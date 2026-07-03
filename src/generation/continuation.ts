@@ -37,7 +37,7 @@ export async function getPartialContent(
     .where("id", "=", attemptId)
     .executeTakeFirst();
 
-  if (attempt?.partial_content) {
+  if (attempt && attempt.partial_content !== null) {
     partialContentStore.set(attemptId, attempt.partial_content);
     return { content: attempt.partial_content };
   }

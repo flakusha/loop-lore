@@ -12,7 +12,7 @@
 import type { Kysely } from "kysely";
 import type { DB } from "../db/schema";
 import { randomUUID } from "node:crypto";
-import { GenerationStatus, CancelReason, CancelSource, PolicyType } from "../db/enums";
+import { GenerationStatus, PolicyType } from "../db/enums";
 import { getLogger } from "../logger";
 import type {
   GenerationOptions,
@@ -183,8 +183,8 @@ export function startGenerationTracking(
   chatToAttempt.set(options.chatId, attemptId);
 
   // Persist to DB (fire-and-forget for speed — errors are non-fatal)
-  void insertAttempt(db, options, attemptId, abortSignalId).catch((err) => {
-    getLogger().child({ module: "generation" }).warn("Failed to persist attempt", { error: String(err) });
+  void insertAttempt(db, options, attemptId, abortSignalId).catch((error: unknown) => {
+    getLogger().child({ module: "generation" }).warn("Failed to persist attempt", { error: String(error) });
   });
 
   events?.onStart?.(attemptId);
@@ -232,9 +232,11 @@ export async function completeGeneration(
     repetition_analysis: result.repetitionAnalysis ? JSON.stringify(result.repetitionAnalysis) : null,
     policy_analysis: result.policyAnalysis ? JSON.stringify(result.policyAnalysis) : null,
     completed_at: new Date().toISOString(),
-    ...(result.cancelReason
-      ? { cancel_reason: result.cancelReason, cancel_reason_detail: result.cancelReason, cancel_source: result.cancelSource }
-      : {}),
+    ...(result.cancelReason && {
+      cancel_reason: result.cancelReason,
+      cancel_reason_detail: result.cancelReason,
+      cancel_source: result.cancelSource,
+    }),
   });
 
   active.events?.onComplete?.(attemptId, result);
@@ -299,7 +301,7 @@ export function getActiveAttemptId(chatId: string): string | undefined {
 /**
  * List all active generation attempts (for admin/debugging).
  */
-export function listActiveGenerations(): Array<{
+export function listActiveGenerations(): ({
   attemptId: string;
   chatId: string;
   actorId: string;
@@ -307,7 +309,7 @@ export function listActiveGenerations(): Array<{
   elapsed: number;
   chunksReceived: number;
   charsReceived: number;
-}> {
+})[] {
   const now = Date.now();
   const result: ReturnType<typeof listActiveGenerations> = [];
 

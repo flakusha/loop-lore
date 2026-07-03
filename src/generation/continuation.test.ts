@@ -56,7 +56,7 @@ function createTestDb(): { sqlite: Database; db: Kysely<DB> } {
   };
 
   const dialect = new SqliteDialect({ database: wrapped });
-  const db = new Kysely<DB>({ dialect }) as unknown as Kysely<DB>;
+  const db = new Kysely<DB>({ dialect }) as unknown;
 
   // Create schema tables
   sqlite.run(`
@@ -87,6 +87,8 @@ function createTestDb(): { sqlite: Database; db: Kysely<DB> } {
       display_name TEXT NOT NULL,
       agent_type TEXT NOT NULL DEFAULT 'none',
       settings TEXT NOT NULL DEFAULT '{}',
+      data_version INTEGER NOT NULL DEFAULT 1,
+      import_spec TEXT NOT NULL DEFAULT '{}',
       created_at TEXT NOT NULL DEFAULT (datetime('now')),
       updated_at TEXT NOT NULL DEFAULT (datetime('now'))
     )
@@ -294,7 +296,7 @@ describe("handleContinueGeneration", () => {
 
     await testDb
       .insertInto("actors")
-      .values({ id: "actor-1", actor_type: "character", display_name: "AI", agent_type: "ai", settings: "{}" })
+      .values({ id: "actor-1", actor_type: "character", display_name: "AI", agent_type: "ai", settings: "{}", data_version: 1, import_spec: "{}" })
       .execute();
 
     await testDb
@@ -449,7 +451,7 @@ describe("handleRetryGeneration", () => {
 
     await testDb
       .insertInto("actors")
-      .values({ id: "actor-1", actor_type: "character", display_name: "AI", agent_type: "ai", settings: "{}" })
+      .values({ id: "actor-1", actor_type: "character", display_name: "AI", agent_type: "ai", settings: "{}", data_version: 1, import_spec: "{}" })
       .execute();
   });
 

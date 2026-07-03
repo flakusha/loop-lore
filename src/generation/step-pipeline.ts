@@ -10,7 +10,6 @@
 import type { Kysely } from "kysely";
 import type { DB } from "../db/schema";
 import { GenerationStatus } from "../db/enums";
-import type { GenerationAttemptRow } from "./types";
 
 // ── Internal: shared state with cancellation-manager ──────────
 // These are imported via re-export from the cancellation manager.
@@ -100,15 +99,17 @@ export async function getPipelineState(
   // Fall back to DB
   const attempt = await db
     .selectFrom("generation_attempts")
-    .selectAll()
+    .select("step_index")
+    .select("total_steps")
+    .select("status")
     .where("id", "=", attemptId)
-    .executeTakeFirst() as GenerationAttemptRow | undefined;
+    .executeTakeFirst();
 
   if (!attempt) return null;
 
   return {
     stepIndex: attempt.step_index ?? 0,
     totalSteps: attempt.total_steps ?? 1,
-    status: attempt.status as GenerationStatus,
+    status: attempt.status,
   };
 }
