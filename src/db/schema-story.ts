@@ -18,6 +18,8 @@ export interface Worlds {
   name: string;
   description: string | null;
   lore: string | null;
+  scan_depth: number;
+  token_budget: number;
   created_at: Generated<string>;
   updated_at: Generated<string>;
 }
