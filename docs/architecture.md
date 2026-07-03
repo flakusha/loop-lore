@@ -24,8 +24,11 @@ loop-lore is a lightweight roleplay/chat application reimagining SillyTavern wit
 ┌──────────────▼──────────────┐
 │   Bun HTTP Server           │
 │   Static serving            │
-│   Route dispatch            │
-│   Session middleware        │
+│   ┌──────────────────────┐  │
+│   │ Middleware Pipeline   │  │
+│   │  auth → roleGuard →  │  │
+│   │  ... → route dispatch│  │
+│   └──────────────────────┘  │
 └──────────────┬──────────────┘
 ┌──────────────▼──────────────┐
 │   Service Layer             │
@@ -48,6 +51,14 @@ loop-lore is a lightweight roleplay/chat application reimagining SillyTavern wit
 
 Bun's built-in HTTP server handles routing, static file serving, session management, and request lifecycle. No Express/Koa dependency.
 
+Request lifecycle flows through a middleware pipeline before reaching route handlers:
+
+1. **Auth middleware** — extracts Bearer token from `Authorization` header, hashes it, looks up session in DB, populates `RequestContext { userId, userRole, sessionId }`
+2. **Role guard** — checks route permissions against user role (admin routes need admin role)
+3. **Route dispatch** — delegates to domain controllers (age-gate, generation, etc.)
+
+Middleware is defined in `src/middleware/` — see [`docs/implementation.md`](./implementation.md#middleware-pipeline).
+
 ### Service Layer
 
 Domain logic isolated in service modules. Each service depends only on the DB adapter interface, not concrete implementations.
@@ -61,9 +72,11 @@ Abstracted through `DatabaseAdapter` interface. Default: SQLite (zero-config). S
 ```
 1. Browser requests page → Bun serves prebuilt HTML from disk
 2. User action → htmx sends AJAX to /api/*
-3. Route handler → calls service → calls DB adapter
-4. Response (HTML fragment or JSON) → htmx swaps DOM
-5. Alpine.js manages local UI state (modals, forms, toasts)
+3. Auth middleware extracts + validates session token → RequestContext
+4. Role guard checks permissions (if applicable)
+5. Route handler → calls service → calls DB adapter
+6. Response (HTML fragment or JSON) → htmx swaps DOM
+7. Alpine.js manages local UI state (modals, forms, toasts)
 ```
 
 ## Static Asset Serving
@@ -75,10 +88,10 @@ Abstracted through `DatabaseAdapter` interface. Default: SQLite (zero-config). S
 
 ## Documentation Serving
 
-- `/docs/*` routes serve Markdown from `docs/` directory
-- Controlled by config/docs flag:
-  - `DOCS_ENABLED=false` → docs routes return 404
-  - Individual doc sections can be hidden via config (e.g., internal architecture docs hidden from public)
+- `/docs/*` routes serve prebuilt HTML from `docs/.vitepress/dist/`
+- Controlled by `docs` config block:
+  - `docs.enabled: false` → all docs routes return 404
+  - `docs.public: [list]` → allowlist of visible section prefixes. Example: `["guide", "frontend", "assets"]` restricts docs to user-facing content only. Empty or absent = all sections visible
 - VitePress or similar SSG optional for rich docs; plain Markdown is default
 
 ## Multi-Process/Session Architecture

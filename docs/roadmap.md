@@ -85,6 +85,10 @@ See [Use Case: Agentic Assistant Workspace](./use-case-agentic-workspace.md) for
 - [ ] **Provider Registry**: Clean LLM backend abstraction layer
 - [ ] **Database Peripherals**: Connection pooling, query caching, read replicas
 - [ ] **Migration Tools**: Easy import/export from other platforms (SillyTavern, etc.)
+- [ ] **Storage Abstraction**: Pluggable storage backends for assets and metadata (local/S3/GCS)
+- [ ] **Observability**: Integration with OpenTelemetry for metrics, tracing, and logging
+- [ ] **Horizontal Scaling**: Redis-backed sessions, WebSocket support for horizontal scaling
+- [ ] **Build System**: Standardized build pipeline with Bun, Docker support, and Kubernetes manifests
 
 ### User Experience Improvements
 
@@ -94,6 +98,9 @@ See [Use Case: Agentic Assistant Workspace](./use-case-agentic-workspace.md) for
 - [ ] **Export/Import**: Chat/character/world backup and migration tools
 - [ ] **Search & Filter**: Full-text search across messages, characters, and lore
 - [ ] **Notifications**: Configurable alert system for events and mentions
+- [ ] **Internationalization**: Full i18n support for UI, with language selection per user (see [internationalization.md](./frontend/internationalization.md))
+- [ ] **Accessibility**: Screen reader support, keyboard navigation, and ARIA compliance
+- [ ] **Progressive Web App (PWA)**: Offline support, installability, and push notifications
 
 ### Advanced AI Features
 
@@ -103,6 +110,11 @@ See [Use Case: Agentic Assistant Workspace](./use-case-agentic-workspace.md) for
 - [ ] **Model Comparison**: Side-by-side model testing with automated evaluation
 - [ ] **Workflow Automation**: Chains of prompts and actions for complex tasks
 - [ ] **Agent Systems**: Specialized AI agents with defined roles and capabilities
+- [ ] **Multi-Agent Collaboration**: Support for multiple agents working together on complex tasks
+- [ ] **Structured Output**: Enforcing JSON/YAML/structured output from LLMs for agent workflows
+- [ ] **Prompt Chaining**: Reusable prompt templates and chains for complex reasoning
+- [ ] **Tool Chaining**: Dynamically chaining tool outputs as inputs to other tools
+- [ ] **AutoGPT-like Agents**: Autonomous agents that can self-direct and chain thoughts
 
 ### Administrative & Operational Features
 
@@ -113,6 +125,10 @@ See [Use Case: Agentic Assistant Workspace](./use-case-agentic-workspace.md) for
 - [ ] **Rate Limiting & Quotas**: Per-user/resource usage controls
 - [ ] **API Versioning**: Stable API contracts with versioned endpoints
 - [ ] **Health Checks**: Service monitoring and automated recovery mechanisms
+- [ ] **Billing & Usage Tracking**: Metered usage for cloud deployments, optional billing integration
+- [ ] **LDAP/AD Integration**: Enterprise authentication via LDAP/Active Directory
+- [ ] **SAML/OIDC Support**: Single Sign-On via SAML or OpenID Connect
+- [ ] **SCIM Provisioning**: Automated user provisioning via SCIM protocol
 
 ### Integration & Extensibility
 
@@ -120,9 +136,12 @@ See [Use Case: Agentic Assistant Workspace](./use-case-agentic-workspace.md) for
 - [ ] **API-First Design**: Complete RESTful API with WebSocket support
 - [ ] **Authentication Providers**: OAuth, LDAP, and external identity provider support
 - [ ] **Storage Backends**: Pluggable storage for assets and metadata (local/S3/GCS)
-- [ ] **Vector Database Options**: Multiple embedding store choices for RAG
+- [ ] **Vector Database Options**: Multiple embedding store choices for RAG (Chroma, PGVector, Qdrant, Milvus, etc.)
 - [ ] **Model Hub Integration**: Direct access to Hugging Face and similar model repositories
 - [ ] **Cross-Platform Clients**: Mobile and desktop native applications
+- [ ] **File System Integrations**: Google Drive, OneDrive, Dropbox sync plugins
+- [ ] **Communication Integrations**: Slack, Discord, Telegram bot/plugins for notifications and commands
+- [ ] **CI/CD Integrations**: GitHub Actions, GitLab CI, Jenkins plugins for DevOps workflows
 
 ## Long-term Vision
 
@@ -133,6 +152,15 @@ See [Use Case: Agentic Assistant Workspace](./use-case-agentic-workspace.md) for
 - **Accessibility & Internationalization**: Screen reader support, keyboard navigation, and full internationalization (see [internationalization.md](./frontend/internationalization.md))
 - **Performance Optimization**: Advanced caching, query optimization, and resource management
 - **Research Tools**: Academic collaboration features and experiment tracking
+- **Decentralized Storage**: IPFS/Filecoin integration for asset storage and content addressing
+- **DAO Governance**: Community-driven governance via token-weighted voting and proposals
+- **AI-Generated Content**: Procedural generation of worlds, characters, lore, and quests using LLMs
+- **XR/VR Integration**: Virtual and augmented reality clients for immersive roleplay and workspaces
+- **Real-time Collaboration**: Google Docs-style collaborative editing for documents, code, and world-building
+- **Simulation Sandboxes**: Isolated environments for testing agents, code, and simulations
+- **Edge Computing**: Deployment to edge networks for low-latency interactions
+- **Quantum-Resistant Cryptography**: Post-quantum security for sensitive data and communications
+- **Neuro-Symbolic AI**: Integration of neural networks with symbolic reasoning for enhanced agent capabilities
 
 ## Contribution Guidelines
 

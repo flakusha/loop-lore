@@ -89,7 +89,8 @@ Hovering over a message reveals a toolbar in the top-right (user messages) or to
 **Basic action set** (always available):
 
 - **Copy**: copies message text to clipboard
-- **Retry** (character messages only): requests a new AI response (same as regenerate)
+- **Retry** (character messages only): requests a new AI response (full regenerate for single-step; resume from failed step for multi-step)
+- **Continue** (character messages only, shown on partial/cancelled messages): appends new content where the message left off — see [generation.md](./generation.md#continue-generation-cut-off--cancelled-messages)
 - **Remove**: deletes the message (cascade archives descendants — see [archiving.md](./archiving.md))
 
 **Extended action set** (available depending on context and mode):
@@ -104,10 +105,15 @@ Hovering over a message reveals a toolbar in the top-right (user messages) or to
 Example layout:
 
 - Top-right corner of user messages: Copy | Retry | Remove buttons
-- Top-left corner of character messages: same buttons
+- Top-left corner of character messages: Copy | Retry | Continue | Remove buttons
+- Partial/cancelled messages show a "↳ Continue" footer button outside the hover toolbar (always visible)
 - Below the message text: stats line (visible in Basic/Detailed mode)
 
 The user message's toolbar is on the right; character message's toolbar is on the left.
+
+**Continue button placement**: the Continue button appears in two locations:
+1. **Hover toolbar** — for messages that completed but are candidates for continuation (truncated, incomplete sentence)
+2. **Inline footer** — for cancelled mid-generation placeholders, always visible below the partial content, styled as a subtle "↳ Continue" link
 
 ---
 

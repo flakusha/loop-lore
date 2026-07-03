@@ -24,6 +24,7 @@ Reimplementation of SillyTavern with enhanced features:
 | [`docs/schema.md`](./schema.md)                 | Full DB schema: users, sessions, chats, messages, assets, worlds        |
 | [`docs/assets.md`](./assets.md)                 | Asset system replacing gallery — images/audio/video, upload, linking    |
 | [`docs/tui.md`](./tui.md)                       | TUI components, data flow, keyboard shortcuts                           |
+| [`docs/testing.md`](./testing.md)               | Testing strategy, tools, coverage goals, and best practices             |
 
 ## Features
 
