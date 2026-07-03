@@ -64,37 +64,57 @@ describe("validateAge", () => {
     const eighteenYearsAgo = new Date();
     eighteenYearsAgo.setFullYear(eighteenYearsAgo.getFullYear() - 18);
     const dateString = eighteenYearsAgo.toISOString().slice(0, 10);
-    expect(() => { validateAge(dateString, 18); }).not.toThrow();
+    expect(() => {
+      validateAge(dateString, 18);
+    }).not.toThrow();
   });
 
   test("passes when user is older than minimum", () => {
-    expect(() => { validateAge("1990-01-01", 18); }).not.toThrow();
+    expect(() => {
+      validateAge("1990-01-01", 18);
+    }).not.toThrow();
   });
 
   test("throws UnderageError when user is below minimum", () => {
-    expect(() => { validateAge("2015-06-15", 18); }).toThrow(UnderageError);
-    expect(() => { validateAge("2015-06-15", 18); }).toThrow(/at least 18/);
+    expect(() => {
+      validateAge("2015-06-15", 18);
+    }).toThrow(UnderageError);
+    expect(() => {
+      validateAge("2015-06-15", 18);
+    }).toThrow(/at least 18/);
   });
 
   test("throws UnderageError for a recent birth date", () => {
     const lastYear = new Date();
     lastYear.setFullYear(lastYear.getFullYear() - 1);
     const dateString = lastYear.toISOString().slice(0, 10);
-    expect(() => { validateAge(dateString, 18); }).toThrow(UnderageError);
+    expect(() => {
+      validateAge(dateString, 18);
+    }).toThrow(UnderageError);
   });
 
   test("throws AgeGateError for invalid date string", () => {
-    expect(() => { validateAge("not-a-date", 18); }).toThrow(AgeGateError);
-    expect(() => { validateAge("not-a-date", 18); }).toThrow(/Invalid birth date/);
+    expect(() => {
+      validateAge("not-a-date", 18);
+    }).toThrow(AgeGateError);
+    expect(() => {
+      validateAge("not-a-date", 18);
+    }).toThrow(/Invalid birth date/);
   });
 
   test("throws AgeGateError for empty string", () => {
-    expect(() => { validateAge("", 18); }).toThrow(AgeGateError);
+    expect(() => {
+      validateAge("", 18);
+    }).toThrow(AgeGateError);
   });
 
   test("respects custom minimum age", () => {
-    expect(() => { validateAge("2005-01-01", 13); }).not.toThrow();
-    expect(() => { validateAge("2015-01-01", 13); }).toThrow(UnderageError);
+    expect(() => {
+      validateAge("2005-01-01", 13);
+    }).not.toThrow();
+    expect(() => {
+      validateAge("2015-01-01", 13);
+    }).toThrow(UnderageError);
   });
 });
 
@@ -122,9 +142,9 @@ describe("acceptAgeGate", () => {
     const config = gateConfig();
 
     // eslint-disable-next-line @typescript-eslint/await-thenable, @typescript-eslint/no-confusing-void-expression
-    await expect(
-      acceptAgeGate(database, config, "test-user-1", { birthDate: "2020-01-01" }),
-    ).rejects.toThrow(UnderageError);
+    await expect(acceptAgeGate(database, config, "test-user-1", { birthDate: "2020-01-01" })).rejects.toThrow(
+      UnderageError,
+    );
 
     // Verify no update was written
     const user = await database
@@ -182,7 +202,9 @@ async function createTestDatabase() {
 
   const dialect = new SqliteDialect({
     database: {
-      close: () => { sqlite.close(); },
+      close: () => {
+        sqlite.close();
+      },
       prepare: (sql: string) => {
         const statement = sqlite.prepare(sql);
         return {
@@ -214,13 +236,16 @@ async function createTestDatabase() {
     .addColumn("created_at", "text", (col) => col.notNull().defaultTo("(datetime('now'))"))
     .execute();
 
-  await database.insertInto("users").values({
-    id: "test-user-1",
-    username: "tester",
-    display_name: "Tester",
-    role: "user",
-    settings: "{}",
-  }).execute();
+  await database
+    .insertInto("users")
+    .values({
+      id: "test-user-1",
+      username: "tester",
+      display_name: "Tester",
+      role: "user",
+      settings: "{}",
+    })
+    .execute();
 
   return database;
 }
