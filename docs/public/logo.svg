@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 120" fill="none">
+  <!-- Stylized Ouroboros / Infinity Loop knot (the "Loop") -->
+  <defs>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#f597e8"/>
+      <stop offset="100%" stop-color="#c469f0"/>
+    </linearGradient>
+    <linearGradient id="fade" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#fffdf5"/>
+      <stop offset="100%" stop-color="#fffdf5" stop-opacity="0.6"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Loop knot icon -->
+  <g transform="translate(12, 12)">
+    <!-- Outer ring -->
+    <circle cx="48" cy="48" r="36" stroke="url(#accent)" stroke-width="4" fill="none"/>
+    <!-- Inner spiral -->
+    <path d="M48 12 C72 12 84 30 84 48 C84 66 72 84 48 84 C24 84 12 66 12 48 C12 36 18 26 30 22 C36 20 40 22 40 28 C40 34 36 40 30 44"
+          stroke="url(#accent)" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    <!-- Small diamond accent -->
+    <path d="M44 44 L48 40 L52 44 L48 48Z" fill="#f597e8"/>
+  </g>
+
+  <!-- Wordmark -->
+  <g transform="translate(100, 12)">
+    <!-- LOOP -->
+    <text x="0" y="46" font-family="system-ui, -apple-system, 'Inter', sans-serif" font-size="40" font-weight="700" letter-spacing="2" fill="url(#accent)">LOOP</text>
+    <!-- LORE -->
+    <text x="6" y="86" font-family="system-ui, -apple-system, 'Inter', sans-serif" font-size="36" font-weight="300" letter-spacing="6" fill="url(#fade)">LORE</text>
+  </g>
+</svg>

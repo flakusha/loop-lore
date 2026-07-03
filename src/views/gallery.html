@@ -1,0 +1,271 @@
+<!-- Gallery View (swapped into #app-root by htmx) -->
+<div class="app-layout" x-data="galleryState()">
+  <!-- Sidebar (same structure as chat) -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <span class="logo">loop-lore</span>
+    </div>
+
+    <nav class="sidebar-nav">
+      <div class="nav-section-title">Navigation</div>
+
+      <a class="nav-item" href="/" hx-get="/" hx-target="#app-root" hx-swap="innerHTML">
+        <span>← Back to Chat</span>
+      </a>
+
+      <a
+        class="nav-item active"
+        href="/views/gallery"
+        hx-get="/views/gallery"
+        hx-target="#app-root"
+        hx-swap="innerHTML"
+      >
+        <span>🖼 Asset Gallery</span>
+      </a>
+
+      <div class="nav-section-title">Filters</div>
+
+      <div style="padding: var(--space-3)">
+        <select class="form-select" x-model="filterType" @change="applyFilter()">
+          <option value="">All types</option>
+          <option value="image">Images</option>
+          <option value="audio">Audio</option>
+          <option value="video">Video</option>
+        </select>
+      </div>
+
+      <div style="padding: 0 var(--space-3) var(--space-3)">
+        <input
+          class="form-input"
+          type="text"
+          placeholder="Search assets..."
+          x-model="searchQuery"
+          @input.debounce="applyFilter()"
+        />
+      </div>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="user-info">
+        <div class="details">
+          <div class="name">Asset Gallery</div>
+          <div class="role" x-text="assetCount + ' assets'"></div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main gallery content -->
+  <main class="main-content">
+    <header class="main-header">
+      <span class="title">Asset Gallery</span>
+      <div class="actions">
+        <button class="btn btn-primary" @click="showUploadModal = true">+ Upload</button>
+      </div>
+    </header>
+
+    <!-- Asset grid loaded via htmx -->
+    <div
+      class="asset-grid"
+      id="asset-grid"
+      x-ref="assetGrid"
+      hx-get="/api/assets"
+      hx-trigger="load"
+      hx-swap="innerHTML"
+    >
+      <!-- Empty state when no assets exist -->
+      <div class="empty-state" style="grid-column: 1 / -1">
+        <div class="icon">📁</div>
+        <div class="title">No assets yet</div>
+        <div class="description">
+          Upload images, audio, or video to get started. Assets can be linked to chats, characters, or
+          messages.
+        </div>
+      </div>
+    </div>
+
+    <!-- Preview modal (single asset viewer) -->
+    <div x-show="previewAsset" x-cloak class="modal-overlay" @click.self="previewAsset = null">
+      <div class="modal" style="max-width: 800px">
+        <div class="modal-header">
+          <span class="title" x-text="previewAsset?.name || 'Asset'"></span>
+          <button class="btn-icon" @click="previewAsset = null">&times;</button>
+        </div>
+        <div class="modal-body" style="padding: 0">
+          <!-- Image preview -->
+          <template x-if="previewAsset?.type === 'image'">
+            <img :src="previewAsset.url" :alt="previewAsset.name" style="width: 100%; display: block" />
+          </template>
+          <!-- Audio preview -->
+          <template x-if="previewAsset?.type === 'audio'">
+            <audio controls style="width: 100%; padding: var(--space-6)" :src="previewAsset.url"></audio>
+          </template>
+          <!-- Video preview -->
+          <template x-if="previewAsset?.type === 'video'">
+            <video controls style="width: 100%; display: block" :src="previewAsset.url"></video>
+          </template>
+        </div>
+        <div class="modal-footer" style="justify-content: space-between">
+          <div style="display: flex; gap: var(--space-2); align-items: center">
+            <span
+              class="tag"
+              :class="{ active: previewAsset?.linked }"
+              x-text="previewAsset?.linked ? '🔗 Linked' : 'Unlinked'"
+            ></span>
+            <span class="tag" x-text="previewAsset?.mime || ''"></span>
+            <span class="tag" x-text="previewAsset?.size || ''"></span>
+          </div>
+          <div style="display: flex; gap: var(--space-2)">
+            <button
+              class="btn btn-secondary"
+              x-show="!previewAsset?.linked"
+              @click="linkAsset(previewAsset?.id)"
+              x-text="'🔗 Link'"
+            ></button>
+            <button
+              class="btn btn-danger"
+              @click="deleteAsset(previewAsset?.id)"
+              x-text="'🗑 Delete'"
+            ></button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Upload modal -->
+    <div x-show="showUploadModal" x-cloak class="modal-overlay" @click.self="showUploadModal = false">
+      <div class="modal">
+        <div class="modal-header">
+          <span class="title">Upload Asset</span>
+          <button class="btn-icon" @click="showUploadModal = false">&times;</button>
+        </div>
+        <div class="modal-body">
+          <!-- Upload form via htmx -->
+          <form
+            hx-post="/api/assets"
+            hx-encoding="multipart/form-data"
+            hx-target="#asset-grid"
+            hx-swap="innerHTML"
+            hx-on::after-request="showUploadModal = false; $dispatch('show-toast', { type: 'success', message: 'Asset uploaded' })"
+          >
+            <div
+              class="drop-zone"
+              @dragover.prevent="$el.classList.add('drag-over')"
+              @dragleave.prevent="$el.classList.remove('drag-over')"
+              @drop.prevent="handleDrop($event)"
+            >
+              <div class="icon">📤</div>
+              <div class="text">Drag & drop files here</div>
+              <div class="hint">or click to browse</div>
+              <input
+                type="file"
+                name="file"
+                accept="image/*,audio/*,video/*"
+                style="display: none"
+                id="upload-input"
+              />
+            </div>
+
+            <div class="form-group" style="margin-top: var(--space-4)">
+              <label class="form-label" for="asset-label">Label (optional)</label>
+              <input
+                class="form-input"
+                type="text"
+                name="label"
+                id="asset-label"
+                placeholder="e.g., Character portrait, Chat background"
+              />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Link to</label>
+              <div style="display: flex; gap: var(--space-2)">
+                <select class="form-select" name="entity_type" style="flex: 1">
+                  <option value="">No link</option>
+                  <option value="chat">Chat</option>
+                  <option value="character">Character</option>
+                  <option value="user">User profile</option>
+                </select>
+                <input
+                  class="form-input"
+                  type="text"
+                  name="entity_id"
+                  placeholder="Entity ID..."
+                  style="flex: 1"
+                />
+              </div>
+            </div>
+
+            <div style="display: flex; gap: var(--space-3); justify-content: flex-end">
+              <button type="button" class="btn btn-secondary" @click="showUploadModal = false">Cancel</button>
+              <button type="submit" class="btn btn-primary">Upload</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+  function galleryState() {
+    return {
+      showUploadModal: false,
+      previewAsset: null,
+      filterType: "",
+      searchQuery: "",
+      assetCount: 0,
+
+      init() {
+        this.assetCount = document.querySelectorAll(".asset-card").length;
+      },
+
+      applyFilter() {
+        // Trigger htmx reload with query params
+        const grid = document.getElementById("asset-grid");
+        if (grid) {
+          let url = "/api/assets";
+          const params = new URLSearchParams();
+          if (this.filterType) params.set("type", this.filterType);
+          if (this.searchQuery) params.set("q", this.searchQuery);
+          const qs = params.toString();
+          htmx.ajax("GET", qs ? `${url}?${qs}` : url, { target: "#asset-grid" });
+        }
+      },
+
+      preview(id, name, type, url, mime, size, linked) {
+        this.previewAsset = { id, name, type, url, mime, size, linked };
+      },
+
+      linkAsset(id) {
+        // Will be implemented when API is ready
+        this.$dispatch("show-toast", { type: "info", message: "Link dialog — API integration needed" });
+      },
+
+      deleteAsset(id) {
+        if (confirm("Delete this asset?")) {
+          htmx.ajax("DELETE", `/api/assets/${id}`, {
+            target: "#asset-grid",
+            swap: "innerHTML",
+            handler: () => {
+              this.previewAsset = null;
+              this.$dispatch("show-toast", { type: "success", message: "Asset deleted" });
+            },
+          });
+        }
+      },
+
+      handleDrop(event) {
+        const file = event.dataTransfer.files[0];
+        if (file) {
+          const input = document.getElementById("upload-input");
+          const dt = new DataTransfer();
+          dt.items.add(file);
+          input.files = dt.files;
+          // Trigger upload
+          input.closest("form").querySelector('button[type="submit"]').click();
+        }
+      },
+    };
+  }
+</script>
