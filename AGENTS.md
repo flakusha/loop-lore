@@ -9,16 +9,21 @@ Deep-dive docs in `/docs/` — read before touching related code:
 
 ### Core System
 
-| File                     | Covers                                                                  |
-| ------------------------ | ----------------------------------------------------------------------- |
-| `docs/schema.md`         | Full DB schema: users, sessions, chats, messages, assets, worlds        |
-| `docs/messages.md`       | Message persistence, detail levels, invalid message handling            |
-| `docs/users-sessions.md` | User roles, remote sessions, demo/solo mode                             |
-| `docs/assets.md`         | Asset system (images/audio/video), upload pipeline, polymorphic linking |
-| `docs/architecture.md`   | System layers, request flow, docs serving                               |
-| `docs/build-deploy.md`   | Minimum-build setup, build pipeline, deployment options                 |
-| `docs/implementation.md` | Tech stack, DB approach, gallery (legacy), assistant, TUI               |
-| `docs/tui.md`            | Blessed component hierarchy, keyboard map, data flow                    |
+| File                             | Covers                                                                  |
+| -------------------------------- | ----------------------------------------------------------------------- |
+| `docs/schema.md`                 | Full DB schema (all tables: core, generation, story, actors, assets)    |
+| `docs/messages.md`               | Message persistence, detail levels, invalid message handling            |
+| `docs/users-sessions.md`         | User roles, remote sessions, demo/solo mode                             |
+| `docs/assets.md`                 | Asset system (images/audio/video), upload pipeline, polymorphic linking |
+| `docs/actors.md`                 | Actor data model: character cards, memories, lorebooks, inventory       |
+| `docs/architecture.md`           | System layers, request flow, docs serving                               |
+| `docs/build-deploy.md`           | Minimum-build setup, build pipeline, deployment options                 |
+| `docs/implementation.md`         | Tech stack, all modules (db, gen, story, assets, assistant, TUI)        |
+| `docs/tui.md`                    | Blessed component hierarchy, keyboard map, data flow                    |
+| `docs/plugin-system.md`          | Plugin architecture: types, lifecycle, security, examples               |
+| `docs/memory-system.md`          | Three-tier memory: episodic, semantic, procedural                       |
+| `docs/artifacts-system.md`       | Code, documents, datasets as polymorphic assets                         |
+| `docs/plan.md`                   | MVP implementation checklist with week-by-week tasks                    |
 
 ### Frontend UX Spec (`docs/frontend/`)
 
@@ -37,7 +42,8 @@ before building any frontend feature.
 | `docs/frontend/chat/archiving.md`         | Cascade deletion, restore, purge flows                                                                                             |
 | `docs/frontend/chat/input.md`             | Text input, media attach, LLM selector, message improvement, image generation                                                      |
 | `docs/frontend/chat/memories.md`          | Character/assistant/world memories, memory selection, auto-purge, token budget                                                     |
-| `docs/frontend/chat/commands-and-misc.md` | Keyboard shortcuts, states summary, image pipeline, system/narration messages                                                      |
+| `docs/frontend/chat/commands-and-misc.md` | Keyboard shortcuts, states summary, image pipeline, system/narration messages      |
+| `docs/frontend/chat/multi-llm-story.md`   | Multi-LLM story generation: GM, turn-taking, quests, quality evaluation, synthetic data |
 | `docs/frontend/characters.md`             | Character list grid, create/edit form                                                                                              |
 | `docs/frontend/gallery.md`                | Asset gallery grid, preview modal, upload dialog                                                                                   |
 | `docs/frontend/settings.md`               | Settings sections: general, chat, API config, theme customization, data management                                                 |
@@ -79,16 +85,24 @@ Reimplement SillyTavern RPG chat with:
 src/
 ├── server.ts            HTTP entry
 ├── db/                  DB layer
-│   ├── schema.ts        Kysely table types (Users, Sessions, Chats, Messages, Assets, etc.)
+│   ├── enums.ts         Centralized enum source of truth
+│   ├── schema.ts        Kysely table types (all tables)
 │   ├── migrations/      Kysely Migrator files
 │   └── index.ts         Kysely init + exports (bun:sqlite dialect)
+├── config/              Configuration loading (file + env override)
+│   ├── schema.ts        Config interface + defaults
+│   └── load.ts          File detection, parse, merge, validate
 ├── routes/              REST handlers
 ├── assets/              service.ts | controller.ts | types.ts
 ├── assistant/           service.ts | controller.ts | types.ts
+├── generation/          LLM generation: types, cancellation, continuation,
+│                        step-pipeline, repetition detection, policy detection
+├── story/               Multi-LLM story: turn-manager, types
+├── content/             Content encoding (gzip/zstd/brotli), minification, compression
+├── age-gate/            Age verification service, controller, tests
 ├── tui/                 app.ts | chat.ts | gallery-view.ts | input.ts
 data/                    Runtime data (SQLite DB, uploaded assets)
 docs/                    Specs, architecture, data model
-migrations/              Legacy SQL migration files (pre-Kysely)
 ```
 
 ---
