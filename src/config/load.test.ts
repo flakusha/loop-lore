@@ -113,27 +113,27 @@ describe("coerceValue", () => {
 
 describe("setByPath", () => {
   test("sets value at nested path", () => {
-    const obj: Record<string, unknown> = {};
-    setByPath(obj, "server.port", 8080);
-    expect(obj).toEqual({ server: { port: 8080 } });
+    const object: Record<string, unknown> = {};
+    setByPath(object, "server.port", 8080);
+    expect(object).toEqual({ server: { port: 8080 } });
   });
 
   test("creates intermediate objects for path", () => {
-    const obj: Record<string, unknown> = {};
-    setByPath(obj, "a.b.c", "deep");
-    expect(obj).toEqual({ a: { b: { c: "deep" } } });
+    const object: Record<string, unknown> = {};
+    setByPath(object, "a.b.c", "deep");
+    expect(object).toEqual({ a: { b: { c: "deep" } } });
   });
 
   test("overwrites existing scalar at path part with object", () => {
-    const obj: Record<string, unknown> = { existing: true };
-    setByPath(obj, "existing.nested", "value");
-    expect(obj).toEqual({ existing: { nested: "value" } });
+    const object: Record<string, unknown> = { existing: true };
+    setByPath(object, "existing.nested", "value");
+    expect(object).toEqual({ existing: { nested: "value" } });
   });
 
   test("single-part path sets top-level key", () => {
-    const obj: Record<string, unknown> = {};
-    setByPath(obj, "key", "value");
-    expect(obj).toEqual({ key: "value" });
+    const object: Record<string, unknown> = {};
+    setByPath(object, "key", "value");
+    expect(object).toEqual({ key: "value" });
   });
 });
 
