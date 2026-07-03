@@ -15,17 +15,10 @@
 import type { Kysely } from "kysely";
 import type { DB } from "../db/schema";
 import type { AgeGateConfig } from "../config/schema";
+import { AgeGateMode } from "../db/enums";
 import * as AgeGateService from "./service";
 
-// ── Helpers ──────────────────────────────────────────────────
-
-function jsonResponse(data: unknown, status = 200): Response {
-  return Response.json(data, { status });
-}
-
-function jsonError(message: string, status: number): Response {
-  return jsonResponse({ error: message }, status);
-}
+import { jsonResponse, jsonError } from "../routes/http-utils";
 
 // ── In-memory runtime config (defaults from schema) ──────────
 
@@ -110,9 +103,7 @@ export async function handleAccept(database: Kysely<DB>, userId: string, body: u
  *
  * Returns the current runtime age gate config (admin-only).
  */
-export function handleAdminGetConfig(
-  userRole: string | null | undefined,
-): Response {
+export function handleAdminGetConfig(userRole: string | null | undefined): Response {
   if (userRole !== "admin") {
     return jsonError("Forbidden", 403);
   }
@@ -129,10 +120,7 @@ export function handleAdminGetConfig(
  * Body example:
  *   { "enabled": true, "minimumAge": 18, "mode": "self-declaration" }
  */
-export function handleAdminUpdateConfig(
-  userRole: string | null | undefined,
-  body: unknown,
-): Response {
+export function handleAdminUpdateConfig(userRole: string | null | undefined, body: unknown): Response {
   if (userRole !== "admin") {
     return jsonError("Forbidden", 403);
   }
@@ -155,8 +143,8 @@ export function handleAdminUpdateConfig(
     updated.minimumAge = input.minimumAge;
   }
   if (typeof input.mode === "string") {
-    const validModes = ["none", "self-declaration", "verification"] as const;
-    if (!validModes.includes(input.mode as typeof validModes[number])) {
+    const validModes = [AgeGateMode.None, AgeGateMode.SelfDeclaration, AgeGateMode.Verification] as const;
+    if (!validModes.includes(input.mode as (typeof validModes)[number])) {
       return jsonError(`mode must be one of: ${validModes.join(", ")}`, 400);
     }
     updated.mode = input.mode as AgeGateConfig["mode"];

@@ -24,6 +24,12 @@ const ENV_MAP: Record<string, string> = {
   AGE_GATE_ENABLED: "ageGate.enabled",
   AGE_GATE_MINIMUM_AGE: "ageGate.minimumAge",
   AGE_GATE_MODE: "ageGate.mode",
+  TLS_KEY: "server.tls.key",
+  TLS_CERT: "server.tls.cert",
+  AUTH_REQUIRED: "auth.required",
+  AUTH_REGISTRATION_OPEN: "auth.registrationOpen",
+  SESSION_TIMEOUT_HOURS: "auth.sessionTimeoutHours",
+  SESSION_MAX_PER_USER: "auth.maxSessionsPerUser",
 };
 
 // Config file candidates in priority order
@@ -33,29 +39,29 @@ function deepMerge<T extends Record<string, unknown>>(base: T, overrides: Partia
   const result = { ...base };
   for (const key of Object.keys(overrides)) {
     const k = key as keyof T;
-    const val = overrides[k];
-    if (val !== undefined) {
-      const baseVal = base[k];
+    const value = overrides[k];
+    if (value !== undefined) {
+      const baseValue = base[k];
       const isObject =
-        typeof val === "object" &&
-        val != null &&
-        !Array.isArray(val) &&
-        typeof baseVal === "object" &&
-        baseVal != null;
+        typeof value === "object" &&
+        value != null &&
+        !Array.isArray(value) &&
+        typeof baseValue === "object" &&
+        baseValue != null;
       result[k] = isObject
-        ? (deepMerge(baseVal as Record<string, unknown>, val as Record<string, unknown>) as T[keyof T])
-        : (val as T[keyof T]);
+        ? (deepMerge(baseValue as Record<string, unknown>, value as Record<string, unknown>) as T[keyof T])
+        : (value as T[keyof T]);
     }
   }
   return result;
 }
 
-function setByPath(obj: Record<string, unknown>, path: string, value: unknown): void {
+function setByPath(object: Record<string, unknown>, path: string, value: unknown): void {
   const parts = path.split(".");
-  let current = obj;
-  for (let i = 0; i < parts.length - 1; i++) {
-    const part = parts[i];
-    if (!current[part] || typeof current[part] !== "object") {
+  let current = object;
+  for (let index = 0; index < parts.length - 1; index++) {
+    const part = parts[index];
+    if (!Object.hasOwn(current, part) || typeof current[part] !== "object") {
       current[part] = {};
     }
     current = current[part] as Record<string, unknown>;
@@ -64,7 +70,7 @@ function setByPath(obj: Record<string, unknown>, path: string, value: unknown): 
 }
 
 function coerceValue(value: string, targetType: string): unknown {
-  if (targetType === "number") return Number.parseInt(value, 10);
+  if (targetType === "number") return Number(value);
   if (targetType === "boolean") {
     if (value === "true" || value === "1") return true;
     if (value === "false" || value === "0") return false;
@@ -73,9 +79,9 @@ function coerceValue(value: string, targetType: string): unknown {
   return value;
 }
 
-function getTypeOfPath(obj: Record<string, unknown>, configPath: string): string {
+function getTypeOfPath(object: Record<string, unknown>, configPath: string): string {
   const parts = configPath.split(".");
-  let current: unknown = obj;
+  let current: unknown = object;
   for (const part of parts) {
     if (typeof current !== "object" || current === null) return "string";
     current = (current as Record<string, unknown>)[part];
@@ -83,13 +89,13 @@ function getTypeOfPath(obj: Record<string, unknown>, configPath: string): string
   return typeof current;
 }
 
-function applyEnvOverrides(config: Config, envMap: Record<string, string>): Config {
+function applyEnvironmentOverrides(config: Config, environmentMap: Record<string, string>): Config {
   const result = structuredClone(config) as unknown as Record<string, unknown>;
-  for (const [envVar, configPath] of Object.entries(envMap)) {
-    const envVal = process.env[envVar];
-    if (envVal !== undefined) {
+  for (const [environmentVariable, configPath] of Object.entries(environmentMap)) {
+    const environmentValue = process.env[environmentVariable];
+    if (environmentValue !== undefined) {
       const targetType = getTypeOfPath(config as unknown as Record<string, unknown>, configPath);
-      const coerced = coerceValue(envVal, targetType);
+      const coerced = coerceValue(environmentValue, targetType);
       setByPath(result, configPath, coerced);
     }
   }
@@ -106,22 +112,21 @@ function findConfigFile(cwd: string): { path: string; ext: string } | null {
   return null;
 }
 
-function parseFileContent(content: string, ext: string): Record<string, unknown> {
-  if (ext === "yaml" || ext === "yml") {
+function parseFileContent(content: string, extension: string): Record<string, unknown> {
+  if (extension === "yaml" || extension === "yml") {
     return parseYaml(content) as Record<string, unknown>;
   }
-  if (ext === "toml") {
+  if (extension === "toml") {
     return parseToml(content);
   }
-  throw new Error(`Unknown config file extension: .${ext}`);
+  throw new Error(`Unknown config file extension: .${extension}`);
 }
 
 function validateConfig(config: Config): void {
-  const validDbTypes = ["sqlite", "postgres"];
-  const validLogLevels = ["debug", "info", "warn", "error"];
+  const validDatabaseTypes = ["sqlite", "postgres"];
 
-  if (!validDbTypes.includes(config.db.type)) {
-    throw new Error(`Invalid db.type: "${config.db.type}". Must be one of: ${validDbTypes.join(", ")}`);
+  if (!validDatabaseTypes.includes(config.db.type)) {
+    throw new Error(`Invalid db.type: "${config.db.type}". Must be one of: ${validDatabaseTypes.join(", ")}`);
   }
   if (config.db.type === "postgres" && !config.db.url) {
     throw new Error("db.url is required when db.type is 'postgres'");
@@ -129,6 +134,7 @@ function validateConfig(config: Config): void {
   if (config.server.port < 1 || config.server.port > 65_535) {
     throw new Error(`Invalid server.port: ${config.server.port}. Must be 1-65535`);
   }
+  const validLogLevels = ["debug", "info", "warn", "error"];
   if (!validLogLevels.includes(config.logging.level)) {
     throw new Error(
       `Invalid logging.level: "${config.logging.level}". Must be one of: ${validLogLevels.join(", ")}`,
@@ -137,21 +143,23 @@ function validateConfig(config: Config): void {
 }
 
 function loadConfig(cwd?: string): Config {
-  const dir = cwd ?? process.cwd();
+  const directory = cwd ?? process.cwd();
   let config: Config = structuredClone(DEFAULTS);
 
-  const found = findConfigFile(dir);
+  const found = findConfigFile(directory);
   if (found) {
     try {
       const content = readFileSync(found.path, "utf8");
       const parsed = parseFileContent(content, found.ext);
       config = deepMerge(config as unknown as Record<string, unknown>, parsed) as unknown as Config;
     } catch (error) {
-      throw new Error(`Failed to parse config file ${found.path}: ${(error as Error).message}`);
+      throw new Error(`Failed to parse config file ${found.path}: ${(error as Error).message}`, {
+        cause: error,
+      });
     }
   }
 
-  config = applyEnvOverrides(config, ENV_MAP);
+  config = applyEnvironmentOverrides(config, ENV_MAP);
   validateConfig(config);
   return config;
 }
