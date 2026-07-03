@@ -7,25 +7,25 @@ import type { Kysely } from "kysely";
  * age verification / compliance. No change when the age gate feature
  * is disabled — these columns simply remain NULL.
  */
-export async function up(db: Kysely<unknown>): Promise<void> {
-  await db.schema
+export async function up(database: Kysely<unknown>): Promise<void> {
+  await database.schema
     .alterTable("users")
     .addColumn("birth_date", "text")
     .execute();
 
-  await db.schema
+  await database.schema
     .alterTable("users")
     .addColumn("age_gate_accepted_at", "text")
     .execute();
 }
 
-export async function down(db: Kysely<unknown>): Promise<void> {
-  await db.schema
+export async function down(database: Kysely<unknown>): Promise<void> {
+  await database.schema
     .alterTable("users")
     .dropColumn("age_gate_accepted_at")
     .execute();
 
-  await db.schema
+  await database.schema
     .alterTable("users")
     .dropColumn("birth_date")
     .execute();
