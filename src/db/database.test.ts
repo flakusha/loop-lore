@@ -1,11 +1,11 @@
 import { describe, test, expect, beforeAll, afterAll } from "bun:test";
 import { Database } from "bun:sqlite";
 
-let sqlite: Database;
+const sqlite: Database = new Database(":memory:");
 
-function createSchema(db: Database): void {
-  db.run("PRAGMA foreign_keys = ON");
-  db.run(`
+function createSchema(database: Database): void {
+  database.run("PRAGMA foreign_keys = ON");
+  database.run(`
     CREATE TABLE users (
       id TEXT PRIMARY KEY,
       username TEXT NOT NULL UNIQUE,
@@ -125,24 +125,23 @@ function createSchema(db: Database): void {
       updated_at TEXT NOT NULL DEFAULT (datetime('now'))
     )
   `);
-  db.run("CREATE INDEX idx_sessions_user_id ON sessions(user_id)");
-  db.run("CREATE INDEX idx_sessions_token_hash ON sessions(token_hash)");
-  db.run("CREATE INDEX idx_actors_user_id ON actors(user_id)");
-  db.run("CREATE INDEX idx_actors_owner ON actors(owner_id)");
-  db.run("CREATE INDEX idx_actors_type ON actors(actor_type)");
-  db.run("CREATE INDEX idx_characters_owner ON characters(owner_id)");
-  db.run("CREATE INDEX idx_chat_participants_actor ON chat_participants(actor_id)");
-  db.run("CREATE INDEX idx_messages_chat_created ON messages(chat_id, created_at)");
-  db.run("CREATE INDEX idx_messages_idempotency ON messages(idempotency_key)");
-  db.run("CREATE INDEX idx_messages_actor ON messages(actor_id)");
-  db.run("CREATE INDEX idx_assets_owner ON assets(owner_id)");
-  db.run("CREATE INDEX idx_asset_links_entity ON asset_links(entity_type, entity_id)");
+  database.run("CREATE INDEX idx_sessions_user_id ON sessions(user_id)");
+  database.run("CREATE INDEX idx_sessions_token_hash ON sessions(token_hash)");
+  database.run("CREATE INDEX idx_actors_user_id ON actors(user_id)");
+  database.run("CREATE INDEX idx_actors_owner ON actors(owner_id)");
+  database.run("CREATE INDEX idx_actors_type ON actors(actor_type)");
+  database.run("CREATE INDEX idx_characters_owner ON characters(owner_id)");
+  database.run("CREATE INDEX idx_chat_participants_actor ON chat_participants(actor_id)");
+  database.run("CREATE INDEX idx_messages_chat_created ON messages(chat_id, created_at)");
+  database.run("CREATE INDEX idx_messages_idempotency ON messages(idempotency_key)");
+  database.run("CREATE INDEX idx_messages_actor ON messages(actor_id)");
+  database.run("CREATE INDEX idx_assets_owner ON assets(owner_id)");
+  database.run("CREATE INDEX idx_asset_links_entity ON asset_links(entity_type, entity_id)");
 }
 
 type Row = Record<string, unknown>;
 
 beforeAll(() => {
-  sqlite = new Database(":memory:");
   createSchema(sqlite);
 });
 
@@ -242,8 +241,8 @@ describe("Database schema", () => {
         "INSERT INTO messages (id, chat_id, actor_id, role, content, content_type, status) VALUES (?, ?, ?, ?, ?, ?, ?)",
         ["msg-vis", chatId, "actor-user-1", "user", "Hello", "text", "sent"],
       );
-      const msg = sqlite.query("SELECT visibility FROM messages WHERE id = ?").get("msg-vis") as Row;
-      expect(msg.visibility).toBe("visible");
+      const message = sqlite.query("SELECT visibility FROM messages WHERE id = ?").get("msg-vis") as Row;
+      expect(message.visibility).toBe("visible");
     });
 
     test("can set different visibility states", () => {

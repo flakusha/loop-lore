@@ -6,9 +6,9 @@ import type { DB } from "./schema";
 
 interface BunSqliteStatement {
   reader: boolean;
-  all(params: readonly unknown[]): unknown[];
-  run(params: readonly unknown[]): { changes: number | bigint; lastInsertRowid: number | bigint };
-  iterate(params: readonly unknown[]): IterableIterator<unknown>;
+  all(parameters: readonly unknown[]): unknown[];
+  run(parameters: readonly unknown[]): { changes: number | bigint; lastInsertRowid: number | bigint };
+  iterate(parameters: readonly unknown[]): IterableIterator<unknown>;
 }
 
 interface BunSqliteWrapper {
@@ -19,8 +19,8 @@ interface BunSqliteWrapper {
 // Wraps bun:sqlite to match the interface Kysely's SqliteDialect expects.
 // The `any` casts are required because Bun's SQLite accepts a wide union of binding types
 // that can't be expressed in Kysely's `readonly unknown[]` parameter signature.
-function createDialect(dbPath: string): SqliteDialect {
-  const sqlite = new Database(dbPath);
+function createDialect(databasePath: string): SqliteDialect {
+  const sqlite = new Database(databasePath);
   sqlite.run("PRAGMA journal_mode = WAL");
   sqlite.run("PRAGMA foreign_keys = ON");
 
@@ -29,7 +29,7 @@ function createDialect(dbPath: string): SqliteDialect {
       sqlite.close();
     },
     prepare: (sql: string) => {
-      const stmt = sqlite.prepare(sql);
+      const statement = sqlite.prepare(sql);
       return {
         get reader() {
           const s = sql.trim().toUpperCase();
@@ -39,12 +39,12 @@ function createDialect(dbPath: string): SqliteDialect {
         // to `SQLQueryBindings[]` which doesn't accept readonly unknown params
         // from Kysely's dialect interface.
         // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-argument
-        all: (params: readonly unknown[]) => stmt.all(...(params as any[])),
+        all: (parameters: readonly unknown[]) => statement.all(...(parameters as any[])),
         // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-argument
-        run: (params: readonly unknown[]) => stmt.run(...(params as any[])),
-        iterate: function* (params: readonly unknown[]) {
+        run: (parameters: readonly unknown[]) => statement.run(...(parameters as any[])),
+        iterate: function* (parameters: readonly unknown[]) {
           // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-argument
-          yield* stmt.all(...(params as any[]));
+          yield* statement.all(...(parameters as any[]));
         },
       };
     },
@@ -53,16 +53,27 @@ function createDialect(dbPath: string): SqliteDialect {
   return new SqliteDialect({ database: wrapped });
 }
 
-let db: Kysely<DB> | null = null;
+// Initialize database connection eagerly
+const database: Kysely<DB> = (() => {
+  const resolvedPath = path.join(process.cwd(), "..", "loop-lore-data", "loop-lore.db");
+  // Ensure the parent directory exists — idempotent, safe for sibling/XDG/custom paths
+  mkdirSync(path.dirname(resolvedPath), { recursive: true });
+  return new Kysely<DB>({ dialect: createDialect(resolvedPath) });
+})();
 
-export function getDb(dbPath?: string): Kysely<DB> {
-  if (!db) {
-    const resolvedPath = dbPath ?? path.join(process.cwd(), "..", "loop-lore-data", "loop-lore.db");
-    // Ensure the parent directory exists — idempotent, safe for sibling/XDG/custom paths
-    mkdirSync(path.dirname(resolvedPath), { recursive: true });
-    db = new Kysely<DB>({ dialect: createDialect(resolvedPath) });
-  }
-  return db;
+/** Test override — set by setTestDatabase(). When set, getDatabase() returns this instead. */
+let testDatabaseOverride: Kysely<DB> | null = null;
+
+/**
+ * Override the global database instance for testing.
+ * Pass null to clear the override.
+ */
+export function setTestDatabase(db: Kysely<DB> | null): void {
+  testDatabaseOverride = db;
+}
+
+export function getDatabase(_databasePath?: string): Kysely<DB> {
+  return testDatabaseOverride ?? database;
 }
 
 export { type DB } from "./schema";
