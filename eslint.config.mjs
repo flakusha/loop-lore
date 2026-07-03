@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Loop Lore Contributors
+
 // ESLint flat config — TypeScript + Unicorn + SonarJS + Prettier
 // https://eslint.org/docs/latest/use/configure/configuration-files
 // https://typescript-eslint.io/getting-started/typed-linting
