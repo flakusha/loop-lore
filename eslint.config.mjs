@@ -80,6 +80,8 @@ export default tseslint.config(
       "unicorn/no-array-reduce": "off",
       // Conflicts with @typescript-eslint/no-non-null-assertion when using .at(-1)!
       "unicorn/prefer-at": "off",
+      // Name replacements rule is too aggressive - doesn't improve readability
+      "unicorn/name-replacements": "off",
 
       // Enforce kebab-case filenames (with PascalCase exceptions for classes, snake_case for migrations)
       "unicorn/filename-case": [
