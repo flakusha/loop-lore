@@ -15,6 +15,7 @@ import { detectTheatricalLoop } from "./repetition-detector";
 import { detectPolicyMismatch } from "./policy-detector";
 import { storePartialContent } from "./continuation";
 import { activeGenerations, chatToAttempt, updateAttemptStatus } from "./cancellation-tracker";
+import { getLogger } from "../logger";
 
 // ── Cancellation logic ────────────────────────────────────
 
@@ -74,7 +75,9 @@ export function cancelGenerationByChat(
       cancel_reason_detail: detail,
       cancel_source: source,
       completed_at: new Date().toISOString(),
-    }).catch((err) => console.error("[generation] Failed to update attempt status:", err));
+    }).catch((err) => {
+      getLogger().child({ module: "generation" }).error("Failed to update attempt status", err);
+    });
   }
 
   return wasCancelled;
@@ -134,8 +137,8 @@ export async function processStreamingChunk(
     void updateAttemptStatus(db, attemptId, GenerationStatus.Streaming, {
       streaming_chunks_received: 0,
       streaming_chars_received: 0,
-    }).catch(() => {
-      // non-fatal
+    }).catch((err) => {
+      getLogger().child({ module: "generation" }).error("Failed to update streaming start status", err);
     });
     active.events?.onStreamingStart?.(attemptId);
   }
@@ -148,8 +151,8 @@ export async function processStreamingChunk(
     void updateAttemptStatus(db, attemptId, active.status, {
       repetition_score: repAnalysis.score,
       repetition_analysis: JSON.stringify(repAnalysis),
-    }).catch(() => {
-      // non-fatal
+    }).catch((err) => {
+      getLogger().child({ module: "generation" }).error("Failed to update repetition analysis", err);
     });
 
     active.events?.onRepetitionDetected?.(attemptId, repAnalysis);
@@ -172,8 +175,8 @@ export async function processStreamingChunk(
         repetition_score: effectiveScore,
         repetition_analysis: JSON.stringify(repAnalysis),
         completed_at: new Date().toISOString(),
-      }).catch(() => {
-        // non-fatal
+      }).catch((err) => {
+        getLogger().child({ module: "generation" }).error("Failed to update repetition-cancel status", err);
       });
       return ChunkAction.CancelRepetition;
     }
@@ -184,7 +187,7 @@ export async function processStreamingChunk(
     const fullText = active.repetitionDetector.getBufferText();
     const policyAnalysis = await detectPolicyMismatch(fullText, {
       enabled: true,
-      expectedPolicy: active.policyConfig.expectedPolicy as PolicyType,
+      expectedPolicy: active.policyConfig.expectedPolicy,
       autoCancel: active.policyConfig.cancel,
       confidenceThreshold: DEFAULT_POLICY_DETECTION.confidenceThreshold,
     });
@@ -205,8 +208,8 @@ export async function processStreamingChunk(
         cancel_source: CancelSource.AutoPolicy,
         policy_analysis: JSON.stringify(policyAnalysis),
         completed_at: new Date().toISOString(),
-      }).catch(() => {
-        // non-fatal
+      }).catch((err) => {
+        getLogger().child({ module: "generation" }).error("Failed to update policy-cancel status", err);
       });
 
       active.events?.onPolicyMismatch?.(attemptId, policyAnalysis);
