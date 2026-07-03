@@ -133,6 +133,7 @@ export async function up(database: Kysely<unknown>): Promise<void> {
     .addColumn("relationships", "text", (col) => col.notNull().defaultTo("{}"))
     .addColumn("inventory", "text", (col) => col.notNull().defaultTo("[]"))
     .addColumn("schedule", "text", (col) => col.notNull().defaultTo("{}"))
+    .addColumn("created_at", "text", (col) => col.notNull().defaultTo("(datetime('now'))"))
     .addColumn("updated_at", "text", (col) => col.notNull().defaultTo("(datetime('now'))"))
     .execute();
 
