@@ -27,6 +27,17 @@ assistant:
 
 logging:
   level: debug          # debug | info | warn | error
+  # jsonlPath: "./data/logs/loop-lore.jsonl"   # enable JSONL output
+  # jsonlMaxBytes: 104857600                   # 100 MB rotation
+  # jsonlMaxFiles: 5
+  # dbEnabled: false                           # log_entries table
+  # censorEnabled: true                        # PII redaction (default)
+  # censorFields: ["x-api-key", "authorization"]
+  # queueMaxSize: 10000
+  # maxMessageBytes: 10240
+  # maxMetaBytes: 102400
+  # maxMetaDepth: 5
+  # maxStackBytes: 5120
 
 tui:
   enabled: true

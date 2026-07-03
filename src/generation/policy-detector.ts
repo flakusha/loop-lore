@@ -9,6 +9,7 @@
  */
 
 import type { PolicyAnalysis, PolicyDetectionConfig } from "./types";
+import { getLogger } from "../logger";
 
 // ── Detector interface ────────────────────────────────────
 
@@ -104,7 +105,7 @@ export async function detectPolicyMismatch(
         bestAnalysis = analysis;
       }
     } catch (error) {
-      console.warn(`[policy-detector] ${detector.name} failed:`, (error as Error).message);
+      getLogger().child({ module: "policy-detector" }).warn(`${detector.name} failed: ${(error as Error).message}`);
       // Detector failure is non-fatal — continue to next detector
     }
   }
