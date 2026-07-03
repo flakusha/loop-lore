@@ -2,6 +2,7 @@ import { Migrator } from "kysely/migration";
 import path from "node:path";
 import { readdirSync } from "node:fs";
 import { getDatabase } from "./index";
+import { getLogger } from "../logger";
 import type { Migration } from "kysely/migration";
 
 async function migrate(): Promise<void> {
@@ -30,17 +31,19 @@ async function migrate(): Promise<void> {
 
   const { error, results } = await migrator.migrateToLatest();
 
+  const log = getLogger().child({ module: "migrate" });
+
   if (results) {
     for (const result of results) {
-      console.log(`Migration ${result.migrationName}: ${result.status}`);
+      log.info(`Migration ${result.migrationName}: ${result.status}`);
     }
   }
   if (error) {
-    console.error("Migration failed:", error);
+    log.error("Migration failed", error instanceof Error ? error : undefined);
     throw new Error("Migration failed — see above");
   }
 
-  console.log("Database migrations completed successfully");
+  log.info("Database migrations completed successfully");
   await database.destroy();
 }
 

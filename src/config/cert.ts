@@ -10,9 +10,14 @@
 
 import { existsSync, mkdirSync } from "node:fs";
 import { dirname } from "node:path";
+import { getLogger } from "../logger";
 import type { TlsConfig } from "./schema";
 
 export type TlsFiles = TlsConfig;
+
+function certLog() {
+  return getLogger().child({ module: "tls" });
+}
 
 /**
  * Ensure TLS key + cert exist. Auto-generates self-signed if missing.
@@ -30,7 +35,7 @@ export function ensureTlsCerts(configPath: TlsFiles): TlsFiles | null {
   mkdirSync(dirname(configPath.cert), { recursive: true });
 
   // Generate self-signed cert
-  console.log("[tls] Generating self-signed development certificate...");
+  certLog().info("Generating self-signed development certificate...");
 
   const subject = "/C=XX/ST=Development/L=Local/O=loop-lore/CN=localhost";
   const result = Bun.spawnSync([
@@ -52,11 +57,11 @@ export function ensureTlsCerts(configPath: TlsFiles): TlsFiles | null {
 
   if (!result.success) {
     const message = result.stderr.toString().trim() || "unknown error";
-    console.warn(`[tls] Failed to generate certificate: ${message}`);
-    console.warn("[tls] Falling back to HTTP only. Install openssl or configure certs manually.");
+    certLog().warn(`Failed to generate certificate: ${message}`);
+    certLog().warn("Falling back to HTTP only. Install openssl or configure certs manually.");
     return null;
   }
 
-  console.log(`[tls] Certificate generated: ${configPath.cert}`);
+  certLog().info(`Certificate generated: ${configPath.cert}`);
   return configPath;
 }

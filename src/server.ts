@@ -11,7 +11,9 @@ import { dispatch as dispatchGeneration } from "./generation/controller";
 import { getDatabase } from "./db/index";
 import { authenticate, compose, errorBoundary } from "./middleware/index";
 import type { RequestContext } from "./middleware/index";
+import { jsonError, HttpStatus } from "./routes/http-utils";
 import { ensureTlsCerts } from "./config/cert";
+import { createLogger, getLogger } from "./logger";
 
 const DOCS_PATH = join(import.meta.dir, "..", "docs", ".vitepress", "dist");
 
@@ -51,7 +53,8 @@ function findCompressedVariant(
 ): { path: string; encoding: string } | null {
   if (!isCompressible(filePath)) return null;
 
-  const encodings = new Set(acceptEncoding.split(",").map((encoding) => encoding.trim().toLowerCase()));
+  const encodings = new Set<string>();
+  for (const encoding of acceptEncoding.split(",")) encodings.add(encoding.trim().toLowerCase());
 
   if (encodings.has("br") && existsSync(`${filePath}.br`)) {
     return { path: `${filePath}.br`, encoding: "br" };
@@ -89,7 +92,7 @@ async function handleApiRequest(
       const generationResult = await dispatchGeneration(req, context.userId, context.userRole);
       if (generationResult) return generationResult;
 
-      return Response.json({ error: "Not implemented" }, { status: 501 });
+      return jsonError("Not implemented", HttpStatus.NotImplemented);
     },
   );
 
@@ -103,6 +106,7 @@ async function handleApiRequest(
 
 function start() {
   const config = loadConfig();
+  createLogger(config.logging);
   initAgeGate(config.ageGate);
   const database = getDatabase();
 
@@ -112,10 +116,14 @@ function start() {
   if (existsSync(sourcePublicDirectory)) {
     const result = compressAssets(sourcePublicDirectory, destinationPublicDirectory);
     if (result.total > 0) {
-      console.log(
-        `Compressed ${result.total} files: ${result.originalBytes}B → ` +
-          `gz:${result.compressedBytes.gz}B zst:${result.compressedBytes.zst}B br:${result.compressedBytes.br}B`,
-      );
+      getLogger().info({
+        message: "Compressed assets",
+        total: result.total,
+        bytes: result.originalBytes,
+        gz: result.compressedBytes.gz,
+        zst: result.compressedBytes.zst,
+        br: result.compressedBytes.br,
+      });
     }
   }
 
@@ -123,10 +131,14 @@ function start() {
   if (existsSync(DOCS_PATH)) {
     const docsResult = compressAssets(DOCS_PATH, DOCS_PATH);
     if (docsResult.total > 0) {
-      console.log(
-        `Docs compressed ${docsResult.total} files: ${docsResult.originalBytes}B → ` +
-          `gz:${docsResult.compressedBytes.gz}B zst:${docsResult.compressedBytes.zst}B br:${docsResult.compressedBytes.br}B`,
-      );
+      getLogger().info({
+        message: "Docs compressed",
+        total: docsResult.total,
+        bytes: docsResult.originalBytes,
+        gz: docsResult.compressedBytes.gz,
+        zst: docsResult.compressedBytes.zst,
+        br: docsResult.compressedBytes.br,
+      });
     }
   }
 
@@ -214,9 +226,11 @@ function start() {
     return new Response("Loop Lore - Documentation available at /docs/");
   };
 
+  const serverLogger = getLogger().child({ module: "server" });
+
   // ── HTTP server (always) ──────────────────────────────────
   serve({ port: config.server.port, fetch: fetchHandler });
-  console.log(`HTTP  → http://localhost:${config.server.port}`);
+  serverLogger.info(`HTTP  → http://localhost:${config.server.port}`);
 
   // ── HTTPS server (TLS certs configured or auto-generated) ─
   if (config.server.tls) {
@@ -232,13 +246,28 @@ function start() {
         },
         fetch: fetchHandler,
       });
-      console.log(`HTTPS → https://localhost:${httpsPort}`);
+      serverLogger.info(`HTTPS → https://localhost:${httpsPort}`);
     } else {
-      console.log("[tls] HTTPS unavailable — serving HTTP only");
+      serverLogger.warn("HTTPS unavailable — serving HTTP only");
     }
   }
 
-  console.log(`Docs  → http://localhost:${config.server.port}/docs/`);
+  serverLogger.info(`Docs  → http://localhost:${config.server.port}/docs/`);
+
+  // ── Shutdown handler — flush logs before exit ──────────
+  const shutdown = async (signal: string) => {
+    const SHUTDOWN_TIMEOUT = 5_000;
+    const flushed = getLogger().flush();
+    const timer = setTimeout(() => {
+      process.stderr.write(`[logger] flush timed out after ${SHUTDOWN_TIMEOUT}ms\n`);
+      process.exit(1);
+    }, SHUTDOWN_TIMEOUT);
+    await flushed;
+    clearTimeout(timer);
+    process.exit(0);
+  };
+  process.on("SIGTERM", () => shutdown("SIGTERM"));
+  process.on("SIGINT", () => shutdown("SIGINT"));
 }
 
 start();
