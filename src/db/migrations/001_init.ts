@@ -1,8 +1,8 @@
 import type { Kysely } from "kysely";
 
-export async function up(db: Kysely<unknown>): Promise<void> {
+export async function up(database: Kysely<unknown>): Promise<void> {
   // ── Users ──────────────────────────────────────────────────
-  await db.schema
+  await database.schema
     .createTable("users")
     .addColumn("id", "text", (col) => col.primaryKey())
     .addColumn("username", "text", (col) => col.notNull().unique())
@@ -15,7 +15,7 @@ export async function up(db: Kysely<unknown>): Promise<void> {
     .execute();
 
   // ── Sessions ────────────────────────────────────────────────
-  await db.schema
+  await database.schema
     .createTable("sessions")
     .addColumn("id", "text", (col) => col.primaryKey())
     .addColumn("user_id", "text", (col) => col.notNull().references("users.id"))
@@ -27,11 +27,11 @@ export async function up(db: Kysely<unknown>): Promise<void> {
     .addColumn("expires_at", "text", (col) => col.notNull())
     .execute();
 
-  await db.schema.createIndex("idx_sessions_user_id").on("sessions").column("user_id").execute();
-  await db.schema.createIndex("idx_sessions_token_hash").on("sessions").column("token_hash").execute();
+  await database.schema.createIndex("idx_sessions_user_id").on("sessions").column("user_id").execute();
+  await database.schema.createIndex("idx_sessions_token_hash").on("sessions").column("token_hash").execute();
 
   // ── Chats ───────────────────────────────────────────────────
-  await db.schema
+  await database.schema
     .createTable("chats")
     .addColumn("id", "text", (col) => col.primaryKey())
     .addColumn("name", "text", (col) => col.notNull())
@@ -52,7 +52,7 @@ export async function up(db: Kysely<unknown>): Promise<void> {
   // ── Actors (unified participant table) ─────────────────────
   // Replaces polymorphic user_id/character_id pattern on messages
   // and the (participant_type, participant_id) pattern on chat_participants
-  await db.schema
+  await database.schema
     .createTable("actors")
     .addColumn("id", "text", (col) => col.primaryKey())
     .addColumn("actor_type", "text", (col) => col.notNull().defaultTo("user"))
@@ -68,14 +68,14 @@ export async function up(db: Kysely<unknown>): Promise<void> {
     .addColumn("updated_at", "text", (col) => col.notNull().defaultTo("(datetime('now'))"))
     .execute();
 
-  await db.schema.createIndex("idx_actors_user_id").on("actors").column("user_id").execute();
-  await db.schema.createIndex("idx_actors_owner").on("actors").column("owner_id").execute();
-  await db.schema.createIndex("idx_actors_type").on("actors").column("actor_type").execute();
+  await database.schema.createIndex("idx_actors_user_id").on("actors").column("user_id").execute();
+  await database.schema.createIndex("idx_actors_owner").on("actors").column("owner_id").execute();
+  await database.schema.createIndex("idx_actors_type").on("actors").column("actor_type").execute();
 
   // ── Chat Participants ─────────────────────────────────────
   // Links actors (users/characters/system) to chats
   // Uses actor_id FK referencing the unified actors table
-  await db.schema
+  await database.schema
     .createTable("chat_participants")
     .addColumn("chat_id", "text", (col) => col.notNull().references("chats.id"))
     .addColumn("actor_id", "text", (col) => col.notNull().references("actors.id"))
@@ -84,10 +84,10 @@ export async function up(db: Kysely<unknown>): Promise<void> {
     .addPrimaryKeyConstraint("pk_chat_participants", ["chat_id", "actor_id"])
     .execute();
 
-  await db.schema.createIndex("idx_chat_participants_actor").on("chat_participants").column("actor_id").execute();
+  await database.schema.createIndex("idx_chat_participants_actor").on("chat_participants").column("actor_id").execute();
 
   // ── Messages ──────────────────────────────────────────────
-  await db.schema
+  await database.schema
     .createTable("messages")
     .addColumn("id", "text", (col) => col.primaryKey())
     .addColumn("chat_id", "text", (col) => col.notNull().references("chats.id"))
@@ -113,15 +113,15 @@ export async function up(db: Kysely<unknown>): Promise<void> {
     .addColumn("edited_at", "text")
     .execute();
 
-  await db.schema.createIndex("idx_messages_chat_created").on("messages").columns(["chat_id", "created_at"]).execute();
-  await db.schema.createIndex("idx_messages_idempotency").on("messages").column("idempotency_key").execute();
-  await db.schema.createIndex("idx_messages_actor").on("messages").column("actor_id").execute();
+  await database.schema.createIndex("idx_messages_chat_created").on("messages").columns(["chat_id", "created_at"]).execute();
+  await database.schema.createIndex("idx_messages_idempotency").on("messages").column("idempotency_key").execute();
+  await database.schema.createIndex("idx_messages_actor").on("messages").column("actor_id").execute();
 
   // ── Characters (legacy, kept for data migration) ──────────
   // Actor entries with actor_type='character' replace this table
   // for all new development. This table remains for backward compat
   // until the character manager is fully migrated.
-  await db.schema
+  await database.schema
     .createTable("characters")
     .addColumn("id", "text", (col) => col.primaryKey())
     .addColumn("owner_id", "text", (col) => col.notNull().references("users.id"))
@@ -135,10 +135,10 @@ export async function up(db: Kysely<unknown>): Promise<void> {
     .addColumn("updated_at", "text", (col) => col.notNull().defaultTo("(datetime('now'))"))
     .execute();
 
-  await db.schema.createIndex("idx_characters_owner").on("characters").column("owner_id").execute();
+  await database.schema.createIndex("idx_characters_owner").on("characters").column("owner_id").execute();
 
   // ── Assets ─────────────────────────────────────────────────
-  await db.schema
+  await database.schema
     .createTable("assets")
     .addColumn("id", "text", (col) => col.primaryKey())
     .addColumn("owner_id", "text", (col) => col.notNull().references("users.id"))
@@ -155,10 +155,10 @@ export async function up(db: Kysely<unknown>): Promise<void> {
     .addColumn("created_at", "text", (col) => col.notNull().defaultTo("(datetime('now'))"))
     .execute();
 
-  await db.schema.createIndex("idx_assets_owner").on("assets").column("owner_id").execute();
+  await database.schema.createIndex("idx_assets_owner").on("assets").column("owner_id").execute();
 
   // ── Asset Links (polymorphic) ─────────────────────────────
-  await db.schema
+  await database.schema
     .createTable("asset_links")
     .addColumn("asset_id", "text", (col) => col.notNull().references("assets.id"))
     .addColumn("entity_type", "text", (col) => col.notNull())
@@ -169,10 +169,10 @@ export async function up(db: Kysely<unknown>): Promise<void> {
     .addPrimaryKeyConstraint("pk_asset_links", ["asset_id", "entity_type", "entity_id"])
     .execute();
 
-  await db.schema.createIndex("idx_asset_links_entity").on("asset_links").columns(["entity_type", "entity_id"]).execute();
+  await database.schema.createIndex("idx_asset_links_entity").on("asset_links").columns(["entity_type", "entity_id"]).execute();
 
   // ── Worlds ─────────────────────────────────────────────────
-  await db.schema
+  await database.schema
     .createTable("worlds")
     .addColumn("id", "text", (col) => col.primaryKey())
     .addColumn("owner_id", "text", (col) => col.notNull().references("users.id"))
@@ -184,15 +184,15 @@ export async function up(db: Kysely<unknown>): Promise<void> {
     .execute();
 }
 
-export async function down(db: Kysely<unknown>): Promise<void> {
-  await db.schema.dropTable("worlds").execute();
-  await db.schema.dropTable("asset_links").execute();
-  await db.schema.dropTable("assets").execute();
-  await db.schema.dropTable("characters").execute();
-  await db.schema.dropTable("messages").execute();
-  await db.schema.dropTable("chat_participants").execute();
-  await db.schema.dropTable("actors").execute();
-  await db.schema.dropTable("chats").execute();
-  await db.schema.dropTable("sessions").execute();
-  await db.schema.dropTable("users").execute();
+export async function down(database: Kysely<unknown>): Promise<void> {
+  await database.schema.dropTable("worlds").execute();
+  await database.schema.dropTable("asset_links").execute();
+  await database.schema.dropTable("assets").execute();
+  await database.schema.dropTable("characters").execute();
+  await database.schema.dropTable("messages").execute();
+  await database.schema.dropTable("chat_participants").execute();
+  await database.schema.dropTable("actors").execute();
+  await database.schema.dropTable("chats").execute();
+  await database.schema.dropTable("sessions").execute();
+  await database.schema.dropTable("users").execute();
 }

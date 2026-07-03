@@ -1,25 +1,27 @@
 import { Migrator } from "kysely/migration";
 import path from "node:path";
 import { readdirSync } from "node:fs";
-import { getDb } from "./index";
+import { getDatabase } from "./index";
 import type { Migration } from "kysely/migration";
 
 async function migrate(): Promise<void> {
-  const db = getDb();
+  const database = getDatabase();
 
   const migrator = new Migrator({
-    db,
+    db: database,
     provider: {
       async getMigrations(): Promise<Record<string, Migration>> {
-        const migrationsDir = path.join(__dirname, "migrations");
-        const files = readdirSync(migrationsDir)
-          .filter((f) => f.endsWith(".ts"))
-          .sort((a, b) => a.localeCompare(b));
+        const migrationsDirectory = path.join(__dirname, "migrations");
+        const files = readdirSync(migrationsDirectory)
+          .filter((f): f is string => f.endsWith(".ts"))
+          .toSorted((a, b) => a.localeCompare(b));
         const migrations: Record<string, Migration> = {};
         for (const file of files) {
-          const migration: Migration = (await import(path.join(migrationsDir, file))) as Migration;
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+          const module = await import(path.join(migrationsDirectory, file));
           const name = file.replace(/\.ts$/, "");
-          migrations[name] = migration;
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+          migrations[name] = module.default ?? module;
         }
         return migrations;
       },
@@ -39,7 +41,7 @@ async function migrate(): Promise<void> {
   }
 
   console.log("Database migrations completed successfully");
-  await db.destroy();
+  await database.destroy();
 }
 
 await migrate();
