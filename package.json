@@ -1,0 +1,52 @@
+{
+  "$schema": "https://raw.githubusercontent.com/SchemaStore/schemastore/master/src/schemas/json/package.json",
+  "name": "loop-lore",
+  "version": "0.1.0",
+  "entryPoint": "src/server.ts",
+  "license": "LGPL-3.0-or-later",
+  "scripts": {
+    "dev": "bun run --watch src/server.ts",
+    "start": "bun run src/server.ts",
+    "tui": "bun run src/tui/app.ts",
+    "build": "bun build src/server.ts --outdir ./dist --target bun",
+    "db:migrate": "bun run src/db/migrate.ts",
+    "docs:dev": "bunx vitepress dev docs",
+    "docs:build": "bunx vitepress build docs",
+    "docs:preview": "bunx vitepress preview docs",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --check \"src/**/*.{ts,tsx}\" \"src/**/*.{html,css}\" \"*.{json,js,mjs,md,yaml,yml}\" \"docs/**/*.md\"",
+    "format:fix": "prettier --write \"src/**/*.{ts,tsx}\" \"src/**/*.{html,css}\" \"*.{json,js,mjs,md,yaml,yml}\" \"docs/**/*.md\"",
+    "md:lint": "markdownlint-cli2 \"docs/**/*.md\"",
+    "md:lint:fix": "markdownlint-cli2 --fix \"docs/**/*.md\"",
+    "typecheck": "tsc --noEmit",
+    "check": "bun run typecheck && bun run lint && bun run format && bun run md:lint",
+    "test": "bun test",
+    "test:watch": "bun test --watch",
+    "test:coverage": "bun test --coverage"
+  },
+  "dependencies": {
+    "blessed": "^0.1.81",
+    "blessed-contrib": "^4.11.0",
+    "js-yaml": "^5.2.1",
+    "kysely": "^0.29.2",
+    "smol-toml": "^1.7.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@types/blessed": "^0.1.16",
+    "@types/js-yaml": "^4.0.9",
+    "bun-types": "^1.0.2",
+    "eslint": "^10.6.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-markdown": "^5",
+    "eslint-plugin-sonarjs": "^4",
+    "eslint-plugin-unicorn": "^70.0.0",
+    "globals": "^17.7.0",
+    "markdownlint-cli2": "^0",
+    "prettier": "^3",
+    "typescript": "^5.4.0",
+    "typescript-eslint": "^8",
+    "vitepress": "^1.6.4"
+  }
+}

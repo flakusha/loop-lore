@@ -1,0 +1,150 @@
+/* ============================================================
+   loop-lore — Dark Theme Design Tokens
+   Extracted and adapted from yodayo.com's dark theme
+   ============================================================ */
+
+:root {
+  /* --- Background palette --- */
+  --bg-primary: #151820; /* Main page background */
+  --bg-secondary: #21242c; /* Cards, surfaces */
+  --bg-tertiary: #30333b; /* Elevated surfaces, inputs */
+  --bg-quaternary: #3f424a; /* Hover states, subtle borders */
+  --bg-quinary: #4a4c4e; /* Lighter elevated */
+
+  /* --- Text palette --- */
+  --text-primary: #fffdf5; /* Main body text (warm off-white) */
+  --text-secondary: #cfcfcf; /* Muted text, labels */
+  --text-tertiary: #898e93; /* Placeholder, disabled */
+  --text-link: #71a1ff; /* Links, clickable text */
+
+  /* --- Accent palette --- */
+  --accent-primary: #f597e8; /* Primary buttons, highlights */
+  --accent-purple: #7130f8; /* Secondary accent */
+  --accent-blue: #0072ff; /* Info, emphasis */
+  --accent-green: #29cc6a; /* Success states */
+  --accent-red: #fc5555; /* Error, danger */
+  --accent-yellow: #fbc531; /* Warning */
+
+  /* --- Border / divider --- */
+  --border-default: #3c3f41; /* Divider lines, subtle borders */
+  --border-active: #f597e8; /* Active / focus border */
+
+  /* --- Shadows --- */
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.5);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+
+  /* --- Drop shadows (for images / overlays) --- */
+  --drop-shadow-subtle: 0 2px 4px rgba(0, 0, 0, 0.3);
+  --drop-shadow-strong: 0 -35px 35px rgba(0, 0, 0, 0.5);
+
+  /* --- Radius --- */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --radius-full: 9999px;
+
+  /* --- Typography --- */
+  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-mono: "JetBrains Mono", "Fira Code", ui-monospace, monospace;
+
+  /* --- Spacing --- */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+
+  /* --- Transitions --- */
+  --transition-fast: 150ms ease;
+  --transition-normal: 250ms ease;
+  --transition-slow: 400ms ease;
+
+  /* --- Z-index layers --- */
+  --z-base: 1;
+  --z-dropdown: 100;
+  --z-modal: 200;
+  --z-toast: 300;
+}
+
+/* ============================================================
+   Global resets & base
+   ============================================================ */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  font-family: var(--font-sans);
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--text-primary);
+  background: var(--bg-primary);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+a {
+  color: var(--text-link);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+
+a:hover {
+  filter: brightness(1.2);
+}
+
+/* ============================================================
+   Custom Scrollbar (Webkit)
+   ============================================================ */
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--bg-quaternary);
+  border-radius: var(--radius-full);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--bg-quinary);
+}
+
+/* Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--bg-quaternary) transparent;
+}
+
+/* ============================================================
+   Selection
+   ============================================================ */
+
+::selection {
+  background: rgba(245, 151, 232, 0.3);
+  color: var(--text-primary);
+}

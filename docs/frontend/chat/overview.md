@@ -1,0 +1,106 @@
+# Chat: Overview & Data Model
+
+## Chat Types
+
+A chat is always a 1:1 conversation. Three types, distinguished by participants:
+
+| Type             | Participants          | Assistant role                                                   | Primary use                                             |
+| ---------------- | --------------------- | ---------------------------------------------------------------- | ------------------------------------------------------- |
+| User × Character | User + Character      | Optional: mediates roleplay mechanics                            | Standard roleplay, story-driven chat                    |
+| User × User      | User + User           | Optional: game master, dice rolls, narration                     | Collaborative storytelling, co-writing                  |
+| User × Assistant | User + Assistant only | Acts as agent: edits text, generates images, helps develop story | Story/world development, writing support, brainstorming |
+
+**Assistant role**: when present, the assistant is NOT a conversation participant — it operates as a background agent that can edit messages, enforce rules, manage game state, generate images, or provide suggestions. The assistant's actions are configurable per chat.
+
+**World + Location**: any chat type can optionally reference a World (first-class entity with lore, rules, atmosphere). A World can have many Locations, which can be connected to each other (e.g., "Forest → Cave → Dungeon"). A 1:1 chat optionally binds to a specific Location within a World.
+
+- World: name, description, lore, rules.
+- Location: sub-entity of World with name, description, and connections to other locations.
+- Chat references a Location within a World.
+- World has many Locations; a Location belongs to one World.
+- A chat optionally binds to a specific Location. The same Location can be referenced by multiple chats. Locations can connect to each other (forming a graph: Forest → Cave → Dungeon).
+
+**Group chat**: explicitly excluded from v1. Listed as a future consideration.
+
+---
+
+### Generation Style Presets (Future)
+
+A per-chat configuration that controls how the LLM generates responses. Not implemented in v1 — all chats use the default preset. Planned options:
+
+| Preset   | Description                                                       | Use case                                       | Cost/speed             |
+| -------- | ----------------------------------------------------------------- | ---------------------------------------------- | ---------------------- |
+| Short    | 1-2 paragraphs, minimal description, action-focused dialogue      | Fast-paced games, quick back-and-forth, combat | Cheaper, faster        |
+| Default  | 1-5 paragraphs with descriptions, balanced narration and dialogue | Standard roleplay, most conversations          | Baseline               |
+| Detailed | Long-form responses, rich descriptions, deep character immersion  | Literary RP, slow-burn storytelling            | More expensive, slower |
+
+Each preset maps to a system prompt instruction appended to the chat context. The preset is selectable per chat (not per-character) so the same character can have short action chats and long literary chats.
+
+**Future considerations**:
+
+- Per-chat preset stored in the chat record
+- Preset can be changed mid-chat (affects future generations only, not existing messages)
+- Tied to the main model selector — if the user switches to a cheaper model, they may want shorter presets to control costs
+
+---
+
+## Data Model
+
+Relationships:
+
+- Character has many Chats
+- User has many Chats
+- Chat belongs to one Character and one User
+- Chat optionally references one World
+- Chat optionally references one Location (sub-entity of World)
+- Chat has many Messages
+- Message belongs to one Chat
+
+A chat without a world is a freeform conversation with just the character's default persona. A chat linked to a world inherits that world's lore and setting context. A chat linked to a Location inherits the location-specific context.
+
+---
+
+## Message Tree Model
+
+Messages form a **tree**, not a flat timeline. Each message has a `parent_id` referencing the message it responds to.
+
+Example tree structure:
+
+- Message A (root, no parent): User says "Tell me about the forest"
+  - Message B (child of A): Character responds "The forest is dark..."
+    - Message D (child of B): User asks "What lives there?"
+      - Message E (child of D): Character responds "Wolves..."
+    - [swipe] Message C (child of A, alternative to B): Character responds "Dark..."
+  - [swipe] Message C2 (child of A, alternative to B): Character responds "The woods..."
+
+- The first message in a chat has no parent (root).
+- A user message gets a `parent_id` pointing to the last character/other-user/assistant message it responds to.
+- A character/assistant message gets a `parent_id` pointing to the user message that triggered it.
+- Swipe variants share the same `parent_id` — they are siblings, not children.
+- The visible timeline is an **in-order traversal** of this tree (active leaf path).
+- **Active path**: the chain of messages from root to the latest visible message, picking the active swipe variant at each fork.
+- **System/user messages for narration**: additional messages can be injected into the chat to guide story development. These are not hidden from the user — they appear in the timeline as system-labelled messages.
+
+---
+
+## Chat Master
+
+The **chat master** is the user who created the chat.
+
+| Who             | Permissions                                                                          |
+| --------------- | ------------------------------------------------------------------------------------ |
+| Chat master     | Delete any message, freeze/unfreeze panels, configure assistant, manage participants |
+| Non-master user | Delete own messages only                                                             |
+| Admin           | Overrides all — can delete any message in any chat, assume master role               |
+| Solo mode       | Local user is always master                                                          |
+
+In User × User chats, both users are co-masters.
+
+---
+
+## World & Location Notes
+
+- World is a first-class entity: name, description, lore, rules.
+- Location is a sub-entity of World: name, description, connections to other locations.
+- A chat references exactly one Location at a time. Location can change mid-chat (e.g., party moves from Forest to Cave). This is a v1.1 feature — v1 scopes to world-level only.
+- See [worlds.md](../worlds.md) for full world/location spec.

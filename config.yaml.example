@@ -1,0 +1,32 @@
+# loop-lore configuration
+# Supports: YAML (.yaml, .yml) or TOML (.toml)
+# Env vars override values below — see src/config/load.ts for mapping
+
+server:
+  port: 3000
+  host: "localhost"
+
+db:
+  type: sqlite          # "sqlite" or "postgres"
+  sqliteFilename: "./data/loop-lore.db"
+  # For Postgres:
+  # type: postgres
+  # url: "postgres://user:pass@localhost:5432/loop-lore"
+
+assets:
+  enabled: true
+  uploadDir: "./data/uploads"
+  maxFileSize: 10485760  # 10 MB
+  compression: true
+
+assistant:
+  enabled: true
+
+logging:
+  level: debug          # debug | info | warn | error
+
+tui:
+  enabled: true
+
+docs:
+  enabled: true

@@ -1,0 +1,291 @@
+/* ============================================================
+   loop-lore — Gallery / Asset Viewer
+   Adapted from yodayo.com image-gallery component,
+   themed to match loop-lore design tokens
+   ============================================================ */
+@import url("theme.css");
+
+/* --- Gallery Container --- */
+.gallery {
+  position: relative;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  background: var(--bg-primary);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+/* --- Main Image Area --- */
+.gallery-content {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16/9;
+  background: var(--bg-secondary);
+  overflow: hidden;
+}
+
+.gallery-slide {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.3s ease;
+}
+
+.gallery-slide img,
+.gallery-slide video {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+/* --- Navigation Arrows --- */
+.gallery-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: var(--bg-tertiary);
+  border: none;
+  border-radius: var(--radius-full);
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--text-primary);
+  z-index: 4;
+  opacity: 0;
+  transition: all 0.3s ease;
+  box-shadow: var(--shadow-md);
+}
+
+.gallery:hover .gallery-nav {
+  opacity: 1;
+}
+
+.gallery-nav:hover {
+  background: var(--bg-quaternary);
+  transform: translateY(-50%) scale(1.1);
+}
+
+.gallery-nav:disabled {
+  opacity: 0.3;
+  cursor: default;
+  pointer-events: none;
+}
+
+.gallery-nav.prev {
+  left: var(--space-3);
+}
+.gallery-nav.next {
+  right: var(--space-3);
+}
+
+.gallery-nav svg {
+  width: 24px;
+  height: 24px;
+  fill: currentColor;
+}
+
+/* --- Fullscreen Button --- */
+.gallery-fullscreen-btn {
+  position: absolute;
+  bottom: var(--space-3);
+  right: var(--space-3);
+  background: rgba(0, 0, 0, 0.5);
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: var(--space-2);
+  cursor: pointer;
+  color: #fff;
+  z-index: 4;
+  transition: all 0.3s ease;
+}
+
+.gallery-fullscreen-btn:hover {
+  background: rgba(0, 0, 0, 0.7);
+  transform: scale(1.1);
+}
+
+.gallery-fullscreen-btn svg {
+  width: 20px;
+  height: 20px;
+  fill: currentColor;
+}
+
+/* --- Thumbnail Strip --- */
+.gallery-thumbnails {
+  display: flex;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  overflow-x: auto;
+  background: var(--bg-secondary);
+}
+
+.gallery-thumbnail {
+  width: 72px;
+  height: 72px;
+  border-radius: var(--radius-sm);
+  object-fit: cover;
+  cursor: pointer;
+  opacity: 0.4;
+  transition: all var(--transition-fast);
+  flex-shrink: 0;
+  border: 2px solid transparent;
+}
+
+.gallery-thumbnail:hover {
+  opacity: 0.7;
+}
+
+.gallery-thumbnail.active {
+  opacity: 1;
+  border-color: var(--accent-primary);
+}
+
+/* --- Gallery Info Overlay --- */
+.gallery-info {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: var(--space-4);
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.7));
+  color: var(--text-primary);
+  z-index: 3;
+}
+
+.gallery-info .caption {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.gallery-info .meta {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-top: var(--space-1);
+}
+
+/* --- Asset Grid (overview page) --- */
+.asset-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: var(--space-4);
+  padding: var(--space-4);
+}
+
+.asset-card {
+  background: var(--bg-secondary);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  border: 1px solid var(--border-default);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.asset-card:hover {
+  border-color: var(--accent-primary);
+  box-shadow: var(--shadow-md);
+}
+
+.asset-card .thumb {
+  width: 100%;
+  aspect-ratio: 4/3;
+  object-fit: cover;
+  display: block;
+}
+
+.asset-card .details {
+  padding: var(--space-3);
+}
+
+.asset-card .details .name {
+  font-size: 13px;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.asset-card .details .type {
+  font-size: 11px;
+  color: var(--text-tertiary);
+  margin-top: 2px;
+}
+
+/* --- Asset Type Badges --- */
+.asset-badge {
+  position: absolute;
+  top: var(--space-2);
+  right: var(--space-2);
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+}
+
+/* --- Upload Area (inside gallery) --- */
+.gallery-upload-area {
+  border: 2px dashed var(--border-default);
+  border-radius: var(--radius-md);
+  padding: var(--space-10);
+  text-align: center;
+  color: var(--text-tertiary);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  background: var(--bg-secondary);
+}
+
+.gallery-upload-area:hover {
+  border-color: var(--accent-primary);
+  background: rgba(245, 151, 232, 0.03);
+}
+
+.gallery-upload-area .icon {
+  font-size: 36px;
+  margin-bottom: var(--space-3);
+  opacity: 0.5;
+}
+
+.gallery-upload-area .text {
+  font-size: 14px;
+}
+
+.gallery-upload-area .hint {
+  font-size: 12px;
+  margin-top: var(--space-1);
+}
+
+/* --- Loading state --- */
+.gallery-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-12);
+  color: var(--text-tertiary);
+}
+
+/* --- Empty state --- */
+.gallery-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-12);
+  color: var(--text-tertiary);
+}
+
+.gallery-empty .icon {
+  font-size: 40px;
+  margin-bottom: var(--space-4);
+  opacity: 0.4;
+}
+
+.gallery-empty .text {
+  font-size: 14px;
+}
