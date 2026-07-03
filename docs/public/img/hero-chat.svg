@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 340" fill="none">
+  <!-- Abstract chat/RPG landscape illustration for docs hero -->
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#151820" stop-opacity="0"/>
+      <stop offset="100%" stop-color="#151820"/>
+    </linearGradient>
+    <linearGradient id="pinkGlow" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#f597e8" stop-opacity="0.15"/>
+      <stop offset="100%" stop-color="#f597e8" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="blueGlow" x1="1" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#0072ff" stop-opacity="0.1"/>
+      <stop offset="100%" stop-color="#0072ff" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background glow -->
+  <rect x="0" y="0" width="600" height="340" fill="url(#bg)"/>
+  <circle cx="180" cy="180" r="180" fill="url(#pinkGlow)"/>
+  <circle cx="420" cy="220" r="160" fill="url(#blueGlow)"/>
+
+  <!-- Chat bubbles decoration -->
+  <!-- Left bubble (character) -->
+  <rect x="40" y="60" width="200" height="56" rx="12" fill="#30333b" opacity="0.8"/>
+  <circle cx="60" cy="88" r="14" fill="#3f424a"/>
+  <rect x="82" y="76" width="100" height="6" rx="3" fill="#cfcfcf" opacity="0.5"/>
+  <rect x="82" y="90" width="140" height="6" rx="3" fill="#898e93" opacity="0.4"/>
+  <rect x="82" y="102" width="80" height="6" rx="3" fill="#898e93" opacity="0.3"/>
+  <path d="M40 116 L56 116 L48 126Z" fill="#30333b" opacity="0.8"/>
+
+  <!-- Right bubble (user) -->
+  <rect x="360" y="100" width="200" height="56" rx="12" fill="#f597e8" opacity="0.9"/>
+  <rect x="380" y="116" width="120" height="6" rx="3" fill="#1a1a1a" opacity="0.4"/>
+  <rect x="380" y="130" width="160" height="6" rx="3" fill="#1a1a1a" opacity="0.3"/>
+  <rect x="380" y="144" width="90" height="6" rx="3" fill="#1a1a1a" opacity="0.2"/>
+  <path d="M360 156 L344 156 L352 166Z" fill="#f597e8" opacity="0.9"/>
+
+  <!-- Top left bubble -->
+  <rect x="60" y="130" width="160" height="48" rx="12" fill="#30333b" opacity="0.6"/>
+  <rect x="82" y="145" width="120" height="6" rx="3" fill="#cfcfcf" opacity="0.4"/>
+  <rect x="82" y="158" width="80" height="6" rx="3" fill="#898e93" opacity="0.3"/>
+
+  <!-- Bottom area - RPG elements -->
+  <rect x="40" y="260" width="520" height="1" rx="0.5" fill="#3c3f41" opacity="0.5"/>
+
+  <!-- Small decorative elements -->
+  <circle cx="100" cy="290" r="4" fill="#f597e8" opacity="0.3"/>
+  <circle cx="300" cy="280" r="6" fill="#0072ff" opacity="0.2"/>
+  <circle cx="500" cy="295" r="3" fill="#29cc6a" opacity="0.3"/>
+  <circle cx="200" cy="300" r="2" fill="#fbc531" opacity="0.2"/>
+  <circle cx="400" cy="285" r="5" fill="#f597e8" opacity="0.15"/>
+
+  <!-- Wavy bottom line -->
+  <path d="M0 320 Q50 310 100 320 Q150 330 200 320 Q250 310 300 320 Q350 330 400 320 Q450 310 500 320 Q550 330 600 320 L600 340 L0 340Z"
+        fill="#21242c" opacity="0.5"/>
+</svg>

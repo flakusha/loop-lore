@@ -1,0 +1,278 @@
+<!-- Chat View (swapped into #app-root by htmx) -->
+<div class="app-layout">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <span class="logo">loop-lore</span>
+    </div>
+
+    <nav class="sidebar-nav">
+      <div x-data="{ activeChat: null }">
+        <div class="nav-section-title">Chats</div>
+
+        <!-- Chat list loaded via htmx -->
+        <div id="chat-list" hx-get="/api/chats" hx-trigger="load" hx-swap="innerHTML">
+          <!-- Loading state -->
+          <div class="nav-item" style="color: var(--text-tertiary); font-size: 13px">Loading chats...</div>
+        </div>
+
+        <div style="padding: var(--space-3)">
+          <button
+            class="btn btn-secondary"
+            style="width: 100%"
+            hx-get="/views/chat/new"
+            hx-target="#app-root"
+            hx-swap="innerHTML"
+            @click="$dispatch('show-toast', { type: 'info', message: 'New chat coming soon' })"
+          >
+            + New Chat
+          </button>
+        </div>
+
+        <div class="nav-section-title">Characters</div>
+        <a
+          class="nav-item"
+          href="/views/characters"
+          hx-get="/views/characters"
+          hx-target="#app-root"
+          hx-swap="innerHTML"
+        >
+          <span>Browse Characters</span>
+        </a>
+
+        <div class="nav-section-title">Assets</div>
+        <a
+          class="nav-item"
+          href="/views/gallery"
+          hx-get="/views/gallery"
+          hx-target="#app-root"
+          hx-swap="innerHTML"
+        >
+          <span>Asset Gallery</span>
+        </a>
+      </div>
+    </nav>
+
+    <!-- Sidebar footer: user info -->
+    <div class="sidebar-footer">
+      <div class="user-info">
+        <img
+          class="avatar"
+          src="/img/default-avatar.png"
+          alt="User avatar"
+          onerror="this.style.display = 'none'"
+          style="background: var(--bg-tertiary)"
+        />
+        <div class="details">
+          <div class="name" id="user-display-name">User</div>
+          <div class="role" id="user-role">solo</div>
+        </div>
+        <button
+          class="btn-icon"
+          hx-get="/views/settings"
+          hx-target="#app-root"
+          hx-swap="innerHTML"
+          title="Settings"
+        >
+          ⚙
+        </button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main chat area -->
+  <main class="main-content" x-data="chatState()">
+    <!-- Header -->
+    <header class="main-header">
+      <div>
+        <span class="title" id="chat-title">Welcome to loop-lore</span>
+      </div>
+      <div class="actions">
+        <button class="btn-icon" title="Toggle gallery sidebar" @click="showGallery = !showGallery">🖼</button>
+        <button class="btn-icon" title="Character info" @click="showCharacterInfo = true">ℹ</button>
+      </div>
+    </header>
+
+    <!-- Body: chat + optional gallery sidebar -->
+    <div style="display: flex; flex: 1; min-height: 0">
+      <!-- Messages -->
+      <div
+        class="chat-area"
+        id="message-list"
+        x-ref="messageList"
+        hx-get="/api/chats/:id/messages"
+        hx-trigger="load from:body"
+        hx-swap="innerHTML"
+        hx-target="#message-list"
+      >
+        <div class="empty-state">
+          <div class="icon">💬</div>
+          <div class="title">No messages yet</div>
+          <div class="description">Start a conversation below. Messages are persisted automatically.</div>
+        </div>
+      </div>
+
+      <!-- Gallery sidebar (toggleable) -->
+      <aside
+        x-show="showGallery"
+        x-transition:enter="transition ease-out duration-200"
+        x-transition:enter-start="opacity-0 translate-x-4"
+        x-transition:enter-end="opacity-100 translate-x-0"
+        style="
+          width: 300px;
+          min-width: 300px;
+          border-left: 1px solid var(--border-default);
+          background: var(--bg-secondary);
+          overflow-y: auto;
+          padding: var(--space-4);
+        "
+        id="gallery-sidebar"
+      >
+        <div class="nav-section-title" style="margin-bottom: var(--space-3)">Chat Assets</div>
+        <div id="gallery-items" hx-get="/api/chats/:id/assets" hx-trigger="load" hx-swap="innerHTML">
+          <div class="gallery-empty">
+            <div class="icon">📁</div>
+            <div class="text">No assets linked to this chat</div>
+          </div>
+        </div>
+      </aside>
+    </div>
+
+    <!-- Input area -->
+    <div class="input-area">
+      <form
+        x-ref="messageForm"
+        hx-post="/api/chats/:id/messages"
+        hx-target="#message-list"
+        hx-swap="beforeend"
+        hx-on::after-request="this.reset(); scrollToBottom()"
+        @submit.prevent="sendMessage()"
+      >
+        <div class="input-row">
+          <textarea
+            name="content"
+            x-ref="messageInput"
+            placeholder="Type a message..."
+            rows="1"
+            @keydown.enter.shift=""
+            @keydown.enter.prevent="sendMessage()"
+            @input="autoResize($el)"
+            required
+          ></textarea>
+          <button type="submit" class="btn btn-primary" title="Send">➤</button>
+        </div>
+        <div class="input-toolbar">
+          <label class="btn btn-ghost" style="cursor: pointer; font-size: 12px">
+            📎 Attach
+            <input
+              type="file"
+              accept="image/*,audio/*,video/*"
+              multiple
+              style="display: none"
+              @change="handleAttach($event)"
+            />
+          </label>
+        </div>
+      </form>
+    </div>
+  </main>
+</div>
+
+<!-- Character Info Modal -->
+<div
+  x-data="{ showCharacterInfo: false }"
+  x-show="showCharacterInfo"
+  x-cloak
+  class="modal-overlay"
+  @click.self="showCharacterInfo = false"
+>
+  <div class="modal">
+    <div class="modal-header">
+      <span class="title">Character Info</span>
+      <button class="btn-icon" @click="showCharacterInfo = false">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div class="empty-state" style="padding: var(--space-6) 0">
+        <div class="icon">👤</div>
+        <div class="title">Character details</div>
+        <div class="description">Character info loaded from the current conversation.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // --- Chat state (Alpine) ---
+  function chatState() {
+    return {
+      showGallery: false,
+      showCharacterInfo: false,
+
+      sendMessage() {
+        const input = this.$refs.messageInput;
+        const text = input.value.trim();
+        if (!text) return;
+
+        const chatId = this.getChatId();
+        if (!chatId) {
+          this.$dispatch("show-toast", { type: "warning", message: "No active chat" });
+          return;
+        }
+
+        // Optimistic insert (htmx handles the actual POST)
+        const msgEl = document.getElementById("message-list");
+        if (msgEl) {
+          msgEl.insertAdjacentHTML(
+            "beforeend",
+            `<div class="message user">
+              <div class="bubble">
+                <div class="meta"><span class="name">You</span></div>
+                ${this.escapeHtml(text)}
+              </div>
+            </div>`,
+          );
+        }
+
+        input.value = "";
+        this.autoResize(input);
+        this.scrollToBottom();
+      },
+
+      autoResize(el) {
+        el.style.height = "auto";
+        el.style.height = Math.min(el.scrollHeight, 200) + "px";
+      },
+
+      scrollToBottom() {
+        const el = document.getElementById("message-list");
+        if (el)
+          setTimeout(() => {
+            el.scrollTop = el.scrollHeight;
+          }, 50);
+      },
+
+      getChatId() {
+        // Extract from URL or data attribute
+        const path = window.location.pathname;
+        const match = path.match(/\/chat\/([^/]+)/);
+        return match ? match[1] : null;
+      },
+
+      handleAttach(event) {
+        const files = event.target.files;
+        if (files.length > 0) {
+          this.$dispatch("show-toast", {
+            type: "info",
+            message: `${files.length} file(s) selected — upload via htmx`,
+          });
+        }
+      },
+
+      escapeHtml(str) {
+        const div = document.createElement("div");
+        div.textContent = str;
+        return div.innerHTML;
+      },
+    };
+  }
+</script>

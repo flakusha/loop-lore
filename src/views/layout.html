@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en" class="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>loop-lore</title>
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="/css/theme.css" media="all" />
+    <link rel="stylesheet" href="/css/app.css" media="all" />
+    <link rel="stylesheet" href="/css/gallery.css" media="all" />
+
+    <!-- htmx -->
+    <script
+      src="https://unpkg.com/htmx.org@2.0.4"
+      integrity="sha384-ieQNIn/OMdC0jtCkCj3zXG1LZyNE1iIhJ6WNF66GSHU7hSHuk7qAApN21JxPBf3b"
+      crossorigin="anonymous"
+      defer
+    ></script>
+
+    <!-- Alpine.js -->
+    <script
+      src="https://unpkg.com/alpinejs@3.14.8/dist/cdn.min.js"
+      integrity="sha384-2GXm0oAzhNWQ6S+3JmC6m+OQfH8AnLyR5t0CVC8cvj2CJmN11OU3o%2BpE%2B%2B1lCg6QaTsgbfN"
+      crossorigin="anonymous"
+      defer
+    ></script>
+
+    <!-- htmx response-targets extension (for error handling) -->
+    <script
+      src="https://unpkg.com/htmx.org@2.0.4/dist/ext/response-targets.js"
+      crossorigin="anonymous"
+      defer
+    ></script>
+
+    <style>
+      /* Inline critical: prevent FOUC */
+      body {
+        background: #151820;
+        color: #fffdf5;
+      }
+      [x-cloak] {
+        display: none !important;
+      }
+    </style>
+  </head>
+  <body x-data="app()" x-init="init()" @keydown.escape.window="closeAllModals()">
+    <!-- Toast container (fixed, outside layout) -->
+    <div class="toast-container" id="toast-container" x-show="toasts.length > 0" x-transition>
+      <template x-for="(toast, i) in toasts" :key="i">
+        <div class="toast" :class="toast.type">
+          <span class="icon" x-text="toast.icon"></span>
+          <span class="message" x-text="toast.msg"></span>
+          <button class="close" @click="toasts.splice(i, 1)">&times;</button>
+        </div>
+      </template>
+    </div>
+
+    <!-- Main content rendered by htmx swaps -->
+    <div id="app-root" hx-ext="response-targets" hx-target-error="#toast-container">{{{content}}}</div>
+
+    <script>
+      // --- Alpine app state ---
+      function app() {
+        return {
+          toasts: [],
+
+          init() {
+            // Listen for htmx toast events
+            document.addEventListener("show-toast", (e) => {
+              this.toasts.push({
+                type: e.detail.type || "info",
+                msg: e.detail.message,
+                icon: e.detail.icon || this.iconFor(e.detail.type || "info"),
+              });
+              // Auto-dismiss after 5s
+              setTimeout(() => this.toasts.shift(), 5000);
+            });
+          },
+
+          iconFor(type) {
+            const icons = { success: "✓", error: "✗", info: "ℹ", warning: "⚠" };
+            return icons[type] || "ℹ";
+          },
+
+          closeAllModals() {
+            // Let individual components handle this
+            document.querySelectorAll("[x-data]").forEach((el) => {
+              if (el.__x) {
+                const data = el.__x.getUnobservedData();
+                if (data && typeof data.showModal !== "undefined") {
+                  data.showModal = false;
+                }
+              }
+            });
+          },
+
+          // --- Toast helper for htmx responses ---
+          toast(type, message) {
+            this.toasts.push({ type, msg: message, icon: this.iconFor(type) });
+            setTimeout(() => this.toasts.shift(), 5000);
+          },
+        };
+      }
+
+      // --- htmx config ---
+      document.addEventListener("htmx:configRequest", (e) => {
+        // Add CSRF / session token if available
+        const token = localStorage.getItem("session_token");
+        if (token) {
+          e.detail.headers["Authorization"] = "Bearer " + token;
+        }
+      });
+
+      document.addEventListener("htmx:afterSwap", (e) => {
+        // Reinitialize Alpine on swapped content
+        if (e.detail.target && e.detail.target.__x) {
+          e.detail.target.__x.$nextTick(() => Alpine.initTree(e.detail.target));
+        }
+      });
+
+      document.addEventListener("htmx:responseError", (e) => {
+        const detail = e.detail;
+        if (detail.xhr) {
+          try {
+            const body = JSON.parse(detail.xhr.responseText);
+            // Dispatch toast event
+            document.dispatchEvent(
+              new CustomEvent("show-toast", {
+                detail: { type: "error", message: body.error || "Request failed" },
+              }),
+            );
+          } catch {
+            document.dispatchEvent(
+              new CustomEvent("show-toast", {
+                detail: { type: "error", message: `Error ${detail.xhr.status}` },
+              }),
+            );
+          }
+        }
+      });
+    </script>
+  </body>
+</html>

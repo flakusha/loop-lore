@@ -1,0 +1,17 @@
+.hermes
+.tmp
+
+dist/
+node_modules/
+
+# Runtime data (stale location — default moved to sibling ../loop-lore-data/)
+data/*.db
+data/uploads/
+
+# Stray test artifact
+local.db
+
+# Pre-compressed static assets (generated on server start)
+*.br
+*.gz
+*.zst
