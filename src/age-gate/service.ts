@@ -67,9 +67,7 @@ export function getStatus(
 
   // User must have a birth date AND have accepted the gate
   // eslint-disable-next-line @typescript-eslint/prefer-optional-chain
-  const hasPassed = user !== null &&
-    user.birth_date !== null &&
-    user.age_gate_accepted_at !== null;
+  const hasPassed = user !== null && user.birth_date !== null && user.age_gate_accepted_at !== null;
 
   return { isEnabled: true, hasPassed, minimumAge: config.minimumAge, mode: config.mode };
 }

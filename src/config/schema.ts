@@ -1,12 +1,26 @@
 // src/config/schema.ts — Config interface + defaults
+//
+// Enum types sourced from ../db/enums
+
+import { DbType, LogLevel, AgeGateMode } from "../db/enums";
+import type { DbType as DbTypeT, LogLevel as LogLevelT, AgeGateMode as AgeGateModeT } from "../db/enums";
+
+interface TlsConfig {
+  /** Path to TLS private key (PEM). Auto-generated if missing. */
+  key: string;
+  /** Path to TLS certificate (PEM). Auto-generated if missing. */
+  cert: string;
+}
 
 interface ServerConfig {
   port: number;
   host: string;
+  /** TLS config. If key/cert paths are set, serve HTTPS too. */
+  tls?: TlsConfig;
 }
 
-interface DbConfig {
-  type: "sqlite" | "postgres";
+interface DatabaseConfig {
+  type: DbTypeT;
   sqliteFilename: string;
   url?: string;
 }
@@ -23,15 +37,21 @@ interface AssistantConfig {
 }
 
 interface LoggingConfig {
-  level: "debug" | "info" | "warn" | "error";
+  level: LogLevelT;
 }
 
 interface TuiConfig {
   enabled: boolean;
 }
 
-interface DocsConfig {
+interface DocumentationConfig {
   enabled: boolean;
+  /**
+   * Allowlist of doc path prefixes visible to non-admin users.
+   * Empty or absent = all docs visible (default).
+   * Example: ["guide", "frontend", "assets"] serves only /docs/guide/*, /docs/frontend/*, /docs/assets.html
+   */
+  public?: string[];
 }
 
 /**
@@ -39,6 +59,20 @@ interface DocsConfig {
  * When enabled, users must declare their age before using the app.
  * Set enabled=false to skip gating entirely ("internet should be free").
  */
+/**
+ * Authentication / session config.
+ */
+interface AuthConfig {
+  /** true = remote multi-user auth required, false = demo/solo mode (skip auth) */
+  required: boolean;
+  /** Allow new user registration */
+  registrationOpen: boolean;
+  /** Idle session timeout in hours */
+  sessionTimeoutHours: number;
+  /** Max simultaneous sessions per user */
+  maxSessionsPerUser: number;
+}
+
 interface AgeGateConfig {
   /** Master toggle — false = no gating at all */
   enabled: boolean;
@@ -50,27 +84,31 @@ interface AgeGateConfig {
    * - "self-declaration": user enters their birth date, we calculate age
    * - "verification": reserved for future ID-based verification
    */
-  mode: "none" | "self-declaration" | "verification";
+  mode: AgeGateModeT;
 }
 
 interface Config {
   server: ServerConfig;
-  db: DbConfig;
+  db: DatabaseConfig;
   assets: AssetsConfig;
   assistant: AssistantConfig;
   logging: LoggingConfig;
   tui: TuiConfig;
-  docs: DocsConfig;
+  docs: DocumentationConfig;
   ageGate: AgeGateConfig;
+  auth: AuthConfig;
 }
-
 const DEFAULTS: Config = {
   server: {
     port: 3000,
     host: "localhost",
+    tls: {
+      key: "./data/certs/key.pem",
+      cert: "./data/certs/cert.pem",
+    },
   },
   db: {
-    type: "sqlite",
+    type: DbType.Sqlite,
     sqliteFilename: "../loop-lore-data/loop-lore.db",
   },
   assets: {
@@ -83,7 +121,7 @@ const DEFAULTS: Config = {
     enabled: true,
   },
   logging: {
-    level: "debug",
+    level: LogLevel.Debug,
   },
   tui: {
     enabled: true,
@@ -94,19 +132,27 @@ const DEFAULTS: Config = {
   ageGate: {
     enabled: false,
     minimumAge: 18,
-    mode: "self-declaration",
+    mode: AgeGateMode.SelfDeclaration,
+  },
+  auth: {
+    required: false,
+    registrationOpen: true,
+    sessionTimeoutHours: 24,
+    maxSessionsPerUser: 10,
   },
 };
 
 export type {
   Config,
   ServerConfig,
-  DbConfig,
+  TlsConfig,
+  DatabaseConfig as DbConfig,
   AssetsConfig,
   AssistantConfig,
   LoggingConfig,
   TuiConfig,
-  DocsConfig,
+  DocumentationConfig,
   AgeGateConfig,
+  AuthConfig,
 };
 export { DEFAULTS };
