@@ -125,4 +125,5 @@ See the [build and deployment guide](./build-deploy.md) for detailed setup instr
 
 ## License
 
-This project is licensed under the LGPL-3.0 License.
+This project is licensed under the LGPL-3.0-or-later License (core code).  
+Documentation is MIT. See [LICENSES/](../LICENSES/) for full texts.
