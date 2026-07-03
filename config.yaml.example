@@ -5,6 +5,9 @@
 server:
   port: 3000
   host: "localhost"
+  tls:
+    key: "./data/certs/key.pem"      # auto-generated if missing
+    cert: "./data/certs/cert.pem"    # auto-generated if missing
 
 db:
   type: sqlite          # "sqlite" or "postgres"
@@ -30,3 +33,10 @@ tui:
 
 docs:
   enabled: true
+  # public: ["guide", "frontend", "assets", "actors"]    # uncomment to restrict visible sections
+
+auth:
+  required: false             # true = remote auth, false = solo/demo mode
+  registrationOpen: true
+  sessionTimeoutHours: 24
+  maxSessionsPerUser: 10

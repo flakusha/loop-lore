@@ -8,10 +8,15 @@ node_modules/
 data/*.db
 data/uploads/
 
-# Stray test artifact
-local.db
-
 # Pre-compressed static assets (generated on server start)
+*.br
+*.gz
+*.zst
+
+# Environment variables (per SECURITY section in AGENTS.md)
+.env
+.env.*
+!.env.example
 *.br
 *.gz
 *.zst
