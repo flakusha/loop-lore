@@ -75,8 +75,8 @@ export function cancelGenerationByChat(
       cancel_reason_detail: detail,
       cancel_source: source,
       completed_at: new Date().toISOString(),
-    }).catch((err) => {
-      getLogger().child({ module: "generation" }).error("Failed to update attempt status", err);
+    }).catch((error: unknown) => {
+      getLogger().child({ module: "generation" }).error("Failed to update attempt status", error);
     });
   }
 
@@ -121,6 +121,7 @@ export async function processStreamingChunk(
   chunk: string,
   db: Kysely<DB>,
 ): Promise<ChunkAction> {
+  const genLog = getLogger().child({ module: "generation" });
   const active = activeGenerations.get(attemptId);
   if (!active) return ChunkAction.Complete;
 
@@ -137,8 +138,8 @@ export async function processStreamingChunk(
     void updateAttemptStatus(db, attemptId, GenerationStatus.Streaming, {
       streaming_chunks_received: 0,
       streaming_chars_received: 0,
-    }).catch((err) => {
-      getLogger().child({ module: "generation" }).error("Failed to update streaming start status", err);
+    }).catch((error: unknown) => {
+      genLog.error("Failed to update streaming start status", error);
     });
     active.events?.onStreamingStart?.(attemptId);
   }
@@ -151,8 +152,8 @@ export async function processStreamingChunk(
     void updateAttemptStatus(db, attemptId, active.status, {
       repetition_score: repAnalysis.score,
       repetition_analysis: JSON.stringify(repAnalysis),
-    }).catch((err) => {
-      getLogger().child({ module: "generation" }).error("Failed to update repetition analysis", err);
+    }).catch((error: unknown) => {
+      genLog.error("Failed to update repetition analysis", error);
     });
 
     active.events?.onRepetitionDetected?.(attemptId, repAnalysis);
@@ -175,8 +176,8 @@ export async function processStreamingChunk(
         repetition_score: effectiveScore,
         repetition_analysis: JSON.stringify(repAnalysis),
         completed_at: new Date().toISOString(),
-      }).catch((err) => {
-        getLogger().child({ module: "generation" }).error("Failed to update repetition-cancel status", err);
+      }).catch((error: unknown) => {
+        genLog.error("Failed to update repetition-cancel status", error);
       });
       return ChunkAction.CancelRepetition;
     }
@@ -208,8 +209,8 @@ export async function processStreamingChunk(
         cancel_source: CancelSource.AutoPolicy,
         policy_analysis: JSON.stringify(policyAnalysis),
         completed_at: new Date().toISOString(),
-      }).catch((err) => {
-        getLogger().child({ module: "generation" }).error("Failed to update policy-cancel status", err);
+      }).catch((error: unknown) => {
+        genLog.error("Failed to update policy-cancel status", error);
       });
 
       active.events?.onPolicyMismatch?.(attemptId, policyAnalysis);

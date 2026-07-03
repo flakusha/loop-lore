@@ -236,9 +236,11 @@ export function detectTheatricalLoop(text: string): { detected: boolean; score: 
     }
   }
 
-  if (lines.filter((l) => l.trim()).length === 0) return { detected: false, score: 0 };
+  let nonBlankCount = 0;
+  for (const l of lines) if (l.trim()) nonBlankCount++;
+  if (nonBlankCount === 0) return { detected: false, score: 0 };
 
-  const actionRatio = actionLineCount / lines.filter((l) => l.trim()).length;
+  const actionRatio = actionLineCount / nonBlankCount;
 
   // High action ratio with every line being an action suggests loop behavior
   return {

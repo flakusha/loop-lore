@@ -39,9 +39,9 @@ export function handleCancelGeneration(body: unknown): Response {
   const database = getDatabase();
   const input = body as Record<string, unknown>;
 
-  const reason = input.reason as CancelReason ?? CancelReason.UserCancel;
-  const source = input.source as CancelSource ?? CancelSource.User;
-  const detail = input.detail as string ?? "User requested cancellation";
+  const reason = (input.reason ?? CancelReason.UserCancel) as CancelReason;
+  const source = (input.source ?? CancelSource.User) as CancelSource;
+  const detail = (input.detail ?? "User requested cancellation") as string;
   const chatId = input.chatId as string | undefined;
   const attemptId = input.attemptId as string | undefined;
 
@@ -220,8 +220,8 @@ export async function handleContinueGeneration(body: unknown): Promise<Response>
     messageId: input.messageId,
     actorId: input.actorId,
     partialContent,
-    modelId: input.modelId ?? attempt.model_id ?? undefined,
-    provider: input.provider ?? attempt.provider ?? undefined,
+    modelId: input.modelId ?? attempt.model_id,
+    provider: input.provider ?? attempt.provider,
     continuationNumber,
     continueContext: {
       parentAttemptId: attempt.id,
