@@ -1,4 +1,7 @@
-export type ContentEncoding = "identity" | "gzip" | "zstd" | "brotli";
+// Content types — ContentEncoding sourced from ../db/enums
+import type { ContentEncoding } from "../db/enums";
+
+export type { ContentEncoding };
 
 export interface EncodeResult {
   encoded: string;
