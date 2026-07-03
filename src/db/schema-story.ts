@@ -117,6 +117,7 @@ export interface NpcStates {
   relationships: string;
   inventory: string;
   schedule: string;
+  created_at: Generated<string>;
   updated_at: Generated<string>;
 }
 
