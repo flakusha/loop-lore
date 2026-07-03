@@ -8,7 +8,6 @@
 import type { Kysely } from "kysely";
 import type { DB } from "../db/schema";
 import { GameMasterType, ContentEncoding, MessageRole, MessageContentType, MessageStatus, MessageVisibility } from "../db/enums";
-import type { GameMasterType as GMT } from "../db/enums";
 import { randomUUID } from "node:crypto";
 import {
   TurnManager,
@@ -308,10 +307,10 @@ export class GameMasterService {
    * Currently produces a structured prompt template.
    * Future: calls an actual LLM via the generation module.
    */
-  private async llmDecision(
+  private llmDecision(
     context: StoryContext,
     actorId: string,
-  ): Promise<GameMasterDecision> {
+  ): GameMasterDecision {
     const actor = context.actors.find((a) => a.id === actorId);
     const npcState = actor?.npcState;
     const location = context.world.currentLocation;
@@ -368,10 +367,10 @@ export class GameMasterService {
    * Human Game Master: returns a minimal prompt, expecting
    * the human to provide the full decision via humanOverride().
    */
-  private async humanDecision(
+  private humanDecision(
     context: StoryContext,
     actorId: string,
-  ): Promise<GameMasterDecision> {
+  ): GameMasterDecision {
     const actor = context.actors.find((a) => a.id === actorId);
 
     return {

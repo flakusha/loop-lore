@@ -10,7 +10,7 @@ import type {
   TurnType as TT,
   QualityDimension as QD,
 } from "../db/enums";
-import type { WorldEvent, NpcState, LocationState } from "./story-events-types";
+import type { WorldEvent, NpcState } from "./story-events-types";
 import type { QuestConfig } from "./quest-types";
 
 // ─── Game Master Config ──────────────────────────────────────────
@@ -115,15 +115,15 @@ export interface StoryContext {
       weather: string | null;
     };
   };
-  activeQuests: Array<{
+  activeQuests: {
     id: string;
     name: string;
     type: import("../db/enums").QuestType;
     progress: number;
     target: number;
     config: QuestConfig;
-  }>;
-  actors: Array<{
+  }[];
+  actors: {
     id: string;
     displayName: string;
     actorType: string;
@@ -131,14 +131,14 @@ export interface StoryContext {
     systemPrompt: string | null;
     locationId: string | null;
     npcState?: NpcState;
-  }>;
-  recentTurns: Array<{
+  }[];
+  recentTurns: {
     turnNumber: number;
     actorId: string;
     turnType: TT;
     prompt: string;
     response: string | null;
     qualityScore: number | null;
-  }>;
+  }[];
   turnManagerState: TurnManagerState;
 }

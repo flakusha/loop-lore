@@ -6,7 +6,6 @@
  * Future: delegate to a dedicated LLM with structured output.
  */
 import { QualityDimension } from "../db/enums";
-import type { QualityDimension as QD } from "../db/enums";
 import {
   DEFAULT_QUALITY_THRESHOLDS,
   DEFAULT_QUALITY_WEIGHTS,
@@ -46,21 +45,23 @@ export class QualityEvaluator {
    * Evaluate a generated response against the story context.
    * Returns detailed scores and a pass/regenerate/escalate decision.
    */
-  async evaluate(
+  evaluate(
     response: string,
     prompt: string,
     actorName: string,
     context?: StoryContext,
-  ): Promise<QualityEvaluation> {
+  ): QualityEvaluation {
     const scores = this.computeScores(response, prompt, actorName, context);
     const overall = scores.overall;
+
+    const questNames = context?.activeQuests.map((q) => q.name).join(", ");
 
     const details: QualityEvaluation["details"] = {
       character_voice: { score: scores.character_voice, reasoning: this.getReasoning("character_voice", scores.character_voice, response, actorName) },
       plot_coherence: { score: scores.plot_coherence, reasoning: this.getReasoning("plot_coherence", scores.plot_coherence, response, prompt) },
       lore_consistency: { score: scores.lore_consistency, reasoning: this.getReasoning("lore_consistency", scores.lore_consistency, response, context?.world.lore) },
       narrative_quality: { score: scores.narrative_quality, reasoning: this.getReasoning("narrative_quality", scores.narrative_quality, response) },
-      quest_relevance: { score: scores.quest_relevance, reasoning: this.getReasoning("quest_relevance", scores.quest_relevance, response, context?.activeQuests.map((q) => q.name).join(", ")) },
+      quest_relevance: { score: scores.quest_relevance, reasoning: this.getReasoning("quest_relevance", scores.quest_relevance, response, questNames) },
       creativity: { score: scores.creativity, reasoning: this.getReasoning("creativity", scores.creativity, response) },
     };
 
@@ -74,7 +75,10 @@ export class QualityEvaluator {
       regenerationReason = `Overall score ${overall} below regeneration threshold ${thresholds.regenerate}`;
     }
 
-    const lowest = Math.min(...Object.values(details).map((d) => d.score));
+    let lowest = Infinity;
+    for (const d of Object.values(details)) {
+      if (d.score < lowest) lowest = d.score;
+    }
     if (lowest < thresholds.escalate && !escalationReason) {
       escalationReason = `Dimension score ${lowest} below escalation threshold`;
     }
@@ -89,12 +93,12 @@ export class QualityEvaluator {
   }
 
   /** Get the raw dimension scores without full evaluation metadata */
-  async computeScore(
+  computeScore(
     response: string,
     prompt: string,
     actorName: string,
     context?: StoryContext,
-  ): Promise<QualityScores> {
+  ): QualityScores {
     return this.computeScores(response, prompt, actorName, context);
   }
 
@@ -139,7 +143,7 @@ export class QualityEvaluator {
   private scoreCharacterVoice(response: string, actorName: string): number {
     let score = 70; // Default baseline
 
-    const lines = response.split("\n").filter((l) => l.trim());
+    const lowerResponse = response.toLowerCase();
 
     // Check for dialogue in character's voice
     const hasDialogue = response.includes(`"`) || response.includes(`"`);
@@ -155,12 +159,13 @@ export class QualityEvaluator {
       "in a voice", "in a tone", "he said", "she said", "they said",
     ];
     for (const phrase of generic) {
-      if (response.toLowerCase().includes(phrase)) score -= 3;
+      if (lowerResponse.includes(phrase)) score -= 3;
     }
 
     // Too short responses
-    if (response.split(/\s+/).length < 15) score -= 15;
-    if (response.split(/\s+/).length > 500) score -= 5;
+    const wordCount = response.split(/\s+/).length;
+    if (wordCount < 15) score -= 15;
+    if (wordCount > 500) score -= 5;
 
     return Math.max(10, Math.min(100, score));
   }
@@ -169,14 +174,21 @@ export class QualityEvaluator {
   private scorePlotCoherence(response: string, prompt: string): number {
     let score = 65;
 
-    // Check if response directly addresses the prompt
-    const promptWords = new Set(
-      prompt.toLowerCase().split(/\s+/).filter((w) => w.length > 3),
-    );
-    const responseWords = response.toLowerCase().split(/\s+/);
-    const matchedWords = responseWords.filter((w) => promptWords.has(w));
+    const lowerResponse = response.toLowerCase();
+    const lowerPrompt = prompt.toLowerCase();
 
-    const overlapRatio = matchedWords.length / promptWords.size;
+    // Check if response directly addresses the prompt
+    const promptWords = new Set<string>();
+    for (const w of lowerPrompt.split(/\s+/)) {
+      if (w.length > 3) promptWords.add(w);
+    }
+    const responseWords = lowerResponse.split(/\s+/);
+    let matchedWordCount = 0;
+    for (const w of responseWords) {
+      if (promptWords.has(w)) matchedWordCount++;
+    }
+
+    const overlapRatio = matchedWordCount / (promptWords.size || 1);
     if (overlapRatio > 0.3) score += 15;
     else if (overlapRatio > 0.1) score += 5;
 
@@ -186,7 +198,7 @@ export class QualityEvaluator {
       "contrary to", "despite this",
     ];
     for (const phrase of contradictionPhrases) {
-      if (response.toLowerCase().includes(phrase)) score -= 2;
+      if (lowerResponse.includes(phrase)) score -= 2;
     }
 
     // Check for logical flow markers
@@ -194,7 +206,10 @@ export class QualityEvaluator {
       "because", "since", "as a result", "therefore",
       "this causes", "leading to", "in response",
     ];
-    const hasFlow = flowMarkers.some((m) => response.toLowerCase().includes(m));
+    let hasFlow = false;
+    for (const m of flowMarkers) {
+      if (lowerResponse.includes(m)) { hasFlow = true; break; }
+    }
     if (hasFlow) score += 10;
 
     return Math.max(10, Math.min(100, score));
@@ -213,10 +228,14 @@ export class QualityEvaluator {
     const responseEntities = this.extractEntities(responseLower);
 
     if (loreEntities.size > 0 && responseEntities.size > 0) {
-      const matches = [...responseEntities].filter((e) =>
-        [...loreEntities].some((le) => le.includes(e) || e.includes(le)),
-      );
-      const matchRatio = matches.length / responseEntities.size;
+      let matchCount = 0;
+      outer:
+      for (const e of responseEntities) {
+        for (const le of loreEntities) {
+          if (le.includes(e) || e.includes(le)) { matchCount++; continue outer; }
+        }
+      }
+      const matchRatio = matchCount / responseEntities.size;
       if (matchRatio > 0.5) score += 15;
       else if (matchRatio > 0.2) score += 8;
       else if (matchRatio < 0.1 && responseEntities.size > 2) score -= 15;
@@ -241,7 +260,11 @@ export class QualityEvaluator {
       "smell", "sound", "feel", "taste", "sight", "hear",
       "glimmer", "echo", "fragrant", "cold", "warm", "dark",
     ];
-    const sensoryCount = sensory.filter((s) => response.toLowerCase().includes(s)).length;
+    const lowerResponse = response.toLowerCase();
+    let sensoryCount = 0;
+    for (const s of sensory) {
+      if (lowerResponse.includes(s)) sensoryCount++;
+    }
     score += sensoryCount * 3;
 
     // Dialogue presence
@@ -263,7 +286,7 @@ export class QualityEvaluator {
   /** Score quest relevance (0-100) */
   private scoreQuestRelevance(
     response: string,
-    quests?: Array<{ name: string; progress: number; target: number }>,
+    quests?: { name: string; progress: number; target: number }[],
   ): number {
     if (!quests || quests.length === 0) return 60; // No active quests
 
@@ -272,9 +295,12 @@ export class QualityEvaluator {
 
     for (const quest of quests) {
       const questWords = quest.name.toLowerCase().split(/\s+/);
-      const matchedWords = questWords.filter((w) => w.length > 3 && responseLower.includes(w));
-      if (matchedWords.length > 0) {
-        score += 10 + (matchedWords.length / questWords.length) * 10;
+      let matchedCount = 0;
+      for (const w of questWords) {
+        if (w.length > 3 && responseLower.includes(w)) matchedCount++;
+      }
+      if (matchedCount > 0) {
+        score += 10 + (matchedCount / questWords.length) * 10;
       }
     }
 
@@ -293,9 +319,11 @@ export class QualityEvaluator {
   /** Score creativity (0-100) */
   private scoreCreativity(
     response: string,
-    recentTurns?: Array<{ response: string | null }>,
+    recentTurns?: { response: string | null }[],
   ): number {
     let score = 65;
+
+    const lowerResponse = response.toLowerCase();
 
     // Unusual/evocative word usage
     const evocativeWords = [
@@ -303,14 +331,19 @@ export class QualityEvaluator {
       "unsettling", "beautiful", "terrifying", "ancient", "forgotten",
       "glimmer", "shadow", "whisper", "fade", "emerge",
     ];
-    const evocativeCount = evocativeWords.filter((w) => response.toLowerCase().includes(w)).length;
+    let evocativeCount = 0;
+    for (const w of evocativeWords) {
+      if (lowerResponse.includes(w)) evocativeCount++;
+    }
     score += evocativeCount * 5;
 
     // Penalize repetition of recent responses
     if (recentTurns && recentTurns.length > 0) {
-      const lastResponses = recentTurns
-        .map((t) => t.response ?? "")
-        .filter((r) => r.length > 50);
+      const lastResponses: string[] = [];
+      for (const t of recentTurns) {
+        const r = t.response ?? "";
+        if (r.length > 50) lastResponses.push(r);
+      }
 
       for (const last of lastResponses) {
         const similarity = this.calculateSimilarity(response, last);
@@ -329,7 +362,7 @@ export class QualityEvaluator {
       "destiny called",
     ];
     for (const cliche of cliches) {
-      if (response.toLowerCase().includes(cliche)) score -= 15;
+      if (lowerResponse.includes(cliche)) score -= 15;
     }
 
     return Math.max(10, Math.min(100, score));
@@ -354,9 +387,12 @@ export class QualityEvaluator {
   private calculateSimilarity(a: string, b: string): number {
     const wordsA = new Set(a.toLowerCase().split(/\s+/));
     const wordsB = new Set(b.toLowerCase().split(/\s+/));
-    const intersection = new Set([...wordsA].filter((w) => wordsB.has(w)));
+    let intersection = 0;
+    for (const w of wordsA) {
+      if (wordsB.has(w)) intersection++;
+    }
     const union = new Set([...wordsA, ...wordsB]);
-    return union.size > 0 ? intersection.size / union.size : 0;
+    return union.size > 0 ? intersection / union.size : 0;
   }
 
   private getReasoning(dimension: string, score: number, response: string, context?: string): string {

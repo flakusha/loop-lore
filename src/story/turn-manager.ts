@@ -14,12 +14,10 @@ import type {
   QualityEvaluation,
   QualityThresholds,
   GameMasterConfig,
-  GameMasterDecision,
   StoryContext,
   WorldEvent,
 } from "./types";
 import { DEFAULT_QUALITY_THRESHOLDS } from "./types";
-import { randomUUID } from "node:crypto";
 import {
   STRATEGY_MAP,
   type TurnParticipant,
@@ -94,7 +92,7 @@ export class TurnManager {
 
     this.state.currentTurn++;
 
-    const selectFn = STRATEGY_MAP[resolvedStrategy] ?? STRATEGY_MAP[TurnStrategy.RoundRobin];
+    const selectFn = STRATEGY_MAP[resolvedStrategy];
     const selectedId = selectFn(
       participants,
       this.state.currentActorId,
