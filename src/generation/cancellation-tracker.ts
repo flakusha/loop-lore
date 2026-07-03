@@ -12,7 +12,8 @@
 import type { Kysely } from "kysely";
 import type { DB } from "../db/schema";
 import { randomUUID } from "node:crypto";
-import { GenerationStatus, CancelReason, CancelSource } from "../db/enums";
+import { GenerationStatus, CancelReason, CancelSource, PolicyType } from "../db/enums";
+import { getLogger } from "../logger";
 import type {
   GenerationOptions,
   GenerationResult,
@@ -33,7 +34,7 @@ export interface ActiveGeneration {
   abortController: AbortController;
   startedAt: number;
   repetitionDetector: StreamingRepetitionDetector;
-  policyConfig: { expectedPolicy: string; cancel: boolean };
+  policyConfig: { expectedPolicy: PolicyType; cancel: boolean };
   responseLimitConfig: { maxResponses: number; isGroupChat: boolean; currentCount: number };
   streaming: boolean;
   chunksReceived: number;
@@ -182,9 +183,8 @@ export function startGenerationTracking(
   chatToAttempt.set(options.chatId, attemptId);
 
   // Persist to DB (fire-and-forget for speed — errors are non-fatal)
-  await insertAttempt(db, options, attemptId, abortSignalId).catch((err) => {
-    // non-fatal but log for debugging
-    console.warn("[generation] Failed to persist attempt:", err);
+  void insertAttempt(db, options, attemptId, abortSignalId).catch((err) => {
+    getLogger().child({ module: "generation" }).warn("Failed to persist attempt", { error: String(err) });
   });
 
   events?.onStart?.(attemptId);
