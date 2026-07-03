@@ -1,19 +1,19 @@
 export function minifyText(content: string): string {
   const lines = content.split("\n");
   const result: string[] = [];
-  let prevBlank = false;
+  let isPreviousBlank = false;
 
   for (const line of lines) {
     const trimmed = line.trimStart();
 
     if (trimmed === "") {
-      if (!prevBlank) {
+      if (!isPreviousBlank) {
         result.push("");
-        prevBlank = true;
+        isPreviousBlank = true;
       }
     } else {
       result.push(trimmed);
-      prevBlank = false;
+      isPreviousBlank = false;
     }
   }
 

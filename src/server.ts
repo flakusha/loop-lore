@@ -4,7 +4,11 @@ import { existsSync, readFileSync } from "node:fs";
 import { compressAssets } from "./content/compress";
 import { loadConfig } from "./config/load";
 import { initAgeGate, dispatch as dispatchAgeGate } from "./age-gate/controller";
-import { getDb } from "./db/index";
+import { dispatch as dispatchGeneration } from "./generation/controller";
+import { getDatabase } from "./db/index";
+import { authenticate, compose, errorBoundary } from "./middleware/index";
+import type { RequestContext } from "./middleware/index";
+import { ensureTlsCerts } from "./config/cert";
 
 const DOCS_PATH = join(import.meta.dir, "..", "docs", ".vitepress", "dist");
 
@@ -25,8 +29,8 @@ const MIME_TYPES: Record<string, string> = {
 };
 
 function getContentType(filePath: string): string {
-  const ext = filePath.split(".").pop()?.toLowerCase() ?? "";
-  return MIME_TYPES[ext] ?? "text/plain";
+  const extension = filePath.split(".").pop()?.toLowerCase() ?? "";
+  return MIME_TYPES[extension] ?? "text/plain";
 }
 
 const PUBLIC_DIR = join(import.meta.dir, "..", "dist", "public");
@@ -34,8 +38,8 @@ const PUBLIC_DIR = join(import.meta.dir, "..", "dist", "public");
 const COMPRESSIBLE_EXTS = new Set([".css", ".js", ".html", ".json", ".svg"]);
 
 function isCompressible(filePath: string): boolean {
-  const ext = filePath.split(".").pop()?.toLowerCase();
-  return ext ? COMPRESSIBLE_EXTS.has(`.${ext}`) : false;
+  const extension = filePath.split(".").pop()?.toLowerCase();
+  return extension ? COMPRESSIBLE_EXTS.has(`.${extension}`) : false;
 }
 
 function findCompressedVariant(
@@ -59,16 +63,51 @@ function findCompressedVariant(
   return null;
 }
 
+/**
+ * API request handler — runs middleware pipeline then dispatches to route controllers.
+ *
+ * Middleware chain: errorBoundary → auth → route dispatch
+ * Auth populates RequestContext { userId, userRole, sessionId }.
+ */
+async function handleApiRequest(
+  request: Request,
+  database: ReturnType<typeof getDatabase>,
+  config: ReturnType<typeof loadConfig>,
+): Promise<Response> {
+  // Build middleware chain: error boundary wraps auth + dispatch
+  const pipeline = compose(
+    [errorBoundary],
+    async (req: Request, context: RequestContext): Promise<Response> => {
+      // ── Age gate routes ──────────────────────────────
+      const ageGateResult = await dispatchAgeGate(req, database, context.userId, context.userRole);
+      if (ageGateResult) return ageGateResult;
+
+      // ── Generation cancellation routes ───────────────
+      const generationResult = await dispatchGeneration(req, context.userId, context.userRole);
+      if (generationResult) return generationResult;
+
+      return Response.json({ error: "Not implemented" }, { status: 501 });
+    },
+  );
+
+  // Run auth first, short-circuit on failure
+  const authResult = await authenticate(request, database, config.auth);
+  if (authResult instanceof Response) return authResult;
+
+  // Run pipeline with authenticated context
+  return pipeline(request, authResult.context);
+}
+
 function start() {
   const config = loadConfig();
   initAgeGate(config.ageGate);
-  const db = getDb();
+  const database = getDatabase();
 
-  const sourcePublicDir = join(import.meta.dir, "public");
-  const destinationPublicDir = join(import.meta.dir, "..", "dist", "public");
+  const sourcePublicDirectory = join(import.meta.dir, "public");
+  const destinationPublicDirectory = join(import.meta.dir, "..", "dist", "public");
 
-  if (existsSync(sourcePublicDir)) {
-    const result = compressAssets(sourcePublicDir, destinationPublicDir);
+  if (existsSync(sourcePublicDirectory)) {
+    const result = compressAssets(sourcePublicDirectory, destinationPublicDirectory);
     if (result.total > 0) {
       console.log(
         `Compressed ${result.total} files: ${result.originalBytes}B → ` +
@@ -77,72 +116,126 @@ function start() {
     }
   }
 
-  serve({
-    port: config.server.port,
-    fetch: async (request: Request) => {
-      const url = new URL(request.url);
-
-      if (url.pathname.startsWith("/api/")) {
-        // ── Age gate routes ──────────────────────────────
-        const ageGateResult = await dispatchAgeGate(request, db, null, null);
-        if (ageGateResult) return ageGateResult;
-
-        return Response.json({ error: "Not implemented" }, { status: 501 });
-      }
-
-      if (
-        process.env.DOCS_ENABLED !== "false" &&
-        url.pathname.startsWith("/docs/")
-      ) {
-        let filePath = url.pathname.slice(5);
-        if (filePath === "" || filePath.endsWith("/")) {
-          filePath += "index.html";
-        }
-
-        const fullPath = join(DOCS_PATH, filePath);
-
-        if (existsSync(fullPath)) {
-          const content = readFileSync(fullPath);
-          return new Response(content, {
-            headers: { "Content-Type": getContentType(filePath) },
-          });
-        }
-
-        return new Response("Documentation not found", { status: 404 });
-      }
-
-      const publicPath = join(
-        PUBLIC_DIR,
-        url.pathname === "/" ? "index.html" : url.pathname,
+  // Pre-compress VitePress docs dist (if built)
+  if (existsSync(DOCS_PATH)) {
+    const docsResult = compressAssets(DOCS_PATH, DOCS_PATH);
+    if (docsResult.total > 0) {
+      console.log(
+        `Docs compressed ${docsResult.total} files: ${docsResult.originalBytes}B → ` +
+          `gz:${docsResult.compressedBytes.gz}B zst:${docsResult.compressedBytes.zst}B br:${docsResult.compressedBytes.br}B`,
       );
+    }
+  }
 
-      if (existsSync(publicPath)) {
+  // ── Shared fetch handler (HTTP + HTTPS) ───────────────────
+  const fetchHandler = async (request: Request): Promise<Response> => {
+    const url = new URL(request.url);
+
+    if (url.pathname.startsWith("/api/")) {
+      return handleApiRequest(request, database, config);
+    }
+
+    if (process.env.DOCS_ENABLED !== "false" && url.pathname.startsWith("/docs/")) {
+      let docPath = url.pathname.slice(5);
+
+      // ── Section allowlist ────────────────────────────────
+      const section = docPath.split("/")[0] || "index";
+      if (config.docs.public && config.docs.public.length > 0) {
+        if (!config.docs.public.includes(section)) {
+          return new Response("Documentation not found", { status: 404 });
+        }
+      }
+
+      // ── Resolve file path ─────────────────────────────────
+      if (docPath === "" || docPath.endsWith("/")) {
+        docPath += "index.html";
+      }
+
+      let fullPath = join(DOCS_PATH, docPath);
+
+      // VitePress generates .html files for clean URLs
+      if (!existsSync(fullPath)) {
+        const htmlPath = fullPath + ".html";
+        if (existsSync(htmlPath)) {
+          fullPath = htmlPath;
+        }
+      }
+
+      if (existsSync(fullPath)) {
         const acceptEncoding = request.headers.get("accept-encoding") ?? "";
-        const variant = findCompressedVariant(publicPath, acceptEncoding);
+        const variant = findCompressedVariant(fullPath, acceptEncoding);
 
         if (variant) {
           const content = readFileSync(variant.path);
           return new Response(content, {
             headers: {
-              "Content-Type": getContentType(publicPath),
+              "Content-Type": getContentType(variant.path),
               "Content-Encoding": variant.encoding,
-              "Vary": "Accept-Encoding",
+              Vary: "Accept-Encoding",
             },
           });
         }
 
-        const content = readFileSync(publicPath);
+        const content = readFileSync(fullPath);
         return new Response(content, {
-          headers: { "Content-Type": getContentType(publicPath) },
+          headers: { "Content-Type": getContentType(fullPath) },
         });
       }
 
-      return new Response("Loop Lore - Documentation available at /docs/");
-    },
-  });
+      return new Response("Documentation not found", { status: 404 });
+    }
 
-  console.log(`Server listening on http://localhost:${config.server.port}`);
-  console.log(`Documentation available at http://localhost:${config.server.port}/docs/`);
+    const publicPath = join(PUBLIC_DIR, url.pathname === "/" ? "index.html" : url.pathname);
+
+    if (existsSync(publicPath)) {
+      const acceptEncoding = request.headers.get("accept-encoding") ?? "";
+      const variant = findCompressedVariant(publicPath, acceptEncoding);
+
+      if (variant) {
+        const content = readFileSync(variant.path);
+        return new Response(content, {
+          headers: {
+            "Content-Type": getContentType(variant.path),
+            "Content-Encoding": variant.encoding,
+            Vary: "Accept-Encoding",
+          },
+        });
+      }
+
+      const content = readFileSync(publicPath);
+      return new Response(content, {
+        headers: { "Content-Type": getContentType(publicPath) },
+      });
+    }
+
+    return new Response("Loop Lore - Documentation available at /docs/");
+  };
+
+  // ── HTTP server (always) ──────────────────────────────────
+  serve({ port: config.server.port, fetch: fetchHandler });
+  console.log(`HTTP  → http://localhost:${config.server.port}`);
+
+  // ── HTTPS server (TLS certs configured or auto-generated) ─
+  if (config.server.tls) {
+    const tlsFiles = ensureTlsCerts(config.server.tls);
+
+    if (tlsFiles) {
+      const httpsPort = config.server.port + 443;
+      serve({
+        port: httpsPort,
+        tls: {
+          key: Bun.file(tlsFiles.key),
+          cert: Bun.file(tlsFiles.cert),
+        },
+        fetch: fetchHandler,
+      });
+      console.log(`HTTPS → https://localhost:${httpsPort}`);
+    } else {
+      console.log("[tls] HTTPS unavailable — serving HTTP only");
+    }
+  }
+
+  console.log(`Docs  → http://localhost:${config.server.port}/docs/`);
 }
 
 start();
