@@ -4,32 +4,85 @@
 
 ### Backend
 
-- **Runtime**: [Bun](https://bun.sh) - Fast TypeScript/JavaScript runtime
-- **Language**: TypeScript 5.0+
+- **Runtime**: [Bun](https://bun.sh) — Fast TypeScript/JavaScript runtime, runs `.ts` directly
+- **Language**: TypeScript 5.4+ strict mode
 - **Database**:
   - Primary: SQLite (via `bun:sqlite` — native, no extra deps) for local development
-  - Abstraction Layer: Drizzle ORM on bun:sqlite; swap to Drizzle Postgres/MySQL adapter for scale
-- **ORM/Query Builder**: Drizzle ORM (migrations + type-safe queries)
-- **Server**: Bun's built-in HTTP server (no additional framework needed)
-- **Validation**: Custom validation functions (could be extended with Zod or Joi)
+  - Query Builder: [Kysely](https://kysely.dev/) with `BunSqliteDialect` — type-safe queries, dialect-swappable
+  - Scaling up: Swap to `PostgresDialect` from `kysely` with `pg` pool
+- **Server**: Bun's built-in HTTP server (no Express/Koa dependency)
+- **Middleware**: Lightweight composable pipeline (auth, role guard, logging) built on Bun fetch; no framework
+- **Validation**: Kysely type system at compile time; incremental runtime validation — schema-per-route pattern with Zod considered for later
 
 ### Frontend
 
-- **Web UI**: Preserved existing functionality (to be integrated)
-- **TUI Mode**:
-  - [`blessed`](https://github.com/chjj/blessed) - Curses-like library for Node.js
-  - [`blessed-contrib`](https://github.com/yaronn/blessed-contrib) - Additional widgets for blessed
-- **Styling**: Inline styling via blessed's API (no external CSS needed for TUI)
-- **Optional Web Components**: For future web-based gallery/assistant integration (htmx/alpinejs as requested)
+- **Web UI**: htmx (server-driven AJAX) + Alpine.js (client-side interactivity)
+- **TUI Mode**: [`blessed`](https://github.com/chjj/blessed) — curses-like terminal UI library
+- **Documentation**: VitePress SSG for rich docs, optional; plain Markdown default
 
 ### Tooling
 
 - **Package Manager**: Bun's built-in package manager
-- **Type Checking**: TypeScript compiler (`bun run build` or `tsc`)
-- **Linting**: ESLint (to be configured)
-- **Formatting**: Prettier (to be configured)
+- **Type Checking**: TypeScript compiler (`tsc --noEmit`)
+- **Linting**: ESLint 9 (flat config) with `typescript-eslint` strictTypeChecked, `unicorn`, `sonarjs`
+- **Formatting**: Prettier
+- **Markdown**: `markdownlint-cli2` for docs quality
 
 ## Core Implementation Details
+
+### Middleware Pipeline
+
+Located in `src/middleware/`
+
+#### Architecture
+
+Lightweight composable pipeline built on Bun's native fetch handler. No Express/Koa dependency. Each middleware receives `(request, context, next)` and either short-circuits (returns `Response`) or calls `next()` with enriched context.
+
+```
+request → auth → roleGuard → route dispatch → Response
+                ↓
+          401 Unauthorized  403 Forbidden
+```
+
+#### RequestContext
+
+Shared context object passed through the pipeline, populated by auth middleware and consumed by route handlers:
+
+```
+RequestContext {
+  userId:    string | null   — authenticated user ID (null in solo mode)
+  userRole:  string | null   — admin | user | viewer | solo
+  sessionId: string | null   — active session ID (null in solo mode)
+}
+```
+
+#### Auth Middleware (`src/middleware/auth.ts`)
+
+Opaque session token model (no JWT dependency):
+
+1. Extract `Authorization: Bearer <token>` header
+2. SHA-256 hash the token
+3. Look up `sessions` table by `token_hash`
+4. Verify expiration, update `last_activity`
+5. Fetch `users.role` for the session's `user_id`
+6. Return `RequestContext`
+
+Solo/demo mode (`auth.required: false`):
+- Bypasses token check
+- Returns a singleton solo user context
+- No DB lookup per request
+
+#### Pipeline Runner (`src/middleware/pipeline.ts`)
+
+`compose(middleware[], finalHandler)` — chains middleware left-to-right. Each middleware receives `(request, context, next)` and either returns `Response` to short-circuit or calls `await next()` to pass through. The final handler is the route dispatcher. Errors bubble to the error boundary middleware.
+
+#### Priority
+
+1. **Auth** — session extraction, user identity
+2. **Access control** — role gates on admin routes (see `docs/users-sessions.md`)
+3. **Validation** — incremental, per-route schema checks (phased implementation)
+
+Rate limiting deferred to reverse proxy for production; no in-app rate limit middleware.
 
 ### Database Layer
 
@@ -37,21 +90,23 @@ Located in `src/db/`
 
 #### Database Approach
 
-[Bun ships `bun:sqlite`](https://bun.sh/docs/api/sqlite) natively — fast, zero deps. [Kysely](https://kysely.dev/) provides type-safe query building on top.
+[Bun ships `bun:sqlite`](https://bun.sh/docs/api/sqlite) natively — fast, zero deps.
+[Kysely](https://kysely.dev/) provides type-safe query building on top.
 
-1. **SQLite (default):** Kysely with `BunSqliteDialect`
+1. **SQLite (default):** Kysely with `BunSqliteDialect`:
 
    ```typescript
    import { Database } from "bun:sqlite";
-   import { Kysely, SqliteDialect } from "kysely";
+   import { Kysely } from "kysely";
+   import { BunSqliteDialect } from "kysely/bun-sqlite";
 
-   const dialect = new SqliteDialect({
+   const dialect = new BunSqliteDialect({
      database: new Database("data.db"),
    });
    const db = new Kysely<DB>({ dialect });
    ```
 
-2. **Scaling up:** Swap to `PostgresDialect` from `kysely`
+2. **Scaling up:** Swap to `PostgresDialect` from `kysely`:
 
    ```typescript
    import { Kysely, PostgresDialect } from "kysely";
@@ -63,7 +118,8 @@ Located in `src/db/`
    const db = new Kysely<DB>({ dialect });
    ```
 
-3. **Same queries, different dialect** — Kysely normalizes across SQLite and Postgres. Store arrays/enums as JSON text for compatibility.
+3. **Same queries, different dialect** — Kysely normalizes across SQLite and Postgres.
+   Store arrays/enums as JSON text for compatibility.
 
 4. **Database Initialization** (`src/db/index.ts`):
    - Reads `DB_TYPE` env var (default: `sqlite`)
@@ -73,9 +129,33 @@ Located in `src/db/`
 #### Schema and Migrations
 
 - Schema defined as TypeScript interfaces in `src/db/schema.ts` (Kysely table types)
+- Enum values centralized in `src/db/enums.ts` (barrel over `enums-*.ts` domain files) — const objects + type unions
 - Migrations managed by Kysely Migrator, stored in `src/db/migrations/`
 - Migration files are `.ts` with `up()`/`down()` exports
-- See `docs/schema.md` for full table definitions
+- See [`docs/schema.md`](./schema.md) for full table definitions
+
+#### Current Migration Sequence
+
+| # | File | What it creates |
+| --- | --- | --- |
+| 001 | `001_init.ts` | Core tables: users, sessions, chats, actors, chat_participants, characters, messages, assets, asset_links, worlds |
+| 002 | `002_age_gate.ts` | `birth_date`, `age_gate_accepted_at` on users |
+| 003a | `003_generation_attempts.ts` | `generation_attempts` table |
+| 003b | `003_story_features.ts` | locations, story_turns, quests, quest_progress, world_states, npc_states, location_states, synthetic_data + new columns on chats |
+| 004 | `004_continuation_retry.ts` | Continuation & tree columns on generation_attempts + messages |
+
+### Actor System
+
+Located in `src/actors/` (types and logic) — the `actors` table is the unified
+participant model. See [`docs/actors.md`](./actors.md) for:
+
+- **Character card imports** (SillyTavern V1/V2 — PNG-embedded and JSON)
+- **Memories**: Learned facts across conversations (`actor_memories`)
+- **Notes**: User-authored reference material (`actor_notes`)
+- **Lorebooks**: Keyword-triggered knowledge entries (`actor_lore_entries`, `world_lore_entries`)
+- **Inventory**: Items, equipment, quest items (`actor_items`)
+- **Data versioning**: Forward-compatible schema evolution via `data_version`
+- **Prompt assembly**: Order of fields injected into the LLM prompt
 
 ### Asset System (Replaces Gallery)
 
@@ -83,17 +163,15 @@ Located in `src/assets/`
 
 See [`docs/assets.md`](./assets.md) for full specification.
 
-The old gallery feature (`src/gallery/`) is replaced by the polymorphic assets system. Assets support images, audio, and video with flexible linking to any entity.
+The old gallery feature is replaced by the polymorphic assets system. Assets
+support images, audio, and video with flexible linking to any entity via the
+`asset_links` table. For code/documents/data, see the
+[`docs/artifacts-system.md`](./artifacts-system.md) extension.
 
 #### Service Layer (`src/assets/service.ts`)
 
 - Encapsulates all asset database operations via Kysely
-- Methods:
-  - `create(file, metadata)`: Upload new asset, store file, generate compressed variants
-  - `list(filter?)`: Retrieve assets with optional entity/label filtering
-  - `link(assetId, entityType, entityId, label?)`: Link asset to entity
-  - `unlink(assetId, entityType, entityId)`: Remove link
-  - `delete(id)`: Remove asset + file from storage + all links
+- Methods: `create`, `list`, `link`, `unlink`, `delete`
 
 #### Controller (`src/assets/controller.ts`)
 
@@ -102,87 +180,210 @@ The old gallery feature (`src/gallery/`) is replaced by the polymorphic assets s
 
 #### API Routes (`src/routes/assets.ts`)
 
-- `GET /api/assets`: List assets (filter by entity/label)
-- `POST /api/assets`: Upload new asset (multipart)
-- `DELETE /api/assets/:id`: Remove asset
-- `POST /api/assets/:id/link`: Link to entity
-- `DELETE /api/assets/:id/link`: Unlink from entity
-- `GET /api/assets/:id/raw`: Serve original file
-- `GET /api/assets/:id/compressed`: Serve compressed variant
-- `GET /api/assets/:id/thumb`: Serve thumbnail
+- `GET /api/assets` — List assets (filter by entity/label)
+- `POST /api/assets` — Upload new asset (multipart)
+- `DELETE /api/assets/:id` — Remove asset
+- `POST /api/assets/:id/link` — Link to entity
+- `DELETE /api/assets/:id/link` — Unlink from entity
+- `GET /api/assets/:id/raw` — Serve original file
+- `GET /api/assets/:id/compressed` — Serve compressed variant
+- `GET /api/assets/:id/thumb` — Serve thumbnail
+
+### Generation Module
+
+Located in `src/generation/`
+
+The generation module handles LLM text generation with streaming support, safety
+checks, and continuation/retry features.
+
+#### Files
+
+| File | Purpose |
+| --- | --- |
+| `types.ts` | Core types: `GenerationOptions`, `GenerationResult`, `ContinueRequest`, `RetryFromPointRequest`, repetition/policy configs |
+| `cancellation-manager.ts` | AbortController-based cancellation — user cancel, chat-switch, timeout |
+| `continuation.ts` | Continue truncated/cancelled messages — preserves partial content, appends via child message |
+| `step-pipeline.ts` | Multi-step generation pipelines with retry-from-point (generate → caption → attach) |
+| `repetition-detector.ts` | StreamingRepetitionDetector — n-gram fingerprinting to detect loops |
+| `policy-detector.ts` | Pluggable PolicyDetector interface — register detectors, no hardcoded keywords |
+| `controller.ts` | Route handler for generation endpoints |
+| `index.ts` | Barrel exports |
+
+#### Key Features
+
+- **Idempotent retries**: SHA-256 key from `(chat_id, parent_message_id, operation, model)` prevents duplicate generations
+- **Continuation**: Partial/cancelled messages preserved — Continue creates a child message chain (A → B → C)
+- **Multi-step pipelines**: Retry resumes from the failed step (not from step 0)
+- **Streaming repetition detection**: N-gram fingerprinting in the streaming chunk pipeline
+- **Policy detection**: Pluggable `PolicyDetector` interface — no hardcoded keyword lists
+- **Cancellation tracking**: `abort_signal_id` on `generation_attempts` for AbortController coordination
+
+#### Generation Status Lifecycle
+
+```
+                ┌─────────┐
+                │ pending  │
+                └────┬────┘
+                     │
+                ┌────▼────┐
+                │processing│
+                └────┬────┘
+                     │
+                ┌────▼────┐
+                │streaming │
+                └┬───┬────┘
+           ┌─────┘   └──────┐
+      ┌────▼────┐      ┌────▼────┐
+      │completed│      │ failed  │
+      └─────────┘      └─────────┘
+                          │
+                     ┌────▼────┐
+                     │cancelled│
+                     └─────────┘
+```
+
+Any of `pending`, `processing`, `streaming` can transition to `failed` or `cancelled`.
+
+#### DB Table
+
+See `generation_attempts` in [`docs/schema.md`](./schema.md). Tracks:
+- Idempotency key, model, provider, status
+- Cancel reason + source (user/auto/system)
+- Streaming metadata (chunks received, chars received)
+- Repetition/policy analysis data
+- Continuation chain (`parent_attempt_id`, `continuation_count`)
+- Multi-step pipeline (`step_index`, `total_steps`)
+
+#### API Endpoints
+
+| Method | Path | Purpose |
+| --- | --- | --- |
+| `POST` | `/api/generation/continue` | Initiate continuation of partial/cancelled message |
+| `POST` | `/api/generation/retry` | Retry generation from specified step index |
+| `POST` | `/api/messages/:id/evaluate` | Trigger quality evaluation (story mode) |
+| `POST` | `/api/messages/:id/regenerate` | Request regeneration |
+| `GET` | `/api/messages/:id/attempts` | List generation attempts for a message |
+
+### Story Module (Multi-LLM Generation)
+
+Located in `src/story/`
+
+See [`docs/frontend/chat/multi-llm-story.md`](./frontend/chat/multi-llm-story.md) for
+the full specification of the multi-LLM story generation system.
+
+#### Files
+
+| File | Purpose |
+| --- | --- |
+| `types.ts` | Domain types: GM config, quest configs, world events, quality evaluation, story context, API request/response types |
+| `turn-manager.ts` | `TurnManager` class — orchestrates turn order, actor selection (5 strategies), regeneration cycles, persistence |
+| `index.ts` | Barrel exports |
+
+#### Turn Strategies
+
+| Strategy | Description | Method |
+| --- | --- | --- |
+| `round_robin` | Fixed order: Actor A → B → C → A... | `roundRobinSelect()` |
+| `scene_based` | Narrator every 3rd turn, otherwise round-robin | `sceneBasedSelect()` |
+| `initiative` | Random shuffle per turn (initiative roll) | `initiativeSelect()` |
+| `quest_driven` | Prioritize actors relevant to active quests | `questDrivenSelect()` |
+| `hybrid` | Quest-driven every 5th turn, scene-based otherwise | `hybridSelect()` |
+
+#### Turn Manager State
+
+The `TurnManager` serializes its state to `chats.story_state` (JSON) for crash resilience.
+State includes: current turn number, current actor, turn order, strategy, pause flag,
+pending regeneration info.
+
+#### DB Tables
+
+Story features add these tables (see [`docs/schema.md`](./schema.md)):
+- `locations` — scene/room/region entities within worlds
+- `story_turns` — per-turn records with quality scores, GM decisions, world events
+- `quests` — global quests with type-specific configs
+- `quest_progress` — per-chat quest progress tracking
+- `world_states` — point-in-time snapshots for rollback
+- `npc_states` — dynamic NPC state (health, relationships, inventory)
+- `location_states` — dynamic location state (atmosphere, NPCs present, weather)
+- `synthetic_data` — generated test scenarios from story sessions
 
 ### Assistant
 
 Located in `src/assistant/`
 
-See `docs/use-case-agentic-workspace.md` for the evolution of the assistant into an **Agent Runtime** for the agentic workspace mode.
-
 #### Service Layer (`src/assistant/service.ts`)
 
-- Contains the logic for processing user requests and generating responses
-- Current implementation is rule-based for MVP:
-  - Detects keywords in user message (`idea`, `suggest`, `stuck`, `blocked`, `character`, `motivation`)
-  - Returns predefined responses with confidence scores
-  - Designed to be easily replaced with LLM integration in the future
-- Methods:
-  - `process(request: AssistantRequest)`: Main entry point for processing requests
+- Rule-based MVP: keyword detection → predefined responses with confidence scores
+- Response shape: `{ type, content, confidence }`
+- Designed to be swapped for LLM-backed agent runtime later
+- See [`docs/use-case-agentic-workspace.md`](./use-case-agentic-workspace.md) for the
+  planned evolution into an **Agent Runtime**
 
 #### Controller (`src/assistant/controller.ts`)
 
 - Wraps the service for use by routes
-- Currently delegates directly to service
 
-#### API Routes (`src/routes/assistant.ts`)
+#### API Routes
 
-- Endpoint:
-  - `POST /api/assistant`: Process user message and context, return assistant response
-- Expects JSON body with:
-  - `message`: User's input
-  - `context`: Optional object with `chatId`, `characterIds`, `recentMessages`
-- Returns JSON with `type`, `content`, and `confidence`
+- `POST /api/assistant` — Process user message and context, return assistant response
 
----
+### Content Module
+
+Located in `src/content/`
+
+Utilities for content encoding, decoding, minification, and asset compression:
+
+| File | Purpose |
+| --- | --- |
+| `encode.ts` | `encodeContent()` — encode message content (gzip/zstd/brotli) |
+| `decode.ts` | `decodeContent()` — decode message content |
+| `minify.ts` | `minifyText()` — strip whitespace/newlines for compact storage |
+| `compress.ts` | `compressAssets()` — batch compression of uploaded assets |
+| `types.ts` | Shared types: `ContentEncoding`, `EncodeResult`, `DecodeOptions` |
+
+### Age Gate Module
+
+Located in `src/age-gate/`
+
+Provides user age verification for NSFW content compliance:
+
+| File | Purpose |
+| --- | --- |
+| `service.ts` | `AgeGateService` — validates birth dates, calculates age, checks minimum age |
+| `controller.ts` | Route handler — accepts birth date, validates, returns status |
+| `service.test.ts` | Unit tests for age calculation and minimum age enforcement |
+
+- Configurable: `ageGate.enabled`, `ageGate.minimumAge`, `ageGate.mode`
+- Modes: `none`, `self-declaration`, `verification` (reserved)
 
 ### Plugin System
 
 Located in `src/plugins/` (planned)
 
-See `docs/use-case-agentic-workspace.md` for the plugin architecture design.
+See [`docs/plugin-system.md`](./plugin-system.md) for the full specification.
+See also [`docs/use-case-agentic-workspace.md`](./use-case-agentic-workspace.md) for
+the plugin architecture design in the agentic context.
 
-The plugin system enables extensibility for both RPG and agentic modes:
+Three plugin types:
 
-- **Native plugins** (core): Bundled with loop-lore — dice roller, code executor, web research
-- **Community plugins**: Third-party, installed from registry — D&D 5e tools, GitHub integration
+- **Core plugins**: Bundled with loop-lore — dice roller, code executor, web research
+- **Community plugins**: Third-party, installed from registry
 - **Local plugins**: User-created, dropped in `plugins/local/`
 
-#### Plugin Interface
+The Plugin interface exposes lifecycle hooks (`onLoad`, `onUnload`) and extension
+points: tools, agent roles, API routes, UI components, event handlers, migrations.
 
-```typescript
-interface Plugin {
-  name: string;
-  version: string;
-  description: string;
-  tools?: ToolDefinition[]; // New tools for agents
-  agentRoles?: AgentRoleDefinition[]; // New agent role templates
-  uiComponents?: UIComponent[]; // WebUI/TUI components
-  apiRoutes?: RouteDefinition[]; // Custom REST endpoints
-  eventHandlers?: EventHandler[]; // React to system events
-}
-```
+### Memory System
 
-#### Plugin API Endpoints
+See [`docs/memory-system.md`](./memory-system.md) for the three-tier memory architecture:
 
-- `GET /api/plugins` — List installed plugins
-- `POST /api/plugins/install` — Install from registry
-- `DELETE /api/plugins/:name` — Uninstall
-- `POST /api/plugins/:name/enable` — Enable plugin
-- `POST /api/plugins/:name/disable` — Disable plugin
-
----
+- **Episodic**: Chronological conversation records → stored as messages
+- **Semantic**: Extracted facts, concepts, relationships → stored as assets
+- **Procedural**: Learned patterns, skills, strategies → stored in actor settings
 
 ### TUI Mode
 
-Located in `src/tui/` (detailed in `tui.md`)
+Located in `src/tui/` — detailed in [`docs/tui.md`](./tui.md)
 
 #### Main Application (`src/tui/app.ts`)
 
@@ -196,110 +397,110 @@ Located in `src/tui/` (detailed in `tui.md`)
 - Displays message history using blessed's `Log` widget
 - Methods for adding messages, setting current chat, loading gallery for chat
 - Integrates with gallery service to display linked media
-- Provides method to add items to gallery linked to current chat
 
 #### Gallery View (`src/tui/gallery-view.ts`)
 
 - Displays gallery items for current chat using blessed's `Box` widget
 - Navigation: Left/Right arrows to browse items
-- Actions: Enter to link item (feedback only, as linking is implicit via chatId), Delete to remove item
-- Displays item details: type, URL, caption
+- Actions: Enter to link item, Delete to remove item
 
 #### Input Handler (`src/tui/input.ts`)
 
 - Manages text input at bottom of screen using blessed's `Textbox` widget
 - Captures Enter key to submit messages
 - Clears input after submission
-- Focus management
-
-#### Data Flow in TUI
-
-1. User types message and presses Enter
-2. Input handler captures text, clears field, notifies callback
-3. Chat view adds user message to display
-4. Application calls assistant API with message and current chat context
-5. Assistant response displayed in chat view
-6. When chat ID is set, chat view loads and displays gallery for that chat
-7. Gallery view allows browsing and managing gallery items for current chat
 
 ### API Integration
 
 - TUI communicates with backend API using relative URLs (same origin)
-- Base URL can be configured via environment variable if needed
 - Uses `fetch` API for HTTP requests
 - Error handling displays messages in chat view
 
 ## Configuration
 
-Config loaded from project root: `config.yaml`, `config.yml`, or `config.toml`. Falls back to defaults if no file found.
+Config loaded from project root: `config.yaml`, `config.yml`, or `config.toml`.
+Falls back to defaults if no file found.
 
-### Config File (`config.yaml`)
+### Config Schema
+
+See `src/config/schema.ts` for the full `Config` interface with TypeScript types.
 
 ```yaml
 server:
   port: 3000
   host: "localhost"
+  tls:
+    key: "./data/certs/key.pem"    # auto-generated if missing
+    cert: "./data/certs/cert.pem"  # auto-generated if missing
 
 db:
-  type: sqlite # "sqlite" or "postgres"
+  type: sqlite           # "sqlite" or "postgres"
   sqliteFilename: "../loop-lore-data/loop-lore.db"
-  # For Postgres: type: postgres, url: "postgres://..."
+  # For Postgres: url: "postgres://..."
 
 assets:
   enabled: true
   uploadDir: "../loop-lore-data/uploads"
-  maxFileSize: 10485760
+  maxFileSize: 10485760  # 10 MB
   compression: true
 
 assistant:
   enabled: true
 
 logging:
-  level: debug
+  level: debug           # "debug", "info", "warn", "error"
 
 tui:
   enabled: true
 
 docs:
   enabled: true
-```
+  # public: ["guide", "frontend"]    # restrict to user-facing sections
 
-See `config.yaml.example` in project root.
+ageGate:
+  enabled: false
+  minimumAge: 18
+  mode: self-declaration  # "none", "self-declaration", "verification"
+
+auth:
+  required: false              # true = remote multi-user, false = demo/solo
+  registrationOpen: true       # allow new user registration
+  sessionTimeoutHours: 24       # idle session timeout
+  maxSessionsPerUser: 10       # max simultaneous sessions per user
+```
 
 ### Environment Variable Override
 
 Env vars override config file values (12-factor style). Mapping in `src/config/load.ts`:
 
-| Env Var                | Config Path          | Type    |
-| ---------------------- | -------------------- | ------- |
-| `PORT`                 | `server.port`        | number  |
-| `HOST`                 | `server.host`        | string  |
-| `DB_TYPE`              | `db.type`            | string  |
-| `SQLITE_FILENAME`      | `db.sqliteFilename`  | string  |
-| `DATABASE_URL`         | `db.url`             | string  |
-| `ENABLE_ASSETS`        | `assets.enabled`     | boolean |
-| `ASSETS_UPLOAD_DIR`    | `assets.uploadDir`   | string  |
-| `ASSETS_MAX_FILE_SIZE` | `assets.maxFileSize` | number  |
-| `ASSETS_COMPRESSION`   | `assets.compression` | boolean |
-| `ENABLE_ASSISTANT`     | `assistant.enabled`  | boolean |
-| `LOG_LEVEL`            | `logging.level`      | string  |
-| `ENABLE_TUI`           | `tui.enabled`        | boolean |
-| `ENABLE_DOCS`          | `docs.enabled`       | boolean |
-
-String values coerced to target type (number, boolean) based on defaults.
-
-### Internal Config Module
-
-- `src/config/schema.ts` — Config interface + defaults
-- `src/config/load.ts` — file detection (yaml → yml → toml), parse, deep merge, env override, validation
+| Env Var | Config Path | Type |
+| --- | --- | --- |
+| `PORT` | `server.port` | number |
+| `HOST` | `server.host` | string |
+| `DB_TYPE` | `db.type` | string |
+| `SQLITE_FILENAME` | `db.sqliteFilename` | string |
+| `DATABASE_URL` | `db.url` | string |
+| `ENABLE_ASSETS` | `assets.enabled` | boolean |
+| `ASSETS_UPLOAD_DIR` | `assets.uploadDir` | string |
+| `ASSETS_MAX_FILE_SIZE` | `assets.maxFileSize` | number |
+| `ASSETS_COMPRESSION` | `assets.compression` | boolean |
+| `ENABLE_ASSISTANT` | `assistant.enabled` | boolean |
+| `LOG_LEVEL` | `logging.level` | string |
+| `ENABLE_TUI` | `tui.enabled` | boolean |
+| `ENABLE_DOCS` | `docs.enabled` | boolean |
+| `TLS_KEY` | `server.tls.key` | string |
+| `TLS_CERT` | `server.tls.cert` | string |
+| `AUTH_REQUIRED` | `auth.required` | boolean |
+| `AUTH_REGISTRATION_OPEN` | `auth.registrationOpen` | boolean |
+| `SESSION_TIMEOUT_HOURS` | `auth.sessionTimeoutHours` | number |
+| `SESSION_MAX_PER_USER` | `auth.maxSessionsPerUser` | number |
 
 ## Development Setup
 
 ### Prerequisites
 
-- [Bun](https://bun.sh) (v0.6.0+)
+- [Bun](https://bun.sh) (v1.0+)
 - Git
-- SQLite3 (for local development)
 
 ### Installation
 
@@ -326,24 +527,32 @@ bun run tui
 
 ### Available Scripts
 
-- `bun run dev`: Start development server
-- `bun run start`: Start production server
-- `bun run tui`: Start TUI interface
-- `bun run build`: TypeScript compile to `./dist`
-- `bun run db:migrate`: Run database migrations
-- `bun run db:reset`: Drop and recreate database (dev only)
-- `bun run lint`: Run ESLint
-- `bun run format`: Format code with Prettier
+| Command | Purpose |
+| --- | --- |
+| `bun run dev` | Development server with `--watch` |
+| `bun run start` | Production server |
+| `bun run tui` | Start TUI interface |
+| `bun run build` | TypeScript compile to `./dist` |
+| `bun run db:migrate` | Run database migrations |
+| `bun run check` | Full quality check: typecheck → lint → format → md:lint |
+| `bun run lint` | Run ESLint |
+| `bun run lint:fix` | Auto-fix ESLint issues |
+| `bun run format` | Check formatting with Prettier |
+| `bun run format:fix` | Auto-format with Prettier |
+| `bun run typecheck` | `tsc --noEmit` |
+| `bun run test` | Run tests (Jest-compatible API) |
+| `bun run test:coverage` | Run tests with coverage |
+| `bun run md:lint` | Lint markdown files |
+| `bun run md:lint:fix` | Auto-fix markdown issues |
+| `bun run docs:dev` | Start VitePress dev server for docs |
+| `bun run docs:build` | Build VitePress docs |
 
 ## Production Deployment
 
 ### Disabling Documentation in Production
 
-To disable documentation serving in production:
-
 1. Set environment variable: `DOCS_ENABLED=false`
 2. Or set in config: `{ docs: { enabled: false } }`
-3. The server will check this flag and not serve documentation routes
 
 ### Environment-specific Configuration
 
@@ -354,108 +563,38 @@ To disable documentation serving in production:
 ### Reverse Proxy Setup
 
 Recommended to put behind a reverse proxy (NGINX, Caddy, etc.) for:
-
 - SSL termination
 - Load balancing
 - Static file serving (if serving web UI)
-- Rate limiting
+- Rate limiting (rate limiting is deferred to reverse proxy; no in-app rate limiter)
 
 ## Testing Strategy
 
 ### Unit Tests
 
-- Test individual services (gallery, assistant, database adapters)
+- Test individual services (assistant, generation, database adapters)
 - Mock external dependencies (database, APIs)
-- Framework: Vitest or Bun's built-in test runner
+- Framework: Bun's built-in test runner (`bun test` — Jest-compatible API)
 
 ### Integration Tests
 
-- Test API endpoints with supertest-like library
+- Test API endpoints using `fetch` with full server lifecycle
 - Test database migrations and rollbacks
 - Test service interactions
 
 ### End-to-End Tests
 
-- Test full user flows (though challenging for TUI)
-- Consider using tools like `playwright` for terminal testing
-- Manual testing checklist for TUI functionality
+- Manual testing checklist for features
+- Synthetic data from story sessions can generate regression test scenarios
 
-### Testing TUI
+## Build Artifacts
 
-- Unit test individual components (chat view, gallery view, input handler)
-- Integration test component interactions
-- Manual verification of keyboard shortcuts and screen updates
-
-## Future Enhancements
-
-### Database
-
-- Add connection pooling for better performance
-- Implement read replicas for scaling
-- Add migration rollback scripts
-- Support for MongoDB or other NoSQL stores via adapter pattern
-
-### TUI
-
-- Add mouse support (where terminal supports it)
-- Implement themes and customizable color schemes
-- Add search functionality for chat history and gallery
-- Implement split-screen views (chat, gallery, user list)
-- Add support for images in terminal (where supported via sixel or similar)
-
-### Gallery
-
-- Add thumbnail generation and preview
-- Support for video and audio files
-- Drag-and-drop upload (in web version)
-- Bulk operations (delete multiple, export/import)
-
-### Assistant
-
-- Integrate with actual LLMs (OpenAI, Anthropic, local models)
-- Add conversation memory and context awareness
-- Implement prompt engineering for better responses
-- Add ability to invoke tools (search, image generation, etc.)
-
-### Web UI Integration
-
-- Implement htmx-based gallery and assistant components
-- Use Alpine.js for client-side interactivity
-- Ensure parity between TUI and web UI features
-- Add responsive design for mobile devices
-
-## Troubleshooting
-
-### Common Issues
-
-#### Database Connection Failures
-
-1. Check environment variables for database connection
-2. Verify database server is running and accessible
-3. Check that database user has appropriate permissions
-4. For SQLite, ensure file directory is writable
-
-#### TUI Display Issues
-
-1. Ensure terminal supports required features (colors, Unicode)
-2. Try resizing terminal window
-3. Check for conflicting terminal applications or tmux/screen settings
-4. Run with `TERM=xterm-256color` if color issues occur
-
-#### API Connection Problems
-
-1. Verify backend server is running
-2. Check CORS settings if serving web UI from different origin
-3. Ensure API_BASE_URL is correctly configured
-4. Check firewall/network settings
-
-### Logs and Debugging
-
-- Application logs can be enabled via environment variable `LOG_LEVEL=debug`
-- Errors are logged to console and can be redirected to file
-- TUI has basic error display in chat view
-- Consider implementing a debug mode for TUI that shows API requests/responses
+- Prebuilt HTML templates stored in `src/views/` (served directly in dev)
+- Pre-compressed (gzip/brotli) variants served when available
+- Bun handles `If-None-Match` / `If-Modified-Since` for caching
+- See [`docs/build-deploy.md`](./build-deploy.md) for full deployment guide
+- See [`docs/architecture.md`](./architecture.md) for system architecture overview
 
 ## License
 
-This project is licensed under the LGPL-3.0 License - see the [LICENSE](../../LICENSE) file for details.
+This project is licensed under the LGPL-3.0 License — see the [LICENSE](../../LICENSE) file for details.

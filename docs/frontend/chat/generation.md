@@ -100,12 +100,57 @@ The user's **error feedback mode** (configurable in settings) controls how failu
 - If the new generation also fails, the new error replaces the old one (still one slot)
 - Swipe is not available on failed messages (nothing to swipe through)
 
+**Retry-from-point behavior** (multi-step operations, see [Idempotent Retries](#idempotent-retries)):
+
+- Clicks "Retry" on a failed multi-step operation resumes from the last successful step
+- The generation slot shows reprocessing starting from the failed step
+- If the operation was single-step, retry-from-point is identical to regenerate
+
 **User message in a failed turn**: the user's message that triggered the failed generation remains visible as a normal bubble above the failed slot. It is NOT modified or highlighted. The user can edit their message and the next send will retry.
 
 **Dismiss behavior**:
 
 - Balanced and Nerd modes: a "Dismiss" button removes the failed message slot entirely, collapsing the gap in the timeline
 - Immersion mode: no dismiss — just regenerate or leave it (there's nothing visible to dismiss)
+
+### Continue Generation (Cut-off / Cancelled Messages)
+
+**Continue** = resume a truncated, cancelled, or cut-off AI message from where it stopped. The partial content is preserved and the AI appends new content.
+
+**When continue is available**:
+
+- A message was cut off by the **token limit** and did not reach a natural stopping point
+- A message was **cancelled mid-generation** by the user
+- A message was **truncated client-side** due to display limits
+- A message ended with an **incomplete sentence** (heuristic: no period/question mark/exclamation at end)
+
+**Continue behavior**:
+
+- The **original partial message remains in the timeline** — it is NOT replaced
+- A "Continue" button appears on the partial/cancelled message (hover toolbar for finished-but-truncated messages; inline on cancelled placeholders)
+- Clicking Continue sends a new generation request that receives:
+  - The same prompt context as the original generation
+  - **Plus** the partial content as a prefix (the AI sees it as already written)
+  - A system instruction: "Continue the response naturally from where it left off. Do not repeat the existing content."
+- The continued output appears as a **new child message** of the partial message, NOT a replacement
+- The child message is visually connected: the partial message shows a subtle "↳ continued below" link, and the child shows "↳ continued from above"
+
+**Visual indicators**:
+
+| Mode      | Partial message                                               | Continued child                                                          |
+| --------- | ------------------------------------------------------------- | ------------------------------------------------------------------------ |
+| Immersion | Faded "↳ Continue" button at bottom, no other detail          | Same as normal message, no decoration                                    |
+| Basic     | "(cut off)" label in meta line, "↳ Continue" button in footer | Small "continued from [time]" label in meta line                         |
+| Detailed  | Token count with "(limit reached)" annotation, Continue link  | "Continued — {n} tokens" label, collapsible join context from parent     |
+
+**Cancelled mid-generation**:
+
+- If the user cancels mid-stream, the partial content is saved as a placeholder message with status `cancelled`
+- The placeholder shows whatever content streamed in before cancellation
+- A "Continue" button is prominently displayed (not hidden in hover)
+- The user can also "Regenerate" (discard partial content and start fresh) or "Continue" (append to partial content)
+
+**Multi-continue**: the user can continue a message multiple times. Each continue creates a new child. This creates a chain: `Message A → Continue B → Continue C`. Each continuation node shows the "↳" connector.
 
 ### Idempotent Retries
 
@@ -132,13 +177,25 @@ A retry on a failed operation must not create duplicate resources (images, messa
 - Each step has its own idempotency key chained from the parent step's key
 - If the pipeline fails at step 2 (caption), retrying resumes from step 2 — it does NOT re-generate the image
 - If the pipeline fails at step 1 (generation), retrying restarts from step 1, and the partial image from the first attempt is cleaned up
+- **Retry-from-point endpoint** (`POST /api/generation/retry`) receives `{ chatId, step?: number }`:
+  - If `step` is specified, resume from that step index — completed steps are not re-executed
+  - If `step` is omitted, retry from step 0 (full regenerate)
+- The response includes a `resumeFromStep` field so the frontend knows which step to restart
+
+**Continue generation idempotency**:
+
+- Each "Continue" on a message creates a new generation attempt with its own idempotency key
+- The idempotency key for a continue is derived from: `(sha256(original_message_id + "continue" + continuation_count))`
+- This prevents duplicate continues if the request is retried (network issues)
+- The `generation_attempts` table tracks the `parent_attempt_id` to link continuations to their source generation
 
 **Server-side implementation**:
 
-- A `generation_attempts` table tracks: `(idempotency_key, chat_id, status, created_at, result_reference)`
-- Status values: `pending → processing → completed | failed`
+- A `generation_attempts` table tracks: `(idempotency_key, chat_id, status, created_at, result_reference, parent_attempt_id, step_index, total_steps)`
+- Status values: `pending → processing → completed | failed | cancelled`
+- Additional status for multi-step: `step_completed` — marks individual pipeline step completion within an attempt
 - TTL: entries older than 1 hour are eligible for garbage collection
-- On retry of a `failed` entry: status reset to `pending`, new processing starts, old partial results cleaned up
+- On retry of a `failed` entry: status reset to `pending`, new processing starts, old partial results cleaned up. If `step_index > 0`, resume from that step without resetting earlier steps.
 
 ---
 

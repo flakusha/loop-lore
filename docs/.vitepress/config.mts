@@ -53,6 +53,25 @@ export default defineConfig({
             { text: 'Users & Sessions', link: '/users-sessions' },
             { text: 'Assets', link: '/assets' },
             { text: 'Actors', link: '/actors' },
+
+            { text: 'Plugin System', link: '/plugin-system' },
+            { text: 'Memory System', link: '/memory-system' },
+            { text: 'Artifacts System', link: '/artifacts-system' },
+          ],
+        },
+        {
+          text: 'Story Generation',
+          collapsed: false,
+          items: [
+            { text: 'Multi-LLM Story', link: '/frontend/chat/multi-llm-story' },
+          ],
+        },
+        {
+          text: 'Project Planning',
+          collapsed: false,
+          items: [
+            { text: 'MVP Plan', link: '/plan' },
+            { text: 'Roadmap', link: '/roadmap' },
           ],
         },
         {
@@ -68,9 +87,9 @@ export default defineConfig({
           text: 'Resources',
           collapsed: false,
           items: [
-            { text: 'Roadmap', link: '/roadmap' },
             { text: 'Asset Credits', link: '/assets-attribution' },
             { text: 'Agentic Workspace', link: '/use-case-agentic-workspace' },
+            { text: 'Migration Strategy', link: '/migration-strategy' },
             { text: 'Vite Docs Proposal', link: '/vite-docs-proposal' },
           ],
         },
