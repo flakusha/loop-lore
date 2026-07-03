@@ -6,20 +6,20 @@ export function encodeContent(plaintext: string, encoding: ContentEncoding): Enc
     return { encoded: plaintext, encoding: "identity" };
   }
 
-  const buf = Buffer.from(plaintext, "utf8");
+  const buffer = Buffer.from(plaintext, "utf8");
 
   switch (encoding) {
     case "gzip": {
-      const compressed = gzipSync(buf);
-      return { encoded: compressed.toString("base64"), encoding: "gzip" };
+      const compressed = gzipSync(buffer);
+      return { encoded: Buffer.from(compressed).toBase64(), encoding: "gzip" };
     }
     case "zstd": {
-      const compressed = (Bun.zstdCompressSync as (data: Buffer, opts?: object) => Buffer)(buf);
-      return { encoded: compressed.toString("base64"), encoding: "zstd" };
+      const compressed = (Bun.zstdCompressSync as (data: Buffer, options?: object) => Buffer)(buffer);
+      return { encoded: Buffer.from(compressed).toBase64(), encoding: "zstd" };
     }
     case "brotli": {
-      const compressed = brotliCompressSync(buf);
-      return { encoded: compressed.toString("base64"), encoding: "brotli" };
+      const compressed = brotliCompressSync(buffer);
+      return { encoded: Buffer.from(compressed).toBase64(), encoding: "brotli" };
     }
     default: {
       return { encoded: plaintext, encoding: "identity" };
