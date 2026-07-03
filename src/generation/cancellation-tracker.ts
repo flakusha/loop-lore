@@ -182,8 +182,9 @@ export function startGenerationTracking(
   chatToAttempt.set(options.chatId, attemptId);
 
   // Persist to DB (fire-and-forget for speed — errors are non-fatal)
-  void insertAttempt(db, options, attemptId, abortSignalId).catch(() => {
-    // non-fatal
+  await insertAttempt(db, options, attemptId, abortSignalId).catch((err) => {
+    // non-fatal but log for debugging
+    console.warn("[generation] Failed to persist attempt:", err);
   });
 
   events?.onStart?.(attemptId);

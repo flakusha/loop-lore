@@ -74,7 +74,7 @@ export function cancelGenerationByChat(
       cancel_reason_detail: detail,
       cancel_source: source,
       completed_at: new Date().toISOString(),
-    }).catch(() => console.error("[generation] Failed to update attempt status"));
+    }).catch((err) => console.error("[generation] Failed to update attempt status:", err));
   }
 
   return wasCancelled;
