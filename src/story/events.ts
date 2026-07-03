@@ -8,8 +8,7 @@
 import type { Kysely, Transaction } from "kysely";
 import type { DB } from "../db/schema";
 import { WorldEventType } from "../db/enums";
-import type { WorldEventType as WET } from "../db/enums";
-import type { WorldEvent, NpcState, LocationState } from "./types";
+import type { WorldEvent } from "./types";
 import { ItemsService } from "./items";
 
 // ── Event Extraction ─────────────────────────────────────────
@@ -204,13 +203,17 @@ export async function validateEvents(
     .where("world_id", "=", worldId)
     .execute();
 
-  const locationNames = new Map(locations.map((l) => [l.name.toLowerCase(), l.id]));
-  const locationIds = new Set(locations.map((l) => l.id));
+  const locationNames = new Map<string, string>();
+  const locationIds = new Set<string>();
+  for (const l of locations) {
+    locationNames.set(l.name.toLowerCase(), l.id);
+    locationIds.add(l.id);
+  }
 
   for (const event of events) {
     switch (event.type) {
       case WorldEventType.LocationChange: {
-        const targetName = (event.data.toLocationName as string)?.toLowerCase();
+        const targetName = (event.data.toLocationName as string | undefined)?.toLowerCase();
         if (targetName && locationNames.has(targetName)) {
           event.locationId = locationNames.get(targetName);
           filteredEvents.push(event);
@@ -331,7 +334,7 @@ async function applyLocationChange(db: Kysely<DB>, event: WorldEvent): Promise<v
 }
 
 async function applyNpcStateChange(db: Kysely<DB>, event: WorldEvent): Promise<void> {
-  const npcActorId = (event.data.npcActorId as string) ?? event.actorId;
+  const npcActorId = (event.data.npcActorId ?? event.actorId) as string;
   if (!npcActorId) return;
 
   const changes = event.data.changes as Partial<Record<string, unknown>>;
@@ -348,7 +351,7 @@ async function applyNpcStateChange(db: Kysely<DB>, event: WorldEvent): Promise<v
 }
 
 async function applyTimeAdvancement(db: Kysely<DB>, worldId: string, event: WorldEvent): Promise<void> {
-  const minutes = (event.data.minutesAdvanced as number) ?? 60;
+  const minutes = (event.data.minutesAdvanced ?? 60) as number;
 
   // Update time in all location states for this world
   const locationStates = await db
@@ -376,7 +379,7 @@ function advanceTimeOfDay(current: string, minutes: number): string {
 }
 
 async function applyLocationModification(db: Kysely<DB>, event: WorldEvent): Promise<void> {
-  const locationId = (event.data.locationId as string) ?? event.locationId;
+  const locationId = (event.data.locationId ?? event.locationId) as string;
   if (!locationId) return;
 
   const changes = event.data.changes as Partial<Record<string, unknown>>;
@@ -412,9 +415,9 @@ async function applyWorldLoreUpdate(db: Kysely<DB>, worldId: string, event: Worl
 }
 
 async function applyCombatEvent(db: Kysely<DB>, event: WorldEvent): Promise<void> {
-  const defenderId = (event.data.defenderId as string) ?? event.actorId;
-  const damage = (event.data.damage as number) ?? 10;
-  const defeated = (event.data.defeated as boolean) ?? false;
+  const defenderId = (event.data.defenderId ?? event.actorId) as string;
+  const damage = (event.data.damage ?? 10) as number;
+  const defeated = (event.data.defeated ?? false) as boolean;
 
   if (defenderId) {
     const npc = await db

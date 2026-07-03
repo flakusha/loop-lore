@@ -8,13 +8,12 @@
 import type { Kysely } from "kysely";
 import type { DB } from "../db/schema";
 import { QuestType, QuestStatus, QuestProgressStatus } from "../db/enums";
-import type { QuestType as QT, QuestStatus as QSt } from "../db/enums";
+import type { QuestType as QT } from "../db/enums";
 import { randomUUID } from "node:crypto";
 import type {
   QuestConfig,
   QuestReward,
   WorldEvent,
-  NpcState,
 } from "./types";
 import { WorldStateService } from "./world-state";
 import { ItemsService } from "./items";
@@ -55,7 +54,7 @@ export class QuestEngine {
     priority?: number;
     deadline?: string;
     rewards?: QuestReward;
-    narrativeHooks?: Array<{ progress: number; narrative: string }>;
+    narrativeHooks?: { progress: number; narrative: string }[];
   }): Promise<string> {
     const id = randomUUID();
     await this.db
@@ -250,10 +249,15 @@ export class QuestEngine {
       case QuestType.Collection: {
         if (event.type !== "item_transfer") return 0;
         const cfg = config as import("./types").CollectionQuestConfig;
-        const itemName = (event.data.itemName as string)?.toLowerCase();
+        const itemName = (event.data.itemName as string | undefined)?.toLowerCase();
         if (cfg.items) {
-          const matches = cfg.items.filter((i) => itemName?.includes(i.itemId.toLowerCase()));
-          return matches.length > 0 ? Math.round(100 / cfg.items.reduce((s, i) => s + i.quantity, 0)) : 0;
+          let totalQuantity = 0;
+          let hasMatch = false;
+          for (const i of cfg.items) {
+            totalQuantity += i.quantity;
+            if (itemName?.includes(i.itemId.toLowerCase())) hasMatch = true;
+          }
+          return hasMatch ? Math.round(100 / totalQuantity) : 0;
         }
         return cfg.categoryQuantity ? Math.round(100 / cfg.categoryQuantity) : 10;
       }
@@ -270,7 +274,7 @@ export class QuestEngine {
       case QuestType.Time: {
         if (event.type !== "time_advancement") return 0;
         const cfg = config as import("./types").TimeQuestConfig;
-        const minutes = (event.data.minutesAdvanced as number) ?? 60;
+        const minutes = (event.data.minutesAdvanced ?? 60) as number;
         const advance = Math.round((minutes / cfg.durationMinutes) * 100);
         return advance;
       }
@@ -290,7 +294,7 @@ export class QuestEngine {
       case QuestType.Social: {
         if (event.type !== "npc_state_change") return 0;
         const cfg = config as import("./types").SocialQuestConfig;
-        const npcId = (event.data.npcActorId as string) ?? event.actorId;
+        const npcId = (event.data.npcActorId ?? event.actorId) as string;
         if (npcId === cfg.targetActorId) {
           return Math.round(100 / cfg.requiredInteractions);
         }
@@ -376,13 +380,17 @@ export class QuestEngine {
     }
 
     // Check milestones
-    const hooks = JSON.parse(quest.narrative_hooks) as Array<{ progress: number; narrative: string }>;
-    const oldMilestone = hooks
-      .filter((h) => h.progress <= quest.progress)
-      .sort((a, b) => b.progress - a.progress)[0];
-    const newMilestone = hooks
-      .filter((h) => h.progress <= newProgress && h.progress > quest.progress)
-      .sort((a, b) => b.progress - a.progress)[0];
+    const hooks = JSON.parse(quest.narrative_hooks) as { progress: number; narrative: string }[];
+    let oldMilestone: { progress: number; narrative: string } | undefined;
+    let newMilestone: { progress: number; narrative: string } | undefined;
+    for (const h of hooks) {
+      if (h.progress <= quest.progress) {
+        if (!oldMilestone || h.progress > oldMilestone.progress) oldMilestone = h;
+      }
+      if (h.progress <= newProgress && h.progress > quest.progress) {
+        if (!newMilestone || h.progress > newMilestone.progress) newMilestone = h;
+      }
+    }
 
     let milestoneText: string | null = null;
     if (newMilestone && (!oldMilestone || oldMilestone.progress < newMilestone.progress)) {
@@ -420,7 +428,7 @@ export class QuestEngine {
     rewardsJson: string,
   ): Promise<void> {
     const rewards = JSON.parse(rewardsJson) as QuestReward;
-    if (!rewards || Object.keys(rewards).length === 0) return;
+    if (Object.keys(rewards).length === 0) return;
 
     // Apply world changes (lore updates, location changes)
     if (rewards.worldChanges && rewards.worldChanges.length > 0 && this.items) {
