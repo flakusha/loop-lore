@@ -6,7 +6,7 @@
 import type { TurnStrategy as TS } from "../db/enums";
 import type { SyntheticDataType as SDT, SyntheticTestMode as STM } from "../db/enums";
 import type { GameMasterConfig, QualityThresholds, GameMasterDecision } from "./story-types";
-import type { QuestReward } from "./quest-types";
+
 
 export interface StartStoryRequest {
   chatId: string;

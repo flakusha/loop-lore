@@ -289,7 +289,7 @@ export class ItemsService {
   async destroy(worldItemId: string, quantity?: number, trx?: Transaction<DB>): Promise<boolean> {
     const db = trx ?? this.db;
 
-    if (quantity === undefined || quantity === null) {
+    if (quantity === undefined) {
       await db.deleteFrom("world_items").where("id", "=", worldItemId).execute();
       return true;
     }
