@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none" stroke="#f597e8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+  <!-- Modern stack: database + lightning + terminal -->
+  <rect x="4" y="8" width="10" height="16" rx="2"/>
+  <rect x="8" y="12" width="2" height="2" rx="0.5"/>
+  <rect x="8" y="17" width="2" height="2" rx="0.5"/>
+  <rect x="12" y="12" width="2" height="2" rx="0.5"/>
+  <rect x="12" y="17" width="2" height="2" rx="0.5"/>
+  <rect x="18" y="10" width="10" height="14" rx="2"/>
+  <path d="M21 14l3 3-3 3"/>
+  <path d="M25 20h-2"/>
+</svg>

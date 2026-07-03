@@ -1,0 +1,19 @@
+{
+  "default": true,
+  "MD013": false,
+  "MD033": false,
+  "MD041": false,
+  "MD035": { "style": "---" },
+  "MD025": false,
+  "MD026": false,
+  "MD036": false,
+  "MD034": false,
+  "MD038": false,
+  "MD040": false,
+  "MD024": false,
+  "MD060": false,
+  "MD047": false,
+  "MD032": false,
+  "MD055": false,
+  "MD012": { "maximum": 2 }
+}
