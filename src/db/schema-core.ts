@@ -67,6 +67,17 @@ export interface Actors {
   system_prompt: string | null;
   agent_type: AgentType;
   settings: string;
+  data_version: number;
+  welcome_message: string | null;
+  personality: string | null;
+  scenario: string | null;
+  mes_example: string | null;
+  alternate_greetings: string | null; // JSON array
+  post_history_instructions: string | null;
+  creator_notes: string | null;
+  creator: string | null;
+  character_version: string | null;
+  import_spec: string;
   created_at: Generated<string>;
   updated_at: Generated<string>;
 }
