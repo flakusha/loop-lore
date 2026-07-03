@@ -6,18 +6,19 @@ export function decodeContent(stored: string, encoding: ContentEncoding): string
     return stored;
   }
 
-  const buf = Buffer.from(stored, "base64");
+  const uint8Array = Uint8Array.fromBase64(stored);
+  const buffer = Buffer.from(uint8Array);
 
   switch (encoding) {
     case "gzip": {
-      return gunzipSync(buf).toString("utf8");
+      return gunzipSync(buffer).toString("utf8");
     }
     case "zstd": {
-      const decompressed = (Bun.zstdDecompressSync as (data: Buffer) => Buffer)(buf);
+      const decompressed = (Bun.zstdDecompressSync as (data: Buffer) => Buffer)(buffer);
       return decompressed.toString("utf8");
     }
     case "brotli": {
-      return brotliDecompressSync(buf).toString("utf8");
+      return brotliDecompressSync(buffer).toString("utf8");
     }
     default: {
       return stored;

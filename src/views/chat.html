@@ -140,6 +140,33 @@
 
     <!-- Input area -->
     <div class="input-area">
+      <!-- Generation status bar (cancel UI) -->
+      <div
+        x-show="isGenerating"
+        x-transition:enter="transition ease-out duration-150"
+        x-transition:enter-start="opacity-0"
+        x-transition:enter-end="opacity-100"
+        class="generation-status"
+      >
+        <div class="generation-info">
+          <span class="typing-indicator">
+            <span class="dot" style="animation-delay: 0ms"></span>
+            <span class="dot" style="animation-delay: 150ms"></span>
+            <span class="dot" style="animation-delay: 300ms"></span>
+          </span>
+          <span class="generation-label" x-text="isContinuing ? '↳ Continuing message...' : generationLabel"></span>
+        </div>
+        <div class="generation-actions">
+          <button
+            class="btn btn-ghost btn-cancel"
+            @click="cancelGeneration()"
+            title="Cancel generation (repetition detected, wrong policy, or not following instructions)"
+          >
+            ⏹ Cancel
+          </button>
+        </div>
+      </div>
+
       <form
         x-ref="messageForm"
         hx-post="/api/chats/:id/messages"
@@ -207,6 +234,233 @@
     return {
       showGallery: false,
       showCharacterInfo: false,
+      // Generation cancellation state
+      isGenerating: false,
+      generationLabel: "Character is responding...",
+      generationCheckInterval: null,
+      activeAttemptId: null,
+      currentChatId: null,
+      // Continue state
+      continuingMessageId: null,
+      isContinuing: false,
+
+      init() {
+        // Poll generation status periodically
+        this.generationCheckInterval = setInterval(() => {
+          if (!this.isGenerating) return;
+          const chatId = this.currentChatId ?? this.getChatId();
+          if (chatId) {
+            this.checkGenerationStatus(chatId);
+          }
+        }, 2000);
+
+        // Keyboard shortcut: Ctrl+J to continue selected message
+        document.addEventListener("keydown", (e) => {
+          if (e.ctrlKey && e.key === "j") {
+            const focusedMsg = document.querySelector(".message.focused");
+            if (focusedMsg) {
+              const msgId = focusedMsg.dataset.messageId;
+              if (msgId) this.continueMessage(msgId);
+            }
+          }
+        });
+      },
+
+      destroy() {
+        if (this.generationCheckInterval) {
+          clearInterval(this.generationCheckInterval);
+        }
+      },
+
+      async checkGenerationStatus(chatId) {
+        try {
+          const url = `/api/generation/status/${chatId}`;
+          const response = await fetch(url);
+          const data = await response.json();
+          if (!data.isActive) {
+            this.isGenerating = false;
+            this.activeAttemptId = null;
+          } else {
+            this.isGenerating = true;
+            this.activeAttemptId = data.attemptId;
+          }
+        } catch (_err) {
+          // Silent: polling failures are non-critical
+        }
+      },
+
+      async cancelGeneration() {
+        const chatId = this.currentChatId ?? this.getChatId();
+        if (!chatId) {
+          this.$dispatch("show-toast", {
+            type: "warning",
+            message: "No active chat to cancel",
+          });
+          return;
+        }
+
+        try {
+          const response = await fetch("/api/generation/cancel", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              chatId,
+              reason: "user_cancel",
+              source: "user",
+              detail: "User cancelled generation",
+            }),
+          });
+
+          const data = await response.json();
+
+          if (response.ok && data.ok) {
+            this.isGenerating = false;
+            this.activeAttemptId = null;
+            this.$dispatch("show-toast", {
+              type: "info",
+              message: "Generation cancelled",
+            });
+          } else {
+            this.$dispatch("show-toast", {
+              type: "error",
+              message: data.error ?? "Failed to cancel generation",
+            });
+          }
+        } catch (error) {
+          this.$dispatch("show-toast", {
+            type: "error",
+            message: "Network error cancelling generation",
+          });
+        }
+      },
+
+      async regenerateResponse() {
+        const chatId = this.currentChatId ?? this.getChatId();
+        if (!chatId) {
+          this.$dispatch("show-toast", { type: "warning", message: "No active chat" });
+          return;
+        }
+
+        try {
+          const response = await fetch("/api/generation/regenerate", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ chatId }),
+          });
+
+          const data = await response.json();
+
+          if (response.ok && data.ready) {
+            this.$dispatch("show-toast", {
+              type: "info",
+              message: "Regenerating response...",
+            });
+            // The htmx form will re-trigger the generation
+          }
+        } catch (error) {
+          this.$dispatch("show-toast", {
+            type: "error",
+            message: "Failed to regenerate",
+          });
+        }
+      },
+
+      async continueMessage(messageId) {
+        const chatId = this.currentChatId ?? this.getChatId();
+        if (!chatId) {
+          this.$dispatch("show-toast", { type: "warning", message: "No active chat" });
+          return;
+        }
+
+        // Look up the actor ID from the message element
+        const msgEl = document.querySelector(`[data-message-id="${messageId}"]`);
+        const actorId = msgEl?.dataset.actorId ?? "unknown";
+
+        try {
+          const response = await fetch("/api/generation/continue", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ messageId, chatId, actorId }),
+          });
+
+          const data = await response.json();
+
+          if (!response.ok || !data.ok) {
+            this.$dispatch("show-toast", {
+              type: "error",
+              message: data.error ?? "Failed to continue message",
+            });
+            return;
+          }
+
+          // Store the continue context for the upcoming generation request
+          this.continuingMessageId = messageId;
+          this.isContinuing = true;
+          this.isGenerating = true;
+
+          // Mark the partial message visually
+          if (msgEl) msgEl.classList.add("continued");
+
+          this.$dispatch("show-toast", {
+            type: "info",
+            message: "Continuing message...",
+          });
+
+          // The frontend should now send a generation request with:
+          // - parentMessageId = messageId (the partial message)
+          // - partialContent = data.partialContent (prepend to prompt context)
+          // - parentAttemptId = data.parentAttemptId
+          // - continuationNumber = data.continuationNumber
+          console.log("[continue] Context:", data.continueContext);
+          // TODO: Wire into actual LLM generation call with partial content as prefix
+        } catch (error) {
+          this.$dispatch("show-toast", {
+            type: "error",
+            message: "Network error continuing message",
+          });
+        }
+      },
+
+      async retryFromPoint(attemptId, step) {
+        const chatId = this.currentChatId ?? this.getChatId();
+        if (!chatId) {
+          this.$dispatch("show-toast", { type: "warning", message: "No active chat" });
+          return;
+        }
+
+        try {
+          const response = await fetch("/api/generation/retry", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ chatId, attemptId, step }),
+          });
+
+          const data = await response.json();
+
+          if (!response.ok || !data.ok) {
+            this.$dispatch("show-toast", {
+              type: "error",
+              message: data.error ?? "Failed to retry",
+            });
+            return;
+          }
+
+          this.$dispatch("show-toast", {
+            type: "info",
+            message: data.resumeFromStep > 0
+              ? `Resuming from step ${data.resumeFromStep + 1} of ${data.totalSteps}...`
+              : "Regenerating response...",
+          });
+
+          this.isGenerating = true;
+          // TODO: Wire into actual generation call with resumeFromStep context
+        } catch (error) {
+          this.$dispatch("show-toast", {
+            type: "error",
+            message: "Network error during retry",
+          });
+        }
+      },
 
       sendMessage() {
         const input = this.$refs.messageInput;
