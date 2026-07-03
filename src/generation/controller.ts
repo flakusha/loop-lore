@@ -20,6 +20,7 @@ import {
   handleListActiveGenerations,
   handleRegenerate,
 } from "./generation-routes";
+import { jsonError } from "../routes/http-utils";
 
 /**
  * Dispatch generation-related API requests.
@@ -38,7 +39,12 @@ export async function dispatch(
 
   // POST /api/generation/cancel
   if (pathname === "/api/generation/cancel" && request.method === "POST") {
-    const body = await request.json().catch(() => ({}));
+    let body: unknown;
+    try {
+      body = await request.json();
+    } catch (parseError) {
+      return jsonError(`Invalid JSON: ${(parseError as Error).message}`, 400);
+    }
     return handleCancelGeneration(body);
   }
 
@@ -55,19 +61,34 @@ export async function dispatch(
 
   // POST /api/generation/retry
   if (pathname === "/api/generation/retry" && request.method === "POST") {
-    const body = await request.json().catch(() => ({}));
+    let body: unknown;
+    try {
+      body = await request.json();
+    } catch (parseError) {
+      return jsonError(`Invalid JSON: ${(parseError as Error).message}`, 400);
+    }
     return handleRetryGeneration(body);
   }
 
   // POST /api/generation/continue
   if (pathname === "/api/generation/continue" && request.method === "POST") {
-    const body = await request.json().catch(() => ({}));
+    let body: unknown;
+    try {
+      body = await request.json();
+    } catch (parseError) {
+      return jsonError(`Invalid JSON: ${(parseError as Error).message}`, 400);
+    }
     return handleContinueGeneration(body);
   }
 
   // POST /api/generation/regenerate
   if (pathname === "/api/generation/regenerate" && request.method === "POST") {
-    const body = await request.json().catch(() => ({}));
+    let body: unknown;
+    try {
+      body = await request.json();
+    } catch (parseError) {
+      return jsonError(`Invalid JSON: ${(parseError as Error).message}`, 400);
+    }
     return handleRegenerate(body);
   }
 
