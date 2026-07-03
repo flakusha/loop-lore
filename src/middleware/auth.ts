@@ -15,6 +15,7 @@ import type { DB } from "../db/schema";
 import type { AuthConfig } from "../config/schema";
 import { UserRole } from "../db/enums";
 import type { RequestContext } from "./types";
+import { jsonError, HttpStatus } from "../routes/http-utils";
 
 /**
  * Attempt to authenticate the request.
@@ -34,7 +35,7 @@ export async function authenticate(
   if (!authConfig.required) {
     const soloUser = await getOrCreateSoloUser(database);
     if (!soloUser) {
-      return Response.json({ error: "Server misconfigured: no solo user" }, { status: 500 });
+      return jsonError("Server misconfigured: no solo user", HttpStatus.InternalServerError);
     }
     return {
       context: {
@@ -48,12 +49,12 @@ export async function authenticate(
   // ── Remote auth — extract Bearer token ────────────────────
   const authHeader = request.headers.get("Authorization");
   if (!authHeader?.startsWith("Bearer ")) {
-    return Response.json({ error: "Missing or invalid Authorization header", code: "UNAUTHORIZED" }, { status: 401 });
+    return jsonError("Missing or invalid Authorization header", HttpStatus.Unauthorized, "UNAUTHORIZED");
   }
 
   const rawToken = authHeader.slice("Bearer ".length).trim();
   if (!rawToken) {
-    return Response.json({ error: "Empty token", code: "UNAUTHORIZED" }, { status: 401 });
+    return jsonError("Empty token", HttpStatus.Unauthorized, "UNAUTHORIZED");
   }
 
   // ── Hash token & look up session ──────────────────────────
@@ -66,14 +67,14 @@ export async function authenticate(
     .executeTakeFirst();
 
   if (!session) {
-    return Response.json({ error: "Invalid session token", code: "UNAUTHORIZED" }, { status: 401 });
+    return jsonError("Invalid session token", HttpStatus.Unauthorized, "UNAUTHORIZED");
   }
 
   // ── Check expiration ──────────────────────────────────────
   if (new Date(session.expires_at) < new Date()) {
     // Clean up expired session
     await database.deleteFrom("sessions").where("id", "=", session.id).execute();
-    return Response.json({ error: "Session expired", code: "UNAUTHORIZED" }, { status: 401 });
+    return jsonError("Session expired", HttpStatus.Unauthorized, "UNAUTHORIZED");
   }
 
   // ── Fetch user role ───────────────────────────────────────
@@ -86,7 +87,7 @@ export async function authenticate(
   if (!user) {
     // Session references deleted user — clean up
     await database.deleteFrom("sessions").where("id", "=", session.id).execute();
-    return Response.json({ error: "User not found", code: "UNAUTHORIZED" }, { status: 401 });
+    return jsonError("User not found", HttpStatus.Unauthorized, "UNAUTHORIZED");
   }
 
   // ── Update last activity + last_seen_at (non-blocking) ────
