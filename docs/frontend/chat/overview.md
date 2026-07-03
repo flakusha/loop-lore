@@ -79,7 +79,16 @@ Example tree structure:
 - Swipe variants share the same `parent_id` — they are siblings, not children.
 - The visible timeline is an **in-order traversal** of this tree (active leaf path).
 - **Active path**: the chain of messages from root to the latest visible message, picking the active swipe variant at each fork.
+- **Continuation messages** are children of partial/cancelled messages. A continued message appears immediately after its parent with "↳ continued from above" connector. Multiple continues form a chain (A → Continue B → Continue C).
 - **System/user messages for narration**: additional messages can be injected into the chat to guide story development. These are not hidden from the user — they appear in the timeline as system-labelled messages.
+
+Extended tree example with continuation:
+
+- Message A (root): User says "Tell me about the forest"
+  - Message B (child of A): Character responds "The forest is dark... [cancelled - 45 tokens]"
+    - Message B1 (child of B) — ↳ continued from above: "and full of ancient secrets. The trees..."
+      - Message B2 (child of B1) — ↳ continued from above: "whisper warnings to those who listen."
+  - [swipe] Message C (child of A, alternative to B): Character responds "The woods..."
 
 ---
 

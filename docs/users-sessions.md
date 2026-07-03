@@ -90,9 +90,11 @@ Session {
 
 ## HTTPS Support
 
-- Local HTTPS via self-signed cert (auto-generated on first run or via config)
+- Local HTTPS via self-signed cert (auto-generated on first run via OpenSSL, falls back gracefully)
 - Remote HTTPS via reverse proxy (recommended) or bun's TLS options
-- Config: `SERVER_TLS_KEY`, `SERVER_TLS_CERT` env vars or config file paths
+- Config: `TLS_KEY` / `SERVER_TLS_KEY`, `TLS_CERT` / `SERVER_TLS_CERT` env vars or `server.tls.key`/`server.tls.cert` in config file
+- Auto-generation runs when cert files are missing and OpenSSL is available
+- HTTPS port: HTTP port + 443 (e.g., HTTP on 3000, HTTPS on 3443)
 
 ## Multi-User Setup (Distributed)
 
@@ -131,9 +133,9 @@ AGE_GATE_ENABLED=false              # true = users must verify age
 AGE_GATE_MINIMUM_AGE=18             # minimum age requirement
 AGE_GATE_MODE=self-declaration      # none | self-declaration | verification
 
-# HTTPS (local)
-SERVER_TLS_KEY=./certs/key.pem
-SERVER_TLS_CERT=./certs/cert.pem
+# TLS (auto-generated self-signed if files missing)
+TLS_KEY=./data/certs/key.pem
+TLS_CERT=./data/certs/cert.pem
 
 # Demo mode
 DEMO_MODE=true                      # skip auth, create solo user
