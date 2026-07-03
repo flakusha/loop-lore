@@ -1,0 +1,41 @@
+version = 1
+
+[[annotations]]
+path = [
+  "src/**",
+  "data/**",
+  "*.ts",
+  "*.js",
+  "*.mjs",
+  "*.json",
+  "*.toml",
+  "eslint.config.mjs",
+  "tsconfig.json",
+]
+precedence = "aggregate"
+SPDX-FileCopyrightText = "2026 Loop Lore Contributors"
+SPDX-License-Identifier = "LGPL-3.0-or-later"
+
+[[annotations]]
+path = ["docs/**"]
+precedence = "aggregate"
+SPDX-FileCopyrightText = "2026 Loop Lore Contributors"
+SPDX-License-Identifier = "MIT"
+
+[[annotations]]
+path = ["plugins/**"]
+precedence = "aggregate"
+SPDX-FileCopyrightText = "2026 Loop Lore Contributors"
+SPDX-License-Identifier = "Apache-2.0 OR MIT"
+
+[[annotations]]
+path = ["LICENSES/**"]
+precedence = "override"
+SPDX-FileCopyrightText = "2026 Loop Lore Contributors"
+SPDX-License-Identifier = "LicenseRef-REUSE"
+
+[[annotations]]
+path = ["LICENSE"]
+precedence = "override"
+SPDX-FileCopyrightText = "2007 Free Software Foundation, Inc."
+SPDX-License-Identifier = "LGPL-3.0-or-later"

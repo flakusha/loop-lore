@@ -597,4 +597,6 @@ Recommended to put behind a reverse proxy (NGINX, Caddy, etc.) for:
 
 ## License
 
-This project is licensed under the LGPL-3.0 License — see the [LICENSE](../../LICENSE) file for details.
+This project is licensed under the LGPL-3.0-or-later License (core code).  
+Documentation is MIT. Plugins may use Apache-2.0 OR MIT.  
+See [LICENSE](../../LICENSE) and [LICENSES/](../../LICENSES/) for full texts.

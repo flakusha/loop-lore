@@ -7,7 +7,7 @@ noted as such.
 ## Original Works — No Attribution Required
 
 These assets were created from scratch for the Loop Lore project and are
-provided under the same license as the project itself (AGPL-3.0).
+provided under the same license as the project itself (LGPL-3.0-or-later).
 
 ### Docs (`docs/public/`)
 
