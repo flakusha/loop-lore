@@ -13,6 +13,7 @@
 | `Up arrow`         | Input focused, empty | Edit last user message                   |
 | `Left/Right arrow` | Message focused      | Swipe character message                  |
 | `Ctrl+K`           | Global               | Quick search / command palette (future)  |
+| `Ctrl+J`           | Message focused      | Continue partial/cancelled message       |
 
 ---
 
@@ -32,6 +33,8 @@
 | Edit mode            | Bubble                 | Textarea replaces bubble; Save/Cancel        |
 | Swipe variant        | Bubble                 | Counter "2/4" always visible                 |
 | Generation failure   | Chat area              | Failed message slot (per error mode)         |
+| Continue available   | Bubble footer          | "↳ Continue" link on partial/cancelled msg  |
+| Continue in progress | Chat area              | Placeholder slot with "↳ Continuing..."      |
 | Archived visible     | Chat area              | Dimmed bubbles with "Archived" tag + Restore |
 
 ---
