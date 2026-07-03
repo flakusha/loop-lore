@@ -37,5 +37,5 @@ features:
     details: Designed for both solo use and multi-user deployments
     icon: <img src="/docs/img/icons/multi-user.svg" alt="" width="32" height="32">
 
-footer: MIT Licensed | Copyright © 2026-present Loop Lore Contributors
+footer: MIT (docs) / LGPL-3.0-or-later (core) | Copyright © 2026-present Loop Lore Contributors
 ---
