@@ -7,7 +7,7 @@
 import type { Kysely, Transaction } from "kysely";
 import type { DB } from "../db/schema";
 import type { ItemCategory, ItemRarity } from "../db/enums";
-import { randomUUID } from "node:crypto";
+import { uid } from "../utils";
 
 // ── Item Definition Helpers ───────────────────────────────────
 
@@ -46,9 +46,6 @@ export interface TransferResult {
 }
 
 // ── Service ───────────────────────────────────────────────────
-
-/** Helper to create a DB-safe UUID string */
-const uid = () => randomUUID() as string;
 
 export class ItemsService {
   constructor(private readonly db: Kysely<DB>) {}
