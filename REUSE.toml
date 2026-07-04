@@ -11,7 +11,19 @@ path = [
   "*.toml",
   "eslint.config.mjs",
   "tsconfig.json",
+  ".gitignore",
+  ".prettierignore",
+  ".prettierrc",
+  "AGENTS.md",
+  "README.md",
+  "config.yaml.example",
 ]
+precedence = "aggregate"
+SPDX-FileCopyrightText = "2026 Loop Lore Contributors"
+SPDX-License-Identifier = "LGPL-3.0-or-later"
+
+[[annotations]]
+path = ["NOTICE"]
 precedence = "aggregate"
 SPDX-FileCopyrightText = "2026 Loop Lore Contributors"
 SPDX-License-Identifier = "LGPL-3.0-or-later"

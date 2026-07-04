@@ -107,7 +107,8 @@ export function buildDefaultTests(): TransportTestSuite {
       // Connection lifecycle tested by the caller with a fresh handler
     },
 
-    async sendRecv(payloads: string[]) { // eslint-disable-line @typescript-eslint/require-await
+    async sendRecv(payloads: string[]) {
+      // eslint-disable-line @typescript-eslint/require-await
       // Send/receive tested by the caller with a connected handler
       for (const payload of payloads) {
         // Verify payload is a string (basic sanity)
@@ -117,7 +118,8 @@ export function buildDefaultTests(): TransportTestSuite {
       }
     },
 
-    async backpressure(size: number) { // eslint-disable-line @typescript-eslint/require-await
+    async backpressure(size: number) {
+      // eslint-disable-line @typescript-eslint/require-await
       // Backpressure test: send a large payload and verify it doesn't throw
       if (size <= 0) {
         throw new TypeError("backpressure size must be > 0");
