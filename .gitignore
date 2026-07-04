@@ -17,6 +17,6 @@ data/uploads/
 .env
 .env.*
 !.env.example
-*.br
-*.gz
-*.zst
+
+# Lock files (generated, can be recreated with bun install)
+bun.lock

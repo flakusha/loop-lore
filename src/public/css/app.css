@@ -1,8 +1,7 @@
 /* ============================================================
    loop-lore — Component Styles
-   Dark themed, adapted from yodayo.com design language
+   Uses CSS variables from loaded theme file
    ============================================================ */
-@import url("theme.css");
 
 /* ============================================================
    LAYOUT
@@ -224,7 +223,7 @@
 }
 
 .message.user .bubble .meta {
-  color: rgba(0, 0, 0, 0.6);
+  color: rgb(0 0 0 / 60%);
 }
 
 .message.character .bubble .meta {
@@ -555,7 +554,7 @@
 .modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.6);
+  background: rgb(0 0 0 / 60%);
   backdrop-filter: blur(4px);
   z-index: var(--z-modal);
   display: flex;
@@ -811,7 +810,7 @@
 .drop-zone:hover,
 .drop-zone.drag-over {
   border-color: var(--accent-primary);
-  background: rgba(245, 151, 232, 0.05);
+  background: rgb(245 151 232 / 5%);
 }
 
 /* ============================================================
@@ -830,6 +829,6 @@
 }
 
 .tag.active {
-  background: rgba(245, 151, 232, 0.15);
+  background: rgb(245 151 232 / 15%);
   color: var(--accent-primary);
 }
