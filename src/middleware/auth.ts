@@ -177,7 +177,7 @@ export function resetSoloUserCache(): void {
  */
 export function extractBearerToken(request: Request): string | null {
   const header = request.headers.get("Authorization");
-  if (!header || !header.startsWith("Bearer ")) return null;
+  if (!header?.startsWith("Bearer ")) return null;
   const token = header.slice("Bearer ".length).trim();
   return token || null;
 }

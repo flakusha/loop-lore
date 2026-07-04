@@ -15,9 +15,7 @@ import type { TlsConfig } from "./schema";
 
 export type TlsFiles = TlsConfig;
 
-function certLog() {
-  return getLogger().child({ module: "tls" });
-}
+const tlsLog = getLogger().child({ module: "tls" });
 
 /**
  * Ensure TLS key + cert exist. Auto-generates self-signed if missing.
@@ -35,7 +33,7 @@ export function ensureTlsCerts(configPath: TlsFiles): TlsFiles | null {
   mkdirSync(dirname(configPath.cert), { recursive: true });
 
   // Generate self-signed cert
-  certLog().info("Generating self-signed development certificate...");
+  tlsLog.info("Generating self-signed development certificate...");
 
   const subject = "/C=XX/ST=Development/L=Local/O=loop-lore/CN=localhost";
   const result = Bun.spawnSync([
@@ -57,11 +55,11 @@ export function ensureTlsCerts(configPath: TlsFiles): TlsFiles | null {
 
   if (!result.success) {
     const message = result.stderr.toString().trim() || "unknown error";
-    certLog().warn(`Failed to generate certificate: ${message}`);
-    certLog().warn("Falling back to HTTP only. Install openssl or configure certs manually.");
+    tlsLog.warn(`Failed to generate certificate: ${message}`);
+    tlsLog.warn("Falling back to HTTP only. Install openssl or configure certs manually.");
     return null;
   }
 
-  certLog().info(`Certificate generated: ${configPath.cert}`);
+  tlsLog.info(`Certificate generated: ${configPath.cert}`);
   return configPath;
 }
