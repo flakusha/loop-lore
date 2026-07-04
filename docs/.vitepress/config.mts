@@ -19,14 +19,15 @@ export default defineConfig({
   themeConfig: {
     nav: [
       { text: 'Guide', link: '/guide/getting-started', activeMatch: '/guide/' },
+      { text: 'Specs', link: '/spec/architecture', activeMatch: '/spec/' },
       { text: 'Frontend', link: '/frontend/overview', activeMatch: '/frontend/' },
       { text: 'Reference', link: '/reference/api', activeMatch: '/reference/' },
-      { text: 'Roadmap', link: '/roadmap' },
+      { text: 'Roadmap', link: '/meta/roadmap' },
       { text: 'GitHub', link: 'https://github.com/yourusername/loop-lore' },
     ],
 
     sidebar: {
-      '/': [
+      '/guide/': [
         {
           text: 'Getting Started',
           collapsed: false,
@@ -36,69 +37,91 @@ export default defineConfig({
           ],
         },
         {
+          text: 'Characters & RPG',
+          collapsed: false,
+          items: [
+            { text: 'Creating Characters', link: '/guide/characters' },
+          ],
+        },
+      ],
+
+      '/spec/': [
+        {
           text: 'Architecture',
           collapsed: false,
           items: [
-            { text: 'Architecture Overview', link: '/architecture' },
-            { text: 'Implementation Details', link: '/implementation' },
-            { text: 'Build & Deploy', link: '/build-deploy' },
+            { text: 'Architecture Overview', link: '/spec/architecture' },
+            { text: 'Implementation Details', link: '/spec/implementation' },
+            { text: 'Build & Deploy', link: '/spec/build-deploy' },
           ],
         },
         {
           text: 'Core Systems',
-          collapsed: true,
+          collapsed: false,
           items: [
-            { text: 'Database Schema', link: '/schema' },
-            { text: 'Messages', link: '/messages' },
-            { text: 'Users & Sessions', link: '/users-sessions' },
-            { text: 'Assets', link: '/assets' },
-            { text: 'Actors', link: '/actors' },
-
-            { text: 'Plugin System', link: '/plugin-system' },
-            { text: 'Memory System', link: '/memory-system' },
-            { text: 'Artifacts System', link: '/artifacts-system' },
+            { text: 'Database Schema', link: '/spec/schema' },
+            { text: 'Messages', link: '/spec/messages' },
+            { text: 'Users & Sessions', link: '/spec/users-sessions' },
+            { text: 'Assets', link: '/spec/assets' },
+            { text: 'Asset Attribution', link: '/spec/assets-attribution' },
           ],
         },
         {
-          text: 'Story Generation',
+          text: 'Characters & RPG',
+          collapsed: false,
+          items: [
+            { text: 'Actor Data Model', link: '/spec/actors' },
+            { text: 'Character & Persona Setup', link: '/spec/character-setup' },
+            { text: 'RPG Mechanics', link: '/spec/rpg-mechanics' },
+            { text: 'Memory System', link: '/spec/memory-system' },
+          ],
+        },
+        {
+          text: 'Story & World',
           collapsed: false,
           items: [
             { text: 'Multi-LLM Story', link: '/frontend/chat/multi-llm-story' },
           ],
         },
         {
-          text: 'Project Planning',
-          collapsed: false,
-          items: [
-            { text: 'MVP Plan', link: '/plan' },
-            { text: 'Roadmap', link: '/roadmap' },
-          ],
-        },
-        {
           text: 'Interfaces',
           collapsed: false,
           items: [
-            { text: 'TUI Mode', link: '/tui' },
-            { text: 'Frontend Overview', link: '/frontend/overview' },
-            { text: 'Frontend UX Specs', link: '/frontend/routing' },
+            { text: 'TUI Mode', link: '/spec/tui' },
+            { text: 'Transport Layer', link: '/spec/transport-unified' },
           ],
         },
         {
-          text: 'Resources',
-          collapsed: false,
+          text: 'Infrastructure',
+          collapsed: true,
           items: [
-            { text: 'Asset Credits', link: '/assets-attribution' },
-            { text: 'Agentic Workspace', link: '/use-case-agentic-workspace' },
-            { text: 'Migration Strategy', link: '/migration-strategy' },
-            { text: 'Vite Docs Proposal', link: '/vite-docs-proposal' },
+            { text: 'Plugin System', link: '/spec/plugin-system' },
+            { text: 'Artifacts System', link: '/spec/artifacts-system' },
+            { text: 'Logging', link: '/spec/logging' },
+            { text: 'Testing', link: '/spec/testing' },
+          ],
+        },
+        {
+          text: 'Integrations',
+          collapsed: true,
+          items: [
+            { text: 'llama.cpp', link: '/spec/integrations/llama-cpp' },
+            { text: 'stable-diffusion.cpp', link: '/spec/integrations/stable-diffusion-cpp' },
+          ],
+        },
+        {
+          text: 'Use Cases',
+          collapsed: true,
+          items: [
+            { text: 'Agentic Workspace', link: '/spec/use-case-agentic-workspace' },
           ],
         },
       ],
 
       '/frontend/': [
         {
-          text: 'Getting Started',
-          collapsed: true,
+          text: 'Design System',
+          collapsed: false,
           items: [
             { text: 'Overview', link: '/frontend/overview' },
             { text: 'Routing', link: '/frontend/routing' },
@@ -110,7 +133,7 @@ export default defineConfig({
         },
         {
           text: 'Chat System',
-          collapsed: true,
+          collapsed: false,
           items: [
             { text: 'Chat Overview', link: '/frontend/chat/overview' },
             { text: 'Layout', link: '/frontend/chat/layout' },
@@ -124,7 +147,7 @@ export default defineConfig({
         },
         {
           text: 'Screens',
-          collapsed: true,
+          collapsed: false,
           items: [
             { text: 'Login', link: '/frontend/login' },
             { text: 'Characters', link: '/frontend/characters' },
@@ -139,22 +162,37 @@ export default defineConfig({
       '/reference/': [
         {
           text: 'API Reference',
-          collapsed: true,
+          collapsed: false,
           items: [
             { text: 'API Overview', link: '/reference/api' },
-            { text: 'Database Schema', link: '/reference/schema' },
-            { text: 'Users & Sessions', link: '/users-sessions' },
-            { text: 'Messages', link: '/messages' },
-            { text: 'Assets', link: '/assets' },
+          ],
+        },
+      ],
+
+      '/meta/': [
+        {
+          text: 'Planning',
+          collapsed: false,
+          items: [
+            { text: 'MVP Plan', link: '/meta/plan' },
+            { text: 'Roadmap', link: '/meta/roadmap' },
+            { text: 'Migration Strategy', link: '/meta/migration-strategy' },
           ],
         },
         {
-          text: 'Core Docs',
-          collapsed: false,
+          text: 'Reviews',
+          collapsed: true,
           items: [
-            { text: 'Architecture', link: '/architecture' },
-            { text: 'Implementation', link: '/implementation' },
-            { text: 'Build & Deploy', link: '/build-deploy' },
+            { text: 'DB Schema Interconnection', link: '/meta/reviews/review-db-schema-interconnection' },
+            { text: 'Typecasts Audit', link: '/meta/reviews/review-typecasts' },
+            { text: 'Validation Approaches', link: '/meta/reviews/review-validation-approaches' },
+          ],
+        },
+        {
+          text: 'Proposals',
+          collapsed: true,
+          items: [
+            { text: 'VitePress Docs', link: '/meta/vite-docs-proposal' },
           ],
         },
       ],

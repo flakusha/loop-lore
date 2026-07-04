@@ -84,6 +84,8 @@ ASSET_S3_REGION=us-east-1
 ASSET_S3_ENDPOINT=https://...  # for MinIO/compatible
 ```
 
+> **Warning**: `ASSET_STORAGE_BACKEND` defaults to `local` if unset. Static server deployments must provide a base path for default assets (e.g., `data/assets/`). All assets must be persisted in the `assets` table; storage path follows `UUID/first-2-chars` scheme. Validate upload limits via env vars (`ASSET_MAX_IMAGE_SIZE`, `ASSET_MAX_AUDIO_SIZE`, `ASSET_MAX_VIDEO_SIZE`) — no hardcoded defaults in code.
+
 ## Upload & Processing Pipeline
 
 ```

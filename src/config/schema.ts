@@ -95,6 +95,41 @@ interface AuthConfig {
   maxSessionsPerUser: number;
 }
 
+interface TransportCompressionConfig {
+  /** Master toggle for transport compression */
+  enabled: boolean;
+  /** Default compression algorithm */
+  default: "zstd" | "br" | "gzip" | "none";
+  /** Minimum payload size (bytes) before compression kicks in */
+  threshold: number;
+}
+
+interface TransportLimitsConfig {
+  /** Max frame size in bytes. Default 0x10000 (64 KiB) */
+  maxFrameSize: number;
+  /** Max payload size in bytes. Default 0x50000 (320 KiB) */
+  maxPayload: number;
+  /** Max concurrent streams (H2). Default 100 */
+  maxConcurrentStreams: number;
+}
+
+interface TransportConfig {
+  /** Default transport protocol */
+  defaultProtocol: "http/1.1" | "http/2" | "http/3" | "websocket" | "webtransport" | "tcp" | "tls";
+  /** Enable WebSocket upgrade support */
+  enableWebSocket: boolean;
+  /** Enable WebTransport support (requires H3) */
+  enableWebTransport: boolean;
+  /** Enable HTTP/2 support */
+  enableH2: boolean;
+  /** Enable HTTP/3 support (requires QUIC/Bun support) */
+  enableH3: boolean;
+  /** Compression settings */
+  compression: TransportCompressionConfig;
+  /** Connection limits */
+  limits: TransportLimitsConfig;
+}
+
 interface AgeGateConfig {
   /** Master toggle — false = no gating at all */
   enabled: boolean;
@@ -119,6 +154,7 @@ interface Config {
   docs: DocumentationConfig;
   ageGate: AgeGateConfig;
   auth: AuthConfig;
+  transport: TransportConfig;
 }
 const DEFAULTS: Config = {
   server: {
@@ -162,6 +198,23 @@ const DEFAULTS: Config = {
     sessionTimeoutHours: 24,
     maxSessionsPerUser: 10,
   },
+  transport: {
+    defaultProtocol: "http/1.1",
+    enableWebSocket: true,
+    enableWebTransport: false,
+    enableH2: false,
+    enableH3: false,
+    compression: {
+      enabled: false,
+      default: "none",
+      threshold: 256,
+    },
+    limits: {
+      maxFrameSize: 0x10000,
+      maxPayload: 0x50000,
+      maxConcurrentStreams: 100,
+    },
+  },
 };
 
 export type {
@@ -176,5 +229,6 @@ export type {
   DocumentationConfig,
   AgeGateConfig,
   AuthConfig,
+  TransportConfig,
 };
 export { DEFAULTS };
