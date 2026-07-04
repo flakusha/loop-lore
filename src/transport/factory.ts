@@ -93,17 +93,16 @@ export function createProtocol(config: TransportConfig): ProtocolHandler {
     case TransportProtocol.WebTransport:
     case TransportProtocol.Tcp:
     case TransportProtocol.Tls: {
-      throw new TransportError(
-        `protocol "${config.protocol}" not yet implemented`,
-        { code: TransportErrorCode.ProtocolUnsupported, recoverable: true },
-      );
+      throw new TransportError(`protocol "${config.protocol}" not yet implemented`, {
+        code: TransportErrorCode.ProtocolUnsupported,
+        recoverable: true,
+      });
     }
 
     default: {
-      throw new TransportError(
-        `unknown protocol: ${String(config.protocol)}`,
-        { code: TransportErrorCode.ProtocolUnsupported },
-      );
+      throw new TransportError(`unknown protocol: ${String(config.protocol)}`, {
+        code: TransportErrorCode.ProtocolUnsupported,
+      });
     }
   }
 
@@ -116,9 +115,7 @@ export function createProtocol(config: TransportConfig): ProtocolHandler {
   return handler;
 }
 
-
-
-export {createHttp1Handler} from "./http1";
-export {createH2Handler} from "./h2";
-export {createWsHandler} from "./ws";
-export {withCompression} from "./compression";
+export { createHttp1Handler } from "./http1";
+export { createH2Handler } from "./h2";
+export { createWsHandler } from "./ws";
+export { withCompression } from "./compression";
