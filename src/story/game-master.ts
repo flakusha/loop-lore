@@ -390,10 +390,10 @@ export class GameMasterService {
     context: StoryContext,
     actorId: string,
   ): Promise<GameMasterDecision> {
-    const decision = await this.llmDecision(context, actorId);
+    const decision = this.llmDecision(context, actorId);
 
     // Check if escalation is needed based on context
-    const escalationThreshold = this.config.escalationThreshold ?? 40;
+    const _escalationThreshold = this.config.escalationThreshold ?? 40;
     const questCount = context.activeQuests.length;
     const actorCount = context.actors.length;
 
