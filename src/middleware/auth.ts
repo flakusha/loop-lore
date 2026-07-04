@@ -15,7 +15,7 @@ import type { DB } from "../db/schema";
 import type { AuthConfig } from "../config/schema";
 import { UserRole } from "../db/enums";
 import type { RequestContext } from "./types";
-import { jsonError, HttpStatus } from "../routes/http-utils";
+import { jsonError, HttpStatus, ErrorCode } from "../routes/http-utils";
 
 /**
  * Attempt to authenticate the request.
@@ -49,12 +49,12 @@ export async function authenticate(
   // ── Remote auth — extract Bearer token ────────────────────
   const authHeader = request.headers.get("Authorization");
   if (!authHeader?.startsWith("Bearer ")) {
-    return jsonError("Missing or invalid Authorization header", HttpStatus.Unauthorized, "UNAUTHORIZED");
+    return jsonError("Missing or invalid Authorization header", HttpStatus.Unauthorized, ErrorCode.Unauthorized);
   }
 
   const rawToken = authHeader.slice("Bearer ".length).trim();
   if (!rawToken) {
-    return jsonError("Empty token", HttpStatus.Unauthorized, "UNAUTHORIZED");
+    return jsonError("Empty token", HttpStatus.Unauthorized, ErrorCode.Unauthorized);
   }
 
   // ── Hash token & look up session ──────────────────────────
@@ -67,14 +67,14 @@ export async function authenticate(
     .executeTakeFirst();
 
   if (!session) {
-    return jsonError("Invalid session token", HttpStatus.Unauthorized, "UNAUTHORIZED");
+    return jsonError("Invalid session token", HttpStatus.Unauthorized, ErrorCode.Unauthorized);
   }
 
   // ── Check expiration ──────────────────────────────────────
   if (new Date(session.expires_at) < new Date()) {
     // Clean up expired session
     await database.deleteFrom("sessions").where("id", "=", session.id).execute();
-    return jsonError("Session expired", HttpStatus.Unauthorized, "UNAUTHORIZED");
+    return jsonError("Session expired", HttpStatus.Unauthorized, ErrorCode.Unauthorized);
   }
 
   // ── Fetch user role ───────────────────────────────────────
@@ -87,7 +87,7 @@ export async function authenticate(
   if (!user) {
     // Session references deleted user — clean up
     await database.deleteFrom("sessions").where("id", "=", session.id).execute();
-    return jsonError("User not found", HttpStatus.Unauthorized, "UNAUTHORIZED");
+    return jsonError("User not found", HttpStatus.Unauthorized, ErrorCode.Unauthorized);
   }
 
   // ── Update last activity + last_seen_at (non-blocking) ────
@@ -146,6 +146,7 @@ async function getOrCreateSoloUser(database: Kysely<DB>): Promise<{ id: string }
       username: "solo",
       display_name: "Solo User",
       role: UserRole.Solo,
+      status: "active",
       settings: "{}",
     })
     .execute()

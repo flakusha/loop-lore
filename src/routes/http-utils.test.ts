@@ -7,6 +7,9 @@
 import { describe, test, expect } from "bun:test";
 import {
   HttpStatus,
+  ErrorCode,
+  NotFoundError,
+  ForbiddenError,
   jsonResponse,
   jsonError,
   jsonValidationError,
@@ -229,5 +232,56 @@ describe("HttpStatus", () => {
     expect(HttpStatus.UnprocessableEntity).toBe(422);
     expect(HttpStatus.InternalServerError).toBe(500);
     expect(HttpStatus.NotImplemented).toBe(501);
+    expect(HttpStatus.TooManyRequests).toBe(429);
+  });
+});
+
+// ── ErrorCode enum ────────────────────────────────────────────
+
+describe("ErrorCode", () => {
+  test("all codes are present and uppercase", () => {
+    const codes = Object.values(ErrorCode);
+    for (const code of codes) {
+      expect(code).toEqual(code.toUpperCase());
+      expect(code).toBeTruthy();
+    }
+  });
+
+  test("critical codes match expected values", () => {
+    expect(ErrorCode.BadRequest).toBe("BAD_REQUEST");
+    expect(ErrorCode.Unauthorized).toBe("UNAUTHORIZED");
+    expect(ErrorCode.Forbidden).toBe("FORBIDDEN");
+    expect(ErrorCode.NotFound).toBe("NOT_FOUND");
+    expect(ErrorCode.ValidationError).toBe("VALIDATION_ERROR");
+    expect(ErrorCode.TooManyRequests).toBe("TOO_MANY_REQUESTS");
+    expect(ErrorCode.ServerError).toBe("SERVER_ERROR");
+    expect(ErrorCode.NotImplemented).toBe("NOT_IMPLEMENTED");
+  });
+});
+
+// ── Typed errors ──────────────────────────────────────────────
+
+describe("NotFoundError", () => {
+  test("formats message from entity + id", () => {
+    const err = new NotFoundError("Chat", "abc-123");
+    expect(err.message).toBe("Chat not found: abc-123");
+    expect(err.name).toBe("NotFoundError");
+  });
+
+  test("is instance of Error", () => {
+    expect(new NotFoundError("X", "y")).toBeInstanceOf(Error);
+  });
+});
+
+describe("ForbiddenError", () => {
+  test("default message", () => {
+    const err = new ForbiddenError();
+    expect(err.message).toBe("Forbidden");
+    expect(err.name).toBe("ForbiddenError");
+  });
+
+  test("custom message", () => {
+    const err = new ForbiddenError("Admin only");
+    expect(err.message).toBe("Admin only");
   });
 });
