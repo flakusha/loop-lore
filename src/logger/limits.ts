@@ -45,13 +45,10 @@ function truncateMeta(
   const keys = Object.keys(obj).slice(0, maxEntries);
   for (const key of keys) {
     const val = obj[key];
-      result[key] = val !== null && typeof val === "object" && !Array.isArray(val) ? truncateMeta(
-          val as Record<string, unknown>,
-          maxBytes,
-          maxDepth,
-          maxEntries,
-          depth + 1,
-        ) : val;
+    result[key] =
+      val !== null && typeof val === "object" && !Array.isArray(val)
+        ? truncateMeta(val as Record<string, unknown>, maxBytes, maxDepth, maxEntries, depth + 1)
+        : val;
   }
   if (Object.keys(obj).length > maxEntries) {
     result["[truncated]"] = `${Object.keys(obj).length - maxEntries} excess keys`;
@@ -104,12 +101,7 @@ export function applyLimits(entry: LogEntry, overrides?: Partial<SizeLimits>): L
 
   // Truncate meta
   if (result.meta) {
-    result.meta = truncateMeta(
-      result.meta,
-      limits.maxMetaBytes,
-      limits.maxMetaDepth,
-      limits.maxMetaEntries,
-    );
+    result.meta = truncateMeta(result.meta, limits.maxMetaBytes, limits.maxMetaDepth, limits.maxMetaEntries);
   }
 
   return result;

@@ -52,11 +52,7 @@ export interface Logger {
   debug(message: string | Record<string, unknown>, meta?: Record<string, unknown>): void;
   info(message: string | Record<string, unknown>, meta?: Record<string, unknown>): void;
   warn(message: string | Record<string, unknown>, meta?: Record<string, unknown>): void;
-  error(
-    message: string | Record<string, unknown>,
-    error?: Error,
-    meta?: Record<string, unknown>,
-  ): void;
+  error(message: string | Record<string, unknown>, error?: Error, meta?: Record<string, unknown>): void;
 
   /** Create child logger with inherited bindings */
   child(bindings: LoggerBindings): Logger;
