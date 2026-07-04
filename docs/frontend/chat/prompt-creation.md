@@ -67,9 +67,9 @@ interface PromptParams {
   actorId: string;
   chatId: string;
   modelId: string;
-  provider: string;              // 'openai' | 'anthropic' | 'local' | ...
-  tokenBudget: number;           // max context tokens for this model
-  includeStoryContext: boolean;  // true when chat.mode = 'story'
+  provider: string; // 'openai' | 'anthropic' | 'local' | ...
+  tokenBudget: number; // max context tokens for this model
+  includeStoryContext: boolean; // true when chat.mode = 'story'
   detailMode: "immersion" | "basic" | "detailed";
 }
 ```
@@ -79,16 +79,16 @@ interface PromptParams {
 Prompt sections are assembled in a specific order that determines fallback
 priority. When token budget is exceeded, sections are dropped **last-to-first**:
 
-| Order | Section                | Source                                        | Drop priority |
-| ----- | ---------------------- | --------------------------------------------- | ------------- |
-| 1     | System prompt          | `actors.system_prompt`                        | Never         |
-| 2     | Actor header           | `actors.{display_name,description,personality,scenario}` | Never |
-| 3     | Lorebook entries       | `actor_lore_entries` + `world_lore_entries`   | 3rd           |
-| 4     | Memories               | `actor_memories` (via asset system)           | 4th           |
-| 5     | Post-history instr.    | `actors.post_history_instructions`            | 2nd           |
-| 6     | Example/swipe content  | `actors.mes_example`                          | 1st (dropped first) |
-| 7     | Chat history           | `messages` (latest N)                         | Never         |
-| 8     | Story context          | `npc_states`, `location_states`, `quests`     | Never (story mode) |
+| Order | Section               | Source                                                   | Drop priority       |
+| ----- | --------------------- | -------------------------------------------------------- | ------------------- |
+| 1     | System prompt         | `actors.system_prompt`                                   | Never               |
+| 2     | Actor header          | `actors.{display_name,description,personality,scenario}` | Never               |
+| 3     | Lorebook entries      | `actor_lore_entries` + `world_lore_entries`              | 3rd                 |
+| 4     | Memories              | `actor_memories` (via asset system)                      | 4th                 |
+| 5     | Post-history instr.   | `actors.post_history_instructions`                       | 2nd                 |
+| 6     | Example/swipe content | `actors.mes_example`                                     | 1st (dropped first) |
+| 7     | Chat history          | `messages` (latest N)                                    | Never               |
+| 8     | Story context         | `npc_states`, `location_states`, `quests`                | Never (story mode)  |
 
 ### Section Details
 
@@ -99,6 +99,7 @@ priority. When token budget is exceeded, sections are dropped **last-to-first**:
 ```
 
 Provider-specific formatting applied here:
+
 - **OpenAI**: messages array with `role: "system"`
 - **Anthropic**: `system` field on the API request
 - **Local (llama.cpp, etc.)**: prepended as `\n### System:\n{prompt}\n`
@@ -123,6 +124,7 @@ All fields nullable — missing fields omitted from output.
 - Insert position: `before_char` or `after_char` (relative to actor header)
 
 **Tables** (planned — not yet in migrations):
+
 - `actor_lore_entries` — owned by actor, keyword-triggered
 - `world_lore_entries` — linked via `asset_links` to world, context-triggered
 
@@ -270,6 +272,7 @@ composes image prompts from:
 - **Negative prompt**: configurable per world/actor
 
 The image prompt is sent to `sd-server` via one of three API paths:
+
 - OpenAI-compatible: `POST /v1/images/generations`
 - WebUI-compatible: `POST /sdapi/v1/txt2img`
 - Native: `POST /sdcpp/v1/img_gen`
@@ -288,23 +291,23 @@ module's step system (`src/generation/step-pipeline.ts`):
 
 The prompt assembler reads from these tables (all currently in migrations):
 
-| Table             | Fields used                                          | Migration |
-| ----------------- | ---------------------------------------------------- | --------- |
+| Table             | Fields used                                                                                                                                                             | Migration                                              |
+| ----------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------ |
 | `actors`          | `display_name`, `description`, `personality`, `scenario`, `system_prompt`, `mes_example`, `post_history_instructions`, `alternate_greetings`, `import_spec`, `settings` | `001_init.ts` (types only, some columns not yet in DB) |
-| `messages`        | `chat_id`, `actor_id`, `content`, `role`, `created_at` | `001_init.ts` |
-| `chats`           | `mode`, `world_id`, `current_location_id`           | `001_init.ts` |
-| `worlds`          | `scan_depth`, `token_budget`                        | `001_init.ts` (types only, columns not yet in DB) |
-| `npc_states`      | `actor_id`, `world_id`, `health`, `mental_state`, `inventory` | `001_init.ts` |
-| `location_states` | `location_id`, `atmosphere`, `npcs_present`         | `001_init.ts` |
-| `quests`          | `name`, `status`, `progress`, `target`              | `001_init.ts` |
+| `messages`        | `chat_id`, `actor_id`, `content`, `role`, `created_at`                                                                                                                  | `001_init.ts`                                          |
+| `chats`           | `mode`, `world_id`, `current_location_id`                                                                                                                               | `001_init.ts`                                          |
+| `worlds`          | `scan_depth`, `token_budget`                                                                                                                                            | `001_init.ts` (types only, columns not yet in DB)      |
+| `npc_states`      | `actor_id`, `world_id`, `health`, `mental_state`, `inventory`                                                                                                           | `001_init.ts`                                          |
+| `location_states` | `location_id`, `atmosphere`, `npcs_present`                                                                                                                             | `001_init.ts`                                          |
+| `quests`          | `name`, `status`, `progress`, `target`                                                                                                                                  | `001_init.ts`                                          |
 
 **Planned tables** (not yet in migrations):
 
-| Table                | Purpose                              |
-| -------------------- | ------------------------------------ |
-| `actor_lore_entries` | Actor-owned keyword-triggered lore   |
-| `world_lore_entries` | World-linked context-triggered lore  |
-| `actor_memories`     | Character memories (via asset system)|
+| Table                | Purpose                               |
+| -------------------- | ------------------------------------- |
+| `actor_lore_entries` | Actor-owned keyword-triggered lore    |
+| `world_lore_entries` | World-linked context-triggered lore   |
+| `actor_memories`     | Character memories (via asset system) |
 
 ---
 
@@ -332,10 +335,10 @@ The prompt assembler reads from these tables (all currently in migrations):
 generation:
   defaultContextLength: 8192
   prompt:
-    historyLength: 8               # recent messages to include
-    memoryBudget: 1024             # tokens reserved for memories
-    loreBudget: 2048               # tokens reserved for lorebook entries
-    exampleBudget: 512             # tokens reserved for mes_example
+    historyLength: 8 # recent messages to include
+    memoryBudget: 1024 # tokens reserved for memories
+    loreBudget: 2048 # tokens reserved for lorebook entries
+    exampleBudget: 512 # tokens reserved for mes_example
   providers:
     openai:
       apiKey: "${OPENAI_API_KEY}"

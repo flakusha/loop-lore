@@ -112,6 +112,7 @@ Example layout:
 The user message's toolbar is on the right; character message's toolbar is on the left.
 
 **Continue button placement**: the Continue button appears in two locations:
+
 1. **Hover toolbar** — for messages that completed but are candidates for continuation (truncated, incomplete sentence)
 2. **Inline footer** — for cancelled mid-generation placeholders, always visible below the partial content, styled as a subtle "↳ Continue" link
 

@@ -13,7 +13,9 @@ Sections listed in the sidebar: General, Chat, API, Data, About.
 ### General
 
 - Display name (text input, updates user's display name across the app)
-- Theme preset (select: presets shipped with the app; "Dark" default. Future: "Light", "System")
+- Theme preset (select: "Default (Dark)", "Light", "Bright", "Colorful", "Monochrome", "No Icons", "Dracula", "Nord", "GitHub Dark", "Material". Default: "Default (Dark)")
+  - Theme preference stored in localStorage, persists across sessions
+  - Theme change takes effect immediately via CSS sheet switching
 - Theme customization (expandable section, collapsed by default):
   - Chat bubble colors: user bubble background, AI bubble background, bubble border (color pickers)
   - Sidebar: background color, brand logo color (color pickers)

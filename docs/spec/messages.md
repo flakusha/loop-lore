@@ -2,16 +2,17 @@
 
 ## Data Integrity & Reliability
 
-Messages are the core data of the application. Unlike SillyTavern, loop-lore guarantees message persistence.
+Messages are the core data of the application. Unlike SillyTavern, loop-lore
+guarantees message persistence.
 
 ### Persistence Guarantees
 
 1. **Write-ahead** — Message saved to DB before response returned to client
 2. **Transaction-safe** — Message + metadata written in single transaction
-3. **Crash recovery** — Messages in flight during crash recovered on restart (WAL mode for SQLite)
+3. **Crash recovery** — WAL mode for SQLite; in-flight messages recovered on restart
 4. **No silent drops** — If write fails, client receives error (no phantom messages)
 
-### Flow
+### Basic Write Flow
 
 ```
 Client sends message
@@ -23,92 +24,190 @@ Client sends message
 
 If DB write fails:
   → Server returns 500/503
-  → Client shows error, message NOT lost because never confirmed
-  → User can retry
+  → Client shows error
+  → User can retry (idempotency key prevents duplicate)
 ```
 
 ### Connection Resilience
 
-- Client-side message draft persisted in localStorage (web) or temp file (TUI)
-- On reconnect: draft restored, user can retry sending
-- Server idempotency key prevents duplicate messages on retry
+- Client-side draft persisted in localStorage (web) / temp file (TUI)
+- On reconnect: draft restored, user can retry
+- Idempotency key prevents duplicate messages on retry
+
+---
 
 ## Message Schema
 
-Full table definition: [`docs/schema.md`](./schema.md#table-messages).
+Full table: [`docs/schema.md`](./schema.md#table-messages).
 
+Key columns for this spec:
+
+| Column | Type | Purpose |
+| ------ | ---- | ------- |
+| `id` | UUID | Primary |
+| `chat_id` | UUID FK | Parent chat |
+| `actor_id` | UUID FK | Sender |
+| `role` | text | 'user', 'assistant', 'character', 'system' |
+| `content` | text | Encrypted JSON blob or plaintext |
+| `content_format` | text | 'markdown', 'text', 'json', 'html' |
+| `content_type` | text | 'text', 'action', 'narration', 'system', 'continuation' |
+| `content_encoding` | text | 'identity', 'gzip', 'zstd', 'brotli' |
+| `parent_id` | UUID FK | Message tree parent |
+| `is_continuation` | int | 1 = continuation of partial message |
+| `continuation_index` | int | Ordinal in continuation chain |
+| `partial` | int | 1 = content is partial/truncated |
+| `status` | text | 'sending', 'sent', 'confirmed', 'partial', 'failed', 'rejected', 'cancelled' |
+| `visibility` | text | 'visible', 'hidden_by_user', 'hidden_by_moderator', 'auto_hidden', 'redacted' |
+| `idempotency_key` | text | Retry dedup |
+| `created_at` | text | ISO timestamp |
+| `edited_at` | text | Nullable |
+
+### Status Scenarios
+
+**Happy path — user message without LLM:**
 ```
-Message {
-  id:               UUID (primary)
-  chatId:           UUID (foreign key → chats)
-  actorId:          UUID (foreign key → actors — unified sender)
-  role:             "user" | "assistant" | "system" | "character"
-  content:          text
-  contentType:      "text" | "action" | "narration" | "system"
-  contentEncoding:  "identity" | "gzip" | "zstd" | "brotli"
+1. Client sends POST /api/messages
+2. Server inserts messages row → status="sending"
+3. Server confirms write → status="sent"
+4. No LLM trigger needed → status="confirmed"
+```
 
-  -- Message metadata (all nullable, populated when LLM used)
-  modelId:          string          -- e.g., "gpt-4", "claude-3-opus"
-  provider:         string          -- e.g., "openai", "anthropic", "local"
-  tokenCount: {
-    prompt:         number
-    completion:     number
-    total:          number
+**Happy path — user message triggering LLM:**
+```
+1. Client sends POST /api/messages
+2. Server inserts messages row → status="sending"
+3. Server confirms write → status="sent"
+4. Server calls LLM API, receives full response
+5. Server writes response message → status="confirmed"
+```
+
+**LLM API error (5xx, timeout, connection failure):**
+```
+1. Server sends prompt to LLM
+2. API returns error (no content received)
+3. Server marks generation_attempts.status = "failed"
+4. Server marks message.status = "failed"
+5. Client shows: "Generation failed. Retry?"
+6. User taps Retry (idempotency_key sent)
+7. Server checks retry count < MAX_GENERATION_RETRIES (3)
+8. New generation_attempt created, API called again
+9. On success → message.status = "confirmed"
+10. If retries exhausted → "Max retries exceeded" error
+```
+
+**Content policy violation (post-generation):**
+```
+1. LLM returns full response
+2. Server policy detector flags content as violating
+3. Server marks message.status = "rejected", visibility = "auto_hidden"
+4. Server stores policy_analysis in generation_attempts
+5. Client shows: "Response filtered by content policy"
+6. User edits prompt and resubmits
+7. Original rejected message preserved in DB for audit
+   (visible to admin via ?showHidden=true)
+```
+
+**Timeout mid-stream (partial content):**
+```
+1. LLM begins streaming tokens
+2. Server-side GENERATION_TIMEOUT_MS fires
+3. Server captures streamed content as partial_content
+4. Server marks attempt.status = "cancelled", partial_content = "<streamed so far>"
+5. Server sets message.partial = 1, message.status = "partial"
+6. Client shows partial content with "Continue" button
+7. On Continue: POST /api/generation/continue { messageId }
+8. Server reads partial_content, builds prefix prompt
+9. Server sends to LLM, appends to existing content
+10. Continuation stored as new message row:
+    is_continuation=1, continuation_index=2, parent_id=original
+11. Client appends continuation to same bubble
+12. Multiple continues chain: A(partial=1, idx=0) → A-2(idx=2) → A-3(idx=3)
+```
+
+**User cancels mid-generation:**
+```
+1. LLM is streaming tokens
+2. User presses Cancel / Escape
+3. Client sends POST /api/generation/cancel { messageId }
+4. Server captures whatever has streamed as partial_content
+5. Server marks attempt.status = "cancelled" (reason = "user_cancel")
+6. If partial content exists → message.partial = 1, message.status = "cancelled"
+   User can Continue (same as partial flow)
+7. If no content yet → message.status = "cancelled", no recovery
+```
+
+**Network failure (send never reached server):**
+```
+1. Client sends POST /api/messages
+2. Network fails before server receives
+3. Client persists draft in localStorage / temp file
+4. On reconnect: prompt user to retry
+5. Retry sends same idempotency_key
+6. Server processes (first write since key unknown)
+7. Duplicate key check prevents double writes on re-send
+```
+
+**Max retries exhausted:**
+```
+1. Message is in "failed" state
+2. User attempts retry
+3. Server checks retry count >= MAX_GENERATION_RETRIES (3)
+4. Server returns error: "Max retries exceeded for this message"
+5. User must regenerate (new message) instead of retry
+```
+
+**Regenerate a confirmed message:**
+```
+1. User requests regeneration on a confirmed message
+2. Server creates new generation_attempt
+3. Original message preserved with status="confirmed"
+4. New response appended as continuation or replacement
+   (configurable: REPLACE_ON_REGENERATE=true|false)
+```
+
+---
+
+## Configuration
+
+```env
+# Message handling
+AUTO_HIDE_INVALID=false           # auto-mark invalid messages as hidden
+HIDE_CONFIRMATION=true            # require confirmation before hiding
+MAX_MESSAGE_LENGTH=100000         # max content length (plaintext before encrypt)
+IDEMPOTENCY_EXPIRY_HOURS=24       # idempotency key TTL
+MAX_GENERATION_RETRIES=3          # max auto-retry on LLM failure
+GENERATION_TIMEOUT_MS=30000        # LLM response timeout
+COMPRESS_THRESHOLD=128             # min bytes before compressing content
+```
+
+```json
+{
+  "messageHandling": {
+    "autoHideInvalid": false,
+    "hideConfirmation": true,
+    "maxLength": 100000,
+    "maxGenerationRetries": 3,
+    "generationTimeoutMs": 30000,
+    "idempotencyExpiryHours": 24,
+    "compressThreshold": 128
   }
-  tokenCost:        number          -- estimated cost in USD (or provider units)
-  generationTimeMs: number          -- time to generate response
-  tokensPerSecond:  number          -- generation speed
-
-  -- Status & visibility state machine
-  status:           "sending" | "sent" | "confirmed" | "failed"
-  visibility:       "visible" | "hidden_by_user" | "hidden_by_moderator"
-                    | "auto_hidden" | "redacted"
-  hiddenBy:         UUID (FK → actors.id)
-  hiddenReason:     string          -- free-text or policy code
-
-  -- Ordering
-  createdAt:        timestamp
-  editedAt:         timestamp       -- nullable
 }
 ```
 
-### Why `visibility` Instead of a `hidden` Boolean
-
-A boolean `hidden` flag is fragile because it doesn't encode _why_ a message was hidden.
-Each hiding reason means different things:
-
-| Visibility State      | Meaning                                | Who can reverse      |
-| --------------------- | -------------------------------------- | -------------------- |
-| `visible`             | Normal state, message is displayed     | —                    |
-| `hidden_by_user`      | User manually hid their own message    | The user             |
-| `hidden_by_moderator` | Admin/mod action                       | Admin only           |
-| `auto_hidden`         | Content filter or rate-limit triggered | Admin or user appeal |
-| `redacted`            | Content was wiped (e.g. PII removed)   | Irreversible         |
-
-A single enum column replaces what would otherwise require 3+ boolean flags (`is_hidden`,
-`is_auto_hidden`, `is_redacted`) plus a separate `hidden_reason` string to disambiguate them.
-With an enum, the reason IS the state — no columns can contradict each other.
+---
 
 ## Message Detail Levels
 
-Messages have two display modes to serve different audiences.
-
-### Basic View (Default — Gameplay/Immersion)
+### Basic View (Default)
 
 ```
 User: "The knight draws his sword."
 Character: *The blade gleams with an eerie blue light.*
 ```
 
-Shows only:
+Shows only: sender, content, relative timestamp (optional).
 
-- Sender (actor display name)
-- Content
-- Timestamp (relative, optional)
-
-No metadata visible. Clean, immersive experience.
-
-### Expanded View (Nerd/Admin/Dev)
+### Expanded View
 
 ```
 User: "The knight draws his sword."
@@ -123,84 +222,43 @@ Character: *The blade gleams with an eerie blue light.*
   Status: confirmed | ID: msg_abc123
 ```
 
-Shows all metadata including:
+### Per-Message Toggle
 
-- Token counts (prompt, completion, total)
-- Generation cost (estimated)
-- Speed (tokens/second)
-- Model + provider info
-- Message ID
-- Status
-- Edit history
-
-### Per-Message Detail Toggle
-
-Users toggle between basic/expanded per message:
-
-- **Web**: Alpine.js `x-show` on detail panel, toggle button per message
-- **TUI**: Select message + press `d` key to expand/collapse
-- **API**: `?detail=basic|expanded` query param, defaults to user preference
-
-> **Warning**: API defaults to `basic` detail level if no `detail` param and no user preference set. The state machine for `status` transitions is: `sending` → `sent` → `confirmed`, or `sending` → `failed`/`cancelled`. Visibility changes are independent but coupled: `auto_hidden` requires `status=failed` or `status=cancelled` to be reversible.
+- **Web**: Alpine.js `x-show`, toggle button per message
+- **TUI**: Select message + press `d`
+- **API**: `?detail=basic|expanded` param, defaults to user preference
 
 ### User Preference
 
 ```json
 {
   "messageDisplay": {
-    "defaultView": "basic", // "basic" | "expanded"
-    "showDetailsForRoles": [], // empty = default only; e.g. ["system"]
-    "alwaysShowStats": false // override: always show token stats
+    "defaultView": "basic",
+    "showDetailsForRoles": [],
+    "alwaysShowStats": false
   }
 }
 ```
 
-## Group Chat Considerations
-
-In group chats with multiple characters and human participants:
-
-- Messages from humans (no LLM) omit `modelId`, `provider`, `tokenCost` — these fields are `null`
-- Messages from LLM-powered characters include full stats
-- System messages (narration, actions) may have partial stats
-- Actor table provides unified identity: query `actors.actor_type` to distinguish
-  human users from AI characters from system narrators
+---
 
 ## Invalid Message Handling
 
 Messages may become invalid due to:
 
-- Failed generation (partial output, timeout)
-- Content policy violation detected post-generation
-- Admin review flags message
+- Failed generation (partial output, timeout) → `partial` or `failed`
+- Content policy violation → `rejected`
+- Admin review flag → visibility change
 
 ### Workflow
 
-1. Message marked `status: failed` or flagged by system
+1. Message marked status `failed`/`partial`/`rejected` or flagged by system
 2. Message still visible to user (not silently deleted)
-3. User/admin can hide message via:
-   - **Click/tap** hide button
-   - **Config auto-hide** `AUTO_HIDE_INVALID=true`
-4. Hidden messages set `visibility` to the appropriate state (not removed from DB)
-5. Admins can view hidden messages via `/api/messages?showHidden=true`
-6. Reveal hidden messages in UI via "Show hidden" toggle
+3. User/admin can hide:
+   - Click/tap hide button
+   - Config auto-hide `AUTO_HIDE_INVALID=true`
+4. Hidden messages set `visibility` to appropriate state (not removed from DB)
+5. Admins view hidden via `/api/messages?showHidden=true`
+6. Reveal in UI via "Show hidden" toggle
 
-### Configuration
 
-```env
-# Message handling
-AUTO_HIDE_INVALID=false          # auto-mark invalid messages as hidden
-HIDE_CONFIRMATION=true           # require confirmation before hiding
-MAX_MESSAGE_LENGTH=100000        # max content length
-IDEMPOTENCY_EXPIRY_HOURS=24      # how long idempotency keys are valid
-```
-
-```json
-// Config option in user settings
-{
-  "messageHandling": {
-    "autoHideInvalid": false,
-    "hideConfirmation": true,
-    "maxLength": 100000
-  }
-}
-```
