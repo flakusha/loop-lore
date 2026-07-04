@@ -7,6 +7,7 @@
 import type { Kysely, Transaction } from "kysely";
 import type { DB } from "../db/schema";
 import type { ItemCategory, ItemRarity } from "../db/enums";
+import { ItemVisibility } from "../db/enums";
 import { uid } from "../utils";
 
 // ── Item Definition Helpers ───────────────────────────────────
@@ -35,7 +36,7 @@ export interface ItemInstance {
   properties: Record<string, unknown>;
   value: number;
   weight: number;
-  isHidden: boolean;
+  visibility: ItemVisibility;
 }
 
 export interface TransferResult {
@@ -107,7 +108,7 @@ export class ItemsService {
         item_id: itemId,
         location_id: locationId,
         quantity,
-        is_hidden: hidden ? 1 : 0,
+        visibility: hidden ? ItemVisibility.Hidden : ItemVisibility.Visible,
         respawnable: respawnable ? 1 : 0,
         spawn_condition: spawnCondition ? JSON.stringify(spawnCondition) : null,
       })
@@ -140,7 +141,7 @@ export class ItemsService {
         "world_items.id as world_item_id",
         "world_items.item_id",
         "world_items.quantity",
-        "world_items.is_hidden",
+        "world_items.visibility",
         "world_items.location_id",
         "world_items.owner_actor_id",
         "items.name",
@@ -154,7 +155,7 @@ export class ItemsService {
       .where("world_items.location_id", "=", locationId);
 
     if (!includeHidden) {
-      query = query.where("world_items.is_hidden", "=", 0);
+      query = query.where("world_items.visibility", "=", "visible");
     }
 
     return query.execute();
