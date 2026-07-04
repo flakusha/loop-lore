@@ -1442,9 +1442,79 @@ The LLM then narrates the mechanical truth.
 | Resolver chain execution                              | `src/rpg/resolver-chain.ts`   | Not started |
 | Plugin bundle system (`PluginBundle` manifest)        | `src/rpg/bundle-loader.ts`    | Not started |
 | Fine-tune overlay service                             | `src/rpg/fine-tune.ts`        | Not started |
-| Bundle activation per scope (world/chat/location)     | `src/rpg/bundle-activator.ts` | Not started |
+| Bundle activation per scope (world/chat/location) | `src/rpg/bundle-activator.ts` | Not started |
 | `.rpgbundle` import/export                            | `src/rpg/bundle-io.ts`        | Not started |
 | LLM GM fine-tune intent extraction                    | `src/rpg/fine-tune-intent.ts` | Not started |
+
+---
+
+## Difficulty Levels (MVP)
+
+### Overview
+
+Difficulty levels control how strictly RPG mechanics are enforced and what happens on failures. MVP uses a **standalone config on the `worlds` table** — not gated behind bundles.
+
+### Configuration (on `worlds` table)
+
+Three columns replace the bundle-gated system:
+
+| Column                | Type    | Default  | Notes                     |
+| --------------------- | ------- | -------- | ------------------------- |
+| `difficulty_modifier` | REAL    | `1.0`    | 0.5-2.0 DC multiplier      |
+| `difficulty_reroll`   | TEXT    | `'off'`  | `'off'` \| `'once'`       |
+| `difficulty_state`    | TEXT    | `'alive'` | `'alive'` \| `'dead'` (initial actor state on join) |
+
+### Preset Modes
+
+| Mode       | Modifier | Reroll   | State    | Notes                         |
+| ---------- | -------- | -------- | -------- | ----------------------------- |
+| Casual     | `0.7`    | `once`   | `alive`  | Easier DCs, one retry         |
+| Normal     | `1.0`    | `off`    | `alive`  | Standard rules                |
+| Hard       | `1.5`    | `off`    | `alive`  | Tougher DCs, no retries       |
+| Iron Man   | `1.0`    | `off`    | `dead`   | Permadeath — no resurrection  |
+
+### Iron Man — Permadeath Semantics
+
+**Trigger:** Actor's HP reaches 0 or a fatal failure occurs.
+
+**Effect:**
+- `world_actor_state.state` set to `'dead'` for that actor
+- Dead actor becomes **observer** — can READ world events, cannot act
+- No resurrection, no replay. Full world recreation (new UUID) required to bring back character
+
+**Prompt injection for dead actors:**
+```
+[OBSERVER MODE] Your character ({name}) has fallen. You can read the world's events but cannot act. The story continues without you.
+```
+
+### State Machine
+
+```
+alive ──fatal──▶ dead
+  │               │
+  └──(normal)─────┘  (no path back)
+```
+
+`dead` is terminal. `alive` is the default for actors joining a non-Iron-Man world.
+
+### Prompt Injection
+
+When active, inject difficulty rules into the LLM prompt:
+
+```
+[Active Rules]
+- Difficulty: {mode_name} (DC modifier: {modifier}x)
+- Rerolls: {reroll_policy}
+- Death: {death_policy}
+```
+
+### Implementation Notes
+
+1. Add three columns to `worlds` table (see schema.md)
+2. Add `world_actor_state` model — per-actor state per world
+3. Inject difficulty rules in prompt assembly
+4. Block `[ACT]` directives when actor state is `dead`
+5. Presets applied at world creation; custom values allowed
 
 ---
 

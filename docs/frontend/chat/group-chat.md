@@ -54,6 +54,7 @@ Extend 1x1 chat to multiple participants (users/characters/assistants). Keep tre
 
 - `GET /api/groups/:chatId` — fetch chat with participants and initiative state.
 - `POST /api/groups/:chatId/messages` — post message, body:
+
   ```json
   {
     "content": "string",
@@ -61,6 +62,7 @@ Extend 1x1 chat to multiple participants (users/characters/assistants). Keep tre
     "talkativity": "medium"
   }
   ```
+
 - `PUT /api/groups/:chatId/initiative` — adjust initiative points.
 
 ## UI Sketch

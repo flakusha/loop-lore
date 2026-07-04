@@ -56,7 +56,7 @@ Each enum encodes a state machine rather than a binary on/off:
 | ----------------------------------- | ------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------- |
 | `users.role`                        | `admin`, `user`, `viewer`, `solo`                                                                            | An `is_admin` boolean                                 |
 | `messages.visibility`               | `visible`, `hidden_by_user`, `hidden_by_moderator`, `auto_hidden`, `redacted`                                | A `hidden` boolean + separate `hidden_reason` column  |
-| `messages.status`                   | `sending`, `sent`, `confirmed`, `failed`, `cancelled`                                                        | A binary `sent` flag                                  |
+| `messages.status`                   | `sending`, `confirmed`, `failed`, `partial`, `rejected`, `cancelled`                                         | Message lifecycle state                               |
 | `actors.actor_type`                 | `user`, `character`, `narrator`, `system`                                                                    | Polymorphic `(participant_type, participant_id)` pair |
 | `actors.agent_type`                 | `none`, `ai`, `narrator`, `npc`                                                                              | An `is_bot` boolean                                   |
 | `generation_attempts.status`        | `pending`, `processing`, `streaming`, `completed`, `failed`, `cancelled`                                     | A single `done` boolean                               |
@@ -103,6 +103,7 @@ See `src/db/enums-core.ts`, `src/db/enums-content.ts`, `src/db/enums-generation.
 | display_name         | TEXT | NOT NULL                  | Shown in UI                                         |
 | password_hash        | TEXT |                           | NULL for demo/solo users                            |
 | role                 | TEXT | NOT NULL, DEFAULT 'user'  | 'admin', 'user', 'viewer', 'solo'                   |
+| status               | TEXT | NOT NULL, DEFAULT 'active'| 'active', 'disabled', 'deactivated'                 |
 | settings             | TEXT | DEFAULT '{}'              | JSON blob (prefs, UI config)                        |
 | birth_date           | TEXT |                           | ISO date (YYYY-MM-DD). NULL until age gate accepted |
 | age_gate_accepted_at | TEXT |                           | ISO timestamp. NULL until age gate accepted         |
@@ -236,9 +237,7 @@ Ref: [`docs/messages.md`](./messages.md) for full spec. Ref: [`docs/frontend/cha
 | content_format         | TEXT    | DEFAULT 'markdown'        | 'markdown', 'text', 'json', 'html'                                                           |
 | content_type           | TEXT    | DEFAULT 'text'            | 'text', 'action', 'narration', 'system', 'continuation'                                      |
 | content_encoding       | TEXT    | DEFAULT 'identity'        | 'identity', 'gzip', 'zstd', 'brotli'                                                         |
-| is_continuation        | INTEGER | NOT NULL, DEFAULT 0       | Boolean: 1 if this is a continuation of a partial message                                    |
-| continuation_index     | INTEGER |                           | Ordinal position in a continuation chain (1-based)                                           |
-| partial                | INTEGER | NOT NULL, DEFAULT 0       | Boolean: 1 if message content is partial/truncated                                           |
+| continuation_index     | INTEGER |                           | Set if message is continuation of a partial; NULL otherwise                                   |
 | model_id               | TEXT    |                           | LLM model used (NULL for user msgs)                                                          |
 | provider               | TEXT    |                           | 'openai', 'anthropic', 'local', etc.                                                         |
 | token_count_prompt     | INTEGER |                           |                                                                                              |
@@ -247,7 +246,7 @@ Ref: [`docs/messages.md`](./messages.md) for full spec. Ref: [`docs/frontend/cha
 | token_cost             | REAL    |                           | Estimated USD                                                                                |
 | generation_time_ms     | INTEGER |                           |                                                                                              |
 | tokens_per_second      | REAL    |                           |                                                                                              |
-| status                 | TEXT    | DEFAULT 'sent'            | 'sending', 'sent', 'confirmed', 'failed', 'cancelled'                                        |
+| status                 | TEXT    | DEFAULT 'sending'         | 'sending', 'confirmed', 'failed', 'partial', 'rejected', 'cancelled'                          |
 | visibility             | TEXT    | DEFAULT 'visible'         | State machine: 'visible', 'hidden_by_user', 'hidden_by_moderator', 'auto_hidden', 'redacted' |
 | hidden_by              | TEXT    | FK → actors.id            | Who performed the hide action                                                                |
 | hidden_reason          | TEXT    |                           | Free-text or policy reason                                                                   |
@@ -264,8 +263,8 @@ Ref: [`docs/messages.md`](./messages.md) for full spec. Ref: [`docs/frontend/cha
 ```
 Message A (root, parent_id = NULL)
 ├── Message B (reply to A, parent_id = A.id)
-│   ├── Message B1 (continuation of B, is_continuation=1)
-│   │   └── Message B2 (multi-continue, is_continuation=1)
+│   ├── Message B1 (continuation of B, continuation_index=1)
+│   │   └── Message B2 (multi-continue, continuation_index=2)
 │   └── [swipe] Message C (alternative to B, same parent_id)
 └── Message D (reply to A)
 ```
@@ -273,7 +272,7 @@ Message A (root, parent_id = NULL)
 - **Active path**: the chain from root to the latest visible leaf, picking the
   active swipe variant at each fork
 - **Swipe variants**: share the same `parent_id` — they are siblings, not children
-- **Continuations**: `is_continuation=1`, parented to the partial message they extend
+- **Continuations**: `continuation_index` set, parented to the partial message they extend
 
 ## Table: `generation_attempts`
 
@@ -320,7 +319,20 @@ Also supports continuation chains and multi-step pipelines.
 
 **Status lifecycle**: `pending → processing → streaming → completed`
 Each of `pending`, `processing`, `streaming` can transition to `failed` or `cancelled`.
-TTL: entries older than 1 hour eligible for garbage collection.
+
+**TTL cleanup**: Entries older than 1 hour eligible for garbage collection. Cleaned by:
+1. **Lazy cleanup**: On new generation attempt, server sweeps expired entries for the same chat_id
+2. **Periodic sweep**: Background timer runs every 15 minutes, `DELETE FROM generation_attempts WHERE updated_at < datetime('now', '-1 hour') AND status IN ('completed', 'failed', 'cancelled')`
+3. **On server startup**: Full sweep of expired entries
+Active generation attempts (`pending`, `processing`, `streaming`) are never swept — they must transition to terminal state or be explicitly cancelled.
+
+**Chat-switch guard**: When generation starts, `generation_attempts.chat_id` is set to the originating chat.
+If the user navigates to a different chat while generation is active, the response is still
+delivered to the original `chat_id`. The frontend displays the response in the correct chat context.
+When the user returns to the original chat, the response is visible. This is enforced by:
+1. Generation controller reads `chat_id` from the attempt, not from the current request context
+2. Message insert uses `generation_attempts.chat_id` as target
+3. Frontend uses `CancelReason.ChatSwitch` when navigating away mid-gen (does not cancel — only cancels if user explicitly requests it)
 
 ## Table: `assets`
 
@@ -408,7 +420,7 @@ Item instances placed in locations or carried by NPCs within a world.
 | location_id      | TEXT    | FK → locations.id         | Where the item is (null if carried)           |
 | owner_actor_id   | TEXT    | FK → actors.id            | Who carries it (null if in location)          |
 | quantity         | INTEGER | NOT NULL, DEFAULT 1       | Stack count                                   |
-| is_hidden        | INTEGER | NOT NULL, DEFAULT 0       | Boolean — hidden until discovered             |
+| visibility       | TEXT    | NOT NULL, DEFAULT 'visible' | 'visible', 'hidden'                           |
 | spawn_condition  | TEXT    |                           | Condition for appearing                       |
 | respawnable      | INTEGER | NOT NULL, DEFAULT 0       | Boolean — respawns after being taken          |
 | created_at       | TEXT    | DEFAULT CURRENT_TIMESTAMP |                                               |

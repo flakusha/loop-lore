@@ -215,7 +215,9 @@ Make the existing view templates actually work end-to-end.
 ## 🚫 Out of Scope for v0.1
 
 Memory system, artifacts, agentic workspace, multi-LLM story,
-RPG mechanics (stats/combat/loot), multi-user registration dashboard,
+RPG mechanics (stats/combat/loot, difficulty, death, replay),
+branch browser (swipe-based for 1x1, synced for group chats),
+multi-user registration dashboard,
 internationalization, PWA, mobile clients, admin dashboard, rate limiting,
 webhooks, OAuth providers.
 

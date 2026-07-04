@@ -11,21 +11,24 @@ Deep-dive docs in `/docs/` — read before touching related code:
 
 | File                       | Covers                                                                  |
 | -------------------------- | ----------------------------------------------------------------------- |
-| `docs/schema.md`           | Full DB schema (all tables: core, generation, story, actors, assets)    |
-| `docs/messages.md`         | Message persistence, detail levels, invalid message handling            |
-| `docs/users-sessions.md`   | User roles, remote sessions, demo/solo mode                             |
-| `docs/assets.md`           | Asset system (images/audio/video), upload pipeline, polymorphic linking |
-| `docs/actors.md`           | Actor data model: character cards, memories, lorebooks, inventory       |
-| `docs/character-setup.md`  | Character & persona system: multi-format import/export, impersonation   |
-| `docs/rpg-mechanics.md`    | RPG mechanics: stats, combat, equipment, dice, skills, XP, loot         |
-| `docs/architecture.md`     | System layers, request flow, docs serving                               |
-| `docs/build-deploy.md`     | Minimum-build setup, build pipeline, deployment options                 |
-| `docs/implementation.md`   | Tech stack, all modules (db, gen, story, assets, assistant, TUI)        |
-| `docs/tui.md`              | Blessed component hierarchy, keyboard map, data flow                    |
-| `docs/plugin-system.md`    | Plugin architecture: types, lifecycle, security, examples               |
-| `docs/memory-system.md`    | Three-tier memory: episodic, semantic, procedural                       |
-| `docs/artifacts-system.md` | Code, documents, datasets as polymorphic assets                         |
-| `docs/plan.md`             | MVP implementation checklist with week-by-week tasks                    |
+| `docs/spec/schema.md`           | Full DB schema (all tables: core, generation, story, actors, assets)    |
+| `docs/spec/messages.md`         | Message persistence, detail levels, invalid message handling            |
+| `docs/spec/users-sessions.md`   | User roles, remote sessions, demo/solo mode                             |
+| `docs/spec/assets.md`           | Asset system (images/audio/video), upload pipeline, polymorphic linking |
+| `docs/spec/actors.md`           | Actor data model: character cards, memories, lorebooks, inventory       |
+| `docs/spec/character-setup.md`  | Character & persona system: multi-format import/export, impersonation   |
+| `docs/spec/rpg-mechanics.md`    | RPG mechanics: stats, combat, equipment, dice, skills, XP, loot         |
+| `docs/spec/architecture.md`     | System layers, request flow, docs serving                               |
+| `docs/spec/build-deploy.md`     | Minimum-build setup, build pipeline, deployment options                 |
+| `docs/spec/implementation.md`   | Tech stack, all modules (db, gen, story, assets, assistant, TUI)        |
+| `docs/spec/tui.md`              | Blessed component hierarchy, keyboard map, data flow                    |
+| `docs/spec/plugin-system.md`    | Plugin architecture: types, lifecycle, security, examples               |
+| `docs/spec/memory-system.md`    | Three-tier memory: episodic, semantic, procedural                       |
+| `docs/spec/artifacts-system.md` | Code, documents, datasets as polymorphic assets                         |
+| `docs/meta/plan.md`             | MVP implementation checklist with week-by-week tasks                    |
+| `docs/spec/api-routes.md`       | API route contract — all endpoints, conventions, error envelope         |
+| `docs/spec/auth-middleware.md`  | Auth middleware — token flow, session model, role guard, rate limiting  |
+| `docs/spec/error-envelope.md`   | Standard error envelope — codes, shapes, patterns, frontend sync        |
 
 ### Frontend UX Spec (`docs/frontend/`)
 
@@ -160,7 +163,7 @@ docs/                    Specs, architecture, data model
 - Manual `screen.render()` after updates
 - Cleanup: restore terminal on exit (process handlers)
 - Share state via props/context, not globals
-- See `docs/tui.md` for component hierarchy
+- See `docs/spec/tui.md` for component hierarchy
 
 ### API Routes
 
@@ -174,14 +177,14 @@ docs/                    Specs, architecture, data model
 - Controller validates + delegates to service
 - Routes: GET/POST/DELETE `/api/assets`, POST/DELETE `/api/assets/:id/link`
 - Polymorphic linking via `asset_links` table
-- See `docs/assets.md` for full spec
+- See `docs/spec/assets.md` for full spec
 
 ### Assistant
 
 - Rule-based MVP in `src/assistant/service.ts`
 - Response shape: `{ type, content, confidence }`
 - Designed for swap to LLM backend later
-- See `docs/implementation.md` → Enhanced Assistant Chat
+- See `docs/spec/implementation.md` → Enhanced Assistant Chat
 
 ### Security
 
