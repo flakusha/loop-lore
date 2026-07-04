@@ -53,10 +53,8 @@ Key columns for this spec:
 | `content_type` | text | 'text', 'action', 'narration', 'system', 'continuation' |
 | `content_encoding` | text | 'identity', 'gzip', 'zstd', 'brotli' |
 | `parent_id` | UUID FK | Message tree parent |
-| `is_continuation` | int | 1 = continuation of partial message |
-| `continuation_index` | int | Ordinal in continuation chain |
-| `partial` | int | 1 = content is partial/truncated |
-| `status` | text | 'sending', 'sent', 'confirmed', 'partial', 'failed', 'rejected', 'cancelled' |
+| `continuation_index` | int | Set if message is continuation of a partial |
+| `status` | text | 'sending', 'confirmed', 'failed', 'partial', 'rejected', 'cancelled' |
 | `visibility` | text | 'visible', 'hidden_by_user', 'hidden_by_moderator', 'auto_hidden', 'redacted' |
 | `idempotency_key` | text | Retry dedup |
 | `created_at` | text | ISO timestamp |
@@ -65,23 +63,24 @@ Key columns for this spec:
 ### Status Scenarios
 
 **Happy path — user message without LLM:**
+
 ```
 1. Client sends POST /api/messages
 2. Server inserts messages row → status="sending"
-3. Server confirms write → status="sent"
-4. No LLM trigger needed → status="confirmed"
+3. Server confirms write → status="confirmed"
 ```
 
 **Happy path — user message triggering LLM:**
+
 ```
 1. Client sends POST /api/messages
 2. Server inserts messages row → status="sending"
-3. Server confirms write → status="sent"
-4. Server calls LLM API, receives full response
-5. Server writes response message → status="confirmed"
+3. Server calls LLM API, receives full response
+4. Server writes response message → status="confirmed"
 ```
 
 **LLM API error (5xx, timeout, connection failure):**
+
 ```
 1. Server sends prompt to LLM
 2. API returns error (no content received)
@@ -96,6 +95,7 @@ Key columns for this spec:
 ```
 
 **Content policy violation (post-generation):**
+
 ```
 1. LLM returns full response
 2. Server policy detector flags content as violating
@@ -108,35 +108,37 @@ Key columns for this spec:
 ```
 
 **Timeout mid-stream (partial content):**
+
 ```
 1. LLM begins streaming tokens
 2. Server-side GENERATION_TIMEOUT_MS fires
 3. Server captures streamed content as partial_content
-4. Server marks attempt.status = "cancelled", partial_content = "<streamed so far>"
-5. Server sets message.partial = 1, message.status = "partial"
-6. Client shows partial content with "Continue" button
+4. Server marks attempt.status = "cancelled", message.status = "partial"
+5. Client shows partial content with "Continue" button
 7. On Continue: POST /api/generation/continue { messageId }
 8. Server reads partial_content, builds prefix prompt
 9. Server sends to LLM, appends to existing content
 10. Continuation stored as new message row:
-    is_continuation=1, continuation_index=2, parent_id=original
+    continuation_index=2, parent_id=original
 11. Client appends continuation to same bubble
-12. Multiple continues chain: A(partial=1, idx=0) → A-2(idx=2) → A-3(idx=3)
+12. Multiple continues chain: A(status=partial, idx=0) → A-2(idx=2) → A-3(idx=3)
 ```
 
 **User cancels mid-generation:**
+
 ```
 1. LLM is streaming tokens
 2. User presses Cancel / Escape
 3. Client sends POST /api/generation/cancel { messageId }
 4. Server captures whatever has streamed as partial_content
 5. Server marks attempt.status = "cancelled" (reason = "user_cancel")
-6. If partial content exists → message.partial = 1, message.status = "cancelled"
-   User can Continue (same as partial flow)
-7. If no content yet → message.status = "cancelled", no recovery
+6. Server marks message.status = "cancelled"
+7. If content was captured → user can Continue (same as partial flow)
+8. If no content yet → no recovery
 ```
 
 **Network failure (send never reached server):**
+
 ```
 1. Client sends POST /api/messages
 2. Network fails before server receives
@@ -148,6 +150,7 @@ Key columns for this spec:
 ```
 
 **Max retries exhausted:**
+
 ```
 1. Message is in "failed" state
 2. User attempts retry
@@ -157,6 +160,7 @@ Key columns for this spec:
 ```
 
 **Regenerate a confirmed message:**
+
 ```
 1. User requests regeneration on a confirmed message
 2. Server creates new generation_attempt
@@ -260,5 +264,4 @@ Messages may become invalid due to:
 4. Hidden messages set `visibility` to appropriate state (not removed from DB)
 5. Admins view hidden via `/api/messages?showHidden=true`
 6. Reveal in UI via "Show hidden" toggle
-
 
