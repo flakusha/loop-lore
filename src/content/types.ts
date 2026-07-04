@@ -1,4 +1,3 @@
-// Content types — ContentEncoding sourced from ../db/enums
 import type { ContentEncoding } from "../db/enums";
 
 export type { ContentEncoding };

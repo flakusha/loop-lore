@@ -73,7 +73,7 @@ describe("jsonError", () => {
   });
 
   test("explicitly passes undefined code as omitted", async () => {
-    const res = jsonError("msg", HttpStatus.BadRequest, undefined);
+    const res = jsonError("msg", HttpStatus.BadRequest);
     const body = await res.json();
     expect(body).not.toHaveProperty("code");
   });
@@ -184,7 +184,7 @@ describe("jsonCreated", () => {
   });
 
   test("returns 201 with explicit undefined", async () => {
-    const res = jsonCreated(undefined);
+    const res = jsonCreated();
     expect(res.status).toBe(201);
     const text = await res.text();
     expect(text).toBe("");
