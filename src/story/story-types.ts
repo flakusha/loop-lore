@@ -79,11 +79,11 @@ export const DEFAULT_QUALITY_THRESHOLDS: QualityThresholds = {
 
 export const DEFAULT_QUALITY_WEIGHTS: Record<QD, number> = {
   character_voice: 0.25,
-  plot_coherence: 0.20,
-  lore_consistency: 0.20,
+  plot_coherence: 0.2,
+  lore_consistency: 0.2,
   narrative_quality: 0.15,
-  quest_relevance: 0.10,
-  creativity: 0.10,
+  quest_relevance: 0.1,
+  creativity: 0.1,
 };
 
 // ─── GM Decision ─────────────────────────────────────────────────
