@@ -154,7 +154,10 @@ export function extractEvents(
         timestamp,
         data: {
           fromActorId: null,
-          toActorId: match[0].toLowerCase().includes("drops") || match[0].toLowerCase().includes("leaves") ? null : actorId,
+          toActorId:
+            match[0].toLowerCase().includes("drops") || match[0].toLowerCase().includes("leaves")
+              ? null
+              : actorId,
           itemName: match[1].trim(),
           quantity: 1,
         },

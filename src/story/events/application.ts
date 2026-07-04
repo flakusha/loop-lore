@@ -157,11 +157,7 @@ async function applyWorldLoreUpdate(db: Kysely<DB>, worldId: string, event: Worl
   if (!entry) return;
 
   // Append new lore to world's lore field
-  const world = await db
-    .selectFrom("worlds")
-    .select("lore")
-    .where("id", "=", worldId)
-    .executeTakeFirst();
+  const world = await db.selectFrom("worlds").select("lore").where("id", "=", worldId).executeTakeFirst();
 
   if (world) {
     const existingLore = world.lore ?? "";
@@ -196,7 +192,11 @@ async function applyCombatEvent(db: Kysely<DB>, event: WorldEvent): Promise<void
   }
 }
 
-async function applyItemTransfer(itemsService: ItemsService, worldId: string, event: WorldEvent): Promise<void> {
+async function applyItemTransfer(
+  itemsService: ItemsService,
+  worldId: string,
+  event: WorldEvent,
+): Promise<void> {
   // For v1: just log the transfer. Actual item resolution requires
   // matching item names to definitions, which needs LLM-assisted matching.
   // This placeholder ensures the event is recorded without error.

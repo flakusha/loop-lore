@@ -6,16 +6,8 @@
  * Future: delegate to a dedicated LLM with structured output.
  */
 import { QualityDimension } from "../db/enums";
-import {
-  DEFAULT_QUALITY_THRESHOLDS,
-  DEFAULT_QUALITY_WEIGHTS,
-} from "./types";
-import type {
-  QualityScores,
-  QualityEvaluation,
-  QualityThresholds,
-  StoryContext,
-} from "./types";
+import { DEFAULT_QUALITY_THRESHOLDS, DEFAULT_QUALITY_WEIGHTS } from "./types";
+import type { QualityScores, QualityEvaluation, QualityThresholds, StoryContext } from "./types";
 
 // ── Scoring Config ───────────────────────────────────────────
 
@@ -45,24 +37,42 @@ export class QualityEvaluator {
    * Evaluate a generated response against the story context.
    * Returns detailed scores and a pass/regenerate/escalate decision.
    */
-  evaluate(
-    response: string,
-    prompt: string,
-    actorName: string,
-    context?: StoryContext,
-  ): QualityEvaluation {
+  evaluate(response: string, prompt: string, actorName: string, context?: StoryContext): QualityEvaluation {
     const scores = this.computeScores(response, prompt, actorName, context);
     const overall = scores.overall;
 
     const questNames = context?.activeQuests.map((q) => q.name).join(", ");
 
     const details: QualityEvaluation["details"] = {
-      character_voice: { score: scores.character_voice, reasoning: this.getReasoning("character_voice", scores.character_voice, response, actorName) },
-      plot_coherence: { score: scores.plot_coherence, reasoning: this.getReasoning("plot_coherence", scores.plot_coherence, response, prompt) },
-      lore_consistency: { score: scores.lore_consistency, reasoning: this.getReasoning("lore_consistency", scores.lore_consistency, response, context?.world.lore) },
-      narrative_quality: { score: scores.narrative_quality, reasoning: this.getReasoning("narrative_quality", scores.narrative_quality, response) },
-      quest_relevance: { score: scores.quest_relevance, reasoning: this.getReasoning("quest_relevance", scores.quest_relevance, response, questNames) },
-      creativity: { score: scores.creativity, reasoning: this.getReasoning("creativity", scores.creativity, response) },
+      character_voice: {
+        score: scores.character_voice,
+        reasoning: this.getReasoning("character_voice", scores.character_voice, response, actorName),
+      },
+      plot_coherence: {
+        score: scores.plot_coherence,
+        reasoning: this.getReasoning("plot_coherence", scores.plot_coherence, response, prompt),
+      },
+      lore_consistency: {
+        score: scores.lore_consistency,
+        reasoning: this.getReasoning(
+          "lore_consistency",
+          scores.lore_consistency,
+          response,
+          context?.world.lore,
+        ),
+      },
+      narrative_quality: {
+        score: scores.narrative_quality,
+        reasoning: this.getReasoning("narrative_quality", scores.narrative_quality, response),
+      },
+      quest_relevance: {
+        score: scores.quest_relevance,
+        reasoning: this.getReasoning("quest_relevance", scores.quest_relevance, response, questNames),
+      },
+      creativity: {
+        score: scores.creativity,
+        reasoning: this.getReasoning("creativity", scores.creativity, response),
+      },
     };
 
     const thresholds = this.config.thresholds;
@@ -93,12 +103,7 @@ export class QualityEvaluator {
   }
 
   /** Get the raw dimension scores without full evaluation metadata */
-  computeScore(
-    response: string,
-    prompt: string,
-    actorName: string,
-    context?: StoryContext,
-  ): QualityScores {
+  computeScore(response: string, prompt: string, actorName: string, context?: StoryContext): QualityScores {
     return this.computeScores(response, prompt, actorName, context);
   }
 
@@ -119,11 +124,11 @@ export class QualityEvaluator {
 
     const overall = Math.round(
       characterVoice * this.config.weights.character_voice +
-      plotCoherence * this.config.weights.plot_coherence +
-      loreConsistency * this.config.weights.lore_consistency +
-      narrativeQuality * this.config.weights.narrative_quality +
-      questRelevance * this.config.weights.quest_relevance +
-      creativity * this.config.weights.creativity,
+        plotCoherence * this.config.weights.plot_coherence +
+        loreConsistency * this.config.weights.lore_consistency +
+        narrativeQuality * this.config.weights.narrative_quality +
+        questRelevance * this.config.weights.quest_relevance +
+        creativity * this.config.weights.creativity,
     );
 
     return {
@@ -155,9 +160,7 @@ export class QualityEvaluator {
     if (hasFirstPerson) score += 5;
 
     // Deduct for generic phrases
-    const generic = [
-      "in a voice", "in a tone", "he said", "she said", "they said",
-    ];
+    const generic = ["in a voice", "in a tone", "he said", "she said", "they said"];
     for (const phrase of generic) {
       if (lowerResponse.includes(phrase)) score -= 3;
     }
@@ -194,8 +197,11 @@ export class QualityEvaluator {
 
     // Check for contradictions
     const contradictionPhrases = [
-      "but suddenly", "however", "on the other hand",
-      "contrary to", "despite this",
+      "but suddenly",
+      "however",
+      "on the other hand",
+      "contrary to",
+      "despite this",
     ];
     for (const phrase of contradictionPhrases) {
       if (lowerResponse.includes(phrase)) score -= 2;
@@ -203,12 +209,20 @@ export class QualityEvaluator {
 
     // Check for logical flow markers
     const flowMarkers = [
-      "because", "since", "as a result", "therefore",
-      "this causes", "leading to", "in response",
+      "because",
+      "since",
+      "as a result",
+      "therefore",
+      "this causes",
+      "leading to",
+      "in response",
     ];
     let hasFlow = false;
     for (const m of flowMarkers) {
-      if (lowerResponse.includes(m)) { hasFlow = true; break; }
+      if (lowerResponse.includes(m)) {
+        hasFlow = true;
+        break;
+      }
     }
     if (hasFlow) score += 10;
 
@@ -229,10 +243,12 @@ export class QualityEvaluator {
 
     if (loreEntities.size > 0 && responseEntities.size > 0) {
       let matchCount = 0;
-      outer:
-      for (const e of responseEntities) {
+      outer: for (const e of responseEntities) {
         for (const le of loreEntities) {
-          if (le.includes(e) || e.includes(le)) { matchCount++; continue outer; }
+          if (le.includes(e) || e.includes(le)) {
+            matchCount++;
+            continue outer;
+          }
         }
       }
       const matchRatio = matchCount / responseEntities.size;
@@ -257,8 +273,18 @@ export class QualityEvaluator {
 
     // Show, don't tell — look for sensory details
     const sensory = [
-      "smell", "sound", "feel", "taste", "sight", "hear",
-      "glimmer", "echo", "fragrant", "cold", "warm", "dark",
+      "smell",
+      "sound",
+      "feel",
+      "taste",
+      "sight",
+      "hear",
+      "glimmer",
+      "echo",
+      "fragrant",
+      "cold",
+      "warm",
+      "dark",
     ];
     const lowerResponse = response.toLowerCase();
     let sensoryCount = 0;
@@ -272,11 +298,13 @@ export class QualityEvaluator {
     if (dialogueCount >= 2) score += 8;
 
     // Tense consistency (check for switching between past/present)
-    const pastVerbs = (response.match(/\b(was|were|had|did|went|said|walked|looked|turned|spoke)\b/gi) ?? []).length;
+    const pastVerbs = (response.match(/\b(was|were|had|did|went|said|walked|looked|turned|spoke)\b/gi) ?? [])
+      .length;
     const presentVerbs = (response.match(/\b(is|are|has|do|go|say|walk|look|turn|speak)\b/gi) ?? []).length;
     if (pastVerbs > 0 && presentVerbs > 0) {
       const ratio = pastVerbs / (pastVerbs + presentVerbs);
-      if (ratio > 0.8 || ratio < 0.2) score += 5; // Consistent tense
+      if (ratio > 0.8 || ratio < 0.2)
+        score += 5; // Consistent tense
       else score -= 5; // Mixed tense
     }
 
@@ -306,9 +334,19 @@ export class QualityEvaluator {
 
     // Check for progress indicators
     const progressWords = [
-      "found", "discovered", "defeated", "rescued", "collected",
-      "obtained", "acquired", "completed", "progress", "quest",
-      "objective", "goal", "mission",
+      "found",
+      "discovered",
+      "defeated",
+      "rescued",
+      "collected",
+      "obtained",
+      "acquired",
+      "completed",
+      "progress",
+      "quest",
+      "objective",
+      "goal",
+      "mission",
     ];
     const hasProgress = progressWords.some((w) => responseLower.includes(w));
     if (hasProgress) score += 10;
@@ -317,19 +355,28 @@ export class QualityEvaluator {
   }
 
   /** Score creativity (0-100) */
-  private scoreCreativity(
-    response: string,
-    recentTurns?: { response: string | null }[],
-  ): number {
+  private scoreCreativity(response: string, recentTurns?: { response: string | null }[]): number {
     let score = 65;
 
     const lowerResponse = response.toLowerCase();
 
     // Unusual/evocative word usage
     const evocativeWords = [
-      "unexpected", "surprising", "peculiar", "strange", "mysterious",
-      "unsettling", "beautiful", "terrifying", "ancient", "forgotten",
-      "glimmer", "shadow", "whisper", "fade", "emerge",
+      "unexpected",
+      "surprising",
+      "peculiar",
+      "strange",
+      "mysterious",
+      "unsettling",
+      "beautiful",
+      "terrifying",
+      "ancient",
+      "forgotten",
+      "glimmer",
+      "shadow",
+      "whisper",
+      "fade",
+      "emerge",
     ];
     let evocativeCount = 0;
     for (const w of evocativeWords) {
@@ -376,7 +423,24 @@ export class QualityEvaluator {
     const matches = text.match(capitalizedPattern);
     if (matches) {
       for (const match of matches) {
-        if (!["The", "A", "An", "This", "That", "These", "Those", "It", "He", "She", "They", "We", "You", "I"].includes(match)) {
+        if (
+          ![
+            "The",
+            "A",
+            "An",
+            "This",
+            "That",
+            "These",
+            "Those",
+            "It",
+            "He",
+            "She",
+            "They",
+            "We",
+            "You",
+            "I",
+          ].includes(match)
+        ) {
           entities.add(match.toLowerCase());
         }
       }
@@ -398,34 +462,55 @@ export class QualityEvaluator {
   private getReasoning(dimension: string, score: number, response: string, context?: string): string {
     if (score >= 80) {
       switch (dimension) {
-        case "character_voice": return "Strong consistent character voice with natural dialogue";
-        case "plot_coherence": return "Response logically follows from context";
-        case "lore_consistency": return "References known world entities correctly";
-        case "narrative_quality": return "Well-paced prose with sensory detail";
-        case "quest_relevance": return "Directly addresses active quest objectives";
-        case "creativity": return "Original and evocative narrative choices";
-        default: return "Good quality";
+        case "character_voice":
+          return "Strong consistent character voice with natural dialogue";
+        case "plot_coherence":
+          return "Response logically follows from context";
+        case "lore_consistency":
+          return "References known world entities correctly";
+        case "narrative_quality":
+          return "Well-paced prose with sensory detail";
+        case "quest_relevance":
+          return "Directly addresses active quest objectives";
+        case "creativity":
+          return "Original and evocative narrative choices";
+        default:
+          return "Good quality";
       }
     }
     if (score >= 50) {
       switch (dimension) {
-        case "character_voice": return "Adequate character voice, minor inconsistencies";
-        case "plot_coherence": return "Generally coherent but some weak connections";
-        case "lore_consistency": return "Mostly consistent with world lore";
-        case "narrative_quality": return "Functional prose, could use more detail";
-        case "quest_relevance": return "Marginally touches on quest elements";
-        case "creativity": return "Some creative elements but follows expected patterns";
-        default: return "Acceptable quality";
+        case "character_voice":
+          return "Adequate character voice, minor inconsistencies";
+        case "plot_coherence":
+          return "Generally coherent but some weak connections";
+        case "lore_consistency":
+          return "Mostly consistent with world lore";
+        case "narrative_quality":
+          return "Functional prose, could use more detail";
+        case "quest_relevance":
+          return "Marginally touches on quest elements";
+        case "creativity":
+          return "Some creative elements but follows expected patterns";
+        default:
+          return "Acceptable quality";
       }
     }
     switch (dimension) {
-      case "character_voice": return "Weak or absent character voice";
-      case "plot_coherence": return "Poor logical connection to prior events";
-      case "lore_consistency": return "Contradicts or ignores world lore";
-      case "narrative_quality": return "Flat or confusing prose";
-      case "quest_relevance": return "Ignores active quest context";
-      case "creativity": return "Generic or repetitive content";
-      default: return "Low quality";
+      case "character_voice":
+        return "Weak or absent character voice";
+      case "plot_coherence":
+        return "Poor logical connection to prior events";
+      case "lore_consistency":
+        return "Contradicts or ignores world lore";
+      case "narrative_quality":
+        return "Flat or confusing prose";
+      case "quest_relevance":
+        return "Ignores active quest context";
+      case "creativity":
+        return "Generic or repetitive content";
+      default:
+        return "Low quality";
     }
   }
 }

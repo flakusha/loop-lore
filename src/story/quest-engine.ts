@@ -10,11 +10,7 @@ import type { DB } from "../db/schema";
 import { QuestType, QuestStatus, QuestProgressStatus } from "../db/enums";
 import type { QuestType as QT } from "../db/enums";
 import { randomUUID } from "node:crypto";
-import type {
-  QuestConfig,
-  QuestReward,
-  WorldEvent,
-} from "./types";
+import type { QuestConfig, QuestReward, WorldEvent } from "./types";
 import { WorldStateService } from "./world-state";
 import { ItemsService } from "./items";
 import { applyEvents } from "./events";
@@ -84,11 +80,7 @@ export class QuestEngine {
    * Process a world event and update matching quest progress.
    * Returns all quests that had their progress changed.
    */
-  async processEvent(
-    worldId: string,
-    chatId: string,
-    events: WorldEvent[],
-  ): Promise<QuestProgressEntry[]> {
+  async processEvent(worldId: string, chatId: string, events: WorldEvent[]): Promise<QuestProgressEntry[]> {
     const activeQuests = await this.db
       .selectFrom("quests")
       .selectAll()
@@ -119,11 +111,7 @@ export class QuestEngine {
     delta: number,
     sourceMessageId?: string,
   ): Promise<QuestProgressEntry> {
-    const quest = await this.db
-      .selectFrom("quests")
-      .selectAll()
-      .where("id", "=", questId)
-      .executeTakeFirst();
+    const quest = await this.db.selectFrom("quests").selectAll().where("id", "=", questId).executeTakeFirst();
 
     if (!quest) throw new Error(`Quest ${questId} not found`);
 
@@ -228,7 +216,16 @@ export class QuestEngine {
    * Returns 0 if the event doesn't advance this quest.
    */
   private calculateProgress(
-    quest: { id: string; type: string; config: string; progress: number; target: number; name: string; narrative_hooks: string; rewards: string },
+    quest: {
+      id: string;
+      type: string;
+      config: string;
+      progress: number;
+      target: number;
+      name: string;
+      narrative_hooks: string;
+      rewards: string;
+    },
     event: WorldEvent,
   ): number {
     const config = JSON.parse(quest.config) as QuestConfig;
@@ -371,9 +368,7 @@ export class QuestEngine {
           chat_id: chatId,
           progress: newProgress,
           status: completed ? QuestProgressStatus.Completed : QuestProgressStatus.Active,
-          contributed_events: sourceMessageId
-            ? JSON.stringify([sourceMessageId])
-            : "[]",
+          contributed_events: sourceMessageId ? JSON.stringify([sourceMessageId]) : "[]",
           completed_at: completed ? new Date().toISOString() : null,
         })
         .execute();
@@ -397,7 +392,12 @@ export class QuestEngine {
       milestoneText = newMilestone.narrative;
       // Inject narration milestone
       if (this.worldState) {
-        await this.worldState.snapshot(quest.world_id, undefined, undefined, `Quest milestone: ${quest.name} - ${milestoneText}`);
+        await this.worldState.snapshot(
+          quest.world_id,
+          undefined,
+          undefined,
+          `Quest milestone: ${quest.name} - ${milestoneText}`,
+        );
       }
     }
 
@@ -422,11 +422,7 @@ export class QuestEngine {
   /**
    * Distribute quest rewards on completion.
    */
-  private async distributeRewards(
-    questId: string,
-    worldId: string,
-    rewardsJson: string,
-  ): Promise<void> {
+  private async distributeRewards(questId: string, worldId: string, rewardsJson: string): Promise<void> {
     const rewards = JSON.parse(rewardsJson) as QuestReward;
     if (Object.keys(rewards).length === 0) return;
 
