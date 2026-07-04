@@ -76,7 +76,7 @@ function createSchema(database: Database): void {
       token_cost REAL,
       generation_time_ms INTEGER,
       tokens_per_second REAL,
-      status TEXT NOT NULL DEFAULT 'sent',
+      status TEXT NOT NULL DEFAULT 'sending',
       visibility TEXT NOT NULL DEFAULT 'visible',
       hidden_by TEXT REFERENCES actors(id),
       hidden_reason TEXT,
@@ -392,11 +392,11 @@ describe("Database schema", () => {
 
       sqlite.run(
         "INSERT INTO messages (id, chat_id, actor_id, role, content, content_type, status) VALUES (?, ?, ?, ?, ?, ?, ?)",
-        ["msg-actor-1", chatId, "actor-user-1", "user", "Hi Bob!", "text", "sent"],
+        ["msg-actor-1", chatId, "actor-user-1", "user", "Hi Bob!", "text", "confirmed"],
       );
       sqlite.run(
         "INSERT INTO messages (id, chat_id, actor_id, role, content, content_type, status) VALUES (?, ?, ?, ?, ?, ?, ?)",
-        ["msg-actor-2", chatId, "actor-char-1", "assistant", "Hello Alice!", "text", "sent"],
+        ["msg-actor-2", chatId, "actor-char-1", "assistant", "Hello Alice!", "text", "confirmed"],
       );
 
       const msgs = sqlite
@@ -421,7 +421,7 @@ describe("Database schema", () => {
       expect(() => {
         sqlite.run(
           "INSERT INTO messages (id, chat_id, actor_id, role, content, content_type, status) VALUES (?, ?, ?, ?, ?, ?, ?)",
-          ["msg-orphan", "chat-vis", "nonexistent-actor", "user", "test", "text", "sent"],
+          ["msg-orphan", "chat-vis", "nonexistent-actor", "user", "test", "text", "confirmed"],
         );
       }).toThrow();
     });

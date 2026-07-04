@@ -133,3 +133,24 @@ export const ItemRarity = {
   Unique: "unique",
 } as const;
 export type ItemRarity = (typeof ItemRarity)[keyof typeof ItemRarity];
+
+export const ItemVisibility = {
+  Visible: "visible",
+  Hidden: "hidden",
+} as const;
+export type ItemVisibility = (typeof ItemVisibility)[keyof typeof ItemVisibility];
+
+// ── State Machine Definitions ────────────────────────────
+import { createMachine, type StateDef } from "./state";
+
+export const itemVisibilityDef: StateDef<ItemVisibility> = {
+  values: ["visible", "hidden"] as const,
+  initial: "visible",
+  transitions: {
+    visible: ["hidden"],
+    hidden: ["visible"],
+  },
+  terminal: [],
+};
+
+export const itemVisibilityMachine = createMachine(itemVisibilityDef);
