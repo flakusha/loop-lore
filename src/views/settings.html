@@ -1,0 +1,157 @@
+<!-- Settings Page -->
+<div class="app-layout">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <span class="logo">loop-lore</span>
+    </div>
+
+    <nav class="sidebar-nav">
+      <div class="nav-section-title">Navigation</div>
+
+      <a class="nav-item" href="/views/chat" hx-get="/views/chat" hx-target="#app-root" hx-swap="innerHTML">
+        <span>Chat</span>
+      </a>
+
+      <a
+        class="nav-item"
+        href="/views/characters"
+        hx-get="/views/characters"
+        hx-target="#app-root"
+        hx-swap="innerHTML"
+      >
+        <span>Characters</span>
+      </a>
+
+      <a
+        class="nav-item"
+        href="/views/gallery"
+        hx-get="/views/gallery"
+        hx-target="#app-root"
+        hx-swap="innerHTML"
+      >
+        <span>Gallery</span>
+      </a>
+
+      <div class="nav-section-title">Settings</div>
+
+      <div class="nav-item active">
+        <span>General</span>
+      </div>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="user-info">
+        <img
+          class="avatar"
+          src="/img/default-avatar.png"
+          alt="User avatar"
+          onerror="this.style.display = 'none'"
+          style="background: var(--bg-tertiary)"
+        />
+        <div class="details">
+          <div class="name" id="user-display-name">User</div>
+          <div class="role" id="user-role">solo</div>
+        </div>
+        <button
+          class="btn-icon"
+          title="Back to chat"
+          hx-get="/views/chat"
+          hx-target="#app-root"
+          hx-swap="innerHTML"
+        >
+          ↤
+        </button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main content -->
+  <main class="main-content">
+    <header class="main-header">
+      <span class="title">Settings</span>
+    </header>
+
+    <div class="chat-area">
+      <div class="empty-state" style="padding: var(--space-12)">
+        <div class="icon" style="font-size: 32px; margin-bottom: var(--space-4)">⚙</div>
+        <div class="title">General Settings</div>
+
+        <div style="margin-top: var(--space-6); width: 100%; max-width: 400px">
+          <!-- Display Name -->
+          <div class="form-group">
+            <label class="form-label">Display Name</label>
+            <input
+              type="text"
+              class="form-input"
+              placeholder="Your display name"
+              value="User"
+              hx-patch="/api/user"
+              hx-trigger="change"
+              hx-target-error="#toast-container"
+            />
+          </div>
+
+          <!-- Theme Selector -->
+          <div class="form-group">
+            <label class="form-label">Theme</label>
+            <select class="form-select" x-model="currentTheme" @change="setTheme($event.target.value)">
+              <option value="default">Default (Dark)</option>
+              <option value="light">Light</option>
+              <option value="bright">Bright</option>
+              <option value="colorful">Colorful</option>
+              <option value="monochrome">Monochrome</option>
+              <option value="no-icons">No Icons</option>
+              <option value="dracula">Dracula</option>
+              <option value="nord">Nord</option>
+              <option value="github-dark">GitHub Dark</option>
+              <option value="material">Material</option>
+            </select>
+          </div>
+
+          <!-- Theme Preview -->
+          <div class="protip" style="margin-top: var(--space-4)">
+            <strong>Theme Options:</strong>
+            <ul style="margin-top: var(--space-2); margin-bottom: 0; padding-left: 1.2em">
+              <li><strong>Default (Dark)</strong> - Original dark theme</li>
+              <li><strong>Light</strong> - Light background with dark text</li>
+              <li><strong>Bright</strong> - High contrast vibrant theme</li>
+              <li><strong>Colorful</strong> - Vibrant saturated colors</li>
+              <li><strong>Monochrome</strong> - Grayscale high-contrast</li>
+              <li><strong>No Icons</strong> - Minimal theme with decorative icons hidden</li>
+              <li><strong>Dracula</strong> - Popular dark theme (dracula/lua)</li>
+              <li><strong>Nord</strong> - Arctic color palette (arctic-violet)</li>
+              <li><strong>GitHub Dark</strong> - GitHub's dark syntax theme</li>
+              <li><strong>Material</strong> - Material Design 3 inspired</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+  // Settings page Alpine state
+  function settingsPage() {
+    return {
+      currentTheme: "default",
+
+      init() {
+        // Load saved theme from localStorage
+        const savedTheme = localStorage.getItem("theme-preference");
+        if (savedTheme) {
+          this.currentTheme = savedTheme;
+        }
+      },
+
+      setTheme(themeId) {
+        const app = Alpine?.closest(document.body)?.__x;
+        if (app) {
+          app.setTheme(themeId);
+        }
+        this.currentTheme = themeId;
+      },
+    };
+  }
+</script>
