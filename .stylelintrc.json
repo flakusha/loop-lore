@@ -1,0 +1,12 @@
+{
+  "extends": "stylelint-config-standard",
+  "ignoreFiles": ["dist/**", "node_modules/**"],
+  "rules": {
+    "custom-property-empty-line-before": null,
+    "rule-empty-line-before": null,
+    "property-no-vendor-prefix": null,
+    "value-keyword-case": ["lower", { "ignoreKeywords": ["BlinkMacSystemFont", "optimizeLegibility"] }],
+    "no-descending-specificity": null,
+    "keyframes-name-pattern": null
+  }
+}
