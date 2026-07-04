@@ -83,7 +83,9 @@ export const MessageStatus = {
   Sending: "sending",
   Sent: "sent",
   Confirmed: "confirmed",
+  Partial: "partial",
   Failed: "failed",
+  Rejected: "rejected",
   Cancelled: "cancelled",
 } as const;
 export type MessageStatus = (typeof MessageStatus)[keyof typeof MessageStatus];
