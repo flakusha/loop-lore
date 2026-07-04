@@ -55,6 +55,10 @@ Bridge between existing backend and user-facing UIs.
   - Sample plugins (dice, roll, simple tools) buildable early
   - Full UI/registry wiring deferred
 - [ ] **Client Extensions**: WebUI/TUI plugin architecture
+- [ ] **Conversation Branching**: Tree navigation for chat history
+- [ ] **Character Relationships**: Relationship graph and stat tracking
+- [ ] **Co-editing**: Real-time collaborative chat editing
+- [ ] **Prompt Library**: Tagged prompt snippets and templates
 
 ### P1: Infrastructure
 
@@ -78,6 +82,9 @@ Bridge between existing backend and user-facing UIs.
 - [ ] **Prompt Chaining**: Reusable templates for complex reasoning
 - [ ] **Tool Chaining**: Dynamic tool output→input chaining
 - [ ] **AutoGPT-like Agents**: Autonomous self-directing agents
+- [ ] **Conversation Analytics**: Token/timing/sentiment dashboards
+- [ ] **Content Discovery**: Recommendation engine and similar content finder
+- [ ] **Memory Visualizer**: Timeline/graph view of memory entries
 
 ### P2: User Experience
 
@@ -118,6 +125,15 @@ Bridge between existing backend and user-facing UIs.
 - [ ] **Cross-Platform Clients**: Mobile and desktop native
 - [ ] **File System Integrations**: Google Drive, OneDrive, Dropbox
 - [ ] **Communication Integrations**: Slack, Discord, Telegram
+- [ ] **CDN Integration**: Content delivery network for assets
+- [ ] **Edge Functions**: Serverless function support
+- [ ] **Multi-Region Deployments**: Geographic distribution
+- [ ] **Prompt Optimization**: AI-suggested prompt improvements
+- [ ] **Fine-tuning Interface**: Model training UI
+- [ ] **Synthetic Data Generation**: Training data creation tools
+- [ ] **Plugin Marketplace**: Community plugins with ratings
+- [ ] **Template Marketplace**: Shared templates and prompts
+- [ ] **Community Moderation**: Content moderation tools
 
 ## Dual-Use Architecture: RPG + Agentic Workspace
 
