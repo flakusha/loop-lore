@@ -13,6 +13,13 @@ export const UserRole = {
 } as const;
 export type UserRole = (typeof UserRole)[keyof typeof UserRole];
 
+export const UserStatus = {
+  Active: "active",
+  Disabled: "disabled",
+  Deactivated: "deactivated",
+} as const;
+export type UserStatus = (typeof UserStatus)[keyof typeof UserStatus];
+
 // ── Chats ─────────────────────────────────────────────────
 export const ChatType = {
   Direct: "direct",
@@ -81,10 +88,9 @@ export type MessageContentType = (typeof MessageContentType)[keyof typeof Messag
 
 export const MessageStatus = {
   Sending: "sending",
-  Sent: "sent",
   Confirmed: "confirmed",
-  Partial: "partial",
   Failed: "failed",
+  Partial: "partial",
   Rejected: "rejected",
   Cancelled: "cancelled",
 } as const;
@@ -98,3 +104,61 @@ export const MessageVisibility = {
   Redacted: "redacted",
 } as const;
 export type MessageVisibility = (typeof MessageVisibility)[keyof typeof MessageVisibility];
+
+// ── State Machine Definitions ────────────────────────────
+import { createMachine, CompositeValidator, type StateDef } from "./state";
+
+export const messageStatusDef: StateDef<MessageStatus> = {
+  values: ["sending", "confirmed", "failed", "partial", "rejected", "cancelled"] as const,
+  initial: "sending",
+  transitions: {
+    sending: ["partial", "failed", "cancelled"],
+    partial: ["confirmed", "cancelled", "rejected"],
+    confirmed: ["partial"],
+    failed: ["partial"],
+    rejected: ["partial"],
+    cancelled: ["partial"],
+  },
+  terminal: ["confirmed", "failed", "rejected", "cancelled"],
+};
+
+export const messageStatusMachine = createMachine(messageStatusDef);
+
+export const messageVisibilityDef: StateDef<MessageVisibility> = {
+  values: ["visible", "hidden_by_user", "hidden_by_moderator", "auto_hidden", "redacted"] as const,
+  initial: "visible",
+  transitions: {
+    visible: ["hidden_by_user", "hidden_by_moderator", "auto_hidden", "redacted"],
+    hidden_by_user: ["visible"],
+    hidden_by_moderator: ["visible"],
+    auto_hidden: ["visible"],
+    redacted: [],
+  },
+  terminal: ["redacted"],
+};
+
+export const messageVisibilityMachine = createMachine(messageVisibilityDef);
+
+// Allowed (status:visibility) pairs for message composite state
+export const messageCompositeValidator = new CompositeValidator(
+  messageStatusMachine,
+  messageVisibilityMachine,
+  [
+    "sending:visible",
+    "confirmed:visible",
+    "confirmed:hidden_by_user",
+    "confirmed:hidden_by_moderator",
+    "confirmed:redacted",
+    "failed:visible",
+    "failed:hidden_by_user",
+    "failed:hidden_by_moderator",
+    "partial:visible",
+    "partial:hidden_by_user",
+    "partial:hidden_by_moderator",
+    "rejected:auto_hidden",
+    "rejected:visible",
+    "cancelled:visible",
+    "cancelled:hidden_by_user",
+    "cancelled:hidden_by_moderator",
+  ],
+);
