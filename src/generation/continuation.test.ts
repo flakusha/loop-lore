@@ -29,6 +29,7 @@ function createTestDb(): { sqlite: Database; db: Kysely<DB> } {
       username TEXT NOT NULL UNIQUE,
       display_name TEXT NOT NULL,
       role TEXT NOT NULL DEFAULT 'user',
+      status TEXT NOT NULL DEFAULT 'active',
       settings TEXT NOT NULL DEFAULT '{}',
       created_at TEXT NOT NULL DEFAULT (datetime('now'))
     )
@@ -66,11 +67,9 @@ function createTestDb(): { sqlite: Database; db: Kysely<DB> } {
       content TEXT NOT NULL,
       content_type TEXT NOT NULL DEFAULT 'text',
       content_encoding TEXT NOT NULL DEFAULT 'identity',
-      status TEXT NOT NULL DEFAULT 'sent',
+      status TEXT NOT NULL DEFAULT 'sending',
       visibility TEXT NOT NULL DEFAULT 'visible',
-      is_continuation INTEGER NOT NULL DEFAULT 0,
       continuation_index INTEGER,
-      partial INTEGER NOT NULL DEFAULT 0,
       created_at TEXT NOT NULL DEFAULT (datetime('now'))
     )
   `);
@@ -249,7 +248,7 @@ describe("handleContinueGeneration", () => {
   beforeEach(async () => {
     await testDb
       .insertInto("users")
-      .values({ id: "user-1", username: "test", display_name: "Test", role: "user", settings: "{}" })
+      .values({ id: "user-1", username: "test", display_name: "Test", role: "user", status: "active", settings: "{}" })
       .execute();
 
     await testDb
@@ -280,9 +279,8 @@ describe("handleContinueGeneration", () => {
         content: "Partial response...",
         content_type: "text",
         content_encoding: "identity",
-        status: "sent",
+        status: "partial",
         visibility: "visible",
-        partial: 1,
       })
       .execute();
   });
@@ -412,7 +410,7 @@ describe("handleRetryGeneration", () => {
   beforeEach(async () => {
     await testDb
       .insertInto("users")
-      .values({ id: "user-1", username: "test", display_name: "Test", role: "user", settings: "{}" })
+      .values({ id: "user-1", username: "test", display_name: "Test", role: "user", status: "active", settings: "{}" })
       .execute();
 
     await testDb
