@@ -85,12 +85,11 @@ export function jsonError(
  *     { field: "email", message: "Invalid format" },
  *   ])
  */
-export function jsonValidationError(
-  errors: ValidationError[],
-  message = "Validation failed",
-): Response {
+export function jsonValidationError(errors: ValidationError[], message = "Validation failed"): Response {
   return Response.json(
-    { error: message, code: "VALIDATION_ERROR", details: errors } satisfies ApiError & { details: ValidationError[] },
+    { error: message, code: "VALIDATION_ERROR", details: errors } satisfies ApiError & {
+      details: ValidationError[];
+    },
     { status: HttpStatus.UnprocessableEntity },
   );
 }
@@ -101,12 +100,7 @@ export function jsonValidationError(
  * @example
  *   jsonPaginated(items, total, page, pageSize)
  */
-export function jsonPaginated<T>(
-  data: T[],
-  total: number,
-  page: number,
-  pageSize: number,
-): Response {
+export function jsonPaginated<T>(data: T[], total: number, page: number, pageSize: number): Response {
   return Response.json(
     {
       data,

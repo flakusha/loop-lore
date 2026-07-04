@@ -95,7 +95,7 @@ describe("jsonValidationError", () => {
 
   test("accepts custom error message", async () => {
     const res = jsonValidationError([], "Custom message");
-    const body = await res.json() as Record<string, unknown>;
+    const body = (await res.json()) as Record<string, unknown>;
     expect(body.error).toBe("Custom message");
   });
 
@@ -105,14 +105,14 @@ describe("jsonValidationError", () => {
       { field: "age", message: "Must be ≥ 18" },
     ];
     const res = jsonValidationError(errors);
-    const body = await res.json() as Record<string, unknown>;
+    const body = (await res.json()) as Record<string, unknown>;
     expect(body.details).toHaveLength(2);
   });
 
   test("empty errors array is valid", async () => {
     const res = jsonValidationError([]);
     expect(res.status).toBe(422);
-    const body = await res.json() as Record<string, unknown>;
+    const body = (await res.json()) as Record<string, unknown>;
     expect(body.details).toEqual([]);
   });
 });
@@ -125,7 +125,7 @@ describe("jsonPaginated", () => {
   test("returns 200 with data and pagination", async () => {
     const res = jsonPaginated(items, 10, 1, 5);
     expect(res.status).toBe(200);
-    const body = await res.json() as Record<string, unknown>;
+    const body = (await res.json()) as Record<string, unknown>;
     expect(body.data).toEqual(items);
     expect(body.pagination).toEqual({
       total: 10,
@@ -137,20 +137,20 @@ describe("jsonPaginated", () => {
 
   test("single page", async () => {
     const res = jsonPaginated(items, 2, 1, 10);
-    const body = await res.json() as { pagination: { totalPages: number } };
+    const body = (await res.json()) as { pagination: { totalPages: number } };
     expect(body.pagination.totalPages).toBe(1);
   });
 
   test("exact page boundary", async () => {
     const res = jsonPaginated(items, 10, 2, 5);
-    const body = await res.json() as { pagination: { totalPages: number; page: number } };
+    const body = (await res.json()) as { pagination: { totalPages: number; page: number } };
     expect(body.pagination.totalPages).toBe(2);
     expect(body.pagination.page).toBe(2);
   });
 
   test("empty dataset", async () => {
     const res = jsonPaginated([], 0, 1, 20);
-    const body = await res.json() as { data: unknown[]; pagination: { total: number; totalPages: number } };
+    const body = (await res.json()) as { data: unknown[]; pagination: { total: number; totalPages: number } };
     expect(body.data).toEqual([]);
     expect(body.pagination.total).toBe(0);
     expect(body.pagination.totalPages).toBe(0);
@@ -158,7 +158,7 @@ describe("jsonPaginated", () => {
 
   test("pageSize zero avoids division by zero", async () => {
     const res = jsonPaginated(items, 5, 1, 0);
-    const body = await res.json() as { pagination: { totalPages: number; pageSize: number } };
+    const body = (await res.json()) as { pagination: { totalPages: number; pageSize: number } };
     expect(body.pagination.totalPages).toBe(0);
     expect(body.pagination.pageSize).toBe(0);
   });
