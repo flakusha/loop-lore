@@ -2,10 +2,12 @@ import { Migrator } from "kysely/migration";
 import path from "node:path";
 import { readdirSync } from "node:fs";
 import { getDatabase } from "./index";
-import { getLogger } from "../logger";
+import { createLogger, getLogger } from "../logger";
 import type { Migration } from "kysely/migration";
 
 async function migrate(): Promise<void> {
+  createLogger();
+
   const database = getDatabase();
 
   const migrator = new Migrator({
