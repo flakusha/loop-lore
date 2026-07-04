@@ -221,7 +221,7 @@ export function detectTheatricalLoop(text: string): { detected: boolean; score: 
   if (lines.length < 6) return { detected: false, score: 0 };
 
   let actionLineCount = 0;
-  let dialogueLineCount = 0;
+  let _dialogueLineCount = 0;
 
   for (const line of lines) {
     const trimmed = line.trim();
@@ -231,8 +231,8 @@ export function detectTheatricalLoop(text: string): { detected: boolean; score: 
     if ((trimmed.startsWith("*") && trimmed.endsWith("*")) ||
         (trimmed.startsWith("(") && trimmed.endsWith(")"))) {
       actionLineCount++;
-    } else if (trimmed.includes("\"") || trimmed.includes("“") || trimmed.includes("»")) {
-      dialogueLineCount++;
+    } else if (trimmed.includes("\"") || trimmed.includes("\u201c") || trimmed.includes("\u00bb")) {
+      _dialogueLineCount++;
     }
   }
 
