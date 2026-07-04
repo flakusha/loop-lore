@@ -2,9 +2,9 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import { serve } from "bun";
-import { join } from "node:path";
+import { join, normalize } from "node:path";
 import { existsSync, readFileSync } from "node:fs";
-import { compressAssets } from "./content/compress";
+import { compressAssets, copyDirectory } from "./content/compress";
 import { loadConfig } from "./config/load";
 import { initAgeGate, dispatch as dispatchAgeGate } from "./age-gate/controller";
 import { dispatch as dispatchGeneration } from "./generation/controller";
@@ -128,6 +128,42 @@ async function handleApiRequest(
   return pipeline(request, authResult.context);
 }
 
+function handleDocsRequest(
+  url: URL,
+  request: Request,
+  config: ReturnType<typeof loadConfig>,
+): Response | null {
+  if (process.env.DOCS_ENABLED === "false") return null;
+  if (!url.pathname.startsWith("/docs/")) return null;
+
+  let docPath = url.pathname.slice(5);
+  const section = docPath.split("/", 1)[0] || "index";
+
+  if (config.docs.public && config.docs.public.length > 0 && !config.docs.public.includes(section)) {
+    return new Response("Documentation not found", { status: 404 });
+  }
+
+  if (docPath === "" || docPath.endsWith("/")) {
+    docPath += "index.html";
+  }
+
+  let fullPath = normalize(join(DOCS_PATH, docPath));
+
+  if (!existsSync(fullPath)) {
+    const htmlPath = fullPath + ".html";
+    if (existsSync(htmlPath)) {
+      fullPath = htmlPath;
+    }
+  }
+
+  if (fullPath.startsWith(join(DOCS_PATH, "/")) && existsSync(fullPath)) {
+    const acceptEncoding = request.headers.get("accept-encoding") ?? "";
+    return respondWithFile(fullPath, acceptEncoding);
+  }
+
+  return new Response("Documentation not found", { status: 404 });
+}
+
 function start() {
   const config = loadConfig();
   createLogger(config.logging);
@@ -136,13 +172,30 @@ function start() {
   const logger = getLogger();
 
   const sourcePublicDirectory = join(import.meta.dir, "public");
+  const sourceViewsDirectory = join(import.meta.dir, "..", "views");
   const destinationPublicDirectory = join(import.meta.dir, "..", "dist", "public");
 
   if (existsSync(sourcePublicDirectory)) {
+    copyDirectory(sourcePublicDirectory, destinationPublicDirectory);
     const result = compressAssets(sourcePublicDirectory, destinationPublicDirectory);
     if (result.total > 0) {
       logger.info({
         message: "Compressed assets",
+        total: result.total,
+        bytes: result.originalBytes,
+        gz: result.compressedBytes.gz,
+        zst: result.compressedBytes.zst,
+        br: result.compressedBytes.br,
+      });
+    }
+  }
+
+  if (existsSync(sourceViewsDirectory)) {
+    copyDirectory(sourceViewsDirectory, destinationPublicDirectory);
+    const result = compressAssets(sourceViewsDirectory, destinationPublicDirectory);
+    if (result.total > 0) {
+      logger.info({
+        message: "Compressed views",
         total: result.total,
         bytes: result.originalBytes,
         gz: result.compressedBytes.gz,
@@ -175,25 +228,15 @@ function start() {
       return handleApiRequest(request, database, config);
     }
 
-    if (process.env.DOCS_ENABLED !== "false" && url.pathname.startsWith("/docs/")) {
-      let docPath = url.pathname.slice(5);
+    const docsResult = handleDocsRequest(url, request, config);
+    if (docsResult) return docsResult;
 
-      // ── Section allowlist ────────────────────────────────
-      const section = docPath.split("/")[0] || "index";
-      if (config.docs.public && config.docs.public.length > 0) {
-        if (!config.docs.public.includes(section)) {
-          return new Response("Documentation not found", { status: 404 });
-        }
-      }
+    const publicPath = normalize(join(PUBLIC_DIR, url.pathname === "/" ? "index.html" : url.pathname));
 
-      // ── Resolve file path ─────────────────────────────────
-      if (docPath === "" || docPath.endsWith("/")) {
-        docPath += "index.html";
-      }
+    if (publicPath.startsWith(join(PUBLIC_DIR, "/"))) {
+      let fullPath = publicPath;
 
-      let fullPath = join(DOCS_PATH, docPath);
-
-      // VitePress generates .html files for clean URLs
+      // Try .html extension fallback for view templates
       if (!existsSync(fullPath)) {
         const htmlPath = fullPath + ".html";
         if (existsSync(htmlPath)) {
@@ -205,15 +248,6 @@ function start() {
         const acceptEncoding = request.headers.get("accept-encoding") ?? "";
         return respondWithFile(fullPath, acceptEncoding);
       }
-
-      return new Response("Documentation not found", { status: 404 });
-    }
-
-    const publicPath = join(PUBLIC_DIR, url.pathname === "/" ? "index.html" : url.pathname);
-
-    if (existsSync(publicPath)) {
-      const acceptEncoding = request.headers.get("accept-encoding") ?? "";
-      return respondWithFile(publicPath, acceptEncoding);
     }
 
     return new Response("Loop Lore - Documentation available at /docs/");
@@ -248,8 +282,8 @@ function start() {
   serverLogger.info(`Docs  → http://localhost:${config.server.port}/docs/`);
 
   // ── Shutdown handler — flush logs before exit ──────────
-  const shutdown = async (signal: string) => {
-    const SHUTDOWN_TIMEOUT = 5_000;
+  const shutdown = async (_signal: string) => {
+    const SHUTDOWN_TIMEOUT = 5000;
     const flushed = logger.flush();
     const timer = setTimeout(() => {
       process.stderr.write(`[logger] flush timed out after ${SHUTDOWN_TIMEOUT}ms\n`);
@@ -259,8 +293,12 @@ function start() {
     clearTimeout(timer);
     process.exit(0);
   };
-  process.on("SIGTERM", () => { void shutdown("SIGTERM"); });
-  process.on("SIGINT", () => { void shutdown("SIGINT"); });
+  process.on("SIGTERM", () => {
+    void shutdown("SIGTERM");
+  });
+  process.on("SIGINT", () => {
+    void shutdown("SIGINT");
+  });
 }
 
 start();
