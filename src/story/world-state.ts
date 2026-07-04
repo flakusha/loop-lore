@@ -6,10 +6,8 @@
  */
 import type { Kysely } from "kysely";
 import type { DB } from "../db/schema";
-import { randomUUID } from "node:crypto";
+import { uid } from "../utils";
 import type { StoryContext, NpcState, LocationState } from "./types";
-
-const uid = () => randomUUID() as string;
 
 // ── World State Service ──────────────────────────────────────
 
@@ -86,7 +84,7 @@ export class WorldStateService {
     const activeQuests = questRows.map((q) => ({
       id: q.id,
       name: q.name,
-      type: q.type as StoryContext["activeQuests"][0]["type"],
+      type: q.type,
       progress: q.progress,
       target: q.target,
       config: JSON.parse(q.config),
@@ -150,7 +148,7 @@ export class WorldStateService {
     const recentTurns = turnRows.reverse().map((t) => ({
       turnNumber: t.turn_number,
       actorId: t.actor_id,
-      turnType: t.turn_type as StoryContext["recentTurns"][0]["turnType"],
+      turnType: t.turn_type,
       prompt: t.prompt_sent,
       response: t.response_received,
       qualityScore: t.quality_score,
