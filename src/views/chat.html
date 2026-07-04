@@ -69,7 +69,7 @@
         </div>
         <button
           class="btn-icon"
-          hx-get="/views/settings"
+          hx-get="/views/settings.html"
           hx-target="#app-root"
           hx-swap="innerHTML"
           title="Settings"
@@ -154,7 +154,10 @@
             <span class="dot" style="animation-delay: 150ms"></span>
             <span class="dot" style="animation-delay: 300ms"></span>
           </span>
-          <span class="generation-label" x-text="isContinuing ? '↳ Continuing message...' : generationLabel"></span>
+          <span
+            class="generation-label"
+            x-text="isContinuing ? '↳ Continuing message...' : generationLabel"
+          ></span>
         </div>
         <div class="generation-actions">
           <button
@@ -447,9 +450,10 @@
 
           this.$dispatch("show-toast", {
             type: "info",
-            message: data.resumeFromStep > 0
-              ? `Resuming from step ${data.resumeFromStep + 1} of ${data.totalSteps}...`
-              : "Regenerating response...",
+            message:
+              data.resumeFromStep > 0
+                ? `Resuming from step ${data.resumeFromStep + 1} of ${data.totalSteps}...`
+                : "Regenerating response...",
           });
 
           this.isGenerating = true;

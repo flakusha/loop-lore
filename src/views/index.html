@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>loop-lore</title>
+
+    <!-- Core resets - always loaded -->
+    <link rel="stylesheet" href="/css/theme.css" media="all" />
+
+    <!-- Theme CSS (dynamically loaded based on user preference) -->
+    <link rel="stylesheet" href="/css/theme-default.css" media="all" id="theme-default" />
+    <link rel="stylesheet" href="/css/theme-light.css" media="all" id="theme-light" disabled />
+    <link rel="stylesheet" href="/css/theme-bright.css" media="all" id="theme-bright" disabled />
+    <link rel="stylesheet" href="/css/theme-colorful.css" media="all" id="theme-colorful" disabled />
+    <link rel="stylesheet" href="/css/theme-monochrome.css" media="all" id="theme-monochrome" disabled />
+    <link rel="stylesheet" href="/css/theme-no-icons.css" media="all" id="theme-no-icons" disabled />
+    <link rel="stylesheet" href="/css/theme-dracula.css" media="all" id="theme-dracula" disabled />
+    <link rel="stylesheet" href="/css/theme-nord.css" media="all" id="theme-nord" disabled />
+    <link rel="stylesheet" href="/css/theme-github-dark.css" media="all" id="theme-github-dark" disabled />
+    <link rel="stylesheet" href="/css/theme-material.css" media="all" id="theme-material" disabled />
+
+    <link rel="stylesheet" href="/css/app.css" media="all" />
+    <link rel="stylesheet" href="/css/gallery.css" media="all" />
+
+    <!-- htmx -->
+    <script
+      src="https://unpkg.com/htmx.org@2.0.4"
+      integrity="sha384-ieQNIn/OMdC0jtCkCj3zXG1LZyNE1iIhJ6WNF66GSHU7hSHuk7qAApN21JxPBf3b"
+      crossorigin="anonymous"
+      defer
+    ></script>
+
+    <!-- Alpine.js -->
+    <script
+      src="https://unpkg.com/alpinejs@3.14.8/dist/cdn.min.js"
+      integrity="sha384-2GXm0oAzhNWQ6S+3JmC6m+OQfH8AnLyR5t0CVC8cvj2CJmN11OU3o%2BpE%2B%2B1lCg6QaTsgbfN"
+      crossorigin="anonymous"
+      defer
+    ></script>
+
+    <!-- htmx response-targets extension (for error handling) -->
+    <script
+      src="https://unpkg.com/htmx.org@2.0.4/dist/ext/response-targets.js"
+      crossorigin="anonymous"
+      defer
+    ></script>
+
+    <style>
+      /* Inline critical: prevent FOUC - uses CSS vars from theme.css */
+      body {
+        background: var(--bg-primary);
+        color: var(--text-primary);
+      }
+      [x-cloak] {
+        display: none !important;
+      }
+
+      /* Theme selector dropdown */
+      .theme-selector {
+        position: relative;
+        display: inline-block;
+      }
+
+      .theme-options {
+        position: absolute;
+        top: 100%;
+        right: 0;
+        background: var(--bg-secondary);
+        border: 1px solid var(--border-default);
+        border-radius: var(--radius-sm);
+        box-shadow: var(--shadow-md);
+        min-width: 180px;
+        z-index: var(--z-dropdown);
+        padding: var(--space-2) 0;
+      }
+
+      .theme-option {
+        padding: var(--space-2) var(--space-3);
+        cursor: pointer;
+        font-size: 13px;
+        white-space: nowrap;
+        transition: background var(--transition-fast);
+      }
+
+      .theme-option:hover {
+        background: var(--bg-tertiary);
+        color: var(--text-primary);
+      }
+
+      .theme-option.active {
+        background: var(--accent-primary);
+        color: #000;
+        font-weight: 600;
+      }
+    </style>
+  </head>
+  <body x-data="app()" x-init="init()" @keydown.escape.window="closeAllModals()">
+    <!-- Toast container (fixed, outside layout) -->
+    <div class="toast-container" id="toast-container" x-show="toasts.length > 0" x-transition>
+      <template x-for="(toast, i) in toasts" :key="i">
+        <div class="toast" :class="toast.type">
+          <span class="icon" x-text="toast.icon"></span>
+          <span class="message" x-text="toast.msg"></span>
+          <button class="close" @click="toasts.splice(i, 1)">&times;</button>
+        </div>
+      </template>
+    </div>
+
+    <!-- Main content -->
+    <div class="app-layout">
+      <!-- Sidebar -->
+      <aside class="sidebar">
+        <div class="sidebar-header">
+          <span class="logo">loop-lore</span>
+        </div>
+
+        <nav class="sidebar-nav">
+          <div x-data="{ activeChat: null }">
+            <div class="nav-section-title">Chats</div>
+
+            <!-- Chat list -->
+            <div id="chat-list" class="nav-item" style="color: var(--text-tertiary); font-size: 13px">
+              Loading chats...
+            </div>
+
+            <div style="padding: var(--space-3)">
+              <button
+                class="btn btn-secondary"
+                style="width: 100%"
+                disabled
+              >
+                + New Chat
+              </button>
+            </div>
+
+            <div class="nav-section-title">Characters</div>
+            <a
+              class="nav-item"
+              href="/views/characters"
+            >
+              <span>Browse Characters</span>
+            </a>
+
+            <div class="nav-section-title">Assets</div>
+            <a
+              class="nav-item"
+              href="/views/gallery"
+            >
+              <span>Asset Gallery</span>
+            </a>
+          </div>
+        </nav>
+
+        <!-- Sidebar footer: user info -->
+        <div class="sidebar-footer">
+          <div class="user-info">
+            <span class="avatar" style="background: var(--bg-tertiary)">👤</span>
+            <div class="details">
+              <div class="name" id="user-display-name">User</div>
+              <div class="role" id="user-role">solo</div>
+            </div>
+            <button
+              class="btn-icon"
+              title="Settings"
+            >
+              ⚙
+            </button>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Main chat area -->
+      <main class="main-content" x-data="chatState()">
+        <!-- Header -->
+        <header class="main-header">
+          <div>
+            <span class="title" id="chat-title">Welcome to loop-lore</span>
+          </div>
+          <div class="actions">
+            <button class="btn-icon" title="Toggle gallery sidebar">🖼</button>
+            <button class="btn-icon" title="Character info">ℹ</button>
+          </div>
+        </header>
+
+        <!-- Body: chat + optional gallery sidebar -->
+        <div style="display: flex; flex: 1; min-height: 0">
+          <!-- Messages -->
+          <div
+            class="chat-area"
+            id="message-list"
+          >
+            <div class="empty-state">
+              <div class="icon">💬</div>
+              <div class="title">No messages yet</div>
+              <div class="description">Start a conversation below. Messages are persisted automatically.</div>
+            </div>
+          </div>
+
+          <!-- Gallery sidebar (toggleable) -->
+          <aside
+            style="
+              width: 300px;
+              min-width: 300px;
+              border-left: 1px solid var(--border-default);
+              background: var(--bg-secondary);
+              overflow-y: auto;
+              padding: var(--space-4);
+            "
+            id="gallery-sidebar"
+          >
+            <div class="nav-section-title" style="margin-bottom: var(--space-3)">Chat Assets</div>
+            <div id="gallery-items" class="gallery-empty">
+              <div class="icon">📁</div>
+              <div class="text">No assets linked to this chat</div>
+            </div>
+          </aside>
+        </div>
+
+        <!-- Input area -->
+        <div class="input-area">
+          <!-- Generation status bar (cancel UI) -->
+          <div
+            style="display: none; position: relative; padding: var(--space-2) var(--space-3); background: var(--bg-tertiary); border-radius: var(--radius-sm); margin-bottom: var(--space-2);"
+            class="generation-status"
+          >
+            <div class="generation-info">
+              <span class="typing-indicator">
+                <span class="dot" style="animation-delay: 0ms"></span>
+                <span class="dot" style="animation-delay: 150ms"></span>
+                <span class="dot" style="animation-delay: 300ms"></span>
+              </span>
+              <span class="generation-label">Assistant is responding...</span>
+            </div>
+            <button
+              class="btn btn-ghost btn-cancel"
+              title="Cancel generation"
+            >
+              ⏹ Cancel
+            </button>
+          </div>
+
+          <form
+            id="message-form"
+          >
+            <div class="input-row">
+              <textarea
+                name="content"
+                id="message-input"
+                placeholder="Type a message..."
+                rows="1"
+                required
+              ></textarea>
+              <button type="submit" class="btn btn-primary" title="Send">➤</button>
+            </div>
+            <div class="input-toolbar">
+              <label class="btn btn-ghost" style="cursor: pointer; font-size: 12px">
+                📎 Attach
+                <input
+                  type="file"
+                  accept="image/*,audio/*,video/*"
+                  multiple
+                  style="display: none"
+                />
+              </label>
+            </div>
+          </form>
+        </div>
+      </main>
+    </div>
+
+    <script src="/browser.js"></script>
+    <script src="/index.js"></script>
+  </body>
+</html>
