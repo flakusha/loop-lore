@@ -76,7 +76,7 @@ export function cancelGenerationByChat(
       cancel_source: source,
       completed_at: new Date().toISOString(),
     }).catch((error: unknown) => {
-      getLogger().child({ module: "generation" }).error("Failed to update attempt status", error);
+      getLogger().child({ module: "generation" }).error("Failed to update attempt status", error instanceof Error ? error : undefined);
     });
   }
 
@@ -139,7 +139,7 @@ export async function processStreamingChunk(
       streaming_chunks_received: 0,
       streaming_chars_received: 0,
     }).catch((error: unknown) => {
-      genLog.error("Failed to update streaming start status", error);
+      genLog.error("Failed to update streaming start status", error instanceof Error ? error : undefined);
     });
     active.events?.onStreamingStart?.(attemptId);
   }
@@ -153,7 +153,7 @@ export async function processStreamingChunk(
       repetition_score: repAnalysis.score,
       repetition_analysis: JSON.stringify(repAnalysis),
     }).catch((error: unknown) => {
-      genLog.error("Failed to update repetition analysis", error);
+      genLog.error("Failed to update repetition analysis", error instanceof Error ? error : undefined);
     });
 
     active.events?.onRepetitionDetected?.(attemptId, repAnalysis);
@@ -177,7 +177,7 @@ export async function processStreamingChunk(
         repetition_analysis: JSON.stringify(repAnalysis),
         completed_at: new Date().toISOString(),
       }).catch((error: unknown) => {
-        genLog.error("Failed to update repetition-cancel status", error);
+        genLog.error("Failed to update repetition-cancel status", error instanceof Error ? error : undefined);
       });
       return ChunkAction.CancelRepetition;
     }
@@ -210,7 +210,7 @@ export async function processStreamingChunk(
         policy_analysis: JSON.stringify(policyAnalysis),
         completed_at: new Date().toISOString(),
       }).catch((error: unknown) => {
-        genLog.error("Failed to update policy-cancel status", error);
+        genLog.error("Failed to update policy-cancel status", error instanceof Error ? error : undefined);
       });
 
       active.events?.onPolicyMismatch?.(attemptId, policyAnalysis);

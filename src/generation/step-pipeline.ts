@@ -11,11 +11,11 @@ import type { Kysely } from "kysely";
 import type { DB } from "../db/schema";
 import { GenerationStatus } from "../db/enums";
 
-// ── Internal: shared state with cancellation-manager ──────────
-// These are imported via re-export from the cancellation manager.
-// cancellation-manager exports activeGenerations and updateAttemptStatus.
+// ── Internal: shared state with cancellation-tracker ──────────
+// These are marked @internal in cancellation-tracker and are NOT
+// re-exported through the public cannon-barrel. Import directly.
 
-import { activeGenerations, updateAttemptStatus } from "./cancellation-manager";
+import { activeGenerations, updateAttemptStatus } from "./cancellation-tracker";
 
 /**
  * Mark a step as completed in a multi-step generation pipeline.
