@@ -18,10 +18,7 @@ export class WorldStateService {
    * Build the full StoryContext for the Game Master
    * from the current DB state.
    */
-  async buildContext(
-    chatId: string,
-    recentTurnCount = 10,
-  ): Promise<StoryContext | null> {
+  async buildContext(chatId: string, recentTurnCount = 10): Promise<StoryContext | null> {
     const chat = await this.db
       .selectFrom("chats")
       .select(["world_id", "current_location_id", "story_state", "turn_strategy"])
@@ -105,13 +102,10 @@ export class WorldStateService {
 
     const actors: StoryContext["actors"] = [];
     for (const p of participantRows) {
-      const npcRow = (p.agent_type === "npc" || p.agent_type === "ai")
-        ? await this.db
-            .selectFrom("npc_states")
-            .selectAll()
-            .where("actor_id", "=", p.id)
-            .executeTakeFirst()
-        : null;
+      const npcRow =
+        p.agent_type === "npc" || p.agent_type === "ai"
+          ? await this.db.selectFrom("npc_states").selectAll().where("actor_id", "=", p.id).executeTakeFirst()
+          : null;
 
       let npcState: NpcState | undefined;
       if (npcRow) {
@@ -156,7 +150,15 @@ export class WorldStateService {
 
     const turnManagerState = chat.story_state
       ? JSON.parse(chat.story_state)
-      : { currentTurn: 0, currentActorId: null, turnOrder: [], strategy: chat.turn_strategy ?? "hybrid", isPaused: false, lastTurnCompletedAt: null, pendingRegeneration: null };
+      : {
+          currentTurn: 0,
+          currentActorId: null,
+          turnOrder: [],
+          strategy: chat.turn_strategy ?? "hybrid",
+          isPaused: false,
+          lastTurnCompletedAt: null,
+          pendingRegeneration: null,
+        };
 
     return {
       world: {
@@ -245,7 +247,12 @@ export class WorldStateService {
   }
 
   /** Take a state snapshot for rollback/history */
-  async snapshot(worldId: string, turnId?: string, messageId?: string, description?: string): Promise<string> {
+  async snapshot(
+    worldId: string,
+    turnId?: string,
+    messageId?: string,
+    description?: string,
+  ): Promise<string> {
     const id = uid();
     await this.db
       .insertInto("world_states")

@@ -7,12 +7,16 @@
  */
 import type { Kysely } from "kysely";
 import type { DB } from "../db/schema";
-import { GameMasterType, ContentEncoding, MessageRole, MessageContentType, MessageStatus, MessageVisibility } from "../db/enums";
-import { randomUUID } from "node:crypto";
 import {
-  TurnManager,
-  type TurnManagerOptions,
-} from "./turn-manager";
+  GameMasterType,
+  ContentEncoding,
+  MessageRole,
+  MessageContentType,
+  MessageStatus,
+  MessageVisibility,
+} from "../db/enums";
+import { randomUUID } from "node:crypto";
+import { TurnManager, type TurnManagerOptions } from "./turn-manager";
 import { WorldStateService } from "./world-state";
 import { QualityEvaluator } from "./quality-evaluator";
 import { extractEvents, validateEvents, applyEvents } from "./events";
@@ -84,9 +88,7 @@ export class GameMasterService {
 
   /** Execute one full story turn */
   async executeTurn(debugActorId?: string): Promise<GmTurnResult> {
-    const context = await this.worldState.buildContext(
-      this.getChatIdFromConfig(),
-    );
+    const context = await this.worldState.buildContext(this.getChatIdFromConfig());
     if (!context) throw new Error("No story context available");
 
     const gmDecision = await this.getGmDecision(context, debugActorId);
@@ -144,19 +146,11 @@ export class GameMasterService {
     );
 
     // Extract world events
-    const worldEvents = extractEvents(
-      response,
-      turn.actor_id,
-      context?.world.currentLocation.id ?? null,
-    );
+    const worldEvents = extractEvents(response, turn.actor_id, context?.world.currentLocation.id ?? null);
 
     // Validate events
     if (context) {
-      const validated = await validateEvents(
-        this.db,
-        context.world.id,
-        worldEvents,
-      );
+      const validated = await validateEvents(this.db, context.world.id, worldEvents);
       if (validated.valid) {
         await applyEvents(this.db, context.world.id, validated.filteredEvents);
       }
@@ -211,7 +205,15 @@ export class GameMasterService {
       });
     }
 
-    return this.buildResult(turn, response, qualityEval, worldEvents, accepted, escalated, regenerationSuggested);
+    return this.buildResult(
+      turn,
+      response,
+      qualityEval,
+      worldEvents,
+      accepted,
+      escalated,
+      regenerationSuggested,
+    );
   }
 
   /** Human GM provides an override decision */
@@ -248,17 +250,20 @@ export class GameMasterService {
       .execute();
 
     for (const chat of chats) {
-      await this.db.insertInto("messages").values({
-        id: randomUUID() as string,
-        chat_id: chat.id,
-        actor_id: narrator.id,
-        role: MessageRole.System,
-        content: text,
-        content_type: MessageContentType.Narration,
-        content_encoding: ContentEncoding.Identity,
-        status: MessageStatus.Sent,
-        visibility: MessageVisibility.Visible,
-      }).execute();
+      await this.db
+        .insertInto("messages")
+        .values({
+          id: randomUUID() as string,
+          chat_id: chat.id,
+          actor_id: narrator.id,
+          role: MessageRole.System,
+          content: text,
+          content_type: MessageContentType.Narration,
+          content_encoding: ContentEncoding.Identity,
+          status: MessageStatus.Sent,
+          visibility: MessageVisibility.Visible,
+        })
+        .execute();
     }
   }
 
@@ -279,12 +284,8 @@ export class GameMasterService {
     return "";
   }
 
-  private async getGmDecision(
-    context: StoryContext,
-    debugActorId?: string,
-  ): Promise<GameMasterDecision> {
-    const actorId = debugActorId
-      ?? await this.turnManager.selectNextActor(undefined, context);
+  private async getGmDecision(context: StoryContext, debugActorId?: string): Promise<GameMasterDecision> {
+    const actorId = debugActorId ?? (await this.turnManager.selectNextActor(undefined, context));
 
     if (!actorId) {
       throw new Error("No available actors for next turn");
@@ -307,22 +308,15 @@ export class GameMasterService {
    * Currently produces a structured prompt template.
    * Future: calls an actual LLM via the generation module.
    */
-  private llmDecision(
-    context: StoryContext,
-    actorId: string,
-  ): GameMasterDecision {
+  private llmDecision(context: StoryContext, actorId: string): GameMasterDecision {
     const actor = context.actors.find((a) => a.id === actorId);
     const npcState = actor?.npcState;
     const location = context.world.currentLocation;
 
-    const promptParts: string[] = [
-      `You are ${actor?.displayName ?? "unknown"}.`,
-    ];
+    const promptParts: string[] = [`You are ${actor?.displayName ?? "unknown"}.`];
 
     if (npcState) {
-      promptParts.push(
-        `Health: ${npcState.health}/100. Mental state: ${npcState.mental_state}.`,
-      );
+      promptParts.push(`Health: ${npcState.health}/100. Mental state: ${npcState.mental_state}.`);
       if (npcState.inventory.length > 0) {
         promptParts.push(`Carrying: ${npcState.inventory.join(", ")}.`);
       }
@@ -334,9 +328,7 @@ export class GameMasterService {
 
     if (context.activeQuests.length > 0) {
       const primary = context.activeQuests[0];
-      promptParts.push(
-        `Active quest: "${primary.name}" (${primary.progress}/${primary.target}).`,
-      );
+      promptParts.push(`Active quest: "${primary.name}" (${primary.progress}/${primary.target}).`);
     }
 
     if (context.recentTurns.length > 0) {
@@ -367,10 +359,7 @@ export class GameMasterService {
    * Human Game Master: returns a minimal prompt, expecting
    * the human to provide the full decision via humanOverride().
    */
-  private humanDecision(
-    context: StoryContext,
-    actorId: string,
-  ): GameMasterDecision {
+  private humanDecision(context: StoryContext, actorId: string): GameMasterDecision {
     const actor = context.actors.find((a) => a.id === actorId);
 
     return {
@@ -386,10 +375,7 @@ export class GameMasterService {
    * Hybrid Game Master: LLM produces a decision, but flags it
    * for human review when confidence is low.
    */
-  private async hybridDecision(
-    context: StoryContext,
-    actorId: string,
-  ): Promise<GameMasterDecision> {
+  private async hybridDecision(context: StoryContext, actorId: string): Promise<GameMasterDecision> {
     const decision = this.llmDecision(context, actorId);
 
     // Check if escalation is needed based on context
@@ -429,7 +415,26 @@ export class GameMasterService {
   }
 
   private buildResult(
-    turn: { id: string; turn_number: number; actor_id: string; prompt_sent: string; chat_id: string; turn_type: string; status: string; regeneration_count: number; world_events: string; quest_progress: string; completed_at: string | null; started_at: string; created_at: string; updated_at: string; response_received: string | null; quality_score: number | null; quality_details: string | null; gm_decision: string | null },
+    turn: {
+      id: string;
+      turn_number: number;
+      actor_id: string;
+      prompt_sent: string;
+      chat_id: string;
+      turn_type: string;
+      status: string;
+      regeneration_count: number;
+      world_events: string;
+      quest_progress: string;
+      completed_at: string | null;
+      started_at: string;
+      created_at: string;
+      updated_at: string;
+      response_received: string | null;
+      quality_score: number | null;
+      quality_details: string | null;
+      gm_decision: string | null;
+    },
     response: string,
     qualityEval: QualityEvaluation,
     worldEvents: WorldEvent[],

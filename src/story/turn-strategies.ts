@@ -24,25 +24,13 @@ export type TurnStrategyFn = (
 
 // ─── Strategies ────────────────────────────────────────────────
 
-export const roundRobinSelect: TurnStrategyFn = (
-  participants,
-  currentActorId,
-  _currentTurn,
-  turnOrder,
-) => {
-  const lastIndex = currentActorId
-    ? turnOrder.indexOf(currentActorId)
-    : -1;
+export const roundRobinSelect: TurnStrategyFn = (participants, currentActorId, _currentTurn, turnOrder) => {
+  const lastIndex = currentActorId ? turnOrder.indexOf(currentActorId) : -1;
   const nextIndex = (lastIndex + 1) % participants.length;
   return participants[nextIndex].actorId;
 };
 
-export const sceneBasedSelect: TurnStrategyFn = (
-  participants,
-  currentActorId,
-  currentTurn,
-  turnOrder,
-) => {
+export const sceneBasedSelect: TurnStrategyFn = (participants, currentActorId, currentTurn, turnOrder) => {
   // Weight narrators higher when scene context is needed
   // Pick narrator every 3rd turn, otherwise round-robin
   if (currentTurn % 3 === 0) {
@@ -52,12 +40,7 @@ export const sceneBasedSelect: TurnStrategyFn = (
   return roundRobinSelect(participants, currentActorId, currentTurn, turnOrder);
 };
 
-export const initiativeSelect: TurnStrategyFn = (
-  participants,
-  _currentActorId,
-  _currentTurn,
-  _turnOrder,
-) => {
+export const initiativeSelect: TurnStrategyFn = (participants, _currentActorId, _currentTurn, _turnOrder) => {
   // Shuffle order based on "initiative" (random for MVP)
   const shuffled = [...participants].sort(() => Math.random() - 0.5);
   return shuffled[0].actorId;
