@@ -57,3 +57,34 @@ export const PolicySeverity = {
   High: "high",
 } as const;
 export type PolicySeverity = (typeof PolicySeverity)[keyof typeof PolicySeverity];
+
+// ── Transport ───────────────────────────────────────────
+export const TransportProtocol = {
+  Http1_1: "http/1.1",
+  Http2: "http/2",
+  Http3: "http/3",
+  WebSocket: "websocket",
+  WebTransport: "webtransport",
+  Tcp: "tcp",
+  Tls: "tls",
+} as const;
+export type TransportProtocol = (typeof TransportProtocol)[keyof typeof TransportProtocol];
+
+export const CompressionAlgorithm = {
+  Zstd: "zstd",
+  Brotli: "br",
+  Gzip: "gzip",
+  None: "none",
+} as const;
+export type CompressionAlgorithm = (typeof CompressionAlgorithm)[keyof typeof CompressionAlgorithm];
+
+export const TransportErrorCode = {
+  ProtocolUnsupported: "PROTOCOL_UNSUPPORTED",
+  NegotiationFailed: "NEGOTIATION_FAILED",
+  CompressionFailed: "COMPRESSION_FAILED",
+  UpgradeFailed: "UPGRADE_FAILED",
+  ConnectionClosed: "CONNECTION_CLOSED",
+  BackpressureTimeout: "BACKPRESSURE_TIMEOUT",
+  MaxFrameExceeded: "MAX_FRAME_EXCEEDED",
+} as const;
+export type TransportErrorCode = (typeof TransportErrorCode)[keyof typeof TransportErrorCode];

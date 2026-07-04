@@ -141,6 +141,8 @@ Located in `src/db/`
 | 001 | `001_init.ts` | Core tables: users, sessions, chats, actors, chat_participants, characters, messages, assets, asset_links, worlds |
 | 002 | `002_age_gate.ts` | `birth_date`, `age_gate_accepted_at` on users |
 | 003a | `003_generation_attempts.ts` | `generation_attempts` table |
+
+> **Warning**: During MVP, `data_version` defaults to `0` across all actor records. When stabilising post-MVP, version bumps will be **forward-compatible only**: migrations add columns/tables, never remove. Existing `v0` records continue working; missing fields resolve to sensible defaults. See [`docs/actors.md`](./actors.md) for full versioning contract.
 | 003b | `003_story_features.ts` | locations, story_turns, quests, quest_progress, world_states, npc_states, location_states, synthetic_data + new columns on chats |
 | 004 | `004_continuation_retry.ts` | Continuation & tree columns on generation_attempts + messages |
 

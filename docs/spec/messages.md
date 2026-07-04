@@ -141,6 +141,8 @@ Users toggle between basic/expanded per message:
 - **TUI**: Select message + press `d` key to expand/collapse
 - **API**: `?detail=basic|expanded` query param, defaults to user preference
 
+> **Warning**: API defaults to `basic` detail level if no `detail` param and no user preference set. The state machine for `status` transitions is: `sending` → `sent` → `confirmed`, or `sending` → `failed`/`cancelled`. Visibility changes are independent but coupled: `auto_hidden` requires `status=failed` or `status=cancelled` to be reversible.
+
 ### User Preference
 
 ```json

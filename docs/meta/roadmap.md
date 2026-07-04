@@ -46,7 +46,7 @@ loop-lore is designed as a **dual-mode application**:
 1. **RPG Mode** (default) — Roleplay chat with characters, worlds, and story-focused features
 2. **Agentic Workspace Mode** — AI-assisted workspaces where agents solve problems, execute code, and conduct research
 
-See [Use Case: Agentic Assistant Workspace](./use-case-agentic-workspace.md) for the full mapping of RPG concepts to agentic concepts (Worlds→Epics, Locations→Tasks, Characters→Agents) and the plugin system design.
+See [Use Case: Agentic Assistant Workspace](../spec/use-case-agentic-workspace.md) for the full mapping of RPG concepts to agentic concepts (Worlds→Epics, Locations→Tasks, Characters→Agents) and the plugin system design.
 
 ---
 
