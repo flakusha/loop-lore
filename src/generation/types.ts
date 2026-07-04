@@ -1,8 +1,36 @@
 /**
  * Generation Types — Barrel
  *
- * Re-exports all generation type definitions from split modules.
+ * Explicit re-exports from split type modules.
  */
-export * from "./gen-types-options";
-export * from "./gen-types-results";
-export * from "./gen-types-api";
+export type {
+  GenerationAttemptRow,
+  GenerationOptions,
+  GenerationMessage,
+  RepetitionDetectionConfig,
+  PolicyDetectionConfig,
+  ResponseLimitConfig,
+} from "./gen-types-options";
+export {
+  DEFAULT_REPETITION_DETECTION,
+  DEFAULT_POLICY_DETECTION,
+  DEFAULT_RESPONSE_LIMIT,
+} from "./gen-types-options";
+
+export type {
+  GenerationResult,
+  TokenUsage,
+  RepetitionAnalysis,
+  RepetitionPattern,
+  PolicyAnalysis,
+  PolicyIndicator,
+  GenerationStep,
+} from "./gen-types-results";
+
+export type {
+  ContinueRequest,
+  ContinueResponse,
+  RetryFromPointRequest,
+  RetryFromPointResponse,
+  GenerationEvents,
+} from "./gen-types-api";

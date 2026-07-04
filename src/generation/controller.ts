@@ -22,6 +22,17 @@ import {
 } from "./generation-routes";
 import { jsonError } from "../routes/http-utils";
 
+// ── Helpers ──────────────────────────────────────────────────
+
+/** Parse JSON request body, returning an error Response on parse failure */
+async function parseJsonBody(request: Request): Promise<unknown | Response> {
+  try {
+    return await request.json();
+  } catch (parseError) {
+    return jsonError(`Invalid JSON: ${(parseError as Error).message}`, 400);
+  }
+}
+
 /**
  * Dispatch generation-related API requests.
  * Returns a Response or null if the path doesn't match.
@@ -39,12 +50,8 @@ export async function dispatch(
 
   // POST /api/generation/cancel
   if (pathname === "/api/generation/cancel" && request.method === "POST") {
-    let body: unknown;
-    try {
-      body = await request.json();
-    } catch (parseError) {
-      return jsonError(`Invalid JSON: ${(parseError as Error).message}`, 400);
-    }
+    const body = await parseJsonBody(request);
+    if (body instanceof Response) return body;
     return handleCancelGeneration(body);
   }
 
@@ -61,34 +68,22 @@ export async function dispatch(
 
   // POST /api/generation/retry
   if (pathname === "/api/generation/retry" && request.method === "POST") {
-    let body: unknown;
-    try {
-      body = await request.json();
-    } catch (parseError) {
-      return jsonError(`Invalid JSON: ${(parseError as Error).message}`, 400);
-    }
+    const body = await parseJsonBody(request);
+    if (body instanceof Response) return body;
     return handleRetryGeneration(body);
   }
 
   // POST /api/generation/continue
   if (pathname === "/api/generation/continue" && request.method === "POST") {
-    let body: unknown;
-    try {
-      body = await request.json();
-    } catch (parseError) {
-      return jsonError(`Invalid JSON: ${(parseError as Error).message}`, 400);
-    }
+    const body = await parseJsonBody(request);
+    if (body instanceof Response) return body;
     return handleContinueGeneration(body);
   }
 
   // POST /api/generation/regenerate
   if (pathname === "/api/generation/regenerate" && request.method === "POST") {
-    let body: unknown;
-    try {
-      body = await request.json();
-    } catch (parseError) {
-      return jsonError(`Invalid JSON: ${(parseError as Error).message}`, 400);
-    }
+    const body = await parseJsonBody(request);
+    if (body instanceof Response) return body;
     return handleRegenerate(body);
   }
 
