@@ -66,10 +66,10 @@ export async function upgradeConnection(
   try {
     newHandler = createProtocol(newConfig);
   } catch (error) {
-    throw new TransportError(
-      `failed to create handler for ${targetProtocol}: ${(error as Error).message}`,
-      { code: TransportErrorCode.UpgradeFailed, cause: error as Error },
-    );
+    throw new TransportError(`failed to create handler for ${targetProtocol}: ${(error as Error).message}`, {
+      code: TransportErrorCode.UpgradeFailed,
+      cause: error as Error,
+    });
   }
 
   // ── Transfer state ──────────────────────────────────────
@@ -85,10 +85,11 @@ export async function upgradeConnection(
       // Ignore close errors during fallback
     }
 
-    throw new TransportError(
-      `upgrade to ${targetProtocol} failed: ${(error as Error).message}`,
-      { code: TransportErrorCode.UpgradeFailed, recoverable: true, cause: error as Error },
-    );
+    throw new TransportError(`upgrade to ${targetProtocol} failed: ${(error as Error).message}`, {
+      code: TransportErrorCode.UpgradeFailed,
+      recoverable: true,
+      cause: error as Error,
+    });
   }
 
   // ── Drain and close old handler ─────────────────────────
