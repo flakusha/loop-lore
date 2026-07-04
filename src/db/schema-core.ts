@@ -5,10 +5,18 @@
  */
 import type { Generated } from "kysely";
 import type {
-  UserRole, ChatType, ChatMode, TurnStrategy,
-  ActorType, AgentType, ChatParticipantRole,
-  MessageRole, MessageContentType, ContentEncoding,
-  MessageStatus, MessageVisibility,
+  UserRole,
+  ChatType,
+  ChatMode,
+  TurnStrategy,
+  ActorType,
+  AgentType,
+  ChatParticipantRole,
+  MessageRole,
+  MessageContentType,
+  ContentEncoding,
+  MessageStatus,
+  MessageVisibility,
 } from "./enums";
 
 // ── Users ────────────────────────────────────────────────────
