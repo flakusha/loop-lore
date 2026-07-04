@@ -209,6 +209,7 @@ async function createTestDatabase() {
     .addColumn("username", "text", (col) => col.notNull().unique())
     .addColumn("display_name", "text", (col) => col.notNull())
     .addColumn("role", "text", (col) => col.notNull().defaultTo("user"))
+    .addColumn("status", "text", (col) => col.notNull().defaultTo("active"))
     .addColumn("settings", "text", (col) => col.notNull().defaultTo("{}"))
     .addColumn("birth_date", "text")
     .addColumn("age_gate_accepted_at", "text")
@@ -222,6 +223,7 @@ async function createTestDatabase() {
       username: "tester",
       display_name: "Tester",
       role: "user",
+      status: "active",
       settings: "{}",
     })
     .execute();
