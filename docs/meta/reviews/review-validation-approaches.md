@@ -10,13 +10,13 @@ for eliminating `as` casts through validation.
 The project has **zero runtime validation libraries** in its dependencies.
 The only validation is ad-hoc:
 
-| Function | File | Approach |
-|----------|------|----------|
-| `validateConfig()` | `config/load.ts` | Manual field-by-field checks + throw |
-| `validateAge()` | `age-gate/service.ts` | Parse date + comparison + throw (typed errors) |
-| `validateEvents()` | `story/events.ts` | Cross-reference against DB state |
-| `.filter((f): f is string => …)` | `db/migrate.ts` | One-off type predicate |
-| `jsonValidationError()` | `routes/http-utils.ts` | Response builder — **plumbing exists but is unused** |
+| Function                         | File                   | Approach                                             |
+| -------------------------------- | ---------------------- | ---------------------------------------------------- |
+| `validateConfig()`               | `config/load.ts`       | Manual field-by-field checks + throw                 |
+| `validateAge()`                  | `age-gate/service.ts`  | Parse date + comparison + throw (typed errors)       |
+| `validateEvents()`               | `story/events.ts`      | Cross-reference against DB state                     |
+| `.filter((f): f is string => …)` | `db/migrate.ts`        | One-off type predicate                               |
+| `jsonValidationError()`          | `routes/http-utils.ts` | Response builder — **plumbing exists but is unused** |
 
 The response utilities already have `jsonValidationError()` and `ApiError` types.
 The missing piece is the **parse side**: a function that takes `unknown` and
@@ -31,7 +31,7 @@ call site — no `as` cast needed.
 
 ```typescript
 function isContinueRequest(body: unknown): body is ContinueRequest {
-  const x = body as Record<string, unknown>;  // one unavoidable cast
+  const x = body as Record<string, unknown>; // one unavoidable cast
   return (
     typeof x.messageId === "string" &&
     typeof x.chatId === "string" &&
@@ -52,14 +52,15 @@ if (!isContinueRequest(body)) {
 **Pros**: Zero dependencies, simple, idiomatic TS. The `as` cast is contained
 inside one function instead of scattered at every call site.
 
-**Cons**: Boilerplate for complex nested shapes. No error messages about *which*
+**Cons**: Boilerplate for complex nested shapes. No error messages about _which_
 field failed. No composition — each guard is hand-written.
 
 **Best for**: request shapes with 3–5 flat fields (`ContinueRequest`,
 `RetryFromPointRequest`, `ConfigureStoryRequest`).
 
 **What it would eliminate**: 2 `as` casts in `generation-routes.ts` (lines 124, 183)
-+ 4 `input.field as EnumType` casts (lines 42–43, 147, 150).
+
+- 4 `input.field as EnumType` casts (lines 42–43, 147, 150).
 
 ---
 
@@ -96,14 +97,14 @@ export async function handleContinueGeneration(body: unknown): Promise<Response>
 
 **What Zod handles** that type guards don't:
 
-| Feature | Type guard | Zod |
-|---------|-----------|-----|
-| Nested validation | Manual | Declarative |
-| Per-field error messages | Manual | Automatic |
-| Enum membership | `enumValues.includes(x)` | `z.nativeEnum(EnumType)` |
-| `.uuid()`, `.email()`, `.url()` | Manual regex | Built-in |
-| Type inference | Separate interface | `z.infer<>` |
-| Transformation (string→number, etc.) | Manual | `.pipe()` |
+| Feature                              | Type guard               | Zod                      |
+| ------------------------------------ | ------------------------ | ------------------------ |
+| Nested validation                    | Manual                   | Declarative              |
+| Per-field error messages             | Manual                   | Automatic                |
+| Enum membership                      | `enumValues.includes(x)` | `z.nativeEnum(EnumType)` |
+| `.uuid()`, `.email()`, `.url()`      | Manual regex             | Built-in                 |
+| Type inference                       | Separate interface       | `z.infer<>`              |
+| Transformation (string→number, etc.) | Manual                   | `.pipe()`                |
 
 **Downside**: Adds ~50KB to bundle (minified, brotli-compressed ~10KB).
 The project already has `js-yaml` and `smol-toml` — `zod` is comparable in size.
@@ -177,11 +178,7 @@ the full `DB` generic — Kysely requires every non-nullable field to be present
 A typed insert helper encapsulates the cast:
 
 ```typescript
-function insertRow<T extends Record<string, unknown>>(
-  db: Kysely<DB>,
-  table: keyof DB,
-  values: T,
-) {
+function insertRow<T extends Record<string, unknown>>(db: Kysely<DB>, table: keyof DB, values: T) {
   return (db.insertInto(table as string) as unknown as { values(v: T): ReturnType<typeof db.insertInto> })
     .values(values)
     .execute();
@@ -210,16 +207,16 @@ Kysely + `DB` generic friction. Using `.select(...)` with explicit columns
 
 ## What to use where
 
-| Cast class | Count | Recommended approach | Effort |
-|-----------|-------|---------------------|--------|
-| HTTP boundary `body as ContinueRequest` (2) | High risk | **Type guard functions** first (0 deps). Evolve to Zod later. | 1 day |
-| HTTP boundary `input.reason as CancelReason` (4) | Medium risk | **Zod `z.nativeEnum()`** or simple type guard with `Object.values()` check | 0.5 day |
-| JSON.parse `as T` (9) | Medium risk | **Zod schemas** for QuestConfig, TurnManagerState, NpcState shapes | 1 day |
-| `as any` Kysely workaround (4) | Low risk | **Narrow the generic** or use typed insert helper. ESLint catch + suppress | 0.5 day |
-| `as never` Kysely arrays (2) | Low risk | Keep — narrowest possible escape. No alternative without loosening Kysely inference. | — |
-| Bun API zstd casts (3) | Low risk | **Typed wrapper** function per zstd operation | 0.5 day |
-| `as unknown as T` config (4) | Low risk | Evolve to Zod when config schema stabilises | — |
-| Kysely enum column `as` (3) | Low risk | Keep — Kysely bridge, not avoidable without DB-level enums | — |
+| Cast class                                       | Count       | Recommended approach                                                                 | Effort  |
+| ------------------------------------------------ | ----------- | ------------------------------------------------------------------------------------ | ------- |
+| HTTP boundary `body as ContinueRequest` (2)      | High risk   | **Type guard functions** first (0 deps). Evolve to Zod later.                        | 1 day   |
+| HTTP boundary `input.reason as CancelReason` (4) | Medium risk | **Zod `z.nativeEnum()`** or simple type guard with `Object.values()` check           | 0.5 day |
+| JSON.parse `as T` (9)                            | Medium risk | **Zod schemas** for QuestConfig, TurnManagerState, NpcState shapes                   | 1 day   |
+| `as any` Kysely workaround (4)                   | Low risk    | **Narrow the generic** or use typed insert helper. ESLint catch + suppress           | 0.5 day |
+| `as never` Kysely arrays (2)                     | Low risk    | Keep — narrowest possible escape. No alternative without loosening Kysely inference. | —       |
+| Bun API zstd casts (3)                           | Low risk    | **Typed wrapper** function per zstd operation                                        | 0.5 day |
+| `as unknown as T` config (4)                     | Low risk    | Evolve to Zod when config schema stabilises                                          | —       |
+| Kysely enum column `as` (3)                      | Low risk    | Keep — Kysely bridge, not avoidable without DB-level enums                           | —       |
 
 ## Quickest path to impact
 

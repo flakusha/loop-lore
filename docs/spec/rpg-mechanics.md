@@ -61,8 +61,8 @@ Actors (static) ──1:N── WorldActorState (dynamic, per world)
 
 **Why this matters:** The same character can be a powerful mage in one world
 and a helpless villager in another. Their stats, inventory, and relationships
-are world-scoped. The character card defines who they *are*; the world state
-defines what they *have* and what they *can do*.
+are world-scoped. The character card defines who they _are_; the world state
+defines what they _have_ and what they _can do_.
 
 ---
 
@@ -73,21 +73,21 @@ defines what they *have* and what they *can do*.
 Six attributes form the foundation. Every character has base values (from
 the character card or default template):
 
-| Abbrev | Full Name     | Governs                           |
-| ------ | ------------- | --------------------------------- |
-| STR    | Strength      | Melee damage, carry weight, force |
-| DEX    | Dexterity     | Ranged attacks, evasion, speed    |
-| CON    | Constitution  | HP, resistances, endurance        |
-| INT    | Intelligence  | Arcane power, skill learning      |
-| WIS    | Wisdom        | Perception, willpower, healing    |
-| CHA    | Charisma      | Persuasion, barter, leadership    |
+| Abbrev | Full Name    | Governs                           |
+| ------ | ------------ | --------------------------------- |
+| STR    | Strength     | Melee damage, carry weight, force |
+| DEX    | Dexterity    | Ranged attacks, evasion, speed    |
+| CON    | Constitution | HP, resistances, endurance        |
+| INT    | Intelligence | Arcane power, skill learning      |
+| WIS    | Wisdom       | Perception, willpower, healing    |
+| CHA    | Charisma     | Persuasion, barter, leadership    |
 
 ### Stat Block Interface
 
 ```typescript
 interface StatBlock {
   // Base attributes (from character card or world default)
-  str: number;  // 1–30, default 10
+  str: number; // 1–30, default 10
   dex: number;
   con: number;
   int: number;
@@ -95,15 +95,15 @@ interface StatBlock {
   cha: number;
 
   // Derived stats (computed, not stored)
-  maxHp: number;    // = con * 5 + level * 2
-  hp: number;       // current, mutable
-  maxMp: number;    // = int * 3 + wis * 2
-  mp: number;       // current, mutable
+  maxHp: number; // = con * 5 + level * 2
+  hp: number; // current, mutable
+  maxMp: number; // = int * 3 + wis * 2
+  mp: number; // current, mutable
   initiative: number; // = dex + random(1,20)
   armorClass: number; // = 10 + dex modifier + armor bonus
   carryCapacity: number; // = str * 10 (lbs)
-  level: number;    // 1–20
-  xp: number;       // current XP
+  level: number; // 1–20
+  xp: number; // current XP
   xpToNext: number; // computed from level
 }
 ```
@@ -116,9 +116,9 @@ Attributes produce modifiers (like D&D 5e):
 modifier = floor((stat - 10) / 2)
 ```
 
-| Stat | 1  | 8  | 10 | 12 | 16 | 20 | 30 |
-| ---- | -- | -- | -- | -- | -- | -- | -- |
-| Mod  | -5 | -1 | 0  | +1 | +3 | +5 | +10 |
+| Stat | 1   | 8   | 10  | 12  | 16  | 20  | 30  |
+| ---- | --- | --- | --- | --- | --- | --- | --- |
+| Mod  | -5  | -1  | 0   | +1  | +3  | +5  | +10 |
 
 ### Effective Stats (Computed at Use Time)
 
@@ -149,20 +149,20 @@ interface ItemDefinition {
   worldId: string;
   name: string;
   description: string;
-  category: ItemCategory;    // weapon, armor, consumable, key_item, etc.
-  rarity: ItemRarity;        // common → unique
+  category: ItemCategory; // weapon, armor, consumable, key_item, etc.
+  rarity: ItemRarity; // common → unique
   stackable: boolean;
   maxStack: number;
   properties: ItemProperties; // type-specific data
-  value: number;              // gold value
-  weight: number;             // encumbrance
+  value: number; // gold value
+  weight: number; // encumbrance
 }
 
 // Type-specific properties
 interface WeaponProperties {
-  damageDice: string;         // "2d6", "1d8+3"
-  damageType: string;         // "slashing", "piercing", "fire"
-  range: number;              // feet
+  damageDice: string; // "2d6", "1d8+3"
+  damageType: string; // "slashing", "piercing", "fire"
+  range: number; // feet
   twoHanded: boolean;
   statBonus: Partial<StatBlock>; // e.g. { str: +2 }
   effects?: ItemEffect[];
@@ -181,10 +181,10 @@ interface ConsumableProperties {
 }
 
 interface ItemEffect {
-  type: 'heal' | 'buff' | 'debuff' | 'teleport' | 'summon' | 'custom';
+  type: "heal" | "buff" | "debuff" | "teleport" | "summon" | "custom";
   stat?: keyof StatBlock;
   value?: number;
-  duration?: number;   // turns, or -1 for permanent
+  duration?: number; // turns, or -1 for permanent
   description: string;
 }
 ```
@@ -196,10 +196,10 @@ Already implemented in `src/story/items.ts`.
 
 ```typescript
 interface WorldItem {
-  id: string;            // world_items.id
-  itemId: string;        // → item definitions
+  id: string; // world_items.id
+  itemId: string; // → item definitions
   worldId: string;
-  locationId?: string;   // where in the world
+  locationId?: string; // where in the world
   ownerActorId?: string; // who's carrying it
   quantity: number;
   isHidden: boolean;
@@ -219,9 +219,9 @@ interface ActorInventory {
   worldId: string;
   items: InventorySlot[];
   equipped: EquipmentLoadout;
-  gold: number;           // convenience — also an item, but fast-access
-  weight: number;         // computed: sum of item weights
-  capacity: number;       // computed: str * 10
+  gold: number; // convenience — also an item, but fast-access
+  weight: number; // computed: sum of item weights
+  capacity: number; // computed: str * 10
 }
 
 interface InventorySlot {
@@ -234,13 +234,13 @@ interface InventorySlot {
 }
 
 interface EquipmentLoadout {
-  head: string | null;     // world_item_id
+  head: string | null; // world_item_id
   chest: string | null;
   legs: string | null;
   feet: string | null;
-  hands: string | null;    // gloves/shields
+  hands: string | null; // gloves/shields
   mainHand: string | null; // weapon
-  offHand: string | null;  // shield/weapon/torch
+  offHand: string | null; // shield/weapon/torch
   ring1: string | null;
   ring2: string | null;
   amulet: string | null;
@@ -294,21 +294,21 @@ result = d20() + statModifier + situationalModifier
 
 Standard RPG dice notation:
 
-| Notation | Meaning |
-| -------- | ------- |
-| `d4`     | 1 four-sided die |
-| `d6`     | 1 six-sided die |
-| `d8`     | 1 eight-sided die |
-| `d10`    | 1 ten-sided die |
-| `d12`    | 1 twelve-sided die |
-| `d20`    | 1 twenty-sided die |
+| Notation | Meaning               |
+| -------- | --------------------- |
+| `d4`     | 1 four-sided die      |
+| `d6`     | 1 six-sided die       |
+| `d8`     | 1 eight-sided die     |
+| `d10`    | 1 ten-sided die       |
+| `d12`    | 1 twelve-sided die    |
+| `d20`    | 1 twenty-sided die    |
 | `2d6`    | 2 six-sided dice, sum |
 | `1d8+3`  | 1 eight-sided die + 3 |
 
 ### Dice Parser
 
 ```typescript
-function rollDice(notation: string): { total: number; rolls: number[]; modifier: number }
+function rollDice(notation: string): { total: number; rolls: number[]; modifier: number };
 ```
 
 ### Pre-Seeded Dice Queue (Deterministic Mode)
@@ -349,7 +349,7 @@ LLM narrates: "Your foot catches the edge. You scramble back, barely catching yo
 ### "LLM Proposes, Code Disposes"
 
 Combat in loop-lore is **narrative-first, mechanically-resolved**. The LLM
-writes what happens; the engine determines what's *true*.
+writes what happens; the engine determines what's _true_.
 
 ### Combat Intent (Structured Output)
 
@@ -357,12 +357,12 @@ When combat begins, the LLM outputs structured intent alongside narrative:
 
 ```typescript
 interface CombatIntent {
-  action: 'attack' | 'defend' | 'cast' | 'flee' | 'use_item' | 'grapple' | 'help';
-  target?: string;        // actor_id of target
-  weapon?: string;        // world_item_id of weapon used
-  spell?: string;         // spell name if casting
-  item?: string;          // world_item_id if using item
-  description: string;    // narrative text (what the LLM writes)
+  action: "attack" | "defend" | "cast" | "flee" | "use_item" | "grapple" | "help";
+  target?: string; // actor_id of target
+  weapon?: string; // world_item_id of weapon used
+  spell?: string; // spell name if casting
+  item?: string; // world_item_id if using item
+  description: string; // narrative text (what the LLM writes)
 }
 ```
 
@@ -398,18 +398,18 @@ reducedDamage = max(1, rawDamage - target.armorReduction)
 
 Active conditions that modify stats or behavior:
 
-| Effect     | Mechanic                                      | Duration     |
-| ---------- | --------------------------------------------- | ------------ |
-| Poisoned   | -2 to all rolls, 1d4 damage per turn          | 1d4 turns    |
-| Stunned    | Cannot act, auto-fail DEX saves               | 1 turn       |
-| Blessed    | +2 to all rolls                               | 1d4 turns    |
-| Cursed     | -2 to all rolls, cannot heal naturally        | Until removed |
-| Burning    | 1d6 damage per turn, -2 DEX                   | 1d4 turns    |
-| Frozen     | Speed halved, -4 DEX                          | 1d4 turns    |
-| Haste      | +2 DEX, extra action per turn                 | 1d4 turns    |
-| Weakened   | -4 STR                                        | 1d4 turns    |
-| Shielded   | +3 AC                                         | Until hit    |
-| Invisible  | Advantage on stealth, auto-hit first attack   | 1 minute     |
+| Effect    | Mechanic                                    | Duration      |
+| --------- | ------------------------------------------- | ------------- |
+| Poisoned  | -2 to all rolls, 1d4 damage per turn        | 1d4 turns     |
+| Stunned   | Cannot act, auto-fail DEX saves             | 1 turn        |
+| Blessed   | +2 to all rolls                             | 1d4 turns     |
+| Cursed    | -2 to all rolls, cannot heal naturally      | Until removed |
+| Burning   | 1d6 damage per turn, -2 DEX                 | 1d4 turns     |
+| Frozen    | Speed halved, -4 DEX                        | 1d4 turns     |
+| Haste     | +2 DEX, extra action per turn               | 1d4 turns     |
+| Weakened  | -4 STR                                      | 1d4 turns     |
+| Shielded  | +3 AC                                       | Until hit     |
+| Invisible | Advantage on stealth, auto-hit first attack | 1 minute      |
 
 Status effects are stored on the actor's world state and injected into
 the prompt as a structured section:
@@ -428,31 +428,31 @@ the prompt as a structured section:
 
 Skills are derived from attributes:
 
-| Skill        | Primary Stat | Use Case                        |
-| ------------ | ------------ | ------------------------------- |
-| Athletics    | STR          | Climbing, swimming, jumping     |
-| Acrobatics   | DEX          | Balancing, tumbling, dodging    |
-| Stealth      | DEX          | Hiding, sneaking, lockpicking   |
-| Perception   | WIS          | Spotting, listening, noticing   |
-| Arcana       | INT          | Magic knowledge, spell analysis |
-| Investigation| INT          | Searching, deducing, analyzing  |
-| Medicine     | WIS          | Healing, diagnosing, surgery    |
-| Survival     | WIS          | Tracking, foraging, shelter     |
-| Persuasion   | CHA          | Negotiating, inspiring, lying   |
-| Intimidation | CHA          | Threatening, commanding         |
-| Animal Handling | WIS       | Taming, riding, calming         |
-| History      | INT          | Recall lore, ancient knowledge  |
+| Skill           | Primary Stat | Use Case                        |
+| --------------- | ------------ | ------------------------------- |
+| Athletics       | STR          | Climbing, swimming, jumping     |
+| Acrobatics      | DEX          | Balancing, tumbling, dodging    |
+| Stealth         | DEX          | Hiding, sneaking, lockpicking   |
+| Perception      | WIS          | Spotting, listening, noticing   |
+| Arcana          | INT          | Magic knowledge, spell analysis |
+| Investigation   | INT          | Searching, deducing, analyzing  |
+| Medicine        | WIS          | Healing, diagnosing, surgery    |
+| Survival        | WIS          | Tracking, foraging, shelter     |
+| Persuasion      | CHA          | Negotiating, inspiring, lying   |
+| Intimidation    | CHA          | Threatening, commanding         |
+| Animal Handling | WIS          | Taming, riding, calming         |
+| History         | INT          | Recall lore, ancient knowledge  |
 
 ### Difficulty Classes
 
-| DC    | Label       | Example                          |
-| ----- | ----------- | -------------------------------- |
-| 5     | Trivial     | Open an unlocked door            |
-| 10    | Easy        | Climb a rope                     |
-| 15    | Medium      | Pick a locked chest              |
-| 20    | Hard        | Lie to a master detective        |
-| 25    | Very Hard   | Sneak past a dragon              |
-| 30    | Nearly Impossible | Disguise as the king       |
+| DC  | Label             | Example                   |
+| --- | ----------------- | ------------------------- |
+| 5   | Trivial           | Open an unlocked door     |
+| 10  | Easy              | Climb a rope              |
+| 15  | Medium            | Pick a locked chest       |
+| 20  | Hard              | Lie to a master detective |
+| 25  | Very Hard         | Sneak past a dragon       |
+| 30  | Nearly Impossible | Disguise as the king      |
 
 ### Skill Check Resolution
 
@@ -470,13 +470,13 @@ Skills are derived from attributes:
 
 ### XP Sources
 
-| Source           | XP     | Notes                          |
-| ---------------- | ------ | ------------------------------ |
-| Quest complete   | 100-500| Scales with quest difficulty    |
-| Combat (defeat)  | 25-200 | Scales with enemy level         |
-| Discovery        | 10-50  | Finding secrets, new locations  |
-| Social (success) | 10-30  | Persuasion, negotiation         |
-| Creative solve   | 20-100 | GM/DM awards for clever plays   |
+| Source           | XP      | Notes                          |
+| ---------------- | ------- | ------------------------------ |
+| Quest complete   | 100-500 | Scales with quest difficulty   |
+| Combat (defeat)  | 25-200  | Scales with enemy level        |
+| Discovery        | 10-50   | Finding secrets, new locations |
+| Social (success) | 10-30   | Persuasion, negotiation        |
+| Creative solve   | 20-100  | GM/DM awards for clever plays  |
 
 ### Level Progression
 
@@ -531,9 +531,9 @@ separately for fast access but it's still an item under the hood.
 
 ```typescript
 interface CurrencyItem {
-  category: 'currency';
+  category: "currency";
   properties: {
-    denomination: 'copper' | 'silver' | 'gold' | 'platinum';
+    denomination: "copper" | "silver" | "gold" | "platinum";
     exchangeRate: number; // relative to gold: copper=0.01, silver=0.1, gold=1, platinum=10
   };
 }
@@ -541,12 +541,12 @@ interface CurrencyItem {
 
 ### Exchange Rates
 
-| Currency  | To Gold |
-| --------- | ------- |
-| Copper    | 0.01    |
-| Silver    | 0.10    |
-| Gold      | 1.00    |
-| Platinum  | 10.00   |
+| Currency | To Gold |
+| -------- | ------- |
+| Copper   | 0.01    |
+| Silver   | 0.10    |
+| Gold     | 1.00    |
+| Platinum | 10.00   |
 
 ### Shopkeeper Interaction
 
@@ -571,15 +571,15 @@ Each enemy type or container can have a loot table:
 ```typescript
 interface LootTable {
   entries: LootEntry[];
-  rolls: number;  // how many times to roll on the table
+  rolls: number; // how many times to roll on the table
 }
 
 interface LootEntry {
   itemId: string;
-  weight: number;  // relative probability
+  weight: number; // relative probability
   minQuantity: number;
   maxQuantity: number;
-  chance: number;  // 0-1, independent chance per entry
+  chance: number; // 0-1, independent chance per entry
 }
 ```
 
@@ -608,8 +608,8 @@ trait** based on the world's theme and the persona's description:
 ```typescript
 interface WorldTrait {
   worldId: string;
-  trait: string;        // "Outsider", "Native", "Chosen One", etc.
-  description: string;  // Narrative justification
+  trait: string; // "Outsider", "Native", "Chosen One", etc.
+  description: string; // Narrative justification
   statModifications: Partial<StatBlock>;
   narrativeHooks: string[]; // Story seeds based on the trait
 }
@@ -685,17 +685,17 @@ If priority is equal, the rule defined later (more recent) wins.
 
 Each rule has a type that determines how it modifies gameplay:
 
-| Type | Effect | Example |
-| ---- | ------ | ------- |
-| `stat_modifier` | Adjusts a stat by a fixed amount | `-2 STR` in cursed zone |
-| `dc_adjustment` | Modifies DC for specific skill checks | `+5 DC` for stealth in bright area |
-| `action_prohibition` | Prevents specific actions | `no casting` in anti-magic zone |
-| `effect_trigger` | Applies status effect on entry/action | `apply burning` in lava room |
-| `auto_roll` | Forces automatic outcomes | `auto-fail perception` in fog |
-| `damage_modifier` | Multiplies/adds to damage types | `fire damage x2` in desert |
-| `resistance_modifier` | Adds/removes damage resistances | `+resistance cold` in arctic |
-| `turn_limit` | Caps turn duration or actions | `1 action per turn` in slow-time field |
-| `custom` | Arbitrary plugin-defined behavior | Plugin-specific rule logic |
+| Type                  | Effect                                | Example                                |
+| --------------------- | ------------------------------------- | -------------------------------------- |
+| `stat_modifier`       | Adjusts a stat by a fixed amount      | `-2 STR` in cursed zone                |
+| `dc_adjustment`       | Modifies DC for specific skill checks | `+5 DC` for stealth in bright area     |
+| `action_prohibition`  | Prevents specific actions             | `no casting` in anti-magic zone        |
+| `effect_trigger`      | Applies status effect on entry/action | `apply burning` in lava room           |
+| `auto_roll`           | Forces automatic outcomes             | `auto-fail perception` in fog          |
+| `damage_modifier`     | Multiplies/adds to damage types       | `fire damage x2` in desert             |
+| `resistance_modifier` | Adds/removes damage resistances       | `+resistance cold` in arctic           |
+| `turn_limit`          | Caps turn duration or actions         | `1 action per turn` in slow-time field |
+| `custom`              | Arbitrary plugin-defined behavior     | Plugin-specific rule logic             |
 
 ### Rule Schema
 
@@ -706,58 +706,65 @@ interface ChatRule {
   description: string;
 
   // Scope (exactly one set)
-  worldId?: string;        // World scope
-  chatId?: string;         // Chat/Group Chat scope
-  locationId?: string;     // Location scope
+  worldId?: string; // World scope
+  chatId?: string; // Chat/Group Chat scope
+  locationId?: string; // Location scope
 
   // Rule definition
   type: RuleType;
-  config: RuleConfig;      // Type-specific parameters
+  config: RuleConfig; // Type-specific parameters
 
   // Activation
   enabled: boolean;
-  priority: number;        // 0-1000, higher = overrides lower
-  conditions?: RuleCondition[];  // Optional: rule only applies when conditions met
+  priority: number; // 0-1000, higher = overrides lower
+  conditions?: RuleCondition[]; // Optional: rule only applies when conditions met
 
   // Metadata
-  source: 'gm' | 'plugin' | 'system' | 'user';
-  pluginId?: string;       // If rule is provided by a plugin
+  source: "gm" | "plugin" | "system" | "user";
+  pluginId?: string; // If rule is provided by a plugin
   createdAt: string;
   updatedAt: string;
 }
 
 interface RuleConfig {
   // stat_modifier
-  stat?: string;            // 'str' | 'dex' | 'con' | 'int' | 'wis' | 'cha' | 'hp' | 'mp' | 'ac'
-  modifier?: number;        // +/- value
+  stat?: string; // 'str' | 'dex' | 'con' | 'int' | 'wis' | 'cha' | 'hp' | 'mp' | 'ac'
+  modifier?: number; // +/- value
 
   // dc_adjustment
-  skill?: string;           // Skill name or 'all'
-  dcDelta?: number;         // +/- DC adjustment
+  skill?: string; // Skill name or 'all'
+  dcDelta?: number; // +/- DC adjustment
 
   // action_prohibition
-  prohibitedActions?: string[];  // 'cast', 'attack', 'flee', 'use_item', 'grapple'
+  prohibitedActions?: string[]; // 'cast', 'attack', 'flee', 'use_item', 'grapple'
 
   // effect_trigger
-  effect?: string;          // Status effect name
-  duration?: number;        // Turns
-  trigger?: 'on_enter' | 'on_action' | 'on_turn_start' | 'on_damage_taken';
+  effect?: string; // Status effect name
+  duration?: number; // Turns
+  trigger?: "on_enter" | "on_action" | "on_turn_start" | "on_damage_taken";
 
   // damage_modifier
-  damageType?: string;      // 'fire', 'cold', 'lightning', 'slashing', 'bludgeoning', 'piercing'
+  damageType?: string; // 'fire', 'cold', 'lightning', 'slashing', 'bludgeoning', 'piercing'
   damageMultiplier?: number; // 2.0 = double, 0.5 = half
-  damageFlat?: number;      // +/- flat damage
+  damageFlat?: number; // +/- flat damage
 
   // custom
-  pluginData?: Record<string, unknown>;  // Arbitrary plugin-specific config
+  pluginData?: Record<string, unknown>; // Arbitrary plugin-specific config
 }
 
 interface RuleCondition {
-  type: 'actor_has_effect' | 'actor_stat_above' | 'actor_stat_below'
-      | 'time_of_day' | 'weather' | 'actor_count' | 'quest_active'
-      | 'has_item' | 'is_actor_type';
-  target?: string;          // E.g. effect name, stat name, item id
-  value?: string | number;  // Comparison value
+  type:
+    | "actor_has_effect"
+    | "actor_stat_above"
+    | "actor_stat_below"
+    | "time_of_day"
+    | "weather"
+    | "actor_count"
+    | "quest_active"
+    | "has_item"
+    | "is_actor_type";
+  target?: string; // E.g. effect name, stat name, item id
+  value?: string | number; // Comparison value
 }
 ```
 
@@ -765,23 +772,23 @@ interface RuleCondition {
 
 Rules are stored in a dedicated `chat_rules` table:
 
-| Column | Type | Constraints | Notes |
-| ------ | ---- | ----------- | ----- |
-| id | TEXT | PK, UUID | |
-| world_id | TEXT | FK → worlds.id, nullable | World-scoped rule |
-| chat_id | TEXT | FK → chats.id, nullable | Chat/group-chat-scoped rule |
-| location_id | TEXT | FK → locations.id, nullable | Location-scoped rule |
-| name | TEXT | NOT NULL | Rule display name |
-| description | TEXT | | Rule description |
-| type | TEXT | NOT NULL | RuleType enum |
-| config | TEXT | NOT NULL, JSON | RuleConfig |
-| enabled | INTEGER | DEFAULT 1 | Boolean |
-| priority | INTEGER | DEFAULT 100 | Override priority |
-| conditions | TEXT | JSON array | Optional RuleCondition[] |
-| source | TEXT | DEFAULT 'user' | 'gm' | 'plugin' | 'system' | 'user' |
-| plugin_id | TEXT | | Plugin that registered this rule |
-| created_at | TEXT | DEFAULT CURRENT_TIMESTAMP | |
-| updated_at | TEXT | DEFAULT CURRENT_TIMESTAMP | |
+| Column      | Type    | Constraints                 | Notes                            |
+| ----------- | ------- | --------------------------- | -------------------------------- |
+| id          | TEXT    | PK, UUID                    |                                  |
+| world_id    | TEXT    | FK → worlds.id, nullable    | World-scoped rule                |
+| chat_id     | TEXT    | FK → chats.id, nullable     | Chat/group-chat-scoped rule      |
+| location_id | TEXT    | FK → locations.id, nullable | Location-scoped rule             |
+| name        | TEXT    | NOT NULL                    | Rule display name                |
+| description | TEXT    |                             | Rule description                 |
+| type        | TEXT    | NOT NULL                    | RuleType enum                    |
+| config      | TEXT    | NOT NULL, JSON              | RuleConfig                       |
+| enabled     | INTEGER | DEFAULT 1                   | Boolean                          |
+| priority    | INTEGER | DEFAULT 100                 | Override priority                |
+| conditions  | TEXT    | JSON array                  | Optional RuleCondition[]         |
+| source      | TEXT    | DEFAULT 'user'              | 'gm'                             | 'plugin' | 'system' | 'user' |
+| plugin_id   | TEXT    |                             | Plugin that registered this rule |
+| created_at  | TEXT    | DEFAULT CURRENT_TIMESTAMP   |                                  |
+| updated_at  | TEXT    | DEFAULT CURRENT_TIMESTAMP   |                                  |
 
 **Indexes:** `(world_id)`, `(chat_id)`, `(location_id)`, `(enabled)`
 
@@ -823,18 +830,18 @@ intent blocks (same pattern as combat intent):
 
 ```typescript
 interface RuleIntent {
-  action: 'create' | 'modify' | 'remove' | 'toggle';
+  action: "create" | "modify" | "remove" | "toggle";
   rule: {
     name: string;
     description: string;
-    scope: 'world' | 'chat' | 'location';
-    scopeId?: string;       // world_id, chat_id, or location_id
+    scope: "world" | "chat" | "location";
+    scopeId?: string; // world_id, chat_id, or location_id
     type: RuleType;
     config: RuleConfig;
     priority?: number;
     conditions?: RuleCondition[];
   };
-  narrative: string;        // In-character justification
+  narrative: string; // In-character justification
 }
 ```
 
@@ -896,7 +903,7 @@ This separation means:
 
 ```typescript
 interface RpgMechanicPlugin {
-  name: string;              // Unique plugin name
+  name: string; // Unique plugin name
   version: string;
   description: string;
 
@@ -919,18 +926,18 @@ interface RpgContext {
 }
 
 interface MechanicResolver {
-  name: string;              // e.g. 'dice_roll', 'combat_resolve', 'skill_check'
+  name: string; // e.g. 'dice_roll', 'combat_resolve', 'skill_check'
   description: string;
-  parameters: JSONSchema;    // Input schema
-  execute: (params: any) => Promise<ResolverResult>;  // Deterministic, fast
+  parameters: JSONSchema; // Input schema
+  execute: (params: any) => Promise<ResolverResult>; // Deterministic, fast
 }
 
 interface ResolverResult {
   success: boolean;
-  data: Record<string, unknown>;    // Mechanical result
-  narrative?: string;               // Optional neutral description
-  stateChanges?: StateChange[];     // State mutations to apply
-  appliedRules?: string[];          // Rules that affected this resolution
+  data: Record<string, unknown>; // Mechanical result
+  narrative?: string; // Optional neutral description
+  stateChanges?: StateChange[]; // State mutations to apply
+  appliedRules?: string[]; // Rules that affected this resolution
 }
 ```
 
@@ -938,47 +945,45 @@ interface ResolverResult {
 
 These are shipped as built-in plugins (always available):
 
-| Resolver | Input | Output | CPU Cost |
-| -------- | ----- | ------ | -------- |
-| `dice_roll` | notation, reason | total, rolls[], modifier | O(1) |
-| `skill_check` | skill, dc, statBlock, modifiers | success, roll, margin | O(1) |
-| `combat_attack` | attackerStats, defenderStats, weapon | hit, damage, crit | O(1) |
-| `damage_apply` | damage, damageType, resistances, armor | netDamage, statusEffects[] | O(1) |
-| `loot_generate` | lootTable, rolls | items[] | O(n) |
-| `status_apply` | effect, targetStats, duration | appliedEffect, tickSchedule | O(1) |
-| `level_up` | currentStats, chosenAttribute | newStats, newAbilities | O(1) |
-| `initiative` | actors[] | orderedQueue | O(n log n) |
-| `xp_calculate` | source, difficulty, actorLevel | xpAwarded | O(1) |
+| Resolver        | Input                                  | Output                      | CPU Cost   |
+| --------------- | -------------------------------------- | --------------------------- | ---------- |
+| `dice_roll`     | notation, reason                       | total, rolls[], modifier    | O(1)       |
+| `skill_check`   | skill, dc, statBlock, modifiers        | success, roll, margin       | O(1)       |
+| `combat_attack` | attackerStats, defenderStats, weapon   | hit, damage, crit           | O(1)       |
+| `damage_apply`  | damage, damageType, resistances, armor | netDamage, statusEffects[]  | O(1)       |
+| `loot_generate` | lootTable, rolls                       | items[]                     | O(n)       |
+| `status_apply`  | effect, targetStats, duration          | appliedEffect, tickSchedule | O(1)       |
+| `level_up`      | currentStats, chosenAttribute          | newStats, newAbilities      | O(1)       |
+| `initiative`    | actors[]                               | orderedQueue                | O(n log n) |
+| `xp_calculate`  | source, difficulty, actorLevel         | xpAwarded                   | O(1)       |
 
 ### Plugin Registration
 
 ```typescript
 // Example: custom D&D 5e combat resolver plugin
 const dndCombatPlugin: RpgMechanicPlugin = {
-  name: 'dnd-5e-combat',
-  version: '1.0.0',
-  description: 'D&D 5e combat resolution with advantage/disadvantage, crits, and damage types',
+  name: "dnd-5e-combat",
+  version: "1.0.0",
+  description: "D&D 5e combat resolution with advantage/disadvantage, crits, and damage types",
 
   resolvers: [
     {
-      name: 'dnd_attack_roll',
-      description: 'D&D 5e attack roll with advantage/disadvantage support',
+      name: "dnd_attack_roll",
+      description: "D&D 5e attack roll with advantage/disadvantage support",
       parameters: {
-        type: 'object',
+        type: "object",
         properties: {
-          attackBonus: { type: 'number' },
-          targetAc: { type: 'number' },
-          advantage: { type: 'boolean', default: false },
-          disadvantage: { type: 'boolean', default: false },
+          attackBonus: { type: "number" },
+          targetAc: { type: "number" },
+          advantage: { type: "boolean", default: false },
+          disadvantage: { type: "boolean", default: false },
         },
-        required: ['attackBonus', 'targetAc'],
+        required: ["attackBonus", "targetAc"],
       },
       execute: async ({ attackBonus, targetAc, advantage, disadvantage }) => {
         const roll1 = rollDie(20);
         const roll2 = advantage || disadvantage ? rollDie(20) : roll1;
-        const finalRoll = advantage ? Math.max(roll1, roll2)
-                        : disadvantage ? Math.min(roll1, roll2)
-                        : roll1;
+        const finalRoll = advantage ? Math.max(roll1, roll2) : disadvantage ? Math.min(roll1, roll2) : roll1;
         const total = finalRoll + attackBonus;
         const isCrit = finalRoll === 20;
         const isFumble = finalRoll === 1;
@@ -1022,10 +1027,10 @@ Resolvers can be chained for complex mechanics:
 ```typescript
 // Example: full attack resolution chain
 const attackChain = [
-  { resolver: 'dnd_attack_roll', params: { attackBonus, targetAc } },
-  { resolver: 'damage_roll', params: { weaponDamage, strModifier } },
-  { resolver: 'damage_apply', params: { damage, resistances, armor } },
-  { resolver: 'status_apply', params: { effect: 'bleeding', target } },
+  { resolver: "dnd_attack_roll", params: { attackBonus, targetAc } },
+  { resolver: "damage_roll", params: { weaponDamage, strModifier } },
+  { resolver: "damage_apply", params: { damage, resistances, armor } },
+  { resolver: "status_apply", params: { effect: "bleeding", target } },
 ];
 
 // Each resolver's output is available as input to the next
@@ -1036,31 +1041,31 @@ const attackChain = [
 
 Third-party plugins can register new resolvers for any RPG system:
 
-| System | Resolver Example | Use Case |
-| ------ | ---------------- | -------- |
-| Call of Cthulhu | `d100_skill_check` | D100 roll-under, pushes, luck spends |
-| Cyberpunk RED | `netrun_resolve` | NET architecture, black ICE, programs |
-| Pathfinder 2e | `pf2e_degrees` | Critical success/failure by +/-10 |
-| GURPS | `gurps_3d6_roll` | 3d6 roll-under, margin of success |
-| FATE | `fate_4df` | 4dF dice, aspect invocations |
-| Custom | `custom_dice_pool` | Any dice pool system (Shadowrun, WoD) |
+| System          | Resolver Example   | Use Case                              |
+| --------------- | ------------------ | ------------------------------------- |
+| Call of Cthulhu | `d100_skill_check` | D100 roll-under, pushes, luck spends  |
+| Cyberpunk RED   | `netrun_resolve`   | NET architecture, black ICE, programs |
+| Pathfinder 2e   | `pf2e_degrees`     | Critical success/failure by +/-10     |
+| GURPS           | `gurps_3d6_roll`   | 3d6 roll-under, margin of success     |
+| FATE            | `fate_4df`         | 4dF dice, aspect invocations          |
+| Custom          | `custom_dice_pool` | Any dice pool system (Shadowrun, WoD) |
 
 ### Performance Characteristics
 
-| Metric | Target | Notes |
-| ------ | ------ | ----- |
-| Per-resolver latency | < 1ms | No LLM calls, pure math |
-| Memory per resolver | < 64KB | No state retained between calls |
-| Resolver chain (5 deep) | < 5ms | Sequential, no IO |
-| Concurrent resolutions | 1000/sec | Stateless, thread-safe |
+| Metric                  | Target   | Notes                           |
+| ----------------------- | -------- | ------------------------------- |
+| Per-resolver latency    | < 1ms    | No LLM calls, pure math         |
+| Memory per resolver     | < 64KB   | No state retained between calls |
+| Resolver chain (5 deep) | < 5ms    | Sequential, no IO               |
+| Concurrent resolutions  | 1000/sec | Stateless, thread-safe          |
 
 ### Plugin RPG Engine vs. Prompt-Based Mechanics
 
-| Approach | CPU Cost | Determinism | Flexibility | LLM Load |
-| -------- | -------- | ----------- | ----------- | -------- |
-| **Plugin resolver** | Fixed, O(1) | ✅ Deterministic | Plugin-defined | None |
-| **LLM-prompted** | Variable, expensive | ❌ Hallucinates | Infinite | High |
-| **Hybrid (this system)** | Fixed + narrative | ✅ Validated | Plugin + LLM | Low |
+| Approach                 | CPU Cost            | Determinism      | Flexibility    | LLM Load |
+| ------------------------ | ------------------- | ---------------- | -------------- | -------- |
+| **Plugin resolver**      | Fixed, O(1)         | ✅ Deterministic | Plugin-defined | None     |
+| **LLM-prompted**         | Variable, expensive | ❌ Hallucinates  | Infinite       | High     |
+| **Hybrid (this system)** | Fixed + narrative   | ✅ Validated     | Plugin + LLM   | Low      |
 
 The hybrid approach ensures the LLM never directly mutates game state.
 Plugin resolvers provide the mechanical backbone; the LLM provides the
@@ -1075,13 +1080,13 @@ system.
 
 ```typescript
 interface PluginBundle {
-  name: string;                    // e.g. 'dnd-5e', 'call-of-cthulhu', 'fate-core'
+  name: string; // e.g. 'dnd-5e', 'call-of-cthulhu', 'fate-core'
   version: string;
   description: string;
   author: string;
 
   // Plugin dependencies (loaded automatically)
-  plugins: string[];               // e.g. ['dice-roller', 'dnd-5e-combat', 'dnd-5e-skills']
+  plugins: string[]; // e.g. ['dice-roller', 'dnd-5e-combat', 'dnd-5e-skills']
 
   // Stat template (default stat block for new characters in this system)
   defaultStatBlock: Partial<StatBlock>;
@@ -1094,10 +1099,10 @@ interface PluginBundle {
 
   // Level curve
   levelProgression: {
-    xpFormula: string;             // 'currentLevel * 100 + 50'
-    attributesPerLevel: number;    // Every N levels, +1 attribute
-    hpPerLevel: number;            // Fixed HP gain per level
-    mpPerLevel: number;            // Fixed MP gain per level
+    xpFormula: string; // 'currentLevel * 100 + 50'
+    attributesPerLevel: number; // Every N levels, +1 attribute
+    hpPerLevel: number; // Fixed HP gain per level
+    mpPerLevel: number; // Fixed MP gain per level
   };
 
   // Default loot tables
@@ -1107,14 +1112,14 @@ interface PluginBundle {
 
 #### Built-In Bundles
 
-| Bundle | Plugins | Stat Range | Dice | Best For |
-| ------ | ------- | ---------- | ---- | -------- |
-| `dnd-5e` | dice-roller, dnd-combat, dnd-skills, dnd-magic, dnd-loot | 1-30 | d20 | Fantasy, tactical combat |
-| `call-of-cthulhu` | coc-dice, coc-skills, coc-sanity, coc-loot | 1-100 (percentile) | d100 | Horror, investigation |
-| `fate-core` | fate-dice, fate-aspects, fate-stunts | 0-8 (ladder) | 4dF | Narrative, cinematic |
-| `gurps-lite` | gurps-dice, gurps-skills, gurps-damage | 1-20 (3d6 curve) | 3d6 | Simulationist, detailed |
-| `minimal` | dice-roller | 1-20 | d20 | Light RP, no crunch |
-| `none` | (empty) | — | — | Pure narrative, zero mechanics |
+| Bundle            | Plugins                                                  | Stat Range         | Dice | Best For                       |
+| ----------------- | -------------------------------------------------------- | ------------------ | ---- | ------------------------------ |
+| `dnd-5e`          | dice-roller, dnd-combat, dnd-skills, dnd-magic, dnd-loot | 1-30               | d20  | Fantasy, tactical combat       |
+| `call-of-cthulhu` | coc-dice, coc-skills, coc-sanity, coc-loot               | 1-100 (percentile) | d100 | Horror, investigation          |
+| `fate-core`       | fate-dice, fate-aspects, fate-stunts                     | 0-8 (ladder)       | 4dF  | Narrative, cinematic           |
+| `gurps-lite`      | gurps-dice, gurps-skills, gurps-damage                   | 1-20 (3d6 curve)   | 3d6  | Simulationist, detailed        |
+| `minimal`         | dice-roller                                              | 1-20               | d20  | Light RP, no crunch            |
+| `none`            | (empty)                                                  | —                  | —    | Pure narrative, zero mechanics |
 
 #### Bundle Activation Scopes
 
@@ -1137,26 +1142,26 @@ bundle defaults:
 
 ```typescript
 interface MechanicFineTune {
-  scope: 'world' | 'chat' | 'location';
+  scope: "world" | "chat" | "location";
   scopeId: string;
 
   // Stat adjustments (overrides bundle defaults)
   statRanges?: {
-    min?: number;                  // Default 1
-    max?: number;                  // Default 30
-    startingPoints?: number;       // Point-buy total for new characters
+    min?: number; // Default 1
+    max?: number; // Default 30
+    startingPoints?: number; // Point-buy total for new characters
   };
 
   // Skill overrides
-  enabledSkills?: string[];        // If set, only these skills are active
+  enabledSkills?: string[]; // If set, only these skills are active
   customSkills?: SkillDefinition[]; // Additional skills not in bundle
 
   // Difficulty curve
-  difficultyMultiplier?: number;   // 0.5 = easier, 2.0 = harder, applied to all DCs
-  xpMultiplier?: number;           // 0.5 = slow leveling, 2.0 = fast
+  difficultyMultiplier?: number; // 0.5 = easier, 2.0 = harder, applied to all DCs
+  xpMultiplier?: number; // 0.5 = slow leveling, 2.0 = fast
 
   // Rule overrides
-  ruleBlacklist?: string[];        // Rule IDs to disable
+  ruleBlacklist?: string[]; // Rule IDs to disable
   rulePriorityOverrides?: Record<string, number>; // Override priority for specific rules
 
   // Plugin-specific
@@ -1194,12 +1199,12 @@ The LLM GM can fine-tune mechanics through structured intent:
 
 ```typescript
 interface FineTuneIntent {
-  action: 'adjust_difficulty' | 'toggle_skill' | 'set_stat_range'
-        | 'add_custom_skill' | 'override_rule_priority';
-  scope: 'world' | 'chat' | 'location';
+  action:
+    "adjust_difficulty" | "toggle_skill" | "set_stat_range" | "add_custom_skill" | "override_rule_priority";
+  scope: "world" | "chat" | "location";
   scopeId: string;
   config: MechanicFineTune;
-  narrative: string;  // In-character justification
+  narrative: string; // In-character justification
 }
 ```
 
@@ -1379,67 +1384,67 @@ The LLM then narrates the mechanical truth.
 
 ### Phase 1: Foundation (Current → v0.1)
 
-| Task | Files | Status |
-| ---- | ----- | ------ |
-| `actor_items` table + migration | `src/db/schema-actors.ts`, `src/db/migrations/` | Not started |
-| Equipment slots on `actor_items` | Schema + `src/characters/equipment.ts` | Not started |
-| Basic stat block on `actors.settings` | Schema update | Not started |
-| Stat computation (base + equipment) | `src/rpg/stat-computer.ts` | Not started |
-| Equip/unequip service | `src/rpg/equipment.ts` | Not started |
+| Task                                  | Files                                           | Status      |
+| ------------------------------------- | ----------------------------------------------- | ----------- |
+| `actor_items` table + migration       | `src/db/schema-actors.ts`, `src/db/migrations/` | Not started |
+| Equipment slots on `actor_items`      | Schema + `src/characters/equipment.ts`          | Not started |
+| Basic stat block on `actors.settings` | Schema update                                   | Not started |
+| Stat computation (base + equipment)   | `src/rpg/stat-computer.ts`                      | Not started |
+| Equip/unequip service                 | `src/rpg/equipment.ts`                          | Not started |
 
 ### Phase 2: Dice & Combat (v0.2)
 
-| Task | Files | Status |
-| ---- | ----- | ------ |
-| Dice engine (parser + roller) | `src/rpg/dice.ts` | Not started |
-| Pre-seeded dice queue | `src/rpg/dice-queue.ts` | Not started |
-| Combat intent extraction | `src/rpg/combat-intent.ts` | Not started |
-| Combat resolution pipeline | `src/rpg/combat-resolver.ts` | Not started |
-| Status effect system | `src/rpg/status-effects.ts` | Not started |
-| Event extraction upgrade | `src/story/events/extraction.ts` | Not started |
+| Task                          | Files                            | Status      |
+| ----------------------------- | -------------------------------- | ----------- |
+| Dice engine (parser + roller) | `src/rpg/dice.ts`                | Not started |
+| Pre-seeded dice queue         | `src/rpg/dice-queue.ts`          | Not started |
+| Combat intent extraction      | `src/rpg/combat-intent.ts`       | Not started |
+| Combat resolution pipeline    | `src/rpg/combat-resolver.ts`     | Not started |
+| Status effect system          | `src/rpg/status-effects.ts`      | Not started |
+| Event extraction upgrade      | `src/story/events/extraction.ts` | Not started |
 
 ### Phase 3: Skills & XP (v0.3)
 
-| Task | Files | Status |
-| ---- | ----- | ------ |
-| Skill definitions | `src/rpg/skills.ts` | Not started |
-| Skill check resolution | `src/rpg/skill-checks.ts` | Not started |
-| XP tracking on world actor state | Schema + `src/rpg/xp.ts` | Not started |
-| Level-up logic | `src/rpg/leveling.ts` | Not started |
-| Loot table system | `src/rpg/loot.ts` | Not started |
+| Task                             | Files                     | Status      |
+| -------------------------------- | ------------------------- | ----------- |
+| Skill definitions                | `src/rpg/skills.ts`       | Not started |
+| Skill check resolution           | `src/rpg/skill-checks.ts` | Not started |
+| XP tracking on world actor state | Schema + `src/rpg/xp.ts`  | Not started |
+| Level-up logic                   | `src/rpg/leveling.ts`     | Not started |
+| Loot table system                | `src/rpg/loot.ts`         | Not started |
 
 ### Phase 4: Persona-World (v0.4)
 
-| Task | Files | Status |
-| ---- | ----- | ------ |
-| Persona world traits | `src/personas/world-traits.ts` | Not started |
-| Persona ↔ character conversion | `src/personas/conversion.ts` | Not started |
-| RPG-enhanced prompt assembly | `src/rpg/prompt-assembly.ts` | Not started |
-| Currency system | `src/rpg/currency.ts` | Not started |
+| Task                           | Files                          | Status      |
+| ------------------------------ | ------------------------------ | ----------- |
+| Persona world traits           | `src/personas/world-traits.ts` | Not started |
+| Persona ↔ character conversion | `src/personas/conversion.ts`   | Not started |
+| RPG-enhanced prompt assembly   | `src/rpg/prompt-assembly.ts`   | Not started |
+| Currency system                | `src/rpg/currency.ts`          | Not started |
 
 ### Phase 5: Chat Rules & Scoped Mechanics (v0.5)
 
-| Task | Files | Status |
-| ---- | ----- | ------ |
-| `chat_rules` table + migration | `src/db/schema-rules.ts`, `src/db/migrations/` | Not started |
-| Chat rule CRUD service | `src/rpg/rules-service.ts` | Not started |
-| Rule resolution pipeline (scope cascade) | `src/rpg/rules-resolver.ts` | Not started |
-| Rule intent extraction from LLM | `src/rpg/rules-intent.ts` | Not started |
-| Rule prompt injection | `src/rpg/rules-prompt.ts` | Not started |
-| Location-scoped rule activation | `src/rpg/rules-location.ts` | Not started |
+| Task                                     | Files                                          | Status      |
+| ---------------------------------------- | ---------------------------------------------- | ----------- |
+| `chat_rules` table + migration           | `src/db/schema-rules.ts`, `src/db/migrations/` | Not started |
+| Chat rule CRUD service                   | `src/rpg/rules-service.ts`                     | Not started |
+| Rule resolution pipeline (scope cascade) | `src/rpg/rules-resolver.ts`                    | Not started |
+| Rule intent extraction from LLM          | `src/rpg/rules-intent.ts`                      | Not started |
+| Rule prompt injection                    | `src/rpg/rules-prompt.ts`                      | Not started |
+| Location-scoped rule activation          | `src/rpg/rules-location.ts`                    | Not started |
 
 ### Phase 6: Plugin Engine & Bundles (v0.6)
 
-| Task | Files | Status |
-| ---- | ----- | ------ |
-| `RpgMechanicPlugin` interface + registry | `src/rpg/plugin-engine.ts` | Not started |
-| Built-in core resolvers (dice, skill, combat, damage) | `src/rpg/resolvers/` | Not started |
-| Resolver chain execution | `src/rpg/resolver-chain.ts` | Not started |
-| Plugin bundle system (`PluginBundle` manifest) | `src/rpg/bundle-loader.ts` | Not started |
-| Fine-tune overlay service | `src/rpg/fine-tune.ts` | Not started |
-| Bundle activation per scope (world/chat/location) | `src/rpg/bundle-activator.ts` | Not started |
-| `.rpgbundle` import/export | `src/rpg/bundle-io.ts` | Not started |
-| LLM GM fine-tune intent extraction | `src/rpg/fine-tune-intent.ts` | Not started |
+| Task                                                  | Files                         | Status      |
+| ----------------------------------------------------- | ----------------------------- | ----------- |
+| `RpgMechanicPlugin` interface + registry              | `src/rpg/plugin-engine.ts`    | Not started |
+| Built-in core resolvers (dice, skill, combat, damage) | `src/rpg/resolvers/`          | Not started |
+| Resolver chain execution                              | `src/rpg/resolver-chain.ts`   | Not started |
+| Plugin bundle system (`PluginBundle` manifest)        | `src/rpg/bundle-loader.ts`    | Not started |
+| Fine-tune overlay service                             | `src/rpg/fine-tune.ts`        | Not started |
+| Bundle activation per scope (world/chat/location)     | `src/rpg/bundle-activator.ts` | Not started |
+| `.rpgbundle` import/export                            | `src/rpg/bundle-io.ts`        | Not started |
+| LLM GM fine-tune intent extraction                    | `src/rpg/fine-tune-intent.ts` | Not started |
 
 ---
 
@@ -1447,22 +1452,22 @@ The LLM then narrates the mechanical truth.
 
 ### Related Documents
 
-| Document | Covers |
-| -------- | ------ |
-| `docs/character-setup.md` | Character card system, format support |
-| `docs/actors.md` | Actor data model, item tables |
-| `docs/schema.md` | Database schema |
-| `docs/story/` | Story system, quests, events |
-| `docs/memory-system.md` | Character memories |
-| `docs/plugin-system.md` | Plugin architecture, tool/role definitions |
-| `docs/assets.md` | Asset upload and linking pipeline |
+| Document                  | Covers                                     |
+| ------------------------- | ------------------------------------------ |
+| `docs/character-setup.md` | Character card system, format support      |
+| `docs/actors.md`          | Actor data model, item tables              |
+| `docs/schema.md`          | Database schema                            |
+| `docs/story/`             | Story system, quests, events               |
+| `docs/memory-system.md`   | Character memories                         |
+| `docs/plugin-system.md`   | Plugin architecture, tool/role definitions |
+| `docs/assets.md`          | Asset upload and linking pipeline          |
 
 ### External References
 
-| System | Relevance |
-| ------ | --------- |
-| D&D 5e SRD | Stat system, combat resolution, skill checks |
-| Multihog DnD Framework | Dual-model state tracking, hybrid RNG |
-| Horae (SillyTavern) | Modular RPG, equipment slots, status bars |
-| Waypoint | "LLM proposes, code disposés" architecture |
-| OpenDungeon | TypeScript mechanics + LLM narrative |
+| System                 | Relevance                                    |
+| ---------------------- | -------------------------------------------- |
+| D&D 5e SRD             | Stat system, combat resolution, skill checks |
+| Multihog DnD Framework | Dual-model state tracking, hybrid RNG        |
+| Horae (SillyTavern)    | Modular RPG, equipment slots, status bars    |
+| Waypoint               | "LLM proposes, code disposés" architecture   |
+| OpenDungeon            | TypeScript mechanics + LLM narrative         |

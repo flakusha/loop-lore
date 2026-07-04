@@ -12,12 +12,12 @@ The chat interface is **centered** with a **configurable maximum width** for the
 
 ## Zone Layout
 
-| #   | Zone                 | Default behavior                                                            | Mobile behavior                              |
-| --- | -------------------- | --------------------------------------------------------------------------- | -------------------------------------------- |
-| 1   | Left panel (sidebar) | Hamburger menu, attaches to browser window left edge or chat area left edge | Always hamburger, full-screen overlay drawer |
-| 2   | Chat area            | Centered, configurable max-width (default ~720px)                           | Full-width, no centering margin              |
-| 3   | Right panel          | Slides in from right, pushes chat area chrome on desktop                    | Overlays on mobile (full-screen drawer)      |
-| 4   | Input area           | Fixed below chat area, same width as chat area                              | Fixed at bottom, full-width                  |
+| #   | Zone                 | Default behavior                                                            | Mobile behavior                                        |
+| --- | -------------------- | --------------------------------------------------------------------------- | ------------------------------------------------------ |
+| 1   | Left panel (sidebar) | Hamburger menu, attaches to browser window left edge or chat area left edge | Always hamburger, full-screen overlay drawer           |
+| 2   | Chat area            | Centered, configurable max-width (default ~720px)                           | Full-width, no centering margin                        |
+| 3   | Right panel          | Slides in from right, pushes chat area chrome on desktop                    | Full-screen overlay drawer (other panel/chat disabled) |
+| 4   | Input area           | Fixed below chat area, same width as chat area                              | Fixed at bottom, full-width                            |
 
 The left and right panels are used for: chat list, character info, story setup, world/location context, and assistant configuration. In group chat mode (future), a chat admin can freeze panels to prevent users from manipulating story setup.
 
@@ -34,7 +34,7 @@ The left and right panels are used for: chat list, character info, story setup, 
 
 **Desktop**: overlays the chat area or pushes it (configurable preference). Default: overlays with a semi-transparent backdrop.
 
-**Mobile (<768px)**: always a full-screen overlay drawer, covering the entire viewport. Left panel takes priority over right panel (if both are open, right is dismissed).
+**Mobile (<768px)**: always a full-screen overlay drawer, covering the entire viewport. Left panel takes priority over right panel (if both are open, right is dismissed). When the left panel is open on mobile, the right panel and chat area are inaccessible (disabled).
 
 **Panel contents when open**:
 
@@ -70,7 +70,7 @@ Implementation approach:
 
 **Desktop behavior**: slides in from the right edge. Pushes the chat area's chrome (background, header bar) narrower, but the message column inside stays at its fixed width. The header bar and empty space around the chat column compress first.
 
-**Mobile behavior**: slides in as a full-screen overlay drawer, similar to the left panel. Clicking outside or pressing Escape closes it.
+**Mobile behavior**: slides in as a full-screen overlay drawer, similar to the left panel. Clicking outside or pressing Escape closes it. When the right panel is open on mobile, the left panel and chat area are inaccessible (disabled) to prevent interaction conflicts.
 
 **Contents**:
 
@@ -87,9 +87,9 @@ Implementation approach:
 
 ## Responsive Behavior Summary
 
-| Viewport   | Left panel                 | Right panel                          | Chat width                       |
-| ---------- | -------------------------- | ------------------------------------ | -------------------------------- |
-| >1200px    | Hamburger, overlays chrome | Slides in, pushes chrome             | Centered, configurable max-width |
-| 768–1200px | Hamburger, overlays chrome | Slides in, pushes chrome (less room) | Centered, narrower max-width     |
-| <768px     | Full-screen overlay drawer | Full-screen overlay drawer           | Full-width, no centering         |
-| <480px     | Full-screen overlay drawer | Full-screen overlay drawer           | Full-width, compact spacing      |
+| Viewport   | Left panel                 | Right panel                                            | Chat width                       |
+| ---------- | -------------------------- | ------------------------------------------------------ | -------------------------------- |
+| >1200px    | Hamburger, overlays chrome | Slides in, pushes chrome                               | Centered, configurable max-width |
+| 768–1200px | Hamburger, overlays chrome | Slides in, pushes chrome (less room)                   | Centered, narrower max-width     |
+| <768px     | Full-screen overlay drawer | Full-screen overlay drawer (other panel/chat disabled) | Full-width, no centering         |
+| <480px     | Full-screen overlay drawer | Full-screen overlay drawer (other panel/chat disabled) | Full-width, compact spacing      |

@@ -1,19 +1,27 @@
-# User Secret Keys & Message Encryption
+# Actor Secret Keys & Message Encryption
 
 ## Overview
 
-Message content is encrypted at rest in the database. Each user has a personal secret key used to protect their data. The encryption model balances privacy (DB compromise does not leak message content) with functionality (the server needs to decrypt messages for LLM API calls and display).
+Message content encrypted at rest with **actor-level encryption keys**.
+Each actor (user, character, assistant, narrator, system) can have one or
+multiple keys.
+
+- **Privacy**: DB compromise does not leak message content
+- **Access Control**: Only authorized actors can decrypt
+- **Key Management**: Request keys, view history, purge
+- **Anonymous Mode**: Server-level setting
 
 ---
 
 ## Threat Model
 
-| Threat                                   | Mitigation                                                                                                                                                   | Coverage     |
-| ---------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------ |
-| DB dump / backup leak                    | Message content encrypted at rest. Keys are not in the DB.                                                                                                   | v1           |
-| Unauthorized DB access via SQL injection | Parameterized queries (Kysely) prevent injection. Encryption adds defense-in-depth.                                                                          | v1           |
-| Server process memory dump               | Keys held in process memory only when actively decrypting. Not persisted in logs.                                                                            | v1           |
-| Compromised server admin                 | Not protected — admin has access to the server process which holds decryption keys. True end-to-end encryption would prevent LLM access and is out of scope. | Not in scope |
+| Threat                          | Mitigation                                          | Coverage |
+| ------------------------------- | --------------------------------------------------- | -------- |
+| DB dump / backup leak           | Content encrypted with actor keys. Keys not in DB.  | v1       |
+| SQL injection                   | Parameterized queries (Kysely).                     | v1       |
+| Server process memory dump      | Keys in memory only during active decrypt.          | v1       |
+| Compromised server admin        | Admin has process access — holds keys.              | Out      |
+| Network eavesdropping           | HTTPS.                                              | v1       |
 
 ---
 
@@ -21,175 +29,315 @@ Message content is encrypted at rest in the database. Each user has a personal s
 
 ```
 ┌─────────────────────────────────────┐
-│         Server Master Key           │  ← SMK: from env SERVER_ENCRYPTION_KEY
-│  (256-bit, stored in env, never DB) │      or generated on first start
+│         Server Master Key           │  SMK: SERVER_ENCRYPTION_KEY env var
+│  (256-bit, env only, never DB)      │  or generated on first start
 └──────────┬──────────────────────────┘
            │
-           ├── encrypts ──► Message content (at rest)
+           ├── encrypts ──► Actor Secret Keys (at rest in actor_keys table)
            │
-           ├── encrypts ──► User Secret Keys (at rest)
-           │
-           └── derives ──► Chat Encryption Keys (per-chat, derived)
+           └── derives ──► Chat Encryption Keys (per-chat HKDF)
+```
+
+### Actor Key Table
+
+```sql
+actor_keys (
+  id            TEXT PK,
+  actor_id      TEXT FK → actors.id,
+  name          TEXT NOT NULL,           -- 'primary', 'rotation-2024-01', etc.
+  key_type      TEXT NOT NULL,           -- 'primary', 'additional'
+  encrypted_key TEXT,                    -- SMK-encrypted AES-256 key
+  public_key    TEXT,                    -- For key exchange (future)
+  created_at    TEXT,
+  expires_at    TEXT,                    -- Rotation window
+  status        TEXT DEFAULT 'active'    -- 'active', 'expired', 'revoked'
+)
 ```
 
 ---
 
-## Server Master Key (SMK)
+## Key Lifecycle
 
-- 256-bit symmetric key, stored in environment variable `SERVER_ENCRYPTION_KEY`
-- On first server start without the key set: auto-generate a key and print it to stdout (requires manual placement in `.env`)
-- Format: 64-character hex string (32 bytes)
-- The SMK is NEVER written to the database or logs
-- If the SMK changes, all encrypted data becomes unreadable. A key rotation mechanism is a future feature.
+### Generation
 
----
+Actor primary key created on first login:
+1. Server generates 256-bit random key (`crypto.randomBytes(32)`)
+2. Encrypts with SMK: `AES-256-GCM(SMK, raw_key)` → `encrypted_key`
+3. Stores in `actor_keys` with `name='primary'`, `status='active'`
 
-## User Secret Key
+### Distribution
 
-Each user has a personal secret key that encrypts their sensitive data (API keys, private preferences).
+```
+New actor joins group chat
+  → Server loads all existing participants' keys
+  → For each key: encrypt with new actor's public key
+  → Send encrypted key bundle to new actor
+  → New actor decrypts bundle, can read history
+```
 
-**Generation**: on user registration, a 256-bit random key is generated.
+**Implementation note**: Keys are distributed SMK-wrapped (server-mediated).
+True E2E (client-only keys without server access) is future.
 
-**Storage**: the user's secret key is encrypted with the SMK before being stored in the `users` table (`encrypted_secret_key` column). This means:
+### Rotation
 
-- The user's secret key is encrypted at rest in the DB
-- The server can decrypt it using the SMK when needed
-- If the SMK is compromised, all user secret keys are compromised (but they were in process memory anyway)
+Rotation replaces the active chat key without breaking history:
 
-**Purpose**:
+```
+1. Admin/actor triggers rotation
+2. New chat key derived: HKDF(new_salt, concat(participant_keys))
+3. New messages use new key
+4. Old key retained with status='expired' for historical reads
+5. Optional: async re-encrypt historical messages with new key
+```
 
-- Encrypts LLM API keys stored in settings (API keys are never stored in plaintext)
-- Future: per-chat key derivation, message-level encryption with user-selectable keys
+**Key versioning**: `messages.content` includes `key_id` referencing which
+`actor_keys.id` encrypted it. Historical messages remain readable as long as
+the referenced key exists (even if expired).
 
-**Password-derived fallback** (future): instead of SMK-encrypted storage, the user's secret key could be derived from their login password via Argon2id. This means the server can never decrypt user keys without the user being logged in. Not implemented in v1 due to complexity with session renewal and LLM background operations.
+### Revocation
 
----
-
-## Message Encryption
-
-**Encrypted field**: `messages.content` — the message text/body. All other message fields (`id`, `chat_id`, `parent_id`, `sender_type`, `state`, `created_at`, `swipe_group`, `metadata`) remain in plaintext for querying and indexing.
-
-**Algorithm**: AES-256-GCM (authenticated encryption with associated data)
-
-**Algorithm rationale**: the choice between modern AEAD options depends on hardware and parallelism requirements. Here's the comparison for this use case:
-
-| Algorithm         | Parallelism                                                                                | HW acceleration (x86)                                                            | Bun/Node support                                      | Nonce misuse resistance                                                      | Status                   |
-| ----------------- | ------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------- | ----------------------------------------------------- | ---------------------------------------------------------------------------- | ------------------------ |
-| AES-256-GCM       | **High** — CTR mode encrypts blocks independently. GHASH pipelineable.                     | AES-NI on all modern x86. BoringSSL dispatches to accelerated path.              | `crypto.createCipheriv` — native, battle-tested       | Weak — nonce reuse leaks auth key                                            | **Selected**             |
-| ChaCha20-Poly1305 | **Message-level** — ChaCha20 itself is sequential, but each message is independent.        | No AES-NI needed. Fast in software. Preferred for mobile/ARM without crypto ISA. | `crypto.createCipheriv` — native                      | Strong — 192-bit nonce variant (XChaCha20) makes random collision negligible | Fallback for ARM devices |
-| AES-256-GCM-SIV   | **Moderate** — SIV construction is inherently serial (two passes). CTR inside is parallel. | Same AES-NI as GCM.                                                              | Not available in BoringSSL/Bun (requires custom impl) | **Strong** — nonce reuse only leaks message equality, not key                | Not available            |
-| AEGIS-256         | **Very high** — 4-way SIMD pipeline, 32 bytes/round. Fastest AEAD on AES-NI hardware.      | AES-NI + SSSE3. ~2-3x faster than AES-GCM on modern x86.                         | Not available in BoringSSL/Bun                        | Weak (same as GCM)                                                           | Future candidate         |
-
-**Why AES-256-GCM wins for v1**:
-
-- Available in Bun's `crypto` module (BoringSSL) without native addons
-- Hardware-accelerated via AES-NI on all modern server CPUs
-- GCM is parallelizable at the block level (CTR mode), which means decryption of a single message leverages SIMD
-- At the application level, per-message encryption is trivially parallel — each message is an independent operation, so we can encrypt/decrypt batches of messages concurrently regardless of cipher choice
-- Well-audited, universally implemented, no footguns with correct nonce generation
-- The nonce collision risk (birthday bound at ~2^32 messages) is acceptable for a chat application — at 1M messages/day it would take ~100 years to reach
-
-**Future migration path**: if Bun adds native AEGIS support, or if ARM servers without AES-NI dominate deployment, swap the algorithm by (a) updating `encryption_algo` column on the messages table and (b) running a background re-encryption job. The key hierarchy and storage format remain identical.
+Revoking an actor's key:
+1. Set `actor_keys.status = 'revoked'`
+2. New chat key derived excluding revoked participant
+3. Future messages unreadable by revoked actor
+4. Historical messages encrypted with old key: **permanently inaccessible**
+   unless re-encrypted before revocation
+5. **Cannot be undone** — re-encrypt history first if retention needed
 
 ---
 
-### Message Compression
+## Message Flow
 
-Content is compressed **before** encryption. This serves two purposes:
+### User Message (Write Path)
 
-- **Storage efficiency**: LLM responses are often verbose markdown (2-5KB per message). Compression reduces storage by 60-70% for typical chat text.
-- **Cryptographic hygiene**: compressed plaintext has no predictable byte patterns, making cryptanalysis harder. The attacker cannot distinguish "weather talk" from "API keys" by ciphertext size alone.
+```
+Client:
+  1. plaintext message
+  2. compress (gzip/zstd/brotli, skip if <128 bytes)
+  3. encrypt with chat key (AES-256-GCM)
+  4. package: {enc, nonce, algo, comp, key_id}
+  5. send to server (over HTTPS)
 
-**Algorithm**: `deflate-raw` (zlib without the zlib header) — available in Bun as `Bun.deflateSync` / `Bun.inflateSync`. Chosen over `gzip` (smaller overhead without CRC) and `brotli` (not universally available for streaming in Bun).
+Server:
+  6. validate + store in messages.content (raw JSON blob)
+  7. return message ID to client
 
-**Threshold**: messages under 128 bytes are stored uncompressed (compression header overhead exceeds savings). The `comp` field in the storage JSON tracks this.
+On read by another actor:
+  8. server loads content JSON
+  9. decrypt with chat key → compressed bytes
+  10. decompress → plaintext
+  11. deliver to requesting actor
+```
 
-**Write path**:
+### LLM Response (Write Path)
 
-1. Plaintext → if length > 128 bytes, compress with deflate-raw → if compressed is smaller, mark `comp: true`
-2. Compressed (or original short) plaintext → encrypt with AES-256-GCM → store as JSON
+```
+Server:
+  1. LLM API returns plaintext response
+  2. (no key operation — response is fresh plaintext)
+  3. compress (gzip/zstd/brotli, skip if <128 bytes)
+  4. encrypt with chat key (AES-256-GCM)
+  5. package: {enc, nonce, algo, comp, key_id}
+  6. store in messages.content
+```
 
-**Read path**:
+**NOT sent compressed to LLM API.** LLM APIs expect plaintext. Compression
+and encryption are storage-layer concerns only.
 
-1. Decrypt ciphertext → if `comp: true`, decompress with inflate-raw → return plaintext
-2. If `comp: false`, return decrypted plaintext directly
+### Read Path (Deliver to Actor)
 
-**Performance impact**: deflate on 5KB of text completes in <10μs on modern CPUs. This is negligible compared to AES-256-GCM decryption (~1μs for the same size) and the LLM API call that follows.
+```
+Client requests messages for chat
+  → Server loads messages.content (JSON blobs)
+  → For each: decrypt with chat key → decompress → plaintext
+  → Send plaintext to client over HTTPS
+```
 
 ---
 
-**AEAD associated data**: `chat_id + message_id` — binds the ciphertext to a specific message. If an attacker swaps encrypted messages between chats, decryption fails.
+## Compress-Encrypt Pipeline
 
-**Per-message nonce**: a random 12-byte nonce is generated for each message and stored alongside the ciphertext.
+### Write: `compressThenEncrypt(plaintext, chatKey) → StoredPayload`
 
-**Storage format**: the `content` column stores a JSON blob:
+```
+Input: plaintext string
+1. If length >= 128 bytes:
+     try: compressed = gzip(plaintext)
+     fallback: try brotli → try zstd → identity
+   Else: identity (no compress)
+2. nonce = random 12 bytes
+3. ciphertext = AES-256-GCM(chatKey, compressed|plaintext, nonce)
+4. Output: { enc: b64(ciphertext), nonce: b64(nonce), algo: "aes-256-gcm",
+             comp: true|false, key_id: chatKey.id }
+```
+
+**Error cases**:
+- Compression fails → fallback to identity, log warning, continue
+- Encryption fails → return error to caller (no partial write)
+- Both succeed → atomically write to DB
+
+### Read: `decryptThenDecompress(payload, chatKey) → plaintext`
+
+```
+Input: stored JSON payload
+1. ciphertext = b64decode(payload.enc)
+2. nonce = b64decode(payload.nonce)
+3. decrypted = AES-256-GCM-decrypt(chatKey, ciphertext, nonce)
+4. If payload.comp:
+     try: plaintext = gunzip(decrypted)
+     fallback: try brotli → try zstd → identity
+   Else: plaintext = decrypted
+5. Output: plaintext string
+```
+
+**Error cases**:
+- Decryption fails (wrong key, tampered data) → return error, log audit event
+- Decompression fails → return decrypted raw bytes as-is, log warning
+- Missing or malformed JSON → return error, log audit event
+
+---
+
+## Storage Format
+
+Written into `messages.content` as JSON:
 
 ```json
 {
-  "enc": "base64-encoded ciphertext",
-  "nonce": "base64-encoded 12-byte nonce",
+  "enc": "base64-ciphertext",
+  "nonce": "base64-12-byte-nonce",
   "algo": "aes-256-gcm",
-  "comp": true
+  "comp": true,
+  "key_id": "actor-key-uuid"
 }
 ```
 
-- `algo`: algorithm used (allows future rotation to AEGIS, ChaCha20, etc. without data loss)
-- `comp`: whether the plaintext was compressed before encryption (see below)
+When encryption disabled (no SMK / dev mode), `messages.content` stores
+plaintext directly and `content_encoding` column tracks compression format.
+No JSON wrapper in dev mode.
 
-In v1, the `content` column type changes from `TEXT` to `TEXT` (still text, but now JSON). A migration updates existing messages to flag them as unencrypted (legacy messages display normally, but new messages use encryption).
+### Encrypted Payload Size Estimate
 
-**Legacy messages**: existing plaintext messages are NOT encrypted retroactively in v1. A `content_format` column on the `messages` table tracks the format:
-
-- `"plain"` — raw text, no encryption
-- `"encrypted"` — AES-256-GCM encrypted JSON blob
-- `"empty"` — message has no content (deleted or system-only)
-
----
-
-## API Key Encryption
-
-LLM API keys stored in user settings are encrypted with the user's secret key (which itself is SMK-encrypted at rest).
-
-- When the user saves API settings: the plaintext API key is encrypted with the user's secret key before being stored in the settings table
-- When the server needs to make an LLM API call: it decrypts the user's secret key via SMK, then decrypts the API key
-- API keys are never stored in plaintext in the DB
-- API keys are never logged (sanitized in server logs)
+| Plaintext | Compressed | Encrypted (b64) |
+| --------- | ---------- | --------------- |
+| 50 bytes  | (skip)     | ~200 bytes      |
+| 1 KB      | ~450 bytes | ~700 bytes      |
+| 10 KB     | ~3 KB      | ~4.5 KB         |
+| 100 KB    | ~25 KB     | ~35 KB          |
 
 ---
 
-## Encryption Flow (Message Write/Read)
+## Error Handling
 
-**Write path**:
+### Write Pipeline Errors
 
-1. User sends message → server receives plaintext
-2. Server encrypts plaintext with SMK + random nonce → ciphertext JSON
-3. Ciphertext JSON written to `messages.content`
-4. `messages.content_format` set to `"encrypted"`
-5. Non-encrypted fields (`chat_id`, `parent_id`, etc.) written in plaintext
+| Step | Error | Behaviour |
+| ---- | ----- | --------- |
+| Compress | Any failure | Log warning. Skip compression (identity). Continue to encrypt. |
+| Encrypt | Key invalid | Return error. No partial write. Client retries with idempotency key. |
+| Encrypt | Key revoked | Return 403. Actor must re-auth or use different key. |
+| DB write | Constraint / timeout | Return 500. Idempotency key prevents duplicate on retry. |
 
-**Read path**:
+### Read Pipeline Errors
 
-1. Server reads message row from DB
-2. If `content_format = "encrypted"`: decrypt ciphertext using SMK + nonce from the JSON
-3. If `content_format = "plain"`: return as-is (legacy compatibility)
-4. Decrypted content served to client or LLM pipeline
+| Step | Error | Behaviour |
+| ---- | ----- | --------- |
+| Decrypt | Key missing | Return 403. Actor lacks access to this message. |
+| Decrypt | Auth tag mismatch | Log audit event. Return error (tampered data detected). |
+| Decompress | Invalid data | Log warning. Return decrypted raw bytes as content. |
+| Payload parse | Malformed JSON | Log audit event. Return error to client. |
+
+### Key Errors
+
+| Error | Cause | Recovery |
+| ----- | ----- | -------- |
+| SMK not set | `SERVER_ENCRYPTION_KEY` missing | Dev mode: skip encryption, log warning. Prod: refuse to start. |
+| Actor has no key | First login race | Auto-generate on demand. |
+| Key expired | Past `expires_at` | Attempt rotation. If failed, fall back to last valid key. |
+| Key revoked | Actor / admin action | Irreversible. Historical messages with this key become inaccessible. |
 
 ---
 
-## Key Rotation (Future)
+## Key Management UI
 
-Not in v1. Provides a path for future implementation.
+Actors manage keys at `/settings/keys`:
 
-- SMK rotation: re-encrypt all user secret keys with the new SMK. Messages are NOT re-encrypted (they use the old SMK) — a `key_version` column on messages tracks which key was used.
-- User secret key rotation: decrypt the old key, generate a new key, re-encrypt API settings.
-- Key rotation triggers a one-time background job. The UI shows "encrypting messages..." during rotation.
+| Action | Description |
+| ------ | ----------- |
+| View keys | List all owned keys with name, type, created, status |
+| Request key | Download / copy primary key (re-auth required) |
+| Generate key | Create additional named key |
+| Rotate key | New primary, old → expired. Optionally re-encrypt history. |
+| Revoke key | Irreversible. Confirm with typed "REVOKE". |
+| Purge key | Delete key record. Messages become permanently inaccessible. |
+| View history | Per-key message list with date/chat/role filters |
+| Export history | Download as JSON, Markdown, or plain text |
 
 ---
 
-## Implementation Notes (v1)
+## Implementation Status
 
-- Use Node.js `crypto` module (built into Bun): `crypto.createCipheriv('aes-256-gcm', key, nonce)`
-- SMK loaded once at server startup from `SERVER_ENCRYPTION_KEY` env var
-- Decrypted content is held in memory only for the duration of the request/LLM call — never written to disk or logs
-- The encryption layer is transparent to the client (htmx/Alpine). The server encrypts on write, decrypts on read. The client never sees ciphertext.
-- If SMK is not set on first start: log a warning and skip encryption (all content stored as `plain`). This allows development without requiring key setup. Production should fail if SMK is missing.
+| Component | Status | File |
+| --------- | ------ | ---- |
+| Client compress/decompress | ✅ Built | `src/frontend/browser.ts` |
+| Client encrypt/decrypt | ✅ Built | `src/frontend/browser.ts` |
+| Client key import/export/gen | ✅ Built | `src/frontend/browser.ts` |
+| Compress-then-encrypt wrapper | ❌ Not built | Pipeline functions |
+| Decrypt-then-decompress wrapper | ❌ Not built | Pipeline functions |
+| Server SMK loading | ❌ Not built | Config + startup |
+| Server actor key CRUD | ❌ Not built | Service layer |
+| Server chat key derivation | ❌ Not built | HKDF service |
+| Server encrypt/decrypt | ❌ Not built | crypto integration |
+| Key distribution (group) | ❌ Not built | |
+| Key rotation | ❌ Not built | |
+| Key revocation | ❌ Not built | |
+| Anonymous mode | ❌ Not built | |
+
+---
+
+## Anonymous Mode
+
+`ANONYMOUS_CHAT=true` env var (future):
+
+- Actor identities hidden from other participants
+- Messages display as "Anonymous" or numbered
+- Actor can still decrypt own messages
+- Admin sees real identities for moderation
+
+---
+
+## Data Purge
+
+### Message Purge
+
+- Delete all messages in a chat (confirmation required)
+- Delete messages older than N days
+- Delete messages matching criteria (e.g. "all from character X")
+- Purge marks `visibility='redacted'`, does not drop rows
+
+### Key Purge
+
+- Deletes encryption key record (irreversible)
+- Historical messages encrypted with that key become permanently inaccessible
+- Warn user about unrecoverable messages before confirming
+
+---
+
+## Migration Path: SMK-Only → Actor Keys
+
+1. Generate actor keys, encrypt with SMK
+2. Re-encrypt messages with actor-derived chat keys
+3. Update `content.key_id` references
+4. Enable key request UI
+5. Phase out direct SMK-based encryption
+
+---
+
+## Configuration
+
+```env
+SERVER_ENCRYPTION_KEY=         # 256-bit hex. Missing = dev mode (skip encryption)
+ENCRYPTION_REQUIRED=false       # true = refuse to start without SMK
+KEY_ROTATION_DAYS=90            # Auto-rotate primary keys
+COMPRESS_THRESHOLD=128          # Min bytes before compressing
+COMPRESS_ALGORITHM=gzip         # gzip | brotli | zstd
+```

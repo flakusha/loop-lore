@@ -34,11 +34,11 @@ meta?:Record<string,unknown> (post-censor)
 ## Log Levels
 
 | Label | Numeric | Console color |
-|-------|---------|---------------|
-| DEBUG | 10 | gray |
-| INFO  | 20 | cyan |
-| WARN  | 30 | yellow |
-| ERROR | 40 | red |
+| ----- | ------- | ------------- |
+| DEBUG | 10      | gray          |
+| INFO  | 20      | cyan          |
+| WARN  | 30      | yellow        |
+| ERROR | 40      | red           |
 
 `entry.level >= threshold` → emit. Threshold from `config.logging.level`.
 
@@ -50,7 +50,7 @@ interface Logger {
   info(msg, meta?): void;
   warn(msg, meta?): void;
   error(msg, err?, meta?): void;
-  child(bindings: { module?, requestId?, userId?, sessionId? }): Logger;
+  child(bindings: { module?; requestId?; userId?; sessionId? }): Logger;
   flush(): Promise<void>;
 }
 ```
@@ -68,14 +68,14 @@ Algorithm: recursive walk depth ≤ 5, key match → replace. Nested objects rec
 
 Applied at Logger.log() before queue:
 
-| Field | Default | Behavior |
-|-------|---------|----------|
-| message string | 10 KB | Truncate + suffix |
-| meta total | 100 KB | Drop deepest keys |
-| meta depth | 5 | Hard cut |
-| error stack | 5 KB | Truncate + suffix |
-| message object keys | 100 | Strip excess |
-| meta entries | 200 | Drop beyond |
+| Field               | Default | Behavior          |
+| ------------------- | ------- | ----------------- |
+| message string      | 10 KB   | Truncate + suffix |
+| meta total          | 100 KB  | Drop deepest keys |
+| meta depth          | 5       | Hard cut          |
+| error stack         | 5 KB    | Truncate + suffix |
+| message object keys | 100     | Strip excess      |
+| meta entries        | 200     | Drop beyond       |
 
 Config: `maxMessageBytes`, `maxMetaBytes`, `maxMetaDepth`, `maxStackBytes`, `queueMaxSize`.
 
@@ -100,9 +100,9 @@ process.on("SIGINT", () => shutdown("SIGINT"));
 ```typescript
 interface LoggingConfig {
   level: LogLevelT;
-  jsonlPath?: string;        // JSONL output path
-  jsonlMaxBytes?: number;    // default 100 MB
-  jsonlMaxFiles?: number;    // default 5
+  jsonlPath?: string; // JSONL output path
+  jsonlMaxBytes?: number; // default 100 MB
+  jsonlMaxFiles?: number; // default 5
   dbEnabled?: boolean;
   censorEnabled?: boolean;
   censorFields?: string[];

@@ -1,15 +1,12 @@
 # Testing Strategy
 
-
 This document outlines the testing approach, tools, and coverage goals for the loop-lore project.
 
 ## Overview
 
-
 loop-lore uses a combination of unit tests, integration tests, and manual testing to ensure correctness and reliability. The test suite is designed to be fast, reliable, and easy to run locally.
 
 ## Test Framework
-
 
 - **Runner**: [Bun's built-in test runner](https://bun.sh/guides/testing) (Jest-compatible API)
 - **Assertions**: Built-in `expect` API
@@ -17,7 +14,6 @@ loop-lore uses a combination of unit tests, integration tests, and manual testin
 - **Coverage**: Built-in coverage reporting via `bun test --coverage`
 
 ## Test Structure
-
 
 Tests are colocated with the source code they test, following the pattern:
 
@@ -28,9 +24,7 @@ src/
     └── feature.test.ts
 ```
 
-
 ## Running Tests
-
 
 ```bash
 # Run all tests
@@ -46,9 +40,7 @@ bun test --coverage
 bun test src/feature/feature.test.ts
 ```
 
-
 ## Coverage Goals
-
 
 While 100% coverage is not always practical or necessary, we aim for high coverage on critical logic:
 
@@ -58,6 +50,7 @@ While 100% coverage is not always practical or necessary, we aim for high covera
 - **Integration points** (routes, services): ≥60%
 
 Current coverage (as of latest run):
+
 - **Functions**: 84.06%
 - **Lines**: 86.00%
 
@@ -65,12 +58,12 @@ See the [coverage report](#current-coverage-analysis) for details.
 
 ## Test Categories
 
-
 ### Unit Tests
 
 Focus on individual functions, classes, or modules in isolation. Use mocks for dependencies.
 
 Examples:
+
 - `src/config/load.test.ts`: Tests configuration loading, merging, validation
 - `src/content/encode-decode.test.ts`: Tests encoding/decoding algorithms
 - `src/generation/continuation.test.ts`: Tests continuation logic (in-memory and DB fallback)
@@ -80,12 +73,14 @@ Examples:
 Test interactions between multiple components, often using a test database.
 
 Examples:
+
 - `src/db/database.test.ts`: Tests database schema and constraints
 - `src/age-gate/service.test.ts`: Tests age gate service with user data
 
 ### Manual Testing
 
 Certain aspects are best verified manually, particularly:
+
 - TUI interactions and rendering
 - Browser-based UI (htmx/Alpine.js)
 - File uploads and asset handling
@@ -94,7 +89,6 @@ Certain aspects are best verified manually, particularly:
 See `docs/implementation.md` for the manual testing checklist.
 
 ## Writing Tests
-
 
 ### Best Practices
 
@@ -120,7 +114,6 @@ describe("myFunction", () => {
   });
 });
 ```
-
 
 ### Example: Testing with Database
 
@@ -159,9 +152,7 @@ describe("MyService", () => {
 });
 ```
 
-
 ## Current Coverage Analysis
-
 
 The following table shows coverage by file (from `bun test --coverage`):
 
@@ -196,9 +187,7 @@ All files                               |   84.06 |   86.00 |
 ----------------------------------------|---------|---------|-------------------
 ```
 
-
 ### Observations & Recommendations
-
 
 1. **Core Logic Well-Covered**:
    - The generation continuation system (crucial for chat retries/continuations) has excellent test coverage.
@@ -224,8 +213,8 @@ All files                               |   84.06 |   86.00 |
 
 ### Suggested Next Steps
 
-
 If improving coverage is a goal:
+
 1. **Prioritize config validation**: Add tests for `validateConfig()` with invalid inputs (bad ports, invalid DB types, missing Postgres URL).
 2. **Test database overrides**: Verify `setTestDatabase()`/`testDatabaseOverride` properly isolates test data.
 3. **Target complex algorithms**: Add fuzz-style tests for repetition detector (n-gram edge cases) and cancellation paths.
@@ -233,8 +222,8 @@ If improving coverage is a goal:
 
 ## Current Status Verdict
 
-
 The test suite provides **solid foundational coverage** for core business logic (database schema, config loading, generation continuation, content processing). The 84% function coverage indicates most critical logic paths are tested. Gaps exist primarily in:
+
 - Error handling paths
 - Configuration validation edge cases
 - Integration layers (server/TUI)

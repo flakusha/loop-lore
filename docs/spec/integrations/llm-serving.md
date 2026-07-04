@@ -6,18 +6,18 @@ This spec covers local and remote LLM serving backends for loop-lore's text gene
 
 **Primary backends** (MVP):
 
-| Backend | Type | Best For |
-| --- | --- | --- |
-| [llama.cpp](https://github.com/ggml-org/llama.cpp) | Local, CPU/GPU | Default local inference, edge deployment |
-| [llama-swap](https://github.com/mostlygeek/llama-swap) | Local proxy | Multi-model routing, model hot-swap |
+| Backend                                                | Type           | Best For                                 |
+| ------------------------------------------------------ | -------------- | ---------------------------------------- |
+| [llama.cpp](https://github.com/ggml-org/llama.cpp)     | Local, CPU/GPU | Default local inference, edge deployment |
+| [llama-swap](https://github.com/mostlygeek/llama-swap) | Local proxy    | Multi-model routing, model hot-swap      |
 
 **Future backends**:
 
-| Backend | Type | Best For |
-| --- | --- | --- |
+| Backend                                      | Type      | Best For                                    |
+| -------------------------------------------- | --------- | ------------------------------------------- |
 | [vLLM](https://github.com/vllm-project/vllm) | Local GPU | High-throughput serving, tensor parallelism |
-| [Ollama](https://github.com/ollama/ollama) | Local | Simple model management |
-| [LM Studio](https://lmstudio.ai/) | Local | Desktop GUI, model discovery |
+| [Ollama](https://github.com/ollama/ollama)   | Local     | Simple model management                     |
+| [LM Studio](https://lmstudio.ai/)            | Local     | Desktop GUI, model discovery                |
 
 **Reference implementation**: llama.cpp upstream repository
 
@@ -90,37 +90,37 @@ llama-server \
 
 ### Key CLI Flags
 
-| Flag | Purpose |
-| --- | --- |
-| `-m, --model` | Path to GGUF model file |
-| `-hf` | Hugging Face model path + quant (auto-downloads) |
-| `--alias` | Friendly model name shown in `/v1/models` |
-| `-c, --ctx-size` | Context window size |
-| `-fa, --flash-attn` | Flash Attention (on/off/auto) |
-| `-ngl, --n-gpu-layers` | Layers to offload to GPU (auto by default) |
-| `-sm, --split-mode` | Multi-GPU split strategy |
-| `--port` | HTTP port (default: 8080) |
-| `-t, --threads` | CPU threads for generation |
-| `-tb, --threads-batch` | CPU threads for prompt processing |
-| `--mlock` | Lock model in RAM (prevents swapping) |
-| `--no-mmap` | Disable memory-mapped model loading |
-| `--swa-full` | Full-size sliding window attention cache |
-| `--spec-type` | Speculative decoding configuration |
-| `--fit` | Auto-adjust unset params to fit device memory |
-| `--cache-ram` | RAM cache size in MiB for KV cache offload |
-| `-ctk, -ctv` | KV cache data type (K and V) |
-| `-ctkd, -ctvd` | Data type for optimized K/V cache |
-| `--temp, --top-k, --top-p, --min-p` | Sampling parameters |
-| `--repeat-penalty` | Repetition penalty (>1 reduces repetition) |
-| `--presence-penalty` | Presence penalty |
-| `--frequency-penalty` | Frequency penalty |
-| `--dry-*` | DRY (Don't Repeat Yourself) sampler |
-| `--dynatemp-range, --dynatemp-exp` | Dynamic temperature sampling |
-| `--mirostat` | Mirostat sampling mode (v2 recommended) |
-| `--jinja` | Jinja2 template support (enabled by default) |
-| `--reasoning-budget` | Token budget for reasoning/thinking output |
-| `--parallel` | Parallel decoding slots |
-| `--draft-min, --draft-max` | Draft token count for speculative decoding |
+| Flag                                | Purpose                                          |
+| ----------------------------------- | ------------------------------------------------ |
+| `-m, --model`                       | Path to GGUF model file                          |
+| `-hf`                               | Hugging Face model path + quant (auto-downloads) |
+| `--alias`                           | Friendly model name shown in `/v1/models`        |
+| `-c, --ctx-size`                    | Context window size                              |
+| `-fa, --flash-attn`                 | Flash Attention (on/off/auto)                    |
+| `-ngl, --n-gpu-layers`              | Layers to offload to GPU (auto by default)       |
+| `-sm, --split-mode`                 | Multi-GPU split strategy                         |
+| `--port`                            | HTTP port (default: 8080)                        |
+| `-t, --threads`                     | CPU threads for generation                       |
+| `-tb, --threads-batch`              | CPU threads for prompt processing                |
+| `--mlock`                           | Lock model in RAM (prevents swapping)            |
+| `--no-mmap`                         | Disable memory-mapped model loading              |
+| `--swa-full`                        | Full-size sliding window attention cache         |
+| `--spec-type`                       | Speculative decoding configuration               |
+| `--fit`                             | Auto-adjust unset params to fit device memory    |
+| `--cache-ram`                       | RAM cache size in MiB for KV cache offload       |
+| `-ctk, -ctv`                        | KV cache data type (K and V)                     |
+| `-ctkd, -ctvd`                      | Data type for optimized K/V cache                |
+| `--temp, --top-k, --top-p, --min-p` | Sampling parameters                              |
+| `--repeat-penalty`                  | Repetition penalty (>1 reduces repetition)       |
+| `--presence-penalty`                | Presence penalty                                 |
+| `--frequency-penalty`               | Frequency penalty                                |
+| `--dry-*`                           | DRY (Don't Repeat Yourself) sampler              |
+| `--dynatemp-range, --dynatemp-exp`  | Dynamic temperature sampling                     |
+| `--mirostat`                        | Mirostat sampling mode (v2 recommended)          |
+| `--jinja`                           | Jinja2 template support (enabled by default)     |
+| `--reasoning-budget`                | Token budget for reasoning/thinking output       |
+| `--parallel`                        | Parallel decoding slots                          |
+| `--draft-min, --draft-max`          | Draft token count for speculative decoding       |
 
 See the full reference at `../llama.cpp/tools/server/README.md` or run `llama-server --help`.
 
@@ -136,8 +136,8 @@ The primary endpoint for text generation. Standard OpenAI chat completions forma
 {
   "model": "my/alias",
   "messages": [
-    {"role": "system", "content": "You are a helpful assistant."},
-    {"role": "user", "content": "Hello!"}
+    { "role": "system", "content": "You are a helpful assistant." },
+    { "role": "user", "content": "Hello!" }
   ],
   "temperature": 0.7,
   "max_tokens": 1024,
@@ -153,14 +153,16 @@ The primary endpoint for text generation. Standard OpenAI chat completions forma
   "object": "chat.completion",
   "created": 1700000000,
   "model": "my/alias",
-  "choices": [{
-    "index": 0,
-    "message": {
-      "role": "assistant",
-      "content": "Hello! How can I help you today?"
-    },
-    "finish_reason": "stop"
-  }],
+  "choices": [
+    {
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": "Hello! How can I help you today?"
+      },
+      "finish_reason": "stop"
+    }
+  ],
   "usage": {
     "prompt_tokens": 25,
     "completion_tokens": 10,
@@ -215,26 +217,26 @@ Lists loaded models and aliases:
 
 llama-server supports several extended fields beyond the OpenAI spec that loop-lore can leverage:
 
-| Field | Type | Description |
-| --- | --- | --- |
-| `reasoning_content` | `string` | Thinking/reasoning tokens (in `choices[0].delta` during streaming, or `choices[0].message` in non-streaming). Enabled by model capability. |
-| `reasoning_budget` | `integer` | Max tokens to spend on reasoning before generating visible content |
-| `grammar` | `string` | GBNF grammar string for constrained generation |
-| `response_format` | `object` | `{ "type": "json_schema", "json_schema": {...} }` for structured JSON output |
-| `logit_bias` | `object` | Token ID → bias value mapping |
-| `top_nsigma` | `number` | Top-n-sigma tail sampling |
-| `xtc_probability` | `number` | XTC sampling probability |
-| `dry_multiplier` | `number` | DRY repetition penalty multiplier |
-| `dry_base` | `number` | DRY repetition penalty base |
-| `dry_allowed_length` | `integer` | DRY allowed repetition length |
-| `dynatemp_range` | `number` | Dynamic temperature range |
-| `dynatemp_exponent` | `number` | Dynamic temperature exponent |
-| `min_p` | `number` | Min-P sampling threshold |
-| `typical_p` | `number` | Typical sampling threshold |
-| `presence_penalty`, `frequency_penalty` | `number` | Standard OpenAI penalties (supported natively) |
-| `n_predict` | `integer` | Max tokens to predict (llama.cpp's name for `max_tokens`) |
-| `cache_prompt` | `boolean` | Reuse cached prompt processing across requests |
-| `slot_id` | `integer` | Force a specific decode slot (advanced) |
+| Field                                   | Type      | Description                                                                                                                                |
+| --------------------------------------- | --------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| `reasoning_content`                     | `string`  | Thinking/reasoning tokens (in `choices[0].delta` during streaming, or `choices[0].message` in non-streaming). Enabled by model capability. |
+| `reasoning_budget`                      | `integer` | Max tokens to spend on reasoning before generating visible content                                                                         |
+| `grammar`                               | `string`  | GBNF grammar string for constrained generation                                                                                             |
+| `response_format`                       | `object`  | `{ "type": "json_schema", "json_schema": {...} }` for structured JSON output                                                               |
+| `logit_bias`                            | `object`  | Token ID → bias value mapping                                                                                                              |
+| `top_nsigma`                            | `number`  | Top-n-sigma tail sampling                                                                                                                  |
+| `xtc_probability`                       | `number`  | XTC sampling probability                                                                                                                   |
+| `dry_multiplier`                        | `number`  | DRY repetition penalty multiplier                                                                                                          |
+| `dry_base`                              | `number`  | DRY repetition penalty base                                                                                                                |
+| `dry_allowed_length`                    | `integer` | DRY allowed repetition length                                                                                                              |
+| `dynatemp_range`                        | `number`  | Dynamic temperature range                                                                                                                  |
+| `dynatemp_exponent`                     | `number`  | Dynamic temperature exponent                                                                                                               |
+| `min_p`                                 | `number`  | Min-P sampling threshold                                                                                                                   |
+| `typical_p`                             | `number`  | Typical sampling threshold                                                                                                                 |
+| `presence_penalty`, `frequency_penalty` | `number`  | Standard OpenAI penalties (supported natively)                                                                                             |
+| `n_predict`                             | `integer` | Max tokens to predict (llama.cpp's name for `max_tokens`)                                                                                  |
+| `cache_prompt`                          | `boolean` | Reuse cached prompt processing across requests                                                                                             |
+| `slot_id`                               | `integer` | Force a specific decode slot (advanced)                                                                                                    |
 
 ### Thinking / Reasoning Support
 
@@ -278,26 +280,26 @@ interface LlmServingConfig {
 
 Env vars:
 
-| Variable | Default | Purpose |
-| --- | --- | --- |
+| Variable            | Default                 | Purpose               |
+| ------------------- | ----------------------- | --------------------- |
 | `LLAMACPP_BASE_URL` | `http://localhost:3000` | llama-server endpoint |
-| `LLAMACPP_MODEL` | — | Default model alias |
-| `LLAMACPP_TIMEOUT` | `30000` | Request timeout in ms |
-| `LLAMACPP_RETRIES` | `2` | Max retry attempts |
+| `LLAMACPP_MODEL`    | —                       | Default model alias   |
+| `LLAMACPP_TIMEOUT`  | `30000`                 | Request timeout in ms |
+| `LLAMACPP_RETRIES`  | `2`                     | Max retry attempts    |
 
 ### Generation Options Mapping
 
-| `GenerationOptions` field | `llama-server` field | Notes |
-| --- | --- | --- |
-| `modelId` | `model` | Mapped to the model alias or file name |
-| `temperature` | `temperature` | Direct passthrough |
-| `maxTokens` | `max_tokens` | Direct passthrough |
-| `topP` | `top_p` | Direct passthrough |
-| `systemPrompt` | `messages[0]` | Injected as system role message |
-| `stream` | `stream` | Direct passthrough |
-| `thinking` | `reasoning_content` | Captured from streaming deltas → `GenerationResult.thinking` |
-| `provider` | — | Used to select the llama-cpp backend |
-| `idempotencyKey` | `cache_prompt` | Reuse cached prompt processing for retries |
+| `GenerationOptions` field | `llama-server` field | Notes                                                        |
+| ------------------------- | -------------------- | ------------------------------------------------------------ |
+| `modelId`                 | `model`              | Mapped to the model alias or file name                       |
+| `temperature`             | `temperature`        | Direct passthrough                                           |
+| `maxTokens`               | `max_tokens`         | Direct passthrough                                           |
+| `topP`                    | `top_p`              | Direct passthrough                                           |
+| `systemPrompt`            | `messages[0]`        | Injected as system role message                              |
+| `stream`                  | `stream`             | Direct passthrough                                           |
+| `thinking`                | `reasoning_content`  | Captured from streaming deltas → `GenerationResult.thinking` |
+| `provider`                | —                    | Used to select the llama-cpp backend                         |
+| `idempotencyKey`          | `cache_prompt`       | Reuse cached prompt processing for retries                   |
 
 ### Task-Based Generation Presets
 
@@ -359,15 +361,15 @@ interface PromptSection {
 
 **Built-in presets**:
 
-| Preset | Temperature | Top-P | Top-K | Penalties | Use Case |
-| --- | --- | --- | --- | --- | --- |
-| `precise` | 0.3 | 0.85 | 20 | Low | Factual answers, code, debugging |
-| `balanced` | 0.7 | 0.9 | 40 | Default | General chat, standard roleplay |
-| `creative` | 1.2 | 0.95 | 60 | Low | Creative writing, brainstorming |
-| `narrative` | 0.9 | 0.92 | 40 | Medium | Long-form storytelling, literary RP |
-| `code` | 0.2 | 0.8 | 10 | None | Code generation, structured output |
-| `roleplay` | 1.0 | 0.95 | 40 | Low | Character dialogue, immersive RP |
-| `concise` | 0.5 | 0.85 | 20 | High | Short answers, quick responses |
+| Preset      | Temperature | Top-P | Top-K | Penalties | Use Case                            |
+| ----------- | ----------- | ----- | ----- | --------- | ----------------------------------- |
+| `precise`   | 0.3         | 0.85  | 20    | Low       | Factual answers, code, debugging    |
+| `balanced`  | 0.7         | 0.9   | 40    | Default   | General chat, standard roleplay     |
+| `creative`  | 1.2         | 0.95  | 60    | Low       | Creative writing, brainstorming     |
+| `narrative` | 0.9         | 0.92  | 40    | Medium    | Long-form storytelling, literary RP |
+| `code`      | 0.2         | 0.8   | 10    | None      | Code generation, structured output  |
+| `roleplay`  | 1.0         | 0.95  | 40    | Low       | Character dialogue, immersive RP    |
+| `concise`   | 0.5         | 0.85  | 20    | High      | Short answers, quick responses      |
 
 **Preset resolution** (per chat):
 
@@ -380,7 +382,7 @@ interface PromptSection {
 ```typescript
 // chats.settings (JSON string)
 interface ChatSettings {
-  generationPreset?: string;  // preset name, e.g. "creative"
+  generationPreset?: string; // preset name, e.g. "creative"
   // ... other chat settings (generation_language, etc.)
 }
 ```
@@ -390,11 +392,13 @@ interface ChatSettings {
 **Prompt template structure** (inspired by SillyTavern's OpenAI presets):
 
 SillyTavern's OpenAI presets (`../silly-tavern/default/content/presets/openai/Default.json`) define:
+
 - `prompts[]`: ordered list of prompt sections (Main Prompt, World Info, Character Description, Chat Examples, Chat History, Post-History Instructions)
 - `prompt_order[]`: per-character ordering of which sections are enabled
 - Each section has `identifier`, `role`, `content`, `system_prompt` flag, `marker` flag
 
 Loop-lore adopts this pattern with a simplified `PromptSection[]` array. The prompt builder assembles sections in order:
+
 1. System instruction (from preset)
 2. Character description + personality
 3. Scenario / World Info
@@ -408,51 +412,70 @@ Loop-lore adopts this pattern with a simplified `PromptSection[]` array. The pro
 const PRESETS = {
   roleplay: {
     promptTemplate: [
-      { identifier: "main", name: "Main Prompt", isSystem: true, role: "system",
-        content: "Write {{char}}'s next reply in a fictional chat between {{char}} and {{user}}.", enabled: true },
+      {
+        identifier: "main",
+        name: "Main Prompt",
+        isSystem: true,
+        role: "system",
+        content: "Write {{char}}'s next reply in a fictional chat between {{char}} and {{user}}.",
+        enabled: true,
+      },
       { identifier: "charDesc", name: "Char Description", isSystem: true, isMarker: true, enabled: true },
-      { identifier: "charPersonality", name: "Char Personality", isSystem: true, isMarker: true, enabled: true },
+      {
+        identifier: "charPersonality",
+        name: "Char Personality",
+        isSystem: true,
+        isMarker: true,
+        enabled: true,
+      },
       { identifier: "scenario", name: "Scenario", isSystem: true, isMarker: true, enabled: true },
       { identifier: "chatHistory", name: "Chat History", isSystem: true, isMarker: true, enabled: true },
-      { identifier: "postInstructions", name: "Post-History Instructions", isSystem: true, role: "system",
-        content: "[Write {{char}}'s next reply with actions, dialogue, and internal thoughts. Stay in character.]", enabled: true },
+      {
+        identifier: "postInstructions",
+        name: "Post-History Instructions",
+        isSystem: true,
+        role: "system",
+        content:
+          "[Write {{char}}'s next reply with actions, dialogue, and internal thoughts. Stay in character.]",
+        enabled: true,
+      },
     ],
-    params: { temperature: 1.0, topP: 0.95, topK: 40 }
-  }
+    params: { temperature: 1.0, topP: 0.95, topK: 40 },
+  },
 };
 ```
 
 **SillyTavern preset mapping** (for migration/reference):
 
-| SillyTavern field | loop-lore field | Notes |
-| --- | --- | --- |
-| `prompts[]` | `promptTemplate[]` | Ordered prompt sections |
-| `prompt.order[]` | `promptTemplate[].enabled` | Which sections are active |
-| `prompts[].role` | `promptTemplate[].role` | System/user/assistant role |
-| `prompts[].content` | `promptTemplate[].content` | Section text with macros |
-| `prompts[].marker` | `promptTemplate[].isMarker` | Filled by prompt builder |
-| `temp`, `top_p`, etc. | `params.*` | Generation parameters |
-| `sampler_priority` | `params.samplerPriority` | Sampler ordering |
-| `impersonation_prompt` | — | Separate impersonation template |
-| `continue_nudge_prompt` | — | Separate continue template |
+| SillyTavern field       | loop-lore field             | Notes                           |
+| ----------------------- | --------------------------- | ------------------------------- |
+| `prompts[]`             | `promptTemplate[]`          | Ordered prompt sections         |
+| `prompt.order[]`        | `promptTemplate[].enabled`  | Which sections are active       |
+| `prompts[].role`        | `promptTemplate[].role`     | System/user/assistant role      |
+| `prompts[].content`     | `promptTemplate[].content`  | Section text with macros        |
+| `prompts[].marker`      | `promptTemplate[].isMarker` | Filled by prompt builder        |
+| `temp`, `top_p`, etc.   | `params.*`                  | Generation parameters           |
+| `sampler_priority`      | `params.samplerPriority`    | Sampler ordering                |
+| `impersonation_prompt`  | —                           | Separate impersonation template |
+| `continue_nudge_prompt` | —                           | Separate continue template      |
 
 **llama-server parameter mapping**:
 
-| Preset param | llama-server field | Notes |
-| --- | --- | --- |
-| `temperature` | `temperature` | Direct passthrough |
-| `topP` | `top_p` | Direct passthrough |
-| `topK` | `top_k` | Direct passthrough |
-| `maxTokens` | `max_tokens` | Direct passthrough |
-| `presencePenalty` | `presence_penalty` | Direct passthrough |
-| `frequencyPenalty` | `frequency_penalty` | Direct passthrough |
-| `repeatPenalty` | `repeat_penalty` | Direct passthrough |
-| `dryMultiplier` | `dry_multiplier` | DRY sampler |
-| `dryBase` | `dry_base` | DRY sampler |
-| `dryAllowedLength` | `dry_allowed_length` | DRY sampler |
-| `dynatempRange` | `dynatemp_range` | Dynamic temperature |
-| `typicalP` | `typical_p` | Typical sampling |
-| `minP` | `min_p` | Min-P sampling |
+| Preset param       | llama-server field   | Notes               |
+| ------------------ | -------------------- | ------------------- |
+| `temperature`      | `temperature`        | Direct passthrough  |
+| `topP`             | `top_p`              | Direct passthrough  |
+| `topK`             | `top_k`              | Direct passthrough  |
+| `maxTokens`        | `max_tokens`         | Direct passthrough  |
+| `presencePenalty`  | `presence_penalty`   | Direct passthrough  |
+| `frequencyPenalty` | `frequency_penalty`  | Direct passthrough  |
+| `repeatPenalty`    | `repeat_penalty`     | Direct passthrough  |
+| `dryMultiplier`    | `dry_multiplier`     | DRY sampler         |
+| `dryBase`          | `dry_base`           | DRY sampler         |
+| `dryAllowedLength` | `dry_allowed_length` | DRY sampler         |
+| `dynatempRange`    | `dynatemp_range`     | Dynamic temperature |
+| `typicalP`         | `typical_p`          | Typical sampling    |
+| `minP`             | `min_p`              | Min-P sampling      |
 
 ### Embeddings Integration
 
@@ -460,10 +483,7 @@ const PRESETS = {
 
 ```typescript
 // Used by src/memory/ for semantic search embeddings
-async function generateEmbedding(
-  config: LlmServingConfig,
-  input: string | string[],
-): Promise<number[][]>
+async function generateEmbedding(config: LlmServingConfig, input: string | string[]): Promise<number[][]>;
 ```
 
 - Returns embedding vectors for semantic memory lookup
@@ -475,15 +495,15 @@ async function generateEmbedding(
 
 llama-server errors follow OpenAI-compatible format. The provider must handle:
 
-| HTTP Code | Meaning | Action |
-| --- | --- | --- |
-| 200 | Success | Process response |
-| 400 | Bad request (malformed params) | Fail immediately, surface to user |
-| 404 | Model not loaded | Retry after model load, or fail with "model not available" |
-| 429 | Rate limited / slots full | Retry with exponential backoff |
-| 500 | Server error | Retry up to `retries` times |
-| 503 | Server loading model | Retry with backoff (model warm-up) |
-| Timeout | No response within `timeout` | Abort request, surface timeout error |
+| HTTP Code | Meaning                        | Action                                                     |
+| --------- | ------------------------------ | ---------------------------------------------------------- |
+| 200       | Success                        | Process response                                           |
+| 400       | Bad request (malformed params) | Fail immediately, surface to user                          |
+| 404       | Model not loaded               | Retry after model load, or fail with "model not available" |
+| 429       | Rate limited / slots full      | Retry with exponential backoff                             |
+| 500       | Server error                   | Retry up to `retries` times                                |
+| 503       | Server loading model           | Retry with backoff (model warm-up)                         |
+| Timeout   | No response within `timeout`   | Abort request, surface timeout error                       |
 
 **Retry strategy**: Exponential backoff with jitter. First retry at `retryBackoffMs`, second at `2 × retryBackoffMs`. Do not retry on 400 (bad request).
 
@@ -499,10 +519,11 @@ async function healthCheck(config: LlmServingConfig): Promise<{
   model?: string;
   latencyMs?: number;
   error?: string;
-}>
+}>;
 ```
 
 Implementation:
+
 1. `GET /v1/models` with `timeout` ms limit
 2. If response contains models → `status: "ok"`, include model alias
 3. If response is slow (>5s) → `status: "degraded"`
@@ -515,6 +536,7 @@ Health check runs on server startup and periodically (configurable, default 60s)
 The generation module does NOT manage `llama-server` process lifecycle (start/stop). It assumes the server is running at `LLAMACPP_BASE_URL`. For local development, use `../ai-scripts/llama-server.sh`. For production, llama-server runs as a systemd service or container.
 
 **Startup sequence**:
+
 1. Generation module initializes, calls `healthCheck()`
 2. If `down` → log warning, continue (lazy availability)
 3. On first generation request → fail fast if server unreachable
@@ -545,19 +567,19 @@ llama-swap serve --config config.yaml
 
 ### Why llama-swap for loop-lore
 
-| Capability | Benefit |
-| --- | --- |
-| **OpenAI API compatibility** | Same endpoints as `llama-server` — drop-in for testing and development |
-| **Multi-model routing** | Single endpoint serves all models; swap on demand |
-| **Model list** | `GET /v1/models` returns all configured models with aliases |
-| **API key support** | Preliminary auth layer for restricting access |
-| **Streaming + non-streaming** | Both modes supported, transparent to client |
-| **Status tracking** | `/running` endpoint shows currently loaded models |
-| **Health checks** | Automatic upstream health verification before routing |
-| **Request capture** | Debug mode for inspecting request/response pairs |
-| **Metrics** | `/metrics` endpoint for Prometheus-compatible monitoring |
-| **TTL auto-unload** | Models unload after idle timeout, freeing VRAM |
-| **Web UI** | Built-in playground at `/ui` for manual testing |
+| Capability                    | Benefit                                                                |
+| ----------------------------- | ---------------------------------------------------------------------- |
+| **OpenAI API compatibility**  | Same endpoints as `llama-server` — drop-in for testing and development |
+| **Multi-model routing**       | Single endpoint serves all models; swap on demand                      |
+| **Model list**                | `GET /v1/models` returns all configured models with aliases            |
+| **API key support**           | Preliminary auth layer for restricting access                          |
+| **Streaming + non-streaming** | Both modes supported, transparent to client                            |
+| **Status tracking**           | `/running` endpoint shows currently loaded models                      |
+| **Health checks**             | Automatic upstream health verification before routing                  |
+| **Request capture**           | Debug mode for inspecting request/response pairs                       |
+| **Metrics**                   | `/metrics` endpoint for Prometheus-compatible monitoring               |
+| **TTL auto-unload**           | Models unload after idle timeout, freeing VRAM                         |
+| **Web UI**                    | Built-in playground at `/ui` for manual testing                        |
 
 ### Current Local Setup
 
@@ -565,16 +587,16 @@ llama-swap serve --config config.yaml
 
 Currently configured models (all use `llama-server` with optimized sampling):
 
-| Model ID | Description | Status |
-| --- | --- | --- |
-| `llama/provider/model-a` | Example 35B model, MTP mode | Active |
+| Model ID                      | Description                  | Status |
+| ----------------------------- | ---------------------------- | ------ |
+| `llama/provider/model-a`      | Example 35B model, MTP mode  | Active |
 | `llama/provider/model-a-slow` | Same model, default sampling | Active |
-| `llama/provider/model-b` | Example 27B model | Active |
-| `llama/provider/model-c` | Example 40B model | Active |
-| `llama/provider/model-d` | Example 26B model | Active |
-| `llama/provider/model-e` | Example 4B model | Active |
-| `llama/provider/model-f` | Example 17B thinking model | Active |
-| `llama/provider/model-g` | Example 2B model | Active |
+| `llama/provider/model-b`      | Example 27B model            | Active |
+| `llama/provider/model-c`      | Example 40B model            | Active |
+| `llama/provider/model-d`      | Example 26B model            | Active |
+| `llama/provider/model-e`      | Example 4B model             | Active |
+| `llama/provider/model-f`      | Example 17B thinking model   | Active |
+| `llama/provider/model-g`      | Example 2B model             | Active |
 
 **Note**: Optimized small/fast models not yet configured. Current setup uses the big smart base models. Add smaller models (e.g. Qwen 3.5 3B, Gemma 2B) for low-latency use cases.
 
@@ -585,15 +607,17 @@ llama-swap supports API key authentication. Keys are defined in config:
 ```yaml
 apiKeys:
   - "sk-hunter2"
-  - "${env.API_KEY_1}"  # env var macro
+  - "${env.API_KEY_1}" # env var macro
 ```
 
 **How it works**:
+
 - When `apiKeys` is non-empty, requests must include `Authorization: Bearer <key>` header
 - When empty (default), no auth check — llama-swap is default-allow
 - Keys can be strings or `${env.VAR}` macros
 
 **loop-lore integration**:
+
 - Set `LLAMACPP_API_KEY` env var in loop-lore config
 - Provider sends `Authorization: Bearer ${LLAMACPP_API_KEY}` header
 - For local dev: leave `apiKeys` empty in llama-swap config (no auth)
@@ -619,6 +643,7 @@ apiKeys:
 ```
 
 **Features**:
+
 - Returns all models defined in config (unless `unlisted: true`)
 - Aliases included if `includeAliasesInList: true` in config
 - Model `name` and `description` fields populated from config
@@ -668,6 +693,7 @@ GET /health
 ```
 
 **Request/response capture** (for debugging):
+
 - Config: `captureBuffer: 15` (MB)
 - Access via Web UI at `/ui` → Request Inspector
 
@@ -721,23 +747,23 @@ models:
       ${llama-server-default}  # macro from ../ai-scripts/llama-swap.yaml
     name: "My Model"
     description: "A helpful model"
-    ttl: 300  # auto-unload after 5 min idle
+    ttl: 300 # auto-unload after 5 min idle
 ```
 
 ### Benefits Over Direct llama-server
 
-| Feature | llama-server | llama-swap |
-| --- | --- | --- |
-| Single model | ✅ | ✅ |
-| Multiple models | ❌ (need multiple instances) | ✅ (single endpoint) |
-| Model hot-swap | ❌ (restart required) | ✅ (automatic) |
-| API key auth | ❌ | ✅ |
-| Model list with aliases | ❌ | ✅ |
-| Loading state UI | ❌ | ✅ |
-| Request capture/debug | ❌ | ✅ |
-| TTL auto-unload | ❌ | ✅ |
-| Web UI playground | ❌ | ✅ |
-| Prometheus metrics | ❌ | ✅ |
+| Feature                 | llama-server                 | llama-swap           |
+| ----------------------- | ---------------------------- | -------------------- |
+| Single model            | ✅                           | ✅                   |
+| Multiple models         | ❌ (need multiple instances) | ✅ (single endpoint) |
+| Model hot-swap          | ❌ (restart required)        | ✅ (automatic)       |
+| API key auth            | ❌                           | ✅                   |
+| Model list with aliases | ❌                           | ✅                   |
+| Loading state UI        | ❌                           | ✅                   |
+| Request capture/debug   | ❌                           | ✅                   |
+| TTL auto-unload         | ❌                           | ✅                   |
+| Web UI playground       | ❌                           | ✅                   |
+| Prometheus metrics      | ❌                           | ✅                   |
 
 See `../llama-swap/config.example.yaml` for full configuration reference.
 
@@ -749,28 +775,28 @@ See `../llama-swap/config.example.yaml` for full configuration reference.
 
 ### Why vLLM
 
-| Capability | Benefit |
-| --- | --- |
+| Capability                | Benefit                                              |
+| ------------------------- | ---------------------------------------------------- |
 | **OpenAI-compatible API** | Same endpoints as llama-server — drop-in replacement |
-| **PagedAttention** | Efficient KV cache memory management |
-| **Continuous batching** | Higher throughput for concurrent requests |
-| **Tensor parallelism** | Multi-GPU scaling without code changes |
-| **Quantization** | GPTQ, AWQ, GGUF support |
-| **Prefix caching** | Reuse cached prompt processing |
-| **Structured output** | JSON schema-constrained generation |
+| **PagedAttention**        | Efficient KV cache memory management                 |
+| **Continuous batching**   | Higher throughput for concurrent requests            |
+| **Tensor parallelism**    | Multi-GPU scaling without code changes               |
+| **Quantization**          | GPTQ, AWQ, GGUF support                              |
+| **Prefix caching**        | Reuse cached prompt processing                       |
+| **Structured output**     | JSON schema-constrained generation                   |
 
 ### API Overview
 
 vLLM exposes OpenAI-compatible endpoints on port 8000 by default:
 
-| Endpoint | Purpose |
-| --- | --- |
+| Endpoint                    | Purpose                                      |
+| --------------------------- | -------------------------------------------- |
 | `POST /v1/chat/completions` | Chat completions (streaming + non-streaming) |
-| `POST /v1/completions` | Legacy completions |
-| `POST /v1/embeddings` | Text embeddings |
-| `GET /v1/models` | List loaded models |
-| `POST /v1/speech_to_text` | Speech-to-text (Whisper) |
-| WebSocket `/realtime` | Real-time streaming |
+| `POST /v1/completions`      | Legacy completions                           |
+| `POST /v1/embeddings`       | Text embeddings                              |
+| `GET /v1/models`            | List loaded models                           |
+| `POST /v1/speech_to_text`   | Speech-to-text (Whisper)                     |
+| WebSocket `/realtime`       | Real-time streaming                          |
 
 ### Configuration
 
@@ -791,7 +817,7 @@ Since vLLM is OpenAI-compatible, it uses the same `LlmServingConfig` interface:
 ```typescript
 // Use vLLM as the backend
 const config: LlmServingConfig = {
-  baseUrl: "http://localhost:8000",  // vLLM endpoint
+  baseUrl: "http://localhost:8000", // vLLM endpoint
   model: "provider/model-name",
   timeout: 30_000,
   stream: true,
@@ -802,15 +828,15 @@ const config: LlmServingConfig = {
 
 **When to use vLLM vs llama-server**:
 
-| Factor | llama-server | vLLM |
-| --- | --- | --- |
-| Hardware | CPU, Vulkan, Metal, CUDA | CUDA only |
-| Model format | GGUF | SafeTensors, GGUF |
-| Multi-GPU | Split mode | Tensor parallelism |
-| Throughput | Good | Higher (continuous batching) |
-| Memory efficiency | Standard | PagedAttention |
-| Setup complexity | Simple | Requires CUDA + Python |
-| Best for | Local dev, edge, mixed hardware | GPU servers, high concurrency |
+| Factor            | llama-server                    | vLLM                          |
+| ----------------- | ------------------------------- | ----------------------------- |
+| Hardware          | CPU, Vulkan, Metal, CUDA        | CUDA only                     |
+| Model format      | GGUF                            | SafeTensors, GGUF             |
+| Multi-GPU         | Split mode                      | Tensor parallelism            |
+| Throughput        | Good                            | Higher (continuous batching)  |
+| Memory efficiency | Standard                        | PagedAttention                |
+| Setup complexity  | Simple                          | Requires CUDA + Python        |
+| Best for          | Local dev, edge, mixed hardware | GPU servers, high concurrency |
 
 ### Implementation Notes
 
@@ -825,19 +851,19 @@ const config: LlmServingConfig = {
 
 Other local/cloud LLM integration candidates:
 
-| Integration | Type | API | Notes |
-| --- | --- | --- | --- |
-| **Ollama** | Local LLM | OpenAI-compatible | Model management, simple setup |
-| **LM Studio** | Local LLM | OpenAI-compatible | Desktop app, GUI model management |
-| **text-generation-webui** | Local LLM | Gradio API | Multiple backends (llama.cpp, transformers) |
-| **KoboldCpp** | Local LLM | OpenAI-compatible | llama.cpp fork with extra features |
-| **LocalAI** | Local LLM | OpenAI-compatible | Multi-model, image generation |
-| **Anthropic API** | Cloud | Native | Claude models, structured output |
-| **Google AI** | Cloud | Native | Gemini models, multimodal |
-| **Mistral API** | Cloud | OpenAI-compatible | Mistral/LeChat models |
-| **Groq** | Cloud | OpenAI-compatible | Fast inference on custom hardware |
-| **Together AI** | Cloud | OpenAI-compatible | Multi-model, fine-tuning |
-| **Fireworks AI** | Cloud | OpenAI-compatible | Fast inference, model hosting |
+| Integration               | Type      | API               | Notes                                       |
+| ------------------------- | --------- | ----------------- | ------------------------------------------- |
+| **Ollama**                | Local LLM | OpenAI-compatible | Model management, simple setup              |
+| **LM Studio**             | Local LLM | OpenAI-compatible | Desktop app, GUI model management           |
+| **text-generation-webui** | Local LLM | Gradio API        | Multiple backends (llama.cpp, transformers) |
+| **KoboldCpp**             | Local LLM | OpenAI-compatible | llama.cpp fork with extra features          |
+| **LocalAI**               | Local LLM | OpenAI-compatible | Multi-model, image generation               |
+| **Anthropic API**         | Cloud     | Native            | Claude models, structured output            |
+| **Google AI**             | Cloud     | Native            | Gemini models, multimodal                   |
+| **Mistral API**           | Cloud     | OpenAI-compatible | Mistral/LeChat models                       |
+| **Groq**                  | Cloud     | OpenAI-compatible | Fast inference on custom hardware           |
+| **Together AI**           | Cloud     | OpenAI-compatible | Multi-model, fine-tuning                    |
+| **Fireworks AI**          | Cloud     | OpenAI-compatible | Fast inference, model hosting               |
 
 ---
 
@@ -920,11 +946,11 @@ Reference: `../ai-scripts/llama-server.sh` — a shell script used for local dev
 
 ## Cross-References: Existing Codebase
 
-| Spec concept | Codebase location | Notes |
-| --- | --- | --- |
-| `GenerationResult.thinking` | `src/generation/gen-types-results.ts:14` | Captures `reasoning_content` from streaming |
-| `GenerationOptions.provider` | `src/generation/gen-types-options.ts:28` | Routes to `llm-serving` backend |
-| `GenerationStep.name: "generate_text"` | `src/generation/gen-types-results.ts:72` | Step pipeline integration |
-| `cancellation-manager` | `src/generation/cancellation-manager.ts` | In-memory tracking for active generations |
-| `step-pipeline.ts` | `src/generation/step-pipeline.ts` | Multi-step orchestration (retry-from-point) |
-| Config schema pattern | `src/config/schema.ts` | Follow existing `*Config` interface pattern |
+| Spec concept                           | Codebase location                        | Notes                                       |
+| -------------------------------------- | ---------------------------------------- | ------------------------------------------- |
+| `GenerationResult.thinking`            | `src/generation/gen-types-results.ts:14` | Captures `reasoning_content` from streaming |
+| `GenerationOptions.provider`           | `src/generation/gen-types-options.ts:28` | Routes to `llm-serving` backend             |
+| `GenerationStep.name: "generate_text"` | `src/generation/gen-types-results.ts:72` | Step pipeline integration                   |
+| `cancellation-manager`                 | `src/generation/cancellation-manager.ts` | In-memory tracking for active generations   |
+| `step-pipeline.ts`                     | `src/generation/step-pipeline.ts`        | Multi-step orchestration (retry-from-point) |
+| Config schema pattern                  | `src/config/schema.ts`                   | Follow existing `*Config` interface pattern |
