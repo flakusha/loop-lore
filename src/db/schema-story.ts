@@ -165,7 +165,7 @@ export interface WorldItems {
   location_id: string | null;
   owner_actor_id: string | null;
   quantity: number;
-  is_hidden: number;
+  visibility: string;
   spawn_condition: string | null;
   respawnable: number;
   created_at: Generated<string>;

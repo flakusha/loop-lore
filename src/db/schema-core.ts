@@ -6,6 +6,7 @@
 import type { Generated } from "kysely";
 import type {
   UserRole,
+  UserStatus,
   ChatType,
   ChatMode,
   TurnStrategy,
@@ -26,6 +27,7 @@ export interface Users {
   display_name: string;
   password_hash: string | null;
   role: UserRole;
+  status: UserStatus;
   settings: string;
   birth_date: string | null;
   age_gate_accepted_at: string | null;
@@ -137,9 +139,7 @@ export interface Messages {
   hidden_by: string | null;
   hidden_reason: string | null;
   idempotency_key: string | null;
-  is_continuation: number | null;
   continuation_index: number | null;
-  partial: number | null;
   created_at: Generated<string>;
   edited_at: string | null;
 }
