@@ -85,6 +85,9 @@ export default tseslint.config(
       "unicorn/prefer-at": "off",
       // Name replacements rule is too aggressive - doesn't improve readability
       "unicorn/name-replacements": "off",
+      // Boolean naming convention is too opinionated for game logic fields
+      // (defeated, hidden, completed, etc. are perfectly readable RPG terminology)
+      "unicorn/consistent-boolean-name": "off",
 
       // Enforce kebab-case filenames (with PascalCase exceptions for classes, snake_case for migrations)
       "unicorn/filename-case": [
