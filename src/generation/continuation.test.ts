@@ -259,7 +259,15 @@ describe("handleContinueGeneration", () => {
 
     await testDb
       .insertInto("actors")
-      .values({ id: "actor-1", actor_type: "character", display_name: "AI", agent_type: "ai", settings: "{}", data_version: 1, import_spec: "{}" })
+      .values({
+        id: "actor-1",
+        actor_type: "character",
+        display_name: "AI",
+        agent_type: "ai",
+        settings: "{}",
+        data_version: 1,
+        import_spec: "{}",
+      })
       .execute();
 
     await testDb
@@ -414,7 +422,15 @@ describe("handleRetryGeneration", () => {
 
     await testDb
       .insertInto("actors")
-      .values({ id: "actor-1", actor_type: "character", display_name: "AI", agent_type: "ai", settings: "{}", data_version: 1, import_spec: "{}" })
+      .values({
+        id: "actor-1",
+        actor_type: "character",
+        display_name: "AI",
+        agent_type: "ai",
+        settings: "{}",
+        data_version: 1,
+        import_spec: "{}",
+      })
       .execute();
   });
 
@@ -512,9 +528,8 @@ describe("handleRetryGeneration", () => {
 describe("cancelGeneration captures partial content", () => {
   test("partial content from repetition detector is stored on cancel", async () => {
     createLogger({ level: "error" });
-    const { startGenerationTracking, cancelGeneration, processStreamingChunk } = await import(
-      "./cancellation-manager"
-    );
+    const { startGenerationTracking, cancelGeneration, processStreamingChunk } =
+      await import("./cancellation-manager");
 
     const options = {
       chatId: "chat-cancel-test",

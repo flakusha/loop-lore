@@ -14,11 +14,7 @@ import type { DB } from "../db/schema";
 import { randomUUID } from "node:crypto";
 import { GenerationStatus, PolicyType } from "../db/enums";
 import { getLogger } from "../logger";
-import type {
-  GenerationOptions,
-  GenerationResult,
-  GenerationEvents,
-} from "./types";
+import type { GenerationOptions, GenerationResult, GenerationEvents } from "./types";
 import { DEFAULT_REPETITION_DETECTION, DEFAULT_POLICY_DETECTION, DEFAULT_RESPONSE_LIMIT } from "./types";
 import { StreamingRepetitionDetector } from "./repetition-detector";
 import { storePartialContent } from "./continuation";
@@ -120,11 +116,7 @@ export async function updateAttemptStatus(
     }
   }
 
-  await db
-    .updateTable("generation_attempts")
-    .set(update)
-    .where("id", "=", attemptId)
-    .execute();
+  await db.updateTable("generation_attempts").set(update).where("id", "=", attemptId).execute();
 }
 
 // ── Start generation tracking ─────────────────────────────
@@ -184,7 +176,9 @@ export function startGenerationTracking(
 
   // Persist to DB (fire-and-forget for speed — errors are non-fatal)
   void insertAttempt(db, options, attemptId, abortSignalId).catch((error: unknown) => {
-    getLogger().child({ module: "generation" }).warn("Failed to persist attempt", { error: String(error) });
+    getLogger()
+      .child({ module: "generation" })
+      .warn("Failed to persist attempt", { error: String(error) });
   });
 
   events?.onStart?.(attemptId);
@@ -251,11 +245,7 @@ export async function completeGeneration(
 /**
  * Mark a generation as failed.
  */
-export async function failGeneration(
-  attemptId: string,
-  error: Error,
-  db: Kysely<DB>,
-): Promise<void> {
+export async function failGeneration(attemptId: string, error: Error, db: Kysely<DB>): Promise<void> {
   const active = activeGenerations.get(attemptId);
 
   // Capture partial content before cleanup
@@ -288,7 +278,11 @@ export function isChatGenerating(chatId: string): boolean {
   const attemptId = chatToAttempt.get(chatId);
   if (!attemptId) return false;
   const active = activeGenerations.get(attemptId);
-  return active !== undefined && active.status !== GenerationStatus.Cancelled && active.status !== GenerationStatus.Completed;
+  return (
+    active !== undefined &&
+    active.status !== GenerationStatus.Cancelled &&
+    active.status !== GenerationStatus.Completed
+  );
 }
 
 /**
@@ -301,7 +295,7 @@ export function getActiveAttemptId(chatId: string): string | undefined {
 /**
  * List all active generation attempts (for admin/debugging).
  */
-export function listActiveGenerations(): ({
+export function listActiveGenerations(): {
   attemptId: string;
   chatId: string;
   actorId: string;
@@ -309,7 +303,7 @@ export function listActiveGenerations(): ({
   elapsed: number;
   chunksReceived: number;
   charsReceived: number;
-})[] {
+}[] {
   const now = Date.now();
   const result: ReturnType<typeof listActiveGenerations> = [];
 
