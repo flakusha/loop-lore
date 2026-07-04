@@ -27,10 +27,7 @@ export type Pipeline = (request: Request, context: RequestContext) => Promise<Re
  * Middleware runs left-to-right. Each receives the context returned
  * by the previous middleware. The last middleware is the route handler.
  */
-export function compose(
-  middleware: Middleware[],
-  finalHandler: RouteHandler,
-): Pipeline {
+export function compose(middleware: Middleware[], finalHandler: RouteHandler): Pipeline {
   return async (request: Request, context: RequestContext): Promise<Response> => {
     // Build the chain from right to left so the first middleware
     // in the array is the outermost layer.
@@ -64,7 +61,8 @@ export async function errorBoundary(
   try {
     return await next();
   } catch (error: unknown) {
-    const logger = (_context as unknown as Record<string, unknown>).logger as import("../logger").Logger | undefined;
+    const logger = (_context as unknown as Record<string, unknown>).logger as
+      import("../logger").Logger | undefined;
     (logger ?? getLogger()).error("Unhandled middleware error", error instanceof Error ? error : undefined);
     const message = error instanceof Error ? error.message : "Internal server error";
     return jsonError(message, HttpStatus.InternalServerError, "INTERNAL_ERROR");

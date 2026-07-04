@@ -37,7 +37,4 @@ export type Middleware = (
  * Final handler in the chain — receives enriched context,
  * dispatches to the appropriate route controller.
  */
-export type RouteHandler = (
-  request: Request,
-  context: RequestContext,
-) => Promise<Response> | Response;
+export type RouteHandler = (request: Request, context: RequestContext) => Promise<Response> | Response;

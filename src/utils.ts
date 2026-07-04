@@ -26,9 +26,7 @@ export function toErrorMessage(error: unknown): string {
 // ── Safe JSON Operations ─────────────────────────────────────
 
 /** Result of a safe JSON parse or stringify operation */
-export type JsonResult<T> =
-  | { ok: true; value: T }
-  | { ok: false; error: Error };
+export type JsonResult<T> = { ok: true; value: T } | { ok: false; error: Error };
 
 /**
  * Parse JSON safely. Never throws — returns a discriminated union.
@@ -47,20 +45,47 @@ export function safeJsonParse<T = unknown>(text: string): JsonResult<T> {
   }
 }
 
+/** Options for safeJsonStringify */
+export interface SafeJsonStringifyOptions {
+  /** Enable double-stringification guard (prevents double-encoding of JSON strings) */
+  guarded?: boolean;
+  /** Number of spaces to use for indentation */
+  space?: number;
+}
+
 /**
  * Stringify JSON safely. Never throws — returns a discriminated union.
  * Handles edge cases like circular references gracefully.
  *
+ * @param value - Value to stringify
+ * @param spaceOrOptions - Either a number for indentation, or an options object
+ * @param options - Options object (when second argument is an object)
+ *
  * @example
  * const result = safeJsonStringify(data);
  * if (!result.ok) { handleError(result.error); }
+ *
+ * @example
+ * // Enable double-stringification guard
+ * const result = safeJsonStringify(data, { guarded: true });
  */
 export function safeJsonStringify(
   value: unknown,
-  space?: number,
+  spaceOrOptions?: number | SafeJsonStringifyOptions,
 ): JsonResult<string> {
   try {
-    return { ok: true, value: JSON.stringify(value, null, space) };
+    let space: number | undefined;
+    let guarded = false;
+
+    if (typeof spaceOrOptions === "number") {
+      space = spaceOrOptions;
+    } else if (spaceOrOptions) {
+      guarded = spaceOrOptions.guarded ?? false;
+      space = spaceOrOptions.space;
+    }
+
+    const toStringify = guarded && isJsonString(value) ? (JSON.parse(value) as unknown) : value;
+    return { ok: true, value: JSON.stringify(toStringify, null, space) };
   } catch (error) {
     return { ok: false, error: asError(error) };
   }
@@ -75,4 +100,50 @@ export function safeJsonStringify(
 export function jsonParseOr<T>(text: string, fallback: T): T {
   const result = safeJsonParse<T>(text);
   return result.ok ? result.value : fallback;
+}
+
+// ── Safe JSON Stringifier with Double-Stringification Guard ─────────
+
+/**
+ * Check if a value is a valid JSON string.
+ * Returns true if the value is a string that can be parsed as JSON.
+ *
+ * @example
+ * isJsonString('{"a":1}') // true
+ * isJsonString('[1,2,3]') // true
+ * isJsonString('not json') // false
+ * isJsonString(123) // false
+ */
+export function isJsonString(value: unknown): value is string {
+  if (typeof value !== "string") return false;
+  try {
+    JSON.parse(value);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Stringify JSON safely with double-stringification guard.
+ * Prevents double-encoding by parsing string values first.
+ * Never throws — returns a discriminated union.
+ *
+ * @example
+ * // Non-string value - stringifies directly
+ * safeJsonStringify({ a: 1 }) // { ok: true, value: '{"a":1}' }
+ *
+ * // Already a JSON string - parses first then stringifies
+ * safeJsonStringify('{"a":1}') // { ok: true, value: '{"a":1}' }
+ *
+ * // Non-JSON string - stringifies as-is
+ * safeJsonStringify('hello') // { ok: true, value: '"hello"' }
+ */
+export function safeJsonStringifyGuarded(value: unknown, space?: number): JsonResult<string> {
+  try {
+    const toStringify = isJsonString(value) ? (JSON.parse(value) as unknown) : value;
+    return { ok: true, value: JSON.stringify(toStringify, null, space) };
+  } catch (error) {
+    return { ok: false, error: asError(error) };
+  }
 }
