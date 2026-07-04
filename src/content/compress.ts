@@ -1,9 +1,25 @@
 import { readdirSync, readFileSync, writeFileSync, existsSync, mkdirSync, copyFileSync } from "node:fs";
 import { join, extname } from "node:path";
 import { gzipSync, brotliCompressSync } from "node:zlib";
-import { minifyText } from "./minify";
+import { minifyText, minifyCSS } from "./minify";
 
 const COMPRESSIBLE_EXTS = new Set([".css", ".js", ".html", ".json", ".svg"]);
+
+export function copyDirectory(sourceDir: string, destDir: string): void {
+  if (!existsSync(sourceDir)) return;
+  
+  for (const entry of readdirSync(sourceDir, { withFileTypes: true })) {
+    const srcPath = join(sourceDir, entry.name);
+    const destPath = join(destDir, entry.name);
+    
+    if (entry.isDirectory()) {
+      copyDirectory(srcPath, destPath);
+    } else if (entry.isFile()) {
+      mkdirSync(join(destPath, ".."), { recursive: true });
+      copyFileSync(srcPath, destPath);
+    }
+  }
+}
 
 function walkDirectory(directory: string): string[] {
   const files: string[] = [];
@@ -42,7 +58,8 @@ function _setupStaticDirectory(sourceDirectory: string, destinationDirectory: st
 
 function compressFile(filePath: string): void {
   const content = readFileSync(filePath, "utf8");
-  const minimized = minifyText(content);
+  const extension = extname(filePath);
+  const minimized = extension === ".css" ? minifyCSS(content) : minifyText(content);
 
   const buffer = Buffer.from(minimized, "utf8");
 
