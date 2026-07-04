@@ -74,19 +74,12 @@ export class ItemsService {
 
   /** Get item definition by ID */
   async getDefinition(itemId: string) {
-    return this.db
-      .selectFrom("items")
-      .selectAll()
-      .where("id", "=", itemId)
-      .executeTakeFirst();
+    return this.db.selectFrom("items").selectAll().where("id", "=", itemId).executeTakeFirst();
   }
 
   /** List item definitions in a world */
   async listDefinitions(worldId: string, category?: ItemCategory) {
-    let query = this.db
-      .selectFrom("items")
-      .selectAll()
-      .where("world_id", "=", worldId);
+    let query = this.db.selectFrom("items").selectAll().where("world_id", "=", worldId);
 
     if (category) {
       query = query.where("category", "=", category);
@@ -123,12 +116,7 @@ export class ItemsService {
   }
 
   /** Give item instance to an NPC */
-  async giveToNpc(
-    itemId: string,
-    actorId: string,
-    worldId: string,
-    quantity = 1,
-  ): Promise<string> {
+  async giveToNpc(itemId: string, actorId: string, worldId: string, quantity = 1): Promise<string> {
     const id = uid();
     await this.db
       .insertInto("world_items")

@@ -5,11 +5,7 @@
  */
 
 // ── Core types from ./types barrel ──────────────────────────
-export type {
-  WorldEvent,
-  NpcState,
-  LocationState,
-} from "./types";
+export type { WorldEvent, NpcState, LocationState } from "./types";
 
 export type {
   GameMasterConfig,
@@ -20,10 +16,7 @@ export type {
   GameMasterDecision,
   StoryContext,
 } from "./types";
-export {
-  DEFAULT_QUALITY_THRESHOLDS,
-  DEFAULT_QUALITY_WEIGHTS,
-} from "./types";
+export { DEFAULT_QUALITY_THRESHOLDS, DEFAULT_QUALITY_WEIGHTS } from "./types";
 
 export type {
   BaseQuestConfig,
@@ -50,20 +43,11 @@ export type {
 } from "./types";
 
 // ── Services ────────────────────────────────────────────────
-export {
-  TurnManager,
-  type TurnManagerOptions,
-} from "./turn-manager";
+export { TurnManager, type TurnManagerOptions } from "./turn-manager";
 
-export {
-  GameMasterService,
-  type GmTurnResult,
-} from "./game-master";
+export { GameMasterService, type GmTurnResult } from "./game-master";
 
-export {
-  QualityEvaluator,
-  type EvaluatorConfig,
-} from "./quality-evaluator";
+export { QualityEvaluator, type EvaluatorConfig } from "./quality-evaluator";
 
 export { WorldStateService } from "./world-state";
 
@@ -75,14 +59,6 @@ export {
   applyEvents,
 } from "./events";
 
-export {
-  type ItemDefinition,
-  type ItemInstance,
-  type TransferResult,
-  ItemsService,
-} from "./items";
+export { type ItemDefinition, type ItemInstance, type TransferResult, ItemsService } from "./items";
 
-export {
-  QuestEngine,
-  type QuestProgressEntry,
-} from "./quest-engine";
+export { QuestEngine, type QuestProgressEntry } from "./quest-engine";

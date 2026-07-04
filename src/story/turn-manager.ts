@@ -18,10 +18,7 @@ import type {
   WorldEvent,
 } from "./types";
 import { DEFAULT_QUALITY_THRESHOLDS } from "./types";
-import {
-  STRATEGY_MAP,
-  type TurnParticipant,
-} from "./turn-strategies";
+import { STRATEGY_MAP, type TurnParticipant } from "./turn-strategies";
 
 export interface TurnManagerOptions {
   db: Kysely<DB>;
@@ -87,7 +84,7 @@ export class TurnManager {
 
     const resolvedStrategy = strategy ?? this.state.strategy;
     const participants = await this.getTurnOrderActors();
-    
+
     if (participants.length === 0) return null;
 
     this.state.currentTurn++;
@@ -196,31 +193,7 @@ export class TurnManager {
       .execute();
   }
 
-  private async refreshTurnOrder(): Promise<void> {
-    if (!this.state) return;
-
-    const participants = await this.db
-      .selectFrom("chat_participants")
-      .innerJoin("actors", "actors.id", "chat_participants.actor_id")
-      .select(["chat_participants.actor_id", "actors.actor_type", "actors.agent_type"])
-      .where("chat_participants.chat_id", "=", this.chatId)
-      .where("actors.agent_type", "in", ["ai", "narrator", "npc"])
-      .execute();
-
-    // Order: narrators first, then ai characters, then npcs
-    const typeOrder: Record<string, number> = { narrator: 0, ai: 1, npc: 2 };
-    participants.sort((a, b) => {
-      const aOrder = typeOrder[a.agent_type] ?? 99;
-      const bOrder = typeOrder[b.agent_type] ?? 99;
-      return aOrder - bOrder;
-    });
-
-    this.state.turnOrder = participants.map((p) => p.actor_id);
-  }
-
-  private async getTurnOrderActors(): Promise<TurnParticipant[]>{
-    if (!this.state) return [];
-
+  private async fetchTurnParticipants(): Promise<TurnParticipant[]> {
     const participants = await this.db
       .selectFrom("chat_participants")
       .innerJoin("actors", "actors.id", "chat_participants.actor_id")
@@ -236,4 +209,24 @@ export class TurnManager {
     }));
   }
 
+  private async refreshTurnOrder(): Promise<void> {
+    if (!this.state) return;
+
+    const participants = await this.fetchTurnParticipants();
+
+    // Order: narrators first, then ai characters, then npcs
+    const typeOrder: Record<string, number> = { narrator: 0, ai: 1, npc: 2 };
+    participants.sort((a, b) => {
+      const aOrder = typeOrder[a.agentType] ?? 99;
+      const bOrder = typeOrder[b.agentType] ?? 99;
+      return aOrder - bOrder;
+    });
+
+    this.state.turnOrder = participants.map((p) => p.actorId);
+  }
+
+  private async getTurnOrderActors(): Promise<TurnParticipant[]> {
+    if (!this.state) return [];
+    return this.fetchTurnParticipants();
+  }
 }
