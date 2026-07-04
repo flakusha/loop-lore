@@ -68,6 +68,7 @@ Opaque session token model (no JWT dependency):
 6. Return `RequestContext`
 
 Solo/demo mode (`auth.required: false`):
+
 - Bypasses token check
 - Returns a singleton solo user context
 - No DB lookup per request
@@ -136,15 +137,15 @@ Located in `src/db/`
 
 #### Current Migration Sequence
 
-| # | File | What it creates |
-| --- | --- | --- |
-| 001 | `001_init.ts` | Core tables: users, sessions, chats, actors, chat_participants, characters, messages, assets, asset_links, worlds |
-| 002 | `002_age_gate.ts` | `birth_date`, `age_gate_accepted_at` on users |
-| 003a | `003_generation_attempts.ts` | `generation_attempts` table |
+| #    | File                         | What it creates                                                                                                   |
+| ---- | ---------------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| 001  | `001_init.ts`                | Core tables: users, sessions, chats, actors, chat_participants, characters, messages, assets, asset_links, worlds |
+| 002  | `002_age_gate.ts`            | `birth_date`, `age_gate_accepted_at` on users                                                                     |
+| 003a | `003_generation_attempts.ts` | `generation_attempts` table                                                                                       |
 
 > **Warning**: During MVP, `data_version` defaults to `0` across all actor records. When stabilising post-MVP, version bumps will be **forward-compatible only**: migrations add columns/tables, never remove. Existing `v0` records continue working; missing fields resolve to sensible defaults. See [`docs/actors.md`](./actors.md) for full versioning contract.
-| 003b | `003_story_features.ts` | locations, story_turns, quests, quest_progress, world_states, npc_states, location_states, synthetic_data + new columns on chats |
-| 004 | `004_continuation_retry.ts` | Continuation & tree columns on generation_attempts + messages |
+> | 003b | `003_story_features.ts` | locations, story_turns, quests, quest_progress, world_states, npc_states, location_states, synthetic_data + new columns on chats |
+> | 004 | `004_continuation_retry.ts` | Continuation & tree columns on generation_attempts + messages |
 
 ### Actor System
 
@@ -200,16 +201,16 @@ checks, and continuation/retry features.
 
 #### Files
 
-| File | Purpose |
-| --- | --- |
-| `types.ts` | Core types: `GenerationOptions`, `GenerationResult`, `ContinueRequest`, `RetryFromPointRequest`, repetition/policy configs |
-| `cancellation-manager.ts` | AbortController-based cancellation — user cancel, chat-switch, timeout |
-| `continuation.ts` | Continue truncated/cancelled messages — preserves partial content, appends via child message |
-| `step-pipeline.ts` | Multi-step generation pipelines with retry-from-point (generate → caption → attach) |
-| `repetition-detector.ts` | StreamingRepetitionDetector — n-gram fingerprinting to detect loops |
-| `policy-detector.ts` | Pluggable PolicyDetector interface — register detectors, no hardcoded keywords |
-| `controller.ts` | Route handler for generation endpoints |
-| `index.ts` | Barrel exports |
+| File                      | Purpose                                                                                                                    |
+| ------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| `types.ts`                | Core types: `GenerationOptions`, `GenerationResult`, `ContinueRequest`, `RetryFromPointRequest`, repetition/policy configs |
+| `cancellation-manager.ts` | AbortController-based cancellation — user cancel, chat-switch, timeout                                                     |
+| `continuation.ts`         | Continue truncated/cancelled messages — preserves partial content, appends via child message                               |
+| `step-pipeline.ts`        | Multi-step generation pipelines with retry-from-point (generate → caption → attach)                                        |
+| `repetition-detector.ts`  | StreamingRepetitionDetector — n-gram fingerprinting to detect loops                                                        |
+| `policy-detector.ts`      | Pluggable PolicyDetector interface — register detectors, no hardcoded keywords                                             |
+| `controller.ts`           | Route handler for generation endpoints                                                                                     |
+| `index.ts`                | Barrel exports                                                                                                             |
 
 #### Key Features
 
@@ -249,6 +250,7 @@ Any of `pending`, `processing`, `streaming` can transition to `failed` or `cance
 #### DB Table
 
 See `generation_attempts` in [`docs/schema.md`](./schema.md). Tracks:
+
 - Idempotency key, model, provider, status
 - Cancel reason + source (user/auto/system)
 - Streaming metadata (chunks received, chars received)
@@ -258,13 +260,13 @@ See `generation_attempts` in [`docs/schema.md`](./schema.md). Tracks:
 
 #### API Endpoints
 
-| Method | Path | Purpose |
-| --- | --- | --- |
-| `POST` | `/api/generation/continue` | Initiate continuation of partial/cancelled message |
-| `POST` | `/api/generation/retry` | Retry generation from specified step index |
-| `POST` | `/api/messages/:id/evaluate` | Trigger quality evaluation (story mode) |
-| `POST` | `/api/messages/:id/regenerate` | Request regeneration |
-| `GET` | `/api/messages/:id/attempts` | List generation attempts for a message |
+| Method | Path                           | Purpose                                            |
+| ------ | ------------------------------ | -------------------------------------------------- |
+| `POST` | `/api/generation/continue`     | Initiate continuation of partial/cancelled message |
+| `POST` | `/api/generation/retry`        | Retry generation from specified step index         |
+| `POST` | `/api/messages/:id/evaluate`   | Trigger quality evaluation (story mode)            |
+| `POST` | `/api/messages/:id/regenerate` | Request regeneration                               |
+| `GET`  | `/api/messages/:id/attempts`   | List generation attempts for a message             |
 
 ### Story Module (Multi-LLM Generation)
 
@@ -275,21 +277,21 @@ the full specification of the multi-LLM story generation system.
 
 #### Files
 
-| File | Purpose |
-| --- | --- |
-| `types.ts` | Domain types: GM config, quest configs, world events, quality evaluation, story context, API request/response types |
-| `turn-manager.ts` | `TurnManager` class — orchestrates turn order, actor selection (5 strategies), regeneration cycles, persistence |
-| `index.ts` | Barrel exports |
+| File              | Purpose                                                                                                             |
+| ----------------- | ------------------------------------------------------------------------------------------------------------------- |
+| `types.ts`        | Domain types: GM config, quest configs, world events, quality evaluation, story context, API request/response types |
+| `turn-manager.ts` | `TurnManager` class — orchestrates turn order, actor selection (5 strategies), regeneration cycles, persistence     |
+| `index.ts`        | Barrel exports                                                                                                      |
 
 #### Turn Strategies
 
-| Strategy | Description | Method |
-| --- | --- | --- |
-| `round_robin` | Fixed order: Actor A → B → C → A... | `roundRobinSelect()` |
-| `scene_based` | Narrator every 3rd turn, otherwise round-robin | `sceneBasedSelect()` |
-| `initiative` | Random shuffle per turn (initiative roll) | `initiativeSelect()` |
-| `quest_driven` | Prioritize actors relevant to active quests | `questDrivenSelect()` |
-| `hybrid` | Quest-driven every 5th turn, scene-based otherwise | `hybridSelect()` |
+| Strategy       | Description                                        | Method                |
+| -------------- | -------------------------------------------------- | --------------------- |
+| `round_robin`  | Fixed order: Actor A → B → C → A...                | `roundRobinSelect()`  |
+| `scene_based`  | Narrator every 3rd turn, otherwise round-robin     | `sceneBasedSelect()`  |
+| `initiative`   | Random shuffle per turn (initiative roll)          | `initiativeSelect()`  |
+| `quest_driven` | Prioritize actors relevant to active quests        | `questDrivenSelect()` |
+| `hybrid`       | Quest-driven every 5th turn, scene-based otherwise | `hybridSelect()`      |
 
 #### Turn Manager State
 
@@ -300,6 +302,7 @@ pending regeneration info.
 #### DB Tables
 
 Story features add these tables (see [`docs/schema.md`](./schema.md)):
+
 - `locations` — scene/room/region entities within worlds
 - `story_turns` — per-turn records with quality scores, GM decisions, world events
 - `quests` — global quests with type-specific configs
@@ -335,13 +338,13 @@ Located in `src/content/`
 
 Utilities for content encoding, decoding, minification, and asset compression:
 
-| File | Purpose |
-| --- | --- |
-| `encode.ts` | `encodeContent()` — encode message content (gzip/zstd/brotli) |
-| `decode.ts` | `decodeContent()` — decode message content |
-| `minify.ts` | `minifyText()` — strip whitespace/newlines for compact storage |
-| `compress.ts` | `compressAssets()` — batch compression of uploaded assets |
-| `types.ts` | Shared types: `ContentEncoding`, `EncodeResult`, `DecodeOptions` |
+| File          | Purpose                                                          |
+| ------------- | ---------------------------------------------------------------- |
+| `encode.ts`   | `encodeContent()` — encode message content (gzip/zstd/brotli)    |
+| `decode.ts`   | `decodeContent()` — decode message content                       |
+| `minify.ts`   | `minifyText()` — strip whitespace/newlines for compact storage   |
+| `compress.ts` | `compressAssets()` — batch compression of uploaded assets        |
+| `types.ts`    | Shared types: `ContentEncoding`, `EncodeResult`, `DecodeOptions` |
 
 ### Age Gate Module
 
@@ -349,11 +352,11 @@ Located in `src/age-gate/`
 
 Provides user age verification for NSFW content compliance:
 
-| File | Purpose |
-| --- | --- |
-| `service.ts` | `AgeGateService` — validates birth dates, calculates age, checks minimum age |
-| `controller.ts` | Route handler — accepts birth date, validates, returns status |
-| `service.test.ts` | Unit tests for age calculation and minimum age enforcement |
+| File              | Purpose                                                                      |
+| ----------------- | ---------------------------------------------------------------------------- |
+| `service.ts`      | `AgeGateService` — validates birth dates, calculates age, checks minimum age |
+| `controller.ts`   | Route handler — accepts birth date, validates, returns status                |
+| `service.test.ts` | Unit tests for age calculation and minimum age enforcement                   |
 
 - Configurable: `ageGate.enabled`, `ageGate.minimumAge`, `ageGate.mode`
 - Modes: `none`, `self-declaration`, `verification` (reserved)
@@ -432,25 +435,25 @@ server:
   port: 3000
   host: "localhost"
   tls:
-    key: "./data/certs/key.pem"    # auto-generated if missing
-    cert: "./data/certs/cert.pem"  # auto-generated if missing
+    key: "./data/certs/key.pem" # auto-generated if missing
+    cert: "./data/certs/cert.pem" # auto-generated if missing
 
 db:
-  type: sqlite           # "sqlite" or "postgres"
+  type: sqlite # "sqlite" or "postgres"
   sqliteFilename: "../loop-lore-data/loop-lore.db"
   # For Postgres: url: "postgres://..."
 
 assets:
   enabled: true
   uploadDir: "../loop-lore-data/uploads"
-  maxFileSize: 10485760  # 10 MB
+  maxFileSize: 10485760 # 10 MB
   compression: true
 
 assistant:
   enabled: true
 
 logging:
-  level: debug           # "debug", "info", "warn", "error"
+  level: debug # "debug", "info", "warn", "error"
 
 tui:
   enabled: true
@@ -462,40 +465,40 @@ docs:
 ageGate:
   enabled: false
   minimumAge: 18
-  mode: self-declaration  # "none", "self-declaration", "verification"
+  mode: self-declaration # "none", "self-declaration", "verification"
 
 auth:
-  required: false              # true = remote multi-user, false = demo/solo
-  registrationOpen: true       # allow new user registration
-  sessionTimeoutHours: 24       # idle session timeout
-  maxSessionsPerUser: 10       # max simultaneous sessions per user
+  required: false # true = remote multi-user, false = demo/solo
+  registrationOpen: true # allow new user registration
+  sessionTimeoutHours: 24 # idle session timeout
+  maxSessionsPerUser: 10 # max simultaneous sessions per user
 ```
 
 ### Environment Variable Override
 
 Env vars override config file values (12-factor style). Mapping in `src/config/load.ts`:
 
-| Env Var | Config Path | Type |
-| --- | --- | --- |
-| `PORT` | `server.port` | number |
-| `HOST` | `server.host` | string |
-| `DB_TYPE` | `db.type` | string |
-| `SQLITE_FILENAME` | `db.sqliteFilename` | string |
-| `DATABASE_URL` | `db.url` | string |
-| `ENABLE_ASSETS` | `assets.enabled` | boolean |
-| `ASSETS_UPLOAD_DIR` | `assets.uploadDir` | string |
-| `ASSETS_MAX_FILE_SIZE` | `assets.maxFileSize` | number |
-| `ASSETS_COMPRESSION` | `assets.compression` | boolean |
-| `ENABLE_ASSISTANT` | `assistant.enabled` | boolean |
-| `LOG_LEVEL` | `logging.level` | string |
-| `ENABLE_TUI` | `tui.enabled` | boolean |
-| `ENABLE_DOCS` | `docs.enabled` | boolean |
-| `TLS_KEY` | `server.tls.key` | string |
-| `TLS_CERT` | `server.tls.cert` | string |
-| `AUTH_REQUIRED` | `auth.required` | boolean |
-| `AUTH_REGISTRATION_OPEN` | `auth.registrationOpen` | boolean |
-| `SESSION_TIMEOUT_HOURS` | `auth.sessionTimeoutHours` | number |
-| `SESSION_MAX_PER_USER` | `auth.maxSessionsPerUser` | number |
+| Env Var                  | Config Path                | Type    |
+| ------------------------ | -------------------------- | ------- |
+| `PORT`                   | `server.port`              | number  |
+| `HOST`                   | `server.host`              | string  |
+| `DB_TYPE`                | `db.type`                  | string  |
+| `SQLITE_FILENAME`        | `db.sqliteFilename`        | string  |
+| `DATABASE_URL`           | `db.url`                   | string  |
+| `ENABLE_ASSETS`          | `assets.enabled`           | boolean |
+| `ASSETS_UPLOAD_DIR`      | `assets.uploadDir`         | string  |
+| `ASSETS_MAX_FILE_SIZE`   | `assets.maxFileSize`       | number  |
+| `ASSETS_COMPRESSION`     | `assets.compression`       | boolean |
+| `ENABLE_ASSISTANT`       | `assistant.enabled`        | boolean |
+| `LOG_LEVEL`              | `logging.level`            | string  |
+| `ENABLE_TUI`             | `tui.enabled`              | boolean |
+| `ENABLE_DOCS`            | `docs.enabled`             | boolean |
+| `TLS_KEY`                | `server.tls.key`           | string  |
+| `TLS_CERT`               | `server.tls.cert`          | string  |
+| `AUTH_REQUIRED`          | `auth.required`            | boolean |
+| `AUTH_REGISTRATION_OPEN` | `auth.registrationOpen`    | boolean |
+| `SESSION_TIMEOUT_HOURS`  | `auth.sessionTimeoutHours` | number  |
+| `SESSION_MAX_PER_USER`   | `auth.maxSessionsPerUser`  | number  |
 
 ## Development Setup
 
@@ -529,25 +532,25 @@ bun run tui
 
 ### Available Scripts
 
-| Command | Purpose |
-| --- | --- |
-| `bun run dev` | Development server with `--watch` |
-| `bun run start` | Production server |
-| `bun run tui` | Start TUI interface |
-| `bun run build` | TypeScript compile to `./dist` |
-| `bun run db:migrate` | Run database migrations |
-| `bun run check` | Full quality check: typecheck → lint → format → md:lint |
-| `bun run lint` | Run ESLint |
-| `bun run lint:fix` | Auto-fix ESLint issues |
-| `bun run format` | Check formatting with Prettier |
-| `bun run format:fix` | Auto-format with Prettier |
-| `bun run typecheck` | `tsc --noEmit` |
-| `bun run test` | Run tests (Jest-compatible API) |
-| `bun run test:coverage` | Run tests with coverage |
-| `bun run md:lint` | Lint markdown files |
-| `bun run md:lint:fix` | Auto-fix markdown issues |
-| `bun run docs:dev` | Start VitePress dev server for docs |
-| `bun run docs:build` | Build VitePress docs |
+| Command                 | Purpose                                                 |
+| ----------------------- | ------------------------------------------------------- |
+| `bun run dev`           | Development server with `--watch`                       |
+| `bun run start`         | Production server                                       |
+| `bun run tui`           | Start TUI interface                                     |
+| `bun run build`         | TypeScript compile to `./dist`                          |
+| `bun run db:migrate`    | Run database migrations                                 |
+| `bun run check`         | Full quality check: typecheck → lint → format → md:lint |
+| `bun run lint`          | Run ESLint                                              |
+| `bun run lint:fix`      | Auto-fix ESLint issues                                  |
+| `bun run format`        | Check formatting with Prettier                          |
+| `bun run format:fix`    | Auto-format with Prettier                               |
+| `bun run typecheck`     | `tsc --noEmit`                                          |
+| `bun run test`          | Run tests (Jest-compatible API)                         |
+| `bun run test:coverage` | Run tests with coverage                                 |
+| `bun run md:lint`       | Lint markdown files                                     |
+| `bun run md:lint:fix`   | Auto-fix markdown issues                                |
+| `bun run docs:dev`      | Start VitePress dev server for docs                     |
+| `bun run docs:build`    | Build VitePress docs                                    |
 
 ## Production Deployment
 
@@ -565,6 +568,7 @@ bun run tui
 ### Reverse Proxy Setup
 
 Recommended to put behind a reverse proxy (NGINX, Caddy, etc.) for:
+
 - SSL termination
 - Load balancing
 - Static file serving (if serving web UI)

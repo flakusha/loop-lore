@@ -34,19 +34,23 @@ Every domain package imports enums as **runtime values** (for DB inserts/updates
 ## ✅ Strong Points
 
 ### 1. Domain-grouped schema files
+
 `schema-core.ts`, `schema-generation.ts`, etc. give each domain ownership of its tables.
 The barrel in `schema.ts` is minimal — just re-exports + the `DB` aggregate.
 
 ### 2. Single enum source of truth
+
 All 30+ enum values live in `src/db/enums-*.ts`. A domain package never hardcodes a string
 literal for a DB field — it always imports `GenerationStatus`, `CancelReason`, etc.
 
 ### 3. Domain types are decoupled from DB types
+
 Generation has three type files (`gen-types-options`, `gen-types-results`, `gen-types-api`)
 with zero DB dependencies — pure domain interfaces. Only `GenerationAttemptRow = Selectable<GenerationAttempts>`
 bridges the two worlds, and it's used in exactly one place (`step-pipeline.ts`).
 
 ### 4. Clean barrel hierarchy
+
 ```
 types.ts              → gen-types-options + gen-types-results + gen-types-api
 cancellation-manager.ts → cancellation-tracker + cancellation-actions
@@ -56,15 +60,18 @@ index.ts              → types + cancellation-manager + continuation + step-pip
 No circular dependencies. Everything flows through barrels.
 
 ### 5. Consistent error handling in routes
+
 `jsonError(message, status)` + `jsonResponse(data, status)` with proper HTTP codes
 (400, 404, 422, 500). Every route handler returns a `Response` object.
 
 ### 6. Pluggable policy detection
+
 `registerPolicyDetector()` interface — no hardcoded keyword lists. Default `NullDetector`
 means no third-party dependencies at startup. Detector failures are caught individually
 and don't cascade.
 
 ### 7. CancellationError class
+
 `GenerationCancelledError` extends `Error` with typed `reason: CancelReason`,
 `source: CancelSource`, `detail: string` — structured error data that callers can
 discriminate on rather than parsing a string.
@@ -82,8 +89,8 @@ discriminate on rather than parsing a string.
 const input = body as Record<string, unknown>;
 
 // Line 42-43: casts unknown strings to enum types
-const reason = input.reason as CancelReason ?? CancelReason.UserCancel;
-const source = input.source as CancelSource ?? CancelSource.User;
+const reason = (input.reason as CancelReason) ?? CancelReason.UserCancel;
+const source = (input.source as CancelSource) ?? CancelSource.User;
 
 // Line 124: casts unknown to typed interface (zero validation)
 const input = body as RetryFromPointRequest;
@@ -111,8 +118,8 @@ this cast hides the mismatch. **Recommendation**: use `.select(["step_index", "t
 with explicit column list instead of `selectAll()`, which gives Kysely enough
 type info without the cast.
 
-*(Same pattern applies to `cancellation-actions.ts` line 99 and `generation-routes.ts` line 192 —
-`selectAll()` then `as`.)*
+_(Same pattern applies to `cancellation-actions.ts` line 99 and `generation-routes.ts` line 192 —
+`selectAll()` then `as`.)_
 
 ### Issue 3: Fire-and-forget DB writes mask failures
 
@@ -137,7 +144,10 @@ persistence a hard requirement before the in-memory state is updated.
 `src/generation/cancellation-tracker.ts` line 36:
 
 ```typescript
-policyConfig: { expectedPolicy: string; cancel: boolean };
+policyConfig: {
+  expectedPolicy: string;
+  cancel: boolean;
+}
 ```
 
 This discards the `PolicyType` union type. The value is then cast back at
@@ -201,13 +211,13 @@ if (attempt && attempt.partial_content !== null) {
 
 ## Recommendations Summary
 
-| Priority | Issue | Fix |
-|----------|-------|-----|
-| **High** | `as` casts on request bodies (3 sites) | Add Zod schemas or type guards for ContinueRequest, RetryFromPointRequest |
-| **High** | Fire-and-forget DB writes (7 sites) | Log failures, make critical writes (start, complete) await |
-| **High** | Missing schema columns (Actors, Worlds) | Add character-card fields to `schema-core.ts` Actors; add scan_depth/token_budget to `schema-story.ts` Worlds |
-| **Medium** | `selectAll()` + `as` cast (3 sites) | Use explicit `.select([...])` for typed results |
-| **Medium** | Silent JSON parse error (4 sites) | Return 400 with parse error message |
-| **Medium** | Policy config type erasure | `expectedPolicy: PolicyType` instead of `string` |
-| **Low** | NpcStates missing `created_at` | Add column for consistency |
-| **Low** | Truthy check on DB string | Use `!== null` instead of falsy check |
+| Priority   | Issue                                   | Fix                                                                                                           |
+| ---------- | --------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
+| **High**   | `as` casts on request bodies (3 sites)  | Add Zod schemas or type guards for ContinueRequest, RetryFromPointRequest                                     |
+| **High**   | Fire-and-forget DB writes (7 sites)     | Log failures, make critical writes (start, complete) await                                                    |
+| **High**   | Missing schema columns (Actors, Worlds) | Add character-card fields to `schema-core.ts` Actors; add scan_depth/token_budget to `schema-story.ts` Worlds |
+| **Medium** | `selectAll()` + `as` cast (3 sites)     | Use explicit `.select([...])` for typed results                                                               |
+| **Medium** | Silent JSON parse error (4 sites)       | Return 400 with parse error message                                                                           |
+| **Medium** | Policy config type erasure              | `expectedPolicy: PolicyType` instead of `string`                                                              |
+| **Low**    | NpcStates missing `created_at`          | Add column for consistency                                                                                    |
+| **Low**    | Truthy check on DB string               | Use `!== null` instead of falsy check                                                                         |

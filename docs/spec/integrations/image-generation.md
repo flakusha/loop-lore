@@ -6,18 +6,18 @@ This spec covers image and video generation backends for loop-lore. Supports tex
 
 **Primary backend** (MVP):
 
-| Backend | Type | Best For |
-| --- | --- | --- |
+| Backend                                                                | Type           | Best For                              |
+| ---------------------------------------------------------------------- | -------------- | ------------------------------------- |
 | [stable-diffusion.cpp](https://github.com/leejet/stable-diffusion.cpp) | Local, CPU/GPU | Default image generation, GGUF models |
 
 **Future backends**:
 
-| Backend | Type | Best For |
-| --- | --- | --- |
+| Backend                                              | Type              | Best For                            |
+| ---------------------------------------------------- | ----------------- | ----------------------------------- |
 | [ComfyUI](https://github.com/comfyanonymous/ComfyUI) | Local, node-based | Complex multi-step pipelines, video |
-| Krea 2 API | Cloud | Style transfer, moodboards |
-| Ideogram 4 API | Cloud | Text rendering, structured prompts |
-| Qwen Image API | Cloud | Multilingual text, 2K resolution |
+| Krea 2 API                                           | Cloud             | Style transfer, moodboards          |
+| Ideogram 4 API                                       | Cloud             | Text rendering, structured prompts  |
+| Qwen Image API                                       | Cloud             | Multilingual text, 2K resolution    |
 
 **Supported model families**: SD 1.x/2.x, SDXL (Illustrious/NoobAI/Pony), SD3, FLUX, Krea 2, Ideogram 4, Qwen Image, Chroma, Wan (video), LTX-2 (video+audio)
 
@@ -34,13 +34,13 @@ loop-lore                sd-server
 
 Three integration paths:
 
-| API | Endpoint | Best For |
-| --- | --- | --- |
+| API        | Endpoint                      | Best For                                                |
+| ---------- | ----------------------------- | ------------------------------------------------------- |
 | **OpenAI** | `POST /v1/images/generations` | Simple text-to-image, drop-in OpenAI client replacement |
-| **OpenAI** | `POST /v1/images/edits` | Image-to-image / inpainting from multipart form data |
-| **WebUI** | `POST /sdapi/v1/txt2img` | Full param control (sampler, scheduler, CFG, LoRA) |
-| **WebUI** | `POST /sdapi/v1/img2img` | Full param control for image-to-image |
-| **sdcpp** | `POST /sdcpp/v1/img_gen` | Async generation with job polling and queue management |
+| **OpenAI** | `POST /v1/images/edits`       | Image-to-image / inpainting from multipart form data    |
+| **WebUI**  | `POST /sdapi/v1/txt2img`      | Full param control (sampler, scheduler, CFG, LoRA)      |
+| **WebUI**  | `POST /sdapi/v1/img2img`      | Full param control for image-to-image                   |
+| **sdcpp**  | `POST /sdcpp/v1/img_gen`      | Async generation with job polling and queue management  |
 
 ## Building sd-server
 
@@ -92,33 +92,33 @@ With full control (from sd.cpp-webui defaults):
 
 ### Key CLI Flags
 
-| Flag | Purpose |
-| --- | --- |
-| `--model, -m` | Path to diffusion model GGUF file |
-| `--port` | HTTP port (default: 8080) |
-| `--host` | Bind address (default: 127.0.0.1) |
-| `--threads, -t` | Number of CPU threads |
-| `--wtype` | Weight type (default, f32, f16, q4_0, q4_1, q5_0, q5_1, q8_0) |
-| `--rng` | RNG type (std_default, cuda) |
-| `--diffusion-fp16` | Run diffusion in fp16 mode |
-| `--vae-fp16` | Run VAE in fp16 mode |
-| `--control-net-path` | Path to ControlNet models |
-| `--lora-model-dir` | Directory for LoRA models |
-| `--embd-dir` | Directory for textual inversion embeddings |
-| `--taesd-path` | Path to TAESD model for fast latent decoding |
-| `--esrgan-path` | Path to ESRGAN upscaler model |
-| `--hires-upscalers-dir` | Directory for hires fix upscaler models |
-| `--output-dir` | Output directory for generated images |
-| `--init-image` | Init image for img2img mode |
-| `--mask-image` | Mask image for inpainting |
-| `--strength` | Denoising strength (0.0–1.0) for img2img |
-| `--cfg-scale` | CFG scale (guidance strength) |
-| `--sample-method` | Sampler (euler_a, euler, heun, dpm2, lcm, ddim, dpm++ 2m, etc.) |
-| `--scheduler` | Scheduler type |
-| `--steps` | Number of sampling steps |
-| `--seed` | Random seed (-1 = random) |
-| `--batch-count` | Number of images to generate |
-| `--clip-skip` | CLIP skip layers |
+| Flag                    | Purpose                                                         |
+| ----------------------- | --------------------------------------------------------------- |
+| `--model, -m`           | Path to diffusion model GGUF file                               |
+| `--port`                | HTTP port (default: 8080)                                       |
+| `--host`                | Bind address (default: 127.0.0.1)                               |
+| `--threads, -t`         | Number of CPU threads                                           |
+| `--wtype`               | Weight type (default, f32, f16, q4_0, q4_1, q5_0, q5_1, q8_0)   |
+| `--rng`                 | RNG type (std_default, cuda)                                    |
+| `--diffusion-fp16`      | Run diffusion in fp16 mode                                      |
+| `--vae-fp16`            | Run VAE in fp16 mode                                            |
+| `--control-net-path`    | Path to ControlNet models                                       |
+| `--lora-model-dir`      | Directory for LoRA models                                       |
+| `--embd-dir`            | Directory for textual inversion embeddings                      |
+| `--taesd-path`          | Path to TAESD model for fast latent decoding                    |
+| `--esrgan-path`         | Path to ESRGAN upscaler model                                   |
+| `--hires-upscalers-dir` | Directory for hires fix upscaler models                         |
+| `--output-dir`          | Output directory for generated images                           |
+| `--init-image`          | Init image for img2img mode                                     |
+| `--mask-image`          | Mask image for inpainting                                       |
+| `--strength`            | Denoising strength (0.0–1.0) for img2img                        |
+| `--cfg-scale`           | CFG scale (guidance strength)                                   |
+| `--sample-method`       | Sampler (euler_a, euler, heun, dpm2, lcm, ddim, dpm++ 2m, etc.) |
+| `--scheduler`           | Scheduler type                                                  |
+| `--steps`               | Number of sampling steps                                        |
+| `--seed`                | Random seed (-1 = random)                                       |
+| `--batch-count`         | Number of images to generate                                    |
+| `--clip-skip`           | CLIP skip layers                                                |
 
 ## API Families
 
@@ -130,13 +130,13 @@ Drop-in replacement for OpenAI's image generation API. Best for simple integrati
 
 Takes standard OpenAI request fields:
 
-| Field | Type | Required | Default | Notes |
-| --- | --- | --- | --- | --- |
-| `prompt` | `string` | Yes | — | Text prompt for generation |
-| `n` | `integer` | No | 1 | Number of images to generate |
-| `size` | `string` | No | default | Format `WIDTHxHEIGHT` (e.g. `"1024x1024"`) |
-| `output_format` | `string` | No | `"png"` | `"png"`, `"jpeg"`, or `"webp"` |
-| `output_compression` | `integer` | No | 100 | Compression level (0–100) |
+| Field                | Type      | Required | Default | Notes                                      |
+| -------------------- | --------- | -------- | ------- | ------------------------------------------ |
+| `prompt`             | `string`  | Yes      | —       | Text prompt for generation                 |
+| `n`                  | `integer` | No       | 1       | Number of images to generate               |
+| `size`               | `string`  | No       | default | Format `WIDTHxHEIGHT` (e.g. `"1024x1024"`) |
+| `output_format`      | `string`  | No       | `"png"` | `"png"`, `"jpeg"`, or `"webp"`             |
+| `output_compression` | `integer` | No       | 100     | Compression level (0–100)                  |
 
 **Response**:
 
@@ -144,9 +144,7 @@ Takes standard OpenAI request fields:
 {
   "created": 1775401200,
   "output_format": "png",
-  "data": [
-    {"b64_json": "iVBORw0KGgo..."}
-  ]
+  "data": [{ "b64_json": "iVBORw0KGgo..." }]
 }
 ```
 
@@ -154,15 +152,15 @@ Takes standard OpenAI request fields:
 
 Image-to-image / inpainting via multipart form data:
 
-| Field | Type | Required | Notes |
-| --- | --- | --- | --- |
-| `prompt` | `string` | Yes | Text prompt |
-| `image[]` | `file[]` | One of | Preferred image upload field (multiple) |
-| `image` | `file` | One of | Legacy single-image upload |
-| `mask` | `file` | No | Optional mask for inpainting |
-| `n` | `integer` | No | Number of images |
-| `size` | `string` | No | `WIDTHxHEIGHT` format |
-| `output_format` | `string` | No | `"png"` or `"jpeg"` |
+| Field           | Type      | Required | Notes                                   |
+| --------------- | --------- | -------- | --------------------------------------- |
+| `prompt`        | `string`  | Yes      | Text prompt                             |
+| `image[]`       | `file[]`  | One of   | Preferred image upload field (multiple) |
+| `image`         | `file`    | One of   | Legacy single-image upload              |
+| `mask`          | `file`    | No       | Optional mask for inpainting            |
+| `n`             | `integer` | No       | Number of images                        |
+| `size`          | `string`  | No       | `WIDTHxHEIGHT` format                   |
+| `output_format` | `string`  | No       | `"png"` or `"jpeg"`                     |
 
 #### `GET /v1/models`
 
@@ -186,27 +184,27 @@ Compatible with AUTOMATIC1111's API format. Provides full parameter control — 
 
 #### `POST /sdapi/v1/txt2img`
 
-| Field | Type | Default | Notes |
-| --- | --- | --- | --- |
-| `prompt` | `string` | — | Required |
-| `negative_prompt` | `string` | `""` | Negative prompt |
-| `width` | `integer` | 512 | Image width |
-| `height` | `integer` | 512 | Image height |
-| `steps` | `integer` | server default | Sampling steps |
-| `cfg_scale` | `number` | server default | CFG / text guidance scale |
-| `seed` | `integer` | -1 | -1 = random |
-| `batch_size` | `integer` | 1 | Number of images |
-| `clip_skip` | `integer` | — | CLIP skip (optional) |
-| `sampler_name` | `string` | — | `"euler_a"`, `"euler"`, `"dpm++ 2m"`, `"lcm"`, etc. |
-| `scheduler` | `string` | — | Scheduler type |
-| `lora` | `array[object]` | — | Structured LoRA list: `[{"path": "...", "multiplier": 0.8}]` |
-| `enable_hr` | `boolean` | false | Enable hires fix |
-| `hr_scale` | `number` | — | Hires upscale scale |
-| `hr_resize_x` | `integer` | — | Hires target width |
-| `hr_resize_y` | `integer` | — | Hires target height |
-| `hr_steps` | `integer` | — | Hires second-pass steps |
-| `hr_upscaler` | `string` | — | Upscaler name (`"Lanczos"`, `"Nearest"`, latent modes, or model name) |
-| `denoising_strength` | `number` | — | Hires denoising strength (txt2img) |
+| Field                | Type            | Default        | Notes                                                                 |
+| -------------------- | --------------- | -------------- | --------------------------------------------------------------------- |
+| `prompt`             | `string`        | —              | Required                                                              |
+| `negative_prompt`    | `string`        | `""`           | Negative prompt                                                       |
+| `width`              | `integer`       | 512            | Image width                                                           |
+| `height`             | `integer`       | 512            | Image height                                                          |
+| `steps`              | `integer`       | server default | Sampling steps                                                        |
+| `cfg_scale`          | `number`        | server default | CFG / text guidance scale                                             |
+| `seed`               | `integer`       | -1             | -1 = random                                                           |
+| `batch_size`         | `integer`       | 1              | Number of images                                                      |
+| `clip_skip`          | `integer`       | —              | CLIP skip (optional)                                                  |
+| `sampler_name`       | `string`        | —              | `"euler_a"`, `"euler"`, `"dpm++ 2m"`, `"lcm"`, etc.                   |
+| `scheduler`          | `string`        | —              | Scheduler type                                                        |
+| `lora`               | `array[object]` | —              | Structured LoRA list: `[{"path": "...", "multiplier": 0.8}]`          |
+| `enable_hr`          | `boolean`       | false          | Enable hires fix                                                      |
+| `hr_scale`           | `number`        | —              | Hires upscale scale                                                   |
+| `hr_resize_x`        | `integer`       | —              | Hires target width                                                    |
+| `hr_resize_y`        | `integer`       | —              | Hires target height                                                   |
+| `hr_steps`           | `integer`       | —              | Hires second-pass steps                                               |
+| `hr_upscaler`        | `string`        | —              | Upscaler name (`"Lanczos"`, `"Nearest"`, latent modes, or model name) |
+| `denoising_strength` | `number`        | —              | Hires denoising strength (txt2img)                                    |
 
 **Response**:
 
@@ -222,24 +220,24 @@ Compatible with AUTOMATIC1111's API format. Provides full parameter control — 
 
 Same fields as txt2img, plus:
 
-| Field | Type | Notes |
-| --- | --- | --- |
-| `init_images` | `array[string]` | Base64 or data URL input images |
-| `mask` | `string` | Base64 or data URL mask (optional) |
-| `inpainting_mask_invert` | `integer\|boolean` | Invert mask flag |
-| `denoising_strength` | `number` | Image-to-image strength (clamped 0.0–1.0) |
+| Field                    | Type               | Notes                                     |
+| ------------------------ | ------------------ | ----------------------------------------- |
+| `init_images`            | `array[string]`    | Base64 or data URL input images           |
+| `mask`                   | `string`           | Base64 or data URL mask (optional)        |
+| `inpainting_mask_invert` | `integer\|boolean` | Invert mask flag                          |
+| `denoising_strength`     | `number`           | Image-to-image strength (clamped 0.0–1.0) |
 
 #### Discovery Endpoints
 
-| Method | Endpoint | Purpose |
-| --- | --- | --- |
-| `GET` | `/sdapi/v1/loras` | List available LoRA models |
-| `GET` | `/sdapi/v1/upscalers` | List available upscalers (built-in + model-backed) |
-| `GET` | `/sdapi/v1/latent-upscale-modes` | List latent upscale modes |
-| `GET` | `/sdapi/v1/samplers` | List available samplers |
-| `GET` | `/sdapi/v1/schedulers` | List available schedulers |
-| `GET` | `/sdapi/v1/sd-models` | Show loaded model metadata |
-| `GET` | `/sdapi/v1/options` | Show server options (output format, model) |
+| Method | Endpoint                         | Purpose                                            |
+| ------ | -------------------------------- | -------------------------------------------------- |
+| `GET`  | `/sdapi/v1/loras`                | List available LoRA models                         |
+| `GET`  | `/sdapi/v1/upscalers`            | List available upscalers (built-in + model-backed) |
+| `GET`  | `/sdapi/v1/latent-upscale-modes` | List latent upscale modes                          |
+| `GET`  | `/sdapi/v1/samplers`             | List available samplers                            |
+| `GET`  | `/sdapi/v1/schedulers`           | List available schedulers                          |
+| `GET`  | `/sdapi/v1/sd-models`            | Show loaded model metadata                         |
+| `GET`  | `/sdapi/v1/options`              | Show server options (output format, model)         |
 
 ---
 
@@ -364,14 +362,14 @@ Discover server capabilities — supported modes, defaults by mode, samplers, sc
 
 ## Integration Decision
 
-| Use Case | Recommended API | Reason |
-| --- | --- | --- |
-| Simple text-to-image from chat | OpenAI API (`/v1/images/generations`) | Drop-in OpenAI compatibility, minimal code |
-| Full param control in image pipeline | WebUI API (`/sdapi/v1/txt2img`) | Sampler, scheduler, CFG, LoRA, hires fix |
-| Background generation with UI feedback | sdcpp API (`/sdcpp/v1/img_gen`) | Async job polling, queue management, progress |
-| Capability discovery | sdcpp API (`/sdcpp/v1/capabilities`) | Model info, samplers, limits in one call |
-| Image-to-image / inpainting | OpenAI API (`/v1/images/edits`) or WebUI (`/sdapi/v1/img2img`) | Both support it; WebUI has more control |
-| LoRA management | WebUI API (`/sdapi/v1/loras`) | Structured LoRA list with names and paths |
+| Use Case                               | Recommended API                                                | Reason                                        |
+| -------------------------------------- | -------------------------------------------------------------- | --------------------------------------------- |
+| Simple text-to-image from chat         | OpenAI API (`/v1/images/generations`)                          | Drop-in OpenAI compatibility, minimal code    |
+| Full param control in image pipeline   | WebUI API (`/sdapi/v1/txt2img`)                                | Sampler, scheduler, CFG, LoRA, hires fix      |
+| Background generation with UI feedback | sdcpp API (`/sdcpp/v1/img_gen`)                                | Async job polling, queue management, progress |
+| Capability discovery                   | sdcpp API (`/sdcpp/v1/capabilities`)                           | Model info, samplers, limits in one call      |
+| Image-to-image / inpainting            | OpenAI API (`/v1/images/edits`) or WebUI (`/sdapi/v1/img2img`) | Both support it; WebUI has more control       |
+| LoRA management                        | WebUI API (`/sdapi/v1/loras`)                                  | Structured LoRA list with names and paths     |
 
 **MVP recommendation**: Use the **OpenAI API** (`/v1/images/generations`) as the primary integration target — it requires minimal new code since it shares shape with the existing OpenAI-compatible generation flow. For advanced features (LoRA, hires, sampler selection), fall back to the **WebUI API**.
 
@@ -381,16 +379,16 @@ Discover server capabilities — supported modes, defaults by mode, samplers, sc
 
 sd-server errors vary by API family. The provider must handle:
 
-| HTTP Code | Meaning | Action |
-| --- | --- | --- |
-| 200 | Success | Process response |
-| 202 | Job accepted (sdcpp API) | Begin polling for completion |
-| 400 | Bad request (invalid params) | Fail immediately, surface to user |
-| 404 | Model not loaded | Fail with "model not available" |
-| 429 | Queue full | Retry with backoff, surface queue position |
-| 500 | Server error | Retry up to `retries` times |
-| 503 | Server loading model | Retry with backoff (model warm-up) |
-| Timeout | No response within timeout | Abort, surface timeout error |
+| HTTP Code | Meaning                      | Action                                     |
+| --------- | ---------------------------- | ------------------------------------------ |
+| 200       | Success                      | Process response                           |
+| 202       | Job accepted (sdcpp API)     | Begin polling for completion               |
+| 400       | Bad request (invalid params) | Fail immediately, surface to user          |
+| 404       | Model not loaded             | Fail with "model not available"            |
+| 429       | Queue full                   | Retry with backoff, surface queue position |
+| 500       | Server error                 | Retry up to `retries` times                |
+| 503       | Server loading model         | Retry with backoff (model warm-up)         |
+| Timeout   | No response within timeout   | Abort, surface timeout error               |
 
 **Retry strategy**: Exponential backoff with jitter. First retry at `retryBackoffMs`, second at `2 × retryBackoffMs`. Do not retry on 400 (bad request).
 
@@ -405,10 +403,11 @@ async function healthCheck(config: ImageGenerationConfig): Promise<{
   apiFamily?: string;
   latencyMs?: number;
   error?: string;
-}>
+}>;
 ```
 
 Implementation:
+
 1. `GET /v1/models` (OpenAI) or `GET /sdcpp/v1/capabilities` (sdcpp) with `timeout` ms limit
 2. If response valid → `status: "ok"`, include model info
 3. If response is slow (>10s) → `status: "degraded"` (large model loading)
@@ -432,6 +431,7 @@ interface JobProgress {
 ```
 
 Polling strategy:
+
 1. Submit job → receive `jobId`
 2. Poll `GET /sdcpp/v1/jobs/{id}` every `pollIntervalMs`
 3. Update progress: `queuePosition` → `generating` → `completed`
@@ -443,7 +443,7 @@ Polling strategy:
 For sdcpp async jobs:
 
 ```typescript
-async function cancelJob(config: ImageGenerationConfig, jobId: string): Promise<boolean>
+async function cancelJob(config: ImageGenerationConfig, jobId: string): Promise<boolean>;
 ```
 
 - `POST /sdcpp/v1/jobs/{id}/cancel`
@@ -451,6 +451,7 @@ async function cancelJob(config: ImageGenerationConfig, jobId: string): Promise<
 - On cancellation, clean up partial assets if any
 
 For OpenAI/WebUI synchronous requests:
+
 - Abort the HTTP request via `AbortController`
 - No server-side cancellation (server completes generation, result discarded)
 
@@ -480,14 +481,14 @@ interface ImageGenerationPreset {
 
 **Built-in presets**:
 
-| Preset | Steps | CFG | Resolution | Sampler | Use Case |
-| --- | --- | --- | --- | --- | --- |
-| `fast` | 15 | 5.0 | 512×512 | `lcm` | Quick drafts, iteration |
-| `balanced` | 25 | 7.0 | 1024×1024 | `euler_a` | General purpose |
-| `quality` | 40 | 8.0 | 1024×1024 | `dpm++ 2m` | High-quality final output |
-| `detailed` | 50 | 9.0 | 1536×1536 | `euler` | Maximum detail, large images |
-| `anime` | 30 | 7.5 | 1024×1024 | `euler_a` | Anime/illustration style |
-| `photo` | 35 | 7.0 | 1024×1024 | `dpm++ 2m` | Photorealistic output |
+| Preset     | Steps | CFG | Resolution | Sampler    | Use Case                     |
+| ---------- | ----- | --- | ---------- | ---------- | ---------------------------- |
+| `fast`     | 15    | 5.0 | 512×512    | `lcm`      | Quick drafts, iteration      |
+| `balanced` | 25    | 7.0 | 1024×1024  | `euler_a`  | General purpose              |
+| `quality`  | 40    | 8.0 | 1024×1024  | `dpm++ 2m` | High-quality final output    |
+| `detailed` | 50    | 9.0 | 1536×1536  | `euler`    | Maximum detail, large images |
+| `anime`    | 30    | 7.5 | 1024×1024  | `euler_a`  | Anime/illustration style     |
+| `photo`    | 35    | 7.0 | 1024×1024  | `dpm++ 2m` | Photorealistic output        |
 
 **Preset resolution** (same as text presets):
 
@@ -499,7 +500,7 @@ interface ImageGenerationPreset {
 ```typescript
 // chats.settings (JSON string)
 interface ChatSettings {
-  generationPreset?: string;      // text preset name
+  generationPreset?: string; // text preset name
   imageGenerationPreset?: string; // image preset name
   // ... other chat settings
 }
@@ -509,16 +510,16 @@ interface ChatSettings {
 
 **API parameter mapping**:
 
-| Preset param | WebUI API field | sdcpp API field | Notes |
-| --- | --- | --- | --- |
-| `width` | `width` | `width` | Image width |
-| `height` | `height` | `height` | Image height |
-| `steps` | `steps` | `sample_params.sample_steps` | Sampling steps |
-| `cfgScale` | `cfg_scale` | `sample_params.guidance.txt_cfg` | Guidance scale |
-| `sampler` | `sampler_name` | `sample_params.sample_method` | Sampling method |
-| `scheduler` | `scheduler` | `sample_params.scheduler` | Scheduler type |
-| `clipSkip` | `clip_skip` | `clip_skip` | CLIP skip layers |
-| `batchCount` | `batch_size` | `batch_count` | Number of images |
+| Preset param | WebUI API field | sdcpp API field                  | Notes            |
+| ------------ | --------------- | -------------------------------- | ---------------- |
+| `width`      | `width`         | `width`                          | Image width      |
+| `height`     | `height`        | `height`                         | Image height     |
+| `steps`      | `steps`         | `sample_params.sample_steps`     | Sampling steps   |
+| `cfgScale`   | `cfg_scale`     | `sample_params.guidance.txt_cfg` | Guidance scale   |
+| `sampler`    | `sampler_name`  | `sample_params.sample_method`    | Sampling method  |
+| `scheduler`  | `scheduler`     | `sample_params.scheduler`        | Scheduler type   |
+| `clipSkip`   | `clip_skip`     | `clip_skip`                      | CLIP skip layers |
+| `batchCount` | `batch_size`    | `batch_count`                    | Number of images |
 
 ---
 
@@ -543,6 +544,7 @@ The image generation step would:
 6. Return an asset reference in the generation result
 
 **Cancellation integration**: The `cancellation-manager.ts` tracks active image generations. When a user cancels:
+
 - For sdcpp async: call `POST /sdcpp/v1/jobs/{id}/cancel`, mark attempt as `cancelled`
 - For OpenAI/WebUI sync: abort HTTP request via `AbortController`
 
@@ -561,6 +563,7 @@ sd-server ──► base64 image ──► assets/service.ts ──► asset_lin
 ```
 
 The assets system (see [`docs/assets.md`](./assets.md)) handles:
+
 - Storage to `data/assets/raw/` with UUID-derived paths
 - Optional compression variants (WebP thumbnails)
 - Polymorphic linking to any entity (message, character, world)
@@ -602,17 +605,17 @@ interface ImageGenerationConfig {
 
 Env vars:
 
-| Variable | Default | Purpose |
-| --- | --- | --- |
-| `SDCPP_BASE_URL` | `http://localhost:9000` | sd-server endpoint |
-| `SDCPP_API_FAMILY` | `openai` | API family to use |
-| `SDCPP_DEFAULT_WIDTH` | `1024` | Default image width |
-| `SDCPP_DEFAULT_HEIGHT` | `1024` | Default image height |
-| `SDCPP_DEFAULT_STEPS` | `28` | Default sampling steps |
-| `SDCPP_DEFAULT_CFG` | `7.5` | Default CFG scale |
-| `SDCPP_TIMEOUT` | `30000` | Connection timeout in ms |
-| `SDCPP_GENERATION_TIMEOUT` | `300000` | Generation timeout in ms |
-| `SDCPP_RETRIES` | `2` | Max retry attempts |
+| Variable                   | Default                 | Purpose                  |
+| -------------------------- | ----------------------- | ------------------------ |
+| `SDCPP_BASE_URL`           | `http://localhost:9000` | sd-server endpoint       |
+| `SDCPP_API_FAMILY`         | `openai`                | API family to use        |
+| `SDCPP_DEFAULT_WIDTH`      | `1024`                  | Default image width      |
+| `SDCPP_DEFAULT_HEIGHT`     | `1024`                  | Default image height     |
+| `SDCPP_DEFAULT_STEPS`      | `28`                    | Default sampling steps   |
+| `SDCPP_DEFAULT_CFG`        | `7.5`                   | Default CFG scale        |
+| `SDCPP_TIMEOUT`            | `30000`                 | Connection timeout in ms |
+| `SDCPP_GENERATION_TIMEOUT` | `300000`                | Generation timeout in ms |
+| `SDCPP_RETRIES`            | `2`                     | Max retry attempts       |
 
 ### Streamlined Integration (OpenAI API Path)
 
@@ -638,21 +641,21 @@ For asynchronous image generation (e.g. from the web UI where the user can cance
 
 stable-diffusion.cpp supports a wide range of architectures. See each model's documentation in `../stable-diffusion.cpp/docs/`:
 
-| Model Family | Doc | Type | Notes |
-| --- | --- | --- | --- |
-| SD 1.x / 2.x | [sd.md](../stable-diffusion.cpp/docs/sd.md) | Image | Legacy, widely compatible |
-| SDXL / SDXL-Turbo | [sd.md](../stable-diffusion.cpp/docs/sd.md) | Image | Higher quality, more VRAM |
-| SDXL fine-tunes: Illustrious, NoobAI, Pony | — | Image | Anime/illustration, booru-style tags |
-| SD3 / SD3.5 | [sd3.md](../stable-diffusion.cpp/docs/sd3.md) | Image | Latest Stability models |
-| FLUX.1-dev/schnell | [flux.md](../stable-diffusion.cpp/docs/flux.md) | Image | Fast, high-quality |
-| FLUX.2-dev/klein | [flux2.md](../stable-diffusion.cpp/docs/flux2.md) | Image | Latest FLUX generation |
-| Krea 2 | [krea2.md](../stable-diffusion.cpp/docs/krea2.md) | Image | Foundation model, style transfer, moodboards |
-| Ideogram 4 | — | Image | JSON caption prompting, text rendering |
-| Qwen Image 2.0 | [qwen_image.md](../stable-diffusion.cpp/docs/qwen_image.md) | Image | Native 2K, multilingual text, editing |
-| Chroma / Chroma1 Radiance | [chroma.md](../stable-diffusion.cpp/docs/chroma.md) | Image | Fast transformer-based |
-| HiDream-O1, Lens | docs above | Image | Various modern architectures |
-| Wan 2.1 / 2.2 | [wan.md](../stable-diffusion.cpp/docs/wan.md) | Video | Text/image-to-video, audio |
-| LTX-2.3 | [ltx2.md](../stable-diffusion.cpp/docs/ltx2.md) | Video | Audio-video, 4K, 50fps, image-to-video |
+| Model Family                               | Doc                                                         | Type  | Notes                                        |
+| ------------------------------------------ | ----------------------------------------------------------- | ----- | -------------------------------------------- |
+| SD 1.x / 2.x                               | [sd.md](../stable-diffusion.cpp/docs/sd.md)                 | Image | Legacy, widely compatible                    |
+| SDXL / SDXL-Turbo                          | [sd.md](../stable-diffusion.cpp/docs/sd.md)                 | Image | Higher quality, more VRAM                    |
+| SDXL fine-tunes: Illustrious, NoobAI, Pony | —                                                           | Image | Anime/illustration, booru-style tags         |
+| SD3 / SD3.5                                | [sd3.md](../stable-diffusion.cpp/docs/sd3.md)               | Image | Latest Stability models                      |
+| FLUX.1-dev/schnell                         | [flux.md](../stable-diffusion.cpp/docs/flux.md)             | Image | Fast, high-quality                           |
+| FLUX.2-dev/klein                           | [flux2.md](../stable-diffusion.cpp/docs/flux2.md)           | Image | Latest FLUX generation                       |
+| Krea 2                                     | [krea2.md](../stable-diffusion.cpp/docs/krea2.md)           | Image | Foundation model, style transfer, moodboards |
+| Ideogram 4                                 | —                                                           | Image | JSON caption prompting, text rendering       |
+| Qwen Image 2.0                             | [qwen_image.md](../stable-diffusion.cpp/docs/qwen_image.md) | Image | Native 2K, multilingual text, editing        |
+| Chroma / Chroma1 Radiance                  | [chroma.md](../stable-diffusion.cpp/docs/chroma.md)         | Image | Fast transformer-based                       |
+| HiDream-O1, Lens                           | docs above                                                  | Image | Various modern architectures                 |
+| Wan 2.1 / 2.2                              | [wan.md](../stable-diffusion.cpp/docs/wan.md)               | Video | Text/image-to-video, audio                   |
+| LTX-2.3                                    | [ltx2.md](../stable-diffusion.cpp/docs/ltx2.md)             | Video | Audio-video, 4K, 50fps, image-to-video       |
 
 Models typically need to be in GGUF format (quantized). The VAE (autoencoder) model can be embedded in the main GGUF or loaded separately.
 
@@ -672,19 +675,19 @@ Video models (Wan, LTX-2) generate video sequences. Key differences from image g
 
 Different model families require different prompting approaches. The provider must handle prompt adaptation based on the active model:
 
-| Model Family | Prompt Style | Token Limit | Key Differences |
-| --- | --- | --- | --- |
-| SD 1.x / 2.x | Natural language, comma-separated tags | <75 | CLIP tokenizer, legacy style |
-| SDXL | Natural language, descriptive paragraphs | 77-150 | Better with detailed prompts |
-| SDXL fine-tunes (Illustrious/NoobAI/Pony) | Booru-style tags + natural language | 77-150 | Danbooru/E621 tag vocabulary |
-| SD3 / SD3.5 | Natural language, T5 tokenizer | 100-300 | Longer context, detailed descriptions |
-| FLUX.1 / FLUX.2 | Natural language, very flexible | 100-300 | Best with detailed natural descriptions |
-| Krea 2 | Natural language + creativity slider | 100-300 | `creativity` param controls interpretation |
-| Ideogram 4 | **JSON captions required** | 100-300 | Structured `compositional_deconstruction` |
-| Qwen Image 2.0 | Natural language, multilingual | 100-300 | Native 2K, text rendering up to 1K tokens |
-| Chroma | Natural language, transformer-based | 100-300 | Similar to FLUX |
-| Wan (video) | Natural language + motion descriptions | 100-300 | Include motion/action for video |
-| LTX-2 (video) | Natural language + motion descriptions | 100-300 | Image-to-video, synchronized audio |
+| Model Family                              | Prompt Style                             | Token Limit | Key Differences                            |
+| ----------------------------------------- | ---------------------------------------- | ----------- | ------------------------------------------ |
+| SD 1.x / 2.x                              | Natural language, comma-separated tags   | <75         | CLIP tokenizer, legacy style               |
+| SDXL                                      | Natural language, descriptive paragraphs | 77-150      | Better with detailed prompts               |
+| SDXL fine-tunes (Illustrious/NoobAI/Pony) | Booru-style tags + natural language      | 77-150      | Danbooru/E621 tag vocabulary               |
+| SD3 / SD3.5                               | Natural language, T5 tokenizer           | 100-300     | Longer context, detailed descriptions      |
+| FLUX.1 / FLUX.2                           | Natural language, very flexible          | 100-300     | Best with detailed natural descriptions    |
+| Krea 2                                    | Natural language + creativity slider     | 100-300     | `creativity` param controls interpretation |
+| Ideogram 4                                | **JSON captions required**               | 100-300     | Structured `compositional_deconstruction`  |
+| Qwen Image 2.0                            | Natural language, multilingual           | 100-300     | Native 2K, text rendering up to 1K tokens  |
+| Chroma                                    | Natural language, transformer-based      | 100-300     | Similar to FLUX                            |
+| Wan (video)                               | Natural language + motion descriptions   | 100-300     | Include motion/action for video            |
+| LTX-2 (video)                             | Natural language + motion descriptions   | 100-300     | Image-to-video, synchronized audio         |
 
 **SDXL fine-tunes (Illustrious, NoobAI, Pony)**:
 
@@ -696,6 +699,7 @@ These are SDXL checkpoints fine-tuned on anime/illustration datasets with booru-
 - **Hybrid approach**: Combine booru tags with natural language for best results. Tags control specifics; natural language fills gaps.
 
 Example Illustrious prompt:
+
 ```
 masterpiece, best quality, solo, 1girl, upper body, black hair, short hair, ahoge, blue eyes, smile, looking at viewer, open mouth, black top, outdoors, highres, (depth of field), bokeh, diffused light
 ```
@@ -737,6 +741,7 @@ Plain text prompts should be expanded via "magic prompt" (LLM-based expansion) b
 - Best with detailed, compositional descriptions
 
 **Prompt length guidelines**:
+
 - SD 1.x/2.x: Keep under 75 tokens (CLIP limit). Use commas for tags.
 - SDXL / Illustrious / NoobAI / Pony: 77-150 tokens. Mix booru tags + natural language.
 - SD3/FLUX/Krea 2/Qwen: 100-300 tokens. Detailed natural language descriptions.
@@ -745,6 +750,7 @@ Plain text prompts should be expanded via "magic prompt" (LLM-based expansion) b
 - For all models: Negative prompts help steer output away from unwanted artifacts.
 
 **Prompt engineering per model type**:
+
 - **Photorealistic**: "highly detailed, sharp focus, professional photography, 8k"
 - **Anime**: "anime style, detailed, vibrant colors, cel shading" + booru tags for Illustrious/NoobAI/Pony
 - **Artistic**: "oil painting, masterpiece, best quality, detailed brushstrokes"
@@ -771,9 +777,7 @@ The JSON block is extracted, applied to generation parameters, then stripped fro
 ```json
 {
   "prompt": "a cosmic landscape",
-  "lora": [
-    {"path": "path/to/lora.safetensors", "multiplier": 0.8}
-  ]
+  "lora": [{ "path": "path/to/lora.safetensors", "multiplier": 0.8 }]
 }
 ```
 
@@ -791,6 +795,7 @@ The JSON block is extracted, applied to generation parameters, then stripped fro
 **LoRA discovery**: `GET /sdapi/v1/loras` returns available LoRAs. For sdcpp: `GET /sdcpp/v1/capabilities` includes `loras` array.
 
 **Loop-lore integration**:
+
 - Store LoRA preferences in `chats.settings` or `actors.settings` JSON
 - Apply LoRAs based on character style or chat context
 - Present LoRA selector in UI when multiple LoRAs are available
@@ -805,36 +810,36 @@ The JSON block is extracted, applied to generation parameters, then stripped fro
 
 ### Why ComfyUI
 
-| Capability | Benefit |
-| --- | --- |
-| **Node-based workflows** | Compose complex generation pipelines visually |
-| **All model types** | SD, SDXL, FLUX, Wan, LTX, video, inpainting, ControlNet |
-| **WebSocket progress** | Real-time execution status per node |
-| **Workflow templates** | Save/reuse/share generation pipelines |
-| **Custom nodes** | Extensible via community node ecosystem |
-| **Image upload** | Input images for img2img, ControlNet, video generation |
+| Capability               | Benefit                                                 |
+| ------------------------ | ------------------------------------------------------- |
+| **Node-based workflows** | Compose complex generation pipelines visually           |
+| **All model types**      | SD, SDXL, FLUX, Wan, LTX, video, inpainting, ControlNet |
+| **WebSocket progress**   | Real-time execution status per node                     |
+| **Workflow templates**   | Save/reuse/share generation pipelines                   |
+| **Custom nodes**         | Extensible via community node ecosystem                 |
+| **Image upload**         | Input images for img2img, ControlNet, video generation  |
 
 ### API Overview
 
 ComfyUI runs on port 8188 by default. Key endpoints:
 
-| Endpoint | Method | Purpose |
-| --- | --- | --- |
-| `/prompt` | POST | Submit workflow for execution |
-| `/prompt` | GET | Get queue status |
-| `/queue` | GET | Detailed queue view (running + pending) |
-| `/queue` | POST | Delete items from queue or clear |
-| `/interrupt` | POST | Cancel currently executing workflow |
-| `/history/{prompt_id}` | GET | Results for a specific prompt |
-| `/history` | GET | Full execution history |
-| `/upload/image` | POST | Upload image to input directory |
-| `/view` | GET | Retrieve generated image by filename |
-| `/object_info` | GET | Full node catalogue |
-| `/system_stats` | GET | Server info: Python, CUDA, VRAM |
-| `/embeddings` | GET | List installed text embeddings |
-| `/models/{type}` | GET | List available models of a type |
-| `/free` | POST | Free VRAM, unload models |
-| `/ws` | WebSocket | Real-time execution events |
+| Endpoint               | Method    | Purpose                                 |
+| ---------------------- | --------- | --------------------------------------- |
+| `/prompt`              | POST      | Submit workflow for execution           |
+| `/prompt`              | GET       | Get queue status                        |
+| `/queue`               | GET       | Detailed queue view (running + pending) |
+| `/queue`               | POST      | Delete items from queue or clear        |
+| `/interrupt`           | POST      | Cancel currently executing workflow     |
+| `/history/{prompt_id}` | GET       | Results for a specific prompt           |
+| `/history`             | GET       | Full execution history                  |
+| `/upload/image`        | POST      | Upload image to input directory         |
+| `/view`                | GET       | Retrieve generated image by filename    |
+| `/object_info`         | GET       | Full node catalogue                     |
+| `/system_stats`        | GET       | Server info: Python, CUDA, VRAM         |
+| `/embeddings`          | GET       | List installed text embeddings          |
+| `/models/{type}`       | GET       | List available models of a type         |
+| `/free`                | POST      | Free VRAM, unload models                |
+| `/ws`                  | WebSocket | Real-time execution events              |
 
 ### Workflow Execution Flow
 
@@ -901,14 +906,14 @@ POST /queue
 
 Other integration candidates beyond MVP:
 
-| Integration | Type | Notes |
-| --- | --- | --- |
-| **Ollama** | Local LLM | OpenAI-compatible, good for text generation; no image gen |
-| **LM Studio** | Local LLM | Desktop app, OpenAI-compatible API |
-| **text-generation-webui** | Local LLM | Gradio API, multiple backends |
-| **KoboldCpp** | Local LLM | llama.cpp fork with extra features |
-| **Draw Things** | Local image | macOS/iOS app, stable diffusion |
-| **Horde** | Distributed | Community-powered distributed inference |
+| Integration               | Type        | Notes                                                     |
+| ------------------------- | ----------- | --------------------------------------------------------- |
+| **Ollama**                | Local LLM   | OpenAI-compatible, good for text generation; no image gen |
+| **LM Studio**             | Local LLM   | Desktop app, OpenAI-compatible API                        |
+| **text-generation-webui** | Local LLM   | Gradio API, multiple backends                             |
+| **KoboldCpp**             | Local LLM   | llama.cpp fork with extra features                        |
+| **Draw Things**           | Local image | macOS/iOS app, stable diffusion                           |
+| **Horde**                 | Distributed | Community-powered distributed inference                   |
 
 ---
 
@@ -982,12 +987,12 @@ Other integration candidates beyond MVP:
 
 ## Cross-References: Existing Codebase
 
-| Spec concept | Codebase location | Notes |
-| --- | --- | --- |
-| `GenerationResult` | `src/generation/gen-types-results.ts:10` | Result type for all generation (text + image) |
-| `GenerationStep.name: "generate_image"` | `src/generation/gen-types-results.ts:72` | Step pipeline integration |
-| `completeStep()` / `failStep()` | `src/generation/step-pipeline.ts:28,56` | Mark image step done/failed |
-| `cancellation-manager` | `src/generation/cancellation-manager.ts` | Track active image generations |
-| `assets/service.ts` | `src/assets/service.ts` | Store generated images, link to messages |
-| `asset_links` table | `src/db/schema.ts` | Polymorphic FK linking assets to entities |
-| Config schema pattern | `src/config/schema.ts` | Follow existing `*Config` interface pattern |
+| Spec concept                            | Codebase location                        | Notes                                         |
+| --------------------------------------- | ---------------------------------------- | --------------------------------------------- |
+| `GenerationResult`                      | `src/generation/gen-types-results.ts:10` | Result type for all generation (text + image) |
+| `GenerationStep.name: "generate_image"` | `src/generation/gen-types-results.ts:72` | Step pipeline integration                     |
+| `completeStep()` / `failStep()`         | `src/generation/step-pipeline.ts:28,56`  | Mark image step done/failed                   |
+| `cancellation-manager`                  | `src/generation/cancellation-manager.ts` | Track active image generations                |
+| `assets/service.ts`                     | `src/assets/service.ts`                  | Store generated images, link to messages      |
+| `asset_links` table                     | `src/db/schema.ts`                       | Polymorphic FK linking assets to entities     |
+| Config schema pattern                   | `src/config/schema.ts`                   | Follow existing `*Config` interface pattern   |

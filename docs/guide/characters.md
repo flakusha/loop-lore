@@ -35,14 +35,14 @@ loop-lore can import characters from any major AI roleplay platform.
 
 **Supported formats:**
 
-| Format | Source | What gets imported |
-| ------ | ------ | ------------------ |
-| PNG with embedded JSON | SillyTavern, Chub.ai | All fields + avatar image |
-| `.json` (V2/V3) | SillyTavern, RisuAI, Chub | All fields + lorebook |
-| `.json` (Character.AI) | Character.AI export | Name, description, greeting, examples |
-| `.yaml` | Hand-authored, Character Card Converter | All fields |
-| `.toml` | Hand-authored | All fields |
-| `.charx` | RisuAI V3 bundles | All fields + bundled assets |
+| Format                 | Source                                  | What gets imported                    |
+| ---------------------- | --------------------------------------- | ------------------------------------- |
+| PNG with embedded JSON | SillyTavern, Chub.ai                    | All fields + avatar image             |
+| `.json` (V2/V3)        | SillyTavern, RisuAI, Chub               | All fields + lorebook                 |
+| `.json` (Character.AI) | Character.AI export                     | Name, description, greeting, examples |
+| `.yaml`                | Hand-authored, Character Card Converter | All fields                            |
+| `.toml`                | Hand-authored                           | All fields                            |
+| `.charx`               | RisuAI V3 bundles                       | All fields + bundled assets           |
 
 **Lorebook entries** (World Info) embedded in character cards are automatically
 imported into the character's lorebook.
@@ -102,12 +102,12 @@ For config-style workflows:
 
 ### Export Formats Comparison
 
-| Format | Best for | Readable | Editable | Compatible |
-| ------ | -------- | -------- | -------- | ---------- |
-| PNG | Sharing, other tools | No (binary) | No | SillyTavern, Chub, RisuAI |
-| JSON | Tool interop, APIs | Moderate | Yes | All platforms |
-| YAML | Hand-editing, VCS | Yes | Yes | loop-lore, Character Card Converter |
-| TOML | Config workflows | Yes | Yes | loop-lore |
+| Format | Best for             | Readable    | Editable | Compatible                          |
+| ------ | -------------------- | ----------- | -------- | ----------------------------------- |
+| PNG    | Sharing, other tools | No (binary) | No       | SillyTavern, Chub, RisuAI           |
+| JSON   | Tool interop, APIs   | Moderate    | Yes      | All platforms                       |
+| YAML   | Hand-editing, VCS    | Yes         | Yes      | loop-lore, Character Card Converter |
+| TOML   | Config workflows     | Yes         | Yes      | loop-lore                           |
 
 ---
 
@@ -170,21 +170,21 @@ Save as `lyra.toml` and import.
 
 ### Field Reference
 
-| Field | Required | Description |
-| ----- | -------- | ----------- |
-| `name` | Yes | Character display name |
-| `description` | Yes | Full character description/backstory |
-| `personality` | No | Short personality summary |
-| `scenario` | No | RP setting/context |
-| `system_prompt` | No | Override the default system prompt |
-| `welcome_message` | No | First message the character sends |
-| `mes_example` | No | Example dialogue showing character voice |
-| `post_history_instructions` | No | Instructions appended after chat history |
-| `alternate_greetings` | No | Array of alternate first messages |
-| `tags` | No | Array of categorization labels |
-| `creator` | No | Your name/credit |
-| `creator_notes` | No | Notes about the character |
-| `character_version` | No | Version string |
+| Field                       | Required | Description                              |
+| --------------------------- | -------- | ---------------------------------------- |
+| `name`                      | Yes      | Character display name                   |
+| `description`               | Yes      | Full character description/backstory     |
+| `personality`               | No       | Short personality summary                |
+| `scenario`                  | No       | RP setting/context                       |
+| `system_prompt`             | No       | Override the default system prompt       |
+| `welcome_message`           | No       | First message the character sends        |
+| `mes_example`               | No       | Example dialogue showing character voice |
+| `post_history_instructions` | No       | Instructions appended after chat history |
+| `alternate_greetings`       | No       | Array of alternate first messages        |
+| `tags`                      | No       | Array of categorization labels           |
+| `creator`                   | No       | Your name/credit                         |
+| `creator_notes`             | No       | Notes about the character                |
+| `character_version`         | No       | Version string                           |
 
 ---
 
@@ -234,11 +234,11 @@ AI sees their name, avatar, and personality in the "user" slot of the prompt.
 
 ### What Changes
 
-| Before | During Impersonation |
-| ------ | -------------------- |
-| AI sees you as `{{user}}` | AI sees you as the impersonated character |
-| Your messages use your name/avatar | Your messages use their name/avatar |
-| AI responds to you as the user | AI responds to both characters in-character |
+| Before                             | During Impersonation                        |
+| ---------------------------------- | ------------------------------------------- |
+| AI sees you as `{{user}}`          | AI sees you as the impersonated character   |
+| Your messages use your name/avatar | Your messages use their name/avatar         |
+| AI responds to you as the user     | AI responds to both characters in-character |
 
 ### When to Use Impersonation
 
@@ -256,13 +256,13 @@ The chat returns to your normal persona.
 
 ## Character ↔ Persona: The Difference
 
-| | Character | Persona |
-| --- | --- | --- |
-| **Who controls it** | AI generates responses | You type the messages |
-| **Stored as** | `actor_type='character'` | User identity on a chat |
-| **Has AI fields** | Yes (personality, system prompt, etc.) | No (just identity) |
-| **Can be shared** | Yes (export/import) | No (per-user) |
-| **Used in** | Any chat | Only your chats |
+|                     | Character                              | Persona                 |
+| ------------------- | -------------------------------------- | ----------------------- |
+| **Who controls it** | AI generates responses                 | You type the messages   |
+| **Stored as**       | `actor_type='character'`               | User identity on a chat |
+| **Has AI fields**   | Yes (personality, system prompt, etc.) | No (just identity)      |
+| **Can be shared**   | Yes (export/import)                    | No (per-user)           |
+| **Used in**         | Any chat                               | Only your chats         |
 
 **Key distinction:** A character is what the AI plays. A persona is what you
 play. Impersonation blurs this line — you temporarily play a character.
@@ -295,7 +295,7 @@ without cluttering the main character definition.
 
 - Keywords: `dragon, scale, wyrm`
 - Content: `Dragon scales are nearly impervious to conventional weapons.
-  Only dragonfire or enchanted blades can cut them.`
+Only dragonfire or enchanted blades can cut them.`
 - When you mention "dragon" in chat → this entry activates → AI knows about
   dragon scales
 

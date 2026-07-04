@@ -18,10 +18,6 @@ Users ──1:N── Characters (as owner)
 Actors ──M:N── Chats (via chat_participants)
 Actors ──1:N── Messages (single FK replaces user_id + character_id)
 Actors ──1:N── Assets (character portraits, etc., via asset_links)
-Actors ──1:N── ActorMemories
-Actors ──1:N── ActorNotes
-Actors ──1:N── ActorItems
-Actors ──1:N── ActorLoreEntries (character_book)
 Actors ──1:N── NpcStates (dynamic NPC state per world)
 Actors ──1:N── GenerationAttempts
 
@@ -33,13 +29,15 @@ Chats ──1:N── QuestProgress
 Chats ──1:N── SyntheticData
 Chats ──M:N── Worlds (via asset_links with entity_type='world')
 
+Worlds ──1:N── Items (world-level item definitions)
 Worlds ──1:N── Locations
-Worlds ──1:N── WorldLoreEntries
 Worlds ──1:N── Quests
 Worlds ──1:N── WorldStates (snapshots)
 Worlds ──1:N── NpcStates
 Worlds ──1:N── LocationStates
 Worlds ──1:N── SyntheticData
+
+Items ──1:N── WorldItems (item instances in locations / carried by NPCs)
 
 Messages ──1:N── Messages (via parent_id — tree model)
 Messages ──1:N── GenerationAttempts (via parent_message_id)
@@ -54,16 +52,16 @@ GenerationAttempts ──1:N── GenerationAttempts (via parent_attempt_id —
 The schema explicitly avoids boolean flags in favor of enum/text columns.
 Each enum encodes a state machine rather than a binary on/off:
 
-| Column | Values | What it replaces |
-| --- | --- | --- |
-| `users.role` | `admin`, `user`, `viewer`, `solo` | An `is_admin` boolean |
-| `messages.visibility` | `visible`, `hidden_by_user`, `hidden_by_moderator`, `auto_hidden`, `redacted` | A `hidden` boolean + separate `hidden_reason` column |
-| `messages.status` | `sending`, `sent`, `confirmed`, `failed`, `cancelled` | A binary `sent` flag |
-| `actors.actor_type` | `user`, `character`, `narrator`, `system` | Polymorphic `(participant_type, participant_id)` pair |
-| `actors.agent_type` | `none`, `ai`, `narrator`, `npc` | An `is_bot` boolean |
-| `generation_attempts.status` | `pending`, `processing`, `streaming`, `completed`, `failed`, `cancelled` | A single `done` boolean |
-| `generation_attempts.cancel_reason` | `user_cancel`, `repetition_detected`, `policy_mismatch`, `response_limit`, `chat_switch`, `timeout`, `error` | (enum replaces free-text + nullable reason) |
-| `quests.status` | `active`, `completed`, `failed`, `abandoned` | A `completed` boolean |
+| Column                              | Values                                                                                                       | What it replaces                                      |
+| ----------------------------------- | ------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------- |
+| `users.role`                        | `admin`, `user`, `viewer`, `solo`                                                                            | An `is_admin` boolean                                 |
+| `messages.visibility`               | `visible`, `hidden_by_user`, `hidden_by_moderator`, `auto_hidden`, `redacted`                                | A `hidden` boolean + separate `hidden_reason` column  |
+| `messages.status`                   | `sending`, `sent`, `confirmed`, `failed`, `cancelled`                                                        | A binary `sent` flag                                  |
+| `actors.actor_type`                 | `user`, `character`, `narrator`, `system`                                                                    | Polymorphic `(participant_type, participant_id)` pair |
+| `actors.agent_type`                 | `none`, `ai`, `narrator`, `npc`                                                                              | An `is_bot` boolean                                   |
+| `generation_attempts.status`        | `pending`, `processing`, `streaming`, `completed`, `failed`, `cancelled`                                     | A single `done` boolean                               |
+| `generation_attempts.cancel_reason` | `user_cancel`, `repetition_detected`, `policy_mismatch`, `response_limit`, `chat_switch`, `timeout`, `error` | (enum replaces free-text + nullable reason)           |
+| `quests.status`                     | `active`, `completed`, `failed`, `abandoned`                                                                 | A `completed` boolean                                 |
 
 ### Unified Actor Table
 
@@ -98,53 +96,53 @@ See `src/db/enums-core.ts`, `src/db/enums-content.ts`, `src/db/enums-generation.
 
 ## Table: `users`
 
-| Column | Type | Constraints | Notes |
-| --- | --- | --- | --- |
-| id | TEXT | PK, UUID | |
-| username | TEXT | UNIQUE, NOT NULL | Login name |
-| display_name | TEXT | NOT NULL | Shown in UI |
-| password_hash | TEXT | | NULL for demo/solo users |
-| role | TEXT | NOT NULL, DEFAULT 'user' | 'admin', 'user', 'viewer', 'solo' |
-| settings | TEXT | DEFAULT '{}' | JSON blob (prefs, UI config) |
-| birth_date | TEXT | | ISO date (YYYY-MM-DD). NULL until age gate accepted |
-| age_gate_accepted_at | TEXT | | ISO timestamp. NULL until age gate accepted |
-| created_at | TEXT | DEFAULT CURRENT_TIMESTAMP | ISO 8601 |
-| last_seen_at | TEXT | | ISO 8601 |
+| Column               | Type | Constraints               | Notes                                               |
+| -------------------- | ---- | ------------------------- | --------------------------------------------------- |
+| id                   | TEXT | PK, UUID                  |                                                     |
+| username             | TEXT | UNIQUE, NOT NULL          | Login name                                          |
+| display_name         | TEXT | NOT NULL                  | Shown in UI                                         |
+| password_hash        | TEXT |                           | NULL for demo/solo users                            |
+| role                 | TEXT | NOT NULL, DEFAULT 'user'  | 'admin', 'user', 'viewer', 'solo'                   |
+| settings             | TEXT | DEFAULT '{}'              | JSON blob (prefs, UI config)                        |
+| birth_date           | TEXT |                           | ISO date (YYYY-MM-DD). NULL until age gate accepted |
+| age_gate_accepted_at | TEXT |                           | ISO timestamp. NULL until age gate accepted         |
+| created_at           | TEXT | DEFAULT CURRENT_TIMESTAMP | ISO 8601                                            |
+| last_seen_at         | TEXT |                           | ISO 8601                                            |
 
 ## Table: `sessions`
 
-| Column | Type | Constraints | Notes |
-| --- | --- | --- | --- |
-| id | TEXT | PK, UUID | |
-| user_id | TEXT | FK → users.id, NOT NULL | |
-| token_hash | TEXT | NOT NULL | Server-side hashed session token |
-| ip | TEXT | | Client IP |
-| user_agent | TEXT | | Client UA string |
-| created_at | TEXT | DEFAULT CURRENT_TIMESTAMP | |
-| last_activity | TEXT | DEFAULT CURRENT_TIMESTAMP | |
-| expires_at | TEXT | NOT NULL | Session expiry |
+| Column        | Type | Constraints               | Notes                            |
+| ------------- | ---- | ------------------------- | -------------------------------- |
+| id            | TEXT | PK, UUID                  |                                  |
+| user_id       | TEXT | FK → users.id, NOT NULL   |                                  |
+| token_hash    | TEXT | NOT NULL                  | Server-side hashed session token |
+| ip            | TEXT |                           | Client IP                        |
+| user_agent    | TEXT |                           | Client UA string                 |
+| created_at    | TEXT | DEFAULT CURRENT_TIMESTAMP |                                  |
+| last_activity | TEXT | DEFAULT CURRENT_TIMESTAMP |                                  |
+| expires_at    | TEXT | NOT NULL                  | Session expiry                   |
 
 - Multiple sessions per user supported (one user on many devices)
 - Index: `(user_id)` for lookup, `(token_hash)` for auth
 
 ## Table: `chats`
 
-| Column | Type | Constraints | Notes |
-| --- | --- | --- | --- |
-| id | TEXT | PK, UUID | |
-| name | TEXT | NOT NULL | Display name |
-| type | TEXT | NOT NULL, DEFAULT 'direct' | 'direct', 'group' |
-| mode | TEXT | NOT NULL, DEFAULT 'direct' | 'direct', 'group', 'story' (extends `type`) |
-| created_by | TEXT | FK → users.id | Who created the chat |
-| world_id | TEXT | FK → worlds.id | Linked world (for story mode) |
-| current_location_id | TEXT | FK → locations.id | Current scene location (story mode) |
-| story_state | TEXT | | JSON — TurnManager serialized state |
-| gm_config | TEXT | | JSON — Game Master configuration |
-| turn_strategy | TEXT | | 'round_robin', 'scene_based', 'initiative', 'quest_driven', 'hybrid' |
-| max_turns | INTEGER | | Max turns for story mode |
-| auto_advance | INTEGER | | Boolean — auto-advance story turns |
-| created_at | TEXT | DEFAULT CURRENT_TIMESTAMP | |
-| updated_at | TEXT | DEFAULT CURRENT_TIMESTAMP | Last message activity |
+| Column              | Type    | Constraints                | Notes                                                                |
+| ------------------- | ------- | -------------------------- | -------------------------------------------------------------------- |
+| id                  | TEXT    | PK, UUID                   |                                                                      |
+| name                | TEXT    | NOT NULL                   | Display name                                                         |
+| type                | TEXT    | NOT NULL, DEFAULT 'direct' | 'direct', 'group'                                                    |
+| mode                | TEXT    | NOT NULL, DEFAULT 'direct' | 'direct', 'group', 'story' (extends `type`)                          |
+| created_by          | TEXT    | FK → users.id, NOT NULL    | Who created the chat                                                 |
+| world_id            | TEXT    | FK → worlds.id             | Linked world (for story mode)                                        |
+| current_location_id | TEXT    | FK → locations.id          | Current scene location (story mode)                                  |
+| story_state         | TEXT    |                            | JSON — TurnManager serialized state                                  |
+| gm_config           | TEXT    |                            | JSON — Game Master configuration                                     |
+| turn_strategy       | TEXT    |                            | 'round_robin', 'scene_based', 'initiative', 'quest_driven', 'hybrid' |
+| max_turns           | INTEGER |                            | Max turns for story mode                                             |
+| auto_advance        | INTEGER |                            | Boolean — auto-advance story turns                                   |
+| created_at          | TEXT    | DEFAULT CURRENT_TIMESTAMP  |                                                                      |
+| updated_at          | TEXT    | DEFAULT CURRENT_TIMESTAMP  | Last message activity                                                |
 
 - `mode` extends `type`: a chat can be `type='direct', mode='story'`
 - Indexes: `(world_id)`, `(current_location_id)`
@@ -154,31 +152,20 @@ See `src/db/enums-core.ts`, `src/db/enums-content.ts`, `src/db/enums-generation.
 Unified participant table. Every entity that can send messages or join chats has an entry here.
 See [actors.md](./actors.md) for full character-card import fields, memories, lorebooks, and items.
 
-| Column | Type | Constraints | Notes |
-| --- | --- | --- | --- |
-| id | TEXT | PK, UUID | |
-| actor_type | TEXT | NOT NULL, DEFAULT 'user' | 'user', 'character', 'narrator', 'system' |
-| display_name | TEXT | NOT NULL | Shown in UI |
-| user_id | TEXT | FK → users.id | Populated for actor_type='user' (links to auth) |
-| owner_id | TEXT | FK → users.id | Populated for actor_type='character' (who created/manages) |
-| avatar_asset_id | TEXT | FK → assets.id | Profile picture |
-| description | TEXT | | Long description / backstory |
-| system_prompt | TEXT | | LLM system prompt override |
-| agent_type | TEXT | NOT NULL, DEFAULT 'none' | 'none', 'ai', 'narrator', 'npc' |
-| settings | TEXT | DEFAULT '{}' | JSON blob (model prefs, tool config, etc.) |
-| data_version | INTEGER | NOT NULL, DEFAULT 0 | Schema iteration tracker (0=active dev, 1+=stabilised) |
-| welcome_message | TEXT | | Character's first message / greeting |
-| personality | TEXT | | Short personality summary |
-| scenario | TEXT | | RP scenario / context / setting |
-| mes_example | TEXT | | Example conversation snippets |
-| alternate_greetings | TEXT | JSON array | Alternate welcome messages (swipes) |
-| post_history_instructions | TEXT | | Instructions appended after chat history |
-| creator_notes | TEXT | | Notes from creator — NOT used in prompts |
-| creator | TEXT | | Creator name/credit |
-| character_version | TEXT | | Version string (creator's own versioning) |
-| import_spec | TEXT | DEFAULT 'raw' | 'chara_card_v1', 'chara_card_v2', 'raw' |
-| created_at | TEXT | DEFAULT CURRENT_TIMESTAMP | |
-| updated_at | TEXT | DEFAULT CURRENT_TIMESTAMP | |
+| Column                    | Type    | Constraints               | Notes                                                      |
+| ------------------------- | ------- | ------------------------- | ---------------------------------------------------------- |
+| id                        | TEXT    | PK, UUID                  |                                                            |
+| actor_type                | TEXT    | NOT NULL, DEFAULT 'user'  | 'user', 'character', 'narrator', 'system'                  |
+| display_name              | TEXT    | NOT NULL                  | Shown in UI                                                |
+| user_id                   | TEXT    | FK → users.id             | Populated for actor_type='user' (links to auth)            |
+| owner_id                  | TEXT    | FK → users.id             | Populated for actor_type='character' (who created/manages) |
+| avatar_asset_id           | TEXT    | FK → assets.id            | Profile picture                                            |
+| description               | TEXT    |                           | Long description / backstory                               |
+| system_prompt             | TEXT    |                           | LLM system prompt override                                 |
+| agent_type                | TEXT    | NOT NULL, DEFAULT 'none'  | 'none', 'ai', 'narrator', 'npc'                            |
+| settings                  | TEXT    | DEFAULT '{}'              | JSON blob (model prefs, tool config, etc.)                 |
+| created_at                | TEXT    | DEFAULT CURRENT_TIMESTAMP |                                                            |
+| updated_at                | TEXT    | DEFAULT CURRENT_TIMESTAMP |                                                            |
 
 - Indexes: `(user_id)` for auth lookup, `(owner_id)` for character management, `(actor_type)` for filtering
 
@@ -187,12 +174,12 @@ See [actors.md](./actors.md) for full character-card import fields, memories, lo
 Junction: which actors are in which chat. Single FK to `actors` replaces the old
 polymorphic `(participant_type, participant_id)` pattern.
 
-| Column | Type | Constraints | Notes |
-| --- | --- | --- | --- |
-| chat_id | TEXT | FK → chats.id, NOT NULL | |
-| actor_id | TEXT | FK → actors.id, NOT NULL | |
+| Column       | Type | Constraints                | Notes                         |
+| ------------ | ---- | -------------------------- | ----------------------------- |
+| chat_id      | TEXT | FK → chats.id, NOT NULL    |                               |
+| actor_id     | TEXT | FK → actors.id, NOT NULL   |                               |
 | role_in_chat | TEXT | NOT NULL, DEFAULT 'member' | 'member', 'owner', 'observer' |
-| joined_at | TEXT | DEFAULT CURRENT_TIMESTAMP | |
+| joined_at    | TEXT | DEFAULT CURRENT_TIMESTAMP  |                               |
 
 - Composite PK: `(chat_id, actor_id)` — an actor can only be in a chat once
 - Index: `(actor_id)` for "find all chats for this actor"
@@ -202,54 +189,75 @@ polymorphic `(participant_type, participant_id)` pattern.
 Managed AI/NPC characters. For new development, create entries in `actors` with
 `actor_type='character'` instead. This table remains for backward compat.
 
-| Column | Type | Constraints | Notes |
-| --- | --- | --- | --- |
-| id | TEXT | PK, UUID | |
-| owner_id | TEXT | FK → users.id, NOT NULL | User who created/manages |
-| name | TEXT | NOT NULL | |
-| avatar_asset_id | TEXT | FK → assets.id | Profile picture (nullable) |
-| description | TEXT | | Long description / backstory |
-| system_prompt | TEXT | | LLM system prompt override |
-| agent_type | TEXT | NOT NULL, DEFAULT 'none' | 'none' (human-played), 'ai' (LLM), 'npc' (non-player) |
-| settings | TEXT | DEFAULT '{}' | JSON: model prefs, temperature, etc. |
-| created_at | TEXT | DEFAULT CURRENT_TIMESTAMP | |
-| updated_at | TEXT | DEFAULT CURRENT_TIMESTAMP | |
+| Column          | Type | Constraints               | Notes                                                 |
+| --------------- | ---- | ------------------------- | ----------------------------------------------------- |
+| id              | TEXT | PK, UUID                  |                                                       |
+| owner_id        | TEXT | FK → users.id, NOT NULL   | User who created/manages                              |
+| name            | TEXT | NOT NULL                  |                                                       |
+| avatar_asset_id | TEXT | FK → assets.id            | Profile picture (nullable)                            |
+| description     | TEXT |                           | Long description / backstory                          |
+| system_prompt   | TEXT |                           | LLM system prompt override                            |
+| agent_type      | TEXT | NOT NULL, DEFAULT 'none'  | 'none' (human-played), 'ai' (LLM), 'npc' (non-player) |
+| settings        | TEXT | DEFAULT '{}'              | JSON: model prefs, temperature, etc.                  |
+| created_at      | TEXT | DEFAULT CURRENT_TIMESTAMP |                                                       |
+| updated_at      | TEXT | DEFAULT CURRENT_TIMESTAMP |                                                       |
+
+## Table: `actor_keys`
+
+Encryption keys for actors. Each actor has a primary key, and may have additional keys for rotation or compartmentalization.
+
+| Column        | Type | Constraints               | Notes                                            |
+| ------------- | ---- | ------------------------- | ------------------------------------------------ |
+| id            | TEXT | PK, UUID                  |                                                  |
+| actor_id      | TEXT | FK → actors.id, NOT NULL  | Owner of this key                                |
+| name          | TEXT | NOT NULL                  | Key name (e.g., 'primary', 'rotation-2024-01')   |
+| key_type      | TEXT | NOT NULL                  | 'primary', 'additional'                          |
+| encrypted_key | TEXT |                           | SMK-encrypted key (NULL for client-derived keys) |
+| public_key    | TEXT |                           | For key exchange (future)                        |
+| created_at    | TEXT | DEFAULT CURRENT_TIMESTAMP |                                                  |
+| expires_at    | TEXT |                           | For key rotation                                 |
+| status        | TEXT | DEFAULT 'active'          | 'active', 'expired', 'revoked'                   |
+
+- Indexes: `(actor_id)`, `(status)`
 
 ## Table: `messages`
 
 Ref: [`docs/messages.md`](./messages.md) for full spec. Ref: [`docs/frontend/chat/messages.md`](./frontend/chat/messages.md) for UI spec.
 
-| Column | Type | Constraints | Notes |
-| --- | --- | --- | --- |
-| id | TEXT | PK, UUID | |
-| chat_id | TEXT | FK → chats.id, NOT NULL | |
-| actor_id | TEXT | FK → actors.id, NOT NULL | Unified sender (replaces user_id + character_id) |
-| parent_id | TEXT | FK → messages.id | Parent in message tree (NULL = root) |
-| role | TEXT | NOT NULL | 'user', 'assistant', 'character', 'system' |
-| content | TEXT | NOT NULL | Message body |
-| content_type | TEXT | DEFAULT 'text' | 'text', 'action', 'narration', 'system', 'continuation' |
-| content_encoding | TEXT | DEFAULT 'identity' | 'identity', 'gzip', 'zstd', 'brotli' |
-| is_continuation | INTEGER | NOT NULL, DEFAULT 0 | Boolean: 1 if this is a continuation of a partial message |
-| continuation_index | INTEGER | | Ordinal position in a continuation chain (1-based) |
-| partial | INTEGER | NOT NULL, DEFAULT 0 | Boolean: 1 if message content is partial/truncated |
-| model_id | TEXT | | LLM model used (NULL for user msgs) |
-| provider | TEXT | | 'openai', 'anthropic', 'local', etc. |
-| token_count_prompt | INTEGER | | |
-| token_count_completion | INTEGER | | |
-| token_count_total | INTEGER | | |
-| token_cost | REAL | | Estimated USD |
-| generation_time_ms | INTEGER | | |
-| tokens_per_second | REAL | | |
-| status | TEXT | DEFAULT 'sent' | 'sending', 'sent', 'confirmed', 'failed', 'cancelled' |
-| visibility | TEXT | DEFAULT 'visible' | State machine: 'visible', 'hidden_by_user', 'hidden_by_moderator', 'auto_hidden', 'redacted' |
-| hidden_by | TEXT | FK → actors.id | Who performed the hide action |
-| hidden_reason | TEXT | | Free-text or policy reason |
-| idempotency_key | TEXT | | For retry dedup |
-| created_at | TEXT | DEFAULT CURRENT_TIMESTAMP | |
-| edited_at | TEXT | | |
+| Column                 | Type    | Constraints               | Notes                                                                                        |
+| ---------------------- | ------- | ------------------------- | -------------------------------------------------------------------------------------------- |
+| id                     | TEXT    | PK, UUID                  |                                                                                              |
+| chat_id                | TEXT    | FK → chats.id, NOT NULL   |                                                                                              |
+| actor_id               | TEXT    | FK → actors.id, NOT NULL  | Unified sender (replaces user_id + character_id)                                             |
+| parent_id              | TEXT    | FK → messages.id          | Parent in message tree (NULL = root)                                                         |
+| role                   | TEXT    | NOT NULL                  | 'user', 'assistant', 'character', 'system'                                                   |
+| content                | TEXT    | NOT NULL                  | Message body (encrypted JSON with key reference)                                             |
+| key_id                 | TEXT    | FK → actor_keys.id        | Which key encrypted this message                                                             |
+| content_format         | TEXT    | DEFAULT 'markdown'        | 'markdown', 'text', 'json', 'html'                                                           |
+| content_type           | TEXT    | DEFAULT 'text'            | 'text', 'action', 'narration', 'system', 'continuation'                                      |
+| content_encoding       | TEXT    | DEFAULT 'identity'        | 'identity', 'gzip', 'zstd', 'brotli'                                                         |
+| is_continuation        | INTEGER | NOT NULL, DEFAULT 0       | Boolean: 1 if this is a continuation of a partial message                                    |
+| continuation_index     | INTEGER |                           | Ordinal position in a continuation chain (1-based)                                           |
+| partial                | INTEGER | NOT NULL, DEFAULT 0       | Boolean: 1 if message content is partial/truncated                                           |
+| model_id               | TEXT    |                           | LLM model used (NULL for user msgs)                                                          |
+| provider               | TEXT    |                           | 'openai', 'anthropic', 'local', etc.                                                         |
+| token_count_prompt     | INTEGER |                           |                                                                                              |
+| token_count_completion | INTEGER |                           |                                                                                              |
+| token_count_total      | INTEGER |                           |                                                                                              |
+| token_cost             | REAL    |                           | Estimated USD                                                                                |
+| generation_time_ms     | INTEGER |                           |                                                                                              |
+| tokens_per_second      | REAL    |                           |                                                                                              |
+| status                 | TEXT    | DEFAULT 'sent'            | 'sending', 'sent', 'confirmed', 'failed', 'cancelled'                                        |
+| visibility             | TEXT    | DEFAULT 'visible'         | State machine: 'visible', 'hidden_by_user', 'hidden_by_moderator', 'auto_hidden', 'redacted' |
+| hidden_by              | TEXT    | FK → actors.id            | Who performed the hide action                                                                |
+| hidden_reason          | TEXT    |                           | Free-text or policy reason                                                                   |
+| idempotency_key        | TEXT    |                           | For retry dedup                                                                              |
+| created_at             | TEXT    | DEFAULT CURRENT_TIMESTAMP |                                                                                              |
+| edited_at              | TEXT    |                           |                                                                                              |
 
 - Indexes: `(chat_id, created_at)` for message listing, `(idempotency_key)` for dedup,
-  `(actor_id)` for user history, `(parent_id)` for tree traversal
+  `(actor_id)` for user history, `(parent_id)` for tree traversal,
+  `(key_id)` for key-based queries, `(content_format)` for format filtering
 
 ### Message Tree Model
 
@@ -272,80 +280,80 @@ Message A (root, parent_id = NULL)
 Tracks every LLM generation attempt for idempotency, cancellation, retry, and analytics.
 Also supports continuation chains and multi-step pipelines.
 
-| Column | Type | Constraints | Notes |
-| --- | --- | --- | --- |
-| id | TEXT | PK, UUID | |
-| chat_id | TEXT | FK → chats.id, NOT NULL | |
-| parent_message_id | TEXT | FK → messages.id, NOT NULL | User message that triggered generation |
-| actor_id | TEXT | FK → actors.id, NOT NULL | AI actor generating the response |
-| idempotency_key | TEXT | NOT NULL | For deduplication |
-| model_id | TEXT | NOT NULL | LLM model used |
-| provider | TEXT | NOT NULL | 'openai', 'anthropic', 'local', etc. |
-| status | TEXT | NOT NULL, DEFAULT 'pending' | 'pending', 'processing', 'streaming', 'completed', 'failed', 'cancelled' |
-| cancel_reason | TEXT | | 'user_cancel', 'repetition_detected', 'policy_mismatch', 'response_limit', 'chat_switch', 'timeout', 'error' |
-| cancel_reason_detail | TEXT | | Human-readable detail |
-| cancel_source | TEXT | | 'user', 'auto_repetition', 'auto_policy', 'auto_limit', 'chat_switch', 'system' |
-| abort_signal_id | TEXT | | UUID for AbortController coordination |
-| started_at | TEXT | NOT NULL, DEFAULT CURRENT_TIMESTAMP | |
-| completed_at | TEXT | | |
-| prompt_tokens | INTEGER | | |
-| completion_tokens | INTEGER | | |
-| total_tokens | INTEGER | | |
-| generation_time_ms | INTEGER | | |
-| error_message | TEXT | | |
-| streaming_chunks_received | INTEGER | | |
-| streaming_chars_received | INTEGER | | |
-| repetition_score | REAL | | 0-1 score for repetition detection |
-| repetition_analysis | TEXT | | JSON with repetition details |
-| policy_analysis | TEXT | | JSON with policy analysis details |
-| response_count_in_turn | INTEGER | | For group chat response limits |
-| parent_attempt_id | TEXT | FK → generation_attempts.id | For continuation chains |
-| continuation_count | INTEGER | | Which continuation number (1-based) |
-| partial_content | TEXT | | Captured partial content for Continue feature |
-| step_index | INTEGER | DEFAULT 0 | Current step in multi-step pipeline |
-| total_steps | INTEGER | DEFAULT 1 | Total steps in multi-step pipeline |
-| created_at | TEXT | NOT NULL, DEFAULT CURRENT_TIMESTAMP | |
-| updated_at | TEXT | NOT NULL, DEFAULT CURRENT_TIMESTAMP | |
+| Column                    | Type    | Constraints                         | Notes                                                                                                        |
+| ------------------------- | ------- | ----------------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| id                        | TEXT    | PK, UUID                            |                                                                                                              |
+| chat_id                   | TEXT    | FK → chats.id, NOT NULL             |                                                                                                              |
+| parent_message_id         | TEXT    | FK → messages.id, NOT NULL          | User message that triggered generation                                                                       |
+| actor_id                  | TEXT    | FK → actors.id, NOT NULL            | AI actor generating the response                                                                             |
+| idempotency_key           | TEXT    | NOT NULL                            | For deduplication                                                                                            |
+| model_id                  | TEXT    | NOT NULL                            | LLM model used                                                                                               |
+| provider                  | TEXT    | NOT NULL                            | 'openai', 'anthropic', 'local', etc.                                                                         |
+| status                    | TEXT    | NOT NULL, DEFAULT 'pending'         | 'pending', 'processing', 'streaming', 'completed', 'failed', 'cancelled'                                     |
+| cancel_reason             | TEXT    |                                     | 'user_cancel', 'repetition_detected', 'policy_mismatch', 'response_limit', 'chat_switch', 'timeout', 'error' |
+| cancel_reason_detail      | TEXT    |                                     | Human-readable detail                                                                                        |
+| cancel_source             | TEXT    |                                     | 'user', 'auto_repetition', 'auto_policy', 'auto_limit', 'chat_switch', 'system'                              |
+| abort_signal_id           | TEXT    |                                     | UUID for AbortController coordination                                                                        |
+| started_at                | TEXT    | NOT NULL, DEFAULT CURRENT_TIMESTAMP |                                                                                                              |
+| completed_at              | TEXT    |                                     |                                                                                                              |
+| prompt_tokens             | INTEGER |                                     |                                                                                                              |
+| completion_tokens         | INTEGER |                                     |                                                                                                              |
+| total_tokens              | INTEGER |                                     |                                                                                                              |
+| generation_time_ms        | INTEGER |                                     |                                                                                                              |
+| error_message             | TEXT    |                                     |                                                                                                              |
+| streaming_chunks_received | INTEGER |                                     |                                                                                                              |
+| streaming_chars_received  | INTEGER |                                     |                                                                                                              |
+| repetition_score          | REAL    |                                     | 0-1 score for repetition detection                                                                           |
+| repetition_analysis       | TEXT    |                                     | JSON with repetition details                                                                                 |
+| policy_analysis           | TEXT    |                                     | JSON with policy analysis details                                                                            |
+| response_count_in_turn    | INTEGER |                                     | For group chat response limits                                                                               |
+| parent_attempt_id         | TEXT    | FK → generation_attempts.id         | For continuation chains                                                                                      |
+| continuation_count        | INTEGER |                                     | Which continuation number (1-based)                                                                          |
+| partial_content           | TEXT    |                                     | Captured partial content for Continue feature                                                                |
+| step_index                | INTEGER | DEFAULT 0                           | Current step in multi-step pipeline                                                                          |
+| total_steps               | INTEGER | DEFAULT 1                           | Total steps in multi-step pipeline                                                                           |
+| created_at                | TEXT    | NOT NULL, DEFAULT CURRENT_TIMESTAMP |                                                                                                              |
+| updated_at                | TEXT    | NOT NULL, DEFAULT CURRENT_TIMESTAMP |                                                                                                              |
 
 - Indexes: `(chat_id)`, `(parent_message_id)`, `(actor_id)`, `(idempotency_key)`,
   `(status)`, `(abort_signal_id)`, `(parent_attempt_id)`
 
 **Status lifecycle**: `pending → processing → streaming → completed`
-  Each of `pending`, `processing`, `streaming` can transition to `failed` or `cancelled`.
-  TTL: entries older than 1 hour eligible for garbage collection.
+Each of `pending`, `processing`, `streaming` can transition to `failed` or `cancelled`.
+TTL: entries older than 1 hour eligible for garbage collection.
 
 ## Table: `assets`
 
 Ref: [`docs/assets.md`](./assets.md) for full spec.
 
-| Column | Type | Constraints | Notes |
-| --- | --- | --- | --- |
-| id | TEXT | PK, UUID | |
-| owner_id | TEXT | FK → users.id, NOT NULL | Uploader/owner |
-| filename | TEXT | NOT NULL | Original filename |
-| mime_type | TEXT | NOT NULL | e.g. 'image/png', 'audio/opus' |
-| asset_type | TEXT | NOT NULL | 'image', 'audio', 'video', 'other' (+ artifact subtypes) |
-| size_bytes | INTEGER | NOT NULL | File size |
-| storage_path | TEXT | NOT NULL | Filesystem path or object store key |
-| storage_backend | TEXT | DEFAULT 'local' | 'local', 's3', 'gcs' |
-| width | INTEGER | | For images/video |
-| height | INTEGER | | For images/video |
-| duration_secs | REAL | | For audio/video |
-| alt_text | TEXT | | Accessibility / description |
-| created_at | TEXT | DEFAULT CURRENT_TIMESTAMP | |
+| Column          | Type    | Constraints               | Notes                                                    |
+| --------------- | ------- | ------------------------- | -------------------------------------------------------- |
+| id              | TEXT    | PK, UUID                  |                                                          |
+| owner_id        | TEXT    | FK → users.id, NOT NULL   | Uploader/owner                                           |
+| filename        | TEXT    | NOT NULL                  | Original filename                                        |
+| mime_type       | TEXT    | NOT NULL                  | e.g. 'image/png', 'audio/opus'                           |
+| asset_type      | TEXT    | NOT NULL                  | 'image', 'audio', 'video', 'other' (+ artifact subtypes) |
+| size_bytes      | INTEGER | NOT NULL                  | File size                                                |
+| storage_path    | TEXT    | NOT NULL                  | Filesystem path or object store key                      |
+| storage_backend | TEXT    | DEFAULT 'local'           | 'local', 's3', 'gcs'                                     |
+| width           | INTEGER |                           | For images/video                                         |
+| height          | INTEGER |                           | For images/video                                         |
+| duration_secs   | REAL    |                           | For audio/video                                          |
+| alt_text        | TEXT    |                           | Accessibility / description                              |
+| created_at      | TEXT    | DEFAULT CURRENT_TIMESTAMP |                                                          |
 
 ## Table: `asset_links`
 
 Junction: which assets are linked to which entities (polymorphic).
 
-| Column | Type | Constraints | Notes |
-| --- | --- | --- | --- |
-| asset_id | TEXT | FK → assets.id, NOT NULL | |
-| entity_type | TEXT | NOT NULL | 'chat', 'character', 'user', 'world', 'message', 'actor_item' |
-| entity_id | TEXT | NOT NULL | UUID of the linked entity |
-| label | TEXT | | Optional label (e.g. 'avatar', 'portrait', 'bgm', 'scene', 'memory') |
-| sort_order | INTEGER | DEFAULT 0 | Display ordering |
-| created_at | TEXT | DEFAULT CURRENT_TIMESTAMP | |
+| Column      | Type    | Constraints               | Notes                                                                |
+| ----------- | ------- | ------------------------- | -------------------------------------------------------------------- |
+| asset_id    | TEXT    | FK → assets.id, NOT NULL  |                                                                      |
+| entity_type | TEXT    | NOT NULL                  | 'chat', 'character', 'user', 'world', 'message', 'actor_item'        |
+| entity_id   | TEXT    | NOT NULL                  | UUID of the linked entity                                            |
+| label       | TEXT    |                           | Optional label (e.g. 'avatar', 'portrait', 'bgm', 'scene', 'memory') |
+| sort_order  | INTEGER | DEFAULT 0                 | Display ordering                                                     |
+| created_at  | TEXT    | DEFAULT CURRENT_TIMESTAMP |                                                                      |
 
 - Composite PK: `(asset_id, entity_type, entity_id)`
 - This replaces the old `gallery` table — polymorphic linking covers all use cases
@@ -354,19 +362,59 @@ Junction: which assets are linked to which entities (polymorphic).
 
 Ref: [`docs/frontend/worlds.md`](./frontend/worlds.md) for UI spec.
 
-| Column | Type | Constraints | Notes |
-| --- | --- | --- | --- |
-| id | TEXT | PK, UUID | |
-| owner_id | TEXT | FK → users.id, NOT NULL | |
-| name | TEXT | NOT NULL | |
-| description | TEXT | | |
-| lore | TEXT | | World lore / knowledge base |
-| scan_depth | INTEGER | DEFAULT 100 | How many recent messages to scan for lore keyword triggers |
-| token_budget | INTEGER | DEFAULT 2000 | Max tokens lore entries can consume per generation |
-| created_at | TEXT | DEFAULT CURRENT_TIMESTAMP | |
-| updated_at | TEXT | DEFAULT CURRENT_TIMESTAMP | |
+| Column       | Type    | Constraints               | Notes                      |
+| ------------ | ------- | ------------------------- | -------------------------- |
+| id           | TEXT    | PK, UUID                  |                            |
+| owner_id     | TEXT    | FK → users.id, NOT NULL   |                            |
+| name         | TEXT    | NOT NULL                  |                            |
+| description  | TEXT    |                           |                            |
+| lore         | TEXT    |                           | World lore / knowledge base |
+| created_at   | TEXT    | DEFAULT CURRENT_TIMESTAMP |                            |
+| updated_at   | TEXT    | DEFAULT CURRENT_TIMESTAMP |                            |
 
 - Worlds link to chats and characters via `asset_links` with entity_type='world'
+
+## Table: `items`
+
+World-level item definitions (templates for items that can appear in the world).
+
+| Column      | Type    | Constraints               | Notes                                                        |
+| ----------- | ------- | ------------------------- | ------------------------------------------------------------ |
+| id          | TEXT    | PK, UUID                  |                                                              |
+| world_id    | TEXT    | FK → worlds.id, NOT NULL  | Parent world                                                 |
+| name        | TEXT    | NOT NULL                  | Item name                                                    |
+| description | TEXT    |                           |                                                              |
+| category    | TEXT    | NOT NULL                  | Item category (e.g., 'weapon', 'consumable', 'key_item')     |
+| rarity      | TEXT    | NOT NULL, DEFAULT 'common' | 'common', 'uncommon', 'rare', 'legendary'                    |
+| stackable   | INTEGER | NOT NULL, DEFAULT 0       | Boolean                                                      |
+| max_stack   | INTEGER | NOT NULL, DEFAULT 1       | Max stack size                                               |
+| properties  | TEXT    | NOT NULL, DEFAULT '{}'    | JSON — type-specific properties                              |
+| value       | INTEGER | NOT NULL, DEFAULT 0       | Monetary base value                                          |
+| weight      | REAL    | NOT NULL, DEFAULT 0       | Encumbrance units                                            |
+| created_at  | TEXT    | DEFAULT CURRENT_TIMESTAMP |                                                              |
+| updated_at  | TEXT    | DEFAULT CURRENT_TIMESTAMP |                                                              |
+
+Indexes: `(world_id)`, `(category)`
+
+## Table: `world_items`
+
+Item instances placed in locations or carried by NPCs within a world.
+
+| Column           | Type    | Constraints               | Notes                                         |
+| ---------------- | ------- | ------------------------- | --------------------------------------------- |
+| id               | TEXT    | PK, UUID                  |                                               |
+| world_id         | TEXT    | FK → worlds.id, NOT NULL  |                                               |
+| item_id          | TEXT    | FK → items.id, NOT NULL   | Link to item definition                       |
+| location_id      | TEXT    | FK → locations.id         | Where the item is (null if carried)           |
+| owner_actor_id   | TEXT    | FK → actors.id            | Who carries it (null if in location)          |
+| quantity         | INTEGER | NOT NULL, DEFAULT 1       | Stack count                                   |
+| is_hidden        | INTEGER | NOT NULL, DEFAULT 0       | Boolean — hidden until discovered             |
+| spawn_condition  | TEXT    |                           | Condition for appearing                       |
+| respawnable      | INTEGER | NOT NULL, DEFAULT 0       | Boolean — respawns after being taken          |
+| created_at       | TEXT    | DEFAULT CURRENT_TIMESTAMP |                                               |
+| updated_at       | TEXT    | DEFAULT CURRENT_TIMESTAMP |                                               |
+
+Indexes: `(world_id)`, `(location_id)`, `(owner_actor_id)`, `(item_id)`
 
 ---
 
@@ -379,16 +427,16 @@ The tables below support the multi-LLM story generation system (see
 
 Sub-entities of worlds — represent scenes, rooms, or regions.
 
-| Column | Type | Constraints | Notes |
-| --- | --- | --- | --- |
-| id | TEXT | PK, UUID | |
-| world_id | TEXT | FK → worlds.id, NOT NULL | Parent world |
-| name | TEXT | NOT NULL | Location name |
-| description | TEXT | | |
-| connections | TEXT | NOT NULL, DEFAULT '[]' | JSON array of `{location_id, direction, description}` |
-| parent_location_id | TEXT | FK → locations.id | Nested location (contained within another) |
-| created_at | TEXT | DEFAULT CURRENT_TIMESTAMP | |
-| updated_at | TEXT | DEFAULT CURRENT_TIMESTAMP | |
+| Column             | Type | Constraints               | Notes                                                 |
+| ------------------ | ---- | ------------------------- | ----------------------------------------------------- |
+| id                 | TEXT | PK, UUID                  |                                                       |
+| world_id           | TEXT | FK → worlds.id, NOT NULL  | Parent world                                          |
+| name               | TEXT | NOT NULL                  | Location name                                         |
+| description        | TEXT |                           |                                                       |
+| connections        | TEXT | NOT NULL, DEFAULT '[]'    | JSON array of `{location_id, direction, description}` |
+| parent_location_id | TEXT | FK → locations.id         | Nested location (contained within another)            |
+| created_at         | TEXT | DEFAULT CURRENT_TIMESTAMP |                                                       |
+| updated_at         | TEXT | DEFAULT CURRENT_TIMESTAMP |                                                       |
 
 - Indexes: `(world_id)`, `(parent_location_id)`
 
@@ -396,26 +444,26 @@ Sub-entities of worlds — represent scenes, rooms, or regions.
 
 Individual turns in a story-generation session.
 
-| Column | Type | Constraints | Notes |
-| --- | --- | --- | --- |
-| id | TEXT | PK, UUID | |
-| chat_id | TEXT | FK → chats.id, NOT NULL | |
-| turn_number | INTEGER | NOT NULL | Sequential within chat |
-| actor_id | TEXT | FK → actors.id, NOT NULL | Actor who generated this turn |
-| turn_type | TEXT | NOT NULL | 'character_action', 'narration', 'gm_injection', 'quest_update', 'world_event' |
-| prompt_sent | TEXT | NOT NULL | Prompt sent to the actor's LLM |
-| response_received | TEXT | | Actor's response content |
-| quality_score | REAL | | 0-100 quality evaluation score |
-| quality_details | TEXT | | JSON — per-dimension scores + reasoning |
-| regeneration_count | INTEGER | NOT NULL, DEFAULT 0 | Number of regeneration attempts |
-| status | TEXT | NOT NULL, DEFAULT 'pending' | 'pending', 'generating', 'evaluating', 'accepted', 'regenerating', 'failed', 'escalated' |
-| gm_decision | TEXT | | JSON — Game Master's decision for this turn |
-| world_events | TEXT | NOT NULL, DEFAULT '[]' | JSON array of WorldEvent extracted from response |
-| quest_progress | TEXT | NOT NULL, DEFAULT '[]' | JSON array of quest progress updates |
-| started_at | TEXT | NOT NULL, DEFAULT CURRENT_TIMESTAMP | |
-| completed_at | TEXT | | |
-| created_at | TEXT | NOT NULL, DEFAULT CURRENT_TIMESTAMP | |
-| updated_at | TEXT | NOT NULL, DEFAULT CURRENT_TIMESTAMP | |
+| Column             | Type    | Constraints                         | Notes                                                                                    |
+| ------------------ | ------- | ----------------------------------- | ---------------------------------------------------------------------------------------- |
+| id                 | TEXT    | PK, UUID                            |                                                                                          |
+| chat_id            | TEXT    | FK → chats.id, NOT NULL             |                                                                                          |
+| turn_number        | INTEGER | NOT NULL                            | Sequential within chat                                                                   |
+| actor_id           | TEXT    | FK → actors.id, NOT NULL            | Actor who generated this turn                                                            |
+| turn_type          | TEXT    | NOT NULL                            | 'character_action', 'narration', 'gm_injection', 'quest_update', 'world_event'           |
+| prompt_sent        | TEXT    | NOT NULL                            | Prompt sent to the actor's LLM                                                           |
+| response_received  | TEXT    |                                     | Actor's response content                                                                 |
+| quality_score      | REAL    |                                     | 0-100 quality evaluation score                                                           |
+| quality_details    | TEXT    |                                     | JSON — per-dimension scores + reasoning                                                  |
+| regeneration_count | INTEGER | NOT NULL, DEFAULT 0                 | Number of regeneration attempts                                                          |
+| status             | TEXT    | NOT NULL, DEFAULT 'pending'         | 'pending', 'generating', 'evaluating', 'accepted', 'regenerating', 'failed', 'escalated' |
+| gm_decision        | TEXT    |                                     | JSON — Game Master's decision for this turn                                              |
+| world_events       | TEXT    | NOT NULL, DEFAULT '[]'              | JSON array of WorldEvent extracted from response                                         |
+| quest_progress     | TEXT    | NOT NULL, DEFAULT '[]'              | JSON array of quest progress updates                                                     |
+| started_at         | TEXT    | NOT NULL, DEFAULT CURRENT_TIMESTAMP |                                                                                          |
+| completed_at       | TEXT    |                                     |                                                                                          |
+| created_at         | TEXT    | NOT NULL, DEFAULT CURRENT_TIMESTAMP |                                                                                          |
+| updated_at         | TEXT    | NOT NULL, DEFAULT CURRENT_TIMESTAMP |                                                                                          |
 
 - Indexes: `(chat_id)`, `(chat_id, turn_number)`, `(actor_id)`
 
@@ -423,27 +471,27 @@ Individual turns in a story-generation session.
 
 Global quests defined at the world level.
 
-| Column | Type | Constraints | Notes |
-| --- | --- | --- | --- |
-| id | TEXT | PK, UUID | |
-| world_id | TEXT | FK → worlds.id, NOT NULL | |
-| creator_id | TEXT | FK → actors.id, NOT NULL | GM or system that created the quest |
-| name | TEXT | NOT NULL | |
-| description | TEXT | | |
-| type | TEXT | NOT NULL | 'time', 'collection', 'destruction', 'rescue', 'discovery', 'social', 'composite' |
-| status | TEXT | NOT NULL, DEFAULT 'active' | 'active', 'completed', 'failed', 'abandoned' |
-| priority | INTEGER | NOT NULL, DEFAULT 0 | Higher = more urgent for GM attention |
-| config | TEXT | NOT NULL, DEFAULT '{}' | JSON — type-specific configuration (see types in multi-llm-story.md) |
-| progress | INTEGER | NOT NULL, DEFAULT 0 | 0-100 or absolute count |
-| target | INTEGER | NOT NULL | Target value for completion |
-| start_time | TEXT | | ISO timestamp |
-| deadline | TEXT | | ISO timestamp (null = no deadline) |
-| time_location_id | TEXT | FK → locations.id | Location whose time tracks (for time-based quests) |
-| rewards | TEXT | NOT NULL, DEFAULT '{}' | JSON — XP, items, world changes, lore unlocks |
-| narrative_hooks | TEXT | NOT NULL, DEFAULT '[]' | JSON array — story beats at progress milestones |
-| created_at | TEXT | NOT NULL, DEFAULT CURRENT_TIMESTAMP | |
-| updated_at | TEXT | NOT NULL, DEFAULT CURRENT_TIMESTAMP | |
-| completed_at | TEXT | | |
+| Column           | Type    | Constraints                         | Notes                                                                             |
+| ---------------- | ------- | ----------------------------------- | --------------------------------------------------------------------------------- |
+| id               | TEXT    | PK, UUID                            |                                                                                   |
+| world_id         | TEXT    | FK → worlds.id, NOT NULL            |                                                                                   |
+| creator_id       | TEXT    | FK → actors.id, NOT NULL            | GM or system that created the quest                                               |
+| name             | TEXT    | NOT NULL                            |                                                                                   |
+| description      | TEXT    |                                     |                                                                                   |
+| type             | TEXT    | NOT NULL                            | 'time', 'collection', 'destruction', 'rescue', 'discovery', 'social', 'composite' |
+| status           | TEXT    | NOT NULL, DEFAULT 'active'          | 'active', 'completed', 'failed', 'abandoned'                                      |
+| priority         | INTEGER | NOT NULL, DEFAULT 0                 | Higher = more urgent for GM attention                                             |
+| config           | TEXT    | NOT NULL, DEFAULT '{}'              | JSON — type-specific configuration (see types in multi-llm-story.md)              |
+| progress         | INTEGER | NOT NULL, DEFAULT 0                 | 0-100 or absolute count                                                           |
+| target           | INTEGER | NOT NULL                            | Target value for completion                                                       |
+| start_time       | TEXT    |                                     | ISO timestamp                                                                     |
+| deadline         | TEXT    |                                     | ISO timestamp (null = no deadline)                                                |
+| time_location_id | TEXT    | FK → locations.id                   | Location whose time tracks (for time-based quests)                                |
+| rewards          | TEXT    | NOT NULL, DEFAULT '{}'              | JSON — XP, items, world changes, lore unlocks                                     |
+| narrative_hooks  | TEXT    | NOT NULL, DEFAULT '[]'              | JSON array — story beats at progress milestones                                   |
+| created_at       | TEXT    | NOT NULL, DEFAULT CURRENT_TIMESTAMP |                                                                                   |
+| updated_at       | TEXT    | NOT NULL, DEFAULT CURRENT_TIMESTAMP |                                                                                   |
+| completed_at     | TEXT    |                                     |                                                                                   |
 
 - Indexes: `(world_id)`, `(status)`, `(creator_id)`
 
@@ -451,17 +499,17 @@ Global quests defined at the world level.
 
 Per-chat progress tracking for quests (a quest can have different progress in different chat sessions).
 
-| Column | Type | Constraints | Notes |
-| --- | --- | --- | --- |
-| id | TEXT | PK, UUID | |
-| quest_id | TEXT | FK → quests.id, NOT NULL | |
-| chat_id | TEXT | FK → chats.id, NOT NULL | |
-| progress | INTEGER | NOT NULL, DEFAULT 0 | Current progress value |
-| status | TEXT | NOT NULL, DEFAULT 'active' | 'active', 'completed', 'failed', 'ignored' |
-| contributed_events | TEXT | NOT NULL, DEFAULT '[]' | JSON array of event IDs that advanced this quest |
-| started_at | TEXT | NOT NULL, DEFAULT CURRENT_TIMESTAMP | |
-| updated_at | TEXT | NOT NULL, DEFAULT CURRENT_TIMESTAMP | |
-| completed_at | TEXT | | |
+| Column             | Type    | Constraints                         | Notes                                            |
+| ------------------ | ------- | ----------------------------------- | ------------------------------------------------ |
+| id                 | TEXT    | PK, UUID                            |                                                  |
+| quest_id           | TEXT    | FK → quests.id, NOT NULL            |                                                  |
+| chat_id            | TEXT    | FK → chats.id, NOT NULL             |                                                  |
+| progress           | INTEGER | NOT NULL, DEFAULT 0                 | Current progress value                           |
+| status             | TEXT    | NOT NULL, DEFAULT 'active'          | 'active', 'completed', 'failed', 'ignored'       |
+| contributed_events | TEXT    | NOT NULL, DEFAULT '[]'              | JSON array of event IDs that advanced this quest |
+| started_at         | TEXT    | NOT NULL, DEFAULT CURRENT_TIMESTAMP |                                                  |
+| updated_at         | TEXT    | NOT NULL, DEFAULT CURRENT_TIMESTAMP |                                                  |
+| completed_at       | TEXT    |                                     |                                                  |
 
 - Indexes: `(quest_id)`, `(chat_id)`, `(quest_id, chat_id)`
 
@@ -469,15 +517,15 @@ Per-chat progress tracking for quests (a quest can have different progress in di
 
 Point-in-time snapshots of world state for rollback and history.
 
-| Column | Type | Constraints | Notes |
-| --- | --- | --- | --- |
-| id | TEXT | PK, UUID | |
-| world_id | TEXT | FK → worlds.id, NOT NULL | |
-| snapshot | TEXT | NOT NULL | JSON — full serialized state |
-| trigger_message_id | TEXT | FK → messages.id | Message that triggered this snapshot |
-| trigger_turn_id | TEXT | FK → story_turns.id | Turn that triggered this snapshot |
-| description | TEXT | | Human-readable label |
-| created_at | TEXT | NOT NULL, DEFAULT CURRENT_TIMESTAMP | |
+| Column             | Type | Constraints                         | Notes                                |
+| ------------------ | ---- | ----------------------------------- | ------------------------------------ |
+| id                 | TEXT | PK, UUID                            |                                      |
+| world_id           | TEXT | FK → worlds.id, NOT NULL            |                                      |
+| snapshot           | TEXT | NOT NULL                            | JSON — full serialized state         |
+| trigger_message_id | TEXT | FK → messages.id                    | Message that triggered this snapshot |
+| trigger_turn_id    | TEXT | FK → story_turns.id                 | Turn that triggered this snapshot    |
+| description        | TEXT |                                     | Human-readable label                 |
+| created_at         | TEXT | NOT NULL, DEFAULT CURRENT_TIMESTAMP |                                      |
 
 - Index: `(world_id)`
 
@@ -485,19 +533,20 @@ Point-in-time snapshots of world state for rollback and history.
 
 Dynamic state for NPCs within a world (separate from static actor definition).
 
-| Column | Type | Constraints | Notes |
-| --- | --- | --- | --- |
-| id | TEXT | PK, UUID | |
-| actor_id | TEXT | FK → actors.id, NOT NULL | |
-| world_id | TEXT | FK → worlds.id, NOT NULL | |
-| location_id | TEXT | FK → locations.id | Current location |
-| health | INTEGER | NOT NULL, DEFAULT 100 | |
-| mental_state | TEXT | NOT NULL, DEFAULT 'calm' | 'calm', 'afraid', 'angry', 'suspicious', etc. |
-| knowledge | TEXT | NOT NULL, DEFAULT '{}' | JSON — `{fact: {fact, confidence, source}}` |
-| relationships | TEXT | NOT NULL, DEFAULT '{}' | JSON — `{actor_id: disposition(-100..100)}` |
-| inventory | TEXT | NOT NULL, DEFAULT '[]' | JSON array of item IDs |
-| schedule | TEXT | NOT NULL, DEFAULT '{}' | JSON — time-based behavior patterns |
-| updated_at | TEXT | NOT NULL, DEFAULT CURRENT_TIMESTAMP | |
+| Column        | Type    | Constraints                         | Notes                                         |
+| ------------- | ------- | ----------------------------------- | --------------------------------------------- |
+| id            | TEXT    | PK, UUID                            |                                               |
+| actor_id      | TEXT    | FK → actors.id, NOT NULL            |                                               |
+| world_id      | TEXT    | FK → worlds.id, NOT NULL            |                                               |
+| location_id   | TEXT    | FK → locations.id                   | Current location                              |
+| health        | INTEGER | NOT NULL, DEFAULT 100               |                                               |
+| mental_state  | TEXT    | NOT NULL, DEFAULT 'calm'            | 'calm', 'afraid', 'angry', 'suspicious', etc. |
+| knowledge     | TEXT    | NOT NULL, DEFAULT '{}'              | JSON — `{fact: {fact, confidence, source}}`   |
+| relationships | TEXT    | NOT NULL, DEFAULT '{}'              | JSON — `{actor_id: disposition(-100..100)}`   |
+| inventory     | TEXT    | NOT NULL, DEFAULT '[]'              | JSON array of item IDs                        |
+| schedule      | TEXT    | NOT NULL, DEFAULT '{}'              | JSON — time-based behavior patterns           |
+| created_at    | TEXT    | NOT NULL, DEFAULT CURRENT_TIMESTAMP |                                               |
+| updated_at    | TEXT    | NOT NULL, DEFAULT CURRENT_TIMESTAMP |                                               |
 
 - Indexes: `(actor_id)`, `(world_id)`, `(location_id)`
 
@@ -505,19 +554,19 @@ Dynamic state for NPCs within a world (separate from static actor definition).
 
 Dynamic state for locations within a world.
 
-| Column | Type | Constraints | Notes |
-| --- | --- | --- | --- |
-| id | TEXT | PK, UUID | |
-| location_id | TEXT | FK → locations.id, NOT NULL | |
-| world_id | TEXT | FK → worlds.id, NOT NULL | |
-| description_override | TEXT | | Temporary description change |
-| atmosphere | TEXT | | Current mood: 'tense', 'peaceful', 'eerie', etc. |
-| npcs_present | TEXT | NOT NULL, DEFAULT '[]' | JSON array of actor IDs currently here |
-| items_available | TEXT | NOT NULL, DEFAULT '[]' | JSON array of item IDs findable here |
-| time_of_day | TEXT | | 'morning', 'afternoon', 'evening', 'night' |
-| weather | TEXT | | 'clear', 'rain', 'storm', 'fog' |
-| hazards | TEXT | NOT NULL, DEFAULT '[]' | JSON array of active environmental hazards |
-| updated_at | TEXT | NOT NULL, DEFAULT CURRENT_TIMESTAMP | |
+| Column               | Type | Constraints                         | Notes                                            |
+| -------------------- | ---- | ----------------------------------- | ------------------------------------------------ |
+| id                   | TEXT | PK, UUID                            |                                                  |
+| location_id          | TEXT | FK → locations.id, NOT NULL         |                                                  |
+| world_id             | TEXT | FK → worlds.id, NOT NULL            |                                                  |
+| description_override | TEXT |                                     | Temporary description change                     |
+| atmosphere           | TEXT |                                     | Current mood: 'tense', 'peaceful', 'eerie', etc. |
+| npcs_present         | TEXT | NOT NULL, DEFAULT '[]'              | JSON array of actor IDs currently here           |
+| items_available      | TEXT | NOT NULL, DEFAULT '[]'              | JSON array of item IDs findable here             |
+| time_of_day          | TEXT |                                     | 'morning', 'afternoon', 'evening', 'night'       |
+| weather              | TEXT |                                     | 'clear', 'rain', 'storm', 'fog'                  |
+| hazards              | TEXT | NOT NULL, DEFAULT '[]'              | JSON array of active environmental hazards       |
+| updated_at           | TEXT | NOT NULL, DEFAULT CURRENT_TIMESTAMP |                                                  |
 
 - Indexes: `(location_id)`, `(world_id)`
 
@@ -525,119 +574,36 @@ Dynamic state for locations within a world.
 
 Generated test scenarios from story sessions for automated testing.
 
-| Column | Type | Constraints | Notes |
-| --- | --- | --- | --- |
-| id | TEXT | PK, UUID | |
-| chat_id | TEXT | FK → chats.id | Source session |
-| world_id | TEXT | FK → worlds.id | |
-| type | TEXT | NOT NULL | 'turn_sequence', 'quality_evaluation', 'quest_progression', 'world_state_transition', 'regeneration_case', 'gm_escalation' |
-| source_data | TEXT | NOT NULL | JSON — input context |
-| generated_cases | TEXT | NOT NULL | JSON — expected outputs |
-| metadata | TEXT | NOT NULL, DEFAULT '{}' | JSON — turn numbers, actor IDs, scores |
-| status | TEXT | NOT NULL, DEFAULT 'generated' | 'generated', 'validated', 'approved', 'rejected', 'archived' |
-| created_at | TEXT | NOT NULL, DEFAULT CURRENT_TIMESTAMP | |
-| validated_at | TEXT | | |
-| validated_by | TEXT | FK → actors.id | |
+| Column          | Type | Constraints                         | Notes                                                                                                                      |
+| --------------- | ---- | ----------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| id              | TEXT | PK, UUID                            |                                                                                                                            |
+| chat_id         | TEXT | FK → chats.id                       | Source session                                                                                                             |
+| world_id        | TEXT | FK → worlds.id                      |                                                                                                                            |
+| type            | TEXT | NOT NULL                            | 'turn_sequence', 'quality_evaluation', 'quest_progression', 'world_state_transition', 'regeneration_case', 'gm_escalation' |
+| source_data     | TEXT | NOT NULL                            | JSON — input context                                                                                                       |
+| generated_cases | TEXT | NOT NULL                            | JSON — expected outputs                                                                                                    |
+| metadata        | TEXT | NOT NULL, DEFAULT '{}'              | JSON — turn numbers, actor IDs, scores                                                                                     |
+| status          | TEXT | NOT NULL, DEFAULT 'generated'       | 'generated', 'validated', 'approved', 'rejected', 'archived'                                                               |
+| created_at      | TEXT | NOT NULL, DEFAULT CURRENT_TIMESTAMP |                                                                                                                            |
+| validated_at    | TEXT |                                     |                                                                                                                            |
+| validated_by    | TEXT | FK → actors.id                      |                                                                                                                            |
 
 - Indexes: `(chat_id)`, `(world_id)`, `(type)`, `(status)`
 
 ---
 
-## Actor Extension Tables
+## Planned Tables (Not Yet in Migration)
 
-These support character-card imports, memories, lorebooks, notes, and inventory.
-See [`docs/actors.md`](./actors.md) for full details.
+These are described in the actor spec ([actors.md](./actors.md)) but not yet
+created in the migration. They will be added in a future migration:
 
-### `actor_memories`
+- `actor_memories` — accumulated facts learned across conversations
+- `actor_notes` — freeform user-authored notes attached to an actor
+- `actor_lore_entries` — character-specific lorebook entries (character_book)
+- `world_lore_entries` — world-scoped lore entries (same structure)
+- `actor_items` — equipment, possessions, quest items
 
-Accumulated facts learned across conversations.
-
-| Column | Type | Constraints | Notes |
-| --- | --- | --- | --- |
-| id | TEXT | PK, UUID | |
-| actor_id | TEXT | FK → actors.id, NOT NULL | Owner of this memory |
-| source_chat_id | TEXT | FK → chats.id | Chat where memory was learned (nullable) |
-| content | TEXT | NOT NULL | The memory text |
-| memory_type | TEXT | NOT NULL | 'summary', 'fact', 'experience', 'relationship', 'custom' |
-| confidence | REAL | DEFAULT 1.0 | 0.0–1.0 — how reliable/settled |
-| importance | INTEGER | DEFAULT 1 | 1–10 — priority for retention under token budget |
-| keywords | TEXT | JSON array | Search keywords |
-| created_at | TEXT | DEFAULT CURRENT_TIMESTAMP | |
-| updated_at | TEXT | DEFAULT CURRENT_TIMESTAMP | Last revision |
-| expires_at | TEXT | | TTL for ephemeral memories (null = permanent) |
-
-Indexes: `(actor_id)`, `(actor_id, memory_type)`, `(actor_id, importance DESC)`
-
-### `actor_notes`
-
-Freeform user-authored notes attached to an actor.
-
-| Column | Type | Constraints | Notes |
-| --- | --- | --- | --- |
-| id | TEXT | PK, UUID | |
-| actor_id | TEXT | FK → actors.id, NOT NULL | |
-| title | TEXT | NOT NULL | Note title |
-| content | TEXT | NOT NULL | Note body (Markdown) |
-| category | TEXT | DEFAULT 'general' | 'general', 'backstory', 'relationships', 'plot', 'mechanics', 'custom' |
-| pinned | INTEGER | DEFAULT 0 | Boolean: 1 = always visible |
-| sort_order | INTEGER | DEFAULT 0 | Display ordering |
-| created_at | TEXT | DEFAULT CURRENT_TIMESTAMP | |
-| updated_at | TEXT | DEFAULT CURRENT_TIMESTAMP | |
-
-Indexes: `(actor_id, category)`, `(actor_id, pinned DESC, sort_order)`
-
-### `actor_lore_entries`
-
-Character-specific lorebook entries (character_book from V2 cards). Activated
-when trigger keywords appear in recent context.
-
-| Column | Type | Constraints | Notes |
-| --- | --- | --- | --- |
-| id | TEXT | PK, UUID | |
-| actor_id | TEXT | FK → actors.id, NOT NULL | Which actor owns this entry |
-| name | TEXT | | Entry name (not used in prompt, for UI) |
-| content | TEXT | NOT NULL | Lore text injected on trigger |
-| keys | TEXT | NOT NULL | JSON array of trigger keywords |
-| secondary_keys | TEXT | JSON array | Secondary keywords for `selective` mode |
-| selective | INTEGER | DEFAULT 0 | Boolean: require key from both sets |
-| case_sensitive | INTEGER | DEFAULT 0 | Boolean |
-| enabled | INTEGER | DEFAULT 1 | Boolean |
-| constant | INTEGER | DEFAULT 0 | Boolean: always inserted (within budget) |
-| position | TEXT | DEFAULT 'before_char' | 'before_char', 'after_char' |
-| insertion_order | INTEGER | DEFAULT 100 | Lower = inserted earlier |
-| priority | INTEGER | DEFAULT 100 | Lower = discarded first when over budget |
-| comment | TEXT | | Editor note, not used in prompts |
-| sort_order | INTEGER | DEFAULT 0 | UI display order |
-| created_at | TEXT | DEFAULT CURRENT_TIMESTAMP | |
-| updated_at | TEXT | DEFAULT CURRENT_TIMESTAMP | |
-
-### `world_lore_entries`
-
-Same structure as `actor_lore_entries`, scoped to a world instead of an actor.
-(Identical schema with `world_id` replacing `actor_id`.)
-
-### `actor_items`
-
-Equipment, possessions, quest items belonging to an actor.
-
-| Column | Type | Constraints | Notes |
-| --- | --- | --- | --- |
-| id | TEXT | PK, UUID | |
-| actor_id | TEXT | FK → actors.id, NOT NULL | Owner |
-| name | TEXT | NOT NULL | Item display name |
-| description | TEXT | | Item description / flavour text |
-| item_type | TEXT | NOT NULL | 'weapon', 'armor', 'consumable', 'key_item', 'currency', 'container', 'tool', 'misc' |
-| quantity | INTEGER | DEFAULT 1 | Stackable count |
-| value | TEXT | | Monetary value (string for flexibility: "5 gp") |
-| weight | REAL | | Encumbrance units |
-| tags | TEXT | JSON array | Arbitrary tags for filtering |
-| metadata | TEXT | JSON | Arbitrary properties (damage, defense, charges, etc.) |
-| equipped | INTEGER | DEFAULT 0 | Boolean: currently equipped/wielded |
-| sort_order | INTEGER | DEFAULT 0 | Display order |
-| created_at | TEXT | DEFAULT CURRENT_TIMESTAMP | |
-| updated_at | TEXT | DEFAULT CURRENT_TIMESTAMP | |
-
-Indexes: `(actor_id)`, `(actor_id, item_type)`, `(actor_id, equipped)`
+See [`docs/actors.md`](./actors.md) for the full table definitions.
 
 ---
 
@@ -652,13 +618,13 @@ chain can be squashed into a single `001_init.ts` that creates all tables at onc
 
 ### Current Migration Sequence
 
-| # | File | What it creates |
-| --- | --- | --- |
-| 001 | `001_init.ts` | All core tables: users, sessions, chats, actors, chat_participants, characters, messages, assets, asset_links, worlds |
-| 002 | `002_age_gate.ts` | `birth_date`, `age_gate_accepted_at` on `users` |
-| 003a | `003_generation_attempts.ts` | `generation_attempts` table |
-| 003b | `003_story_features.ts` | `locations`, `story_turns`, `quests`, `quest_progress`, `world_states`, `npc_states`, `location_states`, `synthetic_data` + new columns on `chats` |
-| 004 | `004_continuation_retry.ts` | `parent_attempt_id`, `continuation_count`, `partial_content`, `step_index`, `total_steps` on `generation_attempts` + `parent_id`, `is_continuation`, `continuation_index`, `partial` on `messages` |
+| #   | File          | What it creates                                                                                                                                                                                                                                                                                            |
+| --- | ------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 001 | `001_init.ts` | All 22 tables: users, sessions, worlds, locations, items, world_items, chats, actors, chat_participants, characters, assets, asset_links, messages, actor_keys, generation_attempts, story_turns, quests, quest_progress, world_states, npc_states, location_states, synthetic_data |
+
+### Migration Notes
+
+All tables and columns are defined in a single `001_init.ts` migration for the v0 development phase. This simplifies the database setup and allows for easy iteration during early development. When production data exists, migrations would be split into logical groups.
 
 ### Migration Pattern
 
@@ -673,11 +639,7 @@ export async function up(database: Kysely<unknown>): Promise<void> {
     // ...
     .execute();
 
-  await database.schema
-    .createIndex("idx_table_column")
-    .on("table_name")
-    .column("column_name")
-    .execute();
+  await database.schema.createIndex("idx_table_column").on("table_name").column("column_name").execute();
 }
 
 export async function down(database: Kysely<unknown>): Promise<void> {
