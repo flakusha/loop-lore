@@ -260,7 +260,7 @@ export class GameMasterService {
           content: text,
           content_type: MessageContentType.Narration,
           content_encoding: ContentEncoding.Identity,
-          status: MessageStatus.Sent,
+          status: MessageStatus.Confirmed,
           visibility: MessageVisibility.Visible,
         })
         .execute();
