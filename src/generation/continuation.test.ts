@@ -1,6 +1,6 @@
 import { describe, test, expect, beforeEach, afterAll } from "bun:test";
 import { Database } from "bun:sqlite";
-import { Kysely, SqliteDialect } from "kysely";
+import { Kysely } from "kysely";
 import type { DB } from "../db/schema";
 import {
   getPartialContent,
@@ -10,53 +10,17 @@ import {
   getAttemptForMessage,
 } from "./continuation";
 import { handleContinueGeneration, handleRetryGeneration } from "./generation-routes";
-import { setTestDatabase } from "../db/index";
+import { createLogger } from "../logger";
+import { createSqliteDialect, setTestDatabase } from "../db/index";
 
-// ── SQLite wrapper (matches BunSqliteWrapper in db/index.ts) ─
-
-interface BunSqliteStatement {
-  reader: boolean;
-  all(parameters: readonly unknown[]): unknown[];
-  run(parameters: readonly unknown[]): { changes: number | bigint; lastInsertRowid: number | bigint };
-  iterate(parameters: readonly unknown[]): IterableIterator<unknown>;
-}
-
-interface BunSqliteWrapper {
-  close(): void;
-  prepare(sql: string): BunSqliteStatement;
-}
-
-// ── Helpers ─────────────────────────────────────────────────
+// ── Test DB Factory ──────────────────────────────────────────
 
 function createTestDb(): { sqlite: Database; db: Kysely<DB> } {
   const sqlite = new Database(":memory:");
   sqlite.run("PRAGMA foreign_keys = ON");
 
-  const wrapped: BunSqliteWrapper = {
-    close() {
-      sqlite.close();
-    },
-    prepare: (sql: string) => {
-      const statement = sqlite.prepare(sql);
-      return {
-        get reader() {
-          const s = sql.trim().toUpperCase();
-          return s.startsWith("SELECT") || s.startsWith("WITH") || s.startsWith("PRAGMA");
-        },
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        all: (parameters: readonly unknown[]) => statement.all(...(parameters as any[])),
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        run: (parameters: readonly unknown[]) => statement.run(...(parameters as any[])),
-        iterate: function* (parameters: readonly unknown[]) {
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          yield* statement.all(...(parameters as any[]));
-        },
-      };
-    },
-  };
-
-  const dialect = new SqliteDialect({ database: wrapped });
-  const db = new Kysely<DB>({ dialect }) as unknown;
+  const dialect = createSqliteDialect(sqlite);
+  const db = new Kysely<DB>({ dialect });
 
   // Create schema tables
   sqlite.run(`
@@ -150,9 +114,8 @@ function createTestDb(): { sqlite: Database; db: Kysely<DB> } {
   return { sqlite, db };
 }
 
-let testSqlite: Database;
 const testEnv = createTestDb();
-testSqlite = testEnv.sqlite;
+const testSqlite = testEnv.sqlite;
 const testDb = testEnv.db;
 
 /** Clean all test tables between tests */
@@ -548,6 +511,7 @@ describe("handleRetryGeneration", () => {
 
 describe("cancelGeneration captures partial content", () => {
   test("partial content from repetition detector is stored on cancel", async () => {
+    createLogger({ level: "error" });
     const { startGenerationTracking, cancelGeneration, processStreamingChunk } = await import(
       "./cancellation-manager"
     );

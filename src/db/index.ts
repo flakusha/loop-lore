@@ -19,25 +19,18 @@ interface BunSqliteWrapper {
 // Wraps bun:sqlite to match the interface Kysely's SqliteDialect expects.
 // The `any` casts are required because Bun's SQLite accepts a wide union of binding types
 // that can't be expressed in Kysely's `readonly unknown[]` parameter signature.
-function createDialect(databasePath: string): SqliteDialect {
-  const sqlite = new Database(databasePath);
-  sqlite.run("PRAGMA journal_mode = WAL");
-  sqlite.run("PRAGMA foreign_keys = ON");
-
+export function createSqliteDialect(database: Database): SqliteDialect {
   const wrapped: BunSqliteWrapper = {
     close() {
-      sqlite.close();
+      database.close();
     },
     prepare: (sql: string) => {
-      const statement = sqlite.prepare(sql);
+      const statement = database.prepare(sql);
       return {
         get reader() {
           const s = sql.trim().toUpperCase();
           return s.startsWith("SELECT") || s.startsWith("WITH") || s.startsWith("PRAGMA");
         },
-        // The `as any[]` cast is required: Bun's SQLite typing narrows `unknown[]`
-        // to `SQLQueryBindings[]` which doesn't accept readonly unknown params
-        // from Kysely's dialect interface.
         // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-argument
         all: (parameters: readonly unknown[]) => statement.all(...(parameters as any[])),
         // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-argument
@@ -51,6 +44,13 @@ function createDialect(databasePath: string): SqliteDialect {
   };
 
   return new SqliteDialect({ database: wrapped });
+}
+
+function createDialect(databasePath: string): SqliteDialect {
+  const sqlite = new Database(databasePath);
+  sqlite.run("PRAGMA journal_mode = WAL");
+  sqlite.run("PRAGMA foreign_keys = ON");
+  return createSqliteDialect(sqlite);
 }
 
 // Initialize database connection eagerly
