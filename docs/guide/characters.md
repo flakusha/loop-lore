@@ -391,7 +391,7 @@ If you're migrating many characters at once:
 loop-lore import ./exported-characters/
 ```
 
-4. Review imported characters in the web UI
+1. Review imported characters in the web UI
 
 ---
 

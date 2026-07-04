@@ -509,6 +509,22 @@ llama-server errors follow OpenAI-compatible format. The provider must handle:
 
 **Streaming errors**: If SSE stream drops mid-generation, attempt one reconnect. If reconnect fails, surface partial content (if any) with a `cancelled: true` flag and `cancelReason: 'stream_error'`.
 
+### Policy Detection
+
+Content policy detection runs post-generation as a separate analysis step, not during streaming.
+
+**Flow**:
+1. LLM returns full response (via streaming or non-streaming)
+2. Response content is sent to policy detection module
+3. Detection runs a ruleset: banned topics, regex patterns, keyword matching
+4. If content passes → message status set to `confirmed`, visibility `visible`
+5. If content flags → message status set to `rejected`, visibility `auto_hidden`, `policy_analysis` JSON populated with detection details
+6. Frontend receives `rejected` status and shows appropriate error UI per detail level
+
+**Integration point**: `src/generation/policy-detector.ts` — called after generation pipeline completes, before final message status is committed. Accepts `string` content, returns `{ passed: boolean; reason?: string; details?: Record<string, unknown> }`.
+
+**Configuration**: Policy rules loaded from `config.policy` section. MVP uses built-in defaults (no custom rule loading). Rules include: banned terms list, response length sanity check, repetition threshold (delegates to existing `repetition_score` in generation_attempts).
+
 ### Health Check
 
 The provider exposes a health check for the generation module:
