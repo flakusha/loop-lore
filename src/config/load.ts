@@ -30,6 +30,17 @@ const ENV_MAP: Record<string, string> = {
   AUTH_REGISTRATION_OPEN: "auth.registrationOpen",
   SESSION_TIMEOUT_HOURS: "auth.sessionTimeoutHours",
   SESSION_MAX_PER_USER: "auth.maxSessionsPerUser",
+  TRANSPORT_DEFAULT_PROTOCOL: "transport.defaultProtocol",
+  TRANSPORT_ENABLE_WEBSOCKET: "transport.enableWebSocket",
+  TRANSPORT_ENABLE_WEBTRANSPORT: "transport.enableWebTransport",
+  TRANSPORT_ENABLE_H2: "transport.enableH2",
+  TRANSPORT_ENABLE_H3: "transport.enableH3",
+  TRANSPORT_COMPRESSION_ENABLED: "transport.compression.enabled",
+  TRANSPORT_COMPRESSION_DEFAULT: "transport.compression.default",
+  TRANSPORT_COMPRESSION_THRESHOLD: "transport.compression.threshold",
+  TRANSPORT_MAX_FRAME_SIZE: "transport.limits.maxFrameSize",
+  TRANSPORT_MAX_PAYLOAD: "transport.limits.maxPayload",
+  TRANSPORT_MAX_CONCURRENT_STREAMS: "transport.limits.maxConcurrentStreams",
 };
 
 // Config file candidates in priority order

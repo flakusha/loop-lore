@@ -428,9 +428,9 @@ The chat header should show the impersonated character's name and avatar.
 
 ## See Also
 
-- [Character Setup Spec](../character-setup.md) — Full technical specification
-- [Actor Data Model](../actors.md) — Database schema and field mapping
+- [Character Setup Spec](../spec/character-setup.md) — Full technical specification
+- [Actor Data Model](../spec/actors.md) — Database schema and field mapping
 - [Character List UI](../frontend/characters.md) — Character list and edit page
 - [Chat Overview](../frontend/chat/overview.md) — Chat types and data model
-- [Memory System](../memory-system.md) — How character memories work
-- [Asset System](../assets.md) — Avatar and media management
+- [Memory System](../spec/memory-system.md) — How character memories work
+- [Asset System](../spec/assets.md) — Avatar and media management
