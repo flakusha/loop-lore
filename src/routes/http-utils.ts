@@ -17,6 +17,7 @@ export const HttpStatus = {
   Unauthorized: 401,
   Forbidden: 403,
   NotFound: 404,
+  TooManyRequests: 429,
   UnprocessableEntity: 422,
   InternalServerError: 500,
   NotImplemented: 501,
@@ -24,11 +25,39 @@ export const HttpStatus = {
 
 export type HttpStatusCode = (typeof HttpStatus)[keyof typeof HttpStatus];
 
+export const ErrorCode = {
+  BadRequest: "BAD_REQUEST",
+  Unauthorized: "UNAUTHORIZED",
+  Forbidden: "FORBIDDEN",
+  NotFound: "NOT_FOUND",
+  ValidationError: "VALIDATION_ERROR",
+  TooManyRequests: "TOO_MANY_REQUESTS",
+  ServerError: "SERVER_ERROR",
+  NotImplemented: "NOT_IMPLEMENTED",
+} as const;
+export type ErrorCode = (typeof ErrorCode)[keyof typeof ErrorCode];
+
+// ── Typed service errors ─────────────────────────────────────
+
+export class NotFoundError extends Error {
+  constructor(entity: string, id: string) {
+    super(`${entity} not found: ${id}`);
+    this.name = "NotFoundError";
+  }
+}
+
+export class ForbiddenError extends Error {
+  constructor(msg = "Forbidden") {
+    super(msg);
+    this.name = "ForbiddenError";
+  }
+}
+
 // ── Response type shorthands ──────────────────────────────────
 
 export interface ApiError {
   error: string;
-  code?: string;
+  code?: ErrorCode;
   details?: unknown;
 }
 
@@ -70,7 +99,7 @@ export function jsonResponse<T>(data: T, status: HttpStatusCode = HttpStatus.OK)
 export function jsonError(
   message: string,
   status: HttpStatusCode = HttpStatus.BadRequest,
-  code?: string,
+  code?: ErrorCode,
 ): Response {
   const body: ApiError = { error: message };
   if (code) body.code = code;

@@ -13,7 +13,7 @@
 
 import type { Middleware, RequestContext, RouteHandler } from "./types";
 import { getLogger } from "../logger";
-import { jsonError, HttpStatus } from "../routes/http-utils";
+import { jsonError, HttpStatus, ErrorCode } from "../routes/http-utils";
 
 /**
  * Composite handler — middleware chain ready to invoke.
@@ -65,7 +65,7 @@ export async function errorBoundary(
       import("../logger").Logger | undefined;
     (logger ?? getLogger()).error("Unhandled middleware error", error instanceof Error ? error : undefined);
     const message = error instanceof Error ? error.message : "Internal server error";
-    return jsonError(message, HttpStatus.InternalServerError, "INTERNAL_ERROR");
+    return jsonError(message, HttpStatus.InternalServerError, ErrorCode.ServerError);
   }
 }
 
