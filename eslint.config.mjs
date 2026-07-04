@@ -15,6 +15,63 @@ import markdown from "eslint-plugin-markdown";
 
 const projectRoot = import.meta.dirname;
 
+// Shared rules for all TS source files (server + frontend)
+const tsPlugins = {
+  "@typescript-eslint": tseslint.plugin,
+  unicorn: unicorn.configs["flat/recommended"].plugins.unicorn,
+  sonarjs: sonarjs.configs.recommended.plugins.sonarjs,
+};
+
+const tsRules = {
+  // ── Unicorn shared overrides ───────────────────────────────
+  ...unicorn.configs["flat/recommended"].rules,
+  "unicorn/prefer-module": "off",
+  "unicorn/prevent-abbreviations": "off",
+  "unicorn/no-null": "off",
+  "unicorn/no-array-reduce": "off",
+  "unicorn/prefer-at": "off",
+  "unicorn/name-replacements": "off",
+  "unicorn/consistent-boolean-name": "off",
+  "unicorn/filename-case": [
+    "warn",
+    { cases: { kebabCase: true, pascalCase: true, snakeCase: true }, multipleFileExtensions: false },
+  ],
+  "unicorn/consistent-function-scoping": "warn",
+  "unicorn/custom-error-definition": "error",
+  "unicorn/throw-new-error": "error",
+  "unicorn/no-await-expression-member": "error",
+  "unicorn/switch-case-braces": ["error", "always"],
+  "unicorn/no-unnecessary-await": "error",
+  "unicorn/expiring-todo-comments": "warn",
+  "unicorn/prefer-top-level-await": "error",
+  "unicorn/catch-error-name": ["error", { name: "error" }],
+  "unicorn/prefer-optional-catch-binding": "error",
+  "unicorn/import-style": "off",
+
+  // ── SonarJS shared overrides ───────────────────────────────
+  ...sonarjs.configs.recommended.rules,
+  "sonarjs/no-duplicate-string": "off",
+  "sonarjs/todo-tag": "off",
+  "sonarjs/function-return-type": "off",
+  "sonarjs/argument-type": "off",
+  "sonarjs/no-empty-function": "off",
+  "sonarjs/unused-import": "off",
+  "sonarjs/no-ignored-return": "warn",
+  "sonarjs/no-identical-conditions": "error",
+  "sonarjs/no-identical-functions": "warn",
+  "sonarjs/no-inverted-boolean-check": "error",
+  "sonarjs/no-empty-collection": "error",
+  "sonarjs/prefer-single-boolean-return": "warn",
+  "sonarjs/prefer-immediate-return": "warn",
+
+  // ── TypeScript shared overrides ────────────────────────────
+  "@typescript-eslint/no-unused-vars": ["error", { argsIgnorePattern: "^_", varsIgnorePattern: "^_" }],
+  "@typescript-eslint/non-nullable-type-assertion-style": "off",
+
+  // ── Prettier ───────────────────────────────────────────────
+  ...prettier.rules,
+};
+
 export default tseslint.config(
   // ── Global ignores ──────────────────────────────────────────────
   {
@@ -36,24 +93,21 @@ export default tseslint.config(
   {
     files: ["**/*.md/**"],
     rules: {
-      // Code blocks inside docs — valid JavaScript/TypeScript patterns
-      "no-undef": "off", // Markdown snippets reference undeclared vars intentionally
+      "no-undef": "off",
       "no-unused-vars": "off",
       "no-unused-expressions": "off",
       "padded-blocks": "off",
       "eol-last": "off",
-      // Prettier conflicts
       ...prettier.rules,
     },
   },
 
-  // ── TypeScript source files: full TS + Unicorn + SonarJS ───────
+  // ── Server TypeScript: Bun/Node env, full type-checked rules ───
   {
     files: ["src/**/*.ts"],
+    ignores: ["src/frontend/**/*.ts"],
     extends: [
-      // ESLint recommended rules
       eslint.configs.recommended,
-      // TypeScript strict + stylistic type-checked rules
       ...tseslint.configs.strictTypeChecked,
       ...tseslint.configs.stylisticTypeChecked,
     ],
@@ -68,92 +122,39 @@ export default tseslint.config(
         ...globals.node,
       },
     },
-    plugins: {
-      unicorn: unicorn.configs["flat/recommended"].plugins.unicorn,
-      sonarjs: sonarjs.configs.recommended.plugins.sonarjs,
-    },
+    plugins: tsPlugins,
     rules: {
-      // ── Unicorn: opinionated quality-of-life rules ──────────
-      ...unicorn.configs["flat/recommended"].rules,
-
-      // Allow pragmatic patterns common in this codebase
-      "unicorn/prefer-module": "off",
-      "unicorn/prevent-abbreviations": "off",
-      "unicorn/no-null": "off",
-      "unicorn/no-array-reduce": "off",
-      // Conflicts with @typescript-eslint/no-non-null-assertion when using .at(-1)!
-      "unicorn/prefer-at": "off",
-      // Name replacements rule is too aggressive - doesn't improve readability
-      "unicorn/name-replacements": "off",
-      // Boolean naming convention is too opinionated for game logic fields
-      // (defeated, hidden, completed, etc. are perfectly readable RPG terminology)
-      "unicorn/consistent-boolean-name": "off",
-
-      // Enforce kebab-case filenames (with PascalCase exceptions for classes, snake_case for migrations)
-      "unicorn/filename-case": [
-        "warn",
-        { cases: { kebabCase: true, pascalCase: true, snakeCase: true }, multipleFileExtensions: false },
-      ],
-      // Prefer module-scoped functions when possible
-      "unicorn/consistent-function-scoping": "warn",
-      // Error classes must be properly named
-      "unicorn/custom-error-definition": "error",
-      // Must use `new` with Error
-      "unicorn/throw-new-error": "error",
-      // Avoid `(await x).foo` — assign to variable first
-      "unicorn/no-await-expression-member": "error",
-      // Switch cases must use braces
-      "unicorn/switch-case-braces": ["error", "always"],
-      "unicorn/no-unnecessary-await": "error",
-      // Track TODO expiry
-      "unicorn/expiring-todo-comments": "warn",
-      // Prefer top-level await over async IIFE
-      "unicorn/prefer-top-level-await": "error",
-      // Catch param should be named `error`
-      "unicorn/catch-error-name": ["error", { name: "error" }],
-      // Prefer optional catch binding when binding unused
-      "unicorn/prefer-optional-catch-binding": "error",
-      // Prefer node: protocol for built-ins
+      ...tsRules,
       "unicorn/prefer-node-protocol": "error",
-      // Prefer default import style
-      "unicorn/import-style": "off", // Too noisy for Node built-in imports
-      // CLI apps legitimately use process.exit() (TUI, migrate)
       "unicorn/no-process-exit": "off",
-
-      // ── SonarJS: code smell & bug detection ────────────────
-      ...sonarjs.configs.recommended.rules,
-
-      // Disable rules that overlap or conflict with TypeScript/Unicorn
-      "sonarjs/no-duplicate-string": "off",
-      "sonarjs/todo-tag": "off",
-      "sonarjs/function-return-type": "off",
-      "sonarjs/argument-type": "off",
-      "sonarjs/no-empty-function": "off",
-      "sonarjs/unused-import": "off", // Covered by @typescript-eslint/no-unused-vars
-
-      // Keep these on — they catch real bugs
-      "sonarjs/no-ignored-return": "warn",
-      "sonarjs/no-identical-conditions": "error",
-      "sonarjs/no-identical-functions": "warn",
-      "sonarjs/no-inverted-boolean-check": "error",
-      "sonarjs/no-empty-collection": "error",
-      "sonarjs/prefer-single-boolean-return": "warn",
-      "sonarjs/prefer-immediate-return": "warn",
-
-      // ── TypeScript overrides ───────────────────────────────
-      "@typescript-eslint/no-unused-vars": ["error", { argsIgnorePattern: "^_", varsIgnorePattern: "^_" }],
-      // Allow template literal expressions of any type
       "@typescript-eslint/restrict-template-expressions": [
         "error",
         { allowNumber: true, allowBoolean: true, allowAny: false, allowNullish: true },
       ],
-      // Resolve conflict between strict rules:
-      // no-non-null-assertion bans `!`, non-nullable-type-assertion-style prefers `!`
-      // We side with no-non-null-assertion (stricter)
-      "@typescript-eslint/non-nullable-type-assertion-style": "off",
+    },
+  },
 
-      // ── Prettier: disable conflicting rules ────────────────
-      ...prettier.rules,
+  // ── Frontend TypeScript: Browser env, DOM-lib tsconfig ─────────
+  {
+    files: ["src/frontend/**/*.ts"],
+    extends: [eslint.configs.recommended],
+    languageOptions: {
+      parser: tseslint.parser,
+      parserOptions: {
+        project: "tsconfig.frontend.json",
+        tsconfigRootDir: projectRoot,
+      },
+      globals: {
+        ...globals.browser,
+      },
+    },
+    plugins: tsPlugins,
+    rules: {
+      ...tsRules,
+      "unicorn/prefer-node-protocol": "off",
+      "unicorn/no-process-exit": "error",
+      "unicorn/prefer-uint8array-base64": "off",
+      "no-unused-vars": "off",
     },
   },
 
@@ -184,7 +185,6 @@ export default tseslint.config(
   },
 
   // ── Overrides: test files ─────────────────────────────────────
-  // (future-proofing — no test files exist yet)
   {
     files: ["**/*.test.ts", "**/*.spec.ts", "**/__tests__/**/*.ts"],
     rules: {
