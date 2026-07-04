@@ -69,9 +69,7 @@ export class LoggerImpl implements Logger {
 
     // Attach meta and censor
     if (meta && Object.keys(meta).length > 0) {
-      entry.meta = options?.skipCensor
-        ? meta
-        : censorMeta(meta, fieldNamesToRules(this.censorFields));
+      entry.meta = options?.skipCensor ? meta : censorMeta(meta, fieldNamesToRules(this.censorFields));
     }
 
     // Apply size limits
@@ -93,11 +91,7 @@ export class LoggerImpl implements Logger {
     this.log("warn", message, undefined, meta);
   }
 
-  error(
-    message: string | Record<string, unknown>,
-    error?: Error,
-    meta?: Record<string, unknown>,
-  ): void {
+  error(message: string | Record<string, unknown>, error?: Error, meta?: Record<string, unknown>): void {
     this.log("error", message, error, meta);
   }
 

@@ -85,12 +85,7 @@ function censorObject(
   return result;
 }
 
-function censorValue(
-  value: unknown,
-  rules: CensorRule[],
-  depth: number,
-  maxDepth: number,
-): unknown {
+function censorValue(value: unknown, rules: CensorRule[], depth: number, maxDepth: number): unknown {
   if (depth > maxDepth || value === null || value === undefined) return value;
 
   if (Array.isArray(value)) {

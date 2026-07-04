@@ -8,10 +8,10 @@ import { numericToLabel } from "./levels";
 // ── Console Pretty Format ──────────────────────────────────
 
 const LEVEL_COLORS: Record<number, string> = {
-  10: "\u{1B}[90m",  // gray
-  20: "\u{1B}[36m",  // cyan
-  30: "\u{1B}[33m",  // yellow
-  40: "\u{1B}[31m",  // red
+  10: "\u{1B}[90m", // gray
+  20: "\u{1B}[36m", // cyan
+  30: "\u{1B}[33m", // yellow
+  40: "\u{1B}[31m", // red
 };
 
 const RESET = "\u{1B}[0m";
