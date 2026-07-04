@@ -2,13 +2,13 @@
 
 ## Tech Stack
 
-| Layer        | Technology                | Notes                                                                                    |
-| ------------ | ------------------------- | ---------------------------------------------------------------------------------------- |
-| HTML         | Prebuilt static templates | Server replaces `&#123;&#123;&#123;content&#125;&#125;&#125;` placeholder in layout.html |
-| AJAX         | htmx 2.x                  | Partial page updates, form submission, server-driven UI                                  |
-| Client state | Alpine.js 3.x             | Modals, toasts, local UI toggles (not data state)                                        |
-| Styling      | Hand-authored CSS         | 3 files: theme.css, app.css, gallery.css. ~26KB total. No framework.                     |
-| Icons        | Unicode / SVG             | No icon library dependency. Inline SVGs where needed.                                    |
+| Layer        | Technology                | Notes                                                                                                                                                   |
+| ------------ | ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| HTML         | Prebuilt static templates | Server replaces `&#123;&#123;&#123;content&#125;&#125;&#125;` placeholder in layout.html                                                                |
+| AJAX         | htmx 2.x                  | Partial page updates, form submission, server-driven UI                                                                                                 |
+| Client state | Alpine.js 3.x             | Modals, toasts, local UI toggles (not data state)                                                                                                       |
+| Styling      | Hand-authored CSS         | 13 files: theme.css + 10 theme-{variant}.css, app.css, gallery.css. ~40KB total. No framework. Supports multiple theme variants with CSS variable switching. |
+| Icons        | Unicode / SVG             | No icon library dependency. Inline SVGs where needed.                                                                                                   |
 
 ## Design Principles
 
@@ -24,7 +24,7 @@
 
 ## Design Token Reference
 
-All design tokens are CSS custom properties defined in `/css/theme.css`:
+All design tokens are CSS custom properties defined in `theme-default.css` (default dark theme). Other themes override these with different color values. The `theme.css` file provides fallback values for when no theme is loaded.
 
 | Token              | Value                                 | Purpose                                      |
 | ------------------ | ------------------------------------- | -------------------------------------------- |
@@ -46,13 +46,65 @@ All design tokens are CSS custom properties defined in `/css/theme.css`:
 
 Full definitions in `theme.css` including: shadow levels, border radii, spacing scale, z-index layers, and transitions.
 
-## CSS Architecture
+## Theme System
 
-No Tailwind. No CSS-in-JS. Three files:
+loop-lore supports multiple visual themes via CSS custom properties. Themes are defined in separate CSS files and switched dynamically via JavaScript.
 
-1. **theme.css** — CSS custom properties (design tokens), global resets, scrollbar, selection colors
-2. **app.css** — Layout system, component classes (`.btn`, `.modal`, `.sidebar`, `.message`, `.input-area`, `.toast`, `.form-input`, `.empty-state`, `.spinner`, `.tag`)
-3. **gallery.css** — Asset gallery components (`.gallery`, `.gallery-nav`, `.asset-grid`, `.drop-zone`)
+### Available Themes
+
+| Theme ID     | Name           | Description                                    |
+| ------------ | -------------- | ---------------------------------------------- |
+| `default`    | Default (Dark) | Original dark theme, adapted from yodayo.com   |
+| `light`      | Light          | Light background with dark text                |
+| `bright`     | Bright         | High contrast vibrant theme                      |
+| `colorful`   | Colorful       | Vibrant saturated colors                       |
+| `monochrome` | Monochrome     | Grayscale high-contrast theme                  |
+| `no-icons`   | No Icons       | Minimal theme with decorative icons hidden     |
+| `dracula`    | Dracula        | Popular dark theme (dracula/lua)                 |
+| `nord`       | Nord           | Arctic color palette (arctic-violet)             |
+| `github-dark`| GitHub Dark    | GitHub's dark syntax theme                       |
+| `material`   | Material       | Material Design 3 inspired                       |
+
+### Theme Files
+
+- `theme.css` — Core resets, global styles, and default design token fallbacks
+- `theme-default.css` — Default dark theme design tokens
+- `theme-light.css` — Light theme design tokens
+- `theme-bright.css` — Bright theme design tokens
+- `theme-colorful.css` — Colorful theme design tokens
+- `theme-monochrome.css` — Monochrome theme design tokens
+- `theme-no-icons.css` — No-icons theme with icon hiding rules
+- `theme-dracula.css` — Dracula theme design tokens
+- `theme-nord.css` — Nord theme design tokens
+- `theme-github-dark.css` — GitHub Dark theme design tokens
+- `theme-material.css` — Material theme design tokens
+
+### Theme Switching
+
+Themes are switched by toggling the `disabled` property on the theme stylesheet link elements. The browser automatically applies the active theme's CSS variables.
+
+1. User selects theme in Settings
+2. JavaScript disables all theme stylesheets
+3. JavaScript enables the selected theme stylesheet
+4. Theme preference saved to localStorage
+
+### CSS Architecture
+
+No Tailwind. No CSS-in-JS. Thirteen files:
+
+1. **theme.css** — Core resets, global styles, default design token fallbacks
+2. **theme-default.css** — Default dark theme design tokens
+3. **theme-light.css** — Light theme design tokens
+4. **theme-bright.css** — Bright theme design tokens
+5. **theme-colorful.css** — Colorful theme design tokens
+6. **theme-monochrome.css** — Monochrome theme design tokens
+7. **theme-no-icons.css** — No-icons theme with icon hiding rules
+8. **theme-dracula.css** — Dracula theme design tokens
+9. **theme-nord.css** — Nord theme design tokens
+10. **theme-github-dark.css** — GitHub Dark theme design tokens
+11. **theme-material.css** — Material theme design tokens
+12. **app.css** — Layout system, component classes (`.btn`, `.modal`, `.sidebar`, `.message`, `.input-area`, `.toast`, `.form-input`, `.empty-state`, `.spinner`, `.tag`)
+13. **gallery.css** — Asset gallery components (`.gallery`, `.gallery-nav`, `.asset-grid`, `.drop-zone`)
 
 ## Icon Strategy
 

@@ -18,21 +18,21 @@ This feature introduces **multi-LLM collaborative story generation** where multi
 
 Extends the existing chat types with a new mode:
 
-| Mode | Participants | Assistant Role | Primary Use |
-|------|--------------|----------------|-------------|
-| `direct` | User × Character | Optional mediator | Standard roleplay |
-| `group` | Multiple users/characters | Optional GM | Collaborative storytelling |
+| Mode        | Participants                         | Assistant Role            | Primary Use                            |
+| ----------- | ------------------------------------ | ------------------------- | -------------------------------------- |
+| `direct`    | User × Character                     | Optional mediator         | Standard roleplay                      |
+| `group`     | Multiple users/characters            | Optional GM               | Collaborative storytelling             |
 | **`story`** | **Multiple LLMs + optional User/GM** | **Required: Game Master** | **Autonomous/guided story generation** |
 
 ### Actor Roles in Story Mode
 
-| Actor Type | Agent Type | Description |
-|------------|------------|-------------|
-| `character` | `ai` | LLM-driven character (PC or NPC) |
-| `character` | `npc` | Non-player character with simpler AI |
-| `narrator` | `narrator` | Narrator agent — describes scenes, time passing, environmental changes |
-| `system` | `game_master` | **Game Master** — orchestrates turns, evaluates quality, manages quests/world state |
-| `user` | `none` | Human player (optional participant) |
+| Actor Type  | Agent Type    | Description                                                                         |
+| ----------- | ------------- | ----------------------------------------------------------------------------------- |
+| `character` | `ai`          | LLM-driven character (PC or NPC)                                                    |
+| `character` | `npc`         | Non-player character with simpler AI                                                |
+| `narrator`  | `narrator`    | Narrator agent — describes scenes, time passing, environmental changes              |
+| `system`    | `game_master` | **Game Master** — orchestrates turns, evaluates quality, manages quests/world state |
+| `user`      | `none`        | Human player (optional participant)                                                 |
 
 ---
 
@@ -115,13 +115,13 @@ src/story/
 
 ### Turn Order Strategies
 
-| Strategy | Description | Use Case |
-|----------|-------------|----------|
-| `round_robin` | Fixed order: Actor A → B → C → A... | Equal participation |
-| `scene_based` | GM selects based on scene relevance | Narrative-driven |
-| `initiative` | Roll/score determines order per scene | Combat/encounters |
-| `quest_driven` | Prioritize actors relevant to active quest | Goal-oriented |
-| `hybrid` | GM chooses strategy per turn | Maximum flexibility |
+| Strategy       | Description                                | Use Case            |
+| -------------- | ------------------------------------------ | ------------------- |
+| `round_robin`  | Fixed order: Actor A → B → C → A...        | Equal participation |
+| `scene_based`  | GM selects based on scene relevance        | Narrative-driven    |
+| `initiative`   | Roll/score determines order per scene      | Combat/encounters   |
+| `quest_driven` | Prioritize actors relevant to active quest | Goal-oriented       |
+| `hybrid`       | GM chooses strategy per turn               | Maximum flexibility |
 
 ---
 
@@ -130,36 +130,36 @@ src/story/
 ### Game Master Types
 
 ```typescript
-type GameMasterType = 'llm' | 'human' | 'hybrid';
+type GameMasterType = "llm" | "human" | "hybrid";
 
 interface GameMasterConfig {
   type: GameMasterType;
   llmConfig?: {
     model: string;
     provider: string;
-    systemPrompt: string;  // "You are the Game Master..."
+    systemPrompt: string; // "You are the Game Master..."
     temperature: number;
   };
   humanGM?: {
-    actorId: string;  // Human user's actor ID
+    actorId: string; // Human user's actor ID
     notifications: boolean;
   };
   // Hybrid: LLM handles routine, escalates complex to human
-  escalationThreshold?: number;  // Quality score below which human reviews
+  escalationThreshold?: number; // Quality score below which human reviews
 }
 ```
 
 ### Game Master Responsibilities
 
-| Responsibility | LLM GM | Human GM | Hybrid |
-|----------------|--------|----------|--------|
-| Turn selection | ✅ | ✅ | ✅ (LLM default) |
-| Quality evaluation | ✅ | ✅ | ✅ (LLM default) |
-| Regeneration decisions | ✅ | ✅ | ✅ (LLM default) |
-| Quest creation/modification | ✅ | ✅ | ✅ (Human final) |
-| World lore authority | Advisory | ✅ Final | ✅ Human final |
-| NPC personality consistency | ✅ | ✅ | ✅ |
-| Rule adjudication | ✅ (configured) | ✅ | ✅ Human final |
+| Responsibility              | LLM GM          | Human GM | Hybrid           |
+| --------------------------- | --------------- | -------- | ---------------- |
+| Turn selection              | ✅              | ✅       | ✅ (LLM default) |
+| Quality evaluation          | ✅              | ✅       | ✅ (LLM default) |
+| Regeneration decisions      | ✅              | ✅       | ✅ (LLM default) |
+| Quest creation/modification | ✅              | ✅       | ✅ (Human final) |
+| World lore authority        | Advisory        | ✅ Final | ✅ Human final   |
+| NPC personality consistency | ✅              | ✅       | ✅               |
+| Rule adjudication           | ✅ (configured) | ✅       | ✅ Human final   |
 
 ### Game Master System Prompt (LLM GM)
 
@@ -204,22 +204,22 @@ OUTPUT FORMAT (JSON):
 
 ### Evaluation Dimensions
 
-| Dimension | Weight | Description |
-|-----------|--------|-------------|
-| `character_voice` | 0.25 | Consistent personality, speech patterns, vocabulary |
-| `plot_coherence` | 0.20 | Logical follow-up to previous events |
-| `lore_consistency` | 0.20 | No contradictions with world facts |
-| `narrative_quality` | 0.15 | Engaging prose, show-don't-tell, pacing |
-| `quest_relevance` | 0.10 | Advances or meaningfully interacts with active quests |
-| `creativity` | 0.10 | Novel ideas, unexpected but plausible developments |
+| Dimension           | Weight | Description                                           |
+| ------------------- | ------ | ----------------------------------------------------- |
+| `character_voice`   | 0.25   | Consistent personality, speech patterns, vocabulary   |
+| `plot_coherence`    | 0.20   | Logical follow-up to previous events                  |
+| `lore_consistency`  | 0.20   | No contradictions with world facts                    |
+| `narrative_quality` | 0.15   | Engaging prose, show-don't-tell, pacing               |
+| `quest_relevance`   | 0.10   | Advances or meaningfully interacts with active quests |
+| `creativity`        | 0.10   | Novel ideas, unexpected but plausible developments    |
 
 ### Quality Thresholds (Configurable)
 
 ```typescript
 interface QualityThresholds {
-  accept: 70;        // Auto-accept
-  regenerate: 40;    // Request regeneration (max 3 attempts)
-  escalate: 40;      // Below this: human GM review required
+  accept: 70; // Auto-accept
+  regenerate: 40; // Request regeneration (max 3 attempts)
+  escalate: 40; // Below this: human GM review required
   maxRegenerations: 3;
 }
 ```
@@ -241,14 +241,14 @@ The World State Engine parses accepted messages for **state-changing events**:
 
 ```typescript
 type WorldEventType =
-  | 'location_change'        // Actor moves to new location
-  | 'npc_state_change'       // NPC relationship, health, knowledge
-  | 'item_transfer'          // Item gained/lost/traded
-  | 'time_advancement'       // Explicit time skip
-  | 'location_modification'  // Location description changed
-  | 'world_lore_update'      // New fact added to world lore
-  | 'quest_progress'         // Quest objective advanced
-  | 'combat_event';          // Damage, defeat, status effects
+  | "location_change" // Actor moves to new location
+  | "npc_state_change" // NPC relationship, health, knowledge
+  | "item_transfer" // Item gained/lost/traded
+  | "time_advancement" // Explicit time skip
+  | "location_modification" // Location description changed
+  | "world_lore_update" // New fact added to world lore
+  | "quest_progress" // Quest objective advanced
+  | "combat_event"; // Damage, defeat, status effects
 ```
 
 ### Event Extraction Pipeline
@@ -332,15 +332,15 @@ CREATE TABLE location_states (
 
 ### Quest Types
 
-| Type | Identifier | Progression Mechanic | Completion Condition |
-|------|------------|---------------------|---------------------|
-| **Time-based** | `time` | World/time location progress | Reach time threshold or survive duration |
-| **Collection** | `collection` | Item acquisition count | Collect N items (specific or category) |
-| **Destruction** | `destruction` | Enemy HP / defeat count | Defeat target enemy/entity |
-| **Rescue** | `rescue` | NPC location/safety status | Move NPC to safe location |
-| **Discovery** | `discovery` | Location/event uncovering | Find hidden location/secret |
-| **Social** | `social` | NPC relationship thresholds | Reach relationship level with NPC |
-| **Composite** | `composite` | Multiple sub-quests | All sub-quests complete |
+| Type            | Identifier    | Progression Mechanic         | Completion Condition                     |
+| --------------- | ------------- | ---------------------------- | ---------------------------------------- |
+| **Time-based**  | `time`        | World/time location progress | Reach time threshold or survive duration |
+| **Collection**  | `collection`  | Item acquisition count       | Collect N items (specific or category)   |
+| **Destruction** | `destruction` | Enemy HP / defeat count      | Defeat target enemy/entity               |
+| **Rescue**      | `rescue`      | NPC location/safety status   | Move NPC to safe location                |
+| **Discovery**   | `discovery`   | Location/event uncovering    | Find hidden location/secret              |
+| **Social**      | `social`      | NPC relationship thresholds  | Reach relationship level with NPC        |
+| **Composite**   | `composite`   | Multiple sub-quests          | All sub-quests complete                  |
 
 ### Quest Schema
 
@@ -384,31 +384,32 @@ CREATE TABLE quests (
 ```typescript
 // Time-based
 interface TimeQuestConfig {
-  type: 'time';
-  durationMinutes: number;        // Real-time or in-game time
-  trackInGameTime: boolean;       // Use world clock vs real clock
-  locationId?: string;            // Specific location's time
+  type: "time";
+  durationMinutes: number; // Real-time or in-game time
+  trackInGameTime: boolean; // Use world clock vs real clock
+  locationId?: string; // Specific location's time
   milestones: { progress: number; narrative: string }[];
 }
 
 // Collection
 interface CollectionQuestConfig {
-  type: 'collection';
-  items: { itemId: string; quantity: number }[];  // Specific items
+  type: "collection";
+  items: { itemId: string; quantity: number }[]; // Specific items
   // OR category-based:
-  category?: string;              // e.g., "herbs", "gems", "documents"
-  categoryQuantity?: number;      // Any 10 herbs
-  sources: string[];              // Where items can be found: location IDs, NPC IDs, "any"
+  category?: string; // e.g., "herbs", "gems", "documents"
+  categoryQuantity?: number; // Any 10 herbs
+  sources: string[]; // Where items can be found: location IDs, NPC IDs, "any"
 }
 
 // Destruction
 interface DestructionQuestConfig {
-  type: 'destruction';
-  targetActorId: string;          // Enemy actor to defeat
+  type: "destruction";
+  targetActorId: string; // Enemy actor to defeat
   // OR target type:
-  targetType?: string;            // e.g., "undead", "bandits"
-  targetQuantity?: number;        // Defeat 5 bandits
-  combatRules?: {                 // Optional custom combat
+  targetType?: string; // e.g., "undead", "bandits"
+  targetQuantity?: number; // Defeat 5 bandits
+  combatRules?: {
+    // Optional custom combat
     hpMultiplier: number;
     specialWeaknesses: string[];
   };
@@ -416,39 +417,39 @@ interface DestructionQuestConfig {
 
 // Rescue
 interface RescueQuestConfig {
-  type: 'rescue';
-  targetActorId: string;          // NPC to rescue
-  safeLocationId: string;         // Location considered "safe"
-  escortRequired: boolean;        // Must be accompanied
-  timeLimitMinutes?: number;      // Optional time pressure
-  threats: string[];              // Actor IDs or types threatening NPC
+  type: "rescue";
+  targetActorId: string; // NPC to rescue
+  safeLocationId: string; // Location considered "safe"
+  escortRequired: boolean; // Must be accompanied
+  timeLimitMinutes?: number; // Optional time pressure
+  threats: string[]; // Actor IDs or types threatening NPC
 }
 
 // Discovery
 interface DiscoveryQuestConfig {
-  type: 'discovery';
-  targetLocationId?: string;      // Specific hidden location
+  type: "discovery";
+  targetLocationId?: string; // Specific hidden location
   // OR discovery type:
-  discoveryType?: 'location' | 'secret' | 'lore' | 'path';
-  clues: { locationId: string; hint: string }[];  // Clue locations
-  revealOnComplete: string;       // What becomes known/accessible
+  discoveryType?: "location" | "secret" | "lore" | "path";
+  clues: { locationId: string; hint: string }[]; // Clue locations
+  revealOnComplete: string; // What becomes known/accessible
 }
 
 // Social
 interface SocialQuestConfig {
-  type: 'social';
-  targetActorId: string;          // NPC to build relationship with
-  targetDisposition: number;      // -100 to 100
-  requiredInteractions: number;   // Minimum meaningful interactions
-  favoredTopics: string[];        // Conversation topics that help
-  disfavoredActions: string[];    // Actions that hurt progress
+  type: "social";
+  targetActorId: string; // NPC to build relationship with
+  targetDisposition: number; // -100 to 100
+  requiredInteractions: number; // Minimum meaningful interactions
+  favoredTopics: string[]; // Conversation topics that help
+  disfavoredActions: string[]; // Actions that hurt progress
 }
 
 // Composite
 interface CompositeQuestConfig {
-  type: 'composite';
-  subQuests: string[];            // Quest IDs
-  logic: 'all' | 'any' | 'sequence';  // All must complete, any one, or in order
+  type: "composite";
+  subQuests: string[]; // Quest IDs
+  logic: "all" | "any" | "sequence"; // All must complete, any one, or in order
 }
 ```
 
@@ -500,6 +501,7 @@ interface CompositeQuestConfig {
 ### Purpose
 
 Generate realistic test scenarios from actual story generation runs for:
+
 - Regression testing of turn-taking logic
 - Quality evaluator calibration
 - Quest engine validation
@@ -508,14 +510,14 @@ Generate realistic test scenarios from actual story generation runs for:
 
 ### Synthetic Data Types
 
-| Type | Source | Use Case |
-|------|--------|----------|
-| `turn_sequence` | Complete turn cycles | Test turn manager, GM decisions |
-| `quality_evaluation` | Message + score + reasoning | Train/calibrate evaluator |
-| `quest_progression` | Event → quest update | Test quest logic |
-| `world_state_transition` | Before/after state | Test state engine |
-| `regeneration_case` | Original + regenerated | Test regeneration logic |
-| `gm_escalation` | Low-quality + GM decision | Test escalation paths |
+| Type                     | Source                      | Use Case                        |
+| ------------------------ | --------------------------- | ------------------------------- |
+| `turn_sequence`          | Complete turn cycles        | Test turn manager, GM decisions |
+| `quality_evaluation`     | Message + score + reasoning | Train/calibrate evaluator       |
+| `quest_progression`      | Event → quest update        | Test quest logic                |
+| `world_state_transition` | Before/after state          | Test state engine               |
+| `regeneration_case`      | Original + regenerated      | Test regeneration logic         |
+| `gm_escalation`          | Low-quality + GM decision   | Test escalation paths           |
 
 ### Generation Pipeline
 
@@ -573,32 +575,32 @@ CREATE TABLE synthetic_scenarios (
   session_id TEXT NOT NULL,  -- Source story session
   scenario_type TEXT NOT NULL,  -- 'turn_sequence' | 'quality_evaluation' | 'quest_progression' | 'world_state_transition' | 'regeneration_case' | 'gm_escalation'
   tags TEXT NOT NULL DEFAULT '[]',  -- JSON array of tags
-  
+
   -- Input: what the system received
   input_context JSON NOT NULL,  -- Full context sent to actor/GM/evaluator
-  
+
   -- Expected output: what the system produced (ground truth)
   expected_output JSON NOT NULL,
-  
+
   -- Metadata for filtering/selection
   metadata JSON NOT NULL DEFAULT '{}',  -- turn_number, actor_ids, quest_ids, quality_score, etc.
-  
+
   -- Validation: assertions that must hold
   assertions JSON DEFAULT '[]',  -- e.g., ["progress >= 0", "progress <= 100"]
-  
+
   created_at TEXT DEFAULT CURRENT_TIMESTAMP
 );
 ```
 
 ### Test Execution Modes
 
-| Mode | Description | CI Integration |
-|------|-------------|----------------|
-| `replay` | Exact replay: same input → expect same output | Unit tests |
-| `mutation` | Mutate input (temperature, prompt variations) → check invariants | Property tests |
-| `regression` | Compare current output vs stored expected output | Regression suite |
-| `calibration` | Run evaluator on quality cases → adjust thresholds | Model eval |
-| `stress` | Rapid-fire synthetic sessions → measure latency, errors | Load tests |
+| Mode          | Description                                                      | CI Integration   |
+| ------------- | ---------------------------------------------------------------- | ---------------- |
+| `replay`      | Exact replay: same input → expect same output                    | Unit tests       |
+| `mutation`    | Mutate input (temperature, prompt variations) → check invariants | Property tests   |
+| `regression`  | Compare current output vs stored expected output                 | Regression suite |
+| `calibration` | Run evaluator on quality cases → adjust thresholds               | Model eval       |
+| `stress`      | Rapid-fire synthetic sessions → measure latency, errors          | Load tests       |
 
 ---
 
@@ -671,14 +673,14 @@ GET    /api/synthetic/test/results/:runId    # Test results
 ```yaml
 story:
   enabled: true
-  
+
   # Turn management
   turnManager:
     defaultStrategy: "hybrid"
     maxTurnsPerSession: 1000
     turnTimeoutMs: 120000
     autoAdvanceOnTimeout: true
-    
+
   # Game Master
   gameMaster:
     defaultType: "llm"
@@ -689,12 +691,12 @@ story:
       maxTokens: 2000
     hybrid:
       escalationThreshold: 40
-      humanGMActorId: null  # Set when human GM joins
-      
+      humanGMActorId: null # Set when human GM joins
+
   # Quality evaluation
   qualityEvaluator:
     enabled: true
-    model: "claude-3.5-sonnet"  # Can use cheaper model
+    model: "claude-3.5-sonnet" # Can use cheaper model
     thresholds:
       accept: 70
       regenerate: 40
@@ -707,25 +709,25 @@ story:
       narrativeQuality: 0.15
       questRelevance: 0.10
       creativity: 0.10
-      
+
   # World state
   worldState:
     enabled: true
-    snapshotInterval: 10  # Snapshot every N turns
+    snapshotInterval: 10 # Snapshot every N turns
     maxSnapshots: 100
     eventExtractorModel: "claude-3-haiku"
-    
+
   # Quest engine
   questEngine:
     enabled: true
     autoGenerateFromEvents: true
-    progressNotificationInterval: 10  # Notify GM every N%
-    
+    progressNotificationInterval: 10 # Notify GM every N%
+
   # Synthetic data generation
   syntheticGenerator:
-    enabled: false  # Enable for test environments
+    enabled: false # Enable for test environments
     generateOnSessionEnd: true
-    generateOnCheckpoint: 50  # Every N turns
+    generateOnCheckpoint: 50 # Every N turns
     scenarioTypes:
       - "turn_sequence"
       - "quality_evaluation"
@@ -819,6 +821,7 @@ story:
 ## Implementation Phases
 
 ### Phase 1: Core Schema & Types (Week 1-2)
+
 - [ ] Add `mode: 'story'` to chats table
 - [ ] Extend `actors.agent_type` with `'game_master'`
 - [ ] Add `npc_states`, `location_states`, `world_states` tables
@@ -827,42 +830,49 @@ story:
 - [ ] Create Kysely migrations
 
 ### Phase 2: Turn Manager & Game Master (Week 3-4)
+
 - [ ] Implement `TurnManager` service with strategy pattern
 - [ ] Implement `GameMaster` service (LLM + human + hybrid)
 - [ ] Implement turn selection, prompt construction
 - [ ] Build GM decision logging/history
 
 ### Phase 3: Quality Evaluation & Regeneration (Week 4-5)
+
 - [ ] Implement `QualityEvaluator` with configurable dimensions
 - [ ] Build regeneration pipeline with exponential backoff
 - [ ] Add escalation to human GM
 - [ ] Integration with existing generation error handling
 
 ### Phase 4: World State Engine (Week 5-6)
+
 - [ ] Implement event extraction from messages (LLM-based)
 - [ ] Build validator and transactional applier
 - [ ] NPC state, location state, world lore updates
 - [ ] Snapshot/rollback mechanism
 
 ### Phase 5: Quest Engine (Week 6-7)
+
 - [ ] Implement all 7 quest types with configs
 - [ ] Progress tracking from world events
 - [ ] Narrative hooks and reward distribution
 - [ ] Composite quest support
 
 ### Phase 6: Synthetic Data Generation (Week 7-8)
+
 - [ ] Implement `SyntheticGenerator` service
 - [ ] Scenario extraction from completed sessions
 - [ ] Test runner with replay/mutation/regression modes
 - [ ] CI/CD integration examples
 
 ### Phase 7: API & UI Integration (Week 8-10)
+
 - [ ] REST endpoints for all new functionality
 - [ ] WebUI: Story chat view, GM panel, quest log
 - [ ] TUI: Story mode components
 - [ ] Real-time updates via WebSocket/htmx
 
 ### Phase 8: Polish & Documentation (Week 10-11)
+
 - [ ] Comprehensive testing (unit, integration, synthetic)
 - [ ] Performance optimization
 - [ ] Documentation: API, user guide, GM guide
@@ -872,13 +882,13 @@ story:
 
 ## Future Extensions
 
-| Feature | Description |
-|---------|-------------|
-| **Multi-user story** | Multiple humans + LLMs in same story |
-| **Story branching** | Parallel timelines, merge/prune |
-| **LLM ensemble GM** | Multiple LLMs vote on GM decisions |
-| **Procedural quest generation** | GM creates quests from world state |
-| **Cross-world story arcs** | Quests spanning multiple worlds |
-| **Story export** | Novel-format export, timeline visualization |
-| **Voice/TTS integration** | Narrated story playback |
-| **Visual storyboards** | AI-generated scene illustrations |
+| Feature                         | Description                                 |
+| ------------------------------- | ------------------------------------------- |
+| **Multi-user story**            | Multiple humans + LLMs in same story        |
+| **Story branching**             | Parallel timelines, merge/prune             |
+| **LLM ensemble GM**             | Multiple LLMs vote on GM decisions          |
+| **Procedural quest generation** | GM creates quests from world state          |
+| **Cross-world story arcs**      | Quests spanning multiple worlds             |
+| **Story export**                | Novel-format export, timeline visualization |
+| **Voice/TTS integration**       | Narrated story playback                     |
+| **Visual storyboards**          | AI-generated scene illustrations            |

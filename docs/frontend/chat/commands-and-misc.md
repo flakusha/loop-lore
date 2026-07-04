@@ -33,7 +33,7 @@
 | Edit mode            | Bubble                 | Textarea replaces bubble; Save/Cancel        |
 | Swipe variant        | Bubble                 | Counter "2/4" always visible                 |
 | Generation failure   | Chat area              | Failed message slot (per error mode)         |
-| Continue available   | Bubble footer          | "↳ Continue" link on partial/cancelled msg  |
+| Continue available   | Bubble footer          | "↳ Continue" link on partial/cancelled msg   |
 | Continue in progress | Chat area              | Placeholder slot with "↳ Continuing..."      |
 | Archived visible     | Chat area              | Dimmed bubbles with "Archived" tag + Restore |
 

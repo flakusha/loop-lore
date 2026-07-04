@@ -91,17 +91,17 @@ Characters ──M:N── Chats (via chat_participants)
 
 ### Persona Table
 
-| Column       | Type    | Constraints               | Notes                            |
-| ------------ | ------- | ------------------------- | -------------------------------- |
-| id           | TEXT    | PK, UUID                  |                                  |
-| user_id      | TEXT    | FK → users.id, NOT NULL   | Owner                            |
-| name         | TEXT    | NOT NULL                  | Display name in this persona     |
-| avatar_asset_id | TEXT | FK → assets.id           | Profile picture                  |
-| description  | TEXT    |                           | Physical/mental traits, backstory|
-| title        | TEXT    |                           | Optional title (display only)    |
-| is_default   | INTEGER | DEFAULT 0                 | Boolean: auto-selected for new chats |
-| created_at   | TEXT    | DEFAULT CURRENT_TIMESTAMP |                                  |
-| updated_at   | TEXT    | DEFAULT CURRENT_TIMESTAMP |                                  |
+| Column          | Type    | Constraints               | Notes                                |
+| --------------- | ------- | ------------------------- | ------------------------------------ |
+| id              | TEXT    | PK, UUID                  |                                      |
+| user_id         | TEXT    | FK → users.id, NOT NULL   | Owner                                |
+| name            | TEXT    | NOT NULL                  | Display name in this persona         |
+| avatar_asset_id | TEXT    | FK → assets.id            | Profile picture                      |
+| description     | TEXT    |                           | Physical/mental traits, backstory    |
+| title           | TEXT    |                           | Optional title (display only)        |
+| is_default      | INTEGER | DEFAULT 0                 | Boolean: auto-selected for new chats |
+| created_at      | TEXT    | DEFAULT CURRENT_TIMESTAMP |                                      |
+| updated_at      | TEXT    | DEFAULT CURRENT_TIMESTAMP |                                      |
 
 **Index**: `(user_id)` for user's persona list, `(user_id, is_default)` for default lookup.
 
@@ -110,10 +110,10 @@ Characters ──M:N── Chats (via chat_participants)
 When a chat is created, the user selects which persona to use. The chat stores
 the active persona:
 
-| Chat Column     | Type   | Constraints            | Notes                        |
-| --------------- | ------ | ---------------------- | ---------------------------- |
-| persona_id      | TEXT   | FK → personas.id       | Active user persona          |
-| impersonate_id  | TEXT   | FK → actors.id         | Character being impersonated |
+| Chat Column    | Type | Constraints      | Notes                        |
+| -------------- | ---- | ---------------- | ---------------------------- |
+| persona_id     | TEXT | FK → personas.id | Active user persona          |
+| impersonate_id | TEXT | FK → actors.id   | Character being impersonated |
 
 **Impersonation flow:**
 
@@ -127,25 +127,25 @@ the active persona:
 
 **Impersonation vs Persona lock:**
 
-| Feature          | Persona                     | Impersonation                    |
-| ---------------- | --------------------------- | -------------------------------- |
-| What it does     | Sets user's identity        | User plays as a character        |
-| Stored in        | `chat.persona_id`           | `chat.impersonate_id`            |
-| Prompt injection | User's persona fields       | Character's fields in user slot  |
-| Message author   | User's actor_id             | User's actor_id (permissions)    |
-| UI display       | Persona name/avatar         | Character name/avatar            |
-| Can be changed   | Anytime (affects future msgs) | Anytime (affects future msgs)  |
+| Feature          | Persona                       | Impersonation                   |
+| ---------------- | ----------------------------- | ------------------------------- |
+| What it does     | Sets user's identity          | User plays as a character       |
+| Stored in        | `chat.persona_id`             | `chat.impersonate_id`           |
+| Prompt injection | User's persona fields         | Character's fields in user slot |
+| Message author   | User's actor_id               | User's actor_id (permissions)   |
+| UI display       | Persona name/avatar           | Character name/avatar           |
+| Can be changed   | Anytime (affects future msgs) | Anytime (affects future msgs)   |
 
 ### Macro System
 
 Macros resolve differently depending on context:
 
-| Macro        | In Character Card         | In Persona                  | Meaning                    |
-| ------------ | ------------------------- | --------------------------- | -------------------------- |
-| `{{char}}`   | Character's display_name  | Chat partner's display_name | The "other" participant    |
-| `{{user}}`   | User's display_name       | This persona's display_name | The "self" participant     |
-| `<BOT>`      | Same as `{{char}}`        | Same as `{{char}}`          | Alias                      |
-| `<USER>`     | Same as `{{user}}`        | Same as `{{user}}`          | Alias                      |
+| Macro      | In Character Card        | In Persona                  | Meaning                 |
+| ---------- | ------------------------ | --------------------------- | ----------------------- |
+| `{{char}}` | Character's display_name | Chat partner's display_name | The "other" participant |
+| `{{user}}` | User's display_name      | This persona's display_name | The "self" participant  |
+| `<BOT>`    | Same as `{{char}}`       | Same as `{{char}}`          | Alias                   |
+| `<USER>`   | Same as `{{user}}`       | Same as `{{user}}`          | Alias                   |
 
 When impersonating, `{{user}}` resolves to the impersonated character's name
 in the prompt context, giving the AI the correct identity frame.
@@ -158,13 +158,13 @@ in the prompt context, giving the AI the correct identity frame.
 
 loop-lore accepts character definitions in five formats:
 
-| Format        | Extension(s)       | Detection                        | Use Case                      |
-| ------------- | ------------------ | -------------------------------- | ----------------------------- |
-| JSON          | `.json`            | Content starts with `{`          | Tool interop, API import      |
-| YAML          | `.yaml`, `.yml`    | Content doesn't start with `{`   | Hand-authored, readable       |
-| TOML          | `.toml`            | Key=value with `[sections]`      | Config-style character defs   |
-| PNG-embedded  | `.png`             | Magic bytes `‰PNG`               | SillyTavern cards, sharing    |
-| CHARX (ZIP)   | `.charx`           | Magic bytes `PK`                 | V3 bundles with assets        |
+| Format       | Extension(s)    | Detection                      | Use Case                    |
+| ------------ | --------------- | ------------------------------ | --------------------------- |
+| JSON         | `.json`         | Content starts with `{`        | Tool interop, API import    |
+| YAML         | `.yaml`, `.yml` | Content doesn't start with `{` | Hand-authored, readable     |
+| TOML         | `.toml`         | Key=value with `[sections]`    | Config-style character defs |
+| PNG-embedded | `.png`          | Magic bytes `‰PNG`             | SillyTavern cards, sharing  |
+| CHARX (ZIP)  | `.charx`        | Magic bytes `PK`               | V3 bundles with assets      |
 
 **Auto-detection algorithm:**
 
@@ -191,19 +191,19 @@ storage. This is the **Canonical Character Card** — a superset of CCv2/V3:
 interface CanonicalCharacterCard {
   // Identity
   name: string;
-  avatar?: AssetRef;           // PNG/image reference
+  avatar?: AssetRef; // PNG/image reference
 
   // Prompt fields
-  description: string;         // Full character description/backstory
-  personality: string;         // Short personality summary
-  scenario: string;            // RP setting/context
-  system_prompt: string;       // System prompt override
-  post_history_instructions: string;  // UJB/jailbreak equivalent
-  welcome_message: string;     // First message (first_mes)
-  mes_example: string;         // Example dialogue
+  description: string; // Full character description/backstory
+  personality: string; // Short personality summary
+  scenario: string; // RP setting/context
+  system_prompt: string; // System prompt override
+  post_history_instructions: string; // UJB/jailbreak equivalent
+  welcome_message: string; // First message (first_mes)
+  mes_example: string; // Example dialogue
 
   // Alternate content
-  alternate_greetings: string[];  // Swipe options for first message
+  alternate_greetings: string[]; // Swipe options for first message
   group_only_greetings: string[]; // Greetings for group chats (V3)
 
   // Metadata
@@ -211,10 +211,10 @@ interface CanonicalCharacterCard {
   creator: string;
   creator_notes: string;
   character_version: string;
-  nickname?: string;           // {{char}} alias (V3)
+  nickname?: string; // {{char}} alias (V3)
 
   // Assets
-  assets?: CharacterAsset[];   // V3 structured assets
+  assets?: CharacterAsset[]; // V3 structured assets
 
   // Lorebook
   character_book?: CharacterBook;
@@ -223,8 +223,14 @@ interface CanonicalCharacterCard {
   extensions?: Record<string, unknown>;
 
   // Import provenance
-  import_spec: 'chara_card_v1' | 'chara_card_v2' | 'chara_card_v3'
-            | 'character_ai' | 'raw_json' | 'raw_yaml' | 'raw_toml';
+  import_spec:
+    | "chara_card_v1"
+    | "chara_card_v2"
+    | "chara_card_v3"
+    | "character_ai"
+    | "raw_json"
+    | "raw_yaml"
+    | "raw_toml";
   import_spec_version?: string;
 }
 ```
@@ -248,14 +254,14 @@ The oldest format. Flat JSON:
 
 **Field mapping:**
 
-| V1 Field      | Canonical Field       |
-| ------------- | --------------------- |
-| `name`        | `name`                |
-| `description` | `description`         |
-| `personality` | `personality`         |
-| `scenario`    | `scenario`            |
-| `first_mes`   | `welcome_message`     |
-| `mes_example` | `mes_example`         |
+| V1 Field      | Canonical Field   |
+| ------------- | ----------------- |
+| `name`        | `name`            |
+| `description` | `description`     |
+| `personality` | `personality`     |
+| `scenario`    | `scenario`        |
+| `first_mes`   | `welcome_message` |
+| `mes_example` | `mes_example`     |
 
 ---
 
@@ -342,15 +348,15 @@ Character.AI exports as JSON with a different structure:
 
 **Field mapping:**
 
-| Character.AI Field          | Canonical Field               |
-| --------------------------- | ----------------------------- |
-| `name`                      | `name`                        |
-| `description`               | `description`                 |
-| `greeting`                  | `welcome_message`             |
-| `definition`                | `description` (appended)      |
-| `examples_of_dialogue`      | `mes_example`                 |
-| `tags`                      | `tags`                        |
-| `visibility`                | `settings.visibility`         |
+| Character.AI Field     | Canonical Field          |
+| ---------------------- | ------------------------ |
+| `name`                 | `name`                   |
+| `description`          | `description`            |
+| `greeting`             | `welcome_message`        |
+| `definition`           | `description` (appended) |
+| `examples_of_dialogue` | `mes_example`            |
+| `tags`                 | `tags`                   |
+| `visibility`           | `settings.visibility`    |
 
 The `definition` field uses Character.AI's nested macro syntax
 (`{{char}}=description={...}`). This is parsed and merged into `description`.
@@ -377,7 +383,7 @@ system_prompt: |
 welcome_message: |
   *The elf woman looks up from the ancient tome, her silver eyes
   catching the torchlight.*
-  
+
   "Ah... a visitor. It has been some time since anyone found their
   way to these ruins."
 mes_example: |
@@ -385,7 +391,7 @@ mes_example: |
   {{user}}: Who are you?
   {{char}}: *She closes the book carefully* I am Lyra. And you are
   either very brave or very lost to be wandering these halls.
-  
+
   <START>
   {{user}}: Can you teach me magic?
   {{char}}: *A faint smile crosses her lips* Magic is not taught.
@@ -475,11 +481,11 @@ and the broader character sharing community.
 
 **PNG chunk keywords:**
 
-| Spec   | Chunk Keyword | Encoding                      |
-| ------ | ------------- | ----------------------------- |
-| V1     | `Chara`       | `base64(JSON)`                |
-| V2     | `chara`       | `base64(UTF-8(JSON))`         |
-| V3     | `ccv3`        | `base64(UTF-8(JSON))`         |
+| Spec | Chunk Keyword | Encoding              |
+| ---- | ------------- | --------------------- |
+| V1   | `Chara`       | `base64(JSON)`        |
+| V2   | `chara`       | `base64(UTF-8(JSON))` |
+| V3   | `ccv3`        | `base64(UTF-8(JSON))` |
 
 **Reading order:** Check for `ccv3` first (V3), fall back to `chara` (V2),
 then `Chara` (V1). Decode base64 → parse JSON → normalize to canonical.
@@ -512,9 +518,7 @@ Assets referenced in `card.json` use the `embeded://` URI scheme:
 
 ```json
 {
-  "assets": [
-    { "type": "icon", "uri": "embeded://assets/icon/images/main.png", "name": "main", "ext": "png" }
-  ]
+  "assets": [{ "type": "icon", "uri": "embeded://assets/icon/images/main.png", "name": "main", "ext": "png" }]
 }
 ```
 
@@ -552,24 +556,24 @@ File uploaded / pasted / URL fetched
 interface FormatNormalizer {
   /** Detect if this parser can handle the input */
   canParse(input: string | Buffer): boolean;
-  
+
   /** Parse and normalize to canonical format */
   parse(input: string | Buffer): CanonicalCharacterCard;
-  
+
   /** Format name for import_spec tracking */
   formatName: string;
 }
 
 // Registered normalizers (order matters for auto-detection)
 const normalizers: FormatNormalizer[] = [
-  new PngCardNormalizer(),     // PNG-embedded
-  new CharxNormalizer(),       // ZIP/CHARX
+  new PngCardNormalizer(), // PNG-embedded
+  new CharxNormalizer(), // ZIP/CHARX
   new CharaCardV3Normalizer(), // CCv3 JSON
   new CharaCardV2Normalizer(), // CCv2 JSON
   new CharacterAiNormalizer(), // Character.AI
-  new TomlNormalizer(),        // TOML
-  new YamlNormalizer(),        // YAML
-  new RawJsonNormalizer(),     // Fallback JSON
+  new TomlNormalizer(), // TOML
+  new YamlNormalizer(), // YAML
+  new RawJsonNormalizer(), // Fallback JSON
 ];
 ```
 
@@ -579,11 +583,11 @@ Import errors produce structured feedback:
 
 ```typescript
 interface ImportError {
-  format: string;           // Detected format name
-  field?: string;           // Field that failed validation
-  message: string;          // Human-readable error
-  suggestion?: string;      // Fix suggestion
-  line?: number;            // For YAML/TOML parse errors
+  format: string; // Detected format name
+  field?: string; // Field that failed validation
+  message: string; // Human-readable error
+  suggestion?: string; // Fix suggestion
+  line?: number; // For YAML/TOML parse errors
 }
 ```
 
@@ -600,15 +604,15 @@ Example errors:
 
 ### Export Format Selection
 
-| Target               | Format             | Notes                              |
-| -------------------- | ------------------ | ---------------------------------- |
-| SillyTavern import   | PNG with V2+V3    | Maximum compatibility              |
-| Chub.ai upload       | PNG with V2+V3    | Same as SillyTavern                |
-| Download (default)   | PNG with V2+V3    | Best for sharing                   |
-| Download (JSON)      | JSON (V2)         | For tools that parse JSON          |
-| Download (YAML)      | YAML              | For hand-editing                   |
-| Download (TOML)      | TOML              | For config-style workflows         |
-| API response         | JSON (V2)         | Standardized API format            |
+| Target             | Format         | Notes                      |
+| ------------------ | -------------- | -------------------------- |
+| SillyTavern import | PNG with V2+V3 | Maximum compatibility      |
+| Chub.ai upload     | PNG with V2+V3 | Same as SillyTavern        |
+| Download (default) | PNG with V2+V3 | Best for sharing           |
+| Download (JSON)    | JSON (V2)      | For tools that parse JSON  |
+| Download (YAML)    | YAML           | For hand-editing           |
+| Download (TOML)    | TOML           | For config-style workflows |
+| API response       | JSON (V2)      | Standardized API format    |
 
 ### Export Process
 
@@ -677,14 +681,14 @@ in reverse). Copies name + description, creates a new character actor.
 # Upload this file or paste into the character editor.
 # Fields marked [optional] can be omitted.
 
-name: ""                              # Required: character display name
-description: ""                       # Required: full character description/backstory
-personality: ""                       # [optional] short personality summary
-scenario: ""                          # [optional] RP setting/context
-system_prompt: ""                     # [optional] system prompt override
-welcome_message: ""                   # [optional] first message to user
-mes_example: ""                       # [optional] example dialogue
-post_history_instructions: ""         # [optional] instructions after chat history
+name: "" # Required: character display name
+description: "" # Required: full character description/backstory
+personality: "" # [optional] short personality summary
+scenario: "" # [optional] RP setting/context
+system_prompt: "" # [optional] system prompt override
+welcome_message: "" # [optional] first message to user
+mes_example: "" # [optional] example dialogue
+post_history_instructions: "" # [optional] instructions after chat history
 
 # [optional] alternate welcome messages (swipes)
 alternate_greetings: []
@@ -838,34 +842,34 @@ in-character responses from both sides.
 
 ### Characters
 
-| Method | Endpoint                     | Description                          |
-| ------ | ---------------------------- | ------------------------------------ |
-| GET    | `/api/characters`            | List user's characters               |
-| POST   | `/api/characters`            | Create character (JSON body)         |
-| GET    | `/api/characters/:id`        | Get character details                |
-| PUT    | `/api/characters/:id`        | Update character                     |
-| DELETE | `/api/characters/:id`        | Delete character                     |
-| POST   | `/api/characters/import`     | Import from file (multipart upload)  |
-| POST   | `/api/characters/import/url` | Import from URL (JSON body: {url})   |
+| Method | Endpoint                     | Description                                          |
+| ------ | ---------------------------- | ---------------------------------------------------- |
+| GET    | `/api/characters`            | List user's characters                               |
+| POST   | `/api/characters`            | Create character (JSON body)                         |
+| GET    | `/api/characters/:id`        | Get character details                                |
+| PUT    | `/api/characters/:id`        | Update character                                     |
+| DELETE | `/api/characters/:id`        | Delete character                                     |
+| POST   | `/api/characters/import`     | Import from file (multipart upload)                  |
+| POST   | `/api/characters/import/url` | Import from URL (JSON body: {url})                   |
 | GET    | `/api/characters/:id/export` | Export as file (query: format=png\|json\|yaml\|toml) |
 
 ### Personas
 
-| Method | Endpoint                  | Description                    |
-| ------ | ------------------------- | ------------------------------ |
-| GET    | `/api/personas`           | List user's personas           |
-| POST   | `/api/personas`           | Create persona                 |
-| PUT    | `/api/personas/:id`       | Update persona                 |
-| DELETE | `/api/personas/:id`       | Delete persona                 |
+| Method | Endpoint                                 | Description                  |
+| ------ | ---------------------------------------- | ---------------------------- |
+| GET    | `/api/personas`                          | List user's personas         |
+| POST   | `/api/personas`                          | Create persona               |
+| PUT    | `/api/personas/:id`                      | Update persona               |
+| DELETE | `/api/personas/:id`                      | Delete persona               |
 | POST   | `/api/personas/:id/convert-to-character` | Convert persona to character |
 
 ### Chat Impersonation
 
-| Method | Endpoint                          | Description                  |
-| ------ | --------------------------------- | ---------------------------- |
-| PUT    | `/api/chats/:id/persona`          | Set active persona           |
-| PUT    | `/api/chats/:id/impersonate`      | Set impersonated character   |
-| DELETE | `/api/chats/:id/impersonate`      | Stop impersonating           |
+| Method | Endpoint                     | Description                |
+| ------ | ---------------------------- | -------------------------- |
+| PUT    | `/api/chats/:id/persona`     | Set active persona         |
+| PUT    | `/api/chats/:id/impersonate` | Set impersonated character |
+| DELETE | `/api/chats/:id/impersonate` | Stop impersonating         |
 
 ---
 
@@ -873,16 +877,16 @@ in-character responses from both sides.
 
 ### New Files Required
 
-| File                          | Purpose                                    |
-| ----------------------------- | ------------------------------------------ |
-| `src/characters/parser.ts`    | Auto-detection + format dispatch           |
+| File                          | Purpose                                                   |
+| ----------------------------- | --------------------------------------------------------- |
+| `src/characters/parser.ts`    | Auto-detection + format dispatch                          |
 | `src/characters/normalizers/` | One file per format (png, charx, v2, v3, cai, yaml, toml) |
-| `src/characters/exporter.ts`  | Canonical → target format conversion       |
-| `src/characters/template.ts`  | YAML/TOML template generation              |
-| `src/personas/service.ts`     | Persona CRUD                              |
-| `src/personas/controller.ts`  | Persona HTTP handlers                     |
-| `src/routes/personas.ts`      | Persona route definitions                 |
-| `src/routes/characters.ts`    | Character import/export routes             |
+| `src/characters/exporter.ts`  | Canonical → target format conversion                      |
+| `src/characters/template.ts`  | YAML/TOML template generation                             |
+| `src/personas/service.ts`     | Persona CRUD                                              |
+| `src/personas/controller.ts`  | Persona HTTP handlers                                     |
+| `src/routes/personas.ts`      | Persona route definitions                                 |
+| `src/routes/characters.ts`    | Character import/export routes                            |
 
 ### Dependencies
 
@@ -897,13 +901,13 @@ New dependencies:
 
 ### Testing Strategy
 
-| Test File                            | Coverage                                    |
-| ------------------------------------ | ------------------------------------------- |
-| `src/characters/parser.test.ts`      | Auto-detection for all formats              |
-| `src/characters/normalizers/*.test.ts`| Each format's normalization logic          |
-| `src/characters/exporter.test.ts`    | Round-trip: canonical → format → canonical  |
-| `src/personas/service.test.ts`       | Persona CRUD + default logic               |
-| `src/characters/integration.test.ts` | Full import → store → export pipeline      |
+| Test File                              | Coverage                                   |
+| -------------------------------------- | ------------------------------------------ |
+| `src/characters/parser.test.ts`        | Auto-detection for all formats             |
+| `src/characters/normalizers/*.test.ts` | Each format's normalization logic          |
+| `src/characters/exporter.test.ts`      | Round-trip: canonical → format → canonical |
+| `src/personas/service.test.ts`         | Persona CRUD + default logic               |
+| `src/characters/integration.test.ts`   | Full import → store → export pipeline      |
 
 ---
 
@@ -920,14 +924,14 @@ SOCIAL/WORK/HEALTH/CREATIVITY. The stat system adapts via plugin bundles
 The default stat template follows the six-attribute model, but this is one
 **bundle choice** among many:
 
-| Field          | RPG Role (Fantasy)         | Sci-Fi Role                | Modern Role                |
-| -------------- | -------------------------- | -------------------------- | -------------------------- |
-| `strength`     | Melee damage, carry weight  | Melee, cybernetic force    | Physical labor, combat     |
-| `dexterity`    | Evasion, ranged attacks     | Piloting, hacking speed    | Driving, athletics         |
-| `intelligence` | Arcane power, knowledge     | Tech/computer skills       | Investigation, logic       |
-| `charisma`     | Persuasion, leadership      | Negotiation, command       | Social, networking         |
-| `hp`           | Hit points                  | Hull integrity             | Health/stamina             |
-| `mp`           | Magic points                | Energy/battery             | Focus/stress               |
+| Field          | RPG Role (Fantasy)         | Sci-Fi Role             | Modern Role            |
+| -------------- | -------------------------- | ----------------------- | ---------------------- |
+| `strength`     | Melee damage, carry weight | Melee, cybernetic force | Physical labor, combat |
+| `dexterity`    | Evasion, ranged attacks    | Piloting, hacking speed | Driving, athletics     |
+| `intelligence` | Arcane power, knowledge    | Tech/computer skills    | Investigation, logic   |
+| `charisma`     | Persuasion, leadership     | Negotiation, command    | Social, networking     |
+| `hp`           | Hit points                 | Hull integrity          | Health/stamina         |
+| `mp`           | Magic points               | Energy/battery          | Focus/stress           |
 
 ### Custom Stat System (Bundle-Defined)
 
@@ -935,7 +939,7 @@ When a plugin bundle is active, it defines its own stat block:
 
 ```typescript
 interface StatBlock {
-  [statName: string]: number;  // Fully flexible keys
+  [statName: string]: number; // Fully flexible keys
 }
 
 // Example: Dungeons & Dragons bundle
@@ -983,35 +987,35 @@ to the DB. Effective stats are computed at use time (base + equipment + effects)
 
 The following character fields work across all genres without modification:
 
-| Field | Fantasy Use | Sci-Fi Use | Modern Use |
-| ----- | ----------- | ---------- | ---------- |
-| `description` | Elven sorceress backstory | AI consciousness origin | Detective's case files |
-| `personality` | Wise, aloof | Analytical, curious | Cynical, sharp |
-| `scenario` | Ancient ruins exploration | Space station investigation | Crime scene investigation |
-| `mes_example` | Fantasy dialogue | Sci-fi bridge comms | Interrogation transcripts |
-| `alternate_greetings` | "Greetings, traveler" | "Identify yourself" | "You're late" |
-| `system_prompt` | Fantasy RP behavior | Sci-fi RP behavior | Modern RP behavior |
-| `tags` | `fantasy, elf, mage` | `sci-fi, android, pilot` | `modern, detective, noir` |
+| Field                 | Fantasy Use               | Sci-Fi Use                  | Modern Use                |
+| --------------------- | ------------------------- | --------------------------- | ------------------------- |
+| `description`         | Elven sorceress backstory | AI consciousness origin     | Detective's case files    |
+| `personality`         | Wise, aloof               | Analytical, curious         | Cynical, sharp            |
+| `scenario`            | Ancient ruins exploration | Space station investigation | Crime scene investigation |
+| `mes_example`         | Fantasy dialogue          | Sci-fi bridge comms         | Interrogation transcripts |
+| `alternate_greetings` | "Greetings, traveler"     | "Identify yourself"         | "You're late"             |
+| `system_prompt`       | Fantasy RP behavior       | Sci-fi RP behavior          | Modern RP behavior        |
+| `tags`                | `fantasy, elf, mage`      | `sci-fi, android, pilot`    | `modern, detective, noir` |
 
 ## Reference
 
 ### External Specifications
 
-| Spec | URL | Notes |
-| ---- | --- | ----- |
-| CCv2 | github.com/malfoyslastname/character-card-spec-v2 | Community standard |
-| CCv3 | github.com/kwaroran/character-card-spec-v3 | V3 with assets |
+| Spec         | URL                                                     | Notes                  |
+| ------------ | ------------------------------------------------------- | ---------------------- |
+| CCv2         | github.com/malfoyslastname/character-card-spec-v2       | Community standard     |
+| CCv3         | github.com/kwaroran/character-card-spec-v3              | V3 with assets         |
 | Unified Spec | github.com/BasedInn/Unified-CharacterCard-Specification | Consolidated reference |
 
 ### Related Documents
 
-| Document | Covers |
-| -------- | ------ |
-| `docs/actors.md` | Actor data model, import field mapping, lorebooks |
-| `docs/schema.md` | Database schema, all tables |
-| `docs/frontend/characters.md` | Character list and edit UI |
-| `docs/frontend/chat/overview.md` | Chat types, data model |
-| `docs/memory-system.md` | Memory lifecycle, three-tier system |
-| `docs/assets.md` | Asset upload and linking pipeline |
-| `docs/spec/rpg-mechanics.md` | RPG stat system, rules, plugin bundles |
-| `docs/spec/plugin-system.md` | Plugin architecture, tool definitions |
+| Document                         | Covers                                            |
+| -------------------------------- | ------------------------------------------------- |
+| `docs/actors.md`                 | Actor data model, import field mapping, lorebooks |
+| `docs/schema.md`                 | Database schema, all tables                       |
+| `docs/frontend/characters.md`    | Character list and edit UI                        |
+| `docs/frontend/chat/overview.md` | Chat types, data model                            |
+| `docs/memory-system.md`          | Memory lifecycle, three-tier system               |
+| `docs/assets.md`                 | Asset upload and linking pipeline                 |
+| `docs/spec/rpg-mechanics.md`     | RPG stat system, rules, plugin bundles            |
+| `docs/spec/plugin-system.md`     | Plugin architecture, tool definitions             |

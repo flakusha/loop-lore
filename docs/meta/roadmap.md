@@ -1,178 +1,156 @@
 # Roadmap
 
-This document outlines potential future features and improvements for loop-lore, inspired by related projects and community needs.
+Current status of feature areas with implementation progress. Checkmarks =
+code exists in `src/`. Target boxes = planned.
 
-## Inspiration Sources
+## ✅ Core Infrastructure (Built)
 
-### Odysseus Features
+| Feature | Implementation |
+|---------|---------------|
+| Database schema (19 tables) | `src/db/schema-*.ts`, `migrations/001_init.ts` |
+| Enums (30+ const+type pairs) | `src/db/enums-*.ts` |
+| Kysely init + WAL + FK | `src/db/index.ts` |
+| DB migrate runner | `src/db/migrate.ts` |
+| Config loader (YAML/TOML/env) | `src/config/load.ts` |
+| TLS cert auto-generation | `src/config/cert.ts` |
+| Auth middleware (Bearer+SHA256) | `src/middleware/auth.ts` |
+| Middleware pipeline (compose, errorBoundary) | `src/middleware/pipeline.ts` |
+| Structured logger (levels, rotate, censor) | `src/logger/*.ts` |
+| Content encoding (gzip/zstd/brotli) | `src/content/encode.ts`, `compress.ts` |
+| Content minification | `src/content/minify.ts` |
+| Transport layer (H1/H2/WS/negotiation) | `src/transport/*.ts` |
+| HTTP/HTTPS server | `src/server.ts` |
+| Stats/age-gate generation controllers | `src/age-gate/controller.ts`, `src/generation/controller.ts` |
+| CSS themes (12) + app CSS | `src/public/css/*.css` |
+| Frontend browser lib (crypto/compress) | `src/frontend/browser.ts` |
+| Web UI view templates | `src/views/chat.html`, `gallery.html`, `layout.html`, `settings.html` |
+| HTTP utils | `src/routes/http-utils.ts` |
+| 333 tests passing | `bun test` |
 
-- **Chat + Agents**: Local/API model integration, tool usage, MCP integration, file operations, shell access, skill systems, and memory persistence
-- **Cookbook**: Hardware-aware model recommendations, automated downloads, and serving optimizations
-- **Deep Research**: Multi-step web research with source citation and report generation
-- **Compare**: Blind side-by-side model testing with automated synthesis
-- **Documents**: Writing-first editor with AI-assisted editing, suggestions, and multi-format support (Markdown, HTML, CSV)
-- **Email**: Full IMAP/SMTP client with triage, tagging, summarization, reminders, and AI-assisted replies
-- **Notes, Tasks + Calendar**: Integrated task management, reminders, scheduled agent tasks, and CalDAV synchronization
-- **Extras**: Gallery/image editor, theming system, file uploads, web search integration, session management, and 2FA
+## 🏗 Integration Phase (Current Focus)
 
-### Open WebUI Features
+Bridge between existing backend and user-facing UIs.
 
-- **Flexible Installation**: Multiple deployment options (pip, Docker, Kubernetes, native)
-- **Broad Model Support**: Unified interface for Ollama, OpenAI-compatible APIs, LMStudio, GroqCloud, Mistral, vLLM, etc.
-- **Advanced Access Control**: Granular RBAC, user groups, and permission systems
-- **Extensible Plugin System**: Filters, Actions, Pipes, Tools, Skills with MCP/MCPO/OpenAPI integration
-- **Custom Agents**: Model wrapping with custom instructions, tools, knowledge bases, and access controls
-- **Persistent Memory**: Cross-conversation context retention and factual recall
-- **Advanced Features**:
-  - Notes & Channels for collaborative workspaces
-  - Calendar & AI scheduling through function calling
-  - Automations with recurring prompt execution
-  - Responsive design with PWA support
-  - Rich media support (Markdown, LaTeX, voice/video, image generation/editing)
-  - Multi-model conversations for ensemble reasoning
-  - Usage analytics and model evaluation (A/B testing, ELO leaderboards)
-  - Flexible storage (SQLite/PostgreSQL, S3/GCS/Azure blob storage)
-  - Advanced vector DB support (Chroma, PGVector, Qdrant, Milvus, etc.)
-  - Enterprise auth (LDAP/AD, SSO, SCIM provisioning)
-  - Cloud storage integration (Google Drive, OneDrive/SharePoint)
-  - Production observability (OpenTelemetry)
-  - Horizontal scalability (Redis sessions, WebSocket support)
-  - Multilingual support
+- [ ] **CRUD route controllers** — chats, messages, characters, users, worlds, assets
+- [ ] **Route router** — single dispatch URL→handler in `src/routes/router.ts`
+- [ ] **View serving** — `/views/chat|gallery|characters|settings` endpoints
+- [ ] **Assistant service** — rule-based MVP (`src/assistant/service.ts`)
+- [ ] **TUI chat widget** — `src/tui/chat.ts` (List + Textbox)
+- [ ] **TUI input widget** — `src/tui/input.ts`
+- [ ] **TUI screen manager** — expand `src/tui/app.ts` with layout
+- [ ] **Lint pass** — fix 176 style errors, make `bun run check` green
+- [ ] **Web UI ↔ API wiring** — htmx swaps working end-to-end
+- [ ] **Sample plugins** — dice/roll tool as early plugin prototype
+
+## 🎯 Planned Features (Priority Order)
+
+### P1: User-Facing Features
+
+- [ ] **Advanced Memory Systems**: Long-term character/world memory with retrieval
+- [ ] **Lorebook/World Info**: Sticky entries, cooldowns, activation conditions
+- [ ] **Character Cards**: Full V2/V3 PNG and JSON import/export
+- [ ] **Streaming Responses**: Real-time token streaming with visual feedback
+- [ ] **Multi-modal Support**: Image/audio/video generation and analysis
+- [ ] **Plugin System**: Server-side extensions + registry
+  - Sample plugins (dice, roll, simple tools) buildable early
+  - Full UI/registry wiring deferred
+- [ ] **Client Extensions**: WebUI/TUI plugin architecture
+
+### P1: Infrastructure
+
+- [ ] **Asset system service** — upload, polymorphic linking, CRUD (`src/assets/`)
+- [ ] **Age gate enforcement** — config-driven NSFW prohibition, birth year checks
+- [ ] **Profanity filter** — hardcoded list + `filter()` function
+- [ ] **Event Bus**: Robust pub/sub for loose coupling
+- [ ] **Provider Registry**: Clean LLM backend abstraction layer
+- [ ] **Agentic Workspace**: Worlds→Epics, Locations→Tasks, Characters→Agents
+
+### P2: Advanced AI
+
+- [ ] **Tool Use Framework**: Standardized AI tool interface
+- [ ] **Function Calling**: Structured API for AI functions
+- [ ] **Retrieval Augmented Generation (RAG)**: Document ingestion + semantic search
+- [ ] **Model Comparison**: Side-by-side testing with evaluation
+- [ ] **Workflow Automation**: Prompt chains for complex tasks
+- [ ] **Agent Systems**: Specialized AI roles (researcher, coder, analyst)
+- [ ] **Multi-Agent Collaboration**: Multiple agents on complex tasks
+- [ ] **Structured Output**: JSON/YAML enforcement from LLMs
+- [ ] **Prompt Chaining**: Reusable templates for complex reasoning
+- [ ] **Tool Chaining**: Dynamic tool output→input chaining
+- [ ] **AutoGPT-like Agents**: Autonomous self-directing agents
+
+### P2: User Experience
+
+- [ ] **Theming System**: Customizable UI themes (structure exists, needs UI)
+- [ ] **Session Management**: Multiple concurrent sessions per user
+- [ ] **Role-Based Access**: Admin/user/guest with granular permissions
+- [ ] **Export/Import**: Chat/character/world backup and migration
+- [ ] **Search & Filter**: Full-text search across messages, characters, lore
+- [ ] **Notifications**: Configurable alerts for events and mentions
+- [ ] **Internationalization**: Full i18n (see `docs/frontend/internationalization.md`)
+- [ ] **Accessibility**: Screen reader, keyboard nav, ARIA
+- [ ] **Progressive Web App (PWA)**: Offline, installability, push
+
+### P2: Administrative
+
+- [ ] **Admin Dashboard**: System metrics, usage stats, performance monitoring
+- [ ] **User Management**: Registration, profiles, preferences, activity
+- [ ] **Backup & Recovery**: Automated schedules, point-in-time recovery
+- [ ] **Audit Logging**: Comprehensive activity logs
+- [ ] **Rate Limiting & Quotas**: Per-user/resource controls
+- [ ] **API Versioning**: Stable contracts with versioned endpoints
+- [ ] **Health Checks**: Service monitoring, auto-recovery
+- [ ] **Billing & Usage Tracking**: Metered usage for cloud
+
+### P3: Enterprise & Scale
+
+- [ ] **Database Peripherals**: Connection pooling, query caching, read replicas
+- [ ] **Storage Abstraction**: Pluggable backends (local/S3/GCS)
+- [ ] **Observability**: OpenTelemetry metrics, tracing, logging
+- [ ] **Horizontal Scaling**: Redis sessions, WebSocket support
+- [ ] **Build System**: Bun build, Docker, Kubernetes manifests
+- [ ] **Migration Tools**: Import/export from SillyTavern, others
+- [ ] **Webhook System**: Outgoing integrations
+- [ ] **API-First Design**: Complete RESTful API + WebSocket
+- [ ] **Authentication Providers**: OAuth, LDAP, SAML/OIDC, SCIM
+- [ ] **Vector Database Options**: Chroma, PGVector, Qdrant, Milvus
+- [ ] **Model Hub Integration**: Hugging Face and similar
+- [ ] **Cross-Platform Clients**: Mobile and desktop native
+- [ ] **File System Integrations**: Google Drive, OneDrive, Dropbox
+- [ ] **Communication Integrations**: Slack, Discord, Telegram
 
 ## Dual-Use Architecture: RPG + Agentic Workspace
 
-loop-lore is designed as a **dual-mode application**:
+loop-lore as **dual-mode application**:
 
-1. **RPG Mode** (default) — Roleplay chat with characters, worlds, and story-focused features
-2. **Agentic Workspace Mode** — AI-assisted workspaces where agents solve problems, execute code, and conduct research
+1. **RPG Mode** (default) — Roleplay chat with characters, worlds, story features
+2. **Agentic Workspace Mode** — AI-assisted workspaces (agents solve problems,
+   execute code, conduct research)
 
-See [Use Case: Agentic Assistant Workspace](../spec/use-case-agentic-workspace.md) for the full mapping of RPG concepts to agentic concepts (Worlds→Epics, Locations→Tasks, Characters→Agents) and the plugin system design.
-
----
-
-## Planned Features for loop-lore
-
-### Plugin System
-
-- [ ] **Plugin System**: Server-side extensions for custom functionality (tools, agent roles, UI components, API routes)
-- [ ] **Plugin Registry**: Community plugin marketplace with install/enable/disable API
-- [ ] **Core Plugins**: Built-in plugins for dice rolling, code execution, web research, file operations
-- [ ] **Client Extensions**: WebUI/TUI plugin architecture
-
-### Agentic Assistant Workspace (Alternative Use Case)
-
-- [ ] **Epic/Task Mapping**: Worlds → Epics, Locations → Tasks, Characters → Agents
-- [ ] **Agent Runtime**: Tool-use framework, code execution, web research, file operations
-- [ ] **Agent Roles**: Built-in roles (researcher, coder, analyst, writer, planner) + custom via plugins
-- [ ] **Agent Memory**: Episodic (chat history), Semantic (extracted facts), Procedural (learned patterns)
-- [ ] **Artifacts System**: Code files, documents, datasets, notebooks as polymorphic assets
-- [ ] **Workspace UI**: Task-focused workspaces with agent collaboration panels
-
-### Core RPG Chat Enhancements
-
-- [ ] **Advanced Memory Systems**: Long-term character/world memory with retrieval mechanisms
-- [ ] **Lorebook/World Info System**: Sticky entries, cooldowns, delays, and activation conditions
-- [ ] **Multi-modal Support**: Image/audio/video generation and analysis within chat
-- [ ] **Character Cards**: Full V2/V3 PNG and JSON character card import/export
-- [ ] **Prompt Enhancement**: Automated prompt improvement suggestions
-- [ ] **Streaming Responses**: Real-time token streaming with visual feedback
-
-### Infrastructure & Architecture
-
-- [ ] **Plugin System**: Server-side extensions for custom functionality
-- [ ] **Client Extensions**: WebUI/TUI plugin architecture
-- [ ] **Event Bus Maturation**: Robust event system for loose coupling
-- [ ] **Provider Registry**: Clean LLM backend abstraction layer
-- [ ] **Database Peripherals**: Connection pooling, query caching, read replicas
-- [ ] **Migration Tools**: Easy import/export from other platforms (SillyTavern, etc.)
-- [ ] **Storage Abstraction**: Pluggable storage backends for assets and metadata (local/S3/GCS)
-- [ ] **Observability**: Integration with OpenTelemetry for metrics, tracing, and logging
-- [ ] **Horizontal Scaling**: Redis-backed sessions, WebSocket support for horizontal scaling
-- [ ] **Build System**: Standardized build pipeline with Bun, Docker support, and Kubernetes manifests
-
-### User Experience Improvements
-
-- [ ] **Theming System**: Customizable UI themes for both TUI and WebUI
-- [ ] **Session Management**: Multiple concurrent sessions per user
-- [ ] **Role-Based Access**: Admin/user/guest roles with granular permissions
-- [ ] **Export/Import**: Chat/character/world backup and migration tools
-- [ ] **Search & Filter**: Full-text search across messages, characters, and lore
-- [ ] **Notifications**: Configurable alert system for events and mentions
-- [ ] **Internationalization**: Full i18n support for UI, with language selection per user (see [internationalization.md](./frontend/internationalization.md))
-- [ ] **Accessibility**: Screen reader support, keyboard navigation, and ARIA compliance
-- [ ] **Progressive Web App (PWA)**: Offline support, installability, and push notifications
-
-### Advanced AI Features
-
-- [ ] **Tool Use Framework**: Standardized interface for AI to use external tools
-- [ ] **Function Calling**: Structured API for AI to execute predefined functions
-- [ ] **Retrieval Augmented Generation (RAG)**: Document ingestion and semantic search
-- [ ] **Model Comparison**: Side-by-side model testing with automated evaluation
-- [ ] **Workflow Automation**: Chains of prompts and actions for complex tasks
-- [ ] **Agent Systems**: Specialized AI agents with defined roles and capabilities
-- [ ] **Multi-Agent Collaboration**: Support for multiple agents working together on complex tasks
-- [ ] **Structured Output**: Enforcing JSON/YAML/structured output from LLMs for agent workflows
-- [ ] **Prompt Chaining**: Reusable prompt templates and chains for complex reasoning
-- [ ] **Tool Chaining**: Dynamically chaining tool outputs as inputs to other tools
-- [ ] **AutoGPT-like Agents**: Autonomous agents that can self-direct and chain thoughts
-
-### Administrative & Operational Features
-
-- [ ] **Admin Dashboard**: System metrics, usage statistics, and performance monitoring
-- [ ] **User Management**: Registration, profiles, preferences, and activity tracking
-- [ ] **Backup & Recovery**: Automated backup schedules and point-in-time recovery
-- [ ] **Audit Logging**: Comprehensive activity logs for security and debugging
-- [ ] **Rate Limiting & Quotas**: Per-user/resource usage controls
-- [ ] **API Versioning**: Stable API contracts with versioned endpoints
-- [ ] **Health Checks**: Service monitoring and automated recovery mechanisms
-- [ ] **Billing & Usage Tracking**: Metered usage for cloud deployments, optional billing integration
-- [ ] **LDAP/AD Integration**: Enterprise authentication via LDAP/Active Directory
-- [ ] **SAML/OIDC Support**: Single Sign-On via SAML or OpenID Connect
-- [ ] **SCIM Provisioning**: Automated user provisioning via SCIM protocol
-
-### Integration & Extensibility
-
-- [ ] **Webhook System**: Outgoing integrations for external services
-- [ ] **API-First Design**: Complete RESTful API with WebSocket support
-- [ ] **Authentication Providers**: OAuth, LDAP, and external identity provider support
-- [ ] **Storage Backends**: Pluggable storage for assets and metadata (local/S3/GCS)
-- [ ] **Vector Database Options**: Multiple embedding store choices for RAG (Chroma, PGVector, Qdrant, Milvus, etc.)
-- [ ] **Model Hub Integration**: Direct access to Hugging Face and similar model repositories
-- [ ] **Cross-Platform Clients**: Mobile and desktop native applications
-- [ ] **File System Integrations**: Google Drive, OneDrive, Dropbox sync plugins
-- [ ] **Communication Integrations**: Slack, Discord, Telegram bot/plugins for notifications and commands
-- [ ] **CI/CD Integrations**: GitHub Actions, GitLab CI, Jenkins plugins for DevOps workflows
+See `docs/spec/use-case-agentic-workspace.md` for RPG→agentic mapping
+(Worlds→Epics, Locations→Tasks, Characters→Agents).
 
 ## Long-term Vision
 
-- **Federated Identity**: Decentralized authentication via Web3/DID solutions
-- **Peer-to-Peer Modes**: Offline-first and sync-when-available capabilities
-- **Marketplace**: Community-sharing platform for characters, lorebooks, and plugins
-- **Analytics Suite**: Advanced usage insights and behavior tracking
-- **Accessibility & Internationalization**: Screen reader support, keyboard navigation, and full internationalization (see [internationalization.md](./frontend/internationalization.md))
-- **Performance Optimization**: Advanced caching, query optimization, and resource management
-- **Research Tools**: Academic collaboration features and experiment tracking
-- **Decentralized Storage**: IPFS/Filecoin integration for asset storage and content addressing
-- **DAO Governance**: Community-driven governance via token-weighted voting and proposals
-- **AI-Generated Content**: Procedural generation of worlds, characters, lore, and quests using LLMs
-- **XR/VR Integration**: Virtual and augmented reality clients for immersive roleplay and workspaces
-- **Real-time Collaboration**: Google Docs-style collaborative editing for documents, code, and world-building
-- **Simulation Sandboxes**: Isolated environments for testing agents, code, and simulations
-- **Edge Computing**: Deployment to edge networks for low-latency interactions
-- **Quantum-Resistant Cryptography**: Post-quantum security for sensitive data and communications
-- **Neuro-Symbolic AI**: Integration of neural networks with symbolic reasoning for enhanced agent capabilities
-
-## Contribution Guidelines
-
-See [CONTRIBUTING.md](CONTRIBUTING.md) for detailed information on:
-
-- Reporting issues
-- Suggesting features
-- Submitting pull requests
-- Code review process
-- Development setup
-- Testing guidelines
+- Federated Identity (Web3/DID)
+- Peer-to-Peer modes (offline-first, sync-when-available)
+- Marketplace for characters, lorebooks, plugins
+- Analytics suite
+- Research tools (academic collaboration, experiment tracking)
+- Decentralized Storage (IPFS/Filecoin)
+- DAO Governance (token-weighted voting)
+- AI-Generated Content (procedural worlds, characters, quests)
+- XR/VR Integration (immersive roleplay + workspaces)
+- Real-time Collaboration (Google Docs-style)
+- Simulation Sandboxes (isolated agent/code testing)
+- Edge Computing (low-latency deployments)
+- Quantum-Resistant Cryptography
+- Neuro-Symbolic AI
 
 ## Timeline
 
-This roadmap is subject to change based on community feedback, contributor availability, and evolving technical priorities. Features may be reprioritized, combined, or split as needed.
+Roadmap subject to change based on community feedback, contributor availability,
+and evolving priorities. Features may be reprioritized, combined, or split.
+
+See `docs/meta/plan.md` for the concrete v0.1 implementation checklist.
+See `CONTRIBUTING.md` for contribution guidelines.

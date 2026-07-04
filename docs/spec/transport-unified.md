@@ -21,6 +21,7 @@ Single interface for HTTP/HTTPS/WebSocket/WebTransport with pluggable compressio
 `createProtocol(config)` — creates handler based on config protocol.
 
 **Selection priority:**
+
 1. Explicit config `protocol`
 2. `Accept` header negotiation
 3. ALPN (TLS)
@@ -30,11 +31,11 @@ Single interface for HTTP/HTTPS/WebSocket/WebTransport with pluggable compressio
 
 ## Built-in Adapters
 
-| Protocol | File | Features |
-|----------|------|----------|
-| HTTP/1.1 | `http1.ts` | Baseline, keep-alive |
-| HTTP/2 | `h2.ts` | Multiplexing, server push |
-| WebSocket | `ws.ts` | Binary/text frames, ping/pong |
+| Protocol  | File       | Features                      |
+| --------- | ---------- | ----------------------------- |
+| HTTP/1.1  | `http1.ts` | Baseline, keep-alive          |
+| HTTP/2    | `h2.ts`    | Multiplexing, server push     |
+| WebSocket | `ws.ts`    | Binary/text frames, ping/pong |
 
 Each adapter wraps native Bun APIs (`serve`, `WebSocket`).
 
@@ -57,6 +58,7 @@ Each adapter wraps native Bun APIs (`serve`, `WebSocket`).
 `negotiate(request, serverCaps)` — parses Accept/Accept-Encoding headers, selects best protocol+compression.
 
 **Capabilities advertised:**
+
 - `maxFrameSize`: default `0x10000` (64 KiB)
 - `maxPayload`: default `0x50000` (320 KiB)
 - `extensions`: `['compression/zstd', 'compression/br', 'handshake/v1']`
@@ -83,19 +85,20 @@ Each adapter wraps native Bun APIs (`serve`, `WebSocket`).
 
 ## Integration Points
 
-| Layer | Entry Point |
-|-------|-------------|
-| Server (HTTP/HTTPS) | `src/server.ts` → `createProtocol({ protocol: 'http/1.1' })` |
-| WebSocket | `src/server.ts` → upgrade handler → `createProtocol({ protocol: 'websocket' })` |
-| WebTransport | `src/server.ts` → WT endpoint → `createProtocol({ protocol: 'webtransport' })` |
-| Client (TUI) | `src/tui/app.ts` → `createProtocol({ protocol: 'websocket' })` |
-| Client (Web) | Static JS → `new WebSocket()` / `new WebTransport()` |
+| Layer               | Entry Point                                                                     |
+| ------------------- | ------------------------------------------------------------------------------- |
+| Server (HTTP/HTTPS) | `src/server.ts` → `createProtocol({ protocol: 'http/1.1' })`                    |
+| WebSocket           | `src/server.ts` → upgrade handler → `createProtocol({ protocol: 'websocket' })` |
+| WebTransport        | `src/server.ts` → WT endpoint → `createProtocol({ protocol: 'webtransport' })`  |
+| Client (TUI)        | `src/tui/app.ts` → `createProtocol({ protocol: 'websocket' })`                  |
+| Client (Web)        | Static JS → `new WebSocket()` / `new WebTransport()`                            |
 
 ---
 
 ## Configuration — `src/config/schema.ts`
 
 `TransportConfig` in config schema:
+
 - `defaultProtocol`, `enableWebSocket`, `enableWebTransport`, `enableH2`, `enableH3`
 - `compression` (enabled, default algorithm, threshold)
 - `limits` (maxFrameSize, maxPayload, maxConcurrentStreams)

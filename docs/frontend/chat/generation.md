@@ -137,11 +137,11 @@ The user's **error feedback mode** (configurable in settings) controls how failu
 
 **Visual indicators**:
 
-| Mode      | Partial message                                               | Continued child                                                          |
-| --------- | ------------------------------------------------------------- | ------------------------------------------------------------------------ |
-| Immersion | Faded "↳ Continue" button at bottom, no other detail          | Same as normal message, no decoration                                    |
-| Basic     | "(cut off)" label in meta line, "↳ Continue" button in footer | Small "continued from [time]" label in meta line                         |
-| Detailed  | Token count with "(limit reached)" annotation, Continue link  | "Continued — {n} tokens" label, collapsible join context from parent     |
+| Mode      | Partial message                                               | Continued child                                                      |
+| --------- | ------------------------------------------------------------- | -------------------------------------------------------------------- |
+| Immersion | Faded "↳ Continue" button at bottom, no other detail          | Same as normal message, no decoration                                |
+| Basic     | "(cut off)" label in meta line, "↳ Continue" button in footer | Small "continued from [time]" label in meta line                     |
+| Detailed  | Token count with "(limit reached)" annotation, Continue link  | "Continued — {n} tokens" label, collapsible join context from parent |
 
 **Cancelled mid-generation**:
 
