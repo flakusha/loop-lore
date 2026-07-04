@@ -62,9 +62,7 @@ function decompress(data: Uint8Array, algorithm: CompressionAlgorithm): Uint8Arr
 
   switch (algorithm) {
     case "zstd": {
-      return new Uint8Array(
-        (Bun.zstdDecompressSync as (buf: Buffer) => Buffer)(buffer),
-      );
+      return new Uint8Array((Bun.zstdDecompressSync as (buf: Buffer) => Buffer)(buffer));
     }
 
     case "br": {
