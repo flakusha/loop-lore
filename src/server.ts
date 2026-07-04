@@ -70,6 +70,30 @@ function findCompressedVariant(
 }
 
 /**
+ * Serve a static file with optional compressed variant.
+ * Shared between docs path and public path serving.
+ */
+function respondWithFile(fullPath: string, acceptEncoding: string): Response {
+  const variant = findCompressedVariant(fullPath, acceptEncoding);
+
+  if (variant) {
+    const content = readFileSync(variant.path);
+    return new Response(content, {
+      headers: {
+        "Content-Type": getContentType(variant.path),
+        "Content-Encoding": variant.encoding,
+        Vary: "Accept-Encoding",
+      },
+    });
+  }
+
+  const content = readFileSync(fullPath);
+  return new Response(content, {
+    headers: { "Content-Type": getContentType(fullPath) },
+  });
+}
+
+/**
  * API request handler — runs middleware pipeline then dispatches to route controllers.
  *
  * Middleware chain: errorBoundary → auth → route dispatch
@@ -109,6 +133,7 @@ function start() {
   createLogger(config.logging);
   initAgeGate(config.ageGate);
   const database = getDatabase();
+  const logger = getLogger();
 
   const sourcePublicDirectory = join(import.meta.dir, "public");
   const destinationPublicDirectory = join(import.meta.dir, "..", "dist", "public");
@@ -116,7 +141,7 @@ function start() {
   if (existsSync(sourcePublicDirectory)) {
     const result = compressAssets(sourcePublicDirectory, destinationPublicDirectory);
     if (result.total > 0) {
-      getLogger().info({
+      logger.info({
         message: "Compressed assets",
         total: result.total,
         bytes: result.originalBytes,
@@ -131,7 +156,7 @@ function start() {
   if (existsSync(DOCS_PATH)) {
     const docsResult = compressAssets(DOCS_PATH, DOCS_PATH);
     if (docsResult.total > 0) {
-      getLogger().info({
+      logger.info({
         message: "Docs compressed",
         total: docsResult.total,
         bytes: docsResult.originalBytes,
@@ -178,23 +203,7 @@ function start() {
 
       if (existsSync(fullPath)) {
         const acceptEncoding = request.headers.get("accept-encoding") ?? "";
-        const variant = findCompressedVariant(fullPath, acceptEncoding);
-
-        if (variant) {
-          const content = readFileSync(variant.path);
-          return new Response(content, {
-            headers: {
-              "Content-Type": getContentType(variant.path),
-              "Content-Encoding": variant.encoding,
-              Vary: "Accept-Encoding",
-            },
-          });
-        }
-
-        const content = readFileSync(fullPath);
-        return new Response(content, {
-          headers: { "Content-Type": getContentType(fullPath) },
-        });
+        return respondWithFile(fullPath, acceptEncoding);
       }
 
       return new Response("Documentation not found", { status: 404 });
@@ -204,29 +213,13 @@ function start() {
 
     if (existsSync(publicPath)) {
       const acceptEncoding = request.headers.get("accept-encoding") ?? "";
-      const variant = findCompressedVariant(publicPath, acceptEncoding);
-
-      if (variant) {
-        const content = readFileSync(variant.path);
-        return new Response(content, {
-          headers: {
-            "Content-Type": getContentType(variant.path),
-            "Content-Encoding": variant.encoding,
-            Vary: "Accept-Encoding",
-          },
-        });
-      }
-
-      const content = readFileSync(publicPath);
-      return new Response(content, {
-        headers: { "Content-Type": getContentType(publicPath) },
-      });
+      return respondWithFile(publicPath, acceptEncoding);
     }
 
     return new Response("Loop Lore - Documentation available at /docs/");
   };
 
-  const serverLogger = getLogger().child({ module: "server" });
+  const serverLogger = logger.child({ module: "server" });
 
   // ── HTTP server (always) ──────────────────────────────────
   serve({ port: config.server.port, fetch: fetchHandler });
@@ -257,7 +250,7 @@ function start() {
   // ── Shutdown handler — flush logs before exit ──────────
   const shutdown = async (signal: string) => {
     const SHUTDOWN_TIMEOUT = 5_000;
-    const flushed = getLogger().flush();
+    const flushed = logger.flush();
     const timer = setTimeout(() => {
       process.stderr.write(`[logger] flush timed out after ${SHUTDOWN_TIMEOUT}ms\n`);
       process.exit(1);
@@ -266,8 +259,8 @@ function start() {
     clearTimeout(timer);
     process.exit(0);
   };
-  process.on("SIGTERM", () => shutdown("SIGTERM"));
-  process.on("SIGINT", () => shutdown("SIGINT"));
+  process.on("SIGTERM", () => { void shutdown("SIGTERM"); });
+  process.on("SIGINT", () => { void shutdown("SIGINT"); });
 }
 
 start();
