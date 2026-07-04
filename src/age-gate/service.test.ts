@@ -1,6 +1,9 @@
 import { describe, test, expect } from "bun:test";
+import { Database } from "bun:sqlite";
+import { Kysely } from "kysely";
 import { getStatus, validateAge, acceptAgeGate, AgeGateError, UnderageError } from "./service";
 import type { AgeGateConfig } from "../config/schema";
+import { createSqliteDialect } from "../db/index";
 
 // ── Helpers ──────────────────────────────────────────────────
 
@@ -194,35 +197,11 @@ describe("acceptAgeGate", () => {
  * containing the age gate columns. Returns the Kysely instance.
  */
 async function createTestDatabase() {
-  const { Database } = await import("bun:sqlite");
-  const { Kysely: KyselyClass, SqliteDialect } = await import("kysely");
-
   const sqlite = new Database(":memory:");
   sqlite.run("PRAGMA foreign_keys = ON");
 
-  const dialect = new SqliteDialect({
-    database: {
-      close: () => {
-        sqlite.close();
-      },
-      prepare: (sql: string) => {
-        const statement = sqlite.prepare(sql);
-        return {
-          get reader() {
-            const s = sql.trim().toUpperCase();
-            return s.startsWith("SELECT") || s.startsWith("WITH") || s.startsWith("PRAGMA");
-          },
-          all: (parameters: readonly unknown[]) => statement.all(...(parameters as never[])),
-          run: (parameters: readonly unknown[]) => statement.run(...(parameters as never[])),
-          iterate: function* (parameters: readonly unknown[]) {
-            yield* statement.all(...(parameters as never[]));
-          },
-        };
-      },
-    },
-  });
-
-  const database = new KyselyClass<import("../db/schema").DB>({ dialect });
+  const dialect = createSqliteDialect(sqlite);
+  const database = new Kysely<import("../db/schema").DB>({ dialect });
 
   await database.schema
     .createTable("users")
