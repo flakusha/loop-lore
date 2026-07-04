@@ -23,6 +23,12 @@ SPDX-FileCopyrightText = "2026 Loop Lore Contributors"
 SPDX-License-Identifier = "MIT"
 
 [[annotations]]
+path = [".agents/**"]
+precedence = "aggregate"
+SPDX-FileCopyrightText = "2026 Loop Lore Contributors"
+SPDX-License-Identifier = "Apache-2.0 OR MIT"
+
+[[annotations]]
 path = ["plugins/**"]
 precedence = "aggregate"
 SPDX-FileCopyrightText = "2026 Loop Lore Contributors"

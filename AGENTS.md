@@ -16,6 +16,8 @@ Deep-dive docs in `/docs/` — read before touching related code:
 | `docs/users-sessions.md`         | User roles, remote sessions, demo/solo mode                             |
 | `docs/assets.md`                 | Asset system (images/audio/video), upload pipeline, polymorphic linking |
 | `docs/actors.md`                 | Actor data model: character cards, memories, lorebooks, inventory       |
+| `docs/character-setup.md`        | Character & persona system: multi-format import/export, impersonation   |
+| `docs/rpg-mechanics.md`          | RPG mechanics: stats, combat, equipment, dice, skills, XP, loot         |
 | `docs/architecture.md`           | System layers, request flow, docs serving                               |
 | `docs/build-deploy.md`           | Minimum-build setup, build pipeline, deployment options                 |
 | `docs/implementation.md`         | Tech stack, all modules (db, gen, story, assets, assistant, TUI)        |

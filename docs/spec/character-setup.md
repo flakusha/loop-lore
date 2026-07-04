@@ -7,6 +7,17 @@ how characters are defined, imported, exported, and used — including multi-for
 support (JSON, YAML, TOML, PNG-embedded), the character ↔ persona relationship,
 and the impersonation feature.
 
+Characters are **genre-agnostic**. The same system supports:
+
+- **Fantasy** — elves, wizards, dragons, enchanted items
+- **Sci-Fi** — AI entities, starship captains, alien species, cybernetic agents
+- **Modern** — detectives, journalists, secret agents, everyday people
+- **Historical** — knights, pharaohs, revolutionaries, Victorian scholars
+- **Horror** — investigators, cultists, eldritch entities, survivors
+- **Superhero** — masked vigilantes, mutants, alien heroes
+- **Slice of Life** — neighbors, coworkers, family members, pets
+- **Assistant/Agent** — specialized AI personas for research, coding, analysis
+
 Design goals:
 
 1. **Universal acceptance** — import from any major AI roleplay platform
@@ -14,6 +25,7 @@ Design goals:
 3. **Character ↔ Persona** — characters can be played by users (impersonation)
 4. **Migration-first** — zero-friction import from SillyTavern, Character.AI, RisuAI, Chub, etc.
 5. **Human-readable** — YAML/TOML for hand-authored characters; JSON for tool interop
+6. **Genre-flexible** — stats, items, and lore adapt to genre via plugin bundles
 
 ---
 
@@ -24,7 +36,7 @@ Design goals:
 A **character** is an AI-controlled entity stored as an actor with
 `actor_type='character'`. Characters carry:
 
-- Identity (name, avatar, description)
+- Identity (name, avatar, description, nickname)
 - Voice (personality, speech patterns, example dialogue)
 - Context (scenario, system prompt, greeting)
 - Knowledge (lorebook entries, memories, notes)
@@ -32,6 +44,12 @@ A **character** is an AI-controlled entity stored as an actor with
 
 Characters travel between chats. The same character can appear in multiple
 conversations with different users or worlds.
+
+**Genre flexibility:** Character fields are genre-agnostic. A fantasy mage's
+"spellbook" is stored the same way as a sci-fi engineer's "toolkit" or a
+detective's "case file" — as items in the inventory. Lorebook entries serve
+equally well for "dragon lore" (fantasy), "ship schematics" (sci-fi), or
+"cold case notes" (modern).
 
 ### Persona
 
@@ -889,7 +907,93 @@ New dependencies:
 
 ---
 
-## RPG Mechanics and Stats\n\nOriginal characters are created by the user, often with assistant assistance. The assistant can suggest stat templates based on RPG systems. Stats are stored as part of the character card and can be modified during play.\n\n### Stat Fields\n- `strength`: affects physical combat damage\n- `dexterity`: affects evasion and skill checks\n- `intelligence`: affects magic potency and puzzle solving\n- `charisma`: affects persuasion and social interactions\n- `hp`: hit points, determines survivability\n- `mp`: magic points, resource for spells\n- `skill_points`: used to upgrade stats per RPG rules\n\n### Stat Integration\nStats are linked to gameplay rules defined in `docs/gameplay.md`. When a character is imported, the system validates stat ranges and applies rule‑based caps. Stats can trigger effects: critical hits, bonus actions, status resistances.\n\n### Assistant‑Generated Stat Drafts\nThe assistant can propose a stat block using a template:\n```json\n{\n  \"strength\": 12,\n  \"dexterity\": 14,\n  \"intelligence\": 10,\n  \"charisma\": 8,\n  \"hp\": 80,\n  \"mp\": 40,\n  \"skill_points\": 5\n}\n```\nUser may accept, edit, or reject. Assistant can also explain how stats map to RPG mechanics, ensuring balance.\n\n### Dynamic Stat Updates\nDuring a session, stats may change due to:\n- Level‑up: increase primary stats, gain skill points\n- Equipment: modify stats temporarily\n- Status effects: alter stats per effect duration\n\nAll changes are recorded in the character’s `stats` extension and persisted to the DB.\n\n## Reference
+## RPG Mechanics and Stats (Genre-Flexible)
+
+Stats are **optional and genre-defined**. A character in a fantasy world might
+use STR/DEX/INT/CON/WIS/CHA; a sci-fi character might use
+TECH/PILOT/COMBAT/CHARISMA/LOGIC; a slice-of-life character might use
+SOCIAL/WORK/HEALTH/CREATIVITY. The stat system adapts via plugin bundles
+(see `docs/spec/rpg-mechanics.md` → Plugin Bundle Presets).
+
+### Default Stat Block (D&D-style)
+
+The default stat template follows the six-attribute model, but this is one
+**bundle choice** among many:
+
+| Field          | RPG Role (Fantasy)         | Sci-Fi Role                | Modern Role                |
+| -------------- | -------------------------- | -------------------------- | -------------------------- |
+| `strength`     | Melee damage, carry weight  | Melee, cybernetic force    | Physical labor, combat     |
+| `dexterity`    | Evasion, ranged attacks     | Piloting, hacking speed    | Driving, athletics         |
+| `intelligence` | Arcane power, knowledge     | Tech/computer skills       | Investigation, logic       |
+| `charisma`     | Persuasion, leadership      | Negotiation, command       | Social, networking         |
+| `hp`           | Hit points                  | Hull integrity             | Health/stamina             |
+| `mp`           | Magic points                | Energy/battery             | Focus/stress               |
+
+### Custom Stat System (Bundle-Defined)
+
+When a plugin bundle is active, it defines its own stat block:
+
+```typescript
+interface StatBlock {
+  [statName: string]: number;  // Fully flexible keys
+}
+
+// Example: Dungeons & Dragons bundle
+// { str: 14, dex: 12, con: 15, int: 10, wis: 13, cha: 8 }
+
+// Example: Cyberpunk bundle
+// { cool: 12, tech: 15, reflexes: 14, luck: 7, body: 11, emp: 9 }
+
+// Example: Slice-of-Life bundle
+// { social: 14, work: 12, health: 10, creativity: 15, finance: 8 }
+```
+
+### Assistant-Generated Stat Drafts
+
+The assistant can propose a stat block using the active bundle's template:
+
+```json
+// D&D bundle draft
+{ "strength": 12, "dexterity": 14, "intelligence": 10, "charisma": 8,
+  "hp": 80, "mp": 40, "skill_points": 5 }
+
+// Cyberpunk bundle draft
+{ "cool": 10, "tech": 14, "reflexes": 12, "luck": 8, "body": 11, "emp": 9 }
+
+// Sci-Fi bundle draft
+{ "combat": 13, "pilot": 15, "tech": 10, "charisma": 9, "hull": 60, "energy": 35 }
+```
+
+User may accept, edit, or reject. Assistant explains how stats map to
+the chosen genre's mechanics.
+
+### Dynamic Stat Updates
+
+During a session, stats may change due to:
+
+- **Level-up** — increase primary stats, gain points
+- **Equipment** — modify stats temporarily (weapon bonuses, armor penalties)
+- **Status effects** — alter stats per effect duration (poisoned -2 STR, EMP -4 INT)
+- **World rules** — location-specific modifiers (no-gravity zone, toxic atmosphere)
+
+All changes are recorded in the character's `stats` extension and persisted
+to the DB. Effective stats are computed at use time (base + equipment + effects).
+
+### Genre-Agnostic Character Fields
+
+The following character fields work across all genres without modification:
+
+| Field | Fantasy Use | Sci-Fi Use | Modern Use |
+| ----- | ----------- | ---------- | ---------- |
+| `description` | Elven sorceress backstory | AI consciousness origin | Detective's case files |
+| `personality` | Wise, aloof | Analytical, curious | Cynical, sharp |
+| `scenario` | Ancient ruins exploration | Space station investigation | Crime scene investigation |
+| `mes_example` | Fantasy dialogue | Sci-fi bridge comms | Interrogation transcripts |
+| `alternate_greetings` | "Greetings, traveler" | "Identify yourself" | "You're late" |
+| `system_prompt` | Fantasy RP behavior | Sci-fi RP behavior | Modern RP behavior |
+| `tags` | `fantasy, elf, mage` | `sci-fi, android, pilot` | `modern, detective, noir` |
+
+## Reference
 
 ### External Specifications
 
@@ -909,3 +1013,5 @@ New dependencies:
 | `docs/frontend/chat/overview.md` | Chat types, data model |
 | `docs/memory-system.md` | Memory lifecycle, three-tier system |
 | `docs/assets.md` | Asset upload and linking pipeline |
+| `docs/spec/rpg-mechanics.md` | RPG stat system, rules, plugin bundles |
+| `docs/spec/plugin-system.md` | Plugin architecture, tool definitions |
