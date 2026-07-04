@@ -19,6 +19,7 @@ export interface DB {
   chat_participants: import("./schema-core").ChatParticipants;
   characters: import("./schema-core").Characters;
   messages: import("./schema-core").Messages;
+  actor_keys: import("./schema-core").ActorKeys;
   assets: import("./schema-content").Assets;
   asset_links: import("./schema-content").AssetLinks;
   worlds: import("./schema-story").Worlds;

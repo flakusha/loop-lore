@@ -112,6 +112,8 @@ export interface Messages {
   parent_id: string | null;
   role: MessageRole;
   content: string;
+  key_id: string | null;
+  content_format: string | null;
   content_type: MessageContentType;
   content_encoding: ContentEncoding;
   model_id: string | null;
@@ -132,4 +134,17 @@ export interface Messages {
   partial: number | null;
   created_at: Generated<string>;
   edited_at: string | null;
+}
+
+// ── Actor Keys ────────────────────────────────────────────────
+export interface ActorKeys {
+  id: Generated<string>;
+  actor_id: string;
+  name: string;
+  key_type: string;
+  encrypted_key: string | null;
+  public_key: string | null;
+  created_at: Generated<string>;
+  expires_at: string | null;
+  status: string;
 }
