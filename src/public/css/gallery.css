@@ -3,7 +3,6 @@
    Adapted from yodayo.com image-gallery component,
    themed to match loop-lore design tokens
    ============================================================ */
-@import url("theme.css");
 
 /* --- Gallery Container --- */
 .gallery {
@@ -86,7 +85,7 @@
 .gallery-nav svg {
   width: 24px;
   height: 24px;
-  fill: currentColor;
+  fill: currentcolor;
 }
 
 /* --- Fullscreen Button --- */
@@ -94,7 +93,7 @@
   position: absolute;
   bottom: var(--space-3);
   right: var(--space-3);
-  background: rgba(0, 0, 0, 0.5);
+  background: rgb(0 0 0 / 50%);
   border: none;
   border-radius: var(--radius-sm);
   padding: var(--space-2);
@@ -105,14 +104,14 @@
 }
 
 .gallery-fullscreen-btn:hover {
-  background: rgba(0, 0, 0, 0.7);
+  background: rgb(0 0 0 / 70%);
   transform: scale(1.1);
 }
 
 .gallery-fullscreen-btn svg {
   width: 20px;
   height: 20px;
-  fill: currentColor;
+  fill: currentcolor;
 }
 
 /* --- Thumbnail Strip --- */
@@ -152,7 +151,7 @@
   left: 0;
   right: 0;
   padding: var(--space-4);
-  background: linear-gradient(transparent, rgba(0, 0, 0, 0.7));
+  background: linear-gradient(transparent, rgb(0 0 0 / 70%));
   color: var(--text-primary);
   z-index: 3;
 }
@@ -220,7 +219,7 @@
   position: absolute;
   top: var(--space-2);
   right: var(--space-2);
-  background: rgba(0, 0, 0, 0.6);
+  background: rgb(0 0 0 / 60%);
   backdrop-filter: blur(4px);
   color: #fff;
   font-size: 11px;
@@ -243,7 +242,7 @@
 
 .gallery-upload-area:hover {
   border-color: var(--accent-primary);
-  background: rgba(245, 151, 232, 0.03);
+  background: rgb(245 151 232 / 3%);
 }
 
 .gallery-upload-area .icon {

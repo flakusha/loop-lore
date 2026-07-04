@@ -9,23 +9,23 @@ Deep-dive docs in `/docs/` — read before touching related code:
 
 ### Core System
 
-| File                             | Covers                                                                  |
-| -------------------------------- | ----------------------------------------------------------------------- |
-| `docs/schema.md`                 | Full DB schema (all tables: core, generation, story, actors, assets)    |
-| `docs/messages.md`               | Message persistence, detail levels, invalid message handling            |
-| `docs/users-sessions.md`         | User roles, remote sessions, demo/solo mode                             |
-| `docs/assets.md`                 | Asset system (images/audio/video), upload pipeline, polymorphic linking |
-| `docs/actors.md`                 | Actor data model: character cards, memories, lorebooks, inventory       |
-| `docs/character-setup.md`        | Character & persona system: multi-format import/export, impersonation   |
-| `docs/rpg-mechanics.md`          | RPG mechanics: stats, combat, equipment, dice, skills, XP, loot         |
-| `docs/architecture.md`           | System layers, request flow, docs serving                               |
-| `docs/build-deploy.md`           | Minimum-build setup, build pipeline, deployment options                 |
-| `docs/implementation.md`         | Tech stack, all modules (db, gen, story, assets, assistant, TUI)        |
-| `docs/tui.md`                    | Blessed component hierarchy, keyboard map, data flow                    |
-| `docs/plugin-system.md`          | Plugin architecture: types, lifecycle, security, examples               |
-| `docs/memory-system.md`          | Three-tier memory: episodic, semantic, procedural                       |
-| `docs/artifacts-system.md`       | Code, documents, datasets as polymorphic assets                         |
-| `docs/plan.md`                   | MVP implementation checklist with week-by-week tasks                    |
+| File                       | Covers                                                                  |
+| -------------------------- | ----------------------------------------------------------------------- |
+| `docs/schema.md`           | Full DB schema (all tables: core, generation, story, actors, assets)    |
+| `docs/messages.md`         | Message persistence, detail levels, invalid message handling            |
+| `docs/users-sessions.md`   | User roles, remote sessions, demo/solo mode                             |
+| `docs/assets.md`           | Asset system (images/audio/video), upload pipeline, polymorphic linking |
+| `docs/actors.md`           | Actor data model: character cards, memories, lorebooks, inventory       |
+| `docs/character-setup.md`  | Character & persona system: multi-format import/export, impersonation   |
+| `docs/rpg-mechanics.md`    | RPG mechanics: stats, combat, equipment, dice, skills, XP, loot         |
+| `docs/architecture.md`     | System layers, request flow, docs serving                               |
+| `docs/build-deploy.md`     | Minimum-build setup, build pipeline, deployment options                 |
+| `docs/implementation.md`   | Tech stack, all modules (db, gen, story, assets, assistant, TUI)        |
+| `docs/tui.md`              | Blessed component hierarchy, keyboard map, data flow                    |
+| `docs/plugin-system.md`    | Plugin architecture: types, lifecycle, security, examples               |
+| `docs/memory-system.md`    | Three-tier memory: episodic, semantic, procedural                       |
+| `docs/artifacts-system.md` | Code, documents, datasets as polymorphic assets                         |
+| `docs/plan.md`             | MVP implementation checklist with week-by-week tasks                    |
 
 ### Frontend UX Spec (`docs/frontend/`)
 
@@ -44,8 +44,8 @@ before building any frontend feature.
 | `docs/frontend/chat/archiving.md`         | Cascade deletion, restore, purge flows                                                                                             |
 | `docs/frontend/chat/input.md`             | Text input, media attach, LLM selector, message improvement, image generation                                                      |
 | `docs/frontend/chat/memories.md`          | Character/assistant/world memories, memory selection, auto-purge, token budget                                                     |
-| `docs/frontend/chat/commands-and-misc.md` | Keyboard shortcuts, states summary, image pipeline, system/narration messages      |
-| `docs/frontend/chat/multi-llm-story.md`   | Multi-LLM story generation: GM, turn-taking, quests, quality evaluation, synthetic data |
+| `docs/frontend/chat/commands-and-misc.md` | Keyboard shortcuts, states summary, image pipeline, system/narration messages                                                      |
+| `docs/frontend/chat/multi-llm-story.md`   | Multi-LLM story generation: GM, turn-taking, quests, quality evaluation, synthetic data                                            |
 | `docs/frontend/characters.md`             | Character list grid, create/edit form                                                                                              |
 | `docs/frontend/gallery.md`                | Asset gallery grid, preview modal, upload dialog                                                                                   |
 | `docs/frontend/settings.md`               | Settings sections: general, chat, API config, theme customization, data management                                                 |
@@ -148,10 +148,11 @@ docs/                    Specs, architecture, data model
   adapter layer
 - Kysely for type-safe queries, schema types, and migrations
   (`kysely/bun-sqlite` dialect)
-- Schema defined in `src/db/schema.ts` as TypeScript interfaces (Kysely
-  `Generated`, `GeneratedAlways` markers for auto columns)
+- **Migrations are the source of truth** — schema types in `src/db/schema-*.ts`
+  should match migration files
 - Migrations in `src/db/migrations/`, runnable on startup via Kysely `Migrator`
-- See `docs/schema.md` for full table definitions
+- See `docs/spec/schema.md` for full table definitions
+- v0: migrations consolidated in `001_init.ts` for simplicity
 
 ### TUI
 
