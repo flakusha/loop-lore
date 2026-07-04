@@ -1,5 +1,5 @@
 export { encodeContent } from "./encode";
 export { decodeContent } from "./decode";
 export { minifyText } from "./minify";
-export { compressAssets } from "./compress";
+export { compressAssets, copyDirectory } from "./compress";
 export type { ContentEncoding, EncodeResult, DecodeOptions } from "./types";
