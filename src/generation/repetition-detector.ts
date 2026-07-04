@@ -14,10 +14,7 @@ import type { RepetitionAnalysis, RepetitionDetectionConfig, RepetitionPattern }
  * Analyze a text buffer for repetitive patterns.
  * Returns a scored analysis with detected patterns.
  */
-export function analyzeRepetition(
-  text: string,
-  config: RepetitionDetectionConfig,
-): RepetitionAnalysis {
+export function analyzeRepetition(text: string, config: RepetitionDetectionConfig): RepetitionAnalysis {
   if (text.length < config.minChars) {
     return {
       detected: false,
@@ -90,10 +87,7 @@ function computeNGramSimilarity(positions: number[], windowSize: number, _textLe
   return Math.min(1, Math.max(0, 1 - avgDistance / windowSize));
 }
 
-function detectPatterns(
-  text: string,
-  config: RepetitionDetectionConfig,
-): RepetitionPattern[] {
+function detectPatterns(text: string, config: RepetitionDetectionConfig): RepetitionPattern[] {
   const fingerprints = extractNGrams(text, NGRAM_SIZE);
 
   // Filter to n-grams that appear multiple times
@@ -228,10 +222,12 @@ export function detectTheatricalLoop(text: string): { detected: boolean; score: 
     if (!trimmed) continue;
 
     // Lines wrapped in *action* or (action)
-    if ((trimmed.startsWith("*") && trimmed.endsWith("*")) ||
-        (trimmed.startsWith("(") && trimmed.endsWith(")"))) {
+    if (
+      (trimmed.startsWith("*") && trimmed.endsWith("*")) ||
+      (trimmed.startsWith("(") && trimmed.endsWith(")"))
+    ) {
       actionLineCount++;
-    } else if (trimmed.includes("\"") || trimmed.includes("\u201c") || trimmed.includes("\u00bb")) {
+    } else if (trimmed.includes('"') || trimmed.includes("\u201c") || trimmed.includes("\u00bb")) {
       _dialogueLineCount++;
     }
   }

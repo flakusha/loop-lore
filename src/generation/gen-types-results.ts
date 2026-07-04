@@ -5,7 +5,13 @@
  * repetition analysis, and policy analysis.
  */
 
-import type { PolicyType, PolicyIndicatorType, PolicySeverity, CancelReason, CancelSource } from "../db/enums";
+import type {
+  PolicyType,
+  PolicyIndicatorType,
+  PolicySeverity,
+  CancelReason,
+  CancelSource,
+} from "../db/enums";
 
 export interface GenerationResult {
   /** The generated content */

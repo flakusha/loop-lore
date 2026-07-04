@@ -49,12 +49,14 @@ export function handleCancelGeneration(body: unknown): Response {
     return jsonError("Either chatId or attemptId is required", 400);
   }
 
-  const resolvedChatId = chatId ?? (() => {
-    for (const gen of listActiveGenerations()) {
-      if (gen.attemptId === attemptId) return gen.chatId;
-    }
-    return null;
-  })();
+  const resolvedChatId =
+    chatId ??
+    (() => {
+      for (const gen of listActiveGenerations()) {
+        if (gen.attemptId === attemptId) return gen.chatId;
+      }
+      return null;
+    })();
 
   if (!resolvedChatId) {
     return jsonError("No active generation found for the given ID", 404);
@@ -91,7 +93,7 @@ export function handleGenerationStatus(chatId: string): Response {
   const attemptId = getActiveAttemptId(chatId);
 
   const activeGen = attemptId
-    ? listActiveGenerations().find((g) => g.attemptId === attemptId) ?? null
+    ? (listActiveGenerations().find((g) => g.attemptId === attemptId) ?? null)
     : null;
 
   return jsonResponse({
@@ -132,9 +134,7 @@ export async function handleRetryGeneration(body: unknown): Promise<Response> {
     input.chatId,
     CancelReason.UserCancel,
     CancelSource.User,
-    input.step === undefined
-      ? "User requested regeneration"
-      : `User requested retry from step ${input.step}`,
+    input.step === undefined ? "User requested regeneration" : `User requested retry from step ${input.step}`,
   );
 
   let resumeFromStep = 0;

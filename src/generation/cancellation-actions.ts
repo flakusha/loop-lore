@@ -76,7 +76,9 @@ export function cancelGenerationByChat(
       cancel_source: source,
       completed_at: new Date().toISOString(),
     }).catch((error: unknown) => {
-      getLogger().child({ module: "generation" }).error("Failed to update attempt status", error instanceof Error ? error : undefined);
+      getLogger()
+        .child({ module: "generation" })
+        .error("Failed to update attempt status", error instanceof Error ? error : undefined);
     });
   }
 
@@ -101,7 +103,11 @@ export async function hasInFlightGeneration(db: Kysely<DB>, idempotencyKey: stri
     .selectFrom("generation_attempts")
     .selectAll()
     .where("idempotency_key", "=", idempotencyKey)
-    .where("status", "in", [GenerationStatus.Pending, GenerationStatus.Processing, GenerationStatus.Streaming])
+    .where("status", "in", [
+      GenerationStatus.Pending,
+      GenerationStatus.Processing,
+      GenerationStatus.Streaming,
+    ])
     .executeTakeFirst();
 
   return existing !== undefined;
@@ -164,7 +170,8 @@ export async function processStreamingChunk(
     const effectiveScore = Math.max(repAnalysis.score, theatreCheck.score);
 
     if (effectiveScore >= 0.85) {
-      const detail = `Repetition: score=${effectiveScore.toFixed(2)}, ` +
+      const detail =
+        `Repetition: score=${effectiveScore.toFixed(2)}, ` +
         `patterns=${repAnalysis.patterns.length}, ` +
         `theatre=${String(theatreCheck.detected)}`;
 
@@ -194,11 +201,13 @@ export async function processStreamingChunk(
     });
 
     if (policyAnalysis.detected) {
-      const mismatchType = active.policyConfig.expectedPolicy === PolicyType.Sfw
-        ? "Explicit content in SFW context"
-        : "SFW content in NSFW context";
+      const mismatchType =
+        active.policyConfig.expectedPolicy === PolicyType.Sfw
+          ? "Explicit content in SFW context"
+          : "SFW content in NSFW context";
 
-      const detail = `Policy mismatch: ${mismatchType}, ` +
+      const detail =
+        `Policy mismatch: ${mismatchType}, ` +
         `confidence=${policyAnalysis.confidence.toFixed(2)}, ` +
         `indicators=${policyAnalysis.indicators.length}`;
 

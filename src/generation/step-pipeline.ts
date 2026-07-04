@@ -25,11 +25,7 @@ import { activeGenerations, updateAttemptStatus } from "./cancellation-tracker";
  * @param stepIndex — the step index that completed (0-based)
  * @param db — Kysely DB instance for persistence
  */
-export async function completeStep(
-  attemptId: string,
-  stepIndex: number,
-  db: Kysely<DB>,
-): Promise<void> {
+export async function completeStep(attemptId: string, stepIndex: number, db: Kysely<DB>): Promise<void> {
   const active = activeGenerations.get(attemptId);
   if (!active) return;
 
@@ -82,10 +78,7 @@ export interface PipelineState {
  * @param db — Kysely DB instance for fallback lookup
  * @returns pipeline state, or null if attempt not found
  */
-export async function getPipelineState(
-  attemptId: string,
-  db: Kysely<DB>,
-): Promise<PipelineState | null> {
+export async function getPipelineState(attemptId: string, db: Kysely<DB>): Promise<PipelineState | null> {
   // Check in-memory first
   const active = activeGenerations.get(attemptId);
   if (active) {
