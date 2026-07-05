@@ -59,6 +59,11 @@ Rationale: No AI SDK dependency. Own abstraction layer in `src/generation/`.
 Fix: htmx + Alpine.js templates. Plain CSS files. No React/Vue/Svelte.
 Rationale: Tech stack constraint. See AGENTS.md.
 
+## Bare `JSON.parse()`/`JSON.stringify()` in production code
+Violation: `JSON.parse(dbField)`, `JSON.stringify(complexData)` in routes, services, or story modules.
+Fix: Use `safeJsonParse<T>()`, `jsonParseOr(field, fallback)`, or `safeJsonStringify(value)` from `src/utils.ts`.
+Rationale: JS/TS has no checked exceptions — `JSON.parse` throws on malformed input (crash risk with DB data). `JSON.stringify` throws on circular refs, BigInt, `undefined` in arrays (silent data loss or crash). Safe variants return `JsonResult<T>` discriminated union — never throw, explicit `.ok` check. `jsonParseOr` provides one-liner fallback for DB fields.
+
 ## Allocation-heavy chain methods in hot paths
 Violation: `items.map(f).filter(g).map(h).reduce(r, init)` in request handlers, generation pipelines, loops processing 1000+ items, or any O(n) function called per-request.
 Fix: Single `for..of` pass with combined transform/filter logic, or single `.reduce()` accumulating transformed + filtered results. Pre-allocate result array when size is known (`new Array(len)`). Use in-place mutation (`splice`, index assignment) for same-collection edits.
