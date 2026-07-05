@@ -1,12 +1,9 @@
 // ── Chat page component (chat.html) ────────────────────────
 
 import { marked } from "marked";
-
-// Configure marked for GFM (tables, strikethrough, task-lists) + line breaks
-marked.use({ breaks: true, gfm: true });
 import DOMPurify from "dompurify";
 
-// Configure marked once at module load
+// Configure marked for GFM (tables, strikethrough, task-lists) + line breaks
 marked.use({ breaks: true, gfm: true });
 
 interface ChatAsset {
@@ -540,14 +537,13 @@ globalThis.chatState = function () {
     },
 
     async handleAttach(event: Event) {
-      const input = event.target as HTMLInputElement;
-      const files = input.files;
-      if (!files?.length || !this.activeChat) {
-        if (!this.activeChat) {
-          this.$dispatch("show-toast", { type: "warning", message: "Select a chat first" });
-        }
+      if (!this.activeChat) {
+        this.$dispatch("show-toast", { type: "warning", message: "Select a chat first" });
         return;
       }
+      const input = event.target as HTMLInputElement;
+      const files = input.files;
+      if (!files?.length) return;
 
       for (const file of files) {
         const formData = new FormData();
