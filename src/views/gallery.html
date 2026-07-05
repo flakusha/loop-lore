@@ -1,73 +1,24 @@
 <!-- Gallery View (swapped into #app-root by htmx) -->
 <div class="app-layout" x-data="galleryState()">
-  <!-- Sidebar -->
-  <aside class="sidebar">
-    <div class="sidebar-header">
-      <span class="logo">loop-lore</span>
-    </div>
-
-    <nav class="sidebar-nav">
-      <div class="nav-section-title">Navigation</div>
-
-      <a class="nav-item" href="/views/chat" hx-get="/views/chat" hx-target="#app-root" hx-swap="innerHTML">
-        <span>← Back to Chat</span>
-      </a>
-
-      <a class="nav-item active" href="/views/gallery" hx-get="/views/gallery" hx-target="#app-root" hx-swap="innerHTML">
-        <span>🖼 Asset Gallery</span>
-      </a>
-
-      <div class="nav-section-title">Filters</div>
-
-      <div style="padding: var(--space-3)">
-        <select class="form-select" x-model="filterType" @change="loadAssets()">
-          <option value="">All types</option>
-          <option value="image">Images</option>
-          <option value="audio">Audio</option>
-          <option value="video">Video</option>
-        </select>
-      </div>
-
-      <div style="padding: 0 var(--space-3) var(--space-3)">
-        <input
-          class="form-input"
-          type="text"
-          placeholder="Search assets..."
-          x-model="searchQuery"
-          @input.debounce="loadAssets()"
-        />
-      </div>
-    </nav>
-
-    <div class="sidebar-footer">
-      <div class="user-info">
-        <div class="details">
-          <div class="name">Asset Gallery</div>
-          <div class="role" x-text="assetCount + ' assets'"></div>
-        </div>
-      </div>
-    </div>
-  </aside>
-
   <!-- Main gallery content -->
   <main class="main-content">
     <header class="main-header">
       <span class="title">Asset Gallery</span>
       <div class="actions">
-        <button class="btn btn-primary" @click="showUploadModal = true">+ Upload</button>
+        <button class="btn btn-primary" @click="showUploadModal = true" data-testid="upload-button">+ Upload</button>
       </div>
     </header>
 
     <!-- Asset grid (Alpine-rendered) -->
-    <div class="asset-grid" id="asset-grid">
+    <div class="asset-grid" id="asset-grid" data-testid="asset-grid">
       <template x-if="loading">
-        <div class="empty-state" style="grid-column: 1 / -1">
+        <div class="empty-state" style="grid-column: 1 / -1" data-testid="gallery-loading">
           <div class="icon">⏳</div>
           <div class="title">Loading assets...</div>
         </div>
       </template>
       <template x-if="!loading && assets.length === 0">
-        <div class="empty-state" style="grid-column: 1 / -1">
+        <div class="empty-state" style="grid-column: 1 / -1" data-testid="gallery-empty">
           <div class="icon">📁</div>
           <div class="title">No assets yet</div>
           <div class="description">
@@ -76,7 +27,7 @@
         </div>
       </template>
       <template x-for="asset in assets" :key="asset.id">
-        <div class="asset-card" @click="openPreview(asset)">
+        <div class="asset-card" @click="openPreview(asset)" :data-testid="'asset-card-' + asset.id">
           <div class="thumbnail">
             <template x-if="asset.asset_type === 'image'">
               <img :src="'/api/assets/' + asset.id + '/thumb'" :alt="asset.filename" loading="lazy" />
@@ -100,7 +51,7 @@
     </div>
 
     <!-- Preview modal -->
-    <div x-show="previewAsset" x-cloak class="modal-overlay" @click.self="previewAsset = null">
+    <div x-show="previewAsset" x-cloak class="modal-overlay" @click.self="previewAsset = null" data-testid="preview-modal">
       <div class="modal" style="max-width: 800px">
         <div class="modal-header">
           <span class="title" x-text="previewAsset?.filename || 'Asset'"></span>
@@ -141,22 +92,21 @@
             <button
               class="btn btn-danger"
               @click="deleteAsset(previewAsset.id)"
-              x-text="'🗑 Delete'"
-            ></button>
+            >🗑 Delete</button>
           </div>
         </div>
       </div>
     </div>
 
     <!-- Upload modal -->
-    <div x-show="showUploadModal" x-cloak class="modal-overlay" @click.self="showUploadModal = false">
+    <div x-show="showUploadModal" x-cloak class="modal-overlay" @click.self="showUploadModal = false" data-testid="upload-modal">
       <div class="modal">
         <div class="modal-header">
           <span class="title">Upload Asset</span>
           <button class="btn-icon" @click="showUploadModal = false">&times;</button>
         </div>
         <div class="modal-body">
-          <form @submit.prevent="uploadAsset($event)">
+          <form @submit.prevent="uploadAsset($event)" data-testid="upload-form">
             <div
               class="drop-zone"
               @dragover.prevent="$el.classList.add('drag-over')"
