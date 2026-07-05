@@ -7,13 +7,13 @@ Browser bundles are built for production via `bun run build:frontend`.
 
 ## Tech Stack
 
-| Layer        | Technology                | Notes                                                                |
-| ------------ | ------------------------- | -------------------------------------------------------------------- |
-| HTML         | Prebuilt static templates | Server replaces `{{{content}}}` placeholder in layout.html           |
-| AJAX         | htmx 2.x                  | Partial page updates, form submission, server-driven UI              |
-| Client state | Alpine.js 3.x             | Modals, toasts, local UI toggles (not data state)                    |
-| Styling      | Hand-authored CSS         | 3 files: theme.css, app.css, gallery.css. No framework. |
-| Icons        | Unicode / SVG             | No icon library dependency. Inline SVGs where needed.                |
+| Layer        | Technology                | Notes                                                      |
+| ------------ | ------------------------- | ---------------------------------------------------------- |
+| HTML         | Prebuilt static templates | Server replaces `{{{content}}}` placeholder in layout.html |
+| AJAX         | htmx 2.x                  | Partial page updates, form submission, server-driven UI    |
+| Client state | Alpine.js 3.x             | Modals, toasts, local UI toggles (not data state)          |
+| Styling      | Hand-authored CSS         | 3 files: theme.css, app.css, gallery.css. No framework.    |
+| Icons        | Unicode / SVG             | No icon library dependency. Inline SVGs where needed.      |
 
 ## Development Workflow
 

@@ -66,13 +66,40 @@ export class QuestEngine {
         type: params.type,
         status: QuestStatus.Active,
         priority: params.priority ?? 0,
-        config: (() => { const r = safeJsonStringify(params.config); if (!r.ok) { getLogger().child({ module: "quest-engine" }).error("safeJsonStringify config failed", undefined, { error: r.error }); throw new Error("Failed to serialize quest config"); } return r.value; })(),
+        config: (() => {
+          const r = safeJsonStringify(params.config);
+          if (!r.ok) {
+            getLogger()
+              .child({ module: "quest-engine" })
+              .error("safeJsonStringify config failed", undefined, { error: r.error });
+            throw new Error("Failed to serialize quest config");
+          }
+          return r.value;
+        })(),
         progress: 0,
         target: params.target,
         start_time: new Date().toISOString(),
         deadline: params.deadline ?? null,
-        rewards: (() => { const r = safeJsonStringify(params.rewards ?? {}); if (!r.ok) { getLogger().child({ module: "quest-engine" }).error("safeJsonStringify rewards failed", undefined, { error: r.error }); throw new Error("Failed to serialize quest rewards"); } return r.value; })(),
-        narrative_hooks: (() => { const r = safeJsonStringify(params.narrativeHooks ?? []); if (!r.ok) { getLogger().child({ module: "quest-engine" }).error("safeJsonStringify narrative_hooks failed", undefined, { error: r.error }); throw new Error("Failed to serialize quest narrative hooks"); } return r.value; })(),
+        rewards: (() => {
+          const r = safeJsonStringify(params.rewards ?? {});
+          if (!r.ok) {
+            getLogger()
+              .child({ module: "quest-engine" })
+              .error("safeJsonStringify rewards failed", undefined, { error: r.error });
+            throw new Error("Failed to serialize quest rewards");
+          }
+          return r.value;
+        })(),
+        narrative_hooks: (() => {
+          const r = safeJsonStringify(params.narrativeHooks ?? []);
+          if (!r.ok) {
+            getLogger()
+              .child({ module: "quest-engine" })
+              .error("safeJsonStringify narrative_hooks failed", undefined, { error: r.error });
+            throw new Error("Failed to serialize quest narrative hooks");
+          }
+          return r.value;
+        })(),
       })
       .execute();
     return id;
@@ -203,7 +230,7 @@ export class QuestEngine {
 
     for (const quest of timeQuests) {
       if (!(quest.deadline && quest.deadline < now)) {
-      	continue;
+        continue;
       }
 
       await this.fail(quest.id);
@@ -254,7 +281,8 @@ export class QuestEngine {
       case QuestType.Collection: {
         if (event.type !== "item_transfer") return 0;
         const cfg = config as import("./types").CollectionQuestConfig;
-        const itemName = typeof event.data.itemName === "string" ? event.data.itemName.toLowerCase() : undefined;
+        const itemName =
+          typeof event.data.itemName === "string" ? event.data.itemName.toLowerCase() : undefined;
         if (cfg.items) {
           let totalQuantity = 0;
           let hasMatch = false;
@@ -289,7 +317,8 @@ export class QuestEngine {
         if (event.locationId === cfg.targetLocationId) {
           return 100 - quest.progress;
         }
-        if (cfg.clues.some((c) => c.locationId === event.locationId)) return Math.round(100 / (cfg.clues.length + 1));
+        if (cfg.clues.some((c) => c.locationId === event.locationId))
+          return Math.round(100 / (cfg.clues.length + 1));
         return 0;
       }
 
@@ -372,7 +401,12 @@ export class QuestEngine {
           chat_id: chatId,
           progress: newProgress,
           status: completed ? QuestProgressStatus.Completed : QuestProgressStatus.Active,
-          contributed_events: sourceMessageId ? (() => { const r = safeJsonStringify([sourceMessageId]); return r.ok ? r.value : "[]"; })() : "[]",
+          contributed_events: sourceMessageId
+            ? (() => {
+                const r = safeJsonStringify([sourceMessageId]);
+                return r.ok ? r.value : "[]";
+              })()
+            : "[]",
           completed_at: completed ? new Date().toISOString() : null,
         })
         .execute();
@@ -382,8 +416,14 @@ export class QuestEngine {
     let oldMilestone: { progress: number; narrative: string } | undefined;
     let newMilestone: { progress: number; narrative: string } | undefined;
     for (const h of hooks) {
-      if (h.progress <= quest.progress && (!oldMilestone || h.progress > oldMilestone.progress)) oldMilestone = h;
-      if (h.progress <= newProgress && h.progress > quest.progress && (!newMilestone || h.progress > newMilestone.progress)) newMilestone = h;
+      if (h.progress <= quest.progress && (!oldMilestone || h.progress > oldMilestone.progress))
+        oldMilestone = h;
+      if (
+        h.progress <= newProgress &&
+        h.progress > quest.progress &&
+        (!newMilestone || h.progress > newMilestone.progress)
+      )
+        newMilestone = h;
     }
 
     let milestoneText: string | null = null;

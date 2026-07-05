@@ -9,8 +9,8 @@ Deep-dive docs in `/docs/` — read before touching related code:
 
 ### Core System
 
-| File                       | Covers                                                                  |
-| -------------------------- | ----------------------------------------------------------------------- |
+| File                            | Covers                                                                  |
+| ------------------------------- | ----------------------------------------------------------------------- |
 | `docs/spec/schema.md`           | Full DB schema (all tables: core, generation, story, actors, assets)    |
 | `docs/spec/messages.md`         | Message persistence, detail levels, invalid message handling            |
 | `docs/spec/users-sessions.md`   | User roles, remote sessions, demo/solo mode                             |

@@ -160,7 +160,9 @@ const dispatch: RouteDispatch = async ({ request, context, database }) => {
   }
 
   // /api/worlds/:worldId/item-instances/:instanceId/transfer
-  const transferMatch = /^\/api\/worlds\/([a-f0-9-]+)\/item-instances\/([a-f0-9-]+)\/transfer$/.exec(pathname);
+  const transferMatch = /^\/api\/worlds\/([a-f0-9-]+)\/item-instances\/([a-f0-9-]+)\/transfer$/.exec(
+    pathname,
+  );
   if (transferMatch) {
     const [, worldId, instanceId] = transferMatch;
     // Verify world ownership
@@ -177,7 +179,8 @@ const dispatch: RouteDispatch = async ({ request, context, database }) => {
       if (body instanceof Response) return body;
       const quantity = (body.quantity as number) ?? 1;
       const result = await items.transfer(
-        instanceId, quantity,
+        instanceId,
+        quantity,
         (body.toLocationId as string) ?? undefined,
         (body.toActorId as string) ?? undefined,
       );
@@ -226,14 +229,18 @@ const dispatch: RouteDispatch = async ({ request, context, database }) => {
 
       if (body.actorId) {
         const id = await items.giveToNpc(
-          body.itemId as string, body.actorId as string, worldId,
+          body.itemId as string,
+          body.actorId as string,
+          worldId,
           (body.quantity as number) ?? 1,
         );
         return jsonCreated({ id });
       }
       if (body.locationId) {
         const id = await items.placeInLocation(
-          body.itemId as string, body.locationId as string, worldId,
+          body.itemId as string,
+          body.locationId as string,
+          worldId,
           (body.quantity as number) ?? 1,
         );
         return jsonCreated({ id });

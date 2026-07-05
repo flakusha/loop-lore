@@ -184,7 +184,9 @@ export function startGenerationTracking(
 
   events?.onStart?.(attemptId);
   void updateAttemptStatus(db, attemptId, GenerationStatus.Processing).catch((error: unknown) => {
-    getLogger().child({ module: "generation" }).warn("Status update failed", { error: String(error) });
+    getLogger()
+      .child({ module: "generation" })
+      .warn("Status update failed", { error: String(error) });
   });
 
   return { attemptId, abortSignal: abortController.signal };
@@ -224,8 +226,18 @@ export async function completeGeneration(
     streaming_chunks_received: active.chunksReceived,
     streaming_chars_received: active.charsReceived,
     repetition_score: result.repetitionScore ?? null,
-    repetition_analysis: result.repetitionAnalysis ? (() => { const r = safeJsonStringify(result.repetitionAnalysis); return r.ok ? r.value : null; })() : null,
-    policy_analysis: result.policyAnalysis ? (() => { const r = safeJsonStringify(result.policyAnalysis); return r.ok ? r.value : null; })() : null,
+    repetition_analysis: result.repetitionAnalysis
+      ? (() => {
+          const r = safeJsonStringify(result.repetitionAnalysis);
+          return r.ok ? r.value : null;
+        })()
+      : null,
+    policy_analysis: result.policyAnalysis
+      ? (() => {
+          const r = safeJsonStringify(result.policyAnalysis);
+          return r.ok ? r.value : null;
+        })()
+      : null,
     completed_at: new Date().toISOString(),
     ...(result.cancelReason && {
       cancel_reason: result.cancelReason,

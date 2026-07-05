@@ -10,10 +10,10 @@
       "properties": {
         "port": {
           "type": "integer",
-          "minimum": 1,
+          "minimum": 0,
           "maximum": 65535,
           "default": 3000,
-          "description": "Server port"
+          "description": "Server port (0 = random)"
         },
         "host": {
           "type": "string",
@@ -26,12 +26,12 @@
           "properties": {
             "key": {
               "type": "string",
-              "default": "../loop-lore-data/certs/key.pem",
+              "default": "/home/flak/git-ai/loop-lore/loop-lore-data/certs/key.pem",
               "description": "Path to TLS private key (PEM)"
             },
             "cert": {
               "type": "string",
-              "default": "../loop-lore-data/certs/cert.pem",
+              "default": "/home/flak/git-ai/loop-lore/loop-lore-data/certs/cert.pem",
               "description": "Path to TLS certificate (PEM)"
             }
           },
@@ -61,7 +61,7 @@
         },
         "sqliteFilename": {
           "type": "string",
-          "default": "../loop-lore-data/loop-lore.db",
+          "default": "/home/flak/git-ai/loop-lore/loop-lore-data/loop-lore.db",
           "description": "SQLite database file path"
         },
         "url": {
@@ -85,7 +85,7 @@
         },
         "uploadDir": {
           "type": "string",
-          "default": "../loop-lore-data/uploads",
+          "default": "/home/flak/git-ai/loop-lore/loop-lore-data/uploads",
           "description": "Directory for uploaded assets"
         },
         "maxFileSize": {
@@ -486,6 +486,93 @@
           "type": "object",
           "default": {},
           "description": "Default model per provider"
+        },
+        "autoStart": {
+          "type": "object",
+          "description": "Auto-spawn external AI servers at startup",
+          "properties": {
+            "llamaCpp": {
+              "type": "object",
+              "description": "Spawn llama.cpp server as child process",
+              "properties": {
+                "enabled": {
+                  "type": "boolean",
+                  "default": false,
+                  "description": "Enable auto-start"
+                },
+                "modelPath": {
+                  "type": "string",
+                  "description": "GGUF path or HF ref (org/repo:quant)"
+                },
+                "port": {
+                  "type": "integer",
+                  "default": 9011,
+                  "description": "llama-server port"
+                },
+                "ctxSize": {
+                  "type": "integer",
+                  "default": 8192,
+                  "description": "Context size in tokens"
+                },
+                "extraArgs": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "Extra CLI args"
+                }
+              },
+              "required": [
+                "enabled",
+                "modelPath",
+                "port"
+              ]
+            },
+            "sdCpp": {
+              "type": "object",
+              "description": "Spawn sd-server as child process",
+              "properties": {
+                "enabled": {
+                  "type": "boolean",
+                  "default": false,
+                  "description": "Enable auto-start"
+                },
+                "modelPath": {
+                  "type": "string",
+                  "description": "Path to .safetensors SDXL model"
+                },
+                "port": {
+                  "type": "integer",
+                  "default": 9010,
+                  "description": "sd-server port"
+                },
+                "llmPath": {
+                  "type": "string",
+                  "description": "Text encoder GGUF path"
+                },
+                "vaePath": {
+                  "type": "string",
+                  "description": "VAE safetensors path"
+                },
+                "loraDir": {
+                  "type": "string",
+                  "description": "LoRA directory path"
+                },
+                "extraArgs": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "Extra CLI args"
+                }
+              },
+              "required": [
+                "enabled",
+                "modelPath",
+                "port"
+              ]
+            }
+          }
         }
       }
     },
@@ -518,6 +605,7 @@
     "docs",
     "auth",
     "transport",
-    "messages"
+    "messages",
+    "encryption"
   ]
 }

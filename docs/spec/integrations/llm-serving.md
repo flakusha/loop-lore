@@ -479,18 +479,18 @@ const PRESETS = {
 
 Token budgets differ sharply between response output and context window:
 
-| Dimension          | Typical Size | Notes                                                  |
-| ------------------ | ------------ | ------------------------------------------------------ |
-| Response body      | ~2,000       | Generated content (excludes thinking/reasoning tokens) |
-| Thinking tokens    | ~500–4,000   | `reasoning_content`, varies by model/task              |
-| Context window     | 32,000–64,000 | Recommended minimum for serious chat/roleplay tasks    |
-| Model max ctx      | 128K–1M      | Hardware-limited; llama.cpp `--ctx-size` caps it       |
+| Dimension       | Typical Size  | Notes                                                  |
+| --------------- | ------------- | ------------------------------------------------------ |
+| Response body   | ~2,000        | Generated content (excludes thinking/reasoning tokens) |
+| Thinking tokens | ~500–4,000    | `reasoning_content`, varies by model/task              |
+| Context window  | 32,000–64,000 | Recommended minimum for serious chat/roleplay tasks    |
+| Model max ctx   | 128K–1M       | Hardware-limited; llama.cpp `--ctx-size` caps it       |
 
 **Key insight**: Response body is short (~2K tokens) but the context needed to produce it is 16–32× larger. The LLM needs full conversation history, character cards, world lore, and instructions to generate coherent output.
 
 #### Service-Side History Compression
 
-The `messages` table already stores compressed content (gzip/zstd/brotli per schema) for storage efficiency. However, the generation pipeline needs a separate **prompt compaction layer** that operates on the *assembled prompt* before sending to the LLM:
+The `messages` table already stores compressed content (gzip/zstd/brotli per schema) for storage efficiency. However, the generation pipeline needs a separate **prompt compaction layer** that operates on the _assembled prompt_ before sending to the LLM:
 
 1. **Summarization** — Older conversation turns rewritten as condensed summaries instead of full messages
 2. **Truncation** — Oldest messages dropped when context budget exceeded (LRU eviction)
@@ -529,27 +529,27 @@ This is separate from storage compression. Storage compression is transparent (g
 
 **Implemented** — standalone modules, zero edits to existing code.
 
-| File | Status | Key exports |
-|------|--------|-------------|
-| `src/generation/context-window-config.ts` | Done | `ContextWindowConfig`, `ContextMessage`, `SummarizeFn`, `ExtractFn`, `TokenCountFn`, `DEFAULT_CONTEXT_WINDOW`, `defaultTokenCount` |
-| `src/generation/context-compressor.ts` | Done | `compressMessages()` — pure function, returns `CompressionResult` with `{ compressed, metadata }` |
-| `src/generation/context-compressor.test.ts` | Done | 19 tests, all pass |
+| File                                        | Status | Key exports                                                                                                                        |
+| ------------------------------------------- | ------ | ---------------------------------------------------------------------------------------------------------------------------------- |
+| `src/generation/context-window-config.ts`   | Done   | `ContextWindowConfig`, `ContextMessage`, `SummarizeFn`, `ExtractFn`, `TokenCountFn`, `DEFAULT_CONTEXT_WINDOW`, `defaultTokenCount` |
+| `src/generation/context-compressor.ts`      | Done   | `compressMessages()` — pure function, returns `CompressionResult` with `{ compressed, metadata }`                                  |
+| `src/generation/context-compressor.test.ts` | Done   | 19 tests, all pass                                                                                                                 |
 
 Decorator pattern: caller wraps `GenerationOptions.prompt` before passing to pipeline.
 
 #### Strategies
 
-| Strategy | Behavior | LLM needed? |
-|----------|----------|-------------|
-| `"sliding"` | Keep last N messages verbatim, older messages dropped LRU | No |
-| `"truncate"` | Drop oldest until budget fit, preserve min turns | No |
-| `"summarize"` | Uses `SummarizeFn` callback when wired; falls back to sliding | Opt-in |
+| Strategy      | Behavior                                                      | LLM needed? |
+| ------------- | ------------------------------------------------------------- | ----------- |
+| `"sliding"`   | Keep last N messages verbatim, older messages dropped LRU     | No          |
+| `"truncate"`  | Drop oldest until budget fit, preserve min turns              | No          |
+| `"summarize"` | Uses `SummarizeFn` callback when wired; falls back to sliding | Opt-in      |
 
-| Strategy | Behavior | LLM needed? |
-|----------|----------|-------------|
-| `"sliding"` | Keep last N messages verbatim, older messages dropped LRU | No |
-| `"truncate"` | Drop oldest until budget fit, preserve min turns | No |
-| `"summarize"` | Uses `SummarizeFn` callback when wired; falls back to sliding | Opt-in |
+| Strategy      | Behavior                                                      | LLM needed? |
+| ------------- | ------------------------------------------------------------- | ----------- |
+| `"sliding"`   | Keep last N messages verbatim, older messages dropped LRU     | No          |
+| `"truncate"`  | Drop oldest until budget fit, preserve min turns              | No          |
+| `"summarize"` | Uses `SummarizeFn` callback when wired; falls back to sliding | Opt-in      |
 
 System messages (leading `role: "system"` block) always preserved. Floor: never below 1 user+assistant turn.
 
@@ -605,6 +605,7 @@ llama-server errors follow OpenAI-compatible format. The provider must handle:
 Content policy detection runs post-generation as a separate analysis step, not during streaming.
 
 **Flow**:
+
 1. LLM returns full response (via streaming or non-streaming)
 2. Response content is sent to policy detection module
 3. Detection runs a ruleset: banned topics, regex patterns, keyword matching

@@ -6,13 +6,13 @@
 
 ## Threat Model
 
-| Threat                          | Mitigation                                          | Coverage |
-| ------------------------------- | --------------------------------------------------- | -------- |
-| DB dump / backup leak           | Content encrypted with actor keys. Keys not in DB.  | v1       |
-| SQL injection                   | Parameterized queries (Kysely).                     | v1       |
-| Server process memory dump      | Keys in memory only during active decrypt.          | v1       |
-| Compromised server admin        | Admin has process access — holds keys.              | Out      |
-| Network eavesdropping           | HTTPS.                                              | v1       |
+| Threat                     | Mitigation                                         | Coverage |
+| -------------------------- | -------------------------------------------------- | -------- |
+| DB dump / backup leak      | Content encrypted with actor keys. Keys not in DB. | v1       |
+| SQL injection              | Parameterized queries (Kysely).                    | v1       |
+| Server process memory dump | Keys in memory only during active decrypt.         | v1       |
+| Compromised server admin   | Admin has process access — holds keys.             | Out      |
+| Network eavesdropping      | HTTPS.                                             | v1       |
 
 ---
 
@@ -47,6 +47,7 @@ actor_keys (
 ### Generation
 
 Actor primary key created on first login:
+
 1. Server generates 256-bit random key (`crypto.randomBytes(32)`)
 2. Encrypts with SMK: `AES-256-GCM(SMK, raw_key)` → `encrypted_key`
 3. Stores in `actor_keys` with `name='primary'`, `status='active'`
@@ -80,6 +81,7 @@ the referenced key exists (even if expired).
 ### Revocation
 
 Revoking an actor's key:
+
 1. Set `actor_keys.status = 'revoked'`
 2. New chat key derived excluding revoked participant
 3. Future messages unreadable by revoked actor
@@ -96,21 +98,16 @@ Revoking an actor's key:
 A message travels from client to server through these steps:
 
 **Client side:**
+
 1. Take the plaintext message string
 2. Compress (gzip/zstd/brotli, skip if `<128` bytes)
 3. Encrypt with chat key (AES-256-GCM)
 4. Package as JSON: `{enc, nonce, algo, comp, key_id}`
 5. Send to server over HTTPS
 
-**Server side:**
-6. Validate input, store `messages.content` as raw JSON blob
-7. Return message ID to client
+**Server side:** 6. Validate input, store `messages.content` as raw JSON blob 7. Return message ID to client
 
-**On read by another actor:**
-8. Server loads content JSON from DB
-9. Decrypt with chat key → compressed bytes
-10. Decompress → plaintext
-11. Deliver to requesting actor over HTTPS
+**On read by another actor:** 8. Server loads content JSON from DB 9. Decrypt with chat key → compressed bytes 10. Decompress → plaintext 11. Deliver to requesting actor over HTTPS
 
 ### LLM Response (Write Path)
 
@@ -146,6 +143,7 @@ When a client requests messages for a chat:
 4. Package: `{ enc: b64(ciphertext), nonce: b64(nonce), algo: "aes-256-gcm", comp: true|false, key_id: chatKey.id }`
 
 **Error cases:**
+
 - Compression fails → fallback to identity, log warning, continue
 - Encryption fails → return error to caller (no partial write)
 - Both succeed → atomically write to DB
@@ -158,6 +156,7 @@ When a client requests messages for a chat:
 4. If comp is false, return decrypted bytes directly
 
 **Error cases:**
+
 - Decryption fails (wrong key, tampered data) → return error, log audit event
 - Decompression fails → return decrypted raw bytes as-is, log warning
 - Missing or malformed JSON → return error, log audit event
@@ -197,30 +196,30 @@ No JSON wrapper in dev mode.
 
 ### Write Pipeline Errors
 
-| Step | Error | Behaviour |
-| ---- | ----- | --------- |
-| Compress | Any failure | Log warning. Skip compression (identity). Continue to encrypt. |
-| Encrypt | Key invalid | Return error. No partial write. Client retries with idempotency key. |
-| Encrypt | Key revoked | Return 403. Actor must re-auth or use different key. |
-| DB write | Constraint / timeout | Return 500. Idempotency key prevents duplicate on retry. |
+| Step     | Error                | Behaviour                                                            |
+| -------- | -------------------- | -------------------------------------------------------------------- |
+| Compress | Any failure          | Log warning. Skip compression (identity). Continue to encrypt.       |
+| Encrypt  | Key invalid          | Return error. No partial write. Client retries with idempotency key. |
+| Encrypt  | Key revoked          | Return 403. Actor must re-auth or use different key.                 |
+| DB write | Constraint / timeout | Return 500. Idempotency key prevents duplicate on retry.             |
 
 ### Read Pipeline Errors
 
-| Step | Error | Behaviour |
-| ---- | ----- | --------- |
-| Decrypt | Key missing | Return 403. Actor lacks access to this message. |
-| Decrypt | Auth tag mismatch | Log audit event. Return error (tampered data detected). |
-| Decompress | Invalid data | Log warning. Return decrypted raw bytes as content. |
-| Payload parse | Malformed JSON | Log audit event. Return error to client. |
+| Step          | Error             | Behaviour                                               |
+| ------------- | ----------------- | ------------------------------------------------------- |
+| Decrypt       | Key missing       | Return 403. Actor lacks access to this message.         |
+| Decrypt       | Auth tag mismatch | Log audit event. Return error (tampered data detected). |
+| Decompress    | Invalid data      | Log warning. Return decrypted raw bytes as content.     |
+| Payload parse | Malformed JSON    | Log audit event. Return error to client.                |
 
 ### Key Errors
 
-| Error | Cause | Recovery |
-| ----- | ----- | -------- |
-| SMK not set | `SERVER_ENCRYPTION_KEY` missing | Dev mode: skip encryption, log warning. Prod: refuse to start. |
-| Actor has no key | First login race | Auto-generate on demand. |
-| Key expired | Past `expires_at` | Attempt rotation. If failed, fall back to last valid key. |
-| Key revoked | Actor / admin action | Irreversible. Historical messages with this key become inaccessible. |
+| Error            | Cause                           | Recovery                                                             |
+| ---------------- | ------------------------------- | -------------------------------------------------------------------- |
+| SMK not set      | `SERVER_ENCRYPTION_KEY` missing | Dev mode: skip encryption, log warning. Prod: refuse to start.       |
+| Actor has no key | First login race                | Auto-generate on demand.                                             |
+| Key expired      | Past `expires_at`               | Attempt rotation. If failed, fall back to last valid key.            |
+| Key revoked      | Actor / admin action            | Irreversible. Historical messages with this key become inaccessible. |
 
 ---
 
@@ -228,36 +227,36 @@ No JSON wrapper in dev mode.
 
 Actors manage keys at `/settings/keys`:
 
-| Action | Description |
-| ------ | ----------- |
-| View keys | List all owned keys with name, type, created, status |
-| Request key | Download / copy primary key (re-auth required) |
-| Generate key | Create additional named key |
-| Rotate key | New primary, old → expired. Optionally re-encrypt history. |
-| Revoke key | Irreversible. Confirm with typed "REVOKE". |
-| Purge key | Delete key record. Messages become permanently inaccessible. |
-| View history | Per-key message list with date/chat/role filters |
-| Export history | Download as JSON, Markdown, or plain text |
+| Action         | Description                                                  |
+| -------------- | ------------------------------------------------------------ |
+| View keys      | List all owned keys with name, type, created, status         |
+| Request key    | Download / copy primary key (re-auth required)               |
+| Generate key   | Create additional named key                                  |
+| Rotate key     | New primary, old → expired. Optionally re-encrypt history.   |
+| Revoke key     | Irreversible. Confirm with typed "REVOKE".                   |
+| Purge key      | Delete key record. Messages become permanently inaccessible. |
+| View history   | Per-key message list with date/chat/role filters             |
+| Export history | Download as JSON, Markdown, or plain text                    |
 
 ---
 
 ## Implementation Status
 
-| Component | Status | File |
-| --------- | ------ | ---- |
-| Client compress/decompress | ✅ Built | `src/frontend/browser.ts` |
-| Client encrypt/decrypt | ✅ Built | `src/frontend/browser.ts` |
-| Client key import/export/gen | ✅ Built | `src/frontend/browser.ts` |
-| Compress-then-encrypt wrapper | ❌ Not built | Pipeline functions |
-| Decrypt-then-decompress wrapper | ❌ Not built | Pipeline functions |
-| Server SMK loading | ❌ Not built | Config + startup |
-| Server actor key CRUD | ❌ Not built | Service layer |
-| Server chat key derivation | ❌ Not built | HKDF service |
-| Server encrypt/decrypt | ❌ Not built | crypto integration |
-| Key distribution (group) | ❌ Not built | |
-| Key rotation | ❌ Not built | |
-| Key revocation | ❌ Not built | |
-| Anonymous mode | ❌ Not built | |
+| Component                       | Status       | File                      |
+| ------------------------------- | ------------ | ------------------------- |
+| Client compress/decompress      | ✅ Built     | `src/frontend/browser.ts` |
+| Client encrypt/decrypt          | ✅ Built     | `src/frontend/browser.ts` |
+| Client key import/export/gen    | ✅ Built     | `src/frontend/browser.ts` |
+| Compress-then-encrypt wrapper   | ❌ Not built | Pipeline functions        |
+| Decrypt-then-decompress wrapper | ❌ Not built | Pipeline functions        |
+| Server SMK loading              | ❌ Not built | Config + startup          |
+| Server actor key CRUD           | ❌ Not built | Service layer             |
+| Server chat key derivation      | ❌ Not built | HKDF service              |
+| Server encrypt/decrypt          | ❌ Not built | crypto integration        |
+| Key distribution (group)        | ❌ Not built |                           |
+| Key rotation                    | ❌ Not built |                           |
+| Key revocation                  | ❌ Not built |                           |
+| Anonymous mode                  | ❌ Not built |                           |
 
 ---
 

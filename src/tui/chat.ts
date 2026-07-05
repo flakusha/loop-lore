@@ -133,9 +133,7 @@ export class ChatWidget {
     this.messages = messages;
     const items = messages.map((msg) => {
       /* eslint-disable unicorn/no-incorrect-template-string-interpolation */
-      const prefix = msg.actorName
-        ? `{bold}${msg.actorName}{/bold}: `
-        : `{bold}${msg.role}{/bold}: `;
+      const prefix = msg.actorName ? `{bold}${msg.actorName}{/bold}: ` : `{bold}${msg.role}{/bold}: `;
       /* eslint-enable unicorn/no-incorrect-template-string-interpolation */
       return `${prefix}${msg.content.slice(0, 200)}${msg.content.length > 200 ? "..." : ""}`;
     });
@@ -204,7 +202,7 @@ export class ChatWidget {
       if (!res.ok) {
         let body: { error?: string };
         try {
-          body = await res.json() as { error?: string };
+          body = (await res.json()) as { error?: string };
         } catch {
           body = { error: res.statusText };
         }

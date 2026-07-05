@@ -39,6 +39,7 @@ The `time` field uses ISO 8601 format with timezone offset. This format is parse
 - **TZ Support:** Node.js respects the `TZ` environment variable by default. The `tzOffset()` function in `src/utils/date.ts` supports IANA timezone names via the `tz` parameter.
 
 **SQLite Compatibility:**
+
 ```sql
 -- Use this in migrations for ISO 8601 format:
 datetime('now')  -- SQLite default: "YYYY-MM-DD HH:MM:SS" (space, no TZ)
@@ -48,6 +49,7 @@ strftime('%Y-%m-%dT%H:%M:%f%z', 'now')  -- "2026-07-05T10:24:25.000+00:00"
 ```
 
 **PostgreSQL Compatibility:**
+
 ```sql
 -- PostgreSQL TIMESTAMP WITH TIME ZONE:
 NOW()  -- "2026-07-05 10:24:25.123456+00"
@@ -57,6 +59,7 @@ TO_CHAR(NOW(), 'YYYY-MM-DD"T"HH24:MI:SS.MS TZH:TZM')
 ```
 
 **Format Precision:**
+
 - Milliseconds: Always included (3 digits from JavaScript `Date`)
 - Microseconds/Nanoseconds: Not available in JavaScript `Date` object. For higher precision, use `performance.now()` or store as separate integer field.
 

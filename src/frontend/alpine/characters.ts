@@ -225,7 +225,7 @@ globalThis.characterEditState = function () {
 
 document.addEventListener("htmx:loadTheme", (e: CustomEvent<{ theme?: string }>) => {
   if (!(e.detail && e.detail.theme)) {
-  	return;
+    return;
   }
 
   const Alpine = globalThis.Alpine;

@@ -68,10 +68,10 @@ Full table definition in `src/db/schema-core.ts` → `Sessions` interface.
 
 Applied per-IP to auth endpoints:
 
-| Endpoint           | Rate Limit     |
-| ------------------ | -------------- |
-| `POST /api/auth/login`  | 10 requests/min |
-| `POST /api/auth/register` | 3 requests/hr  |
+| Endpoint                  | Rate Limit      |
+| ------------------------- | --------------- |
+| `POST /api/auth/login`    | 10 requests/min |
+| `POST /api/auth/register` | 3 requests/hr   |
 
 Rate limit headers returned: `X-RateLimit-Remaining`, `X-RateLimit-Reset`.
 On violation: `429 Too Many Requests` with `ErrorCode.TOO_MANY_REQUESTS`.

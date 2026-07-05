@@ -33,16 +33,65 @@ import {
   parsePagination,
 } from "./http-utils";
 
-interface ListWorldsOpts { database: Kysely<DB>; page: number; pageSize: number; context: RequestContext; }
-interface CreateWorldOpts { database: Kysely<DB>; body: Record<string, unknown>; context: RequestContext; }
-interface GetWorldOpts { database: Kysely<DB>; worldId: string; context: RequestContext; }
-interface UpdateWorldOpts { database: Kysely<DB>; worldId: string; body: Record<string, unknown>; context: RequestContext; }
-interface DeleteWorldOpts { database: Kysely<DB>; worldId: string; context: RequestContext; }
-interface ListLocationsOpts { database: Kysely<DB>; worldId: string; page: number; pageSize: number; context: RequestContext; }
-interface CreateLocationOpts { database: Kysely<DB>; worldId: string; body: Record<string, unknown>; context: RequestContext; }
-interface GetLocationOpts { database: Kysely<DB>; worldId: string; locId: string; context: RequestContext; }
-interface UpdateLocationOpts { database: Kysely<DB>; worldId: string; locId: string; body: Record<string, unknown>; context: RequestContext; }
-interface DeleteLocationOpts { database: Kysely<DB>; worldId: string; locId: string; context: RequestContext; }
+interface ListWorldsOpts {
+  database: Kysely<DB>;
+  page: number;
+  pageSize: number;
+  context: RequestContext;
+}
+interface CreateWorldOpts {
+  database: Kysely<DB>;
+  body: Record<string, unknown>;
+  context: RequestContext;
+}
+interface GetWorldOpts {
+  database: Kysely<DB>;
+  worldId: string;
+  context: RequestContext;
+}
+interface UpdateWorldOpts {
+  database: Kysely<DB>;
+  worldId: string;
+  body: Record<string, unknown>;
+  context: RequestContext;
+}
+interface DeleteWorldOpts {
+  database: Kysely<DB>;
+  worldId: string;
+  context: RequestContext;
+}
+interface ListLocationsOpts {
+  database: Kysely<DB>;
+  worldId: string;
+  page: number;
+  pageSize: number;
+  context: RequestContext;
+}
+interface CreateLocationOpts {
+  database: Kysely<DB>;
+  worldId: string;
+  body: Record<string, unknown>;
+  context: RequestContext;
+}
+interface GetLocationOpts {
+  database: Kysely<DB>;
+  worldId: string;
+  locId: string;
+  context: RequestContext;
+}
+interface UpdateLocationOpts {
+  database: Kysely<DB>;
+  worldId: string;
+  locId: string;
+  body: Record<string, unknown>;
+  context: RequestContext;
+}
+interface DeleteLocationOpts {
+  database: Kysely<DB>;
+  worldId: string;
+  locId: string;
+  context: RequestContext;
+}
 
 function extractIds(pathname: string): { worldId: string | null; locId: string | null } {
   const match = /^\/api\/worlds\/([a-f0-9-]+)(?:\/locations\/([a-f0-9-]+))?$/.exec(pathname);
@@ -113,9 +162,7 @@ const dispatch: RouteDispatch = async ({ request, context, database }) => {
 
 // ── World handlers ────────────────────────────────────────────
 
-async function handleListWorlds(
-  { database, page, pageSize, context }: ListWorldsOpts,
-): Promise<Response> {
+async function handleListWorlds({ database, page, pageSize, context }: ListWorldsOpts): Promise<Response> {
   const userId = context.userId;
   const offset = (page - 1) * pageSize;
 
@@ -135,9 +182,7 @@ async function handleListWorlds(
   return jsonPaginated(worlds, total, page, pageSize);
 }
 
-async function handleCreateWorld(
-  { database, body, context }: CreateWorldOpts,
-): Promise<Response> {
+async function handleCreateWorld({ database, body, context }: CreateWorldOpts): Promise<Response> {
   const userId = context.userId;
   if (!userId) return jsonError("Unauthorized", HttpStatus.Unauthorized, ErrorCode.Unauthorized);
 
@@ -164,21 +209,23 @@ async function handleCreateWorld(
   return jsonCreated({ id });
 }
 
-async function handleGetWorld(
-  { database, worldId, context }: GetWorldOpts,
-): Promise<Response> {
+async function handleGetWorld({ database, worldId, context }: GetWorldOpts): Promise<Response> {
   const { userId, userRole } = context;
   const world = await database.selectFrom("worlds").selectAll().where("id", "=", worldId).executeTakeFirst();
-  if (!world || (world.owner_id !== userId && userRole !== "admin")) return jsonError("World not found", HttpStatus.NotFound, ErrorCode.NotFound);
+  if (!world || (world.owner_id !== userId && userRole !== "admin"))
+    return jsonError("World not found", HttpStatus.NotFound, ErrorCode.NotFound);
   return jsonResponse(world);
 }
 
-async function handleUpdateWorld(
-  { database, worldId, body, context }: UpdateWorldOpts,
-): Promise<Response> {
+async function handleUpdateWorld({ database, worldId, body, context }: UpdateWorldOpts): Promise<Response> {
   const { userId, userRole } = context;
-  const world = await database.selectFrom("worlds").select("owner_id").where("id", "=", worldId).executeTakeFirst();
-  if (!world || (world.owner_id !== userId && userRole !== "admin")) return jsonError("World not found", HttpStatus.NotFound, ErrorCode.NotFound);
+  const world = await database
+    .selectFrom("worlds")
+    .select("owner_id")
+    .where("id", "=", worldId)
+    .executeTakeFirst();
+  if (!world || (world.owner_id !== userId && userRole !== "admin"))
+    return jsonError("World not found", HttpStatus.NotFound, ErrorCode.NotFound);
 
   const updates: Record<string, unknown> = {};
   if (body.name != null) updates.name = body.name;
@@ -196,12 +243,15 @@ async function handleUpdateWorld(
   return jsonResponse({ ok: true });
 }
 
-async function handleDeleteWorld(
-  { database, worldId, context }: DeleteWorldOpts,
-): Promise<Response> {
+async function handleDeleteWorld({ database, worldId, context }: DeleteWorldOpts): Promise<Response> {
   const { userId, userRole } = context;
-  const world = await database.selectFrom("worlds").select("owner_id").where("id", "=", worldId).executeTakeFirst();
-  if (!world || (world.owner_id !== userId && userRole !== "admin")) return jsonError("World not found", HttpStatus.NotFound, ErrorCode.NotFound);
+  const world = await database
+    .selectFrom("worlds")
+    .select("owner_id")
+    .where("id", "=", worldId)
+    .executeTakeFirst();
+  if (!world || (world.owner_id !== userId && userRole !== "admin"))
+    return jsonError("World not found", HttpStatus.NotFound, ErrorCode.NotFound);
 
   await database.deleteFrom("locations").where("world_id", "=", worldId).execute();
   await database.deleteFrom("worlds").where("id", "=", worldId).execute();
@@ -210,12 +260,21 @@ async function handleDeleteWorld(
 
 // ── Location handlers ─────────────────────────────────────────
 
-async function handleListLocations(
-  { database, worldId, page, pageSize, context }: ListLocationsOpts,
-): Promise<Response> {
+async function handleListLocations({
+  database,
+  worldId,
+  page,
+  pageSize,
+  context,
+}: ListLocationsOpts): Promise<Response> {
   const { userId, userRole } = context;
-  const world = await database.selectFrom("worlds").select("owner_id").where("id", "=", worldId).executeTakeFirst();
-  if (!world || (world.owner_id !== userId && userRole !== "admin")) return jsonError("World not found", HttpStatus.NotFound, ErrorCode.NotFound);
+  const world = await database
+    .selectFrom("worlds")
+    .select("owner_id")
+    .where("id", "=", worldId)
+    .executeTakeFirst();
+  if (!world || (world.owner_id !== userId && userRole !== "admin"))
+    return jsonError("World not found", HttpStatus.NotFound, ErrorCode.NotFound);
 
   const offset = (page - 1) * pageSize;
 
@@ -238,12 +297,20 @@ async function handleListLocations(
   return jsonPaginated(locations, total, page, pageSize);
 }
 
-async function handleCreateLocation(
-  { database, worldId, body, context }: CreateLocationOpts,
-): Promise<Response> {
+async function handleCreateLocation({
+  database,
+  worldId,
+  body,
+  context,
+}: CreateLocationOpts): Promise<Response> {
   const { userId, userRole } = context;
-  const world = await database.selectFrom("worlds").select("owner_id").where("id", "=", worldId).executeTakeFirst();
-  if (!world || (world.owner_id !== userId && userRole !== "admin")) return jsonError("World not found", HttpStatus.NotFound, ErrorCode.NotFound);
+  const world = await database
+    .selectFrom("worlds")
+    .select("owner_id")
+    .where("id", "=", worldId)
+    .executeTakeFirst();
+  if (!world || (world.owner_id !== userId && userRole !== "admin"))
+    return jsonError("World not found", HttpStatus.NotFound, ErrorCode.NotFound);
 
   const name = body.name as string | undefined;
   if (!name) return jsonError("name is required", HttpStatus.BadRequest);
@@ -257,19 +324,27 @@ async function handleCreateLocation(
       name,
       description: (body.description as string | undefined) ?? null,
       parent_location_id: (body.parentLocationId as string | undefined) ?? null,
-      connections: body.connections ? (() => { const r = safeJsonStringify(body.connections); return r.ok ? r.value : "[]"; })() : "[]",
+      connections: body.connections
+        ? (() => {
+            const r = safeJsonStringify(body.connections);
+            return r.ok ? r.value : "[]";
+          })()
+        : "[]",
     })
     .execute();
 
   return jsonCreated({ id });
 }
 
-async function handleGetLocation(
-  { database, worldId, locId, context }: GetLocationOpts,
-): Promise<Response> {
+async function handleGetLocation({ database, worldId, locId, context }: GetLocationOpts): Promise<Response> {
   const { userId, userRole } = context;
-  const world = await database.selectFrom("worlds").select("owner_id").where("id", "=", worldId).executeTakeFirst();
-  if (!world || (world.owner_id !== userId && userRole !== "admin")) return jsonError("World not found", HttpStatus.NotFound, ErrorCode.NotFound);
+  const world = await database
+    .selectFrom("worlds")
+    .select("owner_id")
+    .where("id", "=", worldId)
+    .executeTakeFirst();
+  if (!world || (world.owner_id !== userId && userRole !== "admin"))
+    return jsonError("World not found", HttpStatus.NotFound, ErrorCode.NotFound);
 
   const location = await database
     .selectFrom("locations")
@@ -282,12 +357,21 @@ async function handleGetLocation(
   return jsonResponse(location);
 }
 
-async function handleUpdateLocation(
-  { database, worldId, locId, body, context }: UpdateLocationOpts,
-): Promise<Response> {
+async function handleUpdateLocation({
+  database,
+  worldId,
+  locId,
+  body,
+  context,
+}: UpdateLocationOpts): Promise<Response> {
   const { userId, userRole } = context;
-  const world = await database.selectFrom("worlds").select("owner_id").where("id", "=", worldId).executeTakeFirst();
-  if (!world || (world.owner_id !== userId && userRole !== "admin")) return jsonError("World not found", HttpStatus.NotFound, ErrorCode.NotFound);
+  const world = await database
+    .selectFrom("worlds")
+    .select("owner_id")
+    .where("id", "=", worldId)
+    .executeTakeFirst();
+  if (!world || (world.owner_id !== userId && userRole !== "admin"))
+    return jsonError("World not found", HttpStatus.NotFound, ErrorCode.NotFound);
 
   const updates: Record<string, unknown> = {};
   if (body.name) updates.name = body.name;
@@ -310,18 +394,22 @@ async function handleUpdateLocation(
   return jsonResponse({ ok: true });
 }
 
-async function handleDeleteLocation(
-  { database, worldId, locId, context }: DeleteLocationOpts,
-): Promise<Response> {
+async function handleDeleteLocation({
+  database,
+  worldId,
+  locId,
+  context,
+}: DeleteLocationOpts): Promise<Response> {
   const { userId, userRole } = context;
-  const world = await database.selectFrom("worlds").select("owner_id").where("id", "=", worldId).executeTakeFirst();
-  if (!world || (world.owner_id !== userId && userRole !== "admin")) return jsonError("World not found", HttpStatus.NotFound, ErrorCode.NotFound);
+  const world = await database
+    .selectFrom("worlds")
+    .select("owner_id")
+    .where("id", "=", worldId)
+    .executeTakeFirst();
+  if (!world || (world.owner_id !== userId && userRole !== "admin"))
+    return jsonError("World not found", HttpStatus.NotFound, ErrorCode.NotFound);
 
-  await database
-    .deleteFrom("locations")
-    .where("id", "=", locId)
-    .where("world_id", "=", worldId)
-    .execute();
+  await database.deleteFrom("locations").where("id", "=", locId).where("world_id", "=", worldId).execute();
 
   return jsonNoContent();
 }

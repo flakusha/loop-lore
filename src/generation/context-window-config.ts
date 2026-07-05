@@ -38,8 +38,10 @@ export type TokenCountFn = (text: string) => number;
 export type SummarizeFn = (messages: string[]) => Promise<string>;
 
 /** LLM-based fact extraction: caller injects to avoid circular import */
-export type ExtractFn = (messagePair: { user: string; assistant: string }) =>
-  Promise<{ content: string; confidence: number; importance: number; keywords: string[] }[]>;
+export type ExtractFn = (messagePair: {
+  user: string;
+  assistant: string;
+}) => Promise<{ content: string; confidence: number; importance: number; keywords: string[] }[]>;
 
 // ── Defaults ────────────────────────────────────────────────
 

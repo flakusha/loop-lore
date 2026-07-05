@@ -25,12 +25,37 @@ import {
   parseBody,
 } from "./http-utils";
 
-interface GetMeOpts { database: Kysely<DB>; context: RequestContext; }
-interface UpdateMeOpts { database: Kysely<DB>; context: RequestContext; body: Record<string, unknown>; }
-interface GetUserOpts { database: Kysely<DB>; context: RequestContext; targetId: string; }
-interface UpdateUserOpts { database: Kysely<DB>; context: RequestContext; targetId: string; body: Record<string, unknown>; }
-interface UpdateUserSettingsOpts { database: Kysely<DB>; context: RequestContext; targetId: string; body: Record<string, unknown>; }
-interface DeleteUserOpts { database: Kysely<DB>; context: RequestContext; targetId: string; }
+interface GetMeOpts {
+  database: Kysely<DB>;
+  context: RequestContext;
+}
+interface UpdateMeOpts {
+  database: Kysely<DB>;
+  context: RequestContext;
+  body: Record<string, unknown>;
+}
+interface GetUserOpts {
+  database: Kysely<DB>;
+  context: RequestContext;
+  targetId: string;
+}
+interface UpdateUserOpts {
+  database: Kysely<DB>;
+  context: RequestContext;
+  targetId: string;
+  body: Record<string, unknown>;
+}
+interface UpdateUserSettingsOpts {
+  database: Kysely<DB>;
+  context: RequestContext;
+  targetId: string;
+  body: Record<string, unknown>;
+}
+interface DeleteUserOpts {
+  database: Kysely<DB>;
+  context: RequestContext;
+  targetId: string;
+}
 
 function extractUserId(pathname: string): string | null {
   const match = /^\/api\/users\/([a-f0-9-]+)(\/settings)?$/.exec(pathname);
@@ -80,9 +105,7 @@ const dispatch: RouteDispatch = async ({ request, context, database }) => {
   return null; // Not a user route
 };
 
-async function handleGetMe(
-  { database, context }: GetMeOpts,
-): Promise<Response> {
+async function handleGetMe({ database, context }: GetMeOpts): Promise<Response> {
   const userId = context.userId;
   if (!userId) return jsonError("Unauthorized", HttpStatus.Unauthorized, ErrorCode.Unauthorized);
 
@@ -96,9 +119,7 @@ async function handleGetMe(
   return jsonResponse(user);
 }
 
-async function handleUpdateMe(
-  { database, body, context }: UpdateMeOpts,
-): Promise<Response> {
+async function handleUpdateMe({ database, body, context }: UpdateMeOpts): Promise<Response> {
   const userId = context.userId;
   if (!userId) return jsonError("Unauthorized", HttpStatus.Unauthorized, ErrorCode.Unauthorized);
 
@@ -117,9 +138,7 @@ async function handleUpdateMe(
   return jsonResponse({ ok: true });
 }
 
-async function handleGetUser(
-  { database, targetId, context }: GetUserOpts,
-): Promise<Response> {
+async function handleGetUser({ database, targetId, context }: GetUserOpts): Promise<Response> {
   const userId = context.userId;
   if (!userId) return jsonError("Unauthorized", HttpStatus.Unauthorized, ErrorCode.Unauthorized);
 
@@ -138,9 +157,7 @@ async function handleGetUser(
   return jsonResponse(user);
 }
 
-async function handleUpdateUser(
-  { database, targetId, body, context }: UpdateUserOpts,
-): Promise<Response> {
+async function handleUpdateUser({ database, targetId, body, context }: UpdateUserOpts): Promise<Response> {
   const userId = context.userId;
   if (!userId) return jsonError("Unauthorized", HttpStatus.Unauthorized, ErrorCode.Unauthorized);
 
@@ -170,9 +187,12 @@ async function handleUpdateUser(
   return jsonResponse({ ok: true });
 }
 
-async function handleUpdateUserSettings(
-  { database, targetId, body, context }: UpdateUserSettingsOpts,
-): Promise<Response> {
+async function handleUpdateUserSettings({
+  database,
+  targetId,
+  body,
+  context,
+}: UpdateUserSettingsOpts): Promise<Response> {
   const userId = context.userId;
   if (!userId) return jsonError("Unauthorized", HttpStatus.Unauthorized, ErrorCode.Unauthorized);
 
@@ -201,9 +221,7 @@ async function handleUpdateUserSettings(
   return jsonResponse(merged);
 }
 
-async function handleDeleteUser(
-  { database, targetId, context }: DeleteUserOpts,
-): Promise<Response> {
+async function handleDeleteUser({ database, targetId, context }: DeleteUserOpts): Promise<Response> {
   if (context.userRole !== "admin") {
     return jsonError("Forbidden", HttpStatus.Forbidden, ErrorCode.Forbidden);
   }

@@ -59,12 +59,12 @@ Docs organized into:
 
 ### Interfaces & Integrations
 
-| Document                                                                                   | Topics                                           |
-| ------------------------------------------------------------------------------------------ | ------------------------------------------------ |
-| [`spec/tui.md`](./spec/tui.md)                                                             | Blessed TUI: components, keyboard map, data flow |
-| [`spec/transport-unified.md`](./spec/transport-unified.md)                                 | HTTP/WS/WebTransport abstraction                 |
-| [`spec/integrations/llm-serving.md`](./spec/integrations/llm-serving.md)       | LLM provider serving (OpenAI-compatible, etc.) |
-| [`spec/integrations/image-generation.md`](./spec/integrations/image-generation.md) | Image generation integration |
+| Document                                                                           | Topics                                           |
+| ---------------------------------------------------------------------------------- | ------------------------------------------------ |
+| [`spec/tui.md`](./spec/tui.md)                                                     | Blessed TUI: components, keyboard map, data flow |
+| [`spec/transport-unified.md`](./spec/transport-unified.md)                         | HTTP/WS/WebTransport abstraction                 |
+| [`spec/integrations/llm-serving.md`](./spec/integrations/llm-serving.md)           | LLM provider serving (OpenAI-compatible, etc.)   |
+| [`spec/integrations/image-generation.md`](./spec/integrations/image-generation.md) | Image generation integration                     |
 
 ### Frontend UX
 

@@ -45,9 +45,24 @@ import {
   validateMimeType,
 } from "./service";
 
-interface UploadOpts { request: Request; context: RequestContext; database: Kysely<DB>; uploadDir: string; maxFileSize: number; }
-interface ServeRawOpts { database: Kysely<DB>; assetId: string; uploadDir: string; }
-interface ServeCompressedOpts { database: Kysely<DB>; assetId: string; uploadDir: string; variant: string; }
+interface UploadOpts {
+  request: Request;
+  context: RequestContext;
+  database: Kysely<DB>;
+  uploadDir: string;
+  maxFileSize: number;
+}
+interface ServeRawOpts {
+  database: Kysely<DB>;
+  assetId: string;
+  uploadDir: string;
+}
+interface ServeCompressedOpts {
+  database: Kysely<DB>;
+  assetId: string;
+  uploadDir: string;
+  variant: string;
+}
 
 const dispatch: RouteDispatch = async ({ request, context, database, config }) => {
   const url = new URL(request.url);
@@ -99,7 +114,7 @@ const dispatch: RouteDispatch = async ({ request, context, database, config }) =
         return jsonCreated({ id: assetId });
       }
       if (method === "DELETE" && linkId) {
-        const body = await request.json() as { entityType?: string; entityId?: string };
+        const body = (await request.json()) as { entityType?: string; entityId?: string };
         await unlinkAsset(database, assetId, body.entityType ?? "", body.entityId ?? "");
         return jsonNoContent();
       }
@@ -129,9 +144,13 @@ const dispatch: RouteDispatch = async ({ request, context, database, config }) =
   return null; // Not an asset route
 };
 
-async function handleUpload(
-  { request, context, database, uploadDir, maxFileSize }: UploadOpts,
-): Promise<Response> {
+async function handleUpload({
+  request,
+  context,
+  database,
+  uploadDir,
+  maxFileSize,
+}: UploadOpts): Promise<Response> {
   const userId = context.userId;
   if (!userId) return jsonError("Unauthorized", HttpStatus.Unauthorized, ErrorCode.Unauthorized);
 
@@ -163,15 +182,19 @@ async function handleUpload(
 
   const altText = (formData.get("alt_text") as string) ?? undefined;
 
-  const asset = await createAsset(database, {
-    ownerId: userId,
-    filename: file.name,
-    mimeType,
-    assetType: detectAssetType(mimeType),
-    sizeBytes: buffer.length,
-    buffer,
-    altText,
-  }, uploadDir);
+  const asset = await createAsset(
+    database,
+    {
+      ownerId: userId,
+      filename: file.name,
+      mimeType,
+      assetType: detectAssetType(mimeType),
+      sizeBytes: buffer.length,
+      buffer,
+      altText,
+    },
+    uploadDir,
+  );
 
   return jsonCreated({
     id: asset.id,
@@ -184,9 +207,7 @@ async function handleUpload(
   });
 }
 
-async function handleServeRaw(
-  { database, assetId, uploadDir }: ServeRawOpts,
-): Promise<Response> {
+async function handleServeRaw({ database, assetId, uploadDir }: ServeRawOpts): Promise<Response> {
   const asset = await getAsset(database, assetId);
   if (!asset) return jsonError("Asset not found", HttpStatus.NotFound, ErrorCode.NotFound);
 
@@ -202,9 +223,12 @@ async function handleServeRaw(
   });
 }
 
-async function handleServeCompressed(
-  { database, assetId, uploadDir, variant }: ServeCompressedOpts,
-): Promise<Response> {
+async function handleServeCompressed({
+  database,
+  assetId,
+  uploadDir,
+  variant,
+}: ServeCompressedOpts): Promise<Response> {
   const asset = await getAsset(database, assetId);
   if (!asset) return jsonError("Asset not found", HttpStatus.NotFound, ErrorCode.NotFound);
 

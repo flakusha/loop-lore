@@ -1,6 +1,6 @@
 # Chat: Multi-LLM Story Generation with Game Master
 
-> ⚠️ **Implementation status:** Backend story module (`src/story/`) partially implemented (turn manager, game master, quest engine, world state). 
+> ⚠️ **Implementation status:** Backend story module (`src/story/`) partially implemented (turn manager, game master, quest engine, world state).
 > Frontend UI (story mode chat view, GM panel, quest log, story-specific templates) does NOT exist.
 > Story API endpoints are NOT wired into the route router. This spec is aspirational.
 
@@ -60,16 +60,19 @@ The story module is organized into these files:
 A story turn cycle progresses through seven stages:
 
 **Stage 1 — Game Master selects next actor**
+
 - Based on: turn order strategy, scene context, actor availability
 - Considers: quest objectives, character motivations
 - Outputs: `actor_id`, `context_prompt`, `turn_constraints`
 
 **Stage 2 — Selected actor generates response**
+
 - Receives: full context (world state, chat history, GM prompt)
 - Generates: response per actor's system prompt + style guidelines
 - Returns: `content`, `token usage`, `reasoning` (if exposed)
 
 **Stage 3 — Quality evaluator analyzes response**
+
 - Checks: coherence, character voice, plot consistency
 - Scores: 0-100 (configurable thresholds)
 - Flags: OOC, lore contradiction, quality issues
@@ -81,12 +84,14 @@ A story turn cycle progresses through seven stages:
 **Stage 4 — Persist message** (after ACCEPT or GM approval)
 
 **Stage 5 — World state engine processes events**
+
 - Extracts: location changes, NPC state, item transfers
 - Updates: world lore, location descriptions, quest progress
 - Triggers: quest progress updates, time advancement
 - Emits: events for UI, logging, synthetic generation
 
 **Stage 6 — Quest engine evaluates progress**
+
 - Time-based: location/world time progression
 - Collection: item acquisition tracking
 - Combat: enemy HP, defeat conditions
@@ -94,6 +99,7 @@ A story turn cycle progresses through seven stages:
 - Awards: XP, world changes, narrative unlocks
 
 **Stage 7 — Synthetic generator captures scenario** (if enabled)
+
 - Records: turn sequence, decisions, outcomes
 - Generates: test cases, regression scenarios
 - Stores: in `synthetic_data` table for CI/CD
@@ -241,16 +247,19 @@ type WorldEventType =
 World events are extracted from message content through a three-stage pipeline:
 
 **Stage 1 — LLM Extractor**
+
 - Takes raw message content as input
 - Lightweight model with structured output (few-shot prompted)
 - Schema: `WorldEvent[]` — location changes, NPC state changes, item transfers, etc.
 
 **Stage 2 — Validator**
+
 - Rule-based validation against known state
 - Checks: valid locations, existing NPCs, valid items, consistent timestamps
 - Cross-references extracted events against current world state
 
 **Stage 3 — Applier**
+
 - Transactional DB updates
 - Updates: actors (stats, location, equipment), world (lore, descriptions), quests (progress)
 - Emits events for UI update and synthetic generator

@@ -6,12 +6,21 @@
 // See: https://docs.aws.amazon.com/bedrock/latest/userguide/api_reference.html
 
 import type { ProviderInstanceConfig } from "../../config/schema";
-import type { LLMProvider, GenerateRequest, GenerateResponse, ProviderCapabilities, ChunkEvent, StreamHandler } from "./types";
+import type {
+  LLMProvider,
+  GenerateRequest,
+  GenerateResponse,
+  ProviderCapabilities,
+  ChunkEvent,
+  StreamHandler,
+} from "./types";
 import { ProviderError, ProviderAuthError, ProviderRateLimitError } from "./types";
 import { safeJsonParse } from "../../utils";
 import { getLogger } from "../../logger";
 
-getLogger().child({ module: "bedrock" }).warn("AWS Bedrock provider not implemented — AWS Signature V4 signing required");
+getLogger()
+  .child({ module: "bedrock" })
+  .warn("AWS Bedrock provider not implemented — AWS Signature V4 signing required");
 
 const CAPABILITIES: ProviderCapabilities = {
   type: "bedrock",
@@ -67,7 +76,7 @@ export class BedrockProvider implements LLMProvider {
     for (let attempt = 0; attempt <= this.retries; attempt++) {
       try {
         const response = await this.fetchWithRetry(req.model, body, req.signal, req.apiKey);
-        const data = await response.json() as BedrockResponse;
+        const data = (await response.json()) as BedrockResponse;
 
         return {
           content: this.extractContent(data),
@@ -157,7 +166,12 @@ export class BedrockProvider implements LLMProvider {
     };
   }
 
-  async healthCheck(): Promise<{ status: "ok" | "degraded" | "down"; model?: string; latencyMs?: number; error?: string }> {
+  async healthCheck(): Promise<{
+    status: "ok" | "degraded" | "down";
+    model?: string;
+    latencyMs?: number;
+    error?: string;
+  }> {
     const start = Date.now();
     try {
       const models = await this.listModels();
@@ -301,7 +315,11 @@ export class BedrockProvider implements LLMProvider {
     return data.completion ?? data.generation ?? data.outputText ?? "";
   }
 
-  private extractUsage(data: BedrockResponse): { promptTokens: number; completionTokens: number; totalTokens: number } {
+  private extractUsage(data: BedrockResponse): {
+    promptTokens: number;
+    completionTokens: number;
+    totalTokens: number;
+  } {
     return {
       promptTokens: data.usage?.inputTokens ?? 0,
       completionTokens: data.usage?.outputTokens ?? 0,

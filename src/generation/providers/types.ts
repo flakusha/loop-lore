@@ -124,7 +124,12 @@ export interface LLMProvider {
   stream(req: GenerateRequest, handler: StreamHandler): Promise<GenerateResponse>;
 
   /** Health check */
-  healthCheck(): Promise<{ status: "ok" | "degraded" | "down"; model?: string; latencyMs?: number; error?: string }>;
+  healthCheck(): Promise<{
+    status: "ok" | "degraded" | "down";
+    model?: string;
+    latencyMs?: number;
+    error?: string;
+  }>;
 
   /** List available models (GET /v1/models) */
   listModels(): Promise<string[]>;

@@ -188,8 +188,18 @@ export class QualityEvaluator {
     else if (wordCount < 20) score -= 20;
 
     const sensory = [
-      "smell", "sound", "feel", "taste", "sight", "hear",
-      "glimmer", "echo", "fragrant", "cold", "warm", "dark",
+      "smell",
+      "sound",
+      "feel",
+      "taste",
+      "sight",
+      "hear",
+      "glimmer",
+      "echo",
+      "fragrant",
+      "cold",
+      "warm",
+      "dark",
     ];
     const lowerResponse = response.toLowerCase();
     let sensoryCount = 0;
@@ -206,8 +216,7 @@ export class QualityEvaluator {
     const presentVerbs = (response.match(/\b(is|are|has|do|go|say|walk|look|turn|speak)\b/gi) ?? []).length;
     if (pastVerbs > 0 && presentVerbs > 0) {
       const ratio = pastVerbs / (pastVerbs + presentVerbs);
-      if (ratio > 0.8 || ratio < 0.2)
-        score += 5;
+      if (ratio > 0.8 || ratio < 0.2) score += 5;
       else score -= 5;
     }
 
@@ -236,9 +245,19 @@ export class QualityEvaluator {
     }
 
     const progressWords = [
-      "found", "discovered", "defeated", "rescued", "collected",
-      "obtained", "acquired", "completed", "progress", "quest",
-      "objective", "goal", "mission",
+      "found",
+      "discovered",
+      "defeated",
+      "rescued",
+      "collected",
+      "obtained",
+      "acquired",
+      "completed",
+      "progress",
+      "quest",
+      "objective",
+      "goal",
+      "mission",
     ];
     const hasProgress = progressWords.some((w) => responseLower.includes(w));
     if (hasProgress) score += 10;
@@ -254,9 +273,21 @@ export class QualityEvaluator {
     const lowerResponse = response.toLowerCase();
 
     const evocativeWords = [
-      "unexpected", "surprising", "peculiar", "strange", "mysterious",
-      "unsettling", "beautiful", "terrifying", "ancient", "forgotten",
-      "glimmer", "shadow", "whisper", "fade", "emerge",
+      "unexpected",
+      "surprising",
+      "peculiar",
+      "strange",
+      "mysterious",
+      "unsettling",
+      "beautiful",
+      "terrifying",
+      "ancient",
+      "forgotten",
+      "glimmer",
+      "shadow",
+      "whisper",
+      "fade",
+      "emerge",
     ];
     let evocativeCount = 0;
     for (const w of evocativeWords) {
@@ -303,8 +334,20 @@ export class QualityEvaluator {
       for (const match of matches) {
         if (
           ![
-            "The", "A", "An", "This", "That", "These", "Those",
-            "It", "He", "She", "They", "We", "You", "I",
+            "The",
+            "A",
+            "An",
+            "This",
+            "That",
+            "These",
+            "Those",
+            "It",
+            "He",
+            "She",
+            "They",
+            "We",
+            "You",
+            "I",
           ].includes(match)
         ) {
           entities.add(match.toLowerCase());
@@ -335,39 +378,59 @@ export class QualityEvaluator {
     };
   }
 
-   
   private getReasoning(dimension: string, score: number): string {
     /* eslint-disable unicorn/switch-case-braces */
     if (score >= 80) {
       switch (dimension) {
-        case "character_voice": return "Strong consistent character voice with natural dialogue";
-        case "plot_coherence": return "Response logically follows from context";
-        case "lore_consistency": return "References known world entities correctly";
-        case "narrative_quality": return "Well-paced prose with sensory detail";
-        case "quest_relevance": return "Directly addresses active quest objectives";
-        case "creativity": return "Original and evocative narrative choices";
-        default: return "Good quality";
+        case "character_voice":
+          return "Strong consistent character voice with natural dialogue";
+        case "plot_coherence":
+          return "Response logically follows from context";
+        case "lore_consistency":
+          return "References known world entities correctly";
+        case "narrative_quality":
+          return "Well-paced prose with sensory detail";
+        case "quest_relevance":
+          return "Directly addresses active quest objectives";
+        case "creativity":
+          return "Original and evocative narrative choices";
+        default:
+          return "Good quality";
       }
     }
     if (score >= 50) {
       switch (dimension) {
-        case "character_voice": return "Adequate character voice, minor inconsistencies";
-        case "plot_coherence": return "Generally coherent but some weak connections";
-        case "lore_consistency": return "Mostly consistent with world lore";
-        case "narrative_quality": return "Functional prose, could use more detail";
-        case "quest_relevance": return "Marginally touches on quest elements";
-        case "creativity": return "Some creative elements but follows expected patterns";
-        default: return "Acceptable quality";
+        case "character_voice":
+          return "Adequate character voice, minor inconsistencies";
+        case "plot_coherence":
+          return "Generally coherent but some weak connections";
+        case "lore_consistency":
+          return "Mostly consistent with world lore";
+        case "narrative_quality":
+          return "Functional prose, could use more detail";
+        case "quest_relevance":
+          return "Marginally touches on quest elements";
+        case "creativity":
+          return "Some creative elements but follows expected patterns";
+        default:
+          return "Acceptable quality";
       }
     }
     switch (dimension) {
-      case "character_voice": return "Weak or absent character voice";
-      case "plot_coherence": return "Poor logical connection to prior events";
-      case "lore_consistency": return "Contradicts or ignores world lore";
-      case "narrative_quality": return "Flat or confusing prose";
-      case "quest_relevance": return "Ignores active quest context";
-      case "creativity": return "Generic or repetitive content";
-      default: return "Low quality";
+      case "character_voice":
+        return "Weak or absent character voice";
+      case "plot_coherence":
+        return "Poor logical connection to prior events";
+      case "lore_consistency":
+        return "Contradicts or ignores world lore";
+      case "narrative_quality":
+        return "Flat or confusing prose";
+      case "quest_relevance":
+        return "Ignores active quest context";
+      case "creativity":
+        return "Generic or repetitive content";
+      default:
+        return "Low quality";
     }
     /* eslint-enable unicorn/switch-case-braces */
   }

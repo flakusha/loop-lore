@@ -160,7 +160,9 @@ export class GameMasterService {
     const instructions = [
       `Current scene: ${location.name}. ${location.atmosphere ?? ""}`,
       ...(context.activeQuests.length > 0
-        ? [`Active quest: "${context.activeQuests[0].name}" (${context.activeQuests[0].progress}/${context.activeQuests[0].target})`]
+        ? [
+            `Active quest: "${context.activeQuests[0].name}" (${context.activeQuests[0].progress}/${context.activeQuests[0].target})`,
+          ]
         : []),
       ...(context.recentTurns.length > 0
         ? [`Previous turn: "${context.recentTurns.at(-1)?.response?.slice(0, 200) ?? "none"}"`]
@@ -171,7 +173,6 @@ export class GameMasterService {
 
     let responseText = "";
     try {
-       
       responseText = await this.generateText({
         messages: assembled.messages,
         systemPrompt: assembled.systemPrompt,
@@ -211,9 +212,7 @@ export class GameMasterService {
     }
 
     const atmospherePart = location.atmosphere ? `Atmosphere: ${location.atmosphere}.` : "";
-    promptParts.push(
-      `Location: ${location.name}. ${atmospherePart}`,
-    );
+    promptParts.push(`Location: ${location.name}. ${atmospherePart}`);
 
     if (context.activeQuests.length > 0) {
       const primary = context.activeQuests[0];
@@ -288,12 +287,14 @@ export class GameMasterService {
         regeneration_count: 0,
         world_events: "[]",
         quest_progress: "[]",
-        gm_decision: (() => { const r = safeJsonStringify(decision); return r.ok ? r.value : "{}"; })(),
+        gm_decision: (() => {
+          const r = safeJsonStringify(decision);
+          return r.ok ? r.value : "{}";
+        })(),
       })
       .execute();
   }
 
-   
   private buildResult(options: BuildResultOptions): GmTurnResult {
     const { turn, response, qualityEval, worldEvents, accepted, escalated, regenerationSuggested } = options;
     return {
@@ -414,7 +415,15 @@ export class GameMasterService {
     if (qualityEval.escalationReason) {
       escalated = true;
       if (this.config.type === GameMasterType.Hybrid || this.config.type === GameMasterType.Human) {
-        return this.buildResult({ turn, response, qualityEval, worldEvents, accepted: true, escalated: true, regenerationSuggested: false });
+        return this.buildResult({
+          turn,
+          response,
+          qualityEval,
+          worldEvents,
+          accepted: true,
+          escalated: true,
+          regenerationSuggested: false,
+        });
       }
     }
 
@@ -422,7 +431,15 @@ export class GameMasterService {
       const canRegen = await this.turnManager.requestRegeneration(turnId, qualityEval.regenerationReason);
       regenerationSuggested = true;
       if (canRegen) {
-        return this.buildResult({ turn, response, qualityEval, worldEvents, accepted: false, escalated: false, regenerationSuggested: true });
+        return this.buildResult({
+          turn,
+          response,
+          qualityEval,
+          worldEvents,
+          accepted: false,
+          escalated: false,
+          regenerationSuggested: true,
+        });
       }
       escalated = true;
     }
@@ -434,10 +451,16 @@ export class GameMasterService {
         .set({
           response_received: response,
           quality_score: qualityEval.scores.overall,
-          quality_details: (() => { const r = safeJsonStringify(qualityEval.details); return r.ok ? r.value : "{}"; })(),
+          quality_details: (() => {
+            const r = safeJsonStringify(qualityEval.details);
+            return r.ok ? r.value : "{}";
+          })(),
           status: "accepted",
           completed_at: new Date().toISOString(),
-          world_events: (() => { const r = safeJsonStringify(worldEvents); return r.ok ? r.value : "[]"; })(),
+          world_events: (() => {
+            const r = safeJsonStringify(worldEvents);
+            return r.ok ? r.value : "[]";
+          })(),
         })
         .where("id", "=", turnId)
         .execute();
@@ -453,7 +476,15 @@ export class GameMasterService {
       });
     }
 
-    return this.buildResult({ turn, response, qualityEval, worldEvents, accepted, escalated, regenerationSuggested });
+    return this.buildResult({
+      turn,
+      response,
+      qualityEval,
+      worldEvents,
+      accepted,
+      escalated,
+      regenerationSuggested,
+    });
   }
 
   /** Human GM provides an override decision */

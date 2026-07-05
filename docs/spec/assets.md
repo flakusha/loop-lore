@@ -109,12 +109,12 @@ An asset upload proceeds through these steps:
 
 Assets are not directly tied to a single entity. Instead, `asset_links` junction table maps assets to any entity. Examples of how the same asset connects to different entities using `entity_type`, `entity_id`, and `label`:
 
-| Asset | Links To | Label | Purpose |
-|-------|----------|-------|---------|
-| `portrait.webp` | `character` uuid | `portrait` | Character portrait |
-| `bgm.opus` | `world` uuid | `ambient` | Background music |
-| `screenshot.png` | `chat` uuid | `scene` | Scene illustration |
-| `avatar.jpg` | `user` uuid | `avatar` | User profile picture |
+| Asset            | Links To         | Label      | Purpose              |
+| ---------------- | ---------------- | ---------- | -------------------- |
+| `portrait.webp`  | `character` uuid | `portrait` | Character portrait   |
+| `bgm.opus`       | `world` uuid     | `ambient`  | Background music     |
+| `screenshot.png` | `chat` uuid      | `scene`    | Scene illustration   |
+| `avatar.jpg`     | `user` uuid      | `avatar`   | User profile picture |
 
 This replaces the old Gallery model where items had fixed `chat_id`/`character_id` columns.
 

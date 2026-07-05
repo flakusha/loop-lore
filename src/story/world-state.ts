@@ -84,7 +84,10 @@ export class WorldStateService {
       type: q.type,
       progress: q.progress,
       target: q.target,
-      config: (() => { const parsed = jsonParseOr<QuestConfig | null>(q.config, null); return parsed && typeof parsed.type === "string" ? parsed : {} as unknown as QuestConfig; })(),
+      config: (() => {
+        const parsed = jsonParseOr<QuestConfig | null>(q.config, null);
+        return parsed && typeof parsed.type === "string" ? parsed : ({} as unknown as QuestConfig);
+      })(),
     }));
 
     const participantRows = await this.db

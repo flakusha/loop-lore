@@ -21,6 +21,7 @@ import { UserStatus } from "../db/enums";
 import { jsonResponse, jsonError, HttpStatus, ErrorCode } from "./http-utils";
 import { getOrCreateSoloUserForAuth } from "../middleware/auth";
 import { createRateLimiter } from "../middleware/rate-limit";
+import { getSmk, isEncryptionEnabled, ensureActorKey } from "../crypto";
 
 // ── Rate limiting (per-IP, in-memory) ─────────────────────────
 
@@ -45,10 +46,12 @@ function getClientIp(request: Request): string {
   const directIp = (request as { remoteAddress?: string }).remoteAddress;
   if (directIp) return directIp;
   // Note: X-Forwarded-For can be spoofed by clients not behind trusted proxy
-  return request.headers.get("X-Forwarded-For")?.split(",", 1)[0]?.trim()
-    ?? request.headers.get("x-real-ip")
-    ?? request.headers.get("CF-Connecting-IP")
-    ?? "unknown";
+  return (
+    request.headers.get("X-Forwarded-For")?.split(",", 1)[0]?.trim() ??
+    request.headers.get("x-real-ip") ??
+    request.headers.get("CF-Connecting-IP") ??
+    "unknown"
+  );
 }
 
 function computeExpiry(sessionTimeoutHours: number): string {
@@ -56,7 +59,11 @@ function computeExpiry(sessionTimeoutHours: number): string {
 }
 
 function escapeHtml(str: string): string {
-  return str.replaceAll('&', "&amp;").replaceAll('<', "&lt;").replaceAll('>', "&gt;").replaceAll('"', "&quot;");
+  return str
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;");
 }
 
 function errorHtml(msg: string): Response {
@@ -119,11 +126,7 @@ async function createSession(
 
 // ── Route handlers ────────────────────────────────────────────
 
-async function handleLogin(
-  request: Request,
-  database: Kysely<DB>,
-  config: Config,
-): Promise<Response> {
+async function handleLogin(request: Request, database: Kysely<DB>, config: Config): Promise<Response> {
   // Rate limit
   const ip = getClientIp(request);
   if (!loginLimiter.check(ip)) {
@@ -186,6 +189,12 @@ async function handleLogin(
     config.auth.sessionTimeoutHours,
   );
 
+  // Ensure the user's actor has an encryption key (if encryption enabled)
+  if (isEncryptionEnabled()) {
+    const smk = getSmk()!;
+    await ensureActorKey(database, user.id, smk);
+  }
+
   // Return HX-Redirect + Set-Cookie
   return new Response(null, {
     status: HttpStatus.OK,
@@ -196,11 +205,7 @@ async function handleLogin(
   });
 }
 
-async function handleDemoLogin(
-  request: Request,
-  database: Kysely<DB>,
-  config: Config,
-): Promise<Response> {
+async function handleDemoLogin(request: Request, database: Kysely<DB>, config: Config): Promise<Response> {
   // Get or create solo user (reuse logic from auth middleware)
   const soloUser = await getOrCreateSoloUserForAuth(database, config.auth.demoUsername);
   if (!soloUser) {
@@ -218,6 +223,12 @@ async function handleDemoLogin(
     config.auth.maxSessionsPerUser,
     config.auth.sessionTimeoutHours,
   );
+
+  // Ensure the solo user's actor has an encryption key
+  if (isEncryptionEnabled()) {
+    const smk = getSmk()!;
+    await ensureActorKey(database, soloUser.id, smk);
+  }
 
   // Return redirect to chat page (hx-target="body" hx-swap="outerHTML")
   return new Response(null, {
@@ -249,10 +260,7 @@ async function handleLogout(
   return jsonResponse({ ok: true }, HttpStatus.OK);
 }
 
-async function handleMe(
-  database: Kysely<DB>,
-  context: RequestContext,
-): Promise<Response> {
+async function handleMe(database: Kysely<DB>, context: RequestContext): Promise<Response> {
   if (!context.userId) {
     return jsonError("Unauthorized", HttpStatus.Unauthorized, ErrorCode.Unauthorized);
   }

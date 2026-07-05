@@ -12,23 +12,26 @@ Two-mode authentication system:
 Every request to `handleApiRequest()` follows this decision journey:
 
 **Step 1: Check auth-skip paths**
-   - If path is one of `login`, `register`, `age-gate/*`, or asset signed URLs:
-     - Route directly via `compose([errorBoundary], handler)` — no auth, no pipeline
-     - Jump straight to handler execution
-   - Otherwise, continue to step 2
+
+- If path is one of `login`, `register`, `age-gate/*`, or asset signed URLs:
+  - Route directly via `compose([errorBoundary], handler)` — no auth, no pipeline
+  - Jump straight to handler execution
+- Otherwise, continue to step 2
 
 **Step 2: Authenticate**
-   - Call `authenticate(request)` which:
-     1. Extracts `Authorization: Bearer <token>` header
-     2. SHA-256 hashes the token
-     3. Looks up `sessions` table by `token_hash`
-     4. If not found or expired → returns `401 Unauthorized`
-     5. Fetches user role, updates `last_activity`
-     6. Returns `RequestContext { userId, userRole, sessionId }`
+
+- Call `authenticate(request)` which:
+  1.  Extracts `Authorization: Bearer <token>` header
+  2.  SHA-256 hashes the token
+  3.  Looks up `sessions` table by `token_hash`
+  4.  If not found or expired → returns `401 Unauthorized`
+  5.  Fetches user role, updates `last_activity`
+  6.  Returns `RequestContext { userId, userRole, sessionId }`
 
 **Step 3: Execute middleware chain**
-   - `compose([errorBoundary], handler)(request, context)`
-   - Route handler receives validated context, processes the request
+
+- `compose([errorBoundary], handler)(request, context)`
+- Route handler receives validated context, processes the request
 
 ### Auth as pre-step (MVP)
 
@@ -39,15 +42,13 @@ Every request to `handleApiRequest()` follows this decision journey:
 When role guards, rate limiters, and audit logging are needed:
 
 ```typescript
-compose(
-  [errorBoundary, rateLimiter, authenticate, requireRole("admin")],
-  dispatchRoutes,
-);
+compose([errorBoundary, rateLimiter, authenticate, requireRole("admin")], dispatchRoutes);
 ```
 
 ## Token Format
 
 Opaque UUID v4 string. Server-side:
+
 - On login: generate UUID → SHA-256 hash → store hash in `sessions.token_hash`
 - Return raw UUID to client as Bearer token
 - On request: SHA-256(raw token) → lookup `sessions` by hash
@@ -59,6 +60,7 @@ Server:    hash = sha256("550e8400-...") → "a1b2c3..."
 ```
 
 Benefits over JWT:
+
 - No key management
 - Session revocation = DELETE row (immediate)
 - No token payload size limits
@@ -78,6 +80,7 @@ Content-Type: application/json
 ```
 
 Server:
+
 1. Lookup user by username
 2. Verify password hash (bcrypt/scrypt)
 3. Check `user.status !== "disabled"`
@@ -88,6 +91,7 @@ Server:
 ### Validation (every request)
 
 `authenticate()` does:
+
 1. Extract `Bearer <token>` from Authorization header
 2. Early reject: missing header, empty token
 3. SHA-256 hash → sessions table lookup
@@ -154,21 +158,21 @@ if (context.userRole !== "admin") {
 
 ### Permission matrix
 
-| Action | admin | user | viewer | solo |
-|--------|:-----:|:----:|:------:|:----:|
-| Create chats | ✓ | ✓ | | ✓ |
-| Read own chats | ✓ | ✓ | ✓ | ✓ |
-| Read any chat | ✓ | | | ✓ |
-| Send messages | ✓ | ✓ | | ✓ |
-| Edit own messages | ✓ | ✓ | | ✓ |
-| Delete own messages | ✓ | ✓ | | ✓ |
-| Manage users | ✓ | | | |
-| View age gate config | ✓ | | | ✓ |
-| Modify age gate config | ✓ | | | |
-| View system config | ✓ | | | ✓ |
-| Modify system config | ✓ | | | |
-| List active generations | ✓ | | | |
-| Override message status | ✓ | | | |
+| Action                  | admin | user | viewer | solo |
+| ----------------------- | :---: | :--: | :----: | :--: |
+| Create chats            |   ✓   |  ✓   |        |  ✓   |
+| Read own chats          |   ✓   |  ✓   |   ✓    |  ✓   |
+| Read any chat           |   ✓   |      |        |  ✓   |
+| Send messages           |   ✓   |  ✓   |        |  ✓   |
+| Edit own messages       |   ✓   |  ✓   |        |  ✓   |
+| Delete own messages     |   ✓   |  ✓   |        |  ✓   |
+| Manage users            |   ✓   |      |        |      |
+| View age gate config    |   ✓   |      |        |  ✓   |
+| Modify age gate config  |   ✓   |      |        |      |
+| View system config      |   ✓   |      |        |  ✓   |
+| Modify system config    |   ✓   |      |        |      |
+| List active generations |   ✓   |      |        |      |
+| Override message status |   ✓   |      |        |      |
 
 ## Rate Limiting (MVP)
 
@@ -183,11 +187,12 @@ interface RateBucket {
 }
 
 const loginAttempts = new Map<string, RateBucket>();
-const WINDOW_MS = 60_000;  // 1 minute
-const MAX_ATTEMPTS = 10;   // per window
+const WINDOW_MS = 60_000; // 1 minute
+const MAX_ATTEMPTS = 10; // per window
 ```
 
 Logic:
+
 1. On POST `/api/auth/login`: get client IP from `X-Forwarded-For` or `request.ip`
 2. Look up bucket for IP
 3. If outside window → reset bucket
@@ -202,12 +207,12 @@ Same mechanism, separate bucket, lower limit (e.g., 3 per hour per IP).
 
 ## Session Management Routes
 
-| Method | Path | Auth | Description |
-|--------|------|------|-------------|
-| POST | `/api/auth/login` | No | Authenticate, get token |
-| POST | `/api/auth/register` | No | Create account (if `auth.registrationOpen`) |
-| POST | `/api/auth/logout` | Yes | Delete current session |
-| GET | `/api/auth/me` | Yes | Current user profile |
+| Method | Path                 | Auth | Description                                 |
+| ------ | -------------------- | ---- | ------------------------------------------- |
+| POST   | `/api/auth/login`    | No   | Authenticate, get token                     |
+| POST   | `/api/auth/register` | No   | Create account (if `auth.registrationOpen`) |
+| POST   | `/api/auth/logout`   | Yes  | Delete current session                      |
+| GET    | `/api/auth/me`       | Yes  | Current user profile                        |
 
 ### POST /api/auth/register
 
@@ -220,6 +225,7 @@ Same mechanism, separate bucket, lower limit (e.g., 3 per hour per IP).
 ```
 
 Validation:
+
 - Username: 3-32 chars, alphanumeric + underscore, unique
 - Display name: 1-64 chars
 - Password: 8+ chars
@@ -265,6 +271,7 @@ Short-lived HMAC-signed URLs for protected asset downloads. Required because bro
 Token format: `?token=<HMAC-SHA256(assetId + expiry + secret)>`
 
 Server validates on `/api/assets/:id/download`:
+
 1. Parse token from query param
 2. Recompute HMAC with server secret
 3. Check expiry timestamp
@@ -276,11 +283,11 @@ Server validates on `/api/assets/:id/download`:
 // config.json
 {
   "auth": {
-    "required": false,        // true = remote auth, false = solo/demo
-    "registrationOpen": true,  // allow new user registration
+    "required": false, // true = remote auth, false = solo/demo
+    "registrationOpen": true, // allow new user registration
     "sessionTimeoutHours": 24, // idle session expiry
-    "maxSessionsPerUser": 10   // concurrent session limit
-  }
+    "maxSessionsPerUser": 10, // concurrent session limit
+  },
 }
 ```
 

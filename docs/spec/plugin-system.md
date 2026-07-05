@@ -366,15 +366,18 @@ export const plugin: Plugin = {
 Plugins are organized into three categories by source:
 
 **Core plugins** (shipped with loop-lore, maintained by core team):
+
 - `plugins/core/dice-roller/` — `plugin.ts`, `dice-parser.ts`, `package.json` (optional)
 - `plugins/core/code-executor/` — `plugin.ts`, `executor.ts`
 - `plugins/core/web-research/` — `plugin.ts`, `search.ts`
 
 **Community plugins** (third-party, installed separately):
+
 - `plugins/community/github-integration/` — `plugin.ts`, `github-client.ts`
 - `plugins/community/latex-renderer/` — `plugin.ts`, `renderer.ts`
 
 **Local plugins** (user-authored, not shared):
+
 - `plugins/local/my-workflow-automation/` — `plugin.ts`, `workflow.ts`
 
 ### Version Compatibility

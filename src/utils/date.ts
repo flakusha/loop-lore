@@ -90,7 +90,7 @@ export function formatTime(options?: {
 }): string {
   const raw = options?.date ?? new Date();
   const d = raw instanceof Date ? raw : new Date(raw);
-  const style = options?.style ?? "standard";  // Default to standard for parseability
+  const style = options?.style ?? "standard"; // Default to standard for parseability
   const tz = options?.tz;
 
   // Compute time components in target timezone to match offset

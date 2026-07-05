@@ -32,12 +32,12 @@
 # ───────────────────────────────────────────────────────────
 
 server:
-  port: 0                    # random port
+  port: 0 # random port
   host: "localhost"
 
 db:
   type: sqlite
-  sqliteFilename: ":memory:"   # in-memory DB
+  sqliteFilename: ":memory:" # in-memory DB
 
 auth:
   required: false
@@ -45,7 +45,7 @@ auth:
   demoAutoSetup: true
 
 logging:
-  level: error                # quiet during tests
+  level: error # quiet during tests
 
 generation:
   providers:

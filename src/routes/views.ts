@@ -18,14 +18,22 @@ import { join } from "node:path";
 import type { RouteDispatch } from "./router";
 import { registerRoute } from "./router";
 
-
 const VIEWS_DIR = join(import.meta.dir, "..", "views");
 const PUBLIC_DIR = join(import.meta.dir, "..", "..", "dist", "public");
 
 // View templates that can be served
 const ALLOWED_VIEWS = new Set([
-  "chat", "gallery", "settings", "login", "characters", "new-chat", "assets",
-  "worlds", "world-detail", "world-edit", "character-edit"
+  "chat",
+  "gallery",
+  "settings",
+  "login",
+  "characters",
+  "new-chat",
+  "assets",
+  "worlds",
+  "world-detail",
+  "world-edit",
+  "character-edit",
 ]);
 
 /** Simplistic layout wrapper — replaces {{{content}}} in layout.html */
@@ -48,7 +56,10 @@ function serveView(viewName: string): Response | null {
   if (!existsSync(viewPath)) return null;
 
   const content = readFileSync(viewPath, "utf8");
-  const wrapped = viewName === "index" ? content : wrapWithLayout(content, viewName.charAt(0).toUpperCase() + viewName.slice(1));
+  const wrapped =
+    viewName === "index"
+      ? content
+      : wrapWithLayout(content, viewName.charAt(0).toUpperCase() + viewName.slice(1));
 
   return new Response(wrapped, {
     headers: { "Content-Type": "text/html; charset=utf-8" },
@@ -122,7 +133,13 @@ function serveCharacterEdit(characterId: string): Response | null {
 }
 
 // eslint-disable-next-line sonarjs/cognitive-complexity
-const dispatch: RouteDispatch = async ({ request, context: _context, database: _database, config: _config }) => { // eslint-disable-line @typescript-eslint/require-await
+const dispatch: RouteDispatch = async ({
+  request,
+  context: _context,
+  database: _database,
+  config: _config,
+}) => {
+  // eslint-disable-line @typescript-eslint/require-await
   const url = new URL(request.url);
   const { pathname } = url;
 

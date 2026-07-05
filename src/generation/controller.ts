@@ -24,6 +24,8 @@ import { handleGenerate } from "./generate-route";
 import { jsonError } from "../routes/http-utils";
 import type { Config } from "../config/schema";
 import { loadConfig } from "../config/load";
+import type { Kysely } from "kysely";
+import type { DB } from "../db/schema";
 
 // ── Helpers ──────────────────────────────────────────────────
 
@@ -46,6 +48,7 @@ async function parseJsonBody(request: Request): Promise<unknown> {
 // eslint-disable-next-line sonarjs/cognitive-complexity
 export async function dispatch(
   request: Request,
+  database: Kysely<DB>,
   _userId?: string | null,
   _userRole?: string | null,
   config?: Config,
@@ -58,46 +61,46 @@ export async function dispatch(
     const body = await parseJsonBody(request);
     if (body instanceof Response) return body;
     const cfg = config ?? loadConfig();
-    return handleGenerate(body, cfg, _userId ?? undefined);
+    return handleGenerate(body, database, cfg, _userId ?? undefined);
   }
 
   // POST /api/generation/cancel
   if (pathname === "/api/generation/cancel" && request.method === "POST") {
     const body = await parseJsonBody(request);
     if (body instanceof Response) return body;
-    return handleCancelGeneration(body);
+    return handleCancelGeneration(body, database);
   }
 
   // GET /api/generation/status/:chatId
   const statusMatch = /^\/api\/generation\/status\/([^/]+)$/.exec(pathname);
   if (statusMatch && request.method === "GET") {
-    return handleGenerationStatus(statusMatch[1]);
+    return handleGenerationStatus(statusMatch[1], database);
   }
 
   // GET /api/generation/active
   if (pathname === "/api/generation/active" && request.method === "GET") {
-    return handleListActiveGenerations();
+    return handleListActiveGenerations(database);
   }
 
   // POST /api/generation/retry
   if (pathname === "/api/generation/retry" && request.method === "POST") {
     const body = await parseJsonBody(request);
     if (body instanceof Response) return body;
-    return handleRetryGeneration(body);
+    return handleRetryGeneration(body, database);
   }
 
   // POST /api/generation/continue
   if (pathname === "/api/generation/continue" && request.method === "POST") {
     const body = await parseJsonBody(request);
     if (body instanceof Response) return body;
-    return handleContinueGeneration(body);
+    return handleContinueGeneration(body, database);
   }
 
   // POST /api/generation/regenerate
   if (pathname === "/api/generation/regenerate" && request.method === "POST") {
     const body = await parseJsonBody(request);
     if (body instanceof Response) return body;
-    return handleRegenerate(body);
+    return handleRegenerate(body, database);
   }
 
   return null; // Not a generation route

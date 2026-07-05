@@ -38,7 +38,9 @@ export async function completeStep(attemptId: string, stepIndex: number, db: Kys
       step_index: active.stepIndex,
     });
   } catch (error: unknown) {
-    getLogger().child({ module: "generation" }).warn("Non-fatal error in completeStep", { error: String(error) });
+    getLogger()
+      .child({ module: "generation" })
+      .warn("Non-fatal error in completeStep", { error: String(error) });
   }
 }
 
@@ -63,7 +65,9 @@ export async function failStep(
       completed_at: new Date().toISOString(),
     });
   } catch (updateError: unknown) {
-    getLogger().child({ module: "generation" }).warn("Non-fatal error in failStep", { error: String(updateError) });
+    getLogger()
+      .child({ module: "generation" })
+      .warn("Non-fatal error in failStep", { error: String(updateError) });
   }
 }
 
