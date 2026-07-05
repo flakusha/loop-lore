@@ -200,10 +200,12 @@ export class QuestEngine {
     const expired: string[] = [];
 
     for (const quest of timeQuests) {
-      if (quest.deadline && quest.deadline < now) {
-        await this.fail(quest.id);
-        expired.push(quest.id);
+      if (!(quest.deadline && quest.deadline < now)) {
+      	continue;
       }
+
+      await this.fail(quest.id);
+      expired.push(quest.id);
     }
 
     return expired;
@@ -272,8 +274,7 @@ export class QuestEngine {
         if (event.type !== "time_advancement") return 0;
         const cfg = config as import("./types").TimeQuestConfig;
         const minutes = (event.data.minutesAdvanced ?? 60) as number;
-        const advance = Math.round((minutes / cfg.durationMinutes) * 100);
-        return advance;
+        return Math.round((minutes / cfg.durationMinutes) * 100);
       }
 
       case QuestType.Discovery: {
@@ -303,8 +304,9 @@ export class QuestEngine {
         return 0;
       }
 
-      default:
+      default: {
         return 0;
+      }
     }
   }
 
@@ -335,7 +337,7 @@ export class QuestEngine {
       .updateTable("quests")
       .set({
         progress: newProgress,
-        ...(completed ? { status: QuestStatus.Completed, completed_at: new Date().toISOString() } : {}),
+        ...(completed && { status: QuestStatus.Completed, completed_at: new Date().toISOString() }),
       })
       .where("id", "=", quest.id)
       .execute();
@@ -379,12 +381,8 @@ export class QuestEngine {
     let oldMilestone: { progress: number; narrative: string } | undefined;
     let newMilestone: { progress: number; narrative: string } | undefined;
     for (const h of hooks) {
-      if (h.progress <= quest.progress) {
-        if (!oldMilestone || h.progress > oldMilestone.progress) oldMilestone = h;
-      }
-      if (h.progress <= newProgress && h.progress > quest.progress) {
-        if (!newMilestone || h.progress > newMilestone.progress) newMilestone = h;
-      }
+      if (h.progress <= quest.progress && (!oldMilestone || h.progress > oldMilestone.progress)) oldMilestone = h;
+      if (h.progress <= newProgress && h.progress > quest.progress && (!newMilestone || h.progress > newMilestone.progress)) newMilestone = h;
     }
 
     let milestoneText: string | null = null;

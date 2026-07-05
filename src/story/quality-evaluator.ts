@@ -16,6 +16,13 @@ export interface EvaluatorConfig {
   weights: Record<QualityDimension, number>;
 }
 
+export interface EvaluateParams {
+  response: string;
+  prompt: string;
+  actorName: string;
+  context?: StoryContext;
+}
+
 const DEFAULT_EVALUATOR_CONFIG: EvaluatorConfig = {
   thresholds: DEFAULT_QUALITY_THRESHOLDS,
   weights: { ...DEFAULT_QUALITY_WEIGHTS },
@@ -37,8 +44,9 @@ export class QualityEvaluator {
    * Evaluate a generated response against the story context.
    * Returns detailed scores and a pass/regenerate/escalate decision.
    */
-  evaluate(response: string, prompt: string, actorName: string, context?: StoryContext): QualityEvaluation {
-    const scores = this.computeScores(response, prompt, actorName, context);
+  evaluate(params: EvaluateParams): QualityEvaluation {
+    const { response, prompt, actorName, context } = params;
+    const scores = this.computeScores({ response, prompt, actorName, context });
     const overall = scores.overall;
 
     const questNames = context?.activeQuests.map((q) => q.name).join(", ");
@@ -103,18 +111,14 @@ export class QualityEvaluator {
   }
 
   /** Get the raw dimension scores without full evaluation metadata */
-  computeScore(response: string, prompt: string, actorName: string, context?: StoryContext): QualityScores {
-    return this.computeScores(response, prompt, actorName, context);
+  computeScore(params: EvaluateParams): QualityScores {
+    return this.computeScores(params);
   }
 
   // ── Private scoring ──────────────────────────────────────────
 
-  private computeScores(
-    response: string,
-    prompt: string,
-    actorName: string,
-    context?: StoryContext,
-  ): QualityScores {
+  private computeScores(params: EvaluateParams): QualityScores {
+    const { response, prompt, actorName, context } = params;
     const characterVoice = this.scoreCharacterVoice(response, actorName);
     const plotCoherence = this.scorePlotCoherence(response, prompt);
     const loreConsistency = this.scoreLoreConsistency(response, context?.world.lore);
@@ -455,62 +459,86 @@ export class QualityEvaluator {
     for (const w of wordsA) {
       if (wordsB.has(w)) intersection++;
     }
-    const union = new Set([...wordsA, ...wordsB]);
-    return union.size > 0 ? intersection / union.size : 0;
+    let unionSize = wordsA.size;
+    for (const w of wordsB) {
+      if (!wordsA.has(w)) unionSize++;
+    }
+    return unionSize > 0 ? intersection / unionSize : 0;
   }
 
   private getReasoning(dimension: string, score: number, response: string, context?: string): string {
     if (score >= 80) {
       switch (dimension) {
-        case "character_voice":
+        case "character_voice": {
           return "Strong consistent character voice with natural dialogue";
-        case "plot_coherence":
+        }
+        case "plot_coherence": {
           return "Response logically follows from context";
-        case "lore_consistency":
+        }
+        case "lore_consistency": {
           return "References known world entities correctly";
-        case "narrative_quality":
+        }
+        case "narrative_quality": {
           return "Well-paced prose with sensory detail";
-        case "quest_relevance":
+        }
+        case "quest_relevance": {
           return "Directly addresses active quest objectives";
-        case "creativity":
+        }
+        case "creativity": {
           return "Original and evocative narrative choices";
-        default:
+        }
+        default: {
           return "Good quality";
+        }
       }
     }
     if (score >= 50) {
       switch (dimension) {
-        case "character_voice":
+        case "character_voice": {
           return "Adequate character voice, minor inconsistencies";
-        case "plot_coherence":
+        }
+        case "plot_coherence": {
           return "Generally coherent but some weak connections";
-        case "lore_consistency":
+        }
+        case "lore_consistency": {
           return "Mostly consistent with world lore";
-        case "narrative_quality":
+        }
+        case "narrative_quality": {
           return "Functional prose, could use more detail";
-        case "quest_relevance":
+        }
+        case "quest_relevance": {
           return "Marginally touches on quest elements";
-        case "creativity":
+        }
+        case "creativity": {
           return "Some creative elements but follows expected patterns";
-        default:
+        }
+        default: {
           return "Acceptable quality";
+        }
       }
     }
     switch (dimension) {
-      case "character_voice":
+      case "character_voice": {
         return "Weak or absent character voice";
-      case "plot_coherence":
+      }
+      case "plot_coherence": {
         return "Poor logical connection to prior events";
-      case "lore_consistency":
+      }
+      case "lore_consistency": {
         return "Contradicts or ignores world lore";
-      case "narrative_quality":
+      }
+      case "narrative_quality": {
         return "Flat or confusing prose";
-      case "quest_relevance":
+      }
+      case "quest_relevance": {
         return "Ignores active quest context";
-      case "creativity":
+      }
+      case "creativity": {
         return "Generic or repetitive content";
-      default:
+      }
+      default: {
         return "Low quality";
+      }
     }
   }
 }

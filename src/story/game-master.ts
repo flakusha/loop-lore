@@ -4,9 +4,14 @@
  * Orchestrates story progression by selecting actors, constructing
  * prompts, evaluating responses, and managing escalation.
  * Supports LLM, Human, and Hybrid Game Master modes.
+ *
+ * llmDecision() calls the generation module via injected generateText
+ * callback — keeps story module decoupled from provider resolution.
  */
 import type { Kysely } from "kysely";
 import type { DB } from "../db/schema";
+import type { GenerationMessage } from "../generation/types";
+import { PromptAssembler } from "../assistant/prompt-assembler";
 import {
   GameMasterType,
   ContentEncoding,
@@ -29,6 +34,54 @@ import type {
   QualityThresholds,
   WorldEvent,
 } from "./types";
+
+// ── LLM call abstraction ─────────────────────────────────
+
+/**
+ * Function provided by the caller to actually invoke an LLM.
+ * Keeps GameMasterService independent of provider resolution.
+ */
+export type GenerateTextFn = (params: {
+  messages: GenerationMessage[];
+  systemPrompt?: string;
+  temperature?: number;
+  maxTokens?: number;
+  provider?: string;
+  model?: string;
+}) => Promise<string>;
+
+// ── Story turn row type (from DB) ──────────────────────────
+
+export interface StoryTurnRecord {
+  id: string;
+  turn_number: number;
+  actor_id: string;
+  prompt_sent: string;
+  chat_id: string;
+  turn_type: string;
+  status: string;
+  regeneration_count: number;
+  world_events: string;
+  quest_progress: string;
+  completed_at: string | null;
+  started_at: string;
+  created_at: string;
+  updated_at: string;
+  response_received: string | null;
+  quality_score: number | null;
+  quality_details: string | null;
+  gm_decision: string | null;
+}
+
+export interface BuildResultOptions {
+  turn: StoryTurnRecord;
+  response: string;
+  qualityEval: QualityEvaluation;
+  worldEvents: WorldEvent[];
+  accepted: boolean;
+  escalated: boolean;
+  regenerationSuggested: boolean;
+}
 
 // ── GM Decision Result ──────────────────────────────────────
 
@@ -56,10 +109,14 @@ export class GameMasterService {
   private readonly evaluator: QualityEvaluator;
   private readonly items: ItemsService;
   private readonly config: GameMasterConfig;
+  private readonly chatId: string;
+  private readonly generateText: GenerateTextFn;
 
-  constructor(options: TurnManagerOptions) {
+  constructor(options: TurnManagerOptions & { generateText: GenerateTextFn }) {
     this.db = options.db;
+    this.chatId = options.chatId;
     this.config = options.gmConfig;
+    this.generateText = options.generateText;
     this.turnManager = new TurnManager(options);
     this.worldState = new WorldStateService(options.db);
     this.evaluator = new QualityEvaluator({
@@ -138,12 +195,12 @@ export class GameMasterService {
     const context = await this.worldState.buildContext(turn.chat_id);
 
     // Evaluate quality
-    const qualityEval = await this.evaluator.evaluate(
+    const qualityEval = await this.evaluator.evaluate({
       response,
-      turn.prompt_sent,
-      actor?.display_name ?? "unknown",
-      context ?? undefined,
-    );
+      prompt: turn.prompt_sent,
+      actorName: actor?.display_name ?? "unknown",
+      context: context ?? undefined,
+    });
 
     // Extract world events
     const worldEvents = extractEvents(response, turn.actor_id, context?.world.currentLocation.id ?? null);
@@ -164,7 +221,7 @@ export class GameMasterService {
       escalated = true;
       // Escalate to human GM if in hybrid/human mode
       if (this.config.type === GameMasterType.Hybrid || this.config.type === GameMasterType.Human) {
-        return this.buildResult(turn, response, qualityEval, worldEvents, true, true, false);
+        return this.buildResult({ turn, response, qualityEval, worldEvents, accepted: true, escalated: true, regenerationSuggested: false });
       }
     }
 
@@ -172,7 +229,7 @@ export class GameMasterService {
       const canRegen = await this.turnManager.requestRegeneration(turnId, qualityEval.regenerationReason);
       regenerationSuggested = true;
       if (canRegen) {
-        return this.buildResult(turn, response, qualityEval, worldEvents, false, false, true);
+        return this.buildResult({ turn, response, qualityEval, worldEvents, accepted: false, escalated: false, regenerationSuggested: true });
       }
       // Max regens reached — escalate
       escalated = true;
@@ -205,15 +262,7 @@ export class GameMasterService {
       });
     }
 
-    return this.buildResult(
-      turn,
-      response,
-      qualityEval,
-      worldEvents,
-      accepted,
-      escalated,
-      regenerationSuggested,
-    );
+    return this.buildResult({ turn, response, qualityEval, worldEvents, accepted, escalated, regenerationSuggested });
   }
 
   /** Human GM provides an override decision */
@@ -280,8 +329,7 @@ export class GameMasterService {
   // ── Private ─────────────────────────────────────────────────
 
   private getChatIdFromConfig(): string {
-    // Extracted from context building — we need chatId
-    return "";
+    return this.chatId;
   }
 
   private async getGmDecision(context: StoryContext, debugActorId?: string): Promise<GameMasterDecision> {
@@ -292,23 +340,91 @@ export class GameMasterService {
     }
 
     switch (this.config.type) {
-      case GameMasterType.Llm:
+      case GameMasterType.Llm: {
         return this.llmDecision(context, actorId);
-      case GameMasterType.Human:
+      }
+      case GameMasterType.Human: {
         return this.humanDecision(context, actorId);
-      case GameMasterType.Hybrid:
+      }
+      case GameMasterType.Hybrid: {
         return this.hybridDecision(context, actorId);
-      default:
+      }
+      default: {
         return this.llmDecision(context, actorId);
+      }
     }
   }
 
   /**
-   * LLM Game Master: constructs a detailed prompt for the actor.
-   * Currently produces a structured prompt template.
-   * Future: calls an actual LLM via the generation module.
+   * LLM Game Master: builds prompt via PromptAssembler, calls LLM
+   * via injected generateText, returns parsed decision.
    */
-  private llmDecision(context: StoryContext, actorId: string): GameMasterDecision {
+  private async llmDecision(context: StoryContext, actorId: string): Promise<GameMasterDecision> {
+    const actor = context.actors.find((a) => a.id === actorId);
+
+    // Build story-specific system prompt
+    const llmConfig = this.config.llmConfig;
+    const systemPrompt = llmConfig?.systemPrompt ?? "You are the Game Master for an RPG story.";
+
+    // Assemble full prompt using PromptAssembler
+    const assembler = new PromptAssembler(this.db);
+    const assembled = await assembler.assemble({
+      actorId,
+      chatId: this.chatId,
+      modelId: llmConfig?.model ?? "default",
+      systemPromptOverride: systemPrompt,
+      includeStoryContext: true,
+      includeExamples: false,
+    });
+
+    // Add story-specific instructions as a user message
+    const location = context.world.currentLocation;
+    const instructions = [
+      `Current scene: ${location.name}. ${location.atmosphere ?? ""}`,
+      ...(context.activeQuests.length > 0
+        ? [`Active quest: "${context.activeQuests[0].name}" (${context.activeQuests[0].progress}/${context.activeQuests[0].target})`]
+        : []),
+      ...(context.recentTurns.length > 0
+        ? [`Previous turn: "${context.recentTurns.at(-1)?.response?.slice(0, 200) ?? "none"}"`]
+        : []),
+      `Keep response 50-300 words, in-character, use *action descriptions*.`,
+    ].join("\n");
+    assembled.messages.push({ role: "user", content: instructions });
+
+    // Call LLM
+    let responseText = "";
+    try {
+      responseText = await this.generateText({
+        messages: assembled.messages,
+        systemPrompt: assembled.systemPrompt,
+        temperature: llmConfig?.temperature,
+        maxTokens: llmConfig?.maxTokens,
+        provider: llmConfig?.provider,
+        model: llmConfig?.model,
+      });
+    } catch {
+      // Fallback to hardcoded template if LLM call fails
+      return this.hardcodedPrompt(context, actorId);
+    }
+
+    // Wrap the LLM response into a decision structure
+    return {
+      nextActorId: actorId,
+      turnPrompt: responseText,
+      turnConstraints: {
+        maxTokens: llmConfig?.maxTokens ?? 800,
+        tone: location.atmosphere ?? undefined,
+      },
+      questUpdates: [],
+      worldStateChanges: [],
+    };
+  }
+
+  /**
+   * Hardcoded prompt fallback when LLM call fails.
+   * Preserves original stub behavior.
+   */
+  private hardcodedPrompt(context: StoryContext, actorId: string): GameMasterDecision {
     const actor = context.actors.find((a) => a.id === actorId);
     const npcState = actor?.npcState;
     const location = context.world.currentLocation;
@@ -376,7 +492,7 @@ export class GameMasterService {
    * for human review when confidence is low.
    */
   private async hybridDecision(context: StoryContext, actorId: string): Promise<GameMasterDecision> {
-    const decision = this.llmDecision(context, actorId);
+    const decision = await this.llmDecision(context, actorId);
 
     // Check if escalation is needed based on context
     const _escalationThreshold = this.config.escalationThreshold ?? 40;
@@ -414,34 +530,8 @@ export class GameMasterService {
       .execute();
   }
 
-  private buildResult(
-    turn: {
-      id: string;
-      turn_number: number;
-      actor_id: string;
-      prompt_sent: string;
-      chat_id: string;
-      turn_type: string;
-      status: string;
-      regeneration_count: number;
-      world_events: string;
-      quest_progress: string;
-      completed_at: string | null;
-      started_at: string;
-      created_at: string;
-      updated_at: string;
-      response_received: string | null;
-      quality_score: number | null;
-      quality_details: string | null;
-      gm_decision: string | null;
-    },
-    response: string,
-    qualityEval: QualityEvaluation,
-    worldEvents: WorldEvent[],
-    accepted: boolean,
-    escalated: boolean,
-    regenerationSuggested: boolean,
-  ): GmTurnResult {
+  private buildResult(options: BuildResultOptions): GmTurnResult {
+    const { turn, response, qualityEval, worldEvents, accepted, escalated, regenerationSuggested } = options;
     return {
       turnId: turn.id,
       turnNumber: turn.turn_number,
