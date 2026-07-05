@@ -35,13 +35,20 @@ const COOKIE_MAX_AGE_SECS = 24 * 60 * 60; // 24h (matches session timeout defaul
 
 function setTokenCookie(token: string): string {
   // httpOnly to prevent XSS access, SameSite=Lax for htmx redirects
-  return `${TOKEN_COOKIE}=${token}; Path=${COOKIE_PATH}; Max-Age=${COOKIE_MAX_AGE_SECS}; HttpOnly; SameSite=Lax`;
+  return `${TOKEN_COOKIE}=${token}; Path=${COOKIE_PATH}; Max-Age=${COOKIE_MAX_AGE_SECS}; HttpOnly; SameSite=Lax; Secure`;
 }
 
 // ── Helpers ───────────────────────────────────────────────────
 
 function getClientIp(request: Request): string {
-  return request.headers.get("X-Forwarded-For")?.split(",", 1)[0]?.trim() ?? request.headers.get("CF-Connecting-IP") ?? "unknown";
+  // Prefer direct connection IP when available; X-Forwarded-For trust limited to reverse proxy setups
+  const directIp = (request as { remoteAddress?: string }).remoteAddress;
+  if (directIp) return directIp;
+  // Note: X-Forwarded-For can be spoofed by clients not behind trusted proxy
+  return request.headers.get("X-Forwarded-For")?.split(",", 1)[0]?.trim()
+    ?? request.headers.get("x-real-ip")
+    ?? request.headers.get("CF-Connecting-IP")
+    ?? "unknown";
 }
 
 function computeExpiry(sessionTimeoutHours: number): string {
@@ -49,7 +56,7 @@ function computeExpiry(sessionTimeoutHours: number): string {
 }
 
 function escapeHtml(str: string): string {
-  return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+  return str.replaceAll('&', "&amp;").replaceAll('<', "&lt;").replaceAll('>', "&gt;").replaceAll('"', "&quot;");
 }
 
 function errorHtml(msg: string): Response {
@@ -232,7 +239,7 @@ async function handleLogout(
     return new Response(null, {
       status: HttpStatus.OK,
       headers: {
-        "Set-Cookie": `${TOKEN_COOKIE}=; Path=${COOKIE_PATH}; Max-Age=0; HttpOnly; SameSite=Lax`,
+        "Set-Cookie": `${TOKEN_COOKIE}=; Path=${COOKIE_PATH}; Max-Age=0; HttpOnly; SameSite=Lax; Secure`,
       },
     });
   }
