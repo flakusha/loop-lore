@@ -56,7 +56,7 @@ Generation, story, assistant, assets, age gate, profanity, dice, content encodin
 | Assets service (CRUD, upload, linking, metadata extraction) | `src/assets/service.ts`, `metadata.ts` |
 | Age gate (service + controller) | `src/age-gate/*.ts` |
 | Profanity filter (obscenity) | `src/profanity/service.ts` |
-| Dice engine (parse, roll, text commands) | `src/dice/*.ts` |
+| Dice engine (parse, roll, text commands) | `plugins/core/dice-roller/*.ts` — plugin demonstration |
 
 ### 4. Frontend Shell — ✅ Complete
 
@@ -153,7 +153,7 @@ Auth, rate limiting, age gate enforcement, profanity.
 | E2E profanity filter (message filtering) | ✅ Complete | `tests/e2e/flows/profanity.test.ts` |
 | E2E chat full (assets loading, regenerate/reroll, swipe variants) | ✅ Complete | `tests/e2e/flows/chat-full.test.ts` |
 | `bun run check` | ⚠️ Pre-existing lint errors | |
-| Getting-started guide | ❌ | |
+| Getting-started guide | ✅ Exists at `docs/guide/getting-started.md` | |
 | Tag v0.1.0 | ❌ | |
 
 ---
@@ -325,24 +325,104 @@ All 🔴 and 🟡 items still open. See grouped lists below.
 | 🟡 | `src/generation/generate-route.test.ts:222-228` | Mock provider state leaks across tests. |
 | ~~🔵~~ | ~~`src/db/database.test.ts:6`~~ | ~~Test schema missing 17 tables from migration.~~ ✅ Fixed |
 
-### Totals
+### Round 2 Findings — FE/BE Review 2026-07-05
+
+Post-commit review of feat(frontend/tui) — Alpine.js chat/gallery, responsive layout, TUI app.
+37 findings across TS backend + HTML/CSS/Alpine.JS frontend.
+
+#### 🔴 Critical (FE: 4, BE: 0)
+
+| # | File | Line | Problem | Fix |
+|---|------|------|---------|-----|
+| 1 | `src/views/settings.html` | 2 | Missing `x-data="settingsPage()"`. All x-model/x-bind dead (currentTheme, enterToSend, apiKey, etc.) — Alpine scope falls back to `app()` from layout which lacks these props. | Add `x-data="settingsPage()"` to root div. |
+| 2 | `src/frontend/alpine/settings.ts` | 3 | `confirmDeleteText` missing from return object. Referenced by settings.html L226 `x-model="confirmDeleteText"` and L230 `:disabled`. | Add `confirmDeleteText: ""`. |
+| 3 | `src/views/chat.html` | 15 | `.chat-list-panel` + `.chat-list-header` have zero CSS rules. Chat list panel renders unstyled (no positioning, background, width, z-index). | Add `.chat-list-panel { position: fixed; left: 0; top: 0; width: 280px; ... }` to app.css. |
+| 4 | `src/views/gallery.html` | 109 | Upload drop-zone has no click handler. File input `display:none` with no label/button wired to trigger it. Clicking drop zone does nothing. | Add `@click="$refs.fileInput.click()"` to drop-zone div. |
+
+#### 🟡 Backend Risks (11)
+
+| # | File | Line | Problem | Fix |
+|---|------|------|---------|-----|
+| 5 | `src/story/quest-engine.ts` | 68-74 | `safeJsonStringify` failure silently falls back to `"{}"`/`"[]"`. Quest config/rewards/hooks data lost with zero logging. | `console.error` + throw on failure. |
+| 6 | `src/story/quest-engine.ts` | 235 | `jsonParseOr(quest.config, {}) as QuestConfig` — default `{}` invalid for discriminated union (requires `type`). Corrupted DB → broken config. | Validate after parse or provide minimal valid fallback. |
+| 7 | `src/story/world-state.ts` | 87 | Same pattern: `jsonParseOr<QuestConfig>(q.config, {} as QuestConfig)`. Same invalid-fallback risk. | Validate after parse or provide minimal valid fallback. |
+| 8 | `src/story/turn-manager.ts` | 55 | `persistState()` silently returns on `!serialized.ok`. State lost without log/retry. | `console.error` on failure. |
+| 9 | `src/story/turn-strategies.ts` | 46 | `toSorted(() => Math.random() - 0.5)` — non-deterministic comparator violates sort contract. Not a real shuffle. Redundant spread (`[...].toSorted()` — toSorted already returns new). | Use Fisher-Yates shuffle. Drop spread. |
+| 10 | `src/generation/cancellation-actions.ts` | 195 | Policy check condition changed from `active.policyConfig.cancel` to `active.policyConfig.expectedPolicy && chunksReceived % 5 === 0`. Now throttled + requires expectedPolicy truthy. Behavioral change. | Restore `cancel` check or document regression. |
+| 11 | `src/generation/cancellation-actions.ts` | 158 | `safeJsonStringify` fallback to `null` — repetition analysis data silently lost. | Log + handle error result. |
+| 12 | `src/story/quality-evaluator.ts` | 339 | `getReasoning()` `_response`/`_context` params dead. `eslint-disable @typescript-eslint/no-unused-vars` redundant (underscore prefix already exempt). `sonarjs/cognitive-complexity` disable masks 12-path branching. | Drop unused params. Extract dimension→message map. |
+| 13 | `src/utils/date.ts` | 84 | Default `style` changed from `"compact"` to `"standard"`. Breaking for callers relying on compact output. | Verify all callers pass explicit `style: "compact"` if needed. |
+| 14 | `src/story/turn-manager.ts` | 233 | `maxTurns=0` → instant completion. `Number.MAX_SAFE_INTEGER` default effectively unlimited (per TODO). Edge case unvalidated. | Add config validation or sensible default. |
+| 15 | `src/story/quest-engine.ts` | 221,317 | `eslint-disable sonarjs/cognitive-complexity` on `calculateProgress` (7-case switch + nested conditionals) and `applyProgress` (multi-step DB + milestones). | Acceptable for now; refactor later. |
+
+#### 🟡 Frontend Risks (7)
+
+| # | File | Line | Problem | Fix |
+|---|------|------|---------|-----|
+| 16 | `src/views/chat.html` | 86 | `.error-banner` class has no CSS rules. Error messages render invisible/inline. | Add CSS: `background: var(--accent-red); color: white; padding: var(--space-3); ...` |
+| 17 | `src/views/chat.html` | 96 | `.thinking-block`, `.thinking-content` have no CSS rules. Thinking/cot blocks unstyled. | Add CSS in app.css. |
+| 18 | `src/views/chat.html` | 117 | `.media-image`, `.media-file` have no CSS rules. Media attachment layout undefined. | Add CSS in app.css. |
+| 19 | `src/views/gallery.html` | 31,36 | `.thumbnail` and `.file-icon` classes have no CSS in app.css (only `.gallery-thumbnail` in gallery.css — different class). Asset card elements unstyled. | Add CSS or rename classes to match gallery.css selectors. |
+| 20 | `src/views/chat.html` | 135 | `.action-edit`, `.action-regenerate`, `.action-remove`, etc. have no CSS rules. Message action buttons rely solely on `.btn-icon` defaults. | Verify `.btn-icon` suffices or add action-* rules. |
+| 21 | `src/views/settings.html` | header | `<span class="title">Settings</span>` not a heading element. Screen-reader navigation broken. | Use `<h1>` or `role="heading" aria-level="1"`. |
+| 22 | `src/views/index.html` | 288 | `/browser.js` + `/index.js` scripts in dead code path (views.ts serves chat.html wrapped). Only triggerable as static fallback; missing htmx/Alpine/CDN scripts in head. | Either remove dead scripts or fix dependencies. |
+
+#### 🔵 Nits (2)
+
+| # | File | Line | Problem | Fix |
+|---|------|------|---------|-----|
+| 23 | `src/frontend/alpine/chat.ts` | 6,10 | `marked.use({ breaks: true, gfm: true })` called twice. Harmless but redundant. | Remove duplicate call. |
+| 24 | `src/story/turn-strategies.ts` | 46 | `[...participants].toSorted(...)` — spread redundant since `toSorted()` returns new array. | Drop spread. |
+
+#### Totals (Round 2)
 
 | Severity | Count |
 |----------|-------|
-| 🔴 Critical | 28 |
-| 🟡 High/Med | 43 |
-| 🔵 Low/Nit  | 7 (13 fixed) |
+| 🔴 Critical | 4 |
+| 🟡 Backend  | 11 |
+| 🟡 Frontend | 7 |
+| 🔵 Nit      | 2 |
+| **Total**   | **24** |
+
+### Combined Totals (Round 1 + Round 2)
+
+| Severity | Count |
+|----------|-------|
+| 🔴 Critical | 32 |
+| 🟡 High/Med | 61 |
+| 🔵 Low/Nit  | 9 (15 fixed) |
 | ❓ Question  | 0 (1 resolved) |
-| **Total**   | **78** (14 resolved) |
+| **Total**   | **102** (14 resolved) |
 
 ---
 
-## 🚫 Post-MVP (Not in v0.1)
+## 🚫 Skipped During Implementation (v0.1 scope cut)
 
-Memory system (3-tier), artifacts, multi-LLM story, RPG mechanics (stats/combat/loot),
-branch browser, multi-user registration, admin dashboard, PWA, mobile clients,
-webhooks, OAuth providers, end-to-end encryption, character import/export (V2/PNG),
-plugin system, swipe variants rich UI, WebP→PNG conversion, message detail stats.
+These features are described in spec/frontend docs but were **intentionally cut** from the MVP. Some have partial backend shells; most have no implementation at all.
+
+| Feature | Spec | Status |
+|---------|------|--------|
+| Multi-format character import (PNG/YAML/TOML/CHARX) | `docs/spec/character-setup.md` | ❌ Only JSON import works |
+| Persona system (`personas` table, routes, UI) | `docs/spec/character-setup.md` | ❌ Not implemented |
+| Impersonation (`chat.impersonate_id`) | `docs/spec/character-setup.md` | ❌ Not implemented |
+| RPG mechanics (dice, stats, combat, XP, loot) | `docs/spec/rpg-mechanics.md` | ❌ `src/rpg/` does not exist |
+| Three-tier memory system (episodic/semantic/procedural) | `docs/spec/memory-system.md` | ❌ Only `actor_memories` table exists |
+| Artifact system (code/docs/datasets as assets) | `docs/spec/artifacts-system.md` | ❌ Not implemented |
+| Agentic workspace mode | `docs/spec/use-case-agentic-workspace.md` | ❌ Not implemented |
+| Client-side encryption (AES-256-GCM, key hierarchy) | `docs/frontend/encryption.md` | ❌ Messages stored as plaintext |
+| Frontend story mode UI (GM panel, quest log, story chat) | `docs/frontend/chat/multi-llm-story.md` | ❌ Backend `src/story/` exists but no frontend |
+| Message archiving (cascade, restore, purge) | `docs/frontend/chat/archiving.md` | ❌ Hard delete only |
+| Memory selection UI (mid-chat panel, pinning, auto-extract) | `docs/frontend/chat/memories.md` | ❌ Backend reads memories; no UI |
+| Server-side i18n middleware (`$t`, `req.t`) | `docs/frontend/internationalization.md` | ❌ Minimal client-side `__()` only |
+| Anthropic/Ollama/Bedrock providers | `docs/spec/provider-system.md` | ❌ Only OpenAI-compatible exists |
+| Plugin management API (install/list/enable/disable) | `docs/spec/plugin-system.md` | ❌ Plugin skeleton loads files; no API |
+| Signed URLs for asset downloads | `docs/spec/assets.md` | ❌ Uses `raw` endpoint with Bearer auth |
+| `POST /api/auth/register` | `docs/spec/auth-middleware.md` | ❌ Not implemented |
+| `/api/sessions` routes | `docs/spec/users-sessions.md` | ❌ Not implemented |
+| CSS skeleton shimmer, modal confirm dialogs, browser logger | `docs/frontend/components.md` | ❌ Uses native `confirm()` and text loading |
+| Async background compression per upload | `docs/spec/assets.md` | ❌ Only build-time static compression |
+| S3/GCS object store backend | `docs/spec/assets.md` | ❌ Local filesystem only |
+| HTTP/2 and WebSocket in transport layer | `docs/spec/transport-unified.md` | ❌ Defined but not integrated into server |
 
 ---
 

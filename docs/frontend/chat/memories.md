@@ -1,8 +1,6 @@
 # Chat: Memory System
 
-## Overview
-
-A persistent memory layer that allows characters and the assistant to recall information across chat sessions. Backed by a vector database (or structured storage for v1). Users have granular control over which memories persist and which are discarded.
+> ⚠️ **Implementation status:** Backend reads `actor_memories` for prompt assembly. Memory extraction, selection UI, mid-chat memory panel, pinning, and auto-extraction are NOT implemented. This spec is aspirational.
 
 ---
 

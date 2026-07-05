@@ -82,8 +82,7 @@ Response:
 | POST | `/api/auth/logout` | Yes | — | 204 |
 | GET | `/api/auth/me` | Yes | — | `{ id, username, displayName, role }` |
 
-Login creates a session row, returns a Bearer token. Logout deletes the session.
-Demo/solo mode: auto-login without password, role=solo.
+> **Note:** Registration (`POST /api/auth/register`) is NOT implemented. No `/api/sessions` routes exist.
 
 ### Users
 
@@ -229,11 +228,8 @@ Message listing: ordered by `created_at ASC`. `parentId` filter returns children
 | DELETE | `/api/assets/:id/links/:linkId` | Yes† | — | 204 |
 
 † Owner or admin.
-Asset download uses short-lived signed URLs (`?token=<hmac>`). Server generates token
-on metadata fetch or dedicated `/api/assets/:id/signed-url` endpoint. Token format:
-`HMAC-SHA256(base64url(assetId + ":" + expiry))` where expiry is Unix timestamp
-(default +15min). Token signed with server secret (config `auth.sessionSecret` or auto-generated).
-This allows browser `<img src="">` to load protected assets without Bearer headers.
+> **Note:** Signed URL system is NOT implemented. Asset downloads use `/api/assets/:id/raw` with standard Bearer auth.
+> Signed URLs are aspirational (post-MVP).
 
 ---
 
