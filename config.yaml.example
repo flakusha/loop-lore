@@ -115,18 +115,49 @@ generation:
   # autoStart:
   #   llamaCpp:
   #     enabled: true
-  #     modelPath: "org/repo:Q4_K_M"           # HF ref or /path/to/model.gguf
+  #     modelPath: "org/repo:Q4_K_M"
   #     port: 9011
+  #     alias: my-model                    # model alias for API
   #     ctxSize: 8192
-  #     extraArgs: ["--alias", "my-model"]
+  #     threads: -1                        # -1 = auto
+  #     nGpuLayers: auto                   # auto, all, or number
+  #     cacheTypeK: iq4_nl                 # KV cache quant
+  #     cacheTypeV: iq4_nl
+  #     flashAttn: on                      # on, off, auto
+  #     temp: 1.0                          # sampler defaults
+  #     topK: 40
+  #     topP: 0.95
+  #     minP: 0.01
+  #     repeatPenalty: 1.05
+  #     parallelRequests: 1
+  #     fit: true
+  #     specType: "draft-eagle3,ngram-map-k4v"
+  #     specDraftNMax: 4
+  #     reasoningBudget: -1                # -1 = unlimited thinking
   #   sdCpp:
   #     enabled: true
+  #     modelType: checkpoint                  # checkpoint (-m) or diffusion (--diffusion-model)
   #     modelPath: "/path/to/model.safetensors"
   #     port: 9010
-  #     llmPath: "/path/to/text-encoder.gguf"
-  #     vaePath: "/path/to/vae.safetensors"
-  #     loraDir: "/path/to/loras"
-  #     extraArgs: ["--offload-to-cpu"]
+  #     # ── For diffusion modelType, provide text encoder ──
+  #     # llmPath: "/path/to/text-encoder.gguf"    # needed for most diffusion models
+  #     # clipLPath: "/path/to/clip-l.gguf"      # SD1.x/SD2.x
+  #     # clipGPath: "/path/to/clip-g.gguf"
+  #     # t5xxlPath: "/path/to/t5xxl.gguf"
+  #     # ── Model components ───────────────────────────
+  #     # vaePath: "/path/to/vae.safetensors"
+  #     # loraDir: "/path/to/loras"
+  #     # controlNetPath: "/path/to/control-net.safetensors"
+  #     # ── Performance ────────────────────────────────
+  #     # fa: true                               # flash attention
+  #     # vaeTiling: true                        # tile VAE for lower VRAM
+  #     # offloadToCPU: true                     # keep weights in RAM
+  #     # maxVram: "6"                           # VRAM budget in GiB
+  #     # rng: cpu
+  #     # samplerRng: cpu
+  #     # cacheMode: spectrum
+  #     # type: q8_0                             # weight quantization
+  #     # backend: "clip=cpu,vae=cpu"
 
 # ── BYO API Keys ──
 byoKey:

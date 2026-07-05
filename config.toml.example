@@ -113,17 +113,70 @@ openaiCompatible = []
 # enabled = true
 # modelPath = "org/repo:Q4_K_M"        # HF ref or /path/to/model.gguf
 # port = 9011
+# alias = "my-model"                   # model alias for API
 # ctxSize = 8192
-# extraArgs = ["--alias", "my-model"]
+# threads = -1                         # -1 = auto
+# nGpuLayers = "auto"                  # auto, all, or number
+# device = "0"                         # GPU device list
+# mlock = true
+# cacheTypeK = "iq4_nl"
+# cacheTypeV = "iq4_nl"
+# cacheRam = 49152
+# flashAttn = "on"
+# swaFull = true
+# ropeScaling = "yarn"
+# ropeScale = 4.0
+# temp = 1.0
+# topK = 40
+# topP = 0.95
+# minP = 0.01
+# repeatPenalty = 1.05
+# parallelRequests = 1
+# fit = true
+# specType = "draft-eagle3,ngram-map-k4v"
+# specDraftNMin = 0
+# specDraftNMax = 4
+# reasoningBudget = -1
+# jinja = true
+# extraArgs = ["--log-colors", "on"]
 #
 # [generation.autoStart.sdCpp]
 # enabled = true
+# modelType = "checkpoint"             # checkpoint (-m) or diffusion (--diffusion-model)
 # modelPath = "/path/to/model.safetensors"
 # port = 9010
-# llmPath = "/path/to/text-encoder.gguf"
-# vaePath = "/path/to/vae.safetensors"
-# loraDir = "/path/to/loras"
-# extraArgs = ["--offload-to-cpu"]
+# # ── For diffusion modelType ──
+# # llmPath = "/path/to/text-encoder.gguf"
+# # clipLPath = "/path/to/clip-l.gguf"
+# # clipGPath = "/path/to/clip-g.gguf"
+# # t5xxlPath = "/path/to/t5xxl.gguf"
+# # ── Model components ──
+# # vaePath = "/path/to/vae.safetensors"
+# # vaeFormat = "auto"
+# # controlNetPath = "/path/to/control-net.safetensors"
+# # loraDir = "/path/to/loras"
+# # taesdPath = "/path/to/taesd.safetensors"
+# # hiresUpscalersDir = "/path/to/upscalers"
+# # embdDir = "/path/to/embeddings"
+# # photoMakerPath = "/path/to/photomaker.safetensors"
+# # upscaleModelPath = "/path/to/esrgan.safetensors"
+# # ── Performance ──
+# # fa = true
+# # diffusionFA = true
+# # vaeTiling = true
+# # eagerLoad = true
+# # offloadToCPU = true
+# # streamLayers = true
+# # autoFit = true
+# # maxVram = "6"
+# # backend = "clip=cpu,vae=cpu"
+# # rng = "cpu"
+# # samplerRng = "cpu"
+# # type = "q8_0"
+# # prediction = "eps"
+# # cacheMode = "spectrum"
+# # cacheOption = "threshold=0.25"
+# # extraArgs = ["--color"]
 
 [byoKey]
 enabled = true
