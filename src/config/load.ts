@@ -5,6 +5,7 @@ import { parse as parseToml } from "smol-toml";
 import { readFileSync, existsSync } from "node:fs";
 import path from "node:path";
 import { Config, DEFAULTS } from "./schema";
+import type { ProviderInstanceConfig } from "./schema";
 
 // Map flat env var names to dot-separated config paths
 const ENV_MAP: Record<string, string> = {
@@ -30,6 +31,8 @@ const ENV_MAP: Record<string, string> = {
   AUTH_REGISTRATION_OPEN: "auth.registrationOpen",
   SESSION_TIMEOUT_HOURS: "auth.sessionTimeoutHours",
   SESSION_MAX_PER_USER: "auth.maxSessionsPerUser",
+  DEMO_USERNAME: "auth.demoUsername",
+  DEMO_AUTO_SETUP: "auth.demoAutoSetup",
   TRANSPORT_DEFAULT_PROTOCOL: "transport.defaultProtocol",
   TRANSPORT_ENABLE_WEBSOCKET: "transport.enableWebSocket",
   TRANSPORT_ENABLE_WEBTRANSPORT: "transport.enableWebTransport",
@@ -41,7 +44,21 @@ const ENV_MAP: Record<string, string> = {
   TRANSPORT_MAX_FRAME_SIZE: "transport.limits.maxFrameSize",
   TRANSPORT_MAX_PAYLOAD: "transport.limits.maxPayload",
   TRANSPORT_MAX_CONCURRENT_STREAMS: "transport.limits.maxConcurrentStreams",
+  MESSAGE_AUTO_HIDE_INVALID: "messages.autoHideInvalid",
+  MESSAGE_HIDE_CONFIRMATION: "messages.hideConfirmation",
+  MESSAGE_MAX_LENGTH: "messages.maxLength",
+  MESSAGE_MAX_GENERATION_RETRIES: "messages.maxGenerationRetries",
+  MESSAGE_GENERATION_TIMEOUT_MS: "messages.generationTimeoutMs",
+  MESSAGE_IDEMPOTENCY_EXPIRY_HOURS: "messages.idempotencyExpiryHours",
+  ALLOW_NSFW: "nsfw.allowNsfw",
+  NSFW_MIN_AGE: "nsfw.nsfwMinAge",
+  LLM_DEFAULT_PROVIDER: "generation.defaultProvider",
+  BYO_KEY_ENABLED: "byoKey.enabled",
+  BYO_KEY_ENCRYPTION_KEY: "byoKey.encryptionKey",
 };
+
+/** Env vars that auto-create a default OpenAI-compatible provider instance */
+const _PROVIDER_ENV_VARS = ["LLM_PROVIDER_BASE_URL", "LLM_PROVIDER_API_KEY", "LLM_PROVIDER_MODEL"] as const;
 
 // Config file candidates in priority order
 const CONFIG_FILES = ["config.yaml", "config.yml", "config.toml"];
@@ -151,12 +168,53 @@ function validateConfig(config: Config): void {
       `Invalid logging.level: "${config.logging.level}". Must be one of: ${validLogLevels.join(", ")}`,
     );
   }
+  if (config.generation.defaultProvider && config.generation.providers.openaiCompatible.length === 0) {
+    // Warning only — provider may come from env vars post-merge
+  }
+  for (const provider of config.generation.providers.openaiCompatible) {
+    if (!provider.baseUrl) {
+      throw new Error(`generation.providers.openaiCompatible entry "${provider.name}" missing baseUrl`);
+    }
+    if (!provider.model) {
+      throw new Error(`generation.providers.openaiCompatible entry "${provider.name}" missing model`);
+    }
+  }
+  if (config.generation.providers.anthropic && !config.generation.providers.anthropic.apiKey) {
+    throw new Error("generation.providers.anthropic requires apiKey");
+  }
+}
+
+/** Create a default provider instance from LLM_PROVIDER_* env vars */
+function applyProviderEnvVars(config: Config): void {
+  const baseUrl = process.env.LLM_PROVIDER_BASE_URL;
+  if (!baseUrl) return;
+
+  const provider: ProviderInstanceConfig = {
+    name: process.env.LLM_PROVIDER_NAME ?? "default",
+    label: process.env.LLM_PROVIDER_LABEL ?? "Default Provider",
+    baseUrl,
+    apiKey: process.env.LLM_PROVIDER_API_KEY,
+    model: process.env.LLM_PROVIDER_MODEL ?? "default",
+    timeout: Number(process.env.LLM_PROVIDER_TIMEOUT) || 30_000,
+    retries: Number(process.env.LLM_PROVIDER_RETRIES) || 3,
+    allowUserApiKey: process.env.LLM_PROVIDER_ALLOW_USER_KEY !== "false",
+    models: {},
+  };
+  config.generation.providers.openaiCompatible.push(provider);
+
+  if (!config.generation.defaultProvider && process.env.LLM_DEFAULT_PROVIDER) {
+    config.generation.defaultProvider = process.env.LLM_DEFAULT_PROVIDER;
+  }
+  if (!config.generation.defaultProvider) {
+    config.generation.defaultProvider = provider.name;
+  }
 }
 
 function loadConfig(cwd?: string): Config {
   const directory = cwd ?? process.cwd();
   let config: Config = structuredClone(DEFAULTS);
 
+  // 1. Load config file (config.yaml / config.yml / config.toml) — lowest priority
   const found = findConfigFile(directory);
   if (found) {
     try {
@@ -170,9 +228,25 @@ function loadConfig(cwd?: string): Config {
     }
   }
 
+  // 2. Load env.yaml if present — overrides config file values
+  const envYamlPath = path.join(directory, "env.yaml");
+  if (existsSync(envYamlPath)) {
+    try {
+      const content = readFileSync(envYamlPath, "utf8");
+      const parsed = parseFileContent(content, "yaml");
+      config = deepMerge(config as unknown as Record<string, unknown>, parsed) as unknown as Config;
+    } catch (error) {
+      throw new Error(`Failed to parse env.yaml: ${(error as Error).message}`, {
+        cause: error,
+      });
+    }
+  }
+
+  // 3. Apply env var overrides — highest priority
   config = applyEnvironmentOverrides(config, ENV_MAP);
+  applyProviderEnvVars(config);
   validateConfig(config);
   return config;
 }
 
-export { loadConfig, ENV_MAP, deepMerge, validateConfig, coerceValue, setByPath };
+export { loadConfig, ENV_MAP, deepMerge, validateConfig, coerceValue, setByPath, applyProviderEnvVars };

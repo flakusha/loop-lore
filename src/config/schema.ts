@@ -93,6 +93,10 @@ interface AuthConfig {
   sessionTimeoutHours: number;
   /** Max simultaneous sessions per user */
   maxSessionsPerUser: number;
+  /** Demo username (auto-created when auth.required=false) */
+  demoUsername: string;
+  /** Auto-create sample data on first demo run */
+  demoAutoSetup: boolean;
 }
 
 interface TransportCompressionConfig {
@@ -144,6 +148,121 @@ interface AgeGateConfig {
   mode: AgeGateModeT;
 }
 
+// ── LLM / Image Generation Providers ──────────────────────
+
+interface ModelLimits {
+  /** Context window size in tokens */
+  contextLimit: number;
+  /** Max output tokens */
+  maxOutput: number;
+}
+
+interface ProviderInstanceConfig {
+  /** Unique provider instance name (referenced in registry) */
+  name: string;
+  /** Human-readable label for UI */
+  label: string;
+  /** Base URL (e.g. http://localhost:8080/v1) */
+  baseUrl: string;
+  /** Server-level API key (overridden by user BYO key) */
+  apiKey?: string;
+  /** Default model ID */
+  model: string;
+  /** Connection timeout in ms */
+  timeout: number;
+  /** Max retries for transient failures */
+  retries: number;
+  /** Allow user API key override for this provider */
+  allowUserApiKey: boolean;
+  /** Extra headers sent with every request */
+  headers?: Record<string, string>;
+  /** Known models (name → limits) */
+  models: Record<string, ModelLimits>;
+}
+
+interface ImageProviderDefaults {
+  /** Default image width */
+  width: number;
+  /** Default image height */
+  height: number;
+  /** Default sampling steps */
+  steps: number;
+  /** Default CFG scale */
+  cfgScale: number;
+  /** Default sampler name */
+  sampler: string;
+}
+
+interface ImageProviderConfig {
+  /** Unique provider name */
+  name: string;
+  /** Human-readable label for UI */
+  label: string;
+  /** Base URL */
+  baseUrl: string;
+  /** API family: openai-compatible, SD WebUI, or SD cpp */
+  apiFamily: "openai" | "sdapi" | "sdcpp";
+  /** Optional API key */
+  apiKey?: string;
+  /** Default generation parameters */
+  defaults: ImageProviderDefaults;
+  /** Connection timeout in ms */
+  timeout: number;
+  /** Image generation timeout in ms */
+  generationTimeout: number;
+}
+
+interface GenerationProvidersConfig {
+  /** OpenAI-compatible providers (llama.cpp, vLLM, Ollama, LM Studio, etc.) */
+  openaiCompatible: ProviderInstanceConfig[];
+  /** Anthropic native API provider */
+  anthropic?: ProviderInstanceConfig;
+  /** Ollama native API provider (separate from openai-compatible mode) */
+  ollamaNative?: ProviderInstanceConfig;
+  /** Image generation provider (SD, FLUX, etc.) */
+  sd?: ImageProviderConfig;
+}
+
+interface GenerationConfig {
+  /** Provider configurations */
+  providers: GenerationProvidersConfig;
+  /** Default provider name when none specified per-chat */
+  defaultProvider: string;
+  /** Default model per provider (providerName → modelId) */
+  defaultModels: Record<string, string>;
+}
+
+// ── BYO API Key ────────────────────────────────────────────
+
+interface ByoKeyConfig {
+  /** Master toggle for user-owned API keys */
+  enabled: boolean;
+  /** Encryption key for stored API keys (falls back to auth.sessionSecret) */
+  encryptionKey?: string;
+}
+
+interface MessagesConfig {
+  /** Auto-mark invalid messages as hidden */
+  autoHideInvalid: boolean;
+  /** Require confirmation before hiding */
+  hideConfirmation: boolean;
+  /** Max content length (plaintext before encrypt) */
+  maxLength: number;
+  /** Max auto-retry on LLM failure */
+  maxGenerationRetries: number;
+  /** LLM response timeout in ms */
+  generationTimeoutMs: number;
+  /** Idempotency key TTL in hours */
+  idempotencyExpiryHours: number;
+}
+
+interface NsfwConfig {
+  /** Allow NSFW content in chats. Default true. */
+  allowNsfw: boolean;
+  /** Minimum age for NSFW content. Checked against user birth_date. Default 18. */
+  nsfwMinAge: number;
+}
+
 interface Config {
   server: ServerConfig;
   db: DatabaseConfig;
@@ -155,6 +274,10 @@ interface Config {
   ageGate: AgeGateConfig;
   auth: AuthConfig;
   transport: TransportConfig;
+  messages: MessagesConfig;
+  nsfw: NsfwConfig;
+  generation: GenerationConfig;
+  byoKey: ByoKeyConfig;
 }
 const DEFAULTS: Config = {
   server: {
@@ -197,6 +320,8 @@ const DEFAULTS: Config = {
     registrationOpen: true,
     sessionTimeoutHours: 24,
     maxSessionsPerUser: 10,
+    demoUsername: "demo",
+    demoAutoSetup: true,
   },
   transport: {
     defaultProtocol: "http/1.1",
@@ -210,10 +335,32 @@ const DEFAULTS: Config = {
       threshold: 256,
     },
     limits: {
-      maxFrameSize: 0x10000,
-      maxPayload: 0x50000,
+      maxFrameSize: 0x1_00_00,
+      maxPayload: 0x5_00_00,
       maxConcurrentStreams: 100,
     },
+  },
+  messages: {
+    autoHideInvalid: false,
+    hideConfirmation: true,
+    maxLength: 100_000,
+    maxGenerationRetries: 3,
+    generationTimeoutMs: 30_000,
+    idempotencyExpiryHours: 24,
+  },
+  nsfw: {
+    allowNsfw: true,
+    nsfwMinAge: 18,
+  },
+  generation: {
+    providers: {
+      openaiCompatible: [],
+    },
+    defaultProvider: "",
+    defaultModels: {},
+  },
+  byoKey: {
+    enabled: true,
   },
 };
 
@@ -230,5 +377,14 @@ export type {
   AgeGateConfig,
   AuthConfig,
   TransportConfig,
+  MessagesConfig,
+  NsfwConfig,
+  GenerationConfig,
+  GenerationProvidersConfig,
+  ProviderInstanceConfig,
+  ImageProviderConfig,
+  ImageProviderDefaults,
+  ModelLimits,
+  ByoKeyConfig,
 };
 export { DEFAULTS };
