@@ -39,6 +39,32 @@
 - In-place mutation (`.sort()`, `.splice()`, direct index assignment) preferred over creating new arrays for same-collection transforms
 - Exception: readability wins for small/non-hot-path data (&lt;100 items, non-critical path) — keep chains legible
 
+## Structured Logging
+- Always use `getLogger()` from `src/logger/` — never `console.*` in production paths
+- Create module-scoped children: `const log = getLogger().child({ module: "my-module" })`
+- Log levels: `log.error(msg, error?)` for failures, `log.warn(msg, meta?)` for non-fatal, `log.info(msg, meta?)` for lifecycle events
+- Fire-and-forget promises MUST have `.catch((err) => log.warn("description", err))` — never empty `.catch(() => {})`
+- IIFE logging inside object literals: `(() => { const r = safeJsonStringify(x); if (!r.ok) { log.error("serialize failed", r.error); return null; } return r.value; })()`
+
+## Input Validation Checklist (every new route handler)
+- Required path params: check `typeof` + truthy before use
+- Body destructuring: validate string enums against `Set(Object.values(Enum))` before casting
+- Optional params: validate with `typeof param !== "undefined" && typeof param !== "string"` (or appropriate type)
+- `parseBody()`: already returns `Response` on error — check `if (body instanceof Response) return body`
+- `parsePagination()`: handles NaN/negative internally — use directly
+- Ownership: verify `resource.created_by === userId` on every GET/PUT/DELETE by ID
+
+## Safe JSON IIFE Pattern
+When building DB row values that include serialized JSON:
+
+```ts
+settings: (() => { const r = safeJsonStringify(data); return r.ok ? r.value : "{}"; })(),
+```
+
+- Always provide a safe fallback (`"{}"`, `"[]"`, `null`)
+- Log on failure: `if (!r.ok) { log.error("msg", r.error); return fallback; }`
+- Never use bare `JSON.stringify()` in routes, services, or story modules
+
 ## LLM Generation
 - Status tracked in `generation_attempts` table, not on message
 - Message status reflects persistence + delivery, not generation pipeline
