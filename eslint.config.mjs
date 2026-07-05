@@ -146,6 +146,8 @@ export default tseslint.config(
       },
       globals: {
         ...globals.browser,
+        apiFetch: "readonly",
+        THEMES: "readonly",
       },
     },
     plugins: tsPlugins,
@@ -154,7 +156,30 @@ export default tseslint.config(
       "unicorn/prefer-node-protocol": "off",
       "unicorn/no-process-exit": "error",
       "unicorn/prefer-uint8array-base64": "off",
+      "unicorn/no-this-outside-of-class": "off",
+      "unicorn/no-global-object-property-assignment": "off",
       "no-unused-vars": "off",
+    },
+  },
+
+  // ── E2E test TypeScript: Bun test env ──────────────────────
+  {
+    files: ["tests/e2e/**/*.ts"],
+    languageOptions: {
+      parser: tseslint.parser,
+      globals: {
+        ...globals.bun,
+      },
+    },
+    plugins: tsPlugins,
+    rules: {
+      ...tsRules,
+      "unicorn/no-this-outside-of-class": "off",
+      "sonarjs/no-identical-functions": "off",
+      "unicorn/consistent-function-scoping": "off",
+      "@typescript-eslint/no-explicit-any": "off",
+      "unicorn/no-await-expression-member": "off",
+      "@typescript-eslint/require-await": "off",
     },
   },
 
