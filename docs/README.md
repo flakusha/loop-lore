@@ -7,8 +7,8 @@ Reimplementation of SillyTavern with enhanced features:
 - TUI mode
 - Database support (local and remote)
 - Asset system (images/audio/video, replacing old gallery)
-- Character & persona system with multi-format import/export
-- RPG mechanics: stats, combat, equipment, dice, skills, XP
+- Character system with JSON card import/export
+- RPG mechanics: **❌ Not implemented** (no dice engine, no stats/combat/XP/loot)
 - Enhanced assistant chat (user assistance focused)
 - User management & multi-session support
 - Message persistence & reliability
@@ -63,8 +63,8 @@ Docs organized into:
 | ------------------------------------------------------------------------------------------ | ------------------------------------------------ |
 | [`spec/tui.md`](./spec/tui.md)                                                             | Blessed TUI: components, keyboard map, data flow |
 | [`spec/transport-unified.md`](./spec/transport-unified.md)                                 | HTTP/WS/WebTransport abstraction                 |
-| [`spec/integrations/llama-cpp.md`](./spec/integrations/llama-cpp.md)                       | llama.cpp local inference                        |
-| [`spec/integrations/stable-diffusion-cpp.md`](./spec/integrations/stable-diffusion-cpp.md) | stable-diffusion.cpp local image gen             |
+| [`spec/integrations/llm-serving.md`](./spec/integrations/llm-serving.md)       | LLM provider serving (OpenAI-compatible, etc.) |
+| [`spec/integrations/image-generation.md`](./spec/integrations/image-generation.md) | Image generation integration |
 
 ### Frontend UX
 

@@ -1,15 +1,6 @@
-# Actor Secret Keys & Message Encryption
-
-## Overview
-
-Message content encrypted at rest with **actor-level encryption keys**.
-Each actor (user, character, assistant, narrator, system) can have one or
-multiple keys.
-
-- **Privacy**: DB compromise does not leak message content
-- **Access Control**: Only authorized actors can decrypt
-- **Key Management**: Request keys, view history, purge
-- **Anonymous Mode**: Server-level setting
+> ⚠️ **Status:** NOT IMPLEMENTED. Client-side encryption/decryption, `actor_keys` table, and at-rest message encryption do NOT exist.
+> Messages are stored as plaintext (optionally gzip/zstd/brotli compressed for large payloads).
+> This entire spec is aspirational. See [`docs/meta/plan.md`](../meta/plan.md) "Skipped During Implementation".
 
 ---
 

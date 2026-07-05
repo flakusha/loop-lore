@@ -1,6 +1,6 @@
 # Plugin System Specification
 
-> **Status:** Post-MVP (v0.2+). MVP dice engine uses simple config/route, not the full plugin system.
+> **Status:** Post-MVP (v0.2+). Plugin skeleton (`src/plugins/`) loads core/community/local plugins but has NO management API, NO sandbox/security model, and NO example plugins. This spec is aspirational for the full system.
 
 ## Overview
 

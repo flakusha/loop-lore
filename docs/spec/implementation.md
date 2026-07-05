@@ -80,7 +80,8 @@ Solo/demo mode (`auth.required: false`):
 2. **Access control** — role gates on admin routes (see `docs/users-sessions.md`)
 3. **Validation** — incremental, per-route schema checks (phased implementation)
 
-Rate limiting deferred to reverse proxy for production; no in-app rate limit middleware.
+Rate limiting implemented in-app (`src/middleware/rate-limit.ts`) for login endpoint (10/min per IP).
+Also deferred to reverse proxy for production rate limiting beyond login.
 
 ### Database Layer
 
@@ -148,7 +149,7 @@ Future migrations (post-MVP):
 
 ### Actor System
 
-Located in `src/` (planned `src/actors/` for types and logic) — the `actors` table is the unified
+Located in `src/routes/characters.ts` (no dedicated `src/actors/` directory) — the `actors` table is the unified
 participant model. See [`docs/actors.md`](./actors.md) for:
 
 - **Character card imports** (SillyTavern V1/V2 — PNG-embedded and JSON)
@@ -180,13 +181,13 @@ support images, audio, and video with flexible linking to any entity via the
 - Validates uploads (size, type, mime)
 - Delegates to service
 
-#### API Routes (`src/routes/assets.ts`)
+#### API Routes (in `src/assets/controller.ts`, not `src/routes/assets.ts`)
 
-- `GET /api/assets` — List assets (filter by entity/label)
+- `GET /api/assets` — List assets (filter by type)
 - `POST /api/assets` — Upload new asset (multipart)
 - `DELETE /api/assets/:id` — Remove asset
-- `POST /api/assets/:id/link` — Link to entity
-- `DELETE /api/assets/:id/link` — Unlink from entity
+- `POST /api/assets/:id/links` — Link to entity
+- `DELETE /api/assets/:id/links/:linkId` — Unlink from entity
 - `GET /api/assets/:id/raw` — Serve original file
 - `GET /api/assets/:id/compressed` — Serve compressed variant
 - `GET /api/assets/:id/thumb` — Serve thumbnail
@@ -313,13 +314,9 @@ Located in `src/assistant/`
 - See [`docs/use-case-agentic-workspace.md`](./use-case-agentic-workspace.md) for the
   planned evolution into an **Agent Runtime**
 
-#### Controller (`src/assistant/controller.ts`)
-
-- Wraps the service for use by routes
-
-#### API Routes
-
-- `POST /api/assistant` — Process user message and context, return assistant response
+#> **Note:** No dedicated `src/assistant/controller.ts` or `POST /api/assistant` endpoint exists.
+> The assistant is invoked internally by `src/routes/messages.ts` during generation.
+> A standalone API endpoint is aspirational (post-MVP).
 
 ### Content Module
 

@@ -2,11 +2,13 @@
 
 ## Authentication
 
-All API endpoints (except public endpoints) require authentication via JWT tokens passed in the `Authorization` header:
+All API endpoints (except public endpoints) require authentication via opaque bearer tokens passed in the `Authorization` header:
 
 ```
-Authorization: Bearer <jwt_token>
+Authorization: Bearer <token>
 ```
+
+Tokens are UUID v4 strings. Server stores SHA-256 hash in `sessions` table — raw token never stored. Session is deleted on logout. See [Auth Middleware](../spec/auth-middleware.md).
 
 ## Base URL
 
@@ -18,7 +20,7 @@ All API endpoints are prefixed with `/api/`.
 
 ```http
 GET /api/users/me
-Authorization: Bearer <jwt_token>
+Authorization: Bearer <token>
 ```
 
 Returns the currently authenticated user's information.
@@ -27,26 +29,27 @@ Returns the currently authenticated user's information.
 
 ```json
 {
-  "id": "user_123",
+  "id": "user_uuid",
   "username": "johndoe",
-  "email": "john@example.com",
-  "created_at": "2024-01-15T10:30:00Z",
-  "updated_at": "2024-01-15T10:30:00Z"
+  "displayName": "John Doe",
+  "role": "user",
+  "createdAt": "2026-01-15T10:30:00.000Z"
 }
 ```
 
 ### Update User Profile
 
 ```http
-PATCH /api/users/me
-Authorization: Bearer <jwt_token>
+PUT /api/users/me
+Authorization: Bearer <token>
 Content-Type: application/json
 
 {
-  "username": "newusername",
-  "email": "newemail@example.com"
+  "displayName": "Johnny"
 }
 ```
+
+Only `displayName` and `settings` can be updated. Username is immutable.
 
 **Response:** Updated user object
 
@@ -54,26 +57,17 @@ Content-Type: application/json
 
 ```http
 GET /api/users/:userId
-Authorization: Bearer <jwt_token>
+Authorization: Bearer <token>
 ```
 
 **Response:** User object
 
-## Sessions
+## Authentication
 
-### Get Current Session
-
-```http
-GET /api/sessions/me
-Authorization: Bearer <jwt_token>
-```
-
-Returns the current session information.
-
-### Create Session (Login)
+### Login
 
 ```http
-POST /api/sessions
+POST /api/auth/login
 Content-Type: application/json
 
 {
@@ -86,23 +80,33 @@ Content-Type: application/json
 
 ```json
 {
-  "token": "jwt_token_here",
+  "token": "550e8400-e29b-41d4-a716-446655440000",
   "user": {
-    "id": "user_123",
+    "id": "user_uuid",
     "username": "johndoe",
-    "email": "john@example.com"
+    "displayName": "John Doe",
+    "role": "user"
   }
 }
 ```
 
-### Delete Session (Logout)
+### Logout
 
 ```http
-DELETE /api/sessions/:sessionId
-Authorization: Bearer <jwt_token>
+POST /api/auth/logout
+Authorization: Bearer <token>
 ```
 
 **Response:** 204 No Content
+
+### Get Current User (Auth check)
+
+```http
+GET /api/auth/me
+Authorization: Bearer <token>
+```
+
+**Response:** `{ id, username, displayName, role }`
 
 ## Chats
 
@@ -110,45 +114,48 @@ Authorization: Bearer <jwt_token>
 
 ```http
 GET /api/chats
-Authorization: Bearer <jwt_token>
+Authorization: Bearer <token>
 ```
 
-**Response:** Array of chat objects
+**Response:** Paginated array of user's chat objects
 
 ### Create Chat
 
 ```http
 POST /api/chats
-Authorization: Bearer <jwt_token>
+Authorization: Bearer <token>
 Content-Type: application/json
 
 {
   "name": "My Adventure",
-  "description": "A fantasy roleplay adventure"
+  "type": "direct",
+  "mode": "roleplay",
+  "participantIds": ["actor-uuid"],
+  "worldId": "world-uuid"
 }
 ```
 
-**Response:** Created chat object
+**Response:** `{ "id": "chat_uuid" }` with 201
 
 ### Get Chat by ID
 
 ```http
 GET /api/chats/:chatId
-Authorization: Bearer <jwt_token>
+Authorization: Bearer <token>
 ```
 
-**Response:** Chat object with messages and participants
+**Response:** Chat object with participants
 
 ### Update Chat
 
 ```http
-PATCH /api/chats/:chatId
-Authorization: Bearer <jwt_token>
+PUT /api/chats/:chatId
+Authorization: Bearer <token>
 Content-Type: application/json
 
 {
   "name": "Updated Adventure Name",
-  "description": "Updated description"
+  "mode": "roleplay"
 }
 ```
 
@@ -158,7 +165,7 @@ Content-Type: application/json
 
 ```http
 DELETE /api/chats/:chatId
-Authorization: Bearer <jwt_token>
+Authorization: Bearer <token>
 ```
 
 **Response:** 204 No Content
@@ -169,42 +176,46 @@ Authorization: Bearer <jwt_token>
 
 ```http
 GET /api/chats/:chatId/messages
-Authorization: Bearer <jwt_token>
+Authorization: Bearer <token>
 ```
 
 **Query Parameters:**
 
-- `limit`: Number of messages to return (default: 50)
-- `offset`: Number of messages to skip (default: 0)
+- `page`: Page number (default: 1)
+- `pageSize`: Messages per page (default: 50, max: 200)
+- `parentId`: Filter by parent message (tree view)
 - `before`: Get messages before this timestamp
-- `after`: Get messages after this timestamp
 
-**Response:** Array of message objects
+**Response:** Paginated list of message objects
 
 ### Send Message
 
 ```http
 POST /api/chats/:chatId/messages
-Authorization: Bearer <jwt_token>
+Authorization: Bearer <token>
 Content-Type: application/json
 
 {
   "content": "Hello, world!",
-  "characterId": "char_123"  // Optional, for character messages
+  "role": "user",
+  "contentType": "text",
+  "parentId": null,
+  "idempotencyKey": "client-gen-uuid"
 }
 ```
 
-**Response:** Created message object
+**Response:** `{ "id": "msg_uuid" }` with 201
 
-### Update Message
+### Update Message Visibility
 
 ```http
-PATCH /api/messages/:messageId
-Authorization: Bearer <jwt_token>
+PUT /api/messages/:messageId/visibility
+Authorization: Bearer <token>
 Content-Type: application/json
 
 {
-  "content": "Updated message content"
+  "visibility": "hidden_by_user",
+  "reason": "mistake"
 }
 ```
 
@@ -214,7 +225,7 @@ Content-Type: application/json
 
 ```http
 DELETE /api/messages/:messageId
-Authorization: Bearer <jwt_token>
+Authorization: Bearer <token>
 ```
 
 **Response:** 204 No Content
@@ -224,48 +235,49 @@ Authorization: Bearer <jwt_token>
 ### Get Character
 
 ```http
-GET /api/characters/:characterId
-Authorization: Bearer <jwt_token>
+GET /api/actors/:id
+Authorization: Bearer <token>
 ```
 
-**Response:** Character object
+**Response:** Actor object (character/user/assistant)
 
 ### Create Character
 
 ```http
-POST /api/characters
-Authorization: Bearer <jwt_token>
+POST /api/actors
+Authorization: Bearer <token>
 Content-Type: application/json
 
 {
-  "name": "Gandalf",
+  "displayName": "Gandalf",
+  "actorType": "character",
   "description": "A wise old wizard",
-  "avatar": "url_to_avatar_image"
+  "systemPrompt": "You are Gandalf the Grey..."
 }
 ```
 
-**Response:** Created character object
+**Response:** `{ "id": "actor_uuid" }` with 201
 
 ### Update Character
 
 ```http
-PATCH /api/characters/:characterId
-Authorization: Bearer <jwt_token>
+PUT /api/actors/:id
+Authorization: Bearer <token>
 Content-Type: application/json
 
 {
-  "name": "Gandalf the White",
+  "displayName": "Gandalf the White",
   "description": "An even wiser wizard"
 }
 ```
 
-**Response:** Updated character object
+**Response:** Updated actor object
 
 ### Delete Character
 
 ```http
-DELETE /api/characters/:characterId
-Authorization: Bearer <jwt_token>
+DELETE /api/actors/:id
+Authorization: Bearer <token>
 ```
 
 **Response:** 204 No Content
@@ -276,26 +288,24 @@ Authorization: Bearer <jwt_token>
 
 ```http
 POST /api/assets
-Authorization: Bearer <jwt_token>
+Authorization: Bearer <token>
 Content-Type: multipart/form-data
 
 file: <binary file>
-alt_text: "Description of the image"
 ```
 
 **Response:**
 
 ```json
 {
-  "id": "asset_123",
+  "id": "asset_uuid",
   "filename": "portrait.png",
-  "mime_type": "image/png",
-  "asset_type": "image",
-  "size_bytes": 123456,
+  "mimeType": "image/png",
+  "sizeBytes": 123456,
   "urls": {
-    "raw": "/api/assets/asset_123/raw",
-    "compressed": "/api/assets/asset_123/compressed",
-    "thumbnail": "/api/assets/asset_123/thumb"
+    "raw": "/api/assets/uuid/raw",
+    "compressed": "/api/assets/uuid/compressed",
+    "thumbnail": "/api/assets/uuid/thumb"
   }
 }
 ```
@@ -303,39 +313,33 @@ alt_text: "Description of the image"
 ### List Assets
 
 ```http
-GET /api/assets?entity_type=character&entity_id=char_123&label=portrait
-Authorization: Bearer <jwt_token>
+GET /api/assets?type=image
+Authorization: Bearer <token>
 ```
 
-**Response:** Array of asset objects
+**Response:** Paginated array of asset objects
 
 ### Link Asset to Entity
 
 ```http
-POST /api/assets/:assetId/link
-Authorization: Bearer <jwt_token>
+POST /api/assets/:assetId/links
+Authorization: Bearer <token>
 Content-Type: application/json
 
 {
-  "entity_type": "character",
-  "entity_id": "char_123",
+  "entityType": "character",
+  "entityId": "actor_uuid",
   "label": "portrait"
 }
 ```
 
-**Response:** 201 Created
+**Response:** `{ "id": "link_uuid" }` with 201
 
 ### Unlink Asset from Entity
 
 ```http
-DELETE /api/assets/:assetId/link
-Authorization: Bearer <jwt_token>
-Content-Type: application/json
-
-{
-  "entity_type": "character",
-  "entity_id": "char_123"
-}
+DELETE /api/assets/:assetId/links/:linkId
+Authorization: Bearer <token>
 ```
 
 **Response:** 204 No Content
@@ -344,7 +348,7 @@ Content-Type: application/json
 
 ```http
 DELETE /api/assets/:assetId
-Authorization: Bearer <jwt_token>
+Authorization: Bearer <token>
 ```
 
 **Response:** 204 No Content
@@ -354,8 +358,10 @@ Authorization: Bearer <jwt_token>
 ```http
 GET /api/assets/:assetId/raw       # Original file
 GET /api/assets/:assetId/compressed # Compressed variant
-GET /api/assets/:assetId/thumb     # Thumbnail
+GET /api/assets/:assetId/thumb     # Thumbnail (images only)
 ```
+
+Asset downloads use direct paths (no signed URL system). Auth required for all asset endpoints.
 
 **Response:** Binary file data with appropriate Content-Type
 
@@ -363,33 +369,7 @@ GET /api/assets/:assetId/thumb     # Thumbnail
 
 ### Get Assistant Response
 
-```http
-POST /api/assistant
-Authorization: Bearer <jwt_token>
-Content-Type: application/json
-
-{
-  "message": "I need help creating a character",
-  "context": {
-    "chatId": "chat_123",
-    "characterIds": ["char_123", "char_456"],
-    "recentMessages": [
-      { "content": "Hello", "role": "user" },
-      { "content": "Hi there!", "role": "assistant" }
-    ]
-  }
-}
-```
-
-**Response:**
-
-```json
-{
-  "type": "suggestion",
-  "content": "Consider giving your character a unique background story...",
-  "confidence": 0.85
-}
-```
+> **Status:** Not implemented. `/api/assistant` endpoint does not exist yet. Assistant is invoked internally by `src/assistant/service.ts` during message generation. This documentation is aspirational.
 
 ## Error Responses
 
@@ -438,19 +418,19 @@ Status code: 429 Too Many Requests
 
 Endpoints that return lists of items support pagination using:
 
-- `limit`: Number of items to return (default: 50, max: 100)
-- `offset`: Number of items to skip (default: 0)
+- `page`: Page number (default: 1)
+- `pageSize`: Items per page (default: 50, max: 200)
 
 Response includes pagination metadata:
 
 ```json
 {
-  "items": [...],
+  "data": [...],
   "pagination": {
-    "limit": 50,
-    "offset": 0,
     "total": 137,
-    "hasMore": true
+    "page": 1,
+    "pageSize": 50,
+    "totalPages": 3
   }
 }
 ```
