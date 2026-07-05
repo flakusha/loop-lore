@@ -158,7 +158,7 @@ export async function processStreamingChunk(
   if (repAnalysis) {
     void updateAttemptStatus(db, attemptId, active.status, {
       repetition_score: repAnalysis.score,
-        repetition_analysis: (() => { const r = safeJsonStringify(repAnalysis); return r.ok ? r.value : null; })(),
+        repetition_analysis: (() => { const r = safeJsonStringify(repAnalysis); if (!r.ok) { genLog.error("repetition analysis serialization failed", r.error); return null; } return r.value; })(),
     }).catch((error: unknown) => {
       genLog.error("Failed to update repetition analysis", error instanceof Error ? error : undefined);
     });
@@ -192,7 +192,8 @@ export async function processStreamingChunk(
   }
 
   // ── Criterion 3: Policy mismatch detection ──
-  // Detect regardless of cancel flag; throttle to every 5 chunks (O(n²) avoidance)
+  // Detect whenever expectedPolicy is configured; throttle to every 5 chunks for perf (O(n²) avoidance).
+  // Note: detection runs regardless of cancel flag — cancel flag only controls auto-cancel action on detection.
   if (active.policyConfig.expectedPolicy && active.chunksReceived % 5 === 0) {
     const fullText = active.repetitionDetector.getBufferText();
     const policyAnalysis = await detectPolicyMismatch(fullText, {
@@ -219,7 +220,7 @@ export async function processStreamingChunk(
           cancel_reason: CancelReason.PolicyMismatch,
           cancel_reason_detail: detail,
           cancel_source: CancelSource.AutoPolicy,
-          policy_analysis: (() => { const r = safeJsonStringify(policyAnalysis); return r.ok ? r.value : null; })(),
+          policy_analysis: (() => { const r = safeJsonStringify(policyAnalysis); if (!r.ok) { genLog.error("policy analysis serialization failed", r.error); return null; } return r.value; })(),
           completed_at: new Date().toISOString(),
         }).catch((error: unknown) => {
           genLog.error("Failed to update policy-cancel status", error instanceof Error ? error : undefined);

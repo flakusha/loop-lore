@@ -10,6 +10,7 @@
 import type { Kysely } from "kysely";
 import type { DB } from "../db/schema";
 import { GenerationStatus } from "../db/enums";
+import { getLogger } from "../logger";
 
 // ── Internal: shared state with cancellation-tracker ──────────
 // These are marked @internal in cancellation-tracker and are NOT
@@ -37,7 +38,7 @@ export async function completeStep(attemptId: string, stepIndex: number, db: Kys
       step_index: active.stepIndex,
     });
   } catch (error: unknown) {
-    console.warn("[step-pipeline] Non-fatal error in completeStep:", error);
+    getLogger().child({ module: "generation" }).warn("Non-fatal error in completeStep", { error: String(error) });
   }
 }
 
@@ -61,8 +62,8 @@ export async function failStep(
       step_index: stepIndex,
       completed_at: new Date().toISOString(),
     });
-  } catch (error: unknown) {
-    console.warn("[step-pipeline] Non-fatal error in failStep:", error);
+  } catch (updateError: unknown) {
+    getLogger().child({ module: "generation" }).warn("Non-fatal error in failStep", { error: String(updateError) });
   }
 }
 

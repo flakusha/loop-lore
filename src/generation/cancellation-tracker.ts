@@ -184,7 +184,7 @@ export function startGenerationTracking(
 
   events?.onStart?.(attemptId);
   void updateAttemptStatus(db, attemptId, GenerationStatus.Processing).catch((error: unknown) => {
-    console.error("[cancellation] Status update failed:", error);
+    getLogger().child({ module: "generation" }).warn("Status update failed", { error: String(error) });
   });
 
   return { attemptId, abortSignal: abortController.signal };
