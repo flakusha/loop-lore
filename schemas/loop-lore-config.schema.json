@@ -1,0 +1,523 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "./schemas/loop-lore-config.schema.json",
+  "title": "loop-lore Config",
+  "type": "object",
+  "properties": {
+    "server": {
+      "type": "object",
+      "description": "HTTP server configuration",
+      "properties": {
+        "port": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 65535,
+          "default": 3000,
+          "description": "Server port"
+        },
+        "host": {
+          "type": "string",
+          "default": "localhost",
+          "description": "Server host"
+        },
+        "tls": {
+          "type": "object",
+          "description": "TLS certificate configuration",
+          "properties": {
+            "key": {
+              "type": "string",
+              "default": "../loop-lore-data/certs/key.pem",
+              "description": "Path to TLS private key (PEM)"
+            },
+            "cert": {
+              "type": "string",
+              "default": "../loop-lore-data/certs/cert.pem",
+              "description": "Path to TLS certificate (PEM)"
+            }
+          },
+          "required": [
+            "key",
+            "cert"
+          ]
+        }
+      },
+      "required": [
+        "port",
+        "host"
+      ]
+    },
+    "db": {
+      "type": "object",
+      "description": "Database configuration",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "sqlite",
+            "postgres"
+          ],
+          "default": "sqlite",
+          "description": "Database type"
+        },
+        "sqliteFilename": {
+          "type": "string",
+          "default": "../loop-lore-data/loop-lore.db",
+          "description": "SQLite database file path"
+        },
+        "url": {
+          "type": "string",
+          "description": "PostgreSQL connection URL"
+        }
+      },
+      "required": [
+        "type",
+        "sqliteFilename"
+      ]
+    },
+    "assets": {
+      "type": "object",
+      "description": "Asset storage configuration",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable asset uploads"
+        },
+        "uploadDir": {
+          "type": "string",
+          "default": "../loop-lore-data/uploads",
+          "description": "Directory for uploaded assets"
+        },
+        "maxFileSize": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 10485760,
+          "description": "Max upload size in bytes (default 10 MB)"
+        },
+        "compression": {
+          "type": "boolean",
+          "default": true,
+          "description": "Compress uploaded assets"
+        }
+      },
+      "required": [
+        "enabled",
+        "uploadDir",
+        "maxFileSize",
+        "compression"
+      ]
+    },
+    "assistant": {
+      "type": "object",
+      "description": "Assistant configuration",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable rule-based assistant"
+        }
+      },
+      "required": [
+        "enabled"
+      ]
+    },
+    "logging": {
+      "type": "object",
+      "description": "Logging configuration",
+      "properties": {
+        "level": {
+          "type": "string",
+          "enum": [
+            "debug",
+            "info",
+            "warn",
+            "error"
+          ],
+          "default": "debug",
+          "description": "Log level"
+        },
+        "jsonlPath": {
+          "type": "string",
+          "description": "JSONL output path"
+        },
+        "jsonlMaxBytes": {
+          "type": "integer",
+          "default": 104857600,
+          "description": "Max JSONL file bytes before rotation"
+        },
+        "jsonlMaxFiles": {
+          "type": "integer",
+          "default": 5,
+          "description": "Max rotated files to keep"
+        },
+        "dbEnabled": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable DB log transport"
+        },
+        "censorEnabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "PII redaction"
+        },
+        "censorFields": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Extra PII field patterns"
+        },
+        "queueMaxSize": {
+          "type": "integer",
+          "default": 10000,
+          "description": "Max queue entries"
+        },
+        "maxMessageBytes": {
+          "type": "integer",
+          "default": 10240,
+          "description": "Max message string bytes"
+        },
+        "maxMetaBytes": {
+          "type": "integer",
+          "default": 102400,
+          "description": "Max meta blob bytes"
+        },
+        "maxMetaDepth": {
+          "type": "integer",
+          "default": 5,
+          "description": "Max meta recursion depth"
+        },
+        "maxStackBytes": {
+          "type": "integer",
+          "default": 5120,
+          "description": "Max error stack bytes"
+        }
+      },
+      "required": [
+        "level"
+      ]
+    },
+    "tui": {
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable TUI mode"
+        }
+      },
+      "required": [
+        "enabled"
+      ]
+    },
+    "docs": {
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable documentation serving"
+        },
+        "public": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Allowlist of doc path prefixes"
+        }
+      },
+      "required": [
+        "enabled"
+      ]
+    },
+    "ageGate": {
+      "type": "object",
+      "description": "Age verification configuration",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable age gating"
+        },
+        "minimumAge": {
+          "type": "integer",
+          "default": 18,
+          "description": "Minimum required age"
+        },
+        "mode": {
+          "type": "string",
+          "enum": [
+            "none",
+            "self-declaration",
+            "verification"
+          ],
+          "default": "self-declaration",
+          "description": "Age gate mode"
+        }
+      },
+      "required": [
+        "enabled",
+        "minimumAge",
+        "mode"
+      ]
+    },
+    "auth": {
+      "type": "object",
+      "description": "Authentication configuration",
+      "properties": {
+        "required": {
+          "type": "boolean",
+          "default": false,
+          "description": "Require remote multi-user auth"
+        },
+        "registrationOpen": {
+          "type": "boolean",
+          "default": true,
+          "description": "Allow new user registration"
+        },
+        "sessionTimeoutHours": {
+          "type": "integer",
+          "default": 24,
+          "description": "Idle session timeout in hours"
+        },
+        "maxSessionsPerUser": {
+          "type": "integer",
+          "default": 10,
+          "description": "Max simultaneous sessions per user"
+        },
+        "demoUsername": {
+          "type": "string",
+          "default": "demo",
+          "description": "Demo username"
+        },
+        "demoAutoSetup": {
+          "type": "boolean",
+          "default": true,
+          "description": "Auto-create sample data on first demo run"
+        }
+      },
+      "required": [
+        "required",
+        "registrationOpen",
+        "sessionTimeoutHours",
+        "maxSessionsPerUser",
+        "demoUsername",
+        "demoAutoSetup"
+      ]
+    },
+    "transport": {
+      "type": "object",
+      "description": "Transport configuration",
+      "properties": {
+        "defaultProtocol": {
+          "type": "string",
+          "enum": [
+            "http/1.1",
+            "http/2",
+            "http/3",
+            "websocket",
+            "webtransport",
+            "tcp",
+            "tls"
+          ],
+          "default": "http/1.1"
+        },
+        "enableWebSocket": {
+          "type": "boolean",
+          "default": true
+        },
+        "enableWebTransport": {
+          "type": "boolean",
+          "default": false
+        },
+        "enableH2": {
+          "type": "boolean",
+          "default": false
+        },
+        "enableH3": {
+          "type": "boolean",
+          "default": false
+        },
+        "compression": {
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "type": "boolean",
+              "default": false
+            },
+            "default": {
+              "type": "string",
+              "enum": [
+                "zstd",
+                "br",
+                "gzip",
+                "none"
+              ],
+              "default": "none"
+            },
+            "threshold": {
+              "type": "integer",
+              "default": 256
+            }
+          },
+          "required": [
+            "enabled",
+            "default",
+            "threshold"
+          ]
+        },
+        "limits": {
+          "type": "object",
+          "properties": {
+            "maxFrameSize": {
+              "type": "integer",
+              "default": 65536
+            },
+            "maxPayload": {
+              "type": "integer",
+              "default": 327680
+            },
+            "maxConcurrentStreams": {
+              "type": "integer",
+              "default": 100
+            }
+          },
+          "required": [
+            "maxFrameSize",
+            "maxPayload",
+            "maxConcurrentStreams"
+          ]
+        }
+      },
+      "required": [
+        "defaultProtocol",
+        "enableWebSocket",
+        "enableWebTransport",
+        "enableH2",
+        "enableH3",
+        "compression",
+        "limits"
+      ]
+    },
+    "messages": {
+      "type": "object",
+      "description": "Message configuration",
+      "properties": {
+        "autoHideInvalid": {
+          "type": "boolean",
+          "default": false,
+          "description": "Auto-mark invalid messages as hidden"
+        },
+        "hideConfirmation": {
+          "type": "boolean",
+          "default": true,
+          "description": "Require confirmation before hiding"
+        },
+        "maxLength": {
+          "type": "integer",
+          "default": 100000,
+          "description": "Max content length"
+        },
+        "maxGenerationRetries": {
+          "type": "integer",
+          "default": 3,
+          "description": "Max auto-retry on LLM failure"
+        },
+        "generationTimeoutMs": {
+          "type": "integer",
+          "default": 30000,
+          "description": "LLM response timeout in ms"
+        },
+        "idempotencyExpiryHours": {
+          "type": "integer",
+          "default": 24,
+          "description": "Idempotency key TTL in hours"
+        }
+      },
+      "required": [
+        "autoHideInvalid",
+        "hideConfirmation",
+        "maxLength",
+        "maxGenerationRetries",
+        "generationTimeoutMs",
+        "idempotencyExpiryHours"
+      ]
+    },
+    "nsfw": {
+      "type": "object",
+      "description": "NSFW configuration",
+      "properties": {
+        "allowNsfw": {
+          "type": "boolean",
+          "default": true,
+          "description": "Allow NSFW content"
+        },
+        "nsfwMinAge": {
+          "type": "integer",
+          "default": 18,
+          "description": "Minimum age for NSFW content"
+        }
+      },
+      "required": [
+        "allowNsfw",
+        "nsfwMinAge"
+      ]
+    },
+    "generation": {
+      "type": "object",
+      "description": "LLM generation provider configuration",
+      "properties": {
+        "providers": {
+          "type": "object",
+          "properties": {
+            "openaiCompatible": {
+              "type": "array",
+              "default": [],
+              "description": "OpenAI-compatible provider instances"
+            }
+          }
+        },
+        "defaultProvider": {
+          "type": "string",
+          "default": "",
+          "description": "Default provider name"
+        },
+        "defaultModels": {
+          "type": "object",
+          "default": {},
+          "description": "Default model per provider"
+        }
+      }
+    },
+    "byoKey": {
+      "type": "object",
+      "description": "BYO API Key configuration",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable user-owned API keys"
+        },
+        "encryptionKey": {
+          "type": "string",
+          "description": "Encryption key for stored API keys"
+        }
+      },
+      "required": [
+        "enabled"
+      ]
+    }
+  },
+  "required": [
+    "server",
+    "db",
+    "assets",
+    "assistant",
+    "logging",
+    "tui",
+    "docs",
+    "auth",
+    "transport",
+    "messages"
+  ]
+}

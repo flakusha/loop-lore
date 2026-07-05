@@ -7,19 +7,19 @@ server:
   port: 3000
   host: "localhost"
   tls:
-    key: "./data/certs/key.pem"      # auto-generated if missing
-    cert: "./data/certs/cert.pem"    # auto-generated if missing
+    key: "../loop-lore-data/certs/key.pem"      # auto-generated if missing
+    cert: "../loop-lore-data/certs/cert.pem"    # auto-generated if missing
 
 db:
   type: sqlite          # "sqlite" or "postgres"
-  sqliteFilename: "./data/loop-lore.db"
+  sqliteFilename: "../loop-lore-data/loop-lore.db"
   # For Postgres:
   # type: postgres
   # url: "postgres://user:pass@localhost:5432/loop-lore"
 
 assets:
   enabled: true
-  uploadDir: "./data/uploads"
+  uploadDir: "../loop-lore-data/uploads"
   maxFileSize: 10485760  # 10 MB
   compression: true
 

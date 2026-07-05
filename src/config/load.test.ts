@@ -174,9 +174,13 @@ describe("validateConfig", () => {
     }).not.toThrow();
   });
 
-  test("throws on port 0", () => {
+  test("rejects port out of range", () => {
     const config = validConfig();
-    config.server.port = 0;
+    config.server.port = -1;
+    expect(() => {
+      validateConfig(config);
+    }).toThrow(/port/);
+    config.server.port = 100_000;
     expect(() => {
       validateConfig(config);
     }).toThrow(/port/);

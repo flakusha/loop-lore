@@ -1,0 +1,113 @@
+# loop-lore configuration (TOML format)
+# Supports: YAML (.yaml, .yml) or TOML (.toml)
+# Env vars override values below — see src/config/load.ts for mapping
+# $schema: ./schemas/loop-lore-config.schema.json
+
+[server]
+port = 3000
+host = "localhost"
+
+[server.tls]
+key = "../loop-lore-data/certs/key.pem"
+cert = "../loop-lore-data/certs/cert.pem"
+
+[db]
+type = "sqlite"
+sqliteFilename = "../loop-lore-data/loop-lore.db"
+
+# For Postgres:
+# type = "postgres"
+# url = "postgres://user:pass@localhost:5432/loop-lore"
+
+[assets]
+enabled = true
+uploadDir = "../loop-lore-data/uploads"
+maxFileSize = 10485760
+compression = true
+
+[assistant]
+enabled = true
+
+[logging]
+level = "debug"
+
+# JSONL output (optional)
+# jsonlPath = "./data/logs/loop-lore.jsonl"
+# jsonlMaxBytes = 104857600
+# jsonlMaxFiles = 5
+
+[tui]
+enabled = true
+
+[docs]
+enabled = true
+# public = ["guide", "frontend", "assets", "actors"]
+
+[auth]
+required = false
+registrationOpen = true
+sessionTimeoutHours = 24
+maxSessionsPerUser = 10
+demoUsername = "demo"
+demoAutoSetup = true
+
+[ageGate]
+enabled = false
+minimumAge = 18
+mode = "self-declaration"
+
+[transport]
+defaultProtocol = "http/1.1"
+enableWebSocket = true
+enableWebTransport = false
+enableH2 = false
+enableH3 = false
+
+[transport.compression]
+enabled = false
+default = "none"
+threshold = 256
+
+[transport.limits]
+maxFrameSize = 65536
+maxPayload = 327680
+maxConcurrentStreams = 100
+
+[messages]
+autoHideInvalid = false
+hideConfirmation = true
+maxLength = 100000
+maxGenerationRetries = 3
+generationTimeoutMs = 30000
+idempotencyExpiryHours = 24
+
+[nsfw]
+allowNsfw = true
+nsfwMinAge = 18
+
+[generation]
+defaultProvider = ""
+defaultModels = {}
+
+[generation.providers]
+openaiCompatible = []
+
+# Example provider:
+# [[generation.providers.openaiCompatible]]
+# name = "default"
+# label = "Default Provider"
+# baseUrl = "http://localhost:8080/v1"
+# apiKey = "sk-optional"
+# model = "claude-3-opus"
+# timeout = 30000
+# retries = 3
+# allowUserApiKey = true
+
+# Example model limits:
+# [generation.providers.openaiCompatible.models.claude-3-opus]
+# contextLimit = 200000
+# maxOutput = 4000
+
+[byoKey]
+enabled = true
+# encryptionKey = "optional-override-for-auth.sessionSecret"
