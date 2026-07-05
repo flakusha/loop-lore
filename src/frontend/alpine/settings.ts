@@ -14,6 +14,7 @@ globalThis.settingsPage = function () {
     apiModel: "",
     maxTokens: 4096,
     temperature: 1,
+    confirmDeleteText: "",
 
     init() {
       const savedTheme = localStorage.getItem("theme-preference");

@@ -112,6 +112,7 @@
               @dragover.prevent="$el.classList.add('drag-over')"
               @dragleave.prevent="$el.classList.remove('drag-over')"
               @drop.prevent="handleDrop($event)"
+              @click="$refs.fileInput.click()"
             >
               <div class="icon">📤</div>
               <div class="text">Drag & drop files here</div>
