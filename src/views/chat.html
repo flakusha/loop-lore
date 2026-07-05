@@ -1,56 +1,85 @@
 <!-- Chat View (swapped into #app-root by htmx) -->
-<div class="app-layout">
-  <!-- Sidebar -->
-  <aside class="sidebar">
+<div class="app-layout" x-data="chatState()">
+  <!-- Hamburger button (visible on all viewports) -->
+  <button
+    class="hamburger"
+    @click="showSidebar = true"
+    aria-label="Open navigation"
+    title="Open navigation"
+  >☰</button>
+
+  <!-- Left Sidebar (Hamburger drawer) -->
+  <aside class="sidebar" x-show="showSidebar" x-transition>
     <div class="sidebar-header">
       <span class="logo">loop-lore</span>
+      <button class="btn-icon" @click="showSidebar = false" title="Close">&times;</button>
     </div>
 
     <nav class="sidebar-nav">
-      <div x-data="{ activeChat: null }">
-        <div class="nav-section-title">Chats</div>
+      <div class="nav-section-title">Chats</div>
 
-        <!-- Chat list loaded via htmx -->
-        <div id="chat-list" hx-get="/api/chats" hx-trigger="load" hx-swap="innerHTML">
-          <!-- Loading state -->
-          <div class="nav-item" style="color: var(--text-tertiary); font-size: 13px">Loading chats...</div>
-        </div>
-
-        <div style="padding: var(--space-3)">
-          <button
-            class="btn btn-secondary"
-            style="width: 100%"
-            hx-get="/views/chat/new"
-            hx-target="#app-root"
-            hx-swap="innerHTML"
-            @click="$dispatch('show-toast', { type: 'info', message: 'New chat coming soon' })"
+      <!-- Chat list loaded via Alpine -->
+      <div id="chat-list">
+        <template x-if="chats.length === 0">
+          <div class="nav-item" style="color: var(--text-tertiary); font-size: 13px">No chats yet</div>
+        </template>
+        <template x-for="chat in chats" :key="chat.id">
+          <a
+            class="nav-item"
+            :class="{ active: activeChat === chat.id }"
+            href="#"
+            @click.prevent="selectChat(chat.id)"
           >
-            + New Chat
-          </button>
-        </div>
+            <span class="name" x-text="chat.name"></span>
+          </a>
+        </template>
+      </div>
 
-        <div class="nav-section-title">Characters</div>
+      <div style="padding: var(--space-3)">
         <a
-          class="nav-item"
-          href="/views/characters"
-          hx-get="/views/characters"
+          class="btn btn-secondary"
+          style="width: 100%; text-align: center; text-decoration: none"
+          href="/views/new-chat"
+          hx-get="/views/new-chat"
           hx-target="#app-root"
           hx-swap="innerHTML"
         >
-          <span>Browse Characters</span>
-        </a>
-
-        <div class="nav-section-title">Assets</div>
-        <a
-          class="nav-item"
-          href="/views/gallery"
-          hx-get="/views/gallery"
-          hx-target="#app-root"
-          hx-swap="innerHTML"
-        >
-          <span>Asset Gallery</span>
+          + New Chat
         </a>
       </div>
+
+      <div class="nav-section-title">Characters</div>
+      <a
+        class="nav-item"
+        href="/views/characters"
+        hx-get="/views/characters"
+        hx-target="#app-root"
+        hx-swap="innerHTML"
+      >
+        <span>Browse Characters</span>
+      </a>
+
+      <div class="nav-section-title">Assets</div>
+      <a
+        class="nav-item"
+        href="/views/gallery"
+        hx-get="/views/gallery"
+        hx-target="#app-root"
+        hx-swap="innerHTML"
+      >
+        <span>Asset Gallery</span>
+      </a>
+
+      <div class="nav-section-title">Worlds</div>
+      <a
+        class="nav-item"
+        href="/views/worlds"
+        hx-get="/views/worlds"
+        hx-target="#app-root"
+        hx-swap="innerHTML"
+      >
+        <span>🌍 Worlds</span>
+      </a>
     </nav>
 
     <!-- Sidebar footer: user info -->
@@ -64,12 +93,12 @@
           style="background: var(--bg-tertiary)"
         />
         <div class="details">
-          <div class="name" id="user-display-name">User</div>
-          <div class="role" id="user-role">solo</div>
+          <div class="name" id="user-display-name" x-text="userDisplayName">User</div>
+          <div class="role" id="user-role" x-text="userRole">solo</div>
         </div>
         <button
           class="btn-icon"
-          hx-get="/views/settings.html"
+          hx-get="/views/settings"
           hx-target="#app-root"
           hx-swap="innerHTML"
           title="Settings"
@@ -80,63 +109,134 @@
     </div>
   </aside>
 
+  <!-- Mobile backdrop (click to close sidebar) -->
+  <div x-show="showSidebar" class="backdrop" x-transition @click="showSidebar = false"></div>
+
   <!-- Main chat area -->
-  <main class="main-content" x-data="chatState()">
+  <main class="main-content">
     <!-- Header -->
     <header class="main-header">
-      <div>
-        <span class="title" id="chat-title">Welcome to loop-lore</span>
-      </div>
+      <button class="btn-icon" title="Open navigation" @click="showSidebar = true">☰</button>
+      <span class="title" id="chat-title" x-text="activeChatName">Welcome to loop-lore</span>
       <div class="actions">
         <button class="btn-icon" title="Toggle gallery sidebar" @click="showGallery = !showGallery">🖼</button>
         <button class="btn-icon" title="Character info" @click="showCharacterInfo = true">ℹ</button>
       </div>
     </header>
 
-    <!-- Body: chat + optional gallery sidebar -->
-    <div style="display: flex; flex: 1; min-height: 0">
+    <!-- Chat container (centered) -->
+    <div class="chat-container">
       <!-- Messages -->
       <div
         class="chat-area"
         id="message-list"
         x-ref="messageList"
-        hx-get="/api/chats/:id/messages"
-        hx-trigger="load from:body"
-        hx-swap="innerHTML"
-        hx-target="#message-list"
       >
-        <div class="empty-state">
-          <div class="icon">💬</div>
-          <div class="title">No messages yet</div>
-          <div class="description">Start a conversation below. Messages are persisted automatically.</div>
-        </div>
+        <template x-if="!activeChat">
+          <div class="empty-state">
+            <div class="icon">💬</div>
+            <div class="title">Select a chat</div>
+            <div class="description">Choose a conversation from the sidebar or create a new one.</div>
+          </div>
+        </template>
+        <template x-if="activeChat && messages.length === 0 && !loadingMessages">
+          <div class="empty-state">
+            <div class="icon">💬</div>
+            <div class="title">No messages yet</div>
+            <div class="description">Start a conversation below. Messages are persisted automatically.</div>
+          </div>
+        </template>
+        <template x-if="activeChat && loadingMessages">
+          <div class="empty-state">
+            <div class="icon">⏳</div>
+            <div class="title">Loading messages...</div>
+          </div>
+        </template>
+        <template x-if="activeChat && loadingError">
+          <div class="error-banner" x-text="loadingError"></div>
+        </template>
+        <template x-for="msg in groupedMessages" :key="msg.id">
+          <div class="message" :class="msg.role" :data-message-id="msg.id">
+            <div class="bubble">
+              <div class="meta">
+                <span class="name" x-text="displayName(msg)"></span>
+                <span class="time" x-text="formatTime(msg.created_at)"></span>
+              </div>
+              <template x-if="msg.thinking">
+                <details class="thinking-block">
+                  <summary>Thinking process</summary>
+                  <div class="thinking-content" x-html="renderMarkdown(msg.thinking)"></div>
+                </details>
+              </template>
+              <div class="content" x-html="renderMarkdown(msg.content)"></div>
+              <div class="actions">
+                <button class="btn-icon action-copy" title="Copy" @click="copyMessage(msg.id, $event)">📋</button>
+                <template x-if="msg.role === 'assistant'">
+                  <button class="btn-icon action-retry" title="Retry" @click="regenerateResponse(msg)">🔄</button>
+                  <template x-if="msg.status === 'cancelled' || msg.status === 'partial'">
+                    <button class="btn-icon action-continue" title="Continue" @click="continueMessage(msg.id)">↳</button>
+                  </template>
+                </template>
+                <button class="btn-icon action-remove" title="Remove" @click="removeMessage(msg.id, $event)">🗑</button>
+              </div>
+            </div>
+          </div>
+        </template>
       </div>
 
-      <!-- Gallery sidebar (toggleable) -->
+      <!-- Right panel (character info, world context) -->
       <aside
-        x-show="showGallery"
-        x-transition:enter="transition ease-out duration-200"
-        x-transition:enter-start="opacity-0 translate-x-4"
-        x-transition:enter-end="opacity-100 translate-x-0"
-        style="
-          width: 300px;
-          min-width: 300px;
-          border-left: 1px solid var(--border-default);
-          background: var(--bg-secondary);
-          overflow-y: auto;
-          padding: var(--space-4);
-        "
-        id="gallery-sidebar"
+        class="right-panel"
+        x-show="showCharacterInfo"
+        x-transition
       >
-        <div class="nav-section-title" style="margin-bottom: var(--space-3)">Chat Assets</div>
-        <div id="gallery-items" hx-get="/api/chats/:id/assets" hx-trigger="load" hx-swap="innerHTML">
+        <button class="btn-icon" @click="showCharacterInfo = false" title="Close">&times;</button>
+        <div class="panel-content">
+          <div class="nav-section-title">Character Info</div>
+          <template x-if="currentCharacter">
+            <div>
+              <h3 class="name" x-text="currentCharacter.display_name || currentCharacter.name"></h3>
+              <p class="description" x-text="currentCharacter.description"></p>
+            </div>
+          </template>
+          <template x-if="!currentCharacter">
+            <div class="empty-state" style="padding: var(--space-4) 0">
+              <div class="icon">👤</div>
+              <div class="description">Character info will appear here when a chat is selected.</div>
+            </div>
+          </template>
+        </div>
+      </aside>
+    </div>
+
+    <!-- Gallery sidebar (toggleable, overlays on desktop) -->
+    <aside
+      class="gallery-sidebar"
+      x-show="showGallery"
+      x-transition
+    >
+      <button class="btn-icon" @click="showGallery = false" title="Close">&times;</button>
+      <div class="nav-section-title" style="margin-bottom: var(--space-3)">Chat Assets</div>
+      <div id="gallery-items">
+        <template x-if="!activeChat">
+          <div class="gallery-empty">
+            <div class="icon">📁</div>
+            <div class="text">Select a chat to see linked assets</div>
+          </div>
+        </template>
+        <template x-if="activeChat && galleryAssets.length === 0">
           <div class="gallery-empty">
             <div class="icon">📁</div>
             <div class="text">No assets linked to this chat</div>
           </div>
-        </div>
-      </aside>
-    </div>
+        </template>
+        <template x-for="asset in galleryAssets" :key="asset.id">
+          <div class="gallery-item">
+            <div class="name" x-text="asset.name || asset.filename"></div>
+          </div>
+        </template>
+      </div>
+    </aside>
 
     <!-- Input area -->
     <div class="input-area">
@@ -158,12 +258,19 @@
             class="generation-label"
             x-text="isContinuing ? '↳ Continuing message...' : generationLabel"
           ></span>
+          <template x-if="generationDetail">
+            <span class="generation-detail">
+              <span class="detail-item" x-show="generationDetail.elapsedMs">&nbsp;⏱ <span x-text="Math.round(generationDetail.elapsedMs / 1000) + 's'"></span></span>
+              <span class="detail-item" x-show="generationDetail.charsReceived">&nbsp;📝 <span x-text="generationDetail.charsReceived + ' chars'"></span></span>
+              <span class="detail-item" x-show="generationDetail.status">&nbsp;· <span x-text="generationDetail.status"></span></span>
+            </span>
+          </template>
         </div>
         <div class="generation-actions">
           <button
             class="btn btn-ghost btn-cancel"
             @click="cancelGeneration()"
-            title="Cancel generation (repetition detected, wrong policy, or not following instructions)"
+            title="Cancel generation"
           >
             ⏹ Cancel
           </button>
@@ -172,10 +279,6 @@
 
       <form
         x-ref="messageForm"
-        hx-post="/api/chats/:id/messages"
-        hx-target="#message-list"
-        hx-swap="beforeend"
-        hx-on::after-request="this.reset(); scrollToBottom()"
         @submit.prevent="sendMessage()"
       >
         <div class="input-row">
@@ -188,8 +291,9 @@
             @keydown.enter.prevent="sendMessage()"
             @input="autoResize($el)"
             required
+            :disabled="!activeChat"
           ></textarea>
-          <button type="submit" class="btn btn-primary" title="Send">➤</button>
+          <button type="submit" class="btn btn-primary" title="Send" :disabled="!activeChat">➤</button>
         </div>
         <div class="input-toolbar">
           <label class="btn btn-ghost" style="cursor: pointer; font-size: 12px">
@@ -208,10 +312,10 @@
   </main>
 </div>
 
-<!-- Character Info Modal -->
+<!-- Character Info Modal (fallback for desktop) -->
 <div
   x-data="{ showCharacterInfo: false }"
-  x-show="showCharacterInfo"
+  x-show="false"
   x-cloak
   class="modal-overlay"
   @click.self="showCharacterInfo = false"
@@ -230,307 +334,3 @@
     </div>
   </div>
 </div>
-
-<script>
-  // --- Chat state (Alpine) ---
-  function chatState() {
-    return {
-      showGallery: false,
-      showCharacterInfo: false,
-      // Generation cancellation state
-      isGenerating: false,
-      generationLabel: "Character is responding...",
-      generationCheckInterval: null,
-      activeAttemptId: null,
-      currentChatId: null,
-      // Continue state
-      continuingMessageId: null,
-      isContinuing: false,
-
-      init() {
-        // Poll generation status periodically
-        this.generationCheckInterval = setInterval(() => {
-          if (!this.isGenerating) return;
-          const chatId = this.currentChatId ?? this.getChatId();
-          if (chatId) {
-            this.checkGenerationStatus(chatId);
-          }
-        }, 2000);
-
-        // Keyboard shortcut: Ctrl+J to continue selected message
-        document.addEventListener("keydown", (e) => {
-          if (e.ctrlKey && e.key === "j") {
-            const focusedMsg = document.querySelector(".message.focused");
-            if (focusedMsg) {
-              const msgId = focusedMsg.dataset.messageId;
-              if (msgId) this.continueMessage(msgId);
-            }
-          }
-        });
-      },
-
-      destroy() {
-        if (this.generationCheckInterval) {
-          clearInterval(this.generationCheckInterval);
-        }
-      },
-
-      async checkGenerationStatus(chatId) {
-        try {
-          const url = `/api/generation/status/${chatId}`;
-          const response = await fetch(url);
-          const data = await response.json();
-          if (!data.isActive) {
-            this.isGenerating = false;
-            this.activeAttemptId = null;
-          } else {
-            this.isGenerating = true;
-            this.activeAttemptId = data.attemptId;
-          }
-        } catch (_err) {
-          // Silent: polling failures are non-critical
-        }
-      },
-
-      async cancelGeneration() {
-        const chatId = this.currentChatId ?? this.getChatId();
-        if (!chatId) {
-          this.$dispatch("show-toast", {
-            type: "warning",
-            message: "No active chat to cancel",
-          });
-          return;
-        }
-
-        try {
-          const response = await fetch("/api/generation/cancel", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              chatId,
-              reason: "user_cancel",
-              source: "user",
-              detail: "User cancelled generation",
-            }),
-          });
-
-          const data = await response.json();
-
-          if (response.ok && data.ok) {
-            this.isGenerating = false;
-            this.activeAttemptId = null;
-            this.$dispatch("show-toast", {
-              type: "info",
-              message: "Generation cancelled",
-            });
-          } else {
-            this.$dispatch("show-toast", {
-              type: "error",
-              message: data.error ?? "Failed to cancel generation",
-            });
-          }
-        } catch (error) {
-          this.$dispatch("show-toast", {
-            type: "error",
-            message: "Network error cancelling generation",
-          });
-        }
-      },
-
-      async regenerateResponse() {
-        const chatId = this.currentChatId ?? this.getChatId();
-        if (!chatId) {
-          this.$dispatch("show-toast", { type: "warning", message: "No active chat" });
-          return;
-        }
-
-        try {
-          const response = await fetch("/api/generation/regenerate", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ chatId }),
-          });
-
-          const data = await response.json();
-
-          if (response.ok && data.ready) {
-            this.$dispatch("show-toast", {
-              type: "info",
-              message: "Regenerating response...",
-            });
-            // The htmx form will re-trigger the generation
-          }
-        } catch (error) {
-          this.$dispatch("show-toast", {
-            type: "error",
-            message: "Failed to regenerate",
-          });
-        }
-      },
-
-      async continueMessage(messageId) {
-        const chatId = this.currentChatId ?? this.getChatId();
-        if (!chatId) {
-          this.$dispatch("show-toast", { type: "warning", message: "No active chat" });
-          return;
-        }
-
-        // Look up the actor ID from the message element
-        const msgEl = document.querySelector(`[data-message-id="${messageId}"]`);
-        const actorId = msgEl?.dataset.actorId ?? "unknown";
-
-        try {
-          const response = await fetch("/api/generation/continue", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ messageId, chatId, actorId }),
-          });
-
-          const data = await response.json();
-
-          if (!response.ok || !data.ok) {
-            this.$dispatch("show-toast", {
-              type: "error",
-              message: data.error ?? "Failed to continue message",
-            });
-            return;
-          }
-
-          // Store the continue context for the upcoming generation request
-          this.continuingMessageId = messageId;
-          this.isContinuing = true;
-          this.isGenerating = true;
-
-          // Mark the partial message visually
-          if (msgEl) msgEl.classList.add("continued");
-
-          this.$dispatch("show-toast", {
-            type: "info",
-            message: "Continuing message...",
-          });
-
-          // The frontend should now send a generation request with:
-          // - parentMessageId = messageId (the partial message)
-          // - partialContent = data.partialContent (prepend to prompt context)
-          // - parentAttemptId = data.parentAttemptId
-          // - continuationNumber = data.continuationNumber
-          console.log("[continue] Context:", data.continueContext);
-          // TODO: Wire into actual LLM generation call with partial content as prefix
-        } catch (error) {
-          this.$dispatch("show-toast", {
-            type: "error",
-            message: "Network error continuing message",
-          });
-        }
-      },
-
-      async retryFromPoint(attemptId, step) {
-        const chatId = this.currentChatId ?? this.getChatId();
-        if (!chatId) {
-          this.$dispatch("show-toast", { type: "warning", message: "No active chat" });
-          return;
-        }
-
-        try {
-          const response = await fetch("/api/generation/retry", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ chatId, attemptId, step }),
-          });
-
-          const data = await response.json();
-
-          if (!response.ok || !data.ok) {
-            this.$dispatch("show-toast", {
-              type: "error",
-              message: data.error ?? "Failed to retry",
-            });
-            return;
-          }
-
-          this.$dispatch("show-toast", {
-            type: "info",
-            message:
-              data.resumeFromStep > 0
-                ? `Resuming from step ${data.resumeFromStep + 1} of ${data.totalSteps}...`
-                : "Regenerating response...",
-          });
-
-          this.isGenerating = true;
-          // TODO: Wire into actual generation call with resumeFromStep context
-        } catch (error) {
-          this.$dispatch("show-toast", {
-            type: "error",
-            message: "Network error during retry",
-          });
-        }
-      },
-
-      sendMessage() {
-        const input = this.$refs.messageInput;
-        const text = input.value.trim();
-        if (!text) return;
-
-        const chatId = this.getChatId();
-        if (!chatId) {
-          this.$dispatch("show-toast", { type: "warning", message: "No active chat" });
-          return;
-        }
-
-        // Optimistic insert (htmx handles the actual POST)
-        const msgEl = document.getElementById("message-list");
-        if (msgEl) {
-          msgEl.insertAdjacentHTML(
-            "beforeend",
-            `<div class="message user">
-              <div class="bubble">
-                <div class="meta"><span class="name">You</span></div>
-                ${this.escapeHtml(text)}
-              </div>
-            </div>`,
-          );
-        }
-
-        input.value = "";
-        this.autoResize(input);
-        this.scrollToBottom();
-      },
-
-      autoResize(el) {
-        el.style.height = "auto";
-        el.style.height = Math.min(el.scrollHeight, 200) + "px";
-      },
-
-      scrollToBottom() {
-        const el = document.getElementById("message-list");
-        if (el)
-          setTimeout(() => {
-            el.scrollTop = el.scrollHeight;
-          }, 50);
-      },
-
-      getChatId() {
-        // Extract from URL or data attribute
-        const path = window.location.pathname;
-        const match = path.match(/\/chat\/([^/]+)/);
-        return match ? match[1] : null;
-      },
-
-      handleAttach(event) {
-        const files = event.target.files;
-        if (files.length > 0) {
-          this.$dispatch("show-toast", {
-            type: "info",
-            message: `${files.length} file(s) selected — upload via htmx`,
-          });
-        }
-      },
-
-      escapeHtml(str) {
-        const div = document.createElement("div");
-        div.textContent = str;
-        return div.innerHTML;
-      },
-    };
-  }
-</script>

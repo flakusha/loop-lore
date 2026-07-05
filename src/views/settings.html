@@ -84,9 +84,23 @@
             <input
               type="text"
               class="form-input"
+              name="displayName"
               placeholder="Your display name"
               value="User"
-              hx-patch="/api/user"
+              hx-patch="/api/users/me"
+              hx-trigger="change"
+              hx-target-error="#toast-container"
+            />
+          </div>
+
+          <!-- Birth Date -->
+          <div class="form-group">
+            <label class="form-label">Birth Date (for age-gated content)</label>
+            <input
+              type="date"
+              class="form-input"
+              name="birthDate"
+              hx-patch="/api/users/me"
               hx-trigger="change"
               hx-target-error="#toast-container"
             />
@@ -131,27 +145,4 @@
   </main>
 </div>
 
-<script>
-  // Settings page Alpine state
-  function settingsPage() {
-    return {
-      currentTheme: "default",
 
-      init() {
-        // Load saved theme from localStorage
-        const savedTheme = localStorage.getItem("theme-preference");
-        if (savedTheme) {
-          this.currentTheme = savedTheme;
-        }
-      },
-
-      setTheme(themeId) {
-        const app = Alpine?.closest(document.body)?.__x;
-        if (app) {
-          app.setTheme(themeId);
-        }
-        this.currentTheme = themeId;
-      },
-    };
-  }
-</script>
