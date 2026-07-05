@@ -6,8 +6,8 @@
  */
 import type { Kysely } from "kysely";
 import type { DB } from "../db/schema";
-import { uid } from "../utils";
-import type { StoryContext, NpcState, LocationState } from "./types";
+import { uid, jsonParseOr } from "../utils";
+import type { StoryContext, NpcState, LocationState, QuestConfig } from "./types";
 
 // ── World State Service ──────────────────────────────────────
 
@@ -60,11 +60,11 @@ export class WorldStateService {
           locationState = {
             description_override: ls.description_override,
             atmosphere: ls.atmosphere,
-            npcs_present: JSON.parse(ls.npcs_present) as string[],
-            items_available: JSON.parse(ls.items_available) as string[],
+            npcs_present: jsonParseOr(ls.npcs_present, []),
+            items_available: jsonParseOr(ls.items_available, []),
             time_of_day: ls.time_of_day,
             weather: ls.weather,
-            hazards: JSON.parse(ls.hazards) as string[],
+            hazards: jsonParseOr(ls.hazards, []),
           };
         }
       }
@@ -84,7 +84,7 @@ export class WorldStateService {
       type: q.type,
       progress: q.progress,
       target: q.target,
-      config: JSON.parse(q.config),
+      config: jsonParseOr<QuestConfig>(q.config, {} as QuestConfig),
     }));
 
     const participantRows = await this.db
@@ -112,10 +112,10 @@ export class WorldStateService {
         npcState = {
           health: npcRow.health,
           mental_state: npcRow.mental_state,
-          knowledge: JSON.parse(npcRow.knowledge) as NpcState["knowledge"],
-          relationships: JSON.parse(npcRow.relationships) as NpcState["relationships"],
-          inventory: JSON.parse(npcRow.inventory) as string[],
-          schedule: JSON.parse(npcRow.schedule) as NpcState["schedule"],
+          knowledge: jsonParseOr(npcRow.knowledge, {}),
+          relationships: jsonParseOr(npcRow.relationships, {}),
+          inventory: jsonParseOr(npcRow.inventory, []),
+          schedule: jsonParseOr(npcRow.schedule, {}),
         };
       }
 
@@ -139,7 +139,7 @@ export class WorldStateService {
       .limit(recentTurnCount)
       .execute();
 
-    const recentTurns = turnRows.reverse().map((t) => ({
+    const recentTurns = turnRows.toReversed().map((t) => ({
       turnNumber: t.turn_number,
       actorId: t.actor_id,
       turnType: t.turn_type,
@@ -149,7 +149,15 @@ export class WorldStateService {
     }));
 
     const turnManagerState = chat.story_state
-      ? JSON.parse(chat.story_state)
+      ? jsonParseOr(chat.story_state, {
+          currentTurn: 0,
+          currentActorId: null,
+          turnOrder: [],
+          strategy: chat.turn_strategy ?? "hybrid",
+          isPaused: false,
+          lastTurnCompletedAt: null,
+          pendingRegeneration: null,
+        })
       : {
           currentTurn: 0,
           currentActorId: null,
@@ -207,7 +215,13 @@ export class WorldStateService {
             actor_id: character.id,
             world_id: worldId,
             location_id: null,
-          } as any)
+            health: 100,
+            mental_state: "neutral",
+            inventory: "[]",
+            relationships: "{}",
+            knowledge: "{}",
+            schedule: "{}",
+          })
           .execute();
         count++;
       }
@@ -238,7 +252,11 @@ export class WorldStateService {
             id: uid(),
             location_id: loc.id,
             world_id: worldId,
-          } as any)
+            time_of_day: "morning",
+            npcs_present: "[]",
+            items_available: "[]",
+            hazards: "[]",
+          })
           .execute();
         count++;
       }
