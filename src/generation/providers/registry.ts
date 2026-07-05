@@ -121,7 +121,7 @@ export async function resolveProvider(
 export function initializeProviders(config: Config): void {
   for (const instance of config.generation.providers.openaiCompatible) {
     if (getProvider(instance.name)) {
-    	continue;
+      continue;
     }
 
     const provider = new OpenAiCompatibleProvider(instance);
@@ -130,7 +130,10 @@ export function initializeProviders(config: Config): void {
   if (config.generation.providers.anthropic && !getProvider(config.generation.providers.anthropic.name)) {
     // TODO: AnthropicProvider when implemented
   }
-  if (config.generation.providers.ollamaNative && !getProvider(config.generation.providers.ollamaNative.name)) {
+  if (
+    config.generation.providers.ollamaNative &&
+    !getProvider(config.generation.providers.ollamaNative.name)
+  ) {
     // TODO: OllamaNativeProvider when implemented
   }
   // DEAD CODE: Bedrock provider initialization (uncomment when implemented)

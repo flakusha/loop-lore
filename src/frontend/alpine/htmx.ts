@@ -62,8 +62,3 @@ document.addEventListener("htmx:responseError", (e: CustomEvent<{ xhr?: XMLHttpR
     }
   }
 });
-
- 
- 
- 
-

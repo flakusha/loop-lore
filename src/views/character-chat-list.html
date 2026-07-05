@@ -6,7 +6,15 @@
       <span class="title" x-text="characterName || 'Chats'"></span>
       <div class="actions">
         <button class="btn btn-secondary" @click="loadChats" data-testid="refresh-chats">Refresh</button>
-        <a href="/views/new-chat" class="btn btn-primary" hx-get="/views/new-chat" hx-target="#app-root" hx-swap="innerHTML" data-testid="new-chat-from-character">+ New Chat</a>
+        <a
+          href="/views/new-chat"
+          class="btn btn-primary"
+          hx-get="/views/new-chat"
+          hx-target="#app-root"
+          hx-swap="innerHTML"
+          data-testid="new-chat-from-character"
+          >+ New Chat</a
+        >
       </div>
     </header>
 
@@ -46,4 +54,3 @@
     </div>
   </main>
 </div>
-

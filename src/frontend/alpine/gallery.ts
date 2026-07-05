@@ -163,4 +163,3 @@ globalThis.galleryState = function () {
     },
   };
 };
-

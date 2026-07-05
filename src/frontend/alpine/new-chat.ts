@@ -39,4 +39,3 @@ globalThis.newChatState = function () {
     },
   };
 };
-

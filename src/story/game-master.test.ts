@@ -148,19 +148,22 @@ function createTestDb(): TestDbResult {
   `);
 
   // Tables needed by PromptAssembler (used in llmDecision)
-  sqlite.run(`CREATE TABLE actor_lore_entries (id TEXT PRIMARY KEY, actor_id TEXT NOT NULL, content TEXT NOT NULL, keys TEXT NOT NULL DEFAULT '[]', position TEXT NOT NULL DEFAULT 'before_char', "constant" INTEGER NOT NULL DEFAULT 0, "selective" INTEGER NOT NULL DEFAULT 0, insertion_order INTEGER DEFAULT 100, priority INTEGER DEFAULT 100, sort_order INTEGER DEFAULT 0, created_at TEXT NOT NULL DEFAULT (datetime('now')), updated_at TEXT NOT NULL DEFAULT (datetime('now')))`);
-  sqlite.run(`CREATE TABLE world_lore_entries (id TEXT PRIMARY KEY, world_id TEXT NOT NULL, content TEXT NOT NULL, keys TEXT NOT NULL DEFAULT '[]', position TEXT NOT NULL DEFAULT 'before_char', "constant" INTEGER NOT NULL DEFAULT 0, "selective" INTEGER NOT NULL DEFAULT 0, insertion_order INTEGER DEFAULT 100, priority INTEGER DEFAULT 100, sort_order INTEGER DEFAULT 0, created_at TEXT NOT NULL DEFAULT (datetime('now')), updated_at TEXT NOT NULL DEFAULT (datetime('now')))`);
-  sqlite.run(`CREATE TABLE actor_memories (id TEXT PRIMARY KEY, actor_id TEXT NOT NULL, content TEXT NOT NULL, memory_type TEXT NOT NULL DEFAULT 'fact', confidence REAL NOT NULL DEFAULT 1, importance INTEGER NOT NULL DEFAULT 1, keywords TEXT DEFAULT '[]', created_at TEXT NOT NULL DEFAULT (datetime('now')), updated_at TEXT NOT NULL DEFAULT (datetime('now')))`);
+  sqlite.run(
+    `CREATE TABLE actor_lore_entries (id TEXT PRIMARY KEY, actor_id TEXT NOT NULL, content TEXT NOT NULL, keys TEXT NOT NULL DEFAULT '[]', position TEXT NOT NULL DEFAULT 'before_char', "constant" INTEGER NOT NULL DEFAULT 0, "selective" INTEGER NOT NULL DEFAULT 0, insertion_order INTEGER DEFAULT 100, priority INTEGER DEFAULT 100, sort_order INTEGER DEFAULT 0, created_at TEXT NOT NULL DEFAULT (datetime('now')), updated_at TEXT NOT NULL DEFAULT (datetime('now')))`,
+  );
+  sqlite.run(
+    `CREATE TABLE world_lore_entries (id TEXT PRIMARY KEY, world_id TEXT NOT NULL, content TEXT NOT NULL, keys TEXT NOT NULL DEFAULT '[]', position TEXT NOT NULL DEFAULT 'before_char', "constant" INTEGER NOT NULL DEFAULT 0, "selective" INTEGER NOT NULL DEFAULT 0, insertion_order INTEGER DEFAULT 100, priority INTEGER DEFAULT 100, sort_order INTEGER DEFAULT 0, created_at TEXT NOT NULL DEFAULT (datetime('now')), updated_at TEXT NOT NULL DEFAULT (datetime('now')))`,
+  );
+  sqlite.run(
+    `CREATE TABLE actor_memories (id TEXT PRIMARY KEY, actor_id TEXT NOT NULL, content TEXT NOT NULL, memory_type TEXT NOT NULL DEFAULT 'fact', confidence REAL NOT NULL DEFAULT 1, importance INTEGER NOT NULL DEFAULT 1, keywords TEXT DEFAULT '[]', created_at TEXT NOT NULL DEFAULT (datetime('now')), updated_at TEXT NOT NULL DEFAULT (datetime('now')))`,
+  );
 
   return { sqlite, db };
 }
 
 // ── Seed helpers ──────────────────────────────────────────────
 
-async function seedChat(
-  db: Kysely<DB>,
-  overrides?: Record<string, unknown>,
-): Promise<string> {
+async function seedChat(db: Kysely<DB>, overrides?: Record<string, unknown>): Promise<string> {
   const id = (overrides?.id as string | undefined) ?? randomUUID();
   await db
     .insertInto("chats")
@@ -227,10 +230,7 @@ async function seedLocation(
   return id;
 }
 
-async function seedActor(
-  db: Kysely<DB>,
-  overrides?: Record<string, unknown>,
-): Promise<string> {
+async function seedActor(db: Kysely<DB>, overrides?: Record<string, unknown>): Promise<string> {
   const id = (overrides?.id as string | undefined) ?? randomUUID();
   await db
     .insertInto("actors")
@@ -248,11 +248,7 @@ async function seedActor(
   return id;
 }
 
-async function seedParticipant(
-  db: Kysely<DB>,
-  chatId: string,
-  actorId: string,
-): Promise<void> {
+async function seedParticipant(db: Kysely<DB>, chatId: string, actorId: string): Promise<void> {
   await db
     .insertInto("chat_participants")
     .values({
@@ -491,11 +487,7 @@ describe("GameMasterService — executeTurn", () => {
     expect(result.narration).toBeNull();
 
     // Verify story_turn was created in DB
-    const turns = await testDb
-      .selectFrom("story_turns")
-      .selectAll()
-      .where("chat_id", "=", chatId)
-      .execute();
+    const turns = await testDb.selectFrom("story_turns").selectAll().where("chat_id", "=", chatId).execute();
     expect(turns).toHaveLength(1);
     expect(turns[0].id).toBe(result.turnId);
     expect(turns[0].status).toBe("pending");
@@ -649,9 +641,9 @@ describe("GameMasterService — acceptResponse", () => {
 
     // Response with good quality markers
     const response =
-      'I am ready. *He steps forward confidently.* Because the shadows cannot stop us. ' +
-      'The moonlight reveals the path ahead, and the ancient whispers guide our way. ' +
-      'This unexpected quest requires courage!';
+      "I am ready. *He steps forward confidently.* Because the shadows cannot stop us. " +
+      "The moonlight reveals the path ahead, and the ancient whispers guide our way. " +
+      "This unexpected quest requires courage!";
 
     const result = await gm.acceptResponse(turnId, response);
 

@@ -63,7 +63,12 @@ const dispatch: RouteDispatch = async ({ request, context, database }) => {
       const updates: Record<string, unknown> = {};
       const intFields: Record<string, string> = { health: "health" };
       const strFields: Record<string, string> = { mentalState: "mental_state" };
-      const jsonFields: Record<string, string> = { knowledge: "knowledge", relationships: "relationships", inventory: "inventory", schedule: "schedule" };
+      const jsonFields: Record<string, string> = {
+        knowledge: "knowledge",
+        relationships: "relationships",
+        inventory: "inventory",
+        schedule: "schedule",
+      };
 
       for (const [k, col] of Object.entries(intFields)) {
         if (body[k] != null) updates[col] = body[k];
@@ -73,7 +78,7 @@ const dispatch: RouteDispatch = async ({ request, context, database }) => {
       }
       for (const [k, col] of Object.entries(jsonFields)) {
         if (body[k] == null) {
-        	continue;
+          continue;
         }
 
         const r = safeJsonStringify(body[k]);
@@ -139,14 +144,18 @@ const dispatch: RouteDispatch = async ({ request, context, database }) => {
       if (body instanceof Response) return body;
       const updates: Record<string, unknown> = {};
       const strFields = ["description_override", "atmosphere", "time_of_day", "weather"] as const;
-      const jsonFields: Record<string, string> = { npcsPresent: "npcs_present", itemsAvailable: "items_available", hazards: "hazards" };
+      const jsonFields: Record<string, string> = {
+        npcsPresent: "npcs_present",
+        itemsAvailable: "items_available",
+        hazards: "hazards",
+      };
 
       for (const f of strFields) {
         if (body[f] != null) updates[f] = body[f];
       }
       for (const [k, col] of Object.entries(jsonFields)) {
         if (body[k] == null) {
-        	continue;
+          continue;
         }
 
         const r = safeJsonStringify(body[k]);

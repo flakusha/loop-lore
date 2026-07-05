@@ -37,7 +37,9 @@ globalThis.worldsState = function () {
       this.submitting = true;
       const formData = new FormData(form);
       const data: Record<string, unknown> = {};
-      formData.forEach((value, key) => { data[key] = value; });
+      formData.forEach((value, key) => {
+        data[key] = value;
+      });
 
       try {
         const res = await apiFetch("/api/worlds", {
@@ -51,7 +53,10 @@ globalThis.worldsState = function () {
           await this.loadWorlds();
         } else {
           const err = await res.json();
-          (this as any).$dispatch("show-toast", { type: "error", message: err.error || "Failed to create world" });
+          (this as any).$dispatch("show-toast", {
+            type: "error",
+            message: err.error || "Failed to create world",
+          });
         }
       } catch {
         (this as any).$dispatch("show-toast", { type: "error", message: "Network error" });
@@ -128,7 +133,10 @@ globalThis.worldEditState = function () {
     tagsInput: "",
 
     get tags() {
-      return this.tagsInput.split(",").map((t: string) => t.trim()).filter(Boolean);
+      return this.tagsInput
+        .split(",")
+        .map((t: string) => t.trim())
+        .filter(Boolean);
     },
 
     async init() {
@@ -155,7 +163,10 @@ globalThis.worldEditState = function () {
     },
 
     removeTag(tag: string) {
-      this.tagsInput = this.tagsInput.split(",").filter((t: string) => t.trim() !== tag).join(", ");
+      this.tagsInput = this.tagsInput
+        .split(",")
+        .filter((t: string) => t.trim() !== tag)
+        .join(", ");
     },
 
     async saveWorld() {
@@ -183,4 +194,3 @@ globalThis.worldEditState = function () {
     },
   };
 };
-

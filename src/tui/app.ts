@@ -59,9 +59,7 @@ export class TUIApp {
     // F2 — toggle asset sidebar
     this.screen.key(["f2"], () => {
       this.assets.toggle();
-      this.updateStatus(
-        this.assets.isVisible() ? "Assets: visible" : "Assets: hidden",
-      );
+      this.updateStatus(this.assets.isVisible() ? "Assets: visible" : "Assets: hidden");
     });
 
     // F5 — refresh current chat messages
@@ -69,7 +67,8 @@ export class TUIApp {
       const chatId = this.chat.getChatId();
       if (chatId) {
         this.updateStatus("refreshing messages...");
-        this.chat.loadMessages()
+        this.chat
+          .loadMessages()
           .then(() => {
             this.updateStatus(`chat: ${chatId.slice(0, 8)}...`);
           })

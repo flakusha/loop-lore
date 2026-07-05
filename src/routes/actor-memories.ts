@@ -90,10 +90,7 @@ async function handleList(opts: {
     .selectFrom("actor_memories")
     .select(opts.database.fn.countAll<number>().as("total"))
     .where("actor_id", "=", opts.actorId);
-  let listQuery = opts.database
-    .selectFrom("actor_memories")
-    .selectAll()
-    .where("actor_id", "=", opts.actorId);
+  let listQuery = opts.database.selectFrom("actor_memories").selectAll().where("actor_id", "=", opts.actorId);
 
   if (opts.memoryType) {
     countQuery = countQuery.where("memory_type", "=", opts.memoryType);
@@ -136,7 +133,10 @@ async function handleCreate(opts: {
       memory_type: memoryType,
       confidence: (opts.body.confidence as number | undefined) ?? 1,
       importance: (opts.body.importance as number | undefined) ?? 1,
-      keywords: (() => { const r = safeJsonStringify(keywords); return r.ok ? r.value : "[]"; })(),
+      keywords: (() => {
+        const r = safeJsonStringify(keywords);
+        return r.ok ? r.value : "[]";
+      })(),
       expires_at: (opts.body.expiresAt as string | undefined) ?? null,
     })
     .execute();
@@ -193,11 +193,7 @@ async function handleUpdate(opts: {
   if (opts.body.expiresAt != null) updates.expires_at = opts.body.expiresAt;
   updates.updated_at = new Date().toISOString();
 
-  await opts.database
-    .updateTable("actor_memories")
-    .set(updates)
-    .where("id", "=", opts.memoryId)
-    .execute();
+  await opts.database.updateTable("actor_memories").set(updates).where("id", "=", opts.memoryId).execute();
 
   const updated = await opts.database
     .selectFrom("actor_memories")

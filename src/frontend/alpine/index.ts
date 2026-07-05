@@ -5,7 +5,7 @@
  * Bun build compiles this into dist/public/ as split chunks.
  */
 
- // required for declare global in module
+// required for declare global in module
 
 // Types + shared infrastructure first
 import "./types";

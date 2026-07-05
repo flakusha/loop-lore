@@ -17,22 +17,26 @@ loop-lore is a lightweight roleplay/chat application reimagining SillyTavern wit
 A request traverses four layers top-to-bottom:
 
 **1. Client Layer** — Entry points for user interaction:
-   - Web UI (htmx + Alpine.js) — browser-based, AJAX partial updates
-   - TUI (blessed) — terminal interface for power users
-   - API (REST) — programmatic access via curl, scripts, integrations
+
+- Web UI (htmx + Alpine.js) — browser-based, AJAX partial updates
+- TUI (blessed) — terminal interface for power users
+- API (REST) — programmatic access via curl, scripts, integrations
 
 **2. Server Layer** — Bun HTTP server receives client traffic:
-   - Serves static assets (HTML, CSS, JS) with pre-compressed variants
-   - Middleware pipeline processes every request in order: auth extraction → role guard → route dispatch
-   - Route handlers delegate to domain services
+
+- Serves static assets (HTML, CSS, JS) with pre-compressed variants
+- Middleware pipeline processes every request in order: auth extraction → role guard → route dispatch
+- Route handlers delegate to domain services
 
 **3. Service Layer** — Domain logic isolated per concern:
-   - Assistant, Assets, Chat, Generation, Story, Content, Age Gate, Dice, Character, User/Session
-   - Each service depends on the DB adapter interface, never concrete implementations
+
+- Assistant, Assets, Chat, Generation, Story, Content, Age Gate, Dice, Character, User/Session
+- Each service depends on the DB adapter interface, never concrete implementations
 
 **4. Data Layer** — Abstracted storage backend:
-   - Default: SQLite via `bun:sqlite` (zero-config, local solo use)
-   - Swappable: Postgres/MySQL via Kysely dialect swap (multi-user production)
+
+- Default: SQLite via `bun:sqlite` (zero-config, local solo use)
+- Swappable: Postgres/MySQL via Kysely dialect swap (multi-user production)
 
 ### Client Layer
 

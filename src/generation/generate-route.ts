@@ -16,7 +16,12 @@ import {
   MessageStatus,
   MessageVisibility,
 } from "../db/enums";
-import { startGenerationTracking, completeGeneration, failGeneration, processStreamingChunk } from "./cancellation-manager";
+import {
+  startGenerationTracking,
+  completeGeneration,
+  failGeneration,
+  processStreamingChunk,
+} from "./cancellation-manager";
 import type { GenerationOptions, GenerationMessage, GenerationResult } from "./types";
 import type { ChunkEvent } from "./providers/types";
 import { resolveProvider } from "./providers/registry";
@@ -83,8 +88,13 @@ export interface GenerateRequest {
  *
  * @param userId  Authenticated user ID for BYO key resolution (optional).
  */
-export async function handleGenerate(body: unknown, config?: Config, userId?: string): Promise<Response> {
-  const db = getDatabase();
+export async function handleGenerate(
+  body: unknown,
+  _database?: Kysely<DB>,
+  config?: Config,
+  userId?: string,
+): Promise<Response> {
+  const database = _database ?? getDatabase();
   const cfg = config ?? loadConfig();
   const input = body as GenerateRequest;
 
@@ -94,12 +104,17 @@ export async function handleGenerate(body: unknown, config?: Config, userId?: st
   // consumed downstream — invalid values may cause runtime errors.
 
   if (!input.chatId || typeof input.chatId !== "string") return jsonError("chatId is required", 400);
-  if (!input.parentMessageId || typeof input.parentMessageId !== "string") return jsonError("parentMessageId is required", 400);
+  if (!input.parentMessageId || typeof input.parentMessageId !== "string")
+    return jsonError("parentMessageId is required", 400);
   if (!input.actorId || typeof input.actorId !== "string") return jsonError("actorId is required", 400);
-  if (!input.idempotencyKey || typeof input.idempotencyKey !== "string") return jsonError("idempotencyKey is required", 400);
-  if (input.prompt !== undefined && !Array.isArray(input.prompt)) return jsonError("prompt must be an array", 400);
-  if (input.provider !== undefined && typeof input.provider !== "string") return jsonError("provider must be a string", 400);
-  if (input.modelId !== undefined && typeof input.modelId !== "string") return jsonError("modelId must be a string", 400);
+  if (!input.idempotencyKey || typeof input.idempotencyKey !== "string")
+    return jsonError("idempotencyKey is required", 400);
+  if (input.prompt !== undefined && !Array.isArray(input.prompt))
+    return jsonError("prompt must be an array", 400);
+  if (input.provider !== undefined && typeof input.provider !== "string")
+    return jsonError("provider must be a string", 400);
+  if (input.modelId !== undefined && typeof input.modelId !== "string")
+    return jsonError("modelId must be a string", 400);
 
   // ── Resolve provider + model ──────────────────────────
 
@@ -108,13 +123,10 @@ export async function handleGenerate(body: unknown, config?: Config, userId?: st
     resolved = await resolveProvider(
       { provider: input.provider, model: input.modelId, userId },
       cfg,
-      db,
+      database,
     );
   } catch (error) {
-    return jsonError(
-      `Provider resolution failed: ${(error as Error).message}`,
-      422,
-    );
+    return jsonError(`Provider resolution failed: ${(error as Error).message}`, 422);
   }
 
   // ── Assemble prompt ───────────────────────────────────
@@ -127,7 +139,7 @@ export async function handleGenerate(body: unknown, config?: Config, userId?: st
     systemPrompt = input.systemPrompt;
   } else {
     try {
-      const assembler = new PromptAssembler(db);
+      const assembler = new PromptAssembler(database);
       const assembled = await assembler.assemble({
         actorId: input.actorId,
         chatId: input.chatId,
@@ -137,10 +149,7 @@ export async function handleGenerate(body: unknown, config?: Config, userId?: st
       messages = assembled.messages;
       systemPrompt = assembled.systemPrompt;
     } catch (error) {
-      return jsonError(
-        `Prompt assembly failed: ${(error as Error).message}`,
-        422,
-      );
+      return jsonError(`Prompt assembly failed: ${(error as Error).message}`, 422);
     }
   }
 
@@ -171,7 +180,7 @@ export async function handleGenerate(body: unknown, config?: Config, userId?: st
 
   // ── Track generation attempt ─────────────────────────
 
-  const { attemptId, abortSignal } = startGenerationTracking(genOptions, db);
+  const { attemptId, abortSignal } = startGenerationTracking(genOptions, database);
 
   // ── Build provider request ────────────────────────────
 
@@ -218,26 +227,29 @@ export async function handleGenerate(body: unknown, config?: Config, userId?: st
 
       // Store message
       const messageId = randomUUID();
-      await db.insertInto("messages").values({
-        id: messageId,
-        chat_id: input.chatId,
-        actor_id: input.actorId,
-        parent_id: input.parentMessageId,
-        role: MessageRole.Assistant,
-        content: result.content,
-        content_type: MessageContentType.Text,
-        content_encoding: ContentEncoding.Identity,
-        model_id: resolved.resolvedModel,
-        provider: resolved.resolvedProviderName,
-        token_count_prompt: result.tokenUsage.promptTokens,
-        token_count_completion: result.tokenUsage.completionTokens,
-        token_count_total: result.tokenUsage.totalTokens,
-        status: MessageStatus.Confirmed,
-        visibility: MessageVisibility.Visible,
-      }).execute();
+      await database
+        .insertInto("messages")
+        .values({
+          id: messageId,
+          chat_id: input.chatId,
+          actor_id: input.actorId,
+          parent_id: input.parentMessageId,
+          role: MessageRole.Assistant,
+          content: result.content,
+          content_type: MessageContentType.Text,
+          content_encoding: ContentEncoding.Identity,
+          model_id: resolved.resolvedModel,
+          provider: resolved.resolvedProviderName,
+          token_count_prompt: result.tokenUsage.promptTokens,
+          token_count_completion: result.tokenUsage.completionTokens,
+          token_count_total: result.tokenUsage.totalTokens,
+          status: MessageStatus.Confirmed,
+          visibility: MessageVisibility.Visible,
+        })
+        .execute();
 
       // Complete tracking
-      await completeGeneration(attemptId, result, db);
+      await completeGeneration(attemptId, result, database);
 
       return jsonResponse({
         ok: true,
@@ -250,7 +262,7 @@ export async function handleGenerate(body: unknown, config?: Config, userId?: st
       });
     } catch (error) {
       const errMsg = (error as Error).message;
-      await failGeneration(attemptId, error as Error, db).catch(() => {});
+      await failGeneration(attemptId, error as Error, database).catch(() => {});
       return jsonError(`Generation failed: ${errMsg}`, 500);
     }
   }
@@ -270,7 +282,11 @@ export async function handleGenerate(body: unknown, config?: Config, userId?: st
           if (chunk.type === "content" && chunk.content) {
             accumulatedContent += chunk.content;
             // Fire-and-forget cancellation detection
-            try { await processStreamingChunk(attemptId, chunk.content, db); } catch { /* empty */ }
+            try {
+              await processStreamingChunk(attemptId, chunk.content, database);
+            } catch {
+              /* empty */
+            }
             controller.enqueue(
               new TextEncoder().encode(
                 `data: ${JSON.stringify({ type: "content", content: chunk.content })}\n\n`,
@@ -284,8 +300,8 @@ export async function handleGenerate(body: unknown, config?: Config, userId?: st
               ),
             );
           } else if (chunk.type === "done" && chunk.usage) {
-              // usage captured from finalResponse
-            }
+            // usage captured from finalResponse
+          }
         });
 
         // Provider stream completed — handle result
@@ -308,27 +324,30 @@ export async function handleGenerate(body: unknown, config?: Config, userId?: st
 
         // Store message
         const messageId = randomUUID();
-        await db.insertInto("messages").values({
-          id: messageId,
-          chat_id: input.chatId,
-          actor_id: input.actorId,
-          parent_id: input.parentMessageId,
-          role: MessageRole.Assistant,
-          content: result.content,
-          content_type: MessageContentType.Text,
-          content_encoding: ContentEncoding.Identity,
-          model_id: resolved.resolvedModel,
-          provider: resolved.resolvedProviderName,
-          token_count_prompt: result.tokenUsage.promptTokens,
-          token_count_completion: result.tokenUsage.completionTokens,
-          token_count_total: result.tokenUsage.totalTokens,
-          status: result.cancelled ? MessageStatus.Partial : MessageStatus.Confirmed,
-          visibility: MessageVisibility.Visible,
-          continuation_index: input.continuationNumber ?? null,
-        }).execute();
+        await database
+          .insertInto("messages")
+          .values({
+            id: messageId,
+            chat_id: input.chatId,
+            actor_id: input.actorId,
+            parent_id: input.parentMessageId,
+            role: MessageRole.Assistant,
+            content: result.content,
+            content_type: MessageContentType.Text,
+            content_encoding: ContentEncoding.Identity,
+            model_id: resolved.resolvedModel,
+            provider: resolved.resolvedProviderName,
+            token_count_prompt: result.tokenUsage.promptTokens,
+            token_count_completion: result.tokenUsage.completionTokens,
+            token_count_total: result.tokenUsage.totalTokens,
+            status: result.cancelled ? MessageStatus.Partial : MessageStatus.Confirmed,
+            visibility: MessageVisibility.Visible,
+            continuation_index: input.continuationNumber ?? null,
+          })
+          .execute();
 
         // Complete tracking
-        await completeGeneration(attemptId, result, db);
+        await completeGeneration(attemptId, result, database);
 
         // Send done event with final data
         controller.enqueue(
@@ -349,12 +368,14 @@ export async function handleGenerate(body: unknown, config?: Config, userId?: st
         streamError = (error as Error).message;
 
         // Fail tracking
-        try { await failGeneration(attemptId, error as Error, db); } catch { /* empty */ }
+        try {
+          await failGeneration(attemptId, error as Error, database);
+        } catch {
+          /* empty */
+        }
 
         controller.enqueue(
-          new TextEncoder().encode(
-            `data: ${JSON.stringify({ type: "error", error: streamError })}\n\n`,
-          ),
+          new TextEncoder().encode(`data: ${JSON.stringify({ type: "error", error: streamError })}\n\n`),
         );
         controller.close();
       }

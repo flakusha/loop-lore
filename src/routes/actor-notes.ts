@@ -91,10 +91,7 @@ async function handleList(opts: {
     .selectFrom("actor_notes")
     .select(opts.database.fn.countAll<number>().as("total"))
     .where("actor_id", "=", opts.actorId);
-  let listQuery = opts.database
-    .selectFrom("actor_notes")
-    .selectAll()
-    .where("actor_id", "=", opts.actorId);
+  let listQuery = opts.database.selectFrom("actor_notes").selectAll().where("actor_id", "=", opts.actorId);
 
   if (opts.category) {
     countQuery = countQuery.where("category", "=", opts.category);
@@ -149,11 +146,7 @@ async function handleCreate(opts: {
   return jsonCreated(created);
 }
 
-async function handleGet(opts: {
-  database: Kysely<DB>;
-  actorId: string;
-  noteId: string;
-}): Promise<Response> {
+async function handleGet(opts: { database: Kysely<DB>; actorId: string; noteId: string }): Promise<Response> {
   const note = await opts.database
     .selectFrom("actor_notes")
     .selectAll()
@@ -188,11 +181,7 @@ async function handleUpdate(opts: {
   if (opts.body.sortOrder != null) updates.sort_order = opts.body.sortOrder;
   updates.updated_at = new Date().toISOString();
 
-  await opts.database
-    .updateTable("actor_notes")
-    .set(updates)
-    .where("id", "=", opts.noteId)
-    .execute();
+  await opts.database.updateTable("actor_notes").set(updates).where("id", "=", opts.noteId).execute();
 
   const updated = await opts.database
     .selectFrom("actor_notes")

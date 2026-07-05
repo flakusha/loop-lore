@@ -51,4 +51,3 @@ globalThis.settingsPage = function () {
     },
   };
 };
-

@@ -36,7 +36,6 @@ export class TurnManager {
   private readonly qualityThresholds: QualityThresholds;
   private state: TurnManagerState | null = null;
 
-   
   // ─── Private Helpers ────────────────────────────────────────────
 
   private createInitialState(): TurnManagerState {
@@ -54,7 +53,12 @@ export class TurnManager {
   private async persistState(): Promise<void> {
     if (!this.state) return;
     const serialized = safeJsonStringify(this.state);
-    if (!serialized.ok) { getLogger().child({ module: "turn-manager" }).error("persistState serialization failed", undefined, { error: serialized.error }); return; }
+    if (!serialized.ok) {
+      getLogger()
+        .child({ module: "turn-manager" })
+        .error("persistState serialization failed", undefined, { error: serialized.error });
+      return;
+    }
     await this.db
       .updateTable("chats")
       .set({ story_state: serialized.value })
@@ -120,7 +124,9 @@ export class TurnManager {
       throw new Error(`Chat ${this.chatId} not found`);
     }
 
-    this.state = chat.story_state ? jsonParseOr(chat.story_state, this.createInitialState()) : this.createInitialState();
+    this.state = chat.story_state
+      ? jsonParseOr(chat.story_state, this.createInitialState())
+      : this.createInitialState();
 
     // Store maxTurns from chat config (overrides persisted state)
     if (chat.max_turns != null) {

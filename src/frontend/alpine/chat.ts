@@ -25,7 +25,29 @@ globalThis.chatState = function () {
     isContinuing: false,
     chats: [] as Array<{ id: string; name?: string }>,
     activeChat: null as string | null,
-    messages: [] as Array<{ id: string; role: string; content: string; created_at: string; thinking?: string; actor_name?: string; totalVariants?: number; variantIndex?: number; attachments?: Array<{ assetId: string; order: number; caption: string; label: string; url: string; thumbUrl?: string; filename: string; mimeType: string; type: string; width: number; height: number }> }>,
+    messages: [] as Array<{
+      id: string;
+      role: string;
+      content: string;
+      created_at: string;
+      thinking?: string;
+      actor_name?: string;
+      totalVariants?: number;
+      variantIndex?: number;
+      attachments?: Array<{
+        assetId: string;
+        order: number;
+        caption: string;
+        label: string;
+        url: string;
+        thumbUrl?: string;
+        filename: string;
+        mimeType: string;
+        type: string;
+        width: number;
+        height: number;
+      }>;
+    }>,
     loadingMessages: false,
     loadingError: null as string | null,
     hasMoreMessages: true,
@@ -37,7 +59,12 @@ globalThis.chatState = function () {
     galleryAssets: [] as ChatAsset[],
     userDisplayName: "User",
     userRole: "solo",
-    currentCharacter: null as { id: string; display_name?: string; name?: string; description?: string } | null,
+    currentCharacter: null as {
+      id: string;
+      display_name?: string;
+      name?: string;
+      description?: string;
+    } | null,
     /** Inline edit state */
     editingMessageId: null as string | null,
     editContent: "",
@@ -132,7 +159,10 @@ globalThis.chatState = function () {
 
     async selectChat(chatId: string) {
       if (this.isGenerating) {
-        this.$dispatch("show-toast", { type: "warning", message: "Complete current generation before switching chats" });
+        this.$dispatch("show-toast", {
+          type: "warning",
+          message: "Complete current generation before switching chats",
+        });
         return;
       }
       this.loadingError = null;
@@ -233,7 +263,9 @@ globalThis.chatState = function () {
     scrollToBottom() {
       const el = document.querySelector("#message-list");
       if (el) {
-        setTimeout(() => { el.scrollTop = el.scrollHeight; }, 50);
+        setTimeout(() => {
+          el.scrollTop = el.scrollHeight;
+        }, 50);
       }
     },
 
@@ -560,7 +592,10 @@ globalThis.chatState = function () {
             this.$dispatch("show-toast", { type: "success", message: `Ready to attach: ${file.name}` });
           } else {
             const err = await res.json();
-            this.$dispatch("show-toast", { type: "error", message: err.error || `Failed to upload ${file.name}` });
+            this.$dispatch("show-toast", {
+              type: "error",
+              message: err.error || `Failed to upload ${file.name}`,
+            });
           }
         } catch {
           this.$dispatch("show-toast", { type: "error", message: `Network error uploading ${file.name}` });
@@ -583,9 +618,9 @@ globalThis.chatState = function () {
       // Cache key: msg count + last msg id
       const key = `${msgs.length}:${msgs[msgs.length - 1]?.id ?? ""}:${msgs[0]?.id ?? ""}`;
       if (this._groupedKey === key && this._groupedCache) return this._groupedCache;
-      const groups: Array<typeof msgs[number] & { group?: boolean; groupCount?: number }> = [];
+      const groups: Array<(typeof msgs)[number] & { group?: boolean; groupCount?: number }> = [];
       for (let i = 0; i < msgs.length; i++) {
-        const msg: typeof msgs[number] & { group?: boolean; groupCount?: number } = { ...msgs[i] };
+        const msg: (typeof msgs)[number] & { group?: boolean; groupCount?: number } = { ...msgs[i] };
         if (i > 0) {
           const prev = msgs[i - 1];
           const sameRole = msg.role === prev.role;
@@ -619,7 +654,46 @@ globalThis.chatState = function () {
       if (!content) return "";
       // marked.parse returns string | Promise<string>; synchronous for string input
       const html = marked.parse(content) as string;
-      return DOMPurify.sanitize(html, { ALLOWED_TAGS: ["b", "i", "em", "strong", "a", "p", "br", "ul", "ol", "li", "h1", "h2", "h3", "h4", "h5", "h6", "code", "pre", "blockquote", "table", "thead", "tbody", "tr", "th", "td", "hr", "img", "del", "ins", "sup", "sub", "details", "summary", "div", "span"], ALLOWED_ATTR: ["href", "src", "alt", "title", "class", "target", "rel"] });
+      return DOMPurify.sanitize(html, {
+        ALLOWED_TAGS: [
+          "b",
+          "i",
+          "em",
+          "strong",
+          "a",
+          "p",
+          "br",
+          "ul",
+          "ol",
+          "li",
+          "h1",
+          "h2",
+          "h3",
+          "h4",
+          "h5",
+          "h6",
+          "code",
+          "pre",
+          "blockquote",
+          "table",
+          "thead",
+          "tbody",
+          "tr",
+          "th",
+          "td",
+          "hr",
+          "img",
+          "del",
+          "ins",
+          "sup",
+          "sub",
+          "details",
+          "summary",
+          "div",
+          "span",
+        ],
+        ALLOWED_ATTR: ["href", "src", "alt", "title", "class", "target", "rel"],
+      });
     },
 
     /** Copy message content to clipboard */
@@ -699,29 +773,31 @@ globalThis.chatState = function () {
     getMediaStyle(asset: any, totalCount: number): Record<string, string> {
       const style: Record<string, string> = {};
 
-      if (asset.type === 'image' && asset.width && asset.height) {
+      if (asset.type === "image" && asset.width && asset.height) {
         const ratio = asset.width / asset.height;
 
         if (totalCount === 1) {
           // Single image — aspect-ratio-based layout
-          if (ratio > 1.78) { // >16:9 — wide
-            style.width = '100%';
-            style.maxHeight = '400px';
-          } else if (ratio < 0.56) { // >9:16 — tall portrait
-            style.width = '40%';
-            style.float = 'right';
-            style.marginLeft = '12px';
+          if (ratio > 1.78) {
+            // >16:9 — wide
+            style.width = "100%";
+            style.maxHeight = "400px";
+          } else if (ratio < 0.56) {
+            // >9:16 — tall portrait
+            style.width = "40%";
+            style.float = "right";
+            style.marginLeft = "12px";
           } else {
             // Square-ish
-            style.width = '50%';
-            style.float = 'left';
-            style.marginRight = '12px';
+            style.width = "50%";
+            style.float = "left";
+            style.marginRight = "12px";
           }
         } else {
           // Multiple images — grid layout
-          style.width = totalCount === 2 ? 'calc(50% - 6px)' : 'calc(33.33% - 8px)';
-          style.aspectRatio = '1';
-          style.objectFit = 'cover';
+          style.width = totalCount === 2 ? "calc(50% - 6px)" : "calc(33.33% - 8px)";
+          style.aspectRatio = "1";
+          style.objectFit = "cover";
         }
       }
 
@@ -732,8 +808,8 @@ globalThis.chatState = function () {
     openMediaPreview(asset: any) {
       this.$dispatch("show-toast", { type: "info", message: `Viewing: ${asset.filename || asset.caption}` });
       // For v0.1, open full image in new tab
-      if (asset.type === 'image') {
-        window.open(asset.url, '_blank', 'noopener,noreferrer');
+      if (asset.type === "image") {
+        window.open(asset.url, "_blank", "noopener,noreferrer");
       }
     },
 
@@ -744,4 +820,3 @@ globalThis.chatState = function () {
     },
   };
 };
-

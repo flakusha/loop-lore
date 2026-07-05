@@ -43,7 +43,12 @@
           <!-- Theme Selector -->
           <div class="form-group">
             <label class="form-label">Theme</label>
-            <select class="form-select" x-model="currentTheme" @change="setTheme($event.target.value)" data-testid="theme-select">
+            <select
+              class="form-select"
+              x-model="currentTheme"
+              @change="setTheme($event.target.value)"
+              data-testid="theme-select"
+            >
               <option value="default">Default (Dark)</option>
               <option value="light">Light</option>
               <option value="bright">Bright</option>
@@ -60,7 +65,12 @@
           <!-- Language Selector -->
           <div class="form-group">
             <label class="form-label" x-text="__('settings.language')">Language</label>
-            <select class="form-select" x-model="currentLocale" @change="setLocale($event.target.value)" data-testid="locale-select">
+            <select
+              class="form-select"
+              x-model="currentLocale"
+              @change="setLocale($event.target.value)"
+              data-testid="locale-select"
+            >
               <option value="en">English</option>
             </select>
           </div>
@@ -165,24 +175,12 @@
 
           <div class="form-group">
             <label class="form-label">Model</label>
-            <input
-              type="text"
-              class="form-input"
-              x-model="apiModel"
-              placeholder="e.g., gpt-4o"
-            />
+            <input type="text" class="form-input" x-model="apiModel" placeholder="e.g., gpt-4o" />
           </div>
 
           <div class="form-group">
             <label class="form-label">Max context tokens</label>
-            <input
-              type="number"
-              class="form-input"
-              x-model="maxTokens"
-              step="256"
-              min="1024"
-              max="128000"
-            />
+            <input type="number" class="form-input" x-model="maxTokens" step="256" min="1024" max="128000" />
           </div>
 
           <div class="form-group">
@@ -199,8 +197,22 @@
           </div>
 
           <div style="display: flex; gap: var(--space-2); margin-top: var(--space-4)">
-            <button type="button" class="btn btn-secondary" hx-post="/api/generation/test-connection" hx-target-error="#toast-container">Test Connection</button>
-            <button type="button" class="btn btn-primary" hx-post="/api/users/me/settings" hx-target-error="#toast-container">Save API Settings</button>
+            <button
+              type="button"
+              class="btn btn-secondary"
+              hx-post="/api/generation/test-connection"
+              hx-target-error="#toast-container"
+            >
+              Test Connection
+            </button>
+            <button
+              type="button"
+              class="btn btn-primary"
+              hx-post="/api/users/me/settings"
+              hx-target-error="#toast-container"
+            >
+              Save API Settings
+            </button>
           </div>
         </div>
       </div>
@@ -227,7 +239,9 @@
               placeholder='Type "DELETE" to confirm'
               style="margin-bottom: var(--space-3); border-color: var(--accent-red)"
             />
-            <button type="button" class="btn btn-danger" :disabled="confirmDeleteText !== 'DELETE'">Delete All Data</button>
+            <button type="button" class="btn btn-danger" :disabled="confirmDeleteText !== 'DELETE'">
+              Delete All Data
+            </button>
           </div>
         </div>
       </div>
@@ -245,16 +259,25 @@
           <div class="form-group">
             <label class="form-label">Links</label>
             <div style="display: flex; flex-direction: column; gap: var(--space-2)">
-              <a href="/docs/" class="btn btn-secondary" style="text-align: center; text-decoration: none">View Documentation</a>
-              <a href="https://github.com/flakspirit/loop-lore" class="btn btn-secondary" style="text-align: center; text-decoration: none" target="_blank" rel="noopener">Source Code</a>
+              <a href="/docs/" class="btn btn-secondary" style="text-align: center; text-decoration: none"
+                >View Documentation</a
+              >
+              <a
+                href="https://github.com/flakspirit/loop-lore"
+                class="btn btn-secondary"
+                style="text-align: center; text-decoration: none"
+                target="_blank"
+                rel="noopener"
+                >Source Code</a
+              >
             </div>
           </div>
 
           <div class="form-group">
             <label class="form-label">Open Source Credits</label>
             <p style="margin: 0; font-size: 13px; color: var(--text-secondary); line-height: 1.6">
-              Built with Bun, TypeScript, Kysely, htmx, Alpine.js, blessed, and more.
-              Licensed under the MIT License.
+              Built with Bun, TypeScript, Kysely, htmx, Alpine.js, blessed, and more. Licensed under the MIT
+              License.
             </p>
           </div>
         </div>
@@ -262,5 +285,3 @@
     </div>
   </main>
 </div>
-
-

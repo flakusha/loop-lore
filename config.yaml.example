@@ -109,6 +109,25 @@ generation:
   defaultProvider: ""
   defaultModels: {}
 
+  # ── Auto-start external AI servers (optional) ──
+  # Uncomment to spawn llama.cpp / sd-server as child processes at startup.
+  # Servers are skipped gracefully if binaries not found.
+  # autoStart:
+  #   llamaCpp:
+  #     enabled: true
+  #     modelPath: "org/repo:Q4_K_M"           # HF ref or /path/to/model.gguf
+  #     port: 9011
+  #     ctxSize: 8192
+  #     extraArgs: ["--alias", "my-model"]
+  #   sdCpp:
+  #     enabled: true
+  #     modelPath: "/path/to/model.safetensors"
+  #     port: 9010
+  #     llmPath: "/path/to/text-encoder.gguf"
+  #     vaePath: "/path/to/vae.safetensors"
+  #     loraDir: "/path/to/loras"
+  #     extraArgs: ["--offload-to-cpu"]
+
 # ── BYO API Keys ──
 byoKey:
   enabled: true

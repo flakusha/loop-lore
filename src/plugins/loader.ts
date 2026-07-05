@@ -27,10 +27,18 @@ const PLUGIN_DIRS: { origin: PluginOrigin; dir: string }[] = [
 function makeLogger(pluginName: string): PluginLogger {
   const log = getLogger();
   return {
-    info: (msg, meta) => { log.info({ ...meta, plugin: pluginName, message: msg }); },
-    warn: (msg, meta) => { log.warn({ ...meta, plugin: pluginName, message: msg }); },
-    error: (msg, meta) => { log.error({ ...meta, plugin: pluginName, message: msg }); },
-    debug: (msg, meta) => { log.debug({ ...meta, plugin: pluginName, message: msg }); },
+    info: (msg, meta) => {
+      log.info({ ...meta, plugin: pluginName, message: msg });
+    },
+    warn: (msg, meta) => {
+      log.warn({ ...meta, plugin: pluginName, message: msg });
+    },
+    error: (msg, meta) => {
+      log.error({ ...meta, plugin: pluginName, message: msg });
+    },
+    debug: (msg, meta) => {
+      log.debug({ ...meta, plugin: pluginName, message: msg });
+    },
   };
 }
 
@@ -39,7 +47,6 @@ function makeLogger(pluginName: string): PluginLogger {
  * Call once at startup, after DB is ready.
  */
 export async function loadAllPlugins(db: Kysely<DB>): Promise<void> {
-   
   const log = getLogger();
   loadOrder.length = 0;
 
@@ -102,11 +109,21 @@ export async function loadAllPlugins(db: Kysely<DB>): Promise<void> {
           await manifest.onLoad({
             db,
             logger: makeLogger(manifest.name),
-            registerTool: (def) => { registry.addTools(manifest.name, [def]); },
-            registerAgentRole: (def) => { registry.addAgentRoles(manifest.name, [def]); },
-            registerApiRoute: (def) => { registry.addRoutes(manifest.name, [def]); },
-            registerUiComponent: (def) => { registry.addUIComponents(manifest.name, [def]); },
-            registerEventHandler: (def) => { registry.addEventHandlers(manifest.name, [def]); },
+            registerTool: (def) => {
+              registry.addTools(manifest.name, [def]);
+            },
+            registerAgentRole: (def) => {
+              registry.addAgentRoles(manifest.name, [def]);
+            },
+            registerApiRoute: (def) => {
+              registry.addRoutes(manifest.name, [def]);
+            },
+            registerUiComponent: (def) => {
+              registry.addUIComponents(manifest.name, [def]);
+            },
+            registerEventHandler: (def) => {
+              registry.addEventHandlers(manifest.name, [def]);
+            },
           });
         }
 
@@ -153,4 +170,4 @@ export async function unloadAllPlugins(): Promise<void> {
 
 /** List all loaded plugins (for registry API routes) */
 
-export {registry} from "./registry";
+export { registry } from "./registry";

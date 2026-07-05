@@ -26,9 +26,22 @@ import {
 import { uid } from "../utils";
 import { encryptValue } from "../crypto";
 
-interface ListKeysOpts { database: Kysely<DB>; context: RequestContext; }
-interface CreateKeyOpts { database: Kysely<DB>; context: RequestContext; body: Record<string, unknown>; config: Config; }
-interface DeleteKeyOpts { database: Kysely<DB>; context: RequestContext; provider: string; config: Config; }
+interface ListKeysOpts {
+  database: Kysely<DB>;
+  context: RequestContext;
+}
+interface CreateKeyOpts {
+  database: Kysely<DB>;
+  context: RequestContext;
+  body: Record<string, unknown>;
+  config: Config;
+}
+interface DeleteKeyOpts {
+  database: Kysely<DB>;
+  context: RequestContext;
+  provider: string;
+  config: Config;
+}
 
 function extractProvider(pathname: string): string | null {
   const match = /^\/api\/user-api-keys\/(.+)$/.exec(pathname);
@@ -111,9 +124,7 @@ async function handleCreateKey({ database, context, body, config }: CreateKeyOpt
 
   // Validate provider exists in config
   const providerConfigs = config.generation.providers.openaiCompatible;
-  const providerExists = providerConfigs.some(
-    (p: { name?: string }) => p.name === providerName,
-  );
+  const providerExists = providerConfigs.some((p: { name?: string }) => p.name === providerName);
   if (!providerExists) {
     return jsonError(`Unknown provider: ${providerName}`, HttpStatus.BadRequest);
   }
@@ -186,10 +197,7 @@ async function handleDeleteKey({ database, context, provider, config }: DeleteKe
     return jsonError("Key not found", HttpStatus.NotFound, ErrorCode.NotFound);
   }
 
-  await database
-    .deleteFrom("user_api_keys")
-    .where("id", "=", existing.id)
-    .execute();
+  await database.deleteFrom("user_api_keys").where("id", "=", existing.id).execute();
 
   return jsonNoContent();
 }

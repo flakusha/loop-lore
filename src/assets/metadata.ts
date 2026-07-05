@@ -7,14 +7,14 @@
 export interface ImageMetadata {
   width: number;
   height: number;
-  caption?: string;   // extracted from metadata fields
+  caption?: string; // extracted from metadata fields
   format: "png" | "jpeg" | "webp" | "gif" | "unknown";
 }
 
 const PNG_HEADER = new Uint8Array([137, 80, 78, 71, 13, 10, 26, 10]);
 const IHDR_TYPE = 0x49_48_44_52; // 'IHDR' in big-endian
-const TEXTSIG =  0x74_45_58_74; // 'tEXt' in big-endian
-const ZTXTSIG =  0x7a_54_58_74; // 'zTXt' in big-endian
+const TEXTSIG = 0x74_45_58_74; // 'tEXt' in big-endian
+const ZTXTSIG = 0x7a_54_58_74; // 'zTXt' in big-endian
 
 function readUint16BE(buf: Uint8Array, offset: number): number {
   return (buf[offset] << 8) | buf[offset + 1];
@@ -86,15 +86,17 @@ function parseJpegMetadata(buf: Uint8Array): { width: number; height: number; ca
   let caption: string | undefined;
 
   while (offset + 4 < buf.length) {
-    if (buf[offset] !== 0xFF) break;
+    if (buf[offset] !== 0xff) break;
     const marker = buf[offset + 1];
 
-    if (marker === 0xD8 || marker === 0xD9 || marker === 0x00) { // SOI, EOI, padding
+    if (marker === 0xd8 || marker === 0xd9 || marker === 0x00) {
+      // SOI, EOI, padding
       offset++;
       continue;
     }
 
-    if (marker === 0xFE) { // COM (comment) marker
+    if (marker === 0xfe) {
+      // COM (comment) marker
       const segLen = readUint16BE(buf, offset + 2);
       if (segLen >= 3) {
         caption = new TextDecoder().decode(buf.slice(offset + 4, offset + 2 + segLen));
@@ -104,11 +106,18 @@ function parseJpegMetadata(buf: Uint8Array): { width: number; height: number; ca
     }
 
     // SOF0-SOF15 markers (start of frame) — contains dimensions
-      if (marker >= 0xC0 && marker <= 0xCF && marker !== 0xC4 && marker !== 0xC8 && marker !== 0xCC && offset + 11 <= buf.length) {
-        const height = readUint16BE(buf, offset + 5);
-        const width = readUint16BE(buf, offset + 7);
-        return { width, height, caption };
-      }
+    if (
+      marker >= 0xc0 &&
+      marker <= 0xcf &&
+      marker !== 0xc4 &&
+      marker !== 0xc8 &&
+      marker !== 0xcc &&
+      offset + 11 <= buf.length
+    ) {
+      const height = readUint16BE(buf, offset + 5);
+      const width = readUint16BE(buf, offset + 7);
+      return { width, height, caption };
+    }
 
     const segLen = readUint16BE(buf, offset + 2);
     if (segLen < 2) break;
@@ -134,23 +143,23 @@ function parseWebpMetadata(buf: Uint8Array): { width: number; height: number; ca
     if (chunkTag === "VP8 " && chunkSize >= 10) {
       // VP8 keyframe header: 3 bytes frame tag, then 16 bits width/height
       const raw = readUint16LE(buf, offset + 14);
-      const width = raw & 0x3F_FF;
-      const height = (readUint16LE(buf, offset + 16)) & 0x3F_FF;
+      const width = raw & 0x3f_ff;
+      const height = readUint16LE(buf, offset + 16) & 0x3f_ff;
       return { width, height, caption };
     }
 
     if (chunkTag === "VP8L" && chunkSize >= 5) {
       // VP8L lossless header
       const bits = readUint32LE(buf, offset + 12);
-      const width = (bits & 0x3F_FF) + 1;
-      const height = ((bits >> 14) & 0x3F_FF) + 1;
+      const width = (bits & 0x3f_ff) + 1;
+      const height = ((bits >> 14) & 0x3f_ff) + 1;
       return { width, height, caption };
     }
 
     if (chunkTag === "VP8X") {
       // VP8X extended header — bits 16-17 have width/height
-      const width = ((buf[offset + 12] | (buf[offset + 13] << 8)) & 0x3F_FF) + 1;
-      const height = ((buf[offset + 14] | (buf[offset + 15] << 8)) & 0x3F_FF) + 1;
+      const width = ((buf[offset + 12] | (buf[offset + 13] << 8)) & 0x3f_ff) + 1;
+      const height = ((buf[offset + 14] | (buf[offset + 15] << 8)) & 0x3f_ff) + 1;
       return { width, height, caption };
     }
 
@@ -181,17 +190,24 @@ export function extractImageMetadata(buffer: Uint8Array): ImageMetadata {
     return { width, height, caption, format: "png" };
   }
 
-  if (buffer[0] === 0xFF && buffer[1] === 0xD8) {
+  if (buffer[0] === 0xff && buffer[1] === 0xd8) {
     const { width, height, caption } = parseJpegMetadata(buffer);
     return { width, height, caption, format: "jpeg" };
   }
 
-  if (buffer.length >= 12 && new TextDecoder().decode(buffer.slice(0, 4)) === "RIFF" && new TextDecoder().decode(buffer.slice(8, 12)) === "WEBP") {
+  if (
+    buffer.length >= 12 &&
+    new TextDecoder().decode(buffer.slice(0, 4)) === "RIFF" &&
+    new TextDecoder().decode(buffer.slice(8, 12)) === "WEBP"
+  ) {
     const { width, height, caption } = parseWebpMetadata(buffer);
     return { width, height, caption, format: "webp" };
   }
 
-  if (new TextDecoder().decode(buffer.slice(0, 6)) === "GIF87a" || new TextDecoder().decode(buffer.slice(0, 6)) === "GIF89a") {
+  if (
+    new TextDecoder().decode(buffer.slice(0, 6)) === "GIF87a" ||
+    new TextDecoder().decode(buffer.slice(0, 6)) === "GIF89a"
+  ) {
     const { width, height } = parseGifMetadata(buffer);
     return { width, height, format: "gif" };
   }

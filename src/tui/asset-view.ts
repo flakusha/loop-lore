@@ -67,7 +67,9 @@ export class AssetView {
     // Navigation: left/right cycle through assets
     screen.key(["left", "right"], (_ch: string, key: { name: string }) => {
       if (!this.box.visible || this.assets.length === 0) return;
-      this.currentIndex = ((key.name === "left" ? this.currentIndex - 1 + this.assets.length : this.currentIndex + 1) % this.assets.length);
+      this.currentIndex =
+        (key.name === "left" ? this.currentIndex - 1 + this.assets.length : this.currentIndex + 1) %
+        this.assets.length;
       this.renderCurrent();
       screen.render();
     });

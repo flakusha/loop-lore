@@ -235,7 +235,11 @@ export async function listAssets(
 
     const countResult = await countQuery.executeTakeFirst();
     const total = Number(countResult?.total ?? 0);
-    const data = await listQuery.orderBy("assets.created_at", "desc").limit(pageSize).offset(offset).execute();
+    const data = await listQuery
+      .orderBy("assets.created_at", "desc")
+      .limit(pageSize)
+      .offset(offset)
+      .execute();
 
     return { data: data as unknown as AssetRecord[], total };
   }
@@ -276,7 +280,11 @@ export function getAssetFilePath(uploadDir: string, storagePath: string): string
 /**
  * Delete an asset record and its file.
  */
-export async function deleteAsset(database: Kysely<DB>, assetId: string, uploadDir: string): Promise<boolean> {
+export async function deleteAsset(
+  database: Kysely<DB>,
+  assetId: string,
+  uploadDir: string,
+): Promise<boolean> {
   const asset = await database.selectFrom("assets").selectAll().where("id", "=", assetId).executeTakeFirst();
   if (!asset) return false;
 
@@ -295,11 +303,7 @@ export async function deleteAsset(database: Kysely<DB>, assetId: string, uploadD
 /**
  * Link an asset to an entity.
  */
-export async function linkAsset(
-  database: Kysely<DB>,
-  assetId: string,
-  link: AssetLinkInput,
-): Promise<void> {
+export async function linkAsset(database: Kysely<DB>, assetId: string, link: AssetLinkInput): Promise<void> {
   await database
     .insertInto("asset_links")
     .values({
@@ -359,7 +363,14 @@ export function validateFileSize(sizeBytes: number, maxSize: number): string | n
 /**
  * Validate MIME type is allowed.
  */
-const ALLOWED_MIME_PREFIXES = ["image/", "audio/", "video/", "application/pdf", "text/plain", "application/json"];
+const ALLOWED_MIME_PREFIXES = [
+  "image/",
+  "audio/",
+  "video/",
+  "application/pdf",
+  "text/plain",
+  "application/json",
+];
 
 export function validateMimeType(mime: string): string | null {
   const allowed = ALLOWED_MIME_PREFIXES.some((prefix) => mime.startsWith(prefix));

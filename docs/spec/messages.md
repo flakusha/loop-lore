@@ -15,6 +15,7 @@ guarantees message persistence.
 ### Basic Write Flow
 
 Happy path:
+
 1. Client sends message
 2. Server validates (schema, length, role permissions)
 3. Server saves to DB (within transaction)
@@ -23,6 +24,7 @@ Happy path:
 6. Client displays confirmed message
 
 If DB write fails:
+
 1. Server returns 500/503
 2. Client shows error
 3. User can retry (idempotency key prevents duplicate)
@@ -140,10 +142,10 @@ Key design points for the messages table:
 
 **Continue vs Regenerate:**
 
-| Action | Effect | Message status |
-|--------|--------|---------------|
-| Continue | Append to partial — new row with incremented continuation_index | Original stays `partial` |
-| Regenerate | Full replacement — old message cancelled, new sibling created | Old → `cancelled`, New → `sending` → `confirmed` |
+| Action     | Effect                                                          | Message status                                   |
+| ---------- | --------------------------------------------------------------- | ------------------------------------------------ |
+| Continue   | Append to partial — new row with incremented continuation_index | Original stays `partial`                         |
+| Regenerate | Full replacement — old message cancelled, new sibling created   | Old → `cancelled`, New → `sending` → `confirmed` |
 
 ---
 
@@ -153,13 +155,13 @@ Defined in `src/config/schema.ts` → `MessagesConfig`. Server-side only.
 
 Key env vars:
 
-| Env Var | Default | Notes |
-|---------|---------|-------|
-| `MESSAGE_AUTO_HIDE_INVALID` | `false` | auto-mark invalid messages as hidden |
-| `MESSAGE_MAX_LENGTH` | `100000` | max content length in bytes |
-| `MESSAGE_MAX_GENERATION_RETRIES` | `3` | max auto-retry on LLM failure |
-| `MESSAGE_GENERATION_TIMEOUT_MS` | `30000` | LLM response timeout in ms |
-| `MESSAGE_IDEMPOTENCY_EXPIRY_HOURS` | `24` | idempotency key TTL in hours |
+| Env Var                            | Default  | Notes                                |
+| ---------------------------------- | -------- | ------------------------------------ |
+| `MESSAGE_AUTO_HIDE_INVALID`        | `false`  | auto-mark invalid messages as hidden |
+| `MESSAGE_MAX_LENGTH`               | `100000` | max content length in bytes          |
+| `MESSAGE_MAX_GENERATION_RETRIES`   | `3`      | max auto-retry on LLM failure        |
+| `MESSAGE_GENERATION_TIMEOUT_MS`    | `30000`  | LLM response timeout in ms           |
+| `MESSAGE_IDEMPOTENCY_EXPIRY_HOURS` | `24`     | idempotency key TTL in hours         |
 
 Client-side: `COMPRESS_THRESHOLD` (128 bytes) defined in `src/frontend/browser.ts`.
 
@@ -260,14 +262,14 @@ Swipe variants are siblings sharing the same `parent_id`. At each position fork,
 
 `MessageStatus` and `MessageVisibility` form a composite state machine. Not all combinations are valid. The `messageCompositeValidator` in `src/db/enums-core.ts` enforces these pairs:
 
-| Status ↓ | visible | hidden_by_user | hidden_by_moderator | auto_hidden | redacted |
-|----------|---------|---------------|--------------------|-------------|----------|
-| sending  | ✅      | —            | —                  | —           | —        |
-| confirmed| ✅      | ✅           | ✅                 | —           | ✅       |
-| failed   | ✅      | ✅           | ✅                 | —           | —        |
-| partial  | ✅      | ✅           | ✅                 | —           | —        |
-| rejected | —       | —            | —                  | ✅          | —        |
-| cancelled| ✅      | ✅           | ✅                 | —           | —        |
+| Status ↓  | visible | hidden_by_user | hidden_by_moderator | auto_hidden | redacted |
+| --------- | ------- | -------------- | ------------------- | ----------- | -------- |
+| sending   | ✅      | —              | —                   | —           | —        |
+| confirmed | ✅      | ✅             | ✅                  | —           | ✅       |
+| failed    | ✅      | ✅             | ✅                  | —           | —        |
+| partial   | ✅      | ✅             | ✅                  | —           | —        |
+| rejected  | —       | —              | —                   | ✅          | —        |
+| cancelled | ✅      | ✅             | ✅                  | —           | —        |
 
 Total: **16 valid pairs** from 6×5=30 possible. See `src/db/enums-core.ts:142-168` for full definitions.
 

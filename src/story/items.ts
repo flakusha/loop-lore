@@ -65,7 +65,10 @@ export class ItemsService {
         rarity: def.rarity,
         stackable: def.stackable ? 1 : 0,
         max_stack: def.maxStack,
-        properties: (() => { const r = safeJsonStringify(def.properties); return r.ok ? r.value : "{}"; })(),
+        properties: (() => {
+          const r = safeJsonStringify(def.properties);
+          return r.ok ? r.value : "{}";
+        })(),
         value: def.value,
         weight: def.weight,
       })
@@ -110,7 +113,12 @@ export class ItemsService {
         quantity,
         visibility: hidden ? ItemVisibility.Hidden : ItemVisibility.Visible,
         respawnable: respawnable ? 1 : 0,
-        spawn_condition: spawnCondition ? (() => { const r = safeJsonStringify(spawnCondition); return r.ok ? r.value : null; })() : null,
+        spawn_condition: spawnCondition
+          ? (() => {
+              const r = safeJsonStringify(spawnCondition);
+              return r.ok ? r.value : null;
+            })()
+          : null,
       })
       .execute();
     return id;

@@ -122,8 +122,14 @@ async function handleCreate(opts: {
       actor_id: opts.actorId,
       name: (opts.body.name as string | undefined) ?? null,
       content,
-      keys: (() => { const r = safeJsonStringify(opts.body.keys ?? []); return r.ok ? r.value : "[]"; })(),
-      secondary_keys: (() => { const r = safeJsonStringify(opts.body.secondaryKeys ?? []); return r.ok ? r.value : "[]"; })(),
+      keys: (() => {
+        const r = safeJsonStringify(opts.body.keys ?? []);
+        return r.ok ? r.value : "[]";
+      })(),
+      secondary_keys: (() => {
+        const r = safeJsonStringify(opts.body.secondaryKeys ?? []);
+        return r.ok ? r.value : "[]";
+      })(),
       selective: (opts.body.selective as number | undefined) ?? 0,
       case_sensitive: (opts.body.caseSensitive as number | undefined) ?? 0,
       enabled: (opts.body.enabled as number | undefined) ?? 1,
@@ -178,7 +184,15 @@ async function handleUpdate(opts: {
 
   const updates: Record<string, unknown> = {};
   const strFields = ["name", "content", "position", "comment"] as const;
-  const intFields = ["selective", "caseSensitive", "enabled", "constant", "insertionOrder", "priority", "sortOrder"] as const;
+  const intFields = [
+    "selective",
+    "caseSensitive",
+    "enabled",
+    "constant",
+    "insertionOrder",
+    "priority",
+    "sortOrder",
+  ] as const;
   const intCols: Record<string, string> = {
     selective: "selective",
     caseSensitive: "case_sensitive",
@@ -206,11 +220,7 @@ async function handleUpdate(opts: {
 
   updates.updated_at = new Date().toISOString();
 
-  await opts.database
-    .updateTable("actor_lore_entries")
-    .set(updates)
-    .where("id", "=", opts.entryId)
-    .execute();
+  await opts.database.updateTable("actor_lore_entries").set(updates).where("id", "=", opts.entryId).execute();
 
   const updated = await opts.database
     .selectFrom("actor_lore_entries")

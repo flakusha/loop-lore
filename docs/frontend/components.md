@@ -153,15 +153,16 @@ const reqLog = log.child({ requestId: "req_123" });
 ### Log Levels
 
 | Level | Numeric | Console method |
-|-------|---------|----------------|
-| debug | 0       | console.debug |
-| info  | 1       | console.info  |
-| warn  | 2       | console.warn  |
-| error | 3       | console.error |
+| ----- | ------- | -------------- |
+| debug | 0       | console.debug  |
+| info  | 1       | console.info   |
+| warn  | 2       | console.warn   |
+| error | 3       | console.error  |
 
 ### Timestamp Format
 
 Uses ISO 8601 format parseable by `new Date()`:
+
 ```
 2026-07-04T14:30:00.123+02:00
 ```
@@ -180,15 +181,15 @@ Uses ISO 8601 format parseable by `new Date()`:
 
 ```typescript
 // In Alpine.js component
-window.chatState = function() {
+window.chatState = function () {
   const log = createBrowserLogger("debug", "chat");
-  
+
   return {
     async sendMessage() {
       await log.debug("Sending message", { content: this.input });
       // ... send logic
       await log.info("Message sent", { id: response.id });
-    }
+    },
   };
 };
 ```

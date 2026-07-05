@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en" class="dark">
   <head>
     <meta charset="UTF-8" />
@@ -109,7 +109,13 @@
   </head>
   <body x-data="app()" x-init="init()" @keydown.escape.window="closeAllModals()">
     <!-- Toast container (fixed, outside layout) -->
-    <div class="toast-container" id="toast-container" data-testid="toast-container" x-show="toasts.length > 0" x-transition>
+    <div
+      class="toast-container"
+      id="toast-container"
+      data-testid="toast-container"
+      x-show="toasts.length > 0"
+      x-transition
+    >
       <template x-for="(toast, i) in toasts" :key="i">
         <div class="toast" :class="toast.type">
           <span class="icon" x-text="toast.icon"></span>
@@ -151,18 +157,12 @@
             </div>
 
             <div class="nav-section-title">Characters</div>
-            <a
-              class="nav-item"
-              href="/views/characters"
-            >
+            <a class="nav-item" href="/views/characters">
               <span>Browse Characters</span>
             </a>
 
             <div class="nav-section-title">Assets</div>
-            <a
-              class="nav-item"
-              href="/views/gallery"
-            >
+            <a class="nav-item" href="/views/gallery">
               <span>Asset Gallery</span>
             </a>
           </div>
@@ -176,12 +176,7 @@
               <div class="name" id="user-display-name">User</div>
               <div class="role" id="user-role">solo</div>
             </div>
-            <button
-              class="btn-icon"
-              title="Settings"
-            >
-              ⚙
-            </button>
+            <button class="btn-icon" title="Settings">⚙</button>
           </div>
         </div>
       </aside>
@@ -202,10 +197,7 @@
         <!-- Body: chat + optional gallery sidebar -->
         <div style="display: flex; flex: 1; min-height: 0">
           <!-- Messages -->
-          <div
-            class="chat-area"
-            id="message-list"
-          >
+          <div class="chat-area" id="message-list">
             <div class="empty-state">
               <div class="icon">💬</div>
               <div class="title">No messages yet</div>
@@ -237,7 +229,14 @@
         <div class="input-area">
           <!-- Generation status bar (cancel UI) -->
           <div
-            style="display: none; position: relative; padding: var(--space-2) var(--space-3); background: var(--bg-tertiary); border-radius: var(--radius-sm); margin-bottom: var(--space-2);"
+            style="
+              display: none;
+              position: relative;
+              padding: var(--space-2) var(--space-3);
+              background: var(--bg-tertiary);
+              border-radius: var(--radius-sm);
+              margin-bottom: var(--space-2);
+            "
             class="generation-status"
           >
             <div class="generation-info">
@@ -248,17 +247,10 @@
               </span>
               <span class="generation-label">Assistant is responding...</span>
             </div>
-            <button
-              class="btn btn-ghost btn-cancel"
-              title="Cancel generation"
-            >
-              ⏹ Cancel
-            </button>
+            <button class="btn btn-ghost btn-cancel" title="Cancel generation">⏹ Cancel</button>
           </div>
 
-          <form
-            id="message-form"
-          >
+          <form id="message-form">
             <div class="input-row">
               <textarea
                 name="content"
@@ -272,12 +264,7 @@
             <div class="input-toolbar">
               <label class="btn btn-ghost" style="cursor: pointer; font-size: 12px">
                 📎 Attach
-                <input
-                  type="file"
-                  accept="image/*,audio/*,video/*"
-                  multiple
-                  style="display: none"
-                />
+                <input type="file" accept="image/*,audio/*,video/*" multiple style="display: none" />
               </label>
             </div>
           </form>
