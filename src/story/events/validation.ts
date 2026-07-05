@@ -19,6 +19,41 @@ export interface ValidationResult {
 
 // ── Validation ───────────────────────────────────────────────
 
+function validateSingleEvent(
+  event: WorldEvent,
+  locationNames: Map<string, string>,
+  locationIds: Set<string>,
+): { valid: true } | { valid: false; reason: string } {
+  switch (event.type) {
+    case WorldEventType.LocationChange: {
+      const targetName = (event.data.toLocationName as string | undefined)?.toLowerCase();
+      if (targetName && locationNames.has(targetName)) {
+        event.locationId = locationNames.get(targetName);
+        return { valid: true };
+      }
+      return { valid: false, reason: `Unknown location: ${targetName}` };
+    }
+    case WorldEventType.CombatEvent:
+    case WorldEventType.NpcStateChange:
+    case WorldEventType.TimeAdvancement:
+    case WorldEventType.WorldLoreUpdate:
+    case WorldEventType.ItemTransfer:
+    case WorldEventType.QuestProgress: {
+      return { valid: true };
+    }
+    case WorldEventType.LocationModification: {
+      const locId = event.data.locationId as string;
+      if (locId && locationIds.has(locId)) {
+        return { valid: true };
+      }
+      return { valid: false, reason: `Invalid location modification target: ${locId}` };
+    }
+    default: {
+      return { valid: true };
+    }
+  }
+}
+
 /** Validate extracted events against current world state */
 export async function validateEvents(
   db: Kysely<DB>,
@@ -42,45 +77,11 @@ export async function validateEvents(
   }
 
   for (const event of events) {
-    switch (event.type) {
-      case WorldEventType.LocationChange: {
-        const targetName = (event.data.toLocationName as string | undefined)?.toLowerCase();
-        if (targetName && locationNames.has(targetName)) {
-          event.locationId = locationNames.get(targetName);
-          filteredEvents.push(event);
-        } else {
-          rejections.push(`Unknown location: ${targetName}`);
-        }
-        break;
-      }
-      case WorldEventType.CombatEvent:
-      case WorldEventType.NpcStateChange:
-      case WorldEventType.TimeAdvancement:
-      case WorldEventType.WorldLoreUpdate: {
-        filteredEvents.push(event);
-        break;
-      }
-      case WorldEventType.ItemTransfer: {
-        // Item transfers are always valid (may create new item instances)
-        filteredEvents.push(event);
-        break;
-      }
-      case WorldEventType.LocationModification: {
-        const locId = event.data.locationId as string;
-        if (locId && locationIds.has(locId)) {
-          filteredEvents.push(event);
-        } else {
-          rejections.push(`Invalid location modification target: ${locId}`);
-        }
-        break;
-      }
-      case WorldEventType.QuestProgress: {
-        filteredEvents.push(event);
-        break;
-      }
-      default: {
-        filteredEvents.push(event);
-      }
+    const result = validateSingleEvent(event, locationNames, locationIds);
+    if (result.valid) {
+      filteredEvents.push(event);
+    } else {
+      rejections.push(result.reason);
     }
   }
 

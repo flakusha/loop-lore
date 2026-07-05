@@ -10,6 +10,7 @@ import type { WorldEvent } from "../types";
 
 // ── Location Change Patterns ─────────────────────────────────
 
+/* eslint-disable sonarjs/regex-complexity, sonarjs/super-linear-regex, sonarjs/duplicates-in-character-class */
 const locationPatterns = [
   /(?:enters?|moves?\s+to|arrives?\s+at|steps?\s+into|walks?\s+into|goes?\s+to|heads?\s+(?:to|toward)|leaves?\s+the)\s+[""']?([A-Za-z\s]+?)[""']?(?:[,.;!])/gi,
   /(?:makes?\s+(?:their\s+)?way\s+to(?:wards?)?|travels?\s+to|ventures?\s+into)\s+[""']?([A-Za-z\s]+?)[""']?(?:[,.;!])/gi,
@@ -52,6 +53,7 @@ const lorePatterns = [
   /(?:reveals?\s+that|discover(?:s|ed)\s+that|learn(?:s|ed)\s+that|uncovers?|unearth(?:s|ed)|realiz(?:es?|ed)\s+that)/gi,
   /(?:according\s+to\s+(?:legend|ancient|old)\s+(?:texts?|records?|tales?|scrolls?))/gi,
 ];
+/* eslint-enable sonarjs/regex-complexity, sonarjs/super-linear-regex, sonarjs/duplicates-in-character-class */
 
 // ── Extraction ────────────────────────────────────────────────
 
@@ -65,6 +67,15 @@ export function extractEvents(
   actorId: string,
   currentLocationId: string | null,
 ): WorldEvent[] {
+  // Reset module-scoped regex lastIndex to avoid state bleed across calls
+  for (const p of locationPatterns) p.lastIndex = 0;
+  for (const p of timePatterns) p.lastIndex = 0;
+  for (const p of combatPatterns) p.lastIndex = 0;
+  for (const p of npcPatterns) p.lastIndex = 0;
+  for (const p of itemPatterns) p.lastIndex = 0;
+  for (const p of lorePatterns) p.lastIndex = 0;
+
+  // eslint-disable-next-line sonarjs/cognitive-complexity
   const events: WorldEvent[] = [];
   const timestamp = new Date().toISOString();
   const lower = messageContent.toLowerCase();

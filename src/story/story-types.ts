@@ -37,6 +37,7 @@ export interface TurnManagerState {
   strategy: TS;
   isPaused: boolean;
   lastTurnCompletedAt: string | null;
+  maxTurns?: number;
   pendingRegeneration: {
     turnId: string;
     attempt: number;

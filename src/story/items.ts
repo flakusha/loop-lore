@@ -8,7 +8,7 @@ import type { Kysely, Transaction } from "kysely";
 import type { DB } from "../db/schema";
 import type { ItemCategory, ItemRarity } from "../db/enums";
 import { ItemVisibility } from "../db/enums";
-import { uid } from "../utils";
+import { uid, safeJsonStringify } from "../utils";
 
 // ── Item Definition Helpers ───────────────────────────────────
 
@@ -65,7 +65,7 @@ export class ItemsService {
         rarity: def.rarity,
         stackable: def.stackable ? 1 : 0,
         max_stack: def.maxStack,
-        properties: JSON.stringify(def.properties),
+        properties: (() => { const r = safeJsonStringify(def.properties); return r.ok ? r.value : "{}"; })(),
         value: def.value,
         weight: def.weight,
       })
@@ -110,7 +110,7 @@ export class ItemsService {
         quantity,
         visibility: hidden ? ItemVisibility.Hidden : ItemVisibility.Visible,
         respawnable: respawnable ? 1 : 0,
-        spawn_condition: spawnCondition ? JSON.stringify(spawnCondition) : null,
+        spawn_condition: spawnCondition ? (() => { const r = safeJsonStringify(spawnCondition); return r.ok ? r.value : null; })() : null,
       })
       .execute();
     return id;
@@ -127,7 +127,11 @@ export class ItemsService {
         item_id: itemId,
         owner_actor_id: actorId,
         quantity,
-      } as any)
+        location_id: null,
+        visibility: ItemVisibility.Visible,
+        respawnable: 0,
+        spawn_condition: null,
+      })
       .execute();
     return id;
   }
@@ -258,7 +262,10 @@ export class ItemsService {
             location_id: toLocationId ?? null,
             owner_actor_id: toActorId ?? null,
             quantity: actualTransfer,
-          } as any) // Kysely strict inference workaround
+            visibility: ItemVisibility.Visible,
+            respawnable: 0,
+            spawn_condition: null,
+          })
           .execute();
       }
     }

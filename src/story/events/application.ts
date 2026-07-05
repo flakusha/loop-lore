@@ -20,6 +20,47 @@ export interface AppliedEvent {
 
 // ── Apply Events ─────────────────────────────────────────────
 
+async function applySingleEvent(
+  database: Kysely<DB>,
+  worldId: string,
+  items: ItemsService,
+  event: WorldEvent,
+): Promise<AppliedEvent> {
+  switch (event.type) {
+    case WorldEventType.LocationChange: {
+      await applyLocationChange(database, event);
+      return { event, applied: true };
+    }
+    case WorldEventType.NpcStateChange: {
+      await applyNpcStateChange(database, event);
+      return { event, applied: true };
+    }
+    case WorldEventType.TimeAdvancement: {
+      await applyTimeAdvancement(database, worldId, event);
+      return { event, applied: true };
+    }
+    case WorldEventType.LocationModification: {
+      await applyLocationModification(database, event);
+      return { event, applied: true };
+    }
+    case WorldEventType.WorldLoreUpdate: {
+      await applyWorldLoreUpdate(database, worldId, event);
+      return { event, applied: true };
+    }
+    case WorldEventType.CombatEvent: {
+      await applyCombatEvent(database, event);
+      return { event, applied: true };
+    }
+    case WorldEventType.ItemTransfer: {
+      await applyItemTransfer(items, worldId, event);
+      return { event, applied: true };
+    }
+    default: {
+      return { event, applied: false, error: `Unknown event type: ${event.type}` };
+    }
+  }
+}
+
 /** Apply validated events to the DB */
 export async function applyEvents(
   db: Kysely<DB>,
@@ -33,46 +74,7 @@ export async function applyEvents(
 
   for (const event of events) {
     try {
-      switch (event.type) {
-        case WorldEventType.LocationChange: {
-          await applyLocationChange(database, event);
-          results.push({ event, applied: true });
-          break;
-        }
-        case WorldEventType.NpcStateChange: {
-          await applyNpcStateChange(database, event);
-          results.push({ event, applied: true });
-          break;
-        }
-        case WorldEventType.TimeAdvancement: {
-          await applyTimeAdvancement(database, worldId, event);
-          results.push({ event, applied: true });
-          break;
-        }
-        case WorldEventType.LocationModification: {
-          await applyLocationModification(database, event);
-          results.push({ event, applied: true });
-          break;
-        }
-        case WorldEventType.WorldLoreUpdate: {
-          await applyWorldLoreUpdate(database, worldId, event);
-          results.push({ event, applied: true });
-          break;
-        }
-        case WorldEventType.CombatEvent: {
-          await applyCombatEvent(database, event);
-          results.push({ event, applied: true });
-          break;
-        }
-        case WorldEventType.ItemTransfer: {
-          await applyItemTransfer(items, worldId, event);
-          results.push({ event, applied: true });
-          break;
-        }
-        default: {
-          results.push({ event, applied: false, error: `Unknown event type: ${event.type}` });
-        }
-      }
+      results.push(await applySingleEvent(database, worldId, items, event));
     } catch (error) {
       results.push({
         event,
@@ -107,7 +109,7 @@ async function applyNpcStateChange(db: Kysely<DB>, event: WorldEvent): Promise<v
   const changes = event.data.changes as Partial<Record<string, unknown>>;
 
   const update: Record<string, unknown> = {};
-  if (changes.health !== undefined) update.health = changes.health;
+  if (changes.health != null) update.health = changes.health;
   if (changes.mental_state) update.mental_state = changes.mental_state;
   if (changes.relationships) update.relationships = JSON.stringify(changes.relationships);
   if (changes.knowledge) update.knowledge = JSON.stringify(changes.knowledge);
@@ -201,14 +203,11 @@ async function applyCombatEvent(db: Kysely<DB>, event: WorldEvent): Promise<void
 }
 
 async function applyItemTransfer(
-  itemsService: ItemsService,
-  worldId: string,
-  event: WorldEvent,
+  _itemsService: ItemsService,
+  _worldId: string,
+  _event: WorldEvent,
 ): Promise<void> {
   // For v1: just log the transfer. Actual item resolution requires
   // matching item names to definitions, which needs LLM-assisted matching.
   // This placeholder ensures the event is recorded without error.
-  void itemsService;
-  void worldId;
-  void event;
 }
