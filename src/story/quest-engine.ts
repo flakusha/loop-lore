@@ -65,13 +65,13 @@ export class QuestEngine {
         type: params.type,
         status: QuestStatus.Active,
         priority: params.priority ?? 0,
-        config: (() => { const r = safeJsonStringify(params.config); return r.ok ? r.value : "{}"; })(),
+        config: (() => { const r = safeJsonStringify(params.config); if (!r.ok) { console.error("[quest-engine] safeJsonStringify config failed:", r.error); throw new Error("Failed to serialize quest config"); } return r.value; })(),
         progress: 0,
         target: params.target,
         start_time: new Date().toISOString(),
         deadline: params.deadline ?? null,
-        rewards: (() => { const r = safeJsonStringify(params.rewards ?? {}); return r.ok ? r.value : "{}"; })(),
-        narrative_hooks: (() => { const r = safeJsonStringify(params.narrativeHooks ?? []); return r.ok ? r.value : "[]"; })(),
+        rewards: (() => { const r = safeJsonStringify(params.rewards ?? {}); if (!r.ok) { console.error("[quest-engine] safeJsonStringify rewards failed:", r.error); throw new Error("Failed to serialize quest rewards"); } return r.value; })(),
+        narrative_hooks: (() => { const r = safeJsonStringify(params.narrativeHooks ?? []); if (!r.ok) { console.error("[quest-engine] safeJsonStringify narrative_hooks failed:", r.error); throw new Error("Failed to serialize quest narrative hooks"); } return r.value; })(),
       })
       .execute();
     return id;
@@ -232,7 +232,9 @@ export class QuestEngine {
     },
     event: WorldEvent,
   ): number {
-    const config = jsonParseOr(quest.config, {}) as QuestConfig;
+    // FIXME: {} is not a valid QuestConfig — lacks required `type`. Validate after parse.
+    const config = jsonParseOr(quest.config, null) as QuestConfig | null;
+    if (!config || typeof config.type !== "string") return 0;
     const questType = quest.type as QT;
 
     switch (questType) {
@@ -245,7 +247,7 @@ export class QuestEngine {
           if (typeof event.data.defenderId !== "string") return 0;
           return event.data.defenderId === cfg.targetActorId ? 1 : 0;
         }
-        return (cfg.targetQuantity ?? 0) > 0 ? Math.round(100 / cfg.targetQuantity!) : 10;
+        return (cfg.targetQuantity ?? 0) > 0 ? Math.round(100 / cfg.targetQuantity!) : 0;
       }
 
       case QuestType.Collection: {
