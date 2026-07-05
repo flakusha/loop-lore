@@ -38,4 +38,6 @@ export interface DB {
   actor_memories: import("./schema-story").ActorMemories;
   actor_lore_entries: import("./schema-story").ActorLoreEntries;
   world_lore_entries: import("./schema-story").WorldLoreEntries;
+  actor_notes: import("./schema-core").ActorNotes;
+  actor_items: import("./schema-core").ActorItems;
 }

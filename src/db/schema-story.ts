@@ -24,6 +24,9 @@ export interface Worlds {
   lore: string | null;
   scan_depth: number;
   token_budget: number;
+  difficulty_modifier: number;
+  difficulty_reroll: string;
+  difficulty_state: string;
   created_at: Generated<string>;
   updated_at: Generated<string>;
 }
@@ -94,6 +97,7 @@ export interface QuestProgress {
   status: QuestProgressStatus;
   contributed_events: string;
   started_at: Generated<string>;
+  created_at: Generated<string>;
   updated_at: Generated<string>;
   completed_at: string | null;
 }
@@ -137,6 +141,7 @@ export interface LocationStates {
   time_of_day: string | null;
   weather: string | null;
   hazards: string;
+  created_at: Generated<string>;
   updated_at: Generated<string>;
 }
 

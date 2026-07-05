@@ -3,6 +3,7 @@ import { Database } from "bun:sqlite";
 import { mkdirSync } from "node:fs";
 import path from "node:path";
 import type { DB } from "./schema";
+import { DATA_DIR } from "../config/constants";
 
 interface BunSqliteStatement {
   reader: boolean;
@@ -55,10 +56,10 @@ function createDialect(databasePath: string): SqliteDialect {
 
 // Initialize database connection eagerly
 const database: Kysely<DB> = (() => {
-  const resolvedPath = path.join(process.cwd(), "..", "loop-lore-data", "loop-lore.db");
+  const dbPath = process.env.LOOP_LORE_DB_PATH ?? path.join(process.cwd(), DATA_DIR, "loop-lore.db");
   // Ensure the parent directory exists — idempotent, safe for sibling/XDG/custom paths
-  mkdirSync(path.dirname(resolvedPath), { recursive: true });
-  return new Kysely<DB>({ dialect: createDialect(resolvedPath) });
+  mkdirSync(path.dirname(dbPath), { recursive: true });
+  return new Kysely<DB>({ dialect: createDialect(dbPath) });
 })();
 
 /** Test override — set by setTestDatabase(). When set, getDatabase() returns this instead. */
@@ -69,6 +70,7 @@ let testDatabaseOverride: Kysely<DB> | null = null;
  * Pass null to clear the override.
  */
 export function setTestDatabase(db: Kysely<DB> | null): void {
+  // eslint-disable-next-line unicorn/no-top-level-assignment-in-function
   testDatabaseOverride = db;
 }
 
