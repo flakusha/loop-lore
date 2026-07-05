@@ -35,10 +35,10 @@ Violation: `const name = input.name || "default"`.
 Fix: `input.name ?? "default"`.
 Rationale: `||` swallows `""`, `0`, `false`. Nullish coalescing targets null/undefined only.
 
-## `any` type escape hatches
-Violation: `(x as any).foo` or `function f(x: any)`.
-Fix: Strong types, generics, or `unknown` with type guard.
-Rationale: `any` disables typechecking for entire expression. `unknown` forces validation.
+## Type casts (`as ...`) — last resort
+Violation: `value as SomeType`, `value as any`, `x as unknown as Y`, or `function f(x: any)`.
+Fix: Proper type narrowing, generics, branded types, or type guards (`is`, `satisfies`). `as any` only when crossing serialization boundary (JSON.parse, file read) and wrapped in a validation function (<5 lines).
+Rationale: `as` supresses typechecker — both backend and frontend. `as any` disables it entirely. Casts mask real type mismatches that surface at runtime. `satisfies` validates shape without widening. Type guards narrow safely. Applies equally to server (`src/routes/`, `src/db/`) and frontend types (`src/public/`, `src/views/`).
 
 ## Direct `express`-style middleware passing
 Violation: `app.use(handler)` patterns.
@@ -58,3 +58,8 @@ Rationale: No AI SDK dependency. Own abstraction layer in `src/generation/`.
 ## CSS-in-JS or JSX
 Fix: htmx + Alpine.js templates. Plain CSS files. No React/Vue/Svelte.
 Rationale: Tech stack constraint. See AGENTS.md.
+
+## Allocation-heavy chain methods in hot paths
+Violation: `items.map(f).filter(g).map(h).reduce(r, init)` in request handlers, generation pipelines, loops processing 1000+ items, or any O(n) function called per-request.
+Fix: Single `for..of` pass with combined transform/filter logic, or single `.reduce()` accumulating transformed + filtered results. Pre-allocate result array when size is known (`new Array(len)`). Use in-place mutation (`splice`, index assignment) for same-collection edits.
+Rationale: Each chain link allocates a full intermediate array (k·n memory). GC pressure scales linearly with input size and chain length. Single pass is O(n) memory, O(n) time. Chained is O(n) time but O(k·n) allocation — multiplies GC cost for zero semantic benefit. Exception: chains on tiny arrays (&lt;100 items, non-critical path) where readability justifies allocations.

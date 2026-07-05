@@ -25,24 +25,19 @@ metadata:
 
 ## File Layout
 
-```
-src/db/
-├── index.ts              Kysely init, DB instance export
-├── schema.ts             Barrel → re-exports domain schemas + DB aggregate type
-├── schema-core.ts        Core: users, sessions, actors, chats, messages, characters
-├── schema-content.ts     Content: assets, asset_links
-├── schema-generation.ts  Generation: generation_attempts
-├── schema-story.ts       Story: worlds, locations, story_turns, quests, npc_states, items
-├── schema-synthetic.ts   Synthetic: synthetic_data exports
-├── enums.ts              Barrel → re-exports domain enums
-├── enums-core.ts         Core enums
-├── enums-content.ts      Content enums
-├── enums-generation.ts   Generation enums
-├── enums-story.ts        Story enums
-├── enums-config.ts       Config enums
-├── migrate.ts            Migration runner script
-└── migrations/           Chronological migration files
-```
+1. **`src/db/index.ts`** — Kysely init, DB instance export.
+2. **`src/db/schema.ts`** — Barrel re-exporting domain schemas + DB aggregate type.
+3. **Schema files** (one per domain):
+   - `schema-core.ts` — Users, sessions, actors, chats, messages, characters.
+   - `schema-content.ts` — Assets, asset_links.
+   - `schema-generation.ts` — Generation_attempts.
+   - `schema-story.ts` — Worlds, locations, story_turns, quests, npc_states, items.
+   - `schema-synthetic.ts` — Synthetic_data exports.
+4. **Enum files** (one per domain):
+   - `enums.ts` — Barrel re-export.
+   - `enums-core.ts`, `enums-content.ts`, `enums-generation.ts`, `enums-story.ts`, `enums-config.ts`.
+5. **`src/db/migrate.ts`** — Migration runner script.
+6. **`src/db/migrations/`** — Chronological migration files.
 
 ## Table Registry (DB aggregate type)
 
