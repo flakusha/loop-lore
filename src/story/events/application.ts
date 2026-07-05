@@ -34,36 +34,44 @@ export async function applyEvents(
   for (const event of events) {
     try {
       switch (event.type) {
-        case WorldEventType.LocationChange:
+        case WorldEventType.LocationChange: {
           await applyLocationChange(database, event);
           results.push({ event, applied: true });
           break;
-        case WorldEventType.NpcStateChange:
+        }
+        case WorldEventType.NpcStateChange: {
           await applyNpcStateChange(database, event);
           results.push({ event, applied: true });
           break;
-        case WorldEventType.TimeAdvancement:
+        }
+        case WorldEventType.TimeAdvancement: {
           await applyTimeAdvancement(database, worldId, event);
           results.push({ event, applied: true });
           break;
-        case WorldEventType.LocationModification:
+        }
+        case WorldEventType.LocationModification: {
           await applyLocationModification(database, event);
           results.push({ event, applied: true });
           break;
-        case WorldEventType.WorldLoreUpdate:
+        }
+        case WorldEventType.WorldLoreUpdate: {
           await applyWorldLoreUpdate(database, worldId, event);
           results.push({ event, applied: true });
           break;
-        case WorldEventType.CombatEvent:
+        }
+        case WorldEventType.CombatEvent: {
           await applyCombatEvent(database, event);
           results.push({ event, applied: true });
           break;
-        case WorldEventType.ItemTransfer:
+        }
+        case WorldEventType.ItemTransfer: {
           await applyItemTransfer(items, worldId, event);
           results.push({ event, applied: true });
           break;
-        default:
+        }
+        default: {
           results.push({ event, applied: false, error: `Unknown event type: ${event.type}` });
+        }
       }
     } catch (error) {
       results.push({
