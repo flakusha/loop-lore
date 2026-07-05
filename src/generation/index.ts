@@ -90,3 +90,9 @@ export {
 } from "./providers/registry";
 
 export { OpenAiCompatibleProvider } from "./providers/openai-compatible";
+
+// DEAD CODE: Export new providers when implemented
+// export { BedrockProvider } from "./providers/bedrock";
+// export { GoogleProvider } from "./providers/google";
+// export { AnthropicProvider } from "./providers/anthropic";
+// export { OllamaNativeProvider } from "./providers/ollama-native";

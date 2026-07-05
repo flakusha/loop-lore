@@ -15,6 +15,7 @@ import { detectTheatricalLoop } from "./repetition-detector";
 import { detectPolicyMismatch } from "./policy-detector";
 import { storePartialContent } from "./continuation";
 import { activeGenerations, chatToAttempt, updateAttemptStatus } from "./cancellation-tracker";
+import { safeJsonStringify } from "../utils";
 import { getLogger } from "../logger";
 
 // ── Cancellation logic ────────────────────────────────────
@@ -157,7 +158,7 @@ export async function processStreamingChunk(
   if (repAnalysis) {
     void updateAttemptStatus(db, attemptId, active.status, {
       repetition_score: repAnalysis.score,
-      repetition_analysis: JSON.stringify(repAnalysis),
+        repetition_analysis: (() => { const r = safeJsonStringify(repAnalysis); return r.ok ? r.value : null; })(),
     }).catch((error: unknown) => {
       genLog.error("Failed to update repetition analysis", error instanceof Error ? error : undefined);
     });
@@ -181,7 +182,7 @@ export async function processStreamingChunk(
         cancel_reason_detail: detail,
         cancel_source: CancelSource.AutoRepetition,
         repetition_score: effectiveScore,
-        repetition_analysis: JSON.stringify(repAnalysis),
+      repetition_analysis: (() => { const r = safeJsonStringify(repAnalysis); return r.ok ? r.value : null; })(),
         completed_at: new Date().toISOString(),
       }).catch((error: unknown) => {
         genLog.error("Failed to update repetition-cancel status", error instanceof Error ? error : undefined);
@@ -191,7 +192,8 @@ export async function processStreamingChunk(
   }
 
   // ── Criterion 3: Policy mismatch detection ──
-  if (active.policyConfig.cancel) {
+  // Detect regardless of cancel flag; throttle to every 5 chunks (O(n²) avoidance)
+  if (active.policyConfig.expectedPolicy && active.chunksReceived % 5 === 0) {
     const fullText = active.repetitionDetector.getBufferText();
     const policyAnalysis = await detectPolicyMismatch(fullText, {
       enabled: true,
@@ -201,29 +203,36 @@ export async function processStreamingChunk(
     });
 
     if (policyAnalysis.detected) {
-      const mismatchType =
-        active.policyConfig.expectedPolicy === PolicyType.Sfw
-          ? "Explicit content in SFW context"
-          : "SFW content in NSFW context";
+      if (active.policyConfig.cancel) {
+        const mismatchType =
+          active.policyConfig.expectedPolicy === PolicyType.Sfw
+            ? "Explicit content in SFW context"
+            : "SFW content in NSFW context";
 
-      const detail =
-        `Policy mismatch: ${mismatchType}, ` +
-        `confidence=${policyAnalysis.confidence.toFixed(2)}, ` +
-        `indicators=${policyAnalysis.indicators.length}`;
+        const detail =
+          `Policy mismatch: ${mismatchType}, ` +
+          `confidence=${policyAnalysis.confidence.toFixed(2)}, ` +
+          `indicators=${policyAnalysis.indicators.length}`;
 
-      cancelGeneration(attemptId, CancelReason.PolicyMismatch, CancelSource.AutoPolicy, detail);
-      void updateAttemptStatus(db, attemptId, GenerationStatus.Cancelled, {
-        cancel_reason: CancelReason.PolicyMismatch,
-        cancel_reason_detail: detail,
-        cancel_source: CancelSource.AutoPolicy,
-        policy_analysis: JSON.stringify(policyAnalysis),
-        completed_at: new Date().toISOString(),
-      }).catch((error: unknown) => {
-        genLog.error("Failed to update policy-cancel status", error instanceof Error ? error : undefined);
+        cancelGeneration(attemptId, CancelReason.PolicyMismatch, CancelSource.AutoPolicy, detail);
+        void updateAttemptStatus(db, attemptId, GenerationStatus.Cancelled, {
+          cancel_reason: CancelReason.PolicyMismatch,
+          cancel_reason_detail: detail,
+          cancel_source: CancelSource.AutoPolicy,
+          policy_analysis: (() => { const r = safeJsonStringify(policyAnalysis); return r.ok ? r.value : null; })(),
+          completed_at: new Date().toISOString(),
+        }).catch((error: unknown) => {
+          genLog.error("Failed to update policy-cancel status", error instanceof Error ? error : undefined);
+        });
+
+        active.events?.onPolicyMismatch?.(attemptId, policyAnalysis);
+        return ChunkAction.CancelPolicy;
+      }
+
+      genLog.warn("Policy mismatch detected (auto-cancel disabled)", {
+        confidence: policyAnalysis.confidence,
+        indicatorCount: policyAnalysis.indicators.length,
       });
-
-      active.events?.onPolicyMismatch?.(attemptId, policyAnalysis);
-      return ChunkAction.CancelPolicy;
     }
   }
 
@@ -237,8 +246,8 @@ export class GenerationCancelledError extends Error {
   readonly source: CancelSource;
   readonly detail: string;
 
-  constructor(reason: CancelReason, source: CancelSource, detail: string) {
-    super(`Generation cancelled: ${reason} (${source}) — ${detail}`);
+  constructor(reason: CancelReason, source: CancelSource, detail: string, options?: ErrorOptions) {
+    super(`Generation cancelled: ${reason} (${source}) — ${detail}`, options);
     this.name = "GenerationCancelledError";
     this.reason = reason;
     this.source = source;

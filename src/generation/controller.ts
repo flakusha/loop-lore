@@ -22,12 +22,13 @@ import {
 } from "./generation-routes";
 import { handleGenerate } from "./generate-route";
 import { jsonError } from "../routes/http-utils";
+import type { Config } from "../config/schema";
 import { loadConfig } from "../config/load";
 
 // ── Helpers ──────────────────────────────────────────────────
 
 /** Parse JSON request body, returning an error Response on parse failure */
-async function parseJsonBody(request: Request): Promise<unknown | Response> {
+async function parseJsonBody(request: Request): Promise<unknown> {
   try {
     return await request.json();
   } catch (parseError) {
@@ -42,10 +43,12 @@ async function parseJsonBody(request: Request): Promise<unknown | Response> {
  * @param userId  Authenticated user ID (from auth middleware). May be null.
  * @param _userRole  User role for future access checks.
  */
+// eslint-disable-next-line sonarjs/cognitive-complexity
 export async function dispatch(
   request: Request,
   _userId?: string | null,
   _userRole?: string | null,
+  config?: Config,
 ): Promise<Response | null> {
   const url = new URL(request.url);
   const { pathname } = url;
@@ -54,8 +57,8 @@ export async function dispatch(
   if (pathname === "/api/generation/generate" && request.method === "POST") {
     const body = await parseJsonBody(request);
     if (body instanceof Response) return body;
-    const config = loadConfig();
-    return handleGenerate(body, config, _userId ?? undefined);
+    const cfg = config ?? loadConfig();
+    return handleGenerate(body, cfg, _userId ?? undefined);
   }
 
   // POST /api/generation/cancel

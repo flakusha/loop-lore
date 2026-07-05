@@ -140,7 +140,7 @@ export async function handleRetryGeneration(body: unknown): Promise<Response> {
   let resumeFromStep = 0;
   let totalSteps = 1;
 
-  if (input.attemptId && input.step !== undefined) {
+  if (input.attemptId && input.step != null) {
     const attempt = await database
       .selectFrom("generation_attempts")
       .select(["step_index", "total_steps"])
@@ -154,7 +154,7 @@ export async function handleRetryGeneration(body: unknown): Promise<Response> {
     } else {
       return jsonError("Generation attempt not found", 404);
     }
-  } else if (input.step !== undefined) {
+  } else if (input.step != null) {
     resumeFromStep = Math.max(0, input.step);
   }
 
