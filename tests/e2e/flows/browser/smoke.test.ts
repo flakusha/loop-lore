@@ -164,7 +164,7 @@ describe("New Chat view", () => {
   test("loads new chat form with all fields", async () => {
     const page = await ctx.browser.newPage();
     await gotoView(page, "/views/new-chat");
-    await page.locator("[data-testid='create-chat-form']").waitFor({ state: 'attached', timeout: 10000 });
+    await page.locator("[data-testid='create-chat-form']").waitFor({ state: 'attached', timeout: 10_000 });
     await page.locator("[data-testid='chat-name-input']").waitFor({ state: 'attached', timeout: 5000 });
     await page.locator("[data-testid='chat-type-select']").waitFor({ state: 'attached', timeout: 5000 });
     await page.locator("[data-testid='chat-mode-select']").waitFor({ state: 'attached', timeout: 5000 });
@@ -175,7 +175,7 @@ describe("New Chat view", () => {
   test("can type chat name", async () => {
     const page = await ctx.browser.newPage();
     await gotoView(page, "/views/new-chat");
-    await page.locator("[data-testid='chat-name-input']").waitFor({ state: 'attached', timeout: 10000 });
+    await page.locator("[data-testid='chat-name-input']").waitFor({ state: 'attached', timeout: 10_000 });
     const input = page.locator("[data-testid='chat-name-input']");
     await input.fill("Test Chat from Browser");
     expect(await input.inputValue()).toBe("Test Chat from Browser");

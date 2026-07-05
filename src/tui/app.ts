@@ -12,6 +12,7 @@
 import blessed from "blessed";
 import { ChatWidget, API_BASE } from "./chat";
 import { AssetView } from "./asset-view";
+import { getLogger } from "../logger";
 
 export class TUIApp {
   private statusBar: blessed.Widgets.TextElement;
@@ -68,11 +69,14 @@ export class TUIApp {
       const chatId = this.chat.getChatId();
       if (chatId) {
         this.updateStatus("refreshing messages...");
-        void this.chat.loadMessages()
+        this.chat.loadMessages()
           .then(() => {
             this.updateStatus(`chat: ${chatId.slice(0, 8)}...`);
           })
-          .catch((err: Error) => console.error("[tui] loadMessages failed:", err));
+          .catch((error: Error) => {
+            getLogger().child({ module: "tui" }).error("loadMessages failed", error);
+            this.updateStatus("load failed");
+          });
       } else {
         this.updateStatus("no active chat");
       }

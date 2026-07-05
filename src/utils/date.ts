@@ -70,6 +70,8 @@ function pad(n: number, len = 2): string {
  *   "2026-07-04T14:30:00.123+02:00"
  *   — Full ISO 8601, compatible with browser Date.parse
  *   — Default for parseability across frontend/backend
+ *   — NOTE: changed from "compact" to "standard" as default. Callers relying
+ *     on compact output must pass `style: "compact"` explicitly.
  *
  * Compact style (opt-in):
  *   "20260704T143000.123+02:00"

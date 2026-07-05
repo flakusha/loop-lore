@@ -8,11 +8,12 @@
 import { walkDirectory, compressFile, copyDirectory } from "../content/compress";
 import { readFileSync, writeFileSync, existsSync } from "node:fs";
 import { extname } from "node:path";
+import { createLogger } from "../logger";
 
 // ── Strip HTML comments (<!-- ... -->) from HTML files ────
 
 function stripHtmlComments(content: string): string {
-  // eslint-disable-next-line sonarjs/super-linear-regex
+   
   return content.replaceAll(/<!--[\s\S]*?-->/g, "");
 }
 
@@ -31,12 +32,13 @@ const STRIP_TEST_IDS = process.env.STRIP_TEST_IDS !== "false";
 // ── Main compression entry for build ─────────────────────────
 
 function main() {
+  const log = createLogger({ level: "info" });
   const directory = process.argv[2] ?? "./dist/public";
   const sourcePublic = process.argv[3] ?? "./src/public";
   const sourceViews = process.argv[4] ?? "./src/views";
 
   if (!existsSync(directory)) {
-    console.error(`Directory not found: ${directory}`);
+    log.error(`Directory not found: ${directory}`);
     process.exit(1);
   }
 
@@ -70,22 +72,22 @@ function main() {
       compressedBytes.zst += readFileSync(`${file}.zst`, { encoding: null }).length;
       compressedBytes.br += readFileSync(`${file}.br`, { encoding: null }).length;
       total++;
-    } catch (err) {
-      console.error(`[compress] failed on ${file}:`, err instanceof Error ? err.message : err);
+    } catch (error) {
+      log.error(`Compression failed on ${file}`, error instanceof Error ? error : new Error(String(error)));
     }
   }
 
   // Print savings from stripping
   const totalAfter = files.reduce((sum, f) => sum + readFileSync(f).length, 0);
 
-  console.log(`Compressed ${total} files`);
-  console.log(`Original: ${originalBytes} bytes`);
+  log.info(`Compressed ${total} files`);
+  log.info(`Original: ${originalBytes} bytes`);
   if (totalAfter < originalBytes) {
     const pct = ((originalBytes - totalAfter) / originalBytes * 100).toFixed(1);
     const why = STRIP_TEST_IDS ? "HTML comments + data-testid" : "HTML comments";
-    console.log(`After ${why} strip: ${totalAfter} bytes (${pct}% savings)`);
+    log.info(`After ${why} strip: ${totalAfter} bytes (${pct}% savings)`);
   }
-  console.log(`Compressed - gzip: ${compressedBytes.gz}, zstd: ${compressedBytes.zst}, brotli: ${compressedBytes.br}`);
+  log.info(`Compressed sizes - gzip: ${compressedBytes.gz}, zstd: ${compressedBytes.zst}, brotli: ${compressedBytes.br}`);
 }
 
 main();
