@@ -124,26 +124,4 @@ export function isJsonString(value: unknown): value is string {
   }
 }
 
-/**
- * Stringify JSON safely with double-stringification guard.
- * Prevents double-encoding by parsing string values first.
- * Never throws — returns a discriminated union.
- *
- * @example
- * // Non-string value - stringifies directly
- * safeJsonStringify({ a: 1 }) // { ok: true, value: '{"a":1}' }
- *
- * // Already a JSON string - parses first then stringifies
- * safeJsonStringify('{"a":1}') // { ok: true, value: '{"a":1}' }
- *
- * // Non-JSON string - stringifies as-is
- * safeJsonStringify('hello') // { ok: true, value: '"hello"' }
- */
-export function safeJsonStringifyGuarded(value: unknown, space?: number): JsonResult<string> {
-  try {
-    const toStringify = isJsonString(value) ? (JSON.parse(value) as unknown) : value;
-    return { ok: true, value: JSON.stringify(toStringify, null, space) };
-  } catch (error) {
-    return { ok: false, error: asError(error) };
-  }
-}
+

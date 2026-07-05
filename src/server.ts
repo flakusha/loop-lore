@@ -4,17 +4,18 @@
 import { serve } from "bun";
 import { join, normalize } from "node:path";
 import { existsSync, readFileSync } from "node:fs";
+import { spawnSync } from "node:child_process";
 import { compressAssets, copyDirectory } from "./content/compress";
 import { loadConfig } from "./config/load";
 import { initAgeGate, dispatch as dispatchAgeGate } from "./age-gate/controller";
 import { dispatch as dispatchGeneration } from "./generation/controller";
-import { dispatch as dispatchDice } from "./dice/index";
+import { loadAllPlugins, dispatchPluginRoute, unloadAllPlugins } from "./plugins";
 import { getDatabase } from "./db/index";
+import { initializeProviders } from "./generation";
 import { authenticate, compose, errorBoundary } from "./middleware/index";
 import type { RequestContext } from "./middleware/index";
-import { jsonError, HttpStatus } from "./routes/http-utils";
 import { apiDispatch } from "./routes/router";
-import { dispatch as dispatchViews, serveView } from "./routes/views";
+import { dispatch as dispatchViews } from "./routes/views";
 import { dispatchAuth } from "./routes/auth";
 // Route modules (import for registerRoute side-effects)
 import "./routes/chats";
@@ -24,6 +25,14 @@ import "./routes/users";
 import "./routes/worlds";
 import "./routes/api-keys";
 import "./assets/controller";
+import "./routes/actor-memories";
+import "./routes/actor-lore-entries";
+import "./routes/world-lore-entries";
+import "./routes/actor-items";
+import "./routes/actor-notes";
+import "./routes/story-items";
+import "./routes/story-states";
+import "./routes/story-turns";
 import { ensureTlsCerts } from "./config/cert";
 import { createLogger, getLogger } from "./logger";
 
@@ -150,12 +159,12 @@ export async function handleApiRequest(
       if (ageGateResult) return ageGateResult;
 
       // ── Generation cancellation routes ───────────────
-      const generationResult = await dispatchGeneration(req, context.userId, context.userRole);
+      const generationResult = await dispatchGeneration(req, context.userId, context.userRole, config);
       if (generationResult) return generationResult;
 
-      // ── Dice roll routes ─────────────────────────────
-      const diceResult = await dispatchDice(req, context.userId, context.userRole);
-      if (diceResult) return diceResult;
+      // ── Plugin routes (dice-roller, etc.) ──────────────
+      const pluginResult = await dispatchPluginRoute(req);
+      if (pluginResult) return pluginResult;
 
       // ── Route router (chats, messages, characters, etc.) ──
       return apiDispatch({ request: req, context, database, config });
@@ -198,7 +207,7 @@ function handleDocsRequest(
     }
   }
 
-  if (fullPath.startsWith(join(DOCS_PATH, "/")) && existsSync(fullPath)) {
+  if (fullPath.startsWith(DOCS_PATH + "/") && existsSync(fullPath)) {
     const acceptEncoding = request.headers.get("accept-encoding") ?? "";
     return respondWithFile(fullPath, acceptEncoding);
   }
@@ -206,12 +215,33 @@ function handleDocsRequest(
   return new Response("Documentation not found", { status: 404 });
 }
 
-function start() {
+// eslint-disable-next-line sonarjs/cognitive-complexity
+async function start() {
   const config = loadConfig();
   createLogger(config.logging);
   initAgeGate(config.ageGate);
+  initializeProviders(config);
   const database = getDatabase();
+
+  // ── Load all plugins (core → community → local) ──────
+  await loadAllPlugins(database);
   const logger = getLogger();
+
+  // ── Auto-build frontend JS if missing ────────────────────
+  const distPublic = join(import.meta.dir, "..", "dist", "public");
+  const jsTarget = join(distPublic, "alpine.js");
+  if (!existsSync(jsTarget)) {
+    logger.info({ message: "Frontend JS not built — auto-building..." });
+    // eslint-disable-next-line sonarjs/no-os-command-from-path
+    const result = spawnSync("bun", ["run", "build:frontend"], {
+      stdio: ["ignore", "inherit", "inherit"],
+    });
+    if (result.status === 0) {
+      logger.info({ message: "Frontend build complete" });
+    } else {
+      logger.error({ message: "Frontend build failed — some features unavailable" });
+    }
+  }
 
   const sourcePublicDirectory = join(import.meta.dir, "public");
   const sourceViewsDirectory = join(import.meta.dir, "..", "views");
@@ -328,8 +358,9 @@ function start() {
 
   serverLogger.info(`Docs  → http://localhost:${config.server.port}/docs/`);
 
-  // ── Shutdown handler — flush logs before exit ──────────
+  // ── Shutdown handler — unload plugins, flush logs ────
   const shutdown = async (_signal: string) => {
+    await unloadAllPlugins();
     const SHUTDOWN_TIMEOUT = 5000;
     const flushed = logger.flush();
     const timer = setTimeout(() => {
@@ -348,4 +379,9 @@ function start() {
   });
 }
 
-start();
+// Only auto-start when executed directly (not imported by tests)
+// Bun equivalent of `require.main === module`
+const isMainModule = typeof Bun !== "undefined" && (Bun as { main?: string }).main === import.meta.path;
+if (isMainModule) {
+  await start();
+}
