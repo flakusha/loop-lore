@@ -1,58 +1,12 @@
-import { readdirSync, readFileSync, writeFileSync, existsSync, mkdirSync, copyFileSync } from "node:fs";
-import { join, extname } from "node:path";
-import { gzipSync, brotliCompressSync } from "node:zlib";
-import { minifyText, minifyCSS } from "../content/minify";
+/**
+ * Build-time asset compressor.
+ * Delegates to content/compress for actual compression logic.
+ */
 
-const COMPRESSIBLE_EXTS = new Set([".css", ".js", ".html", ".json", ".svg"]);
+import { walkDirectory, compressFile, copyDirectory } from "../content/compress";
+import { readFileSync, existsSync } from "node:fs";
 
-function walkDirectory(directory: string): string[] {
-  const files: string[] = [];
-  const entries = readdirSync(directory, { withFileTypes: true });
-
-  for (const entry of entries) {
-    const full = join(directory, entry.name);
-    if (entry.isDirectory()) {
-      files.push(...walkDirectory(full));
-    } else if (entry.isFile() && COMPRESSIBLE_EXTS.has(extname(entry.name))) {
-      files.push(full);
-    }
-  }
-
-  return files;
-}
-
-function compressFile(filePath: string): void {
-  const content = readFileSync(filePath, "utf8");
-  const extension = extname(filePath);
-  const minimized = extension === ".css" ? minifyCSS(content) : minifyText(content);
-
-  const buffer = Buffer.from(minimized, "utf8");
-
-  const gz = gzipSync(buffer);
-  writeFileSync(`${filePath}.gz`, gz);
-
-  const zst = (Bun.zstdCompressSync as (data: Buffer, options?: object) => Buffer)(buffer);
-  writeFileSync(`${filePath}.zst`, zst);
-
-  const br = brotliCompressSync(buffer);
-  writeFileSync(`${filePath}.br`, br);
-}
-
-function copyDirectory(sourceDir: string, destDir: string): void {
-  if (!existsSync(sourceDir)) return;
-  
-  for (const entry of readdirSync(sourceDir, { withFileTypes: true })) {
-    const srcPath = join(sourceDir, entry.name);
-    const destPath = join(destDir, entry.name);
-    
-    if (entry.isDirectory()) {
-      copyDirectory(srcPath, destPath);
-    } else if (entry.isFile()) {
-      mkdirSync(join(destPath, ".."), { recursive: true });
-      copyFileSync(srcPath, destPath);
-    }
-  }
-}
+// ── Main compression entry for build ─────────────────────────
 
 function main() {
   const directory = process.argv[2] ?? "./dist/public";

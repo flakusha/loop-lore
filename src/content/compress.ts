@@ -21,7 +21,7 @@ export function copyDirectory(sourceDir: string, destDir: string): void {
   }
 }
 
-function walkDirectory(directory: string): string[] {
+export function walkDirectory(directory: string): string[] {
   const files: string[] = [];
   const entries = readdirSync(directory, { withFileTypes: true });
 
@@ -56,7 +56,7 @@ function _setupStaticDirectory(sourceDirectory: string, destinationDirectory: st
   }
 }
 
-function compressFile(filePath: string): void {
+export function compressFile(filePath: string): void {
   const content = readFileSync(filePath, "utf8");
   const extension = extname(filePath);
   const minimized = extension === ".css" ? minifyCSS(content) : minifyText(content);
