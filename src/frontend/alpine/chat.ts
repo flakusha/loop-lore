@@ -85,6 +85,7 @@ globalThis.chatState = function () {
     _observer: null as MutationObserver | null,
 
     init() {
+      (this as any).$root.pageTitle = "loop-lore";
       this.loadChats();
       this.loadUserInfo();
 
@@ -150,6 +151,10 @@ globalThis.chatState = function () {
     async loadChats() {
       try {
         const res = await apiFetch("/api/chats?pageSize=200");
+        if (!res.ok) {
+          this.$dispatch("show-toast", { type: "error", message: "Failed to load chats" });
+          return;
+        }
         const data = await res.json();
         this.chats = data.data || [];
       } catch {

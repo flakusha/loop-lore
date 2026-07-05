@@ -3,6 +3,14 @@
   <!-- Main content -->
   <main class="main-content">
     <header class="main-header">
+      <button
+        class="hamburger"
+        @click="$store.sidebar.open = !$store.sidebar.open"
+        x-show="!$store.sidebar.open"
+        data-testid="hamburger"
+      >
+        ☰
+      </button>
       <span class="title">Worlds</span>
       <div class="actions">
         <button class="btn btn-secondary" @click="showImportForm = true" data-testid="import-world">

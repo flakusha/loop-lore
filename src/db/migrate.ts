@@ -5,11 +5,7 @@ import { getDatabase } from "./index";
 import { createLogger, getLogger } from "../logger";
 import type { Migration } from "kysely/migration";
 
-async function migrate(): Promise<void> {
-  createLogger();
-
-  const database = getDatabase();
-
+export async function runMigrations(database: ReturnType<typeof getDatabase>): Promise<void> {
   const migrator = new Migrator({
     db: database,
     provider: {
@@ -46,7 +42,16 @@ async function migrate(): Promise<void> {
   }
 
   log.info("Database migrations completed successfully");
+}
+
+async function migrate(): Promise<void> {
+  createLogger();
+  const database = getDatabase();
+  await runMigrations(database);
   await database.destroy();
 }
 
-await migrate();
+// Run only when executed directly (bun run src/db/migrate.ts)
+if (import.meta.main) {
+  await migrate();
+}
