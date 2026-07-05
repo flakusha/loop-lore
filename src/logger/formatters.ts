@@ -35,7 +35,7 @@ export function formatConsole(entry: LogEntry, isColor = false): string {
 
   if (isColor) {
     const c = LEVEL_COLORS[entry.level] ?? "";
-    return c + line + RESET;
+    return c + line + RESET + "\n";
   }
 
   return line + "\n";

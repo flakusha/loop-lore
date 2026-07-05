@@ -16,6 +16,7 @@
 /* --- Sidebar (hamburger drawer on all viewports) --- */
 .sidebar {
   position: fixed;
+  top: 0;
   left: -280px;
   width: 280px;
   min-width: 280px;
@@ -134,15 +135,17 @@
 }
 
 .main-header {
-  padding: var(--space-4) var(--space-6);
+  padding: var(--space-3) var(--space-4);
   border-bottom: 1px solid var(--border-default);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  min-height: 60px;
+  min-height: 48px;
+  gap: var(--space-2);
 }
 
 .main-header .title {
+  flex: 1;
   font-size: 16px;
   font-weight: 600;
 }
@@ -535,7 +538,7 @@
 .input-row {
   display: flex;
   gap: var(--space-3);
-  align-items: flex-end;
+  align-items: stretch;
 }
 
 .input-row textarea {
@@ -1121,14 +1124,11 @@
 }
 
 /* ============================================================
-   LAYOUT: Hamburger + Centered Chat + Right Panel
+   LAYOUT: Fixed Header + Sidebar + Content
    ============================================================ */
 
 /* Hamburger button */
 .hamburger {
-  position: fixed;
-  top: var(--space-4);
-  left: var(--space-4);
   width: 36px;
   height: 36px;
   padding: 0;
@@ -1140,7 +1140,6 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: var(--z-dropdown);
   transition: all var(--transition-fast);
 }
 

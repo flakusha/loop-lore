@@ -13,6 +13,7 @@ globalThis.characterChatListState = function () {
       if (match) {
         this.characterId = match[1];
         await this.loadCharacter();
+        (this as any).$root.pageTitle = this.characterName || "Chats";
         await this.loadChats();
       }
     },
@@ -33,6 +34,10 @@ globalThis.characterChatListState = function () {
       this.loading = true;
       try {
         const res = await apiFetch(`/api/chats?characterId=${this.characterId}&pageSize=50`);
+        if (!res.ok) {
+          (this as any).$dispatch("show-toast", { type: "error", message: "Failed to load chats" });
+          return;
+        }
         const data = await res.json();
         this.chats = data.data || [];
       } catch {
@@ -69,6 +74,8 @@ globalThis.charactersState = function () {
     searchQuery: "",
     selectedTag: "",
     selectedChar: null as any,
+    showCreateForm: false,
+    showImportForm: false,
 
     get filteredCharacters() {
       let result = this.characters;
@@ -88,16 +95,22 @@ globalThis.charactersState = function () {
     },
 
     async init() {
+      console.log("[charactersState] init — loading characters");
+      (this as any).$root.pageTitle = "Characters";
       await this.loadCharacters();
     },
 
     async loadCharacters() {
+      console.log("[charactersState] loadCharacters started");
       this.loading = true;
       try {
         const res = await apiFetch("/api/actors?pageSize=100");
+        console.log("[charactersState] loadCharacters response:", res.status, res.ok);
         const data = await res.json();
+        console.log("[charactersState] loadCharacters data:", data.pagination?.total, "actors");
         this.characters = data.data || [];
-      } catch {
+      } catch (e) {
+        console.error("[charactersState] loadCharacters FAILED:", e);
         (this as any).$dispatch("show-toast", { type: "error", message: "Failed to load characters" });
       } finally {
         this.loading = false;
@@ -124,6 +137,14 @@ globalThis.charactersState = function () {
             participantIds: [char.id],
           }),
         });
+        if (!res.ok) {
+          const err = await res.json().catch(() => ({}));
+          (this as any).$dispatch("show-toast", {
+            type: "error",
+            message: err.error || "Failed to create chat",
+          });
+          return;
+        }
         const data = await res.json();
         if (data.id) {
           location.assign("/views/chat");
@@ -155,6 +176,43 @@ globalThis.charactersState = function () {
         (this as any).$dispatch("show-toast", { type: "error", message: "Network error" });
       }
     },
+
+    async createCharacter() {
+      console.log("[charactersState] createCharacter — start");
+      const form = (this as any).$el?.querySelector("form");
+      console.log("[charactersState] createCharacter — form:", form ? "found" : "NOT FOUND");
+      if (!form) return;
+      const formData = new FormData(form);
+      const body = {
+        displayName: formData.get("displayName"),
+        actorType: formData.get("actorType") || "character",
+        description: formData.get("description"),
+      };
+      console.log("[charactersState] createCharacter — body:", body);
+      try {
+        const res = await apiFetch("/api/actors", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(body),
+        });
+        console.log("[charactersState] createCharacter — response:", res.status);
+        if (res.ok) {
+          this.showCreateForm = false;
+          (this as any).$dispatch("show-toast", { type: "success", message: "Character created" });
+          await this.loadCharacters();
+        } else {
+          const err = await res.json();
+          console.error("[charactersState] createCharacter — API error:", err);
+          (this as any).$dispatch("show-toast", {
+            type: "error",
+            message: err.error || "Failed to create character",
+          });
+        }
+      } catch (e) {
+        console.error("[charactersState] createCharacter — caught:", e);
+        (this as any).$dispatch("show-toast", { type: "error", message: "Network error" });
+      }
+    },
   };
 };
 
@@ -167,6 +225,7 @@ globalThis.characterEditState = function () {
     saving: false,
 
     async init() {
+      (this as any).$root.pageTitle = "Edit Character";
       // eslint-disable-next-line sonarjs/prefer-regexp-exec
       const match = location.pathname.match(/\/(?:character|characters)\/([\w-]+)\/edit/);
       if (match) {

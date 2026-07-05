@@ -8,6 +8,10 @@ globalThis.newChatState = function () {
     error: "",
     submitting: false,
 
+    init() {
+      (this as any).$root.pageTitle = "New Chat";
+    },
+
     async createChat() {
       if (!this.name.trim()) {
         this.error = "Chat name is required.";

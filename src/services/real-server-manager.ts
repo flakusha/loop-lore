@@ -466,4 +466,19 @@ export class RealServerManager {
       await this.stop(instance);
     }
   }
+
+  /**
+   * Synchronous kill of all instances — for process.on('exit') handler.
+   * Does not await, does not log (no event loop).
+   */
+  killAllSync(): void {
+    for (const instance of this.instances) {
+      try {
+        process.kill(instance.pid, "SIGKILL");
+      } catch {
+        // already dead — ignore
+      }
+    }
+    this.instances.length = 0;
+  }
 }

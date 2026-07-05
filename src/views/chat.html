@@ -4,6 +4,14 @@
     <!-- Header -->
     <header class="main-header">
       <button
+        class="hamburger"
+        @click="$store.sidebar.open = !$store.sidebar.open"
+        x-show="!$store.sidebar.open"
+        data-testid="hamburger"
+      >
+        ☰
+      </button>
+      <button
         class="btn-icon"
         title="View chats"
         @click="showChatList = !showChatList"
@@ -283,7 +291,7 @@
     </div>
 
     <!-- Input area -->
-    <div class="input-area">
+    <div class="input-area" x-show="activeChat">
       <!-- Generation status bar (cancel UI) -->
       <div
         x-show="isGenerating"
@@ -331,6 +339,17 @@
 
       <form x-ref="messageForm" @submit.prevent="sendMessage()" data-testid="message-form">
         <div class="input-row">
+          <label class="btn btn-ghost" style="cursor: pointer; font-size: 12px; padding: var(--space-2)">
+            📎
+            <input
+              type="file"
+              accept="image/*,audio/*,video/*"
+              multiple
+              style="display: none"
+              @change="handleAttach($event)"
+              data-testid="attach-input"
+            />
+          </label>
           <textarea
             name="content"
             x-ref="messageInput"
@@ -371,17 +390,6 @@
               </template>
             </div>
           </template>
-          <label class="btn btn-ghost" style="cursor: pointer; font-size: 12px">
-            📎 Attach
-            <input
-              type="file"
-              accept="image/*,audio/*,video/*"
-              multiple
-              style="display: none"
-              @change="handleAttach($event)"
-              data-testid="attach-input"
-            />
-          </label>
         </div>
       </form>
     </div>

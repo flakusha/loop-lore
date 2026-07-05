@@ -12,19 +12,25 @@ function getCsrfToken(): string {
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 async function apiFetch(url: string, options?: RequestInit): Promise<Response> {
+  console.log("[apiFetch] >>>", options?.method ?? "GET", url);
   const opts: RequestInit = { ...options };
   opts.headers = new Headers(opts.headers ?? {});
   const csrf = getCsrfToken();
   if (csrf) (opts.headers as Headers).set("X-CSRF-Token", csrf);
   opts.signal = AbortSignal.timeout(30_000);
   const res = await fetch(API_BASE + url, opts);
+  console.log("[apiFetch] <<<", res.status, url);
   if (res.status === 401) {
+    console.warn("[apiFetch] 401 — redirecting to login");
     const redirect = encodeURIComponent(location.pathname + location.search);
     location.assign(`/views/login?redirect=${redirect}`);
     throw new Error("Unauthorized");
   }
   return res;
 }
+
+// Prevent tree-shaking — Bun minifier removes unused top-level functions
+globalThis.apiFetch = apiFetch;
 
 // ── htmx event handlers ───────────────────────────────────
 

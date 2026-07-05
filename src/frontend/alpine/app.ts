@@ -6,8 +6,19 @@ globalThis.app = function () {
     currentTheme: "default",
     sidebarOpen: false,
     currentLocale: "en",
+    localeStrings: {} as Record<string, string>,
+    pageTitle: "loop-lore",
+
+    __(key: string, fallback?: string): string {
+      return this.localeStrings[key] || fallback || key;
+    },
 
     init() {
+      // Initialize Alpine store for cross-scope sidebar state
+      if (typeof Alpine !== "undefined") {
+        Alpine.store("sidebar", { open: false });
+      }
+
       const savedTheme = localStorage.getItem("theme-preference");
       const themes = globalThis.__THEMES ?? [];
       if (savedTheme && themes.some((t: { id: string }) => t.id === savedTheme)) {
@@ -89,7 +100,9 @@ globalThis.app = function () {
       try {
         const res = await fetch(`/locales/${locale}.json`);
         if (res.ok) {
-          globalThis.__localeStrings = await res.json();
+          const strings = await res.json();
+          this.localeStrings = strings;
+          globalThis.__localeStrings = strings;
         }
       } catch {
         // fallback: keys display as-is
