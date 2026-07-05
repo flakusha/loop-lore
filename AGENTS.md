@@ -126,7 +126,10 @@ docs/                    Specs, architecture, data model
   Kysely types + db instance)
 - **Anti-patterns**: See `.agents/references/banned-patterns.md` — reject in
   review (boolean flags, numeric statuses, `I` prefix, bare `.then()`, `any`,
-  silent catches, AI SDK wrappers, CSS-in-JS)
+  silent catches, AI SDK wrappers, CSS-in-JS, `console.*` instead of logger,
+  missing ownership checks, `void promise` without `.catch()`)
+- **Patterns**: See `.agents/references/recommendations.md` — structured logging,
+  input validation checklist, safe JSON IIFE pattern, options-object params
 - **Docs metrics**: No quantitative metrics in docs — they go stale. Describe
   behavior qualitatively.
 
