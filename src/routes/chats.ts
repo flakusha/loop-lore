@@ -34,6 +34,7 @@ import {
 import { ChatType, ChatMode, ChatParticipantRole, TurnStrategy } from "../db/enums";
 import { getRuntimeConfig } from "../age-gate/controller";
 import { getStatus } from "../age-gate/service";
+import { getLogger } from "../logger";
 
 interface ListChatsOpts { database: Kysely<DB>; context: RequestContext; page: number; pageSize: number; }
 interface CreateChatOpts { database: Kysely<DB>; context: RequestContext; body: Record<string, unknown>; }
@@ -157,13 +158,18 @@ async function handleCreateChat(
   // Validate enum values
   const typeStr = type as string | undefined;
   const modeStr = mode as string | undefined;
+  const turnStrategyStr = turnStrategy as string | undefined;
   const validTypes = new Set<string>(Object.values(ChatType));
   const validModes = new Set<string>(Object.values(ChatMode));
+  const validStrategies = new Set<string>(Object.values(TurnStrategy));
   if (typeStr && !validTypes.has(typeStr)) {
     return jsonError(`Invalid chat type: ${typeStr}. Valid: ${[...validTypes].join(", ")}`, HttpStatus.BadRequest);
   }
   if (modeStr && !validModes.has(modeStr)) {
     return jsonError(`Invalid chat mode: ${modeStr}. Valid: ${[...validModes].join(", ")}`, HttpStatus.BadRequest);
+  }
+  if (turnStrategyStr && !validStrategies.has(turnStrategyStr)) {
+    return jsonError(`Invalid turn strategy: ${turnStrategyStr}. Valid: ${[...validStrategies].join(", ")}`, HttpStatus.BadRequest);
   }
 
   const chatId = uid();
@@ -194,7 +200,7 @@ async function handleCreateChat(
         .insertInto("chat_participants")
         .values({ chat_id: chatId, actor_id: actorId, role_in_chat: "member" })
         .execute()
-        .catch((error: unknown) => { console.error("[chats] Failed to add participant:", error); });
+        .catch((error: unknown) => { getLogger().child({ module: "chats" }).error("Failed to add participant", error instanceof Error ? error : new Error(String(error))); });
     }
   }
 
@@ -302,7 +308,7 @@ async function handleAddParticipant(
     .insertInto("chat_participants")
     .values({ chat_id: chatId, actor_id: actorId, role_in_chat: role as ChatParticipantRole })
     .execute()
-    .catch((error: unknown) => { console.error("[chats] Failed to add participant:", error); });
+    .catch((error: unknown) => { getLogger().child({ module: "chats" }).error("Failed to add participant", error instanceof Error ? error : new Error(String(error))); });
 
   return jsonCreated({ id: actorId });
 }

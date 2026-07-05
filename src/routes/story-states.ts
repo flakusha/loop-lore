@@ -72,10 +72,12 @@ const dispatch: RouteDispatch = async ({ request, context, database }) => {
         if (body[k] != null) updates[col] = body[k];
       }
       for (const [k, col] of Object.entries(jsonFields)) {
-        if (body[k] != null) {
-          const r = safeJsonStringify(body[k]);
-          if (r.ok) updates[col] = r.value;
+        if (body[k] == null) {
+        	continue;
         }
+
+        const r = safeJsonStringify(body[k]);
+        if (r.ok) updates[col] = r.value;
       }
       if (body.locationId != null) updates.location_id = body.locationId;
       updates.updated_at = new Date().toISOString();
@@ -143,10 +145,12 @@ const dispatch: RouteDispatch = async ({ request, context, database }) => {
         if (body[f] != null) updates[f] = body[f];
       }
       for (const [k, col] of Object.entries(jsonFields)) {
-        if (body[k] != null) {
-          const r = safeJsonStringify(body[k]);
-          if (r.ok) updates[col] = r.value;
+        if (body[k] == null) {
+        	continue;
         }
+
+        const r = safeJsonStringify(body[k]);
+        if (r.ok) updates[col] = r.value;
       }
       updates.updated_at = new Date().toISOString();
 
