@@ -64,6 +64,30 @@ Violation: `JSON.parse(dbField)`, `JSON.stringify(complexData)` in routes, servi
 Fix: Use `safeJsonParse<T>()`, `jsonParseOr(field, fallback)`, or `safeJsonStringify(value)` from `src/utils.ts`.
 Rationale: JS/TS has no checked exceptions — `JSON.parse` throws on malformed input (crash risk with DB data). `JSON.stringify` throws on circular refs, BigInt, `undefined` in arrays (silent data loss or crash). Safe variants return `JsonResult<T>` discriminated union — never throw, explicit `.ok` check. `jsonParseOr` provides one-liner fallback for DB fields.
 
+## `console.*` in production code (use `getLogger()`)
+Violation: `console.error(...)`, `console.warn(...)`, `console.log(...)` in routes, services, generation pipelines, or any server-side module.
+Fix: Import and use `getLogger()` from `src/logger/index.ts`. Logger auto-tags module, supports structured fields, rotation, and transport layers.
+Rationale: `console.*` bypasses log level filtering, structured output, rotation, and transport. When a production issue occurs, `console.*` output may not reach the configured log sink.
+
+Exception: `console.error` in top-level entry points (`src/server.ts` startup, signal handlers) where logger may not be initialized yet. Document with comment.
+
+## Fire-and-forget `void` without `.catch()`
+Violation: `void someAsyncFunction()` or `promise.catch(() => {})` (empty catch).
+Fix: `void asyncFn().catch((err) => getLogger().child({ module }).warn("description", err))` or similar.
+Rationale: Unhandled promise rejections crash Node/Bun processes. Empty `.catch()` swallows diagnostic info. Log at minimum `warn` level.
+
+Exception: Fire-and-forget DB writes inside hot streaming loops (e.g., `processStreamingChunk` status updates) — the race is intentional and documented. Wrap in `.catch(logger.warn)` still required.
+
+## Missing ownership check in route handlers
+Violation: GET/PUT/DELETE `/api/:resource/:id` that reads/updates/deletes without verifying `resource.created_by === userId` (or `chat.user_id` for nested resources).
+Fix: After fetching the resource, add `if (resource.created_by !== userId) return jsonError("Not found", 404)`.
+Rationale: Without ownership guard, any authenticated user can read/modify/delete any other user's data. Apply to all route handlers that access resources by ID. Use 404 (not 403) to avoid leaking resource existence.
+
+## `void promise.then(...)` without `.catch()`
+Violation: `void loadMessages().then(() => updateStatus("ok"))` without chained `.catch()`.
+Fix: Add `.catch((err) => console.error("...", err))` or `getLogger().error(...)`.
+Rationale: Promise rejection in `.then()` chain crashes process if unhandled.
+
 ## Allocation-heavy chain methods in hot paths
 Violation: `items.map(f).filter(g).map(h).reduce(r, init)` in request handlers, generation pipelines, loops processing 1000+ items, or any O(n) function called per-request.
 Fix: Single `for..of` pass with combined transform/filter logic, or single `.reduce()` accumulating transformed + filtered results. Pre-allocate result array when size is known (`new Array(len)`). Use in-place mutation (`splice`, index assignment) for same-collection edits.
