@@ -2,7 +2,7 @@
 
 ## Overview
 
-The Terminal User Interface (TUI) for loop-lore is built using the `blessed` and `blessed-contrib` libraries, providing a terminal-based chat interface with integrated asset viewer and assistant features.
+The Terminal User Interface (TUI) for loop-lore is built using the `blessed` and `blessed-contrib` libraries, providing a terminal-based chat interface with integrated asset viewer.
 
 ## Technology Stack
 
@@ -18,7 +18,7 @@ The Terminal User Interface (TUI) for loop-lore is built using the `blessed` and
 2. **Chat View**: Displays message history and handles user input
 3. **Asset View**: Displays assets linked to the current chat
 4. **Input Handler**: Manages user input and submits messages
-5. **Service Integrations**: Connects to backend APIs for assets and assistant
+5. **Service Integrations**: Connects to backend APIs
 
 ## Component Details
 
@@ -34,19 +34,19 @@ The Terminal User Interface (TUI) for loop-lore is built using the `blessed` and
 - Displays message history in a scrollable log
 - Methods:
   - `addMessage(message: string)`: Adds a message to the chat log
-  - `setChatId(chatId: string)`: Sets the current chat and loads its gallery
-  - `loadGalleryForChat()`: Fetches and displays gallery for current chat
-  - `addToGallery(url: string, type: string, caption?: string)`: Adds item to gallery linked to current chat
+  - `setChatId(chatId: string)`: Sets the current chat and loads its assets
+  - `loadAssetsForChat()`: Fetches and displays assets for current chat
+  - `addAsset(url: string, type: string, caption?: string)`: Adds asset linked to current chat
 - UI: Log widget with scrolling capabilities
 
-### Gallery View (`src/tui/gallery-view.ts`)
+### Asset View (`src/tui/asset-view.ts`)
 
-- Displays gallery items for the current chat with navigation
+- Displays assets for the current chat with navigation
 - Features:
-  - Left/Right arrow navigation through gallery items
-  - Enter key to "link" item (visual feedback)
-  - Delete key to remove item from gallery
-  - Displays item details (type, URL, caption)
+  - Left/Right arrow navigation through assets
+  - Enter key to "link" asset (visual feedback)
+  - Delete key to remove asset from chat
+  - Displays asset details (type, URL, caption)
 - UI: Box widget showing current item details and controls
 
 ### Input Handler (`src/tui/input.ts`)
@@ -67,17 +67,17 @@ The Terminal User Interface (TUI) for loop-lore is built using the `blessed` and
    - Application sends message to backend assistant API
    - Assistant response is displayed in chat view
 
-2. **Gallery Interaction**:
-   - When chat ID is set, chat view loads gallery for that chat
-   - Gallery view displays items for the current chat
-   - User navigates gallery with left/right arrows
-   - Pressing Enter on an item provides visual feedback (item is already linked via chatId)
-   - Pressing Delete removes the item from gallery and refreshes view
+2. **Asset Interaction**:
+   - When chat ID is set, chat view loads assets for that chat
+   - Asset view displays assets for the current chat
+   - User navigates assets with left/right arrows
+   - Pressing Enter on an asset provides visual feedback (asset is already linked via chatId)
+   - Pressing Delete removes the asset from chat and refreshes view
 
-3. **Gallery Updates**:
-   - Adding to gallery: Chat view calls gallery service to add item linked to current chat
-   - After addition, gallery view refreshes to show new item
-   - Gallery view also refreshes when navigating away and back to a chat
+3. **Asset Updates**:
+   - Adding assets: Chat view calls asset service to add asset linked to current chat
+   - After addition, asset view refreshes to show new asset
+   - Asset view also refreshes when navigating away and back to a chat
 
 ## Styling and Theming
 
@@ -92,17 +92,17 @@ The Terminal User Interface (TUI) for loop-lore is built using the `blessed` and
   - Escape/q/Ctrl+C: Quit application
 - **Chat View**:
   - Up/Down Arrow: Scroll message history
-- **Gallery View** (when active):
-  - Left/Right Arrow: Navigate gallery items
-  - Enter: Link current item to chat (feedback only)
-  - Delete: Remove current item from gallery
+- **Asset View** (when active):
+  - Left/Right Arrow: Navigate asset items
+  - Enter: Link current asset to chat (feedback only)
+  - Delete: Remove current asset from chat
 - **Input**:
   - Enter: Submit message
   - Up/Down Arrow: Navigate command history (if implemented)
 
 ## Integration with Backend
 
-- Gallery Service: Communicates with `/api/gallery` endpoints
+- Asset Service: Communicates with `/api/assets` endpoints
 - Assistant Service: Communicates with `/api/assistant` endpoint
 - Base URL configured via environment variables or relative to current origin
 
@@ -117,8 +117,8 @@ The Terminal User Interface (TUI) for loop-lore is built using the `blessed` and
 
 ### State Management
 
-- Current chat ID is shared between chat view and gallery view
-- Gallery data is fetched per chat and cached in the gallery view
+- Current chat ID is shared between chat view and asset view
+- Asset data is fetched per chat and cached in the asset view
 - Loading states could be added for better UX (future improvement)
 
 ### Extensibility
@@ -131,18 +131,18 @@ The Terminal User Interface (TUI) for loop-lore is built using the `blessed` and
 
 1. **Theming Support**: Allow custom color schemes
 2. **Mouse Support**: Enable mouse interactions where supported by terminal
-3. **Enhanced Gallery**: Thumbnail previews, image viewing
+3. **Enhanced Assets**: Thumbnail previews, image viewing
 4. **Command History**: In input box for easy recall
-5. **Split Screen Views**: Multiple panes for chat, gallery, and user list
+5. **Split Screen Views**: Multiple panes for chat, assets, and user list
 6. **Custom Keybindings**: User-configurable keyboard shortcuts
 
 ## Related Files
 
 - `src/tui/app.ts` - Main TUI application entry point
 - `src/tui/chat.ts` - Chat display and interaction
-- `src/tui/gallery-view.ts` - Gallery browsing and interaction
+- `src/tui/asset-view.ts` - Asset browsing and interaction
 - `src/tui/input.ts` - User input handling
-- `src/gallery/` - Gallery service and API routes
+- `src/assets/` - Asset service and API routes
 - `src/assistant/` - Assistant service and API routes
 
 ## Reference Implementation

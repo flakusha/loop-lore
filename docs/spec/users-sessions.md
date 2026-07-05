@@ -11,24 +11,22 @@ Both models share the same underlying session storage and message handling. The 
 
 ## User Model
 
-Full table definition: [`docs/schema.md`](./schema.md#table-users).
+Full table definition in `src/db/schema-core.ts` → `Users` interface.
 
-### Fields
+**Key fields:**
 
-```
-User {
-  id:           UUID (primary)
-  username:     string (unique)
-  displayName:  string
-  passwordHash: string (nullable for demo users)
-  role:         UserRole
-  settings:     JSON (preferences, UI config)
-  birthDate:    string (nullable, ISO date — age gate)
-  ageGateAcceptedAt: string (nullable, ISO timestamp — age gate)
-  createdAt:    timestamp
-  lastSeenAt:   timestamp
-}
-```
+- `id` — UUID (primary key)
+- `username` — string (unique)
+- `display_name` — string
+- `password_hash` — string (nullable for demo users, hashed with scrypt)
+- `role` — `UserRole` (admin | user | viewer | solo)
+- `settings` — JSON (preferences, UI config)
+- `birth_date` — string (nullable, ISO date — age gate)
+- `age_gate_accepted_at` — string (nullable, ISO timestamp — age gate)
+- `created_at` — timestamp
+- `last_seen_at` — timestamp
+
+Password hashing: **scrypt** (native Bun `Bun.password.hash`). No bcrypt/argon2 deps for MVP.
 
 ### Roles
 
@@ -53,40 +51,40 @@ User {
 | Configure age gate                       | ✓     |        |        |      |
 | View docs (hidden sections)              | all   | public | public | all  |
 
-## Session Management
+## Session Model
+
+Full table definition in `src/db/schema-core.ts` → `Sessions` interface.
 
 ### Remote Multi-User Sessions
 
 - Session token stored in DB (not in-memory) — survives server restart
-- Token: signed JWT or opaque UUID with server-side lookup
+- Token: **opaque UUID + SHA-256 hash** (no JWT for MVP). The UUID is the bearer token; only its SHA-256 hash is stored in DB.
 - Multiple simultaneous sessions per user allowed (configurable max)
 - Session timeout configurable (default: 24h idle)
 - Sessions visible to user: `/api/sessions` lists active sessions
 - Force-logout remote session from session list
 
+### Rate Limiting
+
+Applied per-IP to auth endpoints:
+
+| Endpoint           | Rate Limit     |
+| ------------------ | -------------- |
+| `POST /api/auth/login`  | 10 requests/min |
+| `POST /api/auth/register` | 3 requests/hr  |
+
+Rate limit headers returned: `X-RateLimit-Remaining`, `X-RateLimit-Reset`.
+On violation: `429 Too Many Requests` with `ErrorCode.TOO_MANY_REQUESTS`.
+
 ### Local Demo / Solo Sessions
 
-- No authentication required
-- Single implicit user (role: solo)
+- No authentication required — `auth.required = false`
+- Single implicit user (role: `solo`)
 - Session created on first request, persisted in DB
 - Works over HTTP or HTTPS (cert config optional)
 - Auto-creates demo data on first run (sample character, welcome chat)
-
-### Session Storage
-
-```
-Session {
-  id:           UUID
-  userId:       UUID (nullable for anonymous/demo)
-  token:        string (hashed)
-  ip:           string
-  userAgent:    string
-  createdAt:    timestamp
-  lastActivity: timestamp
-  expiresAt:    timestamp
-  metadata:     JSON (extra context)
-}
-```
+- **No permission checks** — solo user has full access within own session
+- **Demo → Live switch not supported** — changing `auth.required` mid-session breaks DX
 
 ## HTTPS Support
 
@@ -118,27 +116,16 @@ Session {
 
 ## Configuration
 
+Config keys defined in `src/config/schema.ts` → `AuthConfig`.
+
+Env overrides:
+
 ```env
-# Session config
-SESSION_MAX_PER_USER=10
-SESSION_TIMEOUT_HOURS=24
-SESSION_SECRET=change-me-to-random-string
-
-# Auth
-AUTH_REQUIRED=true                  # false = demo/solo mode
+AUTH_REQUIRED=true                  # true=multi-user, false=demo/solo
 AUTH_REGISTRATION_OPEN=true         # allow new user registration
-
-# Age gate / verification
-AGE_GATE_ENABLED=false              # true = users must verify age
-AGE_GATE_MINIMUM_AGE=18             # minimum age requirement
-AGE_GATE_MODE=self-declaration      # none | self-declaration | verification
-
-# TLS (auto-generated self-signed if files missing)
-TLS_KEY=./data/certs/key.pem
-TLS_CERT=./data/certs/cert.pem
-
-# Demo mode
-DEMO_MODE=true                      # skip auth, create solo user
-DEMO_USERNAME=demo
-DEMO_AUTO_SETUP=true                # create sample data on first run
+SESSION_TIMEOUT_HOURS=24            # idle session timeout
+SESSION_MAX_PER_USER=10             # max simultaneous sessions
 ```
+
+Auth endpoints documented in `docs/spec/api-routes.md`.
+Rate limiting: per-IP, hardcoded in middleware for MVP (see `docs/spec/auth-middleware.md`).
