@@ -133,8 +133,285 @@ function createSchema(database: Database): void {
       name TEXT NOT NULL,
       description TEXT,
       lore TEXT,
+      scan_depth INTEGER NOT NULL DEFAULT 100,
+      token_budget INTEGER NOT NULL DEFAULT 2000,
+      difficulty_modifier REAL NOT NULL DEFAULT 1,
+      difficulty_reroll TEXT NOT NULL DEFAULT 'off',
+      difficulty_state TEXT NOT NULL DEFAULT 'alive',
       created_at TEXT NOT NULL DEFAULT (datetime('now')),
       updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+    );
+    CREATE TABLE locations (
+      id TEXT PRIMARY KEY,
+      world_id TEXT NOT NULL REFERENCES worlds(id),
+      name TEXT NOT NULL,
+      description TEXT,
+      connections TEXT NOT NULL DEFAULT '[]',
+      parent_location_id TEXT REFERENCES locations(id),
+      created_at TEXT NOT NULL DEFAULT (datetime('now')),
+      updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+    );
+    CREATE TABLE items (
+      id TEXT PRIMARY KEY,
+      world_id TEXT NOT NULL REFERENCES worlds(id),
+      name TEXT NOT NULL,
+      description TEXT,
+      category TEXT NOT NULL,
+      rarity TEXT NOT NULL DEFAULT 'common',
+      stackable INTEGER NOT NULL DEFAULT 0,
+      max_stack INTEGER NOT NULL DEFAULT 1,
+      properties TEXT NOT NULL DEFAULT '{}',
+      value INTEGER NOT NULL DEFAULT 0,
+      weight REAL NOT NULL DEFAULT 0,
+      created_at TEXT NOT NULL DEFAULT (datetime('now')),
+      updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+    );
+    CREATE TABLE world_items (
+      id TEXT PRIMARY KEY,
+      world_id TEXT NOT NULL REFERENCES worlds(id),
+      item_id TEXT NOT NULL REFERENCES items(id),
+      location_id TEXT REFERENCES locations(id),
+      owner_actor_id TEXT REFERENCES actors(id),
+      quantity INTEGER NOT NULL DEFAULT 1,
+      visibility TEXT NOT NULL DEFAULT 'visible',
+      spawn_condition TEXT,
+      respawnable INTEGER NOT NULL DEFAULT 0,
+      created_at TEXT NOT NULL DEFAULT (datetime('now')),
+      updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+    );
+    CREATE TABLE actor_memories (
+      id TEXT PRIMARY KEY,
+      actor_id TEXT NOT NULL REFERENCES actors(id),
+      source_chat_id TEXT REFERENCES chats(id),
+      content TEXT NOT NULL,
+      memory_type TEXT NOT NULL DEFAULT 'fact',
+      confidence REAL NOT NULL DEFAULT 1,
+      importance INTEGER NOT NULL DEFAULT 1,
+      keywords TEXT DEFAULT '[]',
+      created_at TEXT NOT NULL DEFAULT (datetime('now')),
+      updated_at TEXT NOT NULL DEFAULT (datetime('now')),
+      expires_at TEXT
+    );
+    CREATE TABLE actor_notes (
+      id TEXT PRIMARY KEY,
+      actor_id TEXT NOT NULL REFERENCES actors(id),
+      title TEXT NOT NULL,
+      content TEXT NOT NULL,
+      category TEXT NOT NULL DEFAULT 'general',
+      pinned INTEGER NOT NULL DEFAULT 0,
+      sort_order INTEGER NOT NULL DEFAULT 0,
+      created_at TEXT NOT NULL DEFAULT (datetime('now')),
+      updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+    );
+    CREATE TABLE actor_items (
+      id TEXT PRIMARY KEY,
+      actor_id TEXT NOT NULL REFERENCES actors(id),
+      name TEXT NOT NULL,
+      description TEXT,
+      item_type TEXT NOT NULL,
+      quantity INTEGER NOT NULL DEFAULT 1,
+      value TEXT,
+      weight REAL,
+      tags TEXT DEFAULT '[]',
+      metadata TEXT DEFAULT '{}',
+      equipped INTEGER NOT NULL DEFAULT 0,
+      sort_order INTEGER NOT NULL DEFAULT 0,
+      created_at TEXT NOT NULL DEFAULT (datetime('now')),
+      updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+    );
+    CREATE TABLE actor_lore_entries (
+      id TEXT PRIMARY KEY,
+      actor_id TEXT NOT NULL REFERENCES actors(id),
+      name TEXT,
+      content TEXT NOT NULL,
+      keys TEXT NOT NULL DEFAULT '[]',
+      secondary_keys TEXT DEFAULT '[]',
+      selective INTEGER NOT NULL DEFAULT 0,
+      case_sensitive INTEGER NOT NULL DEFAULT 0,
+      enabled INTEGER NOT NULL DEFAULT 1,
+      constant INTEGER NOT NULL DEFAULT 0,
+      position TEXT NOT NULL DEFAULT 'before_char',
+      insertion_order INTEGER NOT NULL DEFAULT 100,
+      priority INTEGER NOT NULL DEFAULT 100,
+      comment TEXT,
+      sort_order INTEGER NOT NULL DEFAULT 0,
+      created_at TEXT NOT NULL DEFAULT (datetime('now')),
+      updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+    );
+    CREATE TABLE world_lore_entries (
+      id TEXT PRIMARY KEY,
+      world_id TEXT NOT NULL REFERENCES worlds(id),
+      name TEXT,
+      content TEXT NOT NULL,
+      keys TEXT NOT NULL DEFAULT '[]',
+      secondary_keys TEXT DEFAULT '[]',
+      selective INTEGER NOT NULL DEFAULT 0,
+      case_sensitive INTEGER NOT NULL DEFAULT 0,
+      enabled INTEGER NOT NULL DEFAULT 1,
+      constant INTEGER NOT NULL DEFAULT 0,
+      position TEXT NOT NULL DEFAULT 'before_char',
+      insertion_order INTEGER NOT NULL DEFAULT 100,
+      priority INTEGER NOT NULL DEFAULT 100,
+      comment TEXT,
+      sort_order INTEGER NOT NULL DEFAULT 0,
+      created_at TEXT NOT NULL DEFAULT (datetime('now')),
+      updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+    );
+    CREATE TABLE actor_keys (
+      id TEXT PRIMARY KEY,
+      actor_id TEXT NOT NULL REFERENCES actors(id),
+      name TEXT NOT NULL,
+      key_type TEXT NOT NULL,
+      encrypted_key TEXT,
+      public_key TEXT,
+      created_at TEXT NOT NULL DEFAULT (datetime('now')),
+      expires_at TEXT,
+      status TEXT NOT NULL DEFAULT 'active'
+    );
+    CREATE TABLE user_api_keys (
+      id TEXT PRIMARY KEY,
+      user_id TEXT NOT NULL REFERENCES users(id),
+      provider_name TEXT NOT NULL,
+      api_key_encrypted TEXT NOT NULL,
+      created_at TEXT NOT NULL DEFAULT (datetime('now')),
+      updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+    );
+    CREATE TABLE generation_attempts (
+      id TEXT PRIMARY KEY,
+      chat_id TEXT NOT NULL REFERENCES chats(id),
+      parent_message_id TEXT NOT NULL REFERENCES messages(id),
+      actor_id TEXT NOT NULL REFERENCES actors(id),
+      idempotency_key TEXT NOT NULL,
+      model_id TEXT NOT NULL,
+      provider TEXT NOT NULL,
+      status TEXT NOT NULL DEFAULT 'pending',
+      cancel_reason TEXT,
+      cancel_reason_detail TEXT,
+      cancel_source TEXT,
+      abort_signal_id TEXT,
+      started_at TEXT NOT NULL DEFAULT (datetime('now')),
+      completed_at TEXT,
+      prompt_tokens INTEGER,
+      completion_tokens INTEGER,
+      total_tokens INTEGER,
+      generation_time_ms INTEGER,
+      error_message TEXT,
+      streaming_chunks_received INTEGER,
+      streaming_chars_received INTEGER,
+      repetition_score REAL,
+      repetition_analysis TEXT,
+      policy_analysis TEXT,
+      response_count_in_turn INTEGER,
+      parent_attempt_id TEXT REFERENCES generation_attempts(id),
+      continuation_count INTEGER DEFAULT 0,
+      partial_content TEXT,
+      step_index INTEGER DEFAULT 0,
+      total_steps INTEGER DEFAULT 1,
+      created_at TEXT NOT NULL DEFAULT (datetime('now')),
+      updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+    );
+    CREATE TABLE story_turns (
+      id TEXT PRIMARY KEY,
+      chat_id TEXT NOT NULL REFERENCES chats(id),
+      turn_number INTEGER NOT NULL,
+      actor_id TEXT NOT NULL REFERENCES actors(id),
+      turn_type TEXT NOT NULL,
+      prompt_sent TEXT NOT NULL,
+      response_received TEXT,
+      quality_score REAL,
+      quality_details TEXT,
+      regeneration_count INTEGER NOT NULL DEFAULT 0,
+      status TEXT NOT NULL DEFAULT 'pending',
+      gm_decision TEXT,
+      world_events TEXT NOT NULL DEFAULT '[]',
+      quest_progress TEXT NOT NULL DEFAULT '[]',
+      started_at TEXT NOT NULL DEFAULT (datetime('now')),
+      completed_at TEXT,
+      created_at TEXT NOT NULL DEFAULT (datetime('now')),
+      updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+    );
+    CREATE TABLE quests (
+      id TEXT PRIMARY KEY,
+      world_id TEXT NOT NULL REFERENCES worlds(id),
+      creator_id TEXT NOT NULL REFERENCES actors(id),
+      name TEXT NOT NULL,
+      description TEXT,
+      type TEXT NOT NULL,
+      status TEXT NOT NULL DEFAULT 'active',
+      priority INTEGER NOT NULL DEFAULT 0,
+      config TEXT NOT NULL DEFAULT '{}',
+      progress INTEGER NOT NULL DEFAULT 0,
+      target INTEGER NOT NULL,
+      start_time TEXT,
+      deadline TEXT,
+      time_location_id TEXT REFERENCES locations(id),
+      rewards TEXT NOT NULL DEFAULT '{}',
+      narrative_hooks TEXT NOT NULL DEFAULT '[]',
+      created_at TEXT NOT NULL DEFAULT (datetime('now')),
+      updated_at TEXT NOT NULL DEFAULT (datetime('now')),
+      completed_at TEXT
+    );
+    CREATE TABLE quest_progress (
+      id TEXT PRIMARY KEY,
+      quest_id TEXT NOT NULL REFERENCES quests(id),
+      chat_id TEXT NOT NULL REFERENCES chats(id),
+      progress INTEGER NOT NULL DEFAULT 0,
+      status TEXT NOT NULL DEFAULT 'active',
+      contributed_events TEXT NOT NULL DEFAULT '[]',
+      started_at TEXT NOT NULL DEFAULT (datetime('now')),
+      created_at TEXT NOT NULL DEFAULT (datetime('now')),
+      updated_at TEXT NOT NULL DEFAULT (datetime('now')),
+      completed_at TEXT
+    );
+    CREATE TABLE world_states (
+      id TEXT PRIMARY KEY,
+      world_id TEXT NOT NULL REFERENCES worlds(id),
+      snapshot TEXT NOT NULL,
+      trigger_message_id TEXT REFERENCES messages(id),
+      trigger_turn_id TEXT REFERENCES story_turns(id),
+      description TEXT,
+      created_at TEXT NOT NULL DEFAULT (datetime('now'))
+    );
+    CREATE TABLE npc_states (
+      id TEXT PRIMARY KEY,
+      actor_id TEXT NOT NULL REFERENCES actors(id),
+      world_id TEXT NOT NULL REFERENCES worlds(id),
+      location_id TEXT REFERENCES locations(id),
+      health INTEGER NOT NULL DEFAULT 100,
+      mental_state TEXT NOT NULL DEFAULT 'calm',
+      knowledge TEXT NOT NULL DEFAULT '{}',
+      relationships TEXT NOT NULL DEFAULT '{}',
+      inventory TEXT NOT NULL DEFAULT '[]',
+      schedule TEXT NOT NULL DEFAULT '{}',
+      created_at TEXT NOT NULL DEFAULT (datetime('now')),
+      updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+    );
+    CREATE TABLE location_states (
+      id TEXT PRIMARY KEY,
+      location_id TEXT NOT NULL REFERENCES locations(id),
+      world_id TEXT NOT NULL REFERENCES worlds(id),
+      description_override TEXT,
+      atmosphere TEXT,
+      npcs_present TEXT NOT NULL DEFAULT '[]',
+      items_available TEXT NOT NULL DEFAULT '[]',
+      time_of_day TEXT,
+      weather TEXT,
+      hazards TEXT NOT NULL DEFAULT '[]',
+      created_at TEXT NOT NULL DEFAULT (datetime('now')),
+      updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+    );
+    CREATE TABLE synthetic_data (
+      id TEXT PRIMARY KEY,
+      chat_id TEXT REFERENCES chats(id),
+      world_id TEXT REFERENCES worlds(id),
+      type TEXT NOT NULL,
+      source_data TEXT NOT NULL,
+      generated_cases TEXT NOT NULL,
+      metadata TEXT NOT NULL DEFAULT '{}',
+      status TEXT NOT NULL DEFAULT 'generated',
+      created_at TEXT NOT NULL DEFAULT (datetime('now')),
+      validated_at TEXT,
+      validated_by TEXT REFERENCES actors(id)
     )
   `);
   database.run("CREATE INDEX idx_sessions_user_id ON sessions(user_id)");
@@ -149,6 +426,24 @@ function createSchema(database: Database): void {
   database.run("CREATE INDEX idx_messages_actor ON messages(actor_id)");
   database.run("CREATE INDEX idx_assets_owner ON assets(owner_id)");
   database.run("CREATE INDEX idx_asset_links_entity ON asset_links(entity_type, entity_id)");
+  database.run("CREATE INDEX idx_locations_world ON locations(world_id)");
+  database.run("CREATE INDEX idx_items_world ON items(world_id)");
+  database.run("CREATE INDEX idx_world_items_world ON world_items(world_id)");
+  database.run("CREATE INDEX idx_actor_memories_actor ON actor_memories(actor_id)");
+  database.run("CREATE INDEX idx_actor_notes_actor ON actor_notes(actor_id)");
+  database.run("CREATE INDEX idx_actor_items_actor ON actor_items(actor_id)");
+  database.run("CREATE INDEX idx_actor_lore_actor ON actor_lore_entries(actor_id)");
+  database.run("CREATE INDEX idx_world_lore_world ON world_lore_entries(world_id)");
+  database.run("CREATE INDEX idx_actor_keys_actor_id ON actor_keys(actor_id)");
+  database.run("CREATE INDEX idx_user_api_keys_user_provider ON user_api_keys(user_id, provider_name)");
+  database.run("CREATE INDEX idx_generation_attempts_chat ON generation_attempts(chat_id)");
+  database.run("CREATE INDEX idx_story_turns_chat ON story_turns(chat_id)");
+  database.run("CREATE INDEX idx_quests_world ON quests(world_id)");
+  database.run("CREATE INDEX idx_quest_progress_quest ON quest_progress(quest_id)");
+  database.run("CREATE INDEX idx_world_states_world ON world_states(world_id)");
+  database.run("CREATE INDEX idx_npc_states_actor ON npc_states(actor_id)");
+  database.run("CREATE INDEX idx_location_states_location ON location_states(location_id)");
+  database.run("CREATE INDEX idx_synthetic_data_chat ON synthetic_data(chat_id)");
 }
 
 type Row = Record<string, unknown>;
@@ -168,15 +463,33 @@ describe("Database schema", () => {
       .all() as Row[];
     const names = tables.map((t) => t.name as string);
     expect(names).toEqual([
+      "actor_items",
+      "actor_keys",
+      "actor_lore_entries",
+      "actor_memories",
+      "actor_notes",
       "actors",
       "asset_links",
       "assets",
       "characters",
       "chat_participants",
       "chats",
+      "generation_attempts",
+      "items",
+      "location_states",
+      "locations",
       "messages",
+      "npc_states",
+      "quest_progress",
+      "quests",
       "sessions",
+      "story_turns",
+      "synthetic_data",
+      "user_api_keys",
       "users",
+      "world_items",
+      "world_lore_entries",
+      "world_states",
       "worlds",
     ]);
   });
