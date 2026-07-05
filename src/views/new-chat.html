@@ -6,7 +6,10 @@
       <span class="title">New Chat</span>
     </header>
 
-    <div class="chat-area" style="overflow-y: auto; justify-content: center; align-items: flex-start; padding-top: var(--space-12)">
+    <div
+      class="chat-area"
+      style="overflow-y: auto; justify-content: center; align-items: flex-start; padding-top: var(--space-12)"
+    >
       <div style="width: 100%; max-width: 480px; padding: 0 var(--space-4)">
         <div class="empty-state" style="margin-bottom: var(--space-6)">
           <div class="icon">💬</div>
@@ -47,12 +50,33 @@
           </div>
 
           <div class="form-group" x-show="error" x-cloak>
-            <p class="error-msg" x-text="error" style="color: var(--text-danger)" data-testid="chat-error"></p>
+            <p
+              class="error-msg"
+              x-text="error"
+              style="color: var(--text-danger)"
+              data-testid="chat-error"
+            ></p>
           </div>
 
-          <div style="display: flex; gap: var(--space-3); justify-content: flex-end; margin-top: var(--space-6)">
-            <a class="btn btn-secondary" href="/views/chat" hx-get="/views/chat" hx-target="#app-root" hx-swap="innerHTML" data-testid="cancel-create-chat">Cancel</a>
-            <button type="submit" class="btn btn-primary" :disabled="submitting" x-text="submitting ? 'Creating...' : 'Create Chat'" data-testid="create-chat-btn"></button>
+          <div
+            style="display: flex; gap: var(--space-3); justify-content: flex-end; margin-top: var(--space-6)"
+          >
+            <a
+              class="btn btn-secondary"
+              href="/views/chat"
+              hx-get="/views/chat"
+              hx-target="#app-root"
+              hx-swap="innerHTML"
+              data-testid="cancel-create-chat"
+              >Cancel</a
+            >
+            <button
+              type="submit"
+              class="btn btn-primary"
+              :disabled="submitting"
+              x-text="submitting ? 'Creating...' : 'Create Chat'"
+              data-testid="create-chat-btn"
+            ></button>
           </div>
         </form>
       </div>

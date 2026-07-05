@@ -80,7 +80,7 @@ export class PromptAssembler {
       this.db.selectFrom("chats").selectAll().where("id", "=", params.chatId).executeTakeFirstOrThrow(),
     ]);
 
-    const isStory = params.includeStoryContext ?? (chat.mode === ChatMode.Story);
+    const isStory = params.includeStoryContext ?? chat.mode === ChatMode.Story;
     const tokenBudget = params.tokenBudget ?? 32_000;
 
     // ── Section 1: System prompt ──────────────────────────
@@ -131,8 +131,16 @@ export class PromptAssembler {
 
     if (actor.post_history_instructions) {
       const tokens = defaultTokenCount(actor.post_history_instructions);
-      sections.push({ name: "postHistory", chars: actor.post_history_instructions.length, tokens, dropped: false });
-      messages.push({ role: "system", content: `[Post-history instructions]\n${actor.post_history_instructions}` });
+      sections.push({
+        name: "postHistory",
+        chars: actor.post_history_instructions.length,
+        tokens,
+        dropped: false,
+      });
+      messages.push({
+        role: "system",
+        content: `[Post-history instructions]\n${actor.post_history_instructions}`,
+      });
     }
 
     // ── Section 6: Example messages ──────────────────────
@@ -175,7 +183,11 @@ export class PromptAssembler {
       const ordered = sections
         .map((s, i) => ({ ...s, index: i }))
         .filter((s) => !s.dropped && PRIORITY[s.name as keyof typeof PRIORITY] > 0)
-        .sort((a, b) => (PRIORITY[b.name as keyof typeof PRIORITY] ?? 99) - (PRIORITY[a.name as keyof typeof PRIORITY] ?? 99));
+        .sort(
+          (a, b) =>
+            (PRIORITY[b.name as keyof typeof PRIORITY] ?? 99) -
+            (PRIORITY[a.name as keyof typeof PRIORITY] ?? 99),
+        );
 
       for (const section of ordered) {
         if (totalTokens <= tokenBudget) break;
@@ -212,14 +224,16 @@ export class PromptAssembler {
     const loreMessages: GenerationMessage[] = [];
 
     const [actorLore, worldLore] = await Promise.all([
-      this.db.selectFrom("actor_lore_entries")
+      this.db
+        .selectFrom("actor_lore_entries")
         .select(["content", "keys", "position", "constant"])
         .where("actor_id", "=", actorId)
         .where("selective", "=", 0) // non-selective = always include
         .orderBy("position", "asc")
         .execute(),
       worldId
-        ? this.db.selectFrom("world_lore_entries")
+        ? this.db
+            .selectFrom("world_lore_entries")
             .select(["content", "keys", "position", "constant"])
             .where("world_id", "=", worldId)
             .where("selective", "=", 0)
@@ -238,7 +252,8 @@ export class PromptAssembler {
   }
 
   private async buildMemorySection(actorId: string): Promise<GenerationMessage[]> {
-    const memories = await this.db.selectFrom("actor_memories")
+    const memories = await this.db
+      .selectFrom("actor_memories")
       .select(["content", "memory_type", "importance", "keywords"])
       .where("actor_id", "=", actorId)
       .orderBy("importance", "desc")
@@ -247,15 +262,14 @@ export class PromptAssembler {
 
     if (memories.length === 0) return [];
 
-    const memoryText = memories
-      .map((m) => `- [${m.memory_type}] ${m.content}`)
-      .join("\n");
+    const memoryText = memories.map((m) => `- [${m.memory_type}] ${m.content}`).join("\n");
 
     return [{ role: "system", content: `[Memories]\n${memoryText}` }];
   }
 
   private async fetchChatHistory(chatId: string): Promise<GenerationMessage[]> {
-    const rows = await this.db.selectFrom("messages")
+    const rows = await this.db
+      .selectFrom("messages")
       .select(["role", "content", "actor_id"])
       .where("chat_id", "=", chatId)
       .where("status", "=", MessageStatus.Confirmed)
@@ -271,13 +285,17 @@ export class PromptAssembler {
     }));
   }
 
-  private async buildStoryContext(chat: { world_id: string | null; current_location_id: string | null }): Promise<string | null> {
+  private async buildStoryContext(chat: {
+    world_id: string | null;
+    current_location_id: string | null;
+  }): Promise<string | null> {
     if (!chat.world_id) return null;
 
     const parts: string[] = ["[Story Context]"];
 
     if (chat.current_location_id) {
-      const location = await this.db.selectFrom("locations")
+      const location = await this.db
+        .selectFrom("locations")
         .select(["name", "description"])
         .where("id", "=", chat.current_location_id)
         .executeTakeFirst();
@@ -286,7 +304,8 @@ export class PromptAssembler {
         if (location.description) parts.push(`\n${location.description}`);
       }
 
-      const locationState = await this.db.selectFrom("location_states")
+      const locationState = await this.db
+        .selectFrom("location_states")
         .select(["atmosphere", "npcs_present", "time_of_day", "weather"])
         .where("location_id", "=", chat.current_location_id)
         .executeTakeFirst();
@@ -320,11 +339,12 @@ export class PromptAssembler {
 
       const label = trimmed.slice(0, colonIdx).trim().toLowerCase();
       const content = trimmed.slice(colonIdx + 1).trim();
-      const role = label === "assistant" || label === "character" || label === "{{char}}"
-        ? "character"
-        : label === "user" || label === "{{user}}"
-          ? "user"
-          : "user";
+      const role =
+        label === "assistant" || label === "character" || label === "{{char}}"
+          ? "character"
+          : label === "user" || label === "{{user}}"
+            ? "user"
+            : "user";
       examples.push({ role: role, content });
     }
 

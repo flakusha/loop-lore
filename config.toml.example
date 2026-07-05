@@ -108,6 +108,23 @@ openaiCompatible = []
 # contextLimit = 200000
 # maxOutput = 4000
 
+# Example auto-start (spawn llama.cpp / sd-server as child processes):
+# [generation.autoStart.llamaCpp]
+# enabled = true
+# modelPath = "org/repo:Q4_K_M"        # HF ref or /path/to/model.gguf
+# port = 9011
+# ctxSize = 8192
+# extraArgs = ["--alias", "my-model"]
+#
+# [generation.autoStart.sdCpp]
+# enabled = true
+# modelPath = "/path/to/model.safetensors"
+# port = 9010
+# llmPath = "/path/to/text-encoder.gguf"
+# vaePath = "/path/to/vae.safetensors"
+# loraDir = "/path/to/loras"
+# extraArgs = ["--offload-to-cpu"]
+
 [byoKey]
 enabled = true
 # encryptionKey = "optional-override-for-auth.sessionSecret"

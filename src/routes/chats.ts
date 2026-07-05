@@ -36,14 +36,50 @@ import { getRuntimeConfig } from "../age-gate/controller";
 import { getStatus } from "../age-gate/service";
 import { getLogger } from "../logger";
 
-interface ListChatsOpts { database: Kysely<DB>; context: RequestContext; page: number; pageSize: number; }
-interface CreateChatOpts { database: Kysely<DB>; context: RequestContext; body: Record<string, unknown>; }
-interface GetChatOpts { database: Kysely<DB>; context: RequestContext; chatId: string; }
-interface UpdateChatOpts { database: Kysely<DB>; context: RequestContext; chatId: string; body: Record<string, unknown>; }
-interface DeleteChatOpts { database: Kysely<DB>; context: RequestContext; chatId: string; }
-interface ListParticipantsOpts { database: Kysely<DB>; context: RequestContext; chatId: string; }
-interface AddParticipantOpts { database: Kysely<DB>; context: RequestContext; chatId: string; body: Record<string, unknown>; }
-interface RemoveParticipantOpts { database: Kysely<DB>; context: RequestContext; chatId: string; actorId: string; }
+interface ListChatsOpts {
+  database: Kysely<DB>;
+  context: RequestContext;
+  page: number;
+  pageSize: number;
+}
+interface CreateChatOpts {
+  database: Kysely<DB>;
+  context: RequestContext;
+  body: Record<string, unknown>;
+}
+interface GetChatOpts {
+  database: Kysely<DB>;
+  context: RequestContext;
+  chatId: string;
+}
+interface UpdateChatOpts {
+  database: Kysely<DB>;
+  context: RequestContext;
+  chatId: string;
+  body: Record<string, unknown>;
+}
+interface DeleteChatOpts {
+  database: Kysely<DB>;
+  context: RequestContext;
+  chatId: string;
+}
+interface ListParticipantsOpts {
+  database: Kysely<DB>;
+  context: RequestContext;
+  chatId: string;
+}
+interface AddParticipantOpts {
+  database: Kysely<DB>;
+  context: RequestContext;
+  chatId: string;
+  body: Record<string, unknown>;
+}
+interface RemoveParticipantOpts {
+  database: Kysely<DB>;
+  context: RequestContext;
+  chatId: string;
+  actorId: string;
+}
 
 // eslint-disable-next-line sonarjs/cognitive-complexity
 const dispatch: RouteDispatch = async ({ request, context, database }) => {
@@ -103,9 +139,7 @@ const dispatch: RouteDispatch = async ({ request, context, database }) => {
   return null; // Not a chat route
 };
 
-async function handleListChats(
-  { database, context, page, pageSize }: ListChatsOpts,
-): Promise<Response> {
+async function handleListChats({ database, context, page, pageSize }: ListChatsOpts): Promise<Response> {
   const userId = context.userId;
   if (!userId) return jsonError("Unauthorized", HttpStatus.Unauthorized, ErrorCode.Unauthorized);
 
@@ -129,9 +163,7 @@ async function handleListChats(
   return jsonPaginated(chats, total, page, pageSize);
 }
 
-async function handleCreateChat(
-  { database, body, context }: CreateChatOpts,
-): Promise<Response> {
+async function handleCreateChat({ database, body, context }: CreateChatOpts): Promise<Response> {
   const userId = context.userId;
   if (!userId) return jsonError("Unauthorized", HttpStatus.Unauthorized, ErrorCode.Unauthorized);
 
@@ -145,7 +177,11 @@ async function handleCreateChat(
       .executeTakeFirst();
     const status = getStatus(ageGateConfig, user ?? null);
     if (!status.hasPassed) {
-      return jsonError("Age gate not passed. Complete age verification before creating chats.", HttpStatus.Forbidden, ErrorCode.Forbidden);
+      return jsonError(
+        "Age gate not passed. Complete age verification before creating chats.",
+        HttpStatus.Forbidden,
+        ErrorCode.Forbidden,
+      );
     }
   }
 
@@ -163,13 +199,22 @@ async function handleCreateChat(
   const validModes = new Set<string>(Object.values(ChatMode));
   const validStrategies = new Set<string>(Object.values(TurnStrategy));
   if (typeStr && !validTypes.has(typeStr)) {
-    return jsonError(`Invalid chat type: ${typeStr}. Valid: ${[...validTypes].join(", ")}`, HttpStatus.BadRequest);
+    return jsonError(
+      `Invalid chat type: ${typeStr}. Valid: ${[...validTypes].join(", ")}`,
+      HttpStatus.BadRequest,
+    );
   }
   if (modeStr && !validModes.has(modeStr)) {
-    return jsonError(`Invalid chat mode: ${modeStr}. Valid: ${[...validModes].join(", ")}`, HttpStatus.BadRequest);
+    return jsonError(
+      `Invalid chat mode: ${modeStr}. Valid: ${[...validModes].join(", ")}`,
+      HttpStatus.BadRequest,
+    );
   }
   if (turnStrategyStr && !validStrategies.has(turnStrategyStr)) {
-    return jsonError(`Invalid turn strategy: ${turnStrategyStr}. Valid: ${[...validStrategies].join(", ")}`, HttpStatus.BadRequest);
+    return jsonError(
+      `Invalid turn strategy: ${turnStrategyStr}. Valid: ${[...validStrategies].join(", ")}`,
+      HttpStatus.BadRequest,
+    );
   }
 
   const chatId = uid();
@@ -183,7 +228,7 @@ async function handleCreateChat(
       created_by: userId,
       world_id: (worldId as string | undefined) ?? null,
       current_location_id: (currentLocationId as string | undefined) ?? null,
-      turn_strategy: (turnStrategy as string) as TurnStrategy | null,
+      turn_strategy: turnStrategy as string as TurnStrategy | null,
     })
     .execute();
 
@@ -200,16 +245,18 @@ async function handleCreateChat(
         .insertInto("chat_participants")
         .values({ chat_id: chatId, actor_id: actorId, role_in_chat: "member" })
         .execute()
-        .catch((error: unknown) => { getLogger().child({ module: "chats" }).error("Failed to add participant", error instanceof Error ? error : new Error(String(error))); });
+        .catch((error: unknown) => {
+          getLogger()
+            .child({ module: "chats" })
+            .error("Failed to add participant", error instanceof Error ? error : new Error(String(error)));
+        });
     }
   }
 
   return jsonCreated({ id: chatId });
 }
 
-async function handleGetChat(
-  { database, chatId, context }: GetChatOpts,
-): Promise<Response> {
+async function handleGetChat({ database, chatId, context }: GetChatOpts): Promise<Response> {
   const userId = context.userId;
   if (!userId) return jsonError("Unauthorized", HttpStatus.Unauthorized, ErrorCode.Unauthorized);
 
@@ -228,9 +275,7 @@ async function handleGetChat(
   return jsonResponse({ ...chat, participants });
 }
 
-async function handleUpdateChat(
-  { database, chatId, body, context }: UpdateChatOpts,
-): Promise<Response> {
+async function handleUpdateChat({ database, chatId, body, context }: UpdateChatOpts): Promise<Response> {
   const userId = context.userId;
   if (!userId) return jsonError("Unauthorized", HttpStatus.Unauthorized, ErrorCode.Unauthorized);
 
@@ -250,9 +295,7 @@ async function handleUpdateChat(
   return jsonResponse({ ok: true });
 }
 
-async function handleDeleteChat(
-  { database, chatId, context }: DeleteChatOpts,
-): Promise<Response> {
+async function handleDeleteChat({ database, chatId, context }: DeleteChatOpts): Promise<Response> {
   const userId = context.userId;
   if (!userId) return jsonError("Unauthorized", HttpStatus.Unauthorized, ErrorCode.Unauthorized);
 
@@ -268,13 +311,19 @@ async function handleDeleteChat(
   return jsonNoContent();
 }
 
-async function handleListParticipants(
-  { database, chatId, context }: ListParticipantsOpts,
-): Promise<Response> {
+async function handleListParticipants({
+  database,
+  chatId,
+  context,
+}: ListParticipantsOpts): Promise<Response> {
   const userId = context.userId;
   if (!userId) return jsonError("Unauthorized", HttpStatus.Unauthorized, ErrorCode.Unauthorized);
 
-  const chat = await database.selectFrom("chats").select("created_by").where("id", "=", chatId).executeTakeFirst();
+  const chat = await database
+    .selectFrom("chats")
+    .select("created_by")
+    .where("id", "=", chatId)
+    .executeTakeFirst();
   if (!chat || (chat.created_by !== userId && context.userRole !== "admin")) {
     return jsonError("Chat not found", HttpStatus.NotFound);
   }
@@ -288,13 +337,20 @@ async function handleListParticipants(
   return jsonResponse(participants);
 }
 
-async function handleAddParticipant(
-  { database, chatId, body, context }: AddParticipantOpts,
-): Promise<Response> {
+async function handleAddParticipant({
+  database,
+  chatId,
+  body,
+  context,
+}: AddParticipantOpts): Promise<Response> {
   const userId = context.userId;
   if (!userId) return jsonError("Unauthorized", HttpStatus.Unauthorized, ErrorCode.Unauthorized);
 
-  const chat = await database.selectFrom("chats").select("created_by").where("id", "=", chatId).executeTakeFirst();
+  const chat = await database
+    .selectFrom("chats")
+    .select("created_by")
+    .where("id", "=", chatId)
+    .executeTakeFirst();
   if (!chat || (chat.created_by !== userId && context.userRole !== "admin")) {
     return jsonError("Chat not found", HttpStatus.NotFound);
   }
@@ -308,18 +364,29 @@ async function handleAddParticipant(
     .insertInto("chat_participants")
     .values({ chat_id: chatId, actor_id: actorId, role_in_chat: role as ChatParticipantRole })
     .execute()
-    .catch((error: unknown) => { getLogger().child({ module: "chats" }).error("Failed to add participant", error instanceof Error ? error : new Error(String(error))); });
+    .catch((error: unknown) => {
+      getLogger()
+        .child({ module: "chats" })
+        .error("Failed to add participant", error instanceof Error ? error : new Error(String(error)));
+    });
 
   return jsonCreated({ id: actorId });
 }
 
-async function handleRemoveParticipant(
-  { database, chatId, actorId, context }: RemoveParticipantOpts,
-): Promise<Response> {
+async function handleRemoveParticipant({
+  database,
+  chatId,
+  actorId,
+  context,
+}: RemoveParticipantOpts): Promise<Response> {
   const userId = context.userId;
   if (!userId) return jsonError("Unauthorized", HttpStatus.Unauthorized, ErrorCode.Unauthorized);
 
-  const chat = await database.selectFrom("chats").select("created_by").where("id", "=", chatId).executeTakeFirst();
+  const chat = await database
+    .selectFrom("chats")
+    .select("created_by")
+    .where("id", "=", chatId)
+    .executeTakeFirst();
   if (!chat || (chat.created_by !== userId && context.userRole !== "admin")) {
     return jsonError("Chat not found", HttpStatus.NotFound);
   }

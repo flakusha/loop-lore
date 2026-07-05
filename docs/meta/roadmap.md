@@ -5,26 +5,26 @@ code exists in `src/`. Target boxes = planned.
 
 ## ✅ Core Infrastructure (Built)
 
-| Feature | Implementation |
-|---------|---------------|
-| Database schema (19 tables) | `src/db/schema-*.ts`, `migrations/001_init.ts` |
-| Enums (30+ const+type pairs) | `src/db/enums-*.ts` |
-| Kysely init + WAL + FK | `src/db/index.ts` |
-| DB migrate runner | `src/db/migrate.ts` |
-| Config loader (YAML/TOML/env) | `src/config/load.ts` |
-| TLS cert auto-generation | `src/config/cert.ts` |
-| Auth middleware (Bearer+SHA256) | `src/middleware/auth.ts` |
-| Middleware pipeline (compose, errorBoundary) | `src/middleware/pipeline.ts` |
-| Structured logger (levels, rotate, censor) | `src/logger/*.ts` |
-| Content encoding (gzip/zstd/brotli) | `src/content/encode.ts`, `compress.ts` |
-| Content minification | `src/content/minify.ts` |
-| Transport layer (H1/H2/WS/negotiation) | `src/transport/*.ts` |
-| HTTP/HTTPS server | `src/server.ts` |
-| Stats/age-gate generation controllers | `src/age-gate/controller.ts`, `src/generation/controller.ts` |
-| CSS themes (12) + app CSS | `src/public/css/*.css` |
-| Frontend browser lib (crypto/compress) | `src/frontend/browser.ts` |
-| Web UI view templates | `src/views/chat.html`, `gallery.html`, `layout.html`, `settings.html` |
-| HTTP utils | `src/routes/http-utils.ts` |
+| Feature                                      | Implementation                                                        |
+| -------------------------------------------- | --------------------------------------------------------------------- |
+| Database schema (19 tables)                  | `src/db/schema-*.ts`, `migrations/001_init.ts`                        |
+| Enums (30+ const+type pairs)                 | `src/db/enums-*.ts`                                                   |
+| Kysely init + WAL + FK                       | `src/db/index.ts`                                                     |
+| DB migrate runner                            | `src/db/migrate.ts`                                                   |
+| Config loader (YAML/TOML/env)                | `src/config/load.ts`                                                  |
+| TLS cert auto-generation                     | `src/config/cert.ts`                                                  |
+| Auth middleware (Bearer+SHA256)              | `src/middleware/auth.ts`                                              |
+| Middleware pipeline (compose, errorBoundary) | `src/middleware/pipeline.ts`                                          |
+| Structured logger (levels, rotate, censor)   | `src/logger/*.ts`                                                     |
+| Content encoding (gzip/zstd/brotli)          | `src/content/encode.ts`, `compress.ts`                                |
+| Content minification                         | `src/content/minify.ts`                                               |
+| Transport layer (H1/H2/WS/negotiation)       | `src/transport/*.ts`                                                  |
+| HTTP/HTTPS server                            | `src/server.ts`                                                       |
+| Stats/age-gate generation controllers        | `src/age-gate/controller.ts`, `src/generation/controller.ts`          |
+| CSS themes (12) + app CSS                    | `src/public/css/*.css`                                                |
+| Frontend browser lib (crypto/compress)       | `src/frontend/browser.ts`                                             |
+| Web UI view templates                        | `src/views/chat.html`, `gallery.html`, `layout.html`, `settings.html` |
+| HTTP utils                                   | `src/routes/http-utils.ts`                                            |
 
 ## 🏗 Integration Phase (Current Focus)
 

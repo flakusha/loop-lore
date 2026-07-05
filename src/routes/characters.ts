@@ -32,13 +32,44 @@ import {
 } from "./http-utils";
 import { ActorType, AgentType } from "../db/enums";
 
-interface ListActorsOpts { database: Kysely<DB>; page: number; pageSize: number; type?: string; context: RequestContext; }
-interface CreateActorOpts { database: Kysely<DB>; body: Record<string, unknown>; context: RequestContext; }
-interface GetActorOpts { database: Kysely<DB>; actorId: string; context: RequestContext; }
-interface UpdateActorOpts { database: Kysely<DB>; actorId: string; body: Record<string, unknown>; context: RequestContext; }
-interface DeleteActorOpts { database: Kysely<DB>; actorId: string; context: RequestContext; }
-interface ExportCardOpts { database: Kysely<DB>; actorId: string; context: RequestContext; }
-interface ImportActorJsonOpts { body: Record<string, unknown>; database: Kysely<DB>; context: RequestContext; }
+interface ListActorsOpts {
+  database: Kysely<DB>;
+  page: number;
+  pageSize: number;
+  type?: string;
+  context: RequestContext;
+}
+interface CreateActorOpts {
+  database: Kysely<DB>;
+  body: Record<string, unknown>;
+  context: RequestContext;
+}
+interface GetActorOpts {
+  database: Kysely<DB>;
+  actorId: string;
+  context: RequestContext;
+}
+interface UpdateActorOpts {
+  database: Kysely<DB>;
+  actorId: string;
+  body: Record<string, unknown>;
+  context: RequestContext;
+}
+interface DeleteActorOpts {
+  database: Kysely<DB>;
+  actorId: string;
+  context: RequestContext;
+}
+interface ExportCardOpts {
+  database: Kysely<DB>;
+  actorId: string;
+  context: RequestContext;
+}
+interface ImportActorJsonOpts {
+  body: Record<string, unknown>;
+  database: Kysely<DB>;
+  context: RequestContext;
+}
 
 // eslint-disable-next-line sonarjs/cognitive-complexity
 const dispatch: RouteDispatch = async ({ request, context, database }) => {
@@ -95,9 +126,13 @@ const dispatch: RouteDispatch = async ({ request, context, database }) => {
   return null; // Not an actor route
 };
 
-async function handleListActors(
-  { database, page, pageSize, type, context }: ListActorsOpts,
-): Promise<Response> {
+async function handleListActors({
+  database,
+  page,
+  pageSize,
+  type,
+  context,
+}: ListActorsOpts): Promise<Response> {
   const userId = context.userId;
   const offset = (page - 1) * pageSize;
 
@@ -123,9 +158,7 @@ async function handleListActors(
   return jsonPaginated(actors, total, page, pageSize);
 }
 
-async function handleCreateActor(
-  { database, body, context }: CreateActorOpts,
-): Promise<Response> {
+async function handleCreateActor({ database, body, context }: CreateActorOpts): Promise<Response> {
   const userId = context.userId;
   if (!userId) return jsonError("Unauthorized", HttpStatus.Unauthorized, ErrorCode.Unauthorized);
 
@@ -153,9 +186,7 @@ async function handleCreateActor(
   return jsonCreated({ id });
 }
 
-async function handleGetActor(
-  { database, actorId, context }: GetActorOpts,
-): Promise<Response> {
+async function handleGetActor({ database, actorId, context }: GetActorOpts): Promise<Response> {
   const actor = await database.selectFrom("actors").selectAll().where("id", "=", actorId).executeTakeFirst();
   if (!actor) return jsonError("Actor not found", HttpStatus.NotFound, ErrorCode.NotFound);
   if (actor.visibility !== "public" && actor.user_id !== context.userId && context.userRole !== "admin") {
@@ -164,9 +195,7 @@ async function handleGetActor(
   return jsonResponse(actor);
 }
 
-async function handleUpdateActor(
-  { database, actorId, body, context }: UpdateActorOpts,
-): Promise<Response> {
+async function handleUpdateActor({ database, actorId, body, context }: UpdateActorOpts): Promise<Response> {
   const userId = context.userId;
   if (!userId) return jsonError("Unauthorized", HttpStatus.Unauthorized, ErrorCode.Unauthorized);
 
@@ -192,9 +221,7 @@ async function handleUpdateActor(
   return jsonResponse({ ok: true });
 }
 
-async function handleDeleteActor(
-  { database, actorId, context }: DeleteActorOpts,
-): Promise<Response> {
+async function handleDeleteActor({ database, actorId, context }: DeleteActorOpts): Promise<Response> {
   const userId = context.userId;
   if (!userId) return jsonError("Unauthorized", HttpStatus.Unauthorized, ErrorCode.Unauthorized);
 
@@ -209,9 +236,7 @@ async function handleDeleteActor(
   return jsonNoContent();
 }
 
-async function handleExportCard(
-  { database, actorId, context }: ExportCardOpts,
-): Promise<Response> {
+async function handleExportCard({ database, actorId, context }: ExportCardOpts): Promise<Response> {
   const actor = await database.selectFrom("actors").selectAll().where("id", "=", actorId).executeTakeFirst();
   if (!actor) return jsonError("Actor not found", HttpStatus.NotFound, ErrorCode.NotFound);
   if (actor.visibility !== "public" && actor.user_id !== context.userId && context.userRole !== "admin") {
@@ -243,17 +268,17 @@ async function handleExportCard(
   return jsonResponse(card);
 }
 
-function handleImportActorFile(
-  _opts: ImportActorFileOpts,
-): Response {
+function handleImportActorFile(_opts: ImportActorFileOpts): Response {
   return jsonError("File import not yet implemented", HttpStatus.NotImplemented, ErrorCode.NotImplemented);
 }
 
-interface ImportActorFileOpts { request: Request; database: Kysely<DB>; context: RequestContext; }
+interface ImportActorFileOpts {
+  request: Request;
+  database: Kysely<DB>;
+  context: RequestContext;
+}
 
-async function handleImportActorJson(
-  { body, database, context }: ImportActorJsonOpts,
-): Promise<Response> {
+async function handleImportActorJson({ body, database, context }: ImportActorJsonOpts): Promise<Response> {
   const userId = context.userId;
   if (!userId) return jsonError("Unauthorized", HttpStatus.Unauthorized, ErrorCode.Unauthorized);
 
@@ -283,7 +308,12 @@ async function handleImportActorJson(
       creator: (data.creator as string | undefined) ?? null,
       character_version: (data.character_version as string | undefined) ?? null,
       import_spec: body.spec === "chara_card_v2" ? "chara_card_v2" : "raw",
-      alternate_greetings: data.alternate_greetings ? (() => { const r = safeJsonStringify(data.alternate_greetings); return r.ok ? r.value : null; })() : null,
+      alternate_greetings: data.alternate_greetings
+        ? (() => {
+            const r = safeJsonStringify(data.alternate_greetings);
+            return r.ok ? r.value : null;
+          })()
+        : null,
       settings: "{}",
       data_version: 1,
     })

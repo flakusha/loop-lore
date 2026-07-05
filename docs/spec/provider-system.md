@@ -16,10 +16,11 @@ A generation request flows through five stages:
 **1. Request —** Client sends `POST /api/generation/generate` with body `{ chatId, messageId, model?, provider?, preset?, ... }`
 
 **2. Dispatch —** `generation/controller.ts` calls `resolveProvider()` which checks sources in order:
-   - User API key in `user_api_keys` table (if exists and `allowUserApiKey`)
-   - Chat default (`chats.settings.provider` / `chats.settings.model`)
-   - Actor default (`actors.settings.provider` / `actors.settings.model`)
-   - Server default (`config.generation.defaultProvider` + `config.generation.defaultModels`)
+
+- User API key in `user_api_keys` table (if exists and `allowUserApiKey`)
+- Chat default (`chats.settings.provider` / `chats.settings.model`)
+- Actor default (`actors.settings.provider` / `actors.settings.model`)
+- Server default (`config.generation.defaultProvider` + `config.generation.defaultModels`)
 
 **3. Prompt Assembly —** `assistant/prompt-assembler.ts` queries DB for actors, messages, memories, lore. Assembles `GenerationMessage[]` respecting token budget. Returns `{ messages, systemPrompt, tokenCount, sections }`
 
@@ -126,7 +127,12 @@ export interface LLMProvider {
   stream(req: GenerateRequest, handler: StreamHandler): Promise<GenerateResponse>;
 
   /** Health check */
-  healthCheck(): Promise<{ status: "ok" | "degraded" | "down"; model?: string; latencyMs?: number; error?: string }>;
+  healthCheck(): Promise<{
+    status: "ok" | "degraded" | "down";
+    model?: string;
+    latencyMs?: number;
+    error?: string;
+  }>;
 
   /** List available models (GET /v1/models) */
   listModels(): Promise<string[]>;
@@ -207,15 +213,15 @@ interface ImageProviderConfig {
 
 Env vars for auto-config (llama-server already documented in `llm-serving.md`):
 
-| Variable | Purpose |
-|---|---|
-| `LOOPLORE_DEFAULT_PROVIDER` | Default provider name |
+| Variable                                | Purpose                        |
+| --------------------------------------- | ------------------------------ |
+| `LOOPLORE_DEFAULT_PROVIDER`             | Default provider name          |
 | `LOOPLORE_OPENAI_COMPATIBLE_n_BASE_URL` | Nth OpenAI-compatible base URL |
-| `LOOPLORE_OPENAI_COMPATIBLE_n_API_KEY` | Nth API key |
-| `LOOPLORE_OPENAI_COMPATIBLE_n_MODEL` | Nth default model |
-| `LOOPLORE_ANTHROPIC_API_KEY` | Anthropic API key |
-| `LOOPLORE_OLLAMA_BASE_URL` | Ollama endpoint |
-| `LOOPLORE_SD_BASE_URL` | SD server endpoint |
+| `LOOPLORE_OPENAI_COMPATIBLE_n_API_KEY`  | Nth API key                    |
+| `LOOPLORE_OPENAI_COMPATIBLE_n_MODEL`    | Nth default model              |
+| `LOOPLORE_ANTHROPIC_API_KEY`            | Anthropic API key              |
+| `LOOPLORE_OLLAMA_BASE_URL`              | Ollama endpoint                |
+| `LOOPLORE_SD_BASE_URL`                  | SD server endpoint             |
 
 ---
 
@@ -248,6 +254,7 @@ export function resolveProvider(
 4. **Server default** — `config.generation.defaultProvider` + `config.generation.defaultModels`
 
 BYO API key flow:
+
 - User enters API key in Settings → `POST /api/settings/api-keys`
 - Server encrypts with `auth.sessionSecret` (AES-256-GCM)
 - Stored in `user_api_keys` table: `user_id, provider, encrypted_key, key_prefix (first 8 chars for UI display), created_at`
@@ -370,7 +377,7 @@ The prompt assembler (`src/assistant/prompt-assembler.ts`, spec'd in `prompt-cre
 ```typescript
 interface AssembledPrompt {
   messages: GenerationMessage[];
-  systemPrompt?: string;          // separate for Anthropic
+  systemPrompt?: string; // separate for Anthropic
   tokenCount: number;
   tokenBudget: number;
   sections: PromptSectionReport[];
@@ -418,14 +425,14 @@ Current `GameMasterService.llmDecision()` builds a prompt string. Updated flow:
 
 ## Error Handling
 
-| Scenario | Provider Behavior | Pipeline Behavior |
-|---|---|---|
-| 400 Bad Request | Throw | Fail, surface to user (no retry) |
-| 401 Unauthorized | Throw | Surface "API key invalid", suggest key update |
-| 429 Rate limited | Throw with retry-after | Retry with exponential backoff |
-| 5xx Server error | Throw | Retry up to `retries`, then fail |
-| Timeout | Abort via signal | Surface timeout error, partial content if any |
-| SSE disconnect mid-stream | Try reconnect once | Surface partial content, `cancelled: true` |
+| Scenario                  | Provider Behavior      | Pipeline Behavior                             |
+| ------------------------- | ---------------------- | --------------------------------------------- |
+| 400 Bad Request           | Throw                  | Fail, surface to user (no retry)              |
+| 401 Unauthorized          | Throw                  | Surface "API key invalid", suggest key update |
+| 429 Rate limited          | Throw with retry-after | Retry with exponential backoff                |
+| 5xx Server error          | Throw                  | Retry up to `retries`, then fail              |
+| Timeout                   | Abort via signal       | Surface timeout error, partial content if any |
+| SSE disconnect mid-stream | Try reconnect once     | Surface partial content, `cancelled: true`    |
 
 Retry: exponential backoff with jitter, `retryBackoffMs` base, max `retries` attempts.
 

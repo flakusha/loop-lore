@@ -16,14 +16,14 @@ Core tables for loop-lore. Designed for:
 
 ## Source Files
 
-| File | Tables |
-|---|---|
-| `src/db/migrations/001_init.ts` | DDL for all 27 tables — column types, constraints, defaults, indexes |
-| `src/db/schema-core.ts` | Users, Sessions, Chats, Actors, ChatParticipants, Characters, Messages, ActorKeys |
-| `src/db/schema-content.ts` | Assets, AssetLinks |
-| `src/db/schema-generation.ts` | GenerationAttempts |
-| `src/db/schema-story.ts` | Worlds, Locations, Items, WorldItems, StoryTurns, Quests, QuestProgress, WorldStates, NpcStates, LocationStates, ActorMemories, ActorLoreEntries, WorldLoreEntries |
-| `src/db/schema-synthetic.ts` | SyntheticData |
+| File                            | Tables                                                                                                                                                             |
+| ------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `src/db/migrations/001_init.ts` | DDL for all 27 tables — column types, constraints, defaults, indexes                                                                                               |
+| `src/db/schema-core.ts`         | Users, Sessions, Chats, Actors, ChatParticipants, Characters, Messages, ActorKeys                                                                                  |
+| `src/db/schema-content.ts`      | Assets, AssetLinks                                                                                                                                                 |
+| `src/db/schema-generation.ts`   | GenerationAttempts                                                                                                                                                 |
+| `src/db/schema-story.ts`        | Worlds, Locations, Items, WorldItems, StoryTurns, Quests, QuestProgress, WorldStates, NpcStates, LocationStates, ActorMemories, ActorLoreEntries, WorldLoreEntries |
+| `src/db/schema-synthetic.ts`    | SyntheticData                                                                                                                                                      |
 
 Centralized enum definitions: `src/db/enums-*.ts` domain files (core, content, generation, story, config),
 re-exported via `src/db/enums.ts` barrel.
@@ -98,8 +98,8 @@ chain can be squashed into a single `001_init.ts` that creates all tables at onc
 
 ### Current Migration Sequence
 
-| #   | File          | Tables |
-| --- | ------------- | ------ |
+| #   | File          | Tables                                                                                                                                                                                                                                                                                                                                                                |
+| --- | ------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 001 | `001_init.ts` | All 27 tables: users, sessions, worlds, locations, items, world_items, chats, actors, chat_participants, characters, assets, asset_links, messages, actor_keys, actor_memories, actor_notes, actor_items, actor_lore_entries, world_lore_entries, generation_attempts, story_turns, quests, quest_progress, world_states, npc_states, location_states, synthetic_data |
 
 ### Migration Pattern

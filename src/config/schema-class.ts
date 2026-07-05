@@ -10,12 +10,26 @@
 // This file provides derived artifacts.
 
 import type {
-  Config, ServerConfig, DbConfig as DatabaseConfig, AssetsConfig,
-  AssistantConfig, LoggingConfig, TuiConfig, DocumentationConfig,
-  AgeGateConfig, AuthConfig, TransportConfig, TransportCompressionConfig,
-  TransportLimitsConfig, MessagesConfig, NsfwConfig,
-  GenerationConfig, GenerationProvidersConfig, ProviderInstanceConfig,
+  Config,
+  ServerConfig,
+  DbConfig as DatabaseConfig,
+  AssetsConfig,
+  AssistantConfig,
+  LoggingConfig,
+  TuiConfig,
+  DocumentationConfig,
+  AgeGateConfig,
+  AuthConfig,
+  TransportConfig,
+  TransportCompressionConfig,
+  TransportLimitsConfig,
+  MessagesConfig,
+  NsfwConfig,
+  GenerationConfig,
+  GenerationProvidersConfig,
+  ProviderInstanceConfig,
   ByoKeyConfig,
+  EncryptionConfig,
 } from "./schema";
 import { DbType, LogLevel, AgeGateMode } from "../db/enums";
 import { DATA_DIR } from "./constants";
@@ -132,6 +146,12 @@ export class ConfigSchema {
     enabled: true,
   } satisfies ByoKeyConfig;
 
+  readonly encryption = {
+    required: false,
+    compressThreshold: 128,
+    compressAlgorithm: "gzip",
+  } satisfies EncryptionConfig;
+
   // ── ENV_MAP generation ─────────────────────────────────
 
   /** Build flat ENV_VAR → dot.path mapping from all section fields */
@@ -142,7 +162,7 @@ export class ConfigSchema {
     const add = (prefix: string, obj: Record<string, unknown>) => {
       for (const [key, val] of Object.entries(obj)) {
         const path = `${prefix}.${key}`;
-        const envKey = path.replaceAll('.', "_").toUpperCase();
+        const envKey = path.replaceAll(".", "_").toUpperCase();
         if (val && typeof val === "object" && !Array.isArray(val)) {
           add(path, val as Record<string, unknown>);
         } else {
@@ -165,6 +185,7 @@ export class ConfigSchema {
     add("nsfw", s.nsfw);
     add("generation", s.generation);
     add("byoKey", s.byoKey);
+    add("encryption", s.encryption);
 
     // Manual overrides for renamed/mapped env vars
     map.PORT = "server.port";
@@ -213,6 +234,10 @@ export class ConfigSchema {
     map.LLM_DEFAULT_PROVIDER = "generation.defaultProvider";
     map.BYO_KEY_ENABLED = "byoKey.enabled";
     map.BYO_KEY_ENCRYPTION_KEY = "byoKey.encryptionKey";
+    map.SERVER_ENCRYPTION_KEY = "encryption.serverEncryptionKey";
+    map.ENCRYPTION_REQUIRED = "encryption.required";
+    map.COMPRESS_THRESHOLD = "encryption.compressThreshold";
+    map.COMPRESS_ALGORITHM = "encryption.compressAlgorithm";
     map.TESTING_LLAMA_MODEL = "testing.llamaModel";
     map.TESTING_SD_MODEL = "testing.sdModel";
     map.TESTING_LLAMA_PORT = "testing.llamaPort";
@@ -258,14 +283,28 @@ export class ConfigSchema {
           type: "object",
           description: "HTTP server configuration",
           properties: {
-            port: { type: "integer", minimum: 0, maximum: 65_535, default: 3000, description: "Server port (0 = random)" },
+            port: {
+              type: "integer",
+              minimum: 0,
+              maximum: 65_535,
+              default: 3000,
+              description: "Server port (0 = random)",
+            },
             host: { type: "string", default: "localhost", description: "Server host" },
             tls: {
               type: "object",
               description: "TLS certificate configuration",
               properties: {
-                key: { type: "string", default: `${DATA_DIR}/certs/key.pem`, description: "Path to TLS private key (PEM)" },
-                cert: { type: "string", default: `${DATA_DIR}/certs/cert.pem`, description: "Path to TLS certificate (PEM)" },
+                key: {
+                  type: "string",
+                  default: `${DATA_DIR}/certs/key.pem`,
+                  description: "Path to TLS private key (PEM)",
+                },
+                cert: {
+                  type: "string",
+                  default: `${DATA_DIR}/certs/cert.pem`,
+                  description: "Path to TLS certificate (PEM)",
+                },
               },
               required: ["key", "cert"],
             },
@@ -276,8 +315,17 @@ export class ConfigSchema {
           type: "object",
           description: "Database configuration",
           properties: {
-            type: { type: "string", enum: ["sqlite", "postgres"], default: "sqlite", description: "Database type" },
-            sqliteFilename: { type: "string", default: `${DATA_DIR}/loop-lore.db`, description: "SQLite database file path" },
+            type: {
+              type: "string",
+              enum: ["sqlite", "postgres"],
+              default: "sqlite",
+              description: "Database type",
+            },
+            sqliteFilename: {
+              type: "string",
+              default: `${DATA_DIR}/loop-lore.db`,
+              description: "SQLite database file path",
+            },
             url: { type: "string", description: "PostgreSQL connection URL" },
           },
           required: ["type", "sqliteFilename"],
@@ -287,8 +335,17 @@ export class ConfigSchema {
           description: "Asset storage configuration",
           properties: {
             enabled: { type: "boolean", default: true, description: "Enable asset uploads" },
-            uploadDir: { type: "string", default: `${DATA_DIR}/uploads`, description: "Directory for uploaded assets" },
-            maxFileSize: { type: "integer", minimum: 0, default: 10_485_760, description: "Max upload size in bytes (default 10 MB)" },
+            uploadDir: {
+              type: "string",
+              default: `${DATA_DIR}/uploads`,
+              description: "Directory for uploaded assets",
+            },
+            maxFileSize: {
+              type: "integer",
+              minimum: 0,
+              default: 10_485_760,
+              description: "Max upload size in bytes (default 10 MB)",
+            },
             compression: { type: "boolean", default: true, description: "Compress uploaded assets" },
           },
           required: ["enabled", "uploadDir", "maxFileSize", "compression"],
@@ -305,13 +362,26 @@ export class ConfigSchema {
           type: "object",
           description: "Logging configuration",
           properties: {
-            level: { type: "string", enum: ["debug", "info", "warn", "error"], default: "debug", description: "Log level" },
+            level: {
+              type: "string",
+              enum: ["debug", "info", "warn", "error"],
+              default: "debug",
+              description: "Log level",
+            },
             jsonlPath: { type: "string", description: "JSONL output path" },
-            jsonlMaxBytes: { type: "integer", default: 104_857_600, description: "Max JSONL file bytes before rotation" },
+            jsonlMaxBytes: {
+              type: "integer",
+              default: 104_857_600,
+              description: "Max JSONL file bytes before rotation",
+            },
             jsonlMaxFiles: { type: "integer", default: 5, description: "Max rotated files to keep" },
             dbEnabled: { type: "boolean", default: false, description: "Enable DB log transport" },
             censorEnabled: { type: "boolean", default: true, description: "PII redaction" },
-            censorFields: { type: "array", items: { type: "string" }, description: "Extra PII field patterns" },
+            censorFields: {
+              type: "array",
+              items: { type: "string" },
+              description: "Extra PII field patterns",
+            },
             queueMaxSize: { type: "integer", default: 10_000, description: "Max queue entries" },
             maxMessageBytes: { type: "integer", default: 10_240, description: "Max message string bytes" },
             maxMetaBytes: { type: "integer", default: 102_400, description: "Max meta blob bytes" },
@@ -331,7 +401,11 @@ export class ConfigSchema {
           type: "object",
           properties: {
             enabled: { type: "boolean", default: true, description: "Enable documentation serving" },
-            public: { type: "array", items: { type: "string" }, description: "Allowlist of doc path prefixes" },
+            public: {
+              type: "array",
+              items: { type: "string" },
+              description: "Allowlist of doc path prefixes",
+            },
           },
           required: ["enabled"],
         },
@@ -341,7 +415,12 @@ export class ConfigSchema {
           properties: {
             enabled: { type: "boolean", default: false, description: "Enable age gating" },
             minimumAge: { type: "integer", default: 18, description: "Minimum required age" },
-            mode: { type: "string", enum: ["none", "self-declaration", "verification"], default: "self-declaration", description: "Age gate mode" },
+            mode: {
+              type: "string",
+              enum: ["none", "self-declaration", "verification"],
+              default: "self-declaration",
+              description: "Age gate mode",
+            },
           },
           required: ["enabled", "minimumAge", "mode"],
         },
@@ -351,18 +430,41 @@ export class ConfigSchema {
           properties: {
             required: { type: "boolean", default: false, description: "Require remote multi-user auth" },
             registrationOpen: { type: "boolean", default: true, description: "Allow new user registration" },
-            sessionTimeoutHours: { type: "integer", default: 24, description: "Idle session timeout in hours" },
-            maxSessionsPerUser: { type: "integer", default: 10, description: "Max simultaneous sessions per user" },
+            sessionTimeoutHours: {
+              type: "integer",
+              default: 24,
+              description: "Idle session timeout in hours",
+            },
+            maxSessionsPerUser: {
+              type: "integer",
+              default: 10,
+              description: "Max simultaneous sessions per user",
+            },
             demoUsername: { type: "string", default: "demo", description: "Demo username" },
-            demoAutoSetup: { type: "boolean", default: true, description: "Auto-create sample data on first demo run" },
+            demoAutoSetup: {
+              type: "boolean",
+              default: true,
+              description: "Auto-create sample data on first demo run",
+            },
           },
-          required: ["required", "registrationOpen", "sessionTimeoutHours", "maxSessionsPerUser", "demoUsername", "demoAutoSetup"],
+          required: [
+            "required",
+            "registrationOpen",
+            "sessionTimeoutHours",
+            "maxSessionsPerUser",
+            "demoUsername",
+            "demoAutoSetup",
+          ],
         },
         transport: {
           type: "object",
           description: "Transport configuration",
           properties: {
-            defaultProtocol: { type: "string", enum: ["http/1.1", "http/2", "http/3", "websocket", "webtransport", "tcp", "tls"], default: "http/1.1" },
+            defaultProtocol: {
+              type: "string",
+              enum: ["http/1.1", "http/2", "http/3", "websocket", "webtransport", "tcp", "tls"],
+              default: "http/1.1",
+            },
             enableWebSocket: { type: "boolean", default: true },
             enableWebTransport: { type: "boolean", default: false },
             enableH2: { type: "boolean", default: false },
@@ -386,20 +488,55 @@ export class ConfigSchema {
               required: ["maxFrameSize", "maxPayload", "maxConcurrentStreams"],
             },
           },
-          required: ["defaultProtocol", "enableWebSocket", "enableWebTransport", "enableH2", "enableH3", "compression", "limits"],
+          required: [
+            "defaultProtocol",
+            "enableWebSocket",
+            "enableWebTransport",
+            "enableH2",
+            "enableH3",
+            "compression",
+            "limits",
+          ],
         },
         messages: {
           type: "object",
           description: "Message configuration",
           properties: {
-            autoHideInvalid: { type: "boolean", default: false, description: "Auto-mark invalid messages as hidden" },
-            hideConfirmation: { type: "boolean", default: true, description: "Require confirmation before hiding" },
+            autoHideInvalid: {
+              type: "boolean",
+              default: false,
+              description: "Auto-mark invalid messages as hidden",
+            },
+            hideConfirmation: {
+              type: "boolean",
+              default: true,
+              description: "Require confirmation before hiding",
+            },
             maxLength: { type: "integer", default: 100_000, description: "Max content length" },
-            maxGenerationRetries: { type: "integer", default: 3, description: "Max auto-retry on LLM failure" },
-            generationTimeoutMs: { type: "integer", default: 30_000, description: "LLM response timeout in ms" },
-            idempotencyExpiryHours: { type: "integer", default: 24, description: "Idempotency key TTL in hours" },
+            maxGenerationRetries: {
+              type: "integer",
+              default: 3,
+              description: "Max auto-retry on LLM failure",
+            },
+            generationTimeoutMs: {
+              type: "integer",
+              default: 30_000,
+              description: "LLM response timeout in ms",
+            },
+            idempotencyExpiryHours: {
+              type: "integer",
+              default: 24,
+              description: "Idempotency key TTL in hours",
+            },
           },
-          required: ["autoHideInvalid", "hideConfirmation", "maxLength", "maxGenerationRetries", "generationTimeoutMs", "idempotencyExpiryHours"],
+          required: [
+            "autoHideInvalid",
+            "hideConfirmation",
+            "maxLength",
+            "maxGenerationRetries",
+            "generationTimeoutMs",
+            "idempotencyExpiryHours",
+          ],
         },
         nsfw: {
           type: "object",
@@ -417,11 +554,47 @@ export class ConfigSchema {
             providers: {
               type: "object",
               properties: {
-                openaiCompatible: { type: "array", default: [], description: "OpenAI-compatible provider instances" },
+                openaiCompatible: {
+                  type: "array",
+                  default: [],
+                  description: "OpenAI-compatible provider instances",
+                },
               },
             },
             defaultProvider: { type: "string", default: "", description: "Default provider name" },
             defaultModels: { type: "object", default: {}, description: "Default model per provider" },
+            autoStart: {
+              type: "object",
+              description: "Auto-spawn external AI servers at startup",
+              properties: {
+                llamaCpp: {
+                  type: "object",
+                  description: "Spawn llama.cpp server as child process",
+                  properties: {
+                    enabled: { type: "boolean", default: false, description: "Enable auto-start" },
+                    modelPath: { type: "string", description: "GGUF path or HF ref (org/repo:quant)" },
+                    port: { type: "integer", default: 9011, description: "llama-server port" },
+                    ctxSize: { type: "integer", default: 8192, description: "Context size in tokens" },
+                    extraArgs: { type: "array", items: { type: "string" }, description: "Extra CLI args" },
+                  },
+                  required: ["enabled", "modelPath", "port"],
+                },
+                sdCpp: {
+                  type: "object",
+                  description: "Spawn sd-server as child process",
+                  properties: {
+                    enabled: { type: "boolean", default: false, description: "Enable auto-start" },
+                    modelPath: { type: "string", description: "Path to .safetensors SDXL model" },
+                    port: { type: "integer", default: 9010, description: "sd-server port" },
+                    llmPath: { type: "string", description: "Text encoder GGUF path" },
+                    vaePath: { type: "string", description: "VAE safetensors path" },
+                    loraDir: { type: "string", description: "LoRA directory path" },
+                    extraArgs: { type: "array", items: { type: "string" }, description: "Extra CLI args" },
+                  },
+                  required: ["enabled", "modelPath", "port"],
+                },
+              },
+            },
           },
         },
         byoKey: {
@@ -434,7 +607,19 @@ export class ConfigSchema {
           required: ["enabled"],
         },
       },
-      required: ["server", "db", "assets", "assistant", "logging", "tui", "docs", "auth", "transport", "messages"],
+      required: [
+        "server",
+        "db",
+        "assets",
+        "assistant",
+        "logging",
+        "tui",
+        "docs",
+        "auth",
+        "transport",
+        "messages",
+        "encryption",
+      ],
     };
   }
 
@@ -456,6 +641,7 @@ export class ConfigSchema {
       nsfw: this.nsfw,
       generation: this.generation,
       byoKey: this.byoKey,
+      encryption: this.encryption,
     };
   }
 }

@@ -66,58 +66,101 @@ describe("ConfigSchema", () => {
   // ── Validation ──────────────────────────────────────────
 
   test("validate passes for valid default config", () => {
-    expect(() => { ConfigSchema.validate(DEFAULTS); }).not.toThrow();
+    expect(() => {
+      ConfigSchema.validate(DEFAULTS);
+    }).not.toThrow();
   });
 
   test("validate throws for invalid db type", () => {
     const cfg = structuredClone(DEFAULTS);
     (cfg.db as unknown as Record<string, unknown>).type = "mongodb";
-    expect(() => { ConfigSchema.validate(cfg); }).toThrow("db.type");
+    expect(() => {
+      ConfigSchema.validate(cfg);
+    }).toThrow("db.type");
   });
 
   test("validate throws for missing postgres url", () => {
     const cfg = structuredClone(DEFAULTS);
     cfg.db.type = "postgres";
     cfg.db.url = undefined;
-    expect(() => { ConfigSchema.validate(cfg); }).toThrow("db.url");
+    expect(() => {
+      ConfigSchema.validate(cfg);
+    }).toThrow("db.url");
   });
 
   test("validate throws for invalid port", () => {
     const cfg = structuredClone(DEFAULTS);
     cfg.server.port = -1;
-    expect(() => { ConfigSchema.validate(cfg); }).toThrow("port");
+    expect(() => {
+      ConfigSchema.validate(cfg);
+    }).toThrow("port");
     cfg.server.port = 100_000;
-    expect(() => { ConfigSchema.validate(cfg); }).toThrow("port");
+    expect(() => {
+      ConfigSchema.validate(cfg);
+    }).toThrow("port");
   });
 
   test("validate throws for invalid log level", () => {
     const cfg = structuredClone(DEFAULTS);
     (cfg.logging as unknown as Record<string, unknown>).level = "verbose";
-    expect(() => { ConfigSchema.validate(cfg); }).toThrow("logging.level");
+    expect(() => {
+      ConfigSchema.validate(cfg);
+    }).toThrow("logging.level");
   });
 
   test("validate throws for provider missing baseUrl", () => {
     const cfg = structuredClone(DEFAULTS);
     cfg.generation.providers.openaiCompatible = [
-      { name: "bad", label: "Bad", model: "", baseUrl: "", timeout: 30_000, retries: 3, allowUserApiKey: false, models: {} },
+      {
+        name: "bad",
+        label: "Bad",
+        model: "",
+        baseUrl: "",
+        timeout: 30_000,
+        retries: 3,
+        allowUserApiKey: false,
+        models: {},
+      },
     ];
-    expect(() => { ConfigSchema.validate(cfg); }).toThrow("baseUrl");
+    expect(() => {
+      ConfigSchema.validate(cfg);
+    }).toThrow("baseUrl");
   });
 
   test("validate throws for provider missing model", () => {
     const cfg = structuredClone(DEFAULTS);
     cfg.generation.providers.openaiCompatible = [
-      { name: "bad", label: "Bad", model: "", baseUrl: "http://localhost/v1", timeout: 30_000, retries: 3, allowUserApiKey: false, models: {} },
+      {
+        name: "bad",
+        label: "Bad",
+        model: "",
+        baseUrl: "http://localhost/v1",
+        timeout: 30_000,
+        retries: 3,
+        allowUserApiKey: false,
+        models: {},
+      },
     ];
-    expect(() => { ConfigSchema.validate(cfg); }).toThrow("model");
+    expect(() => {
+      ConfigSchema.validate(cfg);
+    }).toThrow("model");
   });
 
   test("validate throws for anthropic missing apiKey", () => {
     const cfg = structuredClone(DEFAULTS);
     cfg.generation.providers.anthropic = {
-      name: "ant", label: "Anthropic", model: "claude", baseUrl: "https://api.anthropic.com", timeout: 30_000, retries: 3, allowUserApiKey: false, models: { claude: { contextLimit: 200_000, maxOutput: 4000 } },
+      name: "ant",
+      label: "Anthropic",
+      model: "claude",
+      baseUrl: "https://api.anthropic.com",
+      timeout: 30_000,
+      retries: 3,
+      allowUserApiKey: false,
+      models: { claude: { contextLimit: 200_000, maxOutput: 4000 } },
     };
-    expect(() => { ConfigSchema.validate(cfg); }).toThrow("apiKey");
+    expect(() => {
+      ConfigSchema.validate(cfg);
+    }).toThrow("apiKey");
   });
 
   // ── JSON Schema generation ──────────────────────────────

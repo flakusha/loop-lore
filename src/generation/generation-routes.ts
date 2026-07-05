@@ -7,6 +7,8 @@
  * All return Response objects. Imported by controller.ts dispatch.
  */
 
+import type { Kysely } from "kysely";
+import type { DB } from "../db/schema";
 import { getDatabase } from "../db/index";
 import {
   cancelGenerationByChat,
@@ -35,8 +37,8 @@ import { jsonResponse, jsonError } from "../routes/http-utils";
  *   { attemptId: string }            — cancel by attempt ID
  *   { reason?: string, source?: string, detail?: string }
  */
-export function handleCancelGeneration(body: unknown): Response {
-  const database = getDatabase();
+export function handleCancelGeneration(body: unknown, database?: Kysely<DB>): Response {
+  const db = database ?? getDatabase();
   const input = body as Record<string, unknown>;
 
   const reason = (input.reason ?? CancelReason.UserCancel) as CancelReason;
@@ -62,7 +64,7 @@ export function handleCancelGeneration(body: unknown): Response {
     return jsonError("No active generation found for the given ID", 404);
   }
 
-  const isCancelled = cancelGenerationByChat(database, resolvedChatId, reason, source, detail);
+  const isCancelled = cancelGenerationByChat(db, resolvedChatId, reason, source, detail);
 
   if (!isCancelled) {
     return jsonError("No active generation found or already cancelled", 404);
@@ -84,7 +86,7 @@ export function handleCancelGeneration(body: unknown): Response {
  *
  * Check whether a chat currently has an active generation.
  */
-export function handleGenerationStatus(chatId: string): Response {
+export function handleGenerationStatus(chatId: string, _database: Kysely<DB>): Response {
   if (!chatId) {
     return jsonError("chatId is required", 400);
   }
@@ -121,8 +123,8 @@ export function handleGenerationStatus(chatId: string): Response {
  * Cancel active generation and return retry metadata
  * including which step to resume from in a multi-step pipeline.
  */
-export async function handleRetryGeneration(body: unknown): Promise<Response> {
-  const database = getDatabase();
+export async function handleRetryGeneration(body: unknown, database?: Kysely<DB>): Promise<Response> {
+  const db = database ?? getDatabase();
   const input = body as RetryFromPointRequest;
 
   if (!input.chatId) {
@@ -130,7 +132,7 @@ export async function handleRetryGeneration(body: unknown): Promise<Response> {
   }
 
   const wasActive = cancelGenerationByChat(
-    database,
+    db,
     input.chatId,
     CancelReason.UserCancel,
     CancelSource.User,
@@ -141,7 +143,7 @@ export async function handleRetryGeneration(body: unknown): Promise<Response> {
   let totalSteps = 1;
 
   if (input.attemptId && input.step != null) {
-    const attempt = await database
+    const attempt = await db
       .selectFrom("generation_attempts")
       .select(["step_index", "total_steps"])
       .where("id", "=", input.attemptId)
@@ -178,15 +180,15 @@ export async function handleRetryGeneration(body: unknown): Promise<Response> {
  * Continue a partial/cancelled message. Captures partial content
  * and returns attempt metadata for the frontend to send the LLM request.
  */
-export async function handleContinueGeneration(body: unknown): Promise<Response> {
-  const database = getDatabase();
+export async function handleContinueGeneration(body: unknown, database?: Kysely<DB>): Promise<Response> {
+  const db = database ?? getDatabase();
   const input = body as ContinueRequest;
 
   if (!input.messageId || !input.chatId || !input.actorId) {
     return jsonError("messageId, chatId, and actorId are required", 400);
   }
 
-  const lastAttempt = await database
+  const lastAttempt = await db
     .selectFrom("generation_attempts")
     .selectAll()
     .where("parent_message_id", "=", input.messageId)
@@ -199,13 +201,13 @@ export async function handleContinueGeneration(body: unknown): Promise<Response>
   }
 
   const attempt = lastAttempt;
-  const { content: partialContent } = await getPartialContent(attempt.id, database);
+  const { content: partialContent } = await getPartialContent(attempt.id, db);
 
   if (!partialContent) {
     return jsonError("No partial content available to continue from", 422);
   }
 
-  const continuationCount = await database
+  const continuationCount = await db
     .selectFrom("generation_attempts")
     .selectAll()
     .where("parent_attempt_id", "=", attempt.id)
@@ -240,7 +242,7 @@ export async function handleContinueGeneration(body: unknown): Promise<Response>
  *
  * List all currently active generation attempts (admin/debugging).
  */
-export function handleListActiveGenerations(): Response {
+export function handleListActiveGenerations(_database: Kysely<DB>): Response {
   const active = listActiveGenerations();
   return jsonResponse({
     count: active.length,
@@ -256,8 +258,8 @@ export function handleListActiveGenerations(): Response {
  * Cancel current generation and signal frontend to trigger
  * fresh generation for the same parent message.
  */
-export function handleRegenerate(body: unknown): Response {
-  const database = getDatabase();
+export function handleRegenerate(body: unknown, database?: Kysely<DB>): Response {
+  const db = database ?? getDatabase();
   const input = body as Record<string, unknown>;
   const chatId = input.chatId as string;
 
@@ -266,7 +268,7 @@ export function handleRegenerate(body: unknown): Response {
   }
 
   const wasActive = cancelGenerationByChat(
-    database,
+    db,
     chatId,
     CancelReason.UserCancel,
     CancelSource.User,

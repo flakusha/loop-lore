@@ -257,6 +257,45 @@ interface BedrockProviderConfig {
   models: Record<string, ModelLimits>;
 }
 
+// ── Auto-Start (spawn external servers at startup) ──────────
+
+interface LlamaCppAutoStartConfig {
+  /** Master toggle — false = external server expected */
+  enabled: boolean;
+  /** Path to GGUF model OR HuggingFace identifier (org/repo:quant) */
+  modelPath: string;
+  /** Port for llama-server (default: 9011) */
+  port: number;
+  /** Context size in tokens (default: 8192) */
+  ctxSize?: number;
+  /** Extra CLI args passed to llama-server */
+  extraArgs?: string[];
+}
+
+interface SdCppAutoStartConfig {
+  /** Master toggle — false = external server expected */
+  enabled: boolean;
+  /** Path to .safetensors SDXL model */
+  modelPath: string;
+  /** Port for sd-server (default: 9010) */
+  port: number;
+  /** Path to text encoder GGUF (for SDXL) */
+  llmPath?: string;
+  /** Path to VAE safetensors */
+  vaePath?: string;
+  /** LoRA directory path */
+  loraDir?: string;
+  /** Extra CLI args passed to sd-server */
+  extraArgs?: string[];
+}
+
+interface AutoStartConfig {
+  /** Spawn llama.cpp server as child process at startup */
+  llamaCpp?: LlamaCppAutoStartConfig;
+  /** Spawn sd-server as child process at startup */
+  sdCpp?: SdCppAutoStartConfig;
+}
+
 interface GenerationConfig {
   /** Provider configurations */
   providers: GenerationProvidersConfig;
@@ -264,6 +303,8 @@ interface GenerationConfig {
   defaultProvider: string;
   /** Default model per provider (providerName → modelId) */
   defaultModels: Record<string, string>;
+  /** Auto-spawn external AI servers at startup (llama.cpp, sd.cpp) */
+  autoStart?: AutoStartConfig;
 }
 
 // ── BYO API Key ────────────────────────────────────────────
@@ -273,6 +314,19 @@ interface ByoKeyConfig {
   enabled: boolean;
   /** Encryption key for stored API keys (falls back to auth.sessionSecret) */
   encryptionKey?: string;
+}
+
+// ── Encryption / SMK ────────────────────────────────────────
+
+interface EncryptionConfig {
+  /** 256-bit hex key from SERVER_ENCRYPTION_KEY env var. Missing = encryption disabled (dev mode). */
+  serverEncryptionKey?: string;
+  /** true = refuse to start without SMK (prod guard). Default false. */
+  required: boolean;
+  /** Min bytes before compressing prior to encrypt. Default 128. */
+  compressThreshold: number;
+  /** Preferred compression algorithm. Default gzip. */
+  compressAlgorithm: "gzip" | "brotli" | "zstd";
 }
 
 interface MessagesConfig {
@@ -330,6 +384,7 @@ interface Config {
   nsfw: NsfwConfig;
   generation: GenerationConfig;
   byoKey: ByoKeyConfig;
+  encryption: EncryptionConfig;
   testing?: TestingConfig;
 }
 const DEFAULTS: Config = {
@@ -415,6 +470,11 @@ const DEFAULTS: Config = {
   byoKey: {
     enabled: true,
   },
+  encryption: {
+    required: false,
+    compressThreshold: 128,
+    compressAlgorithm: "gzip",
+  },
 };
 
 // DEAD CODE: Bedrock provider defaults (add when implementing)
@@ -452,7 +512,11 @@ export type {
   ImageProviderDefaults,
   ModelLimits,
   ByoKeyConfig,
+  EncryptionConfig,
   TestingConfig,
   BedrockProviderConfig,
+  AutoStartConfig,
+  LlamaCppAutoStartConfig,
+  SdCppAutoStartConfig,
 };
 export { DEFAULTS };

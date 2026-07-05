@@ -79,6 +79,7 @@ An asset transitions through these states:
 4. **→ `purged`** — File deleted from storage + DB record removed. Irreversible
 
 **Error paths:**
+
 - From `uploading` → **`failed`** — Upload or processing error. Retryable: `failed` → `uploading` (starts fresh upload)
 - From `failed` → **`ready`** — Retry succeeds, asset becomes usable
 

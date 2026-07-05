@@ -23,6 +23,7 @@ import { initAgeGate } from "@/age-gate/controller";
 import { initializeProviders } from "@/generation";
 import { loadConfig } from "@/config/load";
 import { setTestDatabase } from "@/db/index";
+import { initSmk } from "@/crypto";
 import { resetSoloUserCache } from "@/middleware/index";
 import { getDatabase } from "@/db/index";
 import type { DB } from "@/db/schema";
@@ -114,6 +115,8 @@ export async function createBrowserTest(
   const logger = createLogger({ level: "error" });
   setGlobalLogger(logger);
   initAgeGate(config.ageGate);
+  // Reset SMK from any prior unit tests — test config has no encryption key
+  await initSmk(config.encryption);
   initializeProviders(config);
   await loadAllPlugins(db);
 

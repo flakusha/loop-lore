@@ -5,6 +5,7 @@
 Standard response envelope for all API errors. Synchronizes backend error production with frontend error consumption.
 
 Two envelope types:
+
 - **Success**: `{ ...data }` or `{ data, pagination }`
 - **Error**: `{ error, code?, details? }`
 
@@ -36,16 +37,16 @@ interface ValidationErrorDetail {
 
 Centralized enum, single source of truth:
 
-| Code | HTTP | Meaning | Frontend Handler |
-|------|------|---------|-----------------|
-| `BAD_REQUEST` | 400 | Malformed request body/query | Toast: generic |
-| `UNAUTHORIZED` | 401 | Missing/invalid/expired token | Redirect to `/login` |
-| `FORBIDDEN` | 403 | Authenticated but not permitted | Inline: "Not authorized" |
-| `NOT_FOUND` | 404 | Entity doesn't exist | Inline: "Not found" |
-| `VALIDATION_ERROR` | 422 | Field-level validation failed | Inline field errors |
-| `TOO_MANY_REQUESTS` | 429 | Rate limit exceeded | Toast: "Too many attempts, wait N seconds" |
-| `SERVER_ERROR` | 500 | Unhandled server exception | Toast: "Server error, try again" |
-| `NOT_IMPLEMENTED` | 501 | Feature not yet built | Toast: "Not available" |
+| Code                | HTTP | Meaning                         | Frontend Handler                           |
+| ------------------- | ---- | ------------------------------- | ------------------------------------------ |
+| `BAD_REQUEST`       | 400  | Malformed request body/query    | Toast: generic                             |
+| `UNAUTHORIZED`      | 401  | Missing/invalid/expired token   | Redirect to `/login`                       |
+| `FORBIDDEN`         | 403  | Authenticated but not permitted | Inline: "Not authorized"                   |
+| `NOT_FOUND`         | 404  | Entity doesn't exist            | Inline: "Not found"                        |
+| `VALIDATION_ERROR`  | 422  | Field-level validation failed   | Inline field errors                        |
+| `TOO_MANY_REQUESTS` | 429  | Rate limit exceeded             | Toast: "Too many attempts, wait N seconds" |
+| `SERVER_ERROR`      | 500  | Unhandled server exception      | Toast: "Server error, try again"           |
+| `NOT_IMPLEMENTED`   | 501  | Feature not yet built           | Toast: "Not available"                     |
 
 Every error response MUST include the `code` field in production. The `error` (human) + `code` (machine) pair lets frontend dispatch the correct UX per detail level.
 
@@ -261,14 +262,14 @@ async function handleGetChat(req: Request, ctx: RequestContext): Promise<Respons
 
 ### Error Propagation Map
 
-| Service throws | Controller responds |
-|---------------|--------------------|
-| `NotFoundError` | 404 + `NOT_FOUND` |
-| `ForbiddenError` | 403 + `FORBIDDEN` |
-| `ValidationError` | 422 + `VALIDATION_ERROR` |
-| Rate limit (pipeline) | 429 + `TOO_MANY_REQUESTS` |
-| Auth failure (pipeline) | 401 + `UNAUTHORIZED` |
-| `Error` (unexpected) | 500 + `SERVER_ERROR` |
+| Service throws          | Controller responds       |
+| ----------------------- | ------------------------- |
+| `NotFoundError`         | 404 + `NOT_FOUND`         |
+| `ForbiddenError`        | 403 + `FORBIDDEN`         |
+| `ValidationError`       | 422 + `VALIDATION_ERROR`  |
+| Rate limit (pipeline)   | 429 + `TOO_MANY_REQUESTS` |
+| Auth failure (pipeline) | 401 + `UNAUTHORIZED`      |
+| `Error` (unexpected)    | 500 + `SERVER_ERROR`      |
 
 Pipeline errors (auth, rate limit) are handled before the controller — they return directly from middleware. Service errors are caught in the controller and mapped. Remaining `throw`s hit the `errorBoundary` middleware which returns 500.
 
@@ -312,11 +313,11 @@ function dispatchError(status: number, body: ApiError): void {
 
 The backend sends the same `{ error, code, details }` envelope regardless of the user's error feedback mode. The frontend detail mode controls how much of this is displayed:
 
-| Detail Level | Display |
-|-------------|---------|
-| 1 — Immersion | Regenerate button only. Error message + code hidden. |
-| 2 — Balanced | Short reason (first sentence of `error`). "Details" link shows `code`. |
-| 3 — Nerd | Full panel: `error`, `code`, `details`, HTTP status, provider, model, duration. |
+| Detail Level  | Display                                                                         |
+| ------------- | ------------------------------------------------------------------------------- |
+| 1 — Immersion | Regenerate button only. Error message + code hidden.                            |
+| 2 — Balanced  | Short reason (first sentence of `error`). "Details" link shows `code`.          |
+| 3 — Nerd      | Full panel: `error`, `code`, `details`, HTTP status, provider, model, duration. |
 
 ---
 

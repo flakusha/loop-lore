@@ -15,4 +15,3 @@ const THEMES = [
 
 // Attach to globalThis so Bun bundler doesn't inline/drop the const
 globalThis.__THEMES = THEMES;
-

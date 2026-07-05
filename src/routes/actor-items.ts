@@ -90,10 +90,7 @@ async function handleList(opts: {
     .selectFrom("actor_items")
     .select(opts.database.fn.countAll<number>().as("total"))
     .where("actor_id", "=", opts.actorId);
-  let listQuery = opts.database
-    .selectFrom("actor_items")
-    .selectAll()
-    .where("actor_id", "=", opts.actorId);
+  let listQuery = opts.database.selectFrom("actor_items").selectAll().where("actor_id", "=", opts.actorId);
 
   if (opts.itemType) {
     countQuery = countQuery.where("item_type", "=", opts.itemType);
@@ -134,8 +131,14 @@ async function handleCreate(opts: {
       quantity: (opts.body.quantity as number | undefined) ?? 1,
       value: (opts.body.value as string | undefined) ?? null,
       weight: (opts.body.weight as number | undefined) ?? null,
-      tags: (() => { const r = safeJsonStringify(opts.body.tags ?? []); return r.ok ? r.value : "[]"; })(),
-      metadata: (() => { const r = safeJsonStringify(opts.body.metadata ?? {}); return r.ok ? r.value : "{}"; })(),
+      tags: (() => {
+        const r = safeJsonStringify(opts.body.tags ?? []);
+        return r.ok ? r.value : "[]";
+      })(),
+      metadata: (() => {
+        const r = safeJsonStringify(opts.body.metadata ?? {});
+        return r.ok ? r.value : "{}";
+      })(),
       equipped: (opts.body.equipped as number | undefined) ?? 0,
       sort_order: (opts.body.sortOrder as number | undefined) ?? 0,
     })
@@ -150,11 +153,7 @@ async function handleCreate(opts: {
   return jsonCreated(created);
 }
 
-async function handleGet(opts: {
-  database: Kysely<DB>;
-  actorId: string;
-  itemId: string;
-}): Promise<Response> {
+async function handleGet(opts: { database: Kysely<DB>; actorId: string; itemId: string }): Promise<Response> {
   const item = await opts.database
     .selectFrom("actor_items")
     .selectAll()
@@ -200,11 +199,7 @@ async function handleUpdate(opts: {
   }
   updates.updated_at = new Date().toISOString();
 
-  await opts.database
-    .updateTable("actor_items")
-    .set(updates)
-    .where("id", "=", opts.itemId)
-    .execute();
+  await opts.database.updateTable("actor_items").set(updates).where("id", "=", opts.itemId).execute();
 
   const updated = await opts.database
     .selectFrom("actor_items")

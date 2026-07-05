@@ -38,7 +38,21 @@ declare global {
 
   // Extend Window for Alpine.js component functions
   interface Window {
-    app: () => { toasts: Array<{ type: string; msg: string; icon: string }>; currentTheme: string; sidebarOpen: boolean; currentLocale: string; init: () => void; applyTheme: (themeId: string) => void; iconFor: (type: string) => string; closeAllModals: () => void; toast: (type: string, message: string) => void; setTheme: (themeId: string) => void; getThemeName: () => string; loadLocale: (locale: string) => Promise<void>; setLocale: (localeId: string) => void; };
+    app: () => {
+      toasts: Array<{ type: string; msg: string; icon: string }>;
+      currentTheme: string;
+      sidebarOpen: boolean;
+      currentLocale: string;
+      init: () => void;
+      applyTheme: (themeId: string) => void;
+      iconFor: (type: string) => string;
+      closeAllModals: () => void;
+      toast: (type: string, message: string) => void;
+      setTheme: (themeId: string) => void;
+      getThemeName: () => string;
+      loadLocale: (locale: string) => Promise<void>;
+      setLocale: (localeId: string) => void;
+    };
     chatState: () => AlpineState<{
       showChatList: boolean;
       showGallery: boolean;
@@ -51,7 +65,29 @@ declare global {
       isContinuing: boolean;
       chats: Array<{ id: string; name?: string }>;
       activeChat: string | null;
-      messages: Array<{ id: string; role: string; content: string; created_at: string; thinking?: string; actor_name?: string; variantIndex?: number; totalVariants?: number; attachments?: Array<{ assetId: string; order: number; caption: string; label: string; url: string; thumbUrl?: string; filename: string; mimeType: string; type: string; width: number; height: number }> }>;
+      messages: Array<{
+        id: string;
+        role: string;
+        content: string;
+        created_at: string;
+        thinking?: string;
+        actor_name?: string;
+        variantIndex?: number;
+        totalVariants?: number;
+        attachments?: Array<{
+          assetId: string;
+          order: number;
+          caption: string;
+          label: string;
+          url: string;
+          thumbUrl?: string;
+          filename: string;
+          mimeType: string;
+          type: string;
+          width: number;
+          height: number;
+        }>;
+      }>;
       loadingMessages: boolean;
       loadingError: string | null;
       hasMoreMessages: boolean;
@@ -64,7 +100,14 @@ declare global {
       userDisplayName: string;
       userRole: string;
       currentCharacter: { id: string; display_name?: string; name?: string; description?: string } | null;
-      generationDetail: { model?: string; elapsedMs?: number; chunksReceived?: number; charsReceived?: number; status?: string; attemptId?: string } | null;
+      generationDetail: {
+        model?: string;
+        elapsedMs?: number;
+        chunksReceived?: number;
+        charsReceived?: number;
+        status?: string;
+        attemptId?: string;
+      } | null;
       init(): void;
       destroy(): void;
       loadUserInfo(): Promise<void>;
@@ -97,7 +140,29 @@ declare global {
       saveEdit(msgId: string): Promise<void>;
       editingMessageId: string | null;
       editContent: string;
-      groupedMessages: Array<{ id: string; role: string; content: string; created_at: string; thinking?: string; actor_name?: string; group?: boolean; groupCount?: number; attachments?: Array<{ assetId: string; order: number; caption: string; label: string; url: string; thumbUrl?: string; filename: string; mimeType: string; type: string; width: number; height: number }> }>;
+      groupedMessages: Array<{
+        id: string;
+        role: string;
+        content: string;
+        created_at: string;
+        thinking?: string;
+        actor_name?: string;
+        group?: boolean;
+        groupCount?: number;
+        attachments?: Array<{
+          assetId: string;
+          order: number;
+          caption: string;
+          label: string;
+          url: string;
+          thumbUrl?: string;
+          filename: string;
+          mimeType: string;
+          type: string;
+          width: number;
+          height: number;
+        }>;
+      }>;
       renderMarkdown(content: string): string;
       getMediaStyle(asset: any, totalCount: number): Record<string, string>;
       openMediaPreview(asset: any): void;
@@ -111,11 +176,27 @@ declare global {
     }>;
     galleryState: () => AlpineState<{
       showUploadModal: boolean;
-      previewAsset: { id: string; name?: string; filename?: string; asset_type?: string; mime_type?: string; size_bytes?: number; storage_path?: string } | null;
+      previewAsset: {
+        id: string;
+        name?: string;
+        filename?: string;
+        asset_type?: string;
+        mime_type?: string;
+        size_bytes?: number;
+        storage_path?: string;
+      } | null;
       filterType: string;
       searchQuery: string;
       assetCount: number;
-      assets: Array<{ id: string; name?: string; filename?: string; asset_type?: string; mime_type?: string; size_bytes?: number; storage_path?: string }>;
+      assets: Array<{
+        id: string;
+        name?: string;
+        filename?: string;
+        asset_type?: string;
+        mime_type?: string;
+        size_bytes?: number;
+        storage_path?: string;
+      }>;
       loading: boolean;
       uploading: boolean;
       uploadLabel: string;
@@ -191,4 +272,3 @@ declare global {
   var Alpine: Window["Alpine"];
   var htmx: Window["htmx"];
 }
-

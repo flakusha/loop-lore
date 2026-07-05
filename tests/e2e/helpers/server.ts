@@ -17,6 +17,7 @@ import { createLogger, setGlobalLogger } from "@/logger";
 import { initAgeGate } from "@/age-gate/controller";
 import { initializeProviders, registerProvider, getProvider } from "@/generation";
 import { MockLLMProvider } from "@/test-utils/mock-provider";
+import { initSmk } from "@/crypto";
 import type { DB } from "@/db/schema";
 import type { Config } from "@/config/schema";
 import { resetSoloUserCache } from "@/middleware/index";
@@ -110,6 +111,8 @@ export async function createTestServer(
   const logger = createLogger({ level: "error" });
   setGlobalLogger(logger);
   initAgeGate(config.ageGate);
+  // Reset SMK from any prior unit tests — test config has no encryption key
+  await initSmk(config.encryption);
 
   // Initialize providers from config (real or mock)
   let mockProvider: MockLLMProvider | null = null;

@@ -94,6 +94,6 @@ export function negotiate(
   };
 }
 
-export { DEFAULT_CAPABILITIES,    };
+export { DEFAULT_CAPABILITIES };
 
-export {parseAcceptProtocols, parseAcceptEncoding, parseExtensions} from "./negotiation-parsers";
+export { parseAcceptProtocols, parseAcceptEncoding, parseExtensions } from "./negotiation-parsers";

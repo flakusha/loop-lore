@@ -5,7 +5,9 @@
     <header class="main-header">
       <span class="title">Asset Gallery</span>
       <div class="actions">
-        <button class="btn btn-primary" @click="showUploadModal = true" data-testid="upload-button">+ Upload</button>
+        <button class="btn btn-primary" @click="showUploadModal = true" data-testid="upload-button">
+          + Upload
+        </button>
       </div>
     </header>
 
@@ -22,7 +24,8 @@
           <div class="icon">📁</div>
           <div class="title">No assets yet</div>
           <div class="description">
-            Upload images, audio, or video to get started. Assets can be linked to chats, characters, or messages.
+            Upload images, audio, or video to get started. Assets can be linked to chats, characters, or
+            messages.
           </div>
         </div>
       </template>
@@ -51,7 +54,13 @@
     </div>
 
     <!-- Preview modal -->
-    <div x-show="previewAsset" x-cloak class="modal-overlay" @click.self="previewAsset = null" data-testid="preview-modal">
+    <div
+      x-show="previewAsset"
+      x-cloak
+      class="modal-overlay"
+      @click.self="previewAsset = null"
+      data-testid="preview-modal"
+    >
       <div class="modal" style="max-width: 800px">
         <div class="modal-header">
           <span class="title" x-text="previewAsset?.filename || 'Asset'"></span>
@@ -59,13 +68,25 @@
         </div>
         <div class="modal-body" style="padding: 0">
           <template x-if="previewAsset?.asset_type === 'image'">
-            <img :src="'/api/assets/' + previewAsset.id + '/raw'" :alt="previewAsset.filename" style="width: 100%; display: block" />
+            <img
+              :src="'/api/assets/' + previewAsset.id + '/raw'"
+              :alt="previewAsset.filename"
+              style="width: 100%; display: block"
+            />
           </template>
           <template x-if="previewAsset?.asset_type === 'audio'">
-            <audio controls style="width: 100%; padding: var(--space-6)" :src="'/api/assets/' + previewAsset.id + '/raw'"></audio>
+            <audio
+              controls
+              style="width: 100%; padding: var(--space-6)"
+              :src="'/api/assets/' + previewAsset.id + '/raw'"
+            ></audio>
           </template>
           <template x-if="previewAsset?.asset_type === 'video'">
-            <video controls style="width: 100%; display: block" :src="'/api/assets/' + previewAsset.id + '/raw'"></video>
+            <video
+              controls
+              style="width: 100%; display: block"
+              :src="'/api/assets/' + previewAsset.id + '/raw'"
+            ></video>
           </template>
         </div>
         <div class="modal-footer" style="justify-content: space-between">
@@ -78,28 +99,33 @@
               class="btn btn-ghost"
               @click="copyAssetUrl(previewAsset)"
               title="Copy asset URL to clipboard"
-            >📋 Copy URL</button>
+            >
+              📋 Copy URL
+            </button>
             <button
               class="btn btn-ghost"
               @click="linkAssetToChat(previewAsset.id)"
               title="Link this asset to a chat"
-            >🔗 Link to Chat</button>
-            <button
-              class="btn btn-ghost"
-              @click="downloadAsset(previewAsset)"
-              title="Download asset file"
-            >⬇ Download</button>
-            <button
-              class="btn btn-danger"
-              @click="deleteAsset(previewAsset.id)"
-            >🗑 Delete</button>
+            >
+              🔗 Link to Chat
+            </button>
+            <button class="btn btn-ghost" @click="downloadAsset(previewAsset)" title="Download asset file">
+              ⬇ Download
+            </button>
+            <button class="btn btn-danger" @click="deleteAsset(previewAsset.id)">🗑 Delete</button>
           </div>
         </div>
       </div>
     </div>
 
     <!-- Upload modal -->
-    <div x-show="showUploadModal" x-cloak class="modal-overlay" @click.self="showUploadModal = false" data-testid="upload-modal">
+    <div
+      x-show="showUploadModal"
+      x-cloak
+      class="modal-overlay"
+      @click.self="showUploadModal = false"
+      data-testid="upload-modal"
+    >
       <div class="modal">
         <div class="modal-header">
           <span class="title">Upload Asset</span>
@@ -149,5 +175,3 @@
     </div>
   </main>
 </div>
-
-

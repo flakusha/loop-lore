@@ -75,8 +75,13 @@ async function handleList(opts: {
   context: RequestContext;
 }): Promise<Response> {
   const { userId, userRole } = opts.context;
-  const world = await opts.database.selectFrom("worlds").select("owner_id").where("id", "=", opts.worldId).executeTakeFirst();
-  if (!world || (world.owner_id !== userId && userRole !== "admin")) return jsonError("World not found", HttpStatus.NotFound, ErrorCode.NotFound);
+  const world = await opts.database
+    .selectFrom("worlds")
+    .select("owner_id")
+    .where("id", "=", opts.worldId)
+    .executeTakeFirst();
+  if (!world || (world.owner_id !== userId && userRole !== "admin"))
+    return jsonError("World not found", HttpStatus.NotFound, ErrorCode.NotFound);
 
   const offset = (opts.page - 1) * opts.pageSize;
 
@@ -108,8 +113,13 @@ async function handleCreate(opts: {
   context: RequestContext;
 }): Promise<Response> {
   const { userId, userRole } = opts.context;
-  const world = await opts.database.selectFrom("worlds").select("owner_id").where("id", "=", opts.worldId).executeTakeFirst();
-  if (!world || (world.owner_id !== userId && userRole !== "admin")) return jsonError("World not found", HttpStatus.NotFound, ErrorCode.NotFound);
+  const world = await opts.database
+    .selectFrom("worlds")
+    .select("owner_id")
+    .where("id", "=", opts.worldId)
+    .executeTakeFirst();
+  if (!world || (world.owner_id !== userId && userRole !== "admin"))
+    return jsonError("World not found", HttpStatus.NotFound, ErrorCode.NotFound);
 
   const content = opts.body.content as string | undefined;
   if (!content) return jsonError("content is required", HttpStatus.BadRequest);
@@ -123,8 +133,14 @@ async function handleCreate(opts: {
       world_id: opts.worldId,
       name: (opts.body.name as string) ?? null,
       content,
-      keys: (() => { const r = safeJsonStringify(opts.body.keys ?? []); return r.ok ? r.value : "[]"; })(),
-      secondary_keys: (() => { const r = safeJsonStringify(opts.body.secondaryKeys ?? []); return r.ok ? r.value : "[]"; })(),
+      keys: (() => {
+        const r = safeJsonStringify(opts.body.keys ?? []);
+        return r.ok ? r.value : "[]";
+      })(),
+      secondary_keys: (() => {
+        const r = safeJsonStringify(opts.body.secondaryKeys ?? []);
+        return r.ok ? r.value : "[]";
+      })(),
       selective: (opts.body.selective as number) ?? 0,
       case_sensitive: (opts.body.caseSensitive as number) ?? 0,
       enabled: (opts.body.enabled as number) ?? 1,
@@ -161,7 +177,8 @@ async function handleGet(opts: {
     .where("world_lore_entries.world_id", "=", opts.worldId)
     .executeTakeFirst();
 
-  if (!entry || (entry.owner_id !== userId && userRole !== "admin")) return jsonError("Lore entry not found", HttpStatus.NotFound, ErrorCode.NotFound);
+  if (!entry || (entry.owner_id !== userId && userRole !== "admin"))
+    return jsonError("Lore entry not found", HttpStatus.NotFound, ErrorCode.NotFound);
 
   const fullEntry = await opts.database
     .selectFrom("world_lore_entries")
@@ -190,14 +207,27 @@ async function handleUpdate(opts: {
     .where("world_lore_entries.world_id", "=", opts.worldId)
     .executeTakeFirst();
 
-  if (!existing || (existing.owner_id !== userId && userRole !== "admin")) return jsonError("Lore entry not found", HttpStatus.NotFound, ErrorCode.NotFound);
+  if (!existing || (existing.owner_id !== userId && userRole !== "admin"))
+    return jsonError("Lore entry not found", HttpStatus.NotFound, ErrorCode.NotFound);
 
   const updates: Record<string, unknown> = {};
   const strFields = ["name", "content", "position", "comment"] as const;
-  const intFields = ["selective", "caseSensitive", "enabled", "constant", "insertionOrder", "priority", "sortOrder"] as const;
+  const intFields = [
+    "selective",
+    "caseSensitive",
+    "enabled",
+    "constant",
+    "insertionOrder",
+    "priority",
+    "sortOrder",
+  ] as const;
   const intCols: Record<string, string> = {
-    selective: "selective", caseSensitive: "case_sensitive", enabled: "enabled",
-    constant: "constant", insertionOrder: "insertion_order", priority: "priority",
+    selective: "selective",
+    caseSensitive: "case_sensitive",
+    enabled: "enabled",
+    constant: "constant",
+    insertionOrder: "insertion_order",
+    priority: "priority",
     sortOrder: "sort_order",
   };
 
@@ -218,11 +248,7 @@ async function handleUpdate(opts: {
 
   updates.updated_at = new Date().toISOString();
 
-  await opts.database
-    .updateTable("world_lore_entries")
-    .set(updates)
-    .where("id", "=", opts.entryId)
-    .execute();
+  await opts.database.updateTable("world_lore_entries").set(updates).where("id", "=", opts.entryId).execute();
 
   const updated = await opts.database
     .selectFrom("world_lore_entries")

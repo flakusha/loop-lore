@@ -18,11 +18,11 @@ Design goals:
 
 ## Source Files
 
-| File | Covers |
-|---|---|
-| `src/db/migrations/001_init.ts` | DDL for all actor tables — columns, constraints, defaults, indexes |
-| `src/db/schema-core.ts` | `Actors`, `ActorKeys` type interfaces |
-| `src/db/schema-story.ts` | `ActorMemories`, `ActorLoreEntries`, `WorldLoreEntries`, `Items`, `WorldItems` type interfaces |
+| File                            | Covers                                                                                         |
+| ------------------------------- | ---------------------------------------------------------------------------------------------- |
+| `src/db/migrations/001_init.ts` | DDL for all actor tables — columns, constraints, defaults, indexes                             |
+| `src/db/schema-core.ts`         | `Actors`, `ActorKeys` type interfaces                                                          |
+| `src/db/schema-story.ts`        | `ActorMemories`, `ActorLoreEntries`, `WorldLoreEntries`, `Items`, `WorldItems` type interfaces |
 
 Actor-specific child tables (`actor_notes`, `actor_items`) are also defined in `schema-story.ts`.
 The `actors` table itself lives in `schema-core.ts`.
@@ -239,10 +239,10 @@ Both tables share the same structure (see `src/db/schema-story.ts` and `001_init
 
 Two columns on the `worlds` table configure lorebook behavior (already in `001_init.ts`):
 
-| Column          | Type    | Default | Notes                                                       |
-| --------------- | ------- | ------- | ----------------------------------------------------------- |
-| `scan_depth`    | INTEGER | `100`   | How many recent messages to scan for keyword triggers       |
-| `token_budget`  | INTEGER | `2000`  | Max tokens lore entries can consume in a single prompt      |
+| Column         | Type    | Default | Notes                                                  |
+| -------------- | ------- | ------- | ------------------------------------------------------ |
+| `scan_depth`   | INTEGER | `100`   | How many recent messages to scan for keyword triggers  |
+| `token_budget` | INTEGER | `2000`  | Max tokens lore entries can consume in a single prompt |
 
 ### Lore Injection Flow
 
@@ -333,10 +333,10 @@ Export always produces V2 format for maximum compatibility. The exporter:
 
 Characters (actors with `actor_type='character'`) have a **state machine** controlling sharing:
 
-| State     | Meaning                                         |
-| --------- | ----------------------------------------------- |
-| `private` | Only creator (`owner_id`) can use in chats      |
-| `public`  | Any user can discover and use the character     |
+| State     | Meaning                                     |
+| --------- | ------------------------------------------- |
+| `private` | Only creator (`owner_id`) can use in chats  |
+| `public`  | Any user can discover and use the character |
 
 **Transitions:** `private` ↔ `public` (toggle, always allowed).
 
