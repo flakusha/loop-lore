@@ -1,0 +1,60 @@
+<div class="login-page">
+  <div class="login-card">
+    <div class="login-logo">loop-lore</div>
+
+    <div id="login-error" class="login-error" data-testid="login-error" style="display:none"></div>
+
+    <form
+      hx-post="/api/auth/login"
+      hx-target="#login-error"
+      hx-swap="innerHTML"
+      hx-indicator="#login-submit"
+    >
+      <div class="form-field">
+        <label for="username">Username</label>
+        <input
+          type="text"
+          id="username"
+          name="username"
+          required
+          autofocus
+          autocomplete="username"
+          data-testid="username-input"
+        />
+      </div>
+
+      <div class="form-field">
+        <label for="password">Password</label>
+        <input
+          type="password"
+          id="password"
+          name="password"
+          required
+          autocomplete="current-password"
+          data-testid="password-input"
+        />
+      </div>
+
+      <button id="login-submit" type="submit" class="btn btn-primary login-btn" data-testid="login-submit">
+        Log In
+      </button>
+    </form>
+
+    <div class="login-divider"></div>
+
+    <a
+      href="/"
+      class="login-demo-link"
+      hx-post="/api/demo-login"
+      hx-target="body"
+      hx-swap="outerHTML"
+      data-testid="demo-login"
+    >
+      Continue in demo mode
+    </a>
+
+    <a href="/register" class="login-signup-link" data-testid="signup-link">
+      Don't have an account? Sign up
+    </a>
+  </div>
+</div>

@@ -1,24 +1,22 @@
 <!-- Chat View (swapped into #app-root by htmx) -->
 <div class="app-layout" x-data="chatState()">
-  <!-- Hamburger button (visible on all viewports) -->
-  <button
-    class="hamburger"
-    @click="showSidebar = true"
-    aria-label="Open navigation"
-    title="Open navigation"
-  >☰</button>
+  <main class="main-content">
+    <!-- Header -->
+    <header class="main-header">
+      <button class="btn-icon" title="View chats" @click="showChatList = !showChatList" data-testid="toggle-chat-list">☰</button>
+      <span class="title" id="chat-title" x-text="activeChatName">Welcome to loop-lore</span>
+      <div class="actions">
+        <button class="btn-icon" title="Toggle gallery sidebar" @click="showGallery = !showGallery" data-testid="toggle-gallery">🖼</button>
+        <button class="btn-icon" title="Character info" @click="showCharacterInfo = true" data-testid="toggle-character-info">ℹ</button>
+      </div>
+    </header>
 
-  <!-- Left Sidebar (Hamburger drawer) -->
-  <aside class="sidebar" x-show="showSidebar" x-transition>
-    <div class="sidebar-header">
-      <span class="logo">loop-lore</span>
-      <button class="btn-icon" @click="showSidebar = false" title="Close">&times;</button>
-    </div>
-
-    <nav class="sidebar-nav">
-      <div class="nav-section-title">Chats</div>
-
-      <!-- Chat list loaded via Alpine -->
+    <!-- Chat list panel (moved from sidebar for persistence) -->
+    <div class="chat-list-panel" x-show="showChatList" x-transition data-testid="chat-list-panel">
+      <div class="chat-list-header">
+        <span class="nav-section-title">Chats</span>
+        <button class="btn-icon" @click="showChatList = false" title="Close">&times;</button>
+      </div>
       <div id="chat-list">
         <template x-if="chats.length === 0">
           <div class="nav-item" style="color: var(--text-tertiary); font-size: 13px">No chats yet</div>
@@ -34,7 +32,6 @@
           </a>
         </template>
       </div>
-
       <div style="padding: var(--space-3)">
         <a
           class="btn btn-secondary"
@@ -43,86 +40,12 @@
           hx-get="/views/new-chat"
           hx-target="#app-root"
           hx-swap="innerHTML"
+          hx-push-url="true"
         >
           + New Chat
         </a>
       </div>
-
-      <div class="nav-section-title">Characters</div>
-      <a
-        class="nav-item"
-        href="/views/characters"
-        hx-get="/views/characters"
-        hx-target="#app-root"
-        hx-swap="innerHTML"
-      >
-        <span>Browse Characters</span>
-      </a>
-
-      <div class="nav-section-title">Assets</div>
-      <a
-        class="nav-item"
-        href="/views/gallery"
-        hx-get="/views/gallery"
-        hx-target="#app-root"
-        hx-swap="innerHTML"
-      >
-        <span>Asset Gallery</span>
-      </a>
-
-      <div class="nav-section-title">Worlds</div>
-      <a
-        class="nav-item"
-        href="/views/worlds"
-        hx-get="/views/worlds"
-        hx-target="#app-root"
-        hx-swap="innerHTML"
-      >
-        <span>🌍 Worlds</span>
-      </a>
-    </nav>
-
-    <!-- Sidebar footer: user info -->
-    <div class="sidebar-footer">
-      <div class="user-info">
-        <img
-          class="avatar"
-          src="/img/default-avatar.png"
-          alt="User avatar"
-          onerror="this.style.display = 'none'"
-          style="background: var(--bg-tertiary)"
-        />
-        <div class="details">
-          <div class="name" id="user-display-name" x-text="userDisplayName">User</div>
-          <div class="role" id="user-role" x-text="userRole">solo</div>
-        </div>
-        <button
-          class="btn-icon"
-          hx-get="/views/settings"
-          hx-target="#app-root"
-          hx-swap="innerHTML"
-          title="Settings"
-        >
-          ⚙
-        </button>
-      </div>
     </div>
-  </aside>
-
-  <!-- Mobile backdrop (click to close sidebar) -->
-  <div x-show="showSidebar" class="backdrop" x-transition @click="showSidebar = false"></div>
-
-  <!-- Main chat area -->
-  <main class="main-content">
-    <!-- Header -->
-    <header class="main-header">
-      <button class="btn-icon" title="Open navigation" @click="showSidebar = true">☰</button>
-      <span class="title" id="chat-title" x-text="activeChatName">Welcome to loop-lore</span>
-      <div class="actions">
-        <button class="btn-icon" title="Toggle gallery sidebar" @click="showGallery = !showGallery">🖼</button>
-        <button class="btn-icon" title="Character info" @click="showCharacterInfo = true">ℹ</button>
-      </div>
-    </header>
 
     <!-- Chat container (centered) -->
     <div class="chat-container">
@@ -131,7 +54,14 @@
         class="chat-area"
         id="message-list"
         x-ref="messageList"
+        data-testid="message-list"
       >
+        <!-- Infinite scroll sentinel -->
+        <div x-ref="scrollSentinel" id="scroll-sentinel" style="height: 1px"></div>
+        <!-- Loading older indicator -->
+        <div x-show="loadingOlder" class="loading-older">
+          <span class="spinner"></span> Loading older messages...
+        </div>
         <template x-if="!activeChat">
           <div class="empty-state">
             <div class="icon">💬</div>
@@ -159,7 +89,7 @@
           <div class="message" :class="msg.role" :data-message-id="msg.id">
             <div class="bubble">
               <div class="meta">
-                <span class="name" x-text="displayName(msg)"></span>
+                <span class="name" x-text="displayName(msg)" data-testid="message-author"></span>
                 <span class="time" x-text="formatTime(msg.created_at)"></span>
               </div>
               <template x-if="msg.thinking">
@@ -168,11 +98,50 @@
                   <div class="thinking-content" x-html="renderMarkdown(msg.thinking)"></div>
                 </details>
               </template>
-              <div class="content" x-html="renderMarkdown(msg.content)"></div>
+              <template x-if="editingMessageId !== msg.id">
+                <div class="content" x-html="renderMarkdown(msg.content)"></div>
+              </template>
+              <template x-if="editingMessageId === msg.id">
+                <div class="edit-area">
+                  <textarea class="form-input edit-textarea" x-model="editContent" @keydown.escape="cancelEdit()" @keydown.ctrl.enter="saveEdit(msg.id)"></textarea>
+                  <div class="edit-actions">
+                    <button class="btn btn-ghost btn-sm" @click="cancelEdit()">Cancel</button>
+                    <button class="btn btn-primary btn-sm" @click="saveEdit(msg.id)">Save</button>
+                  </div>
+                </div>
+              </template>
+              <!-- Media attachments -->
+              <template x-if="msg.attachments && msg.attachments.length > 0">
+                <div class="media-attachments" :class="'count-' + msg.attachments.length">
+                  <template x-for="(asset, aIdx) in msg.attachments" :key="asset.assetId">
+                    <div class="media-item" :class="asset.type === 'image' ? 'media-image' : 'media-file'" :style="getMediaStyle(asset, msg.attachments.length)">
+                      <template x-if="asset.type === 'image'">
+                        <img :src="asset.url" :alt="asset.caption || asset.filename" loading="lazy" @click="openMediaPreview(asset)" />
+                      </template>
+                      <template x-if="asset.type === 'audio'">
+                        <audio controls :src="asset.url"></audio>
+                      </template>
+                      <template x-if="asset.type === 'video'">
+                        <video controls :src="asset.url"></video>
+                      </template>
+                      <template x-if="asset.caption">
+                        <div class="media-caption" x-text="asset.caption"></div>
+                      </template>
+                    </div>
+                  </template>
+                </div>
+              </template>
               <div class="actions">
-                <button class="btn-icon action-copy" title="Copy" @click="copyMessage(msg.id, $event)">📋</button>
+                <button class="btn-icon action-edit" title="Edit" @click="startEdit(msg.id)">✏️</button>
                 <template x-if="msg.role === 'assistant'">
-                  <button class="btn-icon action-retry" title="Retry" @click="regenerateResponse(msg)">🔄</button>
+                  <button class="btn-icon action-regenerate" title="Regenerate" @click="regenerateVariant(msg.id)">♻</button>
+                  <template x-if="msg.totalVariants && msg.totalVariants > 1">
+                    <span class="variant-switcher">
+                      <button class="btn-icon action-prev-variant" title="Previous variant" @click="switchVariant(msg.id, -1)">◀</button>
+                      <span class="variant-counter" x-text="(msg.variantIndex ?? 0) + 1 + '/' + msg.totalVariants"></span>
+                      <button class="btn-icon action-next-variant" title="Next variant" @click="switchVariant(msg.id, 1)">▶</button>
+                    </span>
+                  </template>
                   <template x-if="msg.status === 'cancelled' || msg.status === 'partial'">
                     <button class="btn-icon action-continue" title="Continue" @click="continueMessage(msg.id)">↳</button>
                   </template>
@@ -189,7 +158,7 @@
         class="right-panel"
         x-show="showCharacterInfo"
         x-transition
-      >
+        data-testid="character-info-panel">
         <button class="btn-icon" @click="showCharacterInfo = false" title="Close">&times;</button>
         <div class="panel-content">
           <div class="nav-section-title">Character Info</div>
@@ -214,7 +183,7 @@
       class="gallery-sidebar"
       x-show="showGallery"
       x-transition
-    >
+      data-testid="gallery-sidebar">
       <button class="btn-icon" @click="showGallery = false" title="Close">&times;</button>
       <div class="nav-section-title" style="margin-bottom: var(--space-3)">Chat Assets</div>
       <div id="gallery-items">
@@ -238,6 +207,21 @@
       </div>
     </aside>
 
+    <!-- Media Preview Modal -->
+    <div x-show="previewMediaAsset" x-cloak class="modal-overlay" @click.self="previewMediaAsset = null" data-testid="media-preview-modal">
+      <div class="modal" style="max-width: 90vw; max-height: 90vh;">
+        <div class="modal-header">
+          <span class="title" x-text="previewMediaAsset?.caption || previewMediaAsset?.filename"></span>
+          <button class="btn-icon" @click="previewMediaAsset = null">&times;</button>
+        </div>
+        <div class="modal-body" style="padding: 0; text-align: center">
+          <template x-if="previewMediaAsset?.type === 'image'">
+            <img :src="previewMediaAsset.url" style="max-width: 100%; max-height: 80vh; display: block; margin: 0 auto" />
+          </template>
+        </div>
+      </div>
+    </div>
+
     <!-- Input area -->
     <div class="input-area">
       <!-- Generation status bar (cancel UI) -->
@@ -247,6 +231,7 @@
         x-transition:enter-start="opacity-0"
         x-transition:enter-end="opacity-100"
         class="generation-status"
+        data-testid="generation-status"
       >
         <div class="generation-info">
           <span class="typing-indicator">
@@ -271,6 +256,7 @@
             class="btn btn-ghost btn-cancel"
             @click="cancelGeneration()"
             title="Cancel generation"
+            data-testid="cancel-generation"
           >
             ⏹ Cancel
           </button>
@@ -280,6 +266,7 @@
       <form
         x-ref="messageForm"
         @submit.prevent="sendMessage()"
+        data-testid="message-form"
       >
         <div class="input-row">
           <textarea
@@ -292,19 +279,31 @@
             @input="autoResize($el)"
             required
             :disabled="!activeChat"
+            data-testid="message-input"
           ></textarea>
-          <button type="submit" class="btn btn-primary" title="Send" :disabled="!activeChat">➤</button>
+          <button type="submit" class="btn btn-primary" title="Send" :disabled="!activeChat" data-testid="send-button">➤</button>
         </div>
         <div class="input-toolbar">
-          <label class="btn btn-ghost" style="cursor: pointer; font-size: 12px">
-            📎 Attach
-            <input
-              type="file"
-              accept="image/*,audio/*,video/*"
-              multiple
-              style="display: none"
-              @change="handleAttach($event)"
-            />
+          <!-- Pending assets (uploaded, attached to next message) -->
+          <template x-if="pendingAssets.length > 0">
+            <div class="pending-assets">
+              <template x-for="(pa, paIdx) in pendingAssets" :key="pa.assetId">
+                <span class="tag pending-asset-tag">
+                  <span>📎 <span x-text="pa.filename"></span></span>
+                  <button class="btn-icon" style="padding: 0; width: 16px; height: 16px; font-size: 12px" @click="removePendingAsset(pa.assetId)">&times;</button>
+                </span>
+              </template>
+            </div>
+          </template>
+            <label class="btn btn-ghost" style="cursor: pointer; font-size: 12px">
+              📎 Attach
+              <input
+                type="file"
+                accept="image/*,audio/*,video/*"
+                multiple
+                style="display: none"
+                @change="handleAttach($event)"
+                data-testid="attach-input"
           </label>
         </div>
       </form>
