@@ -58,7 +58,7 @@ export class CompositeValidator<A extends string, B extends string> {
     readonly axisB: StateMachine<B>,
     allowedPairs: readonly [`${A}:${B}`, ...`${A}:${B}`[]],
   ) {
-    this.allowed = new Set(allowedPairs as unknown as string[]);
+    this.allowed = new Set(allowedPairs);
   }
 
   isValid(a: A, b: B): boolean {

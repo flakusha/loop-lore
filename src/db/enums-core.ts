@@ -105,6 +105,13 @@ export const MessageVisibility = {
 } as const;
 export type MessageVisibility = (typeof MessageVisibility)[keyof typeof MessageVisibility];
 
+// ── Actor / Character Visibility ───────────────────────────
+export const ActorVisibility = {
+  Private: "private",
+  Public: "public",
+} as const;
+export type ActorVisibility = (typeof ActorVisibility)[keyof typeof ActorVisibility];
+
 // ── State Machine Definitions ────────────────────────────
 import { createMachine, CompositeValidator, type StateDef } from "./state";
 
@@ -162,3 +169,15 @@ export const messageCompositeValidator = new CompositeValidator(
     "cancelled:hidden_by_moderator",
   ],
 );
+
+export const actorVisibilityDef: StateDef<ActorVisibility> = {
+  values: ["private", "public"] as const,
+  initial: "private",
+  transitions: {
+    private: ["public"],
+    public: ["private"],
+  },
+  terminal: [],
+};
+
+export const actorVisibilityMachine = createMachine(actorVisibilityDef);

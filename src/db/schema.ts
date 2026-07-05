@@ -32,6 +32,10 @@ export interface DB {
   npc_states: import("./schema-story").NpcStates;
   location_states: import("./schema-story").LocationStates;
   synthetic_data: import("./schema-synthetic").SyntheticData;
+  user_api_keys: import("./schema-core").UserApiKeys;
   items: import("./schema-story").Items;
   world_items: import("./schema-story").WorldItems;
+  actor_memories: import("./schema-story").ActorMemories;
+  actor_lore_entries: import("./schema-story").ActorLoreEntries;
+  world_lore_entries: import("./schema-story").WorldLoreEntries;
 }

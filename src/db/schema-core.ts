@@ -18,6 +18,7 @@ import type {
   ContentEncoding,
   MessageStatus,
   MessageVisibility,
+  ActorVisibility,
 } from "./enums";
 
 // ── Users ────────────────────────────────────────────────────
@@ -78,6 +79,7 @@ export interface Actors {
   agent_type: AgentType;
   settings: string;
   data_version: number;
+  visibility: Generated<ActorVisibility>;
   welcome_message: string | null;
   personality: string | null;
   scenario: string | null;
@@ -155,4 +157,14 @@ export interface ActorKeys {
   created_at: Generated<string>;
   expires_at: string | null;
   status: string;
+}
+
+// ── User API Keys (BYO) ──────────────────────────────────────
+export interface UserApiKeys {
+  id: Generated<string>;
+  user_id: string;
+  provider_name: string;
+  api_key_encrypted: string;
+  created_at: Generated<string>;
+  updated_at: Generated<string>;
 }
