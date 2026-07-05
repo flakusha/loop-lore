@@ -169,9 +169,9 @@ export class GameMasterService {
     ].join("\n");
     assembled.messages.push({ role: "user", content: instructions });
 
-    let responseText: string = "";
+    let responseText = "";
     try {
-      // eslint-disable-next-line no-useless-assignment
+       
       responseText = await this.generateText({
         messages: assembled.messages,
         systemPrompt: assembled.systemPrompt,
@@ -293,7 +293,7 @@ export class GameMasterService {
       .execute();
   }
 
-  // eslint-disable-next-line unicorn/consistent-class-member-order
+   
   private buildResult(options: BuildResultOptions): GmTurnResult {
     const { turn, response, qualityEval, worldEvents, accepted, escalated, regenerationSuggested } = options;
     return {
