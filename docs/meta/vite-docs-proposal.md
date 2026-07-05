@@ -36,33 +36,14 @@ bun add -d vitepress
 
 ### 2. Directory Structure
 
-```
-docs/
-├── .vitepress/
-│   ├── config.mts          # VitePress configuration
-│   ├── theme/
-│   │   └── index.ts       # Custom theme extension
-│   ├── public/            # Static assets
-│   └── index.md           # Homepage
-├── guide/
-│   ├── getting-started.md
-│   ├── installation.md
-│   ├── architecture.md
-│   ├── frontend.md
-│   ├── tui.md
-│   ├── assets.md
-│   └── assistant.md
-├── reference/
-│   ├── api.md
-│   ├── schema.md
-│   ├── auth.md
-│   ├── users-sessions.md
-│   ├── messages.md
-│   └── assets.md
-├── api-reference/
-├── index.md
-└── vite-docs-proposal.md
-```
+The VitePress docs site is organized into:
+
+- **`.vitepress/`** — site config (`config.mts`), custom theme (`theme/index.ts`), static assets (`public/`), and homepage (`index.md`)
+- **`guide/`** — how-to guides: `getting-started`, `installation`, `architecture`, `frontend`, `tui`, `assets`, `assistant`
+- **`reference/`** — API reference: `api.md`, `schema.md`, `auth.md`, `users-sessions.md`, `messages.md`, `assets.md`
+- **`api-reference/`** — additional API reference docs
+- **`index.md`** — docs landing page
+- **`vite-docs-proposal.md`** — this proposal document
 
 ### 3. Development Workflow
 

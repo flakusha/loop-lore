@@ -23,14 +23,12 @@ This spec covers local and remote LLM serving backends for loop-lore's text gene
 
 ## Architecture
 
-```
-loop-lore ──── HTTP ──── llama-server
-  src/generation/       (OpenAI-compatible API)
-  (existing module)      ├─ POST /v1/chat/completions
-                         ├─ POST /v1/completions
-                         ├─ POST /v1/embeddings
-                         └─ GET  /v1/models
-```
+loop-lore's generation module (`src/generation/`) sends HTTP requests to `llama-server` via its OpenAI-compatible API endpoints:
+
+- `POST /v1/chat/completions` — chat completions
+- `POST /v1/completions` — text completions
+- `POST /v1/embeddings` — embedding generation
+- `GET /v1/models` — list available models
 
 The generation module sends requests to `llama-server` the same way it would to OpenAI — same request shape, same response format. No custom adapter needed beyond a `provider` configuration pointing to the local endpoint.
 
@@ -476,6 +474,99 @@ const PRESETS = {
 | `dynatempRange`    | `dynatemp_range`     | Dynamic temperature |
 | `typicalP`         | `typical_p`          | Typical sampling    |
 | `minP`             | `min_p`              | Min-P sampling      |
+
+### Token Budget & Context Management
+
+Token budgets differ sharply between response output and context window:
+
+| Dimension          | Typical Size | Notes                                                  |
+| ------------------ | ------------ | ------------------------------------------------------ |
+| Response body      | ~2,000       | Generated content (excludes thinking/reasoning tokens) |
+| Thinking tokens    | ~500–4,000   | `reasoning_content`, varies by model/task              |
+| Context window     | 32,000–64,000 | Recommended minimum for serious chat/roleplay tasks    |
+| Model max ctx      | 128K–1M      | Hardware-limited; llama.cpp `--ctx-size` caps it       |
+
+**Key insight**: Response body is short (~2K tokens) but the context needed to produce it is 16–32× larger. The LLM needs full conversation history, character cards, world lore, and instructions to generate coherent output.
+
+#### Service-Side History Compression
+
+The `messages` table already stores compressed content (gzip/zstd/brotli per schema) for storage efficiency. However, the generation pipeline needs a separate **prompt compaction layer** that operates on the *assembled prompt* before sending to the LLM:
+
+1. **Summarization** — Older conversation turns rewritten as condensed summaries instead of full messages
+2. **Truncation** — Oldest messages dropped when context budget exceeded (LRU eviction)
+3. **Priority retention** — System instructions, character cards, and recent N messages always preserved
+4. **Selective detail drop** — Full message detail for recent turns, summarized detail for older turns
+
+#### Prompt Assembly Budget
+
+The prompt builder must track token usage across sections:
+
+```
+Section             Priority   Budget (est.)
+─────────────────────────────────────────────
+System instruction  Critical   ~500
+Character card      Critical   ~1,000–2,000
+World info          High       ~500–2,000
+Recent messages     High       ~8,000–16,000
+Older history       Low        ~2,000–8,000 (summarized)
+─────────────────────────────────────────────
+Total context                    ~16,000–32,000
+```
+
+Remaining context budget (up to `--ctx-size` minus prompt tokens) reserved for response generation.
+
+#### Implementation Direction
+
+- Token counting library (e.g., `tiktoken` or llama.cpp's tokenizer) to measure prompt sections
+- Budget allocation per section with configurable ratios
+- Summarization triggers: when assembled prompt exceeds 75% of `ctx-size`, oldest messages get condensed
+- Summarized messages stored as `detail_level: summary` in the messages table (already supported by schema — see `docs/spec/messages.md`)
+- Compression strategy configurable per chat: `historyCompression: "full" | "summary" | "truncate"`
+
+This is separate from storage compression. Storage compression is transparent (gzip envelope); prompt compaction is a semantic transformation that trades fidelity for context fit.
+
+### Implementation: Context Compression (MVP)
+
+**Implemented** — standalone modules, zero edits to existing code.
+
+| File | Status | Key exports |
+|------|--------|-------------|
+| `src/generation/context-window-config.ts` | Done | `ContextWindowConfig`, `ContextMessage`, `SummarizeFn`, `ExtractFn`, `TokenCountFn`, `DEFAULT_CONTEXT_WINDOW`, `defaultTokenCount` |
+| `src/generation/context-compressor.ts` | Done | `compressMessages()` — pure function, returns `CompressionResult` with `{ compressed, metadata }` |
+| `src/generation/context-compressor.test.ts` | Done | 19 tests, all pass |
+
+Decorator pattern: caller wraps `GenerationOptions.prompt` before passing to pipeline.
+
+#### Strategies
+
+| Strategy | Behavior | LLM needed? |
+|----------|----------|-------------|
+| `"sliding"` | Keep last N messages verbatim, older messages dropped LRU | No |
+| `"truncate"` | Drop oldest until budget fit, preserve min turns | No |
+| `"summarize"` | Uses `SummarizeFn` callback when wired; falls back to sliding | Opt-in |
+
+| Strategy | Behavior | LLM needed? |
+|----------|----------|-------------|
+| `"sliding"` | Keep last N messages verbatim, older messages dropped LRU | No |
+| `"truncate"` | Drop oldest until budget fit, preserve min turns | No |
+| `"summarize"` | Uses `SummarizeFn` callback when wired; falls back to sliding | Opt-in |
+
+System messages (leading `role: "system"` block) always preserved. Floor: never below 1 user+assistant turn.
+
+#### Callbacks (LLM summarization/extraction — future)
+
+Types in `context-window-config.ts` but not wired in MVP:
+
+- `SummarizeFn` — condense older messages into summary block
+- `ExtractFn` — extract facts from message pairs → `actor_memories` table
+
+When callbacks omitted, compressor degrades gracefully (deterministic LRU).
+
+#### No new tables
+
+- `actor_memories` exists but unused — wired when `ExtractFn` implemented
+- `messages.token_count_*` columns available for future real token counts
+- `worlds.token_budget` available for per-world budget (currently orphaned)
 
 ### Embeddings Integration
 

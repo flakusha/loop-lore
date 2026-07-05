@@ -14,19 +14,18 @@ guarantees message persistence.
 
 ### Basic Write Flow
 
-```
-Client sends message
-  → Server validates (schema, length, role permissions)
-  → Server saves to DB (within transaction)
-  → Server queues LLM generation (if applicable)
-  → Server returns success + message ID to client
-  → Client displays confirmed message
+Happy path:
+1. Client sends message
+2. Server validates (schema, length, role permissions)
+3. Server saves to DB (within transaction)
+4. Server queues LLM generation (if applicable)
+5. Server returns success + message ID to client
+6. Client displays confirmed message
 
 If DB write fails:
-  → Server returns 500/503
-  → Client shows error
-  → User can retry (idempotency key prevents duplicate)
-```
+1. Server returns 500/503
+2. Client shows error
+3. User can retry (idempotency key prevents duplicate)
 
 ### Connection Resilience
 
@@ -38,165 +37,131 @@ If DB write fails:
 
 ## Message Schema
 
-Full table: [`docs/schema.md`](./schema.md#table-messages).
+Full table definition: `src/db/schema-core.ts` → `Messages` interface.
+DDL: `src/db/migrations/001_init.ts` (lines 336-371).
 
-Key columns for this spec:
+Key design points for the messages table:
 
-| Column | Type | Purpose |
-| ------ | ---- | ------- |
-| `id` | UUID | Primary |
-| `chat_id` | UUID FK | Parent chat |
-| `actor_id` | UUID FK | Sender |
-| `role` | text | 'user', 'assistant', 'character', 'system' |
-| `content` | text | Encrypted JSON blob or plaintext |
-| `content_format` | text | 'markdown', 'text', 'json', 'html' |
-| `content_type` | text | 'text', 'action', 'narration', 'system', 'continuation' |
-| `content_encoding` | text | 'identity', 'gzip', 'zstd', 'brotli' |
-| `parent_id` | UUID FK | Message tree parent |
-| `continuation_index` | int | Set if message is continuation of a partial |
-| `status` | text | 'sending', 'confirmed', 'failed', 'partial', 'rejected', 'cancelled' |
-| `visibility` | text | 'visible', 'hidden_by_user', 'hidden_by_moderator', 'auto_hidden', 'redacted' |
-| `idempotency_key` | text | Retry dedup |
-| `created_at` | text | ISO timestamp |
-| `edited_at` | text | Nullable |
+- **Unified sender** — `actor_id` FK to `actors` replaces separate `user_id` + `character_id`
+- **Tree model** — `parent_id` self-references for replies, swipe variants, continuations
+- **Content column** — stores encrypted JSON with key reference (`key_id`)
+- **Content encoding** — supports `identity`, `gzip`, `zstd`, `brotli` for large messages
+- **Status + visibility** — composite state machine (see Composite State Validation below)
+- **Idempotency** — `idempotency_key` for retry deduplication
 
 ### Status Scenarios
 
 **Happy path — user message without LLM:**
 
-```
-1. Client sends POST /api/messages
-2. Server inserts messages row → status="sending"
-3. Server confirms write → status="confirmed"
-```
+1. Client sends `POST /api/messages`
+2. Server inserts messages row → `status="sending"`
+3. Server confirms write → `status="confirmed"`
 
 **Happy path — user message triggering LLM:**
 
-```
-1. Client sends POST /api/messages
-2. Server inserts messages row → status="sending"
+1. Client sends `POST /api/messages`
+2. Server inserts messages row → `status="sending"`
 3. Server calls LLM API, receives full response
-4. Server writes response message → status="confirmed"
-```
+4. Server writes response message → `status="confirmed"`
 
 **LLM API error (5xx, timeout, connection failure):**
 
-```
 1. Server sends prompt to LLM
 2. API returns error (no content received)
-3. Server marks generation_attempts.status = "failed"
-4. Server marks message.status = "failed"
+3. Server marks `generation_attempts.status = "failed"`
+4. Server marks `message.status = "failed"`
 5. Client shows: "Generation failed. Retry?"
-6. User taps Retry (idempotency_key sent)
-7. Server checks retry count < MAX_GENERATION_RETRIES (3)
-8. New generation_attempt created, API called again
-9. On success → message.status = "confirmed"
+6. User taps Retry (`idempotency_key` sent)
+7. Server checks retry count < `MAX_GENERATION_RETRIES` (3)
+8. New `generation_attempt` created, API called again
+9. On success → `message.status = "confirmed"`
 10. If retries exhausted → "Max retries exceeded" error
-```
 
 **Content policy violation (post-generation):**
 
-```
 1. LLM returns full response
 2. Server policy detector flags content as violating
-3. Server marks message.status = "rejected", visibility = "auto_hidden"
-4. Server stores policy_analysis in generation_attempts
+3. Server marks `message.status = "rejected"`, `visibility = "auto_hidden"`
+4. Server stores `policy_analysis` in `generation_attempts`
 5. Client shows: "Response filtered by content policy"
 6. User edits prompt and resubmits
-7. Original rejected message preserved in DB for audit
-   (visible to admin via ?showHidden=true)
-```
+7. Original rejected message preserved in DB for audit (visible to admin via `?showHidden=true`)
 
 **Timeout mid-stream (partial content):**
 
-```
 1. LLM begins streaming tokens
-2. Server-side GENERATION_TIMEOUT_MS fires
-3. Server captures streamed content as partial_content
-4. Server marks attempt.status = "cancelled", message.status = "partial"
+2. Server-side `GENERATION_TIMEOUT_MS` fires
+3. Server captures streamed content as `partial_content`
+4. Server marks `attempt.status = "cancelled"`, `message.status = "partial"`
 5. Client shows partial content with "Continue" button
-7. On Continue: POST /api/generation/continue { messageId }
-8. Server reads partial_content, builds prefix prompt
-9. Server sends to LLM, appends to existing content
-10. Continuation stored as new message row:
-    continuation_index=2, parent_id=original
-11. Client appends continuation to same bubble
-12. Multiple continues chain: A(status=partial, idx=0) → A-2(idx=2) → A-3(idx=3)
-```
+6. On Continue: `POST /api/generation/continue { messageId }`
+7. Server reads `partial_content`, builds prefix prompt
+8. Server sends to LLM, appends to existing content
+9. Continuation stored as new message row: `continuation_index=1`, `parent_id=original` (original is idx=0)
+10. Client appends continuation to same bubble
+11. Multiple continues chain: A(idx=0, partial) → A-2(idx=1) → A-3(idx=2)
 
 **User cancels mid-generation:**
 
-```
 1. LLM is streaming tokens
 2. User presses Cancel / Escape
-3. Client sends POST /api/generation/cancel { messageId }
-4. Server captures whatever has streamed as partial_content
-5. Server marks attempt.status = "cancelled" (reason = "user_cancel")
-6. Server marks message.status = "cancelled"
+3. Client sends `POST /api/generation/cancel { messageId }`
+4. Server captures whatever has streamed as `partial_content`
+5. Server marks `attempt.status = "cancelled"` (reason = `"user_cancel"`)
+6. Server marks `message.status = "cancelled"`
 7. If content was captured → user can Continue (same as partial flow)
 8. If no content yet → no recovery
-```
 
 **Network failure (send never reached server):**
 
-```
-1. Client sends POST /api/messages
+1. Client sends `POST /api/messages`
 2. Network fails before server receives
 3. Client persists draft in localStorage / temp file
 4. On reconnect: prompt user to retry
-5. Retry sends same idempotency_key
+5. Retry sends same `idempotency_key`
 6. Server processes (first write since key unknown)
 7. Duplicate key check prevents double writes on re-send
-```
 
 **Max retries exhausted:**
 
-```
 1. Message is in "failed" state
 2. User attempts retry
-3. Server checks retry count >= MAX_GENERATION_RETRIES (3)
+3. Server checks retry count >= `MAX_GENERATION_RETRIES` (3)
 4. Server returns error: "Max retries exceeded for this message"
 5. User must regenerate (new message) instead of retry
-```
 
-**Regenerate a confirmed message:**
+**Regenerate a confirmed message (full replacement):**
 
-```
 1. User requests regeneration on a confirmed message
-2. Server creates new generation_attempt
-3. Original message preserved with status="confirmed"
-4. New response appended as continuation or replacement
-   (configurable: REPLACE_ON_REGENERATE=true|false)
-```
+2. Server creates new `generation_attempt`
+3. Original message status set to `"cancelled"`, visibility set to `"hidden_by_user"`
+4. New response written as a new message row with same `parent_id` (swipe replacement)
+5. Client swaps the old message for the new one in the active timeline
+
+**Continue vs Regenerate:**
+
+| Action | Effect | Message status |
+|--------|--------|---------------|
+| Continue | Append to partial — new row with incremented continuation_index | Original stays `partial` |
+| Regenerate | Full replacement — old message cancelled, new sibling created | Old → `cancelled`, New → `sending` → `confirmed` |
 
 ---
 
 ## Configuration
 
-```env
-# Message handling
-AUTO_HIDE_INVALID=false           # auto-mark invalid messages as hidden
-HIDE_CONFIRMATION=true            # require confirmation before hiding
-MAX_MESSAGE_LENGTH=100000         # max content length (plaintext before encrypt)
-IDEMPOTENCY_EXPIRY_HOURS=24       # idempotency key TTL
-MAX_GENERATION_RETRIES=3          # max auto-retry on LLM failure
-GENERATION_TIMEOUT_MS=30000        # LLM response timeout
-COMPRESS_THRESHOLD=128             # min bytes before compressing content
-```
+Defined in `src/config/schema.ts` → `MessagesConfig`. Server-side only.
 
-```json
-{
-  "messageHandling": {
-    "autoHideInvalid": false,
-    "hideConfirmation": true,
-    "maxLength": 100000,
-    "maxGenerationRetries": 3,
-    "generationTimeoutMs": 30000,
-    "idempotencyExpiryHours": 24,
-    "compressThreshold": 128
-  }
-}
-```
+Key env vars:
+
+| Env Var | Default | Notes |
+|---------|---------|-------|
+| `MESSAGE_AUTO_HIDE_INVALID` | `false` | auto-mark invalid messages as hidden |
+| `MESSAGE_MAX_LENGTH` | `100000` | max content length in bytes |
+| `MESSAGE_MAX_GENERATION_RETRIES` | `3` | max auto-retry on LLM failure |
+| `MESSAGE_GENERATION_TIMEOUT_MS` | `30000` | LLM response timeout in ms |
+| `MESSAGE_IDEMPOTENCY_EXPIRY_HOURS` | `24` | idempotency key TTL in hours |
+
+Client-side: `COMPRESS_THRESHOLD` (128 bytes) defined in `src/frontend/browser.ts`.
 
 ---
 
@@ -246,6 +211,70 @@ Character: *The blade gleams with an eerie blue light.*
 
 ---
 
+## Canceled Message Display
+
+Messages canceled before any tokens streamed (`status="cancelled"`, empty content):
+
+- **UI display**: Shows "[Cancelled]" placeholder in the chat
+- **Swipe counter**: If the canceled message was a swipe variant, its counter disappears. All other swipe counters recalculated on frontend
+- **Cleanup**: Periodic DB sweep may delete canceled messages with empty content. User may notice the message suddenly gone from the chat
+- **No recovery**: Once deleted, the message is gone — no undo
+
+## Message Tree Traversal
+
+### Data Model
+
+Messages form a tree via `parent_id`. Building the tree:
+
+1. **Root message** — `parent_id IS NULL` (chat's first message)
+2. **Replies** — Set `parent_id = parent.id`. Creates a parent-child edge
+3. **Continuations** — Partial/cancelled message gets a child with `continuation_index = N+1`. Chains: A(idx=0, partial) → A-2(idx=1) → A-3(idx=2). Not a fork — always appended to parent bubble
+4. **Swipe variants** — Siblings sharing the same `parent_id`. User picks one per fork position. The frontend stores the active swipe index
+
+**Example:** Message A is root. B replies to A (parent_id = A.id). B1 continues B (idx=1). B2 continues B1 (idx=2). C is a swipe alternative to B (same parent_id = A.id). D is another reply to A. The active timeline picks one variant per fork.
+
+### Active Timeline (Client-Side Flatten)
+
+1. Start from root message (`parent_id IS NULL` for the chat)
+2. Walk children in chronological order (`created_at`)
+3. At each fork (siblings with same `parent_id`), pick the **active swipe variant**:
+   - The user's last-selected swipe for that position
+   - Default to the first sibling (earliest `created_at`)
+4. Continuations (`continuation_index > 0`) are always appended to their parent bubble — not a fork
+5. **Bottom-to-top fill**: If no messages cached, fetch from latest backwards. If already cached, frontend re-runs the flatten algorithm when switching swipe variants
+
+### Swipe System Overlay
+
+Swipe variants are siblings sharing the same `parent_id`. At each position fork, multiple messages share the same `parent_id` but have different `created_at` timestamps. The user's most recently selected swipe is the active one; the others are swipe alternatives.
+
+- The frontend stores the active swipe index per message position
+- Switching swipe re-runs the flatten algorithm
+- Continuations inherit their parent's swipe context
+
+### API
+
+- `GET /api/chats/:id/messages?cursor=<created_at>&limit=50&direction=backward` — Returns flattened timeline from cursor, with swipe variants collapsed (only active variant per position)
+- `GET /api/messages/:id/variants` — Returns all siblings sharing the same `parent_id` (swipe variants)
+
+## Composite State Validation
+
+`MessageStatus` and `MessageVisibility` form a composite state machine. Not all combinations are valid. The `messageCompositeValidator` in `src/db/enums-core.ts` enforces these pairs:
+
+| Status ↓ | visible | hidden_by_user | hidden_by_moderator | auto_hidden | redacted |
+|----------|---------|---------------|--------------------|-------------|----------|
+| sending  | ✅      | —            | —                  | —           | —        |
+| confirmed| ✅      | ✅           | ✅                 | —           | ✅       |
+| failed   | ✅      | ✅           | ✅                 | —           | —        |
+| partial  | ✅      | ✅           | ✅                 | —           | —        |
+| rejected | —       | —            | —                  | ✅          | —        |
+| cancelled| ✅      | ✅           | ✅                 | —           | —        |
+
+Total: **16 valid pairs** from 6×5=30 possible. See `src/db/enums-core.ts:142-168` for full definitions.
+
+### Invalid combinations will be rejected at the service layer.
+
+---
+
 ## Invalid Message Handling
 
 Messages may become invalid due to:
@@ -264,4 +293,3 @@ Messages may become invalid due to:
 4. Hidden messages set `visibility` to appropriate state (not removed from DB)
 5. Admins view hidden via `/api/messages?showHidden=true`
 6. Reveal in UI via "Show hidden" toggle
-

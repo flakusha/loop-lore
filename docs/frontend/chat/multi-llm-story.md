@@ -40,78 +40,59 @@ Extends the existing chat types with a new mode:
 
 ### Turn Manager Service
 
-```
-src/story/
-├── turn-manager.ts      # Core turn orchestration
-├── game-master.ts       # Game Master logic (LLM or human)
-├── quality-evaluator.ts # Response quality analysis
-├── world-state.ts       # World state mutation from story events
-├── quest-engine.ts      # Global quest tracking & progression
-├── synthetic-generator.ts # Automated test data generation
-├── types.ts             # Shared types
-└── index.ts             # Exports
-```
+The story module is organized into these files:
+
+1. **`src/story/turn-manager.ts`** — Core turn orchestration
+2. **`src/story/game-master.ts`** — Game Master logic (LLM or human)
+3. **`src/story/quality-evaluator.ts`** — Response quality analysis
+4. **`src/story/world-state.ts`** — World state mutation from story events
+5. **`src/story/quest-engine.ts`** — Global quest tracking & progression
+6. **`src/story/synthetic-generator.ts`** — Automated test data generation
+7. **`src/story/types.ts`** — Shared types
+8. **`src/story/index.ts`** — Exports
 
 ### Turn Flow
 
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                        STORY TURN CYCLE                         │
-├─────────────────────────────────────────────────────────────────┤
-│                                                                 │
-│  1. GAME MASTER SELECTS NEXT ACTOR                              │
-│     ├─ Based on: turn order, scene context, actor availability │
-│     ├─ Considers: quest objectives, character motivations      │
-│     └─ Outputs: actor_id, context_prompt, turn_constraints    │
-│                          │                                      │
-│                          ▼                                      │
-│  2. SELECTED ACTOR GENERATES RESPONSE                          │
-│     ├─ Receives: full context (world, chat history, prompt)   │
-│     ├─ Generates: response per actor's system prompt + style  │
-│     └─ Returns: content, token usage, reasoning (if exposed)  │
-│                          │                                      │
-│                          ▼                                      │
-│  3. QUALITY EVALUATOR ANALYZES RESPONSE                        │
-│     ├─ Checks: coherence, character voice, plot consistency   │
-│     ├─ Scores: 0-100 (configurable thresholds)                │
-│     ├─ Flags: OOC, lore contradiction, quality issues         │
-│     └─ Decision: ACCEPT | REGENERATE | ESCALATE TO GM         │
-│                          │                                      │
-│         ┌──────────────┼──────────────┐                        │
-│         ▼              ▼              ▼                        │
-│    ┌─────────┐   ┌───────────┐  ┌────────────┐                │
-│    │ ACCEPT  │   │REGENERATE │  │  ESCALATE  │                │
-│    └────┬────┘   └─────┬─────┘  └─────┬──────┘                │
-│         │              │              │                        │
-│         ▼              ▼              ▼                        │
-│  4. PERSIST          2. RETRY      GM REVIEWS                 │
-│  MESSAGE             (max N times)  (human or LLM GM)         │
-│         │              │              │                        │
-│         └──────────────┴──────────────┘                        │
-│                          │                                      │
-│                          ▼                                      │
-│  5. WORLD STATE ENGINE PROCESSES EVENTS                        │
-│     ├─ Extracts: location changes, NPC state, item transfers  │
-│     ├─ Updates: world lore, location descriptions, quest prog │
-│     ├─ Triggers: quest progress, time advancement             │
-│     └─ Emits: events for UI, logging, synthetic generation    │
-│                          │                                      │
-│                          ▼                                      │
-│  6. QUEST ENGINE EVALUATES PROGRESS                            │
-│     ├─ Time-based: location/world time progression            │
-│     ├─ Collection: item acquisition tracking                  │
-│     ├─ Combat: enemy HP, defeat conditions                    │
-│     ├─ Rescue: NPC location, safety status                    │
-│     └─ Awards: XP, world changes, narrative unlocks           │
-│                          │                                      │
-│                          ▼                                      │
-│  7. SYNTHETIC GENERATOR CAPTURES SCENARIO (if enabled)        │
-│     ├─ Records: turn sequence, decisions, outcomes            │
-│     ├─ Generates: test cases, regression scenarios            │
-│     └─ Stores: in synthetic_data table for CI/CD              │
-│                                                                 │
-└─────────────────────────────────────────────────────────────────┘
-```
+A story turn cycle progresses through seven stages:
+
+**Stage 1 — Game Master selects next actor**
+- Based on: turn order strategy, scene context, actor availability
+- Considers: quest objectives, character motivations
+- Outputs: `actor_id`, `context_prompt`, `turn_constraints`
+
+**Stage 2 — Selected actor generates response**
+- Receives: full context (world state, chat history, GM prompt)
+- Generates: response per actor's system prompt + style guidelines
+- Returns: `content`, `token usage`, `reasoning` (if exposed)
+
+**Stage 3 — Quality evaluator analyzes response**
+- Checks: coherence, character voice, plot consistency
+- Scores: 0-100 (configurable thresholds)
+- Flags: OOC, lore contradiction, quality issues
+- Decision: one of three paths:
+  - **ACCEPT** → persist message, continue to stage 5
+  - **REGENERATE** → retry generation (max N times), loop back to stage 2
+  - **ESCALATE** → GM (human or LLM) reviews and decides
+
+**Stage 4 — Persist message** (after ACCEPT or GM approval)
+
+**Stage 5 — World state engine processes events**
+- Extracts: location changes, NPC state, item transfers
+- Updates: world lore, location descriptions, quest progress
+- Triggers: quest progress updates, time advancement
+- Emits: events for UI, logging, synthetic generation
+
+**Stage 6 — Quest engine evaluates progress**
+- Time-based: location/world time progression
+- Collection: item acquisition tracking
+- Combat: enemy HP, defeat conditions
+- Rescue: NPC location, safety status
+- Awards: XP, world changes, narrative unlocks
+
+**Stage 7 — Synthetic generator captures scenario** (if enabled)
+- Records: turn sequence, decisions, outcomes
+- Generates: test cases, regression scenarios
+- Stores: in `synthetic_data` table for CI/CD
 
 ### Turn Order Strategies
 
@@ -253,33 +234,22 @@ type WorldEventType =
 
 ### Event Extraction Pipeline
 
-```
-Message Content
-      │
-      ▼
-┌─────────────────┐
-│ LLM Extractor   │  (lightweight model, structured output)
-│ - Few-shot      │
-│ - Schema:       │
-│   WorldEvent[]  │
-└────────┬────────┘
-         │
-         ▼
-┌─────────────────┐
-│ Validator       │  (rule-based: valid locations, existing NPCs,
-│ - Schema check  │   valid items, consistent timestamps)
-│ - Cross-ref     │
-└────────┬────────┘
-         │
-         ▼
-┌─────────────────┐
-│ Applier         │  (transactional DB updates)
-│ - Update actors │
-│ - Update world  │
-│ - Update quests │
-│ - Emit events   │
-└─────────────────┘
-```
+World events are extracted from message content through a three-stage pipeline:
+
+**Stage 1 — LLM Extractor**
+- Takes raw message content as input
+- Lightweight model with structured output (few-shot prompted)
+- Schema: `WorldEvent[]` — location changes, NPC state changes, item transfers, etc.
+
+**Stage 2 — Validator**
+- Rule-based validation against known state
+- Checks: valid locations, existing NPCs, valid items, consistent timestamps
+- Cross-references extracted events against current world state
+
+**Stage 3 — Applier**
+- Transactional DB updates
+- Updates: actors (stats, location, equipment), world (lore, descriptions), quests (progress)
+- Emits events for UI update and synthetic generator
 
 ### World State Persistence
 
@@ -455,44 +425,12 @@ interface CompositeQuestConfig {
 
 ### Quest Progression Integration
 
-```
-┌────────────────────────────────────────────────────────────┐
-│                   QUEST PROGRESSION FLOW                    │
-├────────────────────────────────────────────────────────────┤
-│                                                             │
-│  STORY EVENT OCCURS                                        │
-│  (from World State Engine)                                 │
-│         │                                                   │
-│         ▼                                                   │
-│  ┌─────────────────┐                                        │
-│  │ Quest Engine    │  Evaluates ALL active quests           │
-│  │ matchEvent()    │  against event type                    │
-│  └────────┬────────┘                                        │
-│         │                                                   │
-│         ▼                                                   │
-│  ┌─────────────────┐                                        │
-│  │ For each match: │                                        │
-│  │ - Update progress                                        │
-│  │ - Check completion                                       │
-│  │ - Trigger narrative hooks                                │
-│  │ - Award rewards                                          │
-│  └────────┬────────┘                                        │
-│         │                                                   │
-│    ┌────┴────┐                                              │
-│    ▼         ▼                                              │
-│ PROGRESS   COMPLETE                                         │
-│    │          │                                             │
-│    ▼          ▼                                             │
-│ Update     - Mark completed                                 │
-│ quest      - Apply rewards                                  │
-│ progress   - Unlock narrative                               │
-│ - Check      - Update world state                           │
-│   milestones - Notify GM/players                            │
-│ - Inject     - Spawn follow-up quests                       │
-│   narration                                              │
-│                                                             │
-└────────────────────────────────────────────────────────────┘
-```
+When a story event occurs, the quest engine evaluates it through this 4-step journey:
+
+1. **Story Event Occurs** — World State Engine emits an event (location change, NPC dialogue, item pickup, combat result)
+2. **Quest Engine Evaluates** — `matchEvent()` checks all active quests against event type, triggering matched quests
+3. **For Each Match** — Update progress, check completion conditions, trigger narrative hooks, award rewards (XP, items, world changes)
+4. **Branch** — If progress-only: update quest progress, check milestones, inject narration. If complete: mark quest completed, apply rewards, unlock narrative branches, update world state, notify GM/players, spawn follow-up quests
 
 ---
 
@@ -521,51 +459,15 @@ Generate realistic test scenarios from actual story generation runs for:
 
 ### Generation Pipeline
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│              SYNTHETIC DATA GENERATION FLOW                 │
-├─────────────────────────────────────────────────────────────┤
-│                                                              │
-│  STORY SESSION COMPLETES (or checkpoint)                    │
-│         │                                                    │
-│         ▼                                                    │
-│  ┌─────────────────────────────────────────────┐           │
-│  │ Synthetic Generator analyzes session        │           │
-│  │ - Extracts all turn cycles                  │           │
-│  │ - Captures: context, prompts, responses     │           │
-│  │ - Records: quality scores, decisions        │           │
-│  │ - Tracks: world state before/after each turn│           │
-│  └──────────────────────┬──────────────────────┘           │
-│                         │                                    │
-│         ┌───────────────┼───────────────┐                   │
-│         ▼               ▼               ▼                   │
-│  ┌────────────┐  ┌────────────┐  ┌────────────┐           │
-│  │ Turn       │  │ Quality    │  │ Quest/     │           │
-│  │ Sequences  │  │ Cases      │  │ World State│           │
-│  └─────┬──────┘  └─────┬──────┘  └─────┬──────┘           │
-│        │               │               │                    │
-│        ▼               ▼               ▼                    │
-│  ┌─────────────────────────────────────────────┐           │
-│  │ Synthetic Data Store                        │           │
-│  │ (table: synthetic_scenarios)                │           │
-│  │ - scenario_type                             │           │
-│  │ - input_context (JSON)                      │           │
-│  │ - expected_output (JSON)                    │           │
-│  │ - metadata: session_id, turn, actors, etc.  │           │
-│  │ - tags: [regression, quality, quest, ...]   │           │
-│  └─────────────────────────────────────────────┘           │
-│                         │                                    │
-│                         ▼                                    │
-│  ┌─────────────────────────────────────────────┐           │
-│  │ Test Runner consumes scenarios              │           │
-│  │ - Unit tests: replay turn with same input   │           │
-│  │ - Integration: full session replay          │           │
-│  │ - Property-based: mutate inputs, check      │           │
-│  │   invariants (quest progress never dec)     │           │
-│  └─────────────────────────────────────────────┘           │
-│                                                              │
-└─────────────────────────────────────────────────────────────┘
-```
+When a story session completes (or hits a checkpoint), synthetic data flows through 4 stages:
+
+1. **Synthetic Generator Analyzes Session** — Extracts all turn cycles, captures context/prompts/responses, records quality scores and decisions, tracks world state before/after each turn
+2. **Split into Three Output Types:**
+   - **Turn Sequences** — Full turn-by-turn replay data
+   - **Quality Cases** — Edge cases for quality evaluation validation
+   - **Quest/World State** — Progression and state transition data
+3. **Synthetic Data Store** — Persisted in `synthetic_scenarios` table with: `scenario_type`, `input_context` (JSON), `expected_output` (JSON), metadata (session_id, turn, actors), and tags (regression, quality, quest)
+4. **Test Runner Consumes Scenarios** — Unit tests replay turns with same input, integration tests do full session replay, property-based tests mutate inputs and check invariants (e.g., quest progress never decreases)
 
 ### Synthetic Scenarios Table
 
@@ -745,76 +647,25 @@ story:
 
 ### Story Mode Chat View
 
-```
-┌─────────────────────────────────────────────────────────────────┐
-│  [World: Elderwood]  [Quest: Find the Crown - 45%]  ⏸ ▶ ⏭     │
-├─────────────────────────────────────────────────────────────────┤
-│                                                                 │
-│  ◆ NARRATION: The sun sets over Elderwood. Shadows lengthen.  │
-│                                                                 │
-│  ┌─────────────────────────────────────────────────────────┐   │
-│  │ [GM] Selecting next actor: Sir Aldric (Knight)          │   │
-│  │ Prompt: "You notice movement in the treeline..."        │   │
-│  └─────────────────────────────────────────────────────────┘   │
-│                                                                 │
-│  ┌─ Sir Aldric ────────────────────────────────────────────┐  │
-│  │ *Sir Aldric's hand rests on his sword hilt. "Show       │  │
-│  │  yourself," he calls, voice steady despite the racing   │  │
-│  │  of his heart.*                                          │  │
-│  │                                                          │  │
-│  │ 💭 Thinking: The knight is cautious but not fearful...  │  │
-│  │ [Quality: 87/100 ✓] [Regenerate] [Details]              │  │
-│  └─────────────────────────────────────────────────────────┘  │
-│                                                                 │
-│  ┌─ Shadow Figure ─────────────────────────────────────────┐  │
-│  │ *A hooded figure steps forward, hands raised.*          │  │
-│  │  "I mean no harm, knight. I seek the same thing you    │  │
-│  │   do."                                                   │  │
-│  │                                                          │  │
-│  │ [Quality: 72/100 ✓] [Regenerate] [Details]              │  │
-│  └─────────────────────────────────────────────────────────┘  │
-│                                                                 │
-│  ◆ NARRATION: The figure reveals a map fragment...           │
-│                                                                 │
-│  ┌─────────────────────────────────────────────────────────┐   │
-│  │ [QUEST UPDATE] "Find the Crown" → 60% (+15%)           │   │
-│  │ Milestone: "First clue discovered - map fragment found" │   │
-│  └─────────────────────────────────────────────────────────┘   │
-│                                                                 │
-├─────────────────────────────────────────────────────────────────┤
-│  [Input disabled during generation]  [GM Panel] [Quest Log]    │
-└─────────────────────────────────────────────────────────────────┘
-```
+A story-mode chat layout showing:
+
+- **Header bar:** World name ("Elderwood"), quest progress ("Find the Crown - 45%"), and controls (pause, play, skip)
+- **Narration block:** World events and scene description (◆ NARRATION)
+- **GM selection panel:** Indicates which actor is selected next and the prompt being used
+- **Actor response bubbles:** Each shows character name, dialogue text, thinking/reasoning (💭), and quality score (87/100) with Regenerate/Details buttons
+- **Quest update banner:** Progress percentage (+15%), milestone achievements
+- **Footer:** Input disabled during generation, with GM Panel and Quest Log buttons
 
 ### GM Control Panel (Human GM)
 
-```
-┌─ GAME MASTER PANEL ──────────────────────────────────────────┐
-│  Status: ▶ RUNNING  |  Turn: 23  |  Next: Sir Aldric        │
-│                                                               │
-│  TURN ORDER:                                                  │
-│  1. Sir Aldric (Knight)     [●] Ready                        │
-│  2. Shadow Figure (Mystery) [○] Waiting                      │
-│  3. Narrator                [○] Waiting                      │
-│  [↑ Move Up] [↓ Move Down] [✎ Edit Prompt] [⏭ Skip]         │
-│                                                               │
-│  ACTIVE QUESTS:                                               │
-│  ████████░░ Find the Crown (60%)                             │
-│  ████░░░░░░ Rescue Villagers (40%)                           │
-│  [+ New Quest] [✎ Edit] [🗑 Delete]                          │
-│                                                               │
-│  WORLD STATE:                                                 │
-│  Location: Elderwood Forest → Clearing                       │
-│  Time: Evening (18:42)  |  Weather: Clear                    │
-│  NPCs Here: Sir Aldric, Shadow Figure, [+ Add]               │
-│                                                               │
-│  QUALITY THRESHOLDS:                                          │
-│  Accept: 70  |  Regenerate: 40  |  Escalate: 40              │
-│  [Apply Changes]                                              │
-│                                                               │
-│  [PAUSE] [STEP] [ESCALATE TO ME] [INJECT NARRATION]          │
-└──────────────────────────────────────────────────────────────┘
-```
+A human GM dashboard showing:
+
+- **Status bar:** Running indicator, current turn number (23), next actor (Sir Aldric)
+- **Turn Order:** Numbered actor list with Ready/Waiting status, Move Up/Down/Skip controls, edit prompt button
+- **Active Quests:** Progress bars for each active quest (Find the Crown 60%, Rescue Villagers 40%), New/Edit/Delete quest buttons
+- **World State:** Current location, time (18:42), weather (Clear), NPCs present with add button
+- **Quality Thresholds:** Configurable Accept (70), Regenerate (40), Escalate (40) thresholds with Apply Changes
+- **Control Buttons:** Pause, Step, Escalate to Me, Inject Narration
 
 ---
 

@@ -38,22 +38,19 @@ Located in `src/middleware/`
 
 Lightweight composable pipeline built on Bun's native fetch handler. No Express/Koa dependency. Each middleware receives `(request, context, next)` and either short-circuits (returns `Response`) or calls `next()` with enriched context.
 
-```
-request → auth → roleGuard → route dispatch → Response
-                ↓
-          401 Unauthorized  403 Forbidden
-```
+Middleware processes each request through these stages:
+
+1. **Auth middleware** — Extracts Bearer token, SHA-256 hashes it, looks up session in DB. If invalid → returns `401 Unauthorized`. On success → populates `RequestContext`
+2. **Role guard** — Checks route permissions against `context.userRole`. If role lacks access → returns `403 Forbidden`
+3. **Route dispatch** — Delegates to domain controller. Controller calls service → service calls DB. Returns `Response`
+4. **Error boundary** — Catches exceptions from any middleware or handler → returns structured error envelope
 
 #### RequestContext
 
 Shared context object passed through the pipeline, populated by auth middleware and consumed by route handlers:
 
 ```
-RequestContext {
-  userId:    string | null   — authenticated user ID (null in solo mode)
-  userRole:  string | null   — admin | user | viewer | solo
-  sessionId: string | null   — active session ID (null in solo mode)
-}
+RequestContext { userId, userRole, sessionId }
 ```
 
 #### Auth Middleware (`src/middleware/auth.ts`)
@@ -144,12 +141,14 @@ Located in `src/db/`
 | 003a | `003_generation_attempts.ts` | `generation_attempts` table                                                                                       |
 
 > **Warning**: During MVP, `data_version` defaults to `0` across all actor records. When stabilising post-MVP, version bumps will be **forward-compatible only**: migrations add columns/tables, never remove. Existing `v0` records continue working; missing fields resolve to sensible defaults. See [`docs/actors.md`](./actors.md) for full versioning contract.
-> | 003b | `003_story_features.ts` | locations, story_turns, quests, quest_progress, world_states, npc_states, location_states, synthetic_data + new columns on chats |
-> | 004 | `004_continuation_retry.ts` | Continuation & tree columns on generation_attempts + messages |
+
+Future migrations (post-MVP):
+- `003b_story_features.ts` — locations, story_turns, quests, quest_progress, world_states, npc_states, location_states, synthetic_data + new columns on chats
+- `004_continuation_retry.ts` — Continuation & tree columns on generation_attempts + messages
 
 ### Actor System
 
-Located in `src/actors/` (types and logic) — the `actors` table is the unified
+Located in `src/` (planned `src/actors/` for types and logic) — the `actors` table is the unified
 participant model. See [`docs/actors.md`](./actors.md) for:
 
 - **Character card imports** (SillyTavern V1/V2 — PNG-embedded and JSON)
@@ -223,29 +222,19 @@ checks, and continuation/retry features.
 
 #### Generation Status Lifecycle
 
-```
-                ┌─────────┐
-                │ pending  │
-                └────┬────┘
-                     │
-                ┌────▼────┐
-                │processing│
-                └────┬────┘
-                     │
-                ┌────▼────┐
-                │streaming │
-                └┬───┬────┘
-           ┌─────┘   └──────┐
-      ┌────▼────┐      ┌────▼────┐
-      │completed│      │ failed  │
-      └─────────┘      └─────────┘
-                          │
-                     ┌────▼────┐
-                     │cancelled│
-                     └─────────┘
-```
+A `generation_attempt` progresses through states in sequence, with terminal states at the end:
 
-Any of `pending`, `processing`, `streaming` can transition to `failed` or `cancelled`.
+**Forward progression:**
+1. `pending` — Queued, not yet picked up by worker
+2. `processing` — Actively being generated (LLM/backend call in-flight)
+3. `streaming` — Tokens are streaming to client (only for streaming providers)
+4. `completed` — Generation finished successfully, result stored
+
+**Terminal transitions from any non-completed state:**
+- `failed` — Error occurred (API error, timeout, connection failure). Can be retried (new attempt)
+- `cancelled` — Stopped by user action, repetition detection, policy violation, chat switch, or system abort
+
+Any of `pending`, `processing`, or `streaming` can transition directly to `failed` or `cancelled`.
 
 #### DB Table
 
@@ -537,7 +526,7 @@ bun run tui
 | `bun run dev`           | Development server with `--watch`                       |
 | `bun run start`         | Production server                                       |
 | `bun run tui`           | Start TUI interface                                     |
-| `bun run build`         | TypeScript compile to `./dist`                          |
+| `bun run build`         | TypeScript compile to `./dist` (optional — Bun runs TS directly) |
 | `bun run db:migrate`    | Run database migrations                                 |
 | `bun run check`         | Full quality check: typecheck → lint → format → md:lint |
 | `bun run lint`          | Run ESLint                                              |

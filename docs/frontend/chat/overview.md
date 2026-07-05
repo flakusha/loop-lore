@@ -111,5 +111,5 @@ In User × User chats, both users are co-masters.
 
 - World is a first-class entity: name, description, lore, rules.
 - Location is a sub-entity of World: name, description, connections to other locations.
-- A chat references exactly one Location at a time. Location can change mid-chat (e.g., party moves from Forest to Cave). This is a v1.1 feature — v1 scopes to world-level only.
+- A chat references exactly one Location at a time. Location can change mid-chat (e.g., party moves from Forest to Cave). This is a Future feature.
 - See [worlds.md](../worlds.md) for full world/location spec.

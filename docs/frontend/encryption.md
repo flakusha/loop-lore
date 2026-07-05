@@ -27,16 +27,11 @@ multiple keys.
 
 ## Key Hierarchy
 
-```
-┌─────────────────────────────────────┐
-│         Server Master Key           │  SMK: SERVER_ENCRYPTION_KEY env var
-│  (256-bit, env only, never DB)      │  or generated on first start
-└──────────┬──────────────────────────┘
-           │
-           ├── encrypts ──► Actor Secret Keys (at rest in actor_keys table)
-           │
-           └── derives ──► Chat Encryption Keys (per-chat HKDF)
-```
+Encryption keys form a three-level hierarchy:
+
+1. **Server Master Key (SMK)** — 256-bit key from `SERVER_ENCRYPTION_KEY` env var (never stored in DB). Generated on first start if env var is absent
+2. **Actor Secret Keys** — Each actor (user, character, assistant, narrator, system) has one or more keys. Stored in `actor_keys` table, encrypted at rest by SMK (`AES-256-GCM(SMK, raw_key)`)
+3. **Chat Encryption Keys** — Per-chat keys derived via HKDF from participant actor keys. Used for message content encryption
 
 ### Actor Key Table
 
@@ -67,28 +62,25 @@ Actor primary key created on first login:
 
 ### Distribution
 
-```
-New actor joins group chat
-  → Server loads all existing participants' keys
-  → For each key: encrypt with new actor's public key
-  → Send encrypted key bundle to new actor
-  → New actor decrypts bundle, can read history
-```
+When a new actor joins a group chat, keys are distributed in four steps:
+
+1. **Server loads** all existing participants' keys from `actor_keys` table
+2. **For each key**, encrypts it with the new actor's public key (SMK-wrapped — server-mediated, not true E2E)
+3. **Sends** encrypted key bundle to new actor
+4. **New actor decrypts** bundle, can now read chat history
 
 **Implementation note**: Keys are distributed SMK-wrapped (server-mediated).
 True E2E (client-only keys without server access) is future.
 
 ### Rotation
 
-Rotation replaces the active chat key without breaking history:
+Rotation replaces the active chat key without breaking history. Five steps:
 
-```
-1. Admin/actor triggers rotation
-2. New chat key derived: HKDF(new_salt, concat(participant_keys))
-3. New messages use new key
-4. Old key retained with status='expired' for historical reads
-5. Optional: async re-encrypt historical messages with new key
-```
+1. **Admin/actor triggers rotation**
+2. **New chat key derived**: `HKDF(new_salt, concat(participant_keys))`
+3. **New messages** use the new key
+4. **Old key** retained with `status='expired'` for historical reads (key versioning via `key_id` in `messages.content`)
+5. **Optional**: Async re-encrypt historical messages with new key
 
 **Key versioning**: `messages.content` includes `key_id` referencing which
 `actor_keys.id` encrypted it. Historical messages remain readable as long as
@@ -110,48 +102,46 @@ Revoking an actor's key:
 
 ### User Message (Write Path)
 
-```
-Client:
-  1. plaintext message
-  2. compress (gzip/zstd/brotli, skip if <128 bytes)
-  3. encrypt with chat key (AES-256-GCM)
-  4. package: {enc, nonce, algo, comp, key_id}
-  5. send to server (over HTTPS)
+A message travels from client to server through these steps:
 
-Server:
-  6. validate + store in messages.content (raw JSON blob)
-  7. return message ID to client
+**Client side:**
+1. Take the plaintext message string
+2. Compress (gzip/zstd/brotli, skip if `<128` bytes)
+3. Encrypt with chat key (AES-256-GCM)
+4. Package as JSON: `{enc, nonce, algo, comp, key_id}`
+5. Send to server over HTTPS
 
-On read by another actor:
-  8. server loads content JSON
-  9. decrypt with chat key → compressed bytes
-  10. decompress → plaintext
-  11. deliver to requesting actor
-```
+**Server side:**
+6. Validate input, store `messages.content` as raw JSON blob
+7. Return message ID to client
+
+**On read by another actor:**
+8. Server loads content JSON from DB
+9. Decrypt with chat key → compressed bytes
+10. Decompress → plaintext
+11. Deliver to requesting actor over HTTPS
 
 ### LLM Response (Write Path)
 
-```
-Server:
-  1. LLM API returns plaintext response
-  2. (no key operation — response is fresh plaintext)
-  3. compress (gzip/zstd/brotli, skip if <128 bytes)
-  4. encrypt with chat key (AES-256-GCM)
-  5. package: {enc, nonce, algo, comp, key_id}
-  6. store in messages.content
-```
+When the server receives an LLM response, it encrypts before storing:
 
-**NOT sent compressed to LLM API.** LLM APIs expect plaintext. Compression
-and encryption are storage-layer concerns only.
+1. LLM API returns plaintext response
+2. No key operation — response is fresh plaintext
+3. Compress (gzip/zstd/brotli, skip if `<128` bytes)
+4. Encrypt with chat key (AES-256-GCM)
+5. Package as JSON: `{enc, nonce, algo, comp, key_id}`
+6. Store in `messages.content`
+
+**Note:** The response is NOT sent compressed to the LLM API. Compression and encryption are storage-layer concerns only. LLM APIs expect plaintext.
 
 ### Read Path (Deliver to Actor)
 
-```
-Client requests messages for chat
-  → Server loads messages.content (JSON blobs)
-  → For each: decrypt with chat key → decompress → plaintext
-  → Send plaintext to client over HTTPS
-```
+When a client requests messages for a chat:
+
+1. Client sends request for messages (e.g., `GET /api/chats/:id/messages`)
+2. Server loads each `messages.content` JSON blob from DB
+3. For each blob: decrypt with chat key → decompress → plaintext
+4. Send plaintext to client over HTTPS
 
 ---
 
@@ -159,38 +149,24 @@ Client requests messages for chat
 
 ### Write: `compressThenEncrypt(plaintext, chatKey) → StoredPayload`
 
-```
-Input: plaintext string
-1. If length >= 128 bytes:
-     try: compressed = gzip(plaintext)
-     fallback: try brotli → try zstd → identity
-   Else: identity (no compress)
-2. nonce = random 12 bytes
-3. ciphertext = AES-256-GCM(chatKey, compressed|plaintext, nonce)
-4. Output: { enc: b64(ciphertext), nonce: b64(nonce), algo: "aes-256-gcm",
-             comp: true|false, key_id: chatKey.id }
-```
+1. If input length ≥ 128 bytes, try compression in order: gzip → brotli → zstd. All fallbacks on failure, fallback to identity. If `<128` bytes, skip compression (identity)
+2. Generate random 12-byte nonce (`crypto.randomBytes(12)`)
+3. Encrypt: `AES-256-GCM(chatKey, compressed|plaintext, nonce)` → ciphertext
+4. Package: `{ enc: b64(ciphertext), nonce: b64(nonce), algo: "aes-256-gcm", comp: true|false, key_id: chatKey.id }`
 
-**Error cases**:
+**Error cases:**
 - Compression fails → fallback to identity, log warning, continue
 - Encryption fails → return error to caller (no partial write)
 - Both succeed → atomically write to DB
 
 ### Read: `decryptThenDecompress(payload, chatKey) → plaintext`
 
-```
-Input: stored JSON payload
-1. ciphertext = b64decode(payload.enc)
-2. nonce = b64decode(payload.nonce)
-3. decrypted = AES-256-GCM-decrypt(chatKey, ciphertext, nonce)
-4. If payload.comp:
-     try: plaintext = gunzip(decrypted)
-     fallback: try brotli → try zstd → identity
-   Else: plaintext = decrypted
-5. Output: plaintext string
-```
+1. Decode `payload.enc` and `payload.nonce` from base64
+2. Decrypt: `AES-256-GCM-decrypt(chatKey, ciphertext, nonce)` → decrypted bytes
+3. If `payload.comp` is true, decompress in order: gunzip → brotli → zstd. All fallbacks on failure, return decrypted bytes as-is
+4. If comp is false, return decrypted bytes directly
 
-**Error cases**:
+**Error cases:**
 - Decryption fails (wrong key, tampered data) → return error, log audit event
 - Decompression fails → return decrypted raw bytes as-is, log warning
 - Missing or malformed JSON → return error, log audit event

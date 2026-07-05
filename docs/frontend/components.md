@@ -129,6 +129,72 @@ Used in: zero chats, zero messages, zero characters, zero assets, search-no-resu
 
 ---
 
+## Frontend Logger
+
+A lightweight browser-compatible logger for debugging Alpine.js components and htmx handlers.
+
+### API
+
+```typescript
+import { createBrowserLogger, getBrowserLogger } from "../logger";
+
+// Create logger with level and module
+const log = createBrowserLogger("debug", "chat");
+
+// Log with structured metadata (async)
+await log.info("Message sent", { messageId: "abc123", tokens: 150 });
+await log.warn("Generation slow", { elapsedMs: 5000, model: "claude-3-opus" });
+await log.error("API failed", { error: err.message, status: 500 });
+
+// Child loggers with inherited bindings
+const reqLog = log.child({ requestId: "req_123" });
+```
+
+### Log Levels
+
+| Level | Numeric | Console method |
+|-------|---------|----------------|
+| debug | 0       | console.debug |
+| info  | 1       | console.info  |
+| warn  | 2       | console.warn  |
+| error | 3       | console.error |
+
+### Timestamp Format
+
+Uses ISO 8601 format parseable by `new Date()`:
+```
+2026-07-04T14:30:00.123+02:00
+```
+
+- Milliseconds: 3 digits
+- Timezone: Offset from UTC (`+02:00`, `-05:00`, `+00:00`)
+- TZ Support: Honors `TZ` environment variable; supports IANA timezone names
+
+### Integration
+
+1. **Development:** Logs appear in browser console with timestamp and module
+2. **Production:** Can be disabled via `LOG_LEVEL=error` or sent to server via `fetch()`
+3. **Async:** Uses `setImmediate`/`requestIdleCallback` for non-blocking writes
+
+### Usage in Alpine.js Components
+
+```typescript
+// In Alpine.js component
+window.chatState = function() {
+  const log = createBrowserLogger("debug", "chat");
+  
+  return {
+    async sendMessage() {
+      await log.debug("Sending message", { content: this.input });
+      // ... send logic
+      await log.info("Message sent", { id: response.id });
+    }
+  };
+};
+```
+
+---
+
 ## Drop Zone (for file uploads)
 
 **Structure**:

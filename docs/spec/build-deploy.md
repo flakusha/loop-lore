@@ -44,12 +44,11 @@ That's it. No Docker, no Postgres, no build step. SQLite file created automatica
 
 ### What Gets Built
 
-```
-src/
-  views/        → Preprocessed HTML → dist/public/
-  public/       → Static assets      → dist/public/  (copied)
-  server.ts     → Bun bundle         → dist/server.js
-```
+The build process maps source to distribution in three steps:
+
+1. **HTML templates** — `src/views/` files are preprocessed and written to `dist/public/`
+2. **Static assets** — `src/public/` files are copied to `dist/public/`
+3. **Server bundle** — `src/server.ts` is bundled via `bun build --target bun` → `dist/server.js`
 
 ### Build Command
 
@@ -76,17 +75,13 @@ No watch/rebuild step needed for frontend assets — Bun's `--watch` restarts on
 
 ## Static Asset Pre-compression
 
-All HTML, CSS, and JS files get compressed at build time:
+All HTML, CSS, and JS files get compressed at build time. For each source file (e.g., `index.html`, `style.css`), three variants are produced in `dist/public/`:
 
-```
-dist/public/
-  index.html
-  index.html.gz        # gzip
-  index.html.br        # brotli
-  style.css
-  style.css.gz
-  style.css.br
-```
+1. Original — `index.html`
+2. Gzip — `index.html.gz`
+3. Brotli — `index.html.br`
+
+Server checks `Accept-Encoding` header and serves the compressed variant directly (no on-the-fly compression).
 
 Server checks `Accept-Encoding` and serves compressed variant directly (no on-the-fly compression).
 
@@ -126,9 +121,11 @@ docker run -p 3000:3000 -v ./loop-lore-data:/app/loop-lore-data \
 
 ### Option C: Reverse proxy (multi-user production)
 
-```
-Client → nginx (TLS, static cache) → Bun (app) → Postgres
-```
+Production topology with three tiers:
+
+1. **nginx** (TLS termination, static cache, rate limiting, load balancing) receives client traffic
+2. **Bun** (dynamic API routes, session management, WebSocket connections) processes application logic
+3. **Postgres** (persistent data, concurrent writes, cross-session consistency) stores all state
 
 nginx handles:
 

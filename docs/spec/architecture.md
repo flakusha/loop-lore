@@ -10,36 +10,29 @@ loop-lore is a lightweight roleplay/chat application reimagining SillyTavern wit
 2. **Data integrity first** — Messages survive crashes, disconnects, machine failure.
 3. **Progressive disclosure** — Simple for solo users, scalable for multi-user setups.
 4. **Adapter pattern** — DB, auth, frontend layers swappable without core changes.
-5. **Dual-mode architecture** — RPG and agentic workspace modes share 80%+ of the codebase (schema, services, UI components). See [Use Case: Agentic Assistant Workspace](./use-case-agentic-workspace.md).
+5. **Dual-mode architecture** — RPG and agentic workspace modes share most of the codebase (schema, services, UI components). See [Use Case: Agentic Assistant Workspace](./use-case-agentic-workspace.md).
 
 ## System Layers
 
-```
-┌─────────────────────────────┐
-│      Clients                │
-│  Web (htmx+Alpine)  TUI     │
-│  (blessed)   API (REST)     │
-└──────────────┬──────────────┘
-               │ HTTP / WS
-┌──────────────▼──────────────┐
-│   Bun HTTP Server           │
-│   Static serving            │
-│   ┌──────────────────────┐  │
-│   │ Middleware Pipeline   │  │
-│   │  auth → roleGuard →  │  │
-│   │  ... → route dispatch│  │
-│   └──────────────────────┘  │
-└──────────────┬──────────────┘
-┌──────────────▼──────────────┐
-│   Service Layer             │
-│  Assistant  Gallery  Chat   │
-│  Character  User/Session    │
-└──────────────┬──────────────┘
-┌──────────────▼──────────────┐
-│   DB Adapter Layer          │
-│  SQLite  (Postgres/MySQL)   │
-└─────────────────────────────┘
-```
+A request traverses four layers top-to-bottom:
+
+**1. Client Layer** — Entry points for user interaction:
+   - Web UI (htmx + Alpine.js) — browser-based, AJAX partial updates
+   - TUI (blessed) — terminal interface for power users
+   - API (REST) — programmatic access via curl, scripts, integrations
+
+**2. Server Layer** — Bun HTTP server receives client traffic:
+   - Serves static assets (HTML, CSS, JS) with pre-compressed variants
+   - Middleware pipeline processes every request in order: auth extraction → role guard → route dispatch
+   - Route handlers delegate to domain services
+
+**3. Service Layer** — Domain logic isolated per concern:
+   - Assistant, Assets, Chat, Generation, Story, Content, Age Gate, Dice, Character, User/Session
+   - Each service depends on the DB adapter interface, never concrete implementations
+
+**4. Data Layer** — Abstracted storage backend:
+   - Default: SQLite via `bun:sqlite` (zero-config, local solo use)
+   - Swappable: Postgres/MySQL via Kysely dialect swap (multi-user production)
 
 ### Client Layer
 
@@ -69,15 +62,17 @@ Abstracted through `DatabaseAdapter` interface. Default: SQLite (zero-config). S
 
 ## Request Flow (Web)
 
-```
-1. Browser requests page → Bun serves prebuilt HTML from disk
-2. User action → htmx sends AJAX to /api/*
-3. Auth middleware extracts + validates session token → RequestContext
-4. Role guard checks permissions (if applicable)
-5. Route handler → calls service → calls DB adapter
-6. Response (HTML fragment or JSON) → htmx swaps DOM
-7. Alpine.js manages local UI state (modals, forms, toasts)
-```
+Seven-step journey for a typical web interaction:
+
+1. **Page load** — Browser requests URL → Bun serves prebuilt HTML from disk (or compiled template)
+2. **User action** — htmx intercepts DOM event (click, submit) → sends AJAX to `/api/*`
+3. **Auth extraction** — Auth middleware reads `Authorization: Bearer <token>`, SHA-256 hashes it, looks up session in DB → populates `RequestContext { userId, userRole, sessionId }`
+4. **Role guard** — Middleware checks route permissions against `context.userRole`. Admin routes require `admin` role; non-matching roles return `403 Forbidden`
+5. **Route dispatch** — Route handler receives `(request, context)`. Calls domain service → service calls DB adapter (Kysely query builder)
+6. **Response** — Two possible paths:
+   - **HTML/JSON**: htmx receives fragment or JSON → swaps DOM element(s) in-place
+   - **SSE stream**: Generation endpoint streams token chunks via Server-Sent Events → typing indicator shows in chat
+7. **Client state** — Alpine.js manages local UI: modal visibility, form data, toast notifications, swipe state
 
 ## Static Asset Serving
 
