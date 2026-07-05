@@ -36,8 +36,8 @@ export async function completeStep(attemptId: string, stepIndex: number, db: Kys
     await updateAttemptStatus(db, attemptId, active.status, {
       step_index: active.stepIndex,
     });
-  } catch {
-    // non-fatal
+  } catch (error: unknown) {
+    console.warn("[step-pipeline] Non-fatal error in completeStep:", error);
   }
 }
 
@@ -55,13 +55,15 @@ export async function failStep(
   error: Error,
   db: Kysely<DB>,
 ): Promise<void> {
-  await updateAttemptStatus(db, attemptId, GenerationStatus.Failed, {
-    error_message: `Step ${stepIndex} failed: ${error.message}`,
-    step_index: stepIndex,
-    completed_at: new Date().toISOString(),
-  }).catch(() => {
-    // non-fatal
-  });
+  try {
+    await updateAttemptStatus(db, attemptId, GenerationStatus.Failed, {
+      error_message: `Step ${stepIndex} failed: ${error.message}`,
+      step_index: stepIndex,
+      completed_at: new Date().toISOString(),
+    });
+  } catch (error: unknown) {
+    console.warn("[step-pipeline] Non-fatal error in failStep:", error);
+  }
 }
 
 export interface PipelineState {
