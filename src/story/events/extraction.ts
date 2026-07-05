@@ -75,7 +75,7 @@ export function extractEvents(
   for (const p of itemPatterns) p.lastIndex = 0;
   for (const p of lorePatterns) p.lastIndex = 0;
 
-  // eslint-disable-next-line sonarjs/cognitive-complexity
+   
   const events: WorldEvent[] = [];
   const timestamp = new Date().toISOString();
   const lower = messageContent.toLowerCase();

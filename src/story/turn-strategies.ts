@@ -40,10 +40,18 @@ export const sceneBasedSelect: TurnStrategyFn = (participants, currentActorId, c
   return roundRobinSelect(participants, currentActorId, currentTurn, turnOrder);
 };
 
+function fisherYatesShuffle<T>(arr: T[]): T[] {
+  const result = [...arr];
+  for (let i = result.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [result[i], result[j]] = [result[j], result[i]];
+  }
+  return result;
+}
+
 export const initiativeSelect: TurnStrategyFn = (participants, _currentActorId, _currentTurn, _turnOrder) => {
-  // Shuffle order based on "initiative" (random for MVP)
-  // eslint-disable-next-line sonarjs/pseudo-random
-  const shuffled = [...participants].toSorted(() => Math.random() - 0.5);
+  // Shuffle order based on "initiative" (Fisher-Yates for uniform distribution)
+  const shuffled = fisherYatesShuffle(participants);
   return shuffled[0].actorId;
 };
 
