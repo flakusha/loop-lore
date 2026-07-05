@@ -6,59 +6,13 @@ import { readFileSync, existsSync } from "node:fs";
 import path from "node:path";
 import { Config, DEFAULTS } from "./schema";
 import type { ProviderInstanceConfig } from "./schema";
+import { ConfigSchema } from "./schema-class";
 
 // Map flat env var names to dot-separated config paths
-const ENV_MAP: Record<string, string> = {
-  PORT: "server.port",
-  HOST: "server.host",
-  DB_TYPE: "db.type",
-  SQLITE_FILENAME: "db.sqliteFilename",
-  DATABASE_URL: "db.url",
-  ENABLE_ASSETS: "assets.enabled",
-  ASSETS_UPLOAD_DIR: "assets.uploadDir",
-  ASSETS_MAX_FILE_SIZE: "assets.maxFileSize",
-  ASSETS_COMPRESSION: "assets.compression",
-  ENABLE_ASSISTANT: "assistant.enabled",
-  LOG_LEVEL: "logging.level",
-  ENABLE_TUI: "tui.enabled",
-  ENABLE_DOCS: "docs.enabled",
-  AGE_GATE_ENABLED: "ageGate.enabled",
-  AGE_GATE_MINIMUM_AGE: "ageGate.minimumAge",
-  AGE_GATE_MODE: "ageGate.mode",
-  TLS_KEY: "server.tls.key",
-  TLS_CERT: "server.tls.cert",
-  AUTH_REQUIRED: "auth.required",
-  AUTH_REGISTRATION_OPEN: "auth.registrationOpen",
-  SESSION_TIMEOUT_HOURS: "auth.sessionTimeoutHours",
-  SESSION_MAX_PER_USER: "auth.maxSessionsPerUser",
-  DEMO_USERNAME: "auth.demoUsername",
-  DEMO_AUTO_SETUP: "auth.demoAutoSetup",
-  TRANSPORT_DEFAULT_PROTOCOL: "transport.defaultProtocol",
-  TRANSPORT_ENABLE_WEBSOCKET: "transport.enableWebSocket",
-  TRANSPORT_ENABLE_WEBTRANSPORT: "transport.enableWebTransport",
-  TRANSPORT_ENABLE_H2: "transport.enableH2",
-  TRANSPORT_ENABLE_H3: "transport.enableH3",
-  TRANSPORT_COMPRESSION_ENABLED: "transport.compression.enabled",
-  TRANSPORT_COMPRESSION_DEFAULT: "transport.compression.default",
-  TRANSPORT_COMPRESSION_THRESHOLD: "transport.compression.threshold",
-  TRANSPORT_MAX_FRAME_SIZE: "transport.limits.maxFrameSize",
-  TRANSPORT_MAX_PAYLOAD: "transport.limits.maxPayload",
-  TRANSPORT_MAX_CONCURRENT_STREAMS: "transport.limits.maxConcurrentStreams",
-  MESSAGE_AUTO_HIDE_INVALID: "messages.autoHideInvalid",
-  MESSAGE_HIDE_CONFIRMATION: "messages.hideConfirmation",
-  MESSAGE_MAX_LENGTH: "messages.maxLength",
-  MESSAGE_MAX_GENERATION_RETRIES: "messages.maxGenerationRetries",
-  MESSAGE_GENERATION_TIMEOUT_MS: "messages.generationTimeoutMs",
-  MESSAGE_IDEMPOTENCY_EXPIRY_HOURS: "messages.idempotencyExpiryHours",
-  ALLOW_NSFW: "nsfw.allowNsfw",
-  NSFW_MIN_AGE: "nsfw.nsfwMinAge",
-  LLM_DEFAULT_PROVIDER: "generation.defaultProvider",
-  BYO_KEY_ENABLED: "byoKey.enabled",
-  BYO_KEY_ENCRYPTION_KEY: "byoKey.encryptionKey",
-};
+// Source of truth: ConfigSchema.envMap() — auto-generated from class hierarchy.
+const ENV_MAP: Record<string, string> = ConfigSchema.envMap();
 
-/** Env vars that auto-create a default OpenAI-compatible provider instance */
-const _PROVIDER_ENV_VARS = ["LLM_PROVIDER_BASE_URL", "LLM_PROVIDER_API_KEY", "LLM_PROVIDER_MODEL"] as const;
+/** Env var check helper — detects when LLM_PROVIDER_* env vars are set */
 
 // Config file candidates in priority order
 const CONFIG_FILES = ["config.yaml", "config.yml", "config.toml"];
@@ -68,11 +22,10 @@ function deepMerge<T extends Record<string, unknown>>(base: T, overrides: Partia
   for (const key of Object.keys(overrides)) {
     const k = key as keyof T;
     const value = overrides[k];
-    if (value !== undefined) {
+    if (value != null) {
       const baseValue = base[k];
       const isObject =
         typeof value === "object" &&
-        value != null &&
         !Array.isArray(value) &&
         typeof baseValue === "object" &&
         baseValue != null;
@@ -151,37 +104,7 @@ function parseFileContent(content: string, extension: string): Record<string, un
 }
 
 function validateConfig(config: Config): void {
-  const validDatabaseTypes = ["sqlite", "postgres"];
-
-  if (!validDatabaseTypes.includes(config.db.type)) {
-    throw new Error(`Invalid db.type: "${config.db.type}". Must be one of: ${validDatabaseTypes.join(", ")}`);
-  }
-  if (config.db.type === "postgres" && !config.db.url) {
-    throw new Error("db.url is required when db.type is 'postgres'");
-  }
-  if (config.server.port < 1 || config.server.port > 65_535) {
-    throw new Error(`Invalid server.port: ${config.server.port}. Must be 1-65535`);
-  }
-  const validLogLevels = ["debug", "info", "warn", "error"];
-  if (!validLogLevels.includes(config.logging.level)) {
-    throw new Error(
-      `Invalid logging.level: "${config.logging.level}". Must be one of: ${validLogLevels.join(", ")}`,
-    );
-  }
-  if (config.generation.defaultProvider && config.generation.providers.openaiCompatible.length === 0) {
-    // Warning only — provider may come from env vars post-merge
-  }
-  for (const provider of config.generation.providers.openaiCompatible) {
-    if (!provider.baseUrl) {
-      throw new Error(`generation.providers.openaiCompatible entry "${provider.name}" missing baseUrl`);
-    }
-    if (!provider.model) {
-      throw new Error(`generation.providers.openaiCompatible entry "${provider.name}" missing model`);
-    }
-  }
-  if (config.generation.providers.anthropic && !config.generation.providers.anthropic.apiKey) {
-    throw new Error("generation.providers.anthropic requires apiKey");
-  }
+  ConfigSchema.validate(config);
 }
 
 /** Create a default provider instance from LLM_PROVIDER_* env vars */
@@ -195,8 +118,8 @@ function applyProviderEnvVars(config: Config): void {
     baseUrl,
     apiKey: process.env.LLM_PROVIDER_API_KEY,
     model: process.env.LLM_PROVIDER_MODEL ?? "default",
-    timeout: Number(process.env.LLM_PROVIDER_TIMEOUT) || 30_000,
-    retries: Number(process.env.LLM_PROVIDER_RETRIES) || 3,
+    timeout: Number.isNaN(Number(process.env.LLM_PROVIDER_TIMEOUT)) ? 30_000 : Number(process.env.LLM_PROVIDER_TIMEOUT),
+    retries: Number.isNaN(Number(process.env.LLM_PROVIDER_RETRIES)) ? 3 : Number(process.env.LLM_PROVIDER_RETRIES),
     allowUserApiKey: process.env.LLM_PROVIDER_ALLOW_USER_KEY !== "false",
     models: {},
   };

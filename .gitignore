@@ -4,9 +4,8 @@
 dist/
 node_modules/
 
-# Runtime data (stale location — default moved to sibling ../loop-lore-data/)
-data/*.db
-data/uploads/
+# Runtime data (stale in-project location — migrated to ../loop-lore-data/)
+data/
 
 # Pre-compressed static assets (generated on server start)
 *.br
@@ -21,5 +20,17 @@ config.yaml
 config.yml
 config.toml
 
+# Per-backend config files — user-specific, contain paths/secrets/tokens
+config.llama-swap.yaml
+config.llama-cpp.yaml
+config.sd-cpp.yaml
+config.e2e.yaml
+
+# Server launch scripts — user-specific paths, not committed
+config.*.sh
+
 # Lock files (generated, can be recreated with bun install)
 bun.lock
+
+# User runtime data directory (SQLite DB, uploads, etc.)
+home/
