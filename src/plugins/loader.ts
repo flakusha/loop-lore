@@ -39,7 +39,7 @@ function makeLogger(pluginName: string): PluginLogger {
  * Call once at startup, after DB is ready.
  */
 export async function loadAllPlugins(db: Kysely<DB>): Promise<void> {
-  // eslint-disable-next-line sonarjs/cognitive-complexity
+   
   const log = getLogger();
   loadOrder.length = 0;
 
