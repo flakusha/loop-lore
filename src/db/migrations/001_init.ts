@@ -212,6 +212,8 @@ export async function up(database: Kysely<unknown>): Promise<void> {
     .execute();
 
   await database.schema.createIndex("idx_actor_memories_actor").on("actor_memories").column("actor_id").execute();
+  await database.schema.createIndex("idx_actor_memories_type").on("actor_memories").column("memory_type").execute();
+  await database.schema.createIndex("idx_actor_memories_source_chat").on("actor_memories").column("source_chat_id").execute();
 
   // ── Actor Notes ──────────────────────────────────────
   await database.schema
@@ -273,6 +275,7 @@ export async function up(database: Kysely<unknown>): Promise<void> {
     .execute();
 
   await database.schema.createIndex("idx_actor_lore_actor").on("actor_lore_entries").column("actor_id").execute();
+  await database.schema.createIndex("idx_actor_lore_position").on("actor_lore_entries").column("position").execute();
 
   // ── World Lore Entries ───────────────────────────────
   await database.schema
@@ -297,6 +300,7 @@ export async function up(database: Kysely<unknown>): Promise<void> {
     .execute();
 
   await database.schema.createIndex("idx_world_lore_world").on("world_lore_entries").column("world_id").execute();
+  await database.schema.createIndex("idx_world_lore_position").on("world_lore_entries").column("position").execute();
 
   // ── Assets ─────────────────────────────────────────────────
   await database.schema
@@ -361,6 +365,7 @@ export async function up(database: Kysely<unknown>): Promise<void> {
     .addColumn("continuation_index", "integer")
     .addColumn("created_at", "text", (col) => col.notNull().defaultTo("(datetime('now'))"))
     .addColumn("edited_at", "text")
+    .addColumn("attachments", "text")  // JSON array: [{assetId, order, caption, label, url, type, mimeType, width?, height?}]
     .execute();
 
   await database.schema.createIndex("idx_messages_chat_created").on("messages").columns(["chat_id", "created_at"]).execute();
@@ -369,6 +374,8 @@ export async function up(database: Kysely<unknown>): Promise<void> {
   await database.schema.createIndex("idx_messages_parent").on("messages").column("parent_id").execute();
   await database.schema.createIndex("idx_messages_key_id").on("messages").column("key_id").execute();
   await database.schema.createIndex("idx_messages_content_format").on("messages").column("content_format").execute();
+  await database.schema.createIndex("idx_messages_visibility").on("messages").column("visibility").execute();
+  await database.schema.createIndex("idx_messages_status").on("messages").column("status").execute();
 
   // ── Actor Keys (encryption) ─────────────────────────────────
   await database.schema
@@ -510,6 +517,7 @@ export async function up(database: Kysely<unknown>): Promise<void> {
     .addColumn("status", "text", (col) => col.notNull().defaultTo("active"))
     .addColumn("contributed_events", "text", (col) => col.notNull().defaultTo("[]"))
     .addColumn("started_at", "text", (col) => col.notNull().defaultTo("(datetime('now'))"))
+    .addColumn("created_at", "text", (col) => col.notNull().defaultTo("(datetime('now'))"))
     .addColumn("updated_at", "text", (col) => col.notNull().defaultTo("(datetime('now'))"))
     .addColumn("completed_at", "text")
     .execute();
@@ -566,6 +574,7 @@ export async function up(database: Kysely<unknown>): Promise<void> {
     .addColumn("time_of_day", "text")
     .addColumn("weather", "text")
     .addColumn("hazards", "text", (col) => col.notNull().defaultTo("[]"))
+    .addColumn("created_at", "text", (col) => col.notNull().defaultTo("(datetime('now'))"))
     .addColumn("updated_at", "text", (col) => col.notNull().defaultTo("(datetime('now'))"))
     .execute();
 
