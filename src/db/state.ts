@@ -18,8 +18,7 @@ export interface StateDef<S extends string> {
 
 export class TransitionError<S extends string> extends Error {
   constructor(from: S, to: S) {
-    super(`Invalid state transition: ${from} → ${to}`);
-    this.name = "TransitionError";
+    super(`Invalid state transition: ${from} → ${to}`, { name: "TransitionError" });
   }
 }
 

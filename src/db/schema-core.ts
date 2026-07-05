@@ -144,6 +144,7 @@ export interface Messages {
   continuation_index: number | null;
   created_at: Generated<string>;
   edited_at: string | null;
+  attachments: string | null;
 }
 
 // ── Actor Keys ────────────────────────────────────────────────
@@ -157,6 +158,37 @@ export interface ActorKeys {
   created_at: Generated<string>;
   expires_at: string | null;
   status: string;
+}
+
+// ── Actor Notes ───────────────────────────────────────────────
+export interface ActorNotes {
+  id: Generated<string>;
+  actor_id: string;
+  title: string;
+  content: string;
+  category: string;
+  pinned: number;
+  sort_order: number;
+  created_at: Generated<string>;
+  updated_at: Generated<string>;
+}
+
+// ── Actor Items ───────────────────────────────────────────────
+export interface ActorItems {
+  id: Generated<string>;
+  actor_id: string;
+  name: string;
+  description: string | null;
+  item_type: string;
+  quantity: number;
+  value: string | null;
+  weight: number | null;
+  tags: string;
+  metadata: string;
+  equipped: number;
+  sort_order: number;
+  created_at: Generated<string>;
+  updated_at: Generated<string>;
 }
 
 // ── User API Keys (BYO) ──────────────────────────────────────
