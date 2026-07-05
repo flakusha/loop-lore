@@ -227,7 +227,7 @@ export function detectTheatricalLoop(text: string): { detected: boolean; score: 
       (trimmed.startsWith("(") && trimmed.endsWith(")"))
     ) {
       actionLineCount++;
-    } else if (trimmed.includes('"') || trimmed.includes("\u201c") || trimmed.includes("\u00bb")) {
+    } else if (trimmed.includes('"') || trimmed.includes("\u{201C}") || trimmed.includes("\u{BB}")) {
       _dialogueLineCount++;
     }
   }
