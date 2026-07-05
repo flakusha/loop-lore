@@ -14,10 +14,10 @@ import { ChatWidget, API_BASE } from "./chat";
 import { AssetView } from "./asset-view";
 
 export class TUIApp {
+  private statusBar: blessed.Widgets.TextElement;
   screen: blessed.Widgets.Screen;
   chat: ChatWidget;
   assets: AssetView;
-  private statusBar: blessed.Widgets.TextElement;
 
   constructor() {
     this.screen = blessed.screen({
@@ -68,9 +68,11 @@ export class TUIApp {
       const chatId = this.chat.getChatId();
       if (chatId) {
         this.updateStatus("refreshing messages...");
-        void this.chat.loadMessages().then(() => {
-          this.updateStatus(`chat: ${chatId.slice(0, 8)}...`);
-        });
+        void this.chat.loadMessages()
+          .then(() => {
+            this.updateStatus(`chat: ${chatId.slice(0, 8)}...`);
+          })
+          .catch((err: Error) => console.error("[tui] loadMessages failed:", err));
       } else {
         this.updateStatus("no active chat");
       }
@@ -83,6 +85,7 @@ export class TUIApp {
     });
 
     // ── Auto-update status when chat changes ───────────────
+    // TODO: replace monkey-patch with event-based approach (EventEmitter on ChatWidget)
     const origSetChatId = this.chat.setChatId.bind(this.chat);
     this.chat.setChatId = (chatId: string) => {
       origSetChatId(chatId);
@@ -101,6 +104,7 @@ export class TUIApp {
 
   private updateStatus(msg: string): void {
     const apiStatus = API_BASE;
+    // eslint-disable-next-line unicorn/no-incorrect-template-string-interpolation
     this.statusBar.setContent(` {bold}Loop Lore{/bold}  |  ${msg}  |  API: ${apiStatus}  `);
     this.screen.render();
   }
