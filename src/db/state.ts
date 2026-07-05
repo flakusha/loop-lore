@@ -75,8 +75,6 @@ export class CompositeValidator<A extends string, B extends string> {
 
 // ── Factory Helpers ───────────────────────────────────────
 
-export function createMachine<S extends string>(
-  def: StateDef<S>,
-): StateMachine<S> {
+export function createMachine<S extends string>(def: StateDef<S>): StateMachine<S> {
   return new StateMachine(def);
 }

@@ -9,7 +9,13 @@
  *   containsProfanity("hello world") // false
  */
 
-import { RegExpMatcher, TextCensor, asteriskCensorStrategy, englishDataset, englishRecommendedTransformers } from "obscenity";
+import {
+  RegExpMatcher,
+  TextCensor,
+  asteriskCensorStrategy,
+  englishDataset,
+  englishRecommendedTransformers,
+} from "obscenity";
 
 const matcher = new RegExpMatcher({
   ...englishDataset.build(),

@@ -5,7 +5,7 @@
  * Bun compiles into dist/public/alpine.js.
  */
 
- // required for declare global in module
+// required for declare global in module
 
 // Types + shared infrastructure first
 import "./alpine/types";

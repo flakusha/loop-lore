@@ -59,10 +59,7 @@ export class MockLLMProvider implements LLMProvider {
     });
   }
 
-  stream(
-    _req: GenerateRequest,
-    handler: StreamHandler,
-  ): Promise<GenerateResponse> {
+  stream(_req: GenerateRequest, handler: StreamHandler): Promise<GenerateResponse> {
     if (this._streamError) {
       throw new Error("Mock stream failure");
     }

@@ -2,14 +2,9 @@
   <div class="login-card">
     <div class="login-logo">loop-lore</div>
 
-    <div id="login-error" class="login-error" data-testid="login-error" style="display:none"></div>
+    <div id="login-error" class="login-error" data-testid="login-error" style="display: none"></div>
 
-    <form
-      hx-post="/api/auth/login"
-      hx-target="#login-error"
-      hx-swap="innerHTML"
-      hx-indicator="#login-submit"
-    >
+    <form hx-post="/api/auth/login" hx-target="#login-error" hx-swap="innerHTML" hx-indicator="#login-submit">
       <div class="form-field">
         <label for="username">Username</label>
         <input

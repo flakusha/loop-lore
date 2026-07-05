@@ -1266,7 +1266,6 @@
 
 /* Responsive breakpoints */
 @media (max-width: 768px) {
-
   .chat-area {
     max-width: 100%;
     padding: var(--space-4);
@@ -1348,7 +1347,7 @@
 }
 
 .toggle-slider::after {
-  content: '';
+  content: "";
   position: absolute;
   top: 2px;
   left: 2px;

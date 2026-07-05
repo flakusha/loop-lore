@@ -22,7 +22,7 @@ function deepMerge<T extends Record<string, unknown>>(base: T, overrides: Partia
   for (const key of Object.keys(overrides)) {
     const k = key as keyof T;
     const value = overrides[k];
-    if (value != null) {
+    if (value !== undefined) {
       const baseValue = base[k];
       const isObject =
         typeof value === "object" &&
@@ -118,8 +118,12 @@ function applyProviderEnvVars(config: Config): void {
     baseUrl,
     apiKey: process.env.LLM_PROVIDER_API_KEY,
     model: process.env.LLM_PROVIDER_MODEL ?? "default",
-    timeout: Number.isNaN(Number(process.env.LLM_PROVIDER_TIMEOUT)) ? 30_000 : Number(process.env.LLM_PROVIDER_TIMEOUT),
-    retries: Number.isNaN(Number(process.env.LLM_PROVIDER_RETRIES)) ? 3 : Number(process.env.LLM_PROVIDER_RETRIES),
+    timeout: Number.isNaN(Number(process.env.LLM_PROVIDER_TIMEOUT))
+      ? 30_000
+      : Number(process.env.LLM_PROVIDER_TIMEOUT),
+    retries: Number.isNaN(Number(process.env.LLM_PROVIDER_RETRIES))
+      ? 3
+      : Number(process.env.LLM_PROVIDER_RETRIES),
     allowUserApiKey: process.env.LLM_PROVIDER_ALLOW_USER_KEY !== "false",
     models: {},
   };

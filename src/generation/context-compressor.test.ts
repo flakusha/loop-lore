@@ -56,11 +56,7 @@ describe("compressMessages — no-op path", () => {
   });
 
   it("passes through when under budget", () => {
-    const msgs = [
-      systemMsg("Short instruction."),
-      userMsg("Hello"),
-      assistantMsg("Hi there!"),
-    ];
+    const msgs = [systemMsg("Short instruction."), userMsg("Hello"), assistantMsg("Hi there!")];
     const result = compressMessages(msgs, { ...DEFAULT_CONTEXT_WINDOW, maxContextTokens: 100_000 });
     expect(result.compressed).toEqual(msgs);
     expect(result.metadata.budgetExceeded).toBe(false);
@@ -74,8 +70,8 @@ describe("compressMessages — no-op path", () => {
 
   it("passes through conversation exactly at budget threshold", () => {
     const msgs = [
-      systemMsg("A".repeat(48)),   // ~12 tokens (48/4)
-      userMsg("B".repeat(48)),     // ~12 tokens
+      systemMsg("A".repeat(48)), // ~12 tokens (48/4)
+      userMsg("B".repeat(48)), // ~12 tokens
     ];
     // Total ~24 tokens, budget = 32000 * 0.75 = 24000 → fits
     const result = compressMessages(msgs);
@@ -177,7 +173,7 @@ describe("compressMessages — custom token count function", () => {
     // 2 messages × 100 tokens = 200 > budget (150 * 0.75 = 112) → should compress
     // Actually: 2 × 100 = 200 > 112 → triggers compression
     expect(result.metadata.budgetExceeded).toBe(true);
-    // With minTurnsAfterCompression=1 and budget=150*0.75=112, 
+    // With minTurnsAfterCompression=1 and budget=150*0.75=112,
     // each msg is 100 tokens, can only keep 1 → drops 1
     expect(result.metadata.conversationDropped).toBe(1);
   });

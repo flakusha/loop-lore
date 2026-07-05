@@ -37,6 +37,7 @@ Loop-lore's memory system extends beyond simple chat history to provide agents a
 ### Storage Layer
 
 All memory types leverage the existing polymorphic asset system. Each conceptual memory becomes an `assets` row linked via `asset_links`:
+
 - `asset_type = 'memory'`
 - `label` indicates memory subtype (`'episodic'`, `'semantic'`, `'procedural'`)
 - `asset_links` connect to relevant entities (chats, characters, epics, tasks)

@@ -42,7 +42,8 @@ export type ErrorCode = (typeof ErrorCode)[keyof typeof ErrorCode];
 // ── Typed service errors ─────────────────────────────────────
 
 export class NotFoundError extends Error {
-  constructor(entity: string, id: string) { // eslint-disable-line unicorn/custom-error-definition
+  constructor(entity: string, id: string) {
+    // eslint-disable-line unicorn/custom-error-definition
     super(`${entity} not found: ${id}`);
     this.name = "NotFoundError";
   }
@@ -87,7 +88,8 @@ export interface PaginatedResponse<T> {
  *   jsonResponse({ ok: true, id: "abc" })
  *   jsonResponse(user, HttpStatus.Created)
  */
-export function jsonResponse<T>(data: T, status: HttpStatusCode = HttpStatus.OK): Response { // eslint-disable-line @typescript-eslint/no-unnecessary-type-parameters
+export function jsonResponse<T>(data: T, status: HttpStatusCode = HttpStatus.OK): Response {
+  // eslint-disable-line @typescript-eslint/no-unnecessary-type-parameters
   return Response.json(data, { status });
 }
 
@@ -131,7 +133,8 @@ export function jsonValidationError(errors: ValidationError[], message = "Valida
  * @example
  *   jsonPaginated(items, total, page, pageSize)
  */
-export function jsonPaginated<T>(data: T[], total: number, page: number, pageSize: number): Response { // eslint-disable-line @typescript-eslint/no-unnecessary-type-parameters
+export function jsonPaginated<T>(data: T[], total: number, page: number, pageSize: number): Response {
+  // eslint-disable-line @typescript-eslint/no-unnecessary-type-parameters
   return Response.json(
     {
       data,
@@ -153,7 +156,8 @@ export function jsonPaginated<T>(data: T[], total: number, page: number, pageSiz
  *   jsonCreated({ id: "new-entity" })
  *   jsonCreated()  // no body
  */
-export function jsonCreated<T>(data?: T): Response { // eslint-disable-line @typescript-eslint/no-unnecessary-type-parameters
+export function jsonCreated<T>(data?: T): Response {
+  // eslint-disable-line @typescript-eslint/no-unnecessary-type-parameters
   if (data === undefined) return new Response(null, { status: HttpStatus.Created });
   const result = safeJsonStringify(data);
   if (!result.ok) {

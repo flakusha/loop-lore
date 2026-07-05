@@ -86,11 +86,21 @@ function createTestDb(): { sqlite: Database; db: Kysely<DB> } {
   `);
 
   // Tables needed by PromptAssembler (lore, memories, locations)
-  sqlite.run(`CREATE TABLE actor_lore_entries (id TEXT PRIMARY KEY, actor_id TEXT NOT NULL, content TEXT NOT NULL, keys TEXT NOT NULL DEFAULT '[]', position TEXT NOT NULL DEFAULT 'before_char', "constant" INTEGER NOT NULL DEFAULT 0, "selective" INTEGER NOT NULL DEFAULT 0, insertion_order INTEGER DEFAULT 100, priority INTEGER DEFAULT 100, sort_order INTEGER DEFAULT 0, created_at TEXT NOT NULL DEFAULT (datetime('now')), updated_at TEXT NOT NULL DEFAULT (datetime('now')))`);
-  sqlite.run(`CREATE TABLE world_lore_entries (id TEXT PRIMARY KEY, world_id TEXT NOT NULL, content TEXT NOT NULL, keys TEXT NOT NULL DEFAULT '[]', position TEXT NOT NULL DEFAULT 'before_char', "constant" INTEGER NOT NULL DEFAULT 0, "selective" INTEGER NOT NULL DEFAULT 0, insertion_order INTEGER DEFAULT 100, priority INTEGER DEFAULT 100, sort_order INTEGER DEFAULT 0, created_at TEXT NOT NULL DEFAULT (datetime('now')), updated_at TEXT NOT NULL DEFAULT (datetime('now')))`);
-  sqlite.run(`CREATE TABLE actor_memories (id TEXT PRIMARY KEY, actor_id TEXT NOT NULL, content TEXT NOT NULL, memory_type TEXT NOT NULL DEFAULT 'fact', confidence REAL NOT NULL DEFAULT 1, importance INTEGER NOT NULL DEFAULT 1, keywords TEXT DEFAULT '[]', created_at TEXT NOT NULL DEFAULT (datetime('now')), updated_at TEXT NOT NULL DEFAULT (datetime('now')))`);
-  sqlite.run(`CREATE TABLE locations (id TEXT PRIMARY KEY, world_id TEXT, name TEXT NOT NULL, description TEXT, connections TEXT NOT NULL DEFAULT '[]', created_at TEXT NOT NULL DEFAULT (datetime('now')), updated_at TEXT NOT NULL DEFAULT (datetime('now')))`);
-  sqlite.run(`CREATE TABLE location_states (location_id TEXT NOT NULL, world_id TEXT NOT NULL, atmosphere TEXT, npcs_present TEXT NOT NULL DEFAULT '[]', items_available TEXT NOT NULL DEFAULT '[]', time_of_day TEXT, weather TEXT, hazards TEXT NOT NULL DEFAULT '[]', created_at TEXT NOT NULL DEFAULT (datetime('now')), updated_at TEXT NOT NULL DEFAULT (datetime('now')))`);
+  sqlite.run(
+    `CREATE TABLE actor_lore_entries (id TEXT PRIMARY KEY, actor_id TEXT NOT NULL, content TEXT NOT NULL, keys TEXT NOT NULL DEFAULT '[]', position TEXT NOT NULL DEFAULT 'before_char', "constant" INTEGER NOT NULL DEFAULT 0, "selective" INTEGER NOT NULL DEFAULT 0, insertion_order INTEGER DEFAULT 100, priority INTEGER DEFAULT 100, sort_order INTEGER DEFAULT 0, created_at TEXT NOT NULL DEFAULT (datetime('now')), updated_at TEXT NOT NULL DEFAULT (datetime('now')))`,
+  );
+  sqlite.run(
+    `CREATE TABLE world_lore_entries (id TEXT PRIMARY KEY, world_id TEXT NOT NULL, content TEXT NOT NULL, keys TEXT NOT NULL DEFAULT '[]', position TEXT NOT NULL DEFAULT 'before_char', "constant" INTEGER NOT NULL DEFAULT 0, "selective" INTEGER NOT NULL DEFAULT 0, insertion_order INTEGER DEFAULT 100, priority INTEGER DEFAULT 100, sort_order INTEGER DEFAULT 0, created_at TEXT NOT NULL DEFAULT (datetime('now')), updated_at TEXT NOT NULL DEFAULT (datetime('now')))`,
+  );
+  sqlite.run(
+    `CREATE TABLE actor_memories (id TEXT PRIMARY KEY, actor_id TEXT NOT NULL, content TEXT NOT NULL, memory_type TEXT NOT NULL DEFAULT 'fact', confidence REAL NOT NULL DEFAULT 1, importance INTEGER NOT NULL DEFAULT 1, keywords TEXT DEFAULT '[]', created_at TEXT NOT NULL DEFAULT (datetime('now')), updated_at TEXT NOT NULL DEFAULT (datetime('now')))`,
+  );
+  sqlite.run(
+    `CREATE TABLE locations (id TEXT PRIMARY KEY, world_id TEXT, name TEXT NOT NULL, description TEXT, connections TEXT NOT NULL DEFAULT '[]', created_at TEXT NOT NULL DEFAULT (datetime('now')), updated_at TEXT NOT NULL DEFAULT (datetime('now')))`,
+  );
+  sqlite.run(
+    `CREATE TABLE location_states (location_id TEXT NOT NULL, world_id TEXT NOT NULL, atmosphere TEXT, npcs_present TEXT NOT NULL DEFAULT '[]', items_available TEXT NOT NULL DEFAULT '[]', time_of_day TEXT, weather TEXT, hazards TEXT NOT NULL DEFAULT '[]', created_at TEXT NOT NULL DEFAULT (datetime('now')), updated_at TEXT NOT NULL DEFAULT (datetime('now')))`,
+  );
 
   return { sqlite, db };
 }
@@ -98,7 +108,7 @@ function createTestDb(): { sqlite: Database; db: Kysely<DB> } {
 // ── Seed helpers ──────────────────────────────────────────────
 
 async function seedChat(testDb: Kysely<DB>, overrides?: Partial<Record<string, unknown>>): Promise<string> {
-  const id = overrides?.id as string ?? randomUUID();
+  const id = (overrides?.id as string) ?? randomUUID();
   await testDb
     .insertInto("chats")
     .values({
@@ -114,7 +124,7 @@ async function seedChat(testDb: Kysely<DB>, overrides?: Partial<Record<string, u
 }
 
 async function seedActor(testDb: Kysely<DB>, overrides?: Partial<Record<string, unknown>>): Promise<string> {
-  const id = overrides?.id as string ?? randomUUID();
+  const id = (overrides?.id as string) ?? randomUUID();
   await testDb
     .insertInto("actors")
     .values({
@@ -137,7 +147,7 @@ async function seedMessage(
   actorId: string,
   overrides?: Partial<Record<string, unknown>>,
 ): Promise<string> {
-  const id = overrides?.id as string ?? randomUUID();
+  const id = (overrides?.id as string) ?? randomUUID();
   await testDb
     .insertInto("messages")
     .values({
@@ -158,9 +168,7 @@ async function seedMessage(
 
 // ── Test helpers ──────────────────────────────────────────────
 
-function makeRequest(
-  overrides?: Partial<Record<string, unknown>>,
-): Record<string, unknown> {
+function makeRequest(overrides?: Partial<Record<string, unknown>>): Record<string, unknown> {
   return {
     chatId: "chat-1",
     parentMessageId: "msg-1",
@@ -260,7 +268,7 @@ describe("handleGenerate — provider resolution", () => {
     config.generation.defaultProvider = "nonexistent";
     // Don't seed chat/actor — should fail at provider resolution before DB
     const body = makeRequest({ provider: "nonexistent" });
-    const res = await handleGenerate(body, config);
+    const res = await handleGenerate(body, undefined, config);
     expect(res.status).toBe(422);
     const data = (await res.json()) as Record<string, unknown>;
     expect(data.error).toContain("Provider resolution failed");
@@ -280,7 +288,7 @@ describe("handleGenerate — non-streaming (complete)", () => {
       prompt: [{ role: "user" as const, content: "Test prompt" }],
     });
     const config = makeConfig();
-    const res = await handleGenerate(body, config);
+    const res = await handleGenerate(body, undefined, config);
     const data = (await res.json()) as Record<string, unknown>;
 
     expect(res.status).toBe(200);
@@ -303,7 +311,7 @@ describe("handleGenerate — non-streaming (complete)", () => {
       prompt: [{ role: "user" as const, content: "Hi" }],
     });
     const config = makeConfig();
-    await handleGenerate(body, config);
+    await handleGenerate(body, undefined, config);
 
     const messages = await testDb.selectFrom("messages").selectAll().execute();
     expect(messages.length).toBeGreaterThanOrEqual(1);
@@ -332,7 +340,7 @@ describe("handleGenerate — non-streaming (complete)", () => {
       prompt: [{ role: "user" as const, content: "Hi" }],
     });
     const config = makeConfig();
-    const res = await handleGenerate(body, config);
+    const res = await handleGenerate(body, undefined, config);
     expect(res.status).toBe(500);
     const data = (await res.json()) as Record<string, unknown>;
     expect(data.error).toContain("Generation failed");
@@ -353,7 +361,7 @@ describe("handleGenerate — streaming (SSE)", () => {
       stream: true,
     });
     const config = makeConfig();
-    const res = await handleGenerate(body, config);
+    const res = await handleGenerate(body, undefined, config);
 
     expect(res.status).toBe(200);
     expect(res.headers.get("Content-Type")).toBe("text/event-stream");
@@ -378,7 +386,7 @@ describe("handleGenerate — streaming (SSE)", () => {
       stream: true,
     });
     const config = makeConfig();
-    await handleGenerate(body, config);
+    await handleGenerate(body, undefined, config);
 
     const messages = await testDb
       .selectFrom("messages")
@@ -405,7 +413,7 @@ describe("handleGenerate — streaming (SSE)", () => {
       stream: true,
     });
     const config = makeConfig();
-    const res = await handleGenerate(body, config);
+    const res = await handleGenerate(body, undefined, config);
 
     const text = await res.text();
     // Should contain error event
@@ -431,7 +439,7 @@ describe("handleGenerate — prompt assembly path", () => {
       // No prompt property — triggers PromptAssembler
     });
     const config = makeConfig();
-    const res = await handleGenerate(body, config);
+    const res = await handleGenerate(body, undefined, config);
 
     expect(res.status).toBe(200);
     const data = (await res.json()) as Record<string, unknown>;

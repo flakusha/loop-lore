@@ -24,16 +24,26 @@ export interface GenerateResponseParams {
 // Keyword → response map
 const RESPONSE_MAP: Record<string, AssistantResponse[]> = {
   help: [
-    { type: "info", content: "Try sending a message to start chatting. Type /help for commands.", confidence: 0.9 },
+    {
+      type: "info",
+      content: "Try sending a message to start chatting. Type /help for commands.",
+      confidence: 0.9,
+    },
   ],
-  hello: [
-    { type: "info", content: "Hello! How can I help you today?", confidence: 0.8 },
-  ],
+  hello: [{ type: "info", content: "Hello! How can I help you today?", confidence: 0.8 }],
   "/help": [
-    { type: "info", content: "Commands: /help — this menu. /clear — clear chat. /stats — show chat stats.", confidence: 1 },
+    {
+      type: "info",
+      content: "Commands: /help — this menu. /clear — clear chat. /stats — show chat stats.",
+      confidence: 1,
+    },
   ],
   lore: [
-    { type: "suggestion", content: "Create a world with lore entries to build rich backstory for your characters.", confidence: 0.7 },
+    {
+      type: "suggestion",
+      content: "Create a world with lore entries to build rich backstory for your characters.",
+      confidence: 0.7,
+    },
   ],
 };
 

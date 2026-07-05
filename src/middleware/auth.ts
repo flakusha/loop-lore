@@ -31,7 +31,6 @@ export async function authenticate(
   database: Kysely<DB>,
   authConfig: AuthConfig,
 ): Promise<Response | { context: RequestContext }> {
-   
   // ── Extract token: Bearer header > cookie fallback ───────
   let rawToken: string | null = null;
 
@@ -120,7 +119,11 @@ export async function authenticate(
   }
 
   // ── Auth required, no valid token ─────────────────────────
-  return jsonError("Missing or invalid Authorization header", HttpStatus.Unauthorized, ErrorCode.Unauthorized);
+  return jsonError(
+    "Missing or invalid Authorization header",
+    HttpStatus.Unauthorized,
+    ErrorCode.Unauthorized,
+  );
 }
 
 // ── Solo user helpers ─────────────────────────────────────────

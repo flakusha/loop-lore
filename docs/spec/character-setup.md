@@ -1,6 +1,6 @@
 # Character & Persona Setup
 
-> ⚠️ **Implementation status:** Basic character CRUD + JSON card import works. 
+> ⚠️ **Implementation status:** Basic character CRUD + JSON card import works.
 > **Persona system, multi-format import (YAML/TOML/PNG/CHARX), and impersonation are NOT implemented.**
 > See [`docs/meta/plan.md`](../meta/plan.md) "Skipped During Implementation" section.
 

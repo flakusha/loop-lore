@@ -248,7 +248,14 @@ describe("handleContinueGeneration", () => {
   beforeEach(async () => {
     await testDb
       .insertInto("users")
-      .values({ id: "user-1", username: "test", display_name: "Test", role: "user", status: "active", settings: "{}" })
+      .values({
+        id: "user-1",
+        username: "test",
+        display_name: "Test",
+        role: "user",
+        status: "active",
+        settings: "{}",
+      })
       .execute();
 
     await testDb
@@ -410,7 +417,14 @@ describe("handleRetryGeneration", () => {
   beforeEach(async () => {
     await testDb
       .insertInto("users")
-      .values({ id: "user-1", username: "test", display_name: "Test", role: "user", status: "active", settings: "{}" })
+      .values({
+        id: "user-1",
+        username: "test",
+        display_name: "Test",
+        role: "user",
+        status: "active",
+        settings: "{}",
+      })
       .execute();
 
     await testDb

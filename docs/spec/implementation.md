@@ -144,6 +144,7 @@ Located in `src/db/`
 > **Warning**: During MVP, `data_version` defaults to `0` across all actor records. When stabilising post-MVP, version bumps will be **forward-compatible only**: migrations add columns/tables, never remove. Existing `v0` records continue working; missing fields resolve to sensible defaults. See [`docs/actors.md`](./actors.md) for full versioning contract.
 
 Future migrations (post-MVP):
+
 - `003b_story_features.ts` — locations, story_turns, quests, quest_progress, world_states, npc_states, location_states, synthetic_data + new columns on chats
 - `004_continuation_retry.ts` — Continuation & tree columns on generation_attempts + messages
 
@@ -226,12 +227,14 @@ checks, and continuation/retry features.
 A `generation_attempt` progresses through states in sequence, with terminal states at the end:
 
 **Forward progression:**
+
 1. `pending` — Queued, not yet picked up by worker
 2. `processing` — Actively being generated (LLM/backend call in-flight)
 3. `streaming` — Tokens are streaming to client (only for streaming providers)
 4. `completed` — Generation finished successfully, result stored
 
 **Terminal transitions from any non-completed state:**
+
 - `failed` — Error occurred (API error, timeout, connection failure). Can be retried (new attempt)
 - `cancelled` — Stopped by user action, repetition detection, policy violation, chat switch, or system abort
 
@@ -315,6 +318,7 @@ Located in `src/assistant/`
   planned evolution into an **Agent Runtime**
 
 #> **Note:** No dedicated `src/assistant/controller.ts` or `POST /api/assistant` endpoint exists.
+
 > The assistant is invoked internally by `src/routes/messages.ts` during generation.
 > A standalone API endpoint is aspirational (post-MVP).
 
@@ -518,25 +522,25 @@ bun run tui
 
 ### Available Scripts
 
-| Command                 | Purpose                                                 |
-| ----------------------- | ------------------------------------------------------- |
-| `bun run dev`           | Development server with `--watch`                       |
-| `bun run start`         | Production server                                       |
-| `bun run tui`           | Start TUI interface                                     |
+| Command                 | Purpose                                                          |
+| ----------------------- | ---------------------------------------------------------------- |
+| `bun run dev`           | Development server with `--watch`                                |
+| `bun run start`         | Production server                                                |
+| `bun run tui`           | Start TUI interface                                              |
 | `bun run build`         | TypeScript compile to `./dist` (optional — Bun runs TS directly) |
-| `bun run db:migrate`    | Run database migrations                                 |
-| `bun run check`         | Full quality check: typecheck → lint → format → md:lint |
-| `bun run lint`          | Run ESLint                                              |
-| `bun run lint:fix`      | Auto-fix ESLint issues                                  |
-| `bun run format`        | Check formatting with Prettier                          |
-| `bun run format:fix`    | Auto-format with Prettier                               |
-| `bun run typecheck`     | `tsc --noEmit`                                          |
-| `bun run test`          | Run tests (Jest-compatible API)                         |
-| `bun run test:coverage` | Run tests with coverage                                 |
-| `bun run md:lint`       | Lint markdown files                                     |
-| `bun run md:lint:fix`   | Auto-fix markdown issues                                |
-| `bun run docs:dev`      | Start VitePress dev server for docs                     |
-| `bun run docs:build`    | Build VitePress docs                                    |
+| `bun run db:migrate`    | Run database migrations                                          |
+| `bun run check`         | Full quality check: typecheck → lint → format → md:lint          |
+| `bun run lint`          | Run ESLint                                                       |
+| `bun run lint:fix`      | Auto-fix ESLint issues                                           |
+| `bun run format`        | Check formatting with Prettier                                   |
+| `bun run format:fix`    | Auto-format with Prettier                                        |
+| `bun run typecheck`     | `tsc --noEmit`                                                   |
+| `bun run test`          | Run tests (Jest-compatible API)                                  |
+| `bun run test:coverage` | Run tests with coverage                                          |
+| `bun run md:lint`       | Lint markdown files                                              |
+| `bun run md:lint:fix`   | Auto-fix markdown issues                                         |
+| `bun run docs:dev`      | Start VitePress dev server for docs                              |
+| `bun run docs:build`    | Build VitePress docs                                             |
 
 ## Production Deployment
 

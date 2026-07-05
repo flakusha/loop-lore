@@ -1,7 +1,7 @@
 # RPG Mechanics Specification
 
 > ⚠️ **Status:** NOT IMPLEMENTED. No dice engine, no stat system, no combat, no XP.
-> No `src/dice/` or `src/rpg/` directory exists. Difficulty columns exist on `worlds` table 
+> No `src/dice/` or `src/rpg/` directory exists. Difficulty columns exist on `worlds` table
 > but no code reads or enforces them. This spec is entirely aspirational.
 > See [`docs/meta/plan.md`](../meta/plan.md) "Skipped During Implementation" section.
 
@@ -30,6 +30,7 @@ excel.
 ---
 
 ---
+
 > 🚀 **Post-MVP (v0.2+):** Dual-state model, stat blocks, items, combat, skills, XP, currency, loot.
 
 ## Dual-State Character Model
@@ -1436,7 +1437,7 @@ The LLM then narrates the mechanical truth.
 | Resolver chain execution                              | `src/rpg/resolver-chain.ts`   | Not started |
 | Plugin bundle system (`PluginBundle` manifest)        | `src/rpg/bundle-loader.ts`    | Not started |
 | Fine-tune overlay service                             | `src/rpg/fine-tune.ts`        | Not started |
-| Bundle activation per scope (world/chat/location) | `src/rpg/bundle-activator.ts` | Not started |
+| Bundle activation per scope (world/chat/location)     | `src/rpg/bundle-activator.ts` | Not started |
 | `.rpgbundle` import/export                            | `src/rpg/bundle-io.ts`        | Not started |
 | LLM GM fine-tune intent extraction                    | `src/rpg/fine-tune-intent.ts` | Not started |
 
@@ -1452,26 +1453,27 @@ Difficulty levels control how strictly RPG mechanics are enforced and what happe
 
 Three columns replace the bundle-gated system:
 
-| Column                | Type    | Default  | Notes                     |
-| --------------------- | ------- | -------- | ------------------------- |
-| `difficulty_modifier` | REAL    | `1.0`    | 0.5-2.0 DC multiplier      |
-| `difficulty_reroll`   | TEXT    | `'off'`  | `'off'` \| `'once'`       |
-| `difficulty_state`    | TEXT    | `'alive'` | `'alive'` \| `'dead'` (initial actor state on join) |
+| Column                | Type | Default   | Notes                                               |
+| --------------------- | ---- | --------- | --------------------------------------------------- |
+| `difficulty_modifier` | REAL | `1.0`     | 0.5-2.0 DC multiplier                               |
+| `difficulty_reroll`   | TEXT | `'off'`   | `'off'` \| `'once'`                                 |
+| `difficulty_state`    | TEXT | `'alive'` | `'alive'` \| `'dead'` (initial actor state on join) |
 
 ### Preset Modes
 
-| Mode       | Modifier | Reroll   | State    | Notes                         |
-| ---------- | -------- | -------- | -------- | ----------------------------- |
-| Casual     | `0.7`    | `once`   | `alive`  | Easier DCs, one retry         |
-| Normal     | `1.0`    | `off`    | `alive`  | Standard rules                |
-| Hard       | `1.5`    | `off`    | `alive`  | Tougher DCs, no retries       |
-| Iron Man   | `1.0`    | `off`    | `dead`   | Permadeath — no resurrection  |
+| Mode     | Modifier | Reroll | State   | Notes                        |
+| -------- | -------- | ------ | ------- | ---------------------------- |
+| Casual   | `0.7`    | `once` | `alive` | Easier DCs, one retry        |
+| Normal   | `1.0`    | `off`  | `alive` | Standard rules               |
+| Hard     | `1.5`    | `off`  | `alive` | Tougher DCs, no retries      |
+| Iron Man | `1.0`    | `off`  | `dead`  | Permadeath — no resurrection |
 
 ### Iron Man — Permadeath Semantics
 
 **Trigger:** Actor's HP reaches 0 or a fatal failure occurs.
 
 **Effect:**
+
 - `world_actor_state.state` set to `'dead'` for that actor
 - Dead actor becomes **observer** — can READ world events, cannot act
 - No resurrection, no replay. Full world recreation (new UUID) required to bring back character

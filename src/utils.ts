@@ -123,5 +123,3 @@ export function isJsonString(value: unknown): value is string {
     return false;
   }
 }
-
-

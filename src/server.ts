@@ -17,6 +17,7 @@ import type { RequestContext } from "./middleware/index";
 import { apiDispatch } from "./routes/router";
 import { dispatch as dispatchViews } from "./routes/views";
 import { dispatchAuth } from "./routes/auth";
+import { initSmk } from "./crypto";
 // Route modules (import for registerRoute side-effects)
 import "./routes/chats";
 import "./routes/messages";
@@ -35,6 +36,7 @@ import "./routes/story-states";
 import "./routes/story-turns";
 import { ensureTlsCerts } from "./config/cert";
 import { createLogger, getLogger } from "./logger";
+import { RealServerManager } from "./services/real-server-manager";
 
 const DOCS_PATH = join(import.meta.dir, "..", "docs", ".vitepress", "dist");
 
@@ -127,22 +129,17 @@ export async function handleApiRequest(
 ): Promise<Response> {
   // ── Auth-skip paths (login, demo-login) — no auth required ──
   const url = new URL(request.url);
-  const skipAuth =
-    url.pathname === "/api/auth/login" ||
-    url.pathname === "/api/demo-login";
+  const skipAuth = url.pathname === "/api/auth/login" || url.pathname === "/api/demo-login";
 
   if (skipAuth) {
-    return compose(
-      [errorBoundary],
-      async (req: Request, _context: RequestContext): Promise<Response> => {
-        // Auth routes with empty context
-        const context: RequestContext = { userId: null, userRole: null, sessionId: null };
-        const authResult = await dispatchAuth({ request: req, context, database, config });
-        if (authResult) return authResult;
+    return compose([errorBoundary], async (req: Request, _context: RequestContext): Promise<Response> => {
+      // Auth routes with empty context
+      const context: RequestContext = { userId: null, userRole: null, sessionId: null };
+      const authResult = await dispatchAuth({ request: req, context, database, config });
+      if (authResult) return authResult;
 
-        return apiDispatch({ request: req, context, database, config });
-      },
-    )(request, { userId: null, userRole: null, sessionId: null });
+      return apiDispatch({ request: req, context, database, config });
+    })(request, { userId: null, userRole: null, sessionId: null });
   }
 
   // ── Authenticated routes ─────────────────────────────────
@@ -159,7 +156,13 @@ export async function handleApiRequest(
       if (ageGateResult) return ageGateResult;
 
       // ── Generation cancellation routes ───────────────
-      const generationResult = await dispatchGeneration(req, context.userId, context.userRole, config);
+      const generationResult = await dispatchGeneration(
+        req,
+        database,
+        context.userId,
+        context.userRole,
+        config,
+      );
       if (generationResult) return generationResult;
 
       // ── Plugin routes (dice-roller, etc.) ──────────────
@@ -220,12 +223,23 @@ async function start() {
   const config = loadConfig();
   createLogger(config.logging);
   initAgeGate(config.ageGate);
+  await initSmk(config.encryption);
   initializeProviders(config);
   const database = getDatabase();
+  const logger = getLogger();
+
+  // ── Auto-start external AI servers (llama.cpp, sd.cpp) ──
+  const serverManager = new RealServerManager(logger);
+  const autoStart = config.generation.autoStart;
+  if (autoStart?.llamaCpp?.enabled) {
+    await serverManager.startLlamaCpp(autoStart.llamaCpp);
+  }
+  if (autoStart?.sdCpp?.enabled) {
+    await serverManager.startSdCpp(autoStart.sdCpp);
+  }
 
   // ── Load all plugins (core → community → local) ──────
   await loadAllPlugins(database);
-  const logger = getLogger();
 
   // ── Auto-build frontend JS if missing ────────────────────
   const distPublic = join(import.meta.dir, "..", "dist", "public");
@@ -302,7 +316,12 @@ async function start() {
 
     // ── View templates and character/world routes ───────────────
     // Try views dispatch first (handles /views/:name, /character/:slug, /worlds, etc.)
-    const viewResponse = await dispatchViews({ request, context: { userId: null, userRole: null, sessionId: null }, database, config });
+    const viewResponse = await dispatchViews({
+      request,
+      context: { userId: null, userRole: null, sessionId: null },
+      database,
+      config,
+    });
     if (viewResponse) return viewResponse;
 
     const docsResult = handleDocsRequest(url, request, config);
@@ -360,6 +379,7 @@ async function start() {
 
   // ── Shutdown handler — unload plugins, flush logs ────
   const shutdown = async (_signal: string) => {
+    await serverManager.stopAll();
     await unloadAllPlugins();
     const SHUTDOWN_TIMEOUT = 5000;
     const flushed = logger.flush();

@@ -1,10 +1,5 @@
 import { describe, test, expect } from "bun:test";
-import {
-  safeJsonParse,
-  safeJsonStringify,
-  isJsonString,
-  jsonParseOr,
-} from "./utils";
+import { safeJsonParse, safeJsonStringify, isJsonString, jsonParseOr } from "./utils";
 
 describe("safeJsonParse", () => {
   test("parses valid JSON", () => {

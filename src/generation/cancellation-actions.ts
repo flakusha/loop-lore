@@ -24,7 +24,7 @@ import { getLogger } from "../logger";
  * Cancel an active generation by attempt ID.
  * Returns true if cancellation was actually performed.
  */
- 
+
 export function cancelGeneration(
   attemptId: string,
   reason: CancelReason,
@@ -158,7 +158,14 @@ export async function processStreamingChunk(
   if (repAnalysis) {
     void updateAttemptStatus(db, attemptId, active.status, {
       repetition_score: repAnalysis.score,
-        repetition_analysis: (() => { const r = safeJsonStringify(repAnalysis); if (!r.ok) { genLog.error("repetition analysis serialization failed", r.error); return null; } return r.value; })(),
+      repetition_analysis: (() => {
+        const r = safeJsonStringify(repAnalysis);
+        if (!r.ok) {
+          genLog.error("repetition analysis serialization failed", r.error);
+          return null;
+        }
+        return r.value;
+      })(),
     }).catch((error: unknown) => {
       genLog.error("Failed to update repetition analysis", error instanceof Error ? error : undefined);
     });
@@ -182,7 +189,10 @@ export async function processStreamingChunk(
         cancel_reason_detail: detail,
         cancel_source: CancelSource.AutoRepetition,
         repetition_score: effectiveScore,
-      repetition_analysis: (() => { const r = safeJsonStringify(repAnalysis); return r.ok ? r.value : null; })(),
+        repetition_analysis: (() => {
+          const r = safeJsonStringify(repAnalysis);
+          return r.ok ? r.value : null;
+        })(),
         completed_at: new Date().toISOString(),
       }).catch((error: unknown) => {
         genLog.error("Failed to update repetition-cancel status", error instanceof Error ? error : undefined);
@@ -220,7 +230,14 @@ export async function processStreamingChunk(
           cancel_reason: CancelReason.PolicyMismatch,
           cancel_reason_detail: detail,
           cancel_source: CancelSource.AutoPolicy,
-          policy_analysis: (() => { const r = safeJsonStringify(policyAnalysis); if (!r.ok) { genLog.error("policy analysis serialization failed", r.error); return null; } return r.value; })(),
+          policy_analysis: (() => {
+            const r = safeJsonStringify(policyAnalysis);
+            if (!r.ok) {
+              genLog.error("policy analysis serialization failed", r.error);
+              return null;
+            }
+            return r.value;
+          })(),
           completed_at: new Date().toISOString(),
         }).catch((error: unknown) => {
           genLog.error("Failed to update policy-cancel status", error instanceof Error ? error : undefined);

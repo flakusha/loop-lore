@@ -5,7 +5,13 @@
 // See docs/spec/provider-system.md for full API mapping.
 
 import type { ProviderInstanceConfig } from "../../config/schema";
-import type { LLMProvider, GenerateRequest, GenerateResponse, ProviderCapabilities, StreamHandler } from "./types";
+import type {
+  LLMProvider,
+  GenerateRequest,
+  GenerateResponse,
+  ProviderCapabilities,
+  StreamHandler,
+} from "./types";
 import { ProviderError, ProviderAuthError, ProviderRateLimitError } from "./types";
 import { safeJsonParse, safeJsonStringify } from "../../utils";
 
@@ -52,9 +58,7 @@ export class OpenAiCompatibleProvider implements LLMProvider {
     this.timeout = config.timeout;
     this.retries = config.retries;
     this.headers = config.headers ?? {};
-    this.models = new Map(
-      Object.entries(config.models).map(([name, limits]) => [name, limits]),
-    );
+    this.models = new Map(Object.entries(config.models).map(([name, limits]) => [name, limits]));
   }
 
   // ── Core generation ────────────────────────────────────
@@ -161,7 +165,11 @@ export class OpenAiCompatibleProvider implements LLMProvider {
         throw error;
       }
     } finally {
-      try { reader.releaseLock(); } catch { /* reader already released */ }
+      try {
+        reader.releaseLock();
+      } catch {
+        /* reader already released */
+      }
     }
 
     return {
@@ -174,7 +182,12 @@ export class OpenAiCompatibleProvider implements LLMProvider {
 
   // ── Health check ───────────────────────────────────────
 
-  async healthCheck(): Promise<{ status: "ok" | "degraded" | "down"; model?: string; latencyMs?: number; error?: string }> {
+  async healthCheck(): Promise<{
+    status: "ok" | "degraded" | "down";
+    model?: string;
+    latencyMs?: number;
+    error?: string;
+  }> {
     const start = Date.now();
     try {
       const models = await this.listModels();
@@ -246,7 +259,12 @@ export class OpenAiCompatibleProvider implements LLMProvider {
     return body;
   }
 
-  private async fetchWithRetry(path: string, body: Record<string, unknown>, signal?: AbortSignal, apiKey?: string): Promise<unknown> {
+  private async fetchWithRetry(
+    path: string,
+    body: Record<string, unknown>,
+    signal?: AbortSignal,
+    apiKey?: string,
+  ): Promise<unknown> {
     const url = `${this.baseUrl}${path}`;
     let lastError: Error | undefined;
 
@@ -255,7 +273,7 @@ export class OpenAiCompatibleProvider implements LLMProvider {
         const response = await this.fetchRaw(url, body, signal, apiKey);
 
         if (response.ok) {
-          return (await response.json());
+          return await response.json();
         }
 
         await this.handleErrorResponse(response);
@@ -278,13 +296,18 @@ export class OpenAiCompatibleProvider implements LLMProvider {
     throw lastError ?? new ProviderError("Max retries exceeded", 500, true);
   }
 
-  private async fetchRaw(url: string, body?: Record<string, unknown>, signal?: AbortSignal, apiKeyOverride?: string): Promise<Response> {
+  private async fetchRaw(
+    url: string,
+    body?: Record<string, unknown>,
+    signal?: AbortSignal,
+    apiKeyOverride?: string,
+  ): Promise<Response> {
     const controller = new AbortController();
-    const combinedSignal = signal
-      ? combineAbortSignals(signal, controller.signal)
-      : controller.signal;
+    const combinedSignal = signal ? combineAbortSignals(signal, controller.signal) : controller.signal;
 
-    const timeoutId = setTimeout(() => { controller.abort(); }, this.timeout);
+    const timeoutId = setTimeout(() => {
+      controller.abort();
+    }, this.timeout);
 
     const effectiveApiKey = apiKeyOverride ?? this.apiKey;
 
@@ -351,11 +374,25 @@ export class OpenAiCompatibleProvider implements LLMProvider {
 // ── Helpers ──────────────────────────────────────────────
 
 const STANDARD_KEYS = new Set([
-  "model", "messages", "stream", "temperature", "max_tokens", "top_p",
-  "stop", "presence_penalty", "frequency_penalty",
-  "min_p", "top_k", "typical_p", "repeat_penalty",
-  "dry_multiplier", "dry_base", "dry_allowed_length",
-  "xtc_probability", "dynatemp_range", "dynatemp_exponent",
+  "model",
+  "messages",
+  "stream",
+  "temperature",
+  "max_tokens",
+  "top_p",
+  "stop",
+  "presence_penalty",
+  "frequency_penalty",
+  "min_p",
+  "top_k",
+  "typical_p",
+  "repeat_penalty",
+  "dry_multiplier",
+  "dry_base",
+  "dry_allowed_length",
+  "xtc_probability",
+  "dynatemp_range",
+  "dynatemp_exponent",
   "reasoning_budget",
 ]);
 
@@ -366,7 +403,13 @@ function combineAbortSignals(...signals: AbortSignal[]): AbortSignal {
       controller.abort(signal.reason);
       return controller.signal;
     }
-    signal.addEventListener("abort", () => { controller.abort(signal.reason); }, { once: true });
+    signal.addEventListener(
+      "abort",
+      () => {
+        controller.abort(signal.reason);
+      },
+      { once: true },
+    );
   }
   return controller.signal;
 }

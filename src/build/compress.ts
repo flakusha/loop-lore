@@ -13,7 +13,6 @@ import { createLogger } from "../logger";
 // ── Strip HTML comments (<!-- ... -->) from HTML files ────
 
 function stripHtmlComments(content: string): string {
-   
   return content.replaceAll(/<!--[\s\S]*?-->/g, "");
 }
 
@@ -83,11 +82,13 @@ function main() {
   log.info(`Compressed ${total} files`);
   log.info(`Original: ${originalBytes} bytes`);
   if (totalAfter < originalBytes) {
-    const pct = ((originalBytes - totalAfter) / originalBytes * 100).toFixed(1);
+    const pct = (((originalBytes - totalAfter) / originalBytes) * 100).toFixed(1);
     const why = STRIP_TEST_IDS ? "HTML comments + data-testid" : "HTML comments";
     log.info(`After ${why} strip: ${totalAfter} bytes (${pct}% savings)`);
   }
-  log.info(`Compressed sizes - gzip: ${compressedBytes.gz}, zstd: ${compressedBytes.zst}, brotli: ${compressedBytes.br}`);
+  log.info(
+    `Compressed sizes - gzip: ${compressedBytes.gz}, zstd: ${compressedBytes.zst}, brotli: ${compressedBytes.br}`,
+  );
 }
 
 main();

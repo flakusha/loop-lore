@@ -16,14 +16,17 @@ globalThis.app = function () {
       this.applyTheme(this.currentTheme);
       this.loadLocale("en");
 
-      document.addEventListener("show-toast", (e: CustomEvent<{ type?: string; message: string; icon?: string }>) => {
-        this.toasts.push({
-          type: e.detail.type || "info",
-          msg: e.detail.message,
-          icon: e.detail.icon || this.iconFor(e.detail.type || "info"),
-        });
-        setTimeout(() => this.toasts.shift(), 5000);
-      });
+      document.addEventListener(
+        "show-toast",
+        (e: CustomEvent<{ type?: string; message: string; icon?: string }>) => {
+          this.toasts.push({
+            type: e.detail.type || "info",
+            msg: e.detail.message,
+            icon: e.detail.icon || this.iconFor(e.detail.type || "info"),
+          });
+          setTimeout(() => this.toasts.shift(), 5000);
+        },
+      );
     },
 
     applyTheme(themeId: string) {
@@ -100,4 +103,3 @@ globalThis.app = function () {
     },
   };
 };
-

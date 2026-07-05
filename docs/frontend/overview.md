@@ -2,13 +2,13 @@
 
 ## Tech Stack
 
-| Layer        | Technology                | Notes                                                                                                                                                   |
-| ------------ | ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| HTML         | Prebuilt static templates | Server replaces `&#123;&#123;&#123;content&#125;&#125;&#125;` placeholder in layout.html                                                                |
-| AJAX         | htmx 2.x                  | Partial page updates, form submission, server-driven UI                                                                                                 |
-| Client state | Alpine.js 3.x             | Modals, toasts, local UI toggles (not data state)                                                                                                       |
+| Layer        | Technology                | Notes                                                                                                                                           |
+| ------------ | ------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
+| HTML         | Prebuilt static templates | Server replaces `&#123;&#123;&#123;content&#125;&#125;&#125;` placeholder in layout.html                                                        |
+| AJAX         | htmx 2.x                  | Partial page updates, form submission, server-driven UI                                                                                         |
+| Client state | Alpine.js 3.x             | Modals, toasts, local UI toggles (not data state)                                                                                               |
 | Styling      | Hand-authored CSS         | 13 files: theme.css + 10 theme-{variant}.css, app.css, gallery.css. No framework. Supports multiple theme variants with CSS variable switching. |
-| Icons        | Unicode / SVG             | No icon library dependency. Inline SVGs where needed.                                                                                                   |
+| Icons        | Unicode / SVG             | No icon library dependency. Inline SVGs where needed.                                                                                           |
 
 ## Design Principles
 
@@ -52,18 +52,18 @@ loop-lore supports multiple visual themes via CSS custom properties. Themes are 
 
 ### Available Themes
 
-| Theme ID     | Name           | Description                                    |
-| ------------ | -------------- | ---------------------------------------------- |
-| `default`    | Default (Dark) | Original dark theme, adapted from yodayo.com   |
-| `light`      | Light          | Light background with dark text                |
-| `bright`     | Bright         | High contrast vibrant theme                      |
-| `colorful`   | Colorful       | Vibrant saturated colors                       |
-| `monochrome` | Monochrome     | Grayscale high-contrast theme                  |
-| `no-icons`   | No Icons       | Minimal theme with decorative icons hidden     |
-| `dracula`    | Dracula        | Popular dark theme (dracula/lua)                 |
-| `nord`       | Nord           | Arctic color palette (arctic-violet)             |
-| `github-dark`| GitHub Dark    | GitHub's dark syntax theme                       |
-| `material`   | Material       | Material Design 3 inspired                       |
+| Theme ID      | Name           | Description                                  |
+| ------------- | -------------- | -------------------------------------------- |
+| `default`     | Default (Dark) | Original dark theme, adapted from yodayo.com |
+| `light`       | Light          | Light background with dark text              |
+| `bright`      | Bright         | High contrast vibrant theme                  |
+| `colorful`    | Colorful       | Vibrant saturated colors                     |
+| `monochrome`  | Monochrome     | Grayscale high-contrast theme                |
+| `no-icons`    | No Icons       | Minimal theme with decorative icons hidden   |
+| `dracula`     | Dracula        | Popular dark theme (dracula/lua)             |
+| `nord`        | Nord           | Arctic color palette (arctic-violet)         |
+| `github-dark` | GitHub Dark    | GitHub's dark syntax theme                   |
+| `material`    | Material       | Material Design 3 inspired                   |
 
 ### Theme Files
 
@@ -139,6 +139,6 @@ On 401 responses, redirect to `/login`. On 500+, show "Server error" toast with 
 | [worlds.md](./worlds.md)                                 | World entity: list, detail, create/edit                                                                   |
 | [login.md](./login.md)                                   | Login page: auth card, demo mode, error states                                                            |
 | [age-gate.md](./age-gate.md)                             | Age verification / compliance: self-declaration flow, admin config, states                                |
-| [components.md](./components.md)                         | Shared components: toasts, modals, spinners, skeletons, empty states, chips, drop zones, frontend logger                   |
+| [components.md](./components.md)                         | Shared components: toasts, modals, spinners, skeletons, empty states, chips, drop zones, frontend logger  |
 | [data-states.md](./data-states.md)                       | Entity state machines, archiving cascade, storage model, purge rules                                      |
 | [internationalization.md](./internationalization.md)     | Multilingual support: UI i18n, LLM generation language, actor language preferences, content translation   |
