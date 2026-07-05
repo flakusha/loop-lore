@@ -20,7 +20,9 @@ import {
   handleListActiveGenerations,
   handleRegenerate,
 } from "./generation-routes";
+import { handleGenerate } from "./generate-route";
 import { jsonError } from "../routes/http-utils";
+import { loadConfig } from "../config/load";
 
 // ── Helpers ──────────────────────────────────────────────────
 
@@ -47,6 +49,14 @@ export async function dispatch(
 ): Promise<Response | null> {
   const url = new URL(request.url);
   const { pathname } = url;
+
+  // POST /api/generation/generate — main generation endpoint
+  if (pathname === "/api/generation/generate" && request.method === "POST") {
+    const body = await parseJsonBody(request);
+    if (body instanceof Response) return body;
+    const config = loadConfig();
+    return handleGenerate(body, config, _userId ?? undefined);
+  }
 
   // POST /api/generation/cancel
   if (pathname === "/api/generation/cancel" && request.method === "POST") {

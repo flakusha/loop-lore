@@ -23,7 +23,7 @@ import { getLogger } from "../logger";
  * Cancel an active generation by attempt ID.
  * Returns true if cancellation was actually performed.
  */
-// eslint-disable-next-line unicorn/consistent-boolean-name
+ 
 export function cancelGeneration(
   attemptId: string,
   reason: CancelReason,
