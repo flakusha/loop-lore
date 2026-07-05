@@ -12,6 +12,7 @@ import type { QuestType as QT } from "../db/enums";
 import { randomUUID } from "node:crypto";
 import type { QuestConfig, QuestReward, WorldEvent } from "./types";
 import { safeJsonStringify, jsonParseOr } from "../utils";
+import { getLogger } from "../logger";
 import { WorldStateService } from "./world-state";
 import { ItemsService } from "./items";
 import { applyEvents } from "./events";
@@ -65,13 +66,13 @@ export class QuestEngine {
         type: params.type,
         status: QuestStatus.Active,
         priority: params.priority ?? 0,
-        config: (() => { const r = safeJsonStringify(params.config); if (!r.ok) { console.error("[quest-engine] safeJsonStringify config failed:", r.error); throw new Error("Failed to serialize quest config"); } return r.value; })(),
+        config: (() => { const r = safeJsonStringify(params.config); if (!r.ok) { getLogger().child({ module: "quest-engine" }).error("safeJsonStringify config failed", undefined, { error: r.error }); throw new Error("Failed to serialize quest config"); } return r.value; })(),
         progress: 0,
         target: params.target,
         start_time: new Date().toISOString(),
         deadline: params.deadline ?? null,
-        rewards: (() => { const r = safeJsonStringify(params.rewards ?? {}); if (!r.ok) { console.error("[quest-engine] safeJsonStringify rewards failed:", r.error); throw new Error("Failed to serialize quest rewards"); } return r.value; })(),
-        narrative_hooks: (() => { const r = safeJsonStringify(params.narrativeHooks ?? []); if (!r.ok) { console.error("[quest-engine] safeJsonStringify narrative_hooks failed:", r.error); throw new Error("Failed to serialize quest narrative hooks"); } return r.value; })(),
+        rewards: (() => { const r = safeJsonStringify(params.rewards ?? {}); if (!r.ok) { getLogger().child({ module: "quest-engine" }).error("safeJsonStringify rewards failed", undefined, { error: r.error }); throw new Error("Failed to serialize quest rewards"); } return r.value; })(),
+        narrative_hooks: (() => { const r = safeJsonStringify(params.narrativeHooks ?? []); if (!r.ok) { getLogger().child({ module: "quest-engine" }).error("safeJsonStringify narrative_hooks failed", undefined, { error: r.error }); throw new Error("Failed to serialize quest narrative hooks"); } return r.value; })(),
       })
       .execute();
     return id;
