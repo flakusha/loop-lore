@@ -11,6 +11,7 @@ import { QuestType, QuestStatus, QuestProgressStatus } from "../db/enums";
 import type { QuestType as QT } from "../db/enums";
 import { randomUUID } from "node:crypto";
 import type { QuestConfig, QuestReward, WorldEvent } from "./types";
+import { safeJsonStringify, jsonParseOr } from "../utils";
 import { WorldStateService } from "./world-state";
 import { ItemsService } from "./items";
 import { applyEvents } from "./events";
@@ -64,13 +65,13 @@ export class QuestEngine {
         type: params.type,
         status: QuestStatus.Active,
         priority: params.priority ?? 0,
-        config: JSON.stringify(params.config),
+        config: (() => { const r = safeJsonStringify(params.config); return r.ok ? r.value : "{}"; })(),
         progress: 0,
         target: params.target,
         start_time: new Date().toISOString(),
         deadline: params.deadline ?? null,
-        rewards: JSON.stringify(params.rewards ?? {}),
-        narrative_hooks: JSON.stringify(params.narrativeHooks ?? []),
+        rewards: (() => { const r = safeJsonStringify(params.rewards ?? {}); return r.ok ? r.value : "{}"; })(),
+        narrative_hooks: (() => { const r = safeJsonStringify(params.narrativeHooks ?? []); return r.ok ? r.value : "[]"; })(),
       })
       .execute();
     return id;
@@ -217,6 +218,7 @@ export class QuestEngine {
    * Calculate progress delta for a quest based on a world event.
    * Returns 0 if the event doesn't advance this quest.
    */
+  // eslint-disable-next-line sonarjs/cognitive-complexity
   private calculateProgress(
     quest: {
       id: string;
@@ -230,25 +232,26 @@ export class QuestEngine {
     },
     event: WorldEvent,
   ): number {
-    const config = JSON.parse(quest.config) as QuestConfig;
+    const config = jsonParseOr(quest.config, {}) as QuestConfig;
     const questType = quest.type as QT;
 
     switch (questType) {
       case QuestType.Destruction: {
         if (event.type !== "combat_event") return 0;
-        const defeated = event.data.defeated as boolean;
+        const defeated = typeof event.data.defeated === "boolean" && event.data.defeated;
         if (!defeated) return 0;
         const cfg = config as import("./types").DestructionQuestConfig;
         if (cfg.targetActorId) {
+          if (typeof event.data.defenderId !== "string") return 0;
           return event.data.defenderId === cfg.targetActorId ? 1 : 0;
         }
-        return cfg.targetQuantity ? Math.round(100 / cfg.targetQuantity) : 10;
+        return (cfg.targetQuantity ?? 0) > 0 ? Math.round(100 / cfg.targetQuantity!) : 10;
       }
 
       case QuestType.Collection: {
         if (event.type !== "item_transfer") return 0;
         const cfg = config as import("./types").CollectionQuestConfig;
-        const itemName = (event.data.itemName as string | undefined)?.toLowerCase();
+        const itemName = typeof event.data.itemName === "string" ? event.data.itemName.toLowerCase() : undefined;
         if (cfg.items) {
           let totalQuantity = 0;
           let hasMatch = false;
@@ -265,7 +268,7 @@ export class QuestEngine {
         if (event.type !== "location_change") return 0;
         const cfg = config as import("./types").RescueQuestConfig;
         if (event.actorId === cfg.targetActorId && event.locationId === cfg.safeLocationId) {
-          return 100 - quest.progress; // Complete
+          return 100 - quest.progress;
         }
         return 0;
       }
@@ -273,7 +276,7 @@ export class QuestEngine {
       case QuestType.Time: {
         if (event.type !== "time_advancement") return 0;
         const cfg = config as import("./types").TimeQuestConfig;
-        const minutes = (event.data.minutesAdvanced ?? 60) as number;
+        const minutes = typeof event.data.minutesAdvanced === "number" ? event.data.minutesAdvanced : 60;
         return Math.round((minutes / cfg.durationMinutes) * 100);
       }
 
@@ -281,18 +284,16 @@ export class QuestEngine {
         if (event.type !== "location_change") return 0;
         const cfg = config as import("./types").DiscoveryQuestConfig;
         if (event.locationId === cfg.targetLocationId) {
-          return 100 - quest.progress; // Complete
+          return 100 - quest.progress;
         }
-        // Check if any clue location was visited
-        const clueHit = cfg.clues.find((c) => c.locationId === event.locationId);
-        if (clueHit) return Math.round(100 / (cfg.clues.length + 1));
+        if (cfg.clues.some((c) => c.locationId === event.locationId)) return Math.round(100 / (cfg.clues.length + 1));
         return 0;
       }
 
       case QuestType.Social: {
         if (event.type !== "npc_state_change") return 0;
         const cfg = config as import("./types").SocialQuestConfig;
-        const npcId = (event.data.npcActorId ?? event.actorId) as string;
+        const npcId = typeof event.data.npcActorId === "string" ? event.data.npcActorId : event.actorId;
         if (npcId === cfg.targetActorId) {
           return Math.round(100 / cfg.requiredInteractions);
         }
@@ -300,7 +301,6 @@ export class QuestEngine {
       }
 
       case QuestType.Composite: {
-        // Composite quests are handled by checking sub-quest completions
         return 0;
       }
 
@@ -314,6 +314,7 @@ export class QuestEngine {
    * Apply progress to a quest, check milestones, and distribute rewards
    * if completed.
    */
+  // eslint-disable-next-line sonarjs/cognitive-complexity
   private async applyProgress(
     quest: {
       id: string;
@@ -332,7 +333,6 @@ export class QuestEngine {
     const newProgress = Math.min(quest.progress + delta, quest.target);
     const completed = newProgress >= quest.target;
 
-    // Update global quest progress
     await this.db
       .updateTable("quests")
       .set({
@@ -342,7 +342,6 @@ export class QuestEngine {
       .where("id", "=", quest.id)
       .execute();
 
-    // Update or insert per-chat progress
     const existingChatProgress = await this.db
       .selectFrom("quest_progress")
       .select("id")
@@ -370,14 +369,13 @@ export class QuestEngine {
           chat_id: chatId,
           progress: newProgress,
           status: completed ? QuestProgressStatus.Completed : QuestProgressStatus.Active,
-          contributed_events: sourceMessageId ? JSON.stringify([sourceMessageId]) : "[]",
+          contributed_events: sourceMessageId ? (() => { const r = safeJsonStringify([sourceMessageId]); return r.ok ? r.value : "[]"; })() : "[]",
           completed_at: completed ? new Date().toISOString() : null,
         })
         .execute();
     }
 
-    // Check milestones
-    const hooks = JSON.parse(quest.narrative_hooks) as { progress: number; narrative: string }[];
+    const hooks = jsonParseOr(quest.narrative_hooks, []) as { progress: number; narrative: string }[];
     let oldMilestone: { progress: number; narrative: string } | undefined;
     let newMilestone: { progress: number; narrative: string } | undefined;
     for (const h of hooks) {
@@ -388,7 +386,6 @@ export class QuestEngine {
     let milestoneText: string | null = null;
     if (newMilestone && (!oldMilestone || oldMilestone.progress < newMilestone.progress)) {
       milestoneText = newMilestone.narrative;
-      // Inject narration milestone
       if (this.worldState) {
         await this.worldState.snapshot(
           quest.world_id,
@@ -399,7 +396,6 @@ export class QuestEngine {
       }
     }
 
-    // Distribute rewards on completion
     if (completed) {
       await this.distributeRewards(quest.id, quest.world_id, quest.rewards);
     }
@@ -417,19 +413,14 @@ export class QuestEngine {
     };
   }
 
-  /**
-   * Distribute quest rewards on completion.
-   */
   private async distributeRewards(questId: string, worldId: string, rewardsJson: string): Promise<void> {
-    const rewards = JSON.parse(rewardsJson) as QuestReward;
+    const rewards = jsonParseOr(rewardsJson, {}) as QuestReward;
     if (Object.keys(rewards).length === 0) return;
 
-    // Apply world changes (lore updates, location changes)
     if (rewards.worldChanges && rewards.worldChanges.length > 0 && this.items) {
       await applyEvents(this.db, worldId, rewards.worldChanges);
     }
 
-    // Unlock follow-up quests
     if (rewards.unlockQuests && rewards.unlockQuests.length > 0) {
       for (const subQuestId of rewards.unlockQuests) {
         await this.db
@@ -441,7 +432,6 @@ export class QuestEngine {
       }
     }
 
-    // Create items (if ItemsService is available)
     if (rewards.items && this.items) {
       for (const item of rewards.items) {
         for (let i = 0; i < item.quantity; i++) {

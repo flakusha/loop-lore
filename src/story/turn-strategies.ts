@@ -42,7 +42,8 @@ export const sceneBasedSelect: TurnStrategyFn = (participants, currentActorId, c
 
 export const initiativeSelect: TurnStrategyFn = (participants, _currentActorId, _currentTurn, _turnOrder) => {
   // Shuffle order based on "initiative" (random for MVP)
-  const shuffled = [...participants].sort(() => Math.random() - 0.5);
+  // eslint-disable-next-line sonarjs/pseudo-random
+  const shuffled = [...participants].toSorted(() => Math.random() - 0.5);
   return shuffled[0].actorId;
 };
 
@@ -69,7 +70,7 @@ export const hybridSelect: TurnStrategyFn = (
   if (currentTurn % 5 === 0) {
     return questDrivenSelect(participants, currentActorId, currentTurn, turnOrder, context);
   }
-  return sceneBasedSelect(participants, currentActorId, currentTurn, turnOrder, context);
+  return sceneBasedSelect(participants, currentActorId, currentTurn, turnOrder);
 };
 
 // ─── Strategy Registry ─────────────────────────────────────────
