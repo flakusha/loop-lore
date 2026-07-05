@@ -9,16 +9,26 @@ Two-mode authentication system:
 
 ## Auth Flow (MVP)
 
-```
-Request → handleApiRequest()
-  │
-  ├── Auth-skip paths? (login, register, age-gate*, asset signed URLs)
-  │     └── route handler directly via compose([errorBoundary], handler)
-  │
-  └── Auth-required paths?
-        └── authenticate(request) → 401 | RequestContext
-              └── compose([errorBoundary], handler)(request, context)
-```
+Every request to `handleApiRequest()` follows this decision journey:
+
+**Step 1: Check auth-skip paths**
+   - If path is one of `login`, `register`, `age-gate/*`, or asset signed URLs:
+     - Route directly via `compose([errorBoundary], handler)` — no auth, no pipeline
+     - Jump straight to handler execution
+   - Otherwise, continue to step 2
+
+**Step 2: Authenticate**
+   - Call `authenticate(request)` which:
+     1. Extracts `Authorization: Bearer <token>` header
+     2. SHA-256 hashes the token
+     3. Looks up `sessions` table by `token_hash`
+     4. If not found or expired → returns `401 Unauthorized`
+     5. Fetches user role, updates `last_activity`
+     6. Returns `RequestContext { userId, userRole, sessionId }`
+
+**Step 3: Execute middleware chain**
+   - `compose([errorBoundary], handler)(request, context)`
+   - Route handler receives validated context, processes the request
 
 ### Auth as pre-step (MVP)
 

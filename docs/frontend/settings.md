@@ -30,8 +30,8 @@ Sections listed in the sidebar: General, Chat, API, Data, About.
   - Spacious: generous padding, larger avatars, wider gaps
 - Language UI | See [internationalization.md](./internationalization.md) for the full spec.
   - v1: catalog infrastructure is in place (key-based `t()` function, `en.json` source, session locale), but only English ships.
-    The settings field for interface language appears as a read-only "English" select with a note: "More languages coming in v1.1."
-  - v1.1+: Language becomes a functional select with locale options, generation language preferences, and content translation settings.
+    The settings field for interface language appears as a read-only "English" select with a note: "More languages in Future."
+  - Future: Language becomes a functional select with locale options, generation language preferences, and content translation settings.
 
 ### Chat
 

@@ -1,5 +1,8 @@
 # RPG Mechanics Specification
 
+> **Status:** MVP sections complete (Difficulty system, Dice engine `src/dice/`).  
+> Post-MVP sections tagged inline: 🔜 = v0.2+, 🚀 = future.
+
 ## Philosophy: Mechanics Serve Narrative
 
 loop-lore's RPG system follows one principle: **the LLM proposes, code
@@ -23,6 +26,9 @@ excel.
    not bolted on as a separate API call
 
 ---
+
+---
+> 🚀 **Post-MVP (v0.2+):** Dual-state model, stat blocks, items, combat, skills, XP, currency, loot.
 
 ## Dual-State Character Model
 
@@ -50,13 +56,8 @@ Per-world. Created when a character enters a world. Contains:
 - Location (where they are in this world)
 
 ```
-Actors (static) ──1:N── WorldActorState (dynamic, per world)
-                          ├── stats (computed from base + equipment)
-                          ├── inventory (items table)
-                          ├── equipment (equipped items)
-                          ├── status_effects (active conditions)
-                          ├── relationships (disposition map)
-                          └── knowledge (learned facts)
+Actors (static) → one-to-many → WorldActorState (dynamic, per world)
+  WorldActorState contains: stats, inventory, equipment, status_effects, relationships, knowledge
 ```
 
 **Why this matters:** The same character can be a powerful mage in one world
@@ -136,6 +137,10 @@ applied as layered modifiers at computation time. This means:
 - The base stat always reflects the character's intrinsic ability
 
 ---
+
+---
+
+> 🚀 **Post-MVP:** Full items/equipment/combat/skills system.
 
 ## Item System (Three-Tier)
 
@@ -1171,27 +1176,14 @@ interface MechanicFineTune {
 
 #### Fine-Tuning UI (Web)
 
-```
-┌─ World: "Forgotten Realm" ────────────────────────────────────┐
-│ Bundle: [D&D 5e ▼]                                            │
-│                                                               │
-│ Stat Range:  1 ──────●──────30     Starting Points: [27  ]    │
-│ Difficulty:  [0.5 ●────────── 2.0]  XP Rate: [1.0 ●──── 2.0] │
-│                                                               │
-│ Active Skills: [✔ Athletics] [✔ Acrobatics] [✘ Animal Handle] │
-│               [✔ Arcana]     [✔ Stealth]                      │
-│                                                               │
-│ Custom Skills: [+ Add]                                        │
-│ ┌─ "Jedi Lore" ──────────────────────────────────────────┐    │
-│ │ Stat: INT    | Base DC: 15 | Description: ...          │    │
-│ └─────────────────────────────────────────────────────────┘    │
-│                                                               │
-│ ┌─ Chat: "Campaign 1" ──── Override ──────────────────────┐   │
-│ │ Bundle: [D&D 5e ▼]  (inherited from world)               │   │
-│ │ Difficulty: [1.0] (custom override)                      │   │
-│ └──────────────────────────────────────────────────────────┘   │
-└────────────────────────────────────────────────────────────────┘
-```
+A world settings panel showing:
+
+- **Header:** World name ("Forgotten Realm") with bundle selector (D&D 5e)
+- **Stat Range:** Slider 1–30 with starting points input (27)
+- **Difficulty:** Slider 0.5–2.0 with XP rate slider 1.0–2.0
+- **Active Skills:** Toggle list with checkboxes (Athletics ✓, Acrobatics ✓, Animal Handling ✘, Arcana ✓, Stealth ✓)
+- **Custom Skills:** Add button, each showing stat, base DC, description (e.g., "Jedi Lore" → INT, DC 15)
+- **Chat Override:** Per-chat overrides inheriting from world bundle (e.g., "Campaign 1" overrides difficulty to 1.0)
 
 #### Fine-Tuning via LLM GM
 
@@ -1382,7 +1374,7 @@ The LLM then narrates the mechanical truth.
 
 ## Implementation Roadmap
 
-### Phase 1: Foundation (Current → v0.1)
+### Phase 1: Foundation (Current → MVP)
 
 | Task                                  | Files                                           | Status      |
 | ------------------------------------- | ----------------------------------------------- | ----------- |
@@ -1392,7 +1384,7 @@ The LLM then narrates the mechanical truth.
 | Stat computation (base + equipment)   | `src/rpg/stat-computer.ts`                      | Not started |
 | Equip/unequip service                 | `src/rpg/equipment.ts`                          | Not started |
 
-### Phase 2: Dice & Combat (v0.2)
+### Phase 2: Dice & Combat (Future)
 
 | Task                          | Files                            | Status      |
 | ----------------------------- | -------------------------------- | ----------- |
@@ -1403,7 +1395,7 @@ The LLM then narrates the mechanical truth.
 | Status effect system          | `src/rpg/status-effects.ts`      | Not started |
 | Event extraction upgrade      | `src/story/events/extraction.ts` | Not started |
 
-### Phase 3: Skills & XP (v0.3)
+### Phase 3: Skills & XP (Future)
 
 | Task                             | Files                     | Status      |
 | -------------------------------- | ------------------------- | ----------- |
@@ -1413,7 +1405,7 @@ The LLM then narrates the mechanical truth.
 | Level-up logic                   | `src/rpg/leveling.ts`     | Not started |
 | Loot table system                | `src/rpg/loot.ts`         | Not started |
 
-### Phase 4: Persona-World (v0.4)
+### Phase 4: Persona-World (Future)
 
 | Task                           | Files                          | Status      |
 | ------------------------------ | ------------------------------ | ----------- |
@@ -1422,7 +1414,7 @@ The LLM then narrates the mechanical truth.
 | RPG-enhanced prompt assembly   | `src/rpg/prompt-assembly.ts`   | Not started |
 | Currency system                | `src/rpg/currency.ts`          | Not started |
 
-### Phase 5: Chat Rules & Scoped Mechanics (v0.5)
+### Phase 5: Chat Rules & Scoped Mechanics (Future)
 
 | Task                                     | Files                                          | Status      |
 | ---------------------------------------- | ---------------------------------------------- | ----------- |
@@ -1433,7 +1425,7 @@ The LLM then narrates the mechanical truth.
 | Rule prompt injection                    | `src/rpg/rules-prompt.ts`                      | Not started |
 | Location-scoped rule activation          | `src/rpg/rules-location.ts`                    | Not started |
 
-### Phase 6: Plugin Engine & Bundles (v0.6)
+### Phase 6: Plugin Engine & Bundles (Future)
 
 | Task                                                  | Files                         | Status      |
 | ----------------------------------------------------- | ----------------------------- | ----------- |
@@ -1483,19 +1475,14 @@ Three columns replace the bundle-gated system:
 - No resurrection, no replay. Full world recreation (new UUID) required to bring back character
 
 **Prompt injection for dead actors:**
+
 ```
 [OBSERVER MODE] Your character ({name}) has fallen. You can read the world's events but cannot act. The story continues without you.
 ```
 
 ### State Machine
 
-```
-alive ──fatal──▶ dead
-  │               │
-  └──(normal)─────┘  (no path back)
-```
-
-`dead` is terminal. `alive` is the default for actors joining a non-Iron-Man world.
+`dead` is terminal. Only `alive` → `dead` transition exists (fatal damage or Iron-Man death). No path back. `alive` is the default for actors joining a non-Iron-Man world.
 
 ### Prompt Injection
 

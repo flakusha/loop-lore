@@ -12,7 +12,7 @@ Browser bundles are built for production via `bun run build:frontend`.
 | HTML         | Prebuilt static templates | Server replaces `{{{content}}}` placeholder in layout.html           |
 | AJAX         | htmx 2.x                  | Partial page updates, form submission, server-driven UI              |
 | Client state | Alpine.js 3.x             | Modals, toasts, local UI toggles (not data state)                    |
-| Styling      | Hand-authored CSS         | 3 files: theme.css, app.css, gallery.css. ~26KB total. No framework. |
+| Styling      | Hand-authored CSS         | 3 files: theme.css, app.css, gallery.css. No framework. |
 | Icons        | Unicode / SVG             | No icon library dependency. Inline SVGs where needed.                |
 
 ## Development Workflow
@@ -111,14 +111,7 @@ bun run typecheck:frontend
 
 ### Build Output
 
-```
-dist/
-├── public/           # Static assets (HTML, CSS, JS bundles)
-│   ├── index.html
-│   ├── style.css
-│   └── browser.js      # Bundled frontend TypeScript
-└── server.js          # Bundled server TypeScript
-```
+The build produces `dist/public/` (static assets — `index.html`, `style.css`, `browser.js` for bundled frontend TypeScript) and `dist/server.js` (bundled server TypeScript).
 
 ### Pre-compression
 
@@ -141,12 +134,7 @@ Server checks `Accept-Encoding` and serves compressed variant directly.
 
 ## Source Structure
 
-```
-src/frontend/
-├── index.ts           # Public exports for browser bundle
-├── browser.ts         # Browser-compatible crypto/compression utilities
-└── ...                # Additional frontend modules
-```
+The `src/frontend/` directory contains `index.ts` (public exports for browser bundle), `browser.ts` (browser-compatible crypto/compression utilities), and additional frontend modules.
 
 ## CSS Architecture
 

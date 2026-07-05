@@ -15,18 +15,14 @@ Reimplementation of SillyTavern with enhanced features:
 
 ## Document Structure
 
-```
-docs/
-├── spec/                          Technical specifications
-│   ├── integrations/              External tool integrations
-├── frontend/                      Frontend UX specifications
-│   └── chat/                      Chat system UX specs
-├── guide/                         User-facing how-to guides
-├── reference/                     API reference
-├── meta/                          Project planning & reviews
-│   └── reviews/                   Code review documents
-└── .vitepress/                    VitePress site config
-```
+Docs organized into:
+
+- **`spec/`** — Technical specifications, with `integrations/` for external tool integration docs
+- **`frontend/`** — Frontend UX specifications, with `chat/` for chat system UX
+- **`guide/`** — User-facing how-to guides
+- **`reference/`** — API reference
+- **`meta/`** — Project planning and reviews, with `reviews/` subdirectory
+- **`.vitepress/`** — VitePress site configuration
 
 ## Specification Documents
 

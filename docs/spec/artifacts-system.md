@@ -135,7 +135,7 @@ Artifacts reuse the existing `assets` and `asset_links` tables with additional m
 -- mime_type TEXT NOT NULL
 -- size_bytes INTEGER NOT NULL
 -- filename TEXT NOT NULL
--- upload_timestamp TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+-- upload_timestamp TEXT NOT NULL DEFAULT (datetime('now'))   -- ISO 8601
 
 -- New artifact-specific columns (nullable for backward compatibility):
 ALTER TABLE assets ADD COLUMN

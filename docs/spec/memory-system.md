@@ -1,5 +1,8 @@
 # Advanced Memory Systems Specification
 
+> **Status:** Post-MVP (v0.2+). Three-tier memory architecture reference.
+> Episodic memory basics already covered by `src/generation/context-compressor.ts` (sliding/summarize/truncate strategies).
+
 ## Overview
 
 Loop-lore's memory system extends beyond simple chat history to provide agents and characters with episodic, semantic, and procedural memory capabilities. This enables more intelligent, context-aware behavior that persists across sessions and improves over time through learning.
@@ -31,17 +34,10 @@ Loop-lore's memory system extends beyond simple chat history to provide agents a
 
 ### Storage Layer
 
-All memory types leverage the existing polymorphic asset system:
-
-```
-memories (conceptual) → assets table + asset_links table
-```
-
-Each memory entry is an asset with:
-
+All memory types leverage the existing polymorphic asset system. Each conceptual memory becomes an `assets` row linked via `asset_links`:
 - `asset_type = 'memory'`
-- `label` indicating memory subtype (`'episodic'`, `'semantic'`, `'procedural'`)
-- `asset_links` connecting to relevant entities (chats, characters, epics, tasks)
+- `label` indicates memory subtype (`'episodic'`, `'semantic'`, `'procedural'`)
+- `asset_links` connect to relevant entities (chats, characters, epics, tasks)
 - Content stored in appropriate format (text, JSON, embeddings)
 
 ### Memory Entry Structure
@@ -221,7 +217,7 @@ CREATE TABLE assets (
   mime_type TEXT NOT NULL,
   size_bytes INTEGER NOT NULL,
   filename TEXT NOT NULL,
-  upload_timestamp TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+  upload_timestamp TEXT NOT NULL DEFAULT (datetime('now'))  -- ISO 8601
 );
 
 -- asset_links table (existing)

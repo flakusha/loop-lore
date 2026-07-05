@@ -6,7 +6,7 @@ This file covers: message bubbles, markdown rendering, asset positioning (book-l
 
 ## Markdown Rendering
 
-All message content is rendered as markdown. LLMs output markdown natively; users can also type markdown in the input.
+All message content is rendered as markdown. LLMs output markdown natively; users can also type markdown in the input. Rendering uses [marked](https://marked.js.org/) with GFM enabled (`breaks: true, gfm: true`).
 
 **Supported syntax**:
 
@@ -15,9 +15,11 @@ All message content is rendered as markdown. LLMs output markdown natively; user
 - `[links](url)` — open in new tab
 - `> blockquote`
 - `- unordered list`, `1. ordered list`
+- Tables (`| col | col |`)
+- Task lists (`- [ ] item`, `- [x] item`)
 - Line breaks preserved as `<br>`
 
-**Not supported in v1**: tables, footnotes, task lists, embedded HTML.
+**Not supported**: footnotes (no extension loaded). Raw HTML passes through unchanged — content trust model is server-authoritative (user and LLM content only).
 
 ---
 
@@ -41,13 +43,15 @@ All message content is rendered as markdown. LLMs output markdown natively; user
 **Message list scroll management**: the message list scrolls with newest at bottom. To handle long conversations efficiently:
 
 - **Infinite scroll upward**: when the user scrolls to the top of the current message list, htmx fetches older messages and prepends them (lazy loading). A "Load earlier messages" indicator appears at the top during loading.
-- **No virtual DOM**: v1 renders all loaded messages as DOM nodes. If a chat exceeds ~500 messages and performance degrades, implement page-based loading (load in chunks of 100, "Load earlier" link between chunks).
+- **No virtual DOM**: v1 renders all loaded messages as DOM nodes. If a chat contains high message counts and performance degrades, implement page-based loading (load in chunks of 100, "Load earlier" link between chunks).
 - **Auto-scroll on new message**: only triggers if the user was already at the bottom (within 100px of the bottom). If the user has scrolled up to read history, a "New message below ↓" floating button appears instead of forcing the scroll position.
 - **Keep position on prepend**: when older messages load above the current view, scroll position relative to the currently visible message is preserved (no jump).
 
 ---
 
 ## Asset Positioning (Book-like Illustration Layout)
+
+**Status**: Implemented. Attachments are stored in `attachments` JSON array on each message record, referencing assets via `asset_links` with `entity_type='message'`.
 
 A message can hold attached images (or other media). The display depends on image size and proportion:
 

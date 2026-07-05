@@ -50,18 +50,15 @@ Design goals:
 
 ### Local Filesystem (Default)
 
-```
-data/assets/
-  raw/                  Original uploads
-    ab/cd/abcd1234.jpg   Path derived from asset UUID
-  compressed/           Pre-compressed variants
-    ab/cd/abcd1234.webp  WebP version
-    ab/cd/abcd1234_thumb.webp  256px thumbnail
-  audio/                Audio files (stored as-is or transcoded)
-    ab/cd/abcd1234.opus
-  video/                Video files
-    ab/cd/abcd1234.webm
-```
+Assets are stored on disk using a UUID-derived path scheme to avoid inode limits. Path construction:
+
+1. UUID is generated for the asset (e.g., `abcd1234-...`)
+2. First 2 chars of UUID become a subdirectory (`ab/cd/`)
+3. Raw file placed at `data/assets/raw/ab/cd/abcd1234.{ext}`
+4. Compressed variants at `data/assets/compressed/ab/cd/abcd1234.webp`
+5. Thumbnail at `data/assets/compressed/ab/cd/abcd1234_thumb.webp`
+6. Audio files at `data/assets/audio/ab/cd/abcd1234.opus`
+7. Video files at `data/assets/video/ab/cd/abcd1234.webm`
 
 Path scheme: first 2 chars of UUID as subdirectory to avoid inode limits.
 
@@ -88,17 +85,17 @@ ASSET_S3_ENDPOINT=https://...  # for MinIO/compatible
 
 ## Upload & Processing Pipeline
 
-```
-1. User uploads file via POST /api/assets
-2. Server validates: size, type, mime
-3. Server generates UUID, stores raw file
-4. Background processing (async):
-   - Images: generate WebP compressed + thumbnail
-   - Audio: optionally transcode to Opus
-   - Video: optionally generate poster frame
-5. Asset record written to DB
-6. Response returned with asset ID + URLs
-```
+An asset upload proceeds through these steps:
+
+1. **Upload** — Client sends `POST /api/assets` with multipart form data (`file`, `alt_text?`)
+2. **Validation** — Server checks file size, MIME type, and extension against allowed lists (`ASSET_MAX_IMAGE_SIZE`, `ASSET_ALLOWED_IMAGE_TYPES`, etc.)
+3. **Storage** — Server generates UUID, stores raw file to `data/assets/raw/{uuid-prefix}/{uuid}.{ext}`
+4. **Background processing** (async, per asset type):
+   - **Images**: Generate WebP compressed variant (q=85) + 256px thumbnail WebP
+   - **Audio**: Optionally transcode to Opus 96kbps
+   - **Video**: Optionally generate poster frame JPEG
+5. **DB write** — Asset record inserted into `assets` table with metadata (filename, mime, size, type)
+6. **Response** — Returns `201 Created` with asset ID and URLs (`raw`, `compressed`, `thumbnail`)
 
 ### Compression Strategy
 
@@ -110,14 +107,14 @@ ASSET_S3_ENDPOINT=https://...  # for MinIO/compatible
 
 ## Asset Linking (Polymorphic)
 
-Assets are not directly tied to a single entity. Instead, `asset_links` junction table maps assets to any entity:
+Assets are not directly tied to a single entity. Instead, `asset_links` junction table maps assets to any entity. Examples of how the same asset connects to different entities using `entity_type`, `entity_id`, and `label`:
 
-```
-Asset "portrait.webp" → link { entity_type: 'character', entity_id: 'char-uuid', label: 'portrait' }
-Asset "bgm.opus"     → link { entity_type: 'world', entity_id: 'world-uuid', label: 'ambient' }
-Asset "screenshot.png" → link { entity_type: 'chat', entity_id: 'chat-uuid', label: 'scene' }
-Asset "avatar.jpg"   → link { entity_type: 'user', entity_id: 'user-uuid', label: 'avatar' }
-```
+| Asset | Links To | Label | Purpose |
+|-------|----------|-------|---------|
+| `portrait.webp` | `character` uuid | `portrait` | Character portrait |
+| `bgm.opus` | `world` uuid | `ambient` | Background music |
+| `screenshot.png` | `chat` uuid | `scene` | Scene illustration |
+| `avatar.jpg` | `user` uuid | `avatar` | User profile picture |
 
 This replaces the old Gallery model where items had fixed `chat_id`/`character_id` columns.
 
@@ -229,10 +226,8 @@ GET /api/assets/:id/thumb     → Thumbnail
 
 Old gallery items map to assets as follows:
 
-```
-GalleryItem { chat_id, character_id, url, type, caption }
-→ Asset { filename: extract from url, mime: detect, storage_path: url }
-→ asset_link { asset_id, entity_type: old type, entity_id: old chat/char id, label: old caption }
-```
+1. **Old item**: `GalleryItem { chat_id, character_id, url, type, caption }`
+2. **New asset**: Extract filename from `url`, detect MIME from `type`, set `storage_path = url`
+3. **New link**: Create `asset_link` with `asset_id` from step 2, `entity_type` from old item's context (chat or character), `entity_id` from old `chat_id`/`character_id`, `label = old caption`
 
 This is a one-time migration script, not needed for fresh installs.
