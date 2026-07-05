@@ -65,7 +65,7 @@ class PluginRegistry {
   }
 
   listPlugins(): LoadedPlugin[] {
-    return Array.from(this.plugins.values());
+    return [...this.plugins.values()];
   }
 
   getPluginsByOrigin(origin: PluginOrigin): LoadedPlugin[] {

@@ -23,7 +23,7 @@ export function minifyText(content: string): string {
 export function minifyCSS(content: string): string {
   let result = content;
 
-  // eslint-disable-next-line sonarjs/super-linear-regex
+   
   result = result.replaceAll(/\/\*[\s\S]*?\*\//g, "");
 
   // eslint-disable-next-line sonarjs/super-linear-regex
@@ -48,7 +48,7 @@ export function minifyCSS(content: string): string {
 
   result = result.replaceAll(';}', "}");
 
-  // eslint-disable-next-line sonarjs/super-linear-regex
+   
   result = result.replaceAll(/\s{2,}/g, " ");
 
   result = result.trim();
