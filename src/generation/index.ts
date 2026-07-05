@@ -65,3 +65,28 @@ export {
   registerDefaultNullDetector,
   detectPolicyMismatch,
 } from "./policy-detector";
+
+// ── Providers ────────────────────────────────────────────
+
+export type {
+  LLMProvider,
+  ProviderCapabilities,
+  GenerateRequest,
+  GenerateResponse,
+  ChunkEvent,
+  StreamHandler,
+  ProviderError,
+  ProviderAuthError,
+  ProviderRateLimitError,
+} from "./providers/types";
+
+export {
+  registerProvider,
+  getProvider,
+  listProviders,
+  resolveProvider,
+  initializeProviders,
+  type ResolvedProvider,
+} from "./providers/registry";
+
+export { OpenAiCompatibleProvider } from "./providers/openai-compatible";
