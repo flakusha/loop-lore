@@ -19,6 +19,7 @@ import type {
 } from "./types";
 import { DEFAULT_QUALITY_THRESHOLDS } from "./types";
 import { STRATEGY_MAP, type TurnParticipant } from "./turn-strategies";
+import { jsonParseOr, safeJsonStringify } from "../utils";
 
 export interface TurnManagerOptions {
   db: Kysely<DB>;
@@ -33,6 +34,68 @@ export class TurnManager {
   private readonly gmConfig: GameMasterConfig;
   private readonly qualityThresholds: QualityThresholds;
   private state: TurnManagerState | null = null;
+
+  // eslint-disable-next-line unicorn/consistent-class-member-order
+  // ─── Private Helpers ────────────────────────────────────────────
+
+  private createInitialState(): TurnManagerState {
+    return {
+      currentTurn: 0,
+      currentActorId: null,
+      turnOrder: [],
+      strategy: TurnStrategy.Hybrid,
+      isPaused: false,
+      lastTurnCompletedAt: null,
+      pendingRegeneration: null,
+    };
+  }
+
+  private async persistState(): Promise<void> {
+    if (!this.state) return;
+    const serialized = safeJsonStringify(this.state);
+    if (!serialized.ok) return;
+    await this.db
+      .updateTable("chats")
+      .set({ story_state: serialized.value })
+      .where("id", "=", this.chatId)
+      .execute();
+  }
+
+  private async fetchTurnParticipants(): Promise<TurnParticipant[]> {
+    const participants = await this.db
+      .selectFrom("chat_participants")
+      .innerJoin("actors", "actors.id", "chat_participants.actor_id")
+      .select(["chat_participants.actor_id", "actors.actor_type", "actors.agent_type"])
+      .where("chat_participants.chat_id", "=", this.chatId)
+      .where("actors.agent_type", "in", ["ai", "narrator", "npc"])
+      .execute();
+
+    return participants.map((p) => ({
+      actorId: p.actor_id,
+      type: p.actor_type,
+      agentType: p.agent_type,
+    }));
+  }
+
+  private async refreshTurnOrder(): Promise<void> {
+    if (!this.state) return;
+
+    const participants = await this.fetchTurnParticipants();
+
+    const typeOrder: Record<string, number> = { narrator: 0, ai: 1, npc: 2 };
+    participants.sort((a, b) => {
+      const aOrder = typeOrder[a.agentType] ?? 99;
+      const bOrder = typeOrder[b.agentType] ?? 99;
+      return aOrder - bOrder;
+    });
+
+    this.state.turnOrder = participants.map((p) => p.actorId);
+  }
+
+  private async getTurnOrderActors(): Promise<TurnParticipant[]> {
+    if (!this.state) return [];
+    return this.fetchTurnParticipants();
+  }
 
   constructor(options: TurnManagerOptions) {
     this.db = options.db;
@@ -56,9 +119,13 @@ export class TurnManager {
       throw new Error(`Chat ${this.chatId} not found`);
     }
 
-    this.state = chat.story_state ? (JSON.parse(chat.story_state) as TurnManagerState) : this.createInitialState();
+    this.state = chat.story_state ? jsonParseOr(chat.story_state, this.createInitialState()) : this.createInitialState();
 
-    // Determine turn order from chat participants + actors
+    // Store maxTurns from chat config (overrides persisted state)
+    if (chat.max_turns != null) {
+      this.state.maxTurns = chat.max_turns;
+    }
+
     if (this.state.turnOrder.length === 0) {
       await this.refreshTurnOrder();
     }
@@ -98,7 +165,7 @@ export class TurnManager {
   }
 
   /** Record a completed turn */
-  async recordTurn(params: {
+  async recordTurn(_params: {
     turnId: string;
     actorId: string;
     prompt: string;
@@ -120,7 +187,7 @@ export class TurnManager {
     const currentAttempt = this.state.pendingRegeneration?.attempt ?? 0;
 
     if (currentAttempt >= this.qualityThresholds.maxRegenerations) {
-      return false; // Max attempts exceeded, escalate instead
+      return false;
     }
 
     this.state.pendingRegeneration = {
@@ -160,69 +227,10 @@ export class TurnManager {
   }
 
   /** Check if story session has reached max turns */
+  // TODO: default maxTurns=MAX_SAFE_INTEGER effectively disables turn limit. Ensure chat.max_turns is configured.
   get isComplete(): boolean {
     if (!this.state) return false;
-    const maxTurns = Number.MAX_SAFE_INTEGER; // Override from chat config later
+    const maxTurns = this.state.maxTurns ?? Number.MAX_SAFE_INTEGER;
     return this.state.currentTurn >= maxTurns;
-  }
-
-  // ─── Private Helpers ────────────────────────────────────────────
-
-  private createInitialState(): TurnManagerState {
-    return {
-      currentTurn: 0,
-      currentActorId: null,
-      turnOrder: [],
-      strategy: TurnStrategy.Hybrid,
-      isPaused: false,
-      lastTurnCompletedAt: null,
-      pendingRegeneration: null,
-    };
-  }
-
-  private async persistState(): Promise<void> {
-    if (!this.state) return;
-    await this.db
-      .updateTable("chats")
-      .set({ story_state: JSON.stringify(this.state) })
-      .where("id", "=", this.chatId)
-      .execute();
-  }
-
-  private async fetchTurnParticipants(): Promise<TurnParticipant[]> {
-    const participants = await this.db
-      .selectFrom("chat_participants")
-      .innerJoin("actors", "actors.id", "chat_participants.actor_id")
-      .select(["chat_participants.actor_id", "actors.actor_type", "actors.agent_type"])
-      .where("chat_participants.chat_id", "=", this.chatId)
-      .where("actors.agent_type", "in", ["ai", "narrator", "npc"])
-      .execute();
-
-    return participants.map((p) => ({
-      actorId: p.actor_id,
-      type: p.actor_type,
-      agentType: p.agent_type,
-    }));
-  }
-
-  private async refreshTurnOrder(): Promise<void> {
-    if (!this.state) return;
-
-    const participants = await this.fetchTurnParticipants();
-
-    // Order: narrators first, then ai characters, then npcs
-    const typeOrder: Record<string, number> = { narrator: 0, ai: 1, npc: 2 };
-    participants.sort((a, b) => {
-      const aOrder = typeOrder[a.agentType] ?? 99;
-      const bOrder = typeOrder[b.agentType] ?? 99;
-      return aOrder - bOrder;
-    });
-
-    this.state.turnOrder = participants.map((p) => p.actorId);
-  }
-
-  private async getTurnOrderActors(): Promise<TurnParticipant[]> {
-    if (!this.state) return [];
-    return this.fetchTurnParticipants();
   }
 }
