@@ -9,8 +9,9 @@ import type { ProviderInstanceConfig } from "../../config/schema";
 import type { LLMProvider, GenerateRequest, GenerateResponse, ProviderCapabilities, ChunkEvent, StreamHandler } from "./types";
 import { ProviderError, ProviderAuthError, ProviderRateLimitError } from "./types";
 import { safeJsonParse } from "../../utils";
+import { getLogger } from "../../logger";
 
-console.warn("[bedrock] AWS Bedrock provider not implemented — AWS Signature V4 signing required");
+getLogger().child({ module: "bedrock" }).warn("AWS Bedrock provider not implemented — AWS Signature V4 signing required");
 
 const CAPABILITIES: ProviderCapabilities = {
   type: "bedrock",
