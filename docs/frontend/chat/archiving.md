@@ -1,6 +1,8 @@
 # Chat: Message Deletion & Archiving
 
-Deleting a message in the tree model is a **cascade operation**. Because the LLM generates responses based on preceding context, deleting a parent message invalidates the logical basis for everything that follows in its subtree.
+> ⚠️ **Implementation status:** Cascade archiving, restore, and purge are NOT implemented.
+> Message deletion uses hard DELETE or soft-delete (`visibility = 'hidden_by_user'`) on a single message only — no cascade.
+> No restore or purge flows exist. This spec is aspirational.
 
 ---
 

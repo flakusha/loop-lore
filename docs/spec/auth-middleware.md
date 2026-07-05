@@ -249,8 +249,7 @@ Returns:
 
 ### Password Storage
 
-- Node `crypto.scryptSync` for hashing (no extra dependency) or `bcrypt` package
-- Salt generated per-password (scrypt includes salt in output)
+- Bun's native `Bun.password.hash` / `Bun.password.verify` (scrypt via Bun, not Node `crypto.scryptSync`)
 - Never log passwords or password hashes
 
 ### Token Storage

@@ -34,7 +34,7 @@ bun run dev
 | `bun run tui`          | Start TUI interface                           |
 | `bun run build`        | Build static assets for production            |
 | `bun run db:migrate`   | Run pending database migrations               |
-| `bun run db:reset`     | Drop and recreate database (development only) |
+| `bun run db:reset`     | ❌ Not implemented — no script exists |
 | `bun run lint`         | Run ESLint on source code                     |
 | `bun run format`       | Format code with Prettier                     |
 | `bun run docs:dev`     | Start documentation development server        |
@@ -66,6 +66,8 @@ ASSET_STORAGE_BACKEND=local
 ```
 
 ## Docker Deployment
+
+> ⚠️ **Note:** No `Dockerfile` exists in the repository yet. Docker deployment instructions are aspirational.
 
 For production deployment using Docker:
 

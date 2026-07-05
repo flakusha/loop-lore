@@ -1,5 +1,9 @@
 # Chat: Multi-LLM Story Generation with Game Master
 
+> ⚠️ **Implementation status:** Backend story module (`src/story/`) partially implemented (turn manager, game master, quest engine, world state). 
+> Frontend UI (story mode chat view, GM panel, quest log, story-specific templates) does NOT exist.
+> Story API endpoints are NOT wired into the route router. This spec is aspirational.
+
 ## Overview
 
 This feature introduces **multi-LLM collaborative story generation** where multiple LLMs take turns developing a story, guided by an **Assistant LLM acting as Game Master** (or a human Game Master). The system supports:

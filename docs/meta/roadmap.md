@@ -25,7 +25,6 @@ code exists in `src/`. Target boxes = planned.
 | Frontend browser lib (crypto/compress) | `src/frontend/browser.ts` |
 | Web UI view templates | `src/views/chat.html`, `gallery.html`, `layout.html`, `settings.html` |
 | HTTP utils | `src/routes/http-utils.ts` |
-| Tests passing | `bun test` |
 
 ## 🏗 Integration Phase (Current Focus)
 
@@ -38,9 +37,8 @@ Bridge between existing backend and user-facing UIs.
 - [ ] **TUI chat widget** — `src/tui/chat.ts` (List + Textbox)
 - [ ] **TUI input widget** — `src/tui/input.ts`
 - [ ] **TUI screen manager** — expand `src/tui/app.ts` with layout
-- [ ] **Lint pass** — fix 176 style errors, make `bun run check` green
 - [ ] **Web UI ↔ API wiring** — htmx swaps working end-to-end
-- [ ] **Sample plugins** — dice/roll tool as early plugin prototype
+- [x] **Sample plugins** — dice/roll tool as early plugin prototype
 
 ## 🎯 Planned Features (Priority Order)
 
