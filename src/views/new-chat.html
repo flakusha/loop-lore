@@ -1,0 +1,61 @@
+<!-- New Chat Form (swapped into #app-root by htmx) -->
+<div class="app-layout" x-data="newChatState()">
+  <!-- Main content -->
+  <main class="main-content">
+    <header class="main-header">
+      <span class="title">New Chat</span>
+    </header>
+
+    <div class="chat-area" style="overflow-y: auto; justify-content: center; align-items: flex-start; padding-top: var(--space-12)">
+      <div style="width: 100%; max-width: 480px; padding: 0 var(--space-4)">
+        <div class="empty-state" style="margin-bottom: var(--space-6)">
+          <div class="icon">💬</div>
+          <div class="title">Start a New Conversation</div>
+          <div class="description">Choose a chat type and add participants to begin.</div>
+        </div>
+
+        <form @submit.prevent="createChat()" data-testid="create-chat-form">
+          <div class="form-group">
+            <label class="form-label" for="chat-name">Chat Name</label>
+            <input
+              class="form-input"
+              type="text"
+              x-model="name"
+              id="chat-name"
+              required
+              placeholder="e.g., Adventure in the Forgotten Forest"
+              data-testid="chat-name-input"
+            />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="chat-type">Chat Type</label>
+            <select class="form-select" x-model="chatType" id="chat-type" data-testid="chat-type-select">
+              <option value="user_character">User × Character</option>
+              <option value="user_user">User × User</option>
+              <option value="user_assistant">User × Assistant</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="chat-mode">Chat Mode</label>
+            <select class="form-select" x-model="chatMode" id="chat-mode" data-testid="chat-mode-select">
+              <option value="roleplay">Roleplay</option>
+              <option value="chat">Chat</option>
+              <option value="story">Story</option>
+            </select>
+          </div>
+
+          <div class="form-group" x-show="error" x-cloak>
+            <p class="error-msg" x-text="error" style="color: var(--text-danger)" data-testid="chat-error"></p>
+          </div>
+
+          <div style="display: flex; gap: var(--space-3); justify-content: flex-end; margin-top: var(--space-6)">
+            <a class="btn btn-secondary" href="/views/chat" hx-get="/views/chat" hx-target="#app-root" hx-swap="innerHTML" data-testid="cancel-create-chat">Cancel</a>
+            <button type="submit" class="btn btn-primary" :disabled="submitting" x-text="submitting ? 'Creating...' : 'Create Chat'" data-testid="create-chat-btn"></button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </main>
+</div>

@@ -1,0 +1,49 @@
+<!-- Character Chat List Page (swapped into #app-root by htmx) -->
+<div class="app-layout" x-data="characterChatListState()">
+  <!-- Main content -->
+  <main class="main-content">
+    <header class="main-header" data-testid="character-chat-header">
+      <span class="title" x-text="characterName || 'Chats'"></span>
+      <div class="actions">
+        <button class="btn btn-secondary" @click="loadChats" data-testid="refresh-chats">Refresh</button>
+        <a href="/views/new-chat" class="btn btn-primary" hx-get="/views/new-chat" hx-target="#app-root" hx-swap="innerHTML" data-testid="new-chat-from-character">+ New Chat</a>
+      </div>
+    </header>
+
+    <div class="chat-area">
+      <!-- Loading -->
+      <template x-if="loading">
+        <div class="empty-state" style="padding: var(--space-12)">
+          <div class="icon">⏳</div>
+          <div class="title">Loading chats...</div>
+        </div>
+      </template>
+
+      <!-- Empty state -->
+      <template x-if="!loading && chats.length === 0">
+        <div class="empty-state" style="padding: var(--space-12)">
+          <div class="icon">💬</div>
+          <div class="title">No chats yet</div>
+          <div class="description">This character has no conversations. Start a new chat to begin.</div>
+          <a href="/views/chat" class="btn btn-primary" style="margin-top: var(--space-4)">+ Start Chat</a>
+        </div>
+      </template>
+
+      <!-- Chat list -->
+      <template x-if="!loading && chats.length > 0">
+        <div class="chat-list" data-testid="character-chat-list">
+          <template x-for="chat in chats" :key="chat.id">
+            <div class="chat-item" @click="openChat(chat)" :data-testid="'chat-item-' + chat.id">
+              <div class="chat-info">
+                <h4 class="chat-name" x-text="chat.name"></h4>
+                <p class="chat-preview" x-text="chat.last_message || 'No messages yet'"></p>
+              </div>
+              <span class="chat-time" x-text="formatTime(chat.updated_at)"></span>
+            </div>
+          </template>
+        </div>
+      </template>
+    </div>
+  </main>
+</div>
+

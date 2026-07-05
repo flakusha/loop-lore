@@ -25,23 +25,35 @@
 
     <!-- htmx -->
     <script
-      src="https://unpkg.com/htmx.org@2.0.4"
-      integrity="sha384-ieQNIn/OMdC0jtCkCj3zXG1LZyNE1iIhJ6WNF66GSHU7hSHuk7qAApN21JxPBf3b"
+      src="https://unpkg.com/htmx.org@2.0.10"
+      integrity="sha384-H5SrcfygHmAuTDZphMHqBJLc3FhssKjG7w/CeCpFReSfwBWDTKpkzPP8c+cLsK+V"
       crossorigin="anonymous"
       defer
     ></script>
 
+    <!-- Alpine components (define app, chatState, etc. BEFORE Alpine loads) -->
+    <script src="/alpine.js" defer></script>
+
     <!-- Alpine.js -->
     <script
-      src="https://unpkg.com/alpinejs@3.14.8/dist/cdn.min.js"
-      integrity="sha384-2GXm0oAzhNWQ6S+3JmC6m+OQfH8AnLyR5t0CVC8cvj2CJmN11OU3o%2BpE%2B%2B1lCg6QaTsgbfN"
+      src="https://unpkg.com/alpinejs@3.14.9/dist/cdn.min.js"
+      integrity="sha384-9Ax3MmS9AClxJyd5/zafcXXjxmwFhZCdsT6HJoJjarvCaAkJlk5QDzjLJm+Wdx5F"
       crossorigin="anonymous"
       defer
     ></script>
 
     <!-- htmx response-targets extension (for error handling) -->
     <script
-      src="https://unpkg.com/htmx.org@2.0.4/dist/ext/response-targets.js"
+      src="https://unpkg.com/htmx.org@2.0.10/dist/ext/response-targets.js"
+      integrity="sha384-FcXXcaqsB+SLXujBqU9KJ7E84XV/wxvVAMAGam/W56Y4g0mE9pgh4HG+A4IlfbNd"
+      crossorigin="anonymous"
+      defer
+    ></script>
+
+    <!-- htmx SSE extension (for streaming generation) -->
+    <script
+      src="https://unpkg.com/htmx.org@2.0.10/dist/ext/sse.js"
+      integrity="sha384-2B3TPlcES1Cnn6T3EWFRfHw95Iw/Re8a0NLI4OsZEkIMd3rggrNnqWYueJH0vQGH"
       crossorigin="anonymous"
       defer
     ></script>
@@ -97,7 +109,7 @@
   </head>
   <body x-data="app()" x-init="init()" @keydown.escape.window="closeAllModals()">
     <!-- Toast container (fixed, outside layout) -->
-    <div class="toast-container" id="toast-container" x-show="toasts.length > 0" x-transition>
+    <div class="toast-container" id="toast-container" data-testid="toast-container" x-show="toasts.length > 0" x-transition>
       <template x-for="(toast, i) in toasts" :key="i">
         <div class="toast" :class="toast.type">
           <span class="icon" x-text="toast.icon"></span>
@@ -110,7 +122,7 @@
     <!-- Main content -->
     <div class="app-layout">
       <!-- Sidebar -->
-      <aside class="sidebar">
+      <aside class="sidebar" data-testid="sidebar-index">
         <div class="sidebar-header">
           <span class="logo">loop-lore</span>
         </div>
@@ -125,13 +137,17 @@
             </div>
 
             <div style="padding: var(--space-3)">
-              <button
+              <a
                 class="btn btn-secondary"
-                style="width: 100%"
-                disabled
+                style="width: 100%; text-align: center; text-decoration: none"
+                href="/views/new-chat"
+                hx-get="/views/new-chat"
+                hx-target="#app-root"
+                hx-swap="innerHTML"
+                hx-push-url="true"
               >
                 + New Chat
-              </button>
+              </a>
             </div>
 
             <div class="nav-section-title">Characters</div>
@@ -171,7 +187,7 @@
       </aside>
 
       <!-- Main chat area -->
-      <main class="main-content" x-data="chatState()">
+      <main class="main-content" x-data="chatState()" data-testid="chat-main-index">
         <!-- Header -->
         <header class="main-header">
           <div>
