@@ -13,6 +13,7 @@ import type { Kysely } from "kysely";
 import type { DB } from "../db/schema";
 import { randomUUID } from "node:crypto";
 import { GenerationStatus, PolicyType } from "../db/enums";
+import { safeJsonStringify } from "../utils";
 import { getLogger } from "../logger";
 import type { GenerationOptions, GenerationResult, GenerationEvents } from "./types";
 import { DEFAULT_REPETITION_DETECTION, DEFAULT_POLICY_DETECTION, DEFAULT_RESPONSE_LIMIT } from "./types";
@@ -182,8 +183,8 @@ export function startGenerationTracking(
   });
 
   events?.onStart?.(attemptId);
-  void updateAttemptStatus(db, attemptId, GenerationStatus.Processing).catch(() => {
-    // non-fatal
+  void updateAttemptStatus(db, attemptId, GenerationStatus.Processing).catch((error: unknown) => {
+    console.error("[cancellation] Status update failed:", error);
   });
 
   return { attemptId, abortSignal: abortController.signal };
@@ -223,8 +224,8 @@ export async function completeGeneration(
     streaming_chunks_received: active.chunksReceived,
     streaming_chars_received: active.charsReceived,
     repetition_score: result.repetitionScore ?? null,
-    repetition_analysis: result.repetitionAnalysis ? JSON.stringify(result.repetitionAnalysis) : null,
-    policy_analysis: result.policyAnalysis ? JSON.stringify(result.policyAnalysis) : null,
+    repetition_analysis: result.repetitionAnalysis ? (() => { const r = safeJsonStringify(result.repetitionAnalysis); return r.ok ? r.value : null; })() : null,
+    policy_analysis: result.policyAnalysis ? (() => { const r = safeJsonStringify(result.policyAnalysis); return r.ok ? r.value : null; })() : null,
     completed_at: new Date().toISOString(),
     ...(result.cancelReason && {
       cancel_reason: result.cancelReason,
