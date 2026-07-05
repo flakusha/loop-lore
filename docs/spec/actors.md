@@ -16,6 +16,19 @@ Design goals:
 
 ---
 
+## Source Files
+
+| File | Covers |
+|---|---|
+| `src/db/migrations/001_init.ts` | DDL for all actor tables — columns, constraints, defaults, indexes |
+| `src/db/schema-core.ts` | `Actors`, `ActorKeys` type interfaces |
+| `src/db/schema-story.ts` | `ActorMemories`, `ActorLoreEntries`, `WorldLoreEntries`, `Items`, `WorldItems` type interfaces |
+
+Actor-specific child tables (`actor_notes`, `actor_items`) are also defined in `schema-story.ts`.
+The `actors` table itself lives in `schema-core.ts`.
+
+---
+
 ## Data Versioning
 
 Every actor record carries a `data_version` integer that tracks which iteration
@@ -47,30 +60,14 @@ breaks existing ones. The current version is always the latest.
 
 ### How It Works (post-stabilisation)
 
-During active development, every actor is `data_version = 0`. Once stabilised,
-version progression looks like this:
+During active development, every actor is `data_version = 0`. Once stabilised, version progression follows this timeline:
 
-```
-                                       record.created_at
-                                              │
-                    ┌─────────────────────────┼─────────────────────────┐
-                    │                         │                         │
-                data_version=0           data_version=1           data_version=4
-                (pre-versioning)         (card fields)           (everything)
-                    │                         │                         │
-              description="..."         welcome_message="..."    welcome_message="..."
-              system_prompt="..."       personality="..."        personality="..."
-                                         scenario="..."          scenario="..."
-                                         import_spec="v2"        import_spec="v2"
-                                                                 items=[...]
-                                                                 lore=[...]
-                                                                 memories=[...]
-```
+1. **Record created** — Timestamp `record.created_at` marks the starting point
+2. **`data_version = 0`** (pre-versioning) — Only basic fields present: `description`, `system_prompt`. New columns are `NULL` — application handles gracefully (no welcome message, no personality snippet)
+3. **`data_version = 1`** (card fields) — `welcome_message`, `personality`, `scenario`, `import_spec="v2"` columns populated. No memories/lore/items yet
+4. **`data_version = 4`** (everything) — All fields present: `welcome_message`, `personality`, `scenario`, `import_spec="v2"`, `items=[...]`, `lore=[...]`, `memories=[...]`
 
-- **Old record** (v0): `welcome_message` is NULL, `personality` is NULL — the
-  application handles gracefully (no welcome, no personality snippet).
-- **Mid record** (v1): Has card fields but no memories/lore/items tables populated.
-- **New record** (v4): Has everything, created under the full schema.
+**Backward compatibility:** Old records with missing columns render `NULL` defaults gracefully. New records under full schema contain everything.
 
 ### Backward Compatibility Contract
 
@@ -129,23 +126,13 @@ versioning didn't change, only the content did.
 
 ### Backfill Strategy
 
-A version-aware backfill script can be run at any time to upgrade old records:
+A version-aware backfill script iterates over actors below `CURRENT_VERSION`. Most bumps require no data transformation — they just acknowledge schema compatibility:
 
-```
-for each actor where data_version < CURRENT_VERSION:
-    if data_version < 1:
-        # v0 → v1: no backfill needed — new columns are NULL,
-        #           defaults apply at read time
-    if data_version < 2:
-        # v1 → v2: optionally pre-seed memories from chat history
-        #          using message extraction (expensive, opt-in)
-    if data_version < 3:
-        # v2 → v3: lore entries exist only if imported — nothing to backfill
-    if data_version < 4:
-        # v3 → v4: items are user-authored — nothing to backfill
-
-    set data_version = CURRENT_VERSION
-```
+1. **If `data_version < 1`** (v0 → v1): No backfill needed. New columns default to `NULL`, read-time defaults apply
+2. **If `data_version < 2`** (v1 → v2): Optionally pre-seed memories from chat history using message extraction (expensive, opt-in)
+3. **If `data_version < 3`** (v2 → v3): Lore entries exist only if imported — nothing to backfill
+4. **If `data_version < 4`** (v3 → v4): Items are user-authored — nothing to backfill
+5. **Set `data_version = CURRENT_VERSION`**
 
 Most version bumps require **no data transformation** — they just acknowledge
 that the record is compatible with a newer schema. The heavy transformations
@@ -153,57 +140,19 @@ that the record is compatible with a newer schema. The heavy transformations
 
 ---
 
-## Actor Table — Column Additions
+## Actor Table — Additional Columns
 
-The existing `actors` table (defined in `docs/schema.md` and `src/db/schema.ts`)
-gains these columns for character-card support. Columns that are rarely used in
-queries (tags, extensions, import metadata) live in the `settings` JSON blob;
-frequently-accessed fields get their own column.
+Beyond the core columns defined in `src/db/schema-core.ts`, the `actors` table
+includes character-card support columns (all in `001_init.ts`):
 
-### New Columns
+- **Card fields**: `welcome_message`, `personality`, `scenario`, `mes_example`,
+  `alternate_greetings` (JSON array), `post_history_instructions`,
+  `creator_notes`, `creator`, `character_version`, `import_spec`
 
-| Column                      | Type    | Constraints         | Notes                                                                                                                                  |
-| --------------------------- | ------- | ------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
-| `data_version`              | INTEGER | NOT NULL, DEFAULT 0 | Tracks which iteration of the schema created this record (0 = pre-versioning, 1 = card fields, 2 = memories, 3 = lorebooks, 4 = items) |
-| `welcome_message`           | TEXT    |                     | Character's first message / greeting (`first_mes`)                                                                                     |
-| `personality`               | TEXT    |                     | Short personality summary (separate from `description`)                                                                                |
-| `scenario`                  | TEXT    |                     | RP scenario / context / setting                                                                                                        |
-| `mes_example`               | TEXT    |                     | Example conversation snippets                                                                                                          |
-| `alternate_greetings`       | TEXT    | JSON array          | Alternate welcome messages — **content swipes**, not data versions                                                                     |
-| `post_history_instructions` | TEXT    |                     | Instructions appended after chat history (V2 `post_history_instructions`)                                                              |
-| `creator_notes`             | TEXT    |                     | Notes from creator — NOT used in prompts                                                                                               |
-| `creator`                   | TEXT    |                     | Creator name/credit                                                                                                                    |
-| `character_version`         | TEXT    |                     | Version string (creator's own versioning)                                                                                              |
-| `import_spec`               | TEXT    | DEFAULT 'raw'       | 'chara_card_v1' \| 'chara_card_v2' \| 'raw'                                                                                            |
-
-### settings JSON — Extended Keys
-
-The existing `settings` JSON column stores remaining card metadata:
-
-```typescript
-interface ActorSettings {
-  // Card metadata
-  tags?: string[];
-  extensions?: Record<string, unknown>; // V2 spec extensions (namespaced)
-
-  // Import tracking
-  importedAt?: string; // ISO 8601
-  importedFrom?: string; // source filename or URL
-  importSpecVersion?: string; // e.g. "2.0"
-
-  // Actor preferences
-  modelPreferences?: {
-    preferredProvider?: string;
-    preferredModel?: string;
-    temperature?: number;
-    maxTokens?: number;
-  };
-
-  // Display
-  color?: string; // Accent color in UI
-  nickname?: string; // User's local nickname for this actor
-}
-```
+These map directly from SillyTavern V1/V2 character card fields (see V2 mapping below).
+Frequently-accessed fields get dedicated columns; rarely-used metadata lives in the
+`settings` JSON blob (`settings.tags`, `settings.extensions`,
+`settings.importSpecVersion`, `settings.modelPreferences`, etc.).
 
 ### V2 Spec Field Mapping
 
@@ -234,44 +183,28 @@ interface ActorSettings {
 Actor memories are accumulated facts learned across conversations. Unlike lore
 (which is static, authored content), memories grow organically.
 
-### Table: `actor_memories`
-
-| Column         | Type    | Constraints               | Notes                                                     |
-| -------------- | ------- | ------------------------- | --------------------------------------------------------- |
-| id             | TEXT    | PK, UUID                  |                                                           |
-| actor_id       | TEXT    | FK → actors.id, NOT NULL  | Owner of this memory                                      |
-| source_chat_id | TEXT    | FK → chats.id             | Chat where memory was learned (nullable)                  |
-| content        | TEXT    | NOT NULL                  | The memory text                                           |
-| memory_type    | TEXT    | NOT NULL                  | 'summary', 'fact', 'experience', 'relationship', 'custom' |
-| confidence     | REAL    | DEFAULT 1.0               | 0.0–1.0 — how reliable/settled                            |
-| importance     | INTEGER | DEFAULT 1                 | 1–10 — priority for retention under token budget          |
-| keywords       | TEXT    | JSON array                | Search keywords                                           |
-| created_at     | TEXT    | DEFAULT CURRENT_TIMESTAMP |                                                           |
-| updated_at     | TEXT    | DEFAULT CURRENT_TIMESTAMP | Last revision                                             |
-| expires_at     | TEXT    |                           | TTL for ephemeral memories (null = permanent)             |
-
-**Indexes:**
-
-- `(actor_id)` — fetch all memories for an actor
-- `(actor_id, memory_type)` — filter by type
-- `(actor_id, importance DESC)` — for budget-based pruning
+Table: `actor_memories` — defined in `src/db/schema-story.ts` and `001_init.ts`.
 
 **Design rationale:**
 
 - `source_chat_id` tracks provenance so users can jump to where a memory was formed
 - `confidence` + `importance` allow the memory system to prioritize under context budget
 - `expires_at` supports temporal memories ("the innkeeper said the festival is next week")
-- `memory_type` supports different memory subsystems (summarization, fact extraction, etc.)
+- `memory_type` supports different memory subsystems (summary, fact extraction, relationships)
 
 ### Memory Lifecycle
 
 ```
 1. A conversation happens
-2. Post-processing extracts facts → creates memory entries
-3. Redundant or superseded memories get consolidated (confidence drops, new entry replaces)
-4. Under token pressure, low-importance memories are dropped first
-5. Expired memories are pruned on read
+2. Post-generation hook (LLM idle) extracts facts → creates memory entries
+3. Background cron periodically re-processes chats to improve injection quality
+4. Redundant or superseded memories get consolidated (confidence drops, new entry replaces)
+5. Under token pressure, low-importance memories are dropped first
+6. Expired memories are pruned on read
 ```
+
+- **Hook trigger**: after LLM response, if generation pipeline has capacity
+- **Cron trigger**: periodic sweep (configurable interval), re-processes recent chats
 
 ---
 
@@ -280,24 +213,11 @@ Actor memories are accumulated facts learned across conversations. Unlike lore
 Freeform notes attached to an actor. Unlike memories (machine-generated), notes are
 user-authored reference material.
 
-### Table: `actor_notes`
+Table: `actor_notes` — defined in `src/db/schema-story.ts` and `001_init.ts`.
 
-| Column     | Type    | Constraints               | Notes                                                                  |
-| ---------- | ------- | ------------------------- | ---------------------------------------------------------------------- |
-| id         | TEXT    | PK, UUID                  |                                                                        |
-| actor_id   | TEXT    | FK → actors.id, NOT NULL  |                                                                        |
-| title      | TEXT    | NOT NULL                  | Note title                                                             |
-| content    | TEXT    | NOT NULL                  | Note body (Markdown)                                                   |
-| category   | TEXT    | DEFAULT 'general'         | 'general', 'backstory', 'relationships', 'plot', 'mechanics', 'custom' |
-| pinned     | INTEGER | DEFAULT 0                 | Boolean: 1 = always visible                                            |
-| sort_order | INTEGER | DEFAULT 0                 | Display ordering                                                       |
-| created_at | TEXT    | DEFAULT CURRENT_TIMESTAMP |                                                                        |
-| updated_at | TEXT    | DEFAULT CURRENT_TIMESTAMP |                                                                        |
-
-**Indexes:**
-
-- `(actor_id, category)` — notes grouped by category
-- `(actor_id, pinned DESC, sort_order)` — display order
+- Fields: `id`, `actor_id`, `title`, `content` (Markdown), `category`, `pinned`, `sort_order`
+- Categories: `general`, `backstory`, `relationships`, `plot`, `mechanics`, `custom`
+- Pinned notes always visible; others ordered by `sort_order`
 
 ---
 
@@ -305,81 +225,24 @@ user-authored reference material.
 
 Lorebooks are keyword-triggered knowledge entries. Two scopes:
 
-1. **Actor lorebook** (character_book) — lore embedded in a character card, travels with the character
-2. **World lorebook** — global lore not tied to any single character (the existing `worlds` table)
+1. **Actor lorebook** (`actor_lore_entries`) — lore embedded in a character card, travels with the character
+2. **World lorebook** (`world_lore_entries`) — global lore not tied to any single character
 
-### Table: `actor_lore_entries`
+Both tables share the same structure (see `src/db/schema-story.ts` and `001_init.ts`):
 
-Character-specific lorebook entries. Each entry is activated when its trigger
-keywords appear in recent context.
-
-| Column          | Type    | Constraints               | Notes                                                      |
-| --------------- | ------- | ------------------------- | ---------------------------------------------------------- |
-| id              | TEXT    | PK, UUID                  |                                                            |
-| actor_id        | TEXT    | FK → actors.id, NOT NULL  | Which actor owns this entry                                |
-| name            | TEXT    |                           | Entry name (not used in prompt, for UI)                    |
-| content         | TEXT    | NOT NULL                  | Lore text injected on trigger                              |
-| keys            | TEXT    | NOT NULL                  | JSON array of trigger keywords                             |
-| secondary_keys  | TEXT    | JSON array                | Secondary keywords for `selective` mode                    |
-| selective       | INTEGER | DEFAULT 0                 | Boolean: require key from both `keys` AND `secondary_keys` |
-| case_sensitive  | INTEGER | DEFAULT 0                 | Boolean: keyword matching is case-sensitive                |
-| enabled         | INTEGER | DEFAULT 1                 | Boolean: can be temporarily disabled                       |
-| constant        | INTEGER | DEFAULT 0                 | Boolean: always inserted (within budget)                   |
-| position        | TEXT    | DEFAULT 'before_char'     | 'before_char' \| 'after_char'                              |
-| insertion_order | INTEGER | DEFAULT 100               | Lower = inserted higher/earlier                            |
-| priority        | INTEGER | DEFAULT 100               | Lower = discarded first when over budget                   |
-| comment         | TEXT    |                           | Editor note, not used in prompts                           |
-| sort_order      | INTEGER | DEFAULT 0                 | UI display order                                           |
-| created_at      | TEXT    | DEFAULT CURRENT_TIMESTAMP |                                                            |
-| updated_at      | TEXT    | DEFAULT CURRENT_TIMESTAMP |                                                            |
-
-**Indexes:**
-
-- `(actor_id)` — fetch all entries for an actor's lorebook
-- `(actor_id, enabled)` — only enabled entries
-
-### World Lore Table
-
-The existing `worlds` table stores world metadata. Lore entries for a world
-use a separate table (mirroring the actor lorebook structure).
-
-### Table: `world_lore_entries`
-
-Same structure as `actor_lore_entries`, but scoped to a world instead of an actor.
-
-| Column          | Type    | Constraints               | Notes                       |
-| --------------- | ------- | ------------------------- | --------------------------- |
-| id              | TEXT    | PK, UUID                  |                             |
-| world_id        | TEXT    | FK → worlds.id, NOT NULL  | Which world owns this entry |
-| name            | TEXT    |                           |                             |
-| content         | TEXT    | NOT NULL                  |                             |
-| keys            | TEXT    | NOT NULL                  | JSON array                  |
-| secondary_keys  | TEXT    | JSON array                |                             |
-| selective       | INTEGER | DEFAULT 0                 |                             |
-| case_sensitive  | INTEGER | DEFAULT 0                 |                             |
-| enabled         | INTEGER | DEFAULT 1                 |                             |
-| constant        | INTEGER | DEFAULT 0                 |                             |
-| position        | TEXT    | DEFAULT 'before_char'     |                             |
-| insertion_order | INTEGER | DEFAULT 100               |                             |
-| priority        | INTEGER | DEFAULT 100               |                             |
-| comment         | TEXT    |                           |                             |
-| sort_order      | INTEGER | DEFAULT 0                 |                             |
-| created_at      | TEXT    | DEFAULT CURRENT_TIMESTAMP |                             |
-| updated_at      | TEXT    | DEFAULT CURRENT_TIMESTAMP |                             |
-
-**Indexes:**
-
-- `(world_id)` — fetch all entries for a world lorebook
-- `(world_id, enabled)` — active entries only
+- Trigger keywords (`keys`, `secondary_keys`), matching mode (`selective`, `case_sensitive`)
+- Insertion control: `position` (`before_char` / `after_char`), `insertion_order`, `priority`
+- Budget control: `constant` (always included), `enabled` (toggle), `priority` (discard order)
+- V2 `character_book` entries map directly to `actor_lore_entries` rows
 
 ### Worlds Table — Extension
 
-Add a column to the existing `worlds` table for lorebook config:
+Two columns on the `worlds` table configure lorebook behavior (already in `001_init.ts`):
 
-| New Column     | Type    | Notes                                                       |
-| -------------- | ------- | ----------------------------------------------------------- |
-| `scan_depth`   | INTEGER | DEFAULT 100 — how many recent messages to scan for keywords |
-| `token_budget` | INTEGER | DEFAULT 2000 — max tokens lore entries can consume          |
+| Column          | Type    | Default | Notes                                                       |
+| --------------- | ------- | ------- | ----------------------------------------------------------- |
+| `scan_depth`    | INTEGER | `100`   | How many recent messages to scan for keyword triggers       |
+| `token_budget`  | INTEGER | `2000`  | Max tokens lore entries can consume in a single prompt      |
 
 ### Lore Injection Flow
 
@@ -400,30 +263,12 @@ Add a column to the existing `worlds` table for lorebook config:
 
 Items that belong to an actor — equipment, possessions, quest items, etc.
 
-### Table: `actor_items`
+Table: `actor_items` — defined in `src/db/schema-story.ts` and `001_init.ts`.
 
-| Column      | Type    | Constraints               | Notes                                                                                |
-| ----------- | ------- | ------------------------- | ------------------------------------------------------------------------------------ |
-| id          | TEXT    | PK, UUID                  |                                                                                      |
-| actor_id    | TEXT    | FK → actors.id, NOT NULL  | Owner                                                                                |
-| name        | TEXT    | NOT NULL                  | Item display name                                                                    |
-| description | TEXT    |                           | Item description / flavour text                                                      |
-| item_type   | TEXT    | NOT NULL                  | 'weapon', 'armor', 'consumable', 'key_item', 'currency', 'container', 'tool', 'misc' |
-| quantity    | INTEGER | DEFAULT 1                 | Stackable count                                                                      |
-| value       | TEXT    |                           | Monetary value (string for flexibility: "5 gp")                                      |
-| weight      | REAL    |                           | Encumbrance units                                                                    |
-| tags        | TEXT    | JSON array                | Arbitrary tags for filtering                                                         |
-| metadata    | TEXT    | JSON                      | Arbitrary properties (damage, defense, charges, etc.)                                |
-| equipped    | INTEGER | DEFAULT 0                 | Boolean: currently equipped/wielded                                                  |
-| sort_order  | INTEGER | DEFAULT 0                 | Display order                                                                        |
-| created_at  | TEXT    | DEFAULT CURRENT_TIMESTAMP |                                                                                      |
-| updated_at  | TEXT    | DEFAULT CURRENT_TIMESTAMP |                                                                                      |
-
-**Indexes:**
-
-- `(actor_id)` — fetch inventory for an actor
-- `(actor_id, item_type)` — filter by type
-- `(actor_id, equipped)` — currently equipped items
+- Fields: `id`, `actor_id`, `name`, `description`, `item_type`, `quantity`, `value`, `weight`, `tags`, `metadata`, `equipped`, `sort_order`
+- Item types: `weapon`, `armor`, `consumable`, `key_item`, `currency`, `container`, `tool`, `misc`
+- `metadata` JSON holds arbitrary properties (damage, defense, charges, etc.)
+- `equipped` boolean marks currently wielded/worn items
 
 ### Asset Linking
 
@@ -484,78 +329,30 @@ Export always produces V2 format for maximum compatibility. The exporter:
 
 ---
 
-## Entity Relationships (Updated)
+## Character Visibility & Sharing
+
+Characters (actors with `actor_type='character'`) have a **state machine** controlling sharing:
+
+| State     | Meaning                                         |
+| --------- | ----------------------------------------------- |
+| `private` | Only creator (`owner_id`) can use in chats      |
+| `public`  | Any user can discover and use the character     |
+
+**Transitions:** `private` ↔ `public` (toggle, always allowed).
+
+**Flow:**
 
 ```
-Users ──1:N── Sessions
-Users ──1:N── Actors (as actor_type='user')
-Users ──1:N── Characters (as owner)
-
-Actors ──1:N── ActorMemories
-Actors ──1:N── ActorNotes
-Actors ──1:N── ActorItems
-Actors ──1:N── ActorLoreEntries    (character_book)
-Actors ──1:N── Messages            (single FK)
-Actors ──M:N── Chats               (via chat_participants)
-Actors ──1:N── Assets              (via asset_links, e.g. portrait, voice)
-
-Worlds ──1:N── WorldLoreEntries
-Worlds ──M:N── Chats               (via asset_links with entity_type='world')
-Worlds ──1:N── Actors              (via asset_links with entity_type='world')
+1. User creates character → visibility='private', owner_id=user.id
+2. User edits character → toggles visibility to 'public'
+3. Other users can browse/search public characters
+4. Other users select the character for their chats
+5. Using a character = setting chat.impersonate_id to the character's actor_id
 ```
 
----
+**Default persona:** When a user starts a new chat, their own characters (where `owner_id = user.id` and `actor_type = 'character'`) are suggested as the default persona. If the user has a default persona set (`personas.is_default = 1`), that takes precedence.
 
-## Migration Plan
-
-### Migration 002: Actor Extensions
-
-During active development, `data_version` defaults to 0 on all records.
-The column exists and the contract is documented — version numbers become
-meaningful when stabilised.
-
-```sql
-ALTER TABLE actors ADD COLUMN data_version INTEGER NOT NULL DEFAULT 0;
-ALTER TABLE actors ADD COLUMN welcome_message TEXT;
-ALTER TABLE actors ADD COLUMN personality TEXT;
-ALTER TABLE actors ADD COLUMN scenario TEXT;
-ALTER TABLE actors ADD COLUMN mes_example TEXT;
-ALTER TABLE actors ADD COLUMN alternate_greetings TEXT;  -- JSON array (swipes)
-ALTER TABLE actors ADD COLUMN post_history_instructions TEXT;
-ALTER TABLE actors ADD COLUMN creator_notes TEXT;
-ALTER TABLE actors ADD COLUMN creator TEXT;
-ALTER TABLE actors ADD COLUMN character_version TEXT;
-ALTER TABLE actors ADD COLUMN import_spec TEXT DEFAULT 'raw';
-
-CREATE TABLE actor_memories ( ... );
-CREATE TABLE actor_notes ( ... );
-CREATE TABLE actor_items ( ... );
-CREATE TABLE actor_lore_entries ( ... );
-CREATE TABLE world_lore_entries ( ... );
-
-ALTER TABLE worlds ADD COLUMN scan_depth INTEGER DEFAULT 100;
-ALTER TABLE worlds ADD COLUMN token_budget INTEGER DEFAULT 2000;
-
--- All existing records remain at data_version = 0 during active development.
--- When stabilised, bump via: UPDATE actors SET data_version = 1 WHERE data_version = 0;
-```
-
-### Data Migration (Legacy Characters)
-
-The legacy `characters` table entries get migrated to `actors` with
-`actor_type='character'`:
-
-```
-characters.id          → actors.id
-characters.owner_id    → actors.owner_id
-characters.name        → actors.display_name
-characters.description → actors.description
-characters.system_prompt → actors.system_prompt
-characters.agent_type  → actors.agent_type
-characters.settings    → actors.settings (merged)
-
-# No first_mes/personality/etc. in legacy table — these default to empty
-```
+**State machine:** `ActorVisibility` in `src/db/enums-core.ts`, exposed via `actorVisibilityMachine`.
 
 ---
 
@@ -563,36 +360,16 @@ characters.settings    → actors.settings (merged)
 
 When constructing the LLM prompt for an actor, these fields are injected in order:
 
-```
-[Actor - {{display_name}}]
-─────────────────────────
-Description: {{description}}
-Personality: {{personality}}
-Scenario: {{scenario}}
+1. `[Actor - {{display_name}}]` — actor identity header
+2. `Description: {{description}}` — character description
+3. `Personality: {{personality}}` — character personality
+4. `Scenario: {{scenario}}` — current scenario context
+5. `[System Prompt]` — `{{system_prompt}}` section header + value
+6. `[Lorebook (before char)]` — activated actor lore entries (`position='before_char'`) and activated world lore entries from linked worlds
+7. `[Example Messages]` — `{{mes_example}}` few-shot examples
+8. `[Chat History]` — conversation history
+9. `[Lorebook (after char)]` — actor lore (`position='after_char'`) and world lore positioned after character
+10. `[Memories]` — actor memories ordered by importance DESC, within token budget
+11. `[Post-History Instructions]` — `{{post_history_instructions}}`
 
-[System Prompt]
-{{system_prompt}}
-
-[Lorebook (before char)]
-{{actor_lore_entries where position='before_char', activated}}
-{{world_lore_entries from linked worlds, activated}}
-
-[Example Messages]
-{{mes_example}}
-
-[Chat History]
-...
-
-[Lorebook (after char)]
-{{actor_lore_entries where position='after_char', activated}}
-{{world_lore_entries from linked worlds, activated, positioned after char}}
-
-[Memories]
-{{actor_memories ordered by importance DESC, within token budget}}
-
-[Post-History Instructions]
-{{post_history_instructions}}
-```
-
-The `welcome_message` is NOT injected into prompts — it's used only when
-starting a new chat as the character's first message.
+The `welcome_message` is NOT injected into prompts — it's used only when starting a new chat as the character's first message.

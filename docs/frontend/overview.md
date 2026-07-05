@@ -7,7 +7,7 @@
 | HTML         | Prebuilt static templates | Server replaces `&#123;&#123;&#123;content&#125;&#125;&#125;` placeholder in layout.html                                                                |
 | AJAX         | htmx 2.x                  | Partial page updates, form submission, server-driven UI                                                                                                 |
 | Client state | Alpine.js 3.x             | Modals, toasts, local UI toggles (not data state)                                                                                                       |
-| Styling      | Hand-authored CSS         | 13 files: theme.css + 10 theme-{variant}.css, app.css, gallery.css. ~40KB total. No framework. Supports multiple theme variants with CSS variable switching. |
+| Styling      | Hand-authored CSS         | 13 files: theme.css + 10 theme-{variant}.css, app.css, gallery.css. No framework. Supports multiple theme variants with CSS variable switching. |
 | Icons        | Unicode / SVG             | No icon library dependency. Inline SVGs where needed.                                                                                                   |
 
 ## Design Principles
@@ -112,7 +112,7 @@ No Font Awesome or icon library. Icons are:
 
 - Unicode characters for simple UI symbols (→ ⚙ ➤ 🖼 ℹ ✗ ✓ ⚠)
 - Inline SVGs for any icon that needs precise styling or color
-- This keeps the CSS bundle under 30KB and avoids external dependencies
+- This keeps the CSS bundle lean and avoids external dependencies
 
 ## Error Handling Pattern
 
@@ -139,6 +139,6 @@ On 401 responses, redirect to `/login`. On 500+, show "Server error" toast with 
 | [worlds.md](./worlds.md)                                 | World entity: list, detail, create/edit                                                                   |
 | [login.md](./login.md)                                   | Login page: auth card, demo mode, error states                                                            |
 | [age-gate.md](./age-gate.md)                             | Age verification / compliance: self-declaration flow, admin config, states                                |
-| [components.md](./components.md)                         | Shared components: toasts, modals, spinners, skeletons, empty states, chips, drop zones                   |
+| [components.md](./components.md)                         | Shared components: toasts, modals, spinners, skeletons, empty states, chips, drop zones, frontend logger                   |
 | [data-states.md](./data-states.md)                       | Entity state machines, archiving cascade, storage model, purge rules                                      |
 | [internationalization.md](./internationalization.md)     | Multilingual support: UI i18n, LLM generation language, actor language preferences, content translation   |

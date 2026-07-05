@@ -58,15 +58,12 @@ State transitions: `active` → `archived` → `active` (restore) or `purged` (a
 
 ### Characters
 
-```
-active ──→ archived ──→ active (restore)
-                              │
-                              └──→ purged (admin only)
-```
+A character transitions through these states:
 
-- `active`: visible in character browser, available for new chats
-- `archived`: hidden from character browser, existing chats still accessible. Character can still respond in existing chats.
-- `purged`: character + all associated chats permanently removed. Admin only. Requires typed confirmation.
+1. **`active`** (default) — Visible in character browser, available for new chats
+2. **→ `archived`** — User action hides from browser. Existing chats still accessible, character still responds in those chats
+3. **→ `active`** — Admin/master restores from archived view
+4. **→ `purged`** — Admin only, typed confirmation required. Character + all associated chats permanently removed
 
 **Note**: archiving a character does NOT archive its chats. The user can still access existing conversations.
 
@@ -74,22 +71,16 @@ active ──→ archived ──→ active (restore)
 
 ### Assets
 
-```
-uploading ──→ ready ──→ archived ──→ purged
-                  │                        │
-                  │                        │
-                  └──→ failed              │
-                       │                   │
-                       └──→ ready (retry)  │
-                                           │
-                              admin action ─┘
-```
+An asset transitions through these states:
 
-- `uploading`: file transfer in progress
-- `ready`: file available, asset usable, visible in gallery
-- `failed`: upload or processing error. Retryable (back to `uploading`).
-- `archived`: hidden from gallery, not deletable by regular users. Admin/master can restore.
-- `purged`: file deleted from storage + DB record removed. Irreversible.
+1. **`uploading`** — File transfer in progress from client to server
+2. **→ `ready`** — Upload succeeded, file available, asset usable and visible in gallery
+3. **→ `archived`** — Hidden from gallery, not deletable by regular users. Admin/master can restore
+4. **→ `purged`** — File deleted from storage + DB record removed. Irreversible
+
+**Error paths:**
+- From `uploading` → **`failed`** — Upload or processing error. Retryable: `failed` → `uploading` (starts fresh upload)
+- From `failed` → **`ready`** — Retry succeeds, asset becomes usable
 
 **File cleanup**: when an asset transitions to `purged`, the actual file on disk (or in object store) is deleted. Archived assets keep their file.
 
@@ -97,15 +88,12 @@ uploading ──→ ready ──→ archived ──→ purged
 
 ### Worlds
 
-```
-active ──→ archived ──→ active (restore)
-                              │
-                              └──→ purged (admin only)
-```
+A world transitions through these states:
 
-- `active`: visible in world browser, selectable during chat creation
-- `archived`: hidden from world browser. Existing linked chats still work and still reference the world's lore.
-- `purged`: world + all locations + lore permanently removed. Admin only.
+1. **`active`** (default) — Visible in world browser, selectable during chat creation
+2. **→ `archived`** — Hidden from world browser. Existing linked chats still work and still reference the world's lore
+3. **→ `active`** — Admin/master restores from archived view
+4. **→ `purged`** — Admin only. World + all locations + lore permanently removed
 
 ---
 

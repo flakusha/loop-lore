@@ -80,14 +80,13 @@ Use cases:
 
 ### Data Model
 
-```
-Users ──1:N── Personas (user-authored identities)
-Users ──1:N── Actors (as actor_type='user')
-Users ──1:N── Characters (as owner)
+Entities relate as follows:
 
-Personas ──M:N── Chats (which identity is active in this chat)
-Characters ──M:N── Chats (via chat_participants)
-```
+1. **Users** own many **Personas** (user-authored identities for chat participation)
+2. **Users** own many **Actors** (when `actor_type='user'`)
+3. **Users** own many **Characters** (as `owner` of actor records with `actor_type='character'`)
+4. **Personas** connect to many **Chats** — determines which identity is active in each chat
+5. **Characters** connect to many **Chats** via the `chat_participants` junction table
 
 ### Persona Table
 
@@ -168,19 +167,19 @@ loop-lore accepts character definitions in five formats:
 
 **Auto-detection algorithm:**
 
-```
-1. Read first 4 bytes
-2. If matches PNG magic (‰PNG): parse tEXt chunks → base64 decode → JSON
-   - Check for 'ccv3' chunk first (V3), fall back to 'chara' (V2)
-3. If matches ZIP magic (PK): extract card.json from archive
-4. Try JSON.parse(content)
-   - If succeeds: treat as JSON
-5. Try TOML parse (smol-toml)
-   - If succeeds with [sections]: treat as TOML
-6. Try YAML parse (js-yaml)
-   - If succeeds: treat as YAML
-7. If all fail: return error with format hint
-```
+The system tries each format in order, returning the first successful parse:
+
+1. **Read first 4 bytes** of the input
+2. **If PNG magic (`‰PNG`)** → Parse `tEXt` metadata chunks. Check for `'ccv3'` chunk first (V3), fall back to `'chara'` (V2). Base64 decode → JSON parse → normalize
+3. **If ZIP magic (`PK`)** → Extract `card.json` from archive. Parse JSON → normalize
+4. **Try JSON.parse(content)**:
+   - If has `spec: "chara_card_v2"` → V2 normalizer
+   - If has `spec: "chara_card_v3"` → V3 normalizer
+   - If has Character.AI fields (`definition`, `greeting`) → CAI normalizer
+   - Otherwise → flat JSON normalizer (assume V1-like)
+5. **Try TOML parse** (smol-toml) — if succeeds with `[sections]` → TOML normalizer
+6. **Try YAML parse** (js-yaml) — if succeeds → YAML normalizer
+7. **If all fail** → return error with format hint
 
 ### Canonical Internal Format
 
@@ -497,33 +496,17 @@ maximum compatibility.
 
 ### Format: CHARX (ZIP Bundle)
 
-V3 native format. ZIP archive containing:
+V3 native format. A `.charx` file is a ZIP archive structured as follows:
 
-```
-character.zip (renamed to .charx)
-├── card.json              # V3 character card JSON
-└── assets/
-    ├── icon/
-    │   └── images/
-    │       └── main.png
-    ├── background/
-    │   └── images/
-    │       └── forest.jpg
-    └── audio/
-        └── bgm/
-            └── theme.mp3
-```
+1. **Root**: `card.json` — V3 character card JSON
+2. **Assets directory**: `assets/` containing subdirectories by type:
+   - `assets/icon/images/main.png` — Character icon/portrait
+   - `assets/background/images/forest.jpg` — Scene background
+   - `assets/audio/bgm/theme.mp3` — Background music
 
-Assets referenced in `card.json` use the `embeded://` URI scheme:
+Assets in `card.json` reference files via `embeded://` URI scheme, e.g. `"uri": "embeded://assets/icon/images/main.png"`.
 
-```json
-{
-  "assets": [{ "type": "icon", "uri": "embeded://assets/icon/images/main.png", "name": "main", "ext": "png" }]
-}
-```
-
-On import, assets are extracted, uploaded to the asset system, and linked
-via `asset_links` with `entity_type='character'`.
+On import, assets are extracted, uploaded to the asset system, and linked via `asset_links` with `entity_type='character'`.
 
 ---
 
@@ -531,24 +514,17 @@ via `asset_links` with `entity_type='character'`.
 
 ### Detection & Parsing Flow
 
-```
-File uploaded / pasted / URL fetched
-  │
-  ├─ Magic bytes: PNG? → parse tEXt → base64 decode → JSON → normalize
-  ├─ Magic bytes: ZIP/PK? → extract card.json → parse → normalize
-  │
-  ├─ JSON.parse() succeeds?
-  │   ├─ Has `spec: "chara_card_v2"` → V2 normalizer
-  │   ├─ Has `spec: "chara_card_v3"` → V3 normalizer
-  │   ├─ Has Character.AI fields (`definition`, `greeting`) → CAI normalizer
-  │   └─ Otherwise → flat JSON normalizer (assume V1-like)
-  │
-  ├─ TOML parse succeeds?
-  │   └─ TOML normalizer (key=value sections → canonical)
-  │
-  └─ YAML parse succeeds?
-      └─ YAML normalizer (keys match canonical directly)
-```
+The import pipeline follows a decision tree:
+
+1. **Check magic bytes** — If PNG magic (`‰PNG`): parse tEXt → base64 decode → JSON → normalize. If ZIP magic (`PK`): extract `card.json` → parse → normalize
+2. **Try JSON.parse()** — If content is valid JSON, check structure:
+   - Has `spec: "chara_card_v2"` → V2 normalizer
+   - Has `spec: "chara_card_v3"` → V3 normalizer
+   - Has Character.AI fields (`definition`, `greeting`) → CAI normalizer
+   - Otherwise → flat JSON normalizer (assume V1-like)
+3. **Try TOML parse** — If `smol-toml` succeeds with `[sections]` structure → TOML normalizer (maps key=value sections to canonical)
+4. **Try YAML parse** — If `js-yaml` succeeds → YAML normalizer (keys match canonical directly)
+5. **If all fail** — Return error with format hint
 
 ### Normalizer Interface
 

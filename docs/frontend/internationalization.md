@@ -47,22 +47,20 @@ Every server-rendered string visible to the user:
 
 ### Architecture
 
-```
-src/
-├── i18n/
-│   ├── index.ts              # i18n loader + t() function
-│   ├── types.ts              # TranslationKeys type (auto-derived)
-│   ├── en.json               # English source catalog
-│   ├── ja.json               # Japanese catalog
-│   ├── zh-CN.json            # Simplified Chinese catalog
-│   ├── zh-TW.json            # Traditional Chinese catalog
-│   ├── ko.json               # Korean catalog
-│   ├── ru.json               # Russian catalog
-│   ├── de.json               # German catalog
-│   ├── fr.json               # French catalog
-│   ├── pt-BR.json            # Brazilian Portuguese catalog
-│   └── es.json               # Spanish catalog
-```
+The i18n module is organized into these source files:
+
+1. **`src/i18n/index.ts`** — i18n loader + `t()` function
+2. **`src/i18n/types.ts`** — `TranslationKeys` type (auto-derived from catalog keys)
+3. **`src/i18n/en.json`** — English source catalog (authoritative, all keys defined here)
+4. **`src/i18n/ja.json`** — Japanese catalog
+5. **`src/i18n/zh-CN.json`** — Simplified Chinese catalog
+6. **`src/i18n/zh-TW.json`** — Traditional Chinese catalog
+7. **`src/i18n/ko.json`** — Korean catalog
+8. **`src/i18n/ru.json`** — Russian catalog
+9. **`src/i18n/de.json`** — German catalog
+10. **`src/i18n/fr.json`** — French catalog
+11. **`src/i18n/pt-BR.json`** — Brazilian Portuguese catalog
+12. **`src/i18n/es.json`** — Spanish catalog
 
 ### Key Shape
 
@@ -251,14 +249,11 @@ When determining the effective generation language for a chat:
 
 ### Settings UI
 
-In the General section (see [settings.md](./settings.md)):
+In the General section (see [settings.md](./settings.md)), a Language subsection with three options:
 
-```
-Language
-├── Interface language     [select: en, ja, zh-CN, ...]  (user only)
-├── Generation language    [select: auto | en | ja | ...] (default: auto)
-└── Preferred content      [select: auto | en | user_language] (future)
-```
+- **Interface language** — select widget (en, ja, zh-CN, ...), user-only setting
+- **Generation language** — select widget (auto | en | ja | ...), default: auto
+- **Preferred content** — select widget (auto | en | user_language), future feature
 
 Settings are stored per-actor. Interface language is user-only. Generation and content preferences exist for both user and character actors.
 
@@ -546,7 +541,7 @@ export function resolveGenerationLanguage(chat: Chat, userActor: Actor, characte
 - [ ] `actors.settings.language` JSON used for cascade resolution
 - [ ] Chat setting `generation_language` (auto / fixed / inherit)
 
-### v1.1
+### Future
 
 - [ ] Additional locale files (ja, zh-CN, ko, ru, de, fr, es)
 - [ ] Community translation PR guidelines in CONTRIBUTING.md
@@ -572,15 +567,15 @@ All language identifiers use BCP-47 format for consistency with the `Accept-Lang
 | Tag     | Language              | v1 ship  |
 | ------- | --------------------- | -------- |
 | `en`    | English               | ✓ Source |
-| `ja`    | Japanese              | v1.1     |
-| `zh-CN` | Chinese (Simplified)  | v1.1     |
+| `ja`    | Japanese              | Future   |
+| `zh-CN` | Chinese (Simplified)  | Future   |
 | `zh-TW` | Chinese (Traditional) | Future   |
-| `ko`    | Korean                | v1.1     |
-| `ru`    | Russian               | v1.1     |
-| `de`    | German                | v1.1     |
-| `fr`    | French                | v1.1     |
-| `es`    | Spanish               | v1.1     |
-| `pt-BR` | Portuguese (Brazil)   | v1.1     |
+| `ko`    | Korean                | Future   |
+| `ru`    | Russian               | Future   |
+| `de`    | German                | Future   |
+| `fr`    | French                | Future   |
+| `es`    | Spanish               | Future   |
+| `pt-BR` | Portuguese (Brazil)   | Future   |
 | `ar`    | Arabic                | Future   |
 | `he`    | Hebrew                | Future   |
 

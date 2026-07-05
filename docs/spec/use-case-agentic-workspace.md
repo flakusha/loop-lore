@@ -159,18 +159,11 @@ interface PluginContext {
 
 ### Plugin Discovery & Loading
 
-```
-plugins/
-├── core/                    # Built-in (read-only)
-│   ├── dice-roller/
-│   ├── code-executor/
-│   └── web-research/
-├── community/               # Installed from registry
-│   ├── dnd-5e-tools/
-│   └── github-integration/
-└── local/                   # User's own
-    └── my-custom-plugin/
-```
+Plugins are organized into three directories:
+
+- **`plugins/core/`** — Built-in, read-only: `dice-roller`, `code-executor`, `web-research`
+- **`plugins/community/`** — Installed from registry: `dnd-5e-tools`, `github-integration`
+- **`plugins/local/`** — User's own custom plugins: `my-custom-plugin`
 
 ### Example: DnD Dice Roller Plugin
 
@@ -239,24 +232,12 @@ The application detects the active mode via a **workspace type** on the chat:
 
 ### Agentic Workspace Layout (WebUI)
 
-```
-┌─────────────────────────────────────────────────────────────────┐
-│  [Epic: "Deep Research: AI Safety"]  [Task: "Literature Review"]│
-├──────────────┬──────────────────────────────────┬───────────────┤
-│              │                                  │               │
-│  AGENTS      │        WORKSPACE (Chat)          │  ARTIFACTS    │
-│  ┌────────┐  │                                  │  ┌─────────┐  │
-│  │🔬Research│  │  User: Find papers on...         │  │📄 paper1│  │
-│  │💻 Coder  │  │  Agent: Searching...             │  │📄 paper2│  │
-│  │📊 Analyst│  │  [Tool: web_search] → results    │  │📊 chart │  │
-│  │✍️ Writer  │  │  Agent: Here are 15 papers...    │  │📓 notes │  │
-│  └────────┘  │                                  │  └─────────┘  │
-│              │                                  │               │
-│  [+ Add Agent]                               │  [Upload]       │
-├──────────────┴──────────────────────────────────┴───────────────┤
-│  TASK GRAPH:  Literature Review → Synthesis → Report Writing    │
-└─────────────────────────────────────────────────────────────────┘
-```
+A three-panel workspace layout:
+
+- **Left panel (AGENTS):** Agent list (Research, Coder, Analyst, Writer) with Add Agent button
+- **Center panel (WORKSPACE/Chat):** Conversation area showing user messages, agent responses, and tool call results (web_search → results)
+- **Right panel (ARTIFACTS):** Generated artifacts gallery (paper1, paper2, chart, notes) with Upload button
+- **Bottom bar (TASK GRAPH):** Visual task progression — Literature Review → Synthesis → Report Writing
 
 ### TUI Adaptation
 
@@ -267,9 +248,9 @@ The application detects the active mode via a **workspace type** on the chat:
 
 ---
 
-## Implementation Phases
+## Implementation Checklist
 
-### Phase 1: Schema & Types (Week 1-2)
+### Schema & Types
 
 - [ ] Add `mode` column to `chats` table (`'rpg' | 'agentic'`)
 - [ ] Extend `actors.agent_type` enum with agent roles
@@ -277,35 +258,33 @@ The application detects the active mode via a **workspace type** on the chat:
 - [ ] Add `locations` table (sub-entity of worlds) for tasks
 - [ ] Add `task_dependencies` table (DAG edges)
 
-### Phase 2: Agent Runtime (Week 3-4)
+### Agent Runtime
 
 - [ ] Refactor `src/assistant/service.ts` → `src/agent/runtime.ts`
 - [ ] Implement `ToolDefinition` registry and execution sandbox
 - [ ] Built-in tools: `web_search`, `run_code`, `file_ops`, `http_request`
 - [ ] Agent memory system (semantic + procedural)
 
-### Phase 3: Plugin System (Week 5-6)
+### Plugin System
 
 - [ ] Plugin loader (core/community/local directories)
 - [ ] Plugin manifest schema + validation
 - [ ] Plugin registry API (install/enable/disable)
 - [ ] Example plugins: `dice-roller`, `code-executor`, `web-research`
 
-### Phase 4: UI Adaptation (Week 7-8)
+### UI Adaptation
 
 - [ ] Workspace mode detection in routing
 - [ ] Agentic layout (agents panel, task graph, artifact gallery)
 - [ ] Tool output rendering (streaming, collapsible, structured)
 - [ ] TUI agent/task views
 
-### Phase 5: Polish & Examples (Week 9-10)
+### Polish & Examples
 
 - [ ] Deep Research agent (multi-step web research → report)
 - [ ] Code Agent (write/test/debug code in sandbox)
 - [ ] Data Analysis Agent (SQL + visualization)
 - [ ] Documentation & migration guide
-
----
 
 ## Configuration
 
@@ -362,6 +341,6 @@ agents:
 
 ## Conclusion
 
-The agentic assistant workspace is not a separate product — it is a **mode** of the same application, leveraging the same database schema, service layer, and UI components. The RPG and agentic use cases share 80%+ of the codebase. The plugin system serves both: D&D dice rollers for RPG, code executors for agentic work.
+The agentic assistant workspace is not a separate product — it is a **mode** of the same application, leveraging the same database schema, service layer, and UI components. The RPG and agentic use cases share most of the codebase. The plugin system serves both: D&D dice rollers for RPG, code executors for agentic work.
 
 This dual-use design ensures loop-lore remains lightweight while serving both creative storytelling and practical AI-assisted work.

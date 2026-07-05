@@ -15,14 +15,10 @@ loop-lore uses a combination of unit tests, integration tests, and manual testin
 
 ## Test Structure
 
-Tests are colocated with the source code they test, following the pattern:
+Tests are colocated with the source code they test. For each feature module, the test file sits alongside the implementation:
 
-```
-src/
-└── feature/
-    ├── feature.ts
-    └── feature.test.ts
-```
+- `src/feature/feature.ts` — implementation
+- `src/feature/feature.test.ts` — tests
 
 ## Running Tests
 
@@ -51,8 +47,8 @@ While 100% coverage is not always practical or necessary, we aim for high covera
 
 Current coverage (as of latest run):
 
-- **Functions**: 84.06%
-- **Lines**: 86.00%
+- **Functions**: ✓
+- **Lines**: ✓
 
 See the [coverage report](#current-coverage-analysis) for details.
 

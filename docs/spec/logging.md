@@ -4,32 +4,61 @@ Unified structured logging. Zero deps. Async queue + PII censor + JSONL/DB trans
 
 ## Architecture
 
-```
-src/utils/date.ts        — formatTime, tzOffset, unixMs, unixSec
-src/logger/
-  index.ts               — createLogger, getLogger, setGlobalLogger
-  types.ts               — LogEntry, Logger, Transport, CensorRule, SizeLimits
-  levels.ts              — LogLevel (Debug:10, Info:20, Warn:30, Error:40), levelFromConfig, shouldEmit
-  formatters.ts          — formatConsole (pretty+color), formatJSONL
-  censors.ts             — field-glob PII engine + DEFAULT_RULES
-  limits.ts              — entry size caps + truncation
-  transports/console.ts  — ConsoleTransport (always active)
-  queue.ts               — AsyncLogQueue (batch 100ms/50 entries, max 10k)
-  logger.ts              — LoggerImpl implements Logger
-```
+The logger module is organized into these source files:
+
+1. **`src/utils/date.ts`** — `formatTime`, `tzOffset`, `unixMs`, `unixSec`
+2. **`src/logger/index.ts`** — `createLogger`, `getLogger`, `setGlobalLogger`
+3. **`src/logger/types.ts`** — `LogEntry`, `Logger`, `Transport`, `CensorRule`, `SizeLimits`
+4. **`src/logger/levels.ts`** — `LogLevel` (Debug:10, Info:20, Warn:30, Error:40), `levelFromConfig`, `shouldEmit`
+5. **`src/logger/formatters.ts`** — `formatConsole` (pretty+color), `formatJSONL`
+6. **`src/logger/censors.ts`** — field-glob PII engine + `DEFAULT_RULES`
+7. **`src/logger/limits.ts`** — entry size caps + truncation
+8. **`src/logger/transports/console.ts`** — `ConsoleTransport` (always active)
+9. **`src/logger/queue.ts`** — `AsyncLogQueue` (batch 100ms/50 entries, max 10k)
+10. **`src/logger/logger.ts`** — `LoggerImpl` implements `Logger`
 
 ## JSONL Format
 
 ```
 level:number   (10/20/30/40)
 timestamp:UnixSec
-time:compactISO+offset  "20260704T143000.123+02:00"
+time:ISO8601+offset  "2026-07-04T14:30:00.123+02:00"
 message:string|object
 module?:string
 requestId?:string, userId?:string, sessionId?:string
 error?:string
 meta?:Record<string,unknown> (post-censor)
 ```
+
+**Note on Date Format:**
+The `time` field uses ISO 8601 format with timezone offset. This format is parseable by `new Date()` in JavaScript/TypeScript and compatible with both SQLite (`strftime`) and PostgreSQL (`TO_CHAR`).
+
+- **Format:** `YYYY-MM-DDTHH:MM:SS.sss±HH:MM`
+- **Milliseconds:** Always included (3 digits)
+- **Timezone:** Offset from UTC (e.g., `+02:00`, `-05:00`, `+00:00`)
+- **TZ Support:** Node.js respects the `TZ` environment variable by default. The `tzOffset()` function in `src/utils/date.ts` supports IANA timezone names via the `tz` parameter.
+
+**SQLite Compatibility:**
+```sql
+-- Use this in migrations for ISO 8601 format:
+datetime('now')  -- SQLite default: "YYYY-MM-DD HH:MM:SS" (space, no TZ)
+
+-- For ISO 8601 with TZ, use strftime:
+strftime('%Y-%m-%dT%H:%M:%f%z', 'now')  -- "2026-07-05T10:24:25.000+00:00"
+```
+
+**PostgreSQL Compatibility:**
+```sql
+-- PostgreSQL TIMESTAMP WITH TIME ZONE:
+NOW()  -- "2026-07-05 10:24:25.123456+00"
+
+-- For ISO 8601 output:
+TO_CHAR(NOW(), 'YYYY-MM-DD"T"HH24:MI:SS.MS TZH:TZM')
+```
+
+**Format Precision:**
+- Milliseconds: Always included (3 digits from JavaScript `Date`)
+- Microseconds/Nanoseconds: Not available in JavaScript `Date` object. For higher precision, use `performance.now()` or store as separate integer field.
 
 ## Log Levels
 

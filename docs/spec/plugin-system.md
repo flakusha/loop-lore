@@ -1,5 +1,7 @@
 # Plugin System Specification
 
+> **Status:** Post-MVP (v0.2+). MVP dice engine uses simple config/route, not the full plugin system.
+
 ## Overview
 
 The loop-lore plugin system enables extensibility for both RPG and Agentic Workspace modes through a standardized interface for adding custom functionality. Plugins can extend the system with new tools, agent roles, API routes, UI components, and more while maintaining a clean separation from core code.
@@ -361,31 +363,19 @@ export const plugin: Plugin = {
 
 ### Directory Structure
 
-```
-plugins/
-├── core/
-│   ├── dice-roller/
-│   │   ├── plugin.ts
-│   │   ├── dice-parser.ts
-│   │   └── package.json (optional)
-│   ├── code-executor/
-│   │   ├── plugin.ts
-│   │   └── executor.ts
-│   └── web-research/
-│       ├── plugin.ts
-│       └── search.ts
-├── community/
-│   ├── github-integration/
-│   │   ├── plugin.ts
-│   │   └── github-client.ts
-│   └── latex-renderer/
-│       ├── plugin.ts
-│       └── renderer.ts
-└── local/
-    └── my-workflow-automation/
-        ├── plugin.ts
-        └── workflow.ts
-```
+Plugins are organized into three categories by source:
+
+**Core plugins** (shipped with loop-lore, maintained by core team):
+- `plugins/core/dice-roller/` — `plugin.ts`, `dice-parser.ts`, `package.json` (optional)
+- `plugins/core/code-executor/` — `plugin.ts`, `executor.ts`
+- `plugins/core/web-research/` — `plugin.ts`, `search.ts`
+
+**Community plugins** (third-party, installed separately):
+- `plugins/community/github-integration/` — `plugin.ts`, `github-client.ts`
+- `plugins/community/latex-renderer/` — `plugin.ts`, `renderer.ts`
+
+**Local plugins** (user-authored, not shared):
+- `plugins/local/my-workflow-automation/` — `plugin.ts`, `workflow.ts`
 
 ### Version Compatibility
 

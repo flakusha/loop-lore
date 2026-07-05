@@ -106,7 +106,7 @@ export async function handleContinueGeneration(body: unknown): Promise<Response>
 | Type inference                       | Separate interface       | `z.infer<>`              |
 | Transformation (string→number, etc.) | Manual                   | `.pipe()`                |
 
-**Downside**: Adds ~50KB to bundle (minified, brotli-compressed ~10KB).
+**Downside**: Adds to bundle size (minified, brotli-compressed).
 The project already has `js-yaml` and `smol-toml` — `zod` is comparable in size.
 
 **What it would eliminate**: All 6 HTTP boundary `as` casts + the 4 `.reason as EnumType`

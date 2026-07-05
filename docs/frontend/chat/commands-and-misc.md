@@ -53,7 +53,7 @@ No further spec defined until v1 is stable.
 
 ---
 
-## World Background (v1.1, Not v1)
+## World Background (Future)
 
 World-location integration beyond entity linking:
 

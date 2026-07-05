@@ -25,7 +25,7 @@ code exists in `src/`. Target boxes = planned.
 | Frontend browser lib (crypto/compress) | `src/frontend/browser.ts` |
 | Web UI view templates | `src/views/chat.html`, `gallery.html`, `layout.html`, `settings.html` |
 | HTTP utils | `src/routes/http-utils.ts` |
-| 333 tests passing | `bun test` |
+| Tests passing | `bun test` |
 
 ## 🏗 Integration Phase (Current Focus)
 
