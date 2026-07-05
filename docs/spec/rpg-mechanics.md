@@ -1,7 +1,9 @@
 # RPG Mechanics Specification
 
-> **Status:** MVP sections complete (Difficulty system, Dice engine `src/dice/`).  
-> Post-MVP sections tagged inline: 🔜 = v0.2+, 🚀 = future.
+> ⚠️ **Status:** NOT IMPLEMENTED. No dice engine, no stat system, no combat, no XP.
+> No `src/dice/` or `src/rpg/` directory exists. Difficulty columns exist on `worlds` table 
+> but no code reads or enforces them. This spec is entirely aspirational.
+> See [`docs/meta/plan.md`](../meta/plan.md) "Skipped During Implementation" section.
 
 ## Philosophy: Mechanics Serve Narrative
 

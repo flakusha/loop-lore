@@ -2,12 +2,12 @@
 
 ## Status
 
-**Design spec.** No prompt assembler exists yet. The generation module
-(`src/generation/`) is a control plane only — it tracks attempts, handles
-cancellation/retry/continuation, and detects repetition/policy violations.
-The actual LLM call is made by the frontend via `GenerationOptions.prompt`.
+**Spec updated.** A `PromptAssembler` class now exists at `src/assistant/prompt-assembler.ts`.
+It is used by `src/generation/generate-route.ts` for server-side prompt assembly.
+The generation module (`src/generation/`) is no longer a "control plane only" — it
+assembles prompts server-side before sending to the LLM provider.
 
-The story module (`src/story/game-master.ts`) has a hardcoded prompt
+The story module (`src/story/game-master.ts`) also has a hardcoded prompt
 template for RPG turn-taking — see [Existing Prompt Construction](#existing-prompt-construction).
 
 ---

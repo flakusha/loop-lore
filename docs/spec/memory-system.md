@@ -1,7 +1,9 @@
 # Advanced Memory Systems Specification
 
-> **Status:** Post-MVP (v0.2+). Three-tier memory architecture reference.
-> Episodic memory basics already covered by `src/generation/context-compressor.ts` (sliding/summarize/truncate strategies).
+> ⚠️ **Status:** NOT IMPLEMENTED. Three-tier memory system (episodic/semantic/procedural) is aspirational.
+> Only basic `actor_memories` table exists (per-actor key-value storage used by prompt assembler).
+> `src/generation/context-compressor.ts` does NOT exist.
+> See [`docs/meta/plan.md`](../meta/plan.md) "Skipped During Implementation" section.
 
 ## Overview
 
