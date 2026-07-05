@@ -6,6 +6,7 @@ import { join, normalize } from "node:path";
 import { existsSync, readFileSync } from "node:fs";
 import { spawnSync } from "node:child_process";
 import { compressAssets, copyDirectory } from "./content/compress";
+import { runMigrations } from "./db/migrate";
 import { loadConfig } from "./config/load";
 import { initAgeGate, dispatch as dispatchAgeGate } from "./age-gate/controller";
 import { dispatch as dispatchGeneration } from "./generation/controller";
@@ -103,7 +104,7 @@ function respondWithFile(fullPath: string, acceptEncoding: string): Response {
     const content = readFileSync(variant.path);
     return new Response(content, {
       headers: {
-        "Content-Type": getContentType(variant.path),
+        "Content-Type": getContentType(fullPath),
         "Content-Encoding": variant.encoding,
         Vary: "Accept-Encoding",
       },
@@ -227,6 +228,14 @@ async function start() {
   initializeProviders(config);
   const database = getDatabase();
   const logger = getLogger();
+
+  // ── Run database migrations ──────────────────────────────
+  try {
+    await runMigrations(database);
+  } catch (err) {
+    logger.error({ message: "Migration failed — aborting startup", error: String(err) });
+    process.exit(1);
+  }
 
   // ── Auto-start external AI servers (llama.cpp, sd.cpp) ──
   const serverManager = new RealServerManager(logger);
@@ -377,7 +386,13 @@ async function start() {
 
   serverLogger.info(`Docs  → http://localhost:${config.server.port}/docs/`);
 
-  // ── Shutdown handler — unload plugins, flush logs ────
+  // ── Hard-exit guard — kills subprocesses at OS level ──
+  // process.on('exit') runs synchronously, no await possible
+  process.on("exit", () => {
+    serverManager.killAllSync();
+  });
+
+  // ── Graceful shutdown — stop servers, unload plugins, flush logs ────
   const shutdown = async (_signal: string) => {
     await serverManager.stopAll();
     await unloadAllPlugins();
@@ -391,11 +406,27 @@ async function start() {
     clearTimeout(timer);
     process.exit(0);
   };
-  process.on("SIGTERM", () => {
-    void shutdown("SIGTERM");
+
+  process.on("SIGTERM", () => void shutdown("SIGTERM"));
+  process.on("SIGINT", () => void shutdown("SIGINT"));
+  process.on("SIGHUP", () => void shutdown("SIGHUP"));
+
+  process.on("uncaughtException", (err) => {
+    try {
+      logger.error({ message: "Uncaught exception", error: String(err) });
+    } catch {
+      /* last resort */
+    }
+    void shutdown("uncaughtException");
   });
-  process.on("SIGINT", () => {
-    void shutdown("SIGINT");
+
+  process.on("unhandledRejection", (reason) => {
+    try {
+      logger.error({ message: "Unhandled rejection", error: String(reason) });
+    } catch {
+      /* last resort */
+    }
+    void shutdown("unhandledRejection");
   });
 }
 

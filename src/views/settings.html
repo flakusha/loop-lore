@@ -3,11 +3,19 @@
   <!-- Main content -->
   <main class="main-content">
     <header class="main-header" data-testid="settings-header">
+      <button
+        class="hamburger"
+        @click="$store.sidebar.open = !$store.sidebar.open"
+        x-show="!$store.sidebar.open"
+        data-testid="hamburger"
+      >
+        ☰
+      </button>
       <span class="title">Settings</span>
     </header>
 
     <div class="chat-area">
-      <div class="empty-state" style="padding: var(--space-12)" data-testid="settings-general">
+      <div class="empty-state" style="padding: var(--space-6)" data-testid="settings-general">
         <div class="icon" style="font-size: 32px; margin-bottom: var(--space-4)">⚙</div>
         <div class="title">General Settings</div>
 
@@ -74,28 +82,11 @@
               <option value="en">English</option>
             </select>
           </div>
-
-          <!-- Theme Preview -->
-          <div class="protip" style="margin-top: var(--space-4)">
-            <strong>Theme Options:</strong>
-            <ul style="margin-top: var(--space-2); margin-bottom: 0; padding-left: 1.2em">
-              <li><strong>Default (Dark)</strong> - Original dark theme</li>
-              <li><strong>Light</strong> - Light background with dark text</li>
-              <li><strong>Bright</strong> - High contrast vibrant theme</li>
-              <li><strong>Colorful</strong> - Vibrant saturated colors</li>
-              <li><strong>Monochrome</strong> - Grayscale high-contrast</li>
-              <li><strong>No Icons</strong> - Minimal theme with decorative icons hidden</li>
-              <li><strong>Dracula</strong> - Popular dark theme (dracula/lua)</li>
-              <li><strong>Nord</strong> - Arctic color palette (arctic-violet)</li>
-              <li><strong>GitHub Dark</strong> - GitHub's dark syntax theme</li>
-              <li><strong>Material</strong> - Material Design 3 inspired</li>
-            </ul>
-          </div>
         </div>
       </div>
 
       <!-- Chat Settings -->
-      <div class="empty-state" style="padding: var(--space-12)" data-testid="settings-chat">
+      <div class="empty-state" style="padding: var(--space-6)" data-testid="settings-chat">
         <h3 class="section-title">Chat Settings</h3>
 
         <div style="margin-top: var(--space-4); width: 100%; max-width: 400px">
@@ -135,7 +126,7 @@
       </div>
 
       <!-- API Settings -->
-      <div class="empty-state" style="padding: var(--space-12)" data-testid="settings-api">
+      <div class="empty-state" style="padding: var(--space-6)" data-testid="settings-api">
         <h3 class="section-title">API Settings</h3>
 
         <div style="margin-top: var(--space-4); width: 100%; max-width: 400px">
@@ -218,7 +209,7 @@
       </div>
 
       <!-- Data Management -->
-      <div class="empty-state" style="padding: var(--space-12)" data-testid="settings-data">
+      <div class="empty-state" style="padding: var(--space-6)" data-testid="settings-data">
         <h3 class="section-title">Data Management</h3>
 
         <div style="margin-top: var(--space-4); width: 100%; max-width: 400px">
@@ -247,7 +238,7 @@
       </div>
 
       <!-- About -->
-      <div class="empty-state" style="padding: var(--space-12)">
+      <div class="empty-state" style="padding: var(--space-6)">
         <h3 class="section-title">About</h3>
 
         <div style="margin-top: var(--space-4); width: 100%; max-width: 400px">

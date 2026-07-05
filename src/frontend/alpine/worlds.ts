@@ -6,9 +6,11 @@ globalThis.worldsState = function () {
     loading: true,
     totalCount: 0,
     showCreateForm: false,
+    showImportForm: false,
     submitting: false,
 
     async init() {
+      (this as any).$root.pageTitle = "Worlds";
       await this.loadWorlds();
     },
 
@@ -16,6 +18,10 @@ globalThis.worldsState = function () {
       this.loading = true;
       try {
         const res = await apiFetch("/api/worlds?pageSize=100");
+        if (!res.ok) {
+          (this as any).$dispatch("show-toast", { type: "error", message: "Failed to load worlds" });
+          return;
+        }
         const data = await res.json();
         this.worlds = data.data || [];
         this.totalCount = data.pagination?.total || this.worlds.length;
@@ -81,6 +87,7 @@ globalThis.worldDetailState = function () {
       const match = location.pathname.match(/\/worlds\/([\w-]+)/);
       if (match) {
         await this.loadWorld(match[1]);
+        (this as any).$root.pageTitle = this.world?.name || "World";
       }
     },
 
@@ -140,6 +147,7 @@ globalThis.worldEditState = function () {
     },
 
     async init() {
+      (this as any).$root.pageTitle = "Edit World";
       // eslint-disable-next-line sonarjs/prefer-regexp-exec
       const match = location.pathname.match(/\/worlds\/([\w-]+)\/edit/);
       if (match) {

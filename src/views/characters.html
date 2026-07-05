@@ -3,6 +3,14 @@
   <!-- Main character grid -->
   <main class="main-content">
     <header class="main-header">
+      <button
+        class="hamburger"
+        @click="$store.sidebar.open = !$store.sidebar.open"
+        x-show="!$store.sidebar.open"
+        data-testid="hamburger"
+      >
+        ☰
+      </button>
       <span class="title">Characters</span>
       <div class="actions">
         <button class="btn btn-secondary" @click="showImportForm = true" data-testid="import-character">
@@ -86,14 +94,7 @@
           <button class="btn-icon" @click="showCreateForm = false">&times;</button>
         </div>
         <div class="modal-body">
-          <form
-            hx-post="/api/actors"
-            hx-target="#app-root"
-            hx-swap="innerHTML"
-            hx-target-error="#toast-container"
-            hx-on::after-request="if(event.detail.successful){ $dispatch('show-toast', { type: 'success', message: 'Character created' }); htmx.ajax('GET', '/views/characters', { target: '#app-root', swap: 'innerHTML' }) }"
-            data-testid="create-character-form"
-          >
+          <form @submit.prevent="createCharacter()" data-testid="create-character-form">
             <div class="form-group">
               <label class="form-label" for="char-name">Character Name</label>
               <input

@@ -23,6 +23,7 @@ globalThis.galleryState = function () {
     uploadLabel: "",
 
     init() {
+      (this as any).$root.pageTitle = "Asset Gallery";
       this.loadAssets();
     },
 

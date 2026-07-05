@@ -25,7 +25,7 @@
 
     <!-- htmx -->
     <script
-      src="https://unpkg.com/htmx.org@2.0.10"
+      src="https://unpkg.com/htmx.org@2.0.10/dist/htmx.min.js"
       integrity="sha384-H5SrcfygHmAuTDZphMHqBJLc3FhssKjG7w/CeCpFReSfwBWDTKpkzPP8c+cLsK+V"
       crossorigin="anonymous"
       defer
@@ -111,22 +111,8 @@
     x-data="app()"
     x-init="init()"
     @keydown.escape.window="closeAllModals()"
-    :class="{ 'sidebar-open': sidebarOpen }"
+    :class="{ 'sidebar-open': $store.sidebar.open }"
   >
-    <!-- Hamburger toggle for sidebar (persistent across all views) -->
-    <button
-      class="hamburger"
-      @click="sidebarOpen = !sidebarOpen"
-      aria-label="Toggle navigation"
-      x-bind:aria-label="__('common.menu')"
-      title="Toggle navigation"
-      x-bind:title="__('common.menu')"
-      :class="{ active: sidebarOpen }"
-      data-testid="hamburger"
-    >
-      ☰
-    </button>
-
     <!-- Toast container (fixed, outside layout) -->
     <div
       class="toast-container"
@@ -145,10 +131,15 @@
     </div>
 
     <!-- Persistent sidebar (does not reload on htmx nav) -->
-    <aside class="sidebar" id="layout-sidebar" data-testid="sidebar" :class="{ open: sidebarOpen }">
+    <aside class="sidebar" id="layout-sidebar" data-testid="sidebar" :class="{ open: $store.sidebar.open }">
       <div class="sidebar-header">
         <span class="logo">loop-lore</span>
-        <button class="btn-icon" @click="sidebarOpen = false" title="Close" x-bind:title="__('common.close')">
+        <button
+          class="btn-icon"
+          @click="$store.sidebar.open = false"
+          title="Close"
+          x-bind:title="__('common.close')"
+        >
           &times;
         </button>
       </div>
@@ -163,7 +154,7 @@
           hx-target="#app-root"
           hx-swap="innerHTML"
           hx-push-url="true"
-          @click="sidebarOpen = false"
+          @click="$store.sidebar.open = false"
           data-testid="nav-chat"
         >
           <span>💬</span> <span x-text="__('nav.chat')">Chat</span>
@@ -176,7 +167,7 @@
           hx-target="#app-root"
           hx-swap="innerHTML"
           hx-push-url="true"
-          @click="sidebarOpen = false"
+          @click="$store.sidebar.open = false"
           data-testid="nav-characters"
         >
           <span>👤</span> <span x-text="__('nav.characters')">Characters</span>
@@ -189,7 +180,7 @@
           hx-target="#app-root"
           hx-swap="innerHTML"
           hx-push-url="true"
-          @click="sidebarOpen = false"
+          @click="$store.sidebar.open = false"
           data-testid="nav-gallery"
         >
           <span>🖼</span> <span x-text="__('nav.gallery')">Gallery</span>
@@ -202,7 +193,7 @@
           hx-target="#app-root"
           hx-swap="innerHTML"
           hx-push-url="true"
-          @click="sidebarOpen = false"
+          @click="$store.sidebar.open = false"
           data-testid="nav-worlds"
         >
           <span>🌍</span> <span x-text="__('nav.worlds')">Worlds</span>
@@ -228,7 +219,7 @@
             hx-target="#app-root"
             hx-swap="innerHTML"
             hx-push-url="true"
-            @click="sidebarOpen = false"
+            @click="$store.sidebar.open = false"
             title="Settings"
             x-bind:title="__('nav.settings')"
           >
@@ -239,7 +230,12 @@
     </aside>
 
     <!-- Backdrop for mobile sidebar -->
-    <div x-show="sidebarOpen" class="backdrop" x-transition @click="sidebarOpen = false"></div>
+    <div
+      x-show="$store.sidebar.open"
+      class="backdrop"
+      x-transition
+      @click="$store.sidebar.open = false"
+    ></div>
 
     <!-- Main content rendered by htmx swaps -->
     <div id="app-root" data-testid="app-root" hx-ext="response-targets" hx-target-error="#toast-container">

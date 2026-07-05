@@ -3,6 +3,14 @@
   <!-- Main content -->
   <main class="main-content">
     <header class="main-header" data-testid="character-chat-header">
+      <button
+        class="hamburger"
+        @click="$store.sidebar.open = !$store.sidebar.open"
+        x-show="!$store.sidebar.open"
+        data-testid="hamburger"
+      >
+        ☰
+      </button>
       <span class="title" x-text="characterName || 'Chats'"></span>
       <div class="actions">
         <button class="btn btn-secondary" @click="loadChats" data-testid="refresh-chats">Refresh</button>
