@@ -56,9 +56,10 @@ export async function validateEvents(
       case WorldEventType.CombatEvent:
       case WorldEventType.NpcStateChange:
       case WorldEventType.TimeAdvancement:
-      case WorldEventType.WorldLoreUpdate:
+      case WorldEventType.WorldLoreUpdate: {
         filteredEvents.push(event);
         break;
+      }
       case WorldEventType.ItemTransfer: {
         // Item transfers are always valid (may create new item instances)
         filteredEvents.push(event);
@@ -73,11 +74,13 @@ export async function validateEvents(
         }
         break;
       }
-      case WorldEventType.QuestProgress:
+      case WorldEventType.QuestProgress: {
         filteredEvents.push(event);
         break;
-      default:
+      }
+      default: {
         filteredEvents.push(event);
+      }
     }
   }
 

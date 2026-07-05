@@ -56,14 +56,10 @@ export class TurnManager {
       throw new Error(`Chat ${this.chatId} not found`);
     }
 
-    if (chat.story_state) {
-      this.state = JSON.parse(chat.story_state) as TurnManagerState;
-    } else {
-      this.state = this.createInitialState();
-    }
+    this.state = chat.story_state ? (JSON.parse(chat.story_state) as TurnManagerState) : this.createInitialState();
 
     // Determine turn order from chat participants + actors
-    if (!this.state.turnOrder.length) {
+    if (this.state.turnOrder.length === 0) {
       await this.refreshTurnOrder();
     }
   }
