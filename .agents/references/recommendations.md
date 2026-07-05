@@ -10,6 +10,7 @@
 - One class/feature per file; `<200` lines preferred; `index.ts` exports public API
 - Feature family grouped in `src/<name>/` with `service.ts | controller.ts | types.ts`
 - Avoid circular imports — import from `enums.ts` barrel, never sibling feature modules
+- **Options-object parameters** — functions with 3+ params take a single destructured object (`function fn({a, b, c, d?})`) over positional args (`function fn(a, b, c, d?)`). Benefits: named at call site, optional without placeholders, auto-declared variable names inside function, extensible without breaking callers
 
 ## Error Handling
 - Controllers: try/catch → proper HTTP (200/201/204/400/401/403/404/422/500/501)
@@ -32,6 +33,12 @@
 - No bare `.then()` waterfalls — `async/await` only
 - Timeout all external calls (LLM, file uploads) with `AbortController`
 
+## Allocation & Performance
+- Chained `.map().filter().reduce()` allocates intermediate arrays (k·n memory). Use single `for..of` pass or single `.reduce()` for hot paths
+- Pre-allocate result buffers when size is known: `new Array(len)` instead of repeated push
+- In-place mutation (`.sort()`, `.splice()`, direct index assignment) preferred over creating new arrays for same-collection transforms
+- Exception: readability wins for small/non-hot-path data (&lt;100 items, non-critical path) — keep chains legible
+
 ## LLM Generation
 - Status tracked in `generation_attempts` table, not on message
 - Message status reflects persistence + delivery, not generation pipeline
@@ -41,6 +48,12 @@
 - Prefer raw SQL inserts in tests over fixtures (catches migration drift)
 - Test edge states: every composite state pair, every transition
 - `bun test` with Jest-compatible assertions
+
+## Documentation
+- Avoid embedding quantitative metrics (token counts, percentages, benchmark numbers) in `.agents/` docs
+- Metrics go stale when code changes; they're never updated reliably
+- Describe behavior qualitatively — "compresses aggressively" not "saves 46%"
+- If metrics must appear, source them from automated CI output, not hand-maintained
 
 ## Agent References (this directory)
 - `.agents/references/banned-patterns.md` — anti-patterns to reject in code review

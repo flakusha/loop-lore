@@ -124,6 +124,11 @@ docs/                    Specs, architecture, data model
 - **JSDoc**: All public exports — @param, @returns, @throws, @example
 - **Imports**: Never import DB-specific modules in services/controllers (use
   Kysely types + db instance)
+- **Anti-patterns**: See `.agents/references/banned-patterns.md` — reject in
+  review (boolean flags, numeric statuses, `I` prefix, bare `.then()`, `any`,
+  silent catches, AI SDK wrappers, CSS-in-JS)
+- **Docs metrics**: No quantitative metrics in docs — they go stale. Describe
+  behavior qualitatively.
 
 ---
 

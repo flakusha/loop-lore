@@ -14,21 +14,15 @@ consume, with adapters/rules mapping it to each tool's native format.
 
 ## Directory Structure
 
-```
-.agents/
-├── README.md              This file — standard spec
-├── skills/                SKILL.md files (agent skill definitions)
-│   ├── project-context/   High-level project overview
-│   ├── db-schema/         Database schema reference
-│   ├── testing/           Testing conventions & commands
-│   └── ...                Project-specific skills
-├── rules/                 Agent-agnostic rule files
-│   └── *.md               Plain markdown rules agents should follow
-└── templates/             Scaffolds for common tasks
-    ├── commit-template.md
-    ├── pr-template.md
-    └── ...
-```
+1. **`README.md`** — This file, the standard spec.
+2. **`skills/`** — SKILL.md files defining agent skills:
+   - `project-context/` — High-level project overview.
+   - `db-schema/` — Database schema reference.
+   - `testing/` — Testing conventions & commands.
+   - Others as needed per project.
+3. **`rules/`** — Agent-agnostic rule files (plain `.md`).
+4. **`templates/`** — Scaffolds for common tasks:
+   - `commit-template.md`, `pr-template.md`, and more.
 
 ## SKILL.md Format
 
