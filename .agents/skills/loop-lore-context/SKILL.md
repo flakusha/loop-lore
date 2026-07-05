@@ -30,28 +30,25 @@ WebUI. Built on TypeScript + Bun with dual TUI/Web UI.
 
 ## Directory Layout
 
-```
-src/
-├── server.ts              HTTP entry
-├── db/                    DB layer (Kysely init, schema types, enums, migrations)
-├── config/                Configuration loading (file + env override)
-├── routes/                REST handlers under /api/
-├── assets/                Media CRUD, upload, polymorphic linking
-├── assistant/             Rule-based help system
-├── generation/            LLM generation (types, cancellation, pipeline, detection)
-├── story/                 Multi-LLM story engine
-├── content/               Encoding/minification/compression
-├── age-gate/              Age verification
-├── tui/                   Blessed widgets (app, chat, gallery, input)
-├── middleware/            Auth, session, error handling
-├── transport/             WebSocket/SSE streaming
-├── utils/                 Shared utilities
-├── logger/                Logging setup
-├── public/                Static assets for web UI
-├── views/                 Htmx templates (if server-rendered web UI)
-data/                      Runtime SQLite DB, uploaded assets
-docs/                      Specs, architecture, data model, UX spec
-```
+1. **`src/server.ts`** — HTTP entry point, starts the server.
+2. **`src/db/`** — Database layer: Kysely init, schema types, enums, migrations.
+3. **`src/config/`** — Configuration loading (file + env override).
+4. **`src/routes/`** — REST handlers mounted under `/api/`.
+5. **`src/assets/`** — Media CRUD, upload pipeline, polymorphic linking.
+6. **`src/assistant/`** — Rule-based help system (swappable to LLM).
+7. **`src/generation/`** — LLM generation: types, cancellation, pipeline, detection.
+8. **`src/story/`** — Multi-LLM story engine (GM, turns, quests).
+9. **`src/content/`** — Encoding, minification, compression.
+10. **`src/age-gate/`** — Age verification service + controller.
+11. **`src/tui/`** — Blessed widgets (app, chat, gallery, input).
+12. **`src/middleware/`** — Auth, session, error handling.
+13. **`src/transport/`** — WebSocket/SSE streaming.
+14. **`src/utils/`** — Shared utility functions.
+15. **`src/logger/`** — Logging setup.
+16. **`src/public/`** — Static assets for web UI.
+17. **`src/views/`** — Htmx templates (server-rendered web UI).
+18. **`data/`** — Runtime SQLite DB, uploaded assets.
+19. **`docs/`** — Specs, architecture, data model, UX spec.
 
 ## Coding Conventions
 
