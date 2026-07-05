@@ -13,10 +13,13 @@ data/uploads/
 *.gz
 *.zst
 
-# Environment variables (per SECURITY section in AGENTS.md)
-.env
-.env.*
-!.env.example
+# Environment overrides (env.yaml replaces .env — supports nested/arrays/multiline)
+env.yaml
+
+# Runtime config files (user-specific, not committed)
+config.yaml
+config.yml
+config.toml
 
 # Lock files (generated, can be recreated with bun install)
 bun.lock

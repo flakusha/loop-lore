@@ -1,6 +1,7 @@
 # loop-lore configuration
 # Supports: YAML (.yaml, .yml) or TOML (.toml)
 # Env vars override values below — see src/config/load.ts for mapping
+# $schema: ./schemas/loop-lore-config.schema.json
 
 server:
   port: 3000
@@ -51,3 +52,64 @@ auth:
   registrationOpen: true
   sessionTimeoutHours: 24
   maxSessionsPerUser: 10
+  demoUsername: demo
+  demoAutoSetup: true
+
+# ── Age Gate ──
+ageGate:
+  enabled: false
+  minimumAge: 18
+  mode: self-declaration    # none | self-declaration | verification
+
+# ── Transport ──
+transport:
+  defaultProtocol: http/1.1
+  enableWebSocket: true
+  enableWebTransport: false
+  enableH2: false
+  enableH3: false
+  compression:
+    enabled: false
+    default: none
+    threshold: 256
+  limits:
+    maxFrameSize: 65536
+    maxPayload: 327680
+    maxConcurrentStreams: 100
+
+# ── Messages ──
+messages:
+  autoHideInvalid: false
+  hideConfirmation: true
+  maxLength: 100000
+  maxGenerationRetries: 3
+  generationTimeoutMs: 30000
+  idempotencyExpiryHours: 24
+
+# ── NSFW ──
+nsfw:
+  allowNsfw: true
+  nsfwMinAge: 18
+
+# ── Generation (LLM Providers) ──
+generation:
+  providers:
+    openaiCompatible: []
+    # Example provider:
+    # - name: default
+    #   label: "Default Provider"
+    #   baseUrl: http://localhost:8080/v1
+    #   apiKey: "sk-optional"
+    #   model: claude-3-opus
+    #   timeout: 30000
+    #   retries: 3
+    #   allowUserApiKey: true
+    #   models:
+    #     claude-3-opus: { contextLimit: 200000, maxOutput: 4000 }
+  defaultProvider: ""
+  defaultModels: {}
+
+# ── BYO API Keys ──
+byoKey:
+  enabled: true
+  # encryptionKey: "optional-override-for-auth.sessionSecret"
