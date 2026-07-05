@@ -32,7 +32,38 @@ export interface LlamaCppOptions {
   port: number;
   /** Local path (/path/to/model.gguf) OR HuggingFace identifier (org/repo:quant) */
   modelPath: string;
+  // ── Model / hardware ───────────────────────────────────
+  alias?: string;
   ctxSize?: number;
+  threads?: number;
+  nGpuLayers?: string;
+  device?: string;
+  mlock?: boolean;
+  // ── KV cache ───────────────────────────────────────────
+  cacheTypeK?: string;
+  cacheTypeV?: string;
+  cacheRam?: number;
+  flashAttn?: string;
+  swaFull?: boolean;
+  // ── Context scaling ────────────────────────────────────
+  ropeScaling?: string;
+  ropeScale?: number;
+  // ── Sampler defaults ───────────────────────────────────
+  temp?: number;
+  topK?: number;
+  topP?: number;
+  minP?: number;
+  repeatPenalty?: number;
+  // ── Server behavior ────────────────────────────────────
+  parallelRequests?: number;
+  fit?: boolean;
+  // ── Advanced ───────────────────────────────────────────
+  specType?: string;
+  specDraftNMin?: number;
+  specDraftNMax?: number;
+  reasoningBudget?: number;
+  jinja?: boolean;
+  // ── Extra ───────────────────────────────────────────────
   extraArgs?: string[];
 }
 
@@ -43,9 +74,41 @@ export interface LlamaSwapOptions {
 export interface SdCppOptions {
   port: number;
   modelPath: string;
+  /** "checkpoint" = full model (-m), "diffusion" = component model (--diffusion-model) */
+  modelType?: "checkpoint" | "diffusion";
+  // ── Text encoders ───────────────────────────────────────
   llmPath?: string;
+  clipLPath?: string;
+  clipGPath?: string;
+  t5xxlPath?: string;
+  // ── Model components ────────────────────────────────────
   vaePath?: string;
+  vaeFormat?: string;
+  controlNetPath?: string;
   loraDir?: string;
+  taesdPath?: string;
+  hiresUpscalersDir?: string;
+  embdDir?: string;
+  photoMakerPath?: string;
+  upscaleModelPath?: string;
+  // ── Boolean flags ───────────────────────────────────────
+  fa?: boolean;
+  diffusionFA?: boolean;
+  vaeTiling?: boolean;
+  eagerLoad?: boolean;
+  offloadToCPU?: boolean;
+  streamLayers?: boolean;
+  autoFit?: boolean;
+  // ── Value flags ─────────────────────────────────────────
+  maxVram?: string;
+  backend?: string;
+  rng?: string;
+  samplerRng?: string;
+  type?: string;
+  prediction?: string;
+  cacheMode?: string;
+  cacheOption?: string;
+  // ── Extra ───────────────────────────────────────────────
   extraArgs?: string[];
 }
 
@@ -175,23 +238,58 @@ export class RealServerManager {
     const modelFlag = isHF ? "-hf" : "-m";
     const modelValue = isHF ? opts.modelPath : resolve(opts.modelPath);
     this.log.info("Starting llama.cpp", { binary, port: opts.port, model: modelValue, isHF });
-    const proc = spawn({
-      cmd: [
-        binary,
-        modelFlag,
-        modelValue,
-        "--port",
-        String(opts.port),
-        "--ctx-size",
-        String(opts.ctxSize ?? 8192),
-        "--host",
-        "127.0.0.1",
-        "--no-ui",
-        ...(opts.extraArgs ?? []),
-      ],
-      stdout: "pipe",
-      stderr: "pipe",
-    });
+
+    const args: string[] = [
+      binary,
+      modelFlag,
+      modelValue,
+      "--port",
+      String(opts.port),
+      "--host",
+      "127.0.0.1",
+      "--no-ui",
+    ];
+
+    // ── Model / hardware ───────────────────────────────────
+    if (opts.alias) args.push("--alias", opts.alias);
+    args.push("--ctx-size", String(opts.ctxSize ?? 8192));
+    if (opts.threads) args.push("-t", String(opts.threads));
+    if (opts.nGpuLayers) args.push("--gpu-layers", opts.nGpuLayers);
+    if (opts.device) args.push("--device", opts.device);
+    if (opts.mlock) args.push("--mlock");
+
+    // ── KV cache ───────────────────────────────────────────
+    if (opts.cacheTypeK) args.push("-ctk", opts.cacheTypeK);
+    if (opts.cacheTypeV) args.push("-ctv", opts.cacheTypeV);
+    if (opts.cacheRam) args.push("--cache-ram", String(opts.cacheRam));
+    if (opts.flashAttn) args.push("-fa", opts.flashAttn);
+    if (opts.swaFull) args.push("--swa-full");
+
+    // ── Context scaling ────────────────────────────────────
+    if (opts.ropeScaling) args.push("--rope-scaling", opts.ropeScaling);
+    if (opts.ropeScale) args.push("--rope-scale", String(opts.ropeScale));
+
+    // ── Sampler defaults ───────────────────────────────────
+    if (opts.temp !== undefined) args.push("--temp", String(opts.temp));
+    if (opts.topK !== undefined) args.push("--top-k", String(opts.topK));
+    if (opts.topP !== undefined) args.push("--top-p", String(opts.topP));
+    if (opts.minP !== undefined) args.push("--min-p", String(opts.minP));
+    if (opts.repeatPenalty !== undefined) args.push("--repeat-penalty", String(opts.repeatPenalty));
+
+    // ── Server behavior ────────────────────────────────────
+    if (opts.parallelRequests) args.push("-np", String(opts.parallelRequests));
+    if (opts.fit) args.push("--fit", "on");
+
+    // ── Advanced ───────────────────────────────────────────
+    if (opts.specType) args.push("--spec-type", opts.specType);
+    if (opts.specDraftNMin !== undefined) args.push("--spec-draft-n-min", String(opts.specDraftNMin));
+    if (opts.specDraftNMax !== undefined) args.push("--spec-draft-n-max", String(opts.specDraftNMax));
+    if (opts.reasoningBudget !== undefined) args.push("--reasoning-budget", String(opts.reasoningBudget));
+    if (opts.jinja !== undefined && !opts.jinja) args.push("--no-jinja");
+
+    if (opts.extraArgs) args.push(...opts.extraArgs);
+
+    const proc = spawn({ cmd: args, stdout: "pipe", stderr: "pipe" });
 
     const ready = await waitForHealth(`http://127.0.0.1:${opts.port}/health`, 120_000);
     if (!ready) {
@@ -252,6 +350,10 @@ export class RealServerManager {
 
   /**
    * Start sd-server on given port.
+   *
+   * Supports two model loading modes:
+   * - checkpoint (default): -m modelPath — standalone full model, no llm/vae needed
+   * - diffusion: --diffusion-model modelPath — requires --llm (text encoder), --vae optional
    */
   async startSdCpp(opts: SdCppOptions): Promise<ServerInstance | null> {
     const binary = findBinary("sd-cpp");
@@ -264,21 +366,61 @@ export class RealServerManager {
       return null;
     }
 
-    const args: string[] = [
-      binary,
-      "--listen-port",
-      String(opts.port),
-      "-l",
-      "127.0.0.1",
-      "-m",
-      resolve(opts.modelPath),
-    ];
-    if (opts.llmPath) args.push("--llm", resolve(opts.llmPath));
-    if (opts.vaePath) args.push("--vae", resolve(opts.vaePath));
+    const modelType = opts.modelType ?? "checkpoint";
+    const args: string[] = [binary, "--listen-port", String(opts.port), "-l", "127.0.0.1"];
+
+    // ── Model loading ─────────────────────────────────────
+    if (modelType === "diffusion") {
+      if (!opts.llmPath) {
+        this.log.warn(
+          "sd-cpp diffusion model missing llmPath — model may fail to load if it needs a text encoder",
+        );
+      }
+      args.push("--diffusion-model", resolve(opts.modelPath));
+      if (opts.llmPath) args.push("--llm", resolve(opts.llmPath));
+      if (opts.vaePath) args.push("--vae", resolve(opts.vaePath));
+    } else {
+      args.push("-m", resolve(opts.modelPath));
+    }
+
+    // ── Text encoders ─────────────────────────────────────
+    if (opts.clipLPath) args.push("--clip_l", resolve(opts.clipLPath));
+    if (opts.clipGPath) args.push("--clip_g", resolve(opts.clipGPath));
+    if (opts.t5xxlPath) args.push("--t5xxl", resolve(opts.t5xxlPath));
+
+    // ── Model components ──────────────────────────────────
+    if (opts.vaeFormat) args.push("--vae-format", opts.vaeFormat);
+    if (opts.controlNetPath) args.push("--control-net", resolve(opts.controlNetPath));
     if (opts.loraDir) args.push("--lora-model-dir", resolve(opts.loraDir));
+    if (opts.taesdPath) args.push("--taesd", resolve(opts.taesdPath));
+    if (opts.hiresUpscalersDir) args.push("--hires-upscalers-dir", resolve(opts.hiresUpscalersDir));
+    if (opts.embdDir) args.push("--embd-dir", resolve(opts.embdDir));
+    if (opts.photoMakerPath) args.push("--photo-maker", resolve(opts.photoMakerPath));
+    if (opts.upscaleModelPath) args.push("--upscale-model", resolve(opts.upscaleModelPath));
+
+    // ── Boolean flags (add only if true) ──────────────────
+    if (opts.fa) args.push("--fa");
+    if (opts.diffusionFA) args.push("--diffusion-fa");
+    if (opts.vaeTiling) args.push("--vae-tiling");
+    if (opts.eagerLoad) args.push("--eager-load");
+    if (opts.offloadToCPU) args.push("--offload-to-cpu");
+    if (opts.streamLayers) args.push("--stream-layers");
+    if (opts.autoFit) args.push("--auto-fit");
+
+    // ── Value flags (add only if set) ─────────────────────
+    if (opts.maxVram) args.push("--max-vram", opts.maxVram);
+    if (opts.backend) args.push("--backend", opts.backend);
+    if (opts.rng) args.push("--rng", opts.rng);
+    if (opts.samplerRng) args.push("--sampler-rng", opts.samplerRng);
+    if (opts.type) args.push("--type", opts.type);
+    if (opts.prediction) args.push("--prediction", opts.prediction);
+    if (opts.cacheMode) args.push("--cache-mode", opts.cacheMode);
+    if (opts.cacheOption) args.push("--cache-option", opts.cacheOption);
+
+    // ── Extra args ────────────────────────────────────────
     if (opts.extraArgs) args.push(...opts.extraArgs);
 
-    this.log.info("Starting sd-server", { binary, port: opts.port, model: opts.modelPath });
+    this.log.info("Starting sd-server", { binary, port: opts.port, modelType, model: opts.modelPath });
     const proc = spawn({
       cmd: args,
       stdout: "pipe",
@@ -301,7 +443,7 @@ export class RealServerManager {
       startedAt: Date.now(),
     };
     this.instances.push(instance);
-    this.log.info("sd-server ready", { port: opts.port, pid: proc.pid });
+    this.log.info("sd-server ready", { port: opts.port, pid: proc.pid, modelType });
     return instance;
   }
 
