@@ -8,10 +8,22 @@ import { compressAssets, copyDirectory } from "./content/compress";
 import { loadConfig } from "./config/load";
 import { initAgeGate, dispatch as dispatchAgeGate } from "./age-gate/controller";
 import { dispatch as dispatchGeneration } from "./generation/controller";
+import { dispatch as dispatchDice } from "./dice/index";
 import { getDatabase } from "./db/index";
 import { authenticate, compose, errorBoundary } from "./middleware/index";
 import type { RequestContext } from "./middleware/index";
 import { jsonError, HttpStatus } from "./routes/http-utils";
+import { apiDispatch } from "./routes/router";
+import { dispatch as dispatchViews, serveView } from "./routes/views";
+import { dispatchAuth } from "./routes/auth";
+// Route modules (import for registerRoute side-effects)
+import "./routes/chats";
+import "./routes/messages";
+import "./routes/characters";
+import "./routes/users";
+import "./routes/worlds";
+import "./routes/api-keys";
+import "./assets/controller";
 import { ensureTlsCerts } from "./config/cert";
 import { createLogger, getLogger } from "./logger";
 
@@ -99,15 +111,40 @@ function respondWithFile(fullPath: string, acceptEncoding: string): Response {
  * Middleware chain: errorBoundary → auth → route dispatch
  * Auth populates RequestContext { userId, userRole, sessionId }.
  */
-async function handleApiRequest(
+export async function handleApiRequest(
   request: Request,
   database: ReturnType<typeof getDatabase>,
   config: ReturnType<typeof loadConfig>,
 ): Promise<Response> {
+  // ── Auth-skip paths (login, demo-login) — no auth required ──
+  const url = new URL(request.url);
+  const skipAuth =
+    url.pathname === "/api/auth/login" ||
+    url.pathname === "/api/demo-login";
+
+  if (skipAuth) {
+    return compose(
+      [errorBoundary],
+      async (req: Request, _context: RequestContext): Promise<Response> => {
+        // Auth routes with empty context
+        const context: RequestContext = { userId: null, userRole: null, sessionId: null };
+        const authResult = await dispatchAuth({ request: req, context, database, config });
+        if (authResult) return authResult;
+
+        return apiDispatch({ request: req, context, database, config });
+      },
+    )(request, { userId: null, userRole: null, sessionId: null });
+  }
+
+  // ── Authenticated routes ─────────────────────────────────
   // Build middleware chain: error boundary wraps auth + dispatch
   const pipeline = compose(
     [errorBoundary],
     async (req: Request, context: RequestContext): Promise<Response> => {
+      // ── Auth routes (logout, me) — need session context ──
+      const authResult = await dispatchAuth({ request: req, context, database, config });
+      if (authResult) return authResult;
+
       // ── Age gate routes ──────────────────────────────
       const ageGateResult = await dispatchAgeGate(req, database, context.userId, context.userRole);
       if (ageGateResult) return ageGateResult;
@@ -116,7 +153,12 @@ async function handleApiRequest(
       const generationResult = await dispatchGeneration(req, context.userId, context.userRole);
       if (generationResult) return generationResult;
 
-      return jsonError("Not implemented", HttpStatus.NotImplemented);
+      // ── Dice roll routes ─────────────────────────────
+      const diceResult = await dispatchDice(req, context.userId, context.userRole);
+      if (diceResult) return diceResult;
+
+      // ── Route router (chats, messages, characters, etc.) ──
+      return apiDispatch({ request: req, context, database, config });
     },
   );
 
@@ -227,6 +269,11 @@ function start() {
     if (url.pathname.startsWith("/api/")) {
       return handleApiRequest(request, database, config);
     }
+
+    // ── View templates and character/world routes ───────────────
+    // Try views dispatch first (handles /views/:name, /character/:slug, /worlds, etc.)
+    const viewResponse = await dispatchViews({ request, context: { userId: null, userRole: null, sessionId: null }, database, config });
+    if (viewResponse) return viewResponse;
 
     const docsResult = handleDocsRequest(url, request, config);
     if (docsResult) return docsResult;
