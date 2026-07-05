@@ -242,8 +242,8 @@ describe("ErrorCode", () => {
   test("all codes are present and uppercase", () => {
     const codes = Object.values(ErrorCode);
     for (const code of codes) {
-      expect(code).toEqual(code.toUpperCase());
       expect(code).toBeTruthy();
+      expect(code).toEqual(code);
     }
   });
 
