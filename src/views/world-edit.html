@@ -1,0 +1,58 @@
+<!-- World Edit Page (swapped into #app-root by htmx) -->
+<div class="app-layout" x-data="worldEditState()">
+  <!-- Main content -->
+  <main class="main-content">
+    <header class="main-header">
+      <span class="title">Edit World</span>
+    </header>
+
+    <div class="chat-area">
+      <!-- Loading -->
+      <template x-if="loading">
+        <div class="empty-state" style="padding: var(--space-12)">
+          <div class="icon">⏳</div>
+          <div class="title">Loading world...</div>
+        </div>
+      </template>
+
+      <!-- Edit form -->
+      <template x-if="!loading && world">
+        <div style="max-width: 600px; margin: 0 auto;">
+          <div class="form-group">
+            <label class="form-label" for="edit-name">Name</label>
+            <input class="form-input" type="text" name="name" id="edit-name" required placeholder="World name" x-model="world.name" />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="edit-description">Description</label>
+            <textarea class="form-input" name="description" id="edit-description" rows="2" placeholder="Short summary for world cards" x-model="world.description"></textarea>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="edit-lore">Lore</label>
+            <textarea class="form-input" name="lore" id="edit-lore" rows="6" placeholder="Full setting description, rules, atmosphere..." x-model="world.lore"></textarea>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Tags</label>
+            <input type="text" class="form-input" placeholder="fantasy, adventure, medieval (comma separated)" x-model="tagsInput" />
+            <div style="display: flex; gap: var(--space-2); flex-wrap: wrap; margin-top: var(--space-2)">
+              <template x-for="(tag, index) in tags" :key="index">
+                <span class="tag"><span x-text="tag"></span> <button class="btn-icon" style="padding: 0; width: 20px; height: 20px" @click="removeTag(tag)">&times;</button></span>
+              </template>
+            </div>
+          </div>
+
+          <div style="display: flex; gap: var(--space-3); justify-content: flex-end; margin-top: var(--space-6)">
+            <a href="/views/worlds" class="btn btn-secondary" data-testid="cancel-edit-world">Cancel</a>
+            <button type="button" class="btn btn-primary" :disabled="saving" @click="saveWorld" data-testid="save-world-btn">
+              <span x-show="!saving">Save World</span>
+              <span x-show="saving">Saving...</span>
+            </button>
+          </div>
+        </div>
+      </template>
+    </div>
+  </main>
+</div>
+

@@ -1,79 +1,13 @@
 <!-- Settings Page -->
 <div class="app-layout">
-  <!-- Sidebar -->
-  <aside class="sidebar">
-    <div class="sidebar-header">
-      <span class="logo">loop-lore</span>
-    </div>
-
-    <nav class="sidebar-nav">
-      <div class="nav-section-title">Navigation</div>
-
-      <a class="nav-item" href="/views/chat" hx-get="/views/chat" hx-target="#app-root" hx-swap="innerHTML">
-        <span>Chat</span>
-      </a>
-
-      <a
-        class="nav-item"
-        href="/views/characters"
-        hx-get="/views/characters"
-        hx-target="#app-root"
-        hx-swap="innerHTML"
-      >
-        <span>Characters</span>
-      </a>
-
-      <a
-        class="nav-item"
-        href="/views/gallery"
-        hx-get="/views/gallery"
-        hx-target="#app-root"
-        hx-swap="innerHTML"
-      >
-        <span>Gallery</span>
-      </a>
-
-      <div class="nav-section-title">Settings</div>
-
-      <div class="nav-item active">
-        <span>General</span>
-      </div>
-    </nav>
-
-    <div class="sidebar-footer">
-      <div class="user-info">
-        <img
-          class="avatar"
-          src="/img/default-avatar.png"
-          alt="User avatar"
-          onerror="this.style.display = 'none'"
-          style="background: var(--bg-tertiary)"
-        />
-        <div class="details">
-          <div class="name" id="user-display-name">User</div>
-          <div class="role" id="user-role">solo</div>
-        </div>
-        <button
-          class="btn-icon"
-          title="Back to chat"
-          hx-get="/views/chat"
-          hx-target="#app-root"
-          hx-swap="innerHTML"
-        >
-          ↤
-        </button>
-      </div>
-    </div>
-  </aside>
-
   <!-- Main content -->
   <main class="main-content">
-    <header class="main-header">
+    <header class="main-header" data-testid="settings-header">
       <span class="title">Settings</span>
     </header>
 
     <div class="chat-area">
-      <div class="empty-state" style="padding: var(--space-12)">
+      <div class="empty-state" style="padding: var(--space-12)" data-testid="settings-general">
         <div class="icon" style="font-size: 32px; margin-bottom: var(--space-4)">⚙</div>
         <div class="title">General Settings</div>
 
@@ -109,7 +43,7 @@
           <!-- Theme Selector -->
           <div class="form-group">
             <label class="form-label">Theme</label>
-            <select class="form-select" x-model="currentTheme" @change="setTheme($event.target.value)">
+            <select class="form-select" x-model="currentTheme" @change="setTheme($event.target.value)" data-testid="theme-select">
               <option value="default">Default (Dark)</option>
               <option value="light">Light</option>
               <option value="bright">Bright</option>
@@ -120,6 +54,14 @@
               <option value="nord">Nord</option>
               <option value="github-dark">GitHub Dark</option>
               <option value="material">Material</option>
+            </select>
+          </div>
+
+          <!-- Language Selector -->
+          <div class="form-group">
+            <label class="form-label" x-text="__('settings.language')">Language</label>
+            <select class="form-select" x-model="currentLocale" @change="setLocale($event.target.value)" data-testid="locale-select">
+              <option value="en">English</option>
             </select>
           </div>
 
@@ -138,6 +80,182 @@
               <li><strong>GitHub Dark</strong> - GitHub's dark syntax theme</li>
               <li><strong>Material</strong> - Material Design 3 inspired</li>
             </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Chat Settings -->
+      <div class="empty-state" style="padding: var(--space-12)" data-testid="settings-chat">
+        <h3 class="section-title">Chat Settings</h3>
+
+        <div style="margin-top: var(--space-4); width: 100%; max-width: 400px">
+          <div class="form-group">
+            <label class="form-label">Enter to send</label>
+            <label class="toggle">
+              <input type="checkbox" x-model="enterToSend" />
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Auto-scroll to bottom</label>
+            <label class="toggle">
+              <input type="checkbox" x-model="autoScroll" />
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Inline image preview</label>
+            <label class="toggle">
+              <input type="checkbox" x-model="inlinePreview" />
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Message detail level</label>
+            <select class="form-select" x-model="detailLevel">
+              <option value="Immersion">Immersion</option>
+              <option value="Basic">Basic</option>
+              <option value="Detailed">Detailed</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- API Settings -->
+      <div class="empty-state" style="padding: var(--space-12)" data-testid="settings-api">
+        <h3 class="section-title">API Settings</h3>
+
+        <div style="margin-top: var(--space-4); width: 100%; max-width: 400px">
+          <div class="form-group">
+            <label class="form-label">Provider</label>
+            <select class="form-select" x-model="apiProvider">
+              <option value="OpenAI">OpenAI</option>
+              <option value="Anthropic">Anthropic</option>
+              <option value="OpenRouter">OpenRouter</option>
+              <option value="Custom">Custom</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">API Key</label>
+            <div style="display: flex; gap: var(--space-2); align-items: center">
+              <input
+                type="password"
+                class="form-input"
+                x-model="apiKey"
+                placeholder="Enter your API key"
+                style="flex: 1"
+              />
+              <button type="button" class="btn btn-secondary" @click="apiKey = ''">Clear</button>
+            </div>
+          </div>
+
+          <div class="form-group" x-show="apiProvider === 'Custom'">
+            <label class="form-label">API Endpoint URL</label>
+            <input
+              type="text"
+              class="form-input"
+              x-model="apiEndpoint"
+              placeholder="https://api.openai.com/v1"
+            />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Model</label>
+            <input
+              type="text"
+              class="form-input"
+              x-model="apiModel"
+              placeholder="e.g., gpt-4o"
+            />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Max context tokens</label>
+            <input
+              type="number"
+              class="form-input"
+              x-model="maxTokens"
+              step="256"
+              min="1024"
+              max="128000"
+            />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Temperature: <span x-text="temperature"></span></label>
+            <input
+              type="range"
+              class="form-range"
+              x-model="temperature"
+              min="0"
+              max="2"
+              step="0.1"
+              style="width: 100%"
+            />
+          </div>
+
+          <div style="display: flex; gap: var(--space-2); margin-top: var(--space-4)">
+            <button type="button" class="btn btn-secondary" hx-post="/api/generation/test-connection" hx-target-error="#toast-container">Test Connection</button>
+            <button type="button" class="btn btn-primary" hx-post="/api/users/me/settings" hx-target-error="#toast-container">Save API Settings</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Data Management -->
+      <div class="empty-state" style="padding: var(--space-12)" data-testid="settings-data">
+        <h3 class="section-title">Data Management</h3>
+
+        <div style="margin-top: var(--space-4); width: 100%; max-width: 400px">
+          <div style="display: flex; gap: var(--space-2); margin-bottom: var(--space-4)">
+            <button type="button" class="btn btn-secondary">Export All Chats</button>
+            <button type="button" class="btn btn-secondary">Import Chats</button>
+          </div>
+
+          <div class="danger-zone">
+            <div class="zone-title">⚠ Danger Zone</div>
+            <p style="margin-bottom: var(--space-3); font-size: 13px; color: var(--text-secondary)">
+              This action permanently deletes all data. Type <strong>DELETE</strong> to confirm.
+            </p>
+            <input
+              type="text"
+              class="form-input"
+              x-model="confirmDeleteText"
+              placeholder='Type "DELETE" to confirm'
+              style="margin-bottom: var(--space-3); border-color: var(--accent-red)"
+            />
+            <button type="button" class="btn btn-danger" :disabled="confirmDeleteText !== 'DELETE'">Delete All Data</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- About -->
+      <div class="empty-state" style="padding: var(--space-12)">
+        <h3 class="section-title">About</h3>
+
+        <div style="margin-top: var(--space-4); width: 100%; max-width: 400px">
+          <div class="form-group">
+            <label class="form-label">Version</label>
+            <p style="margin: 0; color: var(--text-primary)">0.1.0</p>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Links</label>
+            <div style="display: flex; flex-direction: column; gap: var(--space-2)">
+              <a href="/docs/" class="btn btn-secondary" style="text-align: center; text-decoration: none">View Documentation</a>
+              <a href="https://github.com/flakspirit/loop-lore" class="btn btn-secondary" style="text-align: center; text-decoration: none" target="_blank" rel="noopener">Source Code</a>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Open Source Credits</label>
+            <p style="margin: 0; font-size: 13px; color: var(--text-secondary); line-height: 1.6">
+              Built with Bun, TypeScript, Kysely, htmx, Alpine.js, blessed, and more.
+              Licensed under the MIT License.
+            </p>
           </div>
         </div>
       </div>

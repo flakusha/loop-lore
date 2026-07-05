@@ -1,0 +1,178 @@
+<!-- Characters View (swapped into #app-root by htmx) -->
+<div class="app-layout" x-data="charactersState()">
+  <!-- Main character grid -->
+  <main class="main-content">
+    <header class="main-header">
+      <span class="title">Characters</span>
+      <div class="actions">
+        <button class="btn btn-secondary" @click="showImportForm = true" data-testid="import-character">Import Card</button>
+        <button class="btn btn-primary" @click="showCreateForm = true" data-testid="create-character">+ New</button>
+      </div>
+    </header>
+
+    <!-- Character grid loaded via Alpine -->
+    <div class="chat-area" style="overflow-y: auto">
+      <!-- Loading state -->
+      <template x-if="loading">
+        <div class="empty-state" style="padding: var(--space-12)" data-testid="characters-loading">
+          <div class="icon">⏳</div>
+          <div class="title">Loading characters...</div>
+        </div>
+      </template>
+
+      <!-- Empty state -->
+      <template x-if="!loading && characters.length === 0">
+        <div class="empty-state" style="padding: var(--space-12)" data-testid="characters-empty">
+          <div class="icon">👤</div>
+          <div class="title">No characters yet</div>
+          <div class="description">Create your first character to start roleplaying.</div>
+          <button class="btn btn-primary" style="margin-top: var(--space-4)" @click="showCreateForm = true" data-testid="create-first-character">
+            + Create Character
+          </button>
+        </div>
+      </template>
+
+      <!-- Character grid -->
+      <template x-if="!loading && characters.length > 0">
+        <div class="character-grid" data-testid="character-grid">
+          <template x-for="char in characters" :key="char.id">
+            <div class="character-card" @click="selectCharacter(char)" :data-testid="'character-card-' + char.id">
+              <div class="card-img" style="background: var(--bg-tertiary); display: flex; align-items: center; justify-content: center; font-size: 48px">
+                <span>👤</span>
+              </div>
+              <div class="card-body">
+                <div class="name" x-text="char.display_name"></div>
+                <div class="description" x-text="char.description || 'No description'"></div>
+              </div>
+            </div>
+          </template>
+        </div>
+      </template>
+    </div>
+
+    <!-- Create character modal -->
+    <div x-show="showCreateForm" x-cloak class="modal-overlay" @click.self="showCreateForm = false" data-testid="create-character-modal">
+      <div class="modal">
+        <div class="modal-header">
+          <span class="title">Create Character</span>
+          <button class="btn-icon" @click="showCreateForm = false">&times;</button>
+        </div>
+        <div class="modal-body">
+          <form
+            hx-post="/api/actors"
+            hx-target="#app-root"
+            hx-swap="innerHTML"
+            hx-target-error="#toast-container"
+            hx-on::after-request="if(event.detail.successful){ $dispatch('show-toast', { type: 'success', message: 'Character created' }); htmx.ajax('GET', '/views/characters', { target: '#app-root', swap: 'innerHTML' }) }"
+            data-testid="create-character-form">
+            <div class="form-group">
+              <label class="form-label" for="char-name">Character Name</label>
+              <input class="form-input" type="text" name="displayName" id="char-name" required placeholder="e.g., Alice" />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="char-type">Type</label>
+              <select class="form-select" name="actorType" id="char-type">
+                <option value="character">Character</option>
+                <option value="persona">Persona</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="char-desc">Description</label>
+              <textarea
+                class="form-input"
+                name="description"
+                id="char-desc"
+                rows="3"
+                placeholder="Brief description of the character..."
+                style="resize: vertical"
+              ></textarea>
+            </div>
+
+            <div style="display: flex; gap: var(--space-3); justify-content: flex-end">
+              <button type="button" class="btn btn-secondary" @click="showCreateForm = false">Cancel</button>
+              <button type="submit" class="btn btn-primary">Create</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Import modal -->
+    <div x-show="showImportForm" x-cloak class="modal-overlay" @click.self="showImportForm = false" data-testid="import-character-modal">
+      <div class="modal">
+        <div class="modal-header">
+          <span class="title">Import Character Card</span>
+          <button class="btn-icon" @click="showImportForm = false">&times;</button>
+        </div>
+        <div class="modal-body">
+          <form
+            hx-post="/api/actors/import"
+            hx-encoding="multipart/form-data"
+            hx-target="#app-root"
+            hx-swap="innerHTML"
+            hx-target-error="#toast-container"
+            hx-on::after-request="if(event.detail.successful){ showImportForm = false; $dispatch('show-toast', { type: 'success', message: 'Character imported' }); htmx.ajax('GET', '/views/characters', { target: '#app-root', swap: 'innerHTML' }) }"
+            data-testid="import-character-form">
+            <div class="drop-zone" style="margin-bottom: var(--space-4)" @click="$refs.fileInput.click()">
+              <div class="icon">📄</div>
+              <div class="text">Upload a character card JSON or PNG</div>
+              <div class="hint">Supports V2 character cards</div>
+              <input
+                type="file"
+                name="file"
+                accept=".json,.png"
+                style="display: none"
+                x-ref="fileInput"
+              />
+            </div>
+
+            <div style="display: flex; gap: var(--space-3); justify-content: flex-end">
+              <button type="button" class="btn btn-secondary" @click="showImportForm = false">Cancel</button>
+              <button type="submit" class="btn btn-primary">Import</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Character detail modal -->
+    <div x-show="selectedChar" x-cloak class="modal-overlay" @click.self="selectedChar = null" data-testid="character-detail-modal">
+      <div class="modal">
+        <div class="modal-header">
+          <span class="title" x-text="selectedChar?.display_name || 'Character'"></span>
+          <button class="btn-icon" @click="selectedChar = null">&times;</button>
+        </div>
+        <div class="modal-body">
+          <div style="display: flex; gap: var(--space-4); margin-bottom: var(--space-4)">
+            <div style="width: 80px; height: 80px; border-radius: var(--radius-md); background: var(--bg-tertiary); display: flex; align-items: center; justify-content: center; font-size: 36px; flex-shrink: 0">👤</div>
+            <div style="flex: 1">
+              <div style="font-size: 18px; font-weight: 600" x-text="selectedChar?.display_name"></div>
+              <div style="font-size: 12px; color: var(--text-tertiary); margin-top: var(--space-1)" x-text="'ID: ' + selectedChar?.id"></div>
+              <div style="font-size: 13px; color: var(--text-secondary); margin-top: var(--space-2)" x-text="selectedChar?.description || 'No description'"></div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">System Prompt</label>
+            <div style="font-size: 13px; color: var(--text-secondary); white-space: pre-wrap; background: var(--bg-tertiary); padding: var(--space-3); border-radius: var(--radius-sm); max-height: 200px; overflow-y: auto" x-text="selectedChar?.system_prompt || 'None'"></div>
+          </div>
+
+          <div style="display: flex; gap: var(--space-3); justify-content: flex-end">
+            <button class="btn btn-secondary" @click="startChat(selectedChar)" data-testid="start-chat-btn">
+              💬 Start Chat
+            </button>
+            <button class="btn btn-secondary" @click="editCharacter(selectedChar)" data-testid="edit-character-btn">
+              ✏️ Edit
+            </button>
+            <button class="btn btn-danger" @click="deleteCharacter(selectedChar)" data-testid="delete-character-btn">
+              🗑 Delete
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+

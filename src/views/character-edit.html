@@ -1,0 +1,73 @@
+<!-- Character Edit Page (swapped into #app-root by htmx) -->
+<div class="app-layout" x-data="characterEditState()">
+  <!-- Main content -->
+  <main class="main-content">
+    <header class="main-header">
+      <span class="title" x-text="'Edit: ' + (character?.display_name || 'Character')"></span>
+    </header>
+
+    <div class="chat-area">
+      <!-- Loading -->
+      <template x-if="loading">
+        <div class="empty-state" style="padding: var(--space-12)">
+          <div class="icon">⏳</div>
+          <div class="title">Loading character...</div>
+        </div>
+      </template>
+
+      <!-- Edit form -->
+      <template x-if="!loading && character">
+        <div style="max-width: 600px; margin: 0 auto;">
+          <div class="form-group">
+            <label class="form-label" for="edit-name">Display Name</label>
+            <input class="form-input" type="text" id="edit-name" placeholder="Character name" x-model="character.display_name" />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="edit-desc">Description</label>
+            <textarea class="form-input" id="edit-desc" rows="3" placeholder="Brief description..." x-model="character.description"></textarea>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="edit-system">System Prompt</label>
+            <textarea class="form-input" id="edit-system" rows="6" placeholder="System prompt for LLM context..." x-model="character.system_prompt"></textarea>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="edit-personality">Personality</label>
+            <textarea class="form-input" id="edit-personality" rows="3" placeholder="Character personality traits..." x-model="character.personality"></textarea>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="edit-greeting">Welcome Message (first_mes)</label>
+            <textarea class="form-input" id="edit-greeting" rows="3" placeholder="First message the character sends in a new chat..." x-model="character.welcome_message"></textarea>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="edit-example">Example Messages (mes_example)</label>
+            <textarea class="form-input" id="edit-example" rows="4" placeholder="Example dialogue for context..." x-model="character.mes_example"></textarea>
+          </div>
+
+          <div style="display: flex; gap: var(--space-3); justify-content: flex-end; margin-top: var(--space-6)">
+            <a href="/views/characters" class="btn btn-secondary" data-testid="cancel-edit-character">Cancel</a>
+            <button type="button" class="btn btn-primary" :disabled="saving" @click="saveCharacter" data-testid="save-character-btn">
+              <span x-show="!saving">Save Character</span>
+              <span x-show="saving">Saving...</span>
+            </button>
+          </div>
+        </div>
+      </template>
+
+      <!-- Not found -->
+      <template x-if="!loading && !character">
+        <div class="empty-state" style="padding: var(--space-12)">
+          <div class="icon">👤</div>
+          <div class="title">Character not found</div>
+          <div class="description">Could not load character data. It may have been deleted.</div>
+          <a href="/views/characters" class="btn btn-primary" style="margin-top: var(--space-4)">← Back to Characters</a>
+        </div>
+      </template>
+    </div>
+  </main>
+</div>
+
