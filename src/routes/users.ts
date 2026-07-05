@@ -150,7 +150,7 @@ async function handleUpdateUser(
   }
 
   const updates: Record<string, unknown> = {};
-  if (body.displayName) updates.display_name = body.displayName;
+  if (body.displayName !== undefined) updates.display_name = body.displayName;
   if (body.settings) {
     const settingsResult = safeJsonStringify(body.settings);
     if (!settingsResult.ok) return jsonError("Invalid settings data", HttpStatus.BadRequest);

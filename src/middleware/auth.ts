@@ -31,7 +31,7 @@ export async function authenticate(
   database: Kysely<DB>,
   authConfig: AuthConfig,
 ): Promise<Response | { context: RequestContext }> {
-  // eslint-disable-next-line sonarjs/cognitive-complexity
+   
   // ── Extract token: Bearer header > cookie fallback ───────
   let rawToken: string | null = null;
 

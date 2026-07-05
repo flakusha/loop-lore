@@ -178,9 +178,9 @@ async function handleListMessages(
   const enriched = await Promise.all(
     messages.map(async (m) => {
       const attachments = await enrichAttachments(database, m.attachments);
-      const content = m.content_encoding !== "identity"
-        ? decodeContent(m.content, m.content_encoding as "gzip" | "zstd" | "brotli")
-        : m.content;
+      const content = m.content_encoding === "identity"
+        ? m.content
+        : decodeContent(m.content, m.content_encoding);
       return { ...m, content, attachments };
     }),
   );
@@ -202,9 +202,9 @@ async function handleCreateMessage(
   const filteredContent = filterProfanity(content);
 
   // Compress large messages (>10KB) for storage efficiency
-  const LARGE_CONTENT_THRESHOLD = 10240;
+  const LARGE_CONTENT_THRESHOLD = 10_240;
   let storedContent = filteredContent;
-  let contentEncoding: string = "identity";
+  let contentEncoding = "identity";
   if (filteredContent.length > LARGE_CONTENT_THRESHOLD) {
     const encoded = encodeContent(filteredContent, "gzip");
     storedContent = encoded.encoded;
@@ -298,9 +298,9 @@ async function handleGetMessage(
   }
 
   const attachments = await enrichAttachments(database, message.attachments);
-  const content = message.content_encoding !== "identity"
-    ? decodeContent(message.content, message.content_encoding as "gzip" | "zstd" | "brotli")
-    : message.content;
+  const content = message.content_encoding === "identity"
+    ? message.content
+    : decodeContent(message.content, message.content_encoding);
   return jsonResponse({ ...message, content, attachments });
 }
 
