@@ -335,8 +335,8 @@ export class QualityEvaluator {
     };
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars, sonarjs/cognitive-complexity
-  private getReasoning(dimension: string, score: number, _response: string, _context?: string): string {
+   
+  private getReasoning(dimension: string, score: number): string {
     /* eslint-disable unicorn/switch-case-braces */
     if (score >= 80) {
       switch (dimension) {
@@ -381,32 +381,30 @@ export class QualityEvaluator {
     const scores = this.computeScores({ response, prompt, actorName, context });
     const overall = scores.overall;
 
-    const questNames = context?.activeQuests.map((q) => q.name).join(", ");
-
     const details: QualityEvaluation["details"] = {
       character_voice: {
         score: scores.character_voice,
-        reasoning: this.getReasoning("character_voice", scores.character_voice, response, actorName),
+        reasoning: this.getReasoning("character_voice", scores.character_voice),
       },
       plot_coherence: {
         score: scores.plot_coherence,
-        reasoning: this.getReasoning("plot_coherence", scores.plot_coherence, response, prompt),
+        reasoning: this.getReasoning("plot_coherence", scores.plot_coherence),
       },
       lore_consistency: {
         score: scores.lore_consistency,
-        reasoning: this.getReasoning("lore_consistency", scores.lore_consistency, response, context?.world.lore),
+        reasoning: this.getReasoning("lore_consistency", scores.lore_consistency),
       },
       narrative_quality: {
         score: scores.narrative_quality,
-        reasoning: this.getReasoning("narrative_quality", scores.narrative_quality, response),
+        reasoning: this.getReasoning("narrative_quality", scores.narrative_quality),
       },
       quest_relevance: {
         score: scores.quest_relevance,
-        reasoning: this.getReasoning("quest_relevance", scores.quest_relevance, response, questNames),
+        reasoning: this.getReasoning("quest_relevance", scores.quest_relevance),
       },
       creativity: {
         score: scores.creativity,
-        reasoning: this.getReasoning("creativity", scores.creativity, response),
+        reasoning: this.getReasoning("creativity", scores.creativity),
       },
     };
 

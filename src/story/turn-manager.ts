@@ -35,7 +35,7 @@ export class TurnManager {
   private readonly qualityThresholds: QualityThresholds;
   private state: TurnManagerState | null = null;
 
-  // eslint-disable-next-line unicorn/consistent-class-member-order
+   
   // ─── Private Helpers ────────────────────────────────────────────
 
   private createInitialState(): TurnManagerState {
@@ -53,7 +53,7 @@ export class TurnManager {
   private async persistState(): Promise<void> {
     if (!this.state) return;
     const serialized = safeJsonStringify(this.state);
-    if (!serialized.ok) return;
+    if (!serialized.ok) { console.error("[turn-manager] persistState serialization failed:", serialized.error); return; }
     await this.db
       .updateTable("chats")
       .set({ story_state: serialized.value })
@@ -231,6 +231,8 @@ export class TurnManager {
   get isComplete(): boolean {
     if (!this.state) return false;
     const maxTurns = this.state.maxTurns ?? Number.MAX_SAFE_INTEGER;
+    // Guard: maxTurns <= 0 treated as unlimited (same as MAX_SAFE_INTEGER default)
+    if (maxTurns <= 0) return false;
     return this.state.currentTurn >= maxTurns;
   }
 }
