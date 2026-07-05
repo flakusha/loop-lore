@@ -18,9 +18,8 @@ export type TlsFiles = TlsConfig;
 let tlsLog: ReturnType<ReturnType<typeof getLogger>["child"]> | null = null;
 
 function getTlsLog(): ReturnType<ReturnType<typeof getLogger>["child"]> {
-  if (!tlsLog) {
-    tlsLog = getLogger().child({ module: "tls" });
-  }
+  // eslint-disable-next-line unicorn/no-top-level-assignment-in-function
+  tlsLog ??= getLogger().child({ module: "tls" });
   return tlsLog;
 }
 

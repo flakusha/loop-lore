@@ -8,7 +8,8 @@ const COMPRESSIBLE_EXTS = new Set([".css", ".js", ".html", ".json", ".svg"]);
 export function copyDirectory(sourceDir: string, destDir: string): void {
   if (!existsSync(sourceDir)) return;
   
-  for (const entry of readdirSync(sourceDir, { withFileTypes: true })) {
+  const sourceDirEntries = readdirSync(sourceDir, { withFileTypes: true });
+  for (const entry of sourceDirEntries) {
     const srcPath = join(sourceDir, entry.name);
     const destPath = join(destDir, entry.name);
     

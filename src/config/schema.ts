@@ -4,6 +4,7 @@
 
 import { DbType, LogLevel, AgeGateMode } from "../db/enums";
 import type { DbType as DbTypeT, LogLevel as LogLevelT, AgeGateMode as AgeGateModeT } from "../db/enums";
+import { DATA_DIR } from "./constants";
 
 interface TlsConfig {
   /** Path to TLS private key (PEM). Auto-generated if missing. */
@@ -189,8 +190,16 @@ interface ImageProviderDefaults {
   steps: number;
   /** Default CFG scale */
   cfgScale: number;
-  /** Default sampler name */
+  /** Default sampler name (euler, euler_a, dpmpp_2m, etc.) */
   sampler: string;
+  /** Default scheduler (discrete, karras, etc.) */
+  scheduler?: string;
+  /** Default negative prompt */
+  negativePrompt?: string;
+  /** LoRA model directory for relative path resolution */
+  loraModelDir?: string;
+  /** Default LoRA entries (path relative to loraModelDir) */
+  loras?: { path: string; multiplier: number; isHighNoise?: boolean }[];
 }
 
 interface ImageProviderConfig {
@@ -200,7 +209,7 @@ interface ImageProviderConfig {
   label: string;
   /** Base URL */
   baseUrl: string;
-  /** API family: openai-compatible, SD WebUI, or SD cpp */
+  /** API family: openai-compatible, SD WebUI, or SD cpp native */
   apiFamily: "openai" | "sdapi" | "sdcpp";
   /** Optional API key */
   apiKey?: string;
@@ -221,6 +230,31 @@ interface GenerationProvidersConfig {
   ollamaNative?: ProviderInstanceConfig;
   /** Image generation provider (SD, FLUX, etc.) */
   sd?: ImageProviderConfig;
+  /** AWS Bedrock provider (Claude, Llama, Titan models) */
+  bedrock?: BedrockProviderConfig;
+}
+
+interface BedrockProviderConfig {
+  /** Unique provider instance name */
+  name: string;
+  /** Human-readable label for UI */
+  label: string;
+  /** AWS region (e.g., us-east-1) */
+  region: string;
+  /** AWS access key ID (optional - uses env vars if not set) */
+  accessKeyId?: string;
+  /** AWS secret access key (optional - uses env vars if not set) */
+  secretAccessKey?: string;
+  /** Default model ID/alias */
+  model: string;
+  /** Connection timeout in ms */
+  timeout: number;
+  /** Max retries for transient failures */
+  retries: number;
+  /** Whether user API keys can override */
+  allowUserApiKey: boolean;
+  /** Known models (name → limits) */
+  models: Record<string, ModelLimits>;
 }
 
 interface GenerationConfig {
@@ -263,6 +297,24 @@ interface NsfwConfig {
   nsfwMinAge: number;
 }
 
+// ── Testing (e2e real-server config) ────────────────────────
+
+interface TestingConfig {
+  /** Path to GGUF model for llama.cpp real-server e2e */
+  llamaModel?: string;
+  /** Path to safetensors model for sd-server real-server e2e */
+  sdModel?: string;
+  /** llama.cpp port for real-server e2e (default: 9011) */
+  llamaPort?: number;
+  /** sd-server port for real-server e2e (default: 9010) */
+  sdPort?: number;
+  /** llama-swap config yaml path for real-server e2e */
+  llamaSwapConfig?: string;
+}
+
+// ── Centralized data directory ──────────────────────────────
+// See src/config/constants.ts for DATA_DIR — single source of truth.
+
 interface Config {
   server: ServerConfig;
   db: DatabaseConfig;
@@ -278,23 +330,24 @@ interface Config {
   nsfw: NsfwConfig;
   generation: GenerationConfig;
   byoKey: ByoKeyConfig;
+  testing?: TestingConfig;
 }
 const DEFAULTS: Config = {
   server: {
     port: 3000,
     host: "localhost",
     tls: {
-      key: "./data/certs/key.pem",
-      cert: "./data/certs/cert.pem",
+      key: `${DATA_DIR}/certs/key.pem`,
+      cert: `${DATA_DIR}/certs/cert.pem`,
     },
   },
   db: {
     type: DbType.Sqlite,
-    sqliteFilename: "../loop-lore-data/loop-lore.db",
+    sqliteFilename: `${DATA_DIR}/loop-lore.db`,
   },
   assets: {
     enabled: true,
-    uploadDir: "../loop-lore-data/uploads",
+    uploadDir: `${DATA_DIR}/uploads`,
     maxFileSize: 10_485_760,
     compression: true,
   },
@@ -364,6 +417,17 @@ const DEFAULTS: Config = {
   },
 };
 
+// DEAD CODE: Bedrock provider defaults (add when implementing)
+// const BEDROCK_DEFAULTS: BedrockProviderConfig = {
+//   name: "bedrock",
+//   label: "AWS Bedrock",
+//   region: "us-east-1",
+//   timeout: 30000,
+//   retries: 3,
+//   allowUserApiKey: true,
+//   models: {},
+// };
+
 export type {
   Config,
   ServerConfig,
@@ -377,6 +441,8 @@ export type {
   AgeGateConfig,
   AuthConfig,
   TransportConfig,
+  TransportCompressionConfig,
+  TransportLimitsConfig,
   MessagesConfig,
   NsfwConfig,
   GenerationConfig,
@@ -386,5 +452,7 @@ export type {
   ImageProviderDefaults,
   ModelLimits,
   ByoKeyConfig,
+  TestingConfig,
+  BedrockProviderConfig,
 };
 export { DEFAULTS };
