@@ -171,3 +171,60 @@ export interface WorldItems {
   created_at: Generated<string>;
   updated_at: Generated<string>;
 }
+
+// ── Actor Memories ─────────────────────────────────────────
+export interface ActorMemories {
+  id: Generated<string>;
+  actor_id: string;
+  source_chat_id: string | null;
+  content: string;
+  memory_type: string;
+  confidence: number;
+  importance: number;
+  keywords: string;
+  expires_at: string | null;
+  created_at: Generated<string>;
+  updated_at: Generated<string>;
+}
+
+// ── Actor Lore Entries (character_book) ────────────────────
+export interface ActorLoreEntries {
+  id: Generated<string>;
+  actor_id: string;
+  name: string | null;
+  content: string;
+  keys: string;
+  secondary_keys: string;
+  selective: number;
+  case_sensitive: number;
+  enabled: number;
+  constant: number;
+  position: string;
+  insertion_order: number;
+  priority: number;
+  comment: string | null;
+  sort_order: number;
+  created_at: Generated<string>;
+  updated_at: Generated<string>;
+}
+
+// ── World Lore Entries ─────────────────────────────────────
+export interface WorldLoreEntries {
+  id: Generated<string>;
+  world_id: string;
+  name: string | null;
+  content: string;
+  keys: string;
+  secondary_keys: string;
+  selective: number;
+  case_sensitive: number;
+  enabled: number;
+  constant: number;
+  position: string;
+  insertion_order: number;
+  priority: number;
+  comment: string | null;
+  sort_order: number;
+  created_at: Generated<string>;
+  updated_at: Generated<string>;
+}

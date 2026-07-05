@@ -18,6 +18,7 @@ export const AssetType = {
   Image: "image",
   Audio: "audio",
   Video: "video",
+  Memory: "memory",
   Other: "other",
 } as const;
 export type AssetType = (typeof AssetType)[keyof typeof AssetType];

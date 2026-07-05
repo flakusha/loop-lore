@@ -45,6 +45,18 @@ function createSchema(database: Database): void {
       system_prompt TEXT,
       agent_type TEXT NOT NULL DEFAULT 'none',
       settings TEXT NOT NULL DEFAULT '{}',
+      data_version INTEGER NOT NULL DEFAULT 0,
+      visibility TEXT NOT NULL DEFAULT 'private',
+      welcome_message TEXT,
+      personality TEXT,
+      scenario TEXT,
+      mes_example TEXT,
+      alternate_greetings TEXT,
+      post_history_instructions TEXT,
+      creator_notes TEXT,
+      creator TEXT,
+      character_version TEXT,
+      import_spec TEXT NOT NULL DEFAULT 'raw',
       created_at TEXT NOT NULL DEFAULT (datetime('now')),
       updated_at TEXT NOT NULL DEFAULT (datetime('now'))
     );
