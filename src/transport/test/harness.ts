@@ -87,7 +87,8 @@ export async function validateProtocol(
   const failed = results.filter((r) => !r.passed).length;
 
   return {
-    protocol: "unknown", // set by caller
+    // set by caller after validateProtocol() returns; protocol name not known here
+    protocol: "unknown",
     totalTests: results.length,
     passed,
     failed,
@@ -107,8 +108,7 @@ export function buildDefaultTests(): TransportTestSuite {
       // Connection lifecycle tested by the caller with a fresh handler
     },
 
-    async sendRecv(payloads: string[]) {
-       
+    sendRecv(payloads: string[]): Promise<void> {
       // Send/receive tested by the caller with a connected handler
       for (const payload of payloads) {
         // Verify payload is a string (basic sanity)
@@ -116,14 +116,15 @@ export function buildDefaultTests(): TransportTestSuite {
           throw new TypeError(`expected string payload, got ${typeof payload}`);
         }
       }
+      return Promise.resolve();
     },
 
-    async backpressure(size: number) {
-       
+    backpressure(size: number): Promise<void> {
       // Backpressure test: send a large payload and verify it doesn't throw
       if (size <= 0) {
         throw new TypeError("backpressure size must be > 0");
       }
+      return Promise.resolve();
     },
 
     async reconnect() {
