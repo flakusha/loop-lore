@@ -43,6 +43,11 @@ export async function up(database: Kysely<unknown>): Promise<void> {
     .addColumn("name", "text", (col) => col.notNull())
     .addColumn("description", "text")
     .addColumn("lore", "text")
+    .addColumn("scan_depth", "integer", (col) => col.notNull().defaultTo(100))
+    .addColumn("token_budget", "integer", (col) => col.notNull().defaultTo(2000))
+    .addColumn("difficulty_modifier", "real", (col) => col.notNull().defaultTo(1))
+    .addColumn("difficulty_reroll", "text", (col) => col.notNull().defaultTo("'off'"))
+    .addColumn("difficulty_state", "text", (col) => col.notNull().defaultTo("'alive'"))
     .addColumn("created_at", "text", (col) => col.notNull().defaultTo("(datetime('now'))"))
     .addColumn("updated_at", "text", (col) => col.notNull().defaultTo("(datetime('now'))"))
     .execute();
@@ -141,6 +146,18 @@ export async function up(database: Kysely<unknown>): Promise<void> {
     .addColumn("system_prompt", "text")
     .addColumn("agent_type", "text", (col) => col.notNull().defaultTo("none"))
     .addColumn("settings", "text", (col) => col.notNull().defaultTo("{}"))
+    .addColumn("data_version", "integer", (col) => col.notNull().defaultTo(0))
+    .addColumn("visibility", "text", (col) => col.notNull().defaultTo("'private'"))
+    .addColumn("welcome_message", "text")
+    .addColumn("personality", "text")
+    .addColumn("scenario", "text")
+    .addColumn("mes_example", "text")
+    .addColumn("alternate_greetings", "text")
+    .addColumn("post_history_instructions", "text")
+    .addColumn("creator_notes", "text")
+    .addColumn("creator", "text")
+    .addColumn("character_version", "text")
+    .addColumn("import_spec", "text", (col) => col.notNull().defaultTo("raw"))
     .addColumn("created_at", "text", (col) => col.notNull().defaultTo("(datetime('now'))"))
     .addColumn("updated_at", "text", (col) => col.notNull().defaultTo("(datetime('now'))"))
     .execute();
@@ -177,6 +194,109 @@ export async function up(database: Kysely<unknown>): Promise<void> {
     .execute();
 
   await database.schema.createIndex("idx_characters_owner").on("characters").column("owner_id").execute();
+
+  // ── Actor Memories ──────────────────────────────────
+  await database.schema
+    .createTable("actor_memories")
+    .addColumn("id", "text", (col) => col.primaryKey())
+    .addColumn("actor_id", "text", (col) => col.notNull().references("actors.id"))
+    .addColumn("source_chat_id", "text", (col) => col.references("chats.id"))
+    .addColumn("content", "text", (col) => col.notNull())
+    .addColumn("memory_type", "text", (col) => col.notNull().defaultTo("fact"))
+    .addColumn("confidence", "real", (col) => col.notNull().defaultTo(1))
+    .addColumn("importance", "integer", (col) => col.notNull().defaultTo(1))
+    .addColumn("keywords", "text", (col) => col.defaultTo("[]"))
+    .addColumn("created_at", "text", (col) => col.notNull().defaultTo("(datetime('now'))"))
+    .addColumn("updated_at", "text", (col) => col.notNull().defaultTo("(datetime('now'))"))
+    .addColumn("expires_at", "text")
+    .execute();
+
+  await database.schema.createIndex("idx_actor_memories_actor").on("actor_memories").column("actor_id").execute();
+
+  // ── Actor Notes ──────────────────────────────────────
+  await database.schema
+    .createTable("actor_notes")
+    .addColumn("id", "text", (col) => col.primaryKey())
+    .addColumn("actor_id", "text", (col) => col.notNull().references("actors.id"))
+    .addColumn("title", "text", (col) => col.notNull())
+    .addColumn("content", "text", (col) => col.notNull())
+    .addColumn("category", "text", (col) => col.notNull().defaultTo("general"))
+    .addColumn("pinned", "integer", (col) => col.notNull().defaultTo(0))
+    .addColumn("sort_order", "integer", (col) => col.notNull().defaultTo(0))
+    .addColumn("created_at", "text", (col) => col.notNull().defaultTo("(datetime('now'))"))
+    .addColumn("updated_at", "text", (col) => col.notNull().defaultTo("(datetime('now'))"))
+    .execute();
+
+  await database.schema.createIndex("idx_actor_notes_actor").on("actor_notes").column("actor_id").execute();
+
+  // ── Actor Items ──────────────────────────────────────
+  await database.schema
+    .createTable("actor_items")
+    .addColumn("id", "text", (col) => col.primaryKey())
+    .addColumn("actor_id", "text", (col) => col.notNull().references("actors.id"))
+    .addColumn("name", "text", (col) => col.notNull())
+    .addColumn("description", "text")
+    .addColumn("item_type", "text", (col) => col.notNull())
+    .addColumn("quantity", "integer", (col) => col.notNull().defaultTo(1))
+    .addColumn("value", "text")
+    .addColumn("weight", "real")
+    .addColumn("tags", "text", (col) => col.defaultTo("[]"))
+    .addColumn("metadata", "text", (col) => col.defaultTo("{}"))
+    .addColumn("equipped", "integer", (col) => col.notNull().defaultTo(0))
+    .addColumn("sort_order", "integer", (col) => col.notNull().defaultTo(0))
+    .addColumn("created_at", "text", (col) => col.notNull().defaultTo("(datetime('now'))"))
+    .addColumn("updated_at", "text", (col) => col.notNull().defaultTo("(datetime('now'))"))
+    .execute();
+
+  await database.schema.createIndex("idx_actor_items_actor").on("actor_items").column("actor_id").execute();
+
+  // ── Actor Lore Entries (character_book) ──────────────
+  await database.schema
+    .createTable("actor_lore_entries")
+    .addColumn("id", "text", (col) => col.primaryKey())
+    .addColumn("actor_id", "text", (col) => col.notNull().references("actors.id"))
+    .addColumn("name", "text")
+    .addColumn("content", "text", (col) => col.notNull())
+    .addColumn("keys", "text", (col) => col.notNull().defaultTo("[]"))
+    .addColumn("secondary_keys", "text", (col) => col.defaultTo("[]"))
+    .addColumn("selective", "integer", (col) => col.notNull().defaultTo(0))
+    .addColumn("case_sensitive", "integer", (col) => col.notNull().defaultTo(0))
+    .addColumn("enabled", "integer", (col) => col.notNull().defaultTo(1))
+    .addColumn("constant", "integer", (col) => col.notNull().defaultTo(0))
+    .addColumn("position", "text", (col) => col.notNull().defaultTo("before_char"))
+    .addColumn("insertion_order", "integer", (col) => col.notNull().defaultTo(100))
+    .addColumn("priority", "integer", (col) => col.notNull().defaultTo(100))
+    .addColumn("comment", "text")
+    .addColumn("sort_order", "integer", (col) => col.notNull().defaultTo(0))
+    .addColumn("created_at", "text", (col) => col.notNull().defaultTo("(datetime('now'))"))
+    .addColumn("updated_at", "text", (col) => col.notNull().defaultTo("(datetime('now'))"))
+    .execute();
+
+  await database.schema.createIndex("idx_actor_lore_actor").on("actor_lore_entries").column("actor_id").execute();
+
+  // ── World Lore Entries ───────────────────────────────
+  await database.schema
+    .createTable("world_lore_entries")
+    .addColumn("id", "text", (col) => col.primaryKey())
+    .addColumn("world_id", "text", (col) => col.notNull().references("worlds.id"))
+    .addColumn("name", "text")
+    .addColumn("content", "text", (col) => col.notNull())
+    .addColumn("keys", "text", (col) => col.notNull().defaultTo("[]"))
+    .addColumn("secondary_keys", "text", (col) => col.defaultTo("[]"))
+    .addColumn("selective", "integer", (col) => col.notNull().defaultTo(0))
+    .addColumn("case_sensitive", "integer", (col) => col.notNull().defaultTo(0))
+    .addColumn("enabled", "integer", (col) => col.notNull().defaultTo(1))
+    .addColumn("constant", "integer", (col) => col.notNull().defaultTo(0))
+    .addColumn("position", "text", (col) => col.notNull().defaultTo("before_char"))
+    .addColumn("insertion_order", "integer", (col) => col.notNull().defaultTo(100))
+    .addColumn("priority", "integer", (col) => col.notNull().defaultTo(100))
+    .addColumn("comment", "text")
+    .addColumn("sort_order", "integer", (col) => col.notNull().defaultTo(0))
+    .addColumn("created_at", "text", (col) => col.notNull().defaultTo("(datetime('now'))"))
+    .addColumn("updated_at", "text", (col) => col.notNull().defaultTo("(datetime('now'))"))
+    .execute();
+
+  await database.schema.createIndex("idx_world_lore_world").on("world_lore_entries").column("world_id").execute();
 
   // ── Assets ─────────────────────────────────────────────────
   await database.schema
@@ -266,6 +386,19 @@ export async function up(database: Kysely<unknown>): Promise<void> {
 
   await database.schema.createIndex("idx_actor_keys_actor_id").on("actor_keys").column("actor_id").execute();
   await database.schema.createIndex("idx_actor_keys_status").on("actor_keys").column("status").execute();
+
+  // ── User API Keys (BYO) ──────────────────────────────────
+  await database.schema
+    .createTable("user_api_keys")
+    .addColumn("id", "text", (col) => col.primaryKey())
+    .addColumn("user_id", "text", (col) => col.notNull().references("users.id"))
+    .addColumn("provider_name", "text", (col) => col.notNull())
+    .addColumn("api_key_encrypted", "text", (col) => col.notNull())
+    .addColumn("created_at", "text", (col) => col.notNull().defaultTo("(datetime('now'))"))
+    .addColumn("updated_at", "text", (col) => col.notNull().defaultTo("(datetime('now'))"))
+    .execute();
+
+  await database.schema.createIndex("idx_user_api_keys_user_provider").on("user_api_keys").columns(["user_id", "provider_name"]).execute();
 
   // ── Generation Attempts ────────────────────────────────────
   await database.schema
@@ -471,9 +604,15 @@ export async function down(database: Kysely<unknown>): Promise<void> {
   await database.schema.dropTable("story_turns").execute();
   await database.schema.dropTable("generation_attempts").execute();
   await database.schema.dropTable("actor_keys").execute();
+  await database.schema.dropTable("user_api_keys").execute();
   await database.schema.dropTable("messages").execute();
   await database.schema.dropTable("world_items").execute();
   await database.schema.dropTable("items").execute();
+  await database.schema.dropTable("actor_lore_entries").execute();
+  await database.schema.dropTable("world_lore_entries").execute();
+  await database.schema.dropTable("actor_memories").execute();
+  await database.schema.dropTable("actor_notes").execute();
+  await database.schema.dropTable("actor_items").execute();
   await database.schema.dropTable("locations").execute();
   await database.schema.dropTable("worlds").execute();
   await database.schema.dropTable("assets").execute();
