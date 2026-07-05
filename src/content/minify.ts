@@ -23,22 +23,22 @@ export function minifyText(content: string): string {
 export function minifyCSS(content: string): string {
   let result = content;
 
-  result = result.replace(/\/\*[\s\S]*?\*\//g, "");
+  result = result.replaceAll(/\/\*[\s\S]*?\*\//g, "");
 
-  result = result.replace(/^\s*[\r\n]/gm, "");
+  result = result.replaceAll(/^\s*[\r\n]/gm, "");
 
-  result = result.replace(/\s*{\s*/g, "{");
-  result = result.replace(/\s*}\s*/g, "}");
-  result = result.replace(/\s*:\s*/g, ":");
-  result = result.replace(/\s*;\s*/g, ";");
-  result = result.replace(/\s*,\s*/g, ",");
-  result = result.replace(/\s*>\s*/g, ">");
-  result = result.replace(/\s*\+\s*/g, "+");
-  result = result.replace(/\s*~\s*/g, "~");
+  result = result.replaceAll(/\s*{\s*/g, "{");
+  result = result.replaceAll(/\s*}\s*/g, "}");
+  result = result.replaceAll(/\s*:\s*/g, ":");
+  result = result.replaceAll(/\s*;\s*/g, ";");
+  result = result.replaceAll(/\s*,\s*/g, ",");
+  result = result.replaceAll(/\s*>\s*/g, ">");
+  result = result.replaceAll(/\s*\+\s*/g, "+");
+  result = result.replaceAll(/\s*~\s*/g, "~");
 
-  result = result.replace(/;}/g, "}");
+  result = result.replaceAll(';}', "}");
 
-  result = result.replace(/\s{2,}/g, " ");
+  result = result.replaceAll(/\s{2,}/g, " ");
 
   result = result.trim();
 

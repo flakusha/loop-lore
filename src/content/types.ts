@@ -1,6 +1,6 @@
 import type { ContentEncoding } from "../db/enums";
 
-export type { ContentEncoding };
+
 
 export interface EncodeResult {
   encoded: string;
@@ -10,3 +10,5 @@ export interface EncodeResult {
 export interface DecodeOptions {
   encoding: ContentEncoding;
 }
+
+export {type ContentEncoding} from "../db/enums";
