@@ -89,11 +89,17 @@ export async function handleGenerate(body: unknown, config?: Config, userId?: st
   const input = body as GenerateRequest;
 
   // ── Validate required fields ───────────────────────────
+  // NOTE: `body as GenerateRequest` cast on line 89 is unchecked for nested objects.
+  // Sub-objects (repetitionDetection, policyDetection, responseLimit) are
+  // consumed downstream — invalid values may cause runtime errors.
 
-  if (!input.chatId) return jsonError("chatId is required", 400);
-  if (!input.parentMessageId) return jsonError("parentMessageId is required", 400);
-  if (!input.actorId) return jsonError("actorId is required", 400);
-  if (!input.idempotencyKey) return jsonError("idempotencyKey is required", 400);
+  if (!input.chatId || typeof input.chatId !== "string") return jsonError("chatId is required", 400);
+  if (!input.parentMessageId || typeof input.parentMessageId !== "string") return jsonError("parentMessageId is required", 400);
+  if (!input.actorId || typeof input.actorId !== "string") return jsonError("actorId is required", 400);
+  if (!input.idempotencyKey || typeof input.idempotencyKey !== "string") return jsonError("idempotencyKey is required", 400);
+  if (input.prompt !== undefined && !Array.isArray(input.prompt)) return jsonError("prompt must be an array", 400);
+  if (input.provider !== undefined && typeof input.provider !== "string") return jsonError("provider must be a string", 400);
+  if (input.modelId !== undefined && typeof input.modelId !== "string") return jsonError("modelId must be a string", 400);
 
   // ── Resolve provider + model ──────────────────────────
 
@@ -277,11 +283,9 @@ export async function handleGenerate(body: unknown, config?: Config, userId?: st
                 `data: ${JSON.stringify({ type: "thinking", content: chunk.content })}\n\n`,
               ),
             );
-          } else if (chunk.type === "done") {
-            if (chunk.usage) {
+          } else if (chunk.type === "done" && chunk.usage) {
               // usage captured from finalResponse
             }
-          }
         });
 
         // Provider stream completed — handle result

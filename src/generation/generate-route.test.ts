@@ -198,13 +198,15 @@ beforeEach(async () => {
   // Init logger for cancellation-tracker
   createLogger({ level: "error" });
 
-  // Reset any mock provider side effects
+  // Register mock provider — reuse existing entry if present (module-level registry)
   const existing = getProvider("mock-provider");
   if (existing) {
-    // Recreate fresh mock to clear fail/stream flags
-    // (registry still has old instance; re-registration blocked — mutate in-place)
+    // Reset the existing provider in-place to clear state from previous test
     mockProvider = new MockLLMProvider();
     Object.assign(existing, mockProvider);
+  } else {
+    mockProvider = new MockLLMProvider();
+    registerProvider("mock-provider", mockProvider);
   }
 
   // Clear all test tables
@@ -213,19 +215,6 @@ beforeEach(async () => {
   await testDb.deleteFrom("actors").execute();
   await testDb.deleteFrom("chats").execute();
   await testDb.deleteFrom("users").execute();
-
-  // Register mock provider fresh
-  mockProvider = new MockLLMProvider();
-  // Clean up any previously registered mock-provider
-  // (registry is a module-level Map, so we unregister by re-registering — not possible,
-  //  but we can just set a new one. The only way is to handle it.)
-  // Use a unique name per test run to avoid collisions
-  const name = `mock-provider`;
-  // We can't unregister, so test isolation depends on using unique names per describe
-  // or only registering once.
-  if (!getProvider(name)) {
-    registerProvider(name, mockProvider);
-  }
 
   setTestDatabase(testDb);
 });
