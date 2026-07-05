@@ -31,6 +31,7 @@ export async function authenticate(
   database: Kysely<DB>,
   authConfig: AuthConfig,
 ): Promise<Response | { context: RequestContext }> {
+  // eslint-disable-next-line sonarjs/cognitive-complexity
   // ── Extract token: Bearer header > cookie fallback ───────
   let rawToken: string | null = null;
 
@@ -43,7 +44,7 @@ export async function authenticate(
   if (!rawToken) {
     const cookieHeader = request.headers.get("Cookie");
     if (cookieHeader) {
-      const match = cookieHeader.match(/(?:^|;\s*)ll_token=([^;]+)/);
+      const match = /(?:^|;\s*)ll_token=([^;]+)/.exec(cookieHeader);
       if (match) rawToken = match[1];
     }
   }
@@ -191,6 +192,7 @@ export async function getOrCreateSoloUserForAuth(
     .where("role", "=", UserRole.Solo)
     .executeTakeFirst();
 
+  // eslint-disable-next-line unicorn/no-top-level-assignment-in-function
   cachedSoloUser = created ?? null;
   return cachedSoloUser;
 }

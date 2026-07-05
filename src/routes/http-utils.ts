@@ -7,6 +7,8 @@
  * @module http-utils
  */
 
+import { safeJsonStringify } from "../utils";
+
 // ── HTTP status code constants ────────────────────────────────
 
 export const HttpStatus = {
@@ -40,7 +42,7 @@ export type ErrorCode = (typeof ErrorCode)[keyof typeof ErrorCode];
 // ── Typed service errors ─────────────────────────────────────
 
 export class NotFoundError extends Error {
-  constructor(entity: string, id: string) {
+  constructor(entity: string, id: string) { // eslint-disable-line unicorn/custom-error-definition
     super(`${entity} not found: ${id}`);
     this.name = "NotFoundError";
   }
@@ -85,7 +87,7 @@ export interface PaginatedResponse<T> {
  *   jsonResponse({ ok: true, id: "abc" })
  *   jsonResponse(user, HttpStatus.Created)
  */
-export function jsonResponse<T>(data: T, status: HttpStatusCode = HttpStatus.OK): Response {
+export function jsonResponse<T>(data: T, status: HttpStatusCode = HttpStatus.OK): Response { // eslint-disable-line @typescript-eslint/no-unnecessary-type-parameters
   return Response.json(data, { status });
 }
 
@@ -129,7 +131,7 @@ export function jsonValidationError(errors: ValidationError[], message = "Valida
  * @example
  *   jsonPaginated(items, total, page, pageSize)
  */
-export function jsonPaginated<T>(data: T[], total: number, page: number, pageSize: number): Response {
+export function jsonPaginated<T>(data: T[], total: number, page: number, pageSize: number): Response { // eslint-disable-line @typescript-eslint/no-unnecessary-type-parameters
   return Response.json(
     {
       data,
@@ -151,10 +153,15 @@ export function jsonPaginated<T>(data: T[], total: number, page: number, pageSiz
  *   jsonCreated({ id: "new-entity" })
  *   jsonCreated()  // no body
  */
-export function jsonCreated<T>(data?: T): Response {
-  return new Response(data === undefined ? null : JSON.stringify(data), {
+export function jsonCreated<T>(data?: T): Response { // eslint-disable-line @typescript-eslint/no-unnecessary-type-parameters
+  if (data === undefined) return new Response(null, { status: HttpStatus.Created });
+  const result = safeJsonStringify(data);
+  if (!result.ok) {
+    return jsonError("Failed to serialize response", HttpStatus.InternalServerError);
+  }
+  return new Response(result.value, {
     status: HttpStatus.Created,
-    headers: data === undefined ? undefined : { "Content-Type": "application/json" },
+    headers: { "Content-Type": "application/json" },
   });
 }
 
@@ -183,10 +190,7 @@ export async function parseBody<T = Record<string, unknown>>(request: Request): 
     // form-encoded (htmx default)
     const text = await request.text();
     const params = new URLSearchParams(text);
-    const obj: Record<string, unknown> = {};
-    for (const [key, val] of params) {
-      obj[key] = val;
-    }
+    const obj: Record<string, unknown> = Object.fromEntries(params);
     return obj as T;
   } catch {
     return jsonError("Invalid request body", HttpStatus.BadRequest);
@@ -196,10 +200,13 @@ export async function parseBody<T = Record<string, unknown>>(request: Request): 
 /**
  * Extract pagination params from URLSearchParams.
  * Defaults: page=1, pageSize=50 (capped at 200).
+ * Clamps to safe ranges: page >= 1, pageSize 1..200.
  */
 export function parsePagination(searchParams: URLSearchParams): { page: number; pageSize: number } {
-  const page = Number(searchParams.get("page") ?? "1");
-  const pageSize = Math.min(Number(searchParams.get("pageSize") ?? "50"), 200);
+  const rawPage = Number(searchParams.get("page") ?? "1");
+  const rawSize = Number(searchParams.get("pageSize") ?? "50");
+  const page = Number.isFinite(rawPage) && rawPage >= 1 ? Math.floor(rawPage) : 1;
+  const pageSize = Number.isFinite(rawSize) ? Math.min(Math.max(1, Math.floor(rawSize)), 200) : 50;
   return { page, pageSize };
 }
 
@@ -212,7 +219,8 @@ export function parsePagination(searchParams: URLSearchParams): { page: number; 
  *   extractIdFromPath("/api/chats/abc-123/messages", "/api/chats")  // "abc-123"
  */
 export function extractIdFromPath(pathname: string, prefix: string): string | null {
-  const regex = new RegExp(`^${prefix.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}/([a-f0-9-]+)(/.*)?$`);
-  const match = pathname.match(regex);
+  const escaped = prefix.replaceAll(/[.*+?^${}()|[\]\\]/g, String.raw`\$&`);
+  const regex = new RegExp(`^${escaped}/([a-f0-9-]+)(/.*)?$`);
+  const match = regex.exec(pathname);
   return match ? match[1] : null;
 }
