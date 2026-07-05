@@ -1,0 +1,177 @@
+/**
+ * E2E Seed Data
+ *
+ * Populates a test database with demo users, characters, and chats.
+ * All IDs are deterministic for cross-flow reference.
+ */
+
+import crypto from "node:crypto";
+import type { Kysely } from "kysely";
+import type { DB } from "@/db/schema";
+import { UserRole, UserStatus, ChatType, ChatMode, ActorType, AgentType } from "@/db/enums";
+
+// ── Deterministic IDs ───────────────────────────────────────────
+
+/** Password is "password" — bcrypt cost 4 for speed */
+const PASSWORD_HASH = "$2b$04$anSd/tkwm/jhqfjGUZOdkurfsavDtfDeUM7dwdc/MQY.4upTC8ikG";
+
+/** Admin password "adminpass" — bcrypt cost 4 */
+const ADMIN_HASH = "$2b$04$8iIP.O0YTEEoM56xn17NiutFxusLfJ7L/DTHZhA2agrM4gXHLD5Uq";
+
+/** Hex-only IDs matching route regex [a-f0-9-]+ */
+const U = "00000000-0000-4000-a000-000000000000";
+export const SEED = {
+  user: {
+    id: `a0000001-0000-4000-a000-${U.slice(24)}`,
+    username: "e2euser",
+    password: "password",
+  },
+  admin: {
+    id: `a0000002-0000-4000-a000-${U.slice(24)}`,
+    username: "e2eadmin",
+    password: "adminpass",
+  },
+  character: {
+    id: `a0000003-0000-4000-a000-${U.slice(24)}`,
+    name: "E2E Test Character",
+  },
+  chat: {
+    id: `a0000004-0000-4000-a000-${U.slice(24)}`,
+    name: "E2E Test Chat",
+  },
+  message: {
+    id: `a0000005-0000-4000-a000-${U.slice(24)}`,
+    content: "Hello from E2E test",
+  },
+  asset: {
+    id: `a0000006-0000-4000-a000-${U.slice(24)}`,
+    filename: "test-image.png",
+  },
+} as const;
+
+// ── Seed functions ──────────────────────────────────────────────
+
+export async function seedUsers(db: Kysely<DB>): Promise<void> {
+  await db
+    .insertInto("users")
+    .values([
+      {
+        id: SEED.user.id,
+        username: SEED.user.username,
+        display_name: "E2E User",
+        password_hash: PASSWORD_HASH,
+        role: UserRole.User,
+        status: UserStatus.Active,
+        settings: "{}",
+      },
+      {
+        id: SEED.admin.id,
+        username: SEED.admin.username,
+        display_name: "E2E Admin",
+        password_hash: ADMIN_HASH,
+        role: UserRole.Admin,
+        status: UserStatus.Active,
+        settings: "{}",
+      },
+    ])
+    .execute();
+
+  // chat_participants.actor_id references actors.id, not users.id
+  // Create corresponding actor entries for seeded users
+  await db
+    .insertInto("actors")
+    .values([
+      {
+        id: SEED.user.id,
+        actor_type: ActorType.User,
+        display_name: "E2E User",
+        user_id: SEED.user.id,
+        owner_id: SEED.user.id,
+        agent_type: AgentType.None,
+        settings: "{}",
+        import_spec: "raw",
+        data_version: 0,
+      },
+      {
+        id: SEED.admin.id,
+        actor_type: ActorType.User,
+        display_name: "E2E Admin",
+        user_id: SEED.admin.id,
+        owner_id: SEED.admin.id,
+        agent_type: AgentType.None,
+        settings: "{}",
+        import_spec: "raw",
+        data_version: 0,
+      },
+    ])
+    .execute();
+}
+
+export async function seedCharacter(db: Kysely<DB>): Promise<void> {
+  await db
+    .insertInto("actors")
+    .values({
+      id: SEED.character.id,
+      actor_type: ActorType.Character,
+      display_name: SEED.character.name,
+      user_id: SEED.user.id,
+      owner_id: SEED.user.id,
+      agent_type: AgentType.Ai,
+      description: "Character for E2E testing",
+      system_prompt: "You are a test character.",
+      settings: "{}",
+      import_spec: "raw",
+      data_version: 0,
+    })
+    .execute();
+}
+
+export async function seedChat(db: Kysely<DB>): Promise<void> {
+  await db
+    .insertInto("chats")
+    .values({
+      id: SEED.chat.id,
+      name: SEED.chat.name,
+      type: ChatType.Direct,
+      mode: ChatMode.Story,
+      created_by: SEED.user.id,
+    })
+    .execute();
+
+  // Add creator as participant
+  await db
+    .insertInto("chat_participants")
+    .values({
+      chat_id: SEED.chat.id,
+      actor_id: SEED.user.id,
+      role_in_chat: "owner",
+    })
+    .execute();
+}
+
+export async function seedMessage(db: Kysely<DB>): Promise<void> {
+  await db
+    .insertInto("messages")
+    .values({
+      id: SEED.message.id,
+      chat_id: SEED.chat.id,
+      actor_id: SEED.user.id,
+      role: "user",
+      content: SEED.message.content,
+      content_type: "text",
+      content_encoding: "identity",
+      status: "confirmed",
+      visibility: "visible",
+    })
+    .execute();
+}
+
+/**
+ * Seed all test data.
+ */
+export async function seedAll(db: Kysely<DB>): Promise<void> {
+  await seedUsers(db);
+  await seedCharacter(db);
+  await seedChat(db);
+  await seedMessage(db);
+}
