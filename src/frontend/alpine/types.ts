@@ -12,12 +12,20 @@
 import type Alpine from "alpinejs";
 // Required for declare global in module
 
-// Type alias for Alpine component state (magic properties added at runtime)
-type AlpineState<T> = T & {
-  $dispatch?: (event: string, detail?: unknown) => void;
-  $nextTick?: (callback: () => void) => Promise<void>;
-  $refs?: Record<string, HTMLElement>;
-};
+// Alpine magic properties — injected on `this` by x-data at runtime
+// Extend when new features use additional magics ($root, $id, $data, $store, $watch)
+// Full list: https://alpinejs.dev/magics
+interface AlpineMagicThis {
+  $dispatch(event: string, detail?: unknown): void;
+  $nextTick(callback?: () => void): Promise<void>;
+  $refs: Record<string, HTMLElement>;
+  $el: HTMLElement;
+}
+
+// Component state: typed data + Alpine magics accessible on `this`
+// Custom ThisType avoids Alpine.AlpineComponent<T> which breaks on `any` fields
+// (InferInterceptors<T> corrupts `any` → `{}` inside Magics<T>)
+type AlpineState<T> = T & ThisType<T & AlpineMagicThis>;
 
 declare global {
   interface DocumentEventMap {
@@ -96,6 +104,10 @@ declare global {
       previewMediaAsset: any;
       pendingAssets: Array<{ assetId: string; filename: string }>;
       removePendingAsset(assetId: string): void;
+      // Internal fields (accessed via this._*) in component methods
+      _observer: MutationObserver | null;
+      _groupedKey: string;
+      _groupedCache: any;
     }>;
     galleryState: () => AlpineState<{
       showUploadModal: boolean;
@@ -156,6 +168,27 @@ declare global {
     /** i18n: translate key to locale string */
     __: (key: string, fallback?: string) => string;
     __localeStrings: Record<string, string>;
+    /** Theme definitions array (set by theme.ts) */
+    __THEMES: Array<{ id: string; name: string; file: string }>;
   }
+
+  // Global var declarations — enables globalThis.chatState etc.
+  // (Window interface properties don't flow to typeof globalThis)
+  var chatState: Window["chatState"];
+  var galleryState: Window["galleryState"];
+  var settingsPage: Window["settingsPage"];
+  var newChatState: Window["newChatState"];
+  var worldsState: Window["worldsState"];
+  var worldDetailState: Window["worldDetailState"];
+  var worldEditState: Window["worldEditState"];
+  var characterChatListState: Window["characterChatListState"];
+  var charactersState: Window["charactersState"];
+  var characterEditState: Window["characterEditState"];
+  var app: Window["app"];
+  var __: Window["__"];
+  var __localeStrings: Window["__localeStrings"];
+  var __THEMES: Window["__THEMES"];
+  var Alpine: Window["Alpine"];
+  var htmx: Window["htmx"];
 }
 

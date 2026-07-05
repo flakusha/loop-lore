@@ -20,6 +20,7 @@ import type {
 import { DEFAULT_QUALITY_THRESHOLDS } from "./types";
 import { STRATEGY_MAP, type TurnParticipant } from "./turn-strategies";
 import { jsonParseOr, safeJsonStringify } from "../utils";
+import { getLogger } from "../logger";
 
 export interface TurnManagerOptions {
   db: Kysely<DB>;
@@ -53,7 +54,7 @@ export class TurnManager {
   private async persistState(): Promise<void> {
     if (!this.state) return;
     const serialized = safeJsonStringify(this.state);
-    if (!serialized.ok) { console.error("[turn-manager] persistState serialization failed:", serialized.error); return; }
+    if (!serialized.ok) { getLogger().child({ module: "turn-manager" }).error("persistState serialization failed", undefined, { error: serialized.error }); return; }
     await this.db
       .updateTable("chats")
       .set({ story_state: serialized.value })
