@@ -5,6 +5,7 @@ import { chatGenerations } from "./chat-generations";
 import { chatManagement } from "./chat-management";
 import { chatEditing } from "./chat-editing";
 import { chatUtils } from "./chat-utils";
+import type { AlpineState, ChatState } from "./types";
 
 // Configure marked for GFM (tables, strikethrough, task-lists) + line breaks
 // Imported in chat-utils.ts but must run once
@@ -99,13 +100,13 @@ globalThis.chatState = function () {
       }
 
       this._toggleChatListHandler = () => {
-        globalThis.Alpine.store("ui").showChatList = !globalThis.Alpine.store("ui").showChatList;
+        Alpine.store("ui").showChatList = !Alpine.store("ui").showChatList;
       };
       this._toggleGalleryHandler = () => {
-        globalThis.Alpine.store("ui").showGallery = !globalThis.Alpine.store("ui").showGallery;
+        Alpine.store("ui").showGallery = !Alpine.store("ui").showGallery;
       };
       this._toggleCharacterInfoHandler = () => {
-        globalThis.Alpine.store("ui").showCharacterInfo = true;
+        Alpine.store("ui").showCharacterInfo = true;
       };
       document.addEventListener("toggle-chat-list", this._toggleChatListHandler);
       document.addEventListener("toggle-gallery", this._toggleGalleryHandler);
@@ -127,18 +128,18 @@ globalThis.chatState = function () {
 
       document.addEventListener("keydown", (e: KeyboardEvent) => {
         if (e.key === "Escape") {
-          if (globalThis.Alpine.store("ui").showChatList) {
-            globalThis.Alpine.store("ui").showChatList = false;
-          } else if (globalThis.Alpine.store("ui").showGallery) {
-            globalThis.Alpine.store("ui").showGallery = false;
-          } else if (globalThis.Alpine.store("ui").showCharacterInfo) {
-            globalThis.Alpine.store("ui").showCharacterInfo = false;
+          if (Alpine.store("ui").showChatList) {
+            Alpine.store("ui").showChatList = false;
+          } else if (Alpine.store("ui").showGallery) {
+            Alpine.store("ui").showGallery = false;
+          } else if (Alpine.store("ui").showCharacterInfo) {
+            Alpine.store("ui").showCharacterInfo = false;
           }
         }
         if (e.ctrlKey && e.key === "j") {
-          const focusedMsg = document.querySelector(".message.focused");
+          const focusedMsg = document.querySelector<HTMLElement>(".message.focused");
           if (focusedMsg) {
-            const msgId = (focusedMsg as HTMLElement).dataset.messageId;
+            const msgId = focusedMsg.dataset.messageId;
             if (msgId) this.continueMessage(msgId);
           }
         }
@@ -159,7 +160,7 @@ globalThis.chatState = function () {
       }
 
       if (globalThis.Alpine) {
-        const uiStore = globalThis.Alpine.store("ui");
+        const uiStore = Alpine.store("ui");
         if (uiStore) {
           uiStore.showChatList = false;
           uiStore.showGallery = false;
@@ -207,10 +208,10 @@ globalThis.chatState = function () {
       }
       this.loadingError = null;
       this.activeChat = chatId;
-      globalThis.Alpine.store("ui").hasActiveChat = true;
+      Alpine.store("ui").hasActiveChat = true;
       const chat = this.chats.find((c: { id: string; name?: string }) => c.id === chatId);
       this.activeChatName = chat?.name || "Chat";
-      const titleEl = document.querySelector("#page-title");
+      const titleEl = document.querySelector<HTMLElement>("#page-title");
       if (titleEl) titleEl.textContent = this.activeChatName;
       history.replaceState(null, "", `/views/chat?chatid=${chatId}`);
       this.currentPage = 1;
@@ -229,5 +230,5 @@ globalThis.chatState = function () {
     ...chatManagement,
     ...chatEditing,
     ...chatUtils,
-  };
+  } as AlpineState<ChatState>;
 };
