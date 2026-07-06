@@ -1,11 +1,11 @@
 /**
- * Real Server Manager for E2E Tests
+ * Server External Manager for E2E Tests
  *
  * Spawns and manages external server processes for real-hardware testing.
  * Each server type has its own lifecycle: start → health-check → ready → stop.
  *
  * Usage:
- *   const manager = new RealServerManager();
+ *   const manager = new ServerExternalManager();
  *   await manager.startLlamaCpp({ port: 9011, modelPath: "/path/to/model.gguf" });
  *   // Run tests...
  *   await manager.stopAll();
@@ -16,6 +16,8 @@
 
 import { spawn, type Subprocess } from "bun";
 import { resolve } from "node:path";
+import type { Logger } from "../../../src/logger";
+
 
 // ── Types ──────────────────────────────────────────────────
 
@@ -57,7 +59,8 @@ const BINARY_CANDIDATES = {
 } as const;
 
 function findBinary(type: keyof typeof BINARY_CANDIDATES): string | null {
-  for (const name of BINARY_CANDIDATES[type]) {
+  const candidates = BINARY_CANDIDATES[type];
+  for (const name of candidates) {
     const result = Bun.which(name);
     if (result) return result;
   }
@@ -66,7 +69,7 @@ function findBinary(type: keyof typeof BINARY_CANDIDATES): string | null {
 
 // ── Port verification ─────────────────────────────────────
 
-async function isPortFree(port: number): Promise<boolean> {
+function isPortFree(port: number): boolean {
   try {
     const server = Bun.serve({ port, fetch: () => new Response("ok") });
     server.stop();
@@ -76,14 +79,37 @@ async function isPortFree(port: number): Promise<boolean> {
   }
 }
 
+// ── Health check option types ─────────────────────────────
+
+interface WaitForHealthOptions {
+  /** Max wait in ms */
+  timeoutMs: number;
+  /** Poll interval in ms (default 500) */
+  intervalMs?: number;
+}
+
+interface WaitForStdoutOptions {
+  /** String to look for in stdout */
+  signal: string;
+  /** Max wait in ms */
+  timeoutMs: number;
+  /** Decode encoding (default utf-8) */
+  encoding?: string;
+}
+
+interface WaitForPortOptions {
+  /** Max wait in ms */
+  timeoutMs: number;
+}
+
 // ── Health checks ─────────────────────────────────────────
 
 async function waitForHealth(
   url: string,
-  timeoutMs: number,
-  intervalMs = 500,
+  opts: WaitForHealthOptions,
 ): Promise<boolean> {
-  const deadline = Date.now() + timeoutMs;
+  const intervalMs = opts.intervalMs ?? 500;
+  const deadline = Date.now() + opts.timeoutMs;
   while (Date.now() < deadline) {
     try {
       const res = await fetch(url, { signal: AbortSignal.timeout(2000) });
@@ -97,12 +123,12 @@ async function waitForHealth(
 }
 
 /** Wait for process stdout to contain a signal string */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 async function waitForStdout(
   proc: Subprocess,
-  signal: string,
-  timeoutMs: number,
+  opts: WaitForStdoutOptions,
 ): Promise<boolean> {
-  const deadline = Date.now() + timeoutMs;
+  const deadline = Date.now() + opts.timeoutMs;
   const reader = proc.stdout?.getReader();
   if (!reader) return false;
 
@@ -112,7 +138,7 @@ async function waitForStdout(
       const { value, done } = await reader.read();
       if (done) break;
       buffer += new TextDecoder().decode(value);
-      if (buffer.includes(signal)) return true;
+      if (buffer.includes(opts.signal)) return true;
       await new Promise((r) => setTimeout(r, 200));
     }
   } catch {
@@ -122,11 +148,11 @@ async function waitForStdout(
 }
 
 /** Wait for TCP port to respond (any HTTP status = alive) */
-async function waitForPort(port: number, timeoutMs: number): Promise<boolean> {
-  const deadline = Date.now() + timeoutMs;
+async function waitForPort(port: number, opts: WaitForPortOptions): Promise<boolean> {
+  const deadline = Date.now() + opts.timeoutMs;
   while (Date.now() < deadline) {
     try {
-      const res = await fetch(`http://127.0.0.1:${port}/`, { signal: AbortSignal.timeout(2000) });
+      await fetch(`http://127.0.0.1:${port}/`, { signal: AbortSignal.timeout(2000) });
       // Any HTTP response (even 404) means server is listening
       return true;
     } catch {
@@ -140,13 +166,57 @@ async function waitForPort(port: number, timeoutMs: number): Promise<boolean> {
 
 /** Detect HuggingFace identifier format: org/repo:quant */
 function isHuggingFaceRef(path: string): boolean {
-  return /^[\w-]+\/[\w.-]+:[\w_]+$/i.test(path);
+  return /^[\w-]+\/[\w.-]+:\w+$/i.test(path);
 }
 
 // ── Manager class ─────────────────────────────────────────
 
-export class RealServerManager {
+export class ServerExternalManager {
   private instances: ServerInstance[] = [];
+  private log: Logger;
+  private probeTimer: ReturnType<typeof setInterval> | null = null;
+  private readonly PROBE_INTERVAL_MS = 30_000;
+
+  constructor(logger: Logger) {
+    this.log = logger.child({ module: "server-external" });
+  }
+
+  // ── Private: liveliness probing ─────────────────────────
+
+  /** Probe a single instance — returns true if responsive */
+  private async probeInstance(instance: ServerInstance): Promise<boolean> {
+    try {
+      if (instance.type === "llama-cpp" || instance.type === "llama-swap") {
+        const res = await fetch(`http://127.0.0.1:${instance.port}/health`, {
+          signal: AbortSignal.timeout(5000),
+        });
+        return res.ok;
+      }
+      // sd-cpp: any TCP response = alive
+      await fetch(`http://127.0.0.1:${instance.port}/`, {
+        signal: AbortSignal.timeout(5000),
+      });
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
+  /** Run a single liveness check against all managed instances */
+  private async checkAllLiveliness(): Promise<void> {
+    for (const instance of this.instances) {
+      const alive = await this.probeInstance(instance);
+      if (!alive) {
+        this.log.warn("External server unresponsive", {
+          type: instance.type,
+          port: instance.pid,
+          pid: instance.pid,
+        });
+      }
+    }
+  }
+
+  // ── Public API ──────────────────────────────────────────
 
   /** All running server instances */
   get active(): ReadonlyArray<ServerInstance> {
@@ -161,11 +231,11 @@ export class RealServerManager {
   async startLlamaCpp(opts: LlamaCppOptions): Promise<ServerInstance | null> {
     const binary = findBinary("llama-cpp");
     if (!binary) {
-      console.warn("[real-server] llama-server not found in PATH — skipping");
+      this.log.warn("llama-server not found in PATH — skipping");
       return null;
     }
     if (!(await isPortFree(opts.port))) {
-      console.warn(`[real-server] port ${opts.port} in use — skipping llama-cpp`);
+      this.log.warn(`port ${opts.port} in use — skipping llama-cpp`);
       return null;
     }
 
@@ -188,11 +258,11 @@ export class RealServerManager {
 
     const ready = await waitForHealth(
       `http://127.0.0.1:${opts.port}/health`,
-      15_000,
+      { timeoutMs: 15_000 },
     );
     if (!ready) {
       proc.kill();
-      console.warn(`[real-server] llama-cpp on ${opts.port} did not become ready`);
+      this.log.warn(`llama-cpp on ${opts.port} did not become ready`);
       return null;
     }
 
@@ -213,7 +283,7 @@ export class RealServerManager {
   async startLlamaSwap(opts: LlamaSwapOptions): Promise<ServerInstance | null> {
     const binary = findBinary("llama-swap");
     if (!binary) {
-      console.warn("[real-server] llama-swap not found in PATH — skipping");
+      this.log.warn("llama-swap not found in PATH — skipping");
       return null;
     }
 
@@ -225,10 +295,10 @@ export class RealServerManager {
     });
 
     // llama-swap exposes health on its first model port
-    const ready = await waitForHealth("http://127.0.0.1:8080/health", 30_000);
+    const ready = await waitForHealth("http://127.0.0.1:8080/health", { timeoutMs: 30_000 });
     if (!ready) {
       proc.kill();
-      console.warn("[real-server] llama-swap did not become ready");
+      this.log.warn("llama-swap did not become ready");
       return null;
     }
 
@@ -249,11 +319,11 @@ export class RealServerManager {
   async startSdCpp(opts: SdCppOptions): Promise<ServerInstance | null> {
     const binary = findBinary("sd-cpp");
     if (!binary) {
-      console.warn("[real-server] sd-server not found in PATH — skipping");
+      this.log.warn("sd-server not found in PATH — skipping");
       return null;
     }
     if (!(await isPortFree(opts.port))) {
-      console.warn(`[real-server] port ${opts.port} in use — skipping sd-cpp`);
+      this.log.warn(`port ${opts.port} in use — skipping sd-cpp`);
       return null;
     }
 
@@ -275,10 +345,10 @@ export class RealServerManager {
     });
 
     // sd-server: no liveliness probe. Use TCP port + stdout detection.
-    const portReady = await waitForPort(opts.port, 60_000);
+    const portReady = await waitForPort(opts.port, { timeoutMs: 60_000 });
     if (!portReady) {
       proc.kill();
-      console.warn(`[real-server] sd-cpp on ${opts.port} did not start`);
+      this.log.warn(`sd-cpp on ${opts.port} did not start`);
       return null;
     }
 
@@ -309,5 +379,20 @@ export class RealServerManager {
     for (const instance of this.instances) {
       await this.stop(instance);
     }
+  }
+
+  /** Start periodic health checks on all managed servers */
+  startLivenessProbes(): void {
+    if (this.probeTimer) return;
+    this.probeTimer = setInterval(() => {
+      this.checkAllLiveliness().catch(() => {});
+    }, this.PROBE_INTERVAL_MS);
+  }
+
+  /** Stop periodic health checks */
+  stopLivenessProbes(): void {
+    if (!this.probeTimer) return;
+    clearInterval(this.probeTimer);
+    this.probeTimer = null;
   }
 }
