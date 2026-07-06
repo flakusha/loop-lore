@@ -311,6 +311,14 @@ export async function dispatchAuth(params: RouteDispatchParams): Promise<Respons
 }
 
 /**
+ * Reset the login rate limiter — intended for e2e test isolation
+ * (each test file spins up a fresh server but the limiter is process-global).
+ */
+export function resetLoginRateLimiter(): void {
+  loginLimiter.clear();
+}
+
+/**
  * Clear the cached solo user reference (for testing).
  * Re-exported from middleware/auth.ts.
  */
