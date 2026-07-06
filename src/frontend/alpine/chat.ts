@@ -13,7 +13,7 @@ interface ChatAsset {
   filename?: string;
 }
 
-globalThis.chatState = function() {
+globalThis.chatState = function () {
   return {
     isGenerating: false,
     generationLabel: "Character is responding...",
@@ -412,12 +412,12 @@ globalThis.chatState = function() {
           this.activeAttemptId = data.attemptId;
           this.generationDetail = data.generation
             ? {
-              attemptId: data.generation.attemptId,
-              status: data.generation.status,
-              elapsedMs: data.generation.elapsedMs,
-              chunksReceived: data.generation.chunksReceived,
-              charsReceived: data.generation.charsReceived,
-            }
+                attemptId: data.generation.attemptId,
+                status: data.generation.status,
+                elapsedMs: data.generation.elapsedMs,
+                chunksReceived: data.generation.chunksReceived,
+                charsReceived: data.generation.charsReceived,
+              }
             : null;
           // Update label with detail info
           const detail = this.generationDetail;
@@ -596,9 +596,10 @@ globalThis.chatState = function() {
 
         this.$dispatch("show-toast", {
           type: "info",
-          message: data.resumeFromStep > 0
-            ? `Resuming from step ${data.resumeFromStep + 1} of ${data.totalSteps}...`
-            : "Regenerating response...",
+          message:
+            data.resumeFromStep > 0
+              ? `Resuming from step ${data.resumeFromStep + 1} of ${data.totalSteps}...`
+              : "Regenerating response...",
         });
 
         this.isGenerating = true;
