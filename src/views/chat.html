@@ -22,6 +22,7 @@
     <button
       class="btn-icon"
       title="Toggle gallery sidebar"
+      x-show="activeChat"
       @click="$store.ui.showGallery = !$store.ui.showGallery"
       data-testid="toggle-gallery"
     >
@@ -30,6 +31,7 @@
     <button
       class="btn-icon"
       title="Character info"
+      x-show="activeChat"
       @click="$store.ui.showCharacterInfo = true"
       data-testid="toggle-character-info"
     >
@@ -38,6 +40,7 @@
     <button
       class="btn-icon"
       title="Chat settings"
+      x-show="activeChat"
       @click="$store.ui.showChatSettings = true"
       data-testid="toggle-chat-settings"
     >
