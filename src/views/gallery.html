@@ -1,5 +1,5 @@
 <!-- Gallery View -->
-<header id="header-slot" class="main-header" data-testid="gallery-header">
+<header id="header-slot" class="main-header" data-page="gallery" data-testid="gallery-header">
   <button class="hamburger" onclick="toggleSidebar()" data-testid="hamburger">☰</button>
   <span class="title">Asset Gallery</span>
   <div class="actions">
@@ -138,10 +138,3 @@
     </div>
   </main>
 </div>
-
-<script>
-  (function f() {
-    if (typeof loadGalleryPage === "function") loadGalleryPage();
-    else setTimeout(f, 10);
-  })();
-</script>
