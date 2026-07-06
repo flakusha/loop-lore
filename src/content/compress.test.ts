@@ -40,7 +40,9 @@ describe("copyDirectory", () => {
   });
 
   test("no-ops when source directory does not exist", () => {
-    expect(() => { copyDirectory(join(tmpDir, "does-not-exist"), join(tmpDir, "noop-dest")); }).not.toThrow();
+    expect(() => {
+      copyDirectory(join(tmpDir, "does-not-exist"), join(tmpDir, "noop-dest"));
+    }).not.toThrow();
   });
 });
 

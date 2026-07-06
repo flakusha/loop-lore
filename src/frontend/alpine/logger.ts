@@ -98,10 +98,14 @@ class BrowserLoggerImpl implements BrowserLogger {
 
   private getConsoleMethod(level: LogLevel): (...args: unknown[]) => void {
     switch (level) {
-      case "debug": return console.debug;
-      case "warn":  return console.warn;
-      case "error": return console.error;
-      default:      return console.log;
+      case "debug":
+        return console.debug;
+      case "warn":
+        return console.warn;
+      case "error":
+        return console.error;
+      default:
+        return console.log;
     }
   }
 
@@ -128,10 +132,7 @@ class BrowserLoggerImpl implements BrowserLogger {
         : bindings.module
       : this.module;
 
-    return new BrowserLoggerImpl(
-      { level: this.levelFromThreshold() },
-      childModule,
-    );
+    return new BrowserLoggerImpl({ level: this.levelFromThreshold() }, childModule);
   }
 
   /** Derive level string from numeric threshold for child propagation */

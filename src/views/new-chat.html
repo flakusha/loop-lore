@@ -1,10 +1,6 @@
 <!-- New Chat Form (swapped into #app-root by htmx) -->
 <!-- Header: moved to #header-slot by htmx:load handler -->
-<header
-  id="header-slot"
-  class="main-header"
-  data-testid="new-chat-header"
->
+<header id="header-slot" class="main-header" data-testid="new-chat-header">
   <button
     class="hamburger"
     @click="$store.sidebar.open = !$store.sidebar.open"
@@ -74,12 +70,7 @@
           <div
             style="display: flex; gap: var(--space-3); justify-content: flex-end; margin-top: var(--space-6)"
           >
-            <a
-              class="btn btn-secondary"
-              href="/views/chat"
-              data-testid="cancel-create-chat"
-              >Cancel</a
-            >
+            <a class="btn btn-secondary" href="/views/chat" data-testid="cancel-create-chat">Cancel</a>
             <button
               type="submit"
               class="btn btn-primary"
