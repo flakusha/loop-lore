@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en" class="dark">
   <head>
     <meta charset="UTF-8" />
@@ -9,75 +9,16 @@
     <link rel="stylesheet" href="/css/theme.css" media="all" />
 
     <!-- Theme CSS (dynamically loaded based on user preference) -->
-    <link
-      rel="stylesheet"
-      href="/css/theme-default.css"
-      media="all"
-      id="theme-default"
-    />
-    <link
-      rel="stylesheet"
-      href="/css/theme-light.css"
-      media="all"
-      id="theme-light"
-      disabled
-    />
-    <link
-      rel="stylesheet"
-      href="/css/theme-bright.css"
-      media="all"
-      id="theme-bright"
-      disabled
-    />
-    <link
-      rel="stylesheet"
-      href="/css/theme-colorful.css"
-      media="all"
-      id="theme-colorful"
-      disabled
-    />
-    <link
-      rel="stylesheet"
-      href="/css/theme-monochrome.css"
-      media="all"
-      id="theme-monochrome"
-      disabled
-    />
-    <link
-      rel="stylesheet"
-      href="/css/theme-no-icons.css"
-      media="all"
-      id="theme-no-icons"
-      disabled
-    />
-    <link
-      rel="stylesheet"
-      href="/css/theme-dracula.css"
-      media="all"
-      id="theme-dracula"
-      disabled
-    />
-    <link
-      rel="stylesheet"
-      href="/css/theme-nord.css"
-      media="all"
-      id="theme-nord"
-      disabled
-    />
-    <link
-      rel="stylesheet"
-      href="/css/theme-github-dark.css"
-      media="all"
-      id="theme-github-dark"
-      disabled
-    />
-    <link
-      rel="stylesheet"
-      href="/css/theme-material.css"
-      media="all"
-      id="theme-material"
-      disabled
-    />
+    <link rel="stylesheet" href="/css/theme-default.css" media="all" id="theme-default" />
+    <link rel="stylesheet" href="/css/theme-light.css" media="all" id="theme-light" disabled />
+    <link rel="stylesheet" href="/css/theme-bright.css" media="all" id="theme-bright" disabled />
+    <link rel="stylesheet" href="/css/theme-colorful.css" media="all" id="theme-colorful" disabled />
+    <link rel="stylesheet" href="/css/theme-monochrome.css" media="all" id="theme-monochrome" disabled />
+    <link rel="stylesheet" href="/css/theme-no-icons.css" media="all" id="theme-no-icons" disabled />
+    <link rel="stylesheet" href="/css/theme-dracula.css" media="all" id="theme-dracula" disabled />
+    <link rel="stylesheet" href="/css/theme-nord.css" media="all" id="theme-nord" disabled />
+    <link rel="stylesheet" href="/css/theme-github-dark.css" media="all" id="theme-github-dark" disabled />
+    <link rel="stylesheet" href="/css/theme-material.css" media="all" id="theme-material" disabled />
 
     <link rel="stylesheet" href="/css/app.css" media="all" />
     <link rel="stylesheet" href="/css/gallery.css" media="all" />
@@ -118,52 +59,52 @@
     ></script>
 
     <style>
-    /* Inline critical: prevent FOUC - uses CSS vars from theme.css */
-    body {
-      background: var(--bg-primary);
-      color: var(--text-primary);
-    }
-    [x-cloak] {
-      display: none !important;
-    }
+      /* Inline critical: prevent FOUC - uses CSS vars from theme.css */
+      body {
+        background: var(--bg-primary);
+        color: var(--text-primary);
+      }
+      [x-cloak] {
+        display: none !important;
+      }
 
-    /* Theme selector dropdown */
-    .theme-selector {
-      position: relative;
-      display: inline-block;
-    }
+      /* Theme selector dropdown */
+      .theme-selector {
+        position: relative;
+        display: inline-block;
+      }
 
-    .theme-options {
-      position: absolute;
-      top: 100%;
-      right: 0;
-      background: var(--bg-secondary);
-      border: 1px solid var(--border-default);
-      border-radius: var(--radius-sm);
-      box-shadow: var(--shadow-md);
-      min-width: 180px;
-      z-index: var(--z-dropdown);
-      padding: var(--space-2) 0;
-    }
+      .theme-options {
+        position: absolute;
+        top: 100%;
+        right: 0;
+        background: var(--bg-secondary);
+        border: 1px solid var(--border-default);
+        border-radius: var(--radius-sm);
+        box-shadow: var(--shadow-md);
+        min-width: 180px;
+        z-index: var(--z-dropdown);
+        padding: var(--space-2) 0;
+      }
 
-    .theme-option {
-      padding: var(--space-2) var(--space-3);
-      cursor: pointer;
-      font-size: 13px;
-      white-space: nowrap;
-      transition: background var(--transition-fast);
-    }
+      .theme-option {
+        padding: var(--space-2) var(--space-3);
+        cursor: pointer;
+        font-size: 13px;
+        white-space: nowrap;
+        transition: background var(--transition-fast);
+      }
 
-    .theme-option:hover {
-      background: var(--bg-tertiary);
-      color: var(--text-primary);
-    }
+      .theme-option:hover {
+        background: var(--bg-tertiary);
+        color: var(--text-primary);
+      }
 
-    .theme-option.active {
-      background: var(--accent-primary);
-      color: #000;
-      font-weight: 600;
-    }
+      .theme-option.active {
+        background: var(--accent-primary);
+        color: #000;
+        font-weight: 600;
+      }
     </style>
   </head>
   <body
@@ -190,12 +131,7 @@
     </div>
 
     <!-- Persistent sidebar (does not reload on htmx nav) -->
-    <aside
-      class="sidebar"
-      id="layout-sidebar"
-      data-testid="sidebar"
-      :class="{ open: $store.sidebar.open }"
-    >
+    <aside class="sidebar" id="layout-sidebar" data-testid="sidebar" :class="{ open: $store.sidebar.open }">
       <div class="sidebar-header">
         <span class="logo">loop-lore</span>
         <button
@@ -300,20 +236,14 @@
       class="backdrop"
       x-transition
       @click="$store.sidebar.open = false"
-    >
-    </div>
+    ></div>
 
     <!-- Header slot placeholder — replaced via hx-swap-oob on page nav.
          CSS hides it when empty; after OOB swap the real header becomes visible. -->
     <header id="header-slot" class="main-header"></header>
 
     <!-- Main content rendered by htmx swaps -->
-    <div
-      id="app-root"
-      data-testid="app-root"
-      hx-ext="response-targets"
-      hx-target-error="#toast-container"
-    >
+    <div id="app-root" data-testid="app-root" hx-ext="response-targets" hx-target-error="#toast-container">
       {{{content}}}
     </div>
   </body>

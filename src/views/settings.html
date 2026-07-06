@@ -1,10 +1,6 @@
 <!-- Settings Page -->
 <!-- Header: moved to #header-slot by htmx:load handler -->
-<header
-  id="header-slot"
-  class="main-header"
-  data-testid="settings-header"
->
+<header id="header-slot" class="main-header" data-testid="settings-header">
   <button
     class="hamburger"
     @click="$store.sidebar.open = !$store.sidebar.open"

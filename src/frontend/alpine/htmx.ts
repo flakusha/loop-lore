@@ -13,7 +13,6 @@ function getCsrfToken(): string {
   return match ? match[1] : "";
 }
 
- 
 async function apiFetch(url: string, options?: RequestInit): Promise<Response> {
   const method = options?.method ?? "GET";
   log.debug(`${method} ${url}`, { direction: "request" });
@@ -49,7 +48,7 @@ document.addEventListener("htmx:configRequest", (e: CustomEvent<{ headers: Recor
 document.addEventListener("htmx:beforeSwap", (e: CustomEvent<{ content: string }>) => {
   const swapTarget = document.querySelector("#app-root");
   if (swapTarget) {
-    swapTarget.querySelectorAll("[x-data]").forEach(el => {
+    swapTarget.querySelectorAll("[x-data]").forEach((el) => {
       try {
         if (el && (globalThis as any).Alpine) {
           const data = (globalThis as any).Alpine.$data(el);
@@ -69,13 +68,13 @@ document.addEventListener("htmx:load", (e: CustomEvent<{ elt: Element }>) => {
   const elt = e.detail.elt;
   if (elt && elt.getAttribute("x-data") && (globalThis as any).Alpine) {
     const appRoot = document.querySelector("#app-root");
-    const shouldInit = 
+    const shouldInit =
       // If element is inside app-root, init it
-      (appRoot?.contains(elt)) || 
+      appRoot?.contains(elt) ||
       // If it's an OOB swapped header element
       elt.id === "header-slot" ||
       false;
-    
+
     if (shouldInit) {
       (globalThis as any).Alpine.initTree(elt);
     }
@@ -98,11 +97,14 @@ function normalizeHeaderSlot() {
   let bestChildren = -1;
   for (const h of all) {
     if (!appRoot.contains(h)) {
-    	continue;
+      continue;
     }
 
     const n = h.children.length;
-    if (n > bestChildren) { best = h; bestChildren = n; }
+    if (n > bestChildren) {
+      best = h;
+      bestChildren = n;
+    }
   }
   // Fallback: first header at body level (layout placeholder)
   if (!best) best = all[0];

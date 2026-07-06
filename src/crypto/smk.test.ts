@@ -36,7 +36,11 @@ describe("initSmk — valid key", () => {
   });
 
   test("uppercase hex key works", async () => {
-    await initSmk({ serverEncryptionKey: VALID_64_HEX.toUpperCase(), required: false, ...BASE_ENCRYPTION_CONFIG });
+    await initSmk({
+      serverEncryptionKey: VALID_64_HEX.toUpperCase(),
+      required: false,
+      ...BASE_ENCRYPTION_CONFIG,
+    });
     expect(getSmk()).not.toBeNull();
   });
 });
@@ -54,42 +58,46 @@ describe("initSmk — null / dev mode", () => {
   });
 
   test("whitespace-only key + required=false returns null", async () => {
-    await initSmk({ serverEncryptionKey: ' '.repeat(3), required: false, ...BASE_ENCRYPTION_CONFIG });
+    await initSmk({ serverEncryptionKey: " ".repeat(3), required: false, ...BASE_ENCRYPTION_CONFIG });
     expect(getSmk()).toBeNull();
   });
 });
 
 describe("initSmk — error paths", () => {
   test("missing key with required=true throws", async () => {
-    await expect(initSmk({ required: true, ...BASE_ENCRYPTION_CONFIG })).rejects.toThrow("SERVER_ENCRYPTION_KEY is required");
-  });
-
-  test("empty key with required=true throws", async () => {
-    await expect(initSmk({ serverEncryptionKey: "", required: true, ...BASE_ENCRYPTION_CONFIG })).rejects.toThrow(
+    await expect(initSmk({ required: true, ...BASE_ENCRYPTION_CONFIG })).rejects.toThrow(
       "SERVER_ENCRYPTION_KEY is required",
     );
   });
 
+  test("empty key with required=true throws", async () => {
+    await expect(
+      initSmk({ serverEncryptionKey: "", required: true, ...BASE_ENCRYPTION_CONFIG }),
+    ).rejects.toThrow("SERVER_ENCRYPTION_KEY is required");
+  });
+
   test("invalid hex chars throw", async () => {
-    await expect(initSmk({ serverEncryptionKey: "gg".repeat(32), required: false, ...BASE_ENCRYPTION_CONFIG })).rejects.toThrow(
-      "Invalid hex byte",
-    );
+    await expect(
+      initSmk({ serverEncryptionKey: "gg".repeat(32), required: false, ...BASE_ENCRYPTION_CONFIG }),
+    ).rejects.toThrow("Invalid hex byte");
   });
 
   test("odd-length hex throws", async () => {
-    await expect(initSmk({ serverEncryptionKey: "a".repeat(63), required: false, ...BASE_ENCRYPTION_CONFIG })).rejects.toThrow();
+    await expect(
+      initSmk({ serverEncryptionKey: "a".repeat(63), required: false, ...BASE_ENCRYPTION_CONFIG }),
+    ).rejects.toThrow();
   });
 
   test("short key (16 chars, 8 bytes) throws length error", async () => {
-    await expect(initSmk({ serverEncryptionKey: "a".repeat(16), required: false, ...BASE_ENCRYPTION_CONFIG })).rejects.toThrow(
-      "must be 64 hex chars",
-    );
+    await expect(
+      initSmk({ serverEncryptionKey: "a".repeat(16), required: false, ...BASE_ENCRYPTION_CONFIG }),
+    ).rejects.toThrow("must be 64 hex chars");
   });
 
   test("long key (66 chars, 33 bytes) throws length error", async () => {
-    await expect(initSmk({ serverEncryptionKey: "a".repeat(66), required: false, ...BASE_ENCRYPTION_CONFIG })).rejects.toThrow(
-      "must be 64 hex chars",
-    );
+    await expect(
+      initSmk({ serverEncryptionKey: "a".repeat(66), required: false, ...BASE_ENCRYPTION_CONFIG }),
+    ).rejects.toThrow("must be 64 hex chars");
   });
 });
 
