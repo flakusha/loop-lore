@@ -337,12 +337,11 @@ export class PromptAssembler {
 
       const label = trimmed.slice(0, colonIdx).trim().toLowerCase();
       const content = trimmed.slice(colonIdx + 1).trim();
-      const role =
-        label === "assistant" || label === "character" || label === "{{char}}"
-          ? "character"
-          : label === "user" || label === "{{user}}"
-            ? "user"
-            : "user";
+      const role = ["assistant", "character", "{{char}}"].includes(label)
+        ? "character"
+        : label === "user" || label === "{{user}}"
+          ? "user"
+          : "user";
       examples.push({ role: role, content });
     }
 

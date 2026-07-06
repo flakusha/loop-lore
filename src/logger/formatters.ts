@@ -27,7 +27,8 @@ export function formatConsole(entry: LogEntry, isColor = false): string {
   const levelLabel = numericToLabel(entry.level).padEnd(5);
   const modulePart = entry.module ? ` [${entry.module}]` : "";
   const msgResult = safeJsonStringify(entry.message);
-  const msg = typeof entry.message === "string" ? entry.message : (msgResult.ok ? msgResult.value : "[unserializable]");
+  const msg =
+    typeof entry.message === "string" ? entry.message : msgResult.ok ? msgResult.value : "[unserializable]";
 
   let line = `[${entry.time}] [${levelLabel}]${modulePart} ${msg}`;
 
@@ -51,7 +52,8 @@ export function formatConsole(entry: LogEntry, isColor = false): string {
  */
 export function formatJSONL(entry: LogEntry): string {
   const msgResult = safeJsonStringify(entry.message);
-  const msg = typeof entry.message === "string" ? entry.message : (msgResult.ok ? msgResult.value : "[unserializable]");
+  const msg =
+    typeof entry.message === "string" ? entry.message : msgResult.ok ? msgResult.value : "[unserializable]";
   const obj: Record<string, unknown> = {
     level: entry.level,
     timestamp: entry.timestamp,

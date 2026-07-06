@@ -25,24 +25,22 @@ export function minifyCSS(content: string): string {
 
   result = result.replaceAll(/\/\*[\s\S]*?\*\//g, "");
 
-  // eslint-disable-next-line sonarjs/super-linear-regex
   result = result.replaceAll(/^\s*[\r\n]/gm, "");
 
-  // eslint-disable-next-line sonarjs/super-linear-regex
   result = result.replaceAll(/\s*{\s*/g, "{");
-  // eslint-disable-next-line sonarjs/super-linear-regex
+
   result = result.replaceAll(/\s*}\s*/g, "}");
-  // eslint-disable-next-line sonarjs/super-linear-regex
+
   result = result.replaceAll(/\s*:\s*/g, ":");
-  // eslint-disable-next-line sonarjs/super-linear-regex
+
   result = result.replaceAll(/\s*;\s*/g, ";");
-  // eslint-disable-next-line sonarjs/super-linear-regex
+
   result = result.replaceAll(/\s*,\s*/g, ",");
-  // eslint-disable-next-line sonarjs/super-linear-regex
+
   result = result.replaceAll(/\s*>\s*/g, ">");
-  // eslint-disable-next-line sonarjs/super-linear-regex
+
   result = result.replaceAll(/\s*\+\s*/g, "+");
-  // eslint-disable-next-line sonarjs/super-linear-regex
+
   result = result.replaceAll(/\s*~\s*/g, "~");
 
   result = result.replaceAll(";}", "}");

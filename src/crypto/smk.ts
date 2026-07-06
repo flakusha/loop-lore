@@ -14,28 +14,28 @@ const SMK_SALT = "loop-lore-smk-v1";
 const SMK_INFO = "loop-lore-smk-derive";
 
 // Module-level SMK holder — set once at startup
-let activeSmk: CryptoKey | null = null;
+const smkState = { activeSmk: null as CryptoKey | null };
 
 /**
  * Load the SMK at startup and store it globally.
  * Call once from server entry point.
  */
 export async function initSmk(config: EncryptionConfig): Promise<void> {
-  activeSmk = await loadSmk(config);
+  smkState.activeSmk = await loadSmk(config);
 }
 
 /**
  * Get the loaded SMK. Returns null if encryption is disabled (dev mode).
  */
 export function getSmk(): CryptoKey | null {
-  return activeSmk;
+  return smkState.activeSmk;
 }
 
 /**
  * Check whether message encryption is active.
  */
 export function isEncryptionEnabled(): boolean {
-  return activeSmk !== null;
+  return smkState.activeSmk !== null;
 }
 
 /**

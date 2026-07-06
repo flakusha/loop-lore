@@ -61,7 +61,7 @@ export async function loadAllPlugins(db: Kysely<DB>): Promise<void> {
     const pluginDirs = entries
       .filter((e) => e.isDirectory())
       .map((e) => e.name)
-      .sort();
+      .sort((a, b) => a.localeCompare(b));
 
     for (const pluginName of pluginDirs) {
       const pluginDir = join(fullDir, pluginName);
@@ -70,8 +70,8 @@ export async function loadAllPlugins(db: Kysely<DB>): Promise<void> {
       if (!existsSync(pluginFile)) continue;
 
       try {
-        const mod = await import(/* @vite-ignore */ pluginFile);
-        const manifest = mod.plugin as PluginManifest;
+        const mod = (await import(/* @vite-ignore */ pluginFile)) as Record<string, unknown>;
+        const manifest = mod.plugin as PluginManifest | undefined;
 
         if (!manifest?.name) {
           log.warn({ message: `Invalid plugin manifest`, pluginName });
