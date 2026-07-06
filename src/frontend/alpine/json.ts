@@ -22,10 +22,7 @@ export function safeJsonParse<T = unknown>(text: string): JsonResult<T> {
  * Stringify JSON safely. Never throws — returns a discriminated union.
  * Handles edge cases like circular references gracefully.
  */
-export function safeJsonStringify(
-  value: unknown,
-  space?: number,
-): JsonResult<string> {
+export function safeJsonStringify(value: unknown, space?: number): JsonResult<string> {
   try {
     return { ok: true, value: JSON.stringify(value, null, space) };
   } catch (error) {
