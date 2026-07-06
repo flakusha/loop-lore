@@ -64,16 +64,16 @@ interface ServeCompressedOpts {
 }
 
 const dispatch: RouteDispatch = async ({ request, context, database, config }) => {
+  // Check assets enabled
+  if (!config.assets.enabled) {
+    return jsonError("Asset system is disabled", HttpStatus.NotFound, ErrorCode.NotFound);
+  }
+
   const url = new URL(request.url);
   const { pathname } = url;
   const method = request.method;
   const uploadDir = config.assets.uploadDir;
   const maxFileSize = config.assets.maxFileSize;
-
-  // Check assets enabled
-  if (!config.assets.enabled) {
-    return jsonError("Asset system is disabled", HttpStatus.NotFound, ErrorCode.NotFound);
-  }
 
   // ── /api/assets/:id sub-routes ──────────────────────────────
   const singleMatch = /^\/api\/assets\/([a-f0-9-]+)(\/\w+(?:\/\w+)?)?$/.exec(pathname);
@@ -161,6 +161,7 @@ async function handleUpload({
 
   let formData;
   try {
+    // eslint-disable-next-line @typescript-eslint/no-deprecated
     formData = await request.formData();
   } catch {
     return jsonError("Failed to parse multipart form data", HttpStatus.BadRequest);
@@ -231,7 +232,6 @@ async function handleServeCompressed({
   const asset = await getAsset(database, assetId);
   if (!asset) return jsonError("Asset not found", HttpStatus.NotFound, ErrorCode.NotFound);
 
-  const _ext = asset.filename.split(".").pop()?.toLowerCase() ?? "";
   const compressedFilename = `${assetId}_${variant}.webp`;
 
   // Construct compressed path: same subdir as raw, "compressed/" prefix

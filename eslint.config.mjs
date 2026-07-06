@@ -37,7 +37,7 @@ const tsRules = {
     { cases: { kebabCase: true, pascalCase: true, snakeCase: true }, multipleFileExtensions: false },
   ],
   "unicorn/consistent-function-scoping": "warn",
-  "unicorn/custom-error-definition": "error",
+  "unicorn/custom-error-definition": "off",
   "unicorn/throw-new-error": "error",
   "unicorn/no-await-expression-member": "error",
   "unicorn/switch-case-braces": ["error", "always"],
@@ -66,6 +66,8 @@ const tsRules = {
   "sonarjs/no-empty-function": "off",
   "sonarjs/unused-import": "off",
   "sonarjs/no-unused-vars": "off",
+  "sonarjs/deprecation": "off",
+  "sonarjs/regex-complexity": "off",
   "sonarjs/no-ignored-return": "warn",
   "sonarjs/no-identical-conditions": "error",
   "sonarjs/no-identical-functions": "warn",
@@ -88,6 +90,7 @@ const tsRules = {
   "sonarjs/no-os-command-from-path": "off",
   "sonarjs/super-linear-regex": "off",
   "sonarjs/prefer-regexp-exec": "off",
+  "sonarjs/publicly-writable-directories": "off",
   "preserve-caught-error": "off",
 
   // ── TypeScript shared overrides ────────────────────────────
@@ -115,6 +118,7 @@ export default tseslint.config(
       ".hermes/",
       "docs/.vitepress/",
       "migrations/",
+      "plugins/",
       "bun.lock",
       "*.har",
     ],

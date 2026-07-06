@@ -227,7 +227,7 @@ describe("ConfigSchema", () => {
       for (const part of parts) {
         if (current === undefined || current === null || typeof current !== "object") {
           pathExists = false;
-          // eslint-disable-next-line unicorn/no-break-in-nested-loop
+
           break;
         }
         current = (current as Record<string, unknown>)[part];

@@ -52,7 +52,6 @@
   "devDependencies": {
     "@eslint/js": "^10.0.1",
     "@playwright/test": "^1.61.1",
-    "@types/alpinejs": "^3.13.11",
     "@types/blessed": "^0.1.27",
     "@types/dompurify": "^3.2.0",
     "@types/js-yaml": "^4.0.9",

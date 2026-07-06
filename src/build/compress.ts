@@ -18,9 +18,7 @@ function stripHtmlComments(content: string): string {
 
 /** Strip data-testid="..." attributes (and :data-testid="..." Alpine dynamic) */
 function stripTestIds(content: string): string {
-  // eslint-disable-next-line sonarjs/super-linear-regex
   let result = content.replaceAll(/\s+data-testid="[^"]*"/g, "");
-  // eslint-disable-next-line sonarjs/super-linear-regex
   result = result.replaceAll(/\s+:data-testid="[^"]*"/g, "");
   return result;
 }
