@@ -1,5 +1,6 @@
 // ── Chat page component (chat.html) ────────────────────────
 
+import { jsonBody } from "./json";
 import { marked } from "marked";
 import DOMPurify from "dompurify";
 
@@ -269,7 +270,7 @@ globalThis.chatState = function () {
         const res = await apiFetch(`/api/chats/${this.activeChat}/messages`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(body),
+          body: jsonBody(body),
         });
         if (res.ok) {
           this.pendingAssets = []; // Clear queue on success
@@ -435,7 +436,7 @@ globalThis.chatState = function () {
         const response = await apiFetch("/api/generation/cancel", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
+          body: jsonBody({
             chatId: this.activeChat,
             reason: "user_cancel",
             source: "user",
@@ -470,7 +471,7 @@ globalThis.chatState = function () {
         const response = await apiFetch("/api/generation/regenerate", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ chatId: this.activeChat }),
+          body: jsonBody({ chatId: this.activeChat }),
         });
 
         const data = await response.json();
@@ -491,7 +492,7 @@ globalThis.chatState = function () {
         const res = await apiFetch("/api/generation/regenerate", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ chatId: this.activeChat, messageId }),
+          body: jsonBody({ chatId: this.activeChat, messageId }),
         });
         if (res.ok) {
           await this.loadMessages();
@@ -513,7 +514,7 @@ globalThis.chatState = function () {
         const res = await apiFetch(`/api/messages/${messageId}/variant`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ variantIndex: newIdx }),
+          body: jsonBody({ variantIndex: newIdx }),
         });
         if (res.ok) {
           await this.loadMessages();
@@ -536,7 +537,7 @@ globalThis.chatState = function () {
         const response = await apiFetch("/api/generation/continue", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ messageId, chatId: this.activeChat, actorId }),
+          body: jsonBody({ messageId, chatId: this.activeChat, actorId }),
         });
 
         const data = await response.json();
@@ -570,7 +571,7 @@ globalThis.chatState = function () {
         const response = await apiFetch("/api/generation/retry", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ chatId: this.activeChat, attemptId, step }),
+          body: jsonBody({ chatId: this.activeChat, attemptId, step }),
         });
 
         const data = await response.json();
@@ -764,7 +765,7 @@ globalThis.chatState = function () {
         const res = await apiFetch(`/api/messages/${msgId}`, {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ content: this.editContent.trim() }),
+          body: jsonBody({ content: this.editContent.trim() }),
         });
         if (res.ok) {
           const msg = this.messages.find((m) => m.id === msgId);

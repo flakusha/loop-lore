@@ -11,6 +11,7 @@ import { dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import { ConfigSchema } from "./schema-class";
 import { createLogger } from "../logger";
+import { safeJsonStringify } from "../utils";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const log = createLogger({ level: "info" });
@@ -19,7 +20,8 @@ function main() {
   const schema = ConfigSchema.jsonSchema();
   const outputPath = `${__dirname}/../../schemas/loop-lore-config.schema.json`;
   try {
-    writeFileSync(outputPath, JSON.stringify(schema, null, 2));
+    const r = safeJsonStringify(schema, 2);
+    writeFileSync(outputPath, r.ok ? r.value : "{}");
     log.info(`Generated schema: ${outputPath}`);
   } catch (error) {
     log.error(`Failed to write schema: ${error instanceof Error ? error.message : String(error)}`);

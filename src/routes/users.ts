@@ -62,7 +62,7 @@ function extractUserId(pathname: string): string | null {
   return match ? match[1] : null;
 }
 
-// eslint-disable-next-line sonarjs/cognitive-complexity
+ 
 const dispatch: RouteDispatch = async ({ request, context, database }) => {
   const url = new URL(request.url);
   const { pathname } = url;
@@ -231,5 +231,5 @@ async function handleDeleteUser({ database, targetId, context }: DeleteUserOpts)
   return jsonNoContent();
 }
 
-registerRoute(dispatch); // eslint-disable-line unicorn/no-top-level-side-effects
+registerRoute(dispatch);  
 export { dispatch };

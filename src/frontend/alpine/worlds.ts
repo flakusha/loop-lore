@@ -1,5 +1,7 @@
 // ── Worlds page component (worlds.html) ────────────────────
 
+import { jsonBody } from "./json";
+
 globalThis.worldsState = function () {
   return {
     worlds: [] as any[],
@@ -48,7 +50,7 @@ globalThis.worldsState = function () {
         const res = await apiFetch("/api/worlds", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(data),
+          body: jsonBody(data),
         });
         if (res.ok) {
           globalThis.Alpine.store("ui").showCreateForm = false;
@@ -114,7 +116,7 @@ globalThis.worldDetailState = function () {
         const res = await apiFetch(`/api/worlds/${this.world.id}`, {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(this.world),
+          body: jsonBody(this.world),
         });
         if (res.ok) {
           globalThis.Alpine.store("ui").showEditModal = false;
@@ -186,7 +188,7 @@ globalThis.worldEditState = function () {
         const res = await apiFetch(`/api/worlds/${this.world.id}`, {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(data),
+          body: jsonBody(data),
         });
         if (res.ok) {
           (this as any).$dispatch("show-toast", { type: "success", message: "World saved" });

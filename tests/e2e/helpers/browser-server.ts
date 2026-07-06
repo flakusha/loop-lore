@@ -12,7 +12,7 @@
  */
 
 import { chromium, type Browser, type Page } from "@playwright/test";
-import { join, normalize, extname } from "node:path";
+import { join, normalize } from "node:path";
 import { existsSync, readFileSync, mkdirSync, rmSync, cpSync } from "node:fs";
 import { spawnSync } from "node:child_process";
 import { createTestDb, runMigrations, loadTestConfig } from "./server";
@@ -21,11 +21,9 @@ import { dispatch } from "@/routes/views";
 import { createLogger, setGlobalLogger } from "@/logger";
 import { initAgeGate } from "@/age-gate/controller";
 import { initializeProviders } from "@/generation";
-import { loadConfig } from "@/config/load";
 import { setTestDatabase } from "@/db/index";
 import { initSmk } from "@/crypto";
 import { resetSoloUserCache } from "@/middleware/index";
-import { getDatabase } from "@/db/index";
 import type { DB } from "@/db/schema";
 import type { Config } from "@/config/schema";
 import type { Kysely } from "kysely";
@@ -94,7 +92,6 @@ function ensureFrontendBuild(): string {
 
 export async function createBrowserTest(
   overrides?: Partial<Config>,
-  registerMock = false,
 ): Promise<BrowserTestContext> {
   // Build frontend if needed
   const publicDir = ensureFrontendBuild();

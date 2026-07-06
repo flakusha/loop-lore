@@ -5,6 +5,7 @@
  */
 
 import type { LogEntry, SizeLimits } from "./types";
+import { safeJsonStringify } from "../utils";
 
 const DEFAULTS: Required<SizeLimits> = {
   maxMessageBytes: 10_240,
@@ -54,14 +55,17 @@ function truncateMeta(
     result["[truncated]"] = `${Object.keys(obj).length - maxEntries} excess keys`;
   }
   // Check total serialized size — drop entries if still too big
-  const serialized = JSON.stringify(result);
+  const serializedResult = safeJsonStringify(result);
+  const serialized = serializedResult.ok ? serializedResult.value : "{}";
   if (bytes(serialized) <= maxBytes) return result;
   // Remove deepest keys one by one until under limit
   const out: Record<string, unknown> = {};
   let size = 2; // {}
   for (const key of keys) {
     const val = result[key];
-    const pair = JSON.stringify(key) + ":" + JSON.stringify(val);
+    const keyStr = safeJsonStringify(key);
+    const valStr = safeJsonStringify(val);
+    const pair = (keyStr.ok ? keyStr.value : "null") + ":" + (valStr.ok ? valStr.value : "null");
     if (size + bytes(pair) + 1 > maxBytes) {
       out["[truncated]"] = `meta exceeds ${maxBytes} bytes`;
       break;

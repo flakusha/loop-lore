@@ -45,7 +45,7 @@ async function parseJsonBody(request: Request): Promise<unknown> {
  * @param userId  Authenticated user ID (from auth middleware). May be null.
  * @param _userRole  User role for future access checks.
  */
-// eslint-disable-next-line sonarjs/cognitive-complexity
+ 
 export async function dispatch(
   request: Request,
   database: Kysely<DB>,

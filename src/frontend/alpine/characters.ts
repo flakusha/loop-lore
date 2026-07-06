@@ -1,5 +1,6 @@
 // ── Character Chat List page (character-chat-list.html) ──
 
+import { jsonBody, safeJsonStringify } from "./json";
 import { log as rootLog } from "./logger";
 
 const log = rootLog.child({ module: "characters" });
@@ -140,9 +141,9 @@ globalThis.charactersState = function () {
         const res = await apiFetch("/api/chats", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
+          body: jsonBody({
             name: `Chat with ${char.display_name}`,
-            type: "user_character",
+            type: "direct",
             mode: "roleplay",
             participantIds: [char.id],
           }),
@@ -203,7 +204,7 @@ globalThis.charactersState = function () {
         const res = await apiFetch("/api/actors", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(body),
+          body: jsonBody(body),
         });
         log.debug("createCharacter — response", { status: res.status });
         if (res.ok) {
@@ -212,7 +213,8 @@ globalThis.charactersState = function () {
           await this.loadCharacters();
         } else {
           const err = await res.json();
-          log.error("createCharacter — API error", { error: err.error || JSON.stringify(err) });
+          const errStr = safeJsonStringify(err);
+          log.error("createCharacter — API error", { error: err.error || (errStr.ok ? errStr.value : String(err)) });
           (this as any).$dispatch("show-toast", {
             type: "error",
             message: err.error || "Failed to create character",
@@ -328,7 +330,7 @@ globalThis.characterEditState = function () {
         const res = await apiFetch(`/api/actors/${this.character.id}`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(data),
+          body: jsonBody(data),
         });
         if (res.ok) {
           (this as any).$dispatch("show-toast", { type: "success", message: "Character saved" });

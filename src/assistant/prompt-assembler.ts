@@ -199,8 +199,6 @@ export class PromptAssembler {
 
     // Build final messages array (exclude dropped sections)
     const finalMessages: GenerationMessage[] = [];
-    const msgSections = sections.filter((s) => !s.dropped);
-    // Map sections back to messages in order
     let msgIdx = 0;
     for (const section of sections) {
       if (!section.dropped && msgIdx < messages.length) {

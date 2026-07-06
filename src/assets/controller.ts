@@ -19,7 +19,6 @@ import { readFileSync, existsSync } from "node:fs";
 import type { Kysely } from "kysely";
 import type { DB } from "../db/schema";
 import type { RequestContext } from "../middleware/types";
-import type { Config } from "../config/schema";
 import { ErrorCode } from "../routes/http-utils";
 import type { RouteDispatch } from "../routes/router";
 import { registerRoute } from "../routes/router";
@@ -232,7 +231,7 @@ async function handleServeCompressed({
   const asset = await getAsset(database, assetId);
   if (!asset) return jsonError("Asset not found", HttpStatus.NotFound, ErrorCode.NotFound);
 
-  const ext = asset.filename.split(".").pop()?.toLowerCase() ?? "";
+  const _ext = asset.filename.split(".").pop()?.toLowerCase() ?? "";
   const compressedFilename = `${assetId}_${variant}.webp`;
 
   // Construct compressed path: same subdir as raw, "compressed/" prefix

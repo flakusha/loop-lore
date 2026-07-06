@@ -6,9 +6,6 @@
  *   GET /api/chats/:chatId/story-turns/:id   — get single turn
  */
 
-import type { Kysely } from "kysely";
-import type { DB } from "../db/schema";
-import type { RequestContext } from "../middleware/types";
 import type { RouteDispatch } from "./router";
 import { registerRoute } from "./router";
 import {

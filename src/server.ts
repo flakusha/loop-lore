@@ -7,6 +7,7 @@ import { existsSync, readFileSync } from "node:fs";
 import { spawnSync } from "node:child_process";
 import { compressAssets, copyDirectory } from "./content/compress";
 import { runMigrations } from "./db/migrate";
+import { seedDefaultActors } from "./db/seed";
 import { loadConfig } from "./config/load";
 import { initAgeGate, dispatch as dispatchAgeGate } from "./age-gate/controller";
 import { dispatch as dispatchGeneration } from "./generation/controller";
@@ -219,7 +220,7 @@ function handleDocsRequest(
   return new Response("Documentation not found", { status: 404 });
 }
 
-// eslint-disable-next-line sonarjs/cognitive-complexity
+ 
 async function start() {
   const config = loadConfig();
   createLogger(config.logging);
@@ -301,8 +302,9 @@ async function start() {
     (async () => {
       try {
         await runMigrations(database);
+        await seedDefaultActors(database);
       } catch (error) {
-        logger.error({ message: "Migration failed — aborting startup", error: String(error) });
+        logger.error({ message: "Migration/seeding failed — aborting startup", error: String(error) });
         process.exit(1);
       }
     })(),
@@ -311,10 +313,10 @@ async function start() {
   // Auto-start external AI servers (llama.cpp, sd.cpp) in background
   const autoStart = config.generation.autoStart;
   if (autoStart?.llamaCpp?.enabled) {
-    initPromises.push(serverManager.startLlamaCpp(autoStart.llamaCpp).then(() => {}));
+    initPromises.push(serverManager.startLlamaCpp(autoStart.llamaCpp));
   }
   if (autoStart?.sdCpp?.enabled) {
-    initPromises.push(serverManager.startSdCpp(autoStart.sdCpp).then(() => {}));
+    initPromises.push(serverManager.startSdCpp(autoStart.sdCpp));
   }
 
   // Resolve all background init before proceeding to rest
