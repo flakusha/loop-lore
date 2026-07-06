@@ -1,86 +1,253 @@
-<!-- New Chat Form (swapped into #app-root by htmx) -->
-<!-- Header: moved to #header-slot by htmx:load handler -->
+<!-- New Chat Form -->
 <header id="header-slot" class="main-header" data-testid="new-chat-header">
-  <button
-    class="hamburger"
-    @click="$store.sidebar.open = !$store.sidebar.open"
-    x-show="!$store.sidebar.open"
-    data-testid="hamburger"
-  >
-    ☰
-  </button>
+  <button class="hamburger" onclick="toggleSidebar()" data-testid="hamburger">☰</button>
   <span class="title">New Chat</span>
 </header>
 
-<div class="app-layout" x-data="newChatState()">
-  <!-- Main content -->
+<div class="app-layout">
   <main class="main-content" style="padding-top: 0">
     <div
       class="chat-area"
       style="overflow-y: auto; justify-content: center; align-items: flex-start; padding-top: var(--space-12)"
     >
-      <div style="width: 100%; max-width: 480px; padding: 0 var(--space-4)">
+      <div style="width: 100%; max-width: 480px; margin: 0 auto; padding: 0 var(--space-4)">
         <div class="empty-state" style="margin-bottom: var(--space-6)">
           <div class="icon">💬</div>
           <div class="title">Start a New Conversation</div>
           <div class="description">Choose a chat type and add participants to begin.</div>
         </div>
 
-        <form @submit.prevent="createChat()" data-testid="create-chat-form">
+        <form id="create-chat-form" data-testid="create-chat-form">
           <div class="form-group">
             <label class="form-label" for="chat-name">Chat Name</label>
             <input
               class="form-input"
               type="text"
-              x-model="name"
+              name="name"
               id="chat-name"
               required
               placeholder="e.g., Adventure in the Forgotten Forest"
               data-testid="chat-name-input"
             />
           </div>
-
           <div class="form-group">
             <label class="form-label" for="chat-type">Chat Type</label>
-            <select class="form-select" x-model="chatType" id="chat-type" data-testid="chat-type-select">
-              <option value="user_character">User × Character</option>
-              <option value="user_user">User × User</option>
-              <option value="user_assistant">User × Assistant</option>
+            <select class="form-select" name="type" id="chat-type" data-testid="chat-type-select">
+              <option value="direct">1-on-1 Chat</option>
+              <option value="group">Group Chat</option>
             </select>
           </div>
-
           <div class="form-group">
             <label class="form-label" for="chat-mode">Chat Mode</label>
-            <select class="form-select" x-model="chatMode" id="chat-mode" data-testid="chat-mode-select">
-              <option value="roleplay">Roleplay</option>
-              <option value="chat">Chat</option>
-              <option value="story">Story</option>
+            <select class="form-select" name="mode" id="chat-mode" data-testid="chat-mode-select">
+              <option value="direct">Chat</option>
+              <option value="story">Roleplay / Story</option>
             </select>
           </div>
-
-          <div class="form-group" x-show="error" x-cloak>
-            <p
-              class="error-msg"
-              x-text="error"
-              style="color: var(--text-danger)"
-              data-testid="chat-error"
-            ></p>
+          <div class="form-group" id="participant-group">
+            <label class="form-label">Character / Participant</label>
+            <div style="position: relative">
+              <input
+                type="text"
+                class="form-input"
+                id="participant-search"
+                placeholder="Search characters..."
+                autocomplete="off"
+                data-testid="participant-search"
+              />
+              <div
+                id="participant-results"
+                style="
+                  display: none;
+                  position: absolute;
+                  top: 100%;
+                  left: 0;
+                  right: 0;
+                  background: var(--bg-secondary);
+                  border: 1px solid var(--border-default);
+                  border-radius: var(--radius-md);
+                  max-height: 200px;
+                  overflow-y: auto;
+                  z-index: 10;
+                  margin-top: 2px;
+                  box-shadow: var(--shadow-md);
+                "
+              ></div>
+            </div>
+            <div
+              id="selected-participants"
+              style="display: flex; flex-wrap: wrap; gap: var(--space-2); margin-top: var(--space-2)"
+            ></div>
           </div>
-
           <div
             style="display: flex; gap: var(--space-3); justify-content: flex-end; margin-top: var(--space-6)"
           >
             <a class="btn btn-secondary" href="/views/chat" data-testid="cancel-create-chat">Cancel</a>
-            <button
-              type="submit"
-              class="btn btn-primary"
-              :disabled="submitting"
-              x-text="submitting ? 'Creating...' : 'Create Chat'"
-              data-testid="create-chat-btn"
-            ></button>
+            <button type="submit" class="btn btn-primary" data-testid="create-chat-btn">Create Chat</button>
           </div>
         </form>
       </div>
     </div>
   </main>
 </div>
+
+<script>
+  (function () {
+    let actors = [];
+    let selected = [];
+
+    const searchInput = document.getElementById("participant-search");
+    const resultsEl = document.getElementById("participant-results");
+    const selectedEl = document.getElementById("selected-participants");
+    const chatType = document.getElementById("chat-type");
+    const form = document.getElementById("create-chat-form");
+
+    const isGroup = () => chatType.value === "group";
+
+    function renderSelected() {
+      selectedEl.innerHTML = selected
+        .map(
+          (a) =>
+            `<span style="display:inline-flex;align-items:center;gap:var(--space-1);padding:2px var(--space-2);background:var(--bg-tertiary);border-radius:var(--radius-sm);font-size:13px">
+        ${a.display_name || a.name || "Unknown"}
+        <button type="button" class="btn-icon" style="font-size:14px;width:18px;height:18px" data-id="${a.id}" onclick="removeParticipant('${a.id}')">&times;</button>
+      </span>`,
+        )
+        .join("");
+    }
+
+    window.removeParticipant = function (id) {
+      selected = selected.filter((a) => a.id !== id);
+      renderSelected();
+      resultsEl.style.display = "none";
+    };
+
+    function selectActor(actor) {
+      if (isGroup()) {
+        if (!selected.find((a) => a.id === actor.id)) {
+          selected.push(actor);
+        }
+      } else {
+        selected = [actor];
+      }
+      renderSelected();
+      searchInput.value = "";
+      resultsEl.style.display = "none";
+    }
+
+    function renderResults(filtered) {
+      if (filtered.length === 0) {
+        resultsEl.innerHTML =
+          '<div style="padding:var(--space-3);color:var(--text-secondary);font-size:13px;text-align:center">No characters found</div>';
+      } else {
+        resultsEl.innerHTML = filtered
+          .map((a) => {
+            const disabled = isGroup() && selected.find((s) => s.id === a.id);
+            return `<div style="padding:var(--space-2) var(--space-3);cursor:pointer;display:flex;align-items:center;gap:var(--space-2);${disabled ? "opacity:0.4;cursor:default" : ""}" ${disabled ? "" : `onclick="selectActorFromList('${a.id}')"`} onmouseenter="this.style.background='var(--bg-tertiary)'" onmouseleave="this.style.background=''">
+          <span style="font-size:16px">${a.avatar_asset_id ? "" : "👤"}</span>
+          <div>
+            <div style="font-size:14px;font-weight:500">${escapeHtml(a.display_name || a.name || "Unknown")}</div>
+            <div style="font-size:12px;color:var(--text-secondary)">${escapeHtml((a.description || "").slice(0, 60))}</div>
+          </div>
+          ${disabled ? '<span style="margin-left:auto;font-size:12px;color:var(--text-secondary)">added</span>' : ""}
+        </div>`;
+          })
+          .join("");
+      }
+      resultsEl.style.display = "block";
+    }
+
+    window.selectActorFromList = function (id) {
+      const actor = actors.find((a) => a.id === id);
+      if (actor) selectActor(actor);
+    };
+
+    function escapeHtml(str) {
+      const div = document.createElement("div");
+      div.textContent = str;
+      return div.innerHTML;
+    }
+
+    searchInput.addEventListener("input", function () {
+      const q = this.value.toLowerCase().trim();
+      if (!q) {
+        resultsEl.style.display = "none";
+        return;
+      }
+      const filtered = actors
+        .filter((a) => {
+          const name = (a.display_name || a.name || "").toLowerCase();
+          const desc = (a.description || "").toLowerCase();
+          return name.includes(q) || desc.includes(q);
+        })
+        .slice(0, 20);
+      renderResults(filtered);
+    });
+
+    searchInput.addEventListener("blur", function () {
+      setTimeout(() => {
+        resultsEl.style.display = "none";
+      }, 200);
+    });
+
+    searchInput.addEventListener("focus", function () {
+      if (this.value.trim()) {
+        const q = this.value.toLowerCase().trim();
+        const filtered = actors
+          .filter((a) => {
+            const name = (a.display_name || a.name || "").toLowerCase();
+            const desc = (a.description || "").toLowerCase();
+            return name.includes(q) || desc.includes(q);
+          })
+          .slice(0, 20);
+        renderResults(filtered);
+      }
+    });
+
+    form.addEventListener("submit", async function (e) {
+      e.preventDefault();
+      const name = form.querySelector('[name="name"]').value.trim();
+      if (!name) return;
+
+      const btn = form.querySelector('[type="submit"]');
+      btn.disabled = true;
+      btn.textContent = "Creating...";
+
+      try {
+        const res = await apiFetch("/api/chats", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            name,
+            type: chatType.value,
+            mode: document.getElementById("chat-mode").value,
+            participantIds: selected.map((a) => a.id),
+          }),
+        });
+        if (res.ok) {
+          const d = await res.json();
+          location.assign("/views/chat?chatid=" + encodeURIComponent(d.id));
+        } else {
+          const err = await res.json().catch(() => ({}));
+          showToast("error", err.error || "Failed to create chat");
+          btn.disabled = false;
+          btn.textContent = "Create Chat";
+        }
+      } catch {
+        showToast("error", "Network error");
+        btn.disabled = false;
+        btn.textContent = "Create Chat";
+      }
+    });
+
+    (async function loadActors() {
+      try {
+        const res = await apiFetch("/api/actors?pageSize=200");
+        const data = await res.json();
+        actors = (data.data || []).filter((a) => a.actor_type !== "user");
+      } catch {
+        /* ignore */
+      }
+    })();
+  })();
+</script>

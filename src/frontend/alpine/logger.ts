@@ -1,159 +1,144 @@
 /**
- * Browser logger — mirrors server-side Logger API for frontend code.
+ * Browser logger — always-on structured logging.
  *
- * Features:
- *   - Level filtering (debug/info/warn/error)
- *   - Child loggers with module prefix
- *   - Gated behind DEBUG flag — silent in production by default
- *   - Formatted console output (timestamp + level + module)
- *
- * Usage:
- *   import { createLogger } from "./logger";
- *   const log = createLogger();
- *   log.info("chat loaded", { messageCount: 42 });
- *   const charLog = log.child({ module: "characters" });
- *   charLog.debug("init started");
- *
- * Gate:
- *   Enabled when localStorage.getItem("debug") is truthy
- *   or window.__DEBUG__ is set.
+ * Aligned with BE logger (src/logger/) but for browser:
+ *   - AsyncLogQueue (port of BE queue.ts, 100ms/50 batch)
+ *   - BrowserConsoleTransport (color via CSS)
+ *   - ServerTransport (POST /api/frontend/logs, 5s flush)
+ *   - PII censoring (port of BE censors.ts)
+ *   - Size limits (port of BE limits.ts)
+ *   - LogEntry format matches BE spec
+ *   - Child loggers with full bindings
  */
 
-// ── Types (mirrors src/logger/types.ts subset) ─────────────
-
-type LogLevel = "debug" | "info" | "warn" | "error";
-
-const LOG_LEVELS: Record<LogLevel, number> = {
-  debug: 10,
-  info: 20,
-  warn: 30,
-  error: 40,
-};
-
-const LEVEL_LABELS: Record<number, string> = {
-  10: "DEBUG",
-  20: "INFO",
-  30: "WARN",
-  40: "ERROR",
-};
-
-interface LoggerBindings {
-  module?: string;
-}
-
-interface BrowserLogger {
-  debug(message: string, meta?: Record<string, unknown>): void;
-  info(message: string, meta?: Record<string, unknown>): void;
-  warn(message: string, meta?: Record<string, unknown>): void;
-  error(message: string, meta?: Record<string, unknown>): void;
-  child(bindings: LoggerBindings): BrowserLogger;
-}
-
-interface BrowserLoggerConfig {
-  level?: LogLevel;
-}
-
-// ── Gate check ─────────────────────────────────────────────
-
-function isLoggingEnabled(): boolean {
-  try {
-    return !!localStorage.getItem("debug") || !!(globalThis as any).__DEBUG__;
-  } catch {
-    return false;
-  }
-}
+import type {
+  LogEntry,
+  Logger,
+  LoggerBindings,
+  LogOptions,
+  LoggerConfig,
+  SizeLimits,
+} from "../../logger/types";
+import { LogLevelNumeric } from "../../logger/types";
+import { levelFromConfig, shouldEmit } from "../../logger/levels";
+import { applyLimits } from "../../logger/limits";
+import { censorMeta, fieldNamesToRules } from "../../logger/censors";
+import { unixSec, formatTime } from "../../utils/date";
+import { AsyncLogQueue } from "./queue";
+import { BrowserConsoleTransport } from "./transports/console";
+import { ServerTransport } from "./transports/server";
 
 // ── Implementation ─────────────────────────────────────────
 
-class BrowserLoggerImpl implements BrowserLogger {
+class BrowserLoggerImpl implements Logger {
+  private readonly queue: AsyncLogQueue;
   private readonly threshold: number;
-  private readonly enabled: boolean;
-  private readonly module?: string;
+  private readonly levelString: string;
+  private readonly bindings: LoggerBindings;
+  private readonly censorEnabled: boolean;
+  private readonly censorFields: string[];
+  private readonly limits: Partial<SizeLimits>;
 
-  constructor(config?: BrowserLoggerConfig, module?: string) {
-    this.threshold = LOG_LEVELS[config?.level ?? "debug"];
-    this.enabled = isLoggingEnabled();
-    this.module = module;
-  }
+  constructor(config?: Partial<LoggerConfig>, bindings?: LoggerBindings, queue?: AsyncLogQueue) {
+    this.bindings = bindings ?? {};
+    this.levelString = config?.level ?? "debug";
+    this.threshold = levelFromConfig(this.levelString as any);
+    this.censorEnabled = config?.censorEnabled ?? true;
+    this.censorFields = config?.censorFields ?? [];
+    this.limits = config?.limits ?? {};
 
-  private log(level: LogLevel, message: string, meta?: Record<string, unknown>): void {
-    if (!this.enabled) return;
-
-    const numeric = LOG_LEVELS[level];
-    if (numeric < this.threshold) return;
-
-    const label = LEVEL_LABELS[numeric];
-    const modulePart = this.module ? ` [${this.module}]` : "";
-    const ts = new Date().toISOString();
-
-    const formatted = `[${ts}] [${label}]${modulePart} ${message}`;
-
-    const consoleFn = this.getConsoleMethod(level);
-    if (meta && Object.keys(meta).length > 0) {
-      consoleFn(formatted, meta);
+    if (queue) {
+      this.queue = queue;
     } else {
-      consoleFn(formatted);
+      const transports = [new BrowserConsoleTransport(), new ServerTransport()];
+      this.queue = new AsyncLogQueue(transports, {
+        queueMaxSize: config?.queueMaxSize ?? 10_000,
+      });
+      this.queue.start();
     }
   }
 
-  private getConsoleMethod(level: LogLevel): (...args: unknown[]) => void {
-    switch (level) {
-      case "debug": {
-        return console.debug;
-      }
-      case "warn": {
-        return console.warn;
-      }
-      case "error": {
-        return console.error;
-      }
-      default: {
-        return console.log;
-      }
+  private log(
+    level: string,
+    message: string | Record<string, unknown>,
+    error?: Error,
+    meta?: Record<string, unknown>,
+    _options?: LogOptions,
+  ): void {
+    const numericLevel = LogLevelNumeric[level as keyof typeof LogLevelNumeric];
+    if (!shouldEmit(numericLevel, this.threshold)) return;
+
+    const entry: LogEntry = {
+      level: numericLevel,
+      timestamp: unixSec(),
+      time: formatTime(),
+      message,
+      ...this.bindings,
+    };
+
+    if (error) {
+      entry.error = error.stack ?? error.message;
     }
+
+    if (meta && Object.keys(meta).length > 0) {
+      entry.meta = this.censorEnabled ? censorMeta(meta, fieldNamesToRules(this.censorFields)) : meta;
+    }
+
+    const limited = applyLimits(entry, this.limits);
+    this.queue.enqueue(limited);
   }
 
-  debug(message: string, meta?: Record<string, unknown>): void {
-    this.log("debug", message, meta);
+  debug(message: string | Record<string, unknown>, meta?: Record<string, unknown>): void {
+    this.log("debug", message, undefined, meta);
   }
 
-  info(message: string, meta?: Record<string, unknown>): void {
-    this.log("info", message, meta);
+  info(message: string | Record<string, unknown>, meta?: Record<string, unknown>): void {
+    this.log("info", message, undefined, meta);
   }
 
-  warn(message: string, meta?: Record<string, unknown>): void {
-    this.log("warn", message, meta);
+  warn(message: string | Record<string, unknown>, meta?: Record<string, unknown>): void {
+    this.log("warn", message, undefined, meta);
   }
 
-  error(message: string, meta?: Record<string, unknown>): void {
-    this.log("error", message, meta);
+  error(message: string | Record<string, unknown>, error?: Error, meta?: Record<string, unknown>): void {
+    this.log("error", message, error, meta);
   }
 
-  child(bindings: LoggerBindings): BrowserLogger {
-    const childModule = bindings.module
-      ? this.module
-        ? `${this.module}:${bindings.module}`
-        : bindings.module
-      : this.module;
-
-    return new BrowserLoggerImpl({ level: this.levelFromThreshold() }, childModule);
+  child(bindings: LoggerBindings): Logger {
+    return new BrowserLoggerImpl(
+      {
+        level: this.levelString as any,
+        censorEnabled: this.censorEnabled,
+        censorFields: this.censorFields,
+        limits: this.limits,
+      },
+      { ...this.bindings, ...bindings },
+      this.queue,
+    );
   }
 
-  /** Derive level string from numeric threshold for child propagation */
-  private levelFromThreshold(): LogLevel {
-    if (this.threshold <= LOG_LEVELS.debug) return "debug";
-    if (this.threshold <= LOG_LEVELS.info) return "info";
-    if (this.threshold <= LOG_LEVELS.warn) return "warn";
-    return "error";
+  async flush(): Promise<void> {
+    await this.queue.flush();
   }
 }
 
-// ── Factory ────────────────────────────────────────────────
+// ── Factory API ─────────────────────────────────────────────
 
-/** Create root browser logger. */
-export function createLogger(config?: BrowserLoggerConfig): BrowserLogger {
-  return new BrowserLoggerImpl(config);
+const _root: { instance: Logger | null } = { instance: null };
+
+export function createLogger(config?: Partial<LoggerConfig>): Logger {
+  const instance = new BrowserLoggerImpl(config);
+  _root.instance ??= instance;
+  return instance;
 }
 
-/** Pre-built root logger for app-wide use. */
-export const log: BrowserLogger = createLogger();
+export function getLogger(): Logger {
+  if (!_root.instance) throw new Error("Logger not initialized — call createLogger() first");
+  return _root.instance;
+}
+
+export function setGlobalLogger(logger: Logger): void {
+  _root.instance = logger;
+}
+
+export const log: Logger = createLogger();
