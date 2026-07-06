@@ -146,14 +146,21 @@
           <form @submit.prevent="uploadAsset($event)" data-testid="upload-form">
             <div
               class="drop-zone"
+              :class="{ 'has-file': selectedFile, 'uploading': uploading }"
               @dragover.prevent="$el.classList.add('drag-over')"
               @dragleave.prevent="$el.classList.remove('drag-over')"
-              @drop.prevent="handleDrop($event)"
+              @drop.prevent="handleDrop($event); $el.classList.remove('drag-over')"
               @click="$refs.fileInput.click()"
             >
               <div class="icon">📤</div>
-              <div class="text">Drag & drop files here</div>
-              <div class="hint">or click to browse</div>
+              <div
+                class="text"
+                x-text="uploading ? 'Uploading...' : (selectedFile ? selectedFile.name : 'Drag & drop files here')"
+              ></div>
+              <div
+                class="hint"
+                x-text="uploading ? '' : (selectedFile ? 'Click to change file' : 'or click to browse')"
+              ></div>
               <input
                 type="file"
                 name="file"
@@ -161,6 +168,7 @@
                 style="display: none"
                 id="upload-input"
                 x-ref="fileInput"
+                @change="handleFileSelect($event)"
               />
             </div>
 
