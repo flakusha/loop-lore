@@ -6,12 +6,12 @@
 // https://typescript-eslint.io/getting-started/typed-linting
 
 import eslint from "@eslint/js";
-import tseslint from "typescript-eslint";
-import unicorn from "eslint-plugin-unicorn";
-import sonarjs from "eslint-plugin-sonarjs";
-import globals from "globals";
 import prettier from "eslint-config-prettier";
 import markdown from "eslint-plugin-markdown";
+import sonarjs from "eslint-plugin-sonarjs";
+import unicorn from "eslint-plugin-unicorn";
+import globals from "globals";
+import tseslint from "typescript-eslint";
 
 const projectRoot = import.meta.dirname;
 
@@ -56,6 +56,7 @@ const tsRules = {
   "unicorn/no-immediate-mutation": "off",
   "unicorn/isolated-functions": "off",
   "unicorn/no-incorrect-query-selector": "off",
+  "unicorn/prefer-spread": "off",
 
   // ── SonarJS shared overrides ───────────────────────────────
   ...sonarjs.configs.recommended.rules,
@@ -123,7 +124,6 @@ export default tseslint.config(
       "*.har",
     ],
   },
-
   // ── Markdown files: extract & lint code blocks ────────────────
   ...markdown.configs.recommended,
   {
@@ -137,7 +137,6 @@ export default tseslint.config(
       ...prettier.rules,
     },
   },
-
   // ── Server TypeScript: Bun/Node env, full type-checked rules ───
   {
     files: ["src/**/*.ts"],
@@ -169,7 +168,6 @@ export default tseslint.config(
       ],
     },
   },
-
   // ── Frontend TypeScript: Browser env, DOM-lib tsconfig ─────────
   {
     files: ["src/frontend/**/*.ts"],
@@ -197,7 +195,6 @@ export default tseslint.config(
       "no-unused-vars": "off",
     },
   },
-
   // ── E2E test TypeScript: Bun test env ──────────────────────
   {
     files: ["tests/e2e/**/*.ts"],
@@ -218,7 +215,6 @@ export default tseslint.config(
       "@typescript-eslint/require-await": "off",
     },
   },
-
   // ── Config/JS files: no TS parser, just Unicorn + SonarJS ─────
   {
     files: ["**/*.mjs", "**/*.cjs", "**/*.js"],
@@ -244,7 +240,6 @@ export default tseslint.config(
       "no-unused-vars": ["warn", { argsIgnorePattern: "^_", varsIgnorePattern: "^_" }],
     },
   },
-
   // ── Overrides: test files ─────────────────────────────────────
   {
     files: ["**/*.test.ts", "**/*.spec.ts", "**/__tests__/**/*.ts"],

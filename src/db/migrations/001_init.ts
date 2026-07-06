@@ -34,6 +34,7 @@ export async function up(database: Kysely<unknown>): Promise<void> {
 
   await database.schema.createIndex("idx_sessions_user_id").on("sessions").column("user_id").execute();
   await database.schema.createIndex("idx_sessions_token_hash").on("sessions").column("token_hash").execute();
+  await database.schema.createIndex("idx_sessions_user_expires").on("sessions").columns(["user_id", "expires_at"]).execute();
 
   // ── Worlds ─────────────────────────────────────────────────
   await database.schema
@@ -365,7 +366,7 @@ export async function up(database: Kysely<unknown>): Promise<void> {
     .addColumn("continuation_index", "integer")
     .addColumn("created_at", "text", (col) => col.notNull().defaultTo("(datetime('now'))"))
     .addColumn("edited_at", "text")
-    .addColumn("attachments", "text")  // JSON array: [{assetId, order, caption, label, url, type, mimeType, width?, height?}]
+    .addColumn("attachments", "text", (col) => col.defaultTo("[]"))
     .execute();
 
   await database.schema.createIndex("idx_messages_chat_created").on("messages").columns(["chat_id", "created_at"]).execute();
@@ -384,8 +385,7 @@ export async function up(database: Kysely<unknown>): Promise<void> {
     .addColumn("actor_id", "text", (col) => col.notNull().references("actors.id"))
     .addColumn("name", "text", (col) => col.notNull())
     .addColumn("key_type", "text", (col) => col.notNull())
-    .addColumn("encrypted_key", "text")
-    .addColumn("public_key", "text")
+    .addColumn("encrypted_key", "text", (col) => col.notNull())
     .addColumn("created_at", "text", (col) => col.notNull().defaultTo("(datetime('now'))"))
     .addColumn("expires_at", "text")
     .addColumn("status", "text", (col) => col.notNull().defaultTo("active"))

@@ -308,7 +308,12 @@ describe("age-gate controller", () => {
   describe("dispatch", () => {
     test("routes GET /api/age-gate/status to handleGetStatus", async () => {
       const req = new Request("http://localhost/api/age-gate/status");
-      const res = await ageGateDispatch(req, mockDb as unknown as Kysely<DB>, "user-1", "user");
+      const res = await ageGateDispatch({
+        request: req,
+        database: mockDb as unknown as Kysely<DB>,
+        userId: "user-1",
+        userRole: "user",
+      });
       expect(res).not.toBeNull();
       if (res) expect(res.status).toBe(200);
     });
@@ -319,13 +324,23 @@ describe("age-gate controller", () => {
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ birthDate: "2000-01-01" }),
       });
-      const res = await ageGateDispatch(req, mockDb as unknown as Kysely<DB>, "user-1", "user");
+      const res = await ageGateDispatch({
+        request: req,
+        database: mockDb as unknown as Kysely<DB>,
+        userId: "user-1",
+        userRole: "user",
+      });
       expect(res).toBeInstanceOf(Response);
     });
 
     test("routes GET /api/admin/age-gate to handleAdminGetConfig", async () => {
       const req = new Request("http://localhost/api/admin/age-gate");
-      const res = await ageGateDispatch(req, mockDb as unknown as Kysely<DB>, "user-1", "admin");
+      const res = await ageGateDispatch({
+        request: req,
+        database: mockDb as unknown as Kysely<DB>,
+        userId: "user-1",
+        userRole: "admin",
+      });
       expect(res).not.toBeNull();
       if (res) expect(res.status).toBe(200);
     });
@@ -336,20 +351,35 @@ describe("age-gate controller", () => {
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ enabled: true }),
       });
-      const res = await ageGateDispatch(req, mockDb as unknown as Kysely<DB>, "user-1", "admin");
+      const res = await ageGateDispatch({
+        request: req,
+        database: mockDb as unknown as Kysely<DB>,
+        userId: "user-1",
+        userRole: "admin",
+      });
       expect(res).not.toBeNull();
       if (res) expect(res.status).toBe(200);
     });
 
     test("returns null for non-age-gate routes", async () => {
       const req = new Request("http://localhost/api/other");
-      const res = await ageGateDispatch(req, mockDb as unknown as Kysely<DB>, "user-1", "user");
+      const res = await ageGateDispatch({
+        request: req,
+        database: mockDb as unknown as Kysely<DB>,
+        userId: "user-1",
+        userRole: "user",
+      });
       expect(res).toBeNull();
     });
 
     test("returns null for wrong method on age-gate route", async () => {
       const req = new Request("http://localhost/api/age-gate/status", { method: "POST" });
-      const res = await ageGateDispatch(req, mockDb as unknown as Kysely<DB>, "user-1", "user");
+      const res = await ageGateDispatch({
+        request: req,
+        database: mockDb as unknown as Kysely<DB>,
+        userId: "user-1",
+        userRole: "user",
+      });
       expect(res).toBeNull();
     });
   });

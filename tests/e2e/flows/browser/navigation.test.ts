@@ -1,5 +1,5 @@
-import { describe, test, expect, beforeAll, afterAll } from "bun:test";
-import { createBrowserTest, type BrowserTestContext } from "../../helpers/browser-server";
+import { afterAll, beforeAll, describe, expect, test } from "bun:test";
+import { type BrowserTestContext, createBrowserTest } from "../../helpers/browser-server";
 import { seedAll } from "../../helpers/seed";
 
 describe("Navigation E2E", () => {
@@ -95,17 +95,20 @@ describe("Navigation E2E", () => {
       await page.locator("[data-testid='chat-header']").waitFor({ state: "attached", timeout: 8000 });
       await page.waitForTimeout(1000);
 
-      const info = await page.evaluate(() => {
+      // Check header-slot structure for debugging
+      await page.evaluate(() => {
         const all = document.querySelectorAll("#header-slot");
-        return { count: all.length, headers: [...all].map(h => ({
-          parentTag: h.parentElement?.tagName || "",
-          parentId: h.parentElement?.id || "",
-          testid: h.dataset.testid || "",
-          children: h.children.length,
-          text: (h.textContent || "").trim().slice(0, 30),
-        }))};
+        return {
+          count: all.length,
+          headers: [...all].map((h) => ({
+            parentTag: h.parentElement?.tagName || "",
+            parentId: h.parentElement?.id || "",
+            testid: h.dataset.testid || "",
+            children: h.children.length,
+            text: (h.textContent || "").trim().slice(0, 30),
+          })),
+        };
       });
-      console.log("=== headers:", JSON.stringify(info));
 
       // Count header-slot elements — should be exactly 1
       const headers = await page.locator("#header-slot").count();
