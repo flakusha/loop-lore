@@ -1,0 +1,39 @@
+#!/bin/sh
+# Pre-commit hook for loop-lore
+# Install: git config core.hooksPath .githooks && chmod +x .githooks/pre-commit
+
+set -u
+
+failures=0
+
+red() { printf "\033[31m%s\033[0m\n" "$*"; }
+green() { printf "\033[32m%s\033[0m\n" "$*"; }
+yellow() { printf "\033[33m%s\033[0m\n" "$*"; }
+
+step() {
+  desc="$1"
+  shift
+  echo ""
+  echo "--- $desc ---"
+  if "$@"; then
+    green "PASS: $desc"
+  else
+    red "FAIL: $desc"
+    failures=$((failures + 1))
+  fi
+}
+
+echo ""
+echo "=== loop-lore pre-commit checks ==="
+
+step "Format: auto-fix" bun run format:fix
+step "Quality: typecheck + lint + format verify + md lint" bun run check
+step "Unit tests" bun test src/
+step "E2E tests (safeguarded)" env E2E_SAFEGUARD=1 bun test tests/e2e/
+
+echo ""
+if [ "$failures" -gt 0 ]; then
+  red "=== $failures step(s) failed. Fix above issues and retry ==="
+  exit 1
+fi
+green "=== All checks passed ==="

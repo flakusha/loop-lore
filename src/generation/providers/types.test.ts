@@ -16,13 +16,13 @@ describe("ProviderError", () => {
   });
 
   test("creates error with status code", () => {
-    const err = new ProviderError("not found", 404);
+    const err = new ProviderError("not found", undefined, 404);
     expect(err.statusCode).toBe(404);
     expect(err.retryable).toBe(false);
   });
 
   test("creates retryable error", () => {
-    const err = new ProviderError("rate limited", 429, true, 30);
+    const err = new ProviderError("rate limited", undefined, 429, true, 30);
     expect(err.statusCode).toBe(429);
     expect(err.retryable).toBe(true);
     expect(err.retryAfter).toBe(30);
@@ -30,7 +30,7 @@ describe("ProviderError", () => {
 
   test("accepts ErrorOptions", () => {
     const cause = new Error("upstream");
-    const err = new ProviderError("wrapped", 500, false, undefined, { cause });
+    const err = new ProviderError("wrapped", { cause }, 500, false);
     expect(err.cause).toBe(cause);
   });
 });
