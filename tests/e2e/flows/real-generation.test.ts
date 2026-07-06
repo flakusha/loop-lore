@@ -16,19 +16,33 @@ import { describe, test, expect, beforeAll, afterAll } from "bun:test";
 import { createTestServer, type TestServer } from "../helpers/server";
 import { createClient, type ApiClient } from "../helpers/client";
 import { seedAll, SEED } from "../helpers/seed";
-import { RealServerManager, type ServerInstance } from "../helpers/real-server";
+import { ServerExternalManager, type ServerInstance } from "../helpers/server-external";
+
+import type { Logger } from "../../../src/logger";
+import { safeJsonStringify } from "../../../src/utils";
+
+/** Format log message — stringify objects via safe wrapper */
+function fmtMsg(msg: string | Record<string, unknown>): string {
+  if (typeof msg === "string") return msg;
+  const r = safeJsonStringify(msg);
+  return r.ok ? r.value : String(msg);
+}
 
 /** Logger — falls back to console if app logger not yet initialized */
-const log = {
-  info(msg: string) { console.warn(`[real-e2e] ${msg}`); },
-  warn(msg: string) { console.warn(`[real-e2e] ${msg}`); },
+const log: Logger = {
+  debug: () => {},
+  info(msg: string | Record<string, unknown>) { console.warn(`[server-external-e2e] ${fmtMsg(msg)}`); },
+  warn(msg: string | Record<string, unknown>) { console.warn(`[server-external-e2e] ${fmtMsg(msg)}`); },
+  error(msg: string | Record<string, unknown>) { console.error(`[server-external-e2e] ${fmtMsg(msg)}`); },
+  child: () => log,
+  flush: async () => {},
 };
 
 const SKIP_REAL = process.env.LL_REAL_E2E_SKIP === "1";
 const describeReal = SKIP_REAL ? describe.skip : describe;
 
 describeReal("Real-Server Generation E2E", () => {
-  let manager: RealServerManager;
+  let manager: ServerExternalManager;
   let llamaInstance: ServerInstance | null = null;
   let sdInstance: ServerInstance | null = null;
   let server: TestServer;
@@ -37,7 +51,7 @@ describeReal("Real-Server Generation E2E", () => {
   let sdPort = 9010;
 
   beforeAll(async () => {
-    manager = new RealServerManager();
+    manager = new ServerExternalManager(log);
     server = await createTestServer({ auth: { required: true } });
     await seedAll(server.db);
     api = createClient(server.url);

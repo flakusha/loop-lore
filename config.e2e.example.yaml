@@ -17,12 +17,12 @@
 #   Spawns llama.cpp + sd-server as child processes.
 #   Tests skip gracefully if binaries/models missing.
 #
-# Real-server env vars:
+# External-server env vars:
 #   LL_REAL_MODEL           path to GGUF model for llama.cpp (required)
 #   LL_REAL_SD_MODEL        path to safetensors for sd-server (required)
 #   LL_REAL_PORT_LLAMA      llama.cpp port (default: 9011)
 #   LL_REAL_PORT_SD         sd-server port (default: 9010)
-#   LL_REAL_E2E_SKIP=1      skip all real-server tests
+#   LL_REAL_E2E_SKIP=1      skip all external-server tests
 #
 #   # For llama-swap instead of direct llama.cpp:
 #   # LL_REAL_SWAP_CONFIG    path to llama-swap config yaml
@@ -87,7 +87,7 @@ transport:
   enableH2: false
   enableH3: false
 
-# ── Testing: real-server e2e model paths ──────────────────
+# ── Testing: external-server e2e model paths ──────────────
 # model paths: local file or HuggingFace ID (org/repo:quant)
 # HF format auto-downloads via llama-server -hf flag.
 # testing:
