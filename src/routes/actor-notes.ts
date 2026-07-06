@@ -117,8 +117,9 @@ async function handleCreate(opts: {
   body: Record<string, unknown>;
 }): Promise<Response> {
   const title = opts.body.title as string | undefined;
-  const content = opts.body.content as string | undefined;
   if (!title) return jsonError("title is required", HttpStatus.BadRequest);
+
+  const content = opts.body.content as string | undefined;
   if (!content) return jsonError("content is required", HttpStatus.BadRequest);
 
   const id = uid();

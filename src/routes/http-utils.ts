@@ -42,8 +42,8 @@ export type ErrorCode = (typeof ErrorCode)[keyof typeof ErrorCode];
 // ── Typed service errors ─────────────────────────────────────
 
 export class NotFoundError extends Error {
-  constructor(entity: string, id: string) {
-    super(`${entity} not found: ${id}`);
+  constructor(entity: string, id: string, options?: ErrorOptions) {
+    super(`${entity} not found: ${id}`, options);
     this.name = "NotFoundError";
   }
 }
@@ -87,7 +87,7 @@ export interface PaginatedResponse<T> {
  *   jsonResponse({ ok: true, id: "abc" })
  *   jsonResponse(user, HttpStatus.Created)
  */
-export function jsonResponse<T>(data: T, status: HttpStatusCode = HttpStatus.OK): Response {
+export function jsonResponse(data: unknown, status: HttpStatusCode = HttpStatus.OK): Response {
   return Response.json(data, { status });
 }
 
@@ -131,7 +131,7 @@ export function jsonValidationError(errors: ValidationError[], message = "Valida
  * @example
  *   jsonPaginated(items, total, page, pageSize)
  */
-export function jsonPaginated<T>(data: T[], total: number, page: number, pageSize: number): Response {
+export function jsonPaginated(data: unknown[], total: number, page: number, pageSize: number): Response {
   return Response.json(
     {
       data,
@@ -141,7 +141,7 @@ export function jsonPaginated<T>(data: T[], total: number, page: number, pageSiz
         pageSize,
         totalPages: pageSize > 0 ? Math.ceil(total / pageSize) : 0,
       },
-    } satisfies PaginatedResponse<T>,
+    } satisfies PaginatedResponse<unknown>,
     { status: HttpStatus.OK },
   );
 }
@@ -153,7 +153,7 @@ export function jsonPaginated<T>(data: T[], total: number, page: number, pageSiz
  *   jsonCreated({ id: "new-entity" })
  *   jsonCreated()  // no body
  */
-export function jsonCreated<T>(data?: T): Response {
+export function jsonCreated(data?: unknown): Response {
   if (data === undefined) return new Response(null, { status: HttpStatus.Created });
   const result = safeJsonStringify(data);
   if (!result.ok) {

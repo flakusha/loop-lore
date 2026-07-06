@@ -81,7 +81,6 @@ interface RemoveParticipantOpts {
   actorId: string;
 }
 
- 
 const dispatch: RouteDispatch = async ({ request, context, database }) => {
   const url = new URL(request.url);
   const { pathname, searchParams } = url;
@@ -91,7 +90,7 @@ const dispatch: RouteDispatch = async ({ request, context, database }) => {
   const participantMatch = /^\/api\/chats\/([a-f0-9-]+)\/participants(?:\/([a-f0-9-]+))?$/.exec(pathname);
   if (participantMatch) {
     const chatId = participantMatch[1];
-    const actorId = participantMatch[2] ?? null; // eslint-disable-line @typescript-eslint/no-unnecessary-condition
+    const actorId = participantMatch[2] ?? null;
 
     if (method === "GET" && !actorId) {
       return handleListParticipants({ database, chatId, context });
@@ -200,21 +199,24 @@ async function handleCreateChat({ database, body, context }: CreateChatOpts): Pr
   const typeStr = type as string | undefined;
   const modeStr = mode as string | undefined;
   const turnStrategyStr = turnStrategy as string | undefined;
+
   const validTypes = new Set<string>(Object.values(ChatType));
-  const validModes = new Set<string>(Object.values(ChatMode));
-  const validStrategies = new Set<string>(Object.values(TurnStrategy));
   if (typeStr && !validTypes.has(typeStr)) {
     return jsonError(
       `Invalid chat type: ${typeStr}. Valid: ${[...validTypes].join(", ")}`,
       HttpStatus.BadRequest,
     );
   }
+
+  const validModes = new Set<string>(Object.values(ChatMode));
   if (modeStr && !validModes.has(modeStr)) {
     return jsonError(
       `Invalid chat mode: ${modeStr}. Valid: ${[...validModes].join(", ")}`,
       HttpStatus.BadRequest,
     );
   }
+
+  const validStrategies = new Set<string>(Object.values(TurnStrategy));
   if (turnStrategyStr && !validStrategies.has(turnStrategyStr)) {
     return jsonError(
       `Invalid turn strategy: ${turnStrategyStr}. Valid: ${[...validStrategies].join(", ")}`,
@@ -246,15 +248,16 @@ async function handleCreateChat({ database, body, context }: CreateChatOpts): Pr
   // Add additional participants if provided
   if (Array.isArray(participantIds)) {
     for (const actorId of participantIds as string[]) {
-      await database
-        .insertInto("chat_participants")
-        .values({ chat_id: chatId, actor_id: actorId, role_in_chat: "member" })
-        .execute()
-        .catch((error: unknown) => {
-          getLogger()
-            .child({ module: "chats" })
-            .error("Failed to add participant", error instanceof Error ? error : new Error(String(error)));
-        });
+      try {
+        await database
+          .insertInto("chat_participants")
+          .values({ chat_id: chatId, actor_id: actorId, role_in_chat: "member" })
+          .execute();
+      } catch (error: unknown) {
+        getLogger()
+          .child({ module: "chats" })
+          .error("Failed to add participant", error instanceof Error ? error : new Error(String(error)));
+      }
     }
   }
 
@@ -365,15 +368,16 @@ async function handleAddParticipant({
 
   const role = (body.role as string | undefined) ?? "member";
 
-  await database
-    .insertInto("chat_participants")
-    .values({ chat_id: chatId, actor_id: actorId, role_in_chat: role as ChatParticipantRole })
-    .execute()
-    .catch((error: unknown) => {
-      getLogger()
-        .child({ module: "chats" })
-        .error("Failed to add participant", error instanceof Error ? error : new Error(String(error)));
-    });
+  try {
+    await database
+      .insertInto("chat_participants")
+      .values({ chat_id: chatId, actor_id: actorId, role_in_chat: role as ChatParticipantRole })
+      .execute();
+  } catch (error: unknown) {
+    getLogger()
+      .child({ module: "chats" })
+      .error("Failed to add participant", error instanceof Error ? error : new Error(String(error)));
+  }
 
   return jsonCreated({ id: actorId });
 }
@@ -405,5 +409,5 @@ async function handleRemoveParticipant({
   return jsonNoContent();
 }
 
-registerRoute(dispatch);  
+registerRoute(dispatch);
 export { dispatch };
