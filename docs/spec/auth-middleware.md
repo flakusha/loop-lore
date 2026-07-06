@@ -4,8 +4,10 @@
 
 Two-mode authentication system:
 
-1. **Remote multi-user** — `config.auth.required = true`. Bearer token → SHA-256 hash → sessions table lookup. Supports admin/user/viewer roles.
-2. **Solo/demo mode** — `config.auth.required = false`. No token check. Implicit solo user looked up once and cached.
+1. **Remote multi-user** — `config.auth.required = true`. Bearer token → SHA-256
+   hash → sessions table lookup. Supports admin/user/viewer roles.
+2. **Solo/demo mode** — `config.auth.required = false`. No token check. Implicit
+   solo user looked up once and cached.
 
 ## Auth Flow (MVP)
 
@@ -14,19 +16,20 @@ Every request to `handleApiRequest()` follows this decision journey:
 **Step 1: Check auth-skip paths**
 
 - If path is one of `login`, `register`, `age-gate/*`, or asset signed URLs:
-  - Route directly via `compose([errorBoundary], handler)` — no auth, no pipeline
+  - Route directly via `compose([errorBoundary], handler)` — no auth, no
+    pipeline
   - Jump straight to handler execution
 - Otherwise, continue to step 2
 
 **Step 2: Authenticate**
 
 - Call `authenticate(request)` which:
-  1.  Extracts `Authorization: Bearer <token>` header
-  2.  SHA-256 hashes the token
-  3.  Looks up `sessions` table by `token_hash`
-  4.  If not found or expired → returns `401 Unauthorized`
-  5.  Fetches user role, updates `last_activity`
-  6.  Returns `RequestContext { userId, userRole, sessionId }`
+  1. Extracts `Authorization: Bearer <token>` header
+  2. SHA-256 hashes the token
+  3. Looks up `sessions` table by `token_hash`
+  4. If not found or expired → returns `401 Unauthorized`
+  5. Fetches user role, updates `last_activity`
+  6. Returns `RequestContext { userId, userRole, sessionId }`
 
 **Step 3: Execute middleware chain**
 
@@ -35,7 +38,10 @@ Every request to `handleApiRequest()` follows this decision journey:
 
 ### Auth as pre-step (MVP)
 
-`authenticate()` runs **before** the middleware pipeline. Reason: auth-skip paths bypass the entire auth + pipeline step, not just the token check. If we folded auth into the pipeline, auth middleware would need path-matching logic to skip itself — more complexity for marginal gain.
+`authenticate()` runs **before** the middleware pipeline. Reason: auth-skip
+paths bypass the entire auth + pipeline step, not just the token check. If we
+folded auth into the pipeline, auth middleware would need path-matching logic to
+skip itself — more complexity for marginal gain.
 
 ### Future: Auth as middleware
 
@@ -66,7 +72,8 @@ Benefits over JWT:
 - No token payload size limits
 - Simpler to implement
 
-Trade-off: DB lookup per request. Acceptable for MVP. Can add JWT layer later via session cache.
+Trade-off: DB lookup per request. Acceptable for MVP. Can add JWT layer later
+via session cache.
 
 ## Session Model
 
@@ -119,7 +126,8 @@ interface RequestContext {
 
 - `userId` / `sessionId` are `null` only in solo/demo mode before any auth runs
 - `userRole` is `null` before auth, then populated with actual role
-- Solo mode: `userId` = solo user's UUID, `userRole = "solo"`, `sessionId = null`
+- Solo mode: `userId` = solo user's UUID, `userRole = "solo"`,
+  `sessionId = null`
 
 ## Solo/Demo Mode
 
@@ -128,8 +136,10 @@ When `config.auth.required = false`:
 1. No Authorization header needed
 2. Single implicit user (role: `solo`)
 3. User looked up by `WHERE role = "solo"` — created on first request if missing
-4. In-memory cache after first lookup (reset for testing via `resetSoloUserCache()`)
-5. Race-safe creation: duplicate insert is caught by unique constraint on role, re-fetch resolves
+4. In-memory cache after first lookup (reset for testing via
+   `resetSoloUserCache()`)
+5. Race-safe creation: duplicate insert is caught by unique constraint on role,
+   re-fetch resolves
 
 ## Role Guard
 
@@ -193,13 +203,15 @@ const MAX_ATTEMPTS = 10; // per window
 
 Logic:
 
-1. On POST `/api/auth/login`: get client IP from `X-Forwarded-For` or `request.ip`
+1. On POST `/api/auth/login`: get client IP from `X-Forwarded-For` or
+   `request.ip`
 2. Look up bucket for IP
 3. If outside window → reset bucket
 4. If count >= MAX_ATTEMPTS → return 429 Too Many Requests
 5. Increment count, proceed
 
-Rate limiter is only on login — not on authenticated routes. Simple, no external dependency.
+Rate limiter is only on login — not on authenticated routes. Simple, no external
+dependency.
 
 ### Registration throttle
 
@@ -235,7 +247,8 @@ Response: `{ token, user: {...} }` (same as login — auto-login after register)
 
 ### POST /api/auth/logout
 
-No body. Deletes current session (looked up from Authorization header → token_hash → sessions row).
+No body. Deletes current session (looked up from Authorization header →
+token_hash → sessions row).
 
 ### GET /api/auth/me
 
@@ -255,18 +268,21 @@ Returns:
 
 ### Password Storage
 
-- Bun's native `Bun.password.hash` / `Bun.password.verify` (scrypt via Bun, not Node `crypto.scryptSync`)
+- Bun's native `Bun.password.hash` / `Bun.password.verify` (scrypt via Bun, not
+  Node `crypto.scryptSync`)
 - Never log passwords or password hashes
 
 ### Token Storage
 
 - Client: `localStorage` or `sessionStorage` (not cookies — avoids CSRF surface)
 - Server: SHA-256 hash in `sessions.token_hash` — raw token never stored
-- Token sent in Authorization header, never in URL query params (except asset signed URLs)
+- Token sent in Authorization header, never in URL query params (except asset
+  signed URLs)
 
 ### Signed URLs (Asset Downloads)
 
-Short-lived HMAC-signed URLs for protected asset downloads. Required because browser `<img src>` and `<video>` tags can't set custom Authorization headers.
+Short-lived HMAC-signed URLs for protected asset downloads. Required because
+browser `<img src>` and `<video>` tags can't set custom Authorization headers.
 
 Token format: `?token=<HMAC-SHA256(assetId + expiry + secret)>`
 
