@@ -1,120 +1,85 @@
-<!-- World Detail Page (swapped into #app-root by htmx) -->
-<!-- Header: moved to #header-slot by htmx:load handler -->
+<!-- World Detail Page -->
 <header id="header-slot" class="main-header" data-testid="world-detail-header">
-  <button
-    class="hamburger"
-    @click="$store.sidebar.open = !$store.sidebar.open"
-    x-show="!$store.sidebar.open"
-    data-testid="hamburger"
-  >
-    ☰
-  </button>
+  <button class="hamburger" onclick="toggleSidebar()" data-testid="hamburger">☰</button>
   <span class="title" id="page-title">World Details</span>
   <div class="actions">
+    <button class="btn btn-secondary" onclick="loadWorldDetail()" data-testid="refresh-world">Refresh</button>
     <button
-      class="btn btn-secondary"
-      onclick="document.dispatchEvent(new CustomEvent('refresh-world'))"
-      data-testid="refresh-world"
+      class="btn btn-primary"
+      onclick="document.getElementById('edit-world-modal').classList.add('open')"
+      data-testid="edit-world"
     >
-      Refresh
-    </button>
-    <button class="btn btn-primary" @click="$store.ui.showEditModal = true" data-testid="edit-world">
       Edit
     </button>
   </div>
 </header>
 
-<div class="app-layout" x-data="worldDetailState()">
-  <!-- Main content -->
+<div class="app-layout">
   <main class="main-content" style="padding-top: 0">
     <div class="chat-area">
-      <!-- Loading -->
-      <template x-if="loading">
+      <div id="world-detail" data-world-id="{{worldId}}">
         <div class="empty-state" style="padding: var(--space-12)">
           <div class="icon">⏳</div>
           <div class="title">Loading world...</div>
         </div>
-      </template>
-
-      <!-- World content -->
-      <template x-if="!loading && world">
-        <div style="max-width: 800px; margin: 0 auto">
-          <div class="form-group" style="margin-bottom: var(--space-6)">
-            <h2 x-text="world.name"></h2>
-            <p class="description" x-text="world.description"></p>
-          </div>
-
-          <div class="form-group" style="margin-bottom: var(--space-6)">
-            <label class="form-label">Lore</label>
-            <div class="lore-content" x-text="world.lore || 'No lore provided.'"></div>
-          </div>
-
-          <div class="form-group" style="margin-bottom: var(--space-6)">
-            <label class="form-label">Chat Rooms</label>
-            <template x-if="world.chat_rooms?.length > 0">
-              <div class="chat-list">
-                <template x-for="chat in world.chat_rooms" :key="chat.id">
-                  <div class="chat-item">
-                    <span class="chat-name" x-text="chat.name"></span>
-                    <a :href="'/views/chat'" class="btn btn-ghost btn-sm">Open</a
-                    ><!-- TODO: wire to specific chat once chat creation is implemented -->
-                  </div>
-                </template>
-              </div>
-            </template>
-            <div x-if="!world.chat_rooms?.length">
-              <p class="empty-state" style="color: var(--text-tertiary)">No chat rooms in this world yet.</p>
-            </div>
-          </div>
-        </div>
-      </template>
+      </div>
     </div>
   </main>
 
   <!-- Edit Modal -->
   <div
-    x-show="$store.ui.showEditModal"
-    x-cloak
+    id="edit-world-modal"
     class="modal-overlay"
-    @click.self="$store.ui.showEditModal = false"
+    onclick="if (event.target === this) this.classList.remove('open');"
     data-testid="edit-world-modal"
   >
     <div class="modal">
       <div class="modal-header">
         <span class="title">Edit World</span>
-        <button class="btn-icon" @click="$store.ui.showEditModal = false">&times;</button>
+        <button class="btn-icon" onclick="this.closest('.modal-overlay').classList.remove('open')">
+          &times;
+        </button>
       </div>
       <div class="modal-body">
-        <form @submit.prevent="saveWorld()" data-testid="edit-world-form">
+        <form
+          hx-patch="/api/worlds/{{worldId}}"
+          hx-target="#world-detail"
+          hx-swap="innerHTML"
+          hx-target-error="#toast-container"
+          hx-on::after-request="if(event.detail.successful){ document.getElementById('edit-world-modal').classList.remove('open'); showToast('success','World saved'); loadWorldDetail(); }"
+          data-testid="edit-world-form"
+        >
           <div class="form-group">
             <label class="form-label" for="edit-name">Name</label>
-            <input class="form-input" type="text" name="name" id="edit-name" required x-model="world.name" />
+            <input class="form-input" type="text" name="name" id="edit-name" required />
           </div>
-
           <div class="form-group">
             <label class="form-label" for="edit-description">Description</label>
-            <textarea
-              class="form-input"
-              name="description"
-              id="edit-description"
-              rows="2"
-              x-model="world.description"
-            ></textarea>
+            <textarea class="form-input" name="description" id="edit-description" rows="2"></textarea>
           </div>
-
           <div class="form-group">
             <label class="form-label" for="edit-lore">Lore</label>
-            <textarea class="form-input" name="lore" id="edit-lore" rows="4" x-model="world.lore"></textarea>
+            <textarea class="form-input" name="lore" id="edit-lore" rows="4"></textarea>
           </div>
-
           <div style="display: flex; gap: var(--space-3); justify-content: flex-end">
-            <button type="button" class="btn btn-secondary" @click="$store.ui.showEditModal = false">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              onclick="document.getElementById('edit-world-modal').classList.remove('open')"
+            >
               Cancel
             </button>
-            <button type="submit" class="btn btn-primary" :disabled="saving">Save</button>
+            <button type="submit" class="btn btn-primary">Save</button>
           </div>
         </form>
       </div>
     </div>
   </div>
 </div>
+
+<script>
+  (function f() {
+    if (typeof loadWorldDetail === "function") loadWorldDetail();
+    else setTimeout(f, 10);
+  })();
+</script>

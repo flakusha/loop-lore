@@ -1,129 +1,51 @@
-<!-- Gallery View (swapped into #app-root by htmx) -->
-<!-- Header: moved to #header-slot by htmx:load handler -->
+<!-- Gallery View -->
 <header id="header-slot" class="main-header" data-testid="gallery-header">
-  <button
-    class="hamburger"
-    @click="$store.sidebar.open = !$store.sidebar.open"
-    x-show="!$store.sidebar.open"
-    data-testid="hamburger"
-  >
-    ☰
-  </button>
+  <button class="hamburger" onclick="toggleSidebar()" data-testid="hamburger">☰</button>
   <span class="title">Asset Gallery</span>
   <div class="actions">
-    <button class="btn btn-primary" @click="$store.ui.showUploadModal = true" data-testid="upload-button">
+    <button
+      class="btn btn-primary"
+      onclick="document.getElementById('upload-modal').classList.add('open')"
+      data-testid="upload-button"
+    >
       + Upload
     </button>
   </div>
 </header>
 
-<div class="app-layout" x-data="galleryState()">
-  <!-- Main gallery content -->
+<div class="app-layout">
   <main class="main-content" style="padding-top: 0">
-    <!-- Header is OOB-swapped to layout header-slot -->
-
-    <!-- Asset grid (Alpine-rendered) -->
     <div class="asset-grid" id="asset-grid" data-testid="asset-grid">
-      <template x-if="loading">
-        <div class="empty-state" style="grid-column: 1 / -1" data-testid="gallery-loading">
-          <div class="icon">⏳</div>
-          <div class="title">Loading assets...</div>
-        </div>
-      </template>
-      <template x-if="!loading && assets.length === 0">
-        <div class="empty-state" style="grid-column: 1 / -1" data-testid="gallery-empty">
-          <div class="icon">📁</div>
-          <div class="title">No assets yet</div>
-          <div class="description">
-            Upload images, audio, or video to get started. Assets can be linked to chats, characters, or
-            messages.
-          </div>
-        </div>
-      </template>
-      <template x-for="asset in assets" :key="asset.id">
-        <div class="asset-card" @click="openPreview(asset)" :data-testid="'asset-card-' + asset.id">
-          <div class="thumb">
-            <template x-if="asset.asset_type === 'image'">
-              <img :src="'/api/assets/' + asset.id + '/thumb'" :alt="asset.filename" loading="lazy" />
-            </template>
-            <template x-if="asset.asset_type === 'audio'">
-              <div class="file-icon">🎵</div>
-            </template>
-            <template x-if="asset.asset_type === 'video'">
-              <div class="file-icon">🎬</div>
-            </template>
-            <template x-if="asset.asset_type === 'other'">
-              <div class="file-icon">📄</div>
-            </template>
-          </div>
-          <div class="details">
-            <span class="name" x-text="asset.filename"></span>
-            <span class="type" x-text="formatSize(asset.size_bytes)"></span>
-          </div>
-        </div>
-      </template>
+      <div class="empty-state" style="grid-column: 1 / -1" data-testid="gallery-loading">
+        <div class="icon">⏳</div>
+        <div class="title">Loading assets...</div>
+      </div>
     </div>
 
     <!-- Preview modal -->
     <div
-      x-show="previewAsset"
-      x-cloak
+      id="preview-modal"
       class="modal-overlay"
-      @click.self="previewAsset = null"
+      onclick="if (event.target === this) this.classList.remove('open');"
       data-testid="preview-modal"
     >
       <div class="modal" style="max-width: 800px">
         <div class="modal-header">
-          <span class="title" x-text="previewAsset?.filename || 'Asset'"></span>
-          <button class="btn-icon" @click="previewAsset = null">&times;</button>
+          <span class="title" data-field="filename"></span>
+          <button class="btn-icon" onclick="this.closest('.modal-overlay').classList.remove('open')">
+            &times;
+          </button>
         </div>
-        <div class="modal-body" style="padding: 0">
-          <template x-if="previewAsset?.asset_type === 'image'">
-            <img
-              :src="'/api/assets/' + previewAsset.id + '/raw'"
-              :alt="previewAsset.filename"
-              style="width: 100%; display: block"
-            />
-          </template>
-          <template x-if="previewAsset?.asset_type === 'audio'">
-            <audio
-              controls
-              style="width: 100%; padding: var(--space-6)"
-              :src="'/api/assets/' + previewAsset.id + '/raw'"
-            ></audio>
-          </template>
-          <template x-if="previewAsset?.asset_type === 'video'">
-            <video
-              controls
-              style="width: 100%; display: block"
-              :src="'/api/assets/' + previewAsset.id + '/raw'"
-            ></video>
-          </template>
-        </div>
+        <div class="modal-body" style="padding: 0" data-field="preview-body"></div>
         <div class="modal-footer" style="justify-content: space-between">
           <div style="display: flex; gap: var(--space-2); align-items: center">
-            <span class="tag" x-text="previewAsset?.mime_type || ''"></span>
-            <span class="tag" x-text="formatSize(previewAsset?.size_bytes)"></span>
+            <span class="tag" data-field="mime"></span>
+            <span class="tag" data-field="size"></span>
           </div>
           <div style="display: flex; gap: var(--space-2)">
-            <button
-              class="btn btn-ghost"
-              @click="copyAssetUrl(previewAsset)"
-              title="Copy asset URL to clipboard"
-            >
-              📋 Copy URL
-            </button>
-            <button
-              class="btn btn-ghost"
-              @click="linkAssetToChat(previewAsset.id)"
-              title="Link this asset to a chat"
-            >
-              🔗 Link to Chat
-            </button>
-            <button class="btn btn-ghost" @click="downloadAsset(previewAsset)" title="Download asset file">
-              ⬇ Download
-            </button>
-            <button class="btn btn-danger" @click="deleteAsset(previewAsset.id)">🗑 Delete</button>
+            <button class="btn btn-ghost" onclick="copyAssetUrl()" title="Copy URL">📋 Copy URL</button>
+            <button class="btn btn-ghost" onclick="downloadAsset()" title="Download">⬇ Download</button>
+            <button class="btn btn-danger" onclick="deleteAssetPreview()">🗑 Delete</button>
           </div>
         </div>
       </div>
@@ -131,47 +53,65 @@
 
     <!-- Upload modal -->
     <div
-      x-show="$store.ui.showUploadModal"
-      x-cloak
+      id="upload-modal"
       class="modal-overlay"
-      @click.self="$store.ui.showUploadModal = false"
+      onclick="if (event.target === this) this.classList.remove('open');"
       data-testid="upload-modal"
     >
       <div class="modal">
         <div class="modal-header">
           <span class="title">Upload Asset</span>
-          <button class="btn-icon" @click="$store.ui.showUploadModal = false">&times;</button>
+          <button class="btn-icon" onclick="this.closest('.modal-overlay').classList.remove('open')">
+            &times;
+          </button>
         </div>
         <div class="modal-body">
-          <form @submit.prevent="uploadAsset($event)" data-testid="upload-form">
+          <form
+            hx-post="/api/assets"
+            hx-encoding="multipart/form-data"
+            hx-target="#asset-grid"
+            hx-swap="innerHTML"
+            hx-target-error="#toast-container"
+            hx-on::after-request="if(event.detail.successful){ document.getElementById('upload-modal').classList.remove('open'); showToast('success','Asset uploaded'); loadGalleryPage(); }"
+            data-testid="upload-form"
+          >
             <div
               class="drop-zone"
-              :class="{ 'has-file': selectedFile, 'uploading': uploading }"
-              @dragover.prevent="$el.classList.add('drag-over')"
-              @dragleave.prevent="$el.classList.remove('drag-over')"
-              @drop.prevent="handleDrop($event); $el.classList.remove('drag-over')"
-              @click="$refs.fileInput.click()"
+              style="margin-bottom: var(--space-4)"
+              id="upload-dropzone"
+              ondragover="
+                this.classList.add('drag-over');
+                event.preventDefault();
+              "
+              ondragleave="
+                this.classList.remove('drag-over');
+                event.preventDefault();
+              "
+              ondrop="
+                event.preventDefault();
+                this.classList.remove('drag-over');
+                const f = event.dataTransfer.files[0];
+                if (f) {
+                  this.querySelector('.text').textContent = f.name;
+                  document.getElementById('upload-file-input').files = event.dataTransfer.files;
+                }
+              "
             >
               <div class="icon">📤</div>
-              <div
-                class="text"
-                x-text="uploading ? 'Uploading...' : (selectedFile ? selectedFile.name : 'Drag & drop files here')"
-              ></div>
-              <div
-                class="hint"
-                x-text="uploading ? '' : (selectedFile ? 'Click to change file' : 'or click to browse')"
-              ></div>
+              <div class="text">Drag & drop files here</div>
+              <div class="hint">or click to browse</div>
               <input
                 type="file"
                 name="file"
                 accept="image/*,audio/*,video/*"
                 style="display: none"
-                id="upload-input"
-                x-ref="fileInput"
-                @change="handleFileSelect($event)"
+                id="upload-file-input"
+                onchange="
+                  document.getElementById('upload-dropzone').querySelector('.text').textContent =
+                    this.files[0]?.name || 'Drag & drop files here'
+                "
               />
             </div>
-
             <div class="form-group" style="margin-top: var(--space-4)">
               <label class="form-label" for="asset-label">Label (optional)</label>
               <input
@@ -179,16 +119,18 @@
                 type="text"
                 name="alt_text"
                 id="asset-label"
-                x-model="uploadLabel"
-                placeholder="e.g., Character portrait, Chat background"
+                placeholder="e.g., Character portrait"
               />
             </div>
-
             <div style="display: flex; gap: var(--space-3); justify-content: flex-end">
-              <button type="button" class="btn btn-secondary" @click="$store.ui.showUploadModal = false">
+              <button
+                type="button"
+                class="btn btn-secondary"
+                onclick="document.getElementById('upload-modal').classList.remove('open')"
+              >
                 Cancel
               </button>
-              <button type="submit" class="btn btn-primary" :disabled="uploading">Upload</button>
+              <button type="submit" class="btn btn-primary">Upload</button>
             </div>
           </form>
         </div>
@@ -196,3 +138,10 @@
     </div>
   </main>
 </div>
+
+<script>
+  (function f() {
+    if (typeof loadGalleryPage === "function") loadGalleryPage();
+    else setTimeout(f, 10);
+  })();
+</script>
