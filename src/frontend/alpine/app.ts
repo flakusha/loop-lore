@@ -52,7 +52,7 @@ globalThis.app = function () {
 
     applyTheme(themeId: string) {
       const themes = globalThis.__THEMES ?? [];
-      const theme = themes.find((t: { id: string }) => t.id === themeId);
+      const theme = themes.some((t: { id: string }) => t.id === themeId);
       if (!theme) return;
 
       for (const t of themes) {

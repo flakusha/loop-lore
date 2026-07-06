@@ -81,6 +81,9 @@ globalThis.chatState = function () {
 
     /** Cleanup interval on component destroy */
     _observer: null as MutationObserver | null,
+    _toggleChatListHandler: () => {},
+    _toggleGalleryHandler: () => {},
+    _toggleCharacterInfoHandler: () => {},
 
     init() {
       this.loadChats();

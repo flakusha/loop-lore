@@ -8,8 +8,7 @@
 
 // ── Type declarations for htmx custom events ─────────────────
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import type Alpine from "alpinejs";
+export {};
 // Required for declare global in module
 
 // Alpine magic properties — injected on `this` by x-data at runtime
@@ -30,6 +29,7 @@ type AlpineState<T> = T & ThisType<T & AlpineMagicThis>;
 declare global {
   interface DocumentEventMap {
     "htmx:configRequest": CustomEvent<{ headers: Record<string, string> }>;
+    "htmx:beforeSwap": CustomEvent<{ content: string }>;
     "htmx:afterSwap": CustomEvent<{ target: Element }>;
     "htmx:load": CustomEvent<{ elt: Element }>;
     "htmx:responseError": CustomEvent<{ xhr?: XMLHttpRequest }>;
@@ -37,13 +37,14 @@ declare global {
     "show-toast": CustomEvent<{ type?: string; message: string; icon?: string }>;
   }
 
-  // Extend Window for Alpine.js component functions
   interface Window {
     app: () => {
       toasts: Array<{ type: string; msg: string; icon: string }>;
       currentTheme: string;
       sidebarOpen: boolean;
       currentLocale: string;
+      localeStrings: Record<string, string>;
+      pageTitle: string;
       init: () => void;
       applyTheme: (themeId: string) => void;
       iconFor: (type: string) => string;
@@ -53,11 +54,9 @@ declare global {
       getThemeName: () => string;
       loadLocale: (locale: string) => Promise<void>;
       setLocale: (localeId: string) => void;
+      __: (key: string, fallback?: string) => string;
     };
     chatState: () => AlpineState<{
-      showChatList: boolean;
-      showGallery: boolean;
-      showCharacterInfo: boolean;
       isGenerating: boolean;
       generationLabel: string;
       generationCheckInterval: ReturnType<typeof setInterval> | null;
@@ -174,9 +173,11 @@ declare global {
       _observer: MutationObserver | null;
       _groupedKey: string;
       _groupedCache: any;
+      _toggleChatListHandler: () => void;
+      _toggleGalleryHandler: () => void;
+      _toggleCharacterInfoHandler: () => void;
     }>;
     galleryState: () => AlpineState<{
-      showUploadModal: boolean;
       previewAsset: {
         id: string;
         name?: string;
@@ -232,6 +233,9 @@ declare global {
       chatMode: string;
       error: string;
       submitting: boolean;
+      init: () => void;
+      typeEnum: (type: string) => string;
+      modeEnum: (mode: string) => string;
       createChat: () => Promise<void>;
     };
     worldsState: () => any;
@@ -243,6 +247,10 @@ declare global {
     Alpine: {
       $data: (el: HTMLElement) => Record<string, unknown>;
       initTree: (el: HTMLElement) => void;
+      store: {
+        <T = Record<string, unknown>>(key: string): T;
+        <T = Record<string, unknown>>(key: string, value: T): void;
+      };
     };
     htmx: {
       ajax: (method: string, url: string, opts: { target: string; swap: string }) => void;
@@ -272,4 +280,5 @@ declare global {
   var __THEMES: Window["__THEMES"];
   var Alpine: Window["Alpine"];
   var htmx: Window["htmx"];
+  var apiFetch: (url: string, options?: RequestInit) => Promise<Response>;
 }

@@ -36,7 +36,8 @@ globalThis.worldsState = function () {
     },
 
     async createWorld() {
-      const form = (this as any).$el?.querySelector("form");
+      const root = (this as any).$el;
+      const form = root?.tagName === "FORM" ? root : root?.querySelector("form");
       if (!form) return;
 
       this.submitting = true;
@@ -81,7 +82,6 @@ globalThis.worldDetailState = function () {
     saving: false,
 
     async init() {
-      // eslint-disable-next-line sonarjs/prefer-regexp-exec
       const match = location.pathname.match(/\/worlds\/([\w-]+)/);
       if (match) {
         await this.loadWorld(match[1]);
@@ -151,7 +151,6 @@ globalThis.worldEditState = function () {
     },
 
     async init() {
-      // eslint-disable-next-line sonarjs/prefer-regexp-exec
       const match = location.pathname.match(/\/worlds\/([\w-]+)\/edit/);
       if (match) {
         await this.loadWorld(match[1]);
