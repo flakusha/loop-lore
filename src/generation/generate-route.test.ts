@@ -208,12 +208,10 @@ beforeEach(async () => {
 
   // Register mock provider — reuse existing entry if present (module-level registry)
   const existing = getProvider("mock-provider");
+  mockProvider = new MockLLMProvider();
   if (existing) {
-    // Reset the existing provider in-place to clear state from previous test
-    mockProvider = new MockLLMProvider();
     Object.assign(existing, mockProvider);
   } else {
-    mockProvider = new MockLLMProvider();
     registerProvider("mock-provider", mockProvider);
   }
 

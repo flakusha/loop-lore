@@ -246,7 +246,7 @@ export class QuestEngine {
    * Calculate progress delta for a quest based on a world event.
    * Returns 0 if the event doesn't advance this quest.
    */
-   
+
   private calculateProgress(
     quest: {
       id: string;
@@ -346,7 +346,7 @@ export class QuestEngine {
    * Apply progress to a quest, check milestones, and distribute rewards
    * if completed.
    */
-   
+
   private async applyProgress(
     quest: {
       id: string;

@@ -146,7 +146,7 @@ export class QualityEvaluator {
   }
 
   /** Score lore consistency (0-100) */
-   
+
   private scoreLoreConsistency(response: string, lore?: string | null): number {
     if (!lore) return 75;
 
@@ -208,7 +208,7 @@ export class QualityEvaluator {
     }
     score += sensoryCount * 3;
 
-    const dialogueCount = (response.match(/[""\u201C\u201D]/g) ?? []).length;
+    const dialogueCount = (response.match(/["\u{201C}\u{201D}]/gu) ?? []).length;
     if (dialogueCount >= 2) score += 8;
 
     const pastVerbs = (response.match(/\b(was|were|had|did|went|said|walked|looked|turned|spoke)\b/gi) ?? [])
@@ -266,7 +266,7 @@ export class QualityEvaluator {
   }
 
   /** Score creativity (0-100) */
-   
+
   private scoreCreativity(response: string, recentTurns?: { response: string | null }[]): number {
     let score = 65;
 
