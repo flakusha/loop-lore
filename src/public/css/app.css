@@ -1210,7 +1210,7 @@ body {
 .right-panel {
   position: fixed;
   top: 0;
-  right: -320px;
+  right: 0;
   width: 320px;
   min-width: 320px;
   height: 100vh;
@@ -1220,11 +1220,6 @@ body {
   display: flex;
   flex-direction: column;
   z-index: var(--z-modal);
-  transition: right 0.2s ease-out;
-}
-
-.right-panel.open {
-  right: 0;
 }
 
 .right-panel .panel-content {
@@ -1249,7 +1244,7 @@ body {
 .gallery-sidebar {
   position: fixed;
   top: 0;
-  right: -340px;
+  right: 0;
   width: 340px;
   min-width: 340px;
   height: 100vh;
@@ -1259,11 +1254,6 @@ body {
   display: flex;
   flex-direction: column;
   z-index: var(--z-modal);
-  transition: right 0.2s ease-out;
-}
-
-.gallery-sidebar.open {
-  right: 0;
 }
 
 .gallery-sidebar .panel-content {
