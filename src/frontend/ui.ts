@@ -6,8 +6,8 @@
 // ── Sidebar ──────────────────────────────────────────────────
 
 export function toggleSidebar(): void {
-  const sidebar = document.querySelector("#layout-sidebar");
-  const backdrop = document.querySelector("#sidebar-backdrop");
+  const sidebar = document.querySelector<HTMLElement>("#layout-sidebar");
+  const backdrop = document.querySelector<HTMLElement>("#sidebar-backdrop");
   const isOpen = sidebar?.classList.contains("open") ?? false;
   sidebar?.classList.toggle("open");
   if (backdrop) {
@@ -16,13 +16,13 @@ export function toggleSidebar(): void {
   }
   document.body.classList.toggle("sidebar-open");
   if (globalThis.Alpine) {
-    globalThis.Alpine.store("sidebar").open = !isOpen;
+    Alpine.store("sidebar").open = !isOpen;
   }
 }
 
 export function closeSidebar(): void {
-  const sidebar = document.querySelector("#layout-sidebar");
-  const backdrop = document.querySelector("#sidebar-backdrop");
+  const sidebar = document.querySelector<HTMLElement>("#layout-sidebar");
+  const backdrop = document.querySelector<HTMLElement>("#sidebar-backdrop");
   sidebar?.classList.remove("open");
   if (backdrop) {
     backdrop.style.display = "none";
@@ -30,7 +30,7 @@ export function closeSidebar(): void {
   }
   document.body.classList.remove("sidebar-open");
   if (globalThis.Alpine) {
-    globalThis.Alpine.store("sidebar").open = false;
+    Alpine.store("sidebar").open = false;
   }
 }
 
@@ -56,9 +56,12 @@ export function showToast(type: string, message: string): void {
   }, 5000);
 }
 
-document.addEventListener("show-toast", ((e: CustomEvent<{ type?: string; message: string }>) => {
-  showToast(e.detail.type || "info", e.detail.message);
-}) as EventListener);
+document.addEventListener(
+  "show-toast",
+  (e: CustomEvent<{ type?: string; message: string; icon?: string }>) => {
+    showToast(e.detail.type || "info", e.detail.message);
+  },
+);
 
 // ── Theme ────────────────────────────────────────────────────
 
@@ -66,7 +69,7 @@ export function applyTheme(themeId: string): void {
   const themes: Array<{ id: string; file: string }> = globalThis.__THEMES ?? [];
   if (!themeId || themes.every((t) => t.id !== themeId)) return;
   for (const t of themes) {
-    const link = document.querySelector(`#theme-${t.id}`) as HTMLLinkElement | null;
+    const link = document.querySelector<HTMLLinkElement>(`#theme-${t.id}`);
     if (link) link.disabled = t.id !== themeId;
   }
   document.body.classList.toggle("theme-no-icons", themeId === "no-icons");

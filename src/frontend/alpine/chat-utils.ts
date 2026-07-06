@@ -1,7 +1,8 @@
 import DOMPurify from "dompurify";
 import { marked } from "marked";
+import type { ChatState } from "./types";
 
-export const chatUtils = {
+export const chatUtils: Partial<ChatState> & ThisType<ChatState> = {
   _groupedCache: null as Array<Record<string, unknown>> | null,
   _groupedKey: "",
 
@@ -45,10 +46,9 @@ export const chatUtils = {
         "blockquote",
         "table",
         "thead",
-        "tbody",
-        "tr",
-        "th",
         "td",
+        "th",
+        "tr",
         "hr",
         "img",
         "del",
@@ -65,18 +65,17 @@ export const chatUtils = {
   },
 
   get groupedMessages() {
-    const msgs = (this as Record<string, unknown>).messages as Array<Record<string, unknown>>;
+    const msgs = this.messages;
     if (!msgs || msgs.length === 0) return [];
-    const key = `${msgs.length}:${String(msgs[msgs.length - 1]?.id ?? "")}:${String(msgs[0]?.id ?? "")}`;
+    const key = `${msgs.length}:${msgs[msgs.length - 1]?.id ?? ""}:${msgs[0]?.id ?? ""}`;
     if (this._groupedKey === key && this._groupedCache) return this._groupedCache;
     const groups: Array<Record<string, unknown>> = [];
     for (let i = 0; i < msgs.length; i++) {
-      const msg = { ...msgs[i] };
+      const msg = { ...msgs[i] } as Record<string, unknown>;
       if (i > 0) {
         const prev = msgs[i - 1];
         const sameRole = msg.role === prev.role;
-        const timeDiff =
-          new Date(String(msg.created_at)).getTime() - new Date(String(prev.created_at)).getTime();
+        const timeDiff = new Date(msg.created_at as string).getTime() - new Date(prev.created_at).getTime();
         if (sameRole && timeDiff < 300_000) {
           msg.group = true;
           const last = groups[groups.length - 1];
@@ -126,7 +125,7 @@ export const chatUtils = {
     if (asset.asset_type === "image") {
       window.open(`/api/assets/${asset.id}/raw`, "_blank", "noopener,noreferrer");
     } else {
-      (this as Record<string, unknown>).$dispatch?.("show-toast", {
+      this.$dispatch?.("show-toast", {
         type: "info",
         message: `${asset.filename || asset.name} (${asset.asset_type || "unknown"})`,
       });
@@ -140,28 +139,26 @@ export const chatUtils = {
   },
 
   async loadGalleryAssets() {
-    const self = this as Record<string, unknown>;
-    const activeChat = self.activeChat as string | null;
+    const activeChat = this.activeChat;
     if (!activeChat) return;
     try {
       const url = `/api/assets?entity_type=chat&entity_id=${activeChat}&pageSize=200`;
       const res = await apiFetch(url);
       if (res.ok) {
         const data = await res.json();
-        self.galleryAssets = data.data || [];
+        this.galleryAssets = data.data || [];
       } else {
-        self.galleryAssets = [];
+        this.galleryAssets = [];
       }
     } catch {
-      (this as Record<string, unknown>).galleryAssets = [];
+      this.galleryAssets = [];
     }
   },
 
   async loadCharacterInfo() {
-    const self = this as Record<string, unknown>;
-    const activeChat = self.activeChat as string | null;
+    const activeChat = this.activeChat;
     if (!activeChat) return;
-    self.currentCharacter = null;
+    this.currentCharacter = null;
     try {
       const res = await apiFetch(`/api/chats/${activeChat}`);
       if (res.ok) {
@@ -169,7 +166,7 @@ export const chatUtils = {
         if (chat.character_id) {
           const charRes = await apiFetch(`/api/actors/${chat.character_id}`);
           if (charRes.ok) {
-            self.currentCharacter = await charRes.json();
+            this.currentCharacter = await charRes.json();
           }
         }
       }

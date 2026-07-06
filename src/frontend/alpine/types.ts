@@ -13,7 +13,170 @@ interface AlpineMagicThis {
   $el: HTMLElement;
 }
 
-type AlpineState<T> = T & ThisType<T & AlpineMagicThis>;
+export type AlpineState<T> = T & ThisType<T & AlpineMagicThis>;
+
+interface MessageAttachment {
+  assetId: string;
+  order: number;
+  caption: string;
+  label: string;
+  url: string;
+  thumbUrl?: string;
+  filename: string;
+  mimeType: string;
+  type: string;
+  width: number;
+  height: number;
+}
+
+interface Message {
+  id: string;
+  role: string;
+  content: string;
+  created_at: string;
+  thinking?: string;
+  actor_name?: string;
+  variantIndex?: number;
+  totalVariants?: number;
+  attachments?: MessageAttachment[];
+}
+
+interface GroupedMessage extends Message {
+  group?: boolean;
+  groupCount?: number;
+}
+
+interface GalleryAsset {
+  id: string;
+  name?: string;
+  filename?: string;
+  asset_type?: string;
+  mime_type?: string;
+  size_bytes?: number;
+  width?: number;
+  height?: number;
+  alt_text?: string;
+}
+
+interface GenerationDetail {
+  model?: string;
+  elapsedMs?: number;
+  chunksReceived?: number;
+  charsReceived?: number;
+  status?: string;
+  attemptId?: string;
+}
+
+export interface ChatState extends AlpineMagicThis {
+  isGenerating: boolean;
+  generationLabel: string;
+  generationCheckInterval: ReturnType<typeof setInterval> | null;
+  activeAttemptId: string | null;
+  continuingMessageId: string | null;
+  isContinuing: boolean;
+  chats: Array<{ id: string; name?: string }>;
+  activeChat: string | null;
+  messages: Message[];
+  loadingMessages: boolean;
+  loadingError: string | null;
+  hasMoreMessages: boolean;
+  loadingOlder: boolean;
+  currentPage: number;
+  totalPages: number;
+  scrollObserver: IntersectionObserver | null;
+  activeChatName: string;
+  galleryAssets: GalleryAsset[];
+  userDisplayName: string;
+  userRole: string;
+  currentCharacter: { id: string; display_name?: string; name?: string; description?: string } | null;
+  generationDetail: GenerationDetail | null;
+
+  editingMessageId: string | null;
+  editContent: string;
+  previewMediaAsset: any;
+  pendingAssets: Array<{ assetId: string; filename: string }>;
+
+  groupedMessages: GroupedMessage[];
+  _observer: MutationObserver | null;
+  _groupedKey: string;
+  _groupedCache: any;
+  _toggleChatListHandler: () => void;
+  _toggleGalleryHandler: () => void;
+  _toggleCharacterInfoHandler: () => void;
+  _chatSettingsName: string;
+  _chatSettingsMode: string;
+  _chatSettingsTurnStrategy: string;
+  _renameChatId: string;
+  _renameChatName: string;
+
+  init(): void;
+  destroy(): void;
+  loadUserInfo(): Promise<void>;
+  loadChats(): Promise<void>;
+  selectChat(chatId: string): Promise<void>;
+  loadMessages(): Promise<void>;
+  loadOlderMessages(): Promise<void>;
+  setupInfiniteScroll(): void;
+  sendMessage(): Promise<void>;
+  autoResize(el: HTMLTextAreaElement): void;
+  scrollToBottom(): void;
+  loadGalleryAssets(): Promise<void>;
+  loadCharacterInfo(): Promise<void>;
+  formatTime(iso: string): string;
+  displayName(msg: { role: string; actor_name?: string }): string;
+  copyMessage(msgId: string, event: Event): Promise<void>;
+  removeMessage(msgId: string, event: Event): Promise<void>;
+  checkGenerationStatus(chatId: string): Promise<void>;
+  cancelGeneration(): Promise<void>;
+  regenerateResponse(): Promise<void>;
+  regenerateVariant(messageId: string): Promise<void>;
+  switchVariant(messageId: string, direction: number): Promise<void>;
+  continueMessage(messageId: string): Promise<void>;
+  retryFromPoint(attemptId: string, step: number): Promise<void>;
+  getChatId(): string | null;
+  handleAttach(event: Event): Promise<void>;
+  escapeHtml(str: string): string;
+  startEdit(msgId: string): void;
+  cancelEdit(): void;
+  saveEdit(msgId: string): Promise<void>;
+  renderMarkdown(content: string): string;
+  getMediaStyle(asset: any, totalCount: number): Record<string, string>;
+  openMediaPreview(asset: any): void;
+  removePendingAsset(assetId: string): void;
+  openAssetPreview(asset: { id: string; asset_type?: string; filename?: string; name?: string }): void;
+  openChatSettings(): void;
+  saveChatSettings(): Promise<void>;
+  renameChat(chatId: string): Promise<void>;
+  openRenameModal(chatId: string): void;
+  confirmRenameChat(): Promise<void>;
+  deleteChat(chatId: string, event: Event): Promise<void>;
+}
+
+interface WorldEditState {
+  loading: boolean;
+  error: boolean;
+  activeTab: string;
+  world: { id: string; name: string; description: string | null; lore: string | null; tags: string[] } | null;
+  tagsStr: string;
+  locations: Array<{
+    id: string;
+    name: string;
+    description: string | null;
+    parent_location_id: string | null;
+  }>;
+  locationsLoaded: boolean;
+  loadingLocations: boolean;
+  showAddForm: boolean;
+  newLocName: string;
+  newLocDesc: string;
+  newLocParentId: string;
+  worldId: string | null;
+  init(): void;
+  saveWorld(): Promise<void>;
+  loadLocations(): Promise<void>;
+  addLocation(): Promise<void>;
+  deleteLocation(locId: string): Promise<void>;
+}
 
 declare global {
   interface DocumentEventMap {
@@ -41,168 +204,8 @@ declare global {
       setLocale: (localeId: string) => void;
       __: (key: string, fallback?: string) => string;
     };
-    chatState: () => AlpineState<{
-      isGenerating: boolean;
-      generationLabel: string;
-      generationCheckInterval: ReturnType<typeof setInterval> | null;
-      activeAttemptId: string | null;
-      continuingMessageId: string | null;
-      isContinuing: boolean;
-      chats: Array<{ id: string; name?: string }>;
-      activeChat: string | null;
-      messages: Array<{
-        id: string;
-        role: string;
-        content: string;
-        created_at: string;
-        thinking?: string;
-        actor_name?: string;
-        variantIndex?: number;
-        totalVariants?: number;
-        attachments?: Array<{
-          assetId: string;
-          order: number;
-          caption: string;
-          label: string;
-          url: string;
-          thumbUrl?: string;
-          filename: string;
-          mimeType: string;
-          type: string;
-          width: number;
-          height: number;
-        }>;
-      }>;
-      loadingMessages: boolean;
-      loadingError: string | null;
-      hasMoreMessages: boolean;
-      loadingOlder: boolean;
-      currentPage: number;
-      totalPages: number;
-      scrollObserver: IntersectionObserver | null;
-      activeChatName: string;
-      galleryAssets: Array<{ id: string; name?: string; filename?: string }>;
-      userDisplayName: string;
-      userRole: string;
-      currentCharacter: { id: string; display_name?: string; name?: string; description?: string } | null;
-      generationDetail: {
-        model?: string;
-        elapsedMs?: number;
-        chunksReceived?: number;
-        charsReceived?: number;
-        status?: string;
-        attemptId?: string;
-      } | null;
-      init(): void;
-      destroy(): void;
-      loadUserInfo(): Promise<void>;
-      loadChats(): Promise<void>;
-      selectChat(chatId: string): Promise<void>;
-      loadMessages(): Promise<void>;
-      loadOlderMessages(): Promise<void>;
-      setupInfiniteScroll(): void;
-      sendMessage(): Promise<void>;
-      autoResize(el: HTMLTextAreaElement): void;
-      scrollToBottom(): void;
-      loadGalleryAssets(): Promise<void>;
-      loadCharacterInfo(): Promise<void>;
-      formatTime(iso: string): string;
-      displayName(msg: { role: string; actor_name?: string }): string;
-      copyMessage(msgId: string, event: Event): Promise<void>;
-      removeMessage(msgId: string, event: Event): Promise<void>;
-      checkGenerationStatus(chatId: string): Promise<void>;
-      cancelGeneration(): Promise<void>;
-      regenerateResponse(): Promise<void>;
-      regenerateVariant(messageId: string): Promise<void>;
-      switchVariant(messageId: string, direction: number): Promise<void>;
-      continueMessage(messageId: string): Promise<void>;
-      retryFromPoint(attemptId: string, step: number): Promise<void>;
-      getChatId(): string | null;
-      handleAttach(event: Event): Promise<void>;
-      escapeHtml(str: string): string;
-      startEdit(msgId: string): void;
-      cancelEdit(): void;
-      saveEdit(msgId: string): Promise<void>;
-      editingMessageId: string | null;
-      editContent: string;
-      groupedMessages: Array<{
-        id: string;
-        role: string;
-        content: string;
-        created_at: string;
-        thinking?: string;
-        actor_name?: string;
-        group?: boolean;
-        groupCount?: number;
-        attachments?: Array<{
-          assetId: string;
-          order: number;
-          caption: string;
-          label: string;
-          url: string;
-          thumbUrl?: string;
-          filename: string;
-          mimeType: string;
-          type: string;
-          width: number;
-          height: number;
-        }>;
-      }>;
-      renderMarkdown(content: string): string;
-      getMediaStyle(asset: any, totalCount: number): Record<string, string>;
-      openMediaPreview(asset: any): void;
-      previewMediaAsset: any;
-      pendingAssets: Array<{ assetId: string; filename: string }>;
-      removePendingAsset(assetId: string): void;
-      _observer: MutationObserver | null;
-      _groupedKey: string;
-      _groupedCache: any;
-      _toggleChatListHandler: () => void;
-      _toggleGalleryHandler: () => void;
-      _toggleCharacterInfoHandler: () => void;
-      _chatSettingsName: string;
-      _chatSettingsMode: string;
-      _chatSettingsTurnStrategy: string;
-      _renameChatId: string;
-      _renameChatName: string;
-      openChatSettings(): void;
-      saveChatSettings(): Promise<void>;
-      renameChat(chatId: string): Promise<void>;
-      openRenameModal(chatId: string): void;
-      confirmRenameChat(): Promise<void>;
-      deleteChat(chatId: string, event: Event): Promise<void>;
-    }>;
-    worldEditState: () => AlpineState<{
-      loading: boolean;
-      error: boolean;
-      activeTab: string;
-      world: {
-        id: string;
-        name: string;
-        description: string | null;
-        lore: string | null;
-        tags: string[];
-      } | null;
-      tagsStr: string;
-      locations: Array<{
-        id: string;
-        name: string;
-        description: string | null;
-        parent_location_id: string | null;
-      }>;
-      locationsLoaded: boolean;
-      loadingLocations: boolean;
-      showAddForm: boolean;
-      newLocName: string;
-      newLocDesc: string;
-      newLocParentId: string;
-      worldId: string | null;
-      init(): void;
-      saveWorld(): Promise<void>;
-      loadLocations(): Promise<void>;
-      addLocation(): Promise<void>;
-      deleteLocation(locId: string): Promise<void>;
-    }>;
+    chatState: () => AlpineState<ChatState>;
+    worldEditState: () => AlpineState<WorldEditState>;
     Alpine: {
       $data: (el: HTMLElement) => Record<string, unknown>;
       initTree: (el: HTMLElement) => void;

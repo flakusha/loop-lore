@@ -52,9 +52,9 @@ async function tryGzipCompress(data: Uint8Array): Promise<Uint8Array | null> {
   try {
     const stream = new CompressionStream("gzip");
     const writer = stream.writable.getWriter();
-    await writer.write(data as any);
+    await writer.write(data as Uint8Array<ArrayBuffer>);
     await writer.close();
-    const response = new Response(stream as any);
+    const response = new Response(stream.readable);
     return new Uint8Array(await response.arrayBuffer());
   } catch {
     return null;
@@ -65,7 +65,7 @@ async function tryGzipDecompress(data: Uint8Array): Promise<Uint8Array | null> {
   if (typeof DecompressionStream === "undefined") return null;
   try {
     const stream = new DecompressionStream("gzip");
-    const blob = new Blob([data as any]);
+    const blob = new Blob([data as Uint8Array<ArrayBuffer>]);
     const input = blob.stream().pipeThrough(stream);
     const response = new Response(input);
     return new Uint8Array(await response.arrayBuffer());
@@ -81,11 +81,11 @@ function tryZstdCompress(_data: Uint8Array): Promise<Uint8Array | null> {
 async function tryBrotliCompress(data: Uint8Array): Promise<Uint8Array | null> {
   if (typeof CompressionStream === "undefined") return null;
   try {
-    const stream = new CompressionStream("brotli" as any);
+    const stream = new CompressionStream("brotli" as CompressionFormat);
     const writer = stream.writable.getWriter();
-    await writer.write(data as any);
+    await writer.write(data as Uint8Array<ArrayBuffer>);
     await writer.close();
-    const response = new Response(stream as any);
+    const response = new Response(stream.readable);
     return new Uint8Array(await response.arrayBuffer());
   } catch {
     return null;
@@ -95,8 +95,8 @@ async function tryBrotliCompress(data: Uint8Array): Promise<Uint8Array | null> {
 async function tryBrotliDecompress(data: Uint8Array): Promise<Uint8Array | null> {
   if (typeof DecompressionStream === "undefined") return null;
   try {
-    const stream = new DecompressionStream("brotli" as any);
-    const blob = new Blob([data as any]);
+    const stream = new DecompressionStream("brotli" as CompressionFormat);
+    const blob = new Blob([data as Uint8Array<ArrayBuffer>]);
     const input = blob.stream().pipeThrough(stream);
     const response = new Response(input);
     return new Uint8Array(await response.arrayBuffer());
@@ -185,7 +185,11 @@ export async function browserEncryptContent(
   const data = stringToUint8Array(plaintext);
   const nonce = crypto.getRandomValues(new Uint8Array(12));
 
-  const encrypted = await crypto.subtle.encrypt({ name: "AES-GCM", iv: nonce } as any, key, data as any);
+  const encrypted = await crypto.subtle.encrypt(
+    { name: "AES-GCM", iv: nonce },
+    key,
+    data as Uint8Array<ArrayBuffer>,
+  );
 
   return {
     ciphertext: uint8ArrayToBase64(new Uint8Array(encrypted)),
@@ -205,9 +209,9 @@ export async function browserDecryptContent(
   const nonceData = base64ToUint8Array(nonce);
 
   const decrypted = await crypto.subtle.decrypt(
-    { name: "AES-GCM", iv: nonceData } as any,
+    { name: "AES-GCM", iv: nonceData as Uint8Array<ArrayBuffer> },
     key,
-    encryptedData as any,
+    encryptedData as Uint8Array<ArrayBuffer>,
   );
 
   return uint8ArrayToString(new Uint8Array(decrypted));
@@ -215,10 +219,13 @@ export async function browserDecryptContent(
 
 export async function browserImportKey(base64Key: string): Promise<CryptoKey> {
   const keyData = base64ToUint8Array(base64Key);
-  return crypto.subtle.importKey("raw", keyData as any, { name: "AES-GCM", length: 256 }, false, [
-    "encrypt",
-    "decrypt",
-  ]);
+  return crypto.subtle.importKey(
+    "raw",
+    keyData as Uint8Array<ArrayBuffer>,
+    { name: "AES-GCM", length: 256 },
+    false,
+    ["encrypt", "decrypt"],
+  );
 }
 
 export async function browserExportKey(key: CryptoKey): Promise<string> {
