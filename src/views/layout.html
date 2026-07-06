@@ -31,10 +31,13 @@
       defer
     ></script>
 
+    <!-- HTMX bundle: globals + htmx event handlers (no Alpine dependency) -->
+    <script src="/bundle.js" defer></script>
+
     <!-- Alpine components (define app, chatState, etc. BEFORE Alpine loads) -->
     <script src="/alpine.js" defer></script>
 
-    <!-- Alpine.js -->
+    <!-- Alpine.js (loaded for chat page reactivity) -->
     <script
       src="https://unpkg.com/alpinejs@3.14.9/dist/cdn.min.js"
       integrity="sha384-9Ax3MmS9AClxJyd5/zafcXXjxmwFhZCdsT6HJoJjarvCaAkJlk5QDzjLJm+Wdx5F"
@@ -59,13 +62,9 @@
     ></script>
 
     <style>
-      /* Inline critical: prevent FOUC - uses CSS vars from theme.css */
       body {
         background: var(--bg-primary);
         color: var(--text-primary);
-      }
-      [x-cloak] {
-        display: none !important;
       }
 
       /* Theme selector dropdown */
@@ -73,7 +72,6 @@
         position: relative;
         display: inline-block;
       }
-
       .theme-options {
         position: absolute;
         top: 100%;
@@ -86,7 +84,6 @@
         z-index: var(--z-dropdown);
         padding: var(--space-2) 0;
       }
-
       .theme-option {
         padding: var(--space-2) var(--space-3);
         cursor: pointer;
@@ -94,12 +91,10 @@
         white-space: nowrap;
         transition: background var(--transition-fast);
       }
-
       .theme-option:hover {
         background: var(--bg-tertiary);
         color: var(--text-primary);
       }
-
       .theme-option.active {
         background: var(--accent-primary);
         color: #000;
@@ -107,41 +102,15 @@
       }
     </style>
   </head>
-  <body
-    x-data="app()"
-    x-init="init()"
-    @keydown.escape.window="closeAllModals()"
-    :class="{ 'sidebar-open': $store.sidebar.open }"
-  >
+  <body x-data="app()">
     <!-- Toast container (fixed, outside layout) -->
-    <div
-      class="toast-container"
-      id="toast-container"
-      data-testid="toast-container"
-      x-show="toasts.length > 0"
-      x-transition
-    >
-      <template x-for="(toast, i) in toasts" :key="i">
-        <div class="toast" :class="toast.type">
-          <span class="icon" x-text="toast.icon"></span>
-          <span class="message" x-text="toast.msg"></span>
-          <button class="close" @click="toasts.splice(i, 1)">&times;</button>
-        </div>
-      </template>
-    </div>
+    <div class="toast-container" id="toast-container" data-testid="toast-container"></div>
 
-    <!-- Persistent sidebar (does not reload on htmx nav) -->
-    <aside class="sidebar" id="layout-sidebar" data-testid="sidebar" :class="{ open: $store.sidebar.open }">
+    <!-- Persistent sidebar -->
+    <aside class="sidebar" id="layout-sidebar" data-testid="sidebar">
       <div class="sidebar-header">
         <span class="logo">loop-lore</span>
-        <button
-          class="btn-icon"
-          @click="$store.sidebar.open = false"
-          title="Close"
-          x-bind:title="__('common.close')"
-        >
-          &times;
-        </button>
+        <button class="btn-icon" onclick="closeSidebar()" title="Close">&times;</button>
       </div>
 
       <nav class="sidebar-nav">
@@ -154,10 +123,10 @@
           hx-target="#app-root"
           hx-swap="innerHTML"
           hx-push-url="true"
-          @click="$store.sidebar.open = false"
+          onclick="closeSidebar()"
           data-testid="nav-chat"
         >
-          <span>💬</span> <span x-text="__('nav.chat')">Chat</span>
+          <span>💬</span> <span>Chat</span>
         </a>
 
         <a
@@ -167,10 +136,10 @@
           hx-target="#app-root"
           hx-swap="innerHTML"
           hx-push-url="true"
-          @click="$store.sidebar.open = false"
+          onclick="closeSidebar()"
           data-testid="nav-characters"
         >
-          <span>👤</span> <span x-text="__('nav.characters')">Characters</span>
+          <span>👤</span> <span>Characters</span>
         </a>
 
         <a
@@ -180,10 +149,10 @@
           hx-target="#app-root"
           hx-swap="innerHTML"
           hx-push-url="true"
-          @click="$store.sidebar.open = false"
+          onclick="closeSidebar()"
           data-testid="nav-gallery"
         >
-          <span>🖼</span> <span x-text="__('nav.gallery')">Gallery</span>
+          <span>🖼</span> <span>Gallery</span>
         </a>
 
         <a
@@ -193,10 +162,10 @@
           hx-target="#app-root"
           hx-swap="innerHTML"
           hx-push-url="true"
-          @click="$store.sidebar.open = false"
+          onclick="closeSidebar()"
           data-testid="nav-worlds"
         >
-          <span>🌍</span> <span x-text="__('nav.worlds')">Worlds</span>
+          <span>🌍</span> <span>Worlds</span>
         </a>
       </nav>
 
@@ -207,7 +176,7 @@
             src="/img/default-avatar.png"
             alt="User avatar"
             style="background: var(--bg-tertiary)"
-            x-on:error="$el.style.display='none'"
+            onerror="this.style.display = 'none'"
           />
           <div class="details">
             <div class="name" id="user-display-name">User</div>
@@ -219,9 +188,8 @@
             hx-target="#app-root"
             hx-swap="innerHTML"
             hx-push-url="true"
-            @click="$store.sidebar.open = false"
+            onclick="closeSidebar()"
             title="Settings"
-            x-bind:title="__('nav.settings')"
             data-testid="nav-settings"
           >
             ⚙
@@ -231,15 +199,9 @@
     </aside>
 
     <!-- Backdrop for mobile sidebar -->
-    <div
-      x-show="$store.sidebar.open"
-      class="backdrop"
-      x-transition
-      @click="$store.sidebar.open = false"
-    ></div>
+    <div class="backdrop" id="sidebar-backdrop" onclick="closeSidebar()" style="display: none"></div>
 
-    <!-- Header slot placeholder — replaced via hx-swap-oob on page nav.
-         CSS hides it when empty; after OOB swap the real header becomes visible. -->
+    <!-- Header slot placeholder — replaced via hx-swap-oob on page nav -->
     <header id="header-slot" class="main-header"></header>
 
     <!-- Main content rendered by htmx swaps -->

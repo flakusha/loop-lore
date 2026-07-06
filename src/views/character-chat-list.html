@@ -1,21 +1,9 @@
-<!-- Character Chat List Page (swapped into #app-root by htmx) -->
-<!-- Header: moved to #header-slot by htmx:load handler -->
+<!-- Character Chat List Page -->
 <header id="header-slot" class="main-header" data-testid="character-chat-header">
-  <button
-    class="hamburger"
-    @click="$store.sidebar.open = !$store.sidebar.open"
-    x-show="!$store.sidebar.open"
-    data-testid="hamburger"
-  >
-    ☰
-  </button>
+  <button class="hamburger" onclick="toggleSidebar()" data-testid="hamburger">☰</button>
   <span class="title" id="page-title">Chats</span>
   <div class="actions">
-    <button
-      class="btn btn-secondary"
-      onclick="document.dispatchEvent(new CustomEvent('refresh-chats'))"
-      data-testid="refresh-chats"
-    >
+    <button class="btn btn-secondary" onclick="loadCharacterChatList()" data-testid="refresh-chats">
       Refresh
     </button>
     <a
@@ -30,42 +18,24 @@
   </div>
 </header>
 
-<div class="app-layout" x-data="characterChatListState()">
-  <!-- Main content -->
+<div class="app-layout">
   <main class="main-content" style="padding-top: 0">
     <div class="chat-area">
-      <!-- Loading -->
-      <template x-if="loading">
+      <div
+        id="character-chat-list"
+        class="chat-list"
+        data-character-id="{{characterSlug}}"
+        data-testid="character-chat-list"
+      >
         <div class="empty-state" style="padding: var(--space-12)">
           <div class="icon">⏳</div>
           <div class="title">Loading chats...</div>
         </div>
-      </template>
-
-      <!-- Empty state -->
-      <template x-if="!loading && chats.length === 0">
-        <div class="empty-state" style="padding: var(--space-12)">
-          <div class="icon">💬</div>
-          <div class="title">No chats yet</div>
-          <div class="description">This character has no conversations. Start a new chat to begin.</div>
-          <a href="/views/chat" class="btn btn-primary" style="margin-top: var(--space-4)">+ Start Chat</a>
-        </div>
-      </template>
-
-      <!-- Chat list -->
-      <template x-if="!loading && chats.length > 0">
-        <div class="chat-list" data-testid="character-chat-list">
-          <template x-for="chat in chats" :key="chat.id">
-            <div class="chat-item" @click="openChat(chat)" :data-testid="'chat-item-' + chat.id">
-              <div class="chat-info">
-                <h4 class="chat-name" x-text="chat.name"></h4>
-                <p class="chat-preview" x-text="chat.last_message || 'No messages yet'"></p>
-              </div>
-              <span class="chat-time" x-text="formatTime(chat.updated_at)"></span>
-            </div>
-          </template>
-        </div>
-      </template>
+      </div>
     </div>
   </main>
 </div>
+
+<script>
+  loadCharacterChatList();
+</script>
