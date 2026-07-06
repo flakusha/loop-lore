@@ -21,8 +21,8 @@ globalThis.app = function () {
       log.debug("init", { initCount });
 
       if (globalThis.Alpine !== undefined) {
-        globalThis.Alpine.store("sidebar", { open: false });
-        globalThis.Alpine.store("ui", {
+        Alpine.store("sidebar", { open: false });
+        Alpine.store("ui", {
           showChatList: false,
           showGallery: false,
           showCharacterInfo: false,
@@ -76,7 +76,7 @@ globalThis.app = function () {
     closeAllModals() {
       this.sidebarOpen = false;
       if (!globalThis.Alpine) return;
-      const ui = globalThis.Alpine.store("ui");
+      const ui = Alpine.store("ui");
       if (ui) {
         for (const key of Object.keys(ui)) {
           ui[key] = false;

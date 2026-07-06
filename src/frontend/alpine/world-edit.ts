@@ -34,8 +34,8 @@ globalThis.worldEditState = function () {
     newLocParentId: "",
 
     get worldId(): string | null {
-      const el = document.getElementById("world-edit-form");
-      return el?.getAttribute("data-world-id") ?? null;
+      const el = document.querySelector<HTMLElement>("#world-edit-form");
+      return el?.dataset.worldId ?? null;
     },
 
     // ── Init (Alpine lifecycle) ──

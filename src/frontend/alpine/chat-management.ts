@@ -1,9 +1,10 @@
 import { jsonBody } from "./json";
 import { log as rootLog } from "./logger";
+import type { ChatState } from "./types";
 
 const log = rootLog.child({ module: "chat" });
 
-export const chatManagement = {
+export const chatManagement: Partial<ChatState> & ThisType<ChatState> = {
   _renameChatId: "",
   _renameChatName: "",
   _chatSettingsName: "",
@@ -11,7 +12,6 @@ export const chatManagement = {
   _chatSettingsTurnStrategy: "round_robin",
 
   async deleteChat(chatId: string, event: Event) {
-    const self = this as Record<string, unknown>;
     log.info("deleteChat", { chatId });
     if (!confirm("Delete this chat and all its messages?")) return;
     event.stopImmediatePropagation();
@@ -19,114 +19,110 @@ export const chatManagement = {
     try {
       const res = await apiFetch(`/api/chats/${chatId}`, { method: "DELETE" });
       if (res.ok) {
-        const chats = self.chats as Array<Record<string, unknown>>;
-        self.chats = chats.filter((c) => c.id !== chatId);
-        if (self.activeChat === chatId) {
-          self.activeChat = null;
-          self.activeChatName = "Welcome to loop-lore";
-          self.messages = [];
-          globalThis.Alpine.store("ui").hasActiveChat = false;
+        const chats = this.chats;
+        this.chats = chats.filter((c) => c.id !== chatId);
+        if (this.activeChat === chatId) {
+          this.activeChat = null;
+          this.activeChatName = "Welcome to loop-lore";
+          this.messages = [];
+          Alpine.store("ui").hasActiveChat = false;
           const titleEl = document.querySelector("#page-title");
-          if (titleEl) titleEl.textContent = self.activeChatName as string;
+          if (titleEl) titleEl.textContent = this.activeChatName;
         }
-        self.$dispatch?.("show-toast", { type: "success", message: "Chat deleted" });
+        this.$dispatch?.("show-toast", { type: "success", message: "Chat deleted" });
       } else {
         const err = await res.json();
-        self.$dispatch?.("show-toast", { type: "error", message: err.error || "Failed to delete chat" });
+        this.$dispatch?.("show-toast", { type: "error", message: err.error || "Failed to delete chat" });
       }
     } catch {
-      self.$dispatch?.("show-toast", { type: "error", message: "Network error deleting chat" });
+      this.$dispatch?.("show-toast", { type: "error", message: "Network error deleting chat" });
     }
     button?.blur();
   },
 
   openRenameModal(chatId: string) {
-    const self = this as Record<string, unknown>;
     log.info("openRenameModal", { chatId });
-    const chats = self.chats as Array<Record<string, unknown>>;
+    const chats = this.chats;
     const chat = chats.find((c) => c.id === chatId);
-    self._renameChatId = chatId;
-    self._renameChatName = (chat?.name as string) || "Chat";
-    globalThis.Alpine.store("ui").showRenameModal = true;
+    this._renameChatId = chatId;
+    this._renameChatName = chat?.name ?? "Chat";
+    Alpine.store("ui").showRenameModal = true;
   },
 
   async confirmRenameChat() {
-    const self = this as Record<string, unknown>;
-    log.info("confirmRenameChat", { chatId: self._renameChatId });
-    const chats = self.chats as Array<Record<string, unknown>>;
-    const name = (self._renameChatName as string).trim();
-    if (!name || name === chats.find((c) => c.id === self._renameChatId)?.name) {
-      globalThis.Alpine.store("ui").showRenameModal = false;
+    log.info("confirmRenameChat", { chatId: this._renameChatId });
+    const chats = this.chats;
+    const name = this._renameChatName.trim();
+    if (!name || name === chats.find((c) => c.id === this._renameChatId)?.name) {
+      Alpine.store("ui").showRenameModal = false;
       return;
     }
     try {
-      const res = await apiFetch(`/api/chats/${self._renameChatId}`, {
+      const res = await apiFetch(`/api/chats/${this._renameChatId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: jsonBody({ name }),
       });
       if (res.ok) {
-        const chat = chats.find((c) => c.id === self._renameChatId);
+        const chat = chats.find((c) => c.id === this._renameChatId);
         if (chat) chat.name = name;
-        if (self.activeChat === self._renameChatId) {
-          self.activeChatName = name;
+        if (this.activeChat === this._renameChatId) {
+          this.activeChatName = name;
           const titleEl = document.querySelector("#page-title");
           if (titleEl) titleEl.textContent = name;
         }
-        globalThis.Alpine.store("ui").showRenameModal = false;
-        self.$dispatch?.("show-toast", { type: "success", message: "Chat renamed" });
+        Alpine.store("ui").showRenameModal = false;
+        this.$dispatch?.("show-toast", { type: "success", message: "Chat renamed" });
       } else {
         const err = await res.json();
-        self.$dispatch?.("show-toast", { type: "error", message: err.error || "Failed to rename chat" });
+        this.$dispatch?.("show-toast", { type: "error", message: err.error || "Failed to rename chat" });
       }
     } catch {
-      self.$dispatch?.("show-toast", { type: "error", message: "Network error renaming chat" });
+      this.$dispatch?.("show-toast", { type: "error", message: "Network error renaming chat" });
     }
   },
 
-  renameChat(chatId: string) {
+  async renameChat(chatId: string) {
     this.openRenameModal(chatId);
   },
 
   openChatSettings() {
-    const self = this as Record<string, unknown>;
-    const chats = self.chats as Array<Record<string, unknown>>;
-    const chat = chats.find((c) => c.id === self.activeChat);
-    self._chatSettingsName = (chat?.name as string) || "";
-    self._chatSettingsMode = "chat";
-    self._chatSettingsTurnStrategy = "round_robin";
-    globalThis.Alpine.store("ui").showChatSettings = true;
+    const chats = this.chats;
+    const chat = chats.find((c) => c.id === this.activeChat);
+    this._chatSettingsName = chat?.name ?? "";
+    this._chatSettingsMode = "chat";
+    this._chatSettingsTurnStrategy = "round_robin";
+    Alpine.store("ui").showChatSettings = true;
   },
 
   async saveChatSettings() {
-    const self = this as Record<string, unknown>;
-    log.info("saveChatSettings", { chatId: self.activeChat });
-    if (!self.activeChat || !(self._chatSettingsName as string).trim()) return;
+    log.info("saveChatSettings", { chatId: this.activeChat });
+    if (!this.activeChat || !this._chatSettingsName.trim()) return;
     try {
-      const res = await apiFetch(`/api/chats/${self.activeChat}`, {
+      const res = await apiFetch(`/api/chats/${this.activeChat}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: jsonBody({
-          name: (self._chatSettingsName as string).trim(),
-          mode: self._chatSettingsMode,
-          turnStrategy: self._chatSettingsTurnStrategy,
+          name: this._chatSettingsName.trim(),
+          mode: this._chatSettingsMode,
+          turnStrategy: this._chatSettingsTurnStrategy,
         }),
       });
       if (res.ok) {
-        const chats = self.chats as Array<Record<string, unknown>>;
-        const chat = chats.find((c) => c.id === self.activeChat);
-        if (chat) chat.name = (self._chatSettingsName as string).trim();
-        self.activeChatName = (self._chatSettingsName as string).trim();
+        const chats = this.chats;
+        const chat = chats.find((c) => c.id === this.activeChat);
+        if (chat) chat.name = this._chatSettingsName.trim();
+        this.activeChatName = this._chatSettingsName.trim();
         const titleEl = document.querySelector("#page-title");
-        if (titleEl) titleEl.textContent = self.activeChatName as string;
-        globalThis.Alpine.store("ui").showChatSettings = false;
-        self.$dispatch?.("show-toast", { type: "success", message: "Chat settings saved" });
+        if (titleEl) titleEl.textContent = this.activeChatName;
+        Alpine.store("ui").showChatSettings = false;
+        this.$dispatch?.("show-toast", { type: "success", message: "Chat settings saved" });
       } else {
         const err = await res.json();
-        self.$dispatch?.("show-toast", { type: "error", message: err.error || "Failed to save settings" });
+        this.$dispatch?.("show-toast", { type: "error", message: err.error || "Failed to save settings" });
       }
     } catch {
-      self.$dispatch?.("show-toast", { type: "error", message: "Network error saving settings" });
+      this.$dispatch?.("show-toast", { type: "error", message: "Network error saving settings" });
     }
   },
 };
