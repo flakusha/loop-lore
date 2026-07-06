@@ -1,8 +1,7 @@
 # ───────────────────────────────────────────────────────────
-# Example: loop-lore config for local real-server testing
+# Example: loop-lore config for local external-server testing
 # ───────────────────────────────────────────────────────────
-# Copy to config.real-server.yaml, edit paths, then start
-# external servers, then run:
+# Copy to config.server-external.yaml, edit paths, then start:
 #   bun run src/server.ts
 #
 # Port strategy:
