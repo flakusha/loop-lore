@@ -18,6 +18,7 @@ import { initAgeGate } from "@/age-gate/controller";
 import { initializeProviders, registerProvider, getProvider } from "@/generation";
 import { MockLLMProvider } from "@/test-utils/mock-provider";
 import { initSmk } from "@/crypto";
+import { resetLoginRateLimiter } from "@/routes/auth";
 import type { DB } from "@/db/schema";
 import type { Config } from "@/config/schema";
 import { resetSoloUserCache } from "@/middleware/index";
@@ -54,16 +55,65 @@ export async function runMigrations(db: Kysely<DB>): Promise<void> {
 }
 
 /**
+ * E2E_SAFEGUARD: prevent accidental runs against real data.
+ * When E2E_SAFEGUARD=1 (default), validates DB is :memory: and
+ * upload dir is under /tmp/. Logs warnings for each check.
+ * Set E2E_SAFEGUARD=0 to bypass.
+ */
+function enforceE2eSafeguard(config: Config): void {
+  const safeguard = process.env.E2E_SAFEGUARD ?? "1";
+  if (safeguard === "0") {
+    console.warn("[E2E_SAFEGUARD=0] Safety checks bypassed — ensure you are not pointed at real data");
+    return;
+  }
+
+  const issues: string[] = [];
+
+  if (config.db.sqliteFilename !== ":memory:") {
+    issues.push(`db.sqliteFilename is "${config.db.sqliteFilename}", expected ":memory:"`);
+  }
+
+  if (!config.assets.uploadDir?.startsWith("/tmp/")) {
+    issues.push(`assets.uploadDir is "${config.assets.uploadDir}", expected under /tmp/`);
+  }
+
+  if (config.auth.required) {
+    issues.push("auth.required is true, expected false for isolated e2e");
+  }
+
+  if (issues.length > 0) {
+    const msg = [
+      "[E2E_SAFEGUARD] Refusing to run: test config would touch real data.",
+      ...issues.map((i) => `  - ${i}`),
+      "Use config.e2e.yaml (db.sqliteFilename: ':memory:') or set E2E_SAFEGUARD=0 to bypass.",
+    ].join("\n");
+    throw new Error(msg);
+  }
+
+  console.log("[E2E_SAFEGUARD] Config is safe (:memory: DB, /tmp/ uploads, auth disabled)");
+}
+
+/**
  * Load config with test-safe overrides.
+ *
+ * When E2E_SAFEGUARD env is 1 (default): verifies DB is :memory:,
+ * upload dir is under /tmp/, and auth is disabled. Prevents
+ * accidental runs against real data.
+ *
  * Port 0 = random free port.
  * @param overrides Optional partial config overrides (merged on top of defaults).
  */
 export function loadTestConfig(overrides?: Partial<Config>): Config {
   const config = loadConfig();
+  // Apply safe defaults BEFORE safeguard check so real config
+  // values (real DB path, real upload dir) don't trigger rejection.
   config.server.port = 0;
+  config.db.sqliteFilename = ":memory:";
   config.assets.enabled = true;
   config.assets.maxFileSize = 10 * 1024 * 1024; // 10 MB
-  config.auth.required = false; // default: solo/demo mode
+  config.assets.uploadDir = "/tmp/loop-lore-e2e-placeholder";
+  config.auth.required = false;
+  enforceE2eSafeguard(config);
 
   if (overrides) {
     // Deep merge auth overrides
@@ -180,6 +230,8 @@ export async function createTestServer(
       bunServer.stop();
       setTestDatabase(null);
       resetSoloUserCache();
+      // Reset process-global login rate limiter so each test file starts fresh
+      resetLoginRateLimiter();
       // Clean up temp upload directory
       const testDir = resolve("/tmp", testRunId);
       if (existsSync(testDir)) {

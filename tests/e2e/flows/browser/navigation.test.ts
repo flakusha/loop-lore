@@ -15,7 +15,9 @@ describe("Navigation E2E", () => {
   });
 
   async function goto(page: Awaited<ReturnType<BrowserTestContext["browser"]["newPage"]>>, path: string) {
-    await page.goto(ctx.url + path, { waitUntil: "networkidle", timeout: 15_000 }).catch(() => {});
+    try {
+      await page.goto(ctx.url + path, { waitUntil: "networkidle", timeout: 15_000 });
+    } catch {}
     await page.locator("[data-testid='app-root']").waitFor({ state: "attached", timeout: 8000 });
   }
 
@@ -144,7 +146,9 @@ describe("Navigation E2E", () => {
       await page.locator("[data-testid='toggle-chat-list']").waitFor({ state: "attached", timeout: 5000 });
 
       // Navigate to new-chat via URL
-      await page.goto(ctx.url + "/views/new-chat", { waitUntil: "domcontentloaded", timeout: 10_000 }).catch(() => {});
+      try {
+        await page.goto(ctx.url + "/views/new-chat", { waitUntil: "domcontentloaded", timeout: 10_000 });
+      } catch {}
       await page.locator("[data-testid='create-chat-form']").waitFor({ state: "attached", timeout: 8000 });
       expect(page.url()).toContain("/views/new-chat");
 

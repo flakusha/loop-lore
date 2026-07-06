@@ -384,8 +384,10 @@ export class ServerExternalManager {
   /** Start periodic health checks on all managed servers */
   startLivenessProbes(): void {
     if (this.probeTimer) return;
-    this.probeTimer = setInterval(() => {
-      this.checkAllLiveliness().catch(() => {});
+    this.probeTimer = setInterval(async () => {
+      try {
+        await this.checkAllLiveliness();
+      } catch {}
     }, this.PROBE_INTERVAL_MS);
   }
 
