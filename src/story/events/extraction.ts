@@ -10,7 +10,6 @@ import type { WorldEvent } from "../types";
 
 // ── Location Change Patterns ─────────────────────────────────
 
-/* eslint-disable sonarjs/regex-complexity, sonarjs/super-linear-regex, sonarjs/duplicates-in-character-class */
 const locationPatterns = [
   /(?:enters?|moves?\s+to|arrives?\s+at|steps?\s+into|walks?\s+into|goes?\s+to|heads?\s+(?:to|toward)|leaves?\s+the)\s+[""']?([A-Za-z\s]+?)[""']?(?:[,.;!])/gi,
   /(?:makes?\s+(?:their\s+)?way\s+to(?:wards?)?|travels?\s+to|ventures?\s+into)\s+[""']?([A-Za-z\s]+?)[""']?(?:[,.;!])/gi,
@@ -53,7 +52,6 @@ const lorePatterns = [
   /(?:reveals?\s+that|discover(?:s|ed)\s+that|learn(?:s|ed)\s+that|uncovers?|unearth(?:s|ed)|realiz(?:es?|ed)\s+that)/gi,
   /(?:according\s+to\s+(?:legend|ancient|old)\s+(?:texts?|records?|tales?|scrolls?))/gi,
 ];
-/* eslint-enable sonarjs/regex-complexity, sonarjs/super-linear-regex, sonarjs/duplicates-in-character-class */
 
 // ── Extraction ────────────────────────────────────────────────
 

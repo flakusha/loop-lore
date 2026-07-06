@@ -405,7 +405,6 @@ describe("GameMasterService — constructor & state", () => {
       generateText,
     });
 
-     
     await expect(gm.initialize()).rejects.toThrow("not found");
   });
 
@@ -552,7 +551,6 @@ describe("GameMasterService — executeTurn", () => {
       generateText,
     });
 
-     
     await expect(gm.executeTurn()).rejects.toThrow("No story context available");
   });
 
@@ -583,7 +581,6 @@ describe("GameMasterService — executeTurn", () => {
     });
     await gm.initialize();
 
-     
     await expect(gm.executeTurn()).rejects.toThrow("No available actors");
   });
 
@@ -619,7 +616,6 @@ describe("GameMasterService — acceptResponse", () => {
       generateText,
     });
 
-     
     await expect(gm.acceptResponse("no-such-turn", "response")).rejects.toThrow(
       "Turn no-such-turn not found",
     );
