@@ -27,6 +27,7 @@ globalThis.app = function () {
           showEditModal: false,
           showPreviewModal: false,
           showChatSettings: false,
+          hasActiveChat: false,
         });
       }
 
