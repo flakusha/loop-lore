@@ -5,7 +5,6 @@
  * All IDs are deterministic for cross-flow reference.
  */
 
-import crypto from "node:crypto";
 import type { Kysely } from "kysely";
 import type { DB } from "@/db/schema";
 import { UserRole, UserStatus, ChatType, ChatMode, ActorType, AgentType } from "@/db/enums";

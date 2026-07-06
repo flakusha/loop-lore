@@ -144,7 +144,7 @@ describe("acceptAgeGate", () => {
     const database = await createTestDatabase();
     const config = gateConfig();
 
-    // eslint-disable-next-line @typescript-eslint/await-thenable, @typescript-eslint/no-confusing-void-expression
+     
     await expect(acceptAgeGate(database, config, "test-user-1", { birthDate: "2020-01-01" })).rejects.toThrow(
       UnderageError,
     );

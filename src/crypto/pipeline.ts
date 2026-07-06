@@ -8,6 +8,7 @@
  */
 
 import { encodeContent, decodeContent } from "../content";
+import { safeJsonParse, safeJsonStringify } from "../utils";
 import type { ContentEncoding } from "../content/types";
 
 const IV_LENGTH = 12;
@@ -93,7 +94,9 @@ export async function compressThenEncrypt(
     key_id: keyId,
   };
 
-  return JSON.stringify(payload);
+  const r = safeJsonStringify(payload);
+  if (!r.ok) throw new Error("Failed to serialize encrypted payload");
+  return r.value;
 }
 
 /**
@@ -103,12 +106,9 @@ export async function compressThenEncrypt(
  */
 export async function decryptThenDecompress(storedContent: string, chatKey: CryptoKey): Promise<string> {
   // 1. Parse JSON
-  let payload: EncryptedPayload;
-  try {
-    payload = JSON.parse(storedContent) as EncryptedPayload;
-  } catch {
-    throw new Error("Malformed encrypted payload: invalid JSON");
-  }
+  const parsed = safeJsonParse<EncryptedPayload>(storedContent);
+  if (!parsed.ok) throw new Error("Malformed encrypted payload: invalid JSON");
+  const payload = parsed.value;
 
   // Validate shape
   if (!payload.enc || !payload.nonce || !payload.algo) {

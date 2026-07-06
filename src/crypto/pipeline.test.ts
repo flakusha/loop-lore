@@ -4,7 +4,6 @@
 
 import { describe, test, expect, beforeAll } from "bun:test";
 import { compressThenEncrypt, decryptThenDecompress } from "./pipeline";
-import type { PipelineConfig } from "./pipeline";
 
 // Use a shorter key ID since the pipeline just stores it, doesn't validate length
 const KEY_ID = "key-001";
@@ -93,7 +92,7 @@ describe("threshold", () => {
       threshold: 128,
       algorithm: "gzip",
     });
-    const payload = JSON.parse(encrypted);
+    const _payload = JSON.parse(encrypted);
     // If compression reduces size, comp=true; otherwise false
     // Either is valid — just verify round-trip
     const decrypted = await decryptThenDecompress(encrypted, cryptoKey);
@@ -116,7 +115,7 @@ describe("threshold", () => {
       threshold: 0,
       algorithm: "gzip",
     });
-    const payload = JSON.parse(encrypted);
+    const _payload = JSON.parse(encrypted);
     // With very short text, gzip may not compress — either outcome valid
     const decrypted = await decryptThenDecompress(encrypted, cryptoKey);
     expect(decrypted).toBe("hello world this is a test");

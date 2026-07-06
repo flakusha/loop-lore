@@ -146,7 +146,7 @@ export class QualityEvaluator {
   }
 
   /** Score lore consistency (0-100) */
-  // eslint-disable-next-line sonarjs/cognitive-complexity
+   
   private scoreLoreConsistency(response: string, lore?: string | null): number {
     if (!lore) return 75;
 
@@ -266,7 +266,7 @@ export class QualityEvaluator {
   }
 
   /** Score creativity (0-100) */
-  // eslint-disable-next-line sonarjs/cognitive-complexity
+   
   private scoreCreativity(response: string, recentTurns?: { response: string | null }[]): number {
     let score = 65;
 

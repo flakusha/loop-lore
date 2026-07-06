@@ -3,7 +3,7 @@
  */
 
 import { describe, test, expect } from "bun:test";
-import { censorMeta, fieldNamesToRules, DEFAULT_RULES } from "./censors";
+import { censorMeta, fieldNamesToRules } from "./censors";
 
 describe("censorMeta", () => {
   test("returns undefined for undefined input", () => {

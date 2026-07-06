@@ -6,7 +6,7 @@
  */
 
 import { writeFileSync, mkdirSync, existsSync, unlinkSync } from "node:fs";
-import { join, dirname, resolve } from "node:path";
+import { join, resolve } from "node:path";
 import { uid } from "../utils";
 import type { Kysely } from "kysely";
 import type { DB } from "../db/schema";
@@ -310,18 +310,19 @@ export async function deleteAsset(
  * Link an asset to an entity.
  */
 export async function linkAsset(database: Kysely<DB>, assetId: string, link: AssetLinkInput): Promise<void> {
-  await database
-    .insertInto("asset_links")
-    .values({
-      asset_id: assetId,
-      entity_type: link.entityType,
-      entity_id: link.entityId,
-      label: link.label ?? null,
-    })
-    .execute()
-    .catch(() => {
+try {
+      await database
+        .insertInto("asset_links")
+        .values({
+          asset_id: assetId,
+          entity_type: link.entityType,
+          entity_id: link.entityId,
+          label: link.label ?? null,
+        })
+        .execute();
+    } catch {
       /* ignore duplicate */
-    });
+    }
 }
 
 /**

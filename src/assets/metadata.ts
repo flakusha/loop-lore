@@ -12,7 +12,6 @@ export interface ImageMetadata {
 }
 
 const PNG_HEADER = new Uint8Array([137, 80, 78, 71, 13, 10, 26, 10]);
-const IHDR_TYPE = 0x49_48_44_52; // 'IHDR' in big-endian
 const TEXTSIG = 0x74_45_58_74; // 'tEXt' in big-endian
 const ZTXTSIG = 0x7a_54_58_74; // 'zTXt' in big-endian
 

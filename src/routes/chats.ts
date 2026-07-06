@@ -81,7 +81,7 @@ interface RemoveParticipantOpts {
   actorId: string;
 }
 
-// eslint-disable-next-line sonarjs/cognitive-complexity
+ 
 const dispatch: RouteDispatch = async ({ request, context, database }) => {
   const url = new URL(request.url);
   const { pathname, searchParams } = url;
@@ -405,5 +405,5 @@ async function handleRemoveParticipant({
   return jsonNoContent();
 }
 
-registerRoute(dispatch); // eslint-disable-line unicorn/no-top-level-side-effects
+registerRoute(dispatch);  
 export { dispatch };
