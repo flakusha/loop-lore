@@ -128,7 +128,7 @@ export async function authenticate(
 
 // ── Solo user helpers ─────────────────────────────────────────
 
-let cachedSoloUser: { id: string } | null | undefined;
+const soloUserState: { value: { id: string } | null | undefined } = { value: undefined };
 
 /**
  * Get or create the singleton solo/demo user.
@@ -139,7 +139,7 @@ export async function getOrCreateSoloUserForAuth(
   database: Kysely<DB>,
   demoUsername: string,
 ): Promise<{ id: string } | null> {
-  if (cachedSoloUser !== undefined) return cachedSoloUser;
+  if (soloUserState.value !== undefined) return soloUserState.value;
 
   const existing = await database
     .selectFrom("users")
@@ -148,45 +148,47 @@ export async function getOrCreateSoloUserForAuth(
     .executeTakeFirst();
 
   if (existing) {
-    cachedSoloUser = existing;
+    soloUserState.value = existing;
     return existing;
   }
 
   // Create solo user on first run
   const soloId = uid();
-  await database
-    .insertInto("users")
-    .values({
-      id: soloId,
-      username: demoUsername,
-      display_name: "Solo User",
-      role: UserRole.Solo,
-      status: UserStatus.Active,
-      settings: "{}",
-    })
-    .execute()
-    .catch(() => {
-      /* race: another request may have created it — next lookup will find it */
-    });
+  try {
+    await database
+      .insertInto("users")
+      .values({
+        id: soloId,
+        username: demoUsername,
+        display_name: "Solo User",
+        role: UserRole.Solo,
+        status: UserStatus.Active,
+        settings: "{}",
+      })
+      .execute();
+  } catch {
+    /* race: another request may have created it — next lookup will find it */
+  }
 
   // Also create actor entry (chat_participants.actor_id references actors.id)
-  await database
-    .insertInto("actors")
-    .values({
-      id: soloId,
-      actor_type: "user",
-      display_name: "Solo User",
-      user_id: soloId,
-      owner_id: soloId,
-      agent_type: "none",
-      settings: "{}",
-      import_spec: "raw",
-      data_version: 0,
-    })
-    .execute()
-    .catch(() => {
-      /* race-safe: actor may already exist */
-    });
+  try {
+    await database
+      .insertInto("actors")
+      .values({
+        id: soloId,
+        actor_type: "user",
+        display_name: "Solo User",
+        user_id: soloId,
+        owner_id: soloId,
+        agent_type: "none",
+        settings: "{}",
+        import_spec: "raw",
+        data_version: 0,
+      })
+      .execute();
+  } catch {
+    /* race-safe: actor may already exist */
+  }
 
   // Re-fetch (in case of race)
   const created = await database
@@ -195,16 +197,15 @@ export async function getOrCreateSoloUserForAuth(
     .where("role", "=", UserRole.Solo)
     .executeTakeFirst();
 
-  // eslint-disable-next-line unicorn/no-top-level-assignment-in-function
-  cachedSoloUser = created ?? null;
-  return cachedSoloUser;
+  soloUserState.value = created ?? null;
+  return soloUserState.value;
 }
 
 /**
  * Clear the cached solo user reference (for testing).
  */
 export function resetSoloUserCache(): void {
-  cachedSoloUser = undefined;
+  soloUserState.value = undefined;
 }
 
 /**

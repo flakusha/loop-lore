@@ -62,7 +62,6 @@ function extractUserId(pathname: string): string | null {
   return match ? match[1] : null;
 }
 
- 
 const dispatch: RouteDispatch = async ({ request, context, database }) => {
   const url = new URL(request.url);
   const { pathname } = url;
@@ -231,5 +230,5 @@ async function handleDeleteUser({ database, targetId, context }: DeleteUserOpts)
   return jsonNoContent();
 }
 
-registerRoute(dispatch);  
+registerRoute(dispatch);
 export { dispatch };
