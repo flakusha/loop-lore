@@ -202,5 +202,5 @@ async function handleDeleteKey({ database, context, provider, config }: DeleteKe
   return jsonNoContent();
 }
 
-registerRoute(dispatch);  
+registerRoute(dispatch);
 export { dispatch };

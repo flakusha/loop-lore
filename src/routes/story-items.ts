@@ -13,8 +13,7 @@
  *   DELETE /api/worlds/:worldId/item-instances/:instanceId — destroy instance
  */
 
-import type { RouteDispatch } from "./router";
-import { registerRoute } from "./router";
+import { registerRoute, type RouteDispatch } from "./router";
 import { safeJsonStringify } from "../utils";
 import {
   BAD_METHOD,
@@ -246,11 +245,11 @@ const dispatch: RouteDispatch = async ({ request, context, database }) => {
     }
     if (method === "GET") {
       const locationId = searchParams.get("locationId");
-      const actorId = searchParams.get("actorId");
       if (locationId) {
         const instances = await items.getAtLocation(locationId);
         return jsonResponse(instances);
       }
+      const actorId = searchParams.get("actorId");
       if (actorId) {
         const instances = await items.getNpcInventory(actorId);
         return jsonResponse(instances);

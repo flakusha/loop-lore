@@ -71,7 +71,6 @@ interface ImportActorJsonOpts {
   context: RequestContext;
 }
 
- 
 const dispatch: RouteDispatch = async ({ request, context, database }) => {
   const url = new URL(request.url);
   const { pathname, searchParams } = url;
@@ -84,9 +83,10 @@ const dispatch: RouteDispatch = async ({ request, context, database }) => {
     const afterId = pathname.slice(pathname.indexOf(actorId) + actorId.length);
     const knownSubResources = ["/memories", "/items", "/notes", "/lore-entries"];
     const isSubResource = knownSubResources.some((s) => afterId.startsWith(s));
-    const subRoute = pathname.endsWith("/card") ? "/card" : "";
 
     if (isSubResource) return null;
+
+    const subRoute = pathname.endsWith("/card") ? "/card" : "";
 
     if (method === "GET" && !subRoute) {
       return handleGetActor({ database, actorId, context });
@@ -329,5 +329,5 @@ async function handleImportActorJson({ body, database, context }: ImportActorJso
   return jsonCreated({ id });
 }
 
-registerRoute(dispatch);  
+registerRoute(dispatch);
 export { dispatch };
