@@ -2,7 +2,7 @@
 
 import { jsonBody } from "./json";
 
-globalThis.newChatState = function () {
+globalThis.newChatState = function() {
   return {
     name: "",
     chatType: "user_character",
@@ -38,10 +38,10 @@ globalThis.newChatState = function () {
             mode: this.modeEnum(this.chatMode),
           }),
         });
+        const data = await res.json();
         if (res.ok) {
-          location.assign("/views/chat");
+          location.assign(`/views/chat?chatid=${encodeURIComponent(data.id)}`);
         } else {
-          const data = await res.json();
           this.error = data.error || "Failed to create chat.";
         }
       } catch {
