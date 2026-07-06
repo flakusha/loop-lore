@@ -15,6 +15,7 @@ import type {
   ChatParticipantRole,
   MessageRole,
   MessageContentType,
+  MessageContentFormat,
   ContentEncoding,
   MessageStatus,
   MessageVisibility,
@@ -125,7 +126,7 @@ export interface Messages {
   role: MessageRole;
   content: string;
   key_id: string | null;
-  content_format: string | null;
+  content_format: MessageContentFormat;
   content_type: MessageContentType;
   content_encoding: ContentEncoding;
   model_id: string | null;

@@ -4,12 +4,15 @@
  * Common helpers used across modules — uid generation,
  * error formatting, and other general-purpose functions.
  */
-import { randomUUID } from "node:crypto";
+import { randomUUID, randomBytes } from "node:crypto";
 
 // ── ID Generation ─────────────────────────────────────────────
 
-/** Create a DB-safe UUID string */
+/** Create a DB-safe UUID string (v4, RFC 4122) */
 export const uid = (): string => randomUUID();
+
+/** Create a cryptographically secure random token (32 hex chars = 128 bits) */
+export const secureToken = (): string => randomBytes(16).toString("hex");
 
 // ── Error Helpers ─────────────────────────────────────────────
 
@@ -122,4 +125,18 @@ export function isJsonString(value: unknown): value is string {
   } catch {
     return false;
   }
+}
+
+/**
+ * Parse JSON, returning the value or throwing an error.
+ * Use when caller needs to distinguish missing vs malformed.
+ *
+ * @throws {Error} if parse fails
+ */
+export function jsonParseOrThrow(text: string): unknown {
+  const result = safeJsonParse(text);
+  if (!result.ok) {
+    throw result.error;
+  }
+  return result.value;
 }

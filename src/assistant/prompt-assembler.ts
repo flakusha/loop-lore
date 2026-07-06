@@ -76,8 +76,25 @@ export class PromptAssembler {
     // ── Fetch data ───────────────────────────────────────
 
     const [actor, chat] = await Promise.all([
-      this.db.selectFrom("actors").selectAll().where("id", "=", params.actorId).executeTakeFirstOrThrow(),
-      this.db.selectFrom("chats").selectAll().where("id", "=", params.chatId).executeTakeFirstOrThrow(),
+      this.db
+        .selectFrom("actors")
+        .select([
+          "id",
+          "display_name",
+          "system_prompt",
+          "description",
+          "personality",
+          "scenario",
+          "post_history_instructions",
+          "mes_example",
+        ])
+        .where("id", "=", params.actorId)
+        .executeTakeFirstOrThrow(),
+      this.db
+        .selectFrom("chats")
+        .select(["id", "mode", "world_id", "current_location_id"])
+        .where("id", "=", params.chatId)
+        .executeTakeFirstOrThrow(),
     ]);
 
     const isStory = params.includeStoryContext ?? chat.mode === ChatMode.Story;
@@ -156,7 +173,7 @@ export class PromptAssembler {
 
     // ── Section 7: Chat history ──────────────────────────
 
-    const historyMessages = await this.fetchChatHistory(params.chatId);
+    const historyMessages = await this.fetchChatHistory(params.chatId, tokenBudget);
     for (const msg of historyMessages) {
       const tokens = defaultTokenCount(msg.content);
       sections.push({ name: "chatHistory", chars: msg.content.length, tokens, dropped: false });
@@ -198,14 +215,11 @@ export class PromptAssembler {
     }
 
     // Build final messages array (exclude dropped sections)
-    const finalMessages: GenerationMessage[] = [];
-    let msgIdx = 0;
-    for (const section of sections) {
-      if (!section.dropped && msgIdx < messages.length) {
-        finalMessages.push(messages[msgIdx]);
-      }
-      msgIdx++;
-    }
+    // Track message count per section for proper mapping
+    const finalMessages = [...messages];
+    // Remove messages from dropped sections
+    const droppedCount = sections.filter((s) => s.dropped).length;
+    finalMessages.splice(-droppedCount);
 
     return {
       messages: finalMessages,
@@ -221,30 +235,30 @@ export class PromptAssembler {
   private async buildLoreSection(actorId: string, worldId: string | null): Promise<GenerationMessage[]> {
     const loreMessages: GenerationMessage[] = [];
 
+    // Fetch both selective and non-selective entries
     const [actorLore, worldLore] = await Promise.all([
       this.db
         .selectFrom("actor_lore_entries")
-        .select(["content", "keys", "position", "constant"])
+        .select(["content", "keys", "position", "constant", "selective"])
         .where("actor_id", "=", actorId)
-        .where("selective", "=", 0) // non-selective = always include
         .orderBy("position", "asc")
         .execute(),
       worldId
         ? this.db
             .selectFrom("world_lore_entries")
-            .select(["content", "keys", "position", "constant"])
+            .select(["content", "keys", "position", "constant", "selective"])
             .where("world_id", "=", worldId)
-            .where("selective", "=", 0)
             .orderBy("position", "asc")
             .execute()
         : Promise.resolve([]),
     ]);
 
+    // Non-selective entries are always included
     const allEntries = [...actorLore, ...worldLore];
-    if (allEntries.length === 0) return loreMessages;
-
     const loreText = allEntries.map((e) => e.content).join("\n\n");
-    loreMessages.push({ role: "system", content: `[Lore]\n${loreText}` });
+    if (loreText) {
+      loreMessages.push({ role: "system", content: `[Lore]\n${loreText}` });
+    }
 
     return loreMessages;
   }
@@ -265,16 +279,23 @@ export class PromptAssembler {
     return [{ role: "system", content: `[Memories]\n${memoryText}` }];
   }
 
-  private async fetchChatHistory(chatId: string): Promise<GenerationMessage[]> {
+  private async fetchChatHistory(chatId: string, tokenBudget: number): Promise<GenerationMessage[]> {
+    // Fetch messages dynamically based on token budget (approx 4 chars per token)
+    const maxMessages = Math.floor(tokenBudget / 4);
     const rows = await this.db
       .selectFrom("messages")
       .select(["role", "content", "actor_id"])
       .where("chat_id", "=", chatId)
       .where("status", "=", MessageStatus.Confirmed)
       .where("visibility", "=", MessageVisibility.Visible)
-      .where("role", "in", [MessageRole.User, MessageRole.Assistant, MessageRole.Character])
+      .where("role", "in", [
+        MessageRole.User,
+        MessageRole.Assistant,
+        MessageRole.Character,
+        MessageRole.System,
+      ])
       .orderBy("created_at", "asc")
-      .limit(200)
+      .limit(maxMessages)
       .execute();
 
     return rows.map((row) => ({

@@ -86,6 +86,11 @@ export const MessageContentType = {
 } as const;
 export type MessageContentType = (typeof MessageContentType)[keyof typeof MessageContentType];
 
+export const MessageContentFormat = {
+  Markdown: "markdown",
+} as const;
+export type MessageContentFormat = (typeof MessageContentFormat)[keyof typeof MessageContentFormat];
+
 export const MessageStatus = {
   Sending: "sending",
   Confirmed: "confirmed",

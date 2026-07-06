@@ -25,10 +25,7 @@ export interface RouteDispatchParams {
 export type RouteDispatch = (params: RouteDispatchParams) => Promise<Response | null>;
 
 // Registered route modules — imported lazily via getter to avoid circular deps
-const ROUTE_MODULES: RouteDispatch[] = [
-  // Ordered by specificity (most specific first)
-  /* P0 route modules will be added here as created */
-];
+const ROUTE_MODULES: RouteDispatch[] = [];
 
 /**
  * Register a route dispatch function.
