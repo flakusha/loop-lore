@@ -1,7 +1,6 @@
 # AGENTS.md
 
-Instructions for coding agents on loop-lore (SillyTavern clean
-reimplementation).
+Instructions for coding agents on loop-lore.
 
 ## Reference Material
 
@@ -128,8 +127,9 @@ docs/                    Specs, architecture, data model
   review (boolean flags, numeric statuses, `I` prefix, bare `.then()`, `any`,
   silent catches, AI SDK wrappers, CSS-in-JS, `console.*` instead of logger,
   missing ownership checks, `void promise` without `.catch()`)
-- **Patterns**: See `.agents/references/recommendations.md` — structured logging,
-  input validation checklist, safe JSON IIFE pattern, options-object params
+- **Patterns**: See `.agents/references/recommendations.md` — structured
+  logging, input validation checklist, safe JSON IIFE pattern, options-object
+  params
 - **Docs metrics**: No quantitative metrics in docs — they go stale. Describe
   behavior qualitatively.
 
@@ -211,6 +211,7 @@ docs/                    Specs, architecture, data model
 2. Check existing code in `src/` for patterns (look at similar implementations)
 3. Plan: what files change/create? Tests? Side effects?
 4. Implement: follow conventions above
-5. Verify: `bun run src/server.ts` for server, `bun run tui` for TUI
+5. Verify: `bun format && bun typecheck && bun run src/server.ts` for server,
+   `bun run tui` for TUI
 
 Goal: lightweight, extensible, maintainable, scalable.

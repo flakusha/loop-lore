@@ -86,7 +86,7 @@ export function handleCancelGeneration(body: unknown, database?: Kysely<DB>): Re
  *
  * Check whether a chat currently has an active generation.
  */
-export function handleGenerationStatus(chatId: string, _database: Kysely<DB>): Response {
+export function handleGenerationStatus(chatId: string, _database?: Kysely<DB>): Response {
   if (!chatId) {
     return jsonError("chatId is required", 400);
   }
@@ -242,7 +242,7 @@ export async function handleContinueGeneration(body: unknown, database?: Kysely<
  *
  * List all currently active generation attempts (admin/debugging).
  */
-export function handleListActiveGenerations(_database: Kysely<DB>): Response {
+export function handleListActiveGenerations(_database?: Kysely<DB>): Response {
   const active = listActiveGenerations();
   return jsonResponse({
     count: active.length,

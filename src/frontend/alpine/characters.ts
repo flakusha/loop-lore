@@ -13,9 +13,13 @@ globalThis.characterChatListState = function () {
       if (match) {
         this.characterId = match[1];
         await this.loadCharacter();
-        (this as any).$root.pageTitle = this.characterName || "Chats";
+        const titleEl = document.querySelector("#page-title");
+        if (titleEl) titleEl.textContent = this.characterName || "Chats";
         await this.loadChats();
       }
+      document.addEventListener("refresh-chats", () => {
+        this.loadChats();
+      });
     },
 
     async loadCharacter() {
@@ -28,6 +32,8 @@ globalThis.characterChatListState = function () {
       } catch {
         this.characterName = this.characterId;
       }
+      const titleEl = document.querySelector("#page-title");
+      if (titleEl) titleEl.textContent = this.characterName || "Chats";
     },
 
     async loadChats() {
@@ -74,8 +80,6 @@ globalThis.charactersState = function () {
     searchQuery: "",
     selectedTag: "",
     selectedChar: null as any,
-    showCreateForm: false,
-    showImportForm: false,
 
     get filteredCharacters() {
       let result = this.characters;
@@ -96,7 +100,6 @@ globalThis.charactersState = function () {
 
     async init() {
       console.log("[charactersState] init — loading characters");
-      (this as any).$root.pageTitle = "Characters";
       await this.loadCharacters();
     },
 
@@ -197,7 +200,7 @@ globalThis.charactersState = function () {
         });
         console.log("[charactersState] createCharacter — response:", res.status);
         if (res.ok) {
-          this.showCreateForm = false;
+          globalThis.Alpine.store('ui').showCreateForm = false;
           (this as any).$dispatch("show-toast", { type: "success", message: "Character created" });
           await this.loadCharacters();
         } else {
@@ -213,6 +216,19 @@ globalThis.charactersState = function () {
         (this as any).$dispatch("show-toast", { type: "error", message: "Network error" });
       }
     },
+
+    destroy() {
+      // Reset UI flags that might leak across pages
+      if (globalThis.Alpine) {
+        const uiStore = globalThis.Alpine.store('ui');
+        if (uiStore) {
+          uiStore.showCreateForm = false;
+          uiStore.showImportForm = false;
+          uiStore.showEditModal = false;
+          // Note: we do NOT reset showChatList, showGallery, showCharacterInfo as those are intended to persist
+        }
+      }
+    },
   };
 };
 
@@ -225,7 +241,9 @@ globalThis.characterEditState = function () {
     saving: false,
 
     async init() {
-      (this as any).$root.pageTitle = "Edit Character";
+      // Set page title for OOB header
+      const titleEl = document.querySelector("#page-title");
+      if (titleEl) titleEl.textContent = "Edit Character";
       // eslint-disable-next-line sonarjs/prefer-regexp-exec
       const match = location.pathname.match(/\/(?:character|characters)\/([\w-]+)\/edit/);
       if (match) {
@@ -241,6 +259,9 @@ globalThis.characterEditState = function () {
         const res = await apiFetch(`/api/actors/${characterId}`);
         if (res.ok) {
           this.character = await res.json();
+          // Update page title with character name
+          const titleEl = document.querySelector("#page-title");
+          if (titleEl) titleEl.textContent = "Edit: " + (this.character?.display_name || "Character");
         }
       } catch {
         (this as any).$dispatch("show-toast", { type: "error", message: "Failed to load character" });

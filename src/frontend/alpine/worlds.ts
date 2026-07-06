@@ -5,12 +5,9 @@ globalThis.worldsState = function () {
     worlds: [] as any[],
     loading: true,
     totalCount: 0,
-    showCreateForm: false,
-    showImportForm: false,
     submitting: false,
 
     async init() {
-      (this as any).$root.pageTitle = "Worlds";
       await this.loadWorlds();
     },
 
@@ -54,7 +51,7 @@ globalThis.worldsState = function () {
           body: JSON.stringify(data),
         });
         if (res.ok) {
-          this.showCreateForm = false;
+          globalThis.Alpine.store("ui").showCreateForm = false;
           (this as any).$dispatch("show-toast", { type: "success", message: "World created" });
           await this.loadWorlds();
         } else {
@@ -79,7 +76,6 @@ globalThis.worldDetailState = function () {
   return {
     world: null as any,
     loading: true,
-    showEditModal: false,
     saving: false,
 
     async init() {
@@ -87,8 +83,12 @@ globalThis.worldDetailState = function () {
       const match = location.pathname.match(/\/worlds\/([\w-]+)/);
       if (match) {
         await this.loadWorld(match[1]);
-        (this as any).$root.pageTitle = this.world?.name || "World";
+        const titleEl = document.querySelector("#page-title");
+        if (titleEl) titleEl.textContent = this.world?.name || "World";
       }
+      document.addEventListener("refresh-world", () => {
+        if (this.world?.id) this.loadWorld(this.world.id);
+      });
     },
 
     async loadWorld(worldId: string) {
@@ -97,6 +97,8 @@ globalThis.worldDetailState = function () {
         const res = await apiFetch(`/api/worlds/${worldId}`);
         if (res.ok) {
           this.world = await res.json();
+          const titleEl = document.querySelector("#page-title");
+          if (titleEl) titleEl.textContent = this.world?.name || "World";
         }
       } catch {
         (this as any).$dispatch("show-toast", { type: "error", message: "Failed to load world" });
@@ -115,7 +117,7 @@ globalThis.worldDetailState = function () {
           body: JSON.stringify(this.world),
         });
         if (res.ok) {
-          this.showEditModal = false;
+          globalThis.Alpine.store("ui").showEditModal = false;
           (this as any).$dispatch("show-toast", { type: "success", message: "World saved" });
         } else {
           const err = await res.json();
@@ -147,7 +149,6 @@ globalThis.worldEditState = function () {
     },
 
     async init() {
-      (this as any).$root.pageTitle = "Edit World";
       // eslint-disable-next-line sonarjs/prefer-regexp-exec
       const match = location.pathname.match(/\/worlds\/([\w-]+)\/edit/);
       if (match) {

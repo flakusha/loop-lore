@@ -9,7 +9,14 @@ globalThis.newChatState = function () {
     submitting: false,
 
     init() {
-      (this as any).$root.pageTitle = "New Chat";
+      // title is static — OOB header handles it
+    },
+
+    typeEnum(type: string): string {
+      return { user_character: "direct", user_user: "direct", user_assistant: "direct" }[type] ?? "direct";
+    },
+    modeEnum(mode: string): string {
+      return { roleplay: "story", chat: "direct", story: "story" }[mode] ?? "story";
     },
 
     async createChat() {
@@ -25,8 +32,8 @@ globalThis.newChatState = function () {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             name: this.name.trim(),
-            type: this.chatType,
-            mode: this.chatMode,
+            type: this.typeEnum(this.chatType),
+            mode: this.modeEnum(this.chatMode),
           }),
         });
         if (res.ok) {

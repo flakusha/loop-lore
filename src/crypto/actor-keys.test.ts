@@ -29,12 +29,12 @@ beforeAll(async () => {
   sqlite.run("PRAGMA foreign_keys = OFF");
   db = new Kysely<DB>({ dialect: createSqliteDialect(sqlite) });
   await migrate(db as unknown as Kysely<unknown>);
-  await initSmk({ serverEncryptionKey: VALID_HEX_KEY, required: false });
+  await initSmk({ serverEncryptionKey: VALID_HEX_KEY, required: false, compressThreshold: 128, compressAlgorithm: "gzip" });
 });
 
 afterAll(async () => {
   // Reset SMK to prevent pollution of other test suites
-  await initSmk({ required: false });
+  await initSmk({ required: false, compressThreshold: 128, compressAlgorithm: "gzip" });
   db.destroy();
 });
 
@@ -214,7 +214,7 @@ describe("listActorKeys", () => {
       expect(key.status).toBeTruthy();
       expect(key.createdAt).toBeTruthy();
       // No rawKey exposed in metadata
-      expect((key as Record<string, unknown>).rawKey).toBeUndefined();
+      expect((key as unknown as Record<string, unknown>).rawKey).toBeUndefined();
     }
   });
 

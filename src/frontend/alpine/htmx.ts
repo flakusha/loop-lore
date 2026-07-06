@@ -41,14 +41,76 @@ document.addEventListener("htmx:configRequest", (e: CustomEvent<{ headers: Recor
   }
 });
 
-document.addEventListener("htmx:afterSwap", (e: CustomEvent<{ target: Element }>) => {
-  const target = e.detail.target as HTMLElement & { __x?: { $nextTick: (fn: () => void) => void } };
-  if (target && target.__x) {
-    target.__x.$nextTick(() => {
-      globalThis.Alpine?.initTree(target);
+// Cleanup Alpine components before swap to prevent memory leaks and state conflicts
+document.addEventListener("htmx:beforeSwap", (e: CustomEvent<{ content: string }>) => {
+  const swapTarget = document.querySelector("#app-root");
+  if (swapTarget) {
+    swapTarget.querySelectorAll("[x-data]").forEach(el => {
+      try {
+        if (el && (globalThis as any).Alpine) {
+          const data = (globalThis as any).Alpine.$data(el);
+          if (data && typeof data.destroy === "function") {
+            data.destroy();
+          }
+        }
+      } catch {
+        // Handle edge cases
+      }
     });
   }
 });
+
+// Initialize Alpine only on new swapped content that has x-data attribute
+document.addEventListener("htmx:load", (e: CustomEvent<{ elt: Element }>) => {
+  const elt = e.detail.elt;
+  if (elt && elt.getAttribute("x-data") && (globalThis as any).Alpine) {
+    const appRoot = document.querySelector("#app-root");
+    const shouldInit = 
+      // If element is inside app-root, init it
+      (appRoot?.contains(elt)) || 
+      // If it's an OOB swapped header element
+      elt.id === "header-slot" ||
+      false;
+    
+    if (shouldInit) {
+      (globalThis as any).Alpine.initTree(elt);
+    }
+  }
+
+  // Defer to next event loop turn so all htmx:load handlers for this
+  // swap have fired before we touch the DOM.
+  setTimeout(normalizeHeaderSlot, 0);
+});
+
+/** Ensure exactly one #header-slot exists, before #app-root */
+function normalizeHeaderSlot() {
+  const all = document.querySelectorAll("#header-slot");
+  const appRoot = document.querySelector("#app-root");
+  if (!appRoot || all.length === 0) return;
+
+  // Find the best candidate inside #app-root — prefer the one with
+  // children (actual content), last in DOM order (most recently added).
+  let best: Element | null = null;
+  let bestChildren = -1;
+  for (const h of all) {
+    if (appRoot.contains(h)) {
+      const n = h.children.length;
+      if (n > bestChildren) { best = h; bestChildren = n; }
+    }
+  }
+  // Fallback: first header at body level (layout placeholder)
+  if (!best) best = all[0];
+
+  // Remove all others
+  for (const h of all) {
+    if (h !== best) h.remove();
+  }
+
+  // Move before #app-root if still inside it
+  if (appRoot.contains(best)) {
+    appRoot.parentElement?.insertBefore(best, appRoot);
+  }
+}
 
 document.addEventListener("htmx:responseError", (e: CustomEvent<{ xhr?: XMLHttpRequest }>) => {
   if (e.detail.xhr) {

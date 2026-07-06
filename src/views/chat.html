@@ -1,50 +1,50 @@
 <!-- Chat View (swapped into #app-root by htmx) -->
-<div class="app-layout" x-data="chatState()">
-  <main class="main-content">
-    <!-- Header -->
-    <header class="main-header">
-      <button
-        class="hamburger"
-        @click="$store.sidebar.open = !$store.sidebar.open"
-        x-show="!$store.sidebar.open"
-        data-testid="hamburger"
-      >
-        ☰
-      </button>
-      <button
-        class="btn-icon"
-        title="View chats"
-        @click="showChatList = !showChatList"
-        data-testid="toggle-chat-list"
-      >
-        ☰
-      </button>
-      <span class="title" id="chat-title" x-text="activeChatName">Welcome to loop-lore</span>
-      <div class="actions">
-        <button
-          class="btn-icon"
-          title="Toggle gallery sidebar"
-          @click="showGallery = !showGallery"
-          data-testid="toggle-gallery"
-        >
-          🖼
-        </button>
-        <button
-          class="btn-icon"
-          title="Character info"
-          @click="showCharacterInfo = true"
-          data-testid="toggle-character-info"
-        >
-          ℹ
-        </button>
-      </div>
-    </header>
+<!-- Header: moved to #header-slot by htmx:load handler -->
+<header id="header-slot" class="main-header" data-testid="chat-header">
+  <button
+    class="hamburger"
+    @click="$store.sidebar.open = !$store.sidebar.open"
+    x-show="!$store.sidebar.open"
+    data-testid="hamburger"
+  >
+    ☰
+  </button>
+  <span class="title" id="page-title">Welcome to loop-lore</span>
+  <div class="actions">
+    <button
+      class="btn-icon"
+      title="View chats"
+      @click="$store.ui.showChatList = !$store.ui.showChatList"
+      data-testid="toggle-chat-list"
+    >
+      ☰
+    </button>
+    <button
+      class="btn-icon"
+      title="Toggle gallery sidebar"
+      @click="$store.ui.showGallery = !$store.ui.showGallery"
+      data-testid="toggle-gallery"
+    >
+      🖼
+    </button>
+    <button
+      class="btn-icon"
+      title="Character info"
+      @click="$store.ui.showCharacterInfo = true"
+      data-testid="toggle-character-info"
+    >
+      ℹ
+    </button>
+  </div>
+</header>
 
-    <!-- Chat list panel (moved from sidebar for persistence) -->
-    <div class="chat-list-panel" x-show="showChatList" x-transition data-testid="chat-list-panel">
+<div class="app-layout" x-data="chatState()" @htmx:before-swap.window="if($data && typeof $data.destroy==='function') $data.destroy()">
+  <main class="main-content" style="padding-top: 0">
+    <!-- Chat list panel (component) -->
+    <div class="chat-list-panel" x-show="$store.ui.showChatList" x-transition data-testid="chat-list-panel">
       <div class="chat-list-header">
         <span class="nav-section-title">Chats</span>
-        <button class="btn-icon" @click="showChatList = false" title="Close">&times;</button>
+        <button class="btn-icon" @click="$store.ui.showChatList = false" title="Close">&times;</button>
       </div>
       <div id="chat-list">
         <template x-if="chats.length === 0">
@@ -80,9 +80,7 @@
     <div class="chat-container">
       <!-- Messages -->
       <div class="chat-area" id="message-list" x-ref="messageList" data-testid="message-list">
-        <!-- Infinite scroll sentinel -->
         <div x-ref="scrollSentinel" id="scroll-sentinel" style="height: 1px"></div>
-        <!-- Loading older indicator -->
         <div x-show="loadingOlder" class="loading-older">
           <span class="spinner"></span> Loading older messages...
         </div>
@@ -139,7 +137,6 @@
                   </div>
                 </div>
               </template>
-              <!-- Media attachments -->
               <template x-if="msg.attachments && msg.attachments.length > 0">
                 <div class="media-attachments" :class="'count-' + msg.attachments.length">
                   <template x-for="(asset, aIdx) in msg.attachments" :key="asset.assetId">
@@ -220,9 +217,14 @@
         </template>
       </div>
 
-      <!-- Right panel (character info, world context) -->
-      <aside class="right-panel" x-show="showCharacterInfo" x-transition data-testid="character-info-panel">
-        <button class="btn-icon" @click="showCharacterInfo = false" title="Close">&times;</button>
+      <!-- Right panel (character info) -->
+      <aside
+        class="right-panel"
+        x-show="$store.ui.showCharacterInfo"
+        x-transition
+        data-testid="character-info-panel"
+      >
+        <button class="btn-icon" @click="$store.ui.showCharacterInfo = false" title="Close">&times;</button>
         <div class="panel-content">
           <div class="nav-section-title">Character Info</div>
           <template x-if="currentCharacter">
@@ -241,9 +243,9 @@
       </aside>
     </div>
 
-    <!-- Gallery sidebar (toggleable, overlays on desktop) -->
-    <aside class="gallery-sidebar" x-show="showGallery" x-transition data-testid="gallery-sidebar">
-      <button class="btn-icon" @click="showGallery = false" title="Close">&times;</button>
+    <!-- Gallery sidebar -->
+    <aside class="gallery-sidebar" x-show="$store.ui.showGallery" x-transition data-testid="gallery-sidebar">
+      <button class="btn-icon" @click="$store.ui.showGallery = false" title="Close">&times;</button>
       <div class="nav-section-title" style="margin-bottom: var(--space-3)">Chat Assets</div>
       <div id="gallery-items">
         <template x-if="!activeChat">
@@ -292,7 +294,6 @@
 
     <!-- Input area -->
     <div class="input-area" x-show="activeChat">
-      <!-- Generation status bar (cancel UI) -->
       <div
         x-show="isGenerating"
         x-transition:enter="transition ease-out duration-150"
@@ -313,13 +314,13 @@
           ></span>
           <template x-if="generationDetail">
             <span class="generation-detail">
-              <span class="detail-item" x-show="generationDetail.elapsedMs"
+              <span x-show="generationDetail.elapsedMs"
                 >&nbsp;⏱ <span x-text="Math.round(generationDetail.elapsedMs / 1000) + 's'"></span
               ></span>
-              <span class="detail-item" x-show="generationDetail.charsReceived"
+              <span x-show="generationDetail.charsReceived"
                 >&nbsp;📝 <span x-text="generationDetail.charsReceived + ' chars'"></span
               ></span>
-              <span class="detail-item" x-show="generationDetail.status"
+              <span x-show="generationDetail.status"
                 >&nbsp;· <span x-text="generationDetail.status"></span
               ></span>
             </span>
@@ -373,7 +374,6 @@
           </button>
         </div>
         <div class="input-toolbar">
-          <!-- Pending assets (uploaded, attached to next message) -->
           <template x-if="pendingAssets.length > 0">
             <div class="pending-assets">
               <template x-for="(pa, paIdx) in pendingAssets" :key="pa.assetId">
@@ -394,27 +394,4 @@
       </form>
     </div>
   </main>
-</div>
-
-<!-- Character Info Modal (fallback for desktop) -->
-<div
-  x-data="{ showCharacterInfo: false }"
-  x-show="false"
-  x-cloak
-  class="modal-overlay"
-  @click.self="showCharacterInfo = false"
->
-  <div class="modal">
-    <div class="modal-header">
-      <span class="title">Character Info</span>
-      <button class="btn-icon" @click="showCharacterInfo = false">&times;</button>
-    </div>
-    <div class="modal-body">
-      <div class="empty-state" style="padding: var(--space-6) 0">
-        <div class="icon">👤</div>
-        <div class="title">Character details</div>
-        <div class="description">Character info loaded from the current conversation.</div>
-      </div>
-    </div>
-  </div>
 </div>

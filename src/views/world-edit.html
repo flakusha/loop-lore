@@ -1,11 +1,16 @@
 <!-- World Edit Page (swapped into #app-root by htmx) -->
+<!-- Header: moved to #header-slot by htmx:load handler -->
+<header
+  id="header-slot"
+  class="main-header"
+  data-testid="world-edit-header"
+>
+  <span class="title">Edit World</span>
+</header>
+
 <div class="app-layout" x-data="worldEditState()">
   <!-- Main content -->
-  <main class="main-content">
-    <header class="main-header">
-      <span class="title">Edit World</span>
-    </header>
-
+  <main class="main-content" style="padding-top: 0">
     <div class="chat-area">
       <!-- Loading -->
       <template x-if="loading">
