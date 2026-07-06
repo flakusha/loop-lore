@@ -31,6 +31,12 @@ import { PromptAssembler } from "../assistant/prompt-assembler";
 import type { Config } from "../config/schema";
 import { loadConfig } from "../config/load";
 import { jsonResponse, jsonError } from "../routes/http-utils";
+import { safeJsonStringify } from "../utils";
+
+function sseData(obj: unknown): string {
+  const r = safeJsonStringify(obj);
+  return `data: ${r.ok ? r.value : '{"type":"error","error":"serialize failed"}'}\n\n`;
+}
 
 // ── Request shape ─────────────────────────────────────────
 
@@ -264,7 +270,9 @@ export async function handleGenerate(
       });
     } catch (error) {
       const errMsg = (error as Error).message;
-      await failGeneration(attemptId, error as Error, database).catch(() => {});
+      try {
+        await failGeneration(attemptId, error as Error, database);
+      } catch {}
       return jsonError(`Generation failed: ${errMsg}`, 500);
     }
   }
@@ -289,18 +297,10 @@ export async function handleGenerate(
             } catch {
               /* empty */
             }
-            controller.enqueue(
-              new TextEncoder().encode(
-                `data: ${JSON.stringify({ type: "content", content: chunk.content })}\n\n`,
-              ),
-            );
+            controller.enqueue(new TextEncoder().encode(sseData({ type: "content", content: chunk.content })));
           } else if (chunk.type === "thinking" && chunk.content) {
             accumulatedThinking += chunk.content;
-            controller.enqueue(
-              new TextEncoder().encode(
-                `data: ${JSON.stringify({ type: "thinking", content: chunk.content })}\n\n`,
-              ),
-            );
+            controller.enqueue(new TextEncoder().encode(sseData({ type: "thinking", content: chunk.content })));
           } else if (chunk.type === "done" && chunk.usage) {
             // usage captured from finalResponse
           }
@@ -354,7 +354,7 @@ export async function handleGenerate(
         // Send done event with final data
         controller.enqueue(
           new TextEncoder().encode(
-            `data: ${JSON.stringify({
+            sseData({
               type: "done",
               messageId,
               attemptId,
@@ -362,7 +362,7 @@ export async function handleGenerate(
               finishReason: finalResponse.finishReason,
               tokenUsage: result.tokenUsage,
               cancelled: result.cancelled,
-            })}\n\n`,
+            }),
           ),
         );
         controller.close();
@@ -377,7 +377,7 @@ export async function handleGenerate(
         }
 
         controller.enqueue(
-          new TextEncoder().encode(`data: ${JSON.stringify({ type: "error", error: streamError })}\n\n`),
+          new TextEncoder().encode(sseData({ type: "error", error: streamError })),
         );
         controller.close();
       }

@@ -1,5 +1,6 @@
 // ── 401 redirect helper ────────────────────────────────────
 
+import { jsonParseOr } from "./json";
 import { log as rootLog } from "./logger";
 
 const log = rootLog.child({ module: "api" });
@@ -45,7 +46,7 @@ document.addEventListener("htmx:configRequest", (e: CustomEvent<{ headers: Recor
 });
 
 // Cleanup Alpine components before swap to prevent memory leaks and state conflicts
-document.addEventListener("htmx:beforeSwap", (e: CustomEvent<{ content: string }>) => {
+document.addEventListener("htmx:beforeSwap", (_e: CustomEvent<{ content: string }>) => {
   const swapTarget = document.querySelector("#app-root");
   if (swapTarget) {
     swapTarget.querySelectorAll("[x-data]").forEach((el) => {
@@ -123,7 +124,7 @@ function normalizeHeaderSlot() {
 document.addEventListener("htmx:responseError", (e: CustomEvent<{ xhr?: XMLHttpRequest }>) => {
   if (e.detail.xhr) {
     try {
-      const body = JSON.parse(e.detail.xhr.responseText);
+      const body = jsonParseOr(e.detail.xhr.responseText, {} as Record<string, unknown>);
       document.dispatchEvent(
         new CustomEvent("show-toast", {
           detail: { type: "error", message: body.error || "Request failed" },

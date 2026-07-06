@@ -98,7 +98,7 @@ function extractIds(pathname: string): { worldId: string | null; locId: string |
   return { worldId: match?.[1] ?? null, locId: match?.[2] ?? null };
 }
 
-// eslint-disable-next-line sonarjs/cognitive-complexity
+ 
 const dispatch: RouteDispatch = async ({ request, context, database }) => {
   const url = new URL(request.url);
   const { pathname, searchParams } = url;
@@ -414,5 +414,5 @@ async function handleDeleteLocation({
   return jsonNoContent();
 }
 
-registerRoute(dispatch); // eslint-disable-line unicorn/no-top-level-side-effects
+registerRoute(dispatch);  
 export { dispatch };

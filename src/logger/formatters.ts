@@ -4,6 +4,7 @@
 
 import type { LogEntry } from "./types";
 import { numericToLabel } from "./levels";
+import { safeJsonStringify } from "../utils";
 
 // ── Console Pretty Format ──────────────────────────────────
 
@@ -25,7 +26,8 @@ const RESET = "\u{1B}[0m";
 export function formatConsole(entry: LogEntry, isColor = false): string {
   const levelLabel = numericToLabel(entry.level).padEnd(5);
   const modulePart = entry.module ? ` [${entry.module}]` : "";
-  const msg = typeof entry.message === "string" ? entry.message : JSON.stringify(entry.message);
+  const msgResult = safeJsonStringify(entry.message);
+  const msg = typeof entry.message === "string" ? entry.message : (msgResult.ok ? msgResult.value : "[unserializable]");
 
   let line = `[${entry.time}] [${levelLabel}]${modulePart} ${msg}`;
 
@@ -48,11 +50,13 @@ export function formatConsole(entry: LogEntry, isColor = false): string {
  * Strips undefined fields, keeps nulls for schema alignment.
  */
 export function formatJSONL(entry: LogEntry): string {
+  const msgResult = safeJsonStringify(entry.message);
+  const msg = typeof entry.message === "string" ? entry.message : (msgResult.ok ? msgResult.value : "[unserializable]");
   const obj: Record<string, unknown> = {
     level: entry.level,
     timestamp: entry.timestamp,
     time: entry.time,
-    message: typeof entry.message === "string" ? entry.message : JSON.stringify(entry.message),
+    message: msg,
   };
 
   if (entry.module) obj.module = entry.module;
@@ -62,5 +66,6 @@ export function formatJSONL(entry: LogEntry): string {
   if (entry.error) obj.error = entry.error;
   if (entry.meta && Object.keys(entry.meta).length > 0) obj.meta = entry.meta;
 
-  return JSON.stringify(obj) + "\n";
+  const r = safeJsonStringify(obj);
+  return (r.ok ? r.value : "{}") + "\n";
 }

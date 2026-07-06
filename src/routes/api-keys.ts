@@ -202,5 +202,5 @@ async function handleDeleteKey({ database, context, provider, config }: DeleteKe
   return jsonNoContent();
 }
 
-registerRoute(dispatch); // eslint-disable-line unicorn/no-top-level-side-effects
+registerRoute(dispatch);  
 export { dispatch };

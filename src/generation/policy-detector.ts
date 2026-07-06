@@ -126,13 +126,14 @@ export class OpenAIModerationDetector implements PolicyDetector {
   constructor(private readonly apiKey: string) {}
 
   async analyze(text: string, config: PolicyDetectionConfig): Promise<PolicyAnalysis> {
+    const bodyResult = safeJsonStringify({ input: text });
     const response = await fetch("https://api.openai.com/v1/moderations", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${this.apiKey}`,
       },
-      body: JSON.stringify({ input: text }),
+      body: bodyResult.ok ? bodyResult.value : "{}",
     });
 
     if (!response.ok) {
@@ -191,10 +192,11 @@ export class HttpPolicyDetector implements PolicyDetector {
   constructor(private readonly endpointUrl: string) {}
 
   async analyze(text: string, config: PolicyDetectionConfig): Promise<PolicyAnalysis> {
+    const bodyResult = safeJsonStringify({ text, expectedPolicy: config.expectedPolicy });
     const response = await fetch(this.endpointUrl, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ text, expectedPolicy: config.expectedPolicy }),
+      body: bodyResult.ok ? bodyResult.value : "{}",
     });
 
     if (!response.ok) return { detected: false, policy: config.expectedPolicy, confidence: 0, indicators: [] };

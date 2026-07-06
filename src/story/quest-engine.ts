@@ -246,7 +246,7 @@ export class QuestEngine {
    * Calculate progress delta for a quest based on a world event.
    * Returns 0 if the event doesn't advance this quest.
    */
-  // eslint-disable-next-line sonarjs/cognitive-complexity
+   
   private calculateProgress(
     quest: {
       id: string;
@@ -346,7 +346,7 @@ export class QuestEngine {
    * Apply progress to a quest, check milestones, and distribute rewards
    * if completed.
    */
-  // eslint-disable-next-line sonarjs/cognitive-complexity
+   
   private async applyProgress(
     quest: {
       id: string;
