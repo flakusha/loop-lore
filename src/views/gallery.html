@@ -42,7 +42,7 @@
       </template>
       <template x-for="asset in assets" :key="asset.id">
         <div class="asset-card" @click="openPreview(asset)" :data-testid="'asset-card-' + asset.id">
-          <div class="thumbnail">
+          <div class="thumb">
             <template x-if="asset.asset_type === 'image'">
               <img :src="'/api/assets/' + asset.id + '/thumb'" :alt="asset.filename" loading="lazy" />
             </template>
@@ -56,9 +56,9 @@
               <div class="file-icon">📄</div>
             </template>
           </div>
-          <div class="meta">
+          <div class="details">
             <span class="name" x-text="asset.filename"></span>
-            <span class="size" x-text="formatSize(asset.size_bytes)"></span>
+            <span class="type" x-text="formatSize(asset.size_bytes)"></span>
           </div>
         </div>
       </template>
