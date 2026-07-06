@@ -13,6 +13,7 @@ import type { ContentEncoding } from "../content/types";
 
 const IV_LENGTH = 12;
 const DEFAULT_THRESHOLD = 128;
+const DEFAULT_PIPELINE_CONFIG: PipelineConfig = { threshold: DEFAULT_THRESHOLD, algorithm: "gzip" };
 
 export interface EncryptedPayload {
   enc: string; // base64 ciphertext
@@ -35,7 +36,7 @@ export async function compressThenEncrypt(
   plaintext: string,
   chatKey: CryptoKey,
   keyId: string,
-  config: PipelineConfig = { threshold: DEFAULT_THRESHOLD, algorithm: "gzip" },
+  config: PipelineConfig = DEFAULT_PIPELINE_CONFIG,
 ): Promise<string> {
   // 1. Compress if large enough
   let compressed = "";
@@ -70,14 +71,7 @@ export async function compressThenEncrypt(
     }
   }
 
-  // Avoid non-null assertion — branch on didCompress explicitly
-  let dataToEncrypt: string;
-  if (didCompress) {
-    // Both compressed + didCompress set in same loop branch; TS can't prove it
-    dataToEncrypt = compressed;
-  } else {
-    dataToEncrypt = plaintext;
-  }
+  const dataToEncrypt = didCompress ? compressed : plaintext;
   const dataBytes = new TextEncoder().encode(dataToEncrypt);
 
   // 2. Encrypt

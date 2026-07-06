@@ -60,14 +60,11 @@ function parsePngMetadata(buf: Uint8Array): { width: number; height: number; cap
         const key = new TextDecoder().decode(buf.slice(dataStart, nullPos));
         const valStart = nullPos + 1;
         if (valStart < dataEnd) {
-          let val: string;
-          if (chunkType === ZTXTSIG && buf[valStart] === 0) {
-            // zTXt with compression method 0 (deflate) — skip for now, return compressed
-            val = new TextDecoder().decode(buf.slice(valStart + 1, dataEnd));
-          } else {
-            val = new TextDecoder().decode(buf.slice(valStart, dataEnd));
-          }
-          if ((key === "Description" || key === "Comment" || key === "Title") && !caption) {
+          const val =
+            chunkType === ZTXTSIG && buf[valStart] === 0
+              ? new TextDecoder().decode(buf.slice(valStart + 1, dataEnd))
+              : new TextDecoder().decode(buf.slice(valStart, dataEnd));
+          if ((["Description", "Comment", "Title"] as const).includes(key as "Description") && !caption) {
             caption = val;
           }
         }
@@ -88,7 +85,7 @@ function parseJpegMetadata(buf: Uint8Array): { width: number; height: number; ca
     if (buf[offset] !== 0xff) break;
     const marker = buf[offset + 1];
 
-    if (marker === 0xd8 || marker === 0xd9 || marker === 0x00) {
+    if ([0xd8, 0xd9, 0x00].includes(marker)) {
       // SOI, EOI, padding
       offset++;
       continue;
@@ -126,25 +123,23 @@ function parseJpegMetadata(buf: Uint8Array): { width: number; height: number; ca
   return { width: 0, height: 0, caption };
 }
 
-function parseWebpMetadata(buf: Uint8Array): { width: number; height: number; caption?: string } {
+function parseWebpMetadata(buf: Uint8Array): { width: number; height: number } {
   // RIFF header: 4 bytes "RIFF" + 4 bytes file size + 4 bytes "WEBP"
   // VP8/VP8L/VP8X chunk follows
   if (buf.length < 20) return { width: 0, height: 0 };
 
   let offset = 12; // Start of chunk header after RIFF header
-  let caption: string | undefined;
 
   while (offset + 8 <= buf.length) {
     const chunkTag = new TextDecoder().decode(buf.slice(offset, offset + 4));
     const chunkSize = readUint32LE(buf, offset + 4);
-    const chunkEnd = offset + 8 + chunkSize;
 
     if (chunkTag === "VP8 " && chunkSize >= 10) {
       // VP8 keyframe header: 3 bytes frame tag, then 16 bits width/height
       const raw = readUint16LE(buf, offset + 14);
       const width = raw & 0x3f_ff;
       const height = readUint16LE(buf, offset + 16) & 0x3f_ff;
-      return { width, height, caption };
+      return { width, height };
     }
 
     if (chunkTag === "VP8L" && chunkSize >= 5) {
@@ -152,25 +147,25 @@ function parseWebpMetadata(buf: Uint8Array): { width: number; height: number; ca
       const bits = readUint32LE(buf, offset + 12);
       const width = (bits & 0x3f_ff) + 1;
       const height = ((bits >> 14) & 0x3f_ff) + 1;
-      return { width, height, caption };
+      return { width, height };
     }
 
     if (chunkTag === "VP8X") {
       // VP8X extended header — bits 16-17 have width/height
       const width = ((buf[offset + 12] | (buf[offset + 13] << 8)) & 0x3f_ff) + 1;
       const height = ((buf[offset + 14] | (buf[offset + 15] << 8)) & 0x3f_ff) + 1;
-      return { width, height, caption };
+      return { width, height };
     }
 
     // Check for EXIF chunk (metadata) — skip
-
     if (chunkSize === 0) break;
+    const chunkEnd = offset + 8 + chunkSize;
     offset = chunkEnd;
     // Align to even boundary
     if (chunkEnd % 2 !== 0) offset++;
   }
 
-  return { width: 0, height: 0, caption };
+  return { width: 0, height: 0 };
 }
 
 function parseGifMetadata(buf: Uint8Array): { width: number; height: number; caption?: string } {
@@ -199,8 +194,8 @@ export function extractImageMetadata(buffer: Uint8Array): ImageMetadata {
     new TextDecoder().decode(buffer.slice(0, 4)) === "RIFF" &&
     new TextDecoder().decode(buffer.slice(8, 12)) === "WEBP"
   ) {
-    const { width, height, caption } = parseWebpMetadata(buffer);
-    return { width, height, caption, format: "webp" };
+    const { width, height } = parseWebpMetadata(buffer);
+    return { width, height, format: "webp" };
   }
 
   if (
