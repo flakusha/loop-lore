@@ -46,6 +46,14 @@ export const SEED = {
     id: `a0000006-0000-4000-a000-${U.slice(24)}`,
     filename: "test-image.png",
   },
+  solo: {
+    id: `a0000007-0000-4000-a000-${U.slice(24)}`,
+    username: "solo",
+  },
+  soloChat: {
+    id: `a0000008-0000-4000-a000-${U.slice(24)}`,
+    name: "E2E Test Chat",
+  },
 } as const;
 
 // ── Seed functions ──────────────────────────────────────────────
@@ -173,4 +181,62 @@ export async function seedAll(db: Kysely<DB>): Promise<void> {
   await seedCharacter(db);
   await seedChat(db);
   await seedMessage(db);
+  await seedSolo(db);
+}
+
+/**
+ * Seed a Solo-role user + actor + a chat owned by that solo user.
+ * Required for browser e2e tests that run in demo (auth.required=false)
+ * mode: getOrCreateSoloUserForAuth looks up role=UserRole.Solo and uses
+ * that user's id as the auth context userId. Chats seeded under SEED.user
+ * (UserRole.User) are NOT visible to the demo/solo auth context, so we
+ * also seed a chat owned by SEED.solo with the same name as SEED.chat.
+ */
+export async function seedSolo(db: Kysely<DB>): Promise<void> {
+  await db
+    .insertInto("users")
+    .values({
+      id: SEED.solo.id,
+      username: SEED.solo.username,
+      display_name: "Solo User",
+      role: UserRole.Solo,
+      status: UserStatus.Active,
+      settings: "{}",
+    })
+    .execute();
+
+  await db
+    .insertInto("actors")
+    .values({
+      id: SEED.solo.id,
+      actor_type: ActorType.User,
+      display_name: "Solo User",
+      user_id: SEED.solo.id,
+      owner_id: SEED.solo.id,
+      agent_type: AgentType.None,
+      settings: "{}",
+      import_spec: "raw",
+      data_version: 0,
+    })
+    .execute();
+
+  await db
+    .insertInto("chats")
+    .values({
+      id: SEED.soloChat.id,
+      name: SEED.soloChat.name,
+      type: ChatType.Direct,
+      mode: ChatMode.Direct,
+      created_by: SEED.solo.id,
+    })
+    .execute();
+
+  await db
+    .insertInto("chat_participants")
+    .values({
+      chat_id: SEED.soloChat.id,
+      actor_id: SEED.solo.id,
+      role_in_chat: "owner",
+    })
+    .execute();
 }

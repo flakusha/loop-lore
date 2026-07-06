@@ -132,6 +132,10 @@ export function createClient(baseUrl: string) {
       const formBody = new URLSearchParams({ username, password }).toString();
       const headers: Record<string, string> = { "Content-Type": "application/x-www-form-urlencoded" };
       if (token) headers["Cookie"] = `ll_token=${token}`;
+      // Reset process-global login rate limiter so test files don't trip it
+      // (limiter is keyed by IP and shared across test servers in the same bun process).
+      const { resetLoginRateLimiter } = await import("@/routes/auth");
+      resetLoginRateLimiter();
       const res = await fetch(`${baseUrl}/api/auth/login`, {
         method: "POST",
         headers,
