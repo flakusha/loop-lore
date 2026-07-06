@@ -37,7 +37,7 @@ import "./routes/story-states";
 import "./routes/story-turns";
 import { ensureTlsCerts } from "./config/cert";
 import { createLogger, getLogger } from "./logger";
-import { RealServerManager } from "./services/real-server-manager";
+import { ServerExternalManager } from "./services/server-external-manager";
 
 const DOCS_PATH = join(import.meta.dir, "..", "docs", ".vitepress", "dist");
 
@@ -229,23 +229,100 @@ async function start() {
   const database = getDatabase();
   const logger = getLogger();
 
-  // ── Run database migrations ──────────────────────────────
-  try {
-    await runMigrations(database);
-  } catch (err) {
-    logger.error({ message: "Migration failed — aborting startup", error: String(err) });
-    process.exit(1);
+  const serverManager = new ServerExternalManager(logger);
+  const serverLogger = logger.child({ module: "server" });
+
+  // ── Shared fetch handler (HTTP + HTTPS) ───────────────────
+  const fetchHandler = async (request: Request): Promise<Response> => {
+    const url = new URL(request.url);
+
+    if (url.pathname.startsWith("/api/")) {
+      return handleApiRequest(request, database, config);
+    }
+
+    // ── View templates and character/world routes ───────────────
+    const viewResponse = await dispatchViews({
+      request,
+      context: { userId: null, userRole: null, sessionId: null },
+      database,
+      config,
+    });
+    if (viewResponse) return viewResponse;
+
+    const docsResult = handleDocsRequest(url, request, config);
+    if (docsResult) return docsResult;
+
+    const publicPath = normalize(join(PUBLIC_DIR, url.pathname === "/" ? "index.html" : url.pathname));
+
+    if (publicPath.startsWith(join(PUBLIC_DIR, "/"))) {
+      let fullPath = publicPath;
+
+      if (!existsSync(fullPath)) {
+        const htmlPath = fullPath + ".html";
+        if (existsSync(htmlPath)) fullPath = htmlPath;
+      }
+
+      if (existsSync(fullPath)) {
+        const acceptEncoding = request.headers.get("accept-encoding") ?? "";
+        return respondWithFile(fullPath, acceptEncoding);
+      }
+    }
+
+    return new Response("Loop Lore - Documentation available at /docs/");
+  };
+
+  // ── Start HTTP server immediately so port is open ─────────
+  serve({ port: config.server.port, fetch: fetchHandler });
+  serverLogger.info(`HTTP  → http://localhost:${config.server.port}`);
+
+  // ── HTTPS server (TLS certs configured or auto-generated) ─
+  if (config.server.tls) {
+    const tlsFiles = ensureTlsCerts(config.server.tls);
+    if (tlsFiles) {
+      const httpsPort = config.server.port + 443;
+      serve({
+        port: httpsPort,
+        tls: { key: Bun.file(tlsFiles.key), cert: Bun.file(tlsFiles.cert) },
+        fetch: fetchHandler,
+      });
+      serverLogger.info(`HTTPS → https://localhost:${httpsPort}`);
+    } else {
+      serverLogger.warn("HTTPS unavailable — serving HTTP only");
+    }
   }
 
-  // ── Auto-start external AI servers (llama.cpp, sd.cpp) ──
-  const serverManager = new RealServerManager(logger);
+  serverLogger.info(`Docs  → http://localhost:${config.server.port}/docs/`);
+
+  // ── Background initialization (non-blocking) ─────────────
+  const initPromises: Promise<void>[] = [];
+
+  // Run migrations in background
+  initPromises.push(
+    (async () => {
+      try {
+        await runMigrations(database);
+      } catch (error) {
+        logger.error({ message: "Migration failed — aborting startup", error: String(error) });
+        process.exit(1);
+      }
+    })(),
+  );
+
+  // Auto-start external AI servers (llama.cpp, sd.cpp) in background
   const autoStart = config.generation.autoStart;
   if (autoStart?.llamaCpp?.enabled) {
-    await serverManager.startLlamaCpp(autoStart.llamaCpp);
+    initPromises.push(
+      serverManager.startLlamaCpp(autoStart.llamaCpp).then(() => {}),
+    );
   }
   if (autoStart?.sdCpp?.enabled) {
-    await serverManager.startSdCpp(autoStart.sdCpp);
+    initPromises.push(
+      serverManager.startSdCpp(autoStart.sdCpp).then(() => {}),
+    );
   }
+
+  // Resolve all background init before proceeding to rest
+  await Promise.all(initPromises);
 
   // ── Load all plugins (core → community → local) ──────
   await loadAllPlugins(database);
@@ -255,7 +332,6 @@ async function start() {
   const jsTarget = join(distPublic, "alpine.js");
   if (!existsSync(jsTarget)) {
     logger.info({ message: "Frontend JS not built — auto-building..." });
-    // eslint-disable-next-line sonarjs/no-os-command-from-path
     const result = spawnSync("bun", ["run", "build:frontend"], {
       stdio: ["ignore", "inherit", "inherit"],
     });
@@ -315,84 +391,15 @@ async function start() {
     }
   }
 
-  // ── Shared fetch handler (HTTP + HTTPS) ───────────────────
-  const fetchHandler = async (request: Request): Promise<Response> => {
-    const url = new URL(request.url);
-
-    if (url.pathname.startsWith("/api/")) {
-      return handleApiRequest(request, database, config);
-    }
-
-    // ── View templates and character/world routes ───────────────
-    // Try views dispatch first (handles /views/:name, /character/:slug, /worlds, etc.)
-    const viewResponse = await dispatchViews({
-      request,
-      context: { userId: null, userRole: null, sessionId: null },
-      database,
-      config,
-    });
-    if (viewResponse) return viewResponse;
-
-    const docsResult = handleDocsRequest(url, request, config);
-    if (docsResult) return docsResult;
-
-    const publicPath = normalize(join(PUBLIC_DIR, url.pathname === "/" ? "index.html" : url.pathname));
-
-    if (publicPath.startsWith(join(PUBLIC_DIR, "/"))) {
-      let fullPath = publicPath;
-
-      // Try .html extension fallback for view templates
-      if (!existsSync(fullPath)) {
-        const htmlPath = fullPath + ".html";
-        if (existsSync(htmlPath)) {
-          fullPath = htmlPath;
-        }
-      }
-
-      if (existsSync(fullPath)) {
-        const acceptEncoding = request.headers.get("accept-encoding") ?? "";
-        return respondWithFile(fullPath, acceptEncoding);
-      }
-    }
-
-    return new Response("Loop Lore - Documentation available at /docs/");
-  };
-
-  const serverLogger = logger.child({ module: "server" });
-
-  // ── HTTP server (always) ──────────────────────────────────
-  serve({ port: config.server.port, fetch: fetchHandler });
-  serverLogger.info(`HTTP  → http://localhost:${config.server.port}`);
-
-  // ── HTTPS server (TLS certs configured or auto-generated) ─
-  if (config.server.tls) {
-    const tlsFiles = ensureTlsCerts(config.server.tls);
-
-    if (tlsFiles) {
-      const httpsPort = config.server.port + 443;
-      serve({
-        port: httpsPort,
-        tls: {
-          key: Bun.file(tlsFiles.key),
-          cert: Bun.file(tlsFiles.cert),
-        },
-        fetch: fetchHandler,
-      });
-      serverLogger.info(`HTTPS → https://localhost:${httpsPort}`);
-    } else {
-      serverLogger.warn("HTTPS unavailable — serving HTTP only");
-    }
-  }
-
-  serverLogger.info(`Docs  → http://localhost:${config.server.port}/docs/`);
+  // ── Start liveliness probes for managed servers ──────────
+  serverManager.startLivenessProbes();
 
   // ── Hard-exit guard — kills subprocesses at OS level ──
-  // process.on('exit') runs synchronously, no await possible
   process.on("exit", () => {
     serverManager.killAllSync();
   });
 
-  // ── Graceful shutdown — stop servers, unload plugins, flush logs ────
+  // ── Graceful shutdown ────────────────────────────────────
   const shutdown = async (_signal: string) => {
     await serverManager.stopAll();
     await unloadAllPlugins();
@@ -414,18 +421,14 @@ async function start() {
   process.on("uncaughtException", (err) => {
     try {
       logger.error({ message: "Uncaught exception", error: String(err) });
-    } catch {
-      /* last resort */
-    }
+    } catch { /* last resort */ }
     void shutdown("uncaughtException");
   });
 
   process.on("unhandledRejection", (reason) => {
     try {
       logger.error({ message: "Unhandled rejection", error: String(reason) });
-    } catch {
-      /* last resort */
-    }
+    } catch { /* last resort */ }
     void shutdown("unhandledRejection");
   });
 }

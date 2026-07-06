@@ -473,18 +473,18 @@ interface NsfwConfig {
   nsfwMinAge: number;
 }
 
-// ── Testing (e2e real-server config) ────────────────────────
+// ── Testing (e2e external-server config) ────────────────────
 
 interface TestingConfig {
-  /** Path to GGUF model for llama.cpp real-server e2e */
+  /** Path to GGUF model for llama.cpp external-server e2e */
   llamaModel?: string;
-  /** Path to safetensors model for sd-server real-server e2e */
+  /** Path to safetensors model for sd-server external-server e2e */
   sdModel?: string;
-  /** llama.cpp port for real-server e2e (default: 9011) */
+  /** llama.cpp port for external-server e2e (default: 9011) */
   llamaPort?: number;
-  /** sd-server port for real-server e2e (default: 9010) */
+  /** sd-server port for external-server e2e (default: 9010) */
   sdPort?: number;
-  /** llama-swap config yaml path for real-server e2e */
+  /** llama-swap config yaml path for external-server e2e */
   llamaSwapConfig?: string;
 }
 
