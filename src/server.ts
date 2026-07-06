@@ -6,6 +6,7 @@ import { join, normalize } from "node:path";
 import { existsSync, readFileSync, statSync, readdirSync } from "node:fs";
 import { spawnSync } from "node:child_process";
 import { compressAssets, copyDirectory } from "./content/compress";
+import { injectContentHashes } from "./content/hash-injection";
 import { runMigrations } from "./db/migrate";
 import { seedDefaultActors } from "./db/seed";
 import { loadConfig } from "./config/load";
@@ -13,7 +14,7 @@ import { initAgeGate, dispatch as dispatchAgeGate } from "./age-gate/controller"
 import { dispatch as dispatchGeneration } from "./generation/controller";
 import { loadAllPlugins, dispatchPluginRoute, unloadAllPlugins } from "./plugins";
 import { getDatabase } from "./db/index";
-import { initializeProviders } from "./generation";
+import { initializeProviders, registerProvider, OpenAiCompatibleProvider } from "./generation";
 import { authenticate, compose, errorBoundary } from "./middleware/index";
 import type { RequestContext } from "./middleware/index";
 import { apiDispatch } from "./routes/router";
@@ -40,6 +41,7 @@ import "./routes/actor-notes";
 import "./routes/story-items";
 import "./routes/story-states";
 import "./routes/story-turns";
+import "./routes/frontend-logs";
 
 const DOCS_PATH = join(import.meta.dir, "..", "docs", ".vitepress", "dist");
 
@@ -107,27 +109,55 @@ function walkDirectorySync(dir: string): string[] {
 }
 
 /**
- * Serve a static file with optional compressed variant.
+ * Compute a weak ETag from file mtime + size.
+ * Weak ETag (W/"…") allows semantically equivalent variants (e.g. gzip vs br).
+ */
+function computeEtag(filePath: string): string {
+  const stat = statSync(filePath);
+  return `W/"${stat.mtimeMs}-${stat.size}"`;
+}
+
+// Dev cache TTL. Prod: bump hashed files to 31536000 + immutable,
+// non-hashed to 3600 (or no-cache). See injectContentHashes in build/compress.ts.
+const STATIC_CACHE_MAX_AGE = 60;
+
+/**
+ * Serve a static file with optional compressed variant, cache headers, and ETag.
  * Shared between docs path and public path serving.
  */
-function respondWithFile(fullPath: string, acceptEncoding: string): Response {
-  const variant = findCompressedVariant(fullPath, acceptEncoding);
+function respondWithFile(
+  fullPath: string,
+  acceptEncoding: string,
+  ifNoneMatch: string | null,
+  cacheMaxAge = STATIC_CACHE_MAX_AGE,
+): Response {
+  const headers: Record<string, string> = {
+    "Content-Type": getContentType(fullPath),
+    Vary: "Accept-Encoding",
+  };
 
-  if (variant) {
-    const content = readFileSync(variant.path);
-    return new Response(content, {
-      headers: {
-        "Content-Type": getContentType(fullPath),
-        "Content-Encoding": variant.encoding,
-        Vary: "Accept-Encoding",
-      },
-    });
+  // Dev-friendly 1-min cache. Prod: see STATIC_CACHE_MAX_AGE comment.
+  if (cacheMaxAge > 0) {
+    headers["Cache-Control"] = `public, max-age=${cacheMaxAge}`;
   }
 
-  const content = readFileSync(fullPath);
-  return new Response(content, {
-    headers: { "Content-Type": getContentType(fullPath) },
-  });
+  // Determine the actual serving path (compressed variant takes precedence)
+  const variant = findCompressedVariant(fullPath, acceptEncoding);
+  const servePath = variant ? variant.path : fullPath;
+
+  const etag = computeEtag(servePath);
+  headers.ETag = etag;
+
+  // Short-circuit 304 when client has matching ETag
+  if (ifNoneMatch === etag) {
+    return new Response(null, { status: 304, headers: { ...headers, "Content-Length": "0" } });
+  }
+
+  const content = readFileSync(servePath);
+  if (variant) {
+    headers["Content-Encoding"] = variant.encoding;
+  }
+  return new Response(content, { headers });
 }
 
 /**
@@ -245,7 +275,8 @@ function handleDocsRequest(
   }
   if (existsSync(fullPath)) {
     const acceptEncoding = request.headers.get("accept-encoding") ?? "";
-    return respondWithFile(fullPath, acceptEncoding);
+    const ifNoneMatch = request.headers.get("if-none-match");
+    return respondWithFile(fullPath, acceptEncoding, ifNoneMatch);
   }
 
   return new Response("Documentation not found", { status: 404 });
@@ -301,7 +332,8 @@ async function start() {
 
       if (existsSync(fullPath)) {
         const acceptEncoding = request.headers.get("accept-encoding") ?? "";
-        return respondWithFile(fullPath, acceptEncoding);
+        const ifNoneMatch = request.headers.get("if-none-match");
+        return respondWithFile(fullPath, acceptEncoding, ifNoneMatch);
       }
     }
 
@@ -343,7 +375,27 @@ async function start() {
   if (llamaCppCfg?.enabled) {
     initPromises.push(
       (async () => {
-        await serverManager.startLlamaCpp(llamaCppCfg);
+        const instance = await serverManager.startLlamaCpp(llamaCppCfg);
+        if (instance) {
+          const name = llamaCppCfg.alias || "llama";
+          registerProvider(
+            name,
+            new OpenAiCompatibleProvider({
+              name,
+              label: "Auto-started llama.cpp",
+              baseUrl: `http://127.0.0.1:${instance.port}/v1`,
+              model: name,
+              timeout: 30_000,
+              retries: 3,
+              allowUserApiKey: false,
+              models: {},
+            }),
+          );
+          if (!config.generation.defaultProvider) {
+            config.generation.defaultProvider = name;
+          }
+          config.generation.defaultModels[name] ??= name;
+        }
       })(),
     );
   }
@@ -428,6 +480,17 @@ async function start() {
         });
       }
     }
+  }
+
+  // Inject content-hashed filenames into HTML (enables immutable cache for hashed assets).
+  // Runs after copyDirectory so newly-copied HTML templates also get hashed references.
+  const hashResult = injectContentHashes(destinationPublicDirectory);
+  if (hashResult.replaced > 0) {
+    logger.info({
+      message: "Hash-injected references",
+      replaced: hashResult.replaced,
+      skipped: hashResult.skipped,
+    });
   }
 
   // Pre-compress VitePress docs dist (if built)

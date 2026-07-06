@@ -129,7 +129,9 @@ export const chatGenerations = {
     const msgs = self.messages as Array<Record<string, unknown>>;
     const msg = msgs.find((m) => m.id === messageId);
     if (!msg || !msg.totalVariants || (msg.totalVariants as number) <= 1) return;
-    const newIdx = (((msg.variantIndex as number) ?? 0) + direction + (msg.totalVariants as number)) % (msg.totalVariants as number);
+    const newIdx =
+      (((msg.variantIndex as number) ?? 0) + direction + (msg.totalVariants as number)) %
+      (msg.totalVariants as number);
     try {
       const res = await apiFetch(`/api/messages/${messageId}/variant`, {
         method: "PUT",
