@@ -2,7 +2,9 @@
 
 ## Overview
 
-This spec covers local and remote LLM serving backends for loop-lore's text generation. All backends expose OpenAI-compatible APIs, allowing a single provider implementation to support multiple servers.
+This spec covers local and remote LLM serving backends for loop-lore's text
+generation. All backends expose OpenAI-compatible APIs, allowing a single
+provider implementation to support multiple servers.
 
 **Primary backends** (MVP):
 
@@ -23,14 +25,17 @@ This spec covers local and remote LLM serving backends for loop-lore's text gene
 
 ## Architecture
 
-loop-lore's generation module (`src/generation/`) sends HTTP requests to `llama-server` via its OpenAI-compatible API endpoints:
+loop-lore's generation module (`src/generation/`) sends HTTP requests to
+`llama-server` via its OpenAI-compatible API endpoints:
 
 - `POST /v1/chat/completions` — chat completions
 - `POST /v1/completions` — text completions
 - `POST /v1/embeddings` — embedding generation
 - `GET /v1/models` — list available models
 
-The generation module sends requests to `llama-server` the same way it would to OpenAI — same request shape, same response format. No custom adapter needed beyond a `provider` configuration pointing to the local endpoint.
+The generation module sends requests to `llama-server` the same way it would to
+OpenAI — same request shape, same response format. No custom adapter needed
+beyond a `provider` configuration pointing to the local endpoint.
 
 ## llama-server
 
@@ -63,7 +68,8 @@ llama-server \
   --ctx-size 8192
 ```
 
-Production start (from ai-scripts/llama-server.sh — flags refined through extensive use):
+Production start (from ai-scripts/llama-server.sh — flags refined through
+extensive use):
 
 ```bash
 llama-server \
@@ -120,15 +126,18 @@ llama-server \
 | `--parallel`                        | Parallel decoding slots                          |
 | `--draft-min, --draft-max`          | Draft token count for speculative decoding       |
 
-See the full reference at `../llama.cpp/tools/server/README.md` or run `llama-server --help`.
+See the full reference at `../llama.cpp/tools/server/README.md` or run
+`llama-server --help`.
 
 ## OpenAI-Compatible API
 
-llama-server implements the OpenAI API spec. These are the endpoints loop-lore consumes:
+llama-server implements the OpenAI API spec. These are the endpoints loop-lore
+consumes:
 
 ### `POST /v1/chat/completions`
 
-The primary endpoint for text generation. Standard OpenAI chat completions format:
+The primary endpoint for text generation. Standard OpenAI chat completions
+format:
 
 ```json
 {
@@ -169,7 +178,9 @@ The primary endpoint for text generation. Standard OpenAI chat completions forma
 }
 ```
 
-**Streaming**: Server-Sent Events (SSE) with standard `data: {...}` chunks, ending with `data: [DONE]`. Each chunk contains a `choices[0].delta` with `content` and optionally `reasoning_content` for thinking models.
+**Streaming**: Server-Sent Events (SSE) with standard `data: {...}` chunks,
+ending with `data: [DONE]`. Each chunk contains a `choices[0].delta` with
+`content` and optionally `reasoning_content` for thinking models.
 
 ### `POST /v1/completions`
 
@@ -213,7 +224,8 @@ Lists loaded models and aliases:
 
 ### Extended llama.cpp Fields
 
-llama-server supports several extended fields beyond the OpenAI spec that loop-lore can leverage:
+llama-server supports several extended fields beyond the OpenAI spec that
+loop-lore can leverage:
 
 | Field                                   | Type      | Description                                                                                                                                |
 | --------------------------------------- | --------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -238,7 +250,8 @@ llama-server supports several extended fields beyond the OpenAI spec that loop-l
 
 ### Thinking / Reasoning Support
 
-Models that support chain-of-thought or reasoning (QwQ, DeepSeek-R1, etc.) stream thinking tokens in the `reasoning_content` field:
+Models that support chain-of-thought or reasoning (QwQ, DeepSeek-R1, etc.)
+stream thinking tokens in the `reasoning_content` field:
 
 ```
 data: {"choices":[{"delta":{"reasoning_content":"Let me think about this... step by step..."}}]}
@@ -246,7 +259,8 @@ data: {"choices":[{"delta":{"content":"Final answer."}}]}
 data: [DONE]
 ```
 
-loop-lore's `GenerationResult.thinking` field is designed to capture this (see `src/generation/gen-types-results.ts`).
+loop-lore's `GenerationResult.thinking` field is designed to capture this (see
+`src/generation/gen-types-results.ts`).
 
 ## Integration with loop-lore
 
@@ -301,9 +315,14 @@ Env vars:
 
 ### Task-Based Generation Presets
 
-Generation parameters and prompt structure can be configured per-chat based on the task type. Presets bundle temperature, sampling, penalties, and prompt templates into named profiles.
+Generation parameters and prompt structure can be configured per-chat based on
+the task type. Presets bundle temperature, sampling, penalties, and prompt
+templates into named profiles.
 
-**Design reference**: SillyTavern's preset system (`../silly-tavern/default/content/presets/`) — separates generation parameters (textgen presets) from prompt structure (OpenAI presets with ordered prompt sections). Loop-lore combines both into a single preset object.
+**Design reference**: SillyTavern's preset system
+(`../silly-tavern/default/content/presets/`) — separates generation parameters
+(textgen presets) from prompt structure (OpenAI presets with ordered prompt
+sections). Loop-lore combines both into a single preset object.
 
 **Type definition** (add to `src/generation/gen-types-options.ts`):
 
@@ -385,17 +404,22 @@ interface ChatSettings {
 }
 ```
 
-**Per-message override**: User can override the preset for a single generation via the input area UI. Override resets after the response is received.
+**Per-message override**: User can override the preset for a single generation
+via the input area UI. Override resets after the response is received.
 
 **Prompt template structure** (inspired by SillyTavern's OpenAI presets):
 
-SillyTavern's OpenAI presets (`../silly-tavern/default/content/presets/openai/Default.json`) define:
+SillyTavern's OpenAI presets
+(`../silly-tavern/default/content/presets/openai/Default.json`) define:
 
-- `prompts[]`: ordered list of prompt sections (Main Prompt, World Info, Character Description, Chat Examples, Chat History, Post-History Instructions)
+- `prompts[]`: ordered list of prompt sections (Main Prompt, World Info,
+  Character Description, Chat Examples, Chat History, Post-History Instructions)
 - `prompt_order[]`: per-character ordering of which sections are enabled
-- Each section has `identifier`, `role`, `content`, `system_prompt` flag, `marker` flag
+- Each section has `identifier`, `role`, `content`, `system_prompt` flag,
+  `marker` flag
 
-Loop-lore adopts this pattern with a simplified `PromptSection[]` array. The prompt builder assembles sections in order:
+Loop-lore adopts this pattern with a simplified `PromptSection[]` array. The
+prompt builder assembles sections in order:
 
 1. System instruction (from preset)
 2. Character description + personality
@@ -418,7 +442,13 @@ const PRESETS = {
         content: "Write {{char}}'s next reply in a fictional chat between {{char}} and {{user}}.",
         enabled: true,
       },
-      { identifier: "charDesc", name: "Char Description", isSystem: true, isMarker: true, enabled: true },
+      {
+        identifier: "charDesc",
+        name: "Char Description",
+        isSystem: true,
+        isMarker: true,
+        enabled: true,
+      },
       {
         identifier: "charPersonality",
         name: "Char Personality",
@@ -426,8 +456,20 @@ const PRESETS = {
         isMarker: true,
         enabled: true,
       },
-      { identifier: "scenario", name: "Scenario", isSystem: true, isMarker: true, enabled: true },
-      { identifier: "chatHistory", name: "Chat History", isSystem: true, isMarker: true, enabled: true },
+      {
+        identifier: "scenario",
+        name: "Scenario",
+        isSystem: true,
+        isMarker: true,
+        enabled: true,
+      },
+      {
+        identifier: "chatHistory",
+        name: "Chat History",
+        isSystem: true,
+        isMarker: true,
+        enabled: true,
+      },
       {
         identifier: "postInstructions",
         name: "Post-History Instructions",
@@ -486,16 +528,25 @@ Token budgets differ sharply between response output and context window:
 | Context window  | 32,000–64,000 | Recommended minimum for serious chat/roleplay tasks    |
 | Model max ctx   | 128K–1M       | Hardware-limited; llama.cpp `--ctx-size` caps it       |
 
-**Key insight**: Response body is short (~2K tokens) but the context needed to produce it is 16–32× larger. The LLM needs full conversation history, character cards, world lore, and instructions to generate coherent output.
+**Key insight**: Response body is short (~2K tokens) but the context needed to
+produce it is 16–32× larger. The LLM needs full conversation history, character
+cards, world lore, and instructions to generate coherent output.
 
 #### Service-Side History Compression
 
-The `messages` table already stores compressed content (gzip/zstd/brotli per schema) for storage efficiency. However, the generation pipeline needs a separate **prompt compaction layer** that operates on the _assembled prompt_ before sending to the LLM:
+The `messages` table already stores compressed content (gzip/zstd/brotli per
+schema) for storage efficiency. However, the generation pipeline needs a
+separate **prompt compaction layer** that operates on the _assembled prompt_
+before sending to the LLM:
 
-1. **Summarization** — Older conversation turns rewritten as condensed summaries instead of full messages
-2. **Truncation** — Oldest messages dropped when context budget exceeded (LRU eviction)
-3. **Priority retention** — System instructions, character cards, and recent N messages always preserved
-4. **Selective detail drop** — Full message detail for recent turns, summarized detail for older turns
+1. **Summarization** — Older conversation turns rewritten as condensed summaries
+   instead of full messages
+2. **Truncation** — Oldest messages dropped when context budget exceeded (LRU
+   eviction)
+3. **Priority retention** — System instructions, character cards, and recent N
+   messages always preserved
+4. **Selective detail drop** — Full message detail for recent turns, summarized
+   detail for older turns
 
 #### Prompt Assembly Budget
 
@@ -513,17 +564,24 @@ Older history       Low        ~2,000–8,000 (summarized)
 Total context                    ~16,000–32,000
 ```
 
-Remaining context budget (up to `--ctx-size` minus prompt tokens) reserved for response generation.
+Remaining context budget (up to `--ctx-size` minus prompt tokens) reserved for
+response generation.
 
 #### Implementation Direction
 
-- Token counting library (e.g., `tiktoken` or llama.cpp's tokenizer) to measure prompt sections
+- Token counting library (e.g., `tiktoken` or llama.cpp's tokenizer) to measure
+  prompt sections
 - Budget allocation per section with configurable ratios
-- Summarization triggers: when assembled prompt exceeds 75% of `ctx-size`, oldest messages get condensed
-- Summarized messages stored as `detail_level: summary` in the messages table (already supported by schema — see `docs/spec/messages.md`)
-- Compression strategy configurable per chat: `historyCompression: "full" | "summary" | "truncate"`
+- Summarization triggers: when assembled prompt exceeds 75% of `ctx-size`,
+  oldest messages get condensed
+- Summarized messages stored as `detail_level: summary` in the messages table
+  (already supported by schema — see `docs/spec/messages.md`)
+- Compression strategy configurable per chat:
+  `historyCompression: "full" | "summary" | "truncate"`
 
-This is separate from storage compression. Storage compression is transparent (gzip envelope); prompt compaction is a semantic transformation that trades fidelity for context fit.
+This is separate from storage compression. Storage compression is transparent
+(gzip envelope); prompt compaction is a semantic transformation that trades
+fidelity for context fit.
 
 ### Implementation: Context Compression (MVP)
 
@@ -535,7 +593,8 @@ This is separate from storage compression. Storage compression is transparent (g
 | `src/generation/context-compressor.ts`      | Done   | `compressMessages()` — pure function, returns `CompressionResult` with `{ compressed, metadata }`                                  |
 | `src/generation/context-compressor.test.ts` | Done   | 19 tests, all pass                                                                                                                 |
 
-Decorator pattern: caller wraps `GenerationOptions.prompt` before passing to pipeline.
+Decorator pattern: caller wraps `GenerationOptions.prompt` before passing to
+pipeline.
 
 #### Strategies
 
@@ -551,7 +610,8 @@ Decorator pattern: caller wraps `GenerationOptions.prompt` before passing to pip
 | `"truncate"`  | Drop oldest until budget fit, preserve min turns              | No          |
 | `"summarize"` | Uses `SummarizeFn` callback when wired; falls back to sliding | Opt-in      |
 
-System messages (leading `role: "system"` block) always preserved. Floor: never below 1 user+assistant turn.
+System messages (leading `role: "system"` block) always preserved. Floor: never
+below 1 user+assistant turn.
 
 #### Callbacks (LLM summarization/extraction — future)
 
@@ -580,7 +640,8 @@ async function generateEmbedding(config: LlmServingConfig, input: string | strin
 - Returns embedding vectors for semantic memory lookup
 - Batch input supported (array of strings)
 - Embedding model must match the loaded model's embedding dimension
-- Use case: character memory retrieval, world lore search, user preference matching
+- Use case: character memory retrieval, world lore search, user preference
+  matching
 
 ### Error Handling & Retry
 
@@ -596,13 +657,18 @@ llama-server errors follow OpenAI-compatible format. The provider must handle:
 | 503       | Server loading model           | Retry with backoff (model warm-up)                         |
 | Timeout   | No response within `timeout`   | Abort request, surface timeout error                       |
 
-**Retry strategy**: Exponential backoff with jitter. First retry at `retryBackoffMs`, second at `2 × retryBackoffMs`. Do not retry on 400 (bad request).
+**Retry strategy**: Exponential backoff with jitter. First retry at
+`retryBackoffMs`, second at `2 × retryBackoffMs`. Do not retry on 400 (bad
+request).
 
-**Streaming errors**: If SSE stream drops mid-generation, attempt one reconnect. If reconnect fails, surface partial content (if any) with a `cancelled: true` flag and `cancelReason: 'stream_error'`.
+**Streaming errors**: If SSE stream drops mid-generation, attempt one reconnect.
+If reconnect fails, surface partial content (if any) with a `cancelled: true`
+flag and `cancelReason: 'stream_error'`.
 
 ### Policy Detection
 
-Content policy detection runs post-generation as a separate analysis step, not during streaming.
+Content policy detection runs post-generation as a separate analysis step, not
+during streaming.
 
 **Flow**:
 
@@ -610,12 +676,20 @@ Content policy detection runs post-generation as a separate analysis step, not d
 2. Response content is sent to policy detection module
 3. Detection runs a ruleset: banned topics, regex patterns, keyword matching
 4. If content passes → message status set to `confirmed`, visibility `visible`
-5. If content flags → message status set to `rejected`, visibility `auto_hidden`, `policy_analysis` JSON populated with detection details
-6. Frontend receives `rejected` status and shows appropriate error UI per detail level
+5. If content flags → message status set to `rejected`, visibility
+   `auto_hidden`, `policy_analysis` JSON populated with detection details
+6. Frontend receives `rejected` status and shows appropriate error UI per detail
+   level
 
-**Integration point**: `src/generation/policy-detector.ts` — called after generation pipeline completes, before final message status is committed. Accepts `string` content, returns `{ passed: boolean; reason?: string; details?: Record<string, unknown> }`.
+**Integration point**: `src/generation/policy-detector.ts` — called after
+generation pipeline completes, before final message status is committed. Accepts
+`string` content, returns
+`{ passed: boolean; reason?: string; details?: Record<string, unknown> }`.
 
-**Configuration**: Policy rules loaded from `config.policy` section. MVP uses built-in defaults (no custom rule loading). Rules include: banned terms list, response length sanity check, repetition threshold (delegates to existing `repetition_score` in generation_attempts).
+**Configuration**: Policy rules loaded from `config.policy` section. MVP uses
+built-in defaults (no custom rule loading). Rules include: banned terms list,
+response length sanity check, repetition threshold (delegates to existing
+`repetition_score` in generation_attempts).
 
 ### Health Check
 
@@ -637,11 +711,16 @@ Implementation:
 3. If response is slow (>5s) → `status: "degraded"`
 4. If timeout or connection refused → `status: "down"`
 
-Health check runs on server startup and periodically (configurable, default 60s). If status transitions to `down`, the generation module surfaces "llama-server unavailable" to the user.
+Health check runs on server startup and periodically (configurable, default
+60s). If status transitions to `down`, the generation module surfaces
+"llama-server unavailable" to the user.
 
 ### Server Lifecycle
 
-The generation module does NOT manage `llama-server` process lifecycle (start/stop). It assumes the server is running at `LLAMACPP_BASE_URL`. For local development, use `../ai-scripts/llama-server.sh`. For production, llama-server runs as a systemd service or container.
+The generation module does NOT manage `llama-server` process lifecycle
+(start/stop). It assumes the server is running at `LLAMACPP_BASE_URL`. For local
+development, use `../ai-scripts/llama-server.sh`. For production, llama-server
+runs as a systemd service or container.
 
 **Startup sequence**:
 
@@ -651,15 +730,19 @@ The generation module does NOT manage `llama-server` process lifecycle (start/st
 
 ### Concurrent Slot Management
 
-llama-server supports parallel decoding slots (`--parallel N`). For multi-user loop-lore:
+llama-server supports parallel decoding slots (`--parallel N`). For multi-user
+loop-lore:
 
-- Each user request gets a slot (auto-assigned by llama-server, or forced via `slot_id`)
+- Each user request gets a slot (auto-assigned by llama-server, or forced via
+  `slot_id`)
 - If all slots busy → llama-server returns 429 → retry with backoff
 - `slot_id` in config is optional; omit for auto-assignment
 
 ### Model Discovery
 
-`GET /v1/models` returns active models. Loop-lore can poll this to present model selection in the UI. For auto-discovery on startup, implement a health check that:
+`GET /v1/models` returns active models. Loop-lore can poll this to present model
+selection in the UI. For auto-discovery on startup, implement a health check
+that:
 
 1. Pings `/v1/models`
 2. Populates a local model registry (in-memory or DB-backed)
@@ -667,7 +750,10 @@ llama-server supports parallel decoding slots (`--parallel N`). For multi-user l
 
 ## Multi-Model Setup with llama-swap
 
-[llama-swap](https://github.com/mostlygeek/llama-swap) (`../llama-swap/`) is a Go reverse proxy that manages multiple llama.cpp server backends and swaps models on demand. It exposes a single OpenAI-compatible endpoint and routes to the correct backend based on `model` field.
+[llama-swap](https://github.com/mostlygeek/llama-swap) (`../llama-swap/`) is a
+Go reverse proxy that manages multiple llama.cpp server backends and swaps
+models on demand. It exposes a single OpenAI-compatible endpoint and routes to
+the correct backend based on `model` field.
 
 ```bash
 llama-swap serve --config config.yaml
@@ -706,7 +792,9 @@ Currently configured models (all use `llama-server` with optimized sampling):
 | `llama/provider/model-f`      | Example 17B thinking model   | Active |
 | `llama/provider/model-g`      | Example 2B model             | Active |
 
-**Note**: Optimized small/fast models not yet configured. Current setup uses the big smart base models. Add smaller models (e.g. Qwen 3.5 3B, Gemma 2B) for low-latency use cases.
+**Note**: Optimized small/fast models not yet configured. Current setup uses the
+big smart base models. Add smaller models (e.g. Qwen 3.5 3B, Gemma 2B) for
+low-latency use cases.
 
 ### API Key Support (Preliminary)
 
@@ -720,7 +808,8 @@ apiKeys:
 
 **How it works**:
 
-- When `apiKeys` is non-empty, requests must include `Authorization: Bearer <key>` header
+- When `apiKeys` is non-empty, requests must include
+  `Authorization: Bearer <key>` header
 - When empty (default), no auth check — llama-swap is default-allow
 - Keys can be strings or `${env.VAR}` macros
 
@@ -744,7 +833,7 @@ apiKeys:
       "created": 1775401200,
       "owned_by": "local",
       "name": "provider/model-a",
-      "description": "Qwen 3.6 35B uncensored"
+      "description": "Qwen 3.6 35B"
     }
   ]
 }
@@ -776,7 +865,8 @@ POST /v1/chat/completions
 → 200: {"choices":[{"message":{"content":"Hello"}}]}
 ```
 
-**Loading state injection**: When `sendLoadingState: true` in config, llama-swap injects loading status into the `reasoning_content` field during model warm-up:
+**Loading state injection**: When `sendLoadingState: true` in config, llama-swap
+injects loading status into the `reasoning_content` field during model warm-up:
 
 ```http
 data: {"choices":[{"delta":{"reasoning_content":"[loading model: llama/provider/model-a]"}}]}
@@ -877,9 +967,12 @@ See `../llama-swap/config.example.yaml` for full configuration reference.
 
 ## vLLM Integration (Future)
 
-[vLLM](https://github.com/vllm-project/vllm) is a high-performance LLM serving engine with OpenAI-compatible API. It supports PagedAttention for efficient memory management, continuous batching, and multi-GPU tensor parallelism.
+[vLLM](https://github.com/vllm-project/vllm) is a high-performance LLM serving
+engine with OpenAI-compatible API. It supports PagedAttention for efficient
+memory management, continuous batching, and multi-GPU tensor parallelism.
 
-**Status**: Not MVP. Documented for future integration when GPU serving with high throughput is needed.
+**Status**: Not MVP. Documented for future integration when GPU serving with
+high throughput is needed.
 
 ### Why vLLM
 
@@ -949,7 +1042,8 @@ const config: LlmServingConfig = {
 ### Implementation Notes
 
 - Reuse the `llama-cpp` provider — same API shape
-- Add `providerType: "llama-cpp" | "vllm"` to config for backend-specific optimizations
+- Add `providerType: "llama-cpp" | "vllm"` to config for backend-specific
+  optimizations
 - vLLM supports `--enable-prefix-caching` for repeated system prompts
 - vLLM supports `--response-role` for custom assistant role naming
 
@@ -977,46 +1071,57 @@ Other local/cloud LLM integration candidates:
 
 ## Startup Script
 
-Reference: `../ai-scripts/llama-server.sh` — a shell script used for local development with preconfigured sampling parameters and speculative decoding.
+Reference: `../ai-scripts/llama-server.sh` — a shell script used for local
+development with preconfigured sampling parameters and speculative decoding.
 
 ## Implementation Checklist
 
-- [ ] Create `src/generation/providers/llm-serving.ts` — HTTP client for LLM backends
+- [ ] Create `src/generation/providers/llm-serving.ts` — HTTP client for LLM
+      backends
   - [ ] `POST /v1/chat/completions` (streaming + non-streaming)
   - [ ] `GET /v1/models` (model discovery)
   - [ ] `POST /v1/embeddings` (memory system integration)
   - [ ] Thinking/reasoning content extraction from streaming deltas
   - [ ] Streaming error recovery (partial content on reconnect failure)
-  - [ ] Loading state injection parsing (`reasoning_content` with `[loading model: ...]`)
+  - [ ] Loading state injection parsing (`reasoning_content` with
+        `[loading model: ...]`)
 - [ ] Register `"llama-cpp"` provider in the generation dispatch
 - [ ] Add `healthCheck()` function with status transitions
 - [ ] Add retry logic with exponential backoff + jitter
 - [ ] Add configurable timeout per request
 - [ ] Handle error codes: 400, 404, 429, 500, 503, timeout
 - [ ] Add concurrent slot management (auto-assign or forced slot_id)
-- [ ] Add env vars: `LLAMACPP_BASE_URL`, `LLAMACPP_MODEL`, `LLAMACPP_TIMEOUT`, `LLAMACPP_RETRIES`, `LLAMACPP_API_KEY`
+- [ ] Add env vars: `LLAMACPP_BASE_URL`, `LLAMACPP_MODEL`, `LLAMACPP_TIMEOUT`,
+      `LLAMACPP_RETRIES`, `LLAMACPP_API_KEY`
 - [ ] Add startup script or config entry for `llama-server` invocation
 - [ ] Support speculative decoding hint pass-through (optional, advanced)
 
 ### Task-Based Presets
 
 - [ ] Define `GenerationPreset` type in `src/generation/gen-types-options.ts`
-- [ ] Implement built-in presets: `precise`, `balanced`, `creative`, `narrative`, `code`, `roleplay`, `concise`
+- [ ] Implement built-in presets: `precise`, `balanced`, `creative`,
+      `narrative`, `code`, `roleplay`, `concise`
 - [ ] Add preset resolution: chat-level → actor-level → global default
 - [ ] Store preset name in `chats.settings` JSON (`generationPreset` field)
-- [ ] Map preset params to llama-server fields (temperature, top_p, top_k, penalties, DRY)
+- [ ] Map preset params to llama-server fields (temperature, top_p, top_k,
+      penalties, DRY)
 - [ ] Inject preset `systemInstruction` into system prompt
 - [ ] Add per-message preset override in input area UI
 - [ ] Add preset selector to chat settings panel
-- [ ] Update `docs/frontend/chat/overview.md` — expand "Generation Style Presets" section
+- [ ] Update `docs/frontend/chat/overview.md` — expand "Generation Style
+      Presets" section
 
 ### llama-swap Integration
 
-- [ ] Add llama-swap config to `../ai-scripts/llama-swap.yaml` — add small/fast models for low-latency use cases
-- [ ] Test llama-swap routing: verify `GET /v1/models` returns all configured models
+- [ ] Add llama-swap config to `../ai-scripts/llama-swap.yaml` — add small/fast
+      models for low-latency use cases
+- [ ] Test llama-swap routing: verify `GET /v1/models` returns all configured
+      models
 - [ ] Test model hot-swap: verify requesting a different model triggers swap
-- [ ] Test API key auth: set `apiKeys` in config, verify `LLAMACPP_API_KEY` passthrough
-- [ ] Test streaming through llama-swap: verify SSE works with `sendLoadingState: true`
+- [ ] Test API key auth: set `apiKeys` in config, verify `LLAMACPP_API_KEY`
+      passthrough
+- [ ] Test streaming through llama-swap: verify SSE works with
+      `sendLoadingState: true`
 - [ ] Test non-streaming through llama-swap: verify standard response format
 - [ ] Test `/running` endpoint: verify currently loaded model tracking
 - [ ] Test TTL auto-unload: verify model unloads after idle timeout
@@ -1034,22 +1139,29 @@ Reference: `../ai-scripts/llama-server.sh` — a shell script used for local dev
 ### Verification
 
 - [ ] Test: `bun test` passes; `bun run check` passes
-- [ ] Document sample GGUF model paths and download instructions in getting-started guide
+- [ ] Document sample GGUF model paths and download instructions in
+      getting-started guide
 
 ## References
 
 - [llama.cpp README](https://github.com/ggml-org/llama.cpp) — upstream project
-- [llama-server README](../llama.cpp/tools/server/README.md) — full CLI reference
-- [OpenAI Chat Completions API](https://platform.openai.com/docs/api-reference/chat) — upstream spec
+- [llama-server README](../llama.cpp/tools/server/README.md) — full CLI
+  reference
+- [OpenAI Chat Completions API](https://platform.openai.com/docs/api-reference/chat)
+  — upstream spec
 - [llama-swap](../llama-swap/) — multi-model proxy
-- [llama-swap config example](../llama-swap/config.example.yaml) — full config reference
+- [llama-swap config example](../llama-swap/config.example.yaml) — full config
+  reference
 - [Local llama-swap config](../ai-scripts/llama-swap.yaml) — current model setup
 - [Local startup script](../ai-scripts/llama-server.sh) — production flags
-- [vLLM GitHub](https://github.com/vllm-project/vllm) — high-performance LLM serving
-- [vLLM OpenAI Server](https://docs.vllm.ai/en/latest/serving/online_serving/openai_compatible_server/) — API reference
+- [vLLM GitHub](https://github.com/vllm-project/vllm) — high-performance LLM
+  serving
+- [vLLM OpenAI Server](https://docs.vllm.ai/en/latest/serving/online_serving/openai_compatible_server/)
+  — API reference
 - [Ollama](https://github.com/ollama/ollama) — local LLM management
 - [LM Studio](https://lmstudio.ai/) — desktop LLM app
-- [Generation Module](../implementation.md#generation-module) — loop-lore's generation system
+- [Generation Module](../implementation.md#generation-module) — loop-lore's
+  generation system
 - [Implementation Plan](../../meta/plan.md) — MVP roadmap
 
 ## Cross-References: Existing Codebase

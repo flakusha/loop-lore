@@ -55,16 +55,12 @@ export function generateResponse(params: GenerateResponseParams): AssistantRespo
   const { userInput } = params;
   const lower = userInput.toLowerCase().trim();
 
-  // Check exact matches first
+  // Check exact matches first (word boundary or start of string)
   for (const [keyword, responses] of Object.entries(RESPONSE_MAP)) {
-    if (lower.startsWith(keyword)) {
-      return responses[0] ?? null;
-    }
-  }
-
-  // Check keyword containment
-  for (const [keyword, responses] of Object.entries(RESPONSE_MAP)) {
-    if (lower.includes(keyword)) {
+    // Use word boundary regex to avoid false positives (e.g., "helpme" matching "help")
+    const escaped = keyword.replaceAll(/[.*+?^${}()|[\]\\]/g, String.raw`\$&`);
+    const pattern = new RegExp(String.raw`\b${escaped}\b`, "i");
+    if (pattern.test(lower)) {
       return responses[0] ?? null;
     }
   }
@@ -73,5 +69,5 @@ export function generateResponse(params: GenerateResponseParams): AssistantRespo
 }
 
 export function isAssistantEnabled(config: Config): boolean {
-  return config.assistant.enabled;
+  return config.assistant?.enabled ?? false;
 }

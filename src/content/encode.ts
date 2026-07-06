@@ -1,6 +1,16 @@
 import { gzipSync, brotliCompressSync } from "node:zlib";
 import type { ContentEncoding, EncodeResult } from "./types";
 
+function zstdCompress(data: Buffer): Buffer {
+  // zstd compression via Bun runtime (type-safe wrapper)
+  const bun = Bun as { zstdCompressSync?: (data: Buffer) => Buffer };
+  const fn = bun.zstdCompressSync;
+  if (fn) {
+    return fn(data);
+  }
+  throw new Error("zstd compression not available");
+}
+
 export function encodeContent(plaintext: string, encoding: ContentEncoding): EncodeResult {
   if (encoding === "identity" || !plaintext) {
     return { encoded: plaintext, encoding: "identity" };
@@ -14,7 +24,7 @@ export function encodeContent(plaintext: string, encoding: ContentEncoding): Enc
       return { encoded: Buffer.from(compressed).toBase64(), encoding: "gzip" };
     }
     case "zstd": {
-      const compressed = (Bun.zstdCompressSync as (data: Buffer, options?: object) => Buffer)(buffer);
+      const compressed = zstdCompress(buffer);
       return { encoded: Buffer.from(compressed).toBase64(), encoding: "zstd" };
     }
     case "brotli": {

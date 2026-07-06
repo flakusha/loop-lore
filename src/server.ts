@@ -3,7 +3,7 @@
 
 import { serve } from "bun";
 import { join, normalize } from "node:path";
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync, readFileSync, statSync, readdirSync } from "node:fs";
 import { spawnSync } from "node:child_process";
 import { compressAssets, copyDirectory } from "./content/compress";
 import { runMigrations } from "./db/migrate";
@@ -20,6 +20,10 @@ import { apiDispatch } from "./routes/router";
 import { dispatch as dispatchViews } from "./routes/views";
 import { dispatchAuth } from "./routes/auth";
 import { initSmk } from "./crypto";
+import { ensureTlsCerts } from "./config/cert";
+import { createLogger, getLogger } from "./logger";
+import { ServerExternalManager } from "./services/server-external-manager";
+
 // Route modules (import for registerRoute side-effects)
 import "./routes/chats";
 import "./routes/messages";
@@ -36,9 +40,6 @@ import "./routes/actor-notes";
 import "./routes/story-items";
 import "./routes/story-states";
 import "./routes/story-turns";
-import { ensureTlsCerts } from "./config/cert";
-import { createLogger, getLogger } from "./logger";
-import { ServerExternalManager } from "./services/server-external-manager";
 
 const DOCS_PATH = join(import.meta.dir, "..", "docs", ".vitepress", "dist");
 
@@ -94,6 +95,17 @@ function findCompressedVariant(
   return null;
 }
 
+function walkDirectorySync(dir: string): string[] {
+  const files: string[] = [];
+  const entries = readdirSync(dir, { withFileTypes: true });
+  for (const entry of entries) {
+    if (entry.isFile()) {
+      files.push(entry.name);
+    }
+  }
+  return files;
+}
+
 /**
  * Serve a static file with optional compressed variant.
  * Shared between docs path and public path serving.
@@ -129,9 +141,10 @@ export async function handleApiRequest(
   database: ReturnType<typeof getDatabase>,
   config: ReturnType<typeof loadConfig>,
 ): Promise<Response> {
-  // ── Auth-skip paths (login, demo-login) — no auth required ──
+  // ── Auth-skip paths (login, demo-login, age-gate) — no auth required ──
   const url = new URL(request.url);
-  const skipAuth = url.pathname === "/api/auth/login" || url.pathname === "/api/demo-login";
+  const skipAuthPaths = ["/api/auth/login", "/api/demo-login", "/api/age-gate/status"];
+  const skipAuth = skipAuthPaths.includes(url.pathname);
 
   if (skipAuth) {
     return compose([errorBoundary], async (req: Request, _context: RequestContext): Promise<Response> => {
@@ -139,6 +152,14 @@ export async function handleApiRequest(
       const context: RequestContext = { userId: null, userRole: null, sessionId: null };
       const authResult = await dispatchAuth({ request: req, context, database, config });
       if (authResult) return authResult;
+
+      const ageGateResult = await dispatchAgeGate({
+        request: req,
+        database,
+        userId: context.userId,
+        userRole: context.userRole,
+      });
+      if (ageGateResult) return ageGateResult;
 
       return apiDispatch({ request: req, context, database, config });
     })(request, { userId: null, userRole: null, sessionId: null });
@@ -154,7 +175,12 @@ export async function handleApiRequest(
       if (authResult) return authResult;
 
       // ── Age gate routes ──────────────────────────────
-      const ageGateResult = await dispatchAgeGate(req, database, context.userId, context.userRole);
+      const ageGateResult = await dispatchAgeGate({
+        request: req,
+        database,
+        userId: context.userId,
+        userRole: context.userRole,
+      });
       if (ageGateResult) return ageGateResult;
 
       // ── Generation cancellation routes ───────────────
@@ -212,7 +238,12 @@ function handleDocsRequest(
     }
   }
 
-  if (fullPath.startsWith(DOCS_PATH + "/") && existsSync(fullPath)) {
+  // Path traversal guard: must be under DOCS_PATH with trailing separator
+  const docsPathWithSlash = DOCS_PATH + "/";
+  if (!fullPath.startsWith(docsPathWithSlash) && fullPath !== DOCS_PATH) {
+    return new Response("Documentation not found", { status: 404 });
+  }
+  if (existsSync(fullPath)) {
     const acceptEncoding = request.headers.get("accept-encoding") ?? "";
     return respondWithFile(fullPath, acceptEncoding);
   }
@@ -254,7 +285,13 @@ async function start() {
 
     const publicPath = normalize(join(PUBLIC_DIR, url.pathname === "/" ? "index.html" : url.pathname));
 
-    if (publicPath.startsWith(join(PUBLIC_DIR, "/"))) {
+    // Path traversal guard: must be under PUBLIC_DIR
+    const publicDirWithSlash = PUBLIC_DIR + "/";
+    if (!publicPath.startsWith(publicDirWithSlash) && publicPath !== PUBLIC_DIR) {
+      return new Response("Not found", { status: 404 });
+    }
+
+    if (publicPath.startsWith(publicDirWithSlash) || publicPath === PUBLIC_DIR) {
       let fullPath = publicPath;
 
       if (!existsSync(fullPath)) {
@@ -293,21 +330,12 @@ async function start() {
 
   serverLogger.info(`Docs  → http://localhost:${config.server.port}/docs/`);
 
+  // ── Run migrations before serving (ensure DB schema ready) ───
+  await runMigrations(database);
+  await seedDefaultActors(database);
+
   // ── Background initialization (non-blocking) ─────────────
   const initPromises: Promise<void>[] = [];
-
-  // Run migrations in background
-  initPromises.push(
-    (async () => {
-      try {
-        await runMigrations(database);
-        await seedDefaultActors(database);
-      } catch (error) {
-        logger.error({ message: "Migration/seeding failed — aborting startup", error: String(error) });
-        process.exit(1);
-      }
-    })(),
-  );
 
   // Auto-start external AI servers (llama.cpp, sd.cpp) in background
   const autoStart = config.generation.autoStart;
@@ -353,33 +381,52 @@ async function start() {
   const sourceViewsDirectory = join(import.meta.dir, "..", "views");
   const destinationPublicDirectory = join(import.meta.dir, "..", "dist", "public");
 
+  // Helper: check if source is newer than destination
+  function needsCompression(srcDir: string, destDir: string): boolean {
+    if (!existsSync(destDir)) return true;
+    const srcFiles = walkDirectorySync(srcDir);
+    for (const f of srcFiles) {
+      const srcPath = join(srcDir, f);
+      const destPath = join(destDir, f);
+      if (!existsSync(destPath)) return true;
+      const srcStat = statSync(srcPath);
+      const destStat = statSync(destPath);
+      if (srcStat.mtimeMs > destStat.mtimeMs) return true;
+    }
+    return false;
+  }
+
   if (existsSync(sourcePublicDirectory)) {
     copyDirectory(sourcePublicDirectory, destinationPublicDirectory);
-    const result = compressAssets(sourcePublicDirectory, destinationPublicDirectory);
-    if (result.total > 0) {
-      logger.info({
-        message: "Compressed assets",
-        total: result.total,
-        bytes: result.originalBytes,
-        gz: result.compressedBytes.gz,
-        zst: result.compressedBytes.zst,
-        br: result.compressedBytes.br,
-      });
+    if (needsCompression(sourcePublicDirectory, destinationPublicDirectory)) {
+      const result = compressAssets(sourcePublicDirectory, destinationPublicDirectory);
+      if (result.total > 0) {
+        logger.info({
+          message: "Compressed assets",
+          total: result.total,
+          bytes: result.originalBytes,
+          gz: result.compressedBytes.gz,
+          zst: result.compressedBytes.zst,
+          br: result.compressedBytes.br,
+        });
+      }
     }
   }
 
   if (existsSync(sourceViewsDirectory)) {
     copyDirectory(sourceViewsDirectory, destinationPublicDirectory);
-    const result = compressAssets(sourceViewsDirectory, destinationPublicDirectory);
-    if (result.total > 0) {
-      logger.info({
-        message: "Compressed views",
-        total: result.total,
-        bytes: result.originalBytes,
-        gz: result.compressedBytes.gz,
-        zst: result.compressedBytes.zst,
-        br: result.compressedBytes.br,
-      });
+    if (needsCompression(sourceViewsDirectory, destinationPublicDirectory)) {
+      const result = compressAssets(sourceViewsDirectory, destinationPublicDirectory);
+      if (result.total > 0) {
+        logger.info({
+          message: "Compressed views",
+          total: result.total,
+          bytes: result.originalBytes,
+          gz: result.compressedBytes.gz,
+          zst: result.compressedBytes.zst,
+          br: result.compressedBytes.br,
+        });
+      }
     }
   }
 

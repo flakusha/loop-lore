@@ -20,25 +20,38 @@ import * as AgeGateService from "./service";
 
 import { jsonResponse, jsonError } from "../routes/http-utils";
 
-// ── In-memory runtime config (defaults from schema) ──────────
+// ── Age Gate Config Singleton ─────────────────────────────────
 
 /**
- * Runtime age gate config, seeded from the static config on startup.
- * Admin can override it via PUT /api/admin/age-gate without a restart.
- *
- * Initialised by initAgeGate() which is called once during server start.
+ * Singleton class for age gate runtime config.
+ * Prevents module-level mutable state issues.
  */
-let runtimeConfig: AgeGateConfig = { enabled: false, minimumAge: 18, mode: "self-declaration" };
+class AgeGateConfigStore {
+  private config: AgeGateConfig = { enabled: false, minimumAge: 18, mode: "self-declaration" };
+
+  init(config: AgeGateConfig): void {
+    this.config = { ...config };
+  }
+
+  get(): AgeGateConfig {
+    return { ...this.config };
+  }
+
+  update(partial: Partial<AgeGateConfig>): void {
+    this.config = { ...this.config, ...partial };
+  }
+}
+
+export const ageGateConfig = new AgeGateConfigStore();
 
 /** Seed the runtime config. Called once during server start. */
 export function initAgeGate(config: AgeGateConfig): void {
-  // eslint-disable-next-line unicorn/no-top-level-assignment-in-function
-  runtimeConfig = { ...config };
+  ageGateConfig.init(config);
 }
 
 /** Read the current (possibly admin-overridden) runtime config. */
 export function getRuntimeConfig(): AgeGateConfig {
-  return { ...runtimeConfig };
+  return ageGateConfig.get();
 }
 
 // ── Route handlers ───────────────────────────────────────────
@@ -62,7 +75,7 @@ export async function handleGetStatus(database: Kysely<DB>, userId?: string | nu
         .executeTakeFirst();
     }
 
-    const status = AgeGateService.getStatus(runtimeConfig, user ?? null);
+    const status = AgeGateService.getStatus(ageGateConfig.get(), user ?? null);
     return jsonResponse(status);
   } catch (error) {
     return jsonError((error as Error).message, 500);
@@ -75,14 +88,21 @@ export async function handleGetStatus(database: Kysely<DB>, userId?: string | nu
  * Accept the age gate. Requires `{ birthDate: "YYYY-MM-DD" }` in the body.
  * Returns 200 on success, 400 for invalid data, 403 if underage.
  */
-export async function handleAccept(database: Kysely<DB>, userId: string, body: unknown): Promise<Response> {
+export async function handleAccept(
+  database: Kysely<DB>,
+  userId: string | null,
+  body: unknown,
+): Promise<Response> {
+  if (!userId) {
+    return jsonError("Authentication required", 401);
+  }
   try {
     const input = body as Record<string, unknown>;
     if (typeof input.birthDate !== "string") {
       return jsonError("Missing or invalid birthDate (expected YYYY-MM-DD)", 400);
     }
 
-    await AgeGateService.acceptAgeGate(database, runtimeConfig, userId, {
+    await AgeGateService.acceptAgeGate(database, ageGateConfig.get(), userId, {
       birthDate: input.birthDate,
     });
 
@@ -108,7 +128,7 @@ export function handleAdminGetConfig(userRole: string | null | undefined): Respo
     return jsonError("Forbidden", 403);
   }
 
-  return jsonResponse(runtimeConfig);
+  return jsonResponse(ageGateConfig.get());
 }
 
 /**
@@ -131,7 +151,7 @@ export function handleAdminUpdateConfig(userRole: string | null | undefined, bod
   }
 
   const input = body as Record<string, unknown>;
-  const updated: AgeGateConfig = { ...runtimeConfig };
+  const updated: AgeGateConfig = ageGateConfig.get();
 
   if (typeof input.enabled === "boolean") {
     updated.enabled = input.enabled;
@@ -150,23 +170,26 @@ export function handleAdminUpdateConfig(userRole: string | null | undefined, bod
     updated.mode = input.mode as AgeGateConfig["mode"];
   }
 
-  // eslint-disable-next-line unicorn/no-top-level-assignment-in-function
-  runtimeConfig = updated;
-  return jsonResponse(runtimeConfig);
+  ageGateConfig.update(updated);
+  return jsonResponse(ageGateConfig.get());
 }
 
 // ── Route dispatch ───────────────────────────────────────────
+
+/** Options for dispatcher. */
+export interface AgeGateDispatchOptions {
+  request: Request;
+  database: Kysely<DB>;
+  userId: string | null;
+  userRole: string | null | undefined;
+}
 
 /**
  * Dispatch age-gate requests. Returns a Response or null if the
  * path doesn't match an age-gate route.
  */
-export async function dispatch(
-  request: Request,
-  database: Kysely<DB>,
-  userId: string | null,
-  userRole: string | null | undefined,
-): Promise<Response | null> {
+export async function dispatch(options: AgeGateDispatchOptions): Promise<Response | null> {
+  const { request, database, userId, userRole } = options;
   const url = new URL(request.url);
   const { pathname } = url;
 

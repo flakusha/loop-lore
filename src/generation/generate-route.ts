@@ -14,6 +14,7 @@ import { getDatabase } from "../db/index";
 import {
   MessageRole,
   MessageContentType,
+  MessageContentFormat,
   ContentEncoding,
   MessageStatus,
   MessageVisibility,
@@ -245,6 +246,7 @@ export async function handleGenerate(
           role: MessageRole.Assistant,
           content: result.content,
           content_type: MessageContentType.Text,
+          content_format: MessageContentFormat.Markdown,
           content_encoding: ContentEncoding.Identity,
           model_id: resolved.resolvedModel,
           provider: resolved.resolvedProviderName,
@@ -337,6 +339,7 @@ export async function handleGenerate(
             role: MessageRole.Assistant,
             content: result.content,
             content_type: MessageContentType.Text,
+            content_format: MessageContentFormat.Markdown,
             content_encoding: ContentEncoding.Identity,
             model_id: resolved.resolvedModel,
             provider: resolved.resolvedProviderName,
