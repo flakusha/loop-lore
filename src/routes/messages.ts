@@ -268,7 +268,11 @@ async function handleListMessages({
   const countResult = await query.executeTakeFirst();
   const total = countResult?.total ?? 0;
 
-  let listQuery = database.selectFrom("messages").selectAll().where("chat_id", "=", chatId).where("visibility", "=", "visible");
+  let listQuery = database
+    .selectFrom("messages")
+    .selectAll()
+    .where("chat_id", "=", chatId)
+    .where("visibility", "=", "visible");
 
   if (parentId !== undefined) {
     listQuery = listQuery.where("parent_id", "=", parentId);
