@@ -31,6 +31,7 @@ declare global {
   interface DocumentEventMap {
     "htmx:configRequest": CustomEvent<{ headers: Record<string, string> }>;
     "htmx:afterSwap": CustomEvent<{ target: Element }>;
+    "htmx:load": CustomEvent<{ elt: Element }>;
     "htmx:responseError": CustomEvent<{ xhr?: XMLHttpRequest }>;
     "htmx:loadTheme": CustomEvent<{ theme?: string }>;
     "show-toast": CustomEvent<{ type?: string; message: string; icon?: string }>;

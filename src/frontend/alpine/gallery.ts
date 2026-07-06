@@ -12,7 +12,6 @@ interface GalleryAsset {
 
 globalThis.galleryState = function () {
   return {
-    showUploadModal: false,
     previewAsset: null as GalleryAsset | null,
     filterType: "",
     searchQuery: "",
@@ -23,8 +22,10 @@ globalThis.galleryState = function () {
     uploadLabel: "",
 
     init() {
-      (this as any).$root.pageTitle = "Asset Gallery";
       this.loadAssets();
+      document.addEventListener("show-upload-modal", () => {
+        globalThis.Alpine.store("ui").showUploadModal = true;
+      });
     },
 
     async loadAssets() {
@@ -128,7 +129,7 @@ globalThis.galleryState = function () {
       try {
         const res = await apiFetch("/api/assets", { method: "POST", body: formData });
         if (res.ok) {
-          this.showUploadModal = false;
+          globalThis.Alpine.store("ui").showUploadModal = false;
           this.uploadLabel = "";
           fileInput!.value = "";
           (this as any).$dispatch("show-toast", { type: "success", message: "Asset uploaded" });

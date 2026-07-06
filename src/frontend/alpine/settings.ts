@@ -17,7 +17,6 @@ globalThis.settingsPage = function () {
     confirmDeleteText: "",
 
     init() {
-      (this as any).$root.pageTitle = "Settings";
       const savedTheme = localStorage.getItem("theme-preference");
       if (savedTheme) {
         this.currentTheme = savedTheme;

@@ -8,6 +8,8 @@
  */
 
 import { randomUUID } from "node:crypto";
+import type { Kysely } from "kysely";
+import type { DB } from "../db/schema";
 import { getDatabase } from "../db/index";
 import {
   MessageRole,
