@@ -1,5 +1,5 @@
 <!-- Settings Page -->
-<header id="header-slot" class="main-header" data-testid="settings-header">
+<header id="header-slot" class="main-header" data-page="settings" data-testid="settings-header">
   <button class="hamburger" onclick="toggleSidebar()" data-testid="hamburger">☰</button>
   <span class="title">Settings</span>
 </header>
@@ -207,16 +207,3 @@
     </div>
   </main>
 </div>
-
-<script>
-  document.querySelector('[data-testid="theme-select"]').value =
-    localStorage.getItem("theme-preference") || "default";
-  document.querySelector('[data-testid="locale-select"]').value = localStorage.getItem("locale") || "en";
-  const prov = document.querySelector('[data-testid="api-provider"]');
-  if (prov) {
-    prov.addEventListener("change", function () {
-      document.getElementById("api-endpoint-group").style.display =
-        this.value === "Custom" ? "block" : "none";
-    });
-  }
-</script>
