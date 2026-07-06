@@ -220,7 +220,6 @@ function handleDocsRequest(
   return new Response("Documentation not found", { status: 404 });
 }
 
- 
 async function start() {
   const config = loadConfig();
   createLogger(config.logging);
@@ -312,11 +311,21 @@ async function start() {
 
   // Auto-start external AI servers (llama.cpp, sd.cpp) in background
   const autoStart = config.generation.autoStart;
-  if (autoStart?.llamaCpp?.enabled) {
-    initPromises.push(serverManager.startLlamaCpp(autoStart.llamaCpp));
+  const llamaCppCfg = autoStart?.llamaCpp;
+  if (llamaCppCfg?.enabled) {
+    initPromises.push(
+      (async () => {
+        await serverManager.startLlamaCpp(llamaCppCfg);
+      })(),
+    );
   }
-  if (autoStart?.sdCpp?.enabled) {
-    initPromises.push(serverManager.startSdCpp(autoStart.sdCpp));
+  const sdCppCfg = autoStart?.sdCpp;
+  if (sdCppCfg?.enabled) {
+    initPromises.push(
+      (async () => {
+        await serverManager.startSdCpp(sdCppCfg);
+      })(),
+    );
   }
 
   // Resolve all background init before proceeding to rest

@@ -519,10 +519,8 @@ export class ServerExternalManager {
    */
   startLivenessProbes(): void {
     if (this.probeTimer) return;
-    this.probeTimer = setInterval(async () => {
-      try {
-        await this.checkAllLiveliness();
-      } catch {}
+    this.probeTimer = setInterval(() => {
+      void this.checkAllLiveliness();
     }, this.PROBE_INTERVAL_MS);
     this.log.debug("Liveliness probes started", { intervalMs: this.PROBE_INTERVAL_MS });
   }
