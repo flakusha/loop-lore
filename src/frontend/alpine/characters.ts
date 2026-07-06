@@ -1,5 +1,9 @@
 // ── Character Chat List page (character-chat-list.html) ──
 
+import { log as rootLog } from "./logger";
+
+const log = rootLog.child({ module: "characters" });
+
 globalThis.characterChatListState = function () {
   return {
     characterId: null as string | null,
@@ -99,21 +103,21 @@ globalThis.charactersState = function () {
     },
 
     async init() {
-      console.log("[charactersState] init — loading characters");
+      log.debug("init — loading characters");
       await this.loadCharacters();
     },
 
     async loadCharacters() {
-      console.log("[charactersState] loadCharacters started");
+      log.debug("loadCharacters started");
       this.loading = true;
       try {
         const res = await apiFetch("/api/actors?pageSize=100");
-        console.log("[charactersState] loadCharacters response:", res.status, res.ok);
+        log.debug("loadCharacters response", { status: res.status, ok: res.ok });
         const data = await res.json();
-        console.log("[charactersState] loadCharacters data:", data.pagination?.total, "actors");
+        log.debug("loadCharacters data", { total: data.pagination?.total });
         this.characters = data.data || [];
-      } catch (e) {
-        console.error("[charactersState] loadCharacters FAILED:", e);
+      } catch (error) {
+        log.error("loadCharacters FAILED", error instanceof Error ? { error: error.message } : { error: String(error) });
         (this as any).$dispatch("show-toast", { type: "error", message: "Failed to load characters" });
       } finally {
         this.loading = false;
@@ -181,9 +185,9 @@ globalThis.charactersState = function () {
     },
 
     async createCharacter() {
-      console.log("[charactersState] createCharacter — start");
+      log.debug("createCharacter — start");
       const form = (this as any).$el?.querySelector("form");
-      console.log("[charactersState] createCharacter — form:", form ? "found" : "NOT FOUND");
+      log.debug("createCharacter — form", { found: !!form });
       if (!form) return;
       const formData = new FormData(form);
       const body = {
@@ -191,42 +195,44 @@ globalThis.charactersState = function () {
         actorType: formData.get("actorType") || "character",
         description: formData.get("description"),
       };
-      console.log("[charactersState] createCharacter — body:", body);
+      log.debug("createCharacter — body", body);
       try {
         const res = await apiFetch("/api/actors", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(body),
         });
-        console.log("[charactersState] createCharacter — response:", res.status);
+        log.debug("createCharacter — response", { status: res.status });
         if (res.ok) {
           globalThis.Alpine.store('ui').showCreateForm = false;
           (this as any).$dispatch("show-toast", { type: "success", message: "Character created" });
           await this.loadCharacters();
         } else {
           const err = await res.json();
-          console.error("[charactersState] createCharacter — API error:", err);
+          log.error("createCharacter — API error", { error: err.error || JSON.stringify(err) });
           (this as any).$dispatch("show-toast", {
             type: "error",
             message: err.error || "Failed to create character",
           });
         }
-      } catch (e) {
-        console.error("[charactersState] createCharacter — caught:", e);
+      } catch (error) {
+        log.error("createCharacter — caught", error instanceof Error ? { error: error.message } : { error: String(error) });
         (this as any).$dispatch("show-toast", { type: "error", message: "Network error" });
       }
     },
 
     destroy() {
       // Reset UI flags that might leak across pages
-      if (globalThis.Alpine) {
-        const uiStore = globalThis.Alpine.store('ui');
-        if (uiStore) {
-          uiStore.showCreateForm = false;
-          uiStore.showImportForm = false;
-          uiStore.showEditModal = false;
-          // Note: we do NOT reset showChatList, showGallery, showCharacterInfo as those are intended to persist
-        }
+      if (!globalThis.Alpine) {
+      	return;
+      }
+
+      const uiStore = globalThis.Alpine.store('ui');
+      if (uiStore) {
+        uiStore.showCreateForm = false;
+        uiStore.showImportForm = false;
+        uiStore.showEditModal = false;
+        // Note: we do NOT reset showChatList, showGallery, showCharacterInfo as those are intended to persist
       }
     },
   };

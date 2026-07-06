@@ -1,5 +1,8 @@
 // ── 401 redirect helper ────────────────────────────────────
 
+import { log as rootLog } from "./logger";
+
+const log = rootLog.child({ module: "api" });
 const API_BASE = "";
 
 /** Get CSRF token from meta tag or cookie */
@@ -10,18 +13,19 @@ function getCsrfToken(): string {
   return match ? match[1] : "";
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+ 
 async function apiFetch(url: string, options?: RequestInit): Promise<Response> {
-  console.log("[apiFetch] >>>", options?.method ?? "GET", url);
+  const method = options?.method ?? "GET";
+  log.debug(`${method} ${url}`, { direction: "request" });
   const opts: RequestInit = { ...options };
   opts.headers = new Headers(opts.headers ?? {});
   const csrf = getCsrfToken();
   if (csrf) (opts.headers as Headers).set("X-CSRF-Token", csrf);
   opts.signal = AbortSignal.timeout(30_000);
   const res = await fetch(API_BASE + url, opts);
-  console.log("[apiFetch] <<<", res.status, url);
+  log.debug(`${res.status} ${url}`, { direction: "response" });
   if (res.status === 401) {
-    console.warn("[apiFetch] 401 — redirecting to login");
+    log.warn("401 — redirecting to login");
     const redirect = encodeURIComponent(location.pathname + location.search);
     location.assign(`/views/login?redirect=${redirect}`);
     throw new Error("Unauthorized");
@@ -93,10 +97,12 @@ function normalizeHeaderSlot() {
   let best: Element | null = null;
   let bestChildren = -1;
   for (const h of all) {
-    if (appRoot.contains(h)) {
-      const n = h.children.length;
-      if (n > bestChildren) { best = h; bestChildren = n; }
+    if (!appRoot.contains(h)) {
+    	continue;
     }
+
+    const n = h.children.length;
+    if (n > bestChildren) { best = h; bestChildren = n; }
   }
   // Fallback: first header at body level (layout placeholder)
   if (!best) best = all[0];
