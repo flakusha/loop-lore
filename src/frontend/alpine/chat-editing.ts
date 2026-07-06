@@ -108,7 +108,10 @@ export const chatEditing = {
         const res = await apiFetch("/api/assets", { method: "POST", body: formData });
         if (res.ok) {
           const asset = await res.json();
-          self.pendingAssets = [...(self.pendingAssets as Array<{ assetId: string; filename: string }>), { assetId: asset.id, filename: file.name }];
+          self.pendingAssets = [
+            ...(self.pendingAssets as Array<{ assetId: string; filename: string }>),
+            { assetId: asset.id, filename: file.name },
+          ];
           self.$dispatch?.("show-toast", { type: "success", message: `Ready to attach: ${file.name}` });
         } else {
           const err = await res.json();

@@ -31,7 +31,16 @@ import {
   extractIdFromPath,
   parsePagination,
 } from "./http-utils";
-import { ChatType, ChatMode, ChatParticipantRole, TurnStrategy } from "../db/enums";
+import {
+  ChatType,
+  ChatMode,
+  ChatParticipantRole,
+  TurnStrategy,
+  MessageRole,
+  MessageContentType,
+  MessageContentFormat,
+  ContentEncoding,
+} from "../db/enums";
 import { getRuntimeConfig } from "../age-gate/controller";
 import { getStatus } from "../age-gate/service";
 import { getLogger } from "../logger";
@@ -261,6 +270,36 @@ async function handleCreateChat({ database, body, context }: CreateChatOpts): Pr
     }
   }
 
+  // Insert welcome messages for character participants with a welcome_message set
+  const characterActors = await database
+    .selectFrom("chat_participants")
+    .innerJoin("actors", "actors.id", "chat_participants.actor_id")
+    .select(["chat_participants.actor_id", "actors.welcome_message"])
+    .where("chat_participants.chat_id", "=", chatId)
+    .where("actors.welcome_message", "is not", null)
+    .execute();
+
+  for (const actor of characterActors) {
+    await database
+      .insertInto("messages")
+      .values({
+        id: uid(),
+        chat_id: chatId,
+        actor_id: actor.actor_id,
+        parent_id: null,
+        role: MessageRole.Character,
+        content: actor.welcome_message!,
+        key_id: null,
+        content_type: MessageContentType.Text,
+        content_format: MessageContentFormat.Markdown,
+        content_encoding: ContentEncoding.Identity,
+        status: "confirmed",
+        visibility: "visible",
+        idempotency_key: null,
+      })
+      .execute();
+  }
+
   return jsonCreated({ id: chatId });
 }
 
@@ -311,7 +350,34 @@ async function handleDeleteChat({ database, chatId, context }: DeleteChatOpts): 
   if (!chat) return jsonError("Chat not found", HttpStatus.NotFound, ErrorCode.NotFound);
   if (chat.created_by !== userId) return jsonError("Forbidden", HttpStatus.Forbidden, ErrorCode.Forbidden);
 
-  // Delete related records first
+  // Delete related records first (FK order: no FK deps first, then leaf tables)
+  await database.deleteFrom("generation_attempts").where("chat_id", "=", chatId).execute();
+  await database
+    .deleteFrom("world_states")
+    .where((eb) =>
+      eb.or([
+        eb(
+          "trigger_message_id",
+          "in",
+          database.selectFrom("messages").select("id").where("chat_id", "=", chatId),
+        ),
+        eb(
+          "trigger_turn_id",
+          "in",
+          database.selectFrom("story_turns").select("id").where("chat_id", "=", chatId),
+        ),
+      ]),
+    )
+    .execute();
+  await database.deleteFrom("story_turns").where("chat_id", "=", chatId).execute();
+  await database.deleteFrom("quest_progress").where("chat_id", "=", chatId).execute();
+  await database.deleteFrom("synthetic_data").where("chat_id", "=", chatId).execute();
+  await database.deleteFrom("actor_memories").where("source_chat_id", "=", chatId).execute();
+  await database
+    .deleteFrom("asset_links")
+    .where("entity_type", "=", "chat")
+    .where("entity_id", "=", chatId)
+    .execute();
   await database.deleteFrom("messages").where("chat_id", "=", chatId).execute();
   await database.deleteFrom("chat_participants").where("chat_id", "=", chatId).execute();
   await database.deleteFrom("chats").where("id", "=", chatId).execute();
