@@ -5,7 +5,7 @@ import { log as rootLog } from "./logger";
 
 const log = rootLog.child({ module: "characters" });
 
-globalThis.characterChatListState = function () {
+globalThis.characterChatListState = function() {
   return {
     characterId: null as string | null,
     characterName: null as string | null,
@@ -77,7 +77,7 @@ globalThis.characterChatListState = function () {
 
 // ── Characters page component (characters.html) ──────────
 
-globalThis.charactersState = function () {
+globalThis.charactersState = function() {
   return {
     characters: [] as any[],
     loading: true,
@@ -163,7 +163,7 @@ globalThis.charactersState = function () {
         }
         const data = await res.json();
         if (data.id) {
-          location.assign("/views/chat");
+          location.assign(`/views/chat?chatid=${encodeURIComponent(data.id)}`);
         } else {
           (this as any).$dispatch("show-toast", { type: "error", message: "Failed to create chat" });
         }
@@ -256,7 +256,7 @@ globalThis.charactersState = function () {
 
 // ── Character Edit page component (character-edit.html) ──
 
-globalThis.characterEditState = function () {
+globalThis.characterEditState = function() {
   return {
     character: null as any,
     loading: true,

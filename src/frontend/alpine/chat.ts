@@ -1,8 +1,8 @@
 // ── Chat page component (chat.html) ────────────────────────
 
-import { jsonBody } from "./json";
-import { marked } from "marked";
 import DOMPurify from "dompurify";
+import { marked } from "marked";
+import { jsonBody } from "./json";
 
 // Configure marked for GFM (tables, strikethrough, task-lists) + line breaks
 marked.use({ breaks: true, gfm: true });
@@ -13,7 +13,7 @@ interface ChatAsset {
   filename?: string;
 }
 
-globalThis.chatState = function () {
+globalThis.chatState = function() {
   return {
     isGenerating: false,
     generationLabel: "Character is responding...",
@@ -85,9 +85,16 @@ globalThis.chatState = function () {
     _toggleGalleryHandler: () => {},
     _toggleCharacterInfoHandler: () => {},
 
-    init() {
-      this.loadChats();
+    async init() {
+      await this.loadChats();
       this.loadUserInfo();
+
+      // Auto-select chat from URL param after creation
+      const params = new URLSearchParams(location.search);
+      const chatId = params.get("chatid");
+      if (chatId) {
+        await this.selectChat(chatId);
+      }
 
       // Listen for header action events from OOB header
       this._toggleChatListHandler = () => {
@@ -205,8 +212,8 @@ globalThis.chatState = function () {
       this.activeChatName = chat?.name || "Chat";
       const titleEl = document.querySelector("#page-title");
       if (titleEl) titleEl.textContent = this.activeChatName;
-      // Keep URL as /views/chat — no server route for /chat/:id yet
-      // history.replaceState(null, "", `/chat/${chatId}`);
+      // Keep URL in sync so page reload preserves selected chat
+      history.replaceState(null, "", `/views/chat?chatid=${chatId}`);
       // Reset infinite scroll state on chat switch
       this.currentPage = 1;
       this.hasMoreMessages = true;
@@ -405,12 +412,12 @@ globalThis.chatState = function () {
           this.activeAttemptId = data.attemptId;
           this.generationDetail = data.generation
             ? {
-                attemptId: data.generation.attemptId,
-                status: data.generation.status,
-                elapsedMs: data.generation.elapsedMs,
-                chunksReceived: data.generation.chunksReceived,
-                charsReceived: data.generation.charsReceived,
-              }
+              attemptId: data.generation.attemptId,
+              status: data.generation.status,
+              elapsedMs: data.generation.elapsedMs,
+              chunksReceived: data.generation.chunksReceived,
+              charsReceived: data.generation.charsReceived,
+            }
             : null;
           // Update label with detail info
           const detail = this.generationDetail;
@@ -589,10 +596,9 @@ globalThis.chatState = function () {
 
         this.$dispatch("show-toast", {
           type: "info",
-          message:
-            data.resumeFromStep > 0
-              ? `Resuming from step ${data.resumeFromStep + 1} of ${data.totalSteps}...`
-              : "Regenerating response...",
+          message: data.resumeFromStep > 0
+            ? `Resuming from step ${data.resumeFromStep + 1} of ${data.totalSteps}...`
+            : "Regenerating response...",
         });
 
         this.isGenerating = true;
@@ -790,7 +796,7 @@ globalThis.chatState = function () {
     async removeMessage(msgId: string, event: Event) {
       if (!this.activeChat) return;
       if (!confirm("Delete this message?")) return;
-      const button = event.currentTarget as HTMLElement | null;
+      event.stopImmediatePropagation();
       try {
         const res = await apiFetch(`/api/messages/${msgId}`, { method: "DELETE" });
         if (res.ok) {
@@ -803,7 +809,6 @@ globalThis.chatState = function () {
       } catch {
         this.$dispatch("show-toast", { type: "error", message: "Network error removing message" });
       }
-      button?.blur();
     },
 
     /** Calculate CSS style for media item based on aspect ratio and count */
