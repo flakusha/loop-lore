@@ -168,6 +168,7 @@ globalThis.chatState = function () {
           uiStore.showGallery = false;
           uiStore.showCharacterInfo = false;
           uiStore.showChatSettings = false;
+          uiStore.hasActiveChat = false;
         }
       }
     },
@@ -209,6 +210,7 @@ globalThis.chatState = function () {
       }
       this.loadingError = null;
       this.activeChat = chatId;
+      globalThis.Alpine.store("ui").hasActiveChat = true;
       const chat = this.chats.find((c: { id: string; name?: string }) => c.id === chatId);
       this.activeChatName = chat?.name || "Chat";
       const titleEl = document.querySelector("#page-title");
@@ -826,6 +828,7 @@ globalThis.chatState = function () {
             this.activeChat = null;
             this.activeChatName = "Welcome to loop-lore";
             this.messages = [];
+            globalThis.Alpine.store("ui").hasActiveChat = false;
             const titleEl = document.querySelector("#page-title");
             if (titleEl) titleEl.textContent = this.activeChatName;
           }
