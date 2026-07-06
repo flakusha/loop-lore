@@ -58,16 +58,18 @@ function formatTimeAgo(iso: string): string {
       })
       .join("");
   } catch {
-    grid.innerHTML = `<div class="empty-state" style="padding: var(--space-12)"><div class="icon">⚠</div><div class="title">Failed to load characters</div></div>`;
+    /* ignore */
   }
 };
+
+export {};
 
 (globalThis as any).selectCharacterCard = async function (id: string) {
   try {
     const res = await apiFetch(`/api/actors/${id}`);
     if (!res.ok) return;
     const char = await res.json();
-    const modal = document.querySelector("#character-detail-modal") as HTMLElement;
+    const modal = document.querySelector<HTMLElement>("#character-detail-modal");
     if (!modal) return;
     modal.querySelector("[data-field='name']")!.textContent = char.display_name || char.name || "";
     modal.querySelector("[data-field='description']")!.textContent = char.description || "No description";
@@ -117,7 +119,7 @@ function formatTimeAgo(iso: string): string {
     const res = await apiFetch(`/api/actors/${id}`, { method: "DELETE" });
     if (res.ok) {
       document.querySelector("#character-detail-modal")?.classList.remove("open");
-      globalThis.showToast("success", "Character deleted");
+      showToast("success", "Character deleted");
       (globalThis as any).loadCharactersPage();
     }
   } catch {
@@ -183,7 +185,7 @@ function thumbForAsset(a: any): string {
     if (!res.ok) return;
     const a = await res.json();
     (globalThis as any).__previewAsset = a;
-    const modal = document.querySelector("#preview-modal") as HTMLElement;
+    const modal = document.querySelector<HTMLElement>("#preview-modal");
     if (!modal) return;
     modal.querySelector("[data-field='filename']")!.textContent = a.filename || "Asset";
     modal.querySelector("[data-field='mime']")!.textContent = a.mime_type || "";
@@ -217,9 +219,9 @@ function thumbForAsset(a: any): string {
   if (!a?.id) return;
   try {
     await navigator.clipboard.writeText(`${location.origin}/api/assets/${a.id}/raw`);
-    globalThis.showToast("success", "URL copied");
+    showToast("success", "URL copied");
   } catch {
-    globalThis.showToast("error", "Failed to copy");
+    showToast("error", "Failed to copy");
   }
 };
 
@@ -240,11 +242,11 @@ function thumbForAsset(a: any): string {
     if (res.ok) {
       document.querySelector("#preview-modal")?.classList.remove("open");
       (globalThis as any).__previewAsset = null;
-      globalThis.showToast("success", "Asset deleted");
+      showToast("success", "Asset deleted");
       (globalThis as any).loadGalleryPage();
     }
   } catch {
-    globalThis.showToast("error", "Failed to delete");
+    showToast("error", "Failed to delete");
   }
 };
 
@@ -298,20 +300,20 @@ function thumbForAsset(a: any): string {
     __log("DEBUG", "createWorld response", { status: res.status });
     if (res.ok) {
       const data = await res.json();
-      document.getElementById("create-world-modal")?.classList.remove("open");
-      globalThis.showToast("success", "World created");
+      document.querySelector("#create-world-modal")?.classList.remove("open");
+      showToast("success", "World created");
       location.assign(`/worlds/${data.id}/edit`);
     } else {
       const err = await res.json();
-      globalThis.showToast("error", err.error || "Failed to create world");
+      showToast("error", err.error || "Failed to create world");
     }
   } catch {
-    globalThis.showToast("error", "Network error");
+    showToast("error", "Network error");
   }
 };
 
 (globalThis as any).loadWorldDetail = async function () {
-  const container = document.querySelector("#world-detail") as HTMLElement | null;
+  const container = document.querySelector<HTMLElement>("#world-detail");
   const id = container?.dataset.worldId;
   if (!id) return;
   __log("DEBUG", "loadWorldDetail", { id });
@@ -350,7 +352,7 @@ function thumbForAsset(a: any): string {
 };
 
 (globalThis as any).loadCharacterChatList = async function () {
-  const container = document.querySelector("#character-chat-list") as HTMLElement | null;
+  const container = document.querySelector<HTMLElement>("#character-chat-list");
   const id = container?.dataset.characterId;
   if (!id) return;
   __log("DEBUG", "loadCharacterChatList", { id });

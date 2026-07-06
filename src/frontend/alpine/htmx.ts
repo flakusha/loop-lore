@@ -5,7 +5,7 @@ const __log = (level: string, msg: string, meta?: unknown) => {
 };
 
 // Global error capture for debugging page loader issues
-globalThis.addEventListener("error", (e) => {
+addEventListener("error", (e) => {
   __log("ERROR", `Uncaught: ${e.message}`, { filename: e.filename, lineno: e.lineno, colno: e.colno });
 });
 
@@ -41,6 +41,8 @@ async function apiFetch(url: string, options?: RequestInit): Promise<Response> {
 
 globalThis.apiFetch = apiFetch;
 
+export {};
+
 // ── htmx event handlers ───────────────────────────────────
 
 document.addEventListener("htmx:configRequest", (e: CustomEvent<{ headers: Record<string, string> }>) => {
@@ -73,7 +75,7 @@ document.addEventListener("htmx:load", (e: CustomEvent<{ elt: Element }>) => {
   __log("DEBUG", "htmx:load", { tag: elt?.tagName, id: (elt as any)?.id });
   if (elt && globalThis.Alpine && elt.querySelector("[x-data]")) {
     elt.querySelectorAll("[x-data]").forEach((child: Element) => {
-      globalThis.Alpine!.initTree(child);
+      Alpine!.initTree(child as HTMLElement);
     });
   }
   triggerPageLoaders();
@@ -121,15 +123,15 @@ document.addEventListener("htmx:responseError", (e: CustomEvent<{ xhr?: XMLHttpR
 });
 
 // ── Init Alpine stores (idempotent) ────────────────────────
-function initAlpineStores(): void {
+const initAlpineStores = (): void => {
   if (!globalThis.Alpine) return;
   try {
-    if (globalThis.Alpine.store("sidebar")) return;
+    if (Alpine.store("sidebar")) return;
   } catch {
     /* store not defined yet */
   }
-  globalThis.Alpine.store("sidebar", { open: false });
-  globalThis.Alpine.store("ui", {
+  Alpine.store("sidebar", { open: false });
+  Alpine.store("ui", {
     showChatList: false,
     showGallery: false,
     showCharacterInfo: false,
@@ -141,7 +143,7 @@ function initAlpineStores(): void {
     showChatSettings: false,
     hasActiveChat: false,
   });
-}
+};
 
 // Try to init stores immediately and on DOMContentLoaded
 initAlpineStores();
@@ -152,10 +154,9 @@ document.addEventListener("DOMContentLoaded", triggerPageLoaders);
 
 // ── Global keyboard: Escape closes sidebar ──────────────────
 document.addEventListener("keydown", (e: KeyboardEvent) => {
-  if (e.key === "Escape") {
-    const sidebar = document.querySelector("#layout-sidebar");
-    if (sidebar?.classList.contains("open")) {
-      closeSidebar();
-    }
+  if (e.key !== "Escape") return;
+  const sidebar = document.querySelector("#layout-sidebar");
+  if (sidebar?.classList.contains("open")) {
+    closeSidebar();
   }
 });

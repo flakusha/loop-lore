@@ -578,10 +578,10 @@ async function triggerAutoGeneration(
     const log = getLogger().child({ module: "auto-gen" });
     if (
       err.name === "AbortError" ||
-      (err as Error).message === "Request cancelled" ||
-      (err as Error).message === "Request timed out"
+      err.message === "Request cancelled" ||
+      err.message === "Request timed out"
     ) {
-      log.warn("Auto-generation aborted", { reason: (err as Error).message });
+      log.warn("Auto-generation aborted", { reason: err.message });
     } else {
       log.error("Auto-generation failed", err);
     }
