@@ -7,6 +7,7 @@
 import type { Kysely, Transaction } from "kysely";
 import type { DB } from "../../db/schema";
 import { WorldEventType } from "../../db/enums";
+import { safeJsonStringify } from "../../utils";
 import type { WorldEvent } from "../types";
 import { ItemsService } from "../items";
 
@@ -111,8 +112,14 @@ async function applyNpcStateChange(db: Kysely<DB>, event: WorldEvent): Promise<v
   const update: Record<string, unknown> = {};
   if (changes.health != null) update.health = changes.health;
   if (changes.mental_state) update.mental_state = changes.mental_state;
-  if (changes.relationships) update.relationships = JSON.stringify(changes.relationships);
-  if (changes.knowledge) update.knowledge = JSON.stringify(changes.knowledge);
+  if (changes.relationships) {
+    const r = safeJsonStringify(changes.relationships);
+    if (r.ok) update.relationships = r.value;
+  }
+  if (changes.knowledge) {
+    const r = safeJsonStringify(changes.knowledge);
+    if (r.ok) update.knowledge = r.value;
+  }
   if (Object.keys(update).length > 0) {
     update.updated_at = new Date().toISOString();
     await db.updateTable("npc_states").set(update).where("actor_id", "=", npcActorId).execute();
@@ -157,7 +164,10 @@ async function applyLocationModification(db: Kysely<DB>, event: WorldEvent): Pro
   if (changes.description_override) update.description_override = changes.description_override;
   if (changes.atmosphere) update.atmosphere = changes.atmosphere;
   if (changes.weather) update.weather = changes.weather;
-  if (changes.hazards) update.hazards = JSON.stringify(changes.hazards);
+  if (changes.hazards) {
+    const r = safeJsonStringify(changes.hazards);
+    if (r.ok) update.hazards = r.value;
+  }
 
   await db.updateTable("location_states").set(update).where("location_id", "=", locationId).execute();
 }

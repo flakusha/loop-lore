@@ -1,6 +1,6 @@
 import { describe, test, expect, beforeAll, afterAll } from "bun:test";
 import { createBrowserTest, type BrowserTestContext } from "../../helpers/browser-server";
-import { seedAll, SEED } from "../../helpers/seed";
+import { seedAll } from "../../helpers/seed";
 
 describe("Navigation E2E", () => {
   let ctx: BrowserTestContext;

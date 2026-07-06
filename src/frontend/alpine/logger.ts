@@ -98,14 +98,18 @@ class BrowserLoggerImpl implements BrowserLogger {
 
   private getConsoleMethod(level: LogLevel): (...args: unknown[]) => void {
     switch (level) {
-      case "debug":
+      case "debug": {
         return console.debug;
-      case "warn":
+      }
+      case "warn": {
         return console.warn;
-      case "error":
+      }
+      case "error": {
         return console.error;
-      default:
+      }
+      default: {
         return console.log;
+      }
     }
   }
 

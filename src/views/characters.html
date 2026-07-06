@@ -233,19 +233,26 @@
 
           <div class="form-group">
             <label class="form-label">System Prompt</label>
-            <div
-              style="
-                font-size: 13px;
-                color: var(--text-secondary);
-                white-space: pre-wrap;
-                background: var(--bg-tertiary);
-                padding: var(--space-3);
-                border-radius: var(--radius-sm);
-                max-height: 200px;
-                overflow-y: auto;
-              "
-              x-text="selectedChar?.system_prompt || 'None'"
-            ></div>
+            <template x-if="selectedChar?.system_prompt">
+              <div
+                style="
+                  font-size: 13px;
+                  color: var(--text-secondary);
+                  white-space: pre-wrap;
+                  background: var(--bg-tertiary);
+                  padding: var(--space-3);
+                  border-radius: var(--radius-sm);
+                  max-height: 200px;
+                  overflow-y: auto;
+                "
+                x-text="selectedChar?.system_prompt"
+              ></div>
+            </template>
+            <template x-if="!selectedChar?.system_prompt">
+              <div style="font-size: 13px; color: var(--text-tertiary); font-style: italic">
+                No system prompt
+              </div>
+            </template>
           </div>
 
           <div style="display: flex; gap: var(--space-3); justify-content: flex-end">

@@ -13,12 +13,9 @@
  *   DELETE /api/worlds/:worldId/item-instances/:instanceId — destroy instance
  */
 
-import type { Kysely } from "kysely";
-import type { DB } from "../db/schema";
-import type { RequestContext } from "../middleware/types";
 import type { RouteDispatch } from "./router";
 import { registerRoute } from "./router";
-import { uid, safeJsonStringify } from "../utils";
+import { safeJsonStringify } from "../utils";
 import {
   BAD_METHOD,
   jsonResponse,

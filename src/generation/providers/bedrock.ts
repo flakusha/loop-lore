@@ -5,7 +5,6 @@
 // Supports Claude, Llama, Titan, and other Bedrock models.
 // See: https://docs.aws.amazon.com/bedrock/latest/userguide/api_reference.html
 
-import type { ProviderInstanceConfig } from "../../config/schema";
 import type {
   LLMProvider,
   GenerateRequest,

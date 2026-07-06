@@ -218,5 +218,5 @@ const dispatch: RouteDispatch = async ({
   return null; // Not a view route
 };
 
-registerRoute(dispatch); // eslint-disable-line unicorn/no-top-level-side-effects
+registerRoute(dispatch);  
 export { dispatch, serveView };

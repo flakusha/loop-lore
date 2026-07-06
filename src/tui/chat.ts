@@ -7,6 +7,7 @@
  */
 
 import blessed from "blessed";
+import { safeJsonStringify } from "../utils";
 
 export const API_BASE = process.env.LOOP_LORE_API_BASE_URL ?? "http://localhost:3000";
 
@@ -191,10 +192,11 @@ export class ChatWidget {
     this.showTyping();
 
     try {
+      const bodyResult = safeJsonStringify({ content: text, role: "user" });
       const res = await fetch(`${API_BASE}/api/chats/${this.chatId}/messages`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ content: text, role: "user" }),
+        body: bodyResult.ok ? bodyResult.value : "{}",
       });
 
       this.hideTyping();

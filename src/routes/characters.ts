@@ -71,7 +71,7 @@ interface ImportActorJsonOpts {
   context: RequestContext;
 }
 
-// eslint-disable-next-line sonarjs/cognitive-complexity
+ 
 const dispatch: RouteDispatch = async ({ request, context, database }) => {
   const url = new URL(request.url);
   const { pathname, searchParams } = url;
@@ -329,5 +329,5 @@ async function handleImportActorJson({ body, database, context }: ImportActorJso
   return jsonCreated({ id });
 }
 
-registerRoute(dispatch); // eslint-disable-line unicorn/no-top-level-side-effects
+registerRoute(dispatch);  
 export { dispatch };

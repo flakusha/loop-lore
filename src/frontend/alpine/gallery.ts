@@ -1,5 +1,7 @@
 // ── Gallery page component (gallery.html) ──────────────────
 
+import { jsonBody } from "./json";
+
 interface GalleryAsset {
   id: string;
   name?: string;
@@ -88,7 +90,7 @@ globalThis.galleryState = function () {
         const res = await apiFetch(`/api/assets/${assetId}/links`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ entityType: "chat", entityId: chatId.trim() }),
+          body: jsonBody({ entityType: "chat", entityId: chatId.trim() }),
         });
         if (res.ok) {
           (this as any).$dispatch("show-toast", { type: "success", message: "Linked to chat" });

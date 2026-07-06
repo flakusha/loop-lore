@@ -3,7 +3,7 @@
  */
 
 import { describe, test, expect } from "bun:test";
-import { applyLimits, DEFAULTS } from "./limits";
+import { applyLimits } from "./limits";
 import type { LogEntry } from "./types";
 
 const baseEntry: LogEntry = {

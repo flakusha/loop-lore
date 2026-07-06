@@ -1,5 +1,7 @@
 // ── New Chat page component (new-chat.html) ────────────────
 
+import { jsonBody } from "./json";
+
 globalThis.newChatState = function () {
   return {
     name: "",
@@ -30,7 +32,7 @@ globalThis.newChatState = function () {
         const res = await apiFetch("/api/chats", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
+          body: jsonBody({
             name: this.name.trim(),
             type: this.typeEnum(this.chatType),
             mode: this.modeEnum(this.chatMode),

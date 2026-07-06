@@ -42,7 +42,7 @@ type JSONSchema = Record<string, unknown>;
 // ── Schema generator ────────────────────────────────────────
 
 /** Infer JSON Schema type from JS value */
-function inferJsonType(val: unknown): string {
+function _inferJsonType(val: unknown): string {
   if (typeof val === "string") return "string";
   if (typeof val === "number") return Number.isInteger(val) ? "integer" : "number";
   if (typeof val === "boolean") return "boolean";
