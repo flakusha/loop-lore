@@ -74,11 +74,39 @@ export function loadTestConfig(overrides?: Partial<Config>): Config {
     if (overrides.assets) Object.assign(config.assets, overrides.assets);
     // Deep merge ageGate overrides
     if (overrides.ageGate) Object.assign(config.ageGate, overrides.ageGate);
+    // Deep merge byoKey overrides
+    if (overrides.byoKey) Object.assign(config.byoKey, overrides.byoKey);
+    // Deep merge encryption overrides
+    if (overrides.encryption) Object.assign(config.encryption, overrides.encryption);
+    // Deep merge generation overrides (providers, models, defaultProvider)
+    if (overrides.generation) config.generation = mergeGeneration(config.generation, overrides.generation);
     // Deep merge testing overrides
     if (overrides.testing) config.testing = { ...config.testing, ...overrides.testing };
   }
 
   return config;
+}
+
+/**
+ * Deep-merge generation config overrides.
+ * Recursively merges providers and defaultModels instead of replacing.
+ */
+function mergeGeneration(base: Config["generation"], overrides: Partial<Config["generation"]>): Config["generation"] {
+  const result = { ...base };
+  if (overrides.providers) {
+    result.providers = { ...base.providers };
+    for (const [key, val] of Object.entries(overrides.providers)) {
+      if (Array.isArray(val)) {
+        // openaiCompatible is an array — deep merge
+        result.providers[key as keyof typeof result.providers] = val as never;
+      } else if (val && typeof val === "object") {
+        result.providers[key as keyof typeof result.providers] = { ...(base.providers as never)[key], ...val } as never;
+      }
+    }
+  }
+  if (overrides.defaultProvider != null) result.defaultProvider = overrides.defaultProvider;
+  if (overrides.defaultModels) result.defaultModels = { ...base.defaultModels, ...overrides.defaultModels };
+  return result;
 }
 
 /**

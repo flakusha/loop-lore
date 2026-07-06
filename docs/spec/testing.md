@@ -216,6 +216,40 @@ If improving coverage is a goal:
 3. **Target complex algorithms**: Add fuzz-style tests for repetition detector (n-gram edge cases) and cancellation paths.
 4. **Consider integration tests**: For server endpoints and TUI key handlers (using tools like `supertest` for API and `blessed` testing utilities).
 
+## Known Non-Blocking Issues
+
+These are pre-existing test failures that do not block development. They are infrastructure or seed-data mismatches, not bugs in the code under test.
+
+### Solo/Seed User ID Mismatch
+
+Browser E2E tests seed data with deterministic IDs (`SEED.user.id`, `SEED.chat.id`, etc.) but the server runs in solo mode (`auth.required = false`), which auto-creates a solo user with a random UUID. The web UI queries APIs scoped to that random solo user, so seeded data (owned by `SEED.user.id`) is invisible.
+
+**Affected tests** (always fail):
+- `chat-flow.test.ts` — "No chats yet" on chat list, message input disabled
+- `characters-flow.test.ts` — empty character grid, create form never appears
+- `worlds-flow.test.ts` — empty world list, create form never appears
+- `auth-flow.test.ts`, `smoke.test.ts` — may also be affected depending on test path
+
+**Root cause**: `src/middleware/auth.ts:156` generates `const soloId = uid()` (random). `tests/e2e/helpers/seed.ts` uses fixed `SEED.user.id` with `role: UserRole.User`. The middleware finds no `Solo` role user, creates one with a random ID, and that user owns none of the seeded data.
+
+**Fix**: Seed the solo user with `SEED.user.id` and `role: UserRole.Solo` before page loads, or stub `getOrCreateSoloUserForAuth` to return `SEED.user.id`. Alternatively, have tests login as the seeded user instead of relying on solo mode.
+
+### Parallel Suite Instability
+
+When all 7 browser E2E test files run together (`bun test tests/e2e/flows/browser/`), tests that pass solo or in small groups fail or time out.
+
+**Root cause**: Each test file creates its own Playwright browser + `Bun.serve` instance + temp DB + temp upload dirs. Under parallel load:
+- Module-level singletons (e.g., `cachedSoloUser` in `src/middleware/auth.ts:131`) are shared across test files via Bun's module cache. One file's `resetSoloUserCache()` (called in `afterAll` teardown) can corrupt another file's in-flight solo session.
+- Resource pressure from 7 Playwright browser instances + 7 `Bun.serve` processes may trigger Playwright timeouts.
+
+**Symptoms**: Navigation tests and other tests that pass solo (13/13, 14s) time out at the 5000ms Bun test timeout when run in the full browser suite. First failing test in a file triggers cascade: browser/server context invalidates, all subsequent tests in that file fail with "browser has been closed".
+
+**Fix**: Make `cachedSoloUser` per-request rather than module-level (remove singleton). Consider reducing parallelism or using a shared server fixture for browser tests.
+
+### Cascade Failure Pattern
+
+Within a single test file, if any test times out or fails mid-way, all subsequent tests in that file fail because the shared `ctx.page` (Playwright Page) or `ctx.browser` is left in an invalid state. This is a test structure issue — each test assumes a clean starting state and uses the same page instance.
+
 ## Current Status Verdict
 
 The test suite provides **solid foundational coverage** for core business logic (database schema, config loading, generation continuation, content processing). The 84% function coverage indicates most critical logic paths are tested. Gaps exist primarily in:

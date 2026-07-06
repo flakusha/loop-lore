@@ -43,7 +43,7 @@
     "blessed-contrib": "^4.11.0",
     "dompurify": "^3.4.11",
     "js-yaml": "^5.2.1",
-    "kysely": "^0.29.2",
+    "kysely": "^0.29.3",
     "marked": "^18.0.5",
     "obscenity": "^0.4.6",
     "smol-toml": "^1.7.0"
@@ -60,7 +60,7 @@
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-markdown": "^5.1.0",
     "eslint-plugin-sonarjs": "^4.1.0",
-    "eslint-plugin-unicorn": "^70.0.0",
+    "eslint-plugin-unicorn": "^71.0.0",
     "globals": "^17.7.0",
     "htmx.org": "^2.0.10",
     "jscpd": "^5.0.11",

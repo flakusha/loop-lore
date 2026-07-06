@@ -80,7 +80,13 @@ const dispatch: RouteDispatch = async ({ request, context, database }) => {
   // ── Sub-routes on single actor ──────────────────────────────
   const actorId = extractIdFromPath(pathname, "/api/actors");
   if (actorId) {
+    // Check for sub-resources handled by other routes (memories, items, notes, lore-entries)
+    const afterId = pathname.slice(pathname.indexOf(actorId) + actorId.length);
+    const knownSubResources = ["/memories", "/items", "/notes", "/lore-entries"];
+    const isSubResource = knownSubResources.some((s) => afterId.startsWith(s));
     const subRoute = pathname.endsWith("/card") ? "/card" : "";
+
+    if (isSubResource) return null;
 
     if (method === "GET" && !subRoute) {
       return handleGetActor({ database, actorId, context });
