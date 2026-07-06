@@ -8,8 +8,7 @@
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-    "noEmit": true,
-    "types": ["alpinejs"]
+    "noEmit": true
   },
   "include": ["src/frontend/**/*"],
   "exclude": ["node_modules", "dist"]

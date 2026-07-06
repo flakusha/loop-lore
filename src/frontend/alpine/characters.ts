@@ -13,7 +13,6 @@ globalThis.characterChatListState = function () {
     loading: true,
 
     async init() {
-      // eslint-disable-next-line sonarjs/prefer-regexp-exec
       const match = location.pathname.match(/\/character\/([\w-]+)/);
       if (match) {
         this.characterId = match[1];
@@ -144,12 +143,18 @@ globalThis.charactersState = function () {
           body: jsonBody({
             name: `Chat with ${char.display_name}`,
             type: "direct",
-            mode: "roleplay",
+            mode: "direct",
             participantIds: [char.id],
           }),
         });
         if (!res.ok) {
-          const err = await res.json().catch(() => ({}));
+          const err = await (async () => {
+            try {
+              return await res.json();
+            } catch {
+              return {};
+            }
+          })();
           (this as any).$dispatch("show-toast", {
             type: "error",
             message: err.error || "Failed to create chat",
@@ -190,7 +195,8 @@ globalThis.charactersState = function () {
 
     async createCharacter() {
       log.debug("createCharacter — start");
-      const form = (this as any).$el?.querySelector("form");
+      const root = (this as any).$el;
+      const form = root?.tagName === "FORM" ? root : root?.querySelector("form");
       log.debug("createCharacter — form", { found: !!form });
       if (!form) return;
       const formData = new FormData(form);
@@ -214,7 +220,9 @@ globalThis.charactersState = function () {
         } else {
           const err = await res.json();
           const errStr = safeJsonStringify(err);
-          log.error("createCharacter — API error", { error: err.error || (errStr.ok ? errStr.value : String(err)) });
+          log.error("createCharacter — API error", {
+            error: err.error || (errStr.ok ? errStr.value : String(err)),
+          });
           (this as any).$dispatch("show-toast", {
             type: "error",
             message: err.error || "Failed to create character",
@@ -259,7 +267,7 @@ globalThis.characterEditState = function () {
       // Set page title for OOB header
       const titleEl = document.querySelector("#page-title");
       if (titleEl) titleEl.textContent = "Edit Character";
-      // eslint-disable-next-line sonarjs/prefer-regexp-exec
+
       const match = location.pathname.match(/\/(?:character|characters)\/([\w-]+)\/edit/);
       if (match) {
         await this.loadCharacter(match[1]);

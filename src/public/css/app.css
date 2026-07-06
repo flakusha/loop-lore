@@ -185,7 +185,7 @@ body {
   border-right: 1px solid var(--border-default);
   z-index: calc(var(--z-modal) - 1);
   overflow-y: auto;
-  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.15);
+  box-shadow: 2px 0 8px rgb(0 0 0 / 15%);
 }
 
 .chat-list-header {
@@ -1297,7 +1297,7 @@ body {
 }
 
 /* Responsive breakpoints */
-@media (max-width: 768px) {
+@media (width <= 768px) {
   .chat-area {
     max-width: 100%;
     padding: var(--space-4);
@@ -1327,7 +1327,7 @@ body {
   }
 }
 
-@media (max-width: 480px) {
+@media (width <= 480px) {
   .chat-area {
     padding: var(--space-3);
   }
