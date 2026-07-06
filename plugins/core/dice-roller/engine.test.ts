@@ -5,6 +5,7 @@
  */
 
 import { describe, test, expect } from "bun:test";
+import type { DiceRollResult, DiceError, DiceParseResult } from "./types";
 import {
   parseDiceNotation,
   rollDice,
@@ -12,7 +13,6 @@ import {
   parseTextCommand,
   isRollCommand,
 } from "./engine";
-import type { DiceRollResult, DiceError, DiceParseResult } from "./types";
 
 // ── parseDiceNotation ─────────────────────────────────────────
 
