@@ -1,0 +1,78 @@
+<!-- Sidebar Component (From layout.html) -->
+<aside class="sidebar" id="layout-sidebar" data-testid="sidebar">
+  <div class="sidebar-header">
+    <span class="logo">loop-lore</span>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-section-title">Navigation</div>
+
+    <a
+      class="nav-item"
+      href="/views/chat"
+      hx-get="/views/chat"
+      hx-target="#app-root"
+      hx-swap="innerHTML"
+      hx-push-url="true"
+      @click="$store.sidebar.open = false"
+      data-testid="nav-chat"
+    >
+      <span>💬</span> <span x-text="__('nav.chat')">Chat</span>
+    </a>
+
+    <a
+      class="nav-item"
+      href="/views/characters"
+      hx-get="/views/characters"
+      hx-target="#app-root"
+      hx-swap="innerHTML"
+      hx-push-url="true"
+      @click="$store.sidebar.open = false"
+      data-testid="nav-characters"
+    >
+      <span>👤</span> <span x-text="__('nav.characters')">Characters</span>
+    </a>
+
+    <a
+      class="nav-item"
+      href="/views/gallery"
+      hx-get="/views/gallery"
+      hx-target="#app-root"
+      hx-swap="innerHTML"
+      hx-push-url="true"
+      @click="$store.sidebar.open = false"
+      data-testid="nav-gallery"
+    >
+      <span>🖼</span> <span x-text="__('nav.gallery')">Gallery</span>
+    </a>
+
+    <a
+      class="nav-item"
+      href="/views/worlds"
+      hx-get="/views/worlds"
+      hx-target="#app-root"
+      hx-swap="innerHTML"
+      hx-push-url="true"
+      @click="$store.sidebar.open = false"
+      data-testid="nav-worlds"
+    >
+      <span>🌍</span> <span x-text="__('nav.worlds')">Worlds</span>
+    </a>
+  </nav>
+
+  <div class="sidebar-footer">
+    <div class="user-info">
+      <img
+        class="avatar"
+        src="/img/default-avatar.png"
+        alt="User avatar"
+        style="background: var(--bg-tertiary)"
+        x-on:error="$el.style.display='none'"
+      />
+      <div class="details">
+        <div class="name" id="user-display-name">User</div>
+        <div class="role" id="user-role">solo</div>
+      </div>
+      <button class="btn-icon" title="Settings">⚙</button>
+    </div>
+  </div>
+</aside>

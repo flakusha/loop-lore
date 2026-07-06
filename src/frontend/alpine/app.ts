@@ -14,9 +14,19 @@ globalThis.app = function () {
     },
 
     init() {
-      // Initialize Alpine store for cross-scope sidebar state
-      if (typeof Alpine !== "undefined") {
-        Alpine.store("sidebar", { open: false });
+      // Initialize Alpine stores for cross-scope UI state
+      if (globalThis.Alpine !== undefined) {
+        globalThis.Alpine.store("sidebar", { open: false });
+        globalThis.Alpine.store("ui", {
+          showChatList: false,
+          showGallery: false,
+          showCharacterInfo: false,
+          showUploadModal: false,
+          showImportForm: false,
+          showCreateForm: false,
+          showEditModal: false,
+          showPreviewModal: false,
+        });
       }
 
       const savedTheme = localStorage.getItem("theme-preference");

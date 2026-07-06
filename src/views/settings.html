@@ -1,19 +1,24 @@
 <!-- Settings Page -->
+<!-- Header: moved to #header-slot by htmx:load handler -->
+<header
+  id="header-slot"
+  class="main-header"
+  data-testid="settings-header"
+>
+  <button
+    class="hamburger"
+    @click="$store.sidebar.open = !$store.sidebar.open"
+    x-show="!$store.sidebar.open"
+    data-testid="hamburger"
+  >
+    ☰
+  </button>
+  <span class="title">Settings</span>
+</header>
+
 <div class="app-layout" x-data="settingsPage()">
   <!-- Main content -->
-  <main class="main-content">
-    <header class="main-header" data-testid="settings-header">
-      <button
-        class="hamburger"
-        @click="$store.sidebar.open = !$store.sidebar.open"
-        x-show="!$store.sidebar.open"
-        data-testid="hamburger"
-      >
-        ☰
-      </button>
-      <span class="title">Settings</span>
-    </header>
-
+  <main class="main-content" style="padding-top: 0">
     <div class="chat-area">
       <div class="empty-state" style="padding: var(--space-6)" data-testid="settings-general">
         <div class="icon" style="font-size: 32px; margin-bottom: var(--space-4)">⚙</div>

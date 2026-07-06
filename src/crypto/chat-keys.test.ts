@@ -30,7 +30,7 @@ beforeAll(async () => {
   sqlite.run("PRAGMA foreign_keys = OFF");
   db = new Kysely<DB>({ dialect: createSqliteDialect(sqlite) });
   await migrate(db as unknown as Kysely<unknown>);
-  await initSmk({ serverEncryptionKey: VALID_HEX_KEY, required: false });
+  await initSmk({ serverEncryptionKey: VALID_HEX_KEY, required: false, compressThreshold: 128, compressAlgorithm: "gzip" });
 
   // Create two actors with encryption keys
   const smk = getSmkKeySafe();
@@ -41,15 +41,15 @@ beforeAll(async () => {
   await db
     .insertInto("chat_participants")
     .values([
-      { chat_id: CHAT_ID, actor_id: ACTOR_A },
-      { chat_id: CHAT_ID, actor_id: ACTOR_B },
+      { chat_id: CHAT_ID, actor_id: ACTOR_A, role_in_chat: "member" },
+      { chat_id: CHAT_ID, actor_id: ACTOR_B, role_in_chat: "member" },
     ])
     .execute();
 });
 
 afterAll(async () => {
   // Reset SMK to prevent pollution of other test suites
-  await initSmk({ required: false });
+  await initSmk({ required: false, compressThreshold: 128, compressAlgorithm: "gzip" });
   db.destroy();
 });
 
@@ -155,8 +155,8 @@ describe("deriveChatKeyForChat", () => {
     await db
       .insertInto("chat_participants")
       .values([
-        { chat_id: "chat-other", actor_id: ACTOR_A },
-        { chat_id: "chat-other", actor_id: ACTOR_B },
+        { chat_id: "chat-other", actor_id: ACTOR_A, role_in_chat: "member" },
+        { chat_id: "chat-other", actor_id: ACTOR_B, role_in_chat: "member" },
       ])
       .execute();
 

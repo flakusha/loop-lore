@@ -37,7 +37,7 @@ export async function compressThenEncrypt(
   config: PipelineConfig = { threshold: DEFAULT_THRESHOLD, algorithm: "gzip" },
 ): Promise<string> {
   // 1. Compress if large enough
-  let compressed: string;
+  let compressed = "";
   let compAlgo: string | undefined;
   let didCompress = false;
 

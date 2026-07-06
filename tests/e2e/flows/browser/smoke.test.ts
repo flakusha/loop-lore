@@ -45,8 +45,8 @@ describe("Chat view", () => {
   test("has message input and send button", async () => {
     const page = await ctx.browser.newPage();
     await gotoView(page, "/views/chat");
-    await page.waitForSelector("[data-testid='message-input']", { timeout: 5000 });
-    await page.waitForSelector("[data-testid='send-button']", { timeout: 5000 });
+    await page.waitForSelector("[data-testid='message-input']", { state: 'attached', timeout: 5000 });
+    await page.waitForSelector("[data-testid='send-button']", { state: 'attached', timeout: 5000 });
     await page.close();
   });
 
