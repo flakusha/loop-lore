@@ -2,7 +2,7 @@
 
 import { jsonBody } from "./json";
 
-globalThis.newChatState = function() {
+globalThis.newChatState = function () {
   return {
     name: "",
     chatType: "user_character",
