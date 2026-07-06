@@ -132,12 +132,9 @@ function serveCharacterEdit(characterId: string): Response | null {
   });
 }
 
-const dispatch: RouteDispatch = async ({
-  request,
-  context: _context,
-  database: _database,
-  config: _config,
-}) => {
+const dispatch: RouteDispatch = ({ request }) => Promise.resolve(dispatchView(request));
+
+function dispatchView(request: Request): Response | null {
   const url = new URL(request.url);
   const { pathname } = url;
 
@@ -216,7 +213,7 @@ const dispatch: RouteDispatch = async ({
   }
 
   return null; // Not a view route
-};
+}
 
-registerRoute(dispatch);  
+registerRoute(dispatch);
 export { dispatch, serveView };

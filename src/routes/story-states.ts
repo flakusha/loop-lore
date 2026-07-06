@@ -12,8 +12,7 @@
  *   POST /api/worlds/:worldId/states                 — take snapshot
  */
 
-import type { RouteDispatch } from "./router";
-import { registerRoute } from "./router";
+import { registerRoute, type RouteDispatch } from "./router";
 import { safeJsonStringify } from "../utils";
 import {
   BAD_METHOD,

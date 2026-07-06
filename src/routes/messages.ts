@@ -109,7 +109,6 @@ function extractMessagesChatId(pathname: string): string | null {
   return match ? match[1] : null;
 }
 
- 
 const dispatch: RouteDispatch = async ({ request, context, database, config }) => {
   const url = new URL(request.url);
   const { pathname, searchParams } = url;
@@ -119,7 +118,7 @@ const dispatch: RouteDispatch = async ({ request, context, database, config }) =
   const singleMatch = /^\/api\/messages\/([a-f0-9-]+)(\/\w+)?$/.exec(pathname);
   if (singleMatch) {
     const messageId = singleMatch[1];
-    const subRoute = singleMatch[2] ?? ""; // eslint-disable-line @typescript-eslint/no-unnecessary-condition
+    const subRoute = singleMatch[2] ?? "";
 
     if (method === "GET" && !subRoute) {
       return handleGetMessage({ database, messageId, context, config });
@@ -554,7 +553,7 @@ async function handleSelectVariant({
     .execute();
 
   const selected = variants[variantIndex];
-  if (!selected) return jsonError("Invalid variant index", HttpStatus.BadRequest); // eslint-disable-line @typescript-eslint/no-unnecessary-condition
+  if (!selected) return jsonError("Invalid variant index", HttpStatus.BadRequest);
 
   return jsonResponse(selected);
 }
@@ -647,5 +646,5 @@ async function handleUpdateStatus({
   return jsonResponse({ ok: true });
 }
 
-registerRoute(dispatch);  
+registerRoute(dispatch);
 export { dispatch };
