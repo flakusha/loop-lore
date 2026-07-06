@@ -67,15 +67,17 @@ export class TUIApp {
       const chatId = this.chat.getChatId();
       if (chatId) {
         this.updateStatus("refreshing messages...");
-        this.chat
-          .loadMessages()
-          .then(() => {
+        void this.chat.loadMessages().then(
+          () => {
             this.updateStatus(`chat: ${chatId.slice(0, 8)}...`);
-          })
-          .catch((error: Error) => {
-            getLogger().child({ module: "tui" }).error("loadMessages failed", error);
+          },
+          (error: unknown) => {
+            getLogger()
+              .child({ module: "tui" })
+              .error("loadMessages failed", error instanceof Error ? error : new Error(String(error)));
             this.updateStatus("load failed");
-          });
+          },
+        );
       } else {
         this.updateStatus("no active chat");
       }

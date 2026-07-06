@@ -171,7 +171,7 @@ export class GameMasterService {
     ].join("\n");
     assembled.messages.push({ role: "user", content: instructions });
 
-    let responseText = "";
+    let responseText: string;
     try {
       responseText = await this.generateText({
         messages: assembled.messages,

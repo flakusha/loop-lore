@@ -272,7 +272,9 @@ export async function handleGenerate(
       const errMsg = (error as Error).message;
       try {
         await failGeneration(attemptId, error as Error, database);
-      } catch {}
+      } catch {
+        // failGeneration already logs errors
+      }
       return jsonError(`Generation failed: ${errMsg}`, 500);
     }
   }
@@ -288,19 +290,18 @@ export async function handleGenerate(
     async start(controller) {
       try {
         abortController = new AbortController();
-        const finalResponse = await resolved.provider.stream(providerReq, async (chunk: ChunkEvent) => {
+        const finalResponse = await resolved.provider.stream(providerReq, (chunk: ChunkEvent) => {
           if (chunk.type === "content" && chunk.content) {
             accumulatedContent += chunk.content;
-            // Fire-and-forget cancellation detection
-            try {
-              await processStreamingChunk(attemptId, chunk.content, database);
-            } catch {
-              /* empty */
-            }
-            controller.enqueue(new TextEncoder().encode(sseData({ type: "content", content: chunk.content })));
+            void processStreamingChunk(attemptId, chunk.content, database);
+            controller.enqueue(
+              new TextEncoder().encode(sseData({ type: "content", content: chunk.content })),
+            );
           } else if (chunk.type === "thinking" && chunk.content) {
             accumulatedThinking += chunk.content;
-            controller.enqueue(new TextEncoder().encode(sseData({ type: "thinking", content: chunk.content })));
+            controller.enqueue(
+              new TextEncoder().encode(sseData({ type: "thinking", content: chunk.content })),
+            );
           } else if (chunk.type === "done" && chunk.usage) {
             // usage captured from finalResponse
           }
@@ -376,9 +377,7 @@ export async function handleGenerate(
           /* empty */
         }
 
-        controller.enqueue(
-          new TextEncoder().encode(sseData({ type: "error", error: streamError })),
-        );
+        controller.enqueue(new TextEncoder().encode(sseData({ type: "error", error: streamError })));
         controller.close();
       }
     },
