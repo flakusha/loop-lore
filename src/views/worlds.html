@@ -1,88 +1,53 @@
-<!-- Worlds List Page (swapped into #app-root by htmx) -->
-<!-- Header: moved to #header-slot by htmx:load handler -->
+<!-- Worlds List Page -->
 <header id="header-slot" class="main-header" data-testid="worlds-header">
-  <button
-    class="hamburger"
-    @click="$store.sidebar.open = !$store.sidebar.open"
-    x-show="!$store.sidebar.open"
-    data-testid="hamburger"
-  >
-    ☰
-  </button>
+  <button class="hamburger" onclick="toggleSidebar()" data-testid="hamburger">☰</button>
   <span class="title">Worlds</span>
   <div class="actions">
-    <button class="btn btn-secondary" @click="$store.ui.showImportForm = true" data-testid="import-world">
+    <button
+      class="btn btn-secondary"
+      onclick="showToast('info', 'Import feature coming soon')"
+      data-testid="import-world"
+    >
       Import
     </button>
-    <button class="btn btn-primary" @click="$store.ui.showCreateForm = true" data-testid="create-world">
+    <button
+      class="btn btn-primary"
+      onclick="document.getElementById('create-world-modal').classList.add('open')"
+      data-testid="create-world"
+    >
       + New
     </button>
   </div>
 </header>
 
-<div class="app-layout" x-data="worldsState()">
-  <!-- Main content -->
+<div class="app-layout">
   <main class="main-content" style="padding-top: 0">
     <div class="chat-area">
-      <!-- Loading state -->
-      <template x-if="loading">
+      <div class="world-list" id="world-list" data-testid="world-list">
         <div class="empty-state" style="padding: var(--space-12)">
           <div class="icon">⏳</div>
           <div class="title">Loading worlds...</div>
         </div>
-      </template>
-
-      <!-- Empty state -->
-      <template x-if="!loading && worlds.length === 0">
-        <div class="empty-state" style="padding: var(--space-12)">
-          <div class="icon">🌍</div>
-          <div class="title">No worlds yet</div>
-          <div class="description">Create your first world to build a shared story setting.</div>
-          <button
-            class="btn btn-primary"
-            style="margin-top: var(--space-4)"
-            @click="$store.ui.showCreateForm = true"
-          >
-            + Create World
-          </button>
-        </div>
-      </template>
-
-      <!-- World list -->
-      <template x-if="!loading && worlds.length > 0">
-        <div class="world-list" data-testid="world-list">
-          <template x-for="world in worlds" :key="world.id">
-            <div class="world-card" @click="selectWorld(world)" :data-testid="'world-card-' + world.id">
-              <div class="world-header">
-                <h3 class="world-name" x-text="world.name"></h3>
-                <span class="world-id" x-text="'ID: ' + world.id"></span>
-              </div>
-              <div class="world-description" x-text="world.description || 'No description'"></div>
-              <div class="world-meta">
-                <span class="tag" x-text="world.chat_count + ' chats'"></span>
-              </div>
-            </div>
-          </template>
-        </div>
-      </template>
+      </div>
     </div>
   </main>
 
   <!-- Create World Modal -->
   <div
-    x-show="$store.ui.showCreateForm"
-    x-cloak
+    id="create-world-modal"
     class="modal-overlay"
-    @click.self="$store.ui.showCreateForm = false"
+    onclick="if (event.target === this) this.classList.remove('open');"
     data-testid="create-world-modal"
   >
     <div class="modal">
       <div class="modal-header">
         <span class="title">Create World</span>
-        <button class="btn-icon" @click="$store.ui.showCreateForm = false">&times;</button>
+        <button class="btn-icon" onclick="this.closest('.modal-overlay').classList.remove('open')">
+          &times;
+        </button>
       </div>
       <div class="modal-body">
-        <form @submit.prevent="createWorld()" data-testid="create-world-form">
+        <form onsubmit="return createWorld(event);" data-testid="create-world-form">
           <div class="form-group">
             <label class="form-label" for="world-name">World Name</label>
             <input
@@ -94,7 +59,6 @@
               placeholder="e.g., The Forgotten Realm"
             />
           </div>
-
           <div class="form-group">
             <label class="form-label" for="world-description">Description</label>
             <textarea
@@ -105,7 +69,6 @@
               placeholder="Short summary for the world card"
             ></textarea>
           </div>
-
           <div class="form-group">
             <label class="form-label" for="world-lore">Lore</label>
             <textarea
@@ -113,25 +76,30 @@
               name="lore"
               id="world-lore"
               rows="4"
-              placeholder="Full setting description, rules, atmosphere..."
+              placeholder="Full setting description..."
             ></textarea>
           </div>
-
           <div
             style="display: flex; gap: var(--space-3); justify-content: flex-end; margin-top: var(--space-6)"
           >
-            <button type="button" class="btn btn-secondary" @click="$store.ui.showCreateForm = false">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              onclick="document.getElementById('create-world-modal').classList.remove('open')"
+            >
               Cancel
             </button>
-            <button
-              type="submit"
-              class="btn btn-primary"
-              :disabled="submitting"
-              x-text="submitting ? 'Creating...' : 'Create'"
-            ></button>
+            <button type="submit" class="btn btn-primary">Create</button>
           </div>
         </form>
       </div>
     </div>
   </div>
 </div>
+
+<script>
+  (function f() {
+    if (typeof loadWorldsPage === "function") loadWorldsPage();
+    else setTimeout(f, 10);
+  })();
+</script>

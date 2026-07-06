@@ -1,102 +1,122 @@
-<!-- World Edit Page (swapped into #app-root by htmx) -->
-<!-- Header: moved to #header-slot by htmx:load handler -->
+<!-- World Edit Page -->
 <header id="header-slot" class="main-header" data-testid="world-edit-header">
+  <button class="hamburger" onclick="toggleSidebar()" data-testid="hamburger">☰</button>
   <span class="title">Edit World</span>
 </header>
 
 <div class="app-layout" x-data="worldEditState()">
-  <!-- Main content -->
   <main class="main-content" style="padding-top: 0">
     <div class="chat-area">
-      <!-- Loading -->
-      <template x-if="loading">
-        <div class="empty-state" style="padding: var(--space-12)">
+      <div id="world-edit-form" data-world-id="{{worldId}}">
+
+        <!-- Loading State -->
+        <div x-show="loading" class="empty-state" style="padding: var(--space-12)">
           <div class="icon">⏳</div>
           <div class="title">Loading world...</div>
         </div>
-      </template>
 
-      <!-- Edit form -->
-      <template x-if="!loading && world">
-        <div style="max-width: 720px; margin: 0 auto; width: 100%">
-          <div class="form-group">
-            <label class="form-label" for="edit-name">Name</label>
-            <input
-              class="form-input"
-              type="text"
-              name="name"
-              id="edit-name"
-              required
-              placeholder="World name"
-              x-model="world.name"
-            />
-          </div>
+        <!-- Error State -->
+        <div x-show="!loading && error" class="empty-state" style="padding: var(--space-12)">
+          <div class="icon">⚠️</div>
+          <div class="title">Failed to load world</div>
+        </div>
 
-          <div class="form-group">
-            <label class="form-label" for="edit-description">Description</label>
-            <textarea
-              class="form-input form-textarea"
-              name="description"
-              id="edit-description"
-              rows="3"
-              placeholder="Short summary for world cards"
-              x-model="world.description"
-            ></textarea>
-          </div>
+        <!-- Content (loaded) -->
+        <template x-if="!loading && !error && world">
+          <div style="max-width:720px;margin:0 auto;width:100%">
+            <!-- Tab Bar -->
+            <div class="world-edit-tabs">
+              <button class="world-edit-tab" :class="{ active: activeTab === 'general' }" @click="activeTab = 'general'">General</button>
+              <button class="world-edit-tab" :class="{ active: activeTab === 'locations' }" @click="activeTab = 'locations'; if(!locationsLoaded) loadLocations()">Locations</button>
+            </div>
 
-          <div class="form-group">
-            <label class="form-label" for="edit-lore">Lore</label>
-            <textarea
-              class="form-input form-textarea"
-              name="lore"
-              id="edit-lore"
-              rows="6"
-              placeholder="Full setting description, rules, atmosphere..."
-              x-model="world.lore"
-            ></textarea>
-          </div>
+            <!-- General Tab -->
+            <div x-show="activeTab === 'general'">
+              <form @submit.prevent="saveWorld()" data-testid="edit-world-form">
+                <div class="form-group">
+                  <label class="form-label" for="edit-name">Name</label>
+                  <input class="form-input" type="text" id="edit-name" x-model="world.name" required />
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="edit-description">Description</label>
+                  <textarea class="form-input form-textarea" id="edit-description" x-model="world.description" rows="3"></textarea>
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="edit-lore">Lore</label>
+                  <textarea class="form-input form-textarea" id="edit-lore" x-model="world.lore" rows="6"></textarea>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Tags</label>
+                  <input type="text" class="form-input" x-model="tagsStr" placeholder="fantasy, adventure (comma separated)" />
+                </div>
+                <div style="display:flex;gap:var(--space-3);justify-content:flex-end;margin-top:var(--space-6)">
+                  <a href="/views/worlds" class="btn btn-secondary" data-testid="cancel-edit-world">Cancel</a>
+                  <button type="submit" class="btn btn-primary" data-testid="save-world-btn">Save World</button>
+                </div>
+              </form>
+            </div>
 
-          <div class="form-group">
-            <label class="form-label">Tags</label>
-            <input
-              type="text"
-              class="form-input"
-              placeholder="fantasy, adventure, medieval (comma separated)"
-              x-model="tagsInput"
-            />
-            <div style="display: flex; gap: var(--space-2); flex-wrap: wrap; margin-top: var(--space-2)">
-              <template x-for="(tag, index) in tags" :key="index">
-                <span class="tag"
-                  ><span x-text="tag"></span>
-                  <button
-                    class="btn-icon"
-                    style="padding: 0; width: 20px; height: 20px"
-                    @click="removeTag(tag)"
-                  >
-                    &times;
-                  </button></span
-                >
-              </template>
+            <!-- Locations Tab -->
+            <div x-show="activeTab === 'locations'">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:var(--space-4)">
+                <h3 style="margin:0">Locations</h3>
+                <button class="btn btn-primary" @click="showAddForm = !showAddForm" x-text="showAddForm ? 'Cancel' : '+ Add Location'"></button>
+              </div>
+
+              <!-- Add Location Form -->
+              <div class="add-location-form" x-show="showAddForm" x-cloak>
+                <div class="form-group">
+                  <label class="form-label" for="loc-name">Name *</label>
+                  <input class="form-input" type="text" id="loc-name" x-model="newLocName" placeholder="e.g., Dark Forest" />
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="loc-desc">Description</label>
+                  <textarea class="form-input form-textarea" id="loc-desc" x-model="newLocDesc" rows="2" placeholder="Optional description"></textarea>
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="loc-parent">Parent Location</label>
+                  <select class="form-input" id="loc-parent" x-model="newLocParentId">
+                    <option value="">None</option>
+                    <template x-for="loc in locations" :key="loc.id">
+                      <option :value="loc.id" x-text="loc.name"></option>
+                    </template>
+                  </select>
+                </div>
+                <button class="btn btn-primary" @click="addLocation()" :disabled="!newLocName.trim()">Add</button>
+              </div>
+
+              <!-- Loading -->
+              <div x-show="loadingLocations" class="empty-state" style="padding:var(--space-8)">
+                <div class="icon">⏳</div>
+                <div class="title">Loading locations...</div>
+              </div>
+
+              <!-- Location List -->
+              <div x-show="!loadingLocations && locations.length > 0">
+                <template x-for="loc in locations" :key="loc.id">
+                  <div class="location-item">
+                    <div class="location-info">
+                      <div class="location-name" x-text="loc.name"></div>
+                      <div class="location-desc" x-show="loc.description" x-text="loc.description"></div>
+                    </div>
+                    <div class="location-actions">
+                      <button class="btn btn-danger" style="font-size:12px;padding:var(--space-1) var(--space-3)" @click="deleteLocation(loc.id)">Delete</button>
+                    </div>
+                  </div>
+                </template>
+              </div>
+
+              <!-- Empty State -->
+              <div x-show="!loadingLocations && locationsLoaded && locations.length === 0" class="empty-state" style="padding:var(--space-12)">
+                <div class="icon">🗺️</div>
+                <div class="title">No locations yet</div>
+                <div class="description">Add locations to build your world map.</div>
+              </div>
             </div>
           </div>
+        </template>
 
-          <div
-            style="display: flex; gap: var(--space-3); justify-content: flex-end; margin-top: var(--space-6)"
-          >
-            <a href="/views/worlds" class="btn btn-secondary" data-testid="cancel-edit-world">Cancel</a>
-            <button
-              type="button"
-              class="btn btn-primary"
-              :disabled="saving"
-              @click="saveWorld"
-              data-testid="save-world-btn"
-            >
-              <span x-show="!saving">Save World</span>
-              <span x-show="saving">Saving...</span>
-            </button>
-          </div>
-        </div>
-      </template>
+      </div>
     </div>
   </main>
 </div>

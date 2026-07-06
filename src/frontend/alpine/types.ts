@@ -1,19 +1,11 @@
 /**
- * Alpine.js Component Functions
+ * Alpine.js Component Types
  *
- * Extracted from inline <script> blocks in view templates.
- * Compiled into dist/public/alpine.js via bun build.
- * Attached to window so x-data="fn()" bindings resolve.
+ * Only chat page uses Alpine now. All other pages use vanilla JS + HTMX.
  */
 
-// ── Type declarations for htmx custom events ─────────────────
-
 export {};
-// Required for declare global in module
 
-// Alpine magic properties — injected on `this` by x-data at runtime
-// Extend when new features use additional magics ($root, $id, $data, $store, $watch)
-// Full list: https://alpinejs.dev/magics
 interface AlpineMagicThis {
   $dispatch(event: string, detail?: unknown): void;
   $nextTick(callback?: () => void): Promise<void>;
@@ -21,9 +13,6 @@ interface AlpineMagicThis {
   $el: HTMLElement;
 }
 
-// Component state: typed data + Alpine magics accessible on `this`
-// Custom ThisType avoids Alpine.AlpineComponent<T> which breaks on `any` fields
-// (InferInterceptors<T> corrupts `any` → `{}` inside Magics<T>)
 type AlpineState<T> = T & ThisType<T & AlpineMagicThis>;
 
 declare global {
@@ -44,14 +33,10 @@ declare global {
       sidebarOpen: boolean;
       currentLocale: string;
       localeStrings: Record<string, string>;
-      pageTitle: string;
       init: () => void;
       applyTheme: (themeId: string) => void;
       iconFor: (type: string) => string;
       closeAllModals: () => void;
-      toast: (type: string, message: string) => void;
-      setTheme: (themeId: string) => void;
-      getThemeName: () => string;
       loadLocale: (locale: string) => Promise<void>;
       setLocale: (localeId: string) => void;
       __: (key: string, fallback?: string) => string;
@@ -169,7 +154,6 @@ declare global {
       previewMediaAsset: any;
       pendingAssets: Array<{ assetId: string; filename: string }>;
       removePendingAsset(assetId: string): void;
-      // Internal fields (accessed via this._*) in component methods
       _observer: MutationObserver | null;
       _groupedKey: string;
       _groupedCache: any;
@@ -179,80 +163,35 @@ declare global {
       _chatSettingsName: string;
       _chatSettingsMode: string;
       _chatSettingsTurnStrategy: string;
+      _renameChatId: string;
+      _renameChatName: string;
       openChatSettings(): void;
       saveChatSettings(): Promise<void>;
       renameChat(chatId: string): Promise<void>;
+      openRenameModal(chatId: string): void;
+      confirmRenameChat(): Promise<void>;
       deleteChat(chatId: string, event: Event): Promise<void>;
     }>;
-    galleryState: () => AlpineState<{
-      previewAsset: {
-        id: string;
-        name?: string;
-        filename?: string;
-        asset_type?: string;
-        mime_type?: string;
-        size_bytes?: number;
-        storage_path?: string;
-      } | null;
-      filterType: string;
-      searchQuery: string;
-      assetCount: number;
-      assets: Array<{
-        id: string;
-        name?: string;
-        filename?: string;
-        asset_type?: string;
-        mime_type?: string;
-        size_bytes?: number;
-        storage_path?: string;
-      }>;
+    worldEditState: () => AlpineState<{
       loading: boolean;
-      uploading: boolean;
-      uploadLabel: string;
-      selectedFile: File | null;
+      error: boolean;
+      activeTab: string;
+      world: { id: string; name: string; description: string | null; lore: string | null; tags: string[] } | null;
+      tagsStr: string;
+      locations: Array<{ id: string; name: string; description: string | null; parent_location_id: string | null }>;
+      locationsLoaded: boolean;
+      loadingLocations: boolean;
+      showAddForm: boolean;
+      newLocName: string;
+      newLocDesc: string;
+      newLocParentId: string;
+      worldId: string | null;
       init(): void;
-      loadAssets(): Promise<void>;
-      openPreview(asset: { id: string; name?: string; filename?: string }): void;
-      handleFileSelect(event: Event): void;
-      deleteAsset(id: string): Promise<void>;
-      uploadAsset(event: Event): Promise<void>;
-      handleDrop(event: DragEvent): void;
-      formatSize(bytes: number): string;
+      saveWorld(): Promise<void>;
+      loadLocations(): Promise<void>;
+      addLocation(): Promise<void>;
+      deleteLocation(locId: string): Promise<void>;
     }>;
-    settingsPage: () => AlpineState<{
-      currentTheme: string;
-      currentLocale: string;
-      enterToSend: boolean;
-      autoScroll: boolean;
-      inlinePreview: boolean;
-      detailLevel: string;
-      apiProvider: string;
-      apiKey: string;
-      apiEndpoint: string;
-      apiModel: string;
-      maxTokens: number;
-      temperature: number;
-      init(): void;
-      setTheme(themeId: string): void;
-      setLocale(localeId: string): void;
-    }>;
-    newChatState: () => {
-      name: string;
-      chatType: string;
-      chatMode: string;
-      error: string;
-      submitting: boolean;
-      init: () => void;
-      typeEnum: (type: string) => string;
-      modeEnum: (mode: string) => string;
-      createChat: () => Promise<void>;
-    };
-    worldsState: () => any;
-    worldDetailState: () => any;
-    worldEditState: () => any;
-    characterChatListState: () => any;
-    charactersState: () => any;
-    characterEditState: () => any;
     Alpine: {
       $data: (el: HTMLElement) => Record<string, unknown>;
       initTree: (el: HTMLElement) => void;
@@ -264,30 +203,29 @@ declare global {
     htmx: {
       ajax: (method: string, url: string, opts: { target: string; swap: string }) => void;
     };
-    /** i18n: translate key to locale string */
     __: (key: string, fallback?: string) => string;
     __localeStrings: Record<string, string>;
-    /** Theme definitions array (set by theme.ts) */
     __THEMES: Array<{ id: string; name: string; file: string }>;
+    apiFetch: (url: string, options?: RequestInit) => Promise<Response>;
+    toggleSidebar: () => void;
+    closeSidebar: () => void;
+    showToast: (type: string, message: string) => void;
+    applyTheme: (themeId: string) => void;
+    setLocale: (localeId: string) => void;
   }
 
-  // Global var declarations — enables globalThis.chatState etc.
-  // (Window interface properties don't flow to typeof globalThis)
   var chatState: Window["chatState"];
-  var galleryState: Window["galleryState"];
-  var settingsPage: Window["settingsPage"];
-  var newChatState: Window["newChatState"];
-  var worldsState: Window["worldsState"];
-  var worldDetailState: Window["worldDetailState"];
   var worldEditState: Window["worldEditState"];
-  var characterChatListState: Window["characterChatListState"];
-  var charactersState: Window["charactersState"];
-  var characterEditState: Window["characterEditState"];
   var app: Window["app"];
   var __: Window["__"];
   var __localeStrings: Window["__localeStrings"];
   var __THEMES: Window["__THEMES"];
   var Alpine: Window["Alpine"];
   var htmx: Window["htmx"];
-  var apiFetch: (url: string, options?: RequestInit) => Promise<Response>;
+  var apiFetch: Window["apiFetch"];
+  var toggleSidebar: Window["toggleSidebar"];
+  var closeSidebar: Window["closeSidebar"];
+  var showToast: Window["showToast"];
+  var applyTheme: Window["applyTheme"];
+  var setLocale: Window["setLocale"];
 }

@@ -1,14 +1,7 @@
 <!-- Chat View (swapped into #app-root by htmx) -->
 <!-- Header: moved to #header-slot by htmx:load handler -->
 <header id="header-slot" class="main-header" data-testid="chat-header">
-  <button
-    class="hamburger"
-    @click="$store.sidebar.open = !$store.sidebar.open"
-    x-show="!$store.sidebar.open"
-    data-testid="hamburger"
-  >
-    ☰
-  </button>
+  <button class="hamburger" onclick="toggleSidebar()" data-testid="hamburger">☰</button>
   <span class="title" id="page-title">Welcome to loop-lore</span>
   <div class="actions">
     <button
@@ -22,8 +15,8 @@
     <button
       class="btn-icon"
       title="Toggle gallery sidebar"
-      x-show="$store.ui.hasActiveChat"
       @click="$store.ui.showGallery = !$store.ui.showGallery"
+      x-show="$store.ui.hasActiveChat"
       data-testid="toggle-gallery"
     >
       🖼
@@ -31,8 +24,8 @@
     <button
       class="btn-icon"
       title="Character info"
-      x-show="$store.ui.hasActiveChat"
       @click="$store.ui.showCharacterInfo = true"
+      x-show="$store.ui.hasActiveChat"
       data-testid="toggle-character-info"
     >
       ℹ
@@ -40,8 +33,8 @@
     <button
       class="btn-icon"
       title="Chat settings"
-      x-show="$store.ui.hasActiveChat"
       @click="$store.ui.showChatSettings = true"
+      x-show="$store.ui.hasActiveChat"
       data-testid="toggle-chat-settings"
     >
       ⚙
@@ -308,7 +301,11 @@
           <div class="gallery-item" @click="openAssetPreview(asset)">
             <div class="gallery-item-thumb">
               <template x-if="asset.asset_type === 'image'">
-                <img :src="'/api/assets/' + asset.id + '/thumb'" :alt="asset.alt_text || asset.filename" loading="lazy" />
+                <img
+                  :src="'/api/assets/' + asset.id + '/thumb'"
+                  :alt="asset.alt_text || asset.filename"
+                  loading="lazy"
+                />
               </template>
               <template x-if="asset.asset_type === 'audio'">
                 <span class="file-icon">🎵</span>
@@ -500,6 +497,39 @@
         <button class="btn btn-primary" @click="saveChatSettings()" data-testid="settings-save-btn">
           Save
         </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Rename Chat Modal -->
+  <div
+    x-show="$store.ui.showRenameModal"
+    x-cloak
+    class="modal-overlay"
+    @click.self="$store.ui.showRenameModal = false"
+    data-testid="rename-chat-modal"
+  >
+    <div class="modal" style="max-width: 420px">
+      <div class="modal-header">
+        <span class="title">Rename Chat</span>
+        <button class="btn-icon" @click="$store.ui.showRenameModal = false">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">Chat Name</label>
+          <input
+            class="form-input"
+            type="text"
+            x-model="_renameChatName"
+            @keydown.enter="confirmRenameChat"
+            placeholder="Chat name"
+            data-testid="rename-chat-input"
+          />
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-ghost" @click="$store.ui.showRenameModal = false">Cancel</button>
+        <button class="btn btn-primary" @click="confirmRenameChat" data-testid="rename-chat-save-btn">Save</button>
       </div>
     </div>
   </div>
