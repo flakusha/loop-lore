@@ -1,19 +1,10 @@
 <!-- Settings Page -->
-<!-- Header: moved to #header-slot by htmx:load handler -->
 <header id="header-slot" class="main-header" data-testid="settings-header">
-  <button
-    class="hamburger"
-    @click="$store.sidebar.open = !$store.sidebar.open"
-    x-show="!$store.sidebar.open"
-    data-testid="hamburger"
-  >
-    ☰
-  </button>
+  <button class="hamburger" onclick="toggleSidebar()" data-testid="hamburger">☰</button>
   <span class="title">Settings</span>
 </header>
 
-<div class="app-layout" x-data="settingsPage()">
-  <!-- Main content -->
+<div class="app-layout">
   <main class="main-content" style="padding-top: 0">
     <div class="chat-area">
       <div class="empty-state" style="padding: var(--space-6)" data-testid="settings-general">
@@ -21,7 +12,6 @@
         <div class="title">General Settings</div>
 
         <div style="margin-top: var(--space-6); width: 100%; max-width: 400px">
-          <!-- Display Name -->
           <div class="form-group">
             <label class="form-label">Display Name</label>
             <input
@@ -36,7 +26,6 @@
             />
           </div>
 
-          <!-- Birth Date -->
           <div class="form-group">
             <label class="form-label">Birth Date (for age-gated content)</label>
             <input
@@ -49,15 +38,9 @@
             />
           </div>
 
-          <!-- Theme Selector -->
           <div class="form-group">
             <label class="form-label">Theme</label>
-            <select
-              class="form-select"
-              x-model="currentTheme"
-              @change="setTheme($event.target.value)"
-              data-testid="theme-select"
-            >
+            <select class="form-select" onchange="applyTheme(this.value)" data-testid="theme-select">
               <option value="default">Default (Dark)</option>
               <option value="light">Light</option>
               <option value="bright">Bright</option>
@@ -71,53 +54,42 @@
             </select>
           </div>
 
-          <!-- Language Selector -->
           <div class="form-group">
-            <label class="form-label" x-text="__('settings.language')">Language</label>
-            <select
-              class="form-select"
-              x-model="currentLocale"
-              @change="setLocale($event.target.value)"
-              data-testid="locale-select"
-            >
+            <label class="form-label">Language</label>
+            <select class="form-select" onchange="setLocale(this.value)" data-testid="locale-select">
               <option value="en">English</option>
             </select>
           </div>
         </div>
       </div>
 
-      <!-- Chat Settings -->
       <div class="empty-state" style="padding: var(--space-6)" data-testid="settings-chat">
         <h3 class="section-title">Chat Settings</h3>
-
         <div style="margin-top: var(--space-4); width: 100%; max-width: 400px">
           <div class="form-group">
             <label class="form-label">Enter to send</label>
             <label class="toggle">
-              <input type="checkbox" x-model="enterToSend" />
+              <input type="checkbox" onchange="localStorage.setItem('enterToSend', this.checked)" />
               <span class="toggle-slider"></span>
             </label>
           </div>
-
           <div class="form-group">
             <label class="form-label">Auto-scroll to bottom</label>
             <label class="toggle">
-              <input type="checkbox" x-model="autoScroll" />
+              <input type="checkbox" checked onchange="localStorage.setItem('autoScroll', this.checked)" />
               <span class="toggle-slider"></span>
             </label>
           </div>
-
           <div class="form-group">
             <label class="form-label">Inline image preview</label>
             <label class="toggle">
-              <input type="checkbox" x-model="inlinePreview" />
+              <input type="checkbox" checked onchange="localStorage.setItem('inlinePreview', this.checked)" />
               <span class="toggle-slider"></span>
             </label>
           </div>
-
           <div class="form-group">
             <label class="form-label">Message detail level</label>
-            <select class="form-select" x-model="detailLevel">
+            <select class="form-select" onchange="localStorage.setItem('detailLevel', this.value)">
               <option value="Immersion">Immersion</option>
               <option value="Basic">Basic</option>
               <option value="Detailed">Detailed</option>
@@ -126,68 +98,67 @@
         </div>
       </div>
 
-      <!-- API Settings -->
       <div class="empty-state" style="padding: var(--space-6)" data-testid="settings-api">
         <h3 class="section-title">API Settings</h3>
-
         <div style="margin-top: var(--space-4); width: 100%; max-width: 400px">
           <div class="form-group">
             <label class="form-label">Provider</label>
-            <select class="form-select" x-model="apiProvider">
+            <select class="form-select" name="provider" data-testid="api-provider">
               <option value="OpenAI">OpenAI</option>
               <option value="Anthropic">Anthropic</option>
               <option value="OpenRouter">OpenRouter</option>
               <option value="Custom">Custom</option>
             </select>
           </div>
-
           <div class="form-group">
             <label class="form-label">API Key</label>
             <div style="display: flex; gap: var(--space-2); align-items: center">
               <input
                 type="password"
                 class="form-input"
-                x-model="apiKey"
+                name="apiKey"
                 placeholder="Enter your API key"
                 style="flex: 1"
               />
-              <button type="button" class="btn btn-secondary" @click="apiKey = ''">Clear</button>
+              <button
+                type="button"
+                class="btn btn-secondary"
+                onclick="this.previousElementSibling.value = ''"
+              >
+                Clear
+              </button>
             </div>
           </div>
-
-          <div class="form-group" x-show="apiProvider === 'Custom'">
+          <div class="form-group" id="api-endpoint-group" style="display: none">
             <label class="form-label">API Endpoint URL</label>
             <input
               type="text"
               class="form-input"
-              x-model="apiEndpoint"
+              name="apiEndpoint"
               placeholder="https://api.openai.com/v1"
             />
           </div>
-
           <div class="form-group">
             <label class="form-label">Model</label>
-            <input type="text" class="form-input" x-model="apiModel" placeholder="e.g., gpt-4o" />
+            <input type="text" class="form-input" name="model" placeholder="e.g., gpt-4o" />
           </div>
-
           <div class="form-group">
             <label class="form-label">Max context tokens</label>
-            <input type="number" class="form-input" x-model="maxTokens" step="256" min="1024" max="128000" />
+            <input type="number" class="form-input" name="maxTokens" step="256" min="1024" max="128000" />
           </div>
-
           <div class="form-group">
-            <label class="form-label">Temperature: <span x-text="temperature"></span></label>
+            <label class="form-label">Temperature: <span id="temp-value">1.0</span></label>
             <input
               type="range"
               class="form-range"
-              x-model="temperature"
+              name="temperature"
               min="0"
               max="2"
               step="0.1"
               style="width: 100%"
+              oninput="document.getElementById('temp-value').textContent = this.value"
             />
           </div>
-
           <div style="display: flex; gap: var(--space-2); margin-top: var(--space-4)">
             <button
               type="button"
@@ -209,16 +180,13 @@
         </div>
       </div>
 
-      <!-- Data Management -->
       <div class="empty-state" style="padding: var(--space-6)" data-testid="settings-data">
         <h3 class="section-title">Data Management</h3>
-
         <div style="margin-top: var(--space-4); width: 100%; max-width: 400px">
           <div style="display: flex; gap: var(--space-2); margin-bottom: var(--space-4)">
             <button type="button" class="btn btn-secondary">Export All Chats</button>
             <button type="button" class="btn btn-secondary">Import Chats</button>
           </div>
-
           <div class="danger-zone">
             <div class="zone-title">⚠ Danger Zone</div>
             <p style="margin-bottom: var(--space-3); font-size: 13px; color: var(--text-secondary)">
@@ -227,53 +195,28 @@
             <input
               type="text"
               class="form-input"
-              x-model="confirmDeleteText"
+              id="confirm-delete-input"
               placeholder='Type "DELETE" to confirm'
               style="margin-bottom: var(--space-3); border-color: var(--accent-red)"
+              oninput="document.getElementById('delete-all-btn').disabled = this.value !== 'DELETE'"
             />
-            <button type="button" class="btn btn-danger" :disabled="confirmDeleteText !== 'DELETE'">
-              Delete All Data
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <!-- About -->
-      <div class="empty-state" style="padding: var(--space-6)">
-        <h3 class="section-title">About</h3>
-
-        <div style="margin-top: var(--space-4); width: 100%; max-width: 400px">
-          <div class="form-group">
-            <label class="form-label">Version</label>
-            <p style="margin: 0; color: var(--text-primary)">0.1.0</p>
-          </div>
-
-          <div class="form-group">
-            <label class="form-label">Links</label>
-            <div style="display: flex; flex-direction: column; gap: var(--space-2)">
-              <a href="/docs/" class="btn btn-secondary" style="text-align: center; text-decoration: none"
-                >View Documentation</a
-              >
-              <a
-                href="https://github.com/flakspirit/loop-lore"
-                class="btn btn-secondary"
-                style="text-align: center; text-decoration: none"
-                target="_blank"
-                rel="noopener"
-                >Source Code</a
-              >
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label class="form-label">Open Source Credits</label>
-            <p style="margin: 0; font-size: 13px; color: var(--text-secondary); line-height: 1.6">
-              Built with Bun, TypeScript, Kysely, htmx, Alpine.js, blessed, and more. Licensed under the MIT
-              License.
-            </p>
+            <button type="button" class="btn btn-danger" id="delete-all-btn" disabled>Delete All Data</button>
           </div>
         </div>
       </div>
     </div>
   </main>
 </div>
+
+<script>
+  document.querySelector('[data-testid="theme-select"]').value =
+    localStorage.getItem("theme-preference") || "default";
+  document.querySelector('[data-testid="locale-select"]').value = localStorage.getItem("locale") || "en";
+  const prov = document.querySelector('[data-testid="api-provider"]');
+  if (prov) {
+    prov.addEventListener("change", function () {
+      document.getElementById("api-endpoint-group").style.display =
+        this.value === "Custom" ? "block" : "none";
+    });
+  }
+</script>

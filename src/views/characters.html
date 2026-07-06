@@ -1,100 +1,59 @@
-<!-- Characters View (swapped into #app-root by htmx) -->
-<!-- Header: moved to #header-slot by htmx:load handler -->
+<!-- Characters View -->
 <header id="header-slot" class="main-header" data-testid="characters-header">
-  <button
-    class="hamburger"
-    @click="$store.sidebar.open = !$store.sidebar.open"
-    x-show="!$store.sidebar.open"
-    data-testid="hamburger"
-  >
-    ☰
-  </button>
+  <button class="hamburger" onclick="toggleSidebar()" data-testid="hamburger">☰</button>
   <span class="title">Characters</span>
   <div class="actions">
-    <button class="btn btn-secondary" @click="$store.ui.showImportForm = true" data-testid="import-character">
+    <button
+      class="btn btn-secondary"
+      onclick="document.getElementById('import-modal').classList.add('open')"
+      data-testid="import-character"
+    >
       Import Card
     </button>
-    <button class="btn btn-primary" @click="$store.ui.showCreateForm = true" data-testid="create-character">
+    <button
+      class="btn btn-primary"
+      onclick="document.getElementById('create-modal').classList.add('open')"
+      data-testid="create-character"
+    >
       + New
     </button>
   </div>
 </header>
 
-<div
-  class="app-layout"
-  x-data="charactersState()"
-  @htmx:before-swap.window="if($data && typeof $data.destroy==='function') $data.destroy()"
->
+<div class="app-layout">
   <main class="main-content" style="padding-top: 0">
-    <!-- Character grid loaded via Alpine -->
     <div class="chat-area" style="overflow-y: auto">
-      <!-- Loading state -->
-      <template x-if="loading">
+      <div class="character-grid" id="character-grid" data-testid="character-grid">
         <div class="empty-state" style="padding: var(--space-12)" data-testid="characters-loading">
           <div class="icon">⏳</div>
           <div class="title">Loading characters...</div>
         </div>
-      </template>
-
-      <!-- Empty state -->
-      <template x-if="!loading && characters.length === 0">
-        <div class="empty-state" style="padding: var(--space-12)" data-testid="characters-empty">
-          <div class="icon">👤</div>
-          <div class="title">No characters yet</div>
-          <div class="description">Create your first character to start roleplaying.</div>
-          <button
-            class="btn btn-primary"
-            style="margin-top: var(--space-4)"
-            @click="$store.ui.showCreateForm = true"
-            data-testid="create-first-character"
-          >
-            + Create Character
-          </button>
-        </div>
-      </template>
-
-      <!-- Character grid -->
-      <template x-if="!loading && characters.length > 0">
-        <div class="character-grid" data-testid="character-grid">
-          <template x-for="char in filteredCharacters" :key="char.id">
-            <div
-              class="character-card"
-              @click="selectCharacter(char)"
-              :data-testid="'character-card-' + char.id"
-            >
-              <div class="card-img">
-                <template x-if="char.avatar_asset_id">
-                  <img :src="'/api/assets/' + char.avatar_asset_id + '/thumb'" alt="Avatar" />
-                </template>
-                <template x-if="!char.avatar_asset_id">
-                  <span>👤</span>
-                </template>
-              </div>
-              <div class="card-body">
-                <div class="name" x-text="char.display_name"></div>
-                <div class="description" x-text="char.description || 'No description'"></div>
-              </div>
-            </div>
-          </template>
-        </div>
-      </template>
+      </div>
     </div>
 
-    <!-- Create character modal -->
+    <!-- Create modal -->
     <div
-      x-show="$store.ui.showCreateForm"
-      x-cloak
+      id="create-modal"
       class="modal-overlay"
-      @click.self="$store.ui.showCreateForm = false"
+      onclick="if (event.target === this) this.classList.remove('open');"
       data-testid="create-character-modal"
     >
       <div class="modal">
         <div class="modal-header">
           <span class="title">Create Character</span>
-          <button class="btn-icon" @click="$store.ui.showCreateForm = false">&times;</button>
+          <button class="btn-icon" onclick="this.closest('.modal-overlay').classList.remove('open')">
+            &times;
+          </button>
         </div>
         <div class="modal-body">
-          <form @submit.prevent="createCharacter()" data-testid="create-character-form">
+          <form
+            hx-post="/api/actors"
+            hx-target="#app-root"
+            hx-swap="innerHTML"
+            hx-target-error="#toast-container"
+            hx-on::after-request="if(event.detail.successful){ showToast('success','Character created'); loadCharactersPage(); }"
+            data-testid="create-character-form"
+          >
             <div class="form-group">
               <label class="form-label" for="char-name">Character Name</label>
               <input
@@ -106,7 +65,6 @@
                 placeholder="e.g., Alice"
               />
             </div>
-
             <div class="form-group">
               <label class="form-label" for="char-type">Type</label>
               <select class="form-select" name="actorType" id="char-type">
@@ -114,7 +72,6 @@
                 <option value="persona">Persona</option>
               </select>
             </div>
-
             <div class="form-group">
               <label class="form-label" for="char-desc">Description</label>
               <textarea
@@ -122,12 +79,15 @@
                 name="description"
                 id="char-desc"
                 rows="3"
-                placeholder="Brief description of the character..."
+                placeholder="Brief description..."
               ></textarea>
             </div>
-
             <div style="display: flex; gap: var(--space-3); justify-content: flex-end">
-              <button type="button" class="btn btn-secondary" @click="$store.ui.showCreateForm = false">
+              <button
+                type="button"
+                class="btn btn-secondary"
+                onclick="this.closest('.modal-overlay').classList.remove('open')"
+              >
                 Cancel
               </button>
               <button type="submit" class="btn btn-primary">Create</button>
@@ -139,16 +99,17 @@
 
     <!-- Import modal -->
     <div
-      x-show="$store.ui.showImportForm"
-      x-cloak
+      id="import-modal"
       class="modal-overlay"
-      @click.self="$store.ui.showImportForm = false"
+      onclick="if (event.target === this) this.classList.remove('open');"
       data-testid="import-character-modal"
     >
       <div class="modal">
         <div class="modal-header">
           <span class="title">Import Character Card</span>
-          <button class="btn-icon" @click="$store.ui.showImportForm = false">&times;</button>
+          <button class="btn-icon" onclick="this.closest('.modal-overlay').classList.remove('open')">
+            &times;
+          </button>
         </div>
         <div class="modal-body">
           <form
@@ -157,18 +118,31 @@
             hx-target="#app-root"
             hx-swap="innerHTML"
             hx-target-error="#toast-container"
-            hx-on::after-request="if(event.detail.successful){ $store.ui.showImportForm = false; $dispatch('show-toast', { type: 'success', message: 'Character imported' }); htmx.ajax('GET', '/views/characters', { target: '#app-root', swap: 'innerHTML' }) }"
+            hx-on::after-request="if(event.detail.successful){ document.getElementById('import-modal').classList.remove('open'); showToast('success','Character imported'); loadCharactersPage(); }"
             data-testid="import-character-form"
           >
-            <div class="drop-zone" style="margin-bottom: var(--space-4)" @click="$refs.fileInput.click()">
+            <div
+              class="drop-zone"
+              style="margin-bottom: var(--space-4)"
+              onclick="document.getElementById('import-file-input').click()"
+            >
               <div class="icon">📄</div>
               <div class="text">Upload a character card JSON or PNG</div>
               <div class="hint">Supports V2 character cards</div>
-              <input type="file" name="file" accept=".json,.png" style="display: none" x-ref="fileInput" />
+              <input
+                type="file"
+                name="file"
+                accept=".json,.png"
+                style="display: none"
+                id="import-file-input"
+              />
             </div>
-
             <div style="display: flex; gap: var(--space-3); justify-content: flex-end">
-              <button type="button" class="btn btn-secondary" @click="$store.ui.showImportForm = false">
+              <button
+                type="button"
+                class="btn btn-secondary"
+                onclick="document.getElementById('import-modal').classList.remove('open')"
+              >
                 Cancel
               </button>
               <button type="submit" class="btn btn-primary">Import</button>
@@ -180,16 +154,17 @@
 
     <!-- Character detail modal -->
     <div
-      x-show="selectedChar"
-      x-cloak
+      id="character-detail-modal"
       class="modal-overlay"
-      @click.self="selectedChar = null"
+      onclick="if (event.target === this) this.classList.remove('open');"
       data-testid="character-detail-modal"
     >
       <div class="modal">
         <div class="modal-header">
-          <span class="title" x-text="selectedChar?.display_name || 'Character'"></span>
-          <button class="btn-icon" @click="selectedChar = null">&times;</button>
+          <span class="title" data-field="name"></span>
+          <button class="btn-icon" onclick="this.closest('.modal-overlay').classList.remove('open')">
+            &times;
+          </button>
         </div>
         <div class="modal-body">
           <div style="display: flex; gap: var(--space-4); margin-bottom: var(--space-4)">
@@ -206,69 +181,55 @@
                 flex-shrink: 0;
                 overflow: hidden;
               "
+              data-field="avatar"
             >
-              <template x-if="selectedChar?.avatar_asset_id">
-                <img
-                  :src="'/api/assets/' + selectedChar.avatar_asset_id + '/thumb'"
-                  style="width: 100%; height: 100%; object-fit: cover"
-                  alt="Avatar"
-                />
-              </template>
-              <template x-if="!selectedChar?.avatar_asset_id">
-                <span>👤</span>
-              </template>
+              <span>👤</span>
             </div>
             <div style="flex: 1">
-              <div style="font-size: 18px; font-weight: 600" x-text="selectedChar?.display_name"></div>
-              <div
-                style="font-size: 12px; color: var(--text-tertiary); margin-top: var(--space-1)"
-                x-text="'ID: ' + selectedChar?.id"
-              ></div>
+              <div style="font-size: 18px; font-weight: 600" data-field="name"></div>
               <div
                 style="font-size: 13px; color: var(--text-secondary); margin-top: var(--space-2)"
-                x-text="selectedChar?.description || 'No description'"
+                data-field="description"
               ></div>
             </div>
           </div>
-
           <div class="form-group">
             <label class="form-label">System Prompt</label>
-            <template x-if="selectedChar?.system_prompt">
-              <div
-                style="
-                  font-size: 13px;
-                  color: var(--text-secondary);
-                  white-space: pre-wrap;
-                  background: var(--bg-tertiary);
-                  padding: var(--space-3);
-                  border-radius: var(--radius-sm);
-                  max-height: 200px;
-                  overflow-y: auto;
-                "
-                x-text="selectedChar?.system_prompt"
-              ></div>
-            </template>
-            <template x-if="!selectedChar?.system_prompt">
-              <div style="font-size: 13px; color: var(--text-tertiary); font-style: italic">
-                No system prompt
-              </div>
-            </template>
+            <div
+              style="
+                font-size: 13px;
+                color: var(--text-secondary);
+                white-space: pre-wrap;
+                background: var(--bg-tertiary);
+                padding: var(--space-3);
+                border-radius: var(--radius-sm);
+                max-height: 200px;
+                overflow-y: auto;
+              "
+              data-field="system-prompt"
+            ></div>
           </div>
-
           <div style="display: flex; gap: var(--space-3); justify-content: flex-end">
-            <button class="btn btn-secondary" @click="startChat(selectedChar)" data-testid="start-chat-btn">
+            <button
+              class="btn btn-secondary"
+              data-action="start-chat"
+              onclick="startChatFromChar(this)"
+              data-testid="start-chat-btn"
+            >
               💬 Start Chat
             </button>
             <button
               class="btn btn-secondary"
-              @click="editCharacter(selectedChar)"
+              data-action="edit-char"
+              onclick="editCharacter(this)"
               data-testid="edit-character-btn"
             >
               ✏️ Edit
             </button>
             <button
               class="btn btn-danger"
-              @click="deleteCharacter(selectedChar)"
+              data-action="delete-char"
+              onclick="deleteCharacter(this)"
               data-testid="delete-character-btn"
             >
               🗑 Delete
@@ -279,3 +240,10 @@
     </div>
   </main>
 </div>
+
+<script>
+  (function f() {
+    if (typeof loadCharactersPage === "function") loadCharactersPage();
+    else setTimeout(f, 10);
+  })();
+</script>

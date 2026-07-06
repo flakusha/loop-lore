@@ -1,4 +1,6 @@
-// ── Root app component (layout.html) ───────────────────────
+import { log as rootLog } from "./logger";
+
+const log = rootLog.child({ module: "app" });
 
 globalThis.app = function () {
   return {
@@ -14,7 +16,10 @@ globalThis.app = function () {
     },
 
     init() {
-      // Initialize Alpine stores for cross-scope UI state
+      const initCount = ((globalThis as any).__appInitCount ?? 0) + 1;
+      (globalThis as any).__appInitCount = initCount;
+      log.debug("init", { initCount });
+
       if (globalThis.Alpine !== undefined) {
         globalThis.Alpine.store("sidebar", { open: false });
         globalThis.Alpine.store("ui", {
@@ -27,13 +32,13 @@ globalThis.app = function () {
           showEditModal: false,
           showPreviewModal: false,
           showChatSettings: false,
+          showRenameModal: false,
           hasActiveChat: false,
         });
       }
 
       const savedTheme = localStorage.getItem("theme-preference");
-      const themes = globalThis.__THEMES ?? [];
-      if (savedTheme && themes.some((t: { id: string }) => t.id === savedTheme)) {
+      if (savedTheme) {
         this.currentTheme = savedTheme;
       }
       this.applyTheme(this.currentTheme);
@@ -54,21 +59,11 @@ globalThis.app = function () {
 
     applyTheme(themeId: string) {
       const themes = globalThis.__THEMES ?? [];
-      const theme = themes.some((t: { id: string }) => t.id === themeId);
-      if (!theme) return;
-
+      if (!themeId || themes.every((t: { id: string }) => t.id !== themeId)) return;
       for (const t of themes) {
-        const link = document.querySelector(`#theme-${t.id}`);
-        if (link) {
-          (link as HTMLLinkElement).disabled = true;
-        }
+        const link = document.querySelector(`#theme-${t.id}`) as HTMLLinkElement | null;
+        if (link) link.disabled = t.id !== themeId;
       }
-
-      const selectedLink = document.querySelector(`#theme-${themeId}`);
-      if (selectedLink) {
-        (selectedLink as HTMLLinkElement).disabled = false;
-      }
-
       document.body.classList.toggle("theme-no-icons", themeId === "no-icons");
       localStorage.setItem("theme-preference", themeId);
     },
@@ -80,16 +75,26 @@ globalThis.app = function () {
 
     closeAllModals() {
       this.sidebarOpen = false;
-      document.querySelectorAll("[x-data]").forEach((el) => {
-        try {
-          const data = (globalThis as any).Alpine?.$data(el) ?? (el as any)._x_dataStack?.[0];
-          if (data && (data as Record<string, unknown>).showModal != null) {
-            (data as Record<string, unknown>).showModal = false;
-          }
-        } catch {
-          /* element may not have Alpine data yet */
+      if (!globalThis.Alpine) return;
+      const ui = globalThis.Alpine.store("ui");
+      if (ui) {
+        for (const key of Object.keys(ui)) {
+          ui[key] = false;
         }
-      });
+      }
+    },
+
+    async loadLocale(locale: string) {
+      try {
+        const res = await fetch(`/locales/${locale}.json`);
+        if (res.ok) {
+          const strings = await res.json();
+          this.localeStrings = strings;
+          globalThis.__localeStrings = strings;
+        }
+      } catch {
+        // fallback
+      }
     },
 
     toast(type: string, message: string) {
@@ -106,19 +111,6 @@ globalThis.app = function () {
       const themes = globalThis.__THEMES ?? [];
       const theme = themes.find((t: { id: string }) => t.id === this.currentTheme);
       return theme ? theme.name : "Default";
-    },
-
-    async loadLocale(locale: string) {
-      try {
-        const res = await fetch(`/locales/${locale}.json`);
-        if (res.ok) {
-          const strings = await res.json();
-          this.localeStrings = strings;
-          globalThis.__localeStrings = strings;
-        }
-      } catch {
-        // fallback: keys display as-is
-      }
     },
 
     setLocale(localeId: string) {
