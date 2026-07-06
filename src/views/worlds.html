@@ -1,5 +1,5 @@
 <!-- Worlds List Page -->
-<header id="header-slot" class="main-header" data-testid="worlds-header">
+<header id="header-slot" class="main-header" data-page="worlds" data-testid="worlds-header">
   <button class="hamburger" onclick="toggleSidebar()" data-testid="hamburger">☰</button>
   <span class="title">Worlds</span>
   <div class="actions">
@@ -96,10 +96,3 @@
     </div>
   </div>
 </div>
-
-<script>
-  (function f() {
-    if (typeof loadWorldsPage === "function") loadWorldsPage();
-    else setTimeout(f, 10);
-  })();
-</script>
