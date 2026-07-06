@@ -1,180 +1,121 @@
-<!-- Character Edit Page (swapped into #app-root by htmx) -->
-<!-- Header: moved to #header-slot by htmx:load handler -->
+<!-- Character Edit Page -->
 <header id="header-slot" class="main-header" data-testid="character-edit-header">
-  <button
-    class="hamburger"
-    @click="$store.sidebar.open = !$store.sidebar.open"
-    x-show="!$store.sidebar.open"
-    data-testid="hamburger"
-  >
-    ☰
-  </button>
+  <button class="hamburger" onclick="toggleSidebar()" data-testid="hamburger">☰</button>
   <span class="title" id="page-title">Edit Character</span>
 </header>
 
-<div class="app-layout" x-data="characterEditState()">
-  <!-- Main content -->
+<div class="app-layout">
   <main class="main-content" style="padding-top: 0">
     <div class="chat-area">
-      <!-- Loading -->
-      <template x-if="loading">
+      <div id="character-edit-form" data-character-id="{{characterId}}">
         <div class="empty-state" style="padding: var(--space-12)">
           <div class="icon">⏳</div>
           <div class="title">Loading character...</div>
         </div>
-      </template>
-
-      <!-- Edit form -->
-      <template x-if="!loading && character">
-        <div style="max-width: 720px; margin: 0 auto; width: 100%">
-          <!-- Avatar -->
-          <div class="form-group" style="display: flex; align-items: flex-start; gap: var(--space-4)">
-            <div
-              style="
-                width: 80px;
-                height: 80px;
-                border-radius: var(--radius-md);
-                background: var(--bg-tertiary);
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                font-size: 36px;
-                flex-shrink: 0;
-                overflow: hidden;
-                border: 1px solid var(--border-default);
-              "
-            >
-              <template x-if="character.avatar_asset_id">
-                <img
-                  :src="'/api/assets/' + character.avatar_asset_id + '/thumb'"
-                  style="width: 100%; height: 100%; object-fit: cover"
-                  alt="Avatar"
-                />
-              </template>
-              <template x-if="!character.avatar_asset_id">
-                <span>👤</span>
-              </template>
-            </div>
-            <div style="display: flex; flex-direction: column; gap: var(--space-2)">
-              <button
-                type="button"
-                class="btn btn-secondary"
-                @click="$refs.avatarInput.click()"
-                :disabled="uploadingAvatar"
-              >
-                <span x-show="!uploadingAvatar">Upload Avatar</span>
-                <span x-show="uploadingAvatar">Uploading...</span>
-              </button>
-              <template x-if="character.avatar_asset_id">
-                <button type="button" class="btn btn-danger" @click="removeAvatar">Remove</button>
-              </template>
-              <input
-                type="file"
-                accept="image/*"
-                x-ref="avatarInput"
-                @change="uploadAvatar($event.target.files[0])"
-                style="display: none"
-              />
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label class="form-label" for="edit-name">Display Name</label>
-            <input
-              class="form-input"
-              type="text"
-              id="edit-name"
-              placeholder="Character name"
-              x-model="character.display_name"
-            />
-          </div>
-
-          <div class="form-group">
-            <label class="form-label" for="edit-desc">Description</label>
-            <textarea
-              class="form-input form-textarea"
-              id="edit-desc"
-              rows="3"
-              placeholder="Brief description..."
-              x-model="character.description"
-            ></textarea>
-          </div>
-
-          <div class="form-group">
-            <label class="form-label" for="edit-system">System Prompt</label>
-            <textarea
-              class="form-input form-textarea"
-              id="edit-system"
-              rows="6"
-              placeholder="System prompt for LLM context..."
-              x-model="character.system_prompt"
-            ></textarea>
-          </div>
-
-          <div class="form-group">
-            <label class="form-label" for="edit-personality">Personality</label>
-            <textarea
-              class="form-input form-textarea"
-              id="edit-personality"
-              rows="4"
-              placeholder="Character personality traits..."
-              x-model="character.personality"
-            ></textarea>
-          </div>
-
-          <div class="form-group">
-            <label class="form-label" for="edit-greeting">Welcome Message (first_mes)</label>
-            <textarea
-              class="form-input form-textarea"
-              id="edit-greeting"
-              rows="4"
-              placeholder="First message the character sends in a new chat..."
-              x-model="character.welcome_message"
-            ></textarea>
-          </div>
-
-          <div class="form-group">
-            <label class="form-label" for="edit-example">Example Messages (mes_example)</label>
-            <textarea
-              class="form-input form-textarea"
-              id="edit-example"
-              rows="5"
-              placeholder="Example dialogue for context..."
-              x-model="character.mes_example"
-            ></textarea>
-          </div>
-
-          <div
-            style="display: flex; gap: var(--space-3); justify-content: flex-end; margin-top: var(--space-6)"
-          >
-            <a href="/views/characters" class="btn btn-secondary" data-testid="cancel-edit-character"
-              >Cancel</a
-            >
-            <button
-              type="button"
-              class="btn btn-primary"
-              :disabled="saving"
-              @click="saveCharacter"
-              data-testid="save-character-btn"
-            >
-              <span x-show="!saving">Save Character</span>
-              <span x-show="saving">Saving...</span>
-            </button>
-          </div>
-        </div>
-      </template>
-
-      <!-- Not found -->
-      <template x-if="!loading && !character">
-        <div class="empty-state" style="padding: var(--space-12)">
-          <div class="icon">👤</div>
-          <div class="title">Character not found</div>
-          <div class="description">Could not load character data. It may have been deleted.</div>
-          <a href="/views/characters" class="btn btn-primary" style="margin-top: var(--space-4)"
-            >← Back to Characters</a
-          >
-        </div>
-      </template>
+      </div>
     </div>
   </main>
 </div>
+
+<script>
+  (async function () {
+    const id = document.getElementById("character-edit-form")?.getAttribute("data-character-id");
+    if (!id) return;
+    try {
+      const res = await apiFetch("/api/actors/" + id);
+      if (!res.ok) return;
+      const c = await res.json();
+      const avatarHtml = c.avatar_asset_id
+        ? `<img src="/api/assets/${c.avatar_asset_id}/thumb" style="width:100%;height:100%;object-fit:cover" alt="Avatar" />`
+        : "<span>👤</span>";
+      document.getElementById("character-edit-form").innerHTML = `
+      <div style="max-width:720px;margin:0 auto;width:100%">
+        <form id="char-edit-form" data-testid="character-edit-form">
+          <div class="form-group" style="display:flex;align-items:flex-start;gap:var(--space-4)">
+            <div style="width:80px;height:80px;border-radius:var(--radius-md);background:var(--bg-tertiary);display:flex;align-items:center;justify-content:center;font-size:36px;flex-shrink:0;overflow:hidden;border:1px solid var(--border-default)">
+              <div id="avatar-preview">${avatarHtml}</div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:var(--space-2)">
+              <label class="btn btn-secondary" style="cursor:pointer">
+                <span id="upload-avatar-label">Upload Avatar</span>
+                <input type="file" accept="image/*" style="display:none" id="avatar-input"
+                  onchange="(async function(input){const file=input.files[0];if(!file)return;const fd=new FormData();fd.append('file',file);fd.append('alt_text','Avatar');document.getElementById('upload-avatar-label').textContent='Uploading...';const r=await apiFetch('/api/assets',{method:'POST',body:fd});if(r.ok){const a=await r.json();document.getElementById('avatar-preview').innerHTML='<img src=/api/assets/'+a.id+'/thumb style=width:100%;height:100%;object-fit:cover alt=Avatar />';document.getElementById('char-avatar-id').value=a.id;showToast('success','Avatar uploaded')}else{showToast('error','Upload failed')}document.getElementById('upload-avatar-label').textContent='Upload Avatar';})(this)" />
+              </label>
+              ${c.avatar_asset_id ? "<button type=\"button\" class=\"btn btn-danger\" onclick=\"document.getElementById('avatar-preview').innerHTML='<span>👤</span>';document.getElementById('char-avatar-id').value=''\">Remove</button>" : ""}
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="edit-name">Display Name</label>
+            <input class="form-input" type="text" id="edit-name" value="${escapeAttr(c.display_name || "")}" />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="edit-desc">Description</label>
+            <textarea class="form-input form-textarea" id="edit-desc" rows="3">${escapeAttr(c.description || "")}</textarea>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="edit-system">System Prompt</label>
+            <textarea class="form-input form-textarea" id="edit-system" rows="6">${escapeAttr(c.system_prompt || "")}</textarea>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="edit-personality">Personality</label>
+            <textarea class="form-input form-textarea" id="edit-personality" rows="4">${escapeAttr(c.personality || "")}</textarea>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="edit-greeting">Welcome Message (first_mes)</label>
+            <textarea class="form-input form-textarea" id="edit-greeting" rows="4">${escapeAttr(c.welcome_message || "")}</textarea>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="edit-example">Example Messages (mes_example)</label>
+            <textarea class="form-input form-textarea" id="edit-example" rows="5">${escapeAttr(c.mes_example || "")}</textarea>
+          </div>
+          <input type="hidden" id="char-avatar-id" value="${c.avatar_asset_id || ""}" />
+          <div style="display:flex;gap:var(--space-3);justify-content:flex-end;margin-top:var(--space-6)">
+            <a href="/views/characters" class="btn btn-secondary" data-testid="cancel-edit-character">Cancel</a>
+            <button type="button" class="btn btn-primary" onclick="saveCharacterEdit('${id}')" data-testid="save-character-btn">Save Character</button>
+          </div>
+        </form>
+      </div>`;
+    } catch {
+      /* ignore */
+    }
+  })();
+
+  async function saveCharacterEdit(id) {
+    const body = {
+      displayName: document.getElementById("edit-name").value,
+      description: document.getElementById("edit-desc").value,
+      systemPrompt: document.getElementById("edit-system").value,
+      personality: document.getElementById("edit-personality").value,
+      welcomeMessage: document.getElementById("edit-greeting").value,
+      mesExample: document.getElementById("edit-example").value,
+      avatarAssetId: document.getElementById("char-avatar-id").value || null,
+    };
+    try {
+      const btn = document.querySelector('[data-testid="save-character-btn"]');
+      btn.textContent = "Saving...";
+      btn.disabled = true;
+      const res = await apiFetch("/api/actors/" + id, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+      if (res.ok) {
+        showToast("success", "Character saved");
+        location.assign("/views/characters");
+      } else {
+        const err = await res.json();
+        showToast("error", err.error || "Failed to save");
+      }
+    } catch {
+      showToast("error", "Network error");
+    }
+  }
+
+  function escapeAttr(s) {
+    return String(s || "")
+      .replace(/&/g, "&amp;")
+      .replace(/"/g, "&quot;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;");
+  }
+</script>
