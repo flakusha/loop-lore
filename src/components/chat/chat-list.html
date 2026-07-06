@@ -9,14 +9,22 @@
       <div class="nav-item" style="color: var(--text-tertiary); font-size: 13px">No chats yet</div>
     </template>
     <template x-for="chat in chats" :key="chat.id">
-      <a
-        class="nav-item"
-        :class="{ active: activeChat === chat.id }"
-        href="#"
-        @click.prevent="selectChat(chat.id)"
-      >
-        <span class="name" x-text="chat.name"></span>
-      </a>
+      <div class="nav-item-row">
+        <a
+          class="nav-item"
+          :class="{ active: activeChat === chat.id }"
+          href="#"
+          @click.prevent="selectChat(chat.id)"
+        >
+          <span class="name" x-text="chat.name"></span>
+        </a>
+        <span class="nav-item-actions">
+          <button class="btn-icon btn-xs" title="Rename" @click.prevent="renameChat(chat.id)">✏️</button>
+          <button class="btn-icon btn-xs" title="Delete" @click.prevent="deleteChat(chat.id, $event)">
+            🗑
+          </button>
+        </span>
+      </div>
     </template>
   </div>
   <div style="padding: var(--space-3)">
