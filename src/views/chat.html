@@ -52,6 +52,8 @@
   @htmx:before-swap.window="if($data && typeof $data.destroy==='function') $data.destroy()"
 >
   <main class="main-content" style="padding-top: 0">
+    <!-- Backdrop for chat list panel -->
+    <div class="panel-backdrop" x-show="$store.ui.showChatList" @click="$store.ui.showChatList = false" x-transition.opacity></div>
     <!-- Chat list panel (component) -->
     <div class="chat-list-panel" x-show="$store.ui.showChatList" x-transition data-testid="chat-list-panel">
       <div class="chat-list-header">
@@ -237,6 +239,8 @@
         </template>
       </div>
 
+      <!-- Backdrop for character info panel -->
+      <div class="panel-backdrop" x-show="$store.ui.showCharacterInfo" @click="$store.ui.showCharacterInfo = false" x-transition.opacity></div>
       <!-- Right panel (character info) -->
       <aside
         class="right-panel"
@@ -263,6 +267,8 @@
       </aside>
     </div>
 
+    <!-- Backdrop for gallery sidebar -->
+    <div class="panel-backdrop" x-show="$store.ui.showGallery" @click="$store.ui.showGallery = false" x-transition.opacity></div>
     <!-- Gallery sidebar -->
     <aside class="gallery-sidebar" x-show="$store.ui.showGallery" x-transition data-testid="gallery-sidebar">
       <button class="btn-icon" @click="$store.ui.showGallery = false" title="Close">&times;</button>
