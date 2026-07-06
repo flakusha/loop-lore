@@ -1,9 +1,10 @@
 # RPG Mechanics Specification
 
-> ⚠️ **Status:** NOT IMPLEMENTED. No dice engine, no stat system, no combat, no XP.
-> No `src/dice/` or `src/rpg/` directory exists. Difficulty columns exist on `worlds` table
-> but no code reads or enforces them. This spec is entirely aspirational.
-> See [`docs/meta/plan.md`](../meta/plan.md) "Skipped During Implementation" section.
+> ⚠️ **Status:** NOT IMPLEMENTED. No dice engine, no stat system, no combat, no
+> XP. No `src/dice/` or `src/rpg/` directory exists. Difficulty columns exist on
+> `worlds` table but no code reads or enforces them. This spec is entirely
+> aspirational. See [`docs/meta/plan.md`](../meta/plan.md) "Skipped During
+> Implementation" section.
 
 ## Philosophy: Mechanics Serve Narrative
 
@@ -31,7 +32,8 @@ excel.
 
 ---
 
-> 🚀 **Post-MVP (v0.2+):** Dual-state model, stat blocks, items, combat, skills, XP, currency, loot.
+> 🚀 **Post-MVP (v0.2+):** Dual-state model, stat blocks, items, combat, skills,
+> XP, currency, loot.
 
 ## Dual-State Character Model
 
@@ -63,10 +65,10 @@ Actors (static) → one-to-many → WorldActorState (dynamic, per world)
   WorldActorState contains: stats, inventory, equipment, status_effects, relationships, knowledge
 ```
 
-**Why this matters:** The same character can be a powerful mage in one world
-and a helpless villager in another. Their stats, inventory, and relationships
-are world-scoped. The character card defines who they _are_; the world state
-defines what they _have_ and what they _can do_.
+**Why this matters:** The same character can be a powerful mage in one world and
+a helpless villager in another. Their stats, inventory, and relationships are
+world-scoped. The character card defines who they _are_; the world state defines
+what they _have_ and what they _can do_.
 
 ---
 
@@ -74,8 +76,8 @@ defines what they _have_ and what they _can do_.
 
 ### Core Attributes
 
-Six attributes form the foundation. Every character has base values (from
-the character card or default template):
+Six attributes form the foundation. Every character has base values (from the
+character card or default template):
 
 | Abbrev | Full Name    | Governs                           |
 | ------ | ------------ | --------------------------------- |
@@ -132,8 +134,8 @@ When the engine needs a stat value, it computes the **effective stat**:
 effectiveStat = baseStat + equipmentBonus + statusEffectModifier + worldModifier
 ```
 
-Equipment and status effects never modify the stored base stat — they're
-applied as layered modifiers at computation time. This means:
+Equipment and status effects never modify the stored base stat — they're applied
+as layered modifiers at computation time. This means:
 
 - Unequipping an item instantly removes its bonus
 - A "poisoned" debuff applies in real-time
@@ -321,9 +323,9 @@ function rollDice(notation: string): { total: number; rolls: number[]; modifier:
 
 ### Pre-Seeded Dice Queue (Deterministic Mode)
 
-For sequential combat where fairness matters, the engine pre-generates a
-queue of dice rolls before the LLM writes the narrative. The LLM narrates
-around pre-determined outcomes:
+For sequential combat where fairness matters, the engine pre-generates a queue
+of dice rolls before the LLM writes the narrative. The LLM narrates around
+pre-determined outcomes:
 
 ```
 Before turn:
@@ -338,8 +340,8 @@ LLM narrates:
 
 ### Tool-Call Dice (Narrative Mode)
 
-For skill checks where the LLM should declare difficulty before seeing
-the result (prevents sycophancy):
+For skill checks where the LLM should declare difficulty before seeing the
+result (prevents sycophancy):
 
 ```
 LLM calls: rollSkillCheck(stat="dex", dc=15)
@@ -419,8 +421,8 @@ Active conditions that modify stats or behavior:
 | Shielded  | +3 AC                                       | Until hit     |
 | Invisible | Advantage on stealth, auto-hit first attack | 1 minute      |
 
-Status effects are stored on the actor's world state and injected into
-the prompt as a structured section:
+Status effects are stored on the actor's world state and injected into the
+prompt as a structured section:
 
 ```
 [Status Effects]
@@ -534,8 +536,8 @@ Hands: Leather Gloves (+1 DEX)
 
 ## Currency System
 
-Currency is an item with special properties. The engine tracks gold
-separately for fast access but it's still an item under the hood.
+Currency is an item with special properties. The engine tracks gold separately
+for fast access but it's still an item under the hood.
 
 ```typescript
 interface CurrencyItem {
@@ -610,8 +612,8 @@ interface LootEntry {
 
 ### Persona World Traits
 
-When a persona enters a world for the first time, they receive a **world
-trait** based on the world's theme and the persona's description:
+When a persona enters a world for the first time, they receive a **world trait**
+based on the world's theme and the persona's description:
 
 ```typescript
 interface WorldTrait {
@@ -624,8 +626,8 @@ interface WorldTrait {
 ```
 
 **Example:** A sci-fi persona entering a fantasy world gets the "Fish Out of
-Water" trait: -2 WIS (unfamiliar world), +2 INT (advanced knowledge from
-another world), narrative hooks about technology vs magic.
+Water" trait: -2 WIS (unfamiliar world), +2 INT (advanced knowledge from another
+world), narrative hooks about technology vs magic.
 
 ### Persona → Character Conversion (Expanded)
 
@@ -647,8 +649,8 @@ When a user wants to "become" an existing character:
 2. The persona inherits the character's stat block as a starting point
 3. In future chats using this persona, the user plays with those stats
 
-This enables: "I created a powerful wizard character. Now I want to play AS
-that wizard in a new story."
+This enables: "I created a powerful wizard character. Now I want to play AS that
+wizard in a new story."
 
 ---
 
@@ -780,23 +782,23 @@ interface RuleCondition {
 
 Rules are stored in a dedicated `chat_rules` table:
 
-| Column      | Type    | Constraints                 | Notes                            |
-| ----------- | ------- | --------------------------- | -------------------------------- |
-| id          | TEXT    | PK, UUID                    |                                  |
-| world_id    | TEXT    | FK → worlds.id, nullable    | World-scoped rule                |
-| chat_id     | TEXT    | FK → chats.id, nullable     | Chat/group-chat-scoped rule      |
-| location_id | TEXT    | FK → locations.id, nullable | Location-scoped rule             |
-| name        | TEXT    | NOT NULL                    | Rule display name                |
-| description | TEXT    |                             | Rule description                 |
-| type        | TEXT    | NOT NULL                    | RuleType enum                    |
-| config      | TEXT    | NOT NULL, JSON              | RuleConfig                       |
-| enabled     | INTEGER | DEFAULT 1                   | Boolean                          |
-| priority    | INTEGER | DEFAULT 100                 | Override priority                |
-| conditions  | TEXT    | JSON array                  | Optional RuleCondition[]         |
-| source      | TEXT    | DEFAULT 'user'              | 'gm'                             | 'plugin' | 'system' | 'user' |
-| plugin_id   | TEXT    |                             | Plugin that registered this rule |
-| created_at  | TEXT    | DEFAULT CURRENT_TIMESTAMP   |                                  |
-| updated_at  | TEXT    | DEFAULT CURRENT_TIMESTAMP   |                                  |
+| Column      | Type    | Constraints                 | Notes                                  |
+| ----------- | ------- | --------------------------- | -------------------------------------- |
+| id          | TEXT    | PK, UUID                    |                                        |
+| world_id    | TEXT    | FK → worlds.id, nullable    | World-scoped rule                      |
+| chat_id     | TEXT    | FK → chats.id, nullable     | Chat/group-chat-scoped rule            |
+| location_id | TEXT    | FK → locations.id, nullable | Location-scoped rule                   |
+| name        | TEXT    | NOT NULL                    | Rule display name                      |
+| description | TEXT    |                             | Rule description                       |
+| type        | TEXT    | NOT NULL                    | RuleType enum                          |
+| config      | TEXT    | NOT NULL, JSON              | RuleConfig                             |
+| enabled     | INTEGER | DEFAULT 1                   | Boolean                                |
+| priority    | INTEGER | DEFAULT 100                 | Override priority                      |
+| conditions  | TEXT    | JSON array                  | Optional RuleCondition[]               |
+| source      | TEXT    | DEFAULT 'user'              | 'gm' \| 'plugin' \| 'system' \| 'user' |
+| plugin_id   | TEXT    |                             | Plugin that registered this rule       |
+| created_at  | TEXT    | DEFAULT CURRENT_TIMESTAMP   |                                        |
+| updated_at  | TEXT    | DEFAULT CURRENT_TIMESTAMP   |                                        |
 
 **Indexes:** `(world_id)`, `(chat_id)`, `(location_id)`, `(enabled)`
 
@@ -828,13 +830,13 @@ Active rules are injected into the LLM prompt as a structured section:
 - Stealth Advantage (Location): Stealth checks have advantage in the dark forest.
 ```
 
-This gives the LLM full awareness of what rules are in effect so it can
-narrate accordingly.
+This gives the LLM full awareness of what rules are in effect so it can narrate
+accordingly.
 
 ### LLM Game Master Rule Management
 
-The LLM Game Master can create, modify, or remove rules via structured
-intent blocks (same pattern as combat intent):
+The LLM Game Master can create, modify, or remove rules via structured intent
+blocks (same pattern as combat intent):
 
 ```typescript
 interface RuleIntent {
@@ -878,8 +880,8 @@ The ancient wards flare to life as you cross the threshold.
 [/RULE_INTENT]
 ```
 
-The engine validates the intent, applies the rule, and injects the result
-into the prompt:
+The engine validates the intent, applies the rule, and injects the result into
+the prompt:
 
 ```
 [RULE APPLIED]
@@ -1075,16 +1077,14 @@ Third-party plugins can register new resolvers for any RPG system:
 | **LLM-prompted**         | Variable, expensive | ❌ Hallucinates  | Infinite       | High     |
 | **Hybrid (this system)** | Fixed + narrative   | ✅ Validated     | Plugin + LLM   | Low      |
 
-The hybrid approach ensures the LLM never directly mutates game state.
-Plugin resolvers provide the mechanical backbone; the LLM provides the
-narrative skin.
+The hybrid approach ensures the LLM never directly mutates game state. Plugin
+resolvers provide the mechanical backbone; the LLM provides the narrative skin.
 
 ### Plugin Bundle Presets
 
 Plugin bundles are **pre-configured groups of RPG mechanic plugins** that
-activate together as a cohesive ruleset. A bundle defines which resolvers,
-stat templates, skill lists, and default chat rules compose a complete game
-system.
+activate together as a cohesive ruleset. A bundle defines which resolvers, stat
+templates, skill lists, and default chat rules compose a complete game system.
 
 ```typescript
 interface PluginBundle {
@@ -1139,14 +1139,14 @@ Chat level:   bundle = 'fate-core'  → This chat overrides world with FATE
 Location:     bundle = 'minimal'    → This location uses light rules
 ```
 
-A scope can have **exactly one active bundle**. Switching bundles migrates
-state if possible (same stat names), or resets to defaults (new stat system).
+A scope can have **exactly one active bundle**. Switching bundles migrates state
+if possible (same stat names), or resets to defaults (new stat system).
 
 ### Fine Tuning Per Scope
 
-Once a bundle is active, its behavior can be **fine-tuned** per scope
-without modifying the bundle itself. Fine-tuning overlays sit on top of the
-bundle defaults:
+Once a bundle is active, its behavior can be **fine-tuned** per scope without
+modifying the bundle itself. Fine-tuning overlays sit on top of the bundle
+defaults:
 
 ```typescript
 interface MechanicFineTune {
@@ -1184,9 +1184,12 @@ A world settings panel showing:
 - **Header:** World name ("Forgotten Realm") with bundle selector (D&D 5e)
 - **Stat Range:** Slider 1–30 with starting points input (27)
 - **Difficulty:** Slider 0.5–2.0 with XP rate slider 1.0–2.0
-- **Active Skills:** Toggle list with checkboxes (Athletics ✓, Acrobatics ✓, Animal Handling ✘, Arcana ✓, Stealth ✓)
-- **Custom Skills:** Add button, each showing stat, base DC, description (e.g., "Jedi Lore" → INT, DC 15)
-- **Chat Override:** Per-chat overrides inheriting from world bundle (e.g., "Campaign 1" overrides difficulty to 1.0)
+- **Active Skills:** Toggle list with checkboxes (Athletics ✓, Acrobatics ✓,
+  Animal Handling ✘, Arcana ✓, Stealth ✓)
+- **Custom Skills:** Add button, each showing stat, base DC, description (e.g.,
+  "Jedi Lore" → INT, DC 15)
+- **Chat Override:** Per-chat overrides inheriting from world bundle (e.g.,
+  "Campaign 1" overrides difficulty to 1.0)
 
 #### Fine-Tuning via LLM GM
 
@@ -1256,8 +1259,8 @@ These can be shared between users or downloaded from a community registry.
 
 ### Plugin RPG Engine Integration with Rules System
 
-Chat rules (defined in the Rules System section above) and plugin bundles
-work together:
+Chat rules (defined in the Rules System section above) and plugin bundles work
+together:
 
 1. **Bundle defines** the default resolver set, stat model, and skills
 2. **Chat rules** modify behavior at runtime (without changing bundle)
@@ -1447,7 +1450,9 @@ The LLM then narrates the mechanical truth.
 
 ### Overview
 
-Difficulty levels control how strictly RPG mechanics are enforced and what happens on failures. MVP uses a **standalone config on the `worlds` table** — not gated behind bundles.
+Difficulty levels control how strictly RPG mechanics are enforced and what
+happens on failures. MVP uses a **standalone config on the `worlds` table** —
+not gated behind bundles.
 
 ### Configuration (on `worlds` table)
 
@@ -1476,7 +1481,8 @@ Three columns replace the bundle-gated system:
 
 - `world_actor_state.state` set to `'dead'` for that actor
 - Dead actor becomes **observer** — can READ world events, cannot act
-- No resurrection, no replay. Full world recreation (new UUID) required to bring back character
+- No resurrection, no replay. Full world recreation (new UUID) required to bring
+  back character
 
 **Prompt injection for dead actors:**
 
@@ -1486,7 +1492,9 @@ Three columns replace the bundle-gated system:
 
 ### State Machine
 
-`dead` is terminal. Only `alive` → `dead` transition exists (fatal damage or Iron-Man death). No path back. `alive` is the default for actors joining a non-Iron-Man world.
+`dead` is terminal. Only `alive` → `dead` transition exists (fatal damage or
+Iron-Man death). No path back. `alive` is the default for actors joining a
+non-Iron-Man world.
 
 ### Prompt Injection
 

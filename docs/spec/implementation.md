@@ -4,27 +4,35 @@
 
 ### Backend
 
-- **Runtime**: [Bun](https://bun.sh) — Fast TypeScript/JavaScript runtime, runs `.ts` directly
+- **Runtime**: [Bun](https://bun.sh) — Fast TypeScript/JavaScript runtime, runs
+  `.ts` directly
 - **Language**: TypeScript 5.4+ strict mode
 - **Database**:
-  - Primary: SQLite (via `bun:sqlite` — native, no extra deps) for local development
-  - Query Builder: [Kysely](https://kysely.dev/) with `BunSqliteDialect` — type-safe queries, dialect-swappable
+  - Primary: SQLite (via `bun:sqlite` — native, no extra deps) for local
+    development
+  - Query Builder: [Kysely](https://kysely.dev/) with `BunSqliteDialect` —
+    type-safe queries, dialect-swappable
   - Scaling up: Swap to `PostgresDialect` from `kysely` with `pg` pool
 - **Server**: Bun's built-in HTTP server (no Express/Koa dependency)
-- **Middleware**: Lightweight composable pipeline (auth, role guard, logging) built on Bun fetch; no framework
-- **Validation**: Kysely type system at compile time; incremental runtime validation — schema-per-route pattern with Zod considered for later
+- **Middleware**: Lightweight composable pipeline (auth, role guard, logging)
+  built on Bun fetch; no framework
+- **Validation**: Kysely type system at compile time; incremental runtime
+  validation — schema-per-route pattern with Zod considered for later
 
 ### Frontend
 
 - **Web UI**: htmx (server-driven AJAX) + Alpine.js (client-side interactivity)
-- **TUI Mode**: [`blessed`](https://github.com/chjj/blessed) — curses-like terminal UI library
-- **Documentation**: VitePress SSG for rich docs, optional; plain Markdown default
+- **TUI Mode**: [`blessed`](https://github.com/chjj/blessed) — curses-like
+  terminal UI library
+- **Documentation**: VitePress SSG for rich docs, optional; plain Markdown
+  default
 
 ### Tooling
 
 - **Package Manager**: Bun's built-in package manager
 - **Type Checking**: TypeScript compiler (`tsc --noEmit`)
-- **Linting**: ESLint 9 (flat config) with `typescript-eslint` strictTypeChecked, `unicorn`, `sonarjs`
+- **Linting**: ESLint 9 (flat config) with `typescript-eslint`
+  strictTypeChecked, `unicorn`, `sonarjs`
 - **Formatting**: Prettier
 - **Markdown**: `markdownlint-cli2` for docs quality
 
@@ -36,18 +44,27 @@ Located in `src/middleware/`
 
 #### Architecture
 
-Lightweight composable pipeline built on Bun's native fetch handler. No Express/Koa dependency. Each middleware receives `(request, context, next)` and either short-circuits (returns `Response`) or calls `next()` with enriched context.
+Lightweight composable pipeline built on Bun's native fetch handler. No
+Express/Koa dependency. Each middleware receives `(request, context, next)` and
+either short-circuits (returns `Response`) or calls `next()` with enriched
+context.
 
 Middleware processes each request through these stages:
 
-1. **Auth middleware** — Extracts Bearer token, SHA-256 hashes it, looks up session in DB. If invalid → returns `401 Unauthorized`. On success → populates `RequestContext`
-2. **Role guard** — Checks route permissions against `context.userRole`. If role lacks access → returns `403 Forbidden`
-3. **Route dispatch** — Delegates to domain controller. Controller calls service → service calls DB. Returns `Response`
-4. **Error boundary** — Catches exceptions from any middleware or handler → returns structured error envelope
+1. **Auth middleware** — Extracts Bearer token, SHA-256 hashes it, looks up
+   session in DB. If invalid → returns `401 Unauthorized`. On success →
+   populates `RequestContext`
+2. **Role guard** — Checks route permissions against `context.userRole`. If role
+   lacks access → returns `403 Forbidden`
+3. **Route dispatch** — Delegates to domain controller. Controller calls service
+   → service calls DB. Returns `Response`
+4. **Error boundary** — Catches exceptions from any middleware or handler →
+   returns structured error envelope
 
 #### RequestContext
 
-Shared context object passed through the pipeline, populated by auth middleware and consumed by route handlers:
+Shared context object passed through the pipeline, populated by auth middleware
+and consumed by route handlers:
 
 ```
 RequestContext { userId, userRole, sessionId }
@@ -72,16 +89,21 @@ Solo/demo mode (`auth.required: false`):
 
 #### Pipeline Runner (`src/middleware/pipeline.ts`)
 
-`compose(middleware[], finalHandler)` — chains middleware left-to-right. Each middleware receives `(request, context, next)` and either returns `Response` to short-circuit or calls `await next()` to pass through. The final handler is the route dispatcher. Errors bubble to the error boundary middleware.
+`compose(middleware[], finalHandler)` — chains middleware left-to-right. Each
+middleware receives `(request, context, next)` and either returns `Response` to
+short-circuit or calls `await next()` to pass through. The final handler is the
+route dispatcher. Errors bubble to the error boundary middleware.
 
 #### Priority
 
 1. **Auth** — session extraction, user identity
-2. **Access control** — role gates on admin routes (see `docs/users-sessions.md`)
+2. **Access control** — role gates on admin routes (see
+   `docs/users-sessions.md`)
 3. **Validation** — incremental, per-route schema checks (phased implementation)
 
-Rate limiting implemented in-app (`src/middleware/rate-limit.ts`) for login endpoint (10/min per IP).
-Also deferred to reverse proxy for production rate limiting beyond login.
+Rate limiting implemented in-app (`src/middleware/rate-limit.ts`) for login
+endpoint (10/min per IP). Also deferred to reverse proxy for production rate
+limiting beyond login.
 
 ### Database Layer
 
@@ -89,8 +111,8 @@ Located in `src/db/`
 
 #### Database Approach
 
-[Bun ships `bun:sqlite`](https://bun.sh/docs/api/sqlite) natively — fast, zero deps.
-[Kysely](https://kysely.dev/) provides type-safe query building on top.
+[Bun ships `bun:sqlite`](https://bun.sh/docs/api/sqlite) natively — fast, zero
+deps. [Kysely](https://kysely.dev/) provides type-safe query building on top.
 
 1. **SQLite (default):** Kysely with `BunSqliteDialect`:
 
@@ -117,8 +139,8 @@ Located in `src/db/`
    const db = new Kysely<DB>({ dialect });
    ```
 
-3. **Same queries, different dialect** — Kysely normalizes across SQLite and Postgres.
-   Store arrays/enums as JSON text for compatibility.
+3. **Same queries, different dialect** — Kysely normalizes across SQLite and
+   Postgres. Store arrays/enums as JSON text for compatibility.
 
 4. **Database Initialization** (`src/db/index.ts`):
    - Reads `DB_TYPE` env var (default: `sqlite`)
@@ -127,8 +149,10 @@ Located in `src/db/`
 
 #### Schema and Migrations
 
-- Schema defined as TypeScript interfaces in `src/db/schema.ts` (Kysely table types)
-- Enum values centralized in `src/db/enums.ts` (barrel over `enums-*.ts` domain files) — const objects + type unions
+- Schema defined as TypeScript interfaces in `src/db/schema.ts` (Kysely table
+  types)
+- Enum values centralized in `src/db/enums.ts` (barrel over `enums-*.ts` domain
+  files) — const objects + type unions
 - Migrations managed by Kysely Migrator, stored in `src/db/migrations/`
 - Migration files are `.ts` with `up()`/`down()` exports
 - See [`docs/schema.md`](./schema.md) for full table definitions
@@ -141,22 +165,31 @@ Located in `src/db/`
 | 002  | `002_age_gate.ts`            | `birth_date`, `age_gate_accepted_at` on users                                                                     |
 | 003a | `003_generation_attempts.ts` | `generation_attempts` table                                                                                       |
 
-> **Warning**: During MVP, `data_version` defaults to `0` across all actor records. When stabilising post-MVP, version bumps will be **forward-compatible only**: migrations add columns/tables, never remove. Existing `v0` records continue working; missing fields resolve to sensible defaults. See [`docs/actors.md`](./actors.md) for full versioning contract.
+> **Warning**: During MVP, `data_version` defaults to `0` across all actor
+> records. When stabilising post-MVP, version bumps will be **forward-compatible
+> only**: migrations add columns/tables, never remove. Existing `v0` records
+> continue working; missing fields resolve to sensible defaults. See
+> [`docs/actors.md`](./actors.md) for full versioning contract.
 
 Future migrations (post-MVP):
 
-- `003b_story_features.ts` — locations, story_turns, quests, quest_progress, world_states, npc_states, location_states, synthetic_data + new columns on chats
-- `004_continuation_retry.ts` — Continuation & tree columns on generation_attempts + messages
+- `003b_story_features.ts` — locations, story_turns, quests, quest_progress,
+  world_states, npc_states, location_states, synthetic_data + new columns on
+  chats
+- `004_continuation_retry.ts` — Continuation & tree columns on
+  generation_attempts + messages
 
 ### Actor System
 
-Located in `src/routes/characters.ts` (no dedicated `src/actors/` directory) — the `actors` table is the unified
-participant model. See [`docs/actors.md`](./actors.md) for:
+Located in `src/routes/characters.ts` (no dedicated `src/actors/` directory) —
+the `actors` table is the unified participant model. See
+[`docs/actors.md`](./actors.md) for:
 
 - **Character card imports** (SillyTavern V1/V2 — PNG-embedded and JSON)
 - **Memories**: Learned facts across conversations (`actor_memories`)
 - **Notes**: User-authored reference material (`actor_notes`)
-- **Lorebooks**: Keyword-triggered knowledge entries (`actor_lore_entries`, `world_lore_entries`)
+- **Lorebooks**: Keyword-triggered knowledge entries (`actor_lore_entries`,
+  `world_lore_entries`)
 - **Inventory**: Items, equipment, quest items (`actor_items`)
 - **Data versioning**: Forward-compatible schema evolution via `data_version`
 - **Prompt assembly**: Order of fields injected into the LLM prompt
@@ -215,16 +248,23 @@ checks, and continuation/retry features.
 
 #### Key Features
 
-- **Idempotent retries**: SHA-256 key from `(chat_id, parent_message_id, operation, model)` prevents duplicate generations
-- **Continuation**: Partial/cancelled messages preserved — Continue creates a child message chain (A → B → C)
+- **Idempotent retries**: SHA-256 key from
+  `(chat_id, parent_message_id, operation, model)` prevents duplicate
+  generations
+- **Continuation**: Partial/cancelled messages preserved — Continue creates a
+  child message chain (A → B → C)
 - **Multi-step pipelines**: Retry resumes from the failed step (not from step 0)
-- **Streaming repetition detection**: N-gram fingerprinting in the streaming chunk pipeline
-- **Policy detection**: Pluggable `PolicyDetector` interface — no hardcoded keyword lists
-- **Cancellation tracking**: `abort_signal_id` on `generation_attempts` for AbortController coordination
+- **Streaming repetition detection**: N-gram fingerprinting in the streaming
+  chunk pipeline
+- **Policy detection**: Pluggable `PolicyDetector` interface — no hardcoded
+  keyword lists
+- **Cancellation tracking**: `abort_signal_id` on `generation_attempts` for
+  AbortController coordination
 
 #### Generation Status Lifecycle
 
-A `generation_attempt` progresses through states in sequence, with terminal states at the end:
+A `generation_attempt` progresses through states in sequence, with terminal
+states at the end:
 
 **Forward progression:**
 
@@ -235,10 +275,13 @@ A `generation_attempt` progresses through states in sequence, with terminal stat
 
 **Terminal transitions from any non-completed state:**
 
-- `failed` — Error occurred (API error, timeout, connection failure). Can be retried (new attempt)
-- `cancelled` — Stopped by user action, repetition detection, policy violation, chat switch, or system abort
+- `failed` — Error occurred (API error, timeout, connection failure). Can be
+  retried (new attempt)
+- `cancelled` — Stopped by user action, repetition detection, policy violation,
+  chat switch, or system abort
 
-Any of `pending`, `processing`, or `streaming` can transition directly to `failed` or `cancelled`.
+Any of `pending`, `processing`, or `streaming` can transition directly to
+`failed` or `cancelled`.
 
 #### DB Table
 
@@ -265,8 +308,9 @@ See `generation_attempts` in [`docs/schema.md`](./schema.md). Tracks:
 
 Located in `src/story/`
 
-See [`docs/frontend/chat/multi-llm-story.md`](./frontend/chat/multi-llm-story.md) for
-the full specification of the multi-LLM story generation system.
+See
+[`docs/frontend/chat/multi-llm-story.md`](./frontend/chat/multi-llm-story.md)
+for the full specification of the multi-LLM story generation system.
 
 #### Files
 
@@ -288,16 +332,17 @@ the full specification of the multi-LLM story generation system.
 
 #### Turn Manager State
 
-The `TurnManager` serializes its state to `chats.story_state` (JSON) for crash resilience.
-State includes: current turn number, current actor, turn order, strategy, pause flag,
-pending regeneration info.
+The `TurnManager` serializes its state to `chats.story_state` (JSON) for crash
+resilience. State includes: current turn number, current actor, turn order,
+strategy, pause flag, pending regeneration info.
 
 #### DB Tables
 
 Story features add these tables (see [`docs/schema.md`](./schema.md)):
 
 - `locations` — scene/room/region entities within worlds
-- `story_turns` — per-turn records with quality scores, GM decisions, world events
+- `story_turns` — per-turn records with quality scores, GM decisions, world
+  events
 - `quests` — global quests with type-specific configs
 - `quest_progress` — per-chat quest progress tracking
 - `world_states` — point-in-time snapshots for rollback
@@ -311,16 +356,17 @@ Located in `src/assistant/`
 
 #### Service Layer (`src/assistant/service.ts`)
 
-- Rule-based MVP: keyword detection → predefined responses with confidence scores
+- Rule-based MVP: keyword detection → predefined responses with confidence
+  scores
 - Response shape: `{ type, content, confidence }`
 - Designed to be swapped for LLM-backed agent runtime later
-- See [`docs/use-case-agentic-workspace.md`](./use-case-agentic-workspace.md) for the
-  planned evolution into an **Agent Runtime**
+- See [`docs/use-case-agentic-workspace.md`](./use-case-agentic-workspace.md)
+  for the planned evolution into an **Agent Runtime**
 
-#> **Note:** No dedicated `src/assistant/controller.ts` or `POST /api/assistant` endpoint exists.
+#### **Note:** No dedicated `src/assistant/controller.ts` or `POST /api/assistant` endpoint exists.
 
-> The assistant is invoked internally by `src/routes/messages.ts` during generation.
-> A standalone API endpoint is aspirational (post-MVP).
+> The assistant is invoked internally by `src/routes/messages.ts` during
+> generation. A standalone API endpoint is aspirational (post-MVP).
 
 ### Content Module
 
@@ -356,25 +402,29 @@ Provides user age verification for NSFW content compliance:
 Located in `src/plugins/` (planned)
 
 See [`docs/plugin-system.md`](./plugin-system.md) for the full specification.
-See also [`docs/use-case-agentic-workspace.md`](./use-case-agentic-workspace.md) for
-the plugin architecture design in the agentic context.
+See also [`docs/use-case-agentic-workspace.md`](./use-case-agentic-workspace.md)
+for the plugin architecture design in the agentic context.
 
 Three plugin types:
 
-- **Core plugins**: Bundled with loop-lore — dice roller, code executor, web research
+- **Core plugins**: Bundled with loop-lore — dice roller, code executor, web
+  research
 - **Community plugins**: Third-party, installed from registry
 - **Local plugins**: User-created, dropped in `plugins/local/`
 
-The Plugin interface exposes lifecycle hooks (`onLoad`, `onUnload`) and extension
-points: tools, agent roles, API routes, UI components, event handlers, migrations.
+The Plugin interface exposes lifecycle hooks (`onLoad`, `onUnload`) and
+extension points: tools, agent roles, API routes, UI components, event handlers,
+migrations.
 
 ### Memory System
 
-See [`docs/memory-system.md`](./memory-system.md) for the three-tier memory architecture:
+See [`docs/memory-system.md`](./memory-system.md) for the three-tier memory
+architecture:
 
 - **Episodic**: Chronological conversation records → stored as messages
 - **Semantic**: Extracted facts, concepts, relationships → stored as assets
-- **Procedural**: Learned patterns, skills, strategies → stored in actor settings
+- **Procedural**: Learned patterns, skills, strategies → stored in actor
+  settings
 
 ### TUI Mode
 
@@ -383,7 +433,8 @@ Located in `src/tui/` — detailed in [`docs/tui.md`](./tui.md)
 #### Main Application (`src/tui/app.ts`)
 
 - Sets up the blessed screen
-- Initializes and manages child components (chat view, gallery view, input handler)
+- Initializes and manages child components (chat view, gallery view, input
+  handler)
 - Handles global keyboard shortcuts (exit on Escape/q/Ctrl+C)
 - Coordinates data flow between components
 
@@ -418,7 +469,8 @@ Falls back to defaults if no file found.
 
 ### Config Schema
 
-See `src/config/schema.ts` for the full `Config` interface with TypeScript types.
+See `src/config/schema.ts` for the full `Config` interface with TypeScript
+types.
 
 ```yaml
 server:
@@ -466,7 +518,8 @@ auth:
 
 ### Environment Variable Override
 
-Env vars override config file values (12-factor style). Mapping in `src/config/load.ts`:
+Env vars override config file values (12-factor style). Mapping in
+`src/config/load.ts`:
 
 | Env Var                  | Config Path                | Type    |
 | ------------------------ | -------------------------- | ------- |
@@ -562,7 +615,8 @@ Recommended to put behind a reverse proxy (NGINX, Caddy, etc.) for:
 - SSL termination
 - Load balancing
 - Static file serving (if serving web UI)
-- Rate limiting (rate limiting is deferred to reverse proxy; no in-app rate limiter)
+- Rate limiting (rate limiting is deferred to reverse proxy; no in-app rate
+  limiter)
 
 ## Testing Strategy
 
@@ -589,10 +643,11 @@ Recommended to put behind a reverse proxy (NGINX, Caddy, etc.) for:
 - Pre-compressed (gzip/brotli) variants served when available
 - Bun handles `If-None-Match` / `If-Modified-Since` for caching
 - See [`docs/build-deploy.md`](./build-deploy.md) for full deployment guide
-- See [`docs/architecture.md`](./architecture.md) for system architecture overview
+- See [`docs/architecture.md`](./architecture.md) for system architecture
+  overview
 
 ## License
 
-This project is licensed under the LGPL-3.0-or-later License (core code).  
-Documentation is MIT. Plugins may use Apache-2.0 OR MIT.  
+This project is licensed under the LGPL-3.0-or-later License (core code).\
+Documentation is MIT. Plugins may use Apache-2.0 OR MIT.\
 See [LICENSE](../../LICENSE) and [LICENSES/](../../LICENSES/) for full texts.
