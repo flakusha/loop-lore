@@ -24,10 +24,41 @@ export const chatUtils = {
     const html = marked.parse(content) as string;
     return DOMPurify.sanitize(html, {
       ALLOWED_TAGS: [
-        "b", "i", "em", "strong", "a", "p", "br", "ul", "ol", "li",
-        "h1", "h2", "h3", "h4", "h5", "h6", "code", "pre", "blockquote",
-        "table", "thead", "tbody", "tr", "th", "td", "hr", "img",
-        "del", "ins", "sup", "sub", "details", "summary", "div", "span",
+        "b",
+        "i",
+        "em",
+        "strong",
+        "a",
+        "p",
+        "br",
+        "ul",
+        "ol",
+        "li",
+        "h1",
+        "h2",
+        "h3",
+        "h4",
+        "h5",
+        "h6",
+        "code",
+        "pre",
+        "blockquote",
+        "table",
+        "thead",
+        "tbody",
+        "tr",
+        "th",
+        "td",
+        "hr",
+        "img",
+        "del",
+        "ins",
+        "sup",
+        "sub",
+        "details",
+        "summary",
+        "div",
+        "span",
       ],
       ALLOWED_ATTR: ["href", "src", "alt", "title", "class", "target", "rel"],
     });
@@ -44,7 +75,8 @@ export const chatUtils = {
       if (i > 0) {
         const prev = msgs[i - 1];
         const sameRole = msg.role === prev.role;
-        const timeDiff = new Date(String(msg.created_at)).getTime() - new Date(String(prev.created_at)).getTime();
+        const timeDiff =
+          new Date(String(msg.created_at)).getTime() - new Date(String(prev.created_at)).getTime();
         if (sameRole && timeDiff < 300_000) {
           msg.group = true;
           const last = groups[groups.length - 1];

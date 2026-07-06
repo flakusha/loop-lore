@@ -285,6 +285,10 @@ export class OpenAiCompatibleProvider implements LLMProvider {
         if (signal?.aborted) {
           throw new ProviderError("Request cancelled", undefined, undefined, false);
         }
+        // AbortError from timeout or native abort — don't retry, fail fast
+        if ((error as Error).name === "AbortError") {
+          throw new ProviderError("Request timed out", undefined, 504, false);
+        }
         // Exponential backoff
         if (attempt < this.retries) {
           const delay = Math.min(1000 * 2 ** attempt, 10_000);

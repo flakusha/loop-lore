@@ -1,4 +1,4 @@
-import type { Kysely } from "kysely";
+import { sql, type Kysely } from "kysely";
 
 export async function up(database: Kysely<unknown>): Promise<void> {
   // ── Users ──────────────────────────────────────────────────
@@ -13,7 +13,7 @@ export async function up(database: Kysely<unknown>): Promise<void> {
     .addColumn("settings", "text", (col) => col.notNull().defaultTo("{}"))
     .addColumn("birth_date", "text")
     .addColumn("age_gate_accepted_at", "text")
-    .addColumn("created_at", "text", (col) => col.notNull().defaultTo("(datetime('now'))"))
+    .addColumn("created_at", "text", (col) => col.notNull().defaultTo(sql`(datetime('now'))`))
     .addColumn("last_seen_at", "text")
     .execute();
 
@@ -27,8 +27,8 @@ export async function up(database: Kysely<unknown>): Promise<void> {
     .addColumn("token_hash", "text", (col) => col.notNull())
     .addColumn("ip", "text")
     .addColumn("user_agent", "text")
-    .addColumn("created_at", "text", (col) => col.notNull().defaultTo("(datetime('now'))"))
-    .addColumn("last_activity", "text", (col) => col.notNull().defaultTo("(datetime('now'))"))
+    .addColumn("created_at", "text", (col) => col.notNull().defaultTo(sql`(datetime('now'))`))
+    .addColumn("last_activity", "text", (col) => col.notNull().defaultTo(sql`(datetime('now'))`))
     .addColumn("expires_at", "text", (col) => col.notNull())
     .execute();
 
@@ -49,8 +49,8 @@ export async function up(database: Kysely<unknown>): Promise<void> {
     .addColumn("difficulty_modifier", "real", (col) => col.notNull().defaultTo(1))
     .addColumn("difficulty_reroll", "text", (col) => col.notNull().defaultTo("'off'"))
     .addColumn("difficulty_state", "text", (col) => col.notNull().defaultTo("'alive'"))
-    .addColumn("created_at", "text", (col) => col.notNull().defaultTo("(datetime('now'))"))
-    .addColumn("updated_at", "text", (col) => col.notNull().defaultTo("(datetime('now'))"))
+    .addColumn("created_at", "text", (col) => col.notNull().defaultTo(sql`(datetime('now'))`))
+    .addColumn("updated_at", "text", (col) => col.notNull().defaultTo(sql`(datetime('now'))`))
     .execute();
 
   // ── Locations (sub-entities of worlds) ──────────────────────
@@ -62,8 +62,8 @@ export async function up(database: Kysely<unknown>): Promise<void> {
     .addColumn("description", "text")
     .addColumn("connections", "text", (col) => col.notNull().defaultTo("[]"))
     .addColumn("parent_location_id", "text", (col) => col.references("locations.id"))
-    .addColumn("created_at", "text", (col) => col.notNull().defaultTo("(datetime('now'))"))
-    .addColumn("updated_at", "text", (col) => col.notNull().defaultTo("(datetime('now'))"))
+    .addColumn("created_at", "text", (col) => col.notNull().defaultTo(sql`(datetime('now'))`))
+    .addColumn("updated_at", "text", (col) => col.notNull().defaultTo(sql`(datetime('now'))`))
     .execute();
 
   await database.schema.createIndex("idx_locations_world").on("locations").column("world_id").execute();
@@ -83,8 +83,8 @@ export async function up(database: Kysely<unknown>): Promise<void> {
     .addColumn("properties", "text", (col) => col.notNull().defaultTo("{}"))
     .addColumn("value", "integer", (col) => col.notNull().defaultTo(0))
     .addColumn("weight", "real", (col) => col.notNull().defaultTo(0))
-    .addColumn("created_at", "text", (col) => col.notNull().defaultTo("(datetime('now'))"))
-    .addColumn("updated_at", "text", (col) => col.notNull().defaultTo("(datetime('now'))"))
+    .addColumn("created_at", "text", (col) => col.notNull().defaultTo(sql`(datetime('now'))`))
+    .addColumn("updated_at", "text", (col) => col.notNull().defaultTo(sql`(datetime('now'))`))
     .execute();
 
   await database.schema.createIndex("idx_items_world").on("items").column("world_id").execute();
@@ -102,8 +102,8 @@ export async function up(database: Kysely<unknown>): Promise<void> {
     .addColumn("visibility", "text", (col) => col.notNull().defaultTo("visible"))
     .addColumn("spawn_condition", "text")
     .addColumn("respawnable", "integer", (col) => col.notNull().defaultTo(0))
-    .addColumn("created_at", "text", (col) => col.notNull().defaultTo("(datetime('now'))"))
-    .addColumn("updated_at", "text", (col) => col.notNull().defaultTo("(datetime('now'))"))
+    .addColumn("created_at", "text", (col) => col.notNull().defaultTo(sql`(datetime('now'))`))
+    .addColumn("updated_at", "text", (col) => col.notNull().defaultTo(sql`(datetime('now'))`))
     .execute();
 
   await database.schema.createIndex("idx_world_items_world").on("world_items").column("world_id").execute();
@@ -126,8 +126,8 @@ export async function up(database: Kysely<unknown>): Promise<void> {
     .addColumn("turn_strategy", "text")
     .addColumn("max_turns", "integer")
     .addColumn("auto_advance", "integer")
-    .addColumn("created_at", "text", (col) => col.notNull().defaultTo("(datetime('now'))"))
-    .addColumn("updated_at", "text", (col) => col.notNull().defaultTo("(datetime('now'))"))
+    .addColumn("created_at", "text", (col) => col.notNull().defaultTo(sql`(datetime('now'))`))
+    .addColumn("updated_at", "text", (col) => col.notNull().defaultTo(sql`(datetime('now'))`))
     .execute();
 
   await database.schema.createIndex("idx_chats_created_by").on("chats").column("created_by").execute();
@@ -159,8 +159,8 @@ export async function up(database: Kysely<unknown>): Promise<void> {
     .addColumn("creator", "text")
     .addColumn("character_version", "text")
     .addColumn("import_spec", "text", (col) => col.notNull().defaultTo("raw"))
-    .addColumn("created_at", "text", (col) => col.notNull().defaultTo("(datetime('now'))"))
-    .addColumn("updated_at", "text", (col) => col.notNull().defaultTo("(datetime('now'))"))
+    .addColumn("created_at", "text", (col) => col.notNull().defaultTo(sql`(datetime('now'))`))
+    .addColumn("updated_at", "text", (col) => col.notNull().defaultTo(sql`(datetime('now'))`))
     .execute();
 
   await database.schema.createIndex("idx_actors_user_id").on("actors").column("user_id").execute();
@@ -173,7 +173,7 @@ export async function up(database: Kysely<unknown>): Promise<void> {
     .addColumn("chat_id", "text", (col) => col.notNull().references("chats.id"))
     .addColumn("actor_id", "text", (col) => col.notNull().references("actors.id"))
     .addColumn("role_in_chat", "text", (col) => col.notNull().defaultTo("member"))
-    .addColumn("joined_at", "text", (col) => col.notNull().defaultTo("(datetime('now'))"))
+    .addColumn("joined_at", "text", (col) => col.notNull().defaultTo(sql`(datetime('now'))`))
     .addPrimaryKeyConstraint("pk_chat_participants", ["chat_id", "actor_id"])
     .execute();
 
@@ -190,8 +190,8 @@ export async function up(database: Kysely<unknown>): Promise<void> {
     .addColumn("system_prompt", "text")
     .addColumn("agent_type", "text", (col) => col.notNull().defaultTo("none"))
     .addColumn("settings", "text", (col) => col.notNull().defaultTo("{}"))
-    .addColumn("created_at", "text", (col) => col.notNull().defaultTo("(datetime('now'))"))
-    .addColumn("updated_at", "text", (col) => col.notNull().defaultTo("(datetime('now'))"))
+    .addColumn("created_at", "text", (col) => col.notNull().defaultTo(sql`(datetime('now'))`))
+    .addColumn("updated_at", "text", (col) => col.notNull().defaultTo(sql`(datetime('now'))`))
     .execute();
 
   await database.schema.createIndex("idx_characters_owner").on("characters").column("owner_id").execute();
@@ -207,8 +207,8 @@ export async function up(database: Kysely<unknown>): Promise<void> {
     .addColumn("confidence", "real", (col) => col.notNull().defaultTo(1))
     .addColumn("importance", "integer", (col) => col.notNull().defaultTo(1))
     .addColumn("keywords", "text", (col) => col.defaultTo("[]"))
-    .addColumn("created_at", "text", (col) => col.notNull().defaultTo("(datetime('now'))"))
-    .addColumn("updated_at", "text", (col) => col.notNull().defaultTo("(datetime('now'))"))
+    .addColumn("created_at", "text", (col) => col.notNull().defaultTo(sql`(datetime('now'))`))
+    .addColumn("updated_at", "text", (col) => col.notNull().defaultTo(sql`(datetime('now'))`))
     .addColumn("expires_at", "text")
     .execute();
 
@@ -226,8 +226,8 @@ export async function up(database: Kysely<unknown>): Promise<void> {
     .addColumn("category", "text", (col) => col.notNull().defaultTo("general"))
     .addColumn("pinned", "integer", (col) => col.notNull().defaultTo(0))
     .addColumn("sort_order", "integer", (col) => col.notNull().defaultTo(0))
-    .addColumn("created_at", "text", (col) => col.notNull().defaultTo("(datetime('now'))"))
-    .addColumn("updated_at", "text", (col) => col.notNull().defaultTo("(datetime('now'))"))
+    .addColumn("created_at", "text", (col) => col.notNull().defaultTo(sql`(datetime('now'))`))
+    .addColumn("updated_at", "text", (col) => col.notNull().defaultTo(sql`(datetime('now'))`))
     .execute();
 
   await database.schema.createIndex("idx_actor_notes_actor").on("actor_notes").column("actor_id").execute();
@@ -247,8 +247,8 @@ export async function up(database: Kysely<unknown>): Promise<void> {
     .addColumn("metadata", "text", (col) => col.defaultTo("{}"))
     .addColumn("equipped", "integer", (col) => col.notNull().defaultTo(0))
     .addColumn("sort_order", "integer", (col) => col.notNull().defaultTo(0))
-    .addColumn("created_at", "text", (col) => col.notNull().defaultTo("(datetime('now'))"))
-    .addColumn("updated_at", "text", (col) => col.notNull().defaultTo("(datetime('now'))"))
+    .addColumn("created_at", "text", (col) => col.notNull().defaultTo(sql`(datetime('now'))`))
+    .addColumn("updated_at", "text", (col) => col.notNull().defaultTo(sql`(datetime('now'))`))
     .execute();
 
   await database.schema.createIndex("idx_actor_items_actor").on("actor_items").column("actor_id").execute();
@@ -271,8 +271,8 @@ export async function up(database: Kysely<unknown>): Promise<void> {
     .addColumn("priority", "integer", (col) => col.notNull().defaultTo(100))
     .addColumn("comment", "text")
     .addColumn("sort_order", "integer", (col) => col.notNull().defaultTo(0))
-    .addColumn("created_at", "text", (col) => col.notNull().defaultTo("(datetime('now'))"))
-    .addColumn("updated_at", "text", (col) => col.notNull().defaultTo("(datetime('now'))"))
+    .addColumn("created_at", "text", (col) => col.notNull().defaultTo(sql`(datetime('now'))`))
+    .addColumn("updated_at", "text", (col) => col.notNull().defaultTo(sql`(datetime('now'))`))
     .execute();
 
   await database.schema.createIndex("idx_actor_lore_actor").on("actor_lore_entries").column("actor_id").execute();
@@ -296,8 +296,8 @@ export async function up(database: Kysely<unknown>): Promise<void> {
     .addColumn("priority", "integer", (col) => col.notNull().defaultTo(100))
     .addColumn("comment", "text")
     .addColumn("sort_order", "integer", (col) => col.notNull().defaultTo(0))
-    .addColumn("created_at", "text", (col) => col.notNull().defaultTo("(datetime('now'))"))
-    .addColumn("updated_at", "text", (col) => col.notNull().defaultTo("(datetime('now'))"))
+    .addColumn("created_at", "text", (col) => col.notNull().defaultTo(sql`(datetime('now'))`))
+    .addColumn("updated_at", "text", (col) => col.notNull().defaultTo(sql`(datetime('now'))`))
     .execute();
 
   await database.schema.createIndex("idx_world_lore_world").on("world_lore_entries").column("world_id").execute();
@@ -318,7 +318,7 @@ export async function up(database: Kysely<unknown>): Promise<void> {
     .addColumn("height", "integer")
     .addColumn("duration_secs", "real")
     .addColumn("alt_text", "text")
-    .addColumn("created_at", "text", (col) => col.notNull().defaultTo("(datetime('now'))"))
+    .addColumn("created_at", "text", (col) => col.notNull().defaultTo(sql`(datetime('now'))`))
     .execute();
 
   await database.schema.createIndex("idx_assets_owner").on("assets").column("owner_id").execute();
@@ -331,7 +331,7 @@ export async function up(database: Kysely<unknown>): Promise<void> {
     .addColumn("entity_id", "text", (col) => col.notNull())
     .addColumn("label", "text")
     .addColumn("sort_order", "integer", (col) => col.notNull().defaultTo(0))
-    .addColumn("created_at", "text", (col) => col.notNull().defaultTo("(datetime('now'))"))
+    .addColumn("created_at", "text", (col) => col.notNull().defaultTo(sql`(datetime('now'))`))
     .addPrimaryKeyConstraint("pk_asset_links", ["asset_id", "entity_type", "entity_id"])
     .execute();
 
@@ -364,7 +364,7 @@ export async function up(database: Kysely<unknown>): Promise<void> {
     .addColumn("hidden_reason", "text")
     .addColumn("idempotency_key", "text")
     .addColumn("continuation_index", "integer")
-    .addColumn("created_at", "text", (col) => col.notNull().defaultTo("(datetime('now'))"))
+    .addColumn("created_at", "text", (col) => col.notNull().defaultTo(sql`(datetime('now'))`))
     .addColumn("edited_at", "text")
     .addColumn("attachments", "text", (col) => col.defaultTo("[]"))
     .execute();
@@ -386,7 +386,7 @@ export async function up(database: Kysely<unknown>): Promise<void> {
     .addColumn("name", "text", (col) => col.notNull())
     .addColumn("key_type", "text", (col) => col.notNull())
     .addColumn("encrypted_key", "text", (col) => col.notNull())
-    .addColumn("created_at", "text", (col) => col.notNull().defaultTo("(datetime('now'))"))
+    .addColumn("created_at", "text", (col) => col.notNull().defaultTo(sql`(datetime('now'))`))
     .addColumn("expires_at", "text")
     .addColumn("status", "text", (col) => col.notNull().defaultTo("active"))
     .execute();
@@ -401,8 +401,8 @@ export async function up(database: Kysely<unknown>): Promise<void> {
     .addColumn("user_id", "text", (col) => col.notNull().references("users.id"))
     .addColumn("provider_name", "text", (col) => col.notNull())
     .addColumn("api_key_encrypted", "text", (col) => col.notNull())
-    .addColumn("created_at", "text", (col) => col.notNull().defaultTo("(datetime('now'))"))
-    .addColumn("updated_at", "text", (col) => col.notNull().defaultTo("(datetime('now'))"))
+    .addColumn("created_at", "text", (col) => col.notNull().defaultTo(sql`(datetime('now'))`))
+    .addColumn("updated_at", "text", (col) => col.notNull().defaultTo(sql`(datetime('now'))`))
     .execute();
 
   await database.schema.createIndex("idx_user_api_keys_user_provider").on("user_api_keys").columns(["user_id", "provider_name"]).execute();
@@ -422,7 +422,7 @@ export async function up(database: Kysely<unknown>): Promise<void> {
     .addColumn("cancel_reason_detail", "text")
     .addColumn("cancel_source", "text")
     .addColumn("abort_signal_id", "text")
-    .addColumn("started_at", "text", (col) => col.notNull().defaultTo("(datetime('now'))"))
+    .addColumn("started_at", "text", (col) => col.notNull().defaultTo(sql`(datetime('now'))`))
     .addColumn("completed_at", "text")
     .addColumn("prompt_tokens", "integer")
     .addColumn("completion_tokens", "integer")
@@ -440,8 +440,8 @@ export async function up(database: Kysely<unknown>): Promise<void> {
     .addColumn("partial_content", "text")
     .addColumn("step_index", "integer", (col) => col.defaultTo(0))
     .addColumn("total_steps", "integer", (col) => col.defaultTo(1))
-    .addColumn("created_at", "text", (col) => col.notNull().defaultTo("(datetime('now'))"))
-    .addColumn("updated_at", "text", (col) => col.notNull().defaultTo("(datetime('now'))"))
+    .addColumn("created_at", "text", (col) => col.notNull().defaultTo(sql`(datetime('now'))`))
+    .addColumn("updated_at", "text", (col) => col.notNull().defaultTo(sql`(datetime('now'))`))
     .execute();
 
   await database.schema.createIndex("idx_generation_attempts_chat").on("generation_attempts").column("chat_id").execute();
@@ -469,10 +469,10 @@ export async function up(database: Kysely<unknown>): Promise<void> {
     .addColumn("gm_decision", "text")
     .addColumn("world_events", "text", (col) => col.notNull().defaultTo("[]"))
     .addColumn("quest_progress", "text", (col) => col.notNull().defaultTo("[]"))
-    .addColumn("started_at", "text", (col) => col.notNull().defaultTo("(datetime('now'))"))
+    .addColumn("started_at", "text", (col) => col.notNull().defaultTo(sql`(datetime('now'))`))
     .addColumn("completed_at", "text")
-    .addColumn("created_at", "text", (col) => col.notNull().defaultTo("(datetime('now'))"))
-    .addColumn("updated_at", "text", (col) => col.notNull().defaultTo("(datetime('now'))"))
+    .addColumn("created_at", "text", (col) => col.notNull().defaultTo(sql`(datetime('now'))`))
+    .addColumn("updated_at", "text", (col) => col.notNull().defaultTo(sql`(datetime('now'))`))
     .execute();
 
   await database.schema.createIndex("idx_story_turns_chat").on("story_turns").column("chat_id").execute();
@@ -498,8 +498,8 @@ export async function up(database: Kysely<unknown>): Promise<void> {
     .addColumn("time_location_id", "text", (col) => col.references("locations.id"))
     .addColumn("rewards", "text", (col) => col.notNull().defaultTo("{}"))
     .addColumn("narrative_hooks", "text", (col) => col.notNull().defaultTo("[]"))
-    .addColumn("created_at", "text", (col) => col.notNull().defaultTo("(datetime('now'))"))
-    .addColumn("updated_at", "text", (col) => col.notNull().defaultTo("(datetime('now'))"))
+    .addColumn("created_at", "text", (col) => col.notNull().defaultTo(sql`(datetime('now'))`))
+    .addColumn("updated_at", "text", (col) => col.notNull().defaultTo(sql`(datetime('now'))`))
     .addColumn("completed_at", "text")
     .execute();
 
@@ -516,9 +516,9 @@ export async function up(database: Kysely<unknown>): Promise<void> {
     .addColumn("progress", "integer", (col) => col.notNull().defaultTo(0))
     .addColumn("status", "text", (col) => col.notNull().defaultTo("active"))
     .addColumn("contributed_events", "text", (col) => col.notNull().defaultTo("[]"))
-    .addColumn("started_at", "text", (col) => col.notNull().defaultTo("(datetime('now'))"))
-    .addColumn("created_at", "text", (col) => col.notNull().defaultTo("(datetime('now'))"))
-    .addColumn("updated_at", "text", (col) => col.notNull().defaultTo("(datetime('now'))"))
+    .addColumn("started_at", "text", (col) => col.notNull().defaultTo(sql`(datetime('now'))`))
+    .addColumn("created_at", "text", (col) => col.notNull().defaultTo(sql`(datetime('now'))`))
+    .addColumn("updated_at", "text", (col) => col.notNull().defaultTo(sql`(datetime('now'))`))
     .addColumn("completed_at", "text")
     .execute();
 
@@ -535,7 +535,7 @@ export async function up(database: Kysely<unknown>): Promise<void> {
     .addColumn("trigger_message_id", "text", (col) => col.references("messages.id"))
     .addColumn("trigger_turn_id", "text", (col) => col.references("story_turns.id"))
     .addColumn("description", "text")
-    .addColumn("created_at", "text", (col) => col.notNull().defaultTo("(datetime('now'))"))
+    .addColumn("created_at", "text", (col) => col.notNull().defaultTo(sql`(datetime('now'))`))
     .execute();
 
   await database.schema.createIndex("idx_world_states_world").on("world_states").column("world_id").execute();
@@ -553,8 +553,8 @@ export async function up(database: Kysely<unknown>): Promise<void> {
     .addColumn("relationships", "text", (col) => col.notNull().defaultTo("{}"))
     .addColumn("inventory", "text", (col) => col.notNull().defaultTo("[]"))
     .addColumn("schedule", "text", (col) => col.notNull().defaultTo("{}"))
-    .addColumn("created_at", "text", (col) => col.notNull().defaultTo("(datetime('now'))"))
-    .addColumn("updated_at", "text", (col) => col.notNull().defaultTo("(datetime('now'))"))
+    .addColumn("created_at", "text", (col) => col.notNull().defaultTo(sql`(datetime('now'))`))
+    .addColumn("updated_at", "text", (col) => col.notNull().defaultTo(sql`(datetime('now'))`))
     .execute();
 
   await database.schema.createIndex("idx_npc_states_actor").on("npc_states").column("actor_id").execute();
@@ -574,8 +574,8 @@ export async function up(database: Kysely<unknown>): Promise<void> {
     .addColumn("time_of_day", "text")
     .addColumn("weather", "text")
     .addColumn("hazards", "text", (col) => col.notNull().defaultTo("[]"))
-    .addColumn("created_at", "text", (col) => col.notNull().defaultTo("(datetime('now'))"))
-    .addColumn("updated_at", "text", (col) => col.notNull().defaultTo("(datetime('now'))"))
+    .addColumn("created_at", "text", (col) => col.notNull().defaultTo(sql`(datetime('now'))`))
+    .addColumn("updated_at", "text", (col) => col.notNull().defaultTo(sql`(datetime('now'))`))
     .execute();
 
   await database.schema.createIndex("idx_location_states_location").on("location_states").column("location_id").execute();
@@ -592,7 +592,7 @@ export async function up(database: Kysely<unknown>): Promise<void> {
     .addColumn("generated_cases", "text", (col) => col.notNull())
     .addColumn("metadata", "text", (col) => col.notNull().defaultTo("{}"))
     .addColumn("status", "text", (col) => col.notNull().defaultTo("generated"))
-    .addColumn("created_at", "text", (col) => col.notNull().defaultTo("(datetime('now'))"))
+    .addColumn("created_at", "text", (col) => col.notNull().defaultTo(sql`(datetime('now'))`))
     .addColumn("validated_at", "text")
     .addColumn("validated_by", "text", (col) => col.references("actors.id"))
     .execute();

@@ -5,7 +5,7 @@
  */
 
 import type { LogEntry, SizeLimits } from "./types";
-import { safeJsonStringify } from "../utils";
+import { safeJsonStringify } from "../utils/safe-json";
 
 const DEFAULTS: Required<SizeLimits> = {
   maxMessageBytes: 10_240,

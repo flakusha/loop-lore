@@ -53,7 +53,17 @@ globalThis.chatState = function () {
     totalPages: 1,
     scrollObserver: null as IntersectionObserver | null,
     activeChatName: "Welcome to loop-lore",
-    galleryAssets: [] as Array<{ id: string; name?: string; filename?: string; asset_type?: string; mime_type?: string; size_bytes?: number; width?: number; height?: number; alt_text?: string }>,
+    galleryAssets: [] as Array<{
+      id: string;
+      name?: string;
+      filename?: string;
+      asset_type?: string;
+      mime_type?: string;
+      size_bytes?: number;
+      width?: number;
+      height?: number;
+      alt_text?: string;
+    }>,
     userDisplayName: "User",
     userRole: "solo",
     currentCharacter: null as {

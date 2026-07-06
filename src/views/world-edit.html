@@ -8,7 +8,6 @@
   <main class="main-content" style="padding-top: 0">
     <div class="chat-area">
       <div id="world-edit-form" data-world-id="{{worldId}}">
-
         <!-- Loading State -->
         <div x-show="loading" class="empty-state" style="padding: var(--space-12)">
           <div class="icon">⏳</div>
@@ -23,11 +22,23 @@
 
         <!-- Content (loaded) -->
         <template x-if="!loading && !error && world">
-          <div style="max-width:720px;margin:0 auto;width:100%">
+          <div style="max-width: 720px; margin: 0 auto; width: 100%">
             <!-- Tab Bar -->
             <div class="world-edit-tabs">
-              <button class="world-edit-tab" :class="{ active: activeTab === 'general' }" @click="activeTab = 'general'">General</button>
-              <button class="world-edit-tab" :class="{ active: activeTab === 'locations' }" @click="activeTab = 'locations'; if(!locationsLoaded) loadLocations()">Locations</button>
+              <button
+                class="world-edit-tab"
+                :class="{ active: activeTab === 'general' }"
+                @click="activeTab = 'general'"
+              >
+                General
+              </button>
+              <button
+                class="world-edit-tab"
+                :class="{ active: activeTab === 'locations' }"
+                @click="activeTab = 'locations'; if(!locationsLoaded) loadLocations()"
+              >
+                Locations
+              </button>
             </div>
 
             <!-- General Tab -->
@@ -39,39 +50,86 @@
                 </div>
                 <div class="form-group">
                   <label class="form-label" for="edit-description">Description</label>
-                  <textarea class="form-input form-textarea" id="edit-description" x-model="world.description" rows="3"></textarea>
+                  <textarea
+                    class="form-input form-textarea"
+                    id="edit-description"
+                    x-model="world.description"
+                    rows="3"
+                  ></textarea>
                 </div>
                 <div class="form-group">
                   <label class="form-label" for="edit-lore">Lore</label>
-                  <textarea class="form-input form-textarea" id="edit-lore" x-model="world.lore" rows="6"></textarea>
+                  <textarea
+                    class="form-input form-textarea"
+                    id="edit-lore"
+                    x-model="world.lore"
+                    rows="6"
+                  ></textarea>
                 </div>
                 <div class="form-group">
                   <label class="form-label">Tags</label>
-                  <input type="text" class="form-input" x-model="tagsStr" placeholder="fantasy, adventure (comma separated)" />
+                  <input
+                    type="text"
+                    class="form-input"
+                    x-model="tagsStr"
+                    placeholder="fantasy, adventure (comma separated)"
+                  />
                 </div>
-                <div style="display:flex;gap:var(--space-3);justify-content:flex-end;margin-top:var(--space-6)">
+                <div
+                  style="
+                    display: flex;
+                    gap: var(--space-3);
+                    justify-content: flex-end;
+                    margin-top: var(--space-6);
+                  "
+                >
                   <a href="/views/worlds" class="btn btn-secondary" data-testid="cancel-edit-world">Cancel</a>
-                  <button type="submit" class="btn btn-primary" data-testid="save-world-btn">Save World</button>
+                  <button type="submit" class="btn btn-primary" data-testid="save-world-btn">
+                    Save World
+                  </button>
                 </div>
               </form>
             </div>
 
             <!-- Locations Tab -->
             <div x-show="activeTab === 'locations'">
-              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:var(--space-4)">
-                <h3 style="margin:0">Locations</h3>
-                <button class="btn btn-primary" @click="showAddForm = !showAddForm" x-text="showAddForm ? 'Cancel' : '+ Add Location'"></button>
+              <div
+                style="
+                  display: flex;
+                  justify-content: space-between;
+                  align-items: center;
+                  margin-bottom: var(--space-4);
+                "
+              >
+                <h3 style="margin: 0">Locations</h3>
+                <button
+                  class="btn btn-primary"
+                  @click="showAddForm = !showAddForm"
+                  x-text="showAddForm ? 'Cancel' : '+ Add Location'"
+                ></button>
               </div>
 
               <!-- Add Location Form -->
               <div class="add-location-form" x-show="showAddForm" x-cloak>
                 <div class="form-group">
                   <label class="form-label" for="loc-name">Name *</label>
-                  <input class="form-input" type="text" id="loc-name" x-model="newLocName" placeholder="e.g., Dark Forest" />
+                  <input
+                    class="form-input"
+                    type="text"
+                    id="loc-name"
+                    x-model="newLocName"
+                    placeholder="e.g., Dark Forest"
+                  />
                 </div>
                 <div class="form-group">
                   <label class="form-label" for="loc-desc">Description</label>
-                  <textarea class="form-input form-textarea" id="loc-desc" x-model="newLocDesc" rows="2" placeholder="Optional description"></textarea>
+                  <textarea
+                    class="form-input form-textarea"
+                    id="loc-desc"
+                    x-model="newLocDesc"
+                    rows="2"
+                    placeholder="Optional description"
+                  ></textarea>
                 </div>
                 <div class="form-group">
                   <label class="form-label" for="loc-parent">Parent Location</label>
@@ -82,11 +140,13 @@
                     </template>
                   </select>
                 </div>
-                <button class="btn btn-primary" @click="addLocation()" :disabled="!newLocName.trim()">Add</button>
+                <button class="btn btn-primary" @click="addLocation()" :disabled="!newLocName.trim()">
+                  Add
+                </button>
               </div>
 
               <!-- Loading -->
-              <div x-show="loadingLocations" class="empty-state" style="padding:var(--space-8)">
+              <div x-show="loadingLocations" class="empty-state" style="padding: var(--space-8)">
                 <div class="icon">⏳</div>
                 <div class="title">Loading locations...</div>
               </div>
@@ -100,14 +160,24 @@
                       <div class="location-desc" x-show="loc.description" x-text="loc.description"></div>
                     </div>
                     <div class="location-actions">
-                      <button class="btn btn-danger" style="font-size:12px;padding:var(--space-1) var(--space-3)" @click="deleteLocation(loc.id)">Delete</button>
+                      <button
+                        class="btn btn-danger"
+                        style="font-size: 12px; padding: var(--space-1) var(--space-3)"
+                        @click="deleteLocation(loc.id)"
+                      >
+                        Delete
+                      </button>
                     </div>
                   </div>
                 </template>
               </div>
 
               <!-- Empty State -->
-              <div x-show="!loadingLocations && locationsLoaded && locations.length === 0" class="empty-state" style="padding:var(--space-12)">
+              <div
+                x-show="!loadingLocations && locationsLoaded && locations.length === 0"
+                class="empty-state"
+                style="padding: var(--space-12)"
+              >
                 <div class="icon">🗺️</div>
                 <div class="title">No locations yet</div>
                 <div class="description">Add locations to build your world map.</div>
@@ -115,7 +185,6 @@
             </div>
           </div>
         </template>
-
       </div>
     </div>
   </main>

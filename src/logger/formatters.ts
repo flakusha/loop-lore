@@ -4,7 +4,7 @@
 
 import type { LogEntry } from "./types";
 import { numericToLabel } from "./levels";
-import { safeJsonStringify } from "../utils";
+import { safeJsonStringify } from "../utils/safe-json";
 
 // ── Console Pretty Format ──────────────────────────────────
 
@@ -19,11 +19,22 @@ const RESET = "\u{1B}[0m";
 
 /**
  * Format entry for human-readable console output.
- * Only uses ANSI colors when `color` is true.
+ * ANSI mode (default) — uses ANSI escape codes. Output: "[time] [LEVEL] [module] message"
+ * CSS mode (browser) — returns formatted string + CSS for console.log `%c`.
  *
- * Output: "[20260704T143000.123+02:00] [INFO]  [module] message"
+ * Output: "[time] [LEVEL] [module] message"
  */
-export function formatConsole(entry: LogEntry, isColor = false): string {
+export function formatConsole(entry: LogEntry, isColor?: boolean, mode?: "ansi"): string;
+export function formatConsole(
+  entry: LogEntry,
+  isColor?: boolean,
+  mode?: "css",
+): { formatted: string; css: string };
+export function formatConsole(
+  entry: LogEntry,
+  isColor = false,
+  mode: "ansi" | "css" = "ansi",
+): string | { formatted: string; css: string } {
   const levelLabel = numericToLabel(entry.level).padEnd(5);
   const modulePart = entry.module ? ` [${entry.module}]` : "";
   const msgResult = safeJsonStringify(entry.message);
@@ -36,13 +47,26 @@ export function formatConsole(entry: LogEntry, isColor = false): string {
     line += ` — ${entry.error}`;
   }
 
-  if (isColor) {
-    const c = LEVEL_COLORS[entry.level] ?? "";
-    return c + line + RESET + "\n";
+  if (!isColor) {
+    return line + "\n";
   }
 
-  return line + "\n";
+  if (mode === "css") {
+    const css = LEVEL_CSS[entry.level] ?? "";
+    return { formatted: `%c${line}\n`, css };
+  }
+
+  // ANSI mode
+  const c = LEVEL_COLORS[entry.level] ?? "";
+  return c + line + RESET + "\n";
 }
+
+const LEVEL_CSS: Record<number, string> = {
+  10: "color:#888;",
+  20: "color:#06c;",
+  30: "color:#c90;",
+  40: "color:#c00;font-weight:bold;",
+};
 
 // ── JSONL Serialization ────────────────────────────────────
 

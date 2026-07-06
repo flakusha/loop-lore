@@ -33,4 +33,4 @@ config.*.sh
 bun.lock
 
 # User runtime data directory (SQLite DB, uploads, etc.)
-home/
+loop-lore-data/

@@ -56,7 +56,7 @@ function createDialect(databasePath: string): SqliteDialect {
 
 // Initialize database connection eagerly
 const database: Kysely<DB> = (() => {
-  const dbPath = process.env.LOOP_LORE_DB_PATH ?? path.join(process.cwd(), DATA_DIR, "loop-lore.db");
+  const dbPath = process.env.LOOP_LORE_DB_PATH ?? path.resolve(DATA_DIR, "loop-lore.db");
   // Ensure the parent directory exists — idempotent, safe for sibling/XDG/custom paths
   mkdirSync(path.dirname(dbPath), { recursive: true });
   return new Kysely<DB>({ dialect: createDialect(dbPath) });

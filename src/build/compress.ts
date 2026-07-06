@@ -6,6 +6,7 @@
  */
 
 import { walkDirectory, compressFile, copyDirectory } from "../content/compress";
+import { injectContentHashes } from "../content/hash-injection";
 import { readFileSync, writeFileSync, existsSync } from "node:fs";
 import { extname } from "node:path";
 import { createLogger } from "../logger";
@@ -41,6 +42,13 @@ function main() {
 
   copyDirectory(sourcePublic, directory);
   copyDirectory(sourceViews, directory);
+
+  // Replace bare asset references with content-hashed filenames (e.g. alpine.js → alpine-tx4kdwfm.js)
+  // Enables aggressive Cache-Control: immutable for hashed assets in production.
+  const hashResult = injectContentHashes(directory);
+  if (hashResult.replaced > 0) {
+    log.info(`Hash-injected ${hashResult.replaced} references (${hashResult.skipped} skipped)`);
+  }
 
   const files = walkDirectory(directory);
   let total = 0;
