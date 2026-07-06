@@ -54,7 +54,7 @@ describe("initSmk — null / dev mode", () => {
   });
 
   test("whitespace-only key + required=false returns null", async () => {
-    await initSmk({ serverEncryptionKey: "   ", required: false, ...BASE_ENCRYPTION_CONFIG });
+    await initSmk({ serverEncryptionKey: ' '.repeat(3), required: false, ...BASE_ENCRYPTION_CONFIG });
     expect(getSmk()).toBeNull();
   });
 });

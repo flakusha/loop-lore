@@ -132,14 +132,14 @@ function serveCharacterEdit(characterId: string): Response | null {
   });
 }
 
-// eslint-disable-next-line sonarjs/cognitive-complexity
+ 
 const dispatch: RouteDispatch = async ({
   request,
   context: _context,
   database: _database,
   config: _config,
 }) => {
-  // eslint-disable-line @typescript-eslint/require-await
+   
   const url = new URL(request.url);
   const { pathname } = url;
 

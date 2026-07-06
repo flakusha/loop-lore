@@ -95,10 +95,10 @@ describe("Navigation E2E", () => {
 
       const info = await page.evaluate(() => {
         const all = document.querySelectorAll("#header-slot");
-        return { count: all.length, headers: Array.from(all).map(h => ({
+        return { count: all.length, headers: [...all].map(h => ({
           parentTag: h.parentElement?.tagName || "",
           parentId: h.parentElement?.id || "",
-          testid: h.getAttribute("data-testid") || "",
+          testid: h.dataset.testid || "",
           children: h.children.length,
           text: (h.textContent || "").trim().slice(0, 30),
         }))};

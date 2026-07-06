@@ -94,7 +94,7 @@ interface DeleteLocationOpts {
 }
 
 function extractIds(pathname: string): { worldId: string | null; locId: string | null } {
-  const match = /^\/api\/worlds\/([a-f0-9-]+)(?:\/locations\/([a-f0-9-]+))?$/.exec(pathname);
+  const match = /^\/api\/worlds\/([a-f0-9-]+)(?:\/locations(?:\/([a-f0-9-]+))?)?$/.exec(pathname);
   return { worldId: match?.[1] ?? null, locId: match?.[2] ?? null };
 }
 

@@ -109,7 +109,7 @@ const dispatch: RouteDispatch = async ({ request, context, database }) => {
 
   // ── /api/chats/:id (skip if sub-route like /messages) ─────
   const chatId = extractIdFromPath(pathname, "/api/chats");
-  if (chatId && !pathname.includes("/participants") && !pathname.includes("/messages")) {
+  if (chatId && !pathname.includes("/participants") && !pathname.includes("/messages") && !pathname.includes("/story-turns")) {
     if (method === "GET") {
       return handleGetChat({ database, chatId, context });
     }
