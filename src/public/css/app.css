@@ -4,7 +4,9 @@
    ============================================================ */
 
 /* Alpine.js cloak — hide elements before Alpine boots */
-[x-cloak] { display: none !important; }
+[x-cloak] {
+  display: none !important;
+}
 
 /* ============================================================
    LAYOUT
