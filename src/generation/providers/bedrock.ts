@@ -91,7 +91,7 @@ export class BedrockProvider implements LLMProvider {
       }
     }
 
-    throw lastError ?? new ProviderError("Max retries exceeded", 500, true);
+    throw lastError ?? new ProviderError("Max retries exceeded", undefined, 500, true);
   }
 
   async stream(req: GenerateRequest, handler: StreamHandler): Promise<GenerateResponse> {
@@ -108,7 +108,7 @@ export class BedrockProvider implements LLMProvider {
     // fetchWithRetry already throws on !response.ok
     const reader = response.body?.getReader();
     if (!reader) {
-      throw new ProviderError("No response body for streaming", 500, true);
+      throw new ProviderError("No response body for streaming", undefined, 500, true);
     }
 
     const decoder = new TextDecoder();
@@ -119,7 +119,7 @@ export class BedrockProvider implements LLMProvider {
 
     try {
       while (true) {
-        const { done, value } = await reader.read();
+        const { done, value } = await (reader.read() as Promise<{ done: boolean; value?: Uint8Array }>);
         if (done) break;
 
         buffer += decoder.decode(value, { stream: true });
@@ -138,9 +138,7 @@ export class BedrockProvider implements LLMProvider {
           if (parsed.type === "content") {
             fullContent += parsed.content || "";
             handler({ type: "content", content: parsed.content || "" });
-          }
-
-          if (parsed.type === "done") {
+          } else if (parsed.type === "done") {
             handler({ type: "done", finishReason });
           }
         }
@@ -194,7 +192,12 @@ export class BedrockProvider implements LLMProvider {
     const response = await fetch(url, this.createAuthHeaders("GET", url, undefined));
 
     if (!response.ok) {
-      const data = await response.json().catch(() => ({}));
+      let data: Record<string, unknown>;
+      try {
+        data = (await response.json()) as Record<string, unknown>;
+      } catch {
+        data = {};
+      }
       this.handleErrorResponse(response, data);
     }
 
@@ -239,15 +242,20 @@ export class BedrockProvider implements LLMProvider {
         const response = await fetch(url, this.createAuthHeaders("POST", url, body, apiKey));
         if (response.ok) return response;
 
-        const data = await response.json().catch(() => ({}));
-        this.handleErrorResponse(response, data);
+        let fetchData: Record<string, unknown>;
+        try {
+          fetchData = (await response.json()) as Record<string, unknown>;
+        } catch {
+          fetchData = {};
+        }
+        this.handleErrorResponse(response, fetchData);
       } catch (error) {
         lastError = error as Error;
         if (error instanceof ProviderError && !error.retryable) {
           throw error;
         }
         if (signal?.aborted) {
-          throw new ProviderError("Request cancelled", undefined, false);
+          throw new ProviderError("Request cancelled", undefined, undefined, false);
         }
         if (attempt < this.retries) {
           const delay = Math.min(1000 * 2 ** attempt, 10_000);
@@ -256,7 +264,7 @@ export class BedrockProvider implements LLMProvider {
       }
     }
 
-    throw lastError ?? new ProviderError("Max retries exceeded", 500, true);
+    throw lastError ?? new ProviderError("Max retries exceeded", undefined, 500, true);
   }
 
   private createAuthHeaders(
@@ -287,7 +295,7 @@ export class BedrockProvider implements LLMProvider {
 
     switch (response.status) {
       case 400: {
-        throw new ProviderError(message, 400, false);
+        throw new ProviderError(message, undefined, 400, false);
       }
       case 401: {
         throw new ProviderAuthError(message);
@@ -298,10 +306,10 @@ export class BedrockProvider implements LLMProvider {
       case 500:
       case 502:
       case 503: {
-        throw new ProviderError(message, response.status, true);
+        throw new ProviderError(message, undefined, response.status, true);
       }
       default: {
-        throw new ProviderError(message, response.status, response.status >= 500);
+        throw new ProviderError(message, undefined, response.status, response.status >= 500);
       }
     }
   }
@@ -346,10 +354,10 @@ export class BedrockProvider implements LLMProvider {
     }
     // Map Bedrock SSE format to our ChunkEvent format
     if (parsed.type === "content") {
-      return { type: "content", content: String(parsed.content ?? "") };
+      return { type: "content", content: typeof parsed.content === "string" ? parsed.content : "" };
     }
     if (parsed.type === "error") {
-      return { type: "error", content: String(parsed.error ?? "Unknown error") };
+      return { type: "error", content: typeof parsed.error === "string" ? parsed.error : "Unknown error" };
     }
     return null;
   }

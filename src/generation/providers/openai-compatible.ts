@@ -70,7 +70,7 @@ export class OpenAiCompatibleProvider implements LLMProvider {
 
     const choice = data.choices?.[0];
     if (!choice) {
-      throw new ProviderError("Empty response from provider", 500, true);
+      throw new ProviderError("Empty response from provider", undefined, 500, true);
     }
 
     return {
@@ -90,7 +90,7 @@ export class OpenAiCompatibleProvider implements LLMProvider {
     const signal = req.signal;
 
     const url = new URL(`${this.baseUrl}/chat/completions`);
-    const response = await this.fetchRaw(url.toString(), body, signal, req.apiKey);
+    const response = await this.fetchRaw(url.href, body, signal, req.apiKey);
 
     if (!response.ok) {
       await this.handleErrorResponse(response);
@@ -98,7 +98,7 @@ export class OpenAiCompatibleProvider implements LLMProvider {
 
     const reader = response.body?.getReader();
     if (!reader) {
-      throw new ProviderError("No response body for streaming", 500, true);
+      throw new ProviderError("No response body for streaming", undefined, 500, true);
     }
 
     const decoder = new TextDecoder();
@@ -110,7 +110,7 @@ export class OpenAiCompatibleProvider implements LLMProvider {
 
     try {
       while (true) {
-        const { done, value } = await reader.read();
+        const { done, value } = await (reader.read() as Promise<{ done: boolean; value?: Uint8Array }>);
         if (done) break;
 
         buffer += decoder.decode(value, { stream: true });
@@ -210,7 +210,7 @@ export class OpenAiCompatibleProvider implements LLMProvider {
 
   async listModels(): Promise<string[]> {
     const url = new URL(`${this.baseUrl}/models`);
-    const response = await this.fetchRaw(url.toString(), undefined, undefined);
+    const response = await this.fetchRaw(url.href, undefined, undefined);
 
     if (!response.ok) {
       await this.handleErrorResponse(response);
@@ -251,7 +251,7 @@ export class OpenAiCompatibleProvider implements LLMProvider {
 
     // Provider-specific overrides
     for (const [key, value] of Object.entries(req.params)) {
-      if (!(key in body) && !STANDARD_KEYS.has(key)) {
+      if (!Object.hasOwn(body, key) && !STANDARD_KEYS.has(key)) {
         body[key] = value;
       }
     }
@@ -283,7 +283,7 @@ export class OpenAiCompatibleProvider implements LLMProvider {
           throw error;
         }
         if (signal?.aborted) {
-          throw new ProviderError("Request cancelled", undefined, false);
+          throw new ProviderError("Request cancelled", undefined, undefined, false);
         }
         // Exponential backoff
         if (attempt < this.retries) {
@@ -293,7 +293,7 @@ export class OpenAiCompatibleProvider implements LLMProvider {
       }
     }
 
-    throw lastError ?? new ProviderError("Max retries exceeded", 500, true);
+    throw lastError ?? new ProviderError("Max retries exceeded", undefined, 500, true);
   }
 
   private async fetchRaw(
@@ -347,18 +347,18 @@ export class OpenAiCompatibleProvider implements LLMProvider {
         throw new ProviderRateLimitError(retryAfter ? Number(retryAfter) : undefined);
       }
       case 400: {
-        throw new ProviderError(message, 400, false);
+        throw new ProviderError(message, undefined, 400, false);
       }
       case 422: {
-        throw new ProviderError(message, 422, false);
+        throw new ProviderError(message, undefined, 422, false);
       }
       case 500:
       case 502:
       case 503: {
-        throw new ProviderError(message, response.status, true);
+        throw new ProviderError(message, undefined, response.status, true);
       }
       default: {
-        throw new ProviderError(message, response.status, response.status >= 500);
+        throw new ProviderError(message, undefined, response.status, response.status >= 500);
       }
     }
   }
