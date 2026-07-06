@@ -167,6 +167,7 @@ globalThis.chatState = function () {
           uiStore.showChatList = false;
           uiStore.showGallery = false;
           uiStore.showCharacterInfo = false;
+          uiStore.showChatSettings = false;
         }
       }
     },
@@ -809,6 +810,104 @@ globalThis.chatState = function () {
         }
       } catch {
         this.$dispatch("show-toast", { type: "error", message: "Network error removing message" });
+      }
+    },
+
+    /** Delete a chat with confirmation */
+    async deleteChat(chatId: string, event: Event) {
+      if (!confirm("Delete this chat and all its messages?")) return;
+      event.stopImmediatePropagation();
+      const button = event.currentTarget as HTMLElement | null;
+      try {
+        const res = await apiFetch(`/api/chats/${chatId}`, { method: "DELETE" });
+        if (res.ok) {
+          this.chats = this.chats.filter((c) => c.id !== chatId);
+          if (this.activeChat === chatId) {
+            this.activeChat = null;
+            this.activeChatName = "Welcome to loop-lore";
+            this.messages = [];
+            const titleEl = document.querySelector("#page-title");
+            if (titleEl) titleEl.textContent = this.activeChatName;
+          }
+          this.$dispatch("show-toast", { type: "success", message: "Chat deleted" });
+        } else {
+          const err = await res.json();
+          this.$dispatch("show-toast", { type: "error", message: err.error || "Failed to delete chat" });
+        }
+      } catch {
+        this.$dispatch("show-toast", { type: "error", message: "Network error deleting chat" });
+      }
+      button?.blur();
+    },
+
+    /** Rename a chat via prompt */
+    async renameChat(chatId: string) {
+      const chat = this.chats.find((c) => c.id === chatId);
+      const currentName = chat?.name || "Chat";
+      const newName = prompt("Rename chat:", currentName);
+      if (!newName || newName.trim() === "" || newName === currentName) return;
+      try {
+        const res = await apiFetch(`/api/chats/${chatId}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: jsonBody({ name: newName.trim() }),
+        });
+        if (res.ok) {
+          if (chat) chat.name = newName.trim();
+          if (this.activeChat === chatId) {
+            this.activeChatName = newName.trim();
+            const titleEl = document.querySelector("#page-title");
+            if (titleEl) titleEl.textContent = this.activeChatName;
+          }
+          this.$dispatch("show-toast", { type: "success", message: "Chat renamed" });
+        } else {
+          const err = await res.json();
+          this.$dispatch("show-toast", { type: "error", message: err.error || "Failed to rename chat" });
+        }
+      } catch {
+        this.$dispatch("show-toast", { type: "error", message: "Network error renaming chat" });
+      }
+    },
+
+    /** Chat settings state */
+    _chatSettingsName: "",
+    _chatSettingsMode: "chat",
+    _chatSettingsTurnStrategy: "round_robin",
+
+    openChatSettings() {
+      const chat = this.chats.find((c) => c.id === this.activeChat);
+      this._chatSettingsName = chat?.name || "";
+      this._chatSettingsMode = "chat";
+      this._chatSettingsTurnStrategy = "round_robin";
+      globalThis.Alpine.store("ui").showChatSettings = true;
+    },
+
+    async saveChatSettings() {
+      if (!this.activeChat || !this._chatSettingsName.trim()) return;
+      try {
+        const res = await apiFetch(`/api/chats/${this.activeChat}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: jsonBody({
+            name: this._chatSettingsName.trim(),
+            mode: this._chatSettingsMode,
+            turnStrategy: this._chatSettingsTurnStrategy,
+          }),
+        });
+        if (res.ok) {
+          const chat = this.chats.find((c) => c.id === this.activeChat);
+          if (chat) chat.name = this._chatSettingsName.trim();
+          this.activeChatName = this._chatSettingsName.trim();
+          const titleEl = document.querySelector("#page-title");
+          if (titleEl) titleEl.textContent = this.activeChatName;
+          globalThis.Alpine.store("ui").showChatSettings = false;
+          this.$dispatch("show-toast", { type: "success", message: "Chat settings saved" });
+        } else {
+          const err = await res.json();
+          this.$dispatch("show-toast", { type: "error", message: err.error || "Failed to save settings" });
+        }
+      } catch {
+        this.$dispatch("show-toast", { type: "error", message: "Network error saving settings" });
       }
     },
 

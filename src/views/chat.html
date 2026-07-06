@@ -35,6 +35,14 @@
     >
       ℹ
     </button>
+    <button
+      class="btn-icon"
+      title="Chat settings"
+      @click="$store.ui.showChatSettings = true"
+      data-testid="toggle-chat-settings"
+    >
+      ⚙
+    </button>
   </div>
 </header>
 
@@ -55,14 +63,22 @@
           <div class="nav-item" style="color: var(--text-tertiary); font-size: 13px">No chats yet</div>
         </template>
         <template x-for="chat in chats" :key="chat.id">
-          <a
-            class="nav-item"
-            :class="{ active: activeChat === chat.id }"
-            href="#"
-            @click.prevent="selectChat(chat.id)"
-          >
-            <span class="name" x-text="chat.name"></span>
-          </a>
+          <div class="nav-item-row">
+            <a
+              class="nav-item"
+              :class="{ active: activeChat === chat.id }"
+              href="#"
+              @click.prevent="selectChat(chat.id)"
+            >
+              <span class="name" x-text="chat.name"></span>
+            </a>
+            <span class="nav-item-actions">
+              <button class="btn-icon btn-xs" title="Rename" @click.prevent="renameChat(chat.id)">✏️</button>
+              <button class="btn-icon btn-xs" title="Delete" @click.prevent="deleteChat(chat.id, $event)">
+                🗑
+              </button>
+            </span>
+          </div>
         </template>
       </div>
       <div style="padding: var(--space-3)">
@@ -398,4 +414,53 @@
       </form>
     </div>
   </main>
+
+  <!-- Chat Settings Modal -->
+  <div
+    x-show="$store.ui.showChatSettings"
+    x-cloak
+    x-effect="if($store.ui.showChatSettings) openChatSettings()"
+    class="modal-overlay"
+    @click.self="$store.ui.showChatSettings = false"
+    data-testid="chat-settings-modal"
+  >
+    <div class="modal" style="max-width: 420px">
+      <div class="modal-header">
+        <span class="title">Chat Settings</span>
+        <button class="btn-icon" @click="$store.ui.showChatSettings = false">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">Chat Name</label>
+          <input
+            class="form-input"
+            type="text"
+            x-model="_chatSettingsName"
+            placeholder="Chat name"
+            data-testid="settings-chat-name"
+          />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Mode</label>
+          <select class="form-input" x-model="_chatSettingsMode" data-testid="settings-chat-mode">
+            <option value="chat">Chat</option>
+            <option value="roleplay">Roleplay</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Turn Strategy</label>
+          <select class="form-input" x-model="_chatSettingsTurnStrategy" data-testid="settings-turn-strategy">
+            <option value="round_robin">Round Robin</option>
+            <option value="first_participant">First Participant</option>
+          </select>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-ghost" @click="$store.ui.showChatSettings = false">Cancel</button>
+        <button class="btn btn-primary" @click="saveChatSettings()" data-testid="settings-save-btn">
+          Save
+        </button>
+      </div>
+    </div>
+  </div>
 </div>
