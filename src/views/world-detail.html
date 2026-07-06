@@ -1,5 +1,5 @@
 <!-- World Detail Page -->
-<header id="header-slot" class="main-header" data-testid="world-detail-header">
+<header id="header-slot" class="main-header" data-page="world-detail" data-testid="world-detail-header">
   <button class="hamburger" onclick="toggleSidebar()" data-testid="hamburger">☰</button>
   <span class="title" id="page-title">World Details</span>
   <div class="actions">
@@ -76,10 +76,3 @@
     </div>
   </div>
 </div>
-
-<script>
-  (function f() {
-    if (typeof loadWorldDetail === "function") loadWorldDetail();
-    else setTimeout(f, 10);
-  })();
-</script>

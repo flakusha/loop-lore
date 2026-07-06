@@ -1,5 +1,5 @@
 <!-- Characters View -->
-<header id="header-slot" class="main-header" data-testid="characters-header">
+<header id="header-slot" class="main-header" data-page="characters" data-testid="characters-header">
   <button class="hamburger" onclick="toggleSidebar()" data-testid="hamburger">☰</button>
   <span class="title">Characters</span>
   <div class="actions">
@@ -240,10 +240,3 @@
     </div>
   </main>
 </div>
-
-<script>
-  (function f() {
-    if (typeof loadCharactersPage === "function") loadCharactersPage();
-    else setTimeout(f, 10);
-  })();
-</script>

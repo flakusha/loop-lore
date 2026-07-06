@@ -9,6 +9,14 @@ function escapeHtml(str: string): string {
   return div.innerHTML;
 }
 
+function escapeAttr(s: string): string {
+  return String(s || "")
+    .replace(/&/g, "&amp;")
+    .replace(/"/g, "&quot;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+}
+
 function formatSize(bytes: number): string {
   if (!bytes) return "";
   if (bytes < 1024) return `${bytes} B`;
@@ -351,6 +359,279 @@ function thumbForAsset(a: any): string {
   }
 };
 
+(globalThis as any).saveCharacterEdit = async function (id: string): Promise<void> {
+  const body = {
+    displayName: (document.getElementById("edit-name") as HTMLInputElement)?.value,
+    description: (document.getElementById("edit-desc") as HTMLTextAreaElement)?.value,
+    systemPrompt: (document.getElementById("edit-system") as HTMLTextAreaElement)?.value,
+    personality: (document.getElementById("edit-personality") as HTMLTextAreaElement)?.value,
+    welcomeMessage: (document.getElementById("edit-greeting") as HTMLTextAreaElement)?.value,
+    mesExample: (document.getElementById("edit-example") as HTMLTextAreaElement)?.value,
+    avatarAssetId: (document.getElementById("char-avatar-id") as HTMLInputElement)?.value || null,
+  };
+  try {
+    const btn = document.querySelector<HTMLElement>('[data-testid="save-character-btn"]');
+    if (btn) {
+      btn.textContent = "Saving...";
+      (btn as HTMLButtonElement).disabled = true;
+    }
+    const res = await apiFetch(`/api/actors/${id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    });
+    if (res.ok) {
+      showToast("success", "Character saved");
+      location.assign("/views/characters");
+    } else {
+      const err = await res.json();
+      showToast("error", err.error || "Failed to save");
+    }
+  } catch {
+    showToast("error", "Network error");
+  }
+};
+
+(globalThis as any).loadCharacterEditPage = async function (): Promise<void> {
+  const container = document.querySelector<HTMLElement>("#character-edit-form");
+  const id = container?.dataset.characterId;
+  if (!id) return;
+  __log("DEBUG", "loadCharacterEditPage", { id });
+  try {
+    const res = await apiFetch("/api/actors/" + id);
+    if (!res.ok) return;
+    const c = await res.json();
+    const avatarHtml = c.avatar_asset_id
+      ? `<img src="/api/assets/${c.avatar_asset_id}/thumb" style="width:100%;height:100%;object-fit:cover" alt="Avatar" />`
+      : "<span>👤</span>";
+    if (!container) return;
+    container.innerHTML = `
+      <div style="max-width:720px;margin:0 auto;width:100%">
+        <form id="char-edit-form" data-testid="character-edit-form">
+          <div class="form-group" style="display:flex;align-items:flex-start;gap:var(--space-4)">
+            <div style="width:80px;height:80px;border-radius:var(--radius-md);background:var(--bg-tertiary);display:flex;align-items:center;justify-content:center;font-size:36px;flex-shrink:0;overflow:hidden;border:1px solid var(--border-default)">
+              <div id="avatar-preview">${avatarHtml}</div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:var(--space-2)">
+              <label class="btn btn-secondary" style="cursor:pointer">
+                <span id="upload-avatar-label">Upload Avatar</span>
+                <input type="file" accept="image/*" style="display:none" id="avatar-input"
+                  onchange="(async function(input){const file=input.files[0];if(!file)return;const fd=new FormData();fd.append('file',file);fd.append('alt_text','Avatar');document.getElementById('upload-avatar-label').textContent='Uploading...';const r=await apiFetch('/api/assets',{method:'POST',body:fd});if(r.ok){const a=await r.json();document.getElementById('avatar-preview').innerHTML='<img src=/api/assets/'+a.id+'/thumb style=width:100%;height:100%;object-fit:cover alt=Avatar />';document.getElementById('char-avatar-id').value=a.id;showToast('success','Avatar uploaded')}else{showToast('error','Upload failed')}document.getElementById('upload-avatar-label').textContent='Upload Avatar';})(this)" />
+              </label>
+              ${c.avatar_asset_id ? "<button type=\"button\" class=\"btn btn-danger\" onclick=\"document.getElementById('avatar-preview').innerHTML='<span>👤</span>';document.getElementById('char-avatar-id').value=''\">Remove</button>" : ""}
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="edit-name">Display Name</label>
+            <input class="form-input" type="text" id="edit-name" value="${escapeAttr(c.display_name || "")}" />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="edit-desc">Description</label>
+            <textarea class="form-input form-textarea" id="edit-desc" rows="3">${escapeAttr(c.description || "")}</textarea>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="edit-system">System Prompt</label>
+            <textarea class="form-input form-textarea" id="edit-system" rows="6">${escapeAttr(c.system_prompt || "")}</textarea>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="edit-personality">Personality</label>
+            <textarea class="form-input form-textarea" id="edit-personality" rows="4">${escapeAttr(c.personality || "")}</textarea>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="edit-greeting">Welcome Message (first_mes)</label>
+            <textarea class="form-input form-textarea" id="edit-greeting" rows="4">${escapeAttr(c.welcome_message || "")}</textarea>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="edit-example">Example Messages (mes_example)</label>
+            <textarea class="form-input form-textarea" id="edit-example" rows="5">${escapeAttr(c.mes_example || "")}</textarea>
+          </div>
+          <input type="hidden" id="char-avatar-id" value="${c.avatar_asset_id || ""}" />
+          <div style="display:flex;gap:var(--space-3);justify-content:flex-end;margin-top:var(--space-6)">
+            <a href="/views/characters" class="btn btn-secondary" data-testid="cancel-edit-character">Cancel</a>
+            <button type="button" class="btn btn-primary" onclick="saveCharacterEdit('${id}')" data-testid="save-character-btn">Save Character</button>
+          </div>
+        </form>
+      </div>`;
+  } catch {
+    /* ignore */
+  }
+};
+
+(globalThis as any).loadNewChatPage = async function (): Promise<void> {
+  let actors: any[] = [];
+  let selected: any[] = [];
+
+  // Fetch actors
+  try {
+    const res = await apiFetch("/api/actors?pageSize=200");
+    const data = await res.json();
+    actors = (data.data || []).filter((a: any) => a.actor_type !== "user");
+  } catch {
+    /* ignore */
+  }
+
+  // DOM refs
+  const searchInput = document.getElementById("participant-search") as HTMLInputElement | null;
+  const resultsEl = document.getElementById("participant-results");
+  const selectedEl = document.getElementById("selected-participants");
+  const chatType = document.getElementById("chat-type") as HTMLSelectElement | null;
+  const form = document.getElementById("create-chat-form");
+  if (!searchInput || !resultsEl || !selectedEl || !chatType || !form) return;
+
+  const isGroup = () => chatType.value === "group";
+
+  function renderSelected() {
+    if (!selectedEl) return;
+    selectedEl.innerHTML = selected
+      .map(
+        (a: any) =>
+          `<span style="display:inline-flex;align-items:center;gap:var(--space-1);padding:2px var(--space-2);background:var(--bg-tertiary);border-radius:var(--radius-sm);font-size:13px">
+        ${escapeHtml(a.display_name || a.name || "Unknown")}
+        <button type="button" class="btn-icon" style="font-size:14px;width:18px;height:18px" data-id="${a.id}" onclick="removeParticipant('${a.id}')">&times;</button>
+      </span>`,
+      )
+      .join("");
+  }
+
+  (globalThis as any).removeParticipant = function (id: string) {
+    selected = selected.filter((a: any) => a.id !== id);
+    renderSelected();
+    if (resultsEl) resultsEl.style.display = "none";
+  };
+
+  function selectActor(actor: any) {
+    if (isGroup()) {
+      if (!selected.find((a: any) => a.id === actor.id)) selected.push(actor);
+    } else {
+      selected = [actor];
+    }
+    renderSelected();
+    if (searchInput) searchInput.value = "";
+    if (resultsEl) resultsEl.style.display = "none";
+  }
+
+  (globalThis as any).selectActorFromList = function (id: string) {
+    const actor = actors.find((a: any) => a.id === id);
+    if (actor) selectActor(actor);
+  };
+
+  function renderResults(filtered: any[]) {
+    if (!resultsEl) return;
+    if (filtered.length === 0) {
+      resultsEl.innerHTML =
+        '<div style="padding:var(--space-3);color:var(--text-secondary);font-size:13px;text-align:center">No characters found</div>';
+    } else {
+      resultsEl.innerHTML = filtered
+        .map((a: any) => {
+          const disabled = isGroup() && selected.find((s: any) => s.id === a.id);
+          return `<div style="padding:var(--space-2) var(--space-3);cursor:pointer;display:flex;align-items:center;gap:var(--space-2);${disabled ? "opacity:0.4;cursor:default" : ""}" ${disabled ? "" : `onclick="selectActorFromList('${a.id}')"`} onmouseenter="this.style.background='var(--bg-tertiary)'" onmouseleave="this.style.background=''">
+          <span style="font-size:16px">${a.avatar_asset_id ? "" : "👤"}</span>
+          <div>
+            <div style="font-size:14px;font-weight:500">${escapeHtml(a.display_name || a.name || "Unknown")}</div>
+            <div style="font-size:12px;color:var(--text-secondary)">${escapeHtml((a.description || "").slice(0, 60))}</div>
+          </div>
+          ${disabled ? '<span style="margin-left:auto;font-size:12px;color:var(--text-secondary)">added</span>' : ""}
+        </div>`;
+        })
+        .join("");
+    }
+    resultsEl.style.display = "block";
+  }
+
+  searchInput.addEventListener("input", function () {
+    const q = this.value.toLowerCase().trim();
+    if (!q) {
+      if (resultsEl) resultsEl.style.display = "none";
+      return;
+    }
+    const filtered = actors
+      .filter((a: any) => {
+        const name = (a.display_name || a.name || "").toLowerCase();
+        const desc = (a.description || "").toLowerCase();
+        return name.includes(q) || desc.includes(q);
+      })
+      .slice(0, 20);
+    renderResults(filtered);
+  });
+
+  searchInput.addEventListener("blur", function () {
+    setTimeout(() => {
+      if (resultsEl) resultsEl.style.display = "none";
+    }, 200);
+  });
+
+  searchInput.addEventListener("focus", function () {
+    if (this.value.trim()) {
+      const q = this.value.toLowerCase().trim();
+      const filtered = actors
+        .filter((a: any) => {
+          const name = (a.display_name || a.name || "").toLowerCase();
+          const desc = (a.description || "").toLowerCase();
+          return name.includes(q) || desc.includes(q);
+        })
+        .slice(0, 20);
+      renderResults(filtered);
+    }
+  });
+
+  form.addEventListener("submit", async function (e: Event) {
+    e.preventDefault();
+    const nameInput = form.querySelector<HTMLInputElement>('[name="name"]');
+    if (!nameInput) return;
+    const name = nameInput.value.trim();
+    if (!name) return;
+
+    const btn = form.querySelector<HTMLButtonElement>('[type="submit"]');
+    if (btn) {
+      btn.disabled = true;
+      btn.textContent = "Creating...";
+    }
+
+    try {
+      const res = await apiFetch("/api/chats", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name,
+          type: chatType.value,
+          mode: (document.getElementById("chat-mode") as HTMLSelectElement)?.value,
+          participantIds: selected.map((a: any) => a.id),
+        }),
+      });
+      if (res.ok) {
+        const d = await res.json();
+        location.assign("/views/chat?chatid=" + encodeURIComponent(d.id));
+      } else {
+        const err = await res.json().catch(() => ({}));
+        showToast("error", err.error || "Failed to create chat");
+        if (btn) {
+          btn.disabled = false;
+          btn.textContent = "Create Chat";
+        }
+      }
+    } catch {
+      showToast("error", "Network error");
+      if (btn) {
+        btn.disabled = false;
+        btn.textContent = "Create Chat";
+      }
+    }
+  });
+};
+
+(globalThis as any).loadSettingsPage = function (): void {
+  const themeSel = document.querySelector<HTMLSelectElement>('[data-testid="theme-select"]');
+  if (themeSel) themeSel.value = localStorage.getItem("theme-preference") || "default";
+  const localeSel = document.querySelector<HTMLSelectElement>('[data-testid="locale-select"]');
+  if (localeSel) localeSel.value = localStorage.getItem("locale") || "en";
+  const prov = document.querySelector<HTMLSelectElement>('[data-testid="api-provider"]');
+  if (prov) {
+    prov.addEventListener("change", function () {
+      const group = document.getElementById("api-endpoint-group");
+      if (group) group.style.display = this.value === "Custom" ? "block" : "none";
+    });
+  }
+};
 (globalThis as any).loadCharacterChatList = async function () {
   const container = document.querySelector<HTMLElement>("#character-chat-list");
   const id = container?.dataset.characterId;

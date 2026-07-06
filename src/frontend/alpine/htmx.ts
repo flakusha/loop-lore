@@ -58,15 +58,22 @@ document.addEventListener("htmx:beforeSwap", () => {
 });
 
 // Trigger page-specific loaders on htmx content swaps
+const PAGE_LOADERS: Map<string, string> = new Map([
+  ["#character-grid", "loadCharactersPage"],
+  ["#gallery-grid", "loadGalleryPage"],
+  ["#worlds-list", "loadWorldsPage"],
+  ["#world-detail", "loadWorldDetail"],
+  ["#character-chat-list", "loadCharacterChatList"],
+  ["#character-edit-form", "loadCharacterEditPage"],
+  ["#create-chat-form", "loadNewChatPage"],
+  ['[data-page="settings"]', "loadSettingsPage"],
+]);
+
 function triggerPageLoaders(): void {
-  if (document.querySelector("#character-grid")) {
-    (globalThis as any).loadCharactersPage?.();
-  }
-  if (document.querySelector("#gallery-grid")) {
-    (globalThis as any).loadGalleryPage?.();
-  }
-  if (document.querySelector("#worlds-list")) {
-    (globalThis as any).loadWorldsPage?.();
+  for (const [sel, fn] of PAGE_LOADERS) {
+    if (document.querySelector(sel)) {
+      (globalThis as any)[fn]?.();
+    }
   }
 }
 

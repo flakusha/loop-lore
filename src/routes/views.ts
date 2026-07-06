@@ -10,7 +10,8 @@
  *   GET  /worlds/:id         — world detail
  *   GET  /worlds/:id/edit    — world edit
  *
- * Templates wrap content in layout.html using {{{content}}} injection.
+ * When `HX-Request` header is present, returns content fragment only (no layout).
+ * When absent (direct navigation), wraps with full layout.
  */
 
 import { readFileSync, existsSync } from "node:fs";
@@ -47,8 +48,15 @@ function wrapWithLayout(content: string, title?: string): string {
   return layout;
 }
 
-function serveView(viewName: string): Response | null {
-  // Sanitize: only allow known view names to prevent path traversal
+/** Return raw content or layout-wrapped depending on request source */
+function respond(content: string, isHtmx: boolean, title?: string): Response {
+  const body = isHtmx ? content : wrapWithLayout(content, title);
+  return new Response(body, {
+    headers: { "Content-Type": "text/html; charset=utf-8" },
+  });
+}
+
+function serveView(viewName: string, isHtmx = false): Response | null {
   viewName = viewName === "assets" ? "gallery" : viewName;
   if (!ALLOWED_VIEWS.has(viewName)) return null;
 
@@ -56,94 +64,70 @@ function serveView(viewName: string): Response | null {
   if (!existsSync(viewPath)) return null;
 
   const content = readFileSync(viewPath, "utf8");
-  const wrapped =
-    viewName === "index"
-      ? content
-      : wrapWithLayout(content, viewName.charAt(0).toUpperCase() + viewName.slice(1));
-
-  return new Response(wrapped, {
-    headers: { "Content-Type": "text/html; charset=utf-8" },
-  });
+  const title = viewName === "index" ? undefined : viewName.charAt(0).toUpperCase() + viewName.slice(1);
+  return respond(content, isHtmx, title);
 }
 
-// Serve character chat list
-function serveCharacterChatList(slug: string): Response | null {
+function serveCharacterChatList(slug: string, isHtmx = false): Response | null {
   const viewPath = join(VIEWS_DIR, "character-chat-list.html");
   if (!existsSync(viewPath)) return null;
 
   let content = readFileSync(viewPath, "utf8");
-  // Inject character slug for Alpine to use
   content = content.replace("{{characterSlug}}", () => slug);
-  return new Response(wrapWithLayout(content, `${slug} — Chats`), {
-    headers: { "Content-Type": "text/html; charset=utf-8" },
-  });
+  return respond(content, isHtmx, `${slug} — Chats`);
 }
 
-// Serve specific chat (character/:slug/:chatId)
-function serveCharacterChat(slug: string, _chatId: string): Response | null {
+function serveCharacterChat(slug: string, _chatId: string, isHtmx = false): Response | null {
   const viewPath = join(VIEWS_DIR, "chat.html");
   if (!existsSync(viewPath)) return null;
 
   const content = readFileSync(viewPath, "utf8");
-  // Chat view will use Alpine to load messages for the specific chat
-  return new Response(wrapWithLayout(content, `${slug} — Chat`), {
-    headers: { "Content-Type": "text/html; charset=utf-8" },
-  });
+  return respond(content, isHtmx, `${slug} — Chat`);
 }
 
-// Serve world list
-function serveWorldsList(): Response | null {
-  return serveView("worlds");
+function serveWorldsList(isHtmx = false): Response | null {
+  return serveView("worlds", isHtmx);
 }
 
-// Serve world detail
-function serveWorldDetail(worldId: string): Response | null {
+function serveWorldDetail(worldId: string, isHtmx = false): Response | null {
   const viewPath = join(VIEWS_DIR, "world-detail.html");
   if (!existsSync(viewPath)) return null;
 
   let content = readFileSync(viewPath, "utf8");
   content = content.replace("{{worldId}}", () => worldId);
-  return new Response(wrapWithLayout(content, "World — Details"), {
-    headers: { "Content-Type": "text/html; charset=utf-8" },
-  });
+  return respond(content, isHtmx, "World — Details");
 }
 
-// Serve world edit
-function serveWorldEdit(worldId: string): Response | null {
+function serveWorldEdit(worldId: string, isHtmx = false): Response | null {
   const viewPath = join(VIEWS_DIR, "world-edit.html");
   if (!existsSync(viewPath)) return null;
 
   let content = readFileSync(viewPath, "utf8");
   content = content.replace("{{worldId}}", () => worldId);
-  return new Response(wrapWithLayout(content, "Edit World"), {
-    headers: { "Content-Type": "text/html; charset=utf-8" },
-  });
+  return respond(content, isHtmx, "Edit World");
 }
 
-// Serve character edit
-function serveCharacterEdit(characterId: string): Response | null {
+function serveCharacterEdit(characterId: string, isHtmx = false): Response | null {
   const viewPath = join(VIEWS_DIR, "character-edit.html");
   if (!existsSync(viewPath)) return null;
 
   let content = readFileSync(viewPath, "utf8");
   content = content.replace("{{characterId}}", () => characterId);
-  return new Response(wrapWithLayout(content, "Edit Character"), {
-    headers: { "Content-Type": "text/html; charset=utf-8" },
-  });
+  return respond(content, isHtmx, "Edit Character");
 }
 
 const dispatch: RouteDispatch = ({ request }) => Promise.resolve(dispatchView(request));
 
 function dispatchView(request: Request): Response | null {
+  const isHtmx = request.headers.get("HX-Request") === "true";
   const url = new URL(request.url);
   const { pathname } = url;
 
   // ── Landing page ────────────────────────────────────────────
   if (pathname === "/") {
-    const chatResult = serveView("chat");
+    const chatResult = serveView("chat", isHtmx);
     if (chatResult) return chatResult;
 
-    // Fallback to public/index.html
     const publicIndex = join(PUBLIC_DIR, "index.html");
     if (existsSync(publicIndex)) {
       return new Response(readFileSync(publicIndex), {
@@ -155,60 +139,53 @@ function dispatchView(request: Request): Response | null {
   }
 
   // ── Character routes ───────────────────────────────────────
-  // /character/:slug → chat list for character
   const characterChatListMatch = /^\/character\/([\w-]+)$/.exec(pathname);
   if (characterChatListMatch) {
-    const result = serveCharacterChatList(characterChatListMatch[1]);
+    const result = serveCharacterChatList(characterChatListMatch[1], isHtmx);
     if (result) return result;
   }
 
-  // /character/:slug/edit → character edit (must check before /:chatId)
   const characterEditMatch = /^\/character\/([\w-]+)\/edit$/.exec(pathname);
   if (characterEditMatch) {
-    const result = serveCharacterEdit(characterEditMatch[1]);
+    const result = serveCharacterEdit(characterEditMatch[1], isHtmx);
     if (result) return result;
   }
 
-  // /character/:slug/:chatId → specific chat
   const characterChatMatch = /^\/character\/([\w-]+)\/([\w-]+)$/.exec(pathname);
   if (characterChatMatch) {
     const [, slug, chatId] = characterChatMatch;
-    const result = serveCharacterChat(slug, chatId);
+    const result = serveCharacterChat(slug, chatId, isHtmx);
     if (result) return result;
   }
 
-  // /characters/:id/edit → character edit (alternative url)
   const charactersEditMatch = /^\/characters\/([\w-]+)\/edit$/.exec(pathname);
   if (charactersEditMatch) {
-    const result = serveCharacterEdit(charactersEditMatch[1]);
+    const result = serveCharacterEdit(charactersEditMatch[1], isHtmx);
     if (result) return result;
   }
 
   // ── World routes ───────────────────────────────────────────
-  // /worlds → world list
   if (pathname === "/worlds") {
-    const result = serveWorldsList();
+    const result = serveWorldsList(isHtmx);
     if (result) return result;
   }
 
-  // /worlds/:id → world detail
   const worldDetailMatch = /^\/worlds\/([\w-]+)$/.exec(pathname);
   if (worldDetailMatch) {
-    const result = serveWorldDetail(worldDetailMatch[1]);
+    const result = serveWorldDetail(worldDetailMatch[1], isHtmx);
     if (result) return result;
   }
 
-  // /worlds/:id/edit → world edit
   const worldEditMatch = /^\/worlds\/([\w-]+)\/edit$/.exec(pathname);
   if (worldEditMatch) {
-    const result = serveWorldEdit(worldEditMatch[1]);
+    const result = serveWorldEdit(worldEditMatch[1], isHtmx);
     if (result) return result;
   }
 
   // ── View templates ──────────────────────────────────────────
   const viewMatch = /^\/views\/([\w-]+)$/.exec(pathname);
   if (viewMatch) {
-    const result = serveView(viewMatch[1]);
+    const result = serveView(viewMatch[1], isHtmx);
     if (result) return result;
   }
 
