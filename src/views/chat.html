@@ -38,7 +38,11 @@
   </div>
 </header>
 
-<div class="app-layout" x-data="chatState()" @htmx:before-swap.window="if($data && typeof $data.destroy==='function') $data.destroy()">
+<div
+  class="app-layout"
+  x-data="chatState()"
+  @htmx:before-swap.window="if($data && typeof $data.destroy==='function') $data.destroy()"
+>
   <main class="main-content" style="padding-top: 0">
     <!-- Chat list panel (component) -->
     <div class="chat-list-panel" x-show="$store.ui.showChatList" x-transition data-testid="chat-list-panel">

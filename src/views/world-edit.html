@@ -1,10 +1,6 @@
 <!-- World Edit Page (swapped into #app-root by htmx) -->
 <!-- Header: moved to #header-slot by htmx:load handler -->
-<header
-  id="header-slot"
-  class="main-header"
-  data-testid="world-edit-header"
->
+<header id="header-slot" class="main-header" data-testid="world-edit-header">
   <span class="title">Edit World</span>
 </header>
 
@@ -22,7 +18,7 @@
 
       <!-- Edit form -->
       <template x-if="!loading && world">
-        <div style="max-width: 600px; margin: 0 auto">
+        <div style="max-width: 720px; margin: 0 auto; width: 100%">
           <div class="form-group">
             <label class="form-label" for="edit-name">Name</label>
             <input
@@ -39,10 +35,10 @@
           <div class="form-group">
             <label class="form-label" for="edit-description">Description</label>
             <textarea
-              class="form-input"
+              class="form-input form-textarea"
               name="description"
               id="edit-description"
-              rows="2"
+              rows="3"
               placeholder="Short summary for world cards"
               x-model="world.description"
             ></textarea>
@@ -51,7 +47,7 @@
           <div class="form-group">
             <label class="form-label" for="edit-lore">Lore</label>
             <textarea
-              class="form-input"
+              class="form-input form-textarea"
               name="lore"
               id="edit-lore"
               rows="6"

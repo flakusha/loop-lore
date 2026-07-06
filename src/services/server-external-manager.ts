@@ -528,7 +528,7 @@ export class ServerExternalManager {
   /** Stop periodic health checks */
   stopLivenessProbes(): void {
     if (!this.probeTimer) {
-    	return;
+      return;
     }
 
     clearInterval(this.probeTimer);

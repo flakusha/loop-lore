@@ -1,10 +1,6 @@
 <!-- World Detail Page (swapped into #app-root by htmx) -->
 <!-- Header: moved to #header-slot by htmx:load handler -->
-<header
-  id="header-slot"
-  class="main-header"
-  data-testid="world-detail-header"
->
+<header id="header-slot" class="main-header" data-testid="world-detail-header">
   <button
     class="hamburger"
     @click="$store.sidebar.open = !$store.sidebar.open"

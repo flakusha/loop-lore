@@ -1,10 +1,6 @@
 <!-- Character Chat List Page (swapped into #app-root by htmx) -->
 <!-- Header: moved to #header-slot by htmx:load handler -->
-<header
-  id="header-slot"
-  class="main-header"
-  data-testid="character-chat-header"
->
+<header id="header-slot" class="main-header" data-testid="character-chat-header">
   <button
     class="hamburger"
     @click="$store.sidebar.open = !$store.sidebar.open"

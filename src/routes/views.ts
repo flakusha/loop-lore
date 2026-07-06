@@ -132,14 +132,12 @@ function serveCharacterEdit(characterId: string): Response | null {
   });
 }
 
- 
 const dispatch: RouteDispatch = async ({
   request,
   context: _context,
   database: _database,
   config: _config,
 }) => {
-   
   const url = new URL(request.url);
   const { pathname } = url;
 

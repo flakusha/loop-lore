@@ -117,7 +117,10 @@ globalThis.charactersState = function () {
         log.debug("loadCharacters data", { total: data.pagination?.total });
         this.characters = data.data || [];
       } catch (error) {
-        log.error("loadCharacters FAILED", error instanceof Error ? { error: error.message } : { error: String(error) });
+        log.error(
+          "loadCharacters FAILED",
+          error instanceof Error ? { error: error.message } : { error: String(error) },
+        );
         (this as any).$dispatch("show-toast", { type: "error", message: "Failed to load characters" });
       } finally {
         this.loading = false;
@@ -204,7 +207,7 @@ globalThis.charactersState = function () {
         });
         log.debug("createCharacter — response", { status: res.status });
         if (res.ok) {
-          globalThis.Alpine.store('ui').showCreateForm = false;
+          globalThis.Alpine.store("ui").showCreateForm = false;
           (this as any).$dispatch("show-toast", { type: "success", message: "Character created" });
           await this.loadCharacters();
         } else {
@@ -216,7 +219,10 @@ globalThis.charactersState = function () {
           });
         }
       } catch (error) {
-        log.error("createCharacter — caught", error instanceof Error ? { error: error.message } : { error: String(error) });
+        log.error(
+          "createCharacter — caught",
+          error instanceof Error ? { error: error.message } : { error: String(error) },
+        );
         (this as any).$dispatch("show-toast", { type: "error", message: "Network error" });
       }
     },
@@ -224,10 +230,10 @@ globalThis.charactersState = function () {
     destroy() {
       // Reset UI flags that might leak across pages
       if (!globalThis.Alpine) {
-      	return;
+        return;
       }
 
-      const uiStore = globalThis.Alpine.store('ui');
+      const uiStore = globalThis.Alpine.store("ui");
       if (uiStore) {
         uiStore.showCreateForm = false;
         uiStore.showImportForm = false;
@@ -245,6 +251,7 @@ globalThis.characterEditState = function () {
     character: null as any,
     loading: true,
     saving: false,
+    uploadingAvatar: false,
 
     async init() {
       // Set page title for OOB header
@@ -276,6 +283,35 @@ globalThis.characterEditState = function () {
       }
     },
 
+    async uploadAvatar(file: File) {
+      if (!file) return;
+      this.uploadingAvatar = true;
+      try {
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append("alt_text", (this.character?.display_name || "Character") + " avatar");
+        const res = await apiFetch("/api/assets", { method: "POST", body: formData });
+        if (res.ok) {
+          const asset = await res.json();
+          this.character.avatar_asset_id = asset.id;
+        } else {
+          const err = await res.json();
+          (this as any).$dispatch("show-toast", {
+            type: "error",
+            message: err.error || "Avatar upload failed",
+          });
+        }
+      } catch {
+        (this as any).$dispatch("show-toast", { type: "error", message: "Network error" });
+      } finally {
+        this.uploadingAvatar = false;
+      }
+    },
+
+    removeAvatar() {
+      this.character.avatar_asset_id = null;
+    },
+
     async saveCharacter() {
       if (!this.character?.id) return;
       this.saving = true;
@@ -287,6 +323,7 @@ globalThis.characterEditState = function () {
           personality: this.character.personality,
           welcomeMessage: this.character.welcome_message,
           mesExample: this.character.mes_example,
+          avatarAssetId: this.character.avatar_asset_id ?? null,
         };
         const res = await apiFetch(`/api/actors/${this.character.id}`, {
           method: "PUT",
@@ -295,7 +332,7 @@ globalThis.characterEditState = function () {
         });
         if (res.ok) {
           (this as any).$dispatch("show-toast", { type: "success", message: "Character saved" });
-          history.back();
+          location.assign("/views/characters");
         } else {
           const err = await res.json();
           (this as any).$dispatch("show-toast", { type: "error", message: err.error || "Failed to save" });

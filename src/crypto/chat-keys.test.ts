@@ -30,7 +30,12 @@ beforeAll(async () => {
   sqlite.run("PRAGMA foreign_keys = OFF");
   db = new Kysely<DB>({ dialect: createSqliteDialect(sqlite) });
   await migrate(db as unknown as Kysely<unknown>);
-  await initSmk({ serverEncryptionKey: VALID_HEX_KEY, required: false, compressThreshold: 128, compressAlgorithm: "gzip" });
+  await initSmk({
+    serverEncryptionKey: VALID_HEX_KEY,
+    required: false,
+    compressThreshold: 128,
+    compressAlgorithm: "gzip",
+  });
 
   // Create two actors with encryption keys
   const smk = getSmkKeySafe();
