@@ -11,7 +11,7 @@
  */
 
 import crypto from "node:crypto";
-import { uid } from "../utils";
+import { uid, secureToken } from "../utils";
 import type { Kysely } from "kysely";
 import type { DB } from "../db/schema";
 import type { RequestContext } from "../middleware/types";
@@ -106,7 +106,7 @@ async function createSession(
       .execute();
   }
 
-  const rawToken = uid();
+  const rawToken = secureToken();
   const tokenHash = crypto.createHash("sha256").update(rawToken).digest("hex");
 
   await database

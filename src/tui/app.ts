@@ -10,9 +10,11 @@
  */
 
 import blessed from "blessed";
-import { ChatWidget, API_BASE } from "./chat";
+import { ChatWidget } from "./chat";
 import { AssetView } from "./asset-view";
 import { getLogger } from "../logger";
+
+const API_BASE = process.env.LOOP_LORE_API_BASE_URL ?? "http://localhost:3000";
 
 export class TUIApp {
   private statusBar: blessed.Widgets.TextElement;
@@ -41,7 +43,14 @@ export class TUIApp {
     this.updateStatus("initializing...");
 
     // ── Chat widget (main area, above status bar) ──────────
-    this.chat = new ChatWidget(this.screen);
+    // Pass callback for chat change events
+    this.chat = new ChatWidget(this.screen, {
+      onChatChange: (chatId) => {
+        this.assets.setChatId(chatId);
+        this.updateStatus(`chat: ${chatId.slice(0, 8)}... | F2: assets`);
+        void this.chat.loadMessages();
+      },
+    });
 
     // ── Asset view (right sidebar, toggleable) ─────────────
     this.assets = new AssetView(this.screen);
@@ -64,23 +73,23 @@ export class TUIApp {
 
     // F5 — refresh current chat messages
     this.screen.key(["f5"], () => {
-      const chatId = this.chat.getChatId();
-      if (chatId) {
-        this.updateStatus("refreshing messages...");
-        void this.chat.loadMessages().then(
-          () => {
+      void (async () => {
+        const chatId = this.chat.getChatId();
+        if (chatId) {
+          this.updateStatus("refreshing messages...");
+          try {
+            await this.chat.loadMessages();
             this.updateStatus(`chat: ${chatId.slice(0, 8)}...`);
-          },
-          (error: unknown) => {
+          } catch (error: unknown) {
             getLogger()
               .child({ module: "tui" })
               .error("loadMessages failed", error instanceof Error ? error : new Error(String(error)));
             this.updateStatus("load failed");
-          },
-        );
-      } else {
-        this.updateStatus("no active chat");
-      }
+          }
+        } else {
+          this.updateStatus("no active chat");
+        }
+      })();
     });
 
     // Ctrl+L — clear messages display
@@ -88,17 +97,6 @@ export class TUIApp {
       this.chat.clearMessages();
       this.updateStatus("display cleared");
     });
-
-    // ── Auto-update status when chat changes ───────────────
-    // TODO: replace monkey-patch with event-based approach (EventEmitter on ChatWidget)
-    const origSetChatId = this.chat.setChatId.bind(this.chat);
-    this.chat.setChatId = (chatId: string) => {
-      origSetChatId(chatId);
-      this.assets.setChatId(chatId);
-      this.updateStatus(`chat: ${chatId.slice(0, 8)}... | F2: assets`);
-      // Load messages for the selected chat
-      void this.chat.loadMessages();
-    };
 
     this.updateStatus("ready — Tab: focus | F2: assets | F5: refresh | Esc/q: quit");
 
@@ -108,9 +106,8 @@ export class TUIApp {
   // ── Status bar ─────────────────────────────────────────────
 
   private updateStatus(msg: string): void {
-    const apiStatus = API_BASE;
     // eslint-disable-next-line unicorn/no-incorrect-template-string-interpolation
-    this.statusBar.setContent(` {bold}Loop Lore{/bold}  |  ${msg}  |  API: ${apiStatus}  `);
+    this.statusBar.setContent(` {bold}Loop Lore{/bold}  |  ${msg}  |  API: ${API_BASE}  `);
     this.screen.render();
   }
 

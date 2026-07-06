@@ -67,8 +67,12 @@ export function compressFile(filePath: string): void {
   const gz = gzipSync(buffer);
   writeFileSync(`${filePath}.gz`, gz);
 
-  const zst = (Bun.zstdCompressSync as (data: Buffer, options?: object) => Buffer)(buffer);
-  writeFileSync(`${filePath}.zst`, zst);
+  // zstd compression via Bun runtime (type-safe wrapper)
+  const bun = Bun as { zstdCompressSync?: (data: Buffer) => Buffer };
+  const zstdFn = bun.zstdCompressSync;
+  if (zstdFn) {
+    writeFileSync(`${filePath}.zst`, zstdFn(buffer));
+  }
 
   const br = brotliCompressSync(buffer);
   writeFileSync(`${filePath}.br`, br);

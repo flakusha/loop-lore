@@ -34,6 +34,7 @@ import {
 import {
   MessageRole,
   MessageContentType,
+  MessageContentFormat,
   MessageVisibility,
   MessageStatus,
   ContentEncoding,
@@ -349,6 +350,7 @@ async function handleCreateMessage({
       content: storedContent,
       key_id: storedKeyId,
       content_type: (body.contentType as MessageContentType | undefined) ?? MessageContentType.Text,
+      content_format: MessageContentFormat.Markdown,
       content_encoding: contentEncoding as "identity" | "gzip" | "zstd" | "brotli",
       status: "confirmed",
       visibility: "visible",
@@ -419,6 +421,7 @@ async function handleCreateMessage({
           content: replyStoredContent,
           key_id: replyKeyId,
           content_type: MessageContentType.Text,
+          content_format: MessageContentFormat.Markdown,
           content_encoding: replyEncoding as ContentEncoding,
           status: "confirmed",
           visibility: "visible",

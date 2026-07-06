@@ -18,8 +18,8 @@ Core tables for loop-lore. Designed for:
 
 | File                            | Tables                                                                                                                                                             |
 | ------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `src/db/migrations/001_init.ts` | DDL for all 27 tables — column types, constraints, defaults, indexes                                                                                               |
-| `src/db/schema-core.ts`         | Users, Sessions, Chats, Actors, ChatParticipants, Characters, Messages, ActorKeys                                                                                  |
+| `src/db/migrations/001_init.ts` | DDL for all **27** tables (includes ActorNotes, ActorItems, UserApiKeys) — column types, constraints, defaults, indexes                                            |
+| `src/db/schema-core.ts`         | Users, Sessions, Chats, Actors, ChatParticipants, Characters, Messages, ActorKeys, ActorItems, ActorNotes, UserApiKeys                                             |
 | `src/db/schema-content.ts`      | Assets, AssetLinks                                                                                                                                                 |
 | `src/db/schema-generation.ts`   | GenerationAttempts                                                                                                                                                 |
 | `src/db/schema-story.ts`        | Worlds, Locations, Items, WorldItems, StoryTurns, Quests, QuestProgress, WorldStates, NpcStates, LocationStates, ActorMemories, ActorLoreEntries, WorldLoreEntries |
@@ -45,17 +45,30 @@ re-exported via `src/db/enums.ts` barrel.
 The schema explicitly avoids boolean flags in favor of enum/text columns.
 Each enum encodes a state machine rather than a binary on/off:
 
-| Column                              | Values                                                                                                       | What it replaces                                      |
-| ----------------------------------- | ------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------- |
-| `users.role`                        | `admin`, `user`, `viewer`, `solo`                                                                            | An `is_admin` boolean                                 |
-| `messages.visibility`               | `visible`, `hidden_by_user`, `hidden_by_moderator`, `auto_hidden`, `redacted`                                | A `hidden` boolean + separate `hidden_reason` column  |
-| `messages.status`                   | `sending`, `confirmed`, `failed`, `partial`, `rejected`, `cancelled`                                         | Message lifecycle state                               |
-| `actors.actor_type`                 | `user`, `character`, `narrator`, `system`                                                                    | Polymorphic `(participant_type, participant_id)` pair |
-| `actors.agent_type`                 | `none`, `ai`, `narrator`, `npc`                                                                              | An `is_bot` boolean                                   |
-| `assets.asset_type`                 | `image`, `audio`, `video`, `memory`, `other`                                                                 | Content type discriminator                            |
-| `generation_attempts.status`        | `pending`, `processing`, `streaming`, `completed`, `failed`, `cancelled`                                     | A single `done` boolean                               |
-| `generation_attempts.cancel_reason` | `user_cancel`, `repetition_detected`, `policy_mismatch`, `response_limit`, `chat_switch`, `timeout`, `error` | (enum replaces free-text + nullable reason)           |
-| `quests.status`                     | `active`, `completed`, `failed`, `abandoned`                                                                 | A `completed` boolean                                 |
+| Column                              | Values                                                                                                                     | What it replaces                                      |
+| ----------------------------------- | -------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------- |
+| `users.role`                        | `admin`, `user`, `viewer`, `solo`                                                                                          | An `is_admin` boolean                                 |
+| `users.status`                      | `active`, `disabled`, `deactivated`                                                                                        | An `is_active` boolean                                |
+| `messages.visibility`               | `visible`, `hidden_by_user`, `hidden_by_moderator`, `auto_hidden`, `redacted`                                              | A `hidden` boolean + separate `hidden_reason` column  |
+| `messages.status`                   | `sending`, `confirmed`, `failed`, `partial`, `rejected`, `cancelled`                                                       | Message lifecycle state                               |
+| `messages.content_type`             | `text`, `action`, `narration`, `system`, `continuation`                                                                    | A `content_type` field                                |
+| `messages.content_format`           | `markdown` (default)                                                                                                       | A `format` field                                      |
+| `messages.content_encoding`         | `identity`, `gzip`, `zstd`, `brotli`                                                                                       | A `encoding` field                                    |
+| `actors.actor_type`                 | `user`, `character`, `narrator`, `system`                                                                                  | Polymorphic `(participant_type, participant_id)` pair |
+| `actors.agent_type`                 | `none`, `ai`, `narrator`, `npc`                                                                                            | An `is_bot` boolean                                   |
+| `actors.visibility`                 | `private`, `public`                                                                                                        | A `visibility` flag                                   |
+| `characters.agent_type`             | `none`, `ai`, `narrator`, `npc`                                                                                            | An `is_bot` boolean (legacy characters)               |
+| `assets.asset_type`                 | `image`, `audio`, `video`, `memory`, `other`                                                                               | Content type discriminator                            |
+| `chats.type`                        | `direct`, `group`                                                                                                          | A `type` flag (formerly `is_group`)                   |
+| `chats.mode`                        | `direct`, `group`, `story`                                                                                                 | A `mode` flag (formerly `is_story`)                   |
+| `generation_attempts.status`        | `pending`, `processing`, `streaming`, `completed`, `failed`, `cancelled`                                                   | A single `done` boolean                               |
+| `generation_attempts.cancel_source` | `user`, `auto_repetition`, `auto_policy`, `auto_limit`, `chat_switch`, `system`                                            | Cancellation source indicator                         |
+| `quests.type`                       | `time`, `collection`, `destruction`, `rescue`, `discovery`, `social`, `composite`                                          | Quest category flag                                   |
+| `quests.status`                     | `active`, `completed`, `failed`, `abandoned`                                                                               | A `completed` boolean                                 |
+| `quest_progress.status`             | `active`, `completed`, `failed`, `ignored`                                                                                 | Progress status flag                                  |
+| `location_states.items_available`   | (string default `"[]"` — JSON array)                                                                                       | Item availability indicator                           |
+| `synthetic_data.type`               | `turn_sequence`, `quality_evaluation`, `quest_progression`, `world_state_transition`, `regeneration_case`, `gm_escalation` | Synthetic data category                               |
+| `synthetic_data.status`             | `generated`, `validated`, `approved`, `rejected`, `archived`                                                               | Synthetic data lifecycle flag                         |
 
 ### Unified Actor Table (replaces separate characters table)
 

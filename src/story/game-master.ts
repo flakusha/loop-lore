@@ -17,6 +17,7 @@ import {
   ContentEncoding,
   MessageRole,
   MessageContentType,
+  MessageContentFormat,
   MessageStatus,
   MessageVisibility,
 } from "../db/enums";
@@ -530,6 +531,7 @@ export class GameMasterService {
           role: MessageRole.System,
           content: text,
           content_type: MessageContentType.Narration,
+          content_format: MessageContentFormat.Markdown,
           content_encoding: ContentEncoding.Identity,
           status: MessageStatus.Confirmed,
           visibility: MessageVisibility.Visible,

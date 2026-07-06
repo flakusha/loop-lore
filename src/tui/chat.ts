@@ -18,6 +18,11 @@ export interface ChatMessage {
   actorName?: string;
 }
 
+export interface ChatWidgetOptions {
+  sessionToken?: string;
+  onChatChange?: (chatId: string) => void;
+}
+
 export class ChatWidget {
   private screen: blessed.Widgets.Screen;
   private box: blessed.Widgets.BoxElement;
@@ -27,9 +32,14 @@ export class ChatWidget {
   private messages: ChatMessage[] = [];
   private itemCount = 0;
   private isSending = false;
+  private sessionToken: string | undefined;
+  private onChatChange?: (chatId: string) => void;
+  private cursor: string | null = null; // pagination cursor
 
-  constructor(screen: blessed.Widgets.Screen) {
+  constructor(screen: blessed.Widgets.Screen, options: ChatWidgetOptions = {}) {
     this.screen = screen;
+    this.sessionToken = options.sessionToken;
+    this.onChatChange = options.onChatChange;
 
     // Main container box
     this.box = blessed.box({
@@ -89,6 +99,7 @@ export class ChatWidget {
       if (value.trim() && !this.isSending) {
         void this.handleSend(value.trim());
       }
+      // Clear after handleSend completes (avoid race)
       this.inputBox.clearValue();
       this.inputBox.focus();
       screen.render();
@@ -105,10 +116,17 @@ export class ChatWidget {
     });
   }
 
+  setSessionToken(token: string): void {
+    this.sessionToken = token;
+  }
+
   // ── Chat selection ──────────────────────────────────────────
 
   setChatId(chatId: string): void {
     this.chatId = chatId;
+    this.cursor = null;
+    this.clearMessages();
+    this.onChatChange?.(chatId);
   }
 
   getChatId(): string | null {
@@ -175,7 +193,19 @@ export class ChatWidget {
     this.scrollToBottom();
   }
 
-  // ── API wiring (was empty stub) ──────────────────────────────
+  // ── API wiring ─────────────────────────────────────────────────
+
+  private getAuthHeaders(): Record<string, string> {
+    const headers: Record<string, string> = { "Content-Type": "application/json" };
+    if (this.sessionToken) {
+      headers.Authorization = `Bearer ${this.sessionToken}`;
+    }
+    return headers;
+  }
+
+  private hasSession(): boolean {
+    return Boolean(this.sessionToken);
+  }
 
   /**
    * Send message via POST /api/chats/:id/messages.
@@ -195,7 +225,7 @@ export class ChatWidget {
       const bodyResult = safeJsonStringify({ content: text, role: "user" });
       const res = await fetch(`${API_BASE}/api/chats/${this.chatId}/messages`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: this.getAuthHeaders(),
         body: bodyResult.ok ? bodyResult.value : "{}",
       });
 
@@ -237,17 +267,24 @@ export class ChatWidget {
     }
   }
 
-  /** Load messages from GET /api/chats/:id/messages */
+  /** Load messages from GET /api/chats/:id/messages with cursor-based pagination */
   async loadMessages(): Promise<void> {
     if (!this.chatId) return;
     try {
-      const res = await fetch(`${API_BASE}/api/chats/${this.chatId}/messages?pageSize=200`);
+      const url = this.cursor
+        ? `${API_BASE}/api/chats/${this.chatId}/messages?pageSize=200&cursor=${this.cursor}`
+        : `${API_BASE}/api/chats/${this.chatId}/messages?pageSize=200`;
+      const res = await fetch(url, { headers: this.getAuthHeaders() });
       if (!res.ok) {
         this.showError(`Failed to load messages (HTTP ${res.status})`);
         return;
       }
-      const data = (await res.json()) as { data: ChatMessage[] };
-      this.setMessages(data.data);
+      const data = (await res.json()) as { data: ChatMessage[]; cursor: string | null };
+      this.cursor = data.cursor ?? this.cursor;
+      // Prepend older messages (cursor fetches older)
+      this.messages = this.messages.length > 0 ? [...data.data, ...this.messages] : data.data;
+      this.itemCount = this.messages.length;
+      this.scrollToBottom();
     } catch (error) {
       this.showError(`Network error loading messages: ${(error as Error).message}`);
     }

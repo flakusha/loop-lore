@@ -70,6 +70,7 @@ function createTestDb(): TestDbResult {
     CREATE TABLE messages (
       id TEXT PRIMARY KEY, chat_id TEXT NOT NULL, actor_id TEXT NOT NULL,
       parent_id TEXT, role TEXT NOT NULL, content TEXT NOT NULL DEFAULT '',
+      content_format TEXT NOT NULL DEFAULT 'markdown',
       content_type TEXT NOT NULL DEFAULT 'text', content_encoding TEXT NOT NULL DEFAULT 'identity',
       model_id TEXT, provider TEXT,
       token_count_prompt INTEGER, token_count_completion INTEGER, token_count_total INTEGER,
