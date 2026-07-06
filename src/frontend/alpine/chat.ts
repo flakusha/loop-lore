@@ -289,16 +289,17 @@ globalThis.chatState = function () {
           this.pendingAssets = []; // Clear queue on success
           await this.loadMessages();
           await this.loadChats();
+          // Keep isGenerating true — backend auto-generation polling will detect status
         } else {
+          this.isGenerating = false;
           const err = await res.json();
           this.$dispatch("show-toast", { type: "error", message: err.error || "Failed to send" });
           this.messages = this.messages.filter((m: { id: string }) => !m.id.startsWith("temp-"));
         }
       } catch {
+        this.isGenerating = false;
         this.$dispatch("show-toast", { type: "error", message: "Network error" });
         this.messages = this.messages.filter((m: { id: string }) => !m.id.startsWith("temp-"));
-      } finally {
-        this.isGenerating = false;
       }
     },
 
@@ -403,6 +404,7 @@ globalThis.chatState = function () {
     formatTime(iso: string) {
       if (!iso) return "";
       const d = new Date(iso);
+      if (Number.isNaN(d.getTime())) return "";
       return d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
     },
 

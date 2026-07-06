@@ -40,7 +40,9 @@ import {
   ContentEncoding,
 } from "../db/enums";
 import { generateResponse, isAssistantEnabled } from "../assistant/service";
+import { PromptAssembler } from "../assistant/prompt-assembler";
 import { filter as filterProfanity } from "../profanity/service";
+import { resolveProvider } from "../generation/providers/registry";
 import { linkAsset } from "../assets/service";
 import { encodeContent } from "../content/encode";
 import { decodeContent } from "../content/decode";
@@ -393,7 +395,10 @@ async function handleCreateMessage({
       .execute();
   }
 
-  // ── Auto-reply via assistant (if enabled) ──────────────
+  // ── Auto-reply via LLM generation (fire-and-forget) ──────
+  void triggerAutoGeneration(database, config, chatId, id, actorId);
+
+  // ── Fallback: rule-based assistant (if LLM not available) ──
   if (isAssistantEnabled(config)) {
     const assistantResponse = generateResponse({ userInput: filteredContent });
     if (assistantResponse) {
@@ -438,6 +443,84 @@ async function handleCreateMessage({
   }
 
   return jsonCreated({ id });
+}
+
+/**
+ * Background-trigger LLM generation after a user message.
+ * Finds the character participant, resolves provider, assembles prompt,
+ * calls provider.complete(), and stores the assistant message.
+ * Fire-and-forget — errors are caught silently.
+ */
+async function triggerAutoGeneration(
+  database: Kysely<DB>,
+  config: Config,
+  chatId: string,
+  parentMessageId: string,
+  userId: string,
+): Promise<void> {
+  // No LLM provider configured — skip
+  if (!config.generation.defaultProvider && config.generation.providers.openaiCompatible.length === 0) {
+    return;
+  }
+
+  try {
+    // Find character participant (actor that is not the sender)
+    const character = await database
+      .selectFrom("chat_participants")
+      .innerJoin("actors", "actors.id", "chat_participants.actor_id")
+      .where("chat_participants.chat_id", "=", chatId)
+      .where("chat_participants.actor_id", "!=", userId)
+      .select(["actors.id"])
+      .executeTakeFirst();
+
+    if (!character) return;
+
+    const resolved = await resolveProvider({ userId }, config, database);
+    const assembler = new PromptAssembler(database);
+    const prompt = await assembler.assemble({
+      actorId: character.id,
+      chatId,
+      modelId: resolved.resolvedModel,
+    });
+
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 60_000);
+
+    const response = await resolved.provider.complete({
+      model: resolved.resolvedModel,
+      messages: prompt.messages,
+      apiKey: resolved.resolvedApiKey,
+      params: { temperature: 0.9, maxTokens: 2048 },
+      signal: controller.signal,
+    });
+
+    clearTimeout(timeout);
+
+    const messageId = uid();
+    await database
+      .insertInto("messages")
+      .values({
+        id: messageId,
+        chat_id: chatId,
+        actor_id: character.id,
+        parent_id: parentMessageId,
+        role: MessageRole.Assistant,
+        content: response.content,
+        content_type: MessageContentType.Text,
+        content_format: MessageContentFormat.Markdown,
+        content_encoding: ContentEncoding.Identity,
+        model_id: resolved.resolvedModel,
+        provider: resolved.resolvedProviderName,
+        token_count_prompt: response.usage.promptTokens,
+        token_count_completion: response.usage.completionTokens,
+        token_count_total: response.usage.totalTokens,
+        status: MessageStatus.Confirmed,
+        visibility: MessageVisibility.Visible,
+      })
+      .execute();
+  } catch {
+    // Silent — background generation is best-effort
+  }
 }
 
 async function handleGetMessage({ database, messageId, context, config }: GetMessageOpts): Promise<Response> {
