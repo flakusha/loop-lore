@@ -86,28 +86,35 @@ export type StreamHandler = (chunk: ChunkEvent) => void;
 // ── Error types ───────────────────────────────────────────
 
 export class ProviderError extends Error {
+  readonly statusCode?: number;
+  readonly retryable: boolean;
+  readonly retryAfter?: number;
+
   constructor(
     message: string,
-    public readonly statusCode?: number,
-    public readonly retryable = false,
-    public readonly retryAfter?: number,
     options?: ErrorOptions,
+    statusCode?: number,
+    retryable = false,
+    retryAfter?: number,
   ) {
     super(message, options);
     this.name = "ProviderError";
+    this.statusCode = statusCode;
+    this.retryable = retryable;
+    this.retryAfter = retryAfter;
   }
 }
 
 export class ProviderAuthError extends ProviderError {
   constructor(message = "API key invalid", options?: ErrorOptions) {
-    super(message, 401, false, undefined, options);
+    super(message, options, 401, false, undefined);
     this.name = "ProviderAuthError";
   }
 }
 
 export class ProviderRateLimitError extends ProviderError {
   constructor(retryAfter?: number, options?: ErrorOptions) {
-    super("Rate limited", 429, true, retryAfter, options);
+    super("Rate limited", options, 429, true, retryAfter);
     this.name = "ProviderRateLimitError";
   }
 }
