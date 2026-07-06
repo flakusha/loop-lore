@@ -176,6 +176,13 @@ declare global {
       _toggleChatListHandler: () => void;
       _toggleGalleryHandler: () => void;
       _toggleCharacterInfoHandler: () => void;
+      _chatSettingsName: string;
+      _chatSettingsMode: string;
+      _chatSettingsTurnStrategy: string;
+      openChatSettings(): void;
+      saveChatSettings(): Promise<void>;
+      renameChat(chatId: string): Promise<void>;
+      deleteChat(chatId: string, event: Event): Promise<void>;
     }>;
     galleryState: () => AlpineState<{
       previewAsset: {
