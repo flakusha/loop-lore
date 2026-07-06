@@ -42,7 +42,9 @@ import {
 import { generateResponse, isAssistantEnabled } from "../assistant/service";
 import { PromptAssembler } from "../assistant/prompt-assembler";
 import { filter as filterProfanity } from "../profanity/service";
-import { resolveProvider } from "../generation/providers/registry";
+import { resolveProvider, listProviders } from "../generation/providers/registry";
+import { startGenerationTracking, completeGeneration, failGeneration } from "../generation/index";
+import { getLogger } from "../logger";
 import { linkAsset } from "../assets/service";
 import { encodeContent } from "../content/encode";
 import { decodeContent } from "../content/decode";
@@ -459,9 +461,15 @@ async function triggerAutoGeneration(
   userId: string,
 ): Promise<void> {
   // No LLM provider configured — skip
-  if (!config.generation.defaultProvider && config.generation.providers.openaiCompatible.length === 0) {
+  if (
+    !config.generation.defaultProvider &&
+    config.generation.providers.openaiCompatible.length === 0 &&
+    listProviders().length === 0
+  ) {
     return;
   }
+
+  let attemptId: string | undefined;
 
   try {
     // Find character participant (actor that is not the sender)
@@ -483,18 +491,47 @@ async function triggerAutoGeneration(
       modelId: resolved.resolvedModel,
     });
 
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 60_000);
+    // Register generation tracking so frontend detects it via status endpoint
+    const tracking = startGenerationTracking(
+      {
+        chatId,
+        parentMessageId,
+        actorId: character.id,
+        modelId: resolved.resolvedModel,
+        provider: resolved.resolvedProviderName,
+        prompt: prompt.messages,
+        idempotencyKey: uid(),
+      },
+      database,
+    );
+    attemptId = tracking.attemptId;
+
+    const lastMsg = prompt.messages[prompt.messages.length - 1];
+    getLogger()
+      .child({ module: "auto-gen" })
+      .info("LLM request", {
+        model: resolved.resolvedModel,
+        provider: resolved.resolvedProviderName,
+        messageCount: prompt.messages.length,
+        lastRole: lastMsg?.role,
+        lastContentPreview: lastMsg?.content?.slice(0, 200),
+      });
 
     const response = await resolved.provider.complete({
       model: resolved.resolvedModel,
       messages: prompt.messages,
       apiKey: resolved.resolvedApiKey,
       params: { temperature: 0.9, maxTokens: 2048 },
-      signal: controller.signal,
+      signal: tracking.abortSignal,
     });
 
-    clearTimeout(timeout);
+    getLogger().child({ module: "auto-gen" }).info("LLM response", {
+      finishReason: response.finishReason,
+      promptTokens: response.usage.promptTokens,
+      completionTokens: response.usage.completionTokens,
+      totalTokens: response.usage.totalTokens,
+      contentLength: response.content.length,
+    });
 
     const messageId = uid();
     await database
@@ -518,8 +555,36 @@ async function triggerAutoGeneration(
         visibility: MessageVisibility.Visible,
       })
       .execute();
-  } catch {
-    // Silent — background generation is best-effort
+
+    await completeGeneration(
+      attemptId,
+      {
+        content: response.content,
+        tokenUsage: response.usage,
+        generationTimeMs: 0,
+        cancelled: false,
+      },
+      database,
+    );
+  } catch (error) {
+    if (attemptId) {
+      try {
+        await failGeneration(attemptId, error as Error, database);
+      } catch {
+        // failGeneration errors are non-critical
+      }
+    }
+    const err = error instanceof Error ? error : new Error(String(error));
+    const log = getLogger().child({ module: "auto-gen" });
+    if (
+      err.name === "AbortError" ||
+      (err as Error).message === "Request cancelled" ||
+      (err as Error).message === "Request timed out"
+    ) {
+      log.warn("Auto-generation aborted", { reason: (err as Error).message });
+    } else {
+      log.error("Auto-generation failed", err);
+    }
   }
 }
 

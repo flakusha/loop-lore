@@ -220,7 +220,7 @@ export function parsePagination(searchParams: URLSearchParams): { page: number; 
  */
 export function extractIdFromPath(pathname: string, prefix: string): string | null {
   const escaped = prefix.replaceAll(/[.*+?^${}()|[\]\\]/g, String.raw`\$&`);
-  const regex = new RegExp(`^${escaped}/([a-f0-9-]+)(/.*)?$`);
+  const regex = new RegExp(`^${escaped}/([^/]+)(/.*)?$`);
   const match = regex.exec(pathname);
   return match ? match[1] : null;
 }
