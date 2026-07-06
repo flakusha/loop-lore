@@ -144,7 +144,6 @@ describe("acceptAgeGate", () => {
     const database = await createTestDatabase();
     const config = gateConfig();
 
-     
     await expect(acceptAgeGate(database, config, "test-user-1", { birthDate: "2020-01-01" })).rejects.toThrow(
       UnderageError,
     );

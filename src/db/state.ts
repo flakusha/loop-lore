@@ -17,7 +17,6 @@ export interface StateDef<S extends string> {
 // ── Transition Error ──────────────────────────────────────
 
 export class TransitionError<S extends string> extends Error {
-  // eslint-disable-next-line unicorn/custom-error-definition
   constructor(from: S, to: S) {
     super(`Invalid state transition: ${from} → ${to}`);
     this.name = "TransitionError";

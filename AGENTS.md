@@ -214,4 +214,23 @@ docs/                    Specs, architecture, data model
 5. Verify: `bun format && bun typecheck && bun run src/server.ts` for server,
    `bun run tui` for TUI
 
+## Pre-commit Hooks
+
+Install hooks (one-time):
+
+```bash
+git config core.hooksPath .githooks
+chmod +x .githooks/pre-commit
+```
+
+Triggered on `git commit`. Pipeline:
+
+1. `bun run format:fix` — auto-format all sources
+2. `bun run check` — typecheck, lint, format verify, md lint
+3. `bun test src/` — fast unit tests
+4. `E2E_SAFEGUARD=1 bun test tests/e2e/` — full safeguarded e2e
+
+`E2E_SAFEGUARD` validates DB is `:memory:`, uploads under `/tmp/`, auth disabled.
+Set `E2E_SAFEGUARD=0` to bypass (dev-only — never in CI).
+
 Goal: lightweight, extensible, maintainable, scalable.

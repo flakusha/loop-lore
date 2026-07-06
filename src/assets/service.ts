@@ -7,11 +7,11 @@
 
 import { writeFileSync, mkdirSync, existsSync, unlinkSync } from "node:fs";
 import { join, resolve } from "node:path";
-import { uid } from "../utils";
 import type { Kysely } from "kysely";
 import type { DB } from "../db/schema";
 import { AssetType, StorageBackend } from "../db/enums";
 import type { AssetType as AssetTypeT } from "../db/enums";
+import { uid } from "../utils";
 import { extractImageMetadata } from "./metadata";
 
 export interface AssetRecord {
@@ -240,7 +240,7 @@ export async function listAssets(
     }
 
     const countResult = await countQuery.executeTakeFirst();
-    const total = Number(countResult?.total ?? 0);
+    const total = countResult?.total ?? 0;
     const data = await listQuery
       .orderBy("assets.created_at", "desc")
       .limit(pageSize)
@@ -255,7 +255,7 @@ export async function listAssets(
     .selectFrom("assets")
     .select(database.fn.countAll<number>().as("total"))
     .executeTakeFirst();
-  const total = Number(countResult?.total ?? 0);
+  const total = countResult?.total ?? 0;
 
   const data = await database
     .selectFrom("assets")
@@ -310,19 +310,19 @@ export async function deleteAsset(
  * Link an asset to an entity.
  */
 export async function linkAsset(database: Kysely<DB>, assetId: string, link: AssetLinkInput): Promise<void> {
-try {
-      await database
-        .insertInto("asset_links")
-        .values({
-          asset_id: assetId,
-          entity_type: link.entityType,
-          entity_id: link.entityId,
-          label: link.label ?? null,
-        })
-        .execute();
-    } catch {
-      /* ignore duplicate */
-    }
+  try {
+    await database
+      .insertInto("asset_links")
+      .values({
+        asset_id: assetId,
+        entity_type: link.entityType,
+        entity_id: link.entityId,
+        label: link.label ?? null,
+      })
+      .execute();
+  } catch {
+    /* ignore duplicate */
+  }
 }
 
 /**
