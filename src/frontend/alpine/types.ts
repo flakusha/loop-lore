@@ -209,9 +209,11 @@ declare global {
       loading: boolean;
       uploading: boolean;
       uploadLabel: string;
+      selectedFile: File | null;
       init(): void;
       loadAssets(): Promise<void>;
       openPreview(asset: { id: string; name?: string; filename?: string }): void;
+      handleFileSelect(event: Event): void;
       deleteAsset(id: string): Promise<void>;
       uploadAsset(event: Event): Promise<void>;
       handleDrop(event: DragEvent): void;

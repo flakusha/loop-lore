@@ -22,6 +22,7 @@ globalThis.galleryState = function () {
     loading: false,
     uploading: false,
     uploadLabel: "",
+    selectedFile: null as File | null,
 
     init() {
       this.loadAssets();
@@ -118,9 +119,13 @@ globalThis.galleryState = function () {
       }
     },
 
+    handleFileSelect(event: Event) {
+      const input = event.target as HTMLInputElement;
+      this.selectedFile = input.files?.[0] ?? null;
+    },
+
     async uploadAsset(_event: Event) {
-      const fileInput = (this as any).$refs.fileInput as HTMLInputElement | undefined;
-      const file = fileInput?.files?.[0];
+      const file = this.selectedFile;
       if (!file) return;
 
       this.uploading = true;
@@ -133,7 +138,7 @@ globalThis.galleryState = function () {
         if (res.ok) {
           globalThis.Alpine.store("ui").showUploadModal = false;
           this.uploadLabel = "";
-          fileInput!.value = "";
+          this.selectedFile = null;
           (this as any).$dispatch("show-toast", { type: "success", message: "Asset uploaded" });
           await this.loadAssets();
         } else {
@@ -150,12 +155,7 @@ globalThis.galleryState = function () {
     handleDrop(event: DragEvent) {
       const file = event.dataTransfer?.files?.[0];
       if (file) {
-        const input = (this as any).$refs.fileInput as HTMLInputElement | undefined;
-        if (input) {
-          const dt = new DataTransfer();
-          dt.items.add(file);
-          input.files = dt.files;
-        }
+        this.selectedFile = file;
       }
     },
 
