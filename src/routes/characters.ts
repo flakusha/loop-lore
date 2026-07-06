@@ -215,6 +215,7 @@ async function handleUpdateActor({ database, actorId, body, context }: UpdateAct
   if (body.displayName) updates.display_name = body.displayName;
   if (body.description) updates.description = body.description;
   if (body.systemPrompt) updates.system_prompt = body.systemPrompt;
+  if (body.avatarAssetId !== undefined) updates.avatar_asset_id = body.avatarAssetId;
   if (body.settings) {
     const settingsResult = safeJsonStringify(body.settings);
     if (!settingsResult.ok) return jsonError("Invalid settings data", HttpStatus.BadRequest);

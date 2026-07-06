@@ -43,7 +43,6 @@ export type ErrorCode = (typeof ErrorCode)[keyof typeof ErrorCode];
 
 export class NotFoundError extends Error {
   constructor(entity: string, id: string) {
-     
     super(`${entity} not found: ${id}`);
     this.name = "NotFoundError";
   }
@@ -89,7 +88,6 @@ export interface PaginatedResponse<T> {
  *   jsonResponse(user, HttpStatus.Created)
  */
 export function jsonResponse<T>(data: T, status: HttpStatusCode = HttpStatus.OK): Response {
-   
   return Response.json(data, { status });
 }
 
@@ -134,7 +132,6 @@ export function jsonValidationError(errors: ValidationError[], message = "Valida
  *   jsonPaginated(items, total, page, pageSize)
  */
 export function jsonPaginated<T>(data: T[], total: number, page: number, pageSize: number): Response {
-   
   return Response.json(
     {
       data,
@@ -157,7 +154,6 @@ export function jsonPaginated<T>(data: T[], total: number, page: number, pageSiz
  *   jsonCreated()  // no body
  */
 export function jsonCreated<T>(data?: T): Response {
-   
   if (data === undefined) return new Response(null, { status: HttpStatus.Created });
   const result = safeJsonStringify(data);
   if (!result.ok) {

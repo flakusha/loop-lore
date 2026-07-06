@@ -311,14 +311,10 @@ async function start() {
   // Auto-start external AI servers (llama.cpp, sd.cpp) in background
   const autoStart = config.generation.autoStart;
   if (autoStart?.llamaCpp?.enabled) {
-    initPromises.push(
-      serverManager.startLlamaCpp(autoStart.llamaCpp).then(() => {}),
-    );
+    initPromises.push(serverManager.startLlamaCpp(autoStart.llamaCpp).then(() => {}));
   }
   if (autoStart?.sdCpp?.enabled) {
-    initPromises.push(
-      serverManager.startSdCpp(autoStart.sdCpp).then(() => {}),
-    );
+    initPromises.push(serverManager.startSdCpp(autoStart.sdCpp).then(() => {}));
   }
 
   // Resolve all background init before proceeding to rest
@@ -421,14 +417,18 @@ async function start() {
   process.on("uncaughtException", (err) => {
     try {
       logger.error({ message: "Uncaught exception", error: String(err) });
-    } catch { /* last resort */ }
+    } catch {
+      /* last resort */
+    }
     void shutdown("uncaughtException");
   });
 
   process.on("unhandledRejection", (reason) => {
     try {
       logger.error({ message: "Unhandled rejection", error: String(reason) });
-    } catch { /* last resort */ }
+    } catch {
+      /* last resort */
+    }
     void shutdown("unhandledRejection");
   });
 }

@@ -225,6 +225,7 @@ These are pre-existing test failures that do not block development. They are inf
 Browser E2E tests seed data with deterministic IDs (`SEED.user.id`, `SEED.chat.id`, etc.) but the server runs in solo mode (`auth.required = false`), which auto-creates a solo user with a random UUID. The web UI queries APIs scoped to that random solo user, so seeded data (owned by `SEED.user.id`) is invisible.
 
 **Affected tests** (always fail):
+
 - `chat-flow.test.ts` — "No chats yet" on chat list, message input disabled
 - `characters-flow.test.ts` — empty character grid, create form never appears
 - `worlds-flow.test.ts` — empty world list, create form never appears
@@ -239,6 +240,7 @@ Browser E2E tests seed data with deterministic IDs (`SEED.user.id`, `SEED.chat.i
 When all 7 browser E2E test files run together (`bun test tests/e2e/flows/browser/`), tests that pass solo or in small groups fail or time out.
 
 **Root cause**: Each test file creates its own Playwright browser + `Bun.serve` instance + temp DB + temp upload dirs. Under parallel load:
+
 - Module-level singletons (e.g., `cachedSoloUser` in `src/middleware/auth.ts:131`) are shared across test files via Bun's module cache. One file's `resetSoloUserCache()` (called in `afterAll` teardown) can corrupt another file's in-flight solo session.
 - Resource pressure from 7 Playwright browser instances + 7 `Bun.serve` processes may trigger Playwright timeouts.
 
