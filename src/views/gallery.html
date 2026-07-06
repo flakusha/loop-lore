@@ -1,23 +1,26 @@
 <!-- Gallery View (swapped into #app-root by htmx) -->
+<!-- Header: moved to #header-slot by htmx:load handler -->
+<header id="header-slot" class="main-header" data-testid="gallery-header">
+  <button
+    class="hamburger"
+    @click="$store.sidebar.open = !$store.sidebar.open"
+    x-show="!$store.sidebar.open"
+    data-testid="hamburger"
+  >
+    ☰
+  </button>
+  <span class="title">Asset Gallery</span>
+  <div class="actions">
+    <button class="btn btn-primary" @click="$store.ui.showUploadModal = true" data-testid="upload-button">
+      + Upload
+    </button>
+  </div>
+</header>
+
 <div class="app-layout" x-data="galleryState()">
   <!-- Main gallery content -->
-  <main class="main-content">
-    <header class="main-header">
-      <button
-        class="hamburger"
-        @click="$store.sidebar.open = !$store.sidebar.open"
-        x-show="!$store.sidebar.open"
-        data-testid="hamburger"
-      >
-        ☰
-      </button>
-      <span class="title">Asset Gallery</span>
-      <div class="actions">
-        <button class="btn btn-primary" @click="showUploadModal = true" data-testid="upload-button">
-          + Upload
-        </button>
-      </div>
-    </header>
+  <main class="main-content" style="padding-top: 0">
+    <!-- Header is OOB-swapped to layout header-slot -->
 
     <!-- Asset grid (Alpine-rendered) -->
     <div class="asset-grid" id="asset-grid" data-testid="asset-grid">
@@ -128,16 +131,16 @@
 
     <!-- Upload modal -->
     <div
-      x-show="showUploadModal"
+      x-show="$store.ui.showUploadModal"
       x-cloak
       class="modal-overlay"
-      @click.self="showUploadModal = false"
+      @click.self="$store.ui.showUploadModal = false"
       data-testid="upload-modal"
     >
       <div class="modal">
         <div class="modal-header">
           <span class="title">Upload Asset</span>
-          <button class="btn-icon" @click="showUploadModal = false">&times;</button>
+          <button class="btn-icon" @click="$store.ui.showUploadModal = false">&times;</button>
         </div>
         <div class="modal-body">
           <form @submit.prevent="uploadAsset($event)" data-testid="upload-form">
@@ -174,7 +177,9 @@
             </div>
 
             <div style="display: flex; gap: var(--space-3); justify-content: flex-end">
-              <button type="button" class="btn btn-secondary" @click="showUploadModal = false">Cancel</button>
+              <button type="button" class="btn btn-secondary" @click="$store.ui.showUploadModal = false">
+                Cancel
+              </button>
               <button type="submit" class="btn btn-primary" :disabled="uploading">Upload</button>
             </div>
           </form>

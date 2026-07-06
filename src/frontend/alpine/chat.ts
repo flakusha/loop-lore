@@ -14,9 +14,6 @@ interface ChatAsset {
 
 globalThis.chatState = function () {
   return {
-    showChatList: false,
-    showGallery: false,
-    showCharacterInfo: false,
     isGenerating: false,
     generationLabel: "Character is responding...",
     generationCheckInterval: null as ReturnType<typeof setInterval> | null,
@@ -85,9 +82,22 @@ globalThis.chatState = function () {
     _observer: null as MutationObserver | null,
 
     init() {
-      (this as any).$root.pageTitle = "loop-lore";
       this.loadChats();
       this.loadUserInfo();
+
+      // Listen for header action events from OOB header
+      this._toggleChatListHandler = () => {
+        globalThis.Alpine.store("ui").showChatList = !globalThis.Alpine.store("ui").showChatList;
+      };
+      this._toggleGalleryHandler = () => {
+        globalThis.Alpine.store("ui").showGallery = !globalThis.Alpine.store("ui").showGallery;
+      };
+      this._toggleCharacterInfoHandler = () => {
+        globalThis.Alpine.store("ui").showCharacterInfo = true;
+      };
+      document.addEventListener("toggle-chat-list", this._toggleChatListHandler);
+      document.addEventListener("toggle-gallery", this._toggleGalleryHandler);
+      document.addEventListener("toggle-character-info", this._toggleCharacterInfoHandler);
 
       this.generationCheckInterval = setInterval(() => {
         if (!this.isGenerating) return;
@@ -107,12 +117,12 @@ globalThis.chatState = function () {
       // Close sidebar on Escape key
       document.addEventListener("keydown", (e: KeyboardEvent) => {
         if (e.key === "Escape") {
-          if (this.showChatList) {
-            this.showChatList = false;
-          } else if (this.showGallery) {
-            this.showGallery = false;
-          } else if (this.showCharacterInfo) {
-            this.showCharacterInfo = false;
+          if (globalThis.Alpine.store("ui").showChatList) {
+            globalThis.Alpine.store("ui").showChatList = false;
+          } else if (globalThis.Alpine.store("ui").showGallery) {
+            globalThis.Alpine.store("ui").showGallery = false;
+          } else if (globalThis.Alpine.store("ui").showCharacterInfo) {
+            globalThis.Alpine.store("ui").showCharacterInfo = false;
           }
         }
         if (e.ctrlKey && e.key === "j") {
@@ -126,12 +136,27 @@ globalThis.chatState = function () {
     },
 
     destroy() {
+      // Remove event listeners added in init
+      document.removeEventListener("toggle-chat-list", this._toggleChatListHandler);
+      document.removeEventListener("toggle-gallery", this._toggleGalleryHandler);
+      document.removeEventListener("toggle-character-info", this._toggleCharacterInfoHandler);
+
       if (this.generationCheckInterval) {
         clearInterval(this.generationCheckInterval);
       }
       if (this.scrollObserver) {
         this.scrollObserver.disconnect();
         this.scrollObserver = null;
+      }
+
+      // Reset global Alpine UI store flags that might persist across pages
+      if (globalThis.Alpine) {
+        const uiStore = globalThis.Alpine.store("ui");
+        if (uiStore) {
+          uiStore.showChatList = false;
+          uiStore.showGallery = false;
+          uiStore.showCharacterInfo = false;
+        }
       }
     },
 
@@ -174,7 +199,10 @@ globalThis.chatState = function () {
       this.activeChat = chatId;
       const chat = this.chats.find((c: { id: string; name?: string }) => c.id === chatId);
       this.activeChatName = chat?.name || "Chat";
-      history.replaceState(null, "", `/chat/${chatId}`);
+      const titleEl = document.querySelector("#page-title");
+      if (titleEl) titleEl.textContent = this.activeChatName;
+      // Keep URL as /views/chat — no server route for /chat/:id yet
+      // history.replaceState(null, "", `/chat/${chatId}`);
       // Reset infinite scroll state on chat switch
       this.currentPage = 1;
       this.hasMoreMessages = true;

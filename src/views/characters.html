@@ -1,27 +1,31 @@
 <!-- Characters View (swapped into #app-root by htmx) -->
-<div class="app-layout" x-data="charactersState()">
-  <!-- Main character grid -->
-  <main class="main-content">
-    <header class="main-header">
-      <button
-        class="hamburger"
-        @click="$store.sidebar.open = !$store.sidebar.open"
-        x-show="!$store.sidebar.open"
-        data-testid="hamburger"
-      >
-        ☰
-      </button>
-      <span class="title">Characters</span>
-      <div class="actions">
-        <button class="btn btn-secondary" @click="showImportForm = true" data-testid="import-character">
-          Import Card
-        </button>
-        <button class="btn btn-primary" @click="showCreateForm = true" data-testid="create-character">
-          + New
-        </button>
-      </div>
-    </header>
+<!-- Header: moved to #header-slot by htmx:load handler -->
+<header
+  id="header-slot"
+  class="main-header"
+  data-testid="characters-header"
+>
+  <button
+    class="hamburger"
+    @click="$store.sidebar.open = !$store.sidebar.open"
+    x-show="!$store.sidebar.open"
+    data-testid="hamburger"
+  >
+    ☰
+  </button>
+  <span class="title">Characters</span>
+  <div class="actions">
+    <button class="btn btn-secondary" @click="$store.ui.showImportForm = true" data-testid="import-character">
+      Import Card
+    </button>
+    <button class="btn btn-primary" @click="$store.ui.showCreateForm = true" data-testid="create-character">
+      + New
+    </button>
+  </div>
+</header>
 
+<div class="app-layout" x-data="charactersState()" @htmx:before-swap.window="if($data && typeof $data.destroy==='function') $data.destroy()">
+  <main class="main-content" style="padding-top: 0">
     <!-- Character grid loaded via Alpine -->
     <div class="chat-area" style="overflow-y: auto">
       <!-- Loading state -->
@@ -41,7 +45,7 @@
           <button
             class="btn btn-primary"
             style="margin-top: var(--space-4)"
-            @click="showCreateForm = true"
+            @click="$store.ui.showCreateForm = true"
             data-testid="create-first-character"
           >
             + Create Character
@@ -52,22 +56,13 @@
       <!-- Character grid -->
       <template x-if="!loading && characters.length > 0">
         <div class="character-grid" data-testid="character-grid">
-          <template x-for="char in characters" :key="char.id">
+          <template x-for="char in filteredCharacters" :key="char.id">
             <div
               class="character-card"
               @click="selectCharacter(char)"
               :data-testid="'character-card-' + char.id"
             >
-              <div
-                class="card-img"
-                style="
-                  background: var(--bg-tertiary);
-                  display: flex;
-                  align-items: center;
-                  justify-content: center;
-                  font-size: 48px;
-                "
-              >
+              <div class="card-img">
                 <span>👤</span>
               </div>
               <div class="card-body">
@@ -82,16 +77,16 @@
 
     <!-- Create character modal -->
     <div
-      x-show="showCreateForm"
+      x-show="$store.ui.showCreateForm"
       x-cloak
       class="modal-overlay"
-      @click.self="showCreateForm = false"
+      @click.self="$store.ui.showCreateForm = false"
       data-testid="create-character-modal"
     >
       <div class="modal">
         <div class="modal-header">
           <span class="title">Create Character</span>
-          <button class="btn-icon" @click="showCreateForm = false">&times;</button>
+          <button class="btn-icon" @click="$store.ui.showCreateForm = false">&times;</button>
         </div>
         <div class="modal-body">
           <form @submit.prevent="createCharacter()" data-testid="create-character-form">
@@ -128,7 +123,9 @@
             </div>
 
             <div style="display: flex; gap: var(--space-3); justify-content: flex-end">
-              <button type="button" class="btn btn-secondary" @click="showCreateForm = false">Cancel</button>
+              <button type="button" class="btn btn-secondary" @click="$store.ui.showCreateForm = false">
+                Cancel
+              </button>
               <button type="submit" class="btn btn-primary">Create</button>
             </div>
           </form>
@@ -138,16 +135,16 @@
 
     <!-- Import modal -->
     <div
-      x-show="showImportForm"
+      x-show="$store.ui.showImportForm"
       x-cloak
       class="modal-overlay"
-      @click.self="showImportForm = false"
+      @click.self="$store.ui.showImportForm = false"
       data-testid="import-character-modal"
     >
       <div class="modal">
         <div class="modal-header">
           <span class="title">Import Character Card</span>
-          <button class="btn-icon" @click="showImportForm = false">&times;</button>
+          <button class="btn-icon" @click="$store.ui.showImportForm = false">&times;</button>
         </div>
         <div class="modal-body">
           <form
@@ -156,7 +153,7 @@
             hx-target="#app-root"
             hx-swap="innerHTML"
             hx-target-error="#toast-container"
-            hx-on::after-request="if(event.detail.successful){ showImportForm = false; $dispatch('show-toast', { type: 'success', message: 'Character imported' }); htmx.ajax('GET', '/views/characters', { target: '#app-root', swap: 'innerHTML' }) }"
+            hx-on::after-request="if(event.detail.successful){ $store.ui.showImportForm = false; $dispatch('show-toast', { type: 'success', message: 'Character imported' }); htmx.ajax('GET', '/views/characters', { target: '#app-root', swap: 'innerHTML' }) }"
             data-testid="import-character-form"
           >
             <div class="drop-zone" style="margin-bottom: var(--space-4)" @click="$refs.fileInput.click()">
@@ -167,7 +164,9 @@
             </div>
 
             <div style="display: flex; gap: var(--space-3); justify-content: flex-end">
-              <button type="button" class="btn btn-secondary" @click="showImportForm = false">Cancel</button>
+              <button type="button" class="btn btn-secondary" @click="$store.ui.showImportForm = false">
+                Cancel
+              </button>
               <button type="submit" class="btn btn-primary">Import</button>
             </div>
           </form>

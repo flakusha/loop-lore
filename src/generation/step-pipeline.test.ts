@@ -10,7 +10,33 @@ import { completeStep, failStep, getPipelineState } from "./step-pipeline";
 import { activeGenerations } from "./cancellation-tracker";
 import { up as migrate } from "../db/migrations/001_init";
 import type { DB } from "../db/schema";
-import { GenerationStatus } from "../db/enums";
+import { GenerationStatus, PolicyType } from "../db/enums";
+import { StreamingRepetitionDetector } from "./repetition-detector";
+import { DEFAULT_REPETITION_DETECTION } from "./types";
+import type { ActiveGeneration } from "./cancellation-tracker";
+
+/** Minimal ActiveGeneration factory for test mocks. */
+function makeActiveGen(overrides: Partial<ActiveGeneration>): ActiveGeneration {
+  const now = Date.now();
+  return {
+    attemptId: "test",
+    chatId: "chat-test",
+    parentMessageId: "msg-test",
+    actorId: "actor-test",
+    abortController: new AbortController(),
+    startedAt: now,
+    repetitionDetector: new StreamingRepetitionDetector(DEFAULT_REPETITION_DETECTION),
+    policyConfig: { expectedPolicy: PolicyType.Sfw, cancel: false },
+    responseLimitConfig: { maxResponses: 50, isGroupChat: false, currentCount: 0 },
+    streaming: false,
+    chunksReceived: 0,
+    charsReceived: 0,
+    status: GenerationStatus.Processing,
+    stepIndex: 0,
+    totalSteps: 1,
+    ...overrides,
+  };
+}
 
 describe("step-pipeline", () => {
   let db: Kysely<DB>;
@@ -31,7 +57,7 @@ describe("step-pipeline", () => {
         idempotency_key: "ik-persist",
         model_id: "mock-model",
         provider: "mock",
-        status: GenerationStatus.InProgress,
+        status: GenerationStatus.Processing,
         step_index: 0,
         total_steps: 3,
         started_at: new Date().toISOString(),
@@ -49,15 +75,7 @@ describe("step-pipeline", () => {
 
   describe("completeStep", () => {
     test("advances step index for active generation", async () => {
-      activeGenerations.set("a1", {
-        attemptId: "a1",
-        stepIndex: 0,
-        totalSteps: 3,
-        status: GenerationStatus.InProgress,
-        progress: 0,
-        lastActivity: Date.now(),
-        tokenCount: 0,
-      });
+      activeGenerations.set("a1", makeActiveGen({ attemptId: "a1", stepIndex: 0, totalSteps: 3 }));
 
       await completeStep("a1", 0, db);
       expect(activeGenerations.get("a1")!.stepIndex).toBe(1);
@@ -93,21 +111,13 @@ describe("step-pipeline", () => {
 
   describe("getPipelineState", () => {
     test("returns state from active in-memory generation", async () => {
-      activeGenerations.set("a2", {
-        attemptId: "a2",
-        stepIndex: 2,
-        totalSteps: 5,
-        status: GenerationStatus.InProgress,
-        progress: 0.4,
-        lastActivity: Date.now(),
-        tokenCount: 50,
-      });
+      activeGenerations.set("a2", makeActiveGen({ attemptId: "a2", stepIndex: 2, totalSteps: 5 }));
 
       const state = await getPipelineState("a2", db);
       expect(state).not.toBeNull();
       expect(state!.stepIndex).toBe(2);
       expect(state!.totalSteps).toBe(5);
-      expect(state!.status).toBe(GenerationStatus.InProgress);
+      expect(state!.status).toBe(GenerationStatus.Processing);
     });
 
     test("falls back to DB when not in memory", async () => {

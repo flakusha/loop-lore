@@ -1,31 +1,42 @@
 <!-- Character Chat List Page (swapped into #app-root by htmx) -->
+<!-- Header: moved to #header-slot by htmx:load handler -->
+<header
+  id="header-slot"
+  class="main-header"
+  data-testid="character-chat-header"
+>
+  <button
+    class="hamburger"
+    @click="$store.sidebar.open = !$store.sidebar.open"
+    x-show="!$store.sidebar.open"
+    data-testid="hamburger"
+  >
+    ☰
+  </button>
+  <span class="title" id="page-title">Chats</span>
+  <div class="actions">
+    <button
+      class="btn btn-secondary"
+      onclick="document.dispatchEvent(new CustomEvent('refresh-chats'))"
+      data-testid="refresh-chats"
+    >
+      Refresh
+    </button>
+    <a
+      href="/views/new-chat"
+      class="btn btn-primary"
+      hx-get="/views/new-chat"
+      hx-target="#app-root"
+      hx-swap="innerHTML"
+      data-testid="new-chat-from-character"
+      >+ New Chat</a
+    >
+  </div>
+</header>
+
 <div class="app-layout" x-data="characterChatListState()">
   <!-- Main content -->
-  <main class="main-content">
-    <header class="main-header" data-testid="character-chat-header">
-      <button
-        class="hamburger"
-        @click="$store.sidebar.open = !$store.sidebar.open"
-        x-show="!$store.sidebar.open"
-        data-testid="hamburger"
-      >
-        ☰
-      </button>
-      <span class="title" x-text="characterName || 'Chats'"></span>
-      <div class="actions">
-        <button class="btn btn-secondary" @click="loadChats" data-testid="refresh-chats">Refresh</button>
-        <a
-          href="/views/new-chat"
-          class="btn btn-primary"
-          hx-get="/views/new-chat"
-          hx-target="#app-root"
-          hx-swap="innerHTML"
-          data-testid="new-chat-from-character"
-          >+ New Chat</a
-        >
-      </div>
-    </header>
-
+  <main class="main-content" style="padding-top: 0">
     <div class="chat-area">
       <!-- Loading -->
       <template x-if="loading">

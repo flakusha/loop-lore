@@ -167,18 +167,18 @@ const dispatch: RouteDispatch = async ({
     if (result) return result;
   }
 
+  // /character/:slug/edit → character edit (must check before /:chatId)
+  const characterEditMatch = /^\/character\/([\w-]+)\/edit$/.exec(pathname);
+  if (characterEditMatch) {
+    const result = serveCharacterEdit(characterEditMatch[1]);
+    if (result) return result;
+  }
+
   // /character/:slug/:chatId → specific chat
   const characterChatMatch = /^\/character\/([\w-]+)\/([\w-]+)$/.exec(pathname);
   if (characterChatMatch) {
     const [, slug, chatId] = characterChatMatch;
     const result = serveCharacterChat(slug, chatId);
-    if (result) return result;
-  }
-
-  // /character/:slug/edit → character edit
-  const characterEditMatch = /^\/character\/([\w-]+)\/edit$/.exec(pathname);
-  if (characterEditMatch) {
-    const result = serveCharacterEdit(characterEditMatch[1]);
     if (result) return result;
   }
 

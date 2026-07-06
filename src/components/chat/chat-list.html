@@ -1,0 +1,35 @@
+<!-- Chat List Component ( reusable ) -->
+<div class="chat-list-panel" x-show="$store.ui.showChatList">
+  <div class="chat-list-header">
+    <span class="nav-section-title">Chats</span>
+    <button class="btn-icon" @click="$store.ui.showChatList = false" title="Close">×</button>
+  </div>
+  <div id="chat-list">
+    <template x-if="chats.length === 0">
+      <div class="nav-item" style="color: var(--text-tertiary); font-size: 13px">No chats yet</div>
+    </template>
+    <template x-for="chat in chats" :key="chat.id">
+      <a
+        class="nav-item"
+        :class="{ active: activeChat === chat.id }"
+        href="#"
+        @click.prevent="selectChat(chat.id)"
+      >
+        <span class="name" x-text="chat.name"></span>
+      </a>
+    </template>
+  </div>
+  <div style="padding: var(--space-3)">
+    <a
+      class="btn btn-secondary"
+      style="width: 100%; text-align: center; text-decoration: none"
+      href="/views/new-chat"
+      hx-get="/views/new-chat"
+      hx-target="#app-root"
+      hx-swap="innerHTML"
+      hx-push-url="true"
+    >
+      + New Chat
+    </a>
+  </div>
+</div>
