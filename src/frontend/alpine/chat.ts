@@ -11,6 +11,12 @@ interface ChatAsset {
   id: string;
   name?: string;
   filename?: string;
+  asset_type?: string;
+  mime_type?: string;
+  size_bytes?: number;
+  width?: number;
+  height?: number;
+  alt_text?: string;
 }
 
 globalThis.chatState = function () {
