@@ -1,124 +1,45 @@
 /**
- * Browser logger — always-on structured logging.
+ * Browser logger — lightweight console wrapper.
  *
- * Aligned with BE logger (src/logger/) but for browser:
- *   - AsyncLogQueue (port of BE queue.ts, 100ms/50 batch)
- *   - BrowserConsoleTransport (color via CSS)
- *   - ServerTransport (POST /api/frontend/logs, 5s flush)
- *   - PII censoring (port of BE censors.ts)
- *   - Size limits (port of BE limits.ts)
- *   - LogEntry format matches BE spec
- *   - Child loggers with full bindings
+ * Drops heavy queue/transport/censor machinery from FE bundles.
+ * Same Logger interface, same exports, zero deps.
  */
 
-import type {
-  LogEntry,
-  Logger,
-  LoggerBindings,
-  LogOptions,
-  LoggerConfig,
-  SizeLimits,
-} from "../../logger/types";
-import { LogLevelNumeric } from "../../logger/types";
-import { levelFromConfig, shouldEmit } from "../../logger/levels";
-import { applyLimits } from "../../logger/limits";
-import { censorMeta, fieldNamesToRules } from "../../logger/censors";
-import { unixSec, formatTime } from "../../utils/date";
-import { AsyncLogQueue } from "./queue";
-import { BrowserConsoleTransport } from "./transports/console";
-import { ServerTransport } from "./transports/server";
+import type { Logger, LoggerBindings } from "../../logger/types";
 
-// ── Implementation ─────────────────────────────────────────
-
-class BrowserLoggerImpl implements Logger {
-  private readonly queue: AsyncLogQueue;
-  private readonly threshold: number;
-  private readonly levelString: string;
+class LightLogger implements Logger {
   private readonly bindings: LoggerBindings;
-  private readonly censorEnabled: boolean;
-  private readonly censorFields: string[];
-  private readonly limits: Partial<SizeLimits>;
 
-  constructor(config?: Partial<LoggerConfig>, bindings?: LoggerBindings, queue?: AsyncLogQueue) {
+  constructor(bindings?: LoggerBindings) {
     this.bindings = bindings ?? {};
-    this.levelString = config?.level ?? "debug";
-    this.threshold = levelFromConfig(this.levelString as any);
-    this.censorEnabled = config?.censorEnabled ?? true;
-    this.censorFields = config?.censorFields ?? [];
-    this.limits = config?.limits ?? {};
-
-    if (queue) {
-      this.queue = queue;
-    } else {
-      const transports = [new BrowserConsoleTransport(), new ServerTransport()];
-      this.queue = new AsyncLogQueue(transports, {
-        queueMaxSize: config?.queueMaxSize ?? 10_000,
-      });
-      this.queue.start();
-    }
   }
 
-  private log(
-    level: string,
-    message: string | Record<string, unknown>,
-    error?: Error,
-    meta?: Record<string, unknown>,
-    _options?: LogOptions,
-  ): void {
-    const numericLevel = LogLevelNumeric[level as keyof typeof LogLevelNumeric];
-    if (!shouldEmit(numericLevel, this.threshold)) return;
-
-    const entry: LogEntry = {
-      level: numericLevel,
-      timestamp: unixSec(),
-      time: formatTime(),
-      message,
-      ...this.bindings,
-    };
-
-    if (error) {
-      entry.error = error.stack ?? error.message;
-    }
-
-    if (meta && Object.keys(meta).length > 0) {
-      entry.meta = this.censorEnabled ? censorMeta(meta, fieldNamesToRules(this.censorFields)) : meta;
-    }
-
-    const limited = applyLimits(entry, this.limits);
-    this.queue.enqueue(limited);
+  private prefix(): string {
+    return this.bindings.module ? `[${this.bindings.module}]` : "";
   }
 
   debug(message: string | Record<string, unknown>, meta?: Record<string, unknown>): void {
-    this.log("debug", message, undefined, meta);
+    console.debug(this.prefix(), message, meta ?? "");
   }
 
   info(message: string | Record<string, unknown>, meta?: Record<string, unknown>): void {
-    this.log("info", message, undefined, meta);
+    console.info(this.prefix(), message, meta ?? "");
   }
 
   warn(message: string | Record<string, unknown>, meta?: Record<string, unknown>): void {
-    this.log("warn", message, undefined, meta);
+    console.warn(this.prefix(), message, meta ?? "");
   }
 
   error(message: string | Record<string, unknown>, error?: Error, meta?: Record<string, unknown>): void {
-    this.log("error", message, error, meta);
+    console.error(this.prefix(), message, error ?? "", meta ?? "");
   }
 
   child(bindings: LoggerBindings): Logger {
-    return new BrowserLoggerImpl(
-      {
-        level: this.levelString as any,
-        censorEnabled: this.censorEnabled,
-        censorFields: this.censorFields,
-        limits: this.limits,
-      },
-      { ...this.bindings, ...bindings },
-      this.queue,
-    );
+    return new LightLogger({ ...this.bindings, ...bindings });
   }
 
   async flush(): Promise<void> {
-    await this.queue.flush();
+    /* no-op — lightweight logger has no queue */
   }
 }
 
@@ -126,8 +47,8 @@ class BrowserLoggerImpl implements Logger {
 
 const _root: { instance: Logger | null } = { instance: null };
 
-export function createLogger(config?: Partial<LoggerConfig>): Logger {
-  const instance = new BrowserLoggerImpl(config);
+export function createLogger(_config?: unknown): Logger {
+  const instance = new LightLogger();
   _root.instance ??= instance;
   return instance;
 }

@@ -159,6 +159,39 @@ document.addEventListener("DOMContentLoaded", initAlpineStores);
 // Also trigger page loaders on initial page load (for direct navigation, not htmx)
 document.addEventListener("DOMContentLoaded", triggerPageLoaders);
 
+// ── hx-on::after-request replacements (success events) ──────
+document.addEventListener("htmx:afterRequest", ((e: Event) => {
+  const detail = (e as CustomEvent<{ successful: boolean; elt: HTMLElement }>).detail;
+  if (!detail.successful) return;
+  const successEvent = detail.elt.dataset.hxSuccessEvent;
+  if (successEvent) {
+    document.dispatchEvent(new CustomEvent(successEvent));
+  }
+}) as EventListener);
+
+document.addEventListener("asset:uploaded", () => {
+  document.querySelector("#upload-modal")?.classList.remove("open");
+  showToast("success", "Asset uploaded");
+  (globalThis as any).loadGalleryPage?.();
+});
+
+document.addEventListener("character:created", () => {
+  showToast("success", "Character created");
+  (globalThis as any).loadCharactersPage?.();
+});
+
+document.addEventListener("character:imported", () => {
+  document.querySelector("#import-modal")?.classList.remove("open");
+  showToast("success", "Character imported");
+  (globalThis as any).loadCharactersPage?.();
+});
+
+document.addEventListener("world:saved", () => {
+  document.querySelector("#edit-world-modal")?.classList.remove("open");
+  showToast("success", "World saved");
+  (globalThis as any).loadWorldDetail?.();
+});
+
 // ── Global keyboard: Escape closes sidebar ──────────────────
 document.addEventListener("keydown", (e: KeyboardEvent) => {
   if (e.key !== "Escape") return;
