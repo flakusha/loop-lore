@@ -10,11 +10,7 @@
     >
       Import
     </button>
-    <button
-      class="btn btn-primary"
-      onclick="document.getElementById('create-world-modal').classList.add('open')"
-      data-testid="create-world"
-    >
+    <button class="btn btn-primary" onclick="openModal('create-world-modal')" data-testid="create-world">
       + New
     </button>
   </div>
@@ -36,15 +32,13 @@
   <div
     id="create-world-modal"
     class="modal-overlay"
-    onclick="if (event.target === this) this.classList.remove('open');"
+    onclick="closeModalOnBackdrop(event)"
     data-testid="create-world-modal"
   >
     <div class="modal">
       <div class="modal-header">
         <span class="title">Create World</span>
-        <button class="btn-icon" onclick="this.closest('.modal-overlay').classList.remove('open')">
-          &times;
-        </button>
+        <button class="btn-icon" onclick="closeModal(this)">&times;</button>
       </div>
       <div class="modal-body">
         <form onsubmit="return createWorld(event);" data-testid="create-world-form">
@@ -82,13 +76,7 @@
           <div
             style="display: flex; gap: var(--space-3); justify-content: flex-end; margin-top: var(--space-6)"
           >
-            <button
-              type="button"
-              class="btn btn-secondary"
-              onclick="document.getElementById('create-world-modal').classList.remove('open')"
-            >
-              Cancel
-            </button>
+            <button type="button" class="btn btn-secondary" onclick="closeModal(this)">Cancel</button>
             <button type="submit" class="btn btn-primary">Create</button>
           </div>
         </form>

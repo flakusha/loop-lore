@@ -34,8 +34,11 @@
     <!-- HTMX bundle: globals + htmx event handlers (no Alpine dependency) -->
     <script src="/bundle.js" defer></script>
 
-    <!-- Alpine components (define app, chatState, etc. BEFORE Alpine loads) -->
-    <script src="/alpine.js" defer></script>
+    <!-- Alpine core components (define app, sidebar, theme, locale, htmx — every page) -->
+    <script src="/alpine-core.js" defer></script>
+
+    <!-- Alpine chat components (define chatState, worldEditState — chat/world pages) -->
+    <script src="/alpine-chat.js" defer></script>
 
     <!-- Alpine.js (loaded for chat page reactivity) -->
     <script
@@ -176,7 +179,7 @@
             src="/img/default-avatar.png"
             alt="User avatar"
             style="background: var(--bg-tertiary)"
-            onerror="this.style.display = 'none'"
+            data-avatar="user"
           />
           <div class="details">
             <div class="name" id="user-display-name">User</div>
