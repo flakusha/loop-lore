@@ -451,7 +451,7 @@ async function start() {
   if (existsSync(sourcePublicDirectory)) {
     copyDirectory(sourcePublicDirectory, destinationPublicDirectory);
     if (needsCompression(sourcePublicDirectory, destinationPublicDirectory)) {
-      const result = compressAssets(sourcePublicDirectory, destinationPublicDirectory);
+      const result = await compressAssets(sourcePublicDirectory, destinationPublicDirectory);
       if (result.total > 0) {
         logger.info({
           message: "Compressed assets",
@@ -468,7 +468,7 @@ async function start() {
   if (existsSync(sourceViewsDirectory)) {
     copyDirectory(sourceViewsDirectory, destinationPublicDirectory);
     if (needsCompression(sourceViewsDirectory, destinationPublicDirectory)) {
-      const result = compressAssets(sourceViewsDirectory, destinationPublicDirectory);
+      const result = await compressAssets(sourceViewsDirectory, destinationPublicDirectory);
       if (result.total > 0) {
         logger.info({
           message: "Compressed views",
@@ -495,7 +495,7 @@ async function start() {
 
   // Pre-compress VitePress docs dist (if built)
   if (existsSync(DOCS_PATH)) {
-    const docsResult = compressAssets(DOCS_PATH, DOCS_PATH);
+    const docsResult = await compressAssets(DOCS_PATH, DOCS_PATH);
     if (docsResult.total > 0) {
       logger.info({
         message: "Docs compressed",
