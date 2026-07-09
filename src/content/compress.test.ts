@@ -1,7 +1,3 @@
-/**
- * Tests for content/compress.ts — build-time asset compression
- */
-
 import { describe, test, expect, beforeAll, afterAll } from "bun:test";
 import { mkdtempSync, writeFileSync, readFileSync, existsSync, rmSync, mkdirSync } from "node:fs";
 import { join } from "node:path";
@@ -94,46 +90,44 @@ describe("walkDirectory", () => {
 // ── compressFile ─────────────────────────────────────────────
 
 describe("compressFile", () => {
-  test("creates .gz, .zst, and .br files for HTML", () => {
+  test("creates .gz, .zst, and .br files for HTML", async () => {
     const dir = join(tmpDir, "compress-html");
     mkdirSync(dir, { recursive: true });
     const filePath = join(dir, "index.html");
     writeFileSync(filePath, "<div>Hello World</div>");
 
-    compressFile(filePath);
+    await compressFile(filePath);
 
     expect(existsSync(filePath + ".gz")).toBe(true);
     expect(existsSync(filePath + ".zst")).toBe(true);
     expect(existsSync(filePath + ".br")).toBe(true);
 
-    // Compressed files should be smaller than uncompressed (minified first)
-    // Or at least exist with content
     const gzSize = readFileSync(filePath + ".gz").length;
     const brSize = readFileSync(filePath + ".br").length;
     expect(gzSize).toBeGreaterThan(0);
     expect(brSize).toBeGreaterThan(0);
   });
 
-  test("creates compressed files for CSS", () => {
+  test("creates compressed files for CSS", async () => {
     const dir = join(tmpDir, "compress-css");
     mkdirSync(dir, { recursive: true });
     const filePath = join(dir, "style.css");
     writeFileSync(filePath, "body { margin: 0; padding: 0; }");
 
-    compressFile(filePath);
+    await compressFile(filePath);
 
     expect(existsSync(filePath + ".gz")).toBe(true);
     expect(existsSync(filePath + ".zst")).toBe(true);
     expect(existsSync(filePath + ".br")).toBe(true);
   });
 
-  test("creates compressed files for JS", () => {
+  test("creates compressed files for JS", async () => {
     const dir = join(tmpDir, "compress-js");
     mkdirSync(dir, { recursive: true });
     const filePath = join(dir, "bundle.js");
     writeFileSync(filePath, "const x = function() { return 1; }");
 
-    compressFile(filePath);
+    await compressFile(filePath);
 
     expect(existsSync(filePath + ".gz")).toBe(true);
     expect(existsSync(filePath + ".zst")).toBe(true);
@@ -144,14 +138,14 @@ describe("compressFile", () => {
 // ── compressAssets ───────────────────────────────────────────
 
 describe("compressAssets", () => {
-  test("compresses all compressible files in a directory", () => {
+  test("compresses all compressible files in a directory", async () => {
     const src = join(tmpDir, "assets-src");
     const dest = join(tmpDir, "assets-dest");
     mkdirSync(src, { recursive: true });
     writeFileSync(join(src, "a.css"), ".a{}");
     writeFileSync(join(src, "b.js"), "var x=1;");
 
-    const result = compressAssets(src, dest);
+    const result = await compressAssets(src, dest);
 
     expect(result.total).toBeGreaterThanOrEqual(2);
     expect(result.compressed).toBe(result.total);
