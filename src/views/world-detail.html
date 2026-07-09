@@ -4,11 +4,7 @@
   <span class="title" id="page-title">World Details</span>
   <div class="actions">
     <button class="btn btn-secondary" onclick="loadWorldDetail()" data-testid="refresh-world">Refresh</button>
-    <button
-      class="btn btn-primary"
-      onclick="document.getElementById('edit-world-modal').classList.add('open')"
-      data-testid="edit-world"
-    >
+    <button class="btn btn-primary" onclick="openModal('edit-world-modal')" data-testid="edit-world">
       Edit
     </button>
   </div>
@@ -30,15 +26,13 @@
   <div
     id="edit-world-modal"
     class="modal-overlay"
-    onclick="if (event.target === this) this.classList.remove('open');"
+    onclick="closeModalOnBackdrop(event)"
     data-testid="edit-world-modal"
   >
     <div class="modal">
       <div class="modal-header">
         <span class="title">Edit World</span>
-        <button class="btn-icon" onclick="this.closest('.modal-overlay').classList.remove('open')">
-          &times;
-        </button>
+        <button class="btn-icon" onclick="closeModal(this)">&times;</button>
       </div>
       <div class="modal-body">
         <form
@@ -46,7 +40,7 @@
           hx-target="#world-detail"
           hx-swap="innerHTML"
           hx-target-error="#toast-container"
-          hx-on::after-request="if(event.detail.successful){ document.getElementById('edit-world-modal').classList.remove('open'); showToast('success','World saved'); loadWorldDetail(); }"
+          data-hx-success-event="world:saved"
           data-testid="edit-world-form"
         >
           <div class="form-group">
@@ -62,13 +56,7 @@
             <textarea class="form-input" name="lore" id="edit-lore" rows="4"></textarea>
           </div>
           <div style="display: flex; gap: var(--space-3); justify-content: flex-end">
-            <button
-              type="button"
-              class="btn btn-secondary"
-              onclick="document.getElementById('edit-world-modal').classList.remove('open')"
-            >
-              Cancel
-            </button>
+            <button type="button" class="btn btn-secondary" onclick="closeModal(this)">Cancel</button>
             <button type="submit" class="btn btn-primary">Save</button>
           </div>
         </form>
