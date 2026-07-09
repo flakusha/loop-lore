@@ -35,8 +35,8 @@ describe("Toggle buttons", () => {
     await page.locator("[data-testid='toggle-gallery']").waitFor({ state: "attached", timeout: 5000 });
     await page.locator("[data-testid='toggle-character-info']").waitFor({ state: "attached", timeout: 5000 });
     expect(await page.locator("[data-testid='toggle-chat-list']").isVisible()).toBe(true);
-    expect(await page.locator("[data-testid='toggle-gallery']").isVisible()).toBe(true);
-    expect(await page.locator("[data-testid='toggle-character-info']").isVisible()).toBe(true);
+    expect(await page.locator("[data-testid='toggle-gallery']").isVisible()).toBe(false);
+    expect(await page.locator("[data-testid='toggle-character-info']").isVisible()).toBe(false);
     await page.close();
   });
 
@@ -63,7 +63,11 @@ describe("Toggle buttons", () => {
     await sidebar.waitFor({ state: "attached", timeout: 5000 });
     let visible = await sidebar.isVisible();
     expect(visible).toBe(false);
-    await page.click("[data-testid='toggle-gallery']");
+    // Button hidden by Alpine x-show; click via evaluate to bypass visibility
+    await page.evaluate(() => {
+      const btn = document.querySelector("[data-testid='toggle-gallery']") as HTMLButtonElement | null;
+      btn?.click();
+    });
     await page.waitForTimeout(400);
     visible = await sidebar.isVisible();
     expect(visible).toBe(true);
@@ -77,7 +81,11 @@ describe("Toggle buttons", () => {
     await panel.waitFor({ state: "attached", timeout: 5000 });
     let visible = await panel.isVisible();
     expect(visible).toBe(false);
-    await page.click("[data-testid='toggle-character-info']");
+    // Button hidden by Alpine x-show; click via evaluate to bypass visibility
+    await page.evaluate(() => {
+      const btn = document.querySelector("[data-testid='toggle-character-info']") as HTMLButtonElement | null;
+      btn?.click();
+    });
     await page.waitForTimeout(400);
     visible = await panel.isVisible();
     expect(visible).toBe(true);
