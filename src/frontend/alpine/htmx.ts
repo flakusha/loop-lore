@@ -61,7 +61,7 @@ document.addEventListener("htmx:beforeSwap", () => {
 const PAGE_LOADERS: Map<string, string> = new Map([
   ["#character-grid", "loadCharactersPage"],
   ["#gallery-grid", "loadGalleryPage"],
-  ["#worlds-list", "loadWorldsPage"],
+  ["#world-list", "loadWorldsPage"],
   ["#world-detail", "loadWorldDetail"],
   ["#character-chat-list", "loadCharacterChatList"],
   ["#character-edit-form", "loadCharacterEditPage"],

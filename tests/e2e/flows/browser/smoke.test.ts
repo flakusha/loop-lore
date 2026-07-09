@@ -53,9 +53,9 @@ describe("Chat view", () => {
   test("has sidebar toggle buttons", async () => {
     const page = await ctx.browser.newPage();
     await gotoView(page, "/views/chat");
-    await page.waitForSelector("[data-testid='toggle-chat-list']", { timeout: 5000 });
-    await page.waitForSelector("[data-testid='toggle-gallery']", { timeout: 5000 });
-    await page.waitForSelector("[data-testid='toggle-character-info']", { timeout: 5000 });
+    await page.locator("[data-testid='toggle-chat-list']").waitFor({ state: 'attached', timeout: 5000 });
+    await page.locator("[data-testid='toggle-gallery']").waitFor({ state: 'attached', timeout: 5000 });
+    await page.locator("[data-testid='toggle-character-info']").waitFor({ state: 'attached', timeout: 5000 });
     await page.close();
   });
 });
