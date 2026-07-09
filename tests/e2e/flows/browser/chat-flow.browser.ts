@@ -1,3 +1,5 @@
+/* eslint-disable unicorn/no-top-level-assignment-in-function */
+
 /**
  * Browser E2E: Chat Flow
  *
