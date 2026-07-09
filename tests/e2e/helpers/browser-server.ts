@@ -67,7 +67,7 @@ export interface BrowserTestContext {
 
 function ensureFrontendBuild(): string {
   const distPublic = join(import.meta.dir, "..", "..", "..", "dist", "public");
-  const jsPath = join(distPublic, "alpine.js");
+  const jsPath = join(distPublic, "app.js");
   if (existsSync(jsPath)) return distPublic;
 
   // Auto-build frontend
