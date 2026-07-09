@@ -31,14 +31,8 @@
       defer
     ></script>
 
-    <!-- HTMX bundle: globals + htmx event handlers (no Alpine dependency) -->
-    <script src="/bundle.js" defer></script>
-
-    <!-- Alpine core components (define app, sidebar, theme, locale, htmx — every page) -->
-    <script src="/alpine-core.js" defer></script>
-
-    <!-- Alpine chat components (define chatState, worldEditState — chat/world pages) -->
-    <script src="/alpine-chat.js" defer></script>
+    <!-- App bundle: all frontend modules (single file avoids minifier name conflicts) -->
+    <script src="/app.js" defer></script>
 
     <!-- Alpine.js (loaded for chat page reactivity) -->
     <script

@@ -59,7 +59,8 @@ describe("Worlds flow E2E", () => {
       await page.fill("#world-name", "Browser Test World");
       await page.fill("#world-description", "A world created by browser E2E test");
       await page.locator("[data-testid='create-world-form'] button[type='submit']").click();
-      // After creation, modal closes and world appears in list
+      // After creation, page redirects to edit page; navigate back to worlds list
+      try { await page.goto(ctx.url + "/views/worlds", { waitUntil: "domcontentloaded", timeout: 10_000 }); } catch {}
       await page.locator("[data-testid='world-list']").waitFor({ state: "attached", timeout: 8000 });
       const worldNames = await page.locator("[data-testid='world-list'] .world-name").allTextContents();
       expect(worldNames.some((n: string) => n.includes("Browser Test World"))).toBe(true);
@@ -75,6 +76,8 @@ describe("Worlds flow E2E", () => {
       await page.click("[data-testid='create-world']");
       await page.fill("#world-name", "Navigation Test World");
       await page.locator("[data-testid='create-world-form'] button[type='submit']").click();
+      // After creation, page redirects to edit page; navigate back to worlds list
+      try { await page.goto(ctx.url + "/views/worlds", { waitUntil: "domcontentloaded", timeout: 10_000 }); } catch {}
       await page.locator("[data-testid='world-list']").waitFor({ state: "attached", timeout: 8000 });
       const cards = await page.locator("[data-testid^='world-card-']").count();
       expect(cards).toBeGreaterThan(0);
@@ -88,6 +91,8 @@ describe("Worlds flow E2E", () => {
       await page.click("[data-testid='create-world']");
       await page.fill("#world-name", "Detail Test World");
       await page.locator("[data-testid='create-world-form'] button[type='submit']").click();
+      // After creation, page redirects to edit page; navigate back to worlds list
+      try { await page.goto(ctx.url + "/views/worlds", { waitUntil: "domcontentloaded", timeout: 10_000 }); } catch {}
       await page.locator("[data-testid='world-list']").waitFor({ state: "attached", timeout: 8000 });
       // Click the first world card
       const firstCard = page.locator("[data-testid^='world-card-']").first();
