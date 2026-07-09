@@ -1,3 +1,23 @@
+import { minify as minifyHTML } from "html-minifier-terser";
+import CleanCSS from "clean-css";
+import { minify as terserMinify } from "terser";
+
+const defaultHTMLOptions = {
+  collapseWhitespace: true,
+  collapseInlineTagWhitespace: true,
+  caseSensitive: true,
+  removeComments: true,
+  removeRedundantAttributes: true,
+  removeEmptyAttributes: true,
+  removeScriptTypeAttributes: true,
+  removeStyleLinkTypeAttributes: true,
+  useShortDoctype: true,
+  minifyCSS: true,
+  minifyJS: true,
+};
+
+const cssMinifier = new CleanCSS({ level: 2 });
+
 export function minifyText(content: string): string {
   const lines = content.split("\n");
   const result: string[] = [];
@@ -20,34 +40,23 @@ export function minifyText(content: string): string {
   return result.join("\n");
 }
 
+export async function minifyHTMLContent(content: string): Promise<string> {
+  return minifyHTML(content, defaultHTMLOptions);
+}
+
 export function minifyCSS(content: string): string {
-  let result = content;
+  const output = cssMinifier.minify(content);
+  if (output.errors.length > 0) {
+    throw new Error(`CSS minification error: ${output.errors.join(", ")}`);
+  }
+  return output.styles;
+}
 
-  result = result.replaceAll(/\/\*[\s\S]*?\*\//g, "");
-
-  result = result.replaceAll(/^\s*[\r\n]/gm, "");
-
-  result = result.replaceAll(/\s*{\s*/g, "{");
-
-  result = result.replaceAll(/\s*}\s*/g, "}");
-
-  result = result.replaceAll(/\s*:\s*/g, ":");
-
-  result = result.replaceAll(/\s*;\s*/g, ";");
-
-  result = result.replaceAll(/\s*,\s*/g, ",");
-
-  result = result.replaceAll(/\s*>\s*/g, ">");
-
-  result = result.replaceAll(/\s*\+\s*/g, "+");
-
-  result = result.replaceAll(/\s*~\s*/g, "~");
-
-  result = result.replaceAll(";}", "}");
-
-  result = result.replaceAll(/\s{2,}/g, " ");
-
-  result = result.trim();
-
-  return result;
+export async function minifyJS(content: string): Promise<string> {
+  try {
+    const result = await terserMinify(content, { module: true, compress: true, mangle: true });
+    return result.code ?? content;
+  } catch (error) {
+    throw error instanceof Error ? error : new Error(String(error));
+  }
 }
