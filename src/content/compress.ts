@@ -1,7 +1,7 @@
 import { readdirSync, readFileSync, writeFileSync, existsSync, mkdirSync, copyFileSync } from "node:fs";
 import { join, extname } from "node:path";
 import { gzipSync, brotliCompressSync } from "node:zlib";
-import { minifyText, minifyCSS } from "./minify";
+import { minifyText, minifyHTMLContent, minifyCSS, minifyJS } from "./minify";
 
 const COMPRESSIBLE_EXTS = new Set([".css", ".js", ".html", ".json", ".svg"]);
 
@@ -57,12 +57,34 @@ function _setupStaticDirectory(sourceDirectory: string, destinationDirectory: st
   }
 }
 
-export function compressFile(filePath: string): void {
+async function _getMinimizedContent(content: string, extension: string): Promise<string> {
+  switch (extension) {
+    case ".css": {
+      return minifyCSS(content);
+    }
+    case ".js": {
+      return minifyJS(content);
+    }
+    case ".html":
+    case ".htm": {
+      return minifyHTMLContent(content);
+    }
+    default: {
+      return minifyText(content);
+    }
+  }
+}
+
+export async function compressFile(filePath: string): Promise<void> {
   const content = readFileSync(filePath, "utf8");
   const extension = extname(filePath);
-  const minimized = extension === ".css" ? minifyCSS(content) : minifyText(content);
+  const minimized = await _getMinimizedContent(content, extension);
 
   const buffer = Buffer.from(minimized, "utf8");
+
+  if (minimized.length < content.length) {
+    writeFileSync(filePath, minimized, "utf8");
+  }
 
   const gz = gzipSync(buffer);
   writeFileSync(`${filePath}.gz`, gz);
@@ -78,15 +100,15 @@ export function compressFile(filePath: string): void {
   writeFileSync(`${filePath}.br`, br);
 }
 
-export function compressAssets(
+export async function compressAssets(
   sourceDirectory: string,
   destinationDirectory: string,
-): {
+): Promise<{
   total: number;
   compressed: number;
   originalBytes: number;
   compressedBytes: Record<string, number>;
-} {
+}> {
   if (!existsSync(destinationDirectory)) {
     _setupStaticDirectory(sourceDirectory, destinationDirectory);
   }
@@ -98,7 +120,7 @@ export function compressAssets(
   for (const file of files) {
     const stat = readFileSync(file);
     originalBytes += stat.length;
-    compressFile(file);
+    await compressFile(file);
     compressedBytes.gz += readFileSync(`${file}.gz`, { encoding: null }).length;
     compressedBytes.zst += readFileSync(`${file}.zst`, { encoding: null }).length;
     compressedBytes.br += readFileSync(`${file}.br`, { encoding: null }).length;
