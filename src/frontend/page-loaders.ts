@@ -10,11 +10,11 @@ function escapeHtml(str: string): string {
 }
 
 function escapeAttr(s: string): string {
-  return String(s || "")
-    .replace(/&/g, "&amp;")
-    .replace(/"/g, "&quot;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;");
+  return (s || "")
+    .replaceAll("&", "&amp;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;");
 }
 
 function formatSize(bytes: number): string {
@@ -361,13 +361,13 @@ function thumbForAsset(a: any): string {
 
 (globalThis as any).saveCharacterEdit = async function (id: string): Promise<void> {
   const body = {
-    displayName: (document.getElementById("edit-name") as HTMLInputElement)?.value,
-    description: (document.getElementById("edit-desc") as HTMLTextAreaElement)?.value,
-    systemPrompt: (document.getElementById("edit-system") as HTMLTextAreaElement)?.value,
-    personality: (document.getElementById("edit-personality") as HTMLTextAreaElement)?.value,
-    welcomeMessage: (document.getElementById("edit-greeting") as HTMLTextAreaElement)?.value,
-    mesExample: (document.getElementById("edit-example") as HTMLTextAreaElement)?.value,
-    avatarAssetId: (document.getElementById("char-avatar-id") as HTMLInputElement)?.value || null,
+    displayName: (document.querySelector("#edit-name") as HTMLInputElement)?.value,
+    description: (document.querySelector("#edit-desc") as HTMLTextAreaElement)?.value,
+    systemPrompt: (document.querySelector("#edit-system") as HTMLTextAreaElement)?.value,
+    personality: (document.querySelector("#edit-personality") as HTMLTextAreaElement)?.value,
+    welcomeMessage: (document.querySelector("#edit-greeting") as HTMLTextAreaElement)?.value,
+    mesExample: (document.querySelector("#edit-example") as HTMLTextAreaElement)?.value,
+    avatarAssetId: (document.querySelector("#char-avatar-id") as HTMLInputElement)?.value || null,
   };
   try {
     const btn = document.querySelector<HTMLElement>('[data-testid="save-character-btn"]');
@@ -392,6 +392,38 @@ function thumbForAsset(a: any): string {
   }
 };
 
+(globalThis as any).uploadAvatar = async function (input: HTMLInputElement): Promise<void> {
+  const file = input.files?.[0];
+  if (!file) return;
+  const label = document.querySelector("#upload-avatar-label");
+  if (label) label.textContent = "Uploading...";
+  try {
+    const fd = new FormData();
+    fd.append("file", file);
+    fd.append("alt_text", "Avatar");
+    const r = await apiFetch("/api/assets", { method: "POST", body: fd });
+    if (r.ok) {
+      const a = await r.json();
+      document.querySelector("#avatar-preview")!.innerHTML =
+        '<img src="/api/assets/' +
+        a.id +
+        '/thumb" style="width:100%;height:100%;object-fit:cover" alt="Avatar" />';
+      (document.querySelector("#char-avatar-id") as HTMLInputElement)!.value = a.id;
+      showToast("success", "Avatar uploaded");
+    } else {
+      showToast("error", "Upload failed");
+    }
+  } catch {
+    showToast("error", "Upload failed");
+  }
+  if (label) label.textContent = "Upload Avatar";
+};
+
+(globalThis as any).clearAvatar = function (): void {
+  document.querySelector("#avatar-preview")!.innerHTML = "<span>👤</span>";
+  (document.querySelector("#char-avatar-id") as HTMLInputElement)!.value = "";
+};
+
 (globalThis as any).loadCharacterEditPage = async function (): Promise<void> {
   const container = document.querySelector<HTMLElement>("#character-edit-form");
   const id = container?.dataset.characterId;
@@ -401,10 +433,10 @@ function thumbForAsset(a: any): string {
     const res = await apiFetch("/api/actors/" + id);
     if (!res.ok) return;
     const c = await res.json();
+    if (!container) return;
     const avatarHtml = c.avatar_asset_id
       ? `<img src="/api/assets/${c.avatar_asset_id}/thumb" style="width:100%;height:100%;object-fit:cover" alt="Avatar" />`
       : "<span>👤</span>";
-    if (!container) return;
     container.innerHTML = `
       <div style="max-width:720px;margin:0 auto;width:100%">
         <form id="char-edit-form" data-testid="character-edit-form">
@@ -416,9 +448,9 @@ function thumbForAsset(a: any): string {
               <label class="btn btn-secondary" style="cursor:pointer">
                 <span id="upload-avatar-label">Upload Avatar</span>
                 <input type="file" accept="image/*" style="display:none" id="avatar-input"
-                  onchange="(async function(input){const file=input.files[0];if(!file)return;const fd=new FormData();fd.append('file',file);fd.append('alt_text','Avatar');document.getElementById('upload-avatar-label').textContent='Uploading...';const r=await apiFetch('/api/assets',{method:'POST',body:fd});if(r.ok){const a=await r.json();document.getElementById('avatar-preview').innerHTML='<img src=/api/assets/'+a.id+'/thumb style=width:100%;height:100%;object-fit:cover alt=Avatar />';document.getElementById('char-avatar-id').value=a.id;showToast('success','Avatar uploaded')}else{showToast('error','Upload failed')}document.getElementById('upload-avatar-label').textContent='Upload Avatar';})(this)" />
+                  onchange="uploadAvatar(this)" />
               </label>
-              ${c.avatar_asset_id ? "<button type=\"button\" class=\"btn btn-danger\" onclick=\"document.getElementById('avatar-preview').innerHTML='<span>👤</span>';document.getElementById('char-avatar-id').value=''\">Remove</button>" : ""}
+              ${c.avatar_asset_id ? '<button type="button" class="btn btn-danger" onclick="clearAvatar()">Remove</button>' : ""}
             </div>
           </div>
           <div class="form-group">
@@ -471,11 +503,11 @@ function thumbForAsset(a: any): string {
   }
 
   // DOM refs
-  const searchInput = document.getElementById("participant-search") as HTMLInputElement | null;
-  const resultsEl = document.getElementById("participant-results");
-  const selectedEl = document.getElementById("selected-participants");
-  const chatType = document.getElementById("chat-type") as HTMLSelectElement | null;
-  const form = document.getElementById("create-chat-form");
+  const searchInput = document.querySelector("#participant-search") as HTMLInputElement | null;
+  const resultsEl = document.querySelector<HTMLElement>("#participant-results");
+  const selectedEl = document.querySelector("#selected-participants");
+  const chatType = document.querySelector("#chat-type") as HTMLSelectElement | null;
+  const form = document.querySelector("#create-chat-form");
   if (!searchInput || !resultsEl || !selectedEl || !chatType || !form) return;
 
   const isGroup = () => chatType.value === "group";
@@ -501,7 +533,7 @@ function thumbForAsset(a: any): string {
 
   function selectActor(actor: any) {
     if (isGroup()) {
-      if (!selected.find((a: any) => a.id === actor.id)) selected.push(actor);
+      if (selected.every((a: any) => a.id !== actor.id)) selected.push(actor);
     } else {
       selected = [actor];
     }
@@ -517,14 +549,14 @@ function thumbForAsset(a: any): string {
 
   function renderResults(filtered: any[]) {
     if (!resultsEl) return;
-    if (filtered.length === 0) {
-      resultsEl.innerHTML =
-        '<div style="padding:var(--space-3);color:var(--text-secondary);font-size:13px;text-align:center">No characters found</div>';
-    } else {
-      resultsEl.innerHTML = filtered
-        .map((a: any) => {
-          const disabled = isGroup() && selected.find((s: any) => s.id === a.id);
-          return `<div style="padding:var(--space-2) var(--space-3);cursor:pointer;display:flex;align-items:center;gap:var(--space-2);${disabled ? "opacity:0.4;cursor:default" : ""}" ${disabled ? "" : `onclick="selectActorFromList('${a.id}')"`} onmouseenter="this.style.background='var(--bg-tertiary)'" onmouseleave="this.style.background=''">
+    resultsEl.innerHTML =
+      filtered.length === 0
+        ? '<div style="padding:var(--space-3);color:var(--text-secondary);font-size:13px;text-align:center">No characters found</div>'
+        : filtered
+            .map((a: any) => {
+              const disabled = isGroup() && selected.find((s: any) => s.id === a.id);
+              const onclickAttr = disabled ? "" : `onclick="selectActorFromList('${a.id}')"`;
+              return `<div style="padding:var(--space-2) var(--space-3);cursor:pointer;display:flex;align-items:center;gap:var(--space-2);${disabled ? "opacity:0.4;cursor:default" : ""}" ${onclickAttr} onmouseenter="this.style.background='var(--bg-tertiary)'" onmouseleave="this.style.background=''">
           <span style="font-size:16px">${a.avatar_asset_id ? "" : "👤"}</span>
           <div>
             <div style="font-size:14px;font-weight:500">${escapeHtml(a.display_name || a.name || "Unknown")}</div>
@@ -532,9 +564,8 @@ function thumbForAsset(a: any): string {
           </div>
           ${disabled ? '<span style="margin-left:auto;font-size:12px;color:var(--text-secondary)">added</span>' : ""}
         </div>`;
-        })
-        .join("");
-    }
+            })
+            .join("");
     resultsEl.style.display = "block";
   }
 
@@ -561,17 +592,19 @@ function thumbForAsset(a: any): string {
   });
 
   searchInput.addEventListener("focus", function () {
-    if (this.value.trim()) {
-      const q = this.value.toLowerCase().trim();
-      const filtered = actors
-        .filter((a: any) => {
-          const name = (a.display_name || a.name || "").toLowerCase();
-          const desc = (a.description || "").toLowerCase();
-          return name.includes(q) || desc.includes(q);
-        })
-        .slice(0, 20);
-      renderResults(filtered);
+    if (!this.value.trim()) {
+      return;
     }
+
+    const q = this.value.toLowerCase().trim();
+    const filtered = actors
+      .filter((a: any) => {
+        const name = (a.display_name || a.name || "").toLowerCase();
+        const desc = (a.description || "").toLowerCase();
+        return name.includes(q) || desc.includes(q);
+      })
+      .slice(0, 20);
+    renderResults(filtered);
   });
 
   form.addEventListener("submit", async function (e: Event) {
@@ -594,7 +627,7 @@ function thumbForAsset(a: any): string {
         body: JSON.stringify({
           name,
           type: chatType.value,
-          mode: (document.getElementById("chat-mode") as HTMLSelectElement)?.value,
+          mode: (document.querySelector("#chat-mode") as HTMLSelectElement)?.value,
           participantIds: selected.map((a: any) => a.id),
         }),
       });
@@ -602,7 +635,12 @@ function thumbForAsset(a: any): string {
         const d = await res.json();
         location.assign("/views/chat?chatid=" + encodeURIComponent(d.id));
       } else {
-        const err = await res.json().catch(() => ({}));
+        let err: Record<string, string>;
+        try {
+          err = await res.json();
+        } catch {
+          err = {};
+        }
         showToast("error", err.error || "Failed to create chat");
         if (btn) {
           btn.disabled = false;
@@ -627,10 +665,55 @@ function thumbForAsset(a: any): string {
   const prov = document.querySelector<HTMLSelectElement>('[data-testid="api-provider"]');
   if (prov) {
     prov.addEventListener("change", function () {
-      const group = document.getElementById("api-endpoint-group");
+      const group = document.querySelector<HTMLElement>("#api-endpoint-group");
       if (group) group.style.display = this.value === "Custom" ? "block" : "none";
     });
   }
+
+  // Wire localStorage toggles
+  const lsToggles: Array<[string, string]> = [
+    ["enterToSend", "#enter-to-send"],
+    ["autoScroll", "#auto-scroll"],
+    ["inlinePreview", "#inline-preview"],
+  ];
+  for (const [storageKey, selector] of lsToggles) {
+    const el = document.querySelector<HTMLInputElement>(selector);
+    if (el) {
+      el.checked = localStorage.getItem(storageKey) !== "false";
+      el.addEventListener("change", () => localStorage.setItem(storageKey, String(el.checked)));
+    }
+  }
+  const detailEl = document.querySelector<HTMLSelectElement>("#detail-level");
+  if (detailEl) {
+    detailEl.value = localStorage.getItem("detailLevel") || "Immersion";
+    detailEl.addEventListener("change", () => localStorage.setItem("detailLevel", detailEl.value));
+  }
+
+  // Temperature slider
+  const tempSlider = document.querySelector<HTMLInputElement>('[data-testid="temp-slider"]');
+  const tempVal = document.querySelector("#temp-value");
+  if (tempSlider && tempVal) {
+    tempSlider.addEventListener("input", () => {
+      tempVal.textContent = tempSlider.value;
+    });
+  }
+
+  // Delete confirmation
+  const confirmInput = document.querySelector<HTMLInputElement>("#confirm-delete-input");
+  const confirmBtn = document.querySelector<HTMLButtonElement>("#delete-all-btn");
+  if (confirmInput && confirmBtn) {
+    confirmInput.addEventListener("input", () => {
+      confirmBtn.disabled = confirmInput.value !== "DELETE";
+    });
+  }
+
+  // Clear API key button
+  document
+    .querySelector("[data-action='clear-api-key']")
+    ?.addEventListener("click", function (this: HTMLElement) {
+      const input = this.previousElementSibling as HTMLInputElement | null;
+      if (input) input.value = "";
+    });
 };
 (globalThis as any).loadCharacterChatList = async function () {
   const container = document.querySelector<HTMLElement>("#character-chat-list");
