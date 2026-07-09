@@ -3,18 +3,10 @@
   <button class="hamburger" onclick="toggleSidebar()" data-testid="hamburger">☰</button>
   <span class="title">Characters</span>
   <div class="actions">
-    <button
-      class="btn btn-secondary"
-      onclick="document.getElementById('import-modal').classList.add('open')"
-      data-testid="import-character"
-    >
+    <button class="btn btn-secondary" onclick="openModal('import-modal')" data-testid="import-character">
       Import Card
     </button>
-    <button
-      class="btn btn-primary"
-      onclick="document.getElementById('create-modal').classList.add('open')"
-      data-testid="create-character"
-    >
+    <button class="btn btn-primary" onclick="openModal('create-modal')" data-testid="create-character">
       + New
     </button>
   </div>
@@ -35,15 +27,13 @@
     <div
       id="create-modal"
       class="modal-overlay"
-      onclick="if (event.target === this) this.classList.remove('open');"
+      onclick="closeModalOnBackdrop(event)"
       data-testid="create-character-modal"
     >
       <div class="modal">
         <div class="modal-header">
           <span class="title">Create Character</span>
-          <button class="btn-icon" onclick="this.closest('.modal-overlay').classList.remove('open')">
-            &times;
-          </button>
+          <button class="btn-icon" onclick="closeModal(this)">&times;</button>
         </div>
         <div class="modal-body">
           <form
@@ -51,7 +41,7 @@
             hx-target="#app-root"
             hx-swap="innerHTML"
             hx-target-error="#toast-container"
-            hx-on::after-request="if(event.detail.successful){ showToast('success','Character created'); loadCharactersPage(); }"
+            data-hx-success-event="character:created"
             data-testid="create-character-form"
           >
             <div class="form-group">
@@ -83,13 +73,7 @@
               ></textarea>
             </div>
             <div style="display: flex; gap: var(--space-3); justify-content: flex-end">
-              <button
-                type="button"
-                class="btn btn-secondary"
-                onclick="this.closest('.modal-overlay').classList.remove('open')"
-              >
-                Cancel
-              </button>
+              <button type="button" class="btn btn-secondary" onclick="closeModal(this)">Cancel</button>
               <button type="submit" class="btn btn-primary">Create</button>
             </div>
           </form>
@@ -101,15 +85,13 @@
     <div
       id="import-modal"
       class="modal-overlay"
-      onclick="if (event.target === this) this.classList.remove('open');"
+      onclick="closeModalOnBackdrop(event)"
       data-testid="import-character-modal"
     >
       <div class="modal">
         <div class="modal-header">
           <span class="title">Import Character Card</span>
-          <button class="btn-icon" onclick="this.closest('.modal-overlay').classList.remove('open')">
-            &times;
-          </button>
+          <button class="btn-icon" onclick="closeModal(this)">&times;</button>
         </div>
         <div class="modal-body">
           <form
@@ -118,7 +100,7 @@
             hx-target="#app-root"
             hx-swap="innerHTML"
             hx-target-error="#toast-container"
-            hx-on::after-request="if(event.detail.successful){ document.getElementById('import-modal').classList.remove('open'); showToast('success','Character imported'); loadCharactersPage(); }"
+            data-hx-success-event="character:imported"
             data-testid="import-character-form"
           >
             <div
@@ -138,13 +120,7 @@
               />
             </div>
             <div style="display: flex; gap: var(--space-3); justify-content: flex-end">
-              <button
-                type="button"
-                class="btn btn-secondary"
-                onclick="document.getElementById('import-modal').classList.remove('open')"
-              >
-                Cancel
-              </button>
+              <button type="button" class="btn btn-secondary" onclick="closeModal(this)">Cancel</button>
               <button type="submit" class="btn btn-primary">Import</button>
             </div>
           </form>
@@ -156,15 +132,13 @@
     <div
       id="character-detail-modal"
       class="modal-overlay"
-      onclick="if (event.target === this) this.classList.remove('open');"
+      onclick="closeModalOnBackdrop(event)"
       data-testid="character-detail-modal"
     >
       <div class="modal">
         <div class="modal-header">
           <span class="title" data-field="name"></span>
-          <button class="btn-icon" onclick="this.closest('.modal-overlay').classList.remove('open')">
-            &times;
-          </button>
+          <button class="btn-icon" onclick="closeModal(this)">&times;</button>
         </div>
         <div class="modal-body">
           <div style="display: flex; gap: var(--space-4); margin-bottom: var(--space-4)">

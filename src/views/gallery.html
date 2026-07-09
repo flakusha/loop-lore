@@ -3,11 +3,7 @@
   <button class="hamburger" onclick="toggleSidebar()" data-testid="hamburger">☰</button>
   <span class="title">Asset Gallery</span>
   <div class="actions">
-    <button
-      class="btn btn-primary"
-      onclick="document.getElementById('upload-modal').classList.add('open')"
-      data-testid="upload-button"
-    >
+    <button class="btn btn-primary" onclick="openModal('upload-modal')" data-testid="upload-button">
       + Upload
     </button>
   </div>
@@ -26,15 +22,13 @@
     <div
       id="preview-modal"
       class="modal-overlay"
-      onclick="if (event.target === this) this.classList.remove('open');"
+      onclick="closeModalOnBackdrop(event)"
       data-testid="preview-modal"
     >
       <div class="modal" style="max-width: 800px">
         <div class="modal-header">
           <span class="title" data-field="filename"></span>
-          <button class="btn-icon" onclick="this.closest('.modal-overlay').classList.remove('open')">
-            &times;
-          </button>
+          <button class="btn-icon" onclick="closeModal(this)">&times;</button>
         </div>
         <div class="modal-body" style="padding: 0" data-field="preview-body"></div>
         <div class="modal-footer" style="justify-content: space-between">
@@ -55,15 +49,13 @@
     <div
       id="upload-modal"
       class="modal-overlay"
-      onclick="if (event.target === this) this.classList.remove('open');"
+      onclick="closeModalOnBackdrop(event)"
       data-testid="upload-modal"
     >
       <div class="modal">
         <div class="modal-header">
           <span class="title">Upload Asset</span>
-          <button class="btn-icon" onclick="this.closest('.modal-overlay').classList.remove('open')">
-            &times;
-          </button>
+          <button class="btn-icon" onclick="closeModal(this)">&times;</button>
         </div>
         <div class="modal-body">
           <form
@@ -72,31 +64,10 @@
             hx-target="#asset-grid"
             hx-swap="innerHTML"
             hx-target-error="#toast-container"
-            hx-on::after-request="if(event.detail.successful){ document.getElementById('upload-modal').classList.remove('open'); showToast('success','Asset uploaded'); loadGalleryPage(); }"
+            data-hx-success-event="asset:uploaded"
             data-testid="upload-form"
           >
-            <div
-              class="drop-zone"
-              style="margin-bottom: var(--space-4)"
-              id="upload-dropzone"
-              ondragover="
-                this.classList.add('drag-over');
-                event.preventDefault();
-              "
-              ondragleave="
-                this.classList.remove('drag-over');
-                event.preventDefault();
-              "
-              ondrop="
-                event.preventDefault();
-                this.classList.remove('drag-over');
-                const f = event.dataTransfer.files[0];
-                if (f) {
-                  this.querySelector('.text').textContent = f.name;
-                  document.getElementById('upload-file-input').files = event.dataTransfer.files;
-                }
-              "
-            >
+            <div class="drop-zone" style="margin-bottom: var(--space-4)" id="upload-dropzone">
               <div class="icon">📤</div>
               <div class="text">Drag & drop files here</div>
               <div class="hint">or click to browse</div>
@@ -106,10 +77,6 @@
                 accept="image/*,audio/*,video/*"
                 style="display: none"
                 id="upload-file-input"
-                onchange="
-                  document.getElementById('upload-dropzone').querySelector('.text').textContent =
-                    this.files[0]?.name || 'Drag & drop files here'
-                "
               />
             </div>
             <div class="form-group" style="margin-top: var(--space-4)">
@@ -123,13 +90,7 @@
               />
             </div>
             <div style="display: flex; gap: var(--space-3); justify-content: flex-end">
-              <button
-                type="button"
-                class="btn btn-secondary"
-                onclick="document.getElementById('upload-modal').classList.remove('open')"
-              >
-                Cancel
-              </button>
+              <button type="button" class="btn btn-secondary" onclick="closeModal(this)">Cancel</button>
               <button type="submit" class="btn btn-primary">Upload</button>
             </div>
           </form>
