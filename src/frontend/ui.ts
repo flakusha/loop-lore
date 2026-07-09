@@ -63,6 +63,22 @@ document.addEventListener(
   },
 );
 
+// ── Modal helpers ──────────────────────────────────────────────
+
+export function openModal(id: string): void {
+  document.querySelector(`#${CSS.escape(id)}`)?.classList.add("open");
+}
+
+export function closeModal(el: Element): void {
+  el.closest(".modal-overlay")?.classList.remove("open");
+}
+
+export function closeModalOnBackdrop(event: Event): void {
+  if (event.target === event.currentTarget) {
+    (event.currentTarget as HTMLElement).classList.remove("open");
+  }
+}
+
 // ── Theme ────────────────────────────────────────────────────
 
 export function applyTheme(themeId: string): void {
@@ -100,6 +116,16 @@ export function setLocale(localeId: string): void {
   loadLocale(localeId);
 }
 
+// ── Avatar image fallback ──────────────────────────────────────
+document.addEventListener(
+  "error",
+  (e: Event) => {
+    const img = e.target as HTMLImageElement;
+    if (img?.dataset?.avatar === "user") img.style.display = "none";
+  },
+  { capture: true },
+);
+
 // Reveal helpers globally for onclick="" usage
 const g = globalThis as Record<string, unknown>;
 g.toggleSidebar = toggleSidebar;
@@ -107,3 +133,6 @@ g.closeSidebar = closeSidebar;
 g.showToast = showToast;
 g.applyTheme = applyTheme;
 g.setLocale = setLocale;
+g.openModal = openModal;
+g.closeModal = closeModal;
+g.closeModalOnBackdrop = closeModalOnBackdrop;
