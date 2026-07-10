@@ -19,6 +19,7 @@ import {
   handleContinueGeneration,
   handleListActiveGenerations,
   handleRegenerate,
+  handleGenerationStream,
 } from "./generation-routes";
 import { handleGenerate } from "./generate-route";
 import { jsonError } from "../routes/http-utils";
@@ -75,6 +76,12 @@ export async function dispatch(
   const statusMatch = /^\/api\/generation\/status\/([^/]+)$/.exec(pathname);
   if (statusMatch && request.method === "GET") {
     return handleGenerationStatus(statusMatch[1], database);
+  }
+
+  // GET /api/generation/stream/:chatId — HTMX SSE streaming
+  const streamMatch = /^\/api\/generation\/stream\/([^/]+)$/.exec(pathname);
+  if (streamMatch && request.method === "GET") {
+    return handleGenerationStream(streamMatch[1]);
   }
 
   // GET /api/generation/active

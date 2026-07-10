@@ -364,6 +364,7 @@ export async function up(database: Kysely<unknown>): Promise<void> {
     .addColumn("hidden_reason", "text")
     .addColumn("idempotency_key", "text")
     .addColumn("continuation_index", "integer")
+    .addColumn("swipe_index", "integer")
     .addColumn("created_at", "text", (col) => col.notNull().defaultTo(sql`(datetime('now'))`))
     .addColumn("edited_at", "text")
     .addColumn("attachments", "text", (col) => col.defaultTo("[]"))

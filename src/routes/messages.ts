@@ -32,6 +32,8 @@ import {
   parsePagination,
 } from "./http-utils";
 import {
+  CancelReason,
+  CancelSource,
   MessageRole,
   MessageContentType,
   MessageContentFormat,
@@ -43,8 +45,18 @@ import { generateResponse, isAssistantEnabled } from "../assistant/service";
 import { PromptAssembler } from "../assistant/prompt-assembler";
 import { filter as filterProfanity } from "../profanity/service";
 import { resolveProvider, listProviders } from "../generation/providers/registry";
-import { startGenerationTracking, completeGeneration, failGeneration } from "../generation/index";
+import {
+  startGenerationTracking,
+  completeGeneration,
+  failGeneration,
+  cancelGenerationByChat,
+  getOrCreateBuffer,
+  scheduleBufferCleanup,
+} from "../generation/index";
+import type { ChunkEvent } from "../generation/providers/types";
+import { marked } from "marked";
 import { getLogger } from "../logger";
+const log = getLogger().child({ module: "messages" });
 import { linkAsset } from "../assets/service";
 import { encodeContent } from "../content/encode";
 import { decodeContent } from "../content/decode";
@@ -55,6 +67,8 @@ import {
   compressThenEncrypt,
   decryptThenDecompress,
   ensureActorKey,
+  isEncryptedPayload,
+  extractKeyIdFromPayload,
 } from "../crypto";
 
 interface ListMessagesOpts {
@@ -284,15 +298,52 @@ async function handleListMessages({
 
   const messages = await listQuery.orderBy("created_at", "asc").limit(pageSize).offset(offset).execute();
 
+  // Compute variant info per message
+  const parentIds = [...new Set(messages.map((m) => m.parent_id).filter(Boolean))];
+  const variantCounts = new Map<string, number>();
+  const variantIndexes = new Map<string, number>();
+  if (parentIds.length > 0) {
+    const siblings = await database
+      .selectFrom("messages")
+      .select(["id", "parent_id", "swipe_index", "created_at"])
+      .where("parent_id", "in", parentIds as string[])
+      .where("chat_id", "=", chatId)
+      .where("visibility", "=", "visible")
+      .orderBy("swipe_index", "asc")
+      .orderBy("created_at", "asc")
+      .execute();
+    const groups = new Map<string, { id: string; swipeIndex: number | null; createdAt: string }[]>();
+    for (const s of siblings) {
+      const pid = s.parent_id!;
+      if (!groups.has(pid)) groups.set(pid, []);
+      groups.get(pid)!.push({ id: s.id, swipeIndex: s.swipe_index, createdAt: s.created_at });
+    }
+    for (const [pid, items] of groups) {
+      variantCounts.set(pid, items.length);
+      items.forEach((item, idx) => variantIndexes.set(item.id, idx));
+    }
+  }
+
   const enriched = await Promise.all(
     messages.map(async (m) => {
       const attachments = await enrichAttachments(database, m.attachments);
       try {
         const content = await resolveMessageContent(database, m, config);
-        return { ...m, content, attachments };
+        return {
+          ...m,
+          content,
+          attachments,
+          variantIndex: m.parent_id ? (variantIndexes.get(m.id) ?? 0) : undefined,
+          totalVariants: m.parent_id ? (variantCounts.get(m.parent_id) ?? 1) : undefined,
+        };
       } catch {
-        // If decryption fails, return content as-is for debugging
-        return { ...m, content: "[Encrypted — unable to decrypt]", attachments };
+        return {
+          ...m,
+          content: "[Encrypted — unable to decrypt]",
+          attachments,
+          variantIndex: m.parent_id ? (variantIndexes.get(m.id) ?? 0) : undefined,
+          totalVariants: m.parent_id ? (variantCounts.get(m.parent_id) ?? 1) : undefined,
+        };
       }
     }),
   );
@@ -322,7 +373,13 @@ async function handleCreateMessage({
   let contentEncoding: string;
   let storedKeyId: string | null = null;
 
-  if (isEncryptionEnabled()) {
+  // Client pre-encrypted? Skip server-side encryption.
+  if (isEncryptedPayload(filteredContent)) {
+    storedContent = filteredContent;
+    contentEncoding = "identity";
+    storedKeyId = extractKeyIdFromPayload(filteredContent);
+    log.debug("Client pre-encrypted content detected — storing as-is", { keyId: storedKeyId });
+  } else if (isEncryptionEnabled()) {
     const smk = getSmk()!;
     // Ensure the sending actor has an encryption key
     await ensureActorKey(database, actorId, smk);
@@ -348,13 +405,24 @@ async function handleCreateMessage({
   }
 
   const id = uid();
+  const parentId = (body.parentId as string | undefined) ?? null;
+  let msgSwipeIndex: number | null = null;
+  if (parentId) {
+    const maxSwipe = await database
+      .selectFrom("messages")
+      .select(database.fn.max("swipe_index").as("max_idx"))
+      .where("chat_id", "=", chatId)
+      .where("parent_id", "=", parentId)
+      .executeTakeFirst();
+    msgSwipeIndex = (maxSwipe?.max_idx ?? 0) + 1;
+  }
   await database
     .insertInto("messages")
     .values({
       id,
       chat_id: chatId,
       actor_id: actorId,
-      parent_id: (body.parentId as string | undefined) ?? null,
+      parent_id: parentId,
       role: (body.role as MessageRole | undefined) ?? MessageRole.User,
       content: storedContent,
       key_id: storedKeyId,
@@ -364,6 +432,7 @@ async function handleCreateMessage({
       status: "confirmed",
       visibility: "visible",
       idempotency_key: (body.idempotencyKey as string | undefined) ?? null,
+      swipe_index: msgSwipeIndex,
     })
     .execute();
 
@@ -422,6 +491,12 @@ async function handleCreateMessage({
         replyKeyId = chatKey.keyId;
       }
 
+      const replySwipe = await database
+        .selectFrom("messages")
+        .select(database.fn.max("swipe_index").as("max_idx"))
+        .where("chat_id", "=", chatId)
+        .where("parent_id", "=", id)
+        .executeTakeFirst();
       await database
         .insertInto("messages")
         .values({
@@ -437,6 +512,7 @@ async function handleCreateMessage({
           content_encoding: replyEncoding as ContentEncoding,
           status: "confirmed",
           visibility: "visible",
+          swipe_index: (replySwipe?.max_idx ?? 0) + 1,
         })
         .execute();
 
@@ -472,13 +548,23 @@ async function triggerAutoGeneration(
   let attemptId: string | undefined;
 
   try {
+    // Cancel any existing generation for this chat before starting a new one.
+    // Guards against double-send races and ensures clean per-chat generation state.
+    cancelGenerationByChat(
+      database,
+      chatId,
+      CancelReason.UserCancel,
+      CancelSource.System,
+      "New auto-generation starting",
+    );
+
     // Find character participant (actor that is not the sender)
     const character = await database
       .selectFrom("chat_participants")
       .innerJoin("actors", "actors.id", "chat_participants.actor_id")
       .where("chat_participants.chat_id", "=", chatId)
       .where("chat_participants.actor_id", "!=", userId)
-      .select(["actors.id"])
+      .select(["actors.id", "actors.display_name"])
       .executeTakeFirst();
 
     if (!character) return;
@@ -490,6 +576,9 @@ async function triggerAutoGeneration(
       chatId,
       modelId: resolved.resolvedModel,
     });
+
+    // Create stream buffer BEFORE tracking so SSE endpoint can connect early
+    const buffer = getOrCreateBuffer(chatId);
 
     // Register generation tracking so frontend detects it via status endpoint
     const tracking = startGenerationTracking(
@@ -506,34 +595,89 @@ async function triggerAutoGeneration(
     );
     attemptId = tracking.attemptId;
 
+    const actorName = character.display_name;
     const lastMsg = prompt.messages[prompt.messages.length - 1];
-    getLogger()
-      .child({ module: "auto-gen" })
-      .info("LLM request", {
-        model: resolved.resolvedModel,
-        provider: resolved.resolvedProviderName,
-        messageCount: prompt.messages.length,
-        lastRole: lastMsg?.role,
-        lastContentPreview: lastMsg?.content?.slice(0, 200),
-      });
+    const log = getLogger().child({ module: "auto-gen" });
 
-    const response = await resolved.provider.complete({
+    log.info("LLM request", {
       model: resolved.resolvedModel,
-      messages: prompt.messages,
-      apiKey: resolved.resolvedApiKey,
-      params: { temperature: 0.9, maxTokens: 2048 },
-      signal: tracking.abortSignal,
+      provider: resolved.resolvedProviderName,
+      messageCount: prompt.messages.length,
+      lastRole: lastMsg?.role,
+      lastContentPreview: lastMsg?.content?.slice(0, 200),
     });
 
-    getLogger().child({ module: "auto-gen" }).info("LLM response", {
-      finishReason: response.finishReason,
-      promptTokens: response.usage.promptTokens,
-      completionTokens: response.usage.completionTokens,
-      totalTokens: response.usage.totalTokens,
-      contentLength: response.content.length,
+    let accumulatedContent = "";
+    let accumulatedThinking: string | undefined;
+    let tokenUsage = { promptTokens: 0, completionTokens: 0, totalTokens: 0 };
+    let finishReason: "stop" | "length" | "error" | "cancelled" = "stop";
+    const canStream = resolved.provider.capabilities.streaming;
+
+    if (canStream) {
+      const finalResponse = await resolved.provider.stream(
+        {
+          model: resolved.resolvedModel,
+          messages: prompt.messages,
+          apiKey: resolved.resolvedApiKey,
+          params: { temperature: 0.9, maxTokens: 2048 },
+          signal: tracking.abortSignal,
+        },
+        (chunk: ChunkEvent) => {
+          if (chunk.type === "content" && chunk.content) {
+            accumulatedContent += chunk.content;
+            const html = renderStreamMessage(actorName, accumulatedContent, tracking.attemptId, {
+              thinking: accumulatedThinking,
+            });
+            buffer.append("stream-update", html);
+          } else if (chunk.type === "thinking" && chunk.content) {
+            accumulatedThinking = (accumulatedThinking ?? "") + chunk.content;
+          }
+        },
+      );
+      tokenUsage = {
+        promptTokens: finalResponse.usage.promptTokens,
+        completionTokens: finalResponse.usage.completionTokens,
+        totalTokens: finalResponse.usage.totalTokens,
+      };
+      finishReason = finalResponse.finishReason;
+    } else {
+      const response = await resolved.provider.complete({
+        model: resolved.resolvedModel,
+        messages: prompt.messages,
+        apiKey: resolved.resolvedApiKey,
+        params: { temperature: 0.9, maxTokens: 2048 },
+        signal: tracking.abortSignal,
+      });
+      accumulatedContent = response.content;
+      accumulatedThinking = response.thinking;
+      tokenUsage = {
+        promptTokens: response.usage.promptTokens,
+        completionTokens: response.usage.completionTokens,
+        totalTokens: response.usage.totalTokens,
+      };
+      finishReason = response.finishReason;
+      const html = renderStreamMessage(actorName, accumulatedContent, tracking.attemptId, {
+        thinking: accumulatedThinking,
+      });
+      buffer.append("stream-update", html);
+    }
+
+    log.info("LLM response", {
+      contentLength: accumulatedContent.length,
+      finishReason,
+      ...tokenUsage,
     });
 
     const messageId = uid();
+    const maxSwipe = parentMessageId
+      ? await database
+          .selectFrom("messages")
+          .select(database.fn.max("swipe_index").as("max_idx"))
+          .where("chat_id", "=", chatId)
+          .where("parent_id", "=", parentMessageId)
+          .executeTakeFirst()
+      : undefined;
+    const swipeIndex = parentMessageId ? (maxSwipe?.max_idx ?? 0) + 1 : null;
     await database
       .insertInto("messages")
       .values({
@@ -542,30 +686,43 @@ async function triggerAutoGeneration(
         actor_id: character.id,
         parent_id: parentMessageId,
         role: MessageRole.Assistant,
-        content: response.content,
+        content: accumulatedContent,
         content_type: MessageContentType.Text,
         content_format: MessageContentFormat.Markdown,
         content_encoding: ContentEncoding.Identity,
         model_id: resolved.resolvedModel,
         provider: resolved.resolvedProviderName,
-        token_count_prompt: response.usage.promptTokens,
-        token_count_completion: response.usage.completionTokens,
-        token_count_total: response.usage.totalTokens,
+        token_count_prompt: tokenUsage.promptTokens,
+        token_count_completion: tokenUsage.completionTokens,
+        token_count_total: tokenUsage.totalTokens,
         status: MessageStatus.Confirmed,
         visibility: MessageVisibility.Visible,
+        swipe_index: swipeIndex,
       })
       .execute();
 
     await completeGeneration(
       attemptId,
       {
-        content: response.content,
-        tokenUsage: response.usage,
+        content: accumulatedContent,
+        tokenUsage,
         generationTimeMs: 0,
-        cancelled: false,
+        cancelled: finishReason === "cancelled",
       },
       database,
     );
+
+    // Buffer final done event with proper message ID
+    const doneHtml = renderStreamMessage(actorName, accumulatedContent, tracking.attemptId, {
+      messageId,
+      isFinal: true,
+      thinking: accumulatedThinking,
+    });
+    buffer.append("stream-update", doneHtml);
+    buffer.signalDone();
+    scheduleBufferCleanup(chatId);
+
+    // Unref cleanup timer so it doesn't keep process alive
   } catch (error) {
     if (attemptId) {
       try {
@@ -574,6 +731,16 @@ async function triggerAutoGeneration(
         // failGeneration errors are non-critical
       }
     }
+
+    // Signal error to any SSE subscribers
+    try {
+      const buf = getOrCreateBuffer(chatId);
+      buf.signalError((error as Error).message);
+      scheduleBufferCleanup(chatId);
+    } catch {
+      // Buffer errors non-critical
+    }
+
     const err = error instanceof Error ? error : new Error(String(error));
     const log = getLogger().child({ module: "auto-gen" });
     if (
@@ -586,6 +753,43 @@ async function triggerAutoGeneration(
       log.error("Auto-generation failed", err);
     }
   }
+}
+
+/**
+ * Render a streaming message as an HTMX SSE HTML partial.
+ * Used by triggerAutoGeneration to buffer HTML events for the SSE endpoint.
+ */
+function renderStreamMessage(
+  actorName: string,
+  content: string,
+  attemptId: string,
+  opts?: { messageId?: string; isFinal?: boolean; thinking?: string },
+): string {
+  const safeName = escapeHtml(actorName);
+  const rendered = marked.parse(content, { breaks: true, gfm: true }) as string;
+  const safeContent = sanitizeHtml(rendered);
+  const streamingAttr = opts?.isFinal ? "" : ' data-streaming="true"';
+  const msgId = opts?.messageId ?? attemptId;
+  const thinkingBlock = opts?.thinking
+    ? `<details class="thinking-block"><summary>Thinking process</summary><div class="thinking-content">${marked.parse(opts.thinking, { breaks: true, gfm: true }) as string}</div></details>`
+    : "";
+  return `<div class="message assistant" data-message-id="${msgId}"${streamingAttr}><div class="bubble"><div class="meta"><span class="name">${safeName}</span><span class="time">just now</span></div>${thinkingBlock}<div class="content">${safeContent}</div>${opts?.isFinal ? `<div class="actions"><button class="btn-icon action-regenerate" title="Regenerate">♻</button></div>` : ""}</div></div>`;
+}
+
+function escapeHtml(str: string): string {
+  return str
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
+function sanitizeHtml(html: string): string {
+  return html
+    .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, "")
+    .replace(/\bon\w+="[^"]*"/gi, "")
+    .replace(/\bon\w+='[^']*'/gi, "");
 }
 
 async function handleGetMessage({ database, messageId, context, config }: GetMessageOpts): Promise<Response> {
@@ -651,6 +855,7 @@ async function handleListVariants({
     .selectAll()
     .where("parent_id", "=", message.parent_id)
     .where("chat_id", "=", message.chat_id)
+    .orderBy("swipe_index", "asc")
     .orderBy("created_at", "asc")
     .execute();
 
@@ -705,6 +910,7 @@ async function handleSelectVariant({
     .selectAll()
     .where("parent_id", "=", message.parent_id)
     .where("chat_id", "=", message.chat_id)
+    .orderBy("swipe_index", "asc")
     .orderBy("created_at", "asc")
     .execute();
 

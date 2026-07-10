@@ -70,10 +70,10 @@ interface GenerationDetail {
 export interface ChatState extends AlpineMagicThis {
   isGenerating: boolean;
   generationLabel: string;
-  generationCheckInterval: ReturnType<typeof setInterval> | null;
   activeAttemptId: string | null;
   continuingMessageId: string | null;
   isContinuing: boolean;
+  _generationEventSource: EventSource | null;
   chats: Array<{ id: string; name?: string }>;
   activeChat: string | null;
   messages: Message[];
@@ -109,6 +109,10 @@ export interface ChatState extends AlpineMagicThis {
   _renameChatId: string;
   _renameChatName: string;
 
+  _chatKey: CryptoKey | null;
+  _encryptionEnabled: boolean;
+  _keyId: string | null;
+
   init(): void;
   destroy(): void;
   loadUserInfo(): Promise<void>;
@@ -126,7 +130,8 @@ export interface ChatState extends AlpineMagicThis {
   displayName(msg: { role: string; actor_name?: string }): string;
   copyMessage(msgId: string, event: Event): Promise<void>;
   removeMessage(msgId: string, event: Event): Promise<void>;
-  checkGenerationStatus(chatId: string): Promise<void>;
+  connectGenerationSSE(chatId: string): void;
+  _cleanupSSE(): void;
   cancelGeneration(): Promise<void>;
   regenerateResponse(): Promise<void>;
   regenerateVariant(messageId: string): Promise<void>;
@@ -242,4 +247,6 @@ declare global {
   var showToast: Window["showToast"];
   var applyTheme: Window["applyTheme"];
   var setLocale: Window["setLocale"];
+  var __chatKey: CryptoKey | null;
+  var __chatKeyId: string | null;
 }

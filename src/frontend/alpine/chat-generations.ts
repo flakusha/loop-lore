@@ -5,6 +5,62 @@ import type { ChatState } from "./types";
 const log = rootLog.child({ module: "chat" });
 
 export const chatGenerations: Partial<ChatState> & ThisType<ChatState> = {
+  connectGenerationSSE(chatId: string) {
+    // Close any existing connection
+    if (this._generationEventSource) {
+      this._generationEventSource.close();
+    }
+
+    this.isGenerating = true;
+    const url = `/api/generation/stream/${chatId}`;
+    const es = new EventSource(url);
+    this._generationEventSource = es;
+
+    es.addEventListener("stream-update", (event: MessageEvent) => {
+      // Event data is HTMX HTML partial — swap into stream container
+      const container = document.querySelector("#stream-container");
+      if (container) {
+        container.innerHTML = event.data;
+      }
+      // Also update Alpine state for generation label
+      this.activeAttemptId = chatId;
+    });
+
+    es.addEventListener("stream-done", () => {
+      log.info("generation complete via SSE", { chatId });
+      this.isGenerating = false;
+      this.activeAttemptId = null;
+      this.generationDetail = null;
+      this._cleanupSSE();
+      // Reload full message list (persisted message now available)
+      void this.loadMessages();
+    });
+
+    es.addEventListener("stream-error", (event: MessageEvent) => {
+      log.warn("generation error via SSE", { chatId, error: event.data });
+      this.isGenerating = false;
+      this.activeAttemptId = null;
+      this.generationDetail = null;
+      this._cleanupSSE();
+      try {
+        const data = JSON.parse(event.data);
+        this.$dispatch?.("show-toast", {
+          type: "error",
+          message: data.error ?? "Generation failed",
+        });
+      } catch {
+        this.$dispatch?.("show-toast", { type: "error", message: "Generation failed" });
+      }
+    });
+
+    es.addEventListener("error", () => {
+      if (es.readyState !== EventSource.CLOSED) return;
+      log.debug("SSE connection closed permanently", { chatId });
+      this.isGenerating = false;
+      this._cleanupSSE();
+    });
+  },
+
   async checkGenerationStatus(chatId: string) {
     log.debug("checkGenerationStatus", { chatId });
     try {
@@ -169,6 +225,18 @@ export const chatGenerations: Partial<ChatState> & ThisType<ChatState> = {
       this.$dispatch?.("show-toast", { type: "info", message: "Continuing message..." });
     } catch {
       this.$dispatch?.("show-toast", { type: "error", message: "Network error continuing message" });
+    }
+  },
+
+  _cleanupSSE() {
+    if (this._generationEventSource) {
+      this._generationEventSource.close();
+      this._generationEventSource = null;
+    }
+    // Clear stream container
+    const container = document.querySelector("#stream-container");
+    if (container) {
+      container.replaceChildren();
     }
   },
 

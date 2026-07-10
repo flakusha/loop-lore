@@ -6,5 +6,12 @@ export {
   browserImportKey,
   browserExportKey,
   browserGenerateKey,
+  browserCompressThenEncrypt,
+  browserDecryptThenDecompress,
 } from "./browser";
-export type { BrowserContentEncoding, BrowserEncodeResult, BrowserEncryptResult } from "./browser";
+export type {
+  BrowserContentEncoding,
+  BrowserEncodeResult,
+  BrowserEncryptResult,
+  BrowserEncryptedPayload,
+} from "./browser";
