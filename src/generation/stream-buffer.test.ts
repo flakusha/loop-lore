@@ -14,9 +14,7 @@ describe("StreamBuffer", () => {
     expect(seq).toBe(0);
     expect(buf.currentSequence).toBe(1);
     expect(buf.isEmpty).toBe(false);
-    expect(buf.replay()).toEqual([
-      { type: "stream-update", html: "<p>hi</p>", sequence: 0 },
-    ]);
+    expect(buf.replay()).toEqual([{ type: "stream-update", html: "<p>hi</p>", sequence: 0 }]);
   });
 
   test("notifies live subscribers on append", () => {
@@ -63,7 +61,11 @@ describe("StreamBuffer", () => {
     const buf = new StreamBuffer();
     let done = false;
     let live = false;
-    buf.subscribe(() => void 0, () => (done = true), () => (live = true));
+    buf.subscribe(
+      () => void 0,
+      () => (done = true),
+      () => (live = true),
+    );
     buf.signalDone();
     expect(buf.isDone).toBe(true);
     expect(done).toBe(true);
@@ -73,7 +75,11 @@ describe("StreamBuffer", () => {
   test("signalError records error and notifies", () => {
     const buf = new StreamBuffer();
     let err = "";
-    buf.subscribe(() => void 0, () => void 0, (e) => (err = e));
+    buf.subscribe(
+      () => void 0,
+      () => void 0,
+      (e) => (err = e),
+    );
     buf.signalError("boom");
     expect(buf.hasError).toBe("boom");
     expect(err).toBe("boom");
