@@ -1,12 +1,16 @@
 <!-- Settings Page -->
-<header id="header-slot" class="main-header" data-page="settings" data-testid="settings-header">
-  <button class="hamburger" x-on:click="window.toggleSidebar()" data-testid="hamburger">☰</button>
-  <span class="title">Settings</span>
-</header>
+<div class="app-layout" x-data="settingsPage()" x-init="init()">
+  <header id="header-slot" class="main-header" data-page="settings" data-testid="settings-header">
+    <button class="hamburger" x-on:click="window.toggleSidebar()" data-testid="hamburger">☰</button>
+    <span class="title" x-text="'Settings'"></span>
+    <div class="actions">
+      <button class="btn btn-primary" @click="saveGeneral()" :disabled="!loadable" data-testid="save-general">Save General</button>
+    </div>
+  </header>
 
-<div class="app-layout">
   <main class="main-content" style="padding-top: 0">
     <div class="chat-area">
+      <!-- General Settings -->
       <div class="empty-state" style="padding: var(--space-6)" data-testid="settings-general">
         <div class="icon" style="font-size: 32px; margin-bottom: var(--space-4)">⚙</div>
         <div class="title">General Settings</div>
@@ -18,11 +22,8 @@
               type="text"
               class="form-input"
               name="displayName"
+              x-model="displayName"
               placeholder="Your display name"
-              value="User"
-              hx-patch="/api/users/me"
-              hx-trigger="change"
-              hx-target-error="#toast-container"
             />
           </div>
 
@@ -32,18 +33,16 @@
               type="date"
               class="form-input"
               name="birthDate"
-              hx-patch="/api/users/me"
-              hx-trigger="change"
-              hx-target-error="#toast-container"
+              x-model="birthDate"
             />
           </div>
 
           <div class="form-group">
             <label class="form-label">Theme</label>
-            <select class="form-select" data-testid="theme-select">
+            <select class="form-select" data-testid="theme-select" x-model="theme" @change="saveGeneral()">
               <option value="default">Default (Dark)</option>
               <option value="light">Light</option>
-              <option value="bright">Bright</option>
+              <option value="right">Bright</option>
               <option value="colorful">Colorful</option>
               <option value="monochrome">Monochrome</option>
               <option value="no-icons">No Icons</option>
@@ -56,40 +55,41 @@
 
           <div class="form-group">
             <label class="form-label">Language</label>
-            <select class="form-select" data-testid="locale-select">
+            <select class="form-select" data-testid="locale-select" x-model="locale" @change="saveGeneral()">
               <option value="en">English</option>
             </select>
           </div>
         </div>
       </div>
 
+      <!-- Chat Settings -->
       <div class="empty-state" style="padding: var(--space-6)" data-testid="settings-chat">
         <h3 class="section-title">Chat Settings</h3>
         <div style="margin-top: var(--space-4); width: 100%; max-width: 400px">
           <div class="form-group">
             <label class="form-label">Enter to send</label>
             <label class="toggle">
-              <input type="checkbox" id="enter-to-send" />
+              <input type="checkbox" id="enter-to-send" x-model="enterToSend" @change="saveChat()" />
               <span class="toggle-slider"></span>
             </label>
           </div>
           <div class="form-group">
             <label class="form-label">Auto-scroll to bottom</label>
             <label class="toggle">
-              <input type="checkbox" checked id="auto-scroll" />
+              <input type="checkbox" id="auto-scroll" x-model="autoScroll" @change="saveChat()" />
               <span class="toggle-slider"></span>
             </label>
           </div>
           <div class="form-group">
             <label class="form-label">Inline image preview</label>
             <label class="toggle">
-              <input type="checkbox" checked id="inline-preview" />
+              <input type="checkbox" id="inline-preview" x-model="inlinePreview" @change="saveChat()" />
               <span class="toggle-slider"></span>
             </label>
           </div>
           <div class="form-group">
             <label class="form-label">Message detail level</label>
-            <select class="form-select" id="detail-level">
+            <select class="form-select" id="detail-level" x-model="detailLevel" @change="saveChat()">
               <option value="Immersion">Immersion</option>
               <option value="Basic">Basic</option>
               <option value="Detailed">Detailed</option>
@@ -98,12 +98,13 @@
         </div>
       </div>
 
+      <!-- API Settings -->
       <div class="empty-state" style="padding: var(--space-6)" data-testid="settings-api">
         <h3 class="section-title">API Settings</h3>
         <div style="margin-top: var(--space-4); width: 100%; max-width: 400px">
           <div class="form-group">
             <label class="form-label">Provider</label>
-            <select class="form-select" name="provider" data-testid="api-provider">
+            <select class="form-select" name="provider" data-testid="api-provider" x-model="provider" @change="onProviderChange(); saveApi()">
               <option value="OpenAI">OpenAI</option>
               <option value="Anthropic">Anthropic</option>
               <option value="OpenRouter">OpenRouter</option>
@@ -117,10 +118,11 @@
                 type="password"
                 class="form-input"
                 name="apiKey"
+                x-model="apiKey"
                 placeholder="Enter your API key"
                 style="flex: 1"
               />
-              <button type="button" class="btn btn-secondary" data-action="clear-api-key">Clear</button>
+              <button type="button" class="btn btn-secondary" @click="clearApiKey()">Clear</button>
             </div>
           </div>
           <div class="form-group" id="api-endpoint-group" style="display: none">
@@ -129,44 +131,48 @@
               type="text"
               class="form-input"
               name="apiEndpoint"
+              x-model="apiEndpoint"
               placeholder="https://api.openai.com/v1"
             />
           </div>
           <div class="form-group">
             <label class="form-label">Model</label>
-            <input type="text" class="form-input" name="model" placeholder="e.g., gpt-4o" />
+            <input type="text" class="form-input" name="model" x-model="model" placeholder="e.g., gpt-4o" />
           </div>
           <div class="form-group">
             <label class="form-label">Max context tokens</label>
-            <input type="number" class="form-input" name="maxTokens" step="256" min="1024" max="128000" />
+            <input type="number" class="form-input" name="maxTokens" x-model="maxTokens" step="256" min="1024" max="128000" />
           </div>
           <div class="form-group">
-            <label class="form-label">Temperature: <span id="temp-value">1.0</span></label>
+            <label class="form-label">Temperature: <span id="temp-value" x-text="Number(temperature).toFixed(1)"></span></label>
             <input
               type="range"
               class="form-range"
               name="temperature"
+              x-model="temperature"
               min="0"
               max="2"
               step="0.1"
               style="width: 100%"
               data-testid="temp-slider"
+              @input="onTempInput()"
             />
           </div>
           <div style="display: flex; gap: var(--space-2); margin-top: var(--space-4)">
             <button
               type="button"
               class="btn btn-secondary"
-              hx-post="/api/generation/test-connection"
-              hx-target-error="#toast-container"
+              :disabled="saving"
+              @click="testConnection()"
             >
               Test Connection
             </button>
             <button
               type="button"
               class="btn btn-primary"
-              hx-post="/api/users/me/settings"
-              hx-target-error="#toast-container"
+              :disabled="saving"
+              @click="saveApi()"
+              data-testid="save-api"
             >
               Save API Settings
             </button>
@@ -174,6 +180,7 @@
         </div>
       </div>
 
+      <!-- Data Management -->
       <div class="empty-state" style="padding: var(--space-6)" data-testid="settings-data">
         <h3 class="section-title">Data Management</h3>
         <div style="margin-top: var(--space-4); width: 100%; max-width: 400px">
@@ -190,10 +197,12 @@
               type="text"
               class="form-input"
               id="confirm-delete-input"
+              x-model="confirmDeleteText"
+              @input="onConfirmDeleteInput()"
               placeholder='Type "DELETE" to confirm'
               style="margin-bottom: var(--space-3); border-color: var(--accent-red)"
             />
-            <button type="button" class="btn btn-danger" id="delete-all-btn" disabled>Delete All Data</button>
+            <button type="button" class="btn btn-danger" id="delete-all-btn" :disabled="confirmDeleteText !== 'DELETE'" @click="deleteAllData()" data-testid="delete-all">Delete All Data</button>
           </div>
         </div>
       </div>

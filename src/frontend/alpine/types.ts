@@ -41,12 +41,12 @@ interface Message {
   attachments?: MessageAttachment[];
 }
 
-interface GroupedMessage extends Message {
+export interface GroupedMessage extends Message {
   group?: boolean;
   groupCount?: number;
 }
 
-interface GalleryAsset {
+export interface GalleryAsset {
   id: string;
   name?: string;
   filename?: string;
@@ -99,7 +99,7 @@ export interface ChatState extends AlpineMagicThis {
   groupedMessages: GroupedMessage[];
   _observer: MutationObserver | null;
   _groupedKey: string;
-  _groupedCache: Array<Record<string, unknown>> | null;
+  _groupedCache: GroupedMessage[] | null;
   _toggleChatListHandler: () => void;
   _toggleGalleryHandler: () => void;
   _toggleCharacterInfoHandler: () => void;

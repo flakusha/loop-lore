@@ -37,6 +37,19 @@ export interface Users {
   last_seen_at: string | null;
 }
 
+// ── Personas ───────────────────────────────────────────────────
+export interface Personas {
+  id: Generated<string>;
+  user_id: string;
+  name: string;
+  avatar_asset_id: string | null;
+  description: string | null;
+  title: string | null;
+  is_default: Generated<number>;
+  created_at: Generated<string>;
+  updated_at: Generated<string>;
+}
+
 // ── Sessions ──────────────────────────────────────────────────
 export interface Sessions {
   id: Generated<string>;
@@ -103,6 +116,8 @@ export interface ChatParticipants {
   role_in_chat: ChatParticipantRole;
   joined_at: Generated<string>;
   last_read_message_id: string | null;
+  impersonate_actor_id: string | null;
+  persona_id: string | null;
 }
 
 // ── Characters ────────────────────────────────────────────────

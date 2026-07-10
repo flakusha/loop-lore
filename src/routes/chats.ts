@@ -91,6 +91,24 @@ interface RemoveParticipantOpts {
   chatId: string;
   actorId: string;
 }
+interface SetPersonaOpts {
+  database: Kysely<DB>;
+  context: RequestContext;
+  chatId: string;
+  body: Record<string, unknown>;
+}
+interface SetImpersonateOpts {
+  database: Kysely<DB>;
+  context: RequestContext;
+  chatId: string;
+  body: Record<string, unknown>;
+}
+interface ClearImpersonateOpts {
+  database: Kysely<DB>;
+  context: RequestContext;
+  chatId: string;
+  actorId: string;
+}
 
 const dispatch: RouteDispatch = async ({ request, context, database }) => {
   const url = new URL(request.url);
@@ -122,6 +140,33 @@ const dispatch: RouteDispatch = async ({ request, context, database }) => {
   if (readMatch) {
     if (method === "POST") {
       return handleMarkRead({ database, chatId: readMatch[1], context });
+    }
+    return BAD_METHOD();
+  }
+
+  // ── /api/chats/:id/persona ────────────────────────────────
+  const personaMatch = /^\/api\/chats\/([a-f0-9-]+)\/persona$/.exec(pathname);
+  if (personaMatch && method === "PUT") {
+    const body = await parseBody(request);
+    if (body instanceof Response) return body;
+    return handleSetPersona({ database, chatId: personaMatch[1], body, context });
+  }
+
+  // ── /api/chats/:id/impersonate ────────────────────────────
+  const impersonateMatch = /^\/api\/chats\/([a-f0-9-]+)\/impersonate$/.exec(pathname);
+  if (impersonateMatch) {
+    if (method === "PUT") {
+      const body = await parseBody(request);
+      if (body instanceof Response) return body;
+      return handleSetImpersonate({ database, chatId: impersonateMatch[1], body, context });
+    }
+    if (method === "DELETE") {
+      return handleClearImpersonate({
+        database,
+        chatId: impersonateMatch[1],
+        actorId: context.userId!,
+        context,
+      });
     }
     return BAD_METHOD();
   }
@@ -566,6 +611,116 @@ async function handleRemoveParticipant({
 
   await database
     .deleteFrom("chat_participants")
+    .where("chat_id", "=", chatId)
+    .where("actor_id", "=", actorId)
+    .execute();
+
+  return jsonNoContent();
+}
+
+/**
+ * Set persona for the current user in a chat.
+ * Updates the persona_id on their chat_participants entry.
+ */
+async function handleSetPersona({ database, chatId, body, context }: SetPersonaOpts): Promise<Response> {
+  const userId = context.userId;
+  if (!userId)
+    return jsonError({
+      message: "Unauthorized",
+      status: HttpStatus.Unauthorized,
+      code: ErrorCode.Unauthorized,
+    });
+
+  const chat = await database
+    .selectFrom("chats")
+    .select("created_by")
+    .where("id", "=", chatId)
+    .executeTakeFirst();
+  if (!chat || (chat.created_by !== userId && context.userRole !== "admin")) {
+    return jsonError({ message: "Chat not found", status: HttpStatus.NotFound });
+  }
+
+  const personaId = body.personaId as string | null | undefined;
+  const updates: Record<string, unknown> = { persona_id: personaId ?? null };
+
+  await database
+    .updateTable("chat_participants")
+    .set(updates)
+    .where("chat_id", "=", chatId)
+    .where("actor_id", "=", userId)
+    .execute();
+
+  return jsonResponse({ ok: true });
+}
+
+/**
+ * Set impersonation - the character the user is playing.
+ * Updates impersonate_actor_id on their chat_participants entry.
+ */
+async function handleSetImpersonate({
+  database,
+  chatId,
+  body,
+  context,
+}: SetImpersonateOpts): Promise<Response> {
+  const userId = context.userId;
+  if (!userId)
+    return jsonError({
+      message: "Unauthorized",
+      status: HttpStatus.Unauthorized,
+      code: ErrorCode.Unauthorized,
+    });
+
+  const chat = await database
+    .selectFrom("chats")
+    .select("created_by")
+    .where("id", "=", chatId)
+    .executeTakeFirst();
+  if (!chat || (chat.created_by !== userId && context.userRole !== "admin")) {
+    return jsonError({ message: "Chat not found", status: HttpStatus.NotFound });
+  }
+
+  const impersonateActorId = body.impersonateActorId as string | null | undefined;
+  const updates: Record<string, unknown> = { impersonate_actor_id: impersonateActorId ?? null };
+
+  await database
+    .updateTable("chat_participants")
+    .set(updates)
+    .where("chat_id", "=", chatId)
+    .where("actor_id", "=", userId)
+    .execute();
+
+  return jsonResponse({ ok: true });
+}
+
+/**
+ * Clear impersonation - stop playing as a character.
+ */
+async function handleClearImpersonate({
+  database,
+  chatId,
+  actorId,
+  context,
+}: ClearImpersonateOpts): Promise<Response> {
+  if (!actorId)
+    return jsonError({
+      message: "Unauthorized",
+      status: HttpStatus.Unauthorized,
+      code: ErrorCode.Unauthorized,
+    });
+
+  const chat = await database
+    .selectFrom("chats")
+    .select("created_by")
+    .where("id", "=", chatId)
+    .executeTakeFirst();
+  if (!chat || (chat.created_by !== actorId && context.userRole !== "admin")) {
+    return jsonError({ message: "Chat not found", status: HttpStatus.NotFound });
+  }
+
+  await database
+    .updateTable("chat_participants")
+    .set({ impersonate_actor_id: null })
     .where("chat_id", "=", chatId)
     .where("actor_id", "=", actorId)
     .execute();
