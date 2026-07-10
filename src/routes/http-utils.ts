@@ -91,21 +91,38 @@ export function jsonResponse(data: unknown, status: HttpStatusCode = HttpStatus.
   return Response.json(data, { status });
 }
 
+export interface JsonErrorOptions {
+  message: string;
+  status?: HttpStatusCode;
+  code?: ErrorCode;
+}
+
 /**
  * JSON error response with optional machine-readable code.
  *
+ * Accepts either positional args (legacy) or an options object.
+ *
  * @example
+ *   jsonError({ message: "Not found", status: HttpStatus.NotFound })
  *   jsonError("Not found", HttpStatus.NotFound)
- *   jsonError("Expired token", HttpStatus.Unauthorized, "UNAUTHORIZED")
+ *   jsonError({ message: "Expired token", status: HttpStatus.Unauthorized, code: "UNAUTHORIZED" })
  */
+export function jsonError(message: string, status?: HttpStatusCode, code?: ErrorCode): Response;
+export function jsonError(options: JsonErrorOptions): Response;
 export function jsonError(
-  message: string,
+  messageOrOptions: string | JsonErrorOptions,
   status: HttpStatusCode = HttpStatus.BadRequest,
   code?: ErrorCode,
 ): Response {
+  const message = typeof messageOrOptions === "string" ? messageOrOptions : messageOrOptions.message;
+  const resolvedStatus =
+    typeof messageOrOptions === "string"
+      ? status
+      : (messageOrOptions.status ?? HttpStatus.BadRequest);
+  const resolvedCode = typeof messageOrOptions === "string" ? code : messageOrOptions.code;
   const body: ApiError = { error: message };
-  if (code) body.code = code;
-  return Response.json(body, { status });
+  if (resolvedCode) body.code = resolvedCode;
+  return Response.json(body, { status: resolvedStatus });
 }
 
 /**
@@ -125,23 +142,60 @@ export function jsonValidationError(errors: ValidationError[], message = "Valida
   );
 }
 
+export interface JsonPaginatedOptions {
+  data: unknown[];
+  total: number;
+  page: number;
+  pageSize: number;
+}
+
 /**
  * JSON paginated list response.
  *
+ * Accepts either positional args (legacy) or an options object.
+ *
  * @example
+ *   jsonPaginated({ data: items, total, page, pageSize })
  *   jsonPaginated(items, total, page, pageSize)
  */
-export function jsonPaginated(data: unknown[], total: number, page: number, pageSize: number): Response {
+export function jsonPaginated(
+  data: unknown[],
+  total: number,
+  page: number,
+  pageSize: number,
+): Response;
+export function jsonPaginated(options: JsonPaginatedOptions): Response;
+export function jsonPaginated(
+  dataOrOptions: unknown[] | JsonPaginatedOptions,
+  total?: number,
+  page?: number,
+  pageSize?: number,
+): Response {
+  const { data, pagination } =
+    typeof dataOrOptions === "object" && !Array.isArray(dataOrOptions)
+      ? {
+          data: dataOrOptions.data,
+          pagination: {
+            total: dataOrOptions.total,
+            page: dataOrOptions.page,
+            pageSize: dataOrOptions.pageSize,
+            totalPages:
+              dataOrOptions.pageSize > 0
+                ? Math.ceil(dataOrOptions.total / dataOrOptions.pageSize)
+                : 0,
+          },
+        }
+      : {
+          data: dataOrOptions,
+          pagination: {
+            total: total ?? 0,
+            page: page ?? 1,
+            pageSize: pageSize ?? 0,
+            totalPages: pageSize && pageSize > 0 ? Math.ceil((total ?? 0) / pageSize) : 0,
+          },
+        };
   return Response.json(
-    {
-      data,
-      pagination: {
-        total,
-        page,
-        pageSize,
-        totalPages: pageSize > 0 ? Math.ceil(total / pageSize) : 0,
-      },
-    } satisfies PaginatedResponse<unknown>,
+    { data, pagination },
     { status: HttpStatus.OK },
   );
 }
@@ -157,7 +211,7 @@ export function jsonCreated(data?: unknown): Response {
   if (data === undefined) return new Response(null, { status: HttpStatus.Created });
   const result = safeJsonStringify(data);
   if (!result.ok) {
-    return jsonError("Failed to serialize response", HttpStatus.InternalServerError);
+    return jsonError({ message: "Failed to serialize response", status: HttpStatus.InternalServerError });
   }
   return new Response(result.value, {
     status: HttpStatus.Created,
@@ -175,7 +229,7 @@ export function jsonNoContent(): Response {
 // ── Shared route utilities ─────────────────────────────────────
 
 /** "Method not allowed" shorthand */
-export const BAD_METHOD = (): Response => jsonError("Method not allowed", HttpStatus.BadRequest);
+export const BAD_METHOD = (): Response => jsonError({ message: "Method not allowed", status: HttpStatus.BadRequest });
 
 /**
  * Parse request body: JSON or form-encoded.
@@ -193,7 +247,7 @@ export async function parseBody<T = Record<string, unknown>>(request: Request): 
     const obj: Record<string, unknown> = Object.fromEntries(params);
     return obj as T;
   } catch {
-    return jsonError("Invalid request body", HttpStatus.BadRequest);
+    return jsonError({ message: "Invalid request body", status: HttpStatus.BadRequest });
   }
 }
 
