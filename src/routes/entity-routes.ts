@@ -60,7 +60,7 @@ function extractIds({
   entityPath: string;
 }): { parentId: string | null; entityId: string | null } {
   const parentMatch = new RegExp(
-    `^\\/api\\/${parentPrefix}\\/([a-f0-9-]+)\\/${entityPath}(?:\\/([a-f0-9-]+))?$`,
+    String.raw`^\/api\/${parentPrefix}\/([a-f0-9-]+)\/${entityPath}(?:\/([a-f0-9-]+))?$`,
   ).exec(pathname);
   return { parentId: parentMatch?.[1] ?? null, entityId: parentMatch?.[2] ?? null };
 }

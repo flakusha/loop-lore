@@ -1,13 +1,13 @@
 import { jsonBody } from "./json";
 import { log as rootLog } from "./logger";
-import type { ChatState } from "./types";
+import type { ChatState, GalleryAsset } from "./types";
 
 const log = rootLog.child({ module: "chat" });
 
 export const chatEditing: Partial<ChatState> & ThisType<ChatState> = {
   editingMessageId: null as string | null,
   editContent: "",
-  previewMediaAsset: null as any,
+  previewMediaAsset: null as GalleryAsset | null,
   pendingAssets: [] as Array<{ assetId: string; filename: string }>,
 
   startEdit(msgId: string) {
