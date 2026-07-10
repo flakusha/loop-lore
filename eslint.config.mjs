@@ -57,6 +57,7 @@ const tsRules = {
   "unicorn/isolated-functions": "off",
   "unicorn/no-incorrect-query-selector": "off",
   "unicorn/prefer-spread": "off",
+  "unicorn/prefer-string-raw": "off",
 
   // ── SonarJS shared overrides ───────────────────────────────
   ...sonarjs.configs.recommended.rules,
@@ -118,13 +119,14 @@ export default tseslint.config(
       ".tmp/",
       ".hermes/",
       "docs/.vitepress/",
+      "docs/research/",
       "migrations/",
       "plugins/",
       "bun.lock",
       "*.har",
     ],
   },
-  // ── Markdown files: extract & lint code blocks ────────────────
+  // ── Markdown files: extract & lint code blocks ─────────────────
   ...markdown.configs.recommended,
   {
     files: ["**/*.md/**"],
@@ -268,6 +270,27 @@ export default tseslint.config(
       "@typescript-eslint/no-unsafe-assignment": "off",
       "@typescript-eslint/no-unsafe-argument": "off",
       "@typescript-eslint/no-floating-promises": "off",
+    },
+  },
+  // ── Overrides: scripts (utility tools, relaxed rules) ─────────────────
+  {
+    files: ["src/scripts/**/*.ts"],
+    rules: {
+      "unicorn/text-encoding-identifier-case": "off",
+      "unicorn/escape-case": "off",
+      "unicorn/prefer-unicode-code-point-escapes": "off",
+      "unicorn/prefer-node-protocol": "off",
+      "unicorn/prefer-split-limit": "off",
+      "unicorn/no-useless-template-literals": "off",
+      "unicorn/prefer-string-raw": "off",
+      "@typescript-eslint/no-unsafe-member-access": "off",
+      "@typescript-eslint/no-unsafe-assignment": "off",
+      "@typescript-eslint/no-unsafe-argument": "off",
+      "@typescript-eslint/restrict-template-expressions": "off",
+      "@typescript-eslint/no-unnecessary-template-expression": "off",
+      "@typescript-eslint/prefer-regexp-exec": "off",
+      "unicorn/prefer-await": "off",
+      "unicorn/prefer-top-level-await": "off",
     },
   },
 );
