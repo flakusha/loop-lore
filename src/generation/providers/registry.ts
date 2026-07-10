@@ -11,11 +11,8 @@ import { getDatabase } from "../../db/index";
 import { decryptValue } from "../../crypto";
 import type { LLMProvider } from "./types";
 import { OpenAiCompatibleProvider } from "./openai-compatible";
-// DEAD CODE: Import new providers when implemented
-// import { BedrockProvider } from "./bedrock";
-// import { GoogleProvider } from "./google";
-// import { AnthropicProvider } from "./anthropic";
-// import { OllamaNativeProvider } from "./ollama-native";
+// TODO: register additional providers (Bedrock, Google, Anthropic, Ollama native)
+// when their implementations land.
 
 // ── Registry ──────────────────────────────────────────────
 
@@ -142,14 +139,4 @@ export function initializeProviders(config: Config): void {
   ) {
     // TODO: OllamaNativeProvider when implemented
   }
-  // DEAD CODE: Bedrock provider initialization (uncomment when implemented)
-  // if (config.generation.providers.bedrock && !getProvider(config.generation.providers.bedrock.name)) {
-  //   const provider = new BedrockProvider(config.generation.providers.bedrock);
-  //   registerProvider(config.generation.providers.bedrock.name, provider);
-  // }
-  // DEAD CODE: Google provider initialization
-  // if (config.generation.providers.google && !getProvider(config.generation.providers.google.name)) {
-  //   // const provider = new GoogleProvider(config.generation.providers.google);
-  //   // registerProvider(config.generation.providers.google.name, provider);
-  // }
 }
