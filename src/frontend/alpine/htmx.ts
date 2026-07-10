@@ -20,7 +20,7 @@ function getCsrfToken(): string {
   return match ? match[1] : "";
 }
 
-async function apiFetch(url: string, options?: RequestInit): Promise<Response> {
+export async function apiFetch(url: string, options?: RequestInit): Promise<Response> {
   const method = options?.method ?? "GET";
   const start = performance.now();
   apiLog.info(`${method} ${url}`, { direction: "request" });
@@ -57,14 +57,8 @@ document.addEventListener("htmx:beforeSwap", () => {
   apiLog.debug("htmx:beforeSwap");
 });
 
-// Trigger page-specific loaders on htmx content swaps
+// Trigger page-specific loaders on htmx content swaps (for pages still using JS)
 const PAGE_LOADERS: Map<string, string> = new Map([
-  ["#character-grid", "loadCharactersPage"],
-  ["#gallery-grid", "loadGalleryPage"],
-  ["#world-list", "loadWorldsPage"],
-  ["#world-detail", "loadWorldDetail"],
-  ["#character-chat-list", "loadCharacterChatList"],
-  ["#character-edit-form", "loadCharacterEditPage"],
   ["#create-chat-form", "loadNewChatPage"],
   ['[data-page="settings"]', "loadSettingsPage"],
 ]);
@@ -172,24 +166,28 @@ document.addEventListener("htmx:afterRequest", ((e: Event) => {
 document.addEventListener("asset:uploaded", () => {
   document.querySelector("#upload-modal")?.classList.remove("open");
   showToast("success", "Asset uploaded");
-  (globalThis as any).loadGalleryPage?.();
+  const grid = document.querySelector("#asset-grid");
+  if (grid) htmx.trigger(grid, "load");
 });
 
 document.addEventListener("character:created", () => {
   showToast("success", "Character created");
-  (globalThis as any).loadCharactersPage?.();
+  const grid = document.querySelector("#character-grid");
+  if (grid) htmx.trigger(grid, "load");
 });
 
 document.addEventListener("character:imported", () => {
   document.querySelector("#import-modal")?.classList.remove("open");
   showToast("success", "Character imported");
-  (globalThis as any).loadCharactersPage?.();
+  const grid = document.querySelector("#character-grid");
+  if (grid) htmx.trigger(grid, "load");
 });
 
 document.addEventListener("world:saved", () => {
   document.querySelector("#edit-world-modal")?.classList.remove("open");
   showToast("success", "World saved");
-  (globalThis as any).loadWorldDetail?.();
+  const detail = document.querySelector("#world-detail");
+  if (detail) htmx.trigger(detail, "load");
 });
 
 // ── Global keyboard: Escape closes sidebar ──────────────────

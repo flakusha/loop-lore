@@ -4,6 +4,7 @@ import { chatMessages } from "./chat-messages";
 import { chatGenerations } from "./chat-generations";
 import { chatManagement } from "./chat-management";
 import { chatEditing } from "./chat-editing";
+import { chatActions } from "./chat-actions";
 import { chatUtils } from "./chat-utils";
 import type { AlpineState, ChatState } from "./types";
 import { browserImportKey } from "../browser";
@@ -84,6 +85,12 @@ globalThis.chatState = function () {
       status?: string;
       attemptId?: string;
     } | null,
+    detailLevel: "Immersion" as "Immersion" | "Basic" | "Detailed",
+    impersonationActive: false as boolean,
+    impersonatingActorId: null as string | null,
+    _hamburgerOpen: {} as Record<string, boolean>,
+    _statsOpen: {} as Record<string, boolean>,
+    _impersonationLoaded: false as boolean,
 
     // Cleanup handles
     _observer: null as MutationObserver | null,
@@ -95,9 +102,21 @@ globalThis.chatState = function () {
     _chatKey: null as CryptoKey | null,
     _encryptionEnabled: false as boolean,
     _keyId: null as string | null,
+    _storageHandler: null as ((e: StorageEvent) => void) | null,
 
     // ── Core methods ──
     async init() {
+      const storedDetail = localStorage.getItem("chat-detail-level");
+      if (storedDetail === "Basic" || storedDetail === "Detailed") {
+        this.detailLevel = storedDetail;
+      }
+      this._storageHandler = (e: StorageEvent) => {
+        if (e.key !== "chat-detail-level" || !e.newValue) return;
+        if (["Immersion", "Basic", "Detailed"].includes(e.newValue)) {
+          this.detailLevel = e.newValue as "Immersion" | "Basic" | "Detailed";
+        }
+      };
+      addEventListener("storage", this._storageHandler);
       await this.loadChats();
       this.loadUserInfo();
 
@@ -153,6 +172,10 @@ globalThis.chatState = function () {
       document.removeEventListener("toggle-character-info", this._toggleCharacterInfoHandler);
 
       this._cleanupSSE?.();
+
+      if (this._storageHandler) {
+        removeEventListener("storage", this._storageHandler);
+      }
 
       if (this.scrollObserver) {
         this.scrollObserver.disconnect();
@@ -219,6 +242,7 @@ globalThis.chatState = function () {
       this.loadingOlder = false;
       await Promise.all([this.loadMessages(), this.loadGalleryAssets(), this.loadCharacterInfo()]);
       await this.loadChatKey(chatId);
+      await this.loadImpersonationState();
     },
 
     async loadChatKey(chatId: string) {
@@ -257,6 +281,7 @@ globalThis.chatState = function () {
     ...chatGenerations,
     ...chatManagement,
     ...chatEditing,
+    ...chatActions,
     ...chatUtils,
   } as AlpineState<ChatState>;
 };

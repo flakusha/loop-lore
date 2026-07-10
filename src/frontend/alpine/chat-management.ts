@@ -1,6 +1,7 @@
 import { jsonBody } from "./json";
 import { log as rootLog } from "./logger";
 import type { ChatState } from "./types";
+import { apiFetch } from "./htmx";
 
 const log = rootLog.child({ module: "chat" });
 
@@ -10,6 +11,9 @@ export const chatManagement: Partial<ChatState> & ThisType<ChatState> = {
   _chatSettingsName: "",
   _chatSettingsMode: "chat",
   _chatSettingsTurnStrategy: "round_robin",
+  _personas: [],
+  _selectedPersonaId: null as string | null,
+  _impersonatingActorId: null as string | null,
 
   async deleteChat(chatId: string, event: Event) {
     log.info("deleteChat", { chatId });
@@ -138,6 +142,9 @@ export const chatManagement: Partial<ChatState> & ThisType<ChatState> = {
         const titleEl = document.querySelector("#page-title");
         if (titleEl) titleEl.textContent = this.activeChatName;
         Alpine.store("ui").showChatSettings = false;
+        // Persist persona and impersonation settings
+        this.setPersona();
+        this.toggleImpersonation();
         this.$dispatch?.("show-toast", { type: "success", message: "Chat settings saved" });
       } else {
         const err = await res.json();
@@ -146,5 +153,72 @@ export const chatManagement: Partial<ChatState> & ThisType<ChatState> = {
     } catch {
       this.$dispatch?.("show-toast", { type: "error", message: "Network error saving settings" });
     }
+  },
+
+  async loadPersonas() {
+    try {
+      const res = await apiFetch("/api/personas");
+      if (res.ok) {
+        this._personas = await res.json();
+      }
+    } catch {
+      /* ignore */
+    }
+  },
+
+  async setPersona() {
+    if (!this.activeChat) return;
+    try {
+      await apiFetch(`/api/chats/${this.activeChat}/persona`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: jsonBody({ personaId: this._selectedPersonaId }),
+      });
+    } catch {
+      /* non-critical */
+    }
+  },
+
+  async toggleImpersonation() {
+    if (!this.activeChat) return;
+    const actorId = this._impersonatingActorId;
+    try {
+      if (this.impersonationActive && actorId) {
+        await apiFetch(`/api/chats/${this.activeChat}/impersonate`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: jsonBody({ impersonateActorId: actorId }),
+        });
+      } else {
+        await apiFetch(`/api/chats/${this.activeChat}/impersonate`, {
+          method: "DELETE",
+        });
+      }
+    } catch {
+      /* non-critical */
+    }
+  },
+
+  async loadImpersonationState() {
+    if (!this.activeChat || this._impersonationLoaded) return;
+    this._impersonationLoaded = true;
+    try {
+      // Load persona and impersonation state from chat participant
+      const res = await apiFetch(`/api/chats/${this.activeChat}/participants`);
+      if (res.ok) {
+        const participants = await res.json();
+        const me = Array.isArray(participants)
+          ? participants.find((p: any) => p.role_in_chat === "owner")
+          : null;
+        if (me) {
+          this._selectedPersonaId = me.persona_id || null;
+          this._impersonatingActorId = me.impersonate_actor_id || null;
+          this.impersonationActive = !!me.impersonate_actor_id;
+        }
+      }
+    } catch {
+      /* ignore */
+    }
+    await this.loadPersonas();
   },
 };

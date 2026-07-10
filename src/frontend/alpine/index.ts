@@ -10,3 +10,5 @@ import "./chat";
 import "./htmx";
 import "./notifications";
 import "./settings";
+import "./personas";
+import "./admin";

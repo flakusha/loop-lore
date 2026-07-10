@@ -8,14 +8,6 @@ function escapeHtml(str: string): string {
   return div.innerHTML;
 }
 
-function escapeAttr(s: string): string {
-  return (s || "")
-    .replaceAll("&", "&amp;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;");
-}
-
 function formatSize(bytes: number): string {
   if (!bytes) return "";
   if (bytes < 1024) return `${bytes} B`;
@@ -23,91 +15,109 @@ function formatSize(bytes: number): string {
   return `${(bytes / 1_048_576).toFixed(1)} MB`;
 }
 
-function formatTimeAgo(iso: string): string {
-  if (!iso) return "";
-  const d = new Date(iso);
-  const diff = Date.now() - d.getTime();
-  if (diff < 60_000) return "just now";
-  if (diff < 3_600_000) return `${Math.floor(diff / 60_000)}m ago`;
-  if (diff < 86_400_000) return `${Math.floor(diff / 3_600_000)}h ago`;
-  return `${Math.floor(diff / 86_400_000)}d ago`;
-}
-
-// ── Search/filter state (fast-gain UX) ───────────────────
-const characterData: any[] = [];
-const assetData: any[] = [];
-const worldData: any[] = [];
-
-/** Case-insensitive substring match across the given fields. */
-function matchesQuery(item: any, query: string, fields: string[]): boolean {
-  if (!query) return true;
-  const q = query.toLowerCase();
-  return fields.some((f) =>
-    String(item[f] ?? "")
-      .toLowerCase()
-      .includes(q),
-  );
-}
-
-// ── Characters page ─────────────────────────────────────────
-
-(globalThis as any).loadCharactersPage = async function () {
-  pageLog.debug("loadCharactersPage");
-  const grid = document.querySelector("#character-grid");
-  if (!grid) return;
-  try {
-    const res = await apiFetch("/api/actors?pageSize=100");
-    const data = await res.json();
-    const chars = (data.data || []).filter((c: any) => c.actor_type !== "user");
-    characterData.length = 0;
-    characterData.push(...chars);
-    renderCharacters();
-  } catch {
-    /* ignore */
-  }
-};
-
-function renderCharacters(): void {
-  const grid = document.querySelector("#character-grid");
-  if (!grid) return;
-  const query = (document.querySelector<HTMLInputElement>("#character-search")?.value ?? "").trim();
-  const filtered = characterData
-    .filter((c: any) => matchesQuery(c, query, ["display_name", "description"]))
-    .sort((a: any, b: any) => String(a.display_name ?? "").localeCompare(String(b.display_name ?? "")));
-  if (filtered.length === 0) {
-    grid.innerHTML = `<div class="empty-state" style="padding: var(--space-12)" data-testid="characters-empty">
-      <div class="icon">👤</div><div class="title">No characters found</div>
-      <div class="description">${query ? "No matches for your search." : "Create your first character to start roleplaying."}</div>
-    </div>`;
-    return;
-  }
-  grid.innerHTML = filtered
-    .map((char: any) => {
-      const avatar = char.avatar_asset_id
-        ? `<img src="/api/assets/${char.avatar_asset_id}/thumb" alt="Avatar" />`
-        : "<span>👤</span>";
-      return `<div class="character-card" onclick="selectCharacterCard('${char.id}')" data-testid="character-card-${char.id}">
-      <div class="card-img">${avatar}</div>
-      <div class="card-body">
-        <div class="name">${escapeHtml(char.display_name || "")}</div>
-        <div class="description">${escapeHtml(char.description || "No description")}</div>
-      </div>
-      </div>`;
-    })
-    .join("");
-}
+// ── DOM-level search/filter (work on server-rendered content) ──
 
 (globalThis as any).filterCharacters = function () {
-  renderCharacters();
+  const query = (document.querySelector<HTMLInputElement>("#character-search")?.value ?? "")
+    .toLowerCase()
+    .trim();
+  const cards = document.querySelectorAll("#character-grid .character-card");
+  let visible = 0;
+  for (const card of cards) {
+    const name = (card.querySelector(".name")?.textContent ?? "").toLowerCase();
+    const desc = (card.querySelector(".description")?.textContent ?? "").toLowerCase();
+    const match = !query || name.includes(query) || desc.includes(query);
+    (card as HTMLElement).style.display = match ? "" : "none";
+    if (match) visible++;
+  }
+  if (visible === 0 && cards.length > 0) {
+    const grid = document.querySelector("#character-grid");
+    if (grid) {
+      const empty = document.createElement("div");
+      empty.className = "empty-state";
+      empty.style.padding = "var(--space-12)";
+      empty.innerHTML = `<div class="icon">👤</div><div class="title">No characters match your search</div>`;
+      if (!grid.querySelector(".empty-state")) grid.append(empty);
+    }
+  }
 };
 
+(globalThis as any).filterAssets = function () {
+  const query = (document.querySelector<HTMLInputElement>("#asset-search")?.value ?? "").toLowerCase().trim();
+  const type = document.querySelector<HTMLSelectElement>("#asset-type-filter")?.value ?? "all";
+  const cards = document.querySelectorAll("#asset-grid .asset-card");
+  let visible = 0;
+  for (const card of cards) {
+    const name = (card.querySelector(".name")?.textContent ?? "").toLowerCase();
+    const mime = (card.querySelector(".type")?.textContent ?? "").toLowerCase();
+    const matchesQuery = !query || name.includes(query) || mime.includes(query);
+    const matchesType =
+      type === "all" ||
+      (card.querySelector(".file-icon")?.textContent === "🎵" && type === "audio") ||
+      (card.querySelector(".file-icon")?.textContent === "🎬" && type === "video") ||
+      (card.querySelector("img") && type === "image");
+    (card as HTMLElement).style.display = matchesQuery && matchesType ? "" : "none";
+    if (matchesQuery && matchesType) visible++;
+  }
+  if (visible === 0 && cards.length > 0) {
+    const grid = document.querySelector("#asset-grid");
+    if (grid) {
+      const empty = document.createElement("div");
+      empty.className = "empty-state";
+      empty.style.gridColumn = "1 / -1";
+      empty.innerHTML = `<div class="icon">📁</div><div class="title">No assets match your filters</div>`;
+      if (!grid.querySelector(".empty-state")) grid.append(empty);
+    }
+  }
+};
+
+(globalThis as any).filterWorlds = function () {
+  const query = (document.querySelector<HTMLInputElement>("#world-search")?.value ?? "").toLowerCase().trim();
+  const cards = document.querySelectorAll("#world-list .world-card");
+  let visible = 0;
+  for (const card of cards) {
+    const name = (card.querySelector(".world-name")?.textContent ?? "").toLowerCase();
+    const desc = (card.querySelector(".world-description")?.textContent ?? "").toLowerCase();
+    const match = !query || name.includes(query) || desc.includes(query);
+    (card as HTMLElement).style.display = match ? "" : "none";
+    if (match) visible++;
+  }
+  if (visible === 0 && cards.length > 0) {
+    const list = document.querySelector("#world-list");
+    if (list) {
+      const empty = document.createElement("div");
+      empty.className = "empty-state";
+      empty.style.padding = "var(--space-12)";
+      empty.innerHTML = `<div class="icon">🌍</div><div class="title">No worlds match your search</div>`;
+      if (!list.querySelector(".empty-state")) list.append(empty);
+    }
+  }
+};
+
+// ── Characters: detail modal + actions ────────────────────────
+
 (globalThis as any).selectCharacterCard = async function (id: string) {
+  let modal = document.querySelector<HTMLElement>("#character-detail-modal");
+
+  // Lazy-load detail modal if not in DOM yet
+  if (!modal) {
+    const container = document.querySelector("#modal-container");
+    if (!container) return;
+    container.innerHTML =
+      '<div id="character-detail-modal" class="modal-overlay" x-on:click="window.closeModalOnBackdrop($event)" data-testid="character-detail-modal"><div class="modal"></div></div>';
+    const resp = await fetch("/partials/characters/detail-modal");
+    if (resp.ok) {
+      container.innerHTML = await resp.text();
+    }
+    modal = document.querySelector<HTMLElement>("#character-detail-modal");
+  }
+  if (!modal) return;
+
+  const resp = await apiFetch(`/api/actors/${id}`);
+  if (!resp.ok) return;
+  const char = await resp.json();
+
   try {
-    const res = await apiFetch(`/api/actors/${id}`);
-    if (!res.ok) return;
-    const char = await res.json();
-    const modal = document.querySelector<HTMLElement>("#character-detail-modal");
-    if (!modal) return;
     modal.querySelector("[data-field='name']")!.textContent = char.display_name || char.name || "";
     modal.querySelector("[data-field='description']")!.textContent = char.description || "No description";
     modal.querySelector("[data-field='system-prompt']")!.textContent =
@@ -123,8 +133,6 @@ function renderCharacters(): void {
     /* ignore */
   }
 };
-
-// ── Characters action handlers ─────────────────────────────
 
 (globalThis as any).startChatFromChar = async function (btn: HTMLElement) {
   const id = btn.dataset.id;
@@ -157,84 +165,15 @@ function renderCharacters(): void {
     if (res.ok) {
       document.querySelector("#character-detail-modal")?.classList.remove("open");
       showToast("success", "Character deleted");
-      (globalThis as any).loadCharactersPage();
+      const grid = document.querySelector("#character-grid");
+      if (grid) htmx.trigger(grid, "load");
     }
   } catch {
     /* ignore */
   }
 };
 
-// ── Gallery page ───────────────────────────────────────────
-
-function thumbForAsset(a: any): string {
-  switch (a.asset_type) {
-    case "image": {
-      return `<img src="/api/assets/${a.id}/thumb" alt="${escapeHtml(a.filename)}" loading="lazy" />`;
-    }
-    case "audio": {
-      return `<div class="file-icon">🎵</div>`;
-    }
-    case "video": {
-      return `<div class="file-icon">🎬</div>`;
-    }
-    default: {
-      return `<div class="file-icon">📄</div>`;
-    }
-  }
-}
-
-(globalThis as any).loadGalleryPage = async function () {
-  pageLog.debug("loadGalleryPage");
-  const grid = document.querySelector("#asset-grid");
-  if (!grid) return;
-  try {
-    const res = await apiFetch("/api/assets?pageSize=200");
-    const data = await res.json();
-    const assets = data.data || [];
-    assetData.length = 0;
-    assetData.push(...assets);
-    renderAssets();
-  } catch {
-    /* ignore */
-  }
-};
-
-function renderAssets(): void {
-  const grid = document.querySelector("#asset-grid");
-  if (!grid) return;
-  const query = (document.querySelector<HTMLInputElement>("#asset-search")?.value ?? "").trim();
-  const type = document.querySelector<HTMLSelectElement>("#asset-type-filter")?.value ?? "all";
-  let filtered = assetData.filter(
-    (a: any) =>
-      matchesQuery(a, query, ["filename", "mime_type"]) && (type === "all" || a.asset_type === type),
-  );
-  filtered = filtered.sort((a: any, b: any) =>
-    String(a.filename ?? "").localeCompare(String(b.filename ?? "")),
-  );
-  if (filtered.length === 0) {
-    grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1" data-testid="gallery-empty">
-      <div class="icon">📁</div><div class="title">No assets found</div>
-      <div class="description">${query || type !== "all" ? "No matches for your filters." : "Upload images, audio, or video to get started."}</div>
-    </div>`;
-    return;
-  }
-  grid.innerHTML = filtered
-    .map(
-      (a: any) =>
-        `<div class="asset-card" onclick="openAssetPreview('${a.id}')" data-testid="asset-card-${a.id}">
-      <div class="thumb">${thumbForAsset(a)}</div>
-      <div class="details">
-        <span class="name">${escapeHtml(a.filename)}</span>
-        <span class="type">${formatSize(a.size_bytes)}</span>
-      </div>
-    </div>`,
-    )
-    .join("");
-}
-
-(globalThis as any).filterAssets = function () {
-  renderAssets();
-};
+// ── Gallery: preview modal + actions ───────────────────────────
 
 (globalThis as any).openAssetPreview = async function (id: string) {
   pageLog.debug("openAssetPreview", { id });
@@ -301,60 +240,15 @@ function renderAssets(): void {
       document.querySelector("#preview-modal")?.classList.remove("open");
       (globalThis as any).__previewAsset = null;
       showToast("success", "Asset deleted");
-      (globalThis as any).loadGalleryPage();
+      const grid = document.querySelector("#asset-grid");
+      if (grid) htmx.trigger(grid, "load");
     }
   } catch {
     showToast("error", "Failed to delete");
   }
 };
 
-// ── Worlds page ────────────────────────────────────────────
-
-(globalThis as any).loadWorldsPage = async function () {
-  pageLog.debug("loadWorldsPage");
-  const list = document.querySelector("#world-list");
-  if (!list) return;
-  try {
-    const res = await apiFetch("/api/worlds?pageSize=100");
-    const data = await res.json();
-    const worlds = data.data || [];
-    worldData.length = 0;
-    worldData.push(...worlds);
-    renderWorlds();
-  } catch {
-    /* ignore */
-  }
-};
-
-function renderWorlds(): void {
-  const list = document.querySelector("#world-list");
-  if (!list) return;
-  const query = (document.querySelector<HTMLInputElement>("#world-search")?.value ?? "").trim();
-  const filtered = worldData
-    .filter((w: any) => matchesQuery(w, query, ["name", "description"]))
-    .sort((a: any, b: any) => String(a.name ?? "").localeCompare(String(b.name ?? "")));
-  if (filtered.length === 0) {
-    list.innerHTML = `<div class="empty-state" style="padding:var(--space-12)">
-      <div class="icon">🌍</div><div class="title">No worlds found</div>
-      <div class="description">${query ? "No matches for your search." : "Create your first world."}</div>
-    </div>`;
-    return;
-  }
-  list.innerHTML = filtered
-    .map(
-      (w: any) =>
-        `<div class="world-card" onclick="location.assign('/worlds/${w.id}')" data-testid="world-card-${w.id}">
-      <div class="world-header"><h3 class="world-name">${escapeHtml(w.name)}</h3><span class="world-id">ID: ${w.id}</span></div>
-      <div class="world-description">${escapeHtml(w.description || "No description")}</div>
-      <div class="world-meta"><span class="tag">${w.chat_count || 0} chats</span></div>
-    </div>`,
-    )
-    .join("");
-}
-
-(globalThis as any).filterWorlds = function () {
-  renderWorlds();
-};
+// ── Worlds: create ────────────────────────────────────────────
 
 (globalThis as any).createWorld = async function (event: Event) {
   event.preventDefault();
@@ -386,44 +280,7 @@ function renderWorlds(): void {
   }
 };
 
-(globalThis as any).loadWorldDetail = async function () {
-  const container = document.querySelector<HTMLElement>("#world-detail");
-  const id = container?.dataset.worldId;
-  if (!id) return;
-  pageLog.debug("loadWorldDetail", { id });
-  try {
-    const res = await apiFetch(`/api/worlds/${id}`);
-    if (!res.ok) return;
-    const w = await res.json();
-    if (!container) return;
-    const roomItems = w.chat_rooms?.length
-      ? w.chat_rooms
-          .map(
-            (c: any) => `<div class="chat-item"><span class="chat-name">${escapeHtml(c.name)}</span></div>`,
-          )
-          .join("")
-      : null;
-    const roomsHtml = roomItems
-      ? `<div class="chat-list">${roomItems}</div>`
-      : '<p style="color:var(--text-tertiary)">No chat rooms yet.</p>';
-    container.innerHTML = `<div style="max-width:800px;margin:0 auto">
-      <div class="form-group" style="margin-bottom:var(--space-6)">
-        <h2>${escapeHtml(w.name)}</h2>
-        <p class="description">${escapeHtml(w.description || "")}</p>
-      </div>
-      <div class="form-group" style="margin-bottom:var(--space-6)">
-        <label class="form-label">Lore</label>
-        <div class="lore-content">${escapeHtml(w.lore || "No lore provided.")}</div>
-      </div>
-      <div class="form-group" style="margin-bottom:var(--space-6)">
-        <label class="form-label">Chat Rooms</label>
-        ${roomsHtml}
-      </div>
-    </div>`;
-  } catch {
-    /* ignore */
-  }
-};
+// ── Character edit: save + avatar ──────────────────────────────
 
 (globalThis as any).saveCharacterEdit = async function (id: string): Promise<void> {
   const body = {
@@ -432,7 +289,9 @@ function renderWorlds(): void {
     systemPrompt: (document.querySelector("#edit-system") as HTMLTextAreaElement)?.value,
     personality: (document.querySelector("#edit-personality") as HTMLTextAreaElement)?.value,
     welcomeMessage: (document.querySelector("#edit-greeting") as HTMLTextAreaElement)?.value,
+    scenario: (document.querySelector("#edit-scenario") as HTMLTextAreaElement)?.value,
     mesExample: (document.querySelector("#edit-example") as HTMLTextAreaElement)?.value,
+    postHistoryInstructions: (document.querySelector("#edit-post-history") as HTMLTextAreaElement)?.value,
     avatarAssetId: (document.querySelector("#char-avatar-id") as HTMLInputElement)?.value || null,
   };
   try {
@@ -490,76 +349,12 @@ function renderWorlds(): void {
   (document.querySelector("#char-avatar-id") as HTMLInputElement)!.value = "";
 };
 
-(globalThis as any).loadCharacterEditPage = async function (): Promise<void> {
-  const container = document.querySelector<HTMLElement>("#character-edit-form");
-  const id = container?.dataset.characterId;
-  if (!id) return;
-  pageLog.debug("loadCharacterEditPage", { id });
-  try {
-    const res = await apiFetch("/api/actors/" + id);
-    if (!res.ok) return;
-    const c = await res.json();
-    if (!container) return;
-    const avatarHtml = c.avatar_asset_id
-      ? `<img src="/api/assets/${c.avatar_asset_id}/thumb" style="width:100%;height:100%;object-fit:cover" alt="Avatar" />`
-      : "<span>👤</span>";
-    container.innerHTML = `
-      <div style="max-width:720px;margin:0 auto;width:100%">
-        <form id="char-edit-form" data-testid="character-edit-form">
-          <div class="form-group" style="display:flex;align-items:flex-start;gap:var(--space-4)">
-            <div style="width:80px;height:80px;border-radius:var(--radius-md);background:var(--bg-tertiary);display:flex;align-items:center;justify-content:center;font-size:36px;flex-shrink:0;overflow:hidden;border:1px solid var(--border-default)">
-              <div id="avatar-preview">${avatarHtml}</div>
-            </div>
-            <div style="display:flex;flex-direction:column;gap:var(--space-2)">
-              <label class="btn btn-secondary" style="cursor:pointer">
-                <span id="upload-avatar-label">Upload Avatar</span>
-                <input type="file" accept="image/*" style="display:none" id="avatar-input"
-                  onchange="uploadAvatar(this)" />
-              </label>
-              ${c.avatar_asset_id ? '<button type="button" class="btn btn-danger" onclick="clearAvatar()">Remove</button>' : ""}
-            </div>
-          </div>
-          <div class="form-group">
-            <label class="form-label" for="edit-name">Display Name</label>
-            <input class="form-input" type="text" id="edit-name" value="${escapeAttr(c.display_name || "")}" />
-          </div>
-          <div class="form-group">
-            <label class="form-label" for="edit-desc">Description</label>
-            <textarea class="form-input form-textarea" id="edit-desc" rows="3">${escapeAttr(c.description || "")}</textarea>
-          </div>
-          <div class="form-group">
-            <label class="form-label" for="edit-system">System Prompt</label>
-            <textarea class="form-input form-textarea" id="edit-system" rows="6">${escapeAttr(c.system_prompt || "")}</textarea>
-          </div>
-          <div class="form-group">
-            <label class="form-label" for="edit-personality">Personality</label>
-            <textarea class="form-input form-textarea" id="edit-personality" rows="4">${escapeAttr(c.personality || "")}</textarea>
-          </div>
-          <div class="form-group">
-            <label class="form-label" for="edit-greeting">Welcome Message (first_mes)</label>
-            <textarea class="form-input form-textarea" id="edit-greeting" rows="4">${escapeAttr(c.welcome_message || "")}</textarea>
-          </div>
-          <div class="form-group">
-            <label class="form-label" for="edit-example">Example Messages (mes_example)</label>
-            <textarea class="form-input form-textarea" id="edit-example" rows="5">${escapeAttr(c.mes_example || "")}</textarea>
-          </div>
-          <input type="hidden" id="char-avatar-id" value="${c.avatar_asset_id || ""}" />
-          <div style="display:flex;gap:var(--space-3);justify-content:flex-end;margin-top:var(--space-6)">
-            <a href="/views/characters" class="btn btn-secondary" data-testid="cancel-edit-character">Cancel</a>
-            <button type="button" class="btn btn-primary" onclick="saveCharacterEdit('${id}')" data-testid="save-character-btn">Save Character</button>
-          </div>
-        </form>
-      </div>`;
-  } catch {
-    /* ignore */
-  }
-};
+// ── New chat page (still JS-driven) ────────────────────────────
 
 (globalThis as any).loadNewChatPage = async function (): Promise<void> {
   let actors: any[] = [];
   let selected: any[] = [];
 
-  // Fetch actors
   try {
     const res = await apiFetch("/api/actors?pageSize=200");
     const data = await res.json();
@@ -568,13 +363,33 @@ function renderWorlds(): void {
     /* ignore */
   }
 
-  // DOM refs
+  try {
+    const res = await apiFetch("/api/personas");
+    const personas = await res.json();
+    const personaSelect = document.querySelector("#persona-select") as HTMLSelectElement | null;
+    if (personaSelect && Array.isArray(personas)) {
+      for (const p of personas) {
+        const opt = document.createElement("option");
+        opt.value = p.id;
+        opt.textContent = p.name;
+        if (p.is_default) opt.selected = true;
+        personaSelect.append(opt);
+      }
+    }
+  } catch {
+    /* ignore */
+  }
+
   const searchInput = document.querySelector("#participant-search") as HTMLInputElement | null;
   const resultsEl = document.querySelector<HTMLElement>("#participant-results");
   const selectedEl = document.querySelector("#selected-participants");
   const chatType = document.querySelector("#chat-type") as HTMLSelectElement | null;
   const form = document.querySelector("#create-chat-form");
+
   if (!searchInput || !resultsEl || !selectedEl || !chatType || !form) return;
+
+  const impersonateGroup = document.querySelector("#impersonate-group") as HTMLElement | null;
+  const impersonateToggle = document.querySelector("#impersonate-toggle") as HTMLInputElement | null;
 
   const isGroup = () => chatType.value === "group";
 
@@ -595,6 +410,10 @@ function renderWorlds(): void {
     selected = selected.filter((a: any) => a.id !== id);
     renderSelected();
     if (resultsEl) resultsEl.style.display = "none";
+    if (impersonateGroup && impersonateToggle) {
+      impersonateGroup.style.display = selected.length === 1 ? "" : "none";
+      if (selected.length !== 1) impersonateToggle.checked = false;
+    }
   };
 
   function selectActor(actor: any) {
@@ -606,6 +425,10 @@ function renderWorlds(): void {
     renderSelected();
     if (searchInput) searchInput.value = "";
     if (resultsEl) resultsEl.style.display = "none";
+    if (impersonateGroup && impersonateToggle) {
+      impersonateGroup.style.display = selected.length === 1 ? "" : "none";
+      if (selected.length !== 1) impersonateToggle.checked = false;
+    }
   }
 
   (globalThis as any).selectActorFromList = function (id: string) {
@@ -658,10 +481,7 @@ function renderWorlds(): void {
   });
 
   searchInput.addEventListener("focus", function () {
-    if (!this.value.trim()) {
-      return;
-    }
-
+    if (!this.value.trim()) return;
     const q = this.value.toLowerCase().trim();
     const filtered = actors
       .filter((a: any) => {
@@ -687,6 +507,8 @@ function renderWorlds(): void {
     }
 
     try {
+      const personaId = (document.querySelector("#persona-select") as HTMLSelectElement)?.value || undefined;
+      const impersonateId = impersonateToggle?.checked && selected.length === 1 ? selected[0].id : undefined;
       const res = await apiFetch("/api/chats", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -695,10 +517,26 @@ function renderWorlds(): void {
           type: chatType.value,
           mode: (document.querySelector("#chat-mode") as HTMLSelectElement)?.value,
           participantIds: selected.map((a: any) => a.id),
+          personaId,
+          impersonateActorId: impersonateId,
         }),
       });
       if (res.ok) {
         const d = await res.json();
+        if (personaId) {
+          apiFetch("/api/chats/" + d.id + "/persona", {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ personaId }),
+          });
+        }
+        if (impersonateId) {
+          apiFetch("/api/chats/" + d.id + "/impersonate", {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ impersonateActorId: impersonateId }),
+          });
+        }
         location.assign("/views/chat?chatid=" + encodeURIComponent(d.id));
       } else {
         let err: Record<string, string>;
@@ -723,6 +561,8 @@ function renderWorlds(): void {
   });
 };
 
+// ── Settings page (still JS-driven) ────────────────────────────
+
 (globalThis as any).loadSettingsPage = function (): void {
   const themeSel = document.querySelector<HTMLSelectElement>('[data-testid="theme-select"]');
   if (themeSel) themeSel.value = localStorage.getItem("theme-preference") || "default";
@@ -736,7 +576,6 @@ function renderWorlds(): void {
     });
   }
 
-  // Wire localStorage toggles
   const lsToggles: Array<[string, string]> = [
     ["enterToSend", "#enter-to-send"],
     ["autoScroll", "#auto-scroll"],
@@ -755,7 +594,6 @@ function renderWorlds(): void {
     detailEl.addEventListener("change", () => localStorage.setItem("detailLevel", detailEl.value));
   }
 
-  // Temperature slider
   const tempSlider = document.querySelector<HTMLInputElement>('[data-testid="temp-slider"]');
   const tempVal = document.querySelector("#temp-value");
   if (tempSlider && tempVal) {
@@ -764,7 +602,6 @@ function renderWorlds(): void {
     });
   }
 
-  // Delete confirmation
   const confirmInput = document.querySelector<HTMLInputElement>("#confirm-delete-input");
   const confirmBtn = document.querySelector<HTMLButtonElement>("#delete-all-btn");
   if (confirmInput && confirmBtn) {
@@ -773,39 +610,10 @@ function renderWorlds(): void {
     });
   }
 
-  // Clear API key button
   document
     .querySelector("[data-action='clear-api-key']")
     ?.addEventListener("click", function (this: HTMLElement) {
       const input = this.previousElementSibling as HTMLInputElement | null;
       if (input) input.value = "";
     });
-};
-(globalThis as any).loadCharacterChatList = async function () {
-  const container = document.querySelector<HTMLElement>("#character-chat-list");
-  const id = container?.dataset.characterId;
-  if (!id) return;
-  pageLog.debug("loadCharacterChatList", { id });
-  try {
-    const res = await apiFetch(`/api/chats?characterId=${id}&pageSize=50`);
-    const data = await res.json();
-    if (!container) return;
-    const chats = data.data || [];
-    if (chats.length === 0) {
-      container.innerHTML = `<div class="empty-state" style="padding:var(--space-12)"><div class="icon">💬</div><div class="title">No chats yet</div></div>`;
-      return;
-    }
-    const chatItems = chats
-      .map((c: any) => {
-        const preview = escapeHtml(c.last_message || "No messages yet");
-        return `<div class="chat-item" onclick="location.assign('/views/chat?chatid=${c.id}')" data-testid="chat-item-${c.id}">
-        <div class="chat-info"><h4 class="chat-name">${escapeHtml(c.name)}</h4><p class="chat-preview">${preview}</p></div>
-        <span class="chat-time">${formatTimeAgo(c.updated_at)}</span>
-      </div>`;
-      })
-      .join("");
-    container.innerHTML = `<div class="chat-list" data-testid="character-chat-list">${chatItems}</div>`;
-  } catch {
-    /* ignore */
-  }
 };
