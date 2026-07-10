@@ -18,12 +18,12 @@ import { BAD_METHOD, jsonResponse, jsonError, HttpStatus, ErrorCode } from "./ht
 
 const dispatch: RouteDispatch = async ({ request, context, database }) => {
   const url = new URL(request.url);
-  const { pathname, searchParams } = url;
+  const { pathname } = url;
 
   if (pathname !== "/api/chats/activity") return null;
   if (request.method !== "GET") return BAD_METHOD();
 
-  return handleActivity({ database, context, searchParams });
+  return handleActivity({ database, context });
 };
 
 interface ActivityEntry {
@@ -36,38 +36,23 @@ interface ActivityResponse {
   chats: Record<string, ActivityEntry>;
 }
 
-async function handleActivity({
-  database,
-  context,
-  searchParams,
-}: {
-  database: Kysely<DB>;
-  context: RequestContext;
-  searchParams: URLSearchParams;
-}): Promise<Response> {
-  const actorId = context.userId;
-  if (!actorId)
-    return jsonError({
-      message: "Unauthorized",
-      status: HttpStatus.Unauthorized,
-      code: ErrorCode.Unauthorized,
-    });
-
-  const raw = searchParams.get("participantIds") ?? actorId;
-  const participantIds = raw
-    .split(",")
-    .map((s) => s.trim())
-    .filter(Boolean);
-
+/**
+ * Computes per-chat unseen counts for a user by comparing visible message
+ * counts against each participant's `last_read_message_id`. Shared by the
+ * polling endpoint (`GET /api/chats/activity`) and the SSE stream so both
+ * reflect the exact same source of truth.
+ */
+export async function computeActivity(
+  database: Kysely<DB>,
+  userId: string,
+): Promise<Record<string, ActivityEntry>> {
   const participants = await database
     .selectFrom("chat_participants")
     .select(["chat_id", "last_read_message_id"])
-    .where("actor_id", "in", participantIds)
+    .where("actor_id", "=", userId)
     .execute();
 
-  if (participants.length === 0) {
-    return jsonResponse({ chats: {} } satisfies ActivityResponse);
-  }
+  if (participants.length === 0) return {};
 
   const lastReadByChat = new Map<string, string | null>();
   const chatIds = participants.map((p) => {
@@ -91,7 +76,6 @@ async function handleActivity({
     .execute();
   const latestByChat = new Map(latestMessages.map((m) => [m.chat_id, m.latest_created]));
 
-  // Build a map of last-read message creation timestamps
   const lastReadIds = [...lastReadByChat.values()].filter(Boolean) as string[];
   const lastReadMap = new Map<string, string>();
   if (lastReadIds.length > 0) {
@@ -131,7 +115,26 @@ async function handleActivity({
     };
   }
 
-  return jsonResponse({ chats: result } satisfies ActivityResponse);
+  return result;
+}
+
+async function handleActivity({
+  database,
+  context,
+}: {
+  database: Kysely<DB>;
+  context: RequestContext;
+}): Promise<Response> {
+  const actorId = context.userId;
+  if (!actorId)
+    return jsonError({
+      message: "Unauthorized",
+      status: HttpStatus.Unauthorized,
+      code: ErrorCode.Unauthorized,
+    });
+
+  const chats = await computeActivity(database, actorId);
+  return jsonResponse({ chats } satisfies ActivityResponse);
 }
 
 registerRoute(dispatch);

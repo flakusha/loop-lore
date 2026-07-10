@@ -37,6 +37,8 @@ import {
   ChatParticipantRole,
   TurnStrategy,
   MessageRole,
+  MessageStatus,
+  MessageVisibility,
   MessageContentType,
   MessageContentFormat,
   ContentEncoding,
@@ -111,6 +113,15 @@ const dispatch: RouteDispatch = async ({ request, context, database }) => {
     }
     if (method === "DELETE" && actorId) {
       return handleRemoveParticipant({ database, chatId, actorId, context });
+    }
+    return BAD_METHOD();
+  }
+
+  // ── /api/chats/:id/read (mark participant read) ──────────
+  const readMatch = /^\/api\/chats\/([a-f0-9-]+)\/read$/.exec(pathname);
+  if (readMatch) {
+    if (method === "POST") {
+      return handleMarkRead({ database, chatId: readMatch[1], context });
     }
     return BAD_METHOD();
   }
@@ -358,11 +369,53 @@ async function handleUpdateChat({ database, chatId, body, context }: UpdateChatO
   if (body.mode) updates.mode = body.mode;
   if (body.turnStrategy) updates.turn_strategy = body.turnStrategy;
   if (body.worldId) updates.world_id = body.worldId;
+  if (typeof body.isPinned === "boolean") updates.is_pinned = body.isPinned ? 1 : 0;
   updates.updated_at = new Date().toISOString();
 
   await database.updateTable("chats").set(updates).where("id", "=", chatId).execute();
 
   return jsonResponse({ ok: true });
+}
+
+interface MarkReadOpts {
+  database: Kysely<DB>;
+  context: RequestContext;
+  chatId: string;
+}
+
+/**
+ * Marks a chat as read for the current user by advancing their
+ * participant `last_read_message_id` to the latest visible message.
+ * Used by the notifications system on chat open.
+ */
+async function handleMarkRead({ database, context, chatId }: MarkReadOpts): Promise<Response> {
+  const userId = context.userId;
+  if (!userId)
+    return jsonError({
+      message: "Unauthorized",
+      status: HttpStatus.Unauthorized,
+      code: ErrorCode.Unauthorized,
+    });
+
+  const latest = await database
+    .selectFrom("messages")
+    .select(["id"])
+    .where("chat_id", "=", chatId)
+    .where("visibility", "=", MessageVisibility.Visible)
+    .where("status", "=", MessageStatus.Confirmed)
+    .orderBy("created_at", "desc")
+    .limit(1)
+    .executeTakeFirst();
+  if (!latest) return jsonNoContent();
+
+  await database
+    .updateTable("chat_participants")
+    .set({ last_read_message_id: latest.id })
+    .where("chat_id", "=", chatId)
+    .where("actor_id", "=", userId)
+    .execute();
+
+  return jsonResponse({ ok: true, last_read_message_id: latest.id });
 }
 
 async function handleDeleteChat({ database, chatId, context }: DeleteChatOpts): Promise<Response> {
