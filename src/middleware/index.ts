@@ -8,3 +8,4 @@ export { compose, errorBoundary, emptyContext } from "./pipeline";
 export type { Pipeline } from "./pipeline";
 export { ResponseHeaderPolicy } from "./response-headers";
 export type { RouteKind, ApplyOptions } from "./response-headers";
+export { requireAdmin } from "./admin-gate";
