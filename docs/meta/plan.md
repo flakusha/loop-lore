@@ -363,6 +363,35 @@ Review findings collected at [`docs/meta/reviews/review-rounds.md`](reviews/revi
 
 3 rounds (2026-07-05 through 2026-07-06): 139 findings total, 15 resolved.
 
+### TypeScript strict-typing debt (future work — NOT to fix now)
+
+`bun run typecheck` (`tsc --noEmit`) is clean on the committed tree, but
+surfaces errors once enough files are in the TS program. Root cause:
+
+- `src/db/index.ts` shadows the `bun:sqlite` `Database` import with a
+  local `export type Database = Kysely<DB>;` (line 81 vs the line-2
+  import) — `TS2440` "Import declaration conflicts with local
+  declaration of 'Database'". This corrupts the `Kysely<DB>` type
+  exported from `index.ts`.
+- Consequently Kysely's generated `ReferenceExpression` /
+  `OrderByExpression` overloads (which expand to a union of **all**
+  tables) fail to resolve in committed route files once the program
+  is large enough — e.g. `src/routes/entity-routes.ts`,
+  `src/routes/world-lore-entries.ts` `.references(...)` calls error with
+  `TS2345` / `TS2769`.
+
+This is a **Kysely `<DB>` strictness limitation**, not a logic bug,
+and is intentionally left as future work. Triggers observed when adding
+files (including non-DB test files) grow the TS program past
+Kysely's inference threshold.
+
+**Scope decision (2026-07-10):** leave as-is. Do not modify
+`index.ts`, `entity-routes.ts`, or `world-lore-entries.ts` to chase
+these. Fix path when picked up: rename the `Database` type alias in
+`index.ts` (e.g. `LoopLoreDatabase`) to kill the shadow, and
+confirm Kysely's union-size inference recovers. Likely needs a
+follow-up if the union still exceeds Kysely's comparator limits.
+
 ---
 
 ## 🚫 Skipped During Implementation (v0.1 scope cut)

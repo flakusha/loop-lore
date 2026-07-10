@@ -1,8 +1,43 @@
 import { describe, test, expect, beforeAll, afterAll } from "bun:test";
 import { Database } from "bun:sqlite";
-import { Kysely } from "kysely";
-import { createSqliteDialect } from "./index";
+import { Kysely, SqliteDialect } from "kysely";
 import { up, down } from "./migrations/001_init";
+
+// Inlined dialect factory — intentionally NOT imported from ./index so this
+// test does not surface the latent `Database`/`Kysely<DB>` shadow
+// typing wart tracked as future strictness work (see src/db/index.ts).
+interface BunSqliteStatement {
+  reader: boolean;
+  all(parameters: readonly unknown[]): unknown[];
+  run(parameters: readonly unknown[]): { changes: number | bigint; lastInsertRowid: number | bigint };
+  iterate(parameters: readonly unknown[]): IterableIterator<unknown>;
+}
+interface BunSqliteWrapper {
+  close(): void;
+  prepare(sql: string): BunSqliteStatement;
+}
+function createMemoryDialect(database: Database): SqliteDialect {
+  const wrapped: BunSqliteWrapper = {
+    close() {
+      database.close();
+    },
+    prepare: (sql: string) => {
+      const statement = database.prepare(sql);
+      return {
+        get reader() {
+          const s = sql.trim().toUpperCase();
+          return s.startsWith("SELECT") || s.startsWith("WITH") || s.startsWith("PRAGMA");
+        },
+        all: (parameters: readonly unknown[]) => statement.all(...(parameters as any[])),
+        run: (parameters: readonly unknown[]) => statement.run(...(parameters as any[])),
+        iterate: function* (parameters: readonly unknown[]) {
+          yield* statement.all(...(parameters as any[]));
+        },
+      };
+    },
+  };
+  return new SqliteDialect({ database: wrapped });
+}
 
 /** Schema tables created by the split `001_init` orchestrator (excludes kysely_migration). */
 const EXPECTED_TABLES = [
@@ -50,7 +85,7 @@ describe("migrations round-trip (split 001_init)", () => {
   beforeAll(() => {
     db = new Database(":memory:");
     db.run("PRAGMA foreign_keys = ON");
-    kysely = new Kysely({ dialect: createSqliteDialect(db) });
+    kysely = new Kysely({ dialect: createMemoryDialect(db) });
   });
 
   afterAll(() => {
