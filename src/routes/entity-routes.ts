@@ -134,11 +134,21 @@ export function createEntityRoutes(config: EntityConfig): { dispatch: RouteDispa
     const { pathname, searchParams } = url;
     const method = request.method;
 
-    const { parentId, entityId } = extractIds({ pathname, parentPrefix: config.parentPrefix, entityPath: config.entityPath });
+    const { parentId, entityId } = extractIds({
+      pathname,
+      parentPrefix: config.parentPrefix,
+      entityPath: config.entityPath,
+    });
     if (!parentId) return null;
 
     const ownershipOk = config.checkOwnership
-      ? await config.checkOwnership({ database, parentId: parentId, entityId: entityId ?? null, userId: context.userId, userRole: context.userRole })
+      ? await config.checkOwnership({
+          database,
+          parentId: parentId,
+          entityId: entityId ?? null,
+          userId: context.userId,
+          userRole: context.userRole,
+        })
       : await defaultOwnershipCheck({
           database,
           parentId,
@@ -147,7 +157,8 @@ export function createEntityRoutes(config: EntityConfig): { dispatch: RouteDispa
           userRole: context.userRole,
           config,
         });
-    if (!ownershipOk) return jsonError(`${config.entityName} not found`, HttpStatus.NotFound);
+    if (!ownershipOk)
+      return jsonError({ message: `${config.entityName} not found`, status: HttpStatus.NotFound });
 
     if (entityId) {
       if (method === "GET") return handleGet({ database, parentId, entityId, config });
@@ -219,7 +230,7 @@ async function handleList({
   }
   const entities: any[] = await query.limit(pageSize).offset(offset).execute();
 
-  return jsonPaginated(entities, total, page, pageSize);
+  return jsonPaginated({ data: entities, total, page, pageSize });
 }
 
 async function handleCreate({
@@ -235,7 +246,7 @@ async function handleCreate({
 }): Promise<Response> {
   for (const required of config.createRequired) {
     if (body[required] == null || body[required] === "") {
-      return jsonError(`${required} is required`, HttpStatus.BadRequest);
+      return jsonError({ message: `${required} is required`, status: HttpStatus.BadRequest });
     }
   }
 
@@ -272,7 +283,12 @@ async function handleGet({
     .where(config.parentFk, "=", parentId)
     .executeTakeFirst();
 
-  if (!entity) return jsonError(`${config.entityName} not found`, HttpStatus.NotFound, ErrorCode.NotFound);
+  if (!entity)
+    return jsonError({
+      message: `${config.entityName} not found`,
+      status: HttpStatus.NotFound,
+      code: ErrorCode.NotFound,
+    });
   return jsonResponse(entity);
 }
 
@@ -297,7 +313,12 @@ async function handleUpdate({
     .where(config.parentFk, "=", parentId)
     .executeTakeFirst();
 
-  if (!existing) return jsonError(`${config.entityName} not found`, HttpStatus.NotFound, ErrorCode.NotFound);
+  if (!existing)
+    return jsonError({
+      message: `${config.entityName} not found`,
+      status: HttpStatus.NotFound,
+      code: ErrorCode.NotFound,
+    });
 
   const updates = buildUpdateValues({ config, body });
   if (Object.keys(updates).length <= 1) return jsonResponse(existing);
@@ -332,7 +353,11 @@ async function handleDelete({
     .execute();
 
   if (result.length === 0) {
-    return jsonError(`${config.entityName} not found`, HttpStatus.NotFound, ErrorCode.NotFound);
+    return jsonError({
+      message: `${config.entityName} not found`,
+      status: HttpStatus.NotFound,
+      code: ErrorCode.NotFound,
+    });
   }
   return jsonNoContent();
 }

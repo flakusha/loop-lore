@@ -39,8 +39,8 @@ beforeAll(async () => {
 
   // Create two actors with encryption keys
   const smk = getSmkKeySafe();
-  await generateActorKey(db, ACTOR_A, smk, "primary");
-  await generateActorKey(db, ACTOR_B, smk, "primary");
+  await generateActorKey({ database: db, actorId: ACTOR_A, smk, name: "primary" });
+  await generateActorKey({ database: db, actorId: ACTOR_B, smk, name: "primary" });
 
   // Add participants
   await db
@@ -82,7 +82,7 @@ describe("getChatParticipantActorIds", () => {
 describe("deriveChatKey", () => {
   test("derives a valid AES-256-GCM key from participant keys", async () => {
     const smk = getSmkKeySafe();
-    const keys = await loadActorKeys(db, [ACTOR_A, ACTOR_B], smk);
+    const keys = await loadActorKeys({ database: db, actorIds: [ACTOR_A, ACTOR_B], smk });
     expect(keys).toHaveLength(2);
 
     const chatKey = await deriveChatKey(keys, CHAT_ID);
@@ -96,8 +96,8 @@ describe("deriveChatKey", () => {
 
   test("deterministic: same inputs produce same key", async () => {
     const smk = getSmkKeySafe();
-    const keys1 = await loadActorKeys(db, [ACTOR_A, ACTOR_B], smk);
-    const keys2 = await loadActorKeys(db, [ACTOR_A, ACTOR_B], smk);
+    const keys1 = await loadActorKeys({ database: db, actorIds: [ACTOR_A, ACTOR_B], smk });
+    const keys2 = await loadActorKeys({ database: db, actorIds: [ACTOR_A, ACTOR_B], smk });
 
     const chatKey1 = await deriveChatKey(keys1, CHAT_ID);
     const chatKey2 = await deriveChatKey(keys2, CHAT_ID);
@@ -108,7 +108,7 @@ describe("deriveChatKey", () => {
 
   test("different chat IDs produce different keys", async () => {
     const smk = getSmkKeySafe();
-    const keys = await loadActorKeys(db, [ACTOR_A, ACTOR_B], smk);
+    const keys = await loadActorKeys({ database: db, actorIds: [ACTOR_A, ACTOR_B], smk });
 
     const chatKey1 = await deriveChatKey(keys, "chat-alpha");
     const chatKey2 = await deriveChatKey(keys, "chat-beta");
@@ -121,8 +121,8 @@ describe("deriveChatKey", () => {
   test("participant order does not matter (keys sorted by actor_id)", async () => {
     const smk = getSmkKeySafe();
     // loadActorKeys always returns sorted by actor_id, so order is fixed
-    const keysAsc = await loadActorKeys(db, [ACTOR_A, ACTOR_B], smk);
-    const keysDesc = await loadActorKeys(db, [ACTOR_B, ACTOR_A], smk);
+    const keysAsc = await loadActorKeys({ database: db, actorIds: [ACTOR_A, ACTOR_B], smk });
+    const keysDesc = await loadActorKeys({ database: db, actorIds: [ACTOR_B, ACTOR_A], smk });
 
     const chatKey1 = await deriveChatKey(keysAsc, CHAT_ID);
     const chatKey2 = await deriveChatKey(keysDesc, CHAT_ID);

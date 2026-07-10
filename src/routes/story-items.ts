@@ -48,7 +48,7 @@ const dispatch: RouteDispatch = async ({ request, context, database }) => {
       .where("id", "=", worldId)
       .executeTakeFirst();
     if (!worldCheck || (worldCheck.owner_id !== context.userId && context.userRole !== "admin")) {
-      return jsonError("Item not found", HttpStatus.NotFound);
+      return jsonError({ message: "Item not found", status: HttpStatus.NotFound });
     }
     if (method === "GET") {
       // list world_item instances for this definition
@@ -74,11 +74,16 @@ const dispatch: RouteDispatch = async ({ request, context, database }) => {
       .where("id", "=", worldId)
       .executeTakeFirst();
     if (!worldCheck || (worldCheck.owner_id !== context.userId && context.userRole !== "admin")) {
-      return jsonError("Item not found", HttpStatus.NotFound);
+      return jsonError({ message: "Item not found", status: HttpStatus.NotFound });
     }
     if (method === "GET") {
       const def = await items.getDefinition(itemId);
-      if (!def) return jsonError("Item not found", HttpStatus.NotFound, ErrorCode.NotFound);
+      if (!def)
+        return jsonError({
+          message: "Item not found",
+          status: HttpStatus.NotFound,
+          code: ErrorCode.NotFound,
+        });
       return jsonResponse(def);
     }
     if (method === "PUT") {
@@ -124,7 +129,7 @@ const dispatch: RouteDispatch = async ({ request, context, database }) => {
       .where("id", "=", worldId)
       .executeTakeFirst();
     if (!worldCheck || (worldCheck.owner_id !== context.userId && context.userRole !== "admin")) {
-      return jsonError("World not found", HttpStatus.NotFound);
+      return jsonError({ message: "World not found", status: HttpStatus.NotFound });
     }
     if (method === "GET") {
       const { page, pageSize } = parsePagination(searchParams);
@@ -132,12 +137,12 @@ const dispatch: RouteDispatch = async ({ request, context, database }) => {
       const allDefs = await items.listDefinitions(worldId, category as never);
       const total = allDefs.length;
       const paged = allDefs.slice((page - 1) * pageSize, page * pageSize);
-      return jsonPaginated(paged, total, page, pageSize);
+      return jsonPaginated({ data: paged, total, page, pageSize });
     }
     if (method === "POST") {
       const body = await parseBody(request);
       if (body instanceof Response) return body;
-      if (!body.name) return jsonError("name is required", HttpStatus.BadRequest);
+      if (!body.name) return jsonError({ message: "name is required", status: HttpStatus.BadRequest });
       const id = await items.createDefinition({
         worldId,
         name: body.name as string,
@@ -168,7 +173,7 @@ const dispatch: RouteDispatch = async ({ request, context, database }) => {
       .where("id", "=", worldId)
       .executeTakeFirst();
     if (!worldCheck || (worldCheck.owner_id !== context.userId && context.userRole !== "admin")) {
-      return jsonError("Item instance not found", HttpStatus.NotFound);
+      return jsonError({ message: "Item instance not found", status: HttpStatus.NotFound });
     }
     if (method === "POST") {
       const body = await parseBody(request);
@@ -196,7 +201,7 @@ const dispatch: RouteDispatch = async ({ request, context, database }) => {
       .where("id", "=", worldId)
       .executeTakeFirst();
     if (!worldCheck || (worldCheck.owner_id !== context.userId && context.userRole !== "admin")) {
-      return jsonError("Item instance not found", HttpStatus.NotFound);
+      return jsonError({ message: "Item instance not found", status: HttpStatus.NotFound });
     }
     if (method === "DELETE") {
       await items.destroy(instanceId);
@@ -216,12 +221,12 @@ const dispatch: RouteDispatch = async ({ request, context, database }) => {
       .where("id", "=", worldId)
       .executeTakeFirst();
     if (!worldCheck || (worldCheck.owner_id !== context.userId && context.userRole !== "admin")) {
-      return jsonError("World not found", HttpStatus.NotFound);
+      return jsonError({ message: "World not found", status: HttpStatus.NotFound });
     }
     if (method === "POST") {
       const body = await parseBody(request);
       if (body instanceof Response) return body;
-      if (!body.itemId) return jsonError("itemId is required", HttpStatus.BadRequest);
+      if (!body.itemId) return jsonError({ message: "itemId is required", status: HttpStatus.BadRequest });
 
       if (body.actorId) {
         const id = await items.giveToNpc(
@@ -241,7 +246,7 @@ const dispatch: RouteDispatch = async ({ request, context, database }) => {
         );
         return jsonCreated({ id });
       }
-      return jsonError("locationId or actorId is required", HttpStatus.BadRequest);
+      return jsonError({ message: "locationId or actorId is required", status: HttpStatus.BadRequest });
     }
     if (method === "GET") {
       const locationId = searchParams.get("locationId");
@@ -254,7 +259,10 @@ const dispatch: RouteDispatch = async ({ request, context, database }) => {
         const instances = await items.getNpcInventory(actorId);
         return jsonResponse(instances);
       }
-      return jsonError("locationId or actorId query parameter required", HttpStatus.BadRequest);
+      return jsonError({
+        message: "locationId or actorId query parameter required",
+        status: HttpStatus.BadRequest,
+      });
     }
     return BAD_METHOD();
   }

@@ -361,7 +361,12 @@ async function handleCreateMessage({
   config,
 }: CreateMessageOpts): Promise<Response> {
   const actorId = context.userId;
-  if (!actorId) return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, code: ErrorCode.Unauthorized });
+  if (!actorId)
+    return jsonError({
+      message: "Unauthorized",
+      status: HttpStatus.Unauthorized,
+      code: ErrorCode.Unauthorized,
+    });
 
   const content = body.content as string | undefined;
   if (!content || typeof content !== "string") {
@@ -384,14 +389,14 @@ async function handleCreateMessage({
   } else if (isEncryptionEnabled()) {
     const smk = getSmk()!;
     // Ensure the sending actor has an encryption key
-    await ensureActorKey(database, actorId, smk);
+    await ensureActorKey({ database, actorId, smk });
     // Derive chat key from all participants
     const chatKey = await deriveChatKeyForChat(database, chatId, smk);
     // Compress-then-encrypt using config settings
-    storedContent = await compressThenEncrypt(filteredContent, chatKey.key, chatKey.keyId, {
+    storedContent = await compressThenEncrypt({ plaintext: filteredContent, chatKey: chatKey.key, keyId: chatKey.keyId, config: {
       threshold: config.encryption.compressThreshold,
       algorithm: config.encryption.compressAlgorithm,
-    });
+    }});
     contentEncoding = "identity"; // Encryption wrapper supersedes raw compression
     storedKeyId = chatKey.keyId;
   } else {
@@ -444,11 +449,11 @@ async function handleCreateMessage({
   if (attachments && attachments.length > 0) {
     const attachData: { assetId: string; order: number; caption: string; label: string }[] = [];
     for (const [i, a] of attachments.entries()) {
-      await linkAsset(database, a.assetId, {
+      await linkAsset({ database, assetId: a.assetId, link: {
         entityType: "message",
         entityId: id,
         label: a.label ?? "message-attachment",
-      });
+      }});
       attachData.push({
         assetId: a.assetId,
         order: a.order ?? i,
@@ -486,10 +491,10 @@ async function handleCreateMessage({
       if (isEncryptionEnabled()) {
         const smk = getSmk()!;
         const chatKey = await deriveChatKeyForChat(database, chatId, smk);
-        replyStoredContent = await compressThenEncrypt(assistantContent, chatKey.key, chatKey.keyId, {
+        replyStoredContent = await compressThenEncrypt({ plaintext: assistantContent, chatKey: chatKey.key, keyId: chatKey.keyId, config: {
           threshold: config.encryption.compressThreshold,
           algorithm: config.encryption.compressAlgorithm,
-        });
+        }});
         replyKeyId = chatKey.keyId;
       }
 
@@ -552,13 +557,7 @@ async function triggerAutoGeneration(
   try {
     // Cancel any existing generation for this chat before starting a new one.
     // Guards against double-send races and ensures clean per-chat generation state.
-    cancelGenerationByChat(
-      database,
-      chatId,
-      CancelReason.UserCancel,
-      CancelSource.System,
-      "New auto-generation starting",
-    );
+    cancelGenerationByChat({ db: database, chatId, reason: CancelReason.UserCancel, source: CancelSource.System, detail: "New auto-generation starting" });
 
     // Find character participant (actor that is not the sender)
     const character = await database
@@ -571,7 +570,7 @@ async function triggerAutoGeneration(
 
     if (!character) return;
 
-    const resolved = await resolveProvider({ userId }, config, database);
+    const resolved = await resolveProvider({ userId, config, db: database });
     const assembler = new PromptAssembler(database);
     const prompt = await assembler.assemble({
       actorId: character.id,
@@ -583,8 +582,8 @@ async function triggerAutoGeneration(
     const buffer = getOrCreateBuffer(chatId);
 
     // Register generation tracking so frontend detects it via status endpoint
-    const tracking = startGenerationTracking(
-      {
+    const tracking = startGenerationTracking({
+      options: {
         chatId,
         parentMessageId,
         actorId: character.id,
@@ -593,8 +592,8 @@ async function triggerAutoGeneration(
         prompt: prompt.messages,
         idempotencyKey: uid(),
       },
-      database,
-    );
+      db: database,
+    });
     attemptId = tracking.attemptId;
 
     const actorName = character.display_name;
@@ -703,16 +702,12 @@ async function triggerAutoGeneration(
       })
       .execute();
 
-    await completeGeneration(
-      attemptId,
-      {
+    await completeGeneration({ attemptId, result: {
         content: accumulatedContent,
         tokenUsage,
         generationTimeMs: 0,
         cancelled: finishReason === "cancelled",
-      },
-      database,
-    );
+      }, db: database });
 
     // Buffer final done event with proper message ID
     const doneHtml = renderStreamMessage(actorName, accumulatedContent, tracking.attemptId, {
@@ -728,7 +723,7 @@ async function triggerAutoGeneration(
   } catch (error) {
     if (attemptId) {
       try {
-        await failGeneration(attemptId, error as Error, database);
+        await failGeneration({ attemptId, error: error as Error, db: database });
       } catch {
         // failGeneration errors are non-critical
       }
@@ -796,14 +791,20 @@ function sanitizeHtml(html: string): string {
 
 async function handleGetMessage({ database, messageId, context, config }: GetMessageOpts): Promise<Response> {
   const userId = context.userId;
-  if (!userId) return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, code: ErrorCode.Unauthorized });
+  if (!userId)
+    return jsonError({
+      message: "Unauthorized",
+      status: HttpStatus.Unauthorized,
+      code: ErrorCode.Unauthorized,
+    });
 
   const message = await database
     .selectFrom("messages")
     .selectAll()
     .where("id", "=", messageId)
     .executeTakeFirst();
-  if (!message) return jsonError({ message: "Message not found", status: HttpStatus.NotFound, code: ErrorCode.NotFound });
+  if (!message)
+    return jsonError({ message: "Message not found", status: HttpStatus.NotFound, code: ErrorCode.NotFound });
 
   // Verify ownership: message's chat belongs to user
   const chat = await database
@@ -832,14 +833,20 @@ async function handleListVariants({
   config,
 }: ListVariantsOpts): Promise<Response> {
   const userId = context.userId;
-  if (!userId) return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, code: ErrorCode.Unauthorized });
+  if (!userId)
+    return jsonError({
+      message: "Unauthorized",
+      status: HttpStatus.Unauthorized,
+      code: ErrorCode.Unauthorized,
+    });
 
   const message = await database
     .selectFrom("messages")
     .selectAll()
     .where("id", "=", messageId)
     .executeTakeFirst();
-  if (!message) return jsonError({ message: "Message not found", status: HttpStatus.NotFound, code: ErrorCode.NotFound });
+  if (!message)
+    return jsonError({ message: "Message not found", status: HttpStatus.NotFound, code: ErrorCode.NotFound });
 
   // Verify ownership
   const chat = await database
@@ -883,7 +890,12 @@ async function handleSelectVariant({
   context,
 }: SelectVariantOpts): Promise<Response> {
   const userId = context.userId;
-  if (!userId) return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, code: ErrorCode.Unauthorized });
+  if (!userId)
+    return jsonError({
+      message: "Unauthorized",
+      status: HttpStatus.Unauthorized,
+      code: ErrorCode.Unauthorized,
+    });
 
   const variantIndex = body.variantIndex as number;
   if (typeof variantIndex !== "number") {
@@ -895,7 +907,8 @@ async function handleSelectVariant({
     .selectAll()
     .where("id", "=", messageId)
     .executeTakeFirst();
-  if (!message) return jsonError({ message: "Message not found", status: HttpStatus.NotFound, code: ErrorCode.NotFound });
+  if (!message)
+    return jsonError({ message: "Message not found", status: HttpStatus.NotFound, code: ErrorCode.NotFound });
 
   // Verify ownership
   const chat = await database
@@ -924,14 +937,20 @@ async function handleSelectVariant({
 
 async function handleDeleteMessage({ database, messageId, context }: DeleteMessageOpts): Promise<Response> {
   const actorId = context.userId;
-  if (!actorId) return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, code: ErrorCode.Unauthorized });
+  if (!actorId)
+    return jsonError({
+      message: "Unauthorized",
+      status: HttpStatus.Unauthorized,
+      code: ErrorCode.Unauthorized,
+    });
 
   const message = await database
     .selectFrom("messages")
     .selectAll()
     .where("id", "=", messageId)
     .executeTakeFirst();
-  if (!message) return jsonError({ message: "Message not found", status: HttpStatus.NotFound, code: ErrorCode.NotFound });
+  if (!message)
+    return jsonError({ message: "Message not found", status: HttpStatus.NotFound, code: ErrorCode.NotFound });
 
   // Soft-delete: set visibility to hidden
   await database
@@ -950,7 +969,12 @@ async function handleUpdateVisibility({
   context,
 }: UpdateVisibilityOpts): Promise<Response> {
   const userId = context.userId;
-  if (!userId) return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, code: ErrorCode.Unauthorized });
+  if (!userId)
+    return jsonError({
+      message: "Unauthorized",
+      status: HttpStatus.Unauthorized,
+      code: ErrorCode.Unauthorized,
+    });
 
   const visibility = body.visibility as string;
   if (!visibility) return jsonError({ message: "visibility is required", status: HttpStatus.BadRequest });

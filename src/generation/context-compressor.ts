@@ -36,12 +36,14 @@ export interface CompressionResult {
  * @param tokenCountFn — Token counting function (default: ~4 chars/token)
  * @param summarizeFn — Optional LLM summarization callback
  */
-export function compressMessages(
-  messages: ContextMessage[],
-  config: ContextWindowConfig = DEFAULT_CONTEXT_WINDOW,
-  tokenCountFn: TokenCountFn = defaultTokenCount,
-  _summarizeFn?: SummarizeFn,
-): CompressionResult {
+export interface CompressMessagesOpts {
+  messages: ContextMessage[];
+  config?: ContextWindowConfig;
+  tokenCountFn?: TokenCountFn;
+  summarizeFn?: SummarizeFn;
+}
+
+export function compressMessages({ messages, config = DEFAULT_CONTEXT_WINDOW, tokenCountFn = defaultTokenCount, summarizeFn: _summarizeFn }: CompressMessagesOpts): CompressionResult {
   const originalTokens = calculateTotalTokens(messages, tokenCountFn);
   const originalCount = messages.length;
 

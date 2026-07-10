@@ -29,6 +29,13 @@ export interface PipelineConfig {
   algorithm: "gzip" | "brotli" | "zstd";
 }
 
+export interface CompressThenEncryptOpts {
+  plaintext: string;
+  chatKey: CryptoKey;
+  keyId: string;
+  config?: PipelineConfig;
+}
+
 /**
  * Write: plaintext → compress → encrypt → EncryptedPayload JSON.
  */
@@ -62,12 +69,7 @@ export function extractKeyIdFromPayload(storedContent: string): string | null {
   return parsed.value.key_id ?? null;
 }
 
-export async function compressThenEncrypt(
-  plaintext: string,
-  chatKey: CryptoKey,
-  keyId: string,
-  config: PipelineConfig = DEFAULT_PIPELINE_CONFIG,
-): Promise<string> {
+export async function compressThenEncrypt({ plaintext, chatKey, keyId, config = DEFAULT_PIPELINE_CONFIG }: CompressThenEncryptOpts): Promise<string> {
   // 1. Compress if large enough
   let compressed = "";
   let compAlgo: string | undefined;

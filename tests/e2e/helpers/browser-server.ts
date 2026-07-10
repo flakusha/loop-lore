@@ -125,7 +125,7 @@ export async function createBrowserTest(
 
       // ── API routes ──────────────────────────────────
       if (url.pathname.startsWith("/api/")) {
-        return handleApiRequest(req, db, config);
+        return handleApiRequest({ request: req, database: db, config });
       }
 
       // ── View routes (htmx pages) ────────────────────

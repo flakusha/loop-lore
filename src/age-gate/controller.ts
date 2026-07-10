@@ -54,6 +54,14 @@ export function getRuntimeConfig(): AgeGateConfig {
   return ageGateConfig.get();
 }
 
+// ── Options objects ──────────────────────────────────────────
+
+export interface HandleAcceptOpts {
+  database: Kysely<DB>;
+  userId: string | null;
+  body: unknown;
+}
+
 // ── Route handlers ───────────────────────────────────────────
 
 /**
@@ -88,11 +96,7 @@ export async function handleGetStatus(database: Kysely<DB>, userId?: string | nu
  * Accept the age gate. Requires `{ birthDate: "YYYY-MM-DD" }` in the body.
  * Returns 200 on success, 400 for invalid data, 403 if underage.
  */
-export async function handleAccept(
-  database: Kysely<DB>,
-  userId: string | null,
-  body: unknown,
-): Promise<Response> {
+export async function handleAccept({ database, userId, body }: HandleAcceptOpts): Promise<Response> {
   if (!userId) {
     return jsonError("Authentication required", 401);
   }
@@ -102,8 +106,11 @@ export async function handleAccept(
       return jsonError("Missing or invalid birthDate (expected YYYY-MM-DD)", 400);
     }
 
-    await AgeGateService.acceptAgeGate(database, ageGateConfig.get(), userId, {
-      birthDate: input.birthDate,
+    await AgeGateService.acceptAgeGate({
+      database,
+      config: ageGateConfig.get(),
+      userId,
+      input: { birthDate: input.birthDate },
     });
 
     return jsonResponse({ ok: true });
@@ -199,7 +206,7 @@ export async function dispatch(options: AgeGateDispatchOptions): Promise<Respons
 
   if (pathname === "/api/age-gate/accept" && request.method === "POST") {
     const body = await request.json();
-    return handleAccept(database, userId ?? "", body);
+    return handleAccept({ database, userId: userId ?? "", body });
   }
 
   if (pathname === "/api/admin/age-gate" && request.method === "GET") {
