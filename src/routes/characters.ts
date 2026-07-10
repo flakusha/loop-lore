@@ -31,6 +31,9 @@ import {
   parsePagination,
 } from "./http-utils";
 import { ActorType, AgentType } from "../db/enums";
+import { load as yamlLoad } from "js-yaml";
+import { parse as parseToml } from "smol-toml";
+import { extractCharacterDataFromPng } from "../characters/steganography";
 
 interface ListActorsOpts {
   database: Kysely<DB>;
@@ -228,6 +231,14 @@ async function handleUpdateActor({ database, actorId, body, context }: UpdateAct
   if (body.description) updates.description = body.description;
   if (body.systemPrompt) updates.system_prompt = body.systemPrompt;
   if (body.avatarAssetId !== undefined) updates.avatar_asset_id = body.avatarAssetId;
+  if (body.personality) updates.personality = body.personality;
+  if (body.welcomeMessage) updates.welcome_message = body.welcomeMessage;
+  if (body.mesExample) updates.mes_example = body.mesExample;
+  if (body.scenario) updates.scenario = body.scenario;
+  if (body.postHistoryInstructions) updates.post_history_instructions = body.postHistoryInstructions;
+  if (body.creatorNotes) updates.creator_notes = body.creatorNotes;
+  if (body.creator) updates.creator = body.creator;
+  if (body.characterVersion) updates.character_version = body.characterVersion;
   if (body.settings) {
     const settingsResult = safeJsonStringify(body.settings);
     if (!settingsResult.ok)
@@ -295,12 +306,64 @@ async function handleExportCard({ database, actorId, context }: ExportCardOpts):
   return jsonResponse(card);
 }
 
-function handleImportActorFile(_opts: ImportActorFileOpts): Response {
-  return jsonError({
-    message: "File import not yet implemented",
-    status: HttpStatus.NotImplemented,
-    code: ErrorCode.NotImplemented,
-  });
+async function handleImportActorFile({ request, database, context }: ImportActorFileOpts): Promise<Response> {
+  const userId = context.userId;
+  if (!userId)
+    return jsonError({
+      message: "Unauthorized",
+      status: HttpStatus.Unauthorized,
+      code: ErrorCode.Unauthorized,
+    });
+
+  let formData;
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-deprecated
+    formData = await request.formData();
+  } catch {
+    return jsonError({ message: "Failed to parse multipart form data", status: HttpStatus.BadRequest });
+  }
+
+  const file = formData.get("file");
+  if (!file || !(file instanceof File)) {
+    return jsonError({ message: "file field is required", status: HttpStatus.BadRequest });
+  }
+
+  const buffer = Buffer.from(await file.arrayBuffer());
+  const filename = (file.name ?? "").toLowerCase();
+
+  let data: Record<string, unknown>;
+  let spec: string | undefined;
+
+  if (filename.endsWith(".json")) {
+    const parsed = jsonParseOr(await file.text(), null);
+    if (!parsed || typeof parsed !== "object")
+      return jsonError({ message: "Invalid JSON file", status: HttpStatus.BadRequest });
+    data = parsed;
+    spec = data.spec === "chara_card_v2" ? "chara_card_v2" : undefined;
+  } else if (filename.endsWith(".png")) {
+    const extracted = extractCharacterDataFromPng(buffer);
+    if (!extracted)
+      return jsonError({ message: "No character data found in PNG", status: HttpStatus.BadRequest });
+    data = extracted.data;
+    spec = extracted.spec;
+  } else if (filename.endsWith(".yaml") || filename.endsWith(".yml")) {
+    const parsed = yamlLoad(await file.text());
+    if (!parsed || typeof parsed !== "object")
+      return jsonError({ message: "Invalid YAML file", status: HttpStatus.BadRequest });
+    data = parsed as Record<string, unknown>;
+  } else if (filename.endsWith(".toml")) {
+    const parsed = parseToml(await file.text());
+    if (!parsed || typeof parsed !== "object")
+      return jsonError({ message: "Invalid TOML file", status: HttpStatus.BadRequest });
+    data = parsed;
+  } else {
+    return jsonError({
+      message: "Unsupported file type. Use .json, .png, .yaml, or .toml",
+      status: HttpStatus.BadRequest,
+    });
+  }
+
+  return importActorFromData({ data, spec, database, context });
 }
 
 interface ImportActorFileOpts {
@@ -310,6 +373,24 @@ interface ImportActorFileOpts {
 }
 
 async function handleImportActorJson({ body, database, context }: ImportActorJsonOpts): Promise<Response> {
+  const data = (body.data ?? body) as Record<string, unknown>;
+  const spec = body.spec === "chara_card_v2" ? "chara_card_v2" : undefined;
+  return importActorFromData({ data, spec, database, context });
+}
+
+interface ImportActorDataOpts {
+  data: Record<string, unknown>;
+  spec?: string;
+  database: Kysely<DB>;
+  context: RequestContext;
+}
+
+async function importActorFromData({
+  data,
+  spec,
+  database,
+  context,
+}: ImportActorDataOpts): Promise<Response> {
   const userId = context.userId;
   if (!userId)
     return jsonError({
@@ -319,7 +400,6 @@ async function handleImportActorJson({ body, database, context }: ImportActorJso
     });
 
   // Handle both raw actor data and V2 character card format
-  const data = (body.data ?? body) as Record<string, unknown>;
   const displayName = (data.name ?? data.displayName ?? data.display_name) as string | undefined;
   if (!displayName) return jsonError({ message: "Actor name is required", status: HttpStatus.BadRequest });
 
@@ -343,7 +423,7 @@ async function handleImportActorJson({ body, database, context }: ImportActorJso
       creator_notes: (data.creator_notes as string | undefined) ?? null,
       creator: (data.creator as string | undefined) ?? null,
       character_version: (data.character_version as string | undefined) ?? null,
-      import_spec: body.spec === "chara_card_v2" ? "chara_card_v2" : "raw",
+      import_spec: spec ?? "raw",
       alternate_greetings: data.alternate_greetings
         ? (() => {
             const r = safeJsonStringify(data.alternate_greetings);
