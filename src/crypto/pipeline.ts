@@ -32,6 +32,36 @@ export interface PipelineConfig {
 /**
  * Write: plaintext → compress → encrypt → EncryptedPayload JSON.
  */
+/**
+ * Quick check: is this stored content an encrypted payload?
+ * Allows detecting client-pre-encrypted content that should skip server-side re-encryption.
+ */
+export function isEncryptedPayload(storedContent: string): boolean {
+  if (typeof storedContent !== "string") return false;
+  const trimmed = storedContent.trim();
+  if (!trimmed.startsWith("{")) return false;
+  if (!trimmed.endsWith("}")) return false;
+  const parsed = safeJsonParse<EncryptedPayload>(trimmed);
+  if (!parsed.ok) return false;
+  const p = parsed.value;
+  return (
+    typeof p.enc === "string" &&
+    typeof p.nonce === "string" &&
+    typeof p.algo === "string" &&
+    p.algo === "aes-256-gcm" &&
+    typeof p.key_id === "string"
+  );
+}
+
+/**
+ * Extract key_id from an encrypted payload without full parsing.
+ */
+export function extractKeyIdFromPayload(storedContent: string): string | null {
+  const parsed = safeJsonParse<EncryptedPayload>(storedContent);
+  if (!parsed.ok) return null;
+  return parsed.value.key_id ?? null;
+}
+
 export async function compressThenEncrypt(
   plaintext: string,
   chatKey: CryptoKey,
