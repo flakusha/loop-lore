@@ -2,11 +2,7 @@ import { log as rootLog } from "./logger";
 
 const log = rootLog.child({ module: "settings" });
 
-/**
- * Settings page Alpine component.
- * Manages general/chat/api/data settings tabs.
- */
-globalThis.settingsPage = function () {
+(globalThis as any).settingsPage = function () {
   return {
     displayName: "",
     birthDate: "",
@@ -20,22 +16,17 @@ globalThis.settingsPage = function () {
     apiKey: "",
     apiEndpoint: "",
     model: "",
-    maxTokens: 128000,
-    temperature: 1.0,
+    maxTokens: 128_000,
+    temperature: 1,
     confirmDeleteText: "",
     saving: false,
     loaded: false,
 
     async init() {
-      const initCount = ((globalThis as any).__settingsInitCount ?? 0) + 1;
-      (globalThis as any).__settingsInitCount = initCount;
-      log.debug("init", { initCount });
-
       const savedTheme = localStorage.getItem("theme-reference");
       if (savedTheme) this.theme = savedTheme;
       const savedLocale = localStorage.getItem("locale");
       if (savedLocale) this.locale = savedLocale;
-
       const enter = localStorage.getItem("chat-enter-to-send");
       if (enter !== null) this.enterToSend = enter === "1";
       const scroll = localStorage.getItem("chat-auto-scroll");
@@ -44,7 +35,6 @@ globalThis.settingsPage = function () {
       if (preview !== null) this.inlinePreview = preview === "1";
       const detail = localStorage.getItem("chat-detail-level");
       if (detail) this.detailLevel = detail;
-
       await this.loadSettings();
     },
 
@@ -64,8 +54,8 @@ globalThis.settingsPage = function () {
           if (typeof settings.temperature === "number") this.temperature = settings.temperature;
           if (settings.detailLevel) this.detailLevel = settings.detailLevel;
         }
-      } catch (e) {
-        log.warn("loadSettings failed", { error: String(e) });
+      } catch (error) {
+        log.warn("loadSettings failed", { error: String(error) });
       }
       this.loaded = true;
     },
@@ -84,10 +74,7 @@ globalThis.settingsPage = function () {
       localStorage.setItem("chat-auto-scroll", this.autoScroll ? "1" : "0");
       localStorage.setItem("chat-inline-preview", this.inlinePreview ? "1" : "0");
       localStorage.setItem("chat-detail-level", this.detailLevel);
-      await this.persistSettings({
-        detailLevel: this.detailLevel,
-      });
-      window.showToast?.(success", "Chat settings saved");
+      await this.persistSettings({ detailLevel: this.detailLevel });
     },
 
     async saveApi() {
@@ -101,18 +88,8 @@ globalThis.settingsPage = function () {
         };
         if (this.apiEndpoint) payload.apiEndpoint = this.apiEndpoint;
         if (this.apiKey) payload.apiKey = this.apiKey;
-
-        const res = await fetch("/api/users/me/settings", {
-          method: "PATCH",
-          headers: { "Content-Type": "application/json", Accept: "application/json" },
-          body: JSON.stringify(payload),
-        });
-        if (res.ok) {
-          window.showToast?.(success", "API settings saved");
-          this.apiKey = "";
-        } else {
-          window.showToast?.(error", "Failed to save API settings");
-        }
+        await this.persistSettings(payload);
+        this.apiKey = "";
       } finally {
         this.saving = false;
       }
@@ -122,39 +99,44 @@ globalThis.settingsPage = function () {
       try {
         const res = await fetch("/api/generation/test-connection", { method: "POST" });
         if (res.ok) {
-          window.showToast?.(success", "Connection successful");
+          log.info("Connection test succeeded");
         } else {
-          window.showToast?.(error", "Connection failed");
+          log.warn("Connection test failed");
         }
-      } catch {
-        window.showToast?.(error", "Connection test error");
+      } catch (error) {
+        log.warn("Connection test error", { error: String(error) });
       }
     },
 
     async persistSettings(payload: Record<string, unknown>) {
       try {
-        if (payload.theme) window.setTheme?(payload.theme as string);
-        if (payload.locale) window.setLocale?(payload.locale as string);
-
+        if (payload.theme) {
+          const themes = (globalThis as any).__THEMES ?? [];
+          if (themes.every((t: any) => t.id !== payload.theme)) return;
+          for (const t of themes) {
+            const link = document.querySelector("#theme-" + t.id) as HTMLLinkElement | null;
+            if (link) link.disabled = t.id !== payload.theme;
+          }
+          document.body.classList.toggle("theme-no-icons", payload.theme === "no-icons");
+          localStorage.setItem("theme-preference", payload.theme as string);
+        }
+        if (payload.locale) {
+          localStorage.setItem("locale", payload.locale as string);
+        }
         const res = await fetch("/api/users/me/settings", {
           method: "PATCH",
           headers: { "Content-Type": "application/json", Accept: "application/json" },
           body: JSON.stringify(payload),
         });
-        if (res.ok) {
-          window.showToast?.(success", "Settings saved");
-          if (payload.displayName) {
-            await fetch("/api/users/me", {
-              method: "PUT",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ displayName: payload.displayName }),
-            });
-          }
-        } else {
-          window.showToast?.(error", "Failed to save settings");
+        if (res.ok && payload.displayName) {
+          await fetch("/api/users/me", {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ displayName: payload.displayName }),
+          });
         }
-      } catch (e) {
-        log.warn("persistSettings failed", { error: String(e) });
+      } catch (error) {
+        log.warn("persistSettings failed", { error: String(error) });
       }
     },
 
@@ -163,19 +145,19 @@ globalThis.settingsPage = function () {
     },
 
     onProviderChange() {
-      const endpointGroup = document.getElementById("api-endpoint-group");
+      const endpointGroup = document.querySelector("#api-endpoint-group") as HTMLElement | null;
       if (endpointGroup) {
         endpointGroup.style.display = this.provider === "Custom" ? "" : "none";
       }
     },
 
     onTempInput() {
-      const label = document.getElementById("temp-value");
+      const label = document.querySelector("#temp-value");
       if (label) label.textContent = Number(this.temperature).toFixed(1);
     },
 
     onConfirmDeleteInput() {
-      const btn = document.getElementById("delete-all-btn") as HTMLButtonElement | null;
+      const btn = document.querySelector("#delete-all-btn") as HTMLButtonElement | null;
       if (btn) btn.disabled = this.confirmDeleteText !== "DELETE";
     },
 
@@ -184,13 +166,9 @@ globalThis.settingsPage = function () {
       if (!confirm("This will permanently delete ALL your data. Continue?")) return;
       try {
         const res = await fetch("/api/users/me", { method: "DELETE" });
-        if (res.ok) {
-          window.showToast?.(success", "All data deleted");
-        } else {
-          window.showToast?.(error", "Failed to delete data");
-        }
-      } catch {
-        window.showToast?.(error", "Delete error");
+        if (!res.ok) throw new Error("Delete failed");
+      } catch (error) {
+        log.warn("deleteAllData failed", { error: String(error) });
       }
     },
   };
