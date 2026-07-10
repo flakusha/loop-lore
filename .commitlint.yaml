@@ -1,0 +1,61 @@
+# Commitlint configuration for loop-lore
+# Standalone conventional commits rules (no external config dependencies)
+# Used by src/scripts/commit-check.ts
+
+rules:
+  subject-max-length: [2, "always", 72]
+  subject-min-length: [2, "always", 1]
+  body-max-line-length: [2, "always", 100]
+  type-enum:
+    - 2
+    - "always"
+    - ["feat", "fix", "refactor", "chore", "test", "docs", "style", "perf", "build", "ci", "revert"]
+  scope-enum:
+    - 2
+    - "always"
+    - [
+        "core",
+        "db",
+        "routes",
+        "router",
+        "server",
+        "middleware",
+        "config",
+        "logger",
+        "transport",
+        "assets",
+        "story",
+        "generation",
+        "generation-pipeline",
+        "providers",
+        "actors",
+        "actor-notes",
+        "actor-items",
+        "actor-memories",
+        "actor-lore",
+        "worlds",
+        "locations",
+        "items",
+        "quests",
+        "chats",
+        "messages",
+        "characters",
+        "api-keys",
+        "auth",
+        "settings",
+        "users",
+        "sessions",
+        "frontend",
+        "tui",
+        "ui",
+        "views",
+        "htmx",
+        "alpine",
+        "css",
+        "deps",
+        "security",
+        "crypto",
+        "testing",
+        "e2e",
+        "release",
+      ]

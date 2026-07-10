@@ -1,0 +1,164 @@
+# GitHub Actions CI workflow for loop-lore
+# Supports: PRs to master, pushes to release/* branches, and feature branches
+
+name: CI
+
+on:
+  pull_request:
+    branches: [master]
+  push:
+    branches:
+      - master
+      - 'release/**'
+    paths-ignore:
+      - '**.md'
+      - 'docs/**'
+
+jobs:
+  quality:
+    name: Quality Checks
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        bun-version: ['1.1.0', 'latest']
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: ${{ matrix.bun-version }}
+
+      - name: Cache dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.bun/install/cache
+          key: ${{ runner.os }}-bun-${{ hashFiles('**/bun.lock') }}
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Typecheck
+        run: bun run typecheck && bun run typecheck:frontend
+
+      - name: Lint
+        run: bun run lint
+
+      - name: Lint CSS
+        run: bun run lint:css
+
+      - name: Format check
+        run: bun run format
+
+      - name: Markdown lint
+        run: bun run md:lint
+
+  test-unit:
+    name: Unit Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - uses: actions/cache@v4
+        with:
+          path: ~/.bun/install/cache
+          key: ${{ runner.os }}-bun-${{ hashFiles('**/bun.lock') }}
+
+      - run: bun install --frozen-lockfile
+
+      - name: Unit tests
+        run: bun test src/
+
+  test-e2e:
+    name: Browser E2E Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - uses: actions/cache@v4
+        with:
+          path: ~/.bun/install/cache
+          key: ${{ runner.os }}-bun-${{ hashFiles('**/bun.lock') }}
+
+      - run: bun install --frozen-lockfile
+
+      - name: Install Playwright browsers
+        run: bunx playwright install --with-deps chromium
+
+      - name: E2E safeguards check
+        run: |
+          echo "E2E_SAFEGUARD=1" >> $GITHUB_ENV
+
+      - name: Browser tests
+        run: bun run test:e2e:browser
+
+  version:
+    name: Predict Version
+    runs-on: ubuntu-latest
+    needs: [quality]
+    outputs:
+      predicted-version: ${{ steps.predict.outputs.version }}
+      is-release-branch: ${{ steps.predict.outputs.release }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - run: bun install --frozen-lockfile
+
+      - id: predict
+        run: |
+          BRANCH=${GITHUB_REF#refs/heads/}
+          VERSION=$(bun run version:predict)
+          IS_RELEASE="false"
+          if [[ "$BRANCH" == release* ]] || [[ "$BRANCH" == "master" ]]; then
+            IS_RELEASE="true"
+          fi
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "release=$IS_RELEASE" >> $GITHUB_OUTPUT
+          echo "Branch: $BRANCH, Version: $VERSION"
+
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    needs: [quality, test-unit]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - uses: actions/cache@v4
+        with:
+          path: ~/.bun/install/cache
+          key: ${{ runner.os }}-bun-${{ hashFiles('**/bun.lock') }}
+
+      - run: bun install --frozen-lockfile
+
+      - name: Build frontend
+        run: bun run build:frontend
+
+      - name: Build server
+        run: bun run build:server
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist-${{ github.ref_name }}
+          path: dist/

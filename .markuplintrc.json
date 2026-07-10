@@ -1,0 +1,27 @@
+{
+  "$schema": "https://markuplint.dev/schemas/markuplintrc.json",
+  "rules": {
+    "invalid-attr": {
+      "options": {
+        "ignoreAttrNamePrefix": ["hx-", "x-", "x-on:", ":", "@"],
+        "allowAttrs": ["autofocus"]
+      }
+    },
+    "id-duplication": true,
+    "attr-duplication": true,
+    "case-sensitive-attr-name": true,
+    "case-sensitive-tag-name": true,
+    "no-orphaned-end-tag": true,
+    "no-refer-to-non-existent-id": true,
+    "wai-aria": true,
+    "label-has-control": "warning",
+    "use-list": "warning",
+    "landmark-roles": "warning",
+    "heading-levels": false,
+    "doctype": false,
+    "required-h1": false,
+    "required-element": false,
+    "required-attr": false,
+    "require-accessible-name": false
+  }
+}
