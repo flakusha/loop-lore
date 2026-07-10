@@ -57,28 +57,28 @@ export interface ResolvedProvider {
  * 3. Actor default (actors.settings.provider/model)
  * 4. Server default (config.generation.defaultProvider + defaultModels)
  */
-export async function resolveProvider(
-  options: {
-    provider?: string;
-    model?: string;
-    userId?: string;
-  },
-  config: Config,
-  db?: Kysely<DB>,
-): Promise<ResolvedProvider> {
-  let resolvedProviderName = options.provider ?? config.generation.defaultProvider;
-  let resolvedModel = options.model ?? "";
+export interface ResolveProviderOpts {
+  provider?: string;
+  model?: string;
+  userId?: string;
+  config: Config;
+  db?: Kysely<DB>;
+}
+
+export async function resolveProvider({ provider, model, userId, config, db }: ResolveProviderOpts): Promise<ResolvedProvider> {
+  let resolvedProviderName = provider ?? config.generation.defaultProvider;
+  let resolvedModel = model ?? "";
 
   let resolvedApiKey: string | undefined;
 
   // 1. User BYO API key
-  if (options.userId && config.byoKey.enabled && config.byoKey.encryptionKey) {
+  if (userId && config.byoKey.enabled && config.byoKey.encryptionKey) {
     const database = db ?? getDatabase();
     try {
       const row = await database
         .selectFrom("user_api_keys")
         .selectAll()
-        .where("user_id", "=", options.userId)
+        .where("user_id", "=", userId)
         .where("provider_name", "=", resolvedProviderName)
         .executeTakeFirst();
 
@@ -102,15 +102,15 @@ export async function resolveProvider(
     resolvedModel = config.generation.defaultModels[resolvedProviderName] ?? "";
   }
 
-  const provider = resolvedProviderName ? getProvider(resolvedProviderName) : undefined;
-  if (!provider) {
+  const resolvedProvider = resolvedProviderName ? getProvider(resolvedProviderName) : undefined;
+  if (!resolvedProvider) {
     throw new Error(
       `No provider resolved for "${resolvedProviderName}". Configure a provider in config file or LLM_PROVIDER_* env vars.`,
     );
   }
 
   return {
-    provider,
+    provider: resolvedProvider,
     resolvedProviderName,
     resolvedModel,
     resolvedApiKey,

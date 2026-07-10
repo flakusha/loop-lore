@@ -53,6 +53,14 @@ const lorePatterns = [
   /(?:according\s+to\s+(?:legend|ancient|old)\s+(?:texts?|records?|tales?|scrolls?))/gi,
 ];
 
+// ── Options ──────────────────────────────────────────────────
+
+export interface ExtractEventsOpts {
+  messageContent: string;
+  actorId: string;
+  currentLocationId: string | null;
+}
+
 // ── Extraction ────────────────────────────────────────────────
 
 /**
@@ -60,11 +68,7 @@ const lorePatterns = [
  * For v1, uses regex pattern matching and keyword analysis.
  * Future: delegate to a lightweight LLM for structured extraction.
  */
-export function extractEvents(
-  messageContent: string,
-  actorId: string,
-  currentLocationId: string | null,
-): WorldEvent[] {
+export function extractEvents({ messageContent, actorId, currentLocationId }: ExtractEventsOpts): WorldEvent[] {
   // Reset module-scoped regex lastIndex to avoid state bleed across calls
   for (const p of locationPatterns) p.lastIndex = 0;
   for (const p of timePatterns) p.lastIndex = 0;

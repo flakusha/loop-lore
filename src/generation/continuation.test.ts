@@ -573,12 +573,12 @@ describe("cancelGeneration captures partial content", () => {
       totalSteps: 1,
     };
 
-    const { attemptId } = startGenerationTracking(options, testDb);
+    const { attemptId } = startGenerationTracking({ options, db: testDb });
 
-    await processStreamingChunk(attemptId, "Hello, this is a test response.", testDb);
-    await processStreamingChunk(attemptId, " Continuing with more content.", testDb);
+    await processStreamingChunk({ attemptId, chunk: "Hello, this is a test response.", db: testDb });
+    await processStreamingChunk({ attemptId, chunk: " Continuing with more content.", db: testDb });
 
-    cancelGeneration(attemptId, "user_cancel", "user", "Test cancel");
+    cancelGeneration({ attemptId, reason: "user_cancel", source: "user", detail: "Test cancel" });
 
     const result = await getPartialContent(attemptId, testDb);
     expect(result.content).toBe("Hello, this is a test response. Continuing with more content.");

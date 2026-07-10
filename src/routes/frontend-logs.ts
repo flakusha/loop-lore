@@ -29,17 +29,18 @@ const dispatch: RouteDispatch = async ({ request }) => {
   const { pathname } = url;
 
   if (pathname !== "/api/frontend/logs") return null;
-  if (request.method !== "POST") return jsonError("Method not allowed", HttpStatus.BadRequest);
+  if (request.method !== "POST")
+    return jsonError({ message: "Method not allowed", status: HttpStatus.BadRequest });
 
   let body: LogBatch;
   try {
     body = (await request.json()) as LogBatch;
   } catch {
-    return jsonError("Invalid JSON body", HttpStatus.BadRequest);
+    return jsonError({ message: "Invalid JSON body", status: HttpStatus.BadRequest });
   }
 
   if (!Array.isArray(body.entries) || body.entries.length === 0) {
-    return jsonError("entries must be a non-empty array", HttpStatus.BadRequest);
+    return jsonError({ message: "entries must be a non-empty array", status: HttpStatus.BadRequest });
   }
 
   const log = getLogger();

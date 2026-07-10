@@ -77,19 +77,19 @@ describe("step-pipeline", () => {
     test("advances step index for active generation", async () => {
       activeGenerations.set("a1", makeActiveGen({ attemptId: "a1", stepIndex: 0, totalSteps: 3 }));
 
-      await completeStep("a1", 0, db);
+      await completeStep({ attemptId: "a1", stepIndex: 0, db });
       expect(activeGenerations.get("a1")!.stepIndex).toBe(1);
     });
 
     test("no-ops for unknown attempt", async () => {
-      await expect(completeStep("unknown", 0, db)).resolves.toBeUndefined();
+      await expect(completeStep({ attemptId: "unknown", stepIndex: 0, db })).resolves.toBeUndefined();
     });
   });
 
   describe("failStep", () => {
     test("updates DB with failed status", async () => {
       const err = new Error("generation error");
-      await failStep("attempt-persist", 2, err, db);
+      await failStep({ attemptId: "attempt-persist", stepIndex: 2, error: err, db });
 
       // Verify DB update via direct query (in-memory map is empty)
       const row = await db
@@ -105,7 +105,7 @@ describe("step-pipeline", () => {
 
     test("no-ops gracefully on unknown attempt", async () => {
       const err = new Error("test");
-      await expect(failStep("unknown", 0, err, db)).resolves.toBeUndefined();
+      await expect(failStep({ attemptId: "unknown", stepIndex: 0, error: err, db })).resolves.toBeUndefined();
     });
   });
 

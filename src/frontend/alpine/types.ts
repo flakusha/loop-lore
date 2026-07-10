@@ -155,6 +155,8 @@ export interface ChatState extends AlpineMagicThis {
   openRenameModal(chatId: string): void;
   confirmRenameChat(): Promise<void>;
   deleteChat(chatId: string, event: Event): Promise<void>;
+  loadChatKey(chatId: string): Promise<void>;
+  checkGenerationStatus(chatId: string): Promise<void>;
 }
 
 interface WorldEditState {
@@ -221,6 +223,10 @@ declare global {
     };
     htmx: {
       ajax: (method: string, url: string, opts: { target: string; swap: string }) => void;
+      defineExtension: (
+        name: string,
+        extension: { onEvent?: (name: string, evt: CustomEvent) => void },
+      ) => void;
     };
     __: (key: string, fallback?: string) => string;
     __localeStrings: Record<string, string>;
