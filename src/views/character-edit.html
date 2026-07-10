@@ -1,4 +1,4 @@
-<!-- Character Edit Page -->
+<!-- Character Edit Page (skeleton — form loaded via htmx) -->
 <header id="header-slot" class="main-header" data-page="character-edit" data-testid="character-edit-header">
   <button class="hamburger" x-on:click="window.toggleSidebar()" data-testid="hamburger">☰</button>
   <span class="title" id="page-title">Edit Character</span>
@@ -7,7 +7,13 @@
 <div class="app-layout">
   <main class="main-content" style="padding-top: 0">
     <div class="chat-area">
-      <div id="character-edit-form" data-character-id="{{characterId}}">
+      <div
+        id="character-edit-form"
+        data-character-id="{{characterId}}"
+        hx-get="/dynamic/characters/{{characterId}}/edit-form"
+        hx-trigger="load"
+        hx-swap="innerHTML"
+      >
         <div class="empty-state" style="padding: var(--space-12)">
           <div class="icon">⏳</div>
           <div class="title">Loading character...</div>
