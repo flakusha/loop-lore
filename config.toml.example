@@ -181,3 +181,39 @@ openaiCompatible = []
 [byoKey]
 enabled = true
 # encryptionKey = "optional-override-for-auth.sessionSecret"
+
+[encryption]
+required = false
+compressThreshold = 128
+# compressAlgorithm = "gzip"          # gzip | brotli | zstd
+
+# ── Response Headers (FExBE: security / isolation / perf / observability) ──
+[headers]
+enabled = true
+referrerPolicy = "strict-origin-when-cross-origin"
+xContentTypeOptions = true
+xFrameOptions = "DENY"
+permissionsPolicy = "accelerometer=(), camera=(), geolocation=(), microphone=(), usb=()"
+
+[headers.csp]
+enabled = true
+defaultSrc = ["'self'"]
+scriptSrc = ["'self'", "https://unpkg.com", "https://cdn.jsdelivr.net"]   # inline handlers migrated to Alpine x-on
+styleSrc = ["'self'", "'unsafe-inline'"]   # inline style= attrs need unsafe-inline
+imgSrc = ["'self'", "data:", "blob:"]
+fontSrc = ["'self'"]
+connectSrc = ["'self'", "wss:", "https:"]
+objectSrc = ["'none'"]
+baseUri = ["'self'"]
+frameAncestors = ["'none'"]
+upgradeInsecureRequests = true
+# reportOnly = false                  # true = emit Content-Security-Policy-Report-Only (observe, don't enforce)
+
+# crossOriginOpenerPolicy = ""        # same-origin | same-origin-allow-popups | "" (omit)
+# crossOriginEmbedderPolicy = ""      # require-corp | "" (omit; keep off until wasm/SAB ready)
+crossOriginResourcePolicy = "cross-origin"
+immutableHashedAssets = true
+linkPreload = ["/app.js", "/alpine.js", "/css/app.css"]
+# acceptClientHints = ["Device-Memory", "RTT"]
+earlyHints = { enabled = false }
+# nel = '{ "report_to": "default", "max_age": 31536000 }'
