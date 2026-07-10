@@ -1,0 +1,51 @@
+<!-- Backdrop for gallery sidebar -->
+<div
+  class="panel-backdrop"
+  x-show="$store.ui.showGallery"
+  @click="$store.ui.showGallery = false"
+  x-transition.opacity
+></div>
+<!-- Gallery sidebar -->
+<aside class="gallery-sidebar" x-show="$store.ui.showGallery" x-transition data-testid="gallery-sidebar">
+  <button class="btn-icon" @click="$store.ui.showGallery = false" title="Close">&times;</button>
+  <div class="nav-section-title" style="margin-bottom: var(--space-3)">Chat Assets</div>
+  <div id="gallery-items">
+    <template x-if="!activeChat">
+      <div class="gallery-empty">
+        <div class="icon">📁</div>
+        <div class="text">Select a chat to see linked assets</div>
+      </div>
+    </template>
+    <template x-if="activeChat && galleryAssets.length === 0">
+      <div class="gallery-empty">
+        <div class="icon">📁</div>
+        <div class="text">No assets linked to this chat</div>
+      </div>
+    </template>
+    <template x-for="asset in galleryAssets" :key="asset.id">
+      <div class="gallery-item" @click="openAssetPreview(asset)">
+        <div class="gallery-item-thumb">
+          <template x-if="asset.asset_type === 'image'">
+            <img
+              :src="'/api/assets/' + asset.id + '/thumb'"
+              :alt="asset.alt_text || asset.filename"
+              loading="lazy"
+            />
+          </template>
+          <template x-if="asset.asset_type === 'audio'">
+            <span class="file-icon">🎵</span>
+          </template>
+          <template x-if="asset.asset_type === 'video'">
+            <span class="file-icon">🎬</span>
+          </template>
+          <template x-if="!asset.asset_type || asset.asset_type === 'other'">
+            <span class="file-icon">📄</span>
+          </template>
+        </div>
+        <div class="gallery-item-info">
+          <span class="name" x-text="asset.filename || asset.name"></span>
+        </div>
+      </div>
+    </template>
+  </div>
+</aside>

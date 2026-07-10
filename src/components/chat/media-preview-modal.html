@@ -1,0 +1,23 @@
+<!-- Media Preview Modal -->
+<div
+  x-show="previewMediaAsset"
+  x-cloak
+  class="modal-overlay"
+  @click.self="previewMediaAsset = null"
+  data-testid="media-preview-modal"
+>
+  <div class="modal" style="max-width: 90vw; max-height: 90vh">
+    <div class="modal-header">
+      <span class="title" x-text="previewMediaAsset?.caption || previewMediaAsset?.filename"></span>
+      <button class="btn-icon" @click="previewMediaAsset = null">&times;</button>
+    </div>
+    <div class="modal-body" style="padding: 0; text-align: center">
+      <template x-if="previewMediaAsset?.type === 'image'">
+        <img
+          :src="previewMediaAsset.url"
+          style="max-width: 100%; max-height: 80vh; display: block; margin: 0 auto"
+        />
+      </template>
+    </div>
+  </div>
+</div>

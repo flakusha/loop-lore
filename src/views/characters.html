@@ -1,18 +1,24 @@
-<!-- Characters View -->
+<!-- Characters View (skeleton — grid + modals lazy-loaded) -->
 <header id="header-slot" class="main-header" data-page="characters" data-testid="characters-header">
   <button class="hamburger" x-on:click="window.toggleSidebar()" data-testid="hamburger">☰</button>
   <span class="title">Characters</span>
   <div class="actions">
     <button
       class="btn btn-secondary"
-      x-on:click="window.openModal('import-modal')"
+      hx-get="/partials/characters/import-modal"
+      hx-target="#modal-container"
+      hx-swap="innerHTML"
+      hx-on::after-request="window.openModal('import-modal')"
       data-testid="import-character"
     >
       Import Card
     </button>
     <button
       class="btn btn-primary"
-      x-on:click="window.openModal('create-modal')"
+      hx-get="/partials/characters/create-modal"
+      hx-target="#modal-container"
+      hx-swap="innerHTML"
+      hx-on::after-request="window.openModal('create-modal')"
       data-testid="create-character"
     >
       + New
@@ -42,206 +48,19 @@
           <option value="name">Sort: Name</option>
         </select>
       </div>
-      <div class="character-grid" id="character-grid" data-testid="character-grid">
+      <div
+        id="character-grid"
+        data-testid="character-grid"
+        hx-get="/dynamic/characters/grid"
+        hx-trigger="load"
+        hx-swap="innerHTML"
+      >
         <div class="empty-state" style="padding: var(--space-12)" data-testid="characters-loading">
           <div class="icon">⏳</div>
           <div class="title">Loading characters...</div>
         </div>
       </div>
     </div>
-
-    <!-- Create modal -->
-    <div
-      id="create-modal"
-      class="modal-overlay"
-      x-on:click="window.closeModalOnBackdrop($event)"
-      data-testid="create-character-modal"
-    >
-      <div class="modal">
-        <div class="modal-header">
-          <span class="title">Create Character</span>
-          <button class="btn-icon" x-on:click="window.closeModal($el)">&times;</button>
-        </div>
-        <div class="modal-body">
-          <form
-            hx-post="/api/actors"
-            hx-target="#app-root"
-            hx-swap="innerHTML"
-            hx-target-error="#toast-container"
-            data-hx-success-event="character:created"
-            data-testid="create-character-form"
-          >
-            <div class="form-group">
-              <label class="form-label" for="char-name">Character Name</label>
-              <input
-                class="form-input"
-                type="text"
-                name="displayName"
-                id="char-name"
-                required
-                placeholder="e.g., Alice"
-              />
-            </div>
-            <div class="form-group">
-              <label class="form-label" for="char-type">Type</label>
-              <select class="form-select" name="actorType" id="char-type">
-                <option value="character">Character</option>
-                <option value="persona">Persona</option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label class="form-label" for="char-desc">Description</label>
-              <textarea
-                class="form-input form-textarea"
-                name="description"
-                id="char-desc"
-                rows="3"
-                placeholder="Brief description..."
-              ></textarea>
-            </div>
-            <div style="display: flex; gap: var(--space-3); justify-content: flex-end">
-              <button type="button" class="btn btn-secondary" x-on:click="window.closeModal($el)">
-                Cancel
-              </button>
-              <button type="submit" class="btn btn-primary">Create</button>
-            </div>
-          </form>
-        </div>
-      </div>
-    </div>
-
-    <!-- Import modal -->
-    <div
-      id="import-modal"
-      class="modal-overlay"
-      x-on:click="window.closeModalOnBackdrop($event)"
-      data-testid="import-character-modal"
-    >
-      <div class="modal">
-        <div class="modal-header">
-          <span class="title">Import Character Card</span>
-          <button class="btn-icon" x-on:click="window.closeModal($el)">&times;</button>
-        </div>
-        <div class="modal-body">
-          <form
-            hx-post="/api/actors/import"
-            hx-encoding="multipart/form-data"
-            hx-target="#app-root"
-            hx-swap="innerHTML"
-            hx-target-error="#toast-container"
-            data-hx-success-event="character:imported"
-            data-testid="import-character-form"
-          >
-            <div
-              class="drop-zone"
-              style="margin-bottom: var(--space-4)"
-              x-on:click="window.document.getElementById('import-file-input').click()"
-            >
-              <div class="icon">📄</div>
-              <div class="text">Upload a character card JSON or PNG</div>
-              <div class="hint">Supports V2 character cards</div>
-              <input
-                type="file"
-                name="file"
-                accept=".json,.png"
-                style="display: none"
-                id="import-file-input"
-              />
-            </div>
-            <div style="display: flex; gap: var(--space-3); justify-content: flex-end">
-              <button type="button" class="btn btn-secondary" x-on:click="window.closeModal($el)">
-                Cancel
-              </button>
-              <button type="submit" class="btn btn-primary">Import</button>
-            </div>
-          </form>
-        </div>
-      </div>
-    </div>
-
-    <!-- Character detail modal -->
-    <div
-      id="character-detail-modal"
-      class="modal-overlay"
-      x-on:click="window.closeModalOnBackdrop($event)"
-      data-testid="character-detail-modal"
-    >
-      <div class="modal">
-        <div class="modal-header">
-          <span class="title" data-field="name"></span>
-          <button class="btn-icon" x-on:click="window.closeModal($el)">&times;</button>
-        </div>
-        <div class="modal-body">
-          <div style="display: flex; gap: var(--space-4); margin-bottom: var(--space-4)">
-            <div
-              style="
-                width: 80px;
-                height: 80px;
-                border-radius: var(--radius-md);
-                background: var(--bg-tertiary);
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                font-size: 36px;
-                flex-shrink: 0;
-                overflow: hidden;
-              "
-              data-field="avatar"
-            >
-              <span>👤</span>
-            </div>
-            <div style="flex: 1">
-              <div style="font-size: 18px; font-weight: 600" data-field="name"></div>
-              <div
-                style="font-size: 13px; color: var(--text-secondary); margin-top: var(--space-2)"
-                data-field="description"
-              ></div>
-            </div>
-          </div>
-          <div class="form-group">
-            <label class="form-label">System Prompt</label>
-            <div
-              style="
-                font-size: 13px;
-                color: var(--text-secondary);
-                white-space: pre-wrap;
-                background: var(--bg-tertiary);
-                padding: var(--space-3);
-                border-radius: var(--radius-sm);
-                max-height: 200px;
-                overflow-y: auto;
-              "
-              data-field="system-prompt"
-            ></div>
-          </div>
-          <div style="display: flex; gap: var(--space-3); justify-content: flex-end">
-            <button
-              class="btn btn-secondary"
-              data-action="start-chat"
-              x-on:click="window.startChatFromChar($el)"
-              data-testid="start-chat-btn"
-            >
-              💬 Start Chat
-            </button>
-            <button
-              class="btn btn-secondary"
-              data-action="edit-char"
-              x-on:click="window.editCharacter($el)"
-              data-testid="edit-character-btn"
-            >
-              ✏️ Edit
-            </button>
-            <button
-              class="btn btn-danger"
-              data-action="delete-char"
-              x-on:click="window.deleteCharacter($el)"
-              data-testid="delete-character-btn"
-            >
-              🗑 Delete
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
+    <div id="modal-container"></div>
   </main>
 </div>
