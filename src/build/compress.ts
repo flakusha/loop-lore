@@ -1,7 +1,7 @@
 import { walkDirectory, compressFile, copyDirectory } from "../content/compress";
 import { injectContentHashes } from "../content/hash-injection";
 import { readFileSync, writeFileSync, existsSync } from "node:fs";
-import { extname } from "node:path";
+import { extname, join } from "node:path";
 import { createLogger } from "../logger";
 
 const HTML_COMMENT_EXTS = new Set([".html", ".htm", ".svg"]);
@@ -22,6 +22,7 @@ async function main() {
   const directory = process.argv[2] ?? "./dist/public";
   const sourcePublic = process.argv[3] ?? "./src/public";
   const sourceViews = process.argv[4] ?? "./src/views";
+  const sourceComponents = process.argv[5] ?? "./src/components";
 
   if (!existsSync(directory)) {
     log.error(`Directory not found: ${directory}`);
@@ -30,6 +31,7 @@ async function main() {
 
   copyDirectory(sourcePublic, directory);
   copyDirectory(sourceViews, directory);
+  copyDirectory(sourceComponents, join(directory, "components"));
 
   const hashResult = injectContentHashes(directory);
   if (hashResult.replaced > 0) {

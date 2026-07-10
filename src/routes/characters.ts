@@ -79,6 +79,17 @@ const dispatch: RouteDispatch = async ({ request, context, database }) => {
   const { pathname, searchParams } = url;
   const method = request.method;
 
+  // ── Special: /api/actors/import ────────────────────────────
+  if (pathname === "/api/actors/import" && method === "POST") {
+    const contentType = request.headers.get("content-type") ?? "";
+    if (contentType.includes("multipart/form-data")) {
+      return handleImportActorFile({ request, database, context });
+    }
+    const body = await parseBody(request);
+    if (body instanceof Response) return body;
+    return handleImportActorJson({ body, database, context });
+  }
+
   // ── Sub-routes on single actor ──────────────────────────────
   const actorId = extractIdFromPath(pathname, "/api/actors");
   if (actorId) {
@@ -106,17 +117,6 @@ const dispatch: RouteDispatch = async ({ request, context, database }) => {
       return handleDeleteActor({ database, actorId, context });
     }
     return BAD_METHOD();
-  }
-
-  // ── Special: /api/actors/import ────────────────────────────
-  if (pathname === "/api/actors/import" && method === "POST") {
-    const contentType = request.headers.get("content-type") ?? "";
-    if (contentType.includes("multipart/form-data")) {
-      return handleImportActorFile({ request, database, context });
-    }
-    const body = await parseBody(request);
-    if (body instanceof Response) return body;
-    return handleImportActorJson({ body, database, context });
   }
 
   // ── /api/actors (collection) ────────────────────────────────
