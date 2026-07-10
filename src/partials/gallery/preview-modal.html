@@ -1,0 +1,25 @@
+<div
+  id="preview-modal"
+  class="modal-overlay"
+  x-on:click="window.closeModalOnBackdrop($event)"
+  data-testid="preview-modal"
+>
+  <div class="modal" style="max-width: 800px">
+    <div class="modal-header">
+      <span class="title" data-field="filename"></span>
+      <button class="btn-icon" x-on:click="window.closeModal($el)">&times;</button>
+    </div>
+    <div class="modal-body" style="padding: 0" data-field="preview-body"></div>
+    <div class="modal-footer" style="justify-content: space-between">
+      <div style="display: flex; gap: var(--space-2); align-items: center">
+        <span class="tag" data-field="mime"></span>
+        <span class="tag" data-field="size"></span>
+      </div>
+      <div style="display: flex; gap: var(--space-2)">
+        <button class="btn btn-ghost" x-on:click="window.copyAssetUrl()" title="Copy URL">📋 Copy URL</button>
+        <button class="btn btn-ghost" x-on:click="window.downloadAsset()" title="Download">⬇ Download</button>
+        <button class="btn btn-danger" x-on:click="window.deleteAssetPreview()">🗑 Delete</button>
+      </div>
+    </div>
+  </div>
+</div>

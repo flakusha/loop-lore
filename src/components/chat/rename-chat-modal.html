@@ -1,0 +1,34 @@
+<!-- Rename Chat Modal -->
+<div
+  x-show="$store.ui.showRenameModal"
+  x-cloak
+  class="modal-overlay"
+  @click.self="$store.ui.showRenameModal = false"
+  data-testid="rename-chat-modal"
+>
+  <div class="modal" style="max-width: 420px">
+    <div class="modal-header">
+      <span class="title">Rename Chat</span>
+      <button class="btn-icon" @click="$store.ui.showRenameModal = false">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">Chat Name</label>
+        <input
+          class="form-input"
+          type="text"
+          x-model="_renameChatName"
+          @keydown.enter="confirmRenameChat"
+          placeholder="Chat name"
+          data-testid="rename-chat-input"
+        />
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" @click="$store.ui.showRenameModal = false">Cancel</button>
+      <button class="btn btn-primary" @click="confirmRenameChat" data-testid="rename-chat-save-btn">
+        Save
+      </button>
+    </div>
+  </div>
+</div>

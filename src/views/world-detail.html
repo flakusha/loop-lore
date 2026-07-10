@@ -1,14 +1,23 @@
-<!-- World Detail Page -->
+<!-- World Detail Page (skeleton — detail + modal lazy-loaded) -->
 <header id="header-slot" class="main-header" data-page="world-detail" data-testid="world-detail-header">
   <button class="hamburger" x-on:click="window.toggleSidebar()" data-testid="hamburger">☰</button>
   <span class="title" id="page-title">World Details</span>
   <div class="actions">
-    <button class="btn btn-secondary" x-on:click="window.loadWorldDetail()" data-testid="refresh-world">
+    <button
+      class="btn btn-secondary"
+      hx-get="/dynamic/worlds/{{worldId}}/detail"
+      hx-target="#world-detail"
+      hx-swap="innerHTML"
+      data-testid="refresh-world"
+    >
       Refresh
     </button>
     <button
       class="btn btn-primary"
-      x-on:click="window.openModal('edit-world-modal')"
+      hx-get="/partials/worlds/edit-modal?worldId={{worldId}}"
+      hx-target="#modal-container"
+      hx-swap="innerHTML"
+      hx-on::after-request="window.openModal('edit-world-modal')"
       data-testid="edit-world"
     >
       Edit
@@ -19,56 +28,19 @@
 <div class="app-layout">
   <main class="main-content" style="padding-top: 0">
     <div class="chat-area">
-      <div id="world-detail" data-world-id="{{worldId}}">
+      <div
+        id="world-detail"
+        data-world-id="{{worldId}}"
+        hx-get="/dynamic/worlds/{{worldId}}/detail"
+        hx-trigger="load"
+        hx-swap="innerHTML"
+      >
         <div class="empty-state" style="padding: var(--space-12)">
           <div class="icon">⏳</div>
           <div class="title">Loading world...</div>
         </div>
       </div>
     </div>
+    <div id="modal-container"></div>
   </main>
-
-  <!-- Edit Modal -->
-  <div
-    id="edit-world-modal"
-    class="modal-overlay"
-    x-on:click="window.closeModalOnBackdrop($event)"
-    data-testid="edit-world-modal"
-  >
-    <div class="modal">
-      <div class="modal-header">
-        <span class="title">Edit World</span>
-        <button class="btn-icon" x-on:click="window.closeModal($el)">&times;</button>
-      </div>
-      <div class="modal-body">
-        <form
-          hx-patch="/api/worlds/{{worldId}}"
-          hx-target="#world-detail"
-          hx-swap="innerHTML"
-          hx-target-error="#toast-container"
-          data-hx-success-event="world:saved"
-          data-testid="edit-world-form"
-        >
-          <div class="form-group">
-            <label class="form-label" for="edit-name">Name</label>
-            <input class="form-input" type="text" name="name" id="edit-name" required />
-          </div>
-          <div class="form-group">
-            <label class="form-label" for="edit-description">Description</label>
-            <textarea class="form-input" name="description" id="edit-description" rows="2"></textarea>
-          </div>
-          <div class="form-group">
-            <label class="form-label" for="edit-lore">Lore</label>
-            <textarea class="form-input" name="lore" id="edit-lore" rows="4"></textarea>
-          </div>
-          <div style="display: flex; gap: var(--space-3); justify-content: flex-end">
-            <button type="button" class="btn btn-secondary" x-on:click="window.closeModal($el)">
-              Cancel
-            </button>
-            <button type="submit" class="btn btn-primary">Save</button>
-          </div>
-        </form>
-      </div>
-    </div>
-  </div>
 </div>

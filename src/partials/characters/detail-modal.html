@@ -1,0 +1,83 @@
+<div
+  id="character-detail-modal"
+  class="modal-overlay"
+  x-on:click="window.closeModalOnBackdrop($event)"
+  data-testid="character-detail-modal"
+>
+  <div class="modal">
+    <div class="modal-header">
+      <span class="title" data-field="name"></span>
+      <button class="btn-icon" x-on:click="window.closeModal($el)">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div style="display: flex; gap: var(--space-4); margin-bottom: var(--space-4)">
+        <div
+          style="
+            width: 80px;
+            height: 80px;
+            border-radius: var(--radius-md);
+            background: var(--bg-tertiary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 36px;
+            flex-shrink: 0;
+            overflow: hidden;
+          "
+          data-field="avatar"
+        >
+          <span>👤</span>
+        </div>
+        <div style="flex: 1">
+          <div style="font-size: 18px; font-weight: 600" data-field="name"></div>
+          <div
+            style="font-size: 13px; color: var(--text-secondary); margin-top: var(--space-2)"
+            data-field="description"
+          ></div>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">System Prompt</label>
+        <div
+          style="
+            font-size: 13px;
+            color: var(--text-secondary);
+            white-space: pre-wrap;
+            background: var(--bg-tertiary);
+            padding: var(--space-3);
+            border-radius: var(--radius-sm);
+            max-height: 200px;
+            overflow-y: auto;
+          "
+          data-field="system-prompt"
+        ></div>
+      </div>
+      <div style="display: flex; gap: var(--space-3); justify-content: flex-end">
+        <button
+          class="btn btn-secondary"
+          data-action="start-chat"
+          x-on:click="window.startChatFromChar($el)"
+          data-testid="start-chat-btn"
+        >
+          💬 Start Chat
+        </button>
+        <button
+          class="btn btn-secondary"
+          data-action="edit-char"
+          x-on:click="window.editCharacter($el)"
+          data-testid="edit-character-btn"
+        >
+          ✏️ Edit
+        </button>
+        <button
+          class="btn btn-danger"
+          data-action="delete-char"
+          x-on:click="window.deleteCharacter($el)"
+          data-testid="delete-character-btn"
+        >
+          🗑 Delete
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
