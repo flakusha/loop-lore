@@ -1,12 +1,20 @@
 <!-- Characters View -->
 <header id="header-slot" class="main-header" data-page="characters" data-testid="characters-header">
-  <button class="hamburger" onclick="toggleSidebar()" data-testid="hamburger">☰</button>
+  <button class="hamburger" x-on:click="window.toggleSidebar()" data-testid="hamburger">☰</button>
   <span class="title">Characters</span>
   <div class="actions">
-    <button class="btn btn-secondary" onclick="openModal('import-modal')" data-testid="import-character">
+    <button
+      class="btn btn-secondary"
+      x-on:click="window.openModal('import-modal')"
+      data-testid="import-character"
+    >
       Import Card
     </button>
-    <button class="btn btn-primary" onclick="openModal('create-modal')" data-testid="create-character">
+    <button
+      class="btn btn-primary"
+      x-on:click="window.openModal('create-modal')"
+      data-testid="create-character"
+    >
       + New
     </button>
   </div>
@@ -15,6 +23,25 @@
 <div class="app-layout">
   <main class="main-content" style="padding-top: 0">
     <div class="chat-area" style="overflow-y: auto">
+      <div class="list-toolbar">
+        <input
+          id="character-search"
+          class="form-input list-search"
+          type="search"
+          placeholder="Search characters…"
+          aria-label="Search characters"
+          oninput="filterCharacters()"
+          data-testid="character-search"
+        />
+        <select
+          id="character-sort"
+          class="form-select list-sort"
+          aria-label="Sort characters"
+          onchange="filterCharacters()"
+        >
+          <option value="name">Sort: Name</option>
+        </select>
+      </div>
       <div class="character-grid" id="character-grid" data-testid="character-grid">
         <div class="empty-state" style="padding: var(--space-12)" data-testid="characters-loading">
           <div class="icon">⏳</div>
@@ -27,13 +54,13 @@
     <div
       id="create-modal"
       class="modal-overlay"
-      onclick="closeModalOnBackdrop(event)"
+      x-on:click="window.closeModalOnBackdrop($event)"
       data-testid="create-character-modal"
     >
       <div class="modal">
         <div class="modal-header">
           <span class="title">Create Character</span>
-          <button class="btn-icon" onclick="closeModal(this)">&times;</button>
+          <button class="btn-icon" x-on:click="window.closeModal($el)">&times;</button>
         </div>
         <div class="modal-body">
           <form
@@ -73,7 +100,9 @@
               ></textarea>
             </div>
             <div style="display: flex; gap: var(--space-3); justify-content: flex-end">
-              <button type="button" class="btn btn-secondary" onclick="closeModal(this)">Cancel</button>
+              <button type="button" class="btn btn-secondary" x-on:click="window.closeModal($el)">
+                Cancel
+              </button>
               <button type="submit" class="btn btn-primary">Create</button>
             </div>
           </form>
@@ -85,13 +114,13 @@
     <div
       id="import-modal"
       class="modal-overlay"
-      onclick="closeModalOnBackdrop(event)"
+      x-on:click="window.closeModalOnBackdrop($event)"
       data-testid="import-character-modal"
     >
       <div class="modal">
         <div class="modal-header">
           <span class="title">Import Character Card</span>
-          <button class="btn-icon" onclick="closeModal(this)">&times;</button>
+          <button class="btn-icon" x-on:click="window.closeModal($el)">&times;</button>
         </div>
         <div class="modal-body">
           <form
@@ -106,7 +135,7 @@
             <div
               class="drop-zone"
               style="margin-bottom: var(--space-4)"
-              onclick="document.getElementById('import-file-input').click()"
+              x-on:click="window.document.getElementById('import-file-input').click()"
             >
               <div class="icon">📄</div>
               <div class="text">Upload a character card JSON or PNG</div>
@@ -120,7 +149,9 @@
               />
             </div>
             <div style="display: flex; gap: var(--space-3); justify-content: flex-end">
-              <button type="button" class="btn btn-secondary" onclick="closeModal(this)">Cancel</button>
+              <button type="button" class="btn btn-secondary" x-on:click="window.closeModal($el)">
+                Cancel
+              </button>
               <button type="submit" class="btn btn-primary">Import</button>
             </div>
           </form>
@@ -132,13 +163,13 @@
     <div
       id="character-detail-modal"
       class="modal-overlay"
-      onclick="closeModalOnBackdrop(event)"
+      x-on:click="window.closeModalOnBackdrop($event)"
       data-testid="character-detail-modal"
     >
       <div class="modal">
         <div class="modal-header">
           <span class="title" data-field="name"></span>
-          <button class="btn-icon" onclick="closeModal(this)">&times;</button>
+          <button class="btn-icon" x-on:click="window.closeModal($el)">&times;</button>
         </div>
         <div class="modal-body">
           <div style="display: flex; gap: var(--space-4); margin-bottom: var(--space-4)">
@@ -187,7 +218,7 @@
             <button
               class="btn btn-secondary"
               data-action="start-chat"
-              onclick="startChatFromChar(this)"
+              x-on:click="window.startChatFromChar($el)"
               data-testid="start-chat-btn"
             >
               💬 Start Chat
@@ -195,7 +226,7 @@
             <button
               class="btn btn-secondary"
               data-action="edit-char"
-              onclick="editCharacter(this)"
+              x-on:click="window.editCharacter($el)"
               data-testid="edit-character-btn"
             >
               ✏️ Edit
@@ -203,7 +234,7 @@
             <button
               class="btn btn-danger"
               data-action="delete-char"
-              onclick="deleteCharacter(this)"
+              x-on:click="window.deleteCharacter($el)"
               data-testid="delete-character-btn"
             >
               🗑 Delete

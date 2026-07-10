@@ -5,10 +5,10 @@
   data-page="character-chat-list"
   data-testid="character-chat-header"
 >
-  <button class="hamburger" onclick="toggleSidebar()" data-testid="hamburger">☰</button>
+  <button class="hamburger" x-on:click="window.toggleSidebar()" data-testid="hamburger">☰</button>
   <span class="title" id="page-title">Chats</span>
   <div class="actions">
-    <button class="btn btn-secondary" onclick="loadCharacterChatList()" data-testid="refresh-chats">
+    <button class="btn btn-secondary" x-on:click="window.loadCharacterChatList()" data-testid="refresh-chats">
       Refresh
     </button>
     <a
