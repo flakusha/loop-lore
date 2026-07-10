@@ -4,6 +4,58 @@
 
 ---
 
+## ⚡ Status — Verification Pass 2026-07-10
+
+A reconciliation pass compared every finding below against the current code (`main`
+
+- v0.2 in-progress work, commit `ebad0353`). **The large majority are already
+  resolved.** Read this summary instead of the full detail; nothing of substance
+  remains open.
+
+### Resolved (verified in code)
+
+- **XSS (markdown):** `src/frontend/alpine/chat-utils.ts` sanitizes via
+  `DOMPurify.sanitize(marked.parse(...))`. (R1 XSS)
+- **DB filename hardcoded:** `src/db/index.ts:59` reads `LOOP_LORE_DB_PATH` /
+  `config.db.sqliteFilename`. (R1 Config/DB)
+- **Auth / Ownership (all flagged routes):** `chats.ts` checks `created_by === userId`;
+  `actor-*` routes use the `createEntityRoutes` factory (`ownershipTable` /
+  `ownershipFkColumn` → `owner[col] === userId || admin`, verified in
+  `entity-routes.ts`); `story-*` / `worlds.ts` check `owner_id` / `created_by`. (R1)
+- **`Number(env) || 30000`:** `src/config/load.ts:134` uses `?? 30_000`. (R1)
+- **Rate-limit unbounded:** `src/middleware/rate-limit.ts` now prunes idle buckets
+  on an interval. (R2)
+- **Settings `x-data` / gallery drop-zone click:** new `settings.ts` handler +
+  `x-data` wiring. (R2)
+- **R2 🔴 critical fixes:** all applied. (R2)
+- **`parsePagination` NaN/negative guard:** `http-utils.ts` guards. (R2)
+- **`chats.ts` enum validation:** validates `type`/`mode`/`turnStrategy`. (R2)
+- **`users.ts` displayName null + 404:** `handleUpdateUser` returns 404 when
+  missing. (R2)
+- **UI dead elements:** settings buttons wired, characters import wired,
+  `index.html` removed, world-detail/new-chat restructured. (R2)
+- **TS strict-typing debt:** `db/index.ts` alias renamed `Database`→`Db`;
+  `bun run typecheck` clean. (plan.md Known Issues)
+- **`bedrock.ts` dead provider:** deleted (always threw). (R2)
+- **`build/compress.ts` try/catch:** already present around `compressFile`. (R2)
+
+### Open / verify — none of substance
+
+Items from earlier triage that did **not** reproduce on inspection:
+
+- `assistant.enabled` config key: does not exist in `src/config/schema.ts` /
+  `load.ts` — moot (feature not implemented, not a bug).
+- Provider enum drift (`registry.ts` vs `types.ts`): no drift found.
+- Migration `run()` vs `sql` import: `sql` import hoisted to top of migration 009.
+- Prompt-assembler selective entries / token budget: in-progress Epic 12 feature
+  work, not a defect.
+
+> _Archive placeholder: resolved findings below will be relocated to a dedicated
+> archive once the active list is trimmed further. Until then this summary is the
+> source of truth._
+
+---
+
 ## Round 1 — Full Code Review 2026-07-05
 
 92 findings across 85 files. Grouped by area.
