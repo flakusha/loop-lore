@@ -18,6 +18,7 @@ export interface DB {
   actors: import("./schema-core").Actors;
   chat_participants: import("./schema-core").ChatParticipants;
   characters: import("./schema-core").Characters;
+  personas: import("./schema-core").Personas;
   messages: import("./schema-core").Messages;
   actor_keys: import("./schema-core").ActorKeys;
   assets: import("./schema-content").Assets;

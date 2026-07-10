@@ -1,9 +1,9 @@
 import DOMPurify from "dompurify";
 import { marked } from "marked";
-import type { ChatState } from "./types";
+import type { ChatState, GroupedMessage } from "./types";
 
 export const chatUtils: Partial<ChatState> & ThisType<ChatState> = {
-  _groupedCache: null as Array<Record<string, unknown>> | null,
+  _groupedCache: null as GroupedMessage[] | null,
   _groupedKey: "",
 
   formatTime(iso: string) {
@@ -69,9 +69,9 @@ export const chatUtils: Partial<ChatState> & ThisType<ChatState> = {
     if (!msgs || msgs.length === 0) return [];
     const key = `${msgs.length}:${msgs[msgs.length - 1]?.id ?? ""}:${msgs[0]?.id ?? ""}`;
     if (this._groupedKey === key && this._groupedCache) return this._groupedCache;
-    const groups: Array<Record<string, unknown>> = [];
+    const groups: GroupedMessage[] = [];
     for (let i = 0; i < msgs.length; i++) {
-      const msg = { ...msgs[i] } as Record<string, unknown>;
+      const msg = { ...msgs[i] } as GroupedMessage;
       if (i > 0) {
         const prev = msgs[i - 1];
         const sameRole = msg.role === prev.role;

@@ -49,11 +49,40 @@ jobs:
       - name: Lint CSS
         run: bun run lint:css
 
+      - name: Lint HTML
+        run: bunx markuplint --allow-warnings --format GitHub "src/views/**/*.html" "src/components/**/*.html"
+
       - name: Format check
         run: bun run format
 
+      - name: Build frontend (pre-merge guard)
+        run: bun run build:frontend
+
       - name: Markdown lint
         run: bun run md:lint
+
+  duplication:
+    name: Duplication Check
+    runs-on: ubuntu-latest
+    needs: [quality]
+    continue-on-error: true
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - uses: actions/cache@v4
+        with:
+          path: ~/.bun/install/cache
+          key: ${{ runner.os }}-bun-${{ hashFiles('**/bun.lock') }}
+
+      - run: bun install --frozen-lockfile
+
+      - name: jscpd (non-blocking)
+        run: bun run jscpd
 
   test-unit:
     name: Unit Tests

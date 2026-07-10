@@ -29,6 +29,8 @@ export interface PromptParams {
   includeLore?: boolean;
   /** Include example messages (default: false) */
   includeExamples?: boolean;
+  /** Current user's actor ID (for persona/impersonation) */
+  userId?: string;
 }
 
 export interface PromptSectionReport {
@@ -56,6 +58,7 @@ export interface AssembledPrompt {
 const PRIORITY = {
   system: 0,
   actorHeader: 0,
+  userPersona: 0,
   chatHistory: 0,
   storyContext: 1,
   lore: 2,
@@ -144,10 +147,68 @@ export class PromptAssembler {
       messages.push({ role: "system", content: headerText });
     }
 
+    // ── Section 2.5: User Persona / Impersonation ──────────────
+    // When impersonation is active, the user's messages are shown as the character.
+    // Inject the impersonated character's identity in the user slot.
+
+    if (params.userId) {
+      const participant = await this.db
+        .selectFrom("chat_participants")
+        .select(["impersonate_actor_id", "persona_id"])
+        .where("chat_id", "=", params.chatId)
+        .where("actor_id", "=", params.userId)
+        .executeTakeFirst();
+
+      if (participant?.impersonate_actor_id) {
+        // User is impersonating a character - inject that character's identity as the "user"
+        const impersonatedActor = await this.db
+          .selectFrom("actors")
+          .select(["display_name", "description", "personality"])
+          .where("id", "=", participant.impersonate_actor_id)
+          .executeTakeFirst();
+
+        if (impersonatedActor) {
+          const personaParts: string[] = [];
+          if (impersonatedActor.display_name) personaParts.push(`Name: ${impersonatedActor.display_name}`);
+          if (impersonatedActor.description)
+            personaParts.push(`\nDescription: ${impersonatedActor.description}`);
+          if (impersonatedActor.personality)
+            personaParts.push(`\nPersonality: ${impersonatedActor.personality}`);
+
+          if (personaParts.length > 0) {
+            const personaText = `[User Persona]\n${personaParts.join("")}`;
+            const tokens = defaultTokenCount(personaText);
+            sections.push({ name: "userPersona", chars: personaText.length, tokens, dropped: false });
+            messages.push({ role: "system", content: personaText });
+          }
+        }
+      } else if (participant?.persona_id) {
+        // User has a persona selected
+        const persona = await this.db
+          .selectFrom("personas")
+          .select(["name", "description"])
+          .where("id", "=", participant.persona_id)
+          .executeTakeFirst();
+
+        if (persona) {
+          const personaParts: string[] = [];
+          if (persona.name) personaParts.push(`Name: ${persona.name}`);
+          if (persona.description) personaParts.push(`\nDescription: ${persona.description}`);
+
+          if (personaParts.length > 0) {
+            const personaText = `[User Persona]\n${personaParts.join("")}`;
+            const tokens = defaultTokenCount(personaText);
+            sections.push({ name: "userPersona", chars: personaText.length, tokens, dropped: false });
+            messages.push({ role: "system", content: personaText });
+          }
+        }
+      }
+    }
+
     // ── Section 3: Lore entries ──────────────────────────
 
     if (params.includeLore !== false) {
-      const loreMessages = await this.buildLoreSection(actor.id, chat.world_id);
+      const loreMessages = await this.buildLoreSection(actor.id, chat.world_id, params.chatId);
       for (const msg of loreMessages) {
         const tokens = defaultTokenCount(msg.content);
         sections.push({ name: "lore", chars: msg.content.length, tokens, dropped: false });
@@ -234,12 +295,12 @@ export class PromptAssembler {
       }
     }
 
-    // Build final messages array (exclude dropped sections)
-    // Track message count per section for proper mapping
-    const finalMessages = [...messages];
-    // Remove messages from dropped sections
-    const droppedCount = sections.filter((s) => s.dropped).length;
-    finalMessages.splice(-droppedCount);
+    // Build final messages array (exclude dropped sections).
+    // `sections` and `messages` are 1:1 lockstep (one section pushed per message),
+    // so dropping a section means dropping the message at the same index. Dropped
+    // sections are low-priority (lore/memories/examples) and sit at the front, so a
+    // tail splice would wrongly strip chat history instead.
+    const finalMessages = messages.filter((_, i) => !sections[i]?.dropped);
 
     return {
       messages: finalMessages,
@@ -252,7 +313,11 @@ export class PromptAssembler {
 
   // ── Section builders ───────────────────────────────────
 
-  private async buildLoreSection(actorId: string, worldId: string | null): Promise<GenerationMessage[]> {
+  private async buildLoreSection(
+    actorId: string,
+    worldId: string | null,
+    chatId: string,
+  ): Promise<GenerationMessage[]> {
     const loreMessages: GenerationMessage[] = [];
 
     // Fetch both selective and non-selective entries
@@ -273,9 +338,26 @@ export class PromptAssembler {
         : Promise.resolve([]),
     ]);
 
-    // Non-selective entries are always included
-    const allEntries = [...actorLore, ...worldLore];
-    const loreText = allEntries.map((e) => e.content).join("\n\n");
+    // Constant entries are always included. Non-selective entries are always
+    // included. Selective entries are only injected when at least one of their
+    // keys appears in the most recent user message — otherwise they bloat the
+    // prompt with lore that is irrelevant to the current turn.
+    const contextWords = await this.recentUserWords(chatId);
+    const isRelevant = (entry: {
+      content: string;
+      keys: unknown;
+      constant: number | boolean;
+      selective: number | boolean;
+    }): boolean => {
+      if (entry.constant) return true;
+      if (!entry.selective) return true;
+      const keys = parseKeywords(entry.keys);
+      if (keys.length === 0) return true;
+      return keys.some((k) => contextWords.has(k.toLowerCase()));
+    };
+
+    const relevantEntries = [...actorLore, ...worldLore].filter((entry) => isRelevant(entry));
+    const loreText = relevantEntries.map((e) => e.content).join("\n\n");
     if (loreText) {
       loreMessages.push({ role: "system", content: `[Lore]\n${loreText}` });
     }
@@ -355,7 +437,7 @@ export class PromptAssembler {
       .execute();
 
     return rows.map((row) => ({
-      role: row.role as "user" | "assistant" | "character",
+      role: row.role,
       content: row.content,
     }));
   }
