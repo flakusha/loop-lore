@@ -73,6 +73,19 @@ export function safeJsonStringify(
   }
 }
 
+/**
+ * Stringify JSON safely with a fallback value.
+ * Never throws.
+ *
+ * @example
+ *   jsonStringifyOr({ a: 1 })         // '{"a":1}'
+ *   jsonStringifyOr(bad, "[]")         // '[]'
+ */
+export function jsonStringifyOr(value: unknown, fallback: string = "{}"): string {
+  const r = safeJsonStringify(value);
+  return r.ok ? r.value : fallback;
+}
+
 // ── Guards ───────────────────────────────────────────────────
 
 /**

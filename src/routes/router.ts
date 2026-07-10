@@ -8,8 +8,7 @@
  * Wire into server.ts handleApiRequest() replacing the 501 stub.
  */
 
-import type { Kysely } from "kysely";
-import type { DB } from "../db/schema";
+import type { Db } from "../db";
 import type { RequestContext } from "../middleware/types";
 import type { Config } from "../config/schema";
 import { jsonError, HttpStatus, ErrorCode } from "./http-utils";
@@ -17,7 +16,7 @@ import { jsonError, HttpStatus, ErrorCode } from "./http-utils";
 export interface RouteDispatchParams {
   request: Request;
   context: RequestContext;
-  database: Kysely<DB>;
+  database: Db;
   config: Config;
 }
 

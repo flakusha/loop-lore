@@ -224,3 +224,15 @@ export function extractIdFromPath(pathname: string, prefix: string): string | nu
   const match = regex.exec(pathname);
   return match ? match[1] : null;
 }
+
+// ── Body field helpers ───────────────────────────────────────
+
+/** Cast body field as string | undefined */
+export function str(body: Record<string, unknown>, key: string): string | undefined {
+  return body[key] as string | undefined;
+}
+
+/** Cast body field as number | undefined */
+export function num(body: Record<string, unknown>, key: string): number | undefined {
+  return body[key] as number | undefined;
+}
