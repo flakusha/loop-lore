@@ -55,8 +55,10 @@ import {
 } from "../generation/index";
 import type { ChunkEvent } from "../generation/providers/types";
 import { marked } from "marked";
-import { getLogger } from "../logger";
-const log = getLogger().child({ module: "messages" });
+import { getLogger, type Logger } from "../logger";
+function log(): Logger {
+  return getLogger().child({ module: "messages" });
+}
 import { linkAsset } from "../assets/service";
 import { encodeContent } from "../content/encode";
 import { decodeContent } from "../content/decode";
@@ -348,7 +350,7 @@ async function handleListMessages({
     }),
   );
 
-  return jsonPaginated(enriched, total, page, pageSize);
+  return jsonPaginated({ data: enriched, total, page, pageSize });
 }
 
 async function handleCreateMessage({
@@ -359,11 +361,11 @@ async function handleCreateMessage({
   config,
 }: CreateMessageOpts): Promise<Response> {
   const actorId = context.userId;
-  if (!actorId) return jsonError("Unauthorized", HttpStatus.Unauthorized, ErrorCode.Unauthorized);
+  if (!actorId) return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, code: ErrorCode.Unauthorized });
 
   const content = body.content as string | undefined;
   if (!content || typeof content !== "string") {
-    return jsonError("content is required", HttpStatus.BadRequest);
+    return jsonError({ message: "content is required", status: HttpStatus.BadRequest });
   }
 
   const filteredContent = filterProfanity(content);
@@ -378,7 +380,7 @@ async function handleCreateMessage({
     storedContent = filteredContent;
     contentEncoding = "identity";
     storedKeyId = extractKeyIdFromPayload(filteredContent);
-    log.debug("Client pre-encrypted content detected — storing as-is", { keyId: storedKeyId });
+    log().debug("Client pre-encrypted content detected — storing as-is", { keyId: storedKeyId });
   } else if (isEncryptionEnabled()) {
     const smk = getSmk()!;
     // Ensure the sending actor has an encryption key
@@ -794,14 +796,14 @@ function sanitizeHtml(html: string): string {
 
 async function handleGetMessage({ database, messageId, context, config }: GetMessageOpts): Promise<Response> {
   const userId = context.userId;
-  if (!userId) return jsonError("Unauthorized", HttpStatus.Unauthorized, ErrorCode.Unauthorized);
+  if (!userId) return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, code: ErrorCode.Unauthorized });
 
   const message = await database
     .selectFrom("messages")
     .selectAll()
     .where("id", "=", messageId)
     .executeTakeFirst();
-  if (!message) return jsonError("Message not found", HttpStatus.NotFound, ErrorCode.NotFound);
+  if (!message) return jsonError({ message: "Message not found", status: HttpStatus.NotFound, code: ErrorCode.NotFound });
 
   // Verify ownership: message's chat belongs to user
   const chat = await database
@@ -810,7 +812,7 @@ async function handleGetMessage({ database, messageId, context, config }: GetMes
     .where("id", "=", message.chat_id)
     .executeTakeFirst();
   if (!chat || (chat.created_by !== userId && context.userRole !== "admin")) {
-    return jsonError("Message not found", HttpStatus.NotFound);
+    return jsonError({ message: "Message not found", status: HttpStatus.NotFound });
   }
 
   const attachments = await enrichAttachments(database, message.attachments);
@@ -830,14 +832,14 @@ async function handleListVariants({
   config,
 }: ListVariantsOpts): Promise<Response> {
   const userId = context.userId;
-  if (!userId) return jsonError("Unauthorized", HttpStatus.Unauthorized, ErrorCode.Unauthorized);
+  if (!userId) return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, code: ErrorCode.Unauthorized });
 
   const message = await database
     .selectFrom("messages")
     .selectAll()
     .where("id", "=", messageId)
     .executeTakeFirst();
-  if (!message) return jsonError("Message not found", HttpStatus.NotFound, ErrorCode.NotFound);
+  if (!message) return jsonError({ message: "Message not found", status: HttpStatus.NotFound, code: ErrorCode.NotFound });
 
   // Verify ownership
   const chat = await database
@@ -846,7 +848,7 @@ async function handleListVariants({
     .where("id", "=", message.chat_id)
     .executeTakeFirst();
   if (!chat || (chat.created_by !== userId && context.userRole !== "admin")) {
-    return jsonError("Message not found", HttpStatus.NotFound);
+    return jsonError({ message: "Message not found", status: HttpStatus.NotFound });
   }
 
   // Variants are siblings sharing the same parent_id
@@ -881,11 +883,11 @@ async function handleSelectVariant({
   context,
 }: SelectVariantOpts): Promise<Response> {
   const userId = context.userId;
-  if (!userId) return jsonError("Unauthorized", HttpStatus.Unauthorized, ErrorCode.Unauthorized);
+  if (!userId) return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, code: ErrorCode.Unauthorized });
 
   const variantIndex = body.variantIndex as number;
   if (typeof variantIndex !== "number") {
-    return jsonError("variantIndex is required", HttpStatus.BadRequest);
+    return jsonError({ message: "variantIndex is required", status: HttpStatus.BadRequest });
   }
 
   const message = await database
@@ -893,7 +895,7 @@ async function handleSelectVariant({
     .selectAll()
     .where("id", "=", messageId)
     .executeTakeFirst();
-  if (!message) return jsonError("Message not found", HttpStatus.NotFound, ErrorCode.NotFound);
+  if (!message) return jsonError({ message: "Message not found", status: HttpStatus.NotFound, code: ErrorCode.NotFound });
 
   // Verify ownership
   const chat = await database
@@ -902,7 +904,7 @@ async function handleSelectVariant({
     .where("id", "=", message.chat_id)
     .executeTakeFirst();
   if (!chat || (chat.created_by !== userId && context.userRole !== "admin")) {
-    return jsonError("Message not found", HttpStatus.NotFound);
+    return jsonError({ message: "Message not found", status: HttpStatus.NotFound });
   }
 
   const variants = await database
@@ -915,21 +917,21 @@ async function handleSelectVariant({
     .execute();
 
   const selected = variants[variantIndex];
-  if (!selected) return jsonError("Invalid variant index", HttpStatus.BadRequest);
+  if (!selected) return jsonError({ message: "Invalid variant index", status: HttpStatus.BadRequest });
 
   return jsonResponse(selected);
 }
 
 async function handleDeleteMessage({ database, messageId, context }: DeleteMessageOpts): Promise<Response> {
   const actorId = context.userId;
-  if (!actorId) return jsonError("Unauthorized", HttpStatus.Unauthorized, ErrorCode.Unauthorized);
+  if (!actorId) return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, code: ErrorCode.Unauthorized });
 
   const message = await database
     .selectFrom("messages")
     .selectAll()
     .where("id", "=", messageId)
     .executeTakeFirst();
-  if (!message) return jsonError("Message not found", HttpStatus.NotFound, ErrorCode.NotFound);
+  if (!message) return jsonError({ message: "Message not found", status: HttpStatus.NotFound, code: ErrorCode.NotFound });
 
   // Soft-delete: set visibility to hidden
   await database
@@ -948,14 +950,14 @@ async function handleUpdateVisibility({
   context,
 }: UpdateVisibilityOpts): Promise<Response> {
   const userId = context.userId;
-  if (!userId) return jsonError("Unauthorized", HttpStatus.Unauthorized, ErrorCode.Unauthorized);
+  if (!userId) return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, code: ErrorCode.Unauthorized });
 
   const visibility = body.visibility as string;
-  if (!visibility) return jsonError("visibility is required", HttpStatus.BadRequest);
+  if (!visibility) return jsonError({ message: "visibility is required", status: HttpStatus.BadRequest });
 
   const validVisibilities = ["visible", "hidden_by_user", "hidden_by_moderator", "auto_hidden", "redacted"];
   if (!validVisibilities.includes(visibility)) {
-    return jsonError(`Invalid visibility: ${visibility}`, HttpStatus.BadRequest);
+    return jsonError({ message: `Invalid visibility: ${visibility}`, status: HttpStatus.BadRequest });
   }
 
   // Verify ownership: message's chat belongs to user
@@ -964,14 +966,14 @@ async function handleUpdateVisibility({
     .select("chat_id")
     .where("id", "=", messageId)
     .executeTakeFirst();
-  if (!msgChatId) return jsonError("Message not found", HttpStatus.NotFound);
+  if (!msgChatId) return jsonError({ message: "Message not found", status: HttpStatus.NotFound });
   const chat = await database
     .selectFrom("chats")
     .select("created_by")
     .where("id", "=", msgChatId.chat_id)
     .executeTakeFirst();
   if (!chat || (chat.created_by !== userId && context.userRole !== "admin")) {
-    return jsonError("Message not found", HttpStatus.NotFound);
+    return jsonError({ message: "Message not found", status: HttpStatus.NotFound });
   }
 
   await database
@@ -993,11 +995,11 @@ async function handleUpdateStatus({
   context,
 }: UpdateStatusOpts): Promise<Response> {
   if (context.userRole !== "admin") {
-    return jsonError("Forbidden", HttpStatus.Forbidden, ErrorCode.Forbidden);
+    return jsonError({ message: "Forbidden", status: HttpStatus.Forbidden, code: ErrorCode.Forbidden });
   }
 
   const status = body.status as string;
-  if (!status) return jsonError("status is required", HttpStatus.BadRequest);
+  if (!status) return jsonError({ message: "status is required", status: HttpStatus.BadRequest });
 
   await database
     .updateTable("messages")
