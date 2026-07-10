@@ -204,9 +204,12 @@ Page-vs-modal architecture, admin pages, user prefs modal, plugin management.
 | Per-user settings API      | `src/routes/settings.ts`                    | NEW. `GET/PATCH /api/settings` → read/write `users.settings` JSON column. Auto-merge on PATCH.                                                    |
 | Plugin management API      | `src/routes/plugins.ts`                     | NEW. `GET /api/plugins` list, `POST /api/plugins/:name/enable`, `POST /api/plugins/:name/disable`. Gate on admin role.                            |
 
-### 12. Memory Foundation — ⬜ Not Started
+### 12. Memory Foundation — 🟡 In Progress
 
 Keyword filtering, type normalization, context compaction, A/N injection.
+Code landed in v0.2 in-progress work: `memory_type` enum + `decay_rate`/`strength`
+columns (migration 009), `prompt-assembler.ts` (selective memory entries, author note,
+nested lorebook). Context compaction + i18n-keyword filtering still TODO.
 
 | Task                                             | Files                                          | Notes                                                                                                                                                                                |
 | ------------------------------------------------ | ---------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -217,9 +220,11 @@ Keyword filtering, type normalization, context compaction, A/N injection.
 | Memory XML delimiting                            | `src/assistant/prompt-assembler.ts`            | Wrap injected memories in `<memory_context>...</memory_context>` to prevent prompt injection.                                                                                        |
 | KV-cache optimization                            | `src/assistant/prompt-assembler.ts`            | Dynamic content (date/time, user counters) injected as separate user-role message near end of context, NOT in static system prompt. Keeps system prefix byte-identical across turns. |
 
-### 13. Frontend Responsive & UX — ⬜ Not Started
+### 13. Frontend Responsive & UX — 🟡 In Progress
 
 Mobile breakpoints, touch targets, keyboard shortcuts, HTMX search/filter utilities.
+Responsive + a11y polish landed in v0.2 in-progress work (sidebar, layout, components,
+characters/gallery/world pages). HTMX search/filter, view toggle, bulk actions still TODO.
 
 | Task                                        | Files                                             | Notes                                                                                                                                                        |
 | ------------------------------------------- | ------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -276,9 +281,10 @@ Server-side i18n, ARIA pass, keyboard navigation, additional locales.
 | Keyboard navigation                 | `src/frontend/alpine/shortcuts.ts`       | Tab order, arrow key navigation in lists, Escape to close modals/panels.                                   |
 | Focus-visible styling               | `src/public/css/app.css`                 | `:focus-visible` outline on interactive elements. Remove default `:focus` outlines.                        |
 
-### 16. Observability & CI — ⬜ Not Started
+### 16. Observability & CI — 🟡 In Progress
 
 Opt-in telemetry, admin analytics API, CI config, Playwright responsive tests.
+CI config (GitHub Actions) added in v0.2 in-progress work. Telemetry + responsive tests TODO.
 
 | Task                        | Files                                              | Notes                                                                                                                                      |
 | --------------------------- | -------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -322,12 +328,14 @@ ComfyUI plugin, llama-swap LLM proxy, stable-diffusion.cpp, gallery metadata enr
 | Gallery metadata (PNG tEXt+iTXt) + faceted search                 | `src/assets/metadata.ts`              | Caption→memory, params→re-roll; semantic search differentiator.                                                                                                             |
 | Security baseline (SSRF allowlist, upload caps, path confinement) | `src/generation/`, `src/middleware/`  | Adopt when inference ships (was not in MVP dev).                                                                                                                            |
 
-### 19. Basic Chat Notifications — ⬜ Not Started
+### 19. Basic Chat Notifications — 🟡 In Progress
 
 In-app unread badges + toasts for messages arriving in chats the user isn't
 viewing. Reuses existing SSE (`EventSource`) + `showToast` infra. **Autonomous
 scheduled messages deferred** (see `docs/meta/deferred-concepts.md` D.5). No
 browser-native push (needs service worker + push server) — out of scope.
+Cross-chat activity SSE (`src/routes/activity.ts`) landed in v0.2 in-progress work.
+Read-state schema + unread badge + mark-read TODO.
 
 | Task                             | Files                                                     | Notes                                                                                                                                                                            |
 | -------------------------------- | --------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -361,36 +369,20 @@ These were listed as skipped in v0.1. Now planned for v0.2.
 
 Review findings collected at [`docs/meta/reviews/review-rounds.md`](reviews/review-rounds.md).
 
-3 rounds (2026-07-05 through 2026-07-06): 139 findings total, 15 resolved.
+3 rounds (2026-07-05 through 2026-07-06): 139 findings total. A verification pass on
+**2026-07-10** confirmed the large majority of findings were already resolved in code
+(see the "Resolved (verified 2026-07-10)" section in review-rounds.md). Only a small
+set of lower-confidence items remain open.
 
-### TypeScript strict-typing debt (future work — NOT to fix now)
+### ~~TypeScript strict-typing debt~~ — RESOLVED (2026-07-10)
 
-`bun run typecheck` (`tsc --noEmit`) is clean on the committed tree, but
-surfaces errors once enough files are in the TS program. Root cause:
+Previously reported: `src/db/index.ts` shadowed the `bun:sqlite` `Database` import
+with `export type Database = Kysely<DB>` (`TS2440`), corrupting the `Kysely<DB>` type
+and breaking `.references(...)` overloads in route files once the TS program grew.
 
-- `src/db/index.ts` shadows the `bun:sqlite` `Database` import with a
-  local `export type Database = Kysely<DB>;` (line 81 vs the line-2
-  import) — `TS2440` "Import declaration conflicts with local
-  declaration of 'Database'". This corrupts the `Kysely<DB>` type
-  exported from `index.ts`.
-- Consequently Kysely's generated `ReferenceExpression` /
-  `OrderByExpression` overloads (which expand to a union of **all**
-  tables) fail to resolve in committed route files once the program
-  is large enough — e.g. `src/routes/entity-routes.ts`,
-  `src/routes/world-lore-entries.ts` `.references(...)` calls error with
-  `TS2345` / `TS2769`.
-
-This is a **Kysely `<DB>` strictness limitation**, not a logic bug,
-and is intentionally left as future work. Triggers observed when adding
-files (including non-DB test files) grow the TS program past
-Kysely's inference threshold.
-
-**Scope decision (2026-07-10):** leave as-is. Do not modify
-`index.ts`, `entity-routes.ts`, or `world-lore-entries.ts` to chase
-these. Fix path when picked up: rename the `Database` type alias in
-`index.ts` (e.g. `LoopLoreDatabase`) to kill the shadow, and
-confirm Kysely's union-size inference recovers. Likely needs a
-follow-up if the union still exceeds Kysely's comparator limits.
+**Resolution:** the alias was renamed to `export type Db = Kysely<DB>` (no longer
+shadows `bun:sqlite`'s `Database`), so `bun run typecheck` is clean with the full
+program. No further action needed.
 
 ---
 
@@ -401,7 +393,7 @@ These features are described in spec/frontend docs but were **intentionally cut*
 | Feature                                                     | Spec                                      | Status                                         |
 | ----------------------------------------------------------- | ----------------------------------------- | ---------------------------------------------- |
 | Multi-format character import (PNG/YAML/TOML/CHARX)         | `docs/spec/character-setup.md`            | ❌ Only JSON import works                      |
-| Persona system (`personas` table, routes, UI)               | `docs/spec/character-setup.md`            | ❌ Not implemented                             |
+| Persona system (`personas` table, routes, UI)               | `docs/spec/character-setup.md`            | ✅ Implemented (v0.2)                          |
 | Impersonation (`chat.impersonate_id`)                       | `docs/spec/character-setup.md`            | ❌ Not implemented                             |
 | RPG mechanics (dice, stats, combat, XP, loot)               | `docs/spec/rpg-mechanics.md`              | ❌ `src/rpg/` does not exist                   |
 | Three-tier memory system (episodic/semantic/procedural)     | `docs/spec/memory-system.md`              | ❌ Only `actor_memories` table exists          |

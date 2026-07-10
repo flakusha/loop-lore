@@ -342,6 +342,132 @@ body {
   font-size: 11px;
 }
 
+/* --- Message action buttons (shared) --- */
+.btn-icon-action {
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  border: none;
+  color: var(--text-tertiary);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  line-height: 1;
+  transition: all var(--transition-fast);
+}
+.btn-icon-action:hover {
+  background: var(--bg-quaternary);
+  color: var(--text-primary);
+}
+.btn-icon-action.action-active {
+  color: var(--accent-primary);
+  background: rgb(245 151 232 / 12%);
+}
+
+/* --- Detailed (nerd) mode: full row always visible --- */
+.message .bubble .actions-full {
+  display: flex;
+  gap: var(--space-1);
+  margin-top: var(--space-2);
+  flex-wrap: wrap;
+}
+
+/* --- Compact mode: hamburger layout (Immersion + Basic) --- */
+.message .bubble .actions-compact {
+  display: flex;
+  gap: var(--space-1);
+  margin-top: var(--space-2);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--transition-fast);
+}
+.message:hover .bubble .actions-compact,
+.message:focus-within .bubble .actions-compact {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* --- Hamburger dropdown --- */
+.action-hamburger {
+  position: relative;
+}
+.action-dropdown {
+  position: absolute;
+  bottom: calc(100% + 6px);
+  right: 0;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+  min-width: 180px;
+  z-index: var(--z-dropdown);
+  padding: var(--space-1);
+  display: flex;
+  flex-direction: column;
+}
+.action-dropdown button {
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  font-size: 13px;
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-sm);
+  text-align: left;
+  transition: all var(--transition-fast);
+  white-space: nowrap;
+}
+.action-dropdown button:hover {
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+}
+.action-dropdown .dropdown-danger {
+  color: var(--accent-red);
+}
+.action-dropdown .dropdown-danger:hover {
+  background: rgb(255 85 85 / 12%);
+  color: var(--accent-red);
+}
+.action-dropdown .dropdown-active {
+  color: var(--accent-primary);
+}
+.action-dropdown .dropdown-stat {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-1) var(--space-3);
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+.dropdown-stat .stat-label {
+  color: var(--text-tertiary);
+  font-size: 11px;
+}
+.dropdown-stat-no-data {
+  padding: var(--space-2) var(--space-3);
+  font-size: 12px;
+  color: var(--text-tertiary);
+}
+.action-dropdown-info {
+  min-width: 160px;
+}
+
+/* --- Stats line (nerd mode) --- */
+.message .bubble .stats-line {
+  display: flex;
+  gap: 0;
+  margin-top: var(--space-2);
+  font-size: 11px;
+  color: var(--text-tertiary);
+  line-height: 1.4;
+}
+
+/* keep old .actions for backward compat until fully migrated */
 .message .bubble .actions {
   display: flex;
   gap: var(--space-1);
@@ -350,13 +476,11 @@ body {
   pointer-events: none;
   transition: opacity var(--transition-fast);
 }
-
 .message:hover .bubble .actions,
 .message:focus-within .bubble .actions {
   opacity: 1;
   pointer-events: auto;
 }
-
 .message .bubble .actions button {
   background: none;
   border: none;
@@ -367,7 +491,6 @@ body {
   border-radius: var(--radius-sm);
   transition: all var(--transition-fast);
 }
-
 .message .bubble .actions button:hover {
   background: var(--bg-quaternary);
   color: var(--text-primary);
@@ -638,6 +761,41 @@ body {
 
 .input-row textarea::placeholder {
   color: var(--text-tertiary);
+}
+
+.input-area.impersonating .input-row textarea {
+  border-color: var(--accent-primary);
+  background: rgb(245 151 232 / 8%);
+}
+.input-area.impersonating .input-row textarea::placeholder {
+  color: rgb(245 151 232 / 50%);
+}
+
+.impersonation-banner {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-1) 0;
+  font-size: 12px;
+  color: var(--accent-primary);
+}
+.impersonation-banner strong {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+.btn-impersonation-cancel {
+  background: none;
+  color: var(--text-tertiary);
+  cursor: pointer;
+  font-size: 11px;
+  padding: 1px 6px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-default);
+  transition: all var(--transition-fast);
+}
+.btn-impersonation-cancel:hover {
+  color: var(--accent-red);
+  border-color: var(--accent-red);
 }
 
 .input-toolbar {
@@ -1810,4 +1968,84 @@ html {
   .list-sort {
     min-width: 110px;
   }
+}
+
+/* ── Admin ──────────────────────────────────────────────── */
+.admin-stat-card {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+  padding: var(--space-4);
+  text-align: center;
+}
+
+.admin-stat-value {
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.admin-stat-label {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-top: var(--space-1);
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.admin-table th,
+.admin-table td {
+  padding: var(--space-2) var(--space-3);
+  text-align: left;
+  border-bottom: 1px solid var(--border-default);
+}
+
+.admin-table th {
+  font-weight: 600;
+  color: var(--text-secondary);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.role-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: capitalize;
+}
+
+.role-badge.role-admin {
+  background: var(--color-danger-bg, #fdecea);
+  color: var(--color-danger, #d32f2f);
+}
+
+.role-badge.role-user {
+  background: var(--color-info-bg, #e3f2fd);
+  color: var(--color-info, #1976d2);
+}
+
+.role-badge.role-viewer {
+  background: var(--bg-tertiary);
+  color: var(--text-secondary);
+}
+
+.status-badge {
+  text-transform: capitalize;
+  font-size: 12px;
+}
+
+.status-badge.status-active {
+  color: var(--color-success, #2e7d32);
+}
+
+.status-badge.status-disabled,
+.status-badge.status-suspended {
+  color: var(--color-warning, #ed6c02);
 }
