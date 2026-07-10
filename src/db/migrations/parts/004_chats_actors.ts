@@ -57,14 +57,14 @@ export async function up(database: Kysely<unknown>): Promise<void> {
   await database.schema.createIndex("idx_actors_owner").on("actors").column("owner_id").execute();
   await database.schema.createIndex("idx_actors_type").on("actors").column("actor_type").execute();
 
-  // ── Chat Participants (includes read-state for notifications) ──
+  // ── Chat Participants ──
   await database.schema
     .createTable("chat_participants")
     .addColumn("chat_id", "text", (col) => col.notNull().references("chats.id"))
     .addColumn("actor_id", "text", (col) => col.notNull().references("actors.id"))
     .addColumn("role_in_chat", "text", (col) => col.notNull().defaultTo("member"))
     .addColumn("joined_at", "text", (col) => col.notNull().defaultTo(sql`(datetime('now'))`))
-    .addColumn("last_read_message_id", "text", (col) => col.references("messages.id"))
+    .addColumn("last_read_message_id", "text")
     .addPrimaryKeyConstraint("pk_chat_participants", ["chat_id", "actor_id"])
     .execute();
 
