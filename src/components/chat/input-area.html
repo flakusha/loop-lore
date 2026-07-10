@@ -1,0 +1,104 @@
+<!-- Input area -->
+<div class="input-area" :class="impersonationActive ? 'impersonating' : ''" x-show="$store.ui.hasActiveChat">
+  <div
+    x-show="isGenerating"
+    x-transition:enter="transition ease-out duration-150"
+    x-transition:enter-start="opacity-0"
+    x-transition:enter-end="opacity-100"
+    class="generation-status"
+    data-testid="generation-status"
+  >
+    <div class="generation-info">
+      <span class="typing-indicator">
+        <span class="dot" style="animation-delay: 0ms"></span>
+        <span class="dot" style="animation-delay: 150ms"></span>
+        <span class="dot" style="animation-delay: 300ms"></span>
+      </span>
+      <span
+        class="generation-label"
+        x-text="isContinuing ? '↳ Continuing message...' : generationLabel"
+      ></span>
+      <template x-if="generationDetail">
+        <span class="generation-detail">
+          <span x-show="generationDetail.elapsedMs"
+            >&nbsp;⏱ <span x-text="Math.round(generationDetail.elapsedMs / 1000) + 's'"></span
+          ></span>
+          <span x-show="generationDetail.charsReceived"
+            >&nbsp;📝 <span x-text="generationDetail.charsReceived + ' chars'"></span
+          ></span>
+          <span x-show="generationDetail.status">&nbsp;· <span x-text="generationDetail.status"></span></span>
+        </span>
+      </template>
+    </div>
+    <div class="generation-actions">
+      <button
+        class="btn btn-ghost btn-cancel"
+        @click="cancelGeneration()"
+        title="Cancel generation"
+        data-testid="cancel-generation"
+      >
+        ⏹ Cancel
+      </button>
+    </div>
+  </div>
+
+  <form x-ref="messageForm" @submit.prevent="sendMessage()" data-testid="message-form">
+    <div x-show="impersonationActive && !isGenerating" class="impersonation-banner">
+      🎭 Playing as <strong x-text="currentCharacter?.display_name || currentCharacter?.name"></strong>
+      —
+      <button class="btn-impersonation-cancel" @click="toggleImpersonate()">Stop</button>
+    </div>
+    <div class="input-row">
+      <label class="btn btn-ghost" style="cursor: pointer; font-size: 12px; padding: var(--space-2)">
+        📎
+        <input
+          type="file"
+          accept="image/*,audio/*,video/*"
+          multiple
+          style="display: none"
+          @change="handleAttach($$event)"
+          data-testid="attach-input"
+        />
+      </label>
+      <textarea
+        name="content"
+        x-ref="messageInput"
+        :placeholder="impersonationActive ? 'Respond as ' + (currentCharacter?.display_name || currentCharacter?.name || 'character') + '...' : 'Type a message...'"
+        rows="1"
+        @keydown.enter.shift=""
+        @keydown.enter.prevent="sendMessage()"
+        @input="autoResize($el)"
+        required
+        :disabled="!activeChat"
+        data-testid="message-input"
+      ></textarea>
+      <button
+        type="submit"
+        class="btn btn-primary"
+        title="Send"
+        :disabled="!activeChat"
+        data-testid="send-button"
+      >
+        ➤
+      </button>
+    </div>
+    <div class="input-toolbar">
+      <template x-if="pendingAssets.length > 0">
+        <div class="pending-assets">
+          <template x-for="(pa, paIdx) in pendingAssets" :key="pa.assetId">
+            <span class="tag pending-asset-tag">
+              <span>📎 <span x-text="pa.filename"></span></span>
+              <button
+                class="btn-icon"
+                style="padding: 0; width: 16px; height: 16px; font-size: 12px"
+                @click="removePendingAsset(pa.assetId)"
+              >
+                &times;
+              </button>
+            </span>
+          </template>
+        </div>
+      </template>
+    </div>
+  </form>
+</div>

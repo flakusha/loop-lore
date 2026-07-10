@@ -1,8 +1,15 @@
-<!-- Chat List Component ( reusable ) -->
-<div class="chat-list-panel" x-show="$store.ui.showChatList">
+<!-- Backdrop for chat list panel -->
+<div
+  class="panel-backdrop"
+  x-show="$store.ui.showChatList"
+  @click="$store.ui.showChatList = false"
+  x-transition.opacity
+></div>
+<!-- Chat list panel (component) -->
+<div class="chat-list-panel" x-show="$store.ui.showChatList" x-transition data-testid="chat-list-panel">
   <div class="chat-list-header">
     <span class="nav-section-title">Chats</span>
-    <button class="btn-icon" @click="$store.ui.showChatList = false" title="Close">×</button>
+    <button class="btn-icon" @click="$store.ui.showChatList = false" title="Close">&times;</button>
   </div>
   <div id="chat-list">
     <template x-if="chats.length === 0">
@@ -19,8 +26,15 @@
           <span class="name" x-text="chat.name"></span>
         </a>
         <span class="nav-item-actions">
+          <button
+            class="btn-icon btn-xs"
+            :title="chat.isPinned ? 'Unpin' : 'Pin'"
+            @click.prevent="toggleChatPin(chat.id)"
+            :style="chat.isPinned ? 'color:var(--accent-yellow)' : ''"
+            x-text="chat.isPinned ? '★' : '☆'"
+          ></button>
           <button class="btn-icon btn-xs" title="Rename" @click.prevent="renameChat(chat.id)">✏️</button>
-          <button class="btn-icon btn-xs" title="Delete" @click.prevent="deleteChat(chat.id, $event)">
+          <button class="btn-icon btn-xs" title="Delete" @click.prevent="deleteChat(chat.id, $$event)">
             🗑
           </button>
         </span>

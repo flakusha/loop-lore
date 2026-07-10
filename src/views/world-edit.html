@@ -1,4 +1,4 @@
-<!-- World Edit Page -->
+<!-- World Edit Page (skeleton — general tab static, locations via Alpine) -->
 <header id="header-slot" class="main-header" data-testid="world-edit-header">
   <button class="hamburger" x-on:click="window.toggleSidebar()" data-testid="hamburger">☰</button>
   <span class="title">Edit World</span>
@@ -8,19 +8,16 @@
   <main class="main-content" style="padding-top: 0">
     <div class="chat-area">
       <div id="world-edit-form" data-world-id="{{worldId}}">
-        <!-- Loading State -->
         <div x-show="loading" class="empty-state" style="padding: var(--space-12)">
           <div class="icon">⏳</div>
           <div class="title">Loading world...</div>
         </div>
 
-        <!-- Error State -->
         <div x-show="!loading && error" class="empty-state" style="padding: var(--space-12)">
           <div class="icon">⚠️</div>
           <div class="title">Failed to load world</div>
         </div>
 
-        <!-- Content (loaded) -->
         <template x-if="!loading && !error && world">
           <div style="max-width: 720px; margin: 0 auto; width: 100%">
             <!-- Tab Bar -->
@@ -35,7 +32,7 @@
               <button
                 class="world-edit-tab"
                 :class="{ active: activeTab === 'locations' }"
-                @click="activeTab = 'locations'; if(!locationsLoaded) loadLocations()"
+                @click="activeTab = 'locations'; loadLocations()"
               >
                 Locations
               </button>
@@ -91,7 +88,7 @@
               </form>
             </div>
 
-            <!-- Locations Tab -->
+            <!-- Locations Tab (Alpine-rendered from loadLocations()) -->
             <div x-show="activeTab === 'locations'">
               <div
                 style="
@@ -109,7 +106,6 @@
                 ></button>
               </div>
 
-              <!-- Add Location Form -->
               <div class="add-location-form" x-show="showAddForm" x-cloak>
                 <div class="form-group">
                   <label class="form-label" for="loc-name">Name *</label>
@@ -145,13 +141,11 @@
                 </button>
               </div>
 
-              <!-- Loading -->
               <div x-show="loadingLocations" class="empty-state" style="padding: var(--space-8)">
                 <div class="icon">⏳</div>
                 <div class="title">Loading locations...</div>
               </div>
 
-              <!-- Location List -->
               <div x-show="!loadingLocations && locations.length > 0">
                 <template x-for="loc in locations" :key="loc.id">
                   <div class="location-item">
@@ -172,7 +166,6 @@
                 </template>
               </div>
 
-              <!-- Empty State -->
               <div
                 x-show="!loadingLocations && locationsLoaded && locations.length === 0"
                 class="empty-state"

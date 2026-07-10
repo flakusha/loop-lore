@@ -1,0 +1,41 @@
+<header id="header-slot" class="main-header" data-testid="chat-header">
+  <button class="hamburger" x-on:click="window.toggleSidebar()" data-testid="hamburger">☰</button>
+  <span class="title" id="page-title">Welcome to loop-lore</span>
+  <div class="actions">
+    <button
+      class="btn-icon"
+      title="View chats"
+      @click="$store.ui.showChatList = !$store.ui.showChatList"
+      data-testid="toggle-chat-list"
+    >
+      ☰
+    </button>
+    <button
+      class="btn-icon"
+      title="Toggle gallery sidebar"
+      @click="$store.ui.showGallery = !$store.ui.showGallery"
+      x-show="$store.ui.hasActiveChat"
+      data-testid="toggle-gallery"
+    >
+      🖼
+    </button>
+    <button
+      class="btn-icon"
+      title="Character info"
+      @click="$store.ui.showCharacterInfo = true"
+      x-show="$store.ui.hasActiveChat"
+      data-testid="toggle-character-info"
+    >
+      ℹ
+    </button>
+    <button
+      class="btn-icon"
+      title="Chat settings"
+      @click="$store.ui.showChatSettings = true"
+      x-show="$store.ui.hasActiveChat"
+      data-testid="toggle-chat-settings"
+    >
+      ⚙
+    </button>
+  </div>
+</header>

@@ -1,9 +1,16 @@
-<!-- Gallery View -->
+<!-- Gallery View (skeleton — grid + modals lazy-loaded) -->
 <header id="header-slot" class="main-header" data-page="gallery" data-testid="gallery-header">
   <button class="hamburger" x-on:click="window.toggleSidebar()" data-testid="hamburger">☰</button>
   <span class="title">Asset Gallery</span>
   <div class="actions">
-    <button class="btn btn-primary" x-on:click="window.openModal('upload-modal')" data-testid="upload-button">
+    <button
+      class="btn btn-primary"
+      hx-get="/partials/gallery/upload-modal"
+      hx-target="#modal-container"
+      hx-swap="innerHTML"
+      hx-on::after-request="window.openModal('upload-modal')"
+      data-testid="upload-button"
+    >
       + Upload
     </button>
   </div>
@@ -41,97 +48,18 @@
         <option value="name">Sort: Name</option>
       </select>
     </div>
-    <div class="asset-grid" id="asset-grid" data-testid="asset-grid">
+    <div
+      id="asset-grid"
+      data-testid="asset-grid"
+      hx-get="/dynamic/gallery/grid"
+      hx-trigger="load"
+      hx-swap="innerHTML"
+    >
       <div class="empty-state" style="grid-column: 1 / -1" data-testid="gallery-loading">
         <div class="icon">⏳</div>
         <div class="title">Loading assets...</div>
       </div>
     </div>
-
-    <!-- Preview modal -->
-    <div
-      id="preview-modal"
-      class="modal-overlay"
-      x-on:click="window.closeModalOnBackdrop($event)"
-      data-testid="preview-modal"
-    >
-      <div class="modal" style="max-width: 800px">
-        <div class="modal-header">
-          <span class="title" data-field="filename"></span>
-          <button class="btn-icon" x-on:click="window.closeModal($el)">&times;</button>
-        </div>
-        <div class="modal-body" style="padding: 0" data-field="preview-body"></div>
-        <div class="modal-footer" style="justify-content: space-between">
-          <div style="display: flex; gap: var(--space-2); align-items: center">
-            <span class="tag" data-field="mime"></span>
-            <span class="tag" data-field="size"></span>
-          </div>
-          <div style="display: flex; gap: var(--space-2)">
-            <button class="btn btn-ghost" x-on:click="window.copyAssetUrl()" title="Copy URL">
-              📋 Copy URL
-            </button>
-            <button class="btn btn-ghost" x-on:click="window.downloadAsset()" title="Download">
-              ⬇ Download
-            </button>
-            <button class="btn btn-danger" x-on:click="window.deleteAssetPreview()">🗑 Delete</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Upload modal -->
-    <div
-      id="upload-modal"
-      class="modal-overlay"
-      x-on:click="window.closeModalOnBackdrop($event)"
-      data-testid="upload-modal"
-    >
-      <div class="modal">
-        <div class="modal-header">
-          <span class="title">Upload Asset</span>
-          <button class="btn-icon" x-on:click="window.closeModal($el)">&times;</button>
-        </div>
-        <div class="modal-body">
-          <form
-            hx-post="/api/assets"
-            hx-encoding="multipart/form-data"
-            hx-target="#asset-grid"
-            hx-swap="innerHTML"
-            hx-target-error="#toast-container"
-            data-hx-success-event="asset:uploaded"
-            data-testid="upload-form"
-          >
-            <div class="drop-zone" style="margin-bottom: var(--space-4)" id="upload-dropzone">
-              <div class="icon">📤</div>
-              <div class="text">Drag & drop files here</div>
-              <div class="hint">or click to browse</div>
-              <input
-                type="file"
-                name="file"
-                accept="image/*,audio/*,video/*"
-                style="display: none"
-                id="upload-file-input"
-              />
-            </div>
-            <div class="form-group" style="margin-top: var(--space-4)">
-              <label class="form-label" for="asset-label">Label (optional)</label>
-              <input
-                class="form-input"
-                type="text"
-                name="alt_text"
-                id="asset-label"
-                placeholder="e.g., Character portrait"
-              />
-            </div>
-            <div style="display: flex; gap: var(--space-3); justify-content: flex-end">
-              <button type="button" class="btn btn-secondary" x-on:click="window.closeModal($el)">
-                Cancel
-              </button>
-              <button type="submit" class="btn btn-primary">Upload</button>
-            </div>
-          </form>
-        </div>
-      </div>
-    </div>
+    <div id="modal-container"></div>
   </main>
 </div>

@@ -1,4 +1,4 @@
-<!-- Worlds List Page -->
+<!-- Worlds List Page (skeleton — list + modal lazy-loaded) -->
 <header id="header-slot" class="main-header" data-page="worlds" data-testid="worlds-header">
   <button class="hamburger" x-on:click="window.toggleSidebar()" data-testid="hamburger">☰</button>
   <span class="title">Worlds</span>
@@ -12,7 +12,10 @@
     </button>
     <button
       class="btn btn-primary"
-      x-on:click="window.openModal('create-world-modal')"
+      hx-get="/partials/worlds/create-modal"
+      hx-target="#modal-container"
+      hx-swap="innerHTML"
+      hx-on::after-request="window.openModal('create-world-modal')"
       data-testid="create-world"
     >
       + New
@@ -42,70 +45,19 @@
           <option value="name">Sort: Name</option>
         </select>
       </div>
-      <div class="world-list" id="world-list" data-testid="world-list">
+      <div
+        id="world-list"
+        data-testid="world-list"
+        hx-get="/dynamic/worlds/list"
+        hx-trigger="load"
+        hx-swap="innerHTML"
+      >
         <div class="empty-state" style="padding: var(--space-12)">
           <div class="icon">⏳</div>
           <div class="title">Loading worlds...</div>
         </div>
       </div>
     </div>
+    <div id="modal-container"></div>
   </main>
-
-  <!-- Create World Modal -->
-  <div
-    id="create-world-modal"
-    class="modal-overlay"
-    x-on:click="window.closeModalOnBackdrop($event)"
-    data-testid="create-world-modal"
-  >
-    <div class="modal">
-      <div class="modal-header">
-        <span class="title">Create World</span>
-        <button class="btn-icon" x-on:click="window.closeModal($el)">&times;</button>
-      </div>
-      <div class="modal-body">
-        <form onsubmit="return createWorld($event);" data-testid="create-world-form">
-          <div class="form-group">
-            <label class="form-label" for="world-name">World Name</label>
-            <input
-              class="form-input"
-              type="text"
-              name="name"
-              id="world-name"
-              required
-              placeholder="e.g., The Forgotten Realm"
-            />
-          </div>
-          <div class="form-group">
-            <label class="form-label" for="world-description">Description</label>
-            <textarea
-              class="form-input form-textarea"
-              name="description"
-              id="world-description"
-              rows="2"
-              placeholder="Short summary for the world card"
-            ></textarea>
-          </div>
-          <div class="form-group">
-            <label class="form-label" for="world-lore">Lore</label>
-            <textarea
-              class="form-input form-textarea"
-              name="lore"
-              id="world-lore"
-              rows="4"
-              placeholder="Full setting description..."
-            ></textarea>
-          </div>
-          <div
-            style="display: flex; gap: var(--space-3); justify-content: flex-end; margin-top: var(--space-6)"
-          >
-            <button type="button" class="btn btn-secondary" x-on:click="window.closeModal($el)">
-              Cancel
-            </button>
-            <button type="submit" class="btn btn-primary">Create</button>
-          </div>
-        </form>
-      </div>
-    </div>
-  </div>
 </div>

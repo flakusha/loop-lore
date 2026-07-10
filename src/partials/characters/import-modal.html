@@ -1,0 +1,39 @@
+<div
+  id="import-modal"
+  class="modal-overlay"
+  x-on:click="window.closeModalOnBackdrop($event)"
+  data-testid="import-character-modal"
+>
+  <div class="modal">
+    <div class="modal-header">
+      <span class="title">Import Character Card</span>
+      <button class="btn-icon" x-on:click="window.closeModal($el)">&times;</button>
+    </div>
+    <div class="modal-body">
+      <form
+        hx-post="/api/actors/import"
+        hx-encoding="multipart/form-data"
+        hx-target="#app-root"
+        hx-swap="innerHTML"
+        hx-target-error="#toast-container"
+        data-hx-success-event="character:imported"
+        data-testid="import-character-form"
+      >
+        <div
+          class="drop-zone"
+          style="margin-bottom: var(--space-4)"
+          x-on:click="window.document.getElementById('import-file-input').click()"
+        >
+          <div class="icon">📄</div>
+          <div class="text">Upload a character card JSON or PNG</div>
+          <div class="hint">Supports V2 character cards</div>
+          <input type="file" name="file" accept=".json,.png" style="display: none" id="import-file-input" />
+        </div>
+        <div style="display: flex; gap: var(--space-3); justify-content: flex-end">
+          <button type="button" class="btn btn-secondary" x-on:click="window.closeModal($el)">Cancel</button>
+          <button type="submit" class="btn btn-primary">Import</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

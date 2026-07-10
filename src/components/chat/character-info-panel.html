@@ -1,0 +1,31 @@
+<!-- Backdrop for character info panel -->
+<div
+  class="panel-backdrop"
+  x-show="$store.ui.showCharacterInfo"
+  @click="$store.ui.showCharacterInfo = false"
+  x-transition.opacity
+></div>
+<!-- Right panel (character info) -->
+<aside
+  class="right-panel"
+  x-show="$store.ui.showCharacterInfo"
+  x-transition
+  data-testid="character-info-panel"
+>
+  <button class="btn-icon" @click="$store.ui.showCharacterInfo = false" title="Close">&times;</button>
+  <div class="panel-content">
+    <div class="nav-section-title">Character Info</div>
+    <template x-if="currentCharacter">
+      <div>
+        <h3 class="name" x-text="currentCharacter.display_name || currentCharacter.name"></h3>
+        <p class="description" x-text="currentCharacter.description"></p>
+      </div>
+    </template>
+    <template x-if="!currentCharacter">
+      <div class="empty-state" style="padding: var(--space-4) 0">
+        <div class="icon">👤</div>
+        <div class="description">Character info will appear here when a chat is selected.</div>
+      </div>
+    </template>
+  </div>
+</aside>

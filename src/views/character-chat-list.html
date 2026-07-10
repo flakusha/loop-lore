@@ -1,4 +1,4 @@
-<!-- Character Chat List Page -->
+<!-- Character Chat List Page (skeleton — list loaded via htmx) -->
 <header
   id="header-slot"
   class="main-header"
@@ -8,7 +8,13 @@
   <button class="hamburger" x-on:click="window.toggleSidebar()" data-testid="hamburger">☰</button>
   <span class="title" id="page-title">Chats</span>
   <div class="actions">
-    <button class="btn btn-secondary" x-on:click="window.loadCharacterChatList()" data-testid="refresh-chats">
+    <button
+      class="btn btn-secondary"
+      hx-get="/dynamic/characters/{{characterSlug}}/chat-list"
+      hx-target="#character-chat-list"
+      hx-swap="innerHTML"
+      data-testid="refresh-chats"
+    >
       Refresh
     </button>
     <a
@@ -31,6 +37,9 @@
         class="chat-list"
         data-character-id="{{characterSlug}}"
         data-testid="character-chat-list"
+        hx-get="/dynamic/characters/{{characterSlug}}/chat-list"
+        hx-trigger="load"
+        hx-swap="innerHTML"
       >
         <div class="empty-state" style="padding: var(--space-12)">
           <div class="icon">⏳</div>
