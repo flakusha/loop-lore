@@ -1,0 +1,27 @@
+#!/bin/bash
+# Validate commit message format before commit is created
+# Install: git config core.hooksPath .githooks && chmod +x .githooks/prepare-commit-msg
+
+COMMIT_MSG_FILE="$1"
+COMMIT_SOURCE="$2"
+
+# Skip if commit message is empty or from template/merge/squash
+if [ -z "$COMMIT_SOURCE" ] || [ "$COMMIT_SOURCE" = "template" ] || [ "$COMMIT_SOURCE" = "merge" ] || [ "$COMMIT_SOURCE" = "squash" ]; then
+  exit 0
+fi
+
+# Check if commitlint is available and run validation
+if command -v bun &> /dev/null; then
+  if bun run src/scripts/commit-check.ts < "$COMMIT_MSG_FILE" 2>/dev/null; then
+    exit 0
+  else
+    echo "Invalid commit message format. Expected: type(scope): subject" >&2
+    echo "Types: feat, fix, refactor, chore, test, docs, style, perf, build, ci, revert" >&2
+    echo "Example: feat(core): add SSE streaming endpoint" >&2
+    echo "" >&2
+    echo "Fix your commit message or use --no-verify to skip." >&2
+    exit 1
+  fi
+fi
+
+exit 0
