@@ -74,7 +74,7 @@ export interface ChatState extends AlpineMagicThis {
   continuingMessageId: string | null;
   isContinuing: boolean;
   _generationEventSource: EventSource | null;
-  chats: Array<{ id: string; name?: string }>;
+  chats: Array<{ id: string; name?: string; isPinned?: number }>;
   activeChat: string | null;
   messages: Message[];
   loadingMessages: boolean;
@@ -93,13 +93,13 @@ export interface ChatState extends AlpineMagicThis {
 
   editingMessageId: string | null;
   editContent: string;
-  previewMediaAsset: any;
+  previewMediaAsset: GalleryAsset | null;
   pendingAssets: Array<{ assetId: string; filename: string }>;
 
   groupedMessages: GroupedMessage[];
   _observer: MutationObserver | null;
   _groupedKey: string;
-  _groupedCache: any;
+  _groupedCache: Array<Record<string, unknown>> | null;
   _toggleChatListHandler: () => void;
   _toggleGalleryHandler: () => void;
   _toggleCharacterInfoHandler: () => void;
@@ -155,6 +155,7 @@ export interface ChatState extends AlpineMagicThis {
   openRenameModal(chatId: string): void;
   confirmRenameChat(): Promise<void>;
   deleteChat(chatId: string, event: Event): Promise<void>;
+  toggleChatPin(chatId: string): Promise<void>;
   loadChatKey(chatId: string): Promise<void>;
   checkGenerationStatus(chatId: string): Promise<void>;
 }

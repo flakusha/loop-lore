@@ -86,6 +86,28 @@ export const chatManagement: Partial<ChatState> & ThisType<ChatState> = {
     this.openRenameModal(chatId);
   },
 
+  async toggleChatPin(chatId: string) {
+    const chats = this.chats;
+    const chat = chats.find((c) => c.id === chatId);
+    if (!chat) return;
+    const pinned = !(chat.isPinned as number);
+    try {
+      const res = await apiFetch(`/api/chats/${chatId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: jsonBody({ isPinned: pinned }),
+      });
+      if (res.ok) {
+        chat.isPinned = pinned ? 1 : 0;
+        this.chats = [...chats];
+      } else {
+        this.$dispatch?.("show-toast", { type: "error", message: "Failed to update pin state" });
+      }
+    } catch {
+      this.$dispatch?.("show-toast", { type: "error", message: "Network error updating pin state" });
+    }
+  },
+
   openChatSettings() {
     const chats = this.chats;
     const chat = chats.find((c) => c.id === this.activeChat);

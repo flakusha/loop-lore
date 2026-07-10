@@ -59,6 +59,47 @@ import { getLogger, type Logger } from "../logger";
 function log(): Logger {
   return getLogger().child({ module: "messages" });
 }
+
+/** True when at least one LLM provider is available for auto-generation. */
+function isLlmGenerationConfigured(config: Config): boolean {
+  return (
+    !!config.generation.defaultProvider ||
+    config.generation.providers.openaiCompatible.length > 0 ||
+    listProviders().length > 0
+  );
+}
+
+/**
+ * Verify the requesting actor may post to a chat. Owners and admins always
+ * pass; other actors must be a chat participant. Returns a Response to short-
+ * circuit (404 to avoid leaking chat existence) or `true` when allowed.
+ */
+async function assertChatAccess(
+  database: Kysely<DB>,
+  chatId: string,
+  actorId: string,
+  userRole: string | null | undefined,
+): Promise<true | Response> {
+  const chat = await database
+    .selectFrom("chats")
+    .select("created_by")
+    .where("id", "=", chatId)
+    .executeTakeFirst();
+  if (!chat) {
+    return jsonError({ message: "Chat not found", status: HttpStatus.NotFound, code: ErrorCode.NotFound });
+  }
+  if (chat.created_by === actorId || userRole === "admin") return true;
+  const participant = await database
+    .selectFrom("chat_participants")
+    .select("actor_id")
+    .where("chat_id", "=", chatId)
+    .where("actor_id", "=", actorId)
+    .executeTakeFirst();
+  if (!participant) {
+    return jsonError({ message: "Chat not found", status: HttpStatus.NotFound, code: ErrorCode.NotFound });
+  }
+  return true;
+}
 import { linkAsset } from "../assets/service";
 import { encodeContent } from "../content/encode";
 import { decodeContent } from "../content/decode";
@@ -375,6 +416,10 @@ async function handleCreateMessage({
 
   const filteredContent = filterProfanity(content);
 
+  // ── Chat membership / ownership check ────────────────────
+  const access = await assertChatAccess(database, chatId, actorId, context.userRole);
+  if (access instanceof Response) return access;
+
   // ── Encrypt or compress based on SMK availability ──────────
   let storedContent: string;
   let contentEncoding: string;
@@ -482,11 +527,13 @@ async function handleCreateMessage({
       .execute();
   }
 
-  // ── Auto-reply via LLM generation (fire-and-forget) ──────
-  void triggerAutoGeneration(database, config, chatId, id, actorId);
-
-  // ── Fallback: rule-based assistant (if LLM not available) ──
-  if (isAssistantEnabled(config)) {
+  // ── Auto-reply: pick exactly one reply path per user turn ──
+  // LLM generation (fire-and-forget) runs when a provider is configured; the
+  // local rule-based assistant is the offline fallback. Running both would post
+  // two assistant messages for a single user input.
+  if (isLlmGenerationConfigured(config)) {
+    void triggerAutoGeneration(database, config, chatId, id, actorId);
+  } else if (isAssistantEnabled(config)) {
     const assistantResponse = generateResponse({ userInput: filteredContent });
     if (assistantResponse) {
       const assistantId = uid();
@@ -558,11 +605,7 @@ async function triggerAutoGeneration(
   userId: string,
 ): Promise<void> {
   // No LLM provider configured — skip
-  if (
-    !config.generation.defaultProvider &&
-    config.generation.providers.openaiCompatible.length === 0 &&
-    listProviders().length === 0
-  ) {
+  if (!isLlmGenerationConfigured(config)) {
     return;
   }
 
@@ -699,6 +742,27 @@ async function triggerAutoGeneration(
           .executeTakeFirst()
       : undefined;
     const swipeIndex = parentMessageId ? (maxSwipe?.max_idx ?? 0) + 1 : null;
+
+    // Encrypt the assistant reply with the same scheme as user messages so
+    // at-rest encryption stays consistent across the conversation.
+    let storedContent: string = accumulatedContent;
+    let storedKeyId: string | null = null;
+    const contentEncoding = ContentEncoding.Identity;
+    if (isEncryptionEnabled()) {
+      const smk = getSmk()!;
+      const chatKey = await deriveChatKeyForChat(database, chatId, smk);
+      storedContent = await compressThenEncrypt({
+        plaintext: accumulatedContent,
+        chatKey: chatKey.key,
+        keyId: chatKey.keyId,
+        config: {
+          threshold: config.encryption.compressThreshold,
+          algorithm: config.encryption.compressAlgorithm,
+        },
+      });
+      storedKeyId = chatKey.keyId;
+    }
+
     await database
       .insertInto("messages")
       .values({
@@ -707,10 +771,11 @@ async function triggerAutoGeneration(
         actor_id: character.id,
         parent_id: parentMessageId,
         role: MessageRole.Assistant,
-        content: accumulatedContent,
+        content: storedContent,
+        key_id: storedKeyId,
         content_type: MessageContentType.Text,
         content_format: MessageContentFormat.Markdown,
-        content_encoding: ContentEncoding.Identity,
+        content_encoding: contentEncoding,
         model_id: resolved.resolvedModel,
         provider: resolved.resolvedProviderName,
         token_count_prompt: tokenUsage.promptTokens,
@@ -791,10 +856,16 @@ function renderStreamMessage(
   const safeContent = sanitizeHtml(rendered);
   const streamingAttr = opts?.isFinal ? "" : ' data-streaming="true"';
   const msgId = opts?.messageId ?? attemptId;
+
   const thinkingBlock = opts?.thinking
     ? `<details class="thinking-block"><summary>Thinking process</summary><div class="thinking-content">${marked.parse(opts.thinking, { breaks: true, gfm: true }) as string}</div></details>`
     : "";
-  return `<div class="message assistant" data-message-id="${msgId}"${streamingAttr}><div class="bubble"><div class="meta"><span class="name">${safeName}</span><span class="time">just now</span></div>${thinkingBlock}<div class="content">${safeContent}</div>${opts?.isFinal ? `<div class="actions"><button class="btn-icon action-regenerate" title="Regenerate">♻</button></div>` : ""}</div></div>`;
+
+  const actionsHtml = opts?.isFinal
+    ? `<div class="actions"><button class="btn-icon action-regenerate" title="Regenerate">♻</button></div>`
+    : "";
+
+  return `<div class="message assistant" data-message-id="${msgId}"${streamingAttr}><div class="bubble"><div class="meta"><span class="name">${safeName}</span><span class="time">just now</span></div>${thinkingBlock}<div class="content">${safeContent}</div>${actionsHtml}</div></div>`;
 }
 
 function escapeHtml(str: string): string {
