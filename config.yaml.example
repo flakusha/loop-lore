@@ -163,3 +163,43 @@ generation:
 byoKey:
   enabled: true
   # encryptionKey: "optional-override-for-auth.sessionSecret"
+
+# ── Encryption (at-rest message encryption) ──
+encryption:
+  required: false
+  compressThreshold: 128
+  # compressAlgorithm: gzip            # gzip | brotli | zstd
+
+# ── Response Headers (FExBE: security / isolation / perf / observability) ──
+# Centralized, route-aware header injection. Applied to every response.
+headers:
+  enabled: true
+  referrerPolicy: "strict-origin-when-cross-origin"
+  xContentTypeOptions: true
+  xFrameOptions: DENY                  # DENY | SAMEORIGIN | null
+  permissionsPolicy: "accelerometer=(), camera=(), display-capture=(), geolocation=(), gyroscope=(), microphone=(), usb=()"
+  csp:
+    enabled: true
+    defaultSrc: ["'self'"]
+    scriptSrc: ["'self'", "https://unpkg.com", "https://cdn.jsdelivr.net"]   # inline handlers migrated to Alpine x-on
+    styleSrc: ["'self'", "'unsafe-inline'"]                                  # inline style= attrs need unsafe-inline
+    imgSrc: ["'self'", "data:", "blob:"]
+    fontSrc: ["'self'"]
+    connectSrc: ["'self'", "wss:", "https:"]
+    objectSrc: ["'none'"]
+    baseUri: ["'self'"]
+    frameAncestors: ["'none'"]
+    upgradeInsecureRequests: true
+    # reportOnly: false                # true = emit Content-Security-Policy-Report-Only (observe, don't enforce)
+  # crossOriginOpenerPolicy: null      # same-origin | same-origin-allow-popups | null
+  # crossOriginEmbedderPolicy: null    # require-corp | null  (keep null until wasm/SAB ready)
+  crossOriginResourcePolicy: cross-origin   # same-origin | cross-origin
+  immutableHashedAssets: true
+  linkPreload: ["/app.js", "/alpine.js", "/css/app.css"]
+  # acceptClientHints: ["Device-Memory", "RTT"]   # needs HTTPS; opt-in client hints
+  # saveData: false
+  earlyHints:
+    enabled: false                     # 103 Early Hints — needs transport support (spike)
+  # reportingEndpoints:
+  #   default: "https://example.com/report"
+  # nel: '{ "report_to": "default", "max_age": 31536000 }'
