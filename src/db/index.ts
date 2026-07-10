@@ -78,4 +78,6 @@ export function getDatabase(_databasePath?: string): Kysely<DB> {
   return testDatabaseOverride ?? database;
 }
 
+export type Db = Kysely<DB>;
+
 export { type DB } from "./schema";

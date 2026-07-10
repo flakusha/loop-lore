@@ -320,7 +320,7 @@ async function handleListMessages({
     }
     for (const [pid, items] of groups) {
       variantCounts.set(pid, items.length);
-      items.forEach((item, idx) => variantIndexes.set(item.id, idx));
+      for (const [idx, item] of items.entries()) variantIndexes.set(item.id, idx);
     }
   }
 
@@ -778,18 +778,18 @@ function renderStreamMessage(
 
 function escapeHtml(str: string): string {
   return str
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#039;");
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
 }
 
 function sanitizeHtml(html: string): string {
   return html
-    .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, "")
-    .replace(/\bon\w+="[^"]*"/gi, "")
-    .replace(/\bon\w+='[^']*'/gi, "");
+    .replaceAll(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, "")
+    .replaceAll(/\bon\w+="[^"]*"/gi, "")
+    .replaceAll(/\bon\w+='[^']*'/gi, "");
 }
 
 async function handleGetMessage({ database, messageId, context, config }: GetMessageOpts): Promise<Response> {
