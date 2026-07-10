@@ -32,7 +32,24 @@ export class LoggerImpl implements Logger {
     this.threshold = levelFromConfig(this.levelString);
     this.censorEnabled = config?.censorEnabled ?? true;
     this.censorFields = config?.censorFields ?? [];
-    this.limits = config?.limits ?? {};
+
+    // Normalize: config schema (LoggingConfig) passes size limits flattened at top level.
+    // LoggerConfig nests them under `limits`. Support both.
+    const limitsFromNested = config?.limits ?? {};
+    const limitsFromFlat: Partial<SizeLimits> = {};
+    if (config) {
+      const c = config as {
+        maxMessageBytes?: number;
+        maxMetaBytes?: number;
+        maxMetaDepth?: number;
+        maxStackBytes?: number;
+      };
+      if (c.maxMessageBytes != null) limitsFromFlat.maxMessageBytes = c.maxMessageBytes;
+      if (c.maxMetaBytes != null) limitsFromFlat.maxMetaBytes = c.maxMetaBytes;
+      if (c.maxMetaDepth != null) limitsFromFlat.maxMetaDepth = c.maxMetaDepth;
+      if (c.maxStackBytes != null) limitsFromFlat.maxStackBytes = c.maxStackBytes;
+    }
+    this.limits = { ...limitsFromNested, ...limitsFromFlat };
 
     this.transports = [new ConsoleTransport()];
     // Future: JSONLTransport, DBTransport added here when config provided
