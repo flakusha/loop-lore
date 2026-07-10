@@ -144,9 +144,9 @@ describe("acceptAgeGate", () => {
     const database = await createTestDatabase();
     const config = gateConfig();
 
-    await expect(acceptAgeGate({ database, config, userId: "test-user-1", input: { birthDate: "2020-01-01" } })).rejects.toThrow(
-      UnderageError,
-    );
+    await expect(
+      acceptAgeGate({ database, config, userId: "test-user-1", input: { birthDate: "2020-01-01" } }),
+    ).rejects.toThrow(UnderageError);
 
     // Verify no update was written
     const user = await database

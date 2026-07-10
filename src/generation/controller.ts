@@ -55,7 +55,13 @@ export interface DispatchOpts {
   config?: Config;
 }
 
-export async function dispatch({ request, database, userId: _userId, userRole: _userRole, config }: DispatchOpts): Promise<Response | null> {
+export async function dispatch({
+  request,
+  database,
+  userId: _userId,
+  userRole: _userRole,
+  config,
+}: DispatchOpts): Promise<Response | null> {
   const url = new URL(request.url);
   const { pathname } = url;
 

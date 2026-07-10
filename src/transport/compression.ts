@@ -97,9 +97,7 @@ export interface WithCompressionOpts {
  * @param opts.algorithm - Compression algorithm to apply
  * @param opts.options - Tuning options (level, threshold)
  */
-export function withCompression(
-  { handler, algorithm, options = {} }: WithCompressionOpts,
-): ProtocolHandler {
+export function withCompression({ handler, algorithm, options = {} }: WithCompressionOpts): ProtocolHandler {
   return {
     async connect(): Promise<Connection> {
       const connection = await handler.connect();

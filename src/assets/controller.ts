@@ -123,12 +123,21 @@ const dispatch: RouteDispatch = async ({ request, context, database, config }) =
       }
       if (method === "POST" && !linkId) {
         const body = await request.json();
-        await linkAsset({ database, assetId, link: body as { entityType: string; entityId: string; label?: string } });
+        await linkAsset({
+          database,
+          assetId,
+          link: body as { entityType: string; entityId: string; label?: string },
+        });
         return jsonCreated({ id: assetId });
       }
       if (method === "DELETE" && linkId) {
         const body = (await request.json()) as { entityType?: string; entityId?: string };
-        await unlinkAsset({ database, assetId, entityType: body.entityType ?? "", entityId: body.entityId ?? "" });
+        await unlinkAsset({
+          database,
+          assetId,
+          entityType: body.entityType ?? "",
+          entityId: body.entityId ?? "",
+        });
         return jsonNoContent();
       }
       return jsonError({ message: "Method not allowed for links", status: HttpStatus.BadRequest });

@@ -43,7 +43,12 @@ export interface CompressMessagesOpts {
   summarizeFn?: SummarizeFn;
 }
 
-export function compressMessages({ messages, config = DEFAULT_CONTEXT_WINDOW, tokenCountFn = defaultTokenCount, summarizeFn: _summarizeFn }: CompressMessagesOpts): CompressionResult {
+export function compressMessages({
+  messages,
+  config = DEFAULT_CONTEXT_WINDOW,
+  tokenCountFn = defaultTokenCount,
+  summarizeFn: _summarizeFn,
+}: CompressMessagesOpts): CompressionResult {
   const originalTokens = calculateTotalTokens(messages, tokenCountFn);
   const originalCount = messages.length;
 

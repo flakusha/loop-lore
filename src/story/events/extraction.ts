@@ -68,7 +68,11 @@ export interface ExtractEventsOpts {
  * For v1, uses regex pattern matching and keyword analysis.
  * Future: delegate to a lightweight LLM for structured extraction.
  */
-export function extractEvents({ messageContent, actorId, currentLocationId }: ExtractEventsOpts): WorldEvent[] {
+export function extractEvents({
+  messageContent,
+  actorId,
+  currentLocationId,
+}: ExtractEventsOpts): WorldEvent[] {
   // Reset module-scoped regex lastIndex to avoid state bleed across calls
   for (const p of locationPatterns) p.lastIndex = 0;
   for (const p of timePatterns) p.lastIndex = 0;
