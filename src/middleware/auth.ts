@@ -32,7 +32,11 @@ export interface AuthenticateOpts {
  * authConfig.required === false. If auth is required and no valid
  * token is provided, return 401.
  */
-export async function authenticate({ request, database, authConfig }: AuthenticateOpts): Promise<Response | { context: RequestContext }> {
+export async function authenticate({
+  request,
+  database,
+  authConfig,
+}: AuthenticateOpts): Promise<Response | { context: RequestContext }> {
   // ── Extract token: Bearer header > cookie fallback ───────
   let rawToken: string | null = null;
 

@@ -401,7 +401,11 @@ export class GameMasterService {
       context: context ?? undefined,
     });
 
-    const worldEvents = extractEvents({ messageContent: response, actorId: turn.actor_id, currentLocationId: context?.world.currentLocation.id ?? null });
+    const worldEvents = extractEvents({
+      messageContent: response,
+      actorId: turn.actor_id,
+      currentLocationId: context?.world.currentLocation.id ?? null,
+    });
 
     if (context) {
       const validated = await validateEvents({ db: this.db, worldId: context.world.id, events: worldEvents });

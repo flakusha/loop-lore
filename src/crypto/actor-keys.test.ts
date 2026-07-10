@@ -85,7 +85,12 @@ describe("ensureActorKey", () => {
   test("returns existing active key ID when one exists", async () => {
     const smk = getSmkKeySafe();
     // First, make sure there's an active key
-    const existingId = await generateActorKey({ database: db, actorId: "actor-ensure", smk, name: "primary" });
+    const existingId = await generateActorKey({
+      database: db,
+      actorId: "actor-ensure",
+      smk,
+      name: "primary",
+    });
     const ensuredId = await ensureActorKey({ database: db, actorId: "actor-ensure", smk });
     expect(ensuredId).toBe(existingId);
   });

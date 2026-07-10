@@ -127,13 +127,16 @@ export async function handleRetryGeneration(body: unknown, database?: Kysely<DB>
     return jsonError({ message: "chatId is required", status: 400 });
   }
 
-const wasActive = cancelGenerationByChat({
-      db,
-      chatId: input.chatId,
-      reason: CancelReason.UserCancel,
-      source: CancelSource.User,
-      detail: input.step === undefined ? "User requested regeneration" : `User requested retry from step ${input.step}`,
-    });
+  const wasActive = cancelGenerationByChat({
+    db,
+    chatId: input.chatId,
+    reason: CancelReason.UserCancel,
+    source: CancelSource.User,
+    detail:
+      input.step === undefined
+        ? "User requested regeneration"
+        : `User requested retry from step ${input.step}`,
+  });
 
   let resumeFromStep = 0;
   let totalSteps = 1;
@@ -266,13 +269,13 @@ export function handleRegenerate(body: unknown, database?: Kysely<DB>): Response
     return jsonError({ message: "chatId is required", status: 400 });
   }
 
-const wasActive = cancelGenerationByChat({
-      db,
-      chatId,
-      reason: CancelReason.UserCancel,
-      source: CancelSource.User,
-      detail: "User requested regeneration (replacing existing response)",
-    });
+  const wasActive = cancelGenerationByChat({
+    db,
+    chatId,
+    reason: CancelReason.UserCancel,
+    source: CancelSource.User,
+    detail: "User requested regeneration (replacing existing response)",
+  });
 
   return jsonResponse({
     ok: true,

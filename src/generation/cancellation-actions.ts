@@ -68,19 +68,30 @@ export interface CancelGenerationByChatOpts {
   detail?: string;
 }
 
-export function cancelGenerationByChat({ db, chatId, reason = CancelReason.UserCancel, source = CancelSource.User, detail = "" }: CancelGenerationByChatOpts): boolean {
+export function cancelGenerationByChat({
+  db,
+  chatId,
+  reason = CancelReason.UserCancel,
+  source = CancelSource.User,
+  detail = "",
+}: CancelGenerationByChatOpts): boolean {
   const attemptId = chatToAttempt.get(chatId);
   if (!attemptId) return false;
 
   const wasCancelled = cancelGeneration({ attemptId, reason, source, detail });
 
   if (wasCancelled) {
-    void updateAttemptStatus({ db, attemptId, status: GenerationStatus.Cancelled, extra: {
-      cancel_reason: reason,
-      cancel_reason_detail: detail,
-      cancel_source: source,
-      completed_at: new Date().toISOString(),
-    } }).catch((error: unknown) => {
+    void updateAttemptStatus({
+      db,
+      attemptId,
+      status: GenerationStatus.Cancelled,
+      extra: {
+        cancel_reason: reason,
+        cancel_reason_detail: detail,
+        cancel_source: source,
+        completed_at: new Date().toISOString(),
+      },
+    }).catch((error: unknown) => {
       getLogger()
         .child({ module: "generation" })
         .error("Failed to update attempt status", error instanceof Error ? error : undefined);
@@ -133,7 +144,11 @@ export interface ProcessStreamingChunkOpts {
   db: Kysely<DB>;
 }
 
-export async function processStreamingChunk({ attemptId, chunk, db }: ProcessStreamingChunkOpts): Promise<ChunkAction> {
+export async function processStreamingChunk({
+  attemptId,
+  chunk,
+  db,
+}: ProcessStreamingChunkOpts): Promise<ChunkAction> {
   const genLog = getLogger().child({ module: "generation" });
   const active = activeGenerations.get(attemptId);
   if (!active) return ChunkAction.Complete;
@@ -148,10 +163,15 @@ export async function processStreamingChunk({ attemptId, chunk, db }: ProcessStr
   // Mark as streaming on first chunk
   if (active.status === GenerationStatus.Processing) {
     active.status = GenerationStatus.Streaming;
-    void updateAttemptStatus({ db, attemptId, status: GenerationStatus.Streaming, extra: {
-      streaming_chunks_received: 0,
-      streaming_chars_received: 0,
-    } }).catch((error: unknown) => {
+    void updateAttemptStatus({
+      db,
+      attemptId,
+      status: GenerationStatus.Streaming,
+      extra: {
+        streaming_chunks_received: 0,
+        streaming_chars_received: 0,
+      },
+    }).catch((error: unknown) => {
       genLog.error("Failed to update streaming start status", error instanceof Error ? error : undefined);
     });
     active.events?.onStreamingStart?.(attemptId);
@@ -162,17 +182,22 @@ export async function processStreamingChunk({ attemptId, chunk, db }: ProcessStr
   // ── Criterion 2: Repetition detection ──
   const repAnalysis = active.repetitionDetector.addChunk(chunk);
   if (repAnalysis) {
-    void updateAttemptStatus({ db, attemptId, status: active.status, extra: {
-      repetition_score: repAnalysis.score,
-      repetition_analysis: (() => {
-        const r = safeJsonStringify(repAnalysis);
-        if (!r.ok) {
-          genLog.error("repetition analysis serialization failed", r.error);
-          return null;
-        }
-        return r.value;
-      })(),
-    } }).catch((error: unknown) => {
+    void updateAttemptStatus({
+      db,
+      attemptId,
+      status: active.status,
+      extra: {
+        repetition_score: repAnalysis.score,
+        repetition_analysis: (() => {
+          const r = safeJsonStringify(repAnalysis);
+          if (!r.ok) {
+            genLog.error("repetition analysis serialization failed", r.error);
+            return null;
+          }
+          return r.value;
+        })(),
+      },
+    }).catch((error: unknown) => {
       genLog.error("Failed to update repetition analysis", error instanceof Error ? error : undefined);
     });
 
@@ -189,18 +214,28 @@ export async function processStreamingChunk({ attemptId, chunk, db }: ProcessStr
         `patterns=${repAnalysis.patterns.length}, ` +
         `theatre=${String(theatreCheck.detected)}`;
 
-      cancelGeneration({ attemptId, reason: CancelReason.RepetitionDetected, source: CancelSource.AutoRepetition, detail });
-      void updateAttemptStatus({ db, attemptId, status: GenerationStatus.Cancelled, extra: {
-        cancel_reason: CancelReason.RepetitionDetected,
-        cancel_reason_detail: detail,
-        cancel_source: CancelSource.AutoRepetition,
-        repetition_score: effectiveScore,
-        repetition_analysis: (() => {
-          const r = safeJsonStringify(repAnalysis);
-          return r.ok ? r.value : null;
-        })(),
-        completed_at: new Date().toISOString(),
-} }).catch((error: unknown) => {
+      cancelGeneration({
+        attemptId,
+        reason: CancelReason.RepetitionDetected,
+        source: CancelSource.AutoRepetition,
+        detail,
+      });
+      void updateAttemptStatus({
+        db,
+        attemptId,
+        status: GenerationStatus.Cancelled,
+        extra: {
+          cancel_reason: CancelReason.RepetitionDetected,
+          cancel_reason_detail: detail,
+          cancel_source: CancelSource.AutoRepetition,
+          repetition_score: effectiveScore,
+          repetition_analysis: (() => {
+            const r = safeJsonStringify(repAnalysis);
+            return r.ok ? r.value : null;
+          })(),
+          completed_at: new Date().toISOString(),
+        },
+      }).catch((error: unknown) => {
         genLog.error("Failed to update repetition-cancel status", error instanceof Error ? error : undefined);
       });
       return ChunkAction.CancelRepetition;
@@ -231,21 +266,31 @@ export async function processStreamingChunk({ attemptId, chunk, db }: ProcessStr
           `confidence=${policyAnalysis.confidence.toFixed(2)}, ` +
           `indicators=${policyAnalysis.indicators.length}`;
 
-        cancelGeneration({ attemptId, reason: CancelReason.PolicyMismatch, source: CancelSource.AutoPolicy, detail });
-        void updateAttemptStatus({ db, attemptId, status: GenerationStatus.Cancelled, extra: {
-          cancel_reason: CancelReason.PolicyMismatch,
-          cancel_reason_detail: detail,
-          cancel_source: CancelSource.AutoPolicy,
-          policy_analysis: (() => {
-            const r = safeJsonStringify(policyAnalysis);
-            if (!r.ok) {
-              genLog.error("policy analysis serialization failed", r.error);
-              return null;
-            }
-            return r.value;
-          })(),
-          completed_at: new Date().toISOString(),
-        } }).catch((error: unknown) => {
+        cancelGeneration({
+          attemptId,
+          reason: CancelReason.PolicyMismatch,
+          source: CancelSource.AutoPolicy,
+          detail,
+        });
+        void updateAttemptStatus({
+          db,
+          attemptId,
+          status: GenerationStatus.Cancelled,
+          extra: {
+            cancel_reason: CancelReason.PolicyMismatch,
+            cancel_reason_detail: detail,
+            cancel_source: CancelSource.AutoPolicy,
+            policy_analysis: (() => {
+              const r = safeJsonStringify(policyAnalysis);
+              if (!r.ok) {
+                genLog.error("policy analysis serialization failed", r.error);
+                return null;
+              }
+              return r.value;
+            })(),
+            completed_at: new Date().toISOString(),
+          },
+        }).catch((error: unknown) => {
           genLog.error("Failed to update policy-cancel status", error instanceof Error ? error : undefined);
         });
 
