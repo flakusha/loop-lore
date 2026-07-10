@@ -1,9 +1,9 @@
 <!-- Gallery View -->
 <header id="header-slot" class="main-header" data-page="gallery" data-testid="gallery-header">
-  <button class="hamburger" onclick="toggleSidebar()" data-testid="hamburger">☰</button>
+  <button class="hamburger" x-on:click="window.toggleSidebar()" data-testid="hamburger">☰</button>
   <span class="title">Asset Gallery</span>
   <div class="actions">
-    <button class="btn btn-primary" onclick="openModal('upload-modal')" data-testid="upload-button">
+    <button class="btn btn-primary" x-on:click="window.openModal('upload-modal')" data-testid="upload-button">
       + Upload
     </button>
   </div>
@@ -11,6 +11,36 @@
 
 <div class="app-layout">
   <main class="main-content" style="padding-top: 0">
+    <div class="list-toolbar">
+      <input
+        id="asset-search"
+        class="form-input list-search"
+        type="search"
+        placeholder="Search assets…"
+        aria-label="Search assets"
+        oninput="filterAssets()"
+        data-testid="asset-search"
+      />
+      <select
+        id="asset-type-filter"
+        class="form-select list-sort"
+        aria-label="Filter asset type"
+        onchange="filterAssets()"
+      >
+        <option value="all">All types</option>
+        <option value="image">Images</option>
+        <option value="audio">Audio</option>
+        <option value="video">Video</option>
+      </select>
+      <select
+        id="asset-sort"
+        class="form-select list-sort"
+        aria-label="Sort assets"
+        onchange="filterAssets()"
+      >
+        <option value="name">Sort: Name</option>
+      </select>
+    </div>
     <div class="asset-grid" id="asset-grid" data-testid="asset-grid">
       <div class="empty-state" style="grid-column: 1 / -1" data-testid="gallery-loading">
         <div class="icon">⏳</div>
@@ -22,13 +52,13 @@
     <div
       id="preview-modal"
       class="modal-overlay"
-      onclick="closeModalOnBackdrop(event)"
+      x-on:click="window.closeModalOnBackdrop($event)"
       data-testid="preview-modal"
     >
       <div class="modal" style="max-width: 800px">
         <div class="modal-header">
           <span class="title" data-field="filename"></span>
-          <button class="btn-icon" onclick="closeModal(this)">&times;</button>
+          <button class="btn-icon" x-on:click="window.closeModal($el)">&times;</button>
         </div>
         <div class="modal-body" style="padding: 0" data-field="preview-body"></div>
         <div class="modal-footer" style="justify-content: space-between">
@@ -37,9 +67,13 @@
             <span class="tag" data-field="size"></span>
           </div>
           <div style="display: flex; gap: var(--space-2)">
-            <button class="btn btn-ghost" onclick="copyAssetUrl()" title="Copy URL">📋 Copy URL</button>
-            <button class="btn btn-ghost" onclick="downloadAsset()" title="Download">⬇ Download</button>
-            <button class="btn btn-danger" onclick="deleteAssetPreview()">🗑 Delete</button>
+            <button class="btn btn-ghost" x-on:click="window.copyAssetUrl()" title="Copy URL">
+              📋 Copy URL
+            </button>
+            <button class="btn btn-ghost" x-on:click="window.downloadAsset()" title="Download">
+              ⬇ Download
+            </button>
+            <button class="btn btn-danger" x-on:click="window.deleteAssetPreview()">🗑 Delete</button>
           </div>
         </div>
       </div>
@@ -49,13 +83,13 @@
     <div
       id="upload-modal"
       class="modal-overlay"
-      onclick="closeModalOnBackdrop(event)"
+      x-on:click="window.closeModalOnBackdrop($event)"
       data-testid="upload-modal"
     >
       <div class="modal">
         <div class="modal-header">
           <span class="title">Upload Asset</span>
-          <button class="btn-icon" onclick="closeModal(this)">&times;</button>
+          <button class="btn-icon" x-on:click="window.closeModal($el)">&times;</button>
         </div>
         <div class="modal-body">
           <form
@@ -90,7 +124,9 @@
               />
             </div>
             <div style="display: flex; gap: var(--space-3); justify-content: flex-end">
-              <button type="button" class="btn btn-secondary" onclick="closeModal(this)">Cancel</button>
+              <button type="button" class="btn btn-secondary" x-on:click="window.closeModal($el)">
+                Cancel
+              </button>
               <button type="submit" class="btn btn-primary">Upload</button>
             </div>
           </form>
