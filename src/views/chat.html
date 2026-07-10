@@ -1,7 +1,7 @@
 <!-- Chat View (swapped into #app-root by htmx) -->
 <!-- Header: moved to #header-slot by htmx:load handler -->
 <header id="header-slot" class="main-header" data-testid="chat-header">
-  <button class="hamburger" onclick="toggleSidebar()" data-testid="hamburger">☰</button>
+  <button class="hamburger" x-on:click="window.toggleSidebar()" data-testid="hamburger">☰</button>
   <span class="title" id="page-title">Welcome to loop-lore</span>
   <div class="actions">
     <button
@@ -42,11 +42,7 @@
   </div>
 </header>
 
-<div
-  class="app-layout"
-  x-data="chatState()"
-  @htmx:before-swap.window="if($data && typeof $data.destroy==='function') $data.destroy()"
->
+<div class="app-layout" x-data="chatState()">
   <main class="main-content" style="padding-top: 0">
     <!-- Backdrop for chat list panel -->
     <div
@@ -76,8 +72,15 @@
               <span class="name" x-text="chat.name"></span>
             </a>
             <span class="nav-item-actions">
+              <button
+                class="btn-icon btn-xs"
+                :title="chat.isPinned ? 'Unpin' : 'Pin'"
+                @click.prevent="toggleChatPin(chat.id)"
+                :style="chat.isPinned ? 'color:var(--accent-yellow)' : ''"
+                x-text="chat.isPinned ? '★' : '☆'"
+              ></button>
               <button class="btn-icon btn-xs" title="Rename" @click.prevent="renameChat(chat.id)">✏️</button>
-              <button class="btn-icon btn-xs" title="Delete" @click.prevent="deleteChat(chat.id, $event)">
+              <button class="btn-icon btn-xs" title="Delete" @click.prevent="deleteChat(chat.id, $$event)">
                 🗑
               </button>
             </span>
@@ -231,7 +234,7 @@
                     </button>
                   </template>
                 </template>
-                <button class="btn-icon action-remove" title="Remove" @click="removeMessage(msg.id, $event)">
+                <button class="btn-icon action-remove" title="Remove" @click="removeMessage(msg.id, $$event)">
                   🗑
                 </button>
               </div>
@@ -407,7 +410,7 @@
               accept="image/*,audio/*,video/*"
               multiple
               style="display: none"
-              @change="handleAttach($event)"
+              @change="handleAttach($$event)"
               data-testid="attach-input"
             />
           </label>
