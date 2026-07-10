@@ -63,6 +63,7 @@ export interface Chats {
   turn_strategy: TurnStrategy | null;
   max_turns: number | null;
   auto_advance: number | null;
+  is_pinned: Generated<number>;
   created_at: Generated<string>;
   updated_at: Generated<string>;
 }
