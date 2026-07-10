@@ -25,6 +25,11 @@ export {
 export type { ActorKeyData, ActorKeyMeta } from "./actor-keys";
 export { deriveChatKey, deriveChatKeyForChat, getChatParticipantActorIds } from "./chat-keys";
 export type { ChatKey } from "./chat-keys";
-export { compressThenEncrypt, decryptThenDecompress } from "./pipeline";
+export {
+  compressThenEncrypt,
+  decryptThenDecompress,
+  isEncryptedPayload,
+  extractKeyIdFromPayload,
+} from "./pipeline";
 export type { EncryptedPayload, PipelineConfig } from "./pipeline";
 export { encryptValue, decryptValue } from "./byok";

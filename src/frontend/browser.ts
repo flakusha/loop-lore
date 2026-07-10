@@ -236,3 +236,73 @@ export async function browserExportKey(key: CryptoKey): Promise<string> {
 export function browserGenerateKey(): Promise<CryptoKey> {
   return crypto.subtle.generateKey({ name: "AES-GCM", length: 256 }, false, ["encrypt", "decrypt"]);
 }
+
+// ── Compress-then-encrypt pipeline ─────────────────────────
+
+export interface BrowserEncryptedPayload {
+  enc: string;
+  nonce: string;
+  algo: "aes-256-gcm";
+  comp: boolean;
+  compAlgo?: string;
+  key_id: string;
+}
+
+/**
+ * Write pipeline: plaintext → compress → encrypt → EncryptedPayload JSON.
+ * Matches server-side crypto/pipeline.ts shape.
+ */
+export async function browserCompressThenEncrypt(
+  plaintext: string,
+  key: CryptoKey,
+  keyId: string,
+  threshold = 128,
+): Promise<string> {
+  let compressed = "";
+  let compAlgo: string | undefined;
+  let didCompress = false;
+
+  if (plaintext.length >= threshold) {
+    const uint8 = stringToUint8Array(plaintext);
+    const algos = ["gzip", "brotli", "zstd"] as const;
+    for (const algo of algos) {
+      let result: Uint8Array | null = null;
+      if (algo === "gzip") result = await tryGzipCompress(uint8);
+      else if (algo === "brotli") result = await tryBrotliCompress(uint8);
+      if (result && result.length < uint8.length) {
+        compressed = uint8ArrayToBase64(result);
+        compAlgo = algo;
+        didCompress = true;
+        break;
+      }
+    }
+  }
+
+  const dataToEncrypt = didCompress ? compressed : plaintext;
+  const { ciphertext, nonce } = await browserEncryptContent(dataToEncrypt, key);
+
+  const payload: BrowserEncryptedPayload = {
+    enc: ciphertext,
+    nonce,
+    algo: "aes-256-gcm",
+    comp: didCompress,
+    compAlgo: didCompress ? compAlgo : undefined,
+    key_id: keyId,
+  };
+
+  return JSON.stringify(payload);
+}
+
+/**
+ * Read pipeline: EncryptedPayload JSON → decrypt → decompress → plaintext.
+ * Matches server-side crypto/pipeline.ts decryptThenDecompress.
+ */
+export async function browserDecryptThenDecompress(stored: string, key: CryptoKey): Promise<string> {
+  const payload: BrowserEncryptedPayload = JSON.parse(stored);
+  if (!payload.enc || !payload.nonce || !payload.algo) {
+    throw new Error("Malformed encrypted payload");
+  }
+  const plaintext = await browserDecryptContent(payload.enc, payload.nonce, key);
+  if (!payload.comp) return plaintext;
+  return browserDecodeContent(plaintext, (payload.compAlgo ?? "gzip") as BrowserContentEncoding);
+}

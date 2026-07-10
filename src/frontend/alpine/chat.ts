@@ -6,6 +6,9 @@ import { chatManagement } from "./chat-management";
 import { chatEditing } from "./chat-editing";
 import { chatUtils } from "./chat-utils";
 import type { AlpineState, ChatState } from "./types";
+import { browserImportKey } from "../browser";
+import { log as rootLog } from "./logger";
+const log = rootLog.child({ module: "chat-state" });
 
 // Configure marked for GFM (tables, strikethrough, task-lists) + line breaks
 // Imported in chat-utils.ts but must run once
@@ -17,10 +20,10 @@ globalThis.chatState = function () {
     // ── Core state ──
     isGenerating: false,
     generationLabel: "Character is responding...",
-    generationCheckInterval: null as ReturnType<typeof setInterval> | null,
     activeAttemptId: null as string | null,
     continuingMessageId: null as string | null,
     isContinuing: false,
+    _generationEventSource: null as EventSource | null,
     chats: [] as Array<{ id: string; name?: string }>,
     activeChat: null as string | null,
     messages: [] as Array<{
@@ -88,6 +91,11 @@ globalThis.chatState = function () {
     _toggleGalleryHandler: (() => {}) as () => void,
     _toggleCharacterInfoHandler: (() => {}) as () => void,
 
+    // ── Encryption state ──
+    _chatKey: null as CryptoKey | null,
+    _encryptionEnabled: false as boolean,
+    _keyId: null as string | null,
+
     // ── Core methods ──
     async init() {
       await this.loadChats();
@@ -111,13 +119,6 @@ globalThis.chatState = function () {
       document.addEventListener("toggle-chat-list", this._toggleChatListHandler);
       document.addEventListener("toggle-gallery", this._toggleGalleryHandler);
       document.addEventListener("toggle-character-info", this._toggleCharacterInfoHandler);
-
-      this.generationCheckInterval = setInterval(() => {
-        if (!this.isGenerating) return;
-        if (this.activeChat) {
-          this.checkGenerationStatus(this.activeChat);
-        }
-      }, 2000);
 
       this._observer = new MutationObserver(() => {
         if (!document.contains(this.$el)) {
@@ -151,9 +152,8 @@ globalThis.chatState = function () {
       document.removeEventListener("toggle-gallery", this._toggleGalleryHandler);
       document.removeEventListener("toggle-character-info", this._toggleCharacterInfoHandler);
 
-      if (this.generationCheckInterval) {
-        clearInterval(this.generationCheckInterval);
-      }
+      this._cleanupSSE?.();
+
       if (this.scrollObserver) {
         this.scrollObserver.disconnect();
         this.scrollObserver = null;
@@ -218,6 +218,34 @@ globalThis.chatState = function () {
       this.hasMoreMessages = true;
       this.loadingOlder = false;
       await Promise.all([this.loadMessages(), this.loadGalleryAssets(), this.loadCharacterInfo()]);
+      await this.loadChatKey(chatId);
+    },
+
+    async loadChatKey(chatId: string) {
+      try {
+        const res = await apiFetch(`/api/chats/${chatId}/encryption-key`);
+        if (!res.ok) {
+          this._encryptionEnabled = false;
+          this._chatKey = null;
+          this._keyId = null;
+          globalThis.__chatKey = null;
+          globalThis.__chatKeyId = null;
+          return;
+        }
+        const data = await res.json();
+        this._chatKey = await browserImportKey(data.rawKey);
+        this._keyId = data.keyId;
+        this._encryptionEnabled = true;
+        globalThis.__chatKey = this._chatKey;
+        globalThis.__chatKeyId = this._keyId;
+        log.info("Encryption key loaded for chat", { chatId, keyId: data.keyId });
+      } catch {
+        this._encryptionEnabled = false;
+        this._chatKey = null;
+        this._keyId = null;
+        globalThis.__chatKey = null;
+        globalThis.__chatKeyId = null;
+      }
     },
 
     getChatId() {
