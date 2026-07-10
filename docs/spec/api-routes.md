@@ -105,6 +105,7 @@ Response:
 | GET    | `/api/chats/:id`                       | Yes  | —                                                   | Chat + participants           |
 | PUT    | `/api/chats/:id`                       | Yes† | `{ name?, mode?, turnStrategy?, worldId? }`         | Updated chat                  |
 | DELETE | `/api/chats/:id`                       | Yes† | —                                                   | 204                           |
+| GET    | `/api/chats/activity`                  | Yes  | `?participantIds=<id1>,<id2>`                       | Per-chat unseen activity      |
 | GET    | `/api/chats/:id/participants`          | Yes  | —                                                   | `[{ actor, role }]`           |
 | POST   | `/api/chats/:id/participants`          | Yes† | `{ actorId, role? }`                                | `{ id }` + 201                |
 | DELETE | `/api/chats/:id/participants/:actorId` | Yes† | —                                                   | 204                           |

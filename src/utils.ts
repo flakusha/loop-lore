@@ -9,7 +9,13 @@ import { randomUUID, randomBytes } from "node:crypto";
 // ── Safe JSON (re-exported from no-dep sub-module) ──────────
 
 export type { JsonResult, SafeJsonStringifyOptions } from "./utils/safe-json";
-export { safeJsonParse, safeJsonStringify, jsonParseOr, isJsonString } from "./utils/safe-json";
+export {
+  safeJsonParse,
+  safeJsonStringify,
+  jsonParseOr,
+  jsonStringifyOr,
+  isJsonString,
+} from "./utils/safe-json";
 
 // ── ID Generation ─────────────────────────────────────────────
 

@@ -36,10 +36,12 @@ async function decryptElements(root: HTMLElement): Promise<void> {
 if (typeof htmx !== "undefined") {
   htmx.defineExtension(EXTENSION_NAME, {
     onEvent: function (_name: string, evt: CustomEvent) {
-      if (evt.type === "htmx:afterSwap") {
-        const target = evt.detail.target as HTMLElement | undefined;
-        if (target) void decryptElements(target);
+      if (evt.type !== "htmx:afterSwap") {
+        return;
       }
+
+      const target = evt.detail.target as HTMLElement | undefined;
+      if (target) void decryptElements(target);
     },
   });
 }

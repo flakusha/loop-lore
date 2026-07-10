@@ -26,6 +26,7 @@ import { createLogger, getLogger } from "./logger";
 import { ServerExternalManager } from "./services/server-external-manager";
 
 // Route modules (import for registerRoute side-effects)
+import "./routes/activity";
 import "./routes/chats";
 import "./routes/messages";
 import "./routes/characters";
