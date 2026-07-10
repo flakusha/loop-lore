@@ -39,6 +39,14 @@ interface Message {
   variantIndex?: number;
   totalVariants?: number;
   attachments?: MessageAttachment[];
+  model_id?: string;
+  provider?: string;
+  token_count_prompt?: number;
+  token_count_completion?: number;
+  token_count_total?: number;
+  generation_time_ms?: number;
+  tokens_per_second?: number;
+  status?: string;
 }
 
 export interface GroupedMessage extends Message {
@@ -90,6 +98,9 @@ export interface ChatState extends AlpineMagicThis {
   userRole: string;
   currentCharacter: { id: string; display_name?: string; name?: string; description?: string } | null;
   generationDetail: GenerationDetail | null;
+  detailLevel: "Immersion" | "Basic" | "Detailed";
+  impersonationActive: boolean;
+  impersonatingActorId: string | null;
 
   editingMessageId: string | null;
   editContent: string;
@@ -108,10 +119,17 @@ export interface ChatState extends AlpineMagicThis {
   _chatSettingsTurnStrategy: string;
   _renameChatId: string;
   _renameChatName: string;
+  _personas: any[];
+  _selectedPersonaId: string | null;
+  _impersonatingActorId: string | null;
 
   _chatKey: CryptoKey | null;
   _encryptionEnabled: boolean;
   _keyId: string | null;
+  _hamburgerOpen: Record<string, boolean>;
+  _statsOpen: Record<string, boolean>;
+  _impersonationLoaded: boolean;
+  _storageHandler: ((e: StorageEvent) => void) | null;
 
   init(): void;
   destroy(): void;
@@ -130,6 +148,20 @@ export interface ChatState extends AlpineMagicThis {
   displayName(msg: { role: string; actor_name?: string }): string;
   copyMessage(msgId: string, event: Event): Promise<void>;
   removeMessage(msgId: string, event: Event): Promise<void>;
+  toggleImpersonate(): Promise<void>;
+  loadImpersonationState(): Promise<void>;
+  loadPersonas(): Promise<void>;
+  setPersona(): Promise<void>;
+  toggleImpersonation(): Promise<void>;
+  generateImageFromMessage(msgId: string): Promise<void>;
+  captionMessage(msgId: string): Promise<void>;
+  statsLine(msg: Message): string;
+  formattedGenerationTime(ms?: number): string;
+  formattedTokensPerSecond(msg: {
+    tokens_per_second?: number;
+    generation_time_ms?: number;
+    token_count_total?: number;
+  }): string;
   connectGenerationSSE(chatId: string): void;
   _cleanupSSE(): void;
   cancelGeneration(): Promise<void>;
@@ -214,6 +246,7 @@ declare global {
     };
     chatState: () => AlpineState<ChatState>;
     worldEditState: () => AlpineState<WorldEditState>;
+    adminPage: () => unknown;
     Alpine: {
       $data: (el: HTMLElement) => Record<string, unknown>;
       initTree: (el: HTMLElement) => void;
@@ -224,6 +257,7 @@ declare global {
     };
     htmx: {
       ajax: (method: string, url: string, opts: { target: string; swap: string }) => void;
+      trigger: (elt: EventTarget | string, eventName: string, detail?: unknown) => boolean;
       defineExtension: (
         name: string,
         extension: { onEvent?: (name: string, evt: CustomEvent) => void },
