@@ -48,9 +48,9 @@ createEntityRoutes({
     sortOrder: 0,
   },
   createRequired: ["content"],
-  checkOwnership: async (database, worldId, entityId, userId, userRole) => {
-    const db = database as any;
-    const world = await db
+  checkOwnership: async ({ database: db, parentId: worldId, entityId, userId, userRole }) => {
+    const d = db as any;
+    const world = await d
       .selectFrom("worlds")
       .select("owner_id")
       .where("id", "=", worldId)
@@ -58,7 +58,7 @@ createEntityRoutes({
     if (!world || (world.owner_id !== userId && userRole !== "admin")) return false;
 
     if (entityId) {
-      const entry = await db
+      const entry = await d
         .selectFrom("world_lore_entries")
         .select("id")
         .where("id", "=", entityId)
