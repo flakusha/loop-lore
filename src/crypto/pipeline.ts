@@ -69,7 +69,12 @@ export function extractKeyIdFromPayload(storedContent: string): string | null {
   return parsed.value.key_id ?? null;
 }
 
-export async function compressThenEncrypt({ plaintext, chatKey, keyId, config = DEFAULT_PIPELINE_CONFIG }: CompressThenEncryptOpts): Promise<string> {
+export async function compressThenEncrypt({
+  plaintext,
+  chatKey,
+  keyId,
+  config = DEFAULT_PIPELINE_CONFIG,
+}: CompressThenEncryptOpts): Promise<string> {
   // 1. Compress if large enough
   let compressed = "";
   let compAlgo: string | undefined;

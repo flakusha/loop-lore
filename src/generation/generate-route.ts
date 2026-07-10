@@ -104,7 +104,12 @@ export interface HandleGenerateOpts {
   userId?: string;
 }
 
-export async function handleGenerate({ body, database: _database, config: _config, userId }: HandleGenerateOpts): Promise<Response> {
+export async function handleGenerate({
+  body,
+  database: _database,
+  config: _config,
+  userId,
+}: HandleGenerateOpts): Promise<Response> {
   const database = _database ?? getDatabase();
   const cfg = _config ?? loadConfig();
   const input = body as GenerateRequest;
@@ -133,7 +138,13 @@ export async function handleGenerate({ body, database: _database, config: _confi
 
   let resolved;
   try {
-    resolved = await resolveProvider({ provider: input.provider, model: input.modelId, userId, config: cfg, db: database });
+    resolved = await resolveProvider({
+      provider: input.provider,
+      model: input.modelId,
+      userId,
+      config: cfg,
+      db: database,
+    });
   } catch (error) {
     return jsonError({ message: `Provider resolution failed: ${(error as Error).message}`, status: 422 });
   }
@@ -353,7 +364,7 @@ export async function handleGenerate({ body, database: _database, config: _confi
           .execute();
 
         // Complete tracking
-await completeGeneration({ attemptId, result, db: database });
+        await completeGeneration({ attemptId, result, db: database });
 
         // Send done event with final data
         controller.enqueue(
