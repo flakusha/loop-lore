@@ -13,6 +13,7 @@ BYOK / BYOR / 3D world / cross-chat notifications are post-MVP tracking items.
 Source: `docs/research/tool-calling-architecture.md` (567 lines).
 
 Recommended architecture when picked up (do not implement yet):
+
 - 3-layer tool architecture (OpenCode pattern): definition → registry → executor.
 - Tool defs sourced from plugin registry; mapped to OpenAI `tools` array.
 - `tool_calls` SSE delta accumulation; `role: "tool"` result loop; capped rounds.
