@@ -1,0 +1,158 @@
+<!-- Personas List Page -->
+<header id="header-slot" class="main-header" data-page="personas" data-testid="personas-header">
+  <button class="hamburger" x-on:click="window.toggleSidebar()" data-testid="hamburger">☰</button>
+  <span class="title">Personas</span>
+  <div class="actions">
+    <button
+      class="btn btn-primary"
+      @click="$store.ui.activePersona = null; $store.ui.showPersonaForm = true"
+      data-testid="create-persona"
+    >
+      + New Persona
+    </button>
+  </div>
+</header>
+
+<div class="app-layout" x-data="personasPage()" x-init="init()">
+  <main class="main-content" style="padding-top: 0">
+    <div class="chat-area">
+      <div class="list-toolbar">
+        <input
+          class="form-input list-search"
+          type="search"
+          placeholder="Search personas…"
+          aria-label="Search personas"
+          x-model="search"
+          @input="filterList()"
+          data-testid="persona-search"
+        />
+      </div>
+      <div id="persona-list" data-testid="persona-list" style="max-width: 600px; width: 100%; margin: 0 auto">
+        <template x-if="loading">
+          <div class="empty-state" style="padding: var(--space-12)">
+            <div class="icon">⏳</div>
+            <div class="title">Loading personas...</div>
+          </div>
+        </template>
+        <template x-if="!loading && filtered.length === 0 && personas.length === 0">
+          <div class="empty-state" style="padding: var(--space-12)">
+            <div class="icon">🎭</div>
+            <div class="title">No personas yet</div>
+            <div class="description">
+              Create a persona to define your identity in chats. Personas are separate from characters — they
+              represent you, the user.
+            </div>
+          </div>
+        </template>
+        <template x-if="!loading && filtered.length === 0 && personas.length > 0">
+          <div class="empty-state" style="padding: var(--space-12)">
+            <div class="icon">🔍</div>
+            <div class="title">No personas match your search</div>
+          </div>
+        </template>
+        <template x-for="p in filtered" :key="p.id">
+          <div
+            class="list-card"
+            style="
+              display: flex;
+              align-items: center;
+              gap: var(--space-4);
+              padding: var(--space-3) var(--space-4);
+              border-bottom: 1px solid var(--border-default);
+              cursor: pointer;
+            "
+            @click="editPersona(p)"
+            data-testid="persona-item"
+          >
+            <div style="font-size: 24px; flex-shrink: 0">🎭</div>
+            <div style="flex: 1; min-width: 0">
+              <div style="font-weight: 600" x-text="p.name"></div>
+              <div
+                style="
+                  font-size: 13px;
+                  color: var(--text-secondary);
+                  overflow: hidden;
+                  text-overflow: ellipsis;
+                  white-space: nowrap;
+                "
+                x-text="p.description || 'No description'"
+              ></div>
+            </div>
+            <div style="display: flex; gap: var(--space-2); flex-shrink: 0">
+              <template x-if="p.is_default">
+                <span style="font-size: 12px; color: var(--accent-green); padding: 0 var(--space-2)"
+                  >default</span
+                >
+              </template>
+              <button
+                class="btn-icon"
+                title="Delete"
+                @click.stop="deletePersona(p.id)"
+                data-testid="delete-persona"
+              >
+                🗑
+              </button>
+            </div>
+          </div>
+        </template>
+      </div>
+    </div>
+  </main>
+
+  <!-- Persona Create/Edit Modal -->
+  <div
+    x-show="$store.ui.showPersonaForm"
+    x-cloak
+    class="modal-overlay"
+    @click.self="$store.ui.showPersonaForm = false"
+    data-testid="persona-form-modal"
+  >
+    <div class="modal" style="max-width: 480px">
+      <div class="modal-header">
+        <span class="title" x-text="$store.ui.activePersona ? 'Edit Persona' : 'New Persona'"></span>
+        <button class="btn-icon" @click="$store.ui.showPersonaForm = false">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">Name</label>
+          <input
+            class="form-input"
+            type="text"
+            x-model="formName"
+            placeholder="Your persona name"
+            data-testid="persona-name"
+          />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Title (optional)</label>
+          <input class="form-input" type="text" x-model="formTitle" placeholder="e.g., Warrior of Light" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Description</label>
+          <textarea
+            class="form-input form-textarea"
+            x-model="formDescription"
+            rows="4"
+            placeholder="Physical/mental traits, backstory..."
+          ></textarea>
+        </div>
+        <div class="form-group">
+          <label style="display: flex; align-items: center; gap: var(--space-2)">
+            <input type="checkbox" x-model="formIsDefault" @change="onDefaultChange()" />
+            Set as default persona
+          </label>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-ghost" @click="$store.ui.showPersonaForm = false">Cancel</button>
+        <button
+          class="btn btn-primary"
+          @click="savePersona()"
+          :disabled="!formName.trim() || saving"
+          x-text="saving ? 'Saving...' : $store.ui.activePersona ? 'Update' : 'Create'"
+          data-testid="persona-save-btn"
+        ></button>
+      </div>
+    </div>
+  </div>
+</div>
