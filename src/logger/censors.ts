@@ -109,7 +109,11 @@ export interface CensorMetaOpts {
  * Censor PII in a metadata object.
  * Returns a new object, does not mutate input.
  */
-export function censorMeta({ meta, extraRules, maxDepth = 5 }: CensorMetaOpts): Record<string, unknown> | undefined {
+export function censorMeta({
+  meta,
+  extraRules,
+  maxDepth = 5,
+}: CensorMetaOpts): Record<string, unknown> | undefined {
   if (!meta) return meta;
   const rules = extraRules?.length ? [...DEFAULT_RULES, ...extraRules] : DEFAULT_RULES;
   return censorValue(meta, rules, 0, maxDepth) as Record<string, unknown>;

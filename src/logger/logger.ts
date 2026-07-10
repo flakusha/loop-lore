@@ -69,7 +69,9 @@ export class LoggerImpl implements Logger {
 
     // Attach meta and censor
     if (meta && Object.keys(meta).length > 0) {
-      entry.meta = options?.skipCensor ? meta : censorMeta({ meta, extraRules: fieldNamesToRules(this.censorFields) });
+      entry.meta = options?.skipCensor
+        ? meta
+        : censorMeta({ meta, extraRules: fieldNamesToRules(this.censorFields) });
     }
 
     // Apply size limits

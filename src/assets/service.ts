@@ -345,7 +345,12 @@ export async function linkAsset({ database, assetId, link }: LinkAssetOpts): Pro
 /**
  * Unlink an asset from an entity.
  */
-export async function unlinkAsset({ database, assetId, entityType, entityId }: UnlinkAssetOpts): Promise<void> {
+export async function unlinkAsset({
+  database,
+  assetId,
+  entityType,
+  entityId,
+}: UnlinkAssetOpts): Promise<void> {
   await database
     .deleteFrom("asset_links")
     .where("asset_id", "=", assetId)

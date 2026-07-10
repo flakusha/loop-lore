@@ -40,9 +40,14 @@ export async function completeStep({ attemptId, stepIndex, db }: CompleteStepOpt
   active.stepIndex = stepIndex + 1;
 
   try {
-    await updateAttemptStatus({ db, attemptId, status: active.status, extra: {
-      step_index: active.stepIndex,
-    } });
+    await updateAttemptStatus({
+      db,
+      attemptId,
+      status: active.status,
+      extra: {
+        step_index: active.stepIndex,
+      },
+    });
   } catch (error: unknown) {
     getLogger()
       .child({ module: "generation" })
@@ -67,11 +72,16 @@ export interface FailStepOpts {
 
 export async function failStep({ attemptId, stepIndex, error, db }: FailStepOpts): Promise<void> {
   try {
-    await updateAttemptStatus({ db, attemptId, status: GenerationStatus.Failed, extra: {
-      error_message: `Step ${stepIndex} failed: ${error.message}`,
-      step_index: stepIndex,
-      completed_at: new Date().toISOString(),
-    } });
+    await updateAttemptStatus({
+      db,
+      attemptId,
+      status: GenerationStatus.Failed,
+      extra: {
+        error_message: `Step ${stepIndex} failed: ${error.message}`,
+        step_index: stepIndex,
+        completed_at: new Date().toISOString(),
+      },
+    });
   } catch (updateError: unknown) {
     getLogger()
       .child({ module: "generation" })

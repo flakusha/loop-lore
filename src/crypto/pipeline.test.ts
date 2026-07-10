@@ -32,10 +32,15 @@ describe("round-trip", () => {
   });
 
   test("large text (above threshold) — compresses then encrypts", async () => {
-    const encrypted = await compressThenEncrypt({ plaintext: LARGE_TEXT, chatKey: cryptoKey, keyId: KEY_ID, config: {
-      threshold: 128,
-      algorithm: "gzip",
-    } });
+    const encrypted = await compressThenEncrypt({
+      plaintext: LARGE_TEXT,
+      chatKey: cryptoKey,
+      keyId: KEY_ID,
+      config: {
+        threshold: 128,
+        algorithm: "gzip",
+      },
+    });
     const payload = JSON.parse(encrypted);
     expect(payload.comp).toBe(true);
     expect(payload.compAlgo).toBe("gzip");
@@ -45,10 +50,15 @@ describe("round-trip", () => {
   });
 
   test("large text with brotli algorithm", async () => {
-    const encrypted = await compressThenEncrypt({ plaintext: LARGE_TEXT, chatKey: cryptoKey, keyId: KEY_ID, config: {
-      threshold: 128,
-      algorithm: "brotli",
-    } });
+    const encrypted = await compressThenEncrypt({
+      plaintext: LARGE_TEXT,
+      chatKey: cryptoKey,
+      keyId: KEY_ID,
+      config: {
+        threshold: 128,
+        algorithm: "brotli",
+      },
+    });
     const payload = JSON.parse(encrypted);
     expect(payload.comp).toBe(true);
     expect(payload.compAlgo).toBe("brotli");
@@ -58,10 +68,15 @@ describe("round-trip", () => {
   });
 
   test("large text with zstd algorithm", async () => {
-    const encrypted = await compressThenEncrypt({ plaintext: LARGE_TEXT, chatKey: cryptoKey, keyId: KEY_ID, config: {
-      threshold: 128,
-      algorithm: "zstd",
-    } });
+    const encrypted = await compressThenEncrypt({
+      plaintext: LARGE_TEXT,
+      chatKey: cryptoKey,
+      keyId: KEY_ID,
+      config: {
+        threshold: 128,
+        algorithm: "zstd",
+      },
+    });
     const payload = JSON.parse(encrypted);
     expect(payload.comp).toBe(true);
     expect(payload.compAlgo).toBe("zstd");
@@ -71,7 +86,11 @@ describe("round-trip", () => {
   });
 
   test("unicode content round-trip", async () => {
-    const encrypted = await compressThenEncrypt({ plaintext: UNICODE_TEXT, chatKey: cryptoKey, keyId: KEY_ID });
+    const encrypted = await compressThenEncrypt({
+      plaintext: UNICODE_TEXT,
+      chatKey: cryptoKey,
+      keyId: KEY_ID,
+    });
     const decrypted = await decryptThenDecompress(encrypted, cryptoKey);
     expect(decrypted).toBe(UNICODE_TEXT);
   });
@@ -88,10 +107,15 @@ describe("round-trip", () => {
 describe("threshold", () => {
   test("content exactly at threshold — may compress if algo saves bytes", async () => {
     const atThreshold = "x".repeat(128);
-    const encrypted = await compressThenEncrypt({ plaintext: atThreshold, chatKey: cryptoKey, keyId: KEY_ID, config: {
-      threshold: 128,
-      algorithm: "gzip",
-    } });
+    const encrypted = await compressThenEncrypt({
+      plaintext: atThreshold,
+      chatKey: cryptoKey,
+      keyId: KEY_ID,
+      config: {
+        threshold: 128,
+        algorithm: "gzip",
+      },
+    });
     const _payload = JSON.parse(encrypted);
     // If compression reduces size, comp=true; otherwise false
     // Either is valid — just verify round-trip
@@ -101,20 +125,30 @@ describe("threshold", () => {
 
   test("content 1 byte below threshold — not compressed", async () => {
     const belowThreshold = "x".repeat(127);
-    const encrypted = await compressThenEncrypt({ plaintext: belowThreshold, chatKey: cryptoKey, keyId: KEY_ID, config: {
-      threshold: 128,
-      algorithm: "gzip",
-    } });
+    const encrypted = await compressThenEncrypt({
+      plaintext: belowThreshold,
+      chatKey: cryptoKey,
+      keyId: KEY_ID,
+      config: {
+        threshold: 128,
+        algorithm: "gzip",
+      },
+    });
     const payload = JSON.parse(encrypted);
     expect(payload.comp).toBe(false);
   });
 
   test("custom threshold of 0 compresses everything", async () => {
     // Even a short string compressed, if algo reduces size
-    const encrypted = await compressThenEncrypt({ plaintext: "hello world this is a test", chatKey: cryptoKey, keyId: KEY_ID, config: {
-      threshold: 0,
-      algorithm: "gzip",
-    } });
+    const encrypted = await compressThenEncrypt({
+      plaintext: "hello world this is a test",
+      chatKey: cryptoKey,
+      keyId: KEY_ID,
+      config: {
+        threshold: 0,
+        algorithm: "gzip",
+      },
+    });
     const _payload = JSON.parse(encrypted);
     // With very short text, gzip may not compress — either outcome valid
     const decrypted = await decryptThenDecompress(encrypted, cryptoKey);
@@ -122,10 +156,15 @@ describe("threshold", () => {
   });
 
   test("very high threshold (1MB) — never compresses", async () => {
-    const encrypted = await compressThenEncrypt({ plaintext: LARGE_TEXT, chatKey: cryptoKey, keyId: KEY_ID, config: {
-      threshold: 1_000_000,
-      algorithm: "gzip",
-    } });
+    const encrypted = await compressThenEncrypt({
+      plaintext: LARGE_TEXT,
+      chatKey: cryptoKey,
+      keyId: KEY_ID,
+      config: {
+        threshold: 1_000_000,
+        algorithm: "gzip",
+      },
+    });
     const payload = JSON.parse(encrypted);
     expect(payload.comp).toBe(false);
   });
@@ -212,10 +251,15 @@ describe("decompression graceful degradation", () => {
   test("payload with comp=true but bogus compAlgo returns raw decrypted bytes", async () => {
     // Encrypt normally but then corrupt the compression marker
     const text = "x".repeat(200);
-    const encrypted = await compressThenEncrypt({ plaintext: text, chatKey: cryptoKey, keyId: KEY_ID, config: {
-      threshold: 128,
-      algorithm: "gzip",
-    } });
+    const encrypted = await compressThenEncrypt({
+      plaintext: text,
+      chatKey: cryptoKey,
+      keyId: KEY_ID,
+      config: {
+        threshold: 128,
+        algorithm: "gzip",
+      },
+    });
     const payload = JSON.parse(encrypted) as {
       enc: string;
       nonce: string;

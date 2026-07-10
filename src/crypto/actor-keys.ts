@@ -98,7 +98,12 @@ function toBufferSource(arr: Uint8Array): Uint8Array<ArrayBuffer> {
  *
  * @returns The new key's ID.
  */
-export async function generateActorKey({ database, actorId, smk, name = "primary" }: GenerateActorKeyOpts): Promise<string> {
+export async function generateActorKey({
+  database,
+  actorId,
+  smk,
+  name = "primary",
+}: GenerateActorKeyOpts): Promise<string> {
   const id = uid();
   const rawKey = crypto.getRandomValues(new Uint8Array(32));
   const encryptedKey = await encryptWithSmk(smk, rawKey);

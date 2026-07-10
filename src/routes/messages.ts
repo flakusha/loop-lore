@@ -393,10 +393,15 @@ async function handleCreateMessage({
     // Derive chat key from all participants
     const chatKey = await deriveChatKeyForChat(database, chatId, smk);
     // Compress-then-encrypt using config settings
-    storedContent = await compressThenEncrypt({ plaintext: filteredContent, chatKey: chatKey.key, keyId: chatKey.keyId, config: {
-      threshold: config.encryption.compressThreshold,
-      algorithm: config.encryption.compressAlgorithm,
-    }});
+    storedContent = await compressThenEncrypt({
+      plaintext: filteredContent,
+      chatKey: chatKey.key,
+      keyId: chatKey.keyId,
+      config: {
+        threshold: config.encryption.compressThreshold,
+        algorithm: config.encryption.compressAlgorithm,
+      },
+    });
     contentEncoding = "identity"; // Encryption wrapper supersedes raw compression
     storedKeyId = chatKey.keyId;
   } else {
@@ -449,11 +454,15 @@ async function handleCreateMessage({
   if (attachments && attachments.length > 0) {
     const attachData: { assetId: string; order: number; caption: string; label: string }[] = [];
     for (const [i, a] of attachments.entries()) {
-      await linkAsset({ database, assetId: a.assetId, link: {
-        entityType: "message",
-        entityId: id,
-        label: a.label ?? "message-attachment",
-      }});
+      await linkAsset({
+        database,
+        assetId: a.assetId,
+        link: {
+          entityType: "message",
+          entityId: id,
+          label: a.label ?? "message-attachment",
+        },
+      });
       attachData.push({
         assetId: a.assetId,
         order: a.order ?? i,
@@ -491,10 +500,15 @@ async function handleCreateMessage({
       if (isEncryptionEnabled()) {
         const smk = getSmk()!;
         const chatKey = await deriveChatKeyForChat(database, chatId, smk);
-        replyStoredContent = await compressThenEncrypt({ plaintext: assistantContent, chatKey: chatKey.key, keyId: chatKey.keyId, config: {
-          threshold: config.encryption.compressThreshold,
-          algorithm: config.encryption.compressAlgorithm,
-        }});
+        replyStoredContent = await compressThenEncrypt({
+          plaintext: assistantContent,
+          chatKey: chatKey.key,
+          keyId: chatKey.keyId,
+          config: {
+            threshold: config.encryption.compressThreshold,
+            algorithm: config.encryption.compressAlgorithm,
+          },
+        });
         replyKeyId = chatKey.keyId;
       }
 
@@ -557,7 +571,13 @@ async function triggerAutoGeneration(
   try {
     // Cancel any existing generation for this chat before starting a new one.
     // Guards against double-send races and ensures clean per-chat generation state.
-    cancelGenerationByChat({ db: database, chatId, reason: CancelReason.UserCancel, source: CancelSource.System, detail: "New auto-generation starting" });
+    cancelGenerationByChat({
+      db: database,
+      chatId,
+      reason: CancelReason.UserCancel,
+      source: CancelSource.System,
+      detail: "New auto-generation starting",
+    });
 
     // Find character participant (actor that is not the sender)
     const character = await database
@@ -702,12 +722,16 @@ async function triggerAutoGeneration(
       })
       .execute();
 
-    await completeGeneration({ attemptId, result: {
+    await completeGeneration({
+      attemptId,
+      result: {
         content: accumulatedContent,
         tokenUsage,
         generationTimeMs: 0,
         cancelled: finishReason === "cancelled",
-      }, db: database });
+      },
+      db: database,
+    });
 
     // Buffer final done event with proper message ID
     const doneHtml = renderStreamMessage(actorName, accumulatedContent, tracking.attemptId, {

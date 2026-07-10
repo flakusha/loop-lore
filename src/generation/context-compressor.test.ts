@@ -57,7 +57,10 @@ describe("compressMessages — no-op path", () => {
 
   it("passes through when under budget", () => {
     const msgs = [systemMsg("Short instruction."), userMsg("Hello"), assistantMsg("Hi there!")];
-    const result = compressMessages({ messages: msgs, config: { ...DEFAULT_CONTEXT_WINDOW, maxContextTokens: 100_000 } });
+    const result = compressMessages({
+      messages: msgs,
+      config: { ...DEFAULT_CONTEXT_WINDOW, maxContextTokens: 100_000 },
+    });
     expect(result.compressed).toEqual(msgs);
     expect(result.metadata.budgetExceeded).toBe(false);
   });
