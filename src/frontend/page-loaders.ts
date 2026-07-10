@@ -1,7 +1,6 @@
-// Minimal inline logging — avoids logger module SERVER_LOG_BUFFER issue
-const __log = (level: string, msg: string, meta?: unknown) => {
-  console.log(`[${new Date().toISOString()}] [${level}] [pages] ${msg}`, meta ?? "");
-};
+import { log } from "./alpine/logger";
+
+const pageLog = log.child({ module: "pages" });
 
 function escapeHtml(str: string): string {
   const div = document.createElement("div");
@@ -34,43 +33,73 @@ function formatTimeAgo(iso: string): string {
   return `${Math.floor(diff / 86_400_000)}d ago`;
 }
 
+// ── Search/filter state (fast-gain UX) ───────────────────
+const characterData: any[] = [];
+const assetData: any[] = [];
+const worldData: any[] = [];
+
+/** Case-insensitive substring match across the given fields. */
+function matchesQuery(item: any, query: string, fields: string[]): boolean {
+  if (!query) return true;
+  const q = query.toLowerCase();
+  return fields.some((f) =>
+    String(item[f] ?? "")
+      .toLowerCase()
+      .includes(q),
+  );
+}
+
 // ── Characters page ─────────────────────────────────────────
 
 (globalThis as any).loadCharactersPage = async function () {
-  __log("DEBUG", "loadCharactersPage");
+  pageLog.debug("loadCharactersPage");
   const grid = document.querySelector("#character-grid");
   if (!grid) return;
   try {
     const res = await apiFetch("/api/actors?pageSize=100");
     const data = await res.json();
     const chars = (data.data || []).filter((c: any) => c.actor_type !== "user");
-    if (chars.length === 0) {
-      grid.innerHTML = `<div class="empty-state" style="padding: var(--space-12)" data-testid="characters-empty">
-        <div class="icon">👤</div><div class="title">No characters yet</div>
-        <div class="description">Create your first character to start roleplaying.</div>
-      </div>`;
-      return;
-    }
-    grid.innerHTML = chars
-      .map((char: any) => {
-        const avatar = char.avatar_asset_id
-          ? `<img src="/api/assets/${char.avatar_asset_id}/thumb" alt="Avatar" />`
-          : "<span>👤</span>";
-        return `<div class="character-card" onclick="selectCharacterCard('${char.id}')" data-testid="character-card-${char.id}">
-        <div class="card-img">${avatar}</div>
-        <div class="card-body">
-          <div class="name">${escapeHtml(char.display_name || "")}</div>
-          <div class="description">${escapeHtml(char.description || "No description")}</div>
-        </div>
-      </div>`;
-      })
-      .join("");
+    characterData.length = 0;
+    characterData.push(...chars);
+    renderCharacters();
   } catch {
     /* ignore */
   }
 };
 
-export {};
+function renderCharacters(): void {
+  const grid = document.querySelector("#character-grid");
+  if (!grid) return;
+  const query = (document.querySelector<HTMLInputElement>("#character-search")?.value ?? "").trim();
+  const filtered = characterData
+    .filter((c: any) => matchesQuery(c, query, ["display_name", "description"]))
+    .sort((a: any, b: any) => String(a.display_name ?? "").localeCompare(String(b.display_name ?? "")));
+  if (filtered.length === 0) {
+    grid.innerHTML = `<div class="empty-state" style="padding: var(--space-12)" data-testid="characters-empty">
+      <div class="icon">👤</div><div class="title">No characters found</div>
+      <div class="description">${query ? "No matches for your search." : "Create your first character to start roleplaying."}</div>
+    </div>`;
+    return;
+  }
+  grid.innerHTML = filtered
+    .map((char: any) => {
+      const avatar = char.avatar_asset_id
+        ? `<img src="/api/assets/${char.avatar_asset_id}/thumb" alt="Avatar" />`
+        : "<span>👤</span>";
+      return `<div class="character-card" onclick="selectCharacterCard('${char.id}')" data-testid="character-card-${char.id}">
+      <div class="card-img">${avatar}</div>
+      <div class="card-body">
+        <div class="name">${escapeHtml(char.display_name || "")}</div>
+        <div class="description">${escapeHtml(char.description || "No description")}</div>
+      </div>
+      </div>`;
+    })
+    .join("");
+}
+
+(globalThis as any).filterCharacters = function () {
+  renderCharacters();
+};
 
 (globalThis as any).selectCharacterCard = async function (id: string) {
   try {
@@ -155,39 +184,60 @@ function thumbForAsset(a: any): string {
 }
 
 (globalThis as any).loadGalleryPage = async function () {
-  __log("DEBUG", "loadGalleryPage");
+  pageLog.debug("loadGalleryPage");
   const grid = document.querySelector("#asset-grid");
   if (!grid) return;
   try {
     const res = await apiFetch("/api/assets?pageSize=200");
     const data = await res.json();
     const assets = data.data || [];
-    if (assets.length === 0) {
-      grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1" data-testid="gallery-empty">
-        <div class="icon">📁</div><div class="title">No assets yet</div>
-        <div class="description">Upload images, audio, or video to get started.</div>
-      </div>`;
-      return;
-    }
-    grid.innerHTML = assets
-      .map(
-        (a: any) =>
-          `<div class="asset-card" onclick="openAssetPreview('${a.id}')" data-testid="asset-card-${a.id}">
-        <div class="thumb">${thumbForAsset(a)}</div>
-        <div class="details">
-          <span class="name">${escapeHtml(a.filename)}</span>
-          <span class="type">${formatSize(a.size_bytes)}</span>
-        </div>
-      </div>`,
-      )
-      .join("");
+    assetData.length = 0;
+    assetData.push(...assets);
+    renderAssets();
   } catch {
-    grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1"><div class="icon">⚠</div><div class="title">Failed to load</div></div>`;
+    /* ignore */
   }
 };
 
+function renderAssets(): void {
+  const grid = document.querySelector("#asset-grid");
+  if (!grid) return;
+  const query = (document.querySelector<HTMLInputElement>("#asset-search")?.value ?? "").trim();
+  const type = document.querySelector<HTMLSelectElement>("#asset-type-filter")?.value ?? "all";
+  let filtered = assetData.filter(
+    (a: any) =>
+      matchesQuery(a, query, ["filename", "mime_type"]) && (type === "all" || a.asset_type === type),
+  );
+  filtered = filtered.sort((a: any, b: any) =>
+    String(a.filename ?? "").localeCompare(String(b.filename ?? "")),
+  );
+  if (filtered.length === 0) {
+    grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1" data-testid="gallery-empty">
+      <div class="icon">📁</div><div class="title">No assets found</div>
+      <div class="description">${query || type !== "all" ? "No matches for your filters." : "Upload images, audio, or video to get started."}</div>
+    </div>`;
+    return;
+  }
+  grid.innerHTML = filtered
+    .map(
+      (a: any) =>
+        `<div class="asset-card" onclick="openAssetPreview('${a.id}')" data-testid="asset-card-${a.id}">
+      <div class="thumb">${thumbForAsset(a)}</div>
+      <div class="details">
+        <span class="name">${escapeHtml(a.filename)}</span>
+        <span class="type">${formatSize(a.size_bytes)}</span>
+      </div>
+    </div>`,
+    )
+    .join("");
+}
+
+(globalThis as any).filterAssets = function () {
+  renderAssets();
+};
+
 (globalThis as any).openAssetPreview = async function (id: string) {
-  __log("DEBUG", "openAssetPreview", { id });
+  pageLog.debug("openAssetPreview", { id });
   try {
     const res = await apiFetch(`/api/assets/${id}`);
     if (!res.ok) return;
@@ -261,33 +311,49 @@ function thumbForAsset(a: any): string {
 // ── Worlds page ────────────────────────────────────────────
 
 (globalThis as any).loadWorldsPage = async function () {
-  __log("DEBUG", "loadWorldsPage");
+  pageLog.debug("loadWorldsPage");
   const list = document.querySelector("#world-list");
   if (!list) return;
   try {
     const res = await apiFetch("/api/worlds?pageSize=100");
     const data = await res.json();
     const worlds = data.data || [];
-    if (worlds.length === 0) {
-      list.innerHTML = `<div class="empty-state" style="padding:var(--space-12)">
-        <div class="icon">🌍</div><div class="title">No worlds yet</div>
-        <div class="description">Create your first world.</div>
-      </div>`;
-      return;
-    }
-    list.innerHTML = worlds
-      .map(
-        (w: any) =>
-          `<div class="world-card" onclick="location.assign('/worlds/${w.id}')" data-testid="world-card-${w.id}">
-        <div class="world-header"><h3 class="world-name">${escapeHtml(w.name)}</h3><span class="world-id">ID: ${w.id}</span></div>
-        <div class="world-description">${escapeHtml(w.description || "No description")}</div>
-        <div class="world-meta"><span class="tag">${w.chat_count || 0} chats</span></div>
-      </div>`,
-      )
-      .join("");
+    worldData.length = 0;
+    worldData.push(...worlds);
+    renderWorlds();
   } catch {
-    list.innerHTML = `<div class="empty-state"><div class="icon">⚠</div><div class="title">Failed to load</div></div>`;
+    /* ignore */
   }
+};
+
+function renderWorlds(): void {
+  const list = document.querySelector("#world-list");
+  if (!list) return;
+  const query = (document.querySelector<HTMLInputElement>("#world-search")?.value ?? "").trim();
+  const filtered = worldData
+    .filter((w: any) => matchesQuery(w, query, ["name", "description"]))
+    .sort((a: any, b: any) => String(a.name ?? "").localeCompare(String(b.name ?? "")));
+  if (filtered.length === 0) {
+    list.innerHTML = `<div class="empty-state" style="padding:var(--space-12)">
+      <div class="icon">🌍</div><div class="title">No worlds found</div>
+      <div class="description">${query ? "No matches for your search." : "Create your first world."}</div>
+    </div>`;
+    return;
+  }
+  list.innerHTML = filtered
+    .map(
+      (w: any) =>
+        `<div class="world-card" onclick="location.assign('/worlds/${w.id}')" data-testid="world-card-${w.id}">
+      <div class="world-header"><h3 class="world-name">${escapeHtml(w.name)}</h3><span class="world-id">ID: ${w.id}</span></div>
+      <div class="world-description">${escapeHtml(w.description || "No description")}</div>
+      <div class="world-meta"><span class="tag">${w.chat_count || 0} chats</span></div>
+    </div>`,
+    )
+    .join("");
+}
+
+(globalThis as any).filterWorlds = function () {
+  renderWorlds();
 };
 
 (globalThis as any).createWorld = async function (event: Event) {
@@ -298,14 +364,14 @@ function thumbForAsset(a: any): string {
   formData.forEach((value, key) => {
     data[key] = value;
   });
-  __log("DEBUG", "createWorld", { data });
+  pageLog.debug("createWorld", { data });
   try {
     const res = await apiFetch("/api/worlds", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
     });
-    __log("DEBUG", "createWorld response", { status: res.status });
+    pageLog.debug("createWorld response", { status: res.status });
     if (res.ok) {
       const data = await res.json();
       document.querySelector("#create-world-modal")?.classList.remove("open");
@@ -324,7 +390,7 @@ function thumbForAsset(a: any): string {
   const container = document.querySelector<HTMLElement>("#world-detail");
   const id = container?.dataset.worldId;
   if (!id) return;
-  __log("DEBUG", "loadWorldDetail", { id });
+  pageLog.debug("loadWorldDetail", { id });
   try {
     const res = await apiFetch(`/api/worlds/${id}`);
     if (!res.ok) return;
@@ -428,7 +494,7 @@ function thumbForAsset(a: any): string {
   const container = document.querySelector<HTMLElement>("#character-edit-form");
   const id = container?.dataset.characterId;
   if (!id) return;
-  __log("DEBUG", "loadCharacterEditPage", { id });
+  pageLog.debug("loadCharacterEditPage", { id });
   try {
     const res = await apiFetch("/api/actors/" + id);
     if (!res.ok) return;
@@ -719,7 +785,7 @@ function thumbForAsset(a: any): string {
   const container = document.querySelector<HTMLElement>("#character-chat-list");
   const id = container?.dataset.characterId;
   if (!id) return;
-  __log("DEBUG", "loadCharacterChatList", { id });
+  pageLog.debug("loadCharacterChatList", { id });
   try {
     const res = await apiFetch(`/api/chats?characterId=${id}&pageSize=50`);
     const data = await res.json();
