@@ -176,7 +176,11 @@ export interface HandleApiRequestOpts {
  * Middleware chain: errorBoundary → auth → route dispatch
  * Auth populates RequestContext { userId, userRole, sessionId }.
  */
-export async function handleApiRequest({ request, database, config }: HandleApiRequestOpts): Promise<Response> {
+export async function handleApiRequest({
+  request,
+  database,
+  config,
+}: HandleApiRequestOpts): Promise<Response> {
   // ── Auth-skip paths (login, demo-login, age-gate) — no auth required ──
   const url = new URL(request.url);
   const skipAuthPaths = ["/api/auth/login", "/api/demo-login", "/api/age-gate/status"];
@@ -220,7 +224,13 @@ export async function handleApiRequest({ request, database, config }: HandleApiR
       if (ageGateResult) return ageGateResult;
 
       // ── Generation cancellation routes ───────────────
-      const generationResult = await dispatchGeneration({ request: req, database, userId: context.userId, userRole: context.userRole, config });
+      const generationResult = await dispatchGeneration({
+        request: req,
+        database,
+        userId: context.userId,
+        userRole: context.userRole,
+        config,
+      });
       if (generationResult) return generationResult;
 
       // ── Plugin routes (dice-roller, etc.) ──────────────

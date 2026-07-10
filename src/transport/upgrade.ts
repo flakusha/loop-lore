@@ -39,9 +39,11 @@ export interface UpgradeConnectionOpts {
  * // ... WebSocket communication ...
  * ```
  */
-export async function upgradeConnection(
-  { current, targetProtocol, config }: UpgradeConnectionOpts,
-): Promise<ProtocolHandler> {
+export async function upgradeConnection({
+  current,
+  targetProtocol,
+  config,
+}: UpgradeConnectionOpts): Promise<ProtocolHandler> {
   const currentConnection = await current.connect();
   const state = { ...currentConnection.metadata };
 

@@ -65,7 +65,13 @@ export interface ResolveProviderOpts {
   db?: Kysely<DB>;
 }
 
-export async function resolveProvider({ provider, model, userId, config, db }: ResolveProviderOpts): Promise<ResolvedProvider> {
+export async function resolveProvider({
+  provider,
+  model,
+  userId,
+  config,
+  db,
+}: ResolveProviderOpts): Promise<ResolvedProvider> {
   let resolvedProviderName = provider ?? config.generation.defaultProvider;
   let resolvedModel = model ?? "";
 
