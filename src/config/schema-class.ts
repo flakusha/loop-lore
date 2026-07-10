@@ -30,6 +30,7 @@ import type {
   ProviderInstanceConfig,
   ByoKeyConfig,
   EncryptionConfig,
+  HeadersConfig,
 } from "./schema";
 import { DbType, LogLevel, AgeGateMode } from "../db/enums";
 import { DATA_DIR } from "./constants";
@@ -152,6 +153,39 @@ export class ConfigSchema {
     compressAlgorithm: "gzip",
   } satisfies EncryptionConfig;
 
+  readonly headers = {
+    enabled: true,
+    referrerPolicy: "strict-origin-when-cross-origin",
+    xContentTypeOptions: true,
+    xFrameOptions: "DENY",
+    permissionsPolicy:
+      "accelerometer=(), camera=(), display-capture=(), geolocation=(), gyroscope=(), microphone=(), usb=()",
+    csp: {
+      enabled: true,
+      defaultSrc: ["'self'"],
+      scriptSrc: ["'self'", "https://unpkg.com", "https://cdn.jsdelivr.net"],
+      styleSrc: ["'self'", "'unsafe-inline'"],
+      imgSrc: ["'self'", "data:", "blob:"],
+      fontSrc: ["'self'"],
+      connectSrc: ["'self'", "wss:", "https:"],
+      objectSrc: ["'none'"],
+      baseUri: ["'self'"],
+      frameAncestors: ["'none'"],
+      upgradeInsecureRequests: true,
+      reportOnly: false,
+    },
+    crossOriginOpenerPolicy: null,
+    crossOriginEmbedderPolicy: null,
+    crossOriginResourcePolicy: "cross-origin",
+    immutableHashedAssets: true,
+    linkPreload: ["/app.js", "/alpine.js", "/css/app.css"],
+    acceptClientHints: [],
+    saveData: false,
+    earlyHints: { enabled: false },
+    reportingEndpoints: {},
+    nel: null,
+  } satisfies HeadersConfig;
+
   // ── ENV_MAP generation ─────────────────────────────────
 
   /** Build flat ENV_VAR → dot.path mapping from all section fields */
@@ -186,6 +220,7 @@ export class ConfigSchema {
     add("generation", s.generation);
     add("byoKey", s.byoKey);
     add("encryption", s.encryption);
+    add("headers", s.headers);
 
     // Manual overrides for renamed/mapped env vars
     map.PORT = "server.port";
@@ -267,6 +302,34 @@ export class ConfigSchema {
     }
     if (config.generation.providers.anthropic && !config.generation.providers.anthropic.apiKey) {
       throw new Error("generation.providers.anthropic requires apiKey");
+    }
+    if (
+      config.headers.xFrameOptions !== null &&
+      !["DENY", "SAMEORIGIN"].includes(config.headers.xFrameOptions)
+    ) {
+      throw new Error(`Invalid headers.xFrameOptions: "${config.headers.xFrameOptions}"`);
+    }
+    if (
+      config.headers.crossOriginOpenerPolicy !== null &&
+      !["same-origin", "same-origin-allow-popups"].includes(config.headers.crossOriginOpenerPolicy)
+    ) {
+      throw new Error(`Invalid headers.crossOriginOpenerPolicy: "${config.headers.crossOriginOpenerPolicy}"`);
+    }
+    if (
+      config.headers.crossOriginEmbedderPolicy !== null &&
+      config.headers.crossOriginEmbedderPolicy !== "require-corp"
+    ) {
+      throw new Error(
+        `Invalid headers.crossOriginEmbedderPolicy: "${config.headers.crossOriginEmbedderPolicy as string}"`,
+      );
+    }
+    if (
+      config.headers.crossOriginResourcePolicy !== null &&
+      !["same-origin", "cross-origin"].includes(config.headers.crossOriginResourcePolicy)
+    ) {
+      throw new Error(
+        `Invalid headers.crossOriginResourcePolicy: "${config.headers.crossOriginResourcePolicy}"`,
+      );
     }
   }
 
@@ -692,6 +755,118 @@ export class ConfigSchema {
           },
           required: ["enabled"],
         },
+        headers: {
+          type: "object",
+          description: "Response-header policy (browser security / isolation / perf / observability)",
+          properties: {
+            enabled: { type: "boolean", default: true, description: "Master toggle for header injection" },
+            referrerPolicy: {
+              type: "string",
+              default: "strict-origin-when-cross-origin",
+              description: "Referrer-Policy value",
+            },
+            xContentTypeOptions: {
+              type: "boolean",
+              default: true,
+              description: "Emit X-Content-Type-Options: nosniff",
+            },
+            xFrameOptions: {
+              type: ["string", "null"],
+              enum: ["DENY", "SAMEORIGIN", null],
+              default: "DENY",
+              description: "X-Frame-Options; null omits",
+            },
+            permissionsPolicy: {
+              type: "string",
+              default: "accelerometer=(), camera=(), geolocation=(), microphone=(), usb=()",
+              description: "Permissions-Policy feature delegation",
+            },
+            csp: {
+              type: "object",
+              description: "Content-Security-Policy directive set (HTML only)",
+              properties: {
+                enabled: { type: "boolean", default: true },
+                defaultSrc: { type: "array", items: { type: "string" }, default: ["'self'"] },
+                scriptSrc: {
+                  type: "array",
+                  items: { type: "string" },
+                  default: ["'self'", "https://unpkg.com", "https://cdn.jsdelivr.net", "'unsafe-hashes'"],
+                },
+                styleSrc: {
+                  type: "array",
+                  items: { type: "string" },
+                  default: ["'self'", "'unsafe-hashes'"],
+                },
+                imgSrc: { type: "array", items: { type: "string" }, default: ["'self'", "data:", "blob:"] },
+                fontSrc: { type: "array", items: { type: "string" }, default: ["'self'"] },
+                connectSrc: {
+                  type: "array",
+                  items: { type: "string" },
+                  default: ["'self'", "wss:", "https:"],
+                },
+                objectSrc: { type: "array", items: { type: "string" }, default: ["'none'"] },
+                baseUri: { type: "array", items: { type: "string" }, default: ["'self'"] },
+                frameAncestors: { type: "array", items: { type: "string" }, default: ["'none'"] },
+                upgradeInsecureRequests: { type: "boolean", default: true },
+                reportOnly: {
+                  type: "boolean",
+                  default: false,
+                  description: "Emit CSP as Report-Only (observe, not enforce)",
+                },
+              },
+              required: ["enabled"],
+            },
+            crossOriginOpenerPolicy: {
+              type: ["string", "null"],
+              enum: ["same-origin", "same-origin-allow-popups", null],
+              default: null,
+              description: "COOP; null omits",
+            },
+            crossOriginEmbedderPolicy: {
+              type: ["string", "null"],
+              enum: ["require-corp", null],
+              default: null,
+              description: "COEP; keep null until wasm/SAB ready",
+            },
+            crossOriginResourcePolicy: {
+              type: ["string", "null"],
+              enum: ["same-origin", "cross-origin", null],
+              default: "cross-origin",
+              description: "CORP for static subresources",
+            },
+            immutableHashedAssets: {
+              type: "boolean",
+              default: true,
+              description: "Append immutable to Cache-Control for content-hashed assets",
+            },
+            linkPreload: {
+              type: "array",
+              items: { type: "string" },
+              default: ["/app.js", "/alpine.js", "/css/app.css"],
+              description: "Link preload hints for HTML documents",
+            },
+            acceptClientHints: {
+              type: "array",
+              items: { type: "string" },
+              default: [],
+              description: "Accept-CH / Critical-CH client hint tokens",
+            },
+            saveData: { type: "boolean", default: false, description: "Advertise Save-Data cooperativeness" },
+            earlyHints: {
+              type: "object",
+              properties: { enabled: { type: "boolean", default: false } },
+              required: ["enabled"],
+            },
+            reportingEndpoints: {
+              type: "object",
+              additionalProperties: { type: "string" },
+              default: {},
+              description: "Reporting-Endpoints name → URL",
+            },
+            nel: { type: ["string", "null"], default: null, description: "NEL policy JSON; null omits" },
+          },
+          required: ["enabled", "referrerPolicy", "xContentTypeOptions", "csp", "earlyHints"],
+        },
       },
       required: [
         "server",
@@ -705,6 +880,7 @@ export class ConfigSchema {
         "transport",
         "messages",
         "encryption",
+        "headers",
       ],
     };
   }
@@ -728,6 +904,7 @@ export class ConfigSchema {
       generation: this.generation,
       byoKey: this.byoKey,
       encryption: this.encryption,
+      headers: this.headers,
     };
   }
 }
