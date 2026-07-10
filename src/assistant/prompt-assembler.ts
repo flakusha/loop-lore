@@ -64,6 +64,26 @@ const PRIORITY = {
   examples: 5,
 } as const;
 
+// ── Keyword parsing ────────────────────────────────────────
+
+/** Parse the `actor_memories.keywords` JSON column (string[] | null). */
+function parseKeywords(raw: unknown): string[] {
+  if (raw == null) return [];
+  if (Array.isArray(raw)) return raw.map(String);
+  if (typeof raw === "string") {
+    try {
+      const parsed = JSON.parse(raw) as unknown;
+      return Array.isArray(parsed) ? (parsed as unknown[]).map(String) : [];
+    } catch {
+      return raw
+        .split(",")
+        .map((s) => s.trim())
+        .filter(Boolean);
+    }
+  }
+  return [];
+}
+
 // ── Assembler ──────────────────────────────────────────────
 
 export class PromptAssembler {
@@ -137,7 +157,7 @@ export class PromptAssembler {
 
     // ── Section 4: Memories ──────────────────────────────
 
-    const memoryMessages = await this.buildMemorySection(actor.id);
+    const memoryMessages = await this.buildMemorySection(actor.id, params.chatId);
     for (const msg of memoryMessages) {
       const tokens = defaultTokenCount(msg.content);
       sections.push({ name: "memories", chars: msg.content.length, tokens, dropped: false });
@@ -263,7 +283,7 @@ export class PromptAssembler {
     return loreMessages;
   }
 
-  private async buildMemorySection(actorId: string): Promise<GenerationMessage[]> {
+  private async buildMemorySection(actorId: string, chatId: string): Promise<GenerationMessage[]> {
     const memories = await this.db
       .selectFrom("actor_memories")
       .select(["content", "memory_type", "importance", "keywords"])
@@ -274,9 +294,45 @@ export class PromptAssembler {
 
     if (memories.length === 0) return [];
 
-    const memoryText = memories.map((m) => `- [${m.memory_type}] ${m.content}`).join("\n");
+    // Keyword filtering: memories tagged with keywords are only injected
+    // when at least one keyword appears in the latest user message. This
+    // keeps the most relevant memories without bloating the prompt with
+    // top-20-by-importance regardless of context.
+    const contextWords = await this.recentUserWords(chatId);
+    const relevant = memories.filter((m) => {
+      const keys = parseKeywords(m.keywords);
+      if (keys.length === 0) return true;
+      return keys.some((k) => contextWords.has(k.toLowerCase()));
+    });
 
-    return [{ role: "system", content: `[Memories]\n${memoryText}` }];
+    if (relevant.length === 0) return [];
+
+    const memoryText = relevant.map((m) => `- [${m.memory_type}] ${m.content}`).join("\n");
+
+    // XML delimiting prevents injected memories from being mistaken for
+    // instructions by the model.
+    return [{ role: "system", content: `<memory_context>\n${memoryText}\n</memory_context>` }];
+  }
+
+  /** Lowercased word set of the most recent user message in a chat. */
+  private async recentUserWords(chatId: string): Promise<Set<string>> {
+    const row = await this.db
+      .selectFrom("messages")
+      .select(["content"])
+      .where("chat_id", "=", chatId)
+      .where("role", "=", MessageRole.User)
+      .where("status", "=", MessageStatus.Confirmed)
+      .where("visibility", "=", MessageVisibility.Visible)
+      .orderBy("created_at", "desc")
+      .limit(1)
+      .executeTakeFirst();
+    if (!row?.content) return new Set();
+    return new Set(
+      row.content
+        .toLowerCase()
+        .split(/[^a-z0-9]+/i)
+        .filter(Boolean),
+    );
   }
 
   private async fetchChatHistory(chatId: string, tokenBudget: number): Promise<GenerationMessage[]> {
