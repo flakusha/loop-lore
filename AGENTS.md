@@ -141,13 +141,20 @@ docs/                    Specs, architecture, data model
 
 - **ESLint**: `eslint .` or `bun run lint` — TypeScript strict + unicorn +
   sonarjs + prettier
+- **CSS**: `bun run lint:css` — stylelint + `stylelint-config-standard`
+  (config: `.stylelintrc.json`); `--fix` variant available
+- **HTML**: `bun run lint:html` — markuplint, htmx/Alpine-aware
+  (config: `.markuplintrc.json`); runs with `--allow-warnings` so
+  structural/a11y errors block CI while a11y-debt warnings surface
+  without failing. `--fix` variant available
 - **Markdown**: `bun run md:lint` — markdownlint-cli2 on `docs/**/*.md`
 - **TypeScript**: `bun run typecheck` — `tsc --noEmit`
-- **All-in-one**: `bun run check` — runs typecheck → lint → md:lint
+- **All-in-one**: `bun run check` — runs typecheck → lint → lint:css →
+  lint:html → format → md:lint
 - **Auto-fix**: `bun run lint:fix` (ESLint), `bun run format:fix` (Prettier),
   `bun run md:lint:fix` (markdown)
 - **Config files**: `eslint.config.mjs` (flat config), `.prettierrc`,
-  `.markdownlint.json`
+  `.markdownlint.json`, `.stylelintrc.json`, `.markuplintrc.json`
 - **Test**: `bun test` — zero-config, Jest-compatible API
 - **Test coverage**: `bun test --coverage`
 - **CI**: Always run `bun run check` before pushing. Run `bun test` for

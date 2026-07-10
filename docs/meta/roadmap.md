@@ -94,7 +94,31 @@ Bridge between existing backend and user-facing UIs.
 - [ ] **Notifications**: Configurable alerts for events and mentions
 - [ ] **Internationalization**: Full i18n (see `docs/frontend/internationalization.md`)
 - [ ] **Accessibility**: Screen reader, keyboard nav, ARIA
-- [ ] **Progressive Web App (PWA)**: Offline, installability, push
+  - [ ] **Progressive Web App (PWA)**: Offline, installability, push
+
+### P2: Browser Hardening (FExBE Response Headers)
+
+Response-header policy engine is **built and wired** (`src/middleware/response-headers.ts`,
+class `ResponseHeaderPolicy`, applied to every response in `src/server.ts` fetchHandler).
+Config: `headers` block in `src/config/schema.ts` + `schema-class.ts`. Covers security,
+isolation (COOP/COEP off by default), perf, and observability; CSP enforces with inline
+`onclick=` handlers migrated to Alpine `x-on:click` (no `'unsafe-hashes'`; `style-src` uses
+`'unsafe-inline'` because `'unsafe-hashes'` never covered inline `style="..."` and there are
+hundreds). Follow-ups below are post-MVP — recorded here so they don't need re-research:
+
+- [ ] **Self-host htmx + Alpine** — `src/views/layout.html` and `index.html` load them from
+      `unpkg`/`jsdelivr`; drop those hosts from `csp.scriptSrc` to tighten. Currently required.
+- [ ] **Flip COEP on** (`headers.crossOriginEmbedderPolicy: "require-corp"`) — only after
+      self-hosting above; COEP breaks cross-origin CDN scripts. Unlocks cross-origin isolation
+      (SharedArrayBuffer, WebGPU, wasm threads) for future browser-side AI / llama.cpp wasm.
+- [ ] **Early Hints (103)** — `headers.earlyHints.enabled` flag exists but is a **spike**; Bun's
+      `fetch` handler has no first-class 103 API. `Link: preload` header already covers the win.
+- [ ] **CSP Report-Only rollout** — `csp.reportOnly: true` emits
+      `Content-Security-Policy-Report-Only` (observe violations via `reportingEndpoints`/`nel`);
+      flip to enforcing after a clean window.
+- [ ] **Browser/e2e confirmation** that `x-on:click="window.fn($el|$event)"` actually fires —
+      handlers are `globalThis`-attached in `src/frontend/ui.ts:130-138` and loader globals
+      (`src/frontend/loaders.d.ts`); no headless browser run yet to visually confirm.
 
 ### P2: Administrative
 
