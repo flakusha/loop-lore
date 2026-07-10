@@ -1,45 +1,110 @@
 /**
- * Browser logger — lightweight console wrapper.
+ * Browser logger — lightweight console wrapper with transport support.
  *
- * Drops heavy queue/transport/censor machinery from FE bundles.
- * Same Logger interface, same exports, zero deps.
+ * When transports are provided, entries flow through AsyncLogQueue
+ * for batched dispatch. Otherwise falls back to direct console.* calls.
  */
 
-import type { Logger, LoggerBindings } from "../../logger/types";
+import type { Logger, LoggerBindings, LogEntry, Transport } from "../../logger/types";
+import type { LogLevel } from "../../logger/types";
+import { LogLevelNumeric } from "../../logger/types";
+import { levelFromConfig, shouldEmit } from "../../logger/levels";
+import { unixSec, formatTime } from "../../utils/date";
+import { AsyncLogQueue } from "./queue";
+import { BrowserConsoleTransport } from "./transports/console";
+
+export interface LightLoggerConfig {
+  level?: LogLevel;
+  transports?: Transport[];
+}
 
 class LightLogger implements Logger {
   private readonly bindings: LoggerBindings;
+  private readonly transports: Transport[];
+  private readonly queue: AsyncLogQueue | null;
+  private readonly threshold: number;
+  private readonly levelString: LogLevel;
 
-  constructor(bindings?: LoggerBindings) {
+  constructor(config?: LightLoggerConfig, bindings?: LoggerBindings) {
     this.bindings = bindings ?? {};
+    this.levelString = config?.level ?? "debug";
+    this.threshold = levelFromConfig(this.levelString);
+    this.transports = config?.transports ?? [];
+    if (this.transports.length > 0) {
+      this.queue = new AsyncLogQueue(this.transports);
+      this.queue.start();
+    } else {
+      this.queue = null;
+    }
   }
 
-  private prefix(): string {
-    return this.bindings.module ? `[${this.bindings.module}]` : "";
+  private log(
+    level: LogLevel,
+    message: string | Record<string, unknown>,
+    error?: Error,
+    meta?: Record<string, unknown>,
+  ): void {
+    const numericLevel = LogLevelNumeric[level];
+    if (!shouldEmit(numericLevel, this.threshold)) return;
+
+    if (this.queue) {
+      const entry: LogEntry = {
+        level: numericLevel,
+        timestamp: unixSec(),
+        time: formatTime(),
+        message,
+        ...this.bindings,
+      };
+      if (error) {
+        entry.error = error.stack ?? error.message;
+      }
+      if (meta && Object.keys(meta).length > 0) {
+        entry.meta = meta;
+      }
+      this.queue.enqueue(entry);
+    } else {
+      const prefix = this.bindings.module ? `[${this.bindings.module}]` : "";
+      const fn =
+        numericLevel >= 40
+          ? console.error
+          : numericLevel >= 30
+            ? console.warn
+            : numericLevel >= 20
+              ? console.info
+              : console.debug;
+      if (error) {
+        fn(prefix, message, error, meta ?? "");
+      } else {
+        fn(prefix, message, meta ?? "");
+      }
+    }
   }
 
   debug(message: string | Record<string, unknown>, meta?: Record<string, unknown>): void {
-    console.debug(this.prefix(), message, meta ?? "");
+    this.log("debug", message, undefined, meta);
   }
 
   info(message: string | Record<string, unknown>, meta?: Record<string, unknown>): void {
-    console.info(this.prefix(), message, meta ?? "");
+    this.log("info", message, undefined, meta);
   }
 
   warn(message: string | Record<string, unknown>, meta?: Record<string, unknown>): void {
-    console.warn(this.prefix(), message, meta ?? "");
+    this.log("warn", message, undefined, meta);
   }
 
   error(message: string | Record<string, unknown>, error?: Error, meta?: Record<string, unknown>): void {
-    console.error(this.prefix(), message, error ?? "", meta ?? "");
+    this.log("error", message, error, meta);
   }
 
   child(bindings: LoggerBindings): Logger {
-    return new LightLogger({ ...this.bindings, ...bindings });
+    return new LightLogger(
+      { level: this.levelString, transports: this.transports },
+      { ...this.bindings, ...bindings },
+    );
   }
 
   async flush(): Promise<void> {
-    /* no-op — lightweight logger has no queue */
+    await this.queue?.flush();
   }
 }
 
@@ -47,8 +112,9 @@ class LightLogger implements Logger {
 
 const _root: { instance: Logger | null } = { instance: null };
 
-export function createLogger(_config?: unknown): Logger {
-  const instance = new LightLogger();
+export function createLogger(config?: { level?: LogLevel }): Logger {
+  const transports: Transport[] = [new BrowserConsoleTransport()];
+  const instance = new LightLogger({ level: config?.level, transports });
   _root.instance ??= instance;
   return instance;
 }

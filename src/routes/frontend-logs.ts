@@ -5,6 +5,10 @@
  * through the server-side logger for production visibility.
  *
  * POST /api/frontend/logs  — accept log batch
+ *
+ * Note: The incoming log entry shape uses `level: string` ("debug"/"info"/"warn"/"error")
+ * from the browser. This differs from the internal LogEntry type (`level: number` 10/20/30/40).
+ * The switch below maps string level → BE logger method at the boundary.
  */
 
 import type { RouteDispatch } from "./router";
@@ -12,7 +16,7 @@ import { registerRoute } from "./router";
 import { jsonResponse, jsonError, HttpStatus } from "./http-utils";
 import { getLogger } from "../logger";
 
-interface LogEntry {
+interface FrontendLogEntry {
   level: string;
   module: string;
   message: string;
@@ -21,7 +25,7 @@ interface LogEntry {
 }
 
 interface LogBatch {
-  entries: LogEntry[];
+  entries: FrontendLogEntry[];
 }
 
 const dispatch: RouteDispatch = async ({ request }) => {
