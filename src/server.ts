@@ -46,6 +46,7 @@ import "./routes/story-turns";
 import "./routes/frontend-logs";
 import "./routes/message-encryption";
 import "./routes/settings";
+import "./routes/admin";
 import "./personas/controller";
 
 const DOCS_PATH = join(import.meta.dir, "..", "docs", ".vitepress", "dist");

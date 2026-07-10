@@ -8,6 +8,7 @@
  *   POST   /api/assets              — upload new asset (multipart)
  *   GET    /api/assets/:id          — get asset metadata
  *   GET    /api/assets/:id/raw      — serve original file
+ *   GET    /api/assets/:id/download — download file (attachment)
  *   GET    /api/assets/:id/thumb    — serve thumbnail
  *   GET    /api/assets/:id/compressed — serve compressed variant
  *   DELETE /api/assets/:id          — delete asset
@@ -97,6 +98,9 @@ const dispatch: RouteDispatch = async ({ request, context, database, config }) =
     }
     if (method === "GET" && subRoute === "/raw") {
       return handleServeRaw({ database, assetId, uploadDir });
+    }
+    if (method === "GET" && subRoute === "/download") {
+      return handleDownload({ database, assetId, uploadDir });
     }
     if (method === "GET" && (subRoute === "/thumb" || subRoute === "/compressed")) {
       return handleServeCompressed({ database, assetId, uploadDir, variant: subRoute.slice(1) });
@@ -279,6 +283,26 @@ async function handleServeCompressed({
   return new Response(data, {
     headers: {
       "Content-Type": "image/webp",
+      "Cache-Control": "public, max-age=31536000, immutable",
+    },
+  });
+}
+
+async function handleDownload({ database, assetId, uploadDir }: ServeRawOpts): Promise<Response> {
+  const asset = await getAsset(database, assetId);
+  if (!asset)
+    return jsonError({ message: "Asset not found", status: HttpStatus.NotFound, code: ErrorCode.NotFound });
+
+  const filePath = getAssetFilePath(uploadDir, asset.storage_path);
+  if (!existsSync(filePath))
+    return jsonError({ message: "File not found on disk", status: HttpStatus.NotFound });
+
+  const data = readFileSync(filePath);
+  const safeName = asset.filename.replaceAll(/[^\w.-]+/g, "_");
+  return new Response(data, {
+    headers: {
+      "Content-Type": asset.mime_type,
+      "Content-Disposition": `attachment; filename="${safeName}"`,
       "Cache-Control": "public, max-age=31536000, immutable",
     },
   });
