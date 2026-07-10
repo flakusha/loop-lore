@@ -56,6 +56,15 @@ export {
 
 export { completeStep, failStep, getPipelineState, type PipelineState } from "./step-pipeline";
 
+export {
+  getOrCreateBuffer,
+  getBuffer,
+  removeBuffer,
+  scheduleBufferCleanup,
+  type StreamBuffer,
+  type StreamEvent,
+} from "./stream-buffer";
+
 export { StreamingRepetitionDetector, analyzeRepetition, detectTheatricalLoop } from "./repetition-detector";
 
 export {

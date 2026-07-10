@@ -1,6 +1,7 @@
 import { jsonBody } from "./json";
 import { log as rootLog } from "./logger";
 import type { ChatState } from "./types";
+import { browserCompressThenEncrypt } from "../browser";
 
 const log = rootLog.child({ module: "chat" });
 
@@ -112,7 +113,14 @@ export const chatMessages: Partial<ChatState> & ThisType<ChatState> = {
     this.$nextTick?.(() => this.scrollToBottom());
 
     const body: Record<string, unknown> = {};
-    if (text) body.content = text;
+    if (text) {
+      if (this._encryptionEnabled && this._chatKey && this._keyId) {
+        body.content = await browserCompressThenEncrypt(text, this._chatKey, this._keyId);
+        log.debug("Message encrypted client-side before send");
+      } else {
+        body.content = text;
+      }
+    }
     const lastMsg = msgs.findLast((m) => !m.id.startsWith("temp-"));
     if (lastMsg) body.parentId = lastMsg.id;
     if (pendingAssets.length > 0) {
@@ -132,6 +140,8 @@ export const chatMessages: Partial<ChatState> & ThisType<ChatState> = {
       });
       if (res.ok) {
         this.pendingAssets = [];
+        // Connect SSE for streaming generation updates
+        this.connectGenerationSSE(this.activeChat!);
         await this.loadMessages();
         await this.loadChats();
       } else {
