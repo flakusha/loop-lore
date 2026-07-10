@@ -38,13 +38,12 @@ export class PersonasService {
   }
 
   async getById(id: string, userId: string) {
-    const persona = await this.db
+    return this.db
       .selectFrom("personas")
       .selectAll()
       .where("id", "=", id)
       .where("user_id", "=", userId)
       .executeTakeFirst();
-    return persona;
   }
 
   async create(params: CreatePersonaParams): Promise<string> {
@@ -120,12 +119,12 @@ export class PersonasService {
       .where("user_id", "=", userId)
       .executeTakeFirst();
 
-      if (!persona) {
-        getLogger()
-          .child({ module: "personas" })
-          .warn("Persona not found for conversion", { personaId: id, userId });
-        throw new Error("Persona not found");
-      }
+    if (!persona) {
+      getLogger()
+        .child({ module: "personas" })
+        .warn("Persona not found for conversion", { personaId: id, userId });
+      throw new Error("Persona not found");
+    }
 
     const actorId = uid();
     await this.db
