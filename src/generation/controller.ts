@@ -10,6 +10,8 @@
  *   POST /api/generation/retry        — Retry with step-from-point
  *   POST /api/generation/regenerate   — Replace AI response
  *   GET  /api/generation/active       — List active (admin)
+ *   POST /api/generation/image        — Generate image from prompt
+ *   POST /api/generation/caption      — Caption image assets
  */
 
 import {
@@ -22,6 +24,8 @@ import {
   handleGenerationStream,
 } from "./generation-routes";
 import { handleGenerate } from "./generate-route";
+import { handleImageGeneration } from "./image-gen-route";
+import { handleImageCaption } from "./caption-route";
 import { jsonError } from "../routes/http-utils";
 import type { Config } from "../config/schema";
 import { loadConfig } from "../config/load";
@@ -116,6 +120,20 @@ export async function dispatch({
     const body = await parseJsonBody(request);
     if (body instanceof Response) return body;
     return handleRegenerate(body, database);
+  }
+
+  // POST /api/generation/image
+  if (pathname === "/api/generation/image" && request.method === "POST") {
+    const body = await parseJsonBody(request);
+    if (body instanceof Response) return body;
+    return handleImageGeneration(body);
+  }
+
+  // POST /api/generation/caption
+  if (pathname === "/api/generation/caption" && request.method === "POST") {
+    const body = await parseJsonBody(request);
+    if (body instanceof Response) return body;
+    return handleImageCaption(body);
   }
 
   return null; // Not a generation route
