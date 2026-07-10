@@ -10,9 +10,11 @@ import type { RouteDispatch } from "./router";
 import { registerRoute } from "./router";
 import { jsonResponse, jsonError, HttpStatus } from "./http-utils";
 import { deriveChatKeyForChat, getSmk, isEncryptionEnabled } from "../crypto";
-import { getLogger } from "../logger";
+import { getLogger, type Logger } from "../logger";
 
-const log = getLogger().child({ module: "routes:message-encryption" });
+function log(): Logger {
+  return getLogger().child({ module: "routes:message-encryption" });
+}
 
 const ENCRYPTION_KEY_RE = /^\/api\/chats\/([^/]+)\/encryption-key$/;
 interface ParsedPath {
@@ -34,12 +36,12 @@ const dispatch: RouteDispatch = async ({ request, database }) => {
   const { chatId } = parsed;
 
   if (!isEncryptionEnabled()) {
-    return jsonError("Encryption not enabled on this server", HttpStatus.NotImplemented);
+    return jsonError({ message: "Encryption not enabled on this server", status: HttpStatus.NotImplemented });
   }
 
   const smk = getSmk();
   if (!smk) {
-    return jsonError("Encryption not configured", HttpStatus.InternalServerError);
+    return jsonError({ message: "Encryption not configured", status: HttpStatus.InternalServerError });
   }
 
   try {
@@ -53,8 +55,8 @@ const dispatch: RouteDispatch = async ({ request, database }) => {
       length: 256,
     });
   } catch (error) {
-    log.error(`Failed to derive chat key for ${chatId}: ${String(error)}`);
-    return jsonError("Failed to get encryption key", HttpStatus.InternalServerError);
+    log().error(`Failed to derive chat key for ${chatId}: ${String(error)}`);
+    return jsonError({ message: "Failed to get encryption key", status: HttpStatus.InternalServerError });
   }
 };
 
