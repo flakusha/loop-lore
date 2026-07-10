@@ -101,6 +101,7 @@ export interface ChatParticipants {
   actor_id: string;
   role_in_chat: ChatParticipantRole;
   joined_at: Generated<string>;
+  last_read_message_id: string | null;
 }
 
 // ── Characters ────────────────────────────────────────────────
