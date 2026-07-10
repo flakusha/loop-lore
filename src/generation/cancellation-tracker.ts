@@ -105,7 +105,12 @@ export interface UpdateAttemptStatusOpts {
 }
 
 /** @internal — exported for step-pipeline.ts */
-export async function updateAttemptStatus({ db, attemptId, status, extra }: UpdateAttemptStatusOpts): Promise<void> {
+export async function updateAttemptStatus({
+  db,
+  attemptId,
+  status,
+  extra,
+}: UpdateAttemptStatusOpts): Promise<void> {
   const update: Record<string, unknown> = {
     status,
     updated_at: new Date().toISOString(),
@@ -134,7 +139,10 @@ export interface StartGenerationTrackingOpts {
  * Register a new generation attempt. Returns the attempt ID and the
  * AbortSignal (already connected) that the LLM caller should use.
  */
-export function startGenerationTracking({ options, db, events }: StartGenerationTrackingOpts): { attemptId: string; abortSignal: AbortSignal } {
+export function startGenerationTracking({ options, db, events }: StartGenerationTrackingOpts): {
+  attemptId: string;
+  abortSignal: AbortSignal;
+} {
   const attemptId = randomUUID();
   const abortSignalId = randomUUID();
   const abortController = new AbortController();
@@ -237,34 +245,38 @@ export async function completeGeneration({ attemptId, result, db }: CompleteGene
 
   const status: GenerationStatus = result.cancelled ? GenerationStatus.Cancelled : GenerationStatus.Completed;
 
-  await updateAttemptStatus({ db, attemptId, status, extra: {
-    completion_tokens: result.tokenUsage.completionTokens,
-    prompt_tokens: result.tokenUsage.promptTokens,
-    total_tokens: result.tokenUsage.totalTokens,
-    generation_time_ms: duration,
-    streaming_chunks_received: active.chunksReceived,
-    streaming_chars_received: active.charsReceived,
-    repetition_score: result.repetitionScore ?? null,
-    repetition_analysis: result.repetitionAnalysis
-      ? (() => {
-          const r = safeJsonStringify(result.repetitionAnalysis);
-          return r.ok ? r.value : null;
-        })()
-      : null,
-    policy_analysis: result.policyAnalysis
-      ? (() => {
-          const r = safeJsonStringify(result.policyAnalysis);
-          return r.ok ? r.value : null;
-        })()
-      : null,
-    completed_at: new Date().toISOString(),
-    ...(result.cancelReason && {
-      cancel_reason: result.cancelReason,
-      cancel_reason_detail: result.cancelReason,
-      cancel_source: result.cancelSource,
-    }),
-  },
-});
+  await updateAttemptStatus({
+    db,
+    attemptId,
+    status,
+    extra: {
+      completion_tokens: result.tokenUsage.completionTokens,
+      prompt_tokens: result.tokenUsage.promptTokens,
+      total_tokens: result.tokenUsage.totalTokens,
+      generation_time_ms: duration,
+      streaming_chunks_received: active.chunksReceived,
+      streaming_chars_received: active.charsReceived,
+      repetition_score: result.repetitionScore ?? null,
+      repetition_analysis: result.repetitionAnalysis
+        ? (() => {
+            const r = safeJsonStringify(result.repetitionAnalysis);
+            return r.ok ? r.value : null;
+          })()
+        : null,
+      policy_analysis: result.policyAnalysis
+        ? (() => {
+            const r = safeJsonStringify(result.policyAnalysis);
+            return r.ok ? r.value : null;
+          })()
+        : null,
+      completed_at: new Date().toISOString(),
+      ...(result.cancelReason && {
+        cancel_reason: result.cancelReason,
+        cancel_reason_detail: result.cancelReason,
+        cancel_source: result.cancelSource,
+      }),
+    },
+  });
 
   active.events?.onComplete?.(attemptId, result);
 
@@ -295,11 +307,15 @@ export async function failGeneration({ attemptId, error, db }: FailGenerationOpt
     }
   }
 
-  await updateAttemptStatus({ db, attemptId, status: GenerationStatus.Failed, extra: {
-    error_message: error.message,
-    completed_at: new Date().toISOString(),
-  },
-});
+  await updateAttemptStatus({
+    db,
+    attemptId,
+    status: GenerationStatus.Failed,
+    extra: {
+      error_message: error.message,
+      completed_at: new Date().toISOString(),
+    },
+  });
 
   active?.events?.onError?.(attemptId, error);
 
