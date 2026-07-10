@@ -44,5 +44,9 @@ export async function apiDispatch(params: RouteDispatchParams): Promise<Response
     if (result !== null) return result;
   }
 
-  return jsonError("Route not implemented", HttpStatus.NotImplemented, ErrorCode.NotImplemented);
+  return jsonError({
+    message: "Route not implemented",
+    status: HttpStatus.NotImplemented,
+    code: ErrorCode.NotImplemented,
+  });
 }

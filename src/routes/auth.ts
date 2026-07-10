@@ -142,7 +142,7 @@ async function handleLogin(request: Request, database: Kysely<DB>, config: Confi
     const text = await request.text();
     formData = new URLSearchParams(text);
   } catch {
-    return jsonError("Invalid request body", HttpStatus.BadRequest);
+    return jsonError({ message: "Invalid request body", status: HttpStatus.BadRequest });
   }
 
   const username = formData.get("username")?.trim();
@@ -192,7 +192,7 @@ async function handleLogin(request: Request, database: Kysely<DB>, config: Confi
   // Ensure the user's actor has an encryption key (if encryption enabled)
   if (isEncryptionEnabled()) {
     const smk = getSmk()!;
-    await ensureActorKey(database, user.id, smk);
+    await ensureActorKey({ database, actorId: user.id, smk });
   }
 
   // Return HX-Redirect + Set-Cookie
@@ -209,7 +209,10 @@ async function handleDemoLogin(request: Request, database: Kysely<DB>, config: C
   // Get or create solo user (reuse logic from auth middleware)
   const soloUser = await getOrCreateSoloUserForAuth(database, config.auth.demoUsername);
   if (!soloUser) {
-    return jsonError("Server misconfigured: no solo user", HttpStatus.InternalServerError);
+    return jsonError({
+      message: "Server misconfigured: no solo user",
+      status: HttpStatus.InternalServerError,
+    });
   }
 
   // Create session
@@ -227,7 +230,7 @@ async function handleDemoLogin(request: Request, database: Kysely<DB>, config: C
   // Ensure the solo user's actor has an encryption key
   if (isEncryptionEnabled()) {
     const smk = getSmk()!;
-    await ensureActorKey(database, soloUser.id, smk);
+    await ensureActorKey({ database, actorId: soloUser.id, smk });
   }
 
   // Return redirect to chat page (hx-target="body" hx-swap="outerHTML")
@@ -262,7 +265,11 @@ async function handleLogout(
 
 async function handleMe(database: Kysely<DB>, context: RequestContext): Promise<Response> {
   if (!context.userId) {
-    return jsonError("Unauthorized", HttpStatus.Unauthorized, ErrorCode.Unauthorized);
+    return jsonError({
+      message: "Unauthorized",
+      status: HttpStatus.Unauthorized,
+      code: ErrorCode.Unauthorized,
+    });
   }
 
   const user = await database
@@ -271,7 +278,8 @@ async function handleMe(database: Kysely<DB>, context: RequestContext): Promise<
     .where("id", "=", context.userId)
     .executeTakeFirst();
 
-  if (!user) return jsonError("User not found", HttpStatus.NotFound, ErrorCode.NotFound);
+  if (!user)
+    return jsonError({ message: "User not found", status: HttpStatus.NotFound, code: ErrorCode.NotFound });
   return jsonResponse(user);
 }
 

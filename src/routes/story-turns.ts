@@ -34,7 +34,7 @@ const dispatch: RouteDispatch = async ({ request, context, database }) => {
       .where("id", "=", chatId)
       .executeTakeFirst();
     if (!chatCheck || (chatCheck.created_by !== context.userId && context.userRole !== "admin")) {
-      return jsonError("Story turn not found", HttpStatus.NotFound);
+      return jsonError({ message: "Story turn not found", status: HttpStatus.NotFound });
     }
     if (method === "GET") {
       const turn = await database
@@ -43,7 +43,12 @@ const dispatch: RouteDispatch = async ({ request, context, database }) => {
         .where("id", "=", turnId)
         .where("chat_id", "=", chatId)
         .executeTakeFirst();
-      if (!turn) return jsonError("Story turn not found", HttpStatus.NotFound, ErrorCode.NotFound);
+      if (!turn)
+        return jsonError({
+          message: "Story turn not found",
+          status: HttpStatus.NotFound,
+          code: ErrorCode.NotFound,
+        });
       return jsonResponse(turn);
     }
     return BAD_METHOD();
@@ -60,7 +65,7 @@ const dispatch: RouteDispatch = async ({ request, context, database }) => {
       .where("id", "=", chatId)
       .executeTakeFirst();
     if (!chatCheck || (chatCheck.created_by !== context.userId && context.userRole !== "admin")) {
-      return jsonError("Chat not found", HttpStatus.NotFound);
+      return jsonError({ message: "Chat not found", status: HttpStatus.NotFound });
     }
     if (method === "GET") {
       const { page, pageSize } = parsePagination(searchParams);
@@ -82,7 +87,7 @@ const dispatch: RouteDispatch = async ({ request, context, database }) => {
         .offset(offset)
         .execute();
 
-      return jsonPaginated(turns, total, page, pageSize);
+      return jsonPaginated({ data: turns, total, page, pageSize });
     }
     return BAD_METHOD();
   }

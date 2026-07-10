@@ -142,16 +142,37 @@ function deleteFile(uploadDir: string, storagePath: string): void {
   if (existsSync(fullPath)) unlinkSync(fullPath);
 }
 
+export interface CreateAssetOpts {
+  database: Kysely<DB>;
+  input: CreateAssetInput;
+  uploadDir: string;
+}
+
+export interface DeleteAssetOpts {
+  database: Kysely<DB>;
+  assetId: string;
+  uploadDir: string;
+}
+
+export interface UnlinkAssetOpts {
+  database: Kysely<DB>;
+  assetId: string;
+  entityType: string;
+  entityId: string;
+}
+
+export interface LinkAssetOpts {
+  database: Kysely<DB>;
+  assetId: string;
+  link: AssetLinkInput;
+}
+
 // ── Service functions ──────────────────────────────────────────
 
 /**
  * Create an asset record and store the file.
  */
-export async function createAsset(
-  database: Kysely<DB>,
-  input: CreateAssetInput,
-  uploadDir: string,
-): Promise<AssetRecord> {
+export async function createAsset({ database, input, uploadDir }: CreateAssetOpts): Promise<AssetRecord> {
   const id = uid();
   const storagePath = storeFile(uploadDir, id, input.filename, input.buffer);
 
@@ -286,11 +307,7 @@ export function getAssetFilePath(uploadDir: string, storagePath: string): string
 /**
  * Delete an asset record and its file.
  */
-export async function deleteAsset(
-  database: Kysely<DB>,
-  assetId: string,
-  uploadDir: string,
-): Promise<boolean> {
+export async function deleteAsset({ database, assetId, uploadDir }: DeleteAssetOpts): Promise<boolean> {
   const asset = await database.selectFrom("assets").selectAll().where("id", "=", assetId).executeTakeFirst();
   if (!asset) return false;
 
@@ -309,7 +326,7 @@ export async function deleteAsset(
 /**
  * Link an asset to an entity.
  */
-export async function linkAsset(database: Kysely<DB>, assetId: string, link: AssetLinkInput): Promise<void> {
+export async function linkAsset({ database, assetId, link }: LinkAssetOpts): Promise<void> {
   try {
     await database
       .insertInto("asset_links")
@@ -328,12 +345,7 @@ export async function linkAsset(database: Kysely<DB>, assetId: string, link: Ass
 /**
  * Unlink an asset from an entity.
  */
-export async function unlinkAsset(
-  database: Kysely<DB>,
-  assetId: string,
-  entityType: string,
-  entityId: string,
-): Promise<void> {
+export async function unlinkAsset({ database, assetId, entityType, entityId }: UnlinkAssetOpts): Promise<void> {
   await database
     .deleteFrom("asset_links")
     .where("asset_id", "=", assetId)

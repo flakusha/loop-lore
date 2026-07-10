@@ -25,12 +25,14 @@ import { getLogger } from "../logger";
  * Returns true if cancellation was actually performed.
  */
 
-export function cancelGeneration(
-  attemptId: string,
-  reason: CancelReason,
-  source: CancelSource,
-  detail: string,
-): boolean {
+export interface CancelGenerationOpts {
+  attemptId: string;
+  reason: CancelReason;
+  source: CancelSource;
+  detail: string;
+}
+
+export function cancelGeneration({ attemptId, reason, source, detail }: CancelGenerationOpts): boolean {
   const active = activeGenerations.get(attemptId);
   if (!active) return false;
 
@@ -58,25 +60,27 @@ export function cancelGeneration(
 /**
  * Cancel generation by chat ID.
  */
-export function cancelGenerationByChat(
-  db: Kysely<DB>,
-  chatId: string,
-  reason: CancelReason = CancelReason.UserCancel,
-  source: CancelSource = CancelSource.User,
-  detail = "",
-): boolean {
+export interface CancelGenerationByChatOpts {
+  db: Kysely<DB>;
+  chatId: string;
+  reason?: CancelReason;
+  source?: CancelSource;
+  detail?: string;
+}
+
+export function cancelGenerationByChat({ db, chatId, reason = CancelReason.UserCancel, source = CancelSource.User, detail = "" }: CancelGenerationByChatOpts): boolean {
   const attemptId = chatToAttempt.get(chatId);
   if (!attemptId) return false;
 
-  const wasCancelled = cancelGeneration(attemptId, reason, source, detail);
+  const wasCancelled = cancelGeneration({ attemptId, reason, source, detail });
 
   if (wasCancelled) {
-    void updateAttemptStatus(db, attemptId, GenerationStatus.Cancelled, {
+    void updateAttemptStatus({ db, attemptId, status: GenerationStatus.Cancelled, extra: {
       cancel_reason: reason,
       cancel_reason_detail: detail,
       cancel_source: source,
       completed_at: new Date().toISOString(),
-    }).catch((error: unknown) => {
+    } }).catch((error: unknown) => {
       getLogger()
         .child({ module: "generation" })
         .error("Failed to update attempt status", error instanceof Error ? error : undefined);
@@ -123,11 +127,13 @@ export async function hasInFlightGeneration(db: Kysely<DB>, idempotencyKey: stri
  *
  * This is the core check that implements the three cancellation criteria.
  */
-export async function processStreamingChunk(
-  attemptId: string,
-  chunk: string,
-  db: Kysely<DB>,
-): Promise<ChunkAction> {
+export interface ProcessStreamingChunkOpts {
+  attemptId: string;
+  chunk: string;
+  db: Kysely<DB>;
+}
+
+export async function processStreamingChunk({ attemptId, chunk, db }: ProcessStreamingChunkOpts): Promise<ChunkAction> {
   const genLog = getLogger().child({ module: "generation" });
   const active = activeGenerations.get(attemptId);
   if (!active) return ChunkAction.Complete;
@@ -142,10 +148,10 @@ export async function processStreamingChunk(
   // Mark as streaming on first chunk
   if (active.status === GenerationStatus.Processing) {
     active.status = GenerationStatus.Streaming;
-    void updateAttemptStatus(db, attemptId, GenerationStatus.Streaming, {
+    void updateAttemptStatus({ db, attemptId, status: GenerationStatus.Streaming, extra: {
       streaming_chunks_received: 0,
       streaming_chars_received: 0,
-    }).catch((error: unknown) => {
+    } }).catch((error: unknown) => {
       genLog.error("Failed to update streaming start status", error instanceof Error ? error : undefined);
     });
     active.events?.onStreamingStart?.(attemptId);
@@ -156,7 +162,7 @@ export async function processStreamingChunk(
   // ── Criterion 2: Repetition detection ──
   const repAnalysis = active.repetitionDetector.addChunk(chunk);
   if (repAnalysis) {
-    void updateAttemptStatus(db, attemptId, active.status, {
+    void updateAttemptStatus({ db, attemptId, status: active.status, extra: {
       repetition_score: repAnalysis.score,
       repetition_analysis: (() => {
         const r = safeJsonStringify(repAnalysis);
@@ -166,7 +172,7 @@ export async function processStreamingChunk(
         }
         return r.value;
       })(),
-    }).catch((error: unknown) => {
+    } }).catch((error: unknown) => {
       genLog.error("Failed to update repetition analysis", error instanceof Error ? error : undefined);
     });
 
@@ -183,8 +189,8 @@ export async function processStreamingChunk(
         `patterns=${repAnalysis.patterns.length}, ` +
         `theatre=${String(theatreCheck.detected)}`;
 
-      cancelGeneration(attemptId, CancelReason.RepetitionDetected, CancelSource.AutoRepetition, detail);
-      void updateAttemptStatus(db, attemptId, GenerationStatus.Cancelled, {
+      cancelGeneration({ attemptId, reason: CancelReason.RepetitionDetected, source: CancelSource.AutoRepetition, detail });
+      void updateAttemptStatus({ db, attemptId, status: GenerationStatus.Cancelled, extra: {
         cancel_reason: CancelReason.RepetitionDetected,
         cancel_reason_detail: detail,
         cancel_source: CancelSource.AutoRepetition,
@@ -194,7 +200,7 @@ export async function processStreamingChunk(
           return r.ok ? r.value : null;
         })(),
         completed_at: new Date().toISOString(),
-      }).catch((error: unknown) => {
+} }).catch((error: unknown) => {
         genLog.error("Failed to update repetition-cancel status", error instanceof Error ? error : undefined);
       });
       return ChunkAction.CancelRepetition;
@@ -225,8 +231,8 @@ export async function processStreamingChunk(
           `confidence=${policyAnalysis.confidence.toFixed(2)}, ` +
           `indicators=${policyAnalysis.indicators.length}`;
 
-        cancelGeneration(attemptId, CancelReason.PolicyMismatch, CancelSource.AutoPolicy, detail);
-        void updateAttemptStatus(db, attemptId, GenerationStatus.Cancelled, {
+        cancelGeneration({ attemptId, reason: CancelReason.PolicyMismatch, source: CancelSource.AutoPolicy, detail });
+        void updateAttemptStatus({ db, attemptId, status: GenerationStatus.Cancelled, extra: {
           cancel_reason: CancelReason.PolicyMismatch,
           cancel_reason_detail: detail,
           cancel_source: CancelSource.AutoPolicy,
@@ -239,7 +245,7 @@ export async function processStreamingChunk(
             return r.value;
           })(),
           completed_at: new Date().toISOString(),
-        }).catch((error: unknown) => {
+        } }).catch((error: unknown) => {
           genLog.error("Failed to update policy-cancel status", error instanceof Error ? error : undefined);
         });
 

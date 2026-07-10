@@ -66,7 +66,11 @@ interface ServeCompressedOpts {
 const dispatch: RouteDispatch = async ({ request, context, database, config }) => {
   // Check assets enabled
   if (!config.assets.enabled) {
-    return jsonError("Asset system is disabled", HttpStatus.NotFound, ErrorCode.NotFound);
+    return jsonError({
+      message: "Asset system is disabled",
+      status: HttpStatus.NotFound,
+      code: ErrorCode.NotFound,
+    });
   }
 
   const url = new URL(request.url);
@@ -83,7 +87,12 @@ const dispatch: RouteDispatch = async ({ request, context, database, config }) =
 
     if (method === "GET" && !subRoute) {
       const asset = await getAsset(database, assetId);
-      if (!asset) return jsonError("Asset not found", HttpStatus.NotFound, ErrorCode.NotFound);
+      if (!asset)
+        return jsonError({
+          message: "Asset not found",
+          status: HttpStatus.NotFound,
+          code: ErrorCode.NotFound,
+        });
       return jsonResponse(asset);
     }
     if (method === "GET" && subRoute === "/raw") {
@@ -93,8 +102,13 @@ const dispatch: RouteDispatch = async ({ request, context, database, config }) =
       return handleServeCompressed({ database, assetId, uploadDir, variant: subRoute.slice(1) });
     }
     if (method === "DELETE" && !subRoute) {
-      const deleted = await deleteAsset(database, assetId, uploadDir);
-      if (!deleted) return jsonError("Asset not found", HttpStatus.NotFound, ErrorCode.NotFound);
+      const deleted = await deleteAsset({ database, assetId, uploadDir });
+      if (!deleted)
+        return jsonError({
+          message: "Asset not found",
+          status: HttpStatus.NotFound,
+          code: ErrorCode.NotFound,
+        });
       return jsonNoContent();
     }
 
@@ -109,18 +123,18 @@ const dispatch: RouteDispatch = async ({ request, context, database, config }) =
       }
       if (method === "POST" && !linkId) {
         const body = await request.json();
-        await linkAsset(database, assetId, body as { entityType: string; entityId: string; label?: string });
+        await linkAsset({ database, assetId, link: body as { entityType: string; entityId: string; label?: string } });
         return jsonCreated({ id: assetId });
       }
       if (method === "DELETE" && linkId) {
         const body = (await request.json()) as { entityType?: string; entityId?: string };
-        await unlinkAsset(database, assetId, body.entityType ?? "", body.entityId ?? "");
+        await unlinkAsset({ database, assetId, entityType: body.entityType ?? "", entityId: body.entityId ?? "" });
         return jsonNoContent();
       }
-      return jsonError("Method not allowed for links", HttpStatus.BadRequest);
+      return jsonError({ message: "Method not allowed for links", status: HttpStatus.BadRequest });
     }
 
-    return jsonError("Method not allowed", HttpStatus.BadRequest);
+    return jsonError({ message: "Method not allowed", status: HttpStatus.BadRequest });
   }
 
   // ── /api/assets (collection) ─────────────────────────────
@@ -133,7 +147,7 @@ const dispatch: RouteDispatch = async ({ request, context, database, config }) =
     const label = searchParams.get("label") ?? undefined;
 
     const result = await listAssets(database, { page, pageSize, entityType, entityId, label });
-    return jsonPaginated(result.data, result.total, page, pageSize);
+    return jsonPaginated({ data: result.data, total: result.total, page, pageSize });
   }
 
   if (pathname === "/api/assets" && method === "POST") {
@@ -151,12 +165,17 @@ async function handleUpload({
   maxFileSize,
 }: UploadOpts): Promise<Response> {
   const userId = context.userId;
-  if (!userId) return jsonError("Unauthorized", HttpStatus.Unauthorized, ErrorCode.Unauthorized);
+  if (!userId)
+    return jsonError({
+      message: "Unauthorized",
+      status: HttpStatus.Unauthorized,
+      code: ErrorCode.Unauthorized,
+    });
 
   const contentType = request.headers.get("content-type") ?? "";
 
   if (!contentType.includes("multipart/form-data")) {
-    return jsonError("Expected multipart/form-data", HttpStatus.BadRequest);
+    return jsonError({ message: "Expected multipart/form-data", status: HttpStatus.BadRequest });
   }
 
   let formData;
@@ -164,27 +183,27 @@ async function handleUpload({
     // eslint-disable-next-line @typescript-eslint/no-deprecated
     formData = await request.formData();
   } catch {
-    return jsonError("Failed to parse multipart form data", HttpStatus.BadRequest);
+    return jsonError({ message: "Failed to parse multipart form data", status: HttpStatus.BadRequest });
   }
 
   const file = formData.get("file");
   if (!file || !(file instanceof File)) {
-    return jsonError("file field is required", HttpStatus.BadRequest);
+    return jsonError({ message: "file field is required", status: HttpStatus.BadRequest });
   }
 
   const buffer = Buffer.from(await file.arrayBuffer());
   const sizeError = validateFileSize(buffer.length, maxFileSize);
-  if (sizeError) return jsonError(sizeError, HttpStatus.BadRequest);
+  if (sizeError) return jsonError({ message: sizeError, status: HttpStatus.BadRequest });
 
   const mimeType = file.type || "application/octet-stream";
   const mimeError = validateMimeType(mimeType);
-  if (mimeError) return jsonError(mimeError, HttpStatus.BadRequest);
+  if (mimeError) return jsonError({ message: mimeError, status: HttpStatus.BadRequest });
 
   const altText = (formData.get("alt_text") as string) ?? undefined;
 
-  const asset = await createAsset(
+  const asset = await createAsset({
     database,
-    {
+    input: {
       ownerId: userId,
       filename: file.name,
       mimeType,
@@ -194,7 +213,7 @@ async function handleUpload({
       altText,
     },
     uploadDir,
-  );
+  });
 
   return jsonCreated({
     id: asset.id,
@@ -209,10 +228,12 @@ async function handleUpload({
 
 async function handleServeRaw({ database, assetId, uploadDir }: ServeRawOpts): Promise<Response> {
   const asset = await getAsset(database, assetId);
-  if (!asset) return jsonError("Asset not found", HttpStatus.NotFound, ErrorCode.NotFound);
+  if (!asset)
+    return jsonError({ message: "Asset not found", status: HttpStatus.NotFound, code: ErrorCode.NotFound });
 
   const filePath = getAssetFilePath(uploadDir, asset.storage_path);
-  if (!existsSync(filePath)) return jsonError("File not found on disk", HttpStatus.NotFound);
+  if (!existsSync(filePath))
+    return jsonError({ message: "File not found on disk", status: HttpStatus.NotFound });
 
   const data = readFileSync(filePath);
   return new Response(data, {
@@ -230,7 +251,8 @@ async function handleServeCompressed({
   variant,
 }: ServeCompressedOpts): Promise<Response> {
   const asset = await getAsset(database, assetId);
-  if (!asset) return jsonError("Asset not found", HttpStatus.NotFound, ErrorCode.NotFound);
+  if (!asset)
+    return jsonError({ message: "Asset not found", status: HttpStatus.NotFound, code: ErrorCode.NotFound });
 
   const compressedFilename = `${assetId}_${variant}.webp`;
 

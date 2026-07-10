@@ -47,6 +47,15 @@ export class UnderageError extends AgeGateError {
   }
 }
 
+// ── Options objects ──────────────────────────────────────────
+
+export interface AcceptAgeGateOpts {
+  database: Kysely<DB>;
+  config: AgeGateConfig;
+  userId: string;
+  input: AgeGateAcceptInput;
+}
+
 // ── Service ──────────────────────────────────────────────────
 
 /**
@@ -105,12 +114,7 @@ export function validateAge(birthDate: string, minimumAge: number): void {
  * @throws {UnderageError} if the user is below the minimum age
  * @throws {AgeGateError} if birth date is invalid
  */
-export async function acceptAgeGate(
-  database: Kysely<DB>,
-  config: AgeGateConfig,
-  userId: string,
-  input: AgeGateAcceptInput,
-): Promise<void> {
+export async function acceptAgeGate({ database, config, userId, input }: AcceptAgeGateOpts): Promise<void> {
   if (!config.enabled || config.mode === "none") {
     // Gate is disabled — no-op but don't error
     return;

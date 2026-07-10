@@ -401,12 +401,12 @@ export class GameMasterService {
       context: context ?? undefined,
     });
 
-    const worldEvents = extractEvents(response, turn.actor_id, context?.world.currentLocation.id ?? null);
+    const worldEvents = extractEvents({ messageContent: response, actorId: turn.actor_id, currentLocationId: context?.world.currentLocation.id ?? null });
 
     if (context) {
-      const validated = await validateEvents(this.db, context.world.id, worldEvents);
+      const validated = await validateEvents({ db: this.db, worldId: context.world.id, events: worldEvents });
       if (validated.valid) {
-        await applyEvents(this.db, context.world.id, validated.filteredEvents);
+        await applyEvents({ db: this.db, worldId: context.world.id, events: validated.filteredEvents });
       }
     }
 

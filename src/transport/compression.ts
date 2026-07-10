@@ -79,6 +79,12 @@ function decompress(data: Uint8Array, algorithm: CompressionAlgorithm): Uint8Arr
   }
 }
 
+export interface WithCompressionOpts {
+  handler: ProtocolHandler;
+  algorithm: CompressionAlgorithm;
+  options?: CompressionOptions;
+}
+
 /**
  * Wrap a ProtocolHandler with transparent send/receive compression.
  *
@@ -86,14 +92,13 @@ function decompress(data: Uint8Array, algorithm: CompressionAlgorithm): Uint8Arr
  * The raw (uncompressed) handler's `connect()` metadata is extended
  * with `{ compression: algorithm }`.
  *
- * @param handler - Inner protocol handler to wrap
- * @param algorithm - Compression algorithm to apply
- * @param options - Tuning options (level, threshold)
+ * @param opts - Options object
+ * @param opts.handler - Inner protocol handler to wrap
+ * @param opts.algorithm - Compression algorithm to apply
+ * @param opts.options - Tuning options (level, threshold)
  */
 export function withCompression(
-  handler: ProtocolHandler,
-  algorithm: CompressionAlgorithm,
-  options: CompressionOptions = {},
+  { handler, algorithm, options = {} }: WithCompressionOpts,
 ): ProtocolHandler {
   return {
     async connect(): Promise<Connection> {

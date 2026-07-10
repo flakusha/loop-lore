@@ -97,14 +97,16 @@ export interface GenerateRequest {
  *
  * @param userId  Authenticated user ID for BYO key resolution (optional).
  */
-export async function handleGenerate(
-  body: unknown,
-  _database?: Kysely<DB>,
-  config?: Config,
-  userId?: string,
-): Promise<Response> {
+export interface HandleGenerateOpts {
+  body: unknown;
+  database?: Kysely<DB>;
+  config?: Config;
+  userId?: string;
+}
+
+export async function handleGenerate({ body, database: _database, config: _config, userId }: HandleGenerateOpts): Promise<Response> {
   const database = _database ?? getDatabase();
-  const cfg = config ?? loadConfig();
+  const cfg = _config ?? loadConfig();
   const input = body as GenerateRequest;
 
   // ── Validate required fields ───────────────────────────
@@ -112,30 +114,28 @@ export async function handleGenerate(
   // Sub-objects (repetitionDetection, policyDetection, responseLimit) are
   // consumed downstream — invalid values may cause runtime errors.
 
-  if (!input.chatId || typeof input.chatId !== "string") return jsonError("chatId is required", 400);
+  if (!input.chatId || typeof input.chatId !== "string")
+    return jsonError({ message: "chatId is required", status: 400 });
   if (!input.parentMessageId || typeof input.parentMessageId !== "string")
-    return jsonError("parentMessageId is required", 400);
-  if (!input.actorId || typeof input.actorId !== "string") return jsonError("actorId is required", 400);
+    return jsonError({ message: "parentMessageId is required", status: 400 });
+  if (!input.actorId || typeof input.actorId !== "string")
+    return jsonError({ message: "actorId is required", status: 400 });
   if (!input.idempotencyKey || typeof input.idempotencyKey !== "string")
-    return jsonError("idempotencyKey is required", 400);
+    return jsonError({ message: "idempotencyKey is required", status: 400 });
   if (input.prompt !== undefined && !Array.isArray(input.prompt))
-    return jsonError("prompt must be an array", 400);
+    return jsonError({ message: "prompt must be an array", status: 400 });
   if (input.provider !== undefined && typeof input.provider !== "string")
-    return jsonError("provider must be a string", 400);
+    return jsonError({ message: "provider must be a string", status: 400 });
   if (input.modelId !== undefined && typeof input.modelId !== "string")
-    return jsonError("modelId must be a string", 400);
+    return jsonError({ message: "modelId must be a string", status: 400 });
 
   // ── Resolve provider + model ──────────────────────────
 
   let resolved;
   try {
-    resolved = await resolveProvider(
-      { provider: input.provider, model: input.modelId, userId },
-      cfg,
-      database,
-    );
+    resolved = await resolveProvider({ provider: input.provider, model: input.modelId, userId, config: cfg, db: database });
   } catch (error) {
-    return jsonError(`Provider resolution failed: ${(error as Error).message}`, 422);
+    return jsonError({ message: `Provider resolution failed: ${(error as Error).message}`, status: 422 });
   }
 
   // ── Assemble prompt ───────────────────────────────────
@@ -158,7 +158,7 @@ export async function handleGenerate(
       messages = assembled.messages;
       systemPrompt = assembled.systemPrompt;
     } catch (error) {
-      return jsonError(`Prompt assembly failed: ${(error as Error).message}`, 422);
+      return jsonError({ message: `Prompt assembly failed: ${(error as Error).message}`, status: 422 });
     }
   }
 
@@ -189,7 +189,7 @@ export async function handleGenerate(
 
   // ── Track generation attempt ─────────────────────────
 
-  const { attemptId, abortSignal } = startGenerationTracking(genOptions, database);
+  const { attemptId, abortSignal } = startGenerationTracking({ options: genOptions, db: database });
 
   // ── Build provider request ────────────────────────────
 
@@ -259,7 +259,7 @@ export async function handleGenerate(
         .execute();
 
       // Complete tracking
-      await completeGeneration(attemptId, result, database);
+      await completeGeneration({ attemptId, result, db: database });
 
       return jsonResponse({
         ok: true,
@@ -273,11 +273,11 @@ export async function handleGenerate(
     } catch (error) {
       const errMsg = (error as Error).message;
       try {
-        await failGeneration(attemptId, error as Error, database);
+        await failGeneration({ attemptId, error: error as Error, db: database });
       } catch {
         // failGeneration already logs errors
       }
-      return jsonError(`Generation failed: ${errMsg}`, 500);
+      return jsonError({ message: `Generation failed: ${errMsg}`, status: 500 });
     }
   }
 
@@ -295,7 +295,7 @@ export async function handleGenerate(
         const finalResponse = await resolved.provider.stream(providerReq, (chunk: ChunkEvent) => {
           if (chunk.type === "content" && chunk.content) {
             accumulatedContent += chunk.content;
-            void processStreamingChunk(attemptId, chunk.content, database);
+            void processStreamingChunk({ attemptId, chunk: chunk.content, db: database });
             controller.enqueue(
               new TextEncoder().encode(sseData({ type: "content", content: chunk.content })),
             );
@@ -353,7 +353,7 @@ export async function handleGenerate(
           .execute();
 
         // Complete tracking
-        await completeGeneration(attemptId, result, database);
+await completeGeneration({ attemptId, result, db: database });
 
         // Send done event with final data
         controller.enqueue(
@@ -375,7 +375,7 @@ export async function handleGenerate(
 
         // Fail tracking
         try {
-          await failGeneration(attemptId, error as Error, database);
+          await failGeneration({ attemptId, error: error as Error, db: database });
         } catch {
           /* empty */
         }

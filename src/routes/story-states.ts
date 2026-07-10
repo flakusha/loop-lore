@@ -46,11 +46,16 @@ const dispatch: RouteDispatch = async ({ request, context, database }) => {
       .where("id", "=", worldId)
       .executeTakeFirst();
     if (!worldCheck || (worldCheck.owner_id !== context.userId && context.userRole !== "admin")) {
-      return jsonError("NPC state not found", HttpStatus.NotFound);
+      return jsonError({ message: "NPC state not found", status: HttpStatus.NotFound });
     }
     if (method === "GET") {
       const npcState = await state.getNpcState(actorId, worldId);
-      if (!npcState) return jsonError("NPC state not found", HttpStatus.NotFound, ErrorCode.NotFound);
+      if (!npcState)
+        return jsonError({
+          message: "NPC state not found",
+          status: HttpStatus.NotFound,
+          code: ErrorCode.NotFound,
+        });
       return jsonResponse(npcState);
     }
     if (method === "PUT") {
@@ -107,7 +112,7 @@ const dispatch: RouteDispatch = async ({ request, context, database }) => {
       .where("id", "=", worldId)
       .executeTakeFirst();
     if (!worldCheck || (worldCheck.owner_id !== context.userId && context.userRole !== "admin")) {
-      return jsonError("Location not found", HttpStatus.NotFound);
+      return jsonError({ message: "Location not found", status: HttpStatus.NotFound });
     }
     if (method === "GET") {
       const npcs = await state.getNpcsAtLocation(locationId);
@@ -128,11 +133,16 @@ const dispatch: RouteDispatch = async ({ request, context, database }) => {
       .where("location_states.location_id", "=", locationId)
       .executeTakeFirst();
     if (!locWorld || (locWorld.owner_id !== context.userId && context.userRole !== "admin")) {
-      return jsonError("Location not found", HttpStatus.NotFound);
+      return jsonError({ message: "Location not found", status: HttpStatus.NotFound });
     }
     if (method === "GET") {
       const locState = await state.getLocationState(locationId);
-      if (!locState) return jsonError("Location state not found", HttpStatus.NotFound, ErrorCode.NotFound);
+      if (!locState)
+        return jsonError({
+          message: "Location state not found",
+          status: HttpStatus.NotFound,
+          code: ErrorCode.NotFound,
+        });
       return jsonResponse(locState);
     }
     if (method === "PUT") {
@@ -182,7 +192,7 @@ const dispatch: RouteDispatch = async ({ request, context, database }) => {
       .where("id", "=", worldId)
       .executeTakeFirst();
     if (!worldCheck || (worldCheck.owner_id !== context.userId && context.userRole !== "admin")) {
-      return jsonError("World not found", HttpStatus.NotFound);
+      return jsonError({ message: "World not found", status: HttpStatus.NotFound });
     }
     if (method === "GET") {
       const { page, pageSize } = parsePagination(searchParams);
@@ -201,7 +211,7 @@ const dispatch: RouteDispatch = async ({ request, context, database }) => {
         .limit(pageSize)
         .offset(offset)
         .execute();
-      return jsonPaginated(snapshots, total, page, pageSize);
+      return jsonPaginated({ data: snapshots, total, page, pageSize });
     }
     if (method === "POST") {
       const body = await parseBody(request);

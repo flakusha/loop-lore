@@ -46,6 +46,14 @@ export {
   GenerationCancelledError,
 } from "./cancellation-manager";
 
+export type {
+  CancelGenerationOpts,
+  CancelGenerationByChatOpts,
+  ProcessStreamingChunkOpts,
+  CompleteGenerationOpts,
+  FailGenerationOpts,
+} from "./cancellation-manager";
+
 export {
   getPartialContent,
   storePartialContent,
@@ -55,6 +63,7 @@ export {
 } from "./continuation";
 
 export { completeStep, failStep, getPipelineState, type PipelineState } from "./step-pipeline";
+export type { CompleteStepOpts, FailStepOpts } from "./step-pipeline";
 
 export {
   getOrCreateBuffer,
@@ -96,6 +105,7 @@ export {
   resolveProvider,
   initializeProviders,
   type ResolvedProvider,
+  type ResolveProviderOpts,
 } from "./providers/registry";
 
 export { OpenAiCompatibleProvider } from "./providers/openai-compatible";

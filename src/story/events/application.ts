@@ -19,6 +19,15 @@ export interface AppliedEvent {
   error?: string;
 }
 
+// ── Options ──────────────────────────────────────────────────
+
+export interface ApplyEventsOpts {
+  db: Kysely<DB>;
+  worldId: string;
+  events: WorldEvent[];
+  trx?: Transaction<DB>;
+}
+
 // ── Apply Events ─────────────────────────────────────────────
 
 async function applySingleEvent(
@@ -63,12 +72,7 @@ async function applySingleEvent(
 }
 
 /** Apply validated events to the DB */
-export async function applyEvents(
-  db: Kysely<DB>,
-  worldId: string,
-  events: WorldEvent[],
-  trx?: Transaction<DB>,
-): Promise<AppliedEvent[]> {
+export async function applyEvents({ db, worldId, events, trx }: ApplyEventsOpts): Promise<AppliedEvent[]> {
   const database = trx ?? db;
   const results: AppliedEvent[] = [];
   const items = new ItemsService(database);

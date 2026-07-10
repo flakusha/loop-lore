@@ -6,6 +6,12 @@ import { TransportProtocol } from "../db/enums";
 import { TransportError, TransportErrorCode } from "./errors";
 import { createProtocol } from "./factory";
 
+export interface UpgradeConnectionOpts {
+  current: ProtocolHandler;
+  targetProtocol: TransportProtocol;
+  config: TransportConfig;
+}
+
 /**
  * Gracefully upgrade a connection from one protocol to another.
  *
@@ -17,9 +23,10 @@ import { createProtocol } from "./factory";
  * 5. Close old handler
  * 6. Automatic fallback on failure
  *
- * @param current - Active protocol handler to upgrade from
- * @param targetProtocol - Target protocol to upgrade to
- * @param config - Transport config for the new handler
+ * @param opts - Options object
+ * @param opts.current - Active protocol handler to upgrade from
+ * @param opts.targetProtocol - Target protocol to upgrade to
+ * @param opts.config - Transport config for the new handler
  * @returns New ProtocolHandler on target protocol
  * @throws TransportError if upgrade fails and fallback also fails
  *
@@ -28,14 +35,12 @@ import { createProtocol } from "./factory";
  * const http1 = createProtocol({ protocol: "http/1.1" });
  * await http1.connect();
  * // ... HTTP/1.1 communication ...
- * const ws = await upgradeConnection(http1, "websocket", { protocol: "websocket" });
+ * const ws = await upgradeConnection({ current: http1, targetProtocol: "websocket", config: { protocol: "websocket" } });
  * // ... WebSocket communication ...
  * ```
  */
 export async function upgradeConnection(
-  current: ProtocolHandler,
-  targetProtocol: TransportProtocol,
-  config: TransportConfig,
+  { current, targetProtocol, config }: UpgradeConnectionOpts,
 ): Promise<ProtocolHandler> {
   const currentConnection = await current.connect();
   const state = { ...currentConnection.metadata };

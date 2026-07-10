@@ -31,6 +31,33 @@ export interface ActorKeyMeta {
   expiresAt: string | null;
 }
 
+// ── Options-object interfaces ────────────────────────────────
+
+export interface GenerateActorKeyOpts {
+  database: Kysely<DB>;
+  actorId: string;
+  smk: CryptoKey;
+  name?: string;
+}
+
+export interface EnsureActorKeyOpts {
+  database: Kysely<DB>;
+  actorId: string;
+  smk: CryptoKey;
+}
+
+export interface LoadActorKeysOpts {
+  database: Kysely<DB>;
+  actorIds: string[];
+  smk: CryptoKey;
+}
+
+export interface GetActorKeyOpts {
+  database: Kysely<DB>;
+  keyId: string;
+  smk: CryptoKey;
+}
+
 // ── Internal helpers ───────────────────────────────────────
 
 function encryptWithSmk(smk: CryptoKey, rawKey: Uint8Array): Promise<string> {
@@ -71,12 +98,7 @@ function toBufferSource(arr: Uint8Array): Uint8Array<ArrayBuffer> {
  *
  * @returns The new key's ID.
  */
-export async function generateActorKey(
-  database: Kysely<DB>,
-  actorId: string,
-  smk: CryptoKey,
-  name = "primary",
-): Promise<string> {
+export async function generateActorKey({ database, actorId, smk, name = "primary" }: GenerateActorKeyOpts): Promise<string> {
   const id = uid();
   const rawKey = crypto.getRandomValues(new Uint8Array(32));
   const encryptedKey = await encryptWithSmk(smk, rawKey);
@@ -102,7 +124,7 @@ export async function generateActorKey(
  *
  * @returns The active key's ID.
  */
-export async function ensureActorKey(database: Kysely<DB>, actorId: string, smk: CryptoKey): Promise<string> {
+export async function ensureActorKey({ database, actorId, smk }: EnsureActorKeyOpts): Promise<string> {
   const existing = await database
     .selectFrom("actor_keys")
     .select("id")
@@ -112,7 +134,7 @@ export async function ensureActorKey(database: Kysely<DB>, actorId: string, smk:
 
   if (existing) return existing.id;
 
-  return generateActorKey(database, actorId, smk);
+  return generateActorKey({ database, actorId, smk });
 }
 
 /**
@@ -120,11 +142,7 @@ export async function ensureActorKey(database: Kysely<DB>, actorId: string, smk:
  *
  * Returns keys sorted by actor_id for deterministic HKDF input.
  */
-export async function loadActorKeys(
-  database: Kysely<DB>,
-  actorIds: string[],
-  smk: CryptoKey,
-): Promise<ActorKeyData[]> {
+export async function loadActorKeys({ database, actorIds, smk }: LoadActorKeysOpts): Promise<ActorKeyData[]> {
   if (actorIds.length === 0) return [];
 
   const rows = await database
@@ -154,11 +172,7 @@ export async function loadActorKeys(
 /**
  * Get a single key by ID (for key_id lookup on message read).
  */
-export async function getActorKey(
-  database: Kysely<DB>,
-  keyId: string,
-  smk: CryptoKey,
-): Promise<ActorKeyData | null> {
+export async function getActorKey({ database, keyId, smk }: GetActorKeyOpts): Promise<ActorKeyData | null> {
   const row = await database.selectFrom("actor_keys").selectAll().where("id", "=", keyId).executeTakeFirst();
 
   if (!row?.encrypted_key) return null;
@@ -179,7 +193,7 @@ export async function getActorKey(
  *
  * @returns The new key ID.
  */
-export async function rotateActorKey(database: Kysely<DB>, actorId: string, smk: CryptoKey): Promise<string> {
+export async function rotateActorKey({ database, actorId, smk }: GenerateActorKeyOpts): Promise<string> {
   // Expire all current active keys for this actor
   await database
     .updateTable("actor_keys")
@@ -192,7 +206,7 @@ export async function rotateActorKey(database: Kysely<DB>, actorId: string, smk:
     .execute();
 
   // Generate new key
-  return generateActorKey(database, actorId, smk, "primary");
+  return generateActorKey({ database, actorId, smk, name: "primary" });
 }
 
 /**

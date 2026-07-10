@@ -53,9 +53,12 @@ export { WorldStateService } from "./world-state";
 
 export {
   extractEvents,
+  type ExtractEventsOpts,
   type ValidationResult,
   validateEvents,
+  type ValidateEventsOpts,
   type AppliedEvent,
+  type ApplyEventsOpts,
   applyEvents,
 } from "./events";
 

@@ -65,7 +65,7 @@ export async function errorBoundary(
       import("../logger").Logger | undefined;
     (logger ?? getLogger()).error("Unhandled middleware error", error instanceof Error ? error : undefined);
     const message = error instanceof Error ? error.message : "Internal server error";
-    return jsonError(message, HttpStatus.InternalServerError, ErrorCode.ServerError);
+    return jsonError({ message, status: HttpStatus.InternalServerError, code: ErrorCode.ServerError });
   }
 }
 
