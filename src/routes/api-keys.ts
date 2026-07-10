@@ -51,12 +51,20 @@ function extractProvider(pathname: string): string | null {
 const dispatch: RouteDispatch = async ({ request, context, database, config }) => {
   // Require auth for all key routes
   if (!context.userId) {
-    return jsonError("Unauthorized", HttpStatus.Unauthorized, ErrorCode.Unauthorized);
+    return jsonError({
+      message: "Unauthorized",
+      status: HttpStatus.Unauthorized,
+      code: ErrorCode.Unauthorized,
+    });
   }
 
   // Check BYO key feature is enabled
   if (!config.byoKey.enabled) {
-    return jsonError("BYO API key feature is disabled", HttpStatus.Forbidden, ErrorCode.Forbidden);
+    return jsonError({
+      message: "BYO API key feature is disabled",
+      status: HttpStatus.Forbidden,
+      code: ErrorCode.Forbidden,
+    });
   }
 
   const url = new URL(request.url);
@@ -66,7 +74,7 @@ const dispatch: RouteDispatch = async ({ request, context, database, config }) =
   // /api/user-api-keys/:provider — DELETE
   if (pathname.startsWith("/api/user-api-keys/")) {
     const provider = extractProvider(pathname);
-    if (!provider) return jsonError("Provider name required", HttpStatus.BadRequest);
+    if (!provider) return jsonError({ message: "Provider name required", status: HttpStatus.BadRequest });
 
     if (method === "DELETE") return handleDeleteKey({ database, context, provider, config });
     return BAD_METHOD();
@@ -108,25 +116,25 @@ async function handleCreateKey({ database, context, body, config }: CreateKeyOpt
   const userId = context.userId as string;
   const providerName = body.providerName as string | undefined;
 
-  if (!providerName) return jsonError("providerName is required", HttpStatus.BadRequest);
+  if (!providerName) return jsonError({ message: "providerName is required", status: HttpStatus.BadRequest });
 
   const apiKey = body.apiKey as string | undefined;
-  if (!apiKey) return jsonError("apiKey is required", HttpStatus.BadRequest);
+  if (!apiKey) return jsonError({ message: "apiKey is required", status: HttpStatus.BadRequest });
 
   const encryptionSecret = config.byoKey.encryptionKey;
   if (!encryptionSecret) {
-    return jsonError(
-      "Server encryption key not configured — contact administrator",
-      HttpStatus.InternalServerError,
-      ErrorCode.ServerError,
-    );
+    return jsonError({
+      message: "Server encryption key not configured — contact administrator",
+      status: HttpStatus.InternalServerError,
+      code: ErrorCode.ServerError,
+    });
   }
 
   // Validate provider exists in config
   const providerConfigs = config.generation.providers.openaiCompatible;
   const providerExists = providerConfigs.some((p: { name?: string }) => p.name === providerName);
   if (!providerExists) {
-    return jsonError(`Unknown provider: ${providerName}`, HttpStatus.BadRequest);
+    return jsonError({ message: `Unknown provider: ${providerName}`, status: HttpStatus.BadRequest });
   }
 
   // Encrypt the key
@@ -134,7 +142,11 @@ async function handleCreateKey({ database, context, body, config }: CreateKeyOpt
   try {
     encrypted = await encryptValue(apiKey, encryptionSecret);
   } catch {
-    return jsonError("Failed to encrypt API key", HttpStatus.InternalServerError, ErrorCode.ServerError);
+    return jsonError({
+      message: "Failed to encrypt API key",
+      status: HttpStatus.InternalServerError,
+      code: ErrorCode.ServerError,
+    });
   }
 
   // Upsert — insert or update if provider already exists for this user
@@ -178,11 +190,11 @@ async function handleDeleteKey({ database, context, provider, config }: DeleteKe
   const userId = context.userId as string;
   const encryptionSecret = config.byoKey.encryptionKey;
   if (!encryptionSecret) {
-    return jsonError(
-      "Server encryption key not configured — contact administrator",
-      HttpStatus.InternalServerError,
-      ErrorCode.ServerError,
-    );
+    return jsonError({
+      message: "Server encryption key not configured — contact administrator",
+      status: HttpStatus.InternalServerError,
+      code: ErrorCode.ServerError,
+    });
   }
 
   // Verify the key exists and belongs to user
@@ -194,7 +206,7 @@ async function handleDeleteKey({ database, context, provider, config }: DeleteKe
     .executeTakeFirst();
 
   if (!existing) {
-    return jsonError("Key not found", HttpStatus.NotFound, ErrorCode.NotFound);
+    return jsonError({ message: "Key not found", status: HttpStatus.NotFound, code: ErrorCode.NotFound });
   }
 
   await database.deleteFrom("user_api_keys").where("id", "=", existing.id).execute();

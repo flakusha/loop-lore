@@ -18,6 +18,12 @@ import { UserRole, UserStatus } from "../db/enums";
 import type { RequestContext } from "./types";
 import { jsonError, HttpStatus, ErrorCode } from "../routes/http-utils";
 
+export interface AuthenticateOpts {
+  request: Request;
+  database: Kysely<DB>;
+  authConfig: AuthConfig;
+}
+
 /**
  * Attempt to authenticate the request.
  *
@@ -26,11 +32,7 @@ import { jsonError, HttpStatus, ErrorCode } from "../routes/http-utils";
  * authConfig.required === false. If auth is required and no valid
  * token is provided, return 401.
  */
-export async function authenticate(
-  request: Request,
-  database: Kysely<DB>,
-  authConfig: AuthConfig,
-): Promise<Response | { context: RequestContext }> {
+export async function authenticate({ request, database, authConfig }: AuthenticateOpts): Promise<Response | { context: RequestContext }> {
   // ── Extract token: Bearer header > cookie fallback ───────
   let rawToken: string | null = null;
 
@@ -107,7 +109,10 @@ export async function authenticate(
   if (!authConfig.required) {
     const soloUser = await getOrCreateSoloUserForAuth(database, authConfig.demoUsername);
     if (!soloUser) {
-      return jsonError("Server misconfigured: no solo user", HttpStatus.InternalServerError);
+      return jsonError({
+        message: "Server misconfigured: no solo user",
+        status: HttpStatus.InternalServerError,
+      });
     }
     return {
       context: {
@@ -119,11 +124,11 @@ export async function authenticate(
   }
 
   // ── Auth required, no valid token ─────────────────────────
-  return jsonError(
-    "Missing or invalid Authorization header",
-    HttpStatus.Unauthorized,
-    ErrorCode.Unauthorized,
-  );
+  return jsonError({
+    message: "Missing or invalid Authorization header",
+    status: HttpStatus.Unauthorized,
+    code: ErrorCode.Unauthorized,
+  });
 }
 
 // ── Solo user helpers ─────────────────────────────────────────

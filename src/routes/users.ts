@@ -106,7 +106,12 @@ const dispatch: RouteDispatch = async ({ request, context, database }) => {
 
 async function handleGetMe({ database, context }: GetMeOpts): Promise<Response> {
   const userId = context.userId;
-  if (!userId) return jsonError("Unauthorized", HttpStatus.Unauthorized, ErrorCode.Unauthorized);
+  if (!userId)
+    return jsonError({
+      message: "Unauthorized",
+      status: HttpStatus.Unauthorized,
+      code: ErrorCode.Unauthorized,
+    });
 
   const user = await database
     .selectFrom("users")
@@ -114,13 +119,19 @@ async function handleGetMe({ database, context }: GetMeOpts): Promise<Response> 
     .where("id", "=", userId)
     .executeTakeFirst();
 
-  if (!user) return jsonError("User not found", HttpStatus.NotFound, ErrorCode.NotFound);
+  if (!user)
+    return jsonError({ message: "User not found", status: HttpStatus.NotFound, code: ErrorCode.NotFound });
   return jsonResponse(user);
 }
 
 async function handleUpdateMe({ database, body, context }: UpdateMeOpts): Promise<Response> {
   const userId = context.userId;
-  if (!userId) return jsonError("Unauthorized", HttpStatus.Unauthorized, ErrorCode.Unauthorized);
+  if (!userId)
+    return jsonError({
+      message: "Unauthorized",
+      status: HttpStatus.Unauthorized,
+      code: ErrorCode.Unauthorized,
+    });
 
   const updates: Record<string, unknown> = {};
   if (body.displayName != null) updates.display_name = body.displayName;
@@ -128,7 +139,8 @@ async function handleUpdateMe({ database, body, context }: UpdateMeOpts): Promis
   if (body.birthDate != null) updates.birth_date = body.birthDate;
   if (body.settings) {
     const settingsResult = safeJsonStringify(body.settings);
-    if (!settingsResult.ok) return jsonError("Invalid settings data", HttpStatus.BadRequest);
+    if (!settingsResult.ok)
+      return jsonError({ message: "Invalid settings data", status: HttpStatus.BadRequest });
     updates.settings = settingsResult.value;
   }
 
@@ -139,11 +151,16 @@ async function handleUpdateMe({ database, body, context }: UpdateMeOpts): Promis
 
 async function handleGetUser({ database, targetId, context }: GetUserOpts): Promise<Response> {
   const userId = context.userId;
-  if (!userId) return jsonError("Unauthorized", HttpStatus.Unauthorized, ErrorCode.Unauthorized);
+  if (!userId)
+    return jsonError({
+      message: "Unauthorized",
+      status: HttpStatus.Unauthorized,
+      code: ErrorCode.Unauthorized,
+    });
 
   // Non-admin can only view own profile via /api/users/me
   if (context.userRole !== "admin") {
-    return jsonError("Forbidden", HttpStatus.Forbidden, ErrorCode.Forbidden);
+    return jsonError({ message: "Forbidden", status: HttpStatus.Forbidden, code: ErrorCode.Forbidden });
   }
 
   const user = await database
@@ -152,24 +169,31 @@ async function handleGetUser({ database, targetId, context }: GetUserOpts): Prom
     .where("id", "=", targetId)
     .executeTakeFirst();
 
-  if (!user) return jsonError("User not found", HttpStatus.NotFound, ErrorCode.NotFound);
+  if (!user)
+    return jsonError({ message: "User not found", status: HttpStatus.NotFound, code: ErrorCode.NotFound });
   return jsonResponse(user);
 }
 
 async function handleUpdateUser({ database, targetId, body, context }: UpdateUserOpts): Promise<Response> {
   const userId = context.userId;
-  if (!userId) return jsonError("Unauthorized", HttpStatus.Unauthorized, ErrorCode.Unauthorized);
+  if (!userId)
+    return jsonError({
+      message: "Unauthorized",
+      status: HttpStatus.Unauthorized,
+      code: ErrorCode.Unauthorized,
+    });
 
   // User can update own profile; admin can update any
   if (targetId !== userId && context.userRole !== "admin") {
-    return jsonError("Forbidden", HttpStatus.Forbidden, ErrorCode.Forbidden);
+    return jsonError({ message: "Forbidden", status: HttpStatus.Forbidden, code: ErrorCode.Forbidden });
   }
 
   const updates: Record<string, unknown> = {};
   if (body.displayName !== undefined) updates.display_name = body.displayName;
   if (body.settings) {
     const settingsResult = safeJsonStringify(body.settings);
-    if (!settingsResult.ok) return jsonError("Invalid settings data", HttpStatus.BadRequest);
+    if (!settingsResult.ok)
+      return jsonError({ message: "Invalid settings data", status: HttpStatus.BadRequest });
     updates.settings = settingsResult.value;
   }
 
@@ -179,7 +203,7 @@ async function handleUpdateUser({ database, targetId, body, context }: UpdateUse
     .select("id")
     .where("id", "=", targetId)
     .executeTakeFirst();
-  if (!targetUser) return jsonError("User not found", HttpStatus.NotFound);
+  if (!targetUser) return jsonError({ message: "User not found", status: HttpStatus.NotFound });
 
   await database.updateTable("users").set(updates).where("id", "=", targetId).execute();
 
@@ -193,10 +217,15 @@ async function handleUpdateUserSettings({
   context,
 }: UpdateUserSettingsOpts): Promise<Response> {
   const userId = context.userId;
-  if (!userId) return jsonError("Unauthorized", HttpStatus.Unauthorized, ErrorCode.Unauthorized);
+  if (!userId)
+    return jsonError({
+      message: "Unauthorized",
+      status: HttpStatus.Unauthorized,
+      code: ErrorCode.Unauthorized,
+    });
 
   if (targetId !== userId && context.userRole !== "admin") {
-    return jsonError("Forbidden", HttpStatus.Forbidden, ErrorCode.Forbidden);
+    return jsonError({ message: "Forbidden", status: HttpStatus.Forbidden, code: ErrorCode.Forbidden });
   }
 
   const current = await database
@@ -209,7 +238,7 @@ async function handleUpdateUserSettings({
   const merged = { ...currentSettings, ...body };
 
   const mergedResult = safeJsonStringify(merged);
-  if (!mergedResult.ok) return jsonError("Invalid settings data", HttpStatus.BadRequest);
+  if (!mergedResult.ok) return jsonError({ message: "Invalid settings data", status: HttpStatus.BadRequest });
 
   await database
     .updateTable("users")
@@ -222,7 +251,7 @@ async function handleUpdateUserSettings({
 
 async function handleDeleteUser({ database, targetId, context }: DeleteUserOpts): Promise<Response> {
   if (context.userRole !== "admin") {
-    return jsonError("Forbidden", HttpStatus.Forbidden, ErrorCode.Forbidden);
+    return jsonError({ message: "Forbidden", status: HttpStatus.Forbidden, code: ErrorCode.Forbidden });
   }
 
   await database.deleteFrom("users").where("id", "=", targetId).execute();

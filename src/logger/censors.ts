@@ -99,15 +99,17 @@ function censorValue(value: unknown, rules: CensorRule[], depth: number, maxDept
   return value;
 }
 
+export interface CensorMetaOpts {
+  meta: Record<string, unknown> | undefined;
+  extraRules?: CensorRule[];
+  maxDepth?: number;
+}
+
 /**
  * Censor PII in a metadata object.
  * Returns a new object, does not mutate input.
  */
-export function censorMeta(
-  meta: Record<string, unknown> | undefined,
-  extraRules?: CensorRule[],
-  maxDepth = 5,
-): Record<string, unknown> | undefined {
+export function censorMeta({ meta, extraRules, maxDepth = 5 }: CensorMetaOpts): Record<string, unknown> | undefined {
   if (!meta) return meta;
   const rules = extraRules?.length ? [...DEFAULT_RULES, ...extraRules] : DEFAULT_RULES;
   return censorValue(meta, rules, 0, maxDepth) as Record<string, unknown>;

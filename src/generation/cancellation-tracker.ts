@@ -97,13 +97,15 @@ async function insertAttempt(
     .execute();
 }
 
+export interface UpdateAttemptStatusOpts {
+  db: Kysely<DB>;
+  attemptId: string;
+  status: GenerationStatus;
+  extra?: Record<string, unknown>;
+}
+
 /** @internal — exported for step-pipeline.ts */
-export async function updateAttemptStatus(
-  db: Kysely<DB>,
-  attemptId: string,
-  status: GenerationStatus,
-  extra?: Record<string, unknown>,
-): Promise<void> {
+export async function updateAttemptStatus({ db, attemptId, status, extra }: UpdateAttemptStatusOpts): Promise<void> {
   const update: Record<string, unknown> = {
     status,
     updated_at: new Date().toISOString(),
@@ -122,15 +124,17 @@ export async function updateAttemptStatus(
 
 // ── Start generation tracking ─────────────────────────────
 
+export interface StartGenerationTrackingOpts {
+  options: GenerationOptions;
+  db: Kysely<DB>;
+  events?: GenerationEvents;
+}
+
 /**
  * Register a new generation attempt. Returns the attempt ID and the
  * AbortSignal (already connected) that the LLM caller should use.
  */
-export function startGenerationTracking(
-  options: GenerationOptions,
-  db: Kysely<DB>,
-  events?: GenerationEvents,
-): { attemptId: string; abortSignal: AbortSignal } {
+export function startGenerationTracking({ options, db, events }: StartGenerationTrackingOpts): { attemptId: string; abortSignal: AbortSignal } {
   const attemptId = randomUUID();
   const abortSignalId = randomUUID();
   const abortController = new AbortController();
@@ -196,7 +200,7 @@ export function startGenerationTracking(
   });
 
   events?.onStart?.(attemptId);
-  void updateAttemptStatus(db, attemptId, GenerationStatus.Processing).catch((error: unknown) => {
+  void updateAttemptStatus({ db, attemptId, status: GenerationStatus.Processing }).catch((error: unknown) => {
     getLogger()
       .child({ module: "generation" })
       .warn("Status update failed", { error: String(error) });
@@ -211,11 +215,13 @@ export function startGenerationTracking(
  * Mark a generation as completed, recording final stats.
  * Cleans up in-memory tracking.
  */
-export async function completeGeneration(
-  attemptId: string,
-  result: GenerationResult,
-  db: Kysely<DB>,
-): Promise<void> {
+export interface CompleteGenerationOpts {
+  attemptId: string;
+  result: GenerationResult;
+  db: Kysely<DB>;
+}
+
+export async function completeGeneration({ attemptId, result, db }: CompleteGenerationOpts): Promise<void> {
   const active = activeGenerations.get(attemptId);
   if (!active) return;
 
@@ -231,7 +237,7 @@ export async function completeGeneration(
 
   const status: GenerationStatus = result.cancelled ? GenerationStatus.Cancelled : GenerationStatus.Completed;
 
-  await updateAttemptStatus(db, attemptId, status, {
+  await updateAttemptStatus({ db, attemptId, status, extra: {
     completion_tokens: result.tokenUsage.completionTokens,
     prompt_tokens: result.tokenUsage.promptTokens,
     total_tokens: result.tokenUsage.totalTokens,
@@ -257,7 +263,8 @@ export async function completeGeneration(
       cancel_reason_detail: result.cancelReason,
       cancel_source: result.cancelSource,
     }),
-  });
+  },
+});
 
   active.events?.onComplete?.(attemptId, result);
 
@@ -271,7 +278,13 @@ export async function completeGeneration(
 /**
  * Mark a generation as failed.
  */
-export async function failGeneration(attemptId: string, error: Error, db: Kysely<DB>): Promise<void> {
+export interface FailGenerationOpts {
+  attemptId: string;
+  error: Error;
+  db: Kysely<DB>;
+}
+
+export async function failGeneration({ attemptId, error, db }: FailGenerationOpts): Promise<void> {
   const active = activeGenerations.get(attemptId);
 
   // Capture partial content before cleanup
@@ -282,10 +295,11 @@ export async function failGeneration(attemptId: string, error: Error, db: Kysely
     }
   }
 
-  await updateAttemptStatus(db, attemptId, GenerationStatus.Failed, {
+  await updateAttemptStatus({ db, attemptId, status: GenerationStatus.Failed, extra: {
     error_message: error.message,
     completed_at: new Date().toISOString(),
-  });
+  },
+});
 
   active?.events?.onError?.(attemptId, error);
 

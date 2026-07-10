@@ -176,7 +176,7 @@ describe("createWsHandler", () => {
 describe("withCompression", () => {
   test("wraps handler and adds compression metadata", async () => {
     const base = createHttp1Handler({ port: 3000 });
-    const wrapped = withCompression(base, CompressionAlgorithm.Zstd);
+    const wrapped = withCompression({ handler: base, algorithm: CompressionAlgorithm.Zstd });
 
     const conn = await wrapped.connect();
     expect(conn.metadata.compression).toBe(CompressionAlgorithm.Zstd);
@@ -185,7 +185,7 @@ describe("withCompression", () => {
 
   test("no compression when algorithm is none", async () => {
     const base = createHttp1Handler({ port: 3000 });
-    const wrapped = withCompression(base, CompressionAlgorithm.None);
+    const wrapped = withCompression({ handler: base, algorithm: CompressionAlgorithm.None });
 
     const conn = await wrapped.connect();
     expect(conn.metadata.compression).toBe(CompressionAlgorithm.None);

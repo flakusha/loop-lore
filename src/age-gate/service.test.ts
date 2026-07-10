@@ -128,7 +128,7 @@ describe("acceptAgeGate", () => {
     const database = await createTestDatabase();
     const config = gateConfig();
 
-    await acceptAgeGate(database, config, "test-user-1", { birthDate: "2000-06-15" });
+    await acceptAgeGate({ database, config, userId: "test-user-1", input: { birthDate: "2000-06-15" } });
 
     const user = await database
       .selectFrom("users")
@@ -144,7 +144,7 @@ describe("acceptAgeGate", () => {
     const database = await createTestDatabase();
     const config = gateConfig();
 
-    await expect(acceptAgeGate(database, config, "test-user-1", { birthDate: "2020-01-01" })).rejects.toThrow(
+    await expect(acceptAgeGate({ database, config, userId: "test-user-1", input: { birthDate: "2020-01-01" } })).rejects.toThrow(
       UnderageError,
     );
 
@@ -165,7 +165,7 @@ describe("acceptAgeGate", () => {
 
     // Should not throw even with a child's birth date
     expect(
-      acceptAgeGate(database, config, "test-user-1", { birthDate: "2020-01-01" }),
+      acceptAgeGate({ database, config, userId: "test-user-1", input: { birthDate: "2020-01-01" } }),
     ).resolves.toBeUndefined();
 
     // Verify no update was written
@@ -184,7 +184,7 @@ describe("acceptAgeGate", () => {
     const config = gateConfig({ mode: "none" });
 
     expect(
-      acceptAgeGate(database, config, "test-user-1", { birthDate: "2020-01-01" }),
+      acceptAgeGate({ database, config, userId: "test-user-1", input: { birthDate: "2020-01-01" } }),
     ).resolves.toBeUndefined();
   });
 });

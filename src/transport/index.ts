@@ -18,7 +18,7 @@ export { createWsHandler, WsHandler } from "./ws";
 
 // ── Compression ──────────────────────────────────────────
 export { withCompression, compress, decompress } from "./compression";
-export type { CompressionOptions } from "./compression";
+export type { CompressionOptions, WithCompressionOpts } from "./compression";
 
 // ── Negotiation ──────────────────────────────────────────
 export { negotiate, DEFAULT_CAPABILITIES } from "./negotiation";
@@ -27,6 +27,7 @@ export { parseAcceptProtocols, parseAcceptEncoding, parseExtensions } from "./ne
 
 // ── Upgrade ──────────────────────────────────────────────
 export { upgradeConnection } from "./upgrade";
+export type { UpgradeConnectionOpts } from "./upgrade";
 
 // ── Testing ──────────────────────────────────────────────
 export { validateProtocol, buildDefaultTests } from "./test/harness";

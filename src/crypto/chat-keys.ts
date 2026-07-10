@@ -100,6 +100,6 @@ export async function deriveChatKeyForChat(
   smk: CryptoKey,
 ): Promise<ChatKey> {
   const actorIds = await getChatParticipantActorIds(database, chatId);
-  const keys = await loadActorKeys(database, actorIds, smk);
+  const keys = await loadActorKeys({ database, actorIds, smk });
   return deriveChatKey(keys, chatId);
 }

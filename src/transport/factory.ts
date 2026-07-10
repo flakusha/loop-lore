@@ -109,7 +109,7 @@ export function createProtocol(config: TransportConfig): ProtocolHandler {
   // Apply compression wrapper if configured
   const algo = config.compression ?? CompressionAlgorithm.None;
   if (algo !== CompressionAlgorithm.None) {
-    handler = withCompression(handler, algo);
+    handler = withCompression({ handler, algorithm: algo });
   }
 
   return handler;

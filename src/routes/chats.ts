@@ -154,7 +154,12 @@ const dispatch: RouteDispatch = async ({ request, context, database }) => {
 
 async function handleListChats({ database, context, page, pageSize }: ListChatsOpts): Promise<Response> {
   const userId = context.userId;
-  if (!userId) return jsonError("Unauthorized", HttpStatus.Unauthorized, ErrorCode.Unauthorized);
+  if (!userId)
+    return jsonError({
+      message: "Unauthorized",
+      status: HttpStatus.Unauthorized,
+      code: ErrorCode.Unauthorized,
+    });
 
   const offset = (page - 1) * pageSize;
   const countResult = await database
@@ -173,12 +178,17 @@ async function handleListChats({ database, context, page, pageSize }: ListChatsO
     .offset(offset)
     .execute();
 
-  return jsonPaginated(chats, total, page, pageSize);
+  return jsonPaginated({ data: chats, total, page, pageSize });
 }
 
 async function handleCreateChat({ database, body, context }: CreateChatOpts): Promise<Response> {
   const userId = context.userId;
-  if (!userId) return jsonError("Unauthorized", HttpStatus.Unauthorized, ErrorCode.Unauthorized);
+  if (!userId)
+    return jsonError({
+      message: "Unauthorized",
+      status: HttpStatus.Unauthorized,
+      code: ErrorCode.Unauthorized,
+    });
 
   // ── Age gate check ─────────────────────────────────────
   const ageGateConfig = getRuntimeConfig();
@@ -190,18 +200,18 @@ async function handleCreateChat({ database, body, context }: CreateChatOpts): Pr
       .executeTakeFirst();
     const status = getStatus(ageGateConfig, user ?? null);
     if (!status.hasPassed) {
-      return jsonError(
-        "Age gate not passed. Complete age verification before creating chats.",
-        HttpStatus.Forbidden,
-        ErrorCode.Forbidden,
-      );
+      return jsonError({
+        message: "Age gate not passed. Complete age verification before creating chats.",
+        status: HttpStatus.Forbidden,
+        code: ErrorCode.Forbidden,
+      });
     }
   }
 
   const { name, type, mode, participantIds, worldId, currentLocationId, turnStrategy } = body;
 
   if (!name || typeof name !== "string") {
-    return jsonError("name is required", HttpStatus.BadRequest);
+    return jsonError({ message: "name is required", status: HttpStatus.BadRequest });
   }
 
   // Validate enum values
@@ -211,26 +221,26 @@ async function handleCreateChat({ database, body, context }: CreateChatOpts): Pr
 
   const validTypes = new Set<string>(Object.values(ChatType));
   if (typeStr && !validTypes.has(typeStr)) {
-    return jsonError(
-      `Invalid chat type: ${typeStr}. Valid: ${[...validTypes].join(", ")}`,
-      HttpStatus.BadRequest,
-    );
+    return jsonError({
+      message: `Invalid chat type: ${typeStr}. Valid: ${[...validTypes].join(", ")}`,
+      status: HttpStatus.BadRequest,
+    });
   }
 
   const validModes = new Set<string>(Object.values(ChatMode));
   if (modeStr && !validModes.has(modeStr)) {
-    return jsonError(
-      `Invalid chat mode: ${modeStr}. Valid: ${[...validModes].join(", ")}`,
-      HttpStatus.BadRequest,
-    );
+    return jsonError({
+      message: `Invalid chat mode: ${modeStr}. Valid: ${[...validModes].join(", ")}`,
+      status: HttpStatus.BadRequest,
+    });
   }
 
   const validStrategies = new Set<string>(Object.values(TurnStrategy));
   if (turnStrategyStr && !validStrategies.has(turnStrategyStr)) {
-    return jsonError(
-      `Invalid turn strategy: ${turnStrategyStr}. Valid: ${[...validStrategies].join(", ")}`,
-      HttpStatus.BadRequest,
-    );
+    return jsonError({
+      message: `Invalid turn strategy: ${turnStrategyStr}. Valid: ${[...validStrategies].join(", ")}`,
+      status: HttpStatus.BadRequest,
+    });
   }
 
   const chatId = uid();
@@ -305,12 +315,18 @@ async function handleCreateChat({ database, body, context }: CreateChatOpts): Pr
 
 async function handleGetChat({ database, chatId, context }: GetChatOpts): Promise<Response> {
   const userId = context.userId;
-  if (!userId) return jsonError("Unauthorized", HttpStatus.Unauthorized, ErrorCode.Unauthorized);
+  if (!userId)
+    return jsonError({
+      message: "Unauthorized",
+      status: HttpStatus.Unauthorized,
+      code: ErrorCode.Unauthorized,
+    });
 
   const chat = await database.selectFrom("chats").selectAll().where("id", "=", chatId).executeTakeFirst();
-  if (!chat) return jsonError("Chat not found", HttpStatus.NotFound, ErrorCode.NotFound);
+  if (!chat)
+    return jsonError({ message: "Chat not found", status: HttpStatus.NotFound, code: ErrorCode.NotFound });
   if (chat.created_by !== userId && context.userRole !== "admin") {
-    return jsonError("Chat not found", HttpStatus.NotFound);
+    return jsonError({ message: "Chat not found", status: HttpStatus.NotFound });
   }
 
   const participants = await database
@@ -324,11 +340,18 @@ async function handleGetChat({ database, chatId, context }: GetChatOpts): Promis
 
 async function handleUpdateChat({ database, chatId, body, context }: UpdateChatOpts): Promise<Response> {
   const userId = context.userId;
-  if (!userId) return jsonError("Unauthorized", HttpStatus.Unauthorized, ErrorCode.Unauthorized);
+  if (!userId)
+    return jsonError({
+      message: "Unauthorized",
+      status: HttpStatus.Unauthorized,
+      code: ErrorCode.Unauthorized,
+    });
 
   const chat = await database.selectFrom("chats").selectAll().where("id", "=", chatId).executeTakeFirst();
-  if (!chat) return jsonError("Chat not found", HttpStatus.NotFound, ErrorCode.NotFound);
-  if (chat.created_by !== userId) return jsonError("Forbidden", HttpStatus.Forbidden, ErrorCode.Forbidden);
+  if (!chat)
+    return jsonError({ message: "Chat not found", status: HttpStatus.NotFound, code: ErrorCode.NotFound });
+  if (chat.created_by !== userId)
+    return jsonError({ message: "Forbidden", status: HttpStatus.Forbidden, code: ErrorCode.Forbidden });
 
   const updates: Record<string, unknown> = {};
   if (body.name) updates.name = body.name;
@@ -344,11 +367,18 @@ async function handleUpdateChat({ database, chatId, body, context }: UpdateChatO
 
 async function handleDeleteChat({ database, chatId, context }: DeleteChatOpts): Promise<Response> {
   const userId = context.userId;
-  if (!userId) return jsonError("Unauthorized", HttpStatus.Unauthorized, ErrorCode.Unauthorized);
+  if (!userId)
+    return jsonError({
+      message: "Unauthorized",
+      status: HttpStatus.Unauthorized,
+      code: ErrorCode.Unauthorized,
+    });
 
   const chat = await database.selectFrom("chats").selectAll().where("id", "=", chatId).executeTakeFirst();
-  if (!chat) return jsonError("Chat not found", HttpStatus.NotFound, ErrorCode.NotFound);
-  if (chat.created_by !== userId) return jsonError("Forbidden", HttpStatus.Forbidden, ErrorCode.Forbidden);
+  if (!chat)
+    return jsonError({ message: "Chat not found", status: HttpStatus.NotFound, code: ErrorCode.NotFound });
+  if (chat.created_by !== userId)
+    return jsonError({ message: "Forbidden", status: HttpStatus.Forbidden, code: ErrorCode.Forbidden });
 
   // Delete related records first (FK order: no FK deps first, then leaf tables)
   await database.deleteFrom("generation_attempts").where("chat_id", "=", chatId).execute();
@@ -391,7 +421,12 @@ async function handleListParticipants({
   context,
 }: ListParticipantsOpts): Promise<Response> {
   const userId = context.userId;
-  if (!userId) return jsonError("Unauthorized", HttpStatus.Unauthorized, ErrorCode.Unauthorized);
+  if (!userId)
+    return jsonError({
+      message: "Unauthorized",
+      status: HttpStatus.Unauthorized,
+      code: ErrorCode.Unauthorized,
+    });
 
   const chat = await database
     .selectFrom("chats")
@@ -399,7 +434,7 @@ async function handleListParticipants({
     .where("id", "=", chatId)
     .executeTakeFirst();
   if (!chat || (chat.created_by !== userId && context.userRole !== "admin")) {
-    return jsonError("Chat not found", HttpStatus.NotFound);
+    return jsonError({ message: "Chat not found", status: HttpStatus.NotFound });
   }
 
   const participants = await database
@@ -418,7 +453,12 @@ async function handleAddParticipant({
   context,
 }: AddParticipantOpts): Promise<Response> {
   const userId = context.userId;
-  if (!userId) return jsonError("Unauthorized", HttpStatus.Unauthorized, ErrorCode.Unauthorized);
+  if (!userId)
+    return jsonError({
+      message: "Unauthorized",
+      status: HttpStatus.Unauthorized,
+      code: ErrorCode.Unauthorized,
+    });
 
   const chat = await database
     .selectFrom("chats")
@@ -426,11 +466,11 @@ async function handleAddParticipant({
     .where("id", "=", chatId)
     .executeTakeFirst();
   if (!chat || (chat.created_by !== userId && context.userRole !== "admin")) {
-    return jsonError("Chat not found", HttpStatus.NotFound);
+    return jsonError({ message: "Chat not found", status: HttpStatus.NotFound });
   }
 
   const actorId = body.actorId as string | undefined;
-  if (!actorId) return jsonError("actorId is required", HttpStatus.BadRequest);
+  if (!actorId) return jsonError({ message: "actorId is required", status: HttpStatus.BadRequest });
 
   const role = (body.role as string | undefined) ?? "member";
 
@@ -455,7 +495,12 @@ async function handleRemoveParticipant({
   context,
 }: RemoveParticipantOpts): Promise<Response> {
   const userId = context.userId;
-  if (!userId) return jsonError("Unauthorized", HttpStatus.Unauthorized, ErrorCode.Unauthorized);
+  if (!userId)
+    return jsonError({
+      message: "Unauthorized",
+      status: HttpStatus.Unauthorized,
+      code: ErrorCode.Unauthorized,
+    });
 
   const chat = await database
     .selectFrom("chats")
@@ -463,7 +508,7 @@ async function handleRemoveParticipant({
     .where("id", "=", chatId)
     .executeTakeFirst();
   if (!chat || (chat.created_by !== userId && context.userRole !== "admin")) {
-    return jsonError("Chat not found", HttpStatus.NotFound);
+    return jsonError({ message: "Chat not found", status: HttpStatus.NotFound });
   }
 
   await database
