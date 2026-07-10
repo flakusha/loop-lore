@@ -9,3 +9,4 @@ import "./app";
 import "./chat";
 import "./htmx";
 import "./notifications";
+import "./settings";
