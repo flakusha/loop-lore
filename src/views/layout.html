@@ -34,10 +34,26 @@
     <!-- App bundle: all frontend modules (single file avoids minifier name conflicts) -->
     <script src="/app.js" defer></script>
 
+    <!-- Alpine.js morph plugin — MUST load before Alpine core; enables htmx-ext-alpine-morph -->
+    <script
+      src="https://unpkg.com/@alpinejs/morph@3.14.9/dist/cdn.min.js"
+      integrity="sha384-YArgI0UKWPl5xG1dFzxvZLK3+v04eVXEHnw8kanjc2TH9AaMiqE88ko43GO/drkC"
+      crossorigin="anonymous"
+      defer
+    ></script>
+
     <!-- Alpine.js (loaded for chat page reactivity) -->
     <script
       src="https://unpkg.com/alpinejs@3.14.9/dist/cdn.min.js"
       integrity="sha384-9Ax3MmS9AClxJyd5/zafcXXjxmwFhZCdsT6HJoJjarvCaAkJlk5QDzjLJm+Wdx5F"
+      crossorigin="anonymous"
+      defer
+    ></script>
+
+    <!-- htmx alpine-morph extension — swaps via Alpine's morph, preserving component state -->
+    <script
+      src="https://cdn.jsdelivr.net/npm/htmx-ext-alpine-morph@2.0.0/alpine-morph.js"
+      integrity="sha384-Qxr2SF5H+3nTk2cGcn+DXeWSI67NqGe9CQZRQK9Xz6DgWO+H9QuS6oZP7HRce+/l"
       crossorigin="anonymous"
       defer
     ></script>
@@ -99,18 +115,23 @@
       }
     </style>
   </head>
-  <body x-data="app()">
+  <body x-data="app()" hx-ext="alpine-morph">
     <!-- Toast container (fixed, outside layout) -->
     <div class="toast-container" id="toast-container" data-testid="toast-container"></div>
 
+    <!-- Skip to content (first focusable element for keyboard users) -->
+    <a class="skip-to-content" href="#app-root" data-testid="skip-to-content">Skip to content</a>
+
     <!-- Persistent sidebar -->
-    <aside class="sidebar" id="layout-sidebar" data-testid="sidebar">
+    <aside class="sidebar" id="layout-sidebar" data-testid="sidebar" aria-label="Main navigation">
       <div class="sidebar-header">
         <span class="logo">loop-lore</span>
-        <button class="btn-icon" onclick="closeSidebar()" title="Close">&times;</button>
+        <button class="btn-icon" x-on:click="window.closeSidebar()" title="Close" aria-label="Close sidebar">
+          &times;
+        </button>
       </div>
 
-      <nav class="sidebar-nav">
+      <nav class="sidebar-nav" aria-label="Primary">
         <div class="nav-section-title">Navigation</div>
 
         <a
@@ -118,9 +139,9 @@
           href="/views/chat"
           hx-get="/views/chat"
           hx-target="#app-root"
-          hx-swap="innerHTML"
+          hx-swap="morph"
           hx-push-url="true"
-          onclick="closeSidebar()"
+          x-on:click="window.closeSidebar()"
           data-testid="nav-chat"
         >
           <span>💬</span> <span>Chat</span>
@@ -131,9 +152,9 @@
           href="/views/characters"
           hx-get="/views/characters"
           hx-target="#app-root"
-          hx-swap="innerHTML"
+          hx-swap="morph"
           hx-push-url="true"
-          onclick="closeSidebar()"
+          x-on:click="window.closeSidebar()"
           data-testid="nav-characters"
         >
           <span>👤</span> <span>Characters</span>
@@ -144,9 +165,9 @@
           href="/views/gallery"
           hx-get="/views/gallery"
           hx-target="#app-root"
-          hx-swap="innerHTML"
+          hx-swap="morph"
           hx-push-url="true"
-          onclick="closeSidebar()"
+          x-on:click="window.closeSidebar()"
           data-testid="nav-gallery"
         >
           <span>🖼</span> <span>Gallery</span>
@@ -157,9 +178,9 @@
           href="/views/worlds"
           hx-get="/views/worlds"
           hx-target="#app-root"
-          hx-swap="innerHTML"
+          hx-swap="morph"
           hx-push-url="true"
-          onclick="closeSidebar()"
+          x-on:click="window.closeSidebar()"
           data-testid="nav-worlds"
         >
           <span>🌍</span> <span>Worlds</span>
@@ -183,9 +204,9 @@
             class="btn-icon"
             hx-get="/views/settings"
             hx-target="#app-root"
-            hx-swap="innerHTML"
+            hx-swap="morph"
             hx-push-url="true"
-            onclick="closeSidebar()"
+            x-on:click="window.closeSidebar()"
             title="Settings"
             data-testid="nav-settings"
           >
@@ -196,13 +217,25 @@
     </aside>
 
     <!-- Backdrop for mobile sidebar -->
-    <div class="backdrop" id="sidebar-backdrop" onclick="closeSidebar()" style="display: none"></div>
+    <div
+      class="backdrop"
+      id="sidebar-backdrop"
+      x-on:click="window.closeSidebar()"
+      style="display: none"
+    ></div>
 
     <!-- Header slot placeholder — replaced via hx-swap-oob on page nav -->
     <header id="header-slot" class="main-header"></header>
 
     <!-- Main content rendered by htmx swaps -->
-    <div id="app-root" data-testid="app-root" hx-ext="response-targets" hx-target-error="#toast-container">
+    <div
+      id="app-root"
+      data-testid="app-root"
+      hx-ext="response-targets"
+      hx-target-error="#toast-container"
+      role="main"
+      tabindex="-1"
+    >
       {{{content}}}
     </div>
   </body>

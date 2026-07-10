@@ -1,10 +1,16 @@
 <!-- World Detail Page -->
 <header id="header-slot" class="main-header" data-page="world-detail" data-testid="world-detail-header">
-  <button class="hamburger" onclick="toggleSidebar()" data-testid="hamburger">☰</button>
+  <button class="hamburger" x-on:click="window.toggleSidebar()" data-testid="hamburger">☰</button>
   <span class="title" id="page-title">World Details</span>
   <div class="actions">
-    <button class="btn btn-secondary" onclick="loadWorldDetail()" data-testid="refresh-world">Refresh</button>
-    <button class="btn btn-primary" onclick="openModal('edit-world-modal')" data-testid="edit-world">
+    <button class="btn btn-secondary" x-on:click="window.loadWorldDetail()" data-testid="refresh-world">
+      Refresh
+    </button>
+    <button
+      class="btn btn-primary"
+      x-on:click="window.openModal('edit-world-modal')"
+      data-testid="edit-world"
+    >
       Edit
     </button>
   </div>
@@ -26,13 +32,13 @@
   <div
     id="edit-world-modal"
     class="modal-overlay"
-    onclick="closeModalOnBackdrop(event)"
+    x-on:click="window.closeModalOnBackdrop($event)"
     data-testid="edit-world-modal"
   >
     <div class="modal">
       <div class="modal-header">
         <span class="title">Edit World</span>
-        <button class="btn-icon" onclick="closeModal(this)">&times;</button>
+        <button class="btn-icon" x-on:click="window.closeModal($el)">&times;</button>
       </div>
       <div class="modal-body">
         <form
@@ -56,7 +62,9 @@
             <textarea class="form-input" name="lore" id="edit-lore" rows="4"></textarea>
           </div>
           <div style="display: flex; gap: var(--space-3); justify-content: flex-end">
-            <button type="button" class="btn btn-secondary" onclick="closeModal(this)">Cancel</button>
+            <button type="button" class="btn btn-secondary" x-on:click="window.closeModal($el)">
+              Cancel
+            </button>
             <button type="submit" class="btn btn-primary">Save</button>
           </div>
         </form>

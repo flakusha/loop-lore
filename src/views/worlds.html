@@ -1,16 +1,20 @@
 <!-- Worlds List Page -->
 <header id="header-slot" class="main-header" data-page="worlds" data-testid="worlds-header">
-  <button class="hamburger" onclick="toggleSidebar()" data-testid="hamburger">☰</button>
+  <button class="hamburger" x-on:click="window.toggleSidebar()" data-testid="hamburger">☰</button>
   <span class="title">Worlds</span>
   <div class="actions">
     <button
       class="btn btn-secondary"
-      onclick="showToast('info', 'Import feature coming soon')"
+      x-on:click="window.showToast('info', 'Import feature coming soon')"
       data-testid="import-world"
     >
       Import
     </button>
-    <button class="btn btn-primary" onclick="openModal('create-world-modal')" data-testid="create-world">
+    <button
+      class="btn btn-primary"
+      x-on:click="window.openModal('create-world-modal')"
+      data-testid="create-world"
+    >
       + New
     </button>
   </div>
@@ -19,6 +23,25 @@
 <div class="app-layout">
   <main class="main-content" style="padding-top: 0">
     <div class="chat-area">
+      <div class="list-toolbar">
+        <input
+          id="world-search"
+          class="form-input list-search"
+          type="search"
+          placeholder="Search worlds…"
+          aria-label="Search worlds"
+          oninput="filterWorlds()"
+          data-testid="world-search"
+        />
+        <select
+          id="world-sort"
+          class="form-select list-sort"
+          aria-label="Sort worlds"
+          onchange="filterWorlds()"
+        >
+          <option value="name">Sort: Name</option>
+        </select>
+      </div>
       <div class="world-list" id="world-list" data-testid="world-list">
         <div class="empty-state" style="padding: var(--space-12)">
           <div class="icon">⏳</div>
@@ -32,16 +55,16 @@
   <div
     id="create-world-modal"
     class="modal-overlay"
-    onclick="closeModalOnBackdrop(event)"
+    x-on:click="window.closeModalOnBackdrop($event)"
     data-testid="create-world-modal"
   >
     <div class="modal">
       <div class="modal-header">
         <span class="title">Create World</span>
-        <button class="btn-icon" onclick="closeModal(this)">&times;</button>
+        <button class="btn-icon" x-on:click="window.closeModal($el)">&times;</button>
       </div>
       <div class="modal-body">
-        <form onsubmit="return createWorld(event);" data-testid="create-world-form">
+        <form onsubmit="return createWorld($event);" data-testid="create-world-form">
           <div class="form-group">
             <label class="form-label" for="world-name">World Name</label>
             <input
@@ -76,7 +99,9 @@
           <div
             style="display: flex; gap: var(--space-3); justify-content: flex-end; margin-top: var(--space-6)"
           >
-            <button type="button" class="btn btn-secondary" onclick="closeModal(this)">Cancel</button>
+            <button type="button" class="btn btn-secondary" x-on:click="window.closeModal($el)">
+              Cancel
+            </button>
             <button type="submit" class="btn btn-primary">Create</button>
           </div>
         </form>
