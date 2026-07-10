@@ -5,8 +5,6 @@
     "lib": ["ES2024"],
     "module": "ESNext",
     "moduleResolution": "Bundler",
-    "outDir": "./dist",
-    "rootDir": "./src",
     "paths": {
       "@/*": ["./src/*"]
     },
@@ -15,11 +13,7 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "noEmit": true,
-    "types": ["bun-types"],
-    "allowJs": true,
-    "declaration": true,
-    "emitDeclarationOnly": true,
-    "declarationMap": true
+    "types": ["bun-types"]
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist", "src/frontend/**/*"]

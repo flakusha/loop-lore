@@ -35,7 +35,7 @@ async function parseJsonBody(request: Request): Promise<unknown> {
   try {
     return await request.json();
   } catch (parseError) {
-    return jsonError(`Invalid JSON: ${(parseError as Error).message}`, 400);
+    return jsonError({ message: `Invalid JSON: ${(parseError as Error).message}`, status: 400 });
   }
 }
 
@@ -47,13 +47,15 @@ async function parseJsonBody(request: Request): Promise<unknown> {
  * @param _userRole  User role for future access checks.
  */
 
-export async function dispatch(
-  request: Request,
-  database: Kysely<DB>,
-  _userId?: string | null,
-  _userRole?: string | null,
-  config?: Config,
-): Promise<Response | null> {
+export interface DispatchOpts {
+  request: Request;
+  database: Kysely<DB>;
+  userId?: string | null;
+  userRole?: string | null;
+  config?: Config;
+}
+
+export async function dispatch({ request, database, userId: _userId, userRole: _userRole, config }: DispatchOpts): Promise<Response | null> {
   const url = new URL(request.url);
   const { pathname } = url;
 
@@ -62,7 +64,7 @@ export async function dispatch(
     const body = await parseJsonBody(request);
     if (body instanceof Response) return body;
     const cfg = config ?? loadConfig();
-    return handleGenerate(body, database, cfg, _userId ?? undefined);
+    return handleGenerate({ body, database, config: cfg, userId: _userId ?? undefined });
   }
 
   // POST /api/generation/cancel

@@ -162,17 +162,21 @@ function respondWithFile(
   return new Response(content, { headers });
 }
 
+// ── Options objects ──────────────────────────────────────────
+
+export interface HandleApiRequestOpts {
+  request: Request;
+  database: ReturnType<typeof getDatabase>;
+  config: ReturnType<typeof loadConfig>;
+}
+
 /**
  * API request handler — runs middleware pipeline then dispatches to route controllers.
  *
  * Middleware chain: errorBoundary → auth → route dispatch
  * Auth populates RequestContext { userId, userRole, sessionId }.
  */
-export async function handleApiRequest(
-  request: Request,
-  database: ReturnType<typeof getDatabase>,
-  config: ReturnType<typeof loadConfig>,
-): Promise<Response> {
+export async function handleApiRequest({ request, database, config }: HandleApiRequestOpts): Promise<Response> {
   // ── Auth-skip paths (login, demo-login, age-gate) — no auth required ──
   const url = new URL(request.url);
   const skipAuthPaths = ["/api/auth/login", "/api/demo-login", "/api/age-gate/status"];
@@ -216,13 +220,7 @@ export async function handleApiRequest(
       if (ageGateResult) return ageGateResult;
 
       // ── Generation cancellation routes ───────────────
-      const generationResult = await dispatchGeneration(
-        req,
-        database,
-        context.userId,
-        context.userRole,
-        config,
-      );
+      const generationResult = await dispatchGeneration({ request: req, database, userId: context.userId, userRole: context.userRole, config });
       if (generationResult) return generationResult;
 
       // ── Plugin routes (dice-roller, etc.) ──────────────
@@ -235,7 +233,7 @@ export async function handleApiRequest(
   );
 
   // Run auth first, short-circuit on failure
-  const authResult = await authenticate(request, database, config.auth);
+  const authResult = await authenticate({ request, database, authConfig: config.auth });
   if (authResult instanceof Response) return authResult;
 
   // Run pipeline with authenticated context
@@ -301,7 +299,7 @@ async function start() {
     const url = new URL(request.url);
 
     if (url.pathname.startsWith("/api/")) {
-      return handleApiRequest(request, database, config);
+      return handleApiRequest({ request, database, config });
     }
 
     // ── View templates and character/world routes ───────────────

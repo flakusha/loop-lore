@@ -44,7 +44,7 @@ export function handleCancelGeneration(body: unknown, database?: Kysely<DB>): Re
   const attemptId = input.attemptId as string | undefined;
 
   if (!chatId && !attemptId) {
-    return jsonError("Either chatId or attemptId is required", 400);
+    return jsonError({ message: "Either chatId or attemptId is required", status: 400 });
   }
 
   const resolvedChatId =
@@ -57,13 +57,13 @@ export function handleCancelGeneration(body: unknown, database?: Kysely<DB>): Re
     })();
 
   if (!resolvedChatId) {
-    return jsonError("No active generation found for the given ID", 404);
+    return jsonError({ message: "No active generation found for the given ID", status: 404 });
   }
 
-  const isCancelled = cancelGenerationByChat(db, resolvedChatId, reason, source, detail);
+  const isCancelled = cancelGenerationByChat({ db, chatId: resolvedChatId, reason, source, detail });
 
   if (!isCancelled) {
-    return jsonError("No active generation found or already cancelled", 404);
+    return jsonError({ message: "No active generation found or already cancelled", status: 404 });
   }
 
   return jsonResponse({
@@ -84,7 +84,7 @@ export function handleCancelGeneration(body: unknown, database?: Kysely<DB>): Re
  */
 export function handleGenerationStatus(chatId: string, _database?: Kysely<DB>): Response {
   if (!chatId) {
-    return jsonError("chatId is required", 400);
+    return jsonError({ message: "chatId is required", status: 400 });
   }
 
   const isActive = isChatGenerating(chatId);
@@ -124,16 +124,16 @@ export async function handleRetryGeneration(body: unknown, database?: Kysely<DB>
   const input = body as RetryFromPointRequest;
 
   if (!input.chatId) {
-    return jsonError("chatId is required", 400);
+    return jsonError({ message: "chatId is required", status: 400 });
   }
 
-  const wasActive = cancelGenerationByChat(
-    db,
-    input.chatId,
-    CancelReason.UserCancel,
-    CancelSource.User,
-    input.step === undefined ? "User requested regeneration" : `User requested retry from step ${input.step}`,
-  );
+const wasActive = cancelGenerationByChat({
+      db,
+      chatId: input.chatId,
+      reason: CancelReason.UserCancel,
+      source: CancelSource.User,
+      detail: input.step === undefined ? "User requested regeneration" : `User requested retry from step ${input.step}`,
+    });
 
   let resumeFromStep = 0;
   let totalSteps = 1;
@@ -150,7 +150,7 @@ export async function handleRetryGeneration(body: unknown, database?: Kysely<DB>
       resumeFromStep = Math.max(0, Math.min(input.step, maxStep));
       totalSteps = attempt.total_steps ?? 1;
     } else {
-      return jsonError("Generation attempt not found", 404);
+      return jsonError({ message: "Generation attempt not found", status: 404 });
     }
   } else if (input.step != null) {
     resumeFromStep = Math.max(0, input.step);
@@ -181,7 +181,7 @@ export async function handleContinueGeneration(body: unknown, database?: Kysely<
   const input = body as ContinueRequest;
 
   if (!input.messageId || !input.chatId || !input.actorId) {
-    return jsonError("messageId, chatId, and actorId are required", 400);
+    return jsonError({ message: "messageId, chatId, and actorId are required", status: 400 });
   }
 
   const lastAttempt = await db
@@ -193,14 +193,17 @@ export async function handleContinueGeneration(body: unknown, database?: Kysely<
     .executeTakeFirst();
 
   if (!lastAttempt) {
-    return jsonError("No cancelled/failed generation attempt found for this message", 404);
+    return jsonError({
+      message: "No cancelled/failed generation attempt found for this message",
+      status: 404,
+    });
   }
 
   const attempt = lastAttempt;
   const { content: partialContent } = await getPartialContent(attempt.id, db);
 
   if (!partialContent) {
-    return jsonError("No partial content available to continue from", 422);
+    return jsonError({ message: "No partial content available to continue from", status: 422 });
   }
 
   const continuationCount = await db
@@ -260,16 +263,16 @@ export function handleRegenerate(body: unknown, database?: Kysely<DB>): Response
   const chatId = input.chatId as string;
 
   if (!chatId) {
-    return jsonError("chatId is required", 400);
+    return jsonError({ message: "chatId is required", status: 400 });
   }
 
-  const wasActive = cancelGenerationByChat(
-    db,
-    chatId,
-    CancelReason.UserCancel,
-    CancelSource.User,
-    "User requested regeneration (replacing existing response)",
-  );
+const wasActive = cancelGenerationByChat({
+      db,
+      chatId,
+      reason: CancelReason.UserCancel,
+      source: CancelSource.User,
+      detail: "User requested regeneration (replacing existing response)",
+    });
 
   return jsonResponse({
     ok: true,
@@ -292,7 +295,7 @@ export function handleRegenerate(body: unknown, database?: Kysely<DB>): Response
  */
 export function handleGenerationStream(chatId: string): Response {
   if (!chatId) {
-    return jsonError("chatId is required", 400);
+    return jsonError({ message: "chatId is required", status: 400 });
   }
 
   let cleanup: (() => void) | undefined;
