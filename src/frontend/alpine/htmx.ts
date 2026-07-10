@@ -1,12 +1,14 @@
-// Minimal inline logging — avoids logger module's SERVER_LOG_BUFFER.push issue in minified bundle
-const __log = (level: string, msg: string, meta?: unknown) => {
-  const ts = new Date().toISOString();
-  console.log(`[${ts}] [${level}] [api] ${msg}`, meta ?? "");
-};
+import { log } from "./logger";
+
+const apiLog = log.child({ module: "api" });
 
 // Global error capture for debugging page loader issues
 addEventListener("error", (e) => {
-  __log("ERROR", `Uncaught: ${e.message}`, { filename: e.filename, lineno: e.lineno, colno: e.colno });
+  apiLog.error(`Uncaught: ${e.message}`, undefined, {
+    filename: e.filename,
+    lineno: e.lineno,
+    colno: e.colno,
+  });
 });
 
 const API_BASE = "";
@@ -21,7 +23,7 @@ function getCsrfToken(): string {
 async function apiFetch(url: string, options?: RequestInit): Promise<Response> {
   const method = options?.method ?? "GET";
   const start = performance.now();
-  __log("INFO", `${method} ${url}`, { direction: "request" });
+  apiLog.info(`${method} ${url}`, { direction: "request" });
   const opts: RequestInit = { ...options };
   opts.headers = new Headers(opts.headers ?? {});
   const csrf = getCsrfToken();
@@ -29,9 +31,9 @@ async function apiFetch(url: string, options?: RequestInit): Promise<Response> {
   opts.signal = AbortSignal.timeout(30_000);
   const res = await fetch(API_BASE + url, opts);
   const elapsed = Math.round(performance.now() - start);
-  __log("INFO", `${res.status} ${url}`, { direction: "response", elapsedMs: elapsed });
+  apiLog.info(`${res.status} ${url}`, { direction: "response", elapsedMs: elapsed });
   if (res.status === 401) {
-    __log("WARN", `401 — redirecting to login`, { url });
+    apiLog.warn(`401 — redirecting to login`, { url });
     const redirect = encodeURIComponent(location.pathname + location.search);
     location.assign(`/views/login?redirect=${redirect}`);
     throw new Error("Unauthorized");
@@ -41,12 +43,10 @@ async function apiFetch(url: string, options?: RequestInit): Promise<Response> {
 
 globalThis.apiFetch = apiFetch;
 
-export {};
-
 // ── htmx event handlers ───────────────────────────────────
 
 document.addEventListener("htmx:configRequest", (e: CustomEvent<{ headers: Record<string, string> }>) => {
-  __log("DEBUG", "htmx:configRequest", { path: (e as any)?.detail?.path });
+  apiLog.debug("htmx:configRequest", { path: (e as any)?.detail?.path });
   const token = localStorage.getItem("session_token");
   if (token) {
     e.detail.headers["Authorization"] = "Bearer " + token;
@@ -54,7 +54,7 @@ document.addEventListener("htmx:configRequest", (e: CustomEvent<{ headers: Recor
 });
 
 document.addEventListener("htmx:beforeSwap", () => {
-  __log("DEBUG", "htmx:beforeSwap");
+  apiLog.debug("htmx:beforeSwap");
 });
 
 // Trigger page-specific loaders on htmx content swaps
@@ -79,7 +79,7 @@ function triggerPageLoaders(): void {
 
 document.addEventListener("htmx:load", (e: CustomEvent<{ elt: Element }>) => {
   const elt = e.detail.elt;
-  __log("DEBUG", "htmx:load", { tag: elt?.tagName, id: (elt as any)?.id });
+  apiLog.debug("htmx:load", { tag: elt?.tagName, id: (elt as any)?.id });
   if (elt && globalThis.Alpine && elt.querySelector("[x-data]")) {
     elt.querySelectorAll("[x-data]").forEach((child: Element) => {
       Alpine!.initTree(child as HTMLElement);
