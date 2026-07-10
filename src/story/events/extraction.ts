@@ -11,46 +11,46 @@ import type { WorldEvent } from "../types";
 // ── Location Change Patterns ─────────────────────────────────
 
 const locationPatterns = [
-  /(?:enters?|moves?\s+to|arrives?\s+at|steps?\s+into|walks?\s+into|goes?\s+to|heads?\s+(?:to|toward)|leaves?\s+the)\s+[""']?([A-Za-z\s]+?)[""']?(?:[,.;!])/gi,
-  /(?:makes?\s+(?:their\s+)?way\s+to(?:wards?)?|travels?\s+to|ventures?\s+into)\s+[""']?([A-Za-z\s]+?)[""']?(?:[,.;!])/gi,
+  /(?:enters?|moves?\s+to|arrives?\s+at|steps?\s+into|walks?\s+into|goes?\s+to|heads?\s+(?:to|toward)|leaves?\s+the)\s+[""']?([A-Za-z\s]+?)[""']?(?:[,.;!])/i,
+  /(?:makes?\s+(?:their\s+)?way\s+to(?:wards?)?|travels?\s+to|ventures?\s+into)\s+[""']?([A-Za-z\s]+?)[""']?(?:[,.;!])/i,
 ];
 
 // ── Time Advancement Patterns ─────────────────────────────────
 
 const timePatterns = [
-  /(?:hours?\s+(?:pass|go\s+by|elapse)|later\s+that\s+(?:day|night|evening|morning|afternoon)|(?:after|by)\s+(?:a\s+)?few\s+hours)/gi,
-  /(?:the\s+(?:sun|moon)\s+(?:rises?|sets?)|dawn\s+(?:breaks?|approaches?)|dusk\s+(?:falls?|settles?)|night\s+(?:falls?|arrives?))/gi,
-  /(?:the\s+next\s+(?:day|morning|evening)|a\s+(?:day|week|month)\s+later)/gi,
+  /(?:hours?\s+(?:pass|go\s+by|elapse)|later\s+that\s+(?:day|night|evening|morning|afternoon)|(?:after|by)\s+(?:a\s+)?few\s+hours)/i,
+  /(?:the\s+(?:sun|moon)\s+(?:rises?|sets?)|dawn\s+(?:breaks?|approaches?)|dusk\s+(?:falls?|settles?)|night\s+(?:falls?|arrives?))/i,
+  /(?:the\s+next\s+(?:day|morning|evening)|a\s+(?:day|week|month)\s+later)/i,
 ];
 
 // ── Combat Patterns ───────────────────────────────────────────
 
 const combatPatterns = [
-  /(?:strikes?|hits?|slashes?|stabs?|shoots?|fires?\s+(?:at|upon)|attacks?|battles?|fights?|wounds?|injures?)/gi,
-  /(?:takes?\s+\d+\s+(?:damage|hits?)|loses?\s+\d+\s+hp|health\s+(?:drops?|falls?)\s+to\s+\d+)/gi,
+  /(?:strikes?|hits?|slashes?|stabs?|shoots?|fires?\s+(?:at|upon)|attacks?|battles?|fights?|wounds?|injures?)/i,
+  /(?:takes?\s+\d+\s+(?:damage|hits?)|loses?\s+\d+\s+hp|health\s+(?:drops?|falls?)\s+to\s+\d+)/i,
 ];
 
 // ── NPC State Change Patterns ─────────────────────────────────
 
 const npcPatterns = [
-  /(?:looks?\s+(?:calm|afraid|angry|suspicious|friendly|worried|happy|sad|confused|determined))/gi,
-  /(?:becomes?\s+(?:more|less)\s+(?:friendly|hostile|suspicious|trusting))/gi,
-  /(?:reveals?|tells?\s+|confesses?|shares?|admits?)\s+(?:that\s+)?(?:he|she|they)\s+(?:knows?|has|found|discovered)/gi,
+  /(?:looks?\s+(?:calm|afraid|angry|suspicious|friendly|worried|happy|sad|confused|determined))/i,
+  /(?:becomes?\s+(?:more|less)\s+(?:friendly|hostile|suspicious|trusting))/i,
+  /(?:reveals?|tells?\s+|confesses?|shares?|admits?)\s+(?:that\s+)?(?:he|she|they)\s+(?:knows?|has|found|discovered)/i,
 ];
 
 // ── Item Transfer Patterns ────────────────────────────────────
 
 const itemPatterns = [
-  /(?:gives?|hands?|offers?|passes?|trades?)\s+(?:the\s+|a\s+|an\s+)?[""']?([A-Za-z\s]+?)[""']?\s+(?:to\s+|for\s+)/gi,
-  /(?:takes?|picks?\s+up|grabs?|collects?|acquires?|receives?|finds?)\s+(?:the\s+|a\s+|an\s+)?[""']?([A-Za-z\s]+?)[""']?/gi,
-  /(?:drops?|leaves?\s+behind|abandons?|puts?\s+down)\s+(?:the\s+|a\s+|an\s+)?[""']?([A-Za-z\s]+?)[""']?/gi,
+  /(?:gives?|hands?|offers?|passes?|trades?)\s+(?:the\s+|a\s+|an\s+)?[""']?([A-Za-z\s]+?)[""']?\s+(?:to\s+|for\s+)/i,
+  /(?:takes?|picks?\s+up|grabs?|collects?|acquires?|receives?|finds?)\s+(?:the\s+|a\s+|an\s+)?[""']?([A-Za-z\s]+?)[""']?/i,
+  /(?:drops?|leaves?\s+behind|abandons?|puts?\s+down)\s+(?:the\s+|a\s+|an\s+)?[""']?([A-Za-z\s]+?)[""']?/i,
 ];
 
 // ── Lore Update Patterns ──────────────────────────────────────
 
 const lorePatterns = [
-  /(?:reveals?\s+that|discover(?:s|ed)\s+that|learn(?:s|ed)\s+that|uncovers?|unearth(?:s|ed)|realiz(?:es?|ed)\s+that)/gi,
-  /(?:according\s+to\s+(?:legend|ancient|old)\s+(?:texts?|records?|tales?|scrolls?))/gi,
+  /(?:reveals?\s+that|discover(?:s|ed)\s+that|learn(?:s|ed)\s+that|uncovers?|unearth(?:s|ed)|realiz(?:es?|ed)\s+that)/i,
+  /(?:according\s+to\s+(?:legend|ancient|old)\s+(?:texts?|records?|tales?|scrolls?))/i,
 ];
 
 // ── Options ──────────────────────────────────────────────────
@@ -73,14 +73,6 @@ export function extractEvents({
   actorId,
   currentLocationId,
 }: ExtractEventsOpts): WorldEvent[] {
-  // Reset module-scoped regex lastIndex to avoid state bleed across calls
-  for (const p of locationPatterns) p.lastIndex = 0;
-  for (const p of timePatterns) p.lastIndex = 0;
-  for (const p of combatPatterns) p.lastIndex = 0;
-  for (const p of npcPatterns) p.lastIndex = 0;
-  for (const p of itemPatterns) p.lastIndex = 0;
-  for (const p of lorePatterns) p.lastIndex = 0;
-
   const events: WorldEvent[] = [];
   const timestamp = new Date().toISOString();
   const lower = messageContent.toLowerCase();
