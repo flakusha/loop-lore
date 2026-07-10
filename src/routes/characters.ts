@@ -161,15 +161,20 @@ async function handleListActors({
 
   const actors = await listQuery.orderBy("display_name", "asc").limit(pageSize).offset(offset).execute();
 
-  return jsonPaginated(actors, total, page, pageSize);
+  return jsonPaginated({ data: actors, total, page, pageSize });
 }
 
 async function handleCreateActor({ database, body, context }: CreateActorOpts): Promise<Response> {
   const userId = context.userId;
-  if (!userId) return jsonError("Unauthorized", HttpStatus.Unauthorized, ErrorCode.Unauthorized);
+  if (!userId)
+    return jsonError({
+      message: "Unauthorized",
+      status: HttpStatus.Unauthorized,
+      code: ErrorCode.Unauthorized,
+    });
 
   const displayName = body.displayName as string | undefined;
-  if (!displayName) return jsonError("displayName is required", HttpStatus.BadRequest);
+  if (!displayName) return jsonError({ message: "displayName is required", status: HttpStatus.BadRequest });
 
   const id = uid();
   await database
@@ -194,21 +199,28 @@ async function handleCreateActor({ database, body, context }: CreateActorOpts): 
 
 async function handleGetActor({ database, actorId, context }: GetActorOpts): Promise<Response> {
   const actor = await database.selectFrom("actors").selectAll().where("id", "=", actorId).executeTakeFirst();
-  if (!actor) return jsonError("Actor not found", HttpStatus.NotFound, ErrorCode.NotFound);
+  if (!actor)
+    return jsonError({ message: "Actor not found", status: HttpStatus.NotFound, code: ErrorCode.NotFound });
   if (actor.visibility !== "public" && actor.user_id !== context.userId && context.userRole !== "admin") {
-    return jsonError("Actor not found", HttpStatus.NotFound, ErrorCode.NotFound);
+    return jsonError({ message: "Actor not found", status: HttpStatus.NotFound, code: ErrorCode.NotFound });
   }
   return jsonResponse(actor);
 }
 
 async function handleUpdateActor({ database, actorId, body, context }: UpdateActorOpts): Promise<Response> {
   const userId = context.userId;
-  if (!userId) return jsonError("Unauthorized", HttpStatus.Unauthorized, ErrorCode.Unauthorized);
+  if (!userId)
+    return jsonError({
+      message: "Unauthorized",
+      status: HttpStatus.Unauthorized,
+      code: ErrorCode.Unauthorized,
+    });
 
   const actor = await database.selectFrom("actors").selectAll().where("id", "=", actorId).executeTakeFirst();
-  if (!actor) return jsonError("Actor not found", HttpStatus.NotFound, ErrorCode.NotFound);
+  if (!actor)
+    return jsonError({ message: "Actor not found", status: HttpStatus.NotFound, code: ErrorCode.NotFound });
   if (actor.owner_id !== userId && context.userRole !== "admin") {
-    return jsonError("Forbidden", HttpStatus.Forbidden, ErrorCode.Forbidden);
+    return jsonError({ message: "Forbidden", status: HttpStatus.Forbidden, code: ErrorCode.Forbidden });
   }
 
   const updates: Record<string, unknown> = {};
@@ -218,7 +230,8 @@ async function handleUpdateActor({ database, actorId, body, context }: UpdateAct
   if (body.avatarAssetId !== undefined) updates.avatar_asset_id = body.avatarAssetId;
   if (body.settings) {
     const settingsResult = safeJsonStringify(body.settings);
-    if (!settingsResult.ok) return jsonError("Invalid settings data", HttpStatus.BadRequest);
+    if (!settingsResult.ok)
+      return jsonError({ message: "Invalid settings data", status: HttpStatus.BadRequest });
     updates.settings = settingsResult.value;
   }
   updates.updated_at = new Date().toISOString();
@@ -230,12 +243,18 @@ async function handleUpdateActor({ database, actorId, body, context }: UpdateAct
 
 async function handleDeleteActor({ database, actorId, context }: DeleteActorOpts): Promise<Response> {
   const userId = context.userId;
-  if (!userId) return jsonError("Unauthorized", HttpStatus.Unauthorized, ErrorCode.Unauthorized);
+  if (!userId)
+    return jsonError({
+      message: "Unauthorized",
+      status: HttpStatus.Unauthorized,
+      code: ErrorCode.Unauthorized,
+    });
 
   const actor = await database.selectFrom("actors").selectAll().where("id", "=", actorId).executeTakeFirst();
-  if (!actor) return jsonError("Actor not found", HttpStatus.NotFound, ErrorCode.NotFound);
+  if (!actor)
+    return jsonError({ message: "Actor not found", status: HttpStatus.NotFound, code: ErrorCode.NotFound });
   if (actor.owner_id !== userId && context.userRole !== "admin") {
-    return jsonError("Forbidden", HttpStatus.Forbidden, ErrorCode.Forbidden);
+    return jsonError({ message: "Forbidden", status: HttpStatus.Forbidden, code: ErrorCode.Forbidden });
   }
 
   await database.deleteFrom("actors").where("id", "=", actorId).execute();
@@ -245,9 +264,10 @@ async function handleDeleteActor({ database, actorId, context }: DeleteActorOpts
 
 async function handleExportCard({ database, actorId, context }: ExportCardOpts): Promise<Response> {
   const actor = await database.selectFrom("actors").selectAll().where("id", "=", actorId).executeTakeFirst();
-  if (!actor) return jsonError("Actor not found", HttpStatus.NotFound, ErrorCode.NotFound);
+  if (!actor)
+    return jsonError({ message: "Actor not found", status: HttpStatus.NotFound, code: ErrorCode.NotFound });
   if (actor.visibility !== "public" && actor.user_id !== context.userId && context.userRole !== "admin") {
-    return jsonError("Actor not found", HttpStatus.NotFound, ErrorCode.NotFound);
+    return jsonError({ message: "Actor not found", status: HttpStatus.NotFound, code: ErrorCode.NotFound });
   }
 
   // Build V2 character card JSON
@@ -276,7 +296,11 @@ async function handleExportCard({ database, actorId, context }: ExportCardOpts):
 }
 
 function handleImportActorFile(_opts: ImportActorFileOpts): Response {
-  return jsonError("File import not yet implemented", HttpStatus.NotImplemented, ErrorCode.NotImplemented);
+  return jsonError({
+    message: "File import not yet implemented",
+    status: HttpStatus.NotImplemented,
+    code: ErrorCode.NotImplemented,
+  });
 }
 
 interface ImportActorFileOpts {
@@ -287,12 +311,17 @@ interface ImportActorFileOpts {
 
 async function handleImportActorJson({ body, database, context }: ImportActorJsonOpts): Promise<Response> {
   const userId = context.userId;
-  if (!userId) return jsonError("Unauthorized", HttpStatus.Unauthorized, ErrorCode.Unauthorized);
+  if (!userId)
+    return jsonError({
+      message: "Unauthorized",
+      status: HttpStatus.Unauthorized,
+      code: ErrorCode.Unauthorized,
+    });
 
   // Handle both raw actor data and V2 character card format
   const data = (body.data ?? body) as Record<string, unknown>;
   const displayName = (data.name ?? data.displayName ?? data.display_name) as string | undefined;
-  if (!displayName) return jsonError("Actor name is required", HttpStatus.BadRequest);
+  if (!displayName) return jsonError({ message: "Actor name is required", status: HttpStatus.BadRequest });
 
   const id = uid();
   await database

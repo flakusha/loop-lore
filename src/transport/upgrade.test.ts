@@ -30,10 +30,10 @@ describe("upgradeConnection", () => {
   });
 
   test("upgrades http/1.1 to http/2", async () => {
-    const newHandler = await upgradeConnection(http1Handler, TransportProtocol.Http2, {
+    const newHandler = await upgradeConnection({ current: http1Handler, targetProtocol: TransportProtocol.Http2, config: {
       protocol: TransportProtocol.Http2,
       port: 3000,
-    });
+    } });
 
     const conn = await newHandler.connect();
     expect(conn.protocol).toBe(TransportProtocol.Http2);
@@ -42,10 +42,10 @@ describe("upgradeConnection", () => {
   });
 
   test("upgrades http/1.1 to websocket", async () => {
-    const newHandler = await upgradeConnection(http1Handler, TransportProtocol.WebSocket, {
+    const newHandler = await upgradeConnection({ current: http1Handler, targetProtocol: TransportProtocol.WebSocket, config: {
       protocol: TransportProtocol.WebSocket,
       port: 3000,
-    });
+    } });
 
     const conn = await newHandler.connect();
     expect(conn.protocol).toBe(TransportProtocol.WebSocket);
@@ -54,10 +54,10 @@ describe("upgradeConnection", () => {
   });
 
   test("upgrades http/2 to websocket", async () => {
-    const newHandler = await upgradeConnection(http2Handler, TransportProtocol.WebSocket, {
+    const newHandler = await upgradeConnection({ current: http2Handler, targetProtocol: TransportProtocol.WebSocket, config: {
       protocol: TransportProtocol.WebSocket,
       port: 3000,
-    });
+    } });
 
     const conn = await newHandler.connect();
     expect(conn.protocol).toBe(TransportProtocol.WebSocket);
@@ -70,10 +70,10 @@ describe("upgradeConnection", () => {
     const conn1 = await http1Handler.connect();
     Object.assign(conn1.metadata, { customKey: "customValue", sessionId: "sess-123" });
 
-    const newHandler = await upgradeConnection(http1Handler, TransportProtocol.Http2, {
+    const newHandler = await upgradeConnection({ current: http1Handler, targetProtocol: TransportProtocol.Http2, config: {
       protocol: TransportProtocol.Http2,
       port: 3000,
-    });
+    } });
 
     const conn2 = await newHandler.connect();
     expect(conn2.metadata.customKey).toBe("customValue");
@@ -83,10 +83,10 @@ describe("upgradeConnection", () => {
   });
 
   test("closes old handler after upgrade", async () => {
-    await upgradeConnection(http1Handler, TransportProtocol.Http2, {
+    await upgradeConnection({ current: http1Handler, targetProtocol: TransportProtocol.Http2, config: {
       protocol: TransportProtocol.Http2,
       port: 3000,
-    });
+    } });
 
     // Old handler should be closed
     expect(() => http1Handler.send("test")).toThrow(TransportError);
@@ -95,17 +95,17 @@ describe("upgradeConnection", () => {
 
   test("throws for invalid upgrade path (http/1.1 to http/3)", async () => {
     expect(
-      upgradeConnection(http1Handler, TransportProtocol.Http3, {
+      upgradeConnection({ current: http1Handler, targetProtocol: TransportProtocol.Http3, config: {
         protocol: TransportProtocol.Http3,
         port: 3000,
-      }),
+      } }),
     ).rejects.toThrow(TransportError);
 
     try {
-      await upgradeConnection(http1Handler, TransportProtocol.Http3, {
+      await upgradeConnection({ current: http1Handler, targetProtocol: TransportProtocol.Http3, config: {
         protocol: TransportProtocol.Http3,
         port: 3000,
-      });
+      } });
     } catch (error) {
       expect(error).toBeInstanceOf(TransportError);
       expect((error as TransportError).code).toBe(TransportErrorCode.UpgradeFailed);
@@ -115,21 +115,21 @@ describe("upgradeConnection", () => {
 
   test("throws for invalid upgrade path (websocket to http/1.1)", () => {
     expect(
-      upgradeConnection(wsHandler, TransportProtocol.Http1_1, {
+      upgradeConnection({ current: wsHandler, targetProtocol: TransportProtocol.Http1_1, config: {
         protocol: TransportProtocol.Http1_1,
         port: 3000,
-      }),
+      } }),
     ).rejects.toThrow(TransportError);
   });
 
   test("wraps factory error in TransportError with UpgradeFailed code for unimplemented protocols", async () => {
     // Unimplemented protocols throw during factory creation
     try {
-      await upgradeConnection(
-        http1Handler,
-        TransportProtocol.Http3, // Not implemented
-        { protocol: TransportProtocol.Http3, port: 3000 },
-      );
+      await upgradeConnection({
+        current: http1Handler,
+        targetProtocol: TransportProtocol.Http3, // Not implemented
+        config: { protocol: TransportProtocol.Http3, port: 3000 },
+      });
     } catch (error) {
       expect(error).toBeInstanceOf(TransportError);
       expect((error as TransportError).code).toBe(TransportErrorCode.UpgradeFailed);
@@ -159,7 +159,7 @@ describe("upgrade paths", () => {
       await handler.connect();
 
       for (const to of targets) {
-        const newHandler = await upgradeConnection(handler, to, { protocol: to, port: 3000 });
+        const newHandler = await upgradeConnection({ current: handler, targetProtocol: to, config: { protocol: to, port: 3000 } });
         const conn = await newHandler.connect();
         expect(conn.protocol).toBe(to);
         await newHandler.close();

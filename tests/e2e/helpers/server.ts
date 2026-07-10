@@ -213,7 +213,7 @@ export async function createTestServer(
     fetch: async (req: Request): Promise<Response> => {
       const url = new URL(req.url);
       if (url.pathname.startsWith("/api/")) {
-        return handleApiRequest(req, db, config);
+        return handleApiRequest({ request: req, database: db, config });
       }
       return new Response("Not found", { status: 404 });
     },

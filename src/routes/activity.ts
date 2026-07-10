@@ -46,7 +46,12 @@ async function handleActivity({
   searchParams: URLSearchParams;
 }): Promise<Response> {
   const actorId = context.userId;
-  if (!actorId) return jsonError("Unauthorized", HttpStatus.Unauthorized, ErrorCode.Unauthorized);
+  if (!actorId)
+    return jsonError({
+      message: "Unauthorized",
+      status: HttpStatus.Unauthorized,
+      code: ErrorCode.Unauthorized,
+    });
 
   const raw = searchParams.get("participantIds") ?? actorId;
   const participantIds = raw

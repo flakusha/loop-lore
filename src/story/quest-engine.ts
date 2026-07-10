@@ -461,7 +461,7 @@ export class QuestEngine {
     if (Object.keys(rewards).length === 0) return;
 
     if (rewards.worldChanges && rewards.worldChanges.length > 0 && this.items) {
-      await applyEvents(this.db, worldId, rewards.worldChanges);
+      await applyEvents({ db: this.db, worldId, events: rewards.worldChanges });
     }
 
     if (rewards.unlockQuests && rewards.unlockQuests.length > 0) {

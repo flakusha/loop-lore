@@ -53,30 +53,34 @@ describe("jsonResponse", () => {
 
 describe("jsonError", () => {
   test("returns 400 with error message by default", async () => {
-    const res = jsonError("Bad input");
+    const res = jsonError({ message: "Bad input" });
     expect(res.status).toBe(400);
     expect(await res.json()).toEqual({ error: "Bad input" });
   });
 
   test("accepts custom status code", () => {
-    const res = jsonError("Not found", HttpStatus.NotFound);
+    const res = jsonError({ message: "Not found", status: HttpStatus.NotFound });
     expect(res.status).toBe(404);
   });
 
   test("includes code when provided", async () => {
-    const res = jsonError("Expired token", HttpStatus.Unauthorized, "UNAUTHORIZED");
+    const res = jsonError({
+      message: "Expired token",
+      status: HttpStatus.Unauthorized,
+      code: "UNAUTHORIZED",
+    });
     expect(res.status).toBe(401);
     expect(await res.json()).toEqual({ error: "Expired token", code: "UNAUTHORIZED" });
   });
 
   test("omits code field when not provided", async () => {
-    const res = jsonError("Generic error", HttpStatus.InternalServerError);
+    const res = jsonError({ message: "Generic error", status: HttpStatus.InternalServerError });
     const body = await res.json();
     expect(body).not.toHaveProperty("code");
   });
 
   test("explicitly passes undefined code as omitted", async () => {
-    const res = jsonError("msg", HttpStatus.BadRequest);
+    const res = jsonError({ message: "msg", status: HttpStatus.BadRequest });
     const body = await res.json();
     expect(body).not.toHaveProperty("code");
   });
@@ -126,7 +130,7 @@ describe("jsonPaginated", () => {
   const items = [{ id: 1 }, { id: 2 }];
 
   test("returns 200 with data and pagination", async () => {
-    const res = jsonPaginated(items, 10, 1, 5);
+    const res = jsonPaginated({ data: items, total: 10, page: 1, pageSize: 5 });
     expect(res.status).toBe(200);
     const body = (await res.json()) as Record<string, unknown>;
     expect(body.data).toEqual(items);
@@ -139,20 +143,20 @@ describe("jsonPaginated", () => {
   });
 
   test("single page", async () => {
-    const res = jsonPaginated(items, 2, 1, 10);
+    const res = jsonPaginated({ data: items, total: 2, page: 1, pageSize: 10 });
     const body = (await res.json()) as { pagination: { totalPages: number } };
     expect(body.pagination.totalPages).toBe(1);
   });
 
   test("exact page boundary", async () => {
-    const res = jsonPaginated(items, 10, 2, 5);
+    const res = jsonPaginated({ data: items, total: 10, page: 2, pageSize: 5 });
     const body = (await res.json()) as { pagination: { totalPages: number; page: number } };
     expect(body.pagination.totalPages).toBe(2);
     expect(body.pagination.page).toBe(2);
   });
 
   test("empty dataset", async () => {
-    const res = jsonPaginated([], 0, 1, 20);
+    const res = jsonPaginated({ data: [], total: 0, page: 1, pageSize: 20 });
     const body = (await res.json()) as { data: unknown[]; pagination: { total: number; totalPages: number } };
     expect(body.data).toEqual([]);
     expect(body.pagination.total).toBe(0);
@@ -160,7 +164,7 @@ describe("jsonPaginated", () => {
   });
 
   test("pageSize zero avoids division by zero", async () => {
-    const res = jsonPaginated(items, 5, 1, 0);
+    const res = jsonPaginated({ data: items, total: 5, page: 1, pageSize: 0 });
     const body = (await res.json()) as { pagination: { totalPages: number; pageSize: number } };
     expect(body.pagination.totalPages).toBe(0);
     expect(body.pagination.pageSize).toBe(0);

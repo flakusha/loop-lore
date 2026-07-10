@@ -26,7 +26,13 @@ import { activeGenerations, updateAttemptStatus } from "./cancellation-tracker";
  * @param stepIndex — the step index that completed (0-based)
  * @param db — Kysely DB instance for persistence
  */
-export async function completeStep(attemptId: string, stepIndex: number, db: Kysely<DB>): Promise<void> {
+export interface CompleteStepOpts {
+  attemptId: string;
+  stepIndex: number;
+  db: Kysely<DB>;
+}
+
+export async function completeStep({ attemptId, stepIndex, db }: CompleteStepOpts): Promise<void> {
   const active = activeGenerations.get(attemptId);
   if (!active) return;
 
@@ -34,9 +40,9 @@ export async function completeStep(attemptId: string, stepIndex: number, db: Kys
   active.stepIndex = stepIndex + 1;
 
   try {
-    await updateAttemptStatus(db, attemptId, active.status, {
+    await updateAttemptStatus({ db, attemptId, status: active.status, extra: {
       step_index: active.stepIndex,
-    });
+    } });
   } catch (error: unknown) {
     getLogger()
       .child({ module: "generation" })
@@ -52,18 +58,20 @@ export async function completeStep(attemptId: string, stepIndex: number, db: Kys
  * @param error — the error that caused failure
  * @param db — Kysely DB instance for persistence
  */
-export async function failStep(
-  attemptId: string,
-  stepIndex: number,
-  error: Error,
-  db: Kysely<DB>,
-): Promise<void> {
+export interface FailStepOpts {
+  attemptId: string;
+  stepIndex: number;
+  error: Error;
+  db: Kysely<DB>;
+}
+
+export async function failStep({ attemptId, stepIndex, error, db }: FailStepOpts): Promise<void> {
   try {
-    await updateAttemptStatus(db, attemptId, GenerationStatus.Failed, {
+    await updateAttemptStatus({ db, attemptId, status: GenerationStatus.Failed, extra: {
       error_message: `Step ${stepIndex} failed: ${error.message}`,
       step_index: stepIndex,
       completed_at: new Date().toISOString(),
-    });
+    } });
   } catch (updateError: unknown) {
     getLogger()
       .child({ module: "generation" })

@@ -116,9 +116,7 @@ export function jsonError(
 ): Response {
   const message = typeof messageOrOptions === "string" ? messageOrOptions : messageOrOptions.message;
   const resolvedStatus =
-    typeof messageOrOptions === "string"
-      ? status
-      : (messageOrOptions.status ?? HttpStatus.BadRequest);
+    typeof messageOrOptions === "string" ? status : (messageOrOptions.status ?? HttpStatus.BadRequest);
   const resolvedCode = typeof messageOrOptions === "string" ? code : messageOrOptions.code;
   const body: ApiError = { error: message };
   if (resolvedCode) body.code = resolvedCode;
@@ -158,12 +156,7 @@ export interface JsonPaginatedOptions {
  *   jsonPaginated({ data: items, total, page, pageSize })
  *   jsonPaginated(items, total, page, pageSize)
  */
-export function jsonPaginated(
-  data: unknown[],
-  total: number,
-  page: number,
-  pageSize: number,
-): Response;
+export function jsonPaginated(data: unknown[], total: number, page: number, pageSize: number): Response;
 export function jsonPaginated(options: JsonPaginatedOptions): Response;
 export function jsonPaginated(
   dataOrOptions: unknown[] | JsonPaginatedOptions,
@@ -180,9 +173,7 @@ export function jsonPaginated(
             page: dataOrOptions.page,
             pageSize: dataOrOptions.pageSize,
             totalPages:
-              dataOrOptions.pageSize > 0
-                ? Math.ceil(dataOrOptions.total / dataOrOptions.pageSize)
-                : 0,
+              dataOrOptions.pageSize > 0 ? Math.ceil(dataOrOptions.total / dataOrOptions.pageSize) : 0,
           },
         }
       : {
@@ -194,10 +185,7 @@ export function jsonPaginated(
             totalPages: pageSize && pageSize > 0 ? Math.ceil((total ?? 0) / pageSize) : 0,
           },
         };
-  return Response.json(
-    { data, pagination },
-    { status: HttpStatus.OK },
-  );
+  return Response.json({ data, pagination }, { status: HttpStatus.OK });
 }
 
 /**
@@ -229,7 +217,8 @@ export function jsonNoContent(): Response {
 // ── Shared route utilities ─────────────────────────────────────
 
 /** "Method not allowed" shorthand */
-export const BAD_METHOD = (): Response => jsonError({ message: "Method not allowed", status: HttpStatus.BadRequest });
+export const BAD_METHOD = (): Response =>
+  jsonError({ message: "Method not allowed", status: HttpStatus.BadRequest });
 
 /**
  * Parse request body: JSON or form-encoded.

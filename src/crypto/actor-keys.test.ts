@@ -54,7 +54,7 @@ function getSmkKeySafe(): CryptoKey {
 describe("generateActorKey", () => {
   test("generates a key and stores it encrypted in DB", async () => {
     const smk = getSmkKeySafe();
-    const keyId = await generateActorKey(db, ACTOR_ID, smk, "primary");
+    const keyId = await generateActorKey({ database: db, actorId: ACTOR_ID, smk, name: "primary" });
 
     expect(keyId).toBeTruthy();
     expect(typeof keyId).toBe("string");
@@ -75,8 +75,8 @@ describe("generateActorKey", () => {
 
   test("generates unique key IDs on each call", async () => {
     const smk = getSmkKeySafe();
-    const id1 = await generateActorKey(db, ACTOR_ID, smk, "key-a");
-    const id2 = await generateActorKey(db, ACTOR_ID, smk, "key-b");
+    const id1 = await generateActorKey({ database: db, actorId: ACTOR_ID, smk, name: "key-a" });
+    const id2 = await generateActorKey({ database: db, actorId: ACTOR_ID, smk, name: "key-b" });
     expect(id1).not.toBe(id2);
   });
 });
@@ -85,14 +85,14 @@ describe("ensureActorKey", () => {
   test("returns existing active key ID when one exists", async () => {
     const smk = getSmkKeySafe();
     // First, make sure there's an active key
-    const existingId = await generateActorKey(db, "actor-ensure", smk, "primary");
-    const ensuredId = await ensureActorKey(db, "actor-ensure", smk);
+    const existingId = await generateActorKey({ database: db, actorId: "actor-ensure", smk, name: "primary" });
+    const ensuredId = await ensureActorKey({ database: db, actorId: "actor-ensure", smk });
     expect(ensuredId).toBe(existingId);
   });
 
   test("generates new key when no active key exists", async () => {
     const smk = getSmkKeySafe();
-    const newId = await ensureActorKey(db, "actor-no-key", smk);
+    const newId = await ensureActorKey({ database: db, actorId: "actor-no-key", smk });
     expect(newId).toBeTruthy();
 
     const row = await db.selectFrom("actor_keys").select("status").where("id", "=", newId).executeTakeFirst();
@@ -104,9 +104,9 @@ describe("loadActorKeys", () => {
   test("loads and decrypts active keys for actor IDs", async () => {
     const smk = getSmkKeySafe();
     const actorId = "actor-load-test";
-    await generateActorKey(db, actorId, smk, "primary");
+    await generateActorKey({ database: db, actorId, smk, name: "primary" });
 
-    const keys = await loadActorKeys(db, [actorId], smk);
+    const keys = await loadActorKeys({ database: db, actorIds: [actorId], smk });
     expect(keys.length).toBeGreaterThanOrEqual(1);
     expect(keys[0].actorId).toBe(actorId);
     expect(keys[0].rawKey).toBeInstanceOf(Uint8Array);
@@ -116,22 +116,22 @@ describe("loadActorKeys", () => {
 
   test("returns empty array for empty actor ID list", async () => {
     const smk = getSmkKeySafe();
-    const keys = await loadActorKeys(db, [], smk);
+    const keys = await loadActorKeys({ database: db, actorIds: [], smk });
     expect(keys).toEqual([]);
   });
 
   test("returns empty array for actor with no keys", async () => {
     const smk = getSmkKeySafe();
-    const keys = await loadActorKeys(db, ["actor-nonexistent"], smk);
+    const keys = await loadActorKeys({ database: db, actorIds: ["actor-nonexistent"], smk });
     expect(keys).toEqual([]);
   });
 
   test("returns keys sorted by actor_id", async () => {
     const smk = getSmkKeySafe();
-    await generateActorKey(db, "actor-a", smk, "primary");
-    await generateActorKey(db, "actor-b", smk, "primary");
+    await generateActorKey({ database: db, actorId: "actor-a", smk, name: "primary" });
+    await generateActorKey({ database: db, actorId: "actor-b", smk, name: "primary" });
 
-    const keys = await loadActorKeys(db, ["actor-b", "actor-a"], smk);
+    const keys = await loadActorKeys({ database: db, actorIds: ["actor-b", "actor-a"], smk });
     const actorIds = keys.map((k) => k.actorId);
     // Should be sorted by actor_id ascending: a before b
     expect(actorIds).toEqual(["actor-a", "actor-b"]);
@@ -141,9 +141,9 @@ describe("loadActorKeys", () => {
 describe("getActorKey", () => {
   test("returns a single key by ID", async () => {
     const smk = getSmkKeySafe();
-    const keyId = await generateActorKey(db, "actor-single", smk, "primary");
+    const keyId = await generateActorKey({ database: db, actorId: "actor-single", smk, name: "primary" });
 
-    const key = await getActorKey(db, keyId, smk);
+    const key = await getActorKey({ database: db, keyId, smk });
     expect(key).not.toBeNull();
     expect(key!.keyId).toBe(keyId);
     expect(key!.actorId).toBe("actor-single");
@@ -152,7 +152,7 @@ describe("getActorKey", () => {
 
   test("returns null for unknown key ID", async () => {
     const smk = getSmkKeySafe();
-    const key = await getActorKey(db, "nonexistent-key-id", smk);
+    const key = await getActorKey({ database: db, keyId: "nonexistent-key-id", smk });
     expect(key).toBeNull();
   });
 });
@@ -161,9 +161,9 @@ describe("rotateActorKey", () => {
   test("expires old key and generates new active key", async () => {
     const smk = getSmkKeySafe();
     const actorId = "actor-rotate";
-    const oldKeyId = await generateActorKey(db, actorId, smk, "primary");
+    const oldKeyId = await generateActorKey({ database: db, actorId, smk, name: "primary" });
 
-    const newKeyId = await rotateActorKey(db, actorId, smk);
+    const newKeyId = await rotateActorKey({ database: db, actorId, smk });
     expect(newKeyId).not.toBe(oldKeyId);
 
     // Old key should be expired
@@ -187,7 +187,7 @@ describe("rotateActorKey", () => {
 describe("revokeActorKey", () => {
   test("sets key status to revoked", async () => {
     const smk = getSmkKeySafe();
-    const keyId = await generateActorKey(db, "actor-revoke", smk, "primary");
+    const keyId = await generateActorKey({ database: db, actorId: "actor-revoke", smk, name: "primary" });
 
     await revokeActorKey(db, keyId);
 
@@ -205,8 +205,8 @@ describe("listActorKeys", () => {
   test("returns metadata for all keys of an actor (no key material)", async () => {
     const smk = getSmkKeySafe();
     const actorId = "actor-list";
-    await generateActorKey(db, actorId, smk, "primary");
-    await generateActorKey(db, actorId, smk, "backup");
+    await generateActorKey({ database: db, actorId, smk, name: "primary" });
+    await generateActorKey({ database: db, actorId, smk, name: "backup" });
 
     const keys = await listActorKeys(db, actorId);
     expect(keys.length).toBeGreaterThanOrEqual(2);

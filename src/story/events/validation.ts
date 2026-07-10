@@ -17,6 +17,14 @@ export interface ValidationResult {
   rejections: string[];
 }
 
+// ── Options ──────────────────────────────────────────────────
+
+export interface ValidateEventsOpts {
+  db: Kysely<DB>;
+  worldId: string;
+  events: WorldEvent[];
+}
+
 // ── Validation ───────────────────────────────────────────────
 
 function validateSingleEvent(
@@ -55,11 +63,7 @@ function validateSingleEvent(
 }
 
 /** Validate extracted events against current world state */
-export async function validateEvents(
-  db: Kysely<DB>,
-  worldId: string,
-  events: WorldEvent[],
-): Promise<ValidationResult> {
+export async function validateEvents({ db, worldId, events }: ValidateEventsOpts): Promise<ValidationResult> {
   const filteredEvents: WorldEvent[] = [];
   const rejections: string[] = [];
 
