@@ -15,7 +15,7 @@ import { dispatch as dispatchGeneration } from "./generation/controller";
 import { loadAllPlugins, dispatchPluginRoute, unloadAllPlugins } from "./plugins";
 import { getDatabase } from "./db/index";
 import { initializeProviders, registerProvider, OpenAiCompatibleProvider } from "./generation";
-import { authenticate, compose, errorBoundary } from "./middleware/index";
+import { authenticate, compose, errorBoundary, ResponseHeaderPolicy } from "./middleware/index";
 import type { RequestContext } from "./middleware/index";
 import { apiDispatch } from "./routes/router";
 import { dispatch as dispatchViews } from "./routes/views";
@@ -27,6 +27,7 @@ import { ServerExternalManager } from "./services/server-external-manager";
 
 // Route modules (import for registerRoute side-effects)
 import "./routes/activity";
+import "./routes/activity-stream";
 import "./routes/chats";
 import "./routes/messages";
 import "./routes/characters";
@@ -304,50 +305,60 @@ async function start() {
   const serverManager = new ServerExternalManager(logger);
   const serverLogger = logger.child({ module: "server" });
 
+  // ── Response-header policy (FExBE) — built once, applied to every response ──
+  const headerPolicy = new ResponseHeaderPolicy(config.headers);
+
   // ── Shared fetch handler (HTTP + HTTPS) ───────────────────
   const fetchHandler = async (request: Request): Promise<Response> => {
     const url = new URL(request.url);
 
+    let response: Response;
+
     if (url.pathname.startsWith("/api/")) {
-      return handleApiRequest({ request, database, config });
-    }
+      response = await handleApiRequest({ request, database, config });
+    } else {
+      // ── View templates and character/world routes ───────────────
+      const viewResponse = await dispatchViews({
+        request,
+        context: { userId: null, userRole: null, sessionId: null },
+        database,
+        config,
+      });
+      if (viewResponse) {
+        response = viewResponse;
+      } else {
+        const docsResult = handleDocsRequest(url, request, config);
+        if (docsResult) {
+          response = docsResult;
+        } else {
+          const publicPath = normalize(join(PUBLIC_DIR, url.pathname === "/" ? "index.html" : url.pathname));
 
-    // ── View templates and character/world routes ───────────────
-    const viewResponse = await dispatchViews({
-      request,
-      context: { userId: null, userRole: null, sessionId: null },
-      database,
-      config,
-    });
-    if (viewResponse) return viewResponse;
+          // Path traversal guard: must be under PUBLIC_DIR
+          const publicDirWithSlash = PUBLIC_DIR + "/";
+          if (publicPath.startsWith(publicDirWithSlash) || publicPath === PUBLIC_DIR) {
+            let fullPath = publicPath;
 
-    const docsResult = handleDocsRequest(url, request, config);
-    if (docsResult) return docsResult;
+            if (!existsSync(fullPath)) {
+              const htmlPath = fullPath + ".html";
+              if (existsSync(htmlPath)) fullPath = htmlPath;
+            }
 
-    const publicPath = normalize(join(PUBLIC_DIR, url.pathname === "/" ? "index.html" : url.pathname));
-
-    // Path traversal guard: must be under PUBLIC_DIR
-    const publicDirWithSlash = PUBLIC_DIR + "/";
-    if (!publicPath.startsWith(publicDirWithSlash) && publicPath !== PUBLIC_DIR) {
-      return new Response("Not found", { status: 404 });
-    }
-
-    if (publicPath.startsWith(publicDirWithSlash) || publicPath === PUBLIC_DIR) {
-      let fullPath = publicPath;
-
-      if (!existsSync(fullPath)) {
-        const htmlPath = fullPath + ".html";
-        if (existsSync(htmlPath)) fullPath = htmlPath;
+            if (existsSync(fullPath)) {
+              const acceptEncoding = request.headers.get("accept-encoding") ?? "";
+              const ifNoneMatch = request.headers.get("if-none-match");
+              response = respondWithFile(fullPath, acceptEncoding, ifNoneMatch);
+            } else {
+              response = new Response("Not found", { status: 404 });
+            }
+          } else {
+            response = new Response("Not found", { status: 404 });
+          }
+        }
       }
-
-      if (existsSync(fullPath)) {
-        const acceptEncoding = request.headers.get("accept-encoding") ?? "";
-        const ifNoneMatch = request.headers.get("if-none-match");
-        return respondWithFile(fullPath, acceptEncoding, ifNoneMatch);
-      }
     }
 
-    return new Response("Loop Lore - Documentation available at /docs/");
+    // Apply centralized response-header policy (security / perf / observability).
+    return headerPolicy.apply({ request, response });
   };
 
   // ── Start HTTP server immediately so port is open ─────────
