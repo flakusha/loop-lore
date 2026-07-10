@@ -215,9 +215,9 @@ async function handleConvertToCharacter({ database, personaId, context }: GetPer
   try {
     const result = await service.convertToCharacter(personaId, userId);
     return jsonCreated(result);
-  } catch (e) {
+  } catch (error) {
     return jsonError({
-      message: e instanceof Error ? e.message : "Conversion failed",
+      message: error instanceof Error ? error.message : "Conversion failed",
       status: HttpStatus.NotFound,
     });
   }
