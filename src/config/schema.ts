@@ -488,6 +488,72 @@ interface TestingConfig {
   llamaSwapConfig?: string;
 }
 
+// ── Response Headers (FExBE: browser feature / security / perf / observability) ──
+
+/**
+ * Content-Security-Policy directive set.
+ * Each directive is a list of source expressions. Applied only to HTML views
+ * (scripts/styles load there). `script-src` includes `'unsafe-hashes'` so the
+ * existing inline `onclick=` handlers keep working without an inline-block CSP
+ * bypass; tighten later by migrating handlers to Alpine `x-on`.
+ */
+interface CspConfig {
+  /** Master toggle for CSP emission. */
+  enabled: boolean;
+  defaultSrc: string[];
+  scriptSrc: string[];
+  styleSrc: string[];
+  imgSrc: string[];
+  fontSrc: string[];
+  connectSrc: string[];
+  objectSrc: string[];
+  baseUri: string[];
+  frameAncestors: string[];
+  /** Emit `upgrade-insecure-requests` (HTTPS deployments). */
+  upgradeInsecureRequests: boolean;
+  /** Emit as `Content-Security-Policy-Report-Only` (observe violations, don't enforce). */
+  reportOnly: boolean;
+}
+
+/**
+ * Response-header policy. Centralized, route-aware header injection engine.
+ * Per-route behavior is classified at apply time (html / api / static / docs).
+ */
+interface HeadersConfig {
+  /** Master toggle. When false, no headers are added. */
+  enabled: boolean;
+  /** `Referrer-Policy` value. */
+  referrerPolicy: string;
+  /** Emit `X-Content-Type-Options: nosniff`. */
+  xContentTypeOptions: boolean;
+  /** `X-Frame-Options`: "DENY" | "SAMEORIGIN" | null (omit). */
+  xFrameOptions: "DENY" | "SAMEORIGIN" | null;
+  /** `Permissions-Policy` value (feature delegation). */
+  permissionsPolicy: string;
+  /** CSP directive set (HTML only). */
+  csp: CspConfig;
+  /** `Cross-Origin-Opener-Policy`. null = omit. */
+  crossOriginOpenerPolicy: "same-origin" | "same-origin-allow-popups" | null;
+  /** `Cross-Origin-Embedder-Policy`. null = omit (keep OFF until wasm/SAB ready). */
+  crossOriginEmbedderPolicy: "require-corp" | null;
+  /** `Cross-Origin-Resource-Policy` for static subresources. */
+  crossOriginResourcePolicy: "same-origin" | "cross-origin" | null;
+  /** Append `immutable` to `Cache-Control` for content-hashed assets. */
+  immutableHashedAssets: boolean;
+  /** `Link: <...>; rel=preload` hints emitted on HTML documents. */
+  linkPreload: string[];
+  /** `Accept-CH` / `Critical-CH` client hint tokens emitted on HTML. */
+  acceptClientHints: string[];
+  /** Advertise Save-Data cooperativeness (informational). */
+  saveData: boolean;
+  /** Early Hints (103) — requires transport support; spike. */
+  earlyHints: { enabled: boolean };
+  /** `Reporting-Endpoints` map (name → URL) for frontend telemetry. */
+  reportingEndpoints: Record<string, string>;
+  /** `NEL` policy JSON string (null = omit). */
+  nel: string | null;
+}
+
 // ── Centralized data directory ──────────────────────────────
 // See src/config/constants.ts for DATA_DIR — single source of truth.
 
@@ -507,6 +573,7 @@ interface Config {
   generation: GenerationConfig;
   byoKey: ByoKeyConfig;
   encryption: EncryptionConfig;
+  headers: HeadersConfig;
   testing?: TestingConfig;
 }
 const DEFAULTS: Config = {
@@ -597,6 +664,38 @@ const DEFAULTS: Config = {
     compressThreshold: 128,
     compressAlgorithm: "gzip",
   },
+  headers: {
+    enabled: true,
+    referrerPolicy: "strict-origin-when-cross-origin",
+    xContentTypeOptions: true,
+    xFrameOptions: "DENY",
+    permissionsPolicy:
+      "accelerometer=(), camera=(), display-capture=(), geolocation=(), gyroscope=(), microphone=(), usb=()",
+    csp: {
+      enabled: true,
+      defaultSrc: ["'self'"],
+      scriptSrc: ["'self'", "https://unpkg.com", "https://cdn.jsdelivr.net"],
+      styleSrc: ["'self'", "'unsafe-inline'"],
+      imgSrc: ["'self'", "data:", "blob:"],
+      fontSrc: ["'self'"],
+      connectSrc: ["'self'", "wss:", "https:"],
+      objectSrc: ["'none'"],
+      baseUri: ["'self'"],
+      frameAncestors: ["'none'"],
+      upgradeInsecureRequests: true,
+      reportOnly: false,
+    },
+    crossOriginOpenerPolicy: null,
+    crossOriginEmbedderPolicy: null,
+    crossOriginResourcePolicy: "cross-origin",
+    immutableHashedAssets: true,
+    linkPreload: ["/app.js", "/alpine.js", "/css/app.css"],
+    acceptClientHints: [],
+    saveData: false,
+    earlyHints: { enabled: false },
+    reportingEndpoints: {},
+    nel: null,
+  },
 };
 
 // DEAD CODE: Bedrock provider defaults (add when implementing)
@@ -635,6 +734,8 @@ export type {
   ModelLimits,
   ByoKeyConfig,
   EncryptionConfig,
+  HeadersConfig,
+  CspConfig,
   TestingConfig,
   BedrockProviderConfig,
   AutoStartConfig,

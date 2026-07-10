@@ -84,11 +84,23 @@ function applyEnvironmentOverrides(config: Config, environmentMap: Record<string
 }
 
 function findConfigFile(cwd: string): { path: string; ext: string } | null {
-  for (const name of CONFIG_FILES) {
-    const fullPath = path.join(cwd, name);
-    if (existsSync(fullPath)) {
-      return { path: fullPath, ext: name.split(".").pop() as string };
+  // Search project root first, then a dedicated configs/ directory.
+  const searchDirs = [cwd, path.join(cwd, "configs")];
+  for (const dir of searchDirs) {
+    for (const name of CONFIG_FILES) {
+      const fullPath = path.join(dir, name);
+      if (existsSync(fullPath)) {
+        return { path: fullPath, ext: name.split(".").pop() as string };
+      }
     }
+  }
+  return null;
+}
+
+/** Return the first existing path among candidate dirs, or null. */
+function firstExisting(candidates: string[]): string | null {
+  for (const candidate of candidates) {
+    if (existsSync(candidate)) return candidate;
   }
   return null;
 }
@@ -156,8 +168,11 @@ function loadConfig(cwd?: string): Config {
   }
 
   // 2. Load env.yaml if present — overrides config file values
-  const envYamlPath = path.join(directory, "env.yaml");
-  if (existsSync(envYamlPath)) {
+  const envYamlPath = firstExisting([
+    path.join(directory, "env.yaml"),
+    path.join(directory, "configs", "env.yaml"),
+  ]);
+  if (envYamlPath) {
     try {
       const content = readFileSync(envYamlPath, "utf8");
       const parsed = parseFileContent(content, "yaml");
