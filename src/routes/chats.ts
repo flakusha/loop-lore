@@ -7,6 +7,7 @@
  *   GET    /api/chats/:id          — get single chat
  *   PUT    /api/chats/:id          — update chat
  *   DELETE /api/chats/:id          — delete chat
+ *   GET    /api/chats/:id/export    — export chat (JSON / Markdown)
  *   GET    /api/chats/:id/participants     — list participants
  *   POST   /api/chats/:id/participants     — add participant
  *   DELETE /api/chats/:id/participants/:actorId  — remove participant
@@ -42,6 +43,7 @@ import {
   MessageContentType,
   MessageContentFormat,
   ContentEncoding,
+  ActorType,
 } from "../db/enums";
 import { getRuntimeConfig } from "../age-gate/controller";
 import { getStatus } from "../age-gate/service";
@@ -171,13 +173,21 @@ const dispatch: RouteDispatch = async ({ request, context, database }) => {
     return BAD_METHOD();
   }
 
+  // ── /api/chats/:id/export ────────────────────────────────
+  const exportMatch = /^\/api\/chats\/([a-f0-9-]+)\/export$/.exec(pathname);
+  if (exportMatch && method === "GET") {
+    const format = searchParams.get("format") === "md" ? "md" : "json";
+    return handleExportChat({ database, chatId: exportMatch[1], context, format });
+  }
+
   // ── /api/chats/:id (skip if sub-route like /messages) ─────
   const chatId = extractIdFromPath(pathname, "/api/chats");
   if (
     chatId &&
     !pathname.includes("/participants") &&
     !pathname.includes("/messages") &&
-    !pathname.includes("/story-turns")
+    !pathname.includes("/story-turns") &&
+    !pathname.includes("/export")
   ) {
     if (method === "GET") {
       return handleGetChat({ database, chatId, context });
@@ -726,6 +736,125 @@ async function handleClearImpersonate({
     .execute();
 
   return jsonNoContent();
+}
+
+interface ExportChatOpts {
+  database: Kysely<DB>;
+  context: RequestContext;
+  chatId: string;
+  format: "json" | "md";
+}
+
+interface ChatExportActor {
+  id: string;
+  display_name: string;
+  actor_type: ActorType;
+}
+
+interface ChatExportChat {
+  name: string;
+}
+
+interface ChatExportMessage {
+  actor_id: string | null;
+  role: string;
+  content: string | null;
+}
+
+interface ChatExportData {
+  chat: ChatExportChat;
+  participants: { actor_id: string }[];
+  messages: ChatExportMessage[];
+  actors: ChatExportActor[];
+  assetLinks: { asset_id: string; entity_type: string; entity_id: string; label: string | null }[];
+}
+
+/**
+ * Export a chat (with messages, participants, actors, asset links) as JSON or
+ * Markdown. Output is returned as a downloadable attachment.
+ */
+async function handleExportChat({ database, chatId, context, format }: ExportChatOpts): Promise<Response> {
+  const userId = context.userId;
+  if (!userId)
+    return jsonError({
+      message: "Unauthorized",
+      status: HttpStatus.Unauthorized,
+      code: ErrorCode.Unauthorized,
+    });
+
+  const chat = await database.selectFrom("chats").selectAll().where("id", "=", chatId).executeTakeFirst();
+  if (!chat)
+    return jsonError({ message: "Chat not found", status: HttpStatus.NotFound, code: ErrorCode.NotFound });
+  if (chat.created_by !== userId && context.userRole !== "admin")
+    return jsonError({ message: "Forbidden", status: HttpStatus.Forbidden, code: ErrorCode.Forbidden });
+
+  const messages = await database
+    .selectFrom("messages")
+    .selectAll()
+    .where("chat_id", "=", chatId)
+    .orderBy("created_at", "asc")
+    .execute();
+
+  const participants = await database
+    .selectFrom("chat_participants")
+    .selectAll()
+    .where("chat_id", "=", chatId)
+    .execute();
+
+  const actorIds = new Set<string>();
+  for (const m of messages) if (m.actor_id) actorIds.add(m.actor_id);
+  for (const p of participants) actorIds.add(p.actor_id);
+
+  const actors =
+    actorIds.size > 0
+      ? await database
+          .selectFrom("actors")
+          .select(["id", "display_name", "actor_type"])
+          .where("id", "in", [...actorIds])
+          .execute()
+      : [];
+
+  const assetLinks = await database
+    .selectFrom("asset_links")
+    .select(["asset_id", "entity_type", "entity_id", "label"])
+    .where("entity_id", "=", chatId)
+    .execute();
+
+  const exportData: ChatExportData = { chat, participants, messages, actors, assetLinks };
+  const safeName = (chat.name || "chat").replaceAll(/[^\w.-]+/g, "_");
+
+  if (format === "md") {
+    const md = renderChatMarkdown(exportData);
+    return new Response(md, {
+      headers: {
+        "Content-Type": "text/markdown; charset=utf-8",
+        "Content-Disposition": `attachment; filename="${safeName}.md"`,
+      },
+    });
+  }
+
+  return new Response(JSON.stringify(exportData, null, 2), {
+    headers: {
+      "Content-Type": "application/json",
+      "Content-Disposition": `attachment; filename="${safeName}.json"`,
+    },
+  });
+}
+
+function renderChatMarkdown(data: ChatExportData): string {
+  const lines: string[] = [`# ${data.chat.name}`, ""];
+  const actorName = new Map(data.actors.map((a) => [a.id, a.display_name]));
+  const roleLabel: Record<string, string> = {
+    system: "System",
+    assistant: "Assistant",
+    user: "User",
+    tool: "Tool",
+  };
+  for (const m of data.messages) {
+    const who = m.actor_id ? (actorName.get(m.actor_id) ?? m.role) : (roleLabel[m.role] ?? m.role);
+    lines.push(`**${who}:** ${m.content ?? ""}`, "");
+  }
+  return lines.join("\n");
 }
 
 registerRoute(dispatch);
