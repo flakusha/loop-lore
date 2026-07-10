@@ -143,6 +143,7 @@ export interface Messages {
   hidden_reason: string | null;
   idempotency_key: string | null;
   continuation_index: number | null;
+  swipe_index: number | null;
   created_at: Generated<string>;
   edited_at: string | null;
   attachments: string | null;

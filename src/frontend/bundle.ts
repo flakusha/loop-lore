@@ -4,4 +4,5 @@ import "./alpine/world-edit";
 import "./ui";
 import "./page-loaders";
 import "./alpine/htmx";
+import "./htmx-encrypt";
 import "./gallery-upload";

@@ -12,7 +12,7 @@
 import type { Kysely } from "kysely";
 import type { DB } from "../db/schema";
 import { randomUUID } from "node:crypto";
-import { GenerationStatus, PolicyType } from "../db/enums";
+import { CancelReason, GenerationStatus, PolicyType } from "../db/enums";
 import { safeJsonStringify } from "../utils";
 import { getLogger } from "../logger";
 import type { GenerationOptions, GenerationResult, GenerationEvents } from "./types";
@@ -171,6 +171,19 @@ export function startGenerationTracking(
     stepIndex,
     totalSteps,
   };
+
+  // Fully detach any existing generation for this chat before registering new one.
+  // This prevents orphaned generations and the race where an old error handler
+  // deletes the new chatToAttempt entry.
+  const oldAttemptId = chatToAttempt.get(options.chatId);
+  if (oldAttemptId) {
+    const old = activeGenerations.get(oldAttemptId);
+    if (old) {
+      old.abortController.abort();
+      old.events?.onCancel?.(oldAttemptId, CancelReason.ChatSwitch, "Replaced by new generation");
+      activeGenerations.delete(oldAttemptId);
+    }
+  }
 
   activeGenerations.set(attemptId, active);
   chatToAttempt.set(options.chatId, attemptId);
