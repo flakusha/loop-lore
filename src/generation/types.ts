@@ -34,3 +34,12 @@ export type {
   RetryFromPointResponse,
   GenerationEvents,
 } from "./gen-types-api";
+
+export {
+  WorkflowKind,
+  WorkflowModality,
+  composeWorkflowTags,
+  parseWorkflowTag,
+  parseWorkflowTags,
+} from "./workflow-tags";
+export type { WorkflowTag } from "./workflow-tags";
