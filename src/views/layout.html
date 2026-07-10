@@ -185,6 +185,32 @@
         >
           <span>🌍</span> <span>Worlds</span>
         </a>
+
+        <a
+          class="nav-item"
+          href="/views/personas"
+          hx-get="/views/personas"
+          hx-target="#app-root"
+          hx-swap="morph"
+          hx-push-url="true"
+          x-on:click="window.closeSidebar()"
+          data-testid="nav-personas"
+        >
+          <span>🎭</span> <span>Personas</span>
+        </a>
+
+        <a
+          class="nav-item"
+          href="/views/admin"
+          hx-get="/views/admin"
+          hx-target="#app-root"
+          hx-swap="morph"
+          hx-push-url="true"
+          x-on:click="window.closeSidebar()"
+          data-testid="nav-admin"
+        >
+          <span>🛡</span> <span>Admin</span>
+        </a>
       </nav>
 
       <div class="sidebar-footer">

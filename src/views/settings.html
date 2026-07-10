@@ -4,7 +4,9 @@
     <button class="hamburger" x-on:click="window.toggleSidebar()" data-testid="hamburger">☰</button>
     <span class="title" x-text="'Settings'"></span>
     <div class="actions">
-      <button class="btn btn-primary" @click="saveGeneral()" :disabled="!loadable" data-testid="save-general">Save General</button>
+      <button class="btn btn-primary" @click="saveGeneral()" :disabled="!loadable" data-testid="save-general">
+        Save General
+      </button>
     </div>
   </header>
 
@@ -29,12 +31,7 @@
 
           <div class="form-group">
             <label class="form-label">Birth Date (for age-gated content)</label>
-            <input
-              type="date"
-              class="form-input"
-              name="birthDate"
-              x-model="birthDate"
-            />
+            <input type="date" class="form-input" name="birthDate" x-model="birthDate" />
           </div>
 
           <div class="form-group">
@@ -104,7 +101,13 @@
         <div style="margin-top: var(--space-4); width: 100%; max-width: 400px">
           <div class="form-group">
             <label class="form-label">Provider</label>
-            <select class="form-select" name="provider" data-testid="api-provider" x-model="provider" @change="onProviderChange(); saveApi()">
+            <select
+              class="form-select"
+              name="provider"
+              data-testid="api-provider"
+              x-model="provider"
+              @change="onProviderChange(); saveApi()"
+            >
               <option value="OpenAI">OpenAI</option>
               <option value="Anthropic">Anthropic</option>
               <option value="OpenRouter">OpenRouter</option>
@@ -141,10 +144,20 @@
           </div>
           <div class="form-group">
             <label class="form-label">Max context tokens</label>
-            <input type="number" class="form-input" name="maxTokens" x-model="maxTokens" step="256" min="1024" max="128000" />
+            <input
+              type="number"
+              class="form-input"
+              name="maxTokens"
+              x-model="maxTokens"
+              step="256"
+              min="1024"
+              max="128000"
+            />
           </div>
           <div class="form-group">
-            <label class="form-label">Temperature: <span id="temp-value" x-text="Number(temperature).toFixed(1)"></span></label>
+            <label class="form-label"
+              >Temperature: <span id="temp-value" x-text="Number(temperature).toFixed(1)"></span
+            ></label>
             <input
               type="range"
               class="form-range"
@@ -159,12 +172,7 @@
             />
           </div>
           <div style="display: flex; gap: var(--space-2); margin-top: var(--space-4)">
-            <button
-              type="button"
-              class="btn btn-secondary"
-              :disabled="saving"
-              @click="testConnection()"
-            >
+            <button type="button" class="btn btn-secondary" :disabled="saving" @click="testConnection()">
               Test Connection
             </button>
             <button
@@ -202,7 +210,16 @@
               placeholder='Type "DELETE" to confirm'
               style="margin-bottom: var(--space-3); border-color: var(--accent-red)"
             />
-            <button type="button" class="btn btn-danger" id="delete-all-btn" :disabled="confirmDeleteText !== 'DELETE'" @click="deleteAllData()" data-testid="delete-all">Delete All Data</button>
+            <button
+              type="button"
+              class="btn btn-danger"
+              id="delete-all-btn"
+              :disabled="confirmDeleteText !== 'DELETE'"
+              @click="deleteAllData()"
+              data-testid="delete-all"
+            >
+              Delete All Data
+            </button>
           </div>
         </div>
       </div>
