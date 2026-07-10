@@ -86,3 +86,73 @@ settings: (() => { const r = safeJsonStringify(data); return r.ok ? r.value : "{
 - `.agents/references/recommendations.md` — preferred approaches to adopt
 - Loaded via AGENTS.md `cat` includes or skill `context_files` refs
 - One-page each, concrete examples, project-specific
+
+## Factory Pattern (preferred over separate interface + class)
+
+### Problem
+Separate `interface X { ... }` + `class XImpl implements X { ... }` forces:
+- Duplicate imports at every call site (interface + constructor)
+- Interface drift from implementation over time
+- Extra maintenance surface (2 identifiers, 2 declarations)
+
+### Solution: Factory function with inferred type
+
+```ts
+// ✅ Factory — single export, zero interface
+export function createTaskRunner(db: Kysely<DB>, config: RunnerConfig) {
+  const queue: string[] = [];
+
+  async function run(taskId: string): Promise<Result> {
+    // ...
+  }
+
+  function cancel(taskId: string): void {
+    // ...
+  }
+
+  return { run, cancel };
+}
+
+export type TaskRunner = ReturnType<typeof createTaskRunner>;
+```
+
+Call site imports one thing, gets full type:
+
+```ts
+import { createTaskRunner, type TaskRunner } from "./task-runner";
+
+const runner = createTaskRunner(db, config);
+const result = await runner.run("task-1");
+```
+
+### Type inference: `ReturnType<typeof createXxx>`
+
+```ts
+// Consumer — no interface import needed
+import { createWidget, type Widget } from "./widget";
+import { type Kysely } from "kysely";
+
+function handle(widget: Widget): void {
+  console.log(widget.label);
+}
+```
+
+### When to use (service/feature modules)
+- Aggregate services with internal state (`GameMasterService` is candidate)
+- Feature modules where single consumer exists
+- Composables with multiple internal deps
+- Any class that has exactly one implementation and no need for polymorphism
+
+### When NOT to use (keep `interface` + `implements`)
+- Polymorphic contracts with multiple implementations — keep `Logger`/`LLMProvider`/`Transport` interfaces
+- Error classes — must extend `Error`
+- Value objects / DTOs — plain interfaces are appropriate
+- Cross-cutting contracts shared by 3+ implementations
+
+### Existing codebase patterns
+- `transport/factory.ts` — `createProtocol()` returns inferred handler
+- `logger/index.ts` — `createLogger()` returns module-level singleton factory
+- `middleware/rate-limit.ts` — `createRateLimiter()` factory
+- `routes/entity-routes.ts` — `createEntityRoutes()` returns dispatch object
+- `db/state.ts` — `createMachine()` returns state machine object
+- `story/game-master.ts` — class candidate for factory refactor (single implementation, no polymorphic contract)
