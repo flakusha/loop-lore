@@ -157,17 +157,12 @@ hundreds). Follow-ups below are post-MVP — recorded here so they don't need re
 - [ ] **Template Marketplace**: Shared templates and prompts
 - [ ] **Community Moderation**: Content moderation tools
 
-## Research-Derived Deferred Concepts
+## Deferred Concepts
 
-Tracked in [`docs/meta/deferred-concepts.md`](deferred-concepts.md) (each links
-back to its source research doc). These are **planned but post-MVP**:
-
-- **D.1 Tool / Function Calling** — DEFERRED (later concern). 3-layer architecture from `tool-calling-architecture.md`.
-- **D.2 BYOK** — user brings own LLM / image-gen; admin can't see keys but can ban.
-- **D.3 BYOR** — user donates local compute as a worker node.
-- **D.4 3D World** — world map / location travel, 3D character avatars (Three.js/Babylon/R3F).
-- **D.5 Cross-Chat Notifications** — notifications from unseen chats; characters message spontaneously when "missing" the user.
-- **D.6 Dual Runtime (Bun + Deno)** — optional future, no action this cycle.
+Tracked in [`docs/meta/backlog.md`](backlog.md) (P3 section). These are
+**planned but post-MVP**: Tool/Function Calling, BYOK, BYOR, 3D World,
+Cross-Chat Autonomous Messages, Dual Runtime, LLM native providers,
+Image/Video Generation, Full i18n implementation.
 
 ---
 
@@ -204,5 +199,7 @@ See `docs/spec/use-case-agentic-workspace.md` for RPG→agentic mapping
 Roadmap subject to change based on community feedback, contributor availability,
 and evolving priorities. Features may be reprioritized, combined, or split.
 
-See `docs/meta/plan.md` for the concrete v0.1 implementation checklist.
+See `docs/meta/plan.md` for the concrete v0.2 implementation checklist.
+See `docs/meta/backlog.md` for future feature queue.
+See `docs/meta/open-items.md` for technical debt and bugs.
 See `CONTRIBUTING.md` for contribution guidelines.

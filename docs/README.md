@@ -93,8 +93,9 @@ Docs organized into:
 | ------------------------------------------------------------ | ---------------------------- |
 | [`reference/api.md`](./reference/api.md)                     | REST API reference           |
 | [`meta/plan.md`](./meta/plan.md)                             | MVP implementation checklist |
+| [`meta/backlog.md`](./meta/backlog.md)                       | Future feature queue         |
+| [`meta/open-items.md`](./meta/open-items.md)                 | Technical debt & bugs        |
 | [`meta/roadmap.md`](./meta/roadmap.md)                       | Long-term feature roadmap    |
-| [`meta/migration-strategy.md`](./meta/migration-strategy.md) | DB migration refactor plan   |
 
 ## Documentation Hosting
 
