@@ -1,173 +1,42 @@
 /**
  * Server External Manager for E2E Tests
  *
- * Spawns and manages external server processes for real-hardware testing.
- * Each server type has its own lifecycle: start → health-check → ready → stop.
- *
- * Usage:
- *   const manager = new ServerExternalManager();
- *   await manager.startLlamaCpp({ port: 9011, modelPath: "/path/to/model.gguf" });
- *   // Run tests...
- *   await manager.stopAll();
- *
- * All server start methods return { port, pid }. Stop methods kill the process group.
+ * Simplified version of the production ServerExternalManager.
+ * Uses shared utilities from the production codebase but keeps
+ * simplified start methods with shorter timeouts and fewer args.
  * Tests are skipped (not failed) when binaries or models are missing.
  */
 
-import { spawn, type Subprocess } from "bun";
+import { spawn } from "bun";
 import { resolve } from "node:path";
 import type { Logger } from "../../../src/logger";
-
+import type { LlamaCppAutoStartConfig, SdCppAutoStartConfig } from "../../../src/config/schema";
+import {
+  findBinary,
+  isPortFree,
+  isHuggingFaceRef,
+  waitForHealth,
+  waitForPort,
+} from "../../../src/services/external-server-utils";
+import type { ServerInstance } from "../../../src/services/server-external-manager";
 
 // ── Types ──────────────────────────────────────────────────
 
-export interface ServerInstance {
-  type: "llama-cpp" | "llama-swap" | "sd-cpp";
-  process: Subprocess;
-  port: number;
-  pid: number;
-  startedAt: number;
-}
-
-export interface LlamaCppOptions {
-  port: number;
-  /** Local path (/path/to/model.gguf) OR HuggingFace identifier (org/repo:quant) */
-  modelPath: string;
-  ctxSize?: number;
-  extraArgs?: string[];
-}
+export type LlamaCppOptions = Pick<
+  LlamaCppAutoStartConfig,
+  "port" | "modelPath" | "ctxSize" | "extraArgs"
+>;
 
 export interface LlamaSwapOptions {
   configPath: string;
 }
 
-export interface SdCppOptions {
-  port: number;
-  modelPath: string;
-  llmPath?: string;
-  vaePath?: string;
-  loraDir?: string;
-  extraArgs?: string[];
-}
+export type SdCppOptions = Pick<
+  SdCppAutoStartConfig,
+  "port" | "modelPath" | "llmPath" | "vaePath" | "loraDir" | "extraArgs"
+>;
 
-// ── Binary discovery ──────────────────────────────────────
-
-const BINARY_CANDIDATES = {
-  "llama-cpp": ["llama-server", "llama-server-vk"],
-  "llama-swap": ["llama-swap"],
-  "sd-cpp": ["sd-server"],
-} as const;
-
-function findBinary(type: keyof typeof BINARY_CANDIDATES): string | null {
-  const candidates = BINARY_CANDIDATES[type];
-  for (const name of candidates) {
-    const result = Bun.which(name);
-    if (result) return result;
-  }
-  return null;
-}
-
-// ── Port verification ─────────────────────────────────────
-
-function isPortFree(port: number): boolean {
-  try {
-    const server = Bun.serve({ port, fetch: () => new Response("ok") });
-    server.stop();
-    return true;
-  } catch {
-    return false;
-  }
-}
-
-// ── Health check option types ─────────────────────────────
-
-interface WaitForHealthOptions {
-  /** Max wait in ms */
-  timeoutMs: number;
-  /** Poll interval in ms (default 500) */
-  intervalMs?: number;
-}
-
-interface WaitForStdoutOptions {
-  /** String to look for in stdout */
-  signal: string;
-  /** Max wait in ms */
-  timeoutMs: number;
-  /** Decode encoding (default utf-8) */
-  encoding?: string;
-}
-
-interface WaitForPortOptions {
-  /** Max wait in ms */
-  timeoutMs: number;
-}
-
-// ── Health checks ─────────────────────────────────────────
-
-async function waitForHealth(
-  url: string,
-  opts: WaitForHealthOptions,
-): Promise<boolean> {
-  const intervalMs = opts.intervalMs ?? 500;
-  const deadline = Date.now() + opts.timeoutMs;
-  while (Date.now() < deadline) {
-    try {
-      const res = await fetch(url, { signal: AbortSignal.timeout(2000) });
-      if (res.ok) return true;
-    } catch {
-      // Still starting
-    }
-    await new Promise((r) => setTimeout(r, intervalMs));
-  }
-  return false;
-}
-
-/** Wait for process stdout to contain a signal string */
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-async function waitForStdout(
-  proc: Subprocess,
-  opts: WaitForStdoutOptions,
-): Promise<boolean> {
-  const deadline = Date.now() + opts.timeoutMs;
-  const reader = proc.stdout?.getReader();
-  if (!reader) return false;
-
-  let buffer = "";
-  try {
-    while (Date.now() < deadline) {
-      const { value, done } = await reader.read();
-      if (done) break;
-      buffer += new TextDecoder().decode(value);
-      if (buffer.includes(opts.signal)) return true;
-      await new Promise((r) => setTimeout(r, 200));
-    }
-  } catch {
-    // stream closed
-  }
-  return false;
-}
-
-/** Wait for TCP port to respond (any HTTP status = alive) */
-async function waitForPort(port: number, opts: WaitForPortOptions): Promise<boolean> {
-  const deadline = Date.now() + opts.timeoutMs;
-  while (Date.now() < deadline) {
-    try {
-      await fetch(`http://127.0.0.1:${port}/`, { signal: AbortSignal.timeout(2000) });
-      // Any HTTP response (even 404) means server is listening
-      return true;
-    } catch {
-      await new Promise((r) => setTimeout(r, 500));
-    }
-  }
-  return false;
-}
-
-// ── Model path detection ───────────────────────────────────
-
-/** Detect HuggingFace identifier format: org/repo:quant */
-function isHuggingFaceRef(path: string): boolean {
-  return /^[\w-]+\/[\w.-]+:\w+$/i.test(path);
-}
+export type { ServerInstance } from "../../../src/services/server-external-manager";
 
 // ── Manager class ─────────────────────────────────────────
 
@@ -224,9 +93,7 @@ export class ServerExternalManager {
   }
 
   /**
-   * Start llama.cpp server on given port.
-   * modelPath accepts local path (/path/to/model.gguf) or HuggingFace ID (org/repo:quant).
-   * Skips (returns null) if binary not found or port unavailable.
+   * Start llama.cpp server on given port (simplified test version).
    */
   async startLlamaCpp(opts: LlamaCppOptions): Promise<ServerInstance | null> {
     const binary = findBinary("llama-cpp");
@@ -314,7 +181,7 @@ export class ServerExternalManager {
   }
 
   /**
-   * Start sd-server on given port.
+   * Start sd-server on given port (simplified test version).
    */
   async startSdCpp(opts: SdCppOptions): Promise<ServerInstance | null> {
     const binary = findBinary("sd-cpp");
