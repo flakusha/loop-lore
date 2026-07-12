@@ -7,6 +7,7 @@ import { up as upChatsActors, down as downChatsActors } from "./parts/004_chats_
 import { up as upActorData, down as downActorData } from "./parts/005_actor_data";
 import { up as upMessagesKeys, down as downMessagesKeys } from "./parts/006_messages_keys";
 import { up as upStoryGeneration, down as downStoryGeneration } from "./parts/007_story_generation";
+import { up as upModelRoles, down as downModelRoles } from "./parts/008_model_roles";
 
 /**
  * Initial schema migration — orchestrates the split part modules in
@@ -23,9 +24,11 @@ export async function up(database: Kysely<unknown>): Promise<void> {
   await upActorData(database);
   await upMessagesKeys(database);
   await upStoryGeneration(database);
+  await upModelRoles(database);
 }
 
 export async function down(database: Kysely<unknown>): Promise<void> {
+  await downModelRoles(database);
   await downStoryGeneration(database);
   await downMessagesKeys(database);
   await downActorData(database);

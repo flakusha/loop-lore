@@ -422,6 +422,13 @@ interface AutoStartConfig {
   sdCpp?: SdCppAutoStartConfig;
 }
 
+interface ModelRoleAssignment {
+  /** Provider name (must match a registered provider) */
+  provider: string;
+  /** Model ID within the provider */
+  model: string;
+}
+
 interface GenerationConfig {
   /** Provider configurations */
   providers: GenerationProvidersConfig;
@@ -431,6 +438,15 @@ interface GenerationConfig {
   defaultModels: Record<string, string>;
   /** Auto-spawn external AI servers at startup (llama.cpp, sd.cpp) */
   autoStart?: AutoStartConfig;
+  /** Default model role assignments (config-level, overridden by DB) */
+  modelRoles?: {
+    /** Primary reasoning model */
+    main?: ModelRoleAssignment;
+    /** Vision/LM model for captioning */
+    captioning?: ModelRoleAssignment;
+    /** Content moderation/censoring model */
+    moderation?: ModelRoleAssignment;
+  };
 }
 
 // ── BYO API Key ────────────────────────────────────────────
@@ -659,6 +675,7 @@ const DEFAULTS: Config = {
     },
     defaultProvider: "",
     defaultModels: {},
+    modelRoles: {},
   },
   byoKey: {
     enabled: true,
@@ -678,7 +695,7 @@ const DEFAULTS: Config = {
     csp: {
       enabled: true,
       defaultSrc: ["'self'"],
-      scriptSrc: ["'self'", "https://unpkg.com", "https://cdn.jsdelivr.net"],
+      scriptSrc: ["'self'", "https://unpkg.com", "https://cdn.jsdelivr.net", "'unsafe-eval'"],
       styleSrc: ["'self'", "'unsafe-inline'"],
       imgSrc: ["'self'", "data:", "blob:"],
       fontSrc: ["'self'"],
@@ -735,6 +752,7 @@ export type {
   LoggingConfig,
   MessagesConfig,
   ModelLimits,
+  ModelRoleAssignment,
   NsfwConfig,
   ProviderInstanceConfig,
   SdCppAutoStartConfig,
