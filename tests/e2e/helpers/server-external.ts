@@ -8,7 +8,8 @@
  */
 
 import { spawn } from "bun";
-import { resolve } from "node:path";
+import { homedir } from "node:os";
+import { join, resolve } from "node:path";
 import type { Logger } from "../../../src/logger";
 import type { LlamaCppAutoStartConfig, SdCppAutoStartConfig } from "../../../src/config/schema";
 import {
@@ -154,7 +155,8 @@ export class ServerExternalManager {
       return null;
     }
 
-    const resolvedConfig = resolve(opts.configPath);
+    const expandedPath = opts.configPath.startsWith("~") ? join(homedir(), opts.configPath.slice(1)) : opts.configPath;
+    const resolvedConfig = resolve(expandedPath);
     const proc = spawn({
       cmd: [binary, "--config", resolvedConfig, "--host", "127.0.0.1"],
       stdout: "pipe",
