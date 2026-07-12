@@ -73,6 +73,39 @@ Examples:
 - `src/db/database.test.ts`: Tests database schema and constraints
 - `src/age-gate/service.test.ts`: Tests age gate service with user data
 
+### Schema Validation in Tests (Response Shape)
+
+API response shapes are validated against Zod schemas in integration and E2E
+tests. This catches drift between route handlers and frontend expectations
+before it reaches production.
+
+Every route group defines request/response schemas in a companion file
+(e.g. `src/routes/chats.schema.ts`). Tests import those schemas and validate
+API responses:
+
+```ts
+import { GetChatSchema } from "../routes/chats.schema";
+
+test("GET /api/chats/:id returns valid shape", async () => {
+  const res = await api.get(`/api/chats/${chatId}`);
+  expect(res.ok).toBe(true);
+  expect(() => GetChatSchema.parse(res.data)).not.toThrow();
+});
+```
+
+**Zero production overhead** — schema validation in tests only. The schemas
+themselves are used at runtime for request body validation (see
+`docs/spec/implementation.md#runtime-validation-layer`).
+
+#### Contract Testing Pipeline (planned)
+
+1. **Zod schemas** — single source of truth for API contracts
+2. **@asteasolutions/zod-to-openapi** — generate OpenAPI 3.x spec from Zod
+   schemas, served at `/api/docs` via Swagger UI
+3. **Schemathesis** — property-based testing CLI that fuzzes the OpenAPI spec
+   against the live API, finding 500s from edge-case inputs
+4. **CI guard** — Schemathesis run in CI against the generated spec
+
 ### Manual Testing
 
 Certain aspects are best verified manually, particularly:

@@ -16,8 +16,9 @@
 - **Server**: Bun's built-in HTTP server (no Express/Koa dependency)
 - **Middleware**: Lightweight composable pipeline (auth, role guard, logging)
   built on Bun fetch; no framework
-- **Validation**: Kysely type system at compile time; incremental runtime
-  validation — schema-per-route pattern with Zod considered for later
+- **Validation**: Kysely type system at compile time; runtime validation via
+  [Zod](https://zod.dev) — schema-per-route pattern with shared field fragments,
+  logger integration, and optional TypeBox swap for smaller bundle footprint
 
 ### Frontend
 
@@ -104,6 +105,66 @@ route dispatcher. Errors bubble to the error boundary middleware.
 Rate limiting implemented in-app (`src/middleware/rate-limit.ts`) for login
 endpoint (10/min per IP). Also deferred to reverse proxy for production rate
 limiting beyond login.
+
+### Runtime Validation Layer
+
+Request/response validation lives in `src/schemas/` using Zod (primary) or
+TypeBox (swap-in alternative). Each route group gets a companion schema file
+(`chats.schema.ts` alongside `chats.ts`).
+
+#### Design
+
+- **Single source of truth**: Schema = TypeScript type + runtime validation +
+  OpenAPI documentation. Use `z.infer<typeof schema>` for types.
+- **Composition**: Shared field fragments (`src/schemas/shared-fields.ts`)
+  eliminate per-field duplication across schemas — e.g. `uidField`,
+  `displayNameField`, `optionalDescription`, `paginationQuery`.
+- **Enum sharing**: Route schemas import enum definitions from `src/db/enums.ts`
+  (already single source of truth) — no enum duplication.
+- **DB separation**: Kysely table types (`src/db/schema-*.ts`) remain unchanged
+  — they describe DB rows. Zod schemas describe API contracts. Field overlap
+  (~40%) is inherent: the API contract is a different boundary than the DB
+  schema.
+- **Logger integration**: Validation failures log at debug level via
+  `getLogger().child({ module: "validation", requestId, userId })` — detailed
+  issues in dev, silent in prod (error code returned to client).
+- **No rewrite**: Existing route handlers, factories, seed data, and Kysely
+  types are unaffected. Zod is additive — it wraps the existing `parseBody()`
+  result and provides typed `.data`.
+
+#### Pattern
+
+```ts
+// src/schemas/shared-fields.ts
+export const uidField = z.string().uuid();
+export const displayNameField = z.string().min(1).max(100);
+
+// src/routes/chats.schema.ts
+export const CreateChatSchema = z.object({
+  name: displayNameField,
+  type: z.nativeEnum(ChatType).optional().default(ChatType.Direct),
+  participantIds: z.array(uidField).optional(),
+});
+
+// route handler
+const body = CreateChatSchema.parse(await parseBody(request));
+// body is fully typed: { name: string; type?: ChatType; ... }
+```
+
+#### TypeBox Alternative
+
+TypeBox is a drop-in alternative to Zod with a smaller bundle (~5KB vs ~11KB
+min+gzip) and faster validation. API differences: object notation vs method
+chaining, `Static<typeof T>` vs `z.infer`. Swap if bundle size ever matters.
+Both work with `bun build` zero config — pure TypeScript, no native deps.
+
+#### Future: Elysia Framework
+
+[Elysia](https://elysiajs.com) is the best Bun-native framework with built-in
+validation (TypeBox-based `t`), OpenAPI generation (`@elysiajs/swagger`), and
+end-to-end type safety via Eden Treaty. Evaluating post-MVP — migration requires
+full server rewrite from `Bun.serve()` + custom router. Not for MVP. Tracked
+for v1+.
 
 ### Database Layer
 

@@ -41,4 +41,5 @@ export interface DB {
   world_lore_entries: import("./schema-story").WorldLoreEntries;
   actor_notes: import("./schema-core").ActorNotes;
   actor_items: import("./schema-core").ActorItems;
+  model_role_overrides: import("./schema-core").ModelRoleOverrides;
 }
