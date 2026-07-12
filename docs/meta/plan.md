@@ -362,20 +362,20 @@ file via shared `ctx.page` state.
 Tracked in detail at [reviews/review-rounds.md](reviews/review-rounds.md).
 Key open items:
 
-| # | File | Issue |
-|---|------|-------|
-| 14 | `src/db/enums.ts` | Barrel re-exports but no validation enums match DB. Drift risk. |
-| 15 | `src/db/migrations/001_init.ts` | `chat_participants` PK undocumented |
-| 16 | `src/db/migrations/001_init.ts` | No index on `sessions(user_id, expires_at)` for cleanup |
-| 18 | `src/utils.ts` | `safeJsonStringify` guarded mode parses JSON twice on hot path |
-| 21 | `src/assistant/service.ts` | Config schema may not have `assistant.enabled` |
-| 22 | `src/assistant/prompt-assembler.ts` | Selective entries (keys) ignored |
-| 23 | `src/assistant/prompt-assembler.ts` | Token budget enforcement message array rebuild bug |
-| 24 | `src/tui/app.ts` | Monkey-patches `ChatWidget.setChatId` |
-| 25 | `src/tui/chat.ts` | No retry, no idempotency key |
-| 26 | `src/tui/asset-view.ts` | Left/right keys conflict with input nav |
-| 27 | `src/age-gate/controller.ts` | `runtimeConfig` module-level mutable |
-| 29 | `src/build/compress.ts` | No try/catch on single file |
+| #   | File                                | Issue                                                           |
+| --- | ----------------------------------- | --------------------------------------------------------------- |
+| 14  | `src/db/enums.ts`                   | Barrel re-exports but no validation enums match DB. Drift risk. |
+| 15  | `src/db/migrations/001_init.ts`     | `chat_participants` PK undocumented                             |
+| 16  | `src/db/migrations/001_init.ts`     | No index on `sessions(user_id, expires_at)` for cleanup         |
+| 18  | `src/utils.ts`                      | `safeJsonStringify` guarded mode parses JSON twice on hot path  |
+| 21  | `src/assistant/service.ts`          | Config schema may not have `assistant.enabled`                  |
+| 22  | `src/assistant/prompt-assembler.ts` | Selective entries (keys) ignored                                |
+| 23  | `src/assistant/prompt-assembler.ts` | Token budget enforcement message array rebuild bug              |
+| 24  | `src/tui/app.ts`                    | Monkey-patches `ChatWidget.setChatId`                           |
+| 25  | `src/tui/chat.ts`                   | No retry, no idempotency key                                    |
+| 26  | `src/tui/asset-view.ts`             | Left/right keys conflict with input nav                         |
+| 27  | `src/age-gate/controller.ts`        | `runtimeConfig` module-level mutable                            |
+| 29  | `src/build/compress.ts`             | No try/catch on single file                                     |
 
 ---
 
