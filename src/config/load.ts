@@ -4,7 +4,7 @@ import { load as parseYaml } from "js-yaml";
 import { parse as parseToml } from "smol-toml";
 import { readFileSync, existsSync } from "node:fs";
 import path from "node:path";
-import { type Config, DEFAULTS } from "./schema";
+import { type Config } from "./schema";
 import type { ProviderInstanceConfig } from "./schema";
 import { ConfigSchema } from "./schema-class";
 
@@ -151,7 +151,7 @@ function applyProviderEnvVars(config: Config): void {
 
 function loadConfig(cwd?: string): Config {
   const directory = cwd ?? process.cwd();
-  let config: Config = structuredClone(DEFAULTS);
+  let config: Config = structuredClone(new ConfigSchema().defaults);
 
   // 1. Load config file (config.yaml / config.yml / config.toml) — lowest priority
   const found = findConfigFile(directory);
