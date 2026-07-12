@@ -6,8 +6,8 @@
 //   - load.ts ENV_MAP (env var → dot.path mapping)
 //   - load.ts validateConfig (validation rules)
 //
-// Keep schema.ts interfaces + DEFAULTS for backward compat.
-// This file provides derived artifacts.
+// schema.ts provides the type interfaces consumed here via `satisfies`.
+// This file is the sole source of truth for defaults, env-map, validation, and JSON Schema.
 
 import type {
   Config,
@@ -31,6 +31,7 @@ import type {
   ByoKeyConfig,
   EncryptionConfig,
   HeadersConfig,
+  DynamicResponseConfig,
   ModelRoleAssignment,
 } from "./schema";
 import { DbType, LogLevel, AgeGateMode } from "../db/enums";
@@ -155,7 +156,7 @@ export class ConfigSchema {
     csp: {
       enabled: true,
       defaultSrc: ["'self'"],
-      scriptSrc: ["'self'", "https://unpkg.com", "https://cdn.jsdelivr.net", "'unsafe-eval'"],
+      scriptSrc: ["'self'", "'unsafe-inline'"],
       styleSrc: ["'self'", "'unsafe-inline'"],
       imgSrc: ["'self'", "data:", "blob:"],
       fontSrc: ["'self'"],
@@ -163,20 +164,31 @@ export class ConfigSchema {
       objectSrc: ["'none'"],
       baseUri: ["'self'"],
       frameAncestors: ["'none'"],
+      formAction: ["'self'"],
       upgradeInsecureRequests: true,
       reportOnly: false,
     },
     crossOriginOpenerPolicy: null,
     crossOriginEmbedderPolicy: null,
     crossOriginResourcePolicy: "cross-origin",
+    timingAllowOrigin: "",
     immutableHashedAssets: true,
-    linkPreload: ["/app.js", "/css/app.css"],
+    linkPreload: ["/app.js", "/js/alpine.min.js", "/css/app.css"],
     acceptClientHints: [],
     saveData: false,
     earlyHints: { enabled: false },
     reportingEndpoints: {},
     nel: null,
   } satisfies HeadersConfig;
+
+  readonly dynamicResponse = {
+    enabled: true,
+    minify: true,
+    validate: true,
+    compress: true,
+    compressAlgorithm: "auto",
+    compressThreshold: 512,
+  } satisfies DynamicResponseConfig;
 
   // ── ENV_MAP generation ─────────────────────────────────
 
@@ -213,6 +225,7 @@ export class ConfigSchema {
     add("byoKey", s.byoKey);
     add("encryption", s.encryption);
     add("headers", s.headers);
+    add("dynamicResponse", s.dynamicResponse);
 
     // Manual overrides for renamed/mapped env vars
     map.PORT = "server.port";
@@ -782,12 +795,12 @@ export class ConfigSchema {
                 scriptSrc: {
                   type: "array",
                   items: { type: "string" },
-                  default: ["'self'", "https://unpkg.com", "https://cdn.jsdelivr.net", "'unsafe-hashes'"],
+                  default: ["'self'", "'unsafe-inline'"],
                 },
                 styleSrc: {
                   type: "array",
                   items: { type: "string" },
-                  default: ["'self'", "'unsafe-hashes'"],
+                  default: ["'self'", "'unsafe-inline'"],
                 },
                 imgSrc: { type: "array", items: { type: "string" }, default: ["'self'", "data:", "blob:"] },
                 fontSrc: { type: "array", items: { type: "string" }, default: ["'self'"] },
@@ -799,6 +812,7 @@ export class ConfigSchema {
                 objectSrc: { type: "array", items: { type: "string" }, default: ["'none'"] },
                 baseUri: { type: "array", items: { type: "string" }, default: ["'self'"] },
                 frameAncestors: { type: "array", items: { type: "string" }, default: ["'none'"] },
+                formAction: { type: "array", items: { type: "string" }, default: ["'self'"] },
                 upgradeInsecureRequests: { type: "boolean", default: true },
                 reportOnly: {
                   type: "boolean",
@@ -818,13 +832,19 @@ export class ConfigSchema {
               type: ["string", "null"],
               enum: ["require-corp", null],
               default: null,
-              description: "COEP; keep null until wasm/SAB ready",
+              description:
+                "COEP; self-hosted Alpine/htmx resolved CDN blocker. Still not needed (no wasm/SAB).",
             },
             crossOriginResourcePolicy: {
               type: ["string", "null"],
               enum: ["same-origin", "cross-origin", null],
               default: "cross-origin",
               description: "CORP for static subresources",
+            },
+            timingAllowOrigin: {
+              type: "string",
+              default: "",
+              description: "Timing-Allow-Origin; empty string omits",
             },
             immutableHashedAssets: {
               type: "boolean",
@@ -834,7 +854,7 @@ export class ConfigSchema {
             linkPreload: {
               type: "array",
               items: { type: "string" },
-              default: ["/app.js", "/css/app.css"],
+              default: ["/app.js", "/js/alpine.min.js", "/css/app.css"],
               description: "Link preload hints for HTML documents",
             },
             acceptClientHints: {
@@ -859,6 +879,41 @@ export class ConfigSchema {
           },
           required: ["enabled", "referrerPolicy", "xContentTypeOptions", "csp", "earlyHints"],
         },
+        dynamicResponse: {
+          type: "object",
+          description:
+            "Dynamic-response optimization (minify / validate / compress runtime HTML/CSS/JS/JSON)",
+          properties: {
+            enabled: { type: "boolean", default: true, description: "Master toggle" },
+            minify: {
+              type: "boolean",
+              default: true,
+              description: "Strip whitespace + comments from text bodies",
+            },
+            validate: {
+              type: "boolean",
+              default: true,
+              description: "Validate html/css/js parse; skip minify + log on failure",
+            },
+            compress: {
+              type: "boolean",
+              default: true,
+              description: "Apply Content-Encoding based on Accept-Encoding",
+            },
+            compressAlgorithm: {
+              type: "string",
+              enum: ["br", "gzip", "auto"],
+              default: "auto",
+              description: "Preferred algorithm; auto prefers br when advertised",
+            },
+            compressThreshold: {
+              type: "number",
+              default: 512,
+              description: "Minimum body size (bytes) before compression",
+            },
+          },
+          required: ["enabled", "minify", "validate", "compress", "compressAlgorithm", "compressThreshold"],
+        },
       },
       required: [
         "server",
@@ -873,6 +928,7 @@ export class ConfigSchema {
         "messages",
         "encryption",
         "headers",
+        "dynamicResponse",
       ],
     };
   }
@@ -897,6 +953,7 @@ export class ConfigSchema {
       byoKey: this.byoKey,
       encryption: this.encryption,
       headers: this.headers,
+      dynamicResponse: this.dynamicResponse,
     };
   }
 }

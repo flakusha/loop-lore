@@ -2,19 +2,21 @@
  * Tests for ConfigSchema (schema-class.ts)
  *
  * Covers: envMap generation, validation, JSON schema generation,
- * defaults consistency with schema.ts DEFAULTS.
+ * defaults sanity checks.
  */
 
-import { describe, test, expect } from "bun:test";
 import { ConfigSchema } from "@/config/schema-class";
-import { DEFAULTS } from "@/config/schema";
+
+import { describe, test, expect } from "bun:test";
 
 describe("ConfigSchema", () => {
-  // ── Defaults consistency ────────────────────────────────
+  // ── Defaults sanity ─────────────────────────────────
 
-  test("defaults match schema.ts DEFAULTS", () => {
+  test("defaults are accessible and consistent", () => {
     const cs = new ConfigSchema();
-    expect(cs.defaults).toEqual(DEFAULTS);
+    const d = cs.defaults;
+    expect(d.server.port).toBe(3000);
+    expect(d.db.type).toBe("sqlite");
   });
 
   test("defaults are deep-frozen (new instance each access)", () => {
@@ -67,12 +69,12 @@ describe("ConfigSchema", () => {
 
   test("validate passes for valid default config", () => {
     expect(() => {
-      ConfigSchema.validate(DEFAULTS);
+      ConfigSchema.validate(new ConfigSchema().defaults);
     }).not.toThrow();
   });
 
   test("validate throws for invalid db type", () => {
-    const cfg = structuredClone(DEFAULTS);
+    const cfg = structuredClone(new ConfigSchema().defaults);
     (cfg.db as unknown as Record<string, unknown>).type = "mongodb";
     expect(() => {
       ConfigSchema.validate(cfg);
@@ -80,7 +82,7 @@ describe("ConfigSchema", () => {
   });
 
   test("validate throws for missing postgres url", () => {
-    const cfg = structuredClone(DEFAULTS);
+    const cfg = structuredClone(new ConfigSchema().defaults);
     cfg.db.type = "postgres";
     cfg.db.url = undefined;
     expect(() => {
@@ -89,7 +91,7 @@ describe("ConfigSchema", () => {
   });
 
   test("validate throws for invalid port", () => {
-    const cfg = structuredClone(DEFAULTS);
+    const cfg = structuredClone(new ConfigSchema().defaults);
     cfg.server.port = -1;
     expect(() => {
       ConfigSchema.validate(cfg);
@@ -101,7 +103,7 @@ describe("ConfigSchema", () => {
   });
 
   test("validate throws for invalid log level", () => {
-    const cfg = structuredClone(DEFAULTS);
+    const cfg = structuredClone(new ConfigSchema().defaults);
     (cfg.logging as unknown as Record<string, unknown>).level = "verbose";
     expect(() => {
       ConfigSchema.validate(cfg);
@@ -109,7 +111,7 @@ describe("ConfigSchema", () => {
   });
 
   test("validate throws for provider missing baseUrl", () => {
-    const cfg = structuredClone(DEFAULTS);
+    const cfg = structuredClone(new ConfigSchema().defaults);
     cfg.generation.providers.openaiCompatible = [
       {
         name: "bad",
@@ -128,7 +130,7 @@ describe("ConfigSchema", () => {
   });
 
   test("validate throws for provider missing model", () => {
-    const cfg = structuredClone(DEFAULTS);
+    const cfg = structuredClone(new ConfigSchema().defaults);
     cfg.generation.providers.openaiCompatible = [
       {
         name: "bad",
@@ -147,7 +149,7 @@ describe("ConfigSchema", () => {
   });
 
   test("validate throws for anthropic missing apiKey", () => {
-    const cfg = structuredClone(DEFAULTS);
+    const cfg = structuredClone(new ConfigSchema().defaults);
     cfg.generation.providers.anthropic = {
       name: "ant",
       label: "Anthropic",
@@ -218,7 +220,7 @@ describe("ConfigSchema", () => {
 
   test("envMap keys map back to valid config paths", () => {
     const map = ConfigSchema.envMap();
-    const cfg = structuredClone(DEFAULTS) as unknown as Record<string, unknown>;
+    const cfg = structuredClone(new ConfigSchema().defaults) as unknown as Record<string, unknown>;
 
     for (const dotPath of Object.values(map)) {
       const parts = dotPath.split(".");
