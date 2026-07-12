@@ -25,9 +25,9 @@ function parseVersion(version: string): Version {
   const match = /(\d+)\.(\d+)\.(\d+)(?:-(.+))?/.exec(version);
   if (!match) throw new Error(`Invalid version: ${version}`);
   return {
-    major: parseInt(match[1]),
-    minor: parseInt(match[2]),
-    patch: parseInt(match[3]),
+    major: parseInt(match[1]!),
+    minor: parseInt(match[2]!),
+    patch: parseInt(match[3]!),
     prerelease: match[4],
   };
 }
@@ -96,7 +96,7 @@ function main(): void {
   const branch = execSync("git branch --show-current", { encoding: "utf-8" }).trim();
   const isMaster = branch === "master" || branch === "main";
   const releaseMatch = branch.match(/^release\/(\d+)/);
-  const releaseMajor = releaseMatch ? parseInt(releaseMatch[1]) : null;
+  const releaseMajor = releaseMatch ? parseInt(releaseMatch[1]!) : null;
   const bump = determineBump(commits);
 
   // Feature branch - dev version

@@ -20,7 +20,7 @@ export function parseAcceptProtocols(accept: string | null): TransportProtocol[]
     .map((part) => {
       const [proto, qStr] = part.trim().split(";", 2);
       const q = qStr ? Number(qStr.split("=", 2)[1] ?? 1) : 1;
-      const key = proto.trim();
+      const key = proto!.trim();
       if (!Object.hasOwn(map, key)) {
         return null;
       }
@@ -48,7 +48,7 @@ export function parseAcceptEncoding(acceptEncoding: string | null): CompressionA
     .map((part) => {
       const [algo, qStr] = part.trim().split(";", 2);
       const q = qStr ? Number(qStr.split("=", 2)[1] ?? 1) : 1;
-      const key = algo.trim();
+      const key = algo!.trim();
       if (!Object.hasOwn(map, key)) {
         return null;
       }
@@ -64,5 +64,5 @@ export function parseAcceptEncoding(acceptEncoding: string | null): CompressionA
  */
 export function parseExtensions(header: string | null): string[] {
   if (!header) return [];
-  return header.split(",").map((ext) => ext.trim().split(";", 1)[0].trim());
+  return header.split(",").map((ext) => ext.trim().split(";", 1)[0]!.trim());
 }

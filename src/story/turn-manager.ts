@@ -32,7 +32,6 @@ export interface TurnManagerOptions {
 export class TurnManager {
   private readonly db: Kysely<DB>;
   private readonly chatId: string;
-  private readonly gmConfig: GameMasterConfig;
   private readonly qualityThresholds: QualityThresholds;
   private state: TurnManagerState | null = null;
 
@@ -105,7 +104,6 @@ export class TurnManager {
   constructor(options: TurnManagerOptions) {
     this.db = options.db;
     this.chatId = options.chatId;
-    this.gmConfig = options.gmConfig;
     this.qualityThresholds = {
       ...DEFAULT_QUALITY_THRESHOLDS,
       ...options.qualityThresholds,

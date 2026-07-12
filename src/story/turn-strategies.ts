@@ -27,7 +27,7 @@ export type TurnStrategyFn = (
 export const roundRobinSelect: TurnStrategyFn = (participants, currentActorId, _currentTurn, turnOrder) => {
   const lastIndex = currentActorId ? turnOrder.indexOf(currentActorId) : -1;
   const nextIndex = (lastIndex + 1) % participants.length;
-  return participants[nextIndex].actorId;
+  return participants[nextIndex]!.actorId;
 };
 
 export const sceneBasedSelect: TurnStrategyFn = (participants, currentActorId, currentTurn, turnOrder) => {
@@ -44,8 +44,8 @@ function fisherYatesShuffle<T>(arr: T[]): T[] {
   const result = [...arr];
   for (let i = result.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
-    const tmp = result[i];
-    result[i] = result[j];
+    const tmp = result[i]!;
+    result[i] = result[j]!;
     result[j] = tmp;
   }
   return result;
@@ -54,7 +54,7 @@ function fisherYatesShuffle<T>(arr: T[]): T[] {
 export const initiativeSelect: TurnStrategyFn = (participants, _currentActorId, _currentTurn, _turnOrder) => {
   // Shuffle order based on "initiative" (Fisher-Yates for uniform distribution)
   const shuffled = fisherYatesShuffle(participants);
-  return shuffled[0].actorId;
+  return shuffled[0]!.actorId;
 };
 
 export const questDrivenSelect: TurnStrategyFn = (
