@@ -31,6 +31,18 @@ open-items.md and plan.md.
 Key items fixed: migration constraints, path traversal, zstd type safety,
 TUI auth wiring, age-gate singleton, prompt-assembler improvements.
 
+## Round 4 — Alpine.js + htmx Integration (11 findings, 2026-07-12)
+
+**Result**: 3 🔴, 3 🟡, 2 🔵 applied. 3 info-only items noted.
+
+Key fixes: keydown listener leak in chat destroy(), double-toast from
+duplicate `show-toast` listeners, settings page dual-init (Alpine + vanilla
+JS page-loader), `initTree` missing root `x-data`, duplicate store
+initialization, notifications handler cleanup.
+
+See [alpine-htmx-integration.md](alpine-htmx-integration.md) for full
+details.
+
 ## Open Items
 
 See [../open-items.md](../open-items.md) for remaining tracked items:
