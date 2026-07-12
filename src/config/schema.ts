@@ -2,8 +2,8 @@
 //
 // Enum types sourced from ../db/enums
 
-import { DbType, LogLevel, AgeGateMode } from "../db/enums";
-import type { DbType as DbTypeT, LogLevel as LogLevelT, AgeGateMode as AgeGateModeT } from "../db/enums";
+import { AgeGateMode, DbType, LogLevel } from "../db/enums";
+import type { AgeGateMode as AgeGateModeT, DbType as DbTypeT, LogLevel as LogLevelT } from "../db/enums";
 import { DATA_DIR } from "./constants";
 
 interface TlsConfig {
@@ -286,6 +286,10 @@ interface LlamaCppAutoStartConfig {
   cacheTypeK?: string;
   /** KV cache data type for V */
   cacheTypeV?: string;
+  /** KV cache data type for K (draft): f32, f16, bf16, q8_0, q4_0, iq4_nl, q5_0, q5_1 */
+  cacheTypeKD?: string;
+  /** KV cache data type for V */
+  cacheTypeVD?: string;
   /** KV cache RAM budget in MiB */
   cacheRam?: number;
   /** Flash attention: on, off, or auto (default: auto) */
@@ -689,7 +693,7 @@ const DEFAULTS: Config = {
     crossOriginEmbedderPolicy: null,
     crossOriginResourcePolicy: "cross-origin",
     immutableHashedAssets: true,
-    linkPreload: ["/app.js", "/alpine.js", "/css/app.css"],
+    linkPreload: ["/app.js", "/css/app.css"],
     acceptClientHints: [],
     saveData: false,
     earlyHints: { enabled: false },
@@ -710,36 +714,36 @@ const DEFAULTS: Config = {
 // };
 
 export type {
-  Config,
-  ServerConfig,
-  TlsConfig,
-  DatabaseConfig as DbConfig,
+  AgeGateConfig,
   AssetsConfig,
   AssistantConfig,
-  LoggingConfig,
-  TuiConfig,
-  DocumentationConfig,
-  AgeGateConfig,
   AuthConfig,
-  TransportConfig,
-  TransportCompressionConfig,
-  TransportLimitsConfig,
-  MessagesConfig,
-  NsfwConfig,
+  AutoStartConfig,
+  BedrockProviderConfig,
+  ByoKeyConfig,
+  Config,
+  CspConfig,
+  DatabaseConfig as DbConfig,
+  DocumentationConfig,
+  EncryptionConfig,
   GenerationConfig,
   GenerationProvidersConfig,
-  ProviderInstanceConfig,
+  HeadersConfig,
   ImageProviderConfig,
   ImageProviderDefaults,
-  ModelLimits,
-  ByoKeyConfig,
-  EncryptionConfig,
-  HeadersConfig,
-  CspConfig,
-  TestingConfig,
-  BedrockProviderConfig,
-  AutoStartConfig,
   LlamaCppAutoStartConfig,
+  LoggingConfig,
+  MessagesConfig,
+  ModelLimits,
+  NsfwConfig,
+  ProviderInstanceConfig,
   SdCppAutoStartConfig,
+  ServerConfig,
+  TestingConfig,
+  TlsConfig,
+  TransportCompressionConfig,
+  TransportConfig,
+  TransportLimitsConfig,
+  TuiConfig,
 };
 export { DEFAULTS };
