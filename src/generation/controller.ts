@@ -22,6 +22,7 @@ import {
   handleListActiveGenerations,
   handleRegenerate,
   handleGenerationStream,
+  handleTestConnection,
 } from "./generation-routes";
 import { handleGenerate } from "./generate-route";
 import { handleImageGeneration } from "./image-gen-route";
@@ -134,6 +135,13 @@ export async function dispatch({
     const body = await parseJsonBody(request);
     if (body instanceof Response) return body;
     return handleImageCaption(body);
+  }
+
+  // POST /api/generation/test-connection
+  if (pathname === "/api/generation/test-connection" && request.method === "POST") {
+    const body = await parseJsonBody(request);
+    if (body instanceof Response) return body;
+    return handleTestConnection(body, config);
   }
 
   return null; // Not a generation route
