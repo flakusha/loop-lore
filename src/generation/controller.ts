@@ -87,13 +87,13 @@ export async function dispatch({
   // GET /api/generation/status/:chatId
   const statusMatch = /^\/api\/generation\/status\/([^/]+)$/.exec(pathname);
   if (statusMatch && request.method === "GET") {
-    return handleGenerationStatus(statusMatch[1], database);
+    return handleGenerationStatus(statusMatch[1]!, database);
   }
 
   // GET /api/generation/stream/:chatId — HTMX SSE streaming
   const streamMatch = /^\/api\/generation\/stream\/([^/]+)$/.exec(pathname);
   if (streamMatch && request.method === "GET") {
-    return handleGenerationStream(streamMatch[1]);
+    return handleGenerationStream(streamMatch[1]!);
   }
 
   // GET /api/generation/active

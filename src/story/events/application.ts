@@ -155,7 +155,7 @@ function advanceTimeOfDay(current: string, minutes: number): string {
   const idx = order.indexOf(current);
   if (idx === -1) return "morning";
   const advanceSteps = Math.floor(minutes / 180); // ~3 hours per step
-  return order[(idx + advanceSteps) % order.length];
+  return order[(idx + advanceSteps) % order.length]!;
 }
 
 async function applyLocationModification(db: Kysely<DB>, event: WorldEvent): Promise<void> {

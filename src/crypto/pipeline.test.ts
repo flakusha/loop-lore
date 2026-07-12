@@ -116,7 +116,6 @@ describe("threshold", () => {
         algorithm: "gzip",
       },
     });
-    const _payload = JSON.parse(encrypted);
     // If compression reduces size, comp=true; otherwise false
     // Either is valid — just verify round-trip
     const decrypted = await decryptThenDecompress(encrypted, cryptoKey);
@@ -149,7 +148,6 @@ describe("threshold", () => {
         algorithm: "gzip",
       },
     });
-    const _payload = JSON.parse(encrypted);
     // With very short text, gzip may not compress — either outcome valid
     const decrypted = await decryptThenDecompress(encrypted, cryptoKey);
     expect(decrypted).toBe("hello world this is a test");

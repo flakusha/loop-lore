@@ -489,9 +489,9 @@ describe("GameMasterService — executeTurn", () => {
     // Verify story_turn was created in DB
     const turns = await testDb.selectFrom("story_turns").selectAll().where("chat_id", "=", chatId).execute();
     expect(turns).toHaveLength(1);
-    expect(turns[0].id).toBe(result.turnId);
-    expect(turns[0].status).toBe("pending");
-    expect(turns[0].gm_decision).toBeDefined();
+    expect(turns[0]!.id).toBe(result.turnId);
+    expect(turns[0]!.status).toBe("pending");
+    expect(turns[0]!.gm_decision).toBeDefined();
   });
 
   test("Human mode: returns minimal prompt, no LLM call", async () => {

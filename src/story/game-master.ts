@@ -27,7 +27,6 @@ import { TurnManager, type TurnManagerOptions } from "./turn-manager";
 import { WorldStateService } from "./world-state";
 import { QualityEvaluator } from "./quality-evaluator";
 import { extractEvents, validateEvents, applyEvents } from "./events";
-import { ItemsService } from "./items";
 import type {
   GameMasterConfig,
   GameMasterDecision,
@@ -109,7 +108,6 @@ export class GameMasterService {
   private readonly turnManager: TurnManager;
   private readonly worldState: WorldStateService;
   private readonly evaluator: QualityEvaluator;
-  private readonly items: ItemsService;
   private readonly config: GameMasterConfig;
   private readonly chatId: string;
   private readonly generateText: GenerateTextFn;
@@ -162,7 +160,7 @@ export class GameMasterService {
       `Current scene: ${location.name}. ${location.atmosphere ?? ""}`,
       ...(context.activeQuests.length > 0
         ? [
-            `Active quest: "${context.activeQuests[0].name}" (${context.activeQuests[0].progress}/${context.activeQuests[0].target})`,
+            `Active quest: "${context.activeQuests[0]!.name}" (${context.activeQuests[0]!.progress}/${context.activeQuests[0]!.target})`,
           ]
         : []),
       ...(context.recentTurns.length > 0
@@ -216,12 +214,12 @@ export class GameMasterService {
     promptParts.push(`Location: ${location.name}. ${atmospherePart}`);
 
     if (context.activeQuests.length > 0) {
-      const primary = context.activeQuests[0];
+      const primary = context.activeQuests[0]!;
       promptParts.push(`Active quest: "${primary.name}" (${primary.progress}/${primary.target}).`);
     }
 
     if (context.recentTurns.length > 0) {
-      const last = context.recentTurns[context.recentTurns.length - 1];
+      const last = context.recentTurns[context.recentTurns.length - 1]!;
       const lastActor = context.actors.find((a) => a.id === last.actorId);
       promptParts.push(
         `Previous: ${lastActor?.displayName ?? "someone"} said/did: "${last.response?.slice(0, 200)}"`,
@@ -270,7 +268,7 @@ export class GameMasterService {
   }
 
   private async recordGmTurn(
-    context: StoryContext,
+    _context: StoryContext,
     turnId: string,
     turnNumber: number,
     decision: GameMasterDecision,
@@ -324,7 +322,6 @@ export class GameMasterService {
     this.evaluator = new QualityEvaluator({
       thresholds: options.qualityThresholds as QualityThresholds | undefined,
     });
-    this.items = new ItemsService(options.db);
   }
 
   /** Initialize the GM session */
@@ -493,7 +490,7 @@ export class GameMasterService {
   }
 
   /** Human GM provides an override decision */
-  async humanOverride(chatId: string, turnId: string, decision: GameMasterDecision): Promise<void> {
+  async humanOverride(_chatId: string, turnId: string, decision: GameMasterDecision): Promise<void> {
     const gmSerialized = safeJsonStringify(decision);
     if (!gmSerialized.ok) return;
     await this.db

@@ -83,7 +83,7 @@ export class AssetView {
       return;
     }
 
-    const asset = this.assets[this.currentIndex];
+    const asset = this.assets[this.currentIndex]!;
     const sizeStr = this.formatSize(asset.size_bytes);
 
     /* eslint-disable unicorn/no-incorrect-template-string-interpolation */

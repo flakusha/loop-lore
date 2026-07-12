@@ -52,7 +52,7 @@ export interface TestReport {
  * @returns Test report with pass/fail for each case
  */
 export async function validateProtocol(
-  handler: ProtocolHandler,
+  _handler: ProtocolHandler,
   tests: Partial<TransportTestSuite>,
 ): Promise<TestReport> {
   const results: TestResult[] = [];

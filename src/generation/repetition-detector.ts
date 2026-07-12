@@ -71,7 +71,7 @@ function computeNGramSimilarity(positions: number[], windowSize: number, _textLe
   let totalDistance = 0;
   let gaps = 0;
   for (let i = 1; i < positions.length; i++) {
-    const gap = positions[i] - positions[i - 1];
+    const gap = positions[i]! - positions[i - 1]!;
     if (gap <= windowSize) {
       totalDistance += gap;
       gaps++;
