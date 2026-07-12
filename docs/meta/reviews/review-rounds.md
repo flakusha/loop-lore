@@ -34,6 +34,7 @@ TUI auth wiring, age-gate singleton, prompt-assembler improvements.
 ## Open Items
 
 See [../open-items.md](../open-items.md) for remaining tracked items:
+
 - ENUM.1, MIGRATION.1, MIGRATION.2 — schema/db low-priority
 - CAST.1 through CAST.6 — validation and type safety
 - ASSISTANT.1 through ASSISTANT.3 — prompt assembler fixes
