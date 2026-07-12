@@ -123,6 +123,8 @@ generation:
   #     nGpuLayers: auto                   # auto, all, or number
   #     cacheTypeK: iq4_nl                 # KV cache quant
   #     cacheTypeV: iq4_nl
+  #     cacheTypeKD: iq4_nl                 # KV cache quant
+  #     cacheTypeVD: iq4_nl
   #     flashAttn: on                      # on, off, auto
   #     temp: 1.0                          # sampler defaults
   #     topK: 40
