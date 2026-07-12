@@ -178,7 +178,7 @@ export class ConfigSchema {
     crossOriginEmbedderPolicy: null,
     crossOriginResourcePolicy: "cross-origin",
     immutableHashedAssets: true,
-    linkPreload: ["/app.js", "/alpine.js", "/css/app.css"],
+    linkPreload: ["/app.js", "/css/app.css"],
     acceptClientHints: [],
     saveData: false,
     earlyHints: { enabled: false },
@@ -842,7 +842,7 @@ export class ConfigSchema {
             linkPreload: {
               type: "array",
               items: { type: "string" },
-              default: ["/app.js", "/alpine.js", "/css/app.css"],
+              default: ["/app.js", "/css/app.css"],
               description: "Link preload hints for HTML documents",
             },
             acceptClientHints: {
