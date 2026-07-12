@@ -45,7 +45,7 @@ interface DeleteKeyOpts {
 
 function extractProvider(pathname: string): string | null {
   const match = /^\/api\/user-api-keys\/(.+)$/.exec(pathname);
-  return match ? decodeURIComponent(match[1]) : null;
+  return match ? decodeURIComponent(match[1]!) : null;
 }
 
 const dispatch: RouteDispatch = async ({ request, context, database, config }) => {

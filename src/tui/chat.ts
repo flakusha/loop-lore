@@ -203,10 +203,6 @@ export class ChatWidget {
     return headers;
   }
 
-  private hasSession(): boolean {
-    return Boolean(this.sessionToken);
-  }
-
   /**
    * Send message via POST /api/chats/:id/messages.
    * Shows typing indicator, adds user message + assistant auto-reply.

@@ -68,7 +68,6 @@ function extractIds({
 async function defaultOwnershipCheck({
   database,
   parentId,
-  _entityId,
   userId,
   userRole,
   config,

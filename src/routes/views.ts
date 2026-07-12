@@ -461,7 +461,7 @@ const dispatch: RouteDispatch = async ({ request, context, database }) => {
 
 async function dispatchView(
   request: Request,
-  context: RouteDispatchParams["context"] | null,
+  _context: RouteDispatchParams["context"] | null,
   database: Kysely<DB> | null,
 ): Promise<Response | null> {
   const isHtmx = request.headers.get("HX-Request") === "true";
@@ -486,7 +486,7 @@ async function dispatchView(
   // ── Static partials (lazy-loaded modals, skeletons) ──────
   const partialMatch = /^\/partials\/([\w/-]+)$/.exec(pathname);
   if (partialMatch) {
-    const result = serveStaticPartial(partialMatch[1], url.searchParams);
+    const result = serveStaticPartial(partialMatch[1]!, url.searchParams);
     if (result) return result;
   }
 
@@ -504,43 +504,43 @@ async function dispatchView(
 
     const worldDetailMatch = /^\/dynamic\/worlds\/([\w-]+)\/detail$/.exec(pathname);
     if (worldDetailMatch) {
-      return await serveWorldDetailContent(worldDetailMatch[1], database);
+      return await serveWorldDetailContent(worldDetailMatch[1]!, database);
     }
 
     const charEditMatch = /^\/dynamic\/characters\/([\w-]+)\/edit-form$/.exec(pathname);
     if (charEditMatch) {
-      return await serveCharacterEditForm(charEditMatch[1], database);
+      return await serveCharacterEditForm(charEditMatch[1]!, database);
     }
 
     const charChatListMatch = /^\/dynamic\/characters\/([\w-]+)\/chat-list$/.exec(pathname);
     if (charChatListMatch) {
-      return await serveCharacterChatListDb(charChatListMatch[1], database);
+      return await serveCharacterChatListDb(charChatListMatch[1]!, database);
     }
   }
 
   // ── Character routes ───────────────────────────────────────
   const characterChatListMatch = /^\/character\/([\w-]+)$/.exec(pathname);
   if (characterChatListMatch) {
-    const result = serveCharacterChatList(characterChatListMatch[1], isHtmx);
+    const result = serveCharacterChatList(characterChatListMatch[1]!, isHtmx);
     if (result) return result;
   }
 
   const characterEditMatch = /^\/character\/([\w-]+)\/edit$/.exec(pathname);
   if (characterEditMatch) {
-    const result = serveCharacterEdit(characterEditMatch[1], isHtmx);
+    const result = serveCharacterEdit(characterEditMatch[1]!, isHtmx);
     if (result) return result;
   }
 
   const characterChatMatch = /^\/character\/([\w-]+)\/([\w-]+)$/.exec(pathname);
   if (characterChatMatch) {
     const [, slug, chatId] = characterChatMatch;
-    const result = serveCharacterChat(slug, chatId, isHtmx);
+    const result = serveCharacterChat(slug!, chatId!, isHtmx);
     if (result) return result;
   }
 
   const charactersEditMatch = /^\/characters\/([\w-]+)\/edit$/.exec(pathname);
   if (charactersEditMatch) {
-    const result = serveCharacterEdit(charactersEditMatch[1], isHtmx);
+    const result = serveCharacterEdit(charactersEditMatch[1]!, isHtmx);
     if (result) return result;
   }
 
@@ -552,20 +552,20 @@ async function dispatchView(
 
   const worldDetailMatch2 = /^\/worlds\/([\w-]+)$/.exec(pathname);
   if (worldDetailMatch2) {
-    const result = serveWorldDetail(worldDetailMatch2[1], isHtmx);
+    const result = serveWorldDetail(worldDetailMatch2[1]!, isHtmx);
     if (result) return result;
   }
 
   const worldEditMatch = /^\/worlds\/([\w-]+)\/edit$/.exec(pathname);
   if (worldEditMatch) {
-    const result = serveWorldEdit(worldEditMatch[1], isHtmx);
+    const result = serveWorldEdit(worldEditMatch[1]!, isHtmx);
     if (result) return result;
   }
 
   // ── View templates ──────────────────────────────────────────
   const viewMatch = /^\/views\/([\w-]+)$/.exec(pathname);
   if (viewMatch) {
-    const result = serveView(viewMatch[1], isHtmx);
+    const result = serveView(viewMatch[1]!, isHtmx);
     if (result) return result;
   }
 

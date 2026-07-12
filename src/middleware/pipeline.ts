@@ -40,7 +40,7 @@ export function compose(middleware: Middleware[], finalHandler: RouteHandler): P
       const mw = middleware[i];
       const next = chain;
       chain = async (req: Request, ctx: RequestContext): Promise<Response> => {
-        return mw(req, ctx, () => next(req, ctx));
+        return mw!(req, ctx, () => next(req, ctx));
       };
     }
 
@@ -54,7 +54,7 @@ export function compose(middleware: Middleware[], finalHandler: RouteHandler): P
  * Use as the outermost middleware (first in the array).
  */
 export async function errorBoundary(
-  request: Request,
+  _request: Request,
   _context: RequestContext,
   next: () => Promise<Response>,
 ): Promise<Response> {

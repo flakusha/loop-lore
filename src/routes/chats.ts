@@ -124,15 +124,15 @@ const dispatch: RouteDispatch = async ({ request, context, database }) => {
     const actorId = participantMatch[2] ?? null;
 
     if (method === "GET" && !actorId) {
-      return handleListParticipants({ database, chatId, context });
+      return handleListParticipants({ database, chatId: chatId!, context });
     }
     if (method === "POST" && !actorId) {
       const body = await parseBody(request);
       if (body instanceof Response) return body;
-      return handleAddParticipant({ database, chatId, body, context });
+      return handleAddParticipant({ database, chatId: chatId!, body, context });
     }
     if (method === "DELETE" && actorId) {
-      return handleRemoveParticipant({ database, chatId, actorId, context });
+      return handleRemoveParticipant({ database, chatId: chatId!, actorId, context });
     }
     return BAD_METHOD();
   }
@@ -141,7 +141,7 @@ const dispatch: RouteDispatch = async ({ request, context, database }) => {
   const readMatch = /^\/api\/chats\/([a-f0-9-]+)\/read$/.exec(pathname);
   if (readMatch) {
     if (method === "POST") {
-      return handleMarkRead({ database, chatId: readMatch[1], context });
+      return handleMarkRead({ database, chatId: readMatch[1]!, context });
     }
     return BAD_METHOD();
   }
@@ -151,7 +151,7 @@ const dispatch: RouteDispatch = async ({ request, context, database }) => {
   if (personaMatch && method === "PUT") {
     const body = await parseBody(request);
     if (body instanceof Response) return body;
-    return handleSetPersona({ database, chatId: personaMatch[1], body, context });
+    return handleSetPersona({ database, chatId: personaMatch[1]!, body, context });
   }
 
   // ── /api/chats/:id/impersonate ────────────────────────────
@@ -160,12 +160,12 @@ const dispatch: RouteDispatch = async ({ request, context, database }) => {
     if (method === "PUT") {
       const body = await parseBody(request);
       if (body instanceof Response) return body;
-      return handleSetImpersonate({ database, chatId: impersonateMatch[1], body, context });
+      return handleSetImpersonate({ database, chatId: impersonateMatch[1]!, body, context });
     }
     if (method === "DELETE") {
       return handleClearImpersonate({
         database,
-        chatId: impersonateMatch[1],
+        chatId: impersonateMatch[1]!,
         actorId: context.userId!,
         context,
       });
@@ -177,7 +177,7 @@ const dispatch: RouteDispatch = async ({ request, context, database }) => {
   const exportMatch = /^\/api\/chats\/([a-f0-9-]+)\/export$/.exec(pathname);
   if (exportMatch && method === "GET") {
     const format = searchParams.get("format") === "md" ? "md" : "json";
-    return handleExportChat({ database, chatId: exportMatch[1], context, format });
+    return handleExportChat({ database, chatId: exportMatch[1]!, context, format });
   }
 
   // ── /api/chats/:id (skip if sub-route like /messages) ─────
