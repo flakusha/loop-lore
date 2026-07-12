@@ -47,6 +47,7 @@ import "./routes/frontend-logs";
 import "./routes/message-encryption";
 import "./routes/settings";
 import "./routes/admin";
+import "./routes/health";
 import "./personas/controller";
 
 const DOCS_PATH = join(import.meta.dir, "..", "docs", ".vitepress", "dist");
@@ -302,6 +303,21 @@ async function start() {
   initAgeGate(config.ageGate);
   await initSmk(config.encryption);
   initializeProviders(config);
+
+  // Startup health check — scan providers and log any failures
+  const { scanAllProviders } = await import("./admin/provider-health");
+  const healthResults = await scanAllProviders();
+  const failedProviders = healthResults.filter((p) => p.status !== "healthy");
+  const startLogger = getLogger();
+  if (failedProviders.length > 0) {
+    startLogger.warn("providers unreachable on startup", {
+      module: "server",
+      failedProviders: failedProviders.map((p) => p.name),
+    });
+  } else {
+    startLogger.info("all providers healthy", { module: "server", count: healthResults.length });
+  }
+
   const database = getDatabase();
   const logger = getLogger();
 

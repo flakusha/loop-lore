@@ -2,7 +2,7 @@
  * Generation Route Handlers
  *
  * Request handler functions for LLM generation control:
- *   cancel, status, retry, continue, list active, regenerate
+ *   cancel, status, retry, continue, list active, regenerate, test-connection
  *
  * All return Response objects. Imported by controller.ts dispatch.
  */
@@ -22,6 +22,8 @@ import type {
 
 import { getBuffer, isChatGenerating } from "./index";
 import { jsonResponse, jsonError } from "../routes/http-utils";
+import { getProvider } from "./providers/registry";
+import type { Config } from "../config/schema";
 
 // ── Route: Cancel generation ──────────────────────────────
 
@@ -410,4 +412,43 @@ async function waitForBuffer(chatId: string, timeoutMs: number): Promise<ReturnT
     };
     check();
   });
+}
+
+// ── Route: Test connection ────────────────────────────────────
+
+/**
+ * POST /api/generation/test-connection
+ *
+ * Test connectivity to a provider. Body:
+ *   { provider: string, model?: string }
+ */
+export async function handleTestConnection(body: unknown, _config?: Config): Promise<Response> {
+  const input = body as Record<string, unknown>;
+  const providerName = input.provider as string | undefined;
+
+  if (!providerName) {
+    return jsonError({ message: "provider is required", status: 400 });
+  }
+
+  const provider = getProvider(providerName);
+  if (!provider) {
+    return jsonError({ message: `Provider "${providerName}" not found`, status: 404 });
+  }
+
+  try {
+    const result = await provider.healthCheck();
+    return jsonResponse({
+      ok: result.status === "ok",
+      status: result.status,
+      model: result.model,
+      latencyMs: result.latencyMs,
+      error: result.error,
+    });
+  } catch (error) {
+    return jsonResponse({
+      ok: false,
+      status: "error",
+      error: (error as Error).message,
+    });
+  }
 }

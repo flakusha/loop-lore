@@ -114,6 +114,7 @@ export interface ChatState extends AlpineMagicThis {
   _toggleChatListHandler: () => void;
   _toggleGalleryHandler: () => void;
   _toggleCharacterInfoHandler: () => void;
+  _panelClickHandler: (e: MouseEvent) => void;
   _chatSettingsName: string;
   _chatSettingsMode: string;
   _chatSettingsTurnStrategy: string;
