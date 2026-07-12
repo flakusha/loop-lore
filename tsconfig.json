@@ -8,12 +8,20 @@
     "paths": {
       "@/*": ["./src/*"]
     },
+    "types": ["bun"],
     "strict": true,
+    "allowImportingTsExtensions": true,
+    "verbatimModuleSyntax": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedIndexedAccess": true,
+    "noImplicitOverride": true,
     "forceConsistentCasingInFileNames": true,
-    "noEmit": true,
-    "types": ["bun-types"]
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noPropertyAccessFromIndexSignature": true,
+    "noEmit": true
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist", "src/frontend/**/*"]
