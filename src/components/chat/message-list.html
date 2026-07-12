@@ -29,227 +29,242 @@
   </template>
   <template x-for="msg in groupedMessages" :key="msg.id">
     <div class="message" :class="msg.role" :data-message-id="msg.id">
-      <div class="bubble">
-        <div class="meta">
-          <span class="name" x-text="displayName(msg)" data-testid="message-author"></span>
-          <span class="time" x-text="formatTime(msg.created_at)"></span>
-        </div>
-        <template x-if="msg.thinking">
-          <details class="thinking-block">
-            <summary>Thinking process</summary>
-            <div class="thinking-content" x-html="renderMarkdown(msg.thinking)"></div>
-          </details>
-        </template>
-        <template x-if="editingMessageId !== msg.id">
+      <!-- System / narration: centered narrative line, no bubble, actions, or stats -->
+      <template x-if="msg.role === 'system'">
+        <div class="system-message" data-testid="system-message">
+          <span class="system-marker" aria-hidden="true">◆</span>
           <div class="content" x-html="renderMarkdown(msg.content)"></div>
-        </template>
-        <template x-if="editingMessageId === msg.id">
-          <div class="edit-area">
-            <textarea
-              class="form-input edit-textarea"
-              x-model="editContent"
-              @keydown.escape="cancelEdit()"
-              @keydown.ctrl.enter="saveEdit(msg.id)"
-            ></textarea>
-            <div class="edit-actions">
-              <button class="btn btn-ghost btn-sm" @click="cancelEdit()">Cancel</button>
-              <button class="btn btn-primary btn-sm" @click="saveEdit(msg.id)">Save</button>
-            </div>
+        </div>
+      </template>
+      <template x-if="msg.role !== 'system'">
+        <div class="bubble">
+          <div class="meta">
+            <span class="name" x-text="displayName(msg)" data-testid="message-author"></span>
+            <span class="time" x-text="formatTime(msg.created_at)"></span>
           </div>
-        </template>
-        <template x-if="msg.attachments && msg.attachments.length > 0">
-          <div class="media-attachments" :class="'count-' + msg.attachments.length">
-            <template x-for="(asset, aIdx) in msg.attachments" :key="asset.assetId">
-              <div
-                class="media-item"
-                :class="asset.type === 'image' ? 'media-image' : 'media-file'"
-                :style="getMediaStyle(asset, msg.attachments.length)"
-              >
-                <template x-if="asset.type === 'image'">
-                  <img
-                    :src="asset.url"
-                    :alt="asset.caption || asset.filename"
-                    loading="lazy"
-                    @click="openMediaPreview(asset)"
-                  />
-                </template>
-                <template x-if="asset.type === 'audio'">
-                  <audio controls :src="asset.url"></audio>
-                </template>
-                <template x-if="asset.type === 'video'">
-                  <video controls :src="asset.url"></video>
-                </template>
-                <template x-if="asset.caption">
-                  <div class="media-caption" x-text="asset.caption"></div>
-                </template>
+          <template x-if="msg.thinking">
+            <details class="thinking-block">
+              <summary>Thinking process</summary>
+              <div class="thinking-content" x-html="renderMarkdown(msg.thinking)"></div>
+            </details>
+          </template>
+          <template x-if="editingMessageId !== msg.id">
+            <div class="content" x-html="renderMarkdown(msg.content)"></div>
+          </template>
+          <template x-if="editingMessageId === msg.id">
+            <div class="edit-area">
+              <textarea
+                class="form-input edit-textarea"
+                x-model="editContent"
+                @keydown.escape="cancelEdit()"
+                @keydown.ctrl.enter="saveEdit(msg.id)"
+              ></textarea>
+              <div class="edit-actions">
+                <button class="btn btn-ghost btn-sm" @click="cancelEdit()">Cancel</button>
+                <button class="btn btn-primary btn-sm" @click="saveEdit(msg.id)">Save</button>
               </div>
-            </template>
-          </div>
-        </template>
-        <!-- Detailed (nerd) mode: full button row + stats -->
-        <div class="actions-full" x-show="detailLevel === 'Detailed'" :data-detail="detailLevel">
-          <button class="btn-icon-action" @click="copyMessage(msg.id, $$event)" title="Copy">📋</button>
-          <button class="btn-icon-action" @click="startEdit(msg.id)" title="Edit">✏️</button>
-          <template x-if="msg.role === 'assistant'">
-            <button class="btn-icon-action" title="Regenerate" @click="regenerateVariant(msg.id)">♻</button>
+            </div>
           </template>
-          <template x-if="msg.role === 'assistant' && msg.totalVariants && msg.totalVariants > 1">
-            <span class="variant-switcher">
-              <button class="btn-icon-action" title="Previous variant" @click="switchVariant(msg.id, -1)">
-                ◀
-              </button>
-              <span
-                class="variant-counter"
-                x-text="(msg.variantIndex ?? 0) + 1 + '/' + msg.totalVariants"
-              ></span>
-              <button class="btn-icon-action" title="Next variant" @click="switchVariant(msg.id, 1)">
-                ▶
-              </button>
-            </span>
-          </template>
-          <template
-            x-if="msg.role === 'assistant' && (msg.status === 'cancelled' || msg.status === 'partial')"
-          >
-            <button class="btn-icon-action action-continue" title="Continue" @click="continueMessage(msg.id)">
-              ↳
-            </button>
-          </template>
-          <template x-if="msg.role === 'assistant'">
-            <button
-              class="btn-icon-action"
-              :class="impersonationActive ? 'action-active' : ''"
-              @click="toggleImpersonate()"
-              :title="impersonationActive ? 'Stop playing as character' : 'Play as character'"
-            >
-              🎭
-            </button>
-          </template>
-          <button class="btn-icon-action" @click="generateImageFromMessage(msg.id)" title="Generate image">
-            🖼
-          </button>
           <template x-if="msg.attachments && msg.attachments.length > 0">
-            <button class="btn-icon-action" @click="captionMessage(msg.id)" title="Caption images">💬</button>
-          </template>
-          <button
-            class="btn-icon-action action-remove"
-            @click="removeMessage(msg.id, $$event)"
-            title="Remove"
-          >
-            🗑
-          </button>
-        </div>
-        <div
-          class="stats-line"
-          x-show="detailLevel === 'Detailed' && (msg.model_id || msg.provider)"
-          x-text="statsLine(msg)"
-        ></div>
-
-        <!-- Compact mode (Immersion + Basic): hamburger menus -->
-        <div class="actions-compact" x-show="detailLevel !== 'Detailed'" :data-detail="detailLevel">
-          <!-- Info hamburger (Basic mode only) -->
-          <div class="action-hamburger" x-show="detailLevel === 'Basic'">
-            <button
-              class="btn-icon-action"
-              :class="_statsOpen[msg.id] ? 'action-active' : ''"
-              @click="_statsOpen[msg.id] = !_statsOpen[msg.id]"
-              title="Stats"
-            >
-              i
-            </button>
-            <div
-              class="action-dropdown action-dropdown-info"
-              x-show="_statsOpen[msg.id]"
-              @click.outside="_statsOpen[msg.id] = false"
-            >
-              <div class="dropdown-stat" x-show="msg.generation_time_ms">
-                <span class="stat-label">Time</span>
-                <span x-text="formattedGenerationTime(msg.generation_time_ms)"></span>
-              </div>
-              <div class="dropdown-stat" x-show="msg.token_count_total">
-                <span class="stat-label">Tokens</span>
-                <span x-text="msg.token_count_total"></span>
-              </div>
-              <div
-                class="dropdown-stat"
-                x-show="msg.tokens_per_second || (msg.generation_time_ms && msg.token_count_total)"
-              >
-                <span class="stat-label">Speed</span>
-                <span x-text="formattedTokensPerSecond(msg)"></span>
-              </div>
-              <div class="dropdown-stat" x-show="msg.model_id">
-                <span class="stat-label">Model</span>
-                <span x-text="msg.model_id"></span>
-              </div>
-              <div
-                class="dropdown-stat-no-data"
-                x-show="!msg.generation_time_ms && !msg.token_count_total && !msg.model_id"
-              >
-                No generation stats available
-              </div>
-            </div>
-          </div>
-
-          <!-- Actions hamburger -->
-          <div class="action-hamburger">
-            <button
-              class="btn-icon-action"
-              :class="_hamburgerOpen[msg.id] ? 'action-active' : ''"
-              @click="_hamburgerOpen[msg.id] = !_hamburgerOpen[msg.id]"
-              title="Actions"
-            >
-              ⋮
-            </button>
-            <div
-              class="action-dropdown"
-              x-show="_hamburgerOpen[msg.id]"
-              @click.outside="_hamburgerOpen[msg.id] = false"
-            >
-              <button @click="copyMessage(msg.id, $$event); _hamburgerOpen[msg.id] = false">📋 Copy</button>
-              <button @click="startEdit(msg.id); _hamburgerOpen[msg.id] = false">✏️ Edit</button>
-              <template x-if="msg.role === 'assistant'">
-                <button @click="regenerateVariant(msg.id); _hamburgerOpen[msg.id] = false">
-                  ♻ Regenerate
-                </button>
-              </template>
-              <template x-if="msg.role === 'assistant' && msg.totalVariants && msg.totalVariants > 1">
-                <button @click="switchVariant(msg.id, -1); _hamburgerOpen[msg.id] = false">
-                  ◀ Prev Variant
-                </button>
-              </template>
-              <template x-if="msg.role === 'assistant' && msg.totalVariants && msg.totalVariants > 1">
-                <button @click="switchVariant(msg.id, 1); _hamburgerOpen[msg.id] = false">
-                  ▶ Next Variant
-                </button>
-              </template>
-              <template
-                x-if="msg.role === 'assistant' && (msg.status === 'cancelled' || msg.status === 'partial')"
-              >
-                <button @click="continueMessage(msg.id); _hamburgerOpen[msg.id] = false">↳ Continue</button>
-              </template>
-              <template x-if="msg.role === 'assistant'">
-                <button
-                  @click="toggleImpersonate(); _hamburgerOpen[msg.id] = false"
-                  :class="impersonationActive ? 'dropdown-active' : ''"
+            <div class="media-attachments" :class="'count-' + msg.attachments.length">
+              <template x-for="(asset, aIdx) in msg.attachments" :key="asset.assetId">
+                <div
+                  class="media-item"
+                  :class="asset.type === 'image' ? 'media-image' : 'media-file'"
+                  :style="getMediaStyle(asset, msg.attachments.length)"
                 >
-                  🎭 Impersonate
+                  <template x-if="asset.type === 'image'">
+                    <img
+                      :src="asset.url"
+                      :alt="asset.caption || asset.filename"
+                      loading="lazy"
+                      @click="openMediaPreview(asset)"
+                    />
+                  </template>
+                  <template x-if="asset.type === 'audio'">
+                    <audio controls :src="asset.url"></audio>
+                  </template>
+                  <template x-if="asset.type === 'video'">
+                    <video controls :src="asset.url"></video>
+                  </template>
+                  <template x-if="asset.caption">
+                    <div class="media-caption" x-text="asset.caption"></div>
+                  </template>
+                </div>
+              </template>
+            </div>
+          </template>
+          <!-- Detailed (nerd) mode: full button row + stats -->
+          <div class="actions-full" x-show="detailLevel === 'Detailed'" :data-detail="detailLevel">
+            <button class="btn-icon-action" @click="copyMessage(msg.id, $$event)" title="Copy">📋</button>
+            <button class="btn-icon-action" @click="startEdit(msg.id)" title="Edit">✏️</button>
+            <template x-if="msg.role === 'assistant'">
+              <button class="btn-icon-action" title="Regenerate" @click="regenerateVariant(msg.id)">♻</button>
+            </template>
+            <template x-if="msg.role === 'assistant' && msg.totalVariants && msg.totalVariants > 1">
+              <span class="variant-switcher">
+                <button class="btn-icon-action" title="Previous variant" @click="switchVariant(msg.id, -1)">
+                  ◀
                 </button>
-              </template>
-              <button @click="generateImageFromMessage(msg.id); _hamburgerOpen[msg.id] = false">
-                🖼 Generate Image
-              </button>
-              <template x-if="msg.attachments && msg.attachments.length > 0">
-                <button @click="captionMessage(msg.id); _hamburgerOpen[msg.id] = false">💬 Caption</button>
-              </template>
+                <span
+                  class="variant-counter"
+                  x-text="(msg.variantIndex ?? 0) + 1 + '/' + msg.totalVariants"
+                ></span>
+                <button class="btn-icon-action" title="Next variant" @click="switchVariant(msg.id, 1)">
+                  ▶
+                </button>
+              </span>
+            </template>
+            <template
+              x-if="msg.role === 'assistant' && (msg.status === 'cancelled' || msg.status === 'partial')"
+            >
               <button
-                class="dropdown-danger"
-                @click="removeMessage(msg.id, $$event); _hamburgerOpen[msg.id] = false"
+                class="btn-icon-action action-continue"
+                title="Continue"
+                @click="continueMessage(msg.id)"
               >
-                🗑 Remove
+                ↳
               </button>
+            </template>
+            <template x-if="msg.role === 'assistant'">
+              <button
+                class="btn-icon-action"
+                :class="impersonationActive ? 'action-active' : ''"
+                @click="toggleImpersonate()"
+                :title="impersonationActive ? 'Stop playing as character' : 'Play as character'"
+              >
+                🎭
+              </button>
+            </template>
+            <button class="btn-icon-action" @click="generateImageFromMessage(msg.id)" title="Generate image">
+              🖼
+            </button>
+            <template x-if="msg.attachments && msg.attachments.length > 0">
+              <button class="btn-icon-action" @click="captionMessage(msg.id)" title="Caption images">
+                💬
+              </button>
+            </template>
+            <button
+              class="btn-icon-action action-remove"
+              @click="removeMessage(msg.id, $$event)"
+              title="Remove"
+            >
+              🗑
+            </button>
+          </div>
+          <div
+            class="stats-line"
+            x-show="detailLevel === 'Detailed' && (msg.model_id || msg.provider)"
+            x-text="statsLine(msg)"
+          ></div>
+
+          <!-- Compact mode (Immersion + Basic): hamburger menus -->
+          <div class="actions-compact" x-show="detailLevel !== 'Detailed'" :data-detail="detailLevel">
+            <!-- Info hamburger (Basic mode only) -->
+            <div class="action-hamburger" x-show="detailLevel === 'Basic'">
+              <button
+                class="btn-icon-action"
+                :class="_statsOpen[msg.id] ? 'action-active' : ''"
+                @click="_statsOpen[msg.id] = !_statsOpen[msg.id]"
+                title="Stats"
+              >
+                i
+              </button>
+              <div
+                class="action-dropdown action-dropdown-info"
+                x-show="_statsOpen[msg.id]"
+                @click.outside="_statsOpen[msg.id] = false"
+              >
+                <div class="dropdown-stat" x-show="msg.generation_time_ms">
+                  <span class="stat-label">Time</span>
+                  <span x-text="formattedGenerationTime(msg.generation_time_ms)"></span>
+                </div>
+                <div class="dropdown-stat" x-show="msg.token_count_total">
+                  <span class="stat-label">Tokens</span>
+                  <span x-text="msg.token_count_total"></span>
+                </div>
+                <div
+                  class="dropdown-stat"
+                  x-show="msg.tokens_per_second || (msg.generation_time_ms && msg.token_count_total)"
+                >
+                  <span class="stat-label">Speed</span>
+                  <span x-text="formattedTokensPerSecond(msg)"></span>
+                </div>
+                <div class="dropdown-stat" x-show="msg.model_id">
+                  <span class="stat-label">Model</span>
+                  <span x-text="msg.model_id"></span>
+                </div>
+                <div
+                  class="dropdown-stat-no-data"
+                  x-show="!msg.generation_time_ms && !msg.token_count_total && !msg.model_id"
+                >
+                  No generation stats available
+                </div>
+              </div>
+            </div>
+
+            <!-- Actions hamburger -->
+            <div class="action-hamburger">
+              <button
+                class="btn-icon-action"
+                :class="_hamburgerOpen[msg.id] ? 'action-active' : ''"
+                @click="_hamburgerOpen[msg.id] = !_hamburgerOpen[msg.id]"
+                title="Actions"
+              >
+                ⋮
+              </button>
+              <div
+                class="action-dropdown"
+                x-show="_hamburgerOpen[msg.id]"
+                @click.outside="_hamburgerOpen[msg.id] = false"
+              >
+                <button @click="copyMessage(msg.id, $$event); _hamburgerOpen[msg.id] = false">📋 Copy</button>
+                <button @click="startEdit(msg.id); _hamburgerOpen[msg.id] = false">✏️ Edit</button>
+                <template x-if="msg.role === 'assistant'">
+                  <button @click="regenerateVariant(msg.id); _hamburgerOpen[msg.id] = false">
+                    ♻ Regenerate
+                  </button>
+                </template>
+                <template x-if="msg.role === 'assistant' && msg.totalVariants && msg.totalVariants > 1">
+                  <button @click="switchVariant(msg.id, -1); _hamburgerOpen[msg.id] = false">
+                    ◀ Prev Variant
+                  </button>
+                </template>
+                <template x-if="msg.role === 'assistant' && msg.totalVariants && msg.totalVariants > 1">
+                  <button @click="switchVariant(msg.id, 1); _hamburgerOpen[msg.id] = false">
+                    ▶ Next Variant
+                  </button>
+                </template>
+                <template
+                  x-if="msg.role === 'assistant' && (msg.status === 'cancelled' || msg.status === 'partial')"
+                >
+                  <button @click="continueMessage(msg.id); _hamburgerOpen[msg.id] = false">↳ Continue</button>
+                </template>
+                <template x-if="msg.role === 'assistant'">
+                  <button
+                    @click="toggleImpersonate(); _hamburgerOpen[msg.id] = false"
+                    :class="impersonationActive ? 'dropdown-active' : ''"
+                  >
+                    🎭 Impersonate
+                  </button>
+                </template>
+                <button @click="generateImageFromMessage(msg.id); _hamburgerOpen[msg.id] = false">
+                  🖼 Generate Image
+                </button>
+                <template x-if="msg.attachments && msg.attachments.length > 0">
+                  <button @click="captionMessage(msg.id); _hamburgerOpen[msg.id] = false">💬 Caption</button>
+                </template>
+                <button
+                  class="dropdown-danger"
+                  @click="removeMessage(msg.id, $$event); _hamburgerOpen[msg.id] = false"
+                >
+                  🗑 Remove
+                </button>
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      </template>
     </div>
   </template>
 
