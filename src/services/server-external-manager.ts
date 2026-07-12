@@ -17,6 +17,15 @@
 import { spawn, type Subprocess } from "bun";
 import { resolve } from "node:path";
 import type { Logger } from "../logger";
+import type { LlamaCppAutoStartConfig, SdCppAutoStartConfig } from "../config/schema";
+import {
+  BINARY_CANDIDATES,
+  findBinary,
+  isPortFree,
+  isHuggingFaceRef,
+  waitForHealth,
+  waitForPort,
+} from "./external-server-utils";
 
 // ── Types ──────────────────────────────────────────────────
 
@@ -28,205 +37,12 @@ export interface ServerInstance {
   startedAt: number;
 }
 
-export interface LlamaCppOptions {
-  port: number;
-  /** Local path (/path/to/model.gguf) OR HuggingFace identifier (org/repo:quant) */
-  modelPath: string;
-  // ── Model / hardware ───────────────────────────────────
-  alias?: string;
-  ctxSize?: number;
-  threads?: number;
-  nGpuLayers?: string;
-  device?: string;
-  mlock?: boolean;
-  // ── KV cache ───────────────────────────────────────────
-  cacheTypeK?: string;
-  cacheTypeV?: string;
-  cacheRam?: number;
-  flashAttn?: string;
-  swaFull?: boolean;
-  // ── Context scaling ────────────────────────────────────
-  ropeScaling?: string;
-  ropeScale?: number;
-  // ── Sampler defaults ───────────────────────────────────
-  temp?: number;
-  topK?: number;
-  topP?: number;
-  minP?: number;
-  repeatPenalty?: number;
-  // ── Server behavior ────────────────────────────────────
-  parallelRequests?: number;
-  fit?: boolean;
-  // ── Advanced ───────────────────────────────────────────
-  specType?: string;
-  specDraftNMin?: number;
-  specDraftNMax?: number;
-  reasoningBudget?: number;
-  jinja?: boolean;
-  // ── Extra ───────────────────────────────────────────────
-  extraArgs?: string[];
-}
+export type LlamaCppOptions = LlamaCppAutoStartConfig;
+export type SdCppOptions = SdCppAutoStartConfig;
 
 export interface LlamaSwapOptions {
   configPath: string;
 }
-
-export interface SdCppOptions {
-  port: number;
-  modelPath: string;
-  /** "checkpoint" = full model (-m), "diffusion" = component model (--diffusion-model) */
-  modelType?: "checkpoint" | "diffusion";
-  // ── Text encoders ───────────────────────────────────────
-  llmPath?: string;
-  clipLPath?: string;
-  clipGPath?: string;
-  t5xxlPath?: string;
-  // ── Model components ────────────────────────────────────
-  vaePath?: string;
-  vaeFormat?: string;
-  controlNetPath?: string;
-  loraDir?: string;
-  taesdPath?: string;
-  hiresUpscalersDir?: string;
-  embdDir?: string;
-  photoMakerPath?: string;
-  upscaleModelPath?: string;
-  // ── Boolean flags ───────────────────────────────────────
-  fa?: boolean;
-  diffusionFA?: boolean;
-  vaeTiling?: boolean;
-  eagerLoad?: boolean;
-  offloadToCPU?: boolean;
-  streamLayers?: boolean;
-  autoFit?: boolean;
-  // ── Value flags ─────────────────────────────────────────
-  maxVram?: string;
-  backend?: string;
-  rng?: string;
-  samplerRng?: string;
-  type?: string;
-  prediction?: string;
-  cacheMode?: string;
-  cacheOption?: string;
-  // ── Extra ───────────────────────────────────────────────
-  extraArgs?: string[];
-}
-
-// ── Binary discovery ──────────────────────────────────────
-
-const BINARY_CANDIDATES = {
-  "llama-cpp": ["llama-server", "llama-server-vk"],
-  "llama-swap": ["llama-swap"],
-  "sd-cpp": ["sd-server"],
-} as const;
-
-function findBinary(type: keyof typeof BINARY_CANDIDATES): string | null {
-  const candidates = BINARY_CANDIDATES[type];
-  for (const name of candidates) {
-    const result = Bun.which(name);
-    if (result) return result;
-  }
-  return null;
-}
-
-// ── Port verification ─────────────────────────────────────
-
-function isPortFree(port: number): boolean {
-  try {
-    const server = Bun.serve({ port, fetch: () => new Response("ok") });
-    void server.stop();
-    return true;
-  } catch {
-    return false;
-  }
-}
-
-// ── Health check option types ─────────────────────────────
-
-interface WaitForHealthOptions {
-  /** Max wait in ms */
-  timeoutMs: number;
-  /** Poll interval in ms (default 500) */
-  intervalMs?: number;
-}
-
-interface WaitForStdoutOptions {
-  /** String to look for in stdout */
-  signal: string;
-  /** Max wait in ms */
-  timeoutMs: number;
-  /** Decode encoding (default utf-8) */
-  encoding?: string;
-}
-
-interface WaitForPortOptions {
-  /** Max wait in ms */
-  timeoutMs: number;
-}
-
-// ── Health checks ─────────────────────────────────────────
-
-async function waitForHealth(url: string, opts: WaitForHealthOptions): Promise<boolean> {
-  const intervalMs = opts.intervalMs ?? 500;
-  const deadline = Date.now() + opts.timeoutMs;
-  while (Date.now() < deadline) {
-    try {
-      const res = await fetch(url, { signal: AbortSignal.timeout(2000) });
-      if (res.ok) return true;
-    } catch {
-      // Still starting
-    }
-    await new Promise((r) => setTimeout(r, intervalMs));
-  }
-  return false;
-}
-
-/** Wait for process stdout to contain a signal string */
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-async function waitForStdout(proc: Subprocess, opts: WaitForStdoutOptions): Promise<boolean> {
-  const deadline = Date.now() + opts.timeoutMs;
-  const stdout = proc.stdout;
-  if (!stdout || typeof stdout === "number") return false;
-  const reader = stdout.getReader();
-
-  let buffer = "";
-  try {
-    while (Date.now() < deadline) {
-      const { value, done } = await reader.read();
-      if (done) break;
-      buffer += new TextDecoder().decode(value);
-      if (buffer.includes(opts.signal)) return true;
-      await new Promise((r) => setTimeout(r, 200));
-    }
-  } catch {
-    // stream closed
-  }
-  return false;
-}
-
-/** Wait for TCP port to respond (any HTTP status = alive) */
-async function waitForPort(port: number, opts: WaitForPortOptions): Promise<boolean> {
-  const deadline = Date.now() + opts.timeoutMs;
-  while (Date.now() < deadline) {
-    try {
-      await fetch(`http://127.0.0.1:${port}/`, { signal: AbortSignal.timeout(2000) });
-      // Any HTTP response (even 404) means server is listening
-      return true;
-    } catch {
-      await new Promise((r) => setTimeout(r, 500));
-    }
-  }
-  return false;
-}
-
-// ── Model path detection ───────────────────────────────────
-
-/** Detect HuggingFace identifier format: org/repo:quant */
-function isHuggingFaceRef(path: string): boolean {
-  return /^[\w-]+\/[\w.-]+:\w+$/i.test(path);
-}
-
-// ── Manager class ─────────────────────────────────────────
 
 export class ServerExternalManager {
   private instances: ServerInstance[] = [];
@@ -288,6 +104,8 @@ export class ServerExternalManager {
     // ── KV cache ───────────────────────────────────────────
     if (opts.cacheTypeK) args.push("-ctk", opts.cacheTypeK);
     if (opts.cacheTypeV) args.push("-ctv", opts.cacheTypeV);
+    if (opts.cacheTypeKD) args.push("-ctkd", opts.cacheTypeKD);
+    if (opts.cacheTypeVD) args.push("-ctvd", opts.cacheTypeVD);
     if (opts.cacheRam) args.push("--cache-ram", String(opts.cacheRam));
     if (opts.flashAttn) args.push("-fa", opts.flashAttn);
     if (opts.swaFull) args.push("--swa-full");
