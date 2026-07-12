@@ -31,6 +31,7 @@ import type {
   ByoKeyConfig,
   EncryptionConfig,
   HeadersConfig,
+  ModelRoleAssignment,
 } from "./schema";
 import { DbType, LogLevel, AgeGateMode } from "../db/enums";
 import { DATA_DIR } from "./constants";
@@ -131,6 +132,7 @@ export class ConfigSchema {
     } satisfies GenerationProvidersConfig,
     defaultProvider: "",
     defaultModels: {} as Record<string, string>,
+    modelRoles: {} as Record<string, ModelRoleAssignment>,
   } satisfies GenerationConfig;
 
   readonly byoKey = {
@@ -153,7 +155,7 @@ export class ConfigSchema {
     csp: {
       enabled: true,
       defaultSrc: ["'self'"],
-      scriptSrc: ["'self'", "https://unpkg.com", "https://cdn.jsdelivr.net"],
+      scriptSrc: ["'self'", "https://unpkg.com", "https://cdn.jsdelivr.net", "'unsafe-eval'"],
       styleSrc: ["'self'", "'unsafe-inline'"],
       imgSrc: ["'self'", "data:", "blob:"],
       fontSrc: ["'self'"],

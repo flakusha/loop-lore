@@ -41,6 +41,13 @@ Response:
 - Admin-only endpoints marked 🔒
 - Asset download uses signed URLs (token in query param) — see Assets section
 
+### Validation
+
+Request body validation uses Zod schemas defined per route group in companion
+`.schema.ts` files. Route handlers call `schema.parse(body)` after
+`parseBody()` — invalid requests return 422 with field-level details. See
+`docs/spec/implementation.md#runtime-validation-layer` for full design.
+
 ---
 
 ## Existing Routes (already implemented)
