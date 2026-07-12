@@ -26,7 +26,6 @@ import { ActorType } from "../db/enums";
 const VIEWS_DIR = join(import.meta.dir, "..", "views");
 const PARTIALS_DIR = join(import.meta.dir, "..", "partials");
 const COMPONENTS_DIR = join(import.meta.dir, "..", "components");
-const PUBLIC_DIR = join(import.meta.dir, "..", "..", "dist", "public");
 
 const ALLOWED_VIEWS = new Set([
   "chat",
@@ -54,6 +53,8 @@ const ALLOWED_PARTIALS = new Set([
   "worlds/edit-modal",
 ]);
 
+const viewCache = new Map<string, string>();
+
 function wrapWithLayout(content: string, title?: string): string {
   const layoutPath = join(VIEWS_DIR, "layout.html");
   if (!existsSync(layoutPath)) return content;
@@ -80,10 +81,15 @@ function resolveIncludes(content: string, seen = new Set<string>()): string {
 }
 
 function loadView(viewName: string): string {
+  const cached = viewCache.get(viewName);
+  if (cached !== undefined) return cached;
+
   const viewPath = join(VIEWS_DIR, `${viewName}.html`);
   if (!existsSync(viewPath)) return "";
   const content = readFileSync(viewPath, "utf8");
-  return resolveIncludes(content);
+  const resolved = resolveIncludes(content);
+  viewCache.set(viewName, resolved);
+  return resolved;
 }
 
 function respond(content: string, isHtmx: boolean, title?: string): Response {
@@ -195,12 +201,10 @@ async function serveCharactersGrid(database: Kysely<DB>): Promise<Response> {
     .execute();
 
   if (actors.length === 0) {
-    return htmlResponse(`<div id="character-grid" data-testid="character-grid">
-      <div class="empty-state" style="padding: var(--space-12)" data-testid="characters-empty">
-        <div class="icon">👤</div>
-        <div class="title">No characters found</div>
-        <div class="description">Create your first character to start roleplaying.</div>
-      </div>
+    return htmlResponse(`<div class="empty-state" style="padding: var(--space-12)" data-testid="characters-empty">
+      <div class="icon">👤</div>
+      <div class="title">No characters found</div>
+      <div class="description">Create your first character to start roleplaying.</div>
     </div>`);
   }
 
@@ -221,19 +225,17 @@ async function serveCharactersGrid(database: Kysely<DB>): Promise<Response> {
     })
     .join("");
 
-  return htmlResponse(`<div id="character-grid" data-testid="character-grid">${cards}</div>`);
+  return htmlResponse(cards);
 }
 
 async function serveWorldsListDb(database: Kysely<DB>): Promise<Response> {
   const worlds = await database.selectFrom("worlds").selectAll().orderBy("name", "asc").limit(100).execute();
 
   if (worlds.length === 0) {
-    return htmlResponse(`<div id="world-list" data-testid="world-list">
-      <div class="empty-state" style="padding: var(--space-12)">
-        <div class="icon">🌍</div>
-        <div class="title">No worlds found</div>
-        <div class="description">Create your first world.</div>
-      </div>
+    return htmlResponse(`<div class="empty-state" style="padding: var(--space-12)">
+      <div class="icon">🌍</div>
+      <div class="title">No worlds found</div>
+      <div class="description">Create your first world.</div>
     </div>`);
   }
 
@@ -249,18 +251,16 @@ async function serveWorldsListDb(database: Kysely<DB>): Promise<Response> {
     })
     .join("");
 
-  return htmlResponse(`<div id="world-list" data-testid="world-list">${items}</div>`);
+  return htmlResponse(items);
 }
 
 async function serveWorldDetailContent(worldId: string, database: Kysely<DB>): Promise<Response> {
   const world = await database.selectFrom("worlds").selectAll().where("id", "=", worldId).executeTakeFirst();
 
   if (!world) {
-    return htmlResponse(`<div id="world-detail" data-world-id="${worldId}">
-      <div class="empty-state" style="padding: var(--space-12)">
-        <div class="icon">⚠️</div>
-        <div class="title">World not found</div>
-      </div>
+    return htmlResponse(`<div class="empty-state" style="padding: var(--space-12)">
+      <div class="icon">⚠️</div>
+      <div class="title">World not found</div>
     </div>`);
   }
 
@@ -268,8 +268,7 @@ async function serveWorldDetailContent(worldId: string, database: Kysely<DB>): P
   const desc = escapeHtml(world.description || "");
   const lore = escapeHtml(world.lore || "No lore provided.");
 
-  return htmlResponse(`<div id="world-detail" data-world-id="${worldId}">
-    <div style="max-width:800px;margin:0 auto">
+  return htmlResponse(`<div style="max-width:800px;margin:0 auto">
       <div class="form-group" style="margin-bottom:var(--space-6)">
         <h2>${name}</h2>
         <p class="description">${desc}</p>
@@ -278,8 +277,7 @@ async function serveWorldDetailContent(worldId: string, database: Kysely<DB>): P
         <label class="form-label">Lore</label>
         <div class="lore-content">${lore}</div>
       </div>
-    </div>
-  </div>`);
+    </div>`);
 }
 
 async function serveCharacterEditForm(characterId: string, database: Kysely<DB>): Promise<Response> {
@@ -290,11 +288,9 @@ async function serveCharacterEditForm(characterId: string, database: Kysely<DB>)
     .executeTakeFirst();
 
   if (!actor) {
-    return htmlResponse(`<div id="character-edit-form" data-character-id="${characterId}">
-      <div class="empty-state" style="padding: var(--space-12)">
-        <div class="icon">⚠️</div>
-        <div class="title">Character not found</div>
-      </div>
+    return htmlResponse(`<div class="empty-state" style="padding: var(--space-12)">
+      <div class="icon">⚠️</div>
+      <div class="title">Character not found</div>
     </div>`);
   }
 
@@ -314,8 +310,7 @@ async function serveCharacterEditForm(characterId: string, database: Kysely<DB>)
     ? '<button type="button" class="btn btn-danger" onclick="clearAvatar()">Remove</button>'
     : "";
 
-  return htmlResponse(`<div id="character-edit-form" data-character-id="${characterId}">
-    <div style="max-width:720px;margin:0 auto;width:100%">
+  return htmlResponse(`<div style="max-width:720px;margin:0 auto;width:100%">
       <form id="char-edit-form" data-testid="character-edit-form">
         <div class="form-group" style="display:flex;align-items:flex-start;gap:var(--space-4)">
           <div style="width:80px;height:80px;border-radius:var(--radius-md);background:var(--bg-tertiary);display:flex;align-items:center;justify-content:center;font-size:36px;flex-shrink:0;overflow:hidden;border:1px solid var(--border-default)">
@@ -367,8 +362,7 @@ async function serveCharacterEditForm(characterId: string, database: Kysely<DB>)
           <button type="button" class="btn btn-primary" onclick="saveCharacterEdit('${characterId}')" data-testid="save-character-btn">Save Character</button>
         </div>
       </form>
-    </div>
-  </div>`);
+    </div>`);
 }
 
 async function serveCharacterChatListDb(slug: string, database: Kysely<DB>): Promise<Response> {
@@ -381,9 +375,9 @@ async function serveCharacterChatListDb(slug: string, database: Kysely<DB>): Pro
     .execute();
 
   if (chats.length === 0) {
-    return htmlResponse(`<div id="character-chat-list" class="chat-list" data-character-id="${slug}" data-testid="character-chat-list">
-      <div class="empty-state" style="padding:var(--space-12)"><div class="icon">💬</div><div class="title">No chats yet</div></div>
-    </div>`);
+    return htmlResponse(
+      `<div class="empty-state" style="padding:var(--space-12)"><div class="icon">💬</div><div class="title">No chats yet</div></div>`,
+    );
   }
 
   const items = chats
@@ -396,9 +390,7 @@ async function serveCharacterChatListDb(slug: string, database: Kysely<DB>): Pro
     })
     .join("");
 
-  return htmlResponse(
-    `<div id="character-chat-list" class="chat-list" data-character-id="${slug}" data-testid="character-chat-list">${items}</div>`,
-  );
+  return htmlResponse(items);
 }
 
 async function serveGalleryGrid(database: Kysely<DB>): Promise<Response> {
@@ -410,12 +402,10 @@ async function serveGalleryGrid(database: Kysely<DB>): Promise<Response> {
     .execute();
 
   if (assets.length === 0) {
-    return htmlResponse(`<div id="asset-grid" data-testid="asset-grid">
-      <div class="empty-state" style="grid-column:1/-1" data-testid="gallery-empty">
-        <div class="icon">📁</div>
-        <div class="title">No assets found</div>
-        <div class="description">Upload images, audio, or video to get started.</div>
-      </div>
+    return htmlResponse(`<div class="empty-state" style="grid-column:1/-1" data-testid="gallery-empty">
+      <div class="icon">📁</div>
+      <div class="title">No assets found</div>
+      <div class="description">Upload images, audio, or video to get started.</div>
     </div>`);
   }
 
@@ -450,7 +440,7 @@ async function serveGalleryGrid(database: Kysely<DB>): Promise<Response> {
     })
     .join("");
 
-  return htmlResponse(`<div id="asset-grid" data-testid="asset-grid">${cards}</div>`);
+  return htmlResponse(cards);
 }
 
 // ── Main dispatch ───────────────────────────────────────────
@@ -473,14 +463,8 @@ async function dispatchView(
     const chatResult = serveView("chat", isHtmx);
     if (chatResult) return chatResult;
 
-    const publicIndex = join(PUBLIC_DIR, "index.html");
-    if (existsSync(publicIndex)) {
-      return new Response(readFileSync(publicIndex), {
-        headers: { "Content-Type": "text/html; charset=utf-8" },
-      });
-    }
-
-    return new Response("Loop Lore");
+    // Fall through to server.ts respondWithFile for compressed variant + ETag/304.
+    return null;
   }
 
   // ── Static partials (lazy-loaded modals, skeletons) ──────

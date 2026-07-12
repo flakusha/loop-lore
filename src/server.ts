@@ -15,7 +15,13 @@ import { dispatch as dispatchGeneration } from "./generation/controller";
 import { loadAllPlugins, dispatchPluginRoute, unloadAllPlugins } from "./plugins";
 import { getDatabase } from "./db/index";
 import { initializeProviders, registerProvider, OpenAiCompatibleProvider } from "./generation";
-import { authenticate, compose, errorBoundary, ResponseHeaderPolicy } from "./middleware/index";
+import {
+  authenticate,
+  compose,
+  errorBoundary,
+  ResponseHeaderPolicy,
+  DynamicResponsePolicy,
+} from "./middleware/index";
 import type { RequestContext } from "./middleware/index";
 import { apiDispatch } from "./routes/router";
 import { dispatch as dispatchViews } from "./routes/views";
@@ -327,6 +333,9 @@ async function start() {
   // ── Response-header policy (FExBE) — built once, applied to every response ──
   const headerPolicy = new ResponseHeaderPolicy(config.headers);
 
+  // ── Dynamic-response policy — minify + validate + compress runtime bodies ──
+  const dynamicPolicy = new DynamicResponsePolicy(config.dynamicResponse, logger);
+
   // ── Shared fetch handler (HTTP + HTTPS) ───────────────────
   const fetchHandler = async (request: Request): Promise<Response> => {
     const url = new URL(request.url);
@@ -375,6 +384,9 @@ async function start() {
         }
       }
     }
+
+    // Optimize dynamic bodies (minify + validate + compress) before headers.
+    response = await dynamicPolicy.apply({ request, response });
 
     // Apply centralized response-header policy (security / perf / observability).
     return headerPolicy.apply({ request, response });
@@ -439,6 +451,17 @@ async function start() {
       })(),
     );
   }
+  const llamaSwapCfg = autoStart?.llamaSwap;
+  if (llamaSwapCfg?.enabled) {
+    initPromises.push(
+      (async () => {
+        const instance = await serverManager.startLlamaSwap({ configPath: llamaSwapCfg.configPath });
+        if (instance) {
+          serverLogger.info(`llama-swap ready → http://127.0.0.1:${instance.port}`);
+        }
+      })(),
+    );
+  }
   const sdCppCfg = autoStart?.sdCpp;
   if (sdCppCfg?.enabled) {
     initPromises.push(
@@ -456,7 +479,7 @@ async function start() {
 
   // ── Auto-build frontend JS if missing ────────────────────
   const distPublic = join(import.meta.dir, "..", "dist", "public");
-  const jsTarget = join(distPublic, "alpine.js");
+  const jsTarget = join(distPublic, "app.js");
   if (!existsSync(jsTarget)) {
     logger.info({ message: "Frontend JS not built — auto-building..." });
     const result = spawnSync("bun", ["run", "build:frontend"], {

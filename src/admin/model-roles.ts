@@ -50,7 +50,9 @@ export async function resolveModelRole(
       return { role, provider: dbOverride.provider, model: dbOverride.model, source: "db" };
     }
   } catch (error) {
-    getLogger().child({ module: "model-roles" }).warn("Failed to read DB override", { role, error: (error as Error).message });
+    getLogger()
+      .child({ module: "model-roles" })
+      .warn("Failed to read DB override", { role, error: (error as Error).message });
   }
 
   // 2. Config defaults
