@@ -142,11 +142,14 @@ const initAlpineStores = (): void => {
     showEditModal: false,
     showPreviewModal: false,
     showChatSettings: false,
+    showRenameModal: false,
     hasActiveChat: false,
   });
 };
 
-// Try to init stores immediately and on DOMContentLoaded
+// Init stores via alpine:init (fires when Alpine is ready) — this is the
+// proper lifecycle hook. DOMContentLoaded and immediate calls are fallbacks.
+document.addEventListener("alpine:init", initAlpineStores);
 initAlpineStores();
 document.addEventListener("DOMContentLoaded", initAlpineStores);
 
