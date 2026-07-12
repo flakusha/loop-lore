@@ -16,6 +16,7 @@
         "smol-toml": "^1.7.0",
       },
       "devDependencies": {
+        "@alpinejs/morph": "^3.15.12",
         "@eslint/js": "^10.0.1",
         "@playwright/test": "^1.61.1",
         "@types/blessed": "^0.1.27",
@@ -83,6 +84,8 @@
     "@algolia/requester-fetch": ["@algolia/requester-fetch@5.55.1", "", { "dependencies": { "@algolia/client-common": "5.55.1" } }, "sha512-ukU5zeeFs44rQkzv+TRdYard+d+3lmPGs8lPZhHtWE8rfz+LlBSF6s9kP3VQ7LeOYL8Dz0u6tZfnyTrqrumbHQ=="],
 
     "@algolia/requester-node-http": ["@algolia/requester-node-http@5.55.1", "", { "dependencies": { "@algolia/client-common": "5.55.1" } }, "sha512-lCwXyijwPm3vbYHpBXPRomMcD6mgiptmps27gnMCf4HK+u/AOeFPBnIFh4V3l4A5SnP9VRiKBZqwGBpUH0vaTg=="],
+
+    "@alpinejs/morph": ["@alpinejs/morph@3.15.12", "", {}, "sha512-x/QZUsbE3uMAVVzsEjSZf2xbjgzIqUZ+HW9GUtePheyIrOgHlqZETXBq1DpXg6H8kA0099SyAI9YWnKFDS31cg=="],
 
     "@babel/code-frame": ["@babel/code-frame@7.29.7", "", { "dependencies": { "@babel/helper-validator-identifier": "^7.29.7", "js-tokens": "^4.0.0", "picocolors": "^1.1.1" } }, "sha512-Aup7aUOfpbAUg2ROOJN6Iw5f9DMBlzu0mIkm/malLQFN/YQgO48wCj0Kxa3sEHJvPVFg7siR+qRInwXd2qhQKw=="],
 
