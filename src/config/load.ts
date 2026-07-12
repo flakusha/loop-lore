@@ -4,7 +4,7 @@ import { load as parseYaml } from "js-yaml";
 import { parse as parseToml } from "smol-toml";
 import { readFileSync, existsSync } from "node:fs";
 import path from "node:path";
-import { Config, DEFAULTS } from "./schema";
+import { type Config, DEFAULTS } from "./schema";
 import type { ProviderInstanceConfig } from "./schema";
 import { ConfigSchema } from "./schema-class";
 
@@ -42,10 +42,10 @@ function setByPath(object: Record<string, unknown>, path: string, value: unknown
   let current = object;
   for (let index = 0; index < parts.length - 1; index++) {
     const part = parts[index];
-    if (!Object.hasOwn(current, part) || typeof current[part] !== "object") {
-      current[part] = {};
+    if (!Object.hasOwn(current, part!) || typeof current[part!] !== "object") {
+      current[part!] = {};
     }
-    current = current[part] as Record<string, unknown>;
+    current = current[part!] as Record<string, unknown>;
   }
   current[parts.at(-1) as string] = value;
 }

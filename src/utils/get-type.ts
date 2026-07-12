@@ -28,4 +28,4 @@ export function getType(obj: unknown) {
   return lowerCaseTheFirstLetter(Object.prototype.toString.call(obj).replace(/^\[object (\S+)\]$/, "$1"));
 }
 
-const lowerCaseTheFirstLetter = (str: string) => str[0].toLowerCase() + str.slice(1);
+const lowerCaseTheFirstLetter = (str: string) => str[0]!.toLowerCase() + str.slice(1);

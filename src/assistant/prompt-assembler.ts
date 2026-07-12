@@ -290,7 +290,7 @@ export class PromptAssembler {
       for (const section of ordered) {
         if (totalTokens <= tokenBudget) break;
         section.dropped = true;
-        sections[section.index].dropped = true;
+        sections[section.index]!.dropped = true;
         totalTokens -= section.tokens;
       }
     }

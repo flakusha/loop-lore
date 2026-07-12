@@ -30,7 +30,7 @@ export class H2Handler extends TransportBase<H2Options> {
     return Promise.resolve();
   }
 
-  close(): Promise<void> {
+  override close(): Promise<void> {
     this.streams.clear();
     return super.close();
   }

@@ -58,8 +58,8 @@ describe("censorMeta", () => {
       },
     });
     const items = result!.items as Record<string, unknown>[];
-    expect(items[0].email).toBe("[REDACTED]");
-    expect(items[1].name).toBe("ok");
+    expect(items[0]!.email).toBe("[REDACTED]");
+    expect(items[1]!.name).toBe("ok");
   });
 
   test("handles null and undefined values gracefully", () => {
@@ -86,8 +86,8 @@ describe("censorMeta", () => {
   test("fieldNamesToRules converts strings to CensorRule objects", () => {
     const rules = fieldNamesToRules(["pii", "secret"]);
     expect(rules).toHaveLength(2);
-    expect(rules[0].field).toBe("pii");
-    expect(rules[1].field).toBe("secret");
+    expect(rules[0]!.field).toBe("pii");
+    expect(rules[1]!.field).toBe("secret");
   });
 
   test("uses pattern-based censoring when rule has pattern", () => {

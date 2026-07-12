@@ -50,7 +50,7 @@ export async function authenticate({
     const cookieHeader = request.headers.get("Cookie");
     if (cookieHeader) {
       const match = /(?:^|;\s*)ll_token=([^;]+)/.exec(cookieHeader);
-      if (match) rawToken = match[1];
+      if (match) rawToken = match[1]!;
     }
   }
 

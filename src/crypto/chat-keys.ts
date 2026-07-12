@@ -84,7 +84,7 @@ export async function deriveChatKey(participantKeys: ActorKeyData[], chatId: str
 
   return {
     key: derived,
-    keyId: participantKeys[0].keyId,
+    keyId: participantKeys[0]!.keyId,
     rawKey,
   };
 }
