@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>loop-lore</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 
     <!-- Core resets - always loaded -->
     <link rel="stylesheet" href="/css/theme.css" media="all" />
@@ -24,55 +25,31 @@
     <link rel="stylesheet" href="/css/gallery.css" media="all" />
 
     <!-- htmx -->
-    <script
-      src="https://unpkg.com/htmx.org@2.0.10/dist/htmx.min.js"
-      integrity="sha384-H5SrcfygHmAuTDZphMHqBJLc3FhssKjG7w/CeCpFReSfwBWDTKpkzPP8c+cLsK+V"
-      crossorigin="anonymous"
-      defer
-    ></script>
+    <script src="/js/htmx.min.js" defer></script>
 
-    <!-- App bundle: all frontend modules (single file avoids minifier name conflicts) -->
+    <!-- Chat vendor libs (marked + dompurify) — must load before app.js -->
+    <script src="/chat-vendor.js" defer></script>
+
+    <!-- App bundle: core framework (sidebar, toast, theme, locale, htmx) -->
     <script src="/app.js" defer></script>
 
+    <!-- Page-specific behaviors (characters, gallery, worlds, new-chat) -->
+    <script src="/pages.js" defer></script>
+
     <!-- Alpine.js morph plugin — MUST load before Alpine core; enables htmx-ext-alpine-morph -->
-    <script
-      src="https://unpkg.com/@alpinejs/morph@3.14.9/dist/cdn.min.js"
-      integrity="sha384-YArgI0UKWPl5xG1dFzxvZLK3+v04eVXEHnw8kanjc2TH9AaMiqE88ko43GO/drkC"
-      crossorigin="anonymous"
-      defer
-    ></script>
+    <script src="/js/alpine-morph.min.js" defer></script>
 
     <!-- Alpine.js (loaded for chat page reactivity) -->
-    <script
-      src="https://unpkg.com/alpinejs@3.14.9/dist/cdn.min.js"
-      integrity="sha384-9Ax3MmS9AClxJyd5/zafcXXjxmwFhZCdsT6HJoJjarvCaAkJlk5QDzjLJm+Wdx5F"
-      crossorigin="anonymous"
-      defer
-    ></script>
+    <script src="/js/alpine.min.js" defer></script>
 
     <!-- htmx alpine-morph extension — swaps via Alpine's morph, preserving component state -->
-    <script
-      src="https://cdn.jsdelivr.net/npm/htmx-ext-alpine-morph@2.0.0/alpine-morph.js"
-      integrity="sha384-Qxr2SF5H+3nTk2cGcn+DXeWSI67NqGe9CQZRQK9Xz6DgWO+H9QuS6oZP7HRce+/l"
-      crossorigin="anonymous"
-      defer
-    ></script>
+    <script src="/js/htmx-alpine-morph.min.js" defer></script>
 
     <!-- htmx response-targets extension (for error handling) -->
-    <script
-      src="https://cdn.jsdelivr.net/npm/htmx-ext-response-targets@2.0.4"
-      integrity="sha384-T41oglUPvXLGBVyRdZsVRxNWnOOqCynaPubjUVjxhsjFTKrFJGEMm3/0KGmNQ+Pg"
-      crossorigin="anonymous"
-      defer
-    ></script>
+    <script src="/js/htmx-response-targets.min.js" defer></script>
 
     <!-- htmx SSE extension (for streaming generation) -->
-    <script
-      src="https://cdn.jsdelivr.net/npm/htmx-ext-sse@2.2.4"
-      integrity="sha384-A986SAtodyH8eg8x8irJnYUk7i9inVQqYigD6qZ9evobksGNIXfeFvDwLSHcp31N"
-      crossorigin="anonymous"
-      defer
-    ></script>
+    <script src="/js/htmx-sse.min.js" defer></script>
 
     <style>
       body {
@@ -139,7 +116,7 @@
           href="/views/chat"
           hx-get="/views/chat"
           hx-target="#app-root"
-          hx-swap="morph"
+          hx-swap="innerHTML"
           hx-push-url="true"
           x-on:click="window.closeSidebar()"
           data-testid="nav-chat"
@@ -152,7 +129,7 @@
           href="/views/characters"
           hx-get="/views/characters"
           hx-target="#app-root"
-          hx-swap="morph"
+          hx-swap="innerHTML"
           hx-push-url="true"
           x-on:click="window.closeSidebar()"
           data-testid="nav-characters"
@@ -165,7 +142,7 @@
           href="/views/gallery"
           hx-get="/views/gallery"
           hx-target="#app-root"
-          hx-swap="morph"
+          hx-swap="innerHTML"
           hx-push-url="true"
           x-on:click="window.closeSidebar()"
           data-testid="nav-gallery"
@@ -178,7 +155,7 @@
           href="/views/worlds"
           hx-get="/views/worlds"
           hx-target="#app-root"
-          hx-swap="morph"
+          hx-swap="innerHTML"
           hx-push-url="true"
           x-on:click="window.closeSidebar()"
           data-testid="nav-worlds"
@@ -191,7 +168,7 @@
           href="/views/personas"
           hx-get="/views/personas"
           hx-target="#app-root"
-          hx-swap="morph"
+          hx-swap="innerHTML"
           hx-push-url="true"
           x-on:click="window.closeSidebar()"
           data-testid="nav-personas"
@@ -204,7 +181,7 @@
           href="/views/admin"
           hx-get="/views/admin"
           hx-target="#app-root"
-          hx-swap="morph"
+          hx-swap="innerHTML"
           hx-push-url="true"
           x-on:click="window.closeSidebar()"
           data-testid="nav-admin"
@@ -217,7 +194,7 @@
         <div class="user-info">
           <img
             class="avatar"
-            src="/img/default-avatar.png"
+            src="/img/characters/default-avatar.svg"
             alt="User avatar"
             style="background: var(--bg-tertiary)"
             data-avatar="user"
@@ -230,7 +207,7 @@
             class="btn-icon"
             hx-get="/views/settings"
             hx-target="#app-root"
-            hx-swap="morph"
+            hx-swap="innerHTML"
             hx-push-url="true"
             x-on:click="window.closeSidebar()"
             title="Settings"
