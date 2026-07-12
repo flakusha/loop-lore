@@ -4,8 +4,9 @@ Reference for which htmx and Alpine.js extensions loop-lore loads, why each
 was adopted, and which were evaluated and deferred. Revisit the deferred list
 when a concrete feature need appears.
 
-All scripts are pinned to exact versions with Subresource Integrity (SRI)
-hashes and loaded via CDN. The single canonical include block lives in
+All scripts are self-hosted — copied from `node_modules/` into `dist/public/js/`
+during `build:frontend`. Versions are pinned via `package.json` (devDependencies).
+The single canonical include block lives in
 `src/views/layout.html` (every view route is wrapped with it). There is no
 second entry point — `src/views/index.html` was removed as orphaned.
 
