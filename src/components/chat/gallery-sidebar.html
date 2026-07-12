@@ -3,10 +3,15 @@
   class="panel-backdrop"
   x-show="$store.ui.showGallery"
   @click="$store.ui.showGallery = false"
-  x-transition.opacity
+  x-cloak
 ></div>
 <!-- Gallery sidebar -->
-<aside class="gallery-sidebar" x-show="$store.ui.showGallery" x-transition data-testid="gallery-sidebar">
+<aside
+  class="gallery-sidebar"
+  :style="{ display: $store?.ui?.showGallery ? 'flex' : 'none' }"
+  x-cloak
+  data-testid="gallery-sidebar"
+>
   <button class="btn-icon" @click="$store.ui.showGallery = false" title="Close">&times;</button>
   <div class="nav-section-title" style="margin-bottom: var(--space-3)">Chat Assets</div>
   <div id="gallery-items">
