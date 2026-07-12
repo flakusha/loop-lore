@@ -3,10 +3,15 @@
   class="panel-backdrop"
   x-show="$store.ui.showChatList"
   @click="$store.ui.showChatList = false"
-  x-transition.opacity
+  x-cloak
 ></div>
 <!-- Chat list panel (component) -->
-<div class="chat-list-panel" x-show="$store.ui.showChatList" x-transition data-testid="chat-list-panel">
+<div
+  class="chat-list-panel"
+  :style="{ display: $store?.ui?.showChatList ? 'flex' : 'none' }"
+  x-cloak
+  data-testid="chat-list-panel"
+>
   <div class="chat-list-header">
     <span class="nav-section-title">Chats</span>
     <button class="btn-icon" @click="$store.ui.showChatList = false" title="Close">&times;</button>
