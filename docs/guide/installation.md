@@ -8,6 +8,8 @@
 
 ## Quick Start
 
+### macOS / Linux
+
 ```bash
 # Clone the repository
 git clone <repository-url>
@@ -24,6 +26,33 @@ bun run dev
 
 # The server will be available at http://localhost:3000
 ```
+
+### Windows
+
+> ⚠️ **Note:** The TUI interface requires either [Windows Terminal](https://aka.ms/terminal) or WSL (Windows Subsystem for Linux). PowerShell/CMD do not support the curses-based terminal UI.
+
+```powershell
+# Clone the repository
+git clone <repository-url>
+cd loop-lore
+
+# Install dependencies
+bun install
+
+# Run database migrations
+bun run db:migrate
+
+# Start the development server (HTTP only; HTTPS requires manual cert setup)
+bun run dev
+
+# The server will be available at http://localhost:3000
+```
+
+**Windows-specific considerations:**
+
+- **TLS Certificates**: Auto-generation requires OpenSSL. Install [OpenSSL for Windows](https://slproweb.com/products/Win32OpenSSL.html) or configure manual certificates at the paths specified in `config.yaml`.
+- **Binary Paths**: Ensure `llama-server.exe`, `llama-swap.exe`, and `sd-server.exe` are in your system PATH if using auto-start features.
+- **TUI**: Use Windows Terminal or WSL for the best terminal experience.
 
 ## Development Scripts
 
