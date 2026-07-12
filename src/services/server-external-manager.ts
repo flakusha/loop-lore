@@ -15,6 +15,8 @@
  */
 
 import { spawn, type Subprocess } from "bun";
+import { platform } from "node:process";
+import { homedir } from "node:os";
 import { resolve } from "node:path";
 import type { Logger } from "../logger";
 import type { LlamaCppAutoStartConfig, SdCppAutoStartConfig } from "../config/schema";
@@ -165,7 +167,12 @@ export class ServerExternalManager {
       return null;
     }
 
-    const resolvedConfig = resolve(opts.configPath);
+    // Expand ~ to home directory
+    const home = homedir();
+    const expandedPath = opts.configPath.startsWith("~")
+      ? `${home}${opts.configPath.slice(1)}`
+      : opts.configPath;
+    const resolvedConfig = resolve(expandedPath);
     this.log.info("Starting llama-swap", { binary, config: resolvedConfig });
     const proc = spawn({
       cmd: [binary, "--config", resolvedConfig, "--host", "127.0.0.1"],
@@ -295,11 +302,17 @@ export class ServerExternalManager {
   /** Stop a specific instance by type + port */
   async stop(instance: ServerInstance): Promise<void> {
     this.log.info("Stopping server", { type: instance.type, pid: instance.pid });
-    instance.process.kill("SIGTERM");
-    // Wait briefly for graceful shutdown
-    await new Promise((r) => setTimeout(r, 500));
-    if (!instance.process.killed) {
-      instance.process.kill("SIGKILL");
+
+    // On Windows, process.kill() uses terminate() which doesn't accept signal strings
+    if (platform === "win32") {
+      instance.process.kill();
+    } else {
+      instance.process.kill("SIGTERM");
+      // Wait briefly for graceful shutdown
+      await new Promise((r) => setTimeout(r, 500));
+      if (!instance.process.killed) {
+        instance.process.kill("SIGKILL");
+      }
     }
     this.instances = this.instances.filter((i) => i !== instance);
   }
@@ -321,7 +334,12 @@ export class ServerExternalManager {
     this.stopLivenessProbes();
     for (const instance of this.instances) {
       try {
-        process.kill(instance.pid, "SIGKILL");
+        // On Windows, omit signal string (only SIGTERM/SIGKILL supported)
+        if (platform === "win32") {
+          process.kill(instance.pid);
+        } else {
+          process.kill(instance.pid, "SIGKILL");
+        }
       } catch {
         // already dead — ignore
       }
