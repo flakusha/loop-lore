@@ -312,27 +312,17 @@ AES-256-GCM at-rest encryption for messages.
 
 ### 18. Local Inference Integrations — ⬜ Not Started
 
-ComfyUI plugin, llama-swap LLM proxy, stable-diffusion.cpp, gallery metadata enrichment, chat-driven generation, security baseline for remote URLs.
+ComfyUI plugin, llama-swap LLM proxy, stable-diffusion.cpp, gallery metadata enrichment,
+chat-driven generation, security baseline for remote URLs.
 
-**Actionable contract:** [`docs/meta/v02-local-inference.md`](v02-local-inference.md) — derived from `docs/research/comfyui-local-inference.md` + `docs/research/local-remote-inference-uis.md`.
-
-| Task                                                              | Files                                 | Notes                                                                                                                                                                       |
-| ----------------------------------------------------------------- | ------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Canonical ComfyUI HTTP+WS client                                  | `src/generation/comfyui/client.ts`    | `POST /prompt`, `GET /history/{id}`, `POST /upload/image`, `GET /view`, `ws://host/ws?clientId=`. No custom protocols.                                                      |
-| Workflow template manager + tag composition                       | `src/generation/comfyui/templates.ts` | JSON templates w/ placeholder substitution. Tag taxonomy `kind: character\|item\|monster\|location`, `modality: image\|video`. Stored as assets, linked to character/world. |
-| LoRA selection (prompt-inline + node inject)                      | `src/generation/comfyui/`             | Surface available LoRAs; per-gen composition.                                                                                                                               |
-| llama-swap proxy client                                           | `src/generation/llama-swap.ts`        | OpenAI-compatible, multi-model, lazy load, auto-unload.                                                                                                                     |
-| sd.cpp via sd-server (default) / sd-cli (fallback)                | `src/generation/sdcpp.ts`             | sd-server hosts model, VRAM cache, batches, no load-unload loop.                                                                                                            |
-| SSE streaming + replay buffer                                     | `src/generation/stream-buffer.ts`     | Reconnect resilience (comfy-chatbot `_JobChannel`).                                                                                                                         |
-| Asset pipeline integration                                        | `src/assets/service.ts`               | download → store → link `asset_links` → render `message.extra.image`.                                                                                                       |
-| Gallery metadata (PNG tEXt+iTXt) + faceted search                 | `src/assets/metadata.ts`              | Caption→memory, params→re-roll; semantic search differentiator.                                                                                                             |
-| Security baseline (SSRF allowlist, upload caps, path confinement) | `src/generation/`, `src/middleware/`  | Adopt when inference ships (was not in MVP dev).                                                                                                                            |
+Full contract: [backlog.md](backlog.md#p2--specified-not-implemented) (synopsis from
+`docs/research/comfyui-local-inference.md` + `docs/research/local-remote-inference-uis.md`).
 
 ### 19. Basic Chat Notifications — 🟡 In Progress
 
 In-app unread badges + toasts for messages arriving in chats the user isn't
 viewing. Reuses existing SSE (`EventSource`) + `showToast` infra. **Autonomous
-scheduled messages deferred** (see `docs/meta/deferred-concepts.md` D.5). No
+scheduled messages deferred** (see [backlog.md](backlog.md#d5-cross-chat-autonomous-messages)). No
 browser-native push (needs service worker + push server) — out of scope.
 Cross-chat activity SSE (`src/routes/activity.ts`) landed in v0.2 in-progress work.
 Read-state schema + unread badge + mark-read TODO.
@@ -347,84 +337,55 @@ Read-state schema + unread badge + mark-read TODO.
 
 ---
 
-## 🔄 Promoted from Skipped (v0.2)
-
-These were listed as skipped in v0.1. Now planned for v0.2.
-
-| Feature                                     | Moved To           | Rationale                                                                   |
-| ------------------------------------------- | ------------------ | --------------------------------------------------------------------------- |
-| Server-side i18n middleware                 | Epic 15            | Foundation for all error messages                                           |
-| Plugin management API                       | Epic 11            | Admin foundation, extension lifecycle                                       |
-| Message archiving (cascade, restore, purge) | Epic 13            | UX foundation over hard-delete                                              |
-| CSS skeleton shimmer, modal confirm dialogs | Epic 13            | Loading state and destructive-action safety                                 |
-| Multi-format character import (YAML/TOML)   | Epic 14            | Data portability                                                            |
-| Client-side encryption (AES-256-GCM)        | Epic 17            | Security foundation                                                         |
-| Anthropic/Ollama/Bedrock providers          | Epic 10 (deferred) | Needs tool-call loop first. Provider profiles already researched in Part 1. |
-| `/api/sessions` routes                      | Epic 11            | Admin user management                                                       |
-| `POST /api/auth/register`                   | Epic 11            | Admin user management                                                       |
-
----
-
 ## Known Issues
 
-Review findings collected at [`docs/meta/reviews/review-rounds.md`](reviews/review-rounds.md).
+### Resolved (2026-07-10)
 
-3 rounds (2026-07-05 through 2026-07-06): 139 findings total. A verification pass on
-**2026-07-10** confirmed the large majority of findings were already resolved in code
-(see the "Resolved (verified 2026-07-10)" section in review-rounds.md). Only a small
-set of lower-confidence items remain open.
+- **TS strict-typing debt:** `db/index.ts` alias renamed `Database`→`Db`; `bun run typecheck` clean.
 
-### ~~TypeScript strict-typing debt~~ — RESOLVED (2026-07-10)
+### Browser E2E Instability
 
-Previously reported: `src/db/index.ts` shadowed the `bun:sqlite` `Database` import
-with `export type Database = Kysely<DB>` (`TS2440`), corrupting the `Kysely<DB>` type
-and breaking `.references(...)` overloads in route files once the TS program grew.
+**Solo/Seed User ID Mismatch** — Browser E2E tests seed data with deterministic
+IDs but server solo mode creates a random solo user. Seeded data invisible.
+Fix: seed solo user with `UserRole.Solo` or have tests login as seeded user.
 
-**Resolution:** the alias was renamed to `export type Db = Kysely<DB>` (no longer
-shadows `bun:sqlite`'s `Database`), so `bun run typecheck` is clean with the full
-program. No further action needed.
+**Parallel Suite Instability** — 7 browser E2E test files sharing module-level
+singletons (`cachedSoloUser`) corrupt each other's state under parallel load.
+Also 7 Playwright browsers + 7 `Bun.serve` instances trigger timeouts.
+Fix: make `cachedSoloUser` per-request; reduce parallelism or use shared fixture.
 
----
+**Cascade Failure Pattern** — Single test timeout kills all subsequent tests in
+file via shared `ctx.page` state.
 
-## 🚫 Skipped During Implementation (v0.1 scope cut)
+### Remaining Review Findings (Round 3, 2026-07-06)
 
-These features are described in spec/frontend docs but were **intentionally cut** from the MVP. Some have partial backend shells; most have no implementation at all.
+Tracked in detail at [reviews/review-rounds.md](reviews/review-rounds.md).
+Key open items:
 
-| Feature                                                     | Spec                                      | Status                                         |
-| ----------------------------------------------------------- | ----------------------------------------- | ---------------------------------------------- |
-| Multi-format character import (PNG/YAML/TOML/CHARX)         | `docs/spec/character-setup.md`            | ❌ Only JSON import works                      |
-| Persona system (`personas` table, routes, UI)               | `docs/spec/character-setup.md`            | ✅ Implemented (v0.2)                          |
-| Impersonation (`chat.impersonate_id`)                       | `docs/spec/character-setup.md`            | ❌ Not implemented                             |
-| RPG mechanics (dice, stats, combat, XP, loot)               | `docs/spec/rpg-mechanics.md`              | ❌ `src/rpg/` does not exist                   |
-| Three-tier memory system (episodic/semantic/procedural)     | `docs/spec/memory-system.md`              | ❌ Only `actor_memories` table exists          |
-| Artifact system (code/docs/datasets as assets)              | `docs/spec/artifacts-system.md`           | ❌ Not implemented                             |
-| Agentic workspace mode                                      | `docs/spec/use-case-agentic-workspace.md` | ❌ Not implemented                             |
-| Client-side encryption (AES-256-GCM, key hierarchy)         | `docs/frontend/encryption.md`             | ❌ Messages stored as plaintext                |
-| Frontend story mode UI (GM panel, quest log, story chat)    | `docs/frontend/chat/multi-llm-story.md`   | ❌ Backend `src/story/` exists but no frontend |
-| Message archiving (cascade, restore, purge)                 | `docs/frontend/chat/archiving.md`         | ❌ Hard delete only                            |
-| Memory selection UI (mid-chat panel, pinning, auto-extract) | `docs/frontend/chat/memories.md`          | ❌ Backend reads memories; no UI               |
-| Server-side i18n middleware (`$t`, `req.t`)                 | `docs/frontend/internationalization.md`   | ❌ Minimal client-side `__()` only             |
-| Anthropic/Ollama/Bedrock providers                          | `docs/spec/provider-system.md`            | ❌ Only OpenAI-compatible exists               |
-| Plugin management API (install/list/enable/disable)         | `docs/spec/plugin-system.md`              | ❌ Plugin skeleton loads files; no API         |
-| Signed URLs for asset downloads                             | `docs/spec/assets.md`                     | ❌ Uses `raw` endpoint with Bearer auth        |
-| `POST /api/auth/register`                                   | `docs/spec/auth-middleware.md`            | ❌ Not implemented                             |
-| `/api/sessions` routes                                      | `docs/spec/users-sessions.md`             | ❌ Not implemented                             |
-| CSS skeleton shimmer, modal confirm dialogs, browser logger | `docs/frontend/components.md`             | ❌ Uses native `confirm()` and text loading    |
-| Async background compression per upload                     | `docs/spec/assets.md`                     | ❌ Only build-time static compression          |
-| S3/GCS object store backend                                 | `docs/spec/assets.md`                     | ❌ Local filesystem only                       |
-| HTTP/2 and WebSocket in transport layer                     | `docs/spec/transport-unified.md`          | ❌ Defined but not integrated into server      |
+| # | File | Issue |
+|---|------|-------|
+| 14 | `src/db/enums.ts` | Barrel re-exports but no validation enums match DB. Drift risk. |
+| 15 | `src/db/migrations/001_init.ts` | `chat_participants` PK undocumented |
+| 16 | `src/db/migrations/001_init.ts` | No index on `sessions(user_id, expires_at)` for cleanup |
+| 18 | `src/utils.ts` | `safeJsonStringify` guarded mode parses JSON twice on hot path |
+| 21 | `src/assistant/service.ts` | Config schema may not have `assistant.enabled` |
+| 22 | `src/assistant/prompt-assembler.ts` | Selective entries (keys) ignored |
+| 23 | `src/assistant/prompt-assembler.ts` | Token budget enforcement message array rebuild bug |
+| 24 | `src/tui/app.ts` | Monkey-patches `ChatWidget.setChatId` |
+| 25 | `src/tui/chat.ts` | No retry, no idempotency key |
+| 26 | `src/tui/asset-view.ts` | Left/right keys conflict with input nav |
+| 27 | `src/age-gate/controller.ts` | `runtimeConfig` module-level mutable |
+| 29 | `src/build/compress.ts` | No try/catch on single file |
 
 ---
 
 ## 🔗 Cross-Reference
 
+- Active development & bugs: this document (plan.md), [open-items.md](open-items.md)
+- Future / deferred: [backlog.md](backlog.md)
+- Long-term vision: [roadmap.md](roadmap.md)
 - DB: [schema.md](../spec/schema.md)
 - Frontend UX: [overview.md](../frontend/overview.md), [chat/](../frontend/chat/)
 - TUI: [tui.md](../spec/tui.md)
 - Assets: [assets.md](../spec/assets.md)
 - Build: `package.json` scripts
-- Research (v0.2 foundation):
-  - [Part 1: Providers, Messages, Multimodal, Retry, Compression](../research/generation-pipeline-extended.md)
-  - [Part 2: Swipe UX, Chat Modes, Settings, Text Enhancement](../research/generation-pipeline-extended-2.md)
-  - [Part 3: Memory, Context Injection, Responsive, Telemetry](../research/generation-pipeline-extended-3.md)
-  - [Part 4: Admin Config Pages/Modals, HTMX Search/Filters](../research/generation-pipeline-extended-4.md)
