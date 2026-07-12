@@ -20,6 +20,35 @@
 
 import type { HeadersConfig } from "../config/schema";
 
+/** Canonical header names for case-insensitive comparison. */
+const CANONICAL_HEADER_NAMES = new Map<string, string>([
+  ["referrer-policy", "Referrer-Policy"],
+  ["x-content-type-options", "X-Content-Type-Options"],
+  ["x-frame-options", "X-Frame-Options"],
+  ["cross-origin-resource-policy", "Cross-Origin-Resource-Policy"],
+  ["cross-origin-opener-policy", "Cross-Origin-Opener-Policy"],
+  ["cross-origin-embedder-policy", "Cross-Origin-Embedder-Policy"],
+  ["permissions-policy", "Permissions-Policy"],
+  ["content-security-policy", "Content-Security-Policy"],
+  ["content-security-policy-report-only", "Content-Security-Policy-Report-Only"],
+  ["accept-ch", "Accept-CH"],
+  ["critical-ch", "Critical-CH"],
+  ["save-data", "Save-Data"],
+  ["reporting-endpoints", "Reporting-Endpoints"],
+  ["link", "Link"],
+  ["nel", "NEL"],
+  ["vary", "Vary"],
+  ["cache-control", "Cache-Control"],
+  ["content-encoding", "Content-Encoding"],
+  ["timing-allow-origin", "Timing-Allow-Origin"],
+]);
+
+/** Normalize header key to canonical casing for case-insensitive comparison. */
+export function normalizeHeaderKey(key: string): string {
+  const lower = key.toLowerCase();
+  return CANONICAL_HEADER_NAMES.get(lower) ?? key;
+}
+
 /** Classification of an outgoing response, driving which headers apply. */
 export type RouteKind = "html" | "api" | "static";
 
@@ -54,9 +83,10 @@ export class ResponseHeaderPolicy {
 
     const headers = new Headers(response.headers);
     for (const [name, value] of Object.entries(additions)) {
+      const canonical = normalizeHeaderKey(name);
       // Route-set headers win on conflict (never clobber Content-Type, Cache-Control, SSE).
-      if (headers.has(name)) continue;
-      headers.set(name, value);
+      if (headers.has(canonical)) continue;
+      headers.set(canonical, value);
     }
 
     if (kind === "static" && this.config.immutableHashedAssets) {
@@ -95,6 +125,8 @@ export class ResponseHeaderPolicy {
         kind === "static" ? cfg.crossOriginResourcePolicy : "same-origin";
     }
 
+    if (cfg.timingAllowOrigin) headers["Timing-Allow-Origin"] = cfg.timingAllowOrigin;
+
     if ((kind === "html" || kind === "api") && cfg.permissionsPolicy) {
       headers["Permissions-Policy"] = cfg.permissionsPolicy;
     }
@@ -109,6 +141,11 @@ export class ResponseHeaderPolicy {
       if (cfg.crossOriginOpenerPolicy) headers["Cross-Origin-Opener-Policy"] = cfg.crossOriginOpenerPolicy;
       if (cfg.crossOriginEmbedderPolicy)
         headers["Cross-Origin-Embedder-Policy"] = cfg.crossOriginEmbedderPolicy;
+
+      // Timing-Allow-Origin for performance measurement on static assets
+      if (cfg.timingAllowOrigin) {
+        headers["Timing-Allow-Origin"] = cfg.timingAllowOrigin;
+      }
 
       const link = this.buildLinkHeader();
       if (link) headers.Link = link;
@@ -147,6 +184,7 @@ export class ResponseHeaderPolicy {
     push("object-src", c.objectSrc);
     push("base-uri", c.baseUri);
     push("frame-ancestors", c.frameAncestors);
+    push("form-action", c.formAction);
     if (c.upgradeInsecureRequests) directives.push("upgrade-insecure-requests");
 
     return directives.join("; ");
