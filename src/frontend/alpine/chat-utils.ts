@@ -1,6 +1,7 @@
-import DOMPurify from "dompurify";
-import { marked } from "marked";
 import type { ChatState, GroupedMessage } from "./types";
+
+const getMarked = () => (globalThis as any).__marked;
+const getDOMPurify = () => (globalThis as any).__DOMPurify;
 
 export const chatUtils: Partial<ChatState> & ThisType<ChatState> = {
   _groupedCache: null as GroupedMessage[] | null,
@@ -22,6 +23,9 @@ export const chatUtils: Partial<ChatState> & ThisType<ChatState> = {
 
   renderMarkdown(content: string): string {
     if (!content) return "";
+    const marked = getMarked();
+    const DOMPurify = getDOMPurify();
+    if (!marked || !DOMPurify) return content;
     const html = marked.parse(content) as string;
     return DOMPurify.sanitize(html, {
       ALLOWED_TAGS: [

@@ -20,41 +20,12 @@ globalThis.app = function () {
       (globalThis as any).__appInitCount = initCount;
       log.debug("init", { initCount });
 
-      if (globalThis.Alpine !== undefined) {
-        Alpine.store("sidebar", { open: false });
-        Alpine.store("ui", {
-          showChatList: false,
-          showGallery: false,
-          showCharacterInfo: false,
-          showUploadModal: false,
-          showImportForm: false,
-          showCreateForm: false,
-          showEditModal: false,
-          showPreviewModal: false,
-          showChatSettings: false,
-          showRenameModal: false,
-          hasActiveChat: false,
-        });
-      }
-
       const savedTheme = localStorage.getItem("theme-preference");
       if (savedTheme) {
         this.currentTheme = savedTheme;
       }
       this.applyTheme(this.currentTheme);
       this.loadLocale("en");
-
-      document.addEventListener(
-        "show-toast",
-        (e: CustomEvent<{ type?: string; message: string; icon?: string }>) => {
-          this.toasts.push({
-            type: e.detail.type || "info",
-            msg: e.detail.message,
-            icon: e.detail.icon || this.iconFor(e.detail.type || "info"),
-          });
-          setTimeout(() => this.toasts.shift(), 5000);
-        },
-      );
     },
 
     applyTheme(themeId: string) {
