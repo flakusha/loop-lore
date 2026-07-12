@@ -75,7 +75,7 @@ describe("encryptValue / decryptValue", () => {
     const encrypted = await encryptValue("tamper-me", SECRET);
     const parts = encrypted.split(":");
     // Corrupt the ciphertext portion
-    const corrupted = `${parts[0]}:${parts[1].slice(0, -4)}AAAA`;
+    const corrupted = `${parts[0]!}:${parts[1]!.slice(0, -4)}AAAA`;
     await expect(decryptValue(corrupted, SECRET)).rejects.toThrow();
   });
 

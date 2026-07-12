@@ -56,7 +56,7 @@ const dispatch: RouteDispatch = async ({ request, context, database }) => {
   const convertMatch = /^\/api\/personas\/([a-f0-9-]+)\/convert-to-character$/.exec(pathname);
   if (convertMatch) {
     if (method === "POST") {
-      return handleConvertToCharacter({ database, personaId: convertMatch[1], context });
+      return handleConvertToCharacter({ database, personaId: convertMatch[1]!, context });
     }
     return BAD_METHOD();
   }

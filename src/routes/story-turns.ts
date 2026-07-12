@@ -26,7 +26,8 @@ const dispatch: RouteDispatch = async ({ request, context, database }) => {
   // /api/chats/:chatId/story-turns/:turnId
   const singleMatch = /^\/api\/chats\/([a-f0-9-]+)\/story-turns\/([a-f0-9-]+)$/.exec(pathname);
   if (singleMatch) {
-    const [, chatId, turnId] = singleMatch;
+    const chatId = singleMatch[1]!;
+    const turnId = singleMatch[2]!;
     // Verify chat ownership
     const chatCheck = await database
       .selectFrom("chats")
@@ -57,7 +58,7 @@ const dispatch: RouteDispatch = async ({ request, context, database }) => {
   // /api/chats/:chatId/story-turns
   const listMatch = /^\/api\/chats\/([a-f0-9-]+)\/story-turns$/.exec(pathname);
   if (listMatch) {
-    const [, chatId] = listMatch;
+    const chatId = listMatch[1]!;
     // Verify chat ownership
     const chatCheck = await database
       .selectFrom("chats")

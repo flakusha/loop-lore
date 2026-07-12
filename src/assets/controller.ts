@@ -83,7 +83,7 @@ const dispatch: RouteDispatch = async ({ request, context, database, config }) =
   // ── /api/assets/:id sub-routes ──────────────────────────────
   const singleMatch = /^\/api\/assets\/([a-f0-9-]+)(\/\w+(?:\/\w+)?)?$/.exec(pathname);
   if (singleMatch) {
-    const assetId = singleMatch[1];
+    const assetId = singleMatch[1]!;
     const subRoute = singleMatch[2] ?? "";
 
     if (method === "GET" && !subRoute) {

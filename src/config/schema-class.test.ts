@@ -190,28 +190,28 @@ describe("ConfigSchema", () => {
   test("jsonSchema server port has min/max constraints", () => {
     const schema = ConfigSchema.jsonSchema() as Record<string, unknown>;
     const props = schema.properties as Record<string, Record<string, unknown>>;
-    const port = props.server.properties as Record<string, Record<string, unknown>>;
-    expect(port.port.minimum).toBe(0);
-    expect(port.port.maximum).toBe(65_535);
+    const port = props.server!.properties as Record<string, Record<string, unknown>>;
+    expect(port.port!.minimum).toBe(0);
+    expect(port.port!.maximum).toBe(65_535);
   });
 
   test("jsonSchema db type has enum constraint", () => {
     const schema = ConfigSchema.jsonSchema() as Record<string, unknown>;
     const props = schema.properties as Record<string, Record<string, unknown>>;
-    const db = props.db.properties as Record<string, Record<string, unknown>>;
-    expect(db.type.enum).toEqual(["sqlite", "postgres"]);
+    const db = props.db!.properties as Record<string, Record<string, unknown>>;
+    expect(db.type!.enum).toEqual(["sqlite", "postgres"]);
   });
 
   test("jsonSchema defaults match DEFAULTS values", () => {
     const schema = ConfigSchema.jsonSchema() as Record<string, unknown>;
     const props = schema.properties as Record<string, { properties: Record<string, { default: unknown }> }>;
 
-    expect(props.server.properties.port.default).toBe(3000);
-    expect(props.server.properties.host.default).toBe("localhost");
-    expect(props.db.properties.type.default).toBe("sqlite");
-    expect(props.assets.properties.enabled.default).toBe(true);
-    expect(props.auth.properties.required.default).toBe(false);
-    expect(props.messages.properties.maxLength.default).toBe(100_000);
+    expect(props.server!.properties.port!.default).toBe(3000);
+    expect(props.server!.properties.host!.default).toBe("localhost");
+    expect(props.db!.properties.type!.default).toBe("sqlite");
+    expect(props.assets!.properties.enabled!.default).toBe(true);
+    expect(props.auth!.properties.required!.default).toBe(false);
+    expect(props.messages!.properties.maxLength!.default).toBe(100_000);
   });
 
   // ── Config format round-trip ────────────────────────────

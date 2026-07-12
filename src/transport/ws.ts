@@ -28,7 +28,7 @@ export class WsHandler extends TransportBase<WsOptions> {
     };
   }
 
-  protected createConnection(): Connection {
+  protected override createConnection(): Connection {
     const id = randomUUID();
     const remoteAddr = this.options.url ?? `${this.options.host ?? "localhost"}:${this.options.port ?? 3000}`;
 
@@ -40,7 +40,7 @@ export class WsHandler extends TransportBase<WsOptions> {
     };
   }
 
-  async connect(): Promise<Connection> {
+  override async connect(): Promise<Connection> {
     const conn = await super.connect();
     if (this.options.url) {
       this.pingInterval = setInterval(() => {
@@ -66,7 +66,7 @@ export class WsHandler extends TransportBase<WsOptions> {
     return Promise.resolve();
   }
 
-  close(): Promise<void> {
+  override close(): Promise<void> {
     if (this.pingInterval) {
       clearInterval(this.pingInterval);
     }

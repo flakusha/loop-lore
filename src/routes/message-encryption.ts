@@ -24,7 +24,7 @@ interface ParsedPath {
 function parsePath(path: string): ParsedPath | null {
   const match = ENCRYPTION_KEY_RE.exec(path);
   if (!match) return null;
-  return { chatId: match[1] };
+  return { chatId: match[1]! };
 }
 
 const dispatch: RouteDispatch = async ({ request, database }) => {

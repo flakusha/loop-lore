@@ -394,7 +394,7 @@ describe("handleGenerate — streaming (SSE)", () => {
       .where("role", "=", "assistant")
       .execute();
     expect(messages).toHaveLength(1);
-    expect(messages[0].content).toBe("Mock streamed response");
+    expect(messages[0]!.content).toBe("Mock streamed response");
   });
 
   test("returns SSE error event when provider throws during stream", async () => {

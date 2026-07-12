@@ -41,7 +41,7 @@ async function main() {
   const files = walkDirectory(directory);
   let total = 0;
   let originalBytes = 0;
-  const compressedBytes: Record<string, number> = { gz: 0, zst: 0, br: 0 };
+  const compressedBytes: Record<"gz" | "zst" | "br", number> = { gz: 0, zst: 0, br: 0 };
 
   for (const file of files) {
     const content = readFileSync(file);
