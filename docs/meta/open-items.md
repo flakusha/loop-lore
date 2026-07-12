@@ -407,3 +407,25 @@ Left/right navigation keys conflict with input navigation.
 Build crash on disk full.
 
 **Fix**: Add try/catch around single file compression.
+
+---
+
+## TOOL.1 Evaluate Biome as Complementary Linter/Formatter
+
+**Severity**: Info
+**Source**: `eslint.config.mjs`, `.prettierrc`, `package.json`
+
+Biome (Rust-based linter+formatter) could replace Prettier for formatting
+(~25x faster) and cover ~60-70% of non-type-aware ESLint rules (unicorn,
+sonarjs equivalents). Type-aware typescript-eslint rules
+(`strictTypeChecked`, `stylisticTypeChecked`) must stay on ESLint — Biome
+has zero type-aware rules.
+
+**Recommended approach (when ready):**
+
+1. Port formatting to Biome (replace Prettier) — immediate speed win, low risk
+2. Optionally add Biome lint rules as fast first pass, disable overlapping ESLint rules
+3. Keep ESLint for type-aware rules; keep stylelint, markuplint, markdownlint
+
+**Status**: Deferred. No action planned. Revisit when formatting speed or
+config complexity becomes a pain point.
