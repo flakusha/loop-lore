@@ -643,9 +643,9 @@ describe("Database schema", () => {
         )
         .all(chatId) as Row[];
       expect(participants).toHaveLength(2);
-      expect(participants[0].display_name).toBe("Alice");
-      expect(participants[0].role_in_chat).toBe("owner");
-      expect(participants[1].display_name).toBe("Bob");
+      expect(participants[0]!.display_name).toBe("Alice");
+      expect(participants[0]!.role_in_chat).toBe("owner");
+      expect(participants[1]!.display_name).toBe("Bob");
     });
 
     test("composite PK prevents duplicate actor in same chat", () => {
@@ -734,10 +734,10 @@ describe("Database schema", () => {
         )
         .all(chatId) as Row[];
       expect(msgs).toHaveLength(2);
-      expect(msgs[0].content).toBe("Hi Bob!");
-      expect(msgs[0].display_name).toBe("Alice");
-      expect(msgs[1].content).toBe("Hello Alice!");
-      expect(msgs[1].display_name).toBe("Bob");
+      expect(msgs[0]!.content).toBe("Hi Bob!");
+      expect(msgs[0]!.display_name).toBe("Alice");
+      expect(msgs[1]!.content).toBe("Hello Alice!");
+      expect(msgs[1]!.display_name).toBe("Bob");
     });
   });
 

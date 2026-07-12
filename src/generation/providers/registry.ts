@@ -97,7 +97,7 @@ export async function resolveProvider({
   if (!resolvedProviderName) {
     const instances = config.generation.providers.openaiCompatible;
     if (instances.length > 0) {
-      resolvedProviderName = instances[0].name;
+      resolvedProviderName = instances[0]!.name;
     }
   }
 

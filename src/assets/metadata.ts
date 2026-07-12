@@ -16,19 +16,19 @@ const TEXTSIG = 0x74_45_58_74; // 'tEXt' in big-endian
 const ZTXTSIG = 0x7a_54_58_74; // 'zTXt' in big-endian
 
 function readUint16BE(buf: Uint8Array, offset: number): number {
-  return (buf[offset] << 8) | buf[offset + 1];
+  return (buf[offset]! << 8) | buf[offset + 1]!;
 }
 
 function readUint32BE(buf: Uint8Array, offset: number): number {
-  return ((buf[offset] << 24) | (buf[offset + 1] << 16) | (buf[offset + 2] << 8) | buf[offset + 3]) >>> 0;
+  return ((buf[offset]! << 24) | (buf[offset + 1]! << 16) | (buf[offset + 2]! << 8) | buf[offset + 3]!) >>> 0;
 }
 
 function readUint16LE(buf: Uint8Array, offset: number): number {
-  return (buf[offset + 1] << 8) | buf[offset];
+  return (buf[offset + 1]! << 8) | buf[offset]!;
 }
 
 function readUint32LE(buf: Uint8Array, offset: number): number {
-  return ((buf[offset + 3] << 24) | (buf[offset + 2] << 16) | (buf[offset + 1] << 8) | buf[offset]) >>> 0;
+  return ((buf[offset + 3]! << 24) | (buf[offset + 2]! << 16) | (buf[offset + 1]! << 8) | buf[offset]!) >>> 0;
 }
 
 function startsWith(buf: Uint8Array, prefix: Uint8Array): boolean {
@@ -83,7 +83,7 @@ function parseJpegMetadata(buf: Uint8Array): { width: number; height: number; ca
 
   while (offset + 4 < buf.length) {
     if (buf[offset] !== 0xff) break;
-    const marker = buf[offset + 1];
+    const marker = buf[offset + 1]!;
 
     if ([0xd8, 0xd9, 0x00].includes(marker)) {
       // SOI, EOI, padding
@@ -152,8 +152,8 @@ function parseWebpMetadata(buf: Uint8Array): { width: number; height: number } {
 
     if (chunkTag === "VP8X") {
       // VP8X extended header — bits 16-17 have width/height
-      const width = ((buf[offset + 12] | (buf[offset + 13] << 8)) & 0x3f_ff) + 1;
-      const height = ((buf[offset + 14] | (buf[offset + 15] << 8)) & 0x3f_ff) + 1;
+      const width = ((buf[offset + 12]! | (buf[offset + 13]! << 8)) & 0x3f_ff) + 1;
+      const height = ((buf[offset + 14]! | (buf[offset + 15]! << 8)) & 0x3f_ff) + 1;
       return { width, height };
     }
 

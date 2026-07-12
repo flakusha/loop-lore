@@ -244,7 +244,7 @@ async function handleDemoLogin(request: Request, database: Kysely<DB>, config: C
 }
 
 async function handleLogout(
-  request: Request,
+  _request: Request,
   database: Kysely<DB>,
   context: RequestContext,
 ): Promise<Response> {

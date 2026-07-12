@@ -38,7 +38,8 @@ const dispatch: RouteDispatch = async ({ request, context, database }) => {
   // /api/worlds/:worldId/npc-states/:actorId
   const npcStateMatch = /^\/api\/worlds\/([a-f0-9-]+)\/npc-states\/([a-f0-9-]+)$/.exec(pathname);
   if (npcStateMatch) {
-    const [, worldId, actorId] = npcStateMatch;
+    const worldId = npcStateMatch[1]!;
+    const actorId = npcStateMatch[2]!;
     // Verify world ownership
     const worldCheck = await database
       .selectFrom("worlds")
@@ -104,7 +105,8 @@ const dispatch: RouteDispatch = async ({ request, context, database }) => {
   // /api/worlds/:worldId/npcs-at/:locationId
   const npcsAtMatch = /^\/api\/worlds\/([a-f0-9-]+)\/npcs-at\/([a-f0-9-]+)$/.exec(pathname);
   if (npcsAtMatch) {
-    const [, worldId, locationId] = npcsAtMatch;
+    const worldId = npcsAtMatch[1]!;
+    const locationId = npcsAtMatch[2]!;
     // Verify world ownership
     const worldCheck = await database
       .selectFrom("worlds")
@@ -124,7 +126,7 @@ const dispatch: RouteDispatch = async ({ request, context, database }) => {
   // /api/locations/:locationId/state
   const locStateMatch = /^\/api\/locations\/([a-f0-9-]+)\/state$/.exec(pathname);
   if (locStateMatch) {
-    const [, locationId] = locStateMatch;
+    const locationId = locStateMatch[1]!;
     // Verify world ownership via location_states → worlds
     const locWorld = await database
       .selectFrom("location_states")
@@ -184,7 +186,7 @@ const dispatch: RouteDispatch = async ({ request, context, database }) => {
   // /api/worlds/:worldId/states (collection + snapshot)
   const worldStatesMatch = /^\/api\/worlds\/([a-f0-9-]+)\/states$/.exec(pathname);
   if (worldStatesMatch) {
-    const [, worldId] = worldStatesMatch;
+    const worldId = worldStatesMatch[1]!;
     // Verify world ownership
     const worldCheck = await database
       .selectFrom("worlds")

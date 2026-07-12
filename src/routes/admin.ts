@@ -64,17 +64,17 @@ const dispatch: RouteDispatch = async ({ request, context, database }) => {
   if (roleMatch && method === "PATCH") {
     const body = await parseBody(request);
     if (body instanceof Response) return body;
-    return handleUpdateUserRole({ database, targetId: roleMatch[1], body, context });
+    return handleUpdateUserRole({ database, targetId: roleMatch[1]!, body, context });
   }
 
   // ── /api/admin/users/:id ──────────────────────────────────
   const userMatch = /^\/api\/admin\/users\/([a-f0-9-]+)$/.exec(pathname);
   if (userMatch) {
     if (method === "GET") {
-      return handleGetUser({ database, targetId: userMatch[1], context });
+      return handleGetUser({ database, targetId: userMatch[1]!, context });
     }
     if (method === "DELETE") {
-      return handleDeleteUser({ database, targetId: userMatch[1], context });
+      return handleDeleteUser({ database, targetId: userMatch[1]!, context });
     }
     return BAD_METHOD();
   }

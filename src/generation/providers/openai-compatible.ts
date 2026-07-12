@@ -47,8 +47,6 @@ export class OpenAiCompatibleProvider implements LLMProvider {
   private readonly timeout: number;
   private readonly retries: number;
   private readonly headers: Record<string, string>;
-  private readonly models: Map<string, { contextLimit: number; maxOutput: number }>;
-
   readonly capabilities = CAPABILITIES;
 
   constructor(config: ProviderInstanceConfig) {
@@ -58,7 +56,6 @@ export class OpenAiCompatibleProvider implements LLMProvider {
     this.timeout = config.timeout;
     this.retries = config.retries;
     this.headers = config.headers ?? {};
-    this.models = new Map(Object.entries(config.models).map(([name, limits]) => [name, limits]));
   }
 
   // ── Core generation ────────────────────────────────────

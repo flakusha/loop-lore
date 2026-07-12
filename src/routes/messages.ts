@@ -168,7 +168,7 @@ interface UpdateStatusOpts {
 
 function extractMessagesChatId(pathname: string): string | null {
   const match = /^\/api\/chats\/([a-f0-9-]+)\/messages$/.exec(pathname);
-  return match ? match[1] : null;
+  return match ? match[1]! : null;
 }
 
 const dispatch: RouteDispatch = async ({ request, context, database, config }) => {
@@ -179,7 +179,7 @@ const dispatch: RouteDispatch = async ({ request, context, database, config }) =
   // ── /api/messages/:id sub-routes ────────────────────────────
   const singleMatch = /^\/api\/messages\/([a-f0-9-]+)(\/\w+)?$/.exec(pathname);
   if (singleMatch) {
-    const messageId = singleMatch[1];
+    const messageId = singleMatch[1]!;
     const subRoute = singleMatch[2] ?? "";
 
     if (method === "GET" && !subRoute) {

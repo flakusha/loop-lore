@@ -100,24 +100,24 @@ function validateCommit(message: string): CommitInfo {
 
   const [, type, scope, , subject] = match;
 
-  if (!VALID_TYPES.includes(type)) {
-    warnings.push(`Invalid type "${type}" - must be one of: ${VALID_TYPES.join(", ")}`);
+  if (!VALID_TYPES.includes(type!)) {
+    warnings.push(`Invalid type "${type!}" - must be one of: ${VALID_TYPES.join(", ")}`);
   }
 
   if (scope && !RECOMMENDED_SCOPES.includes(scope)) {
     warnings.push(`Unrecognized scope "${scope}" - consider: ${RECOMMENDED_SCOPES.join(", ")}`);
   }
 
-  if (subject.length > 72) {
-    warnings.push(`Subject long: ${subject.length}/72 characters`);
+  if (subject!.length > 72) {
+    warnings.push(`Subject long: ${subject!.length}/72 characters`);
   }
 
-  if (subject.endsWith(".")) {
+  if (subject!.endsWith(".")) {
     warnings.push(`Subject has trailing period`);
   }
 
   // Only fail on invalid type
-  const hasTypeError = !VALID_TYPES.includes(type);
+  const hasTypeError = !VALID_TYPES.includes(type!);
   return { message: firstLine, valid: !hasTypeError, warnings };
 }
 

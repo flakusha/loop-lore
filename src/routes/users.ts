@@ -59,7 +59,7 @@ interface DeleteUserOpts {
 
 function extractUserId(pathname: string): string | null {
   const match = /^\/api\/users\/([a-f0-9-]+)(\/settings)?$/.exec(pathname);
-  return match ? match[1] : null;
+  return match ? match[1]! : null;
 }
 
 const dispatch: RouteDispatch = async ({ request, context, database }) => {

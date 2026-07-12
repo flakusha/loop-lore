@@ -265,7 +265,7 @@ export function extractIdFromPath(pathname: string, prefix: string): string | nu
   const escaped = prefix.replaceAll(/[.*+?^${}()|[\]\\]/g, String.raw`\$&`);
   const regex = new RegExp(`^${escaped}/([^/]+)(/.*)?$`);
   const match = regex.exec(pathname);
-  return match ? match[1] : null;
+  return match ? match[1]! : null;
 }
 
 // ── Body field helpers ───────────────────────────────────────

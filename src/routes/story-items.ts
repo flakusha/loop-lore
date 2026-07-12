@@ -40,7 +40,8 @@ const dispatch: RouteDispatch = async ({ request, context, database }) => {
   // /api/worlds/:worldId/items/:itemId/instances
   const defInstMatch = /^\/api\/worlds\/([a-f0-9-]+)\/items\/([a-f0-9-]+)\/instances$/.exec(pathname);
   if (defInstMatch) {
-    const [, worldId, itemId] = defInstMatch;
+    const worldId = defInstMatch[1]!;
+    const itemId = defInstMatch[2]!;
     // Verify world ownership
     const worldCheck = await database
       .selectFrom("worlds")
@@ -66,7 +67,8 @@ const dispatch: RouteDispatch = async ({ request, context, database }) => {
   // /api/worlds/:worldId/items/:itemId
   const defMatch = /^\/api\/worlds\/([a-f0-9-]+)\/items\/([a-f0-9-]+)$/.exec(pathname);
   if (defMatch) {
-    const [, worldId, itemId] = defMatch;
+    const worldId = defMatch[1]!;
+    const itemId = defMatch[2]!;
     // Verify world ownership
     const worldCheck = await database
       .selectFrom("worlds")
@@ -121,7 +123,7 @@ const dispatch: RouteDispatch = async ({ request, context, database }) => {
   // /api/worlds/:worldId/items (collection)
   const collMatch = /^\/api\/worlds\/([a-f0-9-]+)\/items$/.exec(pathname);
   if (collMatch) {
-    const [, worldId] = collMatch;
+    const worldId = collMatch[1]!;
     // Verify world ownership
     const worldCheck = await database
       .selectFrom("worlds")
@@ -165,7 +167,8 @@ const dispatch: RouteDispatch = async ({ request, context, database }) => {
     pathname,
   );
   if (transferMatch) {
-    const [, worldId, instanceId] = transferMatch;
+    const worldId = transferMatch[1]!;
+    const instanceId = transferMatch[2]!;
     // Verify world ownership
     const worldCheck = await database
       .selectFrom("worlds")
@@ -193,7 +196,8 @@ const dispatch: RouteDispatch = async ({ request, context, database }) => {
   // /api/worlds/:worldId/item-instances/:instanceId
   const instMatch = /^\/api\/worlds\/([a-f0-9-]+)\/item-instances\/([a-f0-9-]+)$/.exec(pathname);
   if (instMatch) {
-    const [, worldId, instanceId] = instMatch;
+    const worldId = instMatch[1]!;
+    const instanceId = instMatch[2]!;
     // Verify world ownership
     const worldCheck = await database
       .selectFrom("worlds")
@@ -213,7 +217,7 @@ const dispatch: RouteDispatch = async ({ request, context, database }) => {
   // /api/worlds/:worldId/item-instances (create placement)
   const instCollMatch = /^\/api\/worlds\/([a-f0-9-]+)\/item-instances$/.exec(pathname);
   if (instCollMatch) {
-    const [, worldId] = instCollMatch;
+    const worldId = instCollMatch[1]!;
     // Verify world ownership
     const worldCheck = await database
       .selectFrom("worlds")

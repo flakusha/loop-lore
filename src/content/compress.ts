@@ -115,7 +115,7 @@ export async function compressAssets(
 
   const files = walkDirectory(destinationDirectory);
   let originalBytes = 0;
-  const compressedBytes: Record<string, number> = { gz: 0, zst: 0, br: 0 };
+  const compressedBytes: Record<"gz" | "zst" | "br", number> = { gz: 0, zst: 0, br: 0 };
 
   for (const file of files) {
     const stat = readFileSync(file);

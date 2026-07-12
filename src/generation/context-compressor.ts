@@ -265,7 +265,7 @@ function selectByTurns(
   let turnsFound = 0;
 
   for (let i = messages.length - 1; i >= 0; i--) {
-    const msg = messages[i];
+    const msg = messages[i]!;
     const currentTokens = calculateTotalTokens(result, tokenCountFn);
     const msgTokens = tokensForMessage(msg, tokenCountFn);
 

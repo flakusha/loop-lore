@@ -148,8 +148,8 @@ describe("compressMessages — sliding strategy", () => {
     const kept = result.compressed.filter((m) => m.role !== "system");
     expect(kept.length).toBeGreaterThan(0);
     // Last kept message should be the last assistant message
-    const lastOriginal = msgs[msgs.length - 1];
-    const lastKept = result.compressed[result.compressed.length - 1];
+    const lastOriginal = msgs[msgs.length - 1]!;
+    const lastKept = result.compressed[result.compressed.length - 1]!;
     expect(lastKept.content).toBe(lastOriginal.content);
   });
 

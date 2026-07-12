@@ -89,7 +89,7 @@ describe("deriveChatKey", () => {
     expect(chatKey.key).not.toBeNull();
     expect(chatKey.key.algorithm.name).toBe("AES-GCM");
     expect(chatKey.key.type).toBe("secret");
-    expect(chatKey.keyId).toBe(keys[0].keyId); // First participant's key
+    expect(chatKey.keyId).toBe(keys[0]!.keyId); // First participant's key
     expect(chatKey.rawKey).toBeInstanceOf(Uint8Array);
     expect(chatKey.rawKey.length).toBe(32); // 256-bit
   });

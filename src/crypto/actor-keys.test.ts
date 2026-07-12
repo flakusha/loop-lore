@@ -113,10 +113,10 @@ describe("loadActorKeys", () => {
 
     const keys = await loadActorKeys({ database: db, actorIds: [actorId], smk });
     expect(keys.length).toBeGreaterThanOrEqual(1);
-    expect(keys[0].actorId).toBe(actorId);
-    expect(keys[0].rawKey).toBeInstanceOf(Uint8Array);
-    expect(keys[0].rawKey.length).toBe(32); // 256-bit key
-    expect(keys[0].status).toBe("active");
+    expect(keys[0]!.actorId).toBe(actorId);
+    expect(keys[0]!.rawKey).toBeInstanceOf(Uint8Array);
+    expect(keys[0]!.rawKey.length).toBe(32); // 256-bit key
+    expect(keys[0]!.status).toBe("active");
   });
 
   test("returns empty array for empty actor ID list", async () => {
