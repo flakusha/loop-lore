@@ -97,6 +97,7 @@ globalThis.chatState = function () {
     _toggleChatListHandler: (() => {}) as () => void,
     _toggleGalleryHandler: (() => {}) as () => void,
     _toggleCharacterInfoHandler: (() => {}) as () => void,
+    _panelClickHandler: ((_e: MouseEvent) => {}) as (e: MouseEvent) => void,
 
     // ── Encryption state ──
     _chatKey: null as CryptoKey | null,
@@ -106,6 +107,19 @@ globalThis.chatState = function () {
 
     // ── Core methods ──
     async init() {
+      // Ensure generation state is clean on fresh mount (prevents stale
+      // isGenerating stuck after htmx morph re-initialization)
+      this.isGenerating = false;
+      this.isContinuing = false;
+      this.activeAttemptId = null;
+      this.continuingMessageId = null;
+
+      // Force-reset panel visibility on every mount (belt-and-suspenders
+      // against stale store state from a previous component instance)
+      Alpine.store("ui").showGallery = false;
+      Alpine.store("ui").showChatList = false;
+      Alpine.store("ui").showCharacterInfo = false;
+
       const storedDetail = localStorage.getItem("chat-detail-level");
       if (storedDetail === "Basic" || storedDetail === "Detailed") {
         this.detailLevel = storedDetail;
@@ -139,6 +153,29 @@ globalThis.chatState = function () {
       document.addEventListener("toggle-gallery", this._toggleGalleryHandler);
       document.addEventListener("toggle-character-info", this._toggleCharacterInfoHandler);
 
+      // Panel close: vanilla JS delegation (not @click directives) so close
+      // buttons in gallery sidebar / character info / chat list work reliably
+      // even after htmx morph swaps where Alpine @click may not re-compile
+      // on elements without their own x-data.
+      this._panelClickHandler = (e: MouseEvent) => {
+        const target = e.target as HTMLElement;
+        const ui = Alpine.store("ui");
+        const closeBtn = target.closest(".gallery-sidebar .btn-icon, .right-panel .btn-icon, .chat-list-panel .btn-icon");
+        if (closeBtn) {
+          if (closeBtn.closest(".gallery-sidebar")) ui.showGallery = false;
+          else if (closeBtn.closest(".right-panel")) ui.showCharacterInfo = false;
+          else if (closeBtn.closest(".chat-list-panel")) ui.showChatList = false;
+          return;
+        }
+        const backdrop = target.closest(".panel-backdrop");
+        if (backdrop) {
+          ui.showGallery = false;
+          ui.showCharacterInfo = false;
+          ui.showChatList = false;
+        }
+      };
+      document.addEventListener("click", this._panelClickHandler, { capture: true });
+
       this._observer = new MutationObserver(() => {
         if (!document.contains(this.$el)) {
           this.destroy();
@@ -170,6 +207,8 @@ globalThis.chatState = function () {
       document.removeEventListener("toggle-chat-list", this._toggleChatListHandler);
       document.removeEventListener("toggle-gallery", this._toggleGalleryHandler);
       document.removeEventListener("toggle-character-info", this._toggleCharacterInfoHandler);
+
+      document.removeEventListener("click", this._panelClickHandler, true);
 
       this._cleanupSSE?.();
 

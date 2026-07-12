@@ -219,3 +219,12 @@ export interface UserApiKeys {
   created_at: Generated<string>;
   updated_at: Generated<string>;
 }
+
+// ── Model Role Overrides (admin panel model assignment) ────────
+export interface ModelRoleOverrides {
+  role: string;
+  provider: string;
+  model: string;
+  created_at: Generated<string>;
+  updated_at: Generated<string>;
+}

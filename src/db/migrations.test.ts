@@ -69,6 +69,7 @@ const EXPECTED_TABLES = [
   "npc_states",
   "location_states",
   "synthetic_data",
+  "model_role_overrides",
 ] as const;
 
 function schemaTables(db: Database): Set<string> {
