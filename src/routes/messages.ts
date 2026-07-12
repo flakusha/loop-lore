@@ -462,6 +462,19 @@ async function handleCreateMessage({
   }
 
   const id = uid();
+  const role = (body.role as MessageRole | undefined) ?? MessageRole.User;
+  // Dev mode (encryption disabled) keeps content plaintext — safe to log a preview
+  // for visibility. In prod the stored payload is encrypted; skip content here.
+  const devPreview = isEncryptionEnabled() ? undefined : filteredContent.slice(0, 200);
+  log().debug("Message received", {
+    id,
+    chatId,
+    actorId,
+    role,
+    parentId: body.parentId ?? undefined,
+    contentLength: filteredContent.length,
+    contentPreview: devPreview,
+  });
   const parentId = (body.parentId as string | undefined) ?? null;
   let msgSwipeIndex: number | null = null;
   if (parentId) {
@@ -538,6 +551,14 @@ async function handleCreateMessage({
     if (assistantResponse) {
       const assistantId = uid();
       const assistantContent = filterProfanity(assistantResponse.content);
+
+      log().debug("Assistant reply (rule-based)", {
+        parentId: id,
+        chatId,
+        assistantId,
+        contentLength: assistantContent.length,
+        contentPreview: isEncryptionEnabled() ? undefined : assistantContent.slice(0, 200),
+      });
 
       // Apply same encryption as user messages
       let replyStoredContent = assistantContent;

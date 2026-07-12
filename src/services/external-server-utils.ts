@@ -5,8 +5,11 @@
  */
 
 import type { Subprocess } from "bun";
+import { platform } from "node:process";
 
 // ── Binary discovery ──────────────────────────────────────
+
+const WINDOWS_EXE_SUFFIX = ".exe";
 
 export const BINARY_CANDIDATES = {
   "llama-cpp": ["llama-server", "llama-server-vk"],
@@ -14,11 +17,21 @@ export const BINARY_CANDIDATES = {
   "sd-cpp": ["sd-server"],
 } as const;
 
+function getBinaryNameWithSuffix(name: string): string[] {
+  const names = [name];
+  if (platform === "win32") {
+    names.push(`${name}${WINDOWS_EXE_SUFFIX}`);
+  }
+  return names;
+}
+
 export function findBinary(type: keyof typeof BINARY_CANDIDATES): string | null {
   const candidates = BINARY_CANDIDATES[type];
   for (const name of candidates) {
-    const result = Bun.which(name);
-    if (result) return result;
+    for (const actualName of getBinaryNameWithSuffix(name)) {
+      const result = Bun.which(actualName);
+      if (result) return result;
+    }
   }
   return null;
 }
