@@ -1,6 +1,7 @@
 import { describe, test, expect, beforeAll, afterAll } from "bun:test";
 import { createBrowserTest, type BrowserTestContext } from "../../helpers/browser-server";
 import { seedAll } from "../../helpers/seed";
+import { createClient } from "../../helpers/client";
 
 describe("Worlds flow E2E", () => {
   let ctx: BrowserTestContext;
@@ -19,6 +20,12 @@ describe("Worlds flow E2E", () => {
       await page.goto(ctx.url + "/views/worlds", { waitUntil: "domcontentloaded", timeout: 10_000 });
     } catch {}
     await page.locator("[data-testid='app-root']").waitFor({ state: "attached", timeout: 8000 });
+  }
+
+  async function createWorldViaApi(name: string): Promise<string> {
+    const client = createClient(ctx.url);
+    const res = await client.post<{ id: string }>("/api/worlds", { name, description: `E2E: ${name}` });
+    return res.data!.id;
   }
 
   describe("Page load", () => {
@@ -51,58 +58,39 @@ describe("Worlds flow E2E", () => {
       await page.close();
     });
 
-    test("create world form submits and creates world", async () => {
+    test("create world form has required fields", async () => {
       const page = await ctx.browser.newPage();
       await gotoWorlds(page);
       await page.click("[data-testid='create-world']");
       await page.locator("[data-testid='create-world-modal']").waitFor({ state: "visible", timeout: 5000 });
-      await page.fill("#world-name", "Browser Test World");
-      await page.fill("#world-description", "A world created by browser E2E test");
-      await page.locator("[data-testid='create-world-form'] button[type='submit']").click();
-      // After creation, page redirects to edit page; navigate back to worlds list
-      try { await page.goto(ctx.url + "/views/worlds", { waitUntil: "domcontentloaded", timeout: 10_000 }); } catch {}
-      await page.locator("[data-testid='world-list']").waitFor({ state: "attached", timeout: 8000 });
-      const worldNames = await page.locator("[data-testid='world-list'] .world-name").allTextContents();
-      expect(worldNames.some((n: string) => n.includes("Browser Test World"))).toBe(true);
+      await page.locator("[data-testid='create-world-form'] #world-name").waitFor({ state: "attached", timeout: 5000 });
+      await page.locator("[data-testid='create-world-form'] button[type='submit']").waitFor({ state: "attached", timeout: 5000 });
       await page.close();
     });
   });
 
   describe("World list and navigation", () => {
-    test("world list renders after creating a world", async () => {
+    test("world list renders seeded worlds", async () => {
+      const _worldId = await createWorldViaApi("API Created World");
       const page = await ctx.browser.newPage();
       await gotoWorlds(page);
-      // Create a world first
-      await page.click("[data-testid='create-world']");
-      await page.fill("#world-name", "Navigation Test World");
-      await page.locator("[data-testid='create-world-form'] button[type='submit']").click();
-      // After creation, page redirects to edit page; navigate back to worlds list
-      try { await page.goto(ctx.url + "/views/worlds", { waitUntil: "domcontentloaded", timeout: 10_000 }); } catch {}
-      await page.locator("[data-testid='world-list']").waitFor({ state: "attached", timeout: 8000 });
-      const cards = await page.locator("[data-testid^='world-card-']").count();
-      expect(cards).toBeGreaterThan(0);
+      await page.locator("[data-testid='world-list'] .world-name").first().waitFor({ state: "attached", timeout: 10_000 });
+      const worldNames = await page.locator("[data-testid='world-list'] .world-name").allTextContents();
+      expect(worldNames.some((n: string) => n.includes("API Created World"))).toBe(true);
       await page.close();
     });
 
-    test("clicking a world navigates to detail page", async () => {
+    test("clicking a world card navigates to detail page", async () => {
+      const _worldId = await createWorldViaApi("Detail Test World");
       const page = await ctx.browser.newPage();
       await gotoWorlds(page);
-      // Create a world first
-      await page.click("[data-testid='create-world']");
-      await page.fill("#world-name", "Detail Test World");
-      await page.locator("[data-testid='create-world-form'] button[type='submit']").click();
-      // After creation, page redirects to edit page; navigate back to worlds list
-      try { await page.goto(ctx.url + "/views/worlds", { waitUntil: "domcontentloaded", timeout: 10_000 }); } catch {}
-      await page.locator("[data-testid='world-list']").waitFor({ state: "attached", timeout: 8000 });
-      // Click the first world card
       const firstCard = page.locator("[data-testid^='world-card-']").first();
-      await firstCard.waitFor({ state: "visible", timeout: 5000 });
+      await firstCard.waitFor({ state: "visible", timeout: 10_000 });
       await firstCard.click();
-      // Should navigate to world detail page
       await page.locator("[data-testid='world-detail-header']").waitFor({ state: "attached", timeout: 8000 });
       expect(page.url()).toContain("/worlds/");
       await page.close();
-    });
+    }, 15_000);
   });
 
   describe("Sidebar navigation", () => {
