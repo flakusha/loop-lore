@@ -11,11 +11,6 @@ import { browserImportKey } from "../browser";
 import { log as rootLog } from "./logger";
 const log = rootLog.child({ module: "chat-state" });
 
-// Configure marked for GFM (tables, strikethrough, task-lists) + line breaks
-// Imported in chat-utils.ts but must run once
-import { marked } from "marked";
-marked.use({ breaks: true, gfm: true });
-
 globalThis.chatState = function () {
   return {
     // ── Core state ──
@@ -94,10 +89,11 @@ globalThis.chatState = function () {
 
     // Cleanup handles
     _observer: null as MutationObserver | null,
-    _toggleChatListHandler: (() => {}) as () => void,
-    _toggleGalleryHandler: (() => {}) as () => void,
-    _toggleCharacterInfoHandler: (() => {}) as () => void,
-    _panelClickHandler: ((_e: MouseEvent) => {}) as (e: MouseEvent) => void,
+    _toggleChatListHandler: null as (() => void) | null,
+    _toggleGalleryHandler: null as (() => void) | null,
+    _toggleCharacterInfoHandler: null as (() => void) | null,
+    _panelClickHandler: null as ((e: MouseEvent) => void) | null,
+    _keydownHandler: null as ((e: KeyboardEvent) => void) | null,
 
     // ── Encryption state ──
     _chatKey: null as CryptoKey | null,
@@ -160,7 +156,9 @@ globalThis.chatState = function () {
       this._panelClickHandler = (e: MouseEvent) => {
         const target = e.target as HTMLElement;
         const ui = Alpine.store("ui");
-        const closeBtn = target.closest(".gallery-sidebar .btn-icon, .right-panel .btn-icon, .chat-list-panel .btn-icon");
+        const closeBtn = target.closest(
+          ".gallery-sidebar .btn-icon, .right-panel .btn-icon, .chat-list-panel .btn-icon",
+        );
         if (closeBtn) {
           if (closeBtn.closest(".gallery-sidebar")) ui.showGallery = false;
           else if (closeBtn.closest(".right-panel")) ui.showCharacterInfo = false;
@@ -183,7 +181,7 @@ globalThis.chatState = function () {
       });
       this._observer.observe(document.body, { childList: true, subtree: true });
 
-      document.addEventListener("keydown", (e: KeyboardEvent) => {
+      this._keydownHandler = (e: KeyboardEvent) => {
         if (e.key === "Escape") {
           if (Alpine.store("ui").showChatList) {
             Alpine.store("ui").showChatList = false;
@@ -200,15 +198,21 @@ globalThis.chatState = function () {
             if (msgId) this.continueMessage(msgId);
           }
         }
-      });
+      };
+      document.addEventListener("keydown", this._keydownHandler);
     },
 
     destroy() {
-      document.removeEventListener("toggle-chat-list", this._toggleChatListHandler);
-      document.removeEventListener("toggle-gallery", this._toggleGalleryHandler);
-      document.removeEventListener("toggle-character-info", this._toggleCharacterInfoHandler);
+      if (this._toggleChatListHandler)
+        document.removeEventListener("toggle-chat-list", this._toggleChatListHandler);
+      if (this._toggleGalleryHandler)
+        document.removeEventListener("toggle-gallery", this._toggleGalleryHandler);
+      if (this._toggleCharacterInfoHandler)
+        document.removeEventListener("toggle-character-info", this._toggleCharacterInfoHandler);
 
-      document.removeEventListener("click", this._panelClickHandler, true);
+      if (this._panelClickHandler) document.removeEventListener("click", this._panelClickHandler, true);
+
+      if (this._keydownHandler) document.removeEventListener("keydown", this._keydownHandler);
 
       this._cleanupSSE?.();
 

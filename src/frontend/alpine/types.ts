@@ -111,10 +111,11 @@ export interface ChatState extends AlpineMagicThis {
   _observer: MutationObserver | null;
   _groupedKey: string;
   _groupedCache: GroupedMessage[] | null;
-  _toggleChatListHandler: () => void;
-  _toggleGalleryHandler: () => void;
-  _toggleCharacterInfoHandler: () => void;
-  _panelClickHandler: (e: MouseEvent) => void;
+  _toggleChatListHandler: (() => void) | null;
+  _toggleGalleryHandler: (() => void) | null;
+  _toggleCharacterInfoHandler: (() => void) | null;
+  _panelClickHandler: ((e: MouseEvent) => void) | null;
+  _keydownHandler: ((e: KeyboardEvent) => void) | null;
   _chatSettingsName: string;
   _chatSettingsMode: string;
   _chatSettingsTurnStrategy: string;
@@ -263,6 +264,7 @@ declare global {
         name: string,
         extension: { onEvent?: (name: string, evt: CustomEvent) => void },
       ) => void;
+      process: (elt: HTMLElement) => void;
     };
     __: (key: string, fallback?: string) => string;
     __localeStrings: Record<string, string>;

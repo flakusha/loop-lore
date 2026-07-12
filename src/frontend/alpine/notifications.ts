@@ -28,6 +28,8 @@ export class NotificationsManager {
   private es: EventSource | null = null;
   private pollTimer: ReturnType<typeof setInterval> | undefined;
   private started = false;
+  private syncHandler: (() => void) | null = null;
+  private beforeUnloadHandler: (() => void) | null = null;
 
   start(): void {
     if (this.started) return;
@@ -37,8 +39,10 @@ export class NotificationsManager {
     this.poll();
     this.pollTimer = setInterval(() => this.poll(), POLL_INTERVAL_MS);
 
-    document.addEventListener("htmx:afterSwap", () => this.syncFromDom());
-    window.addEventListener("beforeunload", () => this.stop());
+    this.syncHandler = () => this.syncFromDom();
+    this.beforeUnloadHandler = () => this.stop();
+    document.addEventListener("htmx:afterSwap", this.syncHandler);
+    window.addEventListener("beforeunload", this.beforeUnloadHandler);
   }
 
   stop(): void {
@@ -46,6 +50,14 @@ export class NotificationsManager {
     this.es = null;
     if (this.pollTimer) clearInterval(this.pollTimer);
     this.pollTimer = undefined;
+    if (this.syncHandler) {
+      document.removeEventListener("htmx:afterSwap", this.syncHandler);
+      this.syncHandler = null;
+    }
+    if (this.beforeUnloadHandler) {
+      window.removeEventListener("beforeunload", this.beforeUnloadHandler);
+      this.beforeUnloadHandler = null;
+    }
     this.started = false;
   }
 
