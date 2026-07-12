@@ -1,10 +1,11 @@
-// src/config/schema.ts — Config interface + defaults
+// src/config/schema.ts — Config type definitions
+//
+// Types only. Defaults live in ConfigSchema class (schema-class.ts) —
+// single source of truth for env-map, validation, and JSON Schema generation.
 //
 // Enum types sourced from ../db/enums
 
-import { AgeGateMode, DbType, LogLevel } from "../db/enums";
 import type { AgeGateMode as AgeGateModeT, DbType as DbTypeT, LogLevel as LogLevelT } from "../db/enums";
-import { DATA_DIR } from "./constants";
 
 interface TlsConfig {
   /** Path to TLS private key (PEM). Auto-generated if missing. */
@@ -133,6 +134,21 @@ interface TransportConfig {
   compression: TransportCompressionConfig;
   /** Connection limits */
   limits: TransportLimitsConfig;
+}
+
+interface DynamicResponseConfig {
+  /** Master toggle for dynamic-response optimization */
+  enabled: boolean;
+  /** Minify text bodies (strip whitespace + comments) before sending */
+  minify: boolean;
+  /** Validate that html/css/js bodies parse; log + skip minify on failure */
+  validate: boolean;
+  /** Compress bodies with Content-Encoding based on Accept-Encoding */
+  compress: boolean;
+  /** Preferred algorithm; "auto" picks br when the client advertises it, else gzip */
+  compressAlgorithm: "br" | "gzip" | "auto";
+  /** Minimum body size (bytes) before compression kicks in */
+  compressThreshold: number;
 }
 
 interface AgeGateConfig {
@@ -415,9 +431,18 @@ interface SdCppAutoStartConfig {
   extraArgs?: string[];
 }
 
+interface LlamaSwapAutoStartConfig {
+  /** Enable auto-start of llama-swap proxy */
+  enabled: boolean;
+  /** Path to llama-swap config YAML */
+  configPath: string;
+}
+
 interface AutoStartConfig {
   /** Spawn llama.cpp server as child process at startup */
   llamaCpp?: LlamaCppAutoStartConfig;
+  /** Spawn llama-swap proxy as child process at startup */
+  llamaSwap?: LlamaSwapAutoStartConfig;
   /** Spawn sd-server as child process at startup */
   sdCpp?: SdCppAutoStartConfig;
 }
@@ -512,10 +537,9 @@ interface TestingConfig {
 
 /**
  * Content-Security-Policy directive set.
- * Each directive is a list of source expressions. Applied only to HTML views
- * (scripts/styles load there). `script-src` includes `'unsafe-hashes'` so the
- * existing inline `onclick=` handlers keep working without an inline-block CSP
- * bypass; tighten later by migrating handlers to Alpine `x-on`.
+ * Applied only to HTML views. `script-src` uses `'unsafe-inline'` because 7 inline
+ * `oninput`/`onchange` handlers remain (characters, worlds, gallery). Migrate to
+ * Alpine `x-on:` before tightening.
  */
 interface CspConfig {
   /** Master toggle for CSP emission. */
@@ -529,6 +553,7 @@ interface CspConfig {
   objectSrc: string[];
   baseUri: string[];
   frameAncestors: string[];
+  formAction: string[];
   /** Emit `upgrade-insecure-requests` (HTTPS deployments). */
   upgradeInsecureRequests: boolean;
   /** Emit as `Content-Security-Policy-Report-Only` (observe violations, don't enforce). */
@@ -554,10 +579,12 @@ interface HeadersConfig {
   csp: CspConfig;
   /** `Cross-Origin-Opener-Policy`. null = omit. */
   crossOriginOpenerPolicy: "same-origin" | "same-origin-allow-popups" | null;
-  /** `Cross-Origin-Embedder-Policy`. null = omit (keep OFF until wasm/SAB ready). */
+  /** `Cross-Origin-Embedder-Policy`. null = omit. */
   crossOriginEmbedderPolicy: "require-corp" | null;
   /** `Cross-Origin-Resource-Policy` for static subresources. */
   crossOriginResourcePolicy: "same-origin" | "cross-origin" | null;
+  /** `Timing-Allow-Origin` for resource timing (performance measurement). */
+  timingAllowOrigin: string;
   /** Append `immutable` to `Cache-Control` for content-hashed assets. */
   immutableHashedAssets: boolean;
   /** `Link: <...>; rel=preload` hints emitted on HTML documents. */
@@ -566,7 +593,7 @@ interface HeadersConfig {
   acceptClientHints: string[];
   /** Advertise Save-Data cooperativeness (informational). */
   saveData: boolean;
-  /** Early Hints (103) — requires transport support; spike. */
+  /** Early Hints (103) — requires transport support. */
   earlyHints: { enabled: boolean };
   /** `Reporting-Endpoints` map (name → URL) for frontend telemetry. */
   reportingEndpoints: Record<string, string>;
@@ -594,130 +621,9 @@ interface Config {
   byoKey: ByoKeyConfig;
   encryption: EncryptionConfig;
   headers: HeadersConfig;
+  dynamicResponse: DynamicResponseConfig;
   testing?: TestingConfig;
 }
-const DEFAULTS: Config = {
-  server: {
-    port: 3000,
-    host: "localhost",
-    tls: {
-      key: `${DATA_DIR}/certs/key.pem`,
-      cert: `${DATA_DIR}/certs/cert.pem`,
-    },
-  },
-  db: {
-    type: DbType.Sqlite,
-    sqliteFilename: `${DATA_DIR}/loop-lore.db`,
-  },
-  assets: {
-    enabled: true,
-    uploadDir: `${DATA_DIR}/uploads`,
-    maxFileSize: 10_485_760,
-    compression: true,
-  },
-  assistant: {
-    enabled: true,
-  },
-  logging: {
-    level: LogLevel.Debug,
-  },
-  tui: {
-    enabled: true,
-  },
-  docs: {
-    enabled: true,
-  },
-  ageGate: {
-    enabled: false,
-    minimumAge: 18,
-    mode: AgeGateMode.SelfDeclaration,
-  },
-  auth: {
-    required: false,
-    registrationOpen: true,
-    sessionTimeoutHours: 24,
-    maxSessionsPerUser: 10,
-    demoUsername: "demo",
-    demoAutoSetup: true,
-  },
-  transport: {
-    defaultProtocol: "http/1.1",
-    enableWebSocket: true,
-    enableWebTransport: false,
-    enableH2: false,
-    enableH3: false,
-    compression: {
-      enabled: false,
-      default: "none",
-      threshold: 256,
-    },
-    limits: {
-      maxFrameSize: 0x1_00_00,
-      maxPayload: 0x5_00_00,
-      maxConcurrentStreams: 100,
-    },
-  },
-  messages: {
-    autoHideInvalid: false,
-    hideConfirmation: true,
-    maxLength: 100_000,
-    maxGenerationRetries: 3,
-    generationTimeoutMs: 30_000,
-    idempotencyExpiryHours: 24,
-  },
-  nsfw: {
-    allowNsfw: true,
-    nsfwMinAge: 18,
-  },
-  generation: {
-    providers: {
-      openaiCompatible: [],
-    },
-    defaultProvider: "",
-    defaultModels: {},
-    modelRoles: {},
-  },
-  byoKey: {
-    enabled: true,
-  },
-  encryption: {
-    required: false,
-    compressThreshold: 128,
-    compressAlgorithm: "gzip",
-  },
-  headers: {
-    enabled: true,
-    referrerPolicy: "strict-origin-when-cross-origin",
-    xContentTypeOptions: true,
-    xFrameOptions: "DENY",
-    permissionsPolicy:
-      "accelerometer=(), camera=(), display-capture=(), geolocation=(), gyroscope=(), microphone=(), usb=()",
-    csp: {
-      enabled: true,
-      defaultSrc: ["'self'"],
-      scriptSrc: ["'self'", "https://unpkg.com", "https://cdn.jsdelivr.net", "'unsafe-eval'"],
-      styleSrc: ["'self'", "'unsafe-inline'"],
-      imgSrc: ["'self'", "data:", "blob:"],
-      fontSrc: ["'self'"],
-      connectSrc: ["'self'", "wss:", "https:"],
-      objectSrc: ["'none'"],
-      baseUri: ["'self'"],
-      frameAncestors: ["'none'"],
-      upgradeInsecureRequests: true,
-      reportOnly: false,
-    },
-    crossOriginOpenerPolicy: null,
-    crossOriginEmbedderPolicy: null,
-    crossOriginResourcePolicy: "cross-origin",
-    immutableHashedAssets: true,
-    linkPreload: ["/app.js", "/css/app.css"],
-    acceptClientHints: [],
-    saveData: false,
-    earlyHints: { enabled: false },
-    reportingEndpoints: {},
-    nel: null,
-  },
-};
 
 // DEAD CODE: Bedrock provider defaults (add when implementing)
 // const BEDROCK_DEFAULTS: BedrockProviderConfig = {
@@ -742,6 +648,7 @@ export type {
   CspConfig,
   DatabaseConfig as DbConfig,
   DocumentationConfig,
+  DynamicResponseConfig,
   EncryptionConfig,
   GenerationConfig,
   GenerationProvidersConfig,
@@ -749,6 +656,7 @@ export type {
   ImageProviderConfig,
   ImageProviderDefaults,
   LlamaCppAutoStartConfig,
+  LlamaSwapAutoStartConfig,
   LoggingConfig,
   MessagesConfig,
   ModelLimits,
@@ -764,4 +672,3 @@ export type {
   TransportLimitsConfig,
   TuiConfig,
 };
-export { DEFAULTS };

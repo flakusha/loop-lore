@@ -12,6 +12,7 @@ import { existsSync, mkdirSync } from "node:fs";
 import { dirname } from "node:path";
 import { getLogger } from "../logger";
 import type { TlsConfig } from "./schema";
+import { platform } from "node:process";
 
 export type TlsFiles = TlsConfig;
 
@@ -41,31 +42,44 @@ export function ensureTlsCerts(configPath: TlsFiles): TlsFiles | null {
   // Generate self-signed cert
   getTlsLog().info("Generating self-signed development certificate...");
 
-  const subject = "/C=XX/ST=Development/L=Local/O=loop-lore/CN=localhost";
-  const result = Bun.spawnSync([
-    "openssl",
-    "req",
-    "-x509",
-    "-nodes",
-    "-days",
-    "365",
-    "-newkey",
-    "rsa:2048",
-    "-keyout",
-    configPath.key,
-    "-out",
-    configPath.cert,
-    "-subj",
-    subject,
-  ]);
+  // On Windows, try openssl.exe as well
+  const opensslBin = platform === "win32" ? ["openssl.exe", "openssl"] : ["openssl"];
 
-  if (!result.success) {
-    const message = result.stderr.toString().trim() || "unknown error";
-    getTlsLog().warn(`Failed to generate certificate: ${message}`);
-    getTlsLog().warn("Falling back to HTTP only. Install openssl or configure certs manually.");
-    return null;
+  for (const bin of opensslBin) {
+    try {
+      const result = Bun.spawnSync([
+        bin,
+        "req",
+        "-x509",
+        "-nodes",
+        "-days",
+        "365",
+        "-newkey",
+        "rsa:2048",
+        "-keyout",
+        configPath.key,
+        "-out",
+        configPath.cert,
+        "-subj",
+        "/C=XX/ST=Development/L=Local/O=loop-lore/CN=localhost",
+      ]);
+
+      if (result.success) {
+        getTlsLog().info(`Certificate generated: ${configPath.cert}`);
+        return configPath;
+      }
+    } catch {
+      // Try next binary
+    }
   }
 
-  getTlsLog().info(`Certificate generated: ${configPath.cert}`);
-  return configPath;
+  const platformHint =
+    platform === "win32"
+      ? "Install OpenSSL for Windows (https://slproweb.com/products/Win32OpenSSL.html) or configure certs manually."
+      : "Install OpenSSL or configure certs manually.";
+
+  getTlsLog().warn(`Failed to generate certificate. ${platformHint}`);
+  getTlsLog().warn("Falling back to HTTP only.");
+
+  return null;
 }

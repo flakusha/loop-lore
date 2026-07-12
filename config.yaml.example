@@ -183,7 +183,7 @@ headers:
   csp:
     enabled: true
     defaultSrc: ["'self'"]
-    scriptSrc: ["'self'", "https://unpkg.com", "https://cdn.jsdelivr.net"]   # inline handlers migrated to Alpine x-on
+    scriptSrc: ["'self'"]                                      # self-hosted Alpine + htmx
     styleSrc: ["'self'", "'unsafe-inline'"]                                  # inline style= attrs need unsafe-inline
     imgSrc: ["'self'", "data:", "blob:"]
     fontSrc: ["'self'"]
@@ -197,7 +197,7 @@ headers:
   # crossOriginEmbedderPolicy: null    # require-corp | null  (keep null until wasm/SAB ready)
   crossOriginResourcePolicy: cross-origin   # same-origin | cross-origin
   immutableHashedAssets: true
-  linkPreload: ["/app.js", "/alpine.js", "/css/app.css"]
+  linkPreload: ["/app.js", "/js/alpine.min.js", "/css/app.css"]
   # acceptClientHints: ["Device-Memory", "RTT"]   # needs HTTPS; opt-in client hints
   # saveData: false
   earlyHints:

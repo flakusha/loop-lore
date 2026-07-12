@@ -1,32 +1,36 @@
 import { describe, test, expect } from "bun:test";
-import { DEFAULTS } from "./schema";
+import { ConfigSchema } from "./schema-class";
 import type { Config } from "./schema";
 import { deepMerge, validateConfig, coerceValue, setByPath } from "./load";
 
 describe("DEFAULTS", () => {
+  function defaults() {
+    return structuredClone(new ConfigSchema().defaults);
+  }
+
   test("has all required config sections", () => {
-    expect(DEFAULTS.server).toBeDefined();
-    expect(DEFAULTS.db).toBeDefined();
-    expect(DEFAULTS.assets).toBeDefined();
-    expect(DEFAULTS.assistant).toBeDefined();
-    expect(DEFAULTS.logging).toBeDefined();
-    expect(DEFAULTS.tui).toBeDefined();
-    expect(DEFAULTS.docs).toBeDefined();
+    const cfg = defaults();
+    expect(cfg.server).toBeDefined();
+    expect(cfg.db).toBeDefined();
+    expect(cfg.assets).toBeDefined();
+    expect(cfg.assistant).toBeDefined();
+    expect(cfg.logging).toBeDefined();
+    expect(cfg.tui).toBeDefined();
+    expect(cfg.docs).toBeDefined();
   });
 
   test("server defaults to port 3000", () => {
-    expect(DEFAULTS.server.port).toBe(3000);
+    expect(defaults().server.port).toBe(3000);
   });
 
   test("db defaults to sqlite", () => {
-    expect(DEFAULTS.db.type).toBe("sqlite");
+    expect(defaults().db.type).toBe("sqlite");
   });
 
   test("defaults are deeply frozen-compatible (no shared references)", () => {
-    const clone1 = structuredClone(DEFAULTS);
-    const clone2 = structuredClone(DEFAULTS);
+    const clone1 = defaults();
+    const clone2 = defaults();
     clone1.server.port = 9999;
-    expect(DEFAULTS.server.port).toBe(3000);
     expect(clone2.server.port).toBe(3000);
   });
 });
@@ -139,7 +143,7 @@ describe("setByPath", () => {
 
 describe("validateConfig", () => {
   function validConfig(): Config {
-    return structuredClone(DEFAULTS);
+    return structuredClone(new ConfigSchema().defaults);
   }
 
   test("passes on valid defaults", () => {
