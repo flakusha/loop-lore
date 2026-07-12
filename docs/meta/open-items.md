@@ -429,3 +429,59 @@ has zero type-aware rules.
 
 **Status**: Deferred. No action planned. Revisit when formatting speed or
 config complexity becomes a pain point.
+
+---
+
+## HTTP.1 Landing `/` Static Read Bypasses `respondWithFile`
+
+**Severity**: Medium
+**Source**: `src/routes/views.ts` (landing branch), `src/server.ts` (`respondWithFile`)
+
+The landing route serves `dist/public/index.html` via a raw `readFileSync` +
+`new Response`, so it emits no `Content-Encoding`, `Vary`, or `ETag` — even
+though `compressAssets` produced `.gz/.br/.zst` variants for that exact file.
+Every other static path goes through `respondWithFile`, which negotiates the
+compressed variant and sets ETag/304. The dynamic-response policy (HTTP.3)
+will gzip/br this body at runtime, but it still re-compresses per request and
+skips the ETag/304 short-circuit the static path already offers.
+
+**Fix**: Route the landing branch through `respondWithFile` (export it from
+`server.ts` or move the branch into the server fetch handler) so the
+pre-built variant + ETag are reused.
+
+---
+
+## HTTP.2 Source/Artifact Divergence for View Templates
+
+**Severity**: Low
+**Source**: `src/routes/views.ts` (`VIEWS_DIR`, `loadView`), `src/server.ts` (startup copy)
+
+`views.ts` reads templates from raw `src/views` at request time, but startup
+copies + minifies + compresses those same files into `dist/public`. The
+minified `dist/public/*.html(.gz)` copies are effectively dead for routed
+paths (`/views/*`, `/character/*`, `/worlds/*`) — they are only hit if a raw
+`.html` path falls through to `respondWithFile`. The runtime dynamic-response
+policy (HTTP.3) now minifies these on the fly, masking the waste, but the
+build-time minified copies remain unused.
+
+**Fix**: Either serve views from the already-minified `dist/public` copies,
+or cache a minified version of each template at first load. Avoid paying
+per-request `minifyHTMLContent` cost for otherwise-static templates.
+
+---
+
+## HTTP.3 Dynamic-Response Optimization — Implemented
+
+**Severity**: Resolved (2026-07-12)
+**Source**: `src/middleware/dynamic-response.ts`, `src/server.ts`, `src/config/schema.ts`
+
+Runtime-templated HTML/CSS/JS/JSON responses previously bypassed both
+minification and compression (only startup static files were optimized).
+Added `DynamicResponsePolicy` — a fetch-handler middleware that validates,
+minifies (strip whitespace + comments), and compresses (br/gzip via
+`Accept-Encoding`) dynamic bodies above a size threshold. Configurable via
+the `dynamicResponse` config block. SSE and already-encoded responses are
+skipped. See tests in `src/middleware/dynamic-response.test.ts`.
+
+**Follow-ups**: HTTP.1 (landing ETag reuse), HTTP.2 (template minify caching)
+remain open.
