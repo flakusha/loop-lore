@@ -58,10 +58,7 @@ document.addEventListener("htmx:beforeSwap", () => {
 });
 
 // Trigger page-specific loaders on htmx content swaps (for pages still using JS)
-const PAGE_LOADERS: Map<string, string> = new Map([
-  ["#create-chat-form", "loadNewChatPage"],
-  ['[data-page="settings"]', "loadSettingsPage"],
-]);
+const PAGE_LOADERS: Map<string, string> = new Map([["#create-chat-form", "loadNewChatPage"]]);
 
 function triggerPageLoaders(): void {
   for (const [sel, fn] of PAGE_LOADERS) {
@@ -74,38 +71,71 @@ function triggerPageLoaders(): void {
 document.addEventListener("htmx:load", (e: CustomEvent<{ elt: Element }>) => {
   const elt = e.detail.elt;
   apiLog.debug("htmx:load", { tag: elt?.tagName, id: (elt as any)?.id });
-  if (elt && globalThis.Alpine && elt.querySelector("[x-data]")) {
-    elt.querySelectorAll("[x-data]").forEach((child: Element) => {
-      Alpine!.initTree(child as HTMLElement);
-    });
+  if (elt && (globalThis as any).htmx && globalThis.Alpine) {
+    htmx.process(elt as HTMLElement);
+    try {
+      Alpine.initTree(elt as HTMLElement);
+    } catch {
+      /* Alpine may fail on partial swaps */
+    }
   }
   triggerPageLoaders();
-  // Remove duplicate header-slot from #app-root after navigation
   normalizeHeaderSlot();
 });
 
+// Update document title from header title after navigation
+document.addEventListener("htmx:afterSwap", (e: Event) => {
+  const target = (e as CustomEvent<{ target: Element }>)?.detail?.target;
+  if (target) {
+    const header = document.querySelector<HTMLElement>("#header-slot .title");
+    if (header) {
+      const title = header.textContent?.trim() || "";
+      if (title) {
+        document.title = `${title} — Loop Lore`;
+      }
+    }
+  }
+});
+
 function normalizeHeaderSlot() {
-  const all = document.querySelectorAll("#header-slot");
+  const all = Array.from(document.querySelectorAll<HTMLElement>("#header-slot"));
   const appRoot = document.querySelector("#app-root");
-  if (!appRoot || all.length === 0) return;
-  let best: Element | null = null;
-  let bestChildren = -1;
+  if (!appRoot || all.length < 2) return;
+
   for (const h of all) {
-    if (!appRoot.contains(h)) {
-      continue;
+    if (h.children.length === 0) h.remove();
+  }
+
+  const remaining = document.querySelectorAll<HTMLElement>("#header-slot");
+  if (remaining.length <= 1) {
+    const h = remaining[0];
+    if (h && appRoot.contains(h)) {
+      appRoot.parentElement?.insertBefore(h, appRoot);
     }
-    const n = h.children.length;
-    if (n > bestChildren) {
-      best = h;
-      bestChildren = n;
+    return;
+  }
+
+  let newest: HTMLElement | null = null;
+  for (const h of remaining) {
+    if (appRoot.contains(h) && (!newest || h.children.length > newest.children.length)) {
+      newest = h;
     }
   }
-  if (!best) best = all[0];
-  for (const h of all) {
-    if (h !== best) h.remove();
+
+  if (!newest) {
+    newest = remaining[0];
+    for (const h of remaining) {
+      if (h.children.length > newest.children.length) {
+        newest = h;
+      }
+    }
   }
-  if (appRoot.contains(best)) {
-    appRoot.parentElement?.insertBefore(best, appRoot);
+
+  for (const h of remaining) {
+    if (h !== newest) h.remove();
+  }
+  if (newest && appRoot.contains(newest)) {
+    appRoot.parentElement?.insertBefore(newest, appRoot);
   }
 }
 

@@ -1,6 +1,6 @@
 /**
- * App entry — single bundle combining all core modules.
- * Single file avoids cross-bundle minified name conflicts (var e / class e).
+ * App entry — core framework bundle (sidebar, toast, theme, locale, htmx).
+ * Page-specific behaviors are in pages.ts (separate bundle).
  */
 import "./alpine/types";
 import "./alpine/theme";
@@ -10,5 +10,4 @@ import "./alpine/htmx";
 import "./alpine/world-edit";
 import "./alpine/chat";
 import "./ui";
-import "./page-loaders";
 import "./gallery-upload";
