@@ -2,7 +2,10 @@
 
 ## Chat Types
 
-A chat is always a 1:1 conversation. Three types, distinguished by participants:
+A chat is either **1:1** (`type: direct`) or **multi-participant** (`type: group`).
+Group support is structurally present (schema + UI) but talkativity, multi-user, and
+story orchestration still require implementation — see [group-chat.md](./group-chat.md).
+Participants are distinguished by actor type:
 
 | Type             | Participants          | Assistant role                                                   | Primary use                                             |
 | ---------------- | --------------------- | ---------------------------------------------------------------- | ------------------------------------------------------- |
@@ -10,7 +13,12 @@ A chat is always a 1:1 conversation. Three types, distinguished by participants:
 | User × User      | User + User           | Optional: game master, dice rolls, narration                     | Collaborative storytelling, co-writing                  |
 | User × Assistant | User + Assistant only | Acts as agent: edits text, generates images, helps develop story | Story/world development, writing support, brainstorming |
 
-**Assistant role**: when present, the assistant is NOT a conversation participant — it operates as a background agent that can edit messages, enforce rules, manage game state, generate images, or provide suggestions. The assistant's actions are configurable per chat.
+**Assistant role**: the assistant is a **first-class, per-chat configurable entity** (not a
+background-only agent). It can be absent, or take one of three roles — **Pure Assistant**,
+**Game Master (GM)**, or **Moderator** — each with its own permissions. The GM in
+particular may be created **with or without permission to influence the chat** (observer vs.
+influencing). Full design in [assistant.md](./assistant.md). Note: only a global
+rule-based responder exists today; the per-chat entity is not yet implemented.
 
 **World + Location**: any chat type can optionally reference a World (first-class entity with lore, rules, atmosphere). A World can have many Locations, which can be connected to each other (e.g., "Forest → Cave → Dungeon"). A 1:1 chat optionally binds to a specific Location within a World.
 
@@ -20,7 +28,18 @@ A chat is always a 1:1 conversation. Three types, distinguished by participants:
 - World has many Locations; a Location belongs to one World.
 - A chat optionally binds to a specific Location. The same Location can be referenced by multiple chats. Locations can connect to each other (forming a graph: Forest → Cave → Dungeon).
 
-**Group chat**: explicitly excluded from v1. Listed as a future consideration.
+**Group chat**: structurally supported (the `chats.type = group` column, the
+`chat_participants` many-to-many table, and the new-chat UI all exist), but the behaviors
+that make it useful are **not yet implemented**:
+
+- **Talkativity** — multiple AI characters taking turns — requires the generation path to
+  select more than one participant (today it replies as only the first non-user actor).
+- **Multi-user** — the new-chat UI filters out `actor_type = user`, so multiple humans
+  cannot currently be added as participants.
+- **Story orchestration** — `ChatMode.Story` is selectable but the story API/turn-manager is
+  unwired.
+
+See [group-chat.md](./group-chat.md) and [assistant.md](./assistant.md).
 
 ---
 
@@ -104,6 +123,12 @@ The **chat master** is the user who created the chat.
 | Solo mode       | Local user is always master                                                          |
 
 In User × User chats, both users are co-masters.
+
+**Assistant / GM relationship**: the chat master configures the assistant, including its GM
+permission tier (see [assistant.md](./assistant.md)). An **Influencing GM** can perform
+master-like actions (write messages, edit world/quest state, manage participants); an
+**Observer GM** may only advise and cannot mutate the chat. An **Admin** overrides both the
+master and any GM.
 
 ---
 
