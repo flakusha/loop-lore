@@ -21,6 +21,8 @@ loop-lore handles user data and API keys. If you discover:
 - XSS in chat messages
 - Improper encryption handling
 - Path traversal in asset uploads
+- **Prompt injection** — see `docs/spec/prompt-injection.md` for the current risk analysis
+  (known vectors, trust posture of each prompt section, and open remediation items)
 
 Please report immediately.
 
