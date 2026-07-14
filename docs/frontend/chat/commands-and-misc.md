@@ -39,17 +39,41 @@
 
 ---
 
-## Group Chat (Future, Not v1)
+## Chat Commands (`/`)
 
-Explicitly excluded from v1. All chats in v1 are 1:1. Group chat would introduce:
+Slash commands provide precise, keyboard-driven actions inside a chat. Typing `/` opens a
+command palette that lists available commands with **dynamic precise/fuzzy matching**:
+
+- **Precise listing** — commands filter as you type by exact prefix/subcommand
+  (`/inv` → `/inventory`, `/sum` → `/summarize`).
+- **Fuzzy listing** — partial/typo-tolerant matching surfaces the closest command when no
+  exact prefix matches (`/sumary` → `/summarize`, `/invntory` → `/inventory`).
+- The list is **dynamic** — it reflects the active chat context (mode, participants,
+  assistant roles, GM permissions). Commands relevant only to a story chat, or available only
+  to a master/GM, appear or disappear accordingly.
+- Command **names are always English** (e.g., `/swipe`, `/summarize`); argument values may
+  be localized (see `../internationalization.md`).
+
+Examples: `/swipe`, `/summarize`, `/inventory`, `/roll`, `/impersonate`, `/gm`,
+`/moderate`. (No dedicated command reference doc yet — the `/api/assistant` surface
+described in `../../reference/api.md` is aspirational.)
+
+## Group Chat (In Progress)
+
+Group chat is now **partially implemented**: the `chats.type = group` column, the
+`chat_participants` many-to-many table, and the new-chat UI (direct/group + multi-select)
+exist, so a group chat can be created. The behaviors below are **not yet implemented** —
+see [group-chat.md](./group-chat.md) for the full draft and TODO list.
+
+Intended capabilities:
 
 - Multiple participants (users + characters)
 - Participant roles (admin, moderator, member)
 - Message threading (reply-to specific messages)
 - Panel freeze by admin (prevent users from manipulating story/location/assistant settings)
-- The assistant as a neutral moderator/game master
-
-No further spec defined until v1 is stable.
+- The assistant as a neutral **moderator / game master** — see
+  [assistant.md](./assistant.md). The assistant may act as a GM (with or without permission
+  to influence the chat) or as a policy moderator that detects prohibited content.
 
 ---
 
