@@ -6,7 +6,7 @@
 
 ## Overview
 
-This feature introduces **multi-LLM collaborative story generation** where multiple LLMs take turns developing a story, guided by an **Assistant LLM acting as Game Master** (or a human Game Master). The system supports:
+This feature introduces **multi-LLM collaborative story generation** where multiple LLMs take turns developing a story, guided by an **Assistant LLM acting as Game Master** (or a human Game Master). The Game Master is the assistant in its **GM role** — see [assistant.md](./assistant.md) for the assistant entity, its permission tiers (observer vs. influencing GM), and the moderator variant. The system supports:
 
 - **Turn-based LLM responses** — multiple AI characters/narrators respond in sequence
 - **Game Master orchestration** — Assistant LLM (or human) manages turn order, analyzes responses, regenerates poor quality outputs
@@ -687,7 +687,7 @@ A human GM dashboard showing:
 ### Phase 1: Core Schema & Types (Week 1-2)
 
 - [ ] Add `mode: 'story'` to chats table
-- [ ] Extend `actors.agent_type` with `'game_master'`
+- [ ] Model the GM as the assistant in its **GM role** (see [assistant.md](./assistant.md)) — `chats.gm_config` already exists for GM configuration; no separate `game_master` agent_type required
 - [ ] Add `npc_states`, `location_states`, `world_states` tables
 - [ ] Add `quests` table with type-specific JSON configs
 - [ ] Add `synthetic_scenarios` table
