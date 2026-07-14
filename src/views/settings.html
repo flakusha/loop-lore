@@ -19,10 +19,11 @@
 
         <div style="margin-top: var(--space-6); width: 100%; max-width: 400px">
           <div class="form-group">
-            <label class="form-label">Display Name</label>
+            <label class="form-label" for="displayName">Display Name</label>
             <input
               type="text"
               class="form-input"
+              id="displayName"
               name="displayName"
               x-model="displayName"
               placeholder="Your display name"
@@ -30,13 +31,19 @@
           </div>
 
           <div class="form-group">
-            <label class="form-label">Birth Date (for age-gated content)</label>
-            <input type="date" class="form-input" name="birthDate" x-model="birthDate" />
+            <label class="form-label" for="birthDate">Birth Date (for age-gated content)</label>
+            <input type="date" class="form-input" id="birthDate" name="birthDate" x-model="birthDate" />
           </div>
 
           <div class="form-group">
-            <label class="form-label">Theme</label>
-            <select class="form-select" data-testid="theme-select" x-model="theme" @change="saveGeneral()">
+            <label class="form-label" for="theme-select">Theme</label>
+            <select
+              class="form-select"
+              id="theme-select"
+              data-testid="theme-select"
+              x-model="theme"
+              @change="saveGeneral()"
+            >
               <option value="default">Default (Dark)</option>
               <option value="light">Light</option>
               <option value="right">Bright</option>
@@ -51,8 +58,14 @@
           </div>
 
           <div class="form-group">
-            <label class="form-label">Language</label>
-            <select class="form-select" data-testid="locale-select" x-model="locale" @change="saveGeneral()">
+            <label class="form-label" for="locale-select">Language</label>
+            <select
+              class="form-select"
+              id="locale-select"
+              data-testid="locale-select"
+              x-model="locale"
+              @change="saveGeneral()"
+            >
               <option value="en">English</option>
             </select>
           </div>
@@ -64,28 +77,28 @@
         <h3 class="section-title">Chat Settings</h3>
         <div style="margin-top: var(--space-4); width: 100%; max-width: 400px">
           <div class="form-group">
-            <label class="form-label">Enter to send</label>
+            <span class="form-label">Enter to send</span>
             <label class="toggle">
               <input type="checkbox" id="enter-to-send" x-model="enterToSend" @change="saveChat()" />
               <span class="toggle-slider"></span>
             </label>
           </div>
           <div class="form-group">
-            <label class="form-label">Auto-scroll to bottom</label>
+            <span class="form-label">Auto-scroll to bottom</span>
             <label class="toggle">
               <input type="checkbox" id="auto-scroll" x-model="autoScroll" @change="saveChat()" />
               <span class="toggle-slider"></span>
             </label>
           </div>
           <div class="form-group">
-            <label class="form-label">Inline image preview</label>
+            <span class="form-label">Inline image preview</span>
             <label class="toggle">
               <input type="checkbox" id="inline-preview" x-model="inlinePreview" @change="saveChat()" />
               <span class="toggle-slider"></span>
             </label>
           </div>
           <div class="form-group">
-            <label class="form-label">Message detail level</label>
+            <label class="form-label" for="detail-level">Message detail level</label>
             <select class="form-select" id="detail-level" x-model="detailLevel" @change="saveChat()">
               <option value="Immersion">Immersion</option>
               <option value="Basic">Basic</option>
@@ -100,9 +113,10 @@
         <h3 class="section-title">API Settings</h3>
         <div style="margin-top: var(--space-4); width: 100%; max-width: 400px">
           <div class="form-group">
-            <label class="form-label">Provider</label>
+            <label class="form-label" for="api-provider">Provider</label>
             <select
               class="form-select"
+              id="api-provider"
               name="provider"
               data-testid="api-provider"
               x-model="provider"
@@ -115,11 +129,12 @@
             </select>
           </div>
           <div class="form-group">
-            <label class="form-label">API Key</label>
+            <label class="form-label" for="apiKey">API Key</label>
             <div style="display: flex; gap: var(--space-2); align-items: center">
               <input
                 type="password"
                 class="form-input"
+                id="apiKey"
                 name="apiKey"
                 x-model="apiKey"
                 placeholder="Enter your API key"
@@ -129,24 +144,33 @@
             </div>
           </div>
           <div class="form-group" id="api-endpoint-group" style="display: none">
-            <label class="form-label">API Endpoint URL</label>
+            <label class="form-label" for="apiEndpoint">API Endpoint URL</label>
             <input
               type="text"
               class="form-input"
+              id="apiEndpoint"
               name="apiEndpoint"
               x-model="apiEndpoint"
               placeholder="https://api.openai.com/v1"
             />
           </div>
           <div class="form-group">
-            <label class="form-label">Model</label>
-            <input type="text" class="form-input" name="model" x-model="model" placeholder="e.g., gpt-4o" />
+            <label class="form-label" for="model">Model</label>
+            <input
+              type="text"
+              class="form-input"
+              id="model"
+              name="model"
+              x-model="model"
+              placeholder="e.g., gpt-4o"
+            />
           </div>
           <div class="form-group">
-            <label class="form-label">Max context tokens</label>
+            <label class="form-label" for="maxTokens">Max context tokens</label>
             <input
               type="number"
               class="form-input"
+              id="maxTokens"
               name="maxTokens"
               x-model="maxTokens"
               step="256"

@@ -13,10 +13,11 @@
     </div>
     <div class="modal-body">
       <div class="form-group">
-        <label class="form-label">Chat Name</label>
+        <label class="form-label" for="rename-chat-input">Chat Name</label>
         <input
           class="form-input"
           type="text"
+          id="rename-chat-input"
           x-model="_renameChatName"
           @keydown.enter="confirmRenameChat"
           placeholder="Chat name"
