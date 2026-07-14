@@ -43,15 +43,52 @@ initialization, notifications handler cleanup.
 See [alpine-htmx-integration.md](alpine-htmx-integration.md) for full
 details.
 
+## Round 5 — Test Suite Coverage Audit (2026-07-12)
+
+**Result**: 12 findings. ~25% file-level coverage across `src/`. E2E suite has
+concrete gaps in isolation, error shape validation, and generation control
+paths. Documentation written; fixes not yet applied.
+
+### Coverage Landscape
+
+- **69 test files** (42 unit + 27 e2e). ~165 source files total.
+- **17 quick-win untested files** — pure logic, zero dependencies (~1,400 lines)
+- **7 story module files untested** — quest-engine, quality-evaluator,
+  turn-manager, world-state, events/* (largest gap by line count)
+- **~20 route handler files** — tested only through full HTTP e2e, no unit-level
+  handler tests
+- **Personas module** — complete CRUD feature, zero tests
+- **Browser e2e functional gaps** — no message-send flow, no full auth flow,
+  no chat creation flow
+
+### E2E Quality Findings
+
+| ID      | Severity | Finding                                      |
+| ------- | -------- | -------------------------------------------- |
+| TEST.1  | High     | No cross-tenant isolation tests              |
+| TEST.2  | High     | Error envelope shape never asserted          |
+| TEST.3  | Medium   | No cancel-during-generation test             |
+| TEST.4  | Medium   | No generation idempotency test               |
+| TEST.5  | Medium   | Test ordering fragile (shared mutable state) |
+| TEST.6  | Medium   | Browser auth flow incomplete (3 tests)       |
+| TEST.7  | Medium   | Browser chat flow sends no messages          |
+| TEST.8  | Medium   | 17 quick-win source files untested           |
+| TEST.9  | Medium   | Story module nearly untested (7 files)       |
+| TEST.10 | Low      | Personas module untested                     |
+| TEST.11 | Low      | Route handler isolation missing              |
+| TEST.12 | Low      | RPG mechanics no tests                       |
+
+Findings tracked in [../open-items.md](../open-items.md) (TEST.1–TEST.12).
+Full E2E review and coverage gap analysis in
+[../../spec/testing.md](../../spec/testing.md).
+
 ## Open Items
 
 See [../open-items.md](../open-items.md) for remaining tracked items:
 
+- TEST.1 through TEST.12 — test coverage debt
 - ENUM.1, MIGRATION.1, MIGRATION.2 — schema/db low-priority
 - CAST.1 through CAST.6 — validation and type safety
 - ASSISTANT.1 through ASSISTANT.3 — prompt assembler fixes
 - TUI.1 through TUI.3 — terminal UI polish
 - AGE.1, BUILD.1 — minor fixes
-
-Full detailed review content is archived in git history
-(commit range: 2026-07-05 through 2026-07-10).
