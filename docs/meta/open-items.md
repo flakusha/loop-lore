@@ -470,7 +470,157 @@ per-request `minifyHTMLContent` cost for otherwise-static templates.
 
 ---
 
-## HTTP.3 Dynamic-Response Optimization — Implemented
+## TEST.1 E2E — No Cross-Tenant Isolation Tests
+
+**Severity**: High
+**Source**: `tests/e2e/flows/{chats,messages,characters,worlds,assets}.test.ts`
+
+No test verifies User A's resources are inaccessible to User B. Every API e2e
+test logs in as one user only. The `SEED.admin` user exists but is never used
+in an isolation test.
+
+**Fix**: Add one test per resource type: User A creates resource, User B gets
+403/404.
+
+## TEST.2 E2E — Error Envelope Never Asserted
+
+**Severity**: High
+**Source**: All e2e test files
+
+`docs/spec/error-envelope.md` defines `{ code, message, details }` shape.
+Zero tests verify this. All error tests only check `res.status` or
+`res.error` presence (e.g., `expect(res.error).toBeTruthy()`). Unknown
+whether API actually returns the documented envelope.
+
+**Fix**: Add `expect(res.error).toMatchObject({ code: expect.any(String), message: expect.any(String) })` to all 4xx/5xx assertions.
+
+## TEST.3 E2E — No Cancel-During-Generation Test
+
+**Severity**: Medium
+**Source**: `tests/e2e/flows/generation.test.ts`
+
+Only validates `POST /api/generation/cancel` input and checks 404 for inactive
+chats. Never tests: start a streaming generation, send cancel mid-stream, verify
+status goes inactive via `GET /api/generation/status/:chatId`.
+
+**Fix**: Start generation in fire-and-forget, wait 200ms, POST cancel, poll
+status until inactive or timeout.
+
+## TEST.4 E2E — No Generation Idempotency Test
+
+**Severity**: Medium
+**Source**: `tests/e2e/flows/generation.test.ts`
+
+`idempotencyKey` sent in request bodies but never verified. Resending the same
+key should return the cached result (same messageId, same content).
+
+**Fix**: Send generate with `idempotencyKey: "test-key-1"`, then resend same
+key, assert response is identical.
+
+## TEST.5 E2E — Test Ordering Fragile (Shared Mutable State)
+
+**Severity**: Medium
+**Source**: `tests/e2e/flows/{worlds,story,chats}.test.ts`
+
+Tests within a file mutate shared module-level variables (`createdWorldId`,
+`createdLocationId`, `itemDefId`, `itemInstanceId`). Test 1 sets the variable,
+test 2 consumes it. Breaks under parallel execution or test shuffling.
+
+**Fix**: Use `beforeEach` to create fresh data per test. Remove inter-test
+variable dependencies.
+
+## TEST.6 E2E — Browser Auth Flow Incomplete
+
+**Severity**: Medium
+**Source**: `tests/e2e/flows/browser/auth-flow.browser.ts`
+
+3 tests only: form rendering, htmx attribute presence, failed login error
+non-empty. Missing: successful login + redirect, demo login click + redirect,
+logout flow, auth-dependent UI elements (user menu, logout button).
+
+**Fix**: Add full login → redirect → verify authenticated state → logout →
+verify unauthenticated state flow.
+
+## TEST.7 E2E — Browser Chat Flow Sends No Messages
+
+**Severity**: Medium
+**Source**: `tests/e2e/flows/browser/chat-flow.browser.ts`
+
+Only tests panel toggles and chat selection. Never types text, clicks send,
+or verifies message appears in list.
+
+**Fix**: Select a chat, type message in input, click send, wait for message
+element to appear in message list.
+
+## TEST.8 Unit — 17 Quick-Win Source Files Untested
+
+**Severity**: Medium
+**Source**: `src/utils/get-type.ts`, `src/utils/safe-json.ts`,
+`src/profanity/service.ts`, `src/db/state.ts`, `src/middleware/admin-gate.ts`,
+`src/middleware/rate-limit.ts`, `src/middleware/pipeline.ts`,
+`src/transport/errors.ts`, `src/transport/compression.ts`,
+`src/story/quality-evaluator.ts`, `src/story/turn-strategies.ts`,
+`src/story/events/extraction.ts`, `src/assistant/service.ts`,
+`src/content/hash-injection.ts`, `src/routes/router.ts`,
+`src/plugins/registry.ts`, `src/config/constants.ts`
+
+~1,400 lines of pure logic with zero dependencies — testable with no mocking.
+
+**Fix**: Write `.test.ts` files for these. Start with `quality-evaluator.ts`
+(505 lines, highest value), then `state.ts`, `safe-json.ts`, `get-type.ts`.
+
+## TEST.9 Unit — Story Module Nearly Untested
+
+**Severity**: Medium
+**Source**: `src/story/quality-evaluator.ts` (505 lines), `quest-engine.ts`
+(497 lines), `turn-manager.ts` (243 lines), `world-state.ts` (326 lines),
+`events/extraction.ts` (201 lines), `events/validation.ts` (93 lines),
+`events/application.ts` (227 lines), `items.ts`
+
+Only `game-master.ts` has tests. Seven files with complex logic (quest
+lifecycle, multi-LLM turn orchestration, event extraction/validation/application,
+heuristic scoring) have zero coverage.
+
+**Fix**: Prioritize `quality-evaluator.ts` (pure scoring, easy) and
+`events/extraction.ts` (pure regex, easy). Then `quest-engine.ts` and
+`turn-manager.ts` (need DB mock).
+
+## TEST.10 Unit — Personas Module Untested
+
+**Severity**: Low
+**Source**: `src/personas/service.ts` (150 lines), `src/personas/controller.ts`
+(227 lines)
+
+Complete CRUD feature module with zero test coverage.
+
+**Fix**: Add unit tests for service layer (needs DB mock). Add controller
+tests (needs HTTP request simulation).
+
+## TEST.11 Unit — Route Handler Isolation Missing
+
+**Severity**: Low
+**Source**: `src/routes/{actor-items,actor-lore-entries,actor-memories,
+actor-notes,story-items,story-states,story-turns,activity,frontend-logs,admin,
+message-encryption,settings,views}.ts`
+
+~20 route files have zero unit tests. Exercised only through full HTTP e2e
+stack — error paths, validation edge cases, and authorization checks untested
+at the handler boundary.
+
+**Fix**: Create test-DB fixture for route-level tests. Start with
+`entity-routes.ts` consumers (actor-items, actor-memories, actor-lore-entries,
+actor-notes) since they share the same factory.
+
+## TEST.12 E2E — RPG Mechanics No Tests
+
+**Severity**: Low
+**Source**: `docs/spec/rpg-mechanics.md`, `tests/e2e/flows/story.test.ts`
+
+Dice rolls, combat, equipment, skills, XP, loot — specified but zero e2e or
+unit test coverage. `story.test.ts` only covers item/state CRUD.
+
+**Fix**: Add tests for dice roll endpoint, combat initialization, equipment
+assignment, XP rewards, loot generation. Verify stat calculations.
 
 **Severity**: Resolved (2026-07-12)
 **Source**: `src/middleware/dynamic-response.ts`, `src/server.ts`, `src/config/schema.ts`

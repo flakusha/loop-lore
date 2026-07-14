@@ -183,73 +183,164 @@ describe("MyService", () => {
 
 ## Current Coverage Analysis
 
-The following table shows coverage by file (from `bun test --coverage`):
+### File-Level Coverage
 
-```
-File                                    | % Funcs | % Lines | Uncovered Line #s
-----------------------------------------|---------|---------|-------------------
-All files                               |   84.06 |   86.00 |
- src/age-gate/service.ts                |  100.00 |   98.21 |
- src/config/load.ts                     |   44.44 |   62.96 | 80-86,90-99,103-109,113-119,143-161
- src/config/schema.ts                   |  100.00 |  100.00 |
- src/content/decode.ts                  |  100.00 |   80.95 | 22-25
- src/content/encode.ts                  |  100.00 |   81.82 | 23-26
- src/content/minify.ts                  |  100.00 |  100.00 |
- src/db/enums-config.ts                 |  100.00 |  100.00 |
- src/db/enums-content.ts                |  100.00 |  100.00 |
- src/db/enums-core.ts                   |  100.00 |  100.00 |
- src/db/enums-generation.ts             |  100.00 |  100.00 |
- src/db/enums-story.ts                  |  100.00 |  100.00 |
- src/db/enums.ts                        |  100.00 |  100.00 |
- src/db/index.ts                        |   66.67 |   54.76 | 28,31-48
- src/generation/cancellation-actions.ts |   41.67 |   92.86 | 87-88,96-103
- src/generation/cancellation-manager.ts |  100.00 |  100.00 |
- src/generation/cancellation-tracker.ts |   41.67 |   54.59 | 115-119,203-242,251-275,284-287,294,301-324
- src/generation/continuation.ts         |  100.00 |  100.00 |
- src/generation/gen-types-api.ts        |  100.00 |  100.00 |
- src/generation/gen-types-options.ts    |  100.00 |  100.00 |
- src/generation/gen-types-results.ts    |  100.00 |  100.00 |
- src/generation/generation-routes.ts    |   50.00 |   50.82 | 38-74,85-110,243-247,259-280
- src/generation/policy-detector.ts      |    0.00 |   17.31 | 39,46,55-60,67,78-111
- src/generation/types.ts                |  100.00 |  100.00 |
- src/routes/http-utils.ts               |  100.00 |  100.00 |
-----------------------------------------|---------|---------|-------------------
-```
+~165 source files under `src/`. ~42 have tests. **~25% file coverage**.
+
+Covered modules: `age-gate`, `characters/steganography`, `config`, `content`,
+`crypto` (full), `db` (index + enums + migrations), `generation` (all core
+algorithms + routes), `logger` (all internals + transports), `middleware`
+(dynamic-response + response-headers), `routes/http-utils`, `story/game-master`,
+`transport` (protocol-level), `utils`.
+
+### Source Files Without Any Test Coverage (by difficulty)
+
+**Easy — pure logic, zero mocks needed** (17 files, ~1,400 lines):
+
+| File                             | Lines | What It Does                    |
+| -------------------------------- | ----- | ------------------------------- |
+| `src/utils/get-type.ts`          | 31    | Runtime type detection          |
+| `src/utils/safe-json.ts`         | 102   | Never-throw JSON operations     |
+| `src/profanity/service.ts`       | 42    | Obscenity wrapper               |
+| `src/db/state.ts`                | 79    | Generic `StateMachine<S>`       |
+| `src/middleware/admin-gate.ts`   | 19    | `requireAdmin` guard            |
+| `src/middleware/rate-limit.ts`   | 67    | `createRateLimiter()`           |
+| `src/middleware/pipeline.ts`     | 77    | `compose()` chain builder       |
+| `src/transport/errors.ts`        | 28    | `TransportError` class          |
+| `src/transport/compression.ts`   | 123   | gzip/brotli/zstd wrapper        |
+| `src/story/quality-evaluator.ts` | 505   | Heuristic scoring engine        |
+| `src/story/turn-strategies.ts`   | 97    | Round-robin/scene/freeform      |
+| `src/story/events/extraction.ts` | 201   | Regex event parser              |
+| `src/assistant/service.ts`       | 73    | Keyword rule engine             |
+| `src/content/hash-injection.ts`  | 92    | Content hash injection          |
+| `src/routes/router.ts`           | 52    | `apiDispatch()`                 |
+| `src/plugins/registry.ts`        | 117   | Plugin registry (in-memory map) |
+| `src/config/constants.ts`        | 9     | `DATA_DIR` constant             |
+
+**Medium — needs DB mock or provider mock** (key files):
+
+| File                                     | Lines | What It Does                       |
+| ---------------------------------------- | ----- | ---------------------------------- |
+| `src/generation/cancellation-actions.ts` | 325   | Cancel logic + stream finalization |
+| `src/generation/cancellation-tracker.ts` | 379   | In-memory generation tracker       |
+| `src/generation/image-gen-route.ts`      | 165   | Image generation handler           |
+| `src/generation/generation-routes.ts`    | 454   | Retry/continue/regenerate handlers |
+| `src/assets/service.ts`                  | 403   | Asset CRUD + file storage          |
+| `src/assets/controller.ts`               | 312   | Asset route handlers               |
+| `src/personas/service.ts`                | 150   | Persona CRUD                       |
+| `src/personas/controller.ts`             | 227   | Persona route handlers             |
+| `src/story/turn-manager.ts`              | 243   | Multi-LLM turn orchestration       |
+| `src/story/quest-engine.ts`              | 497   | Quest lifecycle                    |
+| `src/story/world-state.ts`               | 326   | StoryContext builder               |
+| `src/story/events/validation.ts`         | 93    | Event validation                   |
+| `src/story/events/application.ts`        | 227   | Event application to DB            |
+| `src/logger/logger.ts`                   | 133   | LoggerImpl core                    |
+| `src/logger/queue.ts`                    | 150   | AsyncLogQueue                      |
+| `src/middleware/auth.ts`                 | 229   | Session token validation           |
+| `src/assistant/prompt-assembler.ts`      | 509   | Prompt assembly from DB            |
+
+**Hard — browser DOM, blessed TUI, CLI, full server bootstrap**:
+`src/frontend/**` (40 files), `src/tui/**` (3 files), `src/build/**` (2 files),
+`src/scripts/**` (2 files), `src/server.ts`, `src/services/**` (2 files).
+These rely on browser APIs (`WebCrypto`, `CompressionStreams`), terminal
+display, filesystem, or process management. Covered by browser e2e smoke tests;
+low ROI for unit tests.
+
+### Route Coverage Gap
+
+~20 route files under `src/routes/` have zero unit tests. Routes are exercised
+by API e2e tests but the e2e suite is coarser — no isolated route handler
+tests exist. The `entity-routes.ts` factory tests its own generic logic but
+individual route modules (`actor-items`, `actor-lore-entries`, `actor-memories`,
+`actor-notes`, `story-items`, `story-states`, `story-turns`, `activity`,
+`frontend-logs`, `admin`, `message-encryption`, `settings`, `views`) are
+completely untested at the unit level.
 
 ### Observations & Recommendations
 
-1. **Core Logic Well-Covered**:
-   - The generation continuation system (crucial for chat retries/continuations) has excellent test coverage.
-   - Age gate, content encoding/decoding, and config loading fundamentals are tested.
+1. **Highest-value missing unit tests**: `quality-evaluator.ts` (505 lines of
+   pure scoring logic), `quest-engine.ts` (497 lines), `cancellation-actions.ts`
+   (325 lines), `cancellation-tracker.ts` (379 lines), `turn-manager.ts`
+   (243 lines). These are complex algorithms with no unit coverage.
 
-2. **Configuration Validation Needs Tests**:
-   - `src/config/load.ts` contains validation and type-coercion logic that is inadequately tested. Adding tests for invalid configs, type coercion edge cases, and validation errors would significantly boost coverage.
+2. **17 quick-win files** — pure logic, zero dependencies, testable in under an
+   hour total. Start here for highest coverage gain per effort.
 
-3. **Database Initialization**:
-   - The `testDatabaseOverride` mechanism in `src/db/index.ts` (used by tests) is itself untested. Consider adding a test that verifies test DB isolation works correctly.
+3. **Route handler isolation** — route modules are only tested through the full
+   HTTP e2e stack. Missing unit-level handler tests mean error paths,
+   validation edge cases, and authorization checks are untested at the handler
+   boundary. A test-DB fixture pattern already exists in `src/db/` — extend it
+   to route-level tests.
 
-4. **Generation Module Gaps**:
-   - Cancellation and repetition detection logic have meaningful gaps. These are complex algorithms where edge-case testing would be valuable.
-   - Generation routes are indirectly tested via controller unit tests, but integration-style tests for route handlers (testing full request/response) could be added.
+4. **Personas module** — `service.ts` + `controller.ts` have zero tests. This
+   is a complete feature module with no coverage.
 
-5. **TUI & Server Lack Tests**:
-   - No tests exist for `src/tui/` (Blast-based TUI) or `src/server.ts` (HTTP server setup). These are harder to unit test but could benefit from:
-     - End-to-end tests (using `bun test` with supertest-like approach for server)
-     - Snapshot tests for TUI rendering (if feasible with `blessed`)
+5. **Story module** — `quality-evaluator.ts`, `quest-engine.ts`, `turn-manager.ts`,
+   `world-state.ts`, `events/extraction.ts`, `events/validation.ts`,
+   `events/application.ts` — seven files with complex logic, only `game-master.ts`
+   tested. This is the single largest coverage gap by line count.
 
-6. **Example Code Exempt**:
-   - `policy-detector.ts` showing 0% is expected – it contains only commented-out example implementations. No action needed.
+## E2E Test Suite Review
 
-### Suggested Next Steps
+### Structure
 
-If improving coverage is a goal:
+- **API e2e**: 20 files under `tests/e2e/flows/`, each creates isolated
+  `TestServer` + `ApiClient`. Serve all route groups.
+- **Browser e2e**: 7 files under `tests/e2e/flows/browser/`. Playwright via
+  `chromium.launch()`, full frontend serving with `BrowserTestContext`.
+- **Helpers**: 8 files (`server.ts`, `client.ts`, `seed.ts`,
+  `browser-server.ts`, `htmx-alpine.ts`, `debug.ts`, `server-external.ts`)
+  - 2 mock providers (`llm.ts`, `image.ts`).
+- **Safeguard**: `E2E_SAFEGUARD=1` validates `:memory:` DB + `/tmp/` uploads
+  before any test runs.
 
-1. **Prioritize config validation**: Add tests for `validateConfig()` with invalid inputs (bad ports, invalid DB types, missing Postgres URL).
-2. **Test database overrides**: Verify `setTestDatabase()`/`testDatabaseOverride` properly isolates test data.
-3. **Target complex algorithms**: Add fuzz-style tests for repetition detector (n-gram edge cases) and cancellation paths.
-4. **Consider integration tests**: For server endpoints and TUI key handlers (using tools like `supertest` for API and `blessed` testing utilities).
+### What Works Well
 
-## Known Non-Blocking Issues
+| Area                     | Detail                                                                                                          |
+| ------------------------ | --------------------------------------------------------------------------------------------------------------- |
+| Helper factoring         | Clean separation: server, client, seed, browser-server, htmx-alpine. New flow tests easy to add.                |
+| Deterministic seed data  | Fixed UUIDs (`a0000001` through `a0000008`) make cross-test references predictable.                             |
+| Generation tests         | 17 tests cover streaming/non-streaming, mock failures, SSE parsing, validation, boundary sizes (100 KB prompt). |
+| Mock provider pattern    | `failOnCall`/`streamError` flags with `beforeEach` reset — clean, leak-proof.                                   |
+| Soft-delete verification | `messages.test.ts` verifies `visibility: "hidden_by_user"` after soft delete.                                   |
+| SSE streaming test       | Parses and validates event-stream format with done-event messageId extraction.                                  |
+| World nested resources   | `worlds.test.ts` tests full CRUD for both worlds and locations sub-resources, including deletion ordering.      |
+
+### Critical Gaps (by severity)
+
+**High — security/functional:**
+
+| Gap                           | Affected Tests | Detail                                                                                                                            |
+| ----------------------------- | -------------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| No cross-tenant isolation     | All CRUD files | User B's access to User A's resources never tested. No 403/404 isolation verification exists.                                     |
+| Error envelope never asserted | All files      | Zero tests check `{ code, message }` shape from `docs/spec/error-envelope.md`. Only `res.status` or `res.error` presence checked. |
+
+**Medium — functional gaps:**
+
+| Gap                                 | File                                               | Detail                                                                                                                                      |
+| ----------------------------------- | -------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| No cancel-during-generation test    | `generation.test.ts`                               | Only validates input and checks 404 for inactive. Never tests starting a stream, sending cancel mid-stream, verifying status goes inactive. |
+| No idempotency test                 | `generation.test.ts`                               | `idempotencyKey` sent in request bodies but never verified — resending same key should return cached result.                                |
+| Browser auth flow: 3 tests          | `auth-flow.browser.ts`                             | No successful login redirect, no demo login click, no logout flow, no auth-dependent UI visibility.                                         |
+| Browser chat flow: no message send  | `chat-flow.browser.ts`                             | Only panel toggles + chat selection. Never types text, clicks send, or verifies message appears.                                            |
+| Test ordering fragile               | `worlds.test.ts`, `story.test.ts`, `chats.test.ts` | Tests mutate shared state (`createdWorldId` set by test 1, used by test 2). Breaks under parallel or shuffled execution.                    |
+| Missing message tree/variant tests  | `messages.test.ts`                                 | `docs/frontend/chat/messages.md` describes parent/child message trees. No test for creating reply chains or swipe variants at API level.    |
+| No multi-turn generation test       | `generation.test.ts`                               | Second `generate` request with `parentMessageId` pointing to previous assistant message not tested.                                         |
+| Generation response types unchecked | `chat-full.test.ts`                                | Inline type casts (`as { id: string; assistantMessage?: ... }`) instead of importing API types. Silent drift on response shape changes.     |
+
+**Low — edge cases:**
+
+| Gap                                  | File                     | Detail                                                                                                                            |
+| ------------------------------------ | ------------------------ | --------------------------------------------------------------------------------------------------------------------------------- |
+| No pagination tests                  | All list endpoints       | `limit`, `offset`, `cursor` never tested on `/api/chats`, `/api/actors`, `/api/worlds`, `/api/assets`, `/api/chats/:id/messages`. |
+| No RPG mechanics coverage            | `story.test.ts`          | Quests, combat, dice rolls, skills, XP, loot from `docs/spec/rpg-mechanics.md` — zero e2e tests.                                  |
+| No upload validation                 | `assets.test.ts`         | Oversized file, unsupported type, empty file — never tested.                                                                      |
+| No asset unlink test                 | `assets.test.ts`         | `POST /api/assets/:id/links` creates links but `DELETE /api/assets/:id/links/:linkId` never tested.                               |
+| No world cascade delete test         | `worlds.test.ts`         | Deletes location manually then deletes world. Never tests deleting world that still has child locations.                          |
+| Story turn creation not tested       | `story.test.ts`          | Only verifies empty list; never creates a story turn and verifies it appears.                                                     |
+| SSE done-event parsing brittle       | `generation.test.ts:184` | Regex-based SSE text parsing. Breaks if field ordering changes.                                                                   |
+| Browser `gotoView` swallows errors   | `smoke.browser.ts:27-29` | Empty try/catch — navigation failures surface as assertion timeouts instead of clear errors.                                      |
+| Browser test timeouts: magic numbers | All browser files        | `5000`, `8000`, `10000` ms scattered. CI-sensitive, no configuration override.                                                    |
 
 These are pre-existing test failures that do not block development. They are infrastructure or seed-data mismatches, not bugs in the code under test.
 
