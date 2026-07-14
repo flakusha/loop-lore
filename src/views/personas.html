@@ -114,23 +114,31 @@
       </div>
       <div class="modal-body">
         <div class="form-group">
-          <label class="form-label">Name</label>
+          <label class="form-label" for="persona-name">Name</label>
           <input
             class="form-input"
             type="text"
+            id="persona-name"
             x-model="formName"
             placeholder="Your persona name"
             data-testid="persona-name"
           />
         </div>
         <div class="form-group">
-          <label class="form-label">Title (optional)</label>
-          <input class="form-input" type="text" x-model="formTitle" placeholder="e.g., Warrior of Light" />
+          <label class="form-label" for="persona-title">Title (optional)</label>
+          <input
+            class="form-input"
+            type="text"
+            id="persona-title"
+            x-model="formTitle"
+            placeholder="e.g., Warrior of Light"
+          />
         </div>
         <div class="form-group">
-          <label class="form-label">Description</label>
+          <label class="form-label" for="persona-description">Description</label>
           <textarea
             class="form-input form-textarea"
+            id="persona-description"
             x-model="formDescription"
             rows="4"
             placeholder="Physical/mental traits, backstory..."
