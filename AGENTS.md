@@ -149,7 +149,8 @@ docs/                    Specs, architecture, data model
   without failing. `--fix` variant available
 - **Markdown**: `bun run md:lint` — markdownlint-cli2 on `docs/**/*.md`
 - **TypeScript**: `bun run typecheck` — `tsc --noEmit`
-- **All-in-one**: `bun run check` — runs typecheck → lint → lint:css →
+- **Type coverage**: `bun run typecheck:coverage` — `type-coverage --strict --at-least 85`
+- **All-in-one**: `bun run check` — runs typecheck → typecheck:coverage → lint → lint:css →
   lint:html → format → md:lint
 - **Auto-fix**: `bun run lint:fix` (ESLint), `bun run format:fix` (Prettier),
   `bun run md:lint:fix` (markdown)

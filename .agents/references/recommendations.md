@@ -5,6 +5,7 @@
 - Composite states (status × visibility) validated via `CompositeValidator`
 - Prefer `TEXT` columns with string enums over `INTEGER` magic constants
 - JSON blob columns OK for flexible settings; typed fields for queryable data
+- Distinguish lifecycle state (use state machine) from intrinsic properties (use boolean if truly singular) and orthogonal flags (use boolean if independent axes)
 
 ## Code Structure
 - One class/feature per file; `<200` lines preferred; `index.ts` exports public API
@@ -18,10 +19,17 @@
 - Pipeline: `compose([errorBoundary, authenticate], handler)` wraps all routes
 
 ## State Machine Patterns
+- Framework: `StateDef<S>` + `createMachine(def)` → `StateMachine<S>` in `src/db/state.ts`
+- Define state machines in `src/db/enums-*.ts` alongside the enum they govern
+- Every `StateDef` specifies: `values`, `initial`, `transitions` (valid moves), `terminal` (absorbing states)
+- Multi-axis state validated via `CompositeValidator` (e.g., message status × visibility)
 - Non-terminal states: `sending`, `partial` (system auto-transitions)
 - Terminal states: `confirmed`, `failed`, `rejected`, `cancelled` (wait user action)
 - Retry/continue always flows through `partial` — single re-entry point
-- Never add `is_*` booleans to avoid status explosion; extend the enum instead
+- Never add `is_*` booleans to encode state axes; extend the enum instead
+- Example: lore entries use `enabled INTEGER` — should become `status TEXT` with `LoreEntryStatus { enabled, disabled, archived }` (lifecycle) while keeping `selective`, `case_sensitive`, `constant` as booleans (orthogonal flags)
+- Guard transitions at the service boundary: read current status, call `machine.canTransition(from, to)`, return early on invalid moves rather than throwing deep in the DB layer. See `SyntheticGenerator.transitionStatus` + `syntheticDataStatusMachine` in `src/db/enums-story.ts` (generated → validated → approved/rejected → archived).
+- Test: every state transition, every terminal state, every composite pair
 
 ## DB Access
 - Kysely queries always use bind parameters (never string interpolation)
@@ -84,6 +92,7 @@ settings: (() => { const r = safeJsonStringify(data); return r.ok ? r.value : "{
 ## Agent References (this directory)
 - `.agents/references/banned-patterns.md` — anti-patterns to reject in code review
 - `.agents/references/recommendations.md` — preferred approaches to adopt
+- `docs/meta/pattern-divergence.md` — quantified divergence audit (refresh per release)
 - Loaded via AGENTS.md `cat` includes or skill `context_files` refs
 - One-page each, concrete examples, project-specific
 
