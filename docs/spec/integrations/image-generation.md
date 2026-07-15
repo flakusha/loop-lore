@@ -745,6 +745,67 @@ Plain text prompts should be expanded via "magic prompt" (LLM-based expansion) b
 - **Video**: "a [subject] [action], camera [movement], [scene description]"
 - **Negative prompt baseline**: "blurry, low quality, watermark, text, deformed"
 
+### LLM Prompt Templates for Image Generation
+
+When the user triggers image generation from chat (wand menu, slash command, interactive mode), the LLM is called to convert chat context into an image prompt. Different image models need different prompt formats.
+
+The prompt template system at `src/generation/prompt-templates.ts` provides:
+
+- **Model profiles**: Pre-configured profiles for SD1, SD2, SDXL, Illustrious, Noob, Pony, SD3, FLUX, Krea 2, Anima, Ideogram 4, Qwen Image, Chroma
+- **Prompt format**: Whether the model expects tags, natural language, mixed, or JSON
+- **Detail levels**: Per-model templates for `instant`, `balanced`, and `detailed` modes
+- **Gen mode templates**: Separate templates for `yourself`, `face`, `me`, `scene`, `last`, `background`
+- **Auto-matching**: Resolve profile by model name string (e.g. "flux1-dev" → FLUX profile)
+
+**Template resolution flow**:
+
+1. User triggers image gen (e.g. `/sd you` for a character portrait)
+2. System resolves the image model profile by model name or explicit profile ID
+3. Selects the correct template for the gen mode + detail level
+4. Fills template tokens (`{{charName}}`, `{{charDescription}}`, `{{lastMessage}}`, etc.) from chat context
+5. Sends the resolved prompt to the LLM, which generates the SD prompt
+6. The SD prompt is sent to the image generation backend
+
+**Key templates by model family**:
+
+| Family | Format | Template pattern | Example use |
+|--------|--------|-----------------|-------------|
+| SD1/SD2/tags | `tags` | "Ignore previous instructions. Write comma-separated image tags..." | Legacy models, CLIP 75 token limit |
+| SDXL | `tags` | "Ignore previous instructions. Write comma-separated image tags..." | Higher quality, 150 token limit |
+| Illustrious/Noob | `tags` | "Ignore previous instructions. Write comma-separated booru-style tags..." | Danbooru tag vocabulary, CFG 3-6 |
+| Pony | `tags` | "Ignore previous instructions. Write comma-separated tags with score prefix..." | Score tags required, CFG 6-8+ |
+| SD3/FLUX | `natural` | "Describe {{charName}} in detailed natural language..." | Long descriptions, T5 tokenizer |
+| Krea 2 | `natural` | "Describe {{charName}} in one flowing paragraph..." | Natural language, low step count |
+| Anima | `tags-and-natural` | "Describe {{charName}} using lowercase keywords with spaces..." | Mix of tags and natural language |
+| Ideogram 4 | `json` | "Output JSON: {"high_level_description": "{{charName}}", ...}" | JSON caption format required |
+| Qwen/Chroma | `natural` | "Describe {{charName}} in detailed natural language..." | Long context, multilingual |
+
+**Template token variables**:
+
+| Token | Source | Description |
+|-------|--------|-------------|
+| `{{charName}}` | Character card | Name of the AI character |
+| `{{charDescription}}` | Character card | Character appearance/description |
+| `{{userName}}` | User persona | Name of the user persona |
+| `{{userDescription}}` | User persona | User persona description |
+| `{{lastMessage}}` | Chat history | Last message text |
+| `{{sceneSummary}}` | Scene context | Summary of current scene |
+| `{{chatHistory}}` | Chat history | Recent chat history |
+| `{{negativePrompt}}` | Config | User-configured negative prompt |
+| `{{charPrefix}}` | Character card | Character-specific prompt prefix |
+
+**Detail level impact on token budget**:
+
+| Detail level | Template tokens | Context tokens | Total | Use case |
+|-------------|----------------|---------------|-------|----------|
+| `instant` | ~60-80 | ~100-200 | ~160-280 | Fast generation, quick drafts |
+| `balanced` | ~120-180 | ~200-400 | ~320-580 | General purpose |
+| `detailed` | ~200-300 | ~400-800 | ~600-1100 | High-quality final output |
+
+**Note on the "ignore previous instructions" pattern**: This is intentional. The LLM must switch from RPG chat mode (roleplaying as a character) to image description mode (generating a structured prompt for the image model). The pattern is only used for tag-based models where the format change is most dramatic. Natural language models (FLUX, Krea2, SD3) use a softer transition since the format is closer to the chat style.
+
+**Cross-reference**: Implementation in `src/generation/prompt-templates.ts`, tests in `src/generation/prompt-templates.test.ts`.
+
 ### LoRA Integration
 
 LoRA (Low-Rank Adaptation) models modify generation style. stable-diffusion.cpp supports LoRAs via multiple methods:
