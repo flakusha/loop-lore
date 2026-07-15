@@ -50,3 +50,55 @@ Runs on commit: format → check → unit tests → e2e (with safeguards).
 | `bun run src/server.ts`  | Dev server              |
 | `bun run tui`            | Terminal UI              |
 | `bun run build`          | Production build          |
+
+## RTK Commands (Token-Efficient Output)
+
+**Golden Rule**: Always prefix commands with `rtk`. If RTK has a dedicated filter, it uses it. If not, it passes through unchanged. This means RTK is always safe to use.
+
+Even in command chains with `&&`, use `rtk`:
+
+```bash
+rtk git add . && rtk git commit -m "msg" && rtk git push
+```
+
+### Build & Compile (80-90% savings)
+
+```bash
+rtk tsc         # TypeScript errors grouped by file (83%)
+rtk lint        # ESLint violations grouped (84%)
+rtk bun run build # Build output compressed
+```
+
+### Test (90-99% savings)
+
+```bash
+rtk bun test          # Failures only (99% on passing tests)
+rtk vitest            # Vitest failures only (99.5%)
+rtk test <cmd>        # Generic test wrapper - failures only
+```
+
+### Git (59-80% savings)
+
+```bash
+rtk git status    # Compact status
+rtk git log       # Compact log (works with all flags)
+rtk git diff      # Compact diff (80%)
+rtk git add       # Ultra-compact
+rtk git commit    # Ultra-compact
+```
+
+### Files & Search (60-75% savings)
+
+```bash
+rtk ls <path>       # Tree format, compact
+rtk find <pattern>  # Grouped by directory
+```
+
+### Meta Commands
+
+```bash
+rtk gain            # View token savings statistics
+rtk proxy <cmd>     # Run command without filtering (debug)
+```
+
+Typical savings: **60-99%** on common development operations.
