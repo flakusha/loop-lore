@@ -13,6 +13,7 @@ import type {
   QuestProgressStatus,
   ItemCategory,
   ItemRarity,
+  StackableState,
 } from "./enums";
 
 // ── Worlds ──────────────────────────────────────────────────
@@ -153,7 +154,7 @@ export interface Items {
   description: string | null;
   category: ItemCategory;
   rarity: ItemRarity;
-  stackable: number;
+  stackable: StackableState;
   max_stack: number;
   properties: string;
   value: number;
