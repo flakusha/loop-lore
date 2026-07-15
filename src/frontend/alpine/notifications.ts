@@ -6,6 +6,7 @@
 // SSE connection is repaired by the next poll, a missed poll is covered
 // by the next SSE event. Unseen counts drive sidebar/chat-list badges
 // and a toast when a message lands in a chat the user isn't viewing.
+import { jsonParseOr } from "./json";
 
 interface ActivityEntry {
   unseenCount: number;
@@ -81,10 +82,10 @@ export class NotificationsManager {
     try {
       this.es = new EventSource("/api/activity/stream");
       this.es.addEventListener("activity", (ev) => {
-        const data = JSON.parse((ev as MessageEvent).data) as {
-          chats: Record<string, ActivityEntry>;
-        };
-        this.applySnapshot(data.chats);
+        const data = jsonParseOr<{ chats: Record<string, ActivityEntry> }>((ev as MessageEvent).data, { chats: {} });
+        if (data) {
+          this.applySnapshot(data.chats);
+        }
       });
       this.es.addEventListener("error", () => {
         // Browser auto-reconnects; polling covers the gap.
@@ -145,7 +146,7 @@ export class NotificationsManager {
     const open = document.querySelector<HTMLElement>("[data-chat-id].active, [data-active-chat]");
     const id = open?.dataset.chatId ?? open?.dataset.activeChat ?? null;
     this.setActiveChat(id);
-    if (id) void this.markRead(id);
+    if (id) { void (async () => { try { await this.markRead(id); } catch { /* non-critical */ } })(); }
   }
 }
 
