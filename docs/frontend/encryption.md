@@ -1,6 +1,8 @@
-> ⚠️ **Status:** NOT IMPLEMENTED. Client-side encryption/decryption, `actor_keys` table, and at-rest message encryption do NOT exist.
-> Messages are stored as plaintext (optionally gzip/zstd/brotli compressed for large payloads).
-> This entire spec is aspirational. See [`docs/meta/plan.md`](../meta/plan.md) "Skipped During Implementation".
+> ⚠️ **Status:** Server-side crypto core built (`src/crypto/*` — 69 tests).
+> Client-side (`src/frontend/browser.ts`) has encrypt/decrypt/compress but message
+> route integration is NOT wired. Key management UI pending.
+> This doc covers both implemented and aspirational parts — see implementation
+> status table below. [`docs/spec/crypto.md`](../spec/crypto.md) for server arch.
 
 ---
 
@@ -242,21 +244,24 @@ Actors manage keys at `/settings/keys`:
 
 ## Implementation Status
 
-| Component                       | Status       | File                      |
-| ------------------------------- | ------------ | ------------------------- |
-| Client compress/decompress      | ✅ Built     | `src/frontend/browser.ts` |
-| Client encrypt/decrypt          | ✅ Built     | `src/frontend/browser.ts` |
-| Client key import/export/gen    | ✅ Built     | `src/frontend/browser.ts` |
-| Compress-then-encrypt wrapper   | ❌ Not built | Pipeline functions        |
-| Decrypt-then-decompress wrapper | ❌ Not built | Pipeline functions        |
-| Server SMK loading              | ❌ Not built | Config + startup          |
-| Server actor key CRUD           | ❌ Not built | Service layer             |
-| Server chat key derivation      | ❌ Not built | HKDF service              |
-| Server encrypt/decrypt          | ❌ Not built | crypto integration        |
-| Key distribution (group)        | ❌ Not built |                           |
-| Key rotation                    | ❌ Not built |                           |
-| Key revocation                  | ❌ Not built |                           |
-| Anonymous mode                  | ❌ Not built |                           |
+| Component                       | Status       | File / Ref                           |
+| ------------------------------- | ------------ | ------------------------------------ |
+| Client compress/decompress      | ✅ Built     | `src/frontend/browser.ts`            |
+| Client encrypt/decrypt          | ✅ Built     | `src/frontend/browser.ts`            |
+| Client key import/export/gen    | ✅ Built     | `src/frontend/browser.ts`            |
+| Compress-then-encrypt wrapper   | ✅ Built     | `src/crypto/pipeline.ts`             |
+| Decrypt-then-decompress wrapper | ✅ Built     | `src/crypto/pipeline.ts`             |
+| Server SMK loading              | ✅ Built     | `src/crypto/smk.ts`                  |
+| Server actor key CRUD           | ✅ Built     | `src/crypto/actor-keys.ts`           |
+| Server chat key derivation      | ✅ Built     | `src/crypto/chat-keys.ts`            |
+| Server encrypt/decrypt          | ✅ Built     | `src/crypto/pipeline.ts`             |
+| BYOK (API key at-rest)          | ✅ Built     | `src/crypto/byok.ts`                 |
+| Message route integration       | ❌ Not wired | Message write/read routes            |
+| Key management UI (settings)    | ❌ Not built | `/settings/keys` page                |
+| Key distribution (group)        | ❌ Not built | New participant joins encrypted chat |
+| Key rotation auto-trigger       | ❌ Not built | `KEY_ROTATION_DAYS` cron             |
+| Key revocation UI               | ❌ Not built | Revoke confirm dialog                |
+| Anonymous mode                  | ❌ Not built | `ANONYMOUS_CHAT=true`                |
 
 ---
 

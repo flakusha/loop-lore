@@ -136,5 +136,5 @@ master and any GM.
 
 - World is a first-class entity: name, description, lore, rules.
 - Location is a sub-entity of World: name, description, connections to other locations.
-- A chat references exactly one Location at a time. Location can change mid-chat (e.g., party moves from Forest to Cave). This is a Future feature.
-- See [worlds.md](../worlds.md) for full world/location spec.
+- A chat references exactly one Location at a time. Location can change mid-chat (e.g., party moves from Forest to Cave).
+- Location context injected into LLM prompt: "You are in {{location.name}}. {{location.description}}. Connected locations: {{location.connections}}."
