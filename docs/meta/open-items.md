@@ -585,6 +585,11 @@ heuristic scoring) have zero coverage.
 `events/extraction.ts` (pure regex, easy). Then `quest-engine.ts` and
 `turn-manager.ts` (need DB mock).
 
+**Progress**: `synthetic/generator.ts` (Phase 6) now has `synthetic/generator.test.ts`
+(5 tests, 59 assertions) covering generation across all 6 `SyntheticDataType` and
+status state-machine transitions. `game-master.ts` remains the only other tested
+story file. The 7 files listed above are still untested.
+
 ## TEST.10 Unit — Personas Module Untested
 
 **Severity**: Low
@@ -635,3 +640,25 @@ skipped. See tests in `src/middleware/dynamic-response.test.ts`.
 
 **Follow-ups**: HTTP.1 (landing ETag reuse), HTTP.2 (template minify caching)
 remain open.
+
+---
+
+## ENUM.2 Boolean Integer Flags → Typed State Enums (Resolved)
+
+**Severity**: Medium
+**Source**: `src/db/enums-core.ts`, `src/db/schema-core.ts`, `src/db/schema-story.ts`
+
+Boolean-as-integer (0/1) columns lacked type safety and transition
+validation. Converted to string enums with state machines:
+
+- `chats.is_pinned` → `PinnedState` (unpinned/pinned)
+- `personas.is_default` → `DefaultState` (not_default/default)
+- `actor_notes.pinned` → `PinnedState` (unpinned/pinned)
+- `actor_items.equipped` → `EquipState` (unequipped/equipped)
+- `items.stackable` → `StackableState` (unique/stackable)
+
+Each enum gets `StateDef` + `createMachine` for transition validation.
+Migration 010 converts integer columns to text with data transform.
+Frontend updated to use string enum values.
+
+**Status**: Resolved (2026-07-15)
