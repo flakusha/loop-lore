@@ -18,7 +18,7 @@ Deep-dive docs in `/docs/` — read before touching related code:
 | `docs/spec/character-setup.md`  | Character & persona system: multi-format import/export, impersonation   |
 | `docs/spec/rpg-mechanics.md`    | RPG mechanics: stats, combat, equipment, dice, skills, XP, loot         |
 | `docs/spec/architecture.md`     | System layers, request flow, docs serving                               |
-| `docs/spec/build-deploy.md`     | Minimum-build setup, build pipeline, deployment options                 |
+| `docs/spec/build-deploy.md`       | Minimum-build setup, build pipeline, deployment options                 |
 | `docs/spec/implementation.md`   | Tech stack, all modules (db, gen, story, assets, assistant, TUI)        |
 | `docs/spec/tui.md`              | Blessed component hierarchy, keyboard map, data flow                    |
 | `docs/spec/plugin-system.md`    | Plugin architecture: types, lifecycle, security, examples               |
@@ -48,6 +48,9 @@ before building any frontend feature.
 | `docs/frontend/chat/memories.md`          | Character/assistant/world memories, memory selection, auto-purge, token budget                                                     |
 | `docs/frontend/chat/commands-and-misc.md` | Keyboard shortcuts, states summary, image pipeline, system/narration messages                                                      |
 | `docs/frontend/chat/multi-llm-story.md`   | Multi-LLM story generation: GM, turn-taking, quests, quality evaluation, synthetic data                                            |
+| `docs/frontend/chat/assistant.md`         | Assistant as GM/Moderator, tool assistance, idea suggestions, text improvement                                                      |
+| `docs/frontend/chat/export.md`            | Chat export formats, public sharing, read-only links, story publishing                                                              |
+| `docs/frontend/chat/group-chat.md`        | Multi-participant chat, turn order, @mentions, initiative tracking                                                               |
 | `docs/frontend/characters.md`             | Character list grid, create/edit form                                                                                              |
 | `docs/frontend/gallery.md`                | Asset gallery grid, preview modal, upload dialog                                                                                   |
 | `docs/frontend/admin.md`                  | Admin panel: user mgmt, chat mgmt, world permissions, audit log, content review, system config                                      |
@@ -55,8 +58,13 @@ before building any frontend feature.
 | `docs/frontend/worlds.md`                 | World entity: list, detail, create/edit                                                                                            |
 | `docs/frontend/login.md`                  | Login page: auth card, demo mode, error states                                                                                     |
 | `docs/frontend/encryption.md`             | User secret keys, AES-256-GCM at-rest message encryption, API key encryption, key hierarchy                                        |
+| `docs/frontend/age-gate.md`              | Age verification page, self-declaration flow, redirect behavior                                                                    |
+| `docs/frontend/component-architecture.md` | HTMX/Alpine.js boundaries, component lifecycle, state management                                                                   |
+| `docs/frontend/headers-management.md`     | Response headers (security/performance), frontend header components, htmx navigation                                               |
+| `docs/frontend/internationalization.md`   | UI translation, LLM language selection, actor language preferences, i18n architecture                                           |
 | `docs/frontend/components.md`             | Shared components: toasts, modals, spinners, skeletons, empty states, chips, drop zones                                            |
 | `docs/frontend/notifications.md`          | Notification system: types, storage, delivery, prompt injection, preferences, lifecycle                                             |
+| `docs/frontend/prompt-creation.md`        | Prompt templates, variable injection, actor context, generation tuning                                                               |
 
 ---
 
@@ -223,6 +231,8 @@ docs/                    Specs, architecture, data model
 4. Implement: follow conventions above
 5. Verify: `bun format && bun typecheck && bun run src/server.ts` for server,
    `bun run tui` for TUI
+
+---
 
 ## Pre-commit Hooks
 
