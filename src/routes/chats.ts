@@ -12,6 +12,7 @@
  *   POST   /api/chats/:id/participants     — add participant
  *   PUT    /api/chats/:id/participants/:actorId — update participant (talkativity, role)
  *   DELETE /api/chats/:id/participants/:actorId  — remove participant
+ *   PUT    /api/chats/:id/location               — move to location (story mode)
  */
 
 import type { Kysely } from "kysely";
@@ -168,6 +169,14 @@ const dispatch: RouteDispatch = async ({ request, context, database }) => {
     return handleSetPersona({ database, chatId: personaMatch[1]!, body, context });
   }
 
+  // ── /api/chats/:id/location ────────────────────────────────
+  const locationMatch = /^\/api\/chats\/([a-f0-9-]+)\/location$/.exec(pathname);
+  if (locationMatch && method === "PUT") {
+    const body = await parseBody(request);
+    if (body instanceof Response) return body;
+    return handleMoveLocation({ database, chatId: locationMatch[1]!, body, context });
+  }
+
   // ── /api/chats/:id/impersonate ────────────────────────────
   const impersonateMatch = /^\/api\/chats\/([a-f0-9-]+)\/impersonate$/.exec(pathname);
   if (impersonateMatch) {
@@ -201,7 +210,8 @@ const dispatch: RouteDispatch = async ({ request, context, database }) => {
     !pathname.includes("/participants") &&
     !pathname.includes("/messages") &&
     !pathname.includes("/story-turns") &&
-    !pathname.includes("/export")
+    !pathname.includes("/export") &&
+    !pathname.endsWith("/location")
   ) {
     if (method === "GET") {
       return handleGetChat({ database, chatId, context });
@@ -806,6 +816,81 @@ async function handleClearImpersonate({
     .execute();
 
   return jsonNoContent();
+}
+
+interface MoveLocationOpts {
+  database: Kysely<DB>;
+  context: RequestContext;
+  chatId: string;
+  body: Record<string, unknown>;
+}
+
+/**
+ * Move a chat to a different location (story mode).
+ * Updates current_location_id on the chat.
+ * Validates the location exists in the chat's world.
+ */
+async function handleMoveLocation({
+  database,
+  chatId,
+  body,
+  context,
+}: MoveLocationOpts): Promise<Response> {
+  const userId = context.userId;
+  if (!userId)
+    return jsonError({
+      message: "Unauthorized",
+      status: HttpStatus.Unauthorized,
+      code: ErrorCode.Unauthorized,
+    });
+
+  const chat = await database.selectFrom("chats").selectAll().where("id", "=", chatId).executeTakeFirst();
+  if (!chat)
+    return jsonError({ message: "Chat not found", status: HttpStatus.NotFound, code: ErrorCode.NotFound });
+  if (chat.created_by !== userId && context.userRole !== "admin")
+    return jsonError({ message: "Forbidden", status: HttpStatus.Forbidden, code: ErrorCode.Forbidden });
+
+  if (!chat.world_id)
+    return jsonError({
+      message: "Chat has no world assigned. Set worldId before moving locations.",
+      status: HttpStatus.BadRequest,
+      code: ErrorCode.ValidationError,
+    });
+
+  const locationId = body.locationId as string | null | undefined;
+
+  // Allow clearing location
+  if (locationId === null || locationId === undefined) {
+    await database
+      .updateTable("chats")
+      .set({ current_location_id: null, updated_at: new Date().toISOString() })
+      .where("id", "=", chatId)
+      .execute();
+    return jsonResponse({ ok: true, current_location_id: null });
+  }
+
+  // Validate location exists in chat's world
+  const location = await database
+    .selectFrom("locations")
+    .select(["id", "name"])
+    .where("id", "=", locationId)
+    .where("world_id", "=", chat.world_id)
+    .executeTakeFirst();
+
+  if (!location)
+    return jsonError({
+      message: "Location not found in this world",
+      status: HttpStatus.NotFound,
+      code: ErrorCode.NotFound,
+    });
+
+  await database
+    .updateTable("chats")
+    .set({ current_location_id: locationId, updated_at: new Date().toISOString() })
+    .where("id", "=", chatId)
+    .execute();
+
+  return jsonResponse({ ok: true, current_location_id: locationId, location_name: location.name });
 }
 
 interface ExportChatOpts {
