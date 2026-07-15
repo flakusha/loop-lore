@@ -1,5 +1,6 @@
 // ── New Chat page: actor search, participant selection, form ──
 import { escapeHtml } from "./shared";
+import { jsonBody } from "../alpine/json";
 
 (globalThis as any).loadNewChatPage = async function (): Promise<void> {
   let actors: any[] = [];
@@ -8,7 +9,7 @@ import { escapeHtml } from "./shared";
   try {
     const res = await apiFetch("/api/actors?pageSize=200");
     const data = await res.json();
-    actors = (data.data || []).filter((a: any) => a.actor_type !== "user");
+    actors = data.data || [];
   } catch {
     /* ignore */
   }
@@ -22,7 +23,7 @@ import { escapeHtml } from "./shared";
         const opt = document.createElement("option");
         opt.value = p.id;
         opt.textContent = p.name;
-        if (p.is_default) opt.selected = true;
+        if (p.is_default === "default") opt.selected = true;
         personaSelect.append(opt);
       }
     }
@@ -162,7 +163,7 @@ import { escapeHtml } from "./shared";
       const res = await apiFetch("/api/chats", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
+        body: jsonBody({
           name,
           type: chatType.value,
           mode: (document.querySelector("#chat-mode") as HTMLSelectElement)?.value,
@@ -177,14 +178,14 @@ import { escapeHtml } from "./shared";
           apiFetch("/api/chats/" + d.id + "/persona", {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ personaId }),
+            body: jsonBody({ personaId }),
           });
         }
         if (impersonateId) {
           apiFetch("/api/chats/" + d.id + "/impersonate", {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ impersonateActorId: impersonateId }),
+            body: jsonBody({ impersonateActorId: impersonateId }),
           });
         }
         location.assign("/views/chat?chatid=" + encodeURIComponent(d.id));
