@@ -10,8 +10,6 @@
  */
 import type { Kysely } from "kysely";
 import type { DB } from "../db/schema";
-import type { GenerationMessage } from "../generation/types";
-import { PromptAssembler } from "../assistant/prompt-assembler";
 import {
   GameMasterType,
   ContentEncoding,
@@ -25,7 +23,7 @@ import { randomUUID } from "node:crypto";
 import { safeJsonStringify, jsonParseOr } from "../utils";
 import { TurnManager, type TurnManagerOptions } from "./turn-manager";
 import { WorldStateService } from "./world-state";
-import { QualityEvaluator } from "./quality-evaluator";
+import { QualityEvaluator, createQualityEvaluator } from "./quality-evaluator";
 import { extractEvents, validateEvents, applyEvents } from "./events";
 import type {
   GameMasterConfig,
@@ -35,6 +33,8 @@ import type {
   QualityThresholds,
   WorldEvent,
 } from "./types";
+import { GM_DECISIONS } from "./gm/decisions/registry";
+import type { GenerateTextFn } from "./gm/decisions/types";
 
 // ── LLM call abstraction ─────────────────────────────────
 
@@ -42,14 +42,7 @@ import type {
  * Function provided by the caller to actually invoke an LLM.
  * Keeps GameMasterService independent of provider resolution.
  */
-export type GenerateTextFn = (params: {
-  messages: GenerationMessage[];
-  systemPrompt?: string;
-  temperature?: number;
-  maxTokens?: number;
-  provider?: string;
-  model?: string;
-}) => Promise<string>;
+export type { GenerateTextFn } from "./gm/decisions/types";
 
 // ── Story turn row type (from DB) ──────────────────────────
 
@@ -119,152 +112,22 @@ export class GameMasterService {
   }
 
   private async getGmDecision(context: StoryContext, debugActorId?: string): Promise<GameMasterDecision> {
-    const actorId = debugActorId ?? (await this.turnManager.selectNextActor(undefined, context));
+    const turnContext = {
+      chatMode: "story" as const,
+      isPaused: this.turnManager.isPaused,
+    };
+    const actorId = debugActorId ?? (await this.turnManager.selectNextActor(undefined, turnContext));
 
     if (!actorId) {
       throw new Error("No available actors for next turn");
     }
 
-    switch (this.config.type) {
-      case GameMasterType.Llm: {
-        return this.llmDecision(context, actorId);
-      }
-      case GameMasterType.Human: {
-        return this.humanDecision(context, actorId);
-      }
-      case GameMasterType.Hybrid: {
-        return this.hybridDecision(context, actorId);
-      }
-      default: {
-        return this.llmDecision(context, actorId);
-      }
-    }
-  }
-
-  private async llmDecision(context: StoryContext, actorId: string): Promise<GameMasterDecision> {
-    const llmConfig = this.config.llmConfig;
-    const systemPrompt = llmConfig?.systemPrompt ?? "You are the Game Master for an RPG story.";
-
-    const assembler = new PromptAssembler(this.db);
-    const assembled = await assembler.assemble({
+    const strategy = GM_DECISIONS[this.config.type] ?? GM_DECISIONS[GameMasterType.Llm];
+    return strategy(
+      { config: this.config, generateText: this.generateText, db: this.db, chatId: this.chatId },
+      context,
       actorId,
-      chatId: this.chatId,
-      modelId: llmConfig?.model ?? "default",
-      systemPromptOverride: systemPrompt,
-      includeStoryContext: true,
-      includeExamples: false,
-    });
-
-    const location = context.world.currentLocation;
-    const instructions = [
-      `Current scene: ${location.name}. ${location.atmosphere ?? ""}`,
-      ...(context.activeQuests.length > 0
-        ? [
-            `Active quest: "${context.activeQuests[0]!.name}" (${context.activeQuests[0]!.progress}/${context.activeQuests[0]!.target})`,
-          ]
-        : []),
-      ...(context.recentTurns.length > 0
-        ? [`Previous turn: "${context.recentTurns.at(-1)?.response?.slice(0, 200) ?? "none"}"`]
-        : []),
-      `Keep response 50-300 words, in-character, use *action descriptions*.`,
-    ].join("\n");
-    assembled.messages.push({ role: "user", content: instructions });
-
-    let responseText: string;
-    try {
-      responseText = await this.generateText({
-        messages: assembled.messages,
-        systemPrompt: assembled.systemPrompt,
-        temperature: llmConfig?.temperature,
-        maxTokens: llmConfig?.maxTokens,
-        provider: llmConfig?.provider,
-        model: llmConfig?.model,
-      });
-    } catch {
-      return this.hardcodedPrompt(context, actorId);
-    }
-
-    return {
-      nextActorId: actorId,
-      turnPrompt: responseText,
-      turnConstraints: {
-        maxTokens: llmConfig?.maxTokens ?? 800,
-        tone: location.atmosphere ?? undefined,
-      },
-      questUpdates: [],
-      worldStateChanges: [],
-    };
-  }
-
-  private hardcodedPrompt(context: StoryContext, actorId: string): GameMasterDecision {
-    const actor = context.actors.find((a) => a.id === actorId);
-    const npcState = actor?.npcState;
-    const location = context.world.currentLocation;
-
-    const promptParts: string[] = [`You are ${actor?.displayName ?? "unknown"}.`];
-
-    if (npcState) {
-      promptParts.push(`Health: ${npcState.health}/100. Mental state: ${npcState.mental_state}.`);
-      if (npcState.inventory.length > 0) {
-        promptParts.push(`Carrying: ${npcState.inventory.join(", ")}.`);
-      }
-    }
-
-    const atmospherePart = location.atmosphere ? `Atmosphere: ${location.atmosphere}.` : "";
-    promptParts.push(`Location: ${location.name}. ${atmospherePart}`);
-
-    if (context.activeQuests.length > 0) {
-      const primary = context.activeQuests[0]!;
-      promptParts.push(`Active quest: "${primary.name}" (${primary.progress}/${primary.target}).`);
-    }
-
-    if (context.recentTurns.length > 0) {
-      const last = context.recentTurns[context.recentTurns.length - 1]!;
-      const lastActor = context.actors.find((a) => a.id === last.actorId);
-      promptParts.push(
-        `Previous: ${lastActor?.displayName ?? "someone"} said/did: "${last.response?.slice(0, 200)}"`,
-      );
-    }
-
-    promptParts.push(
-      `Respond in character. Use *action descriptions* for narration. Keep response 50-300 words.`,
     );
-
-    return {
-      nextActorId: actorId,
-      turnPrompt: promptParts.filter(Boolean).join("\n"),
-      turnConstraints: {
-        maxTokens: this.config.llmConfig?.maxTokens ?? 800,
-        tone: location.atmosphere ?? undefined,
-      },
-      questUpdates: [],
-      worldStateChanges: [],
-    };
-  }
-
-  private humanDecision(context: StoryContext, actorId: string): GameMasterDecision {
-    const actor = context.actors.find((a) => a.id === actorId);
-
-    return {
-      nextActorId: actorId,
-      turnPrompt: `[Human GM] Select prompt for ${actor?.displayName ?? "actor"}...`,
-      turnConstraints: { maxTokens: 800 },
-      questUpdates: [],
-      worldStateChanges: [],
-    };
-  }
-
-  private async hybridDecision(context: StoryContext, actorId: string): Promise<GameMasterDecision> {
-    const decision = await this.llmDecision(context, actorId);
-
-    const questCount = context.activeQuests.length;
-    const actorCount = context.actors.length;
-
-    if (questCount > 5 || actorCount > 8) {
-      decision.turnConstraints.focus = "Keep it simple — complex scene";
-    }
-
-    return decision;
   }
 
   private async recordGmTurn(
@@ -312,14 +175,20 @@ export class GameMasterService {
     };
   }
 
-  constructor(options: TurnManagerOptions & { generateText: GenerateTextFn }) {
+  constructor(
+    options: TurnManagerOptions & {
+      generateText: GenerateTextFn;
+      gmConfig: GameMasterConfig;
+      qualityThresholds?: Partial<QualityThresholds>;
+    },
+  ) {
     this.db = options.db;
     this.chatId = options.chatId;
     this.config = options.gmConfig;
     this.generateText = options.generateText;
-    this.turnManager = new TurnManager(options);
+    this.turnManager = new TurnManager({ db: options.db, chatId: options.chatId });
     this.worldState = new WorldStateService(options.db);
-    this.evaluator = new QualityEvaluator({
+    this.evaluator = createQualityEvaluator({
       thresholds: options.qualityThresholds as QualityThresholds | undefined,
     });
   }
@@ -467,15 +336,7 @@ export class GameMasterService {
         .where("id", "=", turnId)
         .execute();
 
-      await this.turnManager.recordTurn({
-        turnId,
-        actorId: turn.actor_id,
-        prompt: turn.prompt_sent,
-        response,
-        qualityEvaluation: qualityEval,
-        worldEvents,
-        questUpdates: [],
-      });
+      await this.turnManager.recordTurn();
     }
 
     return this.buildResult({
