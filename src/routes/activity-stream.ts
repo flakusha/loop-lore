@@ -14,6 +14,7 @@ import type { RouteDispatch } from "./router";
 import { registerRoute } from "./router";
 import { jsonError, HttpStatus, ErrorCode } from "./http-utils";
 import { computeActivity } from "./activity";
+import { safeJsonStringify } from "../utils";
 
 const STREAM_PATH = "/api/activity/stream";
 const POLL_INTERVAL_MS = 5000;
@@ -27,7 +28,8 @@ interface ActivityEntry {
 
 /** Stable signature of an activity snapshot for change detection. */
 function snapshotOf(map: Record<string, ActivityEntry>): string {
-  return JSON.stringify(Object.entries(map).map(([id, e]) => [id, e.unseenCount, e.lastMessageCreatedAt]));
+  const result = safeJsonStringify(Object.entries(map).map(([id, e]) => [id, e.unseenCount, e.lastMessageCreatedAt]));
+  return result.ok ? result.value : "[]";
 }
 
 /**
@@ -51,7 +53,8 @@ export class ActivityStreamer {
 
     const send = (controller: ReadableStreamDefaultController, event: string, data: unknown) => {
       try {
-        controller.enqueue(encoder.encode(`event: ${event}\ndata: ${JSON.stringify(data)}\n\n`));
+        const payload = safeJsonStringify(data);
+        controller.enqueue(encoder.encode(`event: ${event}\ndata: ${payload.ok ? payload.value : "{}"}\n\n`));
       } catch {
         // controller closed — ignore
       }
