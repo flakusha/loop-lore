@@ -96,6 +96,25 @@ A world transitions through these states:
 3. **→ `active`** — Admin/master restores from archived view
 4. **→ `purged`** — Admin only. World + all locations + lore permanently removed
 
+**Cascade:** archiving a world archives all its locations. Restoring the world
+restores its locations. Purging a world purges all locations, lore entries, and
+linked chat references.
+
+### Locations
+
+A location transitions through these states:
+
+1. **`active`** (default) — Visible in world detail, selectable for chat binding
+2. **→ `archived`** — Hidden from world detail. Chats bound to this location
+   still work (the location reference persists, but the location is not
+   selectable for new chats)
+3. **→ `active`** — Admin/world owner restores from archived view
+4. **→ `purged`** — Admin only. Location + its gallery assets permanently removed
+
+**Cascade:** archiving a location does NOT archive its chats. Chats bound to an
+archived location remain accessible to their participants. The location just
+cannot be bound to new chats while archived.
+
 ---
 
 ## State Transitions: Who Can Do What
@@ -111,6 +130,14 @@ A world transitions through these states:
 | `uploading → ready`  | System (success)                                          | Automatic                                             |
 | `uploading → failed` | System (error)                                            | Automatic                                             |
 | `failed → uploading` | Asset owner                                               | Retry link in error state                             |
+
+**Location-specific transitions:**
+
+| Transition           | Who can trigger                      | UI action                                |
+| -------------------- | ------------------------------------ | ---------------------------------------- |
+| `active → archived`  | World owner, admin                   | Archive action in world detail           |
+| `archived → active`  | World owner, admin                   | Restore in archived locations view       |
+| `archived → purged`  | Admin only                           | Purge action with typed confirmation     |
 
 ---
 

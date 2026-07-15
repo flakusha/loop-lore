@@ -22,6 +22,54 @@
 
 5. **Error resilience**: the UI never shows a blank/white state on error. Failed API calls leave existing content intact and surface errors via toasts or inline banners.
 
+6. **Consistent search & filter patterns**: every entity list screen uses the same interaction model for finding things. Search is always a debounced text input. Filters are always removable chips. The UX is identical whether browsing characters, worlds, chats, or gallery assets.
+
+## Search & Filter Pattern
+
+All entity list screens (characters, worlds, chats, gallery) follow a
+consistent search and filter pattern. This section defines the shared behavior.
+
+### Common Elements
+
+- **Search input:** text field with magnifier icon, debounced (300ms), filters
+  by name or label. Clear button (×) when non-empty.
+- **Filter chips:** horizontal row of toggleable chips below the search input.
+  Active chips have a distinct style (filled background). Click to toggle.
+  "Clear all" link when any filter is active.
+- **Sort dropdown:** optional, per-screen. Default sort varies by entity.
+
+### Per-Screen Filters
+
+| Screen    | Search by    | Filters                                                   | Sort options                     |
+| --------- | ------------ | --------------------------------------------------------- | -------------------------------- |
+| Characters| name         | Type (All / Users / Characters), Visibility (All / Private / Public) | Newest, Most Active, Name A-Z |
+| Worlds    | name         | Tags (from world tags), Owner (All / Mine)                | Newest, Last Activity, Name A-Z |
+| Chats     | name         | Type (1x1 / Group), Visibility (Private / Public), World | Newest, Last Message, Name A-Z  |
+| Gallery   | name, label  | Media type (All / Images / Audio / Video), Visibility     | Newest, Size, Name A-Z          |
+
+### Empty States
+
+Each filter combination that yields zero results shows:
+- "No [entities] match the current filter."
+- "Clear filters" link that resets all filters and search
+
+### URL Persistence
+
+Filter state is persisted in the URL query string (e.g.,
+`/characters?type=character&visibility=public&search=lyra`). This enables
+bookmarking and back-button navigation through filter states.
+
+### API Integration
+
+Filters map to query parameters on the list endpoint:
+
+```
+GET /api/characters?type=character&visibility=public&search=lyra&sort=name&order=asc
+GET /api/worlds?tags=fantasy&owner=me&search=realms
+GET /api/chats?type=group&visibility=public&world_id=world-uuid
+GET /api/assets?asset_type=image&visibility=public&search=portrait
+```
+
 ## Design Token Reference
 
 All design tokens are CSS custom properties defined in `theme-default.css` (default dark theme). Other themes override these with different color values. The `theme.css` file provides fallback values for when no theme is loaded.
