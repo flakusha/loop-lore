@@ -165,10 +165,34 @@ Content-Type: application/json
 
 ```http
 DELETE /api/chats/:chatId
-Authorization: Bearer <token>
+Authorization: Bearer [REDACTED:Authorization header]
 ```
 
 **Response:** 204 No Content
+
+### Move Chat Location
+
+```http
+PUT /api/chats/:chatId/location
+Authorization: Bearer [REDACTED:Authorization header]
+Content-Type: application/json
+
+{
+  "locationId": "location-uuid"
+}
+```
+
+Move a chat to a different location (story mode). The location must exist in the chat's world. Pass `null` to clear the current location.
+
+**Response:**
+
+```json
+{
+  "ok": true,
+  "current_location_id": "location-uuid",
+  "location_name": "Dark Forest"
+}
+```
 
 ## Messages
 
@@ -278,6 +302,150 @@ Content-Type: application/json
 ```http
 DELETE /api/actors/:id
 Authorization: Bearer <token>
+```
+
+**Response:** 204 No Content
+
+## Worlds
+
+### List Worlds
+
+```http
+GET /api/worlds
+Authorization: Bearer [REDACTED:Authorization header]
+```
+
+**Response:** Paginated list of world objects
+
+### Create World
+
+```http
+POST /api/worlds
+Authorization: Bearer [REDACTED:Authorization header]
+Content-Type: application/json
+
+{
+  "name": "Fantasy Realm",
+  "description": "A world of magic and adventure",
+  "lore": "Long ago, the dragons ruled..."
+}
+```
+
+**Response:** `{ "id": "world_uuid" }` with 201
+
+### Get World
+
+```http
+GET /api/worlds/:worldId
+Authorization: Bearer [REDACTED:Authorization header]
+```
+
+**Response:** World object
+
+### Update World
+
+```http
+PUT /api/worlds/:worldId
+Authorization: Bearer [REDACTED:Authorization header]
+Content-Type: application/json
+
+{
+  "name": "Updated Name",
+  "lore": "Updated lore..."
+}
+```
+
+**Response:** Updated world object
+
+### Delete World
+
+```http
+DELETE /api/worlds/:worldId
+Authorization: Bearer [REDACTED:Authorization header]
+```
+
+Deletes the world and all associated locations, states, quests, and items.
+
+**Response:** 204 No Content
+
+### Initialize World States
+
+```http
+POST /api/worlds/:worldId/initialize-states
+Authorization: Bearer [REDACTED:Authorization header]
+```
+
+Creates default state records for all locations and NPCs in the world.
+
+**Response:**
+
+```json
+{
+  "ok": true,
+  "locations_initialized": 5,
+  "npcs_initialized": 3
+}
+```
+
+## World Locations
+
+### List Locations
+
+```http
+GET /api/worlds/:worldId/locations
+Authorization: Bearer [REDACTED:Authorization header]
+```
+
+**Response:** Paginated list of location objects
+
+### Create Location
+
+```http
+POST /api/worlds/:worldId/locations
+Authorization: Bearer [REDACTED:Authorization header]
+Content-Type: application/json
+
+{
+  "name": "Dark Forest",
+  "description": "A foreboding forest...",
+  "connections": ["location-uuid-1", "location-uuid-2"],
+  "parentLocationId": null
+}
+```
+
+Connection IDs are validated: each must reference an existing location in the same world. Self-connections are rejected.
+
+**Response:** `{ "id": "location_uuid" }` with 201
+
+### Get Location
+
+```http
+GET /api/worlds/:worldId/locations/:locationId
+Authorization: Bearer [REDACTED:Authorization header]
+```
+
+**Response:** Location object
+
+### Update Location
+
+```http
+PUT /api/worlds/:worldId/locations/:locationId
+Authorization: Bearer [REDACTED:Authorization header]
+Content-Type: application/json
+
+{
+  "name": "Updated Forest",
+  "connections": ["other-location-uuid"]
+}
+```
+
+**Response:** Updated location object
+
+### Delete Location
+
+```http
+DELETE /api/worlds/:worldId/locations/:locationId
+Authorization: Bearer [REDACTED:Authorization header]
 ```
 
 **Response:** 204 No Content
