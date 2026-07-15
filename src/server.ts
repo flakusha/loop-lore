@@ -49,6 +49,7 @@ import "./routes/actor-notes";
 import "./routes/story-items";
 import "./routes/story-states";
 import "./routes/story-turns";
+import "./routes/quests";
 import "./routes/frontend-logs";
 import "./routes/message-encryption";
 import "./routes/settings";
