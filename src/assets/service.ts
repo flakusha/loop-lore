@@ -9,7 +9,7 @@ import { writeFileSync, mkdirSync, existsSync, unlinkSync } from "node:fs";
 import { join, resolve } from "node:path";
 import type { Kysely } from "kysely";
 import type { DB } from "../db/schema";
-import { AssetType, StorageBackend } from "../db/enums";
+import { AssetType, AssetVisibility, StorageBackend } from "../db/enums";
 import type { AssetType as AssetTypeT } from "../db/enums";
 import { uid } from "../utils";
 import { extractImageMetadata } from "./metadata";
@@ -23,6 +23,7 @@ export interface AssetRecord {
   size_bytes: number;
   storage_path: string;
   storage_backend: StorageBackend;
+  visibility: AssetVisibility;
   width: number | null;
   height: number | null;
   duration_secs: number | null;
@@ -167,6 +168,34 @@ export interface LinkAssetOpts {
   link: AssetLinkInput;
 }
 
+export interface ShareRecord {
+  id: string;
+  asset_id: string;
+  shared_with_id: string;
+  shared_by_id: string;
+  created_at: string;
+}
+
+export interface UpdateVisibilityOpts {
+  database: Kysely<DB>;
+  assetId: string;
+  visibility: AssetVisibility;
+  actorId: string;
+}
+
+export interface ShareAssetOpts {
+  database: Kysely<DB>;
+  assetId: string;
+  sharedWithId: string;
+  sharedById: string;
+}
+
+export interface UnshareAssetOpts {
+  database: Kysely<DB>;
+  assetId: string;
+  sharedWithId: string;
+}
+
 // ── Service functions ──────────────────────────────────────────
 
 /**
@@ -196,6 +225,7 @@ export async function createAsset({ database, input, uploadDir }: CreateAssetOpt
     size_bytes: input.sizeBytes,
     storage_path: storagePath,
     storage_backend: StorageBackend.Local,
+    visibility: AssetVisibility.Private,
     width,
     height,
     duration_secs: null,
@@ -214,6 +244,7 @@ export async function createAsset({ database, input, uploadDir }: CreateAssetOpt
       size_bytes: asset.size_bytes,
       storage_path: asset.storage_path,
       storage_backend: asset.storage_backend,
+      visibility: asset.visibility,
       width: asset.width,
       height: asset.height,
       duration_secs: asset.duration_secs,
@@ -371,6 +402,118 @@ export async function getAssetLinks(
     .select(["entity_type", "entity_id", "label"])
     .where("asset_id", "=", assetId)
     .execute();
+}
+
+/**
+ * Update an asset's visibility.
+ * Only the owner can change visibility.
+ */
+export async function updateAssetVisibility({
+  database,
+  assetId,
+  visibility,
+  actorId,
+}: UpdateVisibilityOpts): Promise<AssetRecord | null> {
+  const asset = await database.selectFrom("assets").selectAll().where("id", "=", assetId).executeTakeFirst();
+  if (!asset) return null;
+  if (asset.owner_id !== actorId) return null;
+
+  await database
+    .updateTable("assets")
+    .set({ visibility })
+    .where("id", "=", assetId)
+    .execute();
+
+  return { ...asset, visibility };
+}
+
+/**
+ * Share an asset with an actor.
+ */
+export async function shareAsset({
+  database,
+  assetId,
+  sharedWithId,
+  sharedById,
+}: ShareAssetOpts): Promise<ShareRecord | null> {
+  const asset = await database.selectFrom("assets").selectAll().where("id", "=", assetId).executeTakeFirst();
+  if (!asset) return null;
+  if (asset.owner_id !== sharedById) return null;
+
+  // Auto-escalate visibility to shared when first share is created
+  if (asset.visibility === AssetVisibility.Private) {
+    await database
+      .updateTable("assets")
+      .set({ visibility: AssetVisibility.Shared })
+      .where("id", "=", assetId)
+      .execute();
+  }
+
+  const id = uid();
+  try {
+    await database
+      .insertInto("asset_shares")
+      .values({ id, asset_id: assetId, shared_with_id: sharedWithId, shared_by_id: sharedById })
+      .execute();
+  } catch {
+    return null; /* duplicate or FK failure */
+  }
+
+  return { id, asset_id: assetId, shared_with_id: sharedWithId, shared_by_id: sharedById, created_at: new Date().toISOString() };
+}
+
+/**
+ * Unshare an asset from an actor.
+ */
+export async function unshareAsset({
+  database,
+  assetId,
+  sharedWithId,
+}: UnshareAssetOpts): Promise<void> {
+  await database
+    .deleteFrom("asset_shares")
+    .where("asset_id", "=", assetId)
+    .where("shared_with_id", "=", sharedWithId)
+    .execute();
+}
+
+/**
+ * Get all shares for an asset.
+ */
+export async function getAssetShares(
+  database: Kysely<DB>,
+  assetId: string,
+): Promise<ShareRecord[]> {
+  return database.selectFrom("asset_shares").selectAll().where("asset_id", "=", assetId).execute();
+}
+
+/**
+ * Check if an actor can access an asset.
+ * Owner always yes. Admin always yes. Public asset → any auth user.
+ * Shared asset → check asset_shares. Private → owner only.
+ */
+export async function canAccessAsset(
+  database: Kysely<DB>,
+  assetId: string,
+  actorId: string | null,
+  actorRole: string | null,
+): Promise<boolean> {
+  if (actorRole === "admin") return true;
+
+  const asset = await database.selectFrom("assets").selectAll().where("id", "=", assetId).executeTakeFirst();
+  if (!asset) return false;
+  if (asset.owner_id === actorId) return true;
+  if (asset.visibility === AssetVisibility.Public && actorId) return true;
+  if (asset.visibility === AssetVisibility.Shared && actorId) {
+    const share = await database
+      .selectFrom("asset_shares")
+      .select("id")
+      .where("asset_id", "=", assetId)
+      .where("shared_with_id", "=", actorId)
+      .executeTakeFirst();
+    if (share) return true;
+  }
+  return false;
 }
 
 /**
