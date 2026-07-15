@@ -1,0 +1,107 @@
+/**
+ * Prompt assembly section contracts.
+ *
+ * A prompt is built by running an ordered list of {@link SectionBuilder}s.
+ * Each builder decides whether it is {@link SectionBuilder.enabled | enabled}
+ * for the current context and returns its messages. Adding a prompt section
+ * is one file + one line in the registry — no edits to the orchestrator.
+ */
+import type { Kysely } from "kysely";
+import type { DB } from "../../db/schema";
+import type { GenerationMessage } from "../../generation/gen-types-options";
+
+export interface PromptParams {
+  /** Actor generating the response (character/narrator) */
+  actorId: string;
+  /** Chat to pull message history from */
+  chatId: string;
+  /** Model ID for token budget lookup */
+  modelId: string;
+  /** Override token budget (default: model's contextLimit or 32000) */
+  tokenBudget?: number;
+  /** Override system prompt (uses actor.system_prompt if absent) */
+  systemPromptOverride?: string;
+  /** Include story context (auto-detected from chat.mode) */
+  includeStoryContext?: boolean;
+  /** Include lore entries (default: true) */
+  includeLore?: boolean;
+  /** Include example messages (default: false) */
+  includeExamples?: boolean;
+  /** Current user's actor ID (for persona/impersonation) */
+  userId?: string;
+  /** Other participant actor IDs in a group chat (excludes self) */
+  groupParticipantIds?: string[];
+}
+
+export interface PromptSectionReport {
+  name: string;
+  chars: number;
+  tokens: number;
+  dropped: boolean;
+}
+
+export interface AssembledPrompt {
+  /** Messages array for LLM request */
+  messages: GenerationMessage[];
+  /** Separate system prompt (Anthropic-style providers) */
+  systemPrompt?: string;
+  /** Total token count estimate */
+  tokenCount: number;
+  /** Token budget that was enforced */
+  tokenBudget: number;
+  /** Per-section breakdown for debug UI */
+  sections: PromptSectionReport[];
+}
+
+/** Minimal actor projection the section builders need. */
+export interface AssembleActor {
+  id: string;
+  display_name: string | null;
+  system_prompt: string | null;
+  description: string | null;
+  personality: string | null;
+  scenario: string | null;
+  post_history_instructions: string | null;
+  mes_example: string | null;
+}
+
+/** Minimal chat projection the section builders need. */
+export interface AssembleChat {
+  id: string;
+  mode: string;
+  world_id: string | null;
+  current_location_id: string | null;
+}
+
+/** Shared inputs handed to every section builder. */
+export interface AssembleContext {
+  db: Kysely<DB>;
+  actor: AssembleActor;
+  chat: AssembleChat;
+  params: PromptParams;
+  isStory: boolean;
+  tokenBudget: number;
+}
+
+/** Builds one prompt section's messages. */
+export interface SectionBuilder {
+  /** Must match a {@link PRIORITY} key for token-budget trimming. */
+  name: string;
+  enabled: (ctx: AssembleContext) => boolean;
+  build: (ctx: AssembleContext) => GenerationMessage[] | Promise<GenerationMessage[]>;
+}
+
+// ── Priority rank for section dropping ─────────────────────
+// Lower rank = kept longer when trimming
+export const PRIORITY = {
+  system: 0,
+  actorHeader: 0,
+  groupParticipants: 0,
+  userPersona: 0,
+  chatHistory: 0,
+  storyContext: 1,
+  lore: 2,
+  memories: 3,
+  postHistory: 4,
+  examples: 5,
+} as const;
