@@ -12,6 +12,7 @@
  *   GET    /api/worlds/:id/locations/:locId       — get location
  *   PUT    /api/worlds/:id/locations/:locId       — update location
  *   DELETE /api/worlds/:id/locations/:locId       — delete location
+ *   POST   /api/worlds/:id/initialize-states      — initialize location & NPC states
  */
 
 import type { Kysely } from "kysely";
@@ -20,6 +21,7 @@ import type { RequestContext } from "../middleware/types";
 import type { RouteDispatch } from "./router";
 import { registerRoute } from "./router";
 import { uid, safeJsonStringify } from "../utils";
+import { WorldStateService } from "../story/world-state";
 import {
   BAD_METHOD,
   jsonResponse,
@@ -132,8 +134,14 @@ const dispatch: RouteDispatch = async ({ request, context, database }) => {
     return BAD_METHOD();
   }
 
+  // /api/worlds/:id/initialize-states
+  if (worldId && pathname.endsWith("/initialize-states")) {
+    if (method === "POST") return handleInitializeStates({ database, worldId, context });
+    return BAD_METHOD();
+  }
+
   // /api/worlds/:id
-  if (worldId && !pathname.includes("/locations")) {
+  if (worldId && !pathname.includes("/locations") && !pathname.endsWith("/initialize-states")) {
     if (method === "GET") return handleGetWorld({ database, worldId, context });
     if (method === "PUT") {
       const body = await parseBody(request);
@@ -257,9 +265,81 @@ async function handleDeleteWorld({ database, worldId, context }: DeleteWorldOpts
   if (!world || (world.owner_id !== userId && userRole !== "admin"))
     return jsonError({ message: "World not found", status: HttpStatus.NotFound, code: ErrorCode.NotFound });
 
+  // Delete child tables in FK order (leaf tables first)
+  // Get location IDs for location_states cleanup
+  const locationIds = await database
+    .selectFrom("locations")
+    .select("id")
+    .where("world_id", "=", worldId)
+    .execute();
+  const locIds = locationIds.map((l) => l.id);
+
+  if (locIds.length > 0) {
+    await database.deleteFrom("location_states").where("location_id", "in", locIds).execute();
+  }
+
+  await database.deleteFrom("npc_states").where("world_id", "=", worldId).execute();
+  await database.deleteFrom("world_states").where("world_id", "=", worldId).execute();
+  await database.deleteFrom("world_lore_entries").where("world_id", "=", worldId).execute();
+
+  // Get quest IDs for quest_progress cleanup
+  const questIds = await database
+    .selectFrom("quests")
+    .select("id")
+    .where("world_id", "=", worldId)
+    .execute();
+  const qIds = questIds.map((q) => q.id);
+
+  if (qIds.length > 0) {
+    await database.deleteFrom("quest_progress").where("quest_id", "in", qIds).execute();
+  }
+
+  await database.deleteFrom("quests").where("world_id", "=", worldId).execute();
+  await database.deleteFrom("world_items").where("world_id", "=", worldId).execute();
+  await database.deleteFrom("items").where("world_id", "=", worldId).execute();
+  await database
+    .deleteFrom("asset_links")
+    .where("entity_type", "=", "world")
+    .where("entity_id", "=", worldId)
+    .execute();
   await database.deleteFrom("locations").where("world_id", "=", worldId).execute();
   await database.deleteFrom("worlds").where("id", "=", worldId).execute();
   return jsonNoContent();
+}
+
+interface InitializeStatesOpts {
+  database: Kysely<DB>;
+  worldId: string;
+  context: RequestContext;
+}
+
+/**
+ * Initialize location and NPC states for a world.
+ * Creates default state records for all locations and NPCs.
+ */
+async function handleInitializeStates({
+  database,
+  worldId,
+  context,
+}: InitializeStatesOpts): Promise<Response> {
+  const { userId, userRole } = context;
+  const world = await database
+    .selectFrom("worlds")
+    .select("owner_id")
+    .where("id", "=", worldId)
+    .executeTakeFirst();
+  if (!world || (world.owner_id !== userId && userRole !== "admin"))
+    return jsonError({ message: "World not found", status: HttpStatus.NotFound, code: ErrorCode.NotFound });
+
+  const state = new WorldStateService(database);
+  const locationsCreated = await state.initializeLocationStates(worldId);
+  const npcsCreated = await state.initializeNpcStates(worldId);
+
+  return jsonResponse({
+    ok: true,
+    locations_initialized: locationsCreated,
+    npcs_initialized: npcsCreated,
+  });
 }
 
 // ── Location handlers ─────────────────────────────────────────
@@ -301,6 +381,51 @@ async function handleListLocations({
   return jsonPaginated({ data: locations, total, page, pageSize });
 }
 
+/**
+ * Validate that all connection IDs reference existing locations in the same world.
+ * Returns null if valid, or an error Response if invalid.
+ */
+async function validateConnections(
+  database: Kysely<DB>,
+  worldId: string,
+  connections: unknown,
+  excludeLocationId?: string,
+): Promise<Response | null> {
+  if (!Array.isArray(connections)) return null;
+
+  const connIds = connections.filter((id): id is string => typeof id === "string");
+  if (connIds.length === 0) return null;
+
+  // Check all connection IDs exist in this world
+  const existing = await database
+    .selectFrom("locations")
+    .select("id")
+    .where("world_id", "=", worldId)
+    .where("id", "in", connIds)
+    .execute();
+  const existingIds = new Set(existing.map((l) => l.id));
+
+  const missing = connIds.filter((id) => !existingIds.has(id));
+  if (missing.length > 0) {
+    return jsonError({
+      message: `Invalid connection locations: ${missing.join(", ")}`,
+      status: HttpStatus.BadRequest,
+      code: ErrorCode.ValidationError,
+    });
+  }
+
+  // Check for self-connection
+  if (excludeLocationId && connIds.includes(excludeLocationId)) {
+    return jsonError({
+      message: "Location cannot connect to itself",
+      status: HttpStatus.BadRequest,
+      code: ErrorCode.ValidationError,
+    });
+  }
+
+  return null;
+}
+
 async function handleCreateLocation({
   database,
   worldId,
@@ -318,6 +443,12 @@ async function handleCreateLocation({
 
   const name = body.name as string | undefined;
   if (!name) return jsonError({ message: "name is required", status: HttpStatus.BadRequest });
+
+  // Validate connections if provided
+  if (body.connections) {
+    const connError = await validateConnections(database, worldId, body.connections);
+    if (connError) return connError;
+  }
 
   const id = uid();
   await database
@@ -387,6 +518,10 @@ async function handleUpdateLocation({
   if (body.description) updates.description = body.description;
   if (body.parentLocationId) updates.parent_location_id = body.parentLocationId;
   if (body.connections) {
+    // Validate connection IDs exist in this world
+    const connError = await validateConnections(database, worldId, body.connections, locId);
+    if (connError) return connError;
+
     const connectionsResult = safeJsonStringify(body.connections);
     if (!connectionsResult.ok)
       return jsonError({ message: "Invalid connections data", status: HttpStatus.BadRequest });
