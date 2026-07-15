@@ -28,6 +28,27 @@ Core tables for loop-lore. Designed for:
 Centralized enum definitions: `src/db/enums-*.ts` domain files (core, content, generation, story, config),
 re-exported via `src/db/enums.ts` barrel.
 
+### Bare String Columns Requiring Enum Types
+
+These columns use bare `string` types but have a bounded set of values.
+Should be converted to proper enums with CHECK constraints:
+
+| Table                  | Column        | Current default | Proposed enum                                                  | Reason                                                                         |
+| ---------------------- | ------------- | --------------- | -------------------------------------------------------------- | ------------------------------------------------------------------------------ |
+| `actor_keys`           | `status`      | `"active"`      | `KeyStatus { active, expired, revoked }`                       | De-facto 3-state lifecycle; state machine: active→{expired,revoked} (terminal) |
+| `actor_keys`           | `key_type`    | —               | `KeyType { primary, backup }`                                  | De-facto single value `"primary"`                                              |
+| `actor_memories`       | `memory_type` | `"fact"`        | `MemoryType { fact, episodic, semantic, procedural }`          | Used in prompt formatting + API filter                                         |
+| `actor_notes`          | `category`    | `"general"`     | `NoteCategory { general, personality, history, plot, system }` | Simple classifier                                                              |
+| `world_items`          | `visibility`  | `"visible"`     | `ItemVisibility`                                               | Enum exists at `enums-story.ts:137` — not wired to schema                      |
+| `model_role_overrides` | `role`        | —               | reuse `UserRole` or `SystemRole`                               | Primary-key discriminator                                                      |
+
+### Schema-Migration Mismatches
+
+| Issue                                         | Schema location                    | Migration location                            |
+| --------------------------------------------- | ---------------------------------- | --------------------------------------------- |
+| `chats.purpose` vs `chat_purpose` column name | `schema-core.ts:72` uses `purpose` | `009_group_chat.ts:43` adds as `chat_purpose` |
+| `actor_keys.public_key` missing in DDL        | `schema-core.ts:199` field defined | `006_messages_keys.ts` does not create column |
+
 ## Entity Relationships
 
 - **Users** — 1:N → Sessions, Actors (as `actor_type='user'`), Actors (as owner of `actor_type='character'`)
@@ -69,6 +90,55 @@ Each enum encodes a state machine rather than a binary on/off:
 | `location_states.items_available`   | (string default `"[]"` — JSON array)                                                                                       | Item availability indicator                           |
 | `synthetic_data.type`               | `turn_sequence`, `quality_evaluation`, `quest_progression`, `world_state_transition`, `regeneration_case`, `gm_escalation` | Synthetic data category                               |
 | `synthetic_data.status`             | `generated`, `validated`, `approved`, `rejected`, `archived`                                                               | Synthetic data lifecycle flag                         |
+| `chats.is_pinned`                   | `unpinned`, `pinned`                                                                                                       | A `is_pinned` boolean                                |
+| `personas.is_default`               | `not_default`, `default`                                                                                                   | A `is_default` boolean                               |
+| `actor_notes.pinned`                | `unpinned`, `pinned`                                                                                                       | A `pinned` boolean                                   |
+| `actor_items.equipped`              | `unequipped`, `equipped`                                                                                                   | An `equipped` boolean                                |
+| `items.stackable`                   | `unique`, `stackable`                                                                                                      | A `stackable` boolean                                |
+
+### Remaining Boolean Flags (not yet migrated)
+
+These booleans are genuine singular properties or orthogonal flags,
+**not** state machine candidates — they stay as-is:
+
+| Table                | Column           | Default | Reason                                                      |
+| -------------------- | ---------------- | ------- | ----------------------------------------------------------- |
+| `world_items`        | `respawnable`    | `0`     | Intrinsic property                                          |
+| `actor_lore_entries` | `selective`      | `0`     | Orthogonal flag (relevance gating)                          |
+| `actor_lore_entries` | `case_sensitive` | `0`     | Orthogonal flag (key matching)                              |
+| `actor_lore_entries` | `constant`       | `0`     | Orthogonal flag (always included)                           |
+| `world_lore_entries` | `selective`      | `0`     | Same (mirror table)                                         |
+| `world_lore_entries` | `case_sensitive` | `0`     | Same (mirror table)                                         |
+| `world_lore_entries` | `constant`       | `0`     | Same (mirror table)                                         |
+
+### Migrated Boolean Flags (Resolved 2026-07-15)
+
+These columns were converted from integer 0/1 to string enums with state machines:
+
+| Table            | Column       | Old type    | New enum                    | Migration |
+| ---------------- | ------------ | ----------- | --------------------------- | --------- |
+| `chats`          | `is_pinned`  | `INTEGER 0` | `PinnedState`               | 010       |
+| `personas`       | `is_default` | `INTEGER 0` | `DefaultState`              | 010       |
+| `actor_notes`    | `pinned`     | `INTEGER 0` | `PinnedState`               | 010       |
+| `actor_items`    | `equipped`   | `INTEGER 0` | `EquipState`                | 010       |
+| `items`          | `stackable`  | `INTEGER 0` | `StackableState`            | 010       |
+
+### Planned: Lore Entry Lifecycle State Machine
+
+The `enabled` boolean on `actor_lore_entries` and `world_lore_entries` is
+a migration target: replace with a `status` enum supporting a richer lifecycle.
+
+**Current:** `enabled INTEGER NOT NULL DEFAULT 1`
+
+| Target enum       | Values                            | Transitions                                           |
+| ----------------- | --------------------------------- | ----------------------------------------------------- |
+| `LoreEntryStatus` | `enabled`, `disabled`, `archived` | `enabled ↔ disabled`, `enabled → archived` (terminal) |
+
+**Rationale:** An `archived` state lets users retire lore entries that should
+not appear in prompts without fully deleting them (currently requires
+setting `enabled=0` with no distinction between "disabled temporarily" and
+"archived permanently"). The other three booleans (`selective`, `case_sensitive`,
+`constant`) stay as orthogonal flags — they describe entry behavior, not lifecycle.
 
 ### Unified Actor Table (replaces separate characters table)
 
