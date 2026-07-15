@@ -35,7 +35,7 @@ export class AsyncLogQueue {
   start(): void {
     if (this.timer) return;
     this.timer = setInterval(() => {
-      void this.flush();
+      void (async () => { try { await this.flush(); } catch { /* timer flush — non-critical */ } })();
     }, this.flushInterval);
   }
 
@@ -67,7 +67,7 @@ export class AsyncLogQueue {
 
     if (this.buffer.length >= this.batchSize) {
       queueMicrotask(() => {
-        void this.flush();
+        void (async () => { try { await this.flush(); } catch { /* microtask flush — non-critical */ } })();
       });
     }
   }
@@ -99,7 +99,7 @@ export class AsyncLogQueue {
 
     if (this.buffer.length > 0) {
       queueMicrotask(() => {
-        void this.flush();
+        void (async () => { try { await this.flush(); } catch { /* follow-up flush — non-critical */ } })();
       });
     }
   }

@@ -1,4 +1,5 @@
 // ── Characters page: search, detail modal, actions ────────────
+import { jsonBody } from "../alpine/json";
 
 (globalThis as any).filterCharacters = function () {
   const query = (document.querySelector<HTMLInputElement>("#character-search")?.value ?? "")
@@ -69,7 +70,7 @@
     const res = await apiFetch("/api/chats", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name: "Chat", type: "direct", mode: "direct", participantIds: [id] }),
+      body: jsonBody({ name: "Chat", type: "direct", mode: "direct", participantIds: [id] }),
     });
     if (res.ok) {
       const data = await res.json();

@@ -50,7 +50,7 @@ export class ServerTransport implements Transport {
     if (this.timer) return;
     this.timer = setTimeout(() => {
       this.timer = null;
-      void this.flush();
+      void (async () => { try { await this.flush(); } catch { /* transport flush — non-critical */ } })();
     }, 5000);
   }
 }

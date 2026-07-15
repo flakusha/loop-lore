@@ -1,4 +1,5 @@
 import { log } from "./logger";
+import { jsonParseOr } from "./json";
 
 const apiLog = log.child({ module: "api" });
 
@@ -143,7 +144,7 @@ document.addEventListener("htmx:responseError", (e: CustomEvent<{ xhr?: XMLHttpR
   const xhr = e.detail.xhr;
   if (!xhr) return;
   try {
-    const body = JSON.parse(xhr.responseText);
+    const body = jsonParseOr<Record<string, unknown>>(xhr.responseText, {});
     const msg = (body as any)?.error || `Error ${xhr.status}`;
     document.dispatchEvent(new CustomEvent("show-toast", { detail: { type: "error", message: msg } }));
   } catch {
