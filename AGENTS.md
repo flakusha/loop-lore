@@ -50,11 +50,13 @@ before building any frontend feature.
 | `docs/frontend/chat/multi-llm-story.md`   | Multi-LLM story generation: GM, turn-taking, quests, quality evaluation, synthetic data                                            |
 | `docs/frontend/characters.md`             | Character list grid, create/edit form                                                                                              |
 | `docs/frontend/gallery.md`                | Asset gallery grid, preview modal, upload dialog                                                                                   |
+| `docs/frontend/admin.md`                  | Admin panel: user mgmt, chat mgmt, world permissions, audit log, content review, system config                                      |
 | `docs/frontend/settings.md`               | Settings sections: general, chat, API config, theme customization, data management                                                 |
 | `docs/frontend/worlds.md`                 | World entity: list, detail, create/edit                                                                                            |
 | `docs/frontend/login.md`                  | Login page: auth card, demo mode, error states                                                                                     |
 | `docs/frontend/encryption.md`             | User secret keys, AES-256-GCM at-rest message encryption, API key encryption, key hierarchy                                        |
 | `docs/frontend/components.md`             | Shared components: toasts, modals, spinners, skeletons, empty states, chips, drop zones                                            |
+| `docs/frontend/notifications.md`          | Notification system: types, storage, delivery, prompt injection, preferences, lifecycle                                             |
 
 ---
 
