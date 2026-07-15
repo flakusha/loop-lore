@@ -222,6 +222,264 @@ GET /api/assets/:id/thumb     → Thumbnail
 | Allowed audio types | ogg, opus, mp3, flac  | `ASSET_ALLOWED_AUDIO_TYPES` |
 | Allowed video types | webm, mp4             | `ASSET_ALLOWED_VIDEO_TYPES` |
 
+## Asset Visibility Model
+
+Every asset has a visibility state controlling who can discover and access it.
+Visibility is orthogonal to linking — an asset can be linked to an entity but
+still restricted in who can view it.
+
+### Visibility States
+
+| State    | Meaning                                                         |
+| -------- | --------------------------------------------------------------- |
+| `private`  | Only the owner (`uploaded_by`) can view, download, or link.      |
+| `shared`   | Owner plus explicitly listed actors/users can view and download. |
+| `public`   | Any authenticated user can discover, view, and download.         |
+
+**Default:** `private` on upload.
+
+### State Machine
+
+```
+private ↔ shared ↔ public
+```
+
+All transitions are bidirectional and always allowed. The owner or an admin
+can change visibility at any time. Changing from `public` to `private`
+immediately revokes access for non-owners (previously cached URLs continue
+working until TTL expires — serving layer checks visibility on each request
+for non-immutable endpoints).
+
+### Access Control Matrix
+
+| Actor          | `private`                | `shared`                      | `public`            |
+| -------------- | ------------------------ | ----------------------------- | ------------------- |
+| Owner          | Full (view/download/link) | Full                          | Full                |
+| Listed in share| —                        | View + download               | View + download     |
+| Other user     | —                        | —                             | View + download     |
+| Admin          | Full (override)          | Full (override)               | Full                |
+| Unauthenticated| —                        | —                             | — (auth required)   |
+
+### Visibility and Linking Interaction
+
+Linking an asset to an entity does not change its visibility. The asset's
+visibility gate is checked independently of the link:
+
+- A `private` asset linked to a `public` world is still only visible to the owner and explicitly shared actors. Users viewing the world see the link exists but cannot access the asset file.
+- A `public` asset linked to a `private` chat is accessible to anyone who can view the asset directly, but the chat itself remains private.
+
+This separation lets users control media access independently of entity access.
+
+### API: Change Visibility
+
+```
+PATCH /api/assets/:id
+{
+  "visibility": "shared"
+}
+
+Response: 200
+{ "id": "uuid", "visibility": "shared" }
+```
+
+---
+
+## Asset Sharing Between Actors
+
+Sharing makes a specific asset visible to specific actors without making it
+public. This is the mechanism behind "send image to friend" or "share map
+with party" workflows.
+
+### How Sharing Works
+
+1. **Share:** Owner calls `POST /api/assets/:id/share` with the target actor.
+   Server creates a record in `asset_shares`.
+2. **Unshare:** Owner calls `DELETE /api/assets/:id/share` with the target
+   actor. Server removes the sharing record.
+3. **Visibility update:** When the first share is created and asset is
+   `private`, visibility automatically transitions to `shared`. When all
+   shares are removed, visibility stays `shared` (owner must explicitly
+   revert to `private`).
+
+### Sharing vs Linking
+
+| Concept   | Purpose                                       | Table            | Direction            |
+| --------- | --------------------------------------------- | ---------------- | -------------------- |
+| **Link**    | "This asset belongs to / describes this entity" | `asset_links`     | Asset → Entity       |
+| **Share**   | "This actor may view/download this asset"       | `asset_shares`    | Asset → Actor        |
+
+A link says where an asset lives. A share says who can see it. They are
+independent — you can link without sharing, share without linking, or both.
+
+### Sharing Table
+
+Table: `asset_shares` — new table, added in a future migration.
+
+| Column            | Type    | Constraints                      | Notes                       |
+| ----------------- | ------- | -------------------------------- | --------------------------- |
+| `id`              | TEXT    | PK, UUID                         |                             |
+| `asset_id`        | TEXT    | FK → assets.id, NOT NULL         | The asset being shared      |
+| `shared_with_id`  | TEXT    | FK → actors.id, NOT NULL         | Who receives access         |
+| `shared_by_id`    | TEXT    | FK → actors.id, NOT NULL         | Who granted access          |
+| `created_at`      | TEXT    | DEFAULT CURRENT_TIMESTAMP        |                             |
+
+**Indexes:** `(asset_id)`, `(shared_with_id)`, `(asset_id, shared_with_id)` unique.
+
+### API Endpoints
+
+```
+POST /api/assets/:id/share
+Body: { "actor_id": "target-actor-uuid" }
+Response: 201
+
+DELETE /api/assets/:id/share
+Body: { "actor_id": "target-actor-uuid" }
+Response: 204
+
+GET /api/assets/:id/shares
+Response: 200
+[
+  {
+    "id": "share-uuid",
+    "shared_with": { "id": "actor-uuid", "display_name": "Alice" },
+    "shared_by": { "id": "actor-uuid", "display_name": "Bob" },
+    "created_at": "2026-01-15T10:30:00Z"
+  }
+]
+```
+
+### Bulk Share (Future)
+
+For sharing an asset with an entire chat or world participant list:
+
+```
+POST /api/assets/:id/share
+Body: { "chat_id": "chat-uuid" }
+Response: 201
+(creates share records for all chat participants)
+```
+
+---
+
+## Static File Serving Security
+
+Static asset serving must prevent path traversal attacks. A maliciously
+crafted request could attempt to read files outside the assets directory
+(e.g., `/api/assets/../../etc/passwd`).
+
+### Requirements
+
+1. **Path canonicalization** — resolve the requested path to an absolute
+   canonical form before serving. Reject if the canonical path does not
+   start with the configured assets root directory.
+2. **Reject `..` segments** — any path containing `..` after UUID resolution
+   must be rejected with `400 Bad Request`.
+3. **UUID validation** — asset IDs must be valid UUIDs before path
+   construction. Non-UUID input is rejected early.
+4. **No symlink following** — do not follow symlinks that point outside the
+   assets root. Either reject or resolve to the symlink target and check
+   containment.
+5. **Storage backend parity** — S3/GCS backends use key-based access (no
+   filesystem traversal risk), but key construction must still validate the
+   asset ID format.
+
+### Implementation Pattern
+
+```
+function safeAssetPath(assetId: string, variant: string): string {
+  // 1. Validate UUID format
+  if (!isValidUUID(assetId)) throw new BadRequestError("Invalid asset ID");
+
+  // 2. Construct path using UUID prefix scheme
+  const prefix = assetId.slice(0, 2);
+  const path = join(ASSETS_ROOT, variant, prefix, assetId);
+
+  // 3. Canonicalize and check containment
+  const canonical = realpathSync(path);  // resolves symlinks
+  if (!canonical.startsWith(ASSETS_ROOT)) {
+    throw new BadRequestError("Path traversal detected");
+  }
+
+  return canonical;
+}
+```
+
+---
+
+## Asset Versioning (Draft)
+
+> **Status:** Design sketch. Not implemented. Will be touched later.
+
+Assets can be updated (character portrait revised, map updated, audio
+replaced). Versioning tracks the history of changes without losing prior
+versions.
+
+### Model
+
+Each asset has a `version` integer (starts at 1). When an asset is updated
+(replaced file), the existing record is archived and a new version is created.
+
+### Version Table (Proposed)
+
+Table: `asset_versions`
+
+| Column      | Type    | Notes                                  |
+| ----------- | ------- | -------------------------------------- |
+| id          | TEXT    | PK, UUID                               |
+| asset_id    | TEXT    | FK → assets.id                         |
+| version     | INTEGER | Sequential version number              |
+| filename    | TEXT    | Original filename at this version      |
+| mime_type   | TEXT    | MIME type at this version              |
+| size_bytes  | INTEGER | File size at this version              |
+| storage_path| TEXT    | Path to this version's file            |
+| created_by  | TEXT    | FK → actors.id                         |
+| created_at  | TEXT    | DEFAULT CURRENT_TIMESTAMP              |
+| changelog   | TEXT    | Optional note: "Updated face, added hat"|
+
+**Index:** `(asset_id, version)` unique.
+
+### Update Flow
+
+```
+1. User uploads new version of asset (same entity, different file)
+2. Engine increments version number
+3. Old file kept in storage (not deleted)
+4. New file stored at version-specific path
+5. Current version pointer updated on assets table
+6. Old version record preserved in asset_versions
+```
+
+### API
+
+```
+POST /api/assets/:id/versions
+Content-Type: multipart/form-data
+  file: <binary>
+  changelog?: string
+Response: 201
+{ "version": 3, "id": "new-version-uuid" }
+
+GET /api/assets/:id/versions
+Response: 200
+[
+  { "version": 1, "created_at": "...", "changelog": "Initial upload" },
+  { "version": 2, "created_at": "...", "changelog": "Updated face" },
+  { "version": 3, "created_at": "...", "changelog": "Added hat" }
+]
+
+GET /api/assets/:id/versions/:version
+Response: 200
+{ ...version metadata... }
+```
+
+### UI
+
+In the gallery preview modal, a version selector shows "v3 of 3" with
+previous/next buttons. Each version shows its changelog and timestamp.
+The current version is marked with a green dot.
+
+---
+
 ## Migration from Gallery
 
 Old gallery items map to assets as follows:

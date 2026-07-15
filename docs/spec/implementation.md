@@ -375,11 +375,126 @@ for the full specification of the multi-LLM story generation system.
 
 #### Files
 
-| File              | Purpose                                                                                                             |
-| ----------------- | ------------------------------------------------------------------------------------------------------------------- |
-| `types.ts`        | Domain types: GM config, quest configs, world events, quality evaluation, story context, API request/response types |
-| `turn-manager.ts` | `TurnManager` class — orchestrates turn order, actor selection (5 strategies), regeneration cycles, persistence     |
-| `index.ts`        | Barrel exports                                                                                                      |
+| File                     | Purpose                                                                                                                        |
+| ------------------------ | ------------------------------------------------------------------------------------------------------------------------------ |
+| `types.ts`               | Barrel re-export of story domain types from the split type modules below                                                       |
+| `story-types.ts`         | `GameMasterConfig`, quality evaluation, `StoryContext`, `TurnManagerState` + `DEFAULT_QUALITY_THRESHOLDS`/`WEIGHTS`            |
+| `quest-types.ts`         | Quest config variants (Time/Collection/Destruction/Rescue/Discovery/Social/Composite), `QuestReward`, create/progress requests |
+| `story-events-types.ts`  | `WorldEvent`, `NpcState`, `LocationState` types                                                                                |
+| `story-api-types.ts`     | API request shapes: `StartStory`, `StepStory`, `ConfigureStory`, `GameMasterOverride`, `SyntheticGenerate`, `SyntheticTestRun` |
+| `turn-manager.ts`        | Re-export of the generalized `TurnManager` (lives in `src/turning/`)                                                           |
+| `game-master.ts`         | `GameMasterService` — LLM/Human/Hybrid turn execution, GM decisions, accept/override, inject narration, pause/resume           |
+| `quality-evaluator.ts`   | `QualityEvaluator` — multi-dimension heuristic scoring against `QualityThresholds`                                             |
+| `world-state.ts`         | `WorldStateService` — world/NPC/location state snapshots, context assembly for the GM                                          |
+| `items.ts`               | `ItemsService` — item definitions, instances, transfers                                                                        |
+| `quest-engine.ts`        | `QuestEngine` — quest lifecycle, per-chat progress tracking, reward application                                                |
+| `events/`                | World-event pipeline: `extraction.ts` (regex), `validation.ts`, `application.ts`, `index.ts`                                   |
+| `synthetic/generator.ts` | `SyntheticGenerator` — Phase 6 QA scenario derivation (all 6 `SyntheticDataType`) + `synthetic_data` status state machine      |
+| `synthetic/types.ts`     | `SyntheticCase`, `SyntheticSource` shapes                                                                                      |
+| `synthetic/runner.ts`    | `SyntheticTestRunner` — executes `SyntheticData` scenarios against the pipeline (5 modes)                                      |
+| `index.ts`               | Barrel exports                                                                                                                 |
+
+#### Synthetic Test Runner
+
+`SyntheticTestRunner` (`src/story/synthetic/runner.ts`) executes captured
+`SyntheticData` scenarios against the story pipeline and reports pass/fail per
+case. It is **read-only**: quest progression and GM escalation are evaluated
+against live DB state without mutating it, and quality scoring uses
+`QualityEvaluator` directly (no LLM).
+
+Constructor takes `SyntheticTestRunnerOptions`: `db`, an optional
+`qualityEvaluator` (constructed if omitted), `turnManagerFactory` (for
+turn-sequence orchestration replay), `gameMaster` (for live escalation
+decisions), `idGenerator`, `defaultIterations`, and `autoValidate`.
+
+**Modes** (`run(scenarioIds, mode, mutationParams?)`):
+
+| Mode          | Behavior                                                                                           |
+| ------------- | -------------------------------------------------------------------------------------------------- |
+| `replay`      | Re-run each scenario through its pipeline component; compare `actual` to `expected`                |
+| `regression`  | Same as replay; asserts results match the captured expectation                                     |
+| `mutation`    | Jitter quality inputs (`promptVariations`) and assert score variance ≤ `temperatureVariance * 100` |
+| `calibration` | Run all quality cases; aggregate scores and propose `accept`/`regenerate`/`escalate` thresholds    |
+| `stress`      | Repeat each case `defaultIterations`× and assert score consistency                                 |
+
+**Per-type execution** (dispatch on `synthetic_data.type`):
+
+| `SyntheticDataType`      | Execution                                                                               |
+| ------------------------ | --------------------------------------------------------------------------------------- |
+| `quality_evaluation`     | `QualityEvaluator.evaluate({ response, actorName })` → score + pass                     |
+| `turn_sequence`          | Structural check; `skipped` unless `turnManagerFactory` supplied                        |
+| `quest_progression`      | Read-only compute from live `quests.target` (no mutation)                               |
+| `world_state_transition` | Structural diff of `from`/`to` snapshots; `consistent` = no type changes on shared keys |
+| `regeneration_case`      | Baseline score via `QualityEvaluator`; `warranted` = baseline < `improvedScore`         |
+| `gm_escalation`          | Heuristic (active quest ⇒ escalated) when no `gameMaster`; else `skipped`               |
+
+**Result shape:**
+
+```ts
+interface SyntheticTestCaseResult {
+  scenarioId: string; // parent SyntheticData row
+  caseId: string;
+  scenarioType: SyntheticDataType;
+  mode: SyntheticTestMode;
+  status: "passed" | "failed" | "skipped";
+  expected: Record<string, unknown>;
+  actual: Record<string, unknown>;
+  reason?: string;
+}
+
+interface SyntheticTestRunResult {
+  runId: string;
+  mode: SyntheticTestMode;
+  total: number;
+  passed: number;
+  failed: number;
+  skipped: number;
+  results: SyntheticTestCaseResult[];
+  summary: { passRate: number; suggestedThresholds?: { accept; regenerate; escalate } };
+  startedAt: string;
+  finishedAt: string;
+}
+```
+
+When `autoValidate` is set and a `synthetic_data` row passes every case in
+`replay`/`regression`, the runner transitions it to `validated` via
+`syntheticDataStatusMachine` (no free mutation).
+
+**Routes:** not wired — `POST /api/synthetic/test/run` (and a results
+endpoint) are pending, per the "no wiring yet" directive. The request shape
+`SyntheticTestRunRequest` already exists in `story-api-types.ts`.
+
+#### Implemented State
+
+**Implemented (no route wiring yet — by design):**
+
+- Turn orchestration — `src/turning/` `TurnManager` (5 strategies, regeneration, pause/resume, `chats.story_state` persistence)
+- GM execution — `GameMasterService` (LLM/Human/Hybrid, decisions, override, narration inject)
+- Quality evaluation — `QualityEvaluator` (heuristic multi-dimension scoring)
+- World state — `WorldStateService` (snapshots, NPC/location dynamics, context feed)
+- Items — `ItemsService`
+- Quests — `QuestEngine` (lifecycle + progress + rewards)
+- World-event pipeline — `events/` extract → validate → apply
+- Synthetic generation — `SyntheticGenerator` (Phase 6) with `syntheticDataStatusMachine`
+  (generated → validated → approved/rejected → archived); covered by
+  `synthetic/generator.test.ts` (5 tests)
+- Synthetic test _runner_ — `SyntheticTestRunner` executes `SyntheticData` scenarios
+  in 5 modes (replay / mutation / regression / calibration / stress) against the
+  pipeline; read-only (quest/escalation evaluated against live DB state without
+  mutating it). LLM-backed paths (TurnManager orchestration, GM decisions) are
+  optional; when absent the runner falls back to structural/heuristic checks and
+  marks cases `skipped`.
+
+**Pending:**
+
+- Story + synthetic REST surface — `/api/story/*` and `/api/synthetic/*`
+  controllers/routes are not implemented (deferred per "no wiring yet").
+
+**Schema:** `locations`, `story_turns`, `quests`, `quest_progress`, `world_states`,
+`npc_states`, `location_states`, `synthetic_data` (see [`docs/schema.md`](./schema.md)).
+Note: there is **no** `world_events` table — world events live inside
+`world_states.snapshot` (JSON); `WorldStateTransition` synthetic cases derive from
+snapshot diffs.
 
 #### Turn Strategies
 
@@ -396,20 +511,6 @@ for the full specification of the multi-LLM story generation system.
 The `TurnManager` serializes its state to `chats.story_state` (JSON) for crash
 resilience. State includes: current turn number, current actor, turn order,
 strategy, pause flag, pending regeneration info.
-
-#### DB Tables
-
-Story features add these tables (see [`docs/schema.md`](./schema.md)):
-
-- `locations` — scene/room/region entities within worlds
-- `story_turns` — per-turn records with quality scores, GM decisions, world
-  events
-- `quests` — global quests with type-specific configs
-- `quest_progress` — per-chat quest progress tracking
-- `world_states` — point-in-time snapshots for rollback
-- `npc_states` — dynamic NPC state (health, relationships, inventory)
-- `location_states` — dynamic location state (atmosphere, NPCs present, weather)
-- `synthetic_data` — generated test scenarios from story sessions
 
 ### Assistant
 
