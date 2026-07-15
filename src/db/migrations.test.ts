@@ -90,7 +90,7 @@ describe("migrations round-trip (split 001_init)", () => {
   });
 
   afterAll(() => {
-    void kysely.destroy();
+    void (async () => { try { await kysely.destroy(); } catch { /* teardown — ignore */ } })();
   });
 
   test("up() creates every expected schema table", async () => {
