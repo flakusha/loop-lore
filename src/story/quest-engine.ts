@@ -16,6 +16,7 @@ import { getLogger } from "../logger";
 import { WorldStateService } from "./world-state";
 import { ItemsService } from "./items";
 import { applyEvents } from "./events";
+import { PROGRESS_CALCULATORS } from "./quests/registry";
 
 // ── Progress Entry ───────────────────────────────────────────
 
@@ -263,83 +264,9 @@ export class QuestEngine {
     // FIXME: {} is not a valid QuestConfig — lacks required `type`. Validate after parse.
     const config = jsonParseOr(quest.config, null) as QuestConfig | null;
     if (!config || typeof config.type !== "string") return 0;
-    const questType = quest.type as QT;
-
-    switch (questType) {
-      case QuestType.Destruction: {
-        if (event.type !== "combat_event") return 0;
-        const defeated = typeof event.data.defeated === "boolean" && event.data.defeated;
-        if (!defeated) return 0;
-        const cfg = config as import("./types").DestructionQuestConfig;
-        if (cfg.targetActorId) {
-          if (typeof event.data.defenderId !== "string") return 0;
-          return event.data.defenderId === cfg.targetActorId ? 1 : 0;
-        }
-        return (cfg.targetQuantity ?? 0) > 0 ? Math.round(100 / cfg.targetQuantity!) : 0;
-      }
-
-      case QuestType.Collection: {
-        if (event.type !== "item_transfer") return 0;
-        const cfg = config as import("./types").CollectionQuestConfig;
-        const itemName =
-          typeof event.data.itemName === "string" ? event.data.itemName.toLowerCase() : undefined;
-        if (cfg.items) {
-          let totalQuantity = 0;
-          let hasMatch = false;
-          for (const i of cfg.items) {
-            totalQuantity += i.quantity;
-            if (itemName?.includes(i.itemId.toLowerCase())) hasMatch = true;
-          }
-          return hasMatch ? Math.round(100 / totalQuantity) : 0;
-        }
-        return cfg.categoryQuantity ? Math.round(100 / cfg.categoryQuantity) : 10;
-      }
-
-      case QuestType.Rescue: {
-        if (event.type !== "location_change") return 0;
-        const cfg = config as import("./types").RescueQuestConfig;
-        if (event.actorId === cfg.targetActorId && event.locationId === cfg.safeLocationId) {
-          return 100 - quest.progress;
-        }
-        return 0;
-      }
-
-      case QuestType.Time: {
-        if (event.type !== "time_advancement") return 0;
-        const cfg = config as import("./types").TimeQuestConfig;
-        const minutes = typeof event.data.minutesAdvanced === "number" ? event.data.minutesAdvanced : 60;
-        return Math.round((minutes / cfg.durationMinutes) * 100);
-      }
-
-      case QuestType.Discovery: {
-        if (event.type !== "location_change") return 0;
-        const cfg = config as import("./types").DiscoveryQuestConfig;
-        if (event.locationId === cfg.targetLocationId) {
-          return 100 - quest.progress;
-        }
-        if (cfg.clues.some((c) => c.locationId === event.locationId))
-          return Math.round(100 / (cfg.clues.length + 1));
-        return 0;
-      }
-
-      case QuestType.Social: {
-        if (event.type !== "npc_state_change") return 0;
-        const cfg = config as import("./types").SocialQuestConfig;
-        const npcId = typeof event.data.npcActorId === "string" ? event.data.npcActorId : event.actorId;
-        if (npcId === cfg.targetActorId) {
-          return Math.round(100 / cfg.requiredInteractions);
-        }
-        return 0;
-      }
-
-      case QuestType.Composite: {
-        return 0;
-      }
-
-      default: {
-        return 0;
-      }
-    }
+    const calculator = PROGRESS_CALCULATORS[quest.type as QT];
+    if (!calculator) return 0;
+    return calculator({ progress: quest.progress, target: quest.target }, config, event);
   }
 
   /**
@@ -494,4 +421,12 @@ export class QuestEngine {
       }
     }
   }
+}
+
+export function createQuestEngine(
+  db: Kysely<DB>,
+  worldState?: WorldStateService,
+  items?: ItemsService,
+): QuestEngine {
+  return new QuestEngine(db, worldState, items);
 }
