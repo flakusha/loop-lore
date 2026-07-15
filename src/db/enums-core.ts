@@ -34,6 +34,13 @@ export const ChatMode = {
 } as const;
 export type ChatMode = (typeof ChatMode)[keyof typeof ChatMode];
 
+export const ChatPurpose = {
+  Main: "main",
+  Side: "side",
+  Notes: "notes",
+} as const;
+export type ChatPurpose = (typeof ChatPurpose)[keyof typeof ChatPurpose];
+
 export const TurnStrategy = {
   RoundRobin: "round_robin",
   SceneBased: "scene_based",
@@ -117,6 +124,31 @@ export const ActorVisibility = {
 } as const;
 export type ActorVisibility = (typeof ActorVisibility)[keyof typeof ActorVisibility];
 
+// ── Boolean Flags (replacing integer 0/1) ───────────────
+export const PinnedState = {
+  Unpinned: "unpinned",
+  Pinned: "pinned",
+} as const;
+export type PinnedState = (typeof PinnedState)[keyof typeof PinnedState];
+
+export const DefaultState = {
+  NotDefault: "not_default",
+  Default: "default",
+} as const;
+export type DefaultState = (typeof DefaultState)[keyof typeof DefaultState];
+
+export const EquipState = {
+  Unequipped: "unequipped",
+  Equipped: "equipped",
+} as const;
+export type EquipState = (typeof EquipState)[keyof typeof EquipState];
+
+export const StackableState = {
+  Unique: "unique",
+  Stackable: "stackable",
+} as const;
+export type StackableState = (typeof StackableState)[keyof typeof StackableState];
+
 // ── State Machine Definitions ────────────────────────────
 import { createMachine, CompositeValidator, type StateDef } from "./state";
 
@@ -186,3 +218,51 @@ export const actorVisibilityDef: StateDef<ActorVisibility> = {
 };
 
 export const actorVisibilityMachine = createMachine(actorVisibilityDef);
+
+export const pinnedStateDef: StateDef<PinnedState> = {
+  values: ["unpinned", "pinned"] as const,
+  initial: "unpinned",
+  transitions: {
+    unpinned: ["pinned"],
+    pinned: ["unpinned"],
+  },
+  terminal: [],
+};
+
+export const pinnedStateMachine = createMachine(pinnedStateDef);
+
+export const defaultStateDef: StateDef<DefaultState> = {
+  values: ["not_default", "default"] as const,
+  initial: "not_default",
+  transitions: {
+    not_default: ["default"],
+    default: ["not_default"],
+  },
+  terminal: [],
+};
+
+export const defaultStateMachine = createMachine(defaultStateDef);
+
+export const equipStateDef: StateDef<EquipState> = {
+  values: ["unequipped", "equipped"] as const,
+  initial: "unequipped",
+  transitions: {
+    unequipped: ["equipped"],
+    equipped: ["unequipped"],
+  },
+  terminal: [],
+};
+
+export const equipStateMachine = createMachine(equipStateDef);
+
+export const stackableStateDef: StateDef<StackableState> = {
+  values: ["unique", "stackable"] as const,
+  initial: "unique",
+  transitions: {
+    unique: ["stackable"],
+    stackable: ["unique"],
+  },
+  terminal: [],
+};
+
+export const stackableStateMachine = createMachine(stackableStateDef);

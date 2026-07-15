@@ -5,6 +5,7 @@
  */
 
 import { createEntityRoutes } from "./entity-routes";
+import { EquipState } from "../db/enums";
 
 createEntityRoutes({
   parentPrefix: "actors",
@@ -35,7 +36,7 @@ createEntityRoutes({
   defaults: {
     itemType: "misc",
     quantity: 1,
-    equipped: 0,
+    equipped: EquipState.Unequipped,
     sortOrder: 0,
   },
   createRequired: ["name"],
