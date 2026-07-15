@@ -7,7 +7,19 @@
 
 import type { Kysely } from "kysely";
 import type { DB } from "@/db/schema";
-import { UserRole, UserStatus, ChatType, ChatMode, ActorType, AgentType } from "@/db/enums";
+import {
+  UserRole,
+  UserStatus,
+  ChatType,
+  ChatMode,
+  ActorType,
+  AgentType,
+  ItemCategory,
+  ItemRarity,
+  QuestType,
+  QuestStatus,
+  StackableState,
+} from "@/db/enums";
 
 // ── Deterministic IDs ───────────────────────────────────────────
 
@@ -53,6 +65,26 @@ export const SEED = {
   soloChat: {
     id: `a0000008-0000-4000-a000-${U.slice(24)}`,
     name: "E2E Test Chat",
+  },
+  world: {
+    id: `a0000009-0000-4000-a000-${U.slice(24)}`,
+    name: "E2E Test World",
+    description: "World for E2E testing",
+  },
+  location: {
+    id: `a0000010-0000-4000-a000-${U.slice(24)}`,
+    name: "E2E Test Location",
+    description: "A dusty tavern in the starting village",
+  },
+  item: {
+    id: `a0000011-0000-4000-a000-${U.slice(24)}`,
+    name: "Iron Sword",
+    description: "A plain but reliable blade",
+  },
+  quest: {
+    id: `a0000012-0000-4000-a000-${U.slice(24)}`,
+    name: "Retrieve the Lost Artifact",
+    description: "Find the ancient relic hidden in the caves beneath the village",
   },
 } as const;
 
@@ -173,6 +205,82 @@ export async function seedMessage(db: Kysely<DB>): Promise<void> {
     .execute();
 }
 
+export async function seedWorld(db: Kysely<DB>): Promise<void> {
+  await db
+    .insertInto("worlds")
+    .values({
+      id: SEED.world.id,
+      owner_id: SEED.user.id,
+      name: SEED.world.name,
+      description: SEED.world.description,
+    })
+    .execute();
+}
+
+export async function seedLocation(db: Kysely<DB>): Promise<void> {
+  await db
+    .insertInto("locations")
+    .values({
+      id: SEED.location.id,
+      world_id: SEED.world.id,
+      name: SEED.location.name,
+      description: SEED.location.description,
+    })
+    .execute();
+}
+
+export async function seedItem(db: Kysely<DB>): Promise<void> {
+  await db
+    .insertInto("items")
+    .values({
+      id: SEED.item.id,
+      world_id: SEED.world.id,
+      name: SEED.item.name,
+      description: SEED.item.description,
+      category: ItemCategory.Weapon,
+      rarity: ItemRarity.Common,
+      stackable: StackableState.Unique,
+      max_stack: 1,
+      properties: JSON.stringify({ damage: 5, type: "slashing" }),
+      value: 10,
+      weight: 3,
+    })
+    .execute();
+}
+
+export async function seedWorldItem(db: Kysely<DB>): Promise<void> {
+  await db
+    .insertInto("world_items")
+    .values({
+      id: `a0000013-0000-4000-a000-${U.slice(24)}`,
+      world_id: SEED.world.id,
+      item_id: SEED.item.id,
+      location_id: SEED.location.id,
+      quantity: 1,
+      visibility: "visible",
+      respawnable: 0,
+    })
+    .execute();
+}
+
+export async function seedQuest(db: Kysely<DB>): Promise<void> {
+  await db
+    .insertInto("quests")
+    .values({
+      id: SEED.quest.id,
+      world_id: SEED.world.id,
+      creator_id: SEED.user.id,
+      name: SEED.quest.name,
+      description: SEED.quest.description,
+      type: QuestType.Discovery,
+      status: QuestStatus.Active,
+      priority: 1,
+      target: 1,
+      rewards: JSON.stringify({ xp: 100, gold: 50 }),
+    })
+    .execute();
+}
+
 /**
  * Seed all test data.
  */
@@ -181,6 +289,11 @@ export async function seedAll(db: Kysely<DB>): Promise<void> {
   await seedCharacter(db);
   await seedChat(db);
   await seedMessage(db);
+  await seedWorld(db);
+  await seedLocation(db);
+  await seedItem(db);
+  await seedWorldItem(db);
+  await seedQuest(db);
   await seedSolo(db);
 }
 
