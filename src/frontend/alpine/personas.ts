@@ -1,4 +1,5 @@
 import { log as rootLog } from "./logger";
+import { jsonBody } from "./json";
 
 const log = rootLog.child({ module: "personas" });
 
@@ -7,7 +8,7 @@ interface PersonaItem {
   name: string;
   description: string | null;
   title: string | null;
-  is_default: number;
+  is_default: string;
 }
 
 (globalThis as any).personasPage = function () {
@@ -58,7 +59,7 @@ interface PersonaItem {
       this.formName = p.name;
       this.formTitle = p.title || "";
       this.formDescription = p.description || "";
-      this.formIsDefault = p.is_default === 1;
+      this.formIsDefault = p.is_default === "default";
       ui.showPersonaForm = true;
     },
 
@@ -82,7 +83,7 @@ interface PersonaItem {
         const res = await fetch(url, {
           method,
           headers: { "Content-Type": "application/json", Accept: "application/json" },
-          body: JSON.stringify(body),
+          body: jsonBody(body),
         });
 
         if (res.ok) {

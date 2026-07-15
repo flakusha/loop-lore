@@ -10,6 +10,7 @@
  *   GET    /api/chats/:id/export    — export chat (JSON / Markdown)
  *   GET    /api/chats/:id/participants     — list participants
  *   POST   /api/chats/:id/participants     — add participant
+ *   PUT    /api/chats/:id/participants/:actorId — update participant (talkativity, role)
  *   DELETE /api/chats/:id/participants/:actorId  — remove participant
  */
 
@@ -18,7 +19,7 @@ import type { DB } from "../db/schema";
 import type { RequestContext } from "../middleware/types";
 import type { RouteDispatch } from "./router";
 import { registerRoute } from "./router";
-import { uid } from "../utils";
+import { uid, safeJsonParse, safeJsonStringify } from "../utils";
 import {
   BAD_METHOD,
   jsonResponse,
@@ -44,6 +45,7 @@ import {
   MessageContentFormat,
   ContentEncoding,
   ActorType,
+  PinnedState,
 } from "../db/enums";
 import { getRuntimeConfig } from "../age-gate/controller";
 import { getStatus } from "../age-gate/service";
@@ -93,6 +95,13 @@ interface RemoveParticipantOpts {
   chatId: string;
   actorId: string;
 }
+interface UpdateParticipantOpts {
+  database: Kysely<DB>;
+  context: RequestContext;
+  chatId: string;
+  actorId: string;
+  body: Record<string, unknown>;
+}
 interface SetPersonaOpts {
   database: Kysely<DB>;
   context: RequestContext;
@@ -130,6 +139,11 @@ const dispatch: RouteDispatch = async ({ request, context, database }) => {
       const body = await parseBody(request);
       if (body instanceof Response) return body;
       return handleAddParticipant({ database, chatId: chatId!, body, context });
+    }
+    if (method === "PUT" && actorId) {
+      const body = await parseBody(request);
+      if (body instanceof Response) return body;
+      return handleUpdateParticipant({ database, chatId: chatId!, actorId, body, context });
     }
     if (method === "DELETE" && actorId) {
       return handleRemoveParticipant({ database, chatId: chatId!, actorId, context });
@@ -424,7 +438,14 @@ async function handleUpdateChat({ database, chatId, body, context }: UpdateChatO
   if (body.mode) updates.mode = body.mode;
   if (body.turnStrategy) updates.turn_strategy = body.turnStrategy;
   if (body.worldId) updates.world_id = body.worldId;
-  if (typeof body.isPinned === "boolean") updates.is_pinned = body.isPinned ? 1 : 0;
+  if (typeof body.isPinned === "boolean") updates.is_pinned = body.isPinned ? PinnedState.Pinned : PinnedState.Unpinned;
+  if (typeof body.isPaused === "boolean") {
+    // Update story_state JSON with isPaused flag
+    const current = chat.story_state ? safeJsonParse<Record<string, unknown>>(chat.story_state) : null;
+    const state = { ...(current?.ok && current.value), isPaused: body.isPaused };
+    const serialized = safeJsonStringify(state);
+    updates.story_state = serialized.ok ? serialized.value : chat.story_state;
+  }
   updates.updated_at = new Date().toISOString();
 
   await database.updateTable("chats").set(updates).where("id", "=", chatId).execute();
@@ -626,6 +647,55 @@ async function handleRemoveParticipant({
     .execute();
 
   return jsonNoContent();
+}
+
+async function handleUpdateParticipant({
+  database,
+  chatId,
+  actorId,
+  body,
+  context,
+}: UpdateParticipantOpts): Promise<Response> {
+  const userId = context.userId;
+  if (!userId)
+    return jsonError({
+      message: "Unauthorized",
+      status: HttpStatus.Unauthorized,
+      code: ErrorCode.Unauthorized,
+    });
+
+  const chat = await database
+    .selectFrom("chats")
+    .select("created_by")
+    .where("id", "=", chatId)
+    .executeTakeFirst();
+  if (!chat || (chat.created_by !== userId && context.userRole !== "admin")) {
+    return jsonError({ message: "Chat not found", status: HttpStatus.NotFound });
+  }
+
+  const updates: Record<string, unknown> = {};
+  if (typeof body.talkativity === "number") {
+    updates.talkativity = Math.min(10, Math.max(1, body.talkativity));
+  }
+  if (typeof body.initiative === "number") {
+    updates.initiative = body.initiative;
+  }
+  if (typeof body.role === "string") {
+    updates.role_in_chat = body.role;
+  }
+
+  if (Object.keys(updates).length === 0) {
+    return jsonError({ message: "No valid fields to update", status: HttpStatus.BadRequest });
+  }
+
+  await database
+    .updateTable("chat_participants")
+    .set(updates)
+    .where("chat_id", "=", chatId)
+    .where("actor_id", "=", actorId)
+    .execute();
+
+  return jsonResponse({ ok: true });
 }
 
 /**
@@ -833,7 +903,8 @@ async function handleExportChat({ database, chatId, context, format }: ExportCha
     });
   }
 
-  return new Response(JSON.stringify(exportData, null, 2), {
+  const exportStr = safeJsonStringify(exportData);
+  return new Response(exportStr.ok ? exportStr.value : "{}", {
     headers: {
       "Content-Type": "application/json",
       "Content-Disposition": `attachment; filename="${safeName}.json"`,
