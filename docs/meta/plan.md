@@ -339,6 +339,10 @@ Read-state schema + unread badge + mark-read TODO.
 
 ## Known Issues
 
+### Resolved (2026-07-15)
+
+- **Boolean integer flags → typed state enums:** Converted 5 columns (is_pinned, is_default, pinned, equipped, stackable) from magic 0/1 integers to string enums with state machines. Migration 010 handles data transform. Fixes latent bug in new-chat.ts persona selection.
+
 ### Resolved (2026-07-10)
 
 - **TS strict-typing debt:** `db/index.ts` alias renamed `Database`→`Db`; `bun run typecheck` clean.
@@ -356,6 +360,22 @@ Fix: make `cachedSoloUser` per-request; reduce parallelism or use shared fixture
 
 **Cascade Failure Pattern** — Single test timeout kills all subsequent tests in
 file via shared `ctx.page` state.
+
+### Schema Hardening — Planned
+
+Tracked in detail at [schema.md#bare-string-columns-requiring-enum-types](../spec/schema.md).
+Summary of low-risk cleanup tasks:
+
+| #   | Task                                             | Files                                                       | Difficulty |
+| --- | ------------------------------------------------ | ----------------------------------------------------------- | ---------- |
+| 1   | Lore `enabled` → `LoreEntryStatus` enum          | enums, 2× schema, 2× migration, 2× routes, prompt-assembler | Medium     |
+| 2   | `actor_keys.status` → `KeyStatus` enum + SM      | enums, schema, migration, actor-keys.ts                     | Low        |
+| 3   | `actor_keys.key_type` → `KeyType` enum           | enums, schema, migration, actor-keys.ts                     | Low        |
+| 4   | `memory_type` → `MemoryType` enum                | enums, schema, migration, actor-memories route              | Low        |
+| 5   | `actor_notes.category` → `NoteCategory` enum     | enums, schema, migration                                    | Low        |
+| 6   | Wire `world_items.visibility` → `ItemVisibility` | schema, migration                                           | Trivial    |
+| 7   | Align `chats.purpose` / `chat_purpose` naming    | schema, migration                                           | Trivial    |
+| 8   | Add `actor_keys.public_key` to migration DDL     | migration                                                   | Trivial    |
 
 ### Remaining Review Findings (Round 3, 2026-07-06)
 
