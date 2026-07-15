@@ -1,5 +1,6 @@
 // ── Worlds page: search, create ──────────────────────────────
 import { log as rootLog } from "../alpine/logger";
+import { jsonBody } from "../alpine/json";
 
 const pageLog = rootLog.child({ module: "worlds" });
 
@@ -39,7 +40,7 @@ const pageLog = rootLog.child({ module: "worlds" });
     const res = await apiFetch("/api/worlds", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data),
+      body: jsonBody(data),
     });
     pageLog.debug("createWorld response", { status: res.status });
     if (res.ok) {
