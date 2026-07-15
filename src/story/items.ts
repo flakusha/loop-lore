@@ -7,7 +7,7 @@
 import type { Kysely, Transaction } from "kysely";
 import type { DB } from "../db/schema";
 import type { ItemCategory, ItemRarity } from "../db/enums";
-import { ItemVisibility } from "../db/enums";
+import { ItemVisibility, StackableState } from "../db/enums";
 import { uid, safeJsonStringify } from "../utils";
 
 // ── Item Definition Helpers ───────────────────────────────────
@@ -63,7 +63,7 @@ export class ItemsService {
         description: def.description,
         category: def.category,
         rarity: def.rarity,
-        stackable: def.stackable ? 1 : 0,
+        stackable: def.stackable ? StackableState.Stackable : StackableState.Unique,
         max_stack: def.maxStack,
         properties: (() => {
           const r = safeJsonStringify(def.properties);

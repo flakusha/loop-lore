@@ -62,6 +62,9 @@ function createTestDb(): TestDbResult {
     CREATE TABLE chat_participants (
       chat_id TEXT NOT NULL, actor_id TEXT NOT NULL,
       role_in_chat TEXT NOT NULL DEFAULT 'member',
+      impersonate_actor_id TEXT, persona_id TEXT, last_read_message_id TEXT,
+      talkativity INTEGER NOT NULL DEFAULT 5,
+      initiative INTEGER NOT NULL DEFAULT 0,
       joined_at TEXT NOT NULL DEFAULT (datetime('now')),
       PRIMARY KEY (chat_id, actor_id)
     )
