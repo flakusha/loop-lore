@@ -47,7 +47,7 @@ export { TurnManager, type TurnManagerOptions } from "./turn-manager";
 
 export { GameMasterService, type GmTurnResult } from "./game-master";
 
-export { QualityEvaluator, type EvaluatorConfig } from "./quality-evaluator";
+export { QualityEvaluator, createQualityEvaluator, type EvaluatorConfig } from "./quality-evaluator";
 
 export { WorldStateService } from "./world-state";
 
@@ -64,4 +64,15 @@ export {
 
 export { type ItemDefinition, type ItemInstance, type TransferResult, ItemsService } from "./items";
 
-export { QuestEngine, type QuestProgressEntry } from "./quest-engine";
+export { QuestEngine, createQuestEngine, type QuestProgressEntry } from "./quest-engine";
+
+export { SyntheticGenerator, type SyntheticGeneratorOptions } from "./synthetic/generator";
+export type { SyntheticCase, SyntheticSource } from "./synthetic/types";
+export {
+  SyntheticTestRunner,
+  type SyntheticTestRunnerOptions,
+  type SyntheticTestRunResult,
+  type SyntheticTestCaseResult,
+  type SyntheticTestRunSummary,
+  type SyntheticTestStatus,
+} from "./synthetic/runner";
