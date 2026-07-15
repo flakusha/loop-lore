@@ -116,6 +116,7 @@ Request body validation uses Zod schemas defined per route group in companion
 | GET    | `/api/chats/:id/participants`          | Yes  | —                                                   | `[{ actor, role }]`           |
 | POST   | `/api/chats/:id/participants`          | Yes† | `{ actorId, role? }`                                | `{ id }` + 201                |
 | DELETE | `/api/chats/:id/participants/:actorId` | Yes† | —                                                   | 204                           |
+| PUT    | `/api/chats/:id/location`              | Yes† | `{ locationId }` or `{ locationId: null }`          | `{ ok, current_location_id }` |
 
 † Owner or admin only for mutations. Participants can GET.
 
@@ -220,8 +221,11 @@ Message listing: ordered by `created_at ASC`. `parentId` filter returns children
 | GET    | `/api/worlds/:id/locations/:locId` | Yes  | —                                                          | Location object             |
 | PUT    | `/api/worlds/:id/locations/:locId` | Yes† | `{ name?, description?, parentLocationId?, connections? }` | Updated location            |
 | DELETE | `/api/worlds/:id/locations/:locId` | Yes† | —                                                          | 204                         |
+| POST   | `/api/worlds/:id/initialize-states`| Yes† | —                                                          | `{ locations_initialized, npcs_initialized }` |
 
 † World owner or admin.
+
+Location connections are validated: each connection ID must reference an existing location in the same world. Self-connections are rejected.
 
 ### Assets
 

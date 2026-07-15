@@ -1517,6 +1517,233 @@ When active, inject difficulty rules into the LLM prompt:
 
 ---
 
+## Assistant/GM Safe Tools
+
+The assistant (in GM or Pure Assistant role) can execute structured tool calls
+during gameplay. These tools mutate game state through validated engine
+functions — the LLM never directly writes to the database.
+
+### Tool List
+
+| Tool               | Parameters                                        | Effect                                   | Permission           |
+| ------------------ | ------------------------------------------------- | ---------------------------------------- | -------------------- |
+| `roll_dice`          | notation (`"2d6+3"`), reason                      | Returns total, individual rolls          | All roles            |
+| `skill_check`        | skill, dc, actor_id                               | Rolls d20 + modifier vs DC               | All roles            |
+| `item_transfer`      | item_id, from_actor_id, to_actor_id, quantity     | Moves item between inventories           | GM (influencing)     |
+| `money_transfer`     | from_actor_id, to_actor_id, amount, denomination  | Transfers currency between actors        | GM (influencing)     |
+| `inventory_inspect`  | actor_id                                          | Returns full inventory + equipment       | All roles (read)     |
+| `status_apply`       | effect, target_actor_id, duration                 | Applies status effect to target          | GM (influencing)     |
+| `status_remove`      | effect, target_actor_id                           | Removes status effect from target        | GM (influencing)     |
+| `quest_update`       | quest_id, status, progress                        | Updates quest state                      | GM (influencing)     |
+| `location_move`      | actor_id, location_id                             | Moves actor to a different location      | GM (influencing)     |
+| `world_state_edit`   | key, value                                        | Edits world state snapshot               | GM (influencing)     |
+| `npc_state_edit`     | npc_id, key, value                                | Edits NPC state                          | GM (influencing)     |
+| `loot_generate`      | loot_table_id, location_id                        | Rolls loot and places items at location  | GM (influencing)     |
+| `xp_grant`           | actor_id, amount, reason                          | Awards XP to an actor                    | GM (influencing)     |
+
+### Tool-Call Interface
+
+Tools are invoked via structured intent blocks in the LLM output, following
+the same pattern as `COMBAT_INTENT`:
+
+```
+[TOOL_CALL]
+{
+  "tool": "item_transfer",
+  "params": {
+    "item_id": "sword_001",
+    "from_actor_id": "npc_merchant",
+    "to_actor_id": "player_01",
+    "quantity": 1
+  },
+  "narrative": "The merchant hands you the blade."
+}
+[/TOOL_CALL]
+```
+
+The engine:
+
+1. Extracts `[TOOL_CALL]...[/TOOL_CALL]` blocks from LLM output
+2. Validates the caller's permission tier
+3. Validates parameters against the tool's schema
+4. Executes the tool (deterministic, sub-millisecond)
+5. Returns the result to the LLM for narrative integration
+
+### Permission Matrix
+
+| Tool               | Pure Assistant | Observer GM | Influencing GM | User (self) |
+| ------------------ | -------------- | ----------- | -------------- | ----------- |
+| `roll_dice`          | ✓              | ✓           | ✓              | ✓           |
+| `skill_check`        | ✓              | ✓           | ✓              | ✓           |
+| `inventory_inspect`  | read only      | read only   | read/write     | own only    |
+| `item_transfer`      | —              | —           | ✓              | —           |
+| `money_transfer`     | —              | —           | ✓              | —           |
+| `status_apply`       | —              | —           | ✓              | —           |
+| `status_remove`       | —              | —           | ✓              | —           |
+| `quest_update`       | —              | —           | ✓              | —           |
+| `location_move`      | —              | —           | ✓              | —           |
+| `world_state_edit`   | —              | —           | ✓              | —           |
+| `npc_state_edit`     | —              | —           | ✓              | —           |
+| `loot_generate`      | —              | —           | ✓              | —           |
+| `xp_grant`           | —              | —           | ✓              | —           |
+
+### User Self-Service Tools
+
+Users can invoke a subset of tools on their own actor without GM mediation.
+These are "safe" tools that only affect the caller's own state:
+
+- `roll_dice` — roll dice for their own checks
+- `skill_check` — attempt a skill check on their own behalf
+- `inventory_inspect` — view their own inventory
+
+All other tools require GM permission. This prevents players from
+self-authorizing item transfers, XP grants, or status changes.
+
+### Tool Execution Logging
+
+Every tool call is logged to `generation_attempts` (or a dedicated
+`tool_calls` table if added) with:
+
+- Who called it (actor_id)
+- What tool and parameters
+- Result (success/failure + data)
+- Which rules were active during execution
+
+This audit trail enables debugging, replay, and undo.
+
+---
+
+## In-Game Economy & Trading
+
+### Trading Approaches
+
+loop-lore supports three trading interfaces, from simplest to most complex.
+MVP uses narrative-mediated trading (option B or C). Option A is a future
+enhancement.
+
+#### Option A: Dedicated Trade Screen (Future)
+
+A dedicated UI where two actors exchange items and currency simultaneously.
+Both parties see each other's inventories, propose trades, and confirm.
+
+- **Pros:** Clear, unambiguous, no LLM dependency
+- **Cons:** High implementation cost, breaks narrative flow
+- **When:** Post-MVP, if demand warrants
+
+#### Option B: Assistant/GM-Mediated Trading (Recommended MVP)
+
+The LLM narrates the trade. The engine validates and executes. Same pattern
+as combat — LLM proposes, code disposes.
+
+```
+1. Player says: "I want to buy the sword from the merchant"
+2. LLM narrates: "The merchant examines the blade. '50 gold,' he says."
+3. LLM outputs [TOOL_CALL]:
+   {
+     "tool": "money_transfer",
+     "params": { "from": "player_01", "to": "npc_merchant", "amount": 50 }
+   }
+   and:
+   {
+     "tool": "item_transfer",
+     "params": { "item": "sword_001", "from": "npc_merchant", "to": "player_01" }
+   }
+4. Engine validates: player has ≥ 50 gold, merchant has the sword
+5. Engine executes both transfers atomically
+6. LLM narrates the completed transaction
+```
+
+**Advantages:** works within existing tool-call architecture, no new UI,
+narrative-driven.
+
+#### Option C: NPC Interaction via Narrative (Simplest)
+
+The LLM plays the NPC merchant directly. Trading happens entirely through
+dialogue. The engine only intervenes when the player confirms a transaction
+via a UI action (button click).
+
+```
+1. Player interacts with merchant NPC
+2. LLM narrates merchant dialogue: "I've got swords, potions..."
+3. Player clicks "Buy" button on an item card in the chat
+4. Engine validates and executes the transfer
+5. LLM narrates the result
+```
+
+**Advantages:** zero new LLM tooling, natural conversation flow.
+**Disadvantages:** harder to enforce mechanical constraints (the LLM might
+"forget" the price).
+
+### Trade Validation Rules
+
+Regardless of trading approach, the engine enforces these rules:
+
+1. **Sufficient funds** — buyer must have ≥ asking price in gold (or
+   equivalent denomination after exchange rate conversion)
+2. **Item existence** — seller must have the item in their inventory with
+   sufficient quantity
+3. **Atomic execution** — item transfer and currency transfer happen in a
+   single transaction. If either fails, neither applies
+4. **No negative quantities** — transfer quantity must be ≥ 1 and ≤ seller's
+   available quantity
+5. **Self-trade prevention** — an actor cannot trade with themselves
+6. **Encumbrance check** (optional) — warn if buyer would exceed carry
+   capacity after receiving items
+
+### Currency Exchange
+
+When trading across denominations, the engine uses the exchange rate table:
+
+```
+100 copper = 1 silver
+10 silver = 1 gold
+10 gold = 1 platinum
+```
+
+The engine auto-converts: if a player has 15 silver and needs to pay 1 gold,
+the engine deducts 10 silver (1 gold equivalent) and leaves 5 silver.
+
+### Bartering System (Future)
+
+A negotiation mechanic where the LLM mediates haggling:
+
+```
+Player: "I'll give you 30 gold for the sword."
+LLM (as merchant): "30? This blade is worth at least 45. How about 40?"
+Player: "Deal."
+Engine: validates 40 gold, executes transfer
+```
+
+This is a natural extension of option B/C — no new mechanics needed, just
+prompt engineering for the NPC's pricing logic.
+
+### Shopkeeper NPCs
+
+Shopkeepers are regular NPCs with an additional `shop_inventory` concept.
+The GM or world author defines:
+
+- What items the shopkeeper carries (from item definitions)
+- Pricing (may differ from base item value — markup/discount)
+- Restock schedule (daily, weekly, or never)
+
+The shopkeeper's inventory is stored as world items with
+`owner_actor_id` set to the shopkeeper's actor ID. The same item
+transfer tools apply.
+
+### Player-to-Player Trading
+
+In multi-user group chats, players can trade directly:
+
+1. Player A offers an item: "I'll trade you my healing potion for that map"
+2. Player B confirms: "Deal"
+3. LLM outputs tool calls for the exchange
+4. Engine validates and executes atomically
+
+The GM can optionally require approval for player-to-player trades
+(configurable per world).
+
+---
+
 ## Reference
 
 ### Related Documents
@@ -1530,6 +1757,271 @@ When active, inject difficulty rules into the LLM prompt:
 | `docs/memory-system.md`   | Character memories                         |
 | `docs/plugin-system.md`   | Plugin architecture, tool/role definitions |
 | `docs/assets.md`          | Asset upload and linking pipeline          |
+
+## Economy Balancing Tools (Draft)
+
+> **Status:** Design sketch. Not implemented.
+
+GM-facing tools for monitoring and balancing the in-game economy. The
+economy is a closed system — gold and items flow between actors, shops,
+and the world. These tools help GMs detect imbalances.
+
+### Key Metrics
+
+| Metric                  | Formula                                           | Healthy Range    |
+| ----------------------- | ------------------------------------------------- | ---------------- |
+| Gold supply             | SUM(all actor gold)                               | 100-10000        |
+| Gold velocity           | gold_transfers / time_period                      | Growing slowly   |
+| Item circulation        | items_traded / total_items                        | 30-70%           |
+| Wealth inequality       | max(actor_gold) / median(actor_gold)              | < 10x            |
+| Shop price effectiveness| items_bought / items_available_at_shop            | 20-80%           |
+| Loot rarity distribution| COUNT(items) GROUP BY rarity                      | Follows expected curve |
+
+### Alert Thresholds
+
+The GM can configure alerts for when metrics drift:
+
+```
+gold_supply > 50000  → "Warning: excessive gold in circulation"
+wealth_inequality > 20 → "Warning: one player holds most wealth"
+item_circulation < 10 → "Warning: items are hoarded, not traded"
+```
+
+### Balancing Levers
+
+GMs can adjust the economy via world rules:
+
+| Lever                 | Effect                                        |
+| --------------------- | --------------------------------------------- |
+| Tax rate              | Percentage deducted on each transaction        |
+| Shop markup/discount  | Global modifier on shop prices                 |
+| Loot drop rate        | Multiplier on loot table generation            |
+| Gold sink events      | Town taxes, repair costs, travel fees          |
+| Item decay            | Consumables degrade over time (optional)       |
+
+### Dashboard UI
+
+On the world detail page, an "Economy" tab (GM only) shows:
+
+- **Gold flow chart** — sources (loot, quests, shops) vs sinks (shops, taxes)
+- **Wealth distribution** — histogram of actor gold values
+- **Item flow Sankey** — visual flow of items between actors and shops
+- **Trade log** — recent transactions with timestamps
+
+---
+
+## World Economics (Draft)
+
+> **Status:** Design sketch. Not implemented.
+
+World economics is the macro-level counterpart to actor economics. While
+actor economics tracks individual wealth, world economics tracks the
+entire economy: currency supply, prices, inflation, and market dynamics.
+
+### Currency Supply
+
+Each world has a total currency pool. Gold enters via loot/quests and
+exits via shops/taxes. The engine tracks this automatically.
+
+```typescript
+interface WorldEconomy {
+  worldId: string;
+
+  // Supply tracking
+  totalGoldInCirculation: number; // Sum of all actor gold
+  goldInShops: number; // Gold held by shopkeepers
+  goldInLoot: number; // Gold not yet claimed
+  goldDestroyed: number; // Sunk costs (taxes, repairs, fees)
+
+  // Price indices
+  priceIndex: number; // 1.0 = baseline, >1 = inflation
+  scarcityMap: Map<ItemCategory, number>; // 1.0 = normal, >1 = scarce
+
+  // Market state
+  lastUpdate: string;
+  eventLog: EconomicEvent[];
+}
+```
+
+### Inflation / Deflation
+
+The price index adjusts automatically based on supply and demand:
+
+```
+priceIndex = totalGoldInCirculation / baselineGoldSupply
+```
+
+| Index Range | State     | Effect                                  |
+| ----------- | --------- | --------------------------------------- |
+| < 0.7       | Deflation | Prices drop, NPCs hoard gold            |
+| 0.7–1.3     | Stable    | Normal prices                           |
+| 1.3–2.0     | Inflation | Prices rise, NPCs raise wages           |
+| > 2.0       | Hyperinflation | Currency loses meaning, barter replaces |
+
+**Baseline gold supply** is set per world at creation (default: 5000g).
+The GM can adjust it via tool calls.
+
+### Dynamic Shop Pricing
+
+Shop prices are not static — they adjust based on supply, demand, and
+location:
+
+```typescript
+interface ShopPricing {
+  shopId: string;
+  locationId: string;
+
+  // Base prices (from item definitions)
+  // Modified by:
+  markup: number; // 1.0 = normal, 1.5 = expensive area, 0.7 = discount
+  demandModifier: number; // Items frequently bought → price rises
+  supplyModifier: number; // Items frequently sold → price drops
+  reputationDiscount: number; // From actor's merchant reputation
+}
+```
+
+**Price formula:**
+
+```
+finalPrice = basePrice × priceIndex × locationMarkup × demandModifier
+             × (1 - reputationDiscount) × scarcityModifier
+```
+
+### Regional Price Variations
+
+Different locations have different price levels:
+
+| Location Type      | Markup | Reason                        |
+| ------------------ | ------ | ----------------------------- |
+| Major city         | 1.2    | High demand, higher rent      |
+| Small village      | 0.9    | Lower overhead                |
+| Frontier town      | 1.5    | Scarce goods, transport cost  |
+| Dungeon shop       | 2.0    | Convenience premium           |
+| Black market       | 1.8    | Risk premium, no regulation   |
+| Starting village   | 0.7    | Beginner-friendly pricing     |
+
+The GM sets location markup via world settings or chat rules.
+
+### Supply & Demand
+
+Items track supply levels per location. When actors buy/sell, supply
+adjusts:
+
+```
+// Buying an item
+shop.supply[itemId] -= quantity;
+if (shop.supply[itemId] < lowThreshold) {
+  demandModifier *= 1.2; // Price goes up
+}
+
+// Selling an item
+shop.supply[itemId] += quantity;
+if (shop.supply[itemId] > highThreshold) {
+  demandModifier *= 0.8; // Price goes down
+}
+```
+
+Supply thresholds (configurable per world):
+
+| Threshold     | Default | Effect                         |
+| ------------- | ------- | ------------------------------ |
+| Low           | 2       | Price multiplier ×1.2          |
+| Critical Low  | 0       | Item unavailable, price ×2.0   |
+| Normal        | 10      | Price multiplier ×1.0          |
+| High          | 20      | Price multiplier ×0.8          |
+| Surplus       | 50      | Price multiplier ×0.5          |
+
+### Market Events
+
+Dynamic events that affect the economy:
+
+| Event              | Effect                                    | Duration  |
+| ------------------ | ----------------------------------------- | --------- |
+| Trade route open   | All prices ×0.8 in connected locations   | Until closed |
+| Trade route cut    | Prices ×1.5, scarcity ×2                 | Until cleared |
+| Festival            | Luxuries ×0.5, inns ×2.0                | 3-7 days  |
+| Plague              | Healers ×2.0, general ×0.8               | 1-4 weeks |
+| War                 | Weapons ×2.0, armor ×1.5, food ×1.3      | Until peace |
+| Dragon sighting    | All prices ×1.2, weapons ×1.5            | 1-2 weeks |
+| Mine discovery     | Ore prices ×0.5, metals ×0.7             | 1-3 weeks |
+| Bountiful harvest  | Food prices ×0.5                          | 1 season  |
+| Tax holiday         | All purchases -10% tax                    | 1-7 days  |
+
+Events are injected by the GM via tool calls or triggered automatically
+by quest outcomes.
+
+### Economic Factions
+
+Groups that control economic activity:
+
+```typescript
+interface EconomicFaction {
+  id: string;
+  name: string; // "Ironhold Mining Guild", "Thieves' Trade Union"
+  type: "guild" | "cartel" | "merchant_group" | "government" | "criminal";
+  controlledLocations: string[]; // Locations where they set prices
+  taxRate: number; // Cut they take from transactions
+  reputation: number; // Global standing (-100 to +100)
+  specialities: string[]; // Item categories they specialize in
+  modifiers: {
+    priceModifier: number; // Discount for members
+    accessModifier: number; // Can they shop here?
+    protectionModifier: number; // Safety guarantees
+  };
+}
+```
+
+Factions affect:
+- **Member discounts**: Guild members get better prices
+- **Access control**: Some shops only serve certain factions
+- **Protection**: Trading under guild protection = no theft
+- **Blacklists**: Enemies of a faction pay premium or are refused service
+
+### GM Economy Dashboard
+
+On the world detail page, an "Economy" tab (GM only) shows:
+
+- **Gold flow chart** — sources (loot, quests) vs sinks (shops, taxes)
+- **Wealth distribution** — histogram of actor gold values
+- **Price index trend** — inflation/deflation over time
+- **Item flow** — visual flow of items between actors and shops
+- **Top earners** — wealthiest actors ranked
+- **Trade log** — recent transactions with timestamps
+- **Active events** — current market events and their effects
+- **Faction standings** — economic power balance
+
+### Integration with Actor Economics
+
+World economics and actor economics are coupled:
+
+1. **Actor buys item** → shop gold increases, world supply changes
+2. **Loot drops** → gold enters circulation, price index may shift
+3. **Tax collected** → gold destroyed from circulation
+4. **Quest reward** → gold enters circulation
+5. **Inflation rises** → actor's purchasing power drops, affects bartering
+
+The engine maintains both levels simultaneously. Actor economics provides
+the individual view; world economics provides the systemic view.
+
+### Prompt Injection (GM only)
+
+```
+[World Economy — {{world}}]
+Total Gold: 12,400g in circulation | Baseline: 5,000g
+Price Index: 2.48 (Hyperinflation)
+Active Events:
+  - War with Northern Realm: weapons ×2.0, food ×1.3
+  - Trade Route Cut: all goods ×1.5
+
+Top Earners:
+  1. Dragon Ashara: 85,000g
+  2. Merchant Lord Holt: 12,000g
+  3. Player Alice: 1,200g
+
+Faction Prices:
+  - Ironhold Guild: standard prices, members -15%
+  - Black Market: all prices ×1.8, no questions asked
+```
 
 ### External References
 
