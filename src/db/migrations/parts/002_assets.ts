@@ -16,6 +16,7 @@ export async function up(database: Kysely<unknown>): Promise<void> {
     .addColumn("height", "integer")
     .addColumn("duration_secs", "real")
     .addColumn("alt_text", "text")
+    .addColumn("visibility", "text", (col) => col.notNull().defaultTo("private"))
     .addColumn("created_at", "text", (col) => col.notNull().defaultTo(sql`(datetime('now'))`))
     .execute();
 
@@ -34,9 +35,24 @@ export async function up(database: Kysely<unknown>): Promise<void> {
     .execute();
 
   await database.schema.createIndex("idx_asset_links_entity").on("asset_links").columns(["entity_type", "entity_id"]).execute();
+
+  // ── Asset Shares ───────────────────────────────────────────
+  await database.schema
+    .createTable("asset_shares")
+    .addColumn("id", "text", (col) => col.primaryKey())
+    .addColumn("asset_id", "text", (col) => col.notNull().references("assets.id"))
+    .addColumn("shared_with_id", "text", (col) => col.notNull().references("actors.id"))
+    .addColumn("shared_by_id", "text", (col) => col.notNull().references("actors.id"))
+    .addColumn("created_at", "text", (col) => col.notNull().defaultTo(sql`(datetime('now'))`))
+    .execute();
+
+  await database.schema.createIndex("idx_asset_shares_asset").on("asset_shares").column("asset_id").execute();
+  await database.schema.createIndex("idx_asset_shares_with").on("asset_shares").column("shared_with_id").execute();
+  await database.schema.createIndex("idx_asset_shares_asset_with").on("asset_shares").columns(["asset_id", "shared_with_id"]).execute();
 }
 
 export async function down(database: Kysely<unknown>): Promise<void> {
+  await database.schema.dropTable("asset_shares").execute();
   await database.schema.dropTable("asset_links").execute();
   await database.schema.dropTable("assets").execute();
 }

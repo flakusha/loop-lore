@@ -25,6 +25,7 @@ export interface DB {
   chat_mentions: import("./schema-core").ChatMentions;
   assets: import("./schema-content").Assets;
   asset_links: import("./schema-content").AssetLinks;
+  asset_shares: import("./schema-content").AssetShares;
   worlds: import("./schema-story").Worlds;
   locations: import("./schema-story").Locations;
   generation_attempts: import("./schema-generation").GenerationAttempts;

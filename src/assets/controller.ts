@@ -40,10 +40,16 @@ import {
   linkAsset,
   unlinkAsset,
   getAssetLinks,
+  updateAssetVisibility,
+  shareAsset,
+  unshareAsset,
+  getAssetShares,
+  canAccessAsset,
   detectAssetType,
   validateFileSize,
   validateMimeType,
 } from "./service";
+import { AssetVisibility } from "../db/enums";
 
 interface UploadOpts {
   request: Request;
@@ -56,12 +62,16 @@ interface ServeRawOpts {
   database: Kysely<DB>;
   assetId: string;
   uploadDir: string;
+  actorId: string | null;
+  actorRole: string | null;
 }
 interface ServeCompressedOpts {
   database: Kysely<DB>;
   assetId: string;
   uploadDir: string;
   variant: string;
+  actorId: string | null;
+  actorRole: string | null;
 }
 
 const dispatch: RouteDispatch = async ({ request, context, database, config }) => {
@@ -97,13 +107,13 @@ const dispatch: RouteDispatch = async ({ request, context, database, config }) =
       return jsonResponse(asset);
     }
     if (method === "GET" && subRoute === "/raw") {
-      return handleServeRaw({ database, assetId, uploadDir });
+      return handleServeRaw({ database, assetId, uploadDir, actorId: context.userId, actorRole: context.userRole });
     }
     if (method === "GET" && subRoute === "/download") {
-      return handleDownload({ database, assetId, uploadDir });
+      return handleDownload({ database, assetId, uploadDir, actorId: context.userId, actorRole: context.userRole });
     }
     if (method === "GET" && (subRoute === "/thumb" || subRoute === "/compressed")) {
-      return handleServeCompressed({ database, assetId, uploadDir, variant: subRoute.slice(1) });
+      return handleServeCompressed({ database, assetId, uploadDir, variant: subRoute.slice(1), actorId: context.userId, actorRole: context.userRole });
     }
     if (method === "DELETE" && !subRoute) {
       const deleted = await deleteAsset({ database, assetId, uploadDir });
@@ -145,6 +155,55 @@ const dispatch: RouteDispatch = async ({ request, context, database, config }) =
         return jsonNoContent();
       }
       return jsonError({ message: "Method not allowed for links", status: HttpStatus.BadRequest });
+    }
+
+    // ── Visibility sub-route ─────────────────────────────────
+    if (method === "PATCH" && !subRoute) {
+      const userId = context.userId;
+      if (!userId) return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, code: ErrorCode.Unauthorized });
+
+      const body = (await request.json()) as { visibility?: string };
+      if (!body.visibility || ![AssetVisibility.Private, AssetVisibility.Shared, AssetVisibility.Public].includes(body.visibility as AssetVisibility)) {
+        return jsonError({ message: "Invalid visibility. Must be private, shared, or public", status: HttpStatus.BadRequest });
+      }
+
+      const updated = await updateAssetVisibility({
+        database,
+        assetId,
+        visibility: body.visibility as AssetVisibility,
+        actorId: userId,
+      });
+      if (!updated) return jsonError({ message: "Asset not found or not owner", status: HttpStatus.NotFound, code: ErrorCode.NotFound });
+      return jsonResponse({ id: updated.id, visibility: updated.visibility });
+    }
+
+    // ── Share sub-route ──────────────────────────────────────
+    if (subRoute === "/share") {
+      if (method === "POST") {
+        const userId = context.userId;
+        if (!userId) return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, code: ErrorCode.Unauthorized });
+
+        const body = (await request.json()) as { actor_id?: string };
+        if (!body.actor_id) return jsonError({ message: "actor_id is required", status: HttpStatus.BadRequest });
+
+        const share = await shareAsset({ database, assetId, sharedWithId: body.actor_id, sharedById: userId });
+        if (!share) return jsonError({ message: "Asset not found or not owner", status: HttpStatus.NotFound, code: ErrorCode.NotFound });
+        return jsonCreated(share);
+      }
+      if (method === "DELETE") {
+        const body = (await request.json()) as { actor_id?: string };
+        if (!body.actor_id) return jsonError({ message: "actor_id is required", status: HttpStatus.BadRequest });
+
+        await unshareAsset({ database, assetId, sharedWithId: body.actor_id });
+        return jsonNoContent();
+      }
+      return jsonError({ message: "Method not allowed for share", status: HttpStatus.BadRequest });
+    }
+
+    // ── Shares listing sub-route ─────────────────────────────
+    if (subRoute === "/shares" && method === "GET") {
+      const shares = await getAssetShares(database, assetId);
+      return jsonResponse(shares);
     }
 
     return jsonError({ message: "Method not allowed", status: HttpStatus.BadRequest });
@@ -239,7 +298,10 @@ async function handleUpload({
   });
 }
 
-async function handleServeRaw({ database, assetId, uploadDir }: ServeRawOpts): Promise<Response> {
+async function handleServeRaw({ database, assetId, uploadDir, actorId, actorRole }: ServeRawOpts): Promise<Response> {
+  const allowed = await canAccessAsset(database, assetId, actorId, actorRole);
+  if (!allowed) return jsonError({ message: "Not found", status: HttpStatus.NotFound, code: ErrorCode.NotFound });
+
   const asset = await getAsset(database, assetId);
   if (!asset)
     return jsonError({ message: "Asset not found", status: HttpStatus.NotFound, code: ErrorCode.NotFound });
@@ -262,7 +324,12 @@ async function handleServeCompressed({
   assetId,
   uploadDir,
   variant,
+  actorId,
+  actorRole,
 }: ServeCompressedOpts): Promise<Response> {
+  const allowed = await canAccessAsset(database, assetId, actorId, actorRole);
+  if (!allowed) return jsonError({ message: "Not found", status: HttpStatus.NotFound, code: ErrorCode.NotFound });
+
   const asset = await getAsset(database, assetId);
   if (!asset)
     return jsonError({ message: "Asset not found", status: HttpStatus.NotFound, code: ErrorCode.NotFound });
@@ -276,7 +343,7 @@ async function handleServeCompressed({
 
   if (!existsSync(fullPath)) {
     // Fall back to raw if no compressed variant
-    return handleServeRaw({ database, assetId, uploadDir });
+    return handleServeRaw({ database, assetId, uploadDir, actorId, actorRole });
   }
 
   const data = readFileSync(fullPath);
@@ -288,7 +355,10 @@ async function handleServeCompressed({
   });
 }
 
-async function handleDownload({ database, assetId, uploadDir }: ServeRawOpts): Promise<Response> {
+async function handleDownload({ database, assetId, uploadDir, actorId, actorRole }: ServeRawOpts): Promise<Response> {
+  const allowed = await canAccessAsset(database, assetId, actorId, actorRole);
+  if (!allowed) return jsonError({ message: "Not found", status: HttpStatus.NotFound, code: ErrorCode.NotFound });
+
   const asset = await getAsset(database, assetId);
   if (!asset)
     return jsonError({ message: "Asset not found", status: HttpStatus.NotFound, code: ErrorCode.NotFound });
