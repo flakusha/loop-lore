@@ -48,7 +48,7 @@
       —
       <button class="btn-impersonation-cancel" @click="toggleImpersonate()">Stop</button>
     </div>
-    <div class="input-row">
+    <div class="input-row" style="position: relative">
       <label class="btn btn-ghost" style="cursor: pointer; font-size: 12px; padding: var(--space-2)">
         📎
         <input
@@ -60,6 +60,53 @@
           data-testid="attach-input"
         />
       </label>
+      <!-- @mention autocomplete dropdown -->
+      <div
+        x-show="_showMentionAutocomplete && _mentionResults.length > 0"
+        x-transition:enter="transition ease-out duration-100"
+        x-transition:enter-start="opacity-0 transform -translate-y-1"
+        x-transition:enter-end="opacity-100 transform translate-y-0"
+        class="mention-autocomplete"
+        @click.outside="hideMentionAutocomplete()"
+        data-testid="mention-autocomplete"
+        style="
+          position: absolute;
+          bottom: 100%;
+          left: 40px;
+          right: 40px;
+          max-height: 200px;
+          overflow-y: auto;
+          background: var(--bg-primary, #1a1a2e);
+          border: 1px solid var(--border, #333);
+          border-radius: 8px;
+          box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.3);
+          z-index: 50;
+        "
+      >
+        <template x-for="p in _mentionResults" :key="p.actor_id">
+          <button
+            type="button"
+            class="mention-option"
+            @click.prevent="selectMention(p)"
+            style="
+              display: block;
+              width: 100%;
+              text-align: left;
+              padding: 8px 12px;
+              border: none;
+              background: none;
+              color: var(--text-primary, #e0e0e0);
+              cursor: pointer;
+              font-size: 14px;
+            "
+            @mouseenter="$el.style.background = 'var(--bg-secondary, #16213e)'"
+            @mouseleave="$el.style.background = 'none'"
+          >
+            <span x-text="p.display_name || p.name"></span>
+            <span style="opacity: 0.5; font-size: 12px; margin-left: 6px" x-text="p.actor_type"></span>
+          </button>
+        </template>
+      </div>
       <textarea
         name="content"
         x-ref="messageInput"
@@ -67,7 +114,8 @@
         rows="1"
         @keydown.enter.shift=""
         @keydown.enter.prevent="sendMessage()"
-        @input="autoResize($el)"
+        @input="autoResize($el); handleMentionInput($$event)"
+        @keydown.escape="hideMentionAutocomplete()"
         required
         :disabled="!activeChat"
         data-testid="message-input"
