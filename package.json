@@ -29,7 +29,9 @@
     "md:lint:fix": "markdownlint-cli2 --fix \"docs/**/*.md\"",
     "typecheck": "tsc --noEmit",
     "typecheck:frontend": "tsc --noEmit --project tsconfig.frontend.json",
-    "check": "bun run typecheck && bun run typecheck:frontend && bun run lint && bun run lint:css && bun run lint:html && bun run format && bun run md:lint",
+    "typecheck:coverage": "type-coverage --strict --at-least 85",
+    "typecheck:coverage:frontend": "type-coverage --strict --at-least 85 --project tsconfig.frontend.json",
+    "check": "bun run typecheck && bun run typecheck:frontend && bun run typecheck:coverage && bun run typecheck:coverage:frontend && bun run lint && bun run lint:css && bun run lint:html && bun run format && bun run md:lint",
     "check:full": "bun run build:frontend && bun run check",
     "test": "bun test",
     "test:watch": "bun test --watch",
@@ -74,7 +76,7 @@
     "eslint": "^10.7.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-markdown": "^5.1.0",
-    "eslint-plugin-sonarjs": "^4.1.0",
+    "eslint-plugin-sonarjs": "^4.2.0",
     "eslint-plugin-unicorn": "^71.1.0",
     "globals": "^17.7.0",
     "htmx.org": "^2.0.10",
@@ -84,8 +86,9 @@
     "prettier": "^3.9.5",
     "stylelint": "^17.14.0",
     "stylelint-config-standard": "^40.0.0",
+    "type-coverage": "^2.29.7",
     "typescript": "^5.9.3",
-    "typescript-eslint": "^8.63.0",
+    "typescript-eslint": "^8.64.0",
     "vitepress": "^1.6.4"
   }
 }
