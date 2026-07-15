@@ -1,9 +1,14 @@
 # Banned Coding Patterns
 
-## Boolean-flag columns (`is_active`, `is_hidden`, `has_*`)
-Violation: `is_active INTEGER`, `is_deleted INTEGER`, `is_hidden INTEGER` in schema.
-Fix: Use enum column + status machine. `users.status TEXT`, `items.visibility TEXT`.
+> **Current divergence state**: see `docs/meta/pattern-divergence.md` for
+> quantified sweep of all violations against these rules. Audit conducted
+> per release cycle — update after each refactor pass.
+
+## Boolean-flag columns for lifecycle state (`is_active`, `is_hidden`, `has_*`)
+Violation: `is_active INTEGER`, `is_deleted INTEGER`, `is_hidden INTEGER` for lifecycle state in schema. Also bare `enabled INTEGER` on lore entries that could be `status TEXT`.
+Fix: Use enum column + state machine via `StateDef` + `createMachine`. `users.status TEXT`, `items.visibility TEXT`.
 Rationale: Booleans don't scale — new states require migration + code changes. Enums extend without schema churn.
+Exception: Genuine singular toggles (`is_pinned`, `pinned`, `is_default`, `equipped`, `respawnable`, `stackable`) and orthogonal flags (`selective`, `case_sensitive`, `constant`) are NOT violations. These describe intrinsic properties, not lifecycle state. The rule targets booleans that encode state axes — when you'd need `is_active + is_archived + is_deleted`, use a single `status` enum instead.
 
 ## Numeric status codes (`status = 0 | 1 | 2`)
 Violation: `status INTEGER` with magic numbers in code.
