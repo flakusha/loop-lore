@@ -24,6 +24,7 @@ import { getBuffer, isChatGenerating } from "./index";
 import { jsonResponse, jsonError } from "../routes/http-utils";
 import { getProvider } from "./providers/registry";
 import type { Config } from "../config/schema";
+import { safeJsonStringify } from "../utils";
 
 // ── Route: Cancel generation ──────────────────────────────
 
@@ -347,8 +348,8 @@ export function handleGenerationStream(chatId: string): Response {
         },
         (error: unknown) => {
           try {
-            const payload = JSON.stringify({ error: String(error) });
-            controller.enqueue(new TextEncoder().encode(`event: stream-error\ndata: ${payload}\n\n`));
+            const payload = safeJsonStringify({ error: String(error) });
+            controller.enqueue(new TextEncoder().encode(`event: stream-error\ndata: ${payload.ok ? payload.value : "{}"}\n\n`));
             controller.close();
           } catch {
             // Ignore
