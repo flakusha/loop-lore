@@ -41,7 +41,7 @@ export function findBinary(type: keyof typeof BINARY_CANDIDATES): string | null 
 export function isPortFree(port: number): boolean {
   try {
     const server = Bun.serve({ port, fetch: () => new Response("ok") });
-    void server.stop();
+    void (async () => { try { await server.stop(); } catch { /* probe port check — ignore */ } })();
     return true;
   } catch {
     return false;
