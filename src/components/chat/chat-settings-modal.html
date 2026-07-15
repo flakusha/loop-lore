@@ -45,8 +45,18 @@
           data-testid="settings-turn-strategy"
         >
           <option value="round_robin">Round Robin</option>
-          <option value="first_participant">First Participant</option>
+          <option value="scene_based">Scene Based</option>
+          <option value="initiative">Initiative (Weighted)</option>
+          <option value="quest_driven">Quest Driven</option>
+          <option value="hybrid">Hybrid</option>
         </select>
+      </div>
+      <div class="form-group" x-show="currentChat?.type === 'group'">
+        <label style="display: flex; align-items: center; gap: var(--space-2)">
+          <input type="checkbox" x-model="_groupPaused" />
+          Pause AI Generation
+        </label>
+        <small style="color: var(--text-secondary)">When paused, only user messages are allowed</small>
       </div>
       <div class="form-group">
         <label class="form-label" for="settings-persona">Persona</label>
@@ -68,6 +78,20 @@
           Impersonate
           <span x-text="currentCharacter?.display_name || currentCharacter?.name || 'character'"></span>
         </label>
+      </div>
+      <div class="form-group" x-show="currentChat?.mode === 'story'">
+        <label class="form-label" for="settings-assistant-role">Assistant Role</label>
+        <select
+          class="form-input"
+          id="settings-assistant-role"
+          x-model="_assistantRole"
+          data-testid="settings-assistant-role"
+        >
+          <option value="off">Off</option>
+          <option value="helper">Helper (text/image)</option>
+          <option value="gm">Game Master</option>
+          <option value="moderator">Moderator</option>
+        </select>
       </div>
     </div>
     <div class="modal-footer">

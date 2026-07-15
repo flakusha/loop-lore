@@ -82,7 +82,16 @@ export interface ChatState extends AlpineMagicThis {
   continuingMessageId: string | null;
   isContinuing: boolean;
   _generationEventSource: EventSource | null;
-  chats: Array<{ id: string; name?: string; isPinned?: number }>;
+  chats: Array<{
+    id: string;
+    name?: string;
+    isPinned?: number;
+    type?: string;
+    mode?: string;
+    turn_strategy?: string;
+    story_state?: string;
+    gm_config?: string;
+  }>;
   activeChat: string | null;
   messages: Message[];
   loadingMessages: boolean;
@@ -119,11 +128,13 @@ export interface ChatState extends AlpineMagicThis {
   _chatSettingsName: string;
   _chatSettingsMode: string;
   _chatSettingsTurnStrategy: string;
+  _groupPaused: boolean;
   _renameChatId: string;
   _renameChatName: string;
   _personas: any[];
   _selectedPersonaId: string | null;
   _impersonatingActorId: string | null;
+  _assistantRole: "off" | "helper" | "gm" | "moderator";
 
   _chatKey: CryptoKey | null;
   _encryptionEnabled: boolean;
@@ -132,6 +143,10 @@ export interface ChatState extends AlpineMagicThis {
   _statsOpen: Record<string, boolean>;
   _impersonationLoaded: boolean;
   _storageHandler: ((e: StorageEvent) => void) | null;
+  _mentionQuery: string;
+  _mentionResults: Array<{ actor_id: string; name: string; display_name?: string; actor_type?: string }>;
+  _showMentionAutocomplete: boolean;
+  _chatParticipants: { actor_id: string; name: string; display_name?: string; actor_type?: string }[];
 
   init(): void;
   destroy(): void;
@@ -185,6 +200,21 @@ export interface ChatState extends AlpineMagicThis {
   openAssetPreview(asset: { id: string; asset_type?: string; filename?: string; name?: string }): void;
   openChatSettings(): void;
   saveChatSettings(): Promise<void>;
+  isChatPaused(chat: any): boolean;
+  readonly currentChat: {
+    id: string;
+    name?: string;
+    type?: string;
+    mode?: string;
+    turn_strategy?: string;
+    story_state?: string;
+    gm_config?: string;
+  } | null;
+  toggleGroupPause(): Promise<void>;
+  loadChatParticipants(): Promise<void>;
+  handleMentionInput(event: Event): void;
+  selectMention(participant: { actor_id: string; name: string }): void;
+  hideMentionAutocomplete(): void;
   renameChat(chatId: string): Promise<void>;
   openRenameModal(chatId: string): void;
   confirmRenameChat(): Promise<void>;

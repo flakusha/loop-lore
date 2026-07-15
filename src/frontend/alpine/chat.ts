@@ -286,6 +286,7 @@ globalThis.chatState = function () {
       await Promise.all([this.loadMessages(), this.loadGalleryAssets(), this.loadCharacterInfo()]);
       await this.loadChatKey(chatId);
       await this.loadImpersonationState();
+      await this.loadChatParticipants();
     },
 
     async loadChatKey(chatId: string) {
