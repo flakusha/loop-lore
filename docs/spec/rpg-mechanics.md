@@ -1025,6 +1025,565 @@ When the GM introduces a new NPC:
 
 ---
 
+### Advanced Pipelines
+
+Beyond items and NPCs, the pipeline pattern applies to larger-scope
+creations: locations, worlds, and structured note templates. These
+pipelines have more stages and more validation, but the same principle:
+each stage builds on the previous, and the engine validates at every step.
+
+---
+
+### Location Creation Pipeline
+
+Creates a new location within a world, including its connections,
+encounter tables, and ambient assets.
+
+```
+Description → Map/Connections → Encounter Tables → Assets → Placement
+```
+
+| Stage              | Who    | Output                                      | Required |
+| ------------------ | ------ | ------------------------------------------- | -------- |
+| Description        | LLM    | Name, description, atmosphere, traits       | Yes      |
+| Map/Connections    | LLM + Engine | Connections to existing locations, travel cost, bidirectional flag | Yes |
+| Encounter Tables   | LLM + Engine | Random encounter tables per connection      | Optional |
+| Assets             | LLM (image) | Map image, scene illustration, ambient sound | Optional |
+| Placement          | Engine | Location added to world graph, event recorded | Yes |
+
+**Stage 1: Description**
+
+```
+[CREATE_INTENT]
+{
+  "type": "location",
+  "stage": "description",
+  "input": "A crumbling temple deep in the swamp, overgrown with vines, faintly glowing runes on the walls"
+}
+[/CREATE_INTENT]
+```
+
+Engine response:
+
+```
+[PIPELINE_STAGE_COMPLETE]
+Stage: description
+Result:
+  name: "The Sunken Temple"
+  description: "A crumbling temple half-submerged in swamp water. Vines choke
+    the broken columns. Faintly glowing runes pulse on the interior walls,
+    casting sickly green light across the flooded nave."
+  atmosphere: "Damp, oppressive, ancient. Water drips constantly. Something
+    moves beneath the surface."
+  traits: ["flooded", "magical", "dangerous", "ancient"]
+  visibility: "dark" // Affects perception checks
+  danger_level: "high"
+[/PIPELINE_STAGE_COMPLETE]
+```
+
+**Stage 2: Map/Connections**
+
+```
+[PIPELINE_STAGE_COMPLETE]
+Stage: connections
+Result:
+  connections:
+    - to: "loc_swamp_path"
+      travel_cost: 2
+      bidirectional: true
+      description: "A narrow boardwalk through the mangroves"
+    - to: "loc_ancient_ruins"
+      travel_cost: 1
+      bidirectional: false
+      description: "Underwater tunnel (requires breathing spell or 1 minute breath hold)"
+      condition: "actor_has_effect:water_breathing OR skill_check:constitution_dc_15"
+  travel_pace:
+    cautious: 2x cost, advantage on perception
+    normal: 1x cost
+    fast: 0.5x cost, disadvantage on stealth
+[/PIPELINE_STAGE_COMPLETE]
+```
+
+**Stage 3: Encounter Tables**
+
+```
+[PIPELINE_STAGE_COMPLETE]
+Stage: encounters
+Result:
+  tables:
+    - name: "swamp_creatures"
+      trigger: "on_enter OR every 4 turns"
+      entries:
+        - creature: "Giant Leech", weight: 30, quantity: "1d3"
+        - creature: "Swamp Troll", weight: 15, quantity: 1
+        - creature: "Will-o-Wisp", weight: 20, quantity: 1
+        - creature: "None (clear)", weight: 35, quantity: 0
+    - name: "treasure"
+      trigger: "on_search"
+      entries:
+        - item: "Healing Potion", weight: 40, quantity: "1d2"
+        - item: "Ancient Rune Fragment", weight: 10, quantity: 1
+        - item: "Nothing", weight: 50, quantity: 0
+[/PIPELINE_STAGE_COMPLETE]
+```
+
+**Stage 4: Assets**
+
+```
+[PIPELINE_STAGE_COMPLETE]
+Stage: assets
+Result:
+  assets:
+    - label: "map"
+      prompt: "Overhead map of a flooded swamp temple, ruins, vines, glowing runes, fantasy RPG style"
+      style: "realistic"
+    - label: "scene"
+      prompt: "Interior of a flooded temple, green glowing runes on walls, vines, dark atmosphere"
+      style: "realistic"
+    - label: "ambient"
+      type: "audio"
+      prompt: "Dripping water, distant animal calls, faint magical hum, swamp ambience"
+[/PIPELINE_STAGE_COMPLETE]
+```
+
+**Stage 5: Placement**
+
+Engine validates:
+- Location name unique within world
+- All connection targets exist
+- No circular connections with travel_cost 0
+- Encounter table items exist in world item definitions
+- Assets created and linked via asset_links
+
+Records in `world_events`:
+
+```
+{
+  event_type: "location_created",
+  data: {
+    name: "The Sunken Temple",
+    connections: 2,
+    encounters: 2,
+    assets: 3
+  }
+}
+```
+
+**Location Pipeline UI:**
+
+```
+Step 1: Description
+  [Name: The Sunken Temple           ]
+  [Atmosphere: Damp, oppressive...   ]
+  [Traits: flooded, magical, dangerous]
+  [Danger: High ▼                    ]
+
+Step 2: Connections
+  [Connected to: Swamp Path (cost 2, bidirectional)]
+  [Connected to: Ancient Ruins (cost 1, one-way, requires water breathing)]
+  [+ Add Connection]
+
+Step 3: Encounters
+  [Table: Swamp Creatures — on_enter, every 4 turns]
+    Giant Leech (30%, 1d3)
+    Swamp Troll (15%, 1)
+    Will-o-Wisp (20%, 1)
+    Clear (35%)
+  [+ Add Entry] [+ Add Table]
+
+Step 4: Assets
+  [Map: "Overhead map of a flooded..."] [Generate] [Preview]
+  [Scene: "Interior of a flooded..."]  [Generate] [Preview]
+  [Ambient: "Dripping water..."]       [Generate] [Preview]
+
+Step 5: Review & Create
+  [Summary: 1 location, 2 connections, 2 encounter tables, 3 assets]
+  → Create
+```
+
+---
+
+### World Creation Pipeline
+
+Creates an entire world with its settings, theme, rules, and starter
+content. This is the most complex pipeline — it bootstraps a playable
+environment from a single description.
+
+```
+Description → Theme & Rules → Starting Locations → Starter NPCs → Starter Items → Starter Chats → Assets
+```
+
+| Stage              | Who    | Output                                      | Required |
+| ------------------ | ------ | ------------------------------------------- | -------- |
+| Description        | LLM    | Name, setting, lore summary, genre, tone    | Yes      |
+| Theme & Rules      | LLM + Engine | RPG bundle, difficulty, chat rules, public notes | Yes |
+| Starting Locations | LLM + Pipeline | 2-5 starter locations with connections     | Yes |
+| Starter NPCs       | LLM + Pipeline | 3-5 key NPCs with stats and motivation    | Optional |
+| Starter Items      | LLM + Pipeline | Common/uncommon items for starter shops    | Optional |
+| Starter Chats      | Engine | Pre-created chats (GM intro, tutorial)      | Optional |
+| Assets             | LLM (image) | World map, theme music, lore images         | Optional |
+
+**Stage 1: Description**
+
+```
+[CREATE_INTENT]
+{
+  "type": "world",
+  "stage": "description",
+  "input": "A gothic horror world set in a cursed kingdom. Vampires rule from
+    the shadows. The church is corrupt. Peasants live in fear. Players are
+    vampire hunters, but they start weak and must survive."
+}
+[/CREATE_INTENT]
+```
+
+**Stage 2: Theme & Rules**
+
+```
+[PIPELINE_STAGE_COMPLETE]
+Stage: theme
+Result:
+  name: "The Cursed Kingdom"
+  genre: "gothic_horror"
+  tone: "dread, paranoia, moral ambiguity"
+  theme: "Surival horror. Power comes at a price. Trust no one."
+  bundle: "dnd-5e" // or custom horror bundle
+  difficulty: "hard"
+  rules:
+    - name: "Vampiric Corruption"
+      type: "custom"
+      description: "Dealing damage with vampiric weapons heals the wielder
+        but advances their corruption track. At corruption 10, the character
+        becomes an NPC vampire."
+    - name: "Holy Water Scarcity"
+      type: "effect_trigger"
+      description: "Holy water is extremely rare. Each use is significant."
+  public_notes:
+    - type: "theme"
+      content: "Gothic horror. Dread over action. Vampires are terrifying, not sexy."
+    - type: "world_lore"
+      content: "The kingdom fell 200 years ago when the royal family was turned.
+        The church pretends to fight vampires but secretly serves them."
+  dark_notes:
+    - type: "secret"
+      content: "The church leader is the original vampire who cursed the kingdom."
+    - type: "arc_plan"
+      content: "Act 1: Survive and investigate. Act 2: Discover church betrayal.
+        Act 3: Assault the cathedral."
+[/PIPELINE_STAGE_COMPLETE]
+```
+
+**Stage 3: Starting Locations**
+
+The pipeline calls the location creation pipeline for each starter location:
+
+```
+Starting locations:
+1. "The Village of Ashwick" — safe zone, basic shops, rumor board
+2. "The Church of the Eternal Dawn" — seemingly holy, secretly corrupted
+3. "The Black Forest" — dangerous hunting ground, vampire territory
+4. "The Catacombs" — underground network, hidden clues
+5. "The Crimson Manor" — vampire stronghold, endgame area
+
+Each location runs through the Location Pipeline (Description → Connections → Encounters → Assets → Placement)
+```
+
+**Stage 4: Starter NPCs**
+
+Pipeline creates key NPCs with motivation and stats:
+
+```
+NPCs:
+1. "Father Aldric" — priest, secretly a thrall, provides quests
+2. "Marta the Herbalist" — sells holy water (rare), knows local lore
+3. "Viktor the Hunter" — veteran vampire hunter, potential mentor
+4. "Lady Elara" — vampire noble, complex motives, potential ally or enemy
+5. "The Beggar King" — knows the streets, information broker
+```
+
+**Stage 5: Starter Items**
+
+```
+Items:
+- Wooden Stakes (common, 1d4 piercing, +2d6 vs vampires)
+- Holy Water (uncommon, 2d6 radiant vs undead, very rare)
+- Garlic Charm (common, disadvantage on vampire charm vs wearer)
+- Silver Dagger (uncommon, 1d6+2, bypasses damage resistance)
+- Healing Potion (common, 2d4+2 HP)
+```
+
+**Stage 6: Starter Chats**
+
+Engine creates pre-configured chats:
+
+```
+Chats:
+1. "GM Introduction" — solo chat with GM assistant, sets the scene
+2. "Village Bulletin Board" — group chat, public rumors and quests
+3. "Hunter's Council" — group chat, NPC hunters discuss strategy
+```
+
+**Stage 7: Assets**
+
+```
+Assets:
+- World map: "Gothic kingdom map, dark forests, ruined castles, cursed villages"
+- Theme music: "Dark orchestral, organ, choir, tense atmosphere"
+- Lore images: "Corrupted church interior", "Vampire manor at night"
+```
+
+**World Pipeline UI:**
+
+```
+Step 1: Description
+  [Name: The Cursed Kingdom              ]
+  [Genre: Gothic Horror ▼               ]
+  [Setting: A kingdom ruled by vampires...]
+  [Tone: Dread, paranoia, moral ambiguity]
+
+Step 2: Theme & Rules
+  [Bundle: D&D 5e ▼                     ]
+  [Difficulty: Hard ▼                   ]
+  [Public Notes: + Add theme, lore...    ]
+  [Dark Notes: + Add secrets, arcs...   ]
+  [Chat Rules: + Add custom rules...     ]
+
+Step 3: Starting Locations
+  [Location 1: Village of Ashwick] [Edit] [Remove]
+  [Location 2: Church of the Eternal Dawn] [Edit] [Remove]
+  [Location 3: The Black Forest] [Edit] [Remove]
+  [+ Add Location]
+
+Step 4: Starter NPCs
+  [NPC 1: Father Aldric — Priest, quest giver]
+  [NPC 2: Marta the Herbalist — Shop]
+  [+ Add NPC]
+
+Step 5: Starter Items
+  [Item 1: Wooden Stakes — Common weapon]
+  [Item 2: Holy Water — Uncommon consumable]
+  [+ Add Item]
+
+Step 6: Assets
+  [World Map: Generate] [Theme Music: Upload]
+  [+ Add Asset]
+
+Step 7: Review & Create
+  [Summary: 5 locations, 5 NPCs, 5 items, 3 chats, 2 assets]
+  [Estimated creation time: ~3 minutes]
+  → Create World
+```
+
+---
+
+### Notes Pipeline (Template-Based)
+
+Instead of writing notes freeform, the GM selects from compatible
+templates that ensure consistent structure and proper prompt injection.
+
+#### Template System
+
+```typescript
+interface NoteTemplate {
+  id: string;
+  name: string;
+  description: string;
+  entityType: "public" | "dark"; // Which note system it belongs to
+  noteType: NoteType | DarkNoteType;
+
+  // Template fields — each is a prompt the GM fills in
+  fields: TemplateField[];
+
+  // Validation rules
+  requiredFields: string[]; // Fields that must be filled
+  maxFields?: number; // Cap on optional fields used
+}
+
+interface TemplateField {
+  name: string; // e.g. "creature_name", "weakness", "trigger"
+  label: string; // Human-readable: "Creature Name"
+  type: "text" | "textarea" | "select" | "number" | "boolean" | "multi_select";
+  placeholder?: string;
+  options?: string[]; // For select/multi_select
+  required: boolean;
+  helpText?: string; // "What is the creature's true identity?"
+}
+```
+
+#### Built-in Templates
+
+**Public Note Templates:**
+
+| Template          | Fields                                              |
+| ----------------- | --------------------------------------------------- |
+| `theme_guide`     | genre, tone, pacing, dos, donts                     |
+| `plot_hook`       | hook_title, description, suggested_next, urgency    |
+| `npc_introduction`| name, role, personality, secret, disposition        |
+| `world_lore`      | topic, facts, source, reliability (known/rumored)   |
+| `location_guide`  | location, atmosphere, dangers, opportunities        |
+| `quest_brief`     | quest_name, objective, rewards, complications       |
+
+**Dark Note Templates:**
+
+| Template            | Fields                                                |
+| ------------------- | ----------------------------------------------------- |
+| `secret_identity`   | character, true_identity, evidence, reveal_trigger    |
+| `planned_twist`     | twist_description, setup_required, reveal_moment      |
+| `foreshadow_tracker`| hint_placed, session_placed, target_reveal, subtlety  |
+| `consequence_chain` | action_taken, consequence, trigger_condition, severity|
+| `arc_plan`          | arc_name, acts (array), current_act, next_beat       |
+| `hidden_enemy`      | enemy_name, motivation, plan_stage, weakness          |
+| `world_secret`      | secret, who_knows, how_to_discover, impact_if_revealed|
+
+#### Template Workflow
+
+```
+1. GM clicks "Add Note" in Story Notes panel
+2. Panel shows template picker:
+   [Public Notes]
+     Theme Guide | Plot Hook | NPC Introduction | World Lore | Location Guide | Quest Brief
+   [Dark Notes]
+     Secret Identity | Planned Twist | Foreshadow Tracker | Consequence Chain | Arc Plan | Hidden Enemy | World Secret
+
+3. GM selects "Secret Identity" template
+4. Panel shows form with template fields:
+   [Character: ________]
+   [True Identity: ________]
+   [Evidence: ________]
+   [Reveal Trigger: ________]
+   [Help: What clues will players encounter before the reveal?]
+
+5. GM fills in fields, clicks "Save"
+6. Engine assembles the note from template:
+   title: "Secret: {character} is {true_identity}"
+   content: "SECRET: {character} is actually {true_identity}.
+     Evidence: {evidence}
+     Reveal trigger: {reveal_trigger}
+     Subtlety: weave evidence into narration gradually."
+
+7. Engine validates:
+   - All required fields filled
+   - Reveal trigger is valid condition
+   - Note doesn't duplicate existing dark note (fuzzy match)
+
+8. Saved to dark_notes table, injected into LLM prompt
+```
+
+#### Template Validation Rules
+
+```
+Required fields:
+  - theme_guide: genre, tone (must not be empty)
+  - secret_identity: character, true_identity (must differ from current identity)
+  - arc_plan: arc_name, acts (minimum 2 acts)
+  - consequence_chain: action_taken, trigger_condition (must reference game event)
+
+Cross-field validation:
+  - planned_twist: setup_required must reference events before reveal_moment
+  - foreshadow_tracker: session_placed < target_reveal session
+  - arc_plan: current_act must be one of the defined acts
+
+Duplicate detection:
+  - Fuzzy match on title + content against existing notes
+  - If >80% similar: warn "Similar note already exists: '{existing_title}'"
+  - GM can override warning
+```
+
+#### Template Customization
+
+GMs can create custom templates:
+
+```
+1. Story Notes panel → "Manage Templates" (GM only)
+2. Create New Template:
+   [Name: Vampire Weakness Sheet]
+   [Entity: Dark]
+   [Note Type: secret]
+   [Fields:]
+     + Add Field: "Vampire Name" (text, required)
+     + Add Field: "True Weakness" (textarea, required)
+     + Add Field: "Fake Weakness" (textarea, optional)
+     + Add Field: "How to Discover" (textarea, required)
+     + Add Field: "Exploitation Method" (textarea, optional)
+   [Save Template]
+
+3. Template appears in picker for future notes
+4. Custom templates are world-scoped (can share between worlds via export)
+```
+
+#### Template Export/Import
+
+Templates are shareable:
+
+```
+GET /api/worlds/:id/note-templates
+Response: NoteTemplate[]
+
+POST /api/worlds/:id/note-templates/import
+Body: NoteTemplate[] (from exported world or community share)
+```
+
+A "template pack" can be exported from one world and imported to another:
+
+```json
+{
+  "spec": "loop-lore-note-templates-v1",
+  "templates": [
+    { "name": "Vampire Weakness Sheet", ... },
+    { "name": "Curse Tracker", ... },
+    { "name": "Prophecy Record", ... }
+  ]
+}
+```
+
+#### Notes Pipeline UI
+
+```
+Story Notes Panel → Add Note:
+
+┌─────────────────────────────────────┐
+│ Add Note                            │
+│                                     │
+│ Entity: [Public ▼]                  │
+│                                     │
+│ Pick a template:                    │
+│ ┌──────────┐ ┌──────────┐ ┌──────┐ │
+│ │  Theme   │ │   Plot   │ │ NPC  │ │
+│ │  Guide   │ │   Hook   │ │Intro │ │
+│ └──────────┘ └──────────┘ └──────┘ │
+│ ┌──────────┐ ┌──────────┐ ┌──────┐ │
+│ │  World   │ │ Location │ │ Quest│ │
+│ │  Lore    │ │  Guide   │ │Brief │ │
+│ └──────────┘ └──────────┘ └──────┘ │
+│                                     │
+│ [Custom Template...]                │
+│                                     │
+│ ── OR write freeform ──             │
+└─────────────────────────────────────┘
+
+After selecting "Secret Identity":
+
+┌─────────────────────────────────────┐
+│ Secret Identity                     │
+│                                     │
+│ Character: [Father Aldric        ]  │
+│ True Identity: [The original vamp. ]│
+│ Evidence: [His aversion to the      │
+│   cathedral's inner sanctum.        │
+│   The bite marks hidden by his      │
+│   robes.]                           │
+│ Reveal Trigger: [When players       │
+│   enter the cathedral's vault       │
+│   and find the 200-year-old         │
+│   portrait of the founder —         │
+│   identical to Aldric.]             │
+│                                     │
+│ [Cancel]              [Save Note]   │
+└─────────────────────────────────────┘
+```
+
+---
+
 ## Persona ↔ World Interaction
 
 ### Persona World Traits
