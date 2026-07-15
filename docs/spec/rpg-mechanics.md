@@ -608,6 +608,423 @@ interface LootEntry {
 
 ---
 
+## Creation Pipeline
+
+An integrated pipeline for creating game entities — items, NPCs, locations,
+enemies — through a chain of stages. Each stage builds on the previous,
+producing a complete entity in one flow.
+
+### Pipeline Stages
+
+```
+Description → Stats → Effects → Image → Placement
+```
+
+Each stage is a step in the pipeline. Some steps are LLM-generated, some
+are engine-computed, some are optional.
+
+| Stage         | Who          | Input                      | Output                       | Required |
+| ------------- | ------------ | -------------------------- | ---------------------------- | -------- |
+| Description   | LLM          | User prompt / GM request   | Name, lore, flavor text      | Yes      |
+| Stats         | Engine + LLM | Description + world rules  | Stat block, category, rarity | Yes      |
+| Effects       | Engine + LLM | Stats + world rules        | Item effects, status effects | Optional |
+| Image         | LLM (image)  | Description + style prompt | Asset (avatar/thumbnail)     | Optional |
+| Placement     | Engine       | Entity + target            | World item, inventory slot   | Yes      |
+
+### Pipeline Data Model
+
+```typescript
+interface CreationPipeline {
+  id: string;
+  worldId: string;
+
+  // Pipeline state
+  entityType: "item" | "npc" | "location" | "enemy" | "quest";
+  status: "pending" | "in_progress" | "awaiting_input" | "complete" | "failed";
+  currentStage: PipelineStage;
+
+  // Stage results
+  description?: DescriptionResult;
+  stats?: StatsResult;
+  effects?: EffectsResult;
+  image?: ImageResult;
+  placement?: PlacementResult;
+
+  // Source
+  triggeredBy: "gm_tool" | "llm_intent" | "user_ui" | "auto_loot";
+  chatId?: string; // If triggered from chat
+
+  // Metadata
+  createdAt: string;
+  updatedAt: string;
+}
+```
+
+### Stage 1: Description
+
+The LLM generates the narrative foundation — name, lore, flavor text.
+This is the creative seed that all other stages build on.
+
+```typescript
+interface DescriptionResult {
+  name: string;
+  shortDescription: string; // One-liner for inventory/UI
+  longDescription: string; // Full lore, appearance, history
+  category: ItemCategory | NpcCategory | LocationCategory;
+  rarity: ItemRarity;
+  tags: string[]; // For search and filtering
+}
+```
+
+**Trigger:** GM says "Create a new weapon" or LLM emits `[CREATE_INTENT]`.
+
+**LLM output:**
+
+```
+[CREATE_INTENT]
+{
+  "type": "item",
+  "stage": "description",
+  "input": "A sword forged from dragon bone, glowing with inner fire"
+}
+[/CREATE_INTENT]
+```
+
+**Engine response:**
+
+```
+[PIPELINE_STAGE_COMPLETE]
+Stage: description
+Result:
+  name: "Dragonscale Blade"
+  short: "A sword forged from dragon bone, glowing with inner fire"
+  long: "This ancient blade was forged in the heart of a dying dragon. The bone
+         still pulses with the creature's last breath. Those who wield it feel
+         the weight of a thousand years of rage."
+  category: "weapon"
+  rarity: "rare"
+  tags: ["dragon", "fire", "ancient", "melee"]
+[/PIPELINE_STAGE_COMPLETE]
+```
+
+### Stage 2: Stats
+
+The engine computes mechanical properties based on description and world
+rules. The LLM can suggest stats, but the engine validates and adjusts.
+
+```typescript
+interface StatsResult {
+  // Weapon stats
+  damageDice?: string;
+  damageType?: string;
+  range?: number;
+  twoHanded?: boolean;
+
+  // Armor stats
+  acBonus?: number;
+  stealthDisadvantage?: boolean;
+
+  // Consumable stats
+  charges?: number;
+  cooldown?: number;
+
+  // Universal
+  value: number; // Gold value
+  weight: number;
+  statBonus?: Partial<StatBlock>;
+  requirements?: {
+    level?: number;
+    stat?: Partial<StatBlock>;
+    proficiency?: string;
+  };
+}
+```
+
+**Engine logic:**
+
+```
+1. Load rarity → stat template (common = baseline, rare = +20-40%)
+2. Load category → stat range (weapon: damage dice by rarity)
+3. Apply world rules (if world has custom stat scaling)
+4. If LLM suggested stats: validate against template
+   - If within range: accept
+   - If overpowered: cap at template max
+   - If underpowered: boost to template min
+5. Compute derived values (weight from category, value from rarity)
+```
+
+**Rarity stat templates:**
+
+| Rarity     | Damage Range | AC Range | Value Multiplier | Weight Multiplier |
+| ---------- | ------------ | -------- | ---------------- | ----------------- |
+| Common     | 1d4–1d6      | +1       | ×1.0             | ×1.0              |
+| Uncommon   | 1d6–1d8      | +2       | ×2.0             | ×1.2              |
+| Rare       | 1d8–1d10     | +3       | ×5.0             | ×1.5              |
+| Epic       | 1d10–2d6     | +4       | ×15.0            | ×1.8              |
+| Legendary  | 2d6–2d8      | +5       | ×50.0            | ×2.0              |
+
+### Stage 3: Effects
+
+Optional stage. Adds magical effects, status effects, special abilities.
+Only triggers for Uncommon+ items or when the GM/LLM explicitly requests it.
+
+```typescript
+interface EffectsResult {
+  onHit?: ItemEffect[]; // Applied when weapon hits
+  onUse?: ItemEffect[]; // Applied when consumable is used
+  onEquip?: ItemEffect[]; // Applied when item is equipped
+  passive?: ItemEffect[]; // Always active while held/worn
+  triggered?: {
+    condition: string; // "on_crit" | "on_low_hp" | "on_kill" | "in_darkness"
+    effect: ItemEffect;
+  }[];
+}
+```
+
+**Engine logic:**
+
+```
+1. Check rarity — Common items skip effects stage
+2. Check category — weapons get onHit, armor gets onEquip, consumables get onUse
+3. If LLM suggested effects: validate against rarity budget
+   - Common: 0 effects
+   - Uncommon: 1 effect, duration ≤ 3 turns
+   - Rare: 1-2 effects, duration ≤ 5 turns
+   - Epic: 2-3 effects, duration ≤ 10 turns
+   - Legendary: 3+ effects, duration unlimited
+4. Generate effects matching the item's theme (fire weapon → fire damage effect)
+5. Compute effect values from stats (heal = CON modifier + level)
+```
+
+**Example output for Dragonscale Blade (rare):**
+
+```
+[PIPELINE_STAGE_COMPLETE]
+Stage: effects
+Result:
+  onHit: [{ type: "debuff", stat: "con", value: -1, duration: 3,
+            description: "Dragonfire sears the wound" }]
+  passive: [{ type: "buff", stat: "str", value: 1,
+              description: "Dragonbone grants strength" }]
+  triggered: [{ condition: "on_crit", effect: {
+    type: "debuff", stat: "str", value: -2, duration: 5,
+    description: "Critical hit engulfs target in dragonfire"
+  }}]
+[/PIPELINE_STAGE_COMPLETE]
+```
+
+### Stage 4: Image
+
+Optional stage. Generates a visual asset for the entity. Uses the image
+generation system with a prompt derived from the description.
+
+```typescript
+interface ImageResult {
+  assetId: string; // Created via image generation pipeline
+  prompt: string; // The generation prompt used
+  style: string; // "pixel_art" | "realistic" | "anime" | "sketch" | "oil_painting"
+  thumbnailUrl: string;
+  fullUrl: string;
+}
+```
+
+**Engine logic:**
+
+```
+1. Build image prompt from description:
+   "A sword forged from dragon bone, glowing with inner fire,
+    fantasy RPG item art, {world_style}, detailed, high quality"
+2. Check world style preference (pixel art? realistic? anime?)
+3. Call image generation API
+4. Create asset record in assets table
+5. Link to entity via asset_links table
+6. Generate thumbnail (256px) for inventory/UI
+```
+
+**Style matching:**
+
+| World Theme     | Default Style    | Prompt Modifier                  |
+| --------------- | ---------------- | -------------------------------- |
+| Fantasy         | realistic        | "fantasy RPG, detailed, painterly" |
+| Sci-fi          | realistic        | "sci-fi concept art, sleek"      |
+| Anime           | anime            | "anime style, vibrant colors"    |
+| Retro           | pixel_art        | "pixel art, 32x32, retro game"   |
+| Horror          | sketch           | "dark sketch, pencil, eerie"     |
+| Custom          | (world setting)  | (user-defined)                   |
+
+### Stage 5: Placement
+
+The final stage. The entity is placed in the world — as a world item, in
+an actor's inventory, on a shopkeeper's shelf, or as a location feature.
+
+```typescript
+interface PlacementResult {
+  targetType: "world_item" | "inventory" | "shop" | "location" | "enemy_loot";
+  targetId: string; // location_id, actor_id, or shop_id
+  quantity: number;
+  hidden: boolean;
+  respawnable: boolean;
+}
+```
+
+**Placement options by entity type:**
+
+| Entity  | Placement Target                     | Example                                    |
+| ------- | ------------------------------------ | ------------------------------------------ |
+| Item    | World item (on ground/container)     | "Place in the dragon's hoard"              |
+| Item    | Actor inventory                      | "Give to the party fighter"                |
+| Item    | Shop inventory                       | "Add to Ironhold Smith's stock"            |
+| Item    | Enemy loot table                     | "Add to dragon's loot, 25% chance"         |
+| NPC     | Location (spawn point)               | "Place in the throne room"                 |
+| NPC     | Chat (join as participant)           | "Add to group chat as merchant"            |
+| Location| World (add to location graph)        | "Connect to the forest entrance"           |
+| Enemy   | Location (spawn zone)                | "Spawn 3 goblins in the cave"              |
+
+**Placement validation:**
+
+```
+1. Check target exists (location, actor, shop)
+2. Check weight capacity (if inventory placement)
+3. Check shop has space (if shop placement)
+4. Check location graph connectivity (if new location)
+5. Apply placement to world state
+6. Record in world_events timeline
+```
+
+### Complete Pipeline Flow
+
+```
+1. Trigger: GM says "I want a dragon bone sword" or
+   LLM emits [CREATE_INTENT]
+
+2. Stage 1 (Description): LLM generates name, lore, category, rarity
+
+3. Stage 2 (Stats): Engine computes damage, weight, value, requirements
+   - LLM may suggest, engine validates and adjusts
+
+4. Stage 3 (Effects): Engine adds magical effects based on rarity budget
+   - Skipped for Common items
+
+5. Stage 4 (Image): Engine generates visual asset
+   - Skipped if world has no image gen configured
+
+6. Stage 5 (Placement): Engine places entity in world
+   - GM specifies target, engine validates
+
+7. Final: Engine assembles complete entity, saves to DB, records in timeline
+```
+
+### LLM Pipeline Intent
+
+The LLM can trigger the full pipeline or individual stages:
+
+```typescript
+interface CreateIntent {
+  type: "item" | "npc" | "location" | "enemy" | "quest";
+  stage?: "description" | "stats" | "effects" | "image" | "placement" | "all";
+  input: string; // Natural language description
+  placement?: {
+    targetType: PlacementResult["targetType"];
+    targetId: string;
+    quantity?: number;
+  };
+  style?: string; // Image style override
+}
+```
+
+**Full pipeline example:**
+
+```
+The merchant reaches under the counter and produces a blade that seems
+to drink the light. "Dragon bone," he whispers. "Forged in the old way."
+
+[CREATE_INTENT]
+{
+  "type": "item",
+  "stage": "all",
+  "input": "A sword forged from dragon bone, ancient, glowing with inner fire, rare quality",
+  "placement": {
+    "targetType": "shop",
+    "targetId": "shop_ironhold_smith",
+    "quantity": 1
+  },
+  "style": "realistic"
+}
+[/CREATE_INTENT]
+```
+
+### Pipeline UI (World Detail Page)
+
+A "Create" button in the world detail page opens the creation pipeline
+as a step-by-step wizard:
+
+```
+Step 1: Description
+  [Name: Dragonscale Blade          ]
+  [Category: Weapon ▼              ]
+  [Rarity: Rare ▼                  ]
+  [Description: A sword forged...   ]
+  [Tags: dragon, fire, ancient      ]
+  → Next
+
+Step 2: Stats
+  [Damage: 1d8+2 slashing          ]
+  [Range: 5 ft                      ]
+  [Weight: 4.5 lbs                  ]
+  [Value: 250 gold                  ]
+  [Requirements: Level 5, STR 12    ]
+  → Next
+
+Step 3: Effects
+  [On Hit: -1 CON, 3 turns         ]
+  [Passive: +1 STR                  ]
+  [On Crit: -2 STR, 5 turns        ]
+  → Next
+
+Step 4: Image
+  [Style: Realistic ▼              ]
+  [Prompt: "A sword forged from dragon bone..."]
+  [Generate] → [Preview] → [Accept]
+
+Step 5: Placement
+  [Target: Shop ▼ Ironhold Smith    ]
+  [Quantity: 1                       ]
+  [Hidden: No                        ]
+  → Create
+
+→ Entity created and placed in world.
+```
+
+### Auto-Pipeline: Loot Generation
+
+When loot tables generate items, the pipeline runs automatically:
+
+```
+1. Loot table rolls: "rare weapon"
+2. Pipeline Stage 1: LLM generates description for rare weapon fitting world theme
+3. Pipeline Stage 2: Engine applies rare weapon stat template
+4. Pipeline Stage 3: Engine adds effects (rare = 1-2 effects)
+5. Pipeline Stage 4: Image gen skipped (loot drops don't need images usually)
+6. Pipeline Stage 5: Place as world item at enemy location
+7. LLM narrates: "On the dragon's body you find a glowing bone sword..."
+```
+
+### Auto-Pipeline: NPC Creation
+
+When the GM introduces a new NPC:
+
+```
+1. GM says "A guardsman approaches"
+2. Pipeline Stage 1: LLM generates guard name, description, personality
+3. Pipeline Stage 2: Engine generates stat block (Level 3 human, STR 14, etc.)
+4. Pipeline Stage 3: Engine adds guard-specific traits (alert, disciplined)
+5. Pipeline Stage 4: Image gen for guard portrait
+6. Pipeline Stage 5: Place as actor in current location
+7. LLM narrates the introduction with full context
+```
+
+---
+
 ## Persona ↔ World Interaction
 
 ### Persona World Traits
@@ -887,6 +1304,311 @@ the prompt:
 [RULE APPLIED]
 Anti-Magic Barrier activated in Throne Room. Spellcasting prohibited.
 [/RULE APPLIED]
+```
+
+---
+
+## GM Story Steering & Injections
+
+The GM (human or LLM) guides the narrative through two complementary
+systems: **public notes** (visible to players) and **dark notes** (hidden
+from players). Both are stored in the world and injected into prompts
+at different levels of visibility.
+
+### Public Notes — Story Guidance
+
+Public notes are visible to all players in a world, location, or group
+chat. They guide the narrative direction, establish expectations, and
+provide context the LLM should incorporate.
+
+#### Scope Hierarchy
+
+```
+World Public Notes → visible in all chats within the world
+Location Public Notes → visible only in chats at that location
+Chat Public Notes → visible only in that specific chat
+```
+
+More specific scopes override or augment broader ones.
+
+#### Note Types
+
+| Type              | Purpose                                    | Example                                          |
+| ----------------- | ------------------------------------------ | ------------------------------------------------ |
+| `theme`           | Tone, genre, atmosphere guidance           | "Gothic horror. Dread over action. Slow burn."   |
+| `plot_hook`       | Story threads the GM wants explored        | "The missing miners connect to a deeper evil."   |
+| `guidance`        | Direct narrative direction for the LLM     | "The party should investigate the old well next." |
+| `npc_motive`      | What NPCs want (visible to players)       | "MerchantBob secretly wants the ruby back."      |
+| `world_lore`      | Factual world information everyone knows   | "Dragons were extinct for 300 years — until now." |
+| `tone_instruction`| How the LLM should narrate                 | "No humor. Grimdark. Consequences matter."       |
+| `player_prompt`   | Suggestions for players                    | "Consider: what is your character afraid of?"    |
+
+#### Data Model
+
+```typescript
+interface PublicNote {
+  id: string;
+  worldId: string;
+
+  // Scope (exactly one)
+  scope: "world" | "location" | "chat";
+  scopeId?: string; // location_id or chat_id (null for world)
+
+  // Content
+  type: NoteType;
+  title: string; // Short label
+  content: string; // Full text, injected into prompt
+  priority: number; // 0-1000, higher = injected first
+  enabled: boolean;
+
+  // Metadata
+  author: string; // user_id who created it
+  createdAt: string;
+  updatedAt: string;
+}
+```
+
+#### Prompt Injection
+
+Public notes are injected as a visible prompt section:
+
+```
+[Story Guidance]
+Theme: Gothic horror. Dread over action. Slow burn. No humor.
+Plot Hooks:
+  - The missing miners connect to a deeper evil beneath the mountain.
+  - MerchantBob secretly wants the ruby back — but won't say why.
+World Lore:
+  - Dragons were extinct for 300 years. That changed last month.
+Current Direction:
+  - The party should investigate the old well next. Something stirs there.
+[/Story Guidance]
+```
+
+The LLM reads this section and incorporates it into narration. Unlike
+dark notes, players can see this in the prompt debug view.
+
+#### GM Tool Call: Add Public Note
+
+```
+[TOOL_CALL]
+{
+  "tool": "story_note_add",
+  "params": {
+    "scope": "location",
+    "scopeId": "loc_old_well",
+    "type": "plot_hook",
+    "title": "The Well's Secret",
+    "content": "The well is a sealed entrance to an ancient burial chamber. Something has been breaking the seals from below. The party should feel unease when they approach — the air smells wrong, birds avoid the area.",
+    "priority": 800
+  },
+  "narrative": "The well looms before you. The air here feels... wrong."
+}
+[/TOOL_CALL]
+```
+
+#### Editing & Deletion
+
+- GM can edit any public note (full CRUD)
+- Players with World Editor role can add notes (if approval queue is
+  disabled)
+- Notes can be disabled without deleting (toggle enabled/disabled)
+- Priority controls injection order — highest first
+
+### Dark Notes — Secret Story Management
+
+Dark notes are GM-only. They contain plot twists, hidden NPC motives,
+surprise encounters, and behind-the-scenes story development. Players
+**never** see these in prompts or debug views.
+
+#### Purpose
+
+Dark notes let the GM plan ahead without spoiling surprises:
+
+- Track what the players don't know yet
+- Plan reveal timing for plot twists
+- Manage hidden NPC agendas
+- Coordinate multi-session story arcs
+- Log foreshadowing planted so far
+
+#### Note Types
+
+| Type              | Purpose                                    | Example                                          |
+| ----------------- | ------------------------------------------ | ------------------------------------------------ |
+| `secret`          | Hidden information players haven't learned | "The king is a vampire. His 'illness' is bloodlust." |
+| `twist`           | Planned reveals or betrayals               | "The friendly guide is the villain's agent."     |
+| `foreshadow`      | Subtle hints planted so far                | "Mentioned the guide's unusual knowledge of the catacombs." |
+| `hidden_npc`      | NPC motivations unknown to players         | "The priest is secretly a cultist, Level 8."    |
+| `consequence`     | Upcoming consequences of player actions    | "They stole from the guild — retaliation in 3 sessions." |
+| `arc_plan`        | Multi-session story arc planning           | "Act 1: Mystery → Act 2: Confrontation → Act 3: Revelation" |
+| `note`            | Freeform GM notes                          | "Alice seems suspicious of the guide — lean into that." |
+
+#### Data Model
+
+```typescript
+interface DarkNote {
+  id: string;
+  worldId: string;
+
+  // Scope (same as public notes, but always GM-only)
+  scope: "world" | "location" | "chat";
+  scopeId?: string;
+
+  // Content
+  type: DarkNoteType;
+  title: string;
+  content: string;
+  priority: number;
+  enabled: boolean;
+
+  // Reveal tracking
+  revealedAt?: string; // When this secret was revealed to players
+  revealTrigger?: string; // What should trigger the reveal
+  revealCondition?: string; // "after_session_5" | "player_asks_about_king" | "hp_below_20"
+
+  // Planning
+  relatedNotes?: string[]; // IDs of connected dark notes
+  dependsOn?: string; // This note requires another to be revealed first
+  urgency: "low" | "medium" | "high" | "critical"; // How soon should this come up
+
+  // Metadata
+  author: string;
+  createdAt: string;
+  updatedAt: string;
+}
+```
+
+#### Dark Note Prompt Injection
+
+Dark notes are injected into a **separate, hidden prompt section** that
+only the LLM sees — never exposed in the debug view:
+
+```
+[GM Dark Notes — DO NOT REVEAL TO PLAYERS]
+SECRET: The king is a vampire. His "illness" is bloodlust. The priest
+is secretly a cultist helping the vampire maintain power.
+TWIST: The friendly guide is the villain's agent. Reveal trigger: when
+the party reaches the burial chamber.
+FORESHADOW PLANTED:
+  - Guide's unusual knowledge of catacombs (session 2)
+  - King's refusal to meet in daylight (session 3)
+  - Mysterious blood donations from the village (session 1)
+PENDING CONSEQUENCES:
+  - Guild retaliation for theft (due: 3 sessions)
+ARC PLAN: Act 1 (current) → Mystery. Act 2 → Confrontation with guide.
+  Act 3 → Revelation about the king.
+URGENT: Guide's loyalty check should happen within 2 sessions.
+[/GM Dark Notes — DO NOT REVEAL TO PLAYERS]
+```
+
+The LLM uses this context to:
+- Plant appropriate foreshadowing in narration
+- Build tension toward planned reveals
+- Avoid accidentally revealing secrets
+- Guide player attention toward plot hooks
+- Reference hidden NPC motivations naturally
+
+#### Reveal System
+
+When a dark note's reveal condition is met, the engine:
+
+1. Moves the note from dark → public (or removes it if it's purely hidden)
+2. Updates the revealedAt timestamp
+3. Injects a reveal notification:
+
+```
+[REVEAL TRIGGERED]
+Dark note "The Guide's Betrayal" has been revealed.
+Players now know: The guide was working for the villain all along.
+Removed from dark notes, available for public reference.
+[/REVEAL TRIGGERED]
+```
+
+The LLM then narrates the reveal dramatically.
+
+#### GM Tool Call: Add Dark Note
+
+```
+[TOOL_CALL]
+{
+  "tool": "dark_note_add",
+  "params": {
+    "scope": "world",
+    "type": "twist",
+    "title": "The Guide's Betrayal",
+    "content": "The friendly guide 'Elara' is actually an agent of the villain Lord Malachar. She has been feeding him information about the party's progress. She will sabotage the burial chamber seal when the party arrives.",
+    "revealTrigger": "party_reaches_burial_chamber",
+    "revealCondition": "when the party enters the burial chamber, Elara 'accidentally' breaks the wrong seal",
+    "urgency": "high",
+    "relatedNotes": ["note_malachar_plan", "note_burial_chamber_layout"],
+    "dependsOn": "note_party_trusts_elara"
+  },
+  "narrative": "(GM note recorded — not narrated)"
+}
+[/TOOL_CALL]
+```
+
+#### Dark Note Views
+
+The GM has a dedicated "Story Notes" panel in the world detail page:
+
+- **Public tab** — all public notes, editable by GM and editors
+- **Dark tab** — all dark notes, GM-only (hidden from other users)
+- **Timeline view** — shows notes in reveal order
+- **Relationship graph** — visual map of connected dark notes
+- **Filter by**: type, scope, urgency, revealed/unrevealed
+
+#### Dark Note Visibility Rules
+
+| Who                | Sees Public Notes | Sees Dark Notes |
+| ------------------ | ----------------- | --------------- |
+| GM / World Owner   | Yes               | Yes             |
+| World Editor       | Yes               | No              |
+| World Viewer       | Yes               | No              |
+| Player in chat     | Yes               | No              |
+| Prompt Debug View  | Yes               | **Never**       |
+
+Dark notes are never included in:
+- Chat exports
+- World exports (or are stripped before export)
+- Shared world bundles
+- Any API response to non-GM users
+- Prompt debug view
+
+#### GM Workflow
+
+A typical GM session:
+
+```
+1. Review dark notes → plan what to advance this session
+2. Add/update public notes → set theme, current direction
+3. Start chat → LLM sees public guidance + dark context
+4. During play:
+   - LLM narrates foreshadowing from dark notes
+   - GM adds new dark notes for plot developments
+   - GM adds public notes when players learn new info
+5. Reveal triggers hit → engine promotes dark → public
+6. Session ends → GM reviews revealed notes, updates arc plan
+```
+
+#### Example: Multi-Session Arc
+
+```
+Session 1 (Dark Notes):
+  - secret: "The village elder is a werewolf"
+  - foreshadow: "Elder avoids the full moon festival"
+  - arc_plan: "Reveal at the festival — players witness transformation"
+
+Session 2 (Dark Notes):
+  - twist: "The elder's curse was inflicted by the baron"
+  - consequence: "Elder will attack if cornered"
+  - public note added: "The elder seems... uncomfortable about the festival"
+
+Session 3 (Reveal):
+  - reveal triggered: "Players attend the festival, elder disappears"
+  - dark note promoted to public: "The elder is a werewolf"
+  - new dark note: "The baron is the true villain"
+  - arc_plan updated: "Act 2 → Confront the baron"
 ```
 
 ---
@@ -2002,6 +2724,190 @@ World economics and actor economics are coupled:
 
 The engine maintains both levels simultaneously. Actor economics provides
 the individual view; world economics provides the systemic view.
+
+### P2P Trading & Barter
+
+Actor-to-actor trading is the core exchange mechanism between characters.
+Unlike shop transactions (fixed prices), P2P trades are negotiated —
+the LLM narrates haggling, the engine validates fairness.
+
+#### Trade Types
+
+| Type           | Gold Involved | Items Involved | Validation                |
+| -------------- | ------------- | -------------- | ------------------------- |
+| Direct Sale    | Yes           | Yes            | Gold check + value check  |
+| Barter         | No            | Yes (both sides)| Value comparison         |
+| Hybrid         | Yes           | Yes            | Both checks               |
+| Gift           | Optional      | Optional       | None (voluntary)          |
+| Loan           | Yes           | No             | Debt record created       |
+| Commission     | Yes (escrow)  | Yes            | Quest-linked              |
+
+#### Barter Resolution Pipeline
+
+```
+1. Initiator proposes trade (LLM narrative + TRADE_INTENT)
+2. Engine computes values:
+   - Initiator's offer: items + gold
+   - Target's offer: items + gold
+   - Fairness ratio = initiatorValue / targetValue
+3. If skill check requested:
+   a. Roll d20 + CHA modifier + proficiency
+   b. Compare to DC (set by LLM or computed from value gap)
+   c. Apply outcome modifier to trade terms
+4. If fairness ratio outside acceptable range:
+   - LLM receives warning: "This trade is lopsided"
+   - LLM can narrate NPC refusal or counter-offer
+5. Engine validates:
+   - Both parties own offered items
+   - Gold amounts are sufficient
+   - No trade cooldown active
+   - Trade value within world limits
+6. Execute atomic swap:
+   - Remove items/gold from both parties
+   - Add received items/gold to both parties
+   - Record transaction for both actors
+   - Update reputation if applicable
+7. Inject result to LLM
+8. LLM narrates the completed exchange
+```
+
+#### Value Comparison Engine
+
+Barter trades need fair value estimation. The engine compares:
+
+```
+initiatorValue = sum(item.value × quantity) + initiatorGold
+targetValue = sum(item.value × quantity) + targetGold
+
+fairnessRating:
+  0.8 ≤ ratio ≤ 1.2 → "Fair"
+  0.5 ≤ ratio < 0.8  → "Unfair to you"
+  1.2 < ratio ≤ 2.0  → "Unfair to them"
+  ratio < 0.5 or > 2.0 → "Lopsided"
+```
+
+Value comes from `item_definitions.value` (base gold value). The engine
+can also factor in:
+
+- **Rarity multiplier**: common ×1.0, uncommon ×1.5, rare ×2.5, legendary ×5.0
+- **Demand modifier**: items in scarce supply are worth more
+- **Condition modifier**: damaged items worth 50-75%
+- **Enchantment modifier**: magical items worth 2-10× base value
+- **Quest item flag**: key items marked as "priceless" (cannot be bartered)
+
+#### Barter Skill Checks
+
+When the LLM declares a skill check for barter:
+
+```typescript
+interface BarterCheck {
+  skill: "persuasion" | "intimidation" | "deception" | "insight";
+  dc: number; // Set by LLM or computed
+  modifiers: {
+    chaBonus: number;
+    proficiencyBonus: number;
+    reputationModifier: number;
+    factionModifier: number;
+    situationalModifier: number;
+  };
+}
+```
+
+**DC computation** (if not set by LLM):
+
+```
+dc = 10 + floor(abs(fairnessRatio - 1.0) * 20)
+```
+
+| Fairness Ratio | Computed DC | Example                        |
+| -------------- | ----------- | ------------------------------ |
+| 0.9–1.1        | 10–12       | Nearly fair trade              |
+| 0.7–0.9        | 14–18       | You're getting a deal          |
+| 0.5–0.7        | 18–22       | Very favorable to you          |
+| > 1.2          | 14+         | You're overpaying              |
+
+**Outcome effects:**
+
+| Outcome           | Trade Effect                                  |
+| ----------------- | --------------------------------------------- |
+| Critical Success  | Target accepts, +10 trust, may offer extras   |
+| Success (by 1-5)  | Target accepts, +5 trust                      |
+| Success (by 6+)   | Target accepts, +3 trust, +1 faction rep     |
+| Failure           | Target refuses or demands better terms        |
+| Critical Failure  | Target refuses, -5 trust, may end relationship|
+
+#### Group Chat Multi-Party Trading
+
+In group chats, multiple actors can bid on the same item:
+
+```
+[ACTIVE OFFERS]
+Item: Potion of Flight (held by Alice)
+  - Bob: 150g
+  - Carol: 200g + Short Sword (total: 260g)
+  - Dave: 300g (highest bid)
+
+Alice can:
+  a. Accept highest bid (Dave, 300g)
+  b. Accept any bid (Carol's item combo may be preferred)
+  c. Counter-offer ("I want 350g")
+  d. Withdraw item from trade
+  e. Start an auction with a deadline
+[/ACTIVE OFFERS]
+```
+
+Auction mechanics:
+- LLM narrates the auction, sets deadline (turns or time)
+- Engine tracks all bids, validates each
+- At deadline, highest bidder wins
+- If no bids, item stays with Alice
+
+#### Escrow for Commissions
+
+For task-based trades (commissions, deliveries), the engine holds gold
+in escrow:
+
+```
+1. Employer deposits gold into escrow: "Deliver this letter to the mayor."
+2. Engine: escrow_record = { gold: 50, employer, deliverer, quest_id }
+3. Deliverer completes task (quest completion)
+4. Engine releases escrow: gold moves from escrow to deliverer
+5. If task fails: gold returned to employer
+6. If timeout: gold returned to employer, -10 trust with deliverer
+```
+
+#### Trade Cooldown & Limits
+
+Worlds can configure restrictions:
+
+| Setting           | Default | Description                              |
+| ----------------- | ------- | ---------------------------------------- |
+| `p2p_trade`       | true    | Allow actor-to-actor trading             |
+| `barter`          | true    | Allow item-for-item swaps                |
+| `proximity_check` | false   | Actors must be in same location          |
+| `trade_tax`       | 0%      | Tax on gold involved in trades           |
+| `max_trade_value` | 0       | Cap per trade (0 = unlimited)            |
+| `cooldown_turns`  | 0       | Turns between trades (0 = no cooldown)   |
+| `escrow_enabled`  | true    | Allow escrow for commissions             |
+| `auction_enabled` | true    | Allow multi-party auctions               |
+
+#### LLM Prompt Injection
+
+```
+[P2P Trade — {{char}}]
+Recent Trades:
+  - Traded Healing Potion for Map with Merchant Bob (Fair, +5 trust)
+  - Gifted 100g to Ally Alice (No return expected)
+  - Loaned 200g to Rogue Dan (due: 5 days, 2% daily)
+
+Active Offers:
+  - Potion of Flight: 3 bids, highest 300g (Dave)
+  - Commission: Deliver letter to mayor (50g escrow, 3 turns left)
+
+Merchant Reputation:
+  - Ironhold Smith: trust 65, discount 3%
+  - Merchant Bob: trust 40, credit limit 100g
+```
 
 ### Prompt Injection (GM only)
 
