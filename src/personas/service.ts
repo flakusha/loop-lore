@@ -7,6 +7,7 @@ import type { Kysely } from "kysely";
 import type { DB } from "../db/schema";
 import { getLogger } from "../logger";
 import { uid } from "../utils";
+import { DefaultState } from "../db/enums";
 
 export interface CreatePersonaParams {
   userId: string;
@@ -68,7 +69,7 @@ export class PersonasService {
     if (params.avatarAssetId !== undefined) updates.avatar_asset_id = params.avatarAssetId;
     if (params.description !== undefined) updates.description = params.description;
     if (params.title !== undefined) updates.title = params.title;
-    if (params.isDefault !== undefined) updates.is_default = params.isDefault ? 1 : 0;
+    if (params.isDefault !== undefined) updates.is_default = params.isDefault ? DefaultState.Default : DefaultState.NotDefault;
 
     await this.db
       .updateTable("personas")
@@ -91,12 +92,12 @@ export class PersonasService {
 
   async setDefault(id: string, userId: string): Promise<void> {
     // Unset current default
-    await this.db.updateTable("personas").set({ is_default: 0 }).where("user_id", "=", userId).execute();
+    await this.db.updateTable("personas").set({ is_default: DefaultState.NotDefault }).where("user_id", "=", userId).execute();
 
     // Set new default
     await this.db
       .updateTable("personas")
-      .set({ is_default: 1, updated_at: new Date().toISOString() })
+      .set({ is_default: DefaultState.Default, updated_at: new Date().toISOString() })
       .where("id", "=", id)
       .where("user_id", "=", userId)
       .execute();
@@ -107,7 +108,7 @@ export class PersonasService {
       .selectFrom("personas")
       .selectAll()
       .where("user_id", "=", userId)
-      .where("is_default", "=", 1)
+      .where("is_default", "=", DefaultState.Default)
       .executeTakeFirst();
   }
 

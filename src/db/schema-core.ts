@@ -9,6 +9,7 @@ import type {
   UserStatus,
   ChatType,
   ChatMode,
+  ChatPurpose,
   TurnStrategy,
   ActorType,
   AgentType,
@@ -20,6 +21,9 @@ import type {
   MessageStatus,
   MessageVisibility,
   ActorVisibility,
+  PinnedState,
+  DefaultState,
+  EquipState,
 } from "./enums";
 
 // ── Users ────────────────────────────────────────────────────
@@ -45,7 +49,7 @@ export interface Personas {
   avatar_asset_id: string | null;
   description: string | null;
   title: string | null;
-  is_default: Generated<number>;
+  is_default: Generated<DefaultState>;
   created_at: Generated<string>;
   updated_at: Generated<string>;
 }
@@ -68,6 +72,7 @@ export interface Chats {
   name: string;
   type: ChatType;
   mode: ChatMode;
+  purpose: Generated<ChatPurpose>;
   created_by: string;
   world_id: string | null;
   current_location_id: string | null;
@@ -76,7 +81,8 @@ export interface Chats {
   turn_strategy: TurnStrategy | null;
   max_turns: number | null;
   auto_advance: number | null;
-  is_pinned: Generated<number>;
+  parent_chat_id: string | null;
+  is_pinned: Generated<PinnedState>;
   created_at: Generated<string>;
   updated_at: Generated<string>;
 }
@@ -114,10 +120,30 @@ export interface ChatParticipants {
   chat_id: string;
   actor_id: string;
   role_in_chat: ChatParticipantRole;
+  talkativity: Generated<number>;
+  initiative: Generated<number>;
   joined_at: Generated<string>;
   last_read_message_id: string | null;
   impersonate_actor_id: string | null;
   persona_id: string | null;
+}
+
+// ── Group Initiatives (scene-level) ──────────────────────────
+export interface GroupInitiatives {
+  chat_id: string;
+  scene_id: string;
+  actor_id: string;
+  score: number;
+  created_at: Generated<string>;
+  updated_at: Generated<string>;
+}
+
+// ── Chat Mentions ────────────────────────────────────────────
+export interface ChatMentions {
+  id: Generated<string>;
+  message_id: string;
+  actor_id: string;
+  created_at: Generated<string>;
 }
 
 // ── Characters ────────────────────────────────────────────────
@@ -186,7 +212,7 @@ export interface ActorNotes {
   title: string;
   content: string;
   category: string;
-  pinned: number;
+  pinned: PinnedState;
   sort_order: number;
   created_at: Generated<string>;
   updated_at: Generated<string>;
@@ -204,7 +230,7 @@ export interface ActorItems {
   weight: number | null;
   tags: string;
   metadata: string;
-  equipped: number;
+  equipped: EquipState;
   sort_order: number;
   created_at: Generated<string>;
   updated_at: Generated<string>;
