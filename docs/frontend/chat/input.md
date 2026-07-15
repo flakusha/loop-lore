@@ -56,6 +56,82 @@ Arranged in a single row below or inline with the textarea.
 
 ---
 
+## Asset Attachment Flow
+
+Assets can be attached to messages from the input area in multiple ways.
+
+### From Toolbar (📎 button)
+
+1. Click 📎 → native file picker opens (filtered by accepted types)
+2. Select one or more files → upload starts immediately
+3. Progress indicator on 📎 button (percentage fill)
+4. On success: file reference inserted in textarea at cursor position
+   as `[asset:filename.jpg]` marker
+5. On error: toast notification, file not attached
+
+### From Drag-and-Drop
+
+1. Drag file(s) over chat area → drop zone overlay appears
+   (dashed border + "Drop files here")
+2. Drop → upload starts immediately
+3. On success:
+   - If textarea has text: files attach contextually (markers inserted)
+   - If textarea is empty: creates standalone message per file
+4. On error: toast notification
+
+### From Clipboard Paste
+
+1. Ctrl+V / Cmd+V with image in clipboard
+2. If textarea is focused: image uploads, marker inserted at cursor
+3. If chat area is focused (no textarea focus): creates standalone
+   message with the image
+4. Multiple images in clipboard: each becomes a separate attachment
+   on the same message
+
+### From Gallery Picker
+
+1. Click 📎 → "Choose from Gallery" option in dropdown
+2. Gallery modal opens (filtered to current world's assets)
+3. Select asset → reference marker inserted in textarea
+4. No re-upload (asset already exists server-side)
+
+### Attachment Markers
+
+File references in the textarea use a lightweight marker syntax:
+
+```
+Look at this map: [asset:world_map.png]
+
+And here's the contract: [asset:quest_contract.pdf]
+```
+
+These markers are:
+- Invisible when rendered (replaced by the actual asset on send)
+- Counted toward token limit (20 tokens per marker)
+- Validated on send (asset must exist, user must have access)
+- Removed if the referenced asset is deleted before send
+
+### Upload Limits
+
+| Limit               | Default | Configurable |
+| ------------------- | ------- | ------------ |
+| Max file size       | 10 MB   | Yes          |
+| Max files per msg   | 10      | Yes          |
+| Max total size/msg  | 50 MB   | Yes          |
+| Accepted types      | See table above | Yes   |
+
+### Disabled State During Upload
+
+When uploading:
+- 📎 button shows spinner animation
+- Send button remains enabled (text can be sent without attachments)
+- If user sends while upload is in progress:
+  - Text message sends immediately
+  - Attachments attach when upload completes
+  - If upload fails: toast, attachments not included
+
+---
+
 ## LLM Selector
 
 Controls which model handles the next generation. Placed as a compact dropdown near the toolbar:

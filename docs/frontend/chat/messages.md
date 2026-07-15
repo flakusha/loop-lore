@@ -49,11 +49,80 @@ All message content is rendered as markdown. LLMs output markdown natively; user
 
 ---
 
-## Asset Positioning (Book-like Illustration Layout)
+## Asset Attachments
 
-**Status**: Implemented. Attachments are stored in `attachments` JSON array on each message record, referencing assets via `asset_links` with `entity_type='message'`.
+Messages can attach assets (images, documents, audio, video). Assets
+can be attached in two ways: **contextual** (attached to a specific
+message) or **standalone** (sent as its own message).
 
-A message can hold attached images (or other media). The display depends on image size and proportion:
+### Attachment Types
+
+| Type     | Extensions                          | Display                         |
+| -------- | ----------------------------------- | ------------------------------- |
+| Image    | jpg, png, gif, webp, avif           | Inline in bubble (see layout)   |
+| Document | pdf, txt, md, csv, json, toml       | File card below text            |
+| Audio    | mp3, wav, ogg, m4a                  | Audio player embed              |
+| Video    | mp4, webm, mov                      | Video player embed              |
+| Archive  | zip, tar, gz                        | File card with download link    |
+
+### Contextual Attachments (attached to message)
+
+Assets attached to an existing message. The message text provides
+context for the asset.
+
+**Use cases:**
+- User says "look at this" and attaches an image
+- Character describes a document, GM attaches the actual file
+- User shares a map image with location description
+- Player uploads a character sheet PDF
+
+**How it works:**
+
+1. User types message text in input
+2. Attaches file via 📎 button, drag-and-drop, or paste
+3. File uploads to `/api/assets` on submit
+4. Message created with `attachments` array referencing asset IDs
+5. Bubble renders asset inline (images) or as file card (docs)
+
+**Data model:**
+
+```typescript
+interface MessageAttachment {
+  assetId: string;        // FK to assets table
+  assetType: "image" | "document" | "audio" | "video" | "archive";
+  filename: string;       // original filename
+  mimeType: string;       // MIME type
+  size: number;           // bytes
+  thumbnailUrl?: string;  // for images: thumbnail path
+  url: string;            // full asset URL
+  caption?: string;       // optional alt text / description
+  generatedBy?: string;   // "user" | "llm" | "vision" | "sd-cpp"
+}
+```
+
+### Standalone Attachments (asset as message)
+
+Assets sent without accompanying text. The asset IS the message.
+
+**Use cases:**
+- User pastes an image directly (Ctrl+V)
+- User drags an image into the chat
+- User clicks "Generate image" and the result is the only content
+- System injects a generated image (from vision analysis)
+
+**How it works:**
+
+1. User pastes/drags file or triggers generation
+2. File uploads to `/api/assets`
+3. Message created with empty text and `attachments` array with one entry
+4. Bubble renders the asset at full width (no text wrapping)
+
+**Difference from contextual:** standalone messages have no text body.
+The bubble is purely the asset display.
+
+### Image Layout (Book-like Illustration)
+
+Images in messages adapt their layout based on aspect ratio:
 
 | Image aspect ratio      | Layout                                                      |
 | ----------------------- | ----------------------------------------------------------- |
@@ -61,14 +130,114 @@ A message can hold attached images (or other media). The display depends on imag
 | Tall (>9:16 portrait)   | Right-floated, text wraps around (like a book illustration) |
 | Square-ish (4:3 to 3:4) | Left-floated, text wraps around                             |
 | Multiple images         | Grid layout (2 columns max, square crops)                   |
+| Standalone (no text)    | Full bubble width, no text wrapping                         |
 
-The bubble is bounded by the chat width (max 650px). Height should be reasonable:
+The bubble is bounded by the chat width (max 650px):
 
 - Images max-height: 400px (wide images scale down proportionally)
 - Floating images (left/right): max 40% of bubble width
-- Text + image total height: no enforced cap, but scrolling within the bubble is avoided — the chat list scrolls, not individual bubbles
+- Text + image total height: no enforced cap, but scrolling within
+  the bubble is avoided — the chat list scrolls, not individual bubbles
 
-**Document attachments** (PDF, text files): shown as a file card below the message text (icon + filename + size + download link). No inline preview.
+**Click to expand:** clicking an inline image opens a lightbox overlay
+(full-screen preview with pinch-to-zoom on mobile).
+
+### Document Display
+
+Non-image assets render as file cards:
+
+```
+┌─────────────────────────────────────────┐
+│ Character says something...             │
+│                                         │
+│ ┌─────────────────────────────────────┐ │
+│ │ 📄 character_sheet.pdf      2.4 MB  │ │
+│ │    PDF document · Click to download │ │
+│ └─────────────────────────────────────┘ │
+└─────────────────────────────────────────┘
+```
+
+- File icon varies by type (📄 PDF, 📝 text, 📊 spreadsheet, etc.)
+- Shows filename, size, type
+- Click downloads the file
+- PDF: opens in new tab (browser native viewer)
+- No inline preview for documents in v1
+
+### Audio/Video Display
+
+Media assets embed a player:
+
+```
+┌─────────────────────────────────────────┐
+│ "Listen to this recording..."           │
+│                                         │
+│ ┌─────────────────────────────────────┐ │
+│ │ ▶ ──●────────────── 0:42 / 2:15    │ │
+│ │    ambient_forest.mp3     🔊 3.2 MB │ │
+│ └─────────────────────────────────────┘
+└─────────────────────────────────────────┘
+```
+
+- Audio: inline player with play/pause, progress bar, volume
+- Video: inline player with play/pause, progress, fullscreen toggle
+- Max height: 300px for video (scales proportionally)
+- Autoplay: never (always requires user interaction)
+
+### Attachment Flow
+
+**From input toolbar:**
+
+1. Click 📎 button → native file picker opens
+2. Select file(s) → upload starts immediately
+3. Progress indicator on 📎 button (percentage)
+4. On success: file reference inserted in textarea at cursor
+5. On error: toast notification, file not attached
+
+**From drag-and-drop:**
+
+1. Drag file over chat area → drop zone overlay appears
+2. Drop → upload starts
+3. On success: file attached to new message (standalone if no text)
+4. On error: toast notification
+
+**From clipboard paste:**
+
+1. Ctrl+V / Cmd+V with image in clipboard
+2. Image uploads immediately
+3. Creates standalone message with the image
+4. If text is in the textarea, image attaches contextually instead
+
+**From gallery (asset picker):**
+
+1. Click 📎 → "Choose from Gallery" option
+2. Gallery modal opens (filtered to current world)
+3. Select asset → reference inserted in textarea
+4. No re-upload needed (asset already exists)
+
+### Message with Multiple Attachments
+
+Messages can have multiple attachments. Layout rules:
+
+- **All images:** grid layout (2 columns max)
+- **All documents:** stacked file cards
+- **Mixed types:** images rendered inline, documents as file cards below
+- **Max attachments:** 10 per message (configurable)
+- **Max total size:** 50MB per message (configurable)
+
+```
+┌─────────────────────────────────────────┐
+│ "Here's what I found:"                  │
+│                                         │
+│ ┌──────────┐ ┌──────────┐              │
+│ │ image1   │ │ image2   │              │
+│ │ (thumb)  │ │ (thumb)  │              │
+│ └──────────┘ └──────────┘              │
+│                                         │
+│ ┌─────────────────────────────────────┐ │
+│ │ 📄 notes.txt                  12 KB │ │
+│ └─────────────────────────────────────┘ │
+└─────────────────────────────────────────┘
+```
 
 ---
 
@@ -86,39 +255,183 @@ Stats are generated server-side when the message is created. They are appended t
 
 ---
 
-## Message Tooling (Top Corner Actions)
+## Message Tooling (Bubble Buttons)
 
-Hovering over a message reveals a toolbar in the top-right (user messages) or top-left (character messages) corner of the bubble. The toolbar appears as a row of compact icon buttons on fade-in.
+Every message bubble has action buttons. On **desktop**, they appear on
+hover. On **mobile** (touch devices), they appear on long-press or
+swipe-up gesture.
 
-**Basic action set** (always available):
+### Desktop Hover Toolbar
 
-- **Copy**: copies message text to clipboard
-- **Retry** (character messages only): requests a new AI response (full regenerate for single-step; resume from failed step for multi-step)
-- **Continue** (character messages only, shown on partial/cancelled messages): appends new content where the message left off — see [generation.md](./generation.md#continue-generation-cut-off--cancelled-messages)
-- **Remove**: deletes the message (cascade archives descendants — see [archiving.md](./archiving.md))
+Hovering over a message reveals a toolbar in the top-right (user
+messages) or top-left (character messages) corner of the bubble.
+The toolbar fades in (150ms ease).
 
-**Extended action set** (available depending on context and mode):
+```
+User message (hover):           Character message (hover):
+┌─────────────────────┐         ┌─────────────────────────────┐
+│ Hello, traveler!  ┌─┤         ├─┐ The forest is dark...      │
+│                   │C│         │C│ and full of ancient         │
+│                   │R│         │R│ secrets.                    │
+│                   │X│         │X│                             │
+└─────────────────────┘         └─────────────────────────────┘
+  C = Copy, R = Retry,          C = Copy, R = Retry,
+  X = Remove                    X = Remove, ▶ = Continue
+```
 
-- **Summary**: generate a short summary of this message
-- **Image generation**: generate an image from the message text (triggers sd-cpp or API)
-- **Narrate**: re-generate the message with narration style — future
-- **Analyze**: run vision analysis on attached images — future
+### Basic Action Set (always available)
 
-**Placement**: actions are in a horizontal row, flush with the top edge of the bubble. Icons are 16x16px or Unicode glyphs.
+| Action     | Icon | Available on        | Behavior                                          |
+| ---------- | ---- | ------------------- | ------------------------------------------------- |
+| Copy       | 📋   | All messages        | Copies text to clipboard. Toast: "Copied"         |
+| Retry      | 🔄   | Character messages  | Full regenerate. Prompts confirm if message has children |
+| Continue   | ▶    | Partial/cancelled   | Appends new content where message left off        |
+| Remove     | 🗑️   | All messages        | Archives message + descendants (see archiving.md) |
 
-Example layout:
+### Extended Action Set (context-dependent)
 
-- Top-right corner of user messages: Copy | Retry | Remove buttons
-- Top-left corner of character messages: Copy | Retry | Continue | Remove buttons
-- Partial/cancelled messages show a "↳ Continue" footer button outside the hover toolbar (always visible)
-- Below the message text: stats line (visible in Basic/Detailed mode)
+| Action            | Icon | Available on          | Behavior                                    |
+| ----------------- | ---- | --------------------- | ------------------------------------------- |
+| Edit              | ✏️   | Own messages          | Inline textarea edit (see below)            |
+| Reply             | ↩️   | All messages          | Opens reply composer (see threading below)  |
+| Pin               | 📌   | All messages          | Pins message to chat top (GM/master only)   |
+| React             | 😊   | All messages          | Emoji reaction picker                       |
+| Forward           | ➡️   | All messages          | Forward to another chat or export           |
+| Regenerate        | 🔄️  | Character messages    | Same as Retry but variant-aware (swipe)     |
+| Summary           | 📝   | Character messages    | LLM-generated summary of the message        |
+| Generate image    | 🎨   | Character messages    | Triggers image generation from message text |
+| Narrate           | 📖   | Character messages    | Re-generates as descriptive narration       |
+| Analyze           | 🔍   | Image-attached msgs   | Vision model describes attached images      |
+| Attach asset      | 📎   | All messages          | Attach existing asset from gallery          |
 
-The user message's toolbar is on the right; character message's toolbar is on the left.
+### Toolbar Layout
 
-**Continue button placement**: the Continue button appears in two locations:
+**Desktop (hover):**
 
-1. **Hover toolbar** — for messages that completed but are candidates for continuation (truncated, incomplete sentence)
-2. **Inline footer** — for cancelled mid-generation placeholders, always visible below the partial content, styled as a subtle "↳ Continue" link
+```
+┌─────────────────────────────────────────┐
+│ Hi there!                            ┌──┤
+│                                       │📋│ ← Copy
+│                                       │↩️ │ ← Reply
+│                                       │📎│ ← Attach
+│                                       │⋯ │ ← More (dropdown)
+│                                       └──┘
+└─────────────────────────────────────────┘
+
+More dropdown:
+┌────────────────────┐
+│ 📌 Pin             │
+│ 😊 React           │
+│ ➡️ Forward         │
+│ 📝 Summarize       │
+│ 🎨 Generate image  │
+│ 📖 Narrate         │
+│ 🔍 Analyze         │
+│ ✏️ Edit            │
+│ 🗑️ Remove          │
+└────────────────────┘
+```
+
+**Primary row** (always visible on hover): Copy, Reply, Attach, More(⋯)
+**Extended actions** (inside More dropdown): Pin, React, Forward,
+Summarize, Generate image, Narrate, Analyze, Edit, Remove
+
+This keeps the hover toolbar compact (4 buttons) while exposing all
+actions via the dropdown.
+
+### Mobile Touch Toolbar
+
+On viewports <768px, hover does not work. Instead:
+
+**Long-press** on a message bubble opens a contextual action sheet
+(bottom sheet style):
+
+```
+╔═══════════════════════════════╗
+║  Message Actions              ║
+╠═══════════════════════════════╣
+║  📋 Copy                      ║
+║  ↩️ Reply                     ║
+║  📎 Attach asset              ║
+║  📌 Pin to top                ║
+║  😊 React                     ║
+║  ➡️ Forward                   ║
+║  📝 Summarize                 ║
+║  🎨 Generate image            ║
+║  📖 Narrate                   ║
+║  🔍 Analyze                   ║
+║  ✏️ Edit                      ║
+║  ─────────────────────────── ║
+║  🗑️ Remove                    ║
+╚═══════════════════════════════╝
+```
+
+- Swipe up on bubble = same as long-press
+- Tap elsewhere = dismiss
+- Destructive actions (Remove) shown in red, separated by divider
+- Touch targets: minimum 44×44px (WCAG 2.5.8)
+
+### Keyboard Shortcuts (when message focused)
+
+| Shortcut           | Action                  |
+| ------------------ | ----------------------- |
+| `Ctrl+C` / `Cmd+C` | Copy message text       |
+| `Ctrl+R`           | Retry / Regenerate      |
+| `Ctrl+E`           | Edit (own messages)     |
+| `Delete`           | Remove (with confirm)   |
+| `Ctrl+Shift+R`     | Reply                   |
+| `Ctrl+P`           | Pin / Unpin             |
+| `Ctrl+J`           | Continue (partial msg)  |
+
+### Continue Button Placement
+
+The Continue button appears in two locations:
+
+1. **Hover toolbar** — for messages that completed but are candidates
+   for continuation (truncated, incomplete sentence)
+2. **Inline footer** — for cancelled mid-generation placeholders,
+   always visible below the partial content, styled as a subtle
+   "↳ Continue" link
+
+### Inline Edit Mode
+
+Clicking the Edit action (or pressing `Ctrl+E` on a focused message):
+
+- Bubble transforms into a textarea pre-filled with message content
+- Save / Cancel buttons appear below
+- `Ctrl+Enter` = save, `Escape` = cancel
+- On save: htmx PATCH to API, bubble re-renders in place
+- Edited messages show "(edited)" label in the meta line
+- Edit is available on own messages only (unless GM/master)
+
+### Emoji Reactions
+
+Clicking React opens a compact emoji picker:
+
+```
+┌──────────────────────────┐
+│ 👍 ❤️ 😂 🎭 ⚔️ 🗡️ 🏰 ✨ │
+│ 📌 💀 🐉 🌲 ⚡ 🔥 💧 🌙 │
+│                          │
+│ Custom: [____________]   │
+└──────────────────────────┘
+```
+
+**Reaction display**: small emoji badges below the message text,
+inside the bubble. Multiple reactions from different users stack:
+
+```
+┌─────────────────────────────┐
+│ The dragon roars.           │
+│                             │
+│ 👍 2  ❤️ 1  🐉 3           │
+└─────────────────────────────┘
+```
+
+- Reactions are per-message, stored in `message_reactions` table
+- Clicking a reaction toggles your reaction
+- Hover shows who reacted: "Alice, Bob, Charlie"
+- Max 8 unique reactions per message
 
 ---
 
@@ -146,6 +459,60 @@ Clicking the edit action (available in extended set, or via the basic set if tog
 
 ---
 
+## Reply Threading
+
+Users can reply to a specific message, creating a visual thread.
+
+**Reply indicator:**
+
+When a user clicks Reply (↩️) on a message:
+
+1. Input area shows a reply context bar above the textarea
+2. The × dismisses the reply (cancels, returns to normal input)
+3. On send: message is created with `parent_id` pointing to the
+   replied-to message
+
+Reply context bar layout:
+
+```
+┌─────────────────────────────────────────┐
+│ ↩️ Replying to Character: "The forest   │
+│    is dark..."                     [×]  │
+├─────────────────────────────────────────┤
+│ Type a message...                       │
+└─────────────────────────────────────────┘
+```
+
+**Thread display:**
+
+Replied-to messages show a small thread indicator:
+
+```
+┌─────────────────────────────────────────┐
+│ ↩️ "The forest is dark..."              │  ← reply preview (collapsed)
+│                                         │
+│ What lives there?                       │  ← actual reply text
+│                                         │
+│ 12:34 · User                [📋] [⋯]   │
+└─────────────────────────────────────────┘
+```
+
+- Reply preview: truncated quoted text (max 60 chars), collapsed
+- Clicking the preview scrolls to the original message and highlights
+  it briefly (2s yellow flash)
+- On mobile: reply preview is a horizontal bar with quote icon
+
+**Thread depth:**
+
+- v1: flat replies only (reply to any message, no nested threads)
+- The `parent_id` creates a tree, but the UI shows a flat timeline
+- Future: nested thread view (collapsible branches)
+
+**System/narration messages:** cannot be replied to (no Reply action
+in their toolbar).
+
+---
+
 ## Thinking Process Display
 
 If the LLM exposes a thinking/reasoning process (e.g., chain-of-thought before the final answer), it can be displayed:
@@ -167,3 +534,58 @@ Messages injected to guide story development (not from a user or character) appe
 - Prefix: "◆" or similar unobtrusive marker
 - No avatar, no hover actions, no stats
 - These are visible to all participants and are part of the narrative flow
+
+---
+
+## Pinned Messages
+
+GM or chat master can pin important messages to the top of the chat.
+
+**Pinned bar:**
+
+```
+┌─────────────────────────────────────────┐
+│ 📌 Pinned: "The quest begins at dawn."  │  ← pinned message preview
+│    Click to scroll to message      [×]  │     (collapsible)
+├─────────────────────────────────────────┤
+│ [message list...]                       │
+└─────────────────────────────────────────┘
+```
+
+- Max 3 pinned messages (configurable)
+- Pinned bar is collapsible (click header to toggle)
+- Clicking a pinned preview scrolls to the message and highlights it
+- × unpins the message (GM/master only)
+- Pinned messages are stored in `chat_pins` table (chat_id, message_id, pinned_by, pinned_at)
+- Pinned bar shows at the top of the message list, above the oldest loaded message
+
+---
+
+## Message Context Menu
+
+Right-clicking (desktop) or long-pressing (mobile) on a message opens
+a context menu with all available actions:
+
+```
+┌──────────────────────────┐
+│ 📋 Copy                  │
+│ ↩️ Reply                 │
+│ 📎 Attach asset          │
+│ ✏️ Edit                  │
+│ 📌 Pin to top            │
+│ 😊 React                 │
+│ ➡️ Forward               │
+│ 📝 Summarize             │
+│ 🎨 Generate image        │
+│ 📖 Narrate               │
+│ 🔍 Analyze               │
+│ ─────────────────────── │
+│ 🗑️ Remove                │
+└──────────────────────────┘
+```
+
+Same actions as the hover toolbar, presented as a vertical list.
+Destructive actions (Remove) separated by divider and colored red.
+
+On mobile: the context menu is a bottom sheet (slides up from bottom).
+On desktop: the context menu appears at cursor position.
