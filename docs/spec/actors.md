@@ -475,6 +475,215 @@ The GM can inject economic events via tool calls:
 Event types: `market_crash`, `boom`, `shortage`, `famine`, `plague`,
 `war`, `festival`, `tax_holiday`.
 
+### Actor-to-Actor Trading
+
+Actors can trade directly with each other — not just through shops. This
+covers everything from gifting between party members to haggling with NPCs
+to player-to-player barter.
+
+#### Trade Modes
+
+| Mode           | Description                                   | Validation        |
+| -------------- | --------------------------------------------- | ----------------- |
+| **Gold trade** | One actor pays gold, other provides item       | Gold check        |
+| **Barter**     | Items swapped directly (no gold involved)      | Value comparison  |
+| **Hybrid**     | Items + gold combined in single transaction    | Both checks       |
+| **Gift**       | One-sided transfer, no expectation of return   | None (voluntary)  |
+| **Loan**       | Temporary transfer with repayment expectation  | Debt record       |
+| **Commission** | Task-based: deliver item, get paid on delivery | Escrow/quest link |
+
+#### Trade Intent (LLM Structured Output)
+
+When an actor initiates trade, the LLM emits structured intent:
+
+```typescript
+interface TradeIntent {
+  type: "trade" | "barter" | "gift" | "loan" | "commission";
+  initiator: string; // actor_id making the offer
+  target: string; // actor_id receiving the offer
+
+  // What initiator offers
+  offers: {
+    gold?: number;
+    items?: { worldItemId: string; quantity: number }[];
+  };
+
+  // What initiator requests
+  requests: {
+    gold?: number;
+    items?: { worldItemId: string; quantity: number }[];
+  };
+
+  // Context
+  description: string; // Narrative text
+  skillCheck?: {
+    skill: string; // "persuasion", "intimidation", "deception"
+    dc: number;
+  };
+}
+```
+
+#### Trade Resolution Flow
+
+```
+1. LLM narrates: "I'll trade you my healing potion for that map."
+   [TRADE_INTENT]
+   {
+     "type": "barter",
+     "initiator": "actor_01",
+     "target": "npc_merchant",
+     "offers": { "items": [{ "worldItemId": "potion_01", "quantity": 1 }] },
+     "requests": { "items": [{ "worldItemId": "map_01", "quantity": 1 }] },
+     "description": "Trading healing potion for merchant's map"
+   }
+   [/TRADE_INTENT]
+
+2. Engine validates:
+   a. Initiator owns offered items
+   b. Target owns requested items
+   c. If gold involved: sufficient funds
+   d. If barter: value comparison (see Barter Valuation)
+   e. If skill check required: roll and resolve
+
+3. Engine executes swap:
+   a. Remove offered items from initiator inventory
+   b. Remove requested items from target inventory
+   c. Add requested items to initiator inventory
+   d. Add offered items to target inventory
+   e. Record transaction for both actors
+   f. Update merchant reputation (if applicable)
+
+4. Engine injects result:
+   "TRADE COMPLETE: You received Map of the Underdark. Merchant received
+    Healing Potion x1. Trade value: Fair (150g vs 120g)."
+
+5. LLM narrates the completed exchange
+```
+
+#### Barter Valuation
+
+When items are traded without gold, the engine estimates fairness:
+
+```
+tradeValue = sum(item.value × quantity) for each side
+
+fairness:
+  ratio = initiatorValue / targetValue
+  if ratio >= 0.8 and ratio <= 1.2: "Fair"
+  if ratio >= 0.5 and ratio < 0.8:  "Unfair to you"
+  if ratio > 1.2 and ratio <= 2.0:  "Unfair to them"
+  if ratio < 0.5 or ratio > 2.0:    "Lopsided"
+```
+
+Fairness rating is injected into the prompt so the LLM can narrate
+reactions accordingly:
+
+```
+[TRADE EVALUATION]
+Your offer: Healing Potion (50g) + Rope (5g) = 55g
+Their offer: Steel Shield (120g) = 120g
+Ratio: 0.46 — Lopsided in their favor. They may refuse or demand more.
+[/TRADE EVALUATION]
+```
+
+#### Barter Skill Check
+
+The engine can trigger a skill check during barter to influence the
+outcome:
+
+```typescript
+interface BarterSkillCheck {
+  skill: "persuasion" | "intimidation" | "deception";
+  difficulty: number; // DC
+  modifiers: {
+    charismaBonus: number;
+    reputationModifier: number; // From merchant reputation
+    factionModifier: number; // Guild member discount
+    situationalModifier: number; // Context-dependent
+  };
+  outcome: "critical_success" | "success" | "failure" | "critical_failure";
+}
+```
+
+| Outcome        | Effect                                                  |
+| -------------- | ------------------------------------------------------- |
+| Critical Success | Target accepts unfavorable trade, +10 trust           |
+| Success        | Target accepts trade at fair value                      |
+| Failure        | Target refuses or demands better terms                  |
+| Critical Failure | Target refuses, -5 trust, may refuse future trades    |
+
+The skill check is resolved by the dice engine (plugin resolver), not
+the LLM — ensuring fair, deterministic outcomes.
+
+#### Actor Inventory Freeze During Trade
+
+While a trade is pending (multi-turn negotiation), the engine locks
+the offered items:
+
+- Offered items cannot be equipped or used
+- Offered items can be withdrawn (cancel trade)
+- Trade expires after configurable timeout (default: 10 turns / 5 minutes)
+- Expired trades auto-cancel with notification
+
+#### Trade History
+
+Both actors receive a trade record in their transaction ledger:
+
+```typescript
+interface TradeRecord {
+  id: string;
+  type: "trade" | "barter" | "gift" | "loan" | "commission";
+  timestamp: string;
+  counterparty: string; // actor_id
+  locationId?: string;
+  offered: { items: { name: string; quantity: number }[]; gold: number };
+  received: { items: { name: string; quantity: number }[]; gold: number };
+  fairness?: "fair" | "unfair_to_you" | "unfair_to_them" | "lopsided";
+  skillCheck?: { skill: string; outcome: string; roll: number };
+  reputationChange?: number; // +/- trust with counterparty
+}
+```
+
+Trade history is prompt-injectable so the LLM can reference past deals:
+
+```
+[Recent Trades — {{char}}]
+- Traded Healing Potion for Map with Merchant Bob (Fair, +5 trust)
+- Gifted 100g to Ally Alice (No return expected)
+- Loaned 200g to Rogue Dan (due: 5 days, 2% daily interest)
+```
+
+#### Group Chat Trading
+
+In group chats with multiple actors, trading becomes multi-party:
+
+- Actor A offers item to Actor B
+- Actor C can outbid: "I'll give you two gold for that!"
+- LLM narrates the auction/competition
+- Engine tracks all offers, resolves when accepted
+
+```
+[ACTIVE OFFERS]
+- Potion of Flight (offered by Alice):
+  - Bob: 150g
+  - Carol: 200g + Short Sword
+  - Dave: 300g
+[/ACTIVE OFFERS]
+```
+
+#### Trading Restrictions
+
+Worlds can configure trading rules:
+
+| Rule                | Default | Description                           |
+| ------------------- | ------- | ------------------------------------- |
+| `allow_p2p_trade`   | true    | Allow actor-to-actor trades           |
+| `allow_barter`      | true    | Allow item-for-item swaps             |
+| `require_proximity` | false   | Actors must be in same location       |
+| `tax_on_trade`      | 0       | Percentage tax on gold trades         |
+| `max_trade_value`   | 0       | Cap on single trade value (0 = no cap)|
+| `cooldown_turns`    | 0       | Turns between trades (0 = no cooldown)|
+
 ---
 
 ## Import / Export
