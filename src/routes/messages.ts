@@ -56,6 +56,7 @@ import {
 import type { ChunkEvent } from "../generation/providers/types";
 import { marked } from "marked";
 import { getLogger, type Logger } from "../logger";
+import { selectNextGroupActor } from "../group-chat/turn-selector";
 function log(): Logger {
   return getLogger().child({ module: "messages" });
 }
@@ -545,7 +546,7 @@ async function handleCreateMessage({
   // local rule-based assistant is the offline fallback. Running both would post
   // two assistant messages for a single user input.
   if (isLlmGenerationConfigured(config)) {
-    void triggerAutoGeneration(database, config, chatId, id, actorId);
+    void triggerAutoGeneration(database, config, chatId, id, actorId, filteredContent);
   } else if (isAssistantEnabled(config)) {
     const assistantResponse = generateResponse({ userInput: filteredContent });
     if (assistantResponse) {
@@ -624,6 +625,7 @@ async function triggerAutoGeneration(
   chatId: string,
   parentMessageId: string,
   userId: string,
+  userMessage?: string,
 ): Promise<void> {
   // No LLM provider configured — skip
   if (!isLlmGenerationConfigured(config)) {
@@ -643,23 +645,61 @@ async function triggerAutoGeneration(
       detail: "New auto-generation starting",
     });
 
-    // Find character participant (actor that is not the sender)
-    const character = await database
-      .selectFrom("chat_participants")
-      .innerJoin("actors", "actors.id", "chat_participants.actor_id")
-      .where("chat_participants.chat_id", "=", chatId)
-      .where("chat_participants.actor_id", "!=", userId)
-      .select(["actors.id", "actors.display_name"])
+    // Check if this is a group chat — use turn-based selection
+    const chat = await database
+      .selectFrom("chats")
+      .select(["type", "turn_strategy"])
+      .where("id", "=", chatId)
       .executeTakeFirst();
 
-    if (!character) return;
+    let characterId: string;
+    let characterName: string;
+
+    if (chat?.type === "group") {
+      // Group chat: use turn strategy to select next actor
+      const selectedId = await selectNextGroupActor({ db: database, chatId, userMessage });
+      if (!selectedId) return;
+      const selected = await database
+        .selectFrom("actors")
+        .select(["id", "display_name"])
+        .where("id", "=", selectedId)
+        .executeTakeFirst();
+      if (!selected) return;
+      characterId = selected.id;
+      characterName = selected.display_name;
+    } else {
+      // Direct chat: find the non-user participant
+      const character = await database
+        .selectFrom("chat_participants")
+        .innerJoin("actors", "actors.id", "chat_participants.actor_id")
+        .where("chat_participants.chat_id", "=", chatId)
+        .where("chat_participants.actor_id", "!=", userId)
+        .select(["actors.id", "actors.display_name"])
+        .executeTakeFirst();
+      if (!character) return;
+      characterId = character.id;
+      characterName = character.display_name;
+    }
 
     const resolved = await resolveProvider({ userId, config, db: database });
     const assembler = new PromptAssembler(database);
+
+    // For group chats, include other participants' IDs for context
+    let groupParticipantIds: string[] | undefined;
+    if (chat?.type === "group") {
+      const participants = await database
+        .selectFrom("chat_participants")
+        .select(["actor_id"])
+        .where("chat_id", "=", chatId)
+        .execute();
+      groupParticipantIds = participants.map((p) => p.actor_id).filter((id) => id !== characterId);
+    }
+
     const prompt = await assembler.assemble({
-      actorId: character.id,
+      actorId: characterId,
       chatId,
       modelId: resolved.resolvedModel,
+      groupParticipantIds,
     });
 
     // Create stream buffer BEFORE tracking so SSE endpoint can connect early
@@ -670,7 +710,7 @@ async function triggerAutoGeneration(
       options: {
         chatId,
         parentMessageId,
-        actorId: character.id,
+        actorId: characterId,
         modelId: resolved.resolvedModel,
         provider: resolved.resolvedProviderName,
         prompt: prompt.messages,
@@ -680,7 +720,7 @@ async function triggerAutoGeneration(
     });
     attemptId = tracking.attemptId;
 
-    const actorName = character.display_name;
+    const actorName = characterName;
     const lastMsg = prompt.messages[prompt.messages.length - 1];
     const log = getLogger().child({ module: "auto-gen" });
 
@@ -789,7 +829,7 @@ async function triggerAutoGeneration(
       .values({
         id: messageId,
         chat_id: chatId,
-        actor_id: character.id,
+        actor_id: characterId,
         parent_id: parentMessageId,
         role: MessageRole.Assistant,
         content: storedContent,

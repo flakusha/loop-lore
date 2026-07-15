@@ -139,10 +139,14 @@ async function handleExportAll({ database, context }: ExportAllOpts): Promise<Re
     .execute();
 
   const zip = new JSZip();
-  zip.file("settings.json", JSON.stringify(settings, null, 2));
-  zip.file("characters.json", JSON.stringify(characters, null, 2));
-  zip.file("chats.json", JSON.stringify(chats, null, 2));
-  zip.file("assets.json", JSON.stringify(assets, null, 2));
+  const settingsStr = safeJsonStringify(settings);
+  const charactersStr = safeJsonStringify(characters);
+  const chatsStr = safeJsonStringify(chats);
+  const assetsStr = safeJsonStringify(assets);
+  zip.file("settings.json", settingsStr.ok ? settingsStr.value : "{}");
+  zip.file("characters.json", charactersStr.ok ? charactersStr.value : "[]");
+  zip.file("chats.json", chatsStr.ok ? chatsStr.value : "[]");
+  zip.file("assets.json", assetsStr.ok ? assetsStr.value : "[]");
 
   const buffer = await zip.generateAsync({ type: "nodebuffer" });
   return new Response(buffer, {
