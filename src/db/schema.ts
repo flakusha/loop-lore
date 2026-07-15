@@ -21,6 +21,8 @@ export interface DB {
   personas: import("./schema-core").Personas;
   messages: import("./schema-core").Messages;
   actor_keys: import("./schema-core").ActorKeys;
+  group_initiatives: import("./schema-core").GroupInitiatives;
+  chat_mentions: import("./schema-core").ChatMentions;
   assets: import("./schema-content").Assets;
   asset_links: import("./schema-content").AssetLinks;
   worlds: import("./schema-story").Worlds;
