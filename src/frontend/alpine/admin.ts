@@ -1,5 +1,6 @@
 // ── Admin Page component (admin.html) ──────────────
 import { log as rootLog } from "./logger";
+import { jsonBody } from "./json";
 
 const log = rootLog.child({ module: "admin" });
 
@@ -140,7 +141,7 @@ interface ModelRolesResponse {
         const res = await apiFetch(`/api/admin/users/${this.editRoleUserId}/role`, {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ role: this.editRoleValue }),
+          body: jsonBody({ role: this.editRoleValue }),
         });
         if (res.ok) {
           showToast("success", "Role updated");
@@ -268,7 +269,7 @@ interface ModelRolesResponse {
         const res = await apiFetch(`/api/admin/model-roles/${role}`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ provider, model }),
+          body: jsonBody({ provider, model }),
         });
         if (res.ok) {
           showToast("success", `${role} role updated`);

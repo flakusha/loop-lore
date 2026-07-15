@@ -5,6 +5,8 @@
  * Typechecked with tsconfig.frontend.json (includes DOM lib, no Bun types).
  */
 
+import { jsonBody, safeJsonParse } from "./alpine/json";
+
 export type BrowserContentEncoding = "identity" | "gzip" | "brotli" | "zstd";
 
 export interface BrowserEncodeResult {
@@ -290,7 +292,7 @@ export async function browserCompressThenEncrypt(
     key_id: keyId,
   };
 
-  return JSON.stringify(payload);
+  return jsonBody(payload);
 }
 
 /**
@@ -298,7 +300,9 @@ export async function browserCompressThenEncrypt(
  * Matches server-side crypto/pipeline.ts decryptThenDecompress.
  */
 export async function browserDecryptThenDecompress(stored: string, key: CryptoKey): Promise<string> {
-  const payload: BrowserEncryptedPayload = JSON.parse(stored);
+  const result = safeJsonParse<BrowserEncryptedPayload>(stored);
+  if (!result.ok) throw new Error("Malformed encrypted payload");
+  const payload = result.value;
   if (!payload.enc || !payload.nonce || !payload.algo) {
     throw new Error("Malformed encrypted payload");
   }

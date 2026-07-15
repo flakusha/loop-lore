@@ -12,3 +12,4 @@ import "./notifications";
 import "./settings";
 import "./personas";
 import "./admin";
+import "./world-edit";
