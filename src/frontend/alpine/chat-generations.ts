@@ -1,4 +1,4 @@
-import { jsonBody } from "./json";
+import { jsonBody, jsonParseOr } from "./json";
 import { log as rootLog } from "./logger";
 import type { ChatState } from "./types";
 
@@ -33,7 +33,7 @@ export const chatGenerations: Partial<ChatState> & ThisType<ChatState> = {
       this.generationDetail = null;
       this._cleanupSSE();
       // Reload full message list (persisted message now available)
-      void this.loadMessages();
+      void (async () => { try { await this.loadMessages(); } catch { /* non-critical */ } })();
     });
 
     es.addEventListener("stream-error", (event: MessageEvent) => {
@@ -43,7 +43,7 @@ export const chatGenerations: Partial<ChatState> & ThisType<ChatState> = {
       this.generationDetail = null;
       this._cleanupSSE();
       try {
-        const data = JSON.parse(event.data);
+        const data = jsonParseOr<{ error?: string }>(event.data, {});
         this.$dispatch?.("show-toast", {
           type: "error",
           message: data.error ?? "Generation failed",

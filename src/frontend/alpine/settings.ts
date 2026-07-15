@@ -1,4 +1,5 @@
 import { log as rootLog } from "./logger";
+import { jsonBody } from "./json";
 
 const log = rootLog.child({ module: "settings" });
 
@@ -126,13 +127,13 @@ const log = rootLog.child({ module: "settings" });
         const res = await fetch("/api/users/me/settings", {
           method: "PATCH",
           headers: { "Content-Type": "application/json", Accept: "application/json" },
-          body: JSON.stringify(payload),
+          body: jsonBody(payload),
         });
         if (res.ok && payload.displayName) {
           await fetch("/api/users/me", {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ displayName: payload.displayName }),
+            body: jsonBody({ displayName: payload.displayName }),
           });
         }
       } catch (error) {
