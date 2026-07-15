@@ -1,7 +1,7 @@
 import { createAsset, linkAsset } from "../assets/service";
 import { loadConfig } from "../config/load";
 import { getDatabase } from "../db/index";
-import { uid } from "../utils";
+import { uid, safeJsonStringify } from "../utils";
 
 interface ImageGenBody {
   prompt: string;
@@ -49,16 +49,17 @@ export async function handleImageGeneration(body: unknown): Promise<Response> {
       "Content-Type": "application/json",
       ...(sdConfig.apiKey && { Authorization: `Bearer ${sdConfig.apiKey}` }),
     };
+    const payload = safeJsonStringify({
+      prompt: req.prompt,
+      n,
+      size,
+      output_format: outputFormat,
+      ...(req.negative_prompt && { negative_prompt: req.negative_prompt }),
+    });
     const resp = await fetch(url, {
       method: "POST",
       headers,
-      body: JSON.stringify({
-        prompt: req.prompt,
-        n,
-        size,
-        output_format: outputFormat,
-        ...(req.negative_prompt && { negative_prompt: req.negative_prompt }),
-      }),
+      body: payload.ok ? payload.value : "{}",
       signal: AbortSignal.timeout(sdConfig.generationTimeout ?? 60_000),
     });
 
@@ -77,19 +78,20 @@ export async function handleImageGeneration(body: unknown): Promise<Response> {
     mimeType = outputFormat === "jpeg" ? "image/jpeg" : "image/png";
   } else if (sdConfig.apiFamily === "sdapi") {
     const url = `${sdConfig.baseUrl.replace(/\/+$/, "")}/sdapi/v1/txt2img`;
+    const sdPayload = safeJsonStringify({
+      prompt: req.prompt,
+      negative_prompt: req.negative_prompt ?? sdConfig.defaults.negativePrompt ?? "",
+      width: sdConfig.defaults.width,
+      height: sdConfig.defaults.height,
+      steps: req.steps ?? sdConfig.defaults.steps,
+      cfg_scale: req.cfgScale ?? sdConfig.defaults.cfgScale,
+      sampler_name: req.sampler_name ?? sdConfig.defaults.sampler,
+      batch_size: n,
+    });
     const resp = await fetch(url, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        prompt: req.prompt,
-        negative_prompt: req.negative_prompt ?? sdConfig.defaults.negativePrompt ?? "",
-        width: sdConfig.defaults.width,
-        height: sdConfig.defaults.height,
-        steps: req.steps ?? sdConfig.defaults.steps,
-        cfg_scale: req.cfgScale ?? sdConfig.defaults.cfgScale,
-        sampler_name: req.sampler_name ?? sdConfig.defaults.sampler,
-        batch_size: n,
-      }),
+      body: sdPayload.ok ? sdPayload.value : "{}",
       signal: AbortSignal.timeout(sdConfig.generationTimeout ?? 120_000),
     });
 

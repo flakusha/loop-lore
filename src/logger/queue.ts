@@ -45,7 +45,7 @@ export class AsyncLogQueue {
   start(): void {
     if (this.timer) return;
     this.timer = setInterval(() => {
-      void this.flush();
+      void (async () => { try { await this.flush(); } catch { /* timer flush — non-critical */ } })();
     }, this.flushInterval);
     // Don't let the timer keep the process alive
     if (typeof this.timer === "object" && "unref" in this.timer) {
@@ -86,7 +86,7 @@ export class AsyncLogQueue {
     if (this.buffer.length >= this.batchSize) {
       // Schedule microtask flush — don't block the enqueue caller
       queueMicrotask(() => {
-        void this.flush();
+        void (async () => { try { await this.flush(); } catch { /* microtask flush — non-critical */ } })();
       });
     }
   }
@@ -130,7 +130,7 @@ export class AsyncLogQueue {
     // If more entries arrived while flushing, schedule another flush
     if (this.buffer.length > 0) {
       queueMicrotask(() => {
-        void this.flush();
+        void (async () => { try { await this.flush(); } catch { /* follow-up flush — non-critical */ } })();
       });
     }
   }
