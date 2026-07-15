@@ -13,7 +13,12 @@ export const ContentEncoding = {
 } as const;
 export type ContentEncoding = (typeof ContentEncoding)[keyof typeof ContentEncoding];
 
-// ── Assets ────────────────────────────────────────────────
+export const AssetVisibility = {
+  Private: "private",
+  Shared: "shared",
+  Public: "public",
+} as const;
+export type AssetVisibility = (typeof AssetVisibility)[keyof typeof AssetVisibility];
 export const AssetType = {
   Image: "image",
   Audio: "audio",
