@@ -11,6 +11,7 @@ import { existsSync, mkdirSync, rmSync } from "node:fs";
 import { resolve } from "node:path";
 import { createSqliteDialect, setTestDatabase } from "@/db/index";
 import { up as migrate } from "@/db/migrations/001_init";
+import "./logger-init";
 import { handleApiRequest } from "@/server";
 import { loadConfig } from "@/config/load";
 import { createLogger, setGlobalLogger } from "@/logger";

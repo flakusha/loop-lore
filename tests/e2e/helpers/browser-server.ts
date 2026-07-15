@@ -16,6 +16,7 @@ import { join, normalize } from "node:path";
 import { existsSync, readFileSync, mkdirSync, rmSync, cpSync } from "node:fs";
 import { spawnSync } from "node:child_process";
 import { createTestDb, runMigrations, loadTestConfig } from "./server";
+import "./logger-init";
 import { handleApiRequest } from "@/server";
 import { dispatch } from "@/routes/views";
 import { createLogger, setGlobalLogger } from "@/logger";
