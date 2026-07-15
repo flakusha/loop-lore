@@ -281,6 +281,202 @@ asset_links { asset_id, entity_type='actor_item', entity_id=<item-uuid>, label='
 
 ---
 
+## Actor Economics (Draft)
+
+> **Status:** Design sketch. Not implemented.
+
+Each actor has financial state tracked per-world. Gold is tracked separately
+from inventory for fast access (see Items / Inventory above) but the full
+economic picture includes income, expenses, debt, and reputation.
+
+### Financial State
+
+```typescript
+interface ActorEconomics {
+  actorId: string;
+  worldId: string;
+
+  // Liquid assets
+  gold: number; // Current gold on hand
+  copper: number; // Denomination tracking
+  silver: number;
+  platinum: number;
+
+  // Ledger (recent transactions)
+  recentTransactions: Transaction[];
+
+  // Debt
+  debts: Debt[];
+
+  // Income tracking
+  incomeSources: IncomeSource[];
+
+  // Economic reputation (per merchant/faction)
+  merchantReputation: Map<string, MerchantReputation>;
+}
+
+interface Transaction {
+  id: string;
+  type: "income" | "expense" | "trade" | "gift" | "tax" | "theft" | "quest_reward";
+  amount: number; // In gold equivalent
+  description: string; // "Bought Longsword from Ironhold Smith"
+  counterparty?: string; // actor_id of other party
+  locationId?: string; // Where it happened
+  timestamp: string;
+  chatId?: string; // Provenance — which chat it occurred in
+}
+
+interface Debt {
+  id: string;
+  creditorId: string; // Who is owed
+  amount: number;
+  interest: number; // Daily rate (0 = no interest)
+  reason: string; // "Loan for horse purchase"
+  dueAt?: string; // Optional deadline
+  paidAmount: number; // Partial payments
+  status: "active" | "paid" | "forgiven" | "defaulted";
+}
+
+interface IncomeSource {
+  type: "employment" | "quest" | "trade" | "crafting" | "loot" | "passive";
+  description: string; // "Guard at Ironhold Gate"
+  weeklyIncome: number; // Gold per week
+  active: boolean;
+}
+```
+
+### Wealth Tiers
+
+Actors are classified by net worth (gold + item value - debt):
+
+| Tier        | Net Worth      | Lifestyle           | Examples               |
+| ----------- | -------------- | ------------------- | ---------------------- |
+| Destitute   | < 10           | No shelter/food     | Beggar, escaped slave  |
+| Poor        | 10–99          | Basic shelter       | Peasant, day laborer   |
+| Common      | 100–499        | Comfortable         | Shopkeeper, skilled    |
+| Wealthy     | 500–1999       | Comfortable+        | Merchant, minor noble  |
+| Affluent    | 2000–9999      | Luxury              | Landowner, guild master|
+| Rich        | 10000–49999    | Luxury+             | Noble, archmage        |
+| Legendary   | 50000+         | Unlimited           | Dragon, king           |
+
+Wealth tier affects:
+- Bartering leverage (higher tier = better prices)
+- Access to exclusive shops/services
+- NPC social responses
+- Quest availability (some quests require wealth to initiate)
+
+### Merchant Reputation
+
+Each actor's standing with merchants/factions tracks reliability:
+
+```typescript
+interface MerchantReputation {
+  merchantId: string; // actor_id of merchant/NPC
+  factionId?: string; // Or faction
+  trust: number; // 0-100, affects prices
+  transactions: number; // Total trades completed
+  lastTradeAt: string;
+  creditLimit: number; // How much debt they'll extend
+  discountPercent: number; // Loyalty discount (0-25%)
+}
+```
+
+Price modifier: `finalPrice = basePrice * (1.0 - trust/200) - discountPercent/100`
+
+A trusted regular customer (trust 80, 5% discount) pays 85% of base price.
+A stranger (trust 0) pays full price. A cheater (trust -20, if allowed) pays
+a premium.
+
+### Transaction Flow
+
+```
+1. LLM narrates: "The merchant eyes the gem. '200 gold, and not a copper more.'"
+2. Player accepts
+3. Engine validates:
+   - Actor has ≥ 200 gold (or sufficient items for barter)
+   - Merchant has the item in stock
+4. Engine executes:
+   a. Remove gold from actor
+   b. Add item to actor inventory
+   c. Record transaction in ledger
+   d. Update merchant reputation (+5 trust for fair trade)
+   e. Check for debt repayment (if actor owed money)
+5. Engine injects result:
+   "TRANSACTION: Paid 200g to Ironhold Smith. Remaining: 340g. Trust: 65/100."
+6. LLM narrates the completed trade
+```
+
+### Taxation
+
+Worlds can configure tax rates that apply automatically:
+
+| Tax Type       | Default Rate | Applies To                    |
+| -------------- | ------------ | ----------------------------- |
+| Sales tax      | 0%           | All shop purchases            |
+| Income tax     | 0%           | Employment income             |
+| Property tax   | 0%           | Owned buildings/land          |
+| Travel tax     | 0%           | Entering certain locations    |
+| Quest tax      | 0%           | Quest rewards (GM's cut)      |
+
+Taxes are deducted automatically by the engine. The GM can set rates per
+location or per world via chat rules or tool calls.
+
+### Prompt Injection
+
+```
+[Economics — {{char}}]
+Gold: 340 | Silver: 12 | Debt: 50g to Merchant Bob (due: 3 days)
+Net Worth: ~1200g (Wealthy)
+Recent Transactions:
+  - Paid 200g for Longsword (Ironhold Smith)
+  - Received 50g for delivery quest
+  - Paid 10g tax at city gate
+
+[Merchant Relations — {{char}}]
+- Ironhold Smith: trust 65, discount 3%, 12 transactions
+- Merchant Bob: trust 40, credit limit 100g, 5 transactions
+- Thieves Guild: trust 20, no credit
+```
+
+### Debt Mechanics
+
+Debts accumulate interest daily (configurable per world):
+
+```
+1. Actor takes loan: "I need 500 gold for the ship."
+2. Engine creates debt record: amount=500, interest=0.02/day
+3. Daily cron: interest accrues → debt grows by 2% per day
+4. Actor repays: "I hand over 200 gold to settle part of the debt."
+5. Engine: paidAmount += 200, remaining = 300 + accrued interest
+6. If dueAt passes unpaid → status = "defaulted"
+7. Defaulted debts affect merchant reputation globally (-20 trust with all merchants)
+```
+
+### LLM GM Economic Events
+
+The GM can inject economic events via tool calls:
+
+```
+[TOOL_CALL]
+{
+  "tool": "economy_event",
+  "params": {
+    "type": "market_crash",
+    "world_id": "world_01",
+    "description": "A dragon raided the northern trade route",
+    "effect": "all_prices_x1.5",
+    "duration": "7d",
+    "affected_locations": ["ironhold", "traderoute_north"]
+  }
+}
+[/TOOL_CALL]
+```
+
+Event types: `market_crash`, `boom`, `shortage`, `famine`, `plague`,
+`war`, `festival`, `tax_holiday`.
+
+---
+
 ## Import / Export
 
 ### SillyTavern V1 Import
@@ -353,6 +549,92 @@ Characters (actors with `actor_type='character'`) have a **state machine** contr
 **Default persona:** When a user starts a new chat, their own characters (where `owner_id = user.id` and `actor_type = 'character'`) are suggested as the default persona. If the user has a default persona set (`personas.is_default = 1`), that takes precedence.
 
 **State machine:** `ActorVisibility` in `src/db/enums-core.ts`, exposed via `actorVisibilityMachine`.
+
+---
+
+## Actor Standing & Relationships (Draft)
+
+> **Status:** Design sketch. Not implemented. Will be touched later.
+
+Actors accumulate relational state across chats and worlds. "Standing" is
+the summary of how two actors relate to each other — built from individual
+interaction events.
+
+### Relationship Tiers
+
+| Tier      | Range   | Meaning                                  |
+| --------- | ------- | ---------------------------------------- |
+| Hostile   | -100–-51| Active enmity, attack on sight           |
+| Unfriendly| -50–-21 | Cold, suspicious, refuse cooperation     |
+| Neutral   | -20–+20 | Default, no strong feelings              |
+| Friendly  | +21–+50 | Cooperative, willing to help             |
+| Allied    | +51–+75 | Deep trust, share resources freely       |
+| Devoted   | +76–+100| Unconditional loyalty, sacrifice for other|
+
+### Relationship Events
+
+Standing shifts based on events:
+
+| Event                        | Standing Change |
+| ---------------------------- | --------------- |
+| Successful trade             | +5              |
+| Failed trade (cheated)       | -15             |
+| Gift given                   | +10             |
+| Gift refused                 | -5              |
+| Combat (defeated opponent)   | -20             |
+| Combat (spared opponent)     | +10             |
+| Saved from danger            | +25             |
+| Betrayed trust               | -30             |
+| Shared information           | +5              |
+| Kept secret                  | +10             |
+| Completed quest for them     | +15             |
+| Failed quest for them        | -10             |
+| Insulted publicly            | -10             |
+| Complimented publicly        | +5              |
+
+### Storage (Proposed)
+
+Table: `actor_relationships`
+
+| Column        | Type    | Notes                                    |
+| ------------- | ------- | ---------------------------------------- |
+| actor_a_id    | TEXT    | FK → actors.id                           |
+| actor_b_id    | TEXT    | FK → actors.id                           |
+| world_id      | TEXT    | FK → worlds.id (relationships are per-world) |
+| standing      | INTEGER | -100 to +100                             |
+| last_event_at | TEXT    | Timestamp of last interaction            |
+| notes         | TEXT    | GM or system notes about the relationship|
+
+**Unique constraint:** `(actor_a_id, actor_b_id, world_id)` — one relationship
+per pair per world. Standing is symmetric? No — A's standing toward B can
+differ from B's standing toward A (one-sided trust).
+
+### Prompt Injection
+
+```
+[Relationships — {{char}}]
+- Alice (standing: +45, Friendly): Trading partner, met in Ironhold Market
+- Goblin Chief (standing: -60, Hostile): Defeated in combat, seeks revenge
+- Merchant Bob (standing: +30, Friendly): Reliable supplier
+```
+
+### GM Override
+
+The GM can manually set standing via tool call:
+
+```
+[TOOL_CALL]
+{
+  "tool": "relationship_set",
+  "params": {
+    "actor_a_id": "player_01",
+    "actor_b_id": "npc_merchant",
+    "standing": 50,
+    "reason": "After completing the delivery quest"
+  }
+}
+[/TOOL_CALL]
+```
 
 ---
 
