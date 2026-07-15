@@ -154,3 +154,18 @@ export const itemVisibilityDef: StateDef<ItemVisibility> = {
 };
 
 export const itemVisibilityMachine = createMachine(itemVisibilityDef);
+
+export const syntheticDataStatusDef: StateDef<SyntheticDataStatus> = {
+  values: ["generated", "validated", "approved", "rejected", "archived"] as const,
+  initial: "generated",
+  transitions: {
+    generated: ["validated", "rejected"],
+    validated: ["approved", "rejected", "archived"],
+    approved: ["archived"],
+    rejected: ["generated", "archived"],
+    archived: [],
+  },
+  terminal: ["archived"],
+};
+
+export const syntheticDataStatusMachine = createMachine(syntheticDataStatusDef);
