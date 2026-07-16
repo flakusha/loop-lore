@@ -29,6 +29,7 @@ import type { GenerationOptions, GenerationMessage, GenerationResult } from "./t
 import type { ChunkEvent } from "./providers/types";
 import { resolveProvider } from "./providers/registry";
 import { PromptAssembler } from "../assistant/prompt-assembler";
+import { ContextCompactor } from "./context-compactor";
 import type { Config } from "../config/schema";
 import { loadConfig } from "../config/load";
 import { jsonResponse, jsonError } from "../routes/http-utils";
@@ -168,6 +169,21 @@ export async function handleGenerate({
       });
       messages = assembled.messages;
       systemPrompt = assembled.systemPrompt;
+
+      if (assembled.tokenCount > assembled.tokenBudget * 0.85) {
+        try {
+          const compactor = new ContextCompactor({ threshold: 0.85, keepLast: 10 });
+          const { messages: compacted, compacted: didCompact } = await compactor.compact(
+            messages,
+            assembled.tokenBudget,
+          );
+          if (didCompact) {
+            messages = compacted;
+          }
+        } catch {
+          /* compaction is best-effort; proceed with full context on failure */
+        }
+      }
     } catch (error) {
       return jsonError({ message: `Prompt assembly failed: ${(error as Error).message}`, status: 422 });
     }
