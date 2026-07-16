@@ -170,19 +170,61 @@
 
               <div x-show="!loadingLocations && locations.length > 0">
                 <template x-for="loc in locations" :key="loc.id">
-                  <div class="location-item">
-                    <div class="location-info">
-                      <div class="location-name" x-text="loc.name"></div>
-                      <div class="location-desc" x-show="loc.description" x-text="loc.description"></div>
+                  <div
+                    class="location-item"
+                    style="
+                      padding: var(--space-3);
+                      border: 1px solid var(--color-border);
+                      border-radius: 4px;
+                      cursor: pointer;
+                    "
+                    @click="expandLoc(loc.id)"
+                  >
+                    <div style="display: flex; justify-content: space-between; align-items: center">
+                      <div class="location-info">
+                        <div class="location-name" x-text="loc.name"></div>
+                        <div
+                          class="location-desc"
+                          x-show="loc.description && expandedLoc !== loc.id"
+                          x-text="loc.description"
+                        ></div>
+                      </div>
+                      <div class="location-actions" @click.stop>
+                        <button
+                          class="btn btn-danger"
+                          style="font-size: 12px; padding: var(--space-1) var(--space-3)"
+                          @click="deleteLocation(loc.id)"
+                        >
+                          Delete
+                        </button>
+                      </div>
                     </div>
-                    <div class="location-actions">
-                      <button
-                        class="btn btn-danger"
-                        style="font-size: 12px; padding: var(--space-1) var(--space-3)"
-                        @click="deleteLocation(loc.id)"
-                      >
-                        Delete
-                      </button>
+                    <div
+                      x-show="expandedLoc === loc.id"
+                      @click.stop
+                      style="
+                        margin-top: var(--space-3);
+                        padding-top: var(--space-3);
+                        border-top: 1px solid var(--color-border);
+                      "
+                    >
+                      <div style="display: grid; gap: var(--space-2)">
+                        <input class="form-input" style="font-size: 13px" x-model="editLocName" />
+                        <textarea
+                          class="form-input form-textarea"
+                          rows="2"
+                          style="font-size: 13px"
+                          x-model="editLocDesc"
+                          placeholder="Description"
+                        ></textarea>
+                        <button
+                          class="btn btn-primary btn-xs"
+                          @click="saveLocation(loc.id)"
+                          style="justify-self: flex-start"
+                        >
+                          Save
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </template>
