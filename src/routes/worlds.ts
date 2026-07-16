@@ -36,6 +36,25 @@ import {
 
 type HandleOpts = { database: Kysely<DB>; config: Config };
 
+// ── Helpers ─────────────────────────────────────────────────
+
+async function requireWorldAccess(
+  database: Kysely<DB>,
+  worldId: string,
+  userId: string | null,
+  userRole: string | null,
+): Promise<{ world: { owner_id: string }; error: undefined } | { world: undefined; error: Response }> {
+  const world = await database
+    .selectFrom("worlds")
+    .select("owner_id")
+    .where("id", "=", worldId)
+    .executeTakeFirst();
+  if (!world || (world.owner_id !== userId && userRole !== "admin")) {
+    return { world: undefined, error: jsonError({ message: "World not found", status: HttpStatus.NotFound, code: ErrorCode.NotFound }) };
+  }
+  return { world, error: undefined };
+}
+
 // ── Handlers ────────────────────────────────────────────────
 
 async function handleListWorlds(database: Kysely<DB>, page: number, pageSize: number, userId: string | null) {
@@ -91,9 +110,9 @@ async function handleGetWorld(
   userId: string | null,
   userRole: string | null,
 ) {
+  const { error } = await requireWorldAccess(database, worldId, userId, userRole);
+  if (error) return error;
   const world = await database.selectFrom("worlds").selectAll().where("id", "=", worldId).executeTakeFirst();
-  if (!world || (world.owner_id !== userId && userRole !== "admin"))
-    return jsonError({ message: "World not found", status: HttpStatus.NotFound, code: ErrorCode.NotFound });
   return jsonResponse(world);
 }
 
@@ -104,13 +123,8 @@ async function handleUpdateWorld(
   userId: string | null,
   userRole: string | null,
 ) {
-  const world = await database
-    .selectFrom("worlds")
-    .select("owner_id")
-    .where("id", "=", worldId)
-    .executeTakeFirst();
-  if (!world || (world.owner_id !== userId && userRole !== "admin"))
-    return jsonError({ message: "World not found", status: HttpStatus.NotFound, code: ErrorCode.NotFound });
+  const { error } = await requireWorldAccess(database, worldId, userId, userRole);
+  if (error) return error;
 
   const updates: Record<string, unknown> = {};
   if (body.name != null) updates.name = body.name;
@@ -133,13 +147,8 @@ async function handleDeleteWorld(
   userId: string | null,
   userRole: string | null,
 ) {
-  const world = await database
-    .selectFrom("worlds")
-    .select("owner_id")
-    .where("id", "=", worldId)
-    .executeTakeFirst();
-  if (!world || (world.owner_id !== userId && userRole !== "admin"))
-    return jsonError({ message: "World not found", status: HttpStatus.NotFound, code: ErrorCode.NotFound });
+  const { error } = await requireWorldAccess(database, worldId, userId, userRole);
+  if (error) return error;
 
   const locationIds = await database
     .selectFrom("locations")
@@ -177,13 +186,8 @@ async function handleInitializeStates(
   userId: string | null,
   userRole: string | null,
 ) {
-  const world = await database
-    .selectFrom("worlds")
-    .select("owner_id")
-    .where("id", "=", worldId)
-    .executeTakeFirst();
-  if (!world || (world.owner_id !== userId && userRole !== "admin"))
-    return jsonError({ message: "World not found", status: HttpStatus.NotFound, code: ErrorCode.NotFound });
+  const { error } = await requireWorldAccess(database, worldId, userId, userRole);
+  if (error) return error;
 
   const state = new WorldStateService(database);
   const locationsCreated = await state.initializeLocationStates(worldId);
@@ -202,13 +206,8 @@ async function handleListLocations(
   userId: string | null,
   userRole: string | null,
 ) {
-  const world = await database
-    .selectFrom("worlds")
-    .select("owner_id")
-    .where("id", "=", worldId)
-    .executeTakeFirst();
-  if (!world || (world.owner_id !== userId && userRole !== "admin"))
-    return jsonError({ message: "World not found", status: HttpStatus.NotFound, code: ErrorCode.NotFound });
+  const { error } = await requireWorldAccess(database, worldId, userId, userRole);
+  if (error) return error;
 
   const offset = (page - 1) * pageSize;
   const countResult = await database
@@ -276,13 +275,8 @@ async function handleCreateLocation(
   userId: string | null,
   userRole: string | null,
 ) {
-  const world = await database
-    .selectFrom("worlds")
-    .select("owner_id")
-    .where("id", "=", worldId)
-    .executeTakeFirst();
-  if (!world || (world.owner_id !== userId && userRole !== "admin"))
-    return jsonError({ message: "World not found", status: HttpStatus.NotFound, code: ErrorCode.NotFound });
+  const { error } = await requireWorldAccess(database, worldId, userId, userRole);
+  if (error) return error;
 
   const name = body.name as string | undefined;
   if (!name) return jsonError({ message: "name is required", status: HttpStatus.BadRequest });
@@ -320,13 +314,8 @@ async function handleGetLocation(
   userId: string | null,
   userRole: string | null,
 ) {
-  const world = await database
-    .selectFrom("worlds")
-    .select("owner_id")
-    .where("id", "=", worldId)
-    .executeTakeFirst();
-  if (!world || (world.owner_id !== userId && userRole !== "admin"))
-    return jsonError({ message: "World not found", status: HttpStatus.NotFound, code: ErrorCode.NotFound });
+  const { error } = await requireWorldAccess(database, worldId, userId, userRole);
+  if (error) return error;
 
   const location = await database
     .selectFrom("locations")
@@ -352,13 +341,8 @@ async function handleUpdateLocation(
   userId: string | null,
   userRole: string | null,
 ) {
-  const world = await database
-    .selectFrom("worlds")
-    .select("owner_id")
-    .where("id", "=", worldId)
-    .executeTakeFirst();
-  if (!world || (world.owner_id !== userId && userRole !== "admin"))
-    return jsonError({ message: "World not found", status: HttpStatus.NotFound, code: ErrorCode.NotFound });
+  const { error } = await requireWorldAccess(database, worldId, userId, userRole);
+  if (error) return error;
 
   const updates: Record<string, unknown> = {};
   if (body.name) updates.name = body.name;
@@ -391,13 +375,8 @@ async function handleDeleteLocation(
   userId: string | null,
   userRole: string | null,
 ) {
-  const world = await database
-    .selectFrom("worlds")
-    .select("owner_id")
-    .where("id", "=", worldId)
-    .executeTakeFirst();
-  if (!world || (world.owner_id !== userId && userRole !== "admin"))
-    return jsonError({ message: "World not found", status: HttpStatus.NotFound, code: ErrorCode.NotFound });
+  const { error } = await requireWorldAccess(database, worldId, userId, userRole);
+  if (error) return error;
 
   await database.deleteFrom("locations").where("id", "=", locId).where("world_id", "=", worldId).execute();
   return jsonNoContent();
@@ -407,83 +386,80 @@ async function handleDeleteLocation(
 
 export function worldsRoutes({ database }: HandleOpts): Elysia {
   return new Elysia({ name: "worlds" })
-    .get("/api/worlds", async ({ query }) => {
-      const userId = (query as any).userId as string | null;
-      return handleListWorlds(database, Number(query.page) || 1, Number(query.pageSize) || 20, userId);
+    .get("/api/worlds", async (ctx: any) => {
+      const userId = ctx.userId as string | null;
+      const page = Number(ctx.query?.page) || 1;
+      const pageSize = Number(ctx.query?.pageSize) || 20;
+      return handleListWorlds(database, page, pageSize, userId);
     })
-    .post("/api/worlds", async ({ body, query }) => {
-      const userId = (query as any).userId as string | null;
-      return handleCreateWorld(database, body as Record<string, unknown>, userId);
+    .post("/api/worlds", async (ctx: any) => {
+      const userId = ctx.userId as string | null;
+      return handleCreateWorld(database, ctx.body as Record<string, unknown>, userId);
     })
-    .get("/api/worlds/:id", async ({ params, query }) => {
-      const userId = (query as any).userId as string | null;
-      const userRole = (query as any).userRole as string | null;
-      return handleGetWorld(database, params.id as string, userId, userRole);
+    .get("/api/worlds/:id", async (ctx: any) => {
+      const userId = ctx.userId as string | null;
+      const userRole = ctx.userRole as string | null;
+      return handleGetWorld(database, ctx.params.id as string, userId, userRole);
     })
-    .put("/api/worlds/:id", async ({ params, body, query }) => {
-      const userId = (query as any).userId as string | null;
-      const userRole = (query as any).userRole as string | null;
+    .put("/api/worlds/:id", async (ctx: any) => {
+      const userId = ctx.userId as string | null;
+      const userRole = ctx.userRole as string | null;
       return handleUpdateWorld(
         database,
-        params.id as string,
-        body as Record<string, unknown>,
+        ctx.params.id as string,
+        ctx.body as Record<string, unknown>,
         userId,
         userRole,
       );
     })
-    .delete("/api/worlds/:id", async ({ params, query }) => {
-      const userId = (query as any).userId as string | null;
-      const userRole = (query as any).userRole as string | null;
-      return handleDeleteWorld(database, params.id as string, userId, userRole);
+    .delete("/api/worlds/:id", async (ctx: any) => {
+      const userId = ctx.userId as string | null;
+      const userRole = ctx.userRole as string | null;
+      return handleDeleteWorld(database, ctx.params.id as string, userId, userRole);
     })
-    .get("/api/worlds/:id/locations", async ({ params, query }) => {
-      const userId = (query as any).userId as string | null;
-      const userRole = (query as any).userRole as string | null;
-      return handleListLocations(
-        database,
-        params.id as string,
-        Number(query.page) || 1,
-        Number(query.pageSize) || 20,
-        userId,
-        userRole,
-      );
+    .get("/api/worlds/:id/locations", async (ctx: any) => {
+      const userId = ctx.userId as string | null;
+      const userRole = ctx.userRole as string | null;
+      const page = Number(ctx.query?.page) || 1;
+      const pageSize = Number(ctx.query?.pageSize) || 20;
+      return handleListLocations(database, ctx.params.id as string, page, pageSize, userId, userRole);
     })
-    .post("/api/worlds/:id/locations", async ({ params, body, query }) => {
-      const userId = (query as any).userId as string | null;
-      const userRole = (query as any).userRole as string | null;
+    .post("/api/worlds/:id/locations", async (ctx: any) => {
+      const userId = ctx.userId as string | null;
+      const userRole = ctx.userRole as string | null;
       return handleCreateLocation(
         database,
-        params.id as string,
-        body as Record<string, unknown>,
+        ctx.params.id as string,
+        ctx.body as Record<string, unknown>,
         userId,
         userRole,
       );
     })
-    .get("/api/worlds/:id/locations/:locId", async ({ params, query }) => {
-      const userId = (query as any).userId as string | null;
-      const userRole = (query as any).userRole as string | null;
-      return handleGetLocation(database, params.id as string, params.locId as string, userId, userRole);
+    .get("/api/worlds/:id/locations/:locId", async (ctx: any) => {
+      const userId = ctx.userId as string | null;
+      const userRole = ctx.userRole as string | null;
+      return handleGetLocation(database, ctx.params.id as string, ctx.params.locId as string, userId, userRole);
     })
-    .put("/api/worlds/:id/locations/:locId", async ({ params, body, query }) => {
-      const userId = (query as any).userId as string | null;
-      const userRole = (query as any).userRole as string | null;
+    .put("/api/worlds/:id/locations/:locId", async (ctx: any) => {
+      const userId = ctx.userId as string | null;
+      const userRole = ctx.userRole as string | null;
       return handleUpdateLocation(
         database,
-        params.id as string,
-        params.locId as string,
-        body as Record<string, unknown>,
+        ctx.params.id as string,
+        ctx.params.locId as string,
+        ctx.body as Record<string, unknown>,
         userId,
         userRole,
       );
     })
-    .delete("/api/worlds/:id/locations/:locId", async ({ params, query }) => {
-      const userId = (query as any).userId as string | null;
-      const userRole = (query as any).userRole as string | null;
-      return handleDeleteLocation(database, params.id as string, params.locId as string, userId, userRole);
+    .delete("/api/worlds/:id/locations/:locId", async (ctx: any) => {
+      const userId = ctx.userId as string | null;
+      const userRole = ctx.userRole as string | null;
+      return handleDeleteLocation(database, ctx.params.id as string, ctx.params.locId as string, userId, userRole);
     })
-    .post("/api/worlds/:id/initialize-states", async ({ params, query }) => {
-      const userId = (query as any).userId as string | null;
-      const userRole = (query as any).userRole as string | null;
-      return handleInitializeStates(database, params.id as string, userId, userRole);
-    });
+    .post("/api/worlds/:id/initialize-states", async (ctx: any) => {
+      const userId = ctx.userId as string | null;
+      const userRole = ctx.userRole as string | null;
+      return handleInitializeStates(database, ctx.params.id as string, userId, userRole);
+}) as unknown as Elysia;
 }
