@@ -77,7 +77,7 @@ export function worldLoreEntriesRoutes(opts: { database: Db; config: Config }): 
       defaults: {
         selective: 0,
         caseSensitive: 0,
-        enabled: 1,
+        enabled: "enabled",
         constant: 0,
         position: "before_char",
         insertionOrder: 100,

@@ -116,7 +116,7 @@
                   <th>Actions</th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody aria-busy="true">
                 <template x-if="users.length === 0">
                   <tr>
                     <td colspan="7" class="empty-state" style="padding: var(--space-8)">No users found</td>
@@ -219,7 +219,7 @@
                   <th>Actions</th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody aria-busy="true">
                 <template x-if="worlds.length === 0">
                   <tr>
                     <td colspan="4" class="empty-state" style="padding: var(--space-8)">No worlds found</td>
@@ -293,7 +293,7 @@
                   <th>Actions</th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody aria-busy="true">
                 <template x-if="adminChats.length === 0">
                   <tr>
                     <td colspan="4" class="empty-state" style="padding: var(--space-8)">No chats found</td>
@@ -388,7 +388,7 @@
                     <th>Message</th>
                   </tr>
                 </thead>
-                <tbody>
+                <tbody aria-busy="true">
                   <template x-if="auditEntries.length === 0">
                     <tr>
                       <td colspan="4" class="empty-state" style="padding: var(--space-8)">

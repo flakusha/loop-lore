@@ -12,8 +12,7 @@
     <div class="modal-body">
       <form
         hx-post="/api/actors"
-        hx-target="#app-root"
-        hx-swap="innerHTML"
+        hx-swap="none"
         hx-target-error="#toast-container"
         data-hx-success-event="character:created"
         data-testid="create-character-form"
