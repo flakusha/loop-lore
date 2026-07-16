@@ -177,7 +177,13 @@ export interface ChatState extends AlpineMagicThis {
   toggleImpersonation(): Promise<void>;
   generateImageFromMessage(msgId: string): Promise<void>;
   captionMessage(msgId: string): Promise<void>;
-  statsLine(msg: Message): string;
+  statsLine(msg: {
+    model_id?: string;
+    provider?: string;
+    generation_time_ms?: number;
+    token_count_total?: number;
+    tokens_per_second?: number;
+  }): string;
   formattedGenerationTime(ms?: number): string;
   formattedTokensPerSecond(msg: {
     tokens_per_second?: number;
