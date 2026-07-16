@@ -81,6 +81,12 @@ export function onValidationError(
     return { error: err.message ?? "Not found", code: "NOT_FOUND" };
   }
 
+  // ── Elysia "PARSE" — body parse failure (e.g. multipart with no schema) ──
+  if (code === "PARSE") {
+    set.status = 400;
+    return { error: err?.message ?? "Failed to parse request body", code: "PARSE_ERROR" };
+  }
+
   // ── Service-layer errors ────────────────────────────────
   if (err instanceof NotFoundError) {
     set.status = 404;
