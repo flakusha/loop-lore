@@ -4,7 +4,7 @@ import { jsonParseOr } from "./json";
 const apiLog = log.child({ module: "api" });
 
 // Global error capture for debugging page loader issues
-addEventListener("error", (e) => {
+addEventListener("error", (e: ErrorEvent) => {
   apiLog.error(`Uncaught: ${e.message}`, undefined, {
     filename: e.filename,
     lineno: e.lineno,
