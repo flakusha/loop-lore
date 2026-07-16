@@ -11,7 +11,7 @@ import { injectContentHashes } from "./content/hash-injection";
 import { runMigrations } from "./db/migrate";
 import { seedDefaultActors } from "./db/seed";
 import { loadConfig } from "./config/load";
-import { initAgeGate, dispatch as dispatchAgeGate } from "./age-gate/controller";
+import { initAgeGate } from "./age-gate/controller";
 import { dispatch as dispatchGeneration } from "./generation/controller";
 import { loadAllPlugins, dispatchPluginRoute, unloadAllPlugins } from "./plugins";
 import { getDatabase } from "./db/index";
@@ -19,7 +19,6 @@ import { initializeProviders, registerProvider, OpenAiCompatibleProvider } from 
 import { authenticate, compose, errorBoundary } from "./middleware/index";
 import type { RequestContext } from "./middleware/index";
 import { apiDispatch } from "./routes/router";
-import { dispatch as dispatchViews } from "./routes/views";
 import { dispatchAuth } from "./routes/auth";
 import { initSmk } from "./crypto";
 import { ensureTlsCerts } from "./config/cert";
@@ -330,15 +329,6 @@ async function start() {
   const handleNonApiRequest = async (request: Request): Promise<Response> => {
     const url = new URL(request.url);
 
-    // ── View templates and character/world routes ───────────────
-    const viewResponse = await dispatchViews({
-      request,
-      context: { userId: null, userRole: null, sessionId: null },
-      database,
-      config,
-    });
-    if (viewResponse) return viewResponse;
-
     const docsResult = handleDocsRequest(url, request, config);
     if (docsResult) return docsResult;
 
@@ -396,6 +386,15 @@ async function start() {
   // ── Run migrations before serving (ensure DB schema ready) ───
   await runMigrations(database);
   await seedDefaultActors(database);
+
+  // Admin — seed system config defaults + wire DB log transport
+  const { seedDefaults } = await import("./admin/config");
+  await seedDefaults(database, config);
+
+  if (config.logging.dbEnabled) {
+    const { DBTransport } = await import("./logger/transports/db");
+    logger.addTransport(new DBTransport(database));
+  }
 
   // ── Background initialization (non-blocking) ─────────────
   const initPromises: Promise<void>[] = [];
