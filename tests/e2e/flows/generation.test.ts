@@ -100,6 +100,7 @@ describe("Generation E2E", () => {
     });
     expect(res.status).toBe(400);
     expect(res.error).toContain("parentMessageId");
+    expect(res.code).toBeTruthy(); // TEST.2 error envelope
   });
 
   test("POST /api/generation/generate bad provider returns 422", async () => {
@@ -112,6 +113,7 @@ describe("Generation E2E", () => {
     });
     expect(res.status).toBe(422);
     expect(res.error).toContain("Provider resolution failed");
+    expect(res.code).toBeTruthy(); // TEST.2 error envelope
   });
 
   test("POST /api/generation/generate uses prompt assembler when no explicit prompt", async () => {
@@ -224,12 +226,14 @@ describe("Generation E2E", () => {
       chatId: "00000000-0000-4000-a000-000000000099",
     });
     expect(res.status).toBe(404);
+    expect(res.code).toBeTruthy(); // TEST.2 error envelope
   });
 
   test("POST /api/generation/cancel validates input", async () => {
     const res = await api.post("/api/generation/cancel", {});
     expect(res.status).toBe(400);
     expect(res.error).toContain("chatId");
+    expect(res.code).toBeTruthy(); // TEST.2 error envelope
   });
 
   // ── Status ──────────────────────────────────────────────
@@ -259,6 +263,7 @@ describe("Generation E2E", () => {
   test("POST /api/generation/retry returns 400 when chatId missing", async () => {
     const res = await api.post("/api/generation/retry", {});
     expect(res.status).toBe(400);
+    expect(res.code).toBeTruthy(); // TEST.2 error envelope
   });
 
   test("POST /api/generation/retry returns ok with defaults", async () => {
@@ -283,6 +288,7 @@ describe("Generation E2E", () => {
   test("POST /api/generation/regenerate returns 400 when chatId missing", async () => {
     const res = await api.post("/api/generation/regenerate", {});
     expect(res.status).toBe(400);
+    expect(res.code).toBeTruthy(); // TEST.2 error envelope
   });
 
   test("POST /api/generation/regenerate returns ok", async () => {
@@ -334,8 +340,8 @@ describe("Generation E2E", () => {
     if (res.ok) {
       expect(res.data.content).toBe("Mock response content");
     } else {
-      // Acceptable failure mode — validates graceful handling
       expect(res.status).toBeGreaterThanOrEqual(400);
+      expect(res.code).toBeTruthy(); // TEST.2 error envelope
     }
   });
 

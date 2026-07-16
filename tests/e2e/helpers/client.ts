@@ -10,6 +10,7 @@ export interface ApiResponse<T = unknown> {
   status: number;
   data: T | null;
   error: string | null;
+  code: string | null; // Error envelope code (TEST.2)
 }
 
 /**
@@ -54,6 +55,7 @@ export function createClient(baseUrl: string) {
 
     let data: T | null = null;
     let error: string | null = null;
+    let code: string | null = null;
 
     const contentType = res.headers.get("content-type") ?? "";
     if (contentType.includes("application/json")) {
@@ -63,6 +65,7 @@ export function createClient(baseUrl: string) {
           data = json as T;
         } else {
           error = json.error ?? `HTTP ${res.status}`;
+          code = json.code ?? null;
         }
       } catch {
         error = `Failed to parse JSON response (status ${res.status})`;
@@ -79,7 +82,7 @@ export function createClient(baseUrl: string) {
       }
     }
 
-    return { ok: res.ok, status: res.status, data, error };
+    return { ok: res.ok, status: res.status, data, error, code };
   }
 
   return {

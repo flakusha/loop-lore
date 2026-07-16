@@ -43,10 +43,12 @@ describe("Users E2E", () => {
   test("GET /api/users/:id returns 403 for non-admin", async () => {
     const res = await api.get(`/api/users/${SEED.user.id}`);
     expect(res.status).toBe(403);
+    expect(res.code).toBeTruthy(); // TEST.2 error envelope
   });
 
   test("DELETE /api/users/:id returns 403 for non-admin", async () => {
     const res = await api.del(`/api/users/${SEED.user.id}`);
     expect(res.status).toBe(403);
+    expect(res.code).toBeTruthy(); // TEST.2 error envelope
   });
 });
