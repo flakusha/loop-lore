@@ -1,0 +1,175 @@
+/**
+ * Tests for routes/plugins.ts — Plugin Management Routes
+ */
+import { describe, test, expect, beforeAll, afterAll } from "bun:test";
+import { Database } from "bun:sqlite";
+import { Kysely, sql } from "kysely";
+import { Elysia } from "elysia";
+import { createSqliteDialect } from "../db/index";
+import { pluginRoutes } from "./plugins";
+import { registry } from "../plugins/registry";
+import { createLogger } from "../logger";
+import type { DB } from "../db/schema";
+
+function createTestDb(): Kysely<DB> {
+  const sqlite = new Database(":memory:");
+  sqlite.run("PRAGMA journal_mode = WAL");
+  const dialect = createSqliteDialect(sqlite);
+  return new Kysely<DB>({ dialect });
+}
+
+async function createPluginStateTable(db: Kysely<DB>): Promise<void> {
+  await db.schema
+    .createTable("plugin_state")
+    .addColumn("name", "text", (col) => col.primaryKey())
+    .addColumn("enabled", "integer", (col) => col.notNull().defaultTo(1))
+    .addColumn("enabled_at", "text")
+    .addColumn("disabled_at", "text")
+    .addColumn("created_at", "text", (col) => col.notNull().defaultTo(sql`(datetime('now'))`))
+    .addColumn("updated_at", "text", (col) => col.notNull().defaultTo(sql`(datetime('now'))`))
+    .execute();
+}
+
+function createPluginApp(db: Kysely<DB>, userRole: string): Elysia {
+  return new Elysia({ name: "test-plugins" })
+    .derive(() => ({ userRole }))
+    .use(pluginRoutes({ database: db })) as unknown as Elysia;
+}
+
+describe("GET /api/plugins", () => {
+  let db: Kysely<DB>;
+
+  beforeAll(async () => {
+    createLogger({ level: "warn" });
+    db = createTestDb();
+    await createPluginStateTable(db);
+
+    // Seed a fake plugin in registry
+    registry.register({
+      manifest: {
+        name: "test-plugin",
+        version: "1.0.0",
+        description: "A test plugin",
+        author: "test",
+      },
+      origin: "core",
+      directory: "/tmp",
+    });
+    registry.setEnabled("test-plugin", true);
+  });
+
+  afterAll(async () => {
+    registry.unregisterAll();
+    await db.destroy();
+  });
+
+  test("returns 403 for non-admin", async () => {
+    const app = createPluginApp(db, "user");
+    const res = await app.handle(new Request("http://localhost/api/plugins"));
+    expect(res.status).toBe(403);
+  });
+
+  test("lists plugins for admin", async () => {
+    const app = createPluginApp(db, "admin");
+    const res = await app.handle(new Request("http://localhost/api/plugins"));
+    expect(res.status).toBe(200);
+    const body = (await res.json()) as unknown[];
+    expect(Array.isArray(body)).toBe(true);
+    expect(body[0]).toHaveProperty("name", "test-plugin");
+    expect(body[0]).toHaveProperty("enabled", true);
+  });
+});
+
+describe("POST /api/plugins/:name/enable", () => {
+  let db: Kysely<DB>;
+
+  beforeAll(async () => {
+    db = createTestDb();
+    await createPluginStateTable(db);
+    registry.register({
+      manifest: { name: "disable-me", version: "1.0", description: "", author: "test" },
+      origin: "core",
+      directory: "/tmp",
+    });
+    registry.setEnabled("disable-me", false);
+  });
+
+  afterAll(async () => {
+    registry.unregisterAll();
+    await db.destroy();
+  });
+
+  test("returns 403 for non-admin", async () => {
+    const app = createPluginApp(db, "user");
+    const res = await app.handle(
+      new Request("http://localhost/api/plugins/disable-me/enable", { method: "POST" }),
+    );
+    expect(res.status).toBe(403);
+  });
+
+  test("enables a disabled plugin", async () => {
+    const app = createPluginApp(db, "admin");
+    const res = await app.handle(
+      new Request("http://localhost/api/plugins/disable-me/enable", { method: "POST" }),
+    );
+    const body = await res.text();
+    console.log("enable response:", res.status, body);
+    expect(res.status).toBe(200);
+    expect(registry.isEnabled("disable-me")).toBe(true);
+  });
+
+  test("returns 400 for already enabled plugin", async () => {
+    const app = createPluginApp(db, "admin");
+    const res = await app.handle(
+      new Request("http://localhost/api/plugins/disable-me/enable", { method: "POST" }),
+    );
+    expect(res.status).toBe(400);
+  });
+});
+
+describe("POST /api/plugins/:name/disable", () => {
+  let db: Kysely<DB>;
+
+  beforeAll(async () => {
+    db = createTestDb();
+    await createPluginStateTable(db);
+    registry.register({
+      manifest: { name: "enable-me", version: "1.0", description: "", author: "test" },
+      origin: "core",
+      directory: "/tmp",
+    });
+    registry.setEnabled("enable-me", true);
+  });
+
+  afterAll(async () => {
+    registry.unregisterAll();
+    await db.destroy();
+  });
+
+  test("disables an enabled plugin", async () => {
+    const app = createPluginApp(db, "admin");
+    const res = await app.handle(
+      new Request("http://localhost/api/plugins/enable-me/disable", { method: "POST" }),
+    );
+    const body = await res.text();
+    console.log("disable response:", res.status, body);
+    expect(res.status).toBe(200);
+    expect(registry.isEnabled("enable-me")).toBe(false);
+  });
+
+  test("returns 400 for already disabled plugin", async () => {
+    const app = createPluginApp(db, "admin");
+    const res = await app.handle(
+      new Request("http://localhost/api/plugins/enable-me/disable", { method: "POST" }),
+    );
+    expect(res.status).toBe(400);
+  });
+
+  test("returns 404 for unknown plugin", async () => {
+    const app = createPluginApp(db, "admin");
+    const res = await app.handle(
+      new Request("http://localhost/api/plugins/unknown/disable", { method: "POST" }),
+    );
+    expect(res.status).toBe(404);
+  });
+});
