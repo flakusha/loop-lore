@@ -139,10 +139,10 @@ export interface StartGenerationTrackingOpts {
  * Register a new generation attempt. Returns the attempt ID and the
  * AbortSignal (already connected) that the LLM caller should use.
  */
-export function startGenerationTracking({ options, db, events }: StartGenerationTrackingOpts): {
+export async function startGenerationTracking({ options, db, events }: StartGenerationTrackingOpts): Promise<{
   attemptId: string;
   abortSignal: AbortSignal;
-} {
+}> {
   const attemptId = randomUUID();
   const abortSignalId = randomUUID();
   const abortController = new AbortController();
@@ -200,19 +200,23 @@ export function startGenerationTracking({ options, db, events }: StartGeneration
   activeGenerations.set(attemptId, active);
   chatToAttempt.set(options.chatId, attemptId);
 
-  // Persist to DB (fire-and-forget for speed — errors are non-fatal)
-  void insertAttempt(db, options, attemptId, abortSignalId).catch((error: unknown) => {
+  // Persist to DB — await critical writes to prevent in-memory/DB drift
+  try {
+    await insertAttempt(db, options, attemptId, abortSignalId);
+  } catch (error: unknown) {
     getLogger()
       .child({ module: "generation" })
       .warn("Failed to persist attempt", { error: String(error) });
-  });
+  }
 
   events?.onStart?.(attemptId);
-  void updateAttemptStatus({ db, attemptId, status: GenerationStatus.Processing }).catch((error: unknown) => {
+  try {
+    await updateAttemptStatus({ db, attemptId, status: GenerationStatus.Processing });
+  } catch (error: unknown) {
     getLogger()
       .child({ module: "generation" })
       .warn("Status update failed", { error: String(error) });
-  });
+  }
 
   return { attemptId, abortSignal: abortController.signal };
 }

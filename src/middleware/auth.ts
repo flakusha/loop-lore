@@ -137,7 +137,9 @@ export async function authenticate({
 
 // ── Solo user helpers ─────────────────────────────────────────
 
-const soloUserState: { value: { id: string } | null | undefined } = { value: undefined };
+// Per-DB-instance solo user cache — prevents cross-test-server corruption
+// when multiple Bun.serve instances share the same process (BUG.2).
+const soloUserCache = new Map<Kysely<DB>, { id: string } | null>();
 
 /**
  * Get or create the singleton solo/demo user.
@@ -148,7 +150,8 @@ export async function getOrCreateSoloUserForAuth(
   database: Kysely<DB>,
   demoUsername: string,
 ): Promise<{ id: string } | null> {
-  if (soloUserState.value !== undefined) return soloUserState.value;
+  const cached = soloUserCache.get(database);
+  if (cached !== undefined) return cached;
 
   const existing = await database
     .selectFrom("users")
@@ -157,7 +160,7 @@ export async function getOrCreateSoloUserForAuth(
     .executeTakeFirst();
 
   if (existing) {
-    soloUserState.value = existing;
+    soloUserCache.set(database, existing);
     return existing;
   }
 
@@ -206,15 +209,16 @@ export async function getOrCreateSoloUserForAuth(
     .where("role", "=", UserRole.Solo)
     .executeTakeFirst();
 
-  soloUserState.value = created ?? null;
-  return soloUserState.value;
+  const result = created ?? null;
+  soloUserCache.set(database, result);
+  return result;
 }
 
 /**
  * Clear the cached solo user reference (for testing).
  */
 export function resetSoloUserCache(): void {
-  soloUserState.value = undefined;
+  soloUserCache.clear();
 }
 
 /**

@@ -11,7 +11,7 @@
  *   await ctx.close();
  */
 
-import { chromium, type Browser, type Page } from "@playwright/test";
+import { chromium, type Browser } from "@playwright/test";
 import { join, normalize } from "node:path";
 import { existsSync, readFileSync, mkdirSync, rmSync, cpSync } from "node:fs";
 import { spawnSync } from "node:child_process";
@@ -60,7 +60,6 @@ export interface BrowserTestContext {
   db: Kysely<DB>;
   config: Config;
   browser: Browser;
-  page: Page;
   close: () => Promise<void>;
 }
 
@@ -96,6 +95,11 @@ export async function createBrowserTest(
 ): Promise<BrowserTestContext> {
   // Build frontend if needed
   const publicDir = ensureFrontendBuild();
+
+  // CRITICAL: Reset solo user cache before server creation so seed data
+  // with deterministic SEED.solo.id is picked up instead of a cached random ID
+  // from a previous test file (BUG.1 — solo/seed user ID mismatch).
+  resetSoloUserCache();
 
   // Create DB + run migrations
   const db = createTestDb();
@@ -174,17 +178,12 @@ export async function createBrowserTest(
 
   // Launch Playwright browser
   const browser = await chromium.launch({ headless: true });
-  const context = await browser.newContext({
-    viewport: { width: 1280, height: 720 },
-  });
-  const page = await context.newPage();
 
   return {
     url,
     db,
     config,
     browser,
-    page,
     close: async () => {
       await browser.close();
       bunServer.stop();

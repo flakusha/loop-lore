@@ -37,9 +37,13 @@ import { storyItemsRoutes } from "./routes/story-items";
 import { questsRoutes } from "./routes/quests";
 import { charactersRoutes } from "./routes/characters";
 import { messagesRoutes } from "./routes/messages";
+import { telemetryRoutes } from "./routes/telemetry";
 import { chatsRoutes } from "./routes/chats";
 import { pluginRoutes } from "./routes/plugins";
+import { personaRoutes } from "./personas/controller";
+import { generationRoutes } from "./generation/controller";
 import { authenticate } from "./middleware/auth";
+import { validationErrorPlugin } from "./validation";
 
 export interface AppDeps {
   database: Db;
@@ -53,6 +57,9 @@ export function createApp(deps: AppDeps): Elysia {
   const handleOpts = { database, config };
 
   const app = new Elysia({ adapter: BunAdapter })
+    // ── Validation error middleware (must be first) ───────────
+    .use(validationErrorPlugin())
+
     // ── Authentication guard (runs before all routes, populates context) ──────
     .derive(async ({ request }) => {
       const authResult = await authenticate({ request, database, authConfig: config.auth });
@@ -71,6 +78,7 @@ export function createApp(deps: AppDeps): Elysia {
   // ── Public routes (auth runs but won't block) ───────────────────────────────
   app.use(authPublicRoutes(handleOpts));
   app.use(healthRoutes(handleOpts));
+  app.use(telemetryRoutes(handleOpts));
   app.use(frontendLogsRoutes());
 
   // ── Auth protected routes ───────────────────────────────────────────────────
@@ -97,6 +105,8 @@ export function createApp(deps: AppDeps): Elysia {
   app.use(charactersRoutes(handleOpts));
   app.use(messagesRoutes(handleOpts));
   app.use(chatsRoutes(handleOpts));
+  app.use(personaRoutes(handleOpts));
+  app.use(generationRoutes(handleOpts));
   app.use(viewRoutes({ database: handleOpts.database }));
 
   // ── Catch-all: delegate to existing dispatch logic ───────────────────────────
@@ -110,5 +120,5 @@ export function createApp(deps: AppDeps): Elysia {
     return handleNonApiRequest(request);
   });
 
-  return app;
+return app as unknown as Elysia;
 }
