@@ -96,12 +96,14 @@ export interface SectionBuilder {
 export const PRIORITY = {
   system: 0,
   actorHeader: 0,
+  authorNote: 0,
   groupParticipants: 0,
   userPersona: 0,
   chatHistory: 0,
   storyContext: 1,
   lore: 2,
   memories: 3,
+  dynamicContext: 0,
   postHistory: 4,
   examples: 5,
 } as const;
