@@ -102,6 +102,7 @@ describe("Worlds E2E", () => {
 
     const getRes = await api.get(`/api/worlds/${createdWorldId}/locations/${createdLocationId}`);
     expect(getRes.status).toBe(404);
+    expect(getRes.code).toBeTruthy(); // TEST.2 error envelope
   });
 
   test("DELETE /api/worlds/:id deletes world", async () => {
@@ -110,5 +111,6 @@ describe("Worlds E2E", () => {
 
     const getRes = await api.get(`/api/worlds/${createdWorldId}`);
     expect(getRes.status).toBe(404);
+    expect(getRes.code).toBeTruthy(); // TEST.2 error envelope
   });
 });
