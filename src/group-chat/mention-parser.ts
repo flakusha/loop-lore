@@ -11,7 +11,6 @@
 import { getLogger, type Logger } from "../logger";
 
 const log: Logger = new Proxy({} as Logger, {
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
   get(_target, prop) {
     const instance = getLogger().child({ module: "mention-parser" });
     return Reflect.get(instance, prop);

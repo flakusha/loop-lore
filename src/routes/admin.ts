@@ -55,7 +55,7 @@ export function adminRoutes(opts: { database: Db; config: Config }): Elysia {
       .get(
         "/api/admin/users",
         async (ctx: any) => {
-          const { userRole, error, query } = ctx;
+          const { userRole, query } = ctx;
           if (userRole !== "admin") {
             return jsonError({
               message: "Admin access required",
@@ -88,7 +88,7 @@ export function adminRoutes(opts: { database: Db; config: Config }): Elysia {
       .get(
         "/api/admin/users/:id",
         async (ctx: any) => {
-          const { params: p, userRole, error } = ctx;
+          const { params: p, userRole } = ctx;
           if (userRole !== "admin") {
             return jsonError({
               message: "Admin access required",
@@ -128,7 +128,7 @@ export function adminRoutes(opts: { database: Db; config: Config }): Elysia {
       .patch(
         "/api/admin/users/:id/role",
         async (ctx: any) => {
-          const { params: p, body, userRole, error } = ctx;
+          const { params: p, body, userRole } = ctx;
           if (userRole !== "admin") {
             return jsonError({
               message: "Admin access required",
@@ -148,7 +148,7 @@ export function adminRoutes(opts: { database: Db; config: Config }): Elysia {
       .delete(
         "/api/admin/users/:id",
         async (ctx: any) => {
-          const { params: p, userRole, error } = ctx;
+          const { params: p, userRole } = ctx;
           if (userRole !== "admin") {
             return jsonError({
               message: "Admin access required",
@@ -166,7 +166,7 @@ export function adminRoutes(opts: { database: Db; config: Config }): Elysia {
 
       // ── Stats ──────────────────────────────────────────────
       .get("/api/admin/stats", async (ctx: any) => {
-        const { userRole, error } = ctx;
+        const { userRole } = ctx;
         if (userRole !== "admin") {
           return jsonError({
             message: "Admin access required",
@@ -198,7 +198,7 @@ export function adminRoutes(opts: { database: Db; config: Config }): Elysia {
 
       // ── Provider management ────────────────────────────────
       .get("/api/admin/providers", (ctx: any) => {
-        const { userRole, error } = ctx;
+        const { userRole } = ctx;
         if (userRole !== "admin") {
           return jsonError({
             message: "Admin access required",
@@ -225,8 +225,8 @@ export function adminRoutes(opts: { database: Db; config: Config }): Elysia {
         return jsonResponse({ providers });
       })
       .get("/api/admin/providers/:name/models", (ctx: any) => {
-        const { params, error } = ctx;
-        const providerName = (params as any).name as string;
+        const { params } = ctx;
+        const providerName = params.name as string;
 
         const health = getProviderHealth(providerName);
         if (!health) {
@@ -244,7 +244,7 @@ export function adminRoutes(opts: { database: Db; config: Config }): Elysia {
         });
       })
       .post("/api/admin/providers/rescan", async (ctx: any) => {
-        const { userRole, error } = ctx;
+        const { userRole } = ctx;
         if (userRole !== "admin") {
           return jsonError({
             message: "Admin access required",
@@ -261,7 +261,7 @@ export function adminRoutes(opts: { database: Db; config: Config }): Elysia {
 
       // ── Model role overrides ───────────────────────────────
       .get("/api/admin/model-roles", async (ctx: any) => {
-        const { userRole, error } = ctx;
+        const { userRole } = ctx;
         if (userRole !== "admin") {
           return jsonError({
             message: "Admin access required",
@@ -278,7 +278,7 @@ export function adminRoutes(opts: { database: Db; config: Config }): Elysia {
       .put(
         "/api/admin/model-roles/:role",
         async (ctx: any) => {
-          const { params: p, body, userRole, error } = ctx;
+          const { params: p, body, userRole } = ctx;
           if (userRole !== "admin") {
             return jsonError({
               message: "Admin access required",
@@ -287,7 +287,7 @@ export function adminRoutes(opts: { database: Db; config: Config }): Elysia {
             });
           }
 
-          const role = (p as any).role as string;
+          const role = p.role as string;
           if (!VALID_ROLES.includes(role as ModelRole)) {
             return jsonError({
               message: `Invalid role: "${role}". Must be one of: ${VALID_ROLES.join(", ")}`,
@@ -301,9 +301,9 @@ export function adminRoutes(opts: { database: Db; config: Config }): Elysia {
           try {
             await setModelRoleOverride(role as ModelRole, provider, model, opts.database);
             return jsonResponse({ ok: true });
-          } catch (e) {
+          } catch (error) {
             return jsonError({
-              message: (e as Error).message,
+              message: (error as Error).message,
               status: HttpStatus.BadRequest,
               code: ErrorCode.BadRequest,
             });
@@ -312,7 +312,7 @@ export function adminRoutes(opts: { database: Db; config: Config }): Elysia {
         { body: AdminModelRoleOverrideBody },
       )
       .delete("/api/admin/model-roles/:role", async (ctx: any) => {
-        const { params: p, userRole, error } = ctx;
+        const { params: p, userRole } = ctx;
         if (userRole !== "admin") {
           return jsonError({
             message: "Admin access required",
@@ -321,7 +321,7 @@ export function adminRoutes(opts: { database: Db; config: Config }): Elysia {
           });
         }
 
-        const role = (p as any).role as string;
+        const role = p.role as string;
         if (!VALID_ROLES.includes(role as ModelRole)) {
           return jsonError({
             message: `Invalid role: "${role}". Must be one of: ${VALID_ROLES.join(", ")}`,
@@ -336,7 +336,7 @@ export function adminRoutes(opts: { database: Db; config: Config }): Elysia {
 
       // ── System configuration ───────────────────────────────
       .get("/api/admin/system-config", async (ctx: any) => {
-        const { userRole, error } = ctx;
+        const { userRole } = ctx;
         if (userRole !== "admin") {
           return jsonError({
             message: "Admin access required",
@@ -350,7 +350,7 @@ export function adminRoutes(opts: { database: Db; config: Config }): Elysia {
       .patch(
         "/api/admin/system-config",
         async (ctx: any) => {
-          const { userRole, error, body } = ctx;
+          const { userRole, body } = ctx;
           if (userRole !== "admin") {
             return jsonError({
               message: "Admin access required",
@@ -365,7 +365,7 @@ export function adminRoutes(opts: { database: Db; config: Config }): Elysia {
         { body: AdminSystemConfigBody },
       )
       .delete("/api/admin/system-config/:key", async (ctx: any) => {
-        const { params: p, userRole, error } = ctx;
+        const { params: p, userRole } = ctx;
         if (userRole !== "admin") {
           return jsonError({
             message: "Admin access required",
@@ -373,7 +373,7 @@ export function adminRoutes(opts: { database: Db; config: Config }): Elysia {
             code: ErrorCode.Forbidden,
           });
         }
-        const key = (p as any).key as string;
+        const key = p.key as string;
         await deleteConfig(opts.database, key);
         return jsonNoContent();
       })
@@ -382,7 +382,7 @@ export function adminRoutes(opts: { database: Db; config: Config }): Elysia {
       .get(
         "/api/admin/worlds",
         async (ctx: any) => {
-          const { userRole, error, query } = ctx;
+          const { userRole, query } = ctx;
           if (userRole !== "admin") {
             return jsonError({
               message: "Admin access required",
@@ -414,7 +414,7 @@ export function adminRoutes(opts: { database: Db; config: Config }): Elysia {
       .get(
         "/api/admin/worlds/:id",
         async (ctx: any) => {
-          const { params: p, userRole, error } = ctx;
+          const { params: p, userRole } = ctx;
           if (userRole !== "admin") {
             return jsonError({
               message: "Admin access required",
@@ -452,7 +452,7 @@ export function adminRoutes(opts: { database: Db; config: Config }): Elysia {
       .delete(
         "/api/admin/worlds/:id",
         async (ctx: any) => {
-          const { params: p, userRole, error } = ctx;
+          const { params: p, userRole } = ctx;
           if (userRole !== "admin") {
             return jsonError({
               message: "Admin access required",
@@ -471,7 +471,7 @@ export function adminRoutes(opts: { database: Db; config: Config }): Elysia {
       .get(
         "/api/admin/chats",
         async (ctx: any) => {
-          const { userRole, error, query } = ctx;
+          const { userRole, query } = ctx;
           if (userRole !== "admin") {
             return jsonError({
               message: "Admin access required",
@@ -503,7 +503,7 @@ export function adminRoutes(opts: { database: Db; config: Config }): Elysia {
       .get(
         "/api/admin/chats/:id",
         async (ctx: any) => {
-          const { params: p, userRole, error } = ctx;
+          const { params: p, userRole } = ctx;
           if (userRole !== "admin") {
             return jsonError({
               message: "Admin access required",
@@ -533,7 +533,7 @@ export function adminRoutes(opts: { database: Db; config: Config }): Elysia {
 
           const participants = await opts.database
             .selectFrom("chat_participants")
-            .select(["actor_id", "role", "joined_at"])
+            .select(["actor_id", "role_in_chat", "joined_at"])
             .where("chat_id", "=", id)
             .execute();
 
@@ -548,7 +548,7 @@ export function adminRoutes(opts: { database: Db; config: Config }): Elysia {
       .patch(
         "/api/admin/chats/:id",
         async (ctx: any) => {
-          const { params: p, userRole, error, body } = ctx;
+          const { params: p, userRole, body } = ctx;
           if (userRole !== "admin") {
             return jsonError({
               message: "Admin access required",
@@ -576,7 +576,7 @@ export function adminRoutes(opts: { database: Db; config: Config }): Elysia {
       .delete(
         "/api/admin/chats/:id",
         async (ctx: any) => {
-          const { params: p, userRole, error } = ctx;
+          const { params: p, userRole } = ctx;
           if (userRole !== "admin") {
             return jsonError({
               message: "Admin access required",
@@ -595,7 +595,7 @@ export function adminRoutes(opts: { database: Db; config: Config }): Elysia {
       .get(
         "/api/admin/audit",
         async (ctx: any) => {
-          const { userRole, error, request } = ctx;
+          const { userRole, request } = ctx;
           if (userRole !== "admin") {
             return jsonError({
               message: "Admin access required",
@@ -640,7 +640,7 @@ export function adminRoutes(opts: { database: Db; config: Config }): Elysia {
         { query: PaginationQuery },
       )
       .get("/api/admin/audit/:id", async (ctx: any) => {
-        const { params: p, userRole, error } = ctx;
+        const { params: p, userRole } = ctx;
         if (userRole !== "admin") {
           return jsonError({
             message: "Admin access required",
