@@ -15,7 +15,7 @@ const log = rootLog.child({ module: "world-edit" });
     loading: true,
     error: false,
     saving: false,
-    locations: [],
+    locations: [] as any[],
     loadingLocations: false,
     locationsLoaded: false,
     showAddForm: false,
@@ -24,6 +24,9 @@ const log = rootLog.child({ module: "world-edit" });
     newLocParentId: "",
     newLocConnections: [] as string[],
     editingLocationId: "",
+    expandedLoc: "",
+    editLocName: "",
+    editLocDesc: "",
 
     init() {
       const match = /\/worlds\/([\w-]+)\/edit/.exec(location.pathname);
@@ -138,14 +141,43 @@ const log = rootLog.child({ module: "world-edit" });
       }
     },
 
-    async editLocation(locId: string) {
-      this.editingLocationId = locId;
-      const res = await fetch(`/api/worlds/${this.worldId}/locations/${locId}`, {
-        headers: { Accept: "application/json" },
-      });
-      if (res.ok) {
-        const data = await res.json();
-        log.debug("editLocation loaded", { data });
+    expandLoc(locId: string) {
+      if (this.expandedLoc === locId) {
+        this.expandedLoc = "";
+        return;
+      }
+      this.expandedLoc = locId;
+      const loc = this.locations.find((l: any) => l.id === locId);
+      if (loc) {
+        this.editLocName = loc.name;
+        this.editLocDesc = loc.description || "";
+      }
+    },
+
+    async saveLocation(locId: string) {
+      try {
+        const res = await fetch(`/api/worlds/${this.worldId}/locations/${locId}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: jsonBody({
+            name: this.editLocName.trim(),
+            description: this.editLocDesc.trim() || null,
+          }),
+        });
+        if (res.ok) {
+          const loc = this.locations.find((l: any) => l.id === locId);
+          if (loc) {
+            loc.name = this.editLocName.trim();
+            loc.description = this.editLocDesc.trim() || null;
+          }
+          this.expandedLoc = "";
+          showToast("success", "Location updated");
+        } else {
+          const err = await res.json();
+          showToast("error", err.message || "Failed");
+        }
+      } catch {
+        showToast("error", "Network error");
       }
     },
 
