@@ -194,8 +194,8 @@ async function seedWorld(db: Kysely<DB>): Promise<string> {
       scan_depth: 0,
       token_budget: 4096,
       difficulty_modifier: 1,
-      difficulty_reroll: "off",
-      difficulty_state: "alive",
+      difficulty_reroll: "none",
+      difficulty_state: "normal",
     })
     .execute();
   return id;
