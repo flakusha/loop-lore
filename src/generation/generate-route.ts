@@ -121,7 +121,7 @@ function buildGenerationResult(
     },
     generationTimeMs: 0,
     cancelled,
-    ...(cancelReason ? { cancelReason } : {}),
+    ...(cancelReason && { cancelReason }),
   };
 }
 
@@ -516,6 +516,7 @@ export async function handleGenerate({
 
         for (let round = 0; round < MAX_TOOL_ROUNDS; round++) {
           let roundContent = "";
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
           let roundThinking = "";
 
           const response = await resolved.provider.stream(
