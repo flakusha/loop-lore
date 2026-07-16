@@ -3,9 +3,13 @@ import { injectContentHashes } from "../content/hash-injection";
 import { readFileSync, writeFileSync, existsSync } from "node:fs";
 import { extname, join } from "node:path";
 import { createLogger } from "../logger";
+import CleanCSS from "clean-css";
 
 const HTML_COMMENT_EXTS = new Set([".html", ".htm", ".svg"]);
+const CSS_EXTS = new Set([".css"]);
 const STRIP_TEST_IDS = process.env.STRIP_TEST_IDS !== "false";
+
+const _cssMinifier = new CleanCSS({ level: 2 });
 
 function stripHtmlComments(content: string): string {
   return content.replaceAll(/<!--[\s\S]*?-->/g, "");
@@ -46,6 +50,21 @@ async function main() {
   for (const file of files) {
     const content = readFileSync(file);
     originalBytes += content.length;
+
+    if (CSS_EXTS.has(extname(file).toLowerCase())) {
+      const original = content.toString("utf8");
+      const minified = _cssMinifier.minify(original);
+      if (minified.styles.length < original.length) {
+        try {
+          writeFileSync(file, minified.styles, "utf8");
+        } catch (writeError) {
+          log.error(
+            `Failed to minify CSS at ${file}`,
+            writeError instanceof Error ? writeError : new Error(String(writeError)),
+          );
+        }
+      }
+    }
 
     if (HTML_COMMENT_EXTS.has(extname(file).toLowerCase())) {
       let processed = content.toString("utf8");
