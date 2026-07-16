@@ -306,7 +306,7 @@ export function chatsRoutes(opts: HandlerOpts) {
             const current = fullChat.story_state
               ? safeJsonParse<Record<string, unknown>>(fullChat.story_state)
               : null;
-            const state = { ...(current?.ok ? current.value : {}), isPaused: body.isPaused };
+            const state = { ...(current?.ok && current.value), isPaused: body.isPaused };
             const serialized = safeJsonStringify(state);
             updates.story_state = serialized.ok ? serialized.value : fullChat.story_state;
           }
@@ -508,6 +508,7 @@ export function chatsRoutes(opts: HandlerOpts) {
         },
         {
           params: ChatIdParams,
+          // eslint-disable-next-line unicorn/max-nested-calls
           body: t.Object({ actorId: t.String({ minLength: 1 }), role: t.Optional(t.String()) }),
         },
       )
