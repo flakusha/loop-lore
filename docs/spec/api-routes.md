@@ -214,14 +214,14 @@ Message listing: ordered by `created_at ASC`. `parentId` filter returns children
 
 ### World Locations
 
-| Method | Path                               | Auth | Request                                                    | Response                    |
-| ------ | ---------------------------------- | ---- | ---------------------------------------------------------- | --------------------------- |
-| GET    | `/api/worlds/:id/locations`        | Yes  | `?page&pageSize`                                           | Paginated list of locations |
-| POST   | `/api/worlds/:id/locations`        | Yes† | `{ name, description?, parentLocationId?, connections? }`  | `{ id }` + 201              |
-| GET    | `/api/worlds/:id/locations/:locId` | Yes  | —                                                          | Location object             |
-| PUT    | `/api/worlds/:id/locations/:locId` | Yes† | `{ name?, description?, parentLocationId?, connections? }` | Updated location            |
-| DELETE | `/api/worlds/:id/locations/:locId` | Yes† | —                                                          | 204                         |
-| POST   | `/api/worlds/:id/initialize-states`| Yes† | —                                                          | `{ locations_initialized, npcs_initialized }` |
+| Method | Path                                | Auth | Request                                                    | Response                                      |
+| ------ | ----------------------------------- | ---- | ---------------------------------------------------------- | --------------------------------------------- |
+| GET    | `/api/worlds/:id/locations`         | Yes  | `?page&pageSize`                                           | Paginated list of locations                   |
+| POST   | `/api/worlds/:id/locations`         | Yes† | `{ name, description?, parentLocationId?, connections? }`  | `{ id }` + 201                                |
+| GET    | `/api/worlds/:id/locations/:locId`  | Yes  | —                                                          | Location object                               |
+| PUT    | `/api/worlds/:id/locations/:locId`  | Yes† | `{ name?, description?, parentLocationId?, connections? }` | Updated location                              |
+| DELETE | `/api/worlds/:id/locations/:locId`  | Yes† | —                                                          | 204                                           |
+| POST   | `/api/worlds/:id/initialize-states` | Yes† | —                                                          | `{ locations_initialized, npcs_initialized }` |
 
 † World owner or admin.
 

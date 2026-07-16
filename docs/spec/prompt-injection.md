@@ -88,20 +88,16 @@ guard or "system canary" detection.
 
 ## Open Items
 
-Actionable work, not yet scheduled. Each references the finding above.
-
 - **[F1]** Enforce `role ∈ {User, Assistant, Character}` on message creation; reject client-set
   `System` (and any role the caller is not authorized to emit). Location:
   `src/routes/messages.ts:465,496`. Add a unit test asserting a `role:"system"` body is rejected
   or coerced to `User`.
-- **[F2]** Standardize **all** non-system-author sections on XML delimiters with a distinct tag
-  per section — `<lore>`, `<user_persona>`, `<post_history>`, `<story_context>`, plus the existing
-  `<memory_context>` — so models can distinguish data from instructions and attacker content cannot
-  spoof a section (a bare `[Label]`/TOML style is spoofable and not instruction-trained). Keep
-  `actors.system_prompt` + actor header as the only **unwrapped** authoritative instructions.
-  Do **not** use TOML/YAML/JSON for delimiting (token-heavy, no boundary signal). Location:
-  `src/assistant/prompt-assembler.ts:135-273` (note current inconsistency: memories use XML,
-  lore/persona/post-history/story use bare `[Label]`).
+- **[F2] ✅ DONE** — All non-system-author sections now use XML delimiters with XML-escaped
+  content. See `src/assistant/xml-utils.ts` for `wrapSection()` (static XML + `escapeXml()`)
+  and `getSessionNonce()` (per-session nonce stored server-side for audit, not sent to LLM).
+  Sections wrapped: `<lore>`, `<memory_context>`, `<user_persona>`, `<post_history>`,
+  `<story_context>`. `actors.system_prompt` + actor header remain unwrapped authoritative
+  instructions.
 - **[F2/F4]** Sanitize or flag untrusted character-card / world imports; consider a quarantine or
   visual warning when a card supplies a non-empty `system_prompt` / `post_history_instructions`.
   Location: `docs/spec/character-setup.md` import path.
@@ -132,11 +128,21 @@ context-signal (do instruction-tuned models parse the boundary reliably?).
 | Opaque (base64) blob                            | **No** (unreadable)                 | n/a           | med    | Injection-proof but kills utility; reference data only. |
 | API-level role split (Anthropic `system` field) | n/a                                 | Yes           | —      | Structural, pairs with any text delimiter above.        |
 
-**Approved approach (F2):** standardize every non-system-author section on **static XML** with a
-distinct tag per section; optionally upgrade to **nonce-XML** per session for maximum spoof
-resistance. Keep `actors.system_prompt` + actor header as the only unwrapped authoritative
-instructions. Reserve JSON/TOML for structured _data_ the model consumes, never for delimiting.
-Opaque/base64 only for reference data that must not be executed.
+**Approved approach (F2) — implemented:** standardize every non-system-author section on **static
+XML** with a distinct tag per section. Before wrapping, user-supplied content is XML-escaped
+(`<` → `&lt;`, `>` → `&gt;`, `&` → `&amp;`) so attackers cannot inject closing tags to break
+out of a section. This makes static XML safe without per-message nonce overhead in the LLM prompt.
+
+A per-session nonce is generated server-side (`src/assistant/xml-utils.ts:getSessionNonce()`) and
+stored in the database for audit trails and future validation hooks, but is STRIPPED before the
+prompt reaches the LLM. Instruction-tuned models parse static HTML/XML reliably without needing
+nonce attributes.
+
+See `src/assistant/xml-utils.ts` for `wrapSection()` and `escapeXml()` helpers. Sections wrapped:
+`<lore>`, `<memory_context>`, `<user_persona>`, `<post_history>`, `<story_context>`. Keep
+`actors.system_prompt` + actor header as the only unwrapped authoritative instructions. Reserve
+JSON/TOML for structured _data_ the model consumes, never for delimiting. Opaque/base64 only for
+reference data that must not be executed.
 
 ---
 

@@ -115,6 +115,7 @@ this menu item.
 The Story Notes panel has three tabs:
 
 **Tab 1: Public** (default)
+
 - List of all public notes for the current world/location/chat
 - Each note: title, type badge, content preview, priority
 - "Add Note" button → inline form (type, title, content, scope, priority)
@@ -122,6 +123,7 @@ The Story Notes panel has three tabs:
 - Toggle enabled/disabled per note
 
 **Tab 2: Dark** (GM only, hidden from editors)
+
 - List of all dark notes for the current world/location/chat
 - Each note: title, type badge, content preview, urgency, revealed status
 - "Add Dark Note" button → inline form with extra fields:
@@ -134,6 +136,7 @@ The Story Notes panel has three tabs:
 - "Reveal Now" button on unrevealed notes → promotes to public immediately
 
 **Tab 3: Arc** (GM only)
+
 - Visual timeline of the story arc
 - Shows: notes in order, which are revealed, which are pending
 - Connected notes shown as a flow graph
@@ -141,12 +144,12 @@ The Story Notes panel has three tabs:
 
 ### Role Access
 
-| Role          | Public tab | Dark tab | Arc tab | Add/Edit Public | Add/Edit Dark |
-| ------------- | ---------- | -------- | ------- | --------------- | ------------- |
-| GM            | ✅          | ✅        | ✅       | ✅               | ✅             |
-| World Editor  | ✅          | ❌        | ❌       | ✅               | ❌             |
-| Chat Master   | ✅          | ❌        | ❌       | ✅               | ❌             |
-| Player        | ❌ (hidden) | ❌        | ❌       | ❌               | ❌             |
+| Role         | Public tab  | Dark tab | Arc tab | Add/Edit Public | Add/Edit Dark |
+| ------------ | ----------- | -------- | ------- | --------------- | ------------- |
+| GM           | ✅          | ✅       | ✅      | ✅              | ✅            |
+| World Editor | ✅          | ❌       | ❌      | ✅              | ❌            |
+| Chat Master  | ✅          | ❌       | ❌      | ✅              | ❌            |
+| Player       | ❌ (hidden) | ❌       | ❌      | ❌              | ❌            |
 
 ### Panel Behavior
 
@@ -159,10 +162,12 @@ The Story Notes panel has three tabs:
 ### Integration with Chat
 
 When a public note is added/edited while in a chat:
+
 - The LLM sees the updated guidance on next generation
 - No interrupt — the note takes effect silently
 
 When a dark note's reveal is triggered:
+
 - A system message appears in the chat: "The guide's betrayal is revealed..."
 - The dark note moves to the public tab
 - The LLM incorporates the reveal into its next response
@@ -170,6 +175,7 @@ When a dark note's reveal is triggered:
 ### Prompt Debug View Connection
 
 The Story Notes panel and Prompt Debug View are complementary:
+
 - Story Notes: where you manage what goes into the prompt
 - Debug View: where you see the assembled result
 - Dark notes appear in the debug view only for GM users, marked as

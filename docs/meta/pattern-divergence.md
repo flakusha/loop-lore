@@ -13,10 +13,10 @@ over `new Constructor(dep)` for service/feature modules with single implementati
 
 ### 1.1 God Classes (SRP Violations >400 lines)
 
-| Class                      | File                                 | Lines | Responsibilities                                                                 | Severity |
-| -------------------------- | ------------------------------------ | ----- | -------------------------------------------------------------------------------- | -------- |
-| `ConfigSchema`             | `src/config/schema-class.ts`        | 962   | defaults data, env-map gen, validation, JSON schema gen                          | High     |
-| `OpenAiCompatibleProvider` | `src/generation/providers/openai-compatible.ts` | 442   | HTTP fetch, SSE parsing, retry, streaming, body building                          | Low      |
+| Class                      | File                                            | Lines | Responsibilities                                         | Severity |
+| -------------------------- | ----------------------------------------------- | ----- | -------------------------------------------------------- | -------- |
+| `ConfigSchema`             | `src/config/schema-class.ts`                    | 962   | defaults data, env-map gen, validation, JSON schema gen  | High     |
+| `OpenAiCompatibleProvider` | `src/generation/providers/openai-compatible.ts` | 442   | HTTP fetch, SSE parsing, retry, streaming, body building | Low      |
 
 ### 1.1.1 Resolved — Refactored to Factory + Dispatcher + Wrapper
 
@@ -26,26 +26,26 @@ dimension/type registered in an `xxxS` registry (e.g. `GM_DECISIONS`,
 `PROGRESS_CALCULATORS`, `SCORERS`, `PROMPT_SECTIONS`). New behavior dimensions
 are added by creating a file + one registry line — no edits to the core.
 
-| Class | Original | New structure | Status |
-| --- | --- | --- | --- |
-| `GameMasterService` | `src/story/game-master.ts` (555L) | `src/story/gm/service.ts` (dispatcher + factory) + `src/story/gm/decisions/{llm,hardcoded,human,hybrid}.ts` + `registry.ts` | **Done** |
-| `QuestEngine` | `src/story/quest-engine.ts` (497L) | `src/story/quest-engine.ts` (dispatcher + factory) + `src/story/quests/calculators/*` (7 progress calculators) + `registry.ts` | **Done** |
-| `QualityEvaluator` | `src/story/quality-evaluator.ts` (505L) | `src/story/quality/index.ts` (dispatcher + factory) + `src/story/quality/scorers/*` (6 scorers) + `registry.ts` | **Done** |
-| `PromptAssembler` | `src/assistant/prompt-assembler.ts` (509L) | `src/assistant/prompt-assembler.ts` (orchestrator) + `src/assistant/prompt/sections/*` (section builders) + `registry.ts` | **Done** |
+| Class               | Original                                   | New structure                                                                                                                  | Status   |
+| ------------------- | ------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------ | -------- |
+| `GameMasterService` | `src/story/game-master.ts` (555L)          | `src/story/gm/service.ts` (dispatcher + factory) + `src/story/gm/decisions/{llm,hardcoded,human,hybrid}.ts` + `registry.ts`    | **Done** |
+| `QuestEngine`       | `src/story/quest-engine.ts` (497L)         | `src/story/quest-engine.ts` (dispatcher + factory) + `src/story/quests/calculators/*` (7 progress calculators) + `registry.ts` | **Done** |
+| `QualityEvaluator`  | `src/story/quality-evaluator.ts` (505L)    | `src/story/quality/index.ts` (dispatcher + factory) + `src/story/quality/scorers/*` (6 scorers) + `registry.ts`                | **Done** |
+| `PromptAssembler`   | `src/assistant/prompt-assembler.ts` (509L) | `src/assistant/prompt-assembler.ts` (orchestrator) + `src/assistant/prompt/sections/*` (section builders) + `registry.ts`      | **Done** |
 
 ### 1.2 Factory Candidates (no factory, no polymorphism need)
 
-| Class                         | File                                      | Lines | Why Candidate                                                                                    |
-| ----------------------------- | ----------------------------------------- | ----- | ------------------------------------------------------------------------------------------------ |
-| `WorldStateService`           | `src/story/world-state.ts`                | 326   | Single consumer, no polymorphic contract                                                         |
-| `ItemsService`                | `src/story/items.ts`                      | 319   | Same                                                                                             |
-| `SyntheticGenerator`          | `src/story/synthetic/generator.ts`        | 302   | Same                                                                                             |
-| `TurnManager`                 | `src/turning/turn-manager.ts`             | 251   | Same                                                                                             |
-| `PersonasService`             | `src/personas/service.ts`                 | 124   | Thin service, trivial refactor                                                                   |
-| `ServerExternalManager`       | `src/services/server-external-manager.ts` | 407   | Multiple inline process management                                                               |
-| `ContextCompactor`            | `src/generation/context-compactor.ts`     | 46    | Simple wrapper                                                                                   |
-| `StreamingRepetitionDetector` | `src/generation/repetition-detector.ts`   | 85    | Simple wrapper                                                                                   |
-| `ActivityStreamer`            | `src/routes/activity-stream.ts`           | 87    | SSE per-user stream                                                                              |
+| Class                         | File                                      | Lines | Why Candidate                            |
+| ----------------------------- | ----------------------------------------- | ----- | ---------------------------------------- |
+| `WorldStateService`           | `src/story/world-state.ts`                | 326   | Single consumer, no polymorphic contract |
+| `ItemsService`                | `src/story/items.ts`                      | 319   | Same                                     |
+| `SyntheticGenerator`          | `src/story/synthetic/generator.ts`        | 302   | Same                                     |
+| `TurnManager`                 | `src/turning/turn-manager.ts`             | 251   | Same                                     |
+| `PersonasService`             | `src/personas/service.ts`                 | 124   | Thin service, trivial refactor           |
+| `ServerExternalManager`       | `src/services/server-external-manager.ts` | 407   | Multiple inline process management       |
+| `ContextCompactor`            | `src/generation/context-compactor.ts`     | 46    | Simple wrapper                           |
+| `StreamingRepetitionDetector` | `src/generation/repetition-detector.ts`   | 85    | Simple wrapper                           |
+| `ActivityStreamer`            | `src/routes/activity-stream.ts`           | 87    | SSE per-user stream                      |
 
 ### 1.3 Good Examples (follow factory pattern)
 
@@ -77,17 +77,17 @@ from `src/utils.ts`.
 
 ### 2.1 Server-Side Bare JSON.parse (risky — crash on malformed DB data)
 
-| File                                | Line | Code                     | Fix                                     | Status  |
-| ----------------------------------- | ---- | ------------------------ | --------------------------------------- | ------- |
-| `src/group-chat/turn-selector.ts`   | 115  | `JSON.parse(storyState)` | `jsonParseOr(storyState, defaultState)` | **Open** |
+| File                                | Line | Code                     | Fix                                     | Status    |
+| ----------------------------------- | ---- | ------------------------ | --------------------------------------- | --------- |
+| `src/group-chat/turn-selector.ts`   | 115  | `JSON.parse(storyState)` | `jsonParseOr(storyState, defaultState)` | **Open**  |
 | `src/assistant/prompt-assembler.ts` | 78   | `JSON.parse(raw)`        | `jsonParseOr(raw, [])`                  | **Fixed** |
 
 ### 2.2 Server-Side Bare JSON.stringify (data loss risk)
 
 All server-side bare `JSON.stringify` sites have been replaced with `safeJsonStringify`:
 
-| File                                  | Line(s) | Code                                  | Status  |
-| ------------------------------------- | ------- | ------------------------------------- | ------- |
+| File                                  | Line(s) | Code                                  | Status    |
+| ------------------------------------- | ------- | ------------------------------------- | --------- |
 | `src/routes/settings.ts`              | 142-145 | `JSON.stringify(settings, null, 2)`   | **Fixed** |
 | `src/routes/activity-stream.ts`       | 30, 54  | `JSON.stringify(data)`                | **Fixed** |
 | `src/routes/chats.ts`                 | 905     | `JSON.stringify(exportData, null, 2)` | **Fixed** |
@@ -101,8 +101,8 @@ Frontend has its own safe JSON module (`src/frontend/alpine/json.ts` with
 
 **Fixed** — bare `JSON.parse` replaced with `jsonParseOr`:
 
-| File                                      | Line(s)       | Status  |
-| ----------------------------------------- | ------------- | ------- |
+| File                                      | Line(s)       | Status    |
+| ----------------------------------------- | ------------- | --------- |
 | `src/frontend/alpine/notifications.ts`    | 84            | **Fixed** |
 | `src/frontend/alpine/htmx.ts`             | 146           | **Fixed** |
 | `src/frontend/alpine/chat-management.ts`  | 129, 153, 262 | **Fixed** |
@@ -127,13 +127,13 @@ now migrated to `jsonBody`.
 
 ### 2.5 Adoption Rate Summary
 
-| Domain                | Following | Diverging | Rate  |
-| --------------------- | --------- | --------- | ----- |
-| Server routes         | 9         | 0         | 100%  |
-| Server core           | 6         | 1         | ~86%  |
-| Frontend (JSON.parse) | 4         | 0         | 100%  |
-| Frontend (JSON.stringify → jsonBody) | 11 | 0 | 100%  |
-| Import style (barrel) | 14        | 3         | ~82%  |
+| Domain                               | Following | Diverging | Rate |
+| ------------------------------------ | --------- | --------- | ---- |
+| Server routes                        | 9         | 0         | 100% |
+| Server core                          | 6         | 1         | ~86% |
+| Frontend (JSON.parse)                | 4         | 0         | 100% |
+| Frontend (JSON.stringify → jsonBody) | 11        | 0         | 100% |
+| Import style (barrel)                | 14        | 3         | ~82% |
 
 ---
 
@@ -234,22 +234,22 @@ Plain `any` type annotations: ~18 instances in frontend Alpine code
 
 Fixed sites wrapped in `void (async () => { try { await ... } catch {} })()`:
 
-| File                                       | Line(s)     | Status  |
-| ------------------------------------------ | ----------- | ------- |
-| `src/logger/queue.ts`                      | 48, 89, 133 | **Fixed** |
-| `src/frontend/alpine/queue.ts`             | 38, 70, 102 | **Fixed** |
-| `src/frontend/alpine/notifications.ts`     | 148         | **Fixed** |
-| `src/frontend/alpine/chat-generations.ts`  | 36          | **Fixed** |
-| `src/tui/asset-view.ts`                    | 147         | **Fixed** |
+| File                                      | Line(s)     | Status    |
+| ----------------------------------------- | ----------- | --------- |
+| `src/logger/queue.ts`                     | 48, 89, 133 | **Fixed** |
+| `src/frontend/alpine/queue.ts`            | 38, 70, 102 | **Fixed** |
+| `src/frontend/alpine/notifications.ts`    | 148         | **Fixed** |
+| `src/frontend/alpine/chat-generations.ts` | 36          | **Fixed** |
+| `src/tui/asset-view.ts`                   | 147         | **Fixed** |
 
 **Remaining:** none — all `void` promise sites resolved.
 
-| File                                       | Line  | Code                             | Status  |
-| ------------------------------------------ | ----- | -------------------------------- | ------- |
-| `src/services/external-server-utils.ts`    | 44    | `void server.stop()`             | **Fixed** |
-| `src/services/server-external-manager.ts`  | 359   | `void this.checkAllLiveliness()` | **Fixed** |
-| `src/frontend/alpine/transports/server.ts` | 53    | `void this.flush()`              | **Fixed** |
-| `src/db/migrations.test.ts`                | 93    | `void kysely.destroy()`          | **Fixed** |
+| File                                       | Line | Code                             | Status    |
+| ------------------------------------------ | ---- | -------------------------------- | --------- |
+| `src/services/external-server-utils.ts`    | 44   | `void server.stop()`             | **Fixed** |
+| `src/services/server-external-manager.ts`  | 359  | `void this.checkAllLiveliness()` | **Fixed** |
+| `src/frontend/alpine/transports/server.ts` | 53   | `void this.flush()`              | **Fixed** |
+| `src/db/migrations.test.ts`                | 93   | `void kysely.destroy()`          | **Fixed** |
 
 ### 4.4 `console.*` in Production Code
 

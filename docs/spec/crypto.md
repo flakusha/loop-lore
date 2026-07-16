@@ -3,6 +3,12 @@
 > **Status:** Core implementation built. Key management UI pending.
 > Source: `src/crypto/` (SMK, actor keys, chat keys, pipeline, BYOK).
 > 69 unit tests — run `bun test src/crypto/`.
+>
+> **Encryption model:** Chats use one of three tiers (public / standard /
+> private) — see [`docs/frontend/encryption.md`](../frontend/encryption.md#chat-encryption-tiers).
+> This doc covers the server-side crypto layer supporting standard
+> (server-mediated) encryption. Private (E2E) tier requires client-side key
+> exchange and external security audit before production use.
 
 ---
 
