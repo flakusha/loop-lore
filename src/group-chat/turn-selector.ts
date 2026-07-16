@@ -20,7 +20,6 @@ import { getLogger, type Logger } from "../logger";
 import { safeJsonParse } from "../utils";
 
 const log: Logger = new Proxy({} as Logger, {
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
   get(_target, prop) {
     const instance = getLogger().child({ module: "group-turn-selector" });
     return Reflect.get(instance, prop);
