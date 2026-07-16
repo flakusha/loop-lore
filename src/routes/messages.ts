@@ -739,7 +739,7 @@ export function messagesRoutes(opts: HandlerOpts) {
           await database
             .updateTable("messages")
             .set({
-              visibility: body.visibility as MessageVisibility,
+              visibility: body.visibility,
               hidden_reason: body.reason ?? null,
             })
             .where("id", "=", id)
@@ -756,11 +756,7 @@ export function messagesRoutes(opts: HandlerOpts) {
           const id = (ctx.params as { id: string }).id;
           const body = ctx.body as typeof MessageStatusUpdateBody.static;
 
-          await database
-            .updateTable("messages")
-            .set({ status: body.status as MessageStatus })
-            .where("id", "=", id)
-            .execute();
+          await database.updateTable("messages").set({ status: body.status }).where("id", "=", id).execute();
           return jsonResponse({ ok: true });
         },
         { params: MessageIdParams, body: MessageStatusUpdateBody },
