@@ -44,6 +44,7 @@ describe("Characters E2E", () => {
     const res = await api.post("/api/actors", { actorType: "character" });
     expect(res.ok).toBe(false);
     expect(res.status).toBe(400);
+    expect(res.code).toBeTruthy(); // TEST.2 error envelope
   });
 
   test("GET /api/actors/:id returns single actor", async () => {
@@ -85,5 +86,6 @@ describe("Characters E2E", () => {
 
     const getRes = await api.get(`/api/actors/${actorId}`);
     expect(getRes.status).toBe(404);
+    expect(getRes.code).toBeTruthy(); // TEST.2 error envelope
   });
 });

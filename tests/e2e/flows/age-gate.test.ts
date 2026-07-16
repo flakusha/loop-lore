@@ -39,6 +39,7 @@ describe("Age Gate E2E", () => {
     expect(res.ok).toBe(false);
     expect(res.status).toBe(403);
     expect(res.error).toContain("Age gate");
+    expect(res.code).toBeTruthy(); // TEST.2 error envelope
 
     // Accept age gate
     const acceptRes = await api.post("/api/age-gate/accept", {

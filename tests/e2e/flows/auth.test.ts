@@ -27,6 +27,7 @@ describe("Auth E2E", () => {
     const res = await api.get("/api/auth/me");
     expect(res.status).toBe(401);
     expect(res.error).toBeTruthy();
+    expect(res.code).toBeTruthy(); // TEST.2 error envelope
   });
 
   test("POST /api/demo-login creates session and returns cookie", async () => {
@@ -63,6 +64,7 @@ describe("Auth E2E", () => {
     api.setToken("invalid-token");
     const meRes = await api.get("/api/auth/me");
     expect(meRes.status).toBe(401);
+    expect(meRes.code).toBeTruthy(); // TEST.2 error envelope
   });
   describe("Auth E2E — seeded user login", () => {
     test("POST /api/auth/login with valid credentials", async () => {

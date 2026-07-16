@@ -55,6 +55,7 @@ describe("Chats E2E", () => {
     const res = await api.post("/api/chats", { type: "direct" });
     expect(res.ok).toBe(false);
     expect(res.status).toBe(400);
+    expect(res.code).toBeTruthy(); // TEST.2 error envelope
   });
 
   test("GET /api/chats/:id returns single chat", async () => {
@@ -100,8 +101,9 @@ describe("Chats E2E", () => {
     const deleteRes = await api.del(`/api/chats/${chatId}`);
     expect(deleteRes.ok).toBe(true);
 
-    const getRes = await api.get(`/api/chats/${chatId}`);
+const getRes = await api.get(`/api/chats/${chatId}`);
     expect(getRes.status).toBe(404);
+    expect(getRes.code).toBeTruthy(); // TEST.2 error envelope
   });
 
   test("seeded chat is accessible", async () => {

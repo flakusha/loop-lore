@@ -89,5 +89,6 @@ describe("Assets E2E", () => {
 
     const getRes = await api.get(`/api/assets/${assetId}`);
     expect(getRes.status).toBe(404);
+    expect(getRes.code).toBeTruthy(); // TEST.2 error envelope
   });
 });
