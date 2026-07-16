@@ -30,17 +30,14 @@ export function getSessionNonce(): string {
     const bytes = new Uint8Array(12);
     crypto.getRandomValues(bytes);
     _sessionNonce = btoa(String.fromCharCode(...bytes))
-      .replace(/=+$/, '')
+      .replace(/=+$/, "")
       .substring(0, 12);
   }
   return _sessionNonce;
 }
 
 export function escapeXml(content: string): string {
-  return content
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;');
+  return content.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 }
 
 function escapeFence(content: string): { escaped: string; fenceLen: number } {
@@ -57,8 +54,8 @@ function escapeFence(content: string): { escaped: string; fenceLen: number } {
 
 function escapeSentinel(content: string, tag: string): string {
   return content
-    .replace(new RegExp(`<<${tag}>>`, 'g'), `[${tag}]`)
-    .replace(new RegExp(`<</${tag}>>`, 'g'), `[/${tag}]`);
+    .replace(new RegExp(`<<${tag}>>`, "g"), `[${tag}]`)
+    .replace(new RegExp(`<</${tag}>>`, "g"), `[/${tag}]`);
 }
 
 function wrapXml(tag: string, content: string): string {
@@ -68,7 +65,7 @@ function wrapXml(tag: string, content: string): string {
 
 function wrapFence(tag: string, content: string): string {
   const { escaped, fenceLen } = escapeFence(content);
-  const fence = '`'.repeat(fenceLen);
+  const fence = "`".repeat(fenceLen);
   return `${fence}${tag}\n${escaped}\n${fence}`;
 }
 
