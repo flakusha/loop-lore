@@ -5,8 +5,7 @@ export const calculateCollectionProgress: ProgressCalculator = (_ctx, config, ev
   if (!config) return 0;
   if (event.type !== "item_transfer") return 0;
   const cfg = config as CollectionQuestConfig;
-  const itemName =
-    typeof event.data.itemName === "string" ? event.data.itemName.toLowerCase() : undefined;
+  const itemName = typeof event.data.itemName === "string" ? event.data.itemName.toLowerCase() : undefined;
   if (cfg.items) {
     let totalQuantity = 0;
     let hasMatch = false;

@@ -9,9 +9,7 @@ function makeEvent(type: WorldEventType, data: Record<string, unknown> = {}): Wo
 
 describe("PROGRESS_CALCULATORS registry", () => {
   it("registers a calculator for every QuestType", () => {
-    expect(Object.keys(PROGRESS_CALCULATORS).sort()).toEqual(
-      Object.values(QuestType).sort(),
-    );
+    expect(Object.keys(PROGRESS_CALCULATORS).sort()).toEqual(Object.values(QuestType).sort());
   });
 
   it("dispatches time progress as a percentage of duration", () => {

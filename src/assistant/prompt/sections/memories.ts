@@ -4,6 +4,7 @@
  */
 import type { SectionBuilder } from "../types";
 import { parseKeywords, recentUserWords } from "../keywords";
+import { wrapSection } from "../../xml-utils";
 
 export const memorySection: SectionBuilder = {
   name: "memories",
@@ -30,8 +31,8 @@ export const memorySection: SectionBuilder = {
 
     const memoryText = relevant.map((m) => `- [${m.memory_type}] ${m.content}`).join("\n");
 
-    // XML delimiting prevents injected memories from being mistaken for
-    // instructions by the model.
-    return [{ role: "system", content: `<memory_context>\n${memoryText}\n</memory_context>` }];
+    // XML delimiting with per-session nonce prevents injected memories from being
+    // mistaken for instructions by the model.
+    return [{ role: "system", content: wrapSection("memory_context", memoryText) }];
   },
 };
