@@ -117,7 +117,7 @@ export function getAbortSignal(attemptId: string): AbortSignal | null {
 export async function hasInFlightGeneration(db: Kysely<DB>, idempotencyKey: string): Promise<boolean> {
   const existing = await db
     .selectFrom("generation_attempts")
-    .selectAll()
+    .select("id")
     .where("idempotency_key", "=", idempotencyKey)
     .where("status", "in", [
       GenerationStatus.Pending,
