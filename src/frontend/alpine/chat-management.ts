@@ -252,6 +252,13 @@ export const chatManagement: Partial<ChatState> & ThisType<ChatState> = {
           chat.story_state = serialized.ok ? serialized.value : "{}";
         }
         this._groupPaused = newPaused;
+        if (globalThis.Alpine) {
+          try {
+            Alpine.store("chat").currentChat = chat;
+          } catch {
+            /* store not ready */
+          }
+        }
         this.$dispatch?.("show-toast", {
           type: "success",
           message: newPaused ? "AI generation paused" : "AI generation resumed",
@@ -360,6 +367,13 @@ export const chatManagement: Partial<ChatState> & ThisType<ChatState> = {
           } else {
             const serialized = safeJsonStringify({ isPaused: this._groupPaused });
             chat.story_state = serialized.ok ? serialized.value : "{}";
+          }
+          if (globalThis.Alpine) {
+            try {
+              Alpine.store("chat").currentChat = chat;
+            } catch {
+              /* store not ready */
+            }
           }
         }
         this.activeChatName = this._chatSettingsName.trim();
