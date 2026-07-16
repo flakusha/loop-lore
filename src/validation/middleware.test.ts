@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-explicit-any */
-
 import { describe, test, expect } from "bun:test";
 import { Elysia, t } from "elysia";
 import { TypeCompiler } from "@sinclair/typebox/compiler";

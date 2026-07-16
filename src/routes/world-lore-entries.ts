@@ -15,6 +15,7 @@ async function worldOwnershipCheck({
   parentId,
   userId,
   userRole,
+  _entityId,
 }: {
   database: Db;
   parentId: string;
@@ -22,8 +23,6 @@ async function worldOwnershipCheck({
   userId: string | null;
   userRole: string | null;
 }): Promise<boolean> {
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-  const { _entityId } = { _entityId: null, database, parentId, userId, userRole };
   const db = database as any;
   const world = await db
     .selectFrom("worlds")
@@ -32,7 +31,6 @@ async function worldOwnershipCheck({
     .executeTakeFirst();
   if (!world || (world.owner_id !== userId && userRole !== "admin")) return false;
 
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   const entityId = _entityId;
   if (entityId) {
     const entry = await db
@@ -87,13 +85,7 @@ export function worldLoreEntriesRoutes(opts: { database: Db; config: Config }): 
         sortOrder: 0,
       },
       createRequired: ["content"],
-      checkOwnership: worldOwnershipCheck as (opts: {
-        database: Db;
-        parentId: string;
-        _entityId: string | null;
-        userId: string | null;
-        userRole: string | null;
-      }) => Promise<boolean>,
+      checkOwnership: worldOwnershipCheck,
     },
     opts,
   );
