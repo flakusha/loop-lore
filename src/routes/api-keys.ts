@@ -9,15 +9,14 @@
  * Elysia plugin — uses auth guard for authentication.
  */
 
-/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access */
-
 import { Elysia } from "elysia";
 import type { Kysely } from "kysely";
 import type { DB } from "../db/schema";
 import type { Config } from "../config/schema";
-import { jsonResponse, jsonError, HttpStatus, ErrorCode } from "./http-utils";
+import { jsonResponse, jsonError, HttpStatus } from "./http-utils";
 import { uid } from "../utils";
 import { encryptValue } from "../crypto";
+import { unauthorized, forbidden, notFound } from "../validation/middleware";
 
 export function apiKeysRoutes({ database, config: cfg }: { database: Kysely<DB>; config: Config }) {
   const config = cfg;
@@ -25,19 +24,11 @@ export function apiKeysRoutes({ database, config: cfg }: { database: Kysely<DB>;
     .get("/api/user-api-keys", async (ctx) => {
       const userId = (ctx as any).userId as string | null;
       if (!userId) {
-        return jsonError({
-          message: "Unauthorized",
-          status: HttpStatus.Unauthorized,
-          code: ErrorCode.Unauthorized,
-        });
+        return unauthorized();
       }
 
       if (!config.byoKey.enabled) {
-        return jsonError({
-          message: "BYO API key feature is disabled",
-          status: HttpStatus.Forbidden,
-          code: ErrorCode.Forbidden,
-        });
+        return forbidden("BYO API key feature is disabled");
       }
 
       // eslint-disable-next-line unicorn/no-declarations-before-early-exit
@@ -53,22 +44,14 @@ export function apiKeysRoutes({ database, config: cfg }: { database: Kysely<DB>;
     .post("/api/user-api-keys", async (ctx) => {
       const userId = (ctx as any).userId as string | null;
       if (!userId) {
-        return jsonError({
-          message: "Unauthorized",
-          status: HttpStatus.Unauthorized,
-          code: ErrorCode.Unauthorized,
-        });
+        return unauthorized();
       }
 
       // eslint-disable-next-line unicorn/no-declarations-before-early-exit
       const request = (ctx as any).request as Request;
 
       if (!config.byoKey.enabled) {
-        return jsonError({
-          message: "BYO API key feature is disabled",
-          status: HttpStatus.Forbidden,
-          code: ErrorCode.Forbidden,
-        });
+        return forbidden("BYO API key feature is disabled");
       }
 
       let body: Record<string, unknown>;
@@ -90,7 +73,6 @@ export function apiKeysRoutes({ database, config: cfg }: { database: Kysely<DB>;
         return jsonError({
           message: "Server encryption key not configured — contact administrator",
           status: HttpStatus.InternalServerError,
-          code: ErrorCode.ServerError,
         });
       }
 
@@ -109,7 +91,6 @@ export function apiKeysRoutes({ database, config: cfg }: { database: Kysely<DB>;
         return jsonError({
           message: "Failed to encrypt API key",
           status: HttpStatus.InternalServerError,
-          code: ErrorCode.ServerError,
         });
       }
 
@@ -146,18 +127,12 @@ export function apiKeysRoutes({ database, config: cfg }: { database: Kysely<DB>;
       return jsonResponse({ ok: true, provider: providerName });
     })
     .delete("/api/user-api-keys/:provider", async (ctx) => {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access, unicorn/no-declarations-before-early-exit
       const params = (ctx as any).params as { provider: string };
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access
       const userId = (ctx as any).userId as string | null;
       const provider = params.provider;
 
       if (!userId) {
-        return jsonError({
-          message: "Unauthorized",
-          status: HttpStatus.Unauthorized,
-          code: ErrorCode.Unauthorized,
-        });
+        return unauthorized();
       }
 
       const existing = await database
@@ -168,7 +143,7 @@ export function apiKeysRoutes({ database, config: cfg }: { database: Kysely<DB>;
         .executeTakeFirst();
 
       if (!existing) {
-        return jsonError({ message: "Key not found", status: HttpStatus.NotFound, code: ErrorCode.NotFound });
+        return notFound("Key not found");
       }
 
       await database.deleteFrom("user_api_keys").where("id", "=", existing.id).execute();
