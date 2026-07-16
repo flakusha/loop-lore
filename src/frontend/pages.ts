@@ -6,3 +6,4 @@ import "./pages/characters";
 import "./pages/gallery";
 import "./pages/worlds";
 import "./pages/new-chat";
+import "./pages/quests";
