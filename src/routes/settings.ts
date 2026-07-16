@@ -106,14 +106,18 @@ export function settingsRoutes({ database }: { database: Kysely<DB> }) {
       }
       return handleGetSettings(database, userId);
     })
-    .patch("/api/settings", async (ctx: any) => {
-      const userId = ctx.userId as string | null;
-      if (!userId) {
-        return unauthorized();
-      }
-      const body = ctx.body as Record<string, unknown>;
-      return handleUpdateSettings(database, userId, body);
-    }, { body: t.Any() })
+    .patch(
+      "/api/settings",
+      async (ctx: any) => {
+        const userId = ctx.userId as string | null;
+        if (!userId) {
+          return unauthorized();
+        }
+        const body = ctx.body as Record<string, unknown>;
+        return handleUpdateSettings(database, userId, body);
+      },
+      { body: t.Any() },
+    )
     .get("/api/settings/export", async (ctx) => {
       const userId = (ctx as any).userId as string | null;
       if (!userId) {

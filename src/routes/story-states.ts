@@ -43,8 +43,7 @@ async function handleNpcState(
   const state = new WorldStateService(database);
   if (method === "GET") {
     const npcState = await state.getNpcState(actorId, worldId);
-    if (!npcState)
-      return notFound("NPC state not found");
+    if (!npcState) return notFound("NPC state not found");
     return jsonResponse(npcState);
   }
 
@@ -126,8 +125,7 @@ async function handleLocationState(
   const state = new WorldStateService(database);
   if (method === "GET") {
     const locState = await state.getLocationState(locationId);
-    if (!locState)
-      return notFound("Location state not found");
+    if (!locState) return notFound("Location state not found");
     return jsonResponse(locState);
   }
 
