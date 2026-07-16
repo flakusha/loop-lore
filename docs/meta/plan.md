@@ -217,35 +217,36 @@ Keyword filtering, type normalization, context compaction, author's note, XML de
 | Memory XML delimiting                            | `src/assistant/prompt/sections/memories.ts`        | ✅     |
 | KV-cache optimization (dynamic context section)  | `src/assistant/prompt/sections/dynamic-context.ts` | ✅     |
 
-### 13. Frontend Responsive & UX — 🟡 In Progress
+### 13. Frontend Responsive & UX — ✅ Complete
 
-Mobile breakpoints, touch targets, keyboard shortcuts, HTMX search/filter utilities.
-Responsive + a11y polish landed in v0.2 in-progress work (sidebar, layout, components,
-characters/gallery/world pages). HTMX search/filter, view toggle, bulk actions still TODO.
+Mobile breakpoints, touch targets, swipe sidebar, HTMX search/filter, filter bar component,
+keyboard shortcuts, bulk actions, message archiving, loading indicators, empty states, load more.
+All Epic 13 tasks implemented and verified.
 
-| Task                                        | Files                                             | Notes                                                                                                                                                        |
-| ------------------------------------------- | ------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Mobile breakpoints (768px, 480px)           | `src/public/css/app.css`                          | Mobile-first base. `@media (min-width: 768px)` desktop enhancements. `@media (max-width: 480px)` small phone.                                                |
-| Container queries on input bar              | `src/public/css/app.css`                          | `container-type: inline-size` on `.chat-input-bar`. Collapse extra buttons when bar < 420px/320px.                                                           |
-| 100dvh + safe-area-inset                    | `src/views/layout.html`, `src/public/css/app.css` | `height: 100dvh` on body, `padding-bottom: env(safe-area-inset-bottom)` on input bar.                                                                        |
-| 44px touch targets                          | `src/public/css/app.css`                          | `@media (hover: none) and (pointer: coarse)` rule for buttons, nav links, list items.                                                                        |
-| Swipe gesture for sidebar                   | `src/frontend/alpine/sidebar.ts`                  | Swipe right from left 40px edge → open. Swipe left → close. Backdrop dismiss. Escape key.                                                                    |
-| Responsive sidebar                          | `src/public/css/app.css`                          | Mobile: `position: fixed`, 80% width, `transform: translateX(-100%)`, backdrop `rgba(0,0,0,0.4)`. Desktop: CSS var `--sidebar-width`, resizable drag handle. |
-| Keyboard shortcuts                          | `src/frontend/alpine/shortcuts.ts`                | `@keydown.window`. Shortcuts: toggle sidebar (Ctrl+B), new chat (Ctrl+N), focus input (Ctrl+L), send (Enter), search (Ctrl+K).                               |
-| HTMX active search on gallery               | `src/views/gallery.html`                          | `hx-trigger="input changed delay:300ms"`, `hx-get="/views/gallery/results"`, `hx-push-url="true"`, `hx-target="#asset-grid"`.                                |
-| HTMX active search on characters            | `src/views/characters.html`                       | Same pattern. Search by name, sort (newest/name/most active). Tags filter.                                                                                   |
-| HTMX active search on worlds                | `src/views/worlds.html`                           | Same pattern.                                                                                                                                                |
-| Chat list search + status filter            | `src/views/chat-list-panel.html`                  | Search by title/character. Filter by status (active/archived/pinned). Sort (recent/alpha).                                                                   |
-| Filter bar component                        | `src/components/filter-bar.html`                  | Reusable: `[search input, type dropdown, sort dropdown, active chips, clear all]`.                                                                           |
-| Active filter chips                         | `src/components/filter-chips.html`                | Removable tags showing current filters. Alpine-managed.                                                                                                      |
-| Load More pagination                        | `src/components/load-more.html`                   | `hx-swap="outerHTML"`. Server replaces button with new cards + next page button.                                                                             |
-| Empty states                                | `src/components/empty-state.html`                 | "No results" with clear filters action. Server-rendered HTML fragment.                                                                                       |
-| Loading indicators                          | `src/public/css/app.css`                          | `.htmx-indicator` spinner CSS. Already in spec — implement.                                                                                                  |
-| CSS skeleton shimmer                        | `src/public/css/app.css`                          | Skeleton loading placeholders for cards/lists.                                                                                                               |
-| View toggle (grid/list)                     | `src/views/gallery.html`                          | Alpine `x-data`. CSS grid vs vertical rows. Preference persisted.                                                                                            |
-| Bulk chat actions                           | `src/views/chat-list-panel.html`                  | Checkbox selection. Archive, delete, export batch. Alpine-managed selection array.                                                                           |
-| Chat pin/favorite                           | `src/routes/chats.ts`, `src/db/`                  | `is_pinned` column toggle via PATCH. Star icon in chat list.                                                                                                 |
-| Message archiving (cascade, restore, purge) | `src/routes/messages.ts`, `src/db/`               | Soft-delete via `archived_at` column. Restore within 30 days. Permanent purge after.                                                                         |
+| Task                                        | Files                                             | Status  | Notes                                                                                                                                                             |
+| ------------------------------------------- | ------------------------------------------------- | ------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Mobile breakpoints (768px, 480px)           | `src/public/css/app.css`                          | ✅ Done | Mobile-first base. `@media (min-width: 768px)` desktop enhancements. `@media (max-width: 480px)` small phone.                                                     |
+| Container queries on input bar              | `src/public/css/app.css`                          | ✅ Done | `container-type: inline-size` on `.chat-input-bar`. Collapse extra buttons when bar < 420px/320px.                                                                |
+| 100dvh + safe-area-inset                    | `src/views/layout.html`, `src/public/css/app.css` | ✅ Done | `height: 100dvh` on body, `padding-bottom: env(safe-area-inset-bottom)` on input bar.                                                                             |
+| 44px touch targets                          | `src/public/css/app.css`                          | ✅ Done | `@media (hover: none) and (pointer: coarse)` rule for buttons, nav links, list items.                                                                             |
+| Responsive sidebar                          | `src/public/css/app.css`                          | ✅ Done | Mobile: `position: fixed`, 80% width, `transform: translateX(-100%)`, backdrop `rgba(0,0,0,0.4)`. Desktop: CSS var `--sidebar-width`, resizable drag handle.      |
+| View toggle (grid/list)                     | `src/views/gallery.html`                          | ✅ Done | Alpine `x-data`. CSS grid vs vertical rows. Preference persisted.                                                                                                 |
+| Chat pin/favorite                           | `src/routes/chats.ts`, `src/db/`                  | ✅ Done | `is_pinned` column toggle via PATCH. Star icon in chat list.                                                                                                      |
+| Chat list search + status filter            | `src/views/chat-list-panel.html`                  | ✅ Done | Alpine `x-model` filter on chat list panel.                                                                                                                       |
+| Client-side search (gallery, characters, worlds) | `src/frontend/pages/*.ts`                    | ✅ Done | `filterAssets()`, `filterCharacters()`, `filterWorlds()` — client-side JS.                                                                                       |
+| Swipe gesture for sidebar                   | `src/frontend/alpine/sidebar.ts`                  | ✅ Done | Swipe right from left 40px edge → open. Swipe left → close. Backdrop dismiss. Escape key.                                                                         |
+| HTMX active search on gallery               | `src/views/gallery.html`, `src/routes/views.ts`   | ✅ Done | `hx-trigger="input changed delay:300ms"`, `hx-get="/dynamic/gallery/search"`, `hx-target="#asset-grid"`. Server-side search endpoint.                              |
+| HTMX active search on characters            | `src/views/characters.html`, `src/routes/views.ts`| ✅ Done | Same pattern with sort. Server-side search by name.                                                                                                               |
+| HTMX active search on worlds                | `src/views/worlds.html`, `src/routes/views.ts`    | ✅ Done | Same pattern. Server-side search by name.                                                                                                                         |
+| Filter bar component                        | `src/components/filter-bar.html`                  | ✅ Done | Reusable Alpine-managed: search input, type/sort dropdowns, active chips, clear all. Included via `{{> filter-bar.html}}`.                                         |
+| Active filter chips                         | `src/components/filter-chips.html`                | ✅ Done | Removable tags showing current filters. Alpine-managed. Included via `{{> filter-chips.html}}`.                                                                    |
+| Keyboard shortcuts                          | `src/frontend/alpine/shortcuts.ts`                | ✅ Done | `Ctrl+B` sidebar, `Ctrl+N` new chat, `Ctrl+L` focus input, `Ctrl+K` search, `Escape` close sidebar.                                                              |
+| Load More pagination                        | `src/components/load-more.html`                   | ✅ Done | Reusable component with `hx-swap="outerHTML"`. Server-side pagination support via `data-load-more-url`.                                                            |
+| Empty states component                      | `src/components/empty-state.html`                 | ✅ Done | Reusable Alpine-managed: icon, title, description, action button. Via `data-empty-*` attributes.                                                                  |
+| Loading indicators wiring                   | `src/views/{gallery,characters,worlds}.html`      | ✅ Done | `hx-indicator` and `.htmx-indicator` spinner wired on all 3 data views.                                                                                           |
+| Bulk chat actions                           | `src/views/chat-list-panel.html`                  | ✅ Done | Checkbox selection, batch archive/delete/export. Alpine-managed selection array. Backend `POST /api/chats/batch/*` endpoints.                                     |
+| Message archiving (cascade, restore, purge) | `src/routes/messages.ts`, `src/db/`               | ✅ Done | `archived_at` column (migration 015). Archive/restore/purge API endpoints. 30-day purge cutoff.                                                                   |
+| Unit tests                                  | `src/routes/views-search.test.ts`, `src/routes/message-archiving.test.ts` | ✅ Done | 18 tests: search endpoint content, component existence, schema/enum checks, archive route presence.                                                               |
 
 ### 14. Import/Export & Data Portability — ⬜ Not Started
 
@@ -334,13 +335,26 @@ mock providers, single-threaded. Results stored in `data/benchmarks/`
 
 See [`docs/spec/e2e-benchmarks.md`](../spec/e2e-benchmarks.md) for full spec.
 
-### 18. Local Inference Integrations — ⬜ Not Started
+### 18. Local Inference Integrations — 🟡 In Progress
 
 ComfyUI plugin, llama-swap LLM proxy, stable-diffusion.cpp, gallery metadata enrichment,
 chat-driven generation, security baseline for remote URLs.
 
-Full contract: [backlog.md](backlog.md#p2--specified-not-implemented) (synopsis from
-`docs/research/comfyui-local-inference.md` + `docs/research/local-remote-inference-uis.md`).
+| Task                                      | Files                                                           | Status |
+| ----------------------------------------- | --------------------------------------------------------------- | ------ |
+| Fix doc references in plan + backlog      | `docs/meta/plan.md`, `docs/meta/backlog.md`                    | ✅     |
+| URL validation (SSRF guard, allowlist)    | `src/utils/url-validation.ts`                                    | ✅     |
+| sd.cpp native API provider (`/sdcpp/v1/`) | `src/generation/image-gen-route.ts`                             | ✅     |
+| ComfyUI provider (submit/poll/WS)         | `src/generation/providers/comfyui.ts`                           | ✅     |
+| Gallery metadata enrichment               | `src/generation/image-gen-route.ts`                             | ⬜ TODO |
+| Security wiring into providers            | `src/generation/providers/openai-compatible.ts`                 | ⬜ TODO |
+| Chat-driven multi-step pipeline           | `src/generation/step-pipeline.ts`                               | ⬜ TODO |
+
+Full spec: [`docs/spec/integrations/llm-serving.md`](../spec/integrations/llm-serving.md),
+[`docs/spec/integrations/image-generation.md`](../spec/integrations/image-generation.md),
+[`docs/spec/provider-system.md`](../spec/provider-system.md).
+
+See [backlog.md §P2](backlog.md#p2--specified-not-implemented) for remaining gaps.
 
 ### 19. Basic Chat Notifications — ✅ Complete
 

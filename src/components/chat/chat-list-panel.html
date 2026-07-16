@@ -26,12 +26,32 @@
       <button class="btn-icon" @click="$store.ui.showChatList = false" title="Close">&times;</button>
     </div>
   </div>
+  <!-- Batch action bar -->
+  <div
+    class="batch-bar"
+    x-show="selectedChats.length > 0"
+    style="display: flex; gap: var(--space-2); padding: var(--space-2) var(--space-3); border-bottom: 1px solid var(--border-default); background: var(--bg-tertiary); align-items: center"
+    x-cloak
+  >
+    <span style="font-size: 12px; color: var(--text-secondary)" x-text="`${selectedChats.length} selected`"></span>
+    <button class="btn-xs" @click="batchArchive()" title="Archive selected">📦 Archive</button>
+    <button class="btn-xs" @click="batchDelete()" title="Delete selected" style="color: var(--accent-red)">🗑 Delete</button>
+    <button class="btn-xs" @click="batchExport()" title="Export selected">📥 Export</button>
+    <button class="btn-xs" @click="selectedChats = []" title="Clear selection">✕ Clear</button>
+  </div>
   <div id="chat-list">
     <template x-if="chats.length === 0">
       <div class="nav-item" style="color: var(--text-tertiary); font-size: 13px">No chats yet</div>
     </template>
     <template x-for="chat in filteredChats" :key="chat.id">
-      <div class="nav-item-row">
+      <div class="nav-item-row" :class="{ selected: selectedChats.includes(chat.id) }">
+        <input
+          type="checkbox"
+          :checked="selectedChats.includes(chat.id)"
+          @change="toggleChatSelection(chat.id)"
+          style="margin: 0 0 0 var(--space-2); flex-shrink: 0"
+          aria-label="Select chat"
+        />
         <a
           class="nav-item"
           :class="{ active: activeChat === chat.id }"
@@ -44,10 +64,10 @@
         <span class="nav-item-actions">
           <button
             class="btn-icon btn-xs"
-            :title="chat.isPinned ? 'Unpin' : 'Pin'"
+            :title="chat.isPinned === 'pinned' ? 'Unpin' : 'Pin'"
             @click.prevent="toggleChatPin(chat.id)"
-            :style="chat.isPinned ? 'color:var(--accent-yellow)' : ''"
-            x-text="chat.isPinned ? '★' : '☆'"
+            :style="chat.isPinned === 'pinned' ? 'color:var(--accent-yellow)' : ''"
+            x-text="chat.isPinned === 'pinned' ? '★' : '☆'"
           ></button>
           <button class="btn-icon btn-xs" title="Rename" @click.prevent="renameChat(chat.id)">✏️</button>
           <button class="btn-icon btn-xs" title="Delete" @click.prevent="deleteChat(chat.id, $$event)">
