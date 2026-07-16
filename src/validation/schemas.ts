@@ -152,7 +152,7 @@ export const ChatCreateBody = t.Object({
   type: t.Optional(ChatTypeSchema),
   mode: t.Optional(ChatModeSchema),
   turnStrategy: t.Optional(TurnStrategySchema),
-  participantIds: t.Optional(t.Array(t.String())),
+  participantIds: t.Optional(t.Array(t.String())), // eslint-disable-line unicorn/max-nested-calls
   worldId: OptionalId,
   currentLocationId: OptionalId,
 });
@@ -211,12 +211,14 @@ export const MessageCreateBody = t.Object({
   idempotencyKey: t.Optional(t.String()),
   attachments: t.Optional(
     t.Array(
+      /* eslint-disable unicorn/max-nested-calls */
       t.Object({
         assetId: t.String(),
         order: t.Optional(t.Numeric()),
         caption: t.Optional(t.String()),
         label: t.Optional(t.String()),
       }),
+      /* eslint-enable unicorn/max-nested-calls */
     ),
   ),
 });

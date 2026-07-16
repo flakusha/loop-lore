@@ -31,7 +31,6 @@ export function apiKeysRoutes({ database, config: cfg }: { database: Kysely<DB>;
         return forbidden("BYO API key feature is disabled");
       }
 
-      // eslint-disable-next-line unicorn/no-declarations-before-early-exit
       const keys = await database
         .selectFrom("user_api_keys")
         .select(["provider_name", "created_at", "updated_at"])
