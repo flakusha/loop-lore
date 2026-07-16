@@ -8,26 +8,29 @@ Deep-dive docs in `/docs/` — read before touching related code:
 
 ### Core System
 
-| File                            | Covers                                                                  |
-| ------------------------------- | ----------------------------------------------------------------------- |
-| `docs/spec/schema.md`           | Full DB schema (all tables: core, generation, story, actors, assets)    |
-| `docs/spec/messages.md`         | Message persistence, detail levels, invalid message handling            |
-| `docs/spec/users-sessions.md`   | User roles, remote sessions, demo/solo mode                             |
-| `docs/spec/assets.md`           | Asset system (images/audio/video), upload pipeline, polymorphic linking |
-| `docs/spec/actors.md`           | Actor data model: character cards, memories, lorebooks, inventory       |
-| `docs/spec/character-setup.md`  | Character & persona system: multi-format import/export, impersonation   |
-| `docs/spec/rpg-mechanics.md`    | RPG mechanics: stats, combat, equipment, dice, skills, XP, loot         |
-| `docs/spec/architecture.md`     | System layers, request flow, docs serving                               |
-| `docs/spec/build-deploy.md`       | Minimum-build setup, build pipeline, deployment options                 |
-| `docs/spec/implementation.md`   | Tech stack, all modules (db, gen, story, assets, assistant, TUI)        |
-| `docs/spec/tui.md`              | Blessed component hierarchy, keyboard map, data flow                    |
-| `docs/spec/plugin-system.md`    | Plugin architecture: types, lifecycle, security, examples               |
-| `docs/spec/memory-system.md`    | Three-tier memory: episodic, semantic, procedural                       |
-| `docs/spec/artifacts-system.md` | Code, documents, datasets as polymorphic assets                         |
-| `docs/meta/plan.md`             | MVP implementation checklist with week-by-week tasks                    |
-| `docs/spec/api-routes.md`       | API route contract — all endpoints, conventions, error envelope         |
-| `docs/spec/auth-middleware.md`  | Auth middleware — token flow, session model, role guard, rate limiting  |
-| `docs/spec/error-envelope.md`   | Standard error envelope — codes, shapes, patterns, frontend sync        |
+| File                               | Covers                                                                  |
+| ---------------------------------- | ----------------------------------------------------------------------- |
+| `docs/spec/schema.md`              | Full DB schema (all tables: core, generation, story, actors, assets)    |
+| `docs/spec/messages.md`            | Message persistence, detail levels, invalid message handling            |
+| `docs/spec/users-sessions.md`      | User roles, remote sessions, demo/solo mode                             |
+| `docs/spec/assets.md`              | Asset system (images/audio/video), upload pipeline, polymorphic linking |
+| `docs/spec/actors.md`              | Actor data model: character cards, memories, lorebooks, inventory       |
+| `docs/spec/character-setup.md`     | Character & persona system: multi-format import/export, impersonation   |
+| `docs/spec/rpg-mechanics.md`       | RPG mechanics: stats, combat, equipment, dice, skills, XP, loot         |
+| `docs/spec/architecture.md`        | System layers, request flow, docs serving                               |
+| `docs/spec/build-deploy.md`        | Minimum-build setup, build pipeline, deployment options                 |
+| `docs/spec/implementation.md`      | Tech stack, all modules (db, gen, story, assets, assistant, TUI)        |
+| `docs/spec/tui.md`                 | Blessed component hierarchy, keyboard map, data flow                    |
+| `docs/spec/plugin-system.md`       | Plugin architecture: types, lifecycle, security, examples               |
+| `docs/spec/memory-system.md`       | Three-tier memory: episodic, semantic, procedural                       |
+| `docs/spec/artifacts-system.md`    | Code, documents, datasets as polymorphic assets                         |
+| `docs/spec/crypto.md`              | Encryption: actor keys, chat keys, BYOK, SMK, key hierarchy             |
+| `docs/spec/logging.md`             | Structured logging: levels, formatters, censors, rotation, transport    |
+| `docs/spec/content-compression.md` | Content encoding: gzip/zstd/brotli, minification, hash injection        |
+| `docs/spec/api-routes.md`          | API route contract — all endpoints, conventions, error envelope         |
+| `docs/spec/auth-middleware.md`     | Auth middleware — token flow, session model, role guard, rate limiting  |
+| `docs/spec/error-envelope.md`      | Standard error envelope — codes, shapes, patterns, frontend sync        |
+| `docs/meta/plan.md`                | MVP implementation checklist with week-by-week tasks                    |
 
 ### Frontend UX Spec (`docs/frontend/`)
 
@@ -48,23 +51,23 @@ before building any frontend feature.
 | `docs/frontend/chat/memories.md`          | Character/assistant/world memories, memory selection, auto-purge, token budget                                                     |
 | `docs/frontend/chat/commands-and-misc.md` | Keyboard shortcuts, states summary, image pipeline, system/narration messages                                                      |
 | `docs/frontend/chat/multi-llm-story.md`   | Multi-LLM story generation: GM, turn-taking, quests, quality evaluation, synthetic data                                            |
-| `docs/frontend/chat/assistant.md`         | Assistant as GM/Moderator, tool assistance, idea suggestions, text improvement                                                      |
-| `docs/frontend/chat/export.md`            | Chat export formats, public sharing, read-only links, story publishing                                                              |
-| `docs/frontend/chat/group-chat.md`        | Multi-participant chat, turn order, @mentions, initiative tracking                                                               |
+| `docs/frontend/chat/assistant.md`         | Assistant as GM/Moderator, tool assistance, idea suggestions, text improvement                                                     |
+| `docs/frontend/chat/export.md`            | Chat export formats, public sharing, read-only links, story publishing                                                             |
+| `docs/frontend/chat/group-chat.md`        | Multi-participant chat, turn order, @mentions, initiative tracking                                                                 |
 | `docs/frontend/characters.md`             | Character list grid, create/edit form                                                                                              |
 | `docs/frontend/gallery.md`                | Asset gallery grid, preview modal, upload dialog                                                                                   |
-| `docs/frontend/admin.md`                  | Admin panel: user mgmt, chat mgmt, world permissions, audit log, content review, system config                                      |
+| `docs/frontend/admin.md`                  | Admin panel: user mgmt, chat mgmt, world permissions, audit log, content review, system config                                     |
 | `docs/frontend/settings.md`               | Settings sections: general, chat, API config, theme customization, data management                                                 |
 | `docs/frontend/worlds.md`                 | World entity: list, detail, create/edit                                                                                            |
 | `docs/frontend/login.md`                  | Login page: auth card, demo mode, error states                                                                                     |
 | `docs/frontend/encryption.md`             | User secret keys, AES-256-GCM at-rest message encryption, API key encryption, key hierarchy                                        |
-| `docs/frontend/age-gate.md`              | Age verification page, self-declaration flow, redirect behavior                                                                    |
+| `docs/frontend/age-gate.md`               | Age verification page, self-declaration flow, redirect behavior                                                                    |
 | `docs/frontend/component-architecture.md` | HTMX/Alpine.js boundaries, component lifecycle, state management                                                                   |
 | `docs/frontend/headers-management.md`     | Response headers (security/performance), frontend header components, htmx navigation                                               |
-| `docs/frontend/internationalization.md`   | UI translation, LLM language selection, actor language preferences, i18n architecture                                           |
+| `docs/frontend/internationalization.md`   | UI translation, LLM language selection, actor language preferences, i18n architecture                                              |
 | `docs/frontend/components.md`             | Shared components: toasts, modals, spinners, skeletons, empty states, chips, drop zones                                            |
-| `docs/frontend/notifications.md`          | Notification system: types, storage, delivery, prompt injection, preferences, lifecycle                                             |
-| `docs/frontend/prompt-creation.md`        | Prompt templates, variable injection, actor context, generation tuning                                                               |
+| `docs/frontend/notifications.md`          | Notification system: types, storage, delivery, prompt injection, preferences, lifecycle                                            |
+| `docs/frontend/prompt-creation.md`        | Prompt templates, variable injection, actor context, generation tuning                                                             |
 
 ---
 
@@ -98,6 +101,7 @@ Reimplement SillyTavern RPG chat with:
 ```
 src/
 ├── server.ts            HTTP entry
+├── elysia-app.ts        Elysia app setup
 ├── db/                  DB layer
 │   ├── enums.ts         Centralized enum source of truth
 │   ├── schema.ts        Kysely table types (all tables)
@@ -107,14 +111,38 @@ src/
 │   ├── schema.ts        Config interface + defaults
 │   └── load.ts          File detection, parse, merge, validate
 ├── routes/              REST handlers
-├── assets/              service.ts | controller.ts | types.ts
-├── assistant/           service.ts | controller.ts | types.ts
+├── assets/              Media CRUD, uploads, metadata extraction
+├── assistant/           Prompt assembly, rule-based help
 ├── generation/          LLM generation: types, cancellation, continuation,
-│                        step-pipeline, repetition detection, policy detection
-├── story/               Multi-LLM story: turn-manager, types
+│                        step-pipeline, repetition detection, policy detection,
+│                        streaming, prompt templates
+├── story/               Multi-LLM story: GM, quests, quality eval, world state.
+│                        Turn orchestration in src/turning/; story/ re-exports.
+├── turning/             Generalized turn orchestration (canonical TurnManager)
+├── group-chat/          Multi-participant chat: mention parsing, turn selection
 ├── content/             Content encoding (gzip/zstd/brotli), minification, compression
+├── crypto/              Encryption: actor keys, chat keys, BYOK, SMK, pipeline
+├── transport/           HTTP/1.1, HTTP/2, WebSocket, SSE, negotiation, compression
+├── middleware/           Auth, rate limiting, admin gate, headers, pipeline
+├── logger/              Structured logging with levels, formatters, censors, rotation
+├── frontend/            Web UI: htmx app shell, chat vendor, Alpine.js, htmx-encrypt
+├── personas/            Persona CRUD
+├── plugins/             Plugin system: loader, registry, types
+├── characters/          Character steganography
+├── profanity/           Profanity filtering
+├── admin/               Model role overrides, provider health
+├── build/               Build pipeline
+├── services/            External server manager
+├── components/          Reusable HTML component partials
+├── partials/            HTMX partial templates
 ├── age-gate/            Age verification service, controller, tests
-├── tui/                 app.ts | chat.ts | gallery-view.ts | input.ts
+├── tui/                 Blessed widgets: app, chat, asset view
+├── utils/               Safe JSON, date helpers
+├── utils.ts             Shared utility functions (root)
+├── views/               HTMX page templates (server-rendered web UI)
+├── public/              Static assets (CSS, images, favicon, locales)
+├── scripts/             Commit check, version bump
+├── test-utils/          Mock provider for tests
 data/                    Runtime data (SQLite DB, uploaded assets)
 docs/                    Specs, architecture, data model
 ```
@@ -155,8 +183,8 @@ See `.agents/references/cli-config.md` for command reference.
 2. Check existing code in `src/` for patterns (look at similar implementations)
 3. Plan: what files change/create? Tests? Side effects?
 4. Implement: follow conventions above
-5. Verify: `bun format && bun typecheck && bun run src/server.ts` for server,
-   `bun run tui` for TUI
+5. Verify: `bun run format:fix && bun run check && bun test src/` for server,
+   `bun run src/tui/app.ts` for TUI
 
 ---
 

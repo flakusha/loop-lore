@@ -106,6 +106,7 @@ And here's the contract: [asset:quest_contract.pdf]
 ```
 
 These markers are:
+
 - Invisible when rendered (replaced by the actual asset on send)
 - Counted toward token limit (20 tokens per marker)
 - Validated on send (asset must exist, user must have access)
@@ -113,16 +114,17 @@ These markers are:
 
 ### Upload Limits
 
-| Limit               | Default | Configurable |
-| ------------------- | ------- | ------------ |
-| Max file size       | 10 MB   | Yes          |
-| Max files per msg   | 10      | Yes          |
-| Max total size/msg  | 50 MB   | Yes          |
-| Accepted types      | See table above | Yes   |
+| Limit              | Default         | Configurable |
+| ------------------ | --------------- | ------------ |
+| Max file size      | 10 MB           | Yes          |
+| Max files per msg  | 10              | Yes          |
+| Max total size/msg | 50 MB           | Yes          |
+| Accepted types     | See table above | Yes          |
 
 ### Disabled State During Upload
 
 When uploading:
+
 - 📎 button shows spinner animation
 - Send button remains enabled (text can be sent without attachments)
 - If user sends while upload is in progress:
