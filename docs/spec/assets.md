@@ -230,11 +230,11 @@ still restricted in who can view it.
 
 ### Visibility States
 
-| State    | Meaning                                                         |
-| -------- | --------------------------------------------------------------- |
-| `private`  | Only the owner (`uploaded_by`) can view, download, or link.      |
-| `shared`   | Owner plus explicitly listed actors/users can view and download. |
-| `public`   | Any authenticated user can discover, view, and download.         |
+| State     | Meaning                                                          |
+| --------- | ---------------------------------------------------------------- |
+| `private` | Only the owner (`uploaded_by`) can view, download, or link.      |
+| `shared`  | Owner plus explicitly listed actors/users can view and download. |
+| `public`  | Any authenticated user can discover, view, and download.         |
 
 **Default:** `private` on upload.
 
@@ -252,13 +252,13 @@ for non-immutable endpoints).
 
 ### Access Control Matrix
 
-| Actor          | `private`                | `shared`                      | `public`            |
-| -------------- | ------------------------ | ----------------------------- | ------------------- |
-| Owner          | Full (view/download/link) | Full                          | Full                |
-| Listed in share| —                        | View + download               | View + download     |
-| Other user     | —                        | —                             | View + download     |
-| Admin          | Full (override)          | Full (override)               | Full                |
-| Unauthenticated| —                        | —                             | — (auth required)   |
+| Actor           | `private`                 | `shared`        | `public`          |
+| --------------- | ------------------------- | --------------- | ----------------- |
+| Owner           | Full (view/download/link) | Full            | Full              |
+| Listed in share | —                         | View + download | View + download   |
+| Other user      | —                         | —               | View + download   |
+| Admin           | Full (override)           | Full (override) | Full              |
+| Unauthenticated | —                         | —               | — (auth required) |
 
 ### Visibility and Linking Interaction
 
@@ -303,10 +303,10 @@ with party" workflows.
 
 ### Sharing vs Linking
 
-| Concept   | Purpose                                       | Table            | Direction            |
-| --------- | --------------------------------------------- | ---------------- | -------------------- |
-| **Link**    | "This asset belongs to / describes this entity" | `asset_links`     | Asset → Entity       |
-| **Share**   | "This actor may view/download this asset"       | `asset_shares`    | Asset → Actor        |
+| Concept   | Purpose                                         | Table          | Direction      |
+| --------- | ----------------------------------------------- | -------------- | -------------- |
+| **Link**  | "This asset belongs to / describes this entity" | `asset_links`  | Asset → Entity |
+| **Share** | "This actor may view/download this asset"       | `asset_shares` | Asset → Actor  |
 
 A link says where an asset lives. A share says who can see it. They are
 independent — you can link without sharing, share without linking, or both.
@@ -315,13 +315,13 @@ independent — you can link without sharing, share without linking, or both.
 
 Table: `asset_shares` — new table, added in a future migration.
 
-| Column            | Type    | Constraints                      | Notes                       |
-| ----------------- | ------- | -------------------------------- | --------------------------- |
-| `id`              | TEXT    | PK, UUID                         |                             |
-| `asset_id`        | TEXT    | FK → assets.id, NOT NULL         | The asset being shared      |
-| `shared_with_id`  | TEXT    | FK → actors.id, NOT NULL         | Who receives access         |
-| `shared_by_id`    | TEXT    | FK → actors.id, NOT NULL         | Who granted access          |
-| `created_at`      | TEXT    | DEFAULT CURRENT_TIMESTAMP        |                             |
+| Column           | Type | Constraints               | Notes                  |
+| ---------------- | ---- | ------------------------- | ---------------------- |
+| `id`             | TEXT | PK, UUID                  |                        |
+| `asset_id`       | TEXT | FK → assets.id, NOT NULL  | The asset being shared |
+| `shared_with_id` | TEXT | FK → actors.id, NOT NULL  | Who receives access    |
+| `shared_by_id`   | TEXT | FK → actors.id, NOT NULL  | Who granted access     |
+| `created_at`     | TEXT | DEFAULT CURRENT_TIMESTAMP |                        |
 
 **Indexes:** `(asset_id)`, `(shared_with_id)`, `(asset_id, shared_with_id)` unique.
 
@@ -423,18 +423,18 @@ Each asset has a `version` integer (starts at 1). When an asset is updated
 
 Table: `asset_versions`
 
-| Column      | Type    | Notes                                  |
-| ----------- | ------- | -------------------------------------- |
-| id          | TEXT    | PK, UUID                               |
-| asset_id    | TEXT    | FK → assets.id                         |
-| version     | INTEGER | Sequential version number              |
-| filename    | TEXT    | Original filename at this version      |
-| mime_type   | TEXT    | MIME type at this version              |
-| size_bytes  | INTEGER | File size at this version              |
-| storage_path| TEXT    | Path to this version's file            |
-| created_by  | TEXT    | FK → actors.id                         |
-| created_at  | TEXT    | DEFAULT CURRENT_TIMESTAMP              |
-| changelog   | TEXT    | Optional note: "Updated face, added hat"|
+| Column       | Type    | Notes                                    |
+| ------------ | ------- | ---------------------------------------- |
+| id           | TEXT    | PK, UUID                                 |
+| asset_id     | TEXT    | FK → assets.id                           |
+| version      | INTEGER | Sequential version number                |
+| filename     | TEXT    | Original filename at this version        |
+| mime_type    | TEXT    | MIME type at this version                |
+| size_bytes   | INTEGER | File size at this version                |
+| storage_path | TEXT    | Path to this version's file              |
+| created_by   | TEXT    | FK → actors.id                           |
+| created_at   | TEXT    | DEFAULT CURRENT_TIMESTAMP                |
+| changelog    | TEXT    | Optional note: "Updated face, added hat" |
 
 **Index:** `(asset_id, version)` unique.
 

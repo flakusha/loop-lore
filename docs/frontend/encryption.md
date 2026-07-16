@@ -6,6 +6,59 @@
 
 ---
 
+## Chat Encryption Tiers
+
+Chats have three encryption levels, set at creation and immutable afterward.
+The level determines who holds keys and how content is accessed.
+
+### 1. Public
+
+Messages stored unencrypted or with server-side key only. Accessible without
+authentication for public-facing pages. Server decrypts content for anonymous
+requests.
+
+Use for: public story pages, shared lore, demo chats.
+
+### 2. Standard (server-mediated)
+
+Messages encrypted at rest with actor-derived chat keys. Keys are distributed
+via server when users gain access (invite, join, role promotion). Server holds
+keys and decrypts for authorized users.
+
+Use for: normal roleplay chats, group chats with permissioned access.
+
+### 3. Private (end-to-end)
+
+Messages encrypted end-to-end. Server never sees plaintext — clients encrypt
+and decrypt locally. LLM responses encrypted before storage.
+
+Key exchange happens directly between clients; server stores encrypted key
+bundles but cannot decrypt them.
+
+Rules:
+
+- On user leave: new keys issued for subsequent messages (forward secrecy).
+  Old keys cannot decrypt new content.
+- 100% private chats cannot feed world/location lore or global memories.
+  Local per-user memories may be stored encrypted.
+- Assets created in private chats cannot be re-linked to other chats.
+  Re-linking is restricted to within the same private chat.
+- Users must explicitly share keys when inviting other participants.
+- Sharing with LLM is automatic (server coordinates decryption for generation).
+
+### Immutability
+
+Once a chat's encryption level is set, it cannot be changed. To switch levels,
+clone content into a new chat with the desired level.
+
+### Build Order
+
+1. **Public** — ship first. No crypto dependency, validates all other chat flows.
+2. **Standard** — ship second. Server-mediated, reuses existing pipeline.
+3. **Private** — ship last. Requires external security audit before production.
+
+---
+
 ## Threat Model
 
 | Threat                     | Mitigation                                         | Coverage |
