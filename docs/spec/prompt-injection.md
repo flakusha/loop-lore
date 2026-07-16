@@ -138,11 +138,13 @@ stored in the database for audit trails and future validation hooks, but is STRI
 prompt reaches the LLM. Instruction-tuned models parse static HTML/XML reliably without needing
 nonce attributes.
 
-See `src/assistant/xml-utils.ts` for `wrapSection()` and `escapeXml()` helpers. Sections wrapped:
-`<lore>`, `<memory_context>`, `<user_persona>`, `<post_history>`, `<story_context>`. Keep
-`actors.system_prompt` + actor header as the only unwrapped authoritative instructions. Reserve
-JSON/TOML for structured _data_ the model consumes, never for delimiting. Opaque/base64 only for
-reference data that must not be executed.
+Alternative wrapper formats (`fence`, `sentinel`) are supported for future LLMs that do not use
+XML for instruction tuning. See `src/assistant/xml-utils.ts` — `wrapContent(tag, content, format)`.
+
+Sections wrapped: `<lore>`, `<memory_context>`, `<user_persona>`, `<post_history>`,
+`<story_context>`. Keep `actors.system_prompt` + actor header as the only unwrapped authoritative
+instructions. Reserve JSON/TOML for structured _data_ the model consumes, never for delimiting.
+Opaque/base64 only for reference data that must not be executed.
 
 ---
 
