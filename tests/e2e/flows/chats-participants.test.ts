@@ -52,7 +52,7 @@ describe("Chat Participants E2E", () => {
       roleInChat: "member",
     });
     expect(res.ok).toBe(false);
-    expect(res.status).toBe(400);
+    expect(res.status).toBe(422);
   });
 
   test("DELETE /api/chats/:id/participants/:actorId removes participant", async () => {

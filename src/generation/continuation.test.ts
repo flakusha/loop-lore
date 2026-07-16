@@ -573,7 +573,7 @@ describe("cancelGeneration captures partial content", () => {
       totalSteps: 1,
     };
 
-    const { attemptId } = startGenerationTracking({ options, db: testDb });
+    const { attemptId } = await startGenerationTracking({ options, db: testDb });
 
     await processStreamingChunk({ attemptId, chunk: "Hello, this is a test response.", db: testDb });
     await processStreamingChunk({ attemptId, chunk: " Continuing with more content.", db: testDb });
