@@ -22,7 +22,10 @@
       :disabled="loading"
       hx-indicator="closest .load-more .htmx-indicator"
     >
-      <span x-show="!loading" x-text="$el.closest('[data-load-more-label]')?.dataset.loadMoreLabel || 'Load more'"></span>
+      <span
+        x-show="!loading"
+        x-text="$el.closest('[data-load-more-label]')?.dataset.loadMoreLabel || 'Load more'"
+      ></span>
       <span x-show="loading" class="spinner"></span>
     </button>
   </template>

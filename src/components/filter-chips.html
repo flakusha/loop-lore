@@ -8,17 +8,11 @@
     <template x-for="chip in activeChips" :key="chip.key">
       <span class="tag active">
         <span x-text="chip.label"></span>
-        <button
-          class="btn-xs"
-          @click="removeChip(chip.key)"
-          :aria-label="'Remove ' + chip.label + ' filter'"
-        >&times;</button>
+        <button class="btn-xs" @click="removeChip(chip.key)" :aria-label="'Remove ' + chip.label + ' filter'">
+          &times;
+        </button>
       </span>
     </template>
-    <button
-      class="btn-xs"
-      @click="clearAll()"
-      aria-label="Clear all filters"
-    >Clear all</button>
+    <button class="btn-xs" @click="clearAll()" aria-label="Clear all filters">Clear all</button>
   </div>
 </template>
