@@ -28,12 +28,11 @@ export const examplesSection: SectionBuilder = {
 
       const label = trimmed.slice(0, colonIdx).trim().toLowerCase();
       const content = trimmed.slice(colonIdx + 1).trim();
-      const role =
-        ["assistant", "character", "{{char}}"].includes(label)
-          ? "character"
-          : label === "user" || label === "{{user}}"
-            ? "user"
-            : "user";
+      const role = ["assistant", "character", "{{char}}"].includes(label)
+        ? "character"
+        : label === "user" || label === "{{user}}"
+          ? "user"
+          : "user";
       examples.push({ role, content });
     }
 

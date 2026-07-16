@@ -82,7 +82,9 @@ export class NotificationsManager {
     try {
       this.es = new EventSource("/api/activity/stream");
       this.es.addEventListener("activity", (ev) => {
-        const data = jsonParseOr<{ chats: Record<string, ActivityEntry> }>((ev as MessageEvent).data, { chats: {} });
+        const data = jsonParseOr<{ chats: Record<string, ActivityEntry> }>((ev as MessageEvent).data, {
+          chats: {},
+        });
         if (data) {
           this.applySnapshot(data.chats);
         }
@@ -146,7 +148,15 @@ export class NotificationsManager {
     const open = document.querySelector<HTMLElement>("[data-chat-id].active, [data-active-chat]");
     const id = open?.dataset.chatId ?? open?.dataset.activeChat ?? null;
     this.setActiveChat(id);
-    if (id) { void (async () => { try { await this.markRead(id); } catch { /* non-critical */ } })(); }
+    if (id) {
+      void (async () => {
+        try {
+          await this.markRead(id);
+        } catch {
+          /* non-critical */
+        }
+      })();
+    }
   }
 }
 

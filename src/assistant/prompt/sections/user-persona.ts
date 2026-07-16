@@ -3,6 +3,7 @@
  * has selected a persona, inject that identity into the user slot.
  */
 import type { SectionBuilder } from "../types";
+import { wrapSection } from "../../xml-utils";
 
 export const userPersonaSection: SectionBuilder = {
   name: "userPersona",
@@ -34,7 +35,7 @@ export const userPersonaSection: SectionBuilder = {
           personaParts.push(`\nPersonality: ${impersonatedActor.personality}`);
 
         if (personaParts.length > 0) {
-          return [{ role: "system", content: `[User Persona]\n${personaParts.join("")}` }];
+          return [{ role: "system", content: wrapSection("user_persona", personaParts.join("")) }];
         }
       }
       return [];
@@ -53,7 +54,7 @@ export const userPersonaSection: SectionBuilder = {
         if (persona.description) personaParts.push(`\nDescription: ${persona.description}`);
 
         if (personaParts.length > 0) {
-          return [{ role: "system", content: `[User Persona]\n${personaParts.join("")}` }];
+          return [{ role: "system", content: wrapSection("user_persona", personaParts.join("")) }];
         }
       }
     }
