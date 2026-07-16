@@ -53,5 +53,5 @@ export function messageEncryptionRoutes(opts: { database: Db; config: Config }):
         status: HttpStatus.InternalServerError,
       });
     }
-  });
+  }) as unknown as Elysia;
 }

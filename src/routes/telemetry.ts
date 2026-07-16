@@ -129,10 +129,7 @@ export function telemetryRoutes({ database }: HandleOpts): Elysia {
       const retentionDays = Number(ctx.query.days) || 90;
       const cutoff = new Date(Date.now() - retentionDays * 86400000).toISOString();
 
-      const result = await database
-        .deleteFrom("telemetry_events")
-        .where("created_at", "<", cutoff)
-        .execute();
+      const result = await database.deleteFrom("telemetry_events").where("created_at", "<", cutoff).execute();
 
       getLogger().child({ module: "telemetry" }).info("Purged old telemetry events", {
         retentionDays,
@@ -140,5 +137,5 @@ export function telemetryRoutes({ database }: HandleOpts): Elysia {
       });
 
       return jsonResponse({ ok: true, purged: true });
-}) as unknown as Elysia;
+    }) as unknown as Elysia;
 }

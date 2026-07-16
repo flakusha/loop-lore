@@ -12,14 +12,13 @@
  *   POST /api/worlds/:id/states                 — take snapshot
  */
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 import { Elysia } from "elysia";
 import type { Kysely } from "kysely";
 import type { DB } from "../db/schema";
 import { safeJsonStringify } from "../utils";
-import { jsonResponse, jsonError, jsonPaginated, jsonCreated, HttpStatus, ErrorCode } from "./http-utils";
+import { jsonResponse, jsonError, jsonPaginated, jsonCreated, HttpStatus } from "./http-utils";
 import { WorldStateService } from "../story/world-state";
+import { notFound } from "../validation/middleware";
 
 // ── Handlers ────────────────────────────────────────────────
 
@@ -45,11 +44,7 @@ async function handleNpcState(
   if (method === "GET") {
     const npcState = await state.getNpcState(actorId, worldId);
     if (!npcState)
-      return jsonError({
-        message: "NPC state not found",
-        status: HttpStatus.NotFound,
-        code: ErrorCode.NotFound,
-      });
+      return notFound("NPC state not found");
     return jsonResponse(npcState);
   }
 
@@ -132,11 +127,7 @@ async function handleLocationState(
   if (method === "GET") {
     const locState = await state.getLocationState(locationId);
     if (!locState)
-      return jsonError({
-        message: "Location state not found",
-        status: HttpStatus.NotFound,
-        code: ErrorCode.NotFound,
-      });
+      return notFound("Location state not found");
     return jsonResponse(locState);
   }
 
@@ -216,84 +207,84 @@ async function handleWorldStates(
 
 export function storyStatesRoutes({ database }: { database: Kysely<DB> }): Elysia {
   return new Elysia({ name: "story-states" })
-    .get("/api/worlds/:id/npc-states/:actorId", async ({ params, query }) => {
-      const userId = (query as any).userId as string | null;
-      const userRole = (query as any).userRole as string | null;
+    .get("/api/worlds/:id/npc-states/:actorId", async (ctx: any) => {
+      const userId = ctx.userId as string | null;
+      const userRole = ctx.userRole as string | null;
       return handleNpcState(
         database,
         "GET",
-        params.id as string,
-        params.actorId as string,
+        ctx.params.id as string,
+        ctx.params.actorId as string,
         userId,
         userRole,
       );
     })
-    .put("/api/worlds/:id/npc-states/:actorId", async ({ params, body, query }) => {
-      const userId = (query as any).userId as string | null;
-      const userRole = (query as any).userRole as string | null;
+    .put("/api/worlds/:id/npc-states/:actorId", async (ctx: any) => {
+      const userId = ctx.userId as string | null;
+      const userRole = ctx.userRole as string | null;
       return handleNpcState(
         database,
         "PUT",
-        params.id as string,
-        params.actorId as string,
+        ctx.params.id as string,
+        ctx.params.actorId as string,
         userId,
         userRole,
-        body as Record<string, unknown>,
+        ctx.body as Record<string, unknown>,
       );
     })
-    .get("/api/worlds/:id/npcs-at/:locationId", async ({ params, query }) => {
-      const userId = (query as any).userId as string | null;
-      const userRole = (query as any).userRole as string | null;
+    .get("/api/worlds/:id/npcs-at/:locationId", async (ctx: any) => {
+      const userId = ctx.userId as string | null;
+      const userRole = ctx.userRole as string | null;
       return handleNpcsAtLocation(
         database,
-        params.id as string,
-        params.locationId as string,
+        ctx.params.id as string,
+        ctx.params.locationId as string,
         userId,
         userRole,
       );
     })
-    .get("/api/locations/:locationId/state", async ({ params, query }) => {
-      const userId = (query as any).userId as string | null;
-      const userRole = (query as any).userRole as string | null;
-      return handleLocationState(database, "GET", params.locationId as string, userId, userRole);
+    .get("/api/locations/:locationId/state", async (ctx: any) => {
+      const userId = ctx.userId as string | null;
+      const userRole = ctx.userRole as string | null;
+      return handleLocationState(database, "GET", ctx.params.locationId as string, userId, userRole);
     })
-    .put("/api/locations/:locationId/state", async ({ params, body, query }) => {
-      const userId = (query as any).userId as string | null;
-      const userRole = (query as any).userRole as string | null;
+    .put("/api/locations/:locationId/state", async (ctx: any) => {
+      const userId = ctx.userId as string | null;
+      const userRole = ctx.userRole as string | null;
       return handleLocationState(
         database,
         "PUT",
-        params.locationId as string,
+        ctx.params.locationId as string,
         userId,
         userRole,
-        body as Record<string, unknown>,
+        ctx.body as Record<string, unknown>,
       );
     })
-    .get("/api/worlds/:id/states", async ({ params, query }) => {
-      const userId = (query as any).userId as string | null;
-      const userRole = (query as any).userRole as string | null;
+    .get("/api/worlds/:id/states", async (ctx: any) => {
+      const userId = ctx.userId as string | null;
+      const userRole = ctx.userRole as string | null;
       return handleWorldStates(
         database,
         "GET",
-        params.id as string,
+        ctx.params.id as string,
         userId,
         userRole,
-        Number(query.page) || 1,
-        Number(query.pageSize) || 20,
+        Number(ctx.query?.page) || 1,
+        Number(ctx.query?.pageSize) || 20,
       );
     })
-    .post("/api/worlds/:id/states", async ({ params, body, query }) => {
-      const userId = (query as any).userId as string | null;
-      const userRole = (query as any).userRole as string | null;
+    .post("/api/worlds/:id/states", async (ctx: any) => {
+      const userId = ctx.userId as string | null;
+      const userRole = ctx.userRole as string | null;
       return handleWorldStates(
         database,
         "POST",
-        params.id as string,
+        ctx.params.id as string,
         userId,
         userRole,
         1,
         20,
-        body as Record<string, unknown>,
+        ctx.body as Record<string, unknown>,
       );
-    });
+    }) as unknown as Elysia;
 }
