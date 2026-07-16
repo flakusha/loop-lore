@@ -89,5 +89,15 @@ globalThis.app = function () {
       this.currentLocale = localeId;
       this.loadLocale(localeId);
     },
+
+    async logout() {
+      try {
+        await fetch("/api/auth/logout", { method: "POST" });
+      } catch {
+        // best-effort: clear client session regardless of response
+      } finally {
+        globalThis.location.assign("/views/login");
+      }
+    },
   };
 };

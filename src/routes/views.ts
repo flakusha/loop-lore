@@ -52,6 +52,7 @@ const ALLOWED_VIEWS = new Set([
   "character-edit",
   "personas",
   "admin",
+  "quests",
 ]);
 
 const ALLOWED_PARTIALS = new Set([
@@ -287,7 +288,23 @@ async function serveWorldDetailContent(worldId: string, database: Kysely<DB>): P
   const desc = escapeHtml(world.description || "");
   const lore = escapeHtml(world.lore || "No lore provided.");
 
-  return htmlResponse(`<div style="max-width:800px;margin:0 auto">
+  const locations = await database
+    .selectFrom("locations")
+    .selectAll()
+    .where("world_id", "=", worldId)
+    .orderBy("name", "asc")
+    .execute();
+
+  const locationsJson = JSON.stringify(
+    locations.map((l) => ({
+      id: l.id,
+      name: l.name,
+      description: l.description,
+      world_id: l.world_id,
+    })),
+  );
+
+  return htmlResponse(`<div style="max-width:800px;margin:0 auto" x-data="worldDetail({ worldId: '${worldId}', locations: ${locationsJson} })">
       <div class="form-group" style="margin-bottom:var(--space-6)">
         <h2>${name}</h2>
         <p class="description">${desc}</p>
@@ -295,6 +312,52 @@ async function serveWorldDetailContent(worldId: string, database: Kysely<DB>): P
       <div class="form-group" style="margin-bottom:var(--space-6)">
         <label class="form-label">Lore</label>
         <div class="lore-content">${lore}</div>
+      </div>
+      <div class="form-group" style="margin-bottom:var(--space-6)">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-3)">
+          <label class="form-label" style="margin: 0" x-text="'Locations (' + locationCount + ')'"></label>
+          <div style="display: flex; gap: var(--space-2)">
+            <button class="btn btn-secondary btn-xs" @click="showCreateLocation = !showCreateLocation" x-text="showCreateLocation ? 'Cancel' : '+ Add'"></button>
+            <button class="btn btn-secondary btn-xs" @click="initializeStates()">Init States</button>
+          </div>
+        </div>
+        <div x-show="showCreateLocation" style="margin-bottom: var(--space-3); padding: var(--space-3); background: var(--color-surface, #f8f9fa); border-radius: 4px; border: 1px solid var(--color-border, #e9ecef)">
+          <div style="display: grid; gap: var(--space-2)">
+            <input class="form-input" style="font-size: 13px" x-model="newLocationName" placeholder="Location name" />
+            <input class="form-input" style="font-size: 13px" x-model="newLocationDesc" placeholder="Description (optional)" />
+            <button class="btn btn-primary btn-xs" @click="createLocation()" style="justify-self: flex-start">Create</button>
+          </div>
+        </div>
+        <div x-show="locations.length === 0" class="empty-state" style="padding: var(--space-4); font-size: 13px">No locations defined</div>
+        <template x-if="locations.length > 0">
+          <div style="display: grid; gap: var(--space-2)">
+            <template x-for="loc in locations" :key="loc.id">
+              <div style="padding: var(--space-3); background: var(--color-surface, #f8f9fa); border-radius: 4px; border: 1px solid var(--color-border, #e9ecef); cursor: pointer" @click="expandLoc(loc.id)">
+                <div style="display: flex; justify-content: space-between; align-items: center">
+                  <div>
+                    <strong style="font-size: 13px" x-text="loc.name"></strong>
+                    <span x-show="loc.description && expandedLoc !== loc.id" style="font-size: 12px; color: var(--color-text-secondary); margin-top: 2px; display: block" x-text="loc.description"></span>
+                  </div>
+                  <div style="display: flex; gap: 4px" @click.stop>
+                    <button class="btn btn-danger btn-xs" @click="deleteLocation(loc.id)">Delete</button>
+                  </div>
+                </div>
+                <div x-show="expandedLoc === loc.id" @click.stop style="margin-top: var(--space-3); padding-top: var(--space-3); border-top: 1px solid var(--color-border, #e9ecef)">
+                  <div style="display: grid; gap: var(--space-2)">
+                    <input class="form-input" style="font-size: 13px" x-model="editLocName" />
+                    <textarea class="form-input form-textarea" rows="2" style="font-size: 13px" x-model="editLocDesc" placeholder="Description"></textarea>
+                    <button class="btn btn-primary btn-xs" @click="saveLocation(loc.id)" style="justify-self: flex-start">Save</button>
+                  </div>
+                </div>
+              </div>
+            </template>
+          </div>
+        </template>
+      </div>
+      <div style="display: flex; gap: var(--space-3); margin-top: var(--space-4)">
+        <a href="/quests?worldId=${worldId}" class="btn btn-primary btn-sm" style="text-decoration: none; display: inline-flex; align-items: center">
+          View Quests
+        </a>
       </div>
     </div>`);
 }

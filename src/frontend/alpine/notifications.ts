@@ -65,7 +65,7 @@ export class NotificationsManager {
   /** Mark a chat read (POST) and clear its local unseen state. */
   async markRead(chatId: string): Promise<void> {
     try {
-      await fetch(`/api/chats/${chatId}/read`, { method: "POST" });
+      await fetch(`/api/chats/${chatId}/mark-read`, { method: "PUT" });
     } catch {
       // network error — local state still updated below
     }
