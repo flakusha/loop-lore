@@ -1,9 +1,8 @@
 # Implementation Plan
 
-**v0.1: 0 TS errors. All tests pass. Build clean. Epics 1–9 complete.**  
-**v0.2: Epics 10–17 — foundation hardening. 15 issues resolved (Round 3).**
+**v0.1 MVP — Epics 1–19: foundation hardening. All scope is MVP; no separate v0.2.**
 
-Next target: **v0.2** — generation resilience, admin/settings, memory foundation, responsive UX, search/filter, i18n/a11y, observability, encryption.
+Next target: complete remaining in-progress epics — responsive UX (13), observability (16).
 
 ---
 
@@ -172,7 +171,7 @@ Auth, rate limiting, age gate enforcement, profanity.
 
 ---
 
-## 🏗️ v0.2 — Foundation Completion
+## 🏗️ v0.1 — Foundation Completion
 
 Target: solidify generation, admin, memory, responsive UX, search, i18n, observability.
 
@@ -204,21 +203,19 @@ Page-vs-modal architecture, admin pages, user prefs modal, plugin management.
 | Per-user settings API      | `src/routes/settings.ts`                    | NEW. `GET/PATCH /api/settings` → read/write `users.settings` JSON column. Auto-merge on PATCH.                                                    |
 | Plugin management API      | `src/routes/plugins.ts`                     | NEW. `GET /api/plugins` list, `POST /api/plugins/:name/enable`, `POST /api/plugins/:name/disable`. Gate on admin role.                            |
 
-### 12. Memory Foundation — 🟡 In Progress
+### 12. Memory Foundation — ✅ Complete
 
-Keyword filtering, type normalization, context compaction, A/N injection.
-Code landed in v0.2 in-progress work: `memory_type` enum + `decay_rate`/`strength`
-columns (migration 009), `prompt-assembler.ts` (selective memory entries, author note,
-nested lorebook). Context compaction + i18n-keyword filtering still TODO.
+Keyword filtering, type normalization, context compaction, author's note, XML delimiting, KV-cache optimization.
 
-| Task                                             | Files                                          | Notes                                                                                                                                                                                |
-| ------------------------------------------------ | ---------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Keyword filtering on `actor_memories`            | `src/assistant/prompt-assembler.ts`            | Use existing `keywords` JSON column for relevance filtering instead of top-20-by-importance. Match against current user message keywords.                                            |
-| `memory_type` enum: episodic/semantic/procedural | `src/db/migrations/`, `src/db/schema-story.ts` | Add CHECK constraint on `memory_type`. Add `decay_rate` and `strength` columns.                                                                                                      |
-| Context compaction at 85% threshold              | `src/generation/context-compactor.ts`          | NEW. Estimate tokens (chars*0.3 heuristic). At 85% context fill: summarize older half of conversation, inject as `[Conversation Summary]` system message. Keep last 10 messages.     |
-| A/N depth injection                              | `src/assistant/prompt-assembler.ts`            | Add author's note with position (before/after prompt, in-chat at depth), interval (every N messages), role (system/user/assistant), per-character override.                          |
-| Memory XML delimiting                            | `src/assistant/prompt-assembler.ts`            | Wrap injected memories in `<memory_context>...</memory_context>` to prevent prompt injection.                                                                                        |
-| KV-cache optimization                            | `src/assistant/prompt-assembler.ts`            | Dynamic content (date/time, user counters) injected as separate user-role message near end of context, NOT in static system prompt. Keeps system prefix byte-identical across turns. |
+| Task                                             | Files                                              | Status |
+| ------------------------------------------------ | -------------------------------------------------- | ------ |
+| Keyword filtering on `actor_memories`            | `src/assistant/prompt/sections/memories.ts`        | ✅     |
+| `memory_type` enum: episodic/semantic/procedural | `src/db/migrations/parts/005_actor_data.ts`        | ✅     |
+| `decay_rate` + `strength` + `last_accessed_at`   | `src/db/migrations/011_memory_decay.ts`            | ✅     |
+| Context compaction at 85% threshold              | `src/generation/context-compactor.ts`              | ✅     |
+| A/N depth injection (author's note section)      | `src/assistant/prompt/sections/author-note.ts`     | ✅     |
+| Memory XML delimiting                            | `src/assistant/prompt/sections/memories.ts`        | ✅     |
+| KV-cache optimization (dynamic context section)  | `src/assistant/prompt/sections/dynamic-context.ts` | ✅     |
 
 ### 13. Frontend Responsive & UX — 🟡 In Progress
 
@@ -345,22 +342,21 @@ chat-driven generation, security baseline for remote URLs.
 Full contract: [backlog.md](backlog.md#p2--specified-not-implemented) (synopsis from
 `docs/research/comfyui-local-inference.md` + `docs/research/local-remote-inference-uis.md`).
 
-### 19. Basic Chat Notifications — 🟡 In Progress
+### 19. Basic Chat Notifications — ✅ Complete
 
 In-app unread badges + toasts for messages arriving in chats the user isn't
 viewing. Reuses existing SSE (`EventSource`) + `showToast` infra. **Autonomous
 scheduled messages deferred** (see [backlog.md](backlog.md#d5-cross-chat-autonomous-messages)). No
 browser-native push (needs service worker + push server) — out of scope.
-Cross-chat activity SSE (`src/routes/activity.ts`) landed in v0.2 in-progress work.
-Read-state schema + unread badge + mark-read TODO.
 
-| Task                             | Files                                                     | Notes                                                                                                                                                                            |
-| -------------------------------- | --------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Cross-chat activity signal (SSE) | `src/routes/activity.ts`, `src/routes/messages.ts`        | `GET /api/activity/stream` emits `message.created` for all the user's chats. Reuse `EventSource` pattern from `src/frontend/alpine/chat-generations.ts`. Emit on message insert. |
-| Read-state schema                | `src/db/migrations/`, `src/db/schema-core.ts`             | Add `last_read_message_id` to `chat_participants` (or `read_receipts` table). Minor migration.                                                                                   |
-| Chat-list unread badge           | `src/frontend/alpine/*`, `src/views/chat-list-panel.html` | Listen to activity SSE; show per-chat unseen count.                                                                                                                              |
-| Toast on foreign-chat message    | `src/frontend/ui.ts`, `src/frontend/alpine/*`             | `showToast` when event arrives for non-active chat.                                                                                                                              |
-| Mark-read on chat open           | `src/routes/messages.ts` / chat-open handler              | Update `last_read_message_id`.                                                                                                                                                   |
+| Task                             | Files                                                     | Status |
+| -------------------------------- | --------------------------------------------------------- | ------ |
+| Cross-chat activity signal (SSE) | `src/routes/activity.ts`, `src/routes/activity-stream.ts` | ✅     |
+| Read-state schema                | `src/db/migrations/parts/004_chats_actors.ts`             | ✅     |
+| Chat-list unread badge           | `src/components/chat/chat-list-panel.html`                | ✅     |
+| Toast on foreign-chat message    | `src/frontend/alpine/chat-activity.ts`                    | ✅     |
+| Mark-read on chat open           | `src/routes/chats.ts`, `src/frontend/alpine/chat.ts`      | ✅     |
+| Activity SSE listener            | `src/frontend/alpine/chat-activity.ts`                    | ✅     |
 
 ---
 
