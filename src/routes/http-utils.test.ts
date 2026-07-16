@@ -55,7 +55,7 @@ describe("jsonError", () => {
   test("returns 400 with error message by default", async () => {
     const res = jsonError({ message: "Bad input" });
     expect(res.status).toBe(400);
-    expect(await res.json()).toEqual({ error: "Bad input" });
+    expect(await res.json()).toEqual({ error: "Bad input", code: "BAD_REQUEST" });
   });
 
   test("accepts custom status code", () => {
@@ -73,16 +73,16 @@ describe("jsonError", () => {
     expect(await res.json()).toEqual({ error: "Expired token", code: "UNAUTHORIZED" });
   });
 
-  test("omits code field when not provided", async () => {
+  test("includes code derived from status code", async () => {
     const res = jsonError({ message: "Generic error", status: HttpStatus.InternalServerError });
     const body = await res.json();
-    expect(body).not.toHaveProperty("code");
+    expect(body).toHaveProperty("code", "SERVER_ERROR");
   });
 
-  test("explicitly passes undefined code as omitted", async () => {
+  test("includes code derived from status code for BadRequest", async () => {
     const res = jsonError({ message: "msg", status: HttpStatus.BadRequest });
     const body = await res.json();
-    expect(body).not.toHaveProperty("code");
+    expect(body).toHaveProperty("code", "BAD_REQUEST");
   });
 });
 
