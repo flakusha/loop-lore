@@ -88,3 +88,60 @@ export const TransportErrorCode = {
   MaxFrameExceeded: "MAX_FRAME_EXCEEDED",
 } as const;
 export type TransportErrorCode = (typeof TransportErrorCode)[keyof typeof TransportErrorCode];
+
+// ── Response Compression ─────────────────────────────────
+export const ResponseCompression = {
+  Br: "br",
+  Gzip: "gzip",
+  Auto: "auto",
+} as const;
+export type ResponseCompression = (typeof ResponseCompression)[keyof typeof ResponseCompression];
+
+// ── Encryption Compression ────────────────────────────────
+export const EncryptionCompression = {
+  Gzip: "gzip",
+  Brotli: "brotli",
+  Zstd: "zstd",
+} as const;
+export type EncryptionCompression = (typeof EncryptionCompression)[keyof typeof EncryptionCompression];
+
+// ── Image Generation ──────────────────────────────────────
+export const ImageApiFamily = {
+  Openai: "openai",
+  Sdapi: "sdapi",
+  Sdcpp: "sdcpp",
+} as const;
+export type ImageApiFamily = (typeof ImageApiFamily)[keyof typeof ImageApiFamily];
+
+// ── Sd Model ─────────────────────────────────────────────
+export const SdModelType = {
+  Checkpoint: "checkpoint",
+  Diffusion: "diffusion",
+} as const;
+export type SdModelType = (typeof SdModelType)[keyof typeof SdModelType];
+
+// ── HTTP Security Headers ─────────────────────────────────
+export const XFrameOption = {
+  Deny: "DENY",
+  Sameorigin: "SAMEORIGIN",
+} as const;
+export type XFrameOption = (typeof XFrameOption)[keyof typeof XFrameOption];
+
+export const CrossOriginOpenerPolicy = {
+  SameOrigin: "same-origin",
+  SameOriginAllowPopups: "same-origin-allow-popups",
+} as const;
+export type CrossOriginOpenerPolicy = (typeof CrossOriginOpenerPolicy)[keyof typeof CrossOriginOpenerPolicy];
+
+export const CrossOriginEmbedderPolicy = {
+  RequireCorp: "require-corp",
+} as const;
+export type CrossOriginEmbedderPolicy =
+  (typeof CrossOriginEmbedderPolicy)[keyof typeof CrossOriginEmbedderPolicy];
+
+export const CrossOriginResourcePolicy = {
+  SameOrigin: "same-origin",
+  CrossOrigin: "cross-origin",
+} as const;
+export type CrossOriginResourcePolicy =
+  (typeof CrossOriginResourcePolicy)[keyof typeof CrossOriginResourcePolicy];

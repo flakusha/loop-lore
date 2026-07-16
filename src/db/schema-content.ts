@@ -4,7 +4,7 @@
  * Assets and polymorphic asset links.
  */
 import type { Generated } from "kysely";
-import type { AssetType, AssetVisibility, StorageBackend } from "./enums";
+import type { AssetLinkEntity, AssetType, AssetVisibility, StorageBackend } from "./enums";
 
 // ── Assets ────────────────────────────────────────────────────
 export interface Assets {
@@ -27,7 +27,7 @@ export interface Assets {
 // ── Asset Links ───────────────────────────────────────────────
 export interface AssetLinks {
   asset_id: string;
-  entity_type: string;
+  entity_type: AssetLinkEntity;
   entity_id: string;
   label: string | null;
   sort_order: Generated<number>;

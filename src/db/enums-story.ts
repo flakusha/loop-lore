@@ -97,6 +97,37 @@ export const WorldEventType = {
 } as const;
 export type WorldEventType = (typeof WorldEventType)[keyof typeof WorldEventType];
 
+// ── Memory ───────────────────────────────────────────────
+export const MemoryType = {
+  Episodic: "episodic",
+  Semantic: "semantic",
+  Procedural: "procedural",
+} as const;
+export type MemoryType = (typeof MemoryType)[keyof typeof MemoryType];
+
+// ── Lorebook ──────────────────────────────────────────────
+export const LorePosition = {
+  BeforeChar: "before_char",
+  AfterChar: "after_char",
+  InChar: "in_char",
+} as const;
+export type LorePosition = (typeof LorePosition)[keyof typeof LorePosition];
+
+// ── World Difficulty ──────────────────────────────────────
+export const DifficultyReroll = {
+  None: "none",
+  PerTurn: "per_turn",
+  PerQuest: "per_quest",
+} as const;
+export type DifficultyReroll = (typeof DifficultyReroll)[keyof typeof DifficultyReroll];
+
+export const DifficultyState = {
+  Normal: "normal",
+  Hard: "hard",
+  Extreme: "extreme",
+  Custom: "custom",
+} as const;
+export type DifficultyState = (typeof DifficultyState)[keyof typeof DifficultyState];
 // ── Quality Dimensions ────────────────────────────────────
 export const QualityDimension = {
   CharacterVoice: "character_voice",

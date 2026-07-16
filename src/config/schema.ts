@@ -5,7 +5,21 @@
 //
 // Enum types sourced from ../db/enums
 
-import type { AgeGateMode as AgeGateModeT, DbType as DbTypeT, LogLevel as LogLevelT } from "../db/enums";
+import type {
+  AgeGateMode as AgeGateModeT,
+  CompressionAlgorithm,
+  CrossOriginEmbedderPolicy,
+  CrossOriginOpenerPolicy,
+  CrossOriginResourcePolicy,
+  DbType as DbTypeT,
+  EncryptionCompression,
+  ImageApiFamily,
+  LogLevel as LogLevelT,
+  ResponseCompression,
+  SdModelType,
+  TransportProtocol,
+  XFrameOption,
+} from "../db/enums";
 
 interface TlsConfig {
   /** Path to TLS private key (PEM). Auto-generated if missing. */
@@ -105,7 +119,7 @@ interface TransportCompressionConfig {
   /** Master toggle for transport compression */
   enabled: boolean;
   /** Default compression algorithm */
-  default: "zstd" | "br" | "gzip" | "none";
+  default: CompressionAlgorithm;
   /** Minimum payload size (bytes) before compression kicks in */
   threshold: number;
 }
@@ -121,7 +135,7 @@ interface TransportLimitsConfig {
 
 interface TransportConfig {
   /** Default transport protocol */
-  defaultProtocol: "http/1.1" | "http/2" | "http/3" | "websocket" | "webtransport" | "tcp" | "tls";
+  defaultProtocol: TransportProtocol;
   /** Enable WebSocket upgrade support */
   enableWebSocket: boolean;
   /** Enable WebTransport support (requires H3) */
@@ -146,7 +160,7 @@ interface DynamicResponseConfig {
   /** Compress bodies with Content-Encoding based on Accept-Encoding */
   compress: boolean;
   /** Preferred algorithm; "auto" picks br when the client advertises it, else gzip */
-  compressAlgorithm: "br" | "gzip" | "auto";
+  compressAlgorithm: ResponseCompression;
   /** Minimum body size (bytes) before compression kicks in */
   compressThreshold: number;
 }
@@ -226,7 +240,7 @@ interface ImageProviderConfig {
   /** Base URL */
   baseUrl: string;
   /** API family: openai-compatible, SD WebUI, or SD cpp native */
-  apiFamily: "openai" | "sdapi" | "sdcpp";
+  apiFamily: ImageApiFamily;
   /** Optional API key */
   apiKey?: string;
   /** Default generation parameters */
@@ -357,7 +371,7 @@ interface SdCppAutoStartConfig {
   /** Master toggle — false = external server expected */
   enabled: boolean;
   /** "checkpoint" = standalone full model (-m), "diffusion" = component model (--diffusion-model, needs llm+vae) */
-  modelType: "checkpoint" | "diffusion";
+  modelType: SdModelType;
   /** Path to .safetensors model */
   modelPath: string;
   /** Port for sd-server (default: 9010) */
@@ -493,7 +507,7 @@ interface EncryptionConfig {
   /** Min bytes before compressing prior to encrypt. Default 128. */
   compressThreshold: number;
   /** Preferred compression algorithm. Default gzip. */
-  compressAlgorithm: "gzip" | "brotli" | "zstd";
+  compressAlgorithm: EncryptionCompression;
 }
 
 interface MessagesConfig {
@@ -572,17 +586,17 @@ interface HeadersConfig {
   /** Emit `X-Content-Type-Options: nosniff`. */
   xContentTypeOptions: boolean;
   /** `X-Frame-Options`: "DENY" | "SAMEORIGIN" | null (omit). */
-  xFrameOptions: "DENY" | "SAMEORIGIN" | null;
+  xFrameOptions: XFrameOption | null;
   /** `Permissions-Policy` value (feature delegation). */
   permissionsPolicy: string;
   /** CSP directive set (HTML only). */
   csp: CspConfig;
   /** `Cross-Origin-Opener-Policy`. null = omit. */
-  crossOriginOpenerPolicy: "same-origin" | "same-origin-allow-popups" | null;
+  crossOriginOpenerPolicy: CrossOriginOpenerPolicy | null;
   /** `Cross-Origin-Embedder-Policy`. null = omit. */
-  crossOriginEmbedderPolicy: "require-corp" | null;
+  crossOriginEmbedderPolicy: CrossOriginEmbedderPolicy | null;
   /** `Cross-Origin-Resource-Policy` for static subresources. */
-  crossOriginResourcePolicy: "same-origin" | "cross-origin" | null;
+  crossOriginResourcePolicy: CrossOriginResourcePolicy | null;
   /** `Timing-Allow-Origin` for resource timing (performance measurement). */
   timingAllowOrigin: string;
   /** Append `immutable` to `Cache-Control` for content-hashed assets. */
