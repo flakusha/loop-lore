@@ -40,6 +40,7 @@ import { charactersRoutes } from "./routes/characters";
 import { messagesRoutes } from "./routes/messages";
 import { telemetryRoutes } from "./routes/telemetry";
 import { chatsRoutes } from "./routes/chats";
+import { importRoutes } from "./routes/import";
 import { pluginRoutes } from "./routes/plugins";
 import { personaRoutes } from "./personas/controller";
 import { generationRoutes } from "./generation/controller";
@@ -110,6 +111,7 @@ export function createApp(deps: AppDeps): Elysia {
   app.use(charactersRoutes(handleOpts));
   app.use(messagesRoutes(handleOpts));
   app.use(chatsRoutes(handleOpts));
+  app.use(importRoutes(handleOpts));
   app.use(personaRoutes(handleOpts));
   app.use(generationRoutes(handleOpts));
   app.use(ageGateRoutes(handleOpts));
