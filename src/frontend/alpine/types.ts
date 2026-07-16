@@ -143,6 +143,10 @@ export interface ChatState extends AlpineMagicThis {
   _statsOpen: Record<string, boolean>;
   _impersonationLoaded: boolean;
   _storageHandler: ((e: StorageEvent) => void) | null;
+  _unseenCounts: Record<string, number>;
+  _activityEventSource: EventSource | null;
+  _chatFilter: string;
+  readonly filteredChats: Array<{ id: string; name?: string }>;
   _mentionQuery: string;
   _mentionResults: Array<{ actor_id: string; name: string; display_name?: string; actor_type?: string }>;
   _showMentionAutocomplete: boolean;
@@ -182,6 +186,10 @@ export interface ChatState extends AlpineMagicThis {
   connectGenerationSSE(chatId: string): void;
   _cleanupSSE(): void;
   cancelGeneration(): Promise<void>;
+  connectActivitySSE(): void;
+  disconnectActivitySSE(): void;
+  markChatAsRead(chatId: string): Promise<void>;
+  getUnseenCount(chatId: string): number;
   regenerateResponse(): Promise<void>;
   regenerateVariant(messageId: string): Promise<void>;
   switchVariant(messageId: string, direction: number): Promise<void>;

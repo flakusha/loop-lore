@@ -14,13 +14,23 @@
 >
   <div class="chat-list-header">
     <span class="nav-section-title">Chats</span>
-    <button class="btn-icon" @click="$store.ui.showChatList = false" title="Close">&times;</button>
+    <div class="nav-section-actions">
+      <input
+        class="form-input chat-list-search"
+        type="search"
+        placeholder="Filter…"
+        aria-label="Filter chats"
+        x-model="_chatFilter"
+        style="width: 140px; font-size: 12px; height: 26px"
+      />
+      <button class="btn-icon" @click="$store.ui.showChatList = false" title="Close">&times;</button>
+    </div>
   </div>
   <div id="chat-list">
     <template x-if="chats.length === 0">
       <div class="nav-item" style="color: var(--text-tertiary); font-size: 13px">No chats yet</div>
     </template>
-    <template x-for="chat in chats" :key="chat.id">
+    <template x-for="chat in filteredChats" :key="chat.id">
       <div class="nav-item-row">
         <a
           class="nav-item"
@@ -29,6 +39,7 @@
           @click.prevent="selectChat(chat.id)"
         >
           <span class="name" x-text="chat.name"></span>
+          <span class="badge" x-show="_unseenCounts[chat.id] > 0" x-text="_unseenCounts[chat.id]"></span>
         </a>
         <span class="nav-item-actions">
           <button
