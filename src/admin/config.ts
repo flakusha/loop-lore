@@ -58,7 +58,7 @@ export async function deleteConfig(db: Kysely<DB>, key: string): Promise<void> {
 }
 
 export async function seedDefaults(db: Kysely<DB>, config: Config): Promise<void> {
-  const defaults: Array<{ key: string; value: string; description: string }> = [
+  const defaults: { key: string; value: string; description: string }[] = [
     {
       key: "registration_open",
       value: String(config.auth.registrationOpen),
@@ -101,8 +101,8 @@ export async function seedDefaults(db: Kysely<DB>, config: Config): Promise<void
     if (!existing) {
       try {
         await setConfig(db, d.key, d.value, d.description);
-      } catch (err) {
-        log().warn("Failed to seed config default", { key: d.key, error: (err as Error).message });
+      } catch (error) {
+        log().warn("Failed to seed config default", { key: d.key, error: (error as Error).message });
       }
     }
   }

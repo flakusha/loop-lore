@@ -123,7 +123,7 @@ class PluginRegistry {
     this.enabledMap.set(name, enabled);
   }
 
-  listPluginStates(): Array<{ name: string; enabled: boolean }> {
+  listPluginStates(): { name: string; enabled: boolean }[] {
     return [...this.plugins.keys()].map((name) => ({
       name,
       enabled: this.isEnabled(name),
