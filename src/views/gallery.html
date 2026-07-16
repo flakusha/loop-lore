@@ -19,34 +19,16 @@
 <div class="app-layout">
   <main class="main-content" style="padding-top: 0">
     <div class="list-toolbar" x-data="{ view: localStorage.getItem('gallery-view') || 'grid' }">
-      <input
-        id="asset-search"
-        class="form-input list-search"
-        type="search"
-        placeholder="Search assets…"
-        aria-label="Search assets"
-        oninput="filterAssets()"
-        data-testid="asset-search"
-      />
-      <select
-        id="asset-type-filter"
-        class="form-select list-sort"
-        aria-label="Filter asset type"
-        onchange="filterAssets()"
+      <div
+        data-search-url="/dynamic/gallery/search"
+        data-target-id="asset-grid"
+        data-show-type-filter="true"
+        data-search-placeholder="Search assets…"
+        data-search-label="Search assets"
+        style="display: contents"
       >
-        <option value="all">All types</option>
-        <option value="image">Images</option>
-        <option value="audio">Audio</option>
-        <option value="video">Video</option>
-      </select>
-      <select
-        id="asset-sort"
-        class="form-select list-sort"
-        aria-label="Sort assets"
-        onchange="filterAssets()"
-      >
-        <option value="name">Sort: Name</option>
-      </select>
+        {{> filter-bar.html}}
+      </div>
       <button
         class="btn btn-secondary btn-sm"
         x-on:click="view = view === 'grid' ? 'list' : 'grid'; localStorage.setItem('gallery-view', view); document.getElementById('asset-grid').className = view === 'grid' ? 'asset-grid' : 'asset-grid list-view'"
@@ -63,11 +45,15 @@
       hx-get="/dynamic/gallery/grid"
       hx-trigger="load"
       hx-swap="innerHTML"
+      hx-indicator="#gallery-indicator"
     >
       <div class="empty-state" style="grid-column: 1 / -1" data-testid="gallery-loading">
         <div class="icon">⏳</div>
         <div class="title">Loading assets...</div>
       </div>
+    </div>
+    <div id="gallery-indicator" class="htmx-indicator" style="text-align: center; padding: var(--space-4)">
+      <span class="spinner"></span>
     </div>
     <div id="modal-container"></div>
   </main>

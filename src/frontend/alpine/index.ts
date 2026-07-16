@@ -13,3 +13,5 @@ import "./settings";
 import "./personas";
 import "./admin";
 import "./world-edit";
+import "./sidebar";
+import "./shortcuts";

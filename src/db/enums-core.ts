@@ -128,6 +128,7 @@ export type ActorVisibility = (typeof ActorVisibility)[keyof typeof ActorVisibil
 export const PinnedState = {
   Unpinned: "unpinned",
   Pinned: "pinned",
+  Archived: "archived",
 } as const;
 export type PinnedState = (typeof PinnedState)[keyof typeof PinnedState];
 
@@ -267,11 +268,12 @@ export const actorVisibilityDef: StateDef<ActorVisibility> = {
 export const actorVisibilityMachine = createMachine(actorVisibilityDef);
 
 export const pinnedStateDef: StateDef<PinnedState> = {
-  values: ["unpinned", "pinned"] as const,
+  values: ["unpinned", "pinned", "archived"] as const,
   initial: "unpinned",
   transitions: {
-    unpinned: ["pinned"],
-    pinned: ["unpinned"],
+    unpinned: ["pinned", "archived"],
+    pinned: ["unpinned", "archived"],
+    archived: ["unpinned"],
   },
   terminal: [],
 };

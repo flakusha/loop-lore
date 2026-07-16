@@ -9,5 +9,7 @@ import "./alpine/app";
 import "./alpine/htmx";
 import "./alpine/world-edit";
 import "./alpine/chat";
+import "./alpine/sidebar";
+import "./alpine/shortcuts";
 import "./ui";
 import "./gallery-upload";
