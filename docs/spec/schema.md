@@ -90,38 +90,38 @@ Each enum encodes a state machine rather than a binary on/off:
 | `location_states.items_available`   | (string default `"[]"` — JSON array)                                                                                       | Item availability indicator                           |
 | `synthetic_data.type`               | `turn_sequence`, `quality_evaluation`, `quest_progression`, `world_state_transition`, `regeneration_case`, `gm_escalation` | Synthetic data category                               |
 | `synthetic_data.status`             | `generated`, `validated`, `approved`, `rejected`, `archived`                                                               | Synthetic data lifecycle flag                         |
-| `chats.is_pinned`                   | `unpinned`, `pinned`                                                                                                       | A `is_pinned` boolean                                |
-| `personas.is_default`               | `not_default`, `default`                                                                                                   | A `is_default` boolean                               |
-| `actor_notes.pinned`                | `unpinned`, `pinned`                                                                                                       | A `pinned` boolean                                   |
-| `actor_items.equipped`              | `unequipped`, `equipped`                                                                                                   | An `equipped` boolean                                |
-| `items.stackable`                   | `unique`, `stackable`                                                                                                      | A `stackable` boolean                                |
+| `chats.is_pinned`                   | `unpinned`, `pinned`                                                                                                       | A `is_pinned` boolean                                 |
+| `personas.is_default`               | `not_default`, `default`                                                                                                   | A `is_default` boolean                                |
+| `actor_notes.pinned`                | `unpinned`, `pinned`                                                                                                       | A `pinned` boolean                                    |
+| `actor_items.equipped`              | `unequipped`, `equipped`                                                                                                   | An `equipped` boolean                                 |
+| `items.stackable`                   | `unique`, `stackable`                                                                                                      | A `stackable` boolean                                 |
 
 ### Remaining Boolean Flags (not yet migrated)
 
 These booleans are genuine singular properties or orthogonal flags,
 **not** state machine candidates — they stay as-is:
 
-| Table                | Column           | Default | Reason                                                      |
-| -------------------- | ---------------- | ------- | ----------------------------------------------------------- |
-| `world_items`        | `respawnable`    | `0`     | Intrinsic property                                          |
-| `actor_lore_entries` | `selective`      | `0`     | Orthogonal flag (relevance gating)                          |
-| `actor_lore_entries` | `case_sensitive` | `0`     | Orthogonal flag (key matching)                              |
-| `actor_lore_entries` | `constant`       | `0`     | Orthogonal flag (always included)                           |
-| `world_lore_entries` | `selective`      | `0`     | Same (mirror table)                                         |
-| `world_lore_entries` | `case_sensitive` | `0`     | Same (mirror table)                                         |
-| `world_lore_entries` | `constant`       | `0`     | Same (mirror table)                                         |
+| Table                | Column           | Default | Reason                             |
+| -------------------- | ---------------- | ------- | ---------------------------------- |
+| `world_items`        | `respawnable`    | `0`     | Intrinsic property                 |
+| `actor_lore_entries` | `selective`      | `0`     | Orthogonal flag (relevance gating) |
+| `actor_lore_entries` | `case_sensitive` | `0`     | Orthogonal flag (key matching)     |
+| `actor_lore_entries` | `constant`       | `0`     | Orthogonal flag (always included)  |
+| `world_lore_entries` | `selective`      | `0`     | Same (mirror table)                |
+| `world_lore_entries` | `case_sensitive` | `0`     | Same (mirror table)                |
+| `world_lore_entries` | `constant`       | `0`     | Same (mirror table)                |
 
 ### Migrated Boolean Flags (Resolved 2026-07-15)
 
 These columns were converted from integer 0/1 to string enums with state machines:
 
-| Table            | Column       | Old type    | New enum                    | Migration |
-| ---------------- | ------------ | ----------- | --------------------------- | --------- |
-| `chats`          | `is_pinned`  | `INTEGER 0` | `PinnedState`               | 010       |
-| `personas`       | `is_default` | `INTEGER 0` | `DefaultState`              | 010       |
-| `actor_notes`    | `pinned`     | `INTEGER 0` | `PinnedState`               | 010       |
-| `actor_items`    | `equipped`   | `INTEGER 0` | `EquipState`                | 010       |
-| `items`          | `stackable`  | `INTEGER 0` | `StackableState`            | 010       |
+| Table         | Column       | Old type    | New enum         | Migration |
+| ------------- | ------------ | ----------- | ---------------- | --------- |
+| `chats`       | `is_pinned`  | `INTEGER 0` | `PinnedState`    | 010       |
+| `personas`    | `is_default` | `INTEGER 0` | `DefaultState`   | 010       |
+| `actor_notes` | `pinned`     | `INTEGER 0` | `PinnedState`    | 010       |
+| `actor_items` | `equipped`   | `INTEGER 0` | `EquipState`     | 010       |
+| `items`       | `stackable`  | `INTEGER 0` | `StackableState` | 010       |
 
 ### Planned: Lore Entry Lifecycle State Machine
 

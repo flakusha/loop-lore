@@ -768,39 +768,39 @@ The prompt template system at `src/generation/prompt-templates.ts` provides:
 
 **Key templates by model family**:
 
-| Family | Format | Template pattern | Example use |
-|--------|--------|-----------------|-------------|
-| SD1/SD2/tags | `tags` | "Ignore previous instructions. Write comma-separated image tags..." | Legacy models, CLIP 75 token limit |
-| SDXL | `tags` | "Ignore previous instructions. Write comma-separated image tags..." | Higher quality, 150 token limit |
-| Illustrious/Noob | `tags` | "Ignore previous instructions. Write comma-separated booru-style tags..." | Danbooru tag vocabulary, CFG 3-6 |
-| Pony | `tags` | "Ignore previous instructions. Write comma-separated tags with score prefix..." | Score tags required, CFG 6-8+ |
-| SD3/FLUX | `natural` | "Describe {{charName}} in detailed natural language..." | Long descriptions, T5 tokenizer |
-| Krea 2 | `natural` | "Describe {{charName}} in one flowing paragraph..." | Natural language, low step count |
-| Anima | `tags-and-natural` | "Describe {{charName}} using lowercase keywords with spaces..." | Mix of tags and natural language |
-| Ideogram 4 | `json` | "Output JSON: {"high_level_description": "{{charName}}", ...}" | JSON caption format required |
-| Qwen/Chroma | `natural` | "Describe {{charName}} in detailed natural language..." | Long context, multilingual |
+| Family           | Format             | Template pattern                                                                | Example use                        |
+| ---------------- | ------------------ | ------------------------------------------------------------------------------- | ---------------------------------- |
+| SD1/SD2/tags     | `tags`             | "Ignore previous instructions. Write comma-separated image tags..."             | Legacy models, CLIP 75 token limit |
+| SDXL             | `tags`             | "Ignore previous instructions. Write comma-separated image tags..."             | Higher quality, 150 token limit    |
+| Illustrious/Noob | `tags`             | "Ignore previous instructions. Write comma-separated booru-style tags..."       | Danbooru tag vocabulary, CFG 3-6   |
+| Pony             | `tags`             | "Ignore previous instructions. Write comma-separated tags with score prefix..." | Score tags required, CFG 6-8+      |
+| SD3/FLUX         | `natural`          | "Describe {{charName}} in detailed natural language..."                         | Long descriptions, T5 tokenizer    |
+| Krea 2           | `natural`          | "Describe {{charName}} in one flowing paragraph..."                             | Natural language, low step count   |
+| Anima            | `tags-and-natural` | "Describe {{charName}} using lowercase keywords with spaces..."                 | Mix of tags and natural language   |
+| Ideogram 4       | `json`             | "Output JSON: {"high_level_description": "{{charName}}", ...}"                  | JSON caption format required       |
+| Qwen/Chroma      | `natural`          | "Describe {{charName}} in detailed natural language..."                         | Long context, multilingual         |
 
 **Template token variables**:
 
-| Token | Source | Description |
-|-------|--------|-------------|
-| `{{charName}}` | Character card | Name of the AI character |
+| Token                 | Source         | Description                      |
+| --------------------- | -------------- | -------------------------------- |
+| `{{charName}}`        | Character card | Name of the AI character         |
 | `{{charDescription}}` | Character card | Character appearance/description |
-| `{{userName}}` | User persona | Name of the user persona |
-| `{{userDescription}}` | User persona | User persona description |
-| `{{lastMessage}}` | Chat history | Last message text |
-| `{{sceneSummary}}` | Scene context | Summary of current scene |
-| `{{chatHistory}}` | Chat history | Recent chat history |
-| `{{negativePrompt}}` | Config | User-configured negative prompt |
-| `{{charPrefix}}` | Character card | Character-specific prompt prefix |
+| `{{userName}}`        | User persona   | Name of the user persona         |
+| `{{userDescription}}` | User persona   | User persona description         |
+| `{{lastMessage}}`     | Chat history   | Last message text                |
+| `{{sceneSummary}}`    | Scene context  | Summary of current scene         |
+| `{{chatHistory}}`     | Chat history   | Recent chat history              |
+| `{{negativePrompt}}`  | Config         | User-configured negative prompt  |
+| `{{charPrefix}}`      | Character card | Character-specific prompt prefix |
 
 **Detail level impact on token budget**:
 
-| Detail level | Template tokens | Context tokens | Total | Use case |
-|-------------|----------------|---------------|-------|----------|
-| `instant` | ~60-80 | ~100-200 | ~160-280 | Fast generation, quick drafts |
-| `balanced` | ~120-180 | ~200-400 | ~320-580 | General purpose |
-| `detailed` | ~200-300 | ~400-800 | ~600-1100 | High-quality final output |
+| Detail level | Template tokens | Context tokens | Total     | Use case                      |
+| ------------ | --------------- | -------------- | --------- | ----------------------------- |
+| `instant`    | ~60-80          | ~100-200       | ~160-280  | Fast generation, quick drafts |
+| `balanced`   | ~120-180        | ~200-400       | ~320-580  | General purpose               |
+| `detailed`   | ~200-300        | ~400-800       | ~600-1100 | High-quality final output     |
 
 **Note on the "ignore previous instructions" pattern**: This is intentional. The LLM must switch from RPG chat mode (roleplaying as a character) to image description mode (generating a structured prompt for the image model). The pattern is only used for tag-based models where the format change is most dramatic. Natural language models (FLUX, Krea2, SD3) use a softer transition since the format is closer to the chat style.
 

@@ -623,13 +623,13 @@ Description → Stats → Effects → Image → Placement
 Each stage is a step in the pipeline. Some steps are LLM-generated, some
 are engine-computed, some are optional.
 
-| Stage         | Who          | Input                      | Output                       | Required |
-| ------------- | ------------ | -------------------------- | ---------------------------- | -------- |
-| Description   | LLM          | User prompt / GM request   | Name, lore, flavor text      | Yes      |
-| Stats         | Engine + LLM | Description + world rules  | Stat block, category, rarity | Yes      |
-| Effects       | Engine + LLM | Stats + world rules        | Item effects, status effects | Optional |
-| Image         | LLM (image)  | Description + style prompt | Asset (avatar/thumbnail)     | Optional |
-| Placement     | Engine       | Entity + target            | World item, inventory slot   | Yes      |
+| Stage       | Who          | Input                      | Output                       | Required |
+| ----------- | ------------ | -------------------------- | ---------------------------- | -------- |
+| Description | LLM          | User prompt / GM request   | Name, lore, flavor text      | Yes      |
+| Stats       | Engine + LLM | Description + world rules  | Stat block, category, rarity | Yes      |
+| Effects     | Engine + LLM | Stats + world rules        | Item effects, status effects | Optional |
+| Image       | LLM (image)  | Description + style prompt | Asset (avatar/thumbnail)     | Optional |
+| Placement   | Engine       | Entity + target            | World item, inventory slot   | Yes      |
 
 ### Pipeline Data Model
 
@@ -755,13 +755,13 @@ interface StatsResult {
 
 **Rarity stat templates:**
 
-| Rarity     | Damage Range | AC Range | Value Multiplier | Weight Multiplier |
-| ---------- | ------------ | -------- | ---------------- | ----------------- |
-| Common     | 1d4–1d6      | +1       | ×1.0             | ×1.0              |
-| Uncommon   | 1d6–1d8      | +2       | ×2.0             | ×1.2              |
-| Rare       | 1d8–1d10     | +3       | ×5.0             | ×1.5              |
-| Epic       | 1d10–2d6     | +4       | ×15.0            | ×1.8              |
-| Legendary  | 2d6–2d8      | +5       | ×50.0            | ×2.0              |
+| Rarity    | Damage Range | AC Range | Value Multiplier | Weight Multiplier |
+| --------- | ------------ | -------- | ---------------- | ----------------- |
+| Common    | 1d4–1d6      | +1       | ×1.0             | ×1.0              |
+| Uncommon  | 1d6–1d8      | +2       | ×2.0             | ×1.2              |
+| Rare      | 1d8–1d10     | +3       | ×5.0             | ×1.5              |
+| Epic      | 1d10–2d6     | +4       | ×15.0            | ×1.8              |
+| Legendary | 2d6–2d8      | +5       | ×50.0            | ×2.0              |
 
 ### Stage 3: Effects
 
@@ -843,14 +843,14 @@ interface ImageResult {
 
 **Style matching:**
 
-| World Theme     | Default Style    | Prompt Modifier                  |
-| --------------- | ---------------- | -------------------------------- |
-| Fantasy         | realistic        | "fantasy RPG, detailed, painterly" |
-| Sci-fi          | realistic        | "sci-fi concept art, sleek"      |
-| Anime           | anime            | "anime style, vibrant colors"    |
-| Retro           | pixel_art        | "pixel art, 32x32, retro game"   |
-| Horror          | sketch           | "dark sketch, pencil, eerie"     |
-| Custom          | (world setting)  | (user-defined)                   |
+| World Theme | Default Style   | Prompt Modifier                    |
+| ----------- | --------------- | ---------------------------------- |
+| Fantasy     | realistic       | "fantasy RPG, detailed, painterly" |
+| Sci-fi      | realistic       | "sci-fi concept art, sleek"        |
+| Anime       | anime           | "anime style, vibrant colors"      |
+| Retro       | pixel_art       | "pixel art, 32x32, retro game"     |
+| Horror      | sketch          | "dark sketch, pencil, eerie"       |
+| Custom      | (world setting) | (user-defined)                     |
 
 ### Stage 5: Placement
 
@@ -869,16 +869,16 @@ interface PlacementResult {
 
 **Placement options by entity type:**
 
-| Entity  | Placement Target                     | Example                                    |
-| ------- | ------------------------------------ | ------------------------------------------ |
-| Item    | World item (on ground/container)     | "Place in the dragon's hoard"              |
-| Item    | Actor inventory                      | "Give to the party fighter"                |
-| Item    | Shop inventory                       | "Add to Ironhold Smith's stock"            |
-| Item    | Enemy loot table                     | "Add to dragon's loot, 25% chance"         |
-| NPC     | Location (spawn point)               | "Place in the throne room"                 |
-| NPC     | Chat (join as participant)           | "Add to group chat as merchant"            |
-| Location| World (add to location graph)        | "Connect to the forest entrance"           |
-| Enemy   | Location (spawn zone)                | "Spawn 3 goblins in the cave"              |
+| Entity   | Placement Target                 | Example                            |
+| -------- | -------------------------------- | ---------------------------------- |
+| Item     | World item (on ground/container) | "Place in the dragon's hoard"      |
+| Item     | Actor inventory                  | "Give to the party fighter"        |
+| Item     | Shop inventory                   | "Add to Ironhold Smith's stock"    |
+| Item     | Enemy loot table                 | "Add to dragon's loot, 25% chance" |
+| NPC      | Location (spawn point)           | "Place in the throne room"         |
+| NPC      | Chat (join as participant)       | "Add to group chat as merchant"    |
+| Location | World (add to location graph)    | "Connect to the forest entrance"   |
+| Enemy    | Location (spawn zone)            | "Spawn 3 goblins in the cave"      |
 
 **Placement validation:**
 
@@ -1043,13 +1043,13 @@ encounter tables, and ambient assets.
 Description → Map/Connections → Encounter Tables → Assets → Placement
 ```
 
-| Stage              | Who    | Output                                      | Required |
-| ------------------ | ------ | ------------------------------------------- | -------- |
-| Description        | LLM    | Name, description, atmosphere, traits       | Yes      |
-| Map/Connections    | LLM + Engine | Connections to existing locations, travel cost, bidirectional flag | Yes |
-| Encounter Tables   | LLM + Engine | Random encounter tables per connection      | Optional |
-| Assets             | LLM (image) | Map image, scene illustration, ambient sound | Optional |
-| Placement          | Engine | Location added to world graph, event recorded | Yes |
+| Stage            | Who          | Output                                                             | Required |
+| ---------------- | ------------ | ------------------------------------------------------------------ | -------- |
+| Description      | LLM          | Name, description, atmosphere, traits                              | Yes      |
+| Map/Connections  | LLM + Engine | Connections to existing locations, travel cost, bidirectional flag | Yes      |
+| Encounter Tables | LLM + Engine | Random encounter tables per connection                             | Optional |
+| Assets           | LLM (image)  | Map image, scene illustration, ambient sound                       | Optional |
+| Placement        | Engine       | Location added to world graph, event recorded                      | Yes      |
 
 **Stage 1: Description**
 
@@ -1149,6 +1149,7 @@ Result:
 **Stage 5: Placement**
 
 Engine validates:
+
 - Location name unique within world
 - All connection targets exist
 - No circular connections with travel_cost 0
@@ -1213,15 +1214,15 @@ environment from a single description.
 Description → Theme & Rules → Starting Locations → Starter NPCs → Starter Items → Starter Chats → Assets
 ```
 
-| Stage              | Who    | Output                                      | Required |
-| ------------------ | ------ | ------------------------------------------- | -------- |
-| Description        | LLM    | Name, setting, lore summary, genre, tone    | Yes      |
-| Theme & Rules      | LLM + Engine | RPG bundle, difficulty, chat rules, public notes | Yes |
-| Starting Locations | LLM + Pipeline | 2-5 starter locations with connections     | Yes |
-| Starter NPCs       | LLM + Pipeline | 3-5 key NPCs with stats and motivation    | Optional |
-| Starter Items      | LLM + Pipeline | Common/uncommon items for starter shops    | Optional |
-| Starter Chats      | Engine | Pre-created chats (GM intro, tutorial)      | Optional |
-| Assets             | LLM (image) | World map, theme music, lore images         | Optional |
+| Stage              | Who            | Output                                           | Required |
+| ------------------ | -------------- | ------------------------------------------------ | -------- |
+| Description        | LLM            | Name, setting, lore summary, genre, tone         | Yes      |
+| Theme & Rules      | LLM + Engine   | RPG bundle, difficulty, chat rules, public notes | Yes      |
+| Starting Locations | LLM + Pipeline | 2-5 starter locations with connections           | Yes      |
+| Starter NPCs       | LLM + Pipeline | 3-5 key NPCs with stats and motivation           | Optional |
+| Starter Items      | LLM + Pipeline | Common/uncommon items for starter shops          | Optional |
+| Starter Chats      | Engine         | Pre-created chats (GM intro, tutorial)           | Optional |
+| Assets             | LLM (image)    | World map, theme music, lore images              | Optional |
 
 **Stage 1: Description**
 
@@ -1414,26 +1415,26 @@ interface TemplateField {
 
 **Public Note Templates:**
 
-| Template          | Fields                                              |
-| ----------------- | --------------------------------------------------- |
-| `theme_guide`     | genre, tone, pacing, dos, donts                     |
-| `plot_hook`       | hook_title, description, suggested_next, urgency    |
-| `npc_introduction`| name, role, personality, secret, disposition        |
-| `world_lore`      | topic, facts, source, reliability (known/rumored)   |
-| `location_guide`  | location, atmosphere, dangers, opportunities        |
-| `quest_brief`     | quest_name, objective, rewards, complications       |
+| Template           | Fields                                            |
+| ------------------ | ------------------------------------------------- |
+| `theme_guide`      | genre, tone, pacing, dos, donts                   |
+| `plot_hook`        | hook_title, description, suggested_next, urgency  |
+| `npc_introduction` | name, role, personality, secret, disposition      |
+| `world_lore`       | topic, facts, source, reliability (known/rumored) |
+| `location_guide`   | location, atmosphere, dangers, opportunities      |
+| `quest_brief`      | quest_name, objective, rewards, complications     |
 
 **Dark Note Templates:**
 
-| Template            | Fields                                                |
-| ------------------- | ----------------------------------------------------- |
-| `secret_identity`   | character, true_identity, evidence, reveal_trigger    |
-| `planned_twist`     | twist_description, setup_required, reveal_moment      |
-| `foreshadow_tracker`| hint_placed, session_placed, target_reveal, subtlety  |
-| `consequence_chain` | action_taken, consequence, trigger_condition, severity|
-| `arc_plan`          | arc_name, acts (array), current_act, next_beat       |
-| `hidden_enemy`      | enemy_name, motivation, plan_stage, weakness          |
-| `world_secret`      | secret, who_knows, how_to_discover, impact_if_revealed|
+| Template             | Fields                                                 |
+| -------------------- | ------------------------------------------------------ |
+| `secret_identity`    | character, true_identity, evidence, reveal_trigger     |
+| `planned_twist`      | twist_description, setup_required, reveal_moment       |
+| `foreshadow_tracker` | hint_placed, session_placed, target_reveal, subtlety   |
+| `consequence_chain`  | action_taken, consequence, trigger_condition, severity |
+| `arc_plan`           | arc_name, acts (array), current_act, next_beat         |
+| `hidden_enemy`       | enemy_name, motivation, plan_stage, weakness           |
+| `world_secret`       | secret, who_knows, how_to_discover, impact_if_revealed |
 
 #### Template Workflow
 
@@ -1892,15 +1893,15 @@ More specific scopes override or augment broader ones.
 
 #### Note Types
 
-| Type              | Purpose                                    | Example                                          |
-| ----------------- | ------------------------------------------ | ------------------------------------------------ |
-| `theme`           | Tone, genre, atmosphere guidance           | "Gothic horror. Dread over action. Slow burn."   |
-| `plot_hook`       | Story threads the GM wants explored        | "The missing miners connect to a deeper evil."   |
-| `guidance`        | Direct narrative direction for the LLM     | "The party should investigate the old well next." |
-| `npc_motive`      | What NPCs want (visible to players)       | "MerchantBob secretly wants the ruby back."      |
-| `world_lore`      | Factual world information everyone knows   | "Dragons were extinct for 300 years — until now." |
-| `tone_instruction`| How the LLM should narrate                 | "No humor. Grimdark. Consequences matter."       |
-| `player_prompt`   | Suggestions for players                    | "Consider: what is your character afraid of?"    |
+| Type               | Purpose                                  | Example                                           |
+| ------------------ | ---------------------------------------- | ------------------------------------------------- |
+| `theme`            | Tone, genre, atmosphere guidance         | "Gothic horror. Dread over action. Slow burn."    |
+| `plot_hook`        | Story threads the GM wants explored      | "The missing miners connect to a deeper evil."    |
+| `guidance`         | Direct narrative direction for the LLM   | "The party should investigate the old well next." |
+| `npc_motive`       | What NPCs want (visible to players)      | "MerchantBob secretly wants the ruby back."       |
+| `world_lore`       | Factual world information everyone knows | "Dragons were extinct for 300 years — until now." |
+| `tone_instruction` | How the LLM should narrate               | "No humor. Grimdark. Consequences matter."        |
+| `player_prompt`    | Suggestions for players                  | "Consider: what is your character afraid of?"     |
 
 #### Data Model
 
@@ -1992,15 +1993,15 @@ Dark notes let the GM plan ahead without spoiling surprises:
 
 #### Note Types
 
-| Type              | Purpose                                    | Example                                          |
-| ----------------- | ------------------------------------------ | ------------------------------------------------ |
-| `secret`          | Hidden information players haven't learned | "The king is a vampire. His 'illness' is bloodlust." |
-| `twist`           | Planned reveals or betrayals               | "The friendly guide is the villain's agent."     |
-| `foreshadow`      | Subtle hints planted so far                | "Mentioned the guide's unusual knowledge of the catacombs." |
-| `hidden_npc`      | NPC motivations unknown to players         | "The priest is secretly a cultist, Level 8."    |
-| `consequence`     | Upcoming consequences of player actions    | "They stole from the guild — retaliation in 3 sessions." |
-| `arc_plan`        | Multi-session story arc planning           | "Act 1: Mystery → Act 2: Confrontation → Act 3: Revelation" |
-| `note`            | Freeform GM notes                          | "Alice seems suspicious of the guide — lean into that." |
+| Type          | Purpose                                    | Example                                                     |
+| ------------- | ------------------------------------------ | ----------------------------------------------------------- |
+| `secret`      | Hidden information players haven't learned | "The king is a vampire. His 'illness' is bloodlust."        |
+| `twist`       | Planned reveals or betrayals               | "The friendly guide is the villain's agent."                |
+| `foreshadow`  | Subtle hints planted so far                | "Mentioned the guide's unusual knowledge of the catacombs." |
+| `hidden_npc`  | NPC motivations unknown to players         | "The priest is secretly a cultist, Level 8."                |
+| `consequence` | Upcoming consequences of player actions    | "They stole from the guild — retaliation in 3 sessions."    |
+| `arc_plan`    | Multi-session story arc planning           | "Act 1: Mystery → Act 2: Confrontation → Act 3: Revelation" |
+| `note`        | Freeform GM notes                          | "Alice seems suspicious of the guide — lean into that."     |
 
 #### Data Model
 
@@ -2061,6 +2062,7 @@ URGENT: Guide's loyalty check should happen within 2 sessions.
 ```
 
 The LLM uses this context to:
+
 - Plant appropriate foreshadowing in narration
 - Build tension toward planned reveals
 - Avoid accidentally revealing secrets
@@ -2119,15 +2121,16 @@ The GM has a dedicated "Story Notes" panel in the world detail page:
 
 #### Dark Note Visibility Rules
 
-| Who                | Sees Public Notes | Sees Dark Notes |
-| ------------------ | ----------------- | --------------- |
-| GM / World Owner   | Yes               | Yes             |
-| World Editor       | Yes               | No              |
-| World Viewer       | Yes               | No              |
-| Player in chat     | Yes               | No              |
-| Prompt Debug View  | Yes               | **Never**       |
+| Who               | Sees Public Notes | Sees Dark Notes |
+| ----------------- | ----------------- | --------------- |
+| GM / World Owner  | Yes               | Yes             |
+| World Editor      | Yes               | No              |
+| World Viewer      | Yes               | No              |
+| Player in chat    | Yes               | No              |
+| Prompt Debug View | Yes               | **Never**       |
 
 Dark notes are never included in:
+
 - Chat exports
 - World exports (or are stripped before export)
 - Shared world bundles
@@ -2806,21 +2809,21 @@ functions — the LLM never directly writes to the database.
 
 ### Tool List
 
-| Tool               | Parameters                                        | Effect                                   | Permission           |
-| ------------------ | ------------------------------------------------- | ---------------------------------------- | -------------------- |
-| `roll_dice`          | notation (`"2d6+3"`), reason                      | Returns total, individual rolls          | All roles            |
-| `skill_check`        | skill, dc, actor_id                               | Rolls d20 + modifier vs DC               | All roles            |
-| `item_transfer`      | item_id, from_actor_id, to_actor_id, quantity     | Moves item between inventories           | GM (influencing)     |
-| `money_transfer`     | from_actor_id, to_actor_id, amount, denomination  | Transfers currency between actors        | GM (influencing)     |
-| `inventory_inspect`  | actor_id                                          | Returns full inventory + equipment       | All roles (read)     |
-| `status_apply`       | effect, target_actor_id, duration                 | Applies status effect to target          | GM (influencing)     |
-| `status_remove`      | effect, target_actor_id                           | Removes status effect from target        | GM (influencing)     |
-| `quest_update`       | quest_id, status, progress                        | Updates quest state                      | GM (influencing)     |
-| `location_move`      | actor_id, location_id                             | Moves actor to a different location      | GM (influencing)     |
-| `world_state_edit`   | key, value                                        | Edits world state snapshot               | GM (influencing)     |
-| `npc_state_edit`     | npc_id, key, value                                | Edits NPC state                          | GM (influencing)     |
-| `loot_generate`      | loot_table_id, location_id                        | Rolls loot and places items at location  | GM (influencing)     |
-| `xp_grant`           | actor_id, amount, reason                          | Awards XP to an actor                    | GM (influencing)     |
+| Tool                | Parameters                                       | Effect                                  | Permission       |
+| ------------------- | ------------------------------------------------ | --------------------------------------- | ---------------- |
+| `roll_dice`         | notation (`"2d6+3"`), reason                     | Returns total, individual rolls         | All roles        |
+| `skill_check`       | skill, dc, actor_id                              | Rolls d20 + modifier vs DC              | All roles        |
+| `item_transfer`     | item_id, from_actor_id, to_actor_id, quantity    | Moves item between inventories          | GM (influencing) |
+| `money_transfer`    | from_actor_id, to_actor_id, amount, denomination | Transfers currency between actors       | GM (influencing) |
+| `inventory_inspect` | actor_id                                         | Returns full inventory + equipment      | All roles (read) |
+| `status_apply`      | effect, target_actor_id, duration                | Applies status effect to target         | GM (influencing) |
+| `status_remove`     | effect, target_actor_id                          | Removes status effect from target       | GM (influencing) |
+| `quest_update`      | quest_id, status, progress                       | Updates quest state                     | GM (influencing) |
+| `location_move`     | actor_id, location_id                            | Moves actor to a different location     | GM (influencing) |
+| `world_state_edit`  | key, value                                       | Edits world state snapshot              | GM (influencing) |
+| `npc_state_edit`    | npc_id, key, value                               | Edits NPC state                         | GM (influencing) |
+| `loot_generate`     | loot_table_id, location_id                       | Rolls loot and places items at location | GM (influencing) |
+| `xp_grant`          | actor_id, amount, reason                         | Awards XP to an actor                   | GM (influencing) |
 
 ### Tool-Call Interface
 
@@ -2852,21 +2855,21 @@ The engine:
 
 ### Permission Matrix
 
-| Tool               | Pure Assistant | Observer GM | Influencing GM | User (self) |
-| ------------------ | -------------- | ----------- | -------------- | ----------- |
-| `roll_dice`          | ✓              | ✓           | ✓              | ✓           |
-| `skill_check`        | ✓              | ✓           | ✓              | ✓           |
-| `inventory_inspect`  | read only      | read only   | read/write     | own only    |
-| `item_transfer`      | —              | —           | ✓              | —           |
-| `money_transfer`     | —              | —           | ✓              | —           |
-| `status_apply`       | —              | —           | ✓              | —           |
-| `status_remove`       | —              | —           | ✓              | —           |
-| `quest_update`       | —              | —           | ✓              | —           |
-| `location_move`      | —              | —           | ✓              | —           |
-| `world_state_edit`   | —              | —           | ✓              | —           |
-| `npc_state_edit`     | —              | —           | ✓              | —           |
-| `loot_generate`      | —              | —           | ✓              | —           |
-| `xp_grant`           | —              | —           | ✓              | —           |
+| Tool                | Pure Assistant | Observer GM | Influencing GM | User (self) |
+| ------------------- | -------------- | ----------- | -------------- | ----------- |
+| `roll_dice`         | ✓              | ✓           | ✓              | ✓           |
+| `skill_check`       | ✓              | ✓           | ✓              | ✓           |
+| `inventory_inspect` | read only      | read only   | read/write     | own only    |
+| `item_transfer`     | —              | —           | ✓              | —           |
+| `money_transfer`    | —              | —           | ✓              | —           |
+| `status_apply`      | —              | —           | ✓              | —           |
+| `status_remove`     | —              | —           | ✓              | —           |
+| `quest_update`      | —              | —           | ✓              | —           |
+| `location_move`     | —              | —           | ✓              | —           |
+| `world_state_edit`  | —              | —           | ✓              | —           |
+| `npc_state_edit`    | —              | —           | ✓              | —           |
+| `loot_generate`     | —              | —           | ✓              | —           |
+| `xp_grant`          | —              | —           | ✓              | —           |
 
 ### User Self-Service Tools
 
@@ -3049,14 +3052,14 @@ and the world. These tools help GMs detect imbalances.
 
 ### Key Metrics
 
-| Metric                  | Formula                                           | Healthy Range    |
-| ----------------------- | ------------------------------------------------- | ---------------- |
-| Gold supply             | SUM(all actor gold)                               | 100-10000        |
-| Gold velocity           | gold_transfers / time_period                      | Growing slowly   |
-| Item circulation        | items_traded / total_items                        | 30-70%           |
-| Wealth inequality       | max(actor_gold) / median(actor_gold)              | < 10x            |
-| Shop price effectiveness| items_bought / items_available_at_shop            | 20-80%           |
-| Loot rarity distribution| COUNT(items) GROUP BY rarity                      | Follows expected curve |
+| Metric                   | Formula                                | Healthy Range          |
+| ------------------------ | -------------------------------------- | ---------------------- |
+| Gold supply              | SUM(all actor gold)                    | 100-10000              |
+| Gold velocity            | gold_transfers / time_period           | Growing slowly         |
+| Item circulation         | items_traded / total_items             | 30-70%                 |
+| Wealth inequality        | max(actor_gold) / median(actor_gold)   | < 10x                  |
+| Shop price effectiveness | items_bought / items_available_at_shop | 20-80%                 |
+| Loot rarity distribution | COUNT(items) GROUP BY rarity           | Follows expected curve |
 
 ### Alert Thresholds
 
@@ -3072,13 +3075,13 @@ item_circulation < 10 → "Warning: items are hoarded, not traded"
 
 GMs can adjust the economy via world rules:
 
-| Lever                 | Effect                                        |
-| --------------------- | --------------------------------------------- |
-| Tax rate              | Percentage deducted on each transaction        |
-| Shop markup/discount  | Global modifier on shop prices                 |
-| Loot drop rate        | Multiplier on loot table generation            |
-| Gold sink events      | Town taxes, repair costs, travel fees          |
-| Item decay            | Consumables degrade over time (optional)       |
+| Lever                | Effect                                   |
+| -------------------- | ---------------------------------------- |
+| Tax rate             | Percentage deducted on each transaction  |
+| Shop markup/discount | Global modifier on shop prices           |
+| Loot drop rate       | Multiplier on loot table generation      |
+| Gold sink events     | Town taxes, repair costs, travel fees    |
+| Item decay           | Consumables degrade over time (optional) |
 
 ### Dashboard UI
 
@@ -3132,11 +3135,11 @@ The price index adjusts automatically based on supply and demand:
 priceIndex = totalGoldInCirculation / baselineGoldSupply
 ```
 
-| Index Range | State     | Effect                                  |
-| ----------- | --------- | --------------------------------------- |
-| < 0.7       | Deflation | Prices drop, NPCs hoard gold            |
-| 0.7–1.3     | Stable    | Normal prices                           |
-| 1.3–2.0     | Inflation | Prices rise, NPCs raise wages           |
+| Index Range | State          | Effect                                  |
+| ----------- | -------------- | --------------------------------------- |
+| < 0.7       | Deflation      | Prices drop, NPCs hoard gold            |
+| 0.7–1.3     | Stable         | Normal prices                           |
+| 1.3–2.0     | Inflation      | Prices rise, NPCs raise wages           |
 | > 2.0       | Hyperinflation | Currency loses meaning, barter replaces |
 
 **Baseline gold supply** is set per world at creation (default: 5000g).
@@ -3172,14 +3175,14 @@ finalPrice = basePrice × priceIndex × locationMarkup × demandModifier
 
 Different locations have different price levels:
 
-| Location Type      | Markup | Reason                        |
-| ------------------ | ------ | ----------------------------- |
-| Major city         | 1.2    | High demand, higher rent      |
-| Small village      | 0.9    | Lower overhead                |
-| Frontier town      | 1.5    | Scarce goods, transport cost  |
-| Dungeon shop       | 2.0    | Convenience premium           |
-| Black market       | 1.8    | Risk premium, no regulation   |
-| Starting village   | 0.7    | Beginner-friendly pricing     |
+| Location Type    | Markup | Reason                       |
+| ---------------- | ------ | ---------------------------- |
+| Major city       | 1.2    | High demand, higher rent     |
+| Small village    | 0.9    | Lower overhead               |
+| Frontier town    | 1.5    | Scarce goods, transport cost |
+| Dungeon shop     | 2.0    | Convenience premium          |
+| Black market     | 1.8    | Risk premium, no regulation  |
+| Starting village | 0.7    | Beginner-friendly pricing    |
 
 The GM sets location markup via world settings or chat rules.
 
@@ -3204,29 +3207,29 @@ if (shop.supply[itemId] > highThreshold) {
 
 Supply thresholds (configurable per world):
 
-| Threshold     | Default | Effect                         |
-| ------------- | ------- | ------------------------------ |
-| Low           | 2       | Price multiplier ×1.2          |
-| Critical Low  | 0       | Item unavailable, price ×2.0   |
-| Normal        | 10      | Price multiplier ×1.0          |
-| High          | 20      | Price multiplier ×0.8          |
-| Surplus       | 50      | Price multiplier ×0.5          |
+| Threshold    | Default | Effect                       |
+| ------------ | ------- | ---------------------------- |
+| Low          | 2       | Price multiplier ×1.2        |
+| Critical Low | 0       | Item unavailable, price ×2.0 |
+| Normal       | 10      | Price multiplier ×1.0        |
+| High         | 20      | Price multiplier ×0.8        |
+| Surplus      | 50      | Price multiplier ×0.5        |
 
 ### Market Events
 
 Dynamic events that affect the economy:
 
-| Event              | Effect                                    | Duration  |
-| ------------------ | ----------------------------------------- | --------- |
-| Trade route open   | All prices ×0.8 in connected locations   | Until closed |
-| Trade route cut    | Prices ×1.5, scarcity ×2                 | Until cleared |
-| Festival            | Luxuries ×0.5, inns ×2.0                | 3-7 days  |
-| Plague              | Healers ×2.0, general ×0.8               | 1-4 weeks |
-| War                 | Weapons ×2.0, armor ×1.5, food ×1.3      | Until peace |
-| Dragon sighting    | All prices ×1.2, weapons ×1.5            | 1-2 weeks |
-| Mine discovery     | Ore prices ×0.5, metals ×0.7             | 1-3 weeks |
-| Bountiful harvest  | Food prices ×0.5                          | 1 season  |
-| Tax holiday         | All purchases -10% tax                    | 1-7 days  |
+| Event             | Effect                                 | Duration      |
+| ----------------- | -------------------------------------- | ------------- |
+| Trade route open  | All prices ×0.8 in connected locations | Until closed  |
+| Trade route cut   | Prices ×1.5, scarcity ×2               | Until cleared |
+| Festival          | Luxuries ×0.5, inns ×2.0               | 3-7 days      |
+| Plague            | Healers ×2.0, general ×0.8             | 1-4 weeks     |
+| War               | Weapons ×2.0, armor ×1.5, food ×1.3    | Until peace   |
+| Dragon sighting   | All prices ×1.2, weapons ×1.5          | 1-2 weeks     |
+| Mine discovery    | Ore prices ×0.5, metals ×0.7           | 1-3 weeks     |
+| Bountiful harvest | Food prices ×0.5                       | 1 season      |
+| Tax holiday       | All purchases -10% tax                 | 1-7 days      |
 
 Events are injected by the GM via tool calls or triggered automatically
 by quest outcomes.
@@ -3253,6 +3256,7 @@ interface EconomicFaction {
 ```
 
 Factions affect:
+
 - **Member discounts**: Guild members get better prices
 - **Access control**: Some shops only serve certain factions
 - **Protection**: Trading under guild protection = no theft
@@ -3292,14 +3296,14 @@ the LLM narrates haggling, the engine validates fairness.
 
 #### Trade Types
 
-| Type           | Gold Involved | Items Involved | Validation                |
-| -------------- | ------------- | -------------- | ------------------------- |
-| Direct Sale    | Yes           | Yes            | Gold check + value check  |
-| Barter         | No            | Yes (both sides)| Value comparison         |
-| Hybrid         | Yes           | Yes            | Both checks               |
-| Gift           | Optional      | Optional       | None (voluntary)          |
-| Loan           | Yes           | No             | Debt record created       |
-| Commission     | Yes (escrow)  | Yes            | Quest-linked              |
+| Type        | Gold Involved | Items Involved   | Validation               |
+| ----------- | ------------- | ---------------- | ------------------------ |
+| Direct Sale | Yes           | Yes              | Gold check + value check |
+| Barter      | No            | Yes (both sides) | Value comparison         |
+| Hybrid      | Yes           | Yes              | Both checks              |
+| Gift        | Optional      | Optional         | None (voluntary)         |
+| Loan        | Yes           | No               | Debt record created      |
+| Commission  | Yes (escrow)  | Yes              | Quest-linked             |
 
 #### Barter Resolution Pipeline
 
@@ -3378,22 +3382,22 @@ interface BarterCheck {
 dc = 10 + floor(abs(fairnessRatio - 1.0) * 20)
 ```
 
-| Fairness Ratio | Computed DC | Example                        |
-| -------------- | ----------- | ------------------------------ |
-| 0.9–1.1        | 10–12       | Nearly fair trade              |
-| 0.7–0.9        | 14–18       | You're getting a deal          |
-| 0.5–0.7        | 18–22       | Very favorable to you          |
-| > 1.2          | 14+         | You're overpaying              |
+| Fairness Ratio | Computed DC | Example               |
+| -------------- | ----------- | --------------------- |
+| 0.9–1.1        | 10–12       | Nearly fair trade     |
+| 0.7–0.9        | 14–18       | You're getting a deal |
+| 0.5–0.7        | 18–22       | Very favorable to you |
+| > 1.2          | 14+         | You're overpaying     |
 
 **Outcome effects:**
 
-| Outcome           | Trade Effect                                  |
-| ----------------- | --------------------------------------------- |
-| Critical Success  | Target accepts, +10 trust, may offer extras   |
-| Success (by 1-5)  | Target accepts, +5 trust                      |
-| Success (by 6+)   | Target accepts, +3 trust, +1 faction rep     |
-| Failure           | Target refuses or demands better terms        |
-| Critical Failure  | Target refuses, -5 trust, may end relationship|
+| Outcome          | Trade Effect                                   |
+| ---------------- | ---------------------------------------------- |
+| Critical Success | Target accepts, +10 trust, may offer extras    |
+| Success (by 1-5) | Target accepts, +5 trust                       |
+| Success (by 6+)  | Target accepts, +3 trust, +1 faction rep       |
+| Failure          | Target refuses or demands better terms         |
+| Critical Failure | Target refuses, -5 trust, may end relationship |
 
 #### Group Chat Multi-Party Trading
 
@@ -3416,6 +3420,7 @@ Alice can:
 ```
 
 Auction mechanics:
+
 - LLM narrates the auction, sets deadline (turns or time)
 - Engine tracks all bids, validates each
 - At deadline, highest bidder wins
@@ -3439,16 +3444,16 @@ in escrow:
 
 Worlds can configure restrictions:
 
-| Setting           | Default | Description                              |
-| ----------------- | ------- | ---------------------------------------- |
-| `p2p_trade`       | true    | Allow actor-to-actor trading             |
-| `barter`          | true    | Allow item-for-item swaps                |
-| `proximity_check` | false   | Actors must be in same location          |
-| `trade_tax`       | 0%      | Tax on gold involved in trades           |
-| `max_trade_value` | 0       | Cap per trade (0 = unlimited)            |
-| `cooldown_turns`  | 0       | Turns between trades (0 = no cooldown)   |
-| `escrow_enabled`  | true    | Allow escrow for commissions             |
-| `auction_enabled` | true    | Allow multi-party auctions               |
+| Setting           | Default | Description                            |
+| ----------------- | ------- | -------------------------------------- |
+| `p2p_trade`       | true    | Allow actor-to-actor trading           |
+| `barter`          | true    | Allow item-for-item swaps              |
+| `proximity_check` | false   | Actors must be in same location        |
+| `trade_tax`       | 0%      | Tax on gold involved in trades         |
+| `max_trade_value` | 0       | Cap per trade (0 = unlimited)          |
+| `cooldown_turns`  | 0       | Turns between trades (0 = no cooldown) |
+| `escrow_enabled`  | true    | Allow escrow for commissions           |
+| `auction_enabled` | true    | Allow multi-party auctions             |
 
 #### LLM Prompt Injection
 

@@ -56,6 +56,7 @@ Docs organized into:
 | [`spec/artifacts-system.md`](./spec/artifacts-system.md)     | Code, documents, datasets as assets               |
 | [`spec/logging.md`](./spec/logging.md)                       | Structured logging, PII censor, transports        |
 | [`spec/testing.md`](./spec/testing.md)                       | Testing strategy, tools, coverage goals           |
+| [`spec/e2e-benchmarks.md`](./spec/e2e-benchmarks.md)         | E2E performance benchmarks, git-sha tracking      |
 
 ### Interfaces & Integrations
 

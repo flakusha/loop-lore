@@ -133,11 +133,11 @@ cannot be bound to new chats while archived.
 
 **Location-specific transitions:**
 
-| Transition           | Who can trigger                      | UI action                                |
-| -------------------- | ------------------------------------ | ---------------------------------------- |
-| `active → archived`  | World owner, admin                   | Archive action in world detail           |
-| `archived → active`  | World owner, admin                   | Restore in archived locations view       |
-| `archived → purged`  | Admin only                           | Purge action with typed confirmation     |
+| Transition          | Who can trigger    | UI action                            |
+| ------------------- | ------------------ | ------------------------------------ |
+| `active → archived` | World owner, admin | Archive action in world detail       |
+| `archived → active` | World owner, admin | Restore in archived locations view   |
+| `archived → purged` | Admin only         | Purge action with typed confirmation |
 
 ---
 
