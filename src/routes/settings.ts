@@ -5,67 +5,21 @@
  *   GET  /api/settings           — get current user settings
  *   PATCH /api/settings          — update current user settings
  *   GET  /api/settings/export    — bulk export user data (ZIP)
+ *
+ * Elysia plugin — uses auth guard for authentication (context.userId available).
  */
+
+/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access */
+
+import { Elysia } from "elysia";
 import type { Kysely } from "kysely";
 import type { DB } from "../db/schema";
-import type { RequestContext } from "../middleware/types";
-import type { RouteDispatch } from "./router";
-import { registerRoute } from "./router";
-import { BAD_METHOD, jsonResponse, jsonError, HttpStatus, ErrorCode, parseBody } from "./http-utils";
+import { jsonResponse, jsonError, HttpStatus, ErrorCode } from "./http-utils";
 import { jsonParseOr, safeJsonStringify } from "../utils";
 import JSZip from "jszip";
 import { ActorType } from "../db/enums";
 
-interface GetSettingsOpts {
-  database: Kysely<DB>;
-  context: RequestContext;
-}
-interface UpdateSettingsOpts {
-  database: Kysely<DB>;
-  context: RequestContext;
-  body: Record<string, unknown>;
-}
-interface ExportAllOpts {
-  database: Kysely<DB>;
-  context: RequestContext;
-}
-
-const dispatch: RouteDispatch = async ({ request, context, database }) => {
-  const url = new URL(request.url);
-  const { pathname } = url;
-  const method = request.method;
-
-  // ── /api/settings ───────────────────────────────────────────
-  if (pathname === "/api/settings") {
-    if (method === "GET") {
-      return handleGetSettings({ database, context });
-    }
-    if (method === "PATCH") {
-      const body = await parseBody(request);
-      if (body instanceof Response) return body;
-      return handleUpdateSettings({ database, body, context });
-    }
-    return BAD_METHOD();
-  }
-
-  // ── /api/settings/export (bulk data export as ZIP) ───────
-  if (pathname === "/api/settings/export" && method === "GET") {
-    return handleExportAll({ database, context });
-  }
-
-  return null;
-};
-
-async function handleGetSettings({ database, context }: GetSettingsOpts): Promise<Response> {
-  const userId = context.userId;
-  if (!userId) {
-    return jsonError({
-      message: "Unauthorized",
-      status: HttpStatus.Unauthorized,
-      code: ErrorCode.Unauthorized,
-    });
-  }
-
+async function handleGetSettings(database: Kysely<DB>, userId: string): Promise<Response> {
   const user = await database
     .selectFrom("users")
     .select("settings")
@@ -75,16 +29,11 @@ async function handleGetSettings({ database, context }: GetSettingsOpts): Promis
   return jsonResponse(settings);
 }
 
-async function handleUpdateSettings({ database, body, context }: UpdateSettingsOpts): Promise<Response> {
-  const userId = context.userId;
-  if (!userId) {
-    return jsonError({
-      message: "Unauthorized",
-      status: HttpStatus.Unauthorized,
-      code: ErrorCode.Unauthorized,
-    });
-  }
-
+async function handleUpdateSettings(
+  database: Kysely<DB>,
+  userId: string,
+  body: Record<string, unknown>,
+): Promise<Response> {
   const current = await database
     .selectFrom("users")
     .select("settings")
@@ -107,15 +56,7 @@ async function handleUpdateSettings({ database, body, context }: UpdateSettingsO
   return jsonResponse(merged);
 }
 
-async function handleExportAll({ database, context }: ExportAllOpts): Promise<Response> {
-  const userId = context.userId;
-  if (!userId)
-    return jsonError({
-      message: "Unauthorized",
-      status: HttpStatus.Unauthorized,
-      code: ErrorCode.Unauthorized,
-    });
-
+async function handleExportAll(database: Kysely<DB>, userId: string): Promise<Response> {
   const user = await database
     .selectFrom("users")
     .select("settings")
@@ -157,5 +98,41 @@ async function handleExportAll({ database, context }: ExportAllOpts): Promise<Re
   });
 }
 
-registerRoute(dispatch);
-export { dispatch };
+export function settingsRoutes({ database }: { database: Kysely<DB> }) {
+  return new Elysia({ name: "settings" })
+    .get("/api/settings", async (ctx) => {
+      const userId = (ctx as any).userId as string | null;
+      if (!userId) {
+        return jsonError({
+          message: "Unauthorized",
+          status: HttpStatus.Unauthorized,
+          code: ErrorCode.Unauthorized,
+        });
+      }
+      return handleGetSettings(database, userId);
+    })
+    .patch("/api/settings", async (ctx) => {
+      const request = (ctx as any).request as Request;
+      const userId = (ctx as any).userId as string | null;
+      if (!userId) {
+        return jsonError({
+          message: "Unauthorized",
+          status: HttpStatus.Unauthorized,
+          code: ErrorCode.Unauthorized,
+        });
+      }
+      const body = (await request.json()) as Record<string, unknown>;
+      return handleUpdateSettings(database, userId, body);
+    })
+    .get("/api/settings/export", async (ctx) => {
+      const userId = (ctx as any).userId as string | null;
+      if (!userId) {
+        return jsonError({
+          message: "Unauthorized",
+          status: HttpStatus.Unauthorized,
+          code: ErrorCode.Unauthorized,
+        });
+      }
+      return handleExportAll(database, userId);
+    });
+}
