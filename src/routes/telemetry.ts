@@ -25,7 +25,7 @@ export function telemetryRoutes({ database }: HandleOpts): Elysia {
       }
 
       const body = ctx.body as Record<string, unknown> | undefined;
-      if (!body || !body.type) {
+      if (!body?.type) {
         return jsonError({ message: "event type is required", status: HttpStatus.BadRequest });
       }
 
@@ -127,9 +127,9 @@ export function telemetryRoutes({ database }: HandleOpts): Elysia {
       }
 
       const retentionDays = Number(ctx.query.days) || 90;
-      const cutoff = new Date(Date.now() - retentionDays * 86400000).toISOString();
+      const cutoff = new Date(Date.now() - retentionDays * 86_400_000).toISOString();
 
-      const result = await database.deleteFrom("telemetry_events").where("created_at", "<", cutoff).execute();
+      await database.deleteFrom("telemetry_events").where("created_at", "<", cutoff).execute();
 
       getLogger().child({ module: "telemetry" }).info("Purged old telemetry events", {
         retentionDays,
