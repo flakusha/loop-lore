@@ -77,4 +77,17 @@ describe("Messages E2E", () => {
     expect(res.status).toBe(404);
     expect(res.code).toBeTruthy(); // TEST.2 error envelope
   });
+
+  test("cross-tenant isolation: User B cannot access User A's message", async () => {
+    const resA = await api.get<{ id: string }>(`/api/messages/${SEED.message.id}`);
+    expect(resA.ok).toBe(true);
+    expect(resA.data!.id).toBe(SEED.message.id);
+
+    const apiB = createClient(server.url);
+    await apiB.loginAs(SEED.admin.username, SEED.admin.password);
+    const resB = await apiB.get(`/api/messages/${SEED.message.id}`);
+    expect(resB.ok).toBe(false);
+    expect(resB.status).toBe(403);
+    expect(resB.code).toBeTruthy();
+  });
 });
