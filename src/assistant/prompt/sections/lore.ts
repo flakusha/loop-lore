@@ -30,7 +30,9 @@ export const loreSection: SectionBuilder = {
         : Promise.resolve([]),
     ]);
 
-    const contextWords = await recentUserWords(ctx.db, params.chatId);
+    const contextWords = params.selectiveKeys
+      ? new Set(params.selectiveKeys.map((k) => k.toLowerCase()))
+      : await recentUserWords(ctx.db, params.chatId);
     const isRelevant = (entry: {
       content: string;
       keys: unknown;

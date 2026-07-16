@@ -77,18 +77,18 @@ function wrapWithLayout(content: string, title?: string): string {
   return layout;
 }
 
-function resolveIncludes(content: string, seen = new Set<string>()): string {
+function resolveIncludes(content: string, chain = new Set<string>()): string {
   return content.replaceAll(/\{\{>\s*([\w./-]+)\s*\}\}/g, (_match, includePath: string) => {
     const resolved = join(COMPONENTS_DIR, includePath);
-    if (seen.has(resolved)) {
+    if (chain.has(resolved)) {
       throw new Error(`Circular include detected: ${includePath} (resolved to ${resolved})`);
     }
     if (!existsSync(resolved)) {
       throw new Error(`Include not found: ${includePath} (resolved to ${resolved})`);
     }
     const included = readFileSync(resolved, "utf8");
-    seen.add(resolved);
-    return resolveIncludes(included, seen);
+    chain.add(resolved);
+    return resolveIncludes(included, chain);
   });
 }
 
@@ -185,13 +185,21 @@ function serveStaticPartial(name: string, searchParams?: URLSearchParams): Respo
   if (!ALLOWED_PARTIALS.has(name)) return null;
 
   const partialPath = join(PARTIALS_DIR, `${name}.html`);
-  if (!existsSync(partialPath)) return null;
-
-  let content = readFileSync(partialPath, "utf8");
-  if (searchParams?.has("worldId")) {
-    content = content.replace("{{worldId}}", () => searchParams.get("worldId")!);
+  if (existsSync(partialPath)) {
+    let content = readFileSync(partialPath, "utf8");
+    if (searchParams?.has("worldId")) {
+      content = content.replace("{{worldId}}", () => searchParams.get("worldId")!);
+    }
+    return htmlResponse(content);
   }
-  return htmlResponse(content);
+
+  // Fallback to components dir
+  const componentPath = join(COMPONENTS_DIR, `${name}.html`);
+  if (existsSync(componentPath)) {
+    return htmlResponse(readFileSync(componentPath, "utf8"));
+  }
+
+  return null;
 }
 
 // ── Dynamic partials (server-rendered) ───────────────────────

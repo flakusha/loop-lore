@@ -302,7 +302,7 @@ No index for cleanup queries.
 
 ---
 
-## UTIL.1 safeJsonStringify Double Parse on Hot Path
+## UTIL.1 safeJsonStringify Double Parse on Hot Path (Resolved)
 
 **Severity**: Low
 **Source**: `src/utils.ts` (plan.md)
@@ -310,6 +310,24 @@ No index for cleanup queries.
 Guarded mode parses JSON twice on hot path.
 
 **Fix**: Cache parsed result or use single-pass approach.
+
+**Status**: Resolved — replaced `isJsonString` + `JSON.parse` double call with single `try { JSON.parse(value) }` block. (2026-07-16)
+
+---
+
+## ENUM.1 Enum Barrel No Validation Match (Resolved)
+
+**Severity**: Low
+**Source**: `src/db/enums.ts` (plan.md)
+
+Barrel re-exports but no validation enums match DB. Drift risk between enum
+values and stored data.
+
+**Fix**: Add runtime validation or test that enum values match DB CHECK
+constraints.
+
+**Status**: Resolved — added `src/db/enums.test.ts` with 40 validation tests
+covering all expected enum exports and their values. (2026-07-16)
 
 ---
 
@@ -324,7 +342,7 @@ Config schema may not have `assistant.enabled`.
 
 ---
 
-## ASSISTANT.2 Selective Memory Entries Ignored
+## ASSISTANT.2 Selective Memory Entries Ignored (Resolved)
 
 **Severity**: Low
 **Source**: `src/assistant/prompt-assembler.ts` (plan.md)
@@ -333,9 +351,11 @@ Selective entries (keys) parameter is ignored.
 
 **Fix**: Implement keyword-based filtering.
 
+**Status**: Resolved — added `selectiveKeys` to `PromptParams` interface. Lore section builder uses explicit keys when provided, falls back to `recentUserWords()` from DB. (2026-07-16)
+
 ---
 
-## ASSISTANT.3 Token Budget Rebuild Bug
+## ASSISTANT.3 Token Budget Rebuild Bug (Resolved)
 
 **Severity**: Low
 **Source**: `src/assistant/prompt-assembler.ts` (plan.md)
@@ -344,9 +364,9 @@ Token budget enforcement message array rebuild has a bug.
 
 **Fix**: Fix rebuild logic.
 
----
+**Status**: Resolved — section dropping logic uses index-based filtering (`messages.filter((_, i) => !sections[i]?.dropped)`) instead of tail splice. Verified correct during Round 3 review. (2026-07-06)
 
-## TUI.1 ChatWidget Monkey-Patch
+## TUI.1 ChatWidget Monkey-Patch (Resolved)
 
 **Severity**: Low
 **Source**: `src/tui/app.ts` (plan.md)
@@ -354,6 +374,8 @@ Token budget enforcement message array rebuild has a bug.
 Monkey-patches `ChatWidget.setChatId` — fragile.
 
 **Fix**: Use callback prop instead.
+
+**Status**: Resolved — `ChatWidget` accepts `onChatChange` callback in constructor options. `TUIApp` passes callback, no monkey-patch. (Fixed in Round 3, 2026-07-06)
 
 ---
 
@@ -379,7 +401,7 @@ Left/right navigation keys conflict with input navigation.
 
 ---
 
-## AGE.1 runtimeConfig Module-Level Mutable
+## AGE.1 runtimeConfig Module-Level Mutable (Resolved)
 
 **Severity**: Low
 **Source**: `src/age-gate/controller.ts` (plan.md)
@@ -388,9 +410,11 @@ Left/right navigation keys conflict with input navigation.
 
 **Fix**: Use singleton class instead.
 
+**Status**: Resolved — replaced with `AgeGateConfigStore` singleton class. (Fixed in Round 3, 2026-07-06)
+
 ---
 
-## BUILD.1 No Try/Catch on Single File Compress
+## BUILD.1 No Try/Catch on Single File Compress (Resolved)
 
 **Severity**: Low
 **Source**: `src/build/compress.ts` (plan.md)
@@ -398,6 +422,8 @@ Left/right navigation keys conflict with input navigation.
 Build crash on disk full.
 
 **Fix**: Add try/catch around single file compression.
+
+**Status**: Resolved — Added try/catch around `writeFileSync` at compress.ts:56-67. (2026-07-16)
 
 ---
 

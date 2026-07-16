@@ -1,6 +1,6 @@
 <!-- Active Filter Chips Component
      Removable tags showing current filters. Alpine-managed.
-     Include inside a list-toolbar or standalone via {{> filter-chips.html}}
+     Include inside a list-toolbar or standalone via component include.
      Expects Alpine scope with: activeChips array, removeChip(key), clearAll()
 -->
 <template x-if="activeChips && activeChips.length > 0" data-testid="filter-chips">
