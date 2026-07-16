@@ -188,6 +188,97 @@ export function chatsRoutes(opts: HandlerOpts) {
 
       return jsonCreated({ id: newChatId });
     })
+    // ── Batch chat operations ──────────────────────────────────
+    .post("/api/chats/batch/archive", async (ctx: any) => {
+      const userId = ctx.userId;
+      if (!userId)
+        return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, code: ErrorCode.Unauthorized });
+      const ids = ctx.body.ids as string[] | undefined;
+      if (!ids || !Array.isArray(ids) || ids.length === 0)
+        return jsonError({ message: "ids array is required", status: HttpStatus.BadRequest });
+      const owned = await database
+        .selectFrom("chats")
+        .select("id")
+        .where("id", "in", ids)
+        .where("created_by", "=", userId)
+        .execute();
+      const ownedIds = owned.map((c) => c.id);
+      if (ownedIds.length === 0)
+        return jsonError({ message: "No chats found", status: HttpStatus.NotFound });
+      await database
+        .updateTable("chats")
+        .set({ is_pinned: "archived", updated_at: new Date().toISOString() })
+        .where("id", "in", ownedIds)
+        .execute();
+      return jsonResponse({ ok: true, archived: ownedIds.length });
+    })
+    .post("/api/chats/batch/delete", async (ctx: any) => {
+      const userId = ctx.userId;
+      if (!userId)
+        return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, code: ErrorCode.Unauthorized });
+      const ids = ctx.body.ids as string[] | undefined;
+      if (!ids || !Array.isArray(ids) || ids.length === 0)
+        return jsonError({ message: "ids array is required", status: HttpStatus.BadRequest });
+      const owned = await database
+        .selectFrom("chats")
+        .select("id")
+        .where("id", "in", ids)
+        .where("created_by", "=", userId)
+        .execute();
+      const ownedIds = owned.map((c) => c.id);
+      if (ownedIds.length === 0)
+        return jsonError({ message: "No chats found", status: HttpStatus.NotFound });
+      for (const chatId of ownedIds) {
+        await database.deleteFrom("generation_attempts").where("chat_id", "=", chatId).execute();
+        await database.deleteFrom("messages").where("chat_id", "=", chatId).execute();
+        await database.deleteFrom("chat_participants").where("chat_id", "=", chatId).execute();
+        await database.deleteFrom("story_turns").where("chat_id", "=", chatId).execute();
+        await database.deleteFrom("quest_progress").where("chat_id", "=", chatId).execute();
+        await database.deleteFrom("synthetic_data").where("chat_id", "=", chatId).execute();
+        await database.deleteFrom("actor_memories").where("source_chat_id", "=", chatId).execute();
+      }
+      await database.deleteFrom("chats").where("id", "in", ownedIds).execute();
+      return jsonResponse({ ok: true, deleted: ownedIds.length });
+    })
+    .post("/api/chats/batch/export", async (ctx: any) => {
+      const userId = ctx.userId;
+      if (!userId)
+        return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, code: ErrorCode.Unauthorized });
+      const ids = ctx.body.ids as string[] | undefined;
+      if (!ids || !Array.isArray(ids) || ids.length === 0)
+        return jsonError({ message: "ids array is required", status: HttpStatus.BadRequest });
+      const owned = await database
+        .selectFrom("chats")
+        .selectAll()
+        .where("id", "in", ids)
+        .where("created_by", "=", userId)
+        .execute();
+      if (owned.length === 0)
+        return jsonError({ message: "No chats found", status: HttpStatus.NotFound });
+      const exportData = await Promise.all(
+        owned.map(async (chat) => {
+          const messages = await database
+            .selectFrom("messages")
+            .selectAll()
+            .where("chat_id", "=", chat.id)
+            .orderBy("created_at", "asc")
+            .execute();
+          const participants = await database
+            .selectFrom("chat_participants")
+            .selectAll()
+            .where("chat_id", "=", chat.id)
+            .execute();
+          return { chat, messages, participants };
+        }),
+      );
+      const json = safeJsonStringify(exportData);
+      return new Response(json.ok ? json.value : "[]", {
+        headers: {
+          "Content-Type": "application/json",
+          "Content-Disposition": "attachment; filename=\"chats-export.json\"",
+        },
+      });
+    })
     .get("/api/chats/:id", async (ctx: any) => {
       const userId = ctx.userId;
       if (!userId)

@@ -16,6 +16,7 @@ export const chatManagement: Partial<ChatState> & ThisType<ChatState> = {
   _selectedPersonaId: null as string | null,
   _impersonatingActorId: null as string | null,
   _assistantRole: "off" as "off" | "helper" | "gm" | "moderator",
+  selectedChats: [] as string[],
 
   async deleteChat(chatId: string, event: Event) {
     log.info("deleteChat", { chatId });
@@ -111,6 +112,95 @@ export const chatManagement: Partial<ChatState> & ThisType<ChatState> = {
       }
     } catch {
       this.$dispatch?.("show-toast", { type: "error", message: "Network error updating pin state" });
+    }
+  },
+
+  // ── Batch operations ──────────────────────────────────────
+
+  toggleChatSelection(chatId: string) {
+    const idx = this.selectedChats.indexOf(chatId);
+    if (idx >= 0) {
+      this.selectedChats.splice(idx, 1);
+    } else {
+      this.selectedChats.push(chatId);
+    }
+  },
+
+  async batchArchive() {
+    const ids = this.selectedChats;
+    if (ids.length === 0) return;
+    try {
+      const res = await apiFetch("/api/chats/batch/archive", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: jsonBody({ ids }),
+      });
+      if (res.ok) {
+        this.chats = this.chats.filter((c) => !ids.includes(c.id));
+        this.selectedChats = [];
+        this.$dispatch?.("show-toast", { type: "success", message: `Archived ${ids.length} chat(s)` });
+      } else {
+        const err = await res.json();
+        this.$dispatch?.("show-toast", { type: "error", message: err.error || "Failed to archive" });
+      }
+    } catch {
+      this.$dispatch?.("show-toast", { type: "error", message: "Network error archiving chats" });
+    }
+  },
+
+  async batchDelete() {
+    const ids = this.selectedChats;
+    if (ids.length === 0) return;
+    if (!confirm(`Delete ${ids.length} chat(s) and all their messages?`)) return;
+    try {
+      const res = await apiFetch("/api/chats/batch/delete", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: jsonBody({ ids }),
+      });
+      if (res.ok) {
+        this.chats = this.chats.filter((c) => !ids.includes(c.id));
+        this.selectedChats = [];
+        if (this.activeChat && ids.includes(this.activeChat)) {
+          this.activeChat = null;
+          this.activeChatName = "Welcome to loop-lore";
+          this.messages = [];
+          Alpine.store("ui").hasActiveChat = false;
+        }
+        this.$dispatch?.("show-toast", { type: "success", message: `Deleted ${ids.length} chat(s)` });
+      } else {
+        const err = await res.json();
+        this.$dispatch?.("show-toast", { type: "error", message: err.error || "Failed to delete" });
+      }
+    } catch {
+      this.$dispatch?.("show-toast", { type: "error", message: "Network error deleting chats" });
+    }
+  },
+
+  async batchExport() {
+    const ids = this.selectedChats;
+    if (ids.length === 0) return;
+    try {
+      const res = await apiFetch("/api/chats/batch/export", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: jsonBody({ ids }),
+      });
+      if (res.ok) {
+        const blob = await res.blob();
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "chats-export.json";
+        a.click();
+        URL.revokeObjectURL(url);
+        this.$dispatch?.("show-toast", { type: "success", message: `Exported ${ids.length} chat(s)` });
+      } else {
+        const err = await res.json();
+        this.$dispatch?.("show-toast", { type: "error", message: err.error || "Failed to export" });
+      }
+    } catch {
+      this.$dispatch?.("show-toast", { type: "error", message: "Network error exporting chats" });
     }
   },
 

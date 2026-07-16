@@ -147,6 +147,7 @@ export interface ChatState extends AlpineMagicThis {
   _activityEventSource: EventSource | null;
   _chatFilter: string;
   readonly filteredChats: Array<{ id: string; name?: string }>;
+  selectedChats: string[];
   _mentionQuery: string;
   _mentionResults: Array<{ actor_id: string; name: string; display_name?: string; actor_type?: string }>;
   _showMentionAutocomplete: boolean;
@@ -228,6 +229,10 @@ export interface ChatState extends AlpineMagicThis {
   confirmRenameChat(): Promise<void>;
   deleteChat(chatId: string, event: Event): Promise<void>;
   toggleChatPin(chatId: string): Promise<void>;
+  toggleChatSelection(chatId: string): void;
+  batchArchive(): Promise<void>;
+  batchDelete(): Promise<void>;
+  batchExport(): Promise<void>;
   loadChatKey(chatId: string): Promise<void>;
   checkGenerationStatus(chatId: string): Promise<void>;
 }

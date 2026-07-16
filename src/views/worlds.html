@@ -27,35 +27,31 @@
   <main class="main-content" style="padding-top: 0">
     <div class="chat-area">
       <div class="list-toolbar">
-        <input
-          id="world-search"
-          class="form-input list-search"
-          type="search"
-          placeholder="Search worlds…"
-          aria-label="Search worlds"
-          oninput="filterWorlds()"
-          data-testid="world-search"
-        />
-        <select
-          id="world-sort"
-          class="form-select list-sort"
-          aria-label="Sort worlds"
-          onchange="filterWorlds()"
-        >
-          <option value="name">Sort: Name</option>
-        </select>
+      <div
+        data-search-url="/dynamic/worlds/search"
+        data-target-id="world-list"
+        data-search-placeholder="Search worlds…"
+        data-search-label="Search worlds"
+        style="display: contents"
+      >
+        {{> filter-bar.html}}
       </div>
+    </div>
       <div
         id="world-list"
         data-testid="world-list"
         hx-get="/dynamic/worlds/list"
         hx-trigger="load"
         hx-swap="innerHTML"
+        hx-indicator="#worlds-indicator"
       >
         <div class="empty-state" style="padding: var(--space-12)">
           <div class="icon">⏳</div>
           <div class="title">Loading worlds...</div>
         </div>
+      </div>
+      <div id="worlds-indicator" class="htmx-indicator" style="text-align: center; padding: var(--space-4)">
+        <span class="spinner"></span>
       </div>
     </div>
     <div id="modal-container"></div>
