@@ -34,10 +34,7 @@ async function checkWorldOwnership(
     .select(["owner_id"])
     .where("id", "=", worldId)
     .executeTakeFirst();
-  if (!worldCheck || (worldCheck.owner_id !== userId && userRole !== "admin")) {
-    return false;
-  }
-  return true;
+  return !(!worldCheck || (worldCheck.owner_id !== userId && userRole !== "admin"));
 }
 
 async function handleInstances(
