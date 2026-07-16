@@ -15,3 +15,4 @@ import "./admin";
 import "./world-edit";
 import "./sidebar";
 import "./shortcuts";
+import "./settings-modal";
