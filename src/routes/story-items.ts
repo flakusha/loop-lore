@@ -2,21 +2,24 @@
  * Story Items Routes (World-level item definitions + world item instances)
  *
  * Wraps ItemsService for frontend access:
- *   GET    /api/worlds/:worldId/items            — list item definitions (paginated)
- *   POST   /api/worlds/:worldId/items            — create item definition
- *   GET    /api/worlds/:worldId/items/:id        — get definition
- *   PUT    /api/worlds/:worldId/items/:id        — update definition
- *   DELETE /api/worlds/:worldId/items/:id        — delete definition
- *   GET    /api/worlds/:worldId/items/:id/instances — list placed instances
- *   POST   /api/worlds/:worldId/item-instances   — place item in location / give to NPC
- *   POST   /api/worlds/:worldId/item-instances/:instanceId/transfer — move items
- *   DELETE /api/worlds/:worldId/item-instances/:instanceId — destroy instance
+ *   GET    /api/worlds/:id/items            — list item definitions (paginated)
+ *   POST   /api/worlds/:id/items            — create item definition
+ *   GET    /api/worlds/:id/items/:id        — get definition
+ *   PUT    /api/worlds/:id/items/:id        — update definition
+ *   DELETE /api/worlds/:id/items/:id        — delete definition
+ *   GET    /api/worlds/:id/items/:id/instances — list placed instances
+ *   POST   /api/worlds/:id/item-instances   — place item in location / give to NPC
+ *   POST   /api/worlds/:id/item-instances/:instanceId/transfer — move items
+ *   DELETE /api/worlds/:id/item-instances/:instanceId — destroy instance
  */
 
-import { registerRoute, type RouteDispatch } from "./router";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
+import { Elysia } from "elysia";
+import type { Kysely } from "kysely";
+import type { DB } from "../db/schema";
 import { safeJsonStringify } from "../utils";
 import {
-  BAD_METHOD,
   jsonResponse,
   jsonError,
   jsonPaginated,
@@ -24,254 +27,277 @@ import {
   jsonNoContent,
   HttpStatus,
   ErrorCode,
-  parseBody,
-  parsePagination,
 } from "./http-utils";
 import { ItemsService } from "../story/items";
 
-// ── Dispatch ──────────────────────────────────────────────────
+// ── Handlers ────────────────────────────────────────────────
 
-const dispatch: RouteDispatch = async ({ request, context, database }) => {
-  const url = new URL(request.url);
-  const { pathname, searchParams } = url;
-  const method = request.method;
+async function checkWorldOwnership(
+  database: Kysely<DB>,
+  worldId: string,
+  userId: string | null,
+  userRole: string | null,
+) {
+  const worldCheck = await database
+    .selectFrom("worlds")
+    .select(["owner_id"])
+    .where("id", "=", worldId)
+    .executeTakeFirst();
+  if (!worldCheck || (worldCheck.owner_id !== userId && userRole !== "admin")) {
+    return false;
+  }
+  return true;
+}
+
+async function handleInstances(
+  database: Kysely<DB>,
+  worldId: string,
+  itemId: string,
+  userId: string | null,
+  userRole: string | null,
+) {
+  if (!(await checkWorldOwnership(database, worldId, userId, userRole))) {
+    return jsonError({ message: "Item not found", status: HttpStatus.NotFound });
+  }
+
+  const instances = await database
+    .selectFrom("world_items")
+    .selectAll()
+    .where("world_id", "=", worldId)
+    .where("item_id", "=", itemId)
+    .execute();
+  return jsonResponse(instances);
+}
+
+async function handleDefinition(
+  database: Kysely<DB>,
+  method: string,
+  worldId: string,
+  itemId: string,
+  userId: string | null,
+  userRole: string | null,
+  body?: Record<string, unknown>,
+) {
+  if (!(await checkWorldOwnership(database, worldId, userId, userRole))) {
+    return jsonError({ message: "Item not found", status: HttpStatus.NotFound });
+  }
+
   const items = new ItemsService(database);
 
-  // /api/worlds/:worldId/items/:itemId/instances
-  const defInstMatch = /^\/api\/worlds\/([a-f0-9-]+)\/items\/([a-f0-9-]+)\/instances$/.exec(pathname);
-  if (defInstMatch) {
-    const worldId = defInstMatch[1]!;
-    const itemId = defInstMatch[2]!;
-    // Verify world ownership
-    const worldCheck = await database
-      .selectFrom("worlds")
-      .select(["owner_id"])
-      .where("id", "=", worldId)
-      .executeTakeFirst();
-    if (!worldCheck || (worldCheck.owner_id !== context.userId && context.userRole !== "admin")) {
-      return jsonError({ message: "Item not found", status: HttpStatus.NotFound });
-    }
-    if (method === "GET") {
-      // list world_item instances for this definition
-      const instances = await database
-        .selectFrom("world_items")
-        .selectAll()
-        .where("world_id", "=", worldId)
-        .where("item_id", "=", itemId)
-        .execute();
-      return jsonResponse(instances);
-    }
-    return BAD_METHOD();
+  if (method === "GET") {
+    const def = await items.getDefinition(itemId);
+    if (!def)
+      return jsonError({ message: "Item not found", status: HttpStatus.NotFound, code: ErrorCode.NotFound });
+    return jsonResponse(def);
   }
 
-  // /api/worlds/:worldId/items/:itemId
-  const defMatch = /^\/api\/worlds\/([a-f0-9-]+)\/items\/([a-f0-9-]+)$/.exec(pathname);
-  if (defMatch) {
-    const worldId = defMatch[1]!;
-    const itemId = defMatch[2]!;
-    // Verify world ownership
-    const worldCheck = await database
-      .selectFrom("worlds")
-      .select(["owner_id"])
-      .where("id", "=", worldId)
-      .executeTakeFirst();
-    if (!worldCheck || (worldCheck.owner_id !== context.userId && context.userRole !== "admin")) {
-      return jsonError({ message: "Item not found", status: HttpStatus.NotFound });
-    }
-    if (method === "GET") {
-      const def = await items.getDefinition(itemId);
-      if (!def)
-        return jsonError({
-          message: "Item not found",
-          status: HttpStatus.NotFound,
-          code: ErrorCode.NotFound,
-        });
-      return jsonResponse(def);
-    }
-    if (method === "PUT") {
-      const body = await parseBody(request);
-      if (body instanceof Response) return body;
-      const updates: Record<string, unknown> = {};
-      if (body.name != null) updates.name = body.name;
-      if (body.description != null) updates.description = body.description;
-      if (body.category != null) updates.category = body.category;
-      if (body.rarity != null) updates.rarity = body.rarity;
-      if (body.value != null) updates.value = body.value;
-      if (body.weight != null) updates.weight = body.weight;
-      if (body.properties != null) {
-        const r = safeJsonStringify(body.properties);
-        if (r.ok) updates.properties = r.value;
-      }
-      updates.updated_at = new Date().toISOString();
-      await database
-        .updateTable("items")
-        .set(updates)
-        .where("id", "=", itemId)
-        .where("world_id", "=", worldId)
-        .execute();
-      const updated = await items.getDefinition(itemId);
-      return jsonResponse(updated);
-    }
-    if (method === "DELETE") {
-      await database.deleteFrom("world_items").where("item_id", "=", itemId).execute();
-      await database.deleteFrom("items").where("id", "=", itemId).where("world_id", "=", worldId).execute();
-      return jsonNoContent();
-    }
-    return BAD_METHOD();
+  const updates: Record<string, unknown> = {};
+  if (body?.name != null) updates.name = body.name;
+  if (body?.description != null) updates.description = body.description;
+  if (body?.category != null) updates.category = body.category;
+  if (body?.rarity != null) updates.rarity = body.rarity;
+  if (body?.value != null) updates.value = body.value;
+  if (body?.weight != null) updates.weight = body.weight;
+  if (body?.properties != null) {
+    const r = safeJsonStringify(body.properties);
+    if (r.ok) updates.properties = r.value;
+  }
+  updates.updated_at = new Date().toISOString();
+  await database
+    .updateTable("items")
+    .set(updates)
+    .where("id", "=", itemId)
+    .where("world_id", "=", worldId)
+    .execute();
+
+  const updated = await items.getDefinition(itemId);
+  return jsonResponse(updated);
+}
+
+async function handleDeleteDefinition(
+  database: Kysely<DB>,
+  worldId: string,
+  itemId: string,
+  userId: string | null,
+  userRole: string | null,
+) {
+  if (!(await checkWorldOwnership(database, worldId, userId, userRole))) {
+    return jsonError({ message: "Item not found", status: HttpStatus.NotFound });
   }
 
-  // /api/worlds/:worldId/items (collection)
-  const collMatch = /^\/api\/worlds\/([a-f0-9-]+)\/items$/.exec(pathname);
-  if (collMatch) {
-    const worldId = collMatch[1]!;
-    // Verify world ownership
-    const worldCheck = await database
-      .selectFrom("worlds")
-      .select(["owner_id"])
-      .where("id", "=", worldId)
-      .executeTakeFirst();
-    if (!worldCheck || (worldCheck.owner_id !== context.userId && context.userRole !== "admin")) {
-      return jsonError({ message: "World not found", status: HttpStatus.NotFound });
-    }
-    if (method === "GET") {
-      const { page, pageSize } = parsePagination(searchParams);
-      const category = searchParams.get("category") ?? undefined;
-      const allDefs = await items.listDefinitions(worldId, category as never);
-      const total = allDefs.length;
-      const paged = allDefs.slice((page - 1) * pageSize, page * pageSize);
-      return jsonPaginated({ data: paged, total, page, pageSize });
-    }
-    if (method === "POST") {
-      const body = await parseBody(request);
-      if (body instanceof Response) return body;
-      if (!body.name) return jsonError({ message: "name is required", status: HttpStatus.BadRequest });
-      const id = await items.createDefinition({
-        worldId,
-        name: body.name as string,
-        description: (body.description as string) ?? "",
-        category: (body.category as never) ?? "misc",
-        rarity: (body.rarity as never) ?? "common",
-        stackable: (body.stackable as boolean) ?? false,
-        maxStack: (body.maxStack as number) ?? 1,
-        properties: (body.properties as Record<string, unknown>) ?? {},
-        value: (body.value as number) ?? 0,
-        weight: (body.weight as number) ?? 0,
-      });
-      return jsonCreated({ id });
-    }
-    return BAD_METHOD();
+  await database.deleteFrom("world_items").where("item_id", "=", itemId).execute();
+  await database.deleteFrom("items").where("id", "=", itemId).where("world_id", "=", worldId).execute();
+  return jsonNoContent();
+}
+
+async function handleDefinitions(
+  database: Kysely<DB>,
+  method: string,
+  worldId: string,
+  userId: string | null,
+  userRole: string | null,
+  page: number,
+  pageSize: number,
+  category?: string,
+  body?: Record<string, unknown>,
+) {
+  if (!(await checkWorldOwnership(database, worldId, userId, userRole))) {
+    return jsonError({ message: "World not found", status: HttpStatus.NotFound });
   }
 
-  // /api/worlds/:worldId/item-instances/:instanceId/transfer
-  const transferMatch = /^\/api\/worlds\/([a-f0-9-]+)\/item-instances\/([a-f0-9-]+)\/transfer$/.exec(
-    pathname,
+  const items = new ItemsService(database);
+  if (method === "GET") {
+    const allDefs = await items.listDefinitions(worldId, category as never);
+    const total = allDefs.length;
+    const paged = allDefs.slice((page - 1) * pageSize, page * pageSize);
+    return jsonPaginated({ data: paged, total, page, pageSize });
+  }
+
+  if (!body?.name) return jsonError({ message: "name is required", status: HttpStatus.BadRequest });
+  const id = await items.createDefinition({
+    worldId,
+    name: body.name as string,
+    description: (body.description as string) ?? "",
+    category: (body.category as never) ?? "misc",
+    rarity: (body.rarity as never) ?? "common",
+    stackable: (body.stackable as boolean) ?? false,
+    maxStack: (body.maxStack as number) ?? 1,
+    properties: (body.properties as Record<string, unknown>) ?? {},
+    value: (body.value as number) ?? 0,
+    weight: (body.weight as number) ?? 0,
+  });
+  return jsonCreated({ id });
+}
+
+async function handleTransfer(
+  database: Kysely<DB>,
+  worldId: string,
+  instanceId: string,
+  userId: string | null,
+  userRole: string | null,
+  body?: Record<string, unknown>,
+) {
+  if (!(await checkWorldOwnership(database, worldId, userId, userRole))) {
+    return jsonError({ message: "Item instance not found", status: HttpStatus.NotFound });
+  }
+
+  const items = new ItemsService(database);
+  const quantity = (body?.quantity as number) ?? 1;
+  const result = await items.transfer(
+    instanceId,
+    quantity,
+    (body?.toLocationId as string) ?? undefined,
+    (body?.toActorId as string) ?? undefined,
   );
-  if (transferMatch) {
-    const worldId = transferMatch[1]!;
-    const instanceId = transferMatch[2]!;
-    // Verify world ownership
-    const worldCheck = await database
-      .selectFrom("worlds")
-      .select(["owner_id"])
-      .where("id", "=", worldId)
-      .executeTakeFirst();
-    if (!worldCheck || (worldCheck.owner_id !== context.userId && context.userRole !== "admin")) {
-      return jsonError({ message: "Item instance not found", status: HttpStatus.NotFound });
-    }
-    if (method === "POST") {
-      const body = await parseBody(request);
-      if (body instanceof Response) return body;
-      const quantity = (body.quantity as number) ?? 1;
-      const result = await items.transfer(
-        instanceId,
-        quantity,
-        (body.toLocationId as string) ?? undefined,
-        (body.toActorId as string) ?? undefined,
+  return jsonResponse(result);
+}
+
+async function handleInstance(
+  database: Kysely<DB>,
+  worldId: string,
+  instanceId: string,
+  userId: string | null,
+  userRole: string | null,
+) {
+  if (!(await checkWorldOwnership(database, worldId, userId, userRole))) {
+    return jsonError({ message: "Item instance not found", status: HttpStatus.NotFound });
+  }
+
+  const items = new ItemsService(database);
+  await items.destroy(instanceId);
+  return jsonNoContent();
+}
+
+// ── Elysia plugin ───────────────────────────────────────────
+
+export function storyItemsRoutes({ database }: { database: Kysely<DB> }): Elysia {
+  return new Elysia({ name: "story-items" })
+    .get("/api/worlds/:id/items/:itemId/instances", async ({ params, query }) => {
+      const userId = (query as any).userId as string | null;
+      const userRole = (query as any).userRole as string | null;
+      return handleInstances(database, params.id as string, params.itemId as string, userId, userRole);
+    })
+    .get("/api/worlds/:id/items/:itemId", async ({ params, query }) => {
+      const userId = (query as any).userId as string | null;
+      const userRole = (query as any).userRole as string | null;
+      return handleDefinition(
+        database,
+        "GET",
+        params.id as string,
+        params.itemId as string,
+        userId,
+        userRole,
       );
-      return jsonResponse(result);
-    }
-    return BAD_METHOD();
-  }
-
-  // /api/worlds/:worldId/item-instances/:instanceId
-  const instMatch = /^\/api\/worlds\/([a-f0-9-]+)\/item-instances\/([a-f0-9-]+)$/.exec(pathname);
-  if (instMatch) {
-    const worldId = instMatch[1]!;
-    const instanceId = instMatch[2]!;
-    // Verify world ownership
-    const worldCheck = await database
-      .selectFrom("worlds")
-      .select(["owner_id"])
-      .where("id", "=", worldId)
-      .executeTakeFirst();
-    if (!worldCheck || (worldCheck.owner_id !== context.userId && context.userRole !== "admin")) {
-      return jsonError({ message: "Item instance not found", status: HttpStatus.NotFound });
-    }
-    if (method === "DELETE") {
-      await items.destroy(instanceId);
-      return jsonNoContent();
-    }
-    return BAD_METHOD();
-  }
-
-  // /api/worlds/:worldId/item-instances (create placement)
-  const instCollMatch = /^\/api\/worlds\/([a-f0-9-]+)\/item-instances$/.exec(pathname);
-  if (instCollMatch) {
-    const worldId = instCollMatch[1]!;
-    // Verify world ownership
-    const worldCheck = await database
-      .selectFrom("worlds")
-      .select(["owner_id"])
-      .where("id", "=", worldId)
-      .executeTakeFirst();
-    if (!worldCheck || (worldCheck.owner_id !== context.userId && context.userRole !== "admin")) {
-      return jsonError({ message: "World not found", status: HttpStatus.NotFound });
-    }
-    if (method === "POST") {
-      const body = await parseBody(request);
-      if (body instanceof Response) return body;
-      if (!body.itemId) return jsonError({ message: "itemId is required", status: HttpStatus.BadRequest });
-
-      if (body.actorId) {
-        const id = await items.giveToNpc(
-          body.itemId as string,
-          body.actorId as string,
-          worldId,
-          (body.quantity as number) ?? 1,
-        );
-        return jsonCreated({ id });
-      }
-      if (body.locationId) {
-        const id = await items.placeInLocation(
-          body.itemId as string,
-          body.locationId as string,
-          worldId,
-          (body.quantity as number) ?? 1,
-        );
-        return jsonCreated({ id });
-      }
-      return jsonError({ message: "locationId or actorId is required", status: HttpStatus.BadRequest });
-    }
-    if (method === "GET") {
-      const locationId = searchParams.get("locationId");
-      if (locationId) {
-        const instances = await items.getAtLocation(locationId);
-        return jsonResponse(instances);
-      }
-      const actorId = searchParams.get("actorId");
-      if (actorId) {
-        const instances = await items.getNpcInventory(actorId);
-        return jsonResponse(instances);
-      }
-      return jsonError({
-        message: "locationId or actorId query parameter required",
-        status: HttpStatus.BadRequest,
-      });
-    }
-    return BAD_METHOD();
-  }
-
-  return null;
-};
-
-registerRoute(dispatch);
+    })
+    .put("/api/worlds/:id/items/:itemId", async ({ params, body, query }) => {
+      const userId = (query as any).userId as string | null;
+      const userRole = (query as any).userRole as string | null;
+      return handleDefinition(
+        database,
+        "PUT",
+        params.id as string,
+        params.itemId as string,
+        userId,
+        userRole,
+        body as Record<string, unknown>,
+      );
+    })
+    .delete("/api/worlds/:id/items/:itemId", async ({ params, query }) => {
+      const userId = (query as any).userId as string | null;
+      const userRole = (query as any).userRole as string | null;
+      return handleDeleteDefinition(
+        database,
+        params.id as string,
+        params.itemId as string,
+        userId,
+        userRole,
+      );
+    })
+    .get("/api/worlds/:id/items", async ({ params, query }) => {
+      const userId = (query as any).userId as string | null;
+      const userRole = (query as any).userRole as string | null;
+      const category = (query as any).category as string | undefined;
+      return handleDefinitions(
+        database,
+        "GET",
+        params.id as string,
+        userId,
+        userRole,
+        Number(query.page) || 1,
+        Number(query.pageSize) || 20,
+        category,
+      );
+    })
+    .post("/api/worlds/:id/items", async ({ params, body, query }) => {
+      const userId = (query as any).userId as string | null;
+      const userRole = (query as any).userRole as string | null;
+      return handleDefinitions(
+        database,
+        "POST",
+        params.id as string,
+        userId,
+        userRole,
+        1,
+        20,
+        undefined,
+        body as Record<string, unknown>,
+      );
+    })
+    .post("/api/worlds/:id/item-instances/:instanceId/transfer", async ({ params, body, query }) => {
+      const userId = (query as any).userId as string | null;
+      const userRole = (query as any).userRole as string | null;
+      return handleTransfer(
+        database,
+        params.id as string,
+        params.instanceId as string,
+        userId,
+        userRole,
+        body as Record<string, unknown>,
+      );
+    })
+    .delete("/api/worlds/:id/item-instances/:instanceId", async ({ params, query }) => {
+      const userId = (query as any).userId as string | null;
+      const userRole = (query as any).userRole as string | null;
+      return handleInstance(database, params.id as string, params.instanceId as string, userId, userRole);
+    });
+}
