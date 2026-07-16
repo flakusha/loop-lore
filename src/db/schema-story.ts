@@ -13,6 +13,11 @@ import type {
   QuestProgressStatus,
   ItemCategory,
   ItemRarity,
+  ItemVisibility,
+  MemoryType,
+  LorePosition,
+  DifficultyReroll,
+  DifficultyState,
   StackableState,
 } from "./enums";
 
@@ -26,8 +31,8 @@ export interface Worlds {
   scan_depth: number;
   token_budget: number;
   difficulty_modifier: number;
-  difficulty_reroll: string;
-  difficulty_state: string;
+  difficulty_reroll: DifficultyReroll;
+  difficulty_state: DifficultyState;
   created_at: Generated<string>;
   updated_at: Generated<string>;
 }
@@ -171,7 +176,7 @@ export interface WorldItems {
   location_id: string | null;
   owner_actor_id: string | null;
   quantity: number;
-  visibility: string;
+  visibility: ItemVisibility;
   spawn_condition: string | null;
   respawnable: number;
   created_at: Generated<string>;
@@ -184,7 +189,7 @@ export interface ActorMemories {
   actor_id: string;
   source_chat_id: string | null;
   content: string;
-  memory_type: string;
+  memory_type: MemoryType;
   confidence: number;
   importance: number;
   keywords: string;
@@ -205,7 +210,7 @@ export interface ActorLoreEntries {
   case_sensitive: number;
   enabled: number;
   constant: number;
-  position: string;
+  position: LorePosition;
   insertion_order: number;
   priority: number;
   comment: string | null;
@@ -226,7 +231,7 @@ export interface WorldLoreEntries {
   case_sensitive: number;
   enabled: number;
   constant: number;
-  position: string;
+  position: LorePosition;
   insertion_order: number;
   priority: number;
   comment: string | null;
