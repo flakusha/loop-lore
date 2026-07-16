@@ -57,7 +57,11 @@ export function adminRoutes(opts: { database: Db; config: Config }): Elysia {
         async (ctx: any) => {
           const { userRole, error, query } = ctx;
           if (userRole !== "admin") {
-            return jsonError({ message: "Admin access required", status: HttpStatus.Forbidden, code: ErrorCode.Forbidden });
+            return jsonError({
+              message: "Admin access required",
+              status: HttpStatus.Forbidden,
+              code: ErrorCode.Forbidden,
+            });
           }
 
           const { page, pageSize } = query as { page: number; pageSize: number };
@@ -86,7 +90,11 @@ export function adminRoutes(opts: { database: Db; config: Config }): Elysia {
         async (ctx: any) => {
           const { params: p, userRole, error } = ctx;
           if (userRole !== "admin") {
-            return jsonError({ message: "Admin access required", status: HttpStatus.Forbidden, code: ErrorCode.Forbidden });
+            return jsonError({
+              message: "Admin access required",
+              status: HttpStatus.Forbidden,
+              code: ErrorCode.Forbidden,
+            });
           }
 
           const { id } = p as { id: string };
@@ -107,7 +115,11 @@ export function adminRoutes(opts: { database: Db; config: Config }): Elysia {
             .executeTakeFirst();
 
           if (!user) {
-            return jsonError({ message: "User not found", status: HttpStatus.NotFound, code: ErrorCode.NotFound });
+            return jsonError({
+              message: "User not found",
+              status: HttpStatus.NotFound,
+              code: ErrorCode.NotFound,
+            });
           }
           return jsonResponse(user);
         },
@@ -118,7 +130,11 @@ export function adminRoutes(opts: { database: Db; config: Config }): Elysia {
         async (ctx: any) => {
           const { params: p, body, userRole, error } = ctx;
           if (userRole !== "admin") {
-            return jsonError({ message: "Admin access required", status: HttpStatus.Forbidden, code: ErrorCode.Forbidden });
+            return jsonError({
+              message: "Admin access required",
+              status: HttpStatus.Forbidden,
+              code: ErrorCode.Forbidden,
+            });
           }
 
           const { id } = p as { id: string };
@@ -134,7 +150,11 @@ export function adminRoutes(opts: { database: Db; config: Config }): Elysia {
         async (ctx: any) => {
           const { params: p, userRole, error } = ctx;
           if (userRole !== "admin") {
-            return jsonError({ message: "Admin access required", status: HttpStatus.Forbidden, code: ErrorCode.Forbidden });
+            return jsonError({
+              message: "Admin access required",
+              status: HttpStatus.Forbidden,
+              code: ErrorCode.Forbidden,
+            });
           }
 
           const { id } = p as { id: string };
@@ -148,7 +168,11 @@ export function adminRoutes(opts: { database: Db; config: Config }): Elysia {
       .get("/api/admin/stats", async (ctx: any) => {
         const { userRole, error } = ctx;
         if (userRole !== "admin") {
-          return jsonError({ message: "Admin access required", status: HttpStatus.Forbidden, code: ErrorCode.Forbidden });
+          return jsonError({
+            message: "Admin access required",
+            status: HttpStatus.Forbidden,
+            code: ErrorCode.Forbidden,
+          });
         }
 
         const [userCount, chatCount, messageCount, characterCount, assetCount] = await Promise.all([
@@ -176,7 +200,11 @@ export function adminRoutes(opts: { database: Db; config: Config }): Elysia {
       .get("/api/admin/providers", (ctx: any) => {
         const { userRole, error } = ctx;
         if (userRole !== "admin") {
-          return jsonError({ message: "Admin access required", status: HttpStatus.Forbidden, code: ErrorCode.Forbidden });
+          return jsonError({
+            message: "Admin access required",
+            status: HttpStatus.Forbidden,
+            code: ErrorCode.Forbidden,
+          });
         }
 
         const health = getHealthCache();
@@ -202,7 +230,11 @@ export function adminRoutes(opts: { database: Db; config: Config }): Elysia {
 
         const health = getProviderHealth(providerName);
         if (!health) {
-          return jsonError({ message: "Provider not found", status: HttpStatus.NotFound, code: ErrorCode.NotFound });
+          return jsonError({
+            message: "Provider not found",
+            status: HttpStatus.NotFound,
+            code: ErrorCode.NotFound,
+          });
         }
         return jsonResponse({
           name: health.name,
@@ -214,7 +246,11 @@ export function adminRoutes(opts: { database: Db; config: Config }): Elysia {
       .post("/api/admin/providers/rescan", async (ctx: any) => {
         const { userRole, error } = ctx;
         if (userRole !== "admin") {
-          return jsonError({ message: "Admin access required", status: HttpStatus.Forbidden, code: ErrorCode.Forbidden });
+          return jsonError({
+            message: "Admin access required",
+            status: HttpStatus.Forbidden,
+            code: ErrorCode.Forbidden,
+          });
         }
 
         const results = await scanAllProviders();
@@ -227,7 +263,11 @@ export function adminRoutes(opts: { database: Db; config: Config }): Elysia {
       .get("/api/admin/model-roles", async (ctx: any) => {
         const { userRole, error } = ctx;
         if (userRole !== "admin") {
-          return jsonError({ message: "Admin access required", status: HttpStatus.Forbidden, code: ErrorCode.Forbidden });
+          return jsonError({
+            message: "Admin access required",
+            status: HttpStatus.Forbidden,
+            code: ErrorCode.Forbidden,
+          });
         }
 
         const resolved = await resolveAllModelRoles(opts.config, opts.database);
@@ -240,12 +280,20 @@ export function adminRoutes(opts: { database: Db; config: Config }): Elysia {
         async (ctx: any) => {
           const { params: p, body, userRole, error } = ctx;
           if (userRole !== "admin") {
-            return jsonError({ message: "Admin access required", status: HttpStatus.Forbidden, code: ErrorCode.Forbidden });
+            return jsonError({
+              message: "Admin access required",
+              status: HttpStatus.Forbidden,
+              code: ErrorCode.Forbidden,
+            });
           }
 
           const role = (p as any).role as string;
           if (!VALID_ROLES.includes(role as ModelRole)) {
-            return jsonError({ message: `Invalid role: "${role}". Must be one of: ${VALID_ROLES.join(", ")}`, status: HttpStatus.BadRequest, code: ErrorCode.BadRequest });
+            return jsonError({
+              message: `Invalid role: "${role}". Must be one of: ${VALID_ROLES.join(", ")}`,
+              status: HttpStatus.BadRequest,
+              code: ErrorCode.BadRequest,
+            });
           }
 
           const { provider, model } = body as { provider: string; model: string };
@@ -254,7 +302,11 @@ export function adminRoutes(opts: { database: Db; config: Config }): Elysia {
             await setModelRoleOverride(role as ModelRole, provider, model, opts.database);
             return jsonResponse({ ok: true });
           } catch (e) {
-            return jsonError({ message: (e as Error).message, status: HttpStatus.BadRequest, code: ErrorCode.BadRequest });
+            return jsonError({
+              message: (e as Error).message,
+              status: HttpStatus.BadRequest,
+              code: ErrorCode.BadRequest,
+            });
           }
         },
         { body: AdminModelRoleOverrideBody },
@@ -262,12 +314,20 @@ export function adminRoutes(opts: { database: Db; config: Config }): Elysia {
       .delete("/api/admin/model-roles/:role", async (ctx: any) => {
         const { params: p, userRole, error } = ctx;
         if (userRole !== "admin") {
-          return jsonError({ message: "Admin access required", status: HttpStatus.Forbidden, code: ErrorCode.Forbidden });
+          return jsonError({
+            message: "Admin access required",
+            status: HttpStatus.Forbidden,
+            code: ErrorCode.Forbidden,
+          });
         }
 
         const role = (p as any).role as string;
         if (!VALID_ROLES.includes(role as ModelRole)) {
-return jsonError({ message: `Invalid role: "${role}". Must be one of: ${VALID_ROLES.join(", ")}`, status: HttpStatus.BadRequest, code: ErrorCode.BadRequest });
+          return jsonError({
+            message: `Invalid role: "${role}". Must be one of: ${VALID_ROLES.join(", ")}`,
+            status: HttpStatus.BadRequest,
+            code: ErrorCode.BadRequest,
+          });
         }
 
         await clearModelRoleOverride(role as ModelRole, opts.database);
@@ -278,7 +338,11 @@ return jsonError({ message: `Invalid role: "${role}". Must be one of: ${VALID_RO
       .get("/api/admin/system-config", async (ctx: any) => {
         const { userRole, error } = ctx;
         if (userRole !== "admin") {
-          return jsonError({ message: "Admin access required", status: HttpStatus.Forbidden, code: ErrorCode.Forbidden });
+          return jsonError({
+            message: "Admin access required",
+            status: HttpStatus.Forbidden,
+            code: ErrorCode.Forbidden,
+          });
         }
         const configs = await getAllConfig(opts.database);
         return jsonResponse(configs);
@@ -288,7 +352,11 @@ return jsonError({ message: `Invalid role: "${role}". Must be one of: ${VALID_RO
         async (ctx: any) => {
           const { userRole, error, body } = ctx;
           if (userRole !== "admin") {
-            return jsonError({ message: "Admin access required", status: HttpStatus.Forbidden, code: ErrorCode.Forbidden });
+            return jsonError({
+              message: "Admin access required",
+              status: HttpStatus.Forbidden,
+              code: ErrorCode.Forbidden,
+            });
           }
           const { key, value, description } = body as { key: string; value: string; description?: string };
           await setConfig(opts.database, key, value, description);
@@ -299,7 +367,11 @@ return jsonError({ message: `Invalid role: "${role}". Must be one of: ${VALID_RO
       .delete("/api/admin/system-config/:key", async (ctx: any) => {
         const { params: p, userRole, error } = ctx;
         if (userRole !== "admin") {
-          return jsonError({ message: "Admin access required", status: HttpStatus.Forbidden, code: ErrorCode.Forbidden });
+          return jsonError({
+            message: "Admin access required",
+            status: HttpStatus.Forbidden,
+            code: ErrorCode.Forbidden,
+          });
         }
         const key = (p as any).key as string;
         await deleteConfig(opts.database, key);
@@ -312,7 +384,11 @@ return jsonError({ message: `Invalid role: "${role}". Must be one of: ${VALID_RO
         async (ctx: any) => {
           const { userRole, error, query } = ctx;
           if (userRole !== "admin") {
-            return jsonError({ message: "Admin access required", status: HttpStatus.Forbidden, code: ErrorCode.Forbidden });
+            return jsonError({
+              message: "Admin access required",
+              status: HttpStatus.Forbidden,
+              code: ErrorCode.Forbidden,
+            });
           }
           const { page, pageSize } = query as { page: number; pageSize: number };
           const offset = (page - 1) * pageSize;
@@ -335,174 +411,242 @@ return jsonError({ message: `Invalid role: "${role}". Must be one of: ${VALID_RO
         },
         { query: PaginationQuery },
       )
-.get("/api/admin/worlds/:id", async (ctx: any) => {
+      .get(
+        "/api/admin/worlds/:id",
+        async (ctx: any) => {
           const { params: p, userRole, error } = ctx;
-        if (userRole !== "admin") {
-          return jsonError({ message: "Admin access required", status: HttpStatus.Forbidden, code: ErrorCode.Forbidden });
-        }
-        const { id } = p as { id: string };
-        const world = await opts.database
-          .selectFrom("worlds")
-          .selectAll()
-          .where("id", "=", id)
-          .executeTakeFirst();
-        if (!world) {
-          return jsonError({ message: "World not found", status: HttpStatus.NotFound, code: ErrorCode.NotFound });
-        }
+          if (userRole !== "admin") {
+            return jsonError({
+              message: "Admin access required",
+              status: HttpStatus.Forbidden,
+              code: ErrorCode.Forbidden,
+            });
+          }
+          const { id } = p as { id: string };
+          const world = await opts.database
+            .selectFrom("worlds")
+            .selectAll()
+            .where("id", "=", id)
+            .executeTakeFirst();
+          if (!world) {
+            return jsonError({
+              message: "World not found",
+              status: HttpStatus.NotFound,
+              code: ErrorCode.NotFound,
+            });
+          }
 
-        const locationCount = await opts.database
-          .selectFrom("locations")
-          .select(opts.database.fn.countAll<number>().as("n"))
-          .where("world_id", "=", id)
-          .executeTakeFirst();
+          const locationCount = await opts.database
+            .selectFrom("locations")
+            .select(opts.database.fn.countAll<number>().as("n"))
+            .where("world_id", "=", id)
+            .executeTakeFirst();
 
-        return jsonResponse({
-          ...world,
-          locationCount: locationCount?.n ?? 0,
-        });
-      }, { params: WorldIdParams })
-.delete("/api/admin/worlds/:id", async (ctx: any) => {
+          return jsonResponse({
+            ...world,
+            locationCount: locationCount?.n ?? 0,
+          });
+        },
+        { params: WorldIdParams },
+      )
+      .delete(
+        "/api/admin/worlds/:id",
+        async (ctx: any) => {
           const { params: p, userRole, error } = ctx;
-        if (userRole !== "admin") {
-          return jsonError({ message: "Admin access required", status: HttpStatus.Forbidden, code: ErrorCode.Forbidden });
-        }
-        const { id } = p as { id: string };
-        await opts.database.deleteFrom("worlds").where("id", "=", id).execute();
-        return jsonNoContent();
-      }, { params: WorldIdParams })
+          if (userRole !== "admin") {
+            return jsonError({
+              message: "Admin access required",
+              status: HttpStatus.Forbidden,
+              code: ErrorCode.Forbidden,
+            });
+          }
+          const { id } = p as { id: string };
+          await opts.database.deleteFrom("worlds").where("id", "=", id).execute();
+          return jsonNoContent();
+        },
+        { params: WorldIdParams },
+      )
 
       // ── Chat management ────────────────────────────────────
-.get("/api/admin/chats", async (ctx: any) => {
+      .get(
+        "/api/admin/chats",
+        async (ctx: any) => {
           const { userRole, error, query } = ctx;
-        if (userRole !== "admin") {
-          return jsonError({ message: "Admin access required", status: HttpStatus.Forbidden, code: ErrorCode.Forbidden });
-        }
-        const { page, pageSize } = query as { page: number; pageSize: number };
-        const offset = (page - 1) * pageSize;
+          if (userRole !== "admin") {
+            return jsonError({
+              message: "Admin access required",
+              status: HttpStatus.Forbidden,
+              code: ErrorCode.Forbidden,
+            });
+          }
+          const { page, pageSize } = query as { page: number; pageSize: number };
+          const offset = (page - 1) * pageSize;
 
-        const countResult = await opts.database
-          .selectFrom("chats")
-          .select(opts.database.fn.countAll<number>().as("total"))
-          .executeTakeFirst();
-        const total = countResult?.total ?? 0;
+          const countResult = await opts.database
+            .selectFrom("chats")
+            .select(opts.database.fn.countAll<number>().as("total"))
+            .executeTakeFirst();
+          const total = countResult?.total ?? 0;
 
-        const chats = await opts.database
-          .selectFrom("chats")
-          .select(["id", "name", "type", "created_by", "world_id", "is_pinned", "created_at", "updated_at"])
-          .orderBy("created_at", "desc")
-          .limit(pageSize)
-          .offset(offset)
-          .execute();
+          const chats = await opts.database
+            .selectFrom("chats")
+            .select(["id", "name", "type", "created_by", "world_id", "is_pinned", "created_at", "updated_at"])
+            .orderBy("created_at", "desc")
+            .limit(pageSize)
+            .offset(offset)
+            .execute();
 
-        return jsonResponse({ data: chats, total, page, pageSize });
-      }, { query: PaginationQuery })
-.get("/api/admin/chats/:id", async (ctx: any) => {
+          return jsonResponse({ data: chats, total, page, pageSize });
+        },
+        { query: PaginationQuery },
+      )
+      .get(
+        "/api/admin/chats/:id",
+        async (ctx: any) => {
           const { params: p, userRole, error } = ctx;
-        if (userRole !== "admin") {
-          return jsonError({ message: "Admin access required", status: HttpStatus.Forbidden, code: ErrorCode.Forbidden });
-        }
-        const { id } = p as { id: string };
-        const chat = await opts.database
-          .selectFrom("chats")
-          .selectAll()
-          .where("id", "=", id)
-          .executeTakeFirst();
-        if (!chat) {
-          return jsonError({ message: "Chat not found", status: HttpStatus.NotFound, code: ErrorCode.NotFound });
-        }
+          if (userRole !== "admin") {
+            return jsonError({
+              message: "Admin access required",
+              status: HttpStatus.Forbidden,
+              code: ErrorCode.Forbidden,
+            });
+          }
+          const { id } = p as { id: string };
+          const chat = await opts.database
+            .selectFrom("chats")
+            .selectAll()
+            .where("id", "=", id)
+            .executeTakeFirst();
+          if (!chat) {
+            return jsonError({
+              message: "Chat not found",
+              status: HttpStatus.NotFound,
+              code: ErrorCode.NotFound,
+            });
+          }
 
-        const msgCount = await opts.database
-          .selectFrom("messages")
-          .select(opts.database.fn.countAll<number>().as("n"))
-          .where("chat_id", "=", id)
-          .executeTakeFirst();
+          const msgCount = await opts.database
+            .selectFrom("messages")
+            .select(opts.database.fn.countAll<number>().as("n"))
+            .where("chat_id", "=", id)
+            .executeTakeFirst();
 
-        const participants = await opts.database
-          .selectFrom("chat_participants")
-          .select(["actor_id", "role", "joined_at"])
-          .where("chat_id", "=", id)
-          .execute();
+          const participants = await opts.database
+            .selectFrom("chat_participants")
+            .select(["actor_id", "role", "joined_at"])
+            .where("chat_id", "=", id)
+            .execute();
 
-        return jsonResponse({
-          ...chat,
-          messageCount: msgCount?.n ?? 0,
-          participants,
-        });
-      }, { params: ChatIdParams })
-.patch("/api/admin/chats/:id", async (ctx: any) => {
+          return jsonResponse({
+            ...chat,
+            messageCount: msgCount?.n ?? 0,
+            participants,
+          });
+        },
+        { params: ChatIdParams },
+      )
+      .patch(
+        "/api/admin/chats/:id",
+        async (ctx: any) => {
           const { params: p, userRole, error, body } = ctx;
-        if (userRole !== "admin") {
-          return jsonError({ message: "Admin access required", status: HttpStatus.Forbidden, code: ErrorCode.Forbidden });
-        }
-        const { id } = p as { id: string };
-        const { is_pinned, world_id } = body as { is_pinned?: string; world_id?: string | null };
-        const updates: Record<string, unknown> = {};
-        if (is_pinned !== undefined) updates.is_pinned = is_pinned;
-        if (world_id !== undefined) updates.world_id = world_id;
-        if (Object.keys(updates).length === 0) {
-          return jsonError({ message: "No updatable fields", status: HttpStatus.BadRequest });
-        }
-        await opts.database
-          .updateTable("chats")
-          .set(updates as any)
-          .where("id", "=", id)
-          .execute();
-        return jsonResponse({ ok: true });
-      }, { body: AdminChatUpdateBody, params: ChatIdParams })
-.delete("/api/admin/chats/:id", async (ctx: any) => {
+          if (userRole !== "admin") {
+            return jsonError({
+              message: "Admin access required",
+              status: HttpStatus.Forbidden,
+              code: ErrorCode.Forbidden,
+            });
+          }
+          const { id } = p as { id: string };
+          const { is_pinned, world_id } = body as { is_pinned?: string; world_id?: string | null };
+          const updates: Record<string, unknown> = {};
+          if (is_pinned !== undefined) updates.is_pinned = is_pinned;
+          if (world_id !== undefined) updates.world_id = world_id;
+          if (Object.keys(updates).length === 0) {
+            return jsonError({ message: "No updatable fields", status: HttpStatus.BadRequest });
+          }
+          await opts.database
+            .updateTable("chats")
+            .set(updates as any)
+            .where("id", "=", id)
+            .execute();
+          return jsonResponse({ ok: true });
+        },
+        { body: AdminChatUpdateBody, params: ChatIdParams },
+      )
+      .delete(
+        "/api/admin/chats/:id",
+        async (ctx: any) => {
           const { params: p, userRole, error } = ctx;
-        if (userRole !== "admin") {
-          return jsonError({ message: "Admin access required", status: HttpStatus.Forbidden, code: ErrorCode.Forbidden });
-        }
-        const { id } = p as { id: string };
-        await opts.database.deleteFrom("chats").where("id", "=", id).execute();
-        return jsonNoContent();
-      }, { params: ChatIdParams })
+          if (userRole !== "admin") {
+            return jsonError({
+              message: "Admin access required",
+              status: HttpStatus.Forbidden,
+              code: ErrorCode.Forbidden,
+            });
+          }
+          const { id } = p as { id: string };
+          await opts.database.deleteFrom("chats").where("id", "=", id).execute();
+          return jsonNoContent();
+        },
+        { params: ChatIdParams },
+      )
 
       // ── Audit log ──────────────────────────────────────────
-      .get("/api/admin/audit", async (ctx: any) => {
-        const { userRole, error, request } = ctx;
-        if (userRole !== "admin") {
-          return jsonError({ message: "Admin access required", status: HttpStatus.Forbidden, code: ErrorCode.Forbidden });
-        }
-        const url = new URL(request.url);
-        const { page, pageSize } = parsePagination(url.searchParams);
-        const offset = (page - 1) * pageSize;
-        const eventType = url.searchParams.get("event_type");
-        const userIdFilter = url.searchParams.get("user_id");
-        const entityType = url.searchParams.get("entity_type");
+      .get(
+        "/api/admin/audit",
+        async (ctx: any) => {
+          const { userRole, error, request } = ctx;
+          if (userRole !== "admin") {
+            return jsonError({
+              message: "Admin access required",
+              status: HttpStatus.Forbidden,
+              code: ErrorCode.Forbidden,
+            });
+          }
+          const url = new URL(request.url);
+          const { page, pageSize } = parsePagination(url.searchParams);
+          const offset = (page - 1) * pageSize;
+          const eventType = url.searchParams.get("event_type");
+          const userIdFilter = url.searchParams.get("user_id");
+          const entityType = url.searchParams.get("entity_type");
 
-        let query = opts.database
-          .selectFrom("log_entries")
-          .selectAll()
-          .orderBy("created_at", "desc")
-          .limit(pageSize)
-          .offset(offset);
+          let query = opts.database
+            .selectFrom("log_entries")
+            .selectAll()
+            .orderBy("created_at", "desc")
+            .limit(pageSize)
+            .offset(offset);
 
-        if (eventType) {
-          query = query.where("event_type", "=", eventType);
-        }
-        if (userIdFilter) {
-          query = query.where("user_id", "=", userIdFilter);
-        }
-        if (entityType) {
-          query = query.where("entity_type", "=", entityType);
-        }
+          if (eventType) {
+            query = query.where("event_type", "=", eventType);
+          }
+          if (userIdFilter) {
+            query = query.where("user_id", "=", userIdFilter);
+          }
+          if (entityType) {
+            query = query.where("entity_type", "=", entityType);
+          }
 
-        const entries = await query.execute();
+          const entries = await query.execute();
 
-        const countResult = await opts.database
-          .selectFrom("log_entries")
-          .select(opts.database.fn.countAll<number>().as("total"))
-          .executeTakeFirst();
-        const total = countResult?.total ?? 0;
+          const countResult = await opts.database
+            .selectFrom("log_entries")
+            .select(opts.database.fn.countAll<number>().as("total"))
+            .executeTakeFirst();
+          const total = countResult?.total ?? 0;
 
-        return jsonResponse({ data: entries, total, page, pageSize });
-      }, { query: PaginationQuery })
+          return jsonResponse({ data: entries, total, page, pageSize });
+        },
+        { query: PaginationQuery },
+      )
       .get("/api/admin/audit/:id", async (ctx: any) => {
         const { params: p, userRole, error } = ctx;
         if (userRole !== "admin") {
-          return jsonError({ message: "Admin access required", status: HttpStatus.Forbidden, code: ErrorCode.Forbidden });
+          return jsonError({
+            message: "Admin access required",
+            status: HttpStatus.Forbidden,
+            code: ErrorCode.Forbidden,
+          });
         }
         const { id } = p as { id: string };
         const entry = await opts.database
@@ -511,7 +655,11 @@ return jsonError({ message: `Invalid role: "${role}". Must be one of: ${VALID_RO
           .where("id", "=", id)
           .executeTakeFirst();
         if (!entry) {
-          return jsonError({ message: "Log entry not found", status: HttpStatus.NotFound, code: ErrorCode.NotFound });
+          return jsonError({
+            message: "Log entry not found",
+            status: HttpStatus.NotFound,
+            code: ErrorCode.NotFound,
+          });
         }
         return jsonResponse(entry);
       }) as unknown as Elysia

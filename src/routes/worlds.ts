@@ -385,26 +385,34 @@ export function worldsRoutes({ database }: HandleOpts): Elysia {
       const pageSize = Number(ctx.query?.pageSize) || 20;
       return handleListWorlds(database, page, pageSize, userId);
     })
-    .post("/api/worlds", async (ctx: any) => {
-      const userId = ctx.userId as string | null;
-      return handleCreateWorld(database, ctx.body as Record<string, unknown>, userId);
-    }, { body: WorldCreateBody })
+    .post(
+      "/api/worlds",
+      async (ctx: any) => {
+        const userId = ctx.userId as string | null;
+        return handleCreateWorld(database, ctx.body as Record<string, unknown>, userId);
+      },
+      { body: WorldCreateBody },
+    )
     .get("/api/worlds/:id", async (ctx: any) => {
       const userId = ctx.userId as string | null;
       const userRole = ctx.userRole as string | null;
       return handleGetWorld(database, ctx.params.id as string, userId, userRole);
     })
-    .put("/api/worlds/:id", async (ctx: any) => {
-      const userId = ctx.userId as string | null;
-      const userRole = ctx.userRole as string | null;
-      return handleUpdateWorld(
-        database,
-        ctx.params.id as string,
-        ctx.body as Record<string, unknown>,
-        userId,
-        userRole,
-      );
-    }, { body: WorldUpdateBody })
+    .put(
+      "/api/worlds/:id",
+      async (ctx: any) => {
+        const userId = ctx.userId as string | null;
+        const userRole = ctx.userRole as string | null;
+        return handleUpdateWorld(
+          database,
+          ctx.params.id as string,
+          ctx.body as Record<string, unknown>,
+          userId,
+          userRole,
+        );
+      },
+      { body: WorldUpdateBody },
+    )
     .delete("/api/worlds/:id", async (ctx: any) => {
       const userId = ctx.userId as string | null;
       const userRole = ctx.userRole as string | null;

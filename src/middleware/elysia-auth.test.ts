@@ -15,14 +15,18 @@ describe("authGuard", () => {
 
   test("returns an Elysia plugin", () => {
     const db = {} as never;
-    const config = { auth: { required: false, demoUsername: "demo", maxSessionsPerUser: 10, sessionTimeoutHours: 24 } } as never;
+    const config = {
+      auth: { required: false, demoUsername: "demo", maxSessionsPerUser: 10, sessionTimeoutHours: 24 },
+    } as never;
     const plugin = authGuard({ database: db, config });
     expect(plugin).toBeInstanceOf(Elysia);
   });
 
   test("can be used with .use()", () => {
     const db = {} as never;
-    const config = { auth: { required: false, demoUsername: "demo", maxSessionsPerUser: 10, sessionTimeoutHours: 24 } } as never;
+    const config = {
+      auth: { required: false, demoUsername: "demo", maxSessionsPerUser: 10, sessionTimeoutHours: 24 },
+    } as never;
     const app = new Elysia();
     expect(() => app.use(authGuard({ database: db, config }))).not.toThrow();
   });

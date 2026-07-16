@@ -13,14 +13,7 @@ import { Elysia } from "elysia";
 import type { Db } from "../db";
 import type { Config } from "../config/schema";
 import { uid, jsonStringifyOr } from "../utils";
-import {
-  jsonResponse,
-  jsonError,
-  jsonPaginated,
-  jsonCreated,
-  jsonNoContent,
-  HttpStatus,
-} from "./http-utils";
+import { jsonResponse, jsonError, jsonPaginated, jsonCreated, jsonNoContent, HttpStatus } from "./http-utils";
 import { EntityCreateBody, EntityUpdateBody } from "../validation/schemas";
 import { notFound } from "../validation/middleware";
 
@@ -155,35 +148,39 @@ export function createEntityRoutes(config: EntityConfig, opts: { database: Db; c
 
       return jsonPaginated({ data: entities, total, page, pageSize });
     })
-    .post(basePath, async (ctx) => {
-      const db = opts.database as any;
-      const { id: parentId } = ctx.params as any;
-      const userId = (ctx as any).userId as string | null;
-      const userRole = (ctx as any).userRole as string | null;
-      const body = ((ctx as any).body || {}) as Record<string, unknown>;
+    .post(
+      basePath,
+      async (ctx) => {
+        const db = opts.database as any;
+        const { id: parentId } = ctx.params as any;
+        const userId = (ctx as any).userId as string | null;
+        const userRole = (ctx as any).userRole as string | null;
+        const body = ((ctx as any).body || {}) as Record<string, unknown>;
 
-      const ownershipOk = await checkOwnership(opts.database, parentId, userId, userRole);
-      if (!ownershipOk) {
-        return jsonError({ message: `${config.entityName} not found`, status: HttpStatus.NotFound });
-      }
-
-      for (const required of config.createRequired) {
-        if (body[required] == null || body[required] === "") {
-          return jsonError({ message: `${required} is required`, status: HttpStatus.BadRequest });
+        const ownershipOk = await checkOwnership(opts.database, parentId, userId, userRole);
+        if (!ownershipOk) {
+          return jsonError({ message: `${config.entityName} not found`, status: HttpStatus.NotFound });
         }
-      }
 
-      const values = buildCreateValues({ config, parentId, body });
-      await db.insertInto(config.tableName).values(values).execute();
+        for (const required of config.createRequired) {
+          if (body[required] == null || body[required] === "") {
+            return jsonError({ message: `${required} is required`, status: HttpStatus.BadRequest });
+          }
+        }
 
-      const created = await db
-        .selectFrom(config.tableName)
-        .selectAll()
-        .where("id", "=", values.id)
-        .executeTakeFirst();
+        const values = buildCreateValues({ config, parentId, body });
+        await db.insertInto(config.tableName).values(values).execute();
 
-      return jsonCreated(created);
-    }, { body: EntityCreateBody })
+        const created = await db
+          .selectFrom(config.tableName)
+          .selectAll()
+          .where("id", "=", values.id)
+          .executeTakeFirst();
+
+        return jsonCreated(created);
+      },
+      { body: EntityCreateBody },
+    )
     .get(withIdPath, async (ctx) => {
       const db = opts.database as any;
       const { id: parentId, entityId } = ctx.params as any;
@@ -205,40 +202,44 @@ export function createEntityRoutes(config: EntityConfig, opts: { database: Db; c
       if (!entity) return notFound(`${config.entityName} not found`);
       return jsonResponse(entity);
     })
-    .put(withIdPath, async (ctx) => {
-      const db = opts.database as any;
-      const { id: parentId, entityId } = ctx.params as any;
-      const userId = (ctx as any).userId as string | null;
-      const userRole = (ctx as any).userRole as string | null;
-      const body = ((ctx as any).body || {}) as Record<string, unknown>;
+    .put(
+      withIdPath,
+      async (ctx) => {
+        const db = opts.database as any;
+        const { id: parentId, entityId } = ctx.params as any;
+        const userId = (ctx as any).userId as string | null;
+        const userRole = (ctx as any).userRole as string | null;
+        const body = ((ctx as any).body || {}) as Record<string, unknown>;
 
-      const ownershipOk = await checkOwnership(opts.database, parentId, userId, userRole);
-      if (!ownershipOk) {
-        return notFound(`${config.entityName} not found`);
-      }
+        const ownershipOk = await checkOwnership(opts.database, parentId, userId, userRole);
+        if (!ownershipOk) {
+          return notFound(`${config.entityName} not found`);
+        }
 
-      const existing = await db
-        .selectFrom(config.tableName)
-        .select("id")
-        .where("id", "=", entityId)
-        .where(config.parentFk, "=", parentId)
-        .executeTakeFirst();
+        const existing = await db
+          .selectFrom(config.tableName)
+          .select("id")
+          .where("id", "=", entityId)
+          .where(config.parentFk, "=", parentId)
+          .executeTakeFirst();
 
-      if (!existing) return notFound(`${config.entityName} not found`);
+        if (!existing) return notFound(`${config.entityName} not found`);
 
-      const updates = buildUpdateValues({ config, body });
-      if (Object.keys(updates).length <= 1) return jsonResponse(existing);
+        const updates = buildUpdateValues({ config, body });
+        if (Object.keys(updates).length <= 1) return jsonResponse(existing);
 
-      await db.updateTable(config.tableName).set(updates).where("id", "=", entityId).execute();
+        await db.updateTable(config.tableName).set(updates).where("id", "=", entityId).execute();
 
-      const updated = await db
-        .selectFrom(config.tableName)
-        .selectAll()
-        .where("id", "=", entityId)
-        .executeTakeFirst();
+        const updated = await db
+          .selectFrom(config.tableName)
+          .selectAll()
+          .where("id", "=", entityId)
+          .executeTakeFirst();
 
-      return jsonResponse(updated);
-    }, { body: EntityUpdateBody })
+        return jsonResponse(updated);
+      },
+      { body: EntityUpdateBody },
+    )
     .delete(withIdPath, async (ctx) => {
       const db = opts.database as any;
       const { id: parentId, entityId } = ctx.params as any;
