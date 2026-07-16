@@ -152,7 +152,7 @@ export function initializeProviders(config: Config): void {
  * Respects Retry-After headers from ProviderRateLimitError.
  */
 export async function callWithFailover(
-  providers: Array<{ name: string; provider: LLMProvider }>,
+  providers: { name: string; provider: LLMProvider }[],
   req: GenerateRequest,
   handler?: (chunk: ChunkEvent) => void,
 ): Promise<GenerateResponse> {

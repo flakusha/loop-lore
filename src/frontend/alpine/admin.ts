@@ -162,31 +162,39 @@ interface ConfigEntry {
       if (this.tabsLoaded[tab]) return;
       this.tabsLoaded[tab] = true;
       switch (tab) {
-        case "overview":
+        case "overview": {
           this.loadOverview();
           break;
-        case "users":
+        }
+        case "users": {
           this.loadUsers();
           break;
-        case "worlds":
+        }
+        case "worlds": {
           this.loadWorlds();
           break;
-        case "chats":
+        }
+        case "chats": {
           this.loadChats();
           break;
-        case "audit":
+        }
+        case "audit": {
           this.loadAudit();
           break;
-        case "models":
+        }
+        case "models": {
           this.loadModels();
           this.loadModelRoles();
           break;
-        case "plugins":
+        }
+        case "plugins": {
           this.loadPlugins();
           break;
-        case "system":
+        }
+        case "system": {
           this.loadSystemConfig();
           break;
+        }
       }
     },
 
@@ -196,7 +204,7 @@ interface ConfigEntry {
     },
 
     displayKey(key: string): string {
-      return key.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+      return key.replaceAll("_", " ").replaceAll(/\b\w/g, (c) => c.toUpperCase());
     },
 
     // ── Overview ────────────────────────────────────────

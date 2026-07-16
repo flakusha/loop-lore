@@ -10,13 +10,14 @@
 
 import { validateProviderUrl } from "../../utils/url-validation";
 
-export interface ComfyUIWorkflow {
-  [nodeId: string]: {
+export type ComfyUIWorkflow = Record<
+  string,
+  {
     inputs: Record<string, unknown>;
     class_type: string;
     _meta?: { title?: string };
-  };
-}
+  }
+>;
 
 export interface ComfyUIPromptResult {
   prompt_id: string;

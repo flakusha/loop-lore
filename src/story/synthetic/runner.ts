@@ -192,31 +192,38 @@ export class SyntheticTestRunner {
     let out: Omit<SyntheticTestCaseResult, "scenarioId" | "caseId" | "scenarioType" | "mode">;
 
     switch (row.type) {
-      case SyntheticDataType.QualityEvaluation:
+      case SyntheticDataType.QualityEvaluation: {
         out = this.runQuality(c, mode, mutationParams);
         break;
-      case SyntheticDataType.TurnSequence:
+      }
+      case SyntheticDataType.TurnSequence: {
         out = this.runTurnSequence(c);
         break;
-      case SyntheticDataType.QuestProgression:
+      }
+      case SyntheticDataType.QuestProgression: {
         out = await this.runQuestProgression(c);
         break;
-      case SyntheticDataType.WorldStateTransition:
+      }
+      case SyntheticDataType.WorldStateTransition: {
         out = this.runWorldStateTransition(c);
         break;
-      case SyntheticDataType.RegenerationCase:
+      }
+      case SyntheticDataType.RegenerationCase: {
         out = this.runGeneric(c, this.regenerationLogic(c));
         break;
-      case SyntheticDataType.GmEscalation:
+      }
+      case SyntheticDataType.GmEscalation: {
         out = await this.runGmEscalation(c);
         break;
-      default:
+      }
+      default: {
         out = {
           status: "skipped",
           expected: c.expected,
           actual: {},
           reason: `unsupported scenario type: ${row.type}`,
         };
+      }
     }
 
     return {

@@ -31,13 +31,13 @@ export function getSessionNonce(): string {
     crypto.getRandomValues(bytes);
     _sessionNonce = btoa(String.fromCharCode(...bytes))
       .replace(/=+$/, "")
-      .substring(0, 12);
+      .slice(0, 12);
   }
   return _sessionNonce;
 }
 
 export function escapeXml(content: string): string {
-  return content.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  return content.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;");
 }
 
 function escapeFence(content: string): { escaped: string; fenceLen: number } {
@@ -54,8 +54,8 @@ function escapeFence(content: string): { escaped: string; fenceLen: number } {
 
 function escapeSentinel(content: string, tag: string): string {
   return content
-    .replace(new RegExp(`<<${tag}>>`, "g"), `[${tag}]`)
-    .replace(new RegExp(`<</${tag}>>`, "g"), `[/${tag}]`);
+    .replaceAll(new RegExp(`<<${tag}>>`, "g"), `[${tag}]`)
+    .replaceAll(new RegExp(`<</${tag}>>`, "g"), `[/${tag}]`);
 }
 
 function wrapXml(tag: string, content: string): string {
@@ -84,13 +84,16 @@ function wrapSentinel(tag: string, content: string): string {
  */
 export function wrapContent(tag: string, content: string, format: WrapperFormat = "xml"): string {
   switch (format) {
-    case "fence":
+    case "fence": {
       return wrapFence(tag, content);
-    case "sentinel":
+    }
+    case "sentinel": {
       return wrapSentinel(tag, content);
+    }
     case "xml":
-    default:
+    default: {
       return wrapXml(tag, content);
+    }
   }
 }
 
