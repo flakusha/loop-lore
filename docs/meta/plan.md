@@ -398,41 +398,41 @@ Fix: make `cachedSoloUser` per-request; reduce parallelism or use shared fixture
 **Cascade Failure Pattern** — Single test timeout kills all subsequent tests in
 file via shared `ctx.page` state.
 
-### Schema Hardening — Planned
+### Schema Hardening — Resolved (2026-07-16)
 
 Tracked in detail at [schema.md#bare-string-columns-requiring-enum-types](../spec/schema.md).
-Summary of low-risk cleanup tasks:
+All 8 tasks completed:
 
-| #   | Task                                             | Files                                                       | Difficulty |
-| --- | ------------------------------------------------ | ----------------------------------------------------------- | ---------- |
-| 1   | Lore `enabled` → `LoreEntryStatus` enum          | enums, 2× schema, 2× migration, 2× routes, prompt-assembler | Medium     |
-| 2   | `actor_keys.status` → `KeyStatus` enum + SM      | enums, schema, migration, actor-keys.ts                     | Low        |
-| 3   | `actor_keys.key_type` → `KeyType` enum           | enums, schema, migration, actor-keys.ts                     | Low        |
-| 4   | `memory_type` → `MemoryType` enum                | enums, schema, migration, actor-memories route              | Low        |
-| 5   | `actor_notes.category` → `NoteCategory` enum     | enums, schema, migration                                    | Low        |
-| 6   | Wire `world_items.visibility` → `ItemVisibility` | schema, migration                                           | Trivial    |
-| 7   | Align `chats.purpose` / `chat_purpose` naming    | schema, migration                                           | Trivial    |
-| 8   | Add `actor_keys.public_key` to migration DDL     | migration                                                   | Trivial    |
+| #   | Task                                             | Status                                                              |
+| --- | ------------------------------------------------ | ------------------------------------------------------------------- |
+| 1   | Lore `enabled` → `LoreEntryStatus` enum          | ✅ — New enum, migration 017, schema types, routes defaults updated |
+| 2   | `actor_keys.status` → `KeyStatus` enum + SM      | ✅ — Added `keyStatusDef` + `keyStatusMachine` state machine        |
+| 3   | `actor_keys.key_type` → `KeyType` enum           | ✅ — Already typed, no change needed                                |
+| 4   | `memory_type` → `MemoryType` enum                | ✅ — Already typed, no change needed                                |
+| 5   | `actor_notes.category` → `NoteCategory` enum     | ✅ — Already typed, no change needed                                |
+| 6   | Wire `world_items.visibility` → `ItemVisibility` | ✅ — Already typed, no change needed                                |
+| 7   | Align `chats.purpose` / `chat_purpose` naming    | ✅ — Added `purpose` column to `chats` DDL (migration 017)          |
+| 8   | Add `actor_keys.public_key` to migration DDL     | ✅ — Added `public_key` column to `actor_keys` DDL (migration 017)  |
 
 ### Remaining Review Findings (Round 3, 2026-07-06)
 
 Tracked in detail at [reviews/review-rounds.md](reviews/review-rounds.md).
 Key open items:
 
-| #   | File                                | Issue                                                           |
-| --- | ----------------------------------- | --------------------------------------------------------------- |
-| 14  | `src/db/enums.ts`                   | Barrel re-exports but no validation enums match DB. Drift risk. |
-| 15  | `src/db/migrations/001_init.ts`     | `chat_participants` PK undocumented                             |
-| 16  | `src/db/migrations/001_init.ts`     | No index on `sessions(user_id, expires_at)` for cleanup         | migration/parts/001_users.ts:37  | **Resolved** — `idx_sessions_user_expires` already exists          |
-| 18  | `src/utils.ts`                      | `safeJsonStringify` guarded mode parses JSON twice on hot path  |
-| 21  | `src/assistant/service.ts`          | Config schema may not have `assistant.enabled`                  | schema.ts:37, schema-class.ts:73 | **Resolved** — `enabled: boolean` field exists with default `true` |
-| 22  | `src/assistant/prompt-assembler.ts` | Selective entries (keys) ignored                                |
-| 23  | `src/assistant/prompt-assembler.ts` | Token budget enforcement message array rebuild bug              |
-| 24  | `src/tui/app.ts`                    | Monkey-patches `ChatWidget.setChatId`                           |
-| 25  | `src/tui/chat.ts`                   | No retry, no idempotency key                                    |
-| 26  | `src/tui/asset-view.ts`             | Left/right keys conflict with input nav                         |
-| 27  | `src/age-gate/controller.ts`        | `runtimeConfig` module-level mutable                            |
-| 29  | `src/build/compress.ts`             | No try/catch on single file                                     | compress.ts:56-67                | **Resolved** — Added try/catch around `writeFileSync` (2026-07-16) |
+| #   | File                                | Issue                                                                                                                                                        |
+| --- | ----------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| 14  | `src/db/enums.ts`                   | Barrel re-exports but no validation enums match DB. Drift risk. — Resolved: Added `enums.test.ts` with 40 validation tests (2026-07-16)                      |
+| 15  | `src/db/migrations/001_init.ts`     | `chat_participants` PK undocumented                                                                                                                          |
+| 16  | `src/db/migrations/001_init.ts`     | No index on `sessions(user_id, expires_at)` for cleanup — Resolved: `idx_sessions_user_expires` already exists                                               |
+| 18  | `src/utils.ts`                      | `safeJsonStringify` guarded mode parses JSON twice on hot path — Resolved: Single-pass parse replaces `isJsonString` + `JSON.parse` double call (2026-07-16) |
+| 21  | `src/assistant/service.ts`          | Config schema may not have `assistant.enabled` — Resolved: `enabled: boolean` field exists with default `true`                                               |
+| 22  | `src/assistant/prompt-assembler.ts` | Selective entries (keys) ignored — Resolved: Added `selectiveKeys` to `PromptParams`, lore section uses explicit keys or auto-derived (2026-07-16)           |
+| 23  | `src/assistant/prompt-assembler.ts` | Token budget enforcement message array rebuild bug — Resolved: Index-based filtering replaces tail splice (Round 3)                                          |
+| 24  | `src/tui/app.ts`                    | Monkey-patches `ChatWidget.setChatId` — Resolved: callback prop `onChatChange` replaces monkey-patch (Round 3)                                               |
+| 25  | `src/tui/chat.ts`                   | No retry, no idempotency key                                                                                                                                 |
+| 26  | `src/tui/asset-view.ts`             | Left/right keys conflict with input nav                                                                                                                      |
+| 27  | `src/age-gate/controller.ts`        | `runtimeConfig` module-level mutable — Resolved: `AgeGateConfigStore` singleton class (Round 3)                                                              |
+| 29  | `src/build/compress.ts`             | No try/catch on single file — Resolved: Added try/catch around `writeFileSync` (2026-07-16)                                                                  |
 
 ---
 

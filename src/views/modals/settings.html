@@ -57,8 +57,8 @@
     <!-- Theme tab -->
     <div x-show="tab === 'theme'">
       <div class="form-group">
-        <label class="form-label">Theme</label>
-        <select class="form-select" x-model="theme" @change="save('theme')">
+        <label class="form-label" for="settings-theme">Theme</label>
+        <select id="settings-theme" class="form-select" x-model="theme" @change="save('theme')">
           <option value="default">Default (Dark)</option>
           <option value="light">Light</option>
           <option value="dracula">Dracula</option>
@@ -88,8 +88,8 @@
         ></label>
       </div>
       <div class="form-group">
-        <label class="form-label">Detail Level</label>
-        <select class="form-select" x-model="detailLevel" @change="save('chat')">
+        <label class="form-label" for="settings-detail-level">Detail Level</label>
+        <select id="settings-detail-level" class="form-select" x-model="detailLevel" @change="save('chat')">
           <option value="Immersion">Immersion</option>
           <option value="Basic">Basic</option>
           <option value="Detailed">Detailed</option>
@@ -100,8 +100,8 @@
     <!-- Generation tab -->
     <div x-show="tab === 'generation'">
       <div class="form-group">
-        <label class="form-label">Provider</label>
-        <select class="form-select" x-model="provider" @change="save('api')">
+        <label class="form-label" for="settings-provider">Provider</label>
+        <select id="settings-provider" class="form-select" x-model="provider" @change="save('api')">
           <option value="OpenAI">OpenAI</option>
           <option value="Anthropic">Anthropic</option>
           <option value="OpenRouter">OpenRouter</option>
@@ -109,8 +109,9 @@
         </select>
       </div>
       <div class="form-group">
-        <label class="form-label">Model</label>
+        <label class="form-label" for="settings-model">Model</label>
         <input
+          id="settings-model"
           class="form-input"
           type="text"
           x-model="model"

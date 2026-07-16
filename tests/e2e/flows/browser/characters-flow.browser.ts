@@ -127,6 +127,7 @@ describe("Characters flow E2E", () => {
     test("sidebar navigation works from characters page", async () => {
       const page = await ctx.browser.newPage();
       await gotoCharacters(page);
+      await page.locator("[data-testid='hamburger']").click();
       await page.locator("[data-testid='nav-gallery']").waitFor({ state: "visible", timeout: 5000 });
       await page.click("[data-testid='nav-gallery']");
       await page.locator("[data-testid='gallery-header']").waitFor({ state: "attached", timeout: 8000 });
