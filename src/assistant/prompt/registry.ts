@@ -5,7 +5,9 @@
  */
 import type { SectionBuilder } from "./types";
 import { actorHeaderSection } from "./sections/actor-header";
+import { authorNoteSection } from "./sections/author-note";
 import { chatHistorySection } from "./sections/chat-history";
+import { dynamicContextSection } from "./sections/dynamic-context";
 import { examplesSection } from "./sections/examples";
 import { groupParticipantsSection } from "./sections/group-participants";
 import { loreSection } from "./sections/lore";
@@ -17,11 +19,13 @@ import { userPersonaSection } from "./sections/user-persona";
 
 export const PROMPT_SECTIONS: SectionBuilder[] = [
   systemSection,
+  authorNoteSection,
   actorHeaderSection,
   groupParticipantsSection,
   userPersonaSection,
   loreSection,
   memorySection,
+  dynamicContextSection,
   postHistorySection,
   examplesSection,
   chatHistorySection,
