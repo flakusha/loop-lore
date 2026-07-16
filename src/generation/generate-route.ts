@@ -34,10 +34,64 @@ import type { Config } from "../config/schema";
 import { loadConfig } from "../config/load";
 import { jsonResponse, jsonError } from "../routes/http-utils";
 import { safeJsonStringify } from "../utils";
+import { registry } from "../plugins/registry";
+import type { ToolDefinition } from "../plugins/types";
+
+// ── Helpers ─────────────────────────────────────────────────
 
 function sseData(obj: unknown): string {
   const r = safeJsonStringify(obj);
   return `data: ${r.ok ? r.value : '{"type":"error","error":"serialize failed"}'}\n\n`;
+}
+
+interface StoreMessageOpts {
+  database: Kysely<DB>;
+  chatId: string;
+  actorId: string;
+  parentMessageId: string;
+  result: GenerationResult;
+  modelId: string;
+  provider: string;
+  continuationNumber?: number;
+}
+
+async function storeGeneratedMessage({
+  database,
+  chatId,
+  actorId,
+  parentMessageId,
+  result,
+  modelId,
+  provider,
+  continuationNumber,
+}: StoreMessageOpts): Promise<string> {
+  const messageId = randomUUID();
+  const status = result.cancelled ? MessageStatus.Partial : MessageStatus.Confirmed;
+
+  await database
+    .insertInto("messages")
+    .values({
+      id: messageId,
+      chat_id: chatId,
+      actor_id: actorId,
+      parent_id: parentMessageId,
+      role: MessageRole.Assistant,
+      content: result.content,
+      content_type: MessageContentType.Text,
+      content_format: MessageContentFormat.Markdown,
+      content_encoding: ContentEncoding.Identity,
+      model_id: modelId,
+      provider,
+      token_count_prompt: result.tokenUsage.promptTokens,
+      token_count_completion: result.tokenUsage.completionTokens,
+      token_count_total: result.tokenUsage.totalTokens,
+      status,
+      visibility: MessageVisibility.Visible,
+      continuation_index: continuationNumber ?? null,
+    })
+    .execute();
+
+  return messageId;
 }
 
 // ── Request shape ─────────────────────────────────────────
@@ -216,13 +270,22 @@ export async function handleGenerate({
 
   // ── Track generation attempt ─────────────────────────
 
-  const { attemptId, abortSignal } = startGenerationTracking({ options: genOptions, db: database });
+  const { attemptId, abortSignal } = await startGenerationTracking({ options: genOptions, db: database });
 
   // ── Build provider request ────────────────────────────
+
+  const pluginTools = registry.getAllTools();
+  const tools = pluginTools.length > 0
+    ? pluginTools.map((t: ToolDefinition) => ({
+        type: "function" as const,
+        function: { name: t.name, description: t.description, parameters: t.parameters },
+      }))
+    : undefined;
 
   const providerReq = {
     model: resolved.resolvedModel,
     messages,
+    tools,
     apiKey: resolved.resolvedApiKey,
     params: {
       stream: input.stream ?? false,
@@ -262,28 +325,15 @@ export async function handleGenerate({
       };
 
       // Store message
-      const messageId = randomUUID();
-      await database
-        .insertInto("messages")
-        .values({
-          id: messageId,
-          chat_id: input.chatId,
-          actor_id: input.actorId,
-          parent_id: input.parentMessageId,
-          role: MessageRole.Assistant,
-          content: result.content,
-          content_type: MessageContentType.Text,
-          content_format: MessageContentFormat.Markdown,
-          content_encoding: ContentEncoding.Identity,
-          model_id: resolved.resolvedModel,
-          provider: resolved.resolvedProviderName,
-          token_count_prompt: result.tokenUsage.promptTokens,
-          token_count_completion: result.tokenUsage.completionTokens,
-          token_count_total: result.tokenUsage.totalTokens,
-          status: MessageStatus.Confirmed,
-          visibility: MessageVisibility.Visible,
-        })
-        .execute();
+      const messageId = await storeGeneratedMessage({
+        database,
+        chatId: input.chatId,
+        actorId: input.actorId,
+        parentMessageId: input.parentMessageId,
+        result,
+        modelId: resolved.resolvedModel,
+        provider: resolved.resolvedProviderName,
+      });
 
       // Complete tracking
       await completeGeneration({ attemptId, result, db: database });
@@ -355,29 +405,16 @@ export async function handleGenerate({
         }
 
         // Store message
-        const messageId = randomUUID();
-        await database
-          .insertInto("messages")
-          .values({
-            id: messageId,
-            chat_id: input.chatId,
-            actor_id: input.actorId,
-            parent_id: input.parentMessageId,
-            role: MessageRole.Assistant,
-            content: result.content,
-            content_type: MessageContentType.Text,
-            content_format: MessageContentFormat.Markdown,
-            content_encoding: ContentEncoding.Identity,
-            model_id: resolved.resolvedModel,
-            provider: resolved.resolvedProviderName,
-            token_count_prompt: result.tokenUsage.promptTokens,
-            token_count_completion: result.tokenUsage.completionTokens,
-            token_count_total: result.tokenUsage.totalTokens,
-            status: result.cancelled ? MessageStatus.Partial : MessageStatus.Confirmed,
-            visibility: MessageVisibility.Visible,
-            continuation_index: input.continuationNumber ?? null,
-          })
-          .execute();
+        const messageId = await storeGeneratedMessage({
+          database,
+          chatId: input.chatId,
+          actorId: input.actorId,
+          parentMessageId: input.parentMessageId,
+          result,
+          modelId: resolved.resolvedModel,
+          provider: resolved.resolvedProviderName,
+          continuationNumber: input.continuationNumber,
+        });
 
         // Complete tracking
         await completeGeneration({ attemptId, result, db: database });
