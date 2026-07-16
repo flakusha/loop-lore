@@ -20,6 +20,20 @@ describe("Cross-Tenant Isolation E2E", () => {
     await seedUsers(server.db);
     await seedCharacter(server.db);
 
+    // Create a second regular user (non-admin) for isolation testing
+    await server.db
+      .insertInto("users")
+      .values({
+        id: "00000000-0000-4000-b000-000000000099",
+        username: "e2eother",
+        display_name: "E2E Other User",
+        password_hash: "$2b$04$anSd/tkwm/jhqfjGUZOdkurfsavDtfDeUM7dwdc/MQY.4upTC8ikG",
+        role: "user",
+        status: "active",
+        settings: "{}",
+      })
+      .execute();
+
     userA = createClient(server.url);
     userB = createClient(server.url);
 
@@ -28,7 +42,7 @@ describe("Cross-Tenant Isolation E2E", () => {
     const aOk = await userA.loginAs(SEED.user.username, SEED.user.password);
     expect(aOk).toBe(true);
 
-    const bOk = await userB.loginAs(SEED.admin.username, SEED.admin.password);
+    const bOk = await userB.loginAs("e2eother", "password");
     expect(bOk).toBe(true);
   }, 30_000);
 
