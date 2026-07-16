@@ -167,9 +167,7 @@ export async function callWithFailover(
     }
 
     try {
-      const response = handler
-        ? await prov.stream(req, handler)
-        : await prov.complete(req);
+      const response = handler ? await prov.stream(req, handler) : await prov.complete(req);
 
       circuitBreaker.onSuccess(name);
       return response;

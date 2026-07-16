@@ -120,11 +120,14 @@ export class OpenAiCompatibleProvider implements LLMProvider {
     let buffer = "";
     let fullContent = "";
     let fullThinking = "";
-    const toolCallAccum = new Map<number, {
-      id?: string;
-      type?: "function";
-      function: { name?: string; arguments: string };
-    }>();
+    const toolCallAccum = new Map<
+      number,
+      {
+        id?: string;
+        type?: "function";
+        function: { name?: string; arguments: string };
+      }
+    >();
     let finishReason: "stop" | "length" | "error" | "cancelled" = "stop";
     let usage = { promptTokens: 0, completionTokens: 0, totalTokens: 0 };
 
@@ -202,15 +205,16 @@ export class OpenAiCompatibleProvider implements LLMProvider {
       }
     }
 
-    const toolCalls = toolCallAccum.size > 0
-      ? [...toolCallAccum.entries()]
-          .sort(([a], [b]) => a - b)
-          .map(([, v]) => ({
-            id: v.id ?? "",
-            type: v.type ?? "function" as const,
-            function: { name: v.function.name ?? "", arguments: v.function.arguments },
-          }))
-      : undefined;
+    const toolCalls =
+      toolCallAccum.size > 0
+        ? [...toolCallAccum.entries()]
+            .sort(([a], [b]) => a - b)
+            .map(([, v]) => ({
+              id: v.id ?? "",
+              type: v.type ?? ("function" as const),
+              function: { name: v.function.name ?? "", arguments: v.function.arguments },
+            }))
+        : undefined;
 
     if (toolCalls) {
       for (const tc of toolCalls) {
