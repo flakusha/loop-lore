@@ -88,4 +88,17 @@ describe("Characters E2E", () => {
     expect(getRes.status).toBe(404);
     expect(getRes.code).toBeTruthy(); // TEST.2 error envelope
   });
+
+  test("cross-tenant isolation: User B cannot access User A's character", async () => {
+    const resA = await api.get<{ id: string }>(`/api/actors/${SEED.character.id}`);
+    expect(resA.ok).toBe(true);
+    expect(resA.data!.id).toBe(SEED.character.id);
+
+    const apiB = createClient(server.url);
+    await apiB.loginAs(SEED.admin.username, SEED.admin.password);
+    const resB = await apiB.get(`/api/actors/${SEED.character.id}`);
+    expect(resB.ok).toBe(false);
+    expect(resB.status).toBe(403);
+    expect(resB.code).toBeTruthy();
+  });
 });
