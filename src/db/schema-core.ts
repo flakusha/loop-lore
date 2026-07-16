@@ -194,6 +194,7 @@ export interface Messages {
   swipe_index: number | null;
   created_at: Generated<string>;
   edited_at: string | null;
+  archived_at: string | null;
   attachments: string | null;
 }
 
@@ -256,6 +257,44 @@ export interface ModelRoleOverrides {
   role: ModelRole;
   provider: string;
   model: string;
+  created_at: Generated<string>;
+  updated_at: Generated<string>;
+}
+
+// ── System Config (runtime admin configuration) ─────────────
+export interface SystemConfig {
+  key: string;
+  value: string;
+  description: string | null;
+  created_at: Generated<string>;
+  updated_at: Generated<string>;
+}
+
+// ── Log Entries (DB transport / audit trail) ────────────────
+export interface LogEntries {
+  id: string;
+  level: Generated<number>;
+  timestamp: number;
+  time: string;
+  message: string;
+  module: string | null;
+  user_id: string | null;
+  session_id: string | null;
+  request_id: string | null;
+  meta: string | null;
+  event_type: string | null;
+  entity_type: string | null;
+  entity_id: string | null;
+  action: string | null;
+  created_at: Generated<string>;
+}
+
+// ── Plugin State (enable/disable tracking) ──────────────────
+export interface PluginState {
+  name: string;
+  enabled: Generated<number>;
+  enabled_at: string | null;
+  disabled_at: string | null;
   created_at: Generated<string>;
   updated_at: Generated<string>;
 }

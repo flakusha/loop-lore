@@ -27,11 +27,13 @@ class PluginRegistry {
   private uiComponents = new Map<string, UIComponentDefinition[]>();
   private eventHandlers = new Map<string, EventHandlerDefinition[]>();
   private migrations = new Map<string, MigrationDefinition[]>();
+  private enabledMap = new Map<string, boolean>();
 
   // ── Registration ──────────────────────────────────────────
 
   register(plugin: LoadedPlugin): void {
     this.plugins.set(plugin.manifest.name, plugin);
+    this.enabledMap.set(plugin.manifest.name, true);
   }
 
   addRoutes(pluginName: string, defs: RouteDefinition[]): void {
@@ -110,6 +112,22 @@ class PluginRegistry {
     this.uiComponents.clear();
     this.eventHandlers.clear();
     this.migrations.clear();
+    this.enabledMap.clear();
+  }
+
+  isEnabled(name: string): boolean {
+    return this.enabledMap.get(name) ?? false;
+  }
+
+  setEnabled(name: string, enabled: boolean): void {
+    this.enabledMap.set(name, enabled);
+  }
+
+  listPluginStates(): Array<{ name: string; enabled: boolean }> {
+    return [...this.plugins.keys()].map((name) => ({
+      name,
+      enabled: this.isEnabled(name),
+    }));
   }
 }
 

@@ -57,6 +57,9 @@ export interface Logger {
   /** Create child logger with inherited bindings */
   child(bindings: LoggerBindings): Logger;
 
+  /** Add a transport at runtime (for DB transport after DB init) */
+  addTransport(transport: Transport): void;
+
   /** Flush pending entries (await before shutdown) */
   flush(): Promise<void>;
 }

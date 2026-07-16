@@ -17,7 +17,7 @@ import { AsyncLogQueue } from "./queue";
 import type { LoggerConfig, SizeLimits } from "./types";
 
 export class LoggerImpl implements Logger {
-  private readonly transports: Transport[];
+  private transports: Transport[];
   private readonly queue: AsyncLogQueue;
   private readonly threshold: number;
   private readonly levelString: LogLevel;
@@ -124,6 +124,10 @@ export class LoggerImpl implements Logger {
       },
       { ...this.bindings, ...bindings },
     );
+  }
+
+  addTransport(transport: Transport): void {
+    this.transports.push(transport);
   }
 
   async flush(): Promise<void> {

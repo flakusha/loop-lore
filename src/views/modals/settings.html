@@ -1,0 +1,88 @@
+<!-- User Settings Modal — overlay accessible from chat -->
+<div
+  x-data="settingsModal()"
+  x-show="open"
+  x-on:keydown.escape.window="open = false"
+  x-on:settings-modal.window="open = true; load()"
+  class="modal-overlay"
+  style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: var(--z-modal, 1000); align-items: center; justify-content: center"
+  x-bind:style="open ? { display: 'flex' } : { display: 'none' }"
+>
+  <div
+    class="modal-content"
+    style="background: var(--color-surface, var(--bg-primary, #fff)); border-radius: var(--radius-lg, 12px); max-width: 480px; width: 90%; max-height: 80vh; overflow-y: auto; padding: var(--space-6)"
+    @click.stop
+  >
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-4)">
+      <h2 style="font-size: 18px; font-weight: 600" data-testid="settings-modal-title">Preferences</h2>
+      <button class="btn btn-secondary btn-sm" @click="open = false" data-testid="settings-modal-close">&times;</button>
+    </div>
+
+    <!-- Tab bar -->
+    <div class="world-edit-tabs" style="margin-bottom: var(--space-4)">
+      <button class="world-edit-tab" :class="{ active: tab === 'theme' }" @click="tab = 'theme'">Theme</button>
+      <button class="world-edit-tab" :class="{ active: tab === 'chat' }" @click="tab = 'chat'">Chat</button>
+      <button class="world-edit-tab" :class="{ active: tab === 'generation' }" @click="tab = 'generation'">Generation</button>
+    </div>
+
+    <!-- Theme tab -->
+    <div x-show="tab === 'theme'">
+      <div class="form-group">
+        <label class="form-label">Theme</label>
+        <select class="form-select" x-model="theme" @change="save('theme')">
+          <option value="default">Default (Dark)</option>
+          <option value="light">Light</option>
+          <option value="dracula">Dracula</option>
+          <option value="nord">Nord</option>
+          <option value="github-dark">GitHub Dark</option>
+          <option value="material">Material</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Chat tab -->
+    <div x-show="tab === 'chat'">
+      <div class="form-group" style="display:flex;justify-content:space-between;align-items:center">
+        <span>Enter to send</span>
+        <label class="toggle"><input type="checkbox" x-model="enterToSend" @change="save('chat')"><span class="toggle-slider"></span></label>
+      </div>
+      <div class="form-group" style="display:flex;justify-content:space-between;align-items:center">
+        <span>Auto-scroll</span>
+        <label class="toggle"><input type="checkbox" x-model="autoScroll" @change="save('chat')"><span class="toggle-slider"></span></label>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Detail Level</label>
+        <select class="form-select" x-model="detailLevel" @change="save('chat')">
+          <option value="Immersion">Immersion</option>
+          <option value="Basic">Basic</option>
+          <option value="Detailed">Detailed</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Generation tab -->
+    <div x-show="tab === 'generation'">
+      <div class="form-group">
+        <label class="form-label">Provider</label>
+        <select class="form-select" x-model="provider" @change="save('api')">
+          <option value="OpenAI">OpenAI</option>
+          <option value="Anthropic">Anthropic</option>
+          <option value="OpenRouter">OpenRouter</option>
+          <option value="Custom">Custom</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Model</label>
+        <input class="form-input" type="text" x-model="model" placeholder="e.g. gpt-4o" @change="save('api')">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Temperature: <span x-text="Number(temperature).toFixed(1)"></span></label>
+        <input type="range" x-model="temperature" min="0" max="2" step="0.1" style="width:100%" @change="save('api')">
+      </div>
+    </div>
+
+    <div style="display: flex; justify-content: flex-end; margin-top: var(--space-4)">
+      <button class="btn btn-primary" @click="open = false" data-testid="settings-modal-done">Done</button>
+    </div>
+  </div>
+</div>
