@@ -10,13 +10,11 @@
 
 import type { Kysely } from "kysely";
 import type { DB } from "../db/schema";
-import type { RouteDispatch } from "./router";
-import { registerRoute } from "./router";
+import { Elysia } from "elysia";
 import { jsonError, HttpStatus, ErrorCode } from "./http-utils";
 import { computeActivity } from "./activity";
 import { safeJsonStringify } from "../utils";
 
-const STREAM_PATH = "/api/activity/stream";
 const POLL_INTERVAL_MS = 5000;
 const KEEPALIVE_MS = 15_000;
 
@@ -108,23 +106,17 @@ export class ActivityStreamer {
   }
 }
 
-const dispatch: RouteDispatch = ({ request, context, database }) => {
-  if (request.method !== "GET") return Promise.resolve(null);
-  if (new URL(request.url).pathname !== STREAM_PATH) return Promise.resolve(null);
-
-  const userId = context.userId;
-  if (!userId)
-    return Promise.resolve(
-      jsonError({
+export function activityStreamRoutes({ database }: { database: Kysely<DB> }) {
+  return new Elysia({ name: "activity-stream" }).get("/api/activity/stream", async (ctx) => {
+    const userId = (ctx as any).userId as string | null;
+    if (!userId) {
+      return jsonError({
         message: "Unauthorized",
         status: HttpStatus.Unauthorized,
         code: ErrorCode.Unauthorized,
-      }),
-    );
-
-  const streamer = new ActivityStreamer(database, userId);
-  return Promise.resolve(streamer.open());
-};
-
-registerRoute(dispatch);
-export { dispatch };
+      });
+    }
+    const streamer = new ActivityStreamer(database, userId);
+    return streamer.open();
+  });
+}

@@ -26,5 +26,5 @@ export function healthRoutes(_opts: { database: Db; config: Config }): Elysia {
       timestamp,
       providers: providerList,
     });
-  });
+  }) as unknown as Elysia;
 }
