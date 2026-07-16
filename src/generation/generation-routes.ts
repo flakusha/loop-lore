@@ -327,10 +327,14 @@ export function handleRegenerate(body: unknown, database?: Kysely<DB>): Response
  * - Sends keepalive pings every 15s
  * - Closes connection on done/error or 30s of idle (no buffer)
  */
-export function handleGenerationStream(chatId: string): Response {
+export function handleGenerationStream(chatId: string, headers?: Headers): Response {
   if (!chatId) {
     return jsonError({ message: "chatId is required", status: 400 });
   }
+
+  // Parse Last-Event-ID for SSE reconnect
+  const lastEventId = headers?.get("Last-Event-ID");
+  const replayFrom = lastEventId ? parseInt(lastEventId, 10) : 0;
 
   let cleanup: (() => void) | undefined;
 
@@ -343,7 +347,7 @@ export function handleGenerationStream(chatId: string): Response {
         return;
       }
 
-      for (const event of buffer.replay(0)) {
+      for (const event of buffer.replay(replayFrom)) {
         const lines = event.html.split("\n");
         const dataBlock = lines.map((l) => `data: ${l}`).join("\n");
         controller.enqueue(new TextEncoder().encode(`event: ${event.type}\n${dataBlock}\n\n`));

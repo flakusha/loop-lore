@@ -28,6 +28,24 @@ export interface ProviderCapabilities {
 
 // ── Request / Response ────────────────────────────────────
 
+export interface ToolCall {
+  id: string;
+  type: "function";
+  function: {
+    name: string;
+    arguments: string;
+  };
+}
+
+export interface ToolDef {
+  type: "function";
+  function: {
+    name: string;
+    description: string;
+    parameters: Record<string, unknown>;
+  };
+}
+
 export interface GenerateRequest {
   /** Model ID/alias to use */
   model: string;
@@ -35,6 +53,8 @@ export interface GenerateRequest {
   messages: GenerationMessage[];
   /** Per-request API key override (BYO key support) */
   apiKey?: string;
+  /** Tool definitions for function calling */
+  tools?: ToolDef[];
   /** Generation parameters */
   params: {
     temperature?: number;
@@ -65,6 +85,7 @@ export interface GenerateRequest {
 export interface GenerateResponse {
   content: string;
   thinking?: string;
+  toolCalls?: ToolCall[];
   finishReason: "stop" | "length" | "error" | "cancelled";
   usage: {
     promptTokens: number;
@@ -74,8 +95,9 @@ export interface GenerateResponse {
 }
 
 export interface ChunkEvent {
-  type: "content" | "thinking" | "done" | "error";
+  type: "content" | "thinking" | "tool_call" | "done" | "error";
   content?: string;
+  toolCall?: ToolCall;
   finishReason?: string;
   usage?: { promptTokens: number; completionTokens: number; totalTokens: number };
 }

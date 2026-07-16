@@ -14,6 +14,7 @@ import type {
 } from "./types";
 import { ProviderError, ProviderAuthError, ProviderRateLimitError } from "./types";
 import { safeJsonParse, safeJsonStringify } from "../../utils";
+import { validateProviderUrl } from "../../utils/url-validation";
 
 // ── Capabilities ──────────────────────────────────────────
 
@@ -56,6 +57,16 @@ export class OpenAiCompatibleProvider implements LLMProvider {
     this.timeout = config.timeout;
     this.retries = config.retries;
     this.headers = config.headers ?? {};
+
+    const validated = validateProviderUrl(this.baseUrl);
+    if (!validated.ok) {
+      throw new ProviderError(
+        `Invalid provider URL (${config.name}): ${validated.error}`,
+        undefined,
+        400,
+        false,
+      );
+    }
   }
 
   // ── Core generation ────────────────────────────────────
@@ -70,9 +81,16 @@ export class OpenAiCompatibleProvider implements LLMProvider {
       throw new ProviderError("Empty response from provider", undefined, 500, true);
     }
 
+    const toolCalls = choice.message?.tool_calls?.map((tc) => ({
+      id: tc.id,
+      type: tc.type as "function",
+      function: { name: tc.function.name, arguments: tc.function.arguments },
+    }));
+
     return {
       content: choice.message?.content ?? "",
       thinking: choice.message?.reasoning_content,
+      toolCalls: toolCalls && toolCalls.length > 0 ? toolCalls : undefined,
       finishReason: this.mapFinishReason(choice.finish_reason),
       usage: {
         promptTokens: data.usage?.prompt_tokens ?? 0,
@@ -102,6 +120,11 @@ export class OpenAiCompatibleProvider implements LLMProvider {
     let buffer = "";
     let fullContent = "";
     let fullThinking = "";
+    const toolCallAccum = new Map<number, {
+      id?: string;
+      type?: "function";
+      function: { name?: string; arguments: string };
+    }>();
     let finishReason: "stop" | "length" | "error" | "cancelled" = "stop";
     let usage = { promptTokens: 0, completionTokens: 0, totalTokens: 0 };
 
@@ -138,6 +161,16 @@ export class OpenAiCompatibleProvider implements LLMProvider {
             fullThinking += delta.reasoning_content;
             handler({ type: "thinking", content: delta.reasoning_content });
           }
+          if (delta.tool_calls) {
+            for (const tc of delta.tool_calls) {
+              const existing = toolCallAccum.get(tc.index) ?? { function: { arguments: "" } };
+              if (tc.id) existing.id = tc.id;
+              if (tc.type) existing.type = tc.type;
+              if (tc.function?.name) existing.function.name = tc.function.name;
+              if (tc.function?.arguments) existing.function.arguments += tc.function.arguments;
+              toolCallAccum.set(tc.index, existing);
+            }
+          }
 
           const finish = data.choices?.[0]?.finish_reason;
           if (finish && finish !== "null") {
@@ -169,9 +202,26 @@ export class OpenAiCompatibleProvider implements LLMProvider {
       }
     }
 
+    const toolCalls = toolCallAccum.size > 0
+      ? [...toolCallAccum.entries()]
+          .sort(([a], [b]) => a - b)
+          .map(([, v]) => ({
+            id: v.id ?? "",
+            type: v.type ?? "function" as const,
+            function: { name: v.function.name ?? "", arguments: v.function.arguments },
+          }))
+      : undefined;
+
+    if (toolCalls) {
+      for (const tc of toolCalls) {
+        handler({ type: "tool_call", toolCall: tc });
+      }
+    }
+
     return {
       content: fullContent,
       thinking: fullThinking || undefined,
+      toolCalls,
       finishReason,
       usage,
     };
@@ -225,6 +275,10 @@ export class OpenAiCompatibleProvider implements LLMProvider {
       messages: req.messages,
       stream,
     };
+
+    if (req.tools && req.tools.length > 0) {
+      body.tools = req.tools;
+    }
 
     if (req.params.temperature !== undefined) body.temperature = req.params.temperature;
     if (req.params.maxTokens !== undefined) body.max_tokens = req.params.maxTokens;
@@ -419,7 +473,7 @@ function combineAbortSignals(...signals: AbortSignal[]): AbortSignal {
 
 interface OpenAIResponse {
   choices?: {
-    message?: { content?: string; reasoning_content?: string };
+    message?: { content?: string; reasoning_content?: string; tool_calls?: ToolCallDTO[] };
     finish_reason?: string | null;
   }[];
   usage?: {
@@ -431,7 +485,7 @@ interface OpenAIResponse {
 
 interface OpenAIStreamChunk {
   choices?: {
-    delta?: { content?: string; reasoning_content?: string };
+    delta?: { content?: string; reasoning_content?: string; tool_calls?: ToolCallDeltaDTO[] };
     finish_reason?: string | null;
   }[];
   usage?: {
@@ -439,4 +493,17 @@ interface OpenAIStreamChunk {
     completion_tokens?: number;
     total_tokens?: number;
   };
+}
+
+interface ToolCallDTO {
+  id: string;
+  type: "function";
+  function: { name: string; arguments: string };
+}
+
+interface ToolCallDeltaDTO {
+  index: number;
+  id?: string;
+  type?: "function";
+  function?: { name?: string; arguments?: string };
 }
