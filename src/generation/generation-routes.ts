@@ -123,8 +123,8 @@ function validateRetryFromPoint(body: unknown): { chatId: string; attemptId?: st
   if (b.step !== undefined && typeof b.step !== "number") return null;
   return {
     chatId: b.chatId,
-    attemptId: b.attemptId as string | undefined,
-    step: b.step as number | undefined,
+    attemptId: b.attemptId,
+    step: b.step,
   };
 }
 
@@ -201,8 +201,8 @@ function validateContinue(
     messageId: b.messageId,
     chatId: b.chatId,
     actorId: b.actorId,
-    modelId: b.modelId as string | undefined,
-    provider: b.provider as string | undefined,
+    modelId: b.modelId,
+    provider: b.provider,
   };
 }
 
@@ -285,11 +285,11 @@ function validateCancel(
   if (b.source !== undefined && typeof b.source !== "string") return null;
   if (b.detail !== undefined && typeof b.detail !== "string") return null;
   return {
-    chatId: b.chatId as string | undefined,
-    attemptId: b.attemptId as string | undefined,
-    reason: b.reason as string | undefined,
-    source: b.source as string | undefined,
-    detail: b.detail as string | undefined,
+    chatId: b.chatId,
+    attemptId: b.attemptId,
+    reason: b.reason,
+    source: b.source,
+    detail: b.detail,
   };
 }
 

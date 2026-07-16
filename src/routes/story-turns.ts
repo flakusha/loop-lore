@@ -30,7 +30,7 @@ export function storyTurnsRoutes(opts: { database: Db; config: Config }): Elysia
   return new Elysia({ name: "story-turns" })
     .get("/api/chats/:id/story-turns", async (ctx: any) => {
       const { params, userId, userRole, error, request } = ctx;
-      const chatId = (params as any).id as string;
+      const chatId = params.id as string;
 
       const hasAccess = await checkChatOwnership(
         opts.database,
@@ -42,7 +42,7 @@ export function storyTurnsRoutes(opts: { database: Db; config: Config }): Elysia
         return error(HttpStatus.NotFound, { message: "Chat not found" });
       }
 
-      const searchParams = new URL((request as any).url).searchParams;
+      const searchParams = new URL(request.url).searchParams;
       const page = parseInt(searchParams.get("page") ?? "1", 10);
       const pageSize = parseInt(searchParams.get("pageSize") ?? "50", 10);
       const offset = (page - 1) * pageSize;
@@ -67,8 +67,8 @@ export function storyTurnsRoutes(opts: { database: Db; config: Config }): Elysia
     })
     .get("/api/chats/:id/story-turns/:turnId", async (ctx: any) => {
       const { params, userId, userRole, error } = ctx;
-      const chatId = (params as any).id as string;
-      const turnId = (params as any).turnId as string;
+      const chatId = params.id as string;
+      const turnId = params.turnId as string;
 
       const hasAccess = await checkChatOwnership(
         opts.database,
