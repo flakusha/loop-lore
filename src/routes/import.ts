@@ -4,9 +4,13 @@
  * Handles actor import via multipart upload. Separate from characters
  * plugin to avoid Elysia body validator consuming the body for multipart
  * requests.
+ *
+ * Uses onRequest hook to intercept before Elysia body parsing consumes
+ * the multipart stream.
  */
 
 import { Elysia } from "elysia";
+import crypto from "node:crypto";
 import type { Kysely } from "kysely";
 import type { DB } from "../db/schema";
 import { uid, safeJsonStringify, jsonParseOr } from "../utils";
@@ -14,6 +18,7 @@ import { jsonError, jsonCreated, HttpStatus } from "./http-utils";
 import { load as yamlLoad } from "js-yaml";
 import { parse as parseToml } from "smol-toml";
 import { extractCharacterDataFromPng } from "../characters/steganography";
+import { getOrCreateSoloUserForAuth } from "../middleware/auth";
 
 interface ImportActorOpts {
   data: Record<string, unknown>;
@@ -63,75 +68,81 @@ async function importActor(opts: ImportActorOpts): Promise<Response> {
   return jsonCreated({ id });
 }
 
+async function resolveUserId(request: Request, database: Kysely<DB>): Promise<string | null> {
+  const cookieHeader = request.headers.get("Cookie");
+  const match = cookieHeader ? /ll_token=([^;]+)/.exec(cookieHeader) : null;
+  if (match) {
+    const tokenHash = crypto.createHash("sha256").update(match[1]!).digest("hex");
+    const session = await database
+      .selectFrom("sessions")
+      .select(["user_id"])
+      .where("token_hash", "=", tokenHash)
+      .executeTakeFirst();
+    if (session) return session.user_id;
+  }
+  // Fallback to solo user
+  const solo = await getOrCreateSoloUserForAuth(database, "solo");
+  return solo?.id ?? null;
+}
+
+async function handleImport(request: Request, database: Kysely<DB>, userId: string): Promise<Response> {
+  if (!userId) return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized });
+
+  const contentType = request.headers.get("content-type") ?? "";
+
+  if (contentType.includes("multipart/form-data")) {
+    const formData = await request.formData();
+    const file = formData.get("file");
+    if (!file || !(file instanceof File))
+      return jsonError({ message: "file field is required", status: HttpStatus.BadRequest });
+
+    const fileBytes = Buffer.from(await file.arrayBuffer());
+    const filename = (file.name ?? "").toLowerCase();
+
+    let data: Record<string, unknown>;
+    let spec: string | undefined;
+
+    if (filename.endsWith(".json")) {
+      const parsed = jsonParseOr(await file.text(), null);
+      if (!parsed || typeof parsed !== "object")
+        return jsonError({ message: "Invalid JSON file", status: HttpStatus.BadRequest });
+      data = parsed;
+      spec = data.spec === "chara_card_v2" ? "chara_card_v2" : undefined;
+    } else if (filename.endsWith(".png")) {
+      const extracted = extractCharacterDataFromPng(fileBytes);
+      if (!extracted)
+        return jsonError({ message: "No character data found in PNG", status: HttpStatus.BadRequest });
+      data = extracted.data;
+      spec = extracted.spec;
+    } else if (filename.endsWith(".yaml") || filename.endsWith(".yml")) {
+      const parsed = yamlLoad(await file.text());
+      if (!parsed || typeof parsed !== "object")
+        return jsonError({ message: "Invalid YAML file", status: HttpStatus.BadRequest });
+      data = parsed as Record<string, unknown>;
+    } else if (filename.endsWith(".toml")) {
+      const parsed = parseToml(await file.text());
+      if (!parsed || typeof parsed !== "object")
+        return jsonError({ message: "Invalid TOML file", status: HttpStatus.BadRequest });
+      data = parsed;
+    } else {
+      return jsonError({
+        message: "Unsupported file type. Use .json, .png, .yaml, or .toml",
+        status: HttpStatus.BadRequest,
+      });
+    }
+
+    return importActor({ data, spec, database, userId });
+  }
+
+  return jsonError({ message: "Expected multipart/form-data", status: HttpStatus.BadRequest });
+}
+
 export function importRoutes({ database }: { database: Kysely<DB> }): Elysia {
-  return new Elysia({ name: "import" }).post(
-    "/api/actors/import",
-    async (ctx: any) => {
-      const contentType = ctx.request.headers.get("content-type") ?? "";
-
-      if (contentType.includes("multipart/form-data")) {
-        let formData: FormData;
-        try {
-          formData = await ctx.request.formData();
-        } catch {
-          const raw = await new Response(ctx.request.body, {
-            headers: { "Content-Type": contentType },
-          }).arrayBuffer();
-          const freshReq = new Request(ctx.request.url, {
-            method: "POST",
-            headers: { "Content-Type": contentType },
-            body: raw,
-          });
-          formData = await (freshReq.formData() as Promise<FormData>);
-        }
-        const file = formData.get("file");
-        if (!file || !(file instanceof File))
-          return jsonError({ message: "file field is required", status: HttpStatus.BadRequest });
-
-        const fileBytes = Buffer.from(await file.arrayBuffer());
-        const filename = (file.name ?? "").toLowerCase();
-
-        let data: Record<string, unknown>;
-        let spec: string | undefined;
-
-        if (filename.endsWith(".json")) {
-          const parsed = jsonParseOr(await file.text(), null);
-          if (!parsed || typeof parsed !== "object")
-            return jsonError({ message: "Invalid JSON file", status: HttpStatus.BadRequest });
-          data = parsed;
-          spec = data.spec === "chara_card_v2" ? "chara_card_v2" : undefined;
-        } else if (filename.endsWith(".png")) {
-          const extracted = extractCharacterDataFromPng(fileBytes);
-          if (!extracted)
-            return jsonError({ message: "No character data found in PNG", status: HttpStatus.BadRequest });
-          data = extracted.data;
-          spec = extracted.spec;
-        } else if (filename.endsWith(".yaml") || filename.endsWith(".yml")) {
-          const parsed = yamlLoad(await file.text());
-          if (!parsed || typeof parsed !== "object")
-            return jsonError({ message: "Invalid YAML file", status: HttpStatus.BadRequest });
-          data = parsed as Record<string, unknown>;
-        } else if (filename.endsWith(".toml")) {
-          const parsed = parseToml(await file.text());
-          if (!parsed || typeof parsed !== "object")
-            return jsonError({ message: "Invalid TOML file", status: HttpStatus.BadRequest });
-          data = parsed;
-        } else {
-          return jsonError({
-            message: "Unsupported file type. Use .json, .png, .yaml, or .toml",
-            status: HttpStatus.BadRequest,
-          });
-        }
-
-        return importActor({ data, spec, database, userId: ctx.userId as string });
-      }
-
-      // JSON body
-      const body = ctx.body as Record<string, unknown>;
-      const data = (body.data ?? body) as Record<string, unknown>;
-      const spec = body.spec === "chara_card_v2" ? "chara_card_v2" : undefined;
-      return importActor({ data, spec, database, userId: ctx.userId as string });
-    },
-    { type: undefined },
-  ) as unknown as Elysia;
+  return new Elysia({ name: "import" }).onRequest(async (ctx: any) => {
+    const url = new URL(ctx.request.url);
+    if (ctx.request.method === "POST" && url.pathname === "/api/actors/import") {
+      const userId = await resolveUserId(ctx.request, database);
+      return handleImport(ctx.request, database, userId ?? "");
+    }
+  }) as unknown as Elysia;
 }
