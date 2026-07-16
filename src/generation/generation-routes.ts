@@ -349,7 +349,9 @@ export function handleGenerationStream(chatId: string): Response {
         (error: unknown) => {
           try {
             const payload = safeJsonStringify({ error: String(error) });
-            controller.enqueue(new TextEncoder().encode(`event: stream-error\ndata: ${payload.ok ? payload.value : "{}"}\n\n`));
+            controller.enqueue(
+              new TextEncoder().encode(`event: stream-error\ndata: ${payload.ok ? payload.value : "{}"}\n\n`),
+            );
             controller.close();
           } catch {
             // Ignore

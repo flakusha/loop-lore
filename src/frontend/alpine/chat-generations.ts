@@ -33,7 +33,13 @@ export const chatGenerations: Partial<ChatState> & ThisType<ChatState> = {
       this.generationDetail = null;
       this._cleanupSSE();
       // Reload full message list (persisted message now available)
-      void (async () => { try { await this.loadMessages(); } catch { /* non-critical */ } })();
+      void (async () => {
+        try {
+          await this.loadMessages();
+        } catch {
+          /* non-critical */
+        }
+      })();
     });
 
     es.addEventListener("stream-error", (event: MessageEvent) => {

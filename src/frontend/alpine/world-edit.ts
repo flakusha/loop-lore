@@ -64,7 +64,12 @@ const log = rootLog.child({ module: "world-edit" });
     async saveWorld() {
       this.saving = true;
       const settings = this.tagsStr
-        ? { tags: this.tagsStr.split(",").map((t: string) => t.trim()).filter(Boolean) }
+        ? {
+            tags: this.tagsStr
+              .split(",")
+              .map((t: string) => t.trim())
+              .filter(Boolean),
+          }
         : {};
       try {
         const res = await fetch(`/api/worlds/${this.worldId}`, {
@@ -88,7 +93,9 @@ const log = rootLog.child({ module: "world-edit" });
       this.loadingLocations = true;
       this.locationsLoaded = false;
       try {
-        const res = await fetch(`/api/worlds/${this.worldId}/locations`, { headers: { Accept: "application/json" } });
+        const res = await fetch(`/api/worlds/${this.worldId}/locations`, {
+          headers: { Accept: "application/json" },
+        });
         if (res.ok) {
           const data = await res.json();
           this.locations = (data.data || []).map((l: any) => ({
@@ -133,7 +140,9 @@ const log = rootLog.child({ module: "world-edit" });
 
     async editLocation(locId: string) {
       this.editingLocationId = locId;
-      const res = await fetch(`/api/worlds/${this.worldId}/locations/${locId}`, { headers: { Accept: "application/json" } });
+      const res = await fetch(`/api/worlds/${this.worldId}/locations/${locId}`, {
+        headers: { Accept: "application/json" },
+      });
       if (res.ok) {
         const data = await res.json();
         log.debug("editLocation loaded", { data });
