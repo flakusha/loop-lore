@@ -9,6 +9,7 @@ export * from "./schema-content";
 export * from "./schema-generation";
 export * from "./schema-story";
 export * from "./schema-synthetic";
+export * from "./schema-telemetry";
 
 // ── DB Aggregate ────────────────────────────────────────────────────
 export interface DB {
@@ -48,4 +49,5 @@ export interface DB {
   system_config: import("./schema-core").SystemConfig;
   log_entries: import("./schema-core").LogEntries;
   plugin_state: import("./schema-core").PluginState;
+  telemetry_events: import("./schema-telemetry").TelemetryEvents;
 }
