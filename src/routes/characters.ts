@@ -4,14 +4,7 @@ import { Elysia } from "elysia";
 import type { Kysely } from "kysely";
 import type { DB } from "../db/schema";
 import { uid, safeJsonStringify, jsonParseOr } from "../utils";
-import {
-  jsonResponse,
-  jsonError,
-  jsonPaginated,
-  jsonCreated,
-  jsonNoContent,
-  HttpStatus,
-} from "./http-utils";
+import { jsonResponse, jsonError, jsonPaginated, jsonCreated, jsonNoContent, HttpStatus } from "./http-utils";
 import { ActorType, AgentType } from "../db/enums";
 
 interface HandlerOpts {
@@ -54,7 +47,8 @@ export function charactersRoutes(opts: HandlerOpts) {
       if (!userId) return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized });
 
       const displayName = body.displayName as string | undefined;
-      if (!displayName) return jsonError({ message: "displayName is required", status: HttpStatus.BadRequest });
+      if (!displayName)
+        return jsonError({ message: "displayName is required", status: HttpStatus.BadRequest });
 
       const id = uid();
       await database
@@ -77,7 +71,11 @@ export function charactersRoutes(opts: HandlerOpts) {
       return jsonCreated({ id });
     })
     .get("/api/actors/:id", async (ctx: any) => {
-      const actor = await database.selectFrom("actors").selectAll().where("id", "=", ctx.params.id).executeTakeFirst();
+      const actor = await database
+        .selectFrom("actors")
+        .selectAll()
+        .where("id", "=", ctx.params.id)
+        .executeTakeFirst();
       if (!actor) return jsonError({ message: "Actor not found", status: HttpStatus.NotFound });
 
       if (actor.visibility !== "public" && actor.user_id !== ctx.userId && ctx.userRole !== "admin") {
@@ -86,7 +84,11 @@ export function charactersRoutes(opts: HandlerOpts) {
       return jsonResponse(actor);
     })
     .get("/api/actors/:id/card", async (ctx: any) => {
-      const actor = await database.selectFrom("actors").selectAll().where("id", "=", ctx.params.id).executeTakeFirst();
+      const actor = await database
+        .selectFrom("actors")
+        .selectAll()
+        .where("id", "=", ctx.params.id)
+        .executeTakeFirst();
       if (!actor) return jsonError({ message: "Actor not found", status: HttpStatus.NotFound });
 
       if (actor.visibility !== "public" && actor.user_id !== ctx.userId && ctx.userRole !== "admin") {
@@ -120,7 +122,11 @@ export function charactersRoutes(opts: HandlerOpts) {
       const userId = ctx.userId as string | null;
       if (!userId) return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized });
 
-      const actor = await database.selectFrom("actors").selectAll().where("id", "=", ctx.params.id).executeTakeFirst();
+      const actor = await database
+        .selectFrom("actors")
+        .selectAll()
+        .where("id", "=", ctx.params.id)
+        .executeTakeFirst();
       if (!actor) return jsonError({ message: "Actor not found", status: HttpStatus.NotFound });
 
       if (actor.owner_id !== userId && ctx.userRole !== "admin") {
@@ -142,7 +148,8 @@ export function charactersRoutes(opts: HandlerOpts) {
       if (body.characterVersion) updates.character_version = body.characterVersion;
       if (body.settings) {
         const settingsResult = safeJsonStringify(body.settings);
-        if (!settingsResult.ok) return jsonError({ message: "Invalid settings data", status: HttpStatus.BadRequest });
+        if (!settingsResult.ok)
+          return jsonError({ message: "Invalid settings data", status: HttpStatus.BadRequest });
         updates.settings = settingsResult.value;
       }
       updates.updated_at = new Date().toISOString();
@@ -154,7 +161,11 @@ export function charactersRoutes(opts: HandlerOpts) {
       const userId = ctx.userId as string | null;
       if (!userId) return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized });
 
-      const actor = await database.selectFrom("actors").selectAll().where("id", "=", ctx.params.id).executeTakeFirst();
+      const actor = await database
+        .selectFrom("actors")
+        .selectAll()
+        .where("id", "=", ctx.params.id)
+        .executeTakeFirst();
       if (!actor) return jsonError({ message: "Actor not found", status: HttpStatus.NotFound });
 
       if (actor.owner_id !== userId && ctx.userRole !== "admin") {
