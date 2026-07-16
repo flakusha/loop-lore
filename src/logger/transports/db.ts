@@ -22,20 +22,17 @@ export class DBTransport implements Transport {
 
   async write(entry: LogEntry): Promise<void> {
     try {
-      const metaStr = entry.meta && Object.keys(entry.meta).length > 0
-        ? JSON.stringify(entry.meta)
-        : null;
+      const metaStr = entry.meta && Object.keys(entry.meta).length > 0 ? JSON.stringify(entry.meta) : null;
 
-      const msgStr = typeof entry.message === "string"
-        ? entry.message
-        : JSON.stringify(entry.message);
+      const msgStr = typeof entry.message === "string" ? entry.message : JSON.stringify(entry.message);
 
       const eventType = (entry.meta?.event_type as string | undefined) ?? null;
       const entityType = (entry.meta?.entity_type as string | undefined) ?? null;
       const entityId = (entry.meta?.entity_id as string | undefined) ?? null;
-      const action = (entry.meta?.action as string | undefined)
-        ?? (typeof entry.message === "string" ? entry.message : undefined)
-        ?? null;
+      const action =
+        (entry.meta?.action as string | undefined) ??
+        (typeof entry.message === "string" ? entry.message : undefined) ??
+        null;
 
       await this.db
         .insertInto("log_entries")
