@@ -1,9 +1,12 @@
-import { describe, test, expect, beforeEach } from "bun:test";
+import { describe, test, expect } from "bun:test";
 import { chatEditing } from "./chat-editing";
 import type { ChatState } from "./types";
 
 const mockMessage = (id: string, content: string, role: string) => ({
-  id, content, role, created_at: new Date().toISOString(),
+  id,
+  content,
+  role,
+  created_at: new Date().toISOString(),
 });
 
 type MockEditState = Pick<ChatState, "messages" | "editingMessageId" | "editContent" | "pendingAssets">;
