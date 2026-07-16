@@ -20,6 +20,7 @@ import { healthRoutes } from "./routes/health";
 import { authPublicRoutes, authProtectedRoutes } from "./routes/auth";
 import { settingsRoutes } from "./routes/settings";
 import { activityRoutes } from "./routes/activity";
+import { activityStreamRoutes } from "./routes/activity-stream";
 import { apiKeysRoutes } from "./routes/api-keys";
 import { frontendLogsRoutes } from "./routes/frontend-logs";
 import { messageEncryptionRoutes } from "./routes/message-encryption";
@@ -40,10 +41,13 @@ import { messagesRoutes } from "./routes/messages";
 import { telemetryRoutes } from "./routes/telemetry";
 import { chatsRoutes } from "./routes/chats";
 import { pluginRoutes } from "./routes/plugins";
+import { importRoutes } from "./routes/import";
 import { personaRoutes } from "./personas/controller";
 import { generationRoutes } from "./generation/controller";
+import { ageGateRoutes } from "./age-gate/controller";
+import { assetRoutes } from "./assets/controller";
 import { authenticate } from "./middleware/auth";
-import { validationErrorPlugin } from "./validation";
+import { onValidationError } from "./validation";
 
 export interface AppDeps {
   database: Db;
@@ -57,8 +61,9 @@ export function createApp(deps: AppDeps): Elysia {
   const handleOpts = { database, config };
 
   const app = new Elysia({ adapter: BunAdapter })
-    // ── Validation error middleware (must be first) ───────────
-    .use(validationErrorPlugin())
+    // ── Validation error handler (must be first) ─────────────
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    .onError((ctx: any) => onValidationError(ctx.code, ctx.error, ctx.set))
 
     // ── Authentication guard (runs before all routes, populates context) ──────
     .derive(async ({ request }) => {
@@ -86,6 +91,7 @@ export function createApp(deps: AppDeps): Elysia {
 
   // ── Migrated route modules ───────────────────────────────────────────────────
   app.use(activityRoutes(handleOpts));
+  app.use(activityStreamRoutes(handleOpts));
   app.use(apiKeysRoutes(handleOpts));
   app.use(settingsRoutes(handleOpts));
   app.use(messageEncryptionRoutes(handleOpts));
@@ -107,6 +113,9 @@ export function createApp(deps: AppDeps): Elysia {
   app.use(chatsRoutes(handleOpts));
   app.use(personaRoutes(handleOpts));
   app.use(generationRoutes(handleOpts));
+  app.use(ageGateRoutes(handleOpts));
+  app.use(assetRoutes(handleOpts));
+  app.use(importRoutes(handleOpts));
   app.use(viewRoutes({ database: handleOpts.database }));
 
   // ── Catch-all: delegate to existing dispatch logic ───────────────────────────
@@ -120,5 +129,5 @@ export function createApp(deps: AppDeps): Elysia {
     return handleNonApiRequest(request);
   });
 
-return app as unknown as Elysia;
+  return app as unknown as Elysia;
 }

@@ -11,7 +11,9 @@ import type { DB } from "../db/schema";
 import type { Config } from "../config/schema";
 import { getLogger } from "../logger";
 
-const log = getLogger().child({ module: "system-config" });
+function log() {
+  return getLogger().child({ module: "system-config" });
+}
 
 export interface ConfigEntry {
   key: string;
@@ -30,11 +32,7 @@ export async function getConfig(db: Kysely<DB>, key: string): Promise<ConfigEntr
 }
 
 export async function getConfigValue(db: Kysely<DB>, key: string): Promise<string | undefined> {
-  const row = await db
-    .selectFrom("system_config")
-    .select("value")
-    .where("key", "=", key)
-    .executeTakeFirst();
+  const row = await db.selectFrom("system_config").select("value").where("key", "=", key).executeTakeFirst();
   return row?.value;
 }
 
@@ -48,7 +46,9 @@ export async function setConfig(
     .insertInto("system_config")
     .values({ key, value, description: description ?? null })
     .onConflict((oc) =>
-      oc.column("key").doUpdateSet({ value, description: description ?? null, updated_at: new Date().toISOString() }),
+      oc
+        .column("key")
+        .doUpdateSet({ value, description: description ?? null, updated_at: new Date().toISOString() }),
     )
     .execute();
 }
@@ -59,13 +59,37 @@ export async function deleteConfig(db: Kysely<DB>, key: string): Promise<void> {
 
 export async function seedDefaults(db: Kysely<DB>, config: Config): Promise<void> {
   const defaults: Array<{ key: string; value: string; description: string }> = [
-    { key: "registration_open", value: String(config.auth.registrationOpen), description: "Allow new user registration" },
-    { key: "session_timeout_hours", value: String(config.auth.sessionTimeoutHours), description: "Idle session expiry in hours" },
-    { key: "max_sessions_per_user", value: String(config.auth.maxSessionsPerUser), description: "Concurrent session limit" },
-    { key: "max_upload_size_bytes", value: String(config.assets.maxFileSize), description: "Per-file upload size limit in bytes" },
+    {
+      key: "registration_open",
+      value: String(config.auth.registrationOpen),
+      description: "Allow new user registration",
+    },
+    {
+      key: "session_timeout_hours",
+      value: String(config.auth.sessionTimeoutHours),
+      description: "Idle session expiry in hours",
+    },
+    {
+      key: "max_sessions_per_user",
+      value: String(config.auth.maxSessionsPerUser),
+      description: "Concurrent session limit",
+    },
+    {
+      key: "max_upload_size_bytes",
+      value: String(config.assets.maxFileSize),
+      description: "Per-file upload size limit in bytes",
+    },
     { key: "log_retention_days", value: "90", description: "Audit log retention in days" },
-    { key: "default_provider", value: config.generation.defaultProvider, description: "Default LLM provider" },
-    { key: "default_model", value: config.generation.defaultModels[config.generation.defaultProvider] ?? "", description: "Default LLM model" },
+    {
+      key: "default_provider",
+      value: config.generation.defaultProvider,
+      description: "Default LLM provider",
+    },
+    {
+      key: "default_model",
+      value: config.generation.defaultModels[config.generation.defaultProvider] ?? "",
+      description: "Default LLM model",
+    },
     { key: "auto_moderation", value: "false", description: "Enable auto-moderation rules" },
     { key: "profanity_filter", value: "false", description: "Enable profanity filter" },
     { key: "spam_detection", value: "false", description: "Enable spam detection" },
@@ -78,10 +102,10 @@ export async function seedDefaults(db: Kysely<DB>, config: Config): Promise<void
       try {
         await setConfig(db, d.key, d.value, d.description);
       } catch (err) {
-        log.warn("Failed to seed config default", { key: d.key, error: (err as Error).message });
+        log().warn("Failed to seed config default", { key: d.key, error: (err as Error).message });
       }
     }
   }
 
-  log.info("System config defaults seeded", { count: defaults.length });
+  log().info("System config defaults seeded", { count: defaults.length });
 }

@@ -12,44 +12,14 @@ import { runMigrations } from "./db/migrate";
 import { seedDefaultActors } from "./db/seed";
 import { loadConfig } from "./config/load";
 import { initAgeGate } from "./age-gate/controller";
-import { dispatch as dispatchGeneration } from "./generation/controller";
+
 import { loadAllPlugins, dispatchPluginRoute, unloadAllPlugins } from "./plugins";
 import { getDatabase } from "./db/index";
 import { initializeProviders, registerProvider, OpenAiCompatibleProvider } from "./generation";
-import { authenticate, compose, errorBoundary } from "./middleware/index";
-import type { RequestContext } from "./middleware/index";
-import { apiDispatch } from "./routes/router";
-import { dispatchAuth } from "./routes/auth";
 import { initSmk } from "./crypto";
 import { ensureTlsCerts } from "./config/cert";
 import { createLogger, getLogger } from "./logger";
 import { ServerExternalManager } from "./services/server-external-manager";
-
-// Route modules (import for registerRoute side-effects)
-import "./routes/activity";
-import "./routes/activity-stream";
-import "./routes/chats";
-import "./routes/messages";
-import "./routes/characters";
-import "./routes/users";
-import "./routes/worlds";
-import "./routes/api-keys";
-import "./assets/controller";
-import "./routes/actor-memories";
-import "./routes/actor-lore-entries";
-import "./routes/world-lore-entries";
-import "./routes/actor-items";
-import "./routes/actor-notes";
-import "./routes/story-items";
-import "./routes/story-states";
-import "./routes/story-turns";
-import "./routes/quests";
-import "./routes/frontend-logs";
-import "./routes/message-encryption";
-import "./routes/settings";
-import "./routes/admin";
-import "./routes/health";
-import "./personas/controller";
 
 const DOCS_PATH = join(import.meta.dir, "..", "docs", ".vitepress", "dist");
 
@@ -177,83 +147,13 @@ export interface HandleApiRequestOpts {
 }
 
 /**
- * API request handler — runs middleware pipeline then dispatches to route controllers.
- *
- * Middleware chain: errorBoundary → auth → route dispatch
- * Auth populates RequestContext { userId, userRole, sessionId }.
+ * API request handler — dispatches to plugin routes.
+ * All other API routes are handled by Elysia plugins.
  */
-export async function handleApiRequest({
-  request,
-  database,
-  config,
-}: HandleApiRequestOpts): Promise<Response> {
-  // ── Auth-skip paths (login, demo-login, age-gate) — no auth required ──
-  const url = new URL(request.url);
-  const skipAuthPaths = ["/api/auth/login", "/api/demo-login", "/api/age-gate/status"];
-  const skipAuth = skipAuthPaths.includes(url.pathname);
-
-  if (skipAuth) {
-    return compose([errorBoundary], async (req: Request, _context: RequestContext): Promise<Response> => {
-      // Auth routes with empty context
-      const context: RequestContext = { userId: null, userRole: null, sessionId: null };
-      const authResult = await dispatchAuth({ request: req, context, database, config });
-      if (authResult) return authResult;
-
-      const ageGateResult = await dispatchAgeGate({
-        request: req,
-        database,
-        userId: context.userId,
-        userRole: context.userRole,
-      });
-      if (ageGateResult) return ageGateResult;
-
-      return apiDispatch({ request: req, context, database, config });
-    })(request, { userId: null, userRole: null, sessionId: null });
-  }
-
-  // ── Authenticated routes ─────────────────────────────────
-  // Build middleware chain: error boundary wraps auth + dispatch
-  const pipeline = compose(
-    [errorBoundary],
-    async (req: Request, context: RequestContext): Promise<Response> => {
-      // ── Auth routes (logout, me) — need session context ──
-      const authResult = await dispatchAuth({ request: req, context, database, config });
-      if (authResult) return authResult;
-
-      // ── Age gate routes ──────────────────────────────
-      const ageGateResult = await dispatchAgeGate({
-        request: req,
-        database,
-        userId: context.userId,
-        userRole: context.userRole,
-      });
-      if (ageGateResult) return ageGateResult;
-
-      // ── Generation cancellation routes ───────────────
-      const generationResult = await dispatchGeneration({
-        request: req,
-        database,
-        userId: context.userId,
-        userRole: context.userRole,
-        config,
-      });
-      if (generationResult) return generationResult;
-
-      // ── Plugin routes (dice-roller, etc.) ──────────────
-      const pluginResult = await dispatchPluginRoute(req);
-      if (pluginResult) return pluginResult;
-
-      // ── Route router (chats, messages, characters, etc.) ──
-      return apiDispatch({ request: req, context, database, config });
-    },
-  );
-
-  // Run auth first, short-circuit on failure
-  const authResult = await authenticate({ request, database, authConfig: config.auth });
-  if (authResult instanceof Response) return authResult;
-
-  // Run pipeline with authenticated context
-  return pipeline(request, authResult.context);
+export async function handleApiRequest({ request }: HandleApiRequestOpts): Promise<Response> {
+  const pluginResult = await dispatchPluginRoute(request);
+  if (pluginResult) return pluginResult;
+  return new Response("Not found", { status: 404 });
 }
 
 function handleDocsRequest(
