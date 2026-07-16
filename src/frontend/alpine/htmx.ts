@@ -163,6 +163,7 @@ const initAlpineStores = (): void => {
     /* store not defined yet */
   }
   Alpine.store("sidebar", { open: false });
+  Alpine.store("chat", { currentChat: null });
   Alpine.store("ui", {
     showChatList: false,
     showGallery: false,

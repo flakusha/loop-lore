@@ -27,7 +27,13 @@
     <!-- htmx -->
     <script src="/js/htmx.min.js" defer></script>
 
-    <!-- Chat vendor libs (marked + dompurify) — must load before app.js -->
+    <!-- Alpine.js morph plugin — MUST load before Alpine core -->
+    <script src="/js/alpine-morph.min.js" defer></script>
+
+    <!-- Alpine.js — MUST load before app.js (provides Alpine.store, Alpine.$data) -->
+    <script src="/js/alpine.min.js" defer></script>
+
+    <!-- Chat vendor libs (marked + dompurify) -->
     <script src="/chat-vendor.js" defer></script>
 
     <!-- App bundle: core framework (sidebar, toast, theme, locale, htmx) -->
@@ -35,12 +41,6 @@
 
     <!-- Page-specific behaviors (characters, gallery, worlds, new-chat) -->
     <script src="/pages.js" defer></script>
-
-    <!-- Alpine.js morph plugin — MUST load before Alpine core; enables htmx-ext-alpine-morph -->
-    <script src="/js/alpine-morph.min.js" defer></script>
-
-    <!-- Alpine.js (loaded for chat page reactivity) -->
-    <script src="/js/alpine.min.js" defer></script>
 
     <!-- htmx alpine-morph extension — swaps via Alpine's morph, preserving component state -->
     <script src="/js/htmx-alpine-morph.min.js" defer></script>
