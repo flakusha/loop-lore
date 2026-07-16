@@ -144,7 +144,13 @@ export class AssetView {
   setChatId(chatId: string): void {
     this.chatId = chatId;
     this.currentIndex = 0;
-    void (async () => { try { await this.loadAssets(); } catch { /* non-critical */ } })();
+    void (async () => {
+      try {
+        await this.loadAssets();
+      } catch {
+        /* non-critical */
+      }
+    })();
   }
 
   getChatId(): string | null {

@@ -69,7 +69,8 @@ export class PersonasService {
     if (params.avatarAssetId !== undefined) updates.avatar_asset_id = params.avatarAssetId;
     if (params.description !== undefined) updates.description = params.description;
     if (params.title !== undefined) updates.title = params.title;
-    if (params.isDefault !== undefined) updates.is_default = params.isDefault ? DefaultState.Default : DefaultState.NotDefault;
+    if (params.isDefault !== undefined)
+      updates.is_default = params.isDefault ? DefaultState.Default : DefaultState.NotDefault;
 
     await this.db
       .updateTable("personas")
@@ -92,7 +93,11 @@ export class PersonasService {
 
   async setDefault(id: string, userId: string): Promise<void> {
     // Unset current default
-    await this.db.updateTable("personas").set({ is_default: DefaultState.NotDefault }).where("user_id", "=", userId).execute();
+    await this.db
+      .updateTable("personas")
+      .set({ is_default: DefaultState.NotDefault })
+      .where("user_id", "=", userId)
+      .execute();
 
     // Set new default
     await this.db
