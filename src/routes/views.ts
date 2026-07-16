@@ -2,25 +2,36 @@
  * View Serving Routes
  *
  * Serve HTML templates as htmx-friendly pages:
- *   GET  /                     — landing page → dist/public/index.html via server.ts
- *   GET  /views/:name          — view template from src/views/
  *   GET  /partials/:page/:section — HTML fragment from src/partials/
- *   GET  /character/:slug      — chat list for character
+ *   GET  /dynamic/characters/grid — server-rendered character grid
+ *   GET  /dynamic/gallery/grid    — server-rendered gallery grid
+ *   GET  /dynamic/worlds/list     — server-rendered world list
+ *   GET  /dynamic/gallery/search  — HTMX gallery search
+ *   GET  /dynamic/characters/search — HTMX character search
+ *   GET  /dynamic/worlds/search   — HTMX world search
+ *   GET  /dynamic/worlds/:id/detail — world detail content
+ *   GET  /dynamic/characters/:id/edit-form — character edit form
+ *   GET  /dynamic/characters/:id/chat-list — character chat list
+ *   GET  /character/:slug         — chat list for character
+ *   GET  /character/:slug/edit    — character edit page
  *   GET  /character/:slug/:chatId — specific chat
- *   GET  /worlds               — world list
- *   GET  /worlds/:id           — world detail
- *   GET  /worlds/:id/edit      — world edit
+ *   GET  /characters/:id/edit     — character edit (by id)
+ *   GET  /worlds                  — world list
+ *   GET  /worlds/:id              — world detail
+ *   GET  /worlds/:id/edit         — world edit
+ *   GET  /views/:name             — view template from src/views/
  *
  * When `HX-Request` header is present, returns content fragment only (no layout).
  * When absent (direct navigation), wraps with full layout.
+ *
+ * Elysia plugin — uses closure injection for database access.
  */
 
 import { readFileSync, existsSync } from "node:fs";
 import { join } from "node:path";
+import { Elysia } from "elysia";
 import type { Kysely } from "kysely";
 import type { DB } from "../db/schema";
-import type { RouteDispatch, RouteDispatchParams } from "./router";
-import { registerRoute } from "./router";
 import { ActorType } from "../db/enums";
 
 const VIEWS_DIR = join(import.meta.dir, "..", "views");
@@ -51,6 +62,7 @@ const ALLOWED_PARTIALS = new Set([
   "gallery/preview-modal",
   "worlds/create-modal",
   "worlds/edit-modal",
+  "modals/settings",
 ]);
 
 const viewCache = new Map<string, string>();
@@ -176,7 +188,6 @@ function serveStaticPartial(name: string, searchParams?: URLSearchParams): Respo
   if (!existsSync(partialPath)) return null;
 
   let content = readFileSync(partialPath, "utf8");
-  // Replace {{worldId}} in edit-modal when worldId query param is present
   if (searchParams?.has("worldId")) {
     content = content.replace("{{worldId}}", () => searchParams.get("worldId")!);
   }
@@ -443,116 +454,261 @@ async function serveGalleryGrid(database: Kysely<DB>): Promise<Response> {
   return htmlResponse(cards);
 }
 
-// ── Main dispatch ───────────────────────────────────────────
+// ── Dynamic search endpoints (HTMX active search) ───────────
 
-const dispatch: RouteDispatch = async ({ request, context, database }) => {
-  return await dispatchView(request, context, database);
-};
+async function serveGallerySearch(database: Kysely<DB>, params: URLSearchParams): Promise<Response> {
+  const query = params.get("q")?.toLowerCase().trim() ?? "";
+  const type = params.get("type") ?? "all";
+  const sort = params.get("sort") ?? "name";
 
-async function dispatchView(
-  request: Request,
-  _context: RouteDispatchParams["context"] | null,
-  database: Kysely<DB> | null,
-): Promise<Response | null> {
-  const isHtmx = request.headers.get("HX-Request") === "true";
-  const url = new URL(request.url);
-  const { pathname } = url;
+  let qb = database.selectFrom("assets").selectAll();
 
-  // ── Landing page ────────────────────────────────────────────
-  // Let server.ts serve dist/public/index.html via respondWithFile for
-  // ETag, Vary, and pre-built compressed variants (.gz/.br/.zst).
-  if (pathname === "/") {
-    return null;
+  if (query) {
+    qb = qb.where("filename", "like", `%${query}%`);
+  }
+  if (type !== "all") {
+    qb = qb.where("asset_type", "=", type as any);
   }
 
-  // ── Static partials (lazy-loaded modals, skeletons) ──────
-  const partialMatch = /^\/partials\/([\w/-]+)$/.exec(pathname);
-  if (partialMatch) {
-    const result = serveStaticPartial(partialMatch[1]!, url.searchParams);
-    if (result) return result;
+  if (sort === "newest") qb = qb.orderBy("created_at", "desc");
+  else if (sort === "oldest") qb = qb.orderBy("created_at", "asc");
+  else qb = qb.orderBy("filename", "asc");
+
+  const assets = await qb.limit(200).execute();
+
+  if (assets.length === 0) {
+    return htmlResponse(`<div class="empty-state" style="grid-column:1/-1" data-testid="gallery-empty">
+      <div class="icon">📁</div>
+      <div class="title">No assets match your search</div>
+      <div class="description">Try different search terms.</div>
+    </div>`);
   }
 
-  // ── Dynamic partials (server-rendered data) ─────────────
-  if (database) {
-    if (pathname === "/dynamic/characters/grid") {
-      return await serveCharactersGrid(database);
-    }
-    if (pathname === "/dynamic/gallery/grid") {
-      return await serveGalleryGrid(database);
-    }
-    if (pathname === "/dynamic/worlds/list") {
-      return await serveWorldsListDb(database);
-    }
-
-    const worldDetailMatch = /^\/dynamic\/worlds\/([\w-]+)\/detail$/.exec(pathname);
-    if (worldDetailMatch) {
-      return await serveWorldDetailContent(worldDetailMatch[1]!, database);
-    }
-
-    const charEditMatch = /^\/dynamic\/characters\/([\w-]+)\/edit-form$/.exec(pathname);
-    if (charEditMatch) {
-      return await serveCharacterEditForm(charEditMatch[1]!, database);
-    }
-
-    const charChatListMatch = /^\/dynamic\/characters\/([\w-]+)\/chat-list$/.exec(pathname);
-    if (charChatListMatch) {
-      return await serveCharacterChatListDb(charChatListMatch[1]!, database);
+  function thumbForAsset(a: (typeof assets)[number]): string {
+    switch (a.asset_type) {
+      case "image": return `<img src="/api/assets/${a.id}/thumb" alt="${escapeHtml(a.filename)}" loading="lazy" />`;
+      case "audio": return `<div class="file-icon">🎵</div>`;
+      case "video": return `<div class="file-icon">🎬</div>`;
+      default: return `<div class="file-icon">📄</div>`;
     }
   }
 
-  // ── Character routes ───────────────────────────────────────
-  const characterChatListMatch = /^\/character\/([\w-]+)$/.exec(pathname);
-  if (characterChatListMatch) {
-    const result = serveCharacterChatList(characterChatListMatch[1]!, isHtmx);
-    if (result) return result;
-  }
+  const cards = assets
+    .map((a) => {
+      const filename = escapeHtml(a.filename);
+      const size = formatSize(a.size_bytes);
+      return `<div class="asset-card" onclick="openAssetPreview('${a.id}')" data-testid="asset-card-${a.id}">
+      <div class="thumb">${thumbForAsset(a)}</div>
+      <div class="details">
+        <span class="name">${filename}</span>
+        <span class="type">${size}</span>
+      </div>
+    </div>`;
+    })
+    .join("");
 
-  const characterEditMatch = /^\/character\/([\w-]+)\/edit$/.exec(pathname);
-  if (characterEditMatch) {
-    const result = serveCharacterEdit(characterEditMatch[1]!, isHtmx);
-    if (result) return result;
-  }
-
-  const characterChatMatch = /^\/character\/([\w-]+)\/([\w-]+)$/.exec(pathname);
-  if (characterChatMatch) {
-    const [, slug, chatId] = characterChatMatch;
-    const result = serveCharacterChat(slug!, chatId!, isHtmx);
-    if (result) return result;
-  }
-
-  const charactersEditMatch = /^\/characters\/([\w-]+)\/edit$/.exec(pathname);
-  if (charactersEditMatch) {
-    const result = serveCharacterEdit(charactersEditMatch[1]!, isHtmx);
-    if (result) return result;
-  }
-
-  // ── World routes ───────────────────────────────────────────
-  if (pathname === "/worlds") {
-    const result = serveWorldsList(isHtmx);
-    if (result) return result;
-  }
-
-  const worldDetailMatch2 = /^\/worlds\/([\w-]+)$/.exec(pathname);
-  if (worldDetailMatch2) {
-    const result = serveWorldDetail(worldDetailMatch2[1]!, isHtmx);
-    if (result) return result;
-  }
-
-  const worldEditMatch = /^\/worlds\/([\w-]+)\/edit$/.exec(pathname);
-  if (worldEditMatch) {
-    const result = serveWorldEdit(worldEditMatch[1]!, isHtmx);
-    if (result) return result;
-  }
-
-  // ── View templates ──────────────────────────────────────────
-  const viewMatch = /^\/views\/([\w-]+)$/.exec(pathname);
-  if (viewMatch) {
-    const result = serveView(viewMatch[1]!, isHtmx);
-    if (result) return result;
-  }
-
-  return null;
+  return htmlResponse(cards);
 }
 
-registerRoute(dispatch);
-export { dispatch, serveView };
+async function serveCharactersSearch(database: Kysely<DB>, params: URLSearchParams): Promise<Response> {
+  const query = params.get("q")?.toLowerCase().trim() ?? "";
+  const sort = params.get("sort") ?? "name";
+
+  let qb = database
+    .selectFrom("actors")
+    .selectAll()
+    .where("actor_type", "!=", ActorType.User);
+
+  if (query) {
+    qb = qb.where("display_name", "like", `%${query}%`);
+  }
+
+  if (sort === "newest") qb = qb.orderBy("created_at", "desc");
+  else if (sort === "oldest") qb = qb.orderBy("created_at", "asc");
+  else qb = qb.orderBy("display_name", "asc");
+
+  const actors = await qb.limit(200).execute();
+
+  if (actors.length === 0) {
+    return htmlResponse(`<div class="empty-state" style="padding: var(--space-12)" data-testid="characters-empty">
+      <div class="icon">👤</div>
+      <div class="title">No characters match your search</div>
+      <div class="description">Try different search terms.</div>
+    </div>`);
+  }
+
+  const cards = actors
+    .map((c) => {
+      const avatar = c.avatar_asset_id
+        ? `<img src="/api/assets/${c.avatar_asset_id}/thumb" alt="Avatar" />`
+        : "<span>👤</span>";
+      const name = escapeHtml(c.display_name);
+      const desc = escapeHtml(c.description || "No description");
+      return `<div class="character-card" onclick="selectCharacterCard('${c.id}')" data-testid="character-card-${c.id}">
+      <div class="card-img">${avatar}</div>
+      <div class="card-body">
+        <div class="name">${name}</div>
+        <div class="description">${desc}</div>
+      </div>
+    </div>`;
+    })
+    .join("");
+
+  return htmlResponse(cards);
+}
+
+async function serveWorldsSearch(database: Kysely<DB>, params: URLSearchParams): Promise<Response> {
+  const query = params.get("q")?.toLowerCase().trim() ?? "";
+  const sort = params.get("sort") ?? "name";
+
+  let qb = database.selectFrom("worlds").selectAll();
+
+  if (query) {
+    qb = qb.where("name", "like", `%${query}%`);
+  }
+
+  if (sort === "newest") qb = qb.orderBy("created_at", "desc");
+  else if (sort === "oldest") qb = qb.orderBy("created_at", "asc");
+  else qb = qb.orderBy("name", "asc");
+
+  const worlds = await qb.limit(100).execute();
+
+  if (worlds.length === 0) {
+    return htmlResponse(`<div class="empty-state" style="padding: var(--space-12)">
+      <div class="icon">🌍</div>
+      <div class="title">No worlds match your search</div>
+      <div class="description">Try different search terms.</div>
+    </div>`);
+  }
+
+  const items = worlds
+    .map((w) => {
+      const name = escapeHtml(w.name);
+      const desc = escapeHtml(w.description || "No description");
+      return `<div class="world-card" onclick="location.assign('/worlds/${w.id}')" data-testid="world-card-${w.id}">
+      <div class="world-header"><h3 class="world-name">${name}</h3><span class="world-id">ID: ${w.id}</span></div>
+      <div class="world-description">${desc}</div>
+      <div class="world-meta"><span class="tag">0 chats</span></div>
+    </div>`;
+    })
+    .join("");
+
+  return htmlResponse(items);
+}
+
+// ── Elysia plugin ───────────────────────────────────────────
+
+export function viewRoutes({ database }: { database: Kysely<DB> }) {
+  return new Elysia({ name: "views" })
+    // ── Static partials (lazy-loaded modals, skeletons) ──────
+    .get("/partials/:page/:section", (ctx) => {
+      const name = `${ctx.params.page}/${ctx.params.section}`;
+      const url = new URL(ctx.request.url);
+      const result = serveStaticPartial(name, url.searchParams);
+      if (result) return result;
+      return new Response("Not found", { status: 404 });
+    })
+
+    // ── Dynamic partials (server-rendered data) ─────────────
+    .get("/dynamic/characters/grid", async () => {
+      return await serveCharactersGrid(database);
+    })
+    .get("/dynamic/gallery/grid", async () => {
+      return await serveGalleryGrid(database);
+    })
+    .get("/dynamic/worlds/list", async () => {
+      return await serveWorldsListDb(database);
+    })
+
+    // HTMX search endpoints
+    .get("/dynamic/gallery/search", async (ctx) => {
+      const url = new URL(ctx.request.url);
+      return await serveGallerySearch(database, url.searchParams);
+    })
+    .get("/dynamic/characters/search", async (ctx) => {
+      const url = new URL(ctx.request.url);
+      return await serveCharactersSearch(database, url.searchParams);
+    })
+    .get("/dynamic/worlds/search", async (ctx) => {
+      const url = new URL(ctx.request.url);
+      return await serveWorldsSearch(database, url.searchParams);
+    })
+    .get("/dynamic/worlds/:id/detail", async (ctx) => {
+      return await serveWorldDetailContent(ctx.params.id, database);
+    })
+    .get("/dynamic/characters/:id/edit-form", async (ctx) => {
+      return await serveCharacterEditForm(ctx.params.id, database);
+    })
+    .get("/dynamic/characters/:id/chat-list", async (ctx) => {
+      return await serveCharacterChatListDb(ctx.params.id, database);
+    })
+
+    // ── Character routes ───────────────────────────────────────
+    .get("/character/:slug", (ctx) => {
+      const isHtmx = ctx.request.headers.get("HX-Request") === "true";
+      const result = serveCharacterChatList(ctx.params.slug, isHtmx);
+      if (result) return result;
+      return new Response("Not found", { status: 404 });
+    })
+    .get("/character/:slug/edit", (ctx) => {
+      const isHtmx = ctx.request.headers.get("HX-Request") === "true";
+      const result = serveCharacterEdit(ctx.params.slug, isHtmx);
+      if (result) return result;
+      return new Response("Not found", { status: 404 });
+    })
+    .get("/character/:slug/:chatId", (ctx) => {
+      const isHtmx = ctx.request.headers.get("HX-Request") === "true";
+      const result = serveCharacterChat(ctx.params.slug, ctx.params.chatId, isHtmx);
+      if (result) return result;
+      return new Response("Not found", { status: 404 });
+    })
+    .get("/characters/:id/edit", (ctx) => {
+      const isHtmx = ctx.request.headers.get("HX-Request") === "true";
+      const result = serveCharacterEdit(ctx.params.id, isHtmx);
+      if (result) return result;
+      return new Response("Not found", { status: 404 });
+    })
+
+    // ── World routes ───────────────────────────────────────────
+    .get("/worlds", (ctx) => {
+      const isHtmx = ctx.request.headers.get("HX-Request") === "true";
+      const result = serveWorldsList(isHtmx);
+      if (result) return result;
+      return new Response("Not found", { status: 404 });
+    })
+    .get("/worlds/:id", (ctx) => {
+      const isHtmx = ctx.request.headers.get("HX-Request") === "true";
+      const result = serveWorldDetail(ctx.params.id, isHtmx);
+      if (result) return result;
+      return new Response("Not found", { status: 404 });
+    })
+    .get("/worlds/:id/edit", (ctx) => {
+      const isHtmx = ctx.request.headers.get("HX-Request") === "true";
+      const result = serveWorldEdit(ctx.params.id, isHtmx);
+      if (result) return result;
+      return new Response("Not found", { status: 404 });
+    })
+
+    // ── View templates ──────────────────────────────────────────
+    .get("/views/:name", (ctx) => {
+      const isHtmx = ctx.request.headers.get("HX-Request") === "true";
+      const name = ctx.params.name;
+
+      // Admin view gate
+      if (name === "admin") {
+        const userRole = (ctx as any).userRole as string | null | undefined;
+        if (userRole !== "admin") {
+          return new Response(null, {
+            status: 302,
+            headers: { Location: "/" },
+          });
+        }
+      }
+
+      const result = serveView(name, isHtmx);
+      if (result) return result;
+      return new Response("Not found", { status: 404 });
+    });
+}
+
+export { serveView };

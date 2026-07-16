@@ -45,10 +45,23 @@ function makeLogger(pluginName: string): PluginLogger {
 /**
  * Load all plugins from all 3 directories.
  * Call once at startup, after DB is ready.
+ *
+ * Checks plugin_state table for previously disabled plugins.
  */
 export async function loadAllPlugins(db: Kysely<DB>): Promise<void> {
   const log = getLogger();
   loadOrder.length = 0;
+
+  // Load persisted plugin states
+  const rawStates = await db
+    .selectFrom("plugin_state")
+    .selectAll()
+    .execute()
+    .catch(() => []);
+
+  for (const row of rawStates) {
+    registry.setEnabled(row.name, row.enabled === 1);
+  }
 
   for (const { origin, dir } of PLUGIN_DIRS) {
     const fullDir = join(import.meta.dir, "..", "..", dir);
@@ -129,6 +142,14 @@ export async function loadAllPlugins(db: Kysely<DB>): Promise<void> {
 
         loadOrder.push(manifest.name);
         log.info({ message: `Loaded plugin`, plugin: manifest.name, origin });
+
+        // Persist new plugin to plugin_state if not already tracked
+        await db
+          .insertInto("plugin_state")
+          .values({ name: manifest.name, enabled: 1, enabled_at: new Date().toISOString() })
+          .onConflict((oc) => oc.column("name").doNothing())
+          .execute()
+          .catch(() => {});
       } catch (error) {
         log.error({
           message: `Failed to load plugin`,
@@ -140,7 +161,7 @@ export async function loadAllPlugins(db: Kysely<DB>): Promise<void> {
   }
 }
 
-/** Dispatch a request against all registered plugin routes */
+/** Dispatch a request against all registered plugin routes (enabled only) */
 export async function dispatchPluginRoute(request: Request): Promise<Response | null> {
   for (const route of registry.getAllRoutes()) {
     const url = new URL(request.url);
