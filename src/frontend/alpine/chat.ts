@@ -2,6 +2,7 @@
 
 import { chatMessages } from "./chat-messages";
 import { chatGenerations } from "./chat-generations";
+import { chatActivity } from "./chat-activity";
 import { chatManagement } from "./chat-management";
 import { chatEditing } from "./chat-editing";
 import { chatActions } from "./chat-actions";
@@ -86,6 +87,15 @@ globalThis.chatState = function () {
     _hamburgerOpen: {} as Record<string, boolean>,
     _statsOpen: {} as Record<string, boolean>,
     _impersonationLoaded: false as boolean,
+    _unseenCounts: {} as Record<string, number>,
+    _activityEventSource: null as EventSource | null,
+    _chatFilter: "",
+
+    get filteredChats() {
+      const filter = (this._chatFilter || "").toLowerCase();
+      if (!filter) return this.chats;
+      return this.chats.filter((c: { name?: string }) => (c.name || "").toLowerCase().includes(filter));
+    },
 
     // Cleanup handles
     _observer: null as MutationObserver | null,
@@ -129,6 +139,7 @@ globalThis.chatState = function () {
       addEventListener("storage", this._storageHandler);
       await this.loadChats();
       this.loadUserInfo();
+      this.connectActivitySSE();
 
       const params = new URLSearchParams(location.search);
       const chatId = params.get("chatid");
@@ -215,6 +226,7 @@ globalThis.chatState = function () {
       if (this._keydownHandler) document.removeEventListener("keydown", this._keydownHandler);
 
       this._cleanupSSE?.();
+      this.disconnectActivitySSE();
 
       if (this._storageHandler) {
         removeEventListener("storage", this._storageHandler);
@@ -284,6 +296,7 @@ globalThis.chatState = function () {
       this.hasMoreMessages = true;
       this.loadingOlder = false;
       await Promise.all([this.loadMessages(), this.loadGalleryAssets(), this.loadCharacterInfo()]);
+      await this.markChatAsRead(chatId);
       await this.loadChatKey(chatId);
       await this.loadImpersonationState();
       await this.loadChatParticipants();
@@ -323,6 +336,7 @@ globalThis.chatState = function () {
     // ── Sub-module methods ──
     ...chatMessages,
     ...chatGenerations,
+    ...chatActivity,
     ...chatManagement,
     ...chatEditing,
     ...chatActions,
