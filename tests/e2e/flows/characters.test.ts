@@ -18,6 +18,18 @@ describe("Characters E2E", () => {
     api = createClient(server.url);
     await seedUsers(server.db);
     await seedCharacter(server.db);
+    await server.db
+      .insertInto("users")
+      .values({
+        id: "00000000-0000-4000-b000-000000000099",
+        username: "e2eother",
+        display_name: "E2E Other User",
+        password_hash: "$2b$04$anSd/tkwm/jhqfjGUZOdkurfsavDtfDeUM7dwdc/MQY.4upTC8ikG",
+        role: "user",
+        status: "active",
+        settings: "{}",
+      })
+      .execute();
     await api.loginAs(SEED.user.username, SEED.user.password);
   });
 
@@ -95,10 +107,10 @@ describe("Characters E2E", () => {
     expect(resA.data!.id).toBe(SEED.character.id);
 
     const apiB = createClient(server.url);
-    await apiB.loginAs(SEED.admin.username, SEED.admin.password);
+    await apiB.loginAs("e2eother", "password");
     const resB = await apiB.get(`/api/actors/${SEED.character.id}`);
     expect(resB.ok).toBe(false);
-    expect(resB.status).toBe(403);
+    expect(resB.status).toBe(404);
     expect(resB.code).toBeTruthy();
   });
 });
