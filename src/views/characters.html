@@ -29,26 +29,26 @@
 <div class="app-layout">
   <main class="main-content" style="padding-top: 0">
     <div class="chat-area" style="overflow-y: auto">
-<div class="list-toolbar" x-data="{ view: localStorage.getItem('character-view') || 'grid' }">
-      <div
-        data-search-url="/dynamic/characters/search"
-        data-target-id="character-grid"
-        data-search-placeholder="Search characters…"
-        data-search-label="Search characters"
-        style="display: contents"
-      >
-        {{> filter-bar.html}}
+      <div class="list-toolbar" x-data="{ view: localStorage.getItem('character-view') || 'grid' }">
+        <div
+          data-search-url="/dynamic/characters/search"
+          data-target-id="character-grid"
+          data-search-placeholder="Search characters…"
+          data-search-label="Search characters"
+          style="display: contents"
+        >
+          {{> filter-bar.html}}
+        </div>
+        <button
+          class="btn btn-secondary btn-sm"
+          x-on:click="view = view === 'grid' ? 'list' : 'grid'; localStorage.setItem('character-view', view); document.getElementById('character-grid').className = view === 'grid' ? 'character-grid' : 'character-grid list-view'"
+          :title="view === 'grid' ? 'Switch to list view' : 'Switch to grid view'"
+          data-testid="view-toggle"
+        >
+          <span x-show="view === 'grid'">☰</span>
+          <span x-show="view === 'list'">⊞</span>
+        </button>
       </div>
-      <button
-        class="btn btn-secondary btn-sm"
-        x-on:click="view = view === 'grid' ? 'list' : 'grid'; localStorage.setItem('character-view', view); document.getElementById('character-grid').className = view === 'grid' ? 'character-grid' : 'character-grid list-view'"
-        :title="view === 'grid' ? 'Switch to list view' : 'Switch to grid view'"
-        data-testid="view-toggle"
-      >
-        <span x-show="view === 'grid'">☰</span>
-        <span x-show="view === 'list'">⊞</span>
-      </button>
-    </div>
       <div
         id="character-grid"
         data-testid="character-grid"
@@ -62,7 +62,11 @@
           <div class="title">Loading characters...</div>
         </div>
       </div>
-      <div id="characters-indicator" class="htmx-indicator" style="text-align: center; padding: var(--space-4)">
+      <div
+        id="characters-indicator"
+        class="htmx-indicator"
+        style="text-align: center; padding: var(--space-4)"
+      >
         <span class="spinner"></span>
       </div>
     </div>
