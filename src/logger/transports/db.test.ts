@@ -109,7 +109,7 @@ describe("DBTransport", () => {
   });
 
   test("write does not throw on error (silent catch)", async () => {
-    const badTransport = new DBTransport(db as any);
+    const badTransport = new DBTransport(db);
     // After destroy, insert should fail silently
     const entry: LogEntry = {
       level: 20,

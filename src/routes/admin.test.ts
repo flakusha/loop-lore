@@ -209,7 +209,7 @@ describe("Admin audit", () => {
         message: "test audit",
         module: "auth",
         event_type: "auth",
-      } as any)
+      })
       .execute();
   });
 
