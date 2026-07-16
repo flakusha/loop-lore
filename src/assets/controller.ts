@@ -17,13 +17,11 @@
  */
 
 import { readFileSync, existsSync } from "node:fs";
+import { Elysia } from "elysia";
 import type { Kysely } from "kysely";
 import type { DB } from "../db/schema";
-import { AssetLinkEntity } from "../db/enums";
-import type { RequestContext } from "../middleware/types";
+import { AssetLinkEntity, AssetVisibility } from "../db/enums";
 import { ErrorCode } from "../routes/http-utils";
-import type { RouteDispatch } from "../routes/router";
-import { registerRoute } from "../routes/router";
 import {
   jsonResponse,
   jsonError,
@@ -50,11 +48,11 @@ import {
   validateFileSize,
   validateMimeType,
 } from "./service";
-import { AssetVisibility } from "../db/enums";
+import type { Config } from "../config/schema";
 
 interface UploadOpts {
   request: Request;
-  context: RequestContext;
+  userId: string;
   database: Kysely<DB>;
   uploadDir: string;
   maxFileSize: number;
@@ -75,150 +73,67 @@ interface ServeCompressedOpts {
   actorRole: string | null;
 }
 
-const dispatch: RouteDispatch = async ({ request, context, database, config }) => {
-  // Check assets enabled
-  if (!config.assets.enabled) {
-    return jsonError({
-      message: "Asset system is disabled",
-      status: HttpStatus.NotFound,
-      code: ErrorCode.NotFound,
-    });
-  }
+export function assetRoutes({ database, config }: { database: Kysely<DB>; config: Config }) {
+  return (
+    new Elysia({ name: "assets" })
+      .guard({
+        beforeHandle: () => {
+          if (!config.assets.enabled) {
+            return jsonError({
+              message: "Asset system is disabled",
+              status: HttpStatus.NotFound,
+              code: ErrorCode.NotFound,
+            });
+          }
+        },
+      })
+      // ── Collection routes ─────────────────────────────
+      .get("/api/assets", async (ctx) => {
+        const searchParams = new URL(ctx.request.url).searchParams;
+        const page = Number(searchParams.get("page") ?? "1");
+        const pageSize = Math.min(Number(searchParams.get("pageSize") ?? "50"), 200);
+        const entityType = searchParams.get("entity_type") ?? undefined;
+        const entityId = searchParams.get("entity_id") ?? undefined;
+        const label = searchParams.get("label") ?? undefined;
 
-  const url = new URL(request.url);
-  const { pathname } = url;
-  const method = request.method;
-  const uploadDir = config.assets.uploadDir;
-  const maxFileSize = config.assets.maxFileSize;
-
-  // ── /api/assets/:id sub-routes ──────────────────────────────
-  const singleMatch = /^\/api\/assets\/([a-f0-9-]+)(\/\w+(?:\/\w+)?)?$/.exec(pathname);
-  if (singleMatch) {
-    const assetId = singleMatch[1]!;
-    const subRoute = singleMatch[2] ?? "";
-
-    if (method === "GET" && !subRoute) {
-      const asset = await getAsset(database, assetId);
-      if (!asset)
-        return jsonError({
-          message: "Asset not found",
-          status: HttpStatus.NotFound,
-          code: ErrorCode.NotFound,
+        const result = await listAssets(database, {
+          page,
+          pageSize,
+          entityType: entityType as AssetLinkEntity,
+          entityId,
+          label,
         });
-      return jsonResponse(asset);
-    }
-    if (method === "GET" && subRoute === "/raw") {
-      return handleServeRaw({
-        database,
-        assetId,
-        uploadDir,
-        actorId: context.userId,
-        actorRole: context.userRole,
-      });
-    }
-    if (method === "GET" && subRoute === "/download") {
-      return handleDownload({
-        database,
-        assetId,
-        uploadDir,
-        actorId: context.userId,
-        actorRole: context.userRole,
-      });
-    }
-    if (method === "GET" && (subRoute === "/thumb" || subRoute === "/compressed")) {
-      return handleServeCompressed({
-        database,
-        assetId,
-        uploadDir,
-        variant: subRoute.slice(1),
-        actorId: context.userId,
-        actorRole: context.userRole,
-      });
-    }
-    if (method === "DELETE" && !subRoute) {
-      const deleted = await deleteAsset({ database, assetId, uploadDir });
-      if (!deleted)
-        return jsonError({
-          message: "Asset not found",
-          status: HttpStatus.NotFound,
-          code: ErrorCode.NotFound,
-        });
-      return jsonNoContent();
-    }
-
-    // ── Links sub-routes ────────────────────────────────────
-    const linkMatch = /^\/links(?:\/([a-f0-9-]+))?$/.exec(subRoute);
-    if (linkMatch) {
-      const linkId = linkMatch[1] ?? null;
-
-      if (method === "GET" && !linkId) {
-        const links = await getAssetLinks(database, assetId);
-        return jsonResponse(links);
-      }
-      if (method === "POST" && !linkId) {
-        const body = await request.json();
-        await linkAsset({
+        return jsonPaginated({ data: result.data, total: result.total, page, pageSize });
+      })
+      .post("/api/assets", async (ctx) => {
+        const userId = (ctx as any).userId as string | null;
+        if (!userId)
+          return jsonError({
+            message: "Unauthorized",
+            status: HttpStatus.Unauthorized,
+            code: ErrorCode.Unauthorized,
+          });
+        return handleUpload({
+          request: ctx.request,
+          userId,
           database,
-          assetId,
-          link: body as { entityType: AssetLinkEntity; entityId: string; label?: string },
+          uploadDir: config.assets.uploadDir,
+          maxFileSize: config.assets.maxFileSize,
         });
-        return jsonCreated({ id: assetId });
-      }
-      if (method === "DELETE" && linkId) {
-        const body = (await request.json()) as { entityType?: string; entityId?: string };
-        await unlinkAsset({
-          database,
-          assetId,
-          entityType: (body.entityType ?? "") as AssetLinkEntity,
-          entityId: body.entityId ?? "",
-        });
-        return jsonNoContent();
-      }
-      return jsonError({ message: "Method not allowed for links", status: HttpStatus.BadRequest });
-    }
-
-    // ── Visibility sub-route ─────────────────────────────────
-    if (method === "PATCH" && !subRoute) {
-      const userId = context.userId;
-      if (!userId)
-        return jsonError({
-          message: "Unauthorized",
-          status: HttpStatus.Unauthorized,
-          code: ErrorCode.Unauthorized,
-        });
-
-      const body = (await request.json()) as { visibility?: string };
-      if (
-        !body.visibility ||
-        ![AssetVisibility.Private, AssetVisibility.Shared, AssetVisibility.Public].includes(
-          body.visibility as AssetVisibility,
-        )
-      ) {
-        return jsonError({
-          message: "Invalid visibility. Must be private, shared, or public",
-          status: HttpStatus.BadRequest,
-        });
-      }
-
-      const updated = await updateAssetVisibility({
-        database,
-        assetId,
-        visibility: body.visibility as AssetVisibility,
-        actorId: userId,
-      });
-      if (!updated)
-        return jsonError({
-          message: "Asset not found or not owner",
-          status: HttpStatus.NotFound,
-          code: ErrorCode.NotFound,
-        });
-      return jsonResponse({ id: updated.id, visibility: updated.visibility });
-    }
-
-    // ── Share sub-route ──────────────────────────────────────
-    if (subRoute === "/share") {
-      if (method === "POST") {
-        const userId = context.userId;
+      })
+      // ── Single asset routes ──────────────────────────
+      .get("/api/assets/:id", async (ctx) => {
+        const asset = await getAsset(database, ctx.params.id);
+        if (!asset)
+          return jsonError({
+            message: "Asset not found",
+            status: HttpStatus.NotFound,
+            code: ErrorCode.NotFound,
+          });
+        return jsonResponse(asset);
+      })
+      .patch("/api/assets/:id", async (ctx) => {
+        const userId = (ctx as any).userId as string | null;
         if (!userId)
           return jsonError({
             message: "Unauthorized",
@@ -226,13 +141,127 @@ const dispatch: RouteDispatch = async ({ request, context, database, config }) =
             code: ErrorCode.Unauthorized,
           });
 
-        const body = (await request.json()) as { actor_id?: string };
+        const body = (await ctx.request.json()) as { visibility?: string };
+        if (
+          !body.visibility ||
+          ![AssetVisibility.Private, AssetVisibility.Shared, AssetVisibility.Public].includes(
+            body.visibility as AssetVisibility,
+          )
+        ) {
+          return jsonError({
+            message: "Invalid visibility. Must be private, shared, or public",
+            status: HttpStatus.BadRequest,
+          });
+        }
+
+        const updated = await updateAssetVisibility({
+          database,
+          assetId: ctx.params.id,
+          visibility: body.visibility as AssetVisibility,
+          actorId: userId,
+        });
+        if (!updated)
+          return jsonError({
+            message: "Asset not found or not owner",
+            status: HttpStatus.NotFound,
+            code: ErrorCode.NotFound,
+          });
+        return jsonResponse({ id: updated.id, visibility: updated.visibility });
+      })
+      .delete("/api/assets/:id", async (ctx) => {
+        const deleted = await deleteAsset({
+          database,
+          assetId: ctx.params.id,
+          uploadDir: config.assets.uploadDir,
+        });
+        if (!deleted)
+          return jsonError({
+            message: "Asset not found",
+            status: HttpStatus.NotFound,
+            code: ErrorCode.NotFound,
+          });
+        return jsonNoContent();
+      })
+      // ── File serving routes ──────────────────────────
+      .get("/api/assets/:id/raw", async (ctx) => {
+        return handleServeRaw({
+          database,
+          assetId: ctx.params.id,
+          uploadDir: config.assets.uploadDir,
+          actorId: (ctx as any).userId ?? null,
+          actorRole: (ctx as any).userRole ?? null,
+        });
+      })
+      .get("/api/assets/:id/download", async (ctx) => {
+        return handleDownload({
+          database,
+          assetId: ctx.params.id,
+          uploadDir: config.assets.uploadDir,
+          actorId: (ctx as any).userId ?? null,
+          actorRole: (ctx as any).userRole ?? null,
+        });
+      })
+      .get("/api/assets/:id/thumb", async (ctx) => {
+        return handleServeCompressed({
+          database,
+          assetId: ctx.params.id,
+          uploadDir: config.assets.uploadDir,
+          variant: "thumb",
+          actorId: (ctx as any).userId ?? null,
+          actorRole: (ctx as any).userRole ?? null,
+        });
+      })
+      .get("/api/assets/:id/compressed", async (ctx) => {
+        return handleServeCompressed({
+          database,
+          assetId: ctx.params.id,
+          uploadDir: config.assets.uploadDir,
+          variant: "compressed",
+          actorId: (ctx as any).userId ?? null,
+          actorRole: (ctx as any).userRole ?? null,
+        });
+      })
+      // ── Links sub-routes ─────────────────────────────
+      .get("/api/assets/:id/links", async (ctx) => {
+        const links = await getAssetLinks(database, ctx.params.id);
+        return jsonResponse(links);
+      })
+      .post("/api/assets/:id/links", async (ctx) => {
+        const body = await ctx.request.json();
+        await linkAsset({
+          database,
+          assetId: ctx.params.id,
+          link: body as { entityType: AssetLinkEntity; entityId: string; label?: string },
+        });
+        return jsonCreated({ id: ctx.params.id });
+      })
+      .delete("/api/assets/:id/links/:linkId", async (ctx) => {
+        const body = (await ctx.request.json()) as { entityType?: string; entityId?: string };
+        await unlinkAsset({
+          database,
+          assetId: ctx.params.id,
+          entityType: (body.entityType ?? "") as AssetLinkEntity,
+          entityId: body.entityId ?? "",
+        });
+        return jsonNoContent();
+      })
+      // ── Share sub-routes ─────────────────────────────
+      .post("/api/assets/:id/share", async (ctx) => {
+        const userId = (ctx as any).userId as string | null;
+        if (!userId)
+          return jsonError({
+            message: "Unauthorized",
+            status: HttpStatus.Unauthorized,
+            code: ErrorCode.Unauthorized,
+          });
+
+        const body = (await ctx.request.json()) as { actor_id?: string };
         if (!body.actor_id)
           return jsonError({ message: "actor_id is required", status: HttpStatus.BadRequest });
 
         const share = await shareAsset({
           database,
-          assetId,
+          assetId: ctx.params.id,
           sharedWithId: body.actor_id,
           sharedById: userId,
         });
@@ -243,68 +272,29 @@ const dispatch: RouteDispatch = async ({ request, context, database, config }) =
             code: ErrorCode.NotFound,
           });
         return jsonCreated(share);
-      }
-      if (method === "DELETE") {
-        const body = (await request.json()) as { actor_id?: string };
+      })
+      .delete("/api/assets/:id/share", async (ctx) => {
+        const body = (await ctx.request.json()) as { actor_id?: string };
         if (!body.actor_id)
           return jsonError({ message: "actor_id is required", status: HttpStatus.BadRequest });
 
-        await unshareAsset({ database, assetId, sharedWithId: body.actor_id });
+        await unshareAsset({ database, assetId: ctx.params.id, sharedWithId: body.actor_id });
         return jsonNoContent();
-      }
-      return jsonError({ message: "Method not allowed for share", status: HttpStatus.BadRequest });
-    }
-
-    // ── Shares listing sub-route ─────────────────────────────
-    if (subRoute === "/shares" && method === "GET") {
-      const shares = await getAssetShares(database, assetId);
-      return jsonResponse(shares);
-    }
-
-    return jsonError({ message: "Method not allowed", status: HttpStatus.BadRequest });
-  }
-
-  // ── /api/assets (collection) ─────────────────────────────
-  if (pathname === "/api/assets" && method === "GET") {
-    const searchParams = url.searchParams;
-    const page = Number(searchParams.get("page") ?? "1");
-    const pageSize = Math.min(Number(searchParams.get("pageSize") ?? "50"), 200);
-    const entityType = searchParams.get("entity_type") ?? undefined;
-    const entityId = searchParams.get("entity_id") ?? undefined;
-    const label = searchParams.get("label") ?? undefined;
-
-    const result = await listAssets(database, {
-      page,
-      pageSize,
-      entityType: entityType as AssetLinkEntity,
-      entityId,
-      label,
-    });
-    return jsonPaginated({ data: result.data, total: result.total, page, pageSize });
-  }
-
-  if (pathname === "/api/assets" && method === "POST") {
-    return handleUpload({ request, context, database, uploadDir, maxFileSize });
-  }
-
-  return null; // Not an asset route
-};
+      })
+      .get("/api/assets/:id/shares", async (ctx) => {
+        const shares = await getAssetShares(database, ctx.params.id);
+        return jsonResponse(shares);
+      })
+  );
+}
 
 async function handleUpload({
   request,
-  context,
+  userId,
   database,
   uploadDir,
   maxFileSize,
 }: UploadOpts): Promise<Response> {
-  const userId = context.userId;
-  if (!userId)
-    return jsonError({
-      message: "Unauthorized",
-      status: HttpStatus.Unauthorized,
-      code: ErrorCode.Unauthorized,
-    });
-
   const contentType = request.headers.get("content-type") ?? "";
 
   if (!contentType.includes("multipart/form-data")) {
@@ -453,6 +443,3 @@ async function handleDownload({
     },
   });
 }
-
-registerRoute(dispatch);
-export { dispatch };
