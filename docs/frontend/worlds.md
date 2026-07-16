@@ -165,10 +165,10 @@ of the location's own visibility.
 
 ### Chat Visibility per Location
 
-| Chat Visibility | Meaning                                                       |
-| --------------- | ------------------------------------------------------------- |
-| `public`          | Any user in the world can discover and join the chat          |
-| `private`         | Only invited participants can see and access the chat         |
+| Chat Visibility | Meaning                                               |
+| --------------- | ----------------------------------------------------- |
+| `public`        | Any user in the world can discover and join the chat  |
+| `private`       | Only invited participants can see and access the chat |
 
 **Default:** `public` for location-bound group chats.
 
@@ -222,18 +222,18 @@ a "world history book" for recap, onboarding, and debugging.
 
 ### Event Types
 
-| Event              | Description                                      | Source         |
-| ------------------ | ------------------------------------------------ | -------------- |
-| `chat_created`       | New chat started in the world                    | system         |
+| Event                | Description                                                   | Source         |
+| -------------------- | ------------------------------------------------------------- | -------------- |
+| `chat_created`       | New chat started in the world                                 | system         |
 | `chat_message`       | Message sent (optional — only if world-level logging enabled) | user/character |
-| `item_transfer`      | Item moved between actors                        | GM tool call   |
-| `quest_started`      | Quest accepted                                   | GM tool call   |
-| `quest_completed`    | Quest finished                                   | GM tool call   |
-| `location_entered`   | Actor moved to a new location                    | GM tool call   |
-| `status_applied`     | Status effect applied to actor                   | GM tool call   |
-| `relationship_shift` | Standing changed between actors                  | GM tool call   |
-| `rule_created`       | Chat rule added                                  | GM / LLM       |
-| `world_state_edit`   | World state modified                             | GM tool call   |
+| `item_transfer`      | Item moved between actors                                     | GM tool call   |
+| `quest_started`      | Quest accepted                                                | GM tool call   |
+| `quest_completed`    | Quest finished                                                | GM tool call   |
+| `location_entered`   | Actor moved to a new location                                 | GM tool call   |
+| `status_applied`     | Status effect applied to actor                                | GM tool call   |
+| `relationship_shift` | Standing changed between actors                               | GM tool call   |
+| `rule_created`       | Chat rule added                                               | GM / LLM       |
+| `world_state_edit`   | World state modified                                          | GM tool call   |
 
 ### Timeline UI
 
@@ -251,16 +251,16 @@ chronological order. Each entry shows:
 
 Table: `world_events`
 
-| Column      | Type    | Notes                                  |
-| ----------- | ------- | -------------------------------------- |
-| id          | TEXT    | PK, UUID                               |
-| world_id    | TEXT    | FK → worlds.id                         |
-| event_type  | TEXT    | One of the event types above           |
-| actor_id    | TEXT    | FK → actors.id (who triggered it)      |
-| target_id   | TEXT    | FK → related entity (nullable)         |
-| target_type | TEXT    | 'chat' / 'quest' / 'item' / 'actor' / 'location' |
-| data        | TEXT    | JSON event-specific payload            |
-| created_at  | TEXT    | DEFAULT CURRENT_TIMESTAMP              |
+| Column      | Type | Notes                                            |
+| ----------- | ---- | ------------------------------------------------ |
+| id          | TEXT | PK, UUID                                         |
+| world_id    | TEXT | FK → worlds.id                                   |
+| event_type  | TEXT | One of the event types above                     |
+| actor_id    | TEXT | FK → actors.id (who triggered it)                |
+| target_id   | TEXT | FK → related entity (nullable)                   |
+| target_type | TEXT | 'chat' / 'quest' / 'item' / 'actor' / 'location' |
+| data        | TEXT | JSON event-specific payload                      |
+| created_at  | TEXT | DEFAULT CURRENT_TIMESTAMP                        |
 
 ---
 
@@ -340,11 +340,11 @@ collaboration model.
 
 ### Contribution Roles
 
-| Role          | Permissions                                                  |
-| ------------- | ------------------------------------------------------------ |
-| World Owner   | Full control: edit world, manage locations, approve changes, manage members |
-| World Editor  | Can add/edit locations, lore entries, item definitions       |
-| World Viewer  | Read-only: can browse world, join chats, view timeline      |
+| Role         | Permissions                                                                 |
+| ------------ | --------------------------------------------------------------------------- |
+| World Owner  | Full control: edit world, manage locations, approve changes, manage members |
+| World Editor | Can add/edit locations, lore entries, item definitions                      |
+| World Viewer | Read-only: can browse world, join chats, view timeline                      |
 
 ### Edit Model
 
@@ -385,15 +385,15 @@ GM-facing analytics for balancing and monitoring world health.
 
 ### Metrics
 
-| Metric                    | Description                                         | Computation               |
-| ------------------------- | --------------------------------------------------- | ------------------------- |
-| Messages per character    | Activity distribution across characters             | COUNT(messages) GROUP BY actor |
-| Item economy flow         | Gold sources vs sinks over time                     | SUM(transfers) by type    |
-| Quest completion rate     | Completed vs active vs failed quests                | COUNT(quests) by status   |
-| Location visit frequency  | How often each location is visited                  | COUNT(location_moves) GROUP BY location |
-| Combat win/loss ratio     | Outcomes of GM-resolved combats                     | COUNT(combat_results) by outcome |
-| Session duration          | Average time spent per chat session                 | AVG(session_length)       |
-| Character progression     | Level distribution across active characters         | AVG(level) GROUP BY character |
+| Metric                   | Description                                 | Computation                             |
+| ------------------------ | ------------------------------------------- | --------------------------------------- |
+| Messages per character   | Activity distribution across characters     | COUNT(messages) GROUP BY actor          |
+| Item economy flow        | Gold sources vs sinks over time             | SUM(transfers) by type                  |
+| Quest completion rate    | Completed vs active vs failed quests        | COUNT(quests) by status                 |
+| Location visit frequency | How often each location is visited          | COUNT(location_moves) GROUP BY location |
+| Combat win/loss ratio    | Outcomes of GM-resolved combats             | COUNT(combat_results) by outcome        |
+| Session duration         | Average time spent per chat session         | AVG(session_length)                     |
+| Character progression    | Level distribution across active characters | AVG(level) GROUP BY character           |
 
 ### Dashboard UI
 

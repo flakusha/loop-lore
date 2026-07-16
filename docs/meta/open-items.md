@@ -7,36 +7,21 @@ Items tagged `(plan.md)` are also tracked in the active v0.2 plan.
 
 ---
 
-## DUP.1 Config Defaults Duplicated
+## DUP.1 Config Defaults Duplicated (Resolved)
 
 **Severity**: High
 **Source**: `docs/spec/architecture.md`, `src/config/schema.ts`, `src/config/schema-class.ts`
 
-`src/config/schema.ts` defines `const DEFAULTS: Config` (lines 583–703) with
-every config default value. `src/config/schema-class.ts` defines identical
-instance field defaults (lines 52–179). File comment says "Keep schema.ts
-interfaces + DEFAULTS for backward compat" but the two sources of truth will
-drift.
+`src/config/schema.ts` previously defined `const DEFAULTS: Config` (lines 583–703) with
+every config default value. `src/config/schema-class.ts` defines instance field defaults.
 
-**Fix**: Delete `DEFAULTS` object from `schema.ts`; import defaults from
-`configSchema.defaults` instead. Ensure all consumers use the class-based
-source.
+**Status**: Resolved — `DEFAULTS` object removed from `schema.ts`. Schema-class.ts is now the single source of truth for defaults.
 
 ---
 
-## DUP.2 Async Log Queue Duplicated (Browser vs Server)
+## DUP.2 Async Log Queue Duplicated (Resolved)
 
-**Severity**: Medium
-**Source**: `src/frontend/alpine/queue.ts`, `src/logger/queue.ts`
-
-Both implement `AsyncLogQueue` with identical algorithm, constants, field
-layout, and methods (~90 lines duplicated). Only ~10 lines differ:
-`logger/queue.ts` uses `timer.unref()`, `process.stderr.write()`,
-`flushSync()`. Frontend port uses `console.error()` fallback.
-
-**Fix**: Extract a runtime-agnostic base class (`AsyncLogQueueBase`) into a
-shared location. Subclass with Node vs browser overrides for the 10 diverging
-lines.
+**Status**: Resolved (2026-07-16) — Extracted `AsyncLogQueueBase` to `src/logger/queue-base.ts`. Node logger and browser queue now extend the shared base class.
 
 ---
 
@@ -55,19 +40,15 @@ helpers.
 
 ---
 
-## DUP.4 Chat Route Guard/Ownership Boilerplate
+## DUP.4 Chat Route Guard/Ownership Boilerplate (Resolved)
 
 **Severity**: High
 **Source**: `src/routes/chats.ts` (plan.md)
 
-13 route handlers repeat the same 7-line unauthorized guard (`if (!userId)
-return jsonError(...)`) and same 7-line ownership check (`fetch chat by id,
-check created_by, return 403/404`). ~180 lines of boilerplate total — highest
-refactoring value.
+13 route handlers once repeated the same 7-line unauthorized guard and ownership check.
+~180 lines of boilerplate consolidated via extracted helpers.
 
-**Fix**: Extract `requireUser(context): string | Response` and
-`requireChatAccess(database, chatId, userId, userRole): Promise<Response | true>`.
-Apply to all 13 handlers.
+**Status**: Resolved (2026-07-16) — Added `requireUser()` and `requireChatAccess()`/`requireChatOwner()` helpers. All handlers now use the shared authorization logic.
 
 ---
 
@@ -186,7 +167,7 @@ exist on paper but have no TypeScript interface.
 
 ---
 
-## SCHEMA.2 NpcStates Lacks `created_at` Column
+## SCHEMA.2 NpcStates Lacks `created_at` Column (Resolved)
 
 **Severity**: Low
 **Source**: `src/db/schema-story.ts`
@@ -194,7 +175,7 @@ exist on paper but have no TypeScript interface.
 Every other table has `created_at` with `DEFAULT CURRENT_TIMESTAMP`. NpcStates
 only has `updated_at`.
 
-**Fix**: Add `created_at` column.
+**Status**: Resolved — Schema already has `created_at: Generated<string>` (line 3 in schema-story.ts). MIGRATION.1 and MIGRATION.2 were also addressed.
 
 ---
 
@@ -263,15 +244,15 @@ is cast back at use-site.
 
 ---
 
-## CAST.6 Truthy Check on DB String
+## CAST.6 Truthy Check on DB String (Resolved)
 
 **Severity**: Low
 **Source**: `src/generation/continuation.ts`
 
-`if (attempt?.partial_content)` — returned empty string `""` would be falsy and
-skip the store, even though DB has the value.
+Previously `if (attempt?.partial_content)` — empty string `""` would be falsy and
+skip the store.
 
-**Fix**: Use `!== null` instead of falsy check.
+**Status**: Resolved — Line 40 now uses `if (attempt && attempt.partial_content !== null)`.
 
 ---
 
@@ -322,14 +303,14 @@ Guarded mode parses JSON twice on hot path.
 
 ---
 
-## ASSISTANT.1 Config Schema `assistant.enabled` Check
+## ASSISTANT.1 Config Schema `assistant.enabled` Check (Resolved)
 
 **Severity**: Low
-**Source**: `src/assistant/service.ts` (plan.md)
+**Source**: `src/assistant/service.ts`
 
 Config schema may not have `assistant.enabled`.
 
-**Fix**: Verify config path or add fallback.
+**Status**: Resolved — `AssistantConfig` has `enabled: boolean` in `schema.ts:37`, default `true` in `schema-class.ts:73`. Service checks `config.assistant?.enabled ?? false`.
 
 ---
 
@@ -451,6 +432,23 @@ pre-built variant + ETag are reused.
 
 ---
 
+---
+
+## HTTP.1 Landing `/` Static Read Bypasses `respondWithFile`
+
+**Severity**: Medium
+**Source**: `src/routes/views.ts` (landing branch), `src/server.ts` (`respondWithFile`)
+
+The landing route serves `dist/public/index.html` via a raw `readFileSync` +
+`new Response`, so it emits no `Content-Encoding`, `Vary`, or `ETag` — even
+though `compressAssets` produced `.gz/.br/.zst` variants for that exact file.
+
+**Status**: Resolved (2026-07-16) — Removed `serveView("chat")` call in `views.ts`.
+Landing now returns `null`, falling through to server.ts's `respondWithFile`
+which serves the pre-built `index.html` with compression and ETag.
+
+---
+
 ## HTTP.2 Source/Artifact Divergence for View Templates
 
 **Severity**: Low
@@ -482,17 +480,9 @@ in an isolation test.
 **Fix**: Add one test per resource type: User A creates resource, User B gets
 403/404.
 
-## TEST.2 E2E — Error Envelope Never Asserted
+## TEST.2 E2E — Error Envelope Never Asserted (Resolved)
 
-**Severity**: High
-**Source**: All e2e test files
-
-`docs/spec/error-envelope.md` defines `{ code, message, details }` shape.
-Zero tests verify this. All error tests only check `res.status` or
-`res.error` presence (e.g., `expect(res.error).toBeTruthy()`). Unknown
-whether API actually returns the documented envelope.
-
-**Fix**: Add `expect(res.error).toMatchObject({ code: expect.any(String), message: expect.any(String) })` to all 4xx/5xx assertions.
+**Status**: Resolved (2026-07-16) — Added `res.code` assertions to all error tests in chats.test.ts, messages.test.ts, auth.test.ts, characters.test.ts, assets.test.ts, worlds.test.ts, users.test.ts, and generation.test.ts. Updated `ApiResponse` interface in client.ts to expose `code` field.
 
 ## TEST.3 E2E — No Cancel-During-Generation Test
 

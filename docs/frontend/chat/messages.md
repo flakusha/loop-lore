@@ -57,13 +57,13 @@ message) or **standalone** (sent as its own message).
 
 ### Attachment Types
 
-| Type     | Extensions                          | Display                         |
-| -------- | ----------------------------------- | ------------------------------- |
-| Image    | jpg, png, gif, webp, avif           | Inline in bubble (see layout)   |
-| Document | pdf, txt, md, csv, json, toml       | File card below text            |
-| Audio    | mp3, wav, ogg, m4a                  | Audio player embed              |
-| Video    | mp4, webm, mov                      | Video player embed              |
-| Archive  | zip, tar, gz                        | File card with download link    |
+| Type     | Extensions                    | Display                       |
+| -------- | ----------------------------- | ----------------------------- |
+| Image    | jpg, png, gif, webp, avif     | Inline in bubble (see layout) |
+| Document | pdf, txt, md, csv, json, toml | File card below text          |
+| Audio    | mp3, wav, ogg, m4a            | Audio player embed            |
+| Video    | mp4, webm, mov                | Video player embed            |
+| Archive  | zip, tar, gz                  | File card with download link  |
 
 ### Contextual Attachments (attached to message)
 
@@ -71,6 +71,7 @@ Assets attached to an existing message. The message text provides
 context for the asset.
 
 **Use cases:**
+
 - User says "look at this" and attaches an image
 - Character describes a document, GM attaches the actual file
 - User shares a map image with location description
@@ -88,15 +89,15 @@ context for the asset.
 
 ```typescript
 interface MessageAttachment {
-  assetId: string;        // FK to assets table
+  assetId: string; // FK to assets table
   assetType: "image" | "document" | "audio" | "video" | "archive";
-  filename: string;       // original filename
-  mimeType: string;       // MIME type
-  size: number;           // bytes
-  thumbnailUrl?: string;  // for images: thumbnail path
-  url: string;            // full asset URL
-  caption?: string;       // optional alt text / description
-  generatedBy?: string;   // "user" | "llm" | "vision" | "sd-cpp"
+  filename: string; // original filename
+  mimeType: string; // MIME type
+  size: number; // bytes
+  thumbnailUrl?: string; // for images: thumbnail path
+  url: string; // full asset URL
+  caption?: string; // optional alt text / description
+  generatedBy?: string; // "user" | "llm" | "vision" | "sd-cpp"
 }
 ```
 
@@ -105,6 +106,7 @@ interface MessageAttachment {
 Assets sent without accompanying text. The asset IS the message.
 
 **Use cases:**
+
 - User pastes an image directly (Ctrl+V)
 - User drags an image into the chat
 - User clicks "Generate image" and the result is the only content
@@ -281,28 +283,28 @@ User message (hover):           Character message (hover):
 
 ### Basic Action Set (always available)
 
-| Action     | Icon | Available on        | Behavior                                          |
-| ---------- | ---- | ------------------- | ------------------------------------------------- |
-| Copy       | 📋   | All messages        | Copies text to clipboard. Toast: "Copied"         |
-| Retry      | 🔄   | Character messages  | Full regenerate. Prompts confirm if message has children |
-| Continue   | ▶    | Partial/cancelled   | Appends new content where message left off        |
-| Remove     | 🗑️   | All messages        | Archives message + descendants (see archiving.md) |
+| Action   | Icon | Available on       | Behavior                                                 |
+| -------- | ---- | ------------------ | -------------------------------------------------------- |
+| Copy     | 📋   | All messages       | Copies text to clipboard. Toast: "Copied"                |
+| Retry    | 🔄   | Character messages | Full regenerate. Prompts confirm if message has children |
+| Continue | ▶    | Partial/cancelled  | Appends new content where message left off               |
+| Remove   | 🗑️   | All messages       | Archives message + descendants (see archiving.md)        |
 
 ### Extended Action Set (context-dependent)
 
-| Action            | Icon | Available on          | Behavior                                    |
-| ----------------- | ---- | --------------------- | ------------------------------------------- |
-| Edit              | ✏️   | Own messages          | Inline textarea edit (see below)            |
-| Reply             | ↩️   | All messages          | Opens reply composer (see threading below)  |
-| Pin               | 📌   | All messages          | Pins message to chat top (GM/master only)   |
-| React             | 😊   | All messages          | Emoji reaction picker                       |
-| Forward           | ➡️   | All messages          | Forward to another chat or export           |
-| Regenerate        | 🔄️  | Character messages    | Same as Retry but variant-aware (swipe)     |
-| Summary           | 📝   | Character messages    | LLM-generated summary of the message        |
-| Generate image    | 🎨   | Character messages    | Triggers image generation from message text |
-| Narrate           | 📖   | Character messages    | Re-generates as descriptive narration       |
-| Analyze           | 🔍   | Image-attached msgs   | Vision model describes attached images      |
-| Attach asset      | 📎   | All messages          | Attach existing asset from gallery          |
+| Action         | Icon | Available on        | Behavior                                    |
+| -------------- | ---- | ------------------- | ------------------------------------------- |
+| Edit           | ✏️   | Own messages        | Inline textarea edit (see below)            |
+| Reply          | ↩️   | All messages        | Opens reply composer (see threading below)  |
+| Pin            | 📌   | All messages        | Pins message to chat top (GM/master only)   |
+| React          | 😊   | All messages        | Emoji reaction picker                       |
+| Forward        | ➡️   | All messages        | Forward to another chat or export           |
+| Regenerate     | 🔄️   | Character messages  | Same as Retry but variant-aware (swipe)     |
+| Summary        | 📝   | Character messages  | LLM-generated summary of the message        |
+| Generate image | 🎨   | Character messages  | Triggers image generation from message text |
+| Narrate        | 📖   | Character messages  | Re-generates as descriptive narration       |
+| Analyze        | 🔍   | Image-attached msgs | Vision model describes attached images      |
+| Attach asset   | 📎   | All messages        | Attach existing asset from gallery          |
 
 ### Toolbar Layout
 
@@ -373,15 +375,15 @@ On viewports <768px, hover does not work. Instead:
 
 ### Keyboard Shortcuts (when message focused)
 
-| Shortcut           | Action                  |
-| ------------------ | ----------------------- |
-| `Ctrl+C` / `Cmd+C` | Copy message text       |
-| `Ctrl+R`           | Retry / Regenerate      |
-| `Ctrl+E`           | Edit (own messages)     |
-| `Delete`           | Remove (with confirm)   |
-| `Ctrl+Shift+R`     | Reply                   |
-| `Ctrl+P`           | Pin / Unpin             |
-| `Ctrl+J`           | Continue (partial msg)  |
+| Shortcut           | Action                 |
+| ------------------ | ---------------------- |
+| `Ctrl+C` / `Cmd+C` | Copy message text      |
+| `Ctrl+R`           | Retry / Regenerate     |
+| `Ctrl+E`           | Edit (own messages)    |
+| `Delete`           | Remove (with confirm)  |
+| `Ctrl+Shift+R`     | Reply                  |
+| `Ctrl+P`           | Pin / Unpin            |
+| `Ctrl+J`           | Continue (partial msg) |
 
 ### Continue Button Placement
 

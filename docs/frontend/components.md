@@ -237,13 +237,13 @@ item lore, quest briefs, and dark notes.
 
 ### Capabilities
 
-| Feature              | Trigger                          | Available When               |
-| -------------------- | -------------------------------- | ---------------------------- |
-| Syntax highlighting  | Auto-detect content type         | Field has `highlight` flag   |
-| Grammar check        | Manual toggle or auto-on-blur    | Field has `grammar` flag     |
-| LLM improvement      | Toolbar button or inline request | Field has `llm` flag         |
-| Token count          | Always visible                   | Field is long-form textarea  |
-| Preview toggle       | Toolbar button                   | Field supports markdown      |
+| Feature             | Trigger                          | Available When              |
+| ------------------- | -------------------------------- | --------------------------- |
+| Syntax highlighting | Auto-detect content type         | Field has `highlight` flag  |
+| Grammar check       | Manual toggle or auto-on-blur    | Field has `grammar` flag    |
+| LLM improvement     | Toolbar button or inline request | Field has `llm` flag        |
+| Token count         | Always visible                   | Field is long-form textarea |
+| Preview toggle      | Toolbar button                   | Field supports markdown     |
 
 ### Syntax Highlighting
 
@@ -252,13 +252,13 @@ notation), the editor applies syntax highlighting.
 
 **Supported content types:**
 
-| Content Type      | Detection Method                               | Highlight Style          |
-| ----------------- | ---------------------------------------------- | ------------------------ |
-| Markdown          | Default for all description fields              | Headings, bold, code     |
-| TOML              | Detected by `[section]` headers or `key = val` | Sections, keys, strings  |
-| JSON              | Detected by `{ }` or `[ ]` wrapping            | Keys, values, brackets   |
-| Dice notation     | Detected by `d4`, `2d6`, `1d8+3` patterns      | Dice, modifiers, sums    |
-| HTML              | Detected by `<tag>` patterns                    | Tags, attributes, text   |
+| Content Type  | Detection Method                               | Highlight Style         |
+| ------------- | ---------------------------------------------- | ----------------------- |
+| Markdown      | Default for all description fields             | Headings, bold, code    |
+| TOML          | Detected by `[section]` headers or `key = val` | Sections, keys, strings |
+| JSON          | Detected by `{ }` or `[ ]` wrapping            | Keys, values, brackets  |
+| Dice notation | Detected by `d4`, `2d6`, `1d8+3` patterns      | Dice, modifiers, sums   |
+| HTML          | Detected by `<tag>` patterns                   | Tags, attributes, text  |
 
 **Implementation:**
 
@@ -330,13 +330,13 @@ or configured to run automatically on blur.
 
 **Grammar check scope:**
 
-| Check Type         | What It Catches                          |
-| ------------------ | ---------------------------------------- |
-| Spelling           | Typos, misspellings                      |
-| Grammar            | Subject-verb agreement, tense issues     |
-| Style              | Passive voice, wordiness, redundancy     |
-| Punctuation        | Missing periods, comma splices           |
-| Consistency        | Mixed American/British spelling          |
+| Check Type  | What It Catches                      |
+| ----------- | ------------------------------------ |
+| Spelling    | Typos, misspellings                  |
+| Grammar     | Subject-verb agreement, tense issues |
+| Style       | Passive voice, wordiness, redundancy |
+| Punctuation | Missing periods, comma splices       |
+| Consistency | Mixed American/British spelling      |
 
 **Note:** Grammar check is best-effort. Technical terms, proper nouns,
 and fantasy words are expected to "fail" — users can dismiss suggestions.
@@ -379,6 +379,7 @@ and its positive and negative effects on characters.
 
 The `[toml-request-llm]` prefix (or `[request-llm]`, `[ai-request]`) tells
 the engine to:
+
 1. Extract the request text
 2. Send current field content + request to the LLM
 3. Replace the field content with the LLM response
@@ -386,14 +387,14 @@ the engine to:
 
 **Request syntax variants:**
 
-| Syntax                      | Meaning                          |
-| --------------------------- | -------------------------------- |
-| `[request-llm] <prompt>`    | Basic LLM request               |
-| `[toml-request-llm] <prompt>` | Request with TOML context      |
-| `[ai-request] <prompt>`     | Alias for request-llm           |
-| `[expand]`                  | Shorthand for "expand this"      |
-| `[rewrite]`                 | Shorthand for "rewrite this"     |
-| `[concise]`                 | Shorthand for "make concise"     |
+| Syntax                        | Meaning                      |
+| ----------------------------- | ---------------------------- |
+| `[request-llm] <prompt>`      | Basic LLM request            |
+| `[toml-request-llm] <prompt>` | Request with TOML context    |
+| `[ai-request] <prompt>`       | Alias for request-llm        |
+| `[expand]`                    | Shorthand for "expand this"  |
+| `[rewrite]`                   | Shorthand for "rewrite this" |
+| `[concise]`                   | Shorthand for "make concise" |
 
 #### LLM Request Flow
 
@@ -459,15 +460,15 @@ the engine to:
 
 The LLM receives context about what it's improving:
 
-| Field Context    | Extra Context Injected                           |
-| ---------------- | ------------------------------------------------ |
-| Location desc    | Connected locations, danger level, world theme   |
-| NPC description  | NPC stats, role, current disposition             |
-| Item lore        | Item rarity, category, stats, effects            |
-| Dark note        | Note type, related notes, urgency                |
-| Public note      | Note type, scope, priority                       |
-| Quest brief      | Quest objectives, rewards, active quests         |
-| World lore       | Other lore entries, world genre, existing facts  |
+| Field Context   | Extra Context Injected                          |
+| --------------- | ----------------------------------------------- |
+| Location desc   | Connected locations, danger level, world theme  |
+| NPC description | NPC stats, role, current disposition            |
+| Item lore       | Item rarity, category, stats, effects           |
+| Dark note       | Note type, related notes, urgency               |
+| Public note     | Note type, scope, priority                      |
+| Quest brief     | Quest objectives, rewards, active quests        |
+| World lore      | Other lore entries, world genre, existing facts |
 
 This ensures the LLM generates contextually appropriate content that
 fits the existing world and entities.
@@ -476,12 +477,12 @@ fits the existing world and entities.
 
 To control costs:
 
-| Limit                   | Default | Configurable |
-| ----------------------- | ------- | ------------ |
-| Max requests per field  | 5/min   | Yes          |
-| Max content length sent | 2000 tokens | Yes     |
-| Max response length     | 1000 tokens | Yes     |
-| Cooldown between requests | 10s   | Yes          |
+| Limit                     | Default     | Configurable |
+| ------------------------- | ----------- | ------------ |
+| Max requests per field    | 5/min       | Yes          |
+| Max content length sent   | 2000 tokens | Yes          |
+| Max response length       | 1000 tokens | Yes          |
+| Cooldown between requests | 10s         | Yes          |
 
 When rate limited, the `[AI]` button shows a countdown:
 "AI available in 8s"
@@ -506,6 +507,7 @@ Max history: 10 versions per field.
 **Storage key:** `field-undo-{entity_id}-{field_name}`
 
 **Lifecycle:**
+
 - Created when user opens a field for editing
 - Pushed to stack on each LLM improvement
 - Cleared when entity is deleted
@@ -513,6 +515,7 @@ Max history: 10 versions per field.
 - Syncs across tabs via `storage` event listener
 
 **Why frontend only:**
+
 - Server never sees pre-LLM text — keeps drafts private
 - Undo is instant (no round-trip)
 - No DB migration needed for undo history
@@ -526,13 +529,13 @@ undo/redo works on desktop, tablet, and phone.
 
 **Keyboard shortcuts:**
 
-| Action     | Shortcut                  |
-| ---------- | ------------------------- |
-| Undo       | `Ctrl+Z` (Win/Linux)     |
-| Redo       | `Ctrl+Shift+Z` (Win/Linux) |
-| Redo       | `Ctrl+Y` (alternative)   |
-| Undo       | `Cmd+Z` (macOS)          |
-| Redo       | `Cmd+Shift+Z` (macOS)    |
+| Action | Shortcut                   |
+| ------ | -------------------------- |
+| Undo   | `Ctrl+Z` (Win/Linux)       |
+| Redo   | `Ctrl+Shift+Z` (Win/Linux) |
+| Redo   | `Ctrl+Y` (alternative)     |
+| Undo   | `Cmd+Z` (macOS)            |
+| Redo   | `Cmd+Shift+Z` (macOS)      |
 
 Shortcuts are captured at the field level via `keydown` listener.
 They do NOT conflict with browser undo (the browser operates on the
@@ -555,6 +558,7 @@ undo/redo history available:
 ```
 
 **Button behavior:**
+
 - `[Undo]` — restores previous version, grays out when at v1
 - `[Redo]` — restores next version, grays out when at latest
 - Buttons appear only when the stack has 2+ versions
@@ -563,6 +567,7 @@ undo/redo history available:
 - Disabled state: `--text-tertiary`, `cursor: not-allowed`
 
 **Mobile-specific considerations:**
+
 - On viewports <768px, the undo/redo buttons move to a **floating
   toolbar** anchored above the keyboard (when visible) or at the
   bottom of the screen
@@ -591,6 +596,7 @@ undo/redo history available:
 ```
 
 **Accessibility:**
+
 - Both buttons have `aria-label="Undo"` / `aria-label="Redo"`
 - Keyboard focusable via Tab
 - Screen reader announces: "Undo, version 2 of 3"
@@ -607,11 +613,11 @@ All long-form text fields show a token count in the status bar:
 **Purpose:** helps users manage prompt budget. Fields have soft and hard
 limits:
 
-| Limit     | Default    | Behavior                        |
-| --------- | ---------- | ------------------------------- |
-| Soft      | 500 tokens | Warning badge (yellow)          |
-| Hard      | 2000 tokens | Prevents saving (red badge)    |
-| Override  | 5000 tokens | GM/editor can exceed with confirm |
+| Limit    | Default     | Behavior                          |
+| -------- | ----------- | --------------------------------- |
+| Soft     | 500 tokens  | Warning badge (yellow)            |
+| Hard     | 2000 tokens | Prevents saving (red badge)       |
+| Override | 5000 tokens | GM/editor can exceed with confirm |
 
 ### Preview Toggle
 
@@ -659,14 +665,14 @@ interface EnhancedTextFieldConfig {
 
 **Default configs by field type:**
 
-| Field                    | Highlight | Grammar | LLM | Preview | Limits     |
-| ------------------------ | --------- | ------- | --- | ------- | ---------- |
-| World lore               | markdown  | yes     | yes | yes     | 2000/5000  |
-| Location description     | markdown  | yes     | yes | yes     | 1000/3000  |
-| NPC description          | markdown  | yes     | yes | yes     | 500/2000   |
-| Item lore                | markdown  | yes     | yes | yes     | 500/1500   |
-| Dark note content        | markdown  | yes     | yes | yes     | 1000/3000  |
-| Public note content      | markdown  | yes     | yes | yes     | 500/2000   |
-| Quest description        | markdown  | yes     | yes | yes     | 1000/3000  |
-| Chat rules config        | toml      | no      | no  | no      | 2000/5000  |
-| Dice notation            | dice      | no      | no  | no      | 100/500    |
+| Field                | Highlight | Grammar | LLM | Preview | Limits    |
+| -------------------- | --------- | ------- | --- | ------- | --------- |
+| World lore           | markdown  | yes     | yes | yes     | 2000/5000 |
+| Location description | markdown  | yes     | yes | yes     | 1000/3000 |
+| NPC description      | markdown  | yes     | yes | yes     | 500/2000  |
+| Item lore            | markdown  | yes     | yes | yes     | 500/1500  |
+| Dark note content    | markdown  | yes     | yes | yes     | 1000/3000 |
+| Public note content  | markdown  | yes     | yes | yes     | 500/2000  |
+| Quest description    | markdown  | yes     | yes | yes     | 1000/3000 |
+| Chat rules config    | toml      | no      | no  | no      | 2000/5000 |
+| Dice notation        | dice      | no      | no  | no      | 100/500   |

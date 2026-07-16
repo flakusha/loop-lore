@@ -14,7 +14,9 @@ template for RPG turn-taking — see [Existing Prompt Construction](#existing-pr
 
 ## Overview
 
-The system constructs LLM prompts by composing context from multiple sources:
+The system constructs LLM prompts by composing context from multiple sources.
+All non-system-author sections are delimited with **nonce-XML** tags for
+prompt-injection resistance (see `docs/spec/prompt-injection.md`).
 
 - **Actor identity** — display name, description, personality, scenario
 - **System prompt** — configured per actor or per model
