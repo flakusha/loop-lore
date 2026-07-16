@@ -15,13 +15,13 @@ import { loadTelemetryConfig } from "./config";
 const config = loadTelemetryConfig();
 
 type EventData = Record<string, unknown>;
-type EventParams = {
+interface EventParams {
   eventType: string;
   sessionId?: string;
   userId?: string;
   chatId?: string;
   data?: EventData;
-};
+}
 
 export async function record(
   db: Kysely<DB>,

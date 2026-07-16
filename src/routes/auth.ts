@@ -23,7 +23,10 @@ import { createRateLimiter } from "../middleware/rate-limit";
 import { getSmk, isEncryptionEnabled, ensureActorKey } from "../crypto";
 import { unauthorized, notFound } from "../validation/middleware";
 
-type HandleOpts = { database: Kysely<DB>; config: Config };
+interface HandleOpts {
+  database: Kysely<DB>;
+  config: Config;
+}
 
 // ── Rate limiting (per-IP, in-memory) ─────────────────────────
 
