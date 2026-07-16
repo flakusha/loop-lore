@@ -107,6 +107,17 @@ export interface JsonErrorOptions {
  *   jsonError("Not found", HttpStatus.NotFound)
  *   jsonError({ message: "Expired token", status: HttpStatus.Unauthorized, code: "UNAUTHORIZED" })
  */
+const STATUS_TO_CODE: Record<number, ErrorCode> = {
+  [HttpStatus.BadRequest]: ErrorCode.BadRequest,
+  [HttpStatus.Unauthorized]: ErrorCode.Unauthorized,
+  [HttpStatus.Forbidden]: ErrorCode.Forbidden,
+  [HttpStatus.NotFound]: ErrorCode.NotFound,
+  [HttpStatus.UnprocessableEntity]: ErrorCode.ValidationError,
+  [HttpStatus.TooManyRequests]: ErrorCode.TooManyRequests,
+  [HttpStatus.InternalServerError]: ErrorCode.ServerError,
+  [HttpStatus.NotImplemented]: ErrorCode.NotImplemented,
+};
+
 export function jsonError(message: string, status?: HttpStatusCode, code?: ErrorCode): Response;
 export function jsonError(options: JsonErrorOptions): Response;
 export function jsonError(
@@ -117,9 +128,9 @@ export function jsonError(
   const message = typeof messageOrOptions === "string" ? messageOrOptions : messageOrOptions.message;
   const resolvedStatus =
     typeof messageOrOptions === "string" ? status : (messageOrOptions.status ?? HttpStatus.BadRequest);
-  const resolvedCode = typeof messageOrOptions === "string" ? code : messageOrOptions.code;
-  const body: ApiError = { error: message };
-  if (resolvedCode) body.code = resolvedCode;
+  const resolvedCode =
+    (typeof messageOrOptions === "string" ? code : messageOrOptions.code) ?? STATUS_TO_CODE[resolvedStatus];
+  const body: ApiError = { error: message, code: resolvedCode };
   return Response.json(body, { status: resolvedStatus });
 }
 
