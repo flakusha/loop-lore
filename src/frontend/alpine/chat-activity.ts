@@ -31,7 +31,7 @@ export const chatActivity: Partial<ChatState> & ThisType<ChatState> = {
           if (chatId === active || !entry.unseenCount) continue;
           this.$dispatch?.("show-toast", {
             type: "info",
-            message: `${entry.chatName}: ${entry.unseenCount} new message${entry.unseenCount !== 1 ? "s" : ""}`,
+            message: `${entry.chatName}: ${entry.unseenCount} new message${entry.unseenCount === 1 ? "" : "s"}`,
           });
         }
       } catch {
@@ -51,10 +51,12 @@ export const chatActivity: Partial<ChatState> & ThisType<ChatState> = {
   },
 
   disconnectActivitySSE() {
-    if (this._activityEventSource) {
-      this._activityEventSource.close();
-      this._activityEventSource = null;
+    if (!this._activityEventSource) {
+      return;
     }
+
+    this._activityEventSource.close();
+    this._activityEventSource = null;
   },
 
   async markChatAsRead(chatId: string) {

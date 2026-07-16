@@ -119,10 +119,10 @@ export const chatManagement: Partial<ChatState> & ThisType<ChatState> = {
 
   toggleChatSelection(chatId: string) {
     const idx = this.selectedChats.indexOf(chatId);
-    if (idx >= 0) {
-      this.selectedChats.splice(idx, 1);
-    } else {
+    if (idx === -1) {
       this.selectedChats.push(chatId);
+    } else {
+      this.selectedChats.splice(idx, 1);
     }
   },
 
