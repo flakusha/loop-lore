@@ -1,1017 +1,301 @@
-/**
- * Chat Routes
- *
- * CRUD for chats:
- *   GET    /api/chats              — list user's chats (paginated)
- *   POST   /api/chats              — create chat
- *   GET    /api/chats/:id          — get single chat
- *   PUT    /api/chats/:id          — update chat
- *   DELETE /api/chats/:id          — delete chat
- *   GET    /api/chats/:id/export    — export chat (JSON / Markdown)
- *   GET    /api/chats/:id/participants     — list participants
- *   POST   /api/chats/:id/participants     — add participant
- *   PUT    /api/chats/:id/participants/:actorId — update participant (talkativity, role)
- *   DELETE /api/chats/:id/participants/:actorId  — remove participant
- *   PUT    /api/chats/:id/location               — move to location (story mode)
- */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
+import { Elysia } from "elysia";
 import type { Kysely } from "kysely";
 import type { DB } from "../db/schema";
-import type { RequestContext } from "../middleware/types";
-import type { RouteDispatch } from "./router";
-import { registerRoute } from "./router";
 import { uid, safeJsonParse, safeJsonStringify } from "../utils";
-import {
-  BAD_METHOD,
-  jsonResponse,
-  jsonError,
-  jsonPaginated,
-  jsonCreated,
-  jsonNoContent,
-  HttpStatus,
-  ErrorCode,
-  parseBody,
-  extractIdFromPath,
-  parsePagination,
-} from "./http-utils";
+import { jsonResponse, jsonError, jsonPaginated, jsonCreated, jsonNoContent, HttpStatus, ErrorCode } from "./http-utils";
 import {
   ChatType,
   ChatMode,
   ChatParticipantRole,
   TurnStrategy,
   MessageRole,
-  MessageStatus,
-  MessageVisibility,
   MessageContentType,
   MessageContentFormat,
   ContentEncoding,
-  ActorType,
   PinnedState,
 } from "../db/enums";
 import { getRuntimeConfig } from "../age-gate/controller";
 import { getStatus } from "../age-gate/service";
-import { getLogger } from "../logger";
 
-interface ListChatsOpts {
+interface HandlerOpts {
   database: Kysely<DB>;
-  context: RequestContext;
-  page: number;
-  pageSize: number;
-}
-interface CreateChatOpts {
-  database: Kysely<DB>;
-  context: RequestContext;
-  body: Record<string, unknown>;
-}
-interface GetChatOpts {
-  database: Kysely<DB>;
-  context: RequestContext;
-  chatId: string;
-}
-interface UpdateChatOpts {
-  database: Kysely<DB>;
-  context: RequestContext;
-  chatId: string;
-  body: Record<string, unknown>;
-}
-interface DeleteChatOpts {
-  database: Kysely<DB>;
-  context: RequestContext;
-  chatId: string;
-}
-interface ListParticipantsOpts {
-  database: Kysely<DB>;
-  context: RequestContext;
-  chatId: string;
-}
-interface AddParticipantOpts {
-  database: Kysely<DB>;
-  context: RequestContext;
-  chatId: string;
-  body: Record<string, unknown>;
-}
-interface RemoveParticipantOpts {
-  database: Kysely<DB>;
-  context: RequestContext;
-  chatId: string;
-  actorId: string;
-}
-interface UpdateParticipantOpts {
-  database: Kysely<DB>;
-  context: RequestContext;
-  chatId: string;
-  actorId: string;
-  body: Record<string, unknown>;
-}
-interface SetPersonaOpts {
-  database: Kysely<DB>;
-  context: RequestContext;
-  chatId: string;
-  body: Record<string, unknown>;
-}
-interface SetImpersonateOpts {
-  database: Kysely<DB>;
-  context: RequestContext;
-  chatId: string;
-  body: Record<string, unknown>;
-}
-interface ClearImpersonateOpts {
-  database: Kysely<DB>;
-  context: RequestContext;
-  chatId: string;
-  actorId: string;
 }
 
-const dispatch: RouteDispatch = async ({ request, context, database }) => {
-  const url = new URL(request.url);
-  const { pathname, searchParams } = url;
-  const method = request.method;
+export function chatsRoutes(opts: HandlerOpts) {
+  const { database } = opts;
 
-  // ── Chat participants sub-routes ────────────────────────────
-  const participantMatch = /^\/api\/chats\/([a-f0-9-]+)\/participants(?:\/([a-f0-9-]+))?$/.exec(pathname);
-  if (participantMatch) {
-    const chatId = participantMatch[1];
-    const actorId = participantMatch[2] ?? null;
+  return new Elysia({ name: "chats" })
+    .get("/api/chats", async (ctx: any) => {
+      const userId = ctx.userId;
+      if (!userId) return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, code: ErrorCode.Unauthorized });
 
-    if (method === "GET" && !actorId) {
-      return handleListParticipants({ database, chatId: chatId!, context });
-    }
-    if (method === "POST" && !actorId) {
-      const body = await parseBody(request);
-      if (body instanceof Response) return body;
-      return handleAddParticipant({ database, chatId: chatId!, body, context });
-    }
-    if (method === "PUT" && actorId) {
-      const body = await parseBody(request);
-      if (body instanceof Response) return body;
-      return handleUpdateParticipant({ database, chatId: chatId!, actorId, body, context });
-    }
-    if (method === "DELETE" && actorId) {
-      return handleRemoveParticipant({ database, chatId: chatId!, actorId, context });
-    }
-    return BAD_METHOD();
-  }
+      const page = Number(ctx.query.page) || 1;
+      const pageSize = Number(ctx.query.pageSize) || 20;
+      const offset = (page - 1) * pageSize;
 
-  // ── /api/chats/:id/read (mark participant read) ──────────
-  const readMatch = /^\/api\/chats\/([a-f0-9-]+)\/read$/.exec(pathname);
-  if (readMatch) {
-    if (method === "POST") {
-      return handleMarkRead({ database, chatId: readMatch[1]!, context });
-    }
-    return BAD_METHOD();
-  }
+      const countResult = await database.selectFrom("chats").select(database.fn.countAll<number>().as("total")).where("created_by", "=", userId).executeTakeFirst();
+      const total = countResult?.total ?? 0;
 
-  // ── /api/chats/:id/persona ────────────────────────────────
-  const personaMatch = /^\/api\/chats\/([a-f0-9-]+)\/persona$/.exec(pathname);
-  if (personaMatch && method === "PUT") {
-    const body = await parseBody(request);
-    if (body instanceof Response) return body;
-    return handleSetPersona({ database, chatId: personaMatch[1]!, body, context });
-  }
-
-  // ── /api/chats/:id/location ────────────────────────────────
-  const locationMatch = /^\/api\/chats\/([a-f0-9-]+)\/location$/.exec(pathname);
-  if (locationMatch && method === "PUT") {
-    const body = await parseBody(request);
-    if (body instanceof Response) return body;
-    return handleMoveLocation({ database, chatId: locationMatch[1]!, body, context });
-  }
-
-  // ── /api/chats/:id/impersonate ────────────────────────────
-  const impersonateMatch = /^\/api\/chats\/([a-f0-9-]+)\/impersonate$/.exec(pathname);
-  if (impersonateMatch) {
-    if (method === "PUT") {
-      const body = await parseBody(request);
-      if (body instanceof Response) return body;
-      return handleSetImpersonate({ database, chatId: impersonateMatch[1]!, body, context });
-    }
-    if (method === "DELETE") {
-      return handleClearImpersonate({
-        database,
-        chatId: impersonateMatch[1]!,
-        actorId: context.userId!,
-        context,
-      });
-    }
-    return BAD_METHOD();
-  }
-
-  // ── /api/chats/:id/export ────────────────────────────────
-  const exportMatch = /^\/api\/chats\/([a-f0-9-]+)\/export$/.exec(pathname);
-  if (exportMatch && method === "GET") {
-    const format = searchParams.get("format") === "md" ? "md" : "json";
-    return handleExportChat({ database, chatId: exportMatch[1]!, context, format });
-  }
-
-  // ── /api/chats/:id (skip if sub-route like /messages) ─────
-  const chatId = extractIdFromPath(pathname, "/api/chats");
-  if (
-    chatId &&
-    !pathname.includes("/participants") &&
-    !pathname.includes("/messages") &&
-    !pathname.includes("/story-turns") &&
-    !pathname.includes("/export") &&
-    !pathname.endsWith("/location")
-  ) {
-    if (method === "GET") {
-      return handleGetChat({ database, chatId, context });
-    }
-    if (method === "PUT") {
-      const body = await parseBody(request);
-      if (body instanceof Response) return body;
-      return handleUpdateChat({ database, chatId, body, context });
-    }
-    if (method === "DELETE") {
-      return handleDeleteChat({ database, chatId, context });
-    }
-    return BAD_METHOD();
-  }
-
-  // ── /api/chats (collection) ─────────────────────────────────
-  if (pathname === "/api/chats" && method === "GET") {
-    const { page, pageSize } = parsePagination(searchParams);
-    return handleListChats({ database, context, page, pageSize });
-  }
-
-  if (pathname === "/api/chats" && method === "POST") {
-    const body = await parseBody(request);
-    if (body instanceof Response) return body;
-    return handleCreateChat({ database, body, context });
-  }
-
-  return null; // Not a chat route
-};
-
-async function handleListChats({ database, context, page, pageSize }: ListChatsOpts): Promise<Response> {
-  const userId = context.userId;
-  if (!userId)
-    return jsonError({
-      message: "Unauthorized",
-      status: HttpStatus.Unauthorized,
-      code: ErrorCode.Unauthorized,
-    });
-
-  const offset = (page - 1) * pageSize;
-  const countResult = await database
-    .selectFrom("chats")
-    .select(database.fn.countAll<number>().as("total"))
-    .where("created_by", "=", userId)
-    .executeTakeFirst();
-  const total = countResult?.total ?? 0;
-
-  const chats = await database
-    .selectFrom("chats")
-    .selectAll()
-    .where("created_by", "=", userId)
-    .orderBy("updated_at", "desc")
-    .limit(pageSize)
-    .offset(offset)
-    .execute();
-
-  return jsonPaginated({ data: chats, total, page, pageSize });
-}
-
-async function handleCreateChat({ database, body, context }: CreateChatOpts): Promise<Response> {
-  const userId = context.userId;
-  if (!userId)
-    return jsonError({
-      message: "Unauthorized",
-      status: HttpStatus.Unauthorized,
-      code: ErrorCode.Unauthorized,
-    });
-
-  // ── Age gate check ─────────────────────────────────────
-  const ageGateConfig = getRuntimeConfig();
-  if (ageGateConfig.enabled && ageGateConfig.mode !== "none") {
-    const user = await database
-      .selectFrom("users")
-      .select(["birth_date", "age_gate_accepted_at"])
-      .where("id", "=", userId)
-      .executeTakeFirst();
-    const status = getStatus(ageGateConfig, user ?? null);
-    if (!status.hasPassed) {
-      return jsonError({
-        message: "Age gate not passed. Complete age verification before creating chats.",
-        status: HttpStatus.Forbidden,
-        code: ErrorCode.Forbidden,
-      });
-    }
-  }
-
-  const { name, type, mode, participantIds, worldId, currentLocationId, turnStrategy } = body;
-
-  if (!name || typeof name !== "string") {
-    return jsonError({ message: "name is required", status: HttpStatus.BadRequest });
-  }
-
-  // Validate enum values
-  const typeStr = type as string | undefined;
-  const modeStr = mode as string | undefined;
-  const turnStrategyStr = turnStrategy as string | undefined;
-
-  const validTypes = new Set<string>(Object.values(ChatType));
-  if (typeStr && !validTypes.has(typeStr)) {
-    return jsonError({
-      message: `Invalid chat type: ${typeStr}. Valid: ${[...validTypes].join(", ")}`,
-      status: HttpStatus.BadRequest,
-    });
-  }
-
-  const validModes = new Set<string>(Object.values(ChatMode));
-  if (modeStr && !validModes.has(modeStr)) {
-    return jsonError({
-      message: `Invalid chat mode: ${modeStr}. Valid: ${[...validModes].join(", ")}`,
-      status: HttpStatus.BadRequest,
-    });
-  }
-
-  const validStrategies = new Set<string>(Object.values(TurnStrategy));
-  if (turnStrategyStr && !validStrategies.has(turnStrategyStr)) {
-    return jsonError({
-      message: `Invalid turn strategy: ${turnStrategyStr}. Valid: ${[...validStrategies].join(", ")}`,
-      status: HttpStatus.BadRequest,
-    });
-  }
-
-  const chatId = uid();
-  await database
-    .insertInto("chats")
-    .values({
-      id: chatId,
-      name: name,
-      type: (type as ChatType) ?? ChatType.Direct,
-      mode: (mode as ChatMode) ?? ChatMode.Direct,
-      created_by: userId,
-      world_id: (worldId as string | undefined) ?? null,
-      current_location_id: (currentLocationId as string | undefined) ?? null,
-      turn_strategy: turnStrategy as string as TurnStrategy | null,
+      const chats = await database.selectFrom("chats").selectAll().where("created_by", "=", userId).orderBy("updated_at", "desc").limit(pageSize).offset(offset).execute();
+      return jsonPaginated({ data: chats, total, page, pageSize });
     })
-    .execute();
+    .post("/api/chats", async (ctx: any) => {
+      const userId = ctx.userId;
+      if (!userId) return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, code: ErrorCode.Unauthorized });
 
-  // Add creator as participant
-  await database
-    .insertInto("chat_participants")
-    .values({ chat_id: chatId, actor_id: userId, role_in_chat: "owner" })
-    .execute();
-
-  // Add additional participants if provided
-  if (Array.isArray(participantIds)) {
-    for (const actorId of participantIds as string[]) {
-      try {
-        await database
-          .insertInto("chat_participants")
-          .values({ chat_id: chatId, actor_id: actorId, role_in_chat: "member" })
-          .execute();
-      } catch (error: unknown) {
-        getLogger()
-          .child({ module: "chats" })
-          .error("Failed to add participant", error instanceof Error ? error : new Error(String(error)));
+      const ageGateConfig = getRuntimeConfig();
+      if (ageGateConfig.enabled && ageGateConfig.mode !== "none") {
+        const user = await database.selectFrom("users").select(["birth_date", "age_gate_accepted_at"]).where("id", "=", userId).executeTakeFirst();
+        const st = getStatus(ageGateConfig, user ?? null);
+        if (!st.hasPassed) return jsonError({ message: "Age gate not passed", status: HttpStatus.Forbidden, code: ErrorCode.Forbidden });
       }
-    }
-  }
 
-  // Insert welcome messages for character participants with a welcome_message set
-  const characterActors = await database
-    .selectFrom("chat_participants")
-    .innerJoin("actors", "actors.id", "chat_participants.actor_id")
-    .select(["chat_participants.actor_id", "actors.welcome_message"])
-    .where("chat_participants.chat_id", "=", chatId)
-    .where("actors.welcome_message", "is not", null)
-    .execute();
+      const body = ctx.body;
+      const name = body.name as string;
+      if (!name || typeof name !== "string") return jsonError({ message: "name is required", status: HttpStatus.BadRequest });
 
-  for (const actor of characterActors) {
-    await database
-      .insertInto("messages")
-      .values({
-        id: uid(),
-        chat_id: chatId,
-        actor_id: actor.actor_id,
-        parent_id: null,
-        role: MessageRole.Character,
-        content: actor.welcome_message!,
-        key_id: null,
-        content_type: MessageContentType.Text,
-        content_format: MessageContentFormat.Markdown,
-        content_encoding: ContentEncoding.Identity,
-        status: "confirmed",
-        visibility: "visible",
-        idempotency_key: null,
-      })
-      .execute();
-  }
+      const type = body.type as string | undefined;
+      const mode = body.mode as string | undefined;
+      const turnStrategy = body.turnStrategy as string | undefined;
 
-  return jsonCreated({ id: chatId });
-}
+      const validTypes = Object.values(ChatType) as string[];
+      const validModes = Object.values(ChatMode) as string[];
+      const validStrategies = Object.values(TurnStrategy) as string[];
+      if (type && !validTypes.includes(type)) return jsonError({ message: `Invalid chat type: ${type}`, status: HttpStatus.BadRequest });
+      if (mode && !validModes.includes(mode)) return jsonError({ message: `Invalid chat mode: ${mode}`, status: HttpStatus.BadRequest });
+      if (turnStrategy && !validStrategies.includes(turnStrategy)) return jsonError({ message: `Invalid turn strategy: ${turnStrategy}`, status: HttpStatus.BadRequest });
 
-async function handleGetChat({ database, chatId, context }: GetChatOpts): Promise<Response> {
-  const userId = context.userId;
-  if (!userId)
-    return jsonError({
-      message: "Unauthorized",
-      status: HttpStatus.Unauthorized,
-      code: ErrorCode.Unauthorized,
+      const newChatId = uid();
+      const chatValues: Record<string, unknown> = {
+        id: newChatId,
+        name,
+        type: type ?? ChatType.Direct,
+        mode: mode ?? ChatMode.Direct,
+        created_by: userId,
+        world_id: body.worldId as string | undefined,
+        current_location_id: body.currentLocationId as string | undefined,
+        turn_strategy: turnStrategy
+      };
+      await database.insertInto("chats").values(chatValues as any).execute();
+
+      await database.insertInto("chat_participants").values({ chat_id: newChatId, actor_id: userId, role_in_chat: "owner" }).execute();
+
+      const participantIds = body.participantIds as string[] | undefined;
+      if (Array.isArray(participantIds)) {
+        for (const actorId of participantIds) {
+          try { await database.insertInto("chat_participants").values({ chat_id: newChatId, actor_id: actorId, role_in_chat: "member" }).execute(); } catch {}
+        }
+      }
+
+      const characterActors = await database
+        .selectFrom("chat_participants")
+        .innerJoin("actors", "actors.id", "chat_participants.actor_id")
+        .select(["chat_participants.actor_id", "actors.welcome_message"])
+        .where("chat_participants.chat_id", "=", newChatId)
+        .where("actors.welcome_message", "is not", null)
+        .execute();
+
+      for (const actor of characterActors) {
+        await database.insertInto("messages").values({
+          id: uid(), chat_id: newChatId, actor_id: actor.actor_id, parent_id: null, role: MessageRole.Character,
+          content: actor.welcome_message!, key_id: null, content_type: MessageContentType.Text, content_format: MessageContentFormat.Markdown, content_encoding: ContentEncoding.Identity, status: "confirmed", visibility: "visible",
+        }).execute();
+      }
+
+      return jsonCreated({ id: newChatId });
+    })
+    .get("/api/chats/:id", async (ctx: any) => {
+      const userId = ctx.userId;
+      if (!userId) return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, code: ErrorCode.Unauthorized });
+
+      const chat = await database.selectFrom("chats").select("created_by").where("id", "=", ctx.params.id).executeTakeFirst();
+      if (!chat || (chat.created_by !== userId && ctx.userRole !== "admin")) return jsonError({ message: "Chat not found", status: HttpStatus.NotFound });
+
+      const chatData = await database.selectFrom("chats").selectAll().where("id", "=", ctx.params.id).executeTakeFirst();
+      const participants = await database.selectFrom("chat_participants").selectAll().where("chat_id", "=", ctx.params.id).execute();
+      return jsonResponse({ ...chatData, participants });
+    })
+    .put("/api/chats/:id", async (ctx: any) => {
+      const userId = ctx.userId;
+      if (!userId) return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, code: ErrorCode.Unauthorized });
+
+      const chat = await database.selectFrom("chats").select("created_by").where("id", "=", ctx.params.id).executeTakeFirst();
+      if (!chat || (chat.created_by !== userId && ctx.userRole !== "admin")) return jsonError({ message: "Forbidden", status: HttpStatus.Forbidden });
+
+      const fullChat = await database.selectFrom("chats").selectAll().where("id", "=", ctx.params.id).executeTakeFirst();
+      if (!fullChat) return jsonError({ message: "Chat not found", status: HttpStatus.NotFound });
+
+      const updates: Record<string, unknown> = {};
+      if (ctx.body.name) updates.name = ctx.body.name;
+      if (ctx.body.mode) updates.mode = ctx.body.mode;
+      if (ctx.body.turnStrategy) updates.turn_strategy = ctx.body.turnStrategy;
+      if (ctx.body.worldId) updates.world_id = ctx.body.worldId;
+      if (typeof ctx.body.isPinned === "boolean") updates.is_pinned = ctx.body.isPinned ? PinnedState.Pinned : PinnedState.Unpinned;
+      if (typeof ctx.body.isPaused === "boolean") {
+        const current = fullChat.story_state ? safeJsonParse<Record<string, unknown>>(fullChat.story_state) : null;
+        const state = { ...(current?.ok && current.value), isPaused: ctx.body.isPaused };
+        const serialized = safeJsonStringify(state);
+        updates.story_state = serialized.ok ? serialized.value : fullChat.story_state;
+      }
+      updates.updated_at = new Date().toISOString();
+
+      await database.updateTable("chats").set(updates).where("id", "=", ctx.params.id).execute();
+      return jsonResponse({ ok: true });
+    })
+    .delete("/api/chats/:id", async (ctx: any) => {
+      const userId = ctx.userId;
+      if (!userId) return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, code: ErrorCode.Unauthorized });
+
+      const chat = await database.selectFrom("chats").select("created_by").where("id", "=", ctx.params.id).executeTakeFirst();
+      if (!chat || (chat.created_by !== userId && ctx.userRole !== "admin")) return jsonError({ message: "Forbidden", status: HttpStatus.Forbidden });
+
+      await database.deleteFrom("generation_attempts").where("chat_id", "=", ctx.params.id).execute();
+      await database.deleteFrom("world_states").where((eb) => eb.or([
+        eb("trigger_message_id", "in", database.selectFrom("messages").select("id").where("chat_id", "=", ctx.params.id)),
+        eb("trigger_turn_id", "in", database.selectFrom("story_turns").select("id").where("chat_id", "=", ctx.params.id)),
+      ])).execute();
+      await database.deleteFrom("story_turns").where("chat_id", "=", ctx.params.id).execute();
+      await database.deleteFrom("quest_progress").where("chat_id", "=", ctx.params.id).execute();
+      await database.deleteFrom("synthetic_data").where("chat_id", "=", ctx.params.id).execute();
+      await database.deleteFrom("actor_memories").where("source_chat_id", "=", ctx.params.id).execute();
+      await database.deleteFrom("asset_links").where("entity_type", "=", "chat").where("entity_id", "=", ctx.params.id).execute();
+      await database.deleteFrom("messages").where("chat_id", "=", ctx.params.id).execute();
+      await database.deleteFrom("chat_participants").where("chat_id", "=", ctx.params.id).execute();
+      await database.deleteFrom("chats").where("id", "=", ctx.params.id).execute();
+
+      return jsonNoContent();
+    })
+    .get("/api/chats/:id/export", async (ctx: any) => {
+      const userId = ctx.userId;
+      if (!userId) return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, code: ErrorCode.Unauthorized });
+
+      const chat = await database.selectFrom("chats").select("created_by").where("id", "=", ctx.params.id).executeTakeFirst();
+      if (!chat || (chat.created_by !== userId && ctx.userRole !== "admin")) return jsonError({ message: "Chat not found", status: HttpStatus.NotFound });
+
+      const messages = await database.selectFrom("messages").selectAll().where("chat_id", "=", ctx.params.id).orderBy("created_at", "asc").execute();
+      const participants = await database.selectFrom("chat_participants").selectAll().where("chat_id", "=", ctx.params.id).execute();
+
+      const actorIds = new Set<string>();
+      for (const m of messages) if (m.actor_id) actorIds.add(m.actor_id);
+      for (const p of participants) actorIds.add(p.actor_id);
+
+      const actors = actorIds.size > 0 ? await database.selectFrom("actors").select(["id", "display_name", "actor_type"]).where("id", "in", [...actorIds]).execute() : [];
+      const assetLinks = await database.selectFrom("asset_links").select(["asset_id", "entity_type", "entity_id", "label"]).where("entity_id", "=", ctx.params.id).execute();
+
+      const chatData = await database.selectFrom("chats").selectAll().where("id", "=", ctx.params.id).executeTakeFirst();
+      const format = (ctx.query.format as string) === "md" ? "md" : "json";
+
+      if (format === "md") {
+        const lines: string[] = [`# ${chatData?.name ?? "Chat"}`, ""];
+        const actorName = new Map(actors.map((a) => [a.id, a.display_name]));
+        const roleLabel: Record<string, string> = { system: "System", assistant: "Assistant", user: "User", tool: "Tool" };
+        for (const m of messages) { const who = m.actor_id ? (actorName.get(m.actor_id) ?? m.role) : (roleLabel[m.role] ?? m.role); lines.push(`**${who}:** ${m.content ?? ""}`, ""); }
+        const md = lines.join("\n");
+        const safeName = (chatData?.name || "chat").replaceAll(/[^\w.-]+/g, "_");
+        return new Response(md, { headers: { "Content-Type": "text/markdown; charset=utf-8", "Content-Disposition": `attachment; filename="${safeName}.md"` } });
+      }
+
+      const exportStr = safeJsonStringify({ chat: chatData, participants, messages, actors, assetLinks });
+      const safeName = (chatData?.name || "chat").replaceAll(/[^\w.-]+/g, "_");
+      return new Response(exportStr.ok ? exportStr.value : "{}", { headers: { "Content-Type": "application/json", "Content-Disposition": `attachment; filename="${safeName}.json"` } });
+    })
+    .get("/api/chats/:id/participants", async (ctx: any) => {
+      const userId = ctx.userId;
+      if (!userId) return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, code: ErrorCode.Unauthorized });
+
+      const chat = await database.selectFrom("chats").select("created_by").where("id", "=", ctx.params.id).executeTakeFirst();
+      if (!chat || (chat.created_by !== userId && ctx.userRole !== "admin")) return jsonError({ message: "Chat not found", status: HttpStatus.NotFound });
+
+      const participants = await database.selectFrom("chat_participants").selectAll().where("chat_id", "=", ctx.params.id).execute();
+      return jsonResponse(participants);
+    })
+    .post("/api/chats/:id/participants", async (ctx: any) => {
+      const userId = ctx.userId;
+      if (!userId) return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, code: ErrorCode.Unauthorized });
+
+      const chat = await database.selectFrom("chats").select("created_by").where("id", "=", ctx.params.id).executeTakeFirst();
+      if (!chat || (chat.created_by !== userId && ctx.userRole !== "admin")) return jsonError({ message: "Chat not found", status: HttpStatus.NotFound });
+
+      const actorId = ctx.body.actorId as string | undefined;
+      if (!actorId) return jsonError({ message: "actorId is required", status: HttpStatus.BadRequest });
+
+      const role = (ctx.body.role as string | undefined) ?? "member";
+      try { await database.insertInto("chat_participants").values({ chat_id: ctx.params.id, actor_id: actorId, role_in_chat: role as ChatParticipantRole }).execute(); } catch {}
+      return jsonCreated({ id: actorId });
+    })
+    .put("/api/chats/:id/participants/:actorId", async (ctx: any) => {
+      const userId = ctx.userId;
+      if (!userId) return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, code: ErrorCode.Unauthorized });
+
+      const chat = await database.selectFrom("chats").select("created_by").where("id", "=", ctx.params.id).executeTakeFirst();
+      if (!chat || (chat.created_by !== userId && ctx.userRole !== "admin")) return jsonError({ message: "Chat not found", status: HttpStatus.NotFound });
+
+      const updates: Record<string, unknown> = {};
+      if (typeof ctx.body.talkativity === "number") updates.talkativity = Math.min(10, Math.max(1, ctx.body.talkativity));
+      if (typeof ctx.body.initiative === "number") updates.initiative = ctx.body.initiative;
+      if (typeof ctx.body.role === "string") updates.role_in_chat = ctx.body.role;
+
+      if (Object.keys(updates).length === 0) return jsonError({ message: "No valid fields to update", status: HttpStatus.BadRequest });
+      await database.updateTable("chat_participants").set(updates).where("chat_id", "=", ctx.params.id).where("actor_id", "=", ctx.params.actorId).execute();
+      return jsonResponse({ ok: true });
+    })
+    .delete("/api/chats/:id/participants/:actorId", async (ctx: any) => {
+      const userId = ctx.userId;
+      if (!userId) return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, code: ErrorCode.Unauthorized });
+
+      const chat = await database.selectFrom("chats").select("created_by").where("id", "=", ctx.params.id).executeTakeFirst();
+      if (!chat || (chat.created_by !== userId && ctx.userRole !== "admin")) return jsonError({ message: "Chat not found", status: HttpStatus.NotFound });
+
+      await database.deleteFrom("chat_participants").where("chat_id", "=", ctx.params.id).where("actor_id", "=", ctx.params.actorId).execute();
+      return jsonNoContent();
+    })
+    .put("/api/chats/:id/location", async (ctx: any) => {
+      const userId = ctx.userId;
+      if (!userId) return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, code: ErrorCode.Unauthorized });
+
+      const chat = await database.selectFrom("chats").select("created_by").where("id", "=", ctx.params.id).executeTakeFirst();
+      if (!chat || (chat.created_by !== userId && ctx.userRole !== "admin")) return jsonError({ message: "Chat not found", status: HttpStatus.NotFound });
+
+      const fullChat = await database.selectFrom("chats").selectAll().where("id", "=", ctx.params.id).executeTakeFirst();
+      if (!fullChat) return jsonError({ message: "Chat not found", status: HttpStatus.NotFound });
+
+      if (!fullChat.world_id) return jsonError({ message: "Chat has no world assigned", status: HttpStatus.BadRequest });
+
+      const locationId = ctx.body.locationId as string | null | undefined;
+
+      if (locationId === null || locationId === undefined) {
+        await database.updateTable("chats").set({ current_location_id: null, updated_at: new Date().toISOString() }).where("id", "=", ctx.params.id).execute();
+        return jsonResponse({ ok: true, current_location_id: null });
+      }
+
+      const location = await database.selectFrom("locations").select(["id", "name"]).where("id", "=", locationId).where("world_id", "=", fullChat.world_id).executeTakeFirst();
+      if (!location) return jsonError({ message: "Location not found in this world", status: HttpStatus.NotFound });
+
+      await database.updateTable("chats").set({ current_location_id: locationId, updated_at: new Date().toISOString() }).where("id", "=", ctx.params.id).execute();
+      return jsonResponse({ ok: true, current_location_id: locationId, location_name: location.name });
+    })
+    .put("/api/chats/:id/persona", async (ctx: any) => {
+      const userId = ctx.userId;
+      if (!userId) return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, code: ErrorCode.Unauthorized });
+
+      const chat = await database.selectFrom("chats").select("created_by").where("id", "=", ctx.params.id).executeTakeFirst();
+      if (!chat || (chat.created_by !== userId && ctx.userRole !== "admin")) return jsonError({ message: "Chat not found", status: HttpStatus.NotFound });
+
+      const personaId = ctx.body.personaId as string | null | undefined;
+      await database.updateTable("chat_participants").set({ persona_id: personaId ?? null }).where("chat_id", "=", ctx.params.id).where("actor_id", "=", userId).execute();
+      return jsonResponse({ ok: true });
+    })
+    .put("/api/chats/:id/impersonate", async (ctx: any) => {
+      const userId = ctx.userId;
+      if (!userId) return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, code: ErrorCode.Unauthorized });
+
+      const chat = await database.selectFrom("chats").select("created_by").where("id", "=", ctx.params.id).executeTakeFirst();
+      if (!chat || (chat.created_by !== userId && ctx.userRole !== "admin")) return jsonError({ message: "Chat not found", status: HttpStatus.NotFound });
+
+      const impersonateActorId = ctx.body.impersonateActorId as string | null | undefined;
+      await database.updateTable("chat_participants").set({ impersonate_actor_id: impersonateActorId ?? null }).where("chat_id", "=", ctx.params.id).where("actor_id", "=", userId).execute();
+      return jsonResponse({ ok: true });
     });
-
-  const chat = await database.selectFrom("chats").selectAll().where("id", "=", chatId).executeTakeFirst();
-  if (!chat)
-    return jsonError({ message: "Chat not found", status: HttpStatus.NotFound, code: ErrorCode.NotFound });
-  if (chat.created_by !== userId && context.userRole !== "admin") {
-    return jsonError({ message: "Chat not found", status: HttpStatus.NotFound });
-  }
-
-  const participants = await database
-    .selectFrom("chat_participants")
-    .selectAll()
-    .where("chat_id", "=", chatId)
-    .execute();
-
-  return jsonResponse({ ...chat, participants });
 }
-
-async function handleUpdateChat({ database, chatId, body, context }: UpdateChatOpts): Promise<Response> {
-  const userId = context.userId;
-  if (!userId)
-    return jsonError({
-      message: "Unauthorized",
-      status: HttpStatus.Unauthorized,
-      code: ErrorCode.Unauthorized,
-    });
-
-  const chat = await database.selectFrom("chats").selectAll().where("id", "=", chatId).executeTakeFirst();
-  if (!chat)
-    return jsonError({ message: "Chat not found", status: HttpStatus.NotFound, code: ErrorCode.NotFound });
-  if (chat.created_by !== userId)
-    return jsonError({ message: "Forbidden", status: HttpStatus.Forbidden, code: ErrorCode.Forbidden });
-
-  const updates: Record<string, unknown> = {};
-  if (body.name) updates.name = body.name;
-  if (body.mode) updates.mode = body.mode;
-  if (body.turnStrategy) updates.turn_strategy = body.turnStrategy;
-  if (body.worldId) updates.world_id = body.worldId;
-  if (typeof body.isPinned === "boolean") updates.is_pinned = body.isPinned ? PinnedState.Pinned : PinnedState.Unpinned;
-  if (typeof body.isPaused === "boolean") {
-    // Update story_state JSON with isPaused flag
-    const current = chat.story_state ? safeJsonParse<Record<string, unknown>>(chat.story_state) : null;
-    const state = { ...(current?.ok && current.value), isPaused: body.isPaused };
-    const serialized = safeJsonStringify(state);
-    updates.story_state = serialized.ok ? serialized.value : chat.story_state;
-  }
-  updates.updated_at = new Date().toISOString();
-
-  await database.updateTable("chats").set(updates).where("id", "=", chatId).execute();
-
-  return jsonResponse({ ok: true });
-}
-
-interface MarkReadOpts {
-  database: Kysely<DB>;
-  context: RequestContext;
-  chatId: string;
-}
-
-/**
- * Marks a chat as read for the current user by advancing their
- * participant `last_read_message_id` to the latest visible message.
- * Used by the notifications system on chat open.
- */
-async function handleMarkRead({ database, context, chatId }: MarkReadOpts): Promise<Response> {
-  const userId = context.userId;
-  if (!userId)
-    return jsonError({
-      message: "Unauthorized",
-      status: HttpStatus.Unauthorized,
-      code: ErrorCode.Unauthorized,
-    });
-
-  const latest = await database
-    .selectFrom("messages")
-    .select(["id"])
-    .where("chat_id", "=", chatId)
-    .where("visibility", "=", MessageVisibility.Visible)
-    .where("status", "=", MessageStatus.Confirmed)
-    .orderBy("created_at", "desc")
-    .limit(1)
-    .executeTakeFirst();
-  if (!latest) return jsonNoContent();
-
-  await database
-    .updateTable("chat_participants")
-    .set({ last_read_message_id: latest.id })
-    .where("chat_id", "=", chatId)
-    .where("actor_id", "=", userId)
-    .execute();
-
-  return jsonResponse({ ok: true, last_read_message_id: latest.id });
-}
-
-async function handleDeleteChat({ database, chatId, context }: DeleteChatOpts): Promise<Response> {
-  const userId = context.userId;
-  if (!userId)
-    return jsonError({
-      message: "Unauthorized",
-      status: HttpStatus.Unauthorized,
-      code: ErrorCode.Unauthorized,
-    });
-
-  const chat = await database.selectFrom("chats").selectAll().where("id", "=", chatId).executeTakeFirst();
-  if (!chat)
-    return jsonError({ message: "Chat not found", status: HttpStatus.NotFound, code: ErrorCode.NotFound });
-  if (chat.created_by !== userId)
-    return jsonError({ message: "Forbidden", status: HttpStatus.Forbidden, code: ErrorCode.Forbidden });
-
-  // Delete related records first (FK order: no FK deps first, then leaf tables)
-  await database.deleteFrom("generation_attempts").where("chat_id", "=", chatId).execute();
-  await database
-    .deleteFrom("world_states")
-    .where((eb) =>
-      eb.or([
-        eb(
-          "trigger_message_id",
-          "in",
-          database.selectFrom("messages").select("id").where("chat_id", "=", chatId),
-        ),
-        eb(
-          "trigger_turn_id",
-          "in",
-          database.selectFrom("story_turns").select("id").where("chat_id", "=", chatId),
-        ),
-      ]),
-    )
-    .execute();
-  await database.deleteFrom("story_turns").where("chat_id", "=", chatId).execute();
-  await database.deleteFrom("quest_progress").where("chat_id", "=", chatId).execute();
-  await database.deleteFrom("synthetic_data").where("chat_id", "=", chatId).execute();
-  await database.deleteFrom("actor_memories").where("source_chat_id", "=", chatId).execute();
-  await database
-    .deleteFrom("asset_links")
-    .where("entity_type", "=", "chat")
-    .where("entity_id", "=", chatId)
-    .execute();
-  await database.deleteFrom("messages").where("chat_id", "=", chatId).execute();
-  await database.deleteFrom("chat_participants").where("chat_id", "=", chatId).execute();
-  await database.deleteFrom("chats").where("id", "=", chatId).execute();
-
-  return jsonNoContent();
-}
-
-async function handleListParticipants({
-  database,
-  chatId,
-  context,
-}: ListParticipantsOpts): Promise<Response> {
-  const userId = context.userId;
-  if (!userId)
-    return jsonError({
-      message: "Unauthorized",
-      status: HttpStatus.Unauthorized,
-      code: ErrorCode.Unauthorized,
-    });
-
-  const chat = await database
-    .selectFrom("chats")
-    .select("created_by")
-    .where("id", "=", chatId)
-    .executeTakeFirst();
-  if (!chat || (chat.created_by !== userId && context.userRole !== "admin")) {
-    return jsonError({ message: "Chat not found", status: HttpStatus.NotFound });
-  }
-
-  const participants = await database
-    .selectFrom("chat_participants")
-    .selectAll()
-    .where("chat_id", "=", chatId)
-    .execute();
-
-  return jsonResponse(participants);
-}
-
-async function handleAddParticipant({
-  database,
-  chatId,
-  body,
-  context,
-}: AddParticipantOpts): Promise<Response> {
-  const userId = context.userId;
-  if (!userId)
-    return jsonError({
-      message: "Unauthorized",
-      status: HttpStatus.Unauthorized,
-      code: ErrorCode.Unauthorized,
-    });
-
-  const chat = await database
-    .selectFrom("chats")
-    .select("created_by")
-    .where("id", "=", chatId)
-    .executeTakeFirst();
-  if (!chat || (chat.created_by !== userId && context.userRole !== "admin")) {
-    return jsonError({ message: "Chat not found", status: HttpStatus.NotFound });
-  }
-
-  const actorId = body.actorId as string | undefined;
-  if (!actorId) return jsonError({ message: "actorId is required", status: HttpStatus.BadRequest });
-
-  const role = (body.role as string | undefined) ?? "member";
-
-  try {
-    await database
-      .insertInto("chat_participants")
-      .values({ chat_id: chatId, actor_id: actorId, role_in_chat: role as ChatParticipantRole })
-      .execute();
-  } catch (error: unknown) {
-    getLogger()
-      .child({ module: "chats" })
-      .error("Failed to add participant", error instanceof Error ? error : new Error(String(error)));
-  }
-
-  return jsonCreated({ id: actorId });
-}
-
-async function handleRemoveParticipant({
-  database,
-  chatId,
-  actorId,
-  context,
-}: RemoveParticipantOpts): Promise<Response> {
-  const userId = context.userId;
-  if (!userId)
-    return jsonError({
-      message: "Unauthorized",
-      status: HttpStatus.Unauthorized,
-      code: ErrorCode.Unauthorized,
-    });
-
-  const chat = await database
-    .selectFrom("chats")
-    .select("created_by")
-    .where("id", "=", chatId)
-    .executeTakeFirst();
-  if (!chat || (chat.created_by !== userId && context.userRole !== "admin")) {
-    return jsonError({ message: "Chat not found", status: HttpStatus.NotFound });
-  }
-
-  await database
-    .deleteFrom("chat_participants")
-    .where("chat_id", "=", chatId)
-    .where("actor_id", "=", actorId)
-    .execute();
-
-  return jsonNoContent();
-}
-
-async function handleUpdateParticipant({
-  database,
-  chatId,
-  actorId,
-  body,
-  context,
-}: UpdateParticipantOpts): Promise<Response> {
-  const userId = context.userId;
-  if (!userId)
-    return jsonError({
-      message: "Unauthorized",
-      status: HttpStatus.Unauthorized,
-      code: ErrorCode.Unauthorized,
-    });
-
-  const chat = await database
-    .selectFrom("chats")
-    .select("created_by")
-    .where("id", "=", chatId)
-    .executeTakeFirst();
-  if (!chat || (chat.created_by !== userId && context.userRole !== "admin")) {
-    return jsonError({ message: "Chat not found", status: HttpStatus.NotFound });
-  }
-
-  const updates: Record<string, unknown> = {};
-  if (typeof body.talkativity === "number") {
-    updates.talkativity = Math.min(10, Math.max(1, body.talkativity));
-  }
-  if (typeof body.initiative === "number") {
-    updates.initiative = body.initiative;
-  }
-  if (typeof body.role === "string") {
-    updates.role_in_chat = body.role;
-  }
-
-  if (Object.keys(updates).length === 0) {
-    return jsonError({ message: "No valid fields to update", status: HttpStatus.BadRequest });
-  }
-
-  await database
-    .updateTable("chat_participants")
-    .set(updates)
-    .where("chat_id", "=", chatId)
-    .where("actor_id", "=", actorId)
-    .execute();
-
-  return jsonResponse({ ok: true });
-}
-
-/**
- * Set persona for the current user in a chat.
- * Updates the persona_id on their chat_participants entry.
- */
-async function handleSetPersona({ database, chatId, body, context }: SetPersonaOpts): Promise<Response> {
-  const userId = context.userId;
-  if (!userId)
-    return jsonError({
-      message: "Unauthorized",
-      status: HttpStatus.Unauthorized,
-      code: ErrorCode.Unauthorized,
-    });
-
-  const chat = await database
-    .selectFrom("chats")
-    .select("created_by")
-    .where("id", "=", chatId)
-    .executeTakeFirst();
-  if (!chat || (chat.created_by !== userId && context.userRole !== "admin")) {
-    return jsonError({ message: "Chat not found", status: HttpStatus.NotFound });
-  }
-
-  const personaId = body.personaId as string | null | undefined;
-  const updates: Record<string, unknown> = { persona_id: personaId ?? null };
-
-  await database
-    .updateTable("chat_participants")
-    .set(updates)
-    .where("chat_id", "=", chatId)
-    .where("actor_id", "=", userId)
-    .execute();
-
-  return jsonResponse({ ok: true });
-}
-
-/**
- * Set impersonation - the character the user is playing.
- * Updates impersonate_actor_id on their chat_participants entry.
- */
-async function handleSetImpersonate({
-  database,
-  chatId,
-  body,
-  context,
-}: SetImpersonateOpts): Promise<Response> {
-  const userId = context.userId;
-  if (!userId)
-    return jsonError({
-      message: "Unauthorized",
-      status: HttpStatus.Unauthorized,
-      code: ErrorCode.Unauthorized,
-    });
-
-  const chat = await database
-    .selectFrom("chats")
-    .select("created_by")
-    .where("id", "=", chatId)
-    .executeTakeFirst();
-  if (!chat || (chat.created_by !== userId && context.userRole !== "admin")) {
-    return jsonError({ message: "Chat not found", status: HttpStatus.NotFound });
-  }
-
-  const impersonateActorId = body.impersonateActorId as string | null | undefined;
-  const updates: Record<string, unknown> = { impersonate_actor_id: impersonateActorId ?? null };
-
-  await database
-    .updateTable("chat_participants")
-    .set(updates)
-    .where("chat_id", "=", chatId)
-    .where("actor_id", "=", userId)
-    .execute();
-
-  return jsonResponse({ ok: true });
-}
-
-/**
- * Clear impersonation - stop playing as a character.
- */
-async function handleClearImpersonate({
-  database,
-  chatId,
-  actorId,
-  context,
-}: ClearImpersonateOpts): Promise<Response> {
-  if (!actorId)
-    return jsonError({
-      message: "Unauthorized",
-      status: HttpStatus.Unauthorized,
-      code: ErrorCode.Unauthorized,
-    });
-
-  const chat = await database
-    .selectFrom("chats")
-    .select("created_by")
-    .where("id", "=", chatId)
-    .executeTakeFirst();
-  if (!chat || (chat.created_by !== actorId && context.userRole !== "admin")) {
-    return jsonError({ message: "Chat not found", status: HttpStatus.NotFound });
-  }
-
-  await database
-    .updateTable("chat_participants")
-    .set({ impersonate_actor_id: null })
-    .where("chat_id", "=", chatId)
-    .where("actor_id", "=", actorId)
-    .execute();
-
-  return jsonNoContent();
-}
-
-interface MoveLocationOpts {
-  database: Kysely<DB>;
-  context: RequestContext;
-  chatId: string;
-  body: Record<string, unknown>;
-}
-
-/**
- * Move a chat to a different location (story mode).
- * Updates current_location_id on the chat.
- * Validates the location exists in the chat's world.
- */
-async function handleMoveLocation({
-  database,
-  chatId,
-  body,
-  context,
-}: MoveLocationOpts): Promise<Response> {
-  const userId = context.userId;
-  if (!userId)
-    return jsonError({
-      message: "Unauthorized",
-      status: HttpStatus.Unauthorized,
-      code: ErrorCode.Unauthorized,
-    });
-
-  const chat = await database.selectFrom("chats").selectAll().where("id", "=", chatId).executeTakeFirst();
-  if (!chat)
-    return jsonError({ message: "Chat not found", status: HttpStatus.NotFound, code: ErrorCode.NotFound });
-  if (chat.created_by !== userId && context.userRole !== "admin")
-    return jsonError({ message: "Forbidden", status: HttpStatus.Forbidden, code: ErrorCode.Forbidden });
-
-  if (!chat.world_id)
-    return jsonError({
-      message: "Chat has no world assigned. Set worldId before moving locations.",
-      status: HttpStatus.BadRequest,
-      code: ErrorCode.ValidationError,
-    });
-
-  const locationId = body.locationId as string | null | undefined;
-
-  // Allow clearing location
-  if (locationId === null || locationId === undefined) {
-    await database
-      .updateTable("chats")
-      .set({ current_location_id: null, updated_at: new Date().toISOString() })
-      .where("id", "=", chatId)
-      .execute();
-    return jsonResponse({ ok: true, current_location_id: null });
-  }
-
-  // Validate location exists in chat's world
-  const location = await database
-    .selectFrom("locations")
-    .select(["id", "name"])
-    .where("id", "=", locationId)
-    .where("world_id", "=", chat.world_id)
-    .executeTakeFirst();
-
-  if (!location)
-    return jsonError({
-      message: "Location not found in this world",
-      status: HttpStatus.NotFound,
-      code: ErrorCode.NotFound,
-    });
-
-  await database
-    .updateTable("chats")
-    .set({ current_location_id: locationId, updated_at: new Date().toISOString() })
-    .where("id", "=", chatId)
-    .execute();
-
-  return jsonResponse({ ok: true, current_location_id: locationId, location_name: location.name });
-}
-
-interface ExportChatOpts {
-  database: Kysely<DB>;
-  context: RequestContext;
-  chatId: string;
-  format: "json" | "md";
-}
-
-interface ChatExportActor {
-  id: string;
-  display_name: string;
-  actor_type: ActorType;
-}
-
-interface ChatExportChat {
-  name: string;
-}
-
-interface ChatExportMessage {
-  actor_id: string | null;
-  role: string;
-  content: string | null;
-}
-
-interface ChatExportData {
-  chat: ChatExportChat;
-  participants: { actor_id: string }[];
-  messages: ChatExportMessage[];
-  actors: ChatExportActor[];
-  assetLinks: { asset_id: string; entity_type: string; entity_id: string; label: string | null }[];
-}
-
-/**
- * Export a chat (with messages, participants, actors, asset links) as JSON or
- * Markdown. Output is returned as a downloadable attachment.
- */
-async function handleExportChat({ database, chatId, context, format }: ExportChatOpts): Promise<Response> {
-  const userId = context.userId;
-  if (!userId)
-    return jsonError({
-      message: "Unauthorized",
-      status: HttpStatus.Unauthorized,
-      code: ErrorCode.Unauthorized,
-    });
-
-  const chat = await database.selectFrom("chats").selectAll().where("id", "=", chatId).executeTakeFirst();
-  if (!chat)
-    return jsonError({ message: "Chat not found", status: HttpStatus.NotFound, code: ErrorCode.NotFound });
-  if (chat.created_by !== userId && context.userRole !== "admin")
-    return jsonError({ message: "Forbidden", status: HttpStatus.Forbidden, code: ErrorCode.Forbidden });
-
-  const messages = await database
-    .selectFrom("messages")
-    .selectAll()
-    .where("chat_id", "=", chatId)
-    .orderBy("created_at", "asc")
-    .execute();
-
-  const participants = await database
-    .selectFrom("chat_participants")
-    .selectAll()
-    .where("chat_id", "=", chatId)
-    .execute();
-
-  const actorIds = new Set<string>();
-  for (const m of messages) if (m.actor_id) actorIds.add(m.actor_id);
-  for (const p of participants) actorIds.add(p.actor_id);
-
-  const actors =
-    actorIds.size > 0
-      ? await database
-          .selectFrom("actors")
-          .select(["id", "display_name", "actor_type"])
-          .where("id", "in", [...actorIds])
-          .execute()
-      : [];
-
-  const assetLinks = await database
-    .selectFrom("asset_links")
-    .select(["asset_id", "entity_type", "entity_id", "label"])
-    .where("entity_id", "=", chatId)
-    .execute();
-
-  const exportData: ChatExportData = { chat, participants, messages, actors, assetLinks };
-  const safeName = (chat.name || "chat").replaceAll(/[^\w.-]+/g, "_");
-
-  if (format === "md") {
-    const md = renderChatMarkdown(exportData);
-    return new Response(md, {
-      headers: {
-        "Content-Type": "text/markdown; charset=utf-8",
-        "Content-Disposition": `attachment; filename="${safeName}.md"`,
-      },
-    });
-  }
-
-  const exportStr = safeJsonStringify(exportData);
-  return new Response(exportStr.ok ? exportStr.value : "{}", {
-    headers: {
-      "Content-Type": "application/json",
-      "Content-Disposition": `attachment; filename="${safeName}.json"`,
-    },
-  });
-}
-
-function renderChatMarkdown(data: ChatExportData): string {
-  const lines: string[] = [`# ${data.chat.name}`, ""];
-  const actorName = new Map(data.actors.map((a) => [a.id, a.display_name]));
-  const roleLabel: Record<string, string> = {
-    system: "System",
-    assistant: "Assistant",
-    user: "User",
-    tool: "Tool",
-  };
-  for (const m of data.messages) {
-    const who = m.actor_id ? (actorName.get(m.actor_id) ?? m.role) : (roleLabel[m.role] ?? m.role);
-    lines.push(`**${who}:** ${m.content ?? ""}`, "");
-  }
-  return lines.join("\n");
-}
-
-registerRoute(dispatch);
-export { dispatch };

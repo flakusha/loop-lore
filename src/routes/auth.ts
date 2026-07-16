@@ -7,14 +7,16 @@
  *   GET  /api/auth/me         — current user profile
  *
  * Login form submits form-encoded. On success: HX-Redirect + Set-Cookie.
- * On failure: error HTML for hx-target swap.
+ * On failure: error HTML for htmx error swap.
  */
 
+/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access */
+
 import crypto from "node:crypto";
+import { Elysia } from "elysia";
 import { uid, secureToken } from "../utils";
 import type { Kysely } from "kysely";
 import type { DB } from "../db/schema";
-import type { RequestContext } from "../middleware/types";
 import type { Config } from "../config/schema";
 import type { RouteDispatchParams } from "./router";
 import { UserStatus } from "../db/enums";
@@ -22,6 +24,8 @@ import { jsonResponse, jsonError, HttpStatus, ErrorCode } from "./http-utils";
 import { getOrCreateSoloUserForAuth } from "../middleware/auth";
 import { createRateLimiter } from "../middleware/rate-limit";
 import { getSmk, isEncryptionEnabled, ensureActorKey } from "../crypto";
+
+type HandleOpts = { database: Kysely<DB>; config: Config };
 
 // ── Rate limiting (per-IP, in-memory) ─────────────────────────
 
@@ -32,20 +36,17 @@ const loginLimiter = createRateLimiter({ windowMs: 60_000, maxRequests: LOGIN_MA
 
 const TOKEN_COOKIE = "ll_token";
 const COOKIE_PATH = "/";
-const COOKIE_MAX_AGE_SECS = 24 * 60 * 60; // 24h (matches session timeout default)
+const COOKIE_MAX_AGE_SECS = 24 * 60 * 60; // 24h
 
 function setTokenCookie(token: string): string {
-  // httpOnly to prevent XSS access, SameSite=Lax for htmx redirects
   return `${TOKEN_COOKIE}=${token}; Path=${COOKIE_PATH}; Max-Age=${COOKIE_MAX_AGE_SECS}; HttpOnly; SameSite=Lax; Secure`;
 }
 
 // ── Helpers ───────────────────────────────────────────────────
 
 function getClientIp(request: Request): string {
-  // Prefer direct connection IP when available; X-Forwarded-For trust limited to reverse proxy setups
   const directIp = (request as { remoteAddress?: string }).remoteAddress;
   if (directIp) return directIp;
-  // Note: X-Forwarded-For can be spoofed by clients not behind trusted proxy
   return (
     request.headers.get("X-Forwarded-For")?.split(",", 1)[0]?.trim() ??
     request.headers.get("x-real-ip") ??
@@ -72,62 +73,9 @@ function errorHtml(msg: string): Response {
   });
 }
 
-/**
- * Create a session and return the raw token.
- */
-async function createSession(
-  database: Kysely<DB>,
-  userId: string,
-  ip: string | null,
-  userAgent: string | null,
-  maxSessions: number,
-  sessionTimeoutHours: number,
-): Promise<string> {
-  // Enforce max sessions per user
-  const sessionCount = await database
-    .selectFrom("sessions")
-    .select(database.fn.countAll<number>().as("count"))
-    .where("user_id", "=", userId)
-    .executeTakeFirst();
-
-  if (sessionCount && sessionCount.count >= maxSessions) {
-    // Evict oldest session
-    await database
-      .deleteFrom("sessions")
-      .where("user_id", "=", userId)
-      .where("id", "in", (qb) =>
-        qb
-          .selectFrom("sessions")
-          .select("id")
-          .where("user_id", "=", userId)
-          .orderBy("last_activity", "asc")
-          .limit(1),
-      )
-      .execute();
-  }
-
-  const rawToken = secureToken();
-  const tokenHash = crypto.createHash("sha256").update(rawToken).digest("hex");
-
-  await database
-    .insertInto("sessions")
-    .values({
-      id: uid(),
-      user_id: userId,
-      token_hash: tokenHash,
-      ip,
-      user_agent: userAgent,
-      expires_at: computeExpiry(sessionTimeoutHours),
-    })
-    .execute();
-
-  return rawToken;
-}
-
-// ── Route handlers ────────────────────────────────────────────
+// ── Handlers ──────────────────────────────────────────────────
 
 async function handleLogin(request: Request, database: Kysely<DB>, config: Config): Promise<Response> {
-  // Rate limit
   const ip = getClientIp(request);
   if (!loginLimiter.check(ip)) {
     return new Response('<p class="error-msg">Too many attempts. Try again later.</p>', {
@@ -136,7 +84,6 @@ async function handleLogin(request: Request, database: Kysely<DB>, config: Confi
     });
   }
 
-  // Parse form-encoded body
   let formData: URLSearchParams;
   try {
     const text = await request.text();
@@ -152,61 +99,49 @@ async function handleLogin(request: Request, database: Kysely<DB>, config: Confi
     return errorHtml("Username and password are required.");
   }
 
-  // Lookup user
   const user = await database
     .selectFrom("users")
     .select(["id", "username", "password_hash", "role", "status", "display_name"])
     .where("username", "=", username)
     .executeTakeFirst();
 
-  if (!user) {
-    return errorHtml("Invalid username or password.");
-  }
-
-  // Check status
+  if (!user) return errorHtml("Invalid username or password.");
   if (user.status === UserStatus.Disabled || user.status === UserStatus.Deactivated) {
     return errorHtml("Account is disabled.");
   }
-
-  // Verify password
-  if (!user.password_hash) {
-    return errorHtml("Invalid username or password.");
-  }
+  if (!user.password_hash) return errorHtml("Invalid username or password.");
 
   const passwordValid = await Bun.password.verify(password, user.password_hash);
-  if (!passwordValid) {
-    return errorHtml("Invalid username or password.");
-  }
+  if (!passwordValid) return errorHtml("Invalid username or password.");
 
-  // Create session
   const userAgent = request.headers.get("User-Agent");
-  const token = await createSession(
-    database,
-    user.id,
-    ip,
-    userAgent,
-    config.auth.maxSessionsPerUser,
-    config.auth.sessionTimeoutHours,
-  );
+  const rawToken = secureToken();
+  const tokenHash = crypto.createHash("sha256").update(rawToken).digest("hex");
 
-  // Ensure the user's actor has an encryption key (if encryption enabled)
+  await database
+    .insertInto("sessions")
+    .values({
+      id: uid(),
+      user_id: user.id,
+      token_hash: tokenHash,
+      ip,
+      user_agent: userAgent,
+      expires_at: computeExpiry(config.auth.sessionTimeoutHours),
+    })
+    .execute();
+
   if (isEncryptionEnabled()) {
     const smk = getSmk()!;
     await ensureActorKey({ database, actorId: user.id, smk });
   }
 
-  // Return HX-Redirect + Set-Cookie
   return new Response(null, {
     status: HttpStatus.OK,
-    headers: {
-      "HX-Redirect": "/views/chat",
-      "Set-Cookie": setTokenCookie(token),
-    },
+    headers: { "HX-Redirect": "/views/chat", "Set-Cookie": setTokenCookie(rawToken) },
   });
 }
 
 async function handleDemoLogin(request: Request, database: Kysely<DB>, config: Config): Promise<Response> {
-  // Get or create solo user (reuse logic from auth middleware)
   const soloUser = await getOrCreateSoloUserForAuth(database, config.auth.demoUsername);
   if (!soloUser) {
     return jsonError({
@@ -215,41 +150,43 @@ async function handleDemoLogin(request: Request, database: Kysely<DB>, config: C
     });
   }
 
-  // Create session
   const ip = getClientIp(request);
   const userAgent = request.headers.get("User-Agent");
-  const token = await createSession(
-    database,
-    soloUser.id,
-    ip,
-    userAgent,
-    config.auth.maxSessionsPerUser,
-    config.auth.sessionTimeoutHours,
-  );
+  const rawToken = secureToken();
+  const tokenHash = crypto.createHash("sha256").update(rawToken).digest("hex");
 
-  // Ensure the solo user's actor has an encryption key
+  await database
+    .insertInto("sessions")
+    .values({
+      id: uid(),
+      user_id: soloUser.id,
+      token_hash: tokenHash,
+      ip,
+      user_agent: userAgent,
+      expires_at: computeExpiry(config.auth.sessionTimeoutHours),
+    })
+    .execute();
+
   if (isEncryptionEnabled()) {
     const smk = getSmk()!;
     await ensureActorKey({ database, actorId: soloUser.id, smk });
   }
 
-  // Return redirect to chat page (hx-target="body" hx-swap="outerHTML")
   return new Response(null, {
     status: HttpStatus.OK,
-    headers: {
-      "HX-Redirect": "/views/chat",
-      "Set-Cookie": setTokenCookie(token),
-    },
+    headers: { "HX-Redirect": "/views/chat", "Set-Cookie": setTokenCookie(rawToken) },
   });
 }
 
-async function handleLogout(
-  _request: Request,
-  database: Kysely<DB>,
-  context: RequestContext,
-): Promise<Response> {
-  if (!context.sessionId) {
-    // Solo mode or no session — clear cookie
+async function handleLogout(request: Request, database: Kysely<DB>): Promise<Response> {
+  const token = request.headers
+    .get("Cookie")
+    ?.split(";")
+    .find((c) => c.startsWith("ll_token="))
+    ?.slice(9);
+  const sessionId = token ? await getSessionIdFromToken(database, token) : null;
+
+  if (!sessionId) {
     return new Response(null, {
       status: HttpStatus.OK,
       headers: {
@@ -258,13 +195,42 @@ async function handleLogout(
     });
   }
 
-  await database.deleteFrom("sessions").where("id", "=", context.sessionId).execute();
-
+  await database.deleteFrom("sessions").where("id", "=", sessionId).execute();
   return jsonResponse({ ok: true }, HttpStatus.OK);
 }
 
-async function handleMe(database: Kysely<DB>, context: RequestContext): Promise<Response> {
-  if (!context.userId) {
+async function getSessionIdFromToken(database: Kysely<DB>, token: string): Promise<string | null> {
+  const tokenHash = crypto.createHash("sha256").update(token).digest("hex");
+  const session = await database
+    .selectFrom("sessions")
+    .select("id")
+    .where("token_hash", "=", tokenHash)
+    .executeTakeFirst();
+  return session?.id ?? null;
+}
+
+async function handleMe(request: Request, database: Kysely<DB>): Promise<Response> {
+  const token = request.headers
+    .get("Cookie")
+    ?.split(";")
+    .find((c) => c.startsWith("ll_token="))
+    ?.slice(9);
+  const sessionId = token ? await getSessionIdFromToken(database, token) : null;
+
+  if (!sessionId) {
+    return jsonError({
+      message: "Unauthorized",
+      status: HttpStatus.Unauthorized,
+      code: ErrorCode.Unauthorized,
+    });
+  }
+
+  const session = await database
+    .selectFrom("sessions")
+    .select("user_id")
+    .where("id", "=", sessionId)
+    .executeTakeFirst();
+  if (!session) {
     return jsonError({
       message: "Unauthorized",
       status: HttpStatus.Unauthorized,
@@ -275,7 +241,7 @@ async function handleMe(database: Kysely<DB>, context: RequestContext): Promise<
   const user = await database
     .selectFrom("users")
     .select(["id", "username", "display_name", "role", "created_at", "last_seen_at"])
-    .where("id", "=", context.userId)
+    .where("id", "=", session.user_id)
     .executeTakeFirst();
 
   if (!user)
@@ -283,14 +249,24 @@ async function handleMe(database: Kysely<DB>, context: RequestContext): Promise<
   return jsonResponse(user);
 }
 
-// ── Dispatch ──────────────────────────────────────────────────
+// ── Elysia plugins ─────────────────────────────────────
 
-/**
- * Auth route dispatch. Called from server.ts handleApiRequest.
- * Returns Response on match, null to pass through.
- */
+export function authPublicRoutes({ database, config }: HandleOpts): Elysia {
+  return new Elysia({ name: "auth-public" })
+    .post("/api/auth/login", async ({ request }) => handleLogin(request, database, config))
+    .post("/api/demo-login", async ({ request }) => handleDemoLogin(request, database, config));
+}
+
+export function authProtectedRoutes({ database }: { database: Kysely<DB> }): Elysia {
+  return new Elysia({ name: "auth-protected" })
+    .post("/api/auth/logout", async ({ request }) => handleLogout(request, database))
+    .get("/api/auth/me", async ({ request }) => handleMe(request, database));
+}
+
+// ── Backward compat: dispatchAuth for server.ts ───────────────────────────────────────────
+
 export async function dispatchAuth(params: RouteDispatchParams): Promise<Response | null> {
-  const { request, context, database, config } = params;
+  const { request, database, config } = params;
   const url = new URL(request.url);
   const { pathname } = url;
   const method = request.method;
@@ -299,35 +275,25 @@ export async function dispatchAuth(params: RouteDispatchParams): Promise<Respons
   if (pathname === "/api/auth/login" && method === "POST") {
     return handleLogin(request, database, config);
   }
-
   // POST /api/demo-login
   if (pathname === "/api/demo-login" && method === "POST") {
     return handleDemoLogin(request, database, config);
   }
-
   // POST /api/auth/logout
   if (pathname === "/api/auth/logout" && method === "POST") {
-    return handleLogout(request, database, context);
+    return handleLogout(request, database);
   }
-
   // GET /api/auth/me
   if (pathname === "/api/auth/me" && method === "GET") {
-    return handleMe(database, context);
+    return handleMe(request, database);
   }
-
-  return null; // Not an auth route
+  return null;
 }
 
-/**
- * Reset the login rate limiter — intended for e2e test isolation
- * (each test file spins up a fresh server but the limiter is process-global).
- */
+// ── Test utilities ───────────────────────────────────────────
+
 export function resetLoginRateLimiter(): void {
   loginLimiter.clear();
 }
 
-/**
- * Clear the cached solo user reference (for testing).
- * Re-exported from middleware/auth.ts.
- */
 export { resetSoloUserCache as resetSoloUserCacheForAuth } from "../middleware/auth";

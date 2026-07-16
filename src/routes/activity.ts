@@ -7,24 +7,16 @@
  * Returns dict of chatId → { unseenCount, lastMessageCreatedAt }
  * for each chat the participant belongs to. Compares messages
  * created after the participant's last_read_message_id.
+ *
+ * Elysia plugin — uses auth guard for authentication.
  */
 
+/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access */
+
+import { Elysia } from "elysia";
 import type { Kysely } from "kysely";
 import type { DB } from "../db/schema";
-import type { RequestContext } from "../middleware/types";
-import type { RouteDispatch } from "./router";
-import { registerRoute } from "./router";
-import { BAD_METHOD, jsonResponse, jsonError, HttpStatus, ErrorCode } from "./http-utils";
-
-const dispatch: RouteDispatch = async ({ request, context, database }) => {
-  const url = new URL(request.url);
-  const { pathname } = url;
-
-  if (pathname !== "/api/chats/activity") return null;
-  if (request.method !== "GET") return BAD_METHOD();
-
-  return handleActivity({ database, context });
-};
+import { jsonResponse, jsonError, HttpStatus, ErrorCode } from "./http-utils";
 
 interface ActivityEntry {
   unseenCount: number;
@@ -118,24 +110,17 @@ export async function computeActivity(
   return result;
 }
 
-async function handleActivity({
-  database,
-  context,
-}: {
-  database: Kysely<DB>;
-  context: RequestContext;
-}): Promise<Response> {
-  const actorId = context.userId;
-  if (!actorId)
-    return jsonError({
-      message: "Unauthorized",
-      status: HttpStatus.Unauthorized,
-      code: ErrorCode.Unauthorized,
-    });
-
-  const chats = await computeActivity(database, actorId);
-  return jsonResponse({ chats } satisfies ActivityResponse);
+export function activityRoutes({ database }: { database: Kysely<DB> }) {
+  return new Elysia({ name: "activity" }).get("/api/chats/activity", async (ctx) => {
+    const userId = (ctx as any).userId as string | null;
+    if (!userId) {
+      return jsonError({
+        message: "Unauthorized",
+        status: HttpStatus.Unauthorized,
+        code: ErrorCode.Unauthorized,
+      });
+    }
+    const chats = await computeActivity(database, userId);
+    return jsonResponse({ chats } satisfies ActivityResponse);
+  });
 }
-
-registerRoute(dispatch);
-export { dispatch };

@@ -6,6 +6,7 @@ import { join, normalize } from "node:path";
 import { existsSync, readFileSync, statSync, readdirSync } from "node:fs";
 import { spawnSync } from "node:child_process";
 import { compressAssets, copyDirectory } from "./content/compress";
+import { createApp } from "./elysia-app";
 import { injectContentHashes } from "./content/hash-injection";
 import { runMigrations } from "./db/migrate";
 import { seedDefaultActors } from "./db/seed";
@@ -15,13 +16,7 @@ import { dispatch as dispatchGeneration } from "./generation/controller";
 import { loadAllPlugins, dispatchPluginRoute, unloadAllPlugins } from "./plugins";
 import { getDatabase } from "./db/index";
 import { initializeProviders, registerProvider, OpenAiCompatibleProvider } from "./generation";
-import {
-  authenticate,
-  compose,
-  errorBoundary,
-  ResponseHeaderPolicy,
-  DynamicResponsePolicy,
-} from "./middleware/index";
+import { authenticate, compose, errorBoundary } from "./middleware/index";
 import type { RequestContext } from "./middleware/index";
 import { apiDispatch } from "./routes/router";
 import { dispatch as dispatchViews } from "./routes/views";
@@ -331,70 +326,53 @@ async function start() {
   const serverManager = new ServerExternalManager(logger);
   const serverLogger = logger.child({ module: "server" });
 
-  // ── Response-header policy (FExBE) — built once, applied to every response ──
-  const headerPolicy = new ResponseHeaderPolicy(config.headers);
-
-  // ── Dynamic-response policy — minify + validate + compress runtime bodies ──
-  const dynamicPolicy = new DynamicResponsePolicy(config.dynamicResponse, logger);
-
-  // ── Shared fetch handler (HTTP + HTTPS) ───────────────────
-  const fetchHandler = async (request: Request): Promise<Response> => {
+  // ── Non-API request handler (views, docs, static files) ──
+  const handleNonApiRequest = async (request: Request): Promise<Response> => {
     const url = new URL(request.url);
 
-    let response: Response;
+    // ── View templates and character/world routes ───────────────
+    const viewResponse = await dispatchViews({
+      request,
+      context: { userId: null, userRole: null, sessionId: null },
+      database,
+      config,
+    });
+    if (viewResponse) return viewResponse;
 
-    if (url.pathname.startsWith("/api/")) {
-      response = await handleApiRequest({ request, database, config });
-    } else {
-      // ── View templates and character/world routes ───────────────
-      const viewResponse = await dispatchViews({
-        request,
-        context: { userId: null, userRole: null, sessionId: null },
-        database,
-        config,
-      });
-      if (viewResponse) {
-        response = viewResponse;
-      } else {
-        const docsResult = handleDocsRequest(url, request, config);
-        if (docsResult) {
-          response = docsResult;
-        } else {
-          const publicPath = normalize(join(PUBLIC_DIR, url.pathname === "/" ? "index.html" : url.pathname));
+    const docsResult = handleDocsRequest(url, request, config);
+    if (docsResult) return docsResult;
 
-          // Path traversal guard: must be under PUBLIC_DIR
-          const publicDirWithSlash = PUBLIC_DIR + "/";
-          if (publicPath.startsWith(publicDirWithSlash) || publicPath === PUBLIC_DIR) {
-            let fullPath = publicPath;
+    const publicPath = normalize(join(PUBLIC_DIR, url.pathname === "/" ? "index.html" : url.pathname));
 
-            if (!existsSync(fullPath)) {
-              const htmlPath = fullPath + ".html";
-              if (existsSync(htmlPath)) fullPath = htmlPath;
-            }
+    // Path traversal guard: must be under PUBLIC_DIR
+    const publicDirWithSlash = PUBLIC_DIR + "/";
+    if (publicPath.startsWith(publicDirWithSlash) || publicPath === PUBLIC_DIR) {
+      let fullPath = publicPath;
 
-            if (existsSync(fullPath)) {
-              const acceptEncoding = request.headers.get("accept-encoding") ?? "";
-              const ifNoneMatch = request.headers.get("if-none-match");
-              response = respondWithFile(fullPath, acceptEncoding, ifNoneMatch);
-            } else {
-              response = new Response("Not found", { status: 404 });
-            }
-          } else {
-            response = new Response("Not found", { status: 404 });
-          }
-        }
+      if (!existsSync(fullPath)) {
+        const htmlPath = fullPath + ".html";
+        if (existsSync(htmlPath)) fullPath = htmlPath;
+      }
+
+      if (existsSync(fullPath)) {
+        const acceptEncoding = request.headers.get("accept-encoding") ?? "";
+        const ifNoneMatch = request.headers.get("if-none-match");
+        return respondWithFile(fullPath, acceptEncoding, ifNoneMatch);
       }
     }
 
-    // Optimize dynamic bodies (minify + validate + compress) before headers.
-    response = await dynamicPolicy.apply({ request, response });
-
-    // Apply centralized response-header policy (security / perf / observability).
-    return headerPolicy.apply({ request, response });
+    return new Response("Not found", { status: 404 });
   };
 
-  // ── Start HTTP server immediately so port is open ─────────
-  serve({ port: config.server.port, fetch: fetchHandler });
+  // ── Elysia app (handles routing + transforms) ──────────────
+  const app = createApp({
+    database,
+    config,
+    handleNonApiRequest,
+  });
+
+  // ── Start HTTP server via Elysia ──────────────────────────
+  app.listen({ port: config.server.port });
   serverLogger.info(`HTTP  → http://localhost:${config.server.port}`);
 
   // ── HTTPS server (TLS certs configured or auto-generated) ─
@@ -405,7 +383,7 @@ async function start() {
       serve({
         port: httpsPort,
         tls: { key: Bun.file(tlsFiles.key), cert: Bun.file(tlsFiles.cert) },
-        fetch: fetchHandler,
+        fetch: (request) => app.fetch(request),
       });
       serverLogger.info(`HTTPS → https://localhost:${httpsPort}`);
     } else {

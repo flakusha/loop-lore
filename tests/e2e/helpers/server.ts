@@ -1,7 +1,7 @@
 /**
  * E2E Test Server
  *
- * Spins up Bun.serve on a random port using the real handleApiRequest.
+ * Spins up Bun.serve on a random port using the Elysia app (createApp).
  * Call createTestServer() in setup, use the returned URL for fetch calls.
  */
 
@@ -12,7 +12,7 @@ import { resolve } from "node:path";
 import { createSqliteDialect, setTestDatabase } from "@/db/index";
 import { up as migrate } from "@/db/migrations/001_init";
 import "./logger-init";
-import { handleApiRequest } from "@/server";
+import { createApp } from "@/elysia-app";
 import { loadConfig } from "@/config/load";
 import { createLogger, setGlobalLogger } from "@/logger";
 import { initAgeGate } from "@/age-gate/controller";
@@ -211,13 +211,11 @@ export async function createTestServer(
 
   const bunServer = Bun.serve({
     port: 0,
-    fetch: async (req: Request): Promise<Response> => {
-      const url = new URL(req.url);
-      if (url.pathname.startsWith("/api/")) {
-        return handleApiRequest({ request: req, database: db, config });
-      }
-      return new Response("Not found", { status: 404 });
-    },
+    fetch: createApp({
+      database: db,
+      config,
+      handleNonApiRequest: async () => new Response("Not found", { status: 404 }),
+    }).fetch,
   });
 
   const url = `http://localhost:${bunServer.port}`;
