@@ -4,8 +4,6 @@
  * CRUD for per-actor inventory items.
  */
 
-/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access */
-
 import { Elysia } from "elysia";
 import type { Db } from "../db";
 import type { Config } from "../config/schema";
