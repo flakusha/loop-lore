@@ -121,6 +121,32 @@ export function usersRoutes(opts: { database: Db; config: Config }): Elysia {
       },
       { body: UserProfileUpdateBody, params: UserIdParams },
     )
+    .patch("/api/users/me/settings", async (ctx) => {
+      const userId = (ctx as any).userId as string | null;
+      if (!userId) return unauthorized();
+
+      const body = (ctx as any).body as Record<string, unknown>;
+      const user = await opts.database
+        .selectFrom("users")
+        .select(["id", "settings"])
+        .where("id", "=", userId)
+        .executeTakeFirst();
+
+      if (!user) return notFound("User not found");
+
+      const currentSettings = jsonParseOr<Record<string, unknown>>(user.settings ?? "", {});
+      const mergedResult = safeJsonStringify({ ...currentSettings, ...body });
+      if (!mergedResult.ok)
+        return jsonError({ message: "Invalid settings data", status: HttpStatus.BadRequest });
+
+      await opts.database
+        .updateTable("users")
+        .set({ settings: mergedResult.value })
+        .where("id", "=", userId)
+        .execute();
+
+      return jsonResponse({ ok: true });
+    })
     .put(
       "/api/users/:id/settings",
       async (ctx) => {

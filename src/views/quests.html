@@ -1,0 +1,312 @@
+<!-- Quests Page (world-scoped) -->
+<header id="header-slot" class="main-header" data-page="quests" data-testid="quests-header">
+  <button class="hamburger" x-on:click="window.toggleSidebar()" data-testid="hamburger">☰</button>
+  <span class="title">Quests</span>
+  <div class="actions">
+    <template x-if="worldId">
+      <a :href="'/worlds/' + worldId" class="btn btn-secondary btn-sm">Back to World</a>
+    </template>
+  </div>
+</header>
+
+<div class="app-layout" x-data="questsPage()" x-init="init()">
+  <main class="main-content" style="padding-top: 0">
+    <div class="chat-area" style="max-width: 960px; margin: 0 auto; width: 100%">
+      <!-- World selector if no worldId -->
+      <div x-show="!worldId" style="padding: var(--space-6)">
+        <div class="empty-state" style="padding: var(--space-8)">
+          <div class="icon">📋</div>
+          <div class="title">Select a World</div>
+          <div class="description" style="margin-bottom: var(--space-4)">
+            Quests belong to worlds. Choose a world to view its quests.
+          </div>
+          <select
+            class="form-input"
+            style="width: 300px; margin: 0 auto"
+            x-model="selectedWorldId"
+            @change="goToWorld(selectedWorldId)"
+          >
+            <option value="">Select a world...</option>
+            <template x-for="w in worldOptions" :key="w.id">
+              <option :value="w.id" x-text="w.name"></option>
+            </template>
+          </select>
+        </div>
+      </div>
+
+      <!-- Quest content when worldId is set -->
+      <template x-if="worldId">
+        <div style="padding: var(--space-6)">
+          <div
+            style="
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+              margin-bottom: var(--space-4);
+            "
+          >
+            <h2 style="font-size: 18px; font-weight: 600" x-text="worldName || 'Quests'"></h2>
+            <button class="btn btn-primary btn-sm" @click="showCreateForm = true">+ New Quest</button>
+          </div>
+
+          <!-- Create Form -->
+          <div
+            x-show="showCreateForm"
+            style="
+              padding: var(--space-4);
+              background: var(--color-surface, #f8f9fa);
+              border-radius: 6px;
+              border: 1px solid var(--color-border, #e9ecef);
+              margin-bottom: var(--space-4);
+            "
+          >
+            <h3 style="font-size: 14px; font-weight: 600; margin-bottom: var(--space-3)">Create Quest</h3>
+            <div style="display: grid; gap: var(--space-3)">
+              <div>
+                <label class="form-label" style="font-size: 12px">Name</label>
+                <input
+                  class="form-input"
+                  style="font-size: 13px"
+                  x-model="createName"
+                  placeholder="Quest name"
+                />
+              </div>
+              <div>
+                <label class="form-label" style="font-size: 12px">Description</label>
+                <textarea
+                  class="form-input form-textarea"
+                  rows="2"
+                  style="font-size: 13px"
+                  x-model="createDescription"
+                  placeholder="Quest description"
+                ></textarea>
+              </div>
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3)">
+                <div>
+                  <label class="form-label" style="font-size: 12px">Type</label>
+                  <select class="form-input" style="font-size: 13px" x-model="createType">
+                    <option value="main">Main</option>
+                    <option value="side">Side</option>
+                    <option value="bounty">Bounty</option>
+                    <option value="daily">Daily</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="form-label" style="font-size: 12px">Priority</label>
+                  <input
+                    class="form-input"
+                    type="number"
+                    min="1"
+                    max="10"
+                    style="font-size: 13px"
+                    x-model="createPriority"
+                  />
+                </div>
+              </div>
+              <div style="display: flex; gap: var(--space-2); justify-content: flex-end">
+                <button class="btn btn-secondary btn-xs" @click="showCreateForm = false">Cancel</button>
+                <button class="btn btn-primary btn-xs" @click="createQuest()">Create</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Loading -->
+          <div x-show="loading" class="empty-state" style="padding: var(--space-12)">
+            <div class="icon">⏳</div>
+            <div class="title">Loading quests...</div>
+          </div>
+
+          <!-- Quest list -->
+          <template x-if="!loading">
+            <div>
+              <div x-show="quests.length === 0" class="empty-state" style="padding: var(--space-8)">
+                <div class="title">No quests found</div>
+                <div class="description">Create a quest to start an adventure.</div>
+              </div>
+              <div style="display: grid; gap: var(--space-3)">
+                <template x-for="q in quests" :key="q.id">
+                  <div
+                    style="
+                      padding: var(--space-4);
+                      background: var(--color-surface, #f8f9fa);
+                      border-radius: 6px;
+                      border: 1px solid var(--color-border, #e9ecef);
+                      cursor: pointer;
+                    "
+                    @click="expandQuest(q.id)"
+                  >
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start">
+                      <div style="flex: 1">
+                        <div
+                          style="
+                            display: flex;
+                            align-items: center;
+                            gap: var(--space-2);
+                            margin-bottom: var(--space-1);
+                          "
+                        >
+                          <strong style="font-size: 15px" x-text="q.name"></strong>
+                          <span
+                            style="
+                              font-size: 10px;
+                              padding: 1px 5px;
+                              border-radius: 3px;
+                              background: var(--color-background, #fff);
+                              border: 1px solid var(--color-border, #e9ecef);
+                            "
+                            x-text="q.type"
+                          ></span>
+                          <span
+                            style="font-size: 10px; padding: 1px 5px; border-radius: 3px"
+                            :style="{background: q.status === 'active' ? '#28a74522' : '#6c757d22', color: q.status === 'active' ? '#28a745' : '#6c757d'}"
+                            x-text="q.status"
+                          ></span>
+                        </div>
+                        <div
+                          style="
+                            font-size: 13px;
+                            color: var(--color-text-secondary);
+                            margin-bottom: var(--space-2);
+                          "
+                          x-text="q.description || 'No description'"
+                        ></div>
+                        <div
+                          style="
+                            display: flex;
+                            gap: var(--space-4);
+                            font-size: 11px;
+                            color: var(--color-text-secondary);
+                            margin-bottom: var(--space-2);
+                          "
+                        >
+                          <span x-text="'Priority: ' + q.priority"></span>
+                          <span x-text="'Progress: ' + (q.progress ?? 0) + '/' + (q.target ?? 0)"></span>
+                          <span x-text="'Created: ' + formatDate(q.created_at)"></span>
+                        </div>
+                        <div
+                          style="
+                            height: 4px;
+                            background: var(--color-border, #e9ecef);
+                            border-radius: 2px;
+                            overflow: hidden;
+                          "
+                        >
+                          <div
+                            style="
+                              height: 100%;
+                              background: #28a745;
+                              border-radius: 2px;
+                              transition: width 0.3s;
+                            "
+                            :style="{width: progressPct(q) + '%'}"
+                          ></div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Expanded edit form -->
+                    <div
+                      x-show="expandedQuest === q.id"
+                      @click.stop
+                      style="
+                        margin-top: var(--space-3);
+                        padding-top: var(--space-3);
+                        border-top: 1px solid var(--color-border, #e9ecef);
+                      "
+                    >
+                      <div style="display: grid; gap: var(--space-2)">
+                        <div>
+                          <label class="form-label" style="font-size: 11px">Name</label>
+                          <input class="form-input" style="font-size: 13px" x-model="editName" />
+                        </div>
+                        <div>
+                          <label class="form-label" style="font-size: 11px">Description</label>
+                          <textarea
+                            class="form-input form-textarea"
+                            rows="2"
+                            style="font-size: 13px"
+                            x-model="editDescription"
+                          ></textarea>
+                        </div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-2)">
+                          <div>
+                            <label class="form-label" style="font-size: 11px">Priority</label>
+                            <input
+                              class="form-input"
+                              type="number"
+                              min="1"
+                              max="10"
+                              style="font-size: 13px"
+                              x-model="editPriority"
+                            />
+                          </div>
+                          <div>
+                            <label class="form-label" style="font-size: 11px">Advance by</label>
+                            <input
+                              class="form-input"
+                              type="number"
+                              min="1"
+                              style="font-size: 13px"
+                              x-model="advanceDelta"
+                            />
+                          </div>
+                        </div>
+                        <div style="display: flex; gap: var(--space-2); flex-wrap: wrap">
+                          <button class="btn btn-primary btn-xs" @click="saveQuest(q.id)">Save</button>
+                          <button class="btn btn-secondary btn-xs" @click="advanceQuest(q.id)">
+                            Advance Progress
+                          </button>
+                          <template x-if="confirmDeleteQuest !== q.id">
+                            <button class="btn btn-danger btn-xs" @click="confirmDeleteQuest = q.id">
+                              Delete
+                            </button>
+                          </template>
+                          <template x-if="confirmDeleteQuest === q.id">
+                            <div style="display: flex; gap: 4px">
+                              <button class="btn btn-danger btn-xs" @click="deleteQuest(q.id)">
+                                Confirm
+                              </button>
+                              <button class="btn btn-secondary btn-xs" @click="confirmDeleteQuest = ''">
+                                Cancel
+                              </button>
+                            </div>
+                          </template>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </template>
+              </div>
+
+              <!-- Pagination -->
+              <div
+                x-show="totalPages > 1"
+                style="
+                  display: flex;
+                  justify-content: center;
+                  gap: var(--space-2);
+                  margin-top: var(--space-4);
+                "
+              >
+                <button class="btn btn-secondary btn-xs" :disabled="page === 1" @click="goPage(page - 1)">
+                  Prev
+                </button>
+                <span
+                  style="display: flex; align-items: center; font-size: 13px"
+                  x-text="'Page ' + page + ' of ' + totalPages"
+                ></span>
+                <button
+                  class="btn btn-secondary btn-xs"
+                  :disabled="page >= totalPages"
+                  @click="goPage(page + 1)"
+                >
+                  Next
+                </button>
+              </div>
+            </div>
+          </template>
+        </div>
+      </template>
+    </div>
+  </main>
+</div>

@@ -13,7 +13,11 @@ export const chatActions: Partial<ChatState> & ThisType<ChatState> = {
 
     try {
       if (this.impersonationActive) {
-        const res = await apiFetch(`/api/chats/${this.activeChat}/impersonate`, { method: "DELETE" });
+        const res = await apiFetch(`/api/chats/${this.activeChat}/impersonate`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: jsonBody({ impersonateActorId: null }),
+        });
         if (res.ok) {
           this.impersonationActive = false;
           this.impersonatingActorId = null;
