@@ -220,17 +220,21 @@ export function questsRoutes({ database }: { database: Kysely<DB> }): Elysia {
         userRole,
       );
     })
-    .post("/api/worlds/:id/quests", async (ctx: any) => {
-      const userId = ctx.userId as string | null;
-      const userRole = ctx.userRole as string | null;
-      return handleCreateQuest(
-        database,
-        ctx.params.id as string,
-        userId,
-        userRole,
-        ctx.body as Record<string, unknown>,
-      );
-    }, { body: QuestCreateBody })
+    .post(
+      "/api/worlds/:id/quests",
+      async (ctx: any) => {
+        const userId = ctx.userId as string | null;
+        const userRole = ctx.userRole as string | null;
+        return handleCreateQuest(
+          database,
+          ctx.params.id as string,
+          userId,
+          userRole,
+          ctx.body as Record<string, unknown>,
+        );
+      },
+      { body: QuestCreateBody },
+    )
     .get("/api/quests/:questId", async (ctx: any) => {
       const userId = ctx.userId as string | null;
       const userRole = ctx.userRole as string | null;
