@@ -179,15 +179,15 @@ Target: solidify generation, admin, memory, responsive UX, search, i18n, observa
 
 Tool-calling loop, provider resilience, streaming reconnect.
 
-| Task                                    | Files                                                                 | Status | Notes |
-| --------------------------------------- | --------------------------------------------------------------------- | ------ | ----- |
-| LLM tool-call loop in generate-route.ts | `src/generation/generate-route.ts`                                    | ✅     | Multi-turn orchestration capped at 5 rounds. Tool defs from plugin registry injected into `tools` array. |
-| Tool definition injection into requests | `src/generation/generate-route.ts`                                    | ✅     | `registry.getAllTools()` → OpenAI `tools` array. Gate on `ProviderCapabilities.tools`. |
-| `tool_calls` response parsing           | `src/generation/providers/openai-compatible.ts`                       | ✅     | SSE `delta.tool_calls` accumulation (index-based merge). Emits `tool_call` chunk events. Non-streaming also parsed. |
+| Task                                    | Files                                                                 | Status | Notes                                                                                                                                      |
+| --------------------------------------- | --------------------------------------------------------------------- | ------ | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| LLM tool-call loop in generate-route.ts | `src/generation/generate-route.ts`                                    | ✅     | Multi-turn orchestration capped at 5 rounds. Tool defs from plugin registry injected into `tools` array.                                   |
+| Tool definition injection into requests | `src/generation/generate-route.ts`                                    | ✅     | `registry.getAllTools()` → OpenAI `tools` array. Gate on `ProviderCapabilities.tools`.                                                     |
+| `tool_calls` response parsing           | `src/generation/providers/openai-compatible.ts`                       | ✅     | SSE `delta.tool_calls` accumulation (index-based merge). Emits `tool_call` chunk events. Non-streaming also parsed.                        |
 | Tool execution + result loop            | `src/generation/generate-route.ts`                                    | ✅     | Execute tool via `ToolDefinition.handler`, store result as `tool` role message, re-inject into context, continue generation. Max 5 rounds. |
-| Provider failover (ordered fallback)    | `src/generation/providers/registry.ts`                                | ✅     | `callWithFailover()` tries providers in order, skips open circuits, records success/failure. |
-| Circuit breaker pattern                 | `src/generation/providers/circuit-breaker.ts`                         | ✅     | NEW. Tracks failures per provider. Half-open probe after cooldown. Configurable thresholds. Respects `Retry-After` headers. |
-| SSE reconnect via `Last-Event-ID`       | `src/generation/generation-routes.ts`, `src/generation/controller.ts` | ✅     | Parses `Last-Event-ID` header, calls `streamBuffer.replay(seq)`. Emits replayed events before new stream. |
+| Provider failover (ordered fallback)    | `src/generation/providers/registry.ts`                                | ✅     | `callWithFailover()` tries providers in order, skips open circuits, records success/failure.                                               |
+| Circuit breaker pattern                 | `src/generation/providers/circuit-breaker.ts`                         | ✅     | NEW. Tracks failures per provider. Half-open probe after cooldown. Configurable thresholds. Respects `Retry-After` headers.                |
+| SSE reconnect via `Last-Event-ID`       | `src/generation/generation-routes.ts`, `src/generation/controller.ts` | ✅     | Parses `Last-Event-ID` header, calls `streamBuffer.replay(seq)`. Emits replayed events before new stream.                                  |
 
 ### 11. Admin & Settings Architecture — ⬜ Not Started
 
@@ -223,30 +223,30 @@ Mobile breakpoints, touch targets, swipe sidebar, HTMX search/filter, filter bar
 keyboard shortcuts, bulk actions, message archiving, loading indicators, empty states, load more.
 All Epic 13 tasks implemented and verified.
 
-| Task                                        | Files                                             | Status  | Notes                                                                                                                                                             |
-| ------------------------------------------- | ------------------------------------------------- | ------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Mobile breakpoints (768px, 480px)           | `src/public/css/app.css`                          | ✅ Done | Mobile-first base. `@media (min-width: 768px)` desktop enhancements. `@media (max-width: 480px)` small phone.                                                     |
-| Container queries on input bar              | `src/public/css/app.css`                          | ✅ Done | `container-type: inline-size` on `.chat-input-bar`. Collapse extra buttons when bar < 420px/320px.                                                                |
-| 100dvh + safe-area-inset                    | `src/views/layout.html`, `src/public/css/app.css` | ✅ Done | `height: 100dvh` on body, `padding-bottom: env(safe-area-inset-bottom)` on input bar.                                                                             |
-| 44px touch targets                          | `src/public/css/app.css`                          | ✅ Done | `@media (hover: none) and (pointer: coarse)` rule for buttons, nav links, list items.                                                                             |
-| Responsive sidebar                          | `src/public/css/app.css`                          | ✅ Done | Mobile: `position: fixed`, 80% width, `transform: translateX(-100%)`, backdrop `rgba(0,0,0,0.4)`. Desktop: CSS var `--sidebar-width`, resizable drag handle.      |
-| View toggle (grid/list)                     | `src/views/gallery.html`                          | ✅ Done | Alpine `x-data`. CSS grid vs vertical rows. Preference persisted.                                                                                                 |
-| Chat pin/favorite                           | `src/routes/chats.ts`, `src/db/`                  | ✅ Done | `is_pinned` column toggle via PATCH. Star icon in chat list.                                                                                                      |
-| Chat list search + status filter            | `src/views/chat-list-panel.html`                  | ✅ Done | Alpine `x-model` filter on chat list panel.                                                                                                                       |
-| Client-side search (gallery, characters, worlds) | `src/frontend/pages/*.ts`                    | ✅ Done | `filterAssets()`, `filterCharacters()`, `filterWorlds()` — client-side JS.                                                                                       |
-| Swipe gesture for sidebar                   | `src/frontend/alpine/sidebar.ts`                  | ✅ Done | Swipe right from left 40px edge → open. Swipe left → close. Backdrop dismiss. Escape key.                                                                         |
-| HTMX active search on gallery               | `src/views/gallery.html`, `src/routes/views.ts`   | ✅ Done | `hx-trigger="input changed delay:300ms"`, `hx-get="/dynamic/gallery/search"`, `hx-target="#asset-grid"`. Server-side search endpoint.                              |
-| HTMX active search on characters            | `src/views/characters.html`, `src/routes/views.ts`| ✅ Done | Same pattern with sort. Server-side search by name.                                                                                                               |
-| HTMX active search on worlds                | `src/views/worlds.html`, `src/routes/views.ts`    | ✅ Done | Same pattern. Server-side search by name.                                                                                                                         |
-| Filter bar component                        | `src/components/filter-bar.html`                  | ✅ Done | Reusable Alpine-managed: search input, type/sort dropdowns, active chips, clear all. Included via `{{> filter-bar.html}}`.                                         |
-| Active filter chips                         | `src/components/filter-chips.html`                | ✅ Done | Removable tags showing current filters. Alpine-managed. Included via `{{> filter-chips.html}}`.                                                                    |
-| Keyboard shortcuts                          | `src/frontend/alpine/shortcuts.ts`                | ✅ Done | `Ctrl+B` sidebar, `Ctrl+N` new chat, `Ctrl+L` focus input, `Ctrl+K` search, `Escape` close sidebar.                                                              |
-| Load More pagination                        | `src/components/load-more.html`                   | ✅ Done | Reusable component with `hx-swap="outerHTML"`. Server-side pagination support via `data-load-more-url`.                                                            |
-| Empty states component                      | `src/components/empty-state.html`                 | ✅ Done | Reusable Alpine-managed: icon, title, description, action button. Via `data-empty-*` attributes.                                                                  |
-| Loading indicators wiring                   | `src/views/{gallery,characters,worlds}.html`      | ✅ Done | `hx-indicator` and `.htmx-indicator` spinner wired on all 3 data views.                                                                                           |
-| Bulk chat actions                           | `src/views/chat-list-panel.html`                  | ✅ Done | Checkbox selection, batch archive/delete/export. Alpine-managed selection array. Backend `POST /api/chats/batch/*` endpoints.                                     |
-| Message archiving (cascade, restore, purge) | `src/routes/messages.ts`, `src/db/`               | ✅ Done | `archived_at` column (migration 015). Archive/restore/purge API endpoints. 30-day purge cutoff.                                                                   |
-| Unit tests                                  | `src/routes/views-search.test.ts`, `src/routes/message-archiving.test.ts` | ✅ Done | 18 tests: search endpoint content, component existence, schema/enum checks, archive route presence.                                                               |
+| Task                                             | Files                                                                     | Status  | Notes                                                                                                                                                        |
+| ------------------------------------------------ | ------------------------------------------------------------------------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Mobile breakpoints (768px, 480px)                | `src/public/css/app.css`                                                  | ✅ Done | Mobile-first base. `@media (min-width: 768px)` desktop enhancements. `@media (max-width: 480px)` small phone.                                                |
+| Container queries on input bar                   | `src/public/css/app.css`                                                  | ✅ Done | `container-type: inline-size` on `.chat-input-bar`. Collapse extra buttons when bar < 420px/320px.                                                           |
+| 100dvh + safe-area-inset                         | `src/views/layout.html`, `src/public/css/app.css`                         | ✅ Done | `height: 100dvh` on body, `padding-bottom: env(safe-area-inset-bottom)` on input bar.                                                                        |
+| 44px touch targets                               | `src/public/css/app.css`                                                  | ✅ Done | `@media (hover: none) and (pointer: coarse)` rule for buttons, nav links, list items.                                                                        |
+| Responsive sidebar                               | `src/public/css/app.css`                                                  | ✅ Done | Mobile: `position: fixed`, 80% width, `transform: translateX(-100%)`, backdrop `rgba(0,0,0,0.4)`. Desktop: CSS var `--sidebar-width`, resizable drag handle. |
+| View toggle (grid/list)                          | `src/views/gallery.html`                                                  | ✅ Done | Alpine `x-data`. CSS grid vs vertical rows. Preference persisted.                                                                                            |
+| Chat pin/favorite                                | `src/routes/chats.ts`, `src/db/`                                          | ✅ Done | `is_pinned` column toggle via PATCH. Star icon in chat list.                                                                                                 |
+| Chat list search + status filter                 | `src/views/chat-list-panel.html`                                          | ✅ Done | Alpine `x-model` filter on chat list panel.                                                                                                                  |
+| Client-side search (gallery, characters, worlds) | `src/frontend/pages/*.ts`                                                 | ✅ Done | `filterAssets()`, `filterCharacters()`, `filterWorlds()` — client-side JS.                                                                                   |
+| Swipe gesture for sidebar                        | `src/frontend/alpine/sidebar.ts`                                          | ✅ Done | Swipe right from left 40px edge → open. Swipe left → close. Backdrop dismiss. Escape key.                                                                    |
+| HTMX active search on gallery                    | `src/views/gallery.html`, `src/routes/views.ts`                           | ✅ Done | `hx-trigger="input changed delay:300ms"`, `hx-get="/dynamic/gallery/search"`, `hx-target="#asset-grid"`. Server-side search endpoint.                        |
+| HTMX active search on characters                 | `src/views/characters.html`, `src/routes/views.ts`                        | ✅ Done | Same pattern with sort. Server-side search by name.                                                                                                          |
+| HTMX active search on worlds                     | `src/views/worlds.html`, `src/routes/views.ts`                            | ✅ Done | Same pattern. Server-side search by name.                                                                                                                    |
+| Filter bar component                             | `src/components/filter-bar.html`                                          | ✅ Done | Reusable Alpine-managed: search input, type/sort dropdowns, active chips, clear all. Included via `{{> filter-bar.html}}`.                                   |
+| Active filter chips                              | `src/components/filter-chips.html`                                        | ✅ Done | Removable tags showing current filters. Alpine-managed. Included via `{{> filter-chips.html}}`.                                                              |
+| Keyboard shortcuts                               | `src/frontend/alpine/shortcuts.ts`                                        | ✅ Done | `Ctrl+B` sidebar, `Ctrl+N` new chat, `Ctrl+L` focus input, `Ctrl+K` search, `Escape` close sidebar.                                                          |
+| Load More pagination                             | `src/components/load-more.html`                                           | ✅ Done | Reusable component with `hx-swap="outerHTML"`. Server-side pagination support via `data-load-more-url`.                                                      |
+| Empty states component                           | `src/components/empty-state.html`                                         | ✅ Done | Reusable Alpine-managed: icon, title, description, action button. Via `data-empty-*` attributes.                                                             |
+| Loading indicators wiring                        | `src/views/{gallery,characters,worlds}.html`                              | ✅ Done | `hx-indicator` and `.htmx-indicator` spinner wired on all 3 data views.                                                                                      |
+| Bulk chat actions                                | `src/views/chat-list-panel.html`                                          | ✅ Done | Checkbox selection, batch archive/delete/export. Alpine-managed selection array. Backend `POST /api/chats/batch/*` endpoints.                                |
+| Message archiving (cascade, restore, purge)      | `src/routes/messages.ts`, `src/db/`                                       | ✅ Done | `archived_at` column (migration 015). Archive/restore/purge API endpoints. 30-day purge cutoff.                                                              |
+| Unit tests                                       | `src/routes/views-search.test.ts`, `src/routes/message-archiving.test.ts` | ✅ Done | 18 tests: search endpoint content, component existence, schema/enum checks, archive route presence.                                                          |
 
 ### 14. Import/Export & Data Portability — ⬜ Not Started
 
@@ -335,20 +335,20 @@ mock providers, single-threaded. Results stored in `data/benchmarks/`
 
 See [`docs/spec/e2e-benchmarks.md`](../spec/e2e-benchmarks.md) for full spec.
 
-### 18. Local Inference Integrations — 🟡 In Progress
+### 18. Local Inference Integrations — ✅ Complete
 
 ComfyUI plugin, llama-swap LLM proxy, stable-diffusion.cpp, gallery metadata enrichment,
 chat-driven generation, security baseline for remote URLs.
 
-| Task                                      | Files                                                           | Status |
-| ----------------------------------------- | --------------------------------------------------------------- | ------ |
-| Fix doc references in plan + backlog      | `docs/meta/plan.md`, `docs/meta/backlog.md`                    | ✅     |
-| URL validation (SSRF guard, allowlist)    | `src/utils/url-validation.ts`                                    | ✅     |
-| sd.cpp native API provider (`/sdcpp/v1/`) | `src/generation/image-gen-route.ts`                             | ✅     |
-| ComfyUI provider (submit/poll/WS)         | `src/generation/providers/comfyui.ts`                           | ✅     |
-| Gallery metadata enrichment               | `src/generation/image-gen-route.ts`                             | ⬜ TODO |
-| Security wiring into providers            | `src/generation/providers/openai-compatible.ts`                 | ⬜ TODO |
-| Chat-driven multi-step pipeline           | `src/generation/step-pipeline.ts`                               | ⬜ TODO |
+| Task                                      | Files                                           | Status  |
+| ----------------------------------------- | ----------------------------------------------- | ------- |
+| Fix doc references in plan + backlog      | `docs/meta/plan.md`, `docs/meta/backlog.md`     | ✅      |
+| URL validation (SSRF guard, allowlist)    | `src/utils/url-validation.ts`                   | ✅      |
+| sd.cpp native API provider (`/sdcpp/v1/`) | `src/generation/image-gen-route.ts`             | ✅      |
+| ComfyUI provider (submit/poll/WS)         | `src/generation/providers/comfyui.ts`           | ✅      |
+| Gallery metadata enrichment               | `src/generation/image-gen-route.ts`             | ✅      |
+| Security wiring into providers            | `src/generation/providers/openai-compatible.ts` | ✅      |
+| Chat-driven multi-step pipeline           | `src/generation/step-pipeline.ts`               | ✅      |
 
 Full spec: [`docs/spec/integrations/llm-serving.md`](../spec/integrations/llm-serving.md),
 [`docs/spec/integrations/image-generation.md`](../spec/integrations/image-generation.md),
