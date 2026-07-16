@@ -62,17 +62,17 @@
           >
             <h3 style="font-size: 14px; font-weight: 600; margin-bottom: var(--space-3)">Create Quest</h3>
             <div style="display: grid; gap: var(--space-3)">
-              <div>
-                <label class="form-label" style="font-size: 12px">Name</label>
+              <label class="form-label" style="font-size: 12px">
+                Name
                 <input
                   class="form-input"
                   style="font-size: 13px"
                   x-model="createName"
                   placeholder="Quest name"
                 />
-              </div>
-              <div>
-                <label class="form-label" style="font-size: 12px">Description</label>
+              </label>
+              <label class="form-label" style="font-size: 12px">
+                Description
                 <textarea
                   class="form-input form-textarea"
                   rows="2"
@@ -80,19 +80,19 @@
                   x-model="createDescription"
                   placeholder="Quest description"
                 ></textarea>
-              </div>
+              </label>
               <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3)">
-                <div>
-                  <label class="form-label" style="font-size: 12px">Type</label>
+                <label class="form-label" style="font-size: 12px">
+                  Type
                   <select class="form-input" style="font-size: 13px" x-model="createType">
                     <option value="main">Main</option>
                     <option value="side">Side</option>
                     <option value="bounty">Bounty</option>
                     <option value="daily">Daily</option>
                   </select>
-                </div>
-                <div>
-                  <label class="form-label" style="font-size: 12px">Priority</label>
+                </label>
+                <label class="form-label" style="font-size: 12px">
+                  Priority
                   <input
                     class="form-input"
                     type="number"
@@ -101,7 +101,7 @@
                     style="font-size: 13px"
                     x-model="createPriority"
                   />
-                </div>
+                </label>
               </div>
               <div style="display: flex; gap: var(--space-2); justify-content: flex-end">
                 <button class="btn btn-secondary btn-xs" @click="showCreateForm = false">Cancel</button>
@@ -215,22 +215,22 @@
                       "
                     >
                       <div style="display: grid; gap: var(--space-2)">
-                        <div>
-                          <label class="form-label" style="font-size: 11px">Name</label>
+                        <label class="form-label" style="font-size: 11px">
+                          Name
                           <input class="form-input" style="font-size: 13px" x-model="editName" />
-                        </div>
-                        <div>
-                          <label class="form-label" style="font-size: 11px">Description</label>
+                        </label>
+                        <label class="form-label" style="font-size: 11px">
+                          Description
                           <textarea
                             class="form-input form-textarea"
                             rows="2"
                             style="font-size: 13px"
                             x-model="editDescription"
                           ></textarea>
-                        </div>
+                        </label>
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-2)">
-                          <div>
-                            <label class="form-label" style="font-size: 11px">Priority</label>
+                          <label class="form-label" style="font-size: 11px">
+                            Priority
                             <input
                               class="form-input"
                               type="number"
@@ -239,9 +239,9 @@
                               style="font-size: 13px"
                               x-model="editPriority"
                             />
-                          </div>
-                          <div>
-                            <label class="form-label" style="font-size: 11px">Advance by</label>
+                          </label>
+                          <label class="form-label" style="font-size: 11px">
+                            Advance by
                             <input
                               class="form-input"
                               type="number"
@@ -249,7 +249,7 @@
                               style="font-size: 13px"
                               x-model="advanceDelta"
                             />
-                          </div>
+                          </label>
                         </div>
                         <div style="display: flex; gap: var(--space-2); flex-wrap: wrap">
                           <button class="btn btn-primary btn-xs" @click="saveQuest(q.id)">Save</button>
