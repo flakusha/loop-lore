@@ -160,7 +160,7 @@ describe("resolveProfile", () => {
   });
 
   test("all profiles have all three detail levels", () => {
-    for (const [_id, profile] of Object.entries(BUILTIN_PROFILES)) {
+    for (const profile of Object.values(BUILTIN_PROFILES)) {
       expect(profile.templates.instant).toBeDefined();
       expect(profile.templates.balanced).toBeDefined();
       expect(profile.templates.detailed).toBeDefined();
@@ -169,7 +169,7 @@ describe("resolveProfile", () => {
 
   test("all profiles have all six mode templates", () => {
     const modes = ["yourself", "face", "me", "scene", "last", "background"] as const;
-    for (const [_id, profile] of Object.entries(BUILTIN_PROFILES)) {
+    for (const profile of Object.values(BUILTIN_PROFILES)) {
       for (const detail of ["instant", "balanced", "detailed"] as const) {
         for (const mode of modes) {
           expect(profile.templates[detail][mode]).toBeDefined();
