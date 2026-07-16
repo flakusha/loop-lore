@@ -21,14 +21,6 @@ g.isChatPaused = (chat: any): boolean => {
   return state.isPaused === true;
 };
 
-if (g.Alpine) {
-  try {
-    Alpine.store("chat");
-  } catch {
-    Alpine.store("chat", { currentChat: null });
-  }
-}
-
 g.toggleGroupPause = async function () {
   const el = document.querySelector<HTMLElement>("[x-data]");
   if (el && g.Alpine) {
@@ -131,6 +123,35 @@ globalThis.chatState = function () {
     _toggleCharacterInfoHandler: null as (() => void) | null,
     _panelClickHandler: null as ((e: MouseEvent) => void) | null,
     _keydownHandler: null as ((e: KeyboardEvent) => void) | null,
+
+    // ── Chat settings state ──
+    _chatSettingsName: "",
+    _chatSettingsMode: "chat",
+    _chatSettingsTurnStrategy: "round_robin",
+    _groupPaused: false,
+    _renameChatId: "",
+    _renameChatName: "",
+    _selectedPersonaId: null as string | null,
+    _impersonatingActorId: null as string | null,
+    _assistantRole: "off" as "off" | "helper" | "gm" | "moderator",
+    selectedChats: [] as string[],
+    _personas: [] as any[],
+
+    // ── Mention state ──
+    _mentionQuery: "",
+    _mentionResults: [] as Array<{
+      actor_id: string;
+      name: string;
+      display_name?: string;
+      actor_type?: string;
+    }>,
+    _showMentionAutocomplete: false,
+    _chatParticipants: [] as Array<{
+      actor_id: string;
+      name: string;
+      display_name?: string;
+      actor_type?: string;
+    }>,
 
     // ── Encryption state ──
     _chatKey: null as CryptoKey | null,
