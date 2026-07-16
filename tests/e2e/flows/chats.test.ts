@@ -115,4 +115,39 @@ const getRes = await api.get(`/api/chats/${chatId}`);
     expect(res.ok).toBe(true);
     expect(res.data!.name).toBe(SEED.chat.name);
   });
+
+  test("cross-tenant isolation: User B cannot access User A's chat", async () => {
+    await seedUsers(server.db);
+    await seedChat(server.db);
+
+    // Log in as User A and verify access
+    await api.loginAs(SEED.user.username, SEED.user.password);
+    const ownRes = await api.get(`/api/chats/${SEED.chat.id}`);
+    expect(ownRes.ok).toBe(true);
+
+    // Log in as User B (admin) and try to access User A's chat
+    await api.loginAs(SEED.admin.username, SEED.admin.password);
+    const otherRes = await api.get(`/api/chats/${SEED.chat.id}`);
+    expect(otherRes.ok).toBe(false);
+    expect(otherRes.status).toBe(403);
+  });
+
+  test("cross-tenant isolation: User B cannot see User A's chat list", async () => {
+    await seedUsers(server.db);
+    await seedChat(server.db);
+
+    // Log in as User A and verify chat is visible
+    await api.loginAs(SEED.user.username, SEED.user.password);
+    const ownList = await api.get<{ data: Array<{ id: string }> }>("/api/chats");
+    expect(ownList.ok).toBe(true);
+    const ownChats = ownList.data!.data;
+    expect(ownChats.some((c) => c.id === SEED.chat.id)).toBe(true);
+
+    // Log in as User B and verify chat is NOT visible
+    await api.loginAs(SEED.admin.username, SEED.admin.password);
+    const otherList = await api.get<{ data: Array<{ id: string }> }>("/api/chats");
+    expect(otherList.ok).toBe(true);
+    const otherChats = otherList.data!.data;
+    expect(otherChats.some((c) => c.id === SEED.chat.id)).toBe(false);
+  });
 });

@@ -29,7 +29,7 @@ function createTestDb(): Kysely<DB> {
 function createSettingsApp(db: Kysely<DB>, userId: string): Elysia {
   return new Elysia({ name: "test-settings" })
     .derive(() => ({ userId }))
-    .use(settingsRoutes({ database: db }));
+    .use(settingsRoutes({ database: db })) as unknown as Elysia;
 }
 
 describe("GET /api/settings", () => {
