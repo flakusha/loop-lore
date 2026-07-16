@@ -5,8 +5,6 @@
  * Uses custom ownership check via worlds table.
  */
 
-/* eslint-disable @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-explicit-any */
-
 import { Elysia } from "elysia";
 import type { Db } from "../db";
 import type { Config } from "../config/schema";

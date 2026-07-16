@@ -9,8 +9,6 @@
  *   DELETE /api/:parentPrefix/:parentId/:entityPath/:id   — delete
  */
 
-/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-assignment */
-
 import { Elysia } from "elysia";
 import type { Db } from "../db";
 import type { Config } from "../config/schema";
@@ -22,8 +20,9 @@ import {
   jsonCreated,
   jsonNoContent,
   HttpStatus,
-  ErrorCode,
 } from "./http-utils";
+import { EntityCreateBody, EntityUpdateBody } from "../validation/schemas";
+import { notFound } from "../validation/middleware";
 
 export interface EntityConfig {
   parentPrefix: string;
@@ -184,20 +183,16 @@ export function createEntityRoutes(config: EntityConfig, opts: { database: Db; c
         .executeTakeFirst();
 
       return jsonCreated(created);
-    })
+    }, { body: EntityCreateBody })
     .get(withIdPath, async (ctx) => {
       const db = opts.database as any;
-      const { parentId, entityId } = ctx.params as any;
+      const { id: parentId, entityId } = ctx.params as any;
       const userId = (ctx as any).userId as string | null;
       const userRole = (ctx as any).userRole as string | null;
 
       const ownershipOk = await checkOwnership(opts.database, parentId, userId, userRole);
       if (!ownershipOk) {
-        return jsonError({
-          message: `${config.entityName} not found`,
-          status: HttpStatus.NotFound,
-          code: ErrorCode.NotFound,
-        });
+        return notFound(`${config.entityName} not found`);
       }
 
       const entity = await db
@@ -207,28 +202,19 @@ export function createEntityRoutes(config: EntityConfig, opts: { database: Db; c
         .where(config.parentFk, "=", parentId)
         .executeTakeFirst();
 
-      if (!entity)
-        return jsonError({
-          message: `${config.entityName} not found`,
-          status: HttpStatus.NotFound,
-          code: ErrorCode.NotFound,
-        });
+      if (!entity) return notFound(`${config.entityName} not found`);
       return jsonResponse(entity);
     })
     .put(withIdPath, async (ctx) => {
       const db = opts.database as any;
-      const { parentId, entityId } = ctx.params as any;
+      const { id: parentId, entityId } = ctx.params as any;
       const userId = (ctx as any).userId as string | null;
       const userRole = (ctx as any).userRole as string | null;
       const body = ((ctx as any).body || {}) as Record<string, unknown>;
 
       const ownershipOk = await checkOwnership(opts.database, parentId, userId, userRole);
       if (!ownershipOk) {
-        return jsonError({
-          message: `${config.entityName} not found`,
-          status: HttpStatus.NotFound,
-          code: ErrorCode.NotFound,
-        });
+        return notFound(`${config.entityName} not found`);
       }
 
       const existing = await db
@@ -238,12 +224,7 @@ export function createEntityRoutes(config: EntityConfig, opts: { database: Db; c
         .where(config.parentFk, "=", parentId)
         .executeTakeFirst();
 
-      if (!existing)
-        return jsonError({
-          message: `${config.entityName} not found`,
-          status: HttpStatus.NotFound,
-          code: ErrorCode.NotFound,
-        });
+      if (!existing) return notFound(`${config.entityName} not found`);
 
       const updates = buildUpdateValues({ config, body });
       if (Object.keys(updates).length <= 1) return jsonResponse(existing);
@@ -257,20 +238,16 @@ export function createEntityRoutes(config: EntityConfig, opts: { database: Db; c
         .executeTakeFirst();
 
       return jsonResponse(updated);
-    })
+    }, { body: EntityUpdateBody })
     .delete(withIdPath, async (ctx) => {
       const db = opts.database as any;
-      const { parentId, entityId } = ctx.params as any;
+      const { id: parentId, entityId } = ctx.params as any;
       const userId = (ctx as any).userId as string | null;
       const userRole = (ctx as any).userRole as string | null;
 
       const ownershipOk = await checkOwnership(opts.database, parentId, userId, userRole);
       if (!ownershipOk) {
-        return jsonError({
-          message: `${config.entityName} not found`,
-          status: HttpStatus.NotFound,
-          code: ErrorCode.NotFound,
-        });
+        return notFound(`${config.entityName} not found`);
       }
 
       const result = await db
@@ -280,11 +257,7 @@ export function createEntityRoutes(config: EntityConfig, opts: { database: Db; c
         .execute();
 
       if ((result as any[]).length === 0) {
-        return jsonError({
-          message: `${config.entityName} not found`,
-          status: HttpStatus.NotFound,
-          code: ErrorCode.NotFound,
-        });
+        return notFound(`${config.entityName} not found`);
       }
       return jsonNoContent();
     });
