@@ -340,15 +340,15 @@ See [`docs/spec/e2e-benchmarks.md`](../spec/e2e-benchmarks.md) for full spec.
 ComfyUI plugin, llama-swap LLM proxy, stable-diffusion.cpp, gallery metadata enrichment,
 chat-driven generation, security baseline for remote URLs.
 
-| Task                                      | Files                                           | Status  |
-| ----------------------------------------- | ----------------------------------------------- | ------- |
-| Fix doc references in plan + backlog      | `docs/meta/plan.md`, `docs/meta/backlog.md`     | ✅      |
-| URL validation (SSRF guard, allowlist)    | `src/utils/url-validation.ts`                   | ✅      |
-| sd.cpp native API provider (`/sdcpp/v1/`) | `src/generation/image-gen-route.ts`             | ✅      |
-| ComfyUI provider (submit/poll/WS)         | `src/generation/providers/comfyui.ts`           | ✅      |
-| Gallery metadata enrichment               | `src/generation/image-gen-route.ts`             | ✅      |
-| Security wiring into providers            | `src/generation/providers/openai-compatible.ts` | ✅      |
-| Chat-driven multi-step pipeline           | `src/generation/step-pipeline.ts`               | ✅      |
+| Task                                      | Files                                           | Status |
+| ----------------------------------------- | ----------------------------------------------- | ------ |
+| Fix doc references in plan + backlog      | `docs/meta/plan.md`, `docs/meta/backlog.md`     | ✅     |
+| URL validation (SSRF guard, allowlist)    | `src/utils/url-validation.ts`                   | ✅     |
+| sd.cpp native API provider (`/sdcpp/v1/`) | `src/generation/image-gen-route.ts`             | ✅     |
+| ComfyUI provider (submit/poll/WS)         | `src/generation/providers/comfyui.ts`           | ✅     |
+| Gallery metadata enrichment               | `src/generation/image-gen-route.ts`             | ✅     |
+| Security wiring into providers            | `src/generation/providers/openai-compatible.ts` | ✅     |
+| Chat-driven multi-step pipeline           | `src/generation/step-pipeline.ts`               | ✅     |
 
 Full spec: [`docs/spec/integrations/llm-serving.md`](../spec/integrations/llm-serving.md),
 [`docs/spec/integrations/image-generation.md`](../spec/integrations/image-generation.md),
