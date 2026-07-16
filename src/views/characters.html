@@ -29,7 +29,7 @@
 <div class="app-layout">
   <main class="main-content" style="padding-top: 0">
     <div class="chat-area" style="overflow-y: auto">
-      <div class="list-toolbar">
+      <div class="list-toolbar" x-data="{ view: localStorage.getItem('character-view') || 'grid' }">
         <input
           id="character-search"
           class="form-input list-search"
@@ -47,6 +47,15 @@
         >
           <option value="name">Sort: Name</option>
         </select>
+        <button
+          class="btn btn-secondary btn-sm"
+          x-on:click="view = view === 'grid' ? 'list' : 'grid'; localStorage.setItem('character-view', view); document.getElementById('character-grid').className = view === 'grid' ? 'character-grid' : 'character-grid list-view'"
+          :title="view === 'grid' ? 'Switch to list view' : 'Switch to grid view'"
+          data-testid="view-toggle"
+        >
+          <span x-show="view === 'grid'">☰</span>
+          <span x-show="view === 'list'">⊞</span>
+        </button>
       </div>
       <div
         id="character-grid"
