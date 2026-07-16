@@ -27,10 +27,7 @@ async function runCleanup(db: Kysely<DB>): Promise<void> {
   const cutoff = new Date(Date.now() - days * 86400000).toISOString();
 
   try {
-    await db
-      .deleteFrom("telemetry_events")
-      .where("created_at", "<", cutoff)
-      .execute();
+    await db.deleteFrom("telemetry_events").where("created_at", "<", cutoff).execute();
 
     getLogger()
       .child({ module: "telemetry" })
