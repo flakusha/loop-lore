@@ -1,7 +1,7 @@
 import { describe, test, expect, beforeAll, afterAll } from "bun:test";
 import { createTestServer, type TestServer } from "../helpers/server";
 import { createClient, type ApiClient } from "../helpers/client";
-import { seedUsers, SEED } from "../helpers/seed";
+import { seedUsers, seedWorld, SEED } from "../helpers/seed";
 
 describe("Worlds E2E", () => {
   let server: TestServer;
@@ -112,5 +112,20 @@ describe("Worlds E2E", () => {
     const getRes = await api.get(`/api/worlds/${createdWorldId}`);
     expect(getRes.status).toBe(404);
     expect(getRes.code).toBeTruthy(); // TEST.2 error envelope
+  });
+
+  test("cross-tenant isolation: User B cannot access User A's world", async () => {
+    await seedWorld(server.db);
+
+    const resA = await api.get<{ id: string }>(`/api/worlds/${SEED.world.id}`);
+    expect(resA.ok).toBe(true);
+    expect(resA.data!.id).toBe(SEED.world.id);
+
+    const apiB = createClient(server.url);
+    await apiB.loginAs(SEED.admin.username, SEED.admin.password);
+    const resB = await apiB.get(`/api/worlds/${SEED.world.id}`);
+    expect(resB.ok).toBe(false);
+    expect(resB.status).toBe(403);
+    expect(resB.code).toBeTruthy();
   });
 });
