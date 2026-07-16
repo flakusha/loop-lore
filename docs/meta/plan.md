@@ -175,19 +175,19 @@ Auth, rate limiting, age gate enforcement, profanity.
 
 Target: solidify generation, admin, memory, responsive UX, search, i18n, observability.
 
-### 10. Generation Foundation — ⬜ Not Started
+### 10. Generation Foundation — ✅ Complete
 
 Tool-calling loop, provider resilience, streaming reconnect.
 
-| Task                                    | Files                                                                 | Notes                                                                                                                                                                                                  |
-| --------------------------------------- | --------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| LLM tool-call loop in generate-route.ts | `src/generation/generate-route.ts`                                    | Inject tool defs from plugin registry, parse `tool_calls` from response, execute via `ToolDefinition.handler`, feed results back as `tool` role messages. Multi-turn orchestration capped at N rounds. |
-| Tool definition injection into requests | `src/generation/generate-route.ts`                                    | Map `PluginRegistry.getAllTools()` → OpenAI `tools` array. Gate on `ProviderCapabilities.tools`.                                                                                                       |
-| `tool_calls` response parsing           | `src/generation/providers/openai-compatible.ts`                       | Parse SSE `tool_calls` delta accumulation (index-based merge). Emit `tool_call` chunk events.                                                                                                          |
-| Tool execution + result loop            | `src/generation/generate-route.ts`                                    | Execute tool, store result as `role: "tool"` message, re-inject into context, continue generation. Max rounds configurable (default 5).                                                                |
-| Provider failover (ordered fallback)    | `src/generation/providers/registry.ts`                                | Try provider A → B → C. Circuit breaker: N consecutive failures trigger cooldown (2^attempt seconds). Respect `Retry-After` headers.                                                                   |
-| Circuit breaker pattern                 | `src/generation/providers/circuit-breaker.ts`                         | NEW. Track failures per provider. Half-open probe after cooldown. Configurable thresholds.                                                                                                             |
-| SSE reconnect via `Last-Event-ID`       | `src/generation/generate-route.ts`, `src/generation/stream-buffer.ts` | Parse `Last-Event-ID` header, call `streamBuffer.replay(seq)`. Emit replayed events before new stream.                                                                                                 |
+| Task                                    | Files                                                                 | Status | Notes |
+| --------------------------------------- | --------------------------------------------------------------------- | ------ | ----- |
+| LLM tool-call loop in generate-route.ts | `src/generation/generate-route.ts`                                    | ✅     | Multi-turn orchestration capped at 5 rounds. Tool defs from plugin registry injected into `tools` array. |
+| Tool definition injection into requests | `src/generation/generate-route.ts`                                    | ✅     | `registry.getAllTools()` → OpenAI `tools` array. Gate on `ProviderCapabilities.tools`. |
+| `tool_calls` response parsing           | `src/generation/providers/openai-compatible.ts`                       | ✅     | SSE `delta.tool_calls` accumulation (index-based merge). Emits `tool_call` chunk events. Non-streaming also parsed. |
+| Tool execution + result loop            | `src/generation/generate-route.ts`                                    | ✅     | Execute tool via `ToolDefinition.handler`, store result as `tool` role message, re-inject into context, continue generation. Max 5 rounds. |
+| Provider failover (ordered fallback)    | `src/generation/providers/registry.ts`                                | ✅     | `callWithFailover()` tries providers in order, skips open circuits, records success/failure. |
+| Circuit breaker pattern                 | `src/generation/providers/circuit-breaker.ts`                         | ✅     | NEW. Tracks failures per provider. Half-open probe after cooldown. Configurable thresholds. Respects `Retry-After` headers. |
+| SSE reconnect via `Last-Event-ID`       | `src/generation/generation-routes.ts`, `src/generation/controller.ts` | ✅     | Parses `Last-Event-ID` header, calls `streamBuffer.replay(seq)`. Emits replayed events before new stream. |
 
 ### 11. Admin & Settings Architecture — ⬜ Not Started
 

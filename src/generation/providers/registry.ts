@@ -9,8 +9,9 @@ import type { Kysely } from "kysely";
 import type { DB } from "../../db/schema";
 import { getDatabase } from "../../db/index";
 import { decryptValue } from "../../crypto";
-import type { LLMProvider } from "./types";
+import type { LLMProvider, GenerateRequest, GenerateResponse, ChunkEvent } from "./types";
 import { OpenAiCompatibleProvider } from "./openai-compatible";
+import { circuitBreaker } from "./circuit-breaker";
 // TODO: register additional providers (Bedrock, Google, Anthropic, Ollama native)
 // when their implementations land.
 
@@ -129,6 +130,7 @@ export function initializeProviders(config: Config): void {
 
     const provider = new OpenAiCompatibleProvider(instance);
     registerProvider(instance.name, provider);
+    circuitBreaker.register(instance.name);
   }
   if (config.generation.providers.anthropic && !getProvider(config.generation.providers.anthropic.name)) {
     // TODO: AnthropicProvider when implemented
@@ -139,4 +141,44 @@ export function initializeProviders(config: Config): void {
   ) {
     // TODO: OllamaNativeProvider when implemented
   }
+}
+
+/**
+ * Call a provider with circuit breaker failover.
+ *
+ * Tries providers in order: primary → configured fallback list.
+ * Skips providers whose circuit is open.
+ * Records success/failure in circuit breaker.
+ * Respects Retry-After headers from ProviderRateLimitError.
+ */
+export async function callWithFailover(
+  providers: Array<{ name: string; provider: LLMProvider }>,
+  req: GenerateRequest,
+  handler?: (chunk: ChunkEvent) => void,
+): Promise<GenerateResponse> {
+  const errors: string[] = [];
+
+  for (const { name, provider: prov } of providers) {
+    if (!circuitBreaker.allowRequest(name)) {
+      const state = circuitBreaker.getState(name);
+      const remaining = state?.cooldownRemainingMs ?? 0;
+      errors.push(`${name}: circuit open (${Math.ceil(remaining / 1000)}s cooldown remaining)`);
+      continue;
+    }
+
+    try {
+      const response = handler
+        ? await prov.stream(req, handler)
+        : await prov.complete(req);
+
+      circuitBreaker.onSuccess(name);
+      return response;
+    } catch (error) {
+      const err = error as Error & { retryable?: boolean; retryAfter?: number };
+      circuitBreaker.onFailure(name, err.retryAfter ? err.retryAfter * 1000 : undefined);
+      errors.push(`${name}: ${err.message}`);
+    }
+  }
+
+  throw new Error(`All providers failed: ${errors.join("; ")}`);
 }

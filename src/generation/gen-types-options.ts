@@ -63,9 +63,11 @@ export interface GenerationOptions {
 }
 
 export interface GenerationMessage {
-  role: "system" | "user" | "assistant" | "character";
+  role: "system" | "user" | "assistant" | "character" | "tool";
   content: string;
   name?: string;
+  tool_call_id?: string;
+  tool_calls?: Array<{ id: string; type: "function"; function: { name: string; arguments: string } }>;
 }
 
 // ── Detection configuration interfaces ─────────────────────
