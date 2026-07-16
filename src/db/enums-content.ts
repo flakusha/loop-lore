@@ -34,3 +34,17 @@ export const StorageBackend = {
   Gcs: "gcs",
 } as const;
 export type StorageBackend = (typeof StorageBackend)[keyof typeof StorageBackend];
+
+// ── Asset Link Entities ──────────────────────────────────
+export const AssetLinkEntity = {
+  Chat: "chat",
+  Character: "character",
+  World: "world",
+  Actor: "actor",
+  Location: "location",
+  Quest: "quest",
+  Item: "item",
+  Memory: "memory",
+  Message: "message",
+} as const;
+export type AssetLinkEntity = (typeof AssetLinkEntity)[keyof typeof AssetLinkEntity];

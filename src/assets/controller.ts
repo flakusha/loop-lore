@@ -19,6 +19,7 @@
 import { readFileSync, existsSync } from "node:fs";
 import type { Kysely } from "kysely";
 import type { DB } from "../db/schema";
+import { AssetLinkEntity } from "../db/enums";
 import type { RequestContext } from "../middleware/types";
 import { ErrorCode } from "../routes/http-utils";
 import type { RouteDispatch } from "../routes/router";
@@ -107,13 +108,32 @@ const dispatch: RouteDispatch = async ({ request, context, database, config }) =
       return jsonResponse(asset);
     }
     if (method === "GET" && subRoute === "/raw") {
-      return handleServeRaw({ database, assetId, uploadDir, actorId: context.userId, actorRole: context.userRole });
+      return handleServeRaw({
+        database,
+        assetId,
+        uploadDir,
+        actorId: context.userId,
+        actorRole: context.userRole,
+      });
     }
     if (method === "GET" && subRoute === "/download") {
-      return handleDownload({ database, assetId, uploadDir, actorId: context.userId, actorRole: context.userRole });
+      return handleDownload({
+        database,
+        assetId,
+        uploadDir,
+        actorId: context.userId,
+        actorRole: context.userRole,
+      });
     }
     if (method === "GET" && (subRoute === "/thumb" || subRoute === "/compressed")) {
-      return handleServeCompressed({ database, assetId, uploadDir, variant: subRoute.slice(1), actorId: context.userId, actorRole: context.userRole });
+      return handleServeCompressed({
+        database,
+        assetId,
+        uploadDir,
+        variant: subRoute.slice(1),
+        actorId: context.userId,
+        actorRole: context.userRole,
+      });
     }
     if (method === "DELETE" && !subRoute) {
       const deleted = await deleteAsset({ database, assetId, uploadDir });
@@ -140,7 +160,7 @@ const dispatch: RouteDispatch = async ({ request, context, database, config }) =
         await linkAsset({
           database,
           assetId,
-          link: body as { entityType: string; entityId: string; label?: string },
+          link: body as { entityType: AssetLinkEntity; entityId: string; label?: string },
         });
         return jsonCreated({ id: assetId });
       }
@@ -149,7 +169,7 @@ const dispatch: RouteDispatch = async ({ request, context, database, config }) =
         await unlinkAsset({
           database,
           assetId,
-          entityType: body.entityType ?? "",
+          entityType: (body.entityType ?? "") as AssetLinkEntity,
           entityId: body.entityId ?? "",
         });
         return jsonNoContent();
@@ -160,11 +180,24 @@ const dispatch: RouteDispatch = async ({ request, context, database, config }) =
     // ── Visibility sub-route ─────────────────────────────────
     if (method === "PATCH" && !subRoute) {
       const userId = context.userId;
-      if (!userId) return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, code: ErrorCode.Unauthorized });
+      if (!userId)
+        return jsonError({
+          message: "Unauthorized",
+          status: HttpStatus.Unauthorized,
+          code: ErrorCode.Unauthorized,
+        });
 
       const body = (await request.json()) as { visibility?: string };
-      if (!body.visibility || ![AssetVisibility.Private, AssetVisibility.Shared, AssetVisibility.Public].includes(body.visibility as AssetVisibility)) {
-        return jsonError({ message: "Invalid visibility. Must be private, shared, or public", status: HttpStatus.BadRequest });
+      if (
+        !body.visibility ||
+        ![AssetVisibility.Private, AssetVisibility.Shared, AssetVisibility.Public].includes(
+          body.visibility as AssetVisibility,
+        )
+      ) {
+        return jsonError({
+          message: "Invalid visibility. Must be private, shared, or public",
+          status: HttpStatus.BadRequest,
+        });
       }
 
       const updated = await updateAssetVisibility({
@@ -173,7 +206,12 @@ const dispatch: RouteDispatch = async ({ request, context, database, config }) =
         visibility: body.visibility as AssetVisibility,
         actorId: userId,
       });
-      if (!updated) return jsonError({ message: "Asset not found or not owner", status: HttpStatus.NotFound, code: ErrorCode.NotFound });
+      if (!updated)
+        return jsonError({
+          message: "Asset not found or not owner",
+          status: HttpStatus.NotFound,
+          code: ErrorCode.NotFound,
+        });
       return jsonResponse({ id: updated.id, visibility: updated.visibility });
     }
 
@@ -181,18 +219,35 @@ const dispatch: RouteDispatch = async ({ request, context, database, config }) =
     if (subRoute === "/share") {
       if (method === "POST") {
         const userId = context.userId;
-        if (!userId) return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, code: ErrorCode.Unauthorized });
+        if (!userId)
+          return jsonError({
+            message: "Unauthorized",
+            status: HttpStatus.Unauthorized,
+            code: ErrorCode.Unauthorized,
+          });
 
         const body = (await request.json()) as { actor_id?: string };
-        if (!body.actor_id) return jsonError({ message: "actor_id is required", status: HttpStatus.BadRequest });
+        if (!body.actor_id)
+          return jsonError({ message: "actor_id is required", status: HttpStatus.BadRequest });
 
-        const share = await shareAsset({ database, assetId, sharedWithId: body.actor_id, sharedById: userId });
-        if (!share) return jsonError({ message: "Asset not found or not owner", status: HttpStatus.NotFound, code: ErrorCode.NotFound });
+        const share = await shareAsset({
+          database,
+          assetId,
+          sharedWithId: body.actor_id,
+          sharedById: userId,
+        });
+        if (!share)
+          return jsonError({
+            message: "Asset not found or not owner",
+            status: HttpStatus.NotFound,
+            code: ErrorCode.NotFound,
+          });
         return jsonCreated(share);
       }
       if (method === "DELETE") {
         const body = (await request.json()) as { actor_id?: string };
-        if (!body.actor_id) return jsonError({ message: "actor_id is required", status: HttpStatus.BadRequest });
+        if (!body.actor_id)
+          return jsonError({ message: "actor_id is required", status: HttpStatus.BadRequest });
 
         await unshareAsset({ database, assetId, sharedWithId: body.actor_id });
         return jsonNoContent();
@@ -218,7 +273,13 @@ const dispatch: RouteDispatch = async ({ request, context, database, config }) =
     const entityId = searchParams.get("entity_id") ?? undefined;
     const label = searchParams.get("label") ?? undefined;
 
-    const result = await listAssets(database, { page, pageSize, entityType, entityId, label });
+    const result = await listAssets(database, {
+      page,
+      pageSize,
+      entityType: entityType as AssetLinkEntity,
+      entityId,
+      label,
+    });
     return jsonPaginated({ data: result.data, total: result.total, page, pageSize });
   }
 
@@ -298,9 +359,16 @@ async function handleUpload({
   });
 }
 
-async function handleServeRaw({ database, assetId, uploadDir, actorId, actorRole }: ServeRawOpts): Promise<Response> {
+async function handleServeRaw({
+  database,
+  assetId,
+  uploadDir,
+  actorId,
+  actorRole,
+}: ServeRawOpts): Promise<Response> {
   const allowed = await canAccessAsset(database, assetId, actorId, actorRole);
-  if (!allowed) return jsonError({ message: "Not found", status: HttpStatus.NotFound, code: ErrorCode.NotFound });
+  if (!allowed)
+    return jsonError({ message: "Not found", status: HttpStatus.NotFound, code: ErrorCode.NotFound });
 
   const asset = await getAsset(database, assetId);
   if (!asset)
@@ -328,7 +396,8 @@ async function handleServeCompressed({
   actorRole,
 }: ServeCompressedOpts): Promise<Response> {
   const allowed = await canAccessAsset(database, assetId, actorId, actorRole);
-  if (!allowed) return jsonError({ message: "Not found", status: HttpStatus.NotFound, code: ErrorCode.NotFound });
+  if (!allowed)
+    return jsonError({ message: "Not found", status: HttpStatus.NotFound, code: ErrorCode.NotFound });
 
   const asset = await getAsset(database, assetId);
   if (!asset)
@@ -355,9 +424,16 @@ async function handleServeCompressed({
   });
 }
 
-async function handleDownload({ database, assetId, uploadDir, actorId, actorRole }: ServeRawOpts): Promise<Response> {
+async function handleDownload({
+  database,
+  assetId,
+  uploadDir,
+  actorId,
+  actorRole,
+}: ServeRawOpts): Promise<Response> {
   const allowed = await canAccessAsset(database, assetId, actorId, actorRole);
-  if (!allowed) return jsonError({ message: "Not found", status: HttpStatus.NotFound, code: ErrorCode.NotFound });
+  if (!allowed)
+    return jsonError({ message: "Not found", status: HttpStatus.NotFound, code: ErrorCode.NotFound });
 
   const asset = await getAsset(database, assetId);
   if (!asset)
