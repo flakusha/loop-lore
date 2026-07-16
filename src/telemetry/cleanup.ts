@@ -24,7 +24,7 @@ export function startRetentionCleanup(db: Kysely<DB>): void {
 
 async function runCleanup(db: Kysely<DB>): Promise<void> {
   const days = getRetentionDays();
-  const cutoff = new Date(Date.now() - days * 86400000).toISOString();
+  const cutoff = new Date(Date.now() - days * 86_400_000).toISOString();
 
   try {
     await db.deleteFrom("telemetry_events").where("created_at", "<", cutoff).execute();

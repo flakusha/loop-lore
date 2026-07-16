@@ -15,8 +15,8 @@ export const dynamicContextSection: SectionBuilder = {
   enabled: () => true,
   build: async () => {
     const now = new Date();
-    const dateStr = now.toISOString().split("T")[0] ?? "unknown";
-    const timeStr = now.toTimeString().split(" ")[0] ?? "unknown";
+    const dateStr = now.toISOString().split("T", 1)[0] ?? "unknown";
+    const timeStr = now.toTimeString().split(" ", 1)[0] ?? "unknown";
     const content = `[Current date: ${dateStr} ${timeStr}]`;
     return [{ role: "user", content }];
   },
