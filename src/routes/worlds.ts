@@ -34,7 +34,10 @@ import {
 import { WorldCreateBody, WorldUpdateBody } from "../validation/schemas";
 import { unauthorized, notFound } from "../validation/middleware";
 
-type HandleOpts = { database: Kysely<DB>; config: Config };
+interface HandleOpts {
+  database: Kysely<DB>;
+  config: Config;
+}
 
 // ── Helpers ─────────────────────────────────────────────────
 

@@ -486,14 +486,18 @@ async function serveGallerySearch(database: Kysely<DB>, params: URLSearchParams)
 
   function thumbForAsset(a: (typeof assets)[number]): string {
     switch (a.asset_type) {
-      case "image":
+      case "image": {
         return `<img src="/api/assets/${a.id}/thumb" alt="${escapeHtml(a.filename)}" loading="lazy" />`;
-      case "audio":
+      }
+      case "audio": {
         return `<div class="file-icon">🎵</div>`;
-      case "video":
+      }
+      case "video": {
         return `<div class="file-icon">🎬</div>`;
-      default:
+      }
+      default: {
         return `<div class="file-icon">📄</div>`;
+      }
     }
   }
 

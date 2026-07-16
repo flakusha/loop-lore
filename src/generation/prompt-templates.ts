@@ -73,7 +73,7 @@ export interface ImageModelProfileRegistry {
   profiles: Record<string, ImageModelProfile>;
   defaultProfileId: string;
   /** Match model name patterns to profile IDs (first match wins) */
-  modelMatching?: Array<{ pattern: string; profileId: string }>;
+  modelMatching?: { pattern: string; profileId: string }[];
 }
 
 /** Variables substituted into templates */
@@ -246,7 +246,7 @@ export const BUILTIN_PROFILES: Record<string, ImageModelProfile> = {
     families: ["sd1", "sd2"],
     promptFormat: "tags",
     maxTokenHint: 75,
-    defaults: { cfgScale: 7.0, steps: 25, sampler: "euler_a", scheduler: "karras" },
+    defaults: { cfgScale: 7, steps: 25, sampler: "euler_a", scheduler: "karras" },
     templates: tagTemplates(TAG_STYLE),
   },
 
@@ -256,7 +256,7 @@ export const BUILTIN_PROFILES: Record<string, ImageModelProfile> = {
     families: ["sdxl"],
     promptFormat: "tags",
     maxTokenHint: 150,
-    defaults: { cfgScale: 7.0, steps: 28, sampler: "euler_a", scheduler: "karras" },
+    defaults: { cfgScale: 7, steps: 28, sampler: "euler_a", scheduler: "karras" },
     templates: tagTemplates(TAG_STYLE),
   },
 
@@ -266,7 +266,7 @@ export const BUILTIN_PROFILES: Record<string, ImageModelProfile> = {
     families: ["illustrious", "sdxl"],
     promptFormat: "tags",
     maxTokenHint: 150,
-    defaults: { cfgScale: 5.0, steps: 28, sampler: "euler_a", scheduler: "karras" },
+    defaults: { cfgScale: 5, steps: 28, sampler: "euler_a", scheduler: "karras" },
     templates: tagTemplates("masterpiece, best quality, highres"),
   },
 
@@ -276,7 +276,7 @@ export const BUILTIN_PROFILES: Record<string, ImageModelProfile> = {
     families: ["noob", "sdxl"],
     promptFormat: "tags",
     maxTokenHint: 150,
-    defaults: { cfgScale: 5.0, steps: 28, sampler: "euler_a", scheduler: "karras" },
+    defaults: { cfgScale: 5, steps: 28, sampler: "euler_a", scheduler: "karras" },
     templates: tagTemplates("masterpiece, best quality, highres"),
   },
 
@@ -296,7 +296,7 @@ export const BUILTIN_PROFILES: Record<string, ImageModelProfile> = {
     families: ["sd3"],
     promptFormat: "natural",
     maxTokenHint: 300,
-    defaults: { cfgScale: 7.0, steps: 28, sampler: "dpmpp_2m", scheduler: "karras" },
+    defaults: { cfgScale: 7, steps: 28, sampler: "dpmpp_2m", scheduler: "karras" },
     templates: naturalTemplates(NATURAL_STYLE),
   },
 
@@ -306,7 +306,7 @@ export const BUILTIN_PROFILES: Record<string, ImageModelProfile> = {
     families: ["flux"],
     promptFormat: "natural",
     maxTokenHint: 300,
-    defaults: { cfgScale: 7.0, steps: 25, sampler: "euler", scheduler: "default" },
+    defaults: { cfgScale: 7, steps: 25, sampler: "euler", scheduler: "default" },
     templates: naturalTemplates(NATURAL_STYLE),
   },
 
@@ -316,7 +316,7 @@ export const BUILTIN_PROFILES: Record<string, ImageModelProfile> = {
     families: ["krea2"],
     promptFormat: "natural",
     maxTokenHint: 300,
-    defaults: { cfgScale: 7.0, steps: 12, sampler: "euler", scheduler: "default" },
+    defaults: { cfgScale: 7, steps: 12, sampler: "euler", scheduler: "default" },
     templates: {
       instant: {
         yourself: `Describe {{charName}} briefly. {{charPrefix}}{{charDescription}}`,
@@ -351,7 +351,7 @@ export const BUILTIN_PROFILES: Record<string, ImageModelProfile> = {
     families: ["anima"],
     promptFormat: "tags-and-natural",
     maxTokenHint: 150,
-    defaults: { cfgScale: 7.0, steps: 25, sampler: "euler_a", scheduler: "karras" },
+    defaults: { cfgScale: 7, steps: 25, sampler: "euler_a", scheduler: "karras" },
     templates: mixedTagNaturalTemplates(ANIME_STYLE),
   },
 
@@ -361,7 +361,7 @@ export const BUILTIN_PROFILES: Record<string, ImageModelProfile> = {
     families: ["ideogram"],
     promptFormat: "json",
     maxTokenHint: 300,
-    defaults: { cfgScale: 7.0, steps: 30, sampler: "dpmpp_2m", scheduler: "karras" },
+    defaults: { cfgScale: 7, steps: 30, sampler: "dpmpp_2m", scheduler: "karras" },
     templates: {
       instant: {
         yourself: `Output JSON: {"high_level_description": "{{charName}}", "style_description": {"style": "portrait"}, "compositional_deconstruction": {"foreground": ["{{charDescription}}"]}}`,
@@ -396,7 +396,7 @@ export const BUILTIN_PROFILES: Record<string, ImageModelProfile> = {
     families: ["qwen"],
     promptFormat: "natural",
     maxTokenHint: 1000,
-    defaults: { cfgScale: 7.0, steps: 28, sampler: "dpmpp_2m", scheduler: "karras" },
+    defaults: { cfgScale: 7, steps: 28, sampler: "dpmpp_2m", scheduler: "karras" },
     templates: naturalTemplates(NATURAL_STYLE),
   },
 
@@ -406,7 +406,7 @@ export const BUILTIN_PROFILES: Record<string, ImageModelProfile> = {
     families: ["chroma"],
     promptFormat: "natural",
     maxTokenHint: 300,
-    defaults: { cfgScale: 7.0, steps: 25, sampler: "euler", scheduler: "default" },
+    defaults: { cfgScale: 7, steps: 25, sampler: "euler", scheduler: "default" },
     templates: naturalTemplates(NATURAL_STYLE),
   },
 };
@@ -487,7 +487,7 @@ export function resolveProfile(
   const modeKey = mode === "raw_last" ? "last" : mode;
   const modeTemplates = profile.templates[detail] ?? profile.templates.balanced;
   const fallbackMode = modeKey === "free" ? "last" : modeKey;
-  const template = modeTemplates[fallbackMode as keyof ImageModelTemplates] ?? modeTemplates.yourself;
+  const template = modeTemplates[fallbackMode] ?? modeTemplates.yourself;
 
   return { profile, template, resolvedProfileId: profileId };
 }
@@ -521,35 +521,40 @@ function systemPromptForFamily(
   const verbosity = detail === "instant" ? "short" : detail === "balanced" ? "concise" : "detailed";
 
   switch (promptFormat) {
-    case "tags":
+    case "tags": {
       return [
         `You are an image prompt writer. Output ONLY a ${verbosity} comma-separated list of image tags.`,
         `No explanation, no markdown, no wrapper text.`,
         `Keep under ${maxTokenHint} tokens.`,
         `Use booru-style tags: 1girl, black hair, blue eyes, smile, etc.`,
       ].join(" ");
-    case "natural":
+    }
+    case "natural": {
       return [
         `You are an image prompt writer. Output ONLY a ${verbosity} natural language description.`,
         `One paragraph. Focus on visual composition, lighting, colors, mood, subject.`,
         `No explanation, no markdown, no wrapper text.`,
         `Keep under ${maxTokenHint} tokens.`,
       ].join(" ");
-    case "tags-and-natural":
+    }
+    case "tags-and-natural": {
       return [
         `You are an image prompt writer. Output a ${verbosity} mix of lowercase keywords and natural language.`,
         `Use spaces between keywords. Blend tag-like descriptors with descriptive phrases.`,
         `No explanation, no markdown, no wrapper text.`,
         `Keep under ${maxTokenHint} tokens.`,
       ].join(" ");
-    case "json":
+    }
+    case "json": {
       return [
         `You are an image prompt writer. Output ONLY a JSON object with high_level_description, style_description, and compositional_deconstruction fields.`,
         `No explanation, no markdown, no wrapper text.`,
         `Keep under ${maxTokenHint} tokens.`,
       ].join(" ");
-    default:
+    }
+    default: {
       return `You are an image prompt writer. Output a ${verbosity} description of the scene. Keep under ${maxTokenHint} tokens.`;
+    }
   }
 }
 
