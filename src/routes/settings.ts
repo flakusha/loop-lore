@@ -9,15 +9,14 @@
  * Elysia plugin — uses auth guard for authentication (context.userId available).
  */
 
-/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access */
-
-import { Elysia } from "elysia";
+import { Elysia, t } from "elysia";
 import type { Kysely } from "kysely";
 import type { DB } from "../db/schema";
-import { jsonResponse, jsonError, HttpStatus, ErrorCode } from "./http-utils";
+import { jsonResponse, jsonError, HttpStatus } from "./http-utils";
 import { jsonParseOr, safeJsonStringify } from "../utils";
 import JSZip from "jszip";
 import { ActorType } from "../db/enums";
+import { unauthorized } from "../validation/middleware";
 
 async function handleGetSettings(database: Kysely<DB>, userId: string): Promise<Response> {
   const user = await database
@@ -103,35 +102,22 @@ export function settingsRoutes({ database }: { database: Kysely<DB> }) {
     .get("/api/settings", async (ctx) => {
       const userId = (ctx as any).userId as string | null;
       if (!userId) {
-        return jsonError({
-          message: "Unauthorized",
-          status: HttpStatus.Unauthorized,
-          code: ErrorCode.Unauthorized,
-        });
+        return unauthorized();
       }
       return handleGetSettings(database, userId);
     })
-    .patch("/api/settings", async (ctx) => {
-      const request = (ctx as any).request as Request;
-      const userId = (ctx as any).userId as string | null;
+    .patch("/api/settings", async (ctx: any) => {
+      const userId = ctx.userId as string | null;
       if (!userId) {
-        return jsonError({
-          message: "Unauthorized",
-          status: HttpStatus.Unauthorized,
-          code: ErrorCode.Unauthorized,
-        });
+        return unauthorized();
       }
-      const body = (await request.json()) as Record<string, unknown>;
+      const body = ctx.body as Record<string, unknown>;
       return handleUpdateSettings(database, userId, body);
-    })
+    }, { body: t.Any() })
     .get("/api/settings/export", async (ctx) => {
       const userId = (ctx as any).userId as string | null;
       if (!userId) {
-        return jsonError({
-          message: "Unauthorized",
-          status: HttpStatus.Unauthorized,
-          code: ErrorCode.Unauthorized,
-        });
+        return unauthorized();
       }
       return handleExportAll(database, userId);
     });

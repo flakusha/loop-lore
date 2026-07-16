@@ -10,20 +10,18 @@
  * On failure: error HTML for htmx error swap.
  */
 
-/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access */
-
 import crypto from "node:crypto";
 import { Elysia } from "elysia";
 import { uid, secureToken } from "../utils";
 import type { Kysely } from "kysely";
 import type { DB } from "../db/schema";
 import type { Config } from "../config/schema";
-import type { RouteDispatchParams } from "./router";
 import { UserStatus } from "../db/enums";
-import { jsonResponse, jsonError, HttpStatus, ErrorCode } from "./http-utils";
+import { jsonResponse, jsonError, HttpStatus } from "./http-utils";
 import { getOrCreateSoloUserForAuth } from "../middleware/auth";
 import { createRateLimiter } from "../middleware/rate-limit";
 import { getSmk, isEncryptionEnabled, ensureActorKey } from "../crypto";
+import { unauthorized, notFound } from "../validation/middleware";
 
 type HandleOpts = { database: Kysely<DB>; config: Config };
 
@@ -218,11 +216,7 @@ async function handleMe(request: Request, database: Kysely<DB>): Promise<Respons
   const sessionId = token ? await getSessionIdFromToken(database, token) : null;
 
   if (!sessionId) {
-    return jsonError({
-      message: "Unauthorized",
-      status: HttpStatus.Unauthorized,
-      code: ErrorCode.Unauthorized,
-    });
+    return unauthorized();
   }
 
   const session = await database
@@ -231,11 +225,7 @@ async function handleMe(request: Request, database: Kysely<DB>): Promise<Respons
     .where("id", "=", sessionId)
     .executeTakeFirst();
   if (!session) {
-    return jsonError({
-      message: "Unauthorized",
-      status: HttpStatus.Unauthorized,
-      code: ErrorCode.Unauthorized,
-    });
+    return unauthorized();
   }
 
   const user = await database
@@ -244,8 +234,7 @@ async function handleMe(request: Request, database: Kysely<DB>): Promise<Respons
     .where("id", "=", session.user_id)
     .executeTakeFirst();
 
-  if (!user)
-    return jsonError({ message: "User not found", status: HttpStatus.NotFound, code: ErrorCode.NotFound });
+  if (!user) return notFound("User not found");
   return jsonResponse(user);
 }
 
@@ -254,40 +243,15 @@ async function handleMe(request: Request, database: Kysely<DB>): Promise<Respons
 export function authPublicRoutes({ database, config }: HandleOpts): Elysia {
   return new Elysia({ name: "auth-public" })
     .post("/api/auth/login", async ({ request }) => handleLogin(request, database, config))
-    .post("/api/demo-login", async ({ request }) => handleDemoLogin(request, database, config));
+    .post("/api/demo-login", async ({ request }) =>
+      handleDemoLogin(request, database, config),
+    ) as unknown as Elysia;
 }
 
 export function authProtectedRoutes({ database }: { database: Kysely<DB> }): Elysia {
   return new Elysia({ name: "auth-protected" })
     .post("/api/auth/logout", async ({ request }) => handleLogout(request, database))
-    .get("/api/auth/me", async ({ request }) => handleMe(request, database));
-}
-
-// ── Backward compat: dispatchAuth for server.ts ───────────────────────────────────────────
-
-export async function dispatchAuth(params: RouteDispatchParams): Promise<Response | null> {
-  const { request, database, config } = params;
-  const url = new URL(request.url);
-  const { pathname } = url;
-  const method = request.method;
-
-  // POST /api/auth/login
-  if (pathname === "/api/auth/login" && method === "POST") {
-    return handleLogin(request, database, config);
-  }
-  // POST /api/demo-login
-  if (pathname === "/api/demo-login" && method === "POST") {
-    return handleDemoLogin(request, database, config);
-  }
-  // POST /api/auth/logout
-  if (pathname === "/api/auth/logout" && method === "POST") {
-    return handleLogout(request, database);
-  }
-  // GET /api/auth/me
-  if (pathname === "/api/auth/me" && method === "GET") {
-    return handleMe(request, database);
-  }
-  return null;
+    .get("/api/auth/me", async ({ request }) => handleMe(request, database)) as unknown as Elysia;
 }
 
 // ── Test utilities ───────────────────────────────────────────

@@ -486,10 +486,14 @@ async function serveGallerySearch(database: Kysely<DB>, params: URLSearchParams)
 
   function thumbForAsset(a: (typeof assets)[number]): string {
     switch (a.asset_type) {
-      case "image": return `<img src="/api/assets/${a.id}/thumb" alt="${escapeHtml(a.filename)}" loading="lazy" />`;
-      case "audio": return `<div class="file-icon">🎵</div>`;
-      case "video": return `<div class="file-icon">🎬</div>`;
-      default: return `<div class="file-icon">📄</div>`;
+      case "image":
+        return `<img src="/api/assets/${a.id}/thumb" alt="${escapeHtml(a.filename)}" loading="lazy" />`;
+      case "audio":
+        return `<div class="file-icon">🎵</div>`;
+      case "video":
+        return `<div class="file-icon">🎬</div>`;
+      default:
+        return `<div class="file-icon">📄</div>`;
     }
   }
 
@@ -514,10 +518,7 @@ async function serveCharactersSearch(database: Kysely<DB>, params: URLSearchPara
   const query = params.get("q")?.toLowerCase().trim() ?? "";
   const sort = params.get("sort") ?? "name";
 
-  let qb = database
-    .selectFrom("actors")
-    .selectAll()
-    .where("actor_type", "!=", ActorType.User);
+  let qb = database.selectFrom("actors").selectAll().where("actor_type", "!=", ActorType.User);
 
   if (query) {
     qb = qb.where("display_name", "like", `%${query}%`);
@@ -599,116 +600,118 @@ async function serveWorldsSearch(database: Kysely<DB>, params: URLSearchParams):
 // ── Elysia plugin ───────────────────────────────────────────
 
 export function viewRoutes({ database }: { database: Kysely<DB> }) {
-  return new Elysia({ name: "views" })
-    // ── Static partials (lazy-loaded modals, skeletons) ──────
-    .get("/partials/:page/:section", (ctx) => {
-      const name = `${ctx.params.page}/${ctx.params.section}`;
-      const url = new URL(ctx.request.url);
-      const result = serveStaticPartial(name, url.searchParams);
-      if (result) return result;
-      return new Response("Not found", { status: 404 });
-    })
+  return (
+    new Elysia({ name: "views" })
+      // ── Static partials (lazy-loaded modals, skeletons) ──────
+      .get("/partials/:page/:section", (ctx) => {
+        const name = `${ctx.params.page}/${ctx.params.section}`;
+        const url = new URL(ctx.request.url);
+        const result = serveStaticPartial(name, url.searchParams);
+        if (result) return result;
+        return new Response("Not found", { status: 404 });
+      })
 
-    // ── Dynamic partials (server-rendered data) ─────────────
-    .get("/dynamic/characters/grid", async () => {
-      return await serveCharactersGrid(database);
-    })
-    .get("/dynamic/gallery/grid", async () => {
-      return await serveGalleryGrid(database);
-    })
-    .get("/dynamic/worlds/list", async () => {
-      return await serveWorldsListDb(database);
-    })
+      // ── Dynamic partials (server-rendered data) ─────────────
+      .get("/dynamic/characters/grid", async () => {
+        return await serveCharactersGrid(database);
+      })
+      .get("/dynamic/gallery/grid", async () => {
+        return await serveGalleryGrid(database);
+      })
+      .get("/dynamic/worlds/list", async () => {
+        return await serveWorldsListDb(database);
+      })
 
-    // HTMX search endpoints
-    .get("/dynamic/gallery/search", async (ctx) => {
-      const url = new URL(ctx.request.url);
-      return await serveGallerySearch(database, url.searchParams);
-    })
-    .get("/dynamic/characters/search", async (ctx) => {
-      const url = new URL(ctx.request.url);
-      return await serveCharactersSearch(database, url.searchParams);
-    })
-    .get("/dynamic/worlds/search", async (ctx) => {
-      const url = new URL(ctx.request.url);
-      return await serveWorldsSearch(database, url.searchParams);
-    })
-    .get("/dynamic/worlds/:id/detail", async (ctx) => {
-      return await serveWorldDetailContent(ctx.params.id, database);
-    })
-    .get("/dynamic/characters/:id/edit-form", async (ctx) => {
-      return await serveCharacterEditForm(ctx.params.id, database);
-    })
-    .get("/dynamic/characters/:id/chat-list", async (ctx) => {
-      return await serveCharacterChatListDb(ctx.params.id, database);
-    })
+      // HTMX search endpoints
+      .get("/dynamic/gallery/search", async (ctx) => {
+        const url = new URL(ctx.request.url);
+        return await serveGallerySearch(database, url.searchParams);
+      })
+      .get("/dynamic/characters/search", async (ctx) => {
+        const url = new URL(ctx.request.url);
+        return await serveCharactersSearch(database, url.searchParams);
+      })
+      .get("/dynamic/worlds/search", async (ctx) => {
+        const url = new URL(ctx.request.url);
+        return await serveWorldsSearch(database, url.searchParams);
+      })
+      .get("/dynamic/worlds/:id/detail", async (ctx) => {
+        return await serveWorldDetailContent(ctx.params.id, database);
+      })
+      .get("/dynamic/characters/:id/edit-form", async (ctx) => {
+        return await serveCharacterEditForm(ctx.params.id, database);
+      })
+      .get("/dynamic/characters/:id/chat-list", async (ctx) => {
+        return await serveCharacterChatListDb(ctx.params.id, database);
+      })
 
-    // ── Character routes ───────────────────────────────────────
-    .get("/character/:slug", (ctx) => {
-      const isHtmx = ctx.request.headers.get("HX-Request") === "true";
-      const result = serveCharacterChatList(ctx.params.slug, isHtmx);
-      if (result) return result;
-      return new Response("Not found", { status: 404 });
-    })
-    .get("/character/:slug/edit", (ctx) => {
-      const isHtmx = ctx.request.headers.get("HX-Request") === "true";
-      const result = serveCharacterEdit(ctx.params.slug, isHtmx);
-      if (result) return result;
-      return new Response("Not found", { status: 404 });
-    })
-    .get("/character/:slug/:chatId", (ctx) => {
-      const isHtmx = ctx.request.headers.get("HX-Request") === "true";
-      const result = serveCharacterChat(ctx.params.slug, ctx.params.chatId, isHtmx);
-      if (result) return result;
-      return new Response("Not found", { status: 404 });
-    })
-    .get("/characters/:id/edit", (ctx) => {
-      const isHtmx = ctx.request.headers.get("HX-Request") === "true";
-      const result = serveCharacterEdit(ctx.params.id, isHtmx);
-      if (result) return result;
-      return new Response("Not found", { status: 404 });
-    })
+      // ── Character routes ───────────────────────────────────────
+      .get("/character/:slug", (ctx) => {
+        const isHtmx = ctx.request.headers.get("HX-Request") === "true";
+        const result = serveCharacterChatList(ctx.params.slug, isHtmx);
+        if (result) return result;
+        return new Response("Not found", { status: 404 });
+      })
+      .get("/character/:slug/edit", (ctx) => {
+        const isHtmx = ctx.request.headers.get("HX-Request") === "true";
+        const result = serveCharacterEdit(ctx.params.slug, isHtmx);
+        if (result) return result;
+        return new Response("Not found", { status: 404 });
+      })
+      .get("/character/:slug/:chatId", (ctx) => {
+        const isHtmx = ctx.request.headers.get("HX-Request") === "true";
+        const result = serveCharacterChat(ctx.params.slug, ctx.params.chatId, isHtmx);
+        if (result) return result;
+        return new Response("Not found", { status: 404 });
+      })
+      .get("/characters/:id/edit", (ctx) => {
+        const isHtmx = ctx.request.headers.get("HX-Request") === "true";
+        const result = serveCharacterEdit(ctx.params.id, isHtmx);
+        if (result) return result;
+        return new Response("Not found", { status: 404 });
+      })
 
-    // ── World routes ───────────────────────────────────────────
-    .get("/worlds", (ctx) => {
-      const isHtmx = ctx.request.headers.get("HX-Request") === "true";
-      const result = serveWorldsList(isHtmx);
-      if (result) return result;
-      return new Response("Not found", { status: 404 });
-    })
-    .get("/worlds/:id", (ctx) => {
-      const isHtmx = ctx.request.headers.get("HX-Request") === "true";
-      const result = serveWorldDetail(ctx.params.id, isHtmx);
-      if (result) return result;
-      return new Response("Not found", { status: 404 });
-    })
-    .get("/worlds/:id/edit", (ctx) => {
-      const isHtmx = ctx.request.headers.get("HX-Request") === "true";
-      const result = serveWorldEdit(ctx.params.id, isHtmx);
-      if (result) return result;
-      return new Response("Not found", { status: 404 });
-    })
+      // ── World routes ───────────────────────────────────────────
+      .get("/worlds", (ctx) => {
+        const isHtmx = ctx.request.headers.get("HX-Request") === "true";
+        const result = serveWorldsList(isHtmx);
+        if (result) return result;
+        return new Response("Not found", { status: 404 });
+      })
+      .get("/worlds/:id", (ctx) => {
+        const isHtmx = ctx.request.headers.get("HX-Request") === "true";
+        const result = serveWorldDetail(ctx.params.id, isHtmx);
+        if (result) return result;
+        return new Response("Not found", { status: 404 });
+      })
+      .get("/worlds/:id/edit", (ctx) => {
+        const isHtmx = ctx.request.headers.get("HX-Request") === "true";
+        const result = serveWorldEdit(ctx.params.id, isHtmx);
+        if (result) return result;
+        return new Response("Not found", { status: 404 });
+      })
 
-    // ── View templates ──────────────────────────────────────────
-    .get("/views/:name", (ctx) => {
-      const isHtmx = ctx.request.headers.get("HX-Request") === "true";
-      const name = ctx.params.name;
+      // ── View templates ──────────────────────────────────────────
+      .get("/views/:name", (ctx) => {
+        const isHtmx = ctx.request.headers.get("HX-Request") === "true";
+        const name = ctx.params.name;
 
-      // Admin view gate
-      if (name === "admin") {
-        const userRole = (ctx as any).userRole as string | null | undefined;
-        if (userRole !== "admin") {
-          return new Response(null, {
-            status: 302,
-            headers: { Location: "/" },
-          });
+        // Admin view gate
+        if (name === "admin") {
+          const userRole = (ctx as any).userRole as string | null | undefined;
+          if (userRole !== "admin") {
+            return new Response(null, {
+              status: 302,
+              headers: { Location: "/" },
+            });
+          }
         }
-      }
 
-      const result = serveView(name, isHtmx);
-      if (result) return result;
-      return new Response("Not found", { status: 404 });
-    });
+        const result = serveView(name, isHtmx);
+        if (result) return result;
+        return new Response("Not found", { status: 404 });
+      })
+  );
 }
 
 export { serveView };
