@@ -17,6 +17,7 @@ import type { DB } from "../db/schema";
 import type { AgeGateConfig } from "../config/schema";
 import { AgeGateMode } from "../db/enums";
 import * as AgeGateService from "./service";
+import { Elysia } from "elysia";
 
 import { jsonResponse, jsonError } from "../routes/http-utils";
 
@@ -181,42 +182,12 @@ export function handleAdminUpdateConfig(userRole: string | null | undefined, bod
   return jsonResponse(ageGateConfig.get());
 }
 
-// ── Route dispatch ───────────────────────────────────────────
-
-/** Options for dispatcher. */
-export interface AgeGateDispatchOptions {
-  request: Request;
-  database: Kysely<DB>;
-  userId: string | null;
-  userRole: string | null | undefined;
-}
-
-/**
- * Dispatch age-gate requests. Returns a Response or null if the
- * path doesn't match an age-gate route.
- */
-export async function dispatch(options: AgeGateDispatchOptions): Promise<Response | null> {
-  const { request, database, userId, userRole } = options;
-  const url = new URL(request.url);
-  const { pathname } = url;
-
-  if (pathname === "/api/age-gate/status" && request.method === "GET") {
-    return handleGetStatus(database, userId);
-  }
-
-  if (pathname === "/api/age-gate/accept" && request.method === "POST") {
-    const body = await request.json();
-    return handleAccept({ database, userId: userId ?? "", body });
-  }
-
-  if (pathname === "/api/admin/age-gate" && request.method === "GET") {
-    return handleAdminGetConfig(userRole);
-  }
-
-  if (pathname === "/api/admin/age-gate" && request.method === "PUT") {
-    const body = await request.json();
-    return handleAdminUpdateConfig(userRole, body);
-  }
-
-  return null; // Not an age-gate route
+export function ageGateRoutes({ database }: { database: Kysely<DB> }) {
+  return new Elysia({ name: "age-gate" })
+    .get("/api/age-gate/status", (ctx) => handleGetStatus(database, (ctx as any).userId))
+    .post("/api/age-gate/accept", (ctx) =>
+      handleAccept({ database, userId: (ctx as any).userId, body: ctx.body }),
+    )
+    .get("/api/admin/age-gate", (ctx) => handleAdminGetConfig((ctx as any).userRole))
+    .put("/api/admin/age-gate", (ctx) => handleAdminUpdateConfig((ctx as any).userRole, ctx.body));
 }
