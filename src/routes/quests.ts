@@ -11,23 +11,16 @@
  *   GET    /api/quests/:questId/progress/:chatId    — get chat progress
  */
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 import { Elysia } from "elysia";
 import type { Kysely } from "kysely";
 import type { DB } from "../db/schema";
 import { safeJsonStringify } from "../utils";
-import {
-  jsonResponse,
-  jsonError,
-  jsonPaginated,
-  jsonCreated,
-  jsonNoContent,
-  HttpStatus,
-} from "./http-utils";
+import { jsonResponse, jsonError, jsonPaginated, jsonCreated, jsonNoContent, HttpStatus } from "./http-utils";
 import { QuestEngine } from "../story/quest-engine";
 import type { QuestType as QuestTypeEnum } from "../db/enums";
 import type { QuestConfig } from "../story/types";
+import { QuestCreateBody } from "../validation/schemas";
+import { notFound } from "../validation/middleware";
 
 // ── Handlers ────────────────────────────────────────────────
 
@@ -37,15 +30,32 @@ async function checkQuestAccess(
   userId: string | null,
   userRole: string | null,
 ) {
-  const questRow = await database.selectFrom("quests").select(["world_id"]).where("id", "=", questId).executeTakeFirst();
+  const questRow = await database
+    .selectFrom("quests")
+    .select(["world_id"])
+    .where("id", "=", questId)
+    .executeTakeFirst();
   if (!questRow) return null;
-  const worldCheck = await database.selectFrom("worlds").select(["owner_id"]).where("id", "=", questRow.world_id).executeTakeFirst();
+  const worldCheck = await database
+    .selectFrom("worlds")
+    .select(["owner_id"])
+    .where("id", "=", questRow.world_id)
+    .executeTakeFirst();
   if (!worldCheck || (worldCheck.owner_id !== userId && userRole !== "admin")) return null;
   return questRow;
 }
 
-async function checkWorldAccess(database: Kysely<DB>, worldId: string, userId: string | null, userRole: string | null) {
-  const worldCheck = await database.selectFrom("worlds").select(["owner_id"]).where("id", "=", worldId).executeTakeFirst();
+async function checkWorldAccess(
+  database: Kysely<DB>,
+  worldId: string,
+  userId: string | null,
+  userRole: string | null,
+) {
+  const worldCheck = await database
+    .selectFrom("worlds")
+    .select(["owner_id"])
+    .where("id", "=", worldId)
+    .executeTakeFirst();
   if (!worldCheck || (worldCheck.owner_id !== userId && userRole !== "admin")) return false;
   return true;
 }
@@ -97,7 +107,7 @@ async function handleCreateQuest(
 
   if (!body.name) return jsonError({ message: "name is required", status: HttpStatus.BadRequest });
 
-  const questId = await (new QuestEngine(database)).createQuest({
+  const questId = await new QuestEngine(database).createQuest({
     worldId,
     creatorId: userId!,
     name: body.name as string,
@@ -123,11 +133,15 @@ async function handleQuest(
   body?: Record<string, unknown>,
 ) {
   const questRow = await checkQuestAccess(database, questId, userId, userRole);
-  if (!questRow) return jsonError({ message: "Quest not found", status: HttpStatus.NotFound });
+  if (!questRow) return notFound("Quest not found");
 
   if (method === "GET") {
-    const quest = await database.selectFrom("quests").selectAll().where("id", "=", questId).executeTakeFirst();
-    return quest ? jsonResponse(quest) : jsonError({ message: "Quest not found", status: HttpStatus.NotFound });
+    const quest = await database
+      .selectFrom("quests")
+      .selectAll()
+      .where("id", "=", questId)
+      .executeTakeFirst();
+    return quest ? jsonResponse(quest) : notFound("Quest not found");
   }
 
   const updates: Record<string, unknown> = {};
@@ -145,13 +159,22 @@ async function handleQuest(
     await database.updateTable("quests").set(updates).where("id", "=", questId).execute();
   }
 
-  const updated = await database.selectFrom("quests").selectAll().where("id", "=", questId).executeTakeFirst();
+  const updated = await database
+    .selectFrom("quests")
+    .selectAll()
+    .where("id", "=", questId)
+    .executeTakeFirst();
   return jsonResponse(updated);
 }
 
-async function handleAbandonQuest(database: Kysely<DB>, questId: string, userId: string | null, userRole: string | null) {
+async function handleAbandonQuest(
+  database: Kysely<DB>,
+  questId: string,
+  userId: string | null,
+  userRole: string | null,
+) {
   const questRow = await checkQuestAccess(database, questId, userId, userRole);
-  if (!questRow) return jsonError({ message: "Quest not found", status: HttpStatus.NotFound });
+  if (!questRow) return notFound("Quest not found");
 
   const engine = new QuestEngine(database);
   await engine.abandon(questId);
@@ -167,7 +190,7 @@ async function handleProgress(
   body?: Record<string, unknown>,
 ) {
   const questRow = await checkQuestAccess(database, questId, userId, userRole);
-  if (!questRow) return jsonError({ message: "Quest not found", status: HttpStatus.NotFound });
+  if (!questRow) return notFound("Quest not found");
 
   const engine = new QuestEngine(database);
   if (chatId) {
@@ -185,39 +208,72 @@ async function handleProgress(
 
 export function questsRoutes({ database }: { database: Kysely<DB> }): Elysia {
   return new Elysia({ name: "quests" })
-    .get("/api/worlds/:id/quests", async ({ params, query }) => {
-      const userId = (query as any).userId as string | null;
-      const userRole = (query as any).userRole as string | null;
-      return handleListQuests(database, params.id as string, Number(query.page) || 1, Number(query.pageSize) || 20, userId, userRole);
+    .get("/api/worlds/:id/quests", async (ctx: any) => {
+      const userId = ctx.userId as string | null;
+      const userRole = ctx.userRole as string | null;
+      return handleListQuests(
+        database,
+        ctx.params.id as string,
+        Number(ctx.query?.page) || 1,
+        Number(ctx.query?.pageSize) || 20,
+        userId,
+        userRole,
+      );
     })
-    .post("/api/worlds/:id/quests", async ({ params, body, query }) => {
-      const userId = (query as any).userId as string | null;
-      const userRole = (query as any).userRole as string | null;
-      return handleCreateQuest(database, params.id as string, userId, userRole, body as Record<string, unknown>);
+    .post("/api/worlds/:id/quests", async (ctx: any) => {
+      const userId = ctx.userId as string | null;
+      const userRole = ctx.userRole as string | null;
+      return handleCreateQuest(
+        database,
+        ctx.params.id as string,
+        userId,
+        userRole,
+        ctx.body as Record<string, unknown>,
+      );
+    }, { body: QuestCreateBody })
+    .get("/api/quests/:questId", async (ctx: any) => {
+      const userId = ctx.userId as string | null;
+      const userRole = ctx.userRole as string | null;
+      return handleQuest(database, "GET", ctx.params.questId as string, userId, userRole);
     })
-    .get("/api/quests/:questId", async ({ params, query }) => {
-      const userId = (query as any).userId as string | null;
-      const userRole = (query as any).userRole as string | null;
-      return handleQuest(database, "GET", params.questId as string, userId, userRole);
+    .put("/api/quests/:questId", async (ctx: any) => {
+      const userId = ctx.userId as string | null;
+      const userRole = ctx.userRole as string | null;
+      return handleQuest(
+        database,
+        "PUT",
+        ctx.params.questId as string,
+        userId,
+        userRole,
+        ctx.body as Record<string, unknown>,
+      );
     })
-    .put("/api/quests/:questId", async ({ params, body, query }) => {
-      const userId = (query as any).userId as string | null;
-      const userRole = (query as any).userRole as string | null;
-      return handleQuest(database, "PUT", params.questId as string, userId, userRole, body as Record<string, unknown>);
+    .delete("/api/quests/:questId", async (ctx: any) => {
+      const userId = ctx.userId as string | null;
+      const userRole = ctx.userRole as string | null;
+      return handleAbandonQuest(database, ctx.params.questId as string, userId, userRole);
     })
-    .delete("/api/quests/:questId", async ({ params, query }) => {
-      const userId = (query as any).userId as string | null;
-      const userRole = (query as any).userRole as string | null;
-      return handleAbandonQuest(database, params.questId as string, userId, userRole);
+    .post("/api/quests/:questId/progress", async (ctx: any) => {
+      const userId = ctx.userId as string | null;
+      const userRole = ctx.userRole as string | null;
+      return handleProgress(
+        database,
+        ctx.params.questId as string,
+        undefined,
+        userId,
+        userRole,
+        ctx.body as Record<string, unknown>,
+      );
     })
-    .post("/api/quests/:questId/progress", async ({ params, body, query }) => {
-      const userId = (query as any).userId as string | null;
-      const userRole = (query as any).userRole as string | null;
-      return handleProgress(database, params.questId as string, undefined, userId, userRole, body as Record<string, unknown>);
-    })
-    .get("/api/quests/:questId/progress/:chatId", async ({ params, query }) => {
-      const userId = (query as any).userId as string | null;
-      const userRole = (query as any).userRole as string | null;
-      return handleProgress(database, params.questId as string, params.chatId as string, userId, userRole);
-    });
+    .get("/api/quests/:questId/progress/:chatId", async (ctx: any) => {
+      const userId = ctx.userId as string | null;
+      const userRole = ctx.userRole as string | null;
+      return handleProgress(
+        database,
+        ctx.params.questId as string,
+        ctx.params.chatId as string,
+        userId,
+        userRole,
+      );
+    }) as unknown as Elysia;
 }

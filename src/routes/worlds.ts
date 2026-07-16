@@ -15,8 +15,6 @@
  *   POST   /api/worlds/:id/initialize-states      — initialize location & NPC states
  */
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 import { Elysia } from "elysia";
 import type { Kysely } from "kysely";
 import type { DB } from "../db/schema";
@@ -33,6 +31,8 @@ import {
   HttpStatus,
   ErrorCode,
 } from "./http-utils";
+import { WorldCreateBody, WorldUpdateBody } from "../validation/schemas";
+import { unauthorized, notFound } from "../validation/middleware";
 
 type HandleOpts = { database: Kysely<DB>; config: Config };
 
@@ -50,7 +50,10 @@ async function requireWorldAccess(
     .where("id", "=", worldId)
     .executeTakeFirst();
   if (!world || (world.owner_id !== userId && userRole !== "admin")) {
-    return { world: undefined, error: jsonError({ message: "World not found", status: HttpStatus.NotFound, code: ErrorCode.NotFound }) };
+    return {
+      world: undefined,
+      error: notFound("World not found"),
+    };
   }
   return { world, error: undefined };
 }
@@ -74,12 +77,7 @@ async function handleListWorlds(database: Kysely<DB>, page: number, pageSize: nu
 }
 
 async function handleCreateWorld(database: Kysely<DB>, body: Record<string, unknown>, userId: string | null) {
-  if (!userId)
-    return jsonError({
-      message: "Unauthorized",
-      status: HttpStatus.Unauthorized,
-      code: ErrorCode.Unauthorized,
-    });
+  if (!userId) return unauthorized();
 
   const name = body.name as string | undefined;
   if (!name) return jsonError({ message: "name is required", status: HttpStatus.BadRequest });
@@ -324,12 +322,7 @@ async function handleGetLocation(
     .where("world_id", "=", worldId)
     .executeTakeFirst();
 
-  if (!location)
-    return jsonError({
-      message: "Location not found",
-      status: HttpStatus.NotFound,
-      code: ErrorCode.NotFound,
-    });
+  if (!location) return notFound("Location not found");
   return jsonResponse(location);
 }
 
@@ -395,7 +388,7 @@ export function worldsRoutes({ database }: HandleOpts): Elysia {
     .post("/api/worlds", async (ctx: any) => {
       const userId = ctx.userId as string | null;
       return handleCreateWorld(database, ctx.body as Record<string, unknown>, userId);
-    })
+    }, { body: WorldCreateBody })
     .get("/api/worlds/:id", async (ctx: any) => {
       const userId = ctx.userId as string | null;
       const userRole = ctx.userRole as string | null;
@@ -411,7 +404,7 @@ export function worldsRoutes({ database }: HandleOpts): Elysia {
         userId,
         userRole,
       );
-    })
+    }, { body: WorldUpdateBody })
     .delete("/api/worlds/:id", async (ctx: any) => {
       const userId = ctx.userId as string | null;
       const userRole = ctx.userRole as string | null;
@@ -438,7 +431,13 @@ export function worldsRoutes({ database }: HandleOpts): Elysia {
     .get("/api/worlds/:id/locations/:locId", async (ctx: any) => {
       const userId = ctx.userId as string | null;
       const userRole = ctx.userRole as string | null;
-      return handleGetLocation(database, ctx.params.id as string, ctx.params.locId as string, userId, userRole);
+      return handleGetLocation(
+        database,
+        ctx.params.id as string,
+        ctx.params.locId as string,
+        userId,
+        userRole,
+      );
     })
     .put("/api/worlds/:id/locations/:locId", async (ctx: any) => {
       const userId = ctx.userId as string | null;
@@ -455,11 +454,17 @@ export function worldsRoutes({ database }: HandleOpts): Elysia {
     .delete("/api/worlds/:id/locations/:locId", async (ctx: any) => {
       const userId = ctx.userId as string | null;
       const userRole = ctx.userRole as string | null;
-      return handleDeleteLocation(database, ctx.params.id as string, ctx.params.locId as string, userId, userRole);
+      return handleDeleteLocation(
+        database,
+        ctx.params.id as string,
+        ctx.params.locId as string,
+        userId,
+        userRole,
+      );
     })
     .post("/api/worlds/:id/initialize-states", async (ctx: any) => {
       const userId = ctx.userId as string | null;
       const userRole = ctx.userRole as string | null;
       return handleInitializeStates(database, ctx.params.id as string, userId, userRole);
-}) as unknown as Elysia;
+    }) as unknown as Elysia;
 }
