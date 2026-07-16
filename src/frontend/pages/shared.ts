@@ -46,7 +46,8 @@ interface FilterBarState {
     },
     triggerSearch(): void {
       const el = (this as any).$el as HTMLElement;
-      const searchUrl = el.closest<HTMLElement>("[data-search-url]")?.dataset.searchUrl ?? "/dynamic/gallery/search";
+      const searchUrl =
+        el.closest<HTMLElement>("[data-search-url]")?.dataset.searchUrl ?? "/dynamic/gallery/search";
       const targetId = el.closest<HTMLElement>("[data-target-id]")?.dataset.targetId ?? "asset-grid";
       const params = new URLSearchParams();
       if (this.query) params.set("q", this.query);
