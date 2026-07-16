@@ -11,12 +11,11 @@
  * Elysia plugin — uses auth guard for authentication.
  */
 
-/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access */
-
 import { Elysia } from "elysia";
 import type { Kysely } from "kysely";
 import type { DB } from "../db/schema";
-import { jsonResponse, jsonError, HttpStatus, ErrorCode } from "./http-utils";
+import { jsonResponse } from "./http-utils";
+import { unauthorized } from "../validation/middleware";
 
 interface ActivityEntry {
   unseenCount: number;
@@ -114,11 +113,7 @@ export function activityRoutes({ database }: { database: Kysely<DB> }) {
   return new Elysia({ name: "activity" }).get("/api/chats/activity", async (ctx) => {
     const userId = (ctx as any).userId as string | null;
     if (!userId) {
-      return jsonError({
-        message: "Unauthorized",
-        status: HttpStatus.Unauthorized,
-        code: ErrorCode.Unauthorized,
-      });
+      return unauthorized();
     }
     const chats = await computeActivity(database, userId);
     return jsonResponse({ chats } satisfies ActivityResponse);

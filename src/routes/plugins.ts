@@ -7,22 +7,23 @@
  *   POST /api/plugins/:name/disable — disable a plugin
  */
 
-/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access */
-
 import { Elysia } from "elysia";
 import type { Kysely } from "kysely";
 import type { DB } from "../db/schema";
-import { jsonResponse, jsonError, HttpStatus, ErrorCode } from "./http-utils";
+import { jsonResponse, jsonError, HttpStatus } from "./http-utils";
 import { registry } from "../plugins/registry";
 import { getLogger } from "../logger";
+import { forbidden } from "../validation/middleware";
 
-const log = getLogger().child({ module: "plugins" });
+function log() {
+  return getLogger().child({ module: "plugins" });
+}
 
 export function pluginRoutes({ database }: { database: Kysely<DB> }) {
   return new Elysia({ name: "plugins" })
-    .get("/api/plugins", async ({ userRole }: any) => {
-      if (userRole !== "admin") {
-        return jsonError({ message: "Admin access required", status: HttpStatus.Forbidden, code: ErrorCode.Forbidden });
+    .get("/api/plugins", async (ctx: any) => {
+      if (ctx.userRole !== "admin") {
+        return forbidden("Admin access required");
       }
 
       const plugins = registry.listPlugins().map((p) => ({
@@ -39,7 +40,7 @@ export function pluginRoutes({ database }: { database: Kysely<DB> }) {
     })
     .post("/api/plugins/:name/enable", async ({ params, userRole }: any) => {
       if (userRole !== "admin") {
-        return jsonError({ message: "Admin access required", status: HttpStatus.Forbidden, code: ErrorCode.Forbidden });
+        return forbidden("Admin access required");
       }
 
       const name = params.name as string;
@@ -58,17 +59,19 @@ export function pluginRoutes({ database }: { database: Kysely<DB> }) {
         .insertInto("plugin_state")
         .values({ name, enabled: 1, enabled_at: new Date().toISOString(), disabled_at: null })
         .onConflict((oc) =>
-          oc.column("name").doUpdateSet({ enabled: 1, enabled_at: new Date().toISOString(), disabled_at: null }),
+          oc
+            .column("name")
+            .doUpdateSet({ enabled: 1, enabled_at: new Date().toISOString(), disabled_at: null }),
         )
         .execute()
         .catch(() => {});
 
-      log.info("Plugin enabled", { plugin: name });
+      log().info("Plugin enabled", { plugin: name });
       return jsonResponse({ ok: true });
     })
     .post("/api/plugins/:name/disable", async ({ params, userRole }: any) => {
       if (userRole !== "admin") {
-        return jsonError({ message: "Admin access required", status: HttpStatus.Forbidden, code: ErrorCode.Forbidden });
+        return forbidden("Admin access required");
       }
 
       const name = params.name as string;
@@ -92,7 +95,7 @@ export function pluginRoutes({ database }: { database: Kysely<DB> }) {
         .execute()
         .catch(() => {});
 
-      log.info("Plugin disabled", { plugin: name });
+      log().info("Plugin disabled", { plugin: name });
       return jsonResponse({ ok: true });
     });
 }
