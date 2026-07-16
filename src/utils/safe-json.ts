@@ -66,7 +66,14 @@ export function safeJsonStringify(
       space = spaceOrOptions.space;
     }
 
-    const toStringify = guarded && isJsonString(value) ? (JSON.parse(value) as unknown) : value;
+    let toStringify = value;
+    if (guarded && typeof value === "string") {
+      try {
+        toStringify = JSON.parse(value) as unknown;
+      } catch {
+        // value is not a valid JSON string — stringify as-is
+      }
+    }
     return { ok: true, value: JSON.stringify(toStringify, null, space) };
   } catch (error) {
     return { ok: false, error: asError(error) };

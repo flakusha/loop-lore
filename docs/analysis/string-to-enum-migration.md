@@ -181,22 +181,26 @@ These look like enum candidates but are not:
 1. `WorldItems.visibility` → `ItemVisibility` (enum exists, just change type)
 2. Config inline unions → reference existing enums (`CompressionAlgorithm`, `TransportProtocol`)
 
+The next phase covers schema-only enum types that require new enum definitions but no config changes.
+
 ### Phase 2 — New enums needed (schema only)
 
-3. `ActorKeys.key_type` → `KeyType`
-4. `ActorKeys.status` → `KeyStatus`
-5. `ActorNotes.category` → `NoteCategory`
-6. `ActorItems.item_type` → `ActorItemType` (or reuse `ItemCategory`)
-7. `ModelRoleOverrides.role` → `ModelRole`
+1. `ActorKeys.key_type` → `KeyType`
+1. `ActorKeys.status` → `KeyStatus`
+1. `ActorNotes.category` → `NoteCategory`
+1. `ActorItems.item_type` → `ActorItemType` (or reuse `ItemCategory`)
+1. `ModelRoleOverrides.role` → `ModelRole`
+
+Schema + config enums require both DB migration and config schema updates.
 
 ### Phase 3 — New enums needed (schema + config)
 
-8. `ActorMemories.memory_type` → `MemoryType`
-9. `ActorLoreEntries.position` + `WorldLoreEntries.position` → `LorePosition`
-10. `Worlds.difficulty_reroll` → `DifficultyReroll`
-11. `Worlds.difficulty_state` → `DifficultyState`
-12. `AssetLinks.entity_type` → `AssetLinkEntity`
-13. Config new enums: `ResponseCompression`, `EncryptionCompression`, `ImageApiFamily`, HTTP header enums, `SdModelType`
+1. `ActorMemories.memory_type` → `MemoryType`
+1. `ActorLoreEntries.position` + `WorldLoreEntries.position` → `LorePosition`
+1. `Worlds.difficulty_reroll` → `DifficultyReroll`
+1. `Worlds.difficulty_state` → `DifficultyState`
+1. `AssetLinks.entity_type` → `AssetLinkEntity`
+1. Config new enums: `ResponseCompression`, `EncryptionCompression`, `ImageApiFamily`, HTTP header enums, `SdModelType`
 
 ---
 

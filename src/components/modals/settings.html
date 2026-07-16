@@ -9,12 +9,13 @@
     display: none;
     position: fixed;
     inset: 0;
+    pointer-events: none;
     background: rgba(0, 0, 0, 0.5);
     z-index: var(--z-modal, 1000);
     align-items: center;
     justify-content: center;
   "
-  x-bind:style="open ? { display: 'flex' } : { display: 'none' }"
+  x-bind:style="open ? { display: 'flex', pointerEvents: 'auto' } : { display: 'none', pointerEvents: 'none' }"
 >
   <div
     class="modal-content"

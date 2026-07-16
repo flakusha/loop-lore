@@ -320,6 +320,7 @@ export async function seedSolo(db: Kysely<DB>): Promise<void> {
       status: UserStatus.Active,
       settings: "{}",
     })
+    .onConflict((oc) => oc.column("username").doNothing())
     .execute();
 
   await db
@@ -335,6 +336,7 @@ export async function seedSolo(db: Kysely<DB>): Promise<void> {
       import_spec: "raw",
       data_version: 0,
     })
+    .onConflict((oc) => oc.column("id").doNothing())
     .execute();
 
   await db
@@ -346,6 +348,7 @@ export async function seedSolo(db: Kysely<DB>): Promise<void> {
       mode: ChatMode.Direct,
       created_by: SEED.solo.id,
     })
+    .onConflict((oc) => oc.column("id").doNothing())
     .execute();
 
   await db
@@ -355,5 +358,6 @@ export async function seedSolo(db: Kysely<DB>): Promise<void> {
       actor_id: SEED.solo.id,
       role_in_chat: "owner",
     })
+    .onConflict((oc) => oc.columns(["chat_id", "actor_id"]).doNothing())
     .execute();
 }
