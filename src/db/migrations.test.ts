@@ -58,6 +58,7 @@ const EXPECTED_TABLES = [
   "world_lore_entries",
   "assets",
   "asset_links",
+  "asset_shares",
   "messages",
   "actor_keys",
   "user_api_keys",
@@ -90,7 +91,13 @@ describe("migrations round-trip (split 001_init)", () => {
   });
 
   afterAll(() => {
-    void (async () => { try { await kysely.destroy(); } catch { /* teardown — ignore */ } })();
+    void (async () => {
+      try {
+        await kysely.destroy();
+      } catch {
+        /* teardown — ignore */
+      }
+    })();
   });
 
   test("up() creates every expected schema table", async () => {
