@@ -8,16 +8,16 @@ Notifications are per-user, per-device, and configurable.
 
 ## Notification Types
 
-| Type              | Trigger                                        | Default |
-| ----------------- | ---------------------------------------------- | ------- |
-| `mention`           | @mentioned in a group chat                     | on      |
-| `quest_update`      | Quest status changed by GM                     | on      |
-| `item_offer`        | Another player offers an item for trade        | on      |
-| `world_event`       | Significant event in a joined world            | off     |
-| `chat_invite`       | Invited to a private group chat                | on      |
-| `character_update`  | A followed character's card was updated        | off     |
-| `gm_action`         | GM performed a world-state-changing action     | on      |
-| `system`            | System alerts (server maintenance, etc.)       | on      |
+| Type               | Trigger                                    | Default |
+| ------------------ | ------------------------------------------ | ------- |
+| `mention`          | @mentioned in a group chat                 | on      |
+| `quest_update`     | Quest status changed by GM                 | on      |
+| `item_offer`       | Another player offers an item for trade    | on      |
+| `world_event`      | Significant event in a joined world        | off     |
+| `chat_invite`      | Invited to a private group chat            | on      |
+| `character_update` | A followed character's card was updated    | off     |
+| `gm_action`        | GM performed a world-state-changing action | on      |
+| `system`           | System alerts (server maintenance, etc.)   | on      |
 
 ## Notification Model
 
@@ -41,17 +41,17 @@ interface Notification {
 
 Table: `notifications`
 
-| Column      | Type    | Notes                                  |
-| ----------- | ------- | -------------------------------------- |
-| id          | TEXT    | PK, UUID                               |
-| user_id     | TEXT    | FK → users.id                          |
-| type        | TEXT    | NotificationType enum                  |
-| title       | TEXT    | Short summary                          |
-| body        | TEXT    | Optional detail text                   |
-| link        | TEXT    | Optional deep link path                |
-| read        | INTEGER | DEFAULT 0                              |
-| created_at  | TEXT    | DEFAULT CURRENT_TIMESTAMP              |
-| data        | TEXT    | JSON payload (optional)                |
+| Column     | Type    | Notes                     |
+| ---------- | ------- | ------------------------- |
+| id         | TEXT    | PK, UUID                  |
+| user_id    | TEXT    | FK → users.id             |
+| type       | TEXT    | NotificationType enum     |
+| title      | TEXT    | Short summary             |
+| body       | TEXT    | Optional detail text      |
+| link       | TEXT    | Optional deep link path   |
+| read       | INTEGER | DEFAULT 0                 |
+| created_at | TEXT    | DEFAULT CURRENT_TIMESTAMP |
+| data       | TEXT    | JSON payload (optional)   |
 
 **Index:** `(user_id, read, created_at)` for efficient unread queries.
 

@@ -349,17 +349,18 @@ interface IncomeSource {
 
 Actors are classified by net worth (gold + item value - debt):
 
-| Tier        | Net Worth      | Lifestyle           | Examples               |
-| ----------- | -------------- | ------------------- | ---------------------- |
-| Destitute   | < 10           | No shelter/food     | Beggar, escaped slave  |
-| Poor        | 10–99          | Basic shelter       | Peasant, day laborer   |
-| Common      | 100–499        | Comfortable         | Shopkeeper, skilled    |
-| Wealthy     | 500–1999       | Comfortable+        | Merchant, minor noble  |
-| Affluent    | 2000–9999      | Luxury              | Landowner, guild master|
-| Rich        | 10000–49999    | Luxury+             | Noble, archmage        |
-| Legendary   | 50000+         | Unlimited           | Dragon, king           |
+| Tier      | Net Worth   | Lifestyle       | Examples                |
+| --------- | ----------- | --------------- | ----------------------- |
+| Destitute | < 10        | No shelter/food | Beggar, escaped slave   |
+| Poor      | 10–99       | Basic shelter   | Peasant, day laborer    |
+| Common    | 100–499     | Comfortable     | Shopkeeper, skilled     |
+| Wealthy   | 500–1999    | Comfortable+    | Merchant, minor noble   |
+| Affluent  | 2000–9999   | Luxury          | Landowner, guild master |
+| Rich      | 10000–49999 | Luxury+         | Noble, archmage         |
+| Legendary | 50000+      | Unlimited       | Dragon, king            |
 
 Wealth tier affects:
+
 - Bartering leverage (higher tier = better prices)
 - Access to exclusive shops/services
 - NPC social responses
@@ -410,13 +411,13 @@ a premium.
 
 Worlds can configure tax rates that apply automatically:
 
-| Tax Type       | Default Rate | Applies To                    |
-| -------------- | ------------ | ----------------------------- |
-| Sales tax      | 0%           | All shop purchases            |
-| Income tax     | 0%           | Employment income             |
-| Property tax   | 0%           | Owned buildings/land          |
-| Travel tax     | 0%           | Entering certain locations    |
-| Quest tax      | 0%           | Quest rewards (GM's cut)      |
+| Tax Type     | Default Rate | Applies To                 |
+| ------------ | ------------ | -------------------------- |
+| Sales tax    | 0%           | All shop purchases         |
+| Income tax   | 0%           | Employment income          |
+| Property tax | 0%           | Owned buildings/land       |
+| Travel tax   | 0%           | Entering certain locations |
+| Quest tax    | 0%           | Quest rewards (GM's cut)   |
 
 Taxes are deducted automatically by the engine. The GM can set rates per
 location or per world via chat rules or tool calls.
@@ -483,8 +484,8 @@ to player-to-player barter.
 
 #### Trade Modes
 
-| Mode           | Description                                   | Validation        |
-| -------------- | --------------------------------------------- | ----------------- |
+| Mode           | Description                                    | Validation        |
+| -------------- | ---------------------------------------------- | ----------------- |
 | **Gold trade** | One actor pays gold, other provides item       | Gold check        |
 | **Barter**     | Items swapped directly (no gold involved)      | Value comparison  |
 | **Hybrid**     | Items + gold combined in single transaction    | Both checks       |
@@ -605,12 +606,12 @@ interface BarterSkillCheck {
 }
 ```
 
-| Outcome        | Effect                                                  |
-| -------------- | ------------------------------------------------------- |
-| Critical Success | Target accepts unfavorable trade, +10 trust           |
-| Success        | Target accepts trade at fair value                      |
-| Failure        | Target refuses or demands better terms                  |
-| Critical Failure | Target refuses, -5 trust, may refuse future trades    |
+| Outcome          | Effect                                             |
+| ---------------- | -------------------------------------------------- |
+| Critical Success | Target accepts unfavorable trade, +10 trust        |
+| Success          | Target accepts trade at fair value                 |
+| Failure          | Target refuses or demands better terms             |
+| Critical Failure | Target refuses, -5 trust, may refuse future trades |
 
 The skill check is resolved by the dice engine (plugin resolver), not
 the LLM — ensuring fair, deterministic outcomes.
@@ -675,14 +676,14 @@ In group chats with multiple actors, trading becomes multi-party:
 
 Worlds can configure trading rules:
 
-| Rule                | Default | Description                           |
-| ------------------- | ------- | ------------------------------------- |
-| `allow_p2p_trade`   | true    | Allow actor-to-actor trades           |
-| `allow_barter`      | true    | Allow item-for-item swaps             |
-| `require_proximity` | false   | Actors must be in same location       |
-| `tax_on_trade`      | 0       | Percentage tax on gold trades         |
-| `max_trade_value`   | 0       | Cap on single trade value (0 = no cap)|
-| `cooldown_turns`    | 0       | Turns between trades (0 = no cooldown)|
+| Rule                | Default | Description                            |
+| ------------------- | ------- | -------------------------------------- |
+| `allow_p2p_trade`   | true    | Allow actor-to-actor trades            |
+| `allow_barter`      | true    | Allow item-for-item swaps              |
+| `require_proximity` | false   | Actors must be in same location        |
+| `tax_on_trade`      | 0       | Percentage tax on gold trades          |
+| `max_trade_value`   | 0       | Cap on single trade value (0 = no cap) |
+| `cooldown_turns`    | 0       | Turns between trades (0 = no cooldown) |
 
 ---
 
@@ -771,48 +772,48 @@ interaction events.
 
 ### Relationship Tiers
 
-| Tier      | Range   | Meaning                                  |
-| --------- | ------- | ---------------------------------------- |
-| Hostile   | -100–-51| Active enmity, attack on sight           |
-| Unfriendly| -50–-21 | Cold, suspicious, refuse cooperation     |
-| Neutral   | -20–+20 | Default, no strong feelings              |
-| Friendly  | +21–+50 | Cooperative, willing to help             |
-| Allied    | +51–+75 | Deep trust, share resources freely       |
-| Devoted   | +76–+100| Unconditional loyalty, sacrifice for other|
+| Tier       | Range    | Meaning                                    |
+| ---------- | -------- | ------------------------------------------ |
+| Hostile    | -100–-51 | Active enmity, attack on sight             |
+| Unfriendly | -50–-21  | Cold, suspicious, refuse cooperation       |
+| Neutral    | -20–+20  | Default, no strong feelings                |
+| Friendly   | +21–+50  | Cooperative, willing to help               |
+| Allied     | +51–+75  | Deep trust, share resources freely         |
+| Devoted    | +76–+100 | Unconditional loyalty, sacrifice for other |
 
 ### Relationship Events
 
 Standing shifts based on events:
 
-| Event                        | Standing Change |
-| ---------------------------- | --------------- |
-| Successful trade             | +5              |
-| Failed trade (cheated)       | -15             |
-| Gift given                   | +10             |
-| Gift refused                 | -5              |
-| Combat (defeated opponent)   | -20             |
-| Combat (spared opponent)     | +10             |
-| Saved from danger            | +25             |
-| Betrayed trust               | -30             |
-| Shared information           | +5              |
-| Kept secret                  | +10             |
-| Completed quest for them     | +15             |
-| Failed quest for them        | -10             |
-| Insulted publicly            | -10             |
-| Complimented publicly        | +5              |
+| Event                      | Standing Change |
+| -------------------------- | --------------- |
+| Successful trade           | +5              |
+| Failed trade (cheated)     | -15             |
+| Gift given                 | +10             |
+| Gift refused               | -5              |
+| Combat (defeated opponent) | -20             |
+| Combat (spared opponent)   | +10             |
+| Saved from danger          | +25             |
+| Betrayed trust             | -30             |
+| Shared information         | +5              |
+| Kept secret                | +10             |
+| Completed quest for them   | +15             |
+| Failed quest for them      | -10             |
+| Insulted publicly          | -10             |
+| Complimented publicly      | +5              |
 
 ### Storage (Proposed)
 
 Table: `actor_relationships`
 
-| Column        | Type    | Notes                                    |
-| ------------- | ------- | ---------------------------------------- |
-| actor_a_id    | TEXT    | FK → actors.id                           |
-| actor_b_id    | TEXT    | FK → actors.id                           |
+| Column        | Type    | Notes                                        |
+| ------------- | ------- | -------------------------------------------- |
+| actor_a_id    | TEXT    | FK → actors.id                               |
+| actor_b_id    | TEXT    | FK → actors.id                               |
 | world_id      | TEXT    | FK → worlds.id (relationships are per-world) |
-| standing      | INTEGER | -100 to +100                             |
-| last_event_at | TEXT    | Timestamp of last interaction            |
-| notes         | TEXT    | GM or system notes about the relationship|
+| standing      | INTEGER | -100 to +100                                 |
+| last_event_at | TEXT    | Timestamp of last interaction                |
+| notes         | TEXT    | GM or system notes about the relationship    |
 
 **Unique constraint:** `(actor_a_id, actor_b_id, world_id)` — one relationship
 per pair per world. Standing is symmetric? No — A's standing toward B can

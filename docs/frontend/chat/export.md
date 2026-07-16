@@ -102,11 +102,11 @@ Generate a read-only link that lets anyone view the chat without an account
 
 ### Share Settings
 
-| Setting     | Options                          | Default   |
-| ----------- | -------------------------------- | --------- |
-| Visibility  | `unlisted` / `public`            | `unlisted`|
-| Expiry      | 1h / 24h / 7d / 30d / never     | `24h`     |
-| Include metadata | on/off                       | `on`      |
+| Setting          | Options                     | Default    |
+| ---------------- | --------------------------- | ---------- |
+| Visibility       | `unlisted` / `public`       | `unlisted` |
+| Expiry           | 1h / 24h / 7d / 30d / never | `24h`      |
+| Include metadata | on/off                      | `on`       |
 
 - **Unlisted:** accessible only via the direct link, not discoverable
 - **Public:** listed on a "Shared Stories" page (future)

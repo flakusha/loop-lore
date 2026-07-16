@@ -40,16 +40,17 @@ consistent search and filter pattern. This section defines the shared behavior.
 
 ### Per-Screen Filters
 
-| Screen    | Search by    | Filters                                                   | Sort options                     |
-| --------- | ------------ | --------------------------------------------------------- | -------------------------------- |
-| Characters| name         | Type (All / Users / Characters), Visibility (All / Private / Public) | Newest, Most Active, Name A-Z |
-| Worlds    | name         | Tags (from world tags), Owner (All / Mine)                | Newest, Last Activity, Name A-Z |
-| Chats     | name         | Type (1x1 / Group), Visibility (Private / Public), World | Newest, Last Message, Name A-Z  |
-| Gallery   | name, label  | Media type (All / Images / Audio / Video), Visibility     | Newest, Size, Name A-Z          |
+| Screen     | Search by   | Filters                                                              | Sort options                    |
+| ---------- | ----------- | -------------------------------------------------------------------- | ------------------------------- |
+| Characters | name        | Type (All / Users / Characters), Visibility (All / Private / Public) | Newest, Most Active, Name A-Z   |
+| Worlds     | name        | Tags (from world tags), Owner (All / Mine)                           | Newest, Last Activity, Name A-Z |
+| Chats      | name        | Type (1x1 / Group), Visibility (Private / Public), World             | Newest, Last Message, Name A-Z  |
+| Gallery    | name, label | Media type (All / Images / Audio / Video), Visibility                | Newest, Size, Name A-Z          |
 
 ### Empty States
 
 Each filter combination that yields zero results shows:
+
 - "No [entities] match the current filter."
 - "Clear filters" link that resets all filters and search
 

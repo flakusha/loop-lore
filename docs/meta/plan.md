@@ -301,14 +301,41 @@ CI config (GitHub Actions) added in v0.2 in-progress work. Telemetry + responsiv
 
 ### 17. Encryption Foundation — ⬜ Not Started
 
-AES-256-GCM at-rest encryption for messages.
+AES-256-GCM at-rest encryption for messages. Three-tier model: public (no
+encryption), standard (server-mediated with actor keys), private (E2E with
+client-side key exchange). Build in order: public first, then standard, then
+private (with external audit before production).
 
-| Task                                     | Files                     | Notes                                                                                                        |
-| ---------------------------------------- | ------------------------- | ------------------------------------------------------------------------------------------------------------ |
-| Server-side at-rest encryption (Phase 1) | `src/crypto/at-rest.ts`   | NEW. AES-256-GCM encrypt/decrypt message content on write/read. Key from env or auto-generated on first run. |
-| Per-user keys via Argon2id (Phase 2)     | `src/crypto/user-keys.ts` | NEW. Derive per-user key from password + Argon2id. Encrypt messages with user key.                           |
-| Browser-side key derivation              | `src/frontend/browser.ts` | Web Crypto API: `PBKDF2` derive key from password. Store in session. Send encrypted blobs to server.         |
-| WebP→PNG conversion                      | `src/assets/metadata.ts`  | Convert WebP images to PNG before sending to LLM APIs that don't support WebP.                               |
+| Task                                     | Files                     | Notes                                                                                                           |
+| ---------------------------------------- | ------------------------- | --------------------------------------------------------------------------------------------------------------- |
+| Public tier (Phase 0)                    | `src/routes/messages.ts`  | No encryption. Validate all chat flows work without crypto.                                                     |
+| Server-side at-rest encryption (Phase 1) | `src/crypto/at-rest.ts`   | NEW. AES-256-GCM encrypt/decrypt message content on write/read. Key from env or auto-generated on first run.    |
+| Per-user keys via Argon2id (Phase 2)     | `src/crypto/user-keys.ts` | NEW. Derive per-user key from password + Argon2id. Encrypt messages with user key.                              |
+| Chat-level key derivation (Phase 3)      | `src/crypto/chat-keys.ts` | Per-chat AES-256-GCM from participant keys via HKDF. Already built — wire to routes.                            |
+| Browser-side key derivation              | `src/frontend/browser.ts` | Web Crypto API: `PBKDF2` derive key from password. Store in session. Send encrypted blobs to server.            |
+| Private tier (Phase 4) — E2E             | `src/crypto/e2e/`         | NEW. Client-side encrypt before send. Key exchange protocol. Forward secrecy on user leave. External audit req. |
+| Key rotation on user leave               | `src/crypto/chat-keys.ts` | New keys for subsequent messages when participant leaves. Old keys expire, can't decrypt new content.           |
+| Immutability enforcement                 | `src/routes/chats.ts`     | Reject encryption level change after chat creation. Only clone-to-new-chat allowed.                             |
+| WebP→PNG conversion                      | `src/assets/metadata.ts`  | Convert WebP images to PNG before sending to LLM APIs that don't support WebP.                                  |
+
+See [`docs/frontend/encryption.md`](../frontend/encryption.md#chat-encryption-tiers)
+for full tier specification.
+
+### 20. E2E Performance Benchmarks — ⬜ Not Started
+
+Deterministic performance tracking per git sha. Fixed seed data, in-memory DB,
+mock providers, single-threaded. Results stored in `data/benchmarks/`
+(gitignored). Diff script compares commits.
+
+| Task                            | Files                        | Notes                                                                                |
+| ------------------------------- | ---------------------------- | ------------------------------------------------------------------------------------ |
+| Benchmark runner                | `scripts/bench-run.ts`       | NEW. Run suite, write `data/benchmarks/<sha>.json`. API + DB categories.             |
+| Diff script                     | `scripts/bench-diff.ts`      | NEW. Compare two git shas, print per-benchmark delta. Flag regressions.              |
+| Trend script                    | `scripts/bench-trend.ts`     | NEW. Show last N runs as ASCII trend.                                                |
+| CI integration (GitHub Actions) | `.github/workflows/ci.yml`   | Run benchmarks, upload artifact, compare against `main`. Block merge on 2x slowdown. |
+| Threshold config                | `benchmarks/thresholds.json` | Configurable thresholds: warn at 50% degradation, block at 200% degradation.         |
+
+See [`docs/spec/e2e-benchmarks.md`](../spec/e2e-benchmarks.md) for full spec.
 
 ### 18. Local Inference Integrations — ⬜ Not Started
 
@@ -386,16 +413,16 @@ Key open items:
 | --- | ----------------------------------- | --------------------------------------------------------------- |
 | 14  | `src/db/enums.ts`                   | Barrel re-exports but no validation enums match DB. Drift risk. |
 | 15  | `src/db/migrations/001_init.ts`     | `chat_participants` PK undocumented                             |
-| 16  | `src/db/migrations/001_init.ts`     | No index on `sessions(user_id, expires_at)` for cleanup         |
+| 16  | `src/db/migrations/001_init.ts`     | No index on `sessions(user_id, expires_at)` for cleanup         | migration/parts/001_users.ts:37  | **Resolved** — `idx_sessions_user_expires` already exists          |
 | 18  | `src/utils.ts`                      | `safeJsonStringify` guarded mode parses JSON twice on hot path  |
-| 21  | `src/assistant/service.ts`          | Config schema may not have `assistant.enabled`                  |
+| 21  | `src/assistant/service.ts`          | Config schema may not have `assistant.enabled`                  | schema.ts:37, schema-class.ts:73 | **Resolved** — `enabled: boolean` field exists with default `true` |
 | 22  | `src/assistant/prompt-assembler.ts` | Selective entries (keys) ignored                                |
 | 23  | `src/assistant/prompt-assembler.ts` | Token budget enforcement message array rebuild bug              |
 | 24  | `src/tui/app.ts`                    | Monkey-patches `ChatWidget.setChatId`                           |
 | 25  | `src/tui/chat.ts`                   | No retry, no idempotency key                                    |
 | 26  | `src/tui/asset-view.ts`             | Left/right keys conflict with input nav                         |
 | 27  | `src/age-gate/controller.ts`        | `runtimeConfig` module-level mutable                            |
-| 29  | `src/build/compress.ts`             | No try/catch on single file                                     |
+| 29  | `src/build/compress.ts`             | No try/catch on single file                                     | compress.ts:56-67                | **Resolved** — Added try/catch around `writeFileSync` (2026-07-16) |
 
 ---
 
