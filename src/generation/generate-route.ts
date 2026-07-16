@@ -94,6 +94,62 @@ async function storeGeneratedMessage({
   return messageId;
 }
 
+// ── Tool call execution ────────────────────────────────────
+
+const MAX_TOOL_ROUNDS = 5;
+
+interface ToolCallItem {
+  id: string;
+  function: { name: string; arguments: string };
+}
+
+/**
+ * Execute tool calls and return tool result messages.
+ * Looks up ToolDefinition from the plugin registry by name.
+ */
+async function executeToolCalls(
+  toolCalls: ToolCallItem[],
+): Promise<GenerationMessage[]> {
+  const toolDefs = registry.getAllTools();
+  const results: GenerationMessage[] = [];
+
+  for (const tc of toolCalls) {
+    const def = toolDefs.find((d) => d.name === tc.function.name);
+    if (!def) {
+      results.push({
+        role: "tool",
+        content: JSON.stringify({ error: `Tool not found: ${tc.function.name}` }),
+        tool_call_id: tc.id,
+      });
+      continue;
+    }
+
+    let params: Record<string, unknown>;
+    try {
+      params = JSON.parse(tc.function.arguments);
+    } catch {
+      params = {};
+    }
+
+    try {
+      const toolResult = await def.handler(params);
+      results.push({
+        role: "tool",
+        content: toolResult.content,
+        tool_call_id: tc.id,
+      });
+    } catch (error) {
+      results.push({
+        role: "tool",
+        content: JSON.stringify({ error: (error as Error).message }),
+        tool_call_id: tc.id,
+      });
+    }
+  }
+
+  return results;
+}
+
 // ── Request shape ─────────────────────────────────────────
 
 export interface GenerateRequest {
@@ -309,19 +365,54 @@ export async function handleGenerate({
 
   if (!input.stream) {
     try {
-      const response = await resolved.provider.complete(providerReq);
+      let currentMessages = messages;
+      let finalResponse: Awaited<ReturnType<typeof resolved.provider.complete>> | null = null;
+
+      for (let round = 0; round < MAX_TOOL_ROUNDS; round++) {
+        const response = await resolved.provider.complete({
+          ...providerReq,
+          messages: currentMessages,
+        });
+
+        if (!response.toolCalls || response.toolCalls.length === 0) {
+          finalResponse = response;
+          break;
+        }
+
+        // Add assistant message with tool calls
+        currentMessages = [
+          ...currentMessages,
+          {
+            role: "assistant" as const,
+            content: response.content || "",
+            tool_calls: response.toolCalls.map((tc) => ({
+              id: tc.id,
+              type: "function" as const,
+              function: { name: tc.function.name, arguments: tc.function.arguments },
+            })),
+          },
+        ];
+
+        // Execute tools and append results
+        const toolResults = await executeToolCalls(response.toolCalls);
+        currentMessages = [...currentMessages, ...toolResults];
+      }
+
+      if (!finalResponse) {
+        throw new Error(`Tool call loop exceeded max rounds (${MAX_TOOL_ROUNDS})`);
+      }
 
       const result: GenerationResult = {
-        content: response.content,
-        thinking: response.thinking,
+        content: finalResponse.content,
+        thinking: finalResponse.thinking,
         tokenUsage: {
-          promptTokens: response.usage.promptTokens,
-          completionTokens: response.usage.completionTokens,
-          totalTokens: response.usage.totalTokens,
+          promptTokens: finalResponse.usage.promptTokens,
+          completionTokens: finalResponse.usage.completionTokens,
+          totalTokens: finalResponse.usage.totalTokens,
         },
         generationTimeMs: 0, // set by completeGeneration
-        cancelled: response.finishReason === "cancelled",
-        cancelReason: response.finishReason === "cancelled" ? "user_cancel" : undefined,
+        cancelled: finalResponse.finishReason === "cancelled",
+        cancelReason: finalResponse.finishReason === "cancelled" ? "user_cancel" : undefined,
       };
 
       // Store message
@@ -345,7 +436,7 @@ export async function handleGenerate({
         content: result.content,
         thinking: result.thinking,
         tokenUsage: result.tokenUsage,
-        finishReason: response.finishReason,
+        finishReason: finalResponse.finishReason,
       });
     } catch (error) {
       const errMsg = (error as Error).message;
@@ -369,22 +460,67 @@ export async function handleGenerate({
     async start(controller) {
       try {
         abortController = new AbortController();
-        const finalResponse = await resolved.provider.stream(providerReq, (chunk: ChunkEvent) => {
-          if (chunk.type === "content" && chunk.content) {
-            accumulatedContent += chunk.content;
-            void processStreamingChunk({ attemptId, chunk: chunk.content, db: database });
-            controller.enqueue(
-              new TextEncoder().encode(sseData({ type: "content", content: chunk.content })),
-            );
-          } else if (chunk.type === "thinking" && chunk.content) {
-            accumulatedThinking += chunk.content;
-            controller.enqueue(
-              new TextEncoder().encode(sseData({ type: "thinking", content: chunk.content })),
-            );
-          } else if (chunk.type === "done" && chunk.usage) {
-            // usage captured from finalResponse
+        let currentMessages = messages;
+        let finalResponse: Awaited<ReturnType<typeof resolved.provider.stream>> | null = null;
+
+        for (let round = 0; round < MAX_TOOL_ROUNDS; round++) {
+          let roundContent = "";
+          let roundThinking = "";
+
+          const response = await resolved.provider.stream(
+            { ...providerReq, messages: currentMessages, signal: abortController.signal },
+            (chunk: ChunkEvent) => {
+              if (chunk.type === "content" && chunk.content) {
+                accumulatedContent += chunk.content;
+                roundContent += chunk.content;
+                void processStreamingChunk({ attemptId, chunk: chunk.content, db: database });
+                controller.enqueue(
+                  new TextEncoder().encode(sseData({ type: "content", content: chunk.content })),
+                );
+              } else if (chunk.type === "thinking" && chunk.content) {
+                accumulatedThinking += chunk.content;
+                roundThinking += chunk.content;
+                controller.enqueue(
+                  new TextEncoder().encode(sseData({ type: "thinking", content: chunk.content })),
+                );
+              }
+            },
+          );
+
+          if (!response.toolCalls || response.toolCalls.length === 0) {
+            finalResponse = response;
+            break;
           }
-        });
+
+          // Emit tool_call events to client
+          for (const tc of response.toolCalls) {
+            controller.enqueue(
+              new TextEncoder().encode(sseData({ type: "tool_call", toolCall: tc })),
+            );
+          }
+
+          // Add assistant message with tool calls
+          currentMessages = [
+            ...currentMessages,
+            {
+              role: "assistant" as const,
+              content: roundContent || "",
+              tool_calls: response.toolCalls.map((tc) => ({
+                id: tc.id,
+                type: "function" as const,
+                function: { name: tc.function.name, arguments: tc.function.arguments },
+              })),
+            },
+          ];
+
+          // Execute tools and append results
+          const toolResults = await executeToolCalls(response.toolCalls);
+          currentMessages = [...currentMessages, ...toolResults];
+        }
+
+        if (!finalResponse) {
+          throw new Error(`Tool call loop exceeded max rounds (${MAX_TOOL_ROUNDS})`);
+        }
 
         // Provider stream completed — handle result
         // Use accumulated content as fallback if provider didn't return full content
