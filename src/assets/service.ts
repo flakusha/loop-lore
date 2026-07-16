@@ -9,7 +9,7 @@ import { writeFileSync, mkdirSync, existsSync, unlinkSync } from "node:fs";
 import { join, resolve } from "node:path";
 import type { Kysely } from "kysely";
 import type { DB } from "../db/schema";
-import { AssetType, AssetVisibility, StorageBackend } from "../db/enums";
+import { AssetLinkEntity, AssetType, AssetVisibility, StorageBackend } from "../db/enums";
 import type { AssetType as AssetTypeT } from "../db/enums";
 import { uid } from "../utils";
 import { extractImageMetadata } from "./metadata";
@@ -44,7 +44,7 @@ export interface CreateAssetInput {
 }
 
 export interface AssetLinkInput {
-  entityType: string;
+  entityType: AssetLinkEntity;
   entityId: string;
   label?: string;
 }
@@ -158,7 +158,7 @@ export interface DeleteAssetOpts {
 export interface UnlinkAssetOpts {
   database: Kysely<DB>;
   assetId: string;
-  entityType: string;
+  entityType: AssetLinkEntity;
   entityId: string;
 }
 
@@ -260,7 +260,13 @@ export async function createAsset({ database, input, uploadDir }: CreateAssetOpt
  */
 export async function listAssets(
   database: Kysely<DB>,
-  options: { page?: number; pageSize?: number; entityType?: string; entityId?: string; label?: string } = {},
+  options: {
+    page?: number;
+    pageSize?: number;
+    entityType?: AssetLinkEntity;
+    entityId?: string;
+    label?: string;
+  } = {},
 ): Promise<{ data: AssetRecord[]; total: number }> {
   const page = options.page ?? 1;
   const pageSize = Math.min(options.pageSize ?? 50, 200);
@@ -396,7 +402,7 @@ export async function unlinkAsset({
 export async function getAssetLinks(
   database: Kysely<DB>,
   assetId: string,
-): Promise<{ entity_type: string; entity_id: string; label: string | null }[]> {
+): Promise<{ entity_type: AssetLinkEntity; entity_id: string; label: string | null }[]> {
   return database
     .selectFrom("asset_links")
     .select(["entity_type", "entity_id", "label"])
@@ -418,11 +424,7 @@ export async function updateAssetVisibility({
   if (!asset) return null;
   if (asset.owner_id !== actorId) return null;
 
-  await database
-    .updateTable("assets")
-    .set({ visibility })
-    .where("id", "=", assetId)
-    .execute();
+  await database.updateTable("assets").set({ visibility }).where("id", "=", assetId).execute();
 
   return { ...asset, visibility };
 }
@@ -459,17 +461,19 @@ export async function shareAsset({
     return null; /* duplicate or FK failure */
   }
 
-  return { id, asset_id: assetId, shared_with_id: sharedWithId, shared_by_id: sharedById, created_at: new Date().toISOString() };
+  return {
+    id,
+    asset_id: assetId,
+    shared_with_id: sharedWithId,
+    shared_by_id: sharedById,
+    created_at: new Date().toISOString(),
+  };
 }
 
 /**
  * Unshare an asset from an actor.
  */
-export async function unshareAsset({
-  database,
-  assetId,
-  sharedWithId,
-}: UnshareAssetOpts): Promise<void> {
+export async function unshareAsset({ database, assetId, sharedWithId }: UnshareAssetOpts): Promise<void> {
   await database
     .deleteFrom("asset_shares")
     .where("asset_id", "=", assetId)
@@ -480,10 +484,7 @@ export async function unshareAsset({
 /**
  * Get all shares for an asset.
  */
-export async function getAssetShares(
-  database: Kysely<DB>,
-  assetId: string,
-): Promise<ShareRecord[]> {
+export async function getAssetShares(database: Kysely<DB>, assetId: string): Promise<ShareRecord[]> {
   return database.selectFrom("asset_shares").selectAll().where("asset_id", "=", assetId).execute();
 }
 

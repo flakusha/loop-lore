@@ -24,6 +24,11 @@ import type {
   PinnedState,
   DefaultState,
   EquipState,
+  KeyType,
+  KeyStatus,
+  NoteCategory,
+  ActorItemType,
+  ModelRole,
 } from "./enums";
 
 // ── Users ────────────────────────────────────────────────────
@@ -197,12 +202,12 @@ export interface ActorKeys {
   id: Generated<string>;
   actor_id: string;
   name: string;
-  key_type: string;
+  key_type: KeyType;
   encrypted_key: string | null;
   public_key: string | null;
   created_at: Generated<string>;
   expires_at: string | null;
-  status: string;
+  status: KeyStatus;
 }
 
 // ── Actor Notes ───────────────────────────────────────────────
@@ -211,7 +216,7 @@ export interface ActorNotes {
   actor_id: string;
   title: string;
   content: string;
-  category: string;
+  category: NoteCategory;
   pinned: PinnedState;
   sort_order: number;
   created_at: Generated<string>;
@@ -224,7 +229,7 @@ export interface ActorItems {
   actor_id: string;
   name: string;
   description: string | null;
-  item_type: string;
+  item_type: ActorItemType;
   quantity: number;
   value: string | null;
   weight: number | null;
@@ -248,7 +253,7 @@ export interface UserApiKeys {
 
 // ── Model Role Overrides (admin panel model assignment) ────────
 export interface ModelRoleOverrides {
-  role: string;
+  role: ModelRole;
   provider: string;
   model: string;
   created_at: Generated<string>;
