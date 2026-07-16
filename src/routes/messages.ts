@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 import { Elysia } from "elysia";
 import type { Kysely } from "kysely";
 import type { DB } from "../db/schema";
@@ -53,6 +51,16 @@ import {
   isEncryptedPayload,
   extractKeyIdFromPayload,
 } from "../crypto";
+import {
+  MessageCreateBody,
+  MessageVisibilityUpdateBody,
+  MessageStatusUpdateBody,
+  MessageVariantBody,
+  MessagesQuery,
+  MessageIdParams,
+  ChatIdParams,
+} from "../validation/schemas";
+import { unauthorized, forbidden, notFound } from "../validation/middleware";
 
 function log(): Logger {
   return getLogger().child({ module: "messages" });
@@ -110,7 +118,14 @@ async function requireMessageAccess(
     .where("id", "=", messageId)
     .executeTakeFirst();
   if (!message) {
-    return { message: undefined, error: jsonError({ message: "Message not found", status: HttpStatus.NotFound, code: ErrorCode.NotFound }) };
+    return {
+      message: undefined,
+      error: jsonError({
+        message: "Message not found",
+        status: HttpStatus.NotFound,
+        code: ErrorCode.NotFound,
+      }),
+    };
   }
 
   const chat = await database
@@ -119,7 +134,10 @@ async function requireMessageAccess(
     .where("id", "=", message.chat_id)
     .executeTakeFirst();
   if (!chat || (chat.created_by !== userId && userRole !== "admin")) {
-    return { message: undefined, error: jsonError({ message: "Message not found", status: HttpStatus.NotFound }) };
+    return {
+      message: undefined,
+      error: jsonError({ message: "Message not found", status: HttpStatus.NotFound }),
+    };
   }
 
   return { message: message as unknown as Record<string, unknown>, error: undefined };
@@ -497,387 +515,284 @@ async function triggerAutoGeneration(
 export function messagesRoutes(opts: HandlerOpts) {
   const { database, config } = opts;
 
-  return new Elysia({ name: "messages" })
-    .get("/api/chats/:id/messages", async (ctx: any) => {
-      const { id: chatId } = ctx.params;
-      const page = Number(ctx.query.page) || 1;
-      const pageSize = Number(ctx.query.pageSize) || 20;
-      const offset = (page - 1) * pageSize;
-      const parentId = ctx.query.parentId as string | undefined;
+  return (
+    new Elysia({ name: "messages" })
+      .get(
+        "/api/chats/:id/messages",
+        async (ctx: any) => {
+          const { id: chatId } = ctx.params as { id: string };
+          const query = ctx.query as { page?: number; pageSize?: number; parentId?: string };
+          const page = query.page ?? 1;
+          const pageSize = query.pageSize ?? 20;
+          const offset = (page - 1) * pageSize;
+          const parentId = query.parentId;
 
-      let query = database
-        .selectFrom("messages")
-        .select(database.fn.countAll<number>().as("total"))
-        .where("chat_id", "=", chatId)
-        .where("visibility", "=", "visible");
+          let countQuery = database
+            .selectFrom("messages")
+            .select(database.fn.countAll<number>().as("total"))
+            .where("chat_id", "=", chatId)
+            .where("visibility", "=", "visible");
 
-      if (parentId !== undefined) query = query.where("parent_id", "=", parentId);
+          if (parentId !== undefined) countQuery = countQuery.where("parent_id", "=", parentId);
 
-      const countResult = await query.executeTakeFirst();
-      const total = countResult?.total ?? 0;
+          const countResult = await countQuery.executeTakeFirst();
+          const total = countResult?.total ?? 0;
 
-      let listQuery = database
-        .selectFrom("messages")
-        .selectAll()
-        .where("chat_id", "=", chatId)
-        .where("visibility", "=", "visible");
-      if (parentId !== undefined) listQuery = listQuery.where("parent_id", "=", parentId);
+          let listQuery = database
+            .selectFrom("messages")
+            .selectAll()
+            .where("chat_id", "=", chatId)
+            .where("visibility", "=", "visible");
+          if (parentId !== undefined) listQuery = listQuery.where("parent_id", "=", parentId);
 
-      const messages = await listQuery.orderBy("created_at", "asc").limit(pageSize).offset(offset).execute();
+          const messages = await listQuery
+            .orderBy("created_at", "asc")
+            .limit(pageSize)
+            .offset(offset)
+            .execute();
 
-      const parentIds = [...new Set(messages.map((m) => m.parent_id).filter(Boolean))];
-      const variantCounts = new Map<string, number>();
-      const variantIndexes = new Map<string, number>();
+          const parentIds = [...new Set(messages.map((m) => m.parent_id).filter(Boolean))];
+          const variantCounts = new Map<string, number>();
+          const variantIndexes = new Map<string, number>();
 
-      if (parentIds.length > 0) {
-        const siblings = await database
-          .selectFrom("messages")
-          .select(["id", "parent_id", "swipe_index", "created_at"])
-          .where("parent_id", "in", parentIds as string[])
-          .where("chat_id", "=", chatId)
-          .where("visibility", "=", "visible")
-          .orderBy("swipe_index", "asc")
-          .orderBy("created_at", "asc")
-          .execute();
-        const groups = new Map<string, { id: string; swipeIndex: number | null; createdAt: string }[]>();
-        for (const s of siblings) {
-          const pid = s.parent_id!;
-          if (!groups.has(pid)) groups.set(pid, []);
-          groups.get(pid)!.push({ id: s.id, swipeIndex: s.swipe_index, createdAt: s.created_at });
-        }
-        for (const [pid, items] of groups) {
-          variantCounts.set(pid, items.length);
-          for (const [idx, item] of items.entries()) variantIndexes.set(item.id, idx);
-        }
-      }
-
-      const enriched = await Promise.all(
-        messages.map(async (m) => {
-          const attachments = await enrichAttachments(database, m.attachments);
-          try {
-            const content = await resolveMessageContent(database, m, config);
-            return {
-              ...m,
-              content,
-              attachments,
-              variantIndex: m.parent_id ? (variantIndexes.get(m.id) ?? 0) : undefined,
-              totalVariants: m.parent_id ? (variantCounts.get(m.parent_id) ?? 1) : undefined,
-            };
-          } catch {
-            return {
-              ...m,
-              content: "[Encrypted — unable to decrypt]",
-              attachments,
-              variantIndex: m.parent_id ? (variantIndexes.get(m.id) ?? 0) : undefined,
-              totalVariants: m.parent_id ? (variantCounts.get(m.parent_id) ?? 1) : undefined,
-            };
+          if (parentIds.length > 0) {
+            const siblings = await database
+              .selectFrom("messages")
+              .select(["id", "parent_id", "swipe_index", "created_at"])
+              .where("parent_id", "in", parentIds as string[])
+              .where("chat_id", "=", chatId)
+              .where("visibility", "=", "visible")
+              .orderBy("swipe_index", "asc")
+              .orderBy("created_at", "asc")
+              .execute();
+            const groups = new Map<string, { id: string; swipeIndex: number | null; createdAt: string }[]>();
+            for (const s of siblings) {
+              const pid = s.parent_id!;
+              if (!groups.has(pid)) groups.set(pid, []);
+              groups.get(pid)!.push({ id: s.id, swipeIndex: s.swipe_index, createdAt: s.created_at });
+            }
+            for (const [pid, items] of groups) {
+              variantCounts.set(pid, items.length);
+              for (const [idx, item] of items.entries()) variantIndexes.set(item.id, idx);
+            }
           }
-        }),
-      );
 
-      return jsonPaginated({ data: enriched, total, page, pageSize });
-    })
-    .get("/api/messages/:id", async (ctx: any) => {
-      const userId = ctx.userId;
-      if (!userId)
-        return jsonError({
-          message: "Unauthorized",
-          status: HttpStatus.Unauthorized,
-          code: ErrorCode.Unauthorized,
-        });
+          const enriched = await Promise.all(
+            messages.map(async (m) => {
+              const attachments = await enrichAttachments(database, m.attachments);
+              try {
+                const content = await resolveMessageContent(database, m, config);
+                return {
+                  ...m,
+                  content,
+                  attachments,
+                  variantIndex: m.parent_id ? (variantIndexes.get(m.id) ?? 0) : undefined,
+                  totalVariants: m.parent_id ? (variantCounts.get(m.parent_id) ?? 1) : undefined,
+                };
+              } catch {
+                return {
+                  ...m,
+                  content: "[Encrypted — unable to decrypt]",
+                  attachments,
+                  variantIndex: m.parent_id ? (variantIndexes.get(m.id) ?? 0) : undefined,
+                  totalVariants: m.parent_id ? (variantCounts.get(m.parent_id) ?? 1) : undefined,
+                };
+              }
+            }),
+          );
 
-      const { message, error } = await requireMessageAccess(database, ctx.params.id, userId, ctx.userRole);
-      if (error) return error;
+          return jsonPaginated({ data: enriched, total, page, pageSize });
+        },
+        { params: ChatIdParams, query: MessagesQuery },
+      )
+      .get(
+        "/api/messages/:id",
+        async (ctx: any) => {
+          const userId = ctx.userId as string | null;
+          if (!userId) return unauthorized();
+          const id = (ctx.params as { id: string }).id;
 
-      const attachments = await enrichAttachments(database, message.attachments as string | null);
-      let content: string;
-      try {
-        content = await resolveMessageContent(database, message as any, config);
-      } catch {
-        content = "[Encrypted — unable to decrypt]";
-      }
-      return jsonResponse({ ...message, content, attachments });
-    })
-    .get("/api/messages/:id/variants", async (ctx: any) => {
-      const userId = ctx.userId;
-      if (!userId)
-        return jsonError({
-          message: "Unauthorized",
-          status: HttpStatus.Unauthorized,
-          code: ErrorCode.Unauthorized,
-        });
-
-      const { message, error } = await requireMessageAccess(database, ctx.params.id, userId, ctx.userRole);
-      if (error) return error;
-
-      const variants = await database
-        .selectFrom("messages")
-        .selectAll()
-        .where("parent_id", "=", message.parent_id as string)
-        .where("chat_id", "=", message.chat_id as string)
-        .orderBy("swipe_index", "asc")
-        .orderBy("created_at", "asc")
-        .execute();
-
-      const enriched = await Promise.all(
-        variants.map(async (v) => {
-          try {
-            const c = await resolveMessageContent(database, v, config);
-            return { ...v, content: c };
-          } catch {
-            return { ...v, content: "[Encrypted — unable to decrypt]" };
-          }
-        }),
-      );
-
-      return jsonResponse(enriched);
-    })
-    .put("/api/messages/:id/variant", async (ctx: any) => {
-      const userId = ctx.userId;
-      if (!userId)
-        return jsonError({
-          message: "Unauthorized",
-          status: HttpStatus.Unauthorized,
-          code: ErrorCode.Unauthorized,
-        });
-
-      const variantIndex = ctx.body.variantIndex as number;
-      if (typeof variantIndex !== "number")
-        return jsonError({ message: "variantIndex is required", status: HttpStatus.BadRequest });
-
-      const { message, error } = await requireMessageAccess(database, ctx.params.id, userId, ctx.userRole);
-      if (error) return error;
-
-      const variants = await database
-        .selectFrom("messages")
-        .selectAll()
-        .where("parent_id", "=", message.parent_id as string)
-        .where("chat_id", "=", message.chat_id as string)
-        .orderBy("swipe_index", "asc")
-        .orderBy("created_at", "asc")
-        .execute();
-      const selected = variants[variantIndex];
-      if (!selected) return jsonError({ message: "Invalid variant index", status: HttpStatus.BadRequest });
-
-      return jsonResponse(selected);
-    })
-    .delete("/api/messages/:id", async (ctx: any) => {
-      const actorId = ctx.userId;
-      if (!actorId)
-        return jsonError({
-          message: "Unauthorized",
-          status: HttpStatus.Unauthorized,
-          code: ErrorCode.Unauthorized,
-        });
-
-      const message = await database
-        .selectFrom("messages")
-        .selectAll()
-        .where("id", "=", ctx.params.id)
-        .executeTakeFirst();
-      if (!message)
-        return jsonError({
-          message: "Message not found",
-          status: HttpStatus.NotFound,
-          code: ErrorCode.NotFound,
-        });
-
-      await database
-        .updateTable("messages")
-        .set({ visibility: "hidden_by_user", hidden_by: actorId })
-        .where("id", "=", ctx.params.id)
-        .execute();
-      return jsonNoContent();
-    })
-    .put("/api/messages/:id/visibility", async (ctx: any) => {
-      const userId = ctx.userId;
-      if (!userId)
-        return jsonError({
-          message: "Unauthorized",
-          status: HttpStatus.Unauthorized,
-          code: ErrorCode.Unauthorized,
-        });
-
-      const visibility = ctx.body.visibility as string;
-      if (!visibility) return jsonError({ message: "visibility is required", status: HttpStatus.BadRequest });
-
-      const validVisibilities = [
-        "visible",
-        "hidden_by_user",
-        "hidden_by_moderator",
-        "auto_hidden",
-        "redacted",
-      ];
-      if (!validVisibilities.includes(visibility))
-        return jsonError({ message: `Invalid visibility: ${visibility}`, status: HttpStatus.BadRequest });
-
-      const { error } = await requireMessageAccess(database, ctx.params.id, userId, ctx.userRole);
-      if (error) return error;
-
-      await database
-        .updateTable("messages")
-        .set({
-          visibility: visibility as MessageVisibility,
-          hidden_reason: (ctx.body.reason as string | undefined) ?? null,
-        })
-        .where("id", "=", ctx.params.id)
-        .execute();
-      return jsonResponse({ ok: true });
-    })
-    .put("/api/messages/:id/status", async (ctx: any) => {
-      if (ctx.userRole !== "admin")
-        return jsonError({ message: "Forbidden", status: HttpStatus.Forbidden, code: ErrorCode.Forbidden });
-
-      const status = ctx.body.status as string;
-      if (!status) return jsonError({ message: "status is required", status: HttpStatus.BadRequest });
-
-      await database
-        .updateTable("messages")
-        .set({ status: status as MessageStatus })
-        .where("id", "=", ctx.params.id)
-        .execute();
-      return jsonResponse({ ok: true });
-    })
-    .post("/api/chats/:id/messages", async (ctx: any) => {
-      const actorId = ctx.userId;
-      if (!actorId)
-        return jsonError({
-          message: "Unauthorized",
-          status: HttpStatus.Unauthorized,
-          code: ErrorCode.Unauthorized,
-        });
-
-      const content = ctx.body.content as string | undefined;
-      if (!content || typeof content !== "string")
-        return jsonError({ message: "content is required", status: HttpStatus.BadRequest });
-
-      const filteredContent = filterProfanity(content);
-      const { id: chatId } = ctx.params;
-
-      const access = await assertChatAccess(database, chatId, actorId, ctx.userRole);
-      if (access instanceof Response) return access;
-
-      let storedContent: string;
-      let contentEncoding: string;
-      let storedKeyId: string | null = null;
-
-      if (isEncryptedPayload(filteredContent)) {
-        storedContent = filteredContent;
-        contentEncoding = "identity";
-        storedKeyId = extractKeyIdFromPayload(filteredContent);
-        log().debug("Client pre-encrypted content detected", { keyId: storedKeyId });
-      } else if (isEncryptionEnabled()) {
-        const smk = getSmk()!;
-        await ensureActorKey({ database, actorId, smk });
-        const chatKey = await deriveChatKeyForChat(database, chatId, smk);
-        storedContent = await compressThenEncrypt({
-          plaintext: filteredContent,
-          chatKey: chatKey.key,
-          keyId: chatKey.keyId,
-          config: {
-            threshold: config.encryption.compressThreshold,
-            algorithm: config.encryption.compressAlgorithm,
-          },
-        });
-        contentEncoding = "identity";
-        storedKeyId = chatKey.keyId;
-      } else {
-        const LARGE_CONTENT_THRESHOLD = 10_240;
-        storedContent = filteredContent;
-        contentEncoding = "identity";
-        if (filteredContent.length > LARGE_CONTENT_THRESHOLD) {
-          const encoded = encodeContent(filteredContent, "gzip");
-          storedContent = encoded.encoded;
-          contentEncoding = encoded.encoding;
-        }
-      }
-
-      const id = uid();
-      const parentId = (ctx.body.parentId as string | undefined) ?? null;
-      let msgSwipeIndex: number | null = null;
-      if (parentId) {
-        const maxSwipe = await database
-          .selectFrom("messages")
-          .select(database.fn.max("swipe_index").as("max_idx"))
-          .where("chat_id", "=", chatId)
-          .where("parent_id", "=", parentId)
-          .executeTakeFirst();
-        msgSwipeIndex = (maxSwipe?.max_idx ?? 0) + 1;
-      }
-
-      await database
-        .insertInto("messages")
-        .values({
-          id,
-          chat_id: chatId,
-          actor_id: actorId,
-          parent_id: parentId,
-          role: (ctx.body.role as MessageRole | undefined) ?? MessageRole.User,
-          content: storedContent,
-          key_id: storedKeyId,
-          content_type: (ctx.body.contentType as MessageContentType | undefined) ?? MessageContentType.Text,
-          content_format: MessageContentFormat.Markdown,
-          content_encoding: contentEncoding as "identity" | "gzip" | "zstd" | "brotli",
-          status: "confirmed",
-          visibility: "visible",
-          idempotency_key: (ctx.body.idempotencyKey as string | undefined) ?? null,
-          swipe_index: msgSwipeIndex,
-        })
-        .execute();
-
-      const attachments = ctx.body.attachments as
-        { assetId: string; order?: number; caption?: string; label?: string }[] | undefined;
-      if (attachments && attachments.length > 0) {
-        const attachData: { assetId: string; order: number; caption: string; label: string }[] = [];
-        for (const [i, a] of attachments.entries()) {
-          await linkAsset({
+          const { message, error } = await requireMessageAccess(
             database,
-            assetId: a.assetId,
-            link: { entityType: "message", entityId: id, label: a.label ?? "message-attachment" },
-          });
-          attachData.push({
-            assetId: a.assetId,
-            order: a.order ?? i,
-            caption: a.caption ?? "",
-            label: a.label ?? "message-attachment",
-          });
-        }
-        await database
-          .updateTable("messages")
-          .set({
-            attachments: (() => {
-              const r = safeJsonStringify(attachData);
-              return r.ok ? r.value : "[]";
-            })(),
-          })
-          .where("id", "=", id)
-          .execute();
-      }
+            id,
+            userId,
+            ctx.userRole as string | null,
+          );
+          if (error) return error;
 
-      if (isLlmGenerationConfigured(config)) {
-        void triggerAutoGeneration(database, config, chatId, id, actorId, filteredContent);
-      } else if (isAssistantEnabled(config)) {
-        const assistantResponse = generateResponse({ userInput: filteredContent });
-        if (assistantResponse) {
-          const assistantId = uid();
-          const assistantContent = filterProfanity(assistantResponse.content);
+          const attachments = await enrichAttachments(database, message.attachments as string | null);
+          let content: string;
+          try {
+            content = await resolveMessageContent(database, message as any, config);
+          } catch {
+            content = "[Encrypted — unable to decrypt]";
+          }
+          return jsonResponse({ ...message, content, attachments });
+        },
+        { params: MessageIdParams },
+      )
+      .get(
+        "/api/messages/:id/variants",
+        async (ctx: any) => {
+          const userId = ctx.userId as string | null;
+          if (!userId) return unauthorized();
+          const id = (ctx.params as { id: string }).id;
 
-          log().debug("Assistant reply (rule-based)", {
-            parentId: id,
-            chatId,
-            assistantId,
-            contentLength: assistantContent.length,
-          });
+          const { message, error } = await requireMessageAccess(
+            database,
+            id,
+            userId,
+            ctx.userRole as string | null,
+          );
+          if (error) return error;
 
-          let replyStoredContent = assistantContent;
-          const replyEncoding = "identity";
-          let replyKeyId: string | null = null;
+          const variants = await database
+            .selectFrom("messages")
+            .selectAll()
+            .where("parent_id", "=", message.parent_id as string)
+            .where("chat_id", "=", message.chat_id as string)
+            .orderBy("swipe_index", "asc")
+            .orderBy("created_at", "asc")
+            .execute();
 
-          if (isEncryptionEnabled()) {
+          const enriched = await Promise.all(
+            variants.map(async (v) => {
+              try {
+                const c = await resolveMessageContent(database, v, config);
+                return { ...v, content: c };
+              } catch {
+                return { ...v, content: "[Encrypted — unable to decrypt]" };
+              }
+            }),
+          );
+
+          return jsonResponse(enriched);
+        },
+        { params: MessageIdParams },
+      )
+      .put(
+        "/api/messages/:id/variant",
+        async (ctx: any) => {
+          const userId = ctx.userId as string | null;
+          if (!userId) return unauthorized();
+          const id = (ctx.params as { id: string }).id;
+          const body = ctx.body as typeof MessageVariantBody.static;
+
+          const { message, error } = await requireMessageAccess(
+            database,
+            id,
+            userId,
+            ctx.userRole as string | null,
+          );
+          if (error) return error;
+
+          const variants = await database
+            .selectFrom("messages")
+            .selectAll()
+            .where("parent_id", "=", message.parent_id as string)
+            .where("chat_id", "=", message.chat_id as string)
+            .orderBy("swipe_index", "asc")
+            .orderBy("created_at", "asc")
+            .execute();
+          const selected = variants[body.variantIndex];
+          if (!selected)
+            return jsonError({ message: "Invalid variant index", status: HttpStatus.BadRequest });
+
+          return jsonResponse(selected);
+        },
+        { params: MessageIdParams, body: MessageVariantBody },
+      )
+      .delete(
+        "/api/messages/:id",
+        async (ctx: any) => {
+          const actorId = ctx.userId as string | null;
+          if (!actorId) return unauthorized();
+          const id = (ctx.params as { id: string }).id;
+
+          const message = await database
+            .selectFrom("messages")
+            .selectAll()
+            .where("id", "=", id)
+            .executeTakeFirst();
+          if (!message) return notFound("Message not found");
+
+          await database
+            .updateTable("messages")
+            .set({ visibility: "hidden_by_user", hidden_by: actorId })
+            .where("id", "=", id)
+            .execute();
+          return jsonNoContent();
+        },
+        { params: MessageIdParams },
+      )
+      .put(
+        "/api/messages/:id/visibility",
+        async (ctx: any) => {
+          const userId = ctx.userId as string | null;
+          if (!userId) return unauthorized();
+          const id = (ctx.params as { id: string }).id;
+          const body = ctx.body as typeof MessageVisibilityUpdateBody.static;
+
+          const { error } = await requireMessageAccess(database, id, userId, ctx.userRole as string | null);
+          if (error) return error;
+
+          await database
+            .updateTable("messages")
+            .set({
+              visibility: body.visibility as MessageVisibility,
+              hidden_reason: body.reason ?? null,
+            })
+            .where("id", "=", id)
+            .execute();
+          return jsonResponse({ ok: true });
+        },
+        { params: MessageIdParams, body: MessageVisibilityUpdateBody },
+      )
+      .put(
+        "/api/messages/:id/status",
+        async (ctx: any) => {
+          const userRole = ctx.userRole as string | null;
+          if (userRole !== "admin") return forbidden();
+          const id = (ctx.params as { id: string }).id;
+          const body = ctx.body as typeof MessageStatusUpdateBody.static;
+
+          await database
+            .updateTable("messages")
+            .set({ status: body.status as MessageStatus })
+            .where("id", "=", id)
+            .execute();
+          return jsonResponse({ ok: true });
+        },
+        { params: MessageIdParams, body: MessageStatusUpdateBody },
+      )
+      .post(
+        "/api/chats/:id/messages",
+        async (ctx: any) => {
+          const actorId = ctx.userId as string | null;
+          if (!actorId) return unauthorized();
+          const { id: chatId } = ctx.params as { id: string };
+          const body = ctx.body as typeof MessageCreateBody.static;
+
+          const filteredContent = filterProfanity(body.content);
+
+          const access = await assertChatAccess(database, chatId, actorId, ctx.userRole as string | null);
+          if (access instanceof Response) return access;
+
+          let storedContent: string;
+          let contentEncoding: string;
+          let storedKeyId: string | null = null;
+
+          if (isEncryptedPayload(filteredContent)) {
+            storedContent = filteredContent;
+            contentEncoding = "identity";
+            storedKeyId = extractKeyIdFromPayload(filteredContent);
+            log().debug("Client pre-encrypted content detected", { keyId: storedKeyId });
+          } else if (isEncryptionEnabled()) {
             const smk = getSmk()!;
+            await ensureActorKey({ database, actorId, smk });
             const chatKey = await deriveChatKeyForChat(database, chatId, smk);
-            replyStoredContent = await compressThenEncrypt({
-              plaintext: assistantContent,
+            storedContent = await compressThenEncrypt({
+              plaintext: filteredContent,
               chatKey: chatKey.key,
               keyId: chatKey.keyId,
               config: {
@@ -885,109 +800,230 @@ export function messagesRoutes(opts: HandlerOpts) {
                 algorithm: config.encryption.compressAlgorithm,
               },
             });
-            replyKeyId = chatKey.keyId;
+            contentEncoding = "identity";
+            storedKeyId = chatKey.keyId;
+          } else {
+            const LARGE_CONTENT_THRESHOLD = 10_240;
+            storedContent = filteredContent;
+            contentEncoding = "identity";
+            if (filteredContent.length > LARGE_CONTENT_THRESHOLD) {
+              const encoded = encodeContent(filteredContent, "gzip");
+              storedContent = encoded.encoded;
+              contentEncoding = encoded.encoding;
+            }
           }
 
-          const replySwipe = await database
-            .selectFrom("messages")
-            .select(database.fn.max("swipe_index").as("max_idx"))
-            .where("chat_id", "=", chatId)
-            .where("parent_id", "=", id)
-            .executeTakeFirst();
+          const id = uid();
+          const parentId = body.parentId ?? null;
+          let msgSwipeIndex: number | null = null;
+          if (parentId) {
+            const maxSwipe = await database
+              .selectFrom("messages")
+              .select(database.fn.max("swipe_index").as("max_idx"))
+              .where("chat_id", "=", chatId)
+              .where("parent_id", "=", parentId)
+              .executeTakeFirst();
+            msgSwipeIndex = (maxSwipe?.max_idx ?? 0) + 1;
+          }
+
           await database
             .insertInto("messages")
             .values({
-              id: assistantId,
+              id,
               chat_id: chatId,
               actor_id: actorId,
-              parent_id: id,
-              role: MessageRole.Assistant,
-              content: replyStoredContent,
-              key_id: replyKeyId,
-              content_type: MessageContentType.Text,
+              parent_id: parentId,
+              role: body.role ?? MessageRole.User,
+              content: storedContent,
+              key_id: storedKeyId,
+              content_type: body.contentType ?? MessageContentType.Text,
               content_format: MessageContentFormat.Markdown,
-              content_encoding: replyEncoding as ContentEncoding,
+              content_encoding: contentEncoding as "identity" | "gzip" | "zstd" | "brotli",
               status: "confirmed",
               visibility: "visible",
-              swipe_index: (replySwipe?.max_idx ?? 0) + 1,
+              idempotency_key: body.idempotencyKey ?? null,
+              swipe_index: msgSwipeIndex,
             })
             .execute();
 
-          return jsonCreated({ id, assistantMessage: { id: assistantId, content: assistantContent } });
-        }
-      }
+          const attachments = body.attachments;
+          if (attachments && attachments.length > 0) {
+            const attachData: { assetId: string; order: number; caption: string; label: string }[] = [];
+            for (const [i, a] of attachments.entries()) {
+              await linkAsset({
+                database,
+                assetId: a.assetId,
+                link: { entityType: "message", entityId: id, label: a.label ?? "message-attachment" },
+              });
+              attachData.push({
+                assetId: a.assetId,
+                order: a.order ?? i,
+                caption: a.caption ?? "",
+                label: a.label ?? "message-attachment",
+              });
+            }
+            await database
+              .updateTable("messages")
+              .set({
+                attachments: (() => {
+                  const r = safeJsonStringify(attachData);
+                  return r.ok ? r.value : "[]";
+                })(),
+              })
+              .where("id", "=", id)
+              .execute();
+          }
 
-      return jsonCreated({ id });
-    })
-    // ── Message archiving ──────────────────────────────────────
-    .post("/api/messages/:id/archive", async (ctx: any) => {
-      const userId = ctx.userId;
-      if (!userId)
-        return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, code: ErrorCode.Unauthorized });
-      const message = await database
-        .selectFrom("messages")
-        .selectAll()
-        .where("id", "=", ctx.params.id)
-        .executeTakeFirst();
-      if (!message)
-        return jsonError({ message: "Message not found", status: HttpStatus.NotFound });
-      const chat = await database
-        .selectFrom("chats")
-        .select("created_by")
-        .where("id", "=", message.chat_id)
-        .executeTakeFirst();
-      if (!chat || (chat.created_by !== userId && ctx.userRole !== "admin"))
-        return jsonError({ message: "Message not found", status: HttpStatus.NotFound });
-      await database
-        .updateTable("messages")
-        .set({ archived_at: new Date().toISOString(), visibility: "auto_hidden" })
-        .where("id", "=", ctx.params.id)
-        .execute();
-      return jsonResponse({ ok: true });
-    })
-    .post("/api/messages/:id/restore", async (ctx: any) => {
-      const userId = ctx.userId;
-      if (!userId)
-        return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, code: ErrorCode.Unauthorized });
-      const message = await database
-        .selectFrom("messages")
-        .selectAll()
-        .where("id", "=", ctx.params.id)
-        .executeTakeFirst();
-      if (!message)
-        return jsonError({ message: "Message not found", status: HttpStatus.NotFound });
-      const chat = await database
-        .selectFrom("chats")
-        .select("created_by")
-        .where("id", "=", message.chat_id)
-        .executeTakeFirst();
-      if (!chat || (chat.created_by !== userId && ctx.userRole !== "admin"))
-        return jsonError({ message: "Message not found", status: HttpStatus.NotFound });
-      await database
-        .updateTable("messages")
-        .set({ archived_at: null, visibility: "visible" })
-        .where("id", "=", ctx.params.id)
-        .execute();
-      return jsonResponse({ ok: true });
-    })
-    .post("/api/chats/:id/messages/purge", async (ctx: any) => {
-      const userId = ctx.userId;
-      if (!userId)
-        return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, code: ErrorCode.Unauthorized });
-      const chat = await database
-        .selectFrom("chats")
-        .select("created_by")
-        .where("id", "=", ctx.params.id)
-        .executeTakeFirst();
-      if (!chat || (chat.created_by !== userId && ctx.userRole !== "admin"))
-        return jsonError({ message: "Chat not found", status: HttpStatus.NotFound });
-      const cutoff = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
-      const result = await database
-        .deleteFrom("messages")
-        .where("chat_id", "=", ctx.params.id)
-        .where("archived_at", "is not", null)
-        .where("archived_at", "<", cutoff)
-        .execute();
-      return jsonResponse({ ok: true, purged: Number(result[0]?.numDeletedRows ?? 0) });
-    });
+          if (isLlmGenerationConfigured(config)) {
+            void triggerAutoGeneration(database, config, chatId, id, actorId, filteredContent);
+          } else if (isAssistantEnabled(config)) {
+            const assistantResponse = generateResponse({ userInput: filteredContent });
+            if (assistantResponse) {
+              const assistantId = uid();
+              const assistantContent = filterProfanity(assistantResponse.content);
+
+              log().debug("Assistant reply (rule-based)", {
+                parentId: id,
+                chatId,
+                assistantId,
+                contentLength: assistantContent.length,
+              });
+
+              let replyStoredContent = assistantContent;
+              const replyEncoding = "identity";
+              let replyKeyId: string | null = null;
+
+              if (isEncryptionEnabled()) {
+                const smk = getSmk()!;
+                const chatKey = await deriveChatKeyForChat(database, chatId, smk);
+                replyStoredContent = await compressThenEncrypt({
+                  plaintext: assistantContent,
+                  chatKey: chatKey.key,
+                  keyId: chatKey.keyId,
+                  config: {
+                    threshold: config.encryption.compressThreshold,
+                    algorithm: config.encryption.compressAlgorithm,
+                  },
+                });
+                replyKeyId = chatKey.keyId;
+              }
+
+              const replySwipe = await database
+                .selectFrom("messages")
+                .select(database.fn.max("swipe_index").as("max_idx"))
+                .where("chat_id", "=", chatId)
+                .where("parent_id", "=", id)
+                .executeTakeFirst();
+              await database
+                .insertInto("messages")
+                .values({
+                  id: assistantId,
+                  chat_id: chatId,
+                  actor_id: actorId,
+                  parent_id: id,
+                  role: MessageRole.Assistant,
+                  content: replyStoredContent,
+                  key_id: replyKeyId,
+                  content_type: MessageContentType.Text,
+                  content_format: MessageContentFormat.Markdown,
+                  content_encoding: replyEncoding as ContentEncoding,
+                  status: "confirmed",
+                  visibility: "visible",
+                  swipe_index: (replySwipe?.max_idx ?? 0) + 1,
+                })
+                .execute();
+
+              return jsonCreated({ id, assistantMessage: { id: assistantId, content: assistantContent } });
+            }
+          }
+
+          return jsonCreated({ id });
+        },
+        { params: ChatIdParams, body: MessageCreateBody },
+      )
+      // ── Message archiving ──────────────────────────────────────
+      .post(
+        "/api/messages/:id/archive",
+        async (ctx: any) => {
+          const userId = ctx.userId as string | null;
+          if (!userId) return unauthorized();
+          const id = (ctx.params as { id: string }).id;
+
+          const message = await database
+            .selectFrom("messages")
+            .selectAll()
+            .where("id", "=", id)
+            .executeTakeFirst();
+          if (!message) return notFound("Message not found");
+          const chat = await database
+            .selectFrom("chats")
+            .select("created_by")
+            .where("id", "=", message.chat_id)
+            .executeTakeFirst();
+          if (!chat || (chat.created_by !== userId && (ctx.userRole as string | null) !== "admin"))
+            return notFound("Message not found");
+          await database
+            .updateTable("messages")
+            .set({ archived_at: new Date().toISOString(), visibility: "auto_hidden" })
+            .where("id", "=", id)
+            .execute();
+          return jsonResponse({ ok: true });
+        },
+        { params: MessageIdParams },
+      )
+      .post(
+        "/api/messages/:id/restore",
+        async (ctx: any) => {
+          const userId = ctx.userId as string | null;
+          if (!userId) return unauthorized();
+          const id = (ctx.params as { id: string }).id;
+
+          const message = await database
+            .selectFrom("messages")
+            .selectAll()
+            .where("id", "=", id)
+            .executeTakeFirst();
+          if (!message) return notFound("Message not found");
+          const chat = await database
+            .selectFrom("chats")
+            .select("created_by")
+            .where("id", "=", message.chat_id)
+            .executeTakeFirst();
+          if (!chat || (chat.created_by !== userId && (ctx.userRole as string | null) !== "admin"))
+            return notFound("Message not found");
+          await database
+            .updateTable("messages")
+            .set({ archived_at: null, visibility: "visible" })
+            .where("id", "=", id)
+            .execute();
+          return jsonResponse({ ok: true });
+        },
+        { params: MessageIdParams },
+      )
+      .post(
+        "/api/chats/:id/messages/purge",
+        async (ctx: any) => {
+          const userId = ctx.userId as string | null;
+          if (!userId) return unauthorized();
+          const { id: chatId } = ctx.params as { id: string };
+
+          const chat = await database
+            .selectFrom("chats")
+            .select("created_by")
+            .where("id", "=", chatId)
+            .executeTakeFirst();
+          if (!chat || (chat.created_by !== userId && (ctx.userRole as string | null) !== "admin"))
+            return notFound("Chat not found");
+          const cutoff = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
+          const result = await database
+            .deleteFrom("messages")
+            .where("chat_id", "=", chatId)
+            .where("archived_at", "is not", null)
+            .where("archived_at", "<", cutoff)
+            .execute();
+          return jsonResponse({ ok: true, purged: Number(result[0]?.numDeletedRows ?? 0) });
+        },
+        { params: ChatIdParams },
+      )
+  );
 }
