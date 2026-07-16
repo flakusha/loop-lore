@@ -15,7 +15,7 @@ document.addEventListener("keydown", (e: KeyboardEvent) => {
   // Ctrl+B — toggle sidebar (works everywhere)
   if (e.ctrlKey && e.key === "b") {
     e.preventDefault();
-    window.toggleSidebar();
+    globalThis.toggleSidebar();
     return;
   }
 
