@@ -9,11 +9,11 @@
 import { isIP } from "node:net";
 
 const LOCAL_IPV4_RANGES: { network: number; mask: number }[] = [
-  { network: 0x0a000000, mask: 0xff000000 }, // 10.0.0.0/8
-  { network: 0xac100000, mask: 0xfff00000 }, // 172.16.0.0/12
-  { network: 0xc0a80000, mask: 0xffff0000 }, // 192.168.0.0/16
-  { network: 0x7f000000, mask: 0xff000000 }, // 127.0.0.0/8
-  { network: 0xa9fe0000, mask: 0xffff0000 }, // 169.254.0.0/16 (link-local)
+  { network: 0x0a_00_00_00, mask: 0xff_00_00_00 }, // 10.0.0.0/8
+  { network: 0xac_10_00_00, mask: 0xff_f0_00_00 }, // 172.16.0.0/12
+  { network: 0xc0_a8_00_00, mask: 0xff_ff_00_00 }, // 192.168.0.0/16
+  { network: 0x7f_00_00_00, mask: 0xff_00_00_00 }, // 127.0.0.0/8
+  { network: 0xa9_fe_00_00, mask: 0xff_ff_00_00 }, // 169.254.0.0/16 (link-local)
 ];
 
 export interface UrlValidationOptions {

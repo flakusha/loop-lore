@@ -10,7 +10,7 @@ import { jsonBody } from "./json";
     detailLevel: localStorage.getItem("chat-detail-level") || "Immersion",
     provider: "OpenAI",
     model: "",
-    temperature: 1.0,
+    temperature: 1,
 
     async load() {
       try {

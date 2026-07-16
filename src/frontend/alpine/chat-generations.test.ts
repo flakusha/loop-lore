@@ -20,14 +20,14 @@ describe("chatActions utility functions", () => {
     test("returns seconds for values under 60000", () => {
       expect(chatActions.formattedGenerationTime!(1000)).toBe("1.0s");
       expect(chatActions.formattedGenerationTime!(5000)).toBe("5.0s");
-      expect(chatActions.formattedGenerationTime!(30000)).toBe("30.0s");
-      expect(chatActions.formattedGenerationTime!(59999)).toBe("60.0s");
+      expect(chatActions.formattedGenerationTime!(30_000)).toBe("30.0s");
+      expect(chatActions.formattedGenerationTime!(59_999)).toBe("60.0s");
     });
 
     test("returns minutes for values 60000 and above", () => {
-      expect(chatActions.formattedGenerationTime!(60000)).toBe("1.0m");
-      expect(chatActions.formattedGenerationTime!(120000)).toBe("2.0m");
-      expect(chatActions.formattedGenerationTime!(3600000)).toBe("60.0m");
+      expect(chatActions.formattedGenerationTime!(60_000)).toBe("1.0m");
+      expect(chatActions.formattedGenerationTime!(120_000)).toBe("2.0m");
+      expect(chatActions.formattedGenerationTime!(3_600_000)).toBe("60.0m");
     });
   });
 
