@@ -16,6 +16,7 @@ import type {
   ItemVisibility,
   MemoryType,
   LorePosition,
+  LoreEntryStatus,
   DifficultyReroll,
   DifficultyState,
   StackableState,
@@ -211,7 +212,7 @@ export interface ActorLoreEntries {
   secondary_keys: string;
   selective: number;
   case_sensitive: number;
-  enabled: number;
+  enabled: LoreEntryStatus;
   constant: number;
   position: LorePosition;
   insertion_order: number;
@@ -232,7 +233,7 @@ export interface WorldLoreEntries {
   secondary_keys: string;
   selective: number;
   case_sensitive: number;
-  enabled: number;
+  enabled: LoreEntryStatus;
   constant: number;
   position: LorePosition;
   insertion_order: number;

@@ -233,7 +233,7 @@ export async function handleImageGeneration(body: unknown): Promise<Response> {
     default: {
       return Response.json(
         {
-          error: `Image gen API family "${sdConfig.apiFamily}" not implemented. Use "openai", "sdapi", or "sdcpp".`,
+          error: `Image gen API family "${String(sdConfig.apiFamily)}" not implemented. Use "openai", "sdapi", or "sdcpp".`,
           status: 501,
         },
         { status: 501 },

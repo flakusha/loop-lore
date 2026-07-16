@@ -113,6 +113,12 @@ export const LorePosition = {
 } as const;
 export type LorePosition = (typeof LorePosition)[keyof typeof LorePosition];
 
+export const LoreEntryStatus = {
+  Enabled: "enabled",
+  Disabled: "disabled",
+} as const;
+export type LoreEntryStatus = (typeof LoreEntryStatus)[keyof typeof LoreEntryStatus];
+
 // ── World Difficulty ──────────────────────────────────────
 export const DifficultyReroll = {
   None: "none",
