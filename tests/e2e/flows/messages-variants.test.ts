@@ -76,6 +76,6 @@ describe("Message Variants, Visibility, Status E2E", () => {
       visibility: "invalid",
     });
     expect(res.ok).toBe(false);
-    expect(res.status).toBe(400);
+    expect(res.status).toBe(422);
   });
 });
