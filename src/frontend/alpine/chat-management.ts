@@ -415,7 +415,9 @@ export const chatManagement: Partial<ChatState> & ThisType<ChatState> = {
         });
       } else {
         await apiFetch(`/api/chats/${this.activeChat}/impersonate`, {
-          method: "DELETE",
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: jsonBody({ impersonateActorId: null }),
         });
       }
     } catch {
