@@ -13,10 +13,7 @@ import { getDatabase } from "../db/index";
 import { cancelGenerationByChat, getActiveAttemptId, listActiveGenerations } from "./cancellation-manager";
 import { getPartialContent } from "./continuation";
 import { CancelReason, CancelSource, GenerationStatus } from "../db/enums";
-import type {
-  ContinueResponse,
-  RetryFromPointResponse,
-} from "./types";
+import type { ContinueResponse, RetryFromPointResponse } from "./types";
 
 import { getBuffer, isChatGenerating } from "./index";
 import { jsonResponse, jsonError } from "../routes/http-utils";
@@ -36,13 +33,17 @@ import { safeJsonStringify } from "../utils";
  */
 export function handleCancelGeneration(body: unknown, database?: Kysely<DB>): Response {
   const db = database ?? getDatabase();
-  const input = body as Record<string, unknown>;
+  const input = validateCancel(body);
+
+  if (!input) {
+    return jsonError({ message: "Invalid request body", status: 400 });
+  }
 
   const reason = (input.reason ?? CancelReason.UserCancel) as CancelReason;
   const source = (input.source ?? CancelSource.User) as CancelSource;
-  const detail = (input.detail ?? "User requested cancellation") as string;
-  const chatId = input.chatId as string | undefined;
-  const attemptId = input.attemptId as string | undefined;
+  const detail = input.detail ?? "User requested cancellation";
+  const chatId = input.chatId;
+  const attemptId = input.attemptId;
 
   if (!chatId && !attemptId) {
     return jsonError({ message: "Either chatId or attemptId is required", status: 400 });
@@ -120,7 +121,11 @@ function validateRetryFromPoint(body: unknown): { chatId: string; attemptId?: st
   if (typeof b.chatId !== "string" || !b.chatId) return null;
   if (b.attemptId !== undefined && typeof b.attemptId !== "string") return null;
   if (b.step !== undefined && typeof b.step !== "number") return null;
-  return { chatId: b.chatId, attemptId: b.attemptId as string | undefined, step: b.step as number | undefined };
+  return {
+    chatId: b.chatId,
+    attemptId: b.attemptId as string | undefined,
+    step: b.step as number | undefined,
+  };
 }
 
 /**
@@ -144,10 +149,7 @@ export async function handleRetryGeneration(body: unknown, database?: Kysely<DB>
     chatId,
     reason: CancelReason.UserCancel,
     source: CancelSource.User,
-    detail:
-      step === undefined
-        ? "User requested regeneration"
-        : `User requested retry from step ${step}`,
+    detail: step === undefined ? "User requested regeneration" : `User requested retry from step ${step}`,
   });
 
   let resumeFromStep = 0;
@@ -185,7 +187,9 @@ export async function handleRetryGeneration(body: unknown, database?: Kysely<DB>
 
 // ── Route: Continue generation ────────────────────────────
 
-function validateContinue(body: unknown): { messageId: string; chatId: string; actorId: string; modelId?: string; provider?: string } | null {
+function validateContinue(
+  body: unknown,
+): { messageId: string; chatId: string; actorId: string; modelId?: string; provider?: string } | null {
   if (!body || typeof body !== "object") return null;
   const b = body as Record<string, unknown>;
   if (typeof b.messageId !== "string" || !b.messageId) return null;
@@ -220,7 +224,7 @@ export async function handleContinueGeneration(body: unknown, database?: Kysely<
 
   const lastAttempt = await db
     .selectFrom("generation_attempts")
-    .selectAll()
+    .select(["id", "status", "model_id", "provider", "step_index", "total_steps"])
     .where("parent_message_id", "=", messageId)
     .where("status", "in", [GenerationStatus.Cancelled, GenerationStatus.Failed])
     .orderBy("created_at", "desc")
@@ -242,7 +246,7 @@ export async function handleContinueGeneration(body: unknown, database?: Kysely<
 
   const continuationCount = await db
     .selectFrom("generation_attempts")
-    .selectAll()
+    .select("id")
     .where("parent_attempt_id", "=", attempt.id)
     .execute();
 
@@ -266,6 +270,45 @@ export async function handleContinueGeneration(body: unknown, database?: Kysely<
   };
 
   return jsonResponse(response);
+}
+
+// ── Route: Cancel generation (validator) ───────────────────
+
+function validateCancel(
+  body: unknown,
+): { chatId?: string; attemptId?: string; reason?: string; source?: string; detail?: string } | null {
+  if (!body || typeof body !== "object") return null;
+  const b = body as Record<string, unknown>;
+  if (b.chatId !== undefined && typeof b.chatId !== "string") return null;
+  if (b.attemptId !== undefined && typeof b.attemptId !== "string") return null;
+  if (b.reason !== undefined && typeof b.reason !== "string") return null;
+  if (b.source !== undefined && typeof b.source !== "string") return null;
+  if (b.detail !== undefined && typeof b.detail !== "string") return null;
+  return {
+    chatId: b.chatId as string | undefined,
+    attemptId: b.attemptId as string | undefined,
+    reason: b.reason as string | undefined,
+    source: b.source as string | undefined,
+    detail: b.detail as string | undefined,
+  };
+}
+
+// ── Route: Regenerate (validator) ─────────────────────────
+
+function validateRegenerate(body: unknown): { chatId: string } | null {
+  if (!body || typeof body !== "object") return null;
+  const b = body as Record<string, unknown>;
+  if (typeof b.chatId !== "string" || !b.chatId) return null;
+  return { chatId: b.chatId };
+}
+
+// ── Route: Test connection (validator) ────────────────────
+
+function validateTestConnection(body: unknown): { provider: string } | null {
+  if (!body || typeof body !== "object") return null;
+  const b = body as Record<string, unknown>;
+  if (typeof b.provider !== "string" || !b.provider) return null;
+  return { provider: b.provider };
 }
 
 // ── Route: List active generations ─────────────────────────
@@ -293,12 +336,13 @@ export function handleListActiveGenerations(_database?: Kysely<DB>): Response {
  */
 export function handleRegenerate(body: unknown, database?: Kysely<DB>): Response {
   const db = database ?? getDatabase();
-  const input = body as Record<string, unknown>;
-  const chatId = input.chatId as string;
+  const input = validateRegenerate(body);
 
-  if (!chatId) {
+  if (!input) {
     return jsonError({ message: "chatId is required", status: 400 });
   }
+
+  const { chatId } = input;
 
   const wasActive = cancelGenerationByChat({
     db,
@@ -458,12 +502,13 @@ async function waitForBuffer(chatId: string, timeoutMs: number): Promise<ReturnT
  *   { provider: string, model?: string }
  */
 export async function handleTestConnection(body: unknown, _config?: Config): Promise<Response> {
-  const input = body as Record<string, unknown>;
-  const providerName = input.provider as string | undefined;
+  const input = validateTestConnection(body);
 
-  if (!providerName) {
+  if (!input) {
     return jsonError({ message: "provider is required", status: 400 });
   }
+
+  const { provider: providerName } = input;
 
   const provider = getProvider(providerName);
   if (!provider) {
