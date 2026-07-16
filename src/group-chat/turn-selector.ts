@@ -16,10 +16,16 @@ import type { DB } from "../db/schema";
 import type { GroupTurnContext } from "../turning/types";
 import { TurnManager } from "../turning/turn-manager";
 import { extractMentionedActorIds } from "./mention-parser";
-import { getLogger } from "../logger";
+import { getLogger, type Logger } from "../logger";
 import { safeJsonParse } from "../utils";
 
-const log = getLogger().child({ module: "group-turn-selector" });
+const log: Logger = new Proxy({} as Logger, {
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+  get(_target, prop) {
+    const instance = getLogger().child({ module: "group-turn-selector" });
+    return Reflect.get(instance, prop);
+  },
+});
 
 export interface TurnSelectorOptions {
   db: Kysely<DB>;

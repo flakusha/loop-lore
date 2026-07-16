@@ -5,6 +5,7 @@
  */
 import type { SectionBuilder } from "../types";
 import { parseKeywords, recentUserWords } from "../keywords";
+import { wrapSection } from "../../xml-utils";
 
 export const loreSection: SectionBuilder = {
   name: "lore",
@@ -46,6 +47,6 @@ export const loreSection: SectionBuilder = {
     const relevantEntries = [...actorLore, ...worldLore].filter((entry) => isRelevant(entry));
     const loreText = relevantEntries.map((e) => e.content).join("\n\n");
 
-    return loreText ? [{ role: "system", content: `[Lore]\n${loreText}` }] : [];
+    return loreText ? [{ role: "system", content: wrapSection("lore", loreText) }] : [];
   },
 };

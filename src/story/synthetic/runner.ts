@@ -323,9 +323,7 @@ export class SyntheticTestRunner {
 
   // ─── Quest Progression (read-only) ──────────────────────────
 
-  private async runQuestProgression(
-    c: SyntheticCase,
-  ): Promise<{
+  private async runQuestProgression(c: SyntheticCase): Promise<{
     status: SyntheticTestStatus;
     expected: Record<string, unknown>;
     actual: Record<string, unknown>;
@@ -423,9 +421,7 @@ export class SyntheticTestRunner {
 
   // ─── GM Escalation (heuristic) ──────────────────────────────
 
-  private async runGmEscalation(
-    c: SyntheticCase,
-  ): Promise<{
+  private async runGmEscalation(c: SyntheticCase): Promise<{
     status: SyntheticTestStatus;
     expected: Record<string, unknown>;
     actual: Record<string, unknown>;
