@@ -1,7 +1,9 @@
 import { createAsset, linkAsset } from "../assets/service";
+import { extractImageMetadata } from "../assets/metadata";
 import { loadConfig } from "../config/load";
 import { getDatabase } from "../db/index";
 import { uid, safeJsonStringify } from "../utils";
+import { validateProviderUrl } from "../utils/url-validation";
 
 interface ImageGenBody {
   prompt: string;
@@ -14,6 +16,10 @@ interface ImageGenBody {
   cfgScale?: number;
   sampler_name?: string;
   negative_prompt?: string;
+  seed?: number;
+  enable_hr?: boolean;
+  hr_scale?: number;
+  denoising_strength?: number;
 }
 
 export async function handleImageGeneration(body: unknown): Promise<Response> {
@@ -38,6 +44,14 @@ export async function handleImageGeneration(body: unknown): Promise<Response> {
 
   const n = Math.min(req.n ?? 1, 4);
   const outputFormat = req.output_format ?? "png";
+
+  const validated = validateProviderUrl(sdConfig.baseUrl);
+  if (!validated.ok) {
+    return Response.json(
+      { error: `Invalid image provider URL: ${validated.error}`, status: 400 },
+      { status: 400 },
+    );
+  }
 
   let images: Buffer[];
   let mimeType: string;
@@ -111,10 +125,105 @@ export async function handleImageGeneration(body: unknown): Promise<Response> {
     const sdData = (await resp.json()) as { images: string[] };
     images = sdData.images.map((b64) => Buffer.from(b64, "base64"));
     mimeType = "image/png";
+  } else if (sdConfig.apiFamily === "sdcpp") {
+    const sdcppUrl = `${sdConfig.baseUrl.replace(/\/+$/, "")}/sdcpp/v1/img_gen`;
+    const sdcppPayload = safeJsonStringify({
+      prompt: req.prompt,
+      negative_prompt: req.negative_prompt ?? sdConfig.defaults.negativePrompt,
+      width: sdConfig.defaults.width,
+      height: sdConfig.defaults.height,
+      steps: req.steps ?? sdConfig.defaults.steps,
+      cfg_scale: req.cfgScale ?? sdConfig.defaults.cfgScale,
+      sampler: req.sampler_name ?? sdConfig.defaults.sampler,
+      seed: req.seed ?? -1,
+      batch_size: n,
+      output_format: outputFormat,
+      enable_hr: req.enable_hr ?? false,
+      hr_scale: req.hr_scale,
+      denoising_strength: req.denoising_strength,
+    });
+
+    const submitResp = await fetch(sdcppUrl, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: sdcppPayload.ok ? sdcppPayload.value : "{}",
+      signal: AbortSignal.timeout(30_000),
+    });
+
+    if (!submitResp.ok) {
+      const errText = await submitResp.text().catch(() => "unknown");
+      return Response.json(
+        { error: `sd.cpp job submission failed: ${errText}`, status: 502 },
+        { status: 502 },
+      );
+    }
+
+    const { id: jobId } = (await submitResp.json()) as { id: string };
+    if (!jobId) {
+      return Response.json(
+        { error: "sd.cpp job submission returned no job id", status: 502 },
+        { status: 502 },
+      );
+    }
+
+    const genTimeout = sdConfig.generationTimeout ?? 300_000;
+    const pollInterval = 500;
+    const deadline = Date.now() + genTimeout;
+
+    let jobDone = false;
+    let jobImages: string[] = [];
+
+    while (Date.now() < deadline && !jobDone) {
+      const jobUrl = `${sdConfig.baseUrl.replace(/\/+$/, "")}/sdcpp/v1/jobs/${jobId}`;
+      const statusResp = await fetch(jobUrl, {
+        signal: AbortSignal.timeout(10_000),
+      });
+
+      if (!statusResp.ok) {
+        return Response.json(
+          { error: `sd.cpp job polling failed: HTTP ${statusResp.status}`, status: 502 },
+          { status: 502 },
+        );
+      }
+
+      const statusData = (await statusResp.json()) as {
+        status: string;
+        progress?: number;
+        images?: string[];
+        error?: string;
+      };
+
+      if (statusData.status === "done") {
+        if (!statusData.images || statusData.images.length === 0) {
+          return Response.json(
+            { error: "sd.cpp job completed but returned no images", status: 502 },
+            { status: 502 },
+          );
+        }
+        jobImages = statusData.images;
+        jobDone = true;
+      } else if (statusData.status === "failed" || statusData.status === "cancelled") {
+        return Response.json(
+          { error: `sd.cpp job ${statusData.status}: ${statusData.error ?? "no detail"}`, status: 502 },
+          { status: 502 },
+        );
+      }
+
+      if (!jobDone) {
+        await new Promise((r) => setTimeout(r, pollInterval));
+      }
+    }
+
+    if (!jobDone) {
+      return Response.json({ error: "sd.cpp job timed out", status: 504 }, { status: 504 });
+    }
+
+    images = jobImages.map((b64) => Buffer.from(b64, "base64"));
+    mimeType = "image/png";
   } else {
     return Response.json(
       {
-        error: `Image gen API family "${sdConfig.apiFamily}" not yet implemented. Use "openai" or "sdapi".`,
+        error: `Image gen API family "${sdConfig.apiFamily}" not implemented. Use "openai", "sdapi", or "sdcpp".`,
         status: 501,
       },
       { status: 501 },
@@ -127,6 +236,7 @@ export async function handleImageGeneration(body: unknown): Promise<Response> {
   for (const buffer of images) {
     const assetId = uid();
     const filename = `generated-${assetId.slice(0, 8)}.${outputFormat}`;
+    const meta = extractImageMetadata(buffer);
     const asset = await createAsset({
       database: db,
       input: {
@@ -136,6 +246,7 @@ export async function handleImageGeneration(body: unknown): Promise<Response> {
         assetType: "image",
         sizeBytes: buffer.length,
         buffer,
+        altText: `Generated: ${meta.width}x${meta.height} ${meta.format}`,
       },
       uploadDir: config.assets.uploadDir,
     });
