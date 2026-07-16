@@ -25,6 +25,7 @@
     "lint:html:fix": "markuplint --fix \"src/views/**/*.html\" \"src/components/**/*.html\"",
     "format": "prettier --log-level warn --check \"src/**/*.{ts,tsx}\" \"src/**/*.{html,css}\" \"*.{json,js,mjs,md,yaml,yml}\" \"docs/**/*.md\"",
     "format:fix": "prettier --log-level warn --write \"src/**/*.{ts,tsx}\" \"src/**/*.{html,css}\" \"*.{json,js,mjs,md,yaml,yml}\" \"docs/**/*.md\"",
+    "format:write": "bun format:fix",
     "md:lint": "markdownlint-cli2 \"docs/**/*.md\"",
     "md:lint:fix": "markdownlint-cli2 --fix \"docs/**/*.md\"",
     "typecheck": "tsc --noEmit",
