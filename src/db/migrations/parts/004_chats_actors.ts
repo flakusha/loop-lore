@@ -58,6 +58,8 @@ export async function up(database: Kysely<unknown>): Promise<void> {
   await database.schema.createIndex("idx_actors_type").on("actors").column("actor_type").execute();
 
   // ── Chat Participants ──
+  // Composite PK (chat_id, actor_id) enforces one participant per chat.
+  // Each participant can only be added once to a specific chat.
   await database.schema
     .createTable("chat_participants")
     .addColumn("chat_id", "text", (col) => col.notNull().references("chats.id"))
