@@ -142,7 +142,9 @@ export class CircuitBreaker {
   /**
    * Get current state for a provider (read-only).
    */
-  getState(providerName: string): { state: CircuitState; consecutiveFailures: number; cooldownRemainingMs: number } | undefined {
+  getState(
+    providerName: string,
+  ): { state: CircuitState; consecutiveFailures: number; cooldownRemainingMs: number } | undefined {
     const circuit = this.circuits.get(providerName);
     if (!circuit) return undefined;
 
@@ -156,7 +158,12 @@ export class CircuitBreaker {
   /**
    * Get state for all providers.
    */
-  getAllStates(): Array<{ name: string; state: CircuitState; consecutiveFailures: number; cooldownRemainingMs: number }> {
+  getAllStates(): Array<{
+    name: string;
+    state: CircuitState;
+    consecutiveFailures: number;
+    cooldownRemainingMs: number;
+  }> {
     return [...this.circuits.entries()].map(([name, circuit]) => ({
       name,
       state: circuit.state,

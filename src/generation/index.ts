@@ -111,7 +111,12 @@ export {
 } from "./providers/registry";
 
 export { OpenAiCompatibleProvider } from "./providers/openai-compatible";
-export { ComfyUIClient, type ComfyUIWorkflow, type ComfyUIPromptResult, type ComfyUIClientOptions } from "./providers/comfyui";
+export {
+  ComfyUIClient,
+  type ComfyUIWorkflow,
+  type ComfyUIPromptResult,
+  type ComfyUIClientOptions,
+} from "./providers/comfyui";
 export { CircuitBreaker, circuitBreaker, type CircuitBreakerConfig } from "./providers/circuit-breaker";
 export { callWithFailover } from "./providers/registry";
 // TODO: export additional providers when implemented.
