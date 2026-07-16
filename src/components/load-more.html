@@ -1,0 +1,32 @@
+<!-- Load More Pagination Component
+     Reusable pagination button. Included via {{> load-more.html}}
+     Server replaces this element with new cards + next page button.
+     Data attributes:
+       data-load-more-url="/dynamic/gallery/grid?page=2"
+       data-load-more-label="Load more"
+       data-has-more="true"
+-->
+<div
+  class="load-more"
+  x-data="{ loading: false }"
+  :data-testid="$el.closest('[data-load-more-url]') ? 'load-more' : undefined"
+>
+  <template x-if="$el.closest('[data-has-more]')?.dataset.hasMore === 'true'">
+    <button
+      class="btn btn-secondary"
+      style="width: 100%; justify-content: center; margin: var(--space-4) 0"
+      x-on:click="loading = true; $nextTick(() => {
+        const url = $el.closest('[data-load-more-url]')?.dataset.loadMoreUrl;
+        if (url) htmx.ajax('GET', url, { target: $el.closest('[data-load-more-target]')?.dataset.loadMoreTarget || '#asset-grid', swap: 'beforeend' });
+      })"
+      :disabled="loading"
+      hx-indicator="closest .load-more .htmx-indicator"
+    >
+      <span x-show="!loading" x-text="$el.closest('[data-load-more-label]')?.dataset.loadMoreLabel || 'Load more'"></span>
+      <span x-show="loading" class="spinner"></span>
+    </button>
+  </template>
+  <div class="htmx-indicator" style="display: none; text-align: center; padding: var(--space-4)">
+    <span class="spinner"></span>
+  </div>
+</div>

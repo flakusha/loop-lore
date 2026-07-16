@@ -1,0 +1,28 @@
+<!-- Empty State Component
+     Reusable: icon, title, description, optional action button.
+     Include via {{> empty-state.html}}
+     Alpine-managed via data attributes on parent:
+       data-empty-icon="📁"
+       data-empty-title="No results"
+       data-empty-description="Try different search terms."
+       data-empty-action="Clear filters"
+       data-empty-action-url=""
+       data-empty-testid="empty-state"
+-->
+<div
+  class="empty-state"
+  :data-testid="$el.closest('[data-empty-testid]')?.dataset.emptyTestid || 'empty-state'"
+  x-data="{}"
+>
+  <div class="icon" x-text="$el.closest('[data-empty-icon]')?.dataset.emptyIcon || '📁'"></div>
+  <div class="title" x-text="$el.closest('[data-empty-title]')?.dataset.emptyTitle || 'No results'"></div>
+  <div class="description" x-text="$el.closest('[data-empty-description]')?.dataset.emptyDescription || ''"></div>
+  <template x-if="$el.closest('[data-empty-action]')">
+    <a
+      class="btn btn-secondary"
+      style="margin-top: var(--space-4)"
+      :href="$el.closest('[data-empty-action-url]')?.dataset.emptyActionUrl || '#'"
+      x-text="$el.closest('[data-empty-action]')?.dataset.emptyAction || ''"
+    ></a>
+  </template>
+</div>

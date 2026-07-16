@@ -1,0 +1,24 @@
+<!-- Active Filter Chips Component
+     Removable tags showing current filters. Alpine-managed.
+     Include inside a list-toolbar or standalone via {{> filter-chips.html}}
+     Expects Alpine scope with: activeChips array, removeChip(key), clearAll()
+-->
+<template x-if="activeChips && activeChips.length > 0" data-testid="filter-chips">
+  <div class="filter-chips">
+    <template x-for="chip in activeChips" :key="chip.key">
+      <span class="tag active">
+        <span x-text="chip.label"></span>
+        <button
+          class="btn-xs"
+          @click="removeChip(chip.key)"
+          :aria-label="'Remove ' + chip.label + ' filter'"
+        >&times;</button>
+      </span>
+    </template>
+    <button
+      class="btn-xs"
+      @click="clearAll()"
+      aria-label="Clear all filters"
+    >Clear all</button>
+  </div>
+</template>
