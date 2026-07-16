@@ -46,14 +46,14 @@ describe("chatMessages", () => {
 
   describe("scrollToBottom", () => {
     test("handles missing element gracefully", () => {
-      globalThis.document.querySelector = () => null;
+      document.querySelector = () => null;
       expect(() => chatMessages.scrollToBottom!()).not.toThrow();
     });
   });
 
   describe("setupInfiniteScroll", () => {
     test("does nothing when sentinel not found", () => {
-      globalThis.document.querySelector = () => null;
+      document.querySelector = () => null;
       expect(() =>
         chatMessages.setupInfiniteScroll!.call({ scrollObserver: null, loadOlderMessages: () => {} }),
       ).not.toThrow();

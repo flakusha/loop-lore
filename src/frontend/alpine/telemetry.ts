@@ -11,19 +11,19 @@
 
 let enabled = false;
 let queue: Array<{ type: string; data?: Record<string, unknown> }> = [];
-let flushTimer: ReturnType<typeof setInterval> | null = null;
+let _flushTimer: ReturnType<typeof setInterval> | null = null;
 
 export function initTelemetry(isEnabled: boolean): void {
   enabled = isEnabled;
   if (!enabled) return;
 
-  flushTimer = setInterval(flush, 10_000);
+  _flushTimer = setInterval(flush, 10_000);
 
   document.addEventListener("htmx:afterSettle", () => {
-    track("frontend.page_view", { path: window.location.pathname });
+    track("frontend.page_view", { path: location.pathname });
   });
 
-  window.addEventListener("error", (event) => {
+  globalThis.addEventListener("error", (event: ErrorEvent) => {
     track("frontend.error", {
       message: event.message,
       filename: event.filename,
@@ -32,7 +32,7 @@ export function initTelemetry(isEnabled: boolean): void {
     });
   });
 
-  window.addEventListener("unhandledrejection", (event) => {
+  globalThis.addEventListener("unhandledrejection", (event: PromiseRejectionEvent) => {
     track("frontend.error", {
       message: event.reason?.message ?? String(event.reason),
       type: "unhandledrejection",
