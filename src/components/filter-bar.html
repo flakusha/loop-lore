@@ -1,0 +1,67 @@
+<!-- Filter Bar Component
+     Reusable: search input, type/sort dropdowns, active chips, clear all.
+     Alpine-managed. Include via {{> filter-bar.html}}
+     Place inside a .list-toolbar container. Override defaults via data attributes
+     on the parent:
+       data-search-placeholder="Search…"
+       data-search-label="Search"
+       data-show-type-filter="true"
+       data-search-url="/dynamic/gallery/search"
+       data-target-id="asset-grid"
+-->
+<div
+  x-data="filterBar()"
+  data-testid="filter-bar"
+  style="display: contents"
+>
+  <input
+    class="form-input list-search"
+    type="search"
+    :placeholder="$el.closest('[data-search-placeholder]')?.dataset.searchPlaceholder || 'Search…'"
+    :aria-label="$el.closest('[data-search-label]')?.dataset.searchLabel || 'Search'"
+    x-model="query"
+    @input.debounce.300ms="triggerSearch()"
+  />
+  <select
+    class="form-select list-sort"
+    aria-label="Filter type"
+    x-model="typeFilter"
+    @change="triggerSearch()"
+    x-show="$el.closest('[data-show-type-filter]')?.dataset.showTypeFilter === 'true'"
+  >
+    <option value="all">All types</option>
+    <option value="image">Images</option>
+    <option value="audio">Audio</option>
+    <option value="video">Video</option>
+  </select>
+  <select
+    class="form-select list-sort"
+    aria-label="Sort"
+    x-model="sortBy"
+    @change="triggerSearch()"
+  >
+    <option value="name">Sort: Name</option>
+    <option value="newest">Sort: Newest</option>
+    <option value="oldest">Sort: Oldest</option>
+  </select>
+  <template x-if="activeChips.length > 0">
+    <div class="filter-chips" data-testid="filter-chips">
+      <template x-for="chip in activeChips" :key="chip.key">
+        <span class="tag active">
+          <span x-text="chip.label"></span>
+          <button
+            class="btn-xs"
+            @click="removeChip(chip.key)"
+            aria-label="Remove filter"
+          >&times;</button>
+        </span>
+      </template>
+      <button
+        class="btn-xs"
+        @click="clearAll()"
+        aria-label="Clear all filters"
+      >Clear all</button>
+    </div>
+  </template>
+  {{> filter-chips.html}}
+</div>
