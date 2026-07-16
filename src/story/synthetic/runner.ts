@@ -221,7 +221,7 @@ export class SyntheticTestRunner {
           status: "skipped",
           expected: c.expected,
           actual: {},
-          reason: `unsupported scenario type: ${row.type}`,
+          reason: `unsupported scenario type: ${String(row.type)}`,
         };
       }
     }
@@ -248,8 +248,8 @@ export class SyntheticTestRunner {
     reason?: string;
   } {
     const input = c.input;
-    const response = String(input.content ?? "");
-    const actorName = String(input.actorId ?? "narrator");
+    const response = (input as { content?: string }).content ?? "";
+    const actorName = (input as { actorId?: string }).actorId ?? "narrator";
 
     if (mode === SyntheticTestMode.Mutation) {
       const variations = Math.max(1, mutationParams?.promptVariations ?? 3);
@@ -336,8 +336,8 @@ export class SyntheticTestRunner {
     actual: Record<string, unknown>;
     reason?: string;
   }> {
-    const questId = String(c.input.questId ?? "");
-    const currentProgress = Number(c.input.currentProgress ?? 0);
+    const questId = (c.input as { questId?: string }).questId ?? "";
+    const currentProgress = (c.input as { currentProgress?: number }).currentProgress ?? 0;
     const quest = await this.db
       .selectFrom("quests")
       .select(["target", "status"])
@@ -352,7 +352,7 @@ export class SyntheticTestRunner {
       };
     }
 
-    const target = Number(quest.target) || 100;
+    const target = quest.target || 100;
     const step = Math.max(1, Math.round(target * 0.1));
     const nextProgress = Math.min(currentProgress + step, target);
     const newStatus = nextProgress >= target ? "completed" : "active";
@@ -368,7 +368,7 @@ export class SyntheticTestRunner {
       status: passed ? "passed" : "failed",
       expected: c.expected,
       actual: { target, step, nextProgress, newStatus, advanced },
-      reason: passed ? undefined : `expected status=${expStatus} advanced=${expAdvanced}`,
+      reason: passed ? undefined : `expected status=${String(expStatus)} advanced=${String(expAdvanced)}`,
     };
   }
 
@@ -411,8 +411,9 @@ export class SyntheticTestRunner {
     actual: Record<string, unknown>;
     reason?: string;
   } {
-    const original = String(c.input.original ?? "");
-    const actorName = String(c.input.actorId ?? "narrator");
+    const originalInput = c.input as { original?: string; actorId?: string };
+    const original = originalInput.original ?? "";
+    const actorName = originalInput.actorId ?? "narrator";
     const baseline = this.evaluator.evaluate({ response: original, prompt: "", actorName }).scores.overall;
     const improvedThresh = Number(c.expected.improvedScore ?? 0.7) * 100;
     const warranted = baseline < improvedThresh;
@@ -435,7 +436,7 @@ export class SyntheticTestRunner {
     reason?: string;
   }> {
     if (!this.gameMaster) {
-      const questId = String(c.input.questId ?? "");
+      const questId = (c.input as { questId?: string }).questId ?? "";
       const quest = await this.db
         .selectFrom("quests")
         .select(["status"])

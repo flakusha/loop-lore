@@ -31,6 +31,8 @@ export interface PromptParams {
   userId?: string;
   /** Other participant actor IDs in a group chat (excludes self) */
   groupParticipantIds?: string[];
+  /** Explicit selective keys for lore/memory relevance filtering (overrides auto-derived from last user message) */
+  selectiveKeys?: string[];
 }
 
 export interface PromptSectionReport {

@@ -91,6 +91,7 @@ async function handleImport(request: Request, database: Kysely<DB>, userId: stri
   const contentType = request.headers.get("content-type") ?? "";
 
   if (contentType.includes("multipart/form-data")) {
+    // eslint-disable-next-line @typescript-eslint/no-deprecated
     const formData = await request.formData();
     const file = formData.get("file");
     if (!file || !(file instanceof File))

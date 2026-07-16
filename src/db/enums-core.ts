@@ -315,3 +315,16 @@ export const stackableStateDef: StateDef<StackableState> = {
 };
 
 export const stackableStateMachine = createMachine(stackableStateDef);
+
+export const keyStatusDef: StateDef<KeyStatus> = {
+  values: ["active", "expired", "revoked"] as const,
+  initial: "active",
+  transitions: {
+    active: ["expired", "revoked"],
+    expired: ["active"],
+    revoked: ["active"],
+  },
+  terminal: [],
+};
+
+export const keyStatusMachine = createMachine(keyStatusDef);
