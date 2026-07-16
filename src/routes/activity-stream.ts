@@ -28,7 +28,9 @@ interface ActivityEntry {
 
 /** Stable signature of an activity snapshot for change detection. */
 function snapshotOf(map: Record<string, ActivityEntry>): string {
-  const result = safeJsonStringify(Object.entries(map).map(([id, e]) => [id, e.unseenCount, e.lastMessageCreatedAt]));
+  const result = safeJsonStringify(
+    Object.entries(map).map(([id, e]) => [id, e.unseenCount, e.lastMessageCreatedAt]),
+  );
   return result.ok ? result.value : "[]";
 }
 

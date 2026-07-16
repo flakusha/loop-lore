@@ -3,6 +3,7 @@
  * atmosphere), only for story-mode chats.
  */
 import type { SectionBuilder } from "../types";
+import { wrapSection } from "../../xml-utils";
 
 export const storyContextSection: SectionBuilder = {
   name: "storyContext",
@@ -11,7 +12,7 @@ export const storyContextSection: SectionBuilder = {
     const chat = ctx.chat;
     if (!chat.world_id) return [];
 
-    const parts: string[] = ["[Story Context]"];
+    const parts: string[] = [];
 
     if (chat.current_location_id) {
       const location = await ctx.db
@@ -20,8 +21,8 @@ export const storyContextSection: SectionBuilder = {
         .where("id", "=", chat.current_location_id)
         .executeTakeFirst();
       if (location) {
-        parts.push(`\nCurrent location: ${location.name}`);
-        if (location.description) parts.push(`\n${location.description}`);
+        parts.push(`Current location: ${location.name}`);
+        if (location.description) parts.push(location.description);
       }
 
       const locationState = await ctx.db
@@ -30,12 +31,14 @@ export const storyContextSection: SectionBuilder = {
         .where("location_id", "=", chat.current_location_id)
         .executeTakeFirst();
       if (locationState) {
-        if (locationState.time_of_day) parts.push(`\nTime: ${locationState.time_of_day}`);
-        if (locationState.weather) parts.push(`\nWeather: ${locationState.weather}`);
-        if (locationState.atmosphere) parts.push(`\nAtmosphere: ${locationState.atmosphere}`);
+        if (locationState.time_of_day) parts.push(`Time: ${locationState.time_of_day}`);
+        if (locationState.weather) parts.push(`Weather: ${locationState.weather}`);
+        if (locationState.atmosphere) parts.push(`Atmosphere: ${locationState.atmosphere}`);
       }
     }
 
-    return parts.length > 1 ? [{ role: "system", content: parts.join("") }] : [];
+    return parts.length > 0
+      ? [{ role: "system", content: wrapSection("story_context", parts.join("\n")) }]
+      : [];
   },
 };

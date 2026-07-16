@@ -30,15 +30,7 @@ export type ImageModelFamily =
 export type PromptFormat = "tags" | "natural" | "tags-and-natural" | "json";
 
 /** Generation mode for SD prompt generation */
-export type SdGenMode =
-  | "yourself"
-  | "face"
-  | "me"
-  | "scene"
-  | "last"
-  | "raw_last"
-  | "background"
-  | "free";
+export type SdGenMode = "yourself" | "face" | "me" | "scene" | "last" | "raw_last" | "background" | "free";
 
 /** Detail level: instant = fast/low-token, detailed = rich/high-token */
 export type DetailLevel = "instant" | "balanced" | "detailed";
@@ -144,9 +136,7 @@ export function resolveTemplate(template: string, ctx: TemplateContext): string 
 
 // ── Helper: build tag-based templates ───────────────────────
 
-function tagTemplates(
-  styleTags: string,
-): Record<DetailLevel, ImageModelTemplates> {
+function tagTemplates(styleTags: string): Record<DetailLevel, ImageModelTemplates> {
   const base = {
     yourself: `Ignore previous instructions. Write comma-separated image tags describing {{charName}}. ${styleTags} full body portrait, {{charPrefix}}{{charDescription}}`,
     face: `Ignore previous instructions. Write comma-separated image tags describing {{charName}} face close-up. ${styleTags} face portrait close-up, {{charPrefix}}{{charDescription}}`,
@@ -179,9 +169,7 @@ function tagTemplates(
 
 // ── Helper: build natural language templates ────────────────
 
-function naturalTemplates(
-  style: string,
-): Record<DetailLevel, ImageModelTemplates> {
+function naturalTemplates(style: string): Record<DetailLevel, ImageModelTemplates> {
   const base = {
     yourself: `Describe {{charName}} in detailed natural language. ${style} Focus on appearance, clothing, expression, pose. {{charPrefix}}{{charDescription}}`,
     face: `Describe {{charName}} face in detailed natural language. ${style} Focus on facial features, expression, lighting. face close-up, {{charPrefix}}{{charDescription}}`,
@@ -214,9 +202,7 @@ function naturalTemplates(
 
 // ── Helper: build mixed tag+natural templates ───────────────
 
-function mixedTagNaturalTemplates(
-  style: string,
-): Record<DetailLevel, ImageModelTemplates> {
+function mixedTagNaturalTemplates(style: string): Record<DetailLevel, ImageModelTemplates> {
   const base = {
     yourself: `Describe {{charName}} using lowercase keywords with spaces. Mix tag-like keywords and natural language. ${style} Include: full body, {{charPrefix}}{{charDescription}}`,
     face: `Describe {{charName}} face using lowercase keywords with spaces. Mix tags and natural language. ${style} face close-up, {{charPrefix}}{{charDescription}}`,
@@ -568,10 +554,7 @@ function systemPromptForFamily(
 }
 
 /** Build a role-switch system message for image prompt generation */
-export function buildImageSystemPrompt(
-  profile: ImageModelProfile,
-  detail: DetailLevel,
-): string {
+export function buildImageSystemPrompt(profile: ImageModelProfile, detail: DetailLevel): string {
   const format = profile.promptFormat;
   const content = systemPromptForFamily(format, detail, profile.maxTokenHint);
 

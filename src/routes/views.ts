@@ -2,7 +2,7 @@
  * View Serving Routes
  *
  * Serve HTML templates as htmx-friendly pages:
- *   GET  /                     — landing page → chat view
+ *   GET  /                     — landing page → dist/public/index.html via server.ts
  *   GET  /views/:name          — view template from src/views/
  *   GET  /partials/:page/:section — HTML fragment from src/partials/
  *   GET  /character/:slug      — chat list for character
@@ -459,11 +459,9 @@ async function dispatchView(
   const { pathname } = url;
 
   // ── Landing page ────────────────────────────────────────────
+  // Let server.ts serve dist/public/index.html via respondWithFile for
+  // ETag, Vary, and pre-built compressed variants (.gz/.br/.zst).
   if (pathname === "/") {
-    const chatResult = serveView("chat", isHtmx);
-    if (chatResult) return chatResult;
-
-    // Fall through to server.ts respondWithFile for compressed variant + ETag/304.
     return null;
   }
 

@@ -3,6 +3,7 @@
  * the conversation history.
  */
 import type { SectionBuilder } from "../types";
+import { wrapSection } from "../../xml-utils";
 
 export const postHistorySection: SectionBuilder = {
   name: "postHistory",
@@ -10,6 +11,6 @@ export const postHistorySection: SectionBuilder = {
   build: (ctx) => {
     const instr = ctx.actor.post_history_instructions;
     if (!instr) return [];
-    return [{ role: "system", content: `[Post-history instructions]\n${instr}` }];
+    return [{ role: "system", content: wrapSection("post_history", instr) }];
   },
 };
