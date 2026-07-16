@@ -1,24 +1,20 @@
 /**
  * Personas Controller
  *
- * HTTP handlers for persona CRUD operations.
+ * Elysia plugin for persona CRUD operations.
  */
+import { Elysia } from "elysia";
 import type { Kysely } from "kysely";
 import type { DB } from "../db/schema";
 import type { RequestContext } from "../middleware/types";
-import type { RouteDispatch } from "../routes/router";
-import { registerRoute } from "../routes/router";
 import { PersonasService } from "./service";
 import {
-  BAD_METHOD,
   jsonResponse,
   jsonError,
   jsonCreated,
   jsonNoContent,
   HttpStatus,
   ErrorCode,
-  parseBody,
-  extractIdFromPath,
 } from "../routes/http-utils";
 
 interface ListPersonasOpts {
@@ -47,49 +43,60 @@ interface DeletePersonaOpts {
   personaId: string;
 }
 
-const dispatch: RouteDispatch = async ({ request, context, database }) => {
-  const url = new URL(request.url);
-  const { pathname } = url;
-  const method = request.method;
-
-  // ── /api/personas/:id/convert-to-character ───────────────────────
-  const convertMatch = /^\/api\/personas\/([a-f0-9-]+)\/convert-to-character$/.exec(pathname);
-  if (convertMatch) {
-    if (method === "POST") {
-      return handleConvertToCharacter({ database, personaId: convertMatch[1]!, context });
-    }
-    return BAD_METHOD();
-  }
-
-  // ── /api/personas/:id ───────────────────────────────────────────
-  const personaId = extractIdFromPath(pathname, "/api/personas");
-  if (personaId) {
-    if (method === "GET") {
-      return handleGetPersona({ database, personaId, context });
-    }
-    if (method === "PATCH") {
-      const body = await parseBody(request);
-      if (body instanceof Response) return body;
-      return handleUpdatePersona({ database, personaId, body, context });
-    }
-    if (method === "DELETE") {
-      return handleDeletePersona({ database, personaId, context });
-    }
-    return BAD_METHOD();
-  }
-
-  // ── /api/personas (collection) ───────────────────────────────────
-  if (pathname === "/api/personas" && method === "GET") {
-    return handleListPersonas({ database, context });
-  }
-  if (pathname === "/api/personas" && method === "POST") {
-    const body = await parseBody(request);
-    if (body instanceof Response) return body;
-    return handleCreatePersona({ database, body, context });
-  }
-
-  return null;
-};
+// ── Elysia Plugin ─────────────────────────────────────────────────
+export function personaRoutes({ database }: { database: Kysely<DB> }) {
+  return new Elysia({ name: "personas" })
+    .get("/api/personas", async (ctx) => {
+      const context: RequestContext = {
+        userId: (ctx as any).userId as string | null,
+        userRole: (ctx as any).userRole as string | null,
+        sessionId: (ctx as any).sessionId as string | null,
+      };
+      return handleListPersonas({ database, context });
+    })
+    .post("/api/personas", async (ctx) => {
+      const context: RequestContext = {
+        userId: (ctx as any).userId as string | null,
+        userRole: (ctx as any).userRole as string | null,
+        sessionId: (ctx as any).sessionId as string | null,
+      };
+      const body = ctx.body as Record<string, unknown>;
+      return handleCreatePersona({ database, body, context });
+    })
+    .get("/api/personas/:id", async (ctx) => {
+      const context: RequestContext = {
+        userId: (ctx as any).userId as string | null,
+        userRole: (ctx as any).userRole as string | null,
+        sessionId: (ctx as any).sessionId as string | null,
+      };
+      return handleGetPersona({ database, personaId: ctx.params.id, context });
+    })
+    .patch("/api/personas/:id", async (ctx) => {
+      const context: RequestContext = {
+        userId: (ctx as any).userId as string | null,
+        userRole: (ctx as any).userRole as string | null,
+        sessionId: (ctx as any).sessionId as string | null,
+      };
+      const body = ctx.body as Record<string, unknown>;
+      return handleUpdatePersona({ database, personaId: ctx.params.id, body, context });
+    })
+    .delete("/api/personas/:id", async (ctx) => {
+      const context: RequestContext = {
+        userId: (ctx as any).userId as string | null,
+        userRole: (ctx as any).userRole as string | null,
+        sessionId: (ctx as any).sessionId as string | null,
+      };
+      return handleDeletePersona({ database, personaId: ctx.params.id, context });
+    })
+    .post("/api/personas/:id/convert-to-character", async (ctx) => {
+      const context: RequestContext = {
+        userId: (ctx as any).userId as string | null,
+        userRole: (ctx as any).userRole as string | null,
+        sessionId: (ctx as any).sessionId as string | null,
+      };
+      return handleConvertToCharacter({ database, personaId: ctx.params.id, context });
+    });
+}
 
 async function handleListPersonas({ database, context }: ListPersonasOpts): Promise<Response> {
   const userId = context.userId;
@@ -222,6 +229,3 @@ async function handleConvertToCharacter({ database, personaId, context }: GetPer
     });
   }
 }
-
-registerRoute(dispatch);
-export { dispatch };
