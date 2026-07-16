@@ -217,8 +217,6 @@ export function jsonNoContent(): Response {
 // ── Shared route utilities ─────────────────────────────────────
 
 /** "Method not allowed" shorthand */
-export const BAD_METHOD = (): Response =>
-  jsonError({ message: "Method not allowed", status: HttpStatus.BadRequest });
 
 /**
  * Parse request body: JSON or form-encoded.
@@ -251,21 +249,6 @@ export function parsePagination(searchParams: URLSearchParams): { page: number; 
   const page = Number.isFinite(rawPage) && rawPage >= 1 ? Math.floor(rawPage) : 1;
   const pageSize = Number.isFinite(rawSize) ? Math.min(Math.max(1, Math.floor(rawSize)), 200) : 50;
   return { page, pageSize };
-}
-
-/**
- * Extract a UUID from a pathname by prefix pattern.
- * Returns null if not found.
- *
- * @example
- *   extractIdFromPath("/api/chats/abc-123", "/api/chats")  // "abc-123"
- *   extractIdFromPath("/api/chats/abc-123/messages", "/api/chats")  // "abc-123"
- */
-export function extractIdFromPath(pathname: string, prefix: string): string | null {
-  const escaped = prefix.replaceAll(/[.*+?^${}()|[\]\\]/g, String.raw`\$&`);
-  const regex = new RegExp(`^${escaped}/([^/]+)(/.*)?$`);
-  const match = regex.exec(pathname);
-  return match ? match[1]! : null;
 }
 
 // ── Body field helpers ───────────────────────────────────────
