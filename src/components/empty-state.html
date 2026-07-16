@@ -16,7 +16,10 @@
 >
   <div class="icon" x-text="$el.closest('[data-empty-icon]')?.dataset.emptyIcon || '📁'"></div>
   <div class="title" x-text="$el.closest('[data-empty-title]')?.dataset.emptyTitle || 'No results'"></div>
-  <div class="description" x-text="$el.closest('[data-empty-description]')?.dataset.emptyDescription || ''"></div>
+  <div
+    class="description"
+    x-text="$el.closest('[data-empty-description]')?.dataset.emptyDescription || ''"
+  ></div>
   <template x-if="$el.closest('[data-empty-action]')">
     <a
       class="btn btn-secondary"

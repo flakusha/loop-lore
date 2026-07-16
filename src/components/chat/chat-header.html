@@ -39,6 +39,14 @@
     </button>
     <button
       class="btn-icon"
+      title="User preferences"
+      @click="window.dispatchEvent(new CustomEvent('settings-modal'))"
+      data-testid="toggle-user-preferences"
+    >
+      🎛
+    </button>
+    <button
+      class="btn-icon"
       :title="isChatPaused(currentChat) ? 'Resume AI generation' : 'Pause AI generation'"
       @click="toggleGroupPause()"
       x-show="$store.ui.hasActiveChat && currentChat?.type === 'group'"
