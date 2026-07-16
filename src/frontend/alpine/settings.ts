@@ -145,6 +145,29 @@ const log = rootLog.child({ module: "settings" });
       this.apiKey = "";
     },
 
+    async exportAllData() {
+      try {
+        const res = await fetch("/api/settings/export");
+        if (!res.ok) {
+          showToast("error", "Export failed");
+          return;
+        }
+        const blob = await res.blob();
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "loop-lore-export.zip";
+        document.body.append(a);
+        a.click();
+        a.remove();
+        showToast("success", "Export downloaded");
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+      } catch (error) {
+        log.warn("exportAllData failed", { error: String(error) });
+        showToast("error", "Export failed");
+      }
+    },
+
     onProviderChange() {
       const endpointGroup = document.querySelector("#api-endpoint-group") as HTMLElement | null;
       if (endpointGroup) {

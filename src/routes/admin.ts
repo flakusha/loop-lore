@@ -275,6 +275,29 @@ export function adminRoutes(opts: { database: Db; config: Config }): Elysia {
 
         return jsonResponse({ roles: resolved, overrides, validRoles: VALID_ROLES });
       })
+      .get("/api/admin/model-roles/:role", async (ctx: any) => {
+        const { params: p, userRole } = ctx;
+        if (userRole !== "admin") {
+          return jsonError({
+            message: "Admin access required",
+            status: HttpStatus.Forbidden,
+            code: ErrorCode.Forbidden,
+          });
+        }
+
+        const role = p.role as string;
+        if (!VALID_ROLES.includes(role as ModelRole)) {
+          return jsonError({
+            message: `Invalid role: "${role}". Must be one of: ${VALID_ROLES.join(", ")}`,
+            status: HttpStatus.BadRequest,
+            code: ErrorCode.BadRequest,
+          });
+        }
+
+        const resolved = await resolveAllModelRoles(opts.config, opts.database);
+        const roleConfig = resolved.find((r) => r.role === role) ?? null;
+        return jsonResponse({ role, config: roleConfig });
+      })
       .put(
         "/api/admin/model-roles/:role",
         async (ctx: any) => {

@@ -566,8 +566,13 @@ variable dependencies.
 non-empty. Missing: successful login + redirect, demo login click + redirect,
 logout flow, auth-dependent UI elements (user menu, logout button).
 
+**Status**: Partially addressed (2026-07-16). The logout button (`nav-logout`
+in `layout.html`) and its FE↔BE wiring (`app.logout()` → `POST /api/auth/logout`,
+then redirect to `/views/login`) are now implemented. The browser e2e coverage
+in `auth-flow.browser.ts` still lacks the logout assertion — remaining gap.
+
 **Fix**: Add full login → redirect → verify authenticated state → logout →
-verify unauthenticated state flow.
+verify unauthenticated state flow (extend `auth-flow.browser.ts`).
 
 ## TEST.7 E2E — Browser Chat Flow Sends No Messages
 
