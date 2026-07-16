@@ -33,29 +33,29 @@ Fully specified, awaiting implementation.
 Features described in spec docs but intentionally cut from v0 scope. Some have
 partial shells; most have zero implementation.
 
-| Feature                                                     | Spec                                                                                   | Notes                                    |
-| ----------------------------------------------------------- | -------------------------------------------------------------------------------------- | ---------------------------------------- |
-| Multi-format character import (PNG/YAML/TOML/CHARX)         | docs/spec/character-setup.md                                                           | Only JSON import works                   |
-| Impersonation (`chat.impersonate_id`)                       | docs/spec/character-setup.md                                                           | Not implemented                          |
-| RPG mechanics (dice, stats, combat, XP, loot)               | docs/spec/rpg-mechanics.md                                                             | `src/rpg/` does not exist                |
-| Three-tier memory system (episodic/semantic/procedural)     | docs/spec/memory-system.md                                                             | Only `actor_memories` table exists       |
-| Artifact system (code/docs/datasets as assets)              | docs/spec/artifacts-system.md                                                          | Not implemented                          |
-| Agentic workspace mode                                      | docs/spec/use-case-agentic-workspace.md                                                | Not implemented                          |
-| Client-side encryption (AES-256-GCM, key hierarchy)         | docs/frontend/encryption.md                                                            | Messages stored as plaintext             |
-| Frontend story mode UI (GM panel, quest log, story chat)    | docs/frontend/chat/multi-llm-story.md                                                  | Backend `src/story/` exists; no frontend |
-| Message archiving (cascade, restore, purge)                 | docs/frontend/chat/archiving.md                                                        | Hard delete only                         |
-| Memory selection UI (mid-chat panel, pinning, auto-extract) | docs/frontend/chat/memories.md                                                         | Backend reads memories; no UI            |
-| Server-side i18n middleware (`req.t`)                       | docs/frontend/internationalization.md                                                  | Minimal client-side `__()` only          |
-| Anthropic/Ollama/Bedrock providers                          | docs/spec/provider-system.md                                                           | Only OpenAI-compatible exists            |
-| Plugin management API (install/list/enable/disable)         | docs/spec/plugin-system.md                                                             | Plugin skeleton loads files; no API      |
-| Signed URLs for asset downloads                             | docs/spec/assets.md                                                                    | Uses `raw` endpoint with Bearer auth     |
-| `POST /api/auth/register`                                   | docs/spec/auth-middleware.md                                                           | Not implemented                          |
-| `/api/sessions` routes                                      | docs/spec/users-sessions.md                                                            | Not implemented                          |
-| CSS skeleton shimmer, modal confirm dialogs, browser logger | docs/frontend/components.md                                                            | Uses native `confirm()` and text loading |
-| Async background compression per upload                     | docs/spec/assets.md                                                                    | Only build-time static compression       |
-| S3/GCS object store backend                                 | docs/spec/assets.md                                                                    | Local filesystem only                    |
-| HTTP/2 and WebSocket in transport layer                     | docs/spec/transport-unified.md                                                         | Defined but not integrated into server   |
-| Local inference (ComfyUI, llama-swap, sd.cpp)               | docs/research/comfyui-local-inference.md + docs/research/local-remote-inference-uis.md | Full spec in source research docs        |
+| Feature                                                     | Spec                                                                              | Notes                                    |
+| ----------------------------------------------------------- | --------------------------------------------------------------------------------- | ---------------------------------------- |
+| Multi-format character import (PNG/YAML/TOML/CHARX)         | docs/spec/character-setup.md                                                      | Only JSON import works                   |
+| Impersonation (`chat.impersonate_id`)                       | docs/spec/character-setup.md                                                      | Not implemented                          |
+| RPG mechanics (dice, stats, combat, XP, loot)               | docs/spec/rpg-mechanics.md                                                        | `src/rpg/` does not exist                |
+| Three-tier memory system (episodic/semantic/procedural)     | docs/spec/memory-system.md                                                        | Only `actor_memories` table exists       |
+| Artifact system (code/docs/datasets as assets)              | docs/spec/artifacts-system.md                                                     | Not implemented                          |
+| Agentic workspace mode                                      | docs/spec/use-case-agentic-workspace.md                                           | Not implemented                          |
+| Client-side encryption (AES-256-GCM, key hierarchy)         | docs/frontend/encryption.md                                                       | Messages stored as plaintext             |
+| Frontend story mode UI (GM panel, quest log, story chat)    | docs/frontend/chat/multi-llm-story.md                                             | Backend `src/story/` exists; no frontend |
+| Message archiving (cascade, restore, purge)                 | docs/frontend/chat/archiving.md                                                   | Hard delete only                         |
+| Memory selection UI (mid-chat panel, pinning, auto-extract) | docs/frontend/chat/memories.md                                                    | Backend reads memories; no UI            |
+| Server-side i18n middleware (`req.t`)                       | docs/frontend/internationalization.md                                             | Minimal client-side `__()` only          |
+| Anthropic/Ollama/Bedrock providers                          | docs/spec/provider-system.md                                                      | Only OpenAI-compatible exists            |
+| Plugin management API (install/list/enable/disable)         | docs/spec/plugin-system.md                                                        | Plugin skeleton loads files; no API      |
+| Signed URLs for asset downloads                             | docs/spec/assets.md                                                               | Uses `raw` endpoint with Bearer auth     |
+| `POST /api/auth/register`                                   | docs/spec/auth-middleware.md                                                      | Not implemented                          |
+| `/api/sessions` routes                                      | docs/spec/users-sessions.md                                                       | Not implemented                          |
+| CSS skeleton shimmer, modal confirm dialogs, browser logger | docs/frontend/components.md                                                       | Uses native `confirm()` and text loading |
+| Async background compression per upload                     | docs/spec/assets.md                                                               | Only build-time static compression       |
+| S3/GCS object store backend                                 | docs/spec/assets.md                                                               | Local filesystem only                    |
+| HTTP/2 and WebSocket in transport layer                     | docs/spec/transport-unified.md                                                    | Defined but not integrated into server   |
+| Local inference (ComfyUI, llama-swap, sd.cpp)               | docs/spec/integrations/llm-serving.md, docs/spec/integrations/image-generation.md | Implemented in generation/providers/     |
 
 ## P3 — Deferred Concepts (Post-MVP)
 

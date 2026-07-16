@@ -25,7 +25,7 @@ every config default value. `src/config/schema-class.ts` defines instance field 
 
 ---
 
-## DUP.3 Generation Post-Response Finalization
+## DUP.3 Generation Post-Response Finalization (Resolved)
 
 **Severity**: Medium
 **Source**: `src/generation/generate-route.ts` (plan.md)
@@ -37,6 +37,8 @@ non-streaming uses `MessageStatus.Confirmed`.
 
 **Fix**: Extract `storeGenerationResult()` and `buildGenerationResult()`
 helpers.
+
+**Status**: Resolved (2026-07-16) — Extracted `buildGenerationResult()` and `storeGenerationResult()` helpers. Both streaming and non-streaming paths now call the shared helpers.
 
 ---
 
@@ -109,7 +111,7 @@ complexity without benefit.
 
 ---
 
-## BUG.1 Browser E2E — Solo/Seed User ID Mismatch
+## BUG.1 Browser E2E — Solo/Seed User ID Mismatch (Resolved)
 
 **Severity**: High
 **Source**: `tests/e2e/` (plan.md)
@@ -121,6 +123,8 @@ solo user.
 
 **Fix**: Seed the solo user with `SEED.user.id` and `role: UserRole.Solo` before
 page loads, or stub `getOrCreateSoloUserForAuth` to return `SEED.user.id`.
+
+**Status**: Resolved (2026-07-16) — `browser-server.ts` rewritten to use Elysia `createApp()` and calls `seedSolo(db)` before server startup, ensuring the solo user has `SEED.solo.id` and seeded data is visible.
 
 ---
 
@@ -150,7 +154,7 @@ killing all subsequent tests.
 
 ---
 
-## SCHEMA.1 Schema Types Missing Documented Columns
+## SCHEMA.1 Schema Types Missing Documented Columns (Resolved)
 
 **Severity**: High
 **Source**: `src/db/schema-story.ts`, `src/db/schema-core.ts`
@@ -164,6 +168,8 @@ exist on paper but have no TypeScript interface.
 
 **Fix**: Add character-card fields to `schema-core.ts` Actors; add
 `scan_depth`/`token_budget` to `schema-story.ts` Worlds.
+
+**Status**: Resolved (2026-07-16) — Character-card columns were already present in Actors schema. `scan_depth` and `token_budget` added to `schema-story.ts` Worlds as nullable `number | null`.
 
 ---
 
@@ -179,7 +185,7 @@ only has `updated_at`.
 
 ---
 
-## CAST.1 HTTP Boundary `as` Casts Skip Validation
+## CAST.1 HTTP Boundary `as` Casts Skip Validation (Resolved)
 
 **Severity**: High
 **Source**: `src/generation/generation-routes.ts`
@@ -188,6 +194,8 @@ only has `updated_at`.
 validation. A malformed request generates garbage queries.
 
 **Fix**: Add Zod schemas or type guard functions for these two request shapes.
+
+**Status**: Resolved (2026-07-16) — Added `validateCancel()`, `validateRegenerate()`, `validateTestConnection()` type guard functions. Replaced all `body as Record<string, unknown>` casts with validated guards. `validateRetryFromPoint()` and `validateContinue()` already existed.
 
 ---
 
@@ -205,7 +213,7 @@ missing or has stale status. On restart, in-memory state is lost and DB shows
 
 ---
 
-## CAST.3 `selectAll()` + `as` Cast (3 sites)
+## CAST.3 `selectAll()` + `as` Cast (3 sites) (Resolved)
 
 **Severity**: Medium
 **Source**: `src/generation/step-pipeline.ts`, `src/generation/cancellation-actions.ts`,
@@ -216,6 +224,8 @@ required but unchecked — if migration and schema.ts drift, the cast hides the
 mismatch.
 
 **Fix**: Use explicit `.select([...])` for typed results.
+
+**Status**: Resolved (2026-07-16) — Replaced `selectAll()` with explicit `.select([...])` in `generation-routes.ts` (2 sites) and `cancellation-actions.ts` (1 site).
 
 ---
 
@@ -468,7 +478,7 @@ per-request `minifyHTMLContent` cost for otherwise-static templates.
 
 ---
 
-## TEST.1 E2E — No Cross-Tenant Isolation Tests
+## TEST.1 E2E — No Cross-Tenant Isolation Tests (Resolved)
 
 **Severity**: High
 **Source**: `tests/e2e/flows/{chats,messages,characters,worlds,assets}.test.ts`
@@ -479,6 +489,8 @@ in an isolation test.
 
 **Fix**: Add one test per resource type: User A creates resource, User B gets
 403/404.
+
+**Status**: Resolved (2026-07-16) — Added cross-tenant isolation tests to `chats.test.ts`, `messages.test.ts`, `characters.test.ts`, `worlds.test.ts`. Each test seeds data as User A, then verifies User B (admin) gets 403/404 on access.
 
 ## TEST.2 E2E — Error Envelope Never Asserted (Resolved)
 
