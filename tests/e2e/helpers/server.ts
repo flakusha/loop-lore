@@ -27,7 +27,7 @@ import { resetSoloUserCache } from "@/middleware/index";
 /**
  * Handle import route before Elysia (body consumed by Elysia otherwise).
  */
-async function handleImportRequest(request: Request, database: Kysely<DB>, config: Config): Promise<Response> {
+async function _handleImportRequest(request: Request, database: Kysely<DB>, config: Config): Promise<Response> {
   const { uid, safeJsonStringify, jsonParseOr } = await import("@/utils");
   const { jsonError, jsonCreated, HttpStatus } = await import("@/routes/http-utils");
   const { load: yamlLoad } = await import("js-yaml");
@@ -311,25 +311,15 @@ export async function createTestServer(
   }
   initializeProviders(config);
 
-  const app = createApp({
+const app = createApp({
     database: db,
     config,
     handleNonApiRequest: async () => new Response("Not found", { status: 404 }),
   });
 
-  const bunServer = Bun.serve({
-    port: 0,
-    fetch: async (request) => {
-      // Handle import route before Elysia (body consumption issue)
-      const url = new URL(request.url);
-      if (url.pathname === "/api/actors/import" && request.method === "POST") {
-        return handleImportRequest(request, db, config);
-      }
-      return app.fetch(request);
-    },
-  });
-
-  const url = `http://localhost:${bunServer.port}`;
+  app.listen({ port: 0 });
+  const bunServer = app.server;
+  const url = `http://localhost:${bunServer!.port}`;
 
   return {
     url,
