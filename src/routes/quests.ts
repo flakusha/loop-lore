@@ -56,8 +56,7 @@ async function checkWorldAccess(
     .select(["owner_id"])
     .where("id", "=", worldId)
     .executeTakeFirst();
-  if (!worldCheck || (worldCheck.owner_id !== userId && userRole !== "admin")) return false;
-  return true;
+  return !(!worldCheck || (worldCheck.owner_id !== userId && userRole !== "admin"));
 }
 
 async function handleListQuests(
@@ -112,7 +111,7 @@ async function handleCreateQuest(
     creatorId: userId!,
     name: body.name as string,
     description: (body.description as string) ?? null,
-    type: (body.type as unknown as QuestTypeEnum) ?? "collection",
+    type: (body.type as QuestTypeEnum) ?? "collection",
     config: (body.config || {}) as unknown as QuestConfig,
     target: Number(body.target) || 10,
     priority: Number(body.priority) || 0,

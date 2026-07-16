@@ -22,8 +22,7 @@ function createTestDb(): Kysely<DB> {
   sqlite.run("PRAGMA journal_mode = WAL");
   sqlite.run("PRAGMA foreign_keys = ON");
   const dialect = createSqliteDialect(sqlite);
-  const db = new Kysely<DB>({ dialect });
-  return db;
+  return new Kysely<DB>({ dialect });
 }
 
 function createSettingsApp(db: Kysely<DB>, userId: string): Elysia {

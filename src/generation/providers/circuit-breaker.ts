@@ -63,7 +63,7 @@ export class CircuitBreaker {
    */
   allowRequest(providerName: string): boolean {
     const cfg = this.configs.get(providerName);
-    if (!cfg || !cfg.enabled) return true;
+    if (!cfg?.enabled) return true;
 
     const circuit = this.circuits.get(providerName);
     if (!circuit) return true;
@@ -105,7 +105,7 @@ export class CircuitBreaker {
    */
   onFailure(providerName: string, retryAfterMs?: number): void {
     const cfg = this.configs.get(providerName);
-    if (!cfg || !cfg.enabled) return;
+    if (!cfg?.enabled) return;
 
     const circuit = this.circuits.get(providerName);
     if (!circuit) return;
@@ -158,13 +158,13 @@ export class CircuitBreaker {
   /**
    * Get state for all providers.
    */
-  getAllStates(): Array<{
+  getAllStates(): {
     name: string;
     state: CircuitState;
     consecutiveFailures: number;
     cooldownRemainingMs: number;
-  }> {
-    return [...this.circuits.entries()].map(([name, circuit]) => ({
+  }[] {
+    return [...this.circuits].map(([name, circuit]) => ({
       name,
       state: circuit.state,
       consecutiveFailures: circuit.consecutiveFailures,
