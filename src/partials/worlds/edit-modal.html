@@ -11,7 +11,7 @@
     </div>
     <div class="modal-body">
       <form
-        hx-patch="/api/worlds/{{worldId}}"
+        hx-put="/api/worlds/{{worldId}}"
         hx-target="#world-detail"
         hx-swap="innerHTML"
         hx-target-error="#toast-container"

@@ -217,7 +217,9 @@
         <h3 class="section-title">Data Management</h3>
         <div style="margin-top: var(--space-4); width: 100%; max-width: 400px">
           <div style="display: flex; gap: var(--space-2); margin-bottom: var(--space-4)">
-            <button type="button" class="btn btn-secondary">Export All Chats</button>
+            <button type="button" class="btn btn-secondary" @click="exportAllData()" data-testid="export-all">
+              Export All Data
+            </button>
             <button type="button" class="btn btn-secondary">Import Chats</button>
           </div>
           <div class="danger-zone">

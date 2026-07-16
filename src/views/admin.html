@@ -41,6 +41,16 @@
         <button class="world-edit-tab" :class="{ active: activeTab === 'system' }" @click="showTab('system')">
           System
         </button>
+        <button
+          class="world-edit-tab"
+          :class="{ active: activeTab === 'analytics' }"
+          @click="showTab('analytics')"
+        >
+          Analytics
+        </button>
+        <button class="world-edit-tab" :class="{ active: activeTab === 'health' }" @click="showTab('health')">
+          Health
+        </button>
       </div>
 
       <!-- Overview Tab -->
@@ -695,7 +705,7 @@
                 <div
                   style="
                     display: grid;
-                    grid-template-columns: 200px 1fr auto;
+                    grid-template-columns: 200px 1fr auto auto;
                     gap: var(--space-3);
                     align-items: center;
                     padding: var(--space-3);
@@ -717,6 +727,238 @@
                     @input="sysConfigDirty[c.key] = $event.target.value"
                   />
                   <button class="btn btn-primary btn-xs" @click="saveSystemConfig(c.key)">Save</button>
+                  <div style="display: flex; gap: 4px">
+                    <template x-if="confirmDeleteConfig !== c.key">
+                      <button class="btn btn-danger btn-xs" @click="confirmDeleteConfig = c.key">
+                        Delete
+                      </button>
+                    </template>
+                    <template x-if="confirmDeleteConfig === c.key">
+                      <button class="btn btn-danger btn-xs" @click="deleteSystemConfig(c.key)">
+                        Confirm
+                      </button>
+                    </template>
+                  </div>
+                </div>
+              </template>
+            </div>
+          </div>
+        </template>
+      </div>
+
+      <!-- Analytics Tab -->
+      <div x-show="activeTab === 'analytics'">
+        <div x-show="loadingAnalytics" class="empty-state" style="padding: var(--space-12)">
+          <div class="icon">⏳</div>
+          <div class="title">Loading analytics...</div>
+        </div>
+        <template x-if="!loadingAnalytics">
+          <div style="padding: var(--space-6)">
+            <div
+              style="
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: var(--space-4);
+              "
+            >
+              <h3 style="font-size: 16px; font-weight: 600">Telemetry Summary</h3>
+              <div style="display: flex; gap: var(--space-2)">
+                <button class="btn btn-secondary btn-xs" @click="loadAnalytics()">Refresh</button>
+                <button class="btn btn-danger btn-xs" @click="purgeAnalytics()">Purge Old</button>
+              </div>
+            </div>
+            <div
+              style="
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+                gap: var(--space-4);
+                margin-bottom: var(--space-6);
+              "
+            >
+              <div class="admin-stat-card">
+                <div class="admin-stat-value" x-text="analyticsSummary.total">0</div>
+                <div class="admin-stat-label">Total Events</div>
+              </div>
+              <div class="admin-stat-card">
+                <div class="admin-stat-value" x-text="analyticsSummary.distinct_sessions">0</div>
+                <div class="admin-stat-label">Sessions</div>
+              </div>
+              <div class="admin-stat-card">
+                <div class="admin-stat-value" x-text="analyticsSummary.distinct_users">0</div>
+                <div class="admin-stat-label">Active Users</div>
+              </div>
+            </div>
+            <h3 style="font-size: 14px; font-weight: 600; margin-bottom: var(--space-3)">Daily Events</h3>
+            <div
+              x-show="dailyStats.length === 0"
+              class="empty-state"
+              style="padding: var(--space-4); font-size: 13px"
+            >
+              No daily data available
+            </div>
+            <table x-show="dailyStats.length > 0" class="admin-table" style="margin-bottom: var(--space-6)">
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Events</th>
+                  <th>Active Users</th>
+                </tr>
+              </thead>
+              <tbody aria-busy="true">
+                <template x-for="d in dailyStats" :key="d.date">
+                  <tr>
+                    <td x-text="d.date"></td>
+                    <td x-text="d.count"></td>
+                    <td x-text="d.active_users"></td>
+                  </tr>
+                </template>
+              </tbody>
+            </table>
+            <h3 style="font-size: 14px; font-weight: 600; margin-bottom: var(--space-3)">Recent Errors</h3>
+            <div
+              x-show="errorEvents.length === 0"
+              class="empty-state"
+              style="padding: var(--space-4); font-size: 13px"
+            >
+              No errors recorded
+            </div>
+            <table x-show="errorEvents.length > 0" class="admin-table">
+              <thead>
+                <tr>
+                  <th>Time</th>
+                  <th>Type</th>
+                  <th>Session</th>
+                </tr>
+              </thead>
+              <tbody aria-busy="true">
+                <template x-for="e in errorEvents.slice(0, 20)" :key="e.id">
+                  <tr>
+                    <td x-text="formatDate(e.created_at)" style="font-size: 12px; white-space: nowrap"></td>
+                    <td x-text="e.event_type" style="font-size: 12px"></td>
+                    <td x-text="e.session_id?.slice(0, 8) || '-'" style="font-size: 12px"></td>
+                  </tr>
+                </template>
+              </tbody>
+            </table>
+          </div>
+        </template>
+      </div>
+
+      <!-- Health Tab -->
+      <div x-show="activeTab === 'health'">
+        <div x-show="loadingHealth" class="empty-state" style="padding: var(--space-12)">
+          <div class="icon">⏳</div>
+          <div class="title">Loading health status...</div>
+        </div>
+        <template x-if="!loadingHealth">
+          <div style="padding: var(--space-6)">
+            <div
+              style="
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: var(--space-4);
+              "
+            >
+              <div style="display: flex; align-items: center; gap: var(--space-3)">
+                <h3 style="font-size: 16px; font-weight: 600">Server Health</h3>
+                <span
+                  style="font-size: 12px; padding: 2px 8px; border-radius: 4px"
+                  :style="{background: healthStatus === 'ok' ? '#28a74522' : '#dc354522', color: healthStatus === 'ok' ? '#28a745' : '#dc3545'}"
+                  x-text="healthStatus"
+                ></span>
+              </div>
+              <button class="btn btn-secondary btn-xs" @click="loadHealth()">Refresh</button>
+            </div>
+            <div
+              style="
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+                gap: var(--space-4);
+                margin-bottom: var(--space-6);
+              "
+            >
+              <div class="admin-stat-card">
+                <div class="admin-stat-value" x-text="healthUptime"></div>
+                <div class="admin-stat-label">Uptime (s)</div>
+              </div>
+              <div class="admin-stat-card">
+                <div class="admin-stat-value" x-text="healthProviders.length"></div>
+                <div class="admin-stat-label">Providers</div>
+              </div>
+              <div class="admin-stat-card">
+                <div
+                  class="admin-stat-value"
+                  x-text="healthProviders.filter(p => p.status === 'healthy').length"
+                ></div>
+                <div class="admin-stat-label">Healthy</div>
+              </div>
+              <div class="admin-stat-card">
+                <div
+                  class="admin-stat-value"
+                  x-text="healthProviders.filter(p => p.status !== 'healthy').length"
+                ></div>
+                <div class="admin-stat-label">Degraded</div>
+              </div>
+            </div>
+            <div
+              x-show="healthTimestamp"
+              style="font-size: 12px; color: var(--color-text-secondary); margin-bottom: var(--space-4)"
+            >
+              Last checked: <span x-text="healthTimestamp"></span>
+            </div>
+            <h3 style="font-size: 14px; font-weight: 600; margin-bottom: var(--space-3)">Providers</h3>
+            <div style="display: grid; gap: var(--space-3)">
+              <template x-for="p in healthProviders" :key="p.name">
+                <div
+                  style="
+                    padding: var(--space-3);
+                    background: var(--color-surface, #f8f9fa);
+                    border-radius: 6px;
+                    border: 1px solid var(--color-border, #e9ecef);
+                    display: flex;
+                    align-items: center;
+                    gap: var(--space-3);
+                  "
+                >
+                  <span
+                    style="
+                      display: inline-block;
+                      width: 10px;
+                      height: 10px;
+                      border-radius: 50%;
+                      flex-shrink: 0;
+                    "
+                    :style="{background: p.status === 'healthy' ? '#28a745' : p.status === 'degraded' ? '#ffc107' : '#dc3545'}"
+                  ></span>
+                  <strong style="font-size: 14px" x-text="p.name"></strong>
+                  <span
+                    style="font-size: 11px; padding: 1px 6px; border-radius: 3px"
+                    :style="{background: p.status === 'healthy' ? '#28a74522' : '#dc354522', color: p.status === 'healthy' ? '#28a745' : '#dc3545'}"
+                    x-text="p.status"
+                  ></span>
+                  <span
+                    style="font-size: 12px; color: var(--color-text-secondary)"
+                    x-text="p.models?.length + ' model(s)'"
+                  ></span>
+                  <span
+                    x-show="p.latencyMs"
+                    style="font-size: 12px; color: var(--color-text-secondary)"
+                    x-text="p.latencyMs + 'ms'"
+                  ></span>
+                  <span
+                    x-show="p.error"
+                    style="
+                      font-size: 11px;
+                      color: #dc3545;
+                      max-width: 300px;
+                      overflow: hidden;
+                      text-overflow: ellipsis;
+                      white-space: nowrap;
+                    "
+                    x-text="p.error"
+                  ></span>
                 </div>
               </template>
             </div>

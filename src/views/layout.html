@@ -205,6 +205,15 @@
           </div>
           <button
             class="btn-icon"
+            x-on:click="logout()"
+            title="Log out"
+            aria-label="Log out"
+            data-testid="nav-logout"
+          >
+            ⏻
+          </button>
+          <button
+            class="btn-icon"
             hx-get="/views/settings"
             hx-target="#app-root"
             hx-swap="innerHTML"
