@@ -13,8 +13,6 @@
  *   DELETE /api/worlds/:id/item-instances/:instanceId — destroy instance
  */
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 import { Elysia } from "elysia";
 import type { Kysely } from "kysely";
 import type { DB } from "../db/schema";
@@ -26,9 +24,9 @@ import {
   jsonCreated,
   jsonNoContent,
   HttpStatus,
-  ErrorCode,
 } from "./http-utils";
 import { ItemsService } from "../story/items";
+import { notFound } from "../validation/middleware";
 
 // ── Handlers ────────────────────────────────────────────────
 
@@ -86,8 +84,7 @@ async function handleDefinition(
 
   if (method === "GET") {
     const def = await items.getDefinition(itemId);
-    if (!def)
-      return jsonError({ message: "Item not found", status: HttpStatus.NotFound, code: ErrorCode.NotFound });
+    if (!def) return notFound("Item not found");
     return jsonResponse(def);
   }
 
@@ -212,92 +209,104 @@ async function handleInstance(
 
 export function storyItemsRoutes({ database }: { database: Kysely<DB> }): Elysia {
   return new Elysia({ name: "story-items" })
-    .get("/api/worlds/:id/items/:itemId/instances", async ({ params, query }) => {
-      const userId = (query as any).userId as string | null;
-      const userRole = (query as any).userRole as string | null;
-      return handleInstances(database, params.id as string, params.itemId as string, userId, userRole);
-    })
-    .get("/api/worlds/:id/items/:itemId", async ({ params, query }) => {
-      const userId = (query as any).userId as string | null;
-      const userRole = (query as any).userRole as string | null;
-      return handleDefinition(
+    .get("/api/worlds/:id/items/:itemId/instances", async (ctx: any) => {
+      const userId = ctx.userId as string | null;
+      const userRole = ctx.userRole as string | null;
+      return handleInstances(
         database,
-        "GET",
-        params.id as string,
-        params.itemId as string,
+        ctx.params.id as string,
+        ctx.params.itemId as string,
         userId,
         userRole,
       );
     })
-    .put("/api/worlds/:id/items/:itemId", async ({ params, body, query }) => {
-      const userId = (query as any).userId as string | null;
-      const userRole = (query as any).userRole as string | null;
+    .get("/api/worlds/:id/items/:itemId", async (ctx: any) => {
+      const userId = ctx.userId as string | null;
+      const userRole = ctx.userRole as string | null;
+      return handleDefinition(
+        database,
+        "GET",
+        ctx.params.id as string,
+        ctx.params.itemId as string,
+        userId,
+        userRole,
+      );
+    })
+    .put("/api/worlds/:id/items/:itemId", async (ctx: any) => {
+      const userId = ctx.userId as string | null;
+      const userRole = ctx.userRole as string | null;
       return handleDefinition(
         database,
         "PUT",
-        params.id as string,
-        params.itemId as string,
+        ctx.params.id as string,
+        ctx.params.itemId as string,
         userId,
         userRole,
-        body as Record<string, unknown>,
+        ctx.body as Record<string, unknown>,
       );
     })
-    .delete("/api/worlds/:id/items/:itemId", async ({ params, query }) => {
-      const userId = (query as any).userId as string | null;
-      const userRole = (query as any).userRole as string | null;
+    .delete("/api/worlds/:id/items/:itemId", async (ctx: any) => {
+      const userId = ctx.userId as string | null;
+      const userRole = ctx.userRole as string | null;
       return handleDeleteDefinition(
         database,
-        params.id as string,
-        params.itemId as string,
+        ctx.params.id as string,
+        ctx.params.itemId as string,
         userId,
         userRole,
       );
     })
-    .get("/api/worlds/:id/items", async ({ params, query }) => {
-      const userId = (query as any).userId as string | null;
-      const userRole = (query as any).userRole as string | null;
-      const category = (query as any).category as string | undefined;
+    .get("/api/worlds/:id/items", async (ctx: any) => {
+      const userId = ctx.userId as string | null;
+      const userRole = ctx.userRole as string | null;
+      const category = ctx.query?.category as string | undefined;
       return handleDefinitions(
         database,
         "GET",
-        params.id as string,
+        ctx.params.id as string,
         userId,
         userRole,
-        Number(query.page) || 1,
-        Number(query.pageSize) || 20,
+        Number(ctx.query?.page) || 1,
+        Number(ctx.query?.pageSize) || 20,
         category,
       );
     })
-    .post("/api/worlds/:id/items", async ({ params, body, query }) => {
-      const userId = (query as any).userId as string | null;
-      const userRole = (query as any).userRole as string | null;
+    .post("/api/worlds/:id/items", async (ctx: any) => {
+      const userId = ctx.userId as string | null;
+      const userRole = ctx.userRole as string | null;
       return handleDefinitions(
         database,
         "POST",
-        params.id as string,
+        ctx.params.id as string,
         userId,
         userRole,
         1,
         20,
         undefined,
-        body as Record<string, unknown>,
+        ctx.body as Record<string, unknown>,
       );
     })
-    .post("/api/worlds/:id/item-instances/:instanceId/transfer", async ({ params, body, query }) => {
-      const userId = (query as any).userId as string | null;
-      const userRole = (query as any).userRole as string | null;
+    .post("/api/worlds/:id/item-instances/:instanceId/transfer", async (ctx: any) => {
+      const userId = ctx.userId as string | null;
+      const userRole = ctx.userRole as string | null;
       return handleTransfer(
         database,
-        params.id as string,
-        params.instanceId as string,
+        ctx.params.id as string,
+        ctx.params.instanceId as string,
         userId,
         userRole,
-        body as Record<string, unknown>,
+        ctx.body as Record<string, unknown>,
       );
     })
-    .delete("/api/worlds/:id/item-instances/:instanceId", async ({ params, query }) => {
-      const userId = (query as any).userId as string | null;
-      const userRole = (query as any).userRole as string | null;
-      return handleInstance(database, params.id as string, params.instanceId as string, userId, userRole);
-    });
+    .delete("/api/worlds/:id/item-instances/:instanceId", async (ctx: any) => {
+      const userId = ctx.userId as string | null;
+      const userRole = ctx.userRole as string | null;
+      return handleInstance(
+        database,
+        ctx.params.id as string,
+        ctx.params.instanceId as string,
+        userId,
+        userRole,
+      );
+    }) as unknown as Elysia;
 }

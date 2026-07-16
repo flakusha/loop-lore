@@ -6,12 +6,11 @@
  *   GET /api/chats/:id/story-turns/:id   — get single turn
  */
 
-/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access */
-
 import { Elysia } from "elysia";
 import type { Db } from "../db";
 import type { Config } from "../config/schema";
-import { jsonResponse, jsonError, jsonPaginated, HttpStatus, ErrorCode } from "./http-utils";
+import { jsonResponse, jsonPaginated, HttpStatus } from "./http-utils";
+import { notFound } from "../validation/middleware";
 
 async function checkChatOwnership(
   database: Db,
@@ -29,7 +28,8 @@ async function checkChatOwnership(
 
 export function storyTurnsRoutes(opts: { database: Db; config: Config }): Elysia {
   return new Elysia({ name: "story-turns" })
-    .get("/api/chats/:id/story-turns", async ({ params, userId, userRole, error, request }) => {
+    .get("/api/chats/:id/story-turns", async (ctx: any) => {
+      const { params, userId, userRole, error, request } = ctx;
       const chatId = (params as any).id as string;
 
       const hasAccess = await checkChatOwnership(
@@ -63,9 +63,10 @@ export function storyTurnsRoutes(opts: { database: Db; config: Config }): Elysia
         .offset(offset)
         .execute();
 
-      return jsonPaginated({ data: turns, total, page, pageSize });
+      return jsonPaginated({ data: turns, total: Number(total), page, pageSize });
     })
-    .get("/api/chats/:id/story-turns/:turnId", async ({ params, userId, userRole, error }) => {
+    .get("/api/chats/:id/story-turns/:turnId", async (ctx: any) => {
+      const { params, userId, userRole, error } = ctx;
       const chatId = (params as any).id as string;
       const turnId = (params as any).turnId as string;
 
@@ -87,11 +88,8 @@ export function storyTurnsRoutes(opts: { database: Db; config: Config }): Elysia
         .executeTakeFirst();
 
       if (!turn) {
-        return error(HttpStatus.NotFound, {
-          message: "Story turn not found",
-          code: ErrorCode.NotFound,
-        });
+        return notFound("Story turn not found");
       }
       return jsonResponse(turn);
-    });
+    }) as unknown as Elysia;
 }
