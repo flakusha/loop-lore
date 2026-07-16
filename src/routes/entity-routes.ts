@@ -1,5 +1,5 @@
 /**
- * Entity Routes Factory
+ * Entity Routes Factory for Elysia
  *
  * Generic CRUD route generator for child-entity patterns:
  *   GET    /api/:parentPrefix/:parentId/:entityPath       — list (paginated)
@@ -8,14 +8,14 @@
  *   PUT    /api/:parentPrefix/:parentId/:entityPath/:id   — update
  *   DELETE /api/:parentPrefix/:parentId/:entityPath/:id   — delete
  */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-explicit-any */
 
+/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-assignment */
+
+import { Elysia } from "elysia";
 import type { Db } from "../db";
-import type { RouteDispatch, RouteDispatchParams } from "./router";
-import { registerRoute } from "./router";
+import type { Config } from "../config/schema";
 import { uid, jsonStringifyOr } from "../utils";
 import {
-  BAD_METHOD,
   jsonResponse,
   jsonError,
   jsonPaginated,
@@ -23,8 +23,6 @@ import {
   jsonNoContent,
   HttpStatus,
   ErrorCode,
-  parseBody,
-  parsePagination,
 } from "./http-utils";
 
 export interface EntityConfig {
@@ -44,48 +42,10 @@ export interface EntityConfig {
   checkOwnership?: (opts: {
     database: Db;
     parentId: string;
-    entityId: string | null;
+    _entityId: string | null;
     userId: string | null;
     userRole: string | null;
   }) => Promise<boolean>;
-}
-
-function extractIds({
-  pathname,
-  parentPrefix,
-  entityPath,
-}: {
-  pathname: string;
-  parentPrefix: string;
-  entityPath: string;
-}): { parentId: string | null; entityId: string | null } {
-  const parentMatch = new RegExp(
-    String.raw`^\/api\/${parentPrefix}\/([a-f0-9-]+)\/${entityPath}(?:\/([a-f0-9-]+))?$`,
-  ).exec(pathname);
-  return { parentId: parentMatch?.[1] ?? null, entityId: parentMatch?.[2] ?? null };
-}
-
-async function defaultOwnershipCheck({
-  database,
-  parentId,
-  userId,
-  userRole,
-  config,
-}: {
-  database: Db;
-  parentId: string;
-  _entityId: string | null;
-  userId: string | null;
-  userRole: string | null;
-  config: EntityConfig;
-}): Promise<boolean> {
-  const db = database as any;
-  const owner = await db
-    .selectFrom(config.ownershipTable)
-    .select(config.ownershipFkColumn)
-    .where("id", "=", parentId)
-    .executeTakeFirst();
-  return !!owner && (owner[config.ownershipFkColumn] === userId || userRole === "admin");
 }
 
 function buildCreateValues({
@@ -127,236 +87,205 @@ function buildUpdateValues({
   return updates;
 }
 
-export function createEntityRoutes(config: EntityConfig): { dispatch: RouteDispatch } {
-  const dispatch: RouteDispatch = async ({ request, context, database }: RouteDispatchParams) => {
-    const url = new URL(request.url);
-    const { pathname, searchParams } = url;
-    const method = request.method;
+export function createEntityRoutes(config: EntityConfig, opts: { database: Db; config: Config }): Elysia {
+  const basePath = `/api/${config.parentPrefix}/:id/${config.entityPath}`;
+  const withIdPath = `${basePath}/:entityId`;
 
-    const { parentId, entityId } = extractIds({
-      pathname,
-      parentPrefix: config.parentPrefix,
-      entityPath: config.entityPath,
-    });
-    if (!parentId) return null;
+  async function checkOwnership(
+    database: Db,
+    parentId: string,
+    userId: string | null,
+    userRole: string | null,
+  ): Promise<boolean> {
+    if (config.checkOwnership) {
+      return config.checkOwnership({
+        database,
+        parentId,
+        _entityId: null,
+        userId,
+        userRole,
+      });
+    }
+    const owner = await (database as any)
+      .selectFrom(config.ownershipTable)
+      .select(config.ownershipFkColumn)
+      .where("id", "=", parentId)
+      .executeTakeFirst();
+    return !!owner && (owner[config.ownershipFkColumn] === userId || userRole === "admin");
+  }
 
-    const ownershipOk = config.checkOwnership
-      ? await config.checkOwnership({
-          database,
-          parentId: parentId,
-          entityId: entityId ?? null,
-          userId: context.userId,
-          userRole: context.userRole,
-        })
-      : await defaultOwnershipCheck({
-          database,
-          parentId,
-          _entityId: entityId ?? null,
-          userId: context.userId,
-          userRole: context.userRole,
-          config,
-        });
-    if (!ownershipOk)
-      return jsonError({ message: `${config.entityName} not found`, status: HttpStatus.NotFound });
+  return new Elysia({ name: config.entityPath })
+    .get(basePath, async (ctx) => {
+      const db = opts.database as any;
+      const { id: parentId } = ctx.params as any;
+      const userId = (ctx as any).userId as string | null;
+      const userRole = (ctx as any).userRole as string | null;
+      const searchParams = new URL((ctx as any).request.url).searchParams;
 
-    if (entityId) {
-      if (method === "GET") return handleGet({ database, parentId, entityId, config });
-      if (method === "PUT") {
-        const body = await parseBody(request);
-        if (body instanceof Response) return body;
-        return handleUpdate({ database, parentId, entityId, body, config });
+      const ownershipOk = await checkOwnership(opts.database, parentId, userId, userRole);
+      if (!ownershipOk) {
+        return jsonError({ message: `${config.entityName} not found`, status: HttpStatus.NotFound });
       }
-      if (method === "DELETE") return handleDelete({ database, parentId, entityId, config });
-      return BAD_METHOD();
-    }
 
-    if (method === "GET") {
-      const { page, pageSize } = parsePagination(searchParams);
-      const filterValue = config.filterField
-        ? (searchParams.get(config.filterField.param) ?? undefined)
-        : undefined;
-      return handleList({ database, parentId, page, pageSize, config, filterValue });
-    }
-    if (method === "POST") {
-      const body = await parseBody(request);
-      if (body instanceof Response) return body;
-      return handleCreate({ database, parentId, config, body });
-    }
+      const page = parseInt(searchParams.get("page") ?? "1", 10);
+      const pageSize = parseInt(searchParams.get("pageSize") ?? "50", 10);
+      const offset = (page - 1) * pageSize;
 
-    return BAD_METHOD();
-  };
+      const countQuery = db
+        .selectFrom(config.tableName)
+        .select(db.fn.countAll().as("total"))
+        .where(config.parentFk, "=", parentId);
+      const listQuery = db.selectFrom(config.tableName).selectAll().where(config.parentFk, "=", parentId);
 
-  registerRoute(dispatch);
-  return { dispatch };
-}
+      if (config.filterField) {
+        const filterValue = searchParams.get(config.filterField.param);
+        if (filterValue) {
+          countQuery.where(config.filterField.column, "=", filterValue);
+          listQuery.where(config.filterField.column, "=", filterValue);
+        }
+      }
 
-async function handleList({
-  database,
-  parentId,
-  page,
-  pageSize,
-  config,
-  filterValue,
-}: {
-  database: Db;
-  parentId: string;
-  page: number;
-  pageSize: number;
-  config: EntityConfig;
-  filterValue?: string;
-}): Promise<Response> {
-  const offset = (page - 1) * pageSize;
-  const db = database as any;
+      const countResult: { total?: number } = await countQuery.executeTakeFirst();
+      const total = countResult?.total ?? 0;
 
-  const countQuery = db
-    .selectFrom(config.tableName)
-    .select(db.fn.countAll().as("total"))
-    .where(config.parentFk, "=", parentId);
-  const listQuery = db.selectFrom(config.tableName).selectAll().where(config.parentFk, "=", parentId);
+      let query = listQuery;
+      for (const ob of config.orderBy) {
+        query = query.orderBy(ob.column, ob.dir);
+      }
+      const entities = await query.limit(pageSize).offset(offset).execute();
 
-  if (config.filterField && filterValue) {
-    const fc = config.filterField.column;
-    countQuery.where(fc, "=", filterValue);
-    listQuery.where(fc, "=", filterValue);
-  }
+      return jsonPaginated({ data: entities, total, page, pageSize });
+    })
+    .post(basePath, async (ctx) => {
+      const db = opts.database as any;
+      const { id: parentId } = ctx.params as any;
+      const userId = (ctx as any).userId as string | null;
+      const userRole = (ctx as any).userRole as string | null;
+      const body = ((ctx as any).body || {}) as Record<string, unknown>;
 
-  const countResult: any = await countQuery.executeTakeFirst();
-  const total = (countResult?.total as number | undefined) ?? 0;
+      const ownershipOk = await checkOwnership(opts.database, parentId, userId, userRole);
+      if (!ownershipOk) {
+        return jsonError({ message: `${config.entityName} not found`, status: HttpStatus.NotFound });
+      }
 
-  let query = listQuery;
-  for (const ob of config.orderBy) {
-    query = query.orderBy(ob.column, ob.dir);
-  }
-  const entities: any[] = await query.limit(pageSize).offset(offset).execute();
+      for (const required of config.createRequired) {
+        if (body[required] == null || body[required] === "") {
+          return jsonError({ message: `${required} is required`, status: HttpStatus.BadRequest });
+        }
+      }
 
-  return jsonPaginated({ data: entities, total, page, pageSize });
-}
+      const values = buildCreateValues({ config, parentId, body });
+      await db.insertInto(config.tableName).values(values).execute();
 
-async function handleCreate({
-  database,
-  parentId,
-  config,
-  body,
-}: {
-  database: Db;
-  parentId: string;
-  config: EntityConfig;
-  body: Record<string, unknown>;
-}): Promise<Response> {
-  for (const required of config.createRequired) {
-    if (body[required] == null || body[required] === "") {
-      return jsonError({ message: `${required} is required`, status: HttpStatus.BadRequest });
-    }
-  }
+      const created = await db
+        .selectFrom(config.tableName)
+        .selectAll()
+        .where("id", "=", values.id)
+        .executeTakeFirst();
 
-  const values = buildCreateValues({ config, parentId, body });
-  const db = database as any;
+      return jsonCreated(created);
+    })
+    .get(withIdPath, async (ctx) => {
+      const db = opts.database as any;
+      const { parentId, entityId } = ctx.params as any;
+      const userId = (ctx as any).userId as string | null;
+      const userRole = (ctx as any).userRole as string | null;
 
-  await db.insertInto(config.tableName).values(values).execute();
+      const ownershipOk = await checkOwnership(opts.database, parentId, userId, userRole);
+      if (!ownershipOk) {
+        return jsonError({
+          message: `${config.entityName} not found`,
+          status: HttpStatus.NotFound,
+          code: ErrorCode.NotFound,
+        });
+      }
 
-  const created = await db
-    .selectFrom(config.tableName)
-    .selectAll()
-    .where("id", "=", values.id)
-    .executeTakeFirst();
+      const entity = await db
+        .selectFrom(config.tableName)
+        .selectAll()
+        .where("id", "=", entityId)
+        .where(config.parentFk, "=", parentId)
+        .executeTakeFirst();
 
-  return jsonCreated(created);
-}
+      if (!entity)
+        return jsonError({
+          message: `${config.entityName} not found`,
+          status: HttpStatus.NotFound,
+          code: ErrorCode.NotFound,
+        });
+      return jsonResponse(entity);
+    })
+    .put(withIdPath, async (ctx) => {
+      const db = opts.database as any;
+      const { parentId, entityId } = ctx.params as any;
+      const userId = (ctx as any).userId as string | null;
+      const userRole = (ctx as any).userRole as string | null;
+      const body = ((ctx as any).body || {}) as Record<string, unknown>;
 
-async function handleGet({
-  database,
-  parentId,
-  entityId,
-  config,
-}: {
-  database: Db;
-  parentId: string;
-  entityId: string;
-  config: EntityConfig;
-}): Promise<Response> {
-  const db = database as any;
-  const entity = await db
-    .selectFrom(config.tableName)
-    .selectAll()
-    .where("id", "=", entityId)
-    .where(config.parentFk, "=", parentId)
-    .executeTakeFirst();
+      const ownershipOk = await checkOwnership(opts.database, parentId, userId, userRole);
+      if (!ownershipOk) {
+        return jsonError({
+          message: `${config.entityName} not found`,
+          status: HttpStatus.NotFound,
+          code: ErrorCode.NotFound,
+        });
+      }
 
-  if (!entity)
-    return jsonError({
-      message: `${config.entityName} not found`,
-      status: HttpStatus.NotFound,
-      code: ErrorCode.NotFound,
+      const existing = await db
+        .selectFrom(config.tableName)
+        .select("id")
+        .where("id", "=", entityId)
+        .where(config.parentFk, "=", parentId)
+        .executeTakeFirst();
+
+      if (!existing)
+        return jsonError({
+          message: `${config.entityName} not found`,
+          status: HttpStatus.NotFound,
+          code: ErrorCode.NotFound,
+        });
+
+      const updates = buildUpdateValues({ config, body });
+      if (Object.keys(updates).length <= 1) return jsonResponse(existing);
+
+      await db.updateTable(config.tableName).set(updates).where("id", "=", entityId).execute();
+
+      const updated = await db
+        .selectFrom(config.tableName)
+        .selectAll()
+        .where("id", "=", entityId)
+        .executeTakeFirst();
+
+      return jsonResponse(updated);
+    })
+    .delete(withIdPath, async (ctx) => {
+      const db = opts.database as any;
+      const { parentId, entityId } = ctx.params as any;
+      const userId = (ctx as any).userId as string | null;
+      const userRole = (ctx as any).userRole as string | null;
+
+      const ownershipOk = await checkOwnership(opts.database, parentId, userId, userRole);
+      if (!ownershipOk) {
+        return jsonError({
+          message: `${config.entityName} not found`,
+          status: HttpStatus.NotFound,
+          code: ErrorCode.NotFound,
+        });
+      }
+
+      const result = await db
+        .deleteFrom(config.tableName)
+        .where("id", "=", entityId)
+        .where(config.parentFk, "=", parentId)
+        .execute();
+
+      if ((result as any[]).length === 0) {
+        return jsonError({
+          message: `${config.entityName} not found`,
+          status: HttpStatus.NotFound,
+          code: ErrorCode.NotFound,
+        });
+      }
+      return jsonNoContent();
     });
-  return jsonResponse(entity);
-}
-
-async function handleUpdate({
-  database,
-  parentId,
-  entityId,
-  body,
-  config,
-}: {
-  database: Db;
-  parentId: string;
-  entityId: string;
-  body: Record<string, unknown>;
-  config: EntityConfig;
-}): Promise<Response> {
-  const db = database as any;
-  const existing = await db
-    .selectFrom(config.tableName)
-    .select("id")
-    .where("id", "=", entityId)
-    .where(config.parentFk, "=", parentId)
-    .executeTakeFirst();
-
-  if (!existing)
-    return jsonError({
-      message: `${config.entityName} not found`,
-      status: HttpStatus.NotFound,
-      code: ErrorCode.NotFound,
-    });
-
-  const updates = buildUpdateValues({ config, body });
-  if (Object.keys(updates).length <= 1) return jsonResponse(existing);
-
-  await db.updateTable(config.tableName).set(updates).where("id", "=", entityId).execute();
-
-  const updated = await db
-    .selectFrom(config.tableName)
-    .selectAll()
-    .where("id", "=", entityId)
-    .executeTakeFirst();
-
-  return jsonResponse(updated);
-}
-
-async function handleDelete({
-  database,
-  parentId,
-  entityId,
-  config,
-}: {
-  database: Db;
-  parentId: string;
-  entityId: string;
-  config: EntityConfig;
-}): Promise<Response> {
-  const db = database as any;
-  const result = await db
-    .deleteFrom(config.tableName)
-    .where("id", "=", entityId)
-    .where(config.parentFk, "=", parentId)
-    .execute();
-
-  if (result.length === 0) {
-    return jsonError({
-      message: `${config.entityName} not found`,
-      status: HttpStatus.NotFound,
-      code: ErrorCode.NotFound,
-    });
-  }
-  return jsonNoContent();
 }
