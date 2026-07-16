@@ -31,24 +31,37 @@ WebUI. Built on TypeScript + Bun with dual TUI/Web UI.
 ## Directory Layout
 
 1. **`src/server.ts`** — HTTP entry point, starts the server.
-2. **`src/db/`** — Database layer: Kysely init, schema types, enums, migrations.
+2. **`src/db/`** — Database layer: Kysely init, schema types, enums, migrations, state machines.
 3. **`src/config/`** — Configuration loading (file + env override).
 4. **`src/routes/`** — REST handlers mounted under `/api/`.
-5. **`src/assets/`** — Media CRUD, upload pipeline, polymorphic linking.
-6. **`src/assistant/`** — Rule-based help system (swappable to LLM).
-7. **`src/generation/`** — LLM generation: types, cancellation, pipeline, detection.
-8. **`src/story/`** — Multi-LLM story engine (GM, turns, quests).
-9. **`src/content/`** — Encoding, minification, compression.
-10. **`src/age-gate/`** — Age verification service + controller.
-11. **`src/tui/`** — Blessed widgets (app, chat, gallery, input).
-12. **`src/middleware/`** — Auth, session, error handling.
-13. **`src/transport/`** — WebSocket/SSE streaming.
-14. **`src/utils/`** — Shared utility functions.
-15. **`src/logger/`** — Logging setup.
-16. **`src/public/`** — Static assets for web UI.
-17. **`src/views/`** — Htmx templates (server-rendered web UI).
-18. **`data/`** — Runtime SQLite DB, uploaded assets.
-19. **`docs/`** — Specs, architecture, data model, UX spec.
+5. **`src/assets/`** — Media CRUD, upload pipeline, polymorphic linking, metadata extraction.
+6. **`src/assistant/`** — Prompt assembly, rule-based help system (swappable to LLM).
+7. **`src/generation/`** — LLM generation: types, cancellation, pipeline, repetition/policy detection, streaming.
+8. **`src/story/`** — Multi-LLM story engine (GM, quests, quality eval). Turn orchestration lives in `src/turning/`; story/ re-exports for compat.
+9. **`src/turning/`** — Generalized turn orchestration (shared by story mode and group chat). Canonical TurnManager.
+10. **`src/group-chat/`** — Multi-participant chat: mention parsing, turn selection.
+11. **`src/content/`** — Content encoding (gzip/zstd/brotli), minification, compression.
+12. **`src/crypto/`** — Encryption subsystem: actor keys, chat keys, BYOK, SMK, pipeline.
+13. **`src/transport/`** — HTTP/1.1, HTTP/2, WebSocket, SSE streaming, content negotiation, compression.
+14. **`src/middleware/`** — Auth, rate limiting, admin gate, response headers, pipeline composition.
+15. **`src/logger/`** — Structured logging with levels, formatters, censors, rotation, queuing.
+16. **`src/frontend/`** — Web UI: htmx app shell, chat vendor, gallery upload, htmx-encrypt, Alpine.js.
+17. **`src/personas/`** — Persona CRUD (user-facing character aliases in chats).
+18. **`src/plugins/`** — Plugin system: loader, registry, types.
+19. **`src/characters/`** — Character steganography (embedding data in character cards).
+20. **`src/profanity/`** — Profanity filtering service.
+21. **`src/admin/`** — Admin panel: model role overrides, provider health checks.
+22. **`src/build/`** — Build pipeline: compression, vendor copy.
+23. **`src/services/`** — External server management utilities.
+24. **`src/components/`** — Reusable HTML component partials.
+25. **`src/partials/`** — HTMX partial templates (characters, gallery, worlds).
+26. **`src/age-gate/`** — Age verification service + controller.
+27. **`src/tui/`** — Blessed widgets (app, chat, asset view).
+28. **`src/utils/`** — Shared utilities: safe JSON, date helpers.
+29. **`src/views/`** — HTMX page templates (server-rendered web UI).
+30. **`src/public/`** — Static assets for web UI (CSS, images, locales).
+31. **`data/`** — Runtime SQLite DB, uploaded assets.
+32. **`docs/`** — Specs, architecture, data model, UX spec.
 
 ## Coding Conventions
 
@@ -91,21 +104,31 @@ Before touching any feature, read the relevant spec in `docs/`:
 
 | Feature              | Doc File                          |
 | -------------------- | --------------------------------- |
-| DB schema (all)      | `docs/schema.md`                  |
-| Messages             | `docs/messages.md`                |
-| Users/sessions       | `docs/users-sessions.md`          |
-| Assets               | `docs/assets.md`                  |
-| Actors               | `docs/actors.md`                  |
-| Characters/persona   | `docs/character-setup.md`         |
-| RPG mechanics        | `docs/rpg-mechanics.md`           |
-| Architecture         | `docs/architecture.md`            |
-| Build/deploy         | `docs/build-deploy.md`            |
-| Implementation       | `docs/implementation.md`          |
-| TUI                  | `docs/tui.md`                     |
-| Plugin system        | `docs/plugin-system.md`           |
-| Memory system        | `docs/memory-system.md`           |
-| Artifacts system     | `docs/artifacts-system.md`        |
-| Plan / tasks         | `docs/plan.md`                    |
+| DB schema (all)      | `docs/spec/schema.md`             |
+| Messages             | `docs/spec/messages.md`           |
+| Users/sessions       | `docs/spec/users-sessions.md`     |
+| Assets               | `docs/spec/assets.md`             |
+| Actors               | `docs/spec/actors.md`             |
+| Characters/persona   | `docs/spec/character-setup.md`    |
+| RPG mechanics        | `docs/spec/rpg-mechanics.md`      |
+| Architecture         | `docs/spec/architecture.md`       |
+| Build/deploy         | `docs/spec/build-deploy.md`       |
+| Implementation       | `docs/spec/implementation.md`     |
+| API routes           | `docs/spec/api-routes.md`         |
+| Auth middleware      | `docs/spec/auth-middleware.md`    |
+| Error envelope       | `docs/spec/error-envelope.md`     |
+| Crypto               | `docs/spec/crypto.md`             |
+| Logging              | `docs/spec/logging.md`            |
+| Content compression  | `docs/spec/content-compression.md`|
+| TUI                  | `docs/spec/tui.md`                |
+| Plugin system        | `docs/spec/plugin-system.md`      |
+| Memory system        | `docs/spec/memory-system.md`      |
+| Artifacts system     | `docs/spec/artifacts-system.md`   |
+| Frontend extensions  | `docs/spec/frontend-extensions.md`|
+| I18n                 | `docs/spec/i18n-implementation.md`|
+| CI maintenance       | `docs/spec/ci-maintenance.md`     |
+| Assets attribution   | `docs/spec/assets-attribution.md` |
+| Plan / tasks         | `docs/meta/plan.md`               |
 | Frontend UX          | `docs/frontend/overview.md`       |
 
 ## Common Pitfalls
