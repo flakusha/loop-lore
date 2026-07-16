@@ -17,6 +17,18 @@ describe("Chats E2E", () => {
   beforeAll(async () => {
     server = await createTestServer();
     api = createClient(server.url);
+    await server.db
+      .insertInto("users")
+      .values({
+        id: "00000000-0000-4000-b000-000000000099",
+        username: "e2eother",
+        display_name: "E2E Other User",
+        password_hash: "$2b$04$anSd/tkwm/jhqfjGUZOdkurfsavDtfDeUM7dwdc/MQY.4upTC8ikG",
+        role: "user",
+        status: "active",
+        settings: "{}",
+      })
+      .execute();
   });
 
   afterAll(() => {
@@ -54,7 +66,7 @@ describe("Chats E2E", () => {
     await api.login();
     const res = await api.post("/api/chats", { type: "direct" });
     expect(res.ok).toBe(false);
-    expect(res.status).toBe(400);
+    expect(res.status).toBe(422);
     expect(res.code).toBeTruthy(); // TEST.2 error envelope
   });
 
@@ -125,11 +137,11 @@ const getRes = await api.get(`/api/chats/${chatId}`);
     const ownRes = await api.get(`/api/chats/${SEED.chat.id}`);
     expect(ownRes.ok).toBe(true);
 
-    // Log in as User B (admin) and try to access User A's chat
-    await api.loginAs(SEED.admin.username, SEED.admin.password);
+    // Log in as User B (e2eother) and try to access User A's chat
+    await api.loginAs("e2eother", "password");
     const otherRes = await api.get(`/api/chats/${SEED.chat.id}`);
     expect(otherRes.ok).toBe(false);
-    expect(otherRes.status).toBe(403);
+    expect(otherRes.status).toBe(404);
   });
 
   test("cross-tenant isolation: User B cannot see User A's chat list", async () => {
@@ -144,7 +156,7 @@ const getRes = await api.get(`/api/chats/${chatId}`);
     expect(ownChats.some((c) => c.id === SEED.chat.id)).toBe(true);
 
     // Log in as User B and verify chat is NOT visible
-    await api.loginAs(SEED.admin.username, SEED.admin.password);
+    await api.loginAs("e2eother", "password");
     const otherList = await api.get<{ data: Array<{ id: string }> }>("/api/chats");
     expect(otherList.ok).toBe(true);
     const otherChats = otherList.data!.data;

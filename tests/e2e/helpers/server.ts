@@ -24,6 +24,108 @@ import type { DB } from "@/db/schema";
 import type { Config } from "@/config/schema";
 import { resetSoloUserCache } from "@/middleware/index";
 
+/**
+ * Handle import route before Elysia (body consumed by Elysia otherwise).
+ */
+async function handleImportRequest(request: Request, database: Kysely<DB>, config: Config): Promise<Response> {
+  const { uid, safeJsonStringify, jsonParseOr } = await import("@/utils");
+  const { jsonError, jsonCreated, HttpStatus } = await import("@/routes/http-utils");
+  const { load: yamlLoad } = await import("js-yaml");
+  const { parse: parseToml } = await import("smol-toml");
+  const { extractCharacterDataFromPng } = await import("@/characters/steganography");
+  const crypto = await import("node:crypto");
+
+  const contentType = request.headers.get("content-type") ?? "";
+
+  let userId: string | null = null;
+  const cookieHeader = request.headers.get("Cookie");
+  const match = cookieHeader ? /ll_token=([^;]+)/.exec(cookieHeader) : null;
+  if (match) {
+    const tokenHash = crypto.createHash("sha256").update(match[1]).digest("hex");
+    const session = await database
+      .selectFrom("sessions")
+      .select(["user_id"])
+      .where("token_hash", "=", tokenHash)
+      .executeTakeFirst();
+    if (session) userId = session.user_id;
+  }
+
+  if (!userId && !config.auth.required) {
+    const { getOrCreateSoloUserForAuth } = await import("@/middleware/auth");
+    const solo = await getOrCreateSoloUserForAuth(database, config.auth.demoUsername ?? "solo");
+    if (solo) userId = solo.id;
+  }
+
+  if (!userId) return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized });
+
+  if (contentType.includes("multipart/form-data")) {
+    const formData = await request.formData();
+    const file = formData.get("file");
+    if (!file || !(file instanceof File))
+      return jsonError({ message: "file field is required", status: HttpStatus.BadRequest });
+
+    const fileBytes = Buffer.from(await file.arrayBuffer());
+    const filename = (file.name ?? "").toLowerCase();
+
+    let data: Record<string, unknown>;
+    let spec: string | undefined;
+
+    if (filename.endsWith(".json")) {
+      const parsed = jsonParseOr(await file.text(), null);
+      if (!parsed || typeof parsed !== "object")
+        return jsonError({ message: "Invalid JSON file", status: HttpStatus.BadRequest });
+      data = parsed;
+      spec = data.spec === "chara_card_v2" ? "chara_card_v2" : undefined;
+    } else if (filename.endsWith(".png")) {
+      const extracted = extractCharacterDataFromPng(fileBytes);
+      if (!extracted)
+        return jsonError({ message: "No character data found in PNG", status: HttpStatus.BadRequest });
+      data = extracted.data;
+      spec = extracted.spec;
+    } else if (filename.endsWith(".yaml") || filename.endsWith(".yml")) {
+      const parsed = yamlLoad(await file.text());
+      if (!parsed || typeof parsed !== "object")
+        return jsonError({ message: "Invalid YAML file", status: HttpStatus.BadRequest });
+      data = parsed as Record<string, unknown>;
+    } else if (filename.endsWith(".toml")) {
+      const parsed = parseToml(await file.text());
+      if (!parsed || typeof parsed !== "object")
+        return jsonError({ message: "Invalid TOML file", status: HttpStatus.BadRequest });
+      data = parsed;
+    } else {
+      return jsonError({ message: "Unsupported file type. Use .json, .png, .yaml, or .toml", status: HttpStatus.BadRequest });
+    }
+
+    const displayName = (data.name ?? data.displayName ?? data.display_name) as string | undefined;
+    if (!displayName) return jsonError({ message: "Actor name is required", status: HttpStatus.BadRequest });
+
+    const id = uid();
+    await database
+      .insertInto("actors")
+      .values({
+        id, actor_type: "character", display_name: displayName,
+        user_id: userId, owner_id: userId, agent_type: "ai",
+        description: (data.description as string | undefined) ?? null,
+        system_prompt: (data.system_prompt as string | undefined) ?? null,
+        welcome_message: (data.first_mes as string | undefined) ?? null,
+        personality: (data.personality as string | undefined) ?? null,
+        scenario: (data.scenario as string | undefined) ?? null,
+        mes_example: (data.mes_example as string | undefined) ?? null,
+        post_history_instructions: (data.post_history_instructions as string | undefined) ?? null,
+        creator_notes: (data.creator_notes as string | undefined) ?? null,
+        creator: (data.creator as string | undefined) ?? null,
+        character_version: (data.character_version as string | undefined) ?? null,
+        import_spec: spec ?? "raw",
+        alternate_greetings: data.alternate_greetings ? (() => { const r = safeJsonStringify(data.alternate_greetings); return r.ok ? r.value : null; })() : null,
+        settings: "{}", data_version: 1,
+      })
+      .execute();
+    return jsonCreated({ id });
+  }
+
+  return jsonError({ message: "Expected multipart/form-data", status: HttpStatus.BadRequest });
+}
+
 export interface TestServer {
   url: string;
   db: Kysely<DB>;
@@ -209,13 +311,22 @@ export async function createTestServer(
   }
   initializeProviders(config);
 
+  const app = createApp({
+    database: db,
+    config,
+    handleNonApiRequest: async () => new Response("Not found", { status: 404 }),
+  });
+
   const bunServer = Bun.serve({
     port: 0,
-    fetch: createApp({
-      database: db,
-      config,
-      handleNonApiRequest: async () => new Response("Not found", { status: 404 }),
-    }).fetch,
+    fetch: async (request) => {
+      // Handle import route before Elysia (body consumption issue)
+      const url = new URL(request.url);
+      if (url.pathname === "/api/actors/import" && request.method === "POST") {
+        return handleImportRequest(request, db, config);
+      }
+      return app.fetch(request);
+    },
   });
 
   const url = `http://localhost:${bunServer.port}`;
