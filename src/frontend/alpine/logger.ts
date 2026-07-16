@@ -103,7 +103,7 @@ class LightLogger implements Logger {
     );
   }
 
-async flush(): Promise<void> {
+  async flush(): Promise<void> {
     await this.queue?.flush();
   }
 

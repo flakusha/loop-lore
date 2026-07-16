@@ -13,8 +13,6 @@ import {
   browserGenerateKey,
   browserCompressThenEncrypt,
   browserDecryptThenDecompress,
-  type BrowserEncodeResult,
-  type BrowserEncryptResult,
   type BrowserEncryptedPayload,
 } from "../browser";
 
