@@ -23,7 +23,9 @@ import { jsonBody } from "./json";
           if (typeof s.temperature === "number") this.temperature = s.temperature;
           if (s.detailLevel) this.detailLevel = s.detailLevel;
         }
-      } catch { /* ignore */ }
+      } catch {
+        /* ignore */
+      }
     },
 
     async save(section: string) {
@@ -49,7 +51,9 @@ import { jsonBody } from "./json";
           headers: { "Content-Type": "application/json" },
           body: jsonBody(payload),
         });
-      } catch { /* ignore */ }
+      } catch {
+        /* ignore */
+      }
     },
 
     applyTheme() {
