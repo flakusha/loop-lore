@@ -2,84 +2,59 @@
  * Story Turns Routes
  *
  * Read-only access to story turns per chat:
- *   GET /api/chats/:chatId/story-turns       — list turns (paginated)
- *   GET /api/chats/:chatId/story-turns/:id   — get single turn
+ *   GET /api/chats/:id/story-turns       — list turns (paginated)
+ *   GET /api/chats/:id/story-turns/:id   — get single turn
  */
 
-import type { RouteDispatch } from "./router";
-import { registerRoute } from "./router";
-import {
-  BAD_METHOD,
-  jsonResponse,
-  jsonError,
-  jsonPaginated,
-  HttpStatus,
-  ErrorCode,
-  parsePagination,
-} from "./http-utils";
+/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access */
 
-const dispatch: RouteDispatch = async ({ request, context, database }) => {
-  const url = new URL(request.url);
-  const { pathname, searchParams } = url;
-  const method = request.method;
+import { Elysia } from "elysia";
+import type { Db } from "../db";
+import type { Config } from "../config/schema";
+import { jsonResponse, jsonError, jsonPaginated, HttpStatus, ErrorCode } from "./http-utils";
 
-  // /api/chats/:chatId/story-turns/:turnId
-  const singleMatch = /^\/api\/chats\/([a-f0-9-]+)\/story-turns\/([a-f0-9-]+)$/.exec(pathname);
-  if (singleMatch) {
-    const chatId = singleMatch[1]!;
-    const turnId = singleMatch[2]!;
-    // Verify chat ownership
-    const chatCheck = await database
-      .selectFrom("chats")
-      .select(["created_by"])
-      .where("id", "=", chatId)
-      .executeTakeFirst();
-    if (!chatCheck || (chatCheck.created_by !== context.userId && context.userRole !== "admin")) {
-      return jsonError({ message: "Story turn not found", status: HttpStatus.NotFound });
-    }
-    if (method === "GET") {
-      const turn = await database
-        .selectFrom("story_turns")
-        .selectAll()
-        .where("id", "=", turnId)
-        .where("chat_id", "=", chatId)
-        .executeTakeFirst();
-      if (!turn)
-        return jsonError({
-          message: "Story turn not found",
-          status: HttpStatus.NotFound,
-          code: ErrorCode.NotFound,
-        });
-      return jsonResponse(turn);
-    }
-    return BAD_METHOD();
-  }
+async function checkChatOwnership(
+  database: Db,
+  chatId: string,
+  userId: string | null,
+  userRole: string | null,
+): Promise<boolean> {
+  const chat = await database
+    .selectFrom("chats")
+    .select(["created_by"])
+    .where("id", "=", chatId)
+    .executeTakeFirst();
+  return !!chat && (chat.created_by === userId || userRole === "admin");
+}
 
-  // /api/chats/:chatId/story-turns
-  const listMatch = /^\/api\/chats\/([a-f0-9-]+)\/story-turns$/.exec(pathname);
-  if (listMatch) {
-    const chatId = listMatch[1]!;
-    // Verify chat ownership
-    const chatCheck = await database
-      .selectFrom("chats")
-      .select(["created_by"])
-      .where("id", "=", chatId)
-      .executeTakeFirst();
-    if (!chatCheck || (chatCheck.created_by !== context.userId && context.userRole !== "admin")) {
-      return jsonError({ message: "Chat not found", status: HttpStatus.NotFound });
-    }
-    if (method === "GET") {
-      const { page, pageSize } = parsePagination(searchParams);
+export function storyTurnsRoutes(opts: { database: Db; config: Config }): Elysia {
+  return new Elysia({ name: "story-turns" })
+    .get("/api/chats/:id/story-turns", async ({ params, userId, userRole, error, request }) => {
+      const chatId = (params as any).id as string;
+
+      const hasAccess = await checkChatOwnership(
+        opts.database,
+        chatId,
+        userId as string | null,
+        userRole as string | null,
+      );
+      if (!hasAccess) {
+        return error(HttpStatus.NotFound, { message: "Chat not found" });
+      }
+
+      const searchParams = new URL((request as any).url).searchParams;
+      const page = parseInt(searchParams.get("page") ?? "1", 10);
+      const pageSize = parseInt(searchParams.get("pageSize") ?? "50", 10);
       const offset = (page - 1) * pageSize;
 
-      const countResult = await database
+      const countResult = await opts.database
         .selectFrom("story_turns")
-        .select(database.fn.countAll<number>().as("total"))
+        .select(opts.database.fn.countAll().as("total"))
         .where("chat_id", "=", chatId)
         .executeTakeFirst();
       const total = countResult?.total ?? 0;
 
-      const turns = await database
+      const turns = await opts.database
         .selectFrom("story_turns")
         .selectAll()
         .where("chat_id", "=", chatId)
@@ -89,11 +64,34 @@ const dispatch: RouteDispatch = async ({ request, context, database }) => {
         .execute();
 
       return jsonPaginated({ data: turns, total, page, pageSize });
-    }
-    return BAD_METHOD();
-  }
+    })
+    .get("/api/chats/:id/story-turns/:turnId", async ({ params, userId, userRole, error }) => {
+      const chatId = (params as any).id as string;
+      const turnId = (params as any).turnId as string;
 
-  return null;
-};
+      const hasAccess = await checkChatOwnership(
+        opts.database,
+        chatId,
+        userId as string | null,
+        userRole as string | null,
+      );
+      if (!hasAccess) {
+        return error(HttpStatus.NotFound, { message: "Story turn not found" });
+      }
 
-registerRoute(dispatch);
+      const turn = await opts.database
+        .selectFrom("story_turns")
+        .selectAll()
+        .where("id", "=", turnId)
+        .where("chat_id", "=", chatId)
+        .executeTakeFirst();
+
+      if (!turn) {
+        return error(HttpStatus.NotFound, {
+          message: "Story turn not found",
+          code: ErrorCode.NotFound,
+        });
+      }
+      return jsonResponse(turn);
+    });
+}
