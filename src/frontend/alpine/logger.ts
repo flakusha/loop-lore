@@ -103,8 +103,12 @@ class LightLogger implements Logger {
     );
   }
 
-  async flush(): Promise<void> {
+async flush(): Promise<void> {
     await this.queue?.flush();
+  }
+
+  addTransport(transport: Transport): void {
+    this.transports.push(transport);
   }
 }
 

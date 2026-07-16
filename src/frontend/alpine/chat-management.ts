@@ -215,7 +215,7 @@ export const chatManagement: Partial<ChatState> & ThisType<ChatState> = {
     if (chat?.gm_config) {
       try {
         const config = JSON.parse(chat.gm_config);
-        this._assistantRole = (config.assistantRole as typeof this._assistantRole) || "off";
+        this._assistantRole = (config.assistantRole as "off" | "helper" | "gm" | "moderator") || "off";
       } catch {}
     }
     Alpine.store("ui").showChatSettings = true;
