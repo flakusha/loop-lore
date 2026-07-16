@@ -10,7 +10,34 @@ import { chatUtils } from "./chat-utils";
 import type { AlpineState, ChatState } from "./types";
 import { browserImportKey } from "../browser";
 import { log as rootLog } from "./logger";
+import { jsonParseOr } from "./json";
 const log = rootLog.child({ module: "chat-state" });
+
+const g = globalThis as Record<string, unknown>;
+
+g.isChatPaused = (chat: any): boolean => {
+  if (!chat?.story_state) return false;
+  const state = jsonParseOr<Record<string, unknown>>(chat.story_state, {});
+  return state.isPaused === true;
+};
+
+if (g.Alpine) {
+  try {
+    Alpine.store("chat");
+  } catch {
+    Alpine.store("chat", { currentChat: null });
+  }
+}
+
+g.toggleGroupPause = async function () {
+  const el = document.querySelector<HTMLElement>("[x-data]");
+  if (el && g.Alpine) {
+    const data = Alpine.$data(el);
+    if (typeof (data as any).toggleGroupPause === "function") {
+      await (data as any).toggleGroupPause();
+    }
+  }
+};
 
 globalThis.chatState = function () {
   return {
@@ -289,6 +316,13 @@ globalThis.chatState = function () {
       Alpine.store("ui").hasActiveChat = true;
       const chat = this.chats.find((c: { id: string; name?: string }) => c.id === chatId);
       this.activeChatName = chat?.name || "Chat";
+      if (g.Alpine) {
+        try {
+          Alpine.store("chat").currentChat = chat || null;
+        } catch {
+          /* store not ready */
+        }
+      }
       const titleEl = document.querySelector<HTMLElement>("#page-title");
       if (titleEl) titleEl.textContent = this.activeChatName;
       history.replaceState(null, "", `/views/chat?chatid=${chatId}`);
