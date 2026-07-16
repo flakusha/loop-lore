@@ -45,4 +45,7 @@ export interface DB {
   actor_notes: import("./schema-core").ActorNotes;
   actor_items: import("./schema-core").ActorItems;
   model_role_overrides: import("./schema-core").ModelRoleOverrides;
+  system_config: import("./schema-core").SystemConfig;
+  log_entries: import("./schema-core").LogEntries;
+  plugin_state: import("./schema-core").PluginState;
 }

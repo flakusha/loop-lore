@@ -4,7 +4,7 @@
  * Creates the Elysia HTTP application. Public routes and migrated
  * route modules are registered first. Everything else falls through
  * to the catch-all handler which delegates to the existing dispatch
- * logic (handleApiRequest, dispatchViews, static files).
+ * logic (handleApiRequest, static files).
  *
  * Uses closure injection (not .state()/.decorate()) to avoid Elysia's
  * complex type inference issues when merging plugins.
@@ -15,7 +15,7 @@ import { BunAdapter } from "elysia/adapter/bun";
 import type { Db } from "./db";
 import type { Config } from "./config/schema";
 import { handleApiRequest } from "./server";
-import { dispatch as dispatchViews } from "./routes/views";
+import { viewRoutes } from "./routes/views";
 import { healthRoutes } from "./routes/health";
 import { authPublicRoutes, authProtectedRoutes } from "./routes/auth";
 import { settingsRoutes } from "./routes/settings";
@@ -38,6 +38,7 @@ import { questsRoutes } from "./routes/quests";
 import { charactersRoutes } from "./routes/characters";
 import { messagesRoutes } from "./routes/messages";
 import { chatsRoutes } from "./routes/chats";
+import { pluginRoutes } from "./routes/plugins";
 import { authenticate } from "./middleware/auth";
 
 export interface AppDeps {
@@ -55,8 +56,10 @@ export function createApp(deps: AppDeps): Elysia {
     // ── Authentication guard (runs before all routes, populates context) ──────
     .derive(async ({ request }) => {
       const authResult = await authenticate({ request, database, authConfig: config.auth });
+      // When auth fails, we still return values (will be null)
+      // Route handlers check for userId === null and return 401
       if (authResult instanceof Response) {
-        throw authResult;
+        return { userId: null, userRole: null, sessionId: null };
       }
       return {
         userId: authResult.context.userId,
@@ -86,6 +89,7 @@ export function createApp(deps: AppDeps): Elysia {
   app.use(worldLoreEntriesRoutes(handleOpts));
   app.use(worldsRoutes(handleOpts));
   app.use(adminRoutes(handleOpts));
+  app.use(pluginRoutes(handleOpts));
   app.use(storyTurnsRoutes(handleOpts));
   app.use(storyStatesRoutes(handleOpts));
   app.use(storyItemsRoutes(handleOpts));
@@ -93,6 +97,7 @@ export function createApp(deps: AppDeps): Elysia {
   app.use(charactersRoutes(handleOpts));
   app.use(messagesRoutes(handleOpts));
   app.use(chatsRoutes(handleOpts));
+  app.use(viewRoutes({ database: handleOpts.database }));
 
   // ── Catch-all: delegate to existing dispatch logic ───────────────────────────
   app.all("/*", async ({ request }) => {
@@ -101,14 +106,6 @@ export function createApp(deps: AppDeps): Elysia {
     if (url.pathname.startsWith("/api/")) {
       return handleApiRequest({ request, database: handleOpts.database, config: handleOpts.config });
     }
-
-    const viewResponse = await dispatchViews({
-      request,
-      context: { userId: null, userRole: null, sessionId: null },
-      database: handleOpts.database,
-      config: handleOpts.config,
-    });
-    if (viewResponse) return viewResponse;
 
     return handleNonApiRequest(request);
   });
