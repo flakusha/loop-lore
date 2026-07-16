@@ -73,12 +73,12 @@ function createInsertInto(): { values: () => { execute: () => Promise<void> } } 
   };
 }
 
-function createMockDb() {
+function createMockDb(): Kysely<DB> {
   return {
     selectFrom: createSelectFrom,
     updateTable: createUpdateTable,
     insertInto: createInsertInto,
-  };
+  } as unknown as Kysely<DB>;
 }
 
 function createErrorDb() {
@@ -153,7 +153,7 @@ describe("age-gate controller", () => {
   describe("handleGetStatus", () => {
     test("returns gate disabled when config disabled", async () => {
       initAgeGate({ enabled: false, minimumAge: 18, mode: AgeGateMode.None });
-      const res = await handleGetStatus(mockDb as unknown as Kysely<DB>, null);
+      const res = await handleGetStatus(mockDb, null);
       const data = (await res.json()) as { isEnabled: boolean; hasPassed: boolean };
       expect(data.isEnabled).toBe(false);
       expect(data.hasPassed).toBe(true);
@@ -161,7 +161,7 @@ describe("age-gate controller", () => {
 
     test("returns gate not passed for null user with enabled gate", async () => {
       initAgeGate({ enabled: true, minimumAge: 18, mode: AgeGateMode.SelfDeclaration });
-      const res = await handleGetStatus(mockDb as unknown as Kysely<DB>, null);
+      const res = await handleGetStatus(mockDb, null);
       const data = (await res.json()) as { isEnabled: boolean; hasPassed: boolean };
       expect(data.isEnabled).toBe(true);
       expect(data.hasPassed).toBe(false);
@@ -195,7 +195,7 @@ describe("age-gate controller", () => {
   describe("handleAccept", () => {
     test("returns 400 when birthDate missing", async () => {
       const res = await handleAccept({
-        database: mockDb as unknown as Kysely<DB>,
+        database: mockDb,
         userId: "user-1",
         body: {},
       });
@@ -206,7 +206,7 @@ describe("age-gate controller", () => {
 
     test("returns 400 when birthDate not a string", async () => {
       const res = await handleAccept({
-        database: mockDb as unknown as Kysely<DB>,
+        database: mockDb,
         userId: "user-1",
         body: { birthDate: 123 },
       });
@@ -216,7 +216,7 @@ describe("age-gate controller", () => {
     test("returns 403 when user is underage", async () => {
       initAgeGate({ enabled: true, minimumAge: 18, mode: AgeGateMode.SelfDeclaration });
       const res = await handleAccept({
-        database: mockDb as unknown as Kysely<DB>,
+        database: mockDb,
         userId: "user-1",
         body: { birthDate: "2020-01-01" },
       });
@@ -239,7 +239,7 @@ describe("age-gate controller", () => {
     test("is no-op when gate disabled", async () => {
       initAgeGate({ enabled: false, minimumAge: 18, mode: AgeGateMode.None });
       const res = await handleAccept({
-        database: mockDb as unknown as Kysely<DB>,
+        database: mockDb,
         userId: "user-1",
         body: { birthDate: "2020-01-01" },
       });
@@ -249,7 +249,7 @@ describe("age-gate controller", () => {
     test("is no-op when mode is none", async () => {
       initAgeGate({ enabled: true, minimumAge: 18, mode: AgeGateMode.None });
       const res = await handleAccept({
-        database: mockDb as unknown as Kysely<DB>,
+        database: mockDb,
         userId: "user-1",
         body: { birthDate: "2020-01-01" },
       });
