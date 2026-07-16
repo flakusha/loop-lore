@@ -83,7 +83,7 @@ export class OpenAiCompatibleProvider implements LLMProvider {
 
     const toolCalls = choice.message?.tool_calls?.map((tc) => ({
       id: tc.id,
-      type: tc.type as "function",
+      type: tc.type,
       function: { name: tc.function.name, arguments: tc.function.arguments },
     }));
 
@@ -207,7 +207,7 @@ export class OpenAiCompatibleProvider implements LLMProvider {
 
     const toolCalls =
       toolCallAccum.size > 0
-        ? [...toolCallAccum.entries()]
+        ? [...toolCallAccum]
             .sort(([a], [b]) => a - b)
             .map(([, v]) => ({
               id: v.id ?? "",

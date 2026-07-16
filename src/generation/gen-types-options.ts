@@ -67,7 +67,7 @@ export interface GenerationMessage {
   content: string;
   name?: string;
   tool_call_id?: string;
-  tool_calls?: Array<{ id: string; type: "function"; function: { name: string; arguments: string } }>;
+  tool_calls?: { id: string; type: "function"; function: { name: string; arguments: string } }[];
 }
 
 // ── Detection configuration interfaces ─────────────────────
