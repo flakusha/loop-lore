@@ -43,29 +43,41 @@ metadata:
 
 From `schema.ts`:
 
-| Table                  | Schema Source         | Domain     |
-| ---------------------- | --------------------- | ---------- |
-| `users`                | `schema-core.ts`      | Core       |
-| `sessions`             | `schema-core.ts`      | Core       |
-| `chats`                | `schema-core.ts`      | Core       |
-| `actors`               | `schema-core.ts`      | Core       |
-| `chat_participants`    | `schema-core.ts`      | Core       |
-| `characters`           | `schema-core.ts`      | Core       |
-| `messages`             | `schema-core.ts`      | Core       |
-| `assets`               | `schema-content.ts`   | Content    |
-| `asset_links`          | `schema-content.ts`   | Content    |
-| `worlds`               | `schema-story.ts`     | Story      |
-| `locations`            | `schema-story.ts`     | Story      |
-| `generation_attempts`  | `schema-generation.ts`| Generation |
-| `story_turns`          | `schema-story.ts`     | Story      |
-| `quests`               | `schema-story.ts`     | Story      |
-| `quest_progress`       | `schema-story.ts`     | Story      |
-| `world_states`         | `schema-story.ts`     | Story      |
-| `npc_states`           | `schema-story.ts`     | Story      |
-| `location_states`      | `schema-story.ts`     | Story      |
-| `synthetic_data`       | `schema-synthetic.ts` | Synthetic  |
-| `items`                | `schema-story.ts`     | Story      |
-| `world_items`          | `schema-story.ts`     | Story      |
+| Table                  | Schema Source          | Domain     |
+| ---------------------- | ---------------------- | ---------- |
+| `users`                | `schema-core.ts`       | Core       |
+| `sessions`             | `schema-core.ts`       | Core       |
+| `chats`                | `schema-core.ts`       | Core       |
+| `actors`               | `schema-core.ts`       | Core       |
+| `chat_participants`    | `schema-core.ts`       | Core       |
+| `characters`           | `schema-core.ts`       | Core       |
+| `personas`             | `schema-core.ts`       | Core       |
+| `messages`             | `schema-core.ts`       | Core       |
+| `actor_keys`           | `schema-core.ts`       | Core       |
+| `group_initiatives`    | `schema-core.ts`       | Core       |
+| `chat_mentions`        | `schema-core.ts`       | Core       |
+| `actor_notes`          | `schema-core.ts`       | Core       |
+| `actor_items`          | `schema-core.ts`       | Core       |
+| `user_api_keys`        | `schema-core.ts`       | Core       |
+| `model_role_overrides` | `schema-core.ts`       | Core       |
+| `assets`               | `schema-content.ts`    | Content    |
+| `asset_links`          | `schema-content.ts`    | Content    |
+| `asset_shares`         | `schema-content.ts`    | Content    |
+| `generation_attempts`  | `schema-generation.ts` | Generation |
+| `worlds`               | `schema-story.ts`      | Story      |
+| `locations`            | `schema-story.ts`      | Story      |
+| `story_turns`          | `schema-story.ts`      | Story      |
+| `quests`               | `schema-story.ts`      | Story      |
+| `quest_progress`       | `schema-story.ts`      | Story      |
+| `world_states`         | `schema-story.ts`      | Story      |
+| `npc_states`           | `schema-story.ts`      | Story      |
+| `location_states`      | `schema-story.ts`      | Story      |
+| `items`                | `schema-story.ts`      | Story      |
+| `world_items`          | `schema-story.ts`      | Story      |
+| `actor_memories`       | `schema-story.ts`      | Story      |
+| `actor_lore_entries`   | `schema-story.ts`      | Story      |
+| `world_lore_entries`   | `schema-story.ts`      | Story      |
+| `synthetic_data`       | `schema-synthetic.ts`  | Synthetic  |
 
 ## Enums Pattern
 
@@ -87,31 +99,55 @@ export type MessageVisibility =
 
 Key enums from `enums-core.ts`:
 
-| Enum                  | Values                                                          |
-| --------------------- | --------------------------------------------------------------- |
-| `UserRole`            | `admin`, `user`, `viewer`, `solo`                               |
-| `SessionType`         | `web`, `tui`, `api`, `remote`                                   |
-| `MessageVisibility`   | `visible`, `hidden_by_user`, `hidden_by_moderator`, `auto_hidden`, `redacted` |
-| `MessageStatus`       | `sending`, `sent`, `confirmed`, `failed`, `cancelled`           |
-| `ActorType`           | `user`, `character`, `narrator`, `system`                       |
-| `ActorAgentType`      | `none`, `ai`, `narrator`, `npc`                                 |
-| `ChatType`            | `user_character`, `user_user`, `user_assistant`                 |
-| `ChatAccess`          | `private`, `shared`, `public`                                   |
+| Enum                       | Values                                                                          |
+| -------------------------- | ------------------------------------------------------------------------------- |
+| `UserRole`                 | `admin`, `user`, `viewer`, `solo`                                               |
+| `UserStatus`               | `active`, `inactive`, `banned`                                                  |
+| `MessageVisibility`        | `visible`, `hidden_by_user`, `hidden_by_moderator`, `auto_hidden`, `redacted`   |
+| `MessageStatus`            | `sending`, `sent`, `confirmed`, `failed`, `cancelled`                           |
+| `MessageRole`              | `user`, `assistant`, `system`, `tool`                                           |
+| `MessageContentType`       | `text`, `image`, `audio`, `video`, `code`, `file`                               |
+| `MessageContentFormat`     | `markdown`, `plain`, `html`, `json`                                             |
+| `ContentEncoding`          | `none`, `gzip`, `zstd`, `brotli`                                                |
+| `ActorType`                | `user`, `character`, `narrator`, `system`                                       |
+| `AgentType`                | `none`, `ai`, `narrator`, `npc`                                                 |
+| `ActorVisibility`          | `visible`, `hidden`, `archived`                                                 |
+| `ChatType`                 | `user_character`, `user_user`, `user_assistant`                                 |
+| `ChatMode`                 | `story`, `group`, `freeform`                                                    |
+| `ChatPurpose`              | `chat`, `roleplay`, `story_generation`, `content_generation`, `data_generation` |
+| `TurnStrategy`             | `round_robin`, `scene_based`, `initiative`, `quest_driven`, `hybrid`            |
+| `ChatParticipantRole`      | `owner`, `participant`, `observer`                                              |
+| `PinnedState`              | `pinned`, `unpinned`                                                            |
+| `DefaultState`             | `default`, `not_default`                                                        |
+| `EquipState`               | `equipped`, `unequipped`                                                        |
+| `StackableState`           | `stackable`, `not_stackable`                                                    |
 
 Key enums from `enums-generation.ts`:
 
 | Enum                  | Values                                                          |
 | --------------------- | --------------------------------------------------------------- |
 | `GenerationStatus`    | `pending`, `processing`, `streaming`, `completed`, `failed`, `cancelled` |
-| `GenerationProvider`  | `openai`, `anthropic`, `google`, `mistral`, `ollama`, `openrouter`, `custom` |
 | `CancelReason`        | `user_cancel`, `repetition_detected`, `policy_mismatch`, `response_limit`, `chat_switch`, `timeout`, `error` |
+| `CancelSource`        | `user`, `system`, `detector`                                     |
+| `ChunkAction`         | `append`, `replace_last`, `thinking_start`, `thinking_end`       |
 
 Key enums from `enums-story.ts`:
 
-| Enum                  | Values                                                          |
-| --------------------- | --------------------------------------------------------------- |
-| `QuestStatus`         | `active`, `completed`, `failed`, `abandoned`                    |
-| `TurnType`            | `player`, `gm`, `npc`, `narration`, `combat`                    |
+| Enum                   | Values                                                           |
+| ---------------------- | ---------------------------------------------------------------- |
+| `QuestStatus`          | `active`, `completed`, `failed`, `abandoned`                     |
+| `QuestType`            | `main`, `side`, `radiant`, `event`                               |
+| `QuestProgressStatus`  | `not_started`, `in_progress`, `completed`, `failed`              |
+| `TurnType`             | `player`, `gm`, `npc`, `narration`, `combat`                    |
+| `TurnStatus`           | `pending`, `in_progress`, `completed`, `failed`, `cancelled`     |
+| `SyntheticDataType`    | `chat_message`, `story_turn`, `quest`, `lore`, `world_state`    |
+| `SyntheticDataStatus`  | `generated`, `validated`, `approved`, `rejected`, `archived`     |
+| `SyntheticTestMode`    | `off`, `quality`, `adversarial`, `coverage`                      |
+| `WorldEventType`       | `narrative`, `combat`, `environmental`, `social`, `quest`        |
+| `QualityDimension`     | `coherence`, `creativity`, `consistency`, `engagement`, `relevance` |
+| `ItemCategory`         | `weapon`, `armor`, `consumable`, `key`, `misc`, `currency`       |
+| `ItemRarity`           | `common`, `uncommon`, `rare`, `epic`, `legendary`                |
+| `ItemVisibility`       | `visible`, `hidden`, `revealed`                                   |
 
 ## Schema Type Pattern
 
@@ -123,11 +159,30 @@ export interface Messages {
   chat_id: string;                  // FK → chats.id
   actor_id: string;                 // FK → actors.id
   parent_id: string | null;         // FK → messages.id (tree model)
-  content: string;                  // Message body (markdown)
-  visibility: MessageVisibility;    // Enum
+  role: MessageRole;                // Enum: user, assistant, system, tool
+  content: string;                  // Message body
+  key_id: string | null;            // FK → actor_keys.id (encryption)
+  content_format: MessageContentFormat; // markdown, plain, html, json
+  content_type: MessageContentType; // text, image, audio, video, code, file
+  content_encoding: ContentEncoding;   // none, gzip, zstd, brotli
+  model_id: string | null;          // Model used for generation
+  provider: string | null;          // Provider name
+  token_count_prompt: number | null;
+  token_count_completion: number | null;
+  token_count_total: number | null;
+  token_cost: number | null;
+  generation_time_ms: number | null;
+  tokens_per_second: number | null;
   status: MessageStatus;            // Enum
+  visibility: MessageVisibility;    // Enum
+  hidden_by: string | null;         // FK → users.id
+  hidden_reason: string | null;
+  idempotency_key: string | null;   // Dedup for retries
+  continuation_index: number | null; // Chunk index for continuation
+  swipe_index: number | null;       // Alternative reply index
   created_at: Generated<string>;    // Auto-timestamp
-  updated_at: Generated<string>;    // Auto-timestamp
+  edited_at: string | null;
+  attachments: string | null;       // JSON array of asset refs
 }
 ```
 
@@ -172,13 +227,17 @@ const messages = await db
   .selectAll()
   .execute();
 
-// Insert with Generated fields omitted
+// Insert with required GeneratedAlways fields omitted
 await db
   .insertInto("messages")
   .values({
     chat_id: chatId,
     actor_id: actorId,
+    role: MessageRole.User,
     content: "Hello world",
+    content_format: MessageContentFormat.Markdown,
+    content_type: MessageContentType.Text,
+    content_encoding: ContentEncoding.None,
     visibility: MessageVisibility.Visible,
     status: MessageStatus.Sent,
   })
