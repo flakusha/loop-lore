@@ -16,15 +16,8 @@
 import { Elysia } from "elysia";
 import type { Kysely } from "kysely";
 import type { DB } from "../db/schema";
-import { safeJsonStringify } from "../utils";
-import {
-  jsonResponse,
-  jsonError,
-  jsonPaginated,
-  jsonCreated,
-  jsonNoContent,
-  HttpStatus,
-} from "./http-utils";
+import { uid, safeJsonStringify } from "../utils";
+import { jsonResponse, jsonError, jsonPaginated, jsonCreated, jsonNoContent, HttpStatus } from "./http-utils";
 import { ItemsService } from "../story/items";
 import { notFound } from "../validation/middleware";
 
@@ -209,6 +202,56 @@ async function handleInstance(
 
 export function storyItemsRoutes({ database }: { database: Kysely<DB> }): Elysia {
   return new Elysia({ name: "story-items" })
+    .post("/api/worlds/:id/item-instances", async (ctx: any) => {
+      const userId = ctx.userId as string | null;
+      const userRole = ctx.userRole as string | null;
+      const worldId = ctx.params.id as string;
+
+      if (!(await checkWorldOwnership(database, worldId, userId, userRole))) {
+        return jsonError({ message: "World not found", status: HttpStatus.NotFound });
+      }
+
+      const body = ctx.body as Record<string, unknown>;
+      const itemId = body.itemId as string;
+      const locationId = body.locationId as string;
+      const quantity = (body.quantity as number) ?? 1;
+
+      if (!itemId) return jsonError({ message: "itemId is required", status: HttpStatus.BadRequest });
+      if (!locationId) return jsonError({ message: "locationId is required", status: HttpStatus.BadRequest });
+
+      const id = uid();
+      await database
+        .insertInto("world_items")
+        .values({
+          id,
+          world_id: worldId,
+          item_id: itemId,
+          location_id: locationId,
+          quantity,
+          visibility: "visible",
+          respawnable: 0,
+        })
+        .execute();
+
+      return jsonCreated({ id });
+    })
+    .get("/api/worlds/:id/item-instances", async (ctx: any) => {
+      const userId = ctx.userId as string | null;
+      const userRole = ctx.userRole as string | null;
+      const worldId = ctx.params.id as string;
+
+      if (!(await checkWorldOwnership(database, worldId, userId, userRole))) {
+        return jsonError({ message: "World not found", status: HttpStatus.NotFound });
+      }
+
+      const locationId = ctx.query?.locationId as string | undefined;
+      let query = database.selectFrom("world_items").selectAll().where("world_id", "=", worldId);
+      if (locationId) {
+        query = query.where("location_id", "=", locationId);
+      }
+      const instances = await query.execute();
+      return jsonResponse(instances);
+    })
     .get("/api/worlds/:id/items/:itemId/instances", async (ctx: any) => {
       const userId = ctx.userId as string | null;
       const userRole = ctx.userRole as string | null;

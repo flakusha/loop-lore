@@ -41,7 +41,6 @@ import { messagesRoutes } from "./routes/messages";
 import { telemetryRoutes } from "./routes/telemetry";
 import { chatsRoutes } from "./routes/chats";
 import { pluginRoutes } from "./routes/plugins";
-import { importRoutes } from "./routes/import";
 import { personaRoutes } from "./personas/controller";
 import { generationRoutes } from "./generation/controller";
 import { ageGateRoutes } from "./age-gate/controller";
@@ -115,7 +114,6 @@ export function createApp(deps: AppDeps): Elysia {
   app.use(generationRoutes(handleOpts));
   app.use(ageGateRoutes(handleOpts));
   app.use(assetRoutes(handleOpts));
-  app.use(importRoutes(handleOpts));
   app.use(viewRoutes({ database: handleOpts.database }));
 
   // ── Catch-all: delegate to existing dispatch logic ───────────────────────────
