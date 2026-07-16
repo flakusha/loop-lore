@@ -54,7 +54,14 @@ async function main() {
         processed = stripTestIds(processed);
       }
       if (processed.length < content.length) {
-        writeFileSync(file, processed, "utf8");
+        try {
+          writeFileSync(file, processed, "utf8");
+        } catch (writeError) {
+          log.error(
+            `Failed to write stripped HTML at ${file}`,
+            writeError instanceof Error ? writeError : new Error(String(writeError)),
+          );
+        }
       }
     }
 
