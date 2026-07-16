@@ -18,6 +18,7 @@ import {
   ContentEncoding,
   MessageStatus,
   MessageVisibility,
+  CancelReason,
 } from "../db/enums";
 import {
   startGenerationTracking,
@@ -94,6 +95,67 @@ async function storeGeneratedMessage({
   return messageId;
 }
 
+// ── Shared helpers ────────────────────────────────────────
+
+/**
+ * Build a GenerationResult from a provider response.
+ */
+function buildGenerationResult(
+  response: {
+    content: string;
+    thinking?: string;
+    toolCalls?: any[];
+    finishReason: string;
+    usage: { promptTokens: number; completionTokens: number; totalTokens: number };
+  },
+  cancelled: boolean,
+  cancelReason?: CancelReason,
+): GenerationResult {
+  return {
+    content: response.content,
+    thinking: response.thinking,
+    tokenUsage: {
+      promptTokens: response.usage.promptTokens,
+      completionTokens: response.usage.completionTokens,
+      totalTokens: response.usage.totalTokens,
+    },
+    generationTimeMs: 0,
+    cancelled,
+    ...(cancelReason ? { cancelReason } : {}),
+  };
+}
+
+/**
+ * Insert the generated message into the database and complete tracking.
+ * Returns the new message ID.
+ */
+async function storeGenerationResult(opts: {
+  db: Kysely<DB>;
+  attemptId: string;
+  result: GenerationResult;
+  chatId: string;
+  parentMessageId: string;
+  actorId: string;
+  modelId: string;
+  provider: string;
+  continuationNumber?: number;
+}): Promise<string> {
+  const messageId = await storeGeneratedMessage({
+    database: opts.db,
+    chatId: opts.chatId,
+    actorId: opts.actorId,
+    parentMessageId: opts.parentMessageId,
+    result: opts.result,
+    modelId: opts.modelId,
+    provider: opts.provider,
+    continuationNumber: opts.continuationNumber,
+  });
+
+  await completeGeneration({ attemptId: opts.attemptId, result: opts.result, db: opts.db });
+
+  return messageId;
+}
+
 // ── Tool call execution ────────────────────────────────────
 
 const MAX_TOOL_ROUNDS = 5;
@@ -107,9 +169,7 @@ interface ToolCallItem {
  * Execute tool calls and return tool result messages.
  * Looks up ToolDefinition from the plugin registry by name.
  */
-async function executeToolCalls(
-  toolCalls: ToolCallItem[],
-): Promise<GenerationMessage[]> {
+async function executeToolCalls(toolCalls: ToolCallItem[]): Promise<GenerationMessage[]> {
   const toolDefs = registry.getAllTools();
   const results: GenerationMessage[] = [];
 
@@ -331,12 +391,13 @@ export async function handleGenerate({
   // ── Build provider request ────────────────────────────
 
   const pluginTools = registry.getAllTools();
-  const tools = pluginTools.length > 0
-    ? pluginTools.map((t: ToolDefinition) => ({
-        type: "function" as const,
-        function: { name: t.name, description: t.description, parameters: t.parameters },
-      }))
-    : undefined;
+  const tools =
+    pluginTools.length > 0
+      ? pluginTools.map((t: ToolDefinition) => ({
+          type: "function" as const,
+          function: { name: t.name, description: t.description, parameters: t.parameters },
+        }))
+      : undefined;
 
   const providerReq = {
     model: resolved.resolvedModel,
@@ -402,32 +463,22 @@ export async function handleGenerate({
         throw new Error(`Tool call loop exceeded max rounds (${MAX_TOOL_ROUNDS})`);
       }
 
-      const result: GenerationResult = {
-        content: finalResponse.content,
-        thinking: finalResponse.thinking,
-        tokenUsage: {
-          promptTokens: finalResponse.usage.promptTokens,
-          completionTokens: finalResponse.usage.completionTokens,
-          totalTokens: finalResponse.usage.totalTokens,
-        },
-        generationTimeMs: 0, // set by completeGeneration
-        cancelled: finalResponse.finishReason === "cancelled",
-        cancelReason: finalResponse.finishReason === "cancelled" ? "user_cancel" : undefined,
-      };
+      const result = buildGenerationResult(
+        finalResponse,
+        finalResponse.finishReason === "cancelled",
+        finalResponse.finishReason === "cancelled" ? CancelReason.UserCancel : undefined,
+      );
 
-      // Store message
-      const messageId = await storeGeneratedMessage({
-        database,
-        chatId: input.chatId,
-        actorId: input.actorId,
-        parentMessageId: input.parentMessageId,
+      const messageId = await storeGenerationResult({
+        db: database,
+        attemptId,
         result,
+        chatId: input.chatId,
+        parentMessageId: input.parentMessageId,
+        actorId: input.actorId,
         modelId: resolved.resolvedModel,
         provider: resolved.resolvedProviderName,
       });
-
-      // Complete tracking
-      await completeGeneration({ attemptId, result, db: database });
 
       return jsonResponse({
         ok: true,
@@ -494,9 +545,7 @@ export async function handleGenerate({
 
           // Emit tool_call events to client
           for (const tc of response.toolCalls) {
-            controller.enqueue(
-              new TextEncoder().encode(sseData({ type: "tool_call", toolCall: tc })),
-            );
+            controller.enqueue(new TextEncoder().encode(sseData({ type: "tool_call", toolCall: tc })));
           }
 
           // Add assistant message with tool calls
@@ -523,37 +572,27 @@ export async function handleGenerate({
         }
 
         // Provider stream completed — handle result
-        // Use accumulated content as fallback if provider didn't return full content
-        const result: GenerationResult = {
-          content: finalResponse.content || accumulatedContent,
-          thinking: finalResponse.thinking || accumulatedThinking || undefined,
-          tokenUsage: {
-            promptTokens: finalResponse.usage.promptTokens,
-            completionTokens: finalResponse.usage.completionTokens,
-            totalTokens: finalResponse.usage.totalTokens,
+        const result = buildGenerationResult(
+          {
+            ...finalResponse,
+            content: finalResponse.content || accumulatedContent,
+            thinking: finalResponse.thinking || accumulatedThinking || undefined,
           },
-          generationTimeMs: 0,
-          cancelled: finalResponse.finishReason === "cancelled",
-        };
+          finalResponse.finishReason === "cancelled",
+          finalResponse.finishReason === "cancelled" ? CancelReason.UserCancel : undefined,
+        );
 
-        if (result.cancelled) {
-          result.cancelReason = "user_cancel";
-        }
-
-        // Store message
-        const messageId = await storeGeneratedMessage({
-          database,
-          chatId: input.chatId,
-          actorId: input.actorId,
-          parentMessageId: input.parentMessageId,
+        const messageId = await storeGenerationResult({
+          db: database,
+          attemptId,
           result,
+          chatId: input.chatId,
+          parentMessageId: input.parentMessageId,
+          actorId: input.actorId,
           modelId: resolved.resolvedModel,
           provider: resolved.resolvedProviderName,
           continuationNumber: input.continuationNumber,
         });
-
-        // Complete tracking
-        await completeGeneration({ attemptId, result, db: database });
 
         // Send done event with final data
         controller.enqueue(

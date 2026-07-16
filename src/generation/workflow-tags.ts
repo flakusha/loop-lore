@@ -7,7 +7,7 @@
  * monster, location) and a `modality` (image, video). The same
  * workflow may serve multiple tags; the tag set is the lookup key.
  *
- * See docs/meta/v02-local-inference.md (Epic 18).
+ * See docs/spec/integrations/image-generation.md + docs/spec/integrations/llm-serving.md (Epic 18).
  */
 
 /** What the generated asset represents. */
