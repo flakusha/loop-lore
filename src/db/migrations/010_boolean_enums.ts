@@ -23,6 +23,8 @@ export async function up(database: Kysely<any>): Promise<void> {
     .where("is_pinned", "=", 1)
     .execute();
 
+  // Drop index before dropping column (SQLite constraint)
+  await database.schema.dropIndex("idx_chats_pinned").ifExists().execute();
   await database.schema.alterTable("chats").dropColumn("is_pinned").execute();
   await database.schema.alterTable("chats").renameColumn("is_pinned_new", "is_pinned").execute();
   await database.schema.createIndex("idx_chats_pinned").on("chats").column("is_pinned").execute();
@@ -39,6 +41,8 @@ export async function up(database: Kysely<any>): Promise<void> {
     .where("is_default", "=", 1)
     .execute();
 
+  // Drop index before dropping column (SQLite constraint)
+  await database.schema.dropIndex("idx_personas_default").ifExists().execute();
   await database.schema.alterTable("personas").dropColumn("is_default").execute();
   await database.schema.alterTable("personas").renameColumn("is_default_new", "is_default").execute();
   await database.schema
@@ -152,9 +156,10 @@ export async function down(database: Kysely<any>): Promise<void> {
     .where("is_default", "=", "default")
     .execute();
 
+  // Drop index before dropping column (SQLite constraint)
+  await database.schema.dropIndex("idx_personas_default").ifExists().execute();
   await database.schema.alterTable("personas").dropColumn("is_default").execute();
   await database.schema.alterTable("personas").renameColumn("is_default_old", "is_default").execute();
-  await database.schema.dropIndex("idx_personas_default").execute();
   await database.schema
     .createIndex("idx_personas_default")
     .on("personas")
@@ -174,8 +179,9 @@ export async function down(database: Kysely<any>): Promise<void> {
     .where("is_pinned", "=", "pinned")
     .execute();
 
+  // Drop index before dropping column (SQLite constraint)
+  await database.schema.dropIndex("idx_chats_pinned").ifExists().execute();
   await database.schema.alterTable("chats").dropColumn("is_pinned").execute();
   await database.schema.alterTable("chats").renameColumn("is_pinned_old", "is_pinned").execute();
-  await database.schema.dropIndex("idx_chats_pinned").execute();
   await database.schema.createIndex("idx_chats_pinned").on("chats").column("is_pinned").execute();
 }
