@@ -14,9 +14,7 @@ import { cancelGenerationByChat, getActiveAttemptId, listActiveGenerations } fro
 import { getPartialContent } from "./continuation";
 import { CancelReason, CancelSource, GenerationStatus } from "../db/enums";
 import type {
-  ContinueRequest,
   ContinueResponse,
-  RetryFromPointRequest,
   RetryFromPointResponse,
 } from "./types";
 
@@ -116,6 +114,15 @@ export function handleGenerationStatus(chatId: string, _database?: Kysely<DB>): 
 
 // ── Route: Retry with step-from-point ──────────────────────
 
+function validateRetryFromPoint(body: unknown): { chatId: string; attemptId?: string; step?: number } | null {
+  if (!body || typeof body !== "object") return null;
+  const b = body as Record<string, unknown>;
+  if (typeof b.chatId !== "string" || !b.chatId) return null;
+  if (b.attemptId !== undefined && typeof b.attemptId !== "string") return null;
+  if (b.step !== undefined && typeof b.step !== "number") return null;
+  return { chatId: b.chatId, attemptId: b.attemptId as string | undefined, step: b.step as number | undefined };
+}
+
 /**
  * POST /api/generation/retry
  *
@@ -124,48 +131,50 @@ export function handleGenerationStatus(chatId: string, _database?: Kysely<DB>): 
  */
 export async function handleRetryGeneration(body: unknown, database?: Kysely<DB>): Promise<Response> {
   const db = database ?? getDatabase();
-  const input = body as RetryFromPointRequest;
+  const input = validateRetryFromPoint(body);
 
-  if (!input.chatId) {
+  if (!input) {
     return jsonError({ message: "chatId is required", status: 400 });
   }
 
+  const { chatId, attemptId, step } = input;
+
   const wasActive = cancelGenerationByChat({
     db,
-    chatId: input.chatId,
+    chatId,
     reason: CancelReason.UserCancel,
     source: CancelSource.User,
     detail:
-      input.step === undefined
+      step === undefined
         ? "User requested regeneration"
-        : `User requested retry from step ${input.step}`,
+        : `User requested retry from step ${step}`,
   });
 
   let resumeFromStep = 0;
   let totalSteps = 1;
 
-  if (input.attemptId && input.step != null) {
+  if (attemptId && step != null) {
     const attempt = await db
       .selectFrom("generation_attempts")
       .select(["step_index", "total_steps"])
-      .where("id", "=", input.attemptId)
+      .where("id", "=", attemptId)
       .executeTakeFirst();
 
     if (attempt) {
       const maxStep = (attempt.total_steps ?? 1) - 1;
-      resumeFromStep = Math.max(0, Math.min(input.step, maxStep));
+      resumeFromStep = Math.max(0, Math.min(step, maxStep));
       totalSteps = attempt.total_steps ?? 1;
     } else {
       return jsonError({ message: "Generation attempt not found", status: 404 });
     }
-  } else if (input.step != null) {
-    resumeFromStep = Math.max(0, input.step);
+  } else if (step != null) {
+    resumeFromStep = Math.max(0, step);
   }
 
   const retryResponse: RetryFromPointResponse = {
     ok: true,
-    attemptId: input.attemptId ?? undefined,
-    chatId: input.chatId,
+    attemptId: attemptId ?? undefined,
+    chatId,
     cancelled: wasActive,
     resumeFromStep,
     totalSteps,
@@ -176,6 +185,23 @@ export async function handleRetryGeneration(body: unknown, database?: Kysely<DB>
 
 // ── Route: Continue generation ────────────────────────────
 
+function validateContinue(body: unknown): { messageId: string; chatId: string; actorId: string; modelId?: string; provider?: string } | null {
+  if (!body || typeof body !== "object") return null;
+  const b = body as Record<string, unknown>;
+  if (typeof b.messageId !== "string" || !b.messageId) return null;
+  if (typeof b.chatId !== "string" || !b.chatId) return null;
+  if (typeof b.actorId !== "string" || !b.actorId) return null;
+  if (b.modelId !== undefined && typeof b.modelId !== "string") return null;
+  if (b.provider !== undefined && typeof b.provider !== "string") return null;
+  return {
+    messageId: b.messageId,
+    chatId: b.chatId,
+    actorId: b.actorId,
+    modelId: b.modelId as string | undefined,
+    provider: b.provider as string | undefined,
+  };
+}
+
 /**
  * POST /api/generation/continue
  *
@@ -184,16 +210,18 @@ export async function handleRetryGeneration(body: unknown, database?: Kysely<DB>
  */
 export async function handleContinueGeneration(body: unknown, database?: Kysely<DB>): Promise<Response> {
   const db = database ?? getDatabase();
-  const input = body as ContinueRequest;
+  const input = validateContinue(body);
 
-  if (!input.messageId || !input.chatId || !input.actorId) {
+  if (!input) {
     return jsonError({ message: "messageId, chatId, and actorId are required", status: 400 });
   }
+
+  const { messageId, chatId, actorId, modelId, provider } = input;
 
   const lastAttempt = await db
     .selectFrom("generation_attempts")
     .selectAll()
-    .where("parent_message_id", "=", input.messageId)
+    .where("parent_message_id", "=", messageId)
     .where("status", "in", [GenerationStatus.Cancelled, GenerationStatus.Failed])
     .orderBy("created_at", "desc")
     .executeTakeFirst();
@@ -223,12 +251,12 @@ export async function handleContinueGeneration(body: unknown, database?: Kysely<
   const response: ContinueResponse = {
     ok: true,
     parentAttemptId: attempt.id,
-    chatId: input.chatId,
-    messageId: input.messageId,
-    actorId: input.actorId,
+    chatId,
+    messageId,
+    actorId,
     partialContent,
-    modelId: input.modelId ?? attempt.model_id,
-    provider: input.provider ?? attempt.provider,
+    modelId: modelId ?? attempt.model_id,
+    provider: provider ?? attempt.provider,
     continuationNumber,
     continueContext: {
       parentAttemptId: attempt.id,
