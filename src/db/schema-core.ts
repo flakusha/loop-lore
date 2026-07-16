@@ -104,7 +104,7 @@ export interface Actors {
   system_prompt: string | null;
   agent_type: AgentType;
   settings: string;
-  data_version: number;
+  data_version: Generated<number>;
   visibility: Generated<ActorVisibility>;
   welcome_message: string | null;
   personality: string | null;

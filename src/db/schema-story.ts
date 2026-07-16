@@ -28,8 +28,8 @@ export interface Worlds {
   name: string;
   description: string | null;
   lore: string | null;
-  scan_depth: number;
-  token_budget: number;
+  scan_depth: number | null;
+  token_budget: number | null;
   difficulty_modifier: number;
   difficulty_reroll: DifficultyReroll;
   difficulty_state: DifficultyState;
