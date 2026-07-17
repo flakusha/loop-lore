@@ -113,6 +113,10 @@ interface AuthConfig {
   demoUsername: string;
   /** Auto-create sample data on first demo run */
   demoAutoSetup: boolean;
+  /** Bootstrap admin username (multi-user mode). Set via config or AUTH_ADMIN_USERNAME env. */
+  adminUsername?: string;
+  /** Bootstrap admin password (multi-user mode). Env-only preferred; AUTH_ADMIN_PASSWORD. Never commit. */
+  adminPassword?: string;
 }
 
 interface TransportCompressionConfig {

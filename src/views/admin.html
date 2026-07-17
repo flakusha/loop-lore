@@ -479,7 +479,7 @@
                 Model Role Assignments
               </h3>
               <div style="display: grid; gap: var(--space-3)">
-                <template x-for="role in ['main', 'captioning', 'moderation']" :key="role">
+                <template x-for="r in modelRoleList" :key="r.role">
                   <div
                     style="
                       display: grid;
@@ -491,43 +491,40 @@
                       border-radius: 6px;
                     "
                   >
-                    <div style="font-weight: 500; text-transform: capitalize" x-text="role"></div>
+                    <div style="font-weight: 500; text-transform: capitalize" x-text="r.role"></div>
                     <select
                       class="form-input"
                       style="font-size: 13px"
-                      @change="onRoleProviderChange(role, $event.target.value)"
+                      x-model="r.provider"
+                      @change="onRoleProviderChange(r.role)"
                     >
                       <option value="">Select provider...</option>
                       <template x-for="p in providers" :key="p.name">
-                        <option
-                          :value="p.name"
-                          x-text="p.label"
-                          :selected="modelRoles[role]?.provider === p.name"
-                        ></option>
+                        <option :value="p.name" x-text="p.label"></option>
                       </template>
                     </select>
                     <select
                       class="form-input"
                       style="font-size: 13px"
-                      @change="onRoleModelChange(role, $event.target.value)"
+                      x-model="r.model"
                     >
                       <option value="">Select model...</option>
-                      <template x-for="m in getModelsForRole(role)" :key="m">
-                        <option :value="m" x-text="m" :selected="modelRoles[role]?.model === m"></option>
+                      <template x-for="m in getModelsForRole(r.role)" :key="m">
+                        <option :value="m" x-text="m"></option>
                       </template>
                     </select>
                     <div style="display: flex; gap: 4px">
                       <button
                         class="btn btn-primary btn-xs"
-                        @click="saveModelRole(role)"
-                        :disabled="!modelRoles[role]?.provider || !modelRoles[role]?.model"
+                        @click="saveModelRole(r.role)"
+                        :disabled="!r.provider || !r.model"
                       >
                         Save
                       </button>
                       <button
                         class="btn btn-secondary btn-xs"
-                        @click="clearModelRole(role)"
-                        x-show="overrides[role]"
+                        @click="clearModelRole(r.role)"
+                        x-show="overrides[r.role]"
                       >
                         Clear
                       </button>

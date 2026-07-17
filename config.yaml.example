@@ -183,8 +183,8 @@ headers:
   csp:
     enabled: true
     defaultSrc: ["'self'"]
-    scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'"]   # Alpine.js uses Function() + @x setAttribute override
-    styleSrc: ["'self'", "'unsafe-inline'"]                                  # inline style= attrs need unsafe-inline
+    scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'"] # Alpine.js uses Function() + @x setAttribute override
+    styleSrc: ["'self'", "'unsafe-inline'"] # inline style= attrs need unsafe-inline
     imgSrc: ["'self'", "data:", "blob:"]
     fontSrc: ["'self'"]
     connectSrc: ["'self'", "wss:", "https:"]
