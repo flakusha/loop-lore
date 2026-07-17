@@ -2,6 +2,7 @@
 <div
   x-show="$store.ui.showChatSettings"
   x-cloak
+  :class="{ open: $store.ui.showChatSettings }"
   x-effect="if($store.ui.showChatSettings) openChatSettings()"
   class="modal-overlay"
   @click.self="$store.ui.showChatSettings = false"
