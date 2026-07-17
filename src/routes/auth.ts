@@ -3,6 +3,7 @@
  *
  *   POST /api/auth/login      — authenticate, create session, return token
  *   POST /api/demo-login      — solo/demo mode login (no password)
+ *   POST /api/auth/register   — create account + auto-login
  *   POST /api/auth/logout     — delete current session
  *   GET  /api/auth/me         — current user profile
  *
@@ -16,7 +17,7 @@ import { uid, secureToken } from "../utils";
 import type { Kysely } from "kysely";
 import type { DB } from "../db/schema";
 import type { Config } from "../config/schema";
-import { UserStatus } from "../db/enums";
+import { UserStatus, UserRole } from "../db/enums";
 import { jsonResponse, jsonError, HttpStatus } from "./http-utils";
 import { getOrCreateSoloUserForAuth } from "../middleware/auth";
 import { createRateLimiter } from "../middleware/rate-limit";
@@ -40,7 +41,7 @@ const COOKIE_PATH = "/";
 const COOKIE_MAX_AGE_SECS = 24 * 60 * 60; // 24h
 
 function setTokenCookie(token: string): string {
-  return `${TOKEN_COOKIE}=${token}; Path=${COOKIE_PATH}; Max-Age=${COOKIE_MAX_AGE_SECS}; HttpOnly; SameSite=Lax; Secure`;
+  return `${TOKEN_COOKIE}=${token}; Path=${COOKIE_PATH}; Max-Age=${COOKIE_MAX_AGE_SECS}; HttpOnly; SameSite=Lax`;
 }
 
 // ── Helpers ───────────────────────────────────────────────────
@@ -136,7 +137,7 @@ async function handleLogin(request: Request, database: Kysely<DB>, config: Confi
     await ensureActorKey({ database, actorId: user.id, smk });
   }
 
-  return new Response(null, {
+  return new Response("OK", {
     status: HttpStatus.OK,
     headers: { "HX-Redirect": "/views/chat", "Set-Cookie": setTokenCookie(rawToken) },
   });
@@ -173,7 +174,100 @@ async function handleDemoLogin(request: Request, database: Kysely<DB>, config: C
     await ensureActorKey({ database, actorId: soloUser.id, smk });
   }
 
-  return new Response(null, {
+  return new Response("OK", {
+    status: HttpStatus.OK,
+    headers: { "HX-Redirect": "/views/chat", "Set-Cookie": setTokenCookie(rawToken) },
+  });
+}
+
+async function handleRegister(request: Request, database: Kysely<DB>, config: Config): Promise<Response> {
+  let formData: URLSearchParams;
+  try {
+    const text = await request.text();
+    formData = new URLSearchParams(text);
+  } catch {
+    return errorHtml("Invalid request body");
+  }
+
+  const username = formData.get("username")?.trim();
+  const password = formData.get("password");
+
+  if (!username || !password) {
+    return errorHtml("Username and password are required.");
+  }
+
+  if (username.length < 3 || username.length > 32) {
+    return errorHtml("Username must be 3–32 characters.");
+  }
+
+  if (password.length < 6) {
+    return errorHtml("Password must be at least 6 characters.");
+  }
+
+  const existing = await database
+    .selectFrom("users")
+    .select(["id"])
+    .where("username", "=", username)
+    .executeTakeFirst();
+
+  if (existing) {
+    return errorHtml("Username already taken.");
+  }
+
+  const passwordHash = await Bun.password.hash(password);
+  const userId = uid();
+
+  await database
+    .insertInto("users")
+    .values({
+      id: userId,
+      username,
+      display_name: username,
+      password_hash: passwordHash,
+      role: UserRole.User,
+      status: UserStatus.Active,
+      settings: "{}",
+    })
+    .execute();
+
+  await database
+    .insertInto("actors")
+    .values({
+      id: userId,
+      actor_type: "user",
+      display_name: username,
+      user_id: userId,
+      owner_id: userId,
+      agent_type: "none",
+      settings: "{}",
+      import_spec: "raw",
+      data_version: 0,
+    })
+    .execute();
+
+  if (isEncryptionEnabled()) {
+    const smk = getSmk()!;
+    await ensureActorKey({ database, actorId: userId, smk });
+  }
+
+  const ip = getClientIp(request);
+  const userAgent = request.headers.get("User-Agent");
+  const rawToken = secureToken();
+  const tokenHash = crypto.createHash("sha256").update(rawToken).digest("hex");
+
+  await database
+    .insertInto("sessions")
+    .values({
+      id: uid(),
+      user_id: userId,
+      token_hash: tokenHash,
+      ip,
+      user_agent: userAgent,
+      expires_at: computeExpiry(config.auth.sessionTimeoutHours),
+    })
+    .execute();
+
+  return new Response("OK", {
     status: HttpStatus.OK,
     headers: { "HX-Redirect": "/views/chat", "Set-Cookie": setTokenCookie(rawToken) },
   });
@@ -191,7 +285,7 @@ async function handleLogout(request: Request, database: Kysely<DB>): Promise<Res
     return new Response(null, {
       status: HttpStatus.OK,
       headers: {
-        "Set-Cookie": `${TOKEN_COOKIE}=; Path=${COOKIE_PATH}; Max-Age=0; HttpOnly; SameSite=Lax; Secure`,
+        "Set-Cookie": `${TOKEN_COOKIE}=; Path=${COOKIE_PATH}; Max-Age=0; HttpOnly; SameSite=Lax`,
       },
     });
   }
@@ -210,31 +304,38 @@ async function getSessionIdFromToken(database: Kysely<DB>, token: string): Promi
   return session?.id ?? null;
 }
 
-async function handleMe(request: Request, database: Kysely<DB>): Promise<Response> {
-  const token = request.headers
-    .get("Cookie")
-    ?.split(";")
-    .find((c) => c.startsWith("ll_token="))
-    ?.slice(9);
-  const sessionId = token ? await getSessionIdFromToken(database, token) : null;
+async function handleMe(
+  request: Request,
+  database: Kysely<DB>,
+  derivedUserId: string | null = null,
+): Promise<Response> {
+  let userId: string | null = derivedUserId;
 
-  if (!sessionId) {
-    return unauthorized();
+  if (!userId) {
+    const token = request.headers
+      .get("Cookie")
+      ?.split(";")
+      .find((c) => c.startsWith("ll_token="))
+      ?.slice(9);
+    const sessionId = token ? await getSessionIdFromToken(database, token) : null;
+    if (sessionId) {
+      const session = await database
+        .selectFrom("sessions")
+        .select("user_id")
+        .where("id", "=", sessionId)
+        .executeTakeFirst();
+      userId = session?.user_id ?? null;
+    }
   }
 
-  const session = await database
-    .selectFrom("sessions")
-    .select("user_id")
-    .where("id", "=", sessionId)
-    .executeTakeFirst();
-  if (!session) {
+  if (!userId) {
     return unauthorized();
   }
 
   const user = await database
     .selectFrom("users")
     .select(["id", "username", "display_name", "role", "created_at", "last_seen_at"])
-    .where("id", "=", session.user_id)
+    .where("id", "=", userId)
     .executeTakeFirst();
 
   if (!user) return notFound("User not found");
@@ -246,15 +347,18 @@ async function handleMe(request: Request, database: Kysely<DB>): Promise<Respons
 export function authPublicRoutes({ database, config }: HandleOpts): Elysia {
   return new Elysia({ name: "auth-public" })
     .post("/api/auth/login", async ({ request }) => handleLogin(request, database, config))
-    .post("/api/demo-login", async ({ request }) =>
-      handleDemoLogin(request, database, config),
+    .post("/api/demo-login", async ({ request }) => handleDemoLogin(request, database, config))
+    .post("/api/auth/register", async ({ request }) =>
+      handleRegister(request, database, config),
     ) as unknown as Elysia;
 }
 
 export function authProtectedRoutes({ database }: { database: Kysely<DB> }): Elysia {
   return new Elysia({ name: "auth-protected" })
     .post("/api/auth/logout", async ({ request }) => handleLogout(request, database))
-    .get("/api/auth/me", async ({ request }) => handleMe(request, database)) as unknown as Elysia;
+    .get("/api/auth/me", async ({ request, ...rest }) =>
+      handleMe(request, database, (rest as any).userId as string | null | undefined),
+    ) as unknown as Elysia;
 }
 
 // ── Test utilities ───────────────────────────────────────────

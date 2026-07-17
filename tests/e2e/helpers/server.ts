@@ -13,6 +13,7 @@ import { createSqliteDialect, setTestDatabase } from "@/db/index";
 import { up as migrate } from "@/db/migrations/001_init";
 import "./logger-init";
 import { createApp } from "@/elysia-app";
+import { createRequestHandler } from "@/server";
 import { loadConfig } from "@/config/load";
 import { createLogger, setGlobalLogger } from "@/logger";
 import { initAgeGate } from "@/age-gate/controller";
@@ -311,15 +312,18 @@ export async function createTestServer(
   }
   initializeProviders(config);
 
-const app = createApp({
+  const app = createApp({
     database: db,
     config,
     handleNonApiRequest: async () => new Response("Not found", { status: 404 }),
   });
 
-  app.listen({ port: 0 });
-  const bunServer = app.server;
-  const url = `http://localhost:${bunServer!.port}`;
+  // Route through the same production handler so response-header and
+  // dynamic-response policies are exercised by e2e tests.
+  const handler = createRequestHandler(app, config, logger);
+
+  const bunServer = Bun.serve({ port: 0, fetch: handler });
+  const url = `http://localhost:${bunServer.port}`;
 
   return {
     url,

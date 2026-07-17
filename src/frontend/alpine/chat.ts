@@ -116,6 +116,10 @@ globalThis.chatState = function () {
       return this.chats.filter((c: { name?: string }) => (c.name || "").toLowerCase().includes(filter));
     },
 
+    get currentChat() {
+      return this.chats.find((c: { id: string; name?: string }) => c.id === this.activeChat) ?? null;
+    },
+
     // Cleanup handles
     _observer: null as MutationObserver | null,
     _toggleChatListHandler: null as (() => void) | null,
