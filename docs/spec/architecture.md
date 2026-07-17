@@ -6,12 +6,6 @@ loop-lore is a lightweight roleplay/chat application reimagining SillyTavern wit
 
 ## Guiding Principles
 
-1. **Minimum-build** — Zero or minimal compilation step for local dev. Bun runs TS directly.
-2. **Data integrity first** — Messages survive crashes, disconnects, machine failure.
-3. **Progressive disclosure** — Simple for solo users, scalable for multi-user setups.
-4. **Adapter pattern** — DB, auth, frontend layers swappable without core changes.
-5. **Dual-mode architecture** — RPG and agentic workspace modes share most of the codebase (schema, services, UI components). See [Use Case: Agentic Assistant Workspace](./use-case-agentic-workspace.md).
-
 ## System Layers
 
 A request traverses four layers top-to-bottom:
@@ -67,16 +61,6 @@ Abstracted through `DatabaseAdapter` interface. Default: SQLite (zero-config). S
 ## Request Flow (Web)
 
 Seven-step journey for a typical web interaction:
-
-1. **Page load** — Browser requests URL → Bun serves prebuilt HTML from disk (or compiled template)
-2. **User action** — htmx intercepts DOM event (click, submit) → sends AJAX to `/api/*`
-3. **Auth extraction** — Auth middleware reads `Authorization: Bearer <token>`, SHA-256 hashes it, looks up session in DB → populates `RequestContext { userId, userRole, sessionId }`
-4. **Role guard** — Middleware checks route permissions against `context.userRole`. Admin routes require `admin` role; non-matching roles return `403 Forbidden`
-5. **Route dispatch** — Route handler receives `(request, context)`. Calls domain service → service calls DB adapter (Kysely query builder)
-6. **Response** — Two possible paths:
-   - **HTML/JSON**: htmx receives fragment or JSON → swaps DOM element(s) in-place
-   - **SSE stream**: Generation endpoint streams token chunks via Server-Sent Events → typing indicator shows in chat
-7. **Client state** — Alpine.js manages local UI: modal visibility, form data, toast notifications, swipe state
 
 ## Static Asset Serving
 
