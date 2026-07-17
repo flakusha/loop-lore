@@ -37,3 +37,6 @@ loop-lore-data/
 
 # TODO Remove once confirmed
 .opencode/
+
+# MCPs
+.playwright-mcp/

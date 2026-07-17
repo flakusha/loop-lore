@@ -323,7 +323,7 @@ async function serveWorldDetailContent(worldId: string, database: Kysely<DB>): P
             <button class="btn btn-secondary btn-xs" @click="initializeStates()">Init States</button>
           </div>
         </div>
-        <div x-show="showCreateLocation" style="margin-bottom: var(--space-3); padding: var(--space-3); background: var(--color-surface, #f8f9fa); border-radius: 4px; border: 1px solid var(--color-border, #e9ecef)">
+        <div x-show="showCreateLocation" style="margin-bottom: var(--space-3); padding: var(--space-3); background: var(--bg-secondary, #f8f9fa); border-radius: 4px; border: 1px solid var(--border-default, #e9ecef)">
           <div style="display: grid; gap: var(--space-2)">
             <input class="form-input" style="font-size: 13px" x-model="newLocationName" placeholder="Location name" />
             <input class="form-input" style="font-size: 13px" x-model="newLocationDesc" placeholder="Description (optional)" />
@@ -334,17 +334,17 @@ async function serveWorldDetailContent(worldId: string, database: Kysely<DB>): P
         <template x-if="locations.length > 0">
           <div style="display: grid; gap: var(--space-2)">
             <template x-for="loc in locations" :key="loc.id">
-              <div style="padding: var(--space-3); background: var(--color-surface, #f8f9fa); border-radius: 4px; border: 1px solid var(--color-border, #e9ecef); cursor: pointer" @click="expandLoc(loc.id)">
+              <div style="padding: var(--space-3); background: var(--bg-secondary, #f8f9fa); border-radius: 4px; border: 1px solid var(--border-default, #e9ecef); cursor: pointer" @click="expandLoc(loc.id)">
                 <div style="display: flex; justify-content: space-between; align-items: center">
                   <div>
                     <strong style="font-size: 13px" x-text="loc.name"></strong>
-                    <span x-show="loc.description && expandedLoc !== loc.id" style="font-size: 12px; color: var(--color-text-secondary); margin-top: 2px; display: block" x-text="loc.description"></span>
+                    <span x-show="loc.description && expandedLoc !== loc.id" style="font-size: 12px; color: var(--text-secondary); margin-top: 2px; display: block" x-text="loc.description"></span>
                   </div>
                   <div style="display: flex; gap: 4px" @click.stop>
                     <button class="btn btn-danger btn-xs" @click="deleteLocation(loc.id)">Delete</button>
                   </div>
                 </div>
-                <div x-show="expandedLoc === loc.id" @click.stop style="margin-top: var(--space-3); padding-top: var(--space-3); border-top: 1px solid var(--color-border, #e9ecef)">
+                <div x-show="expandedLoc === loc.id" @click.stop style="margin-top: var(--space-3); padding-top: var(--space-3); border-top: 1px solid var(--border-default, #e9ecef)">
                   <div style="display: grid; gap: var(--space-2)">
                     <input class="form-input" style="font-size: 13px" x-model="editLocName" />
                     <textarea class="form-input form-textarea" rows="2" style="font-size: 13px" x-model="editLocDesc" placeholder="Description"></textarea>
