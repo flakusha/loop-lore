@@ -48,6 +48,7 @@ import {
   validateFileSize,
   validateMimeType,
 } from "./service";
+import type { AssetRecord } from "./service";
 import type { Config } from "../config/schema";
 
 interface UploadOpts {
@@ -71,6 +72,27 @@ interface ServeCompressedOpts {
   variant: string;
   actorId: string | null;
   actorRole: string | null;
+}
+
+interface ResolvedAsset {
+  asset: AssetRecord;
+}
+
+async function resolveAsset(
+  database: Kysely<DB>,
+  assetId: string,
+  actorId: string | null,
+  actorRole: string | null,
+): Promise<ResolvedAsset | Response> {
+  const allowed = await canAccessAsset(database, assetId, actorId, actorRole);
+  if (!allowed)
+    return jsonError({ message: "Not found", status: HttpStatus.NotFound, code: ErrorCode.NotFound });
+
+  const asset = await getAsset(database, assetId);
+  if (!asset)
+    return jsonError({ message: "Asset not found", status: HttpStatus.NotFound, code: ErrorCode.NotFound });
+
+  return { asset };
 }
 
 export function assetRoutes({ database, config }: { database: Kysely<DB>; config: Config }) {
@@ -356,13 +378,9 @@ async function handleServeRaw({
   actorId,
   actorRole,
 }: ServeRawOpts): Promise<Response> {
-  const allowed = await canAccessAsset(database, assetId, actorId, actorRole);
-  if (!allowed)
-    return jsonError({ message: "Not found", status: HttpStatus.NotFound, code: ErrorCode.NotFound });
-
-  const asset = await getAsset(database, assetId);
-  if (!asset)
-    return jsonError({ message: "Asset not found", status: HttpStatus.NotFound, code: ErrorCode.NotFound });
+  const resolved = await resolveAsset(database, assetId, actorId, actorRole);
+  if (resolved instanceof Response) return resolved;
+  const { asset } = resolved;
 
   const filePath = getAssetFilePath(uploadDir, asset.storage_path);
   if (!existsSync(filePath))
@@ -385,13 +403,8 @@ async function handleServeCompressed({
   actorId,
   actorRole,
 }: ServeCompressedOpts): Promise<Response> {
-  const allowed = await canAccessAsset(database, assetId, actorId, actorRole);
-  if (!allowed)
-    return jsonError({ message: "Not found", status: HttpStatus.NotFound, code: ErrorCode.NotFound });
-
-  const asset = await getAsset(database, assetId);
-  if (!asset)
-    return jsonError({ message: "Asset not found", status: HttpStatus.NotFound, code: ErrorCode.NotFound });
+  const resolved = await resolveAsset(database, assetId, actorId, actorRole);
+  if (resolved instanceof Response) return resolved;
 
   const compressedFilename = `${assetId}_${variant}.webp`;
 
@@ -421,13 +434,9 @@ async function handleDownload({
   actorId,
   actorRole,
 }: ServeRawOpts): Promise<Response> {
-  const allowed = await canAccessAsset(database, assetId, actorId, actorRole);
-  if (!allowed)
-    return jsonError({ message: "Not found", status: HttpStatus.NotFound, code: ErrorCode.NotFound });
-
-  const asset = await getAsset(database, assetId);
-  if (!asset)
-    return jsonError({ message: "Asset not found", status: HttpStatus.NotFound, code: ErrorCode.NotFound });
+  const resolved = await resolveAsset(database, assetId, actorId, actorRole);
+  if (resolved instanceof Response) return resolved;
+  const { asset } = resolved;
 
   const filePath = getAssetFilePath(uploadDir, asset.storage_path);
   if (!existsSync(filePath))
