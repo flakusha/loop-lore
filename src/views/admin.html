@@ -617,6 +617,85 @@
                 </template>
               </div>
             </div>
+            <!-- Stable Diffusion Info -->
+            <div style="margin-top: var(--space-6)">
+              <h3 style="font-size: 16px; font-weight: 600; margin-bottom: var(--space-3)">
+                Stable Diffusion
+              </h3>
+              <div
+                style="
+                  padding: var(--space-4);
+                  background: var(--bg-secondary, #f8f9fa);
+                  border-radius: 6px;
+                  border: 1px solid var(--border-default, #e9ecef);
+                "
+              >
+                <div
+                  style="
+                    display: flex;
+                    align-items: center;
+                    gap: var(--space-2);
+                    margin-bottom: var(--space-3);
+                  "
+                >
+                  <span
+                    style="
+                      display: inline-block;
+                      width: 8px;
+                      height: 8px;
+                      border-radius: 50%;
+                      background: #ffc107;
+                    "
+                  ></span>
+                  <strong>Pending Implementation</strong>
+                  <span style="font-size: 12px; color: var(--text-secondary, #6c757d)">
+                    — Full support coming with SD.CPP, ComfyUI & external API integrations
+                  </span>
+                </div>
+                <div
+                  style="
+                    display: grid;
+                    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+                    gap: var(--space-3);
+                    font-size: 13px;
+                  "
+                >
+                  <div>
+                    <div style="color: var(--text-secondary, #6c757d); margin-bottom: 2px">Status</div>
+                    <div style="font-weight: 500">Not configured</div>
+                  </div>
+                  <div>
+                    <div style="color: var(--text-secondary, #6c757d); margin-bottom: 2px">
+                      Active Backend
+                    </div>
+                    <div style="font-weight: 500">None</div>
+                  </div>
+                  <div>
+                    <div style="color: var(--text-secondary, #6c757d); margin-bottom: 2px">Model</div>
+                    <div style="font-weight: 500">—</div>
+                  </div>
+                  <div>
+                    <div style="color: var(--text-secondary, #6c757d); margin-bottom: 2px">
+                      Supported Backends
+                    </div>
+                    <div style="font-weight: 500">SD.CPP, ComfyUI, External API</div>
+                  </div>
+                </div>
+                <div
+                  style="
+                    margin-top: var(--space-3);
+                    padding-top: var(--space-3);
+                    border-top: 1px solid var(--border-default, #e9ecef);
+                    font-size: 12px;
+                    color: var(--text-secondary, #6c757d);
+                  "
+                >
+                  Image generation will be available once a Stable Diffusion backend is configured. Supported
+                  backends: local SD.CPP server, ComfyUI workflow engine, or external API (e.g. Stability AI,
+                  Replicate).
+                </div>
+              </div>
+            </div>
           </div>
         </template>
       </div>
