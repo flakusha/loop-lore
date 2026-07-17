@@ -22,7 +22,7 @@ import {
 let ctx: BrowserTestContext;
 
 beforeAll(async () => {
-  // eslint-disable-next-line unicorn/no-top-level-assignment-in-function -- shared test context must outlive the hook
+   
   ctx = await createBrowserTest();
   await seedAll(ctx.db);
 }, 45_000);
