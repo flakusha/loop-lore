@@ -52,30 +52,6 @@ the walls as you enter, illuminating a vast chamber...
 
 Machine-readable format for import into other instances or tools.
 
-```json
-{
-  "spec": "loop-lore-chat-v1",
-  "chat": {
-    "name": "The Lost Temple of Ares",
-    "created_at": "2026-01-15T10:00:00Z",
-    "world": "Forgotten Realm",
-    "participants": [
-      { "name": "Alice", "type": "user" },
-      { "name": "Lyra", "type": "character" }
-    ]
-  },
-  "messages": [
-    {
-      "id": "msg-uuid",
-      "parent_id": null,
-      "actor": "Alice",
-      "content": "I push open the heavy stone door.",
-      "timestamp": "2026-01-15T10:00:00Z"
-    }
-  ]
-}
-```
-
 ### PDF Export (Future)
 
 Formatted PDF with chapter headers, character portraits, and page numbers.

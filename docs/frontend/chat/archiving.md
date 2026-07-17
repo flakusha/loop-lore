@@ -55,12 +55,6 @@ Given a tree where message A is the root, B is its child, and B has children D a
 
 ## Restore Flow (Admin/Chat Master Only)
 
-1. Enable "Show archived" from the More menu in the chat header
-2. Archived messages appear in the timeline with a dimmed background and an "Archived" tag
-3. Each archived message has a "Restore" button (restore arrow icon)
-4. Clicking restore on a parent also restores its descendants (if no conflicts exist)
-5. Restore is a htmx PATCH to `/api/chats/:chatId/messages/:msgId/restore`
-
 ---
 
 ## Hard Delete (Admin Only, Rare)

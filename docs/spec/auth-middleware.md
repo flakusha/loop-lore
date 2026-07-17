@@ -88,26 +88,9 @@ username=alice&password=...
 
 Server:
 
-1. Lookup user by username
-2. Verify password hash (scrypt via `Bun.password.verify`)
-3. Check `user.status` is not `disabled`/`deactivated`
-4. Generate UUID token → store SHA-256 hash + metadata in `sessions`
-5. Respond `200 OK` + `Set-Cookie: ll_token` (HttpOnly) + `HX-Redirect: /views/chat`
-
-> `maxSessionsPerUser` enforcement is not yet implemented.
-
 ### Validation (every request)
 
 `authenticate()` does:
-
-1. Extract `Bearer <token>` from Authorization header
-2. Early reject: missing header, empty token
-3. SHA-256 hash → sessions table lookup
-4. Reject: invalid hash, expired session (clean up row)
-5. Fetch user role
-6. Reject: user deleted (clean up session)
-7. Update `last_activity` (session) + `last_seen_at` (user) — fire-and-forget
-8. Return `RequestContext { userId, userRole, sessionId }`
 
 ### Expiration
 
@@ -116,14 +99,6 @@ Server:
 - No periodic cleanup for MVP. Future: background sweep every N minutes
 
 ## RequestContext
-
-```typescript
-interface RequestContext {
-  userId: string | null;
-  userRole: "admin" | "user" | "viewer" | "solo" | null;
-  sessionId: string | null;
-}
-```
 
 - `userId` / `sessionId` are `null` only in solo/demo mode before any auth runs
 - `userRole` is `null` before auth, then populated with actual role
@@ -150,26 +125,9 @@ When `config.auth.required = false`:
 
 ### Planned middleware (post-MVP)
 
-```typescript
-function requireRole(...roles: string[]): Middleware {
-  return async (request, context, next) => {
-    if (!context.userRole || !roles.includes(context.userRole)) {
-      return jsonError("Forbidden", 403, "FORBIDDEN");
-    }
-    return next();
-  };
-}
-```
-
 ### Current (MVP)
 
 Inline checks in route handlers:
-
-```typescript
-if (context.userRole !== "admin") {
-  return jsonError("Forbidden", HttpStatus.Forbidden, "FORBIDDEN");
-}
-```
 
 ### Permission matrix
 
@@ -194,17 +152,6 @@ if (context.userRole !== "admin") {
 ### Login throttle
 
 Simple per-IP in-memory counter:
-
-```typescript
-interface RateBucket {
-  count: number;
-  windowStart: number;
-}
-
-const loginAttempts = new Map<string, RateBucket>();
-const WINDOW_MS = 60_000; // 1 minute
-const MAX_ATTEMPTS = 10; // per window
-```
 
 Logic:
 
@@ -234,14 +181,6 @@ Same mechanism, separate bucket, lower limit (e.g., 3 per hour per IP).
 
 ### POST /api/auth/register
 
-```json
-{
-  "username": "alice",
-  "displayName": "Alice",
-  "password": "securePassword123"
-}
-```
-
 Validation:
 
 - Username: 3-32 chars, alphanumeric + underscore, unique
@@ -259,16 +198,6 @@ token_hash → sessions row).
 ### GET /api/auth/me
 
 Returns:
-
-```json
-{
-  "id": "uuid",
-  "username": "alice",
-  "displayName": "Alice",
-  "role": "user",
-  "createdAt": "2026-01-01T00:00:00.000Z"
-}
-```
 
 ## Security Considerations
 

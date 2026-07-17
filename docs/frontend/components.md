@@ -135,21 +135,6 @@ A lightweight browser-compatible logger for debugging Alpine.js components and h
 
 ### API
 
-```typescript
-import { createBrowserLogger, getBrowserLogger } from "../logger";
-
-// Create logger with level and module
-const log = createBrowserLogger("debug", "chat");
-
-// Log with structured metadata (async)
-await log.info("Message sent", { messageId: "abc123", tokens: 150 });
-await log.warn("Generation slow", { elapsedMs: 5000, model: "claude-3-opus" });
-await log.error("API failed", { error: err.message, status: 500 });
-
-// Child loggers with inherited bindings
-const reqLog = log.child({ requestId: "req_123" });
-```
-
 ### Log Levels
 
 | Level | Numeric | Console method |
@@ -178,21 +163,6 @@ Uses ISO 8601 format parseable by `new Date()`:
 3. **Async:** Uses `setImmediate`/`requestIdleCallback` for non-blocking writes
 
 ### Usage in Alpine.js Components
-
-```typescript
-// In Alpine.js component
-window.chatState = function () {
-  const log = createBrowserLogger("debug", "chat");
-
-  return {
-    async sendMessage() {
-      await log.debug("Sending message", { content: this.input });
-      // ... send logic
-      await log.info("Message sent", { id: response.id });
-    },
-  };
-};
-```
 
 ---
 
@@ -295,14 +265,6 @@ A grammar checker runs on the field content. Can be triggered manually
 or configured to run automatically on blur.
 
 **How it works:**
-
-1. User types text in the field
-2. Grammar check runs (client-side via LanguageTool API or similar)
-3. Errors are underlined with colored squiggles
-4. Hovering an error shows a tooltip with the suggestion
-5. Clicking a suggestion applies the fix
-
-**UI:**
 
 ```
 ┌─────────────────────────────────────────┐
@@ -640,28 +602,6 @@ Preview renders markdown client-side (no server call). Toggle is instant.
 ### Field Configuration
 
 Each enhanced text field can be configured with flags:
-
-```typescript
-interface EnhancedTextFieldConfig {
-  // Feature flags
-  highlight?: boolean; // Enable syntax highlighting
-  grammar?: boolean; // Enable grammar check
-  llm?: boolean; // Enable LLM improvement
-  preview?: boolean; // Enable markdown preview
-  tokenCount?: boolean; // Show token counter
-
-  // Limits
-  softLimit?: number; // Token soft limit (default 500)
-  hardLimit?: number; // Token hard limit (default 2000)
-
-  // LLM settings
-  llmActions?: string[]; // Available AI actions (subset of defaults)
-  llmContext?: string; // Extra context for LLM requests
-
-  // Content type
-  contentType?: "markdown" | "toml" | "json" | "dice" | "html" | "auto";
-}
-```
 
 **Default configs by field type:**
 

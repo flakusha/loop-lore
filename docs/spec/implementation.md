@@ -75,20 +75,9 @@ RequestContext { userId, userRole, sessionId }
 
 Opaque session token model (no JWT dependency):
 
-1. Extract `Authorization: Bearer <token>` header
-2. SHA-256 hash the token
-3. Look up `sessions` table by `token_hash`
-4. Verify expiration, update `last_activity`
-5. Fetch `users.role` for the session's `user_id`
-6. Return `RequestContext`
-
-Solo/demo mode (`auth.required: false`):
-
 - Bypasses token check
 - Returns a singleton solo user context
 - No DB lookup per request
-
-#### Pipeline Runner (`src/middleware/pipeline.ts`)
 
 `compose(middleware[], finalHandler)` — chains middleware left-to-right. Each
 middleware receives `(request, context, next)` and either returns `Response` to
@@ -134,37 +123,7 @@ TypeBox (swap-in alternative). Each route group gets a companion schema file
 
 #### Pattern
 
-```ts
-// src/schemas/shared-fields.ts
-export const uidField = z.string().uuid();
-export const displayNameField = z.string().min(1).max(100);
-
-// src/routes/chats.schema.ts
-export const CreateChatSchema = z.object({
-  name: displayNameField,
-  type: z.nativeEnum(ChatType).optional().default(ChatType.Direct),
-  participantIds: z.array(uidField).optional(),
-});
-
-// route handler
-const body = CreateChatSchema.parse(await parseBody(request));
-// body is fully typed: { name: string; type?: ChatType; ... }
-```
-
-#### TypeBox Alternative
-
-TypeBox is a drop-in alternative to Zod with a smaller bundle (~5KB vs ~11KB
-min+gzip) and faster validation. API differences: object notation vs method
-chaining, `Static<typeof T>` vs `z.infer`. Swap if bundle size ever matters.
-Both work with `bun build` zero config — pure TypeScript, no native deps.
-
-#### Future: Elysia Framework
-
-[Elysia](https://elysiajs.com) is the best Bun-native framework with built-in
-validation (TypeBox-based `t`), OpenAPI generation (`@elysiajs/swagger`), and
-end-to-end type safety via Eden Treaty. Evaluating post-MVP — migration requires
-full server rewrite from `Bun.serve()` + custom router. Not for MVP. Tracked
-for v1+.
+See `src/schemas/shared-fields.ts` for Zod schema fragments.
 
 ### Database Layer
 
@@ -177,260 +136,7 @@ deps. [Kysely](https://kysely.dev/) provides type-safe query building on top.
 
 1. **SQLite (default):** Kysely with `BunSqliteDialect`:
 
-   ```typescript
-   import { Database } from "bun:sqlite";
-   import { Kysely } from "kysely";
-   import { BunSqliteDialect } from "kysely/bun-sqlite";
-
-   const dialect = new BunSqliteDialect({
-     database: new Database("data.db"),
-   });
-   const db = new Kysely<DB>({ dialect });
-   ```
-
-2. **Scaling up:** Swap to `PostgresDialect` from `kysely`:
-
-   ```typescript
-   import { Kysely, PostgresDialect } from "kysely";
-   import { Pool } from "pg";
-
-   const dialect = new PostgresDialect({
-     pool: new Pool({ connectionString: process.env.DATABASE_URL }),
-   });
-   const db = new Kysely<DB>({ dialect });
-   ```
-
-3. **Same queries, different dialect** — Kysely normalizes across SQLite and
-   Postgres. Store arrays/enums as JSON text for compatibility.
-
-4. **Database Initialization** (`src/db/index.ts`):
-   - Reads `DB_TYPE` env var (default: `sqlite`)
-   - Instantiates Kysely with the appropriate dialect
-   - Runs pending migrations on startup via `Migrator`
-
-#### Schema and Migrations
-
-- Schema defined as TypeScript interfaces in `src/db/schema.ts` (Kysely table
-  types)
-- Enum values centralized in `src/db/enums.ts` (barrel over `enums-*.ts` domain
-  files) — const objects + type unions
-- Migrations managed by Kysely Migrator, stored in `src/db/migrations/`
-- Migration files are `.ts` with `up()`/`down()` exports
-- See [`docs/schema.md`](./schema.md) for full table definitions
-
-#### Current Migration Sequence
-
-| #    | File                         | What it creates                                                                                                   |
-| ---- | ---------------------------- | ----------------------------------------------------------------------------------------------------------------- |
-| 001  | `001_init.ts`                | Core tables: users, sessions, chats, actors, chat_participants, characters, messages, assets, asset_links, worlds |
-| 002  | `002_age_gate.ts`            | `birth_date`, `age_gate_accepted_at` on users                                                                     |
-| 003a | `003_generation_attempts.ts` | `generation_attempts` table                                                                                       |
-
-> **Warning**: During MVP, `data_version` defaults to `0` across all actor
-> records. When stabilising post-MVP, version bumps will be **forward-compatible
-> only**: migrations add columns/tables, never remove. Existing `v0` records
-> continue working; missing fields resolve to sensible defaults. See
-> [`docs/actors.md`](./actors.md) for full versioning contract.
-
-Future migrations (post-MVP):
-
-- `003b_story_features.ts` — locations, story_turns, quests, quest_progress,
-  world_states, npc_states, location_states, synthetic_data + new columns on
-  chats
-- `004_continuation_retry.ts` — Continuation & tree columns on
-  generation_attempts + messages
-
-### Actor System
-
-Located in `src/routes/characters.ts` (no dedicated `src/actors/` directory) —
-the `actors` table is the unified participant model. See
-[`docs/actors.md`](./actors.md) for:
-
-- **Character card imports** (SillyTavern V1/V2 — PNG-embedded and JSON)
-- **Memories**: Learned facts across conversations (`actor_memories`)
-- **Notes**: User-authored reference material (`actor_notes`)
-- **Lorebooks**: Keyword-triggered knowledge entries (`actor_lore_entries`,
-  `world_lore_entries`)
-- **Inventory**: Items, equipment, quest items (`actor_items`)
-- **Data versioning**: Forward-compatible schema evolution via `data_version`
-- **Prompt assembly**: Order of fields injected into the LLM prompt
-
-### Asset System (Replaces Gallery)
-
-Located in `src/assets/`
-
-See [`docs/assets.md`](./assets.md) for full specification.
-
-The old gallery feature is replaced by the polymorphic assets system. Assets
-support images, audio, and video with flexible linking to any entity via the
-`asset_links` table. For code/documents/data, see the
-[`docs/artifacts-system.md`](./artifacts-system.md) extension.
-
-#### Service Layer (`src/assets/service.ts`)
-
-- Encapsulates all asset database operations via Kysely
-- Methods: `create`, `list`, `link`, `unlink`, `delete`
-
-#### Controller (`src/assets/controller.ts`)
-
-- Validates uploads (size, type, mime)
-- Delegates to service
-
-#### API Routes (in `src/assets/controller.ts`, not `src/routes/assets.ts`)
-
-- `GET /api/assets` — List assets (filter by type)
-- `POST /api/assets` — Upload new asset (multipart)
-- `DELETE /api/assets/:id` — Remove asset
-- `POST /api/assets/:id/links` — Link to entity
-- `DELETE /api/assets/:id/links/:linkId` — Unlink from entity
-- `GET /api/assets/:id/raw` — Serve original file
-- `GET /api/assets/:id/compressed` — Serve compressed variant
-- `GET /api/assets/:id/thumb` — Serve thumbnail
-
-### Generation Module
-
-Located in `src/generation/`
-
-The generation module handles LLM text generation with streaming support, safety
-checks, and continuation/retry features.
-
-#### Files
-
-| File                      | Purpose                                                                                                                    |
-| ------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
-| `types.ts`                | Core types: `GenerationOptions`, `GenerationResult`, `ContinueRequest`, `RetryFromPointRequest`, repetition/policy configs |
-| `cancellation-manager.ts` | AbortController-based cancellation — user cancel, chat-switch, timeout                                                     |
-| `continuation.ts`         | Continue truncated/cancelled messages — preserves partial content, appends via child message                               |
-| `step-pipeline.ts`        | Multi-step generation pipelines with retry-from-point (generate → caption → attach)                                        |
-| `repetition-detector.ts`  | StreamingRepetitionDetector — n-gram fingerprinting to detect loops                                                        |
-| `policy-detector.ts`      | Pluggable PolicyDetector interface — register detectors, no hardcoded keywords                                             |
-| `controller.ts`           | Route handler for generation endpoints                                                                                     |
-| `index.ts`                | Barrel exports                                                                                                             |
-
-#### Key Features
-
-- **Idempotent retries**: SHA-256 key from
-  `(chat_id, parent_message_id, operation, model)` prevents duplicate
-  generations
-- **Continuation**: Partial/cancelled messages preserved — Continue creates a
-  child message chain (A → B → C)
-- **Multi-step pipelines**: Retry resumes from the failed step (not from step 0)
-- **Streaming repetition detection**: N-gram fingerprinting in the streaming
-  chunk pipeline
-- **Policy detection**: Pluggable `PolicyDetector` interface — no hardcoded
-  keyword lists
-- **Cancellation tracking**: `abort_signal_id` on `generation_attempts` for
-  AbortController coordination
-
-#### Generation Status Lifecycle
-
-A `generation_attempt` progresses through states in sequence, with terminal
-states at the end:
-
-**Forward progression:**
-
-1. `pending` — Queued, not yet picked up by worker
-2. `processing` — Actively being generated (LLM/backend call in-flight)
-3. `streaming` — Tokens are streaming to client (only for streaming providers)
-4. `completed` — Generation finished successfully, result stored
-
-**Terminal transitions from any non-completed state:**
-
-- `failed` — Error occurred (API error, timeout, connection failure). Can be
-  retried (new attempt)
-- `cancelled` — Stopped by user action, repetition detection, policy violation,
-  chat switch, or system abort
-
-Any of `pending`, `processing`, or `streaming` can transition directly to
-`failed` or `cancelled`.
-
-#### DB Table
-
-See `generation_attempts` in [`docs/schema.md`](./schema.md). Tracks:
-
-- Idempotency key, model, provider, status
-- Cancel reason + source (user/auto/system)
-- Streaming metadata (chunks received, chars received)
-- Repetition/policy analysis data
-- Continuation chain (`parent_attempt_id`, `continuation_count`)
-- Multi-step pipeline (`step_index`, `total_steps`)
-
-#### API Endpoints
-
-| Method | Path                           | Purpose                                            |
-| ------ | ------------------------------ | -------------------------------------------------- |
-| `POST` | `/api/generation/continue`     | Initiate continuation of partial/cancelled message |
-| `POST` | `/api/generation/retry`        | Retry generation from specified step index         |
-| `POST` | `/api/messages/:id/evaluate`   | Trigger quality evaluation (story mode)            |
-| `POST` | `/api/messages/:id/regenerate` | Request regeneration                               |
-| `GET`  | `/api/messages/:id/attempts`   | List generation attempts for a message             |
-
-### Story Module (Multi-LLM Generation)
-
-Located in `src/story/`
-
-See
-[`docs/frontend/chat/multi-llm-story.md`](./frontend/chat/multi-llm-story.md)
-for the full specification of the multi-LLM story generation system.
-
-#### Files
-
-| File                     | Purpose                                                                                                                        |
-| ------------------------ | ------------------------------------------------------------------------------------------------------------------------------ |
-| `types.ts`               | Barrel re-export of story domain types from the split type modules below                                                       |
-| `story-types.ts`         | `GameMasterConfig`, quality evaluation, `StoryContext`, `TurnManagerState` + `DEFAULT_QUALITY_THRESHOLDS`/`WEIGHTS`            |
-| `quest-types.ts`         | Quest config variants (Time/Collection/Destruction/Rescue/Discovery/Social/Composite), `QuestReward`, create/progress requests |
-| `story-events-types.ts`  | `WorldEvent`, `NpcState`, `LocationState` types                                                                                |
-| `story-api-types.ts`     | API request shapes: `StartStory`, `StepStory`, `ConfigureStory`, `GameMasterOverride`, `SyntheticGenerate`, `SyntheticTestRun` |
-| `turn-manager.ts`        | Re-export of the generalized `TurnManager` (lives in `src/turning/`)                                                           |
-| `game-master.ts`         | `GameMasterService` — LLM/Human/Hybrid turn execution, GM decisions, accept/override, inject narration, pause/resume           |
-| `quality-evaluator.ts`   | `QualityEvaluator` — multi-dimension heuristic scoring against `QualityThresholds`                                             |
-| `world-state.ts`         | `WorldStateService` — world/NPC/location state snapshots, context assembly for the GM                                          |
-| `items.ts`               | `ItemsService` — item definitions, instances, transfers                                                                        |
-| `quest-engine.ts`        | `QuestEngine` — quest lifecycle, per-chat progress tracking, reward application                                                |
-| `events/`                | World-event pipeline: `extraction.ts` (regex), `validation.ts`, `application.ts`, `index.ts`                                   |
-| `synthetic/generator.ts` | `SyntheticGenerator` — Phase 6 QA scenario derivation (all 6 `SyntheticDataType`) + `synthetic_data` status state machine      |
-| `synthetic/types.ts`     | `SyntheticCase`, `SyntheticSource` shapes                                                                                      |
-| `synthetic/runner.ts`    | `SyntheticTestRunner` — executes `SyntheticData` scenarios against the pipeline (5 modes)                                      |
-| `index.ts`               | Barrel exports                                                                                                                 |
-
-#### Synthetic Test Runner
-
-`SyntheticTestRunner` (`src/story/synthetic/runner.ts`) executes captured
-`SyntheticData` scenarios against the story pipeline and reports pass/fail per
-case. It is **read-only**: quest progression and GM escalation are evaluated
-against live DB state without mutating it, and quality scoring uses
-`QualityEvaluator` directly (no LLM).
-
-Constructor takes `SyntheticTestRunnerOptions`: `db`, an optional
-`qualityEvaluator` (constructed if omitted), `turnManagerFactory` (for
-turn-sequence orchestration replay), `gameMaster` (for live escalation
-decisions), `idGenerator`, `defaultIterations`, and `autoValidate`.
-
-**Modes** (`run(scenarioIds, mode, mutationParams?)`):
-
-| Mode          | Behavior                                                                                           |
-| ------------- | -------------------------------------------------------------------------------------------------- |
-| `replay`      | Re-run each scenario through its pipeline component; compare `actual` to `expected`                |
-| `regression`  | Same as replay; asserts results match the captured expectation                                     |
-| `mutation`    | Jitter quality inputs (`promptVariations`) and assert score variance ≤ `temperatureVariance * 100` |
-| `calibration` | Run all quality cases; aggregate scores and propose `accept`/`regenerate`/`escalate` thresholds    |
-| `stress`      | Repeat each case `defaultIterations`× and assert score consistency                                 |
-
-**Per-type execution** (dispatch on `synthetic_data.type`):
-
-| `SyntheticDataType`      | Execution                                                                               |
-| ------------------------ | --------------------------------------------------------------------------------------- |
-| `quality_evaluation`     | `QualityEvaluator.evaluate({ response, actorName })` → score + pass                     |
-| `turn_sequence`          | Structural check; `skipped` unless `turnManagerFactory` supplied                        |
-| `quest_progression`      | Read-only compute from live `quests.target` (no mutation)                               |
-| `world_state_transition` | Structural diff of `from`/`to` snapshots; `consistent` = no type changes on shared keys |
-| `regeneration_case`      | Baseline score via `QualityEvaluator`; `warranted` = baseline < `improvedScore`         |
-| `gm_escalation`          | Heuristic (active quest ⇒ escalated) when no `gameMaster`; else `skipped`               |
-
-**Result shape:**
-
-```ts
+   ts
 interface SyntheticTestCaseResult {
   scenarioId: string; // parent SyntheticData row
   caseId: string;
@@ -454,6 +160,7 @@ interface SyntheticTestRunResult {
   startedAt: string;
   finishedAt: string;
 }
+
 ```
 
 When `autoValidate` is set and a `synthetic_data` row passes every case in
@@ -713,27 +420,6 @@ Env vars override config file values (12-factor style). Mapping in
 - Git
 
 ### Installation
-
-```bash
-# Clone repository
-git clone <repository-url>
-cd loop-lore
-
-# Install dependencies
-bun install
-
-# Copy example configuration
-cp .env.example .env
-
-# Initialize database
-bun run db:migrate
-
-# Start development server
-bun run dev
-
-# In another terminal, start TUI
-bun run tui
-```
 
 ### Available Scripts
 
