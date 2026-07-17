@@ -100,6 +100,7 @@ describe("Export E2E", () => {
           size_bytes: 12,
           storage_path: "test-download.txt",
           storage_backend: "local",
+          visibility: "public",
           owner_id: SEED.user.id,
         })
         .execute();

@@ -44,7 +44,7 @@ export class WsHandler extends TransportBase<WsOptions> {
     const conn = await super.connect();
     if (this.options.url) {
       this.pingInterval = setInterval(() => {
-        this.ws?.ping();
+        (this.ws as any)?.ping?.();
       }, this.options.pingInterval ?? 30_000);
     }
     return conn;

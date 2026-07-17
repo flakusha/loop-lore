@@ -107,6 +107,13 @@ body {
   color: var(--text-primary);
 }
 
+.nav-divider {
+  height: 1px;
+  background: var(--border-default);
+  margin: var(--space-2) var(--space-3);
+  opacity: 0.5;
+}
+
 .nav-item .avatar {
   width: 32px;
   height: 32px;
@@ -1086,7 +1093,7 @@ body {
 
 .world-edit-tab {
   padding: var(--space-3) var(--space-5);
-  font-size: 14px;
+  font-size: var(--fs-base);
   font-weight: 500;
   color: var(--text-secondary);
   cursor: pointer;
@@ -1900,6 +1907,40 @@ body {
   font-weight: 600;
   color: var(--accent-red);
   margin-bottom: var(--space-3);
+}
+
+.danger-zone .zone-description {
+  margin-bottom: var(--space-3);
+  font-size: var(--fs-base-sm);
+  color: var(--text-secondary);
+}
+
+/* ============================================================
+   SETTINGS PAGE
+   ============================================================ */
+
+.settings-tab-content {
+  padding: var(--space-6);
+}
+
+.settings-section {
+  max-width: 480px;
+}
+
+.form-row {
+  display: flex;
+  gap: var(--space-2);
+  align-items: center;
+}
+
+.form-row .form-input {
+  flex: 1;
+}
+
+.form-actions {
+  display: flex;
+  gap: var(--space-2);
+  margin-top: var(--space-4);
 }
 
 /* ============================================================

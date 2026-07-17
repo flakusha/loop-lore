@@ -67,7 +67,7 @@ function ensureFrontendBuild(): string {
 // ── Create browser test context ──────────────────────────────
 
 export async function createBrowserTest(
-  overrides?: Partial<Config>,
+  overrides?: Omit<Partial<Config>, "auth"> & { auth?: Partial<Config["auth"]> },
 ): Promise<BrowserTestContext> {
   const publicDir = ensureFrontendBuild();
 

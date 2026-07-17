@@ -64,7 +64,7 @@ export function adminRoutes(opts: { database: Db; config: Config }): Elysia {
       .get(
         "/api/admin/users",
         async (ctx: any) => {
-          const { userRole, query } = ctx;
+          const { userRole } = ctx;
           if (!hasAdminAccess(userRole)) {
             return jsonError({
               message: "Admin access required",
@@ -73,22 +73,42 @@ export function adminRoutes(opts: { database: Db; config: Config }): Elysia {
             });
           }
 
-          const { page, pageSize } = query as { page: number; pageSize: number };
+          const url = new URL(ctx.request.url);
+          const { page, pageSize } = parsePagination(url.searchParams);
           const offset = (page - 1) * pageSize;
+          const q = url.searchParams.get("q");
+          const roleFilter = url.searchParams.get("role");
+          const statusFilter = url.searchParams.get("status");
 
-          const countResult = await db
-            .selectFrom("users")
-            .select(db.fn.countAll<number>().as("total"))
-            .executeTakeFirst();
-          const total = countResult?.total ?? 0;
-
-          const users = await db
+          let countQuery = db.selectFrom("users").select(db.fn.countAll<number>().as("total"));
+          let listQuery = db
             .selectFrom("users")
             .select(["id", "username", "display_name", "role", "status", "created_at", "last_seen_at"])
             .orderBy("created_at", "desc")
             .limit(pageSize)
-            .offset(offset)
-            .execute();
+            .offset(offset);
+
+          if (q) {
+            const like = `%${q}%`;
+            countQuery = countQuery.where((eb) =>
+              eb.or([eb("username", "like", like), eb("display_name", "like", like)]),
+            );
+            listQuery = listQuery.where((eb) =>
+              eb.or([eb("username", "like", like), eb("display_name", "like", like)]),
+            );
+          }
+          if (roleFilter) {
+            countQuery = countQuery.where("role", "=", roleFilter as any);
+            listQuery = listQuery.where("role", "=", roleFilter as any);
+          }
+          if (statusFilter) {
+            countQuery = countQuery.where("status", "=", statusFilter as any);
+            listQuery = listQuery.where("status", "=", statusFilter as any);
+          }
+
+          const countResult = await countQuery.executeTakeFirst();
+          const total = countResult?.total ?? 0;
+          const users = await listQuery.execute();
 
           return jsonResponse({ data: users, total, page, pageSize });
         },
@@ -366,6 +386,40 @@ export function adminRoutes(opts: { database: Db; config: Config }): Elysia {
         return jsonNoContent();
       })
 
+      // ── SD.CPP status ──────────────────────────────────────
+      .get("/api/admin/sd-status", async (ctx: any) => {
+        const { userRole } = ctx;
+        if (!hasAdminAccess(userRole)) {
+          return jsonError({
+            message: "Admin access required",
+            status: HttpStatus.Forbidden,
+            code: ErrorCode.Forbidden,
+          });
+        }
+
+        const config = opts.config;
+        const sdPort: number = (config as any).generation?.autoStart?.sdCpp?.port ?? 9010;
+        let status: "running" | "stopped" | "unknown";
+        let latencyMs: number | null = null;
+
+        try {
+          const start = Date.now();
+          const res = await fetch(`http://127.0.0.1:${String(sdPort)}/`, {
+            signal: AbortSignal.timeout(5000),
+          });
+          latencyMs = Date.now() - start;
+          status = res.ok ? "running" : "stopped";
+        } catch {
+          status = "stopped";
+        }
+
+        return jsonResponse({
+          status,
+          port: sdPort,
+          latencyMs,
+        });
+      })
+
       // ── System configuration ───────────────────────────────
       .get("/api/admin/system-config", async (ctx: any) => {
         const { userRole } = ctx;
@@ -414,7 +468,7 @@ export function adminRoutes(opts: { database: Db; config: Config }): Elysia {
       .get(
         "/api/admin/worlds",
         async (ctx: any) => {
-          const { userRole, query } = ctx;
+          const { userRole } = ctx;
           if (!hasAdminAccess(userRole)) {
             return jsonError({
               message: "Admin access required",
@@ -422,22 +476,30 @@ export function adminRoutes(opts: { database: Db; config: Config }): Elysia {
               code: ErrorCode.Forbidden,
             });
           }
-          const { page, pageSize } = query as { page: number; pageSize: number };
+          const url = new URL(ctx.request.url);
+          const { page, pageSize } = parsePagination(url.searchParams);
           const offset = (page - 1) * pageSize;
+          const q = url.searchParams.get("q");
 
-          const countResult = await opts.database
+          let countQuery = opts.database
             .selectFrom("worlds")
-            .select(opts.database.fn.countAll<number>().as("total"))
-            .executeTakeFirst();
-          const total = countResult?.total ?? 0;
-
-          const worlds = await opts.database
+            .select(opts.database.fn.countAll<number>().as("total"));
+          let listQuery = opts.database
             .selectFrom("worlds")
             .select(["id", "name", "description", "owner_id", "created_at", "updated_at"])
             .orderBy("created_at", "desc")
             .limit(pageSize)
-            .offset(offset)
-            .execute();
+            .offset(offset);
+
+          if (q) {
+            const like = `%${q}%`;
+            countQuery = countQuery.where("name", "like", like);
+            listQuery = listQuery.where("name", "like", like);
+          }
+
+          const countResult = await countQuery.executeTakeFirst();
+          const total = countResult?.total ?? 0;
+          const worlds = await listQuery.execute();
 
           return jsonResponse({ data: worlds, total, page, pageSize });
         },
@@ -503,7 +565,7 @@ export function adminRoutes(opts: { database: Db; config: Config }): Elysia {
       .get(
         "/api/admin/chats",
         async (ctx: any) => {
-          const { userRole, query } = ctx;
+          const { userRole } = ctx;
           if (!hasAdminAccess(userRole)) {
             return jsonError({
               message: "Admin access required",
@@ -511,22 +573,35 @@ export function adminRoutes(opts: { database: Db; config: Config }): Elysia {
               code: ErrorCode.Forbidden,
             });
           }
-          const { page, pageSize } = query as { page: number; pageSize: number };
+          const url = new URL(ctx.request.url);
+          const { page, pageSize } = parsePagination(url.searchParams);
           const offset = (page - 1) * pageSize;
+          const q = url.searchParams.get("q");
+          const typeFilter = url.searchParams.get("type");
 
-          const countResult = await opts.database
+          let countQuery = opts.database
             .selectFrom("chats")
-            .select(opts.database.fn.countAll<number>().as("total"))
-            .executeTakeFirst();
-          const total = countResult?.total ?? 0;
-
-          const chats = await opts.database
+            .select(opts.database.fn.countAll<number>().as("total"));
+          let listQuery = opts.database
             .selectFrom("chats")
             .select(["id", "name", "type", "created_by", "world_id", "is_pinned", "created_at", "updated_at"])
             .orderBy("created_at", "desc")
             .limit(pageSize)
-            .offset(offset)
-            .execute();
+            .offset(offset);
+
+          if (q) {
+            const like = `%${q}%`;
+            countQuery = countQuery.where("name", "like", like);
+            listQuery = listQuery.where("name", "like", like);
+          }
+          if (typeFilter) {
+            countQuery = countQuery.where("type", "=", typeFilter as any);
+            listQuery = listQuery.where("type", "=", typeFilter as any);
+          }
+
+          const countResult = await countQuery.executeTakeFirst();
+          const total = countResult?.total ?? 0;
+          const chats = await listQuery.execute();
 
           return jsonResponse({ data: chats, total, page, pageSize });
         },
@@ -641,6 +716,7 @@ export function adminRoutes(opts: { database: Db; config: Config }): Elysia {
           const eventType = url.searchParams.get("event_type");
           const userIdFilter = url.searchParams.get("user_id");
           const entityType = url.searchParams.get("entity_type");
+          const q = url.searchParams.get("q");
 
           let query = opts.database
             .selectFrom("log_entries")
@@ -658,13 +734,30 @@ export function adminRoutes(opts: { database: Db; config: Config }): Elysia {
           if (entityType) {
             query = query.where("entity_type", "=", entityType);
           }
+          if (q) {
+            const like = `%${q}%`;
+            query = query.where("message", "like", like);
+          }
 
           const entries = await query.execute();
 
-          const countResult = await opts.database
+          let countQuery = opts.database
             .selectFrom("log_entries")
-            .select(opts.database.fn.countAll<number>().as("total"))
-            .executeTakeFirst();
+            .select(opts.database.fn.countAll<number>().as("total"));
+          if (eventType) {
+            countQuery = countQuery.where("event_type", "=", eventType);
+          }
+          if (userIdFilter) {
+            countQuery = countQuery.where("user_id", "=", userIdFilter);
+          }
+          if (entityType) {
+            countQuery = countQuery.where("entity_type", "=", entityType);
+          }
+          if (q) {
+            const like = `%${q}%`;
+            countQuery = countQuery.where("message", "like", like);
+          }
+          const countResult = await countQuery.executeTakeFirst();
           const total = countResult?.total ?? 0;
 
           return jsonResponse({ data: entries, total, page, pageSize });

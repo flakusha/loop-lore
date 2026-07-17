@@ -5,6 +5,7 @@ const log = rootLog.child({ module: "settings" });
 
 (globalThis as any).settingsPage = function () {
   return {
+    activeTab: "general",
     displayName: "",
     birthDate: "",
     theme: "default",

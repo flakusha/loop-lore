@@ -106,7 +106,7 @@ export class DynamicResponsePolicy {
       if (encoded) {
         headers.set("Content-Encoding", encoded.encoding);
         headers.set("Vary", this.mergeVary(headers.get("Vary")));
-        return new Response(encoded.buffer, { status: response.status, headers });
+        return new Response(new Uint8Array(encoded.buffer), { status: response.status, headers });
       }
     }
 

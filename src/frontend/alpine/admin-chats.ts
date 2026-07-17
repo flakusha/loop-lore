@@ -18,13 +18,16 @@ export const adminChats = {
   chatTotal: 0,
   loadingChats: false,
   confirmDeleteChat: "",
+  chatSearch: "",
+  chatTypeFilter: "",
 
   async loadChats() {
     this.loadingChats = true;
     try {
-      const res = await fetch(`/api/admin/chats?page=${this.chatPage}&pageSize=${(this as any).pageSize}`, {
-        headers: { Accept: "application/json" },
-      });
+      let url = `/api/admin/chats?page=${this.chatPage}&pageSize=${(this as any).pageSize}`;
+      if (this.chatSearch) url += `&q=${encodeURIComponent(this.chatSearch)}`;
+      if (this.chatTypeFilter) url += `&type=${this.chatTypeFilter}`;
+      const res = await fetch(url, { headers: { Accept: "application/json" } });
       if (res.ok) {
         const data = await res.json();
         this.adminChats = data.data || [];
@@ -59,5 +62,15 @@ export const adminChats = {
     } catch {
       showToast("error", "Network error");
     }
+  },
+  searchChats() {
+    this.chatPage = 1;
+    this.loadChats();
+  },
+  clearChatFilters() {
+    this.chatSearch = "";
+    this.chatTypeFilter = "";
+    this.chatPage = 1;
+    this.loadChats();
   },
 };

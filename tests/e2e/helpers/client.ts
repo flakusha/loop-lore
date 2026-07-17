@@ -49,7 +49,7 @@ export function createClient(baseUrl: string) {
     if (setCookie) {
       const match = /ll_token=([^;]+)/.exec(setCookie);
       if (match) {
-        token = match[1];
+        token = match[1] ?? null;
       }
     }
 
@@ -148,7 +148,7 @@ export function createClient(baseUrl: string) {
       const setCookie = res.headers.get("Set-Cookie");
       if (setCookie) {
         const match = /ll_token=([^;]+)/.exec(setCookie);
-        if (match) token = match[1];
+        if (match) token = match[1] ?? null;
       }
       return res.ok;
     },

@@ -4,20 +4,50 @@
     <button class="hamburger" x-on:click="window.toggleSidebar()" data-testid="hamburger">☰</button>
     <span class="title" x-text="'Settings'"></span>
     <div class="actions">
-      <button class="btn btn-primary" @click="saveGeneral()" :disabled="!loadable" data-testid="save-general">
-        Save General
-      </button>
+      <template x-if="activeTab === 'general'">
+        <button class="btn btn-primary" @click="saveGeneral()" :disabled="!loaded" data-testid="save-general">
+          Save General
+        </button>
+      </template>
+      <template x-if="activeTab === 'api'">
+        <button
+          type="button"
+          class="btn btn-primary"
+          :disabled="saving"
+          @click="saveApi()"
+          data-testid="save-api"
+        >
+          Save API Settings
+        </button>
+      </template>
     </div>
   </header>
 
-  <main class="main-content" style="padding-top: 0">
-    <div class="chat-area">
-      <!-- General Settings -->
-      <div class="empty-state" style="padding: var(--space-6)" data-testid="settings-general">
-        <div class="icon" style="font-size: 32px; margin-bottom: var(--space-4)">⚙</div>
-        <div class="title">General Settings</div>
+  <main class="main-content">
+    <div class="chat-area" style="max-width: 960px; margin: 0 auto; width: 100%">
+      <!-- Tab Bar -->
+      <div class="world-edit-tabs">
+        <button
+          class="world-edit-tab"
+          :class="{ active: activeTab === 'general' }"
+          @click="activeTab = 'general'"
+        >
+          General
+        </button>
+        <button class="world-edit-tab" :class="{ active: activeTab === 'chat' }" @click="activeTab = 'chat'">
+          Chat
+        </button>
+        <button class="world-edit-tab" :class="{ active: activeTab === 'api' }" @click="activeTab = 'api'">
+          API
+        </button>
+        <button class="world-edit-tab" :class="{ active: activeTab === 'data' }" @click="activeTab = 'data'">
+          Data
+        </button>
+      </div>
 
-        <div style="margin-top: var(--space-6); width: 100%; max-width: 400px">
+      <!-- General Tab -->
+      <div x-show="activeTab === 'general'" class="settings-tab-content" data-testid="settings-general">
+        <div class="settings-section">
           <div class="form-group">
             <label class="form-label" for="displayName">Display Name</label>
             <input
@@ -46,7 +76,7 @@
             >
               <option value="default">Default (Dark)</option>
               <option value="light">Light</option>
-              <option value="right">Bright</option>
+              <option value="bright">Bright</option>
               <option value="colorful">Colorful</option>
               <option value="monochrome">Monochrome</option>
               <option value="no-icons">No Icons</option>
@@ -72,10 +102,9 @@
         </div>
       </div>
 
-      <!-- Chat Settings -->
-      <div class="empty-state" style="padding: var(--space-6)" data-testid="settings-chat">
-        <h3 class="section-title">Chat Settings</h3>
-        <div style="margin-top: var(--space-4); width: 100%; max-width: 400px">
+      <!-- Chat Tab -->
+      <div x-show="activeTab === 'chat'" class="settings-tab-content" data-testid="settings-chat">
+        <div class="settings-section">
           <div class="form-group">
             <span class="form-label">Enter to send</span>
             <label class="toggle">
@@ -108,10 +137,9 @@
         </div>
       </div>
 
-      <!-- API Settings -->
-      <div class="empty-state" style="padding: var(--space-6)" data-testid="settings-api">
-        <h3 class="section-title">API Settings</h3>
-        <div style="margin-top: var(--space-4); width: 100%; max-width: 400px">
+      <!-- API Tab -->
+      <div x-show="activeTab === 'api'" class="settings-tab-content" data-testid="settings-api">
+        <div class="settings-section">
           <div class="form-group">
             <label class="form-label" for="api-provider">Provider</label>
             <select
@@ -130,7 +158,7 @@
           </div>
           <div class="form-group">
             <label class="form-label" for="apiKey">API Key</label>
-            <div style="display: flex; gap: var(--space-2); align-items: center">
+            <div class="form-row">
               <input
                 type="password"
                 class="form-input"
@@ -138,7 +166,6 @@
                 name="apiKey"
                 x-model="apiKey"
                 placeholder="Enter your API key"
-                style="flex: 1"
               />
               <button type="button" class="btn btn-secondary" @click="clearApiKey()">Clear</button>
             </div>
@@ -190,33 +217,22 @@
               min="0"
               max="2"
               step="0.1"
-              style="width: 100%"
               data-testid="temp-slider"
               @input="onTempInput()"
             />
           </div>
-          <div style="display: flex; gap: var(--space-2); margin-top: var(--space-4)">
+          <div class="form-actions">
             <button type="button" class="btn btn-secondary" :disabled="saving" @click="testConnection()">
               Test Connection
-            </button>
-            <button
-              type="button"
-              class="btn btn-primary"
-              :disabled="saving"
-              @click="saveApi()"
-              data-testid="save-api"
-            >
-              Save API Settings
             </button>
           </div>
         </div>
       </div>
 
-      <!-- Data Management -->
-      <div class="empty-state" style="padding: var(--space-6)" data-testid="settings-data">
-        <h3 class="section-title">Data Management</h3>
-        <div style="margin-top: var(--space-4); width: 100%; max-width: 400px">
-          <div style="display: flex; gap: var(--space-2); margin-bottom: var(--space-4)">
+      <!-- Data Tab -->
+      <div x-show="activeTab === 'data'" class="settings-tab-content" data-testid="settings-data">
+        <div class="settings-section">
+          <div class="form-actions">
             <button type="button" class="btn btn-secondary" @click="exportAllData()" data-testid="export-all">
               Export All Data
             </button>
@@ -224,7 +240,7 @@
           </div>
           <div class="danger-zone">
             <div class="zone-title">⚠ Danger Zone</div>
-            <p style="margin-bottom: var(--space-3); font-size: 13px; color: var(--text-secondary)">
+            <p class="zone-description">
               This action permanently deletes all data. Type <strong>DELETE</strong> to confirm.
             </p>
             <input
@@ -234,7 +250,6 @@
               x-model="confirmDeleteText"
               @input="onConfirmDeleteInput()"
               placeholder='Type "DELETE" to confirm'
-              style="margin-bottom: var(--space-3); border-color: var(--accent-red)"
             />
             <button
               type="button"

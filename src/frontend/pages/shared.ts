@@ -107,7 +107,7 @@ interface FilterChip {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-interface FilterBarState {
+export interface FilterBarState {
   query: string;
   typeFilter: string;
   sortBy: string;

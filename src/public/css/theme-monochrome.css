@@ -60,4 +60,27 @@
   --z-dropdown: 100;
   --z-modal: 200;
   --z-toast: 300;
+
+/* Accent alpha variants */
+  --accent-primary-3: rgb(192 192 192 / 3%);
+  --accent-primary-5: rgb(192 192 192 / 5%);
+  --accent-primary-8: rgb(192 192 192 / 8%);
+  --accent-primary-12: rgb(192 192 192 / 12%);
+  --accent-primary-15: rgb(192 192 192 / 15%);
+  --accent-primary-22: rgb(192 192 192 / 22%);
+  --accent-primary-50: rgb(192 192 192 / 50%);
+  --accent-red-10: rgb(255 102 102 / 10%);
+  --accent-red-12: rgb(255 102 102 / 12%);
+  --accent-red-22: rgb(255 102 102 / 22%);
+  --fs-xs: 11px;
+  --fs-sm: 12px;
+  --fs-base-sm: 13px;
+  --fs-base: 14px;
+  --fs-body: 15px;
+  --fs-md: 16px;
+  --fs-lg: 18px;
+  --fs-xl: 20px;
+  --fs-2xl: 24px;
+  --fs-3xl: 32px;
+  --fs-display: 48px;
 }

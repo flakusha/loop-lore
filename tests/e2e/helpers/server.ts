@@ -28,7 +28,8 @@ import { resetSoloUserCache } from "@/middleware/index";
 /**
  * Handle import route before Elysia (body consumed by Elysia otherwise).
  */
-async function _handleImportRequest(request: Request, database: Kysely<DB>, config: Config): Promise<Response> {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export async function _handleImportRequest(request: Request, database: Kysely<DB>, config: Config): Promise<Response> {
   const { uid, safeJsonStringify, jsonParseOr } = await import("@/utils");
   const { jsonError, jsonCreated, HttpStatus } = await import("@/routes/http-utils");
   const { load: yamlLoad } = await import("js-yaml");
@@ -42,7 +43,7 @@ async function _handleImportRequest(request: Request, database: Kysely<DB>, conf
   const cookieHeader = request.headers.get("Cookie");
   const match = cookieHeader ? /ll_token=([^;]+)/.exec(cookieHeader) : null;
   if (match) {
-    const tokenHash = crypto.createHash("sha256").update(match[1]).digest("hex");
+    const tokenHash = crypto.createHash("sha256").update(match[1]!).digest("hex");
     const session = await database
       .selectFrom("sessions")
       .select(["user_id"])
@@ -207,7 +208,7 @@ function enforceE2eSafeguard(config: Config): void {
  * Port 0 = random free port.
  * @param overrides Optional partial config overrides (merged on top of defaults).
  */
-export function loadTestConfig(overrides?: Partial<Config>): Config {
+export function loadTestConfig(overrides?: Omit<Partial<Config>, "auth"> & { auth?: Partial<Config["auth"]> }): Config {
   const config = loadConfig();
   // Apply safe defaults BEFORE safeguard check so real config
   // values (real DB path, real upload dir) don't trigger rejection.
@@ -254,7 +255,7 @@ function mergeGeneration(base: Config["generation"], overrides: Partial<Config["
         // openaiCompatible is an array — deep merge
         result.providers[key as keyof typeof result.providers] = val as never;
       } else if (val && typeof val === "object") {
-        result.providers[key as keyof typeof result.providers] = { ...(base.providers as never)[key], ...val } as never;
+        result.providers[key as keyof typeof result.providers] = { ...((base.providers as unknown as Record<string, unknown>)[key] as Record<string, unknown>), ...(val as Record<string, unknown>) } as never;
       }
     }
   }
@@ -275,7 +276,7 @@ function mergeGeneration(base: Config["generation"], overrides: Partial<Config["
  *   server.close();
  */
 export async function createTestServer(
-  overrides?: Partial<Config>,
+  overrides?: Omit<Partial<Config>, "auth"> & { auth?: Partial<Config["auth"]> },
   registerMock = false,
 ): Promise<TestServer> {
   const db = createTestDb();

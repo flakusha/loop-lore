@@ -43,7 +43,8 @@ export class TelemetryTransport implements Transport {
     if (!body.ok) return Promise.resolve();
 
     try {
-      navigator.sendBeacon(this.url, body.value);
+      const blob = new Blob([body.value], { type: "application/json" });
+      navigator.sendBeacon(this.url, blob);
     } catch {
       fetch(this.url, {
         method: "POST",

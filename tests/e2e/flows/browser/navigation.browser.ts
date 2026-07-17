@@ -124,7 +124,7 @@ describe("Navigation E2E", () => {
           headers: [...all].map((h) => ({
             parentTag: h.parentElement?.tagName || "",
             parentId: h.parentElement?.id || "",
-            testid: h.dataset.testid || "",
+            testid: (h as HTMLElement).dataset.testid || "",
             children: h.children.length,
             text: (h.textContent || "").trim().slice(0, 30),
           })),

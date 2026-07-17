@@ -39,6 +39,7 @@ import { isFrontendTelemetryEnabled } from "../telemetry/service";
 const VIEWS_DIR = join(import.meta.dir, "..", "views");
 const PARTIALS_DIR = join(import.meta.dir, "..", "partials");
 const COMPONENTS_DIR = join(import.meta.dir, "..", "components");
+const ICONS_DIR = join(import.meta.dir, "..", "..", "dist", "public", "icons", "tabler");
 
 const ALLOWED_VIEWS = new Set([
   "chat",
@@ -104,6 +105,24 @@ function resolveIncludes(content: string, chain = new Set<string>()): string {
   });
 }
 
+/**
+ * Replace `{{icon:name}}` directives with inline SVG content from
+ * `dist/public/icons/tabler/{name}.svg`. The dist SVGs are copied from
+ * node_modules by `src/build/copy-icons.ts` during the frontend build.
+ *
+ * Falls back to a comment placeholder if the icon file is missing so
+ * the page still renders (visible indicator for debugging).
+ */
+function resolveIcons(content: string): string {
+  return content.replaceAll(/\{\{icon:([\w-]+)\}\}/g, (_match, name: string) => {
+    const iconPath = join(ICONS_DIR, `${name}.svg`);
+    if (!existsSync(iconPath)) {
+      return `<!-- icon not found: ${name} -->`;
+    }
+    return readFileSync(iconPath, "utf8");
+  });
+}
+
 function loadView(viewName: string): string {
   const cached = viewCache.get(viewName);
   if (cached !== undefined) return cached;
@@ -111,7 +130,7 @@ function loadView(viewName: string): string {
   const viewPath = join(VIEWS_DIR, `${viewName}.html`);
   if (!existsSync(viewPath)) return "";
   const content = readFileSync(viewPath, "utf8");
-  const resolved = resolveIncludes(content);
+  const resolved = resolveIcons(resolveIncludes(content));
   viewCache.set(viewName, resolved);
   return resolved;
 }

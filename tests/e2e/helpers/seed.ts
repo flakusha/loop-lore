@@ -205,6 +205,7 @@ export async function seedMessage(db: Kysely<DB>): Promise<void> {
       actor_id: SEED.user.id,
       role: "user",
       content: SEED.message.content,
+      content_format: "markdown",
       content_type: "text",
       content_encoding: "identity",
       status: "confirmed",
@@ -221,6 +222,9 @@ export async function seedWorld(db: Kysely<DB>): Promise<void> {
       owner_id: SEED.user.id,
       name: SEED.world.name,
       description: SEED.world.description,
+      difficulty_modifier: 1,
+      difficulty_reroll: "none",
+      difficulty_state: "normal",
     })
     .execute();
 }
@@ -233,6 +237,7 @@ export async function seedLocation(db: Kysely<DB>): Promise<void> {
       world_id: SEED.world.id,
       name: SEED.location.name,
       description: SEED.location.description,
+      connections: "[]",
     })
     .execute();
 }
@@ -284,6 +289,9 @@ export async function seedQuest(db: Kysely<DB>): Promise<void> {
       status: QuestStatus.Active,
       priority: 1,
       target: 1,
+      config: "{}",
+      progress: 0,
+      narrative_hooks: "[]",
       rewards: JSON.stringify({ xp: 100, gold: 50 }),
     })
     .execute();

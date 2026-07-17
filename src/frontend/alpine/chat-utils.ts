@@ -77,7 +77,7 @@ export const chatUtils: Partial<ChatState> & ThisType<ChatState> = {
     for (let i = 0; i < msgs.length; i++) {
       const msg = { ...msgs[i] } as GroupedMessage;
       if (i > 0) {
-        const prev = msgs[i - 1];
+        const prev = msgs[i - 1]!;
         const sameRole = msg.role === prev.role;
         const timeDiff = new Date(msg.created_at as string).getTime() - new Date(prev.created_at).getTime();
         if (sameRole && timeDiff < 300_000) {
