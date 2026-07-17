@@ -1,4 +1,6 @@
-export const chatPanels = {
+import type { ChatState } from "./types";
+
+export const chatPanels: Partial<ChatState> & ThisType<ChatState> = {
   _toggleChatListHandler: null as (() => void) | null,
   _toggleGalleryHandler: null as (() => void) | null,
   _toggleCharacterInfoHandler: null as (() => void) | null,
@@ -7,21 +9,20 @@ export const chatPanels = {
   _observer: null as MutationObserver | null,
 
   registerPanelHandlers() {
-    const s = this as any;
-    s._toggleChatListHandler = () => {
+    this._toggleChatListHandler = () => {
       Alpine.store("ui").showChatList = !Alpine.store("ui").showChatList;
     };
-    s._toggleGalleryHandler = () => {
+    this._toggleGalleryHandler = () => {
       Alpine.store("ui").showGallery = !Alpine.store("ui").showGallery;
     };
-    s._toggleCharacterInfoHandler = () => {
+    this._toggleCharacterInfoHandler = () => {
       Alpine.store("ui").showCharacterInfo = true;
     };
-    document.addEventListener("toggle-chat-list", s._toggleChatListHandler);
-    document.addEventListener("toggle-gallery", s._toggleGalleryHandler);
-    document.addEventListener("toggle-character-info", s._toggleCharacterInfoHandler);
+    document.addEventListener("toggle-chat-list", this._toggleChatListHandler!);
+    document.addEventListener("toggle-gallery", this._toggleGalleryHandler!);
+    document.addEventListener("toggle-character-info", this._toggleCharacterInfoHandler!);
 
-    s._panelClickHandler = (e: MouseEvent) => {
+    this._panelClickHandler = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
       const ui = Alpine.store("ui");
       const closeBtn = target.closest(
@@ -40,16 +41,16 @@ export const chatPanels = {
         ui.showChatList = false;
       }
     };
-    document.addEventListener("click", s._panelClickHandler, { capture: true });
+    document.addEventListener("click", this._panelClickHandler, { capture: true });
 
-    s._observer = new MutationObserver(() => {
-      if (!document.contains(s.$el)) {
-        s.destroy();
+    this._observer = new MutationObserver(() => {
+      if (!document.contains(this.$el)) {
+        this.destroy();
       }
     });
-    s._observer.observe(document.body, { childList: true, subtree: true });
+    this._observer.observe(document.body, { childList: true, subtree: true });
 
-    s._keydownHandler = (e: KeyboardEvent) => {
+    this._keydownHandler = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
         if (Alpine.store("ui").showChatList) Alpine.store("ui").showChatList = false;
         else if (Alpine.store("ui").showGallery) Alpine.store("ui").showGallery = false;
@@ -59,21 +60,22 @@ export const chatPanels = {
         const focusedMsg = document.querySelector<HTMLElement>(".message.focused");
         if (focusedMsg) {
           const msgId = focusedMsg.dataset.messageId;
-          if (msgId) (this as any).continueMessage(msgId);
+          if (msgId) this.continueMessage(msgId);
         }
       }
     };
-    document.addEventListener("keydown", s._keydownHandler);
+    document.addEventListener("keydown", this._keydownHandler);
   },
 
   unregisterPanelHandlers() {
-    const s = this as any;
-    if (s._toggleChatListHandler) document.removeEventListener("toggle-chat-list", s._toggleChatListHandler);
-    if (s._toggleGalleryHandler) document.removeEventListener("toggle-gallery", s._toggleGalleryHandler);
-    if (s._toggleCharacterInfoHandler)
-      document.removeEventListener("toggle-character-info", s._toggleCharacterInfoHandler);
-    if (s._panelClickHandler) document.removeEventListener("click", s._panelClickHandler, true);
-    if (s._keydownHandler) document.removeEventListener("keydown", s._keydownHandler);
-    if (s._observer) s._observer.disconnect();
+    if (this._toggleChatListHandler)
+      document.removeEventListener("toggle-chat-list", this._toggleChatListHandler);
+    if (this._toggleGalleryHandler)
+      document.removeEventListener("toggle-gallery", this._toggleGalleryHandler);
+    if (this._toggleCharacterInfoHandler)
+      document.removeEventListener("toggle-character-info", this._toggleCharacterInfoHandler);
+    if (this._panelClickHandler) document.removeEventListener("click", this._panelClickHandler, true);
+    if (this._keydownHandler) document.removeEventListener("keydown", this._keydownHandler);
+    if (this._observer) this._observer.disconnect();
   },
 };

@@ -12,18 +12,18 @@ Living document tracking where codebase diverges from documented patterns. Updat
 
 Four god classes refactored to factory + dispatcher + registry pattern:
 
-| Class               | Original                              | New structure                                                                                                           |
-| ------------------- | ------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
-| `GameMasterService` | `src/story/game-master.ts` (555L)     | `src/story/gm/service.ts` + `src/story/gm/decisions/*.ts` + `registry.ts`                                              |
-| `QuestEngine`       | `src/story/quest-engine.ts` (497L)    | `src/story/quest-engine.ts` + `src/story/quests/calculators/*` + `registry.ts`                                          |
-| `QualityEvaluator`  | `src/story/quality-evaluator.ts` (505L) | `src/story/quality/index.ts` + `src/story/quality/scorers/*` + `registry.ts`                                          |
-| `PromptAssembler`   | `src/assistant/prompt-assembler.ts` (509L) | `src/assistant/prompt-assembler.ts` + `src/assistant/prompt/sections/*` + `registry.ts`                              |
+| Class               | Original                                   | New structure                                                                           |
+| ------------------- | ------------------------------------------ | --------------------------------------------------------------------------------------- |
+| `GameMasterService` | `src/story/game-master.ts` (555L)          | `src/story/gm/service.ts` + `src/story/gm/decisions/*.ts` + `registry.ts`               |
+| `QuestEngine`       | `src/story/quest-engine.ts` (497L)         | `src/story/quest-engine.ts` + `src/story/quests/calculators/*` + `registry.ts`          |
+| `QualityEvaluator`  | `src/story/quality-evaluator.ts` (505L)    | `src/story/quality/index.ts` + `src/story/quality/scorers/*` + `registry.ts`            |
+| `PromptAssembler`   | `src/assistant/prompt-assembler.ts` (509L) | `src/assistant/prompt-assembler.ts` + `src/assistant/prompt/sections/*` + `registry.ts` |
 
 ### 1.2 Remaining God Class
 
-| Class             | File                           | Lines | Why Candidate |
-| ----------------- | ------------------------------ | ----- | ------------- |
-| `ConfigSchema`    | `src/config/schema-class.ts`   | 962   | defaults, env-map, validation, JSON schema gen |
+| Class          | File                         | Lines | Why Candidate                                  |
+| -------------- | ---------------------------- | ----- | ---------------------------------------------- |
+| `ConfigSchema` | `src/config/schema-class.ts` | 962   | defaults, env-map, validation, JSON schema gen |
 
 ### 1.3 Factory Candidates (no factory, no polymorphism need)
 
@@ -45,9 +45,9 @@ God-class refactors split into small per-dimension files with consistent fieldâ†
 
 ### 2.1 Server-Side Bare JSON.parse (risky)
 
-| File                              | Line | Code                     | Status  |
-| --------------------------------- | ---- | ------------------------ | ------- |
-| `src/group-chat/turn-selector.ts` | 115  | `JSON.parse(storyState)` | Open    |
+| File                              | Line | Code                     | Status |
+| --------------------------------- | ---- | ------------------------ | ------ |
+| `src/group-chat/turn-selector.ts` | 115  | `JSON.parse(storyState)` | Open   |
 
 ### 2.2 Server-Side Bare JSON.stringify â€” All Fixed
 

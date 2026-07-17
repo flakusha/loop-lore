@@ -1,14 +1,11 @@
 // ── Admin Page component (admin.html) — orchestrator ──────────
 
-import { log as rootLog } from "./logger";
-import { adminUsers } from "./admin-users";
-import { adminWorlds } from "./admin-worlds";
-import { adminChats } from "./admin-chats";
 import { adminAudit } from "./admin-audit";
+import { adminChats } from "./admin-chats";
 import { adminModels } from "./admin-models";
 import { adminSystem } from "./admin-system";
-
-const log = rootLog.child({ module: "admin" });
+import { adminUsers } from "./admin-users";
+import { adminWorlds } from "./admin-worlds";
 
 (globalThis as any).adminPage = function () {
   return {

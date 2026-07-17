@@ -10,7 +10,7 @@ function mockDoc(overrides?: Record<string, any>) {
       parentElement: null,
       remove() {
         const idx = items.indexOf(this);
-        if (idx >= 0) items.splice(idx, 1);
+        if (idx !== -1) items.splice(idx, 1);
       },
       contains(child: any) {
         return this === child || this.children.some((c: any) => c === child || c.contains(child));

@@ -24,6 +24,7 @@ Retrieval: pattern matching, skill activation, success rate weighting.
 ## Memory Architecture
 
 Storage via polymorphic asset system. Each memory is an `assets` row linked via `asset_links`:
+
 - `asset_type = 'memory'`
 - `label`: `'episodic'`, `'semantic'`, `'procedural'`
 - `asset_links` connect to chats, characters, epics, tasks

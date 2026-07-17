@@ -7,9 +7,9 @@
  *   requireAdmin        — legacy pipeline middleware (RequestContext-based)
  *   adminViewGuard      — Elysia beforeHandle guard (reads ctx.userRole)
  */
-import type { Middleware } from "./types";
-import { jsonError, HttpStatus, ErrorCode } from "../routes/http-utils";
 import { UserRole } from "../db/enums";
+import { ErrorCode, HttpStatus, jsonError } from "../routes/http-utils";
+import type { Middleware } from "./types";
 
 function isAdminRole(userRole: string | null | undefined): boolean {
   return userRole === "admin" || userRole === UserRole.Solo;
@@ -34,8 +34,7 @@ export const requireAdmin: Middleware = async (_request, context, next) => {
  *
  * Accepts any Elysia context shape — userRole is injected via .derive() in elysia-app.ts.
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function adminViewGuard(ctx: any): Response | void {
+export function adminViewGuard(ctx: any): Response | undefined {
   if (!isAdminRole(ctx.userRole)) {
     return new Response(null, { status: 302, headers: { Location: "/" } });
   }

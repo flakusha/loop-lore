@@ -1,10 +1,8 @@
 import { jsonBody, jsonParseOr, safeJsonStringify } from "./json";
-import { log as rootLog } from "./logger";
 import { apiFetch } from "./htmx";
+import type { ChatState } from "./types";
 
-const log = rootLog.child({ module: "chat-group" });
-
-export const chatGroup = {
+export const chatGroup: Partial<ChatState> & ThisType<ChatState> = {
   _groupPaused: false,
   _mentionQuery: "",
   _mentionResults: [] as Array<{
@@ -28,12 +26,11 @@ export const chatGroup = {
   },
 
   async toggleGroupPause() {
-    const s = this as any;
-    const chat = s.currentChat;
-    if (!chat || chat.type !== "group" || !s.activeChat) return;
-    const newPaused = !s.isChatPaused(chat);
+    const chat = this.currentChat;
+    if (!chat || chat.type !== "group" || !this.activeChat) return;
+    const newPaused = !this.isChatPaused(chat);
     try {
-      const res = await apiFetch(`/api/chats/${s.activeChat}`, {
+      const res = await apiFetch(`/api/chats/${this.activeChat}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: jsonBody({ isPaused: newPaused }),
@@ -48,7 +45,7 @@ export const chatGroup = {
           const serialized = safeJsonStringify({ isPaused: newPaused });
           chat.story_state = serialized.ok ? serialized.value : "{}";
         }
-        s._groupPaused = newPaused;
+        this._groupPaused = newPaused;
         if (globalThis.Alpine) {
           try {
             Alpine.store("chat").currentChat = chat;
@@ -56,25 +53,24 @@ export const chatGroup = {
             /* store not ready */
           }
         }
-        s.$dispatch?.("show-toast", {
+        this.$dispatch?.("show-toast", {
           type: "success",
           message: newPaused ? "AI generation paused" : "AI generation resumed",
         });
       } else {
         const err = await res.json();
-        s.$dispatch?.("show-toast", { type: "error", message: err.error || "Failed to toggle pause" });
+        this.$dispatch?.("show-toast", { type: "error", message: err.error || "Failed to toggle pause" });
       }
     } catch {
-      s.$dispatch?.("show-toast", { type: "error", message: "Network error toggling pause" });
+      this.$dispatch?.("show-toast", { type: "error", message: "Network error toggling pause" });
     }
   },
 
   async loadChatParticipants() {
-    const s = this as any;
-    if (!s.activeChat) return;
+    if (!this.activeChat) return;
     try {
-      const res = await apiFetch(`/api/chats/${s.activeChat}/participants`);
-      if (res.ok) s._chatParticipants = await res.json();
+      const res = await apiFetch(`/api/chats/${this.activeChat}/participants`);
+      if (res.ok) this._chatParticipants = await res.json();
     } catch {
       /* ignore */
     }
@@ -101,7 +97,7 @@ export const chatGroup = {
   },
 
   selectMention(participant: { actor_id: string; name: string }) {
-    const textarea = (this as any).$refs?.messageInput as HTMLTextAreaElement | undefined;
+    const textarea = this.$refs.messageInput as HTMLTextAreaElement | undefined;
     if (!textarea) return;
     const value = textarea.value;
     const cursorPos = textarea.selectionStart;

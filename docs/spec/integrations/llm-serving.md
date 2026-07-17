@@ -16,39 +16,39 @@ Production (from `ai-scripts/llama-server.sh`): add `-ctk/ctv iq4_nl`, `--swa-fu
 
 ### OpenAI-Compatible Endpoints
 
-| Endpoint                       | Purpose                  |
-| ------------------------------ | ------------------------ |
-| `POST /v1/chat/completions`    | Primary — chat completions |
-| `POST /v1/completions`         | Legacy completions       |
-| `POST /v1/embeddings`          | Text embeddings          |
-| `GET /v1/models`               | List available models    |
+| Endpoint                    | Purpose                    |
+| --------------------------- | -------------------------- |
+| `POST /v1/chat/completions` | Primary — chat completions |
+| `POST /v1/completions`      | Legacy completions         |
+| `POST /v1/embeddings`       | Text embeddings            |
+| `GET /v1/models`            | List available models      |
 
 Standard OpenAI request/response shape. Streaming via SSE with `data: {...}` chunks ending with `data: [DONE]`.
 
 ### Extended llama.cpp Fields
 
-| Field | Purpose |
-| ----- | ------- |
-| `reasoning_content` | Thinking tokens (from streaming deltas) |
-| `reasoning_budget` | Max thinking tokens before visible output |
-| `grammar` | GBNF grammar for constrained generation |
-| `response_format` | `{ type: "json_schema", json_schema: {...} }` |
-| `dry_multiplier/base/allowed_length` | DRY repetition penalty |
-| `dynatemp_range/exponent` | Dynamic temperature |
-| `min_p`, `typical_p`, `xtc_probability` | Advanced sampling |
-| `cache_prompt` | Reuse cached prompt processing |
+| Field                                   | Purpose                                       |
+| --------------------------------------- | --------------------------------------------- |
+| `reasoning_content`                     | Thinking tokens (from streaming deltas)       |
+| `reasoning_budget`                      | Max thinking tokens before visible output     |
+| `grammar`                               | GBNF grammar for constrained generation       |
+| `response_format`                       | `{ type: "json_schema", json_schema: {...} }` |
+| `dry_multiplier/base/allowed_length`    | DRY repetition penalty                        |
+| `dynatemp_range/exponent`               | Dynamic temperature                           |
+| `min_p`, `typical_p`, `xtc_probability` | Advanced sampling                             |
+| `cache_prompt`                          | Reuse cached prompt processing                |
 
 ### Task-Based Generation Presets
 
-| Preset      | Temperature | Top-P | Top-K | Use Case                   |
-| ----------- | ----------- | ----- | ----- | -------------------------- |
-| `precise`   | 0.3         | 0.85  | 20    | Factual, code              |
-| `balanced`  | 0.7         | 0.9   | 40    | General chat, roleplay     |
-| `creative`  | 1.2         | 0.95  | 60    | Creative writing           |
-| `narrative` | 0.9         | 0.92  | 40    | Storytelling, literary RP  |
-| `code`      | 0.2         | 0.8   | 10    | Code, structured output    |
-| `roleplay`  | 1.0         | 0.95  | 40    | Character dialogue         |
-| `concise`   | 0.5         | 0.85  | 20    | Short answers              |
+| Preset      | Temperature | Top-P | Top-K | Use Case                  |
+| ----------- | ----------- | ----- | ----- | ------------------------- |
+| `precise`   | 0.3         | 0.85  | 20    | Factual, code             |
+| `balanced`  | 0.7         | 0.9   | 40    | General chat, roleplay    |
+| `creative`  | 1.2         | 0.95  | 60    | Creative writing          |
+| `narrative` | 0.9         | 0.92  | 40    | Storytelling, literary RP |
+| `code`      | 0.2         | 0.8   | 10    | Code, structured output   |
+| `roleplay`  | 1.0         | 0.95  | 40    | Character dialogue        |
+| `concise`   | 0.5         | 0.85  | 20    | Short answers             |
 
 Resolution: chat-level `chats.settings.generationPreset` → actor-level → global default (`balanced`).
 
@@ -56,13 +56,14 @@ Prompt template structure (inspired by SillyTavern OpenAI presets): ordered `Pro
 
 ### Context Compression (MVP — implemented)
 
-| File | Key Exports |
-| ---- | ----------- |
-| `src/generation/context-window-config.ts` | `ContextWindowConfig`, `compressMessages` types |
-| `src/generation/context-compressor.ts` | `compressMessages()` — pure function |
-| `src/generation/context-compressor.test.ts` | 19 tests |
+| File                                        | Key Exports                                     |
+| ------------------------------------------- | ----------------------------------------------- |
+| `src/generation/context-window-config.ts`   | `ContextWindowConfig`, `compressMessages` types |
+| `src/generation/context-compressor.ts`      | `compressMessages()` — pure function            |
+| `src/generation/context-compressor.test.ts` | 19 tests                                        |
 
 Strategies:
+
 - `"sliding"` — keep last N verbatim, older LRU-drop
 - `"truncate"` — drop oldest until budget fit, preserve min turns
 - `"summarize"` — uses `SummarizeFn` when wired; falls back to sliding
@@ -71,13 +72,13 @@ System messages always preserved. Floor: never below 1 user+assistant turn.
 
 ### Error Handling
 
-| Code | Action |
-| ---- | ------ |
-| 400  | Fail, no retry |
-| 404  | Retry after model load |
-| 429  | Retry with exponential backoff |
-| 5xx  | Retry up to `retries` |
-| Timeout | Abort, surface error |
+| Code     | Action                              |
+| -------- | ----------------------------------- |
+| 400      | Fail, no retry                      |
+| 404      | Retry after model load              |
+| 429      | Retry with exponential backoff      |
+| 5xx      | Retry up to `retries`               |
+| Timeout  | Abort, surface error                |
 | SSE drop | Try reconnect once, surface partial |
 
 ### Policy Detection
@@ -101,12 +102,12 @@ Config: `../ai-scripts/llama-swap.yaml`. Benefits over direct llama-server: no r
 High-throughput GPU serving with PagedAttention, continuous batching, tensor parallelism.
 OpenAI-compatible. Same `LlmServingConfig` interface. Use when GPU throughput needed.
 
-| vs llama-server | llama-server | vLLM |
-| --------------- | ------------ | ---- |
-| Hardware | CPU, Vulkan, Metal, CUDA | CUDA only |
-| Model format | GGUF | SafeTensors, GGUF |
-| Throughput | Good | Higher (continuous batching) |
-| Setup | Simple | Requires CUDA + Python |
+| vs llama-server | llama-server             | vLLM                         |
+| --------------- | ------------------------ | ---------------------------- |
+| Hardware        | CPU, Vulkan, Metal, CUDA | CUDA only                    |
+| Model format    | GGUF                     | SafeTensors, GGUF            |
+| Throughput      | Good                     | Higher (continuous batching) |
+| Setup           | Simple                   | Requires CUDA + Python       |
 
 ## Other LLM Integrations (Future)
 

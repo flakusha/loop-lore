@@ -26,34 +26,34 @@
 
 FE called GET, BE expected POST/PUT. All resolved by changing FE to correct method.
 
-| FE Call (original)                     | BE Route                              | Fix            |
-| -------------------------------------- | ------------------------------------- | -------------- |
-| `GET /api/chats/batch/archive`         | `POST /api/chats/batch/archive`       | FE→POST        |
-| `GET /api/chats/batch/delete`          | `POST /api/chats/batch/delete`        | FE→POST        |
-| `GET /api/chats/batch/export`          | `POST /api/chats/batch/export`        | FE→POST        |
-| `GET /api/chats/:id/mark-read`         | `PUT /api/chats/:id/mark-read`        | FE→PUT         |
-| `GET /api/chats/:id/read`              | No matching route                     | FE→PUT mark-read |
-| `GET /api/admin/providers/rescan`      | `POST /api/admin/providers/rescan`    | FE→POST        |
-| `DELETE /api/chats/:id/impersonate`    | Only `PUT` exists                     | FE→PUT with null |
-| `GET /api/generation/*`                | All `POST` on BE                      | False positive — Alpine uses `apiFetch()` with POST |
+| FE Call (original)                  | BE Route                           | Fix                                                 |
+| ----------------------------------- | ---------------------------------- | --------------------------------------------------- |
+| `GET /api/chats/batch/archive`      | `POST /api/chats/batch/archive`    | FE→POST                                             |
+| `GET /api/chats/batch/delete`       | `POST /api/chats/batch/delete`     | FE→POST                                             |
+| `GET /api/chats/batch/export`       | `POST /api/chats/batch/export`     | FE→POST                                             |
+| `GET /api/chats/:id/mark-read`      | `PUT /api/chats/:id/mark-read`     | FE→PUT                                              |
+| `GET /api/chats/:id/read`           | No matching route                  | FE→PUT mark-read                                    |
+| `GET /api/admin/providers/rescan`   | `POST /api/admin/providers/rescan` | FE→POST                                             |
+| `DELETE /api/chats/:id/impersonate` | Only `PUT` exists                  | FE→PUT with null                                    |
+| `GET /api/generation/*`             | All `POST` on BE                   | False positive — Alpine uses `apiFetch()` with POST |
 
 ### 2. Path Mismatches (2)
 
-| FE Call                          | BE Route                               | Fix                          |
-| -------------------------------- | -------------------------------------- | ---------------------------- |
-| `GET /api/messages/:id/variant`  | `GET /api/messages/:id/variants`       | FE→`/variants` (plural)      |
+| FE Call                          | BE Route                                 | Fix                        |
+| -------------------------------- | ---------------------------------------- | -------------------------- |
+| `GET /api/messages/:id/variant`  | `GET /api/messages/:id/variants`         | FE→`/variants` (plural)    |
 | `GET /api/plugins/:name/:action` | `POST /api/plugins/:name/enable/disable` | FE→explicit enable/disable |
 
 ### 3. Missing BE Routes (6)
 
-| FE Call                            | Resolution                            |
-| ---------------------------------- | ------------------------------------- |
-| `GET /api/admin/model-roles/:role` | Added GET route                       |
-| `GET /api/admin/users/:id/role`    | Already existed (PATCH), verified     |
-| `GET /api/users/me/settings`       | Added `PATCH /api/users/me/settings`  |
+| FE Call                            | Resolution                           |
+| ---------------------------------- | ------------------------------------ |
+| `GET /api/admin/model-roles/:role` | Added GET route                      |
+| `GET /api/admin/users/:id/role`    | Already existed (PATCH), verified    |
+| `GET /api/users/me/settings`       | Added `PATCH /api/users/me/settings` |
 | `PATCH /api/worlds/:id`            | FE→PUT (BE already had)              |
-| `POST /api/actors/import`          | Exists via `onRequest` hook           |
-| `GET /api/chats/:id/persona`       | Exists via PUT, verified compatible   |
+| `POST /api/actors/import`          | Exists via `onRequest` hook          |
+| `GET /api/chats/:id/persona`       | Exists via PUT, verified compatible  |
 
 ### 4. DELETE Route Coverage — All Verified
 

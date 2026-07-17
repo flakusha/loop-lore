@@ -56,12 +56,19 @@ export function showToast(type: string, message: string): void {
   }, 5000);
 }
 
-document.addEventListener(
-  "show-toast",
-  (e: CustomEvent<{ type?: string; message: string; icon?: string }>) => {
-    showToast(e.detail.type || "info", e.detail.message);
-  },
-);
+// Guard against double registration — ui.ts is bundled into both
+// app.js and pages.js. Module-level flags don't work across bundles,
+// so we use a DOM property on document (shared across bundles).
+const LISTENER_KEY = "__toastListenerRegistered";
+if (!(document as any)[LISTENER_KEY]) {
+  (document as any)[LISTENER_KEY] = true;
+  document.addEventListener(
+    "show-toast",
+    (e: CustomEvent<{ type?: string; message: string; icon?: string }>) => {
+      showToast(e.detail.type || "info", e.detail.message);
+    },
+  );
+}
 
 // ── Modal helpers ──────────────────────────────────────────────
 
