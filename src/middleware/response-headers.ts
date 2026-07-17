@@ -61,7 +61,7 @@ const SSE_PATTERN = /text\/event-stream/;
 /** Options for {@link ResponseHeaderPolicy.apply}. */
 export interface ApplyOptions {
   /** Incoming request (used for hashed-asset detection). */
-  request?: Request;
+  request: Request;
   /** Response to decorate with policy headers. */
   response: Response;
 }
@@ -97,7 +97,7 @@ export class ResponseHeaderPolicy {
     }
 
     if (kind === "static" && this.config.immutableHashedAssets) {
-      this.augmentImmutable({ request: request!, headers });
+      this.augmentImmutable({ request, headers });
     }
 
     return new Response(response.body, { status: response.status, headers });
@@ -105,14 +105,13 @@ export class ResponseHeaderPolicy {
 
   /**
    * Classify a response into a route kind.
-   * HTML → html; SSE (content-type) → sse; `/api/*` → api; otherwise → static.
+   * HTML → html; SSE (content-type) → sse; `/api/*` → api; static → static.
    */
   private classify({ request, response }: ApplyOptions): RouteKind {
     const contentType = response.headers.get("content-type") ?? "";
     if (contentType.startsWith("text/html")) return "html";
     if (contentType.match(SSE_PATTERN)) return "sse";
-    const pathname = request ? new URL(request.url).pathname : "";
-    if (pathname.startsWith("/api/")) return "api";
+    if (request && new URL(request.url).pathname.startsWith("/api/")) return "api";
     return "static";
   }
 
@@ -136,37 +135,41 @@ export class ResponseHeaderPolicy {
 
     if (cfg.timingAllowOrigin) headers["Timing-Allow-Origin"] = cfg.timingAllowOrigin;
 
-    if ((kind === "html" || kind === "api") && cfg.permissionsPolicy) {
-      headers["Permissions-Policy"] = cfg.permissionsPolicy;
+    switch (kind) {
+      case "html": {
+        if (cfg.csp.enabled) {
+          const headerName = cfg.csp.reportOnly
+            ? "Content-Security-Policy-Report-Only"
+            : "Content-Security-Policy";
+          headers[headerName] = this.buildCsp();
+        }
+        if (cfg.crossOriginOpenerPolicy) headers["Cross-Origin-Opener-Policy"] = cfg.crossOriginOpenerPolicy;
+        if (cfg.crossOriginEmbedderPolicy)
+          headers["Cross-Origin-Embedder-Policy"] = cfg.crossOriginEmbedderPolicy;
+        if (cfg.permissionsPolicy) headers["Permissions-Policy"] = cfg.permissionsPolicy;
+
+        // Timing-Allow-Origin for performance measurement on static assets
+        if (cfg.timingAllowOrigin) {
+          headers["Timing-Allow-Origin"] = cfg.timingAllowOrigin;
+        }
+
+        const link = this.buildLinkHeader();
+        if (link) headers.Link = link;
+
+        if (cfg.acceptClientHints.length > 0) {
+          const hints = cfg.acceptClientHints.join(", ");
+          headers["Accept-CH"] = hints;
+          headers["Critical-CH"] = hints;
+          if (cfg.saveData) headers["Save-Data"] = "on";
+        }
+        break;
+      }
+      case "api":
+        if (cfg.permissionsPolicy) headers["Permissions-Policy"] = cfg.permissionsPolicy;
+        break;
     }
 
-    if (kind === "html") {
-      if (cfg.csp.enabled) {
-        const headerName = cfg.csp.reportOnly
-          ? "Content-Security-Policy-Report-Only"
-          : "Content-Security-Policy";
-        headers[headerName] = this.buildCsp();
-      }
-      if (cfg.crossOriginOpenerPolicy) headers["Cross-Origin-Opener-Policy"] = cfg.crossOriginOpenerPolicy;
-      if (cfg.crossOriginEmbedderPolicy)
-        headers["Cross-Origin-Embedder-Policy"] = cfg.crossOriginEmbedderPolicy;
-
-      // Timing-Allow-Origin for performance measurement on static assets
-      if (cfg.timingAllowOrigin) {
-        headers["Timing-Allow-Origin"] = cfg.timingAllowOrigin;
-      }
-
-      const link = this.buildLinkHeader();
-      if (link) headers.Link = link;
-
-      if (cfg.acceptClientHints.length > 0) {
-        const hints = cfg.acceptClientHints.join(", ");
-        headers["Accept-CH"] = hints;
-        headers["Critical-CH"] = hints;
-        if (cfg.saveData) headers["Save-Data"] = "on";
-      }
-    }
-
+    // Headers shared by html and api
     if (kind === "html" || kind === "api") {
       const reporting = this.buildReportingEndpoints();
       if (reporting) headers["Reporting-Endpoints"] = reporting;
