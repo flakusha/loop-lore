@@ -22,18 +22,6 @@ Query: `?page=1&pageSize=50` (default page=1, pageSize=50, max 200)
 
 Response:
 
-```json
-{
-  "data": [...],
-  "pagination": {
-    "total": 142,
-    "page": 1,
-    "pageSize": 50,
-    "totalPages": 3
-  }
-}
-```
-
 ### Auth
 
 - All API endpoints require a session token except auth routes. Token accepted via `Authorization: Bearer <token>` header **or** the `ll_token` HttpOnly cookie (set by the web login flow).
@@ -134,20 +122,6 @@ Request body validation uses Zod schemas defined per route group in companion
 
 † Owner or admin only for mutations. Participants can GET.
 
-```json
-// POST /api/chats body
-{
-  "name": "Campaign Chat",
-  "type": "direct",
-  "mode": "story",
-  "participantIds": ["actor-uuid-1", "actor-uuid-2"],
-  "worldId": "world-uuid",
-  "currentLocationId": "loc-uuid",
-  "turnStrategy": "round_robin",
-  "gmConfig": { "narratorStyle": "descriptive", "enforceRules": true }
-}
-```
-
 ### Messages
 
 | Method | Path                           | Auth  | Request                                                        | Response                              |
@@ -163,17 +137,6 @@ Request body validation uses Zod schemas defined per route group in companion
 
 Message content is immutable after creation. To correct a message: regenerate (swipe) or delete and resend.
 † Owner, chat participant, or admin.
-
-```json
-// POST /api/chats/:id/messages body
-{
-  "content": "Hello world",
-  "role": "user",
-  "contentType": "text",
-  "parentId": null,
-  "idempotencyKey": "client-gen-uuid"
-}
-```
 
 Message listing: ordered by `created_at ASC`. `parentId` filter returns children of a specific message (tree). `before` param returns messages before a given timestamp.
 
@@ -201,18 +164,6 @@ Message listing: ordered by `created_at ASC`. `parentId` filter returns children
 | PUT    | `/api/actors/:id/memories/:memoryId` | Yes† | `{ content?, priority?, tags? }`      | Updated memory                                             |
 
 † Owner or admin.
-
-```json
-// POST /api/actors body
-{
-  "displayName": "Gandalf",
-  "actorType": "character",
-  "agentType": "ai",
-  "description": "A wise wizard...",
-  "systemPrompt": "You are Gandalf the Grey...",
-  "settings": { "temperature": 0.7 }
-}
-```
 
 ### Worlds
 

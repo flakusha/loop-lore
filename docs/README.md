@@ -108,13 +108,6 @@ This documentation is written in Markdown and can be served from the `/docs/` ro
 
 ## Getting Started
 
-```bash
-git clone <repository-url>
-cd loop-lore
-bun install
-bun run dev
-```
-
 See the [build and deployment guide](./spec/build-deploy.md) for detailed setup instructions.
 
 ## License

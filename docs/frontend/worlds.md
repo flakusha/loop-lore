@@ -174,12 +174,6 @@ of the location's own visibility.
 
 ### Discovery Flow
 
-1. User navigates to a location in the world browser
-2. Location detail shows "Group Chats" section
-3. Public chats are listed with name, participant count, last activity
-4. User clicks to join a public chat
-5. Private chats are hidden unless the user is a participant
-
 ### Joining a Location Chat
 
 - **Public:** click "Join" → automatically added as participant
@@ -283,17 +277,6 @@ When an actor moves from Location A to Location B:
 ### Connection Properties
 
 Each location connection can have metadata:
-
-```typescript
-interface LocationConnection {
-  from: string; // location_id
-  to: string; // location_id
-  travel_cost: number; // turns required (default 1)
-  bidirectional: boolean; // if false, one-way only
-  encounter_table?: LootTable; // random encounters during travel
-  description?: string; // "A narrow mountain path winds upward..."
-}
-```
 
 ### Travel in Chat
 

@@ -17,14 +17,6 @@ The application aims to be:
 
 ### Quick Start (Solo/Demo)
 
-```bash
-git clone <repo> && cd loop-lore
-bun install
-bun run dev
-# → Server at http://localhost:3000
-# → Demo mode auto-enabled (no auth, sample data created)
-```
-
 That's it. No Docker, no Postgres, no build step. SQLite file created automatically.
 
 ### Available Scripts
@@ -89,11 +81,6 @@ Server checks `Accept-Encoding` and serves compressed variant directly (no on-th
 
 ### Option A: Single binary (simplest)
 
-```bash
-bun build src/server.ts --compile --outfile loop-lore
-./loop-lore
-```
-
 Single binary with embedded SQLite. No deps needed. Works on any Linux x64.
 
 ### Option B: Docker container
@@ -110,13 +97,6 @@ COPY --from=build /app/dist ./dist
 COPY --from=build /app/node_modules ./node_modules
 EXPOSE 3000
 CMD ["bun", "run", "dist/server.js"]
-```
-
-```bash
-docker build -t loop-lore .
-docker run -p 3000:3000 -v ./loop-lore-data:/app/loop-lore-data \
-  -e SQLITE_FILENAME=loop-lore-data/loop-lore.db \
-  loop-lore
 ```
 
 ### Option C: Reverse proxy (multi-user production)

@@ -128,16 +128,6 @@ versioning didn't change, only the content did.
 
 A version-aware backfill script iterates over actors below `CURRENT_VERSION`. Most bumps require no data transformation — they just acknowledge schema compatibility:
 
-1. **If `data_version < 1`** (v0 → v1): No backfill needed. New columns default to `NULL`, read-time defaults apply
-2. **If `data_version < 2`** (v1 → v2): Optionally pre-seed memories from chat history using message extraction (expensive, opt-in)
-3. **If `data_version < 3`** (v2 → v3): Lore entries exist only if imported — nothing to backfill
-4. **If `data_version < 4`** (v3 → v4): Items are user-authored — nothing to backfill
-5. **Set `data_version = CURRENT_VERSION`**
-
-Most version bumps require **no data transformation** — they just acknowledge
-that the record is compatible with a newer schema. The heavy transformations
-(memory extraction from chat history) are opt-in and separate.
-
 ---
 
 ## Actor Table — Additional Columns
@@ -195,13 +185,6 @@ Table: `actor_memories` — defined in `src/db/schema-story.ts` and `001_init.ts
 ### Memory Lifecycle
 
 ```
-1. A conversation happens
-2. Post-generation hook (LLM idle) extracts facts → creates memory entries
-3. Background cron periodically re-processes chats to improve injection quality
-4. Redundant or superseded memories get consolidated (confidence drops, new entry replaces)
-5. Under token pressure, low-importance memories are dropped first
-6. Expired memories are pruned on read
-```
 
 - **Hook trigger**: after LLM response, if generation pipeline has capacity
 - **Cron trigger**: periodic sweep (configurable interval), re-processes recent chats
@@ -247,15 +230,10 @@ Two columns on the `worlds` table configure lorebook behavior (already in `001_i
 ### Lore Injection Flow
 
 ```
+
 1. When generating a response, the system collects:
    a. World lorebooks linked to the current chat (via asset_links where entity_type='world')
    b. Character lorebooks for each participant actor with agent_type='ai'
-2. For each lorebook, scan recent N messages (scan_depth) for keyword matches
-3. Sort matching entries by insertion_order (lower first)
-4. Deduplicate by id
-5. Fill up to token_budget from highest-priority entries
-6. Inject matched entries at specified position relative to character defs
-```
 
 ---
 
@@ -291,60 +269,6 @@ economic picture includes income, expenses, debt, and reputation.
 
 ### Financial State
 
-```typescript
-interface ActorEconomics {
-  actorId: string;
-  worldId: string;
-
-  // Liquid assets
-  gold: number; // Current gold on hand
-  copper: number; // Denomination tracking
-  silver: number;
-  platinum: number;
-
-  // Ledger (recent transactions)
-  recentTransactions: Transaction[];
-
-  // Debt
-  debts: Debt[];
-
-  // Income tracking
-  incomeSources: IncomeSource[];
-
-  // Economic reputation (per merchant/faction)
-  merchantReputation: Map<string, MerchantReputation>;
-}
-
-interface Transaction {
-  id: string;
-  type: "income" | "expense" | "trade" | "gift" | "tax" | "theft" | "quest_reward";
-  amount: number; // In gold equivalent
-  description: string; // "Bought Longsword from Ironhold Smith"
-  counterparty?: string; // actor_id of other party
-  locationId?: string; // Where it happened
-  timestamp: string;
-  chatId?: string; // Provenance — which chat it occurred in
-}
-
-interface Debt {
-  id: string;
-  creditorId: string; // Who is owed
-  amount: number;
-  interest: number; // Daily rate (0 = no interest)
-  reason: string; // "Loan for horse purchase"
-  dueAt?: string; // Optional deadline
-  paidAmount: number; // Partial payments
-  status: "active" | "paid" | "forgiven" | "defaulted";
-}
-
-interface IncomeSource {
-  type: "employment" | "quest" | "trade" | "crafting" | "loot" | "passive";
-  description: string; // "Guard at Ironhold Gate"
-  weeklyIncome: number; // Gold per week
-  active: boolean;
-}
-```
-
 ### Wealth Tiers
 
 Actors are classified by net worth (gold + item value - debt):
@@ -369,18 +293,6 @@ Wealth tier affects:
 ### Merchant Reputation
 
 Each actor's standing with merchants/factions tracks reliability:
-
-```typescript
-interface MerchantReputation {
-  merchantId: string; // actor_id of merchant/NPC
-  factionId?: string; // Or faction
-  trust: number; // 0-100, affects prices
-  transactions: number; // Total trades completed
-  lastTradeAt: string;
-  creditLimit: number; // How much debt they'll extend
-  discountPercent: number; // Loyalty discount (0-25%)
-}
-```
 
 Price modifier: `finalPrice = basePrice * (1.0 - trust/200) - discountPercent/100`
 
@@ -444,20 +356,13 @@ Recent Transactions:
 Debts accumulate interest daily (configurable per world):
 
 ```
-1. Actor takes loan: "I need 500 gold for the ship."
-2. Engine creates debt record: amount=500, interest=0.02/day
-3. Daily cron: interest accrues → debt grows by 2% per day
-4. Actor repays: "I hand over 200 gold to settle part of the debt."
-5. Engine: paidAmount += 200, remaining = 300 + accrued interest
-6. If dueAt passes unpaid → status = "defaulted"
-7. Defaulted debts affect merchant reputation globally (-20 trust with all merchants)
-```
 
 ### LLM GM Economic Events
 
 The GM can inject economic events via tool calls:
 
 ```
+
 [TOOL_CALL]
 {
   "tool": "economy_event",
@@ -471,6 +376,7 @@ The GM can inject economic events via tool calls:
   }
 }
 [/TOOL_CALL]
+
 ```
 
 Event types: `market_crash`, `boom`, `shortage`, `famine`, `plague`,
@@ -497,36 +403,10 @@ to player-to-player barter.
 
 When an actor initiates trade, the LLM emits structured intent:
 
-```typescript
-interface TradeIntent {
-  type: "trade" | "barter" | "gift" | "loan" | "commission";
-  initiator: string; // actor_id making the offer
-  target: string; // actor_id receiving the offer
-
-  // What initiator offers
-  offers: {
-    gold?: number;
-    items?: { worldItemId: string; quantity: number }[];
-  };
-
-  // What initiator requests
-  requests: {
-    gold?: number;
-    items?: { worldItemId: string; quantity: number }[];
-  };
-
-  // Context
-  description: string; // Narrative text
-  skillCheck?: {
-    skill: string; // "persuasion", "intimidation", "deception"
-    dc: number;
-  };
-}
-```
-
 #### Trade Resolution Flow
 
 ```
+
 1. LLM narrates: "I'll trade you my healing potion for that map."
    [TRADE_INTENT]
    {
@@ -559,6 +439,7 @@ interface TradeIntent {
     Healing Potion x1. Trade value: Fair (150g vs 120g)."
 
 5. LLM narrates the completed exchange
+
 ```
 
 #### Barter Valuation
@@ -566,6 +447,7 @@ interface TradeIntent {
 When items are traded without gold, the engine estimates fairness:
 
 ```
+
 tradeValue = sum(item.value × quantity) for each side
 
 fairness:
@@ -574,37 +456,26 @@ fairness:
   if ratio >= 0.5 and ratio < 0.8:  "Unfair to you"
   if ratio > 1.2 and ratio <= 2.0:  "Unfair to them"
   if ratio < 0.5 or ratio > 2.0:    "Lopsided"
+
 ```
 
 Fairness rating is injected into the prompt so the LLM can narrate
 reactions accordingly:
 
 ```
+
 [TRADE EVALUATION]
 Your offer: Healing Potion (50g) + Rope (5g) = 55g
 Their offer: Steel Shield (120g) = 120g
 Ratio: 0.46 — Lopsided in their favor. They may refuse or demand more.
 [/TRADE EVALUATION]
+
 ```
 
 #### Barter Skill Check
 
 The engine can trigger a skill check during barter to influence the
 outcome:
-
-```typescript
-interface BarterSkillCheck {
-  skill: "persuasion" | "intimidation" | "deception";
-  difficulty: number; // DC
-  modifiers: {
-    charismaBonus: number;
-    reputationModifier: number; // From merchant reputation
-    factionModifier: number; // Guild member discount
-    situationalModifier: number; // Context-dependent
-  };
-  outcome: "critical_success" | "success" | "failure" | "critical_failure";
-}
-```
 
 | Outcome          | Effect                                             |
 | ---------------- | -------------------------------------------------- |
@@ -630,28 +501,15 @@ the offered items:
 
 Both actors receive a trade record in their transaction ledger:
 
-```typescript
-interface TradeRecord {
-  id: string;
-  type: "trade" | "barter" | "gift" | "loan" | "commission";
-  timestamp: string;
-  counterparty: string; // actor_id
-  locationId?: string;
-  offered: { items: { name: string; quantity: number }[]; gold: number };
-  received: { items: { name: string; quantity: number }[]; gold: number };
-  fairness?: "fair" | "unfair_to_you" | "unfair_to_them" | "lopsided";
-  skillCheck?: { skill: string; outcome: string; roll: number };
-  reputationChange?: number; // +/- trust with counterparty
-}
-```
-
 Trade history is prompt-injectable so the LLM can reference past deals:
 
 ```
+
 [Recent Trades — {{char}}]
 - Traded Healing Potion for Map with Merchant Bob (Fair, +5 trust)
 - Gifted 100g to Ally Alice (No return expected)
 - Loaned 200g to Rogue Dan (due: 5 days, 2% daily interest)
+
 ```
 
 #### Group Chat Trading
@@ -664,12 +522,14 @@ In group chats with multiple actors, trading becomes multi-party:
 - Engine tracks all offers, resolves when accepted
 
 ```
+
 [ACTIVE OFFERS]
 - Potion of Flight (offered by Alice):
   - Bob: 150g
   - Carol: 200g + Short Sword
   - Dave: 300g
 [/ACTIVE OFFERS]
+
 ```
 
 #### Trading Restrictions
@@ -748,12 +608,6 @@ Characters (actors with `actor_type='character'`) have a **state machine** contr
 
 **Flow:**
 
-```
-1. User creates character → visibility='private', owner_id=user.id
-2. User edits character → toggles visibility to 'public'
-3. Other users can browse/search public characters
-4. Other users select the character for their chats
-5. Using a character = setting chat.impersonate_id to the character's actor_id
 ```
 
 **Default persona:** When a user starts a new chat, their own characters (where `owner_id = user.id` and `actor_type = 'character'`) are suggested as the default persona. If the user has a default persona set (`personas.is_default = 1`), that takes precedence.
@@ -852,16 +706,3 @@ The GM can manually set standing via tool call:
 
 When constructing the LLM prompt for an actor, these fields are injected in order:
 
-1. `[Actor - {{display_name}}]` — actor identity header
-2. `Description: {{description}}` — character description
-3. `Personality: {{personality}}` — character personality
-4. `Scenario: {{scenario}}` — current scenario context
-5. `[System Prompt]` — `{{system_prompt}}` section header + value
-6. `[Lorebook (before char)]` — activated actor lore entries (`position='before_char'`) and activated world lore entries from linked worlds
-7. `[Example Messages]` — `{{mes_example}}` few-shot examples
-8. `[Chat History]` — conversation history
-9. `[Lorebook (after char)]` — actor lore (`position='after_char'`) and world lore positioned after character
-10. `[Memories]` — actor memories ordered by importance DESC, within token budget
-11. `[Post-History Instructions]` — `{{post_history_instructions}}`
-
-The `welcome_message` is NOT injected into prompts — it's used only when starting a new chat as the character's first message.

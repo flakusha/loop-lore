@@ -49,19 +49,6 @@ Every server-rendered string visible to the user:
 
 The i18n module is organized into these source files:
 
-1. **`src/i18n/index.ts`** — i18n loader + `t()` function
-2. **`src/i18n/types.ts`** — `TranslationKeys` type (auto-derived from catalog keys)
-3. **`src/i18n/en.json`** — English source catalog (authoritative, all keys defined here)
-4. **`src/i18n/ja.json`** — Japanese catalog
-5. **`src/i18n/zh-CN.json`** — Simplified Chinese catalog
-6. **`src/i18n/zh-TW.json`** — Traditional Chinese catalog
-7. **`src/i18n/ko.json`** — Korean catalog
-8. **`src/i18n/ru.json`** — Russian catalog
-9. **`src/i18n/de.json`** — German catalog
-10. **`src/i18n/fr.json`** — French catalog
-11. **`src/i18n/pt-BR.json`** — Brazilian Portuguese catalog
-12. **`src/i18n/es.json`** — Spanish catalog
-
 ### Key Shape
 
 ```jsonc
@@ -109,63 +96,10 @@ The i18n module is organized into these source files:
 - HTML templates use `&#123;&#123;&#123; t("nav.chats") &#125;&#125;&#125;` directly in server-rendered partials
 - Alpine.js components get a `$t` magic property initialized from a data attribute on `<body>`:
 
-  ```html
-  <body data-t='{"swipe": "Swipe variant {current} of {total}"}'></body>
-  ```
-
-  Accessed as: `<span x-text="$t('swipe', { current: 2, total: 4 })"></span>`
-
-### Fallback Chain
-
-1. User's preferred interface language (from settings)
-2. `Accept-Language` header (browser default)
-3. `en` (English — always available, shipped in the repo as the source of truth)
-
-If a key is missing in the user's language, the same key is looked up in `en.json`. If missing there too, the raw key is returned as a developer-visible fallback.
-
-### v1 Scope
-
-v1 ships with **English only**. The catalog infrastructure (`i18n/index.ts`, key-based lookup, `&#123;&#123; ... &#125;&#125;` template syntax, session language) is in place from day one so that:
-
-- Every UI string uses `t("key")` rather than raw text
-- Adding a new language is a matter of adding a JSON file
-- Template authors write translations-aware code from the start (no retrofitting `"Chats"` → `t("nav.chats")` across 50 templates)
-
-Additional languages ship as minor releases after v1.
-
-### Translation Management
-
-- `en.json` is the **single source of truth** and is maintained by developers
-- Community translations via pull requests to `src/i18n/*.json`
-- A `src/i18n/validate.ts` script checks every locale against `en.json`:
-  - Missing keys → warning
-  - Extra keys → warning (may be stale)
-  - Interpolation mismatch → error (`&#123;verb&#125;` in key but `&#123;action&#125;` in value)
-- CI runs `bun run src/i18n/validate.ts` on PRs that touch `src/i18n/`
-
----
-
-## Layer 2: Chat / LLM Language
-
-### Definition
-
-The language the LLM is instructed to generate roleplay responses in. This is distinct from the application interface language and from the actor's preferred language.
-
-### Where It Applies
-
-- Character responses (AI-generated dialogue and narration)
-- Assistant responses (suggestions, summaries, troubleshooting)
-- Image generation prompts (the prompt sent to the image model)
-- Narration / system-generated story text
-
-### How It Works
-
-When generating a response, the system prompt is augmented with a language directive:
-
-```
-You are a character in a roleplay. The user speaks in Japanese.
+  You are a character in a roleplay. The user speaks in Japanese.
 Generate your responses in Japanese. If the user switches to English,
 match their language. Narrate actions and descriptions in Japanese.
+
 ```
 
 The language directive is **not hardcoded** — it is a template parameter derived from the _chat's generation language_ setting.
@@ -472,18 +406,6 @@ No schema changes required for v1. All language preferences are stored in existi
 
 For the translation cache, a new table if L2 caching is desired:
 
-```sql
-CREATE TABLE IF NOT EXISTS translation_cache (
-  source_id     TEXT NOT NULL,
-  field         TEXT NOT NULL,      -- e.g. 'alt_text', 'auto_description'
-  target_lang   TEXT NOT NULL,      -- BCP-47 tag
-  translated    TEXT NOT NULL,
-  created_at    TEXT NOT NULL DEFAULT (datetime('now')),
-  ttl_seconds   INTEGER NOT NULL DEFAULT 86400,
-  PRIMARY KEY (source_id, field, target_lang)
-);
-```
-
 Without L2 caching (v1 scope), the table is omitted and only L1 in-memory cache is used.
 
 ---
@@ -492,37 +414,8 @@ Without L2 caching (v1 scope), the table is omitted and only L1 in-memory cache 
 
 New file: `src/i18n/index.ts`
 
-```typescript
-/**
- * Application i18n service.
- *
- * Provides:
- * - t(key, interpolations) — static UI string lookup
- * - translateContent(text, targetLang) — LLM-based content translation
- * - resolveGenerationLanguage(chat, userActor, characterActor) — cascade resolution
- * - loadLocale(lang) — switch active catalog
- */
-
-export function t(key: string, params?: Record<string, string | number>): string;
-export async function translateContent(
-  text: string,
-  targetLang: string,
-  options?: { idempotencyKey?: string },
-): Promise<string>;
-export function resolveGenerationLanguage(chat: Chat, userActor: Actor, characterActor?: Actor): string;
-```
-
 ### `translateContent` Flow
 
-```
-1. Check L1 cache (in-memory LRU)    → hit → return
-2. Check L2 cache (DB)                → hit → return + warm L1
-3. Check rate limit (30/min)          → exceeded → return English original
-4. Check length < TRANSLATION_MAX_LENGTH → exceeded → return English original
-5. Call translation LLM
-6. Store in L2 cache (async, non-blocking)
-7. Store in L1 cache
-8. Return translation
 ```
 
 ---
@@ -585,10 +478,3 @@ All language identifiers use BCP-47 format for consistency with the `Accept-Lang
 
 Existing code that hardcodes UI strings (e.g., `res.send("<h1>Chats</h1>")`) needs to be updated to use `t("nav.chats")`:
 
-1. Identify all hardcoded UI-facing strings in templates and route handlers
-2. Extract them as keys into `en.json`
-3. Replace raw strings with `t("key")` calls
-4. Add the locale middleware to session handling
-5. Add generation language directive to system prompt builder
-
-There is no data migration — user-authored content is already stored as-authored and remains untouched.

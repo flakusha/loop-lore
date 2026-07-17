@@ -79,28 +79,6 @@ context for the asset.
 
 **How it works:**
 
-1. User types message text in input
-2. Attaches file via 📎 button, drag-and-drop, or paste
-3. File uploads to `/api/assets` on submit
-4. Message created with `attachments` array referencing asset IDs
-5. Bubble renders asset inline (images) or as file card (docs)
-
-**Data model:**
-
-```typescript
-interface MessageAttachment {
-  assetId: string; // FK to assets table
-  assetType: "image" | "document" | "audio" | "video" | "archive";
-  filename: string; // original filename
-  mimeType: string; // MIME type
-  size: number; // bytes
-  thumbnailUrl?: string; // for images: thumbnail path
-  url: string; // full asset URL
-  caption?: string; // optional alt text / description
-  generatedBy?: string; // "user" | "llm" | "vision" | "sd-cpp"
-}
-```
-
 ### Standalone Attachments (asset as message)
 
 Assets sent without accompanying text. The asset IS the message.
@@ -188,14 +166,6 @@ Media assets embed a player:
 ### Attachment Flow
 
 **From input toolbar:**
-
-1. Click 📎 button → native file picker opens
-2. Select file(s) → upload starts immediately
-3. Progress indicator on 📎 button (percentage)
-4. On success: file reference inserted in textarea at cursor
-5. On error: toast notification, file not attached
-
-**From drag-and-drop:**
 
 1. Drag file over chat area → drop zone overlay appears
 2. Drop → upload starts

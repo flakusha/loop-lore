@@ -1,12 +1,10 @@
 # Implementation Plan
 
-**v0.1 MVP — Epics 1–19: foundation hardening. All scope is MVP; no separate v0.2.**
-
-Next target: complete remaining in-progress epics — responsive UX (13), observability (16).
+**v0.1 MVP — Epics 1–19: foundation hardening.**
 
 ---
 
-## 📌 Epics
+## Epics
 
 ### 1. Core Infrastructure — ✅ Complete
 
@@ -28,8 +26,6 @@ Server, database, config, middleware, logger, transport layer.
 
 ### 2. API Layer — ✅ Complete
 
-All route controllers + router.
-
 | Task                                          | Files                      |
 | --------------------------------------------- | -------------------------- |
 | Chat CRUD + participants                      | `src/routes/chats.ts`      |
@@ -46,8 +42,6 @@ All route controllers + router.
 
 ### 3. Backend Services — ✅ Complete
 
-Generation, story, assistant, assets, age gate, profanity, dice, content encoding.
-
 | Task                                                                      | Files                                                  |
 | ------------------------------------------------------------------------- | ------------------------------------------------------ |
 | Generation module (providers, pipeline, cancellation, policy, repetition) | `src/generation/*.ts`                                  |
@@ -56,15 +50,13 @@ Generation, story, assistant, assets, age gate, profanity, dice, content encodin
 | Assets service (CRUD, upload, linking, metadata extraction)               | `src/assets/service.ts`, `metadata.ts`                 |
 | Age gate (service + controller)                                           | `src/age-gate/*.ts`                                    |
 | Profanity filter (obscenity)                                              | `src/profanity/service.ts`                             |
-| Dice engine (parse, roll, text commands)                                  | `plugins/core/dice-roller/*.ts` — plugin demonstration |
+| Dice engine (parse, roll, text commands)                                  | `plugins/core/dice-roller/*.ts`                        |
 
 ### 4. Frontend Shell — ✅ Complete
 
-Layout, themes, i18n, build pipeline, Alpine modular architecture.
-
 | Task                                                           | Files                                                       |
 | -------------------------------------------------------------- | ----------------------------------------------------------- |
-| Persistent sidebar in layout (hamburger drawer)                | `src/views/layout.html`                                     |
+| Persistent sidebar (hamburger drawer)                          | `src/views/layout.html`                                     |
 | Theme system (10 themes, CSS var switching, localStorage)      | `src/public/css/theme*.css`                                 |
 | Component CSS (app.css, gallery.css)                           | `src/public/css/*.css`                                      |
 | i18n infrastructure (en.json, `t()` function, settings toggle) | `src/frontend/alpine/i18n.ts`, `src/public/locales/en.json` |
@@ -74,8 +66,6 @@ Layout, themes, i18n, build pipeline, Alpine modular architecture.
 | 401 redirect helper (apiFetch across all calls)                | `src/frontend/alpine/htmx.ts`                               |
 
 ### 5. Chat Experience — ✅ Complete
-
-Messages, send, inline edit, media attachments, infinite scroll, generation feedback.
 
 | Task                                                           | Status |
 | -------------------------------------------------------------- | ------ |
@@ -97,15 +87,9 @@ Messages, send, inline edit, media attachments, infinite scroll, generation feed
 | Thinking process display (`<details>` expand)                  | ✅     |
 | System/narration message styling                               | ✅     |
 
-**Remaining (P2):**
-
-- Swipe variants (touch/click handling)
-- Message detail level display (stats per mode)
-- WebP→PNG conversion for LLM API compatibility
+**Remaining (P2):** Swipe variants, detail level display, WebP→PNG conversion.
 
 ### 6. Pages — ✅ Complete
-
-All view templates with Alpine components.
 
 | Task                                                            | Status |
 | --------------------------------------------------------------- | ------ |
@@ -122,8 +106,6 @@ All view templates with Alpine components.
 
 ### 7. TUI — ✅ Complete
 
-Terminal UI widgets.
-
 | Task                                                     | Files                     |
 | -------------------------------------------------------- | ------------------------- |
 | Chat widget (message list, input, scroll, typing, error) | `src/tui/chat.ts`         |
@@ -132,8 +114,6 @@ Terminal UI widgets.
 | API wiring (`handleSend` fully wired with fetch)         | `src/tui/chat.ts:180-229` |
 
 ### 8. Security & Governance — ✅ Complete
-
-Auth, rate limiting, age gate enforcement, profanity.
 
 | Task                                                     | Status |
 | -------------------------------------------------------- | ------ |
@@ -146,231 +126,189 @@ Auth, rate limiting, age gate enforcement, profanity.
 
 ### 9. Testing & Release — ✅ Complete
 
-| Task                                                              | Status                                                       | Test file                                                         |
-| ----------------------------------------------------------------- | ------------------------------------------------------------ | ----------------------------------------------------------------- |
-| `bun test` passes                                                 | ✅ Sequential: 718 pass, 0 fail. Parallel: 713 pass, 5 flaky | —                                                                 |
-| E2E web UI (auth, chats, messages, characters, assets)            | ✅ Complete                                                  | `tests/e2e/flows/{auth,chats,messages,characters,assets}.test.ts` |
-| E2E age gate (underage rejection, acceptance flow)                | ✅ Complete                                                  | `tests/e2e/flows/age-gate.test.ts`                                |
-| E2E profanity filter (message filtering)                          | ✅ Complete                                                  | `tests/e2e/flows/profanity.test.ts`                               |
-| E2E chat full (assets loading, regenerate/reroll, swipe variants) | ✅ Complete                                                  | `tests/e2e/flows/chat-full.test.ts`                               |
-| E2E browser smoke (page loads, views)                             | ⚠️ Flaky — `data-testid` mismatches, chrome timeout          | `tests/e2e/flows/browser/{smoke,chat-flow}.test.ts`               |
-| E2E browser auth (login form, htmx submit)                        | ⚠️ Flaky — `data-testid` mismatch                            | `tests/e2e/flows/browser/auth-flow.test.ts`                       |
-| Crypto unit tests (pipeline, SMK, chat-keys, actor-keys, BYOK)    | ✅ 69 tests                                                  | `src/crypto/{pipeline,smk,chat-keys,actor-keys,byok}.test.ts`     |
-| Content compress unit tests                                       | ✅ 9 tests                                                   | `src/content/compress.test.ts`                                    |
-| Logger internals unit tests                                       | ✅ 65 tests                                                  | `src/logger/{censors,formatters,levels,limits}.test.ts`           |
-| Logger transports unit tests                                      | ✅ 9 tests                                                   | `src/logger/transports/console.test.ts`                           |
-| Date utils unit tests                                             | ✅ 15 tests                                                  | `src/utils/date.test.ts`                                          |
-| Provider types unit tests                                         | ✅ 9 tests                                                   | `src/generation/providers/types.test.ts`                          |
-| Step pipeline unit tests                                          | ✅ 9 tests                                                   | `src/generation/step-pipeline.test.ts`                            |
-| Assets metadata unit tests                                        | ✅ 13 tests                                                  | `src/assets/metadata.test.ts`                                     |
-| `bun run check`                                                   | ✅ Passes (typecheck, lint, format, md:lint)                 |                                                                   |
-| Getting-started guide                                             | ✅ Exists at `docs/guide/getting-started.md`                 |                                                                   |
-| Tag v0.1.0                                                        | ❌                                                           |                                                                   |
+| Task                                                              | Status                                                | Test file                                                         |
+| ----------------------------------------------------------------- | ----------------------------------------------------- | ----------------------------------------------------------------- |
+| `bun test` passes                                                 | ✅ 718 pass, 0 fail                                   | —                                                                 |
+| E2E web UI (auth, chats, messages, characters, assets)            | ✅ Complete                                           | `tests/e2e/flows/{auth,chats,messages,characters,assets}.test.ts` |
+| E2E age gate (underage rejection, acceptance flow)                | ✅ Complete                                           | `tests/e2e/flows/age-gate.test.ts`                                |
+| E2E profanity filter (message filtering)                          | ✅ Complete                                           | `tests/e2e/flows/profanity.test.ts`                               |
+| E2E chat full (assets loading, regenerate/reroll, swipe variants) | ✅ Complete                                           | `tests/e2e/flows/chat-full.test.ts`                               |
+| E2E browser smoke (page loads, views)                             | ⚠️ Flaky — `data-testid` mismatches, chrome timeout   | `tests/e2e/flows/browser/{smoke,chat-flow}.test.ts`               |
+| E2E browser auth (login form, htmx submit)                        | ⚠️ Flaky — `data-testid` mismatch                     | `tests/e2e/flows/browser/auth-flow.test.ts`                       |
+| Crypto unit tests (pipeline, SMK, chat-keys, actor-keys, BYOK)    | ✅ 69 tests                                           | `src/crypto/{pipeline,smk,chat-keys,actor-keys,byok}.test.ts`     |
+| Content compress unit tests                                       | ✅ 9 tests                                            | `src/content/compress.test.ts`                                    |
+| Logger internals unit tests                                       | ✅ 65 tests                                           | `src/logger/{censors,formatters,levels,limits}.test.ts`           |
+| Logger transports unit tests                                      | ✅ 9 tests                                            | `src/logger/transports/console.test.ts`                           |
+| Date utils unit tests                                             | ✅ 15 tests                                           | `src/utils/date.test.ts`                                          |
+| Provider types unit tests                                         | ✅ 9 tests                                            | `src/generation/providers/types.test.ts`                          |
+| Step pipeline unit tests                                          | ✅ 9 tests                                            | `src/generation/step-pipeline.test.ts`                            |
+| Assets metadata unit tests                                        | ✅ 13 tests                                           | `src/assets/metadata.test.ts`                                     |
+| `bun run check`                                                   | ✅ Passes (typecheck, lint, format, md:lint)          |                                                                   |
+| Getting-started guide                                             | ✅ `docs/guide/getting-started.md`                    |                                                                   |
+| Tag v0.1.0                                                        | ❌                                                     |                                                                   |
 
 ---
 
----
-
-## 🏗️ v0.1 — Foundation Completion
-
-Target: solidify generation, admin, memory, responsive UX, search, i18n, observability.
+## v0.1 — Foundation Completion
 
 ### 10. Generation Foundation — ✅ Complete
 
 Tool-calling loop, provider resilience, streaming reconnect.
 
-| Task                                    | Files                                                                 | Status | Notes                                                                                                                                      |
-| --------------------------------------- | --------------------------------------------------------------------- | ------ | ------------------------------------------------------------------------------------------------------------------------------------------ |
-| LLM tool-call loop in generate-route.ts | `src/generation/generate-route.ts`                                    | ✅     | Multi-turn orchestration capped at 5 rounds. Tool defs from plugin registry injected into `tools` array.                                   |
-| Tool definition injection into requests | `src/generation/generate-route.ts`                                    | ✅     | `registry.getAllTools()` → OpenAI `tools` array. Gate on `ProviderCapabilities.tools`.                                                     |
-| `tool_calls` response parsing           | `src/generation/providers/openai-compatible.ts`                       | ✅     | SSE `delta.tool_calls` accumulation (index-based merge). Emits `tool_call` chunk events. Non-streaming also parsed.                        |
-| Tool execution + result loop            | `src/generation/generate-route.ts`                                    | ✅     | Execute tool via `ToolDefinition.handler`, store result as `tool` role message, re-inject into context, continue generation. Max 5 rounds. |
-| Provider failover (ordered fallback)    | `src/generation/providers/registry.ts`                                | ✅     | `callWithFailover()` tries providers in order, skips open circuits, records success/failure.                                               |
-| Circuit breaker pattern                 | `src/generation/providers/circuit-breaker.ts`                         | ✅     | NEW. Tracks failures per provider. Half-open probe after cooldown. Configurable thresholds. Respects `Retry-After` headers.                |
-| SSE reconnect via `Last-Event-ID`       | `src/generation/generation-routes.ts`, `src/generation/controller.ts` | ✅     | Parses `Last-Event-ID` header, calls `streamBuffer.replay(seq)`. Emits replayed events before new stream.                                  |
+| Task                                    | Files                                                                 | Status |
+| --------------------------------------- | --------------------------------------------------------------------- | ------ |
+| LLM tool-call loop in generate-route.ts | `src/generation/generate-route.ts`                                    | ✅     |
+| Tool definition injection into requests | `src/generation/generate-route.ts`                                    | ✅     |
+| `tool_calls` response parsing           | `src/generation/providers/openai-compatible.ts`                       | ✅     |
+| Tool execution + result loop            | `src/generation/generate-route.ts`                                    | ✅     |
+| Provider failover (ordered fallback)    | `src/generation/providers/registry.ts`                                | ✅     |
+| Circuit breaker pattern                 | `src/generation/providers/circuit-breaker.ts`                         | ✅     |
+| SSE reconnect via `Last-Event-ID`       | `src/generation/generation-routes.ts`, `src/generation/controller.ts` | ✅     |
 
 ### 11. Admin & Settings Architecture — ⬜ Not Started
 
-Page-vs-modal architecture, admin pages, user prefs modal, plugin management.
-
-| Task                       | Files                                       | Notes                                                                                                                                             |
-| -------------------------- | ------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Admin middleware gate      | `src/middleware/admin-gate.ts`              | NEW. Check `user.role === 'admin'`. Redirect to `/` if not.                                                                                       |
-| Admin page routes          | `src/routes/admin.ts`                       | NEW. `/admin` → redirect to `/admin/settings`. `/admin/settings/[section]` — tabbed admin pages. `/admin/users` — user management.                |
-| Admin settings tabs        | `src/views/admin/`                          | NEW. Tabs: General, API, Users, Data, About. Each tab = htmx partial. Keywords per tab for search.                                                |
-| Admin runtime config table | `src/db/migrations/`, `src/admin/config.ts` | NEW. `system_config` key-value table. Seed with `config.yaml` defaults at startup. Admin changes take effect without restart.                     |
-| User preferences modal     | `src/components/modals/settings.html`       | NEW. Modal overlay accessible from chat. Tabs: Theme, Chat Behavior, Generation, Shortcuts, Data. Live preview (theme changes apply immediately). |
-| Per-user settings API      | `src/routes/settings.ts`                    | NEW. `GET/PATCH /api/settings` → read/write `users.settings` JSON column. Auto-merge on PATCH.                                                    |
-| Plugin management API      | `src/routes/plugins.ts`                     | NEW. `GET /api/plugins` list, `POST /api/plugins/:name/enable`, `POST /api/plugins/:name/disable`. Gate on admin role.                            |
+| Task                       | Files                                       |
+| -------------------------- | ------------------------------------------- |
+| Admin middleware gate      | `src/middleware/admin-gate.ts`              |
+| Admin page routes          | `src/routes/admin.ts`                       |
+| Admin settings tabs        | `src/views/admin/`                          |
+| Admin runtime config table | `src/db/migrations/`, `src/admin/config.ts` |
+| User preferences modal     | `src/components/modals/settings.html`       |
+| Per-user settings API      | `src/routes/settings.ts`                    |
+| Plugin management API      | `src/routes/plugins.ts`                     |
 
 ### 12. Memory Foundation — ✅ Complete
 
-Keyword filtering, type normalization, context compaction, author's note, XML delimiting, KV-cache optimization.
-
-| Task                                             | Files                                              | Status |
-| ------------------------------------------------ | -------------------------------------------------- | ------ |
-| Keyword filtering on `actor_memories`            | `src/assistant/prompt/sections/memories.ts`        | ✅     |
-| `memory_type` enum: episodic/semantic/procedural | `src/db/migrations/parts/005_actor_data.ts`        | ✅     |
-| `decay_rate` + `strength` + `last_accessed_at`   | `src/db/migrations/011_memory_decay.ts`            | ✅     |
-| Context compaction at 85% threshold              | `src/generation/context-compactor.ts`              | ✅     |
-| A/N depth injection (author's note section)      | `src/assistant/prompt/sections/author-note.ts`     | ✅     |
-| Memory XML delimiting                            | `src/assistant/prompt/sections/memories.ts`        | ✅     |
-| KV-cache optimization (dynamic context section)  | `src/assistant/prompt/sections/dynamic-context.ts` | ✅     |
+| Task                                             | Files                                              |
+| ------------------------------------------------ | -------------------------------------------------- |
+| Keyword filtering on `actor_memories`            | `src/assistant/prompt/sections/memories.ts`        |
+| `memory_type` enum: episodic/semantic/procedural | `src/db/migrations/parts/005_actor_data.ts`        |
+| `decay_rate` + `strength` + `last_accessed_at`   | `src/db/migrations/011_memory_decay.ts`            |
+| Context compaction at 85% threshold              | `src/generation/context-compactor.ts`              |
+| A/N depth injection (author's note section)      | `src/assistant/prompt/sections/author-note.ts`     |
+| Memory XML delimiting                            | `src/assistant/prompt/sections/memories.ts`        |
+| KV-cache optimization (dynamic context section)  | `src/assistant/prompt/sections/dynamic-context.ts` |
 
 ### 13. Frontend Responsive & UX — ✅ Complete
 
-Mobile breakpoints, touch targets, swipe sidebar, HTMX search/filter, filter bar component,
-keyboard shortcuts, bulk actions, message archiving, loading indicators, empty states, load more.
-All Epic 13 tasks implemented and verified.
-
-| Task                                             | Files                                                                     | Status  | Notes                                                                                                                                                        |
-| ------------------------------------------------ | ------------------------------------------------------------------------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Mobile breakpoints (768px, 480px)                | `src/public/css/app.css`                                                  | ✅ Done | Mobile-first base. `@media (min-width: 768px)` desktop enhancements. `@media (max-width: 480px)` small phone.                                                |
-| Container queries on input bar                   | `src/public/css/app.css`                                                  | ✅ Done | `container-type: inline-size` on `.chat-input-bar`. Collapse extra buttons when bar < 420px/320px.                                                           |
-| 100dvh + safe-area-inset                         | `src/views/layout.html`, `src/public/css/app.css`                         | ✅ Done | `height: 100dvh` on body, `padding-bottom: env(safe-area-inset-bottom)` on input bar.                                                                        |
-| 44px touch targets                               | `src/public/css/app.css`                                                  | ✅ Done | `@media (hover: none) and (pointer: coarse)` rule for buttons, nav links, list items.                                                                        |
-| Responsive sidebar                               | `src/public/css/app.css`                                                  | ✅ Done | Mobile: `position: fixed`, 80% width, `transform: translateX(-100%)`, backdrop `rgba(0,0,0,0.4)`. Desktop: CSS var `--sidebar-width`, resizable drag handle. |
-| View toggle (grid/list)                          | `src/views/gallery.html`                                                  | ✅ Done | Alpine `x-data`. CSS grid vs vertical rows. Preference persisted.                                                                                            |
-| Chat pin/favorite                                | `src/routes/chats.ts`, `src/db/`                                          | ✅ Done | `is_pinned` column toggle via PATCH. Star icon in chat list.                                                                                                 |
-| Chat list search + status filter                 | `src/views/chat-list-panel.html`                                          | ✅ Done | Alpine `x-model` filter on chat list panel.                                                                                                                  |
-| Client-side search (gallery, characters, worlds) | `src/frontend/pages/*.ts`                                                 | ✅ Done | `filterAssets()`, `filterCharacters()`, `filterWorlds()` — client-side JS.                                                                                   |
-| Swipe gesture for sidebar                        | `src/frontend/alpine/sidebar.ts`                                          | ✅ Done | Swipe right from left 40px edge → open. Swipe left → close. Backdrop dismiss. Escape key.                                                                    |
-| HTMX active search on gallery                    | `src/views/gallery.html`, `src/routes/views.ts`                           | ✅ Done | `hx-trigger="input changed delay:300ms"`, `hx-get="/dynamic/gallery/search"`, `hx-target="#asset-grid"`. Server-side search endpoint.                        |
-| HTMX active search on characters                 | `src/views/characters.html`, `src/routes/views.ts`                        | ✅ Done | Same pattern with sort. Server-side search by name.                                                                                                          |
-| HTMX active search on worlds                     | `src/views/worlds.html`, `src/routes/views.ts`                            | ✅ Done | Same pattern. Server-side search by name.                                                                                                                    |
-| Filter bar component                             | `src/components/filter-bar.html`                                          | ✅ Done | Reusable Alpine-managed: search input, type/sort dropdowns, active chips, clear all. Included via `{{> filter-bar.html}}`.                                   |
-| Active filter chips                              | `src/components/filter-chips.html`                                        | ✅ Done | Removable tags showing current filters. Alpine-managed. Included via `{{> filter-chips.html}}`.                                                              |
-| Keyboard shortcuts                               | `src/frontend/alpine/shortcuts.ts`                                        | ✅ Done | `Ctrl+B` sidebar, `Ctrl+N` new chat, `Ctrl+L` focus input, `Ctrl+K` search, `Escape` close sidebar.                                                          |
-| Load More pagination                             | `src/components/load-more.html`                                           | ✅ Done | Reusable component with `hx-swap="outerHTML"`. Server-side pagination support via `data-load-more-url`.                                                      |
-| Empty states component                           | `src/components/empty-state.html`                                         | ✅ Done | Reusable Alpine-managed: icon, title, description, action button. Via `data-empty-*` attributes.                                                             |
-| Loading indicators wiring                        | `src/views/{gallery,characters,worlds}.html`                              | ✅ Done | `hx-indicator` and `.htmx-indicator` spinner wired on all 3 data views.                                                                                      |
-| Bulk chat actions                                | `src/views/chat-list-panel.html`                                          | ✅ Done | Checkbox selection, batch archive/delete/export. Alpine-managed selection array. Backend `POST /api/chats/batch/*` endpoints.                                |
-| Message archiving (cascade, restore, purge)      | `src/routes/messages.ts`, `src/db/`                                       | ✅ Done | `archived_at` column (migration 015). Archive/restore/purge API endpoints. 30-day purge cutoff.                                                              |
-| Unit tests                                       | `src/routes/views-search.test.ts`, `src/routes/message-archiving.test.ts` | ✅ Done | 18 tests: search endpoint content, component existence, schema/enum checks, archive route presence.                                                          |
+| Task                                             | Files                                                                     |
+| ------------------------------------------------ | ------------------------------------------------------------------------- |
+| Mobile breakpoints (768px, 480px)                | `src/public/css/app.css`                                                  |
+| Container queries on input bar                   | `src/public/css/app.css`                                                  |
+| 100dvh + safe-area-inset                         | `src/views/layout.html`, `src/public/css/app.css`                         |
+| 44px touch targets                               | `src/public/css/app.css`                                                  |
+| Responsive sidebar                               | `src/public/css/app.css`                                                  |
+| View toggle (grid/list)                          | `src/views/gallery.html`                                                  |
+| Chat pin/favorite                                | `src/routes/chats.ts`, `src/db/`                                          |
+| Chat list search + status filter                 | `src/views/chat-list-panel.html`                                          |
+| Client-side search (gallery, characters, worlds) | `src/frontend/pages/*.ts`                                                 |
+| Swipe gesture for sidebar                        | `src/frontend/alpine/sidebar.ts`                                          |
+| HTMX active search on gallery                    | `src/views/gallery.html`, `src/routes/views.ts`                           |
+| HTMX active search on characters                 | `src/views/characters.html`, `src/routes/views.ts`                        |
+| HTMX active search on worlds                     | `src/views/worlds.html`, `src/routes/views.ts`                            |
+| Filter bar component                             | `src/components/filter-bar.html`                                          |
+| Active filter chips                              | `src/components/filter-chips.html`                                        |
+| Keyboard shortcuts                               | `src/frontend/alpine/shortcuts.ts`                                        |
+| Load More pagination                             | `src/components/load-more.html`                                           |
+| Empty states component                           | `src/components/empty-state.html`                                         |
+| Loading indicators wiring                        | `src/views/{gallery,characters,worlds}.html`                              |
+| Bulk chat actions                                | `src/views/chat-list-panel.html`                                          |
+| Message archiving (cascade, restore, purge)      | `src/routes/messages.ts`, `src/db/`                                       |
+| Unit tests                                       | `src/routes/views-search.test.ts`, `src/routes/message-archiving.test.ts` |
 
 ### 14. Import/Export & Data Portability — ⬜ Not Started
 
-File-based character import, chat export, PNG steganography.
-
-| Task                              | Files                      | Notes                                                                                             |
-| --------------------------------- | -------------------------- | ------------------------------------------------------------------------------------------------- |
-| File upload character import      | `src/routes/characters.ts` | Replace `NotImplemented` at line 279. Accept multipart upload. Parse JSON body from file.         |
-| PNG steganography card extraction | `src/routes/characters.ts` | Extract PNG tEXt/iTXt chunks. Parse base64-encoded JSON character data. Support V2/V3 card specs. |
-| YAML/TOML character import        | `src/routes/characters.ts` | Parse YAML/TOML file body. Map to actor fields. Validate.                                         |
-| Chat export (JSON)                | `src/routes/chats.ts`      | `GET /api/chats/:id/export` → full chat with messages, actors, assets metadata as JSON download.  |
-| Chat export (Markdown)            | `src/routes/chats.ts`      | Same endpoint, `?format=md`. Rendered as markdown dialogue.                                       |
-| Bulk data export                  | `src/routes/settings.ts`   | Export all user data: chats, characters, settings, assets. Single ZIP download.                   |
-| Asset download endpoint           | `src/assets/controller.ts` | `GET /api/assets/:id/download` with Content-Disposition header.                                   |
+| Task                              | Files                      |
+| --------------------------------- | -------------------------- |
+| File upload character import      | `src/routes/characters.ts` |
+| PNG steganography card extraction | `src/routes/characters.ts` |
+| YAML/TOML character import        | `src/routes/characters.ts` |
+| Chat export (JSON)                | `src/routes/chats.ts`      |
+| Chat export (Markdown)            | `src/routes/chats.ts`      |
+| Bulk data export                  | `src/routes/settings.ts`   |
+| Asset download endpoint           | `src/assets/controller.ts` |
 
 ### 15. i18n & Accessibility — ⬜ Not Started
 
-Server-side i18n, ARIA pass, keyboard navigation, additional locales.
-
-| Task                                | Files                                    | Notes                                                                                                      |
-| ----------------------------------- | ---------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
-| Server-side i18n module             | `src/i18n/index.ts`, `src/i18n/types.ts` | NEW. `t(key, locale, params)` function. Load locale JSON files. Fallback to `en` on miss.                  |
-| i18n middleware                     | `src/middleware/i18n.ts`                 | NEW. Detect `Accept-Language` header or `?lang=` param. Attach `req.t = t.bind(null, locale)` to request.  |
-| Translate all server error messages | `src/routes/*.ts`, `src/i18n/`           | Replace hardcoded English strings with `t()` calls. Add translation keys for all error envelopes.          |
-| Locale files (10 languages)         | `src/public/locales/*.json`              | ja, zh-CN, zh-TW, ko, ru, de, fr, pt-BR, es. Seed with English, mark for translation.                      |
-| ARIA landmark roles                 | `src/views/*.html`                       | `<nav role="navigation">`, `<main role="main">`, `<aside role="complementary">`, `<header role="banner">`. |
-| ARIA labels on interactive elements | `src/views/*.html`                       | `aria-label` on icon buttons, `aria-describedby` on inputs, `aria-expanded` on toggles.                    |
-| Focus management                    | `src/frontend/alpine/focus.ts`           | Trap focus in modals. Return focus on close. `autofocus` on search inputs.                                 |
-| Skip-to-content link                | `src/views/layout.html`                  | Hidden link as first focusable element.                                                                    |
-| Keyboard navigation                 | `src/frontend/alpine/shortcuts.ts`       | Tab order, arrow key navigation in lists, Escape to close modals/panels.                                   |
-| Focus-visible styling               | `src/public/css/app.css`                 | `:focus-visible` outline on interactive elements. Remove default `:focus` outlines.                        |
+| Task                                | Files                                    |
+| ----------------------------------- | ---------------------------------------- |
+| Server-side i18n module             | `src/i18n/index.ts`, `src/i18n/types.ts` |
+| i18n middleware                     | `src/middleware/i18n.ts`                 |
+| Translate all server error messages | `src/routes/*.ts`, `src/i18n/`           |
+| Locale files (10 languages)         | `src/public/locales/*.json`              |
+| ARIA landmark roles                 | `src/views/*.html`                       |
+| ARIA labels on interactive elements | `src/views/*.html`                       |
+| Focus management                    | `src/frontend/alpine/focus.ts`           |
+| Skip-to-content link                | `src/views/layout.html`                  |
+| Keyboard navigation                 | `src/frontend/alpine/shortcuts.ts`       |
+| Focus-visible styling               | `src/public/css/app.css`                 |
 
 ### 16. Observability & CI — 🟡 In Progress
 
-Opt-in telemetry, admin analytics API, CI config, Playwright responsive tests.
-CI config (GitHub Actions) added in v0.2 in-progress work. Telemetry + responsive tests TODO.
-
-| Task                        | Files                                              | Notes                                                                                                                                      |
-| --------------------------- | -------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
-| Telemetry config loading    | `src/telemetry/config.ts`                          | NEW. Env vars: `TELEMETRY_ENABLED`, `TELEMETRY_EVENTS_ENABLED`, `TELEMETRY_FRONTEND_ENABLED`, `TELEMETRY_RETENTION_DAYS`. All default OFF. |
-| Telemetry service           | `src/telemetry/service.ts`                         | NEW. `record()` method. Generation events: `generation.started/completed/failed`, `tool.called/failed`. Metadata-only (no content).        |
-| Telemetry events table      | `src/db/migrations/`, `src/db/schema-telemetry.ts` | NEW. `id`, `session_id`, `user_id`, `chat_id`, `event_type`, `event_data` (JSON), `created_at`, `source`.                                  |
-| Telemetry route             | `src/routes/telemetry.ts`                          | NEW. `POST /api/telemetry/event` — accept event from frontend (sendBeacon). Rate limit 100/sec/session.                                    |
-| Frontend telemetry tracking | `src/frontend/alpine/telemetry.ts`                 | NEW. `track(type, data)` → `navigator.sendBeacon('/api/telemetry/event', ...)`. htmx lifecycle hooks. `window.onerror` capture.            |
-| Admin analytics API         | `src/routes/telemetry.ts`                          | `GET /api/telemetry/analytics/summary, models, errors, daily, sessions`. `DELETE /api/telemetry/analytics/purge`. Admin-gated.             |
-| Retention cleanup           | `src/telemetry/cleanup.ts`                         | NEW. On startup + every 24h: delete events older than `TELEMETRY_RETENTION_DAYS`.                                                          |
-| CI config (GitHub Actions)  | `.github/workflows/ci.yml`                         | NEW. `bun run check` → `bun test src/` → `bun run test:e2e:browser`. Matrix: bun 1.x.                                                      |
-| Playwright responsive tests | `tests/e2e/responsive/`                            | NEW. Viewport 375px, 768px, 1440px. Sidebar overlay behavior, input bar adaptation.                                                        |
-| Browser E2E stabilization   | `tests/e2e/flows/browser/`                         | Fix `data-testid` mismatches. Add chrome timeout retry. Stabilize auth-flow, chat-flow, smoke.                                             |
+| Task                        | Files                                              |
+| --------------------------- | -------------------------------------------------- |
+| Telemetry config loading    | `src/telemetry/config.ts`                          |
+| Telemetry service           | `src/telemetry/service.ts`                         |
+| Telemetry events table      | `src/db/migrations/`, `src/db/schema-telemetry.ts` |
+| Telemetry route             | `src/routes/telemetry.ts`                          |
+| Frontend telemetry tracking | `src/frontend/alpine/telemetry.ts`                 |
+| Admin analytics API         | `src/routes/telemetry.ts`                          |
+| Retention cleanup           | `src/telemetry/cleanup.ts`                         |
+| CI config (GitHub Actions)  | `.github/workflows/ci.yml`                         |
+| Playwright responsive tests | `tests/e2e/responsive/`                            |
+| Browser E2E stabilization   | `tests/e2e/flows/browser/`                         |
 
 ### 17. Encryption Foundation — ⬜ Not Started
 
-AES-256-GCM at-rest encryption for messages. Three-tier model: public (no
-encryption), standard (server-mediated with actor keys), private (E2E with
-client-side key exchange). Build in order: public first, then standard, then
-private (with external audit before production).
+| Task                                     | Files                     |
+| ---------------------------------------- | ------------------------- |
+| Public tier (Phase 0)                    | `src/routes/messages.ts`  |
+| Server-side at-rest encryption (Phase 1) | `src/crypto/at-rest.ts`   |
+| Per-user keys via Argon2id (Phase 2)     | `src/crypto/user-keys.ts` |
+| Chat-level key derivation (Phase 3)      | `src/crypto/chat-keys.ts` |
+| Browser-side key derivation              | `src/frontend/browser.ts` |
+| Private tier (Phase 4) — E2E             | `src/crypto/e2e/`         |
+| Key rotation on user leave               | `src/crypto/chat-keys.ts` |
+| Immutability enforcement                 | `src/routes/chats.ts`     |
+| WebP→PNG conversion                      | `src/assets/metadata.ts`  |
 
-| Task                                     | Files                     | Notes                                                                                                           |
-| ---------------------------------------- | ------------------------- | --------------------------------------------------------------------------------------------------------------- |
-| Public tier (Phase 0)                    | `src/routes/messages.ts`  | No encryption. Validate all chat flows work without crypto.                                                     |
-| Server-side at-rest encryption (Phase 1) | `src/crypto/at-rest.ts`   | NEW. AES-256-GCM encrypt/decrypt message content on write/read. Key from env or auto-generated on first run.    |
-| Per-user keys via Argon2id (Phase 2)     | `src/crypto/user-keys.ts` | NEW. Derive per-user key from password + Argon2id. Encrypt messages with user key.                              |
-| Chat-level key derivation (Phase 3)      | `src/crypto/chat-keys.ts` | Per-chat AES-256-GCM from participant keys via HKDF. Already built — wire to routes.                            |
-| Browser-side key derivation              | `src/frontend/browser.ts` | Web Crypto API: `PBKDF2` derive key from password. Store in session. Send encrypted blobs to server.            |
-| Private tier (Phase 4) — E2E             | `src/crypto/e2e/`         | NEW. Client-side encrypt before send. Key exchange protocol. Forward secrecy on user leave. External audit req. |
-| Key rotation on user leave               | `src/crypto/chat-keys.ts` | New keys for subsequent messages when participant leaves. Old keys expire, can't decrypt new content.           |
-| Immutability enforcement                 | `src/routes/chats.ts`     | Reject encryption level change after chat creation. Only clone-to-new-chat allowed.                             |
-| WebP→PNG conversion                      | `src/assets/metadata.ts`  | Convert WebP images to PNG before sending to LLM APIs that don't support WebP.                                  |
-
-See [`docs/frontend/encryption.md`](../frontend/encryption.md#chat-encryption-tiers)
-for full tier specification.
+See `docs/frontend/encryption.md` for full tier specification.
 
 ### 20. E2E Performance Benchmarks — ⬜ Not Started
 
-Deterministic performance tracking per git sha. Fixed seed data, in-memory DB,
-mock providers, single-threaded. Results stored in `data/benchmarks/`
-(gitignored). Diff script compares commits.
+| Task                            | Files                        |
+| ------------------------------- | ---------------------------- |
+| Benchmark runner                | `scripts/bench-run.ts`       |
+| Diff script                     | `scripts/bench-diff.ts`      |
+| Trend script                    | `scripts/bench-trend.ts`     |
+| CI integration (GitHub Actions) | `.github/workflows/ci.yml`   |
+| Threshold config                | `benchmarks/thresholds.json` |
 
-| Task                            | Files                        | Notes                                                                                |
-| ------------------------------- | ---------------------------- | ------------------------------------------------------------------------------------ |
-| Benchmark runner                | `scripts/bench-run.ts`       | NEW. Run suite, write `data/benchmarks/<sha>.json`. API + DB categories.             |
-| Diff script                     | `scripts/bench-diff.ts`      | NEW. Compare two git shas, print per-benchmark delta. Flag regressions.              |
-| Trend script                    | `scripts/bench-trend.ts`     | NEW. Show last N runs as ASCII trend.                                                |
-| CI integration (GitHub Actions) | `.github/workflows/ci.yml`   | Run benchmarks, upload artifact, compare against `main`. Block merge on 2x slowdown. |
-| Threshold config                | `benchmarks/thresholds.json` | Configurable thresholds: warn at 50% degradation, block at 200% degradation.         |
-
-See [`docs/spec/e2e-benchmarks.md`](../spec/e2e-benchmarks.md) for full spec.
+See `docs/spec/e2e-benchmarks.md` for full spec.
 
 ### 18. Local Inference Integrations — ✅ Complete
 
-ComfyUI plugin, llama-swap LLM proxy, stable-diffusion.cpp, gallery metadata enrichment,
-chat-driven generation, security baseline for remote URLs.
+| Task                                      | Files                                           |
+| ----------------------------------------- | ----------------------------------------------- |
+| URL validation (SSRF guard, allowlist)    | `src/utils/url-validation.ts`                   |
+| sd.cpp native API provider (`/sdcpp/v1/`) | `src/generation/image-gen-route.ts`             |
+| ComfyUI provider (submit/poll/WS)         | `src/generation/providers/comfyui.ts`           |
+| Gallery metadata enrichment               | `src/generation/image-gen-route.ts`             |
+| Security wiring into providers            | `src/generation/providers/openai-compatible.ts` |
+| Chat-driven multi-step pipeline           | `src/generation/step-pipeline.ts`               |
 
-| Task                                      | Files                                           | Status |
-| ----------------------------------------- | ----------------------------------------------- | ------ |
-| Fix doc references in plan + backlog      | `docs/meta/plan.md`, `docs/meta/backlog.md`     | ✅     |
-| URL validation (SSRF guard, allowlist)    | `src/utils/url-validation.ts`                   | ✅     |
-| sd.cpp native API provider (`/sdcpp/v1/`) | `src/generation/image-gen-route.ts`             | ✅     |
-| ComfyUI provider (submit/poll/WS)         | `src/generation/providers/comfyui.ts`           | ✅     |
-| Gallery metadata enrichment               | `src/generation/image-gen-route.ts`             | ✅     |
-| Security wiring into providers            | `src/generation/providers/openai-compatible.ts` | ✅     |
-| Chat-driven multi-step pipeline           | `src/generation/step-pipeline.ts`               | ✅     |
-
-Full spec: [`docs/spec/integrations/llm-serving.md`](../spec/integrations/llm-serving.md),
-[`docs/spec/integrations/image-generation.md`](../spec/integrations/image-generation.md),
-[`docs/spec/provider-system.md`](../spec/provider-system.md).
-
-See [backlog.md §P2](backlog.md#p2--specified-not-implemented) for remaining gaps.
+Full spec: `docs/spec/integrations/llm-serving.md`, `docs/spec/integrations/image-generation.md`, `docs/spec/provider-system.md`.
 
 ### 19. Basic Chat Notifications — ✅ Complete
 
-In-app unread badges + toasts for messages arriving in chats the user isn't
-viewing. Reuses existing SSE (`EventSource`) + `showToast` infra. **Autonomous
-scheduled messages deferred** (see [backlog.md](backlog.md#d5-cross-chat-autonomous-messages)). No
-browser-native push (needs service worker + push server) — out of scope.
-
-| Task                             | Files                                                     | Status |
-| -------------------------------- | --------------------------------------------------------- | ------ |
-| Cross-chat activity signal (SSE) | `src/routes/activity.ts`, `src/routes/activity-stream.ts` | ✅     |
-| Read-state schema                | `src/db/migrations/parts/004_chats_actors.ts`             | ✅     |
-| Chat-list unread badge           | `src/components/chat/chat-list-panel.html`                | ✅     |
-| Toast on foreign-chat message    | `src/frontend/alpine/chat-activity.ts`                    | ✅     |
-| Mark-read on chat open           | `src/routes/chats.ts`, `src/frontend/alpine/chat.ts`      | ✅     |
-| Activity SSE listener            | `src/frontend/alpine/chat-activity.ts`                    | ✅     |
+| Task                             | Files                                                     |
+| -------------------------------- | --------------------------------------------------------- |
+| Cross-chat activity signal (SSE) | `src/routes/activity.ts`, `src/routes/activity-stream.ts` |
+| Read-state schema                | `src/db/migrations/parts/004_chats_actors.ts`             |
+| Chat-list unread badge           | `src/components/chat/chat-list-panel.html`                |
+| Toast on foreign-chat message    | `src/frontend/alpine/chat-activity.ts`                    |
+| Mark-read on chat open           | `src/routes/chats.ts`, `src/frontend/alpine/chat.ts`      |
+| Activity SSE listener            | `src/frontend/alpine/chat-activity.ts`                    |
 
 ---
 
@@ -378,71 +316,41 @@ browser-native push (needs service worker + push server) — out of scope.
 
 ### Resolved (2026-07-15)
 
-- **Boolean integer flags → typed state enums:** Converted 5 columns (is_pinned, is_default, pinned, equipped, stackable) from magic 0/1 integers to string enums with state machines. Migration 010 handles data transform. Fixes latent bug in new-chat.ts persona selection.
+- **Boolean integer flags → typed state enums:** 5 columns converted to string enums with state machines. Migration 010 handles data transform.
 
 ### Resolved (2026-07-10)
 
-- **TS strict-typing debt:** `db/index.ts` alias renamed `Database`→`Db`; `bun run typecheck` clean.
+- **TS strict-typing debt:** `Database`→`Db` alias rename; `bun run typecheck` clean.
 
 ### Browser E2E Instability
 
-**Solo/Seed User ID Mismatch** — Browser E2E tests seed data with deterministic
-IDs but server solo mode creates a random solo user. Seeded data invisible.
-Fix: seed solo user with `UserRole.Solo` or have tests login as seeded user.
-
-**Parallel Suite Instability** — 7 browser E2E test files sharing module-level
-singletons (`cachedSoloUser`) corrupt each other's state under parallel load.
-Also 7 Playwright browsers + 7 `Bun.serve` instances trigger timeouts.
-Fix: make `cachedSoloUser` per-request; reduce parallelism or use shared fixture.
-
-**Cascade Failure Pattern** — Single test timeout kills all subsequent tests in
-file via shared `ctx.page` state.
+- **Solo/Seed User ID Mismatch** — seed solo user with `UserRole.Solo` or login as seeded user.
+- **Parallel Suite Instability** — 7 browser E2E test files sharing `cachedSoloUser` singleton corrupt state. Fix: per-request singleton or shared fixture.
+- **Cascade Failure Pattern** — single test timeout kills all subsequent tests via shared `ctx.page`.
 
 ### Schema Hardening — Resolved (2026-07-16)
 
-Tracked in detail at [schema.md#bare-string-columns-requiring-enum-types](../spec/schema.md).
-All 8 tasks completed:
-
-| #   | Task                                             | Status                                                                   |
-| --- | ------------------------------------------------ | ------------------------------------------------------------------------ |
-| 1   | Lore `enabled` → `LoreEntryStatus` enum          | ✅ — New enum, migration 017, schema types, routes defaults updated      |
-| 2   | `actor_keys.status` → `KeyStatus` enum + SM      | ✅ — Added `keyStatusDef` + `keyStatusMachine` state machine             |
-| 3   | `actor_keys.key_type` → `KeyType` enum           | ✅ — Already typed, no change needed                                     |
-| 4   | `memory_type` → `MemoryType` enum                | ✅ — Already typed, no change needed                                     |
-| 5   | `actor_notes.category` → `NoteCategory` enum     | ✅ — Already typed, no change needed                                     |
-| 6   | Wire `world_items.visibility` → `ItemVisibility` | ✅ — Already typed, no change needed                                     |
-| 7   | Align `chats.purpose` / `chat_purpose` naming    | ✅ — Migration 017 added `purpose`, migration 018 dropped `chat_purpose` |
-| 8   | Add `actor_keys.public_key` to migration DDL     | ✅ — Added `public_key` column to `actor_keys` DDL (migration 017)       |
+All 8 tasks completed (see `docs/spec/schema.md`): `LoreEntryStatus` enum, `KeyStatus` + state machine, naming alignment, `public_key` DDL column.
 
 ### Remaining Review Findings (Round 3, 2026-07-06)
 
-Tracked in detail at [reviews/review-rounds.md](reviews/review-rounds.md).
-Key open items:
+See `reviews/review-rounds.md` for full detail. Key open items:
 
-| #   | File                                | Issue                                                                                                                                                        |
-| --- | ----------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| 14  | `src/db/enums.ts`                   | Barrel re-exports but no validation enums match DB. Drift risk. — Resolved: Added `enums.test.ts` with 40 validation tests (2026-07-16)                      |
-| 15  | `src/db/migrations/001_init.ts`     | `chat_participants` PK undocumented                                                                                                                          |
-| 16  | `src/db/migrations/001_init.ts`     | No index on `sessions(user_id, expires_at)` for cleanup — Resolved: `idx_sessions_user_expires` already exists                                               |
-| 18  | `src/utils.ts`                      | `safeJsonStringify` guarded mode parses JSON twice on hot path — Resolved: Single-pass parse replaces `isJsonString` + `JSON.parse` double call (2026-07-16) |
-| 21  | `src/assistant/service.ts`          | Config schema may not have `assistant.enabled` — Resolved: `enabled: boolean` field exists with default `true`                                               |
-| 22  | `src/assistant/prompt-assembler.ts` | Selective entries (keys) ignored — Resolved: Added `selectiveKeys` to `PromptParams`, lore section uses explicit keys or auto-derived (2026-07-16)           |
-| 23  | `src/assistant/prompt-assembler.ts` | Token budget enforcement message array rebuild bug — Resolved: Index-based filtering replaces tail splice (Round 3)                                          |
-| 24  | `src/tui/app.ts`                    | Monkey-patches `ChatWidget.setChatId` — Resolved: callback prop `onChatChange` replaces monkey-patch (Round 3)                                               |
-| 25  | `src/tui/chat.ts`                   | No retry, no idempotency key                                                                                                                                 |
-| 26  | `src/tui/asset-view.ts`             | Left/right keys conflict with input nav                                                                                                                      |
-| 27  | `src/age-gate/controller.ts`        | `runtimeConfig` module-level mutable — Resolved: `AgeGateConfigStore` singleton class (Round 3)                                                              |
-| 29  | `src/build/compress.ts`             | No try/catch on single file — Resolved: Added try/catch around `writeFileSync` (2026-07-16)                                                                  |
+| #  | File                                | Issue                                                                                       |
+| -- | ----------------------------------- | ------------------------------------------------------------------------------------------- |
+| 15 | `src/db/migrations/001_init.ts`     | `chat_participants` PK undocumented                                                         |
+| 25 | `src/tui/chat.ts`                   | No retry, no idempotency key                                                                |
+| 26 | `src/tui/asset-view.ts`             | Left/right keys conflict with input nav                                                     |
 
 ---
 
-## 🔗 Cross-Reference
+## Cross-Reference
 
-- Active development & bugs: this document (plan.md), [open-items.md](open-items.md)
-- Future / deferred: [backlog.md](backlog.md)
-- Long-term vision: [roadmap.md](roadmap.md)
-- DB: [schema.md](../spec/schema.md)
-- Frontend UX: [overview.md](../frontend/overview.md), [chat/](../frontend/chat/)
-- TUI: [tui.md](../spec/tui.md)
-- Assets: [assets.md](../spec/assets.md)
+- Active development & bugs: `plan.md`, `open-items.md`
+- Future / deferred: `backlog.md`
+- Long-term vision: `roadmap.md`
+- DB: `schema.md`
+- Frontend UX: `frontend/overview.md`, `frontend/chat/`
+- TUI: `tui.md`
+- Assets: `assets.md`
 - Build: `package.json` scripts
