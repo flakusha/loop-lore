@@ -2,16 +2,8 @@
  * Logger types — LogEntry, Logger, Transport, support interfaces.
  */
 
-// ── Log Levels ─────────────────────────────────────────────
-
-export const LogLevel = {
-  Debug: "debug",
-  Info: "info",
-  Warn: "warn",
-  Error: "error",
-} as const;
-
-export type LogLevel = (typeof LogLevel)[keyof typeof LogLevel];
+import { LogLevel } from "../db/enums-config";
+export { LogLevel };
 
 /** Numeric level values — higher = more severe */
 export const LogLevelNumeric: Record<LogLevel, number> = {
