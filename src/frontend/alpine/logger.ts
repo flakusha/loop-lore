@@ -110,6 +110,9 @@ class LightLogger implements Logger {
   addTransport(transport: Transport): void {
     this.transports.push(transport);
   }
+  setBindings(partial: LoggerBindings): void {
+    Object.assign(this.bindings, partial);
+  }
 }
 
 // ── Factory API ─────────────────────────────────────────────

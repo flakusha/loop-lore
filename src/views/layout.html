@@ -36,7 +36,9 @@
     <!-- Page-specific behaviors (characters, gallery, worlds, new-chat) -->
     <script src="/pages.js" defer></script>
 
-    <!-- Telemetry config injected by server: {{{telemetryConfig}}} -->
+    <!-- Telemetry config injected by server (replaced in wrapWithLayout) -->
+    <script>globalThis.__TELEMETRY_FRONTEND_ENABLED = {{telemetryEnabled}};</script>
+    <script>globalThis.__USER_ID = {{userId}}; globalThis.__SESSION_ID = {{sessionId}};</script>
 
     <style>
       body {
@@ -183,7 +185,7 @@
             class="avatar"
             src="/img/characters/default-avatar.svg"
             alt="User avatar"
-            style="background: var(--bg-tertiary)"
+            background: var(--bg-tertiary)
             data-avatar="user"
           />
           <div class="details">
@@ -220,7 +222,7 @@
       class="backdrop"
       id="sidebar-backdrop"
       x-on:click="window.closeSidebar()"
-      style="display: none"
+      display: none
     ></div>
 
     <!-- Header slot placeholder — replaced via hx-swap-oob on page nav -->
