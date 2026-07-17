@@ -552,7 +552,8 @@ interface TestingConfig {
 /**
  * Content-Security-Policy directive set.
  * Applied only to HTML views. `script-src` includes `'unsafe-eval'` because
- * Alpine.js uses `new Function()` internally for expression evaluation.
+ * Alpine.js uses `new Function()` internally for expression evaluation, and
+ * `'unsafe-inline'` because Alpine's @x directive parsing uses innerHTML.
  */
 interface CspConfig {
   /** Master toggle for CSP emission. */

@@ -175,8 +175,9 @@ test("header-slot is not duplicated inside #app-root");
    - Add utility function in `response-headers.ts`
 
 2. **CSP Nonce Support**
-   - Enable `'strict-dynamic'` + nonce for inline Alpine handlers
-   - Remove `'unsafe-inline'` when Alpine migration complete
+   - Current: `'unsafe-inline'` + `'unsafe-eval'` required for Alpine.js
+   - Alpine uses `new Function()` for expression evaluation (`'unsafe-eval`)
+   - Alpine's `@x` directive override uses innerHTML injection (`'unsafe-inline` needed)
 
 3. **Cache-Control Presets**
    - Configurable max-age per route kind
