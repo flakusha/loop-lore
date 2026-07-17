@@ -55,9 +55,6 @@ export type RouteKind = "html" | "api" | "static" | "sse";
 /** Matches bun's content-hashed asset names, e.g. `alpine-tx4kdwfm.js`. */
 const HASHED_ASSET_PATTERN = /-[a-z0-9]{8}\.(?:js|css|svg|png|jpe?g|webp|gif|woff2?)$/;
 
-/** Matches Server-Sent Events streams. */
-const SSE_PATTERN = /text\/event-stream/;
-
 /** Options for {@link ResponseHeaderPolicy.apply}. */
 export interface ApplyOptions {
   /** Incoming request (used for hashed-asset detection). */
@@ -110,7 +107,7 @@ export class ResponseHeaderPolicy {
   private classify({ request, response }: ApplyOptions): RouteKind {
     const contentType = response.headers.get("content-type") ?? "";
     if (contentType.startsWith("text/html")) return "html";
-    if (contentType.match(SSE_PATTERN)) return "sse";
+    if (contentType.includes("text/event-stream")) return "sse";
     if (request && new URL(request.url).pathname.startsWith("/api/")) return "api";
     return "static";
   }
@@ -164,9 +161,10 @@ export class ResponseHeaderPolicy {
         }
         break;
       }
-      case "api":
+      case "api": {
         if (cfg.permissionsPolicy) headers["Permissions-Policy"] = cfg.permissionsPolicy;
         break;
+      }
     }
 
     // Headers shared by html and api
