@@ -1,6 +1,9 @@
 // ── Characters page: search, detail modal, actions ────────────
 import { jsonBody } from "../alpine/json";
 
+declare const Alpine: { initTree: (el: Element) => void } | undefined;
+declare const htmx: { trigger: (el: Element, event: string) => void } | undefined;
+
 (globalThis as any).filterCharacters = function () {
   const query = (document.querySelector<HTMLInputElement>("#character-search")?.value ?? "")
     .toLowerCase()
@@ -32,11 +35,12 @@ import { jsonBody } from "../alpine/json";
   if (!modal) {
     const container = document.querySelector("#modal-container");
     if (!container) return;
-    container.innerHTML =
-      '<div id="character-detail-modal" class="modal-overlay" x-on:click="window.closeModalOnBackdrop($event)" data-testid="character-detail-modal"><div class="modal"></div></div>';
     const resp = await fetch("/partials/characters/detail-modal");
-    if (resp.ok) {
-      container.innerHTML = await resp.text();
+    if (!resp.ok) return;
+    container.innerHTML = await resp.text();
+    // Initialize Alpine on dynamically loaded modal
+    if (globalThis.Alpine) {
+      Alpine.initTree(container);
     }
     modal = document.querySelector<HTMLElement>("#character-detail-modal");
   }
