@@ -30,11 +30,11 @@ Password hashing: **scrypt** (native Bun `Bun.password.hash`). No bcrypt/argon2 
 
 ### Roles
 
-| Role     | Permissions                                                                                                                                 |
-| -------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
-| `admin`  | Full access. Manage users, system config, view all messages/stats.                                                                          |
-| `user`   | Standard. Create/manage own chats, characters, assets. View own message stats.                                                              |
-| `viewer` | Read-only. View assigned chats, no editing.                                                                                                 |
+| Role     | Permissions                                                                                                                                       |
+| -------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
+| `admin`  | Full access. Manage users, system config, view all messages/stats.                                                                                |
+| `user`   | Standard. Create/manage own chats, characters, assets. View own message stats.                                                                   |
+| `viewer` | Read-only. View assigned chats, no editing.                                                                                                        |
 | `solo`   | Implicit role for local demo mode. Instance owner — admin-equivalent (user mgmt, system + age-gate config) within the single-user instance. |
 
 ### Role-Based Feature Access
@@ -58,11 +58,11 @@ Full table definition in `src/db/schema-core.ts` → `Sessions` interface.
 ### Remote Multi-User Sessions
 
 - Session token stored in DB (not in-memory) — survives server restart
-- Token: **opaque UUID + SHA-256 hash** (no JWT for MVP). The UUID is the bearer token; only its SHA-256 hash is stored in DB.
+- Token: [REDACTED:API key param] UUID + SHA-256 hash** (no JWT for MVP). The UUID is the bearer token; only its SHA-256 hash is stored in DB.
 - Multiple simultaneous sessions per user allowed (configurable max)
 - Session timeout configurable (default: 24h idle)
 - Web clients carry the token in the `ll_token` HttpOnly cookie; API clients may
-  use `Authorization: Bearer <token>`
+  use `Authorization: Bearer [REDACTED:Authorization header]
 - **Not implemented:** there is no `/api/sessions` list endpoint and no remote
   force-logout. Logout (`/api/auth/logout`) only deletes the caller's own session.
 
@@ -134,12 +134,10 @@ AUTH_DEMO_USERNAME=demo             # solo user's username (demo mode)
 
 ## Account Seeding
 
-`src/db/seed.ts` seeds **only the default Assistant actor** — no human accounts.
-First human account per mode:
-
-- **Solo/demo:** `solo` user created lazily on first request or `/api/demo-login`
+`src/db/seed.ts` seeds the default Assistant actor and demo solo user (if no admin exists):
+- **Solo/demo:** `solo` user created on first run or `/api/demo-login`
   (username = `auth.demoUsername`). It is the instance owner (admin-equivalent).
-- **Multi-user:** a bootstrap admin is seeded on startup from
+- **Multi-user:** a bootstrap admin is seeded from
   `AUTH_ADMIN_USERNAME` / `AUTH_ADMIN_PASSWORD` when no admin exists (idempotent).
 - **Self-service:** users register via `/api/auth/register` when
   `auth.registrationOpen=true`; new accounts get `role=user` (never admin).
