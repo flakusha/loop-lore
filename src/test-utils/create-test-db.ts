@@ -1,12 +1,45 @@
 import { Database } from "bun:sqlite";
 import { Kysely } from "kysely";
 import { createSqliteDialect } from "../db/index";
+import { runMigrations } from "../db/migrate";
+import { createLogger } from "../logger";
 import type { DB } from "../db/schema";
 
-/** Create an in-memory SQLite test database */
-export function createTestDb(): Kysely<DB> {
+/**
+ * Create an in-memory SQLite test database with the full schema
+ * applied via migrations. Single source of truth: migrations define
+ * the DB structure, tests consume it.
+ *
+ * @returns Both the typed Kysely instance and raw SQLite handle
+ *   (for introspection tests that need PRAGMA queries).
+ */
+export async function createTestDb(): Promise<{ db: Kysely<DB>; sqlite: Database }> {
   const sqlite = new Database(":memory:");
-  sqlite.run("PRAGMA journal_mode = WAL");
+  sqlite.run("PRAGMA foreign_keys = ON");
   const dialect = createSqliteDialect(sqlite);
-  return new Kysely<DB>({ dialect });
+  const db = new Kysely<DB>({ dialect });
+
+  // Ensure logger is available (runMigrations calls getLogger())
+  try {
+    createLogger({ level: "error" });
+  } catch {
+    // Logger already initialized — ignore
+  }
+
+  await runMigrations(db);
+
+  return { db, sqlite };
+}
+
+/**
+ * Drop all non-migration tables from the test DB.
+ * Useful for tests that need a clean slate without re-running migrations.
+ */
+export async function resetTestDb(sqlite: Database): Promise<void> {
+  const tables = sqlite
+    .query("SELECT name FROM sqlite_master WHERE type = 'table' AND name NOT LIKE 'kysely_%'")
+    .all() as { name: string }[];
+  for (const { name } of tables) {
+    sqlite.run(`DELETE FROM "${name}"`);
+  }
 }

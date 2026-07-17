@@ -79,3 +79,4 @@ export function getDatabase(_databasePath?: string): Kysely<DB> {
 export type Db = Kysely<DB>;
 
 export { type DB } from "./schema";
+export { SCHEMA, SchemaManifest, type TableName } from "./schema-manifest";

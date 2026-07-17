@@ -2,25 +2,13 @@
  * Tests for routes/plugins.ts — Plugin Management Routes
  */
 import { describe, test, expect, beforeAll, afterAll } from "bun:test";
-import { Kysely, sql } from "kysely";
 import { Elysia } from "elysia";
 import { createTestDb } from "../test-utils/create-test-db";
 import { pluginRoutes } from "./plugins";
 import { registry } from "../plugins/registry";
 import { createLogger } from "../logger";
+import type { Kysely } from "kysely";
 import type { DB } from "../db/schema";
-
-async function createPluginStateTable(db: Kysely<DB>): Promise<void> {
-  await db.schema
-    .createTable("plugin_state")
-    .addColumn("name", "text", (col) => col.primaryKey())
-    .addColumn("enabled", "integer", (col) => col.notNull().defaultTo(1))
-    .addColumn("enabled_at", "text")
-    .addColumn("disabled_at", "text")
-    .addColumn("created_at", "text", (col) => col.notNull().defaultTo(sql`(datetime('now'))`))
-    .addColumn("updated_at", "text", (col) => col.notNull().defaultTo(sql`(datetime('now'))`))
-    .execute();
-}
 
 function createPluginApp(db: Kysely<DB>, userRole: string): Elysia {
   return new Elysia({ name: "test-plugins" })
@@ -33,10 +21,8 @@ describe("GET /api/plugins", () => {
 
   beforeAll(async () => {
     createLogger({ level: "warn" });
-    db = createTestDb();
-    await createPluginStateTable(db);
+    ({ db } = await createTestDb());
 
-    // Seed a fake plugin in registry
     registry.register({
       manifest: {
         name: "test-plugin",
@@ -76,8 +62,7 @@ describe("POST /api/plugins/:name/enable", () => {
   let db: Kysely<DB>;
 
   beforeAll(async () => {
-    db = createTestDb();
-    await createPluginStateTable(db);
+    ({ db } = await createTestDb());
     registry.register({
       manifest: { name: "disable-me", version: "1.0", description: "", author: "test" },
       origin: "core",
@@ -123,8 +108,7 @@ describe("POST /api/plugins/:name/disable", () => {
   let db: Kysely<DB>;
 
   beforeAll(async () => {
-    db = createTestDb();
-    await createPluginStateTable(db);
+    ({ db } = await createTestDb());
     registry.register({
       manifest: { name: "enable-me", version: "1.0", description: "", author: "test" },
       origin: "core",
