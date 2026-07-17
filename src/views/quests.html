@@ -54,9 +54,9 @@
             x-show="showCreateForm"
             style="
               padding: var(--space-4);
-              background: var(--color-surface, #f8f9fa);
+              background: var(--bg-secondary, #f8f9fa);
               border-radius: 6px;
-              border: 1px solid var(--color-border, #e9ecef);
+              border: 1px solid var(--border-default, #e9ecef);
               margin-bottom: var(--space-4);
             "
           >
@@ -128,9 +128,9 @@
                   <div
                     style="
                       padding: var(--space-4);
-                      background: var(--color-surface, #f8f9fa);
+                      background: var(--bg-secondary, #f8f9fa);
                       border-radius: 6px;
-                      border: 1px solid var(--color-border, #e9ecef);
+                      border: 1px solid var(--border-default, #e9ecef);
                       cursor: pointer;
                     "
                     @click="expandQuest(q.id)"
@@ -151,8 +151,8 @@
                               font-size: 10px;
                               padding: 1px 5px;
                               border-radius: 3px;
-                              background: var(--color-background, #fff);
-                              border: 1px solid var(--color-border, #e9ecef);
+                              background: var(--bg-tertiary, #fff);
+                              border: 1px solid var(--border-default, #e9ecef);
                             "
                             x-text="q.type"
                           ></span>
@@ -163,11 +163,7 @@
                           ></span>
                         </div>
                         <div
-                          style="
-                            font-size: 13px;
-                            color: var(--color-text-secondary);
-                            margin-bottom: var(--space-2);
-                          "
+                          style="font-size: 13px; color: var(--text-secondary); margin-bottom: var(--space-2)"
                           x-text="q.description || 'No description'"
                         ></div>
                         <div
@@ -175,7 +171,7 @@
                             display: flex;
                             gap: var(--space-4);
                             font-size: 11px;
-                            color: var(--color-text-secondary);
+                            color: var(--text-secondary);
                             margin-bottom: var(--space-2);
                           "
                         >
@@ -186,7 +182,7 @@
                         <div
                           style="
                             height: 4px;
-                            background: var(--color-border, #e9ecef);
+                            background: var(--border-default, #e9ecef);
                             border-radius: 2px;
                             overflow: hidden;
                           "
@@ -211,7 +207,7 @@
                       style="
                         margin-top: var(--space-3);
                         padding-top: var(--space-3);
-                        border-top: 1px solid var(--color-border, #e9ecef);
+                        border-top: 1px solid var(--border-default, #e9ecef);
                       "
                     >
                       <div style="display: grid; gap: var(--space-2)">
