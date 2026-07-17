@@ -1,13 +1,15 @@
 // ── New Chat page: actor search, participant selection, form ──
-import { escapeHtml } from "./shared";
+import { escapeHtml, filterActors, getErrorMessage } from "./shared";
+import { feFetch } from "../fe-fetch";
+import { showToast } from "../ui";
 import { jsonBody } from "../alpine/json";
 
-(globalThis as any).loadNewChatPage = async function (): Promise<void> {
+globalThis.loadNewChatPage = async function (): Promise<void> {
   let actors: any[] = [];
   let selected: any[] = [];
 
   try {
-    const res = await apiFetch("/api/actors?pageSize=200");
+    const res = await feFetch("/api/actors?pageSize=200");
     const data = await res.json();
     actors = data.data || [];
   } catch {
@@ -15,7 +17,7 @@ import { jsonBody } from "../alpine/json";
   }
 
   try {
-    const res = await apiFetch("/api/personas");
+    const res = await feFetch("/api/personas");
     const personas = await res.json();
     const personaSelect = document.querySelector("#persona-select") as HTMLSelectElement | null;
     if (personaSelect && Array.isArray(personas)) {
@@ -57,7 +59,7 @@ import { jsonBody } from "../alpine/json";
       .join("");
   }
 
-  (globalThis as any).removeParticipant = function (id: string) {
+  globalThis.removeParticipant = function (id: string) {
     selected = selected.filter((a: any) => a.id !== id);
     renderSelected();
     if (resultsEl) resultsEl.style.display = "none";
@@ -82,7 +84,7 @@ import { jsonBody } from "../alpine/json";
     }
   }
 
-  (globalThis as any).selectActorFromList = function (id: string) {
+  globalThis.selectActorFromList = function (id: string) {
     const actor = actors.find((a: any) => a.id === id);
     if (actor) selectActor(actor);
   };
@@ -115,14 +117,7 @@ import { jsonBody } from "../alpine/json";
       if (resultsEl) resultsEl.style.display = "none";
       return;
     }
-    const filtered = actors
-      .filter((a: any) => {
-        const name = (a.display_name || a.name || "").toLowerCase();
-        const desc = (a.description || "").toLowerCase();
-        return name.includes(q) || desc.includes(q);
-      })
-      .slice(0, 20);
-    renderResults(filtered);
+    renderResults(filterActors(actors, q));
   });
 
   searchInput.addEventListener("blur", function () {
@@ -132,16 +127,9 @@ import { jsonBody } from "../alpine/json";
   });
 
   searchInput.addEventListener("focus", function () {
-    if (!this.value.trim()) return;
     const q = this.value.toLowerCase().trim();
-    const filtered = actors
-      .filter((a: any) => {
-        const name = (a.display_name || a.name || "").toLowerCase();
-        const desc = (a.description || "").toLowerCase();
-        return name.includes(q) || desc.includes(q);
-      })
-      .slice(0, 20);
-    renderResults(filtered);
+    if (!q) return;
+    renderResults(filterActors(actors, q));
   });
 
   form.addEventListener("submit", async function (e: Event) {
@@ -160,7 +148,7 @@ import { jsonBody } from "../alpine/json";
     try {
       const personaId = (document.querySelector("#persona-select") as HTMLSelectElement)?.value || undefined;
       const impersonateId = impersonateToggle?.checked && selected.length === 1 ? selected[0].id : undefined;
-      const res = await apiFetch("/api/chats", {
+      const res = await feFetch("/api/chats", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: jsonBody({
@@ -175,14 +163,14 @@ import { jsonBody } from "../alpine/json";
       if (res.ok) {
         const d = await res.json();
         if (personaId) {
-          apiFetch("/api/chats/" + d.id + "/persona", {
+          feFetch("/api/chats/" + d.id + "/persona", {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
             body: jsonBody({ personaId }),
           });
         }
         if (impersonateId) {
-          apiFetch("/api/chats/" + d.id + "/impersonate", {
+          feFetch("/api/chats/" + d.id + "/impersonate", {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
             body: jsonBody({ impersonateActorId: impersonateId }),
@@ -190,13 +178,7 @@ import { jsonBody } from "../alpine/json";
         }
         location.assign("/views/chat?chatid=" + encodeURIComponent(d.id));
       } else {
-        let err: Record<string, string>;
-        try {
-          err = await res.json();
-        } catch {
-          err = {};
-        }
-        showToast("error", err.error || "Failed to create chat");
+        showToast("error", await getErrorMessage(res, "Failed to create chat"));
         if (btn) {
           btn.disabled = false;
           btn.textContent = "Create Chat";
