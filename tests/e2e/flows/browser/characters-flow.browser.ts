@@ -1,17 +1,15 @@
 import { describe, test, expect, beforeAll, afterAll } from "bun:test";
 import { createBrowserTest, type BrowserTestContext } from "../../helpers/browser-server";
-import { seedAll } from "../../helpers/seed";
 
 describe("Characters flow E2E", () => {
   let ctx: BrowserTestContext;
 
   beforeAll(async () => {
     ctx = await createBrowserTest();
-    await seedAll(ctx.db);
   }, 45_000);
 
   afterAll(async () => {
-    await ctx.close();
+    await ctx?.close?.();
   });
 
   async function gotoCharacters(page: Awaited<ReturnType<BrowserTestContext["browser"]["newPage"]>>) {
@@ -95,6 +93,9 @@ describe("Characters flow E2E", () => {
   describe("Character detail", () => {
     test("clicking a character opens detail modal", async () => {
       const page = await ctx.browser.newPage();
+      const consoleMessages: string[] = [];
+      page.on("console", (msg) => consoleMessages.push(`${msg.type()}: ${msg.text()}`));
+
       await gotoCharacters(page);
       // Wait for grid (characters are seeded so grid should render)
       await page.locator("[data-testid='character-grid']").waitFor({ state: "attached", timeout: 8000 });
@@ -102,6 +103,17 @@ describe("Characters flow E2E", () => {
       const firstCard = page.locator("[data-testid^='character-card-']").first();
       await firstCard.waitFor({ state: "visible", timeout: 5000 });
       await firstCard.click();
+
+      // Wait a bit to catch console errors
+      await page.waitForTimeout(1000);
+
+      const errors = consoleMessages.filter(
+        (m) => m.toLowerCase().includes("error") || m.includes("404") || m.includes("TypeError"),
+      );
+      if (errors.length > 0) {
+        console.log("Console errors found:", errors);
+      }
+
       await page.locator("[data-testid='character-detail-modal']").waitFor({ state: "visible", timeout: 5000 });
       // Detail modal has action buttons
       await page.locator("[data-testid='start-chat-btn']").waitFor({ state: "visible", timeout: 5000 });
