@@ -50,7 +50,7 @@
       :title="window.isChatPaused($store.chat?.currentChat) ? 'Resume AI generation' : 'Pause AI generation'"
       @click="window.toggleGroupPause()"
       x-show="$store.ui.hasActiveChat && $store.chat?.currentChat?.type === 'group'"
-      :style="window.isChatPaused($store.chat?.currentChat) ? 'color: var(--color-warning, #f59e0b)' : ''"
+      :style="window.isChatPaused($store.chat?.currentChat) ? 'color: #f59e0b' : ''"
       data-testid="toggle-group-pause"
     >
       <span x-text="window.isChatPaused($store.chat?.currentChat) ? '▶' : '⏸'"></span>
