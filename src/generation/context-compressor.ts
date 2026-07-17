@@ -185,7 +185,7 @@ function truncateStrategy(
 }
 
 /** Sliding window: keep recent messages, optionally summarize older ones */
-// eslint-disable-next-line sonarjs/no-identical-functions
+
 function slidingStrategy(
   system: ContextMessage[],
   conversation: ContextMessage[],
