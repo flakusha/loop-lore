@@ -2,6 +2,7 @@
 <div
   x-show="$store.ui.showRenameModal"
   x-cloak
+  :class="{ open: $store.ui.showRenameModal }"
   class="modal-overlay"
   @click.self="$store.ui.showRenameModal = false"
   data-testid="rename-chat-modal"
