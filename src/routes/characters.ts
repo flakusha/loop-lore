@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 import { Elysia } from "elysia";
 import type { Kysely } from "kysely";
 import type { DB } from "../db/schema";
@@ -78,7 +76,9 @@ export function charactersRoutes(opts: HandlerOpts) {
         .executeTakeFirst();
       if (!actor) return jsonError({ message: "Actor not found", status: HttpStatus.NotFound });
 
-      if (actor.visibility !== "public" && actor.user_id !== ctx.userId && ctx.userRole !== "admin") {
+      // Solo role is admin-equivalent for own actors (instance owner)
+      const isAdminOrSolo = ctx.userRole === "admin" || ctx.userRole === "solo";
+      if (actor.visibility !== "public" && actor.user_id !== ctx.userId && !isAdminOrSolo) {
         return jsonError({ message: "Actor not found", status: HttpStatus.NotFound });
       }
       return jsonResponse(actor);
@@ -91,7 +91,9 @@ export function charactersRoutes(opts: HandlerOpts) {
         .executeTakeFirst();
       if (!actor) return jsonError({ message: "Actor not found", status: HttpStatus.NotFound });
 
-      if (actor.visibility !== "public" && actor.user_id !== ctx.userId && ctx.userRole !== "admin") {
+      // Solo role is admin-equivalent for own actors
+      const isAdminOrSolo = ctx.userRole === "admin" || ctx.userRole === "solo";
+      if (actor.visibility !== "public" && actor.user_id !== ctx.userId && !isAdminOrSolo) {
         return jsonError({ message: "Actor not found", status: HttpStatus.NotFound });
       }
 
