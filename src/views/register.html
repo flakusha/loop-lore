@@ -12,32 +12,7 @@
       hx-swap="innerHTML"
       hx-indicator="#register-submit"
     >
-      <div class="form-field">
-        <label for="username">Username</label>
-        <input
-          type="text"
-          id="username"
-          name="username"
-          required
-          autofocus
-          autocomplete="username"
-          class="form-input"
-          data-testid="register-username"
-        />
-      </div>
-
-      <div class="form-field">
-        <label for="password">Password</label>
-        <input
-          type="password"
-          id="password"
-          name="password"
-          required
-          autocomplete="new-password"
-          class="form-input"
-          data-testid="register-password"
-        />
-      </div>
+      {{> auth-form-fields.html}}
 
       <button
         id="register-submit"
