@@ -46,6 +46,10 @@ export const SEED = {
     id: `a0000003-0000-4000-a000-${U.slice(24)}`,
     name: "E2E Test Character",
   },
+  soloCharacter: {
+    id: `a0000007-0000-4000-a000-${U.slice(24)}`,
+    name: "E2E Solo Character",
+  },
   chat: {
     id: `a0000004-0000-4000-a000-${U.slice(24)}`,
     name: "E2E Test Chat",
@@ -59,30 +63,30 @@ export const SEED = {
     filename: "test-image.png",
   },
   solo: {
-    id: `a0000007-0000-4000-a000-${U.slice(24)}`,
-    username: "solo",
+    id: `a0000008-0000-4000-a000-${U.slice(24)}`,
+    username: "demo",
   },
   soloChat: {
-    id: `a0000008-0000-4000-a000-${U.slice(24)}`,
+    id: `a0000009-0000-4000-a000-${U.slice(24)}`,
     name: "E2E Test Chat",
   },
   world: {
-    id: `a0000009-0000-4000-a000-${U.slice(24)}`,
+    id: `a0000010-0000-4000-a000-${U.slice(24)}`,
     name: "E2E Test World",
     description: "World for E2E testing",
   },
   location: {
-    id: `a0000010-0000-4000-a000-${U.slice(24)}`,
+    id: `a0000011-0000-4000-a000-${U.slice(24)}`,
     name: "E2E Test Location",
     description: "A dusty tavern in the starting village",
   },
   item: {
-    id: `a0000011-0000-4000-a000-${U.slice(24)}`,
+    id: `a0000012-0000-4000-a000-${U.slice(24)}`,
     name: "Iron Sword",
     description: "A plain but reliable blade",
   },
   quest: {
-    id: `a0000012-0000-4000-a000-${U.slice(24)}`,
+    id: `a0000013-0000-4000-a000-${U.slice(24)}`,
     name: "Retrieve the Lost Artifact",
     description: "Find the ancient relic hidden in the caves beneath the village",
   },
@@ -177,7 +181,6 @@ export async function seedChat(db: Kysely<DB>): Promise<void> {
       mode: ChatMode.Story,
       created_by: SEED.user.id,
     })
-    .onConflict((oc) => oc.column("id").doNothing())
     .execute();
 
   // Add creator as participant
@@ -188,7 +191,6 @@ export async function seedChat(db: Kysely<DB>): Promise<void> {
       actor_id: SEED.user.id,
       role_in_chat: "owner",
     })
-    .onConflict((oc) => oc.columns(["chat_id", "actor_id"]).doNothing())
     .execute();
 }
 
@@ -256,7 +258,7 @@ export async function seedWorldItem(db: Kysely<DB>): Promise<void> {
   await db
     .insertInto("world_items")
     .values({
-      id: `a0000013-0000-4000-a000-${U.slice(24)}`,
+      id: `b0000001-0000-4000-a000-${U.slice(24)}`,
       world_id: SEED.world.id,
       item_id: SEED.item.id,
       location_id: SEED.location.id,
@@ -298,16 +300,13 @@ export async function seedAll(db: Kysely<DB>): Promise<void> {
   await seedItem(db);
   await seedWorldItem(db);
   await seedQuest(db);
-  await seedSolo(db);
 }
 
 /**
- * Seed a Solo-role user + actor + a chat owned by that solo user.
+ * Seed a Solo-role user + actor + character + chat owned by that solo user.
  * Required for browser e2e tests that run in demo (auth.required=false)
  * mode: getOrCreateSoloUserForAuth looks up role=UserRole.Solo and uses
- * that user's id as the auth context userId. Chats seeded under SEED.user
- * (UserRole.User) are NOT visible to the demo/solo auth context, so we
- * also seed a chat owned by SEED.solo with the same name as SEED.chat.
+ * that user's id as the auth context userId.
  */
 export async function seedSolo(db: Kysely<DB>): Promise<void> {
   await db
@@ -332,6 +331,25 @@ export async function seedSolo(db: Kysely<DB>): Promise<void> {
       user_id: SEED.solo.id,
       owner_id: SEED.solo.id,
       agent_type: AgentType.None,
+      settings: "{}",
+      import_spec: "raw",
+      data_version: 0,
+    })
+    .onConflict((oc) => oc.column("id").doNothing())
+    .execute();
+
+  // Seed a character visible to solo user (uses separate ID from SEED.character)
+  await db
+    .insertInto("actors")
+    .values({
+      id: SEED.soloCharacter.id,
+      actor_type: ActorType.Character,
+      display_name: SEED.soloCharacter.name,
+      user_id: SEED.solo.id,
+      owner_id: SEED.solo.id,
+      agent_type: AgentType.Ai,
+      description: "Character for E2E testing (solo)",
+      system_prompt: "You are a test character.",
       settings: "{}",
       import_spec: "raw",
       data_version: 0,
