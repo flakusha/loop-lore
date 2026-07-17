@@ -62,7 +62,7 @@ export function createApp(deps: AppDeps): Elysia {
 
   const app = new Elysia({ adapter: BunAdapter })
     // ── Validation error handler (must be first) ─────────────
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
     .onError((ctx: any) => onValidationError(ctx.code, ctx.error, ctx.set))
 
     // ── Authentication guard (runs before all routes, populates context) ──────

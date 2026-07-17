@@ -46,7 +46,6 @@ export function apiKeysRoutes({ database, config: cfg }: { database: Kysely<DB>;
         return unauthorized();
       }
 
-      // eslint-disable-next-line unicorn/no-declarations-before-early-exit
       const request = (ctx as any).request as Request;
 
       if (!config.byoKey.enabled) {
