@@ -4,18 +4,18 @@ Unified structured logging. Zero deps. Async queue + PII censor + JSONL/DB trans
 
 ## Source Files
 
-| File                                     | Purpose                        |
-| ---------------------------------------- | ------------------------------ |
-| `src/logger/index.ts`                    | `createLogger`, `getLogger`    |
-| `src/logger/types.ts`                    | `LogEntry`, `Logger`, `Transport` |
-| `src/logger/levels.ts`                   | `LogLevel` (Debug:10, Info:20, Warn:30, Error:40) |
-| `src/logger/formatters.ts`               | `formatConsole`, `formatJSONL` |
-| `src/logger/censors.ts`                  | Field-glob PII engine + `DEFAULT_RULES` |
-| `src/logger/limits.ts`                   | Entry size caps + truncation   |
-| `src/logger/transports/console.ts`       | `ConsoleTransport` (always active) |
-| `src/logger/queue.ts`                    | `AsyncLogQueue` (batch 100ms/50 entries, max 10k) |
-| `src/logger/logger.ts`                   | `LoggerImpl` implements `Logger` |
-| `src/utils/date.ts`                      | `formatTime`, `tzOffset`, `unixMs` |
+| File                               | Purpose                                           |
+| ---------------------------------- | ------------------------------------------------- |
+| `src/logger/index.ts`              | `createLogger`, `getLogger`                       |
+| `src/logger/types.ts`              | `LogEntry`, `Logger`, `Transport`                 |
+| `src/logger/levels.ts`             | `LogLevel` (Debug:10, Info:20, Warn:30, Error:40) |
+| `src/logger/formatters.ts`         | `formatConsole`, `formatJSONL`                    |
+| `src/logger/censors.ts`            | Field-glob PII engine + `DEFAULT_RULES`           |
+| `src/logger/limits.ts`             | Entry size caps + truncation                      |
+| `src/logger/transports/console.ts` | `ConsoleTransport` (always active)                |
+| `src/logger/queue.ts`              | `AsyncLogQueue` (batch 100ms/50 entries, max 10k) |
+| `src/logger/logger.ts`             | `LoggerImpl` implements `Logger`                  |
+| `src/utils/date.ts`                | `formatTime`, `tzOffset`, `unixMs`                |
 
 ## Log Levels
 
@@ -50,14 +50,14 @@ Replacement: `[REDACTED]`. Per-entry opt-out: `skipCensor: true`. Recursive walk
 
 Applied before queue:
 
-| Field             | Default | Behavior          |
-| ----------------- | ------- | ----------------- |
-| message string    | 10 KB   | Truncate + suffix |
-| meta total        | 100 KB  | Drop deepest keys |
-| meta depth        | 5       | Hard cut          |
-| error stack       | 5 KB    | Truncate + suffix |
-| message obj keys  | 100     | Strip excess      |
-| meta entries      | 200     | Drop beyond       |
+| Field            | Default | Behavior          |
+| ---------------- | ------- | ----------------- |
+| message string   | 10 KB   | Truncate + suffix |
+| meta total       | 100 KB  | Drop deepest keys |
+| meta depth       | 5       | Hard cut          |
+| error stack      | 5 KB    | Truncate + suffix |
+| message obj keys | 100     | Strip excess      |
+| meta entries     | 200     | Drop beyond       |
 
 Config: `maxMessageBytes`, `maxMetaBytes`, `maxMetaDepth`, `maxStackBytes`, `queueMaxSize`.
 
@@ -74,4 +74,3 @@ Single consumer (`queueMicrotask` + `setInterval`). `Promise.allSettled` transpo
 Env: `LOG_LEVEL`, `LOG_JSONL_PATH`, `LOG_DB_ENABLED`, `LOG_CENSOR_ENABLED`.
 
 ## Usage
-

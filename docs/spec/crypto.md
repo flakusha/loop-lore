@@ -72,15 +72,15 @@ AES-256-GCM for API key encryption at rest. PBKDF2 from config secret (100k iter
 
 ## Error Handling
 
-| Layer   | Failure                    | Behaviour                                           |
-| ------- | -------------------------- | --------------------------------------------------- |
-| SMK     | Env missing + required=true | Throws on startup — refuses to start                |
-| SMK     | Env missing + required=false| Dev mode — no encryption, warning                   |
-| Encrypt | Key invalid/null            | 500. No partial write.                              |
-| Decrypt | Auth tag mismatch           | Throw — tampered                                    |
-| Decrypt | Key missing/revoked         | 403                                                 |
-| Decompress| Corrupt data              | Return raw bytes, log warning                       |
-| Parse   | Malformed JSON              | Return error, log audit event                       |
+| Layer      | Failure                      | Behaviour                            |
+| ---------- | ---------------------------- | ------------------------------------ |
+| SMK        | Env missing + required=true  | Throws on startup — refuses to start |
+| SMK        | Env missing + required=false | Dev mode — no encryption, warning    |
+| Encrypt    | Key invalid/null             | 500. No partial write.               |
+| Decrypt    | Auth tag mismatch            | Throw — tampered                     |
+| Decrypt    | Key missing/revoked          | 403                                  |
+| Decompress | Corrupt data                 | Return raw bytes, log warning        |
+| Parse      | Malformed JSON               | Return error, log audit event        |
 
 ---
 

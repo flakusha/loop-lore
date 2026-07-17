@@ -214,4 +214,6 @@ export interface ChatState extends AlpineMagicThis {
   batchExport(): Promise<void>;
   loadChatKey(chatId: string): Promise<void>;
   checkGenerationStatus(chatId: string): Promise<void>;
+  registerPanelHandlers(): void;
+  unregisterPanelHandlers(): void;
 }

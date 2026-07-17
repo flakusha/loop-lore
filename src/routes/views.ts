@@ -809,15 +809,13 @@ export function viewRoutes({ database }: { database: Kysely<DB> }) {
       })
 
       // ── Admin view (guarded — must precede /views/:name) ─────────
-      .guard(
-        { beforeHandle: adminViewGuard },
-        (app) =>
-          app.get("/views/admin", (ctx) => {
-            const isHtmx = ctx.request.headers.get("HX-Request") === "true";
-            const result = serveView("admin", isHtmx);
-            if (result) return result;
-            return new Response("Not found", { status: 404 });
-          }),
+      .guard({ beforeHandle: adminViewGuard }, (app) =>
+        app.get("/views/admin", (ctx) => {
+          const isHtmx = ctx.request.headers.get("HX-Request") === "true";
+          const result = serveView("admin", isHtmx);
+          if (result) return result;
+          return new Response("Not found", { status: 404 });
+        }),
       )
 
       // ── View templates (non-admin) ──────────────────────────────

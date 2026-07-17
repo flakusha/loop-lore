@@ -303,6 +303,7 @@ export default tseslint.config(
       "@typescript-eslint/no-unsafe-assignment": "off",
       "@typescript-eslint/no-unsafe-argument": "off",
       "@typescript-eslint/no-floating-promises": "off",
+      "sonarjs/explicit-test-skip": "off",
     },
   },
   // ── Overrides: scripts (utility tools, relaxed rules) ─────────────────

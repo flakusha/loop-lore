@@ -73,11 +73,11 @@ Configurable in `benchmarks/thresholds.json`.
 
 ## Tooling
 
-| Script                       | Purpose                              |
-| ---------------------------- | ------------------------------------ |
-| `scripts/bench-run.ts`       | Run suite, write JSON                |
-| `scripts/bench-diff.ts`      | Compare two SHAs, print delta        |
-| `scripts/bench-trend.ts`     | Last N results as ASCII trend        |
+| Script                   | Purpose                       |
+| ------------------------ | ----------------------------- |
+| `scripts/bench-run.ts`   | Run suite, write JSON         |
+| `scripts/bench-diff.ts`  | Compare two SHAs, print delta |
+| `scripts/bench-trend.ts` | Last N results as ASCII trend |
 
 ## References
 
