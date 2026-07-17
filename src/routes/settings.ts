@@ -88,7 +88,7 @@ async function handleExportAll(database: Kysely<DB>, userId: string): Promise<Re
   zip.file("chats.json", chatsStr.ok ? chatsStr.value : "[]");
   zip.file("assets.json", assetsStr.ok ? assetsStr.value : "[]");
 
-  const buffer = await zip.generateAsync({ type: "nodebuffer" });
+  const buffer = await zip.generateAsync({ type: "arraybuffer" });
   return new Response(buffer, {
     headers: {
       "Content-Type": "application/zip",

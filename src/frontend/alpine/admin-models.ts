@@ -48,6 +48,9 @@ export const adminModels = {
   expandProvider: "",
   pluginList: [] as PluginInfo[],
   loadingPlugins: false,
+  sdStatus: "unknown" as "running" | "stopped" | "unknown",
+  sdPort: 9010,
+  sdLatencyMs: null as number | null,
 
   async loadModels() {
     this.loadingModels = true;
@@ -156,8 +159,12 @@ export const adminModels = {
           if (idx === -1) {
             merged.push(p);
           } else {
+            const existing = merged[idx]!;
             merged[idx] = {
-              ...merged[idx],
+              ...existing,
+              name: existing.name,
+              label: existing.label,
+              capabilities: existing.capabilities,
               status: p.status,
               modelCount: p.modelCount,
               latencyMs: p.latencyMs,
@@ -173,6 +180,20 @@ export const adminModels = {
       showToast("error", "Network error");
     } finally {
       this.scanning = false;
+    }
+  },
+
+  async loadSdStatus() {
+    try {
+      const res = await fetch("/api/admin/sd-status", { headers: { Accept: "application/json" } });
+      if (res.ok) {
+        const data = await res.json();
+        this.sdStatus = data.status;
+        this.sdPort = data.port;
+        this.sdLatencyMs = data.latencyMs;
+      }
+    } catch {
+      this.sdStatus = "unknown";
     }
   },
 

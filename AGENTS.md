@@ -44,7 +44,8 @@ before building any frontend feature.
 | `docs/frontend/data-states.md`            | Entity state machines (active/archived/purged), cascade rules, storage model                                                       |
 | `docs/frontend/chat/overview.md`          | Chat types (User×Character, User×User, User×Assistant), data model, message tree, chat master, world/location                      |
 | `docs/frontend/chat/layout.md`            | Hamburger sidebar, centered configurable width, left/right panels, responsive behavior                                             |
-| `docs/frontend/chat/messages.md`          | Markdown render, message bubbles, book-like image layout, detail levels, hover tooling, swipe, thinking display, scroll management |
+| `docs/frontend/chat/message-bubbles.md`  | Visual spec: bubble styling, avatars, grouping, markdown, media layout, detail levels, thinking, system msgs  |
+| `docs/frontend/chat/message-actions.md`  | Actions spec: toolbars, button sets, keyboard shortcuts, mobile touch, threading, reactions, pinned msgs     |
 | `docs/frontend/chat/generation.md`        | Typing indicator, streaming, generation status per mode, 3-tier error handling, chat-switch guard, idempotent retries              |
 | `docs/frontend/chat/archiving.md`         | Cascade deletion, restore, purge flows                                                                                             |
 | `docs/frontend/chat/input.md`             | Text input, media attach, LLM selector, message improvement, image generation                                                      |

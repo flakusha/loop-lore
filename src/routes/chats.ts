@@ -29,9 +29,12 @@ import {
   PaginationQuery,
 } from "../validation/schemas";
 import { unauthorized, forbidden, notFound } from "../validation/middleware";
+import { triggerAutoGeneration, isLlmGenerationConfigured } from "../generation/auto-gen";
+import type { Config } from "../config/schema";
 
 interface HandlerOpts {
   database: Kysely<DB>;
+  config: Config;
 }
 
 export function chatsRoutes(opts: HandlerOpts) {
@@ -145,6 +148,21 @@ export function chatsRoutes(opts: HandlerOpts) {
                 visibility: "visible",
               })
               .execute();
+          }
+
+          // If no welcome message was created for any participant, trigger
+          // LLM auto-generation so the assistant sends an initial greeting.
+          if (characterActors.length === 0 && participantIds && participantIds.length > 0) {
+            const { database: db, config } = opts;
+            if (isLlmGenerationConfigured(config)) {
+              void triggerAutoGeneration({
+                database: db,
+                config,
+                chatId: newChatId,
+                parentMessageId: null,
+                userId,
+              });
+            }
           }
 
           return jsonCreated({ id: newChatId });

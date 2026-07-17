@@ -18,7 +18,7 @@ function getCsrfToken(): string {
   const meta = document.querySelector<HTMLMetaElement>('meta[name="csrf-token"]');
   if (meta?.content) return meta.content;
   const match = document.cookie.match(/(?:^|;\s*)csrf_token=([^;]+)/);
-  return match ? match[1] : "";
+  return match?.[1] ?? "";
 }
 
 export async function feFetch(url: string, options: RequestInit = {}): Promise<Response> {
