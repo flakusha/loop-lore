@@ -19,14 +19,14 @@ Artifacts are specialized Assets for: code files, documents, data files, noteboo
 
 ## Artifact Types
 
-| Type              | Examples                       | Labels                                                        |
-| ----------------- | ------------------------------ | ------------------------------------------------------------- |
-| **Code**          | .py, .js, .ts, .go, .rs, .sh   | `source`, `script`, `module`, `library`, `test`, `fixture`    |
-| **Document**      | .md, .txt, .pdf, .docx         | `document`, `note`, `spec`, `report`, `readme`                |
-| **Data**          | .csv, .json, .xml, .yaml, .sql | `dataset`, `database`, `fixture`, `migration`, `seed`         |
-| **Notebook**      | .ipynb, .rmd                   | `notebook`, `experiment`, `analysis`, `tutorial`              |
-| **Config**        | .env, .toml, .ini              | `config`, `settings`, `environment`, `secrets`, `template`    |
-| **Build/Deps**    | package.json, Cargo.toml, etc. | `manifest`, `lockfile`, `build`, `dependency`                 |
+| Type           | Examples                       | Labels                                                     |
+| -------------- | ------------------------------ | ---------------------------------------------------------- |
+| **Code**       | .py, .js, .ts, .go, .rs, .sh   | `source`, `script`, `module`, `library`, `test`, `fixture` |
+| **Document**   | .md, .txt, .pdf, .docx         | `document`, `note`, `spec`, `report`, `readme`             |
+| **Data**       | .csv, .json, .xml, .yaml, .sql | `dataset`, `database`, `fixture`, `migration`, `seed`      |
+| **Notebook**   | .ipynb, .rmd                   | `notebook`, `experiment`, `analysis`, `tutorial`           |
+| **Config**     | .env, .toml, .ini              | `config`, `settings`, `environment`, `secrets`, `template` |
+| **Build/Deps** | package.json, Cargo.toml, etc. | `manifest`, `lockfile`, `build`, `dependency`              |
 
 ## Artifact Lifecycle
 
@@ -36,16 +36,16 @@ Artifacts are specialized Assets for: code files, documents, data files, noteboo
 
 ## API Endpoints
 
-| Method | Endpoint                     | Purpose                   |
-| ------ | ---------------------------- | ------------------------- |
-| POST   | `/api/assets/code`           | Create code artifact      |
-| POST   | `/api/assets/document`       | Create document artifact  |
-| POST   | `/api/assets/data`           | Create data artifact      |
-| GET    | `/api/assets/:id/metadata`   | Enhanced metadata         |
-| POST   | `/api/assets/:id/execute`    | Sandboxed execution       |
-| POST   | `/api/assets/:id/query`      | Data querying             |
-| POST   | `/api/assets/:id/transform`  | Minify/format/convert     |
-| GET    | `/api/assets/:id/preview`    | HTML preview              |
+| Method | Endpoint                    | Purpose                  |
+| ------ | --------------------------- | ------------------------ |
+| POST   | `/api/assets/code`          | Create code artifact     |
+| POST   | `/api/assets/document`      | Create document artifact |
+| POST   | `/api/assets/data`          | Create data artifact     |
+| GET    | `/api/assets/:id/metadata`  | Enhanced metadata        |
+| POST   | `/api/assets/:id/execute`   | Sandboxed execution      |
+| POST   | `/api/assets/:id/query`     | Data querying            |
+| POST   | `/api/assets/:id/transform` | Minify/format/convert    |
+| GET    | `/api/assets/:id/preview`   | HTML preview             |
 
 ## UI Components
 

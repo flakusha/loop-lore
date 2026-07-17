@@ -6,13 +6,13 @@ htmx + Alpine.js. No build step for development. Production build via `bun run b
 
 ## Tech Stack
 
-| Layer        | Technology                | Notes                                                    |
-| ------------ | ------------------------- | -------------------------------------------------------- |
-| HTML         | Prebuilt static templates | Server replaces `{{{content}}}` in layout.html           |
-| AJAX         | htmx 2.x                  | Partial page updates, server-driven UI                   |
-| Client state | Alpine.js 3.x             | Modals, toasts, local UI toggles (not data state)        |
-| Styling      | Hand-authored CSS         | 3 files: theme.css, app.css, gallery.css. No framework.  |
-| Icons        | Unicode / SVG             | No icon library dependency. Inline SVGs where needed.    |
+| Layer        | Technology                | Notes                                                   |
+| ------------ | ------------------------- | ------------------------------------------------------- |
+| HTML         | Prebuilt static templates | Server replaces `{{{content}}}` in layout.html          |
+| AJAX         | htmx 2.x                  | Partial page updates, server-driven UI                  |
+| Client state | Alpine.js 3.x             | Modals, toasts, local UI toggles (not data state)       |
+| Styling      | Hand-authored CSS         | 3 files: theme.css, app.css, gallery.css. No framework. |
+| Icons        | Unicode / SVG             | No icon library dependency. Inline SVGs where needed.   |
 
 ## Development
 
@@ -26,13 +26,13 @@ htmx + Alpine.js. No build step for development. Production build via `bun run b
 
 ## Scripts
 
-| Command                  | Purpose                               |
-| ------------------------ | ------------------------------------- |
-| `bun run dev`            | Dev server (hot reload)               |
-| `bun run start`          | Production server                     |
-| `bun run build`          | Build all assets (frontend + server)  |
-| `bun run build:frontend` | Build browser bundle only             |
-| `bun run build:server`   | Build server bundle only              |
+| Command                  | Purpose                              |
+| ------------------------ | ------------------------------------ |
+| `bun run dev`            | Dev server (hot reload)              |
+| `bun run start`          | Production server                    |
+| `bun run build`          | Build all assets (frontend + server) |
+| `bun run build:frontend` | Build browser bundle only            |
+| `bun run build:server`   | Build server bundle only             |
 
 ## TypeScript
 
@@ -82,19 +82,19 @@ No Tailwind, no CSS-in-JS. Three files:
 
 ## Docs Index
 
-| File                                                | Pages covered                                                      |
-| --------------------------------------------------- | ------------------------------------------------------------------ |
-| `frontend/overview.md`                              | Design principles, CSS tokens, tech stack                          |
-| `frontend/routing.md`                               | URL structure, navigation patterns, htmx history                   |
-| `frontend/chat/overview.md`                         | Chat types, data model, message tree, chat master                  |
-| `frontend/chat/layout.md`                           | Hamburger sidebar, centered configurable width, panels, responsive |
-| `frontend/chat/messages.md`                         | Markdown render, message bubbles, detail levels, tooling, swipe    |
-| `frontend/chat/generation.md`                       | Typing indicator, streaming, error handling                        |
-| `frontend/characters.md`                            | Character list grid, create/edit form                              |
-| `frontend/gallery.md`                               | Asset gallery grid, preview modal, upload dialog                   |
-| `frontend/settings.md`                              | Settings sections: general, chat, API config                       |
-| `frontend/components.md`                            | Shared components: toasts, modals, spinners, chips, drop zones     |
-| `frontend/`                                         | All frontend UX specifications                                     |
+| File                          | Pages covered                                                      |
+| ----------------------------- | ------------------------------------------------------------------ |
+| `frontend/overview.md`        | Design principles, CSS tokens, tech stack                          |
+| `frontend/routing.md`         | URL structure, navigation patterns, htmx history                   |
+| `frontend/chat/overview.md`   | Chat types, data model, message tree, chat master                  |
+| `frontend/chat/layout.md`     | Hamburger sidebar, centered configurable width, panels, responsive |
+| `frontend/chat/messages.md`   | Markdown render, message bubbles, detail levels, tooling, swipe    |
+| `frontend/chat/generation.md` | Typing indicator, streaming, error handling                        |
+| `frontend/characters.md`      | Character list grid, create/edit form                              |
+| `frontend/gallery.md`         | Asset gallery grid, preview modal, upload dialog                   |
+| `frontend/settings.md`        | Settings sections: general, chat, API config                       |
+| `frontend/components.md`      | Shared components: toasts, modals, spinners, chips, drop zones     |
+| `frontend/`                   | All frontend UX specifications                                     |
 
 ## Related Docs
 

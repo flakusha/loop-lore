@@ -287,13 +287,13 @@ When a story session completes (or hits a checkpoint), synthetic data flows thro
 
 ```
 
-POST   /api/chats/story              # Create story-mode chat
-GET    /api/chats/:id/story/state    # Get current story state (turn, actors, quests)
-POST   /api/chats/:id/story/start    # Begin autonomous generation
-POST   /api/chats/:id/story/pause    # Pause generation
-POST   /api/chats/:id/story/resume   # Resume generation
-POST   /api/chats/:id/story/step     # Single turn (for testing/debugging)
-POST   /api/chats/:id/story/configure # Update GM config, turn order, thresholds
+POST /api/chats/story # Create story-mode chat
+GET /api/chats/:id/story/state # Get current story state (turn, actors, quests)
+POST /api/chats/:id/story/start # Begin autonomous generation
+POST /api/chats/:id/story/pause # Pause generation
+POST /api/chats/:id/story/resume # Resume generation
+POST /api/chats/:id/story/step # Single turn (for testing/debugging)
+POST /api/chats/:id/story/configure # Update GM config, turn order, thresholds
 
 ```
 
@@ -301,10 +301,10 @@ POST   /api/chats/:id/story/configure # Update GM config, turn order, thresholds
 
 ```
 
-POST   /api/chats/:id/gm/turn        # Request GM decision for next turn
-GET    /api/chats/:id/gm/history     # GM decision log
-POST   /api/chats/:id/gm/override    # Human GM override
-POST   /api/chats/:id/gm/escalate    # Escalate current turn to human
+POST /api/chats/:id/gm/turn # Request GM decision for next turn
+GET /api/chats/:id/gm/history # GM decision log
+POST /api/chats/:id/gm/override # Human GM override
+POST /api/chats/:id/gm/escalate # Escalate current turn to human
 
 ```
 
@@ -312,9 +312,9 @@ POST   /api/chats/:id/gm/escalate    # Escalate current turn to human
 
 ```
 
-POST   /api/messages/:id/evaluate    # Trigger quality evaluation
-POST   /api/messages/:id/regenerate  # Request regeneration
-GET    /api/messages/:id/attempts    # List generation attempts
+POST /api/messages/:id/evaluate # Trigger quality evaluation
+POST /api/messages/:id/regenerate # Request regeneration
+GET /api/messages/:id/attempts # List generation attempts
 
 ```
 
@@ -322,12 +322,12 @@ GET    /api/messages/:id/attempts    # List generation attempts
 
 ```
 
-GET    /api/worlds/:worldId/quests           # List quests
-POST   /api/worlds/:worldId/quests           # Create quest (GM)
-GET    /api/quests/:id                       # Quest detail
-PATCH  /api/quests/:id                       # Update quest (GM)
-POST   /api/quests/:id/progress              # Manual progress update (GM)
-GET    /api/quests/:id/history               # Progress history
+GET /api/worlds/:worldId/quests # List quests
+POST /api/worlds/:worldId/quests # Create quest (GM)
+GET /api/quests/:id # Quest detail
+PATCH /api/quests/:id # Update quest (GM)
+POST /api/quests/:id/progress # Manual progress update (GM)
+GET /api/quests/:id/history # Progress history
 
 ```
 
@@ -335,10 +335,10 @@ GET    /api/quests/:id/history               # Progress history
 
 ```
 
-GET    /api/worlds/:worldId/state            # Current world state snapshot
-GET    /api/worlds/:worldId/state/history    # State history
-GET    /api/worlds/:worldId/npcs/:actorId    # NPC dynamic state
-GET    /api/worlds/:worldId/locations/:id    # Location dynamic state
+GET /api/worlds/:worldId/state # Current world state snapshot
+GET /api/worlds/:worldId/state/history # State history
+GET /api/worlds/:worldId/npcs/:actorId # NPC dynamic state
+GET /api/worlds/:worldId/locations/:id # Location dynamic state
 
 ```
 
@@ -346,14 +346,14 @@ GET    /api/worlds/:worldId/locations/:id    # Location dynamic state
 
 ```
 
-GET    /api/synthetic/scenarios              # List with filters
-POST   /api/synthetic/scenarios              # Create manual scenario
-GET    /api/synthetic/scenarios/:id          # Get scenario
-POST   /api/synthetic/generate               # Trigger generation from session
-POST   /api/synthetic/test/run               # Run test suite
-GET    /api/synthetic/test/results/:runId    # Test results
+GET /api/synthetic/scenarios # List with filters
+POST /api/synthetic/scenarios # Create manual scenario
+GET /api/synthetic/scenarios/:id # Get scenario
+POST /api/synthetic/generate # Trigger generation from session
+POST /api/synthetic/test/run # Run test suite
+GET /api/synthetic/test/results/:runId # Test results
 
-```
+````
 
 ---
 
@@ -426,7 +426,7 @@ story:
       - "gm_escalation"
     maxScenariosPerSession: 100
     retentionDays: 30
-```
+````
 
 ---
 

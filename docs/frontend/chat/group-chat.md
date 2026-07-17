@@ -67,14 +67,14 @@ Extend 1x1 chat to multiple participants (users/characters/assistants). Keep tre
 - `POST /api/groups/:chatId/messages` — post message, body:
 
   typescript
-// After inserting the user message:
-const mentionedActorIds = extractMentionedActorIds(userMessage);
-for (const actorId of mentionedActorIds) {
+  // After inserting the user message:
+  const mentionedActorIds = extractMentionedActorIds(userMessage);
+  for (const actorId of mentionedActorIds) {
   await db
-    .insertInto("chat_mentions")
-    .values({ id: crypto.randomUUID(), message_id: message.id, actor_id: actorId })
-    .execute();
-}
+  .insertInto("chat_mentions")
+  .values({ id: crypto.randomUUID(), message_id: message.id, actor_id: actorId })
+  .execute();
+  }
 
 ```
 
@@ -192,3 +192,4 @@ Add `assistant_role` column or use existing `role_in_chat` with assistant-specif
 | `src/components/chat/chat-header.html`         | Pause button                                      |
 | `src/components/chat/chat-settings-modal.html` | Turn strategy + pause checkbox                    |
 | `src/db/migrations/009_group_chat.ts`          | Schema additions                                  |
+```
