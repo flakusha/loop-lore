@@ -131,7 +131,7 @@ A group chat may include the assistant as a participant in any of its roles
 ### Done
 
 - [x] Schema: `chat_participants.talkativity`, `chat_participants.initiative`,
-      `chats.parent_chat_id`, `chats.chat_purpose`, `group_initiatives` table,
+      `chats.parent_chat_id`, `chats.purpose`, `group_initiatives` table,
       `chat_mentions` table (migration 009).
 - [x] TurnManager generalized to `src/turning/` — shared by story + group chat.
 - [x] 5 turn strategies implemented: `round_robin`, `scene_based`, `initiative`,
