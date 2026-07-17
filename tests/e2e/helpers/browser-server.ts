@@ -91,8 +91,7 @@ export async function createBrowserTest(
   initializeProviders(config);
   await loadAllPlugins(db);
 
-  // Seed solo user with deterministic ID so seeded data is visible
-  // (BUG.1 fix — solo/seed user ID mismatch)
+  // Seed solo user + character visible to solo context
   await seedSolo(db);
   resetSoloUserCache();
 
