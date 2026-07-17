@@ -42,6 +42,7 @@ export interface Users {
   settings: string;
   birth_date: string | null;
   age_gate_accepted_at: string | null;
+  data_version: Generated<number>;
   created_at: Generated<string>;
   last_seen_at: string | null;
 }
@@ -55,6 +56,7 @@ export interface Personas {
   description: string | null;
   title: string | null;
   is_default: Generated<DefaultState>;
+  data_version: Generated<number>;
   created_at: Generated<string>;
   updated_at: Generated<string>;
 }
@@ -192,6 +194,7 @@ export interface Messages {
   idempotency_key: string | null;
   continuation_index: number | null;
   swipe_index: number | null;
+  data_version: Generated<number>;
   created_at: Generated<string>;
   edited_at: string | null;
   archived_at: string | null;

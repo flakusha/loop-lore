@@ -34,3 +34,6 @@ bun.lock
 
 # User runtime data directory (SQLite DB, uploads, etc.)
 loop-lore-data/
+
+# TODO Remove once confirmed
+.opencode/

@@ -1,48 +1,16 @@
 import { describe, test, expect, beforeAll, afterAll } from "bun:test";
-import { Kysely, sql } from "kysely";
 import { createTestDb } from "../test-utils/create-test-db";
 import { seedDefaultActors } from "./seed";
 import { createLogger } from "../logger";
+import type { Kysely } from "kysely";
 import type { DB } from "./schema";
-
-async function createTables(db: Kysely<DB>): Promise<void> {
-  await db.schema
-    .createTable("actors")
-    .addColumn("id", "text", (col) => col.primaryKey())
-    .addColumn("actor_type", "text", (col) => col.notNull().defaultTo("user"))
-    .addColumn("agent_type", "text", (col) => col.notNull().defaultTo("none"))
-    .addColumn("display_name", "text", (col) => col.notNull())
-    .addColumn("description", "text")
-    .addColumn("system_prompt", "text")
-    .addColumn("user_id", "text", (col) => col.references("users.id"))
-    .addColumn("owner_id", "text", (col) => col.references("users.id"))
-    .addColumn("avatar_asset_id", "text")
-    .addColumn("visibility", "text", (col) => col.notNull().defaultTo("private"))
-    .addColumn("settings", "text", (col) => col.notNull().defaultTo("{}"))
-    .addColumn("data_version", "integer", (col) => col.notNull().defaultTo(0))
-    .addColumn("import_spec", "text", (col) => col.notNull().defaultTo("raw"))
-    .addColumn("created_at", "text", (col) => col.notNull().defaultTo(sql`(datetime('now'))`))
-    .addColumn("updated_at", "text", (col) => col.notNull().defaultTo(sql`(datetime('now'))`))
-    .execute();
-
-  await db.schema
-    .createTable("users")
-    .addColumn("id", "text", (col) => col.primaryKey())
-    .addColumn("username", "text", (col) => col.notNull().unique())
-    .addColumn("display_name", "text", (col) => col.notNull())
-    .addColumn("role", "text", (col) => col.notNull().defaultTo("user"))
-    .addColumn("status", "text", (col) => col.notNull().defaultTo("active"))
-    .addColumn("settings", "text", (col) => col.notNull().defaultTo("{}"))
-    .execute();
-}
 
 describe("seedDefaultActors", () => {
   let db: Kysely<DB>;
 
   beforeAll(async () => {
     createLogger({ level: "warn" });
-    db = createTestDb();
-    await createTables(db);
+    ({ db } = await createTestDb());
   });
 
   afterAll(async () => {

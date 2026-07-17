@@ -18,7 +18,7 @@ Core tables for loop-lore. Designed for:
 
 | File                            | Tables                                                                                                                                                             |
 | ------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `src/db/migrations/001_init.ts` | DDL for all tables (includes personas, chat features) — column types, constraints, defaults, indexes                                                               |
+| `src/db/migrations/001_init.ts` | DDL for all core tables (parts/ directory) — column types, constraints, defaults, indexes                                                                          |
 | `src/db/schema-core.ts`         | Users, Sessions, Chats, Actors, ChatParticipants, Characters, Messages, ActorKeys, ActorItems, ActorNotes, UserApiKeys                                             |
 | `src/db/schema-content.ts`      | Assets, AssetLinks                                                                                                                                                 |
 | `src/db/schema-generation.ts`   | GenerationAttempts                                                                                                                                                 |
@@ -44,11 +44,11 @@ Should be converted to proper enums with CHECK constraints:
 
 ### Schema-Migration Mismatches
 
-| Issue                                          | Schema location                    | Migration location                                        |
-| ---------------------------------------------- | ---------------------------------- | --------------------------------------------------------- |
-| ~~`chats.purpose` vs `chat_purpose`~~          | `schema-core.ts:72` uses `purpose` | **Fixed in 018**: dropped redundant `chat_purpose` column |
-| `actor_keys.public_key` missing in DDL         | `schema-core.ts:199` field defined | `006_messages_keys.ts` does not create column             |
-| Migrations 008-010 partially squashed into 001 | `001_init.ts` parts                | Running 008-010 after 001_init causes column conflicts    |
+| Issue                                         | Schema location                    | Migration location                                                                   |
+| --------------------------------------------- | ---------------------------------- | ------------------------------------------------------------------------------------ |
+| ~~`chats.purpose` vs `chat_purpose`~~         | `schema-core.ts:72` uses `purpose` | **Fixed in 019**: dropped redundant `chat_purpose` column                            |
+| `actor_keys.public_key` added later           | `schema-core.ts:199` field defined | `006_messages_keys.ts` does not create column; **added in 017**                      |
+| Migrations 008-010 run cleanly after 001_init | `001_init.ts` parts                | Parts unsquashed: 001 creates only pre-008 schema; 008-010 add columns incrementally |
 
 ## Entity Relationships
 
@@ -124,14 +124,12 @@ These columns were converted from integer 0/1 to string enums with state machine
 | `actor_items` | `equipped`   | `INTEGER 0` | `EquipState`     | 010       |
 | `items`       | `stackable`  | `INTEGER 0` | `StackableState` | 010       |
 
-### Planned: Lore Entry Lifecycle State Machine
+### Implemented: Lore Entry Lifecycle State Machine
 
-The `enabled` boolean on `actor_lore_entries` and `world_lore_entries` is
-a migration target: replace with a `status` enum supporting a richer lifecycle.
+The `enabled` column on `actor_lore_entries` and `world_lore_entries` was
+converted from integer 0/1 to a text enum (`LoreEntryStatus`) supporting:
 
-**Current:** `enabled INTEGER NOT NULL DEFAULT 1`
-
-| Target enum       | Values                            | Transitions                                           |
+| Enum              | Values                            | Transitions                                           |
 | ----------------- | --------------------------------- | ----------------------------------------------------- |
 | `LoreEntryStatus` | `enabled`, `disabled`, `archived` | `enabled ↔ disabled`, `enabled → archived` (terminal) |
 
@@ -140,6 +138,9 @@ not appear in prompts without fully deleting them (currently requires
 setting `enabled=0` with no distinction between "disabled temporarily" and
 "archived permanently"). The other three booleans (`selective`, `case_sensitive`,
 `constant`) stay as orthogonal flags — they describe entry behavior, not lifecycle.
+
+- **Migration 017**: converted column type from INTEGER to TEXT
+- **Migration (enum update 2026-07-17)**: added `Archived = "archived"` to `LoreEntryStatus` enum
 
 ### Unified Actor Table (replaces separate characters table)
 
@@ -182,23 +183,25 @@ chain can be squashed into a single `001_init.ts` that creates all tables at onc
 
 ### Current Migration Sequence
 
-| #   | File                       | Tables                                                                                                                                                                                                                                                                                                                                                                                                    |
-| --- | -------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 001 | `001_init.ts`              | All core tables: users, sessions, personas, assets, worlds, locations, items, world_items, world_lore_entries, chats, actors, chat_participants, characters, actor_memories, actor_notes, actor_items, actor_lore_entries, messages, actor_keys, user_api_keys, generation_attempts, story_turns, quests, quest_progress, world_states, npc_states, location_states, synthetic_data, model_role_overrides |
-| 008 | `008_chat_features.ts`     | chat features (partially squashed into 001)                                                                                                                                                                                                                                                                                                                                                               |
-| 009 | `009_group_chat.ts`        | group chat features (partially squashed into 001)                                                                                                                                                                                                                                                                                                                                                         |
-| 010 | `010_boolean_enums.ts`     | boolean enum conversions (partially squashed into 001)                                                                                                                                                                                                                                                                                                                                                    |
-| 011 | `011_memory_decay.ts`      | Memory decay and strength tracking                                                                                                                                                                                                                                                                                                                                                                        |
-| 012 | `012_system_config.ts`     | System config key-value table                                                                                                                                                                                                                                                                                                                                                                             |
-| 013 | `013_log_entries.ts`       | Log entries table for DB transport                                                                                                                                                                                                                                                                                                                                                                        |
-| 014 | `014_plugin_state.ts`      | Plugin state persistence                                                                                                                                                                                                                                                                                                                                                                                  |
-| 015 | `015_message_archiving.ts` | Message archiving column                                                                                                                                                                                                                                                                                                                                                                                  |
-| 016 | `016_telemetry_events.ts`  | Telemetry events table                                                                                                                                                                                                                                                                                                                                                                                    |
-| 017 | `017_schema_hardening.ts`  | Schema hardening — enum conversions, missing columns                                                                                                                                                                                                                                                                                                                                                      |
+| #   | File                               | Tables                                                                                                                                                                                                                                                                                                                                                                                                    |
+| --- | ---------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 001 | `001_init.ts`                      | All core tables: users, sessions, personas, assets, worlds, locations, items, world_items, world_lore_entries, chats, actors, chat_participants, characters, actor_memories, actor_notes, actor_items, actor_lore_entries, messages, actor_keys, user_api_keys, generation_attempts, story_turns, quests, quest_progress, world_states, npc_states, location_states, synthetic_data, model_role_overrides |
+| 008 | `008_chat_features.ts`             | chat features (partially squashed into 001)                                                                                                                                                                                                                                                                                                                                                               |
+| 009 | `009_group_chat.ts`                | group chat features (partially squashed into 001)                                                                                                                                                                                                                                                                                                                                                         |
+| 010 | `010_boolean_enums.ts`             | boolean enum conversions (partially squashed into 001)                                                                                                                                                                                                                                                                                                                                                    |
+| 011 | `011_memory_decay.ts`              | Memory decay and strength tracking                                                                                                                                                                                                                                                                                                                                                                        |
+| 012 | `012_system_config.ts`             | System config key-value table                                                                                                                                                                                                                                                                                                                                                                             |
+| 013 | `013_log_entries.ts`               | Log entries table for DB transport                                                                                                                                                                                                                                                                                                                                                                        |
+| 014 | `014_plugin_state.ts`              | Plugin state persistence                                                                                                                                                                                                                                                                                                                                                                                  |
+| 015 | `015_message_archiving.ts`         | Message archiving column                                                                                                                                                                                                                                                                                                                                                                                  |
+| 016 | `016_telemetry_events.ts`          | Telemetry events table                                                                                                                                                                                                                                                                                                                                                                                    |
+| 017 | `017_schema_hardening.ts`          | Schema hardening — enum conversions, missing columns                                                                                                                                                                                                                                                                                                                                                      |
+| 018 | `018_data_version_columns.ts`      | Data version columns (users, personas, messages) + data_migrations tracking table                                                                                                                                                                                                                                                                                                                         |
+| 019 | `019_drop_chat_purpose.ts`         | Drop redundant `chat_purpose` column (canonical is `purpose`, added in 017)                                                                                                                                                                                                                                                                                                                               |
+| 020 | `020_difficulty_reroll_default.ts` | Fix worlds.difficulty_reroll default "off" → "none" (match DifficultyReroll enum)                                                                                                                                                                                                                                                                                                                         |
 
-**Note:** Migrations 008-010 have been partially squashed into 001_init parts.
-Running them individually alongside 001_init will cause column-name conflicts.
-See "Schema-Migration Mismatches" below.
+All parts in `001_init.ts` are kept at pre-008 state. Migrations 008-017 add
+columns incrementally; migrations 018-020 apply post-hoc fixes.
 
 ### Migration Pattern
 

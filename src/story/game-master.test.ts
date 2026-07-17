@@ -90,7 +90,7 @@ function createTestDb(): TestDbResult {
       description TEXT, lore TEXT, scan_depth INTEGER NOT NULL DEFAULT 0,
       token_budget INTEGER NOT NULL DEFAULT 4096,
       difficulty_modifier REAL NOT NULL DEFAULT 1,
-      difficulty_reroll TEXT NOT NULL DEFAULT 'off',
+      difficulty_reroll TEXT NOT NULL DEFAULT 'none',
       difficulty_state TEXT NOT NULL DEFAULT 'alive',
       created_at TEXT NOT NULL DEFAULT (datetime('now')), updated_at TEXT NOT NULL DEFAULT (datetime('now'))
     )
