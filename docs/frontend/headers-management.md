@@ -112,37 +112,13 @@ The layout (`src/views/layout.html`) contains an empty header placeholder:
 
 Each view template includes its header at the top:
 
-```html
-<header id="header-slot" class="main-header" data-page="characters" data-testid="characters-header">
-  <button class="hamburger" x-on:click="window.toggleSidebar()">☰</button>
-  <span class="title">Characters</span>
-  <div class="actions">...</div>
-</header>
-```
-
 ### Header Management JavaScript
 
 Located in `src/frontend/alpine/htmx.ts`:
 
-```ts
-function normalizeHeaderSlot() {
-  // Removes empty duplicate headers
-  // Moves populated header outside #app-root if nested
-}
-
-document.addEventListener("htmx:load", (e) => {
-  normalizeHeaderSlot();
-});
-```
-
 ### Header Test Coverage
 
 E2E tests in `tests/e2e/flows/browser/navigation.browser.ts`:
-
-```ts
-test("single header-slot exists after multiple navigations (no duplicates)");
-test("header-slot is not duplicated inside #app-root");
-```
 
 ---
 
@@ -214,24 +190,3 @@ test("header-slot is not duplicated inside #app-root");
 
 ### Headers Config Schema (`src/config/schema.ts`)
 
-```ts
-interface HeadersConfig {
-  enabled: boolean;
-  referrerPolicy: string;
-  xContentTypeOptions: boolean;
-  xFrameOptions: "DENY" | "SAMEORIGIN" | null;
-  permissionsPolicy: string;
-  csp: CspConfig; // HTML only
-  crossOriginOpenerPolicy: string | null;
-  crossOriginEmbedderPolicy: string | null;
-  crossOriginResourcePolicy: string | null;
-  timingAllowOrigin: string; // HTML: for performance measurement
-  immutableHashedAssets: boolean; // Static only
-  linkPreload: string[]; // HTML only
-  acceptClientHints: string[]; // HTML only
-  saveData: boolean;
-  earlyHints: { enabled: boolean };
-  reportingEndpoints: Record<string, string>;
-  nel: string | null;
-}
-```

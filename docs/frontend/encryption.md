@@ -81,20 +81,6 @@ Encryption keys form a three-level hierarchy:
 
 ### Actor Key Table
 
-```sql
-actor_keys (
-  id            TEXT PK,
-  actor_id      TEXT FK → actors.id,
-  name          TEXT NOT NULL,           -- 'primary', 'rotation-2024-01', etc.
-  key_type      TEXT NOT NULL,           -- 'primary', 'additional'
-  encrypted_key TEXT,                    -- SMK-encrypted AES-256 key
-  public_key    TEXT,                    -- For key exchange (future)
-  created_at    TEXT,
-  expires_at    TEXT,                    -- Rotation window
-  status        TEXT DEFAULT 'active'    -- 'active', 'expired', 'revoked'
-)
-```
-
 ---
 
 ## Key Lifecycle
@@ -123,16 +109,6 @@ True E2E (client-only keys without server access) is future.
 
 Rotation replaces the active chat key without breaking history. Five steps:
 
-1. **Admin/actor triggers rotation**
-2. **New chat key derived**: `HKDF(new_salt, concat(participant_keys))`
-3. **New messages** use the new key
-4. **Old key** retained with `status='expired'` for historical reads (key versioning via `key_id` in `messages.content`)
-5. **Optional**: Async re-encrypt historical messages with new key
-
-**Key versioning**: `messages.content` includes `key_id` referencing which
-`actor_keys.id` encrypted it. Historical messages remain readable as long as
-the referenced key exists (even if expired).
-
 ### Revocation
 
 Revoking an actor's key:
@@ -154,28 +130,11 @@ A message travels from client to server through these steps:
 
 **Client side:**
 
-1. Take the plaintext message string
-2. Compress (gzip/zstd/brotli, skip if `<128` bytes)
-3. Encrypt with chat key (AES-256-GCM)
-4. Package as JSON: `{enc, nonce, algo, comp, key_id}`
-5. Send to server over HTTPS
-
-**Server side:** 6. Validate input, store `messages.content` as raw JSON blob 7. Return message ID to client
-
 **On read by another actor:** 8. Server loads content JSON from DB 9. Decrypt with chat key → compressed bytes 10. Decompress → plaintext 11. Deliver to requesting actor over HTTPS
 
 ### LLM Response (Write Path)
 
 When the server receives an LLM response, it encrypts before storing:
-
-1. LLM API returns plaintext response
-2. No key operation — response is fresh plaintext
-3. Compress (gzip/zstd/brotli, skip if `<128` bytes)
-4. Encrypt with chat key (AES-256-GCM)
-5. Package as JSON: `{enc, nonce, algo, comp, key_id}`
-6. Store in `messages.content`
-
-**Note:** The response is NOT sent compressed to the LLM API. Compression and encryption are storage-layer concerns only. LLM APIs expect plaintext.
 
 ### Read Path (Deliver to Actor)
 
@@ -221,16 +180,6 @@ When a client requests messages for a chat:
 ## Storage Format
 
 Written into `messages.content` as JSON:
-
-```json
-{
-  "enc": "base64-ciphertext",
-  "nonce": "base64-12-byte-nonce",
-  "algo": "aes-256-gcm",
-  "comp": true,
-  "key_id": "actor-key-uuid"
-}
-```
 
 When encryption disabled (no SMK / dev mode), `messages.content` stores
 plaintext directly and `content_encoding` column tracks compression format.
@@ -347,12 +296,6 @@ Actors manage keys at `/settings/keys`:
 ---
 
 ## Migration Path: SMK-Only → Actor Keys
-
-1. Generate actor keys, encrypt with SMK
-2. Re-encrypt messages with actor-derived chat keys
-3. Update `content.key_id` references
-4. Enable key request UI
-5. Phase out direct SMK-based encryption
 
 ---
 
