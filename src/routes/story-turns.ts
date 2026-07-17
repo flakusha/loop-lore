@@ -23,7 +23,7 @@ async function checkChatOwnership(
     .select(["created_by"])
     .where("id", "=", chatId)
     .executeTakeFirst();
-  return !!chat && (chat.created_by === userId || userRole === "admin");
+  return !!chat && (chat.created_by === userId || userRole === "admin" || userRole === "solo");
 }
 
 export function storyTurnsRoutes(opts: { database: Db; config: Config }): Elysia {

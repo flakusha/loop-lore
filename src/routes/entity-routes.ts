@@ -103,7 +103,9 @@ export function createEntityRoutes(config: EntityConfig, opts: { database: Db; c
       .select(config.ownershipFkColumn)
       .where("id", "=", parentId)
       .executeTakeFirst();
-    return !!owner && (owner[config.ownershipFkColumn] === userId || userRole === "admin");
+    return (
+      !!owner && (owner[config.ownershipFkColumn] === userId || userRole === "admin" || userRole === "solo")
+    );
   }
 
   return new Elysia({ name: config.entityPath })

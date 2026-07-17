@@ -17,7 +17,9 @@
 import { spawn, type Subprocess } from "bun";
 import { platform } from "node:process";
 import { homedir } from "node:os";
+import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
+import { load as parseYaml } from "js-yaml";
 import type { Logger } from "../logger";
 import type { LlamaCppAutoStartConfig, SdCppAutoStartConfig } from "../config/schema";
 import {
@@ -173,31 +175,55 @@ export class ServerExternalManager {
       ? `${home}${opts.configPath.slice(1)}`
       : opts.configPath;
     const resolvedConfig = resolve(expandedPath);
-    this.log.info("Starting llama-swap", { binary, config: resolvedConfig });
+    // llama-swap listens on `startPort` from its own config (default 8080).
+    // The spawn command does not pass --port, so read the real port here.
+    const port = this.resolveLlamaSwapPort(resolvedConfig);
+    this.log.info("Starting llama-swap", { binary, config: resolvedConfig, port });
     const proc = spawn({
       cmd: [binary, "--config", resolvedConfig, "--host", "127.0.0.1"],
       stdout: "pipe",
       stderr: "pipe",
     });
 
-    // llama-swap exposes health on its first model port
-    const ready = await waitForHealth("http://127.0.0.1:8080/health", { timeoutMs: 30_000 });
+    // Probe the actual listening port (llama-swap has no guaranteed /health route).
+    const ready = await waitForPort(port, { timeoutMs: 30_000 });
     if (!ready) {
       proc.kill();
-      this.log.warn("llama-swap did not become ready within timeout");
+      this.log.warn("llama-swap did not become ready within timeout", { port });
       return null;
     }
 
     const instance: ServerInstance = {
       type: "llama-swap",
       process: proc,
-      port: 8080, // llama-swap default; actual ports from config
+      port,
       pid: proc.pid,
       startedAt: Date.now(),
     };
     this.instances.push(instance);
-    this.log.info("llama-swap ready", { pid: proc.pid });
+    this.log.info("llama-swap ready", { pid: proc.pid, port });
     return instance;
+  }
+
+  /**
+   * Read `startPort` from a llama-swap config file.
+   * llama-swap listens on this port (the spawn command does not override it).
+   * Falls back to 8080 if the file is missing or unreadable.
+   */
+  private resolveLlamaSwapPort(configPath: string): number {
+    try {
+      const content = readFileSync(configPath, "utf8");
+      const parsed = parseYaml(content) as { startPort?: number } | null;
+      if (parsed && typeof parsed.startPort === "number") {
+        return parsed.startPort;
+      }
+    } catch (error) {
+      this.log.warn("Could not read llama-swap config for port — defaulting to 8080", {
+        config: configPath,
+        error: error instanceof Error ? error.message : String(error),
+      });
+    }
+    return 8080;
   }
 
   /**
@@ -395,11 +421,18 @@ export class ServerExternalManager {
   /** Probe a single instance — returns true if responsive */
   private async probeInstance(instance: ServerInstance): Promise<boolean> {
     try {
-      if (instance.type === "llama-cpp" || instance.type === "llama-swap") {
+      if (instance.type === "llama-cpp") {
         const res = await fetch(`http://127.0.0.1:${instance.port}/health`, {
           signal: AbortSignal.timeout(5000),
         });
         return res.ok;
+      }
+      if (instance.type === "llama-swap") {
+        // No guaranteed /health route; probe the OpenAI models endpoint.
+        await fetch(`http://127.0.0.1:${instance.port}/v1/models`, {
+          signal: AbortSignal.timeout(5000),
+        });
+        return true;
       }
       // sd-cpp: any TCP response = alive
       await fetch(`http://127.0.0.1:${instance.port}/`, {

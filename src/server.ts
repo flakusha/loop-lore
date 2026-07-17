@@ -328,7 +328,7 @@ async function start() {
 
   // ── Run migrations before serving (ensure DB schema ready) ───
   await runMigrations(database);
-  await seedDefaultActors(database);
+  await seedDefaultActors(database, config);
 
   // Admin — seed system config defaults + wire DB log transport
   const { seedDefaults } = await import("./admin/config");
