@@ -15,7 +15,7 @@ Every request to `handleApiRequest()` follows this decision journey:
 
 **Step 1: Check auth-skip paths**
 
-- If path is one of `login`, `register`, `age-gate/*`, or asset signed URLs:
+- If path is one of `login`, `demo-login`, `register`, `age-gate/*`, or asset signed URLs:
   - Route directly via `compose([errorBoundary], handler)` — no auth, no
     pipeline
   - Jump straight to handler execution
@@ -56,7 +56,7 @@ compose([errorBoundary, rateLimiter, authenticate, requireRole("admin")], dispat
 Opaque UUID v4 string. Server-side:
 
 - On login: generate UUID → SHA-256 hash → store hash in `sessions.token_hash`
-- Return raw UUID to client as Bearer token
+- Return raw UUID to client via `ll_token` HttpOnly cookie (or accept it as a Bearer token)
 - On request: SHA-256(raw token) → lookup `sessions` by hash
 
 ```
@@ -81,19 +81,20 @@ via session cache.
 
 ```http
 POST /api/auth/login
-Content-Type: application/json
+Content-Type: application/x-www-form-urlencoded
 
-{ "username": "alice", "password": "..." }
+username=alice&password=...
 ```
 
 Server:
 
 1. Lookup user by username
-2. Verify password hash (bcrypt/scrypt)
-3. Check `user.status !== "disabled"`
-4. Check `maxSessionsPerUser` limit (reject if exceeded)
-5. Generate UUID token → store hash + metadata in `sessions`
-6. Return `{ token, user: { id, username, displayName, role } }`
+2. Verify password hash (scrypt via `Bun.password.verify`)
+3. Check `user.status` is not `disabled`/`deactivated`
+4. Generate UUID token → store SHA-256 hash + metadata in `sessions`
+5. Respond `200 OK` + `Set-Cookie: ll_token` (HttpOnly) + `HX-Redirect: /views/chat`
+
+> `maxSessionsPerUser` enforcement is not yet implemented.
 
 ### Validation (every request)
 
@@ -141,6 +142,10 @@ When `config.auth.required = false`:
 5. Race-safe creation: duplicate insert is caught by unique constraint on role,
    re-fetch resolves
 
+6. **Solo user is the instance owner.** In demo/solo mode the single `solo`
+   user is treated as admin-equivalent: it has full access to user management,
+   system config, and age-gate config. There is no separate admin in this mode.
+
 ## Role Guard
 
 ### Planned middleware (post-MVP)
@@ -176,13 +181,13 @@ if (context.userRole !== "admin") {
 | Send messages           |   ✓   |  ✓   |        |  ✓   |
 | Edit own messages       |   ✓   |  ✓   |        |  ✓   |
 | Delete own messages     |   ✓   |  ✓   |        |  ✓   |
-| Manage users            |   ✓   |      |        |      |
+| Manage users            |   ✓   |      |        |  ✓   |
 | View age gate config    |   ✓   |      |        |  ✓   |
-| Modify age gate config  |   ✓   |      |        |      |
+| Modify age gate config  |   ✓   |      |        |  ✓   |
 | View system config      |   ✓   |      |        |  ✓   |
-| Modify system config    |   ✓   |      |        |      |
-| List active generations |   ✓   |      |        |      |
-| Override message status |   ✓   |      |        |      |
+| Modify system config    |   ✓   |      |        |  ✓   |
+| List active generations |   ✓   |      |        |  ✓   |
+| Override message status |   ✓   |      |        |  ✓   |
 
 ## Rate Limiting (MVP)
 
@@ -219,12 +224,13 @@ Same mechanism, separate bucket, lower limit (e.g., 3 per hour per IP).
 
 ## Session Management Routes
 
-| Method | Path                 | Auth | Description                                 |
-| ------ | -------------------- | ---- | ------------------------------------------- |
-| POST   | `/api/auth/login`    | No   | Authenticate, get token                     |
-| POST   | `/api/auth/register` | No   | Create account (if `auth.registrationOpen`) |
-| POST   | `/api/auth/logout`   | Yes  | Delete current session                      |
-| GET    | `/api/auth/me`       | Yes  | Current user profile                        |
+| Method | Path                 | Auth | Description                                                         |
+| ------ | -------------------- | ---- | ------------------------------------------------------------------- |
+| POST   | `/api/auth/login`    | No   | Authenticate, get token                                             |
+| POST   | `/api/demo-login`    | No   | Solo/demo login (no password, `auth.required=false`)                |
+| POST   | `/api/auth/register` | No   | Create account — **gated on `auth.registrationOpen`** (`role=user`) |
+| POST   | `/api/auth/logout`   | Yes  | Delete current session                                              |
+| GET    | `/api/auth/me`       | Yes  | Current user profile                                                |
 
 ### POST /api/auth/register
 
@@ -243,7 +249,7 @@ Validation:
 - Password: 8+ chars
 - Reject if `auth.registrationOpen === false`
 
-Response: `{ token, user: {...} }` (same as login — auto-login after register).
+Response: `200 OK` + `Set-Cookie: ll_token` (HttpOnly) + `HX-Redirect: /views/chat` — auto-login after register. Must return an error when `auth.registrationOpen === false`.
 
 ### POST /api/auth/logout
 
@@ -274,10 +280,12 @@ Returns:
 
 ### Token Storage
 
-- Client: `localStorage` or `sessionStorage` (not cookies — avoids CSRF surface)
+- Client (web): `ll_token` HttpOnly cookie (`SameSite=Lax`, `Path=/`, 24h
+  max-age), set by login/demo-login/register. HttpOnly keeps it out of JS.
+- Client (API/programmatic): may send the raw token via `Authorization: Bearer`
+  header instead of the cookie.
 - Server: SHA-256 hash in `sessions.token_hash` — raw token never stored
-- Token sent in Authorization header, never in URL query params (except asset
-  signed URLs)
+- Token never appears in URL query params (except asset signed URLs)
 
 ### Signed URLs (Asset Downloads)
 
@@ -303,8 +311,29 @@ Server validates on `/api/assets/:id/download`:
     "registrationOpen": true, // allow new user registration
     "sessionTimeoutHours": 24, // idle session expiry
     "maxSessionsPerUser": 10, // concurrent session limit
+    "adminUsername": "admin", // bootstrap admin (multi-user mode)
+    "adminPassword": null, // bootstrap admin password (env-only, never commit)
+    "demoUsername": "demo", // solo user's username (demo mode)
   },
 }
+```
+
+## Account Bootstrapping
+
+Seeding (`src/db/seed.ts`) creates **only the default Assistant actor** — no
+human accounts are seeded there. Human accounts are created as follows:
+
+| Mode                         | How the first account appears                                                                                                                                                                                                                                                          |
+| ---------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Solo/demo (`required=false`) | The `solo` user is created lazily on first request / `/api/demo-login` (`getOrCreateSoloUserForAuth`). Treated as instance owner (admin-equivalent).                                                                                                                                   |
+| Multi-user (`required=true`) | A bootstrap **admin** is seeded on startup from `AUTH_ADMIN_USERNAME` + `AUTH_ADMIN_PASSWORD` when no admin exists yet. Idempotent — skipped if any admin row is present. Without these env vars and with `registrationOpen=false`, the instance has no way to create the first admin. |
+| Multi-user, self-service     | Users self-register via `/api/auth/register` (only when `registrationOpen=true`), created with `role=user`. Registration never grants admin.                                                                                                                                           |
+
+Env overrides:
+
+```env
+AUTH_ADMIN_USERNAME=admin      # bootstrap admin username (multi-user)
+AUTH_ADMIN_PASSWORD=<secret>   # bootstrap admin password — set via env only
 ```
 
 ## See Also

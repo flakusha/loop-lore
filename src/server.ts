@@ -7,6 +7,7 @@ import { existsSync, readFileSync, statSync, readdirSync } from "node:fs";
 import { spawnSync } from "node:child_process";
 import { compressAssets, copyDirectory } from "./content/compress";
 import { createApp } from "./elysia-app";
+import { DynamicResponsePolicy, ResponseHeaderPolicy } from "./middleware";
 import { injectContentHashes } from "./content/hash-injection";
 import { runMigrations } from "./db/migrate";
 import { seedDefaultActors } from "./db/seed";
@@ -140,6 +141,33 @@ function respondWithFile(
 
 // ── Options objects ──────────────────────────────────────────
 
+/**
+ * Wrap the Elysia app so EVERY outgoing response (routes, errors, static,
+ * docs) passes through the dynamic-response and response-header policies.
+ * Dynamic runs first (sets Content-Encoding/Vary); the header policy is
+ * additive and only fills headers the route omitted.
+ *
+ * @param app - Built Elysia app (provides `app.fetch`).
+ * @param config - Resolved config (supplies both policy config blocks).
+ * @param logger - Logger for the dynamic-response policy.
+ * @returns A fetch-style handler applying both policies in order.
+ */
+export function createRequestHandler(
+  app: { fetch: (request: Request) => Response | Promise<Response> },
+  config: ReturnType<typeof loadConfig>,
+  logger: ReturnType<typeof getLogger>,
+): (request: Request) => Promise<Response> {
+  const headerPolicy = new ResponseHeaderPolicy(config.headers);
+  const dynamicPolicy = new DynamicResponsePolicy(config.dynamicResponse, logger);
+
+  return async (request: Request): Promise<Response> => {
+    let response = await app.fetch(request);
+    response = await dynamicPolicy.apply({ request, response });
+    response = headerPolicy.apply({ request, response });
+    return response;
+  };
+}
+
 export interface HandleApiRequestOpts {
   request: Request;
   database: ReturnType<typeof getDatabase>;
@@ -245,6 +273,17 @@ async function start() {
       }
 
       if (existsSync(fullPath)) {
+        const ext = fullPath.split(".").pop()?.toLowerCase();
+        if (ext === "html" || ext === "htm") {
+          // Redirects: /views/* paths should go to /views/ (handled by route)
+          if (url.pathname.startsWith("/views/")) {
+            return new Response(null, { status: 302, headers: { Location: "/views/" } });
+          }
+          const head = readFileSync(fullPath, "utf8").slice(0, 1024).trimStart();
+          if (!head.startsWith("<!doctype") && !head.startsWith("<!DOCTYPE") && !head.startsWith("<html")) {
+            return new Response("Not found", { status: 404 });
+          }
+        }
         const acceptEncoding = request.headers.get("accept-encoding") ?? "";
         const ifNoneMatch = request.headers.get("if-none-match");
         return respondWithFile(fullPath, acceptEncoding, ifNoneMatch);
@@ -261,8 +300,12 @@ async function start() {
     handleNonApiRequest,
   });
 
-  // ── Start HTTP server via Elysia ──────────────────────────
-  app.listen({ port: config.server.port });
+  // ── Centralized response-header + dynamic-response policies ──
+  // Applied to EVERY outgoing response via createRequestHandler.
+  const handleRequest = createRequestHandler(app, config, logger);
+
+  // ── Start HTTP server ──────────────────────────────────────
+  serve({ port: config.server.port, fetch: handleRequest });
   serverLogger.info(`HTTP  → http://localhost:${config.server.port}`);
 
   // ── HTTPS server (TLS certs configured or auto-generated) ─
@@ -273,7 +316,7 @@ async function start() {
       serve({
         port: httpsPort,
         tls: { key: Bun.file(tlsFiles.key), cert: Bun.file(tlsFiles.cert) },
-        fetch: (request) => app.fetch(request),
+        fetch: handleRequest,
       });
       serverLogger.info(`HTTPS → https://localhost:${httpsPort}`);
     } else {
@@ -370,8 +413,8 @@ async function start() {
     }
   }
 
-  const sourcePublicDirectory = join(import.meta.dir, "public");
-  const sourceViewsDirectory = join(import.meta.dir, "..", "views");
+  const sourcePublicDirectory = join(import.meta.dir, "..", "src", "public");
+  const sourceViewsDirectory = join(import.meta.dir, "..", "src", "views");
   const destinationPublicDirectory = join(import.meta.dir, "..", "dist", "public");
 
   // Helper: check if source is newer than destination

@@ -38,7 +38,7 @@ export async function up(database: Kysely<unknown>): Promise<void> {
     .addColumn("agent_type", "text", (col) => col.notNull().defaultTo("none"))
     .addColumn("settings", "text", (col) => col.notNull().defaultTo("{}"))
     .addColumn("data_version", "integer", (col) => col.notNull().defaultTo(0))
-    .addColumn("visibility", "text", (col) => col.notNull().defaultTo("'private'"))
+    .addColumn("visibility", "text", (col) => col.notNull().defaultTo("private"))
     .addColumn("welcome_message", "text")
     .addColumn("personality", "text")
     .addColumn("scenario", "text")

@@ -2,15 +2,15 @@
   <div class="login-card">
     <div class="login-logo">loop-lore</div>
 
-    <div id="login-error" class="login-error" data-testid="login-error"></div>
+    <div id="register-error" class="login-error" data-testid="register-error"></div>
 
     <form
       method="post"
-      action="/api/auth/login"
-      hx-post="/api/auth/login"
-      hx-target="#login-error"
+      action="/api/auth/register"
+      hx-post="/api/auth/register"
+      hx-target="#register-error"
       hx-swap="innerHTML"
-      hx-indicator="#login-submit"
+      hx-indicator="#register-submit"
     >
       <div class="form-field">
         <label for="username">Username</label>
@@ -22,7 +22,7 @@
           autofocus
           autocomplete="username"
           class="form-input"
-          data-testid="username-input"
+          data-testid="register-username"
         />
       </div>
 
@@ -33,32 +33,26 @@
           id="password"
           name="password"
           required
-          autocomplete="current-password"
+          autocomplete="new-password"
           class="form-input"
-          data-testid="password-input"
+          data-testid="register-password"
         />
       </div>
 
-      <button id="login-submit" type="submit" class="btn btn-primary login-btn" data-testid="login-submit">
-        Log In
+      <button
+        id="register-submit"
+        type="submit"
+        class="btn btn-primary login-btn"
+        data-testid="register-submit"
+      >
+        Sign Up
       </button>
     </form>
 
     <div class="login-divider"></div>
 
-    <a
-      href="/"
-      class="login-demo-link"
-      hx-post="/api/demo-login"
-      hx-target="body"
-      hx-swap="outerHTML"
-      data-testid="demo-login"
-    >
-      Continue in demo mode
-    </a>
-
-    <a href="/register" class="login-signup-link" data-testid="signup-link">
-      Don't have an account? Sign up
+    <a href="/views/login" class="login-signup-link" data-testid="login-link">
+      Already have an account? Log in
     </a>
   </div>
 </div>
