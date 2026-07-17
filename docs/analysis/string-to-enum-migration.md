@@ -17,29 +17,29 @@ Audit of all string-typed fields across schema and config types. Goal: migrate `
 
 ### schema-core.ts
 
-| Table               | Field      | Target Enum     | Values                                        |
-| ------------------- | ---------- | --------------- | --------------------------------------------- |
-| `ActorKeys`         | `key_type` | `KeyType`       | signing, encryption, symmetric, master        |
-| `ActorKeys`         | `status`   | `KeyStatus`     | active, expired, revoked                      |
-| `ActorNotes`        | `category` | `NoteCategory`  | general, world, character, story, combat, session |
-| `ActorItems`        | `item_type`| `ActorItemType` | equipment, consumable, key, artifact, misc    |
-| `ModelRoleOverrides`| `role`     | `ModelRole`     | main, captioning, moderation, embeddings, summarization |
+| Table                | Field       | Target Enum     | Values                                                  |
+| -------------------- | ----------- | --------------- | ------------------------------------------------------- |
+| `ActorKeys`          | `key_type`  | `KeyType`       | signing, encryption, symmetric, master                  |
+| `ActorKeys`          | `status`    | `KeyStatus`     | active, expired, revoked                                |
+| `ActorNotes`         | `category`  | `NoteCategory`  | general, world, character, story, combat, session       |
+| `ActorItems`         | `item_type` | `ActorItemType` | equipment, consumable, key, artifact, misc              |
+| `ModelRoleOverrides` | `role`      | `ModelRole`     | main, captioning, moderation, embeddings, summarization |
 
 ### schema-story.ts
 
-| Table               | Field          | Target Enum         | Values                                    |
-| ------------------- | -------------- | ------------------- | ----------------------------------------- |
-| `WorldItems`        | `visibility`   | `ItemVisibility`    | visible, hidden (enum already exists!)    |
-| `ActorMemories`     | `memory_type`  | `MemoryType`        | episodic, semantic, procedural            |
-| `ActorLoreEntries`  | `position`     | `LorePosition`      | before_char, after_char, in_char          |
-| `WorldLoreEntries`  | `position`     | `LorePosition`      | (reuse same enum)                         |
-| `Worlds`            | `difficulty_reroll` | `DifficultyReroll` | none, per_turn, per_quest                 |
-| `Worlds`            | `difficulty_state`  | `DifficultyState`  | normal, hard, extreme, custom             |
+| Table              | Field               | Target Enum        | Values                                 |
+| ------------------ | ------------------- | ------------------ | -------------------------------------- |
+| `WorldItems`       | `visibility`        | `ItemVisibility`   | visible, hidden (enum already exists!) |
+| `ActorMemories`    | `memory_type`       | `MemoryType`       | episodic, semantic, procedural         |
+| `ActorLoreEntries` | `position`          | `LorePosition`     | before_char, after_char, in_char       |
+| `WorldLoreEntries` | `position`          | `LorePosition`     | (reuse same enum)                      |
+| `Worlds`           | `difficulty_reroll` | `DifficultyReroll` | none, per_turn, per_quest              |
+| `Worlds`           | `difficulty_state`  | `DifficultyState`  | normal, hard, extreme, custom          |
 
 ### schema-content.ts
 
-| Table        | Field         | Target Enum       | Values                                                |
-| ------------ | ------------- | ----------------- | ----------------------------------------------------- |
+| Table        | Field         | Target Enum       | Values                                                       |
+| ------------ | ------------- | ----------------- | ------------------------------------------------------------ |
 | `AssetLinks` | `entity_type` | `AssetLinkEntity` | chat, character, world, actor, location, quest, item, memory |
 
 ---
@@ -57,16 +57,16 @@ All in `src/config/schema.ts`.
 
 ### Need new enum
 
-| Config Field                              | Suggested Enum                                         | Values                                        |
-| ----------------------------------------- | ------------------------------------------------------ | --------------------------------------------- |
-| `DynamicResponseConfig.compressAlgorithm` | `ResponseCompression` or extend `CompressionAlgorithm` | br, gzip, auto                                |
-| `EncryptionConfig.compressAlgorithm`      | `EncryptionCompression`                                | gzip, brotli, zstd                            |
-| `ImageProviderConfig.apiFamily`           | `ImageApiFamily`                                       | openai, sdapi, sdcpp                          |
-| `HeadersConfig.xFrameOptions`             | `XFrameOption`                                         | deny, sameorigin                              |
-| `HeadersConfig.crossOriginOpenerPolicy`   | `CrossOriginOpenerPolicy`                              | same-origin, same-origin-allow-popups         |
-| `HeadersConfig.crossOriginEmbedderPolicy` | `CrossOriginEmbedderPolicy`                            | require-corp                                  |
-| `HeadersConfig.crossOriginResourcePolicy` | `CrossOriginResourcePolicy`                            | same-origin, cross-origin                     |
-| `SdCppAutoStartConfig.modelType`          | `SdModelType`                                          | checkpoint, diffusion                         |
+| Config Field                              | Suggested Enum                                         | Values                                |
+| ----------------------------------------- | ------------------------------------------------------ | ------------------------------------- |
+| `DynamicResponseConfig.compressAlgorithm` | `ResponseCompression` or extend `CompressionAlgorithm` | br, gzip, auto                        |
+| `EncryptionConfig.compressAlgorithm`      | `EncryptionCompression`                                | gzip, brotli, zstd                    |
+| `ImageProviderConfig.apiFamily`           | `ImageApiFamily`                                       | openai, sdapi, sdcpp                  |
+| `HeadersConfig.xFrameOptions`             | `XFrameOption`                                         | deny, sameorigin                      |
+| `HeadersConfig.crossOriginOpenerPolicy`   | `CrossOriginOpenerPolicy`                              | same-origin, same-origin-allow-popups |
+| `HeadersConfig.crossOriginEmbedderPolicy` | `CrossOriginEmbedderPolicy`                            | require-corp                          |
+| `HeadersConfig.crossOriginResourcePolicy` | `CrossOriginResourcePolicy`                            | same-origin, cross-origin             |
+| `SdCppAutoStartConfig.modelType`          | `SdModelType`                                          | checkpoint, diffusion                 |
 
 ### Debatable (keep string)
 
@@ -76,15 +76,15 @@ All in `src/config/schema.ts`.
 
 ## Part 3: False Positives — Keep `string`
 
-| Field                        | Table        | Why Not Enum                         |
-| ---------------------------- | ------------ | ------------------------------------ |
-| `ActorItems.tags`            | schema-core  | JSON array, freeform                 |
-| `ActorItems.metadata`        | schema-core  | JSON blob                            |
-| `ActorItems.value`           | schema-core  | Variable format                      |
-| `NpcStates.mental_state`     | schema-story | Narrative text                       |
-| `NpcStates.knowledge`        | schema-story | JSON blob                            |
-| `NpcStates.relations`        | schema-story | JSON blob                            |
-| `WorldItems.spawn_condition` | schema-story | Freeform narrative condition         |
+| Field                        | Table        | Why Not Enum                 |
+| ---------------------------- | ------------ | ---------------------------- |
+| `ActorItems.tags`            | schema-core  | JSON array, freeform         |
+| `ActorItems.metadata`        | schema-core  | JSON blob                    |
+| `ActorItems.value`           | schema-core  | Variable format              |
+| `NpcStates.mental_state`     | schema-story | Narrative text               |
+| `NpcStates.knowledge`        | schema-story | JSON blob                    |
+| `NpcStates.relations`        | schema-story | JSON blob                    |
+| `WorldItems.spawn_condition` | schema-story | Freeform narrative condition |
 
 ---
 
@@ -103,11 +103,11 @@ All in `src/config/schema.ts`.
 
 ## Enum File Placement
 
-| Enum                                                                                                                                     | File               |
-| ---------------------------------------------------------------------------------------------------------------------------------------- | ------------------ |
-| `KeyType`, `KeyStatus`, `NoteCategory`, `ActorItemType`, `ModelRole`                                                                     | `enums-core.ts`    |
-| `MemoryType`, `LorePosition`, `DifficultyReroll`, `DifficultyState`                                                                      | `enums-story.ts`   |
-| `AssetLinkEntity`                                                                                                                        | `enums-content.ts` |
+| Enum                                                                                                                                                                                 | File               |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------ |
+| `KeyType`, `KeyStatus`, `NoteCategory`, `ActorItemType`, `ModelRole`                                                                                                                 | `enums-core.ts`    |
+| `MemoryType`, `LorePosition`, `DifficultyReroll`, `DifficultyState`                                                                                                                  | `enums-story.ts`   |
+| `AssetLinkEntity`                                                                                                                                                                    | `enums-content.ts` |
 | `ResponseCompression`, `EncryptionCompression`, `ImageApiFamily`, `XFrameOption`, `CrossOriginOpenerPolicy`, `CrossOriginEmbedderPolicy`, `CrossOriginResourcePolicy`, `SdModelType` | `enums-config.ts`  |
 
 ---

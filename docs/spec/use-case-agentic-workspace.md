@@ -4,18 +4,19 @@ Secondary mode beyond RPG roleplay chat. Core entities repurposed.
 
 ## Entity Mapping
 
-| RPG Concept   | Agentic Workspace | Description                                                   |
-| ------------- | ----------------- | ------------------------------------------------------------- |
-| **World**     | **Epic**          | Project/research initiative. Lore→project context             |
-| **Location**  | **Task**          | Discrete work unit. Connections→task dependencies (DAG)       |
-| **Character** | **Agent**         | AI agent with role (researcher, coder, analyst, writer)       |
-| **Chat**      | **Workspace**     | 1:1 User↔Agent or multi-agent conversation per Task           |
-| **Message**   | **Message**       | + `content_type`: `tool_call`, `tool_result`, `code`          |
-| **Asset**     | **Artifact**      | Code, docs, reports, charts linked polymorphically            |
+| RPG Concept   | Agentic Workspace | Description                                             |
+| ------------- | ----------------- | ------------------------------------------------------- |
+| **World**     | **Epic**          | Project/research initiative. Lore→project context       |
+| **Location**  | **Task**          | Discrete work unit. Connections→task dependencies (DAG) |
+| **Character** | **Agent**         | AI agent with role (researcher, coder, analyst, writer) |
+| **Chat**      | **Workspace**     | 1:1 User↔Agent or multi-agent conversation per Task     |
+| **Message**   | **Message**       | + `content_type`: `tool_call`, `tool_result`, `code`    |
+| **Asset**     | **Artifact**      | Code, docs, reports, charts linked polymorphically      |
 
 ## Schema Compatibility
 
 Existing schema supports this with minimal changes:
+
 - `worlds` table → epics (conceptual rename). `lore`→context, `description`→objective.
 - `locations` (future table) → tasks with DAG dependencies.
 - `actors` with `actor_type='character'` and `agent_type='ai'` → agents. `system_prompt`→instructions. `settings`→model config, tools, MCP servers.
@@ -29,13 +30,13 @@ Foundation: `src/assistant/` (rule-based). Evolved to Agent Runtime:
 
 ### Built-in Tool Categories
 
-| Category            | Tools                                              |
-| ------------------- | -------------------------------------------------- |
-| Web Research        | `search`, `extract`, `deep_research`               |
-| Code Execution      | `run_code`, `run_shell`, `read_file`, `write_file` |
-| Data Analysis       | `query_sql`, `analyze_csv`, `plot`                 |
-| Document Ops        | `create_doc`, `edit_doc`, `convert_format`         |
-| API/Integration     | `http_request`, `mcp_call`                         |
+| Category        | Tools                                              |
+| --------------- | -------------------------------------------------- |
+| Web Research    | `search`, `extract`, `deep_research`               |
+| Code Execution  | `run_code`, `run_shell`, `read_file`, `write_file` |
+| Data Analysis   | `query_sql`, `analyze_csv`, `plot`                 |
+| Document Ops    | `create_doc`, `edit_doc`, `convert_format`         |
+| API/Integration | `http_request`, `mcp_call`                         |
 
 ### Agent Memory
 

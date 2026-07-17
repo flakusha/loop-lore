@@ -16,10 +16,17 @@ export interface WorldEditState {
   newLocName: string;
   newLocDesc: string;
   newLocParentId: string;
+  newLocConnections: string[];
+  editingLocationId: string;
+  expandedLoc: string;
+  editLocName: string;
+  editLocDesc: string;
   worldId: string | null;
   init(): void;
   saveWorld(): Promise<void>;
   loadLocations(): Promise<void>;
   addLocation(): Promise<void>;
   deleteLocation(locId: string): Promise<void>;
+  expandLoc(locId: string): void;
+  saveLocation(locId: string): Promise<void>;
 }

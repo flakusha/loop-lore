@@ -204,4 +204,3 @@ All parts in `001_init.ts` are kept at pre-008 state. Migrations 008-017 add
 columns incrementally; migrations 018-020 apply post-hoc fixes.
 
 ### Migration Pattern
-

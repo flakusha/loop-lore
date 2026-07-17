@@ -2351,7 +2351,7 @@ The GM can configure alerts for when metrics drift:
 
 ```
 
-gold_supply > 50000  → "Warning: excessive gold in circulation"
+gold_supply > 50000 → "Warning: excessive gold in circulation"
 wealth_inequality > 20 → "Warning: one player holds most wealth"
 item_circulation < 10 → "Warning: items are hoarded, not traded"
 
@@ -2423,7 +2423,7 @@ location:
 ```
 
 finalPrice = basePrice × priceIndex × locationMarkup × demandModifier
-             × (1 - reputationDiscount) × scarcityModifier
+× (1 - reputationDiscount) × scarcityModifier
 
 ```
 
@@ -2452,13 +2452,13 @@ adjusts:
 // Buying an item
 shop.supply[itemId] -= quantity;
 if (shop.supply[itemId] < lowThreshold) {
-  demandModifier *= 1.2; // Price goes up
+demandModifier *= 1.2; // Price goes up
 }
 
 // Selling an item
 shop.supply[itemId] += quantity;
 if (shop.supply[itemId] > highThreshold) {
-  demandModifier *= 0.8; // Price goes down
+demandModifier *= 0.8; // Price goes down
 }
 
 ```
@@ -2578,10 +2578,10 @@ initiatorValue = sum(item.value × quantity) + initiatorGold
 targetValue = sum(item.value × quantity) + targetGold
 
 fairnessRating:
-  0.8 ≤ ratio ≤ 1.2 → "Fair"
-  0.5 ≤ ratio < 0.8  → "Unfair to you"
-  1.2 < ratio ≤ 2.0  → "Unfair to them"
-  ratio < 0.5 or > 2.0 → "Lopsided"
+0.8 ≤ ratio ≤ 1.2 → "Fair"
+0.5 ≤ ratio < 0.8 → "Unfair to you"
+1.2 < ratio ≤ 2.0 → "Unfair to them"
+ratio < 0.5 or > 2.0 → "Lopsided"
 
 ```
 
@@ -2631,16 +2631,17 @@ In group chats, multiple actors can bid on the same item:
 
 [ACTIVE OFFERS]
 Item: Potion of Flight (held by Alice)
+
 - Bob: 150g
 - Carol: 200g + Short Sword (total: 260g)
 - Dave: 300g (highest bid)
 
 Alice can:
-  a. Accept highest bid (Dave, 300g)
-  b. Accept any bid (Carol's item combo may be preferred)
-  c. Counter-offer ("I want 350g")
-  d. Withdraw item from trade
-  e. Start an auction with a deadline
+a. Accept highest bid (Dave, 300g)
+b. Accept any bid (Carol's item combo may be preferred)
+c. Counter-offer ("I want 350g")
+d. Withdraw item from trade
+e. Start an auction with a deadline
 [/ACTIVE OFFERS]
 
 ```
