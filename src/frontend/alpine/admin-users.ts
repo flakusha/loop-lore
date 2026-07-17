@@ -21,14 +21,19 @@ export const adminUsers = {
   confirmDeleteUser: "",
   editRoleUserId: "",
   editRoleValue: "",
+  userSearch: "",
+  userRoleFilter: "",
+  userStatusFilter: "",
 
   async loadUsers() {
     this.loadingUsers = true;
     try {
       const self = this as any;
-      const res = await fetch(`/api/admin/users?page=${self.userPage}&pageSize=${self.pageSize}`, {
-        headers: { Accept: "application/json" },
-      });
+      let url = `/api/admin/users?page=${self.userPage}&pageSize=${self.pageSize}`;
+      if (self.userSearch) url += `&q=${encodeURIComponent(self.userSearch)}`;
+      if (self.userRoleFilter) url += `&role=${self.userRoleFilter}`;
+      if (self.userStatusFilter) url += `&status=${self.userStatusFilter}`;
+      const res = await fetch(url, { headers: { Accept: "application/json" } });
       if (res.ok) {
         const data = await res.json();
         this.users = data.data || [];
@@ -91,5 +96,16 @@ export const adminUsers = {
     } catch {
       showToast("error", "Network error");
     }
+  },
+  searchUsers() {
+    this.userPage = 1;
+    this.loadUsers();
+  },
+  clearUserFilters() {
+    this.userSearch = "";
+    this.userRoleFilter = "";
+    this.userStatusFilter = "";
+    this.userPage = 1;
+    this.loadUsers();
   },
 };

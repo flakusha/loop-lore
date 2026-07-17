@@ -83,7 +83,7 @@ export const chatGroup: Partial<ChatState> & ThisType<ChatState> = {
     const beforeCursor = value.slice(0, cursorPos);
     const atMatch = beforeCursor.match(/@(\w*)$/);
     if (atMatch) {
-      this._mentionQuery = atMatch[1].toLowerCase();
+      this._mentionQuery = (atMatch[1] ?? "").toLowerCase();
       this._showMentionAutocomplete = true;
       this._mentionResults = this._chatParticipants.filter((p: any) => {
         const name = (p.display_name || p.name || "").toLowerCase();

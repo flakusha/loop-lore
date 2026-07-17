@@ -94,7 +94,23 @@ export class PromptAssembler {
     // message), so dropping a section means dropping the message at the same
     // index. Dropped sections are low-priority (lore/memories/examples) and
     // sit at the front, so a tail splice would wrongly strip chat history.
-    const finalMessages = messages.filter((_, i) => !sections[i]?.dropped);
+    //
+    // Jinja chat templates (vLLM, llama.cpp) require all system messages
+    // before any user/assistant message. Single-pass partition into the
+    // final array — system msgs first, everything else in original order.
+    const finalMessages: GenerationMessage[] = [];
+    const deferred: GenerationMessage[] = [];
+    for (const [i, msg] of messages.entries()) {
+      if (sections[i]?.dropped) continue;
+      if (msg.role === "system") {
+        finalMessages.push(msg);
+      } else {
+        deferred.push(msg);
+      }
+    }
+    for (const msg of deferred) {
+      finalMessages.push(msg);
+    }
 
     return {
       messages: finalMessages,

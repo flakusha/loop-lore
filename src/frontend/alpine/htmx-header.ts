@@ -24,9 +24,9 @@ export function normalizeHeaderSlot() {
   }
 
   if (!newest) {
-    newest = remaining[0];
+    newest = remaining[0] ?? null;
     for (const h of remaining) {
-      if (h.children.length > newest.children.length) {
+      if (newest && h.children.length > newest.children.length) {
         newest = h;
       }
     }

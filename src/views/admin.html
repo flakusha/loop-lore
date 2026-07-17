@@ -114,6 +114,47 @@
         </div>
         <template x-if="!loadingUsers">
           <div style="padding: var(--space-6)">
+            <div
+              style="
+                display: flex;
+                gap: var(--space-3);
+                margin-bottom: var(--space-4);
+                flex-wrap: wrap;
+                align-items: center;
+              "
+            >
+              <input
+                class="form-input"
+                type="search"
+                placeholder="Search users..."
+                x-model="userSearch"
+                @input.debounce.300ms="searchUsers()"
+                style="flex: 1; min-width: 200px"
+              />
+              <select class="form-input" style="width: auto" x-model="userRoleFilter" @change="searchUsers()">
+                <option value="">All roles</option>
+                <option value="admin">Admin</option>
+                <option value="user">User</option>
+                <option value="viewer">Viewer</option>
+              </select>
+              <select
+                class="form-input"
+                style="width: auto"
+                x-model="userStatusFilter"
+                @change="searchUsers()"
+              >
+                <option value="">All statuses</option>
+                <option value="active">Active</option>
+                <option value="disabled">Disabled</option>
+              </select>
+              <button
+                class="btn btn-secondary btn-xs"
+                x-show="userSearch || userRoleFilter || userStatusFilter"
+                @click="clearUserFilters()"
+              >
+                Clear
+              </button>
+            </div>
             <table class="admin-table">
               <thead>
                 <tr>
@@ -220,6 +261,27 @@
         </div>
         <template x-if="!loadingWorlds">
           <div style="padding: var(--space-6)">
+            <div
+              style="
+                display: flex;
+                gap: var(--space-3);
+                margin-bottom: var(--space-4);
+                flex-wrap: wrap;
+                align-items: center;
+              "
+            >
+              <input
+                class="form-input"
+                type="search"
+                placeholder="Search worlds..."
+                x-model="worldSearch"
+                @input.debounce.300ms="searchWorlds()"
+                style="flex: 1; min-width: 200px"
+              />
+              <button class="btn btn-secondary btn-xs" x-show="worldSearch" @click="clearWorldFilters()">
+                Clear
+              </button>
+            </div>
             <table class="admin-table">
               <thead>
                 <tr>
@@ -294,6 +356,36 @@
         </div>
         <template x-if="!loadingChats">
           <div style="padding: var(--space-6)">
+            <div
+              style="
+                display: flex;
+                gap: var(--space-3);
+                margin-bottom: var(--space-4);
+                flex-wrap: wrap;
+                align-items: center;
+              "
+            >
+              <input
+                class="form-input"
+                type="search"
+                placeholder="Search chats..."
+                x-model="chatSearch"
+                @input.debounce.300ms="searchChats()"
+                style="flex: 1; min-width: 200px"
+              />
+              <select class="form-input" style="width: auto" x-model="chatTypeFilter" @change="searchChats()">
+                <option value="">All types</option>
+                <option value="direct">Direct</option>
+                <option value="group">Group</option>
+              </select>
+              <button
+                class="btn btn-secondary btn-xs"
+                x-show="chatSearch || chatTypeFilter"
+                @click="clearChatFilters()"
+              >
+                Clear
+              </button>
+            </div>
             <table class="admin-table">
               <thead>
                 <tr>
@@ -366,7 +458,15 @@
       <div x-show="activeTab === 'audit'">
         <div style="padding: var(--space-6)">
           <div style="display: flex; gap: var(--space-3); margin-bottom: var(--space-4); flex-wrap: wrap">
-            <select class="form-input" style="width: auto" x-model="auditEventType" @change="loadAudit()">
+            <input
+              class="form-input"
+              type="search"
+              placeholder="Search audit messages..."
+              x-model="auditSearch"
+              @input.debounce.300ms="searchAudit()"
+              style="flex: 1; min-width: 200px"
+            />
+            <select class="form-input" style="width: auto" x-model="auditEventType" @change="searchAudit()">
               <option value="">All event types</option>
               <option value="auth">Auth</option>
               <option value="user">User</option>
@@ -376,13 +476,20 @@
               <option value="system">System</option>
               <option value="plugin">Plugin</option>
             </select>
-            <select class="form-input" style="width: auto" x-model="auditEntityType" @change="loadAudit()">
+            <select class="form-input" style="width: auto" x-model="auditEntityType" @change="searchAudit()">
               <option value="">All entities</option>
               <option value="user">User</option>
               <option value="chat">Chat</option>
               <option value="world">World</option>
               <option value="asset">Asset</option>
             </select>
+            <button
+              class="btn btn-secondary btn-xs"
+              x-show="auditSearch || auditEventType || auditEntityType"
+              @click="clearAuditFilters()"
+            >
+              Clear
+            </button>
           </div>
           <div x-show="loadingAudit" class="empty-state" style="padding: var(--space-8)">
             <div class="icon">⏳</div>
@@ -639,18 +746,18 @@
                   "
                 >
                   <span
-                    style="
-                      display: inline-block;
-                      width: 8px;
-                      height: 8px;
-                      border-radius: 50%;
-                      background: #ffc107;
-                    "
+                    style="display: inline-block; width: 8px; height: 8px; border-radius: 50%"
+                    :style="{background: sdStatus === 'running' ? '#28a745' : sdStatus === 'stopped' ? '#dc3545' : '#ffc107'}"
                   ></span>
-                  <strong>Pending Implementation</strong>
-                  <span style="font-size: 12px; color: var(--text-secondary, #6c757d)">
-                    — Full support coming with SD.CPP, ComfyUI & external API integrations
+                  <strong
+                    x-text="sdStatus === 'running' ? 'Running' : sdStatus === 'stopped' ? 'Stopped' : 'Unknown'"
+                  ></strong>
+                  <span style="font-size: 12px; color: var(--text-secondary, #6c757d)" x-show="sdPort">
+                    — Port <span x-text="sdPort"></span>
                   </span>
+                  <button class="btn btn-secondary btn-xs" @click="loadSdStatus()" style="margin-left: auto">
+                    Refresh
+                  </button>
                 </div>
                 <div
                   style="
@@ -662,17 +769,21 @@
                 >
                   <div>
                     <div style="color: var(--text-secondary, #6c757d); margin-bottom: 2px">Status</div>
-                    <div style="font-weight: 500">Not configured</div>
+                    <div
+                      style="font-weight: 500"
+                      x-text="sdStatus === 'running' ? 'Active' : sdStatus === 'stopped' ? 'Not running' : 'Unknown'"
+                    ></div>
                   </div>
                   <div>
-                    <div style="color: var(--text-secondary, #6c757d); margin-bottom: 2px">
-                      Active Backend
-                    </div>
-                    <div style="font-weight: 500">None</div>
+                    <div style="color: var(--text-secondary, #6c757d); margin-bottom: 2px">Latency</div>
+                    <div
+                      style="font-weight: 500"
+                      x-text="sdLatencyMs != null ? sdLatencyMs + 'ms' : '—'"
+                    ></div>
                   </div>
                   <div>
-                    <div style="color: var(--text-secondary, #6c757d); margin-bottom: 2px">Model</div>
-                    <div style="font-weight: 500">—</div>
+                    <div style="color: var(--text-secondary, #6c757d); margin-bottom: 2px">Port</div>
+                    <div style="font-weight: 500" x-text="sdPort"></div>
                   </div>
                   <div>
                     <div style="color: var(--text-secondary, #6c757d); margin-bottom: 2px">

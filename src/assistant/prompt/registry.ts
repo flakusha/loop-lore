@@ -25,9 +25,9 @@ export const PROMPT_SECTIONS: SectionBuilder[] = [
   userPersonaSection,
   loreSection,
   memorySection,
-  dynamicContextSection,
   postHistorySection,
+  storyContextSection,
+  dynamicContextSection,
   examplesSection,
   chatHistorySection,
-  storyContextSection,
 ];

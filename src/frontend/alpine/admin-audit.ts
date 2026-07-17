@@ -20,6 +20,7 @@ export const adminAudit = {
   loadingAudit: false,
   auditEventType: "",
   auditEntityType: "",
+  auditSearch: "",
 
   async loadAudit() {
     this.loadingAudit = true;
@@ -27,6 +28,7 @@ export const adminAudit = {
       let url = `/api/admin/audit?page=${this.auditPage}&pageSize=${(this as any).pageSize}`;
       if (this.auditEventType) url += `&event_type=${this.auditEventType}`;
       if (this.auditEntityType) url += `&entity_type=${this.auditEntityType}`;
+      if (this.auditSearch) url += `&q=${encodeURIComponent(this.auditSearch)}`;
       const res = await fetch(url, { headers: { Accept: "application/json" } });
       if (res.ok) {
         const data = await res.json();
@@ -45,5 +47,16 @@ export const adminAudit = {
   async goAuditPage(p: number) {
     this.auditPage = p;
     await this.loadAudit();
+  },
+  searchAudit() {
+    this.auditPage = 1;
+    this.loadAudit();
+  },
+  clearAuditFilters() {
+    this.auditSearch = "";
+    this.auditEventType = "";
+    this.auditEntityType = "";
+    this.auditPage = 1;
+    this.loadAudit();
   },
 };
