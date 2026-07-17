@@ -1,7 +1,7 @@
 import type { ChatState, GroupedMessage } from "./types";
 
-const getMarked = () => (globalThis as any).__marked;
-const getDOMPurify = () => (globalThis as any).__DOMPurify;
+const getMarked = () => globalThis.__marked;
+const getDOMPurify = () => globalThis.__DOMPurify;
 
 export const chatUtils: Partial<ChatState> & ThisType<ChatState> = {
   _groupedCache: null as GroupedMessage[] | null,
