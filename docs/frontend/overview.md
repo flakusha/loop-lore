@@ -12,22 +12,34 @@
 
 ## Design Principles
 
-1. **Information density**: show what the user needs, hide the rest. No toolbar overflow. Advanced features (swipe, inline edit, token details) appear on hover or explicit toggle.
+1. **Information density**: show what the user needs, hide the rest. No toolbar
+   overflow. Advanced features (swipe, inline edit, token details) appear on
+   hover or explicit toggle.
 
-2. **Progressive disclosure**: features are revealed contextually. A new user sees just the input and messages. Power-user features (swipe, edit, regenerate) appear on hover.
+2. **Progressive disclosure**: features are revealed contextually. A new user
+   sees just the input and messages. Power-user features (swipe, edit,
+   regenerate) appear on hover.
 
-3. **Consistent behavior**: same interaction patterns across pages. Buttons in consistent locations. Keyboard shortcuts where they reduce friction.
+3. **Consistent behavior**: same interaction patterns across pages. Buttons in
+   consistent locations. Keyboard shortcuts where they reduce friction.
 
-4. **Performance first**: pages load fast, interactions feel instant. htmx handles partial updates; full page reloads are rare. The sidebar is cached — only the main content area swaps.
+4. **Performance first**: pages load fast, interactions feel instant. htmx
+   handles partial updates; full page reloads are rare. The sidebar is cached —
+   only the main content area swaps.
 
-5. **Error resilience**: the UI never shows a blank/white state on error. Failed API calls leave existing content intact and surface errors via toasts or inline banners.
+5. **Error resilience**: the UI never shows a blank/white state on error. Failed
+   API calls leave existing content intact and surface errors via toasts or
+   inline banners.
 
-6. **Consistent search & filter patterns**: every entity list screen uses the same interaction model for finding things. Search is always a debounced text input. Filters are always removable chips. The UX is identical whether browsing characters, worlds, chats, or gallery assets.
+6. **Consistent search & filter patterns**: every entity list screen uses the
+   same interaction model for finding things. Search is always a debounced text
+   input. Filters are always removable chips. The UX is identical whether
+   browsing characters, worlds, chats, or gallery assets.
 
 ## Search & Filter Pattern
 
-All entity list screens (characters, worlds, chats, gallery) follow a
-consistent search and filter pattern. This section defines the shared behavior.
+All entity list screens (characters, worlds, chats, gallery) follow a consistent
+search and filter pattern. This section defines the shared behavior.
 
 ### Common Elements
 
@@ -73,7 +85,9 @@ GET /api/assets?asset_type=image&visibility=public&search=portrait
 
 ## Design Token Reference
 
-All design tokens are CSS custom properties defined in `theme-default.css` (default dark theme). Other themes override these with different color values. The `theme.css` file provides fallback values for when no theme is loaded.
+All design tokens are CSS custom properties defined in `theme-default.css`
+(default dark theme). Other themes override these with different color values.
+The `theme.css` file provides fallback values for when no theme is loaded.
 
 | Token              | Value                                 | Purpose                                      |
 | ------------------ | ------------------------------------- | -------------------------------------------- |
@@ -93,26 +107,28 @@ All design tokens are CSS custom properties defined in `theme-default.css` (defa
 | `--font-sans`      | `'Inter', ui-sans-serif, ...`         | Body font                                    |
 | `--font-mono`      | `'JetBrains Mono', ui-monospace, ...` | Code font                                    |
 
-Full definitions in `theme.css` including: shadow levels, border radii, spacing scale, z-index layers, and transitions.
+Full definitions in `theme.css` including: shadow levels, border radii, spacing
+scale, z-index layers, and transitions.
 
 ## Theme System
 
-loop-lore supports multiple visual themes via CSS custom properties. Themes are defined in separate CSS files and switched dynamically via JavaScript.
+loop-lore supports multiple visual themes via CSS custom properties. Themes are
+defined in separate CSS files and switched dynamically via JavaScript.
 
 ### Available Themes
 
-| Theme ID      | Name           | Description                                  |
-| ------------- | -------------- | -------------------------------------------- |
-| `default`     | Default (Dark) | Original dark theme, adapted from yodayo.com |
-| `light`       | Light          | Light background with dark text              |
-| `bright`      | Bright         | High contrast vibrant theme                  |
-| `colorful`    | Colorful       | Vibrant saturated colors                     |
-| `monochrome`  | Monochrome     | Grayscale high-contrast theme                |
-| `no-icons`    | No Icons       | Minimal theme with decorative icons hidden   |
-| `dracula`     | Dracula        | Popular dark theme (dracula/lua)             |
-| `nord`        | Nord           | Arctic color palette (arctic-violet)         |
-| `github-dark` | GitHub Dark    | GitHub's dark syntax theme                   |
-| `material`    | Material       | Material Design 3 inspired                   |
+| Theme ID      | Name           | Description                                |
+| ------------- | -------------- | ------------------------------------------ |
+| `default`     | Default (Dark) | Original dark theme                        |
+| `light`       | Light          | Light background with dark text            |
+| `bright`      | Bright         | High contrast vibrant theme                |
+| `colorful`    | Colorful       | Vibrant saturated colors                   |
+| `monochrome`  | Monochrome     | Grayscale high-contrast theme              |
+| `no-icons`    | No Icons       | Minimal theme with decorative icons hidden |
+| `dracula`     | Dracula        | Popular dark theme (dracula/lua)           |
+| `nord`        | Nord           | Arctic color palette (arctic-violet)       |
+| `github-dark` | GitHub Dark    | GitHub's dark syntax theme                 |
+| `material`    | Material       | Material Design 3 inspired                 |
 
 ### Theme Files
 
@@ -130,7 +146,9 @@ loop-lore supports multiple visual themes via CSS custom properties. Themes are 
 
 ### Theme Switching
 
-Themes are switched by toggling the `disabled` property on the theme stylesheet link elements. The browser automatically applies the active theme's CSS variables.
+Themes are switched by toggling the `disabled` property on the theme stylesheet
+link elements. The browser automatically applies the active theme's CSS
+variables.
 
 1. User selects theme in Settings
 2. JavaScript disables all theme stylesheets
@@ -152,8 +170,11 @@ No Tailwind. No CSS-in-JS. Thirteen files:
 9. **theme-nord.css** — Nord theme design tokens
 10. **theme-github-dark.css** — GitHub Dark theme design tokens
 11. **theme-material.css** — Material theme design tokens
-12. **app.css** — Layout system, component classes (`.btn`, `.modal`, `.sidebar`, `.message`, `.input-area`, `.toast`, `.form-input`, `.empty-state`, `.spinner`, `.tag`)
-13. **gallery.css** — Asset gallery components (`.gallery`, `.gallery-nav`, `.asset-grid`, `.drop-zone`)
+12. **app.css** — Layout system, component classes (`.btn`, `.modal`,
+    `.sidebar`, `.message`, `.input-area`, `.toast`, `.form-input`,
+    `.empty-state`, `.spinner`, `.tag`)
+13. **gallery.css** — Asset gallery components (`.gallery`, `.gallery-nav`,
+    `.asset-grid`, `.drop-zone`)
 
 ## Icon Strategy
 
@@ -165,9 +186,14 @@ No Font Awesome or icon library. Icons are:
 
 ## Error Handling Pattern
 
-All htmx requests targeting content-bearing regions use `hx-target-error` to shunt error responses to the toast container. This prevents error response bodies from being rendered visibly into content areas during brief flashes. On error, existing content stays intact and the user sees a toast notification instead.
+All htmx requests targeting content-bearing regions use `hx-target-error` to
+shunt error responses to the toast container. This prevents error response
+bodies from being rendered visibly into content areas during brief flashes. On
+error, existing content stays intact and the user sees a toast notification
+instead.
 
-On 401 responses, redirect to `/login`. On 500+, show "Server error" toast with retry suggestion. On network failure, show "Connection lost" toast.
+On 401 responses, redirect to `/login`. On 500+, show "Server error" toast with
+retry suggestion. On network failure, show "Connection lost" toast.
 
 ## Document Index
 
