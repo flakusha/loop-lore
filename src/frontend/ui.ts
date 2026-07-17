@@ -49,11 +49,33 @@ export function showToast(type: string, message: string): void {
   const icon = ICONS[type] || "ℹ";
   const toast = document.createElement("div");
   toast.className = `toast ${type}`;
-  toast.innerHTML = `<span class="icon">${icon}</span><span class="message">${message}</span>`;
-  container.append(toast);
-  setTimeout(() => {
+  toast.setAttribute("role", "status");
+
+  const iconEl = document.createElement("span");
+  iconEl.className = "icon";
+  iconEl.textContent = icon;
+
+  const msgEl = document.createElement("span");
+  msgEl.className = "message";
+  msgEl.textContent = message;
+
+  const close = document.createElement("button");
+  close.className = "close";
+  close.type = "button";
+  close.setAttribute("aria-label", "Dismiss notification");
+  close.innerHTML = "&times;";
+
+  const dismiss = (): void => {
     if (toast.parentNode) toast.remove();
-  }, 5000);
+  };
+  close.addEventListener("click", dismiss);
+
+  toast.append(iconEl, msgEl, close);
+  container.append(toast);
+
+  const timer = setTimeout(dismiss, 5000);
+  // Cancel auto-dismiss if the user hovers — keeps it readable.
+  toast.addEventListener("mouseenter", () => clearTimeout(timer));
 }
 
 // Guard against double registration — ui.ts is bundled into both
