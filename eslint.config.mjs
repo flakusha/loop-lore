@@ -227,6 +227,7 @@ export default tseslint.config(
         __localeStrings: "readonly",
         Alpine: "readonly",
         htmx: "readonly",
+        require: "readonly",
         chatState: "readonly",
         worldEditState: "readonly",
       },
