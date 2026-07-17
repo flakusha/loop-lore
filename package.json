@@ -43,7 +43,7 @@
     "test:e2e:smoke": "bun test ./tests/e2e/flows/browser/smoke.browser.ts",
     "test:all": "bun run build:frontend && bun test && bun run test:e2e:browser",
     "jscpd": "jscpd src/ --min-lines 8 --min-tokens 100 --ignore '**/*.test.ts,**/migrations/*'",
-    "jscpd:full": "jscpd src/ --min-lines 4 --min-tokens 30 --ignore '**/migrations/*'",
+    "jscpd:full": "jscpd src/ --min-lines 4 --min-tokens 30 --ignore '**/migrations/*,**/*.test.ts'",
     "commit:lint": "bun run src/scripts/commit-check.ts --all",
     "commit:check": "bun run src/scripts/commit-check.ts --staged",
     "version:predict": "bun run src/scripts/version-bump.ts",

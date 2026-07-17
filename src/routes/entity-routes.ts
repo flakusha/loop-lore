@@ -137,8 +137,8 @@ export function createEntityRoutes(config: EntityConfig, opts: { database: Db; c
         }
       }
 
-      const countResult: { total?: number } = await countQuery.executeTakeFirst();
-      const total = countResult?.total ?? 0;
+      const countResult: { total?: number | bigint } = await countQuery.executeTakeFirst();
+      const total = Number(countResult?.total ?? 0);
 
       let query = listQuery;
       for (const ob of config.orderBy) {
