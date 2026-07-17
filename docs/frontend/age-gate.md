@@ -57,22 +57,7 @@ Admins can change age gate settings at runtime via the API (no restart needed):
 
 Body example for PUT:
 
-```json
-{
-  "enabled": true,
-  "minimumAge": 18,
-  "mode": "self-declaration"
-}
-```
-
 To disable the gate entirely at runtime:
-
-```json
-{
-  "enabled": false,
-  "mode": "none"
-}
-```
 
 ## API Reference
 
@@ -87,15 +72,6 @@ To disable the gate entirely at runtime:
 
 Response:
 
-```json
-{
-  "enabled": true,
-  "passed": false,
-  "minimumAge": 18,
-  "mode": "self-declaration"
-}
-```
-
 - When `enabled=false`, `passed` is always `true` — no gating.
 - When `enabled=true` and `passed=false`, the client should redirect to `/age-gate`.
 
@@ -103,27 +79,9 @@ Response:
 
 Request body:
 
-```json
-{
-  "birthDate": "2000-06-15"
-}
-```
-
 Success (200):
 
-```json
-{
-  "ok": true
-}
-```
-
 Underage (403):
-
-```json
-{
-  "error": "You must be at least 18 years old to use this service."
-}
-```
 
 ## States (Edge Cases)
 

@@ -205,21 +205,3 @@ columns incrementally; migrations 018-020 apply post-hoc fixes.
 
 ### Migration Pattern
 
-```typescript
-// migrations/NNN_name.ts
-import type { Kysely } from "kysely";
-
-export async function up(database: Kysely<unknown>): Promise<void> {
-  await database.schema
-    .createTable("table_name")
-    .addColumn("id", "text", (col) => col.primaryKey())
-    // ...
-    .execute();
-
-  await database.schema.createIndex("idx_table_column").on("table_name").column("column_name").execute();
-}
-
-export async function down(database: Kysely<unknown>): Promise<void> {
-  await database.schema.dropTable("table_name").execute();
-}
-```

@@ -25,16 +25,6 @@
 
 ### Component Lifecycle Integration
 
-```html
-<!-- Each page must include destroy handler -->
-<section
-  x-data="chatState()"
-  @htmx:before-swap.window="destroy()"
-  hx-get="/views/partial"
-  hx-trigger="load"
-></section>
-```
-
 ### Shared Components
 
 - `components/sidebar/sidebar.html` - Persistent sidebar (OOB swap)

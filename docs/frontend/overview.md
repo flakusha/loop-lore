@@ -159,23 +159,6 @@ variables.
 
 No Tailwind. No CSS-in-JS. Thirteen files:
 
-1. **theme.css** — Core resets, global styles, default design token fallbacks
-2. **theme-default.css** — Default dark theme design tokens
-3. **theme-light.css** — Light theme design tokens
-4. **theme-bright.css** — Bright theme design tokens
-5. **theme-colorful.css** — Colorful theme design tokens
-6. **theme-monochrome.css** — Monochrome theme design tokens
-7. **theme-no-icons.css** — No-icons theme with icon hiding rules
-8. **theme-dracula.css** — Dracula theme design tokens
-9. **theme-nord.css** — Nord theme design tokens
-10. **theme-github-dark.css** — GitHub Dark theme design tokens
-11. **theme-material.css** — Material theme design tokens
-12. **app.css** — Layout system, component classes (`.btn`, `.modal`,
-    `.sidebar`, `.message`, `.input-area`, `.toast`, `.form-input`,
-    `.empty-state`, `.spinner`, `.tag`)
-13. **gallery.css** — Asset gallery components (`.gallery`, `.gallery-nav`,
-    `.asset-grid`, `.drop-zone`)
-
 ## Icon Strategy
 
 No Font Awesome or icon library. Icons are:

@@ -23,20 +23,6 @@ Notifications are per-user, per-device, and configurable.
 
 Each notification has:
 
-```typescript
-interface Notification {
-  id: string;
-  user_id: string;
-  type: NotificationType;
-  title: string; // Short summary: "Alice mentioned you in 'Lost Temple'"
-  body?: string; // Optional detail: "@Lyra do you know this spell?"
-  link?: string; // Deep link: /chats/chat-uuid?msg=msg-uuid
-  read: boolean; // false until user dismisses
-  created_at: string;
-  data?: Record<string, unknown>; // Type-specific payload
-}
-```
-
 ### Storage (Proposed)
 
 Table: `notifications`
@@ -152,12 +138,4 @@ For live notification delivery without polling:
 
 ## Notification Lifecycle
 
-```
-1. Event occurs (mention, quest update, etc.)
-2. System creates notification record
-3. If user is online: push via SSE
-4. If user is offline: stored for next login
-5. User sees notification in bell dropdown
-6. User clicks → marks as read + navigates to link
-7. After 30 days, read notifications are auto-purged
 ```

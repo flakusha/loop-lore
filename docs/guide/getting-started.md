@@ -1,23 +1,16 @@
-# Getting Started with Loop Lore
+# Getting Started
 
 ## Prerequisites
 
 - [Bun](https://bun.sh) v1.0+
 - Git
-- SQLite3 (for local development)
+- SQLite3 (local dev)
 
-## Installation
+## Install
 
-```bash
-git clone <repository-url>
-cd loop-lore
-bun install
-bun run dev
-```
+Server at `http://localhost:3000`
 
-The server will be available at `http://localhost:3000`
-
-## Development Scripts
+## Scripts
 
 | Command              | Description                        |
 | -------------------- | ---------------------------------- |

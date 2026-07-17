@@ -20,13 +20,6 @@ Characters are **genre-agnostic**. The same system supports:
 
 Design goals:
 
-1. **Universal acceptance** — import from any major AI roleplay platform
-2. **Format agnostic** — JSON, YAML, TOML, PNG-embedded; detect automatically
-3. **Character ↔ Persona** — characters can be played by users (impersonation)
-4. **Migration-first** — zero-friction import from SillyTavern, Character.AI, RisuAI, Chub, etc.
-5. **Human-readable** — YAML/TOML for hand-authored characters; JSON for tool interop
-6. **Genre-flexible** — stats, items, and lore adapt to genre via plugin bundles
-
 ---
 
 ## Concepts
@@ -78,12 +71,6 @@ Use cases:
 
 Entities relate as follows:
 
-1. **Users** own many **Personas** — see [`personas.md`](./personas.md)
-2. **Users** own many **Actors** (when `actor_type='user'`)
-3. **Users** own many **Characters** (as `owner` of actor records with `actor_type='character'`)
-4. **Personas** connect to many **Chats** via `chat_participants.persona_id` — see [`personas.md`](./personas.md)
-5. **Characters** connect to many **Chats** via the `chat_participants` junction table
-
 ---
 
 ## Multi-Format Support
@@ -121,70 +108,11 @@ The system tries each format in order, returning the first successful parse:
 All imported formats normalize to a single internal representation before
 storage. This is the **Canonical Character Card** — a superset of CCv2/V3:
 
-```typescript
-interface CanonicalCharacterCard {
-  // Identity
-  name: string;
-  avatar?: AssetRef; // PNG/image reference
-
-  // Prompt fields
-  description: string; // Full character description/backstory
-  personality: string; // Short personality summary
-  scenario: string; // RP setting/context
-  system_prompt: string; // System prompt override
-  post_history_instructions: string; // UJB/jailbreak equivalent
-  welcome_message: string; // First message (first_mes)
-  mes_example: string; // Example dialogue
-
-  // Alternate content
-  alternate_greetings: string[]; // Swipe options for first message
-  group_only_greetings: string[]; // Greetings for group chats (V3)
-
-  // Metadata
-  tags: string[];
-  creator: string;
-  creator_notes: string;
-  character_version: string;
-  nickname?: string; // {{char}} alias (V3)
-
-  // Assets
-  assets?: CharacterAsset[]; // V3 structured assets
-
-  // Lorebook
-  character_book?: CharacterBook;
-
-  // Extensions (platform-specific data preserved)
-  extensions?: Record<string, unknown>;
-
-  // Import provenance
-  import_spec:
-    | "chara_card_v1"
-    | "chara_card_v2"
-    | "chara_card_v3"
-    | "character_ai"
-    | "raw_json"
-    | "raw_yaml"
-    | "raw_toml";
-  import_spec_version?: string;
-}
-```
-
 ---
 
 ### Format: Character Card V1 (SillyTavern)
 
 The oldest format. Flat JSON:
-
-```json
-{
-  "name": "Lyra",
-  "description": "A mysterious elf sorceress...",
-  "personality": "Wise, patient, slightly aloof",
-  "scenario": "Fantasy world, ancient ruins",
-  "first_mes": "Hello there, traveler.",
-  "mes_example": "<START>\n{{user}}: Who are you?\n{{char}}: I am Lyra..."
-}
-```
 
 **Field mapping:**
 
@@ -203,30 +131,6 @@ The oldest format. Flat JSON:
 
 Wrapped in `{ spec, spec_version, data }` envelope:
 
-```json
-{
-  "spec": "chara_card_v2",
-  "spec_version": "2.0",
-  "data": {
-    "name": "Lyra",
-    "description": "A mysterious elf sorceress...",
-    "personality": "Wise, patient, slightly aloof",
-    "scenario": "Fantasy world, ancient ruins",
-    "first_mes": "Hello there, traveler.",
-    "mes_example": "<START>\n{{user}}: Who are you?\n{{char}}: I am Lyra...",
-    "system_prompt": "You are Lyra...",
-    "post_history_instructions": "Always respond in character.",
-    "alternate_greetings": ["Greetings, traveler.", "Well met!"],
-    "tags": ["fantasy", "elf", "sorceress"],
-    "creator": "SomeAuthor",
-    "creator_notes": "My first character!",
-    "character_version": "1.3",
-    "character_book": { ... },
-    "extensions": {}
-  }
-}
-```
-
 **Field mapping:** All V2 fields map directly to canonical fields (see
 `docs/actors.md` V2 Spec Field Mapping table for complete mapping).
 
@@ -235,26 +139,6 @@ Wrapped in `{ spec, spec_version, data }` envelope:
 ### Format: Character Card V3 (RisuAI)
 
 Superset of V2 with assets and multilingual support:
-
-```json
-{
-  "spec": "chara_card_v3",
-  "spec_version": "3.0",
-  "data": {
-    "...all V2 fields...",
-    "nickname": "Lyra",
-    "assets": [
-      { "type": "icon", "uri": "embeded://assets/icon.png", "name": "main", "ext": "png" },
-      { "type": "background", "uri": "https://example.com/bg.jpg", "name": "forest", "ext": "jpg" }
-    ],
-    "creator_notes_multilingual": { "en": "...", "ja": "..." },
-    "source": ["https://chub.ai/characters/..."],
-    "group_only_greetings": ["Party time!"],
-    "creation_date": 1700000000,
-    "modification_date": 1700100000
-  }
-}
-```
 
 **V3 lorebook additions:**
 
@@ -266,19 +150,6 @@ Superset of V2 with assets and multilingual support:
 ### Format: Character.AI Export
 
 Character.AI exports as JSON with a different structure:
-
-```json
-{
-  "name": "Lyra",
-  "title": "Lyra the Sorceress",
-  "description": "...",
-  "greeting": "Hello there!",
-  "definition": "{{char}}=description={Name:\"Lyra\", Gender:\"Female\"}\n...",
-  "examples_of_dialogue": "<START>\n...",
-  "tags": ["fantasy"],
-  "visibility": "private"
-}
-```
 
 **Field mapping:**
 
@@ -463,44 +334,9 @@ The import pipeline follows a decision tree:
 
 ### Normalizer Interface
 
-```typescript
-interface FormatNormalizer {
-  /** Detect if this parser can handle the input */
-  canParse(input: string | Buffer): boolean;
-
-  /** Parse and normalize to canonical format */
-  parse(input: string | Buffer): CanonicalCharacterCard;
-
-  /** Format name for import_spec tracking */
-  formatName: string;
-}
-
-// Registered normalizers (order matters for auto-detection)
-const normalizers: FormatNormalizer[] = [
-  new PngCardNormalizer(), // PNG-embedded
-  new CharxNormalizer(), // ZIP/CHARX
-  new CharaCardV3Normalizer(), // CCv3 JSON
-  new CharaCardV2Normalizer(), // CCv2 JSON
-  new CharacterAiNormalizer(), // Character.AI
-  new TomlNormalizer(), // TOML
-  new YamlNormalizer(), // YAML
-  new RawJsonNormalizer(), // Fallback JSON
-];
-```
-
 ### Error Handling
 
 Import errors produce structured feedback:
-
-```typescript
-interface ImportError {
-  format: string; // Detected format name
-  field?: string; // Field that failed validation
-  message: string; // Human-readable error
-  suggestion?: string; // Fix suggestion
-  line?: number; // For YAML/TOML parse errors
-}
-```
 
 Example errors:
 
@@ -526,14 +362,6 @@ Example errors:
 | API response       | JSON (V2)      | Standardized API format    |
 
 ### Export Process
-
-1. Read actor record + all extension tables (lore, memories, notes, items)
-2. Map canonical fields to target format
-3. Collect `actor_lore_entries` → `data.character_book.entries`
-4. Collect linked assets → `data.assets` (V3) or embed in PNG
-5. If PNG: embed JSON as base64 in tEXt chunks (write both `chara` + `ccv3`)
-6. If CHARX: create ZIP with card.json + extracted asset files
-7. If YAML/TOML: serialize canonical fields with human-readable formatting
 
 ### V2 → V3 Auto-Upgrade on Export
 
@@ -650,27 +478,11 @@ character_version = "1.0"
 
 ### From SillyTavern
 
-1. Export character as PNG or JSON from SillyTavern
-2. In loop-lore: `/characters` → "Import" → select file
-3. Auto-detected as V1/V2/V3 → normalized → stored
-4. Lorebook entries imported into `actor_lore_entries`
-5. Avatar uploaded as asset, linked via `asset_links`
-6. Review: all fields preserved, editable in the character form
-
-**Bulk import:** Place multiple PNG/JSON files in a directory. Use the CLI
-or API to batch-import:
-
 ```bash
 loop-lore import --format sillytavern ./my-characters/
 ```
 
 ### From Character.AI
-
-1. Export character data (JSON or text format)
-2. In loop-lore: "Import" → select file or paste JSON
-3. Auto-detected as Character.AI format → normalized
-4. `definition` field merged into `description`
-5. Review and adjust: Character.AI's macro syntax is converted to loop-lore macros
 
 ### From RisuAI
 
@@ -781,36 +593,9 @@ The default stat template follows the six-attribute model, but this is one
 
 When a plugin bundle is active, it defines its own stat block:
 
-```typescript
-interface StatBlock {
-  [statName: string]: number; // Fully flexible keys
-}
-
-// Example: Dungeons & Dragons bundle
-// { str: 14, dex: 12, con: 15, int: 10, wis: 13, cha: 8 }
-
-// Example: Cyberpunk bundle
-// { cool: 12, tech: 15, reflexes: 14, luck: 7, body: 11, emp: 9 }
-
-// Example: Slice-of-Life bundle
-// { social: 14, work: 12, health: 10, creativity: 15, finance: 8 }
-```
-
 ### Assistant-Generated Stat Drafts
 
 The assistant can propose a stat block using the active bundle's template:
-
-```json
-// D&D bundle draft
-{ "strength": 12, "dexterity": 14, "intelligence": 10, "charisma": 8,
-  "hp": 80, "mp": 40, "skill_points": 5 }
-
-// Cyberpunk bundle draft
-{ "cool": 10, "tech": 14, "reflexes": 12, "luck": 8, "body": 11, "emp": 9 }
-
-// Sci-Fi bundle draft
-{ "combat": 13, "pilot": 15, "tech": 10, "charisma": 9, "hull": 60, "energy": 35 }
-```
 
 User may accept, edit, or reject. Assistant explains how stats map to
 the chosen genre's mechanics.

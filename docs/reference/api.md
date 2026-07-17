@@ -2,603 +2,195 @@
 
 ## Authentication
 
-All API endpoints (except public endpoints) require authentication via opaque bearer tokens passed in the `Authorization` header:
-
-```
-Authorization: Bearer <token>
-```
-
-Tokens are UUID v4 strings. Server stores SHA-256 hash in `sessions` table — raw token never stored. Session is deleted on logout. See [Auth Middleware](../spec/auth-middleware.md).
+Bearer tokens in `Authorization: Bearer <token>` header. Token is UUID v4. Server stores SHA-256 hash in `sessions` table. See `docs/spec/auth-middleware.md`.
 
 ## Base URL
 
-All API endpoints are prefixed with `/api/`.
+All endpoints prefixed with `/api/`.
 
 ## Users
 
 ### Get Current User
 
-```http
-GET /api/users/me
-Authorization: Bearer <token>
-```
+`GET /api/users/me` — returns `{ id, username, displayName, role, createdAt }`
 
-Returns the currently authenticated user's information.
+### Update Profile
 
-**Response:**
-
-```json
-{
-  "id": "user_uuid",
-  "username": "johndoe",
-  "displayName": "John Doe",
-  "role": "user",
-  "createdAt": "2026-01-15T10:30:00.000Z"
-}
-```
-
-### Update User Profile
-
-```http
-PUT /api/users/me
-Authorization: Bearer <token>
-Content-Type: application/json
-
-{
-  "displayName": "Johnny"
-}
-```
-
-Only `displayName` and `settings` can be updated. Username is immutable.
-
-**Response:** Updated user object
+`PUT /api/users/me` — body: `{ displayName, settings }`. Username immutable.
 
 ### Get User by ID
 
-```http
-GET /api/users/:userId
-Authorization: Bearer <token>
-```
-
-**Response:** User object
+`GET /api/users/:userId`
 
 ## Authentication
 
 ### Login
 
-```http
-POST /api/auth/login
-Content-Type: application/json
-
-{
-  "username": "johndoe",
-  "password": "password123"
-}
-```
-
-**Response:**
-
-```json
-{
-  "token": "550e8400-e29b-41d4-a716-446655440000",
-  "user": {
-    "id": "user_uuid",
-    "username": "johndoe",
-    "displayName": "John Doe",
-    "role": "user"
-  }
-}
-```
+`POST /api/auth/login` — body: `{ username, password }` — returns `{ token, user }`
 
 ### Logout
 
-```http
-POST /api/auth/logout
-Authorization: Bearer <token>
-```
+`POST /api/auth/logout` — 204 No Content
 
-**Response:** 204 No Content
+### Me
 
-### Get Current User (Auth check)
-
-```http
-GET /api/auth/me
-Authorization: Bearer <token>
-```
-
-**Response:** `{ id, username, displayName, role }`
+`GET /api/auth/me` — returns `{ id, username, displayName, role }`
 
 ## Chats
 
-### Get User's Chats
+### List
 
-```http
-GET /api/chats
-Authorization: Bearer <token>
-```
+`GET /api/chats` — paginated user's chats
 
-**Response:** Paginated array of user's chat objects
+### Create
 
-### Create Chat
+`POST /api/chats` — body: `{ name, type, mode, participantIds, worldId }` — returns `{ id }` 201
 
-```http
-POST /api/chats
-Authorization: Bearer <token>
-Content-Type: application/json
+### Get
 
-{
-  "name": "My Adventure",
-  "type": "direct",
-  "mode": "roleplay",
-  "participantIds": ["actor-uuid"],
-  "worldId": "world-uuid"
-}
-```
+`GET /api/chats/:chatId` — chat object with participants
 
-**Response:** `{ "id": "chat_uuid" }` with 201
+### Update
 
-### Get Chat by ID
+`PUT /api/chats/:chatId` — body: `{ name, mode }`
 
-```http
-GET /api/chats/:chatId
-Authorization: Bearer <token>
-```
+### Delete
 
-**Response:** Chat object with participants
+`DELETE /api/chats/:chatId` — 204
 
-### Update Chat
+### Move Location
 
-```http
-PUT /api/chats/:chatId
-Authorization: Bearer <token>
-Content-Type: application/json
-
-{
-  "name": "Updated Adventure Name",
-  "mode": "roleplay"
-}
-```
-
-**Response:** Updated chat object
-
-### Delete Chat
-
-```http
-DELETE /api/chats/:chatId
-Authorization: Bearer [REDACTED:Authorization header]
-```
-
-**Response:** 204 No Content
-
-### Move Chat Location
-
-```http
-PUT /api/chats/:chatId/location
-Authorization: Bearer [REDACTED:Authorization header]
-Content-Type: application/json
-
-{
-  "locationId": "location-uuid"
-}
-```
-
-Move a chat to a different location (story mode). The location must exist in the chat's world. Pass `null` to clear the current location.
-
-**Response:**
-
-```json
-{
-  "ok": true,
-  "current_location_id": "location-uuid",
-  "location_name": "Dark Forest"
-}
-```
+`PUT /api/chats/:chatId/location` — body: `{ locationId }` — null clears location
 
 ## Messages
 
-### Get Messages for a Chat
+### List
 
-```http
-GET /api/chats/:chatId/messages
-Authorization: Bearer <token>
-```
+`GET /api/chats/:chatId/messages` — query: `page`, `pageSize` (max 200), `parentId`, `before`
 
-**Query Parameters:**
+### Send
 
-- `page`: Page number (default: 1)
-- `pageSize`: Messages per page (default: 50, max: 200)
-- `parentId`: Filter by parent message (tree view)
-- `before`: Get messages before this timestamp
+`POST /api/chats/:chatId/messages` — body: `{ content, role, contentType, parentId, idempotencyKey }` — returns `{ id }` 201
 
-**Response:** Paginated list of message objects
+### Update Visibility
 
-### Send Message
+`PUT /api/messages/:messageId/visibility` — body: `{ visibility, reason }`
 
-```http
-POST /api/chats/:chatId/messages
-Authorization: Bearer <token>
-Content-Type: application/json
+### Delete
 
-{
-  "content": "Hello, world!",
-  "role": "user",
-  "contentType": "text",
-  "parentId": null,
-  "idempotencyKey": "client-gen-uuid"
-}
-```
-
-**Response:** `{ "id": "msg_uuid" }` with 201
-
-### Update Message Visibility
-
-```http
-PUT /api/messages/:messageId/visibility
-Authorization: Bearer <token>
-Content-Type: application/json
-
-{
-  "visibility": "hidden_by_user",
-  "reason": "mistake"
-}
-```
-
-**Response:** Updated message object
-
-### Delete Message
-
-```http
-DELETE /api/messages/:messageId
-Authorization: Bearer <token>
-```
-
-**Response:** 204 No Content
+`DELETE /api/messages/:messageId` — 204
 
 ## Characters
 
-### Get Character
+### Get
 
-```http
-GET /api/actors/:id
-Authorization: Bearer <token>
-```
+`GET /api/actors/:id` — actor object
 
-**Response:** Actor object (character/user/assistant)
+### Create
 
-### Create Character
+`POST /api/actors` — body: `{ displayName, actorType, description, systemPrompt }` — returns `{ id }` 201
 
-```http
-POST /api/actors
-Authorization: Bearer <token>
-Content-Type: application/json
+### Update
 
-{
-  "displayName": "Gandalf",
-  "actorType": "character",
-  "description": "A wise old wizard",
-  "systemPrompt": "You are Gandalf the Grey..."
-}
-```
+`PUT /api/actors/:id` — body: updated fields
 
-**Response:** `{ "id": "actor_uuid" }` with 201
+### Delete
 
-### Update Character
-
-```http
-PUT /api/actors/:id
-Authorization: Bearer <token>
-Content-Type: application/json
-
-{
-  "displayName": "Gandalf the White",
-  "description": "An even wiser wizard"
-}
-```
-
-**Response:** Updated actor object
-
-### Delete Character
-
-```http
-DELETE /api/actors/:id
-Authorization: Bearer <token>
-```
-
-**Response:** 204 No Content
+`DELETE /api/actors/:id` — 204
 
 ## Worlds
 
-### List Worlds
+### List
 
-```http
-GET /api/worlds
-Authorization: Bearer [REDACTED:Authorization header]
-```
+`GET /api/worlds` — paginated list
 
-**Response:** Paginated list of world objects
+### Create
 
-### Create World
+`POST /api/worlds` — body: `{ name, description, lore }` — returns `{ id }` 201
 
-```http
-POST /api/worlds
-Authorization: Bearer [REDACTED:Authorization header]
-Content-Type: application/json
+### Get
 
-{
-  "name": "Fantasy Realm",
-  "description": "A world of magic and adventure",
-  "lore": "Long ago, the dragons ruled..."
-}
-```
+`GET /api/worlds/:worldId`
 
-**Response:** `{ "id": "world_uuid" }` with 201
+### Update
 
-### Get World
+`PUT /api/worlds/:worldId`
 
-```http
-GET /api/worlds/:worldId
-Authorization: Bearer [REDACTED:Authorization header]
-```
+### Delete
 
-**Response:** World object
+`DELETE /api/worlds/:worldId` — deletes world + all locations, states, quests, items — 204
 
-### Update World
+### Initialize States
 
-```http
-PUT /api/worlds/:worldId
-Authorization: Bearer [REDACTED:Authorization header]
-Content-Type: application/json
-
-{
-  "name": "Updated Name",
-  "lore": "Updated lore..."
-}
-```
-
-**Response:** Updated world object
-
-### Delete World
-
-```http
-DELETE /api/worlds/:worldId
-Authorization: Bearer [REDACTED:Authorization header]
-```
-
-Deletes the world and all associated locations, states, quests, and items.
-
-**Response:** 204 No Content
-
-### Initialize World States
-
-```http
-POST /api/worlds/:worldId/initialize-states
-Authorization: Bearer [REDACTED:Authorization header]
-```
-
-Creates default state records for all locations and NPCs in the world.
-
-**Response:**
-
-```json
-{
-  "ok": true,
-  "locations_initialized": 5,
-  "npcs_initialized": 3
-}
-```
+`POST /api/worlds/:worldId/initialize-states` — creates default state records for all locations and NPCs
 
 ## World Locations
 
-### List Locations
+### List
 
-```http
-GET /api/worlds/:worldId/locations
-Authorization: Bearer [REDACTED:Authorization header]
-```
+`GET /api/worlds/:worldId/locations`
 
-**Response:** Paginated list of location objects
+### Create
 
-### Create Location
+`POST /api/worlds/:worldId/locations` — body: `{ name, description, connections, parentLocationId }` — connection IDs validated against same world
 
-```http
-POST /api/worlds/:worldId/locations
-Authorization: Bearer [REDACTED:Authorization header]
-Content-Type: application/json
+### Get
 
-{
-  "name": "Dark Forest",
-  "description": "A foreboding forest...",
-  "connections": ["location-uuid-1", "location-uuid-2"],
-  "parentLocationId": null
-}
-```
+`GET /api/worlds/:worldId/locations/:locationId`
 
-Connection IDs are validated: each must reference an existing location in the same world. Self-connections are rejected.
+### Update
 
-**Response:** `{ "id": "location_uuid" }` with 201
+`PUT /api/worlds/:worldId/locations/:locationId`
 
-### Get Location
+### Delete
 
-```http
-GET /api/worlds/:worldId/locations/:locationId
-Authorization: Bearer [REDACTED:Authorization header]
-```
-
-**Response:** Location object
-
-### Update Location
-
-```http
-PUT /api/worlds/:worldId/locations/:locationId
-Authorization: Bearer [REDACTED:Authorization header]
-Content-Type: application/json
-
-{
-  "name": "Updated Forest",
-  "connections": ["other-location-uuid"]
-}
-```
-
-**Response:** Updated location object
-
-### Delete Location
-
-```http
-DELETE /api/worlds/:worldId/locations/:locationId
-Authorization: Bearer [REDACTED:Authorization header]
-```
-
-**Response:** 204 No Content
+`DELETE /api/worlds/:worldId/locations/:locationId` — 204
 
 ## Assets
 
-### Upload Asset
+### Upload
 
-```http
-POST /api/assets
-Authorization: Bearer <token>
-Content-Type: multipart/form-data
+`POST /api/assets` — multipart `file` — returns `{ id, filename, mimeType, sizeBytes, urls: { raw, compressed, thumb } }`
 
-file: <binary file>
-```
+### List
 
-**Response:**
+`GET /api/assets?type=image` — paginated
 
-```json
-{
-  "id": "asset_uuid",
-  "filename": "portrait.png",
-  "mimeType": "image/png",
-  "sizeBytes": 123456,
-  "urls": {
-    "raw": "/api/assets/uuid/raw",
-    "compressed": "/api/assets/uuid/compressed",
-    "thumbnail": "/api/assets/uuid/thumb"
-  }
-}
-```
+### Link
 
-### List Assets
+`POST /api/assets/:assetId/links` — body: `{ entityType, entityId, label }` — returns `{ id }` 201
 
-```http
-GET /api/assets?type=image
-Authorization: Bearer <token>
-```
+### Unlink
 
-**Response:** Paginated array of asset objects
+`DELETE /api/assets/:assetId/links/:linkId` — 204
 
-### Link Asset to Entity
+### Delete
 
-```http
-POST /api/assets/:assetId/links
-Authorization: Bearer <token>
-Content-Type: application/json
+`DELETE /api/assets/:assetId` — 204
 
-{
-  "entityType": "character",
-  "entityId": "actor_uuid",
-  "label": "portrait"
-}
-```
+### Serve
 
-**Response:** `{ "id": "link_uuid" }` with 201
+`GET /api/assets/:assetId/raw` — original file
+`GET /api/assets/:assetId/compressed` — compressed variant
+`GET /api/assets/:assetId/thumb` — thumbnail (images only)
 
-### Unlink Asset from Entity
-
-```http
-DELETE /api/assets/:assetId/links/:linkId
-Authorization: Bearer <token>
-```
-
-**Response:** 204 No Content
-
-### Delete Asset
-
-```http
-DELETE /api/assets/:assetId
-Authorization: Bearer <token>
-```
-
-**Response:** 204 No Content
-
-### Serve Asset
-
-```http
-GET /api/assets/:assetId/raw       # Original file
-GET /api/assets/:assetId/compressed # Compressed variant
-GET /api/assets/:assetId/thumb     # Thumbnail (images only)
-```
-
-Asset downloads use direct paths (no signed URL system). Auth required for all asset endpoints.
-
-**Response:** Binary file data with appropriate Content-Type
-
-## Assistant
-
-### Get Assistant Response
-
-> **Status:** Not implemented. `/api/assistant` endpoint does not exist yet. Assistant is invoked internally by `src/assistant/service.ts` during message generation. This documentation is aspirational.
+Auth required. Asset downloads use direct paths (no signed URLs).
 
 ## Error Responses
 
-All error responses follow this format:
+All errors follow `{ error: { message, code, details? } }`. Common codes:
 
-```json
-{
-  "error": {
-    "message": "Human readable error message",
-    "code": "ERROR_CODE",
-    "details": {} // Optional additional details
-  }
-}
-```
-
-Common error codes:
-
-- `VALIDATION_ERROR`: Invalid request data
-- `UNAUTHORIZED`: Missing or invalid authentication
-- `FORBIDDEN`: Insufficient permissions
-- `NOT_FOUND`: Resource not found
-- `CONFLICT`: Resource conflict (e.g., duplicate username)
-- `INTERNAL_ERROR`: Unexpected server error
+- `VALIDATION_ERROR` — invalid request data
+- `UNAUTHORIZED` — missing/invalid auth
+- `FORBIDDEN` — insufficient permissions
+- `NOT_FOUND` — resource not found
+- `CONFLICT` — resource conflict (e.g. duplicate username)
+- `INTERNAL_ERROR` — unexpected server error
 
 ## Rate Limiting
 
-API endpoints may be rate-limited. When rate limited, the server responds with:
-
-```json
-{
-  "error": {
-    "message": "Rate limit exceeded",
-    "code": "RATE_LIMITED",
-    "details": {
-      "limit": 100,
-      "remaining": 0,
-      "reset": 1623456789000
-    }
-  }
-}
-```
-
-Status code: 429 Too Many Requests
+429 response: `{ error: { message: "Rate limit exceeded", code: "RATE_LIMITED", details: { limit, remaining, reset } } }`
 
 ## Pagination
 
-Endpoints that return lists of items support pagination using:
-
-- `page`: Page number (default: 1)
-- `pageSize`: Items per page (default: 50, max: 200)
-
-Response includes pagination metadata:
-
-```json
-{
-  "data": [...],
-  "pagination": {
-    "total": 137,
-    "page": 1,
-    "pageSize": 50,
-    "totalPages": 3
-  }
-}
-```
+Query params: `page` (default 1), `pageSize` (default 50, max 200). Response: `{ data: [...], pagination: { total, page, pageSize, totalPages } }`

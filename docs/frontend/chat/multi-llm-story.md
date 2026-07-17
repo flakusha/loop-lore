@@ -46,15 +46,6 @@ Extends the existing chat types with a new mode:
 
 The story module is organized into these files:
 
-1. **`src/story/turn-manager.ts`** — Core turn orchestration
-2. **`src/story/game-master.ts`** — Game Master logic (LLM or human)
-3. **`src/story/quality-evaluator.ts`** — Response quality analysis
-4. **`src/story/world-state.ts`** — World state mutation from story events
-5. **`src/story/quest-engine.ts`** — Global quest tracking & progression
-6. **`src/story/synthetic-generator.ts`** — Automated test data generation
-7. **`src/story/types.ts`** — Shared types
-8. **`src/story/index.ts`** — Exports
-
 ### Turn Flow
 
 A story turn cycle progresses through seven stages:
@@ -120,26 +111,6 @@ A story turn cycle progresses through seven stages:
 
 ### Game Master Types
 
-```typescript
-type GameMasterType = "llm" | "human" | "hybrid";
-
-interface GameMasterConfig {
-  type: GameMasterType;
-  llmConfig?: {
-    model: string;
-    provider: string;
-    systemPrompt: string; // "You are the Game Master..."
-    temperature: number;
-  };
-  humanGM?: {
-    actorId: string; // Human user's actor ID
-    notifications: boolean;
-  };
-  // Hybrid: LLM handles routine, escalates complex to human
-  escalationThreshold?: number; // Quality score below which human reviews
-}
-```
-
 ### Game Master Responsibilities
 
 | Responsibility              | LLM GM          | Human GM | Hybrid           |
@@ -171,23 +142,6 @@ CURRENT SCENE:
 {scene_summary}
 
 YOUR ROLE:
-1. Select the next actor to act based on narrative relevance
-2. Provide a focused prompt for that actor (max 500 tokens)
-3. Evaluate responses for: character voice, plot coherence, lore consistency
-4. Score responses 0-100. Below 60 = regenerate. Below 40 = escalate.
-5. Track quest progress and world state changes
-6. Inject narration messages for time skips, scene transitions, environmental changes
-
-OUTPUT FORMAT (JSON):
-{
-  "nextActorId": "uuid",
-  "turnPrompt": "Specific direction for this actor...",
-  "turnConstraints": { "maxTokens": 800, "tone": "tense", "focus": "dialogue" },
-  "narration": "Optional scene-setting narration to inject before turn",
-  "questUpdates": [{ "questId": "uuid", "progress": 25, "note": "Found first clue" }],
-  "worldStateChanges": [{ "type": "location_change", "actorId": "uuid", "newLocation": "cave" }]
-}
-```
 
 ---
 
@@ -206,15 +160,6 @@ OUTPUT FORMAT (JSON):
 
 ### Quality Thresholds (Configurable)
 
-```typescript
-interface QualityThresholds {
-  accept: 70; // Auto-accept
-  regenerate: 40; // Request regeneration (max 3 attempts)
-  escalate: 40; // Below this: human GM review required
-  maxRegenerations: 3;
-}
-```
-
 ### Regeneration Strategy
 
 1. **First failure**: Same prompt, temperature +0.1
@@ -229,18 +174,6 @@ interface QualityThresholds {
 ### Event Extraction from Messages
 
 The World State Engine parses accepted messages for **state-changing events**:
-
-```typescript
-type WorldEventType =
-  | "location_change" // Actor moves to new location
-  | "npc_state_change" // NPC relationship, health, knowledge
-  | "item_transfer" // Item gained/lost/traded
-  | "time_advancement" // Explicit time skip
-  | "location_modification" // Location description changed
-  | "world_lore_update" // New fact added to world lore
-  | "quest_progress" // Quest objective advanced
-  | "combat_event"; // Damage, defeat, status effects
-```
 
 ### Event Extraction Pipeline
 
@@ -268,47 +201,6 @@ World events are extracted from message content through a three-stage pipeline:
 
 New tables for dynamic world state:
 
-```sql
--- World state snapshots (for rollback, history, synthesis)
-CREATE TABLE world_states (
-  id TEXT PRIMARY KEY,
-  world_id TEXT NOT NULL REFERENCES worlds(id),
-  snapshot_json TEXT NOT NULL,  -- Full serialized state
-  trigger_message_id TEXT REFERENCES messages(id),
-  created_at TEXT DEFAULT CURRENT_TIMESTAMP
-);
-
--- NPC dynamic state (separate from static actor definition)
-CREATE TABLE npc_states (
-  id TEXT PRIMARY KEY,
-  actor_id TEXT NOT NULL REFERENCES actors(id),  -- actor_type='character', agent_type='npc'
-  world_id TEXT NOT NULL REFERENCES worlds(id),
-  location_id TEXT REFERENCES locations(id),
-  health INTEGER DEFAULT 100,
-  mental_state TEXT DEFAULT 'calm',  -- calm, afraid, angry, suspicious, etc.
-  knowledge JSON DEFAULT '{}',       -- What NPC knows (facts, rumors, secrets)
-  relationships JSON DEFAULT '{}',   -- {actor_id: disposition(-100 to 100)}
-  inventory JSON DEFAULT '[]',       -- Items NPC carries
-  schedule JSON DEFAULT '{}',        -- Time-based behavior patterns
-  updated_at TEXT DEFAULT CURRENT_TIMESTAMP
-);
-
--- Location dynamic state
-CREATE TABLE location_states (
-  id TEXT PRIMARY KEY,
-  location_id TEXT NOT NULL REFERENCES locations(id),
-  world_id TEXT NOT NULL REFERENCES worlds(id),
-  description_override TEXT,         -- Temporary description change
-  atmosphere TEXT,                   -- Current mood: tense, peaceful, eerie
-  npcs_present JSON DEFAULT '[]',    -- Actor IDs currently here
-  items_available JSON DEFAULT '[]', -- Items findable here
-  time_of_day TEXT,                  -- morning, afternoon, evening, night
-  weather TEXT,                      -- clear, rain, storm, fog
-  hazards JSON DEFAULT '[]',         -- Active environmental hazards
-  updated_at TEXT DEFAULT CURRENT_TIMESTAMP
-);
-```
-
 ---
 
 ## Global Quest System
@@ -327,114 +219,7 @@ CREATE TABLE location_states (
 
 ### Quest Schema
 
-```sql
-CREATE TABLE quests (
-  id TEXT PRIMARY KEY,
-  world_id TEXT NOT NULL REFERENCES worlds(id),
-  creator_id TEXT NOT NULL REFERENCES actors(id),  -- GM or system
-  name TEXT NOT NULL,
-  description TEXT,
-  type TEXT NOT NULL,  -- 'time' | 'collection' | 'destruction' | 'rescue' | 'discovery' | 'social' | 'composite'
-  status TEXT NOT NULL DEFAULT 'active',  -- 'active' | 'completed' | 'failed' | 'abandoned'
-  priority INTEGER DEFAULT 0,  -- Higher = more urgent for GM attention
-
-  -- Type-specific config (JSON)
-  config JSON NOT NULL,  -- See type configs below
-
-  -- Progress tracking
-  progress INTEGER DEFAULT 0,  -- 0-100 or absolute count
-  target INTEGER NOT NULL,     -- Target value for completion
-
-  -- Time-based quests
-  start_time TEXT,             -- ISO timestamp
-  deadline TEXT,               -- ISO timestamp (null = no deadline)
-  time_location_id TEXT REFERENCES locations(id),  -- Location whose time tracks
-
-  -- Rewards
-  rewards JSON DEFAULT '{}',   -- XP, items, world changes, lore unlocks
-
-  -- Narrative
-  narrative_hooks JSON DEFAULT '[]',  -- Story beats at progress milestones
-
-  created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-  updated_at TEXT DEFAULT CURRENT_TIMESTAMP,
-  completed_at TEXT
-);
-```
-
 ### Type-Specific Configs
-
-```typescript
-// Time-based
-interface TimeQuestConfig {
-  type: "time";
-  durationMinutes: number; // Real-time or in-game time
-  trackInGameTime: boolean; // Use world clock vs real clock
-  locationId?: string; // Specific location's time
-  milestones: { progress: number; narrative: string }[];
-}
-
-// Collection
-interface CollectionQuestConfig {
-  type: "collection";
-  items: { itemId: string; quantity: number }[]; // Specific items
-  // OR category-based:
-  category?: string; // e.g., "herbs", "gems", "documents"
-  categoryQuantity?: number; // Any 10 herbs
-  sources: string[]; // Where items can be found: location IDs, NPC IDs, "any"
-}
-
-// Destruction
-interface DestructionQuestConfig {
-  type: "destruction";
-  targetActorId: string; // Enemy actor to defeat
-  // OR target type:
-  targetType?: string; // e.g., "undead", "bandits"
-  targetQuantity?: number; // Defeat 5 bandits
-  combatRules?: {
-    // Optional custom combat
-    hpMultiplier: number;
-    specialWeaknesses: string[];
-  };
-}
-
-// Rescue
-interface RescueQuestConfig {
-  type: "rescue";
-  targetActorId: string; // NPC to rescue
-  safeLocationId: string; // Location considered "safe"
-  escortRequired: boolean; // Must be accompanied
-  timeLimitMinutes?: number; // Optional time pressure
-  threats: string[]; // Actor IDs or types threatening NPC
-}
-
-// Discovery
-interface DiscoveryQuestConfig {
-  type: "discovery";
-  targetLocationId?: string; // Specific hidden location
-  // OR discovery type:
-  discoveryType?: "location" | "secret" | "lore" | "path";
-  clues: { locationId: string; hint: string }[]; // Clue locations
-  revealOnComplete: string; // What becomes known/accessible
-}
-
-// Social
-interface SocialQuestConfig {
-  type: "social";
-  targetActorId: string; // NPC to build relationship with
-  targetDisposition: number; // -100 to 100
-  requiredInteractions: number; // Minimum meaningful interactions
-  favoredTopics: string[]; // Conversation topics that help
-  disfavoredActions: string[]; // Actions that hurt progress
-}
-
-// Composite
-interface CompositeQuestConfig {
-  type: "composite";
-  subQuests: string[]; // Quest IDs
-  logic: "all" | "any" | "sequence"; // All must complete, any one, or in order
-}
-```
 
 ### Quest Progression Integration
 
@@ -484,29 +269,6 @@ When a story session completes (or hits a checkpoint), synthetic data flows thro
 
 ### Synthetic Scenarios Table
 
-```sql
-CREATE TABLE synthetic_scenarios (
-  id TEXT PRIMARY KEY,
-  session_id TEXT NOT NULL,  -- Source story session
-  scenario_type TEXT NOT NULL,  -- 'turn_sequence' | 'quality_evaluation' | 'quest_progression' | 'world_state_transition' | 'regeneration_case' | 'gm_escalation'
-  tags TEXT NOT NULL DEFAULT '[]',  -- JSON array of tags
-
-  -- Input: what the system received
-  input_context JSON NOT NULL,  -- Full context sent to actor/GM/evaluator
-
-  -- Expected output: what the system produced (ground truth)
-  expected_output JSON NOT NULL,
-
-  -- Metadata for filtering/selection
-  metadata JSON NOT NULL DEFAULT '{}',  -- turn_number, actor_ids, quest_ids, quality_score, etc.
-
-  -- Validation: assertions that must hold
-  assertions JSON DEFAULT '[]',  -- e.g., ["progress >= 0", "progress <= 100"]
-
-  created_at TEXT DEFAULT CURRENT_TIMESTAMP
-);
-```
-
 ### Test Execution Modes
 
 | Mode          | Description                                                      | CI Integration   |
@@ -524,6 +286,7 @@ CREATE TABLE synthetic_scenarios (
 ### Story Chat Management
 
 ```
+
 POST   /api/chats/story              # Create story-mode chat
 GET    /api/chats/:id/story/state    # Get current story state (turn, actors, quests)
 POST   /api/chats/:id/story/start    # Begin autonomous generation
@@ -531,54 +294,65 @@ POST   /api/chats/:id/story/pause    # Pause generation
 POST   /api/chats/:id/story/resume   # Resume generation
 POST   /api/chats/:id/story/step     # Single turn (for testing/debugging)
 POST   /api/chats/:id/story/configure # Update GM config, turn order, thresholds
+
 ```
 
 ### Game Master
 
 ```
+
 POST   /api/chats/:id/gm/turn        # Request GM decision for next turn
 GET    /api/chats/:id/gm/history     # GM decision log
 POST   /api/chats/:id/gm/override    # Human GM override
 POST   /api/chats/:id/gm/escalate    # Escalate current turn to human
+
 ```
 
 ### Quality & Regeneration
 
 ```
+
 POST   /api/messages/:id/evaluate    # Trigger quality evaluation
 POST   /api/messages/:id/regenerate  # Request regeneration
 GET    /api/messages/:id/attempts    # List generation attempts
+
 ```
 
 ### Quests
 
 ```
+
 GET    /api/worlds/:worldId/quests           # List quests
 POST   /api/worlds/:worldId/quests           # Create quest (GM)
 GET    /api/quests/:id                       # Quest detail
 PATCH  /api/quests/:id                       # Update quest (GM)
 POST   /api/quests/:id/progress              # Manual progress update (GM)
 GET    /api/quests/:id/history               # Progress history
+
 ```
 
 ### World State
 
 ```
+
 GET    /api/worlds/:worldId/state            # Current world state snapshot
 GET    /api/worlds/:worldId/state/history    # State history
 GET    /api/worlds/:worldId/npcs/:actorId    # NPC dynamic state
 GET    /api/worlds/:worldId/locations/:id    # Location dynamic state
+
 ```
 
 ### Synthetic Data
 
 ```
+
 GET    /api/synthetic/scenarios              # List with filters
 POST   /api/synthetic/scenarios              # Create manual scenario
 GET    /api/synthetic/scenarios/:id          # Get scenario
 POST   /api/synthetic/generate               # Trigger generation from session
 POST   /api/synthetic/test/run               # Run test suite
 GET    /api/synthetic/test/results/:runId    # Test results
+
 ```
 
 ---
