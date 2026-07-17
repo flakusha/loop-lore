@@ -21,7 +21,8 @@
 /settings/api              → LLM provider config
 /settings/data             → Import/export, danger zone
 
-/login                     → Authentication (multi-user mode only)
+/login                     → Authentication (served at /views/login; multi-user mode only)
+/register                  → Registration (served at /views/register; if registrationOpen)
 
 /worlds                    → Browse worlds (first-class entity)
 /worlds/:id                → World detail / lore / chat rooms
@@ -59,6 +60,22 @@ The sidebar chat items link to `/character/:slug/:chatId` directly. The header t
 All internal navigation uses htmx `hx-get` with `hx-target="#app-root"` and `hx-swap="innerHTML"`. The browser history is updated via `hx-push-url="true"` on these links, so back/forward works.
 
 Full page reloads only happen on `/login` or hard errors (server 500, connection lost).
+
+## Server-Rendered View Layer
+
+The clean URLs above are the design contract. The current implementation serves
+pages from a `/views/:name` route (e.g. `/views/chat`, `/views/login`,
+`/views/register`, `/views/characters`). A few bare aliases redirect based on
+auth state:
+
+- `GET /` → `/views/chat` if authenticated, else `/views/login`
+- `GET /chat` → `/views/chat` if authenticated, else `/views/login`
+- `GET /register` → `/views/chat` if authenticated, else `/views/register`
+
+On a `401` from any htmx request, the client redirects to
+`/views/login?redirect=<original-path>`. Auth handlers (login, demo-login,
+register) return `HX-Redirect: /views/chat` on success. Solo/demo mode has no
+login step — `/` lands directly on `/views/chat`.
 
 ## Summary
 
