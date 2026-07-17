@@ -54,6 +54,20 @@ globalThis.questsPage = function () {
       this.worldId = params.get("worldId") || "";
 
       if (this.worldId) {
+        // Verify the world exists before rendering — a stale/deleted id
+        // in the URL must not force a blank quests page.
+        try {
+          const wRes = await feFetch(`/api/worlds/${this.worldId}`, {
+            headers: { Accept: "application/json" },
+          });
+          if (!wRes.ok) {
+            globalThis.location.assign("/views/quests");
+            return;
+          }
+        } catch {
+          globalThis.location.assign("/views/quests");
+          return;
+        }
         await this.loadQuests();
       } else {
         await this.loadWorlds();

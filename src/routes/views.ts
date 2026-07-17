@@ -114,6 +114,14 @@ function respond(content: string, isHtmx: boolean, title?: string): Response {
   });
 }
 
+function notFoundView(message: string, isHtmx: boolean, title = "Not found"): Response {
+  const content = `<div class="empty-state" style="padding: var(--space-12)">
+      <div class="icon">⚠️</div>
+      <div class="title">${escapeHtml(message)}</div>
+    </div>`;
+  return respond(content, isHtmx, title);
+}
+
 function htmlResponse(body: string): Response {
   return new Response(body, {
     headers: { "Content-Type": "text/html; charset=utf-8" },
@@ -158,7 +166,14 @@ function serveWorldsList(isHtmx = false): Response | null {
   return serveView("worlds", isHtmx);
 }
 
-function serveWorldDetail(worldId: string, isHtmx = false): Response | null {
+async function serveWorldDetail(
+  worldId: string,
+  database: Kysely<DB>,
+  isHtmx = false,
+): Promise<Response | null> {
+  const world = await database.selectFrom("worlds").select("id").where("id", "=", worldId).executeTakeFirst();
+  if (!world) return notFoundView("World not found", isHtmx, "World not found");
+
   let content = loadView("world-detail");
   if (!content) return null;
 
@@ -166,7 +181,14 @@ function serveWorldDetail(worldId: string, isHtmx = false): Response | null {
   return respond(content, isHtmx, "World — Details");
 }
 
-function serveWorldEdit(worldId: string, isHtmx = false): Response | null {
+async function serveWorldEdit(
+  worldId: string,
+  database: Kysely<DB>,
+  isHtmx = false,
+): Promise<Response | null> {
+  const world = await database.selectFrom("worlds").select("id").where("id", "=", worldId).executeTakeFirst();
+  if (!world) return notFoundView("World not found", isHtmx, "World not found");
+
   let content = loadView("world-edit");
   if (!content) return null;
 
@@ -174,7 +196,18 @@ function serveWorldEdit(worldId: string, isHtmx = false): Response | null {
   return respond(content, isHtmx, "Edit World");
 }
 
-function serveCharacterEdit(characterId: string, isHtmx = false): Response | null {
+async function serveCharacterEdit(
+  characterId: string,
+  database: Kysely<DB>,
+  isHtmx = false,
+): Promise<Response | null> {
+  const actor = await database
+    .selectFrom("actors")
+    .select("id")
+    .where("id", "=", characterId)
+    .executeTakeFirst();
+  if (!actor) return notFoundView("Character not found", isHtmx, "Character not found");
+
   let content = loadView("character-edit");
   if (!content) return null;
 
@@ -769,9 +802,9 @@ export function viewRoutes({ database }: { database: Kysely<DB> }) {
         if (result) return result;
         return new Response("Not found", { status: 404 });
       })
-      .get("/character/:slug/edit", (ctx) => {
+      .get("/character/:slug/edit", async (ctx) => {
         const isHtmx = ctx.request.headers.get("HX-Request") === "true";
-        const result = serveCharacterEdit(ctx.params.slug, isHtmx);
+        const result = await serveCharacterEdit(ctx.params.slug, database, isHtmx);
         if (result) return result;
         return new Response("Not found", { status: 404 });
       })
@@ -781,9 +814,9 @@ export function viewRoutes({ database }: { database: Kysely<DB> }) {
         if (result) return result;
         return new Response("Not found", { status: 404 });
       })
-      .get("/characters/:id/edit", (ctx) => {
+      .get("/characters/:id/edit", async (ctx) => {
         const isHtmx = ctx.request.headers.get("HX-Request") === "true";
-        const result = serveCharacterEdit(ctx.params.id, isHtmx);
+        const result = await serveCharacterEdit(ctx.params.id, database, isHtmx);
         if (result) return result;
         return new Response("Not found", { status: 404 });
       })
@@ -795,15 +828,15 @@ export function viewRoutes({ database }: { database: Kysely<DB> }) {
         if (result) return result;
         return new Response("Not found", { status: 404 });
       })
-      .get("/worlds/:id", (ctx) => {
+      .get("/worlds/:id", async (ctx) => {
         const isHtmx = ctx.request.headers.get("HX-Request") === "true";
-        const result = serveWorldDetail(ctx.params.id, isHtmx);
+        const result = await serveWorldDetail(ctx.params.id, database, isHtmx);
         if (result) return result;
         return new Response("Not found", { status: 404 });
       })
-      .get("/worlds/:id/edit", (ctx) => {
+      .get("/worlds/:id/edit", async (ctx) => {
         const isHtmx = ctx.request.headers.get("HX-Request") === "true";
-        const result = serveWorldEdit(ctx.params.id, isHtmx);
+        const result = await serveWorldEdit(ctx.params.id, database, isHtmx);
         if (result) return result;
         return new Response("Not found", { status: 404 });
       })
