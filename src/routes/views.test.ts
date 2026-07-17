@@ -131,3 +131,50 @@ describe("chat view mounts modals", () => {
     expect(body).toContain("chat-settings-modal");
   });
 });
+
+describe("id verification (URL injection guard)", () => {
+  // DB mock whose lookups always miss — simulates a deleted/archived id.
+  const missingDb = {
+    selectFrom: () => ({
+      select: () => ({
+        where: () => ({
+          executeTakeFirst: async () => null,
+        }),
+      }),
+    }),
+  } as never;
+
+  test("/worlds/:id with missing world returns not-found, not shell", async () => {
+    const app = viewRoutes({ database: missingDb });
+    const res = await app.handle(new Request("http://localhost/worlds/does-not-exist"));
+    expect(res.status).toBe(200);
+    const body = await res.text();
+    expect(body).toContain("World not found");
+    // The broken shell (edit button pointing at a non-existent world) must not render.
+    expect(body).not.toContain('data-testid="edit-world"');
+  });
+
+  test("/worlds/:id/edit with missing world returns not-found", async () => {
+    const app = viewRoutes({ database: missingDb });
+    const res = await app.handle(new Request("http://localhost/worlds/does-not-exist/edit"));
+    expect(res.status).toBe(200);
+    const body = await res.text();
+    expect(body).toContain("World not found");
+  });
+
+  test("/characters/:id/edit with missing character returns not-found", async () => {
+    const app = viewRoutes({ database: missingDb });
+    const res = await app.handle(new Request("http://localhost/characters/does-not-exist/edit"));
+    expect(res.status).toBe(200);
+    const body = await res.text();
+    expect(body).toContain("Character not found");
+  });
+
+  test("/character/:slug/edit with missing character returns not-found", async () => {
+    const app = viewRoutes({ database: missingDb });
+    const res = await app.handle(new Request("http://localhost/character/does-not-exist/edit"));
+    expect(res.status).toBe(200);
+    const body = await res.text();
+    expect(body).toContain("Character not found");
+  });
+});
