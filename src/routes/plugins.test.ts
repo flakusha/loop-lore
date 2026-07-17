@@ -2,21 +2,13 @@
  * Tests for routes/plugins.ts — Plugin Management Routes
  */
 import { describe, test, expect, beforeAll, afterAll } from "bun:test";
-import { Database } from "bun:sqlite";
 import { Kysely, sql } from "kysely";
 import { Elysia } from "elysia";
-import { createSqliteDialect } from "../db/index";
+import { createTestDb } from "../test-utils/create-test-db";
 import { pluginRoutes } from "./plugins";
 import { registry } from "../plugins/registry";
 import { createLogger } from "../logger";
 import type { DB } from "../db/schema";
-
-function createTestDb(): Kysely<DB> {
-  const sqlite = new Database(":memory:");
-  sqlite.run("PRAGMA journal_mode = WAL");
-  const dialect = createSqliteDialect(sqlite);
-  return new Kysely<DB>({ dialect });
-}
 
 async function createPluginStateTable(db: Kysely<DB>): Promise<void> {
   await db.schema
