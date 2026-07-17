@@ -93,6 +93,8 @@ export class ConfigSchema {
     maxSessionsPerUser: 10,
     demoUsername: "demo",
     demoAutoSetup: true,
+    adminUsername: "",
+    adminPassword: "",
   } satisfies AuthConfig;
 
   readonly transport = {
@@ -252,6 +254,9 @@ export class ConfigSchema {
     map.SESSION_MAX_PER_USER = "auth.maxSessionsPerUser";
     map.DEMO_USERNAME = "auth.demoUsername";
     map.DEMO_AUTO_SETUP = "auth.demoAutoSetup";
+    map.AUTH_ADMIN_USERNAME = "auth.adminUsername";
+    // eslint-disable-next-line sonarjs/no-hardcoded-passwords
+    map.AUTH_ADMIN_PASSWORD = "auth.adminPassword";
     map.TRANSPORT_DEFAULT_PROTOCOL = "transport.defaultProtocol";
     map.TRANSPORT_ENABLE_WEBSOCKET = "transport.enableWebSocket";
     map.TRANSPORT_ENABLE_WEBTRANSPORT = "transport.enableWebTransport";
@@ -513,6 +518,17 @@ export class ConfigSchema {
               type: "boolean",
               default: true,
               description: "Auto-create sample data on first demo run",
+            },
+            adminUsername: {
+              type: "string",
+              default: "",
+              description: "Bootstrap admin username (multi-user mode). Env: AUTH_ADMIN_USERNAME.",
+            },
+            adminPassword: {
+              type: "string",
+              default: "",
+              description:
+                "Bootstrap admin password (multi-user mode). Env-only preferred: AUTH_ADMIN_PASSWORD. Never commit.",
             },
           },
           required: [
