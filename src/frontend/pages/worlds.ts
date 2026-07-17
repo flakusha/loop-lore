@@ -1,4 +1,7 @@
 // ── Worlds page: search, create ──────────────────────────────
+import { feFetch } from "../fe-fetch";
+import { showToast } from "../ui";
+import { filterCards } from "./shared";
 import { log as rootLog } from "../alpine/logger";
 import { jsonBody } from "../alpine/json";
 
@@ -11,30 +14,20 @@ interface LocationData {
   world_id: string;
 }
 
-(globalThis as any).filterWorlds = function () {
-  const query = (document.querySelector<HTMLInputElement>("#world-search")?.value ?? "").toLowerCase().trim();
-  const cards = document.querySelectorAll("#world-list .world-card");
-  let visible = 0;
-  for (const card of cards) {
-    const name = (card.querySelector(".world-name")?.textContent ?? "").toLowerCase();
-    const desc = (card.querySelector(".world-description")?.textContent ?? "").toLowerCase();
-    const match = !query || name.includes(query) || desc.includes(query);
-    (card as HTMLElement).style.display = match ? "" : "none";
-    if (match) visible++;
-  }
-  if (visible === 0 && cards.length > 0) {
-    const list = document.querySelector("#world-list");
-    if (list) {
-      const empty = document.createElement("div");
-      empty.className = "empty-state";
-      empty.style.padding = "var(--space-12)";
-      empty.innerHTML = `<div class="icon">🌍</div><div class="title">No worlds match your search</div>`;
-      if (!list.querySelector(".empty-state")) list.append(empty);
-    }
-  }
+globalThis.filterWorlds = function () {
+  const query = document.querySelector<HTMLInputElement>("#world-search")?.value ?? "";
+  filterCards({
+    containerId: "#world-list",
+    cardSelector: ".world-card",
+    nameSelector: ".world-name",
+    descSelector: ".world-description",
+    query,
+    emptyIcon: "🌍",
+    emptyTitle: "No worlds match your search",
+  });
 };
 
-(globalThis as any).createWorld = async function (event: Event) {
+globalThis.createWorld = async function (event: Event) {
   event.preventDefault();
   const form = event.target as HTMLFormElement;
   const formData = new FormData(form);
@@ -44,7 +37,7 @@ interface LocationData {
   });
   pageLog.debug("createWorld", { data });
   try {
-    const res = await apiFetch("/api/worlds", {
+    const res = await feFetch("/api/worlds", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: jsonBody(data),
@@ -65,7 +58,7 @@ interface LocationData {
 };
 
 // ── World detail: location CRUD ─────────────────────────────
-(globalThis as any).worldDetail = function (initial: { worldId: string; locations: LocationData[] }) {
+globalThis.worldDetail = function (initial: { worldId: string; locations: LocationData[] }) {
   return {
     worldId: initial.worldId,
     locations: initial.locations || [],
@@ -95,7 +88,7 @@ interface LocationData {
 
     async saveLocation(locId: string) {
       try {
-        const res = await fetch(`/api/worlds/${this.worldId}/locations/${locId}`, {
+        const res = await feFetch(`/api/worlds/${this.worldId}/locations/${locId}`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: jsonBody({
@@ -123,7 +116,7 @@ interface LocationData {
     async createLocation() {
       if (!this.newLocationName.trim()) return;
       try {
-        const res = await fetch(`/api/worlds/${this.worldId}/locations`, {
+        const res = await feFetch(`/api/worlds/${this.worldId}/locations`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: jsonBody({
@@ -154,7 +147,7 @@ interface LocationData {
 
     async deleteLocation(locId: string) {
       try {
-        const res = await fetch(`/api/worlds/${this.worldId}/locations/${locId}`, { method: "DELETE" });
+        const res = await feFetch(`/api/worlds/${this.worldId}/locations/${locId}`, { method: "DELETE" });
         if (res.ok) {
           this.locations = this.locations.filter((l: LocationData) => l.id !== locId);
           showToast("success", "Location deleted");
@@ -169,7 +162,7 @@ interface LocationData {
 
     async initializeStates() {
       try {
-        const res = await fetch(`/api/worlds/${this.worldId}/initialize-states`, { method: "POST" });
+        const res = await feFetch(`/api/worlds/${this.worldId}/initialize-states`, { method: "POST" });
         if (res.ok) {
           const data = await res.json();
           showToast(

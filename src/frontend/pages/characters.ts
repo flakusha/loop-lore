@@ -1,33 +1,23 @@
 // ── Characters page: search, detail modal, actions ────────────
-import { fetchPartial } from "./shared";
+import { fetchPartial, filterCards } from "./shared";
+import { feFetch } from "../fe-fetch";
+import { showToast } from "../ui";
 import { jsonBody } from "../alpine/json";
 
-(globalThis as any).filterCharacters = function () {
-  const query = (document.querySelector<HTMLInputElement>("#character-search")?.value ?? "")
-    .toLowerCase()
-    .trim();
-  const cards = document.querySelectorAll("#character-grid .character-card");
-  let visible = 0;
-  for (const card of cards) {
-    const name = (card.querySelector(".name")?.textContent ?? "").toLowerCase();
-    const desc = (card.querySelector(".description")?.textContent ?? "").toLowerCase();
-    const match = !query || name.includes(query) || desc.includes(query);
-    (card as HTMLElement).style.display = match ? "" : "none";
-    if (match) visible++;
-  }
-  if (visible === 0 && cards.length > 0) {
-    const grid = document.querySelector("#character-grid");
-    if (grid) {
-      const empty = document.createElement("div");
-      empty.className = "empty-state";
-      empty.style.padding = "var(--space-12)";
-      empty.innerHTML = `<div class="icon">👤</div><div class="title">No characters match your search</div>`;
-      if (!grid.querySelector(".empty-state")) grid.append(empty);
-    }
-  }
+globalThis.filterCharacters = function () {
+  const query = document.querySelector<HTMLInputElement>("#character-search")?.value ?? "";
+  filterCards({
+    containerId: "#character-grid",
+    cardSelector: ".character-card",
+    nameSelector: ".name",
+    descSelector: ".description",
+    query,
+    emptyIcon: "👤",
+    emptyTitle: "No characters match your search",
+  });
 };
 
-(globalThis as any).selectCharacterCard = async function (id: string) {
+globalThis.selectCharacterCard = async function (id: string) {
   let modal = document.querySelector<HTMLElement>("#character-detail-modal");
 
   if (!modal) {
@@ -37,14 +27,14 @@ import { jsonBody } from "../alpine/json";
     if (!html) return;
     container.innerHTML = html;
     // Initialize Alpine on dynamically loaded modal
-    if ((globalThis as any).Alpine) {
-      (globalThis as any).Alpine.initTree(container);
+    if (globalThis.Alpine) {
+      globalThis.Alpine.initTree(container as HTMLElement);
     }
     modal = document.querySelector<HTMLElement>("#character-detail-modal");
   }
   if (!modal) return;
 
-  const resp = await (globalThis as any).apiFetch(`/api/actors/${id}`);
+  const resp = await feFetch(`/api/actors/${id}`);
   if (!resp.ok) {
     console.error("Failed to fetch actor:", resp.status, id);
     return;
@@ -68,11 +58,11 @@ import { jsonBody } from "../alpine/json";
   }
 };
 
-(globalThis as any).startChatFromChar = async function (btn: HTMLElement) {
+globalThis.startChatFromChar = async function (btn: HTMLElement) {
   const id = btn.dataset.id;
   if (!id) return;
   try {
-    const res = await (globalThis as any).apiFetch("/api/chats", {
+    const res = await feFetch("/api/chats", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: jsonBody({ name: "Chat", type: "direct", mode: "direct", participantIds: [id] }),
@@ -86,24 +76,24 @@ import { jsonBody } from "../alpine/json";
   }
 };
 
-(globalThis as any).editCharacter = function (btn: HTMLElement) {
+globalThis.editCharacter = function (btn: HTMLElement) {
   const id = btn.dataset.id;
   if (id) location.assign(`/character/${id}/edit`);
 };
 
-(globalThis as any).deleteCharacter = async function (btn: HTMLElement) {
+globalThis.deleteCharacter = async function (btn: HTMLElement) {
   const id = btn.dataset.id;
   if (!id || !confirm("Delete this character?")) return;
   try {
-    const res = await (globalThis as any).apiFetch(`/api/actors/${id}`, {
+    const res = await feFetch(`/api/actors/${id}`, {
       method: "DELETE",
     });
     if (res.ok) {
       document.querySelector("#character-detail-modal")?.classList.remove("open");
-      (globalThis as any).showToast?.("success", "Character deleted");
+      showToast("success", "Character deleted");
       const grid = document.querySelector("#character-grid");
       if (grid) {
-        (globalThis as any).htmx.trigger(grid, "load");
+        htmx.trigger(grid, "load");
       }
     }
   } catch {
