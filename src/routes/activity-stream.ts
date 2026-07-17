@@ -16,7 +16,7 @@ import { computeActivity } from "./activity";
 import { safeJsonStringify } from "../utils";
 
 const POLL_INTERVAL_MS = 5000;
-const KEEPALIVE_MS = 8_000;
+const KEEPALIVE_MS = 8000;
 
 interface ActivityEntry {
   unseenCount: number;

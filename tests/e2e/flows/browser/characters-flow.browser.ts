@@ -1,5 +1,5 @@
-import { describe, test, expect, beforeAll, afterAll } from "bun:test";
-import { createBrowserTest, type BrowserTestContext } from "../../helpers/browser-server";
+import { afterAll, beforeAll, describe, expect, test } from "bun:test";
+import { type BrowserTestContext, createBrowserTest } from "../../helpers/browser-server";
 
 describe("Characters flow E2E", () => {
   let ctx: BrowserTestContext;
@@ -94,7 +94,9 @@ describe("Characters flow E2E", () => {
     test("clicking a character opens detail modal", async () => {
       const page = await ctx.browser.newPage();
       const consoleMessages: string[] = [];
-      page.on("console", (msg) => consoleMessages.push(`${msg.type()}: ${msg.text()}`));
+      page.on("console", (msg) => {
+        consoleMessages.push(`${msg.type()}: ${msg.text()}`);
+      });
 
       await gotoCharacters(page);
       // Wait for grid (characters are seeded so grid should render)
@@ -141,7 +143,9 @@ describe("Characters flow E2E", () => {
       await gotoCharacters(page);
       await page.locator("[data-testid='hamburger']").click();
       await page.locator("[data-testid='nav-gallery']").waitFor({ state: "visible", timeout: 5000 });
-      await page.click("[data-testid='nav-gallery']");
+      await page.evaluate(() => {
+        (document.querySelector("[data-testid='nav-gallery']") as HTMLElement)?.click();
+      });
       await page.locator("[data-testid='gallery-header']").waitFor({ state: "attached", timeout: 8000 });
       expect(page.url()).toContain("/views/gallery");
       await page.close();

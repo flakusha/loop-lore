@@ -3,7 +3,6 @@
  */
 
 import { LogLevel } from "../db/enums-config";
-export { LogLevel };
 
 /** Numeric level values — higher = more severe */
 export const LogLevelNumeric: Record<LogLevel, number> = {
@@ -129,3 +128,5 @@ export interface LoggerConfig {
 // ── Factory ────────────────────────────────────────────────
 
 export type LoggerFactory = (config?: Partial<LoggerConfig>) => Logger;
+
+export { LogLevel } from "../db/enums-config";

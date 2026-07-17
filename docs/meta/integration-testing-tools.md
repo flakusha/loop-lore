@@ -87,42 +87,42 @@ Gaps: no `playwright.config.ts`, no htmx-specific assertions library.
 
 ## 4. Bun Ecosystem Compatibility
 
-| Tool                           | Bun Compat | Notes                                    |
-| ------------------------------ | ---------- | ---------------------------------------- |
-| Zod                            | Full       | Pure TS                                  |
-| TypeBox                        | Full       | Pure TS                                  |
-| @asteasolutions/zod-to-openapi | Full       | Pure TS                                  |
-| ts-rest                        | Poor       | No Bun adapter                           |
-| Elysia                         | Native     | Built for Bun                            |
-| Schemathesis                   | External   | Python, runs against any HTTP API        |
+| Tool                           | Bun Compat | Notes                                                    |
+| ------------------------------ | ---------- | -------------------------------------------------------- |
+| Zod                            | Full       | Pure TS                                                  |
+| TypeBox                        | Full       | Pure TS                                                  |
+| @asteasolutions/zod-to-openapi | Full       | Pure TS                                                  |
+| ts-rest                        | Poor       | No Bun adapter                                           |
+| Elysia                         | Native     | Built for Bun                                            |
+| Schemathesis                   | External   | Python, runs against any HTTP API                        |
 | Playwright                     | Works      | Browser automation ok; test runner doesn't work with Bun |
-| Bun test                       | Native     | Already using                            |
-| bun:sqlite                     | Native     | Already using                            |
-| openapi-typescript             | Full       | Generates TS types from OpenAPI spec     |
+| Bun test                       | Native     | Already using                                            |
+| bun:sqlite                     | Native     | Already using                                            |
+| openapi-typescript             | Full       | Generates TS types from OpenAPI spec                     |
 
 ## 5. Recommendations — Ranked by Fit
 
 ### Tier 1: Add Now (low cost, high value)
 
-| # | Tool | What | Effort |
-|---|------|------|--------|
-| 1 | Zod | Add `zod`, define API schemas, replace `parseBody()` with `schema.safeParse()`, use `z.infer` for types | 2-3d |
-| 2 | Response shape validation | Add Zod schemas to E2E API tests | 0.5d |
-| 3 | Playwright helpers | Create `playwright.config.ts`, add htmx/Alpine assertion utilities | 0.5d |
+| #   | Tool                      | What                                                                                                    | Effort |
+| --- | ------------------------- | ------------------------------------------------------------------------------------------------------- | ------ |
+| 1   | Zod                       | Add `zod`, define API schemas, replace `parseBody()` with `schema.safeParse()`, use `z.infer` for types | 2-3d   |
+| 2   | Response shape validation | Add Zod schemas to E2E API tests                                                                        | 0.5d   |
+| 3   | Playwright helpers        | Create `playwright.config.ts`, add htmx/Alpine assertion utilities                                      | 0.5d   |
 
 ### Tier 2: Add Next (medium cost, medium value)
 
-| # | Tool | What | Effort |
-|---|------|------|--------|
-| 4 | @asteasolutions/zod-to-openapi | Generate OpenAPI 3.x spec, serve Swagger UI at `/api/docs` | 1d |
-| 5 | Schemathesis | Run against OpenAPI spec in CI | 0.5d |
-| 6 | openapi-typescript | Generate TS types from OpenAPI spec | 0.5d |
+| #   | Tool                           | What                                                       | Effort |
+| --- | ------------------------------ | ---------------------------------------------------------- | ------ |
+| 4   | @asteasolutions/zod-to-openapi | Generate OpenAPI 3.x spec, serve Swagger UI at `/api/docs` | 1d     |
+| 5   | Schemathesis                   | Run against OpenAPI spec in CI                             | 0.5d   |
+| 6   | openapi-typescript             | Generate TS types from OpenAPI spec                        | 0.5d   |
 
 ### Tier 3: Evaluate Later
 
-| # | Tool | What | Effort |
-|---|------|------|--------|
-| 7 | Elysia migration | Rewrite server on Elysia for built-in validation/OpenAPI/types | 1-2wk |
+| #   | Tool             | What                                                           | Effort |
+| --- | ---------------- | -------------------------------------------------------------- | ------ |
+| 7   | Elysia migration | Rewrite server on Elysia for built-in validation/OpenAPI/types | 1-2wk  |
 
 ### Do NOT Use
 

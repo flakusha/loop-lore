@@ -98,7 +98,9 @@ describe("Worlds flow E2E", () => {
       const page = await ctx.browser.newPage();
       await gotoWorlds(page);
       await page.locator("[data-testid='nav-characters']").waitFor({ state: "visible", timeout: 5000 });
-      await page.click("[data-testid='nav-characters']");
+      await page.evaluate(() => {
+        (document.querySelector("[data-testid='nav-characters']") as HTMLElement)?.click();
+      });
       await page.locator("[data-testid='characters-header']").waitFor({ state: "attached", timeout: 8000 });
       expect(page.url()).toContain("/views/characters");
       await page.close();

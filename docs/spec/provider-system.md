@@ -61,14 +61,14 @@ Wires into `cancellation-tracker.ts` and `cancellation-actions.ts` (repetition/p
 
 ## Error Handling
 
-| Scenario      | Action                                    |
-| ------------- | ----------------------------------------- |
-| 400           | Fail, no retry                            |
-| 401           | Surface "API key invalid"                 |
-| 429           | Retry with exponential backoff            |
-| 5xx           | Retry up to `retries`, then fail          |
-| Timeout       | Abort via signal, partial content if any  |
-| SSE disconnect| Try reconnect once, surface partial       |
+| Scenario       | Action                                   |
+| -------------- | ---------------------------------------- |
+| 400            | Fail, no retry                           |
+| 401            | Surface "API key invalid"                |
+| 429            | Retry with exponential backoff           |
+| 5xx            | Retry up to `retries`, then fail         |
+| Timeout        | Abort via signal, partial content if any |
+| SSE disconnect | Try reconnect once, surface partial      |
 
 ## Startup Sequence
 

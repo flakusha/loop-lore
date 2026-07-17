@@ -45,7 +45,14 @@ export async function navigateViaHtmx(
   targetTestid?: string,
   timeoutMs = 8000,
 ): Promise<void> {
-  await page.click(`[data-testid='${testid}']`);
+  // Use page.evaluate to click — Playwright's click({ force: true })
+  // still rejects "outside of the viewport" in headless Chromium.
+  // Nav links are always in the DOM and htmx interception doesn't
+  // depend on visual position.
+  await page.evaluate((sel) => {
+    const el = document.querySelector(sel);
+    if (el instanceof HTMLElement) el.click();
+  }, `[data-testid='${testid}']`);
   // Wait for the target element (or app-root) to confirm swap completed
   const target = targetTestid ? `[data-testid='${targetTestid}']` : "[data-testid='app-root']";
   await page.locator(target).waitFor({ state: "attached", timeout: timeoutMs });
@@ -64,7 +71,9 @@ export async function getAlpineStore<T = Record<string, unknown>>(
 ): Promise<T> {
   return page.evaluate((name) => {
     if (typeof Alpine === "undefined") throw new Error("Alpine not loaded");
-    return structuredClone(Alpine.store(name)) as T;
+    // structuredClone fails on Alpine Proxy objects (DataCloneError).
+    // JSON round-trip strips proxies and React-like internals safely.
+    return structuredClone(Alpine.store(name));
   }, storeName) as Promise<T>;
 }
 

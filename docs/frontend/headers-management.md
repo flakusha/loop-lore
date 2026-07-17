@@ -189,4 +189,3 @@ E2E tests in `tests/e2e/flows/browser/navigation.browser.ts`:
 ## Configuration Reference
 
 ### Headers Config Schema (`src/config/schema.ts`)
-

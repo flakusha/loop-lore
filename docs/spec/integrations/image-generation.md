@@ -26,20 +26,20 @@ Key flags: `--threads`, `--wtype`, `--rng`, `--diffusion-fp16`, `--vae-fp16`, `-
 
 **`POST /sdapi/v1/txt2img`** — full param control:
 
-| Field | Type | Notes |
-| ----- | ---- | ----- |
-| `prompt` | string | Required |
-| `negative_prompt` | string | |
-| `width`, `height` | int | Default 512 |
-| `steps` | int | Sampling steps |
-| `cfg_scale` | number | Guidance scale |
-| `seed` | int | -1 = random |
-| `batch_size` | int | |
-| `sampler_name` | string | `euler_a`, `euler`, `dpm++ 2m`, `lcm` |
-| `scheduler` | string | |
-| `lora` | array | `[{path, multiplier}]` |
-| `enable_hr` | boolean | Hires fix |
-| `hr_scale`, `hr_steps`, `hr_upscaler` | | Hires params |
+| Field                                 | Type    | Notes                                 |
+| ------------------------------------- | ------- | ------------------------------------- |
+| `prompt`                              | string  | Required                              |
+| `negative_prompt`                     | string  |                                       |
+| `width`, `height`                     | int     | Default 512                           |
+| `steps`                               | int     | Sampling steps                        |
+| `cfg_scale`                           | number  | Guidance scale                        |
+| `seed`                                | int     | -1 = random                           |
+| `batch_size`                          | int     |                                       |
+| `sampler_name`                        | string  | `euler_a`, `euler`, `dpm++ 2m`, `lcm` |
+| `scheduler`                           | string  |                                       |
+| `lora`                                | array   | `[{path, multiplier}]`                |
+| `enable_hr`                           | boolean | Hires fix                             |
+| `hr_scale`, `hr_steps`, `hr_upscaler` |         | Hires params                          |
 
 **`POST /sdapi/v1/img2img`** — same + `init_images`, `mask`, `denoising_strength`.
 
@@ -55,39 +55,39 @@ Job fields: `prompt`, `negative_prompt`, `width`, `height`, `seed`, `batch_count
 
 ## Integration Decision
 
-| Use Case                  | Recommended API              |
-| ------------------------- | ---------------------------- |
-| Simple text-to-image      | OpenAI API                   |
-| Full param control        | WebUI API                    |
-| Background + UI feedback  | sdcpp API (async job polling)|
-| Capability discovery      | sdcpp API                    |
-| Image-to-image/inpainting | OpenAI or WebUI              |
-| LoRA management           | WebUI API                    |
+| Use Case                  | Recommended API               |
+| ------------------------- | ----------------------------- |
+| Simple text-to-image      | OpenAI API                    |
+| Full param control        | WebUI API                     |
+| Background + UI feedback  | sdcpp API (async job polling) |
+| Capability discovery      | sdcpp API                     |
+| Image-to-image/inpainting | OpenAI or WebUI               |
+| LoRA management           | WebUI API                     |
 
 **MVP**: OpenAI API (minimal new code, shares shape with existing OpenAI-compatible gen flow).
 
 ## Error Handling
 
-| Code | Meaning          | Action                             |
-| ---- | ---------------- | ---------------------------------- |
-| 400  | Bad request      | Fail, surface to user              |
-| 404  | Model not loaded | "model not available"              |
-| 429  | Queue full       | Retry with backoff                 |
-| 500  | Server error     | Retry up to `retries`              |
-| 503  | Loading model    | Retry with backoff                 |
+| Code | Meaning          | Action                |
+| ---- | ---------------- | --------------------- |
+| 400  | Bad request      | Fail, surface to user |
+| 404  | Model not loaded | "model not available" |
+| 429  | Queue full       | Retry with backoff    |
+| 500  | Server error     | Retry up to `retries` |
+| 503  | Loading model    | Retry with backoff    |
 
 Retry: exponential backoff with jitter. Generation timeout: default 5 min (separate from connection timeout).
 
 ## Image Generation Presets
 
-| Preset     | Steps | CFG | Resolution | Sampler    | Use Case                |
-| ---------- | ----- | --- | ---------- | ---------- | ----------------------- |
-| `fast`     | 15    | 5.0 | 512×512    | `lcm`      | Quick drafts            |
-| `balanced` | 25    | 7.0 | 1024×1024  | `euler_a`  | General purpose         |
-| `quality`  | 40    | 8.0 | 1024×1024  | `dpm++ 2m` | Final output            |
-| `detailed` | 50    | 9.0 | 1536×1536  | `euler`    | Maximum detail          |
-| `anime`    | 30    | 7.5 | 1024×1024  | `euler_a`  | Anime/illustration      |
-| `photo`    | 35    | 7.0 | 1024×1024  | `dpm++ 2m` | Photorealistic          |
+| Preset     | Steps | CFG | Resolution | Sampler    | Use Case           |
+| ---------- | ----- | --- | ---------- | ---------- | ------------------ |
+| `fast`     | 15    | 5.0 | 512×512    | `lcm`      | Quick drafts       |
+| `balanced` | 25    | 7.0 | 1024×1024  | `euler_a`  | General purpose    |
+| `quality`  | 40    | 8.0 | 1024×1024  | `dpm++ 2m` | Final output       |
+| `detailed` | 50    | 9.0 | 1536×1536  | `euler`    | Maximum detail     |
+| `anime`    | 30    | 7.5 | 1024×1024  | `euler_a`  | Anime/illustration |
+| `photo`    | 35    | 7.0 | 1024×1024  | `dpm++ 2m` | Photorealistic     |
 
 Resolution order: chat-level → global default (`balanced`).
 
@@ -104,31 +104,31 @@ SD 1.x/2.x, SDXL (incl. Illustrious, NoobAI, Pony), SD3/SD3.5, FLUX.1/FLUX.2, Kr
 
 ### Prompt Styles per Model
 
-| Family              | Style                    | Token Limit |
-| ------------------- | ------------------------ | ----------- |
-| SD 1.x/2.x          | Comma-separated tags     | <75         |
-| SDXL                | Descriptive paragraphs   | 77-150      |
-| SDXL fine-tunes     | Booru tags + natural     | 77-150      |
-| SD3/FLUX            | Detailed natural language| 100-300     |
-| Krea 2              | Natural + creativity slider| 100-300   |
-| Ideogram 4          | JSON captions            | 100-300     |
-| Qwen Image 2.0      | Multilingual, detailed   | 100-300     |
-| Video (Wan/LTX-2)   | Natural + motion         | 100-300     |
+| Family            | Style                       | Token Limit |
+| ----------------- | --------------------------- | ----------- |
+| SD 1.x/2.x        | Comma-separated tags        | <75         |
+| SDXL              | Descriptive paragraphs      | 77-150      |
+| SDXL fine-tunes   | Booru tags + natural        | 77-150      |
+| SD3/FLUX          | Detailed natural language   | 100-300     |
+| Krea 2            | Natural + creativity slider | 100-300     |
+| Ideogram 4        | JSON captions               | 100-300     |
+| Qwen Image 2.0    | Multilingual, detailed      | 100-300     |
+| Video (Wan/LTX-2) | Natural + motion            | 100-300     |
 
 ## LLM Prompt Templates for SD
 
 When user triggers image gen from chat, LLM converts context to SD prompt per model profile:
 
-| Family           | Format             | Key Trait                     |
-| ---------------- | ------------------ | ----------------------------- |
-| SD1/SD2/tags     | `tags`             | CLIP 75-token limit           |
-| SDXL             | `tags`             | 150-token limit               |
-| Illustrious/Noob | `tags`             | Danbooru vocabulary, CFG 3-6  |
-| Pony             | `tags`             | Score tags required, CFG 6-8+ |
-| SD3/FLUX         | `natural`          | T5 tokenizer, long desc       |
-| Krea 2           | `natural`          | Low step count                |
-| Ideogram 4       | `json`             | JSON caption format           |
-| Qwen/Chroma      | `natural`          | Long context, multilingual    |
+| Family           | Format    | Key Trait                     |
+| ---------------- | --------- | ----------------------------- |
+| SD1/SD2/tags     | `tags`    | CLIP 75-token limit           |
+| SDXL             | `tags`    | 150-token limit               |
+| Illustrious/Noob | `tags`    | Danbooru vocabulary, CFG 3-6  |
+| Pony             | `tags`    | Score tags required, CFG 6-8+ |
+| SD3/FLUX         | `natural` | T5 tokenizer, long desc       |
+| Krea 2           | `natural` | Low step count                |
+| Ideogram 4       | `json`    | JSON caption format           |
+| Qwen/Chroma      | `natural` | Long context, multilingual    |
 
 Templates in `src/generation/prompt-templates.ts`. Detail levels: `instant` (~160 tokens), `balanced` (~320), `detailed` (~600).
 

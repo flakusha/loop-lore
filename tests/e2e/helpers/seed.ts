@@ -181,6 +181,7 @@ export async function seedChat(db: Kysely<DB>): Promise<void> {
       mode: ChatMode.Story,
       created_by: SEED.user.id,
     })
+    .onConflict((oc) => oc.column("id").doNothing())
     .execute();
 
   // Add creator as participant
@@ -191,6 +192,7 @@ export async function seedChat(db: Kysely<DB>): Promise<void> {
       actor_id: SEED.user.id,
       role_in_chat: "owner",
     })
+    .onConflict((oc) => oc.columns(["chat_id", "actor_id"]).doNothing())
     .execute();
 }
 

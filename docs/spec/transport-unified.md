@@ -18,11 +18,11 @@ Selection: explicit config → `Accept` header → ALPN (TLS) → http/1.1 fallb
 
 ## Built-in Adapters
 
-| Protocol  | File    | Features                          |
-| --------- | ------- | --------------------------------- |
-| HTTP/1.1  | `http1.ts` | Baseline, keep-alive            |
-| HTTP/2    | `h2.ts`    | Multiplexing, server push       |
-| WebSocket | `ws.ts`    | Binary/text frames, ping/pong   |
+| Protocol  | File       | Features                      |
+| --------- | ---------- | ----------------------------- |
+| HTTP/1.1  | `http1.ts` | Baseline, keep-alive          |
+| HTTP/2    | `h2.ts`    | Multiplexing, server push     |
+| WebSocket | `ws.ts`    | Binary/text frames, ping/pong |
 
 Not yet implemented: HTTP/3 (`h3.ts`), WebTransport (`wt.ts`).
 
@@ -46,12 +46,12 @@ Capabilities: `maxFrameSize` (default 64 KiB), `maxPayload` (320 KiB), `extensio
 
 ## Integration Points
 
-| Layer               | Entry Point                                                              |
-| ------------------- | ------------------------------------------------------------------------ |
-| Server (HTTP/HTTPS) | `src/server.ts` → `createProtocol({ protocol: 'http/1.1' })`             |
+| Layer               | Entry Point                                                             |
+| ------------------- | ----------------------------------------------------------------------- |
+| Server (HTTP/HTTPS) | `src/server.ts` → `createProtocol({ protocol: 'http/1.1' })`            |
 | WebSocket           | `src/server.ts` → upgrade → `createProtocol({ protocol: 'websocket' })` |
-| WebTransport        | `src/server.ts` → WT endpoint                                            |
-| Client (TUI)        | `src/tui/app.ts` → `createProtocol({ protocol: 'websocket' })`           |
+| WebTransport        | `src/server.ts` → WT endpoint                                           |
+| Client (TUI)        | `src/tui/app.ts` → `createProtocol({ protocol: 'websocket' })`          |
 | Client (Web)        | Static JS → `new WebSocket()` / `new WebTransport()`                    |
 
 ## Config — `src/config/schema.ts`

@@ -28,4 +28,3 @@ Fully feasible. `browser-server.ts` serves complete frontend stack. Playwright c
 - `countEventListeners(page, type)` — regression guard
 
 ### Test Cases
-

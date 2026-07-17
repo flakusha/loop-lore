@@ -110,13 +110,13 @@ Comma-separated in character editor. Filter on characters list. Suggested: `fant
 
 ## Migrating from Other Platforms
 
-| Platform    | Method                                                           |
-| ----------- | ---------------------------------------------------------------- |
-| SillyTavern | Export PNG/JSON → loop-lore Import                              |
+| Platform     | Method                                                                 |
+| ------------ | ---------------------------------------------------------------------- |
+| SillyTavern  | Export PNG/JSON → loop-lore Import                                     |
 | Character.AI | Export JSON → loop-lore Import; `definition` merged into `description` |
-| Chub.ai     | Download PNG/JSON → Import (fully compatible)                    |
-| RisuAI      | Export V3 JSON/CHARX → Import                                   |
-| Batch       | `loop-lore import ./exported-characters/`                       |
+| Chub.ai      | Download PNG/JSON → Import (fully compatible)                          |
+| RisuAI       | Export V3 JSON/CHARX → Import                                          |
+| Batch        | `loop-lore import ./exported-characters/`                              |
 
 ## Troubleshooting
 

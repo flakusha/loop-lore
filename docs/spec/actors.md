@@ -365,15 +365,15 @@ The GM can inject economic events via tool calls:
 
 [TOOL_CALL]
 {
-  "tool": "economy_event",
-  "params": {
-    "type": "market_crash",
-    "world_id": "world_01",
-    "description": "A dragon raided the northern trade route",
-    "effect": "all_prices_x1.5",
-    "duration": "7d",
-    "affected_locations": ["ironhold", "traderoute_north"]
-  }
+"tool": "economy_event",
+"params": {
+"type": "market_crash",
+"world_id": "world_01",
+"description": "A dragon raided the northern trade route",
+"effect": "all_prices_x1.5",
+"duration": "7d",
+"affected_locations": ["ironhold", "traderoute_north"]
+}
 }
 [/TOOL_CALL]
 
@@ -410,12 +410,12 @@ When an actor initiates trade, the LLM emits structured intent:
 1. LLM narrates: "I'll trade you my healing potion for that map."
    [TRADE_INTENT]
    {
-     "type": "barter",
-     "initiator": "actor_01",
-     "target": "npc_merchant",
-     "offers": { "items": [{ "worldItemId": "potion_01", "quantity": 1 }] },
-     "requests": { "items": [{ "worldItemId": "map_01", "quantity": 1 }] },
-     "description": "Trading healing potion for merchant's map"
+   "type": "barter",
+   "initiator": "actor_01",
+   "target": "npc_merchant",
+   "offers": { "items": [{ "worldItemId": "potion_01", "quantity": 1 }] },
+   "requests": { "items": [{ "worldItemId": "map_01", "quantity": 1 }] },
+   "description": "Trading healing potion for merchant's map"
    }
    [/TRADE_INTENT]
 
@@ -436,7 +436,7 @@ When an actor initiates trade, the LLM emits structured intent:
 
 4. Engine injects result:
    "TRADE COMPLETE: You received Map of the Underdark. Merchant received
-    Healing Potion x1. Trade value: Fair (150g vs 120g)."
+   Healing Potion x1. Trade value: Fair (150g vs 120g)."
 
 5. LLM narrates the completed exchange
 
@@ -451,11 +451,11 @@ When items are traded without gold, the engine estimates fairness:
 tradeValue = sum(item.value × quantity) for each side
 
 fairness:
-  ratio = initiatorValue / targetValue
-  if ratio >= 0.8 and ratio <= 1.2: "Fair"
-  if ratio >= 0.5 and ratio < 0.8:  "Unfair to you"
-  if ratio > 1.2 and ratio <= 2.0:  "Unfair to them"
-  if ratio < 0.5 or ratio > 2.0:    "Lopsided"
+ratio = initiatorValue / targetValue
+if ratio >= 0.8 and ratio <= 1.2: "Fair"
+if ratio >= 0.5 and ratio < 0.8: "Unfair to you"
+if ratio > 1.2 and ratio <= 2.0: "Unfair to them"
+if ratio < 0.5 or ratio > 2.0: "Lopsided"
 
 ```
 
@@ -506,6 +506,7 @@ Trade history is prompt-injectable so the LLM can reference past deals:
 ```
 
 [Recent Trades — {{char}}]
+
 - Traded Healing Potion for Map with Merchant Bob (Fair, +5 trust)
 - Gifted 100g to Ally Alice (No return expected)
 - Loaned 200g to Rogue Dan (due: 5 days, 2% daily interest)
@@ -524,11 +525,12 @@ In group chats with multiple actors, trading becomes multi-party:
 ```
 
 [ACTIVE OFFERS]
+
 - Potion of Flight (offered by Alice):
   - Bob: 150g
   - Carol: 200g + Short Sword
   - Dave: 300g
-[/ACTIVE OFFERS]
+    [/ACTIVE OFFERS]
 
 ```
 
@@ -705,4 +707,3 @@ The GM can manually set standing via tool call:
 ## Prompt Assembly
 
 When constructing the LLM prompt for an actor, these fields are injected in order:
-

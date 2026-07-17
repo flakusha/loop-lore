@@ -438,17 +438,17 @@ Table: `asset_versions`
 
 POST /api/assets/:id/versions
 Content-Type: multipart/form-data
-  file: <binary>
-  changelog?: string
+file: <binary>
+changelog?: string
 Response: 201
 { "version": 3, "id": "new-version-uuid" }
 
 GET /api/assets/:id/versions
 Response: 200
 [
-  { "version": 1, "created_at": "...", "changelog": "Initial upload" },
-  { "version": 2, "created_at": "...", "changelog": "Updated face" },
-  { "version": 3, "created_at": "...", "changelog": "Added hat" }
+{ "version": 1, "created_at": "...", "changelog": "Initial upload" },
+{ "version": 2, "created_at": "...", "changelog": "Updated face" },
+{ "version": 3, "created_at": "...", "changelog": "Added hat" }
 ]
 
 GET /api/assets/:id/versions/:version
@@ -474,3 +474,4 @@ Old gallery items map to assets as follows:
 3. **New link**: Create `asset_link` with `asset_id` from step 2, `entity_type` from old item's context (chat or character), `entity_id` from old `chat_id`/`character_id`, `label = old caption`
 
 This is a one-time migration script, not needed for fresh installs.
+```

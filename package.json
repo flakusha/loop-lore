@@ -37,7 +37,7 @@
     "test": "bun test",
     "test:watch": "bun test --watch",
     "test:coverage": "bun test --coverage",
-    "test:e2e": "bun test tests/e2e/",
+    "test:e2e": "HTTP_PROXY= NO_PROXY=* bun test tests/e2e/",
     "test:e2e:browser": "for f in tests/e2e/flows/browser/*.browser.ts; do bun test --max-concurrency=1 \"./$f\" || exit 1; sleep 0.3; done",
     "pretest:e2e:browser": "killall chrome-headless-shell 2>/dev/null || true",
     "test:e2e:smoke": "bun test ./tests/e2e/flows/browser/smoke.browser.ts",

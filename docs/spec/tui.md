@@ -4,12 +4,12 @@ TUI built with `blessed` + `blessed-contrib`. Terminal chat interface with integ
 
 ## Source Files
 
-| File                        | Purpose                            |
-| --------------------------- | ---------------------------------- |
-| `src/tui/app.ts`            | Main entry: screen, layout, shortcuts |
-| `src/tui/chat.ts`           | Message history display, input relay |
-| `src/tui/asset-view.ts`     | Asset browser (nav, link, delete)  |
-| `src/tui/input.ts`          | Text input, submit handling        |
+| File                    | Purpose                               |
+| ----------------------- | ------------------------------------- |
+| `src/tui/app.ts`        | Main entry: screen, layout, shortcuts |
+| `src/tui/chat.ts`       | Message history display, input relay  |
+| `src/tui/asset-view.ts` | Asset browser (nav, link, delete)     |
+| `src/tui/input.ts`      | Text input, submit handling           |
 
 ## Architecture
 
@@ -27,14 +27,14 @@ TUI built with `blessed` + `blessed-contrib`. Terminal chat interface with integ
 
 ## Keyboard Shortcuts
 
-| Key            | Scope  | Action                    |
-| -------------- | ------ | ------------------------- |
-| Escape/q/Ctrl+C| Global | Quit                      |
-| Up/Down        | Chat   | Scroll history            |
-| Left/Right     | Assets | Navigate items            |
-| Enter          | Assets | Link feedback             |
-| Delete         | Assets | Remove from chat          |
-| Enter          | Input  | Submit message            |
+| Key             | Scope  | Action           |
+| --------------- | ------ | ---------------- |
+| Escape/q/Ctrl+C | Global | Quit             |
+| Up/Down         | Chat   | Scroll history   |
+| Left/Right      | Assets | Navigate items   |
+| Enter           | Assets | Link feedback    |
+| Delete          | Assets | Remove from chat |
+| Enter           | Input  | Submit message   |
 
 ## Integration
 
