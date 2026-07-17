@@ -21,7 +21,7 @@ export class LoggerImpl implements Logger {
   private readonly queue: AsyncLogQueue;
   private readonly threshold: number;
   private readonly levelString: LogLevel;
-  private readonly bindings: LoggerBindings;
+  private bindings: LoggerBindings;
   private readonly censorEnabled: boolean;
   private readonly censorFields: string[];
   private readonly limits: Partial<SizeLimits>;
@@ -128,6 +128,10 @@ export class LoggerImpl implements Logger {
 
   addTransport(transport: Transport): void {
     this.transports.push(transport);
+  }
+
+  setBindings(partial: LoggerBindings): void {
+    this.bindings = { ...this.bindings, ...partial };
   }
 
   async flush(): Promise<void> {

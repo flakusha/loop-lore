@@ -19,7 +19,7 @@ export interface LightLoggerConfig {
 }
 
 class LightLogger implements Logger {
-  private readonly bindings: LoggerBindings;
+  private bindings: LoggerBindings;
   private readonly transports: Transport[];
   private readonly queue: AsyncLogQueue | null;
   private readonly threshold: number;

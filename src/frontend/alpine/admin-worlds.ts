@@ -17,13 +17,14 @@ export const adminWorlds = {
   worldTotal: 0,
   loadingWorlds: false,
   confirmDeleteWorld: "",
+  worldSearch: "",
 
   async loadWorlds() {
     this.loadingWorlds = true;
     try {
-      const res = await fetch(`/api/admin/worlds?page=${this.worldPage}&pageSize=${(this as any).pageSize}`, {
-        headers: { Accept: "application/json" },
-      });
+      let url = `/api/admin/worlds?page=${this.worldPage}&pageSize=${(this as any).pageSize}`;
+      if (this.worldSearch) url += `&q=${encodeURIComponent(this.worldSearch)}`;
+      const res = await fetch(url, { headers: { Accept: "application/json" } });
       if (res.ok) {
         const data = await res.json();
         this.worlds = data.data || [];
@@ -58,5 +59,14 @@ export const adminWorlds = {
     } catch {
       showToast("error", "Network error");
     }
+  },
+  searchWorlds() {
+    this.worldPage = 1;
+    this.loadWorlds();
+  },
+  clearWorldFilters() {
+    this.worldSearch = "";
+    this.worldPage = 1;
+    this.loadWorlds();
   },
 };

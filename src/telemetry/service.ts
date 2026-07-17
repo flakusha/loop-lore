@@ -38,11 +38,13 @@ export async function record(
     await db
       .insertInto("telemetry_events")
       .values({
+        id: crypto.randomUUID(),
         event_type: eventType,
         session_id: sessionId ?? null,
         user_id: userId ?? null,
         chat_id: chatId ?? null,
         event_data: payload,
+        created_at: new Date().toISOString(),
       })
       .execute();
   } catch (error: unknown) {
