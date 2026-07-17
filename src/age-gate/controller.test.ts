@@ -285,12 +285,22 @@ describe("age-gate controller", () => {
       const data = (await res.json()) as { enabled: boolean };
       expect(data.enabled).toBeDefined();
     });
+
+    test("returns config for solo user (admin-equivalent)", async () => {
+      const res = handleAdminGetConfig("solo");
+      expect(res.status).toBe(200);
+    });
   });
 
   describe("handleAdminUpdateConfig", () => {
     test("returns 403 for non-admin", () => {
       const res = handleAdminUpdateConfig("user", { enabled: true });
       expect(res.status).toBe(403);
+    });
+
+    test("allows update for solo user (admin-equivalent)", () => {
+      const res = handleAdminUpdateConfig("solo", { enabled: true });
+      expect(res.status).toBe(200);
     });
 
     test("returns 400 for invalid body", () => {
