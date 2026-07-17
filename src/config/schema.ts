@@ -551,9 +551,8 @@ interface TestingConfig {
 
 /**
  * Content-Security-Policy directive set.
- * Applied only to HTML views. `script-src` uses `'unsafe-inline'` because 7 inline
- * `oninput`/`onchange` handlers remain (characters, worlds, gallery). Migrate to
- * Alpine `x-on:` before tightening.
+ * Applied only to HTML views. `script-src` includes `'unsafe-eval'` because
+ * Alpine.js uses `new Function()` internally for expression evaluation.
  */
 interface CspConfig {
   /** Master toggle for CSP emission. */

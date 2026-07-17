@@ -1,8 +1,6 @@
 import { Database } from "bun:sqlite";
 import { Kysely } from "kysely";
-import {
-  createSqliteDialect,
-} from "../db/index";
+import { createSqliteDialect } from "../db/index";
 import { up } from "../db/migrations/001_init";
 import { createApp } from "../elysia-app";
 import { loadConfig } from "../config/load";

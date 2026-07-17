@@ -1,19 +1,11 @@
 import { walkDirectory, compressFile, copyDirectory } from "../content/compress";
+import { minifyHTMLContent, minifyCSS } from "../content/minify";
 import { injectContentHashes } from "../content/hash-injection";
 import { readFileSync, writeFileSync, existsSync } from "node:fs";
 import { extname, join } from "node:path";
 import { createLogger } from "../logger";
-import CleanCSS from "clean-css";
 
-const HTML_COMMENT_EXTS = new Set([".html", ".htm", ".svg"]);
-const CSS_EXTS = new Set([".css"]);
 const STRIP_TEST_IDS = process.env.STRIP_TEST_IDS !== "false";
-
-const _cssMinifier = new CleanCSS({ level: 2 });
-
-function stripHtmlComments(content: string): string {
-  return content.replaceAll(/<!--[\s\S]*?-->/g, "");
-}
 
 function stripTestIds(content: string): string {
   let result = content.replaceAll(/\s+data-testid="[^"]*"/g, "");
@@ -51,36 +43,48 @@ async function main() {
     const content = readFileSync(file);
     originalBytes += content.length;
 
-    if (CSS_EXTS.has(extname(file).toLowerCase())) {
+    const ext = extname(file).toLowerCase();
+
+    if (ext === ".css") {
       const original = content.toString("utf8");
-      const minified = _cssMinifier.minify(original);
-      if (minified.styles.length < original.length) {
-        try {
-          writeFileSync(file, minified.styles, "utf8");
-        } catch (writeError) {
-          log.error(
-            `Failed to minify CSS at ${file}`,
-            writeError instanceof Error ? writeError : new Error(String(writeError)),
-          );
+      try {
+        const minified = minifyCSS(original);
+        if (minified.length < original.length) {
+          writeFileSync(file, minified, "utf8");
         }
+      } catch (writeError) {
+        log.error(
+          `Failed to minify CSS at ${file}`,
+          writeError instanceof Error ? writeError : new Error(String(writeError)),
+        );
       }
     }
 
-    if (HTML_COMMENT_EXTS.has(extname(file).toLowerCase())) {
+    if (ext === ".html" || ext === ".htm") {
+      const original = content.toString("utf8");
+      try {
+        let processed = await minifyHTMLContent(original);
+        if (STRIP_TEST_IDS) {
+          processed = stripTestIds(processed);
+        }
+        if (processed.length < original.length) {
+          writeFileSync(file, processed, "utf8");
+        }
+      } catch (writeError) {
+        log.error(
+          `Failed to minify HTML at ${file}`,
+          writeError instanceof Error ? writeError : new Error(String(writeError)),
+        );
+      }
+    }
+
+    if (ext === ".svg") {
       let processed = content.toString("utf8");
-      processed = stripHtmlComments(processed);
       if (STRIP_TEST_IDS) {
         processed = stripTestIds(processed);
       }
       if (processed.length < content.length) {
-        try {
-          writeFileSync(file, processed, "utf8");
-        } catch (writeError) {
-          log.error(
-            `Failed to write stripped HTML at ${file}`,
-            writeError instanceof Error ? writeError : new Error(String(writeError)),
-          );
-        }
+        writeFileSync(file, processed, "utf8");
       }
     }
 
@@ -101,8 +105,8 @@ async function main() {
   log.info(`Original: ${originalBytes} bytes`);
   if (totalAfter < originalBytes) {
     const pct = (((originalBytes - totalAfter) / originalBytes) * 100).toFixed(1);
-    const why = STRIP_TEST_IDS ? "HTML comments + data-testid" : "HTML comments";
-    log.info(`After ${why} strip: ${totalAfter} bytes (${pct}% savings)`);
+    const why = STRIP_TEST_IDS ? "minification + data-testid strip" : "minification";
+    log.info(`After ${why}: ${totalAfter} bytes (${pct}% savings)`);
   }
   log.info(
     `Compressed sizes - gzip: ${compressedBytes.gz}, zstd: ${compressedBytes.zst}, brotli: ${compressedBytes.br}`,

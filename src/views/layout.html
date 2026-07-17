@@ -24,32 +24,17 @@
     <link rel="stylesheet" href="/css/app.css" media="all" />
     <link rel="stylesheet" href="/css/gallery.css" media="all" />
 
-    <!-- htmx -->
-    <script src="/js/htmx.min.js" defer></script>
+    <!-- Vendor bundle: htmx, Alpine.js, morph plugin, htmx extensions (built via bun bundler) -->
+    <script src="/vendor.js" defer></script>
 
-    <!-- Alpine.js morph plugin — MUST load before Alpine core -->
-    <script src="/js/alpine-morph.min.js" defer></script>
-
-    <!-- Alpine.js — MUST load before app.js (provides Alpine.store, Alpine.$data) -->
-    <script src="/js/alpine.min.js" defer></script>
-
-    <!-- Chat vendor libs (marked + dompurify) -->
-    <script src="/chat-vendor.js" defer></script>
-
-    <!-- App bundle: core framework (sidebar, toast, theme, locale, htmx) -->
+    <!-- App bundle: defines app(), chatState(), Alpine stores -->
     <script src="/app.js" defer></script>
+
+    <!-- Chat vendor libs (marked + dompurify) — lazy-loaded by chat-utils -->
+    <script src="/chat-vendor.js" defer></script>
 
     <!-- Page-specific behaviors (characters, gallery, worlds, new-chat) -->
     <script src="/pages.js" defer></script>
-
-    <!-- htmx alpine-morph extension — swaps via Alpine's morph, preserving component state -->
-    <script src="/js/htmx-alpine-morph.min.js" defer></script>
-
-    <!-- htmx response-targets extension (for error handling) -->
-    <script src="/js/htmx-response-targets.min.js" defer></script>
-
-    <!-- htmx SSE extension (for streaming generation) -->
-    <script src="/js/htmx-sse.min.js" defer></script>
 
     <style>
       body {

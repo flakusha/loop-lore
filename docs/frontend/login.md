@@ -1,10 +1,10 @@
 # Frontend: Login Page
 
-**URL**: `/login`
+**URL**: `/views/login` (the bare `/` and `/chat` redirect here when the request is unauthenticated; `htmx.ts` also redirects to `/views/login?redirect=...` on 401).
 
 ## Overview
 
-Authentication for multi-user mode. In solo/demo mode, this page is skipped entirely — the user goes directly to `/`.
+Authentication for multi-user mode. In solo/demo mode, this page is skipped entirely — the user goes directly to `/` which redirects to `/views/chat`.
 
 ## Layout
 
@@ -27,7 +27,7 @@ Centered card on a plain dark background (no sidebar, no navigation). Max-width 
 | ------------------------------- | ------------------------------------------------------------------------------------------------------ |
 | Default                         | Card with empty inputs, Log In button, demo mode link                                                  |
 | Attempting login                | Button shows spinner, "Logging in..." text, both inputs disabled                                       |
-| Login success                   | Redirect to `/`                                                                                        |
+| Login success                   | `Set-Cookie: ll_token` + `HX-Redirect: /views/chat`                                                    |
 | Login failure (bad credentials) | Error text appears above inputs: "Invalid username or password." Button re-enables, inputs stay filled |
 | Login failure (server error)    | Error text: "Server error. Please try again later."                                                    |
 | Login failure (rate limited)    | Error text: "Too many attempts. Please wait [n] seconds."                                              |
@@ -35,4 +35,6 @@ Centered card on a plain dark background (no sidebar, no navigation). Max-width 
 
 ## Demo Mode
 
-Clicking "Continue in demo mode": POST to `/api/demo-login` which creates a temporary solo session. Redirect to `/`. No credentials needed. Demo sessions have a user role of "solo" and may have limited functionality (no multi-device sync, no API configuration changes).
+Clicking "Continue in demo mode": POST to `/api/demo-login` which creates a solo session (role `solo`). Response is `Set-Cookie: ll_token` + `HX-Redirect: /views/chat`. No credentials needed. The solo user is the instance owner (admin-equivalent) within the single-user instance.
+
+The "Sign up" link is shown only when the server has `auth.registrationOpen=true`; registration posts to `/api/auth/register` and, on success, auto-logs in (`Set-Cookie: ll_token` + `HX-Redirect: /views/chat`). New accounts are created with `role=user`.

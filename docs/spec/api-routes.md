@@ -36,7 +36,7 @@ Response:
 
 ### Auth
 
-- All API endpoints require `Authorization: Bearer <token>` except auth routes
+- All API endpoints require a session token except auth routes. Token accepted via `Authorization: Bearer <token>` header **or** the `ll_token` HttpOnly cookie (set by the web login flow).
 - Auth middleware populates `RequestContext { userId, userRole, sessionId }`
 - Admin-only endpoints marked 🔒
 - Asset download uses signed URLs (token in query param) — see Assets section
@@ -83,13 +83,27 @@ Request body validation uses Zod schemas defined per route group in companion
 
 ### Sessions / Auth
 
-| Method | Path               | Auth | Request                  | Response                              |
-| ------ | ------------------ | ---- | ------------------------ | ------------------------------------- |
-| POST   | `/api/auth/login`  | No   | `{ username, password }` | `{ token, user: {...} }`              |
-| POST   | `/api/auth/logout` | Yes  | —                        | 204                                   |
-| GET    | `/api/auth/me`     | Yes  | —                        | `{ id, username, displayName, role }` |
+| Method | Path                 | Auth | Request (form-encoded) | Response                                          |
+| ------ | -------------------- | ---- | ---------------------- | ------------------------------------------------- |
+| POST   | `/api/auth/login`    | No   | `username`, `password` | `200 OK` + `Set-Cookie: ll_token` + `HX-Redirect` |
+| POST   | `/api/demo-login`    | No   | —                      | `200 OK` + `Set-Cookie: ll_token` + `HX-Redirect` |
+| POST   | `/api/auth/register` | No   | `username`, `password` | `200 OK` + `Set-Cookie: ll_token` + `HX-Redirect` |
+| POST   | `/api/auth/logout`   | Yes  | —                      | `200 OK` + clears `ll_token` cookie               |
+| GET    | `/api/auth/me`       | Yes  | —                      | `{ id, username, displayName, role, ... }`        |
 
-> **Note:** Registration (`POST /api/auth/register`) is NOT implemented. No `/api/sessions` routes exist.
+> **Web-first flow:** login/demo-login/register are submitted form-encoded by
+> htmx. On success they set the `ll_token` HttpOnly cookie and return
+> `HX-Redirect: /views/chat` (no JSON `{ token, user }` body). `/api/auth/me`
+> returns JSON.
+>
+> **`/api/demo-login`** authenticates the implicit solo user (no password) when
+> `auth.required=false`.
+>
+> **Registration** is implemented but MUST be gated on `auth.registrationOpen`
+> (returns an error when closed). New accounts are created with `role=user`.
+>
+> **No `/api/sessions` routes exist** — there is no session list or remote
+> force-logout endpoint.
 
 ### Users
 

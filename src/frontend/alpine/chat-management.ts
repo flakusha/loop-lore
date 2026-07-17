@@ -227,10 +227,6 @@ export const chatManagement: Partial<ChatState> & ThisType<ChatState> = {
     return state.isPaused === true;
   },
 
-  get currentChat(): any {
-    return this.chats.find((c) => c.id === this.activeChat) ?? null;
-  },
-
   async toggleGroupPause() {
     const chat = this.currentChat;
     if (!chat || chat.type !== "group" || !this.activeChat) return;

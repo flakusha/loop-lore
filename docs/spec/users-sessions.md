@@ -30,12 +30,12 @@ Password hashing: **scrypt** (native Bun `Bun.password.hash`). No bcrypt/argon2 
 
 ### Roles
 
-| Role     | Permissions                                                                    |
-| -------- | ------------------------------------------------------------------------------ |
-| `admin`  | Full access. Manage users, system config, view all messages/stats.             |
-| `user`   | Standard. Create/manage own chats, characters, assets. View own message stats. |
-| `viewer` | Read-only. View assigned chats, no editing.                                    |
-| `solo`   | Implicit role for local demo mode. All permissions within own session.         |
+| Role     | Permissions                                                                                                                                 |
+| -------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| `admin`  | Full access. Manage users, system config, view all messages/stats.                                                                          |
+| `user`   | Standard. Create/manage own chats, characters, assets. View own message stats.                                                              |
+| `viewer` | Read-only. View assigned chats, no editing.                                                                                                 |
+| `solo`   | Implicit role for local demo mode. Instance owner — admin-equivalent (user mgmt, system + age-gate config) within the single-user instance. |
 
 ### Role-Based Feature Access
 
@@ -46,9 +46,9 @@ Password hashing: **scrypt** (native Bun `Bun.password.hash`). No bcrypt/argon2 
 | Delete messages                          | ✓     | own    |        | ✓    |
 | Hide messages (soft-delete)              | ✓     | own    |        | ✓    |
 | View message stats (tokens, cost, speed) | all   | own    |        | ✓    |
-| Manage users                             | ✓     |        |        |      |
-| System config                            | ✓     |        |        |      |
-| Configure age gate                       | ✓     |        |        |      |
+| Manage users                             | ✓     |        |        | ✓    |
+| System config                            | ✓     |        |        | ✓    |
+| Configure age gate                       | ✓     |        |        | ✓    |
 | View docs (hidden sections)              | all   | public | public | all  |
 
 ## Session Model
@@ -61,8 +61,10 @@ Full table definition in `src/db/schema-core.ts` → `Sessions` interface.
 - Token: **opaque UUID + SHA-256 hash** (no JWT for MVP). The UUID is the bearer token; only its SHA-256 hash is stored in DB.
 - Multiple simultaneous sessions per user allowed (configurable max)
 - Session timeout configurable (default: 24h idle)
-- Sessions visible to user: `/api/sessions` lists active sessions
-- Force-logout remote session from session list
+- Web clients carry the token in the `ll_token` HttpOnly cookie; API clients may
+  use `Authorization: Bearer <token>`
+- **Not implemented:** there is no `/api/sessions` list endpoint and no remote
+  force-logout. Logout (`/api/auth/logout`) only deletes the caller's own session.
 
 ### Rate Limiting
 
@@ -122,10 +124,25 @@ Env overrides:
 
 ```env
 AUTH_REQUIRED=true                  # true=multi-user, false=demo/solo
-AUTH_REGISTRATION_OPEN=true         # allow new user registration
+AUTH_REGISTRATION_OPEN=true         # allow /api/auth/register (must be enforced)
 SESSION_TIMEOUT_HOURS=24            # idle session timeout
-SESSION_MAX_PER_USER=10             # max simultaneous sessions
+SESSION_MAX_PER_USER=10             # max simultaneous sessions (not yet enforced)
+AUTH_ADMIN_USERNAME=admin           # bootstrap admin username (multi-user)
+AUTH_ADMIN_PASSWORD=<secret>        # bootstrap admin password (env-only)
+AUTH_DEMO_USERNAME=demo             # solo user's username (demo mode)
 ```
+
+## Account Seeding
+
+`src/db/seed.ts` seeds **only the default Assistant actor** — no human accounts.
+First human account per mode:
+
+- **Solo/demo:** `solo` user created lazily on first request or `/api/demo-login`
+  (username = `auth.demoUsername`). It is the instance owner (admin-equivalent).
+- **Multi-user:** a bootstrap admin is seeded on startup from
+  `AUTH_ADMIN_USERNAME` / `AUTH_ADMIN_PASSWORD` when no admin exists (idempotent).
+- **Self-service:** users register via `/api/auth/register` when
+  `auth.registrationOpen=true`; new accounts get `role=user` (never admin).
 
 Auth endpoints documented in `docs/spec/api-routes.md`.
 Rate limiting: per-IP, hardcoded in middleware for MVP (see `docs/spec/auth-middleware.md`).
