@@ -112,7 +112,7 @@ export async function loadLocale(locale: string): Promise<void> {
 
 export function setLocale(localeId: string): void {
   localStorage.setItem("locale", localeId);
-  (globalThis as Record<string, unknown>).currentLocale = localeId;
+  globalThis.currentLocale = localeId;
   loadLocale(localeId);
 }
 
@@ -127,12 +127,11 @@ document.addEventListener(
 );
 
 // Reveal helpers globally for onclick="" usage
-const g = globalThis as Record<string, unknown>;
-g.toggleSidebar = toggleSidebar;
-g.closeSidebar = closeSidebar;
-g.showToast = showToast;
-g.applyTheme = applyTheme;
-g.setLocale = setLocale;
-g.openModal = openModal;
-g.closeModal = closeModal;
-g.closeModalOnBackdrop = closeModalOnBackdrop;
+globalThis.toggleSidebar = toggleSidebar;
+globalThis.closeSidebar = closeSidebar;
+globalThis.showToast = showToast;
+globalThis.applyTheme = applyTheme;
+globalThis.setLocale = setLocale;
+globalThis.openModal = openModal;
+globalThis.closeModal = closeModal;
+globalThis.closeModalOnBackdrop = closeModalOnBackdrop;

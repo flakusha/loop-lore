@@ -11,7 +11,7 @@ interface PersonaItem {
   is_default: string;
 }
 
-(globalThis as any).personasPage = function () {
+globalThis.personasPage = function () {
   return {
     personas: [] as PersonaItem[],
     filtered: [] as PersonaItem[],

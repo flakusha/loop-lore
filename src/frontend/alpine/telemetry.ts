@@ -16,9 +16,9 @@ export function initTelemetry(): void {
   _initialized = true;
 
   const enabled =
-    (globalThis as any).__TELEMETRY_FRONTEND_ENABLED === true ||
-    (globalThis as any).__TELEMETRY_FRONTEND_ENABLED === "true" ||
-    (globalThis as any).__TELEMETRY_FRONTEND_ENABLED === 1;
+    globalThis.__TELEMETRY_FRONTEND_ENABLED === true ||
+    globalThis.__TELEMETRY_FRONTEND_ENABLED === "true" ||
+    globalThis.__TELEMETRY_FRONTEND_ENABLED === 1;
 
   if (!enabled) return;
 
@@ -64,8 +64,8 @@ export function initTelemetry(): void {
 
 export function isTelemetryEnabled(): boolean {
   return (
-    (globalThis as any).__TELEMETRY_FRONTEND_ENABLED === true ||
-    (globalThis as any).__TELEMETRY_FRONTEND_ENABLED === "true" ||
-    (globalThis as any).__TELEMETRY_FRONTEND_ENABLED === 1
+    globalThis.__TELEMETRY_FRONTEND_ENABLED === true ||
+    globalThis.__TELEMETRY_FRONTEND_ENABLED === "true" ||
+    globalThis.__TELEMETRY_FRONTEND_ENABLED === 1
   );
 }

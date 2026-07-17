@@ -8,5 +8,5 @@ import DOMPurify from "dompurify";
 
 marked.use({ breaks: true, gfm: true });
 
-(globalThis as any).__marked = marked;
-(globalThis as any).__DOMPurify = DOMPurify;
+globalThis.__marked = marked;
+globalThis.__DOMPurify = DOMPurify;
