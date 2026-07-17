@@ -1,14 +1,23 @@
 /**
  * Admin gate middleware
  *
- * Short-circuits to 403 if userRole is not "admin".
- * Applied before admin-only routes in the compose pipeline.
+ * Short-circuits to 403 (API) or 302 (views) if userRole is not "admin" or "solo".
+ *
+ * Two exports:
+ *   requireAdmin        — legacy pipeline middleware (RequestContext-based)
+ *   adminViewGuard      — Elysia beforeHandle guard (reads ctx.userRole)
  */
 import type { Middleware } from "./types";
 import { jsonError, HttpStatus, ErrorCode } from "../routes/http-utils";
+import { UserRole } from "../db/enums";
 
+function isAdminRole(userRole: string | null | undefined): boolean {
+  return userRole === "admin" || userRole === UserRole.Solo;
+}
+
+/** Legacy pipeline middleware — checks context.userRole. */
 export const requireAdmin: Middleware = async (_request, context, next) => {
-  if (context.userRole !== "admin") {
+  if (!isAdminRole(context.userRole)) {
     return jsonError({
       message: "Admin access required",
       status: HttpStatus.Forbidden,
@@ -17,3 +26,17 @@ export const requireAdmin: Middleware = async (_request, context, next) => {
   }
   return next();
 };
+
+/**
+ * Elysia beforeHandle guard for view routes.
+ * Returns 302 redirect to "/" on denial (non-disruptive UX for page nav).
+ * Usage: .guard({ beforeHandle: adminViewGuard }, (app) => app.get("/views/admin", ...))
+ *
+ * Accepts any Elysia context shape — userRole is injected via .derive() in elysia-app.ts.
+ */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function adminViewGuard(ctx: any): Response | void {
+  if (!isAdminRole(ctx.userRole)) {
+    return new Response(null, { status: 302, headers: { Location: "/" } });
+  }
+}

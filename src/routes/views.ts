@@ -33,6 +33,7 @@ import { Elysia } from "elysia";
 import type { Kysely } from "kysely";
 import type { DB } from "../db/schema";
 import { ActorType } from "../db/enums";
+import { adminViewGuard } from "../middleware/admin-gate";
 
 const VIEWS_DIR = join(import.meta.dir, "..", "views");
 const PARTIALS_DIR = join(import.meta.dir, "..", "partials");
@@ -807,7 +808,19 @@ export function viewRoutes({ database }: { database: Kysely<DB> }) {
         return new Response("Not found", { status: 404 });
       })
 
-      // ── View templates ──────────────────────────────────────────
+      // ── Admin view (guarded — must precede /views/:name) ─────────
+      .guard(
+        { beforeHandle: adminViewGuard },
+        (app) =>
+          app.get("/views/admin", (ctx) => {
+            const isHtmx = ctx.request.headers.get("HX-Request") === "true";
+            const result = serveView("admin", isHtmx);
+            if (result) return result;
+            return new Response("Not found", { status: 404 });
+          }),
+      )
+
+      // ── View templates (non-admin) ──────────────────────────────
       .get("/views/:name", (ctx) => {
         const isHtmx = ctx.request.headers.get("HX-Request") === "true";
         const name = ctx.params.name;
@@ -823,17 +836,6 @@ export function viewRoutes({ database }: { database: Kysely<DB> }) {
         }
         if (!ALLOWED_VIEWS.has(name)) {
           return new Response(null, { status: 302, headers: { Location: "/views/" } });
-        }
-
-        // Admin view gate
-        if (name === "admin") {
-          const userRole = (ctx as any).userRole as string | null | undefined;
-          if (userRole !== "admin") {
-            return new Response(null, {
-              status: 302,
-              headers: { Location: "/" },
-            });
-          }
         }
 
         const result = serveView(name, isHtmx);
