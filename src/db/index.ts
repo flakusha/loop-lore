@@ -32,12 +32,11 @@ export function createSqliteDialect(database: Database): SqliteDialect {
           const s = sql.trim().toUpperCase();
           return s.startsWith("SELECT") || s.startsWith("WITH") || s.startsWith("PRAGMA");
         },
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-argument
+
         all: (parameters: readonly unknown[]) => statement.all(...(parameters as any[])),
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-argument
+
         run: (parameters: readonly unknown[]) => statement.run(...(parameters as any[])),
         iterate: function* (parameters: readonly unknown[]) {
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-argument
           yield* statement.all(...(parameters as any[]));
         },
       };
@@ -70,7 +69,6 @@ let testDatabaseOverride: Kysely<DB> | null = null;
  * Pass null to clear the override.
  */
 export function setTestDatabase(db: Kysely<DB> | null): void {
-  // eslint-disable-next-line unicorn/no-top-level-assignment-in-function
   testDatabaseOverride = db;
 }
 

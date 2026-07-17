@@ -16,10 +16,9 @@ export async function runMigrations(database: ReturnType<typeof getDatabase>): P
           .toSorted((a, b) => a.localeCompare(b));
         const migrations: Record<string, Migration> = {};
         for (const file of files) {
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
           const module = await import(path.join(migrationsDirectory, file));
           const name = file.replace(/\.ts$/, "");
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+
           migrations[name] = module.default ?? module;
         }
         return migrations;

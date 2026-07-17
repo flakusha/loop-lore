@@ -18,7 +18,6 @@ function log(): Logger {
 
 export function messageEncryptionRoutes(opts: { database: Db; config: Config }): Elysia {
   return new Elysia().get("/api/chats/:id/encryption-key", async ({ params }) => {
-    // eslint-disable-next-line unicorn/no-declarations-before-early-exit
     const chatId = params.id;
 
     if (!isEncryptionEnabled()) {
