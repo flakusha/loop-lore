@@ -303,12 +303,13 @@ export async function createTestServer(
     registerProvider("mock-provider", mockProvider);
     // Use the actual instance from registry (may be pre-existing from other tests)
     mockProvider = getProvider("mock-provider") as MockLLMProvider ?? mockProvider;
-    if (!config.generation.defaultProvider) {
-      config.generation.defaultProvider = "mock-provider";
-    }
-    if (!config.generation.defaultModels["mock-provider"]) {
-      config.generation.defaultModels["mock-provider"] = "mock-model";
-    }
+    // Force mock as the default provider/model. config.yaml may set a real
+    // defaultProvider (e.g. a local llama-swap endpoint); if we only set it
+    // when unset, generation e2e tests hit the real LLM (slow timeouts +
+    // content mismatch). registerMock is used exclusively by generation e2e,
+    // so this never affects other suites.
+    config.generation.defaultProvider = "mock-provider";
+    config.generation.defaultModels["mock-provider"] = "mock-model";
   }
   initializeProviders(config);
 
