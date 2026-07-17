@@ -50,15 +50,18 @@ export function normalizeHeaderKey(key: string): string {
 }
 
 /** Classification of an outgoing response, driving which headers apply. */
-export type RouteKind = "html" | "api" | "static";
+export type RouteKind = "html" | "api" | "static" | "sse";
 
 /** Matches bun's content-hashed asset names, e.g. `alpine-tx4kdwfm.js`. */
 const HASHED_ASSET_PATTERN = /-[a-z0-9]{8}\.(?:js|css|svg|png|jpe?g|webp|gif|woff2?)$/;
 
+/** Matches Server-Sent Events streams. */
+const SSE_PATTERN = /text\/event-stream/;
+
 /** Options for {@link ResponseHeaderPolicy.apply}. */
 export interface ApplyOptions {
-  /** Incoming request (used for route classification + hashed-asset detection). */
-  request: Request;
+  /** Incoming request (used for hashed-asset detection). */
+  request?: Request;
   /** Response to decorate with policy headers. */
   response: Response;
 }
@@ -79,6 +82,10 @@ export class ResponseHeaderPolicy {
     if (!this.config.enabled) return response;
 
     const kind = this.classify({ request, response });
+
+    // SSE and streaming responses pass through without wrapping
+    if (kind === "sse") return response;
+
     const additions = this.buildHeaders(kind);
 
     const headers = new Headers(response.headers);
@@ -90,7 +97,7 @@ export class ResponseHeaderPolicy {
     }
 
     if (kind === "static" && this.config.immutableHashedAssets) {
-      this.augmentImmutable({ request, headers });
+      this.augmentImmutable({ request: request!, headers });
     }
 
     return new Response(response.body, { status: response.status, headers });
@@ -98,12 +105,14 @@ export class ResponseHeaderPolicy {
 
   /**
    * Classify a response into a route kind.
-   * HTML (incl. docs HTML) → html; `/api/*` → api; everything else → static.
+   * HTML → html; SSE (content-type) → sse; `/api/*` → api; otherwise → static.
    */
   private classify({ request, response }: ApplyOptions): RouteKind {
     const contentType = response.headers.get("content-type") ?? "";
     if (contentType.startsWith("text/html")) return "html";
-    if (new URL(request.url).pathname.startsWith("/api/")) return "api";
+    if (contentType.match(SSE_PATTERN)) return "sse";
+    const pathname = request ? new URL(request.url).pathname : "";
+    if (pathname.startsWith("/api/")) return "api";
     return "static";
   }
 
