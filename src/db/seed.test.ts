@@ -1,17 +1,9 @@
 import { describe, test, expect, beforeAll, afterAll } from "bun:test";
-import { Database } from "bun:sqlite";
 import { Kysely, sql } from "kysely";
-import { createSqliteDialect } from "./index";
+import { createTestDb } from "../test-utils/create-test-db";
 import { seedDefaultActors } from "./seed";
 import { createLogger } from "../logger";
 import type { DB } from "./schema";
-
-function createTestDb(): Kysely<DB> {
-  const sqlite = new Database(":memory:");
-  sqlite.run("PRAGMA journal_mode = WAL");
-  const dialect = createSqliteDialect(sqlite);
-  return new Kysely<DB>({ dialect });
-}
 
 async function createTables(db: Kysely<DB>): Promise<void> {
   await db.schema
@@ -68,11 +60,7 @@ describe("seedDefaultActors", () => {
     expect(actor).toBeDefined();
     expect(actor?.display_name).toBe("Assistant");
 
-    const user = await db
-      .selectFrom("users")
-      .selectAll()
-      .where("username", "=", "demo")
-      .executeTakeFirst();
+    const user = await db.selectFrom("users").selectAll().where("username", "=", "demo").executeTakeFirst();
     expect(user).toBeDefined();
     expect(user?.role).toBe("solo");
   });
