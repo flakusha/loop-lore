@@ -97,10 +97,10 @@ The i18n module is organized into these source files:
 - Alpine.js components get a `$t` magic property initialized from a data attribute on `<body>`:
 
   You are a character in a roleplay. The user speaks in Japanese.
-Generate your responses in Japanese. If the user switches to English,
-match their language. Narrate actions and descriptions in Japanese.
+  Generate your responses in Japanese. If the user switches to English,
+  match their language. Narrate actions and descriptions in Japanese.
 
-```
+````
 
 The language directive is **not hardcoded** — it is a template parameter derived from the _chat's generation language_ setting.
 
@@ -156,7 +156,7 @@ Add a `language` column to the `actors` table (or to the `settings` JSON blob). 
     "content": "en", // Content language preference (see Layer 4)
   },
 }
-```
+````
 
 ### Actor Types
 
@@ -478,3 +478,4 @@ All language identifiers use BCP-47 format for consistency with the `Accept-Lang
 
 Existing code that hardcodes UI strings (e.g., `res.send("<h1>Chats</h1>")`) needs to be updated to use `t("nav.chats")`:
 
+```

@@ -4,11 +4,11 @@ Status: Post-MVP (v0.2+). Plugin skeleton (`src/plugins/`) loads core/community/
 
 ## Plugin Types
 
-| Type      | Location             | Verification        |
-| --------- | -------------------- | ------------------- |
-| Core      | `plugins/core/`      | Bundled, read-only  |
-| Community | `plugins/community/` | Signature required  |
-| Local     | `plugins/local/`     | No verification     |
+| Type      | Location             | Verification       |
+| --------- | -------------------- | ------------------ |
+| Core      | `plugins/core/`      | Bundled, read-only |
+| Community | `plugins/community/` | Signature required |
+| Local     | `plugins/local/`     | No verification    |
 
 ## Extension Points
 

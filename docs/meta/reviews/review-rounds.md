@@ -32,20 +32,20 @@ All 🔴 (4) and 🟡 (18) items addressed. 2 nits fixed. Critical: missing `x-d
 
 ### E2E Quality Findings
 
-| ID      | Severity | Finding                                  |
-| ------- | -------- | ---------------------------------------- |
-| TEST.1  | High     | No cross-tenant isolation tests          |
-| TEST.2  | High     | Error envelope shape never asserted      |
-| TEST.3  | Medium   | No cancel-during-generation test         |
-| TEST.4  | Medium   | No generation idempotency test           |
-| TEST.5  | Medium   | Test ordering fragile (shared state)     |
-| TEST.6  | Medium   | Browser auth flow incomplete (3 tests)   |
-| TEST.7  | Medium   | Browser chat flow sends no messages      |
-| TEST.8  | Medium   | 17 quick-win source files untested       |
-| TEST.9  | Medium   | Story module nearly untested (7 files)   |
-| TEST.10 | Low      | Personas module untested                 |
-| TEST.11 | Low      | Route handler isolation missing          |
-| TEST.12 | Low      | RPG mechanics no tests                   |
+| ID      | Severity | Finding                                |
+| ------- | -------- | -------------------------------------- |
+| TEST.1  | High     | No cross-tenant isolation tests        |
+| TEST.2  | High     | Error envelope shape never asserted    |
+| TEST.3  | Medium   | No cancel-during-generation test       |
+| TEST.4  | Medium   | No generation idempotency test         |
+| TEST.5  | Medium   | Test ordering fragile (shared state)   |
+| TEST.6  | Medium   | Browser auth flow incomplete (3 tests) |
+| TEST.7  | Medium   | Browser chat flow sends no messages    |
+| TEST.8  | Medium   | 17 quick-win source files untested     |
+| TEST.9  | Medium   | Story module nearly untested (7 files) |
+| TEST.10 | Low      | Personas module untested               |
+| TEST.11 | Low      | Route handler isolation missing        |
+| TEST.12 | Low      | RPG mechanics no tests                 |
 
 Tracked in `open-items.md` (TEST.1–TEST.12). Full E2E analysis in `../../spec/testing.md`.
 

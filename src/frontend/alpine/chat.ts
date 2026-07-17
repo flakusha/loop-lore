@@ -13,24 +13,23 @@ import { chatUtils } from "./chat-utils";
 import { chatKeys } from "./chat-keys";
 import { chatPanels } from "./chat-panels";
 import type { AlpineState, ChatState } from "./types";
-import { log as rootLog } from "./logger";
 import { jsonParseOr } from "./json";
-const log = rootLog.child({ module: "chat-state" });
 
 const g = globalThis as Record<string, unknown>;
 
-g.isChatPaused = (chat: any): boolean => {
+g.isChatPaused = (chat: Record<string, unknown>): boolean => {
   if (!chat?.story_state) return false;
-  const state = jsonParseOr<Record<string, unknown>>(chat.story_state, {});
+  const state = jsonParseOr<Record<string, unknown>>(chat.story_state as string, {});
   return state.isPaused === true;
 };
 
 g.toggleGroupPause = async function () {
   const el = document.querySelector<HTMLElement>("[x-data]");
-  if (el && g.Alpine) {
+  if (el && typeof Alpine !== "undefined") {
     const data = Alpine.$data(el);
-    if (typeof (data as any).toggleGroupPause === "function") {
-      await (data as any).toggleGroupPause();
+    const fn = (data as Record<string, unknown>).toggleGroupPause as (() => Promise<void>) | undefined;
+    if (typeof fn === "function") {
+      await fn();
     }
   }
 };
@@ -164,11 +163,11 @@ globalThis.chatState = function () {
         await this.selectChat(chatId);
       }
 
-      (this as any).registerPanelHandlers();
+      this.registerPanelHandlers();
     },
 
     destroy() {
-      (this as any).unregisterPanelHandlers();
+      this.unregisterPanelHandlers();
 
       this._cleanupSSE?.();
       this.disconnectActivitySSE();

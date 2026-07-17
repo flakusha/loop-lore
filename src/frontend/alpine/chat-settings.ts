@@ -1,10 +1,11 @@
 import { jsonBody, jsonParseOr, safeJsonStringify } from "./json";
 import { log as rootLog } from "./logger";
 import { apiFetch } from "./htmx";
+import type { ChatState } from "./types";
 
 const log = rootLog.child({ module: "chat-settings" });
 
-export const chatSettings = {
+export const chatSettings: Partial<ChatState> & ThisType<ChatState> = {
   _chatSettingsName: "",
   _chatSettingsMode: "chat",
   _chatSettingsTurnStrategy: "round_robin",
@@ -14,52 +15,50 @@ export const chatSettings = {
   _personas: [] as any[],
 
   openChatSettings() {
-    const s = this as any;
-    const chats = s.chats;
-    const chat = chats.find((c: any) => c.id === s.activeChat);
-    s._chatSettingsName = chat?.name ?? "";
-    s._chatSettingsMode = chat?.mode ?? "chat";
-    s._chatSettingsTurnStrategy = chat?.turn_strategy ?? "round_robin";
-    s._groupPaused = s.isChatPaused(chat);
+    const chats = this.chats;
+    const chat = chats.find((c) => c.id === this.activeChat);
+    this._chatSettingsName = chat?.name ?? "";
+    this._chatSettingsMode = chat?.mode ?? "chat";
+    this._chatSettingsTurnStrategy = chat?.turn_strategy ?? "round_robin";
+    this._groupPaused = this.isChatPaused(chat);
     if (chat?.gm_config) {
       try {
         const config = JSON.parse(chat.gm_config);
-        s._assistantRole = (config.assistantRole as "off" | "helper" | "gm" | "moderator") || "off";
+        this._assistantRole = (config.assistantRole as "off" | "helper" | "gm" | "moderator") || "off";
       } catch {}
     }
     Alpine.store("ui").showChatSettings = true;
   },
 
   async saveChatSettings() {
-    const s = this as any;
-    log.info("saveChatSettings", { chatId: s.activeChat });
-    if (!s.activeChat || !s._chatSettingsName.trim()) return;
+    log.info("saveChatSettings", { chatId: this.activeChat });
+    if (!this.activeChat || !this._chatSettingsName.trim()) return;
     try {
-      const gmConfig = { assistantRole: s._assistantRole };
-      const res = await apiFetch(`/api/chats/${s.activeChat}`, {
+      const gmConfig = { assistantRole: this._assistantRole };
+      const res = await apiFetch(`/api/chats/${this.activeChat}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: jsonBody({
-          name: s._chatSettingsName.trim(),
-          mode: s._chatSettingsMode,
-          turnStrategy: s._chatSettingsTurnStrategy,
-          isPaused: s._groupPaused,
+          name: this._chatSettingsName.trim(),
+          mode: this._chatSettingsMode,
+          turnStrategy: this._chatSettingsTurnStrategy,
+          isPaused: this._groupPaused,
           gmConfig: jsonBody(gmConfig),
         }),
       });
       if (res.ok) {
-        const chats = s.chats;
-        const chat = chats.find((c: any) => c.id === s.activeChat);
+        const chats = this.chats;
+        const chat = chats.find((c) => c.id === this.activeChat);
         if (chat) {
-          chat.name = s._chatSettingsName.trim();
-          chat.turn_strategy = s._chatSettingsTurnStrategy;
+          chat.name = this._chatSettingsName.trim();
+          chat.turn_strategy = this._chatSettingsTurnStrategy;
           if (chat.story_state) {
             const st = jsonParseOr<Record<string, unknown>>(chat.story_state, {});
-            st.isPaused = s._groupPaused;
+            st.isPaused = this._groupPaused;
             const serialized = safeJsonStringify(st);
             chat.story_state = serialized.ok ? serialized.value : chat.story_state;
           } else {
-            const serialized = safeJsonStringify({ isPaused: s._groupPaused });
+            const serialized = safeJsonStringify({ isPaused: this._groupPaused });
             chat.story_state = serialized.ok ? serialized.value : "{}";
           }
           if (globalThis.Alpine) {
@@ -70,39 +69,38 @@ export const chatSettings = {
             }
           }
         }
-        s.activeChatName = s._chatSettingsName.trim();
+        this.activeChatName = this._chatSettingsName.trim();
         const titleEl = document.querySelector("#page-title");
-        if (titleEl) titleEl.textContent = s.activeChatName;
+        if (titleEl) titleEl.textContent = this.activeChatName;
         Alpine.store("ui").showChatSettings = false;
-        s.setPersona();
-        s.toggleImpersonation();
-        s.$dispatch?.("show-toast", { type: "success", message: "Chat settings saved" });
+        this.setPersona();
+        this.toggleImpersonation();
+        this.$dispatch?.("show-toast", { type: "success", message: "Chat settings saved" });
       } else {
         const err = await res.json();
-        s.$dispatch?.("show-toast", { type: "error", message: err.error || "Failed to save settings" });
+        this.$dispatch?.("show-toast", { type: "error", message: err.error || "Failed to save settings" });
       }
     } catch {
-      s.$dispatch?.("show-toast", { type: "error", message: "Network error saving settings" });
+      this.$dispatch?.("show-toast", { type: "error", message: "Network error saving settings" });
     }
   },
 
   async loadPersonas() {
     try {
       const res = await apiFetch("/api/personas");
-      if (res.ok) (this as any)._personas = await res.json();
+      if (res.ok) this._personas = await res.json();
     } catch {
       /* ignore */
     }
   },
 
   async setPersona() {
-    const s = this as any;
-    if (!s.activeChat) return;
+    if (!this.activeChat) return;
     try {
-      await apiFetch(`/api/chats/${s.activeChat}/persona`, {
+      await apiFetch(`/api/chats/${this.activeChat}/persona`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: jsonBody({ personaId: s._selectedPersonaId }),
+        body: jsonBody({ personaId: this._selectedPersonaId }),
       });
     } catch {
       /* non-critical */
@@ -110,18 +108,17 @@ export const chatSettings = {
   },
 
   async toggleImpersonation() {
-    const s = this as any;
-    if (!s.activeChat) return;
-    const actorId = s._impersonatingActorId;
+    if (!this.activeChat) return;
+    const actorId = this._impersonatingActorId;
     try {
-      if (s.impersonationActive && actorId) {
-        await apiFetch(`/api/chats/${s.activeChat}/impersonate`, {
+      if (this.impersonationActive && actorId) {
+        await apiFetch(`/api/chats/${this.activeChat}/impersonate`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: jsonBody({ impersonateActorId: actorId }),
         });
       } else {
-        await apiFetch(`/api/chats/${s.activeChat}/impersonate`, {
+        await apiFetch(`/api/chats/${this.activeChat}/impersonate`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: jsonBody({ impersonateActorId: null }),
@@ -133,25 +130,24 @@ export const chatSettings = {
   },
 
   async loadImpersonationState() {
-    const s = this as any;
-    if (!s.activeChat || s._impersonationLoaded) return;
-    s._impersonationLoaded = true;
+    if (!this.activeChat || this._impersonationLoaded) return;
+    this._impersonationLoaded = true;
     try {
-      const res = await apiFetch(`/api/chats/${s.activeChat}/participants`);
+      const res = await apiFetch(`/api/chats/${this.activeChat}/participants`);
       if (res.ok) {
         const participants = await res.json();
         const me = Array.isArray(participants)
           ? participants.find((p: any) => p.role_in_chat === "owner")
           : null;
         if (me) {
-          s._selectedPersonaId = me.persona_id || null;
-          s._impersonatingActorId = me.impersonate_actor_id || null;
-          s.impersonationActive = !!me.impersonate_actor_id;
+          this._selectedPersonaId = me.persona_id || null;
+          this._impersonatingActorId = me.impersonate_actor_id || null;
+          this.impersonationActive = !!me.impersonate_actor_id;
         }
       }
     } catch {
       /* ignore */
     }
-    await s.loadPersonas();
+    await this.loadPersonas();
   },
 };

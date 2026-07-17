@@ -137,31 +137,31 @@ deps. [Kysely](https://kysely.dev/) provides type-safe query building on top.
 1. **SQLite (default):** Kysely with `BunSqliteDialect`:
 
    ts
-interface SyntheticTestCaseResult {
-  scenarioId: string; // parent SyntheticData row
-  caseId: string;
-  scenarioType: SyntheticDataType;
-  mode: SyntheticTestMode;
-  status: "passed" | "failed" | "skipped";
-  expected: Record<string, unknown>;
-  actual: Record<string, unknown>;
-  reason?: string;
-}
+   interface SyntheticTestCaseResult {
+   scenarioId: string; // parent SyntheticData row
+   caseId: string;
+   scenarioType: SyntheticDataType;
+   mode: SyntheticTestMode;
+   status: "passed" | "failed" | "skipped";
+   expected: Record<string, unknown>;
+   actual: Record<string, unknown>;
+   reason?: string;
+   }
 
 interface SyntheticTestRunResult {
-  runId: string;
-  mode: SyntheticTestMode;
-  total: number;
-  passed: number;
-  failed: number;
-  skipped: number;
-  results: SyntheticTestCaseResult[];
-  summary: { passRate: number; suggestedThresholds?: { accept; regenerate; escalate } };
-  startedAt: string;
-  finishedAt: string;
+runId: string;
+mode: SyntheticTestMode;
+total: number;
+passed: number;
+failed: number;
+skipped: number;
+results: SyntheticTestCaseResult[];
+summary: { passRate: number; suggestedThresholds?: { accept; regenerate; escalate } };
+startedAt: string;
+finishedAt: string;
 }
 
-```
+````
 
 When `autoValidate` is set and a `synthetic_data` row passes every case in
 `replay`/`regression`, the runner transitions it to `validated` via
@@ -383,7 +383,7 @@ auth:
   registrationOpen: true # allow new user registration
   sessionTimeoutHours: 24 # idle session timeout
   maxSessionsPerUser: 10 # max simultaneous sessions per user
-```
+````
 
 ### Environment Variable Override
 

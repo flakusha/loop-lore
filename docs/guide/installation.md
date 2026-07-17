@@ -28,18 +28,18 @@ bun run dev
 
 ## Scripts
 
-| Command                | Description                              |
-| ---------------------- | ---------------------------------------- |
-| `bun run dev`          | Start dev server (hot reload)            |
-| `bun run start`        | Start production server                  |
-| `bun run tui`          | Start TUI interface                      |
-| `bun run build`        | Build static assets for production       |
-| `bun run db:migrate`   | Run pending migrations                   |
-| `bun run lint`         | Run ESLint                               |
-| `bun run format`       | Format code with Prettier                |
-| `bun run docs:dev`     | Start documentation dev server           |
-| `bun run docs:build`   | Build documentation for production       |
-| `bun run docs:preview` | Preview built documentation              |
+| Command                | Description                        |
+| ---------------------- | ---------------------------------- |
+| `bun run dev`          | Start dev server (hot reload)      |
+| `bun run start`        | Start production server            |
+| `bun run tui`          | Start TUI interface                |
+| `bun run build`        | Build static assets for production |
+| `bun run db:migrate`   | Run pending migrations             |
+| `bun run lint`         | Run ESLint                         |
+| `bun run format`       | Format code with Prettier          |
+| `bun run docs:dev`     | Start documentation dev server     |
+| `bun run docs:build`   | Build documentation for production |
+| `bun run docs:preview` | Preview built documentation        |
 
 ## Environment
 

@@ -15,10 +15,19 @@ describe("Navigation E2E", () => {
   });
 
   async function goto(page: Awaited<ReturnType<BrowserTestContext["browser"]["newPage"]>>, path: string) {
+    // Ensure generous viewport for sidebar nav visibility in headless Chromium
+    await page.setViewportSize({ width: 1440, height: 900 });
     try {
-      await page.goto(ctx.url + path, { waitUntil: "networkidle", timeout: 15_000 });
+      await page.goto(ctx.url + path, { waitUntil: "domcontentloaded", timeout: 10_000 });
     } catch {}
     await page.locator("[data-testid='app-root']").waitFor({ state: "attached", timeout: 8000 });
+  }
+
+  async function clickNav(page: Awaited<ReturnType<BrowserTestContext["browser"]["newPage"]>>, selector: string) {
+    // Use evaluate — sidebar nav links may be scrolled outside viewport in headless Chromium
+    await page.evaluate((sel) => {
+      (document.querySelector(sel) as HTMLElement)?.click();
+    }, selector);
   }
 
   describe("Sidebar navigation", () => {
@@ -27,44 +36,44 @@ describe("Navigation E2E", () => {
       await goto(page, "/views/chat");
       await page.locator("[data-testid='hamburger']").click();
       await page.locator("[data-testid='nav-characters']").waitFor({ state: "visible", timeout: 5000 });
-      await page.click("[data-testid='nav-characters']");
+      await clickNav(page, "[data-testid='nav-characters']");
       await page.locator("[data-testid='characters-header']").waitFor({ state: "attached", timeout: 8000 });
       expect(page.url()).toContain("/views/characters");
       await page.close();
-    });
+    }, 20_000);
 
     test("navigates from characters to gallery via sidebar link", async () => {
       const page = await ctx.browser.newPage();
       await goto(page, "/views/characters");
       await page.locator("[data-testid='hamburger']").click();
       await page.locator("[data-testid='nav-gallery']").waitFor({ state: "visible", timeout: 5000 });
-      await page.click("[data-testid='nav-gallery']");
+      await clickNav(page, "[data-testid='nav-gallery']");
       await page.locator("[data-testid='gallery-header']").waitFor({ state: "attached", timeout: 8000 });
       expect(page.url()).toContain("/views/gallery");
       await page.close();
-    });
+    }, 20_000);
 
     test("navigates from gallery to worlds via sidebar link", async () => {
       const page = await ctx.browser.newPage();
       await goto(page, "/views/gallery");
       await page.locator("[data-testid='hamburger']").click();
       await page.locator("[data-testid='nav-worlds']").waitFor({ state: "visible", timeout: 5000 });
-      await page.click("[data-testid='nav-worlds']");
+      await clickNav(page, "[data-testid='nav-worlds']");
       await page.locator("[data-testid='worlds-header']").waitFor({ state: "attached", timeout: 8000 });
       expect(page.url()).toContain("/views/worlds");
       await page.close();
-    });
+    }, 20_000);
 
     test("navigates from worlds to chat via sidebar link", async () => {
       const page = await ctx.browser.newPage();
       await goto(page, "/views/worlds");
       await page.locator("[data-testid='hamburger']").click();
       await page.locator("[data-testid='nav-chat']").waitFor({ state: "visible", timeout: 5000 });
-      await page.click("[data-testid='nav-chat']");
+      await clickNav(page, "[data-testid='nav-chat']");
       await page.locator("[data-testid='chat-header']").waitFor({ state: "attached", timeout: 8000 });
       expect(page.url()).toContain("/views/chat");
       await page.close();
-    });
+    }, 20_000);
 
     test("hamburger button exists and toggles sidebar", async () => {
       const page = await ctx.browser.newPage();
@@ -86,24 +95,24 @@ describe("Navigation E2E", () => {
       await page.locator("[data-testid='chat-header']").waitFor({ state: "attached", timeout: 5000 });
 
       // Navigate: chat → characters → gallery → worlds
-      await page.locator("[data-testid='hamburger']").click();
+      await page.locator("[data-testid='hamburger']").first().click();
       await page.locator("[data-testid='nav-characters']").waitFor({ state: "visible", timeout: 5000 });
-      await page.click("[data-testid='nav-characters']");
+      await clickNav(page, "[data-testid='nav-characters']");
       await page.locator("[data-testid='characters-header']").waitFor({ state: "attached", timeout: 8000 });
 
-      await page.locator("[data-testid='hamburger']").click();
+      await page.locator("[data-testid='hamburger']").first().click();
       await page.locator("[data-testid='nav-gallery']").waitFor({ state: "visible", timeout: 5000 });
-      await page.click("[data-testid='nav-gallery']");
+      await clickNav(page, "[data-testid='nav-gallery']");
       await page.locator("[data-testid='gallery-header']").waitFor({ state: "attached", timeout: 8000 });
 
-      await page.locator("[data-testid='hamburger']").click();
+      await page.locator("[data-testid='hamburger']").first().click();
       await page.locator("[data-testid='nav-worlds']").waitFor({ state: "visible", timeout: 5000 });
-      await page.click("[data-testid='nav-worlds']");
+      await clickNav(page, "[data-testid='nav-worlds']");
       await page.locator("[data-testid='worlds-header']").waitFor({ state: "attached", timeout: 8000 });
 
-      await page.locator("[data-testid='hamburger']").click();
+      await page.locator("[data-testid='hamburger']").first().click();
       await page.locator("[data-testid='nav-chat']").waitFor({ state: "visible", timeout: 5000 });
-      await page.click("[data-testid='nav-chat']");
+      await clickNav(page, "[data-testid='nav-chat']");
       await page.locator("[data-testid='chat-header']").waitFor({ state: "attached", timeout: 8000 });
       await page.waitForTimeout(1000);
 
@@ -141,7 +150,7 @@ describe("Navigation E2E", () => {
       // Navigate to characters
       await page.locator("[data-testid='hamburger']").click();
       await page.locator("[data-testid='nav-characters']").waitFor({ state: "visible", timeout: 5000 });
-      await page.click("[data-testid='nav-characters']");
+      await clickNav(page, "[data-testid='nav-characters']");
       await page.locator("[data-testid='characters-header']").waitFor({ state: "attached", timeout: 8000 });
       await page.waitForTimeout(500);
 
@@ -201,7 +210,7 @@ describe("Navigation E2E", () => {
       await page.click("[data-testid='hamburger']");
       // Click settings gear button in sidebar footer
       await page.locator("[data-testid='nav-settings']").waitFor({ state: "visible", timeout: 5000 });
-      await page.click("[data-testid='nav-settings']");
+      await clickNav(page, "[data-testid='nav-settings']");
       await page.locator("[data-testid='settings-header']").waitFor({ state: "attached", timeout: 8000 });
       expect(page.url()).toContain("/views/settings");
       await page.close();

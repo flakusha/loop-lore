@@ -8,17 +8,17 @@
 
 ### Sources and Trust Posture
 
-| # | Section             | Source Field(s)                      | Author Trust | Delimited?             |
-| - | ------------------- | ------------------------------------ | ------------ | ---------------------- |
-| 1 | System prompt       | `actors.system_prompt`               | character    | plain (authoritative)  |
-| 2 | Actor header        | `display_name`, `description`, etc.  | character    | plain (authoritative)  |
-| 3 | User persona        | `impersonate_actor_id` / `persona_id`| persona/card | `<user_persona>` XML   |
-| 4 | Lore                | `actor_lore_entries` + world lore    | lore author  | `<lore>` XML           |
-| 5 | Memories            | `actor_memories`                     | memory auth  | `<memory_context>` XML |
-| 6 | Post-history instr. | `actors.post_history_instructions`   | character    | `<post_history>` XML   |
-| 7 | Examples            | `actors.mes_example`                 | character    | plain                  |
-| 8 | Story context       | `locations`, `location_states`       | world author | `<story_context>` XML  |
-| 9 | Chat history        | `messages` (incl. `MessageRole.System`)| **chat user** | n/a                  |
+| #   | Section             | Source Field(s)                         | Author Trust  | Delimited?             |
+| --- | ------------------- | --------------------------------------- | ------------- | ---------------------- |
+| 1   | System prompt       | `actors.system_prompt`                  | character     | plain (authoritative)  |
+| 2   | Actor header        | `display_name`, `description`, etc.     | character     | plain (authoritative)  |
+| 3   | User persona        | `impersonate_actor_id` / `persona_id`   | persona/card  | `<user_persona>` XML   |
+| 4   | Lore                | `actor_lore_entries` + world lore       | lore author   | `<lore>` XML           |
+| 5   | Memories            | `actor_memories`                        | memory auth   | `<memory_context>` XML |
+| 6   | Post-history instr. | `actors.post_history_instructions`      | character     | `<post_history>` XML   |
+| 7   | Examples            | `actors.mes_example`                    | character     | plain                  |
+| 8   | Story context       | `locations`, `location_states`          | world author  | `<story_context>` XML  |
+| 9   | Chat history        | `messages` (incl. `MessageRole.System`) | **chat user** | n/a                    |
 
 ## Findings
 
@@ -50,13 +50,13 @@ Plain "Ignore previous instructions" in normal `user` message. Partially mitigat
 
 ## Delimiter Options (Approved: Static XML)
 
-| Format        | Spoofable? | Model-trained | Notes                                |
-| ------------- | ---------- | ------------- | ------------------------------------ |
-| **Nonce-XML** | No         | Yes           | Strongest, per-session secret        |
-| **Static XML**| No         | Yes           | **Approved**. XML-escaped content.   |
-| Triple-backtick| Yes       | Partial       | User can emit ```                    |
-| `[Label]`     | Yes        | No            | Current for 5 sections — weakest     |
-| JSON/TOML/YAML| Structurally hard | data-only | Good for data, not boundary signals  |
+| Format          | Spoofable?        | Model-trained | Notes                               |
+| --------------- | ----------------- | ------------- | ----------------------------------- |
+| **Nonce-XML**   | No                | Yes           | Strongest, per-session secret       |
+| **Static XML**  | No                | Yes           | **Approved**. XML-escaped content.  |
+| Triple-backtick | Yes               | Partial       | User can emit ```                   |
+| `[Label]`       | Yes               | No            | Current for 5 sections — weakest    |
+| JSON/TOML/YAML  | Structurally hard | data-only     | Good for data, not boundary signals |
 
 **Approach**: Standardize on static XML with distinct tag per section. Content XML-escaped (`<` → `&lt;`, `>` → `&gt;`, `&` → `&amp;`). Per-session nonce generated server-side for audit, stripped before LLM.
 

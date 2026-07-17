@@ -10,12 +10,12 @@ type(scope): short description (≤72 chars, no period)
 
 ### Types
 
-| Type                  | Bump    | Scope              |
-| --------------------- | ------- | ------------------ |
-| `feat`                | minor   | New feature        |
-| `fix`                 | patch   | Bug fix            |
-| `feat!` / `refactor!` | major   | Breaking change    |
-| `refactor`, `docs`, `test`, `chore`, `style`, `perf`, `build`, `ci` | none | |
+| Type                                                                | Bump  | Scope           |
+| ------------------------------------------------------------------- | ----- | --------------- |
+| `feat`                                                              | minor | New feature     |
+| `fix`                                                               | patch | Bug fix         |
+| `feat!` / `refactor!`                                               | major | Breaking change |
+| `refactor`, `docs`, `test`, `chore`, `style`, `perf`, `build`, `ci` | none  |                 |
 
 ### Scopes
 
@@ -29,12 +29,12 @@ Validates commit message format. Skip: `git commit --no-verify`.
 
 ## Branch Strategy
 
-| Branch            | Version Output                          |
-| ----------------- | --------------------------------------- |
-| `master` / `main` | Semver bump (0.2.0, 1.0.0, etc.)        |
-| `release/0`       | 0.x.y (0.2.1, 0.3.0, etc.)              |
-| `release/1`       | 1.x.y                                    |
-| `feature/*`       | dev (0.1.0-dev.20260710.abc123)          |
+| Branch            | Version Output                   |
+| ----------------- | -------------------------------- |
+| `master` / `main` | Semver bump (0.2.0, 1.0.0, etc.) |
+| `release/0`       | 0.x.y (0.2.1, 0.3.0, etc.)       |
+| `release/1`       | 1.x.y                            |
+| `feature/*`       | dev (0.1.0-dev.20260710.abc123)  |
 
 ## Release Process
 

@@ -1,10 +1,10 @@
-import { describe, test, expect, beforeAll, afterAll } from "bun:test";
 import { Database } from "bun:sqlite";
+import { afterAll, beforeAll, describe, expect, test } from "bun:test";
+import { Kysely } from "kysely";
+import type { Migration } from "kysely/migration";
 import { readdirSync } from "node:fs";
 import path from "node:path";
-import { Kysely } from "kysely";
 import { createSqliteDialect } from "./index";
-import type { Migration } from "kysely/migration";
 
 // ── Helpers ──────────────────────────────────────────────────
 
@@ -75,7 +75,7 @@ describe("full migration chain", () => {
   test("all migrations revert in reverse order without error", async () => {
     for (const name of [...MIGRATION_NAMES].reverse()) {
       if (migrations[name]!.down) {
-        await migrations[name]!.down!(kysely);
+        await migrations[name]!.down(kysely);
       }
     }
 
@@ -261,7 +261,7 @@ describe("migration consistency flags", () => {
 
     for (const name of [...MIGRATION_NAMES].reverse()) {
       if (allMigrations[name]!.down) {
-        await allMigrations[name]!.down!(kysely);
+        await allMigrations[name]!.down(kysely);
       }
     }
     const downTables = schemaTables(db);

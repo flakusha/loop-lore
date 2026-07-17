@@ -126,11 +126,18 @@ export async function createBrowserTest(
 
   const browser = await chromium.launch({ headless: true });
 
+  // Create browser context with generous viewport so sidebar nav is visible.
+  // Cast to Browser — BrowserContext also has newPage() and is compatible
+  // at runtime with the BrowserTestContext interface.
+  const browserContext = await browser.newContext({
+    viewport: { width: 1440, height: 900 },
+  });
+
   return {
     url,
     db,
     config,
-    browser,
+    browser: browserContext as unknown as Browser,
     close: async () => {
       await browser.close();
       bunServer.stop();

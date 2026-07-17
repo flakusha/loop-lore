@@ -7,12 +7,12 @@ Source: `src/content/` (encode, decode, compress, minify, hash-injection).
 
 ## Compression Algorithms
 
-| Algorithm | Priority              | Used For                             |
-| --------- | --------------------- | ------------------------------------ |
-| gzip      | 1st (config default)  | Crypto pipeline, build artifacts     |
-| brotli    | 2nd                   | Build artifacts                      |
-| zstd      | 3rd                   | Build artifacts (fastest decompress) |
-| identity  | fallback              | Sub-threshold / failure fallback     |
+| Algorithm | Priority             | Used For                             |
+| --------- | -------------------- | ------------------------------------ |
+| gzip      | 1st (config default) | Crypto pipeline, build artifacts     |
+| brotli    | 2nd                  | Build artifacts                      |
+| zstd      | 3rd                  | Build artifacts (fastest decompress) |
+| identity  | fallback             | Sub-threshold / failure fallback     |
 
 Source: `src/content/encode.ts`, `src/content/decode.ts`, `src/content/types.ts`.
 
