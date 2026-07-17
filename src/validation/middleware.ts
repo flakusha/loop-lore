@@ -14,8 +14,6 @@
  * @module validation/middleware
  */
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 import { NotFoundError, ForbiddenError } from "../routes/http-utils";
 
 /**
