@@ -1,8 +1,6 @@
 // ── Characters page: search, detail modal, actions ────────────
+import { fetchPartial } from "./shared";
 import { jsonBody } from "../alpine/json";
-
-declare const Alpine: { initTree: (el: Element) => void } | undefined;
-declare const htmx: { trigger: (el: Element, event: string) => void } | undefined;
 
 (globalThis as any).filterCharacters = function () {
   const query = (document.querySelector<HTMLInputElement>("#character-search")?.value ?? "")
@@ -35,19 +33,22 @@ declare const htmx: { trigger: (el: Element, event: string) => void } | undefine
   if (!modal) {
     const container = document.querySelector("#modal-container");
     if (!container) return;
-    const resp = await fetch("/partials/characters/detail-modal");
-    if (!resp.ok) return;
-    container.innerHTML = await resp.text();
+    const html = await fetchPartial("/partials/characters/detail-modal");
+    if (!html) return;
+    container.innerHTML = html;
     // Initialize Alpine on dynamically loaded modal
-    if (globalThis.Alpine) {
-      Alpine.initTree(container);
+    if ((globalThis as any).Alpine) {
+      (globalThis as any).Alpine.initTree(container);
     }
     modal = document.querySelector<HTMLElement>("#character-detail-modal");
   }
   if (!modal) return;
 
-  const resp = await apiFetch(`/api/actors/${id}`);
-  if (!resp.ok) return;
+  const resp = await (globalThis as any).apiFetch(`/api/actors/${id}`);
+  if (!resp.ok) {
+    console.error("Failed to fetch actor:", resp.status, id);
+    return;
+  }
   const char = await resp.json();
 
   try {
@@ -71,7 +72,7 @@ declare const htmx: { trigger: (el: Element, event: string) => void } | undefine
   const id = btn.dataset.id;
   if (!id) return;
   try {
-    const res = await apiFetch("/api/chats", {
+    const res = await (globalThis as any).apiFetch("/api/chats", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: jsonBody({ name: "Chat", type: "direct", mode: "direct", participantIds: [id] }),
@@ -94,12 +95,16 @@ declare const htmx: { trigger: (el: Element, event: string) => void } | undefine
   const id = btn.dataset.id;
   if (!id || !confirm("Delete this character?")) return;
   try {
-    const res = await apiFetch(`/api/actors/${id}`, { method: "DELETE" });
+    const res = await (globalThis as any).apiFetch(`/api/actors/${id}`, {
+      method: "DELETE",
+    });
     if (res.ok) {
       document.querySelector("#character-detail-modal")?.classList.remove("open");
-      showToast("success", "Character deleted");
+      (globalThis as any).showToast?.("success", "Character deleted");
       const grid = document.querySelector("#character-grid");
-      if (grid) htmx.trigger(grid, "load");
+      if (grid) {
+        (globalThis as any).htmx.trigger(grid, "load");
+      }
     }
   } catch {
     /* ignore */
