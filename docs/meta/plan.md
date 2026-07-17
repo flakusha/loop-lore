@@ -199,7 +199,7 @@ Page-vs-modal architecture, admin pages, user prefs modal, plugin management.
 | Admin page routes          | `src/routes/admin.ts`                       | NEW. `/admin` → redirect to `/admin/settings`. `/admin/settings/[section]` — tabbed admin pages. `/admin/users` — user management.                |
 | Admin settings tabs        | `src/views/admin/`                          | NEW. Tabs: General, API, Users, Data, About. Each tab = htmx partial. Keywords per tab for search.                                                |
 | Admin runtime config table | `src/db/migrations/`, `src/admin/config.ts` | NEW. `system_config` key-value table. Seed with `config.yaml` defaults at startup. Admin changes take effect without restart.                     |
-| User preferences modal     | `src/views/modals/settings.html`            | NEW. Modal overlay accessible from chat. Tabs: Theme, Chat Behavior, Generation, Shortcuts, Data. Live preview (theme changes apply immediately). |
+| User preferences modal     | `src/components/modals/settings.html`       | NEW. Modal overlay accessible from chat. Tabs: Theme, Chat Behavior, Generation, Shortcuts, Data. Live preview (theme changes apply immediately). |
 | Per-user settings API      | `src/routes/settings.ts`                    | NEW. `GET/PATCH /api/settings` → read/write `users.settings` JSON column. Auto-merge on PATCH.                                                    |
 | Plugin management API      | `src/routes/plugins.ts`                     | NEW. `GET /api/plugins` list, `POST /api/plugins/:name/enable`, `POST /api/plugins/:name/disable`. Gate on admin role.                            |
 
