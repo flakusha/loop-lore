@@ -966,6 +966,8 @@ body {
   cursor: pointer;
   transition: all var(--transition-normal);
   border: 1px solid var(--border-default);
+  max-width: 280px;
+  justify-self: center;
 }
 
 .character-card:hover {
