@@ -13,7 +13,7 @@ import type { DB } from "../db/schema";
 function createApp(db: Kysely<DB>, userId: string | null): Elysia {
   return new Elysia({ name: "test-chats" })
     .derive(() => ({ userId }))
-    .use(chatsRoutes({ database: db })) as unknown as Elysia;
+    .use(chatsRoutes({ database: db, config: {} as any })) as unknown as Elysia;
 }
 
 describe("chatsRoutes", () => {

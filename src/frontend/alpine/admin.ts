@@ -68,6 +68,7 @@ import { adminWorlds } from "./admin-worlds";
         case "models": {
           this.loadModels();
           this.loadModelRoles();
+          this.loadSdStatus();
           break;
         }
         case "plugins": {

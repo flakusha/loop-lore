@@ -338,7 +338,7 @@ describe("Generation E2E", () => {
 
     // Mock provider ignores content size — succeeds gracefully
     if (res.ok) {
-      expect(res.data.content).toBe("Mock response content");
+      expect((res.data as { content: string }).content).toBe("Mock response content");
     } else {
       expect(res.status).toBeGreaterThanOrEqual(400);
       expect(res.code).toBeTruthy(); // TEST.2 error envelope

@@ -36,6 +36,8 @@ const log: Logger = {
   error(msg: string | Record<string, unknown>) { console.error(`[server-external-e2e] ${fmtMsg(msg)}`); },
   child: () => log,
   flush: async () => {},
+  addTransport: () => {},
+  setBindings: () => {},
 };
 
 const SKIP_REAL = process.env.LL_REAL_E2E_SKIP === "1";
@@ -100,7 +102,7 @@ describeReal("Real-Server Generation E2E", () => {
   // ── LLM ──────────────────────────────────────────────────
 
   describe("llama.cpp", () => {
-    test("real LLM completes generation", { timeout: 60_000 }, async () => {
+    test("real LLM completes generation", async () => {
       await ensureServers();
       if (!llamaInstance) return;
 
@@ -133,7 +135,7 @@ describeReal("Real-Server Generation E2E", () => {
       }
     });
 
-    test("real LLM respects maxTokens", { timeout: 60_000 }, async () => {
+    test("real LLM respects maxTokens", async () => {
       await ensureServers();
       if (!llamaInstance) return;
 
@@ -159,7 +161,7 @@ describeReal("Real-Server Generation E2E", () => {
   // ── SD ───────────────────────────────────────────────────
 
   describe("sd-server", () => {
-    test("health check returns samplers", { timeout: 10_000 }, async () => {
+    test("health check returns samplers", async () => {
       await ensureServers();
       if (!sdInstance) return;
 
@@ -171,7 +173,7 @@ describeReal("Real-Server Generation E2E", () => {
       expect(data.some((s) => s.name === "euler_a")).toBe(true);
     });
 
-    test("txt2img generates image", { timeout: 30_000 }, async () => {
+    test("txt2img generates image", async () => {
       await ensureServers();
       if (!sdInstance) return;
 
@@ -189,11 +191,11 @@ describeReal("Real-Server Generation E2E", () => {
       const data = (await res.json()) as { images: string[] };
       expect(Array.isArray(data.images)).toBe(true);
       expect(data.images.length).toBeGreaterThan(0);
-      expect(data.images[0].length).toBeGreaterThan(10);
+      expect(data.images[0]!.length).toBeGreaterThan(10);
       expect(data.images[0]).toMatch(/^[A-Za-z0-9+/]+=*$/);
     });
 
-    test("handles missing prompt gracefully", { timeout: 10_000 }, async () => {
+    test("handles missing prompt gracefully", async () => {
       await ensureServers();
       if (!sdInstance) return;
 
