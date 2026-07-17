@@ -118,6 +118,15 @@ export function createApp(deps: AppDeps): Elysia {
   app.use(assetRoutes(handleOpts));
   app.use(viewRoutes({ database: handleOpts.database }));
 
+  // ── Convenience redirects ─────────────────────────────────────
+  const redirectTo = (location: string): Response =>
+    new Response(null, { status: 302, headers: { Location: location } });
+
+  // Authenticated users land on the chat; everyone else on the login screen.
+  app.get("/", (ctx: any) => redirectTo(ctx.userId ? "/views/chat" : "/views/login"));
+  app.get("/chat", (ctx: any) => redirectTo(ctx.userId ? "/views/chat" : "/views/login"));
+  app.get("/register", (ctx: any) => redirectTo(ctx.userId ? "/views/chat" : "/views/register"));
+
   // ── Catch-all: delegate to existing dispatch logic ───────────────────────────
   app.all("/*", async ({ request }) => {
     const url = new URL(request.url);
