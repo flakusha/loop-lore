@@ -82,7 +82,7 @@
             x-text="chat.isPinned === 'pinned' ? '★' : '☆'"
           ></button>
           <button class="btn-icon btn-xs" title="Rename" @click.prevent="renameChat(chat.id)">✏️</button>
-          <button class="btn-icon btn-xs" title="Delete" @click.prevent="deleteChat(chat.id, $$event)">
+          <button class="btn-icon btn-xs" title="Delete" @click.prevent="deleteChat(chat.id, $event)">
             🗑
           </button>
         </span>
