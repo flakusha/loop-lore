@@ -10,6 +10,7 @@ import { chatSettings } from "./chat-settings";
 import { chatEditing } from "./chat-editing";
 import { chatActions } from "./chat-actions";
 import { chatUtils } from "./chat-utils";
+import { getLogger } from "./logger";
 import { chatKeys } from "./chat-keys";
 import { chatPanels } from "./chat-panels";
 import type { AlpineState, ChatState } from "./types";
@@ -236,6 +237,7 @@ globalThis.chatState = function () {
       }
       this.loadingError = null;
       this.activeChat = chatId;
+      getLogger().setBindings({ chatId });
       Alpine.store("ui").hasActiveChat = true;
       const chat = this.chats.find((c: { id: string; name?: string }) => c.id === chatId);
       this.activeChatName = chat?.name || "Chat";
