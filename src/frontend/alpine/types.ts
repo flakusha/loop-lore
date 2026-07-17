@@ -105,4 +105,6 @@ declare global {
   var chatState: Window["chatState"];
   var worldEditState: Window["worldEditState"];
   var app: Window["app"];
+  var __USER_ID: string | null | undefined;
+  var __SESSION_ID: string | null | undefined;
 }

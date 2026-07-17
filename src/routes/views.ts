@@ -34,6 +34,7 @@ import type { Kysely } from "kysely";
 import type { DB } from "../db/schema";
 import { ActorType } from "../db/enums";
 import { adminViewGuard } from "../middleware/admin-gate";
+import { isFrontendTelemetryEnabled } from "../telemetry/service";
 
 const VIEWS_DIR = join(import.meta.dir, "..", "views");
 const PARTIALS_DIR = join(import.meta.dir, "..", "partials");
@@ -70,12 +71,20 @@ const ALLOWED_PARTIALS = new Set([
 
 const viewCache = new Map<string, string>();
 
-function wrapWithLayout(content: string, title?: string): string {
+function wrapWithLayout(
+  content: string,
+  title?: string,
+  userId?: string | null,
+  sessionId?: string | null,
+): string {
   const layoutPath = join(VIEWS_DIR, "layout.html");
   if (!existsSync(layoutPath)) return content;
 
   let layout = readFileSync(layoutPath, "utf8");
   layout = layout.replace("{{{content}}}", () => content);
+  layout = layout.replace("{{telemetryEnabled}}", () => (isFrontendTelemetryEnabled() ? "true" : "false"));
+  layout = layout.replace("{{userId}}", () => JSON.stringify(userId ?? null));
+  layout = layout.replace("{{sessionId}}", () => JSON.stringify(sessionId ?? null));
   if (title) layout = layout.replace(/<title>.*?<\/title>/, () => `<title>${title} — Loop Lore</title>`);
   return layout;
 }
@@ -107,19 +116,31 @@ function loadView(viewName: string): string {
   return resolved;
 }
 
-function respond(content: string, isHtmx: boolean, title?: string): Response {
-  const body = isHtmx ? content : wrapWithLayout(content, title);
+function respond(
+  content: string,
+  isHtmx: boolean,
+  title?: string,
+  userId?: string | null,
+  sessionId?: string | null,
+): Response {
+  const body = isHtmx ? content : wrapWithLayout(content, title, userId, sessionId);
   return new Response(body, {
     headers: { "Content-Type": "text/html; charset=utf-8" },
   });
 }
 
-function notFoundView(message: string, isHtmx: boolean, title = "Not found"): Response {
+function notFoundView(
+  message: string,
+  isHtmx: boolean,
+  title = "Not found",
+  userId?: string | null,
+  sessionId?: string | null,
+): Response {
   const content = `<div class="empty-state" style="padding: var(--space-12)">
       <div class="icon">⚠️</div>
       <div class="title">${escapeHtml(message)}</div>
     </div>`;
-  return respond(content, isHtmx, title);
+  return respond(content, isHtmx, title, userId, sessionId);
 }
 
 function htmlResponse(body: string): Response {
@@ -136,7 +157,12 @@ function escapeHtml(str: string): string {
     .replaceAll('"', "&quot;");
 }
 
-function serveView(viewName: string, isHtmx = false): Response | null {
+function serveView(
+  viewName: string,
+  isHtmx = false,
+  userId?: string | null,
+  sessionId?: string | null,
+): Response | null {
   viewName = viewName === "assets" ? "gallery" : viewName;
   if (!ALLOWED_VIEWS.has(viewName)) return null;
 
@@ -144,75 +170,92 @@ function serveView(viewName: string, isHtmx = false): Response | null {
   if (!content) return null;
 
   const title = viewName === "index" ? undefined : viewName.charAt(0).toUpperCase() + viewName.slice(1);
-  return respond(content, isHtmx, title);
+  return respond(content, isHtmx, title, userId, sessionId);
 }
 
-function serveCharacterChatList(slug: string, isHtmx = false): Response | null {
+function serveCharacterChatList(
+  slug: string,
+  isHtmx = false,
+  userId?: string | null,
+  sessionId?: string | null,
+): Response | null {
   let content = loadView("character-chat-list");
   if (!content) return null;
 
   content = content.replace("{{characterSlug}}", () => slug);
-  return respond(content, isHtmx, `${slug} — Chats`);
+  return respond(content, isHtmx, `${slug} — Chats`, userId, sessionId);
 }
 
-function serveCharacterChat(slug: string, _chatId: string, isHtmx = false): Response | null {
+function serveCharacterChat(
+  slug: string,
+  _chatId: string,
+  isHtmx = false,
+  userId?: string | null,
+  sessionId?: string | null,
+): Response | null {
   const content = loadView("chat");
   if (!content) return null;
 
-  return respond(content, isHtmx, `${slug} — Chat`);
+  return respond(content, isHtmx, `${slug} — Chat`, userId, sessionId);
 }
 
-function serveWorldsList(isHtmx = false): Response | null {
-  return serveView("worlds", isHtmx);
+function serveWorldsList(isHtmx = false, userId?: string | null, sessionId?: string | null): Response | null {
+  return serveView("worlds", isHtmx, userId, sessionId);
 }
 
 async function serveWorldDetail(
   worldId: string,
   database: Kysely<DB>,
   isHtmx = false,
+  userId?: string | null,
+  sessionId?: string | null,
 ): Promise<Response | null> {
   const world = await database.selectFrom("worlds").select("id").where("id", "=", worldId).executeTakeFirst();
-  if (!world) return notFoundView("World not found", isHtmx, "World not found");
+  if (!world) return notFoundView("World not found", isHtmx, "World not found", userId, sessionId);
 
   let content = loadView("world-detail");
   if (!content) return null;
 
   content = content.replace("{{worldId}}", () => worldId);
-  return respond(content, isHtmx, "World — Details");
+  return respond(content, isHtmx, "World — Details", userId, sessionId);
 }
 
 async function serveWorldEdit(
   worldId: string,
   database: Kysely<DB>,
   isHtmx = false,
+  userId?: string | null,
+  sessionId?: string | null,
 ): Promise<Response | null> {
   const world = await database.selectFrom("worlds").select("id").where("id", "=", worldId).executeTakeFirst();
-  if (!world) return notFoundView("World not found", isHtmx, "World not found");
+  if (!world) return notFoundView("World not found", isHtmx, "World not found", userId, sessionId);
 
   let content = loadView("world-edit");
   if (!content) return null;
 
   content = content.replace("{{worldId}}", () => worldId);
-  return respond(content, isHtmx, "Edit World");
+  return respond(content, isHtmx, "Edit World", userId, sessionId);
 }
 
 async function serveCharacterEdit(
   characterId: string,
   database: Kysely<DB>,
   isHtmx = false,
+  userId?: string | null,
+  sessionId?: string | null,
 ): Promise<Response | null> {
   const actor = await database
     .selectFrom("actors")
     .select("id")
     .where("id", "=", characterId)
     .executeTakeFirst();
-  if (!actor) return notFoundView("Character not found", isHtmx, "Character not found");
+  if (!actor) return notFoundView("Character not found", isHtmx, "Character not found", userId, sessionId);
 
   let content = loadView("character-edit");
   if (!content) return null;
 
   content = content.replace("{{characterId}}", () => characterId);
-  return respond(content, isHtmx, "Edit Character");
+  return respond(content, isHtmx, "Edit Character", userId, sessionId);
 }
 
 // ── Static partials (read from file) ─────────────────────────
@@ -796,65 +839,71 @@ export function viewRoutes({ database }: { database: Kysely<DB> }) {
       })
 
       // ── Character routes ───────────────────────────────────────
-      .get("/character/:slug", (ctx) => {
+      .get("/character/:slug", (ctx: any) => {
         const isHtmx = ctx.request.headers.get("HX-Request") === "true";
-        const result = serveCharacterChatList(ctx.params.slug, isHtmx);
+        const result = serveCharacterChatList(ctx.params.slug, isHtmx, ctx.userId, ctx.sessionId);
         if (result) return result;
         return new Response("Not found", { status: 404 });
       })
-      .get("/character/:slug/edit", async (ctx) => {
+      .get("/character/:slug/edit", async (ctx: any) => {
         const isHtmx = ctx.request.headers.get("HX-Request") === "true";
-        const result = await serveCharacterEdit(ctx.params.slug, database, isHtmx);
+        const result = await serveCharacterEdit(ctx.params.slug, database, isHtmx, ctx.userId, ctx.sessionId);
         if (result) return result;
         return new Response("Not found", { status: 404 });
       })
-      .get("/character/:slug/:chatId", (ctx) => {
+      .get("/character/:slug/:chatId", (ctx: any) => {
         const isHtmx = ctx.request.headers.get("HX-Request") === "true";
-        const result = serveCharacterChat(ctx.params.slug, ctx.params.chatId, isHtmx);
+        const result = serveCharacterChat(
+          ctx.params.slug,
+          ctx.params.chatId,
+          isHtmx,
+          ctx.userId,
+          ctx.sessionId,
+        );
         if (result) return result;
         return new Response("Not found", { status: 404 });
       })
-      .get("/characters/:id/edit", async (ctx) => {
+      .get("/characters/:id/edit", async (ctx: any) => {
         const isHtmx = ctx.request.headers.get("HX-Request") === "true";
-        const result = await serveCharacterEdit(ctx.params.id, database, isHtmx);
+        const result = await serveCharacterEdit(ctx.params.id, database, isHtmx, ctx.userId, ctx.sessionId);
         if (result) return result;
         return new Response("Not found", { status: 404 });
       })
 
       // ── World routes ───────────────────────────────────────────
-      .get("/worlds", (ctx) => {
+      .get("/worlds", (ctx: any) => {
         const isHtmx = ctx.request.headers.get("HX-Request") === "true";
-        const result = serveWorldsList(isHtmx);
+        const result = serveWorldsList(isHtmx, ctx.userId, ctx.sessionId);
         if (result) return result;
         return new Response("Not found", { status: 404 });
       })
-      .get("/worlds/:id", async (ctx) => {
+      .get("/worlds/:id", async (ctx: any) => {
         const isHtmx = ctx.request.headers.get("HX-Request") === "true";
-        const result = await serveWorldDetail(ctx.params.id, database, isHtmx);
+        const result = await serveWorldDetail(ctx.params.id, database, isHtmx, ctx.userId, ctx.sessionId);
         if (result) return result;
         return new Response("Not found", { status: 404 });
       })
-      .get("/worlds/:id/edit", async (ctx) => {
+      .get("/worlds/:id/edit", async (ctx: any) => {
         const isHtmx = ctx.request.headers.get("HX-Request") === "true";
-        const result = await serveWorldEdit(ctx.params.id, database, isHtmx);
+        const result = await serveWorldEdit(ctx.params.id, database, isHtmx, ctx.userId, ctx.sessionId);
         if (result) return result;
         return new Response("Not found", { status: 404 });
       })
 
       // ── Admin view (guarded — must precede /views/:name) ─────────
       .guard({ beforeHandle: adminViewGuard }, (app) =>
-        app.get("/views/admin", (ctx) => {
+        app.get("/views/admin", (ctx: any) => {
           const isHtmx = ctx.request.headers.get("HX-Request") === "true";
-          const result = serveView("admin", isHtmx);
+          const result = serveView("admin", isHtmx, ctx.userId, ctx.sessionId);
           if (result) return result;
           return new Response("Not found", { status: 404 });
         }),
       )
 
       // ── View templates (non-admin) ──────────────────────────────
-      .get("/views/:name", (ctx) => {
+      .get("/views/:name", (ctx: any) => {
         const isHtmx = ctx.request.headers.get("HX-Request") === "true";
-        const name = ctx.params.name;
+        const name = ctx.params.name as string;
 
         // Redirect .html extensions to clean path; non-allowed views to /views/
         const cleanName = name.replace(/\.html?$/i, "");
@@ -869,7 +918,7 @@ export function viewRoutes({ database }: { database: Kysely<DB> }) {
           return new Response(null, { status: 302, headers: { Location: "/views/" } });
         }
 
-        const result = serveView(name, isHtmx);
+        const result = serveView(name, isHtmx, ctx.userId, ctx.sessionId);
         if (result) return result;
         return new Response("Not found", { status: 404 });
       })

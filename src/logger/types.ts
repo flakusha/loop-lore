@@ -50,6 +50,8 @@ export interface Logger {
 
   /** Add a transport at runtime (for DB transport after DB init) */
   addTransport(transport: Transport): void;
+  /** Merge bindings at runtime (e.g. userId/sessionId for telemetry) */
+  setBindings(partial: LoggerBindings): void;
 
   /** Flush pending entries (await before shutdown) */
   flush(): Promise<void>;
@@ -60,6 +62,7 @@ export interface LoggerBindings {
   requestId?: string;
   userId?: string;
   sessionId?: string;
+  chatId?: string;
 }
 
 /** Optional per-entry overrides */

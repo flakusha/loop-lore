@@ -4,7 +4,7 @@
  * Wires TelemetryTransport into the browser logger on init.
  * Provides trackClick helper for Alpine @click handlers.
  *
- * Dev: always enabled. Prod: gated by server-rendered config flag.
+ * Dev: auto-enabled when NODE_ENV !== "production" (env-overridable). Prod: opt-in via TELEMETRY_* env vars, gated by server-injected global.
  */
 import { getLogger } from "./logger";
 import { TelemetryTransport } from "./transports/telemetry";
@@ -22,6 +22,10 @@ export function initTelemetry(): void {
   try {
     const logger = getLogger();
     logger.addTransport(new TelemetryTransport());
+    logger.setBindings({
+      userId: globalThis.__USER_ID ?? undefined,
+      sessionId: globalThis.__SESSION_ID ?? undefined,
+    });
   } catch {
     // logger not ready yet
   }
