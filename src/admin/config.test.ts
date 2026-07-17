@@ -2,19 +2,11 @@
  * Tests for admin/config.ts — System Config CRUD
  */
 import { describe, test, expect, beforeAll, afterAll } from "bun:test";
-import { Database } from "bun:sqlite";
 import { Kysely, sql } from "kysely";
-import { createSqliteDialect } from "../db/index";
+import { createTestDb } from "../test-utils/create-test-db";
 import { getAllConfig, getConfig, setConfig, deleteConfig } from "./config";
 import { createLogger } from "../logger";
 import type { DB } from "../db/schema";
-
-function createTestDb(): Kysely<DB> {
-  const sqlite = new Database(":memory:");
-  sqlite.run("PRAGMA journal_mode = WAL");
-  const dialect = createSqliteDialect(sqlite);
-  return new Kysely<DB>({ dialect });
-}
 
 async function createSystemConfigTable(db: Kysely<DB>): Promise<void> {
   await db.schema

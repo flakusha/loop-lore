@@ -151,38 +151,61 @@ describe("age-gate controller", () => {
   });
 
   describe("handleGetStatus", () => {
-    test("returns gate disabled when config disabled", async () => {
-      initAgeGate({ enabled: false, minimumAge: 18, mode: AgeGateMode.None });
-      const res = await handleGetStatus(mockDb, null);
+    test.each<
+      [
+        string,
+        { enabled: boolean; minimumAge: number; mode: AgeGateMode },
+        string | null,
+        string | null,
+        string | null,
+        boolean,
+        boolean,
+      ]
+    >([
+      [
+        "returns gate disabled when config disabled",
+        { enabled: false, minimumAge: 18, mode: AgeGateMode.None },
+        null,
+        null,
+        null,
+        false,
+        true,
+      ],
+      [
+        "returns gate not passed for null user with enabled gate",
+        { enabled: true, minimumAge: 18, mode: AgeGateMode.SelfDeclaration },
+        null,
+        null,
+        null,
+        true,
+        false,
+      ],
+      [
+        "returns gate not passed for user without birth_date",
+        { enabled: true, minimumAge: 18, mode: AgeGateMode.SelfDeclaration },
+        "user-1",
+        null,
+        null,
+        true,
+        false,
+      ],
+      [
+        "returns gate passed when user has both fields",
+        { enabled: true, minimumAge: 18, mode: AgeGateMode.SelfDeclaration },
+        "user-1",
+        "2000-01-01",
+        "2024-01-01T00:00:00.000Z",
+        true,
+        true,
+      ],
+    ])("%s", async (_name, config, userId, birthDate, acceptedAt, expectedIsEnabled, expectedHasPassed) => {
+      initAgeGate(config);
+      const db =
+        userId === null ? mockDb : (createDbWithUser(birthDate, acceptedAt) as unknown as Kysely<DB>);
+      const res = await handleGetStatus(db, userId);
       const data = (await res.json()) as { isEnabled: boolean; hasPassed: boolean };
-      expect(data.isEnabled).toBe(false);
-      expect(data.hasPassed).toBe(true);
-    });
-
-    test("returns gate not passed for null user with enabled gate", async () => {
-      initAgeGate({ enabled: true, minimumAge: 18, mode: AgeGateMode.SelfDeclaration });
-      const res = await handleGetStatus(mockDb, null);
-      const data = (await res.json()) as { isEnabled: boolean; hasPassed: boolean };
-      expect(data.isEnabled).toBe(true);
-      expect(data.hasPassed).toBe(false);
-    });
-
-    test("returns gate not passed for user without birth_date", async () => {
-      initAgeGate({ enabled: true, minimumAge: 18, mode: AgeGateMode.SelfDeclaration });
-      const dbWithUser = createDbWithUser(null, null);
-      const res = await handleGetStatus(dbWithUser as unknown as Kysely<DB>, "user-1");
-      const data = (await res.json()) as { isEnabled: boolean; hasPassed: boolean };
-      expect(data.isEnabled).toBe(true);
-      expect(data.hasPassed).toBe(false);
-    });
-
-    test("returns gate passed when user has both fields", async () => {
-      initAgeGate({ enabled: true, minimumAge: 18, mode: AgeGateMode.SelfDeclaration });
-      const dbWithUser = createDbWithUser("2000-01-01", "2024-01-01T00:00:00.000Z");
-      const res = await handleGetStatus(dbWithUser as unknown as Kysely<DB>, "user-1");
-      const data = (await res.json()) as { isEnabled: boolean; hasPassed: boolean };
-      expect(data.isEnabled).toBe(true);
-      expect(data.hasPassed).toBe(true);
+      expect(data.isEnabled).toBe(expectedIsEnabled);
+      expect(data.hasPassed).toBe(expectedHasPassed);
     });
 
     test("returns 500 on database error", async () => {
@@ -193,28 +216,36 @@ describe("age-gate controller", () => {
   });
 
   describe("handleAccept", () => {
-    test("returns 400 when birthDate missing", async () => {
+    test.each<[string, Record<string, unknown>, boolean]>([
+      ["returns 400 when birthDate missing", {}, true],
+      ["returns 400 when birthDate not a string", { birthDate: 123 }, false],
+    ])("%s", async (_name, body, checkError) => {
       const res = await handleAccept({
         database: mockDb,
         userId: "user-1",
-        body: {},
+        body,
       });
       expect(res.status).toBe(400);
-      const data = (await res.json()) as { error: string };
-      expect(data.error).toContain("birthDate");
+      if (checkError) {
+        const data = (await res.json()) as { error: string };
+        expect(data.error).toContain("birthDate");
+      }
     });
 
-    test("returns 400 when birthDate not a string", async () => {
+    test.each<[string, { enabled: boolean; minimumAge: number; mode: AgeGateMode }]>([
+      ["is no-op when gate disabled", { enabled: false, minimumAge: 18, mode: AgeGateMode.None }],
+      ["is no-op when mode is none", { enabled: true, minimumAge: 18, mode: AgeGateMode.None }],
+    ])("%s", async (_name, config) => {
+      initAgeGate(config);
       const res = await handleAccept({
         database: mockDb,
         userId: "user-1",
-        body: { birthDate: 123 },
+        body: { birthDate: "2020-01-01" },
       });
-      expect(res.status).toBe(400);
+      expect(res.status).toBe(200);
     });
 
     test("returns 403 when user is underage", async () => {
-      initAgeGate({ enabled: true, minimumAge: 18, mode: AgeGateMode.SelfDeclaration });
       const res = await handleAccept({
         database: mockDb,
         userId: "user-1",
@@ -224,7 +255,6 @@ describe("age-gate controller", () => {
     });
 
     test("returns 200 and updates database for valid adult", async () => {
-      initAgeGate({ enabled: true, minimumAge: 18, mode: AgeGateMode.SelfDeclaration });
       const dbWithUpdate = createDbWithUpdate();
       const res = await handleAccept({
         database: dbWithUpdate as unknown as Kysely<DB>,
@@ -236,28 +266,7 @@ describe("age-gate controller", () => {
       expect(data.ok).toBe(true);
     });
 
-    test("is no-op when gate disabled", async () => {
-      initAgeGate({ enabled: false, minimumAge: 18, mode: AgeGateMode.None });
-      const res = await handleAccept({
-        database: mockDb,
-        userId: "user-1",
-        body: { birthDate: "2020-01-01" },
-      });
-      expect(res.status).toBe(200);
-    });
-
-    test("is no-op when mode is none", async () => {
-      initAgeGate({ enabled: true, minimumAge: 18, mode: AgeGateMode.None });
-      const res = await handleAccept({
-        database: mockDb,
-        userId: "user-1",
-        body: { birthDate: "2020-01-01" },
-      });
-      expect(res.status).toBe(200);
-    });
-
     test("returns 500 on database error", async () => {
-      initAgeGate({ enabled: true, minimumAge: 18, mode: AgeGateMode.SelfDeclaration });
       const errorDb = createErrorDb();
       const res = await handleAccept({
         database: errorDb as unknown as Kysely<DB>,
@@ -269,77 +278,49 @@ describe("age-gate controller", () => {
   });
 
   describe("handleAdminGetConfig", () => {
-    test("returns 403 for non-admin", () => {
-      const res = handleAdminGetConfig("user");
-      expect(res.status).toBe(403);
-    });
-
-    test("returns 403 for null role", () => {
-      const res = handleAdminGetConfig(null);
-      expect(res.status).toBe(403);
-    });
-
-    test("returns config for admin", async () => {
-      const res = handleAdminGetConfig("admin");
-      expect(res.status).toBe(200);
-      const data = (await res.json()) as { enabled: boolean };
-      expect(data.enabled).toBeDefined();
-    });
-
-    test("returns config for solo user (admin-equivalent)", async () => {
-      const res = handleAdminGetConfig("solo");
-      expect(res.status).toBe(200);
+    test.each<[string, string | null, number, boolean]>([
+      ["returns 403 for non-admin", "user", 403, false],
+      ["returns 403 for null role", null, 403, false],
+      ["returns config for admin", "admin", 200, true],
+      ["returns config for solo user (admin-equivalent)", "solo", 200, false],
+    ])("%s", async (_name, role, expectedStatus, checkData) => {
+      const res = handleAdminGetConfig(role);
+      expect(res.status).toBe(expectedStatus);
+      if (checkData) {
+        const data = (await res.json()) as { enabled: boolean };
+        expect(data.enabled).toBeDefined();
+      }
     });
   });
 
   describe("handleAdminUpdateConfig", () => {
-    test("returns 403 for non-admin", () => {
-      const res = handleAdminUpdateConfig("user", { enabled: true });
-      expect(res.status).toBe(403);
+    test.each<[string, string, Record<string, unknown>, number]>([
+      ["returns 403 for non-admin", "user", { enabled: true }, 403],
+      ["allows update for solo user (admin-equivalent)", "solo", { enabled: true }, 200],
+    ])("%s", (_name, role, body, expectedStatus) => {
+      const res = handleAdminUpdateConfig(role, body);
+      expect(res.status).toBe(expectedStatus);
     });
 
-    test("allows update for solo user (admin-equivalent)", () => {
-      const res = handleAdminUpdateConfig("solo", { enabled: true });
-      expect(res.status).toBe(200);
-    });
-
-    test("returns 400 for invalid body", () => {
-      const res = handleAdminUpdateConfig("admin", null);
+    test.each<[string, Record<string, unknown> | null]>([
+      ["returns 400 for invalid body", null],
+      ["returns 400 for minimumAge = 0", { minimumAge: 0 }],
+      ["returns 400 for minimumAge = 151", { minimumAge: 151 }],
+      ["returns 400 for invalid mode", { mode: "invalid-mode" }],
+    ])("%s", (_name, body) => {
+      const res = handleAdminUpdateConfig("admin", body);
       expect(res.status).toBe(400);
     });
 
-    test("returns 400 for invalid minimumAge", () => {
-      const res = handleAdminUpdateConfig("admin", { minimumAge: 0 });
-      expect(res.status).toBe(400);
-      const res2 = handleAdminUpdateConfig("admin", { minimumAge: 151 });
-      expect(res2.status).toBe(400);
-    });
-
-    test("returns 400 for invalid mode", () => {
-      const res = handleAdminUpdateConfig("admin", { mode: "invalid-mode" });
-      expect(res.status).toBe(400);
-    });
-
-    test("updates enabled flag", async () => {
-      initAgeGate({ enabled: false, minimumAge: 18, mode: AgeGateMode.SelfDeclaration });
-      const res = handleAdminUpdateConfig("admin", { enabled: true });
+    test.each<[string, Record<string, unknown>, string, unknown]>([
+      ["updates enabled flag", { enabled: true }, "enabled", true],
+      ["updates minimumAge", { minimumAge: 21 }, "minimumAge", 21],
+      ["updates mode", { mode: AgeGateMode.Verification }, "mode", AgeGateMode.Verification],
+    ])("%s", async (_name, body, key, value) => {
+      const res = handleAdminUpdateConfig("admin", body);
       expect(res.status).toBe(200);
-      const data = (await res.json()) as { enabled: boolean };
-      expect(data.enabled).toBe(true);
-    });
-
-    test("updates minimumAge", async () => {
-      const res = handleAdminUpdateConfig("admin", { minimumAge: 21 });
-      expect(res.status).toBe(200);
-      const data = (await res.json()) as { minimumAge: number };
-      expect(data.minimumAge).toBe(21);
-    });
-
-    test("updates mode", async () => {
-      const res = handleAdminUpdateConfig("admin", { mode: AgeGateMode.Verification });
-      expect(res.status).toBe(200);
-      const data = (await res.json()) as { mode: AgeGateMode };
-      expect(data.mode).toBe(AgeGateMode.Verification);
+      const data = (await res.json()) as Record<string, unknown>;
+      expect(data[key]).toBe(value);
     });
 
     test("returns updated config", async () => {

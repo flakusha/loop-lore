@@ -2,19 +2,11 @@
  * Tests for logger/transports/db.ts — DBTransport
  */
 import { describe, test, expect, beforeAll, afterAll } from "bun:test";
-import { Database } from "bun:sqlite";
 import { Kysely, sql } from "kysely";
-import { createSqliteDialect } from "../../db/index";
+import { createTestDb } from "../../test-utils/create-test-db";
 import { DBTransport } from "./db";
 import type { DB } from "../../db/schema";
 import type { LogEntry } from "../types";
-
-function createTestDb(): Kysely<DB> {
-  const sqlite = new Database(":memory:");
-  sqlite.run("PRAGMA journal_mode = WAL");
-  const dialect = createSqliteDialect(sqlite);
-  return new Kysely<DB>({ dialect });
-}
 
 async function createLogEntriesTable(db: Kysely<DB>): Promise<void> {
   await db.schema
