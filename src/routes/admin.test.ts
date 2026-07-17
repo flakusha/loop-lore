@@ -143,6 +143,18 @@ describe("Admin system-config", () => {
     );
     expect(res.status).toBe(403);
   });
+
+  test("PATCH /api/admin/system-config allows solo user (admin-equivalent)", async () => {
+    const app = createAdminApp(db, "solo");
+    const res = await app.handle(
+      new Request("http://localhost/api/admin/system-config", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ key: "x", value: "y" }),
+      }),
+    );
+    expect(res.status).toBe(200);
+  });
 });
 
 describe("Admin worlds", () => {
