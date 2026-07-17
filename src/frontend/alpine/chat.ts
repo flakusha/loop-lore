@@ -160,6 +160,12 @@ globalThis.chatState = function () {
       const params = new URLSearchParams(location.search);
       const chatId = params.get("chatid");
       if (chatId) {
+        const chatExists = this.chats.some((c: { id: string }) => c.id === chatId);
+        if (!chatExists) {
+          // Chat was deleted or doesn't exist — redirect to chat view without chatid
+          window.location.href = "/views/chat";
+          return;
+        }
         await this.selectChat(chatId);
       }
 
