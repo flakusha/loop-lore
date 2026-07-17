@@ -30,11 +30,11 @@ Password hashing: **scrypt** (native Bun `Bun.password.hash`). No bcrypt/argon2 
 
 ### Roles
 
-| Role     | Permissions                                                                                                                                       |
-| -------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
-| `admin`  | Full access. Manage users, system config, view all messages/stats.                                                                                |
-| `user`   | Standard. Create/manage own chats, characters, assets. View own message stats.                                                                   |
-| `viewer` | Read-only. View assigned chats, no editing.                                                                                                        |
+| Role     | Permissions                                                                                                                                 |
+| -------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| `admin`  | Full access. Manage users, system config, view all messages/stats.                                                                          |
+| `user`   | Standard. Create/manage own chats, characters, assets. View own message stats.                                                              |
+| `viewer` | Read-only. View assigned chats, no editing.                                                                                                 |
 | `solo`   | Implicit role for local demo mode. Instance owner — admin-equivalent (user mgmt, system + age-gate config) within the single-user instance. |
 
 ### Role-Based Feature Access
@@ -135,6 +135,7 @@ AUTH_DEMO_USERNAME=demo             # solo user's username (demo mode)
 ## Account Seeding
 
 `src/db/seed.ts` seeds the default Assistant actor and demo solo user (if no admin exists):
+
 - **Solo/demo:** `solo` user created on first run or `/api/demo-login`
   (username = `auth.demoUsername`). It is the instance owner (admin-equivalent).
 - **Multi-user:** a bootstrap admin is seeded from
