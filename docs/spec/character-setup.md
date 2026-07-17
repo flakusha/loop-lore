@@ -1,15 +1,11 @@
-# Character & Persona Setup
+# Characters
 
-> ⚠️ **Implementation status:** Basic character CRUD + JSON card import works.
-> **Persona system, multi-format import (YAML/TOML/PNG/CHARX), and impersonation are NOT implemented.**
-> See [`docs/meta/plan.md`](../meta/plan.md) "Skipped During Implementation" section.
-
-## Overview
-
-This document specifies the complete character and persona system for loop-lore:
+This document specifies the character system for loop-lore:
 how characters are defined, imported, exported, and used — including multi-format
 support (JSON, YAML, TOML, PNG-embedded), the character ↔ persona relationship,
 and the impersonation feature.
+
+For personas, see [`docs/spec/personas.md`](./personas.md).
 
 Characters are **genre-agnostic**. The same system supports:
 
@@ -57,12 +53,10 @@ equally well for "dragon lore" (fantasy), "ship schematics" (sci-fi), or
 
 ### Persona
 
-A **persona** is a user-authored identity that the user adopts during a chat.
-Personas define how the user presents themselves to the AI: name, appearance,
-personality, backstory.
+A **persona** is a user-authored identity adopted during a chat. Personas
+define how the user presents themselves to the AI.
 
-Personas are separate from characters — they live on the `users` table (or a
-dedicated `personas` table) and are selected per-chat.
+See [`docs/spec/personas.md`](./personas.md) for the full persona system.
 
 ### Impersonation
 
@@ -78,80 +72,17 @@ Use cases:
 - **Writing**: author voices multiple characters in a collaborative story
 - **Testing**: creator playtests their character by playing the user role
 
----
-
 ## Character ↔ Persona Relationship
 
 ### Data Model
 
 Entities relate as follows:
 
-1. **Users** own many **Personas** (user-authored identities for chat participation)
+1. **Users** own many **Personas** — see [`personas.md`](./personas.md)
 2. **Users** own many **Actors** (when `actor_type='user'`)
 3. **Users** own many **Characters** (as `owner` of actor records with `actor_type='character'`)
-4. **Personas** connect to many **Chats** — determines which identity is active in each chat
+4. **Personas** connect to many **Chats** via `chat_participants.persona_id` — see [`personas.md`](./personas.md)
 5. **Characters** connect to many **Chats** via the `chat_participants` junction table
-
-### Persona Table
-
-| Column          | Type    | Constraints               | Notes                                |
-| --------------- | ------- | ------------------------- | ------------------------------------ |
-| id              | TEXT    | PK, UUID                  |                                      |
-| user_id         | TEXT    | FK → users.id, NOT NULL   | Owner                                |
-| name            | TEXT    | NOT NULL                  | Display name in this persona         |
-| avatar_asset_id | TEXT    | FK → assets.id            | Profile picture                      |
-| description     | TEXT    |                           | Physical/mental traits, backstory    |
-| title           | TEXT    |                           | Optional title (display only)        |
-| is_default      | INTEGER | DEFAULT 0                 | Boolean: auto-selected for new chats |
-| created_at      | TEXT    | DEFAULT CURRENT_TIMESTAMP |                                      |
-| updated_at      | TEXT    | DEFAULT CURRENT_TIMESTAMP |                                      |
-
-**Index**: `(user_id)` for user's persona list, `(user_id, is_default)` for default lookup.
-
-### Chat ↔ Persona Binding
-
-When a chat is created, the user selects which persona to use. The chat stores
-the active persona:
-
-| Chat Column    | Type | Constraints      | Notes                        |
-| -------------- | ---- | ---------------- | ---------------------------- |
-| persona_id     | TEXT | FK → personas.id | Active user persona          |
-| impersonate_id | TEXT | FK → actors.id   | Character being impersonated |
-
-**Impersonation flow:**
-
-1. User selects "Impersonate" on a character
-2. `chat.impersonate_id` is set to that character's actor ID
-3. In prompt assembly, the impersonated character's fields replace the user's
-   identity fields
-4. Messages from the user are attributed to `chat.impersonate_id` in the
-   prompt (but stored with the user's `actor_id` for permissions)
-5. The UI shows the impersonated character's avatar and name for user messages
-
-**Impersonation vs Persona lock:**
-
-| Feature          | Persona                       | Impersonation                   |
-| ---------------- | ----------------------------- | ------------------------------- |
-| What it does     | Sets user's identity          | User plays as a character       |
-| Stored in        | `chat.persona_id`             | `chat.impersonate_id`           |
-| Prompt injection | User's persona fields         | Character's fields in user slot |
-| Message author   | User's actor_id               | User's actor_id (permissions)   |
-| UI display       | Persona name/avatar           | Character name/avatar           |
-| Can be changed   | Anytime (affects future msgs) | Anytime (affects future msgs)   |
-
-### Macro System
-
-Macros resolve differently depending on context:
-
-| Macro      | In Character Card        | In Persona                  | Meaning                 |
-| ---------- | ------------------------ | --------------------------- | ----------------------- |
-| `{{char}}` | Character's display_name | Chat partner's display_name | The "other" participant |
-| `{{user}}` | User's display_name      | This persona's display_name | The "self" participant  |
-| `<BOT>`    | Same as `{{char}}`       | Same as `{{char}}`          | Alias                   |
-| `<USER>`   | Same as `{{user}}`       | Same as `{{user}}`          | Alias                   |
-
-When impersonating, `{{user}}` resolves to the impersonated character's name
-in the prompt context, giving the AI the correct identity frame.
 
 ---
 
@@ -760,64 +691,6 @@ loop-lore import --format sillytavern ./my-characters/
 2. Upload via web UI or API
 3. No conversion needed — keys match canonical fields directly
 
----
-
-## Prompt Assembly with Personas
-
-When constructing the LLM prompt, persona and impersonation affect how
-identity fields are injected:
-
-### Standard Chat (No Impersonation)
-
-```
-[System]
-You are {{char}}. {{system_prompt}}
-
-[Character Card — {{char}}]
-Description: {{character.description}}
-Personality: {{character.personality}}
-Scenario: {{character.scenario}}
-
-[User Persona — {{user}}]
-Description: {{persona.description}}
-
-[Chat History]
-{{user}}: ...
-{{char}}: ...
-
-[Post-History Instructions]
-{{post_history_instructions}}
-```
-
-### Impersonation Chat
-
-```
-[System]
-You are {{char}}. {{system_prompt}}
-
-[Character Card — {{char}}]
-Description: {{character.description}}
-Personality: {{character.personality}}
-Scenario: {{character.scenario}}
-
-[User Persona — {{user}}]
-Name: {{impersonated_character.display_name}}
-Description: {{impersonated_character.description}}
-Personality: {{impersonated_character.personality}}
-
-[Chat History]
-{{impersonated_character}}: ...    ← user messages shown as character
-{{char}}: ...
-
-[Post-History Instructions]
-{{post_history_instructions}}
-```
-
-The AI sees the impersonated character as the "user" identity, enabling
-in-character responses from both sides.
-
----
-
 ## API Endpoints
 
 ### Characters
@@ -835,21 +708,11 @@ in-character responses from both sides.
 
 ### Personas
 
-| Method | Endpoint                                 | Description                  |
-| ------ | ---------------------------------------- | ---------------------------- |
-| GET    | `/api/personas`                          | List user's personas         |
-| POST   | `/api/personas`                          | Create persona               |
-| PUT    | `/api/personas/:id`                      | Update persona               |
-| DELETE | `/api/personas/:id`                      | Delete persona               |
-| POST   | `/api/personas/:id/convert-to-character` | Convert persona to character |
+See [`docs/spec/personas.md`](./personas.md) for persona API endpoints.
 
 ### Chat Impersonation
 
-| Method | Endpoint                     | Description                |
-| ------ | ---------------------------- | -------------------------- |
-| PUT    | `/api/chats/:id/persona`     | Set active persona         |
-| PUT    | `/api/chats/:id/impersonate` | Set impersonated character |
-| DELETE | `/api/chats/:id/impersonate` | Stop impersonating         |
+See [`docs/spec/personas.md`](./personas.md) for impersonation endpoints.
 
 ---
 
@@ -863,10 +726,9 @@ in-character responses from both sides.
 | `src/characters/normalizers/` | One file per format (png, charx, v2, v3, cai, yaml, toml) |
 | `src/characters/exporter.ts`  | Canonical → target format conversion                      |
 | `src/characters/template.ts`  | YAML/TOML template generation                             |
-| `src/personas/service.ts`     | Persona CRUD                                              |
-| `src/personas/controller.ts`  | Persona HTTP handlers                                     |
-| `src/routes/personas.ts`      | Persona route definitions                                 |
 | `src/routes/characters.ts`    | Character import/export routes                            |
+
+Persona files are listed in [`docs/spec/personas.md`](./personas.md).
 
 ### Dependencies
 
@@ -888,6 +750,8 @@ New dependencies:
 | `src/characters/exporter.test.ts`      | Round-trip: canonical → format → canonical |
 | `src/personas/service.test.ts`         | Persona CRUD + default logic               |
 | `src/characters/integration.test.ts`   | Full import → store → export pipeline      |
+
+Persona tests: see [`docs/spec/personas.md`](./personas.md).
 
 ---
 

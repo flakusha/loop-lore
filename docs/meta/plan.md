@@ -403,16 +403,16 @@ file via shared `ctx.page` state.
 Tracked in detail at [schema.md#bare-string-columns-requiring-enum-types](../spec/schema.md).
 All 8 tasks completed:
 
-| #   | Task                                             | Status                                                              |
-| --- | ------------------------------------------------ | ------------------------------------------------------------------- |
-| 1   | Lore `enabled` → `LoreEntryStatus` enum          | ✅ — New enum, migration 017, schema types, routes defaults updated |
-| 2   | `actor_keys.status` → `KeyStatus` enum + SM      | ✅ — Added `keyStatusDef` + `keyStatusMachine` state machine        |
-| 3   | `actor_keys.key_type` → `KeyType` enum           | ✅ — Already typed, no change needed                                |
-| 4   | `memory_type` → `MemoryType` enum                | ✅ — Already typed, no change needed                                |
-| 5   | `actor_notes.category` → `NoteCategory` enum     | ✅ — Already typed, no change needed                                |
-| 6   | Wire `world_items.visibility` → `ItemVisibility` | ✅ — Already typed, no change needed                                |
-| 7   | Align `chats.purpose` / `chat_purpose` naming    | ✅ — Added `purpose` column to `chats` DDL (migration 017)          |
-| 8   | Add `actor_keys.public_key` to migration DDL     | ✅ — Added `public_key` column to `actor_keys` DDL (migration 017)  |
+| #   | Task                                             | Status                                                                   |
+| --- | ------------------------------------------------ | ------------------------------------------------------------------------ |
+| 1   | Lore `enabled` → `LoreEntryStatus` enum          | ✅ — New enum, migration 017, schema types, routes defaults updated      |
+| 2   | `actor_keys.status` → `KeyStatus` enum + SM      | ✅ — Added `keyStatusDef` + `keyStatusMachine` state machine             |
+| 3   | `actor_keys.key_type` → `KeyType` enum           | ✅ — Already typed, no change needed                                     |
+| 4   | `memory_type` → `MemoryType` enum                | ✅ — Already typed, no change needed                                     |
+| 5   | `actor_notes.category` → `NoteCategory` enum     | ✅ — Already typed, no change needed                                     |
+| 6   | Wire `world_items.visibility` → `ItemVisibility` | ✅ — Already typed, no change needed                                     |
+| 7   | Align `chats.purpose` / `chat_purpose` naming    | ✅ — Migration 017 added `purpose`, migration 018 dropped `chat_purpose` |
+| 8   | Add `actor_keys.public_key` to migration DDL     | ✅ — Added `public_key` column to `actor_keys` DDL (migration 017)       |
 
 ### Remaining Review Findings (Round 3, 2026-07-06)
 
