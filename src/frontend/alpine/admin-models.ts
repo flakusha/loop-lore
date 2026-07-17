@@ -1,6 +1,5 @@
 import { log as rootLog } from "./logger";
 import { jsonBody } from "./json";
-import { VALID_ROLES } from "../../admin/model-roles";
 
 const log = rootLog.child({ module: "admin-models" });
 
@@ -86,7 +85,8 @@ export const adminModels = {
         this.overrides = data.overrides || {};
         // Build a stable, fully-populated list so every role has a
         // reactive target for x-model (avoids selects losing/resetting state).
-        this.modelRoleList = VALID_ROLES.map((role) => {
+        // Use the server's authoritative validRoles (no server-dep import needed).
+        this.modelRoleList = (data.validRoles || []).map((role) => {
           const found = (data.roles || []).find((r) => r.role === role);
           return { role, provider: found?.provider ?? "", model: found?.model ?? "" };
         });
