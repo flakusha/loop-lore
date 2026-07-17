@@ -1,4 +1,5 @@
 import { log as rootLog } from "./logger";
+import { initTelemetry } from "./telemetry";
 
 const log = rootLog.child({ module: "app" });
 
@@ -16,6 +17,7 @@ globalThis.app = function () {
     },
 
     init() {
+      initTelemetry();
       const initCount = ((globalThis as any).__appInitCount ?? 0) + 1;
       (globalThis as any).__appInitCount = initCount;
       log.debug("init", { initCount });
