@@ -503,11 +503,7 @@
                         <option :value="p.name" x-text="p.label"></option>
                       </template>
                     </select>
-                    <select
-                      class="form-input"
-                      style="font-size: 13px"
-                      x-model="r.model"
-                    >
+                    <select class="form-input" style="font-size: 13px" x-model="r.model">
                       <option value="">Select model...</option>
                       <template x-for="m in getModelsForRole(r.role)" :key="m">
                         <option :value="m" x-text="m"></option>
