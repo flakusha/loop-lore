@@ -153,6 +153,7 @@ export async function getOrCreateSoloUserForAuth(
   const cached = soloUserCache.get(database);
   if (cached !== undefined) return cached;
 
+  // First, check if a solo user was pre-seeded (e.g., in tests)
   const existing = await database
     .selectFrom("users")
     .select(["id"])
@@ -162,6 +163,18 @@ export async function getOrCreateSoloUserForAuth(
   if (existing) {
     soloUserCache.set(database, existing);
     return existing;
+  }
+
+  // Check if demo user exists (seeded via src/db/seed.ts or config)
+  const demoUser = await database
+    .selectFrom("users")
+    .select(["id"])
+    .where("username", "=", demoUsername)
+    .executeTakeFirst();
+
+  if (demoUser) {
+    soloUserCache.set(database, demoUser);
+    return demoUser;
   }
 
   // Create solo user on first run
