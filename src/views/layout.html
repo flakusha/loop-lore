@@ -98,8 +98,6 @@
       </div>
 
       <nav class="sidebar-nav" aria-label="Primary">
-        <div class="nav-section-title">Navigation</div>
-
         <a
           class="nav-item"
           href="/views/chat"
@@ -112,6 +110,8 @@
         >
           <span>💬</span> <span>Chat</span>
         </a>
+
+        <div class="nav-divider" role="separator"></div>
 
         <a
           class="nav-item"
@@ -128,15 +128,15 @@
 
         <a
           class="nav-item"
-          href="/views/gallery"
-          hx-get="/views/gallery"
+          href="/views/personas"
+          hx-get="/views/personas"
           hx-target="#app-root"
           hx-swap="innerHTML"
           hx-push-url="true"
           x-on:click="window.closeSidebar()"
-          data-testid="nav-gallery"
+          data-testid="nav-personas"
         >
-          <span>🖼</span> <span>Gallery</span>
+          <span>🎭</span> <span>Personas</span>
         </a>
 
         <a
@@ -152,18 +152,22 @@
           <span>🌍</span> <span>Worlds</span>
         </a>
 
+        <div class="nav-divider" role="separator"></div>
+
         <a
           class="nav-item"
-          href="/views/personas"
-          hx-get="/views/personas"
+          href="/views/gallery"
+          hx-get="/views/gallery"
           hx-target="#app-root"
           hx-swap="innerHTML"
           hx-push-url="true"
           x-on:click="window.closeSidebar()"
-          data-testid="nav-personas"
+          data-testid="nav-gallery"
         >
-          <span>🎭</span> <span>Personas</span>
+          <span>🖼</span> <span>Gallery</span>
         </a>
+
+        <div class="nav-divider" role="separator"></div>
 
         <a
           class="nav-item"
@@ -222,7 +226,7 @@
       class="backdrop"
       id="sidebar-backdrop"
       x-on:click="window.closeSidebar()"
-      display: none
+      style="display: none"
     ></div>
 
     <!-- Header slot placeholder — replaced via hx-swap-oob on page nav -->

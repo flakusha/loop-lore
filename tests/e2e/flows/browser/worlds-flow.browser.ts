@@ -71,7 +71,7 @@ describe("Worlds flow E2E", () => {
 
   describe("World list and navigation", () => {
     test("world list renders seeded worlds", async () => {
-      const _worldId = await createWorldViaApi("API Created World");
+      void (await createWorldViaApi("API Created World"));
       const page = await ctx.browser.newPage();
       await gotoWorlds(page);
       await page.locator("[data-testid='world-list'] .world-name").first().waitFor({ state: "attached", timeout: 10_000 });
@@ -81,7 +81,7 @@ describe("Worlds flow E2E", () => {
     });
 
     test("clicking a world card navigates to detail page", async () => {
-      const _worldId = await createWorldViaApi("Detail Test World");
+      void (await createWorldViaApi("Detail Test World"));
       const page = await ctx.browser.newPage();
       await gotoWorlds(page);
       const firstCard = page.locator("[data-testid^='world-card-']").first();
