@@ -96,7 +96,7 @@
           </template>
           <!-- Detailed (nerd) mode: full button row + stats -->
           <div class="actions-full" x-show="detailLevel === 'Detailed'" :data-detail="detailLevel">
-            <button class="btn-icon-action" @click="copyMessage(msg.id, $$event)" title="Copy">📋</button>
+            <button class="btn-icon-action" @click="copyMessage(msg.id, $event)" title="Copy">📋</button>
             <button class="btn-icon-action" @click="startEdit(msg.id)" title="Edit">✏️</button>
             <template x-if="msg.role === 'assistant'">
               <button class="btn-icon-action" title="Regenerate" @click="regenerateVariant(msg.id)">♻</button>
@@ -146,7 +146,7 @@
             </template>
             <button
               class="btn-icon-action action-remove"
-              @click="removeMessage(msg.id, $$event)"
+              @click="removeMessage(msg.id, $event)"
               title="Remove"
             >
               🗑
@@ -218,7 +218,7 @@
                 x-show="_hamburgerOpen[msg.id]"
                 @click.outside="_hamburgerOpen[msg.id] = false"
               >
-                <button @click="copyMessage(msg.id, $$event); _hamburgerOpen[msg.id] = false">📋 Copy</button>
+                <button @click="copyMessage(msg.id, $event); _hamburgerOpen[msg.id] = false">📋 Copy</button>
                 <button @click="startEdit(msg.id); _hamburgerOpen[msg.id] = false">✏️ Edit</button>
                 <template x-if="msg.role === 'assistant'">
                   <button @click="regenerateVariant(msg.id); _hamburgerOpen[msg.id] = false">
@@ -256,7 +256,7 @@
                 </template>
                 <button
                   class="dropdown-danger"
-                  @click="removeMessage(msg.id, $$event); _hamburgerOpen[msg.id] = false"
+                  @click="removeMessage(msg.id, $event); _hamburgerOpen[msg.id] = false"
                 >
                   🗑 Remove
                 </button>
