@@ -2,6 +2,7 @@
 <div
   x-show="previewMediaAsset"
   x-cloak
+  :class="{ open: !!previewMediaAsset }"
   class="modal-overlay"
   @click.self="previewMediaAsset = null"
   data-testid="media-preview-modal"

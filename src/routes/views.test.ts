@@ -115,3 +115,19 @@ describe("views serve with layout wrapping", () => {
     expect(body).toContain("<!doctype html>");
   });
 });
+
+describe("chat view mounts modals", () => {
+  test("/views/chat includes user-preferences and chat-settings modals", async () => {
+    const app = viewRoutes({ database: mockDb });
+    const res = await app.handle(
+      new Request("http://localhost/views/chat", { headers: { "HX-Request": "true" } }),
+    );
+    expect(res.status).toBe(200);
+    const body = await res.text();
+    // User preferences modal (was never mounted — bug fix)
+    expect(body).toContain("settings-modal-title");
+    expect(body).toContain("settingsModal");
+    // Chat settings modal
+    expect(body).toContain("chat-settings-modal");
+  });
+});
