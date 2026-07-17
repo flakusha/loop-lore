@@ -116,6 +116,7 @@ export type LorePosition = (typeof LorePosition)[keyof typeof LorePosition];
 export const LoreEntryStatus = {
   Enabled: "enabled",
   Disabled: "disabled",
+  Archived: "archived",
 } as const;
 export type LoreEntryStatus = (typeof LoreEntryStatus)[keyof typeof LoreEntryStatus];
 

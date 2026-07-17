@@ -2,40 +2,20 @@
  * Tests for logger/transports/db.ts — DBTransport
  */
 import { describe, test, expect, beforeAll, afterAll } from "bun:test";
-import { Kysely, sql } from "kysely";
 import { createTestDb } from "../../test-utils/create-test-db";
 import { DBTransport } from "./db";
+import { createLogger } from "../index";
+import type { Kysely } from "kysely";
 import type { DB } from "../../db/schema";
 import type { LogEntry } from "../types";
-
-async function createLogEntriesTable(db: Kysely<DB>): Promise<void> {
-  await db.schema
-    .createTable("log_entries")
-    .addColumn("id", "text", (col) => col.primaryKey())
-    .addColumn("level", "integer", (col) => col.notNull().defaultTo(20))
-    .addColumn("timestamp", "real", (col) => col.notNull())
-    .addColumn("time", "text", (col) => col.notNull())
-    .addColumn("message", "text", (col) => col.notNull())
-    .addColumn("module", "text")
-    .addColumn("user_id", "text")
-    .addColumn("session_id", "text")
-    .addColumn("request_id", "text")
-    .addColumn("meta", "text")
-    .addColumn("event_type", "text")
-    .addColumn("entity_type", "text")
-    .addColumn("entity_id", "text")
-    .addColumn("action", "text")
-    .addColumn("created_at", "text", (col) => col.notNull().defaultTo(sql`(datetime('now'))`))
-    .execute();
-}
 
 describe("DBTransport", () => {
   let db: Kysely<DB>;
   let transport: DBTransport;
 
   beforeAll(async () => {
-    db = createTestDb();
-    await createLogEntriesTable(db);
+    createLogger({ level: "error" });
+    ({ db } = await createTestDb());
     transport = new DBTransport(db);
   });
 
@@ -102,7 +82,6 @@ describe("DBTransport", () => {
 
   test("write does not throw on error (silent catch)", async () => {
     const badTransport = new DBTransport(db);
-    // After destroy, insert should fail silently
     const entry: LogEntry = {
       level: 20,
       timestamp: 0,

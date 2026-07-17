@@ -1,90 +1,17 @@
 /**
- * Unit tests for admin routes (Elysia plugin)
+ * Tests for admin routes — system config, worlds, chats, audit
  */
 import { describe, test, expect, beforeAll, afterAll } from "bun:test";
-import { Database } from "bun:sqlite";
-import { Kysely, sql } from "kysely";
+import { Kysely } from "kysely";
 import { Elysia } from "elysia";
-import { createSqliteDialect } from "../db/index";
+import { createTestDb } from "../test-utils/create-test-db";
 import { adminRoutes } from "./admin";
 import { uid } from "../utils";
 import { createLogger } from "../logger";
 import type { DB } from "../db/schema";
+import type { Database } from "bun:sqlite";
 
 const mockConfig = {} as any;
-
-function createTestDb(): Kysely<DB> {
-  const sqlite = new Database(":memory:");
-  sqlite.run("PRAGMA journal_mode = WAL");
-  const dialect = createSqliteDialect(sqlite);
-  return new Kysely<DB>({ dialect });
-}
-
-async function createTables(db: Kysely<DB>): Promise<void> {
-  await db.schema
-    .createTable("users")
-    .addColumn("id", "text", (col) => col.primaryKey())
-    .addColumn("username", "text", (col) => col.notNull().unique())
-    .addColumn("display_name", "text")
-    .addColumn("role", "text", (col) => col.notNull().defaultTo("user"))
-    .addColumn("status", "text", (col) => col.notNull().defaultTo("active"))
-    .addColumn("birth_date", "text")
-    .addColumn("settings", "text")
-    .addColumn("created_at", "text", (col) => col.notNull().defaultTo(sql`(datetime('now'))`))
-    .addColumn("last_seen_at", "text")
-    .execute();
-
-  await db.schema
-    .createTable("chats")
-    .addColumn("id", "text", (col) => col.primaryKey())
-    .addColumn("name", "text")
-    .addColumn("type", "text", (col) => col.notNull().defaultTo("direct"))
-    .addColumn("mode", "text", (col) => col.notNull().defaultTo("direct"))
-    .addColumn("created_by", "text", (col) => col.notNull())
-    .addColumn("world_id", "text")
-    .addColumn("is_pinned", "text", (col) => col.notNull().defaultTo("unpinned"))
-    .addColumn("created_at", "text", (col) => col.notNull().defaultTo(sql`(datetime('now'))`))
-    .addColumn("updated_at", "text", (col) => col.notNull().defaultTo(sql`(datetime('now'))`))
-    .execute();
-
-  await db.schema
-    .createTable("worlds")
-    .addColumn("id", "text", (col) => col.primaryKey())
-    .addColumn("name", "text", (col) => col.notNull())
-    .addColumn("description", "text")
-    .addColumn("owner_id", "text", (col) => col.notNull())
-    .addColumn("created_at", "text", (col) => col.notNull().defaultTo(sql`(datetime('now'))`))
-    .addColumn("updated_at", "text", (col) => col.notNull().defaultTo(sql`(datetime('now'))`))
-    .execute();
-
-  await db.schema
-    .createTable("system_config")
-    .addColumn("key", "text", (col) => col.primaryKey())
-    .addColumn("value", "text", (col) => col.notNull())
-    .addColumn("description", "text")
-    .addColumn("created_at", "text", (col) => col.notNull().defaultTo(sql`(datetime('now'))`))
-    .addColumn("updated_at", "text", (col) => col.notNull().defaultTo(sql`(datetime('now'))`))
-    .execute();
-
-  await db.schema
-    .createTable("log_entries")
-    .addColumn("id", "text", (col) => col.primaryKey())
-    .addColumn("level", "integer", (col) => col.notNull().defaultTo(20))
-    .addColumn("timestamp", "real", (col) => col.notNull())
-    .addColumn("time", "text", (col) => col.notNull())
-    .addColumn("message", "text", (col) => col.notNull())
-    .addColumn("module", "text")
-    .addColumn("user_id", "text")
-    .addColumn("session_id", "text")
-    .addColumn("request_id", "text")
-    .addColumn("meta", "text")
-    .addColumn("event_type", "text")
-    .addColumn("entity_type", "text")
-    .addColumn("entity_id", "text")
-    .addColumn("action", "text")
-    .addColumn("created_at", "text", (col) => col.notNull().defaultTo(sql`(datetime('now'))`))
-    .execute();
-}
 
 function createAdminApp(db: Kysely<DB>, userRole: string): Elysia {
   return new Elysia({ name: "test-admin" })
@@ -102,11 +29,11 @@ describe("adminRoutes", () => {
 
 describe("Admin system-config", () => {
   let db: Kysely<DB>;
+  let sqlite: Database;
 
   beforeAll(async () => {
     createLogger({ level: "warn" });
-    db = createTestDb();
-    await createTables(db);
+    ({ db, sqlite } = await createTestDb());
     await db
       .insertInto("system_config")
       .values({ key: "test_key", value: "test_val", description: "test" })
@@ -115,6 +42,7 @@ describe("Admin system-config", () => {
 
   afterAll(async () => {
     await db.destroy();
+    sqlite.close();
   });
 
   test("GET /api/admin/system-config requires admin", async () => {
@@ -159,15 +87,37 @@ describe("Admin system-config", () => {
 
 describe("Admin worlds", () => {
   let db: Kysely<DB>;
+  let sqlite: Database;
 
   beforeAll(async () => {
-    db = createTestDb();
-    await createTables(db);
-    await sql`INSERT INTO worlds (id, name, owner_id) VALUES ('w1', 'Test World', ${userId})`.execute(db);
+    ({ db, sqlite } = await createTestDb());
+    await db
+      .insertInto("users")
+      .values({
+        id: userId,
+        username: `user-${userId}`,
+        display_name: "Test User",
+        role: "user",
+        status: "active",
+        settings: "{}",
+      })
+      .execute();
+    await db
+      .insertInto("worlds")
+      .values({
+        id: "w1",
+        name: "Test World",
+        owner_id: userId,
+        difficulty_modifier: 1,
+        difficulty_reroll: "none",
+        difficulty_state: "normal",
+      })
+      .execute();
   });
 
   afterAll(async () => {
     await db.destroy();
+    sqlite.close();
   });
 
   test("GET /api/admin/worlds returns worlds", async () => {
@@ -182,17 +132,30 @@ describe("Admin worlds", () => {
 
 describe("Admin chats", () => {
   let db: Kysely<DB>;
+  let sqlite: Database;
 
   beforeAll(async () => {
-    db = createTestDb();
-    await createTables(db);
-    await sql`INSERT INTO chats (id, name, type, mode, created_by) VALUES ('c1', 'Test Chat', 'direct', 'direct', ${userId})`.execute(
-      db,
-    );
+    ({ db, sqlite } = await createTestDb());
+    await db
+      .insertInto("users")
+      .values({
+        id: userId,
+        username: `user-${userId}`,
+        display_name: "Test User",
+        role: "user",
+        status: "active",
+        settings: "{}",
+      })
+      .execute();
+    await db
+      .insertInto("chats")
+      .values({ id: "c1", name: "Test Chat", type: "direct", mode: "direct", created_by: userId })
+      .execute();
   });
 
   afterAll(async () => {
     await db.destroy();
+    sqlite.close();
   });
 
   test("GET /api/admin/chats returns chats", async () => {
@@ -207,10 +170,10 @@ describe("Admin chats", () => {
 
 describe("Admin audit", () => {
   let db: Kysely<DB>;
+  let sqlite: Database;
 
   beforeAll(async () => {
-    db = createTestDb();
-    await createTables(db);
+    ({ db, sqlite } = await createTestDb());
     await db
       .insertInto("log_entries")
       .values({
@@ -227,6 +190,7 @@ describe("Admin audit", () => {
 
   afterAll(async () => {
     await db.destroy();
+    sqlite.close();
   });
 
   test("GET /api/admin/audit returns entries", async () => {

@@ -21,6 +21,8 @@ export async function up(database: Kysely<unknown>): Promise<void> {
 }
 
 export async function down(database: Kysely<unknown>): Promise<void> {
+  await database.schema.dropIndex("idx_messages_archived").execute();
+
   await database.schema
     .alterTable("messages")
     .dropColumn("archived_at")

@@ -12,7 +12,7 @@ export async function up(database: Kysely<unknown>): Promise<void> {
     .addColumn("scan_depth", "integer", (col) => col.notNull().defaultTo(100))
     .addColumn("token_budget", "integer", (col) => col.notNull().defaultTo(2000))
     .addColumn("difficulty_modifier", "real", (col) => col.notNull().defaultTo(1))
-    .addColumn("difficulty_reroll", "text", (col) => col.notNull().defaultTo("off"))
+    .addColumn("difficulty_reroll", "text", (col) => col.notNull().defaultTo("none"))
     .addColumn("difficulty_state", "text", (col) => col.notNull().defaultTo("alive"))
     .addColumn("created_at", "text", (col) => col.notNull().defaultTo(sql`(datetime('now'))`))
     .addColumn("updated_at", "text", (col) => col.notNull().defaultTo(sql`(datetime('now'))`))
