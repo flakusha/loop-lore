@@ -1,5 +1,6 @@
 import { log as rootLog } from "./logger";
 import { jsonBody } from "./json";
+import { VALID_ROLES } from "../../admin/model-roles";
 
 const log = rootLog.child({ module: "admin-models" });
 
@@ -41,7 +42,7 @@ interface PluginInfo {
 export const adminModels = {
   providers: [] as ProviderInfo[],
   providerModels: {} as Record<string, string[]>,
-  modelRoles: {} as Record<string, { provider: string; model: string }>,
+  modelRoleList: [] as Array<{ role: string; provider: string; model: string }>,
   overrides: {} as Record<string, { provider: string; model: string }>,
   loadingModels: false,
   scanning: false,
@@ -83,32 +84,34 @@ export const adminModels = {
       if (res.ok) {
         const data: ModelRolesResponse = await res.json();
         this.overrides = data.overrides || {};
-        for (const r of data.roles) this.modelRoles[r.role] = { provider: r.provider, model: r.model };
+        // Build a stable, fully-populated list so every role has a
+        // reactive target for x-model (avoids selects losing/resetting state).
+        this.modelRoleList = VALID_ROLES.map((role) => {
+          const found = (data.roles || []).find((r) => r.role === role);
+          return { role, provider: found?.provider ?? "", model: found?.model ?? "" };
+        });
       }
     } catch {
       log.warn("Failed to load model roles");
     }
   },
   getModelsForRole(role: string): string[] {
-    const provider = this.modelRoles[role]?.provider;
+    const entry = this.modelRoleList.find((e) => e.role === role);
+    const provider = entry?.provider;
     if (!provider) return [];
     return this.providerModels[provider] || [];
   },
   getProviderModels(name: string): string[] {
     return this.providerModels[name] || [];
   },
-  onRoleProviderChange(role: string, provider: string) {
-    if (!Object.hasOwn(this.modelRoles, role)) this.modelRoles[role] = { provider: "", model: "" };
-    this.modelRoles[role]!.provider = provider;
-    this.modelRoles[role]!.model = "";
-  },
-  onRoleModelChange(role: string, model: string) {
-    if (!Object.hasOwn(this.modelRoles, role)) this.modelRoles[role] = { provider: "", model: "" };
-    this.modelRoles[role]!.model = model;
+  onRoleProviderChange(role: string) {
+    const entry = this.modelRoleList.find((e) => e.role === role);
+    if (entry) entry.model = "";
   },
   async saveModelRole(role: string) {
-    const { provider, model } = this.modelRoles[role] || {};
-    if (!provider || !model) return;
+    const entry = this.modelRoleList.find((e) => e.role === role);
+    if (!entry || !entry.provider || !entry.model) return;
+    const { provider, model } = entry;
     try {
       const res = await apiFetch(`/api/admin/model-roles/${role}`, {
         method: "PUT",
@@ -147,16 +150,23 @@ export const adminModels = {
       if (res.ok) {
         const data = await res.json();
         const providers = (data.providers ?? []) as ProviderInfo[];
+        const merged = [...this.providers];
         for (const p of providers) {
-          const existing = this.providers.find((ep: any) => ep.name === p.name);
-          if (existing) {
-            existing.status = p.status;
-            existing.modelCount = p.modelCount;
-            existing.latencyMs = p.latencyMs;
-            existing.error = p.error;
+          const idx = merged.findIndex((ep: any) => ep.name === p.name);
+          if (idx === -1) {
+            merged.push(p);
+          } else {
+            merged[idx] = {
+              ...merged[idx],
+              status: p.status,
+              modelCount: p.modelCount,
+              latencyMs: p.latencyMs,
+              error: p.error,
+            };
           }
           await this.loadProviderModels(p.name);
         }
+        this.providers = merged;
         showToast("success", "Providers rescanned");
       } else showToast("error", "Failed to rescan providers");
     } catch {

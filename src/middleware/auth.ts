@@ -153,76 +153,79 @@ export async function getOrCreateSoloUserForAuth(
   const cached = soloUserCache.get(database);
   if (cached !== undefined) return cached;
 
-  // First, check if a solo user was pre-seeded (e.g., in tests)
+  // Resolve the solo/demo user id (pre-seeded, demo, or created on first run).
   const existing = await database
     .selectFrom("users")
     .select(["id"])
     .where("role", "=", UserRole.Solo)
     .executeTakeFirst();
 
+  let soloId: string;
   if (existing) {
-    soloUserCache.set(database, existing);
-    return existing;
+    soloId = existing.id;
+  } else {
+    // Check demo user (seeded via src/db/seed.ts or config)
+    const demoUser = await database
+      .selectFrom("users")
+      .select(["id"])
+      .where("username", "=", demoUsername)
+      .executeTakeFirst();
+
+    if (demoUser) {
+      soloId = demoUser.id;
+    } else {
+      // Create solo user on first run
+      soloId = uid();
+      try {
+        await database
+          .insertInto("users")
+          .values({
+            id: soloId,
+            username: demoUsername,
+            display_name: "Solo User",
+            role: UserRole.Solo,
+            status: UserStatus.Active,
+            settings: "{}",
+          })
+          .execute();
+      } catch {
+        /* race: another request may have created it — next lookup will find it */
+      }
+    }
   }
 
-  // Check if demo user exists (seeded via src/db/seed.ts or config)
-  const demoUser = await database
-    .selectFrom("users")
-    .select(["id"])
-    .where("username", "=", demoUsername)
-    .executeTakeFirst();
-
-  if (demoUser) {
-    soloUserCache.set(database, demoUser);
-    return demoUser;
-  }
-
-  // Create solo user on first run
-  const soloId = uid();
+  // Ensure the solo user has a corresponding actor. chat_participants.actor_id
+  // references actors.id, and chat creation inserts the owner as actor_id = userId,
+  // so the actor MUST exist or chat creation fails with a FOREIGN KEY constraint.
+  // This also covers users pre-seeded by src/db/seed.ts (which creates the user
+  // but not its actor).
   try {
-    await database
-      .insertInto("users")
-      .values({
-        id: soloId,
-        username: demoUsername,
-        display_name: "Solo User",
-        role: UserRole.Solo,
-        status: UserStatus.Active,
-        settings: "{}",
-      })
-      .execute();
-  } catch {
-    /* race: another request may have created it — next lookup will find it */
-  }
-
-  // Also create actor entry (chat_participants.actor_id references actors.id)
-  try {
-    await database
-      .insertInto("actors")
-      .values({
-        id: soloId,
-        actor_type: "user",
-        display_name: "Solo User",
-        user_id: soloId,
-        owner_id: soloId,
-        agent_type: "none",
-        settings: "{}",
-        import_spec: "raw",
-        data_version: 0,
-      })
-      .execute();
+    const actorExists = await database
+      .selectFrom("actors")
+      .select("id")
+      .where("id", "=", soloId)
+      .executeTakeFirst();
+    if (!actorExists) {
+      await database
+        .insertInto("actors")
+        .values({
+          id: soloId,
+          actor_type: "user",
+          display_name: "Solo User",
+          user_id: soloId,
+          owner_id: soloId,
+          agent_type: "none",
+          settings: "{}",
+          import_spec: "raw",
+          data_version: 0,
+        })
+        .execute();
+    }
   } catch {
     /* race-safe: actor may already exist */
   }
 
-  // Re-fetch (in case of race)
-  const created = await database
-    .selectFrom("users")
-    .select(["id"])
-    .where("role", "=", UserRole.Solo)
-    .executeTakeFirst();
-
-  const result = created ?? null;
+  const result = { id: soloId };
   soloUserCache.set(database, result);
   return result;
 }
