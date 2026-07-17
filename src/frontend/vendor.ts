@@ -16,7 +16,7 @@ Alpine.plugin(morph);
 // Bun's require() inlines them in the same module scope where `htmx` is defined.
 require("htmx.org/dist/ext/alpine-morph.js");
 require("htmx.org/dist/ext/response-targets.js");
-require("htmx.org/dist/ext/sse.js");
+require("htmx-ext-sse/sse.js");
 
 // Initialize Alpine stores immediately (before Alpine starts auto-initialization)
 Alpine.store("sidebar", { open: false });
