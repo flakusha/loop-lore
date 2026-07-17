@@ -52,16 +52,6 @@ Design goals:
 
 Assets are stored on disk using a UUID-derived path scheme to avoid inode limits. Path construction:
 
-1. UUID is generated for the asset (e.g., `abcd1234-...`)
-2. First 2 chars of UUID become a subdirectory (`ab/cd/`)
-3. Raw file placed at `data/assets/raw/ab/cd/abcd1234.{ext}`
-4. Compressed variants at `data/assets/compressed/ab/cd/abcd1234.webp`
-5. Thumbnail at `data/assets/compressed/ab/cd/abcd1234_thumb.webp`
-6. Audio files at `data/assets/audio/ab/cd/abcd1234.opus`
-7. Video files at `data/assets/video/ab/cd/abcd1234.webm`
-
-Path scheme: first 2 chars of UUID as subdirectory to avoid inode limits.
-
 ### Object Store (S3/GCS)
 
 ```
@@ -441,17 +431,11 @@ Table: `asset_versions`
 ### Update Flow
 
 ```
-1. User uploads new version of asset (same entity, different file)
-2. Engine increments version number
-3. Old file kept in storage (not deleted)
-4. New file stored at version-specific path
-5. Current version pointer updated on assets table
-6. Old version record preserved in asset_versions
-```
 
 ### API
 
 ```
+
 POST /api/assets/:id/versions
 Content-Type: multipart/form-data
   file: <binary>
@@ -470,6 +454,7 @@ Response: 200
 GET /api/assets/:id/versions/:version
 Response: 200
 { ...version metadata... }
+
 ```
 
 ### UI

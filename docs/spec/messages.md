@@ -14,20 +14,9 @@ guarantees message persistence.
 
 ### Basic Write Flow
 
-Happy path:
+Happy path: client sends → server validates → server saves (transaction) → queues LLM (if applicable) → returns success + ID → client displays.
 
-1. Client sends message
-2. Server validates (schema, length, role permissions)
-3. Server saves to DB (within transaction)
-4. Server queues LLM generation (if applicable)
-5. Server returns success + message ID to client
-6. Client displays confirmed message
-
-If DB write fails:
-
-1. Server returns 500/503
-2. Client shows error
-3. User can retry (idempotency key prevents duplicate)
+On failure: server returns 500/503, client shows error, user retries (idempotency key prevents duplicate).
 
 ### Connection Resilience
 
@@ -65,82 +54,6 @@ Key design points for the messages table:
 2. Server inserts messages row → `status="sending"`
 3. Server calls LLM API, receives full response
 4. Server writes response message → `status="confirmed"`
-
-**LLM API error (5xx, timeout, connection failure):**
-
-1. Server sends prompt to LLM
-2. API returns error (no content received)
-3. Server marks `generation_attempts.status = "failed"`
-4. Server marks `message.status = "failed"`
-5. Client shows: "Generation failed. Retry?"
-6. User taps Retry (`idempotency_key` sent)
-7. Server checks retry count < `MAX_GENERATION_RETRIES` (3)
-8. New `generation_attempt` created, API called again
-9. On success → `message.status = "confirmed"`
-10. If retries exhausted → "Max retries exceeded" error
-
-**Content policy violation (post-generation):**
-
-1. LLM returns full response
-2. Server policy detector flags content as violating
-3. Server marks `message.status = "rejected"`, `visibility = "auto_hidden"`
-4. Server stores `policy_analysis` in `generation_attempts`
-5. Client shows: "Response filtered by content policy"
-6. User edits prompt and resubmits
-7. Original rejected message preserved in DB for audit (visible to admin via `?showHidden=true`)
-
-**Timeout mid-stream (partial content):**
-
-1. LLM begins streaming tokens
-2. Server-side `GENERATION_TIMEOUT_MS` fires
-3. Server captures streamed content as `partial_content`
-4. Server marks `attempt.status = "cancelled"`, `message.status = "partial"`
-5. Client shows partial content with "Continue" button
-6. On Continue: `POST /api/generation/continue { messageId }`
-7. Server reads `partial_content`, builds prefix prompt
-8. Server sends to LLM, appends to existing content
-9. Continuation stored as new message row: `continuation_index=1`, `parent_id=original` (original is idx=0)
-10. Client appends continuation to same bubble
-11. Multiple continues chain: A(idx=0, partial) → A-2(idx=1) → A-3(idx=2)
-
-**User cancels mid-generation:**
-
-1. LLM is streaming tokens
-2. User presses Cancel / Escape
-3. Client sends `POST /api/generation/cancel { messageId }`
-4. Server captures whatever has streamed as `partial_content`
-5. Server marks `attempt.status = "cancelled"` (reason = `"user_cancel"`)
-6. Server marks `message.status = "cancelled"`
-7. If content was captured → user can Continue (same as partial flow)
-8. If no content yet → no recovery
-
-**Network failure (send never reached server):**
-
-1. Client sends `POST /api/messages`
-2. Network fails before server receives
-3. Client persists draft in localStorage / temp file
-4. On reconnect: prompt user to retry
-5. Retry sends same `idempotency_key`
-6. Server processes (first write since key unknown)
-7. Duplicate key check prevents double writes on re-send
-
-**Max retries exhausted:**
-
-1. Message is in "failed" state
-2. User attempts retry
-3. Server checks retry count >= `MAX_GENERATION_RETRIES` (3)
-4. Server returns error: "Max retries exceeded for this message"
-5. User must regenerate (new message) instead of retry
-
-**Regenerate a confirmed message (full replacement):**
-
-1. User requests regeneration on a confirmed message
-2. Server creates new `generation_attempt`
-3. Original message status set to `"cancelled"`, visibility set to `"hidden_by_user"`
-4. New response written as a new message row with same `parent_id` (swipe replacement)
-5. Client swaps the old message for the new one in the active timeline
-
-**Continue vs Regenerate:**
 
 | Action     | Effect                                                          | Message status                                   |
 | ---------- | --------------------------------------------------------------- | ------------------------------------------------ |
@@ -201,15 +114,7 @@ Character: *The blade gleams with an eerie blue light.*
 
 ### User Preference
 
-```json
-{
-  "messageDisplay": {
-    "defaultView": "basic",
-    "showDetailsForRoles": [],
-    "alwaysShowStats": false
-  }
-}
-```
+Stored in user settings JSON. Fields: `defaultView` (basic|expanded), `showDetailsForRoles`, `alwaysShowStats`.
 
 ---
 

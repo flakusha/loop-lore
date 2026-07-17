@@ -62,20 +62,6 @@ assembler, with story-specific sections injected conditionally when
 
 The assembler accepts a `PromptParams` object derived from existing types:
 
-```typescript
-import type { GenerationMessage } from "../generation/gen-types-options";
-
-interface PromptParams {
-  actorId: string;
-  chatId: string;
-  modelId: string;
-  provider: string; // 'openai' | 'anthropic' | 'local' | ...
-  tokenBudget: number; // max context tokens for this model
-  includeStoryContext: boolean; // true when chat.mode = 'story'
-  detailMode: "immersion" | "basic" | "detailed";
-}
-```
-
 ### Assembly Order
 
 Prompt sections are assembled in a specific order that determines fallback
@@ -217,29 +203,7 @@ routes to the correct provider format:
 
 ### OpenAI / compatible
 
-```json
-{
-  "model": "gpt-4o",
-  "messages": [
-    { "role": "system", "content": "..." },
-    { "role": "user", "content": "..." },
-    { "role": "assistant", "content": "..." }
-  ]
-}
-```
-
 ### Anthropic
-
-```json
-{
-  "model": "claude-sonnet-4",
-  "system": "...",
-  "messages": [
-    { "role": "user", "content": "..." },
-    { "role": "assistant", "content": "..." }
-  ]
-}
-```
 
 ### Local (llama.cpp / vLLM / ollama)
 
@@ -366,15 +330,6 @@ generation:
 ---
 
 ## Usage Flow
-
-1. **Receive generation request** — `GenerationOptions` from frontend or story GM
-2. **Fetch actor data** — query `actors` by `actor_id`
-3. **Load lorebooks** — query `actor_lore_entries` + `world_lore_entries` via `asset_links`
-4. **Scan recent chat** — retrieve latest N messages, extract keywords for lorebook matching
-5. **Assemble sections** — build each section string, respect ordering and truncation
-6. **Apply token budget** — estimate tokens per section, trim lowest-priority sections
-7. **Format for provider** — convert to `GenerationMessage[]` with provider-specific structure
-8. **Return** — pass to generation module which dispatches to LLM provider
 
 ---
 

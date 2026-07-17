@@ -90,30 +90,6 @@ character card or default template):
 
 ### Stat Block Interface
 
-```typescript
-interface StatBlock {
-  // Base attributes (from character card or world default)
-  str: number; // 1–30, default 10
-  dex: number;
-  con: number;
-  int: number;
-  wis: number;
-  cha: number;
-
-  // Derived stats (computed, not stored)
-  maxHp: number; // = con * 5 + level * 2
-  hp: number; // current, mutable
-  maxMp: number; // = int * 3 + wis * 2
-  mp: number; // current, mutable
-  initiative: number; // = dex + random(1,20)
-  armorClass: number; // = 10 + dex modifier + armor bonus
-  carryCapacity: number; // = str * 10 (lbs)
-  level: number; // 1–20
-  xp: number; // current XP
-  xpToNext: number; // computed from level
-}
-```
-
 ### Stat Modifiers
 
 Attributes produce modifiers (like D&D 5e):
@@ -153,110 +129,15 @@ as layered modifiers at computation time. This means:
 
 World-scoped templates. Reusable. Defined once, instanced many times.
 
-```typescript
-interface ItemDefinition {
-  id: string;
-  worldId: string;
-  name: string;
-  description: string;
-  category: ItemCategory; // weapon, armor, consumable, key_item, etc.
-  rarity: ItemRarity; // common → unique
-  stackable: boolean;
-  maxStack: number;
-  properties: ItemProperties; // type-specific data
-  value: number; // gold value
-  weight: number; // encumbrance
-}
-
-// Type-specific properties
-interface WeaponProperties {
-  damageDice: string; // "2d6", "1d8+3"
-  damageType: string; // "slashing", "piercing", "fire"
-  range: number; // feet
-  twoHanded: boolean;
-  statBonus: Partial<StatBlock>; // e.g. { str: +2 }
-  effects?: ItemEffect[];
-}
-
-interface ArmorProperties {
-  acBonus: number;
-  statBonus: Partial<StatBlock>;
-  stealthDisadvantage: boolean;
-  effects?: ItemEffect[];
-}
-
-interface ConsumableProperties {
-  effect: ItemEffect;
-  charges: number;
-}
-
-interface ItemEffect {
-  type: "heal" | "buff" | "debuff" | "teleport" | "summon" | "custom";
-  stat?: keyof StatBlock;
-  value?: number;
-  duration?: number; // turns, or -1 for permanent
-  description: string;
-}
-```
-
 ### Tier 2: World Item Instances
 
 Items placed in the world — on the ground, in containers, carried by NPCs.
 Already implemented in `src/story/items.ts`.
 
-```typescript
-interface WorldItem {
-  id: string; // world_items.id
-  itemId: string; // → item definitions
-  worldId: string;
-  locationId?: string; // where in the world
-  ownerActorId?: string; // who's carrying it
-  quantity: number;
-  isHidden: boolean;
-  respawnable: boolean;
-  spawnCondition?: Record<string, unknown>;
-}
-```
-
 ### Tier 3: Actor Inventory + Equipment
 
 Items carried by an actor (user character, NPC, or impersonated persona).
 Extends the existing `world_items` with equipment state.
-
-```typescript
-interface ActorInventory {
-  actorId: string;
-  worldId: string;
-  items: InventorySlot[];
-  equipped: EquipmentLoadout;
-  gold: number; // convenience — also an item, but fast-access
-  weight: number; // computed: sum of item weights
-  capacity: number; // computed: str * 10
-}
-
-interface InventorySlot {
-  worldItemId: string;
-  itemId: string;
-  name: string;
-  category: ItemCategory;
-  quantity: number;
-  properties: ItemProperties;
-}
-
-interface EquipmentLoadout {
-  head: string | null; // world_item_id
-  chest: string | null;
-  legs: string | null;
-  feet: string | null;
-  hands: string | null; // gloves/shields
-  mainHand: string | null; // weapon
-  offHand: string | null; // shield/weapon/torch
-  ring1: string | null;
-  ring2: string | null;
-  amulet: string | null;
-  cloak: string | null;
-}
-```
 
 ### Equipment Slots
 
@@ -365,17 +246,6 @@ writes what happens; the engine determines what's _true_.
 
 When combat begins, the LLM outputs structured intent alongside narrative:
 
-```typescript
-interface CombatIntent {
-  action: "attack" | "defend" | "cast" | "flee" | "use_item" | "grapple" | "help";
-  target?: string; // actor_id of target
-  weapon?: string; // world_item_id of weapon used
-  spell?: string; // spell name if casting
-  item?: string; // world_item_id if using item
-  description: string; // narrative text (what the LLM writes)
-}
-```
-
 ### Resolution Pipeline
 
 ```
@@ -467,12 +337,6 @@ Skills are derived from attributes:
 ### Skill Check Resolution
 
 ```
-1. LLM describes intent: "I try to sneak past the guard"
-2. LLM (or UI) calls: skillCheck("stealth", dc=15)
-3. Engine rolls: d20() + stealthModifier(DEX + proficiency) = 17
-4. Result: SUCCESS (17 ≥ 15)
-5. LLM narrates the success
-```
 
 ---
 
@@ -491,7 +355,9 @@ Skills are derived from attributes:
 ### Level Progression
 
 ```
+
 XP to next level = currentLevel * 100 + 50
+
 ```
 
 | Level | XP Required | XP to Next |
@@ -509,15 +375,18 @@ XP to next level = currentLevel * 100 + 50
 When a character levels up:
 
 ```
+
 maxHp += conModifier + 5
 maxMp += intModifier + 3
 // Every 4 levels: +1 to one attribute (player choice)
 // Certain levels unlock new abilities (world-defined)
+
 ```
 
 ### XP Injection into Prompt
 
 ```
+
 [Character Stats — {{char}}]
 Level 5 Human Fighter
 HP: 38/45 | MP: 12/12
@@ -530,6 +399,7 @@ Status: None
 Main Hand: Longsword (1d8+3 slashing)
 Chest: Chain Mail (+6 AC)
 Hands: Leather Gloves (+1 DEX)
+
 ```
 
 ---
@@ -538,16 +408,6 @@ Hands: Leather Gloves (+1 DEX)
 
 Currency is an item with special properties. The engine tracks gold separately
 for fast access but it's still an item under the hood.
-
-```typescript
-interface CurrencyItem {
-  category: "currency";
-  properties: {
-    denomination: "copper" | "silver" | "gold" | "platinum";
-    exchangeRate: number; // relative to gold: copper=0.01, silver=0.1, gold=1, platinum=10
-  };
-}
-```
 
 ### Exchange Rates
 
@@ -563,12 +423,6 @@ interface CurrencyItem {
 When a player buys/sells:
 
 ```
-1. LLM narrates: "The merchant examines the sword. 'I'll give you 50 gold.'"
-2. Player confirms purchase
-3. Engine validates: player has ≥ 50 gold
-4. Engine executes: remove 50 gold, add sword to inventory
-5. LLM narrates the transaction
-```
 
 ---
 
@@ -577,21 +431,6 @@ When a player buys/sells:
 ### Loot Tables
 
 Each enemy type or container can have a loot table:
-
-```typescript
-interface LootTable {
-  entries: LootEntry[];
-  rolls: number; // how many times to roll on the table
-}
-
-interface LootEntry {
-  itemId: string;
-  weight: number; // relative probability
-  minQuantity: number;
-  maxQuantity: number;
-  chance: number; // 0-1, independent chance per entry
-}
-```
 
 ### Loot Generation
 
@@ -633,48 +472,10 @@ are engine-computed, some are optional.
 
 ### Pipeline Data Model
 
-```typescript
-interface CreationPipeline {
-  id: string;
-  worldId: string;
-
-  // Pipeline state
-  entityType: "item" | "npc" | "location" | "enemy" | "quest";
-  status: "pending" | "in_progress" | "awaiting_input" | "complete" | "failed";
-  currentStage: PipelineStage;
-
-  // Stage results
-  description?: DescriptionResult;
-  stats?: StatsResult;
-  effects?: EffectsResult;
-  image?: ImageResult;
-  placement?: PlacementResult;
-
-  // Source
-  triggeredBy: "gm_tool" | "llm_intent" | "user_ui" | "auto_loot";
-  chatId?: string; // If triggered from chat
-
-  // Metadata
-  createdAt: string;
-  updatedAt: string;
-}
-```
-
 ### Stage 1: Description
 
 The LLM generates the narrative foundation — name, lore, flavor text.
 This is the creative seed that all other stages build on.
-
-```typescript
-interface DescriptionResult {
-  name: string;
-  shortDescription: string; // One-liner for inventory/UI
-  longDescription: string; // Full lore, appearance, history
-  category: ItemCategory | NpcCategory | LocationCategory;
-  rarity: ItemRarity;
-  tags: string[]; // For search and filtering
-}
-```
 
 **Trigger:** GM says "Create a new weapon" or LLM emits `[CREATE_INTENT]`.
 
@@ -712,34 +513,6 @@ Result:
 The engine computes mechanical properties based on description and world
 rules. The LLM can suggest stats, but the engine validates and adjusts.
 
-```typescript
-interface StatsResult {
-  // Weapon stats
-  damageDice?: string;
-  damageType?: string;
-  range?: number;
-  twoHanded?: boolean;
-
-  // Armor stats
-  acBonus?: number;
-  stealthDisadvantage?: boolean;
-
-  // Consumable stats
-  charges?: number;
-  cooldown?: number;
-
-  // Universal
-  value: number; // Gold value
-  weight: number;
-  statBonus?: Partial<StatBlock>;
-  requirements?: {
-    level?: number;
-    stat?: Partial<StatBlock>;
-    proficiency?: string;
-  };
-}
-```
-
 **Engine logic:**
 
 ```
@@ -767,19 +540,6 @@ interface StatsResult {
 
 Optional stage. Adds magical effects, status effects, special abilities.
 Only triggers for Uncommon+ items or when the GM/LLM explicitly requests it.
-
-```typescript
-interface EffectsResult {
-  onHit?: ItemEffect[]; // Applied when weapon hits
-  onUse?: ItemEffect[]; // Applied when consumable is used
-  onEquip?: ItemEffect[]; // Applied when item is equipped
-  passive?: ItemEffect[]; // Always active while held/worn
-  triggered?: {
-    condition: string; // "on_crit" | "on_low_hp" | "on_kill" | "in_darkness"
-    effect: ItemEffect;
-  }[];
-}
-```
 
 **Engine logic:**
 
@@ -818,28 +578,12 @@ Result:
 Optional stage. Generates a visual asset for the entity. Uses the image
 generation system with a prompt derived from the description.
 
-```typescript
-interface ImageResult {
-  assetId: string; // Created via image generation pipeline
-  prompt: string; // The generation prompt used
-  style: string; // "pixel_art" | "realistic" | "anime" | "sketch" | "oil_painting"
-  thumbnailUrl: string;
-  fullUrl: string;
-}
-```
-
 **Engine logic:**
 
 ```
 1. Build image prompt from description:
    "A sword forged from dragon bone, glowing with inner fire,
     fantasy RPG item art, {world_style}, detailed, high quality"
-2. Check world style preference (pixel art? realistic? anime?)
-3. Call image generation API
-4. Create asset record in assets table
-5. Link to entity via asset_links table
-6. Generate thumbnail (256px) for inventory/UI
-```
 
 **Style matching:**
 
@@ -857,16 +601,6 @@ interface ImageResult {
 The final stage. The entity is placed in the world — as a world item, in
 an actor's inventory, on a shopkeeper's shelf, or as a location feature.
 
-```typescript
-interface PlacementResult {
-  targetType: "world_item" | "inventory" | "shop" | "location" | "enemy_loot";
-  targetId: string; // location_id, actor_id, or shop_id
-  quantity: number;
-  hidden: boolean;
-  respawnable: boolean;
-}
-```
-
 **Placement options by entity type:**
 
 | Entity   | Placement Target                 | Example                            |
@@ -882,13 +616,6 @@ interface PlacementResult {
 
 **Placement validation:**
 
-```
-1. Check target exists (location, actor, shop)
-2. Check weight capacity (if inventory placement)
-3. Check shop has space (if shop placement)
-4. Check location graph connectivity (if new location)
-5. Apply placement to world state
-6. Record in world_events timeline
 ```
 
 ### Complete Pipeline Flow
@@ -917,20 +644,6 @@ interface PlacementResult {
 ### LLM Pipeline Intent
 
 The LLM can trigger the full pipeline or individual stages:
-
-```typescript
-interface CreateIntent {
-  type: "item" | "npc" | "location" | "enemy" | "quest";
-  stage?: "description" | "stats" | "effects" | "image" | "placement" | "all";
-  input: string; // Natural language description
-  placement?: {
-    targetType: PlacementResult["targetType"];
-    targetId: string;
-    quantity?: number;
-  };
-  style?: string; // Image style override
-}
-```
 
 **Full pipeline example:**
 
@@ -1000,27 +713,11 @@ Step 5: Placement
 When loot tables generate items, the pipeline runs automatically:
 
 ```
-1. Loot table rolls: "rare weapon"
-2. Pipeline Stage 1: LLM generates description for rare weapon fitting world theme
-3. Pipeline Stage 2: Engine applies rare weapon stat template
-4. Pipeline Stage 3: Engine adds effects (rare = 1-2 effects)
-5. Pipeline Stage 4: Image gen skipped (loot drops don't need images usually)
-6. Pipeline Stage 5: Place as world item at enemy location
-7. LLM narrates: "On the dragon's body you find a glowing bone sword..."
-```
 
 ### Auto-Pipeline: NPC Creation
 
 When the GM introduces a new NPC:
 
-```
-1. GM says "A guardsman approaches"
-2. Pipeline Stage 1: LLM generates guard name, description, personality
-3. Pipeline Stage 2: Engine generates stat block (Level 3 human, STR 14, etc.)
-4. Pipeline Stage 3: Engine adds guard-specific traits (alert, disciplined)
-5. Pipeline Stage 4: Image gen for guard portrait
-6. Pipeline Stage 5: Place as actor in current location
-7. LLM narrates the introduction with full context
 ```
 
 ---
@@ -1280,27 +977,14 @@ The pipeline calls the location creation pipeline for each starter location:
 
 ```
 Starting locations:
-1. "The Village of Ashwick" — safe zone, basic shops, rumor board
-2. "The Church of the Eternal Dawn" — seemingly holy, secretly corrupted
-3. "The Black Forest" — dangerous hunting ground, vampire territory
-4. "The Catacombs" — underground network, hidden clues
-5. "The Crimson Manor" — vampire stronghold, endgame area
-
-Each location runs through the Location Pipeline (Description → Connections → Encounters → Assets → Placement)
-```
 
 **Stage 4: Starter NPCs**
 
 Pipeline creates key NPCs with motivation and stats:
 
 ```
+
 NPCs:
-1. "Father Aldric" — priest, secretly a thrall, provides quests
-2. "Marta the Herbalist" — sells holy water (rare), knows local lore
-3. "Viktor the Hunter" — veteran vampire hunter, potential mentor
-4. "Lady Elara" — vampire noble, complex motives, potential ally or enemy
-5. "The Beggar King" — knows the streets, information broker
-```
 
 **Stage 5: Starter Items**
 
@@ -1383,33 +1067,6 @@ Instead of writing notes freeform, the GM selects from compatible
 templates that ensure consistent structure and proper prompt injection.
 
 #### Template System
-
-```typescript
-interface NoteTemplate {
-  id: string;
-  name: string;
-  description: string;
-  entityType: "public" | "dark"; // Which note system it belongs to
-  noteType: NoteType | DarkNoteType;
-
-  // Template fields — each is a prompt the GM fills in
-  fields: TemplateField[];
-
-  // Validation rules
-  requiredFields: string[]; // Fields that must be filled
-  maxFields?: number; // Cap on optional fields used
-}
-
-interface TemplateField {
-  name: string; // e.g. "creature_name", "weakness", "trigger"
-  label: string; // Human-readable: "Creature Name"
-  type: "text" | "textarea" | "select" | "number" | "boolean" | "multi_select";
-  placeholder?: string;
-  options?: string[]; // For select/multi_select
-  required: boolean;
-  helpText?: string; // "What is the creature's true identity?"
-}
-```
 
 #### Built-in Templates
 
@@ -1526,17 +1183,6 @@ Body: NoteTemplate[] (from exported world or community share)
 
 A "template pack" can be exported from one world and imported to another:
 
-```json
-{
-  "spec": "loop-lore-note-templates-v1",
-  "templates": [
-    { "name": "Vampire Weakness Sheet", ... },
-    { "name": "Curse Tracker", ... },
-    { "name": "Prophecy Record", ... }
-  ]
-}
-```
-
 #### Notes Pipeline UI
 
 ```
@@ -1591,16 +1237,6 @@ After selecting "Secret Identity":
 
 When a persona enters a world for the first time, they receive a **world trait**
 based on the world's theme and the persona's description:
-
-```typescript
-interface WorldTrait {
-  worldId: string;
-  trait: string; // "Outsider", "Native", "Chosen One", etc.
-  description: string; // Narrative justification
-  statModifications: Partial<StatBlock>;
-  narrativeHooks: string[]; // Story seeds based on the trait
-}
-```
 
 **Example:** A sci-fi persona entering a fantasy world gets the "Fish Out of
 Water" trait: -2 WIS (unfamiliar world), +2 INT (advanced knowledge from another
@@ -1686,75 +1322,6 @@ Each rule has a type that determines how it modifies gameplay:
 
 ### Rule Schema
 
-```typescript
-interface ChatRule {
-  id: string;
-  name: string;
-  description: string;
-
-  // Scope (exactly one set)
-  worldId?: string; // World scope
-  chatId?: string; // Chat/Group Chat scope
-  locationId?: string; // Location scope
-
-  // Rule definition
-  type: RuleType;
-  config: RuleConfig; // Type-specific parameters
-
-  // Activation
-  enabled: boolean;
-  priority: number; // 0-1000, higher = overrides lower
-  conditions?: RuleCondition[]; // Optional: rule only applies when conditions met
-
-  // Metadata
-  source: "gm" | "plugin" | "system" | "user";
-  pluginId?: string; // If rule is provided by a plugin
-  createdAt: string;
-  updatedAt: string;
-}
-
-interface RuleConfig {
-  // stat_modifier
-  stat?: string; // 'str' | 'dex' | 'con' | 'int' | 'wis' | 'cha' | 'hp' | 'mp' | 'ac'
-  modifier?: number; // +/- value
-
-  // dc_adjustment
-  skill?: string; // Skill name or 'all'
-  dcDelta?: number; // +/- DC adjustment
-
-  // action_prohibition
-  prohibitedActions?: string[]; // 'cast', 'attack', 'flee', 'use_item', 'grapple'
-
-  // effect_trigger
-  effect?: string; // Status effect name
-  duration?: number; // Turns
-  trigger?: "on_enter" | "on_action" | "on_turn_start" | "on_damage_taken";
-
-  // damage_modifier
-  damageType?: string; // 'fire', 'cold', 'lightning', 'slashing', 'bludgeoning', 'piercing'
-  damageMultiplier?: number; // 2.0 = double, 0.5 = half
-  damageFlat?: number; // +/- flat damage
-
-  // custom
-  pluginData?: Record<string, unknown>; // Arbitrary plugin-specific config
-}
-
-interface RuleCondition {
-  type:
-    | "actor_has_effect"
-    | "actor_stat_above"
-    | "actor_stat_below"
-    | "time_of_day"
-    | "weather"
-    | "actor_count"
-    | "quest_active"
-    | "has_item"
-    | "is_actor_type";
-  target?: string; // E.g. effect name, stat name, item id
-  value?: string | number; // Comparison value
-}
-```
-
 ### Rule Storage
 
 Rules are stored in a dedicated `chat_rules` table:
@@ -1814,23 +1381,6 @@ accordingly.
 
 The LLM Game Master can create, modify, or remove rules via structured intent
 blocks (same pattern as combat intent):
-
-```typescript
-interface RuleIntent {
-  action: "create" | "modify" | "remove" | "toggle";
-  rule: {
-    name: string;
-    description: string;
-    scope: "world" | "chat" | "location";
-    scopeId?: string; // world_id, chat_id, or location_id
-    type: RuleType;
-    config: RuleConfig;
-    priority?: number;
-    conditions?: RuleCondition[];
-  };
-  narrative: string; // In-character justification
-}
-```
 
 Example LLM output:
 
@@ -1904,29 +1454,6 @@ More specific scopes override or augment broader ones.
 | `player_prompt`    | Suggestions for players                  | "Consider: what is your character afraid of?"     |
 
 #### Data Model
-
-```typescript
-interface PublicNote {
-  id: string;
-  worldId: string;
-
-  // Scope (exactly one)
-  scope: "world" | "location" | "chat";
-  scopeId?: string; // location_id or chat_id (null for world)
-
-  // Content
-  type: NoteType;
-  title: string; // Short label
-  content: string; // Full text, injected into prompt
-  priority: number; // 0-1000, higher = injected first
-  enabled: boolean;
-
-  // Metadata
-  author: string; // user_id who created it
-  createdAt: string;
-  updatedAt: string;
-}
-```
 
 #### Prompt Injection
 
@@ -2004,39 +1531,6 @@ Dark notes let the GM plan ahead without spoiling surprises:
 | `note`        | Freeform GM notes                          | "Alice seems suspicious of the guide — lean into that."     |
 
 #### Data Model
-
-```typescript
-interface DarkNote {
-  id: string;
-  worldId: string;
-
-  // Scope (same as public notes, but always GM-only)
-  scope: "world" | "location" | "chat";
-  scopeId?: string;
-
-  // Content
-  type: DarkNoteType;
-  title: string;
-  content: string;
-  priority: number;
-  enabled: boolean;
-
-  // Reveal tracking
-  revealedAt?: string; // When this secret was revealed to players
-  revealTrigger?: string; // What should trigger the reveal
-  revealCondition?: string; // "after_session_5" | "player_asks_about_king" | "hp_below_20"
-
-  // Planning
-  relatedNotes?: string[]; // IDs of connected dark notes
-  dependsOn?: string; // This note requires another to be revealed first
-  urgency: "low" | "medium" | "high" | "critical"; // How soon should this come up
-
-  // Metadata
-  author: string;
-  createdAt: string;
-  updatedAt: string;
-}
-```
 
 #### Dark Note Prompt Injection
 
@@ -2195,46 +1689,6 @@ This separation means:
 
 ### Plugin RPG Engine Interface
 
-```typescript
-interface RpgMechanicPlugin {
-  name: string; // Unique plugin name
-  version: string;
-  description: string;
-
-  // Lifecycle hooks
-  onActivate?(context: RpgContext): Promise<void>;
-  onDeactivate?(): Promise<void>;
-
-  // Fixed CPU cost functions (registered mechanics)
-  resolvers: MechanicResolver[];
-}
-
-interface RpgContext {
-  db: Database;
-  eventBus: EventBus;
-  logger: Logger;
-  registerResolver: (resolver: MechanicResolver) => void;
-  getStatBlock: (actorId: string) => Promise<StatBlock>;
-  getEffectiveStats: (actorId: string) => Promise<StatBlock>;
-  getActiveRules: (worldId: string, chatId: string, locationId?: string) => Promise<ChatRule[]>;
-}
-
-interface MechanicResolver {
-  name: string; // e.g. 'dice_roll', 'combat_resolve', 'skill_check'
-  description: string;
-  parameters: JSONSchema; // Input schema
-  execute: (params: any) => Promise<ResolverResult>; // Deterministic, fast
-}
-
-interface ResolverResult {
-  success: boolean;
-  data: Record<string, unknown>; // Mechanical result
-  narrative?: string; // Optional neutral description
-  stateChanges?: StateChange[]; // State mutations to apply
-  appliedRules?: string[]; // Rules that affected this resolution
-}
-```
-
 ### Built-in Core Resolvers
 
 These are shipped as built-in plugins (always available):
@@ -2253,53 +1707,6 @@ These are shipped as built-in plugins (always available):
 
 ### Plugin Registration
 
-```typescript
-// Example: custom D&D 5e combat resolver plugin
-const dndCombatPlugin: RpgMechanicPlugin = {
-  name: "dnd-5e-combat",
-  version: "1.0.0",
-  description: "D&D 5e combat resolution with advantage/disadvantage, crits, and damage types",
-
-  resolvers: [
-    {
-      name: "dnd_attack_roll",
-      description: "D&D 5e attack roll with advantage/disadvantage support",
-      parameters: {
-        type: "object",
-        properties: {
-          attackBonus: { type: "number" },
-          targetAc: { type: "number" },
-          advantage: { type: "boolean", default: false },
-          disadvantage: { type: "boolean", default: false },
-        },
-        required: ["attackBonus", "targetAc"],
-      },
-      execute: async ({ attackBonus, targetAc, advantage, disadvantage }) => {
-        const roll1 = rollDie(20);
-        const roll2 = advantage || disadvantage ? rollDie(20) : roll1;
-        const finalRoll = advantage ? Math.max(roll1, roll2) : disadvantage ? Math.min(roll1, roll2) : roll1;
-        const total = finalRoll + attackBonus;
-        const isCrit = finalRoll === 20;
-        const isFumble = finalRoll === 1;
-
-        return {
-          success: true,
-          data: {
-            roll: finalRoll,
-            total,
-            isCrit,
-            isFumble,
-            hit: total >= targetAc || isCrit,
-            advantage: advantage ? { roll1, roll2, used: Math.max } : undefined,
-            disadvantage: disadvantage ? { roll1, roll2, used: Math.min } : undefined,
-          },
-        };
-      },
-    },
-  ],
-};
-```
-
 ### LLM ↔ Resolver Flow
 
 ```
@@ -2317,19 +1724,6 @@ const dndCombatPlugin: RpgMechanicPlugin = {
 ### Resolver Chaining (Composability)
 
 Resolvers can be chained for complex mechanics:
-
-```typescript
-// Example: full attack resolution chain
-const attackChain = [
-  { resolver: "dnd_attack_roll", params: { attackBonus, targetAc } },
-  { resolver: "damage_roll", params: { weaponDamage, strModifier } },
-  { resolver: "damage_apply", params: { damage, resistances, armor } },
-  { resolver: "status_apply", params: { effect: "bleeding", target } },
-];
-
-// Each resolver's output is available as input to the next
-// Chain stops if any resolver returns success: false
-```
 
 ### Custom Resolver Registration (Community Plugins)
 
@@ -2370,38 +1764,6 @@ Plugin bundles are **pre-configured groups of RPG mechanic plugins** that
 activate together as a cohesive ruleset. A bundle defines which resolvers, stat
 templates, skill lists, and default chat rules compose a complete game system.
 
-```typescript
-interface PluginBundle {
-  name: string; // e.g. 'dnd-5e', 'call-of-cthulhu', 'fate-core'
-  version: string;
-  description: string;
-  author: string;
-
-  // Plugin dependencies (loaded automatically)
-  plugins: string[]; // e.g. ['dice-roller', 'dnd-5e-combat', 'dnd-5e-skills']
-
-  // Stat template (default stat block for new characters in this system)
-  defaultStatBlock: Partial<StatBlock>;
-
-  // Skill definitions for this system
-  skills: SkillDefinition[];
-
-  // Default chat rules (activated when bundle is enabled for a world/chat)
-  defaultRules: Partial<ChatRule>[];
-
-  // Level curve
-  levelProgression: {
-    xpFormula: string; // 'currentLevel * 100 + 50'
-    attributesPerLevel: number; // Every N levels, +1 attribute
-    hpPerLevel: number; // Fixed HP gain per level
-    mpPerLevel: number; // Fixed MP gain per level
-  };
-
-  // Default loot tables
-  lootTables: Record<string, LootTable>;
-}
-```
-
 #### Built-In Bundles
 
 | Bundle            | Plugins                                                  | Stat Range         | Dice | Best For                       |
@@ -2432,35 +1794,6 @@ Once a bundle is active, its behavior can be **fine-tuned** per scope without
 modifying the bundle itself. Fine-tuning overlays sit on top of the bundle
 defaults:
 
-```typescript
-interface MechanicFineTune {
-  scope: "world" | "chat" | "location";
-  scopeId: string;
-
-  // Stat adjustments (overrides bundle defaults)
-  statRanges?: {
-    min?: number; // Default 1
-    max?: number; // Default 30
-    startingPoints?: number; // Point-buy total for new characters
-  };
-
-  // Skill overrides
-  enabledSkills?: string[]; // If set, only these skills are active
-  customSkills?: SkillDefinition[]; // Additional skills not in bundle
-
-  // Difficulty curve
-  difficultyMultiplier?: number; // 0.5 = easier, 2.0 = harder, applied to all DCs
-  xpMultiplier?: number; // 0.5 = slow leveling, 2.0 = fast
-
-  // Rule overrides
-  ruleBlacklist?: string[]; // Rule IDs to disable
-  rulePriorityOverrides?: Record<string, number>; // Override priority for specific rules
-
-  // Plugin-specific
-  pluginConfigs?: Record<string, Record<string, unknown>>;
-}
-```
-
 #### Fine-Tuning UI (Web)
 
 A world settings panel showing:
@@ -2478,17 +1811,6 @@ A world settings panel showing:
 #### Fine-Tuning via LLM GM
 
 The LLM GM can fine-tune mechanics through structured intent:
-
-```typescript
-interface FineTuneIntent {
-  action:
-    "adjust_difficulty" | "toggle_skill" | "set_stat_range" | "add_custom_skill" | "override_rule_priority";
-  scope: "world" | "chat" | "location";
-  scopeId: string;
-  config: MechanicFineTune;
-  narrative: string; // In-character justification
-}
-```
 
 Example:
 
@@ -2514,30 +1836,6 @@ The ancient dragon's lair warps reality itself.
 #### Preset Sharing & Marketplace
 
 Bundle presets are shareable as `.rpgbundle` files (JSON):
-
-```json
-{
-  "spec": "rpg-bundle-v1",
-  "name": "star-wars-5e",
-  "version": "1.2.0",
-  "base": "dnd-5e",
-  "overrides": {
-    "skills": [
-      { "name": "Piloting", "stat": "dex", "baseDC": 12 },
-      { "name": "Jedi Lore", "stat": "int", "baseDC": 15 }
-    ],
-    "statRanges": { "min": 3, "max": 20, "startingPoints": 30 },
-    "customRules": [
-      {
-        "name": "Lightsaber Parry",
-        "type": "stat_modifier",
-        "config": { "stat": "ac", "modifier": 2 },
-        "condition": { "type": "has_item", "value": "lightsaber" }
-      }
-    ]
-  }
-}
-```
 
 These can be shared between users or downloaded from a community registry.
 
@@ -2793,12 +2091,6 @@ When active, inject difficulty rules into the LLM prompt:
 
 ### Implementation Notes
 
-1. Add three columns to `worlds` table (see schema.md)
-2. Add `world_actor_state` model — per-actor state per world
-3. Inject difficulty rules in prompt assembly
-4. Block `[ACT]` directives when actor state is `dead`
-5. Presets applied at world creation; custom values allowed
-
 ---
 
 ## Assistant/GM Safe Tools
@@ -2846,12 +2138,6 @@ the same pattern as `COMBAT_INTENT`:
 ```
 
 The engine:
-
-1. Extracts `[TOOL_CALL]...[/TOOL_CALL]` blocks from LLM output
-2. Validates the caller's permission tier
-3. Validates parameters against the tool's schema
-4. Executes the tool (deterministic, sub-millisecond)
-5. Returns the result to the LLM for narrative integration
 
 ### Permission Matrix
 
@@ -2947,12 +2233,6 @@ dialogue. The engine only intervenes when the player confirms a transaction
 via a UI action (button click).
 
 ```
-1. Player interacts with merchant NPC
-2. LLM narrates merchant dialogue: "I've got swords, potions..."
-3. Player clicks "Buy" button on an item card in the chat
-4. Engine validates and executes the transfer
-5. LLM narrates the result
-```
 
 **Advantages:** zero new LLM tooling, natural conversation flow.
 **Disadvantages:** harder to enforce mechanical constraints (the LLM might
@@ -2979,9 +2259,11 @@ Regardless of trading approach, the engine enforces these rules:
 When trading across denominations, the engine uses the exchange rate table:
 
 ```
+
 100 copper = 1 silver
 10 silver = 1 gold
 10 gold = 1 platinum
+
 ```
 
 The engine auto-converts: if a player has 15 silver and needs to pay 1 gold,
@@ -2992,10 +2274,12 @@ the engine deducts 10 silver (1 gold equivalent) and leaves 5 silver.
 A negotiation mechanic where the LLM mediates haggling:
 
 ```
+
 Player: "I'll give you 30 gold for the sword."
 LLM (as merchant): "30? This blade is worth at least 45. How about 40?"
 Player: "Deal."
 Engine: validates 40 gold, executes transfer
+
 ```
 
 This is a natural extension of option B/C — no new mechanics needed, just
@@ -3066,9 +2350,11 @@ and the world. These tools help GMs detect imbalances.
 The GM can configure alerts for when metrics drift:
 
 ```
+
 gold_supply > 50000  → "Warning: excessive gold in circulation"
 wealth_inequality > 20 → "Warning: one player holds most wealth"
 item_circulation < 10 → "Warning: items are hoarded, not traded"
+
 ```
 
 ### Balancing Levers
@@ -3107,32 +2393,14 @@ entire economy: currency supply, prices, inflation, and market dynamics.
 Each world has a total currency pool. Gold enters via loot/quests and
 exits via shops/taxes. The engine tracks this automatically.
 
-```typescript
-interface WorldEconomy {
-  worldId: string;
-
-  // Supply tracking
-  totalGoldInCirculation: number; // Sum of all actor gold
-  goldInShops: number; // Gold held by shopkeepers
-  goldInLoot: number; // Gold not yet claimed
-  goldDestroyed: number; // Sunk costs (taxes, repairs, fees)
-
-  // Price indices
-  priceIndex: number; // 1.0 = baseline, >1 = inflation
-  scarcityMap: Map<ItemCategory, number>; // 1.0 = normal, >1 = scarce
-
-  // Market state
-  lastUpdate: string;
-  eventLog: EconomicEvent[];
-}
-```
-
 ### Inflation / Deflation
 
 The price index adjusts automatically based on supply and demand:
 
 ```
+
 priceIndex = totalGoldInCirculation / baselineGoldSupply
+
 ```
 
 | Index Range | State          | Effect                                  |
@@ -3150,25 +2418,13 @@ The GM can adjust it via tool calls.
 Shop prices are not static — they adjust based on supply, demand, and
 location:
 
-```typescript
-interface ShopPricing {
-  shopId: string;
-  locationId: string;
-
-  // Base prices (from item definitions)
-  // Modified by:
-  markup: number; // 1.0 = normal, 1.5 = expensive area, 0.7 = discount
-  demandModifier: number; // Items frequently bought → price rises
-  supplyModifier: number; // Items frequently sold → price drops
-  reputationDiscount: number; // From actor's merchant reputation
-}
-```
-
 **Price formula:**
 
 ```
+
 finalPrice = basePrice × priceIndex × locationMarkup × demandModifier
              × (1 - reputationDiscount) × scarcityModifier
+
 ```
 
 ### Regional Price Variations
@@ -3192,6 +2448,7 @@ Items track supply levels per location. When actors buy/sell, supply
 adjusts:
 
 ```
+
 // Buying an item
 shop.supply[itemId] -= quantity;
 if (shop.supply[itemId] < lowThreshold) {
@@ -3203,6 +2460,7 @@ shop.supply[itemId] += quantity;
 if (shop.supply[itemId] > highThreshold) {
   demandModifier *= 0.8; // Price goes down
 }
+
 ```
 
 Supply thresholds (configurable per world):
@@ -3238,23 +2496,6 @@ by quest outcomes.
 
 Groups that control economic activity:
 
-```typescript
-interface EconomicFaction {
-  id: string;
-  name: string; // "Ironhold Mining Guild", "Thieves' Trade Union"
-  type: "guild" | "cartel" | "merchant_group" | "government" | "criminal";
-  controlledLocations: string[]; // Locations where they set prices
-  taxRate: number; // Cut they take from transactions
-  reputation: number; // Global standing (-100 to +100)
-  specialities: string[]; // Item categories they specialize in
-  modifiers: {
-    priceModifier: number; // Discount for members
-    accessModifier: number; // Can they shop here?
-    protectionModifier: number; // Safety guarantees
-  };
-}
-```
-
 Factions affect:
 
 - **Member discounts**: Guild members get better prices
@@ -3279,15 +2520,6 @@ On the world detail page, an "Economy" tab (GM only) shows:
 
 World economics and actor economics are coupled:
 
-1. **Actor buys item** → shop gold increases, world supply changes
-2. **Loot drops** → gold enters circulation, price index may shift
-3. **Tax collected** → gold destroyed from circulation
-4. **Quest reward** → gold enters circulation
-5. **Inflation rises** → actor's purchasing power drops, affects bartering
-
-The engine maintains both levels simultaneously. Actor economics provides
-the individual view; world economics provides the systemic view.
-
 ### P2P Trading & Barter
 
 Actor-to-actor trading is the core exchange mechanism between characters.
@@ -3308,6 +2540,7 @@ the LLM narrates haggling, the engine validates fairness.
 #### Barter Resolution Pipeline
 
 ```
+
 1. Initiator proposes trade (LLM narrative + TRADE_INTENT)
 2. Engine computes values:
    - Initiator's offer: items + gold
@@ -3332,6 +2565,7 @@ the LLM narrates haggling, the engine validates fairness.
    - Update reputation if applicable
 7. Inject result to LLM
 8. LLM narrates the completed exchange
+
 ```
 
 #### Value Comparison Engine
@@ -3339,6 +2573,7 @@ the LLM narrates haggling, the engine validates fairness.
 Barter trades need fair value estimation. The engine compares:
 
 ```
+
 initiatorValue = sum(item.value × quantity) + initiatorGold
 targetValue = sum(item.value × quantity) + targetGold
 
@@ -3347,6 +2582,7 @@ fairnessRating:
   0.5 ≤ ratio < 0.8  → "Unfair to you"
   1.2 < ratio ≤ 2.0  → "Unfair to them"
   ratio < 0.5 or > 2.0 → "Lopsided"
+
 ```
 
 Value comes from `item_definitions.value` (base gold value). The engine
@@ -3362,24 +2598,12 @@ can also factor in:
 
 When the LLM declares a skill check for barter:
 
-```typescript
-interface BarterCheck {
-  skill: "persuasion" | "intimidation" | "deception" | "insight";
-  dc: number; // Set by LLM or computed
-  modifiers: {
-    chaBonus: number;
-    proficiencyBonus: number;
-    reputationModifier: number;
-    factionModifier: number;
-    situationalModifier: number;
-  };
-}
-```
-
 **DC computation** (if not set by LLM):
 
 ```
+
 dc = 10 + floor(abs(fairnessRatio - 1.0) * 20)
+
 ```
 
 | Fairness Ratio | Computed DC | Example               |
@@ -3404,11 +2628,12 @@ dc = 10 + floor(abs(fairnessRatio - 1.0) * 20)
 In group chats, multiple actors can bid on the same item:
 
 ```
+
 [ACTIVE OFFERS]
 Item: Potion of Flight (held by Alice)
-  - Bob: 150g
-  - Carol: 200g + Short Sword (total: 260g)
-  - Dave: 300g (highest bid)
+- Bob: 150g
+- Carol: 200g + Short Sword (total: 260g)
+- Dave: 300g (highest bid)
 
 Alice can:
   a. Accept highest bid (Dave, 300g)
@@ -3417,6 +2642,7 @@ Alice can:
   d. Withdraw item from trade
   e. Start an auction with a deadline
 [/ACTIVE OFFERS]
+
 ```
 
 Auction mechanics:
@@ -3431,13 +2657,6 @@ Auction mechanics:
 For task-based trades (commissions, deliveries), the engine holds gold
 in escrow:
 
-```
-1. Employer deposits gold into escrow: "Deliver this letter to the mayor."
-2. Engine: escrow_record = { gold: 50, employer, deliverer, quest_id }
-3. Deliverer completes task (quest completion)
-4. Engine releases escrow: gold moves from escrow to deliverer
-5. If task fails: gold returned to employer
-6. If timeout: gold returned to employer, -10 trust with deliverer
 ```
 
 #### Trade Cooldown & Limits
