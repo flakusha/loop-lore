@@ -93,7 +93,7 @@ async function assertChatAccess(
   if (!chat) {
     return jsonError({ message: "Chat not found", status: HttpStatus.NotFound, code: ErrorCode.NotFound });
   }
-  if (chat.created_by === actorId || userRole === "admin") return true;
+  if (chat.created_by === actorId || userRole === "admin" || userRole === "solo") return true;
   const participant = await database
     .selectFrom("chat_participants")
     .select("actor_id")
@@ -133,7 +133,7 @@ async function requireMessageAccess(
     .select("created_by")
     .where("id", "=", message.chat_id)
     .executeTakeFirst();
-  if (!chat || (chat.created_by !== userId && userRole !== "admin")) {
+  if (!chat || (chat.created_by !== userId && userRole !== "admin" && userRole !== "solo")) {
     return {
       message: undefined,
       error: jsonError({ message: "Message not found", status: HttpStatus.NotFound }),
