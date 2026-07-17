@@ -1,4 +1,7 @@
 // Quests Page component (quests.html)
+import { feFetch } from "../fe-fetch";
+import { showToast } from "../ui";
+import { getErrorMessage } from "./shared";
 import { log as rootLog } from "../alpine/logger";
 import { jsonBody } from "../alpine/json";
 
@@ -22,7 +25,7 @@ interface WorldOption {
   name: string;
 }
 
-(globalThis as any).questsPage = function () {
+globalThis.questsPage = function () {
   return {
     worldId: "",
     worldName: "",
@@ -59,7 +62,7 @@ interface WorldOption {
 
     async loadWorlds() {
       try {
-        const res = await fetch("/api/worlds?pageSize=100", { headers: { Accept: "application/json" } });
+        const res = await feFetch("/api/worlds?pageSize=100", { headers: { Accept: "application/json" } });
         if (res.ok) {
           const data = await res.json();
           this.worldOptions = data.data || [];
@@ -77,7 +80,7 @@ interface WorldOption {
     async loadQuests() {
       this.loading = true;
       try {
-        const res = await fetch(
+        const res = await feFetch(
           `/api/worlds/${this.worldId}/quests?page=${this.page}&pageSize=${this.pageSize}`,
           { headers: { Accept: "application/json" } },
         );
@@ -87,7 +90,7 @@ interface WorldOption {
           this.total = data.total || 0;
         }
         if (!this.worldName) {
-          const wRes = await fetch(`/api/worlds/${this.worldId}`, {
+          const wRes = await feFetch(`/api/worlds/${this.worldId}`, {
             headers: { Accept: "application/json" },
           });
           if (wRes.ok) {
@@ -116,7 +119,7 @@ interface WorldOption {
           type: this.createType,
           priority: Number(this.createPriority) || 5,
         };
-        const res = await fetch(`/api/worlds/${this.worldId}/quests`, {
+        const res = await feFetch(`/api/worlds/${this.worldId}/quests`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: jsonBody(body),
@@ -128,8 +131,7 @@ interface WorldOption {
           this.createDescription = "";
           await this.loadQuests();
         } else {
-          const err = await res.json();
-          showToast("error", err.message || "Failed to create quest");
+          showToast("error", await getErrorMessage(res, "Failed to create quest"));
         }
       } catch {
         showToast("error", "Network error");
@@ -139,14 +141,13 @@ interface WorldOption {
     async deleteQuest(questId: string) {
       if (this.confirmDeleteQuest !== questId) return;
       try {
-        const res = await fetch(`/api/quests/${questId}`, { method: "DELETE" });
+        const res = await feFetch(`/api/quests/${questId}`, { method: "DELETE" });
         if (res.ok) {
           showToast("success", "Quest deleted");
           this.confirmDeleteQuest = "";
           await this.loadQuests();
         } else {
-          const err = await res.json();
-          showToast("error", err.message || "Failed to delete quest");
+          showToast("error", await getErrorMessage(res, "Failed to delete quest"));
         }
       } catch {
         showToast("error", "Network error");
@@ -185,7 +186,7 @@ interface WorldOption {
 
     async saveQuest(questId: string) {
       try {
-        const res = await fetch(`/api/quests/${questId}`, {
+        const res = await feFetch(`/api/quests/${questId}`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: jsonBody({
@@ -199,8 +200,7 @@ interface WorldOption {
           this.expandedQuest = "";
           await this.loadQuests();
         } else {
-          const err = await res.json();
-          showToast("error", err.message || "Failed");
+          showToast("error", await getErrorMessage(res, "Failed"));
         }
       } catch {
         showToast("error", "Network error");
@@ -209,7 +209,7 @@ interface WorldOption {
 
     async advanceQuest(questId: string) {
       try {
-        const res = await fetch(`/api/quests/${questId}/progress`, {
+        const res = await feFetch(`/api/quests/${questId}/progress`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: jsonBody({ delta: Number(this.advanceDelta) || 1 }),
@@ -220,8 +220,7 @@ interface WorldOption {
           if (q) q.progress = entry.progress ?? (q.progress ?? 0) + (Number(this.advanceDelta) || 1);
           showToast("success", "Progress advanced");
         } else {
-          const err = await res.json();
-          showToast("error", err.message || "Failed");
+          showToast("error", await getErrorMessage(res, "Failed"));
         }
       } catch {
         showToast("error", "Network error");

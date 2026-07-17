@@ -1,5 +1,7 @@
 import { log } from "./logger";
 import { jsonParseOr } from "./json";
+import { feFetch } from "../fe-fetch";
+import { normalizeHeaderSlot } from "./htmx-header";
 
 const apiLog = log.child({ module: "api" });
 
@@ -12,33 +14,16 @@ addEventListener("error", (e: ErrorEvent) => {
   });
 });
 
-const API_BASE = "";
-
-function getCsrfToken(): string {
-  const meta = document.querySelector<HTMLMetaElement>('meta[name="csrf-token"]');
-  if (meta?.content) return meta.content;
-  const match = document.cookie.match(/(?:^|;\s*)csrf_token=([^;]+)/);
-  return match ? match[1] : "";
-}
-
+// `apiFetch` is the Alpine/chat-layer alias for the unified frontend request
+// helper. It delegates to `feFetch` (../fe-fetch) for header + 401 handling and
+// adds request/response logging. Vanilla pages call `feFetch` directly.
 export async function apiFetch(url: string, options?: RequestInit): Promise<Response> {
   const method = options?.method ?? "GET";
   const start = performance.now();
   apiLog.info(`${method} ${url}`, { direction: "request" });
-  const opts: RequestInit = { ...options };
-  opts.headers = new Headers(opts.headers ?? {});
-  const csrf = getCsrfToken();
-  if (csrf) (opts.headers as Headers).set("X-CSRF-Token", csrf);
-  opts.signal = AbortSignal.timeout(30_000);
-  const res = await fetch(API_BASE + url, opts);
+  const res = await feFetch(url, options);
   const elapsed = Math.round(performance.now() - start);
   apiLog.info(`${res.status} ${url}`, { direction: "response", elapsedMs: elapsed });
-  if (res.status === 401) {
-    apiLog.warn(`401 — redirecting to login`, { url });
-    const redirect = encodeURIComponent(location.pathname + location.search);
-    location.assign(`/views/login?redirect=${redirect}`);
-    throw new Error("Unauthorized");
-  }
   return res;
 }
 
@@ -97,48 +82,6 @@ document.addEventListener("htmx:afterSwap", (e: Event) => {
     }
   }
 });
-
-function normalizeHeaderSlot() {
-  const all = Array.from(document.querySelectorAll<HTMLElement>("#header-slot"));
-  const appRoot = document.querySelector("#app-root");
-  if (!appRoot || all.length < 2) return;
-
-  for (const h of all) {
-    if (h.children.length === 0) h.remove();
-  }
-
-  const remaining = document.querySelectorAll<HTMLElement>("#header-slot");
-  if (remaining.length <= 1) {
-    const h = remaining[0];
-    if (h && appRoot.contains(h)) {
-      appRoot.parentElement?.insertBefore(h, appRoot);
-    }
-    return;
-  }
-
-  let newest: HTMLElement | null = null;
-  for (const h of remaining) {
-    if (appRoot.contains(h) && (!newest || h.children.length > newest.children.length)) {
-      newest = h;
-    }
-  }
-
-  if (!newest) {
-    newest = remaining[0];
-    for (const h of remaining) {
-      if (h.children.length > newest.children.length) {
-        newest = h;
-      }
-    }
-  }
-
-  for (const h of remaining) {
-    if (h !== newest) h.remove();
-  }
-  if (newest && appRoot.contains(newest)) {
-    appRoot.parentElement?.insertBefore(newest, appRoot);
-  }
-}
 
 document.addEventListener("htmx:responseError", (e: CustomEvent<{ xhr?: XMLHttpRequest }>) => {
   const xhr = e.detail.xhr;

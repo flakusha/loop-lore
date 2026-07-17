@@ -2,13 +2,17 @@
 
 import { chatMessages } from "./chat-messages";
 import { chatGenerations } from "./chat-generations";
+import { chatVariants } from "./chat-variants";
 import { chatActivity } from "./chat-activity";
 import { chatManagement } from "./chat-management";
+import { chatGroup } from "./chat-group";
+import { chatSettings } from "./chat-settings";
 import { chatEditing } from "./chat-editing";
 import { chatActions } from "./chat-actions";
 import { chatUtils } from "./chat-utils";
+import { chatKeys } from "./chat-keys";
+import { chatPanels } from "./chat-panels";
 import type { AlpineState, ChatState } from "./types";
-import { browserImportKey } from "../browser";
 import { log as rootLog } from "./logger";
 import { jsonParseOr } from "./json";
 const log = rootLog.child({ module: "chat-state" });
@@ -120,50 +124,11 @@ globalThis.chatState = function () {
       return this.chats.find((c: { id: string; name?: string }) => c.id === this.activeChat) ?? null;
     },
 
-    // Cleanup handles
-    _observer: null as MutationObserver | null,
-    _toggleChatListHandler: null as (() => void) | null,
-    _toggleGalleryHandler: null as (() => void) | null,
-    _toggleCharacterInfoHandler: null as (() => void) | null,
-    _panelClickHandler: null as ((e: MouseEvent) => void) | null,
-    _keydownHandler: null as ((e: KeyboardEvent) => void) | null,
-
-    // ── Chat settings state ──
-    _chatSettingsName: "",
-    _chatSettingsMode: "chat",
-    _chatSettingsTurnStrategy: "round_robin",
-    _groupPaused: false,
-    _renameChatId: "",
-    _renameChatName: "",
-    _selectedPersonaId: null as string | null,
-    _impersonatingActorId: null as string | null,
-    _assistantRole: "off" as "off" | "helper" | "gm" | "moderator",
-    selectedChats: [] as string[],
-    _personas: [] as any[],
-
-    // ── Mention state ──
-    _mentionQuery: "",
-    _mentionResults: [] as Array<{
-      actor_id: string;
-      name: string;
-      display_name?: string;
-      actor_type?: string;
-    }>,
-    _showMentionAutocomplete: false,
-    _chatParticipants: [] as Array<{
-      actor_id: string;
-      name: string;
-      display_name?: string;
-      actor_type?: string;
-    }>,
-
-    // ── Encryption state ──
-    _chatKey: null as CryptoKey | null,
-    _encryptionEnabled: false as boolean,
-    _keyId: null as string | null,
-    _storageHandler: null as ((e: StorageEvent) => void) | null,
-
-    // ── Core methods ──
+    // ── Sub-module state + methods ──
+    ...chatKeys,
+    ...chatGroup,
+    ...chatSettings,
+    ...chatPanels,
     async init() {
       // Ensure generation state is clean on fresh mount (prevents stale
       // isGenerating stuck after htmx morph re-initialization)
@@ -199,83 +164,11 @@ globalThis.chatState = function () {
         await this.selectChat(chatId);
       }
 
-      this._toggleChatListHandler = () => {
-        Alpine.store("ui").showChatList = !Alpine.store("ui").showChatList;
-      };
-      this._toggleGalleryHandler = () => {
-        Alpine.store("ui").showGallery = !Alpine.store("ui").showGallery;
-      };
-      this._toggleCharacterInfoHandler = () => {
-        Alpine.store("ui").showCharacterInfo = true;
-      };
-      document.addEventListener("toggle-chat-list", this._toggleChatListHandler);
-      document.addEventListener("toggle-gallery", this._toggleGalleryHandler);
-      document.addEventListener("toggle-character-info", this._toggleCharacterInfoHandler);
-
-      // Panel close: vanilla JS delegation (not @click directives) so close
-      // buttons in gallery sidebar / character info / chat list work reliably
-      // even after htmx morph swaps where Alpine @click may not re-compile
-      // on elements without their own x-data.
-      this._panelClickHandler = (e: MouseEvent) => {
-        const target = e.target as HTMLElement;
-        const ui = Alpine.store("ui");
-        const closeBtn = target.closest(
-          ".gallery-sidebar .btn-icon, .right-panel .btn-icon, .chat-list-panel .btn-icon",
-        );
-        if (closeBtn) {
-          if (closeBtn.closest(".gallery-sidebar")) ui.showGallery = false;
-          else if (closeBtn.closest(".right-panel")) ui.showCharacterInfo = false;
-          else if (closeBtn.closest(".chat-list-panel")) ui.showChatList = false;
-          return;
-        }
-        const backdrop = target.closest(".panel-backdrop");
-        if (backdrop) {
-          ui.showGallery = false;
-          ui.showCharacterInfo = false;
-          ui.showChatList = false;
-        }
-      };
-      document.addEventListener("click", this._panelClickHandler, { capture: true });
-
-      this._observer = new MutationObserver(() => {
-        if (!document.contains(this.$el)) {
-          this.destroy();
-        }
-      });
-      this._observer.observe(document.body, { childList: true, subtree: true });
-
-      this._keydownHandler = (e: KeyboardEvent) => {
-        if (e.key === "Escape") {
-          if (Alpine.store("ui").showChatList) {
-            Alpine.store("ui").showChatList = false;
-          } else if (Alpine.store("ui").showGallery) {
-            Alpine.store("ui").showGallery = false;
-          } else if (Alpine.store("ui").showCharacterInfo) {
-            Alpine.store("ui").showCharacterInfo = false;
-          }
-        }
-        if (e.ctrlKey && e.key === "j") {
-          const focusedMsg = document.querySelector<HTMLElement>(".message.focused");
-          if (focusedMsg) {
-            const msgId = focusedMsg.dataset.messageId;
-            if (msgId) this.continueMessage(msgId);
-          }
-        }
-      };
-      document.addEventListener("keydown", this._keydownHandler);
+      (this as any).registerPanelHandlers();
     },
 
     destroy() {
-      if (this._toggleChatListHandler)
-        document.removeEventListener("toggle-chat-list", this._toggleChatListHandler);
-      if (this._toggleGalleryHandler)
-        document.removeEventListener("toggle-gallery", this._toggleGalleryHandler);
-      if (this._toggleCharacterInfoHandler)
-        document.removeEventListener("toggle-character-info", this._toggleCharacterInfoHandler);
-
-      if (this._panelClickHandler) document.removeEventListener("click", this._panelClickHandler, true);
-
-      if (this._keydownHandler) document.removeEventListener("keydown", this._keydownHandler);
+      (this as any).unregisterPanelHandlers();
 
       this._cleanupSSE?.();
       this.disconnectActivitySSE();
@@ -361,40 +254,17 @@ globalThis.chatState = function () {
       await this.loadChatParticipants();
     },
 
-    async loadChatKey(chatId: string) {
-      try {
-        const res = await apiFetch(`/api/chats/${chatId}/encryption-key`);
-        if (!res.ok) {
-          this._encryptionEnabled = false;
-          this._chatKey = null;
-          this._keyId = null;
-          globalThis.__chatKey = null;
-          globalThis.__chatKeyId = null;
-          return;
-        }
-        const data = await res.json();
-        this._chatKey = await browserImportKey(data.rawKey);
-        this._keyId = data.keyId;
-        this._encryptionEnabled = true;
-        globalThis.__chatKey = this._chatKey;
-        globalThis.__chatKeyId = this._keyId;
-        log.info("Encryption key loaded for chat", { chatId, keyId: data.keyId });
-      } catch {
-        this._encryptionEnabled = false;
-        this._chatKey = null;
-        this._keyId = null;
-        globalThis.__chatKey = null;
-        globalThis.__chatKeyId = null;
-      }
-    },
-
     getChatId() {
       return this.activeChat;
     },
 
     // ── Sub-module methods ──
+    ...chatKeys,
+    ...chatGroup,
+    ...chatSettings,
     ...chatMessages,
     ...chatGenerations,
+    ...chatVariants,
     ...chatActivity,
     ...chatManagement,
     ...chatEditing,

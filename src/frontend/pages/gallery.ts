@@ -1,45 +1,38 @@
 // ── Gallery page: search, preview, actions ────────────────────
-import { escapeHtml, formatSize } from "./shared";
+import { escapeHtml, formatSize, filterCards } from "./shared";
+import { feFetch } from "../fe-fetch";
+import { showToast } from "../ui";
 import { log as rootLog } from "../alpine/logger";
 
 const pageLog = rootLog.child({ module: "gallery" });
 
-(globalThis as any).filterAssets = function () {
-  const query = (document.querySelector<HTMLInputElement>("#asset-search")?.value ?? "").toLowerCase().trim();
+globalThis.filterAssets = function () {
+  const query = document.querySelector<HTMLInputElement>("#asset-search")?.value ?? "";
   const type = document.querySelector<HTMLSelectElement>("#asset-type-filter")?.value ?? "all";
-  const cards = document.querySelectorAll("#asset-grid .asset-card");
-  let visible = 0;
-  for (const card of cards) {
-    const name = (card.querySelector(".name")?.textContent ?? "").toLowerCase();
-    const mime = (card.querySelector(".type")?.textContent ?? "").toLowerCase();
-    const matchesQuery = !query || name.includes(query) || mime.includes(query);
-    const matchesType =
+  filterCards({
+    containerId: "#asset-grid",
+    cardSelector: ".asset-card",
+    nameSelector: ".name",
+    descSelector: ".type",
+    query,
+    emptyIcon: "📁",
+    emptyTitle: "No assets match your filters",
+    emptyStyle: "grid-column: 1 / -1;",
+    matchExtra: (card) =>
       type === "all" ||
       (card.querySelector(".file-icon")?.textContent === "🎵" && type === "audio") ||
       (card.querySelector(".file-icon")?.textContent === "🎬" && type === "video") ||
-      (card.querySelector("img") && type === "image");
-    (card as HTMLElement).style.display = matchesQuery && matchesType ? "" : "none";
-    if (matchesQuery && matchesType) visible++;
-  }
-  if (visible === 0 && cards.length > 0) {
-    const grid = document.querySelector("#asset-grid");
-    if (grid) {
-      const empty = document.createElement("div");
-      empty.className = "empty-state";
-      empty.style.gridColumn = "1 / -1";
-      empty.innerHTML = `<div class="icon">📁</div><div class="title">No assets match your filters</div>`;
-      if (!grid.querySelector(".empty-state")) grid.append(empty);
-    }
-  }
+      (!!card.querySelector("img") && type === "image"),
+  });
 };
 
-(globalThis as any).openAssetPreview = async function (id: string) {
+globalThis.openAssetPreview = async function (id: string) {
   pageLog.debug("openAssetPreview", { id });
   try {
-    const res = await apiFetch(`/api/assets/${id}`);
+    const res = await feFetch(`/api/assets/${id}`);
     if (!res.ok) return;
     const a = await res.json();
-    (globalThis as any).__previewAsset = a;
+    globalThis.__previewAsset = a;
     const modal = document.querySelector<HTMLElement>("#preview-modal");
     if (!modal) return;
     modal.querySelector("[data-field='filename']")!.textContent = a.filename || "Asset";
@@ -69,8 +62,8 @@ const pageLog = rootLog.child({ module: "gallery" });
   }
 };
 
-(globalThis as any).copyAssetUrl = async function () {
-  const a = (globalThis as any).__previewAsset;
+globalThis.copyAssetUrl = async function () {
+  const a = globalThis.__previewAsset;
   if (!a?.id) return;
   try {
     await navigator.clipboard.writeText(`${location.origin}/api/assets/${a.id}/raw`);
@@ -80,8 +73,8 @@ const pageLog = rootLog.child({ module: "gallery" });
   }
 };
 
-(globalThis as any).downloadAsset = function () {
-  const a = (globalThis as any).__previewAsset;
+globalThis.downloadAsset = function () {
+  const a = globalThis.__previewAsset;
   if (!a?.id) return;
   const el = document.createElement("a");
   el.href = `/api/assets/${a.id}/raw`;
@@ -89,14 +82,14 @@ const pageLog = rootLog.child({ module: "gallery" });
   el.click();
 };
 
-(globalThis as any).deleteAssetPreview = async function () {
-  const a = (globalThis as any).__previewAsset;
+globalThis.deleteAssetPreview = async function () {
+  const a = globalThis.__previewAsset;
   if (!a?.id || !confirm("Delete this asset?")) return;
   try {
-    const res = await apiFetch(`/api/assets/${a.id}`, { method: "DELETE" });
+    const res = await feFetch(`/api/assets/${a.id}`, { method: "DELETE" });
     if (res.ok) {
       document.querySelector("#preview-modal")?.classList.remove("open");
-      (globalThis as any).__previewAsset = null;
+      globalThis.__previewAsset = null;
       showToast("success", "Asset deleted");
       const grid = document.querySelector("#asset-grid");
       if (grid) htmx.trigger(grid, "load");
