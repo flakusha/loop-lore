@@ -2,9 +2,16 @@
   <div class="login-card">
     <div class="login-logo">loop-lore</div>
 
-    <div id="login-error" class="login-error" data-testid="login-error" style="display: none"></div>
+    <div id="login-error" class="login-error" data-testid="login-error"></div>
 
-    <form hx-post="/api/auth/login" hx-target="#login-error" hx-swap="innerHTML" hx-indicator="#login-submit">
+    <form
+      method="post"
+      action="/api/auth/login"
+      hx-post="/api/auth/login"
+      hx-target="#login-error"
+      hx-swap="innerHTML"
+      hx-indicator="#login-submit"
+    >
       <div class="form-field">
         <label for="username">Username</label>
         <input
@@ -14,6 +21,7 @@
           required
           autofocus
           autocomplete="username"
+          class="form-input"
           data-testid="username-input"
         />
       </div>
@@ -26,6 +34,7 @@
           name="password"
           required
           autocomplete="current-password"
+          class="form-input"
           data-testid="password-input"
         />
       </div>

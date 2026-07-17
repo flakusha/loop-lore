@@ -53,6 +53,7 @@ const ALLOWED_VIEWS = new Set([
   "personas",
   "admin",
   "quests",
+  "register",
 ]);
 
 const ALLOWED_PARTIALS = new Set([
@@ -182,7 +183,7 @@ function serveCharacterEdit(characterId: string, isHtmx = false): Response | nul
 
 // ── Static partials (read from file) ─────────────────────────
 
-function serveStaticPartial(name: string, searchParams?: URLSearchParams): Response | null {
+function serveStaticPartial(name: string, searchParams?: URLSearchParams): string | null {
   if (!ALLOWED_PARTIALS.has(name)) return null;
 
   const partialPath = join(PARTIALS_DIR, `${name}.html`);
@@ -191,13 +192,13 @@ function serveStaticPartial(name: string, searchParams?: URLSearchParams): Respo
     if (searchParams?.has("worldId")) {
       content = content.replace("{{worldId}}", () => searchParams.get("worldId")!);
     }
-    return htmlResponse(content);
+    return content;
   }
 
   // Fallback to components dir
   const componentPath = join(COMPONENTS_DIR, `${name}.html`);
   if (existsSync(componentPath)) {
-    return htmlResponse(readFileSync(componentPath, "utf8"));
+    return readFileSync(componentPath, "utf8");
   }
 
   return null;
@@ -679,44 +680,84 @@ export function viewRoutes({ database }: { database: Kysely<DB> }) {
     new Elysia({ name: "views" })
       // ── Static partials (lazy-loaded modals, skeletons) ──────
       .get("/partials/:page/:section", (ctx) => {
+        const isHtmx = ctx.request.headers.get("HX-Request") === "true";
+        if (!isHtmx) {
+          return new Response(null, { status: 302, headers: { Location: "/views/" } });
+        }
         const name = `${ctx.params.page}/${ctx.params.section}`;
         const url = new URL(ctx.request.url);
-        const result = serveStaticPartial(name, url.searchParams);
-        if (result) return result;
-        return new Response("Not found", { status: 404 });
+        const content = serveStaticPartial(name, url.searchParams);
+        if (!content) return new Response("Not found", { status: 404 });
+        return htmlResponse(content);
       })
 
       // ── Dynamic partials (server-rendered data) ─────────────
-      .get("/dynamic/characters/grid", async () => {
+      .get("/dynamic/characters/grid", async (ctx) => {
+        const isHtmx = ctx.request.headers.get("HX-Request") === "true";
+        if (!isHtmx) {
+          return new Response(null, { status: 302, headers: { Location: "/views/" } });
+        }
         return await serveCharactersGrid(database);
       })
-      .get("/dynamic/gallery/grid", async () => {
+      .get("/dynamic/gallery/grid", async (ctx) => {
+        const isHtmx = ctx.request.headers.get("HX-Request") === "true";
+        if (!isHtmx) {
+          return new Response(null, { status: 302, headers: { Location: "/views/" } });
+        }
         return await serveGalleryGrid(database);
       })
-      .get("/dynamic/worlds/list", async () => {
+      .get("/dynamic/worlds/list", async (ctx) => {
+        const isHtmx = ctx.request.headers.get("HX-Request") === "true";
+        if (!isHtmx) {
+          return new Response(null, { status: 302, headers: { Location: "/views/" } });
+        }
         return await serveWorldsListDb(database);
       })
 
       // HTMX search endpoints
       .get("/dynamic/gallery/search", async (ctx) => {
+        const isHtmx = ctx.request.headers.get("HX-Request") === "true";
+        if (!isHtmx) {
+          return new Response(null, { status: 302, headers: { Location: "/views/" } });
+        }
         const url = new URL(ctx.request.url);
         return await serveGallerySearch(database, url.searchParams);
       })
       .get("/dynamic/characters/search", async (ctx) => {
+        const isHtmx = ctx.request.headers.get("HX-Request") === "true";
+        if (!isHtmx) {
+          return new Response(null, { status: 302, headers: { Location: "/views/" } });
+        }
         const url = new URL(ctx.request.url);
         return await serveCharactersSearch(database, url.searchParams);
       })
       .get("/dynamic/worlds/search", async (ctx) => {
+        const isHtmx = ctx.request.headers.get("HX-Request") === "true";
+        if (!isHtmx) {
+          return new Response(null, { status: 302, headers: { Location: "/views/" } });
+        }
         const url = new URL(ctx.request.url);
         return await serveWorldsSearch(database, url.searchParams);
       })
       .get("/dynamic/worlds/:id/detail", async (ctx) => {
+        const isHtmx = ctx.request.headers.get("HX-Request") === "true";
+        if (!isHtmx) {
+          return new Response(null, { status: 302, headers: { Location: "/views/" } });
+        }
         return await serveWorldDetailContent(ctx.params.id, database);
       })
       .get("/dynamic/characters/:id/edit-form", async (ctx) => {
+        const isHtmx = ctx.request.headers.get("HX-Request") === "true";
+        if (!isHtmx) {
+          return new Response(null, { status: 302, headers: { Location: "/views/" } });
+        }
         return await serveCharacterEditForm(ctx.params.id, database);
       })
       .get("/dynamic/characters/:id/chat-list", async (ctx) => {
+        const isHtmx = ctx.request.headers.get("HX-Request") === "true";
+        if (!isHtmx) {
+          return new Response(null, { status: 302, headers: { Location: "/views/" } });
+        }
         return await serveCharacterChatListDb(ctx.params.id, database);
       })
 
@@ -770,6 +811,19 @@ export function viewRoutes({ database }: { database: Kysely<DB> }) {
       .get("/views/:name", (ctx) => {
         const isHtmx = ctx.request.headers.get("HX-Request") === "true";
         const name = ctx.params.name;
+
+        // Redirect .html extensions to clean path; non-allowed views to /views/
+        const cleanName = name.replace(/\.html?$/i, "");
+        const isHtmlExtension = /\.html?$/i.test(name);
+        if (isHtmlExtension) {
+          if (ALLOWED_VIEWS.has(cleanName)) {
+            return new Response(null, { status: 302, headers: { Location: `/views/${cleanName}` } });
+          }
+          return new Response(null, { status: 302, headers: { Location: "/views/" } });
+        }
+        if (!ALLOWED_VIEWS.has(name)) {
+          return new Response(null, { status: 302, headers: { Location: "/views/" } });
+        }
 
         // Admin view gate
         if (name === "admin") {
