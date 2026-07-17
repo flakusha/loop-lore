@@ -10,4 +10,4 @@ export { ResponseHeaderPolicy, normalizeHeaderKey } from "./response-headers";
 export type { RouteKind, ApplyOptions } from "./response-headers";
 export { DynamicResponsePolicy } from "./dynamic-response";
 export type { DynamicApplyOptions } from "./dynamic-response";
-export { requireAdmin } from "./admin-gate";
+export { requireAdmin, adminViewGuard } from "./admin-gate";
