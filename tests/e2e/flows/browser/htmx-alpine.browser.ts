@@ -371,3 +371,62 @@ describe("Chat list selection", () => {
     await page.close();
   });
 });
+
+// ── Chat window modals open (regression for x-show + .open CSS) ──
+
+describe("Chat window modals open", () => {
+  test("chat settings modal becomes visible when store toggled (.open fix)", async () => {
+    const page = await ctx.browser.newPage();
+    await gotoView(page, "/views/chat");
+    await waitForAlpineReady(page);
+
+    // Header "Chat settings" button sets this store flag.
+    await page.evaluate(() => {
+      Alpine.store("ui").showChatSettings = true;
+    });
+    await page.waitForTimeout(300);
+
+    const modal = page.locator("[data-testid='chat-settings-modal']");
+    await modal.waitFor({ state: "visible", timeout: 5000 });
+    const cls = await modal.getAttribute("class");
+    expect(cls).toContain("open");
+    expect(await modal.isVisible()).toBe(true);
+    await page.close();
+  });
+
+  test("chat settings button opens modal after selecting a chat", async () => {
+    const page = await ctx.browser.newPage();
+    await gotoView(page, "/views/chat");
+    await waitForAlpineReady(page);
+
+    await page.click("[data-testid='toggle-chat-list']");
+    await page.waitForTimeout(400);
+    const chatItem = page.locator("[data-testid='chat-list-panel'] .nav-item").first();
+    await chatItem.waitFor({ state: "attached", timeout: 5000 });
+    await chatItem.click();
+    await page.waitForTimeout(500);
+
+    await page.click("[data-testid='toggle-chat-settings']");
+    await page.waitForTimeout(400);
+
+    const modal = page.locator("[data-testid='chat-settings-modal']");
+    await modal.waitFor({ state: "visible", timeout: 5000 });
+    expect(await modal.isVisible()).toBe(true);
+    await page.close();
+  });
+
+  test("user preferences modal opens via header button", async () => {
+    const page = await ctx.browser.newPage();
+    await gotoView(page, "/views/chat");
+    await waitForAlpineReady(page);
+
+    // "User preferences" button dispatches a window 'settings-modal' event.
+    await page.click("[data-testid='toggle-user-preferences']");
+    await page.waitForTimeout(400);
+
+    const title = page.locator("[data-testid='settings-modal-title']");
+    await title.waitFor({ state: "visible", timeout: 5000 });
+    expect(await title.isVisible()).toBe(true);
+    await page.close();
+  });
+});
