@@ -43,7 +43,7 @@ const EXPECTED_ENUMS: Record<string, string[]> = {
   QuestProgressStatus: ["active", "completed", "failed", "ignored"],
   MemoryType: ["episodic", "semantic", "procedural"],
   LorePosition: ["before_char", "after_char", "in_char"],
-  LoreEntryStatus: ["enabled", "disabled"],
+  LoreEntryStatus: ["enabled", "disabled", "archived"],
   ItemCategory: [
     "weapon",
     "armor",

@@ -39,11 +39,16 @@ describe("normalizeHeaderSlot", () => {
   });
 
   test("does nothing when only one header-slot exists", () => {
-    const appRoot = { _id: "app-root", children: [], contains: () => true, parentElement: { insertBefore: () => {} } } as any;
+    const appRoot = {
+      _id: "app-root",
+      children: [],
+      contains: () => true,
+      parentElement: { insertBefore: () => {} },
+    } as any;
     const header = { _id: "header-slot", children: [{}] } as any;
     const doc = mockDoc({
-      querySelectorAll: (sel: string) => sel === "#header-slot" ? [header] : [],
-      querySelector: (sel: string) => sel === "#app-root" ? appRoot : null,
+      querySelectorAll: (sel: string) => (sel === "#header-slot" ? [header] : []),
+      querySelector: (sel: string) => (sel === "#app-root" ? appRoot : null),
     });
     globalThis.document = doc as any;
     expect(() => normalizeHeaderSlot()).not.toThrow();
@@ -51,11 +56,17 @@ describe("normalizeHeaderSlot", () => {
 
   test("removes empty header-slots", () => {
     let removed = 0;
-    const empty = { _id: "header-slot", children: [], remove() { removed++; } } as any;
+    const empty = {
+      _id: "header-slot",
+      children: [],
+      remove() {
+        removed++;
+      },
+    } as any;
     const appRoot = { _id: "app-root", children: [], contains: () => false, parentElement: null } as any;
     const doc = mockDoc({
-      querySelectorAll: (sel: string) => sel === "#header-slot" ? [empty, empty] : [],
-      querySelector: (sel: string) => sel === "#app-root" ? appRoot : null,
+      querySelectorAll: (sel: string) => (sel === "#header-slot" ? [empty, empty] : []),
+      querySelector: (sel: string) => (sel === "#app-root" ? appRoot : null),
     });
     globalThis.document = doc as any;
     normalizeHeaderSlot();
@@ -66,7 +77,7 @@ describe("normalizeHeaderSlot", () => {
     const appRoot = { _id: "app-root" } as any;
     const doc = mockDoc({
       querySelectorAll: () => [],
-      querySelector: (sel: string) => sel === "#app-root" ? appRoot : null,
+      querySelector: (sel: string) => (sel === "#app-root" ? appRoot : null),
     });
     globalThis.document = doc as any;
     expect(() => normalizeHeaderSlot()).not.toThrow();

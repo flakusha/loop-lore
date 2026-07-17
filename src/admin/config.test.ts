@@ -2,30 +2,18 @@
  * Tests for admin/config.ts — System Config CRUD
  */
 import { describe, test, expect, beforeAll, afterAll } from "bun:test";
-import { Kysely, sql } from "kysely";
 import { createTestDb } from "../test-utils/create-test-db";
 import { getAllConfig, getConfig, setConfig, deleteConfig } from "./config";
 import { createLogger } from "../logger";
+import type { Kysely } from "kysely";
 import type { DB } from "../db/schema";
-
-async function createSystemConfigTable(db: Kysely<DB>): Promise<void> {
-  await db.schema
-    .createTable("system_config")
-    .addColumn("key", "text", (col) => col.primaryKey())
-    .addColumn("value", "text", (col) => col.notNull())
-    .addColumn("description", "text")
-    .addColumn("created_at", "text", (col) => col.notNull().defaultTo(sql`(datetime('now'))`))
-    .addColumn("updated_at", "text", (col) => col.notNull().defaultTo(sql`(datetime('now'))`))
-    .execute();
-}
 
 describe("getAllConfig", () => {
   let db: Kysely<DB>;
 
   beforeAll(async () => {
     createLogger({ level: "warn" });
-    db = createTestDb();
-    await createSystemConfigTable(db);
+    ({ db } = await createTestDb());
     await db.insertInto("system_config").values({ key: "foo", value: "bar" }).execute();
     await db.insertInto("system_config").values({ key: "baz", value: "qux" }).execute();
   });
@@ -46,8 +34,7 @@ describe("getConfig", () => {
   let db: Kysely<DB>;
 
   beforeAll(async () => {
-    db = createTestDb();
-    await createSystemConfigTable(db);
+    ({ db } = await createTestDb());
     await db
       .insertInto("system_config")
       .values({ key: "foo", value: "bar", description: "Test key" })
@@ -75,8 +62,7 @@ describe("setConfig", () => {
   let db: Kysely<DB>;
 
   beforeAll(async () => {
-    db = createTestDb();
-    await createSystemConfigTable(db);
+    ({ db } = await createTestDb());
   });
 
   afterAll(async () => {
@@ -102,8 +88,7 @@ describe("deleteConfig", () => {
   let db: Kysely<DB>;
 
   beforeAll(async () => {
-    db = createTestDb();
-    await createSystemConfigTable(db);
+    ({ db } = await createTestDb());
     await db.insertInto("system_config").values({ key: "delete_me", value: "bye" }).execute();
   });
 

@@ -1,8 +1,8 @@
 /**
  * Migration 016: Telemetry Events Table
  *
- * Opt-in anonymized event tracking for operational observability.
- * Events are metadata-only — no content is stored.
+ * No DEFAULT expression on created_at (SQLite limitation on ALTER TABLE ADD COLUMN).
+ * Use `CURRENT_TIMESTAMP` in application code or rely on insertion-time value.
  */
 import type { Kysely } from "kysely";
 
@@ -17,7 +17,7 @@ export async function up(db: Kysely<unknown>): Promise<void> {
     .addColumn("event_data", "text", (col) => col.notNull().defaultTo("{}"))
     .addColumn("source", "text", (col) => col.notNull().defaultTo("server"))
     .addColumn("created_at", "text", (col) =>
-      col.notNull().defaultTo("(datetime('now'))"),
+      col.notNull(),
     )
     .execute();
 

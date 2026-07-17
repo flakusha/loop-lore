@@ -165,14 +165,14 @@ describe("createEntityRoutes", () => {
   test("GET by ID returns specific note", async () => {
     // Create a note first
     const app = createApp(db, userId);
-    const createRes = await app.handle(
+    const noteCreate = await app.handle(
       new Request(`http://localhost/api/actors/${actorId}/notes`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ title: "Find Me", content: "Here" }),
       }),
     );
-    const created = (await createRes.json()) as any;
+    const created = (await noteCreate.json()) as { id: string };
 
     const res = await app.handle(new Request(`http://localhost/api/actors/${actorId}/notes/${created.id}`));
     expect(res.status).toBe(200);
@@ -190,14 +190,14 @@ describe("createEntityRoutes", () => {
 
   test("PUT updates a note", async () => {
     const app = createApp(db, userId);
-    const createRes = await app.handle(
+    const noteCreate = await app.handle(
       new Request(`http://localhost/api/actors/${actorId}/notes`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ title: "Before", content: "Original" }),
       }),
     );
-    const created = (await createRes.json()) as any;
+    const created = (await noteCreate.json()) as { id: string };
 
     // Use "content" field — EntityUpdateBody schema only allows name/content/type/data
     const res = await app.handle(
@@ -229,14 +229,14 @@ describe("createEntityRoutes", () => {
 
   test("DELETE removes a note", async () => {
     const app = createApp(db, userId);
-    const createRes = await app.handle(
+    const noteCreate = await app.handle(
       new Request(`http://localhost/api/actors/${actorId}/notes`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ title: "Delete Me", content: "Gone" }),
       }),
     );
-    const created = (await createRes.json()) as any;
+    const created = (await noteCreate.json()) as { id: string };
 
     const res = await app.handle(
       new Request(`http://localhost/api/actors/${actorId}/notes/${created.id}`, {
@@ -246,10 +246,10 @@ describe("createEntityRoutes", () => {
     expect(res.status).toBe(204);
 
     // Verify gone
-    const getRes = await app.handle(
+    const noteGet = await app.handle(
       new Request(`http://localhost/api/actors/${actorId}/notes/${created.id}`),
     );
-    expect(getRes.status).toBe(404);
+    expect(noteGet.status).toBe(404);
   });
 
   // NOTE: DELETE for nonexistent entity returns 204 (idempotent) — pre-existing
