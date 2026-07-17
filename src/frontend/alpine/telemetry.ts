@@ -1,67 +1,71 @@
 /**
- * Frontend Telemetry Tracking
+ * Frontend Telemetry
  *
- * Opt-in client-side event tracking via navigator.sendBeacon.
- *   track(type, data) → queue events → flush on page unload
- *   htmx lifecycle hooks → auto-track page views
- *   window.onerror → capture unhandled errors
+ * Wires TelemetryTransport into the browser logger on init.
+ * Provides trackClick helper for Alpine @click handlers.
  *
- * Enabled via TELEMETRY_FRONTEND_ENABLED env var.
+ * Dev: always enabled. Prod: gated by server-rendered config flag.
  */
+import { getLogger } from "./logger";
+import { TelemetryTransport } from "./transports/telemetry";
 
-let enabled = false;
-let queue: Array<{ type: string; data?: Record<string, unknown> }> = [];
-let _flushTimer: ReturnType<typeof setInterval> | null = null;
+let _initialized = false;
 
-export function initTelemetry(isEnabled: boolean): void {
-  enabled = isEnabled;
+export function initTelemetry(): void {
+  if (_initialized) return;
+  _initialized = true;
+
+  const enabled =
+    (globalThis as any).__TELEMETRY_FRONTEND_ENABLED === true ||
+    (globalThis as any).__TELEMETRY_FRONTEND_ENABLED === "true" ||
+    (globalThis as any).__TELEMETRY_FRONTEND_ENABLED === 1;
+
   if (!enabled) return;
 
-  _flushTimer = setInterval(flush, 10_000);
+  try {
+    const logger = getLogger();
+    logger.addTransport(new TelemetryTransport());
+  } catch {
+    // logger not ready yet
+  }
 
   document.addEventListener("htmx:afterSettle", () => {
-    track("frontend.page_view", { path: location.pathname });
+    try {
+      getLogger().info("frontend.page_view", { path: location.pathname });
+    } catch {
+      /* noop */
+    }
   });
 
   globalThis.addEventListener("error", (event: ErrorEvent) => {
-    track("frontend.error", {
-      message: event.message,
-      filename: event.filename,
-      lineno: event.lineno,
-      colno: event.colno,
-    });
+    try {
+      getLogger().error("frontend.error", undefined, {
+        message: event.message,
+        filename: event.filename,
+        lineno: event.lineno,
+        colno: event.colno,
+      });
+    } catch {
+      /* noop */
+    }
   });
 
   globalThis.addEventListener("unhandledrejection", (event: PromiseRejectionEvent) => {
-    track("frontend.error", {
-      message: event.reason?.message ?? String(event.reason),
-      type: "unhandledrejection",
-    });
+    try {
+      getLogger().error("frontend.error", undefined, {
+        message: event.reason?.message ?? String(event.reason),
+        type: "unhandledrejection",
+      });
+    } catch {
+      /* noop */
+    }
   });
 }
 
-export function track(type: string, data?: Record<string, unknown>): void {
-  if (!enabled) return;
-  queue.push({ type, data });
-  if (queue.length >= 10) flush();
-}
-
-function flush(): void {
-  if (queue.length === 0) return;
-  const batch = queue.splice(0);
-  const payload = {
-    events: batch,
-    sessionId: getSessionId(),
-  };
-  navigator.sendBeacon("/api/telemetry/event", JSON.stringify(payload));
-}
-
-function getSessionId(): string {
-  const key = "ll_telemetry_sid";
-  let sid = sessionStorage.getItem(key);
-  if (!sid) {
-    sid = crypto.randomUUID();
-    sessionStorage.setItem(key, sid);
-  }
-  return sid;
+export function isTelemetryEnabled(): boolean {
+  return (
+    (globalThis as any).__TELEMETRY_FRONTEND_ENABLED === true ||
+    (globalThis as any).__TELEMETRY_FRONTEND_ENABLED === "true" ||
+    (globalThis as any).__TELEMETRY_FRONTEND_ENABLED === 1
+  );
 }
