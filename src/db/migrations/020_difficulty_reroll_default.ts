@@ -10,13 +10,13 @@
  */
 import { sql, type Kysely } from "kysely";
 
-export async function up(db: Kysely<any>): Promise<void> {
-  await db.schema
+export async function up(database: Kysely<any>): Promise<void> {
+  await database.schema
     .alterTable("worlds")
     .addColumn("difficulty_reroll_v2", "text", (col) => col.notNull().defaultTo("none"))
     .execute();
 
-  await db
+  await database
     .updateTable("worlds")
     .set({ difficulty_reroll_v2: "none" } as any)
     .where("difficulty_reroll", "=", "off")
@@ -26,19 +26,19 @@ export async function up(db: Kysely<any>): Promise<void> {
     UPDATE worlds
     SET difficulty_reroll_v2 = difficulty_reroll
     WHERE difficulty_reroll != 'off'
-  `.execute(db);
+  `.execute(database);
 
-  await db.schema.alterTable("worlds").dropColumn("difficulty_reroll").execute();
-  await db.schema.alterTable("worlds").renameColumn("difficulty_reroll_v2", "difficulty_reroll").execute();
+  await database.schema.alterTable("worlds").dropColumn("difficulty_reroll").execute();
+  await database.schema.alterTable("worlds").renameColumn("difficulty_reroll_v2", "difficulty_reroll").execute();
 }
 
-export async function down(db: Kysely<any>): Promise<void> {
-  await db.schema
+export async function down(database: Kysely<any>): Promise<void> {
+  await database.schema
     .alterTable("worlds")
     .addColumn("difficulty_reroll_old", "text", (col) => col.notNull().defaultTo("off"))
     .execute();
 
-  await db
+  await database
     .updateTable("worlds")
     .set({ difficulty_reroll_old: "off" } as any)
     .where("difficulty_reroll", "=", "none")
@@ -48,8 +48,8 @@ export async function down(db: Kysely<any>): Promise<void> {
     UPDATE worlds
     SET difficulty_reroll_old = difficulty_reroll
     WHERE difficulty_reroll != 'none'
-  `.execute(db);
+  `.execute(database);
 
-  await db.schema.alterTable("worlds").dropColumn("difficulty_reroll").execute();
-  await db.schema.alterTable("worlds").renameColumn("difficulty_reroll_old", "difficulty_reroll").execute();
+  await database.schema.alterTable("worlds").dropColumn("difficulty_reroll").execute();
+  await database.schema.alterTable("worlds").renameColumn("difficulty_reroll_old", "difficulty_reroll").execute();
 }

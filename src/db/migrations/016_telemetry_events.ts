@@ -1,13 +1,13 @@
 /**
- * Migration 016: Telemetry Events Table
+ * Migration 016 — Telemetry events table
  *
  * No DEFAULT expression on created_at (SQLite limitation on ALTER TABLE ADD COLUMN).
  * Use `CURRENT_TIMESTAMP` in application code or rely on insertion-time value.
  */
 import type { Kysely } from "kysely";
 
-export async function up(db: Kysely<unknown>): Promise<void> {
-  await db.schema
+export async function up(database: Kysely<unknown>): Promise<void> {
+  await database.schema
     .createTable("telemetry_events")
     .addColumn("id", "text", (col) => col.primaryKey())
     .addColumn("session_id", "text")
@@ -21,19 +21,19 @@ export async function up(db: Kysely<unknown>): Promise<void> {
     )
     .execute();
 
-  await db.schema
+  await database.schema
     .createIndex("idx_telemetry_events_type")
     .on("telemetry_events")
     .column("event_type")
     .execute();
 
-  await db.schema
+  await database.schema
     .createIndex("idx_telemetry_events_created")
     .on("telemetry_events")
     .column("created_at")
     .execute();
 }
 
-export async function down(db: Kysely<unknown>): Promise<void> {
-  await db.schema.dropTable("telemetry_events").ifExists().execute();
+export async function down(database: Kysely<unknown>): Promise<void> {
+  await database.schema.dropTable("telemetry_events").ifExists().execute();
 }
