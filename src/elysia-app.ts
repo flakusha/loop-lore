@@ -21,6 +21,7 @@ import { authPublicRoutes, authProtectedRoutes } from "./routes/auth";
 import { settingsRoutes } from "./routes/settings";
 import { activityRoutes } from "./routes/activity";
 import { activityStreamRoutes } from "./routes/activity-stream";
+import { notificationsRoutes } from "./routes/notifications";
 import { apiKeysRoutes } from "./routes/api-keys";
 import { frontendLogsRoutes } from "./routes/frontend-logs";
 import { messageEncryptionRoutes } from "./routes/message-encryption";
@@ -38,8 +39,11 @@ import { storyItemsRoutes } from "./routes/story-items";
 import { questsRoutes } from "./routes/quests";
 import { charactersRoutes } from "./routes/characters";
 import { messagesRoutes } from "./routes/messages";
+import { messageReactionsRoutes } from "./routes/message-reactions";
 import { telemetryRoutes } from "./routes/telemetry";
 import { chatsRoutes } from "./routes/chats";
+import { chatPinRoutes } from "./routes/chat-pins";
+import { chatExportRoutes } from "./routes/chat-export";
 import { importRoutes } from "./routes/import";
 import { pluginRoutes } from "./routes/plugins";
 import { personaRoutes } from "./personas/controller";
@@ -92,6 +96,7 @@ export function createApp(deps: AppDeps): Elysia {
   // ── Migrated route modules ───────────────────────────────────────────────────
   app.use(activityRoutes(handleOpts));
   app.use(activityStreamRoutes(handleOpts));
+  app.use(notificationsRoutes(handleOpts));
   app.use(apiKeysRoutes(handleOpts));
   app.use(settingsRoutes(handleOpts));
   app.use(messageEncryptionRoutes(handleOpts));
@@ -110,7 +115,10 @@ export function createApp(deps: AppDeps): Elysia {
   app.use(questsRoutes(handleOpts));
   app.use(charactersRoutes(handleOpts));
   app.use(messagesRoutes(handleOpts));
+  app.use(messageReactionsRoutes(handleOpts));
   app.use(chatsRoutes(handleOpts));
+  app.use(chatPinRoutes(handleOpts));
+  app.use(chatExportRoutes(handleOpts));
   app.use(importRoutes(handleOpts));
   app.use(personaRoutes(handleOpts));
   app.use(generationRoutes(handleOpts));
