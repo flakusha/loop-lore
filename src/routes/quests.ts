@@ -17,6 +17,7 @@ import type { DB } from "../db/schema";
 import { safeJsonStringify } from "../utils";
 import { jsonResponse, jsonError, jsonPaginated, jsonCreated, jsonNoContent, HttpStatus } from "./http-utils";
 import { QuestEngine } from "../story/quest-engine";
+import { notifyQuestUpdate } from "../notifications/service";
 import type { QuestType as QuestTypeEnum } from "../db/enums";
 import type { QuestConfig } from "../story/types";
 import { QuestCreateBody } from "../validation/schemas";
@@ -163,6 +164,10 @@ async function handleQuest(
     .selectAll()
     .where("id", "=", questId)
     .executeTakeFirst();
+  void notifyQuestUpdate(database, {
+    worldId: questRow.world_id,
+    questName: updated?.name ?? "Quest",
+  }).catch(() => {});
   return jsonResponse(updated);
 }
 
@@ -200,6 +205,16 @@ async function handleProgress(
   const delta = Number(body?.delta) || 1;
   const sourceMessageId = body?.sourceMessageId as string | undefined;
   const entry = await engine.advanceProgress(questId, body?.chatId as string, delta, sourceMessageId);
+  const questNameRow = await database
+    .selectFrom("quests")
+    .select("name")
+    .where("id", "=", questId)
+    .executeTakeFirst();
+  void notifyQuestUpdate(database, {
+    worldId: questRow.world_id,
+    chatId: body?.chatId as string | undefined,
+    questName: questNameRow?.name ?? "Quest",
+  }).catch(() => {});
   return jsonResponse(entry);
 }
 
