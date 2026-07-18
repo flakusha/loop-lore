@@ -18,11 +18,11 @@
  */
 import { sql, type Kysely } from "kysely";
 
-export async function up(db: Kysely<any>): Promise<void> {
-  await sql`PRAGMA foreign_keys = OFF`.execute(db);
+export async function up(database: Kysely<any>): Promise<void> {
+  await sql`PRAGMA foreign_keys = OFF`.execute(database);
 
   // ── users — CHECK(role) ─────────────────────────────────
-  await db.schema
+  await database.schema
     .createTable("users_ck")
     .addColumn("id", "text", (col) => col.primaryKey())
     .addColumn("username", "text", (col) => col.notNull().unique())
@@ -42,13 +42,13 @@ export async function up(db: Kysely<any>): Promise<void> {
     )
     .execute();
 
-  await sql`INSERT INTO users_ck SELECT * FROM users`.execute(db);
-  await db.schema.dropTable("users").execute();
-  await db.schema.alterTable("users_ck").renameTo("users").execute();
-  await db.schema.createIndex("idx_users_role").on("users").column("role").execute();
+  await sql`INSERT INTO users_ck SELECT * FROM users`.execute(database);
+  await database.schema.dropTable("users").execute();
+  await database.schema.alterTable("users_ck").renameTo("users").execute();
+  await database.schema.createIndex("idx_users_role").on("users").column("role").execute();
 
   // ── chats — CHECK(type) ─────────────────────────────────
-  await db.schema
+  await database.schema
     .createTable("chats_ck")
     .addColumn("id", "text", (col) => col.primaryKey())
     .addColumn("name", "text", (col) => col.notNull())
@@ -76,17 +76,17 @@ export async function up(db: Kysely<any>): Promise<void> {
     )
     .execute();
 
-  await sql`INSERT INTO chats_ck SELECT * FROM chats`.execute(db);
-  await db.schema.dropTable("chats").execute();
-  await db.schema.alterTable("chats_ck").renameTo("chats").execute();
-  await db.schema.createIndex("idx_chats_created_by").on("chats").column("created_by").execute();
-  await db.schema.createIndex("idx_chats_world").on("chats").column("world_id").execute();
-  await db.schema.createIndex("idx_chats_location").on("chats").column("current_location_id").execute();
-  await db.schema.createIndex("idx_chats_pinned").on("chats").column("is_pinned").execute();
-  await db.schema.createIndex("idx_chats_parent").on("chats").column("parent_chat_id").execute();
+  await sql`INSERT INTO chats_ck SELECT * FROM chats`.execute(database);
+  await database.schema.dropTable("chats").execute();
+  await database.schema.alterTable("chats_ck").renameTo("chats").execute();
+  await database.schema.createIndex("idx_chats_created_by").on("chats").column("created_by").execute();
+  await database.schema.createIndex("idx_chats_world").on("chats").column("world_id").execute();
+  await database.schema.createIndex("idx_chats_location").on("chats").column("current_location_id").execute();
+  await database.schema.createIndex("idx_chats_pinned").on("chats").column("is_pinned").execute();
+  await database.schema.createIndex("idx_chats_parent").on("chats").column("parent_chat_id").execute();
 
   // ── world_lore_entries — CHECK(enabled) ──────────────────
-  await db.schema
+  await database.schema
     .createTable("world_lore_entries_ck")
     .addColumn("id", "text", (col) => col.primaryKey())
     .addColumn("world_id", "text", (col) => col.notNull())
@@ -112,14 +112,14 @@ export async function up(db: Kysely<any>): Promise<void> {
     )
     .execute();
 
-  await sql`INSERT INTO world_lore_entries_ck SELECT * FROM world_lore_entries`.execute(db);
-  await db.schema.dropTable("world_lore_entries").execute();
-  await db.schema.alterTable("world_lore_entries_ck").renameTo("world_lore_entries").execute();
-  await db.schema.createIndex("idx_world_lore_world").on("world_lore_entries").column("world_id").execute();
-  await db.schema.createIndex("idx_world_lore_position").on("world_lore_entries").column("position").execute();
+  await sql`INSERT INTO world_lore_entries_ck SELECT * FROM world_lore_entries`.execute(database);
+  await database.schema.dropTable("world_lore_entries").execute();
+  await database.schema.alterTable("world_lore_entries_ck").renameTo("world_lore_entries").execute();
+  await database.schema.createIndex("idx_world_lore_world").on("world_lore_entries").column("world_id").execute();
+  await database.schema.createIndex("idx_world_lore_position").on("world_lore_entries").column("position").execute();
 
   // ── actor_lore_entries — CHECK(enabled) ─────────────────
-  await db.schema
+  await database.schema
     .createTable("actor_lore_entries_ck")
     .addColumn("id", "text", (col) => col.primaryKey())
     .addColumn("actor_id", "text", (col) => col.notNull())
@@ -145,20 +145,20 @@ export async function up(db: Kysely<any>): Promise<void> {
     )
     .execute();
 
-  await sql`INSERT INTO actor_lore_entries_ck SELECT * FROM actor_lore_entries`.execute(db);
-  await db.schema.dropTable("actor_lore_entries").execute();
-  await db.schema.alterTable("actor_lore_entries_ck").renameTo("actor_lore_entries").execute();
-  await db.schema.createIndex("idx_actor_lore_actor").on("actor_lore_entries").column("actor_id").execute();
-  await db.schema.createIndex("idx_actor_lore_position").on("actor_lore_entries").column("position").execute();
+  await sql`INSERT INTO actor_lore_entries_ck SELECT * FROM actor_lore_entries`.execute(database);
+  await database.schema.dropTable("actor_lore_entries").execute();
+  await database.schema.alterTable("actor_lore_entries_ck").renameTo("actor_lore_entries").execute();
+  await database.schema.createIndex("idx_actor_lore_actor").on("actor_lore_entries").column("actor_id").execute();
+  await database.schema.createIndex("idx_actor_lore_position").on("actor_lore_entries").column("position").execute();
 
-  await sql`PRAGMA foreign_keys = ON`.execute(db);
+  await sql`PRAGMA foreign_keys = ON`.execute(database);
 }
 
-export async function down(db: Kysely<any>): Promise<void> {
-  await sql`PRAGMA foreign_keys = OFF`.execute(db);
+export async function down(database: Kysely<any>): Promise<void> {
+  await sql`PRAGMA foreign_keys = OFF`.execute(database);
 
   // ── actor_lore_entries — remove CHECK(enabled) ──────────
-  await db.schema
+  await database.schema
     .createTable("actor_lore_entries_nock")
     .addColumn("id", "text", (col) => col.primaryKey())
     .addColumn("actor_id", "text", (col) => col.notNull())
@@ -180,14 +180,14 @@ export async function down(db: Kysely<any>): Promise<void> {
     .addForeignKeyConstraint("fk_ale_actor", ["actor_id"], "actors", ["id"])
     .execute();
 
-  await sql`INSERT INTO actor_lore_entries_nock SELECT * FROM actor_lore_entries`.execute(db);
-  await db.schema.dropTable("actor_lore_entries").execute();
-  await db.schema.alterTable("actor_lore_entries_nock").renameTo("actor_lore_entries").execute();
-  await db.schema.createIndex("idx_actor_lore_actor").on("actor_lore_entries").column("actor_id").execute();
-  await db.schema.createIndex("idx_actor_lore_position").on("actor_lore_entries").column("position").execute();
+  await sql`INSERT INTO actor_lore_entries_nock SELECT * FROM actor_lore_entries`.execute(database);
+  await database.schema.dropTable("actor_lore_entries").execute();
+  await database.schema.alterTable("actor_lore_entries_nock").renameTo("actor_lore_entries").execute();
+  await database.schema.createIndex("idx_actor_lore_actor").on("actor_lore_entries").column("actor_id").execute();
+  await database.schema.createIndex("idx_actor_lore_position").on("actor_lore_entries").column("position").execute();
 
   // ── world_lore_entries — remove CHECK(enabled) ──────────
-  await db.schema
+  await database.schema
     .createTable("world_lore_entries_nock")
     .addColumn("id", "text", (col) => col.primaryKey())
     .addColumn("world_id", "text", (col) => col.notNull())
@@ -209,14 +209,14 @@ export async function down(db: Kysely<any>): Promise<void> {
     .addForeignKeyConstraint("fk_wle_world", ["world_id"], "worlds", ["id"])
     .execute();
 
-  await sql`INSERT INTO world_lore_entries_nock SELECT * FROM world_lore_entries`.execute(db);
-  await db.schema.dropTable("world_lore_entries").execute();
-  await db.schema.alterTable("world_lore_entries_nock").renameTo("world_lore_entries").execute();
-  await db.schema.createIndex("idx_world_lore_world").on("world_lore_entries").column("world_id").execute();
-  await db.schema.createIndex("idx_world_lore_position").on("world_lore_entries").column("position").execute();
+  await sql`INSERT INTO world_lore_entries_nock SELECT * FROM world_lore_entries`.execute(database);
+  await database.schema.dropTable("world_lore_entries").execute();
+  await database.schema.alterTable("world_lore_entries_nock").renameTo("world_lore_entries").execute();
+  await database.schema.createIndex("idx_world_lore_world").on("world_lore_entries").column("world_id").execute();
+  await database.schema.createIndex("idx_world_lore_position").on("world_lore_entries").column("position").execute();
 
   // ── chats — remove CHECK(type) ──────────────────────────
-  await db.schema
+  await database.schema
     .createTable("chats_nock")
     .addColumn("id", "text", (col) => col.primaryKey())
     .addColumn("name", "text", (col) => col.notNull())
@@ -240,17 +240,17 @@ export async function down(db: Kysely<any>): Promise<void> {
     .addForeignKeyConstraint("fk_chats_location", ["current_location_id"], "locations", ["id"])
     .execute();
 
-  await sql`INSERT INTO chats_nock SELECT * FROM chats`.execute(db);
-  await db.schema.dropTable("chats").execute();
-  await db.schema.alterTable("chats_nock").renameTo("chats").execute();
-  await db.schema.createIndex("idx_chats_created_by").on("chats").column("created_by").execute();
-  await db.schema.createIndex("idx_chats_world").on("chats").column("world_id").execute();
-  await db.schema.createIndex("idx_chats_location").on("chats").column("current_location_id").execute();
-  await db.schema.createIndex("idx_chats_pinned").on("chats").column("is_pinned").execute();
-  await db.schema.createIndex("idx_chats_parent").on("chats").column("parent_chat_id").execute();
+  await sql`INSERT INTO chats_nock SELECT * FROM chats`.execute(database);
+  await database.schema.dropTable("chats").execute();
+  await database.schema.alterTable("chats_nock").renameTo("chats").execute();
+  await database.schema.createIndex("idx_chats_created_by").on("chats").column("created_by").execute();
+  await database.schema.createIndex("idx_chats_world").on("chats").column("world_id").execute();
+  await database.schema.createIndex("idx_chats_location").on("chats").column("current_location_id").execute();
+  await database.schema.createIndex("idx_chats_pinned").on("chats").column("is_pinned").execute();
+  await database.schema.createIndex("idx_chats_parent").on("chats").column("parent_chat_id").execute();
 
   // ── users — remove CHECK(role) ──────────────────────────
-  await db.schema
+  await database.schema
     .createTable("users_nock")
     .addColumn("id", "text", (col) => col.primaryKey())
     .addColumn("username", "text", (col) => col.notNull().unique())
@@ -266,10 +266,10 @@ export async function down(db: Kysely<any>): Promise<void> {
     .addColumn("last_seen_at", "text")
     .execute();
 
-  await sql`INSERT INTO users_nock SELECT * FROM users`.execute(db);
-  await db.schema.dropTable("users").execute();
-  await db.schema.alterTable("users_nock").renameTo("users").execute();
-  await db.schema.createIndex("idx_users_role").on("users").column("role").execute();
+  await sql`INSERT INTO users_nock SELECT * FROM users`.execute(database);
+  await database.schema.dropTable("users").execute();
+  await database.schema.alterTable("users_nock").renameTo("users").execute();
+  await database.schema.createIndex("idx_users_role").on("users").column("role").execute();
 
-  await sql`PRAGMA foreign_keys = ON`.execute(db);
+  await sql`PRAGMA foreign_keys = ON`.execute(database);
 }
