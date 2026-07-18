@@ -21,7 +21,7 @@ Visual Novel Mode, RisuAI emotion images.
 - **Inspiration**: SillyTavern VN (sprites, letterbox, focus, shake)
 - **What**: Render chat as a VN scene — character sprites over location backgrounds,
   letterbox bars, focus mode, sprite shake on impact.
-- **Fits**: `docs/spec/actors.md` already defines item *sprites*; extend to character
+- **Fits**: `docs/spec/actors.md` already defines item _sprites_; extend to character
   sprites. Location assets provide backgrounds.
 - **Effort**: Med
 - **Depends on**: sprite asset pipeline, layout component (`docs/frontend/chat/layout.md`)

@@ -47,19 +47,22 @@ export async function registerDevice(
     name: string;
     type: "mobile" | "desktop" | "web";
     publicKey: string;
-  }
+  },
 ): Promise<string> {
   const deviceId = crypto.randomUUID();
 
-  await db.insertInto("user_devices").values({
-    id: deviceId,
-    user_id: userId,
-    name: deviceInfo.name,
-    type: deviceInfo.type,
-    public_key: deviceInfo.publicKey,
-    created_at: new Date().toISOString(),
-    last_seen: new Date().toISOString(),
-  }).execute();
+  await db
+    .insertInto("user_devices")
+    .values({
+      id: deviceId,
+      user_id: userId,
+      name: deviceInfo.name,
+      type: deviceInfo.type,
+      public_key: deviceInfo.publicKey,
+      created_at: new Date().toISOString(),
+      last_seen: new Date().toISOString(),
+    })
+    .execute();
 
   return deviceId;
 }
@@ -101,7 +104,7 @@ export async function GET(req: Request) {
       encryptedContent: msg.content, // Already encrypted
       keyId: msg.key_id,
       timestamp: msg.created_at,
-    }))
+    })),
   );
 
   return success(200, {
@@ -122,7 +125,7 @@ export interface VectorClock {
 export function resolveConflict(
   local: EncryptedMessage,
   remote: EncryptedMessage,
-  clock: VectorClock
+  clock: VectorClock,
 ): EncryptedMessage {
   // Compare vector clocks
   const localTime = clock[local.deviceId] || 0;

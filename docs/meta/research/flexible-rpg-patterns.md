@@ -15,9 +15,9 @@ Focus on modularity, extensibility, and genre-crossing compatibility.
 interface WorldRules {
   // Core mechanics
   dice_system: "d20" | "fate" | "savage" | "gurps" | "forge";
-  attributes: string[];  // Configurable attribute list
-  skill_list: string[];  // Configurable skills
-  
+  attributes: string[]; // Configurable attribute list
+  skill_list: string[]; // Configurable skills
+
   // Optional modules
   modules: {
     magic?: MagicRules;
@@ -25,11 +25,11 @@ interface WorldRules {
     vehicles?: VehicleRules;
     sanity?: SanityRules;
   };
-  
+
   // Scaling
   stat_cap?: number;
   level_cap?: number;
-  
+
   // Genre variants
   damage_model: "abstract" | "realistic" | "dice";
   armor_model: "ac" | "dr" | "none";
@@ -37,6 +37,7 @@ interface WorldRules {
 ```
 
 ### Implementation Strategy
+
 - Rules stored in `worlds.rules` JSON column
 - Engine reads configuration at runtime
 - Modules loaded conditionally based on world settings
@@ -54,13 +55,13 @@ interface GameEffect {
   source: "item" | "spell" | "status" | "world";
   target: "self" | "other" | "area";
   duration: "instant" | "turn" | "scene" | "permanent";
-  
+
   // Stat modifiers
   modifiers?: {
     stat?: Partial<Record<string, number>>;
     skill?: Partial<Record<string, number>>;
   };
-  
+
   // Special effects
   flags?: {
     advantage?: boolean;
@@ -68,13 +69,14 @@ interface GameEffect {
     extra_action?: boolean;
     immune?: string[];
   };
-  
+
   // Stacking rules
   stacking: "none" | "same_type" | "different_type";
 }
 ```
 
 ### Application Points
+
 - **Effective stats**: Apply modifiers at computation time
 - **Roll bonuses**: Add to d20/skill check rolls
 - **Status effects**: Apply during combat resolution
@@ -92,7 +94,7 @@ interface RulesModule {
   id: string;
   name: string;
   version: string;
-  
+
   // Hooks into resolution pipeline
   hooks: {
     beforeRoll?: (context: RollContext) => RollContext;
@@ -100,25 +102,26 @@ interface RulesModule {
     beforeDamage?: (damage: Damage) => Damage;
     afterDamage?: (damage: Damage, target: Actor) => void;
   };
-  
+
   // Configurable options
   defaults: Record<string, unknown>;
 }
 
 const MODULES: Record<string, RulesModule> = {
-  magic: { /* spell slots, mana, etc. */ },
-  cybernetics: { /* implants, humanity, etc. */ },
-  vehicles: { /* speed, handling, vehicle HP */ },
-  sanity: { /* fear, horror checks */ },
+  magic: {/* spell slots, mana, etc. */},
+  cybernetics: {/* implants, humanity, etc. */},
+  vehicles: {/* speed, handling, vehicle HP */},
+  sanity: {/* fear, horror checks */},
 };
 ```
 
 ### Loading Pattern
+
 ```typescript
 function loadWorldRules(worldId: string): RulesEngine {
   const world = db.selectFrom("worlds").where("id", "=", worldId);
   const modules = world.rules.modules || {};
-  
+
   const engine = new RulesEngine();
   for (const [id, config] of Object.entries(modules)) {
     const mod = MODULES[id];
@@ -149,7 +152,7 @@ interface CombatIntent {
 async function resolveCombat(
   intent: CombatIntent,
   actor: Actor,
-  target: Actor | null
+  target: Actor | null,
 ): Promise<CombatResult> {
   // 1. Parse intent (LLM or structured input)
   // 2. Apply modifiers from equipment/status
@@ -162,12 +165,13 @@ async function resolveCombat(
 ```
 
 ### Cross-Genre Actions
-| Action | Fantasy | Modern | Sci-fi | Horror |
-|--------|---------|--------|--------|--------|
-| Attack | Melee weapon | Firearm | Energy weapon | Improvised |
-| Cast | Spell | Device | Tech power | Ritual |
-| Use Item | Potion | Medkit | Stim | Tome |
-| Move | Walk | Run | Fly | Flee |
+
+| Action   | Fantasy      | Modern  | Sci-fi        | Horror     |
+| -------- | ------------ | ------- | ------------- | ---------- |
+| Attack   | Melee weapon | Firearm | Energy weapon | Improvised |
+| Cast     | Spell        | Device  | Tech power    | Ritual     |
+| Use Item | Potion       | Medkit  | Stim          | Tome       |
+| Move     | Walk         | Run     | Fly           | Flee       |
 
 ---
 
@@ -182,9 +186,9 @@ const cyberpunkAttributes = ["str", "dex", "con", "int", "wis", "cha", "tech"];
 const superheroAttributes = ["str", "dex", "con", "int", "wis", "cha", "pow"];
 
 interface ActorStats {
-  base: Record<string, number>;  // Configurable by world
+  base: Record<string, number>; // Configurable by world
   modifiers: Modifier[];
-  computed: Record<string, number>;  // Base + modifiers
+  computed: Record<string, number>; // Base + modifiers
 }
 ```
 
@@ -195,8 +199,8 @@ interface ActorStats {
 interface Skill {
   id: string;
   name: string;
-  attribute?: string;  // If linked, max = attribute
-  category?: string;   // "combat", "social", "magic", etc.
+  attribute?: string; // If linked, max = attribute
+  category?: string; // "combat", "social", "magic", etc.
   base: number;
   bonuses: Modifier[];
 }
@@ -219,10 +223,10 @@ const universalSkills = [
 
 ```typescript
 interface EnergySystem {
-  max: number;           // Computed from stats
-  current: number;       // Current available
+  max: number; // Computed from stats
+  current: number; // Current available
   recovery: "round" | "rest" | "time";
-  
+
   // Action costs
   costs: {
     move: number;
@@ -235,17 +239,17 @@ interface EnergySystem {
 // Forge-style variable expenditure
 class ActionBuilder {
   private energy = 0;
-  
+
   spend(base: number): this {
     this.energy += base;
     return this;
   }
-  
+
   add(variable: number): this {
     this.energy += variable;
     return this;
   }
-  
+
   // Check if actor has enough energy
   canPay(actor: Actor): boolean {
     return actor.energy.current >= this.energy;
@@ -254,6 +258,7 @@ class ActionBuilder {
 ```
 
 ### Energy Recovery Patterns
+
 - **Round-based**: Recover at turn start (tactical)
 - **Rest-based**: Recover after short/long rest (D&D-style)
 - **Time-based**: Recover over time (realistic)
@@ -270,8 +275,8 @@ interface MetaCurrency {
   type: "fate_point" | "benny" | "hero_point" | "inspiration";
   amount: number;
   max?: number;
-  refresh: number;  // Per session/scene
-  
+  refresh: number; // Per session/scene
+
   // Uses
   uses: {
     reroll: boolean;
@@ -282,15 +287,11 @@ interface MetaCurrency {
 }
 
 // Award triggers (narrative)
-const META_TRIGGERS = [
-  "good_roleplay",
-  "creative_solution",
-  "character_development",
-  "story_advancement",
-];
+const META_TRIGGERS = ["good_roleplay", "creative_solution", "character_development", "story_advancement"];
 ```
 
 ### Integration with Rewards
+
 ```typescript
 // Quest completion awards both XP and meta-currency
 interface QuestReward {
@@ -314,11 +315,11 @@ interface QuestReward {
 interface StatusEffect {
   id: string;
   name: string;
-  
+
   // Duration
   duration: number | "until_removed";
   tick: "start_turn" | "end_turn" | "on_action";
-  
+
   // Mechanical effects
   effects: {
     stat_modifiers?: Partial<Record<string, number>>;
@@ -327,7 +328,7 @@ interface StatusEffect {
     save_penalty?: number;
     action_restrictions?: string[];
   };
-  
+
   // Narrative effects
   description: string;
   visible_to_player: boolean;
@@ -360,8 +361,8 @@ interface ItemTemplate {
   name: string;
   description: string;
   category: "weapon" | "armor" | "consumable" | "tool" | "misc";
-  slot?: string;  // If equippable
-  
+  slot?: string; // If equippable
+
   // Mechanical properties
   properties: {
     damage_dice?: string;
@@ -370,14 +371,14 @@ interface ItemTemplate {
     stat_bonuses?: Partial<Record<string, number>>;
     requires_attunement?: boolean;
   };
-  
+
   // Cost/value
   cost: {
     currency?: string;
     value?: number;
     rarity?: "common" | "uncommon" | "rare" | "unique";
   };
-  
+
   // Module-specific
   module_data?: Record<string, unknown>;
 }
@@ -414,13 +415,13 @@ const neuralInterface: ItemTemplate = {
 ```typescript
 interface LevelProgression {
   formula: "linear" | "polynomial" | "exponential";
-  
+
   // Linear: level * multiplier + base
   linear?: { multiplier: number; base: number };
-  
+
   // Polynomial: level^2 * a + level * b + c
   polynomial?: { a: number; b: number; c: number };
-  
+
   // Level effects
   on_level_up: {
     hp_bonus?: number | "con_mod";
@@ -442,6 +443,7 @@ const dndProgression: LevelProgression = {
 ```
 
 ### Milestone Progression
+
 ```typescript
 // Quest-based advancement
 interface MilestoneProgress {
@@ -467,14 +469,14 @@ interface MechanicsTestCase {
   name: string;
   system: "d20" | "fate" | "savage";
   action: string;
-  
+
   // Inputs
   actor_stats: Record<string, number>;
   modifiers: Modifier[];
   dc?: number;
-  
+
   // Expected outputs
-  expected_success_rate: number;  // Statistical
+  expected_success_rate: number; // Statistical
   expected_damage_range?: [number, number];
   expected_effects?: string[];
 }
@@ -486,8 +488,8 @@ const combatTests = [
     system: "d20",
     action: "attack",
     actor_stats: { str: 16, dex: 14 },
-    dc: 13,  // Typical AC
-    expected_success_rate: 0.65,  // 65% hit chance
+    dc: 13, // Typical AC
+    expected_success_rate: 0.65, // 65% hit chance
   },
 ];
 ```
@@ -497,6 +499,7 @@ const combatTests = [
 ## 12. Configuration Examples
 
 ### Fantasy World
+
 ```yaml
 rules:
   dice_system: d20
@@ -511,6 +514,7 @@ rules:
 ```
 
 ### Cyberpunk World
+
 ```yaml
 rules:
   dice_system: d20
@@ -527,6 +531,7 @@ rules:
 ```
 
 ### Superhero World
+
 ```yaml
 rules:
   dice_system: fate
@@ -541,6 +546,7 @@ rules:
 ```
 
 ### Horror World
+
 ```yaml
 rules:
   dice_system: d20
@@ -553,4 +559,84 @@ rules:
       clue_system: true
   damage_model: dice
   armor_model: ac
+```
+
+---
+
+## 13. Actor Relationships & Standing
+
+### Relationship Effects
+
+Relationships provide mechanical and narrative modifiers:
+
+```typescript
+interface RelationshipEffect {
+  type: "disposition" | "trust" | "fear" | "respect" | "romance";
+  target: "self" | "other" | "both";
+  modifier: number; // Applied to rolls/social checks
+  condition?: string; // When effect applies
+}
+
+// Example: Rival relationship
+const RIVAL_EFFECTS: RelationshipEffect[] = [
+  { type: "disposition", target: "other", modifier: -2, condition: "combat" },
+  { type: "respect", target: "self", modifier: +1 }, // Motivated by rivalry
+];
+```
+
+### Standing-Based Quest Gating
+
+```typescript
+interface StandingRequirement {
+  minStanding: number;
+  faction?: string; // If specific faction required
+  relationship?: {
+    targetActorId: string;
+    minDisposition: number;
+  };
+}
+
+// Quest gated by standing
+const STANDING_GATED_QUEST = {
+  id: "royal_audience",
+  name: "Royal Audience",
+  requirements: {
+    minStanding: 50,
+    faction: "kingdom",
+  },
+  // Only available at Hero tier with kingdom
+};
+```
+
+### Romance/Subtext Mechanics
+
+For worlds enabling romantic content:
+
+```typescript
+interface RomanceTrack {
+  actorA: string;
+  actorB: string;
+  worldId: string;
+
+  // Progression stages
+  stage: "none" | "interested" | "flirting" | "dating" | "committed" | "broken_up";
+
+  // Compatibility score
+  compatibility: number; // 0-100 based on aligned values
+
+  // Mechanical modifiers
+  modifiers: {
+    persuasion: number; // Social roll bonus
+    combat: number; // Bonus when fighting together
+    stress_relief: number; // Stress recovery bonus
+  };
+
+  // Milestone tracking
+  milestones: {
+    first_meeting?: string;
+    first_date?: string;
+    first_kiss?: string;
+    intimacy?: string;
+  };
+}
 ```

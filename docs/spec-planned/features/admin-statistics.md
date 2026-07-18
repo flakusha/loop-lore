@@ -3,6 +3,7 @@
 ## User Statistics
 
 ### Default Metrics (Always Collected)
+
 ```sql
 -- Table: user_statistics (daily rollups)
 CREATE TABLE user_statistics (
@@ -18,12 +19,14 @@ CREATE TABLE user_statistics (
 ```
 
 ### Violation Tracking
+
 - Profanity filter triggers
 - Rate limit exceeded
 - Failed login attempts (5+)
 - Content flagged by others
 
 ### Privacy Controls
+
 ```
 GET /api/admin/statistics/users
 Query: ?period=7d&include_violations=true
@@ -40,6 +43,7 @@ Response:
 ## Stable Diffusion Tuning
 
 ### Prompt Injection Templates
+
 ```typescript
 // src/admin/sd-templates.ts
 export const sdTemplates = {
@@ -58,6 +62,7 @@ export const sdTemplates = {
 ```
 
 ### Model Selection
+
 - Per-world default model
 - Per-chat override
 - Per-user preference (if allowed)
@@ -66,6 +71,7 @@ export const sdTemplates = {
 ## Moderation Tools
 
 ### Content Review
+
 ```
 GET /api/admin/moderation/flagged
 Query: ?status=pending&type=message|asset|chat
@@ -82,6 +88,7 @@ Body: { "status": "approved|rejected|escalated" }
 ```
 
 ### Auto-Moderation Rules
+
 ```yaml
 auto_moderation:
   profanity:
@@ -98,6 +105,7 @@ auto_moderation:
 ## Admin Configuration
 
 ### Runtime Config Table
+
 ```sql
 CREATE TABLE admin_config (
   key TEXT PRIMARY KEY,
@@ -113,6 +121,7 @@ CREATE TABLE admin_config (
 ```
 
 ### Dangerous Actions
+
 - Disable encryption features
 - Clear all notifications
 - Force user logout

@@ -80,6 +80,7 @@
     "bun-plugin-html": "2.2.8",
     "eslint": "^10.7.0",
     "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-import": "^2.32.0",
     "eslint-plugin-markdown": "^5.1.0",
     "eslint-plugin-sonarjs": "^4.2.0",
     "eslint-plugin-unicorn": "^71.1.0",

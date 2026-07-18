@@ -26,12 +26,12 @@ export class OutputTransformEngine {
   }
 
   removeRule(id: string): void {
-    this.rules = this.rules.filter(r => r.id !== id);
+    this.rules = this.rules.filter((r) => r.id !== id);
   }
 
   transform(text: string): string {
     let result = text;
-    for (const rule of this.rules.filter(r => r.enabled)) {
+    for (const rule of this.rules.filter((r) => r.enabled)) {
       try {
         const regex = new RegExp(rule.pattern, rule.flags || "");
         result = result.replace(regex, rule.replacement);
@@ -109,6 +109,7 @@ const transformedContent = transformEngine.transform(rawMessage.content);
 ## User Storage
 
 Rules stored in `user.settings.output_transforms` JSON:
+
 ```json
 {
   "rules": [

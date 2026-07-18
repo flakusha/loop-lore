@@ -51,12 +51,13 @@ AGENTS.md states **"Interfaces > types"** but nothing enforces it. Mixed
 `interface`/`type` usage drifts. Add
 `@typescript-eslint/consistent-type-definitions: ["error", "interface"]`.
 
-### 5. Dead code slips through
-LSP reports unused `Def` consts in `src/db/enums-core.ts`
-(`messageStatusDef`, `actorVisibilityDef`, …). That means either
-`noUnusedLocals` isn't catching them (they may be exported via a barrel) or
-they're genuinely dead. Add `import/no-unused-modules` + a periodic dead-code
-audit; delete the dead `Def`s if unused.
+### 5. Dead code can slip through module boundaries
+`noUnusedLocals` only catches unused symbols *within* a file. Exported-but-
+never-imported modules (e.g. a route or helper that lost its only caller)
+are invisible to `tsc`. Add `import/no-unused-modules` (per-file, opt-in) to
+catch orphaned modules. (Note: editor LSP may surface stale "unused"
+diagnostics after refactors — `bun run typecheck` is the source of truth and
+currently passes clean.)
 
 ### 6. Frontend gets a softer ruleset
 `eslint.config.mjs` frontend block turns several rules `off`
@@ -84,8 +85,8 @@ for a project that values "lightweight, maintainable".
    genuinely browser-specific off-switches (`prefer-node-protocol`,
    `no-process-exit` stays error).
 6. **Optional**: `eslint-plugin-perfectionist` for import/export sorting.
-7. **Audit + delete dead `Def` consts** in `enums-core.ts`; add
-   `import/no-unused-modules` to prevent recurrence.
+7. **Add `import/no-unused-modules`** (opt-in per file) to catch
+   orphaned exports that `noUnusedLocals` misses.
 
 ## Suggested steps
 
@@ -99,4 +100,4 @@ for a project that values "lightweight, maintainable".
 - Run `bun run lint` → expect the 5 complexity errors + any cycles →
   refactor those files (see `04`) before flipping to error, or land the rule
   as `warn` for one cycle then `error`.
-- Delete unused `Def` consts in `src/db/enums-core.ts`; verify `bun run typecheck`.
+- Add `import/no-unused-modules` (opt-in) to catch orphaned modules; verify `bun run typecheck`.

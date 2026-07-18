@@ -19,6 +19,7 @@ export function rollDice(notation: string, seed?: number): DiceRoll; // determin
 **Notation**: d4, d6, d8, d12, d20, 2d6+3, etc.
 
 ### File: src/rpg/dice.test.ts
+
 - Test all standard dice
 - Test modifiers
 - Test seeded rolls for deterministic mode
@@ -28,17 +29,24 @@ export function rollDice(notation: string, seed?: number): DiceRoll; // determin
 ### File: src/rpg/stats.ts
 
 Core attributes:
+
 - STR, DEX, CON, INT, WIS, CHA
 
 Stat block interface on actors table:
+
 ```json
 {
   "stats": {
-    "str": 16, "dex": 14, "con": 12,
-    "int": 10, "wis": 13, "cha": 8
+    "str": 16,
+    "dex": 14,
+    "con": 12,
+    "int": 10,
+    "wis": 13,
+    "cha": 8
   },
   "modifiers": {
-    "str": "+3", "dex": "+2"
+    "str": "+3",
+    "dex": "+2"
   }
 }
 ```
@@ -48,6 +56,7 @@ Stat block interface on actors table:
 ### File: src/rpg/combat.ts
 
 Combat intent extraction from LLM:
+
 ```json
 {
   "intent": "attack",
@@ -64,16 +73,16 @@ Damage formula: 1d8 + STR modifier
 
 Commands have access tiers based on world rules:
 
-| Command | Default Tier | GM Override |
-|---------|--------------|-------------|
-| /improve | all | whitelist/blacklist |
-| /dice | all | whitelist/blacklist |
-| /stats | all | whitelist/blacklist |
-| /attack | member | whitelist/blacklist |
-| /damage | gm | whitelist/blacklist |
-| /heal | gm | whitelist/blacklist |
-| /quest | gm | whitelist/blacklist |
-| /image | member | configurable cost |
+| Command  | Default Tier | GM Override         |
+| -------- | ------------ | ------------------- |
+| /improve | all          | whitelist/blacklist |
+| /dice    | all          | whitelist/blacklist |
+| /stats   | all          | whitelist/blacklist |
+| /attack  | member       | whitelist/blacklist |
+| /damage  | gm           | whitelist/blacklist |
+| /heal    | gm           | whitelist/blacklist |
+| /quest   | gm           | whitelist/blacklist |
+| /image   | member       | configurable cost   |
 
 ## Phase 4: Items & Equipment
 
@@ -88,6 +97,7 @@ Item types: weapon, armor, consumable, key_item, currency, container, tool, misc
 ### File: src/rpg/skills.ts
 
 Skills derived from attributes:
+
 - Athletics (STR), Acrobatics (DEX), Stealth (DEX)
 - Perception (WIS), Arcana (INT), Investigation (INT)
 - Medicine (WIS), Survival (WIS), Persuasion (CHA)

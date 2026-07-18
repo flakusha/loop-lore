@@ -8,33 +8,33 @@ Deep-dive docs in `/docs/` — read before touching related code:
 
 ### Core System
 
-| File                               | Covers                                                                  |
-| ---------------------------------- | ----------------------------------------------------------------------- |
-| `docs/spec/schema.md`              | Full DB schema (all tables: core, generation, story, actors, assets)    |
-| `docs/spec/messages.md`            | Message persistence, detail levels, invalid message handling            |
-| `docs/spec/users-sessions.md`      | User roles, remote sessions, demo/solo mode                             |
-| `docs/spec/assets.md`              | Asset system (images/audio/video), upload pipeline, polymorphic linking |
-| `docs/spec/actors.md`              | Actor data model: character cards, memories, lorebooks, inventory       |
-| `docs/spec/character-setup.md`     | Character & persona system: multi-format import/export, impersonation   |
-| `docs/spec/rpg-mechanics.md`       | RPG mechanics: stats, combat, equipment, dice, skills, XP, loot         |
-| `docs/spec/architecture.md`        | System layers, request flow, docs serving                               |
-| `docs/spec/build-deploy.md`        | Minimum-build setup, build pipeline, deployment options                 |
-| `docs/spec/implementation.md`      | Tech stack, all modules (db, gen, story, assets, assistant, TUI)        |
-| `docs/spec/tui.md`                 | Blessed component hierarchy, keyboard map, data flow                    |
-| `docs/spec/plugin-system.md`       | Plugin architecture: types, lifecycle, security, examples               |
-| `docs/spec/memory-system.md`       | Three-tier memory: episodic, semantic, procedural                       |
-| `docs/spec/artifacts-system.md`    | Code, documents, datasets as polymorphic assets                         |
-| `docs/spec/crypto.md`              | Encryption: actor keys, chat keys, BYOK, SMK, key hierarchy             |
-| `docs/spec/logging.md`             | Structured logging: levels, formatters, censors, rotation, transport    |
-| `docs/spec/content-compression.md` | Content encoding: gzip/zstd/brotli, minification, hash injection        |
-| `docs/spec/api-routes.md`          | API route contract — all endpoints, conventions, error envelope         |
-| `docs/spec/auth-middleware.md`     | Auth middleware — token flow, session model, role guard, rate limiting  |
-| `docs/spec/error-envelope.md`      | Standard error envelope — codes, shapes, patterns, frontend sync        |
-| `docs/spec/access-model-clarification.md` | Gallery access model: auth, ownership, public endpoints        |
-| `docs/spec/archival-workflow.md`   | Message archival: states, transitions, restore/purge workflows          |
-| `docs/spec/assistant-commands.md`  | Assistant command parser and command specification                      |
-| `docs/spec/encryption-workflow.md` | Key hierarchy: SMK, actor keys, encryption/decryption pipeline         |
-| `docs/meta/plan.md`                | MVP implementation checklist with week-by-week tasks                    |
+| File                                      | Covers                                                                  |
+| ----------------------------------------- | ----------------------------------------------------------------------- |
+| `docs/spec/schema.md`                     | Full DB schema (all tables: core, generation, story, actors, assets)    |
+| `docs/spec/messages.md`                   | Message persistence, detail levels, invalid message handling            |
+| `docs/spec/users-sessions.md`             | User roles, remote sessions, demo/solo mode                             |
+| `docs/spec/assets.md`                     | Asset system (images/audio/video), upload pipeline, polymorphic linking |
+| `docs/spec/actors.md`                     | Actor data model: character cards, memories, lorebooks, inventory       |
+| `docs/spec/character-setup.md`            | Character & persona system: multi-format import/export, impersonation   |
+| `docs/spec/rpg-mechanics.md`              | RPG mechanics: stats, combat, equipment, dice, skills, XP, loot         |
+| `docs/spec/architecture.md`               | System layers, request flow, docs serving                               |
+| `docs/spec/build-deploy.md`               | Minimum-build setup, build pipeline, deployment options                 |
+| `docs/spec/implementation.md`             | Tech stack, all modules (db, gen, story, assets, assistant, TUI)        |
+| `docs/spec/tui.md`                        | Blessed component hierarchy, keyboard map, data flow                    |
+| `docs/spec/plugin-system.md`              | Plugin architecture: types, lifecycle, security, examples               |
+| `docs/spec/memory-system.md`              | Three-tier memory: episodic, semantic, procedural                       |
+| `docs/spec/artifacts-system.md`           | Code, documents, datasets as polymorphic assets                         |
+| `docs/spec/crypto.md`                     | Encryption: actor keys, chat keys, BYOK, SMK, key hierarchy             |
+| `docs/spec/logging.md`                    | Structured logging: levels, formatters, censors, rotation, transport    |
+| `docs/spec/content-compression.md`        | Content encoding: gzip/zstd/brotli, minification, hash injection        |
+| `docs/spec/api-routes.md`                 | API route contract — all endpoints, conventions, error envelope         |
+| `docs/spec/auth-middleware.md`            | Auth middleware — token flow, session model, role guard, rate limiting  |
+| `docs/spec/error-envelope.md`             | Standard error envelope — codes, shapes, patterns, frontend sync        |
+| `docs/spec/access-model-clarification.md` | Gallery access model: auth, ownership, public endpoints                 |
+| `docs/spec/archival-workflow.md`          | Message archival: states, transitions, restore/purge workflows          |
+| `docs/spec/assistant-commands.md`         | Assistant command parser and command specification                      |
+| `docs/spec/encryption-workflow.md`        | Key hierarchy: SMK, actor keys, encryption/decryption pipeline          |
+| `docs/meta/plan.md`                       | MVP implementation checklist with week-by-week tasks                    |
 
 ### Frontend UX Spec (`docs/frontend/`)
 

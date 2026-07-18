@@ -50,7 +50,7 @@ export function getCapabilities(): DeviceCapabilities {
 function checkWebGL2(): boolean {
   try {
     const canvas = document.createElement("canvas");
-    return !!(canvas.getContext("webgl2"));
+    return !!canvas.getContext("webgl2");
   } catch {
     return false;
   }
@@ -78,16 +78,16 @@ export function featureGate(feature: string): boolean {
     "3d_world_map": ["high"],
     "3d_avatars": ["high", "medium"],
     "3d_assets": ["high"],
-    "immersive_audio": ["medium", "high"],
-    "high_quality_images": ["medium", "high"],
-    "regex_transforms": ["low", "medium", "high"], // Always available
+    immersive_audio: ["medium", "high"],
+    high_quality_images: ["medium", "high"],
+    regex_transforms: ["low", "medium", "high"], // Always available
   };
 
   return requirements[feature]?.includes(tier) ?? true;
 }
 
 // Alpine plugin
-export default function() {
+export default function () {
   return {
     init() {
       const tier = detectDeviceTier();

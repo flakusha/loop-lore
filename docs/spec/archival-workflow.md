@@ -2,25 +2,28 @@
 
 ## States
 
-| State | Description | Transitions |
-|-------|-------------|-------------|
-| active | Normal message | archive, delete |
-| archived | Hidden but restorable | restore, purge |
-| purged | Permanently deleted | none |
+| State    | Description           | Transitions     |
+| -------- | --------------------- | --------------- |
+| active   | Normal message        | archive, delete |
+| archived | Hidden but restorable | restore, purge  |
+| purged   | Permanently deleted   | none            |
 
 ## Cascade Rules
 
 When archiving a chat:
+
 1. Archive all messages (set `archived_at` timestamp)
 2. Link archived assets to archival record
 3. Preserve in separate partition/table
 
 When restoring:
+
 1. Restore all messages in chat
 2. Restore linked assets
 3. Rebuild indexes
 
 When purging:
+
 1. Permanent deletion
 2. Cascade delete linked assets
 3. Notify participants
@@ -35,16 +38,19 @@ When purging:
 ## UI Flow
 
 ### Archive Button
+
 - Appears in chat menu (three dots)
 - Confirmation: "Archive this chat? Hidden but restorable for 90 days."
 - Triggers soft-delete with `archived_at` timestamp
 
 ### Restore Flow
+
 - Archived chats appear in separate view `/views/archived`
 - "Restore" button reverses archival
 - Available within retention window
 
 ### Purge Flow
+
 - Admin-only or user-requested after retention
 - Confirmation with "This cannot be undone"
 - Permanent deletion with cascade

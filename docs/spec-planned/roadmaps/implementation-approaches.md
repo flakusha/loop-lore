@@ -3,6 +3,7 @@
 ## 7. Combined Filter System
 
 ### Approach: Filter Composition
+
 ```typescript
 // src/search/filter-composer.ts
 export interface Filter {
@@ -13,7 +14,7 @@ export interface Filter {
 
 export function buildFilterQuery(
   baseQuery: SelectQueryBuilder<any, any>,
-  filters: Filter[]
+  filters: Filter[],
 ): SelectQueryBuilder<any, any> {
   let query = baseQuery;
 
@@ -39,6 +40,7 @@ export function buildFilterQuery(
 ```
 
 ### Edge Cases
+
 - Empty filter value → skip filter
 - Unknown field → log warning, ignore
 - SQL injection in filter → parameterized queries
@@ -48,6 +50,7 @@ export function buildFilterQuery(
 ## 8. Integrity Verification
 
 ### Approach: File Hash Comparison
+
 ```typescript
 // src/integrity/checker.ts
 import { createHash } from "crypto";
@@ -59,9 +62,7 @@ export interface IntegrityReport {
   missingFiles: string[];
 }
 
-export async function checkIntegrity(
-  expectedHashes: Record<string, string>
-): Promise<IntegrityReport> {
+export async function checkIntegrity(expectedHashes: Record<string, string>): Promise<IntegrityReport> {
   const modified: string[] = [];
   const missing: string[] = [];
 
@@ -87,6 +88,7 @@ export async function checkIntegrity(
 ```
 
 ### Edge Cases
+
 - Missing integrity.json → return "unknown" status
 - File unreadable → log warning, skip
 - Hash algorithm mismatch → fallback to sha256
@@ -96,11 +98,12 @@ export async function checkIntegrity(
 ## 9. World Rules for Commands
 
 ### Approach: Rule-Based Command Control
+
 ```typescript
 // src/db/schema-core.ts
 export interface WorldRules {
   allowed_commands: string[]; // ["dice", "stats", "improve"]
-  blacklisted_commands: string[]; // ["damage", "heal"] 
+  blacklisted_commands: string[]; // ["damage", "heal"]
   command_costs: Record<string, number>; // {"image": 10, "quest": 5}
 }
 
@@ -108,13 +111,9 @@ export interface WorldRules {
 export async function checkCommandPermission(
   command: string,
   worldId: string,
-  userId: string
+  userId: string,
 ): Promise<boolean> {
-  const world = await db
-    .selectFrom("worlds")
-    .select("rules")
-    .where("id", "=", worldId)
-    .executeTakeFirst();
+  const world = await db.selectFrom("worlds").select("rules").where("id", "=", worldId).executeTakeFirst();
 
   if (!world?.rules) return true; // No rules = all allowed
 
@@ -135,6 +134,7 @@ export async function checkCommandPermission(
 ```
 
 ### Edge Cases
+
 - Invalid JSON in rules → log error, allow all
 - Circular dependencies (commands calling commands) → max depth 3
 - Cost insufficient → deduct from actor gold
@@ -144,6 +144,7 @@ export async function checkCommandPermission(
 ## 10. Notification SSE Endpoint
 
 ### Approach: Server-Sent Events
+
 ```typescript
 // src/routes/notifications-stream.ts
 export function notificationStream(ctx: any) {
@@ -184,20 +185,21 @@ export function notificationStream(ctx: any) {
           clearInterval(interval);
           controller.close();
         });
-      }
+      },
     }),
     {
       headers: {
         "Content-Type": "text/event-stream",
         "Cache-Control": "no-cache",
-        "Connection": "keep-alive",
+        Connection: "keep-alive",
       },
-    }
+    },
   );
 }
 ```
 
 ### Edge Cases
+
 - Client disconnects → cleanup interval
 - DB connection lost → reconnect with backoff
 - Too many notifications → buffer limit 100
@@ -207,12 +209,10 @@ export function notificationStream(ctx: any) {
 ## 11. Archive Cascade with Assets
 
 ### Approach: Transactional Cascade
+
 ```typescript
 // src/archival/cascade.ts
-export async function archiveChatWithAssets(
-  chatId: string,
-  userId: string
-): Promise<void> {
+export async function archiveChatWithAssets(chatId: string, userId: string): Promise<void> {
   await db.transaction().execute(async (trx) => {
     // Archive chat
     await trx
@@ -222,11 +222,7 @@ export async function archiveChatWithAssets(
       .execute();
 
     // Archive messages and link assets
-    const messages = await trx
-      .selectFrom("messages")
-      .select("id")
-      .where("chat_id", "=", chatId)
-      .execute();
+    const messages = await trx.selectFrom("messages").select("id").where("chat_id", "=", chatId).execute();
 
     for (const msg of messages) {
       await trx
@@ -260,6 +256,7 @@ export async function archiveChatWithAssets(
 ```
 
 ### Edge Cases
+
 - Asset already archived → skip
 - DB lock timeout → retry 3 times
 - Partial failure → rollback entire transaction
