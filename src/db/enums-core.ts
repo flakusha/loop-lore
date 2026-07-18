@@ -75,6 +75,19 @@ export const ChatParticipantRole = {
 } as const;
 export type ChatParticipantRole = (typeof ChatParticipantRole)[keyof typeof ChatParticipantRole];
 
+// ── Notifications ──────────────────────────────────────────
+export const NotificationType = {
+  Mention: "mention",
+  QuestUpdate: "quest_update",
+  ItemOffer: "item_offer",
+  WorldEvent: "world_event",
+  ChatInvite: "chat_invite",
+  CharacterUpdate: "character_update",
+  GmAction: "gm_action",
+  System: "system",
+} as const;
+export type NotificationType = (typeof NotificationType)[keyof typeof NotificationType];
+
 // ── Messages ──────────────────────────────────────────────
 export const MessageRole = {
   User: "user",
