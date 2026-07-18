@@ -50,4 +50,6 @@ export interface DB {
   log_entries: import("./schema-core").LogEntries;
   plugin_state: import("./schema-core").PluginState;
   telemetry_events: import("./schema-telemetry").TelemetryEvents;
+  message_reactions: import("./schema-core").MessageReactions;
+  chat_pins: import("./schema-core").ChatPins;
 }

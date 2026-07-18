@@ -1,5 +1,5 @@
 /**
- * Migration 018 — Drop redundant `chat_purpose` column
+ * Migration 019 — Drop redundant chat_purpose column
  *
  * Migration 009 created `chat_purpose` on `chats`.
  * Migration 017 added the canonical `purpose` column (same semantics).
@@ -10,12 +10,12 @@
  */
 import type { Kysely } from "kysely";
 
-export async function up(db: Kysely<any>): Promise<void> {
-  await db.schema.alterTable("chats").dropColumn("chat_purpose").execute();
+export async function up(database: Kysely<any>): Promise<void> {
+  await database.schema.alterTable("chats").dropColumn("chat_purpose").execute();
 }
 
-export async function down(db: Kysely<any>): Promise<void> {
-  await db.schema
+export async function down(database: Kysely<any>): Promise<void> {
+  await database.schema
     .alterTable("chats")
     .addColumn("chat_purpose", "text", (col) => col.notNull().defaultTo("main"))
     .execute();

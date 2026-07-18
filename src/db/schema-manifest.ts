@@ -731,6 +731,24 @@ export const SCHEMA = new SchemaManifest()
     created_at: col("text", { notNull: true }),
   })
 
+  // ── Chat: Message Reactions ──────────────────────────────────
+  .table("message_reactions", {
+    id: col("text", { primaryKey: true }),
+    message_id: col("text", { notNull: true }),
+    user_id: col("text", { notNull: true }),
+    emoji: col("text", { notNull: true }),
+    created_at: col("text", { notNull: true }),
+  })
+
+  // ── Chat: Chat Pins ──────────────────────────────────────────
+  .table("chat_pins", {
+    id: col("text", { primaryKey: true }),
+    chat_id: col("text", { notNull: true }),
+    message_id: col("text", { notNull: true }),
+    pinned_by: col("text", { notNull: true }),
+    pinned_at: col("text", { notNull: true }),
+  })
+
   // ── System: Data Migrations (runtime tracking table) ────────
   .table("data_migrations", {
     table_name: col("text", { notNull: true }),

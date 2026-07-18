@@ -15,23 +15,23 @@
  */
 import { sql, type Kysely } from "kysely";
 
-export async function up(db: Kysely<unknown>): Promise<void> {
-  await db.schema
+export async function up(database: Kysely<unknown>): Promise<void> {
+  await database.schema
     .alterTable("users")
     .addColumn("data_version", "integer", (col) => col.notNull().defaultTo(1))
     .execute();
 
-  await db.schema
+  await database.schema
     .alterTable("personas")
     .addColumn("data_version", "integer", (col) => col.notNull().defaultTo(1))
     .execute();
 
-  await db.schema
+  await database.schema
     .alterTable("messages")
     .addColumn("data_version", "integer", (col) => col.notNull().defaultTo(1))
     .execute();
 
-  await db.schema
+  await database.schema
     .createTable("data_migrations")
     .addColumn("table_name", "text", (col) => col.notNull())
     .addColumn("from_version", "integer", (col) => col.notNull())
@@ -42,9 +42,9 @@ export async function up(db: Kysely<unknown>): Promise<void> {
     .execute();
 }
 
-export async function down(db: Kysely<unknown>): Promise<void> {
-  await db.schema.dropTable("data_migrations").execute();
-  await db.schema.alterTable("messages").dropColumn("data_version").execute();
-  await db.schema.alterTable("personas").dropColumn("data_version").execute();
-  await db.schema.alterTable("users").dropColumn("data_version").execute();
+export async function down(database: Kysely<unknown>): Promise<void> {
+  await database.schema.dropTable("data_migrations").execute();
+  await database.schema.alterTable("messages").dropColumn("data_version").execute();
+  await database.schema.alterTable("personas").dropColumn("data_version").execute();
+  await database.schema.alterTable("users").dropColumn("data_version").execute();
 }

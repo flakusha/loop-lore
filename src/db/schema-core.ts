@@ -301,3 +301,21 @@ export interface PluginState {
   created_at: Generated<string>;
   updated_at: Generated<string>;
 }
+
+// ── Message Reactions ───────────────────────────────────────
+export interface MessageReactions {
+  id: Generated<string>;
+  message_id: string;
+  user_id: string;
+  emoji: string;
+  created_at: Generated<string>;
+}
+
+// ── Chat Pins ───────────────────────────────────────────────
+export interface ChatPins {
+  id: Generated<string>;
+  chat_id: string;
+  message_id: string;
+  pinned_by: string;
+  pinned_at: Generated<string>;
+}
