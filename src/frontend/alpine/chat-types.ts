@@ -19,6 +19,7 @@ export interface Message {
   role: string;
   content: string;
   created_at: string;
+  edited_at?: string;
   thinking?: string;
   actor_name?: string;
   variantIndex?: number;
@@ -78,7 +79,13 @@ export interface ChatState extends AlpineMagicThis {
   galleryAssets: GalleryAsset[];
   userDisplayName: string;
   userRole: string;
-  currentCharacter: { id: string; display_name?: string; name?: string; description?: string } | null;
+  currentCharacter: {
+    id: string;
+    display_name?: string;
+    name?: string;
+    description?: string;
+    avatar_asset_id?: string;
+  } | null;
   generationDetail: GenerationDetail | null;
   detailLevel: "Immersion" | "Basic" | "Detailed";
   impersonationActive: boolean;
@@ -140,6 +147,7 @@ export interface ChatState extends AlpineMagicThis {
   loadGalleryAssets(): Promise<void>;
   loadCharacterInfo(): Promise<void>;
   formatTime(iso: string): string;
+  formatTimeShort(iso: string): string;
   displayName(msg: { role: string; actor_name?: string }): string;
   copyMessage(msgId: string, event: Event): Promise<void>;
   removeMessage(msgId: string, event: Event): Promise<void>;
