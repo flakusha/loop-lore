@@ -8,7 +8,7 @@ export const chatEditing: Partial<ChatState> & ThisType<ChatState> = {
   editingMessageId: null as string | null,
   editContent: "",
   previewMediaAsset: null as GalleryAsset | null,
-  pendingAssets: [] as Array<{ assetId: string; filename: string }>,
+  pendingAssets: [] as { assetId: string; filename: string }[],
 
   startEdit(msgId: string) {
     const msgs = this.messages;

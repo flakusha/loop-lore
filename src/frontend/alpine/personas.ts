@@ -26,7 +26,7 @@ globalThis.personasPage = function () {
     async init() {
       if (!globalThis.Alpine) return;
       Alpine.store("ui", Alpine.store("ui") || {});
-      const ui = Alpine.store("ui") as Record<string, any>;
+      const ui = Alpine.store("ui");
       if (!("showPersonaForm" in ui)) ui.showPersonaForm = false;
       if (!("activePersona" in ui)) ui.activePersona = null;
       await this.loadPersonas();
@@ -54,7 +54,7 @@ globalThis.personasPage = function () {
 
     editPersona(p: PersonaItem) {
       if (!globalThis.Alpine) return;
-      const ui = Alpine.store("ui") as Record<string, any>;
+      const ui = Alpine.store("ui");
       ui.activePersona = p;
       this.formName = p.name;
       this.formTitle = p.title || "";
@@ -68,7 +68,7 @@ globalThis.personasPage = function () {
       if (!name) return;
 
       if (!globalThis.Alpine) return;
-      const ui = Alpine.store("ui") as Record<string, any>;
+      const ui = Alpine.store("ui");
       const active = ui.activePersona as PersonaItem | null;
       this.saving = true;
 

@@ -82,7 +82,7 @@ export class NotificationsManager {
     try {
       this.es = new EventSource("/api/activity/stream");
       this.es.addEventListener("activity", (ev) => {
-        const data = jsonParseOr<{ chats: Record<string, ActivityEntry> }>((ev as MessageEvent).data, {
+        const data = jsonParseOr<{ chats: Record<string, ActivityEntry> }>(ev.data, {
           chats: {},
         });
         if (data) {
