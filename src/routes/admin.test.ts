@@ -124,9 +124,9 @@ describe("Admin worlds", () => {
     const app = createAdminApp(db, "admin");
     const res = await app.handle(new Request("http://localhost/api/admin/worlds"));
     expect(res.status).toBe(200);
-    const body = await res.json();
+    const body = (await res.json()) as { data: { name: string }[] };
     expect(body.data).toHaveLength(1);
-    expect(body.data[0].name).toBe("Test World");
+    expect(body.data[0]!.name).toBe("Test World");
   });
 });
 
@@ -162,9 +162,9 @@ describe("Admin chats", () => {
     const app = createAdminApp(db, "admin");
     const res = await app.handle(new Request("http://localhost/api/admin/chats"));
     expect(res.status).toBe(200);
-    const body = await res.json();
+    const body = (await res.json()) as { data: { name: string }[] };
     expect(body.data).toHaveLength(1);
-    expect(body.data[0].name).toBe("Test Chat");
+    expect(body.data[0]!.name).toBe("Test Chat");
   });
 });
 
@@ -197,8 +197,8 @@ describe("Admin audit", () => {
     const app = createAdminApp(db, "admin");
     const res = await app.handle(new Request("http://localhost/api/admin/audit"));
     expect(res.status).toBe(200);
-    const body = await res.json();
+    const body = (await res.json()) as { data: { message: string }[] };
     expect(body.data).toHaveLength(1);
-    expect(body.data[0].message).toBe("test audit");
+    expect(body.data[0]!.message).toBe("test audit");
   });
 });
