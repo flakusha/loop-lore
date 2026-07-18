@@ -346,7 +346,6 @@ async function handleUpload({
 
   let formData;
   try {
-    // eslint-disable-next-line @typescript-eslint/no-deprecated
     formData = await request.formData();
   } catch {
     return jsonError({ message: "Failed to parse multipart form data", status: HttpStatus.BadRequest });

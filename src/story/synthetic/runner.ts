@@ -216,13 +216,14 @@ export class SyntheticTestRunner {
         out = await this.runGmEscalation(c);
         break;
       }
-      default:
+      default: {
         out = {
           status: "skipped",
           expected: c.expected,
           actual: {},
           reason: `unsupported scenario type: ${String(row.type)}`,
         };
+      }
     }
 
     return {

@@ -1,8 +1,9 @@
-import { Elysia } from "elysia";
+import { Elysia, t } from "elysia";
 import type { Kysely } from "kysely";
 import type { DB } from "../db/schema";
 import type { Config } from "../config/schema";
 import { uid, safeJsonParse, safeJsonStringify } from "../utils";
+import { notifyMention } from "../notifications/service";
 import {
   jsonResponse,
   jsonError,
@@ -14,6 +15,9 @@ import {
 } from "./http-utils";
 import { MessageRole, MessageContentType, MessageContentFormat, ContentEncoding } from "../db/enums";
 import { generateResponse, isAssistantEnabled } from "../assistant/service";
+import { parseCommand } from "../assistant/command-parser";
+import { getCommand } from "../assistant/commands/registry";
+import type { CommandContext } from "../assistant/commands/registry";
 import { filter as filterProfanity } from "../profanity/service";
 import { triggerAutoGeneration, isLlmGenerationConfigured } from "../generation/auto-gen";
 import { getLogger, type Logger } from "../logger";
@@ -40,6 +44,7 @@ import {
   ChatIdParams,
 } from "../validation/schemas";
 import { unauthorized, forbidden, notFound } from "../validation/middleware";
+import { extractMentionedActorIds, parseInitiativeFlag } from "../group-chat/mention-parser";
 
 function log(): Logger {
   return getLogger().child({ module: "messages" });
@@ -395,6 +400,68 @@ export function messagesRoutes(opts: HandlerOpts) {
         },
         { params: MessageIdParams },
       )
+      // ── Edit message content (user messages only) ─────────────
+      .patch(
+        "/api/messages/:id",
+        async (ctx: any) => {
+          const userId = ctx.userId as string | null;
+          if (!userId) return unauthorized();
+          const id = (ctx.params as { id: string }).id;
+          const body = ctx.body as { content?: string };
+          const newContent = body?.content;
+
+          if (!newContent || typeof newContent !== "string" || newContent.trim().length === 0) {
+            return jsonError({
+              message: "Content is required",
+              status: HttpStatus.BadRequest,
+              code: ErrorCode.ValidationError,
+            });
+          }
+
+          const msg = await database
+            .selectFrom("messages")
+            .select(["id", "actor_id", "role", "chat_id"])
+            .where("id", "=", id)
+            .executeTakeFirst();
+
+          if (!msg) return notFound("Message not found");
+
+          if (msg.actor_id !== userId && (ctx.userRole as string | null) !== "admin") {
+            return jsonError({
+              message: "Cannot edit this message",
+              status: HttpStatus.Forbidden,
+              code: ErrorCode.Forbidden,
+            });
+          }
+
+          if (msg.role !== "user") {
+            return jsonError({
+              message: "Only user messages can be edited",
+              status: HttpStatus.BadRequest,
+              code: ErrorCode.ValidationError,
+            });
+          }
+
+          const access = await assertChatAccess(database, msg.chat_id, userId, ctx.userRole as string | null);
+          if (access instanceof Response) return access;
+
+          await database
+            .updateTable("messages")
+            .set({
+              content: newContent.trim(),
+              edited_at: new Date().toISOString(),
+            })
+            .where("id", "=", id)
+            .execute();
+
+          log().info("Message edited", { messageId: id, userId });
+          return jsonResponse({ id, content: newContent.trim(), edited_at: true });
+        },
+        {
+          params: t.Object({ id: t.String() }),
+          body: t.Object({ content: t.String() }),
+        },
+      )
       .put(
         "/api/messages/:id/visibility",
         async (ctx: any) => {
@@ -440,9 +507,80 @@ export function messagesRoutes(opts: HandlerOpts) {
           const body = ctx.body as typeof MessageCreateBody.static;
 
           const filteredContent = filterProfanity(body.content);
+          const { isInitiative, cleanMessage } = parseInitiativeFlag(filteredContent);
+          const effectiveContent = isInitiative ? cleanMessage : filteredContent;
 
           const access = await assertChatAccess(database, chatId, actorId, ctx.userRole as string | null);
           if (access instanceof Response) return access;
+
+          // ── Slash command dispatch ────────────────────────────────
+          const parsed = parseCommand(effectiveContent);
+          if (parsed) {
+            const handler = getCommand(parsed.command);
+            if (handler) {
+              const chatRecord = await database
+                .selectFrom("chats")
+                .select(["id", "mode", "type", "gm_config"])
+                .where("id", "=", chatId)
+                .executeTakeFirst();
+
+              const recentMessages = await database
+                .selectFrom("messages")
+                .select(["id", "role", "content", "created_at"])
+                .where("chat_id", "=", chatId)
+                .orderBy("created_at", "desc")
+                .limit(50)
+                .execute();
+
+              const cmdCtx: CommandContext = {
+                chatId,
+                activeChat: chatRecord
+                  ? {
+                      id: chatRecord.id,
+                      mode: chatRecord.mode ?? undefined,
+                      type: chatRecord.type ?? undefined,
+                    }
+                  : undefined,
+                messages: recentMessages.reverse(),
+                db: database,
+                userId: actorId,
+              };
+
+              const result = await handler(parsed.args, cmdCtx);
+
+              if (result.handled) {
+                if (result.systemMessage) {
+                  const sysMsgId = uid();
+                  await database
+                    .insertInto("messages")
+                    .values({
+                      id: sysMsgId,
+                      chat_id: chatId,
+                      actor_id: actorId,
+                      // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion -- Kysely enum type mismatch
+                      role: MessageRole.System as any,
+                      content: result.systemMessage,
+                      // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion -- Kysely enum type mismatch
+                      content_format: MessageContentFormat.Markdown as any,
+                      // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion -- Kysely enum type mismatch
+                      content_type: MessageContentType.Text as any,
+                      content_encoding: "identity",
+                      status: "confirmed",
+                      visibility: "visible",
+                    })
+                    .execute();
+                }
+
+                log().info("Command dispatched", { command: parsed.command, handled: true });
+                return jsonResponse({
+                  command: parsed.command,
+                  systemMessage: result.systemMessage ?? null,
+                  action: result.action ?? null,
+                  actionPayload: result.actionPayload ?? null,
+                });
+              }
+            }
+          }
 
           let storedContent: string;
           let contentEncoding: string;
@@ -540,6 +678,73 @@ export function messagesRoutes(opts: HandlerOpts) {
               .execute();
           }
 
+          // ── Persist initiative claim ────────────────────────────────
+          if (isInitiative) {
+            const currentScene = "main"; // TODO: detect actual current scene from story_state
+
+            const existing = await database
+              .selectFrom("group_initiatives")
+              .select("score")
+              .where("chat_id", "=", chatId)
+              .where("scene_id", "=", currentScene)
+              .where("actor_id", "=", actorId)
+              .executeTakeFirst();
+
+            if (existing) {
+              await database
+                .updateTable("group_initiatives")
+                .set({ score: existing.score + 1, updated_at: new Date().toISOString() })
+                .where("chat_id", "=", chatId)
+                .where("scene_id", "=", currentScene)
+                .where("actor_id", "=", actorId)
+                .execute();
+            } else {
+              await database
+                .insertInto("group_initiatives")
+                .values({
+                  chat_id: chatId,
+                  scene_id: currentScene,
+                  actor_id: actorId,
+                  score: 1,
+                })
+                .execute();
+            }
+
+            log().info("Initiative claimed", { chatId, actorId, scene: currentScene });
+          }
+
+          // ── Persist @mentions ─────────────────────────────────────
+          const participants = await database
+            .selectFrom("chat_participants")
+            .innerJoin("actors", "actors.id", "chat_participants.actor_id")
+            .select(["chat_participants.actor_id", "actors.display_name"])
+            .where("chat_participants.chat_id", "=", chatId)
+            .execute();
+          const mentionedActorIds = extractMentionedActorIds(
+            filteredContent,
+            participants.map((p) => ({ actorId: p.actor_id, displayName: p.display_name })),
+          );
+          if (mentionedActorIds.length > 0) {
+            await Promise.all(
+              mentionedActorIds.map(async (actorId: string) => {
+                try {
+                  await database
+                    .insertInto("chat_mentions")
+                    .values({ id: uid(), message_id: id, actor_id: actorId })
+                    .execute();
+                } catch {
+                  /* ignore duplicate */
+                }
+              }),
+            );
+            void notifyMention(database, {
+              chatId,
+              senderId: actorId,
+              mentionedActorIds,
+              messageId: id,
+            }).catch(() => {});
+          }
+
           if (isLlmGenerationConfigured(config)) {
             void triggerAutoGeneration({
               database,
@@ -547,10 +752,10 @@ export function messagesRoutes(opts: HandlerOpts) {
               chatId,
               parentMessageId: id,
               userId: actorId,
-              userMessage: filteredContent,
+              userMessage: effectiveContent,
             });
           } else if (isAssistantEnabled(config)) {
-            const assistantResponse = generateResponse({ userInput: filteredContent });
+            const assistantResponse = generateResponse({ userInput: effectiveContent });
             if (assistantResponse) {
               const assistantId = uid();
               const assistantContent = filterProfanity(assistantResponse.content);

@@ -2,7 +2,15 @@ import { Elysia, t } from "elysia";
 import type { Kysely } from "kysely";
 import type { DB } from "../db/schema";
 import { uid, safeJsonParse, safeJsonStringify } from "../utils";
-import { jsonResponse, jsonError, jsonPaginated, jsonCreated, jsonNoContent, HttpStatus } from "./http-utils";
+import {
+  jsonResponse,
+  jsonError,
+  jsonPaginated,
+  jsonCreated,
+  jsonNoContent,
+  HttpStatus,
+  ErrorCode,
+} from "./http-utils";
 import {
   ChatType,
   ChatMode,
@@ -29,6 +37,7 @@ import {
   PaginationQuery,
 } from "../validation/schemas";
 import { unauthorized, forbidden, notFound } from "../validation/middleware";
+import { notifyChatInvite } from "../notifications/service";
 import { triggerAutoGeneration, isLlmGenerationConfigured } from "../generation/auto-gen";
 import type { Config } from "../config/schema";
 
@@ -313,6 +322,18 @@ export function chatsRoutes(opts: HandlerOpts) {
             .executeTakeFirst();
           if (!fullChat) return notFound("Chat not found");
 
+          // Check if chat panel is frozen (admin-only feature)
+          if (fullChat.story_state) {
+            const storyState = safeJsonParse<Record<string, unknown>>(fullChat.story_state);
+            if (storyState.ok && storyState.value.isPanelFrozen && userRole !== "admin") {
+              return jsonError(
+                "Chat settings are frozen by admin",
+                HttpStatus.Forbidden,
+                ErrorCode.Forbidden,
+              );
+            }
+          }
+
           const updates: Record<string, unknown> = { updated_at: new Date().toISOString() };
           if (body.name) updates.name = body.name;
           if (body.mode) updates.mode = body.mode;
@@ -325,6 +346,16 @@ export function chatsRoutes(opts: HandlerOpts) {
               ? safeJsonParse<Record<string, unknown>>(fullChat.story_state)
               : null;
             const state = { ...(current?.ok && current.value), isPaused: body.isPaused };
+            const serialized = safeJsonStringify(state);
+            updates.story_state = serialized.ok ? serialized.value : fullChat.story_state;
+          }
+
+          // Admin: freeze/unfreeze panel
+          if (typeof body.freezePanel === "boolean" && userRole === "admin") {
+            const current = fullChat.story_state
+              ? safeJsonParse<Record<string, unknown>>(fullChat.story_state)
+              : null;
+            const state = { ...(current?.ok && current.value), isPanelFrozen: body.freezePanel };
             const serialized = safeJsonStringify(state);
             updates.story_state = serialized.ok ? serialized.value : fullChat.story_state;
           }
@@ -519,6 +550,11 @@ export function chatsRoutes(opts: HandlerOpts) {
               .insertInto("chat_participants")
               .values({ chat_id: id, actor_id: body.actorId, role_in_chat: role as ChatParticipantRole })
               .execute();
+            void notifyChatInvite(database, {
+              chatId: id,
+              invitedUserId: body.actorId,
+              inviterId: userId,
+            }).catch(() => {});
           } catch {
             /* skip duplicate */
           }

@@ -69,8 +69,9 @@ async function applySingleEvent(
       // Quest progress is handled by QuestEngine, not here
       return { event, applied: true };
     }
-    default:
+    default: {
       return assertNever(event.type);
+    }
   }
 }
 

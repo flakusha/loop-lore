@@ -57,8 +57,9 @@ function validateSingleEvent(
       }
       return { valid: false, reason: `Invalid location modification target: ${locId}` };
     }
-    default:
+    default: {
       return assertNever(event.type);
+    }
   }
 }
 

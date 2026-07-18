@@ -164,6 +164,7 @@ export const ChatUpdateBody = t.Object({
   worldId: OptionalId,
   isPinned: t.Optional(t.Boolean()),
   isPaused: t.Optional(t.Boolean()),
+  freezePanel: t.Optional(t.Boolean()),
 });
 
 export const ChatIdParams = t.Object({
