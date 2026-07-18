@@ -121,9 +121,12 @@ export interface ChatState extends AlpineMagicThis {
   _keyId: string | null;
   _hamburgerOpen: Record<string, boolean>;
   _statsOpen: Record<string, boolean>;
+  _contextMenu: { visible: boolean; messageId: string | null; x: number; y: number };
   _impersonationLoaded: boolean;
   _storageHandler: ((e: StorageEvent) => void) | null;
   _unseenCounts: Record<string, number>;
+  _isScrolledUp: boolean;
+  _scrollHandler: (() => void) | null;
   _activityEventSource: EventSource | null;
   _chatFilter: string;
   readonly filteredChats: Array<{ id: string; name?: string }>;
@@ -144,6 +147,8 @@ export interface ChatState extends AlpineMagicThis {
   sendMessage(): Promise<void>;
   autoResize(el: HTMLTextAreaElement): void;
   scrollToBottom(): void;
+  setupScrollDetection(): void;
+  scrollToBottomSmooth(): void;
   loadGalleryAssets(): Promise<void>;
   loadCharacterInfo(): Promise<void>;
   formatTime(iso: string): string;
@@ -195,6 +200,8 @@ export interface ChatState extends AlpineMagicThis {
   removePendingAsset(assetId: string): void;
   openAssetPreview(asset: { id: string; asset_type?: string; filename?: string; name?: string }): void;
   openChatSettings(): void;
+  openContextMenu(event: MouseEvent, msgId: string): void;
+  closeContextMenu(): void;
   saveChatSettings(): Promise<void>;
   isChatPaused(chat: any): boolean;
   readonly currentChat: {
