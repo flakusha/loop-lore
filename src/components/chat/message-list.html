@@ -28,7 +28,12 @@
     <div class="error-banner" x-text="loadingError"></div>
   </template>
   <template x-for="msg in groupedMessages" :key="msg.id">
-    <div class="message" :class="msg.role" :data-message-id="msg.id" @contextmenu="openContextMenu($event, msg.id)">
+    <div
+      class="message"
+      :class="msg.role"
+      :data-message-id="msg.id"
+      @contextmenu="openContextMenu($event, msg.id)"
+    >
       <!-- System / narration: centered narrative line, no bubble, actions, or stats -->
       <template x-if="msg.role === 'system'">
         <div class="system-message" data-testid="system-message">
@@ -295,15 +300,26 @@
   >
     <button @click="copyMessage(_contextMenu.messageId, $event); closeContextMenu()">📋 Copy</button>
     <button @click="startEdit(_contextMenu.messageId); closeContextMenu()">✏️ Edit</button>
-    <template x-if="(() => { const m = messages.find(msg => msg.id === _contextMenu.messageId); return m && m.role === 'assistant'; })()">
+    <template
+      x-if="(() => { const m = messages.find(msg => msg.id === _contextMenu.messageId); return m && m.role === 'assistant'; })()"
+    >
       <button @click="regenerateVariant(_contextMenu.messageId); closeContextMenu()">♻ Regenerate</button>
     </template>
-    <template x-if="(() => { const m = messages.find(msg => msg.id === _contextMenu.messageId); return m && (m.status === 'cancelled' || m.status === 'partial'); })()">
+    <template
+      x-if="(() => { const m = messages.find(msg => msg.id === _contextMenu.messageId); return m && (m.status === 'cancelled' || m.status === 'partial'); })()"
+    >
       <button @click="continueMessage(_contextMenu.messageId); closeContextMenu()">↳ Continue</button>
     </template>
-    <button @click="generateImageFromMessage(_contextMenu.messageId); closeContextMenu()">🖼 Generate Image</button>
+    <button @click="generateImageFromMessage(_contextMenu.messageId); closeContextMenu()">
+      🖼 Generate Image
+    </button>
     <div class="context-menu-divider"></div>
-    <button class="dropdown-danger" @click="removeMessage(_contextMenu.messageId, $event); closeContextMenu()">🗑 Remove</button>
+    <button
+      class="dropdown-danger"
+      @click="removeMessage(_contextMenu.messageId, $event); closeContextMenu()"
+    >
+      🗑 Remove
+    </button>
   </div>
 
   <!-- Stream container for SSE streaming generation -->

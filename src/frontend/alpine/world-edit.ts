@@ -1,5 +1,5 @@
 import { log as rootLog } from "./logger";
-import { jsonBody } from "./json";
+import { jsonBody, jsonParseOr } from "./json";
 import { worldLocations } from "./world-locations";
 
 const log = rootLog.child({ module: "world-edit" });
@@ -34,10 +34,8 @@ const log = rootLog.child({ module: "world-edit" });
             lore: data.lore ?? "",
           };
           if (data.settings) {
-            try {
-              const settings = JSON.parse(data.settings);
-              this.tagsStr = (settings.tags || []).join(", ");
-            } catch {}
+            const settings = jsonParseOr<{ tags?: string[] }>(data.settings, {});
+            this.tagsStr = (settings.tags || []).join(", ");
           }
         } else this.error = true;
       } catch (error) {
