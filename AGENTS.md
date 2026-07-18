@@ -37,38 +37,38 @@ Deep-dive docs in `/docs/` — read before touching related code:
 These are the authoritative UX specification files. Read the relevant ones
 before building any frontend feature.
 
-| File                                      | Covers                                                                                                                             |
-| ----------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
-| `docs/frontend/overview.md`               | Design principles, CSS tokens, tech stack, architecture                                                                            |
-| `docs/frontend/routing.md`                | URL scheme, navigation patterns, htmx history                                                                                      |
-| `docs/frontend/data-states.md`            | Entity state machines (active/archived/purged), cascade rules, storage model                                                       |
-| `docs/frontend/chat/overview.md`          | Chat types (User×Character, User×User, User×Assistant), data model, message tree, chat master, world/location                      |
-| `docs/frontend/chat/layout.md`            | Hamburger sidebar, centered configurable width, left/right panels, responsive behavior                                             |
-| `docs/frontend/chat/message-bubbles.md`  | Visual spec: bubble styling, avatars, grouping, markdown, media layout, detail levels, thinking, system msgs  |
-| `docs/frontend/chat/message-actions.md`  | Actions spec: toolbars, button sets, keyboard shortcuts, mobile touch, threading, reactions, pinned msgs     |
-| `docs/frontend/chat/generation.md`        | Typing indicator, streaming, generation status per mode, 3-tier error handling, chat-switch guard, idempotent retries              |
-| `docs/frontend/chat/archiving.md`         | Cascade deletion, restore, purge flows                                                                                             |
-| `docs/frontend/chat/input.md`             | Text input, media attach, LLM selector, message improvement, image generation                                                      |
-| `docs/frontend/chat/memories.md`          | Character/assistant/world memories, memory selection, auto-purge, token budget                                                     |
-| `docs/frontend/chat/commands-and-misc.md` | Keyboard shortcuts, states summary, image pipeline, system/narration messages                                                      |
-| `docs/frontend/chat/multi-llm-story.md`   | Multi-LLM story generation: GM, turn-taking, quests, quality evaluation, synthetic data                                            |
-| `docs/frontend/chat/assistant.md`         | Assistant as GM/Moderator, tool assistance, idea suggestions, text improvement                                                     |
-| `docs/frontend/chat/export.md`            | Chat export formats, public sharing, read-only links, story publishing                                                             |
-| `docs/frontend/chat/group-chat.md`        | Multi-participant chat, turn order, @mentions, initiative tracking                                                                 |
-| `docs/frontend/characters.md`             | Character list grid, create/edit form                                                                                              |
-| `docs/frontend/gallery.md`                | Asset gallery grid, preview modal, upload dialog                                                                                   |
-| `docs/frontend/admin.md`                  | Admin panel: user mgmt, chat mgmt, world permissions, audit log, content review, system config                                     |
-| `docs/frontend/settings.md`               | Settings sections: general, chat, API config, theme customization, data management                                                 |
-| `docs/frontend/worlds.md`                 | World entity: list, detail, create/edit                                                                                            |
-| `docs/frontend/login.md`                  | Login page: auth card, demo mode, error states                                                                                     |
-| `docs/frontend/encryption.md`             | User secret keys, AES-256-GCM at-rest message encryption, API key encryption, key hierarchy                                        |
-| `docs/frontend/age-gate.md`               | Age verification page, self-declaration flow, redirect behavior                                                                    |
-| `docs/frontend/component-architecture.md` | HTMX/Alpine.js boundaries, component lifecycle, state management                                                                   |
-| `docs/frontend/headers-management.md`     | Response headers (security/performance), frontend header components, htmx navigation                                               |
-| `docs/frontend/internationalization.md`   | UI translation, LLM language selection, actor language preferences, i18n architecture                                              |
-| `docs/frontend/components.md`             | Shared components: toasts, modals, spinners, skeletons, empty states, chips, drop zones                                            |
-| `docs/frontend/notifications.md`          | Notification system: types, storage, delivery, prompt injection, preferences, lifecycle                                            |
-| `docs/frontend/prompt-creation.md`        | Prompt templates, variable injection, actor context, generation tuning                                                             |
+| File                                      | Covers                                                                                                                |
+| ----------------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| `docs/frontend/overview.md`               | Design principles, CSS tokens, tech stack, architecture                                                               |
+| `docs/frontend/routing.md`                | URL scheme, navigation patterns, htmx history                                                                         |
+| `docs/frontend/data-states.md`            | Entity state machines (active/archived/purged), cascade rules, storage model                                          |
+| `docs/frontend/chat/overview.md`          | Chat types (User×Character, User×User, User×Assistant), data model, message tree, chat master, world/location         |
+| `docs/frontend/chat/layout.md`            | Hamburger sidebar, centered configurable width, left/right panels, responsive behavior                                |
+| `docs/frontend/chat/message-bubbles.md`   | Visual spec: bubble styling, avatars, grouping, markdown, media layout, detail levels, thinking, system msgs          |
+| `docs/frontend/chat/message-actions.md`   | Actions spec: toolbars, button sets, keyboard shortcuts, mobile touch, threading, reactions, pinned msgs              |
+| `docs/frontend/chat/generation.md`        | Typing indicator, streaming, generation status per mode, 3-tier error handling, chat-switch guard, idempotent retries |
+| `docs/frontend/chat/archiving.md`         | Cascade deletion, restore, purge flows                                                                                |
+| `docs/frontend/chat/input.md`             | Text input, media attach, LLM selector, message improvement, image generation                                         |
+| `docs/frontend/chat/memories.md`          | Character/assistant/world memories, memory selection, auto-purge, token budget                                        |
+| `docs/frontend/chat/commands-and-misc.md` | Keyboard shortcuts, states summary, image pipeline, system/narration messages                                         |
+| `docs/frontend/chat/multi-llm-story.md`   | Multi-LLM story generation: GM, turn-taking, quests, quality evaluation, synthetic data                               |
+| `docs/frontend/chat/assistant.md`         | Assistant as GM/Moderator, tool assistance, idea suggestions, text improvement                                        |
+| `docs/frontend/chat/export.md`            | Chat export formats, public sharing, read-only links, story publishing                                                |
+| `docs/frontend/chat/group-chat.md`        | Multi-participant chat, turn order, @mentions, initiative tracking                                                    |
+| `docs/frontend/characters.md`             | Character list grid, create/edit form                                                                                 |
+| `docs/frontend/gallery.md`                | Asset gallery grid, preview modal, upload dialog                                                                      |
+| `docs/frontend/admin.md`                  | Admin panel: user mgmt, chat mgmt, world permissions, audit log, content review, system config                        |
+| `docs/frontend/settings.md`               | Settings sections: general, chat, API config, theme customization, data management                                    |
+| `docs/frontend/worlds.md`                 | World entity: list, detail, create/edit                                                                               |
+| `docs/frontend/login.md`                  | Login page: auth card, demo mode, error states                                                                        |
+| `docs/frontend/encryption.md`             | User secret keys, AES-256-GCM at-rest message encryption, API key encryption, key hierarchy                           |
+| `docs/frontend/age-gate.md`               | Age verification page, self-declaration flow, redirect behavior                                                       |
+| `docs/frontend/component-architecture.md` | HTMX/Alpine.js boundaries, component lifecycle, state management                                                      |
+| `docs/frontend/headers-management.md`     | Response headers (security/performance), frontend header components, htmx navigation                                  |
+| `docs/frontend/internationalization.md`   | UI translation, LLM language selection, actor language preferences, i18n architecture                                 |
+| `docs/frontend/components.md`             | Shared components: toasts, modals, spinners, skeletons, empty states, chips, drop zones                               |
+| `docs/frontend/notifications.md`          | Notification system: types, storage, delivery, prompt injection, preferences, lifecycle                               |
+| `docs/frontend/prompt-creation.md`        | Prompt templates, variable injection, actor context, generation tuning                                                |
 
 ---
 
