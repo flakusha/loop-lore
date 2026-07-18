@@ -6,7 +6,7 @@
  */
 
 import { Database } from "bun:sqlite";
-import { Kysely } from "kysely";
+import { Kysely, type Dialect } from "kysely";
 import { existsSync, mkdirSync, rmSync } from "node:fs";
 import { resolve } from "node:path";
 import { createSqliteDialect, setTestDatabase } from "@/db/index";
@@ -28,7 +28,7 @@ import { resetSoloUserCache } from "@/middleware/index";
 /**
  * Handle import route before Elysia (body consumed by Elysia otherwise).
  */
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+ 
 export async function _handleImportRequest(request: Request, database: Kysely<DB>, config: Config): Promise<Response> {
   const { uid, safeJsonStringify, jsonParseOr } = await import("@/utils");
   const { jsonError, jsonCreated, HttpStatus } = await import("@/routes/http-utils");
@@ -137,14 +137,25 @@ export interface TestServer {
 }
 
 /**
- * Create an in-memory SQLite database with full schema.
+ * Factory that builds a Kysely `Dialect`. Defaults to in-memory SQLite;
+ * override with a Postgres/MySQL factory (gated by `TEST_DB=postgres`) to
+ * exercise the dialect-swap design. See `docs/meta/code-practices-improvements/05`.
  */
-export function createTestDb(): Kysely<DB> {
+export type DialectFactory = () => Dialect;
+
+function sqliteInMemory(): Dialect {
   const sqlite = new Database(":memory:");
   sqlite.run("PRAGMA journal_mode = WAL");
   sqlite.run("PRAGMA foreign_keys = ON");
-  const dialect = createSqliteDialect(sqlite);
-  const db = new Kysely<DB>({ dialect });
+  return createSqliteDialect(sqlite);
+}
+
+/**
+ * Create a test database using the supplied dialect factory.
+ * @param dialectFactory Builder for the Kysely Dialect (defaults to in-memory SQLite).
+ */
+export function createTestDb(dialectFactory: DialectFactory = sqliteInMemory): Kysely<DB> {
+  const db = new Kysely<DB>({ dialect: dialectFactory() });
 
   // Override global DB so all getDatabase() calls resolve to test DB
   setTestDatabase(db);
