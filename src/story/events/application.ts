@@ -7,7 +7,7 @@
 import type { Kysely, Transaction } from "kysely";
 import type { DB } from "../../db/schema";
 import { WorldEventType } from "../../db/enums";
-import { safeJsonStringify } from "../../utils";
+import { safeJsonStringify, assertNever } from "../../utils";
 import type { WorldEvent } from "../types";
 import { ItemsService } from "../items";
 
@@ -65,9 +65,12 @@ async function applySingleEvent(
       await applyItemTransfer(items, worldId, event);
       return { event, applied: true };
     }
-    default: {
-      return { event, applied: false, error: `Unknown event type: ${event.type}` };
+    case WorldEventType.QuestProgress: {
+      // Quest progress is handled by QuestEngine, not here
+      return { event, applied: true };
     }
+    default:
+      return assertNever(event.type);
   }
 }
 

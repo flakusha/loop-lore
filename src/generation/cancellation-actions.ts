@@ -13,6 +13,7 @@ import { GenerationStatus, CancelReason, CancelSource, ChunkAction, PolicyType }
 import { DEFAULT_POLICY_DETECTION } from "./types";
 import { detectTheatricalLoop } from "./repetition-detector";
 import { detectPolicyMismatch } from "./policy-detector";
+import { safeTransition } from "./cancellation-tracker";
 import { storePartialContent } from "./continuation";
 import { activeGenerations, chatToAttempt, updateAttemptStatus } from "./cancellation-tracker";
 import { safeJsonStringify } from "../utils";
@@ -44,7 +45,11 @@ export function cancelGeneration({ attemptId, reason, source, detail }: CancelGe
     storePartialContent(attemptId, partialContent);
   }
 
-  active.status = GenerationStatus.Cancelled;
+  safeTransition({
+    active,
+    to: GenerationStatus.Cancelled,
+    log: getLogger().child({ module: "generation" }),
+  });
   active.abortController.abort(new GenerationCancelledError(reason, source, detail));
 
   // Fire callback
@@ -162,7 +167,7 @@ export async function processStreamingChunk({
 
   // Mark as streaming on first chunk
   if (active.status === GenerationStatus.Processing) {
-    active.status = GenerationStatus.Streaming;
+    safeTransition({ active, to: GenerationStatus.Streaming, log: genLog });
     void updateAttemptStatus({
       db,
       attemptId,

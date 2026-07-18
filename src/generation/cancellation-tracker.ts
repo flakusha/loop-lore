@@ -12,7 +12,7 @@
 import type { Kysely } from "kysely";
 import type { DB } from "../db/schema";
 import { randomUUID } from "node:crypto";
-import { CancelReason, GenerationStatus, PolicyType } from "../db/enums";
+import { CancelReason, GenerationStatus, generationStatusMachine, PolicyType } from "../db/enums";
 import { safeJsonStringify } from "../utils";
 import { getLogger } from "../logger";
 import type { GenerationOptions, GenerationResult, GenerationEvents } from "./types";
@@ -51,6 +51,26 @@ export const activeGenerations = new Map<string, ActiveGeneration>();
 
 /** Map of chatId → attemptId for rapid chat-level lookup. @internal */
 export const chatToAttempt = new Map<string, string>();
+
+// ── Transition validation ─────────────────────────────────
+
+interface TransitionOpts {
+  active: ActiveGeneration;
+  to: GenerationStatus;
+  log: ReturnType<typeof getLogger>;
+}
+
+/**
+ * Validate and apply a status transition on an active generation.
+ * Logs a warning on invalid transitions but does not block (defensive).
+ */
+export function safeTransition({ active, to, log }: TransitionOpts): void {
+  const from = active.status;
+  if (!generationStatusMachine.canTransition(from, to)) {
+    log.warn("Invalid generation status transition", { from, to, attemptId: active.attemptId });
+  }
+  active.status = to;
+}
 
 // ── DB helpers ─────────────────────────────────────────────
 

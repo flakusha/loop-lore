@@ -9,6 +9,7 @@
  */
 
 import { inflateSync } from "node:zlib";
+import { safeJsonParse } from "../utils/safe-json";
 
 export interface ExtractedCharacter {
   /** Parsed card payload. For V2 cards this is the `data` object. */
@@ -104,15 +105,11 @@ function tryParseCharacter(text: string | null): ExtractedCharacter | null {
   }
 
   for (const candidate of candidates) {
-    try {
-      const parsed = JSON.parse(candidate) as Record<string, unknown>;
-      if (parsed && typeof parsed === "object") {
-        const spec = typeof parsed.spec === "string" ? parsed.spec : undefined;
-        const data = (parsed.data as Record<string, unknown> | undefined) ?? parsed;
-        return { data, spec };
-      }
-    } catch {
-      /* try next */
+    const result = safeJsonParse<Record<string, unknown>>(candidate);
+    if (result.ok && result.value && typeof result.value === "object") {
+      const spec = typeof result.value.spec === "string" ? result.value.spec : undefined;
+      const data = (result.value.data as Record<string, unknown> | undefined) ?? result.value;
+      return { data, spec };
     }
   }
   return null;

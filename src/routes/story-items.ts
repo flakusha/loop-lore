@@ -20,6 +20,14 @@ import { uid, safeJsonStringify } from "../utils";
 import { jsonResponse, jsonError, jsonPaginated, jsonCreated, jsonNoContent, HttpStatus } from "./http-utils";
 import { ItemsService } from "../story/items";
 import { notFound } from "../validation/middleware";
+import { ItemCategory, ItemRarity } from "../db/enums";
+
+/** Validate a value against an enum's values. Returns the value if valid, fallback otherwise. */
+function enumOr<T extends string>(value: unknown, validValues: readonly T[], fallback: T): T {
+  return typeof value === "string" && (validValues as readonly string[]).includes(value)
+    ? (value as T)
+    : fallback;
+}
 
 // ── Handlers ────────────────────────────────────────────────
 
@@ -134,7 +142,10 @@ async function handleDefinitions(
 
   const items = new ItemsService(database);
   if (method === "GET") {
-    const allDefs = await items.listDefinitions(worldId, category as never);
+    const allDefs = await items.listDefinitions(
+      worldId,
+      enumOr(category, Object.values(ItemCategory), "other") as ItemCategory,
+    );
     const total = allDefs.length;
     const paged = allDefs.slice((page - 1) * pageSize, page * pageSize);
     return jsonPaginated({ data: paged, total, page, pageSize });
@@ -145,8 +156,8 @@ async function handleDefinitions(
     worldId,
     name: body.name as string,
     description: (body.description as string) ?? "",
-    category: (body.category as never) ?? "misc",
-    rarity: (body.rarity as never) ?? "common",
+    category: enumOr(body.category, Object.values(ItemCategory), "other"),
+    rarity: enumOr(body.rarity, Object.values(ItemRarity), "common"),
     stackable: (body.stackable as boolean) ?? false,
     maxStack: (body.maxStack as number) ?? 1,
     properties: (body.properties as Record<string, unknown>) ?? {},
