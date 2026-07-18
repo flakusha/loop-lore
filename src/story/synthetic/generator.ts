@@ -174,8 +174,9 @@ export class SyntheticGenerator {
       case SyntheticDataType.GmEscalation: {
         return this.buildGmEscalation(source);
       }
-      default:
+      default: {
         return assertNever(type);
+      }
     }
   }
 

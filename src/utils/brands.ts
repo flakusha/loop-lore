@@ -26,7 +26,7 @@ export function brand<T extends string>(raw: string): Brand<string, T> {
 
 /** Extract the underlying string from a branded type */
 export function unbrand<T extends string>(branded: Brand<string, T>): string {
-  return branded as string;
+  return branded;
 }
 
 // ── Entity ID Types ──────────────────────────────────────────
