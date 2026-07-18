@@ -14,6 +14,13 @@ export const chatUtils: Partial<ChatState> & ThisType<ChatState> = {
     return d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
   },
 
+  formatTimeShort(iso: string) {
+    if (!iso) return "";
+    const d = new Date(iso);
+    if (Number.isNaN(d.getTime())) return "";
+    return d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+  },
+
   displayName(msg: { role: string; actor_name?: string }): string {
     if (msg.role === "user") return "You";
     if (msg.role === "system") return "System";

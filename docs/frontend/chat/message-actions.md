@@ -10,11 +10,11 @@ levels, see [message-bubbles.md](./message-bubbles.md).
 
 ## Implementation Priority Tiers
 
-| Tier | Scope | Blocks |
-|------|-------|--------|
-| **P0 (Core)** | Copy, Remove, basic hover reveal | Minimum viable chat |
-| **P1 (Rich)** | Edit, Reply, Regenerate/Retry, Continue, Variant switcher, Keyboard shortcuts, Inline edit | Competitive chat UX |
-| **P2 (Delight)** | Pin, React, Forward, Summarize, Generate image, Narrate, Analyze, Attach asset, Context menu, Mobile bottom sheet | Polish layer |
+| Tier             | Scope                                                                                                             | Blocks              |
+| ---------------- | ----------------------------------------------------------------------------------------------------------------- | ------------------- |
+| **P0 (Core)**    | Copy, Remove, basic hover reveal                                                                                  | Minimum viable chat |
+| **P1 (Rich)**    | Edit, Reply, Regenerate/Retry, Continue, Variant switcher, Keyboard shortcuts, Inline edit                        | Competitive chat UX |
+| **P2 (Delight)** | Pin, React, Forward, Summarize, Generate image, Narrate, Analyze, Attach asset, Context menu, Mobile bottom sheet | Polish layer        |
 
 Features in this document are tagged with their tier. Untagged = P0.
 
@@ -88,57 +88,57 @@ Actions appear as a **flat button row** always visible below the content:
 
 ## Basic Action Set (P0, always available)
 
-| Action | Icon | Available on | Behavior |
-|--------|------|-------------|----------|
-| Copy | 📋 | All messages | Copies text to clipboard. Toast: "Copied" |
-| Remove | 🗑 | All messages | Archives message + descendants (see archiving.md). Red/danger style |
+| Action | Icon | Available on | Behavior                                                            |
+| ------ | ---- | ------------ | ------------------------------------------------------------------- |
+| Copy   | 📋   | All messages | Copies text to clipboard. Toast: "Copied"                           |
+| Remove | 🗑    | All messages | Archives message + descendants (see archiving.md). Red/danger style |
 
 ## Extended Action Set
 
 ### P1 Actions
 
-| Action | Icon | Available on | Behavior |
-|--------|------|-------------|----------|
-| Edit | ✏️ | Own messages | Inline textarea edit (see Inline Edit below) |
-| Regenerate | ♻ | Assistant messages | Full regenerate. Variant-aware (creates new variant) |
-| Continue | ↳ | Partial/cancelled messages | Appends new content where message left off |
-| Impersonate | 🎭 | Assistant messages | Toggle: play as this character (sends as character) |
+| Action      | Icon | Available on               | Behavior                                             |
+| ----------- | ---- | -------------------------- | ---------------------------------------------------- |
+| Edit        | ✏️   | Own messages               | Inline textarea edit (see Inline Edit below)         |
+| Regenerate  | ♻    | Assistant messages         | Full regenerate. Variant-aware (creates new variant) |
+| Continue    | ↳    | Partial/cancelled messages | Appends new content where message left off           |
+| Impersonate | 🎭   | Assistant messages         | Toggle: play as this character (sends as character)  |
 
 ### P2 Actions
 
-| Action | Icon | Available on | Behavior |
-|--------|------|-------------|----------|
-| Reply | ↩ | All messages | Opens reply composer (see Reply Threading below) |
-| Pin | 📌 | All messages | Pins message to chat top (GM/master only) |
-| React | 😊 | All messages | Emoji reaction picker |
-| Forward | ➡ | All messages | Forward to another chat or export |
-| Summarize | 📝 | Character messages | LLM-generated summary of the message |
-| Generate image | 🖼 | Character messages | Triggers image generation from message text |
-| Narrate | 📖 | Character messages | Re-generates as descriptive narration |
-| Analyze | 🔍 | Image-attached messages | Vision model describes attached images |
-| Attach asset | 📎 | All messages | Attach existing asset from gallery |
+| Action         | Icon | Available on            | Behavior                                         |
+| -------------- | ---- | ----------------------- | ------------------------------------------------ |
+| Reply          | ↩    | All messages            | Opens reply composer (see Reply Threading below) |
+| Pin            | 📌   | All messages            | Pins message to chat top (GM/master only)        |
+| React          | 😊   | All messages            | Emoji reaction picker                            |
+| Forward        | ➡    | All messages            | Forward to another chat or export                |
+| Summarize      | 📝   | Character messages      | LLM-generated summary of the message             |
+| Generate image | 🖼    | Character messages      | Triggers image generation from message text      |
+| Narrate        | 📖   | Character messages      | Re-generates as descriptive narration            |
+| Analyze        | 🔍   | Image-attached messages | Vision model describes attached images           |
+| Attach asset   | 📎   | All messages            | Attach existing asset from gallery               |
 
 ---
 
 ## Action Visibility by Role
 
-| Action | user | assistant | character | system |
-|--------|------|-----------|-----------|--------|
-| Copy | ✅ | ✅ | ✅ | ❌ |
-| Edit | ✅ (own) | ✅ (own) | ✅ (own) | ❌ |
-| Remove | ✅ | ✅ | ✅ | ❌ |
-| Regenerate | ❌ | ✅ | ✅ | ❌ |
-| Continue | ❌ | ✅ (partial) | ✅ (partial) | ❌ |
-| Impersonate | ❌ | ✅ | ❌ | ❌ |
-| Reply | ✅ | ✅ | ✅ | ❌ |
-| Pin | ✅ | ✅ | ✅ | ❌ |
-| React | ✅ | ✅ | ✅ | ❌ |
-| Forward | ✅ | ✅ | ✅ | ❌ |
-| Summarize | ❌ | ✅ | ✅ | ❌ |
-| Generate image | ❌ | ✅ | ✅ | ❌ |
-| Narrate | ❌ | ❌ | ✅ | ❌ |
-| Analyze | ❌ | ❌ | ✅ (w/ image) | ❌ |
-| Attach asset | ✅ | ✅ | ✅ | ❌ |
+| Action         | user     | assistant    | character     | system |
+| -------------- | -------- | ------------ | ------------- | ------ |
+| Copy           | ✅       | ✅           | ✅            | ❌     |
+| Edit           | ✅ (own) | ✅ (own)     | ✅ (own)      | ❌     |
+| Remove         | ✅       | ✅           | ✅            | ❌     |
+| Regenerate     | ❌       | ✅           | ✅            | ❌     |
+| Continue       | ❌       | ✅ (partial) | ✅ (partial)  | ❌     |
+| Impersonate    | ❌       | ✅           | ❌            | ❌     |
+| Reply          | ✅       | ✅           | ✅            | ❌     |
+| Pin            | ✅       | ✅           | ✅            | ❌     |
+| React          | ✅       | ✅           | ✅            | ❌     |
+| Forward        | ✅       | ✅           | ✅            | ❌     |
+| Summarize      | ❌       | ✅           | ✅            | ❌     |
+| Generate image | ❌       | ✅           | ✅            | ❌     |
+| Narrate        | ❌       | ❌           | ✅            | ❌     |
+| Analyze        | ❌       | ❌           | ✅ (w/ image) | ❌     |
+| Attach asset   | ✅       | ✅           | ✅            | ❌     |
 
 System messages have **no actions** (no toolbar, no context menu).
 
@@ -181,15 +181,15 @@ On viewports <768px, hover does not work. Instead:
 
 Active when a message is focused (Tab to focus, visual focus ring shown).
 
-| Shortcut | Action |
-|----------|--------|
-| `Ctrl+C` / `Cmd+C` | Copy message text |
-| `Ctrl+R` | Retry / Regenerate |
-| `Ctrl+E` | Edit (own messages) |
-| `Delete` | Remove (with confirm) |
-| `Ctrl+Shift+R` | Reply |
-| `Ctrl+P` | Pin / Unpin |
-| `Ctrl+J` | Continue (partial msg) |
+| Shortcut           | Action                 |
+| ------------------ | ---------------------- |
+| `Ctrl+C` / `Cmd+C` | Copy message text      |
+| `Ctrl+R`           | Retry / Regenerate     |
+| `Ctrl+E`           | Edit (own messages)    |
+| `Delete`           | Remove (with confirm)  |
+| `Ctrl+Shift+R`     | Reply                  |
+| `Ctrl+P`           | Pin / Unpin            |
+| `Ctrl+J`           | Continue (partial msg) |
 
 ---
 
@@ -354,20 +354,20 @@ with all available actions:
 
 ## Test Fixtures
 
-| # | Case | Expected |
-|---|------|----------|
-| 1 | Hover on user message | Actions fade in at bottom of bubble, 150ms ease |
-| 2 | Hover on character message | Same, with avatar visible |
-| 3 | Compact mode hamburger | ⋮ button → dropdown with all available actions |
-| 4 | Detailed mode buttons | Flat row of icon buttons always visible |
-| 5 | Click Copy | Toast "Copied", text on clipboard |
-| 6 | Click Remove | Confirmation → message archived, not deleted |
-| 7 | Edit own message | Textarea appears, pre-filled, Save/Cancel buttons |
-| 8 | Ctrl+Enter in edit | Saves edit, "(edited)" label appears |
-| 9 | Escape in edit | Cancels edit, reverts to original content |
-| 10 | Continue on partial | New content appended, Continue button disappears |
-| 11 | Regenerate | New variant created, variant counter increments |
-| 12 | Mobile long-press | Bottom sheet slides up, all actions listed |
-| 13 | Mobile touch target | All buttons ≥44×44px |
-| 14 | Keyboard Tab focus | Focus ring visible on message |
-| 15 | Ctrl+R on focused message | Triggers regenerate |
+| #   | Case                       | Expected                                          |
+| --- | -------------------------- | ------------------------------------------------- |
+| 1   | Hover on user message      | Actions fade in at bottom of bubble, 150ms ease   |
+| 2   | Hover on character message | Same, with avatar visible                         |
+| 3   | Compact mode hamburger     | ⋮ button → dropdown with all available actions    |
+| 4   | Detailed mode buttons      | Flat row of icon buttons always visible           |
+| 5   | Click Copy                 | Toast "Copied", text on clipboard                 |
+| 6   | Click Remove               | Confirmation → message archived, not deleted      |
+| 7   | Edit own message           | Textarea appears, pre-filled, Save/Cancel buttons |
+| 8   | Ctrl+Enter in edit         | Saves edit, "(edited)" label appears              |
+| 9   | Escape in edit             | Cancels edit, reverts to original content         |
+| 10  | Continue on partial        | New content appended, Continue button disappears  |
+| 11  | Regenerate                 | New variant created, variant counter increments   |
+| 12  | Mobile long-press          | Bottom sheet slides up, all actions listed        |
+| 13  | Mobile touch target        | All buttons ≥44×44px                              |
+| 14  | Keyboard Tab focus         | Focus ring visible on message                     |
+| 15  | Ctrl+R on focused message  | Triggers regenerate                               |
