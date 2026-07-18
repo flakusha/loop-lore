@@ -4,6 +4,7 @@ export const chatPanels: Partial<ChatState> & ThisType<ChatState> = {
   _toggleChatListHandler: null as (() => void) | null,
   _toggleGalleryHandler: null as (() => void) | null,
   _toggleCharacterInfoHandler: null as (() => void) | null,
+  _toggleMemoryPanelHandler: null as (() => void) | null,
   _panelClickHandler: null as ((e: MouseEvent) => void) | null,
   _keydownHandler: null as ((e: KeyboardEvent) => void) | null,
   _observer: null as MutationObserver | null,
@@ -18,9 +19,13 @@ export const chatPanels: Partial<ChatState> & ThisType<ChatState> = {
     this._toggleCharacterInfoHandler = () => {
       Alpine.store("ui").showCharacterInfo = true;
     };
-    document.addEventListener("toggle-chat-list", this._toggleChatListHandler!);
-    document.addEventListener("toggle-gallery", this._toggleGalleryHandler!);
-    document.addEventListener("toggle-character-info", this._toggleCharacterInfoHandler!);
+    this._toggleMemoryPanelHandler = () => {
+      Alpine.store("ui").showMemoryPanel = !Alpine.store("ui").showMemoryPanel;
+    };
+    document.addEventListener("toggle-chat-list", this._toggleChatListHandler);
+    document.addEventListener("toggle-gallery", this._toggleGalleryHandler);
+    document.addEventListener("toggle-character-info", this._toggleCharacterInfoHandler);
+    document.addEventListener("toggle-memory-panel", this._toggleMemoryPanelHandler);
 
     this._panelClickHandler = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
@@ -39,6 +44,7 @@ export const chatPanels: Partial<ChatState> & ThisType<ChatState> = {
         ui.showGallery = false;
         ui.showCharacterInfo = false;
         ui.showChatList = false;
+        ui.showMemoryPanel = false;
       }
     };
     document.addEventListener("click", this._panelClickHandler, { capture: true });
@@ -55,6 +61,7 @@ export const chatPanels: Partial<ChatState> & ThisType<ChatState> = {
         if (Alpine.store("ui").showChatList) Alpine.store("ui").showChatList = false;
         else if (Alpine.store("ui").showGallery) Alpine.store("ui").showGallery = false;
         else if (Alpine.store("ui").showCharacterInfo) Alpine.store("ui").showCharacterInfo = false;
+        else if (Alpine.store("ui").showMemoryPanel) Alpine.store("ui").showMemoryPanel = false;
       }
       if (e.ctrlKey && e.key === "j") {
         const focusedMsg = document.querySelector<HTMLElement>(".message.focused");
@@ -74,6 +81,8 @@ export const chatPanels: Partial<ChatState> & ThisType<ChatState> = {
       document.removeEventListener("toggle-gallery", this._toggleGalleryHandler);
     if (this._toggleCharacterInfoHandler)
       document.removeEventListener("toggle-character-info", this._toggleCharacterInfoHandler);
+    if (this._toggleMemoryPanelHandler)
+      document.removeEventListener("toggle-memory-panel", this._toggleMemoryPanelHandler);
     if (this._panelClickHandler) document.removeEventListener("click", this._panelClickHandler, true);
     if (this._keydownHandler) document.removeEventListener("keydown", this._keydownHandler);
     if (this._observer) this._observer.disconnect();

@@ -104,8 +104,8 @@ describe("chatEditing", () => {
       chatEditing.removePendingAsset!.call(mockState, "asset-2");
 
       expect(mockState.pendingAssets.length).toBe(2);
-      expect(mockState.pendingAssets[0]!.assetId).toBe("asset-1");
-      expect(mockState.pendingAssets[1]!.assetId).toBe("asset-3");
+      expect(mockState.pendingAssets[0].assetId).toBe("asset-1");
+      expect(mockState.pendingAssets[1].assetId).toBe("asset-3");
     });
 
     test("does nothing for non-existent asset id", () => {

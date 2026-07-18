@@ -3,6 +3,7 @@ import type { WorldEditState } from "./world-types";
 
 export type { ChatState, GroupedMessage, Message, MessageAttachment, GenerationDetail } from "./chat-types";
 export type { WorldEditState } from "./world-types";
+export type { RpgStats, StatusEffect, EquipmentSlot, MemoryEntry, MemoryPanelState } from "./chat-types";
 
 /**
  * Alpine.js Component Types
@@ -42,7 +43,44 @@ export interface PreviewAsset {
 
 export interface WorldDetailInit {
   worldId: string;
-  locations: Array<{ id: string; name: string; description: string | null; world_id: string }>;
+  locations: { id: string; name: string; description: string | null; world_id: string }[];
+}
+
+export interface NotificationListItem {
+  id: string;
+  type: string;
+  title: string;
+  body: string | null;
+  link: string | null;
+  read: number;
+}
+
+export interface NotificationBellState {
+  open: boolean;
+  unreadCount: number;
+  items: NotificationListItem[];
+  init: () => void;
+  refresh: () => Promise<void>;
+  connect: () => void;
+  toggle: () => void;
+  iconFor: (type: string) => string;
+  markRead: (id: string) => Promise<void>;
+  markAllRead: () => Promise<void>;
+  dismiss: (id: string) => Promise<void>;
+  goTo: (link: string | null) => void;
+}
+
+export interface NotificationPrefsState {
+  loaded: boolean;
+  saving: boolean;
+  enabled: Record<string, boolean>;
+  mutedWorlds: string[];
+  types: { key: string; label: string }[];
+  init: () => void;
+  refresh: () => Promise<void>;
+  toggleType: (key: string) => Promise<void>;
+  toggleMuteWorld: (worldId: string) => Promise<void>;
+  save: () => Promise<void>;
 }
 
 declare global {
@@ -58,7 +96,7 @@ declare global {
 
   interface Window {
     app: () => {
-      toasts: Array<{ type: string; msg: string; icon: string }>;
+      toasts: { type: string; msg: string; icon: string }[];
       currentTheme: string;
       sidebarOpen: boolean;
       currentLocale: string;
@@ -71,6 +109,8 @@ declare global {
       setLocale: (localeId: string) => void;
       __: (key: string, fallback?: string) => string;
     };
+    notificationsBell: () => NotificationBellState;
+    notificationPrefs: () => NotificationPrefsState;
     chatState: () => AlpineState<ChatState>;
     worldEditState: () => AlpineState<WorldEditState>;
     adminPage: () => unknown;
@@ -78,7 +118,9 @@ declare global {
       $data: (el: HTMLElement) => Record<string, unknown>;
       initTree: (el: HTMLElement) => void;
       store: {
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-parameters -- Alpine.store generic is for caller convenience
         <T = Record<string, unknown>>(key: string): T;
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-parameters -- Alpine.store generic is for caller convenience
         <T = Record<string, unknown>>(key: string, value: T): void;
       };
     };
@@ -93,7 +135,7 @@ declare global {
     };
     __: (key: string, fallback?: string) => string;
     __localeStrings: Record<string, string>;
-    __THEMES: Array<{ id: string; name: string; file: string }>;
+    __THEMES: { id: string; name: string; file: string }[];
     apiFetch: (url: string, options?: RequestInit) => Promise<Response>;
     toggleSidebar: () => void;
     closeSidebar: () => void;
@@ -105,6 +147,8 @@ declare global {
   var chatState: Window["chatState"];
   var worldEditState: Window["worldEditState"];
   var app: Window["app"];
+  var notificationsBell: Window["notificationsBell"];
+  var notificationPrefs: Window["notificationPrefs"];
   var __USER_ID: string | null | undefined;
   var __SESSION_ID: string | null | undefined;
 }

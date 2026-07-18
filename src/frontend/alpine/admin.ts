@@ -16,7 +16,7 @@ import { adminWorlds } from "./admin-worlds";
 
     // Overview
     stats: { users: 0, chats: 0, messages: 0, characters: 0, assets: 0, worlds: 0 },
-    recentEntries: [] as Array<{
+    recentEntries: [] as {
       id: string;
       level: number;
       message: string;
@@ -25,7 +25,7 @@ import { adminWorlds } from "./admin-worlds";
       entity_type: string | null;
       entity_id: string | null;
       created_at: string;
-    }>,
+    }[],
 
     // ── Tab state + methods ─────────────────────────────
     ...adminUsers,

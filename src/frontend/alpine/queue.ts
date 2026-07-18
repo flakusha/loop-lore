@@ -5,17 +5,9 @@
  * Queue overflow: drops oldest. Fallback: console.error on transport failure.
  */
 
-import type { Transport } from "../../logger/types";
 import { AsyncLogQueueBase } from "../../logger/queue-base";
 
 export class AsyncLogQueue extends AsyncLogQueueBase {
-  constructor(
-    transports: Transport[],
-    options?: { flushInterval?: number; batchSize?: number; queueMaxSize?: number },
-  ) {
-    super(transports, options);
-  }
-
   override async flush(): Promise<void> {
     if (this.flushing || this.buffer.length === 0) return;
 

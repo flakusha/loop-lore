@@ -13,6 +13,8 @@ import { chatUtils } from "./chat-utils";
 import { getLogger } from "./logger";
 import { chatKeys } from "./chat-keys";
 import { chatPanels } from "./chat-panels";
+import { rpgStats } from "./rpg-stats";
+import { memoryPanel } from "./memory-panel";
 import type { AlpineState, ChatState } from "./types";
 import { jsonParseOr } from "./json";
 
@@ -28,7 +30,7 @@ g.toggleGroupPause = async function () {
   const el = document.querySelector<HTMLElement>("[x-data]");
   if (el && typeof Alpine !== "undefined") {
     const data = Alpine.$data(el);
-    const fn = (data as Record<string, unknown>).toggleGroupPause as (() => Promise<void>) | undefined;
+    const fn = data.toggleGroupPause as (() => Promise<void>) | undefined;
     if (typeof fn === "function") {
       await fn();
     }
@@ -44,9 +46,9 @@ globalThis.chatState = function () {
     continuingMessageId: null as string | null,
     isContinuing: false,
     _generationEventSource: null as EventSource | null,
-    chats: [] as Array<{ id: string; name?: string }>,
+    chats: [] as { id: string; name?: string }[],
     activeChat: null as string | null,
-    messages: [] as Array<{
+    messages: [] as {
       id: string;
       role: string;
       content: string;
@@ -55,7 +57,7 @@ globalThis.chatState = function () {
       actor_name?: string;
       totalVariants?: number;
       variantIndex?: number;
-      attachments?: Array<{
+      attachments?: {
         assetId: string;
         order: number;
         caption: string;
@@ -67,8 +69,8 @@ globalThis.chatState = function () {
         type: string;
         width: number;
         height: number;
-      }>;
-    }>,
+      }[];
+    }[],
     loadingMessages: false,
     loadingError: null as string | null,
     hasMoreMessages: true,
@@ -77,7 +79,7 @@ globalThis.chatState = function () {
     totalPages: 1,
     scrollObserver: null as IntersectionObserver | null,
     activeChatName: "Welcome to loop-lore",
-    galleryAssets: [] as Array<{
+    galleryAssets: [] as {
       id: string;
       name?: string;
       filename?: string;
@@ -87,7 +89,7 @@ globalThis.chatState = function () {
       width?: number;
       height?: number;
       alt_text?: string;
-    }>,
+    }[],
     userDisplayName: "User",
     userRole: "solo",
     currentCharacter: null as {
@@ -95,6 +97,7 @@ globalThis.chatState = function () {
       display_name?: string;
       name?: string;
       description?: string;
+      avatar_asset_id?: string;
     } | null,
     generationDetail: null as {
       model?: string;
@@ -104,13 +107,13 @@ globalThis.chatState = function () {
       status?: string;
       attemptId?: string;
     } | null,
-    detailLevel: "Immersion" as "Immersion" | "Basic" | "Detailed",
-    impersonationActive: false as boolean,
+    detailLevel: "Immersion",
+    impersonationActive: false,
     impersonatingActorId: null as string | null,
-    _hamburgerOpen: {} as Record<string, boolean>,
-    _statsOpen: {} as Record<string, boolean>,
-    _impersonationLoaded: false as boolean,
-    _unseenCounts: {} as Record<string, number>,
+    _hamburgerOpen: {},
+    _statsOpen: {},
+    _impersonationLoaded: false,
+    _unseenCounts: {},
     _activityEventSource: null as EventSource | null,
     _chatFilter: "",
 
@@ -123,6 +126,13 @@ globalThis.chatState = function () {
     get currentChat() {
       return this.chats.find((c: { id: string; name?: string }) => c.id === this.activeChat) ?? null;
     },
+
+    // ── RPG Stats State ──
+    ...rpgStats,
+    showRpgPanel: false as boolean,
+
+    // ── Memory Panel State ──
+    ...memoryPanel,
 
     // ── Sub-module state + methods ──
     ...chatKeys,
@@ -138,12 +148,31 @@ globalThis.chatState = function () {
       this.continuingMessageId = null;
       this._isScrolledUp = false;
       this._contextMenu = { visible: false, messageId: null, x: 0, y: 0 };
+      this._reactionPicker = { visible: false, messageId: "", x: 0, y: 0 };
+      this._quickEmojis = [
+        "👍",
+        "❤️",
+        "😂",
+        "🎭",
+        "⚔️",
+        "🗡️",
+        "🏰",
+        "✨",
+        "💀",
+        "🐉",
+        "🌲",
+        "⚡",
+        "🔥",
+        "💧",
+        "🌙",
+      ];
 
       // Force-reset panel visibility on every mount (belt-and-suspenders
       // against stale store state from a previous component instance)
       Alpine.store("ui").showGallery = false;
       Alpine.store("ui").showChatList = false;
       Alpine.store("ui").showCharacterInfo = false;
+      Alpine.store("ui").showMemoryPanel = false;
 
       const storedDetail = localStorage.getItem("chat-detail-level");
       if (storedDetail === "Basic" || storedDetail === "Detailed") {
