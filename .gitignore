@@ -43,6 +43,9 @@ bun.lock
 # Git worktrees (parallel branch development)
 tree/
 
+# Agent credentials (GPG keys, signing config — never commit)
+.credentials.env
+
 # Tooling output (reports, analysis, optimization)
 .jscpd-report/
 token-optimizer/
