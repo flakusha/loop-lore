@@ -9,6 +9,9 @@
     <!-- Core resets - always loaded -->
     <link rel="stylesheet" href="/css/theme.css" media="all" />
 
+    <!-- Shared design tokens (fonts, spacing, transitions, z-index) -->
+    <link rel="stylesheet" href="/css/theme-base.css" media="all" />
+
     <!-- Theme CSS (dynamically loaded based on user preference) -->
     <link rel="stylesheet" href="/css/theme-default.css" media="all" id="theme-default" />
     <link rel="stylesheet" href="/css/theme-light.css" media="all" id="theme-light" disabled />
@@ -37,8 +40,12 @@
     <script src="/pages.js" defer></script>
 
     <!-- Telemetry config injected by server (replaced in wrapWithLayout) -->
-    <script>globalThis.__TELEMETRY_FRONTEND_ENABLED = {{telemetryEnabled}};</script>
-    <script>globalThis.__USER_ID = {{userId}}; globalThis.__SESSION_ID = {{sessionId}};</script>
+    <script>
+      globalThis.__TELEMETRY_FRONTEND_ENABLED = {{telemetryEnabled}};
+    </script>
+    <script>
+      globalThis.__USER_ID = {{userId}}; globalThis.__SESSION_ID = {{sessionId}};
+    </script>
 
     <style>
       body {
@@ -189,7 +196,7 @@
             class="avatar"
             src="/img/characters/default-avatar.svg"
             alt="User avatar"
-            background: var(--bg-tertiary)
+            style="background: var(--bg-tertiary)"
             data-avatar="user"
           />
           <div class="details">
