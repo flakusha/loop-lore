@@ -144,7 +144,7 @@ async function handleDefinitions(
   if (method === "GET") {
     const allDefs = await items.listDefinitions(
       worldId,
-      enumOr(category, Object.values(ItemCategory), "other") as ItemCategory,
+      enumOr(category, Object.values(ItemCategory), "other"),
     );
     const total = allDefs.length;
     const paged = allDefs.slice((page - 1) * pageSize, page * pageSize);
