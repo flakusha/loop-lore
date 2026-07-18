@@ -106,6 +106,7 @@ export const PRIORITY = {
   lore: 2,
   memories: 3,
   dynamicContext: 0,
+  recentEvents: 0,
   postHistory: 4,
   examples: 5,
 } as const;
