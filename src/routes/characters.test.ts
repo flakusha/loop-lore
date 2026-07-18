@@ -47,7 +47,7 @@ describe("charactersRoutes", () => {
     const app = createApp(db, userId);
     const res = await app.handle(new Request("http://localhost/api/actors"));
     expect(res.status).toBe(200);
-    const body = await res.json();
+    const body = (await res.json()) as { data: unknown[]; pagination: { total: number } };
     expect(body.data).toBeInstanceOf(Array);
     expect(body.pagination.total).toBe(0);
   });
@@ -64,7 +64,7 @@ describe("charactersRoutes", () => {
       }),
     );
     expect(res.status).toBe(201);
-    const body = await res.json();
+    const body = (await res.json()) as { id: string };
     expect(body.id).toBeDefined();
 
     const actor = await db.selectFrom("actors").selectAll().where("id", "=", body.id).executeTakeFirst();
@@ -105,7 +105,7 @@ describe("charactersRoutes", () => {
     const app = createApp(db, userId);
     const res = await app.handle(new Request("http://localhost/api/actors"));
     expect(res.status).toBe(200);
-    const body = await res.json();
+    const body = (await res.json()) as { data: unknown[]; pagination: { total: number } };
     expect(body.pagination.total).toBeGreaterThanOrEqual(1);
     expect(body.data.some((a: any) => a.display_name === "Test Character")).toBe(true);
   });
@@ -125,7 +125,7 @@ describe("charactersRoutes", () => {
 
     const res = await app.handle(new Request(`http://localhost/api/actors/${id}`));
     expect(res.status).toBe(200);
-    const body = await res.json();
+    const body = (await res.json()) as { display_name: string };
     expect(body.display_name).toBe("Find Me");
   });
 
@@ -150,7 +150,7 @@ describe("charactersRoutes", () => {
 
     const res = await app.handle(new Request(`http://localhost/api/actors/${id}/card`));
     expect(res.status).toBe(200);
-    const body = await res.json();
+    const body = (await res.json()) as { spec: string; data: { name: string; description: string } };
     expect(body.spec).toBe("chara_card_v2");
     expect(body.data.name).toBe("Card Actor");
     expect(body.data.description).toBe("A character");
@@ -177,7 +177,7 @@ describe("charactersRoutes", () => {
       }),
     );
     expect(res.status).toBe(200);
-    const body = await res.json();
+    const body = (await res.json()) as { ok: boolean };
     expect(body.ok).toBe(true);
 
     const actor = await db.selectFrom("actors").selectAll().where("id", "=", id).executeTakeFirst();
