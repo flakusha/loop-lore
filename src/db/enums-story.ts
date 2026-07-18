@@ -6,6 +6,9 @@
  */
 
 // ── Story Turns ───────────────────────────────────────────
+// ── State Machine (used by story/synthetic/generator.ts) ────
+import { createMachine, type StateDef } from "./state";
+
 export const TurnType = {
   CharacterAction: "character_action",
   Narration: "narration",
@@ -193,9 +196,6 @@ export const ItemVisibility = {
   Hidden: "hidden",
 } as const;
 export type ItemVisibility = (typeof ItemVisibility)[keyof typeof ItemVisibility];
-
-// ── State Machine (used by story/synthetic/generator.ts) ────
-import { createMachine, type StateDef } from "./state";
 
 const syntheticDataStatusDef: StateDef<SyntheticDataStatus> = {
   values: ["generated", "validated", "approved", "rejected", "archived"] as const,
