@@ -16,6 +16,7 @@ import { safeJsonStringify, jsonParseOr } from "../utils";
 import { UserProfileUpdateBody, UserIdParams } from "../validation/schemas";
 import { unauthorized, forbidden, notFound } from "../validation/middleware";
 import { jsonResponse, jsonError, jsonNoContent, HttpStatus } from "./http-utils";
+import { validateAge } from "../age-gate/service";
 
 export function usersRoutes(opts: { database: Db; config: Config }): Elysia {
   return new Elysia({ name: "users" })
@@ -43,8 +44,18 @@ export function usersRoutes(opts: { database: Db; config: Config }): Elysia {
 
         const updates: Record<string, unknown> = {};
         if (body.displayName != null) updates.display_name = body.displayName;
-        // TODO: re-validate age gate when birthDate changes
-        if (body.birthDate != null) updates.birth_date = body.birthDate;
+        if (body.birthDate != null) {
+          // Re-validate age gate when birthDate changes
+          try {
+            validateAge(body.birthDate, opts.config.ageGate.minimumAge);
+          } catch (err) {
+            return jsonError({
+              message: err instanceof Error ? err.message : "Invalid birth date",
+              status: HttpStatus.BadRequest,
+            });
+          }
+          updates.birth_date = body.birthDate;
+        }
         if (body.settings) {
           const settingsResult = safeJsonStringify(body.settings);
           if (!settingsResult.ok)
