@@ -13,5 +13,6 @@ export {
   parseMentions,
   resolveMention,
   extractMentionedActorIds,
+  parseInitiativeFlag,
   type ParsedMention,
 } from "./mention-parser";

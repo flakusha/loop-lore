@@ -184,7 +184,7 @@ async function executeToolCalls(toolCalls: ToolCallItem[]): Promise<GenerationMe
       continue;
     }
 
-    let params: Record<string, unknown> = jsonParseOr(tc.function.arguments, {});
+    const params: Record<string, unknown> = jsonParseOr(tc.function.arguments, {});
 
     try {
       const toolResult = await def.handler(params);
