@@ -48,9 +48,9 @@ export function usersRoutes(opts: { database: Db; config: Config }): Elysia {
           // Re-validate age gate when birthDate changes
           try {
             validateAge(body.birthDate, opts.config.ageGate.minimumAge);
-          } catch (err) {
+          } catch (error) {
             return jsonError({
-              message: err instanceof Error ? err.message : "Invalid birth date",
+              message: error instanceof Error ? error.message : "Invalid birth date",
               status: HttpStatus.BadRequest,
             });
           }

@@ -34,6 +34,9 @@ interface HandleOpts {
 const LOGIN_MAX_ATTEMPTS = 10;
 const loginLimiter = createRateLimiter({ windowMs: 60_000, maxRequests: LOGIN_MAX_ATTEMPTS });
 
+const REGISTER_MAX_ATTEMPTS = 3;
+const registerLimiter = createRateLimiter({ windowMs: 60 * 60 * 1000, maxRequests: REGISTER_MAX_ATTEMPTS });
+
 // ── Cookie helpers ────────────────────────────────────────────
 
 const TOKEN_COOKIE = "ll_token";
@@ -181,6 +184,19 @@ async function handleDemoLogin(request: Request, database: Kysely<DB>, config: C
 }
 
 async function handleRegister(request: Request, database: Kysely<DB>, config: Config): Promise<Response> {
+  // Gate: registration must be open
+  if (!config.auth.registrationOpen) {
+    return errorHtml("Registration is closed.");
+  }
+
+  const ip = getClientIp(request);
+  if (!registerLimiter.check(ip)) {
+    return new Response('<p class="error-msg">Too many registration attempts. Try again later.</p>', {
+      status: HttpStatus.TooManyRequests,
+      headers: { "Content-Type": "text/html; charset=utf-8" },
+    });
+  }
+
   let formData: URLSearchParams;
   try {
     const text = await request.text();
@@ -250,7 +266,6 @@ async function handleRegister(request: Request, database: Kysely<DB>, config: Co
     await ensureActorKey({ database, actorId: userId, smk });
   }
 
-  const ip = getClientIp(request);
   const userAgent = request.headers.get("User-Agent");
   const rawToken = secureToken();
   const tokenHash = crypto.createHash("sha256").update(rawToken).digest("hex");
@@ -365,6 +380,10 @@ export function authProtectedRoutes({ database }: { database: Kysely<DB> }): Ely
 
 export function resetLoginRateLimiter(): void {
   loginLimiter.clear();
+}
+
+export function resetRegisterRateLimiter(): void {
+  registerLimiter.clear();
 }
 
 export { resetSoloUserCache as resetSoloUserCacheForAuth } from "../middleware/auth";
