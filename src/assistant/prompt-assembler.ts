@@ -10,6 +10,7 @@ import type { DB } from "../db/schema";
 import type { GenerationMessage } from "../generation/gen-types-options";
 import { ChatMode } from "../db/enums";
 import { defaultTokenCount } from "../generation/context-window-config";
+import { ContextCompactor } from "../generation/context-compactor";
 import { PROMPT_SECTIONS } from "./prompt/registry";
 import { PRIORITY } from "./prompt/types";
 import type { AssembleContext, AssembledPrompt, PromptParams, PromptSectionReport } from "./prompt/types";
@@ -117,4 +118,36 @@ export class PromptAssembler {
       sections,
     };
   }
+}
+
+/**
+ * Compact conversation history when prompt exceeds token budget.
+ *
+ * After the assembler drops low-priority sections, if the remaining messages
+ * still exceed the budget, the ContextCompactor summarizes the older half
+ * of chat history into a single system message.
+ *
+ * @param messages - Assembled message list (mutated in place)
+ * @param tokenBudget - Maximum token budget
+ * @returns Summary text if compaction occurred, undefined otherwise
+ */
+export async function compactPromptHistory(
+  messages: GenerationMessage[],
+  tokenBudget: number,
+): Promise<string | undefined> {
+  const compactor = new ContextCompactor({ threshold: 0.85, keepLast: 10 });
+  const total = compactor.totalTokens(messages);
+  if (total <= tokenBudget * 0.85) return undefined;
+
+  const {
+    messages: compacted,
+    compacted: didCompact,
+    summary,
+  } = await compactor.compact(messages, tokenBudget);
+  if (!didCompact) return undefined;
+
+  // Replace the message list contents with the compacted version
+  messages.length = 0;
+  messages.push(...compacted);
+  return summary;
 }
