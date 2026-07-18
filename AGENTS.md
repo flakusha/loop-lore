@@ -276,3 +276,55 @@ Triggered on `git commit`. Pipeline:
 Set `E2E_SAFEGUARD=0` to bypass (dev-only — never in CI).
 
 Goal: lightweight, extensible, maintainable, scalable.
+
+---
+
+## Agent GPG Signing — Worktrees
+
+Agent commits in worktrees are GPG-signed with the agent's dedicated key.
+Configuration lives in `.credentials.env` (gitignored), never hardcoded.
+
+### Configuration
+
+Copy `.credentials.env.example` to `.credentials.env` and fill in:
+
+```bash
+AGENT_GPG_KEY_ID="<your-gpg-key-fingerprint>"
+AGENT_GPG_NAME="<committer-name>"
+AGENT_GPG_EMAIL="<committer-email>"
+```
+
+### Worktree Setup
+
+`scripts/worktree.sh` auto-configures signing when creating worktrees:
+
+```bash
+# Auto-configured on create/new:
+./scripts/worktree.sh new feature-xyz
+
+# Configure on existing worktree:
+./scripts/worktree.sh sign feature-xyz
+```
+
+The script sets `commit.gpgsign=true` and `user.signingkey` in the
+worktree's local git config. It does **NOT** set `user.name`/`user.email`
+— those are provided at commit time via `GIT_COMMITTER_*` env vars
+(Author=user, Committer=agent separation).
+
+### Agent Commit in Worktree
+
+```bash
+cd tree/<branch>
+GIT_COMMITTER_NAME="<AGENT_GPG_NAME>" \
+GIT_COMMITTER_EMAIL="<AGENT_GPG_EMAIL>" \
+git -c user.signingkey=<AGENT_GPG_KEY_ID> \
+    -c commit.gpgsign=true \
+    commit -S \
+    --author="<user name> <<user email>>" \
+    -m "<type>(<scope>): <subject>"
+```
+
+### Skill Override
+
+`.agents/skills/agent-commit/SKILL.md` overrides the global agent-commit
+skill. All agent identity is read from `.credentials.env`, never hardcoded.
