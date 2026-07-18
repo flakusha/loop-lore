@@ -261,7 +261,6 @@ export class QuestEngine {
     },
     event: WorldEvent,
   ): number {
-    // FIXME: {} is not a valid QuestConfig — lacks required `type`. Validate after parse.
     const config = jsonParseOr(quest.config, null) as QuestConfig | null;
     if (!config || typeof config.type !== "string") return 0;
     const calculator = PROGRESS_CALCULATORS[quest.type as QT];
