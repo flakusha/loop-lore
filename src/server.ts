@@ -96,7 +96,7 @@ function computeEtag(filePath: string): string {
   return `W/"${stat.mtimeMs}-${stat.size}"`;
 }
 
-// Dev cache TTL. Prod: bump hashed files to 31536000 + immutable,
+// Dev cache TTL. Prod: bump hashed files to IMMUTABLE_CACHE_MAX_AGE + immutable,
 // non-hashed to 3600 (or no-cache). See injectContentHashes in build/compress.ts.
 const STATIC_CACHE_MAX_AGE = 60;
 

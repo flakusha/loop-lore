@@ -49,6 +49,7 @@ import {
   validateMimeType,
 } from "./service";
 import type { AssetRecord } from "./service";
+import { IMMUTABLE_CACHE_MAX_AGE } from "../config/constants";
 import type { Config } from "../config/schema";
 
 interface UploadOpts {
@@ -76,6 +77,36 @@ interface ServeCompressedOpts {
 
 interface ResolvedAsset {
   asset: AssetRecord;
+}
+
+/** Extract userId from context or return Unauthorized error. */
+function requireUserId(ctx: unknown): string | Response {
+  const userId = (ctx as any).userId as string | null;
+  if (!userId)
+    return jsonError({
+      message: "Unauthorized",
+      status: HttpStatus.Unauthorized,
+      code: ErrorCode.Unauthorized,
+    });
+  return userId;
+}
+
+/** Serve a file from disk with proper headers. */
+function serveFile(
+  filePath: string,
+  contentType: string,
+  opts?: { cacheControl?: string; extraHeaders?: Record<string, string> },
+): Response {
+  if (!existsSync(filePath))
+    return jsonError({ message: "File not found on disk", status: HttpStatus.NotFound });
+  const data = readFileSync(filePath);
+  return new Response(data, {
+    headers: {
+      "Content-Type": contentType,
+      "Cache-Control": opts?.cacheControl ?? `public, max-age=${IMMUTABLE_CACHE_MAX_AGE}, immutable`,
+      ...opts?.extraHeaders,
+    },
+  });
 }
 
 async function resolveAsset(
@@ -128,13 +159,8 @@ export function assetRoutes({ database, config }: { database: Kysely<DB>; config
         return jsonPaginated({ data: result.data, total: result.total, page, pageSize });
       })
       .post("/api/assets", async (ctx) => {
-        const userId = (ctx as any).userId as string | null;
-        if (!userId)
-          return jsonError({
-            message: "Unauthorized",
-            status: HttpStatus.Unauthorized,
-            code: ErrorCode.Unauthorized,
-          });
+        const userId = requireUserId(ctx);
+        if (typeof userId !== "string") return userId;
         return handleUpload({
           request: ctx.request,
           userId,
@@ -155,13 +181,8 @@ export function assetRoutes({ database, config }: { database: Kysely<DB>; config
         return jsonResponse(asset);
       })
       .patch("/api/assets/:id", async (ctx) => {
-        const userId = (ctx as any).userId as string | null;
-        if (!userId)
-          return jsonError({
-            message: "Unauthorized",
-            status: HttpStatus.Unauthorized,
-            code: ErrorCode.Unauthorized,
-          });
+        const userId = requireUserId(ctx);
+        if (typeof userId !== "string") return userId;
 
         const body = (await ctx.request.json()) as { visibility?: string };
         if (
@@ -380,19 +401,7 @@ async function handleServeRaw({
 }: ServeRawOpts): Promise<Response> {
   const resolved = await resolveAsset(database, assetId, actorId, actorRole);
   if (resolved instanceof Response) return resolved;
-  const { asset } = resolved;
-
-  const filePath = getAssetFilePath(uploadDir, asset.storage_path);
-  if (!existsSync(filePath))
-    return jsonError({ message: "File not found on disk", status: HttpStatus.NotFound });
-
-  const data = readFileSync(filePath);
-  return new Response(data, {
-    headers: {
-      "Content-Type": asset.mime_type,
-      "Cache-Control": "public, max-age=31536000, immutable",
-    },
-  });
+  return serveFile(getAssetFilePath(uploadDir, resolved.asset.storage_path), resolved.asset.mime_type);
 }
 
 async function handleServeCompressed({
@@ -406,25 +415,15 @@ async function handleServeCompressed({
   const resolved = await resolveAsset(database, assetId, actorId, actorRole);
   if (resolved instanceof Response) return resolved;
 
-  const compressedFilename = `${assetId}_${variant}.webp`;
-
-  // Construct compressed path: same subdir as raw, "compressed/" prefix
   const subDir = `${assetId.slice(0, 2)}/${assetId.slice(2, 4)}`;
-  const compressedPath = `compressed/${subDir}/${compressedFilename}`;
+  const compressedPath = `compressed/${subDir}/${assetId}_${variant}.webp`;
   const fullPath = getAssetFilePath(uploadDir, compressedPath);
 
+  // Fall back to raw if no compressed variant
   if (!existsSync(fullPath)) {
-    // Fall back to raw if no compressed variant
-    return handleServeRaw({ database, assetId, uploadDir, actorId, actorRole });
+    return serveFile(getAssetFilePath(uploadDir, resolved.asset.storage_path), resolved.asset.mime_type);
   }
-
-  const data = readFileSync(fullPath);
-  return new Response(data, {
-    headers: {
-      "Content-Type": "image/webp",
-      "Cache-Control": "public, max-age=31536000, immutable",
-    },
-  });
+  return serveFile(fullPath, "image/webp");
 }
 
 async function handleDownload({
@@ -437,18 +436,8 @@ async function handleDownload({
   const resolved = await resolveAsset(database, assetId, actorId, actorRole);
   if (resolved instanceof Response) return resolved;
   const { asset } = resolved;
-
-  const filePath = getAssetFilePath(uploadDir, asset.storage_path);
-  if (!existsSync(filePath))
-    return jsonError({ message: "File not found on disk", status: HttpStatus.NotFound });
-
-  const data = readFileSync(filePath);
   const safeName = asset.filename.replaceAll(/[^\w.-]+/g, "_");
-  return new Response(data, {
-    headers: {
-      "Content-Type": asset.mime_type,
-      "Content-Disposition": `attachment; filename="${safeName}"`,
-      "Cache-Control": "public, max-age=31536000, immutable",
-    },
+  return serveFile(getAssetFilePath(uploadDir, asset.storage_path), asset.mime_type, {
+    extraHeaders: { "Content-Disposition": `attachment; filename="${safeName}"` },
   });
 }
