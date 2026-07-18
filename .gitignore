@@ -1,5 +1,5 @@
-.hermes
-.tmp
+# Can be modified locally
+.gitattributes
 
 dist/
 node_modules/
@@ -34,8 +34,10 @@ config.*.sh
 # Lock files (generated, can be recreated with bun install)
 bun.lock
 
-# TODO Remove once confirmed
+# TODO Remove once confirmed AND agent-related paths
 .opencode/
+.hermes
+.tmp
 
 # MCPs
 .playwright-mcp/

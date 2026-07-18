@@ -4,8 +4,8 @@ set -euo pipefail
 # Git worktree management for loop-lore
 # Usage: ./scripts/worktree.sh <command> [args]
 
-REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
-TREE_DIR="$REPO_ROOT/tree"
+REPO_ROOT="${REPO_ROOT:-$(cd "$(dirname "$0")/.." && pwd)}"
+TREE_DIR="${TREE_DIR:-$REPO_ROOT/tree}"
 
 # Source agent credentials if available (GPG signing for worktrees)
 if [[ -f "$REPO_ROOT/.credentials.env" ]]; then
@@ -20,6 +20,18 @@ YELLOW='\033[1;33m'
 CYAN='\033[0;36m'
 NC='\033[0m' # No Color
 
+PROTECTED_BRANCHES="master main"
+
+is_protected() {
+    local branch="$1"
+    for protected in $PROTECTED_BRANCHES; do
+        if [[ "$branch" == "$protected" ]]; then
+            return 0
+        fi
+    done
+    return 1
+}
+
 usage() {
     cat <<EOF
 Git Worktree Management — loop-lore
@@ -32,15 +44,19 @@ Commands:
   sign <branch>             Configure GPG signing for existing worktree
   merge <branch> <source>   Merge source branch into worktree's branch
   rebase <branch> [onto]    Rebase worktree's branch onto target (default: master)
+  finalize <branch>         Validate worktree ready, run checks, merge to master, remove
+  agent-merge <branch>      Alias for finalize — merge worktree into master and clean up
   list                      Show all worktrees with status
   cleanup                   Remove worktrees for deleted branches
-  remove <branch>           Remove specific worktree
+  remove <branch>           Remove specific worktree (blocks if dirty)
   prs                       Create worktrees for all open PRs (needs gh auth)
 
 Examples:
   $(basename "$0") new feature-xyz
   $(basename "$0") new feature-xyz master
   $(basename "$0") create existing-branch
+  $(basename "$0") finalize feature-xyz
+  $(basename "$0") agent-merge feature-xyz
   $(basename "$0") list
   $(basename "$0") cleanup
 EOF
@@ -58,9 +74,15 @@ configure_signing() {
         return 0
     fi
 
+    # Safety: never configure signing on the main repo root
+    if [[ "$(realpath "$worktree_path")" == "$(realpath "$REPO_ROOT")" ]]; then
+        echo -e "${RED}  Error: refusing to configure signing on main repo root${NC}"
+        return 1
+    fi
+
     # Verify key exists in GPG keyring
     if ! gpg --list-keys "$AGENT_GPG_KEY_ID" &>/dev/null; then
-        echo -e "${RED}  Error: GPG key $AGENT_GPG_KEY_ID not found in keyring${NC}"
+        echo -e "${RED}  Error: GPG key $AGENT_GPG_KEY_ID not not found in keyring${NC}"
         return 1
     fi
 
@@ -133,6 +155,12 @@ cmd_create() {
         exit 1
     fi
 
+    # Block operations on protected branches
+    if is_protected "$branch"; then
+        echo -e "${RED}Error: cannot create worktree for protected branch '$branch'${NC}"
+        exit 1
+    fi
+
     # Check if branch exists
     if ! git -C "$REPO_ROOT" rev-parse --verify "$branch" >/dev/null 2>&1; then
         echo -e "${RED}Error: branch '$branch' does not exist${NC}"
@@ -165,6 +193,12 @@ cmd_new() {
     if [[ -z "$branch" ]]; then
         echo -e "${RED}Error: branch name required${NC}"
         echo "Usage: $(basename "$0") new <branch> [base]"
+        exit 1
+    fi
+
+    # Block operations on protected branches
+    if is_protected "$branch"; then
+        echo -e "${RED}Error: cannot create branch '$branch' — protected branch${NC}"
         exit 1
     fi
 
@@ -234,14 +268,13 @@ cmd_cleanup() {
             continue
         fi
 
-        # Check if branch exists on remote
-        if ! git -C "$REPO_ROOT" branch -r --list "origin/$branch" >/dev/null 2>&1; then
-            echo -e "${RED}  Removing stale worktree: $worktree_path (branch '$branch' not on remote)${NC}"
-            git -C "$REPO_ROOT" worktree remove "$worktree_path" --force 2>/dev/null || \
-                rm -rf "$worktree_path"
+        # Check if branch still exists locally
+        if ! git -C "$REPO_ROOT" rev-parse --verify "$branch" >/dev/null 2>&1; then
+            echo -e "${RED}  Removing stale worktree: $worktree_path (branch '$branch' deleted)${NC}"
+            git -C "$REPO_ROOT" worktree remove "$worktree_path" 2>/dev/null || true
             ((removed++))
         else
-            echo -e "${GREEN}  Kept: $worktree_path (branch '$branch' exists on remote)${NC}"
+            echo -e "${GREEN}  Kept: $worktree_path (branch '$branch' exists)${NC}"
         fi
     done
 
@@ -263,6 +296,15 @@ cmd_remove() {
 
     local worktree_path
     worktree_path="$(require_worktree "$branch")"
+
+    # Block removal if worktree has uncommitted changes
+    if ! git -C "$worktree_path" diff --quiet 2>/dev/null || \
+       ! git -C "$worktree_path" diff --cached --quiet 2>/dev/null; then
+        echo -e "${RED}Error: worktree has uncommitted changes${NC}"
+        echo -e "  Stash or commit first: cd $worktree_path && git stash"
+        echo -e "  Or use: git -C $worktree_path diff --stat"
+        exit 1
+    fi
 
     echo -e "${CYAN}Removing worktree: $worktree_path${NC}"
     git -C "$REPO_ROOT" worktree remove "$worktree_path"
@@ -386,6 +428,12 @@ cmd_rebase() {
         exit 1
     fi
 
+    # Block rebasing protected branches onto something else
+    if is_protected "$branch"; then
+        echo -e "${RED}Error: cannot rebase protected branch '$branch'${NC}"
+        exit 1
+    fi
+
     local worktree_path
     worktree_path="$(require_worktree "$branch")"
 
@@ -406,6 +454,109 @@ cmd_rebase() {
         echo -e "  Or:   cd $worktree_path && git rebase --abort"
         exit 1
     fi
+}
+
+cmd_finalize() {
+    local branch="$1"
+
+    if [[ -z "$branch" ]]; then
+        echo -e "${RED}Error: branch name required${NC}"
+        echo "Usage: $(basename "$0") finalize <branch>"
+        echo "  Validates worktree is clean, runs checks, merges to master, removes worktree"
+        exit 1
+    fi
+
+    local worktree_path
+    worktree_path="$(require_worktree "$branch")"
+
+    # Block finalizing protected branches
+    if is_protected "$branch"; then
+        echo -e "${RED}Error: cannot finalize protected branch '$branch'${NC}"
+        exit 1
+    fi
+
+    echo -e "${CYAN}═══ Finalizing '$branch' ═══${NC}"
+    echo ""
+
+    # Step 1: Check for uncommitted changes
+    echo -e "${CYAN}Step 1: Checking worktree state...${NC}"
+    local has_changes=false
+    if ! git -C "$worktree_path" diff --quiet 2>/dev/null || \
+       ! git -C "$worktree_path" diff --cached --quiet 2>/dev/null; then
+        has_changes=true
+        echo -e "${YELLOW}  ⚠ Uncommitted changes detected${NC}"
+        git -C "$worktree_path" diff --stat 2>/dev/null || true
+        echo ""
+        echo -e "  ${YELLOW}Commit or stash before finalizing:${NC}"
+        echo -e "    cd $worktree_path && git add -A && git commit -m 'feat: ...'"
+        echo -e "    cd $worktree_path && git stash"
+        exit 1
+    fi
+    echo -e "${GREEN}  ✓ Worktree clean${NC}"
+    echo ""
+
+    # Step 2: Run typecheck + lint + format
+    echo -e "${CYAN}Step 2: Running checks (bun run check)...${NC}"
+    if command -v bun &>/dev/null && [[ -f "$worktree_path/bun.lock" || -f "$worktree_path/package.json" ]]; then
+        if (cd "$worktree_path" && bun run check); then
+            echo -e "${GREEN}  ✓ Checks passed${NC}"
+        else
+            echo -e "${RED}  ✗ Checks failed — fix before finalizing${NC}"
+            exit 1
+        fi
+    else
+        echo -e "${YELLOW}  Skipped: bun or package.json not found${NC}"
+    fi
+    echo ""
+
+    # Step 3: Run tests
+    echo -e "${CYAN}Step 3: Running tests (bun test src/)...${NC}"
+    if command -v bun &>/dev/null && [[ -f "$worktree_path/bun.lock" || -f "$worktree_path/package.json" ]]; then
+        if (cd "$worktree_path" && bun test src/); then
+            echo -e "${GREEN}  ✓ Tests passed${NC}"
+        else
+            echo -e "${RED}  ✗ Tests failed — fix before finalizing${NC}"
+            exit 1
+        fi
+    else
+        echo -e "${YELLOW}  Skipped: bun or package.json not found${NC}"
+    fi
+    echo ""
+
+    # Step 4: Check branch has commits beyond base
+    local base="master"
+    local ahead
+    ahead=$(git -C "$worktree_path" rev-list --count "$base..HEAD" 2>/dev/null || echo "0")
+    if [[ "$ahead" -eq 0 ]]; then
+        echo -e "${YELLOW}  ⚠ Branch '$branch' has no commits beyond $base${NC}"
+        echo -e "  Nothing to merge."
+        exit 0
+    fi
+    echo -e "${GREEN}  ✓ Branch has $ahead commit(s) beyond $base${NC}"
+    echo ""
+
+    # Step 5: Merge into master
+    echo -e "${CYAN}Step 5: Merging '$branch' into master...${NC}"
+    if git -C "$REPO_ROOT" merge "$branch" --no-edit; then
+        echo -e "${GREEN}  ✓ Merged into master${NC}"
+    else
+        echo -e "${RED}  ✗ Merge conflicts — resolve manually${NC}"
+        exit 1
+    fi
+    echo ""
+
+    # Step 6: Remove worktree
+    echo -e "${CYAN}Step 6: Removing worktree...${NC}"
+    git -C "$REPO_ROOT" worktree remove "$worktree_path"
+    echo -e "${GREEN}  ✓ Worktree removed${NC}"
+    echo ""
+
+    echo -e "${GREEN}═══ Finalized '$branch' — merged to master ═══${NC}"
+}
+
+cmd_agent_merge() {
+    # Alias for finalize — same behavior
+    cmd_finalize "$@"
 }
 
 # Main
@@ -439,6 +590,10 @@ case "${1:-}" in
     rebase)
         shift
         cmd_rebase "${1:-}" "${2:-}"
+        ;;
+    finalize|agent-merge)
+        shift
+        cmd_finalize "${1:-}"
         ;;
     prs)
         cmd_prs
