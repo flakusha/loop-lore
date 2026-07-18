@@ -197,8 +197,8 @@ export class WorldStateService {
     const characters = await this.db
       .selectFrom("actors")
       .selectAll()
-      .where("actor_type", "in", ["character", "narrator"] as never)
-      .where("agent_type", "in", ["ai", "npc"] as never)
+      .where("actor_type", "in", ["character", "narrator"] as ("character" | "narrator")[])
+      .where("agent_type", "in", ["ai", "npc"] as ("ai" | "npc")[])
       .execute();
 
     let count = 0;
