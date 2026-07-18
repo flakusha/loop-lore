@@ -2571,3 +2571,89 @@ html {
   align-items: center;
   padding: 4px 0;
 }
+
+/* ============================================================
+   CHARACTER INFO PANEL — RPG Stats
+   ============================================================ */
+
+.character-panel-empty {
+  padding: var(--space-4) 0;
+}
+
+.rpg-stats-section {
+  margin-top: var(--space-4);
+}
+
+.rpg-stats-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-2);
+}
+
+.rpg-stats-title {
+  font-size: 12px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.rpg-stats-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-2);
+}
+
+.rpg-stat-block {
+  padding: var(--space-2);
+  background: var(--bg-secondary, #f8f9fa);
+  border-radius: 4px;
+  font-size: 12px;
+}
+
+.rpg-stat-label {
+  color: var(--text-secondary);
+  margin-bottom: 2px;
+}
+
+.rpg-stats-expanded {
+  margin-top: var(--space-2);
+}
+
+.rpg-xp-section {
+  margin-bottom: var(--space-3);
+}
+
+.rpg-xp-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  margin-bottom: 4px;
+}
+
+.rpg-progress-track {
+  height: 4px;
+  background: var(--border-default, #e9ecef);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.rpg-progress-fill {
+  height: 100%;
+  background: #28a745;
+  border-radius: 2px;
+}
+
+.rpg-core-stats {
+  display: grid;
+  gap: var(--space-1);
+  font-size: 12px;
+}
+
+.rpg-stat-row {
+  display: flex;
+  justify-content: space-between;
+}
+
+.rpg-stat-name {
+  color: var(--text-secondary);
+}
