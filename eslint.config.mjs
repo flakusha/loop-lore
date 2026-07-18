@@ -79,7 +79,6 @@ const tsRules = {
   "sonarjs/no-empty-collection": "error",
   "sonarjs/prefer-single-boolean-return": "warn",
   "sonarjs/prefer-immediate-return": "warn",
-  "sonarjs/cognitive-complexity": "off",
   "sonarjs/no-nested-conditional": "off",
   "sonarjs/assertions-in-tests": "off",
   "sonarjs/no-dead-store": "off",
@@ -257,6 +256,22 @@ export default tseslint.config(
       "unicorn/no-this-outside-of-class": "off",
       "unicorn/no-global-object-property-assignment": "off",
       "no-unused-vars": "off",
+      // Frontend Alpine/htmx globals are `any`-typed — relax template/expression rules
+      "@typescript-eslint/restrict-template-expressions": [
+        "error",
+        { allowNumber: true, allowBoolean: true, allowAny: true, allowNullish: true },
+      ],
+      "@typescript-eslint/restrict-plus-operands": "off",
+      "@typescript-eslint/no-dynamic-delete": "off",
+      // Alpine event handlers return promises silently
+      "@typescript-eslint/no-misused-promises": "off",
+      "@typescript-eslint/consistent-type-definitions": "off",
+      // --fix for these removes type assertions that frontend relies on for globalThis access
+      "@typescript-eslint/no-unnecessary-type-assertion": "off",
+      "@typescript-eslint/array-type": "off",
+      // Frontend DOM patterns
+      "@typescript-eslint/prefer-regexp-exec": "off",
+      "@typescript-eslint/no-unnecessary-type-conversion": "off",
     },
   },
   // ── E2E test TypeScript: Bun test env ──────────────────────
@@ -329,6 +344,7 @@ export default tseslint.config(
       "@typescript-eslint/no-unsafe-argument": "off",
       "@typescript-eslint/no-floating-promises": "off",
       "sonarjs/explicit-test-skip": "off",
+      "@typescript-eslint/no-require-imports": "off",
     },
   },
   // ── Overrides: scripts (utility tools, relaxed rules) ─────────────────
