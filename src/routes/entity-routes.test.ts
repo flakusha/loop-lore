@@ -98,7 +98,7 @@ describe("createEntityRoutes", () => {
       }),
     );
     expect(res.status).toBe(201);
-    const body = await res.json();
+    const body = (await res.json()) as { title: string; content: string; actor_id: string; id: string };
     expect(body.title).toBe("My Note");
     expect(body.content).toBe("Body text");
     expect(body.actor_id).toBe(actorId);
@@ -147,7 +147,7 @@ describe("createEntityRoutes", () => {
     const app = createApp(db, userId);
     const res = await app.handle(new Request(`http://localhost/api/actors/${actorId}/notes`));
     expect(res.status).toBe(200);
-    const body = await res.json();
+    const body = (await res.json()) as { data: unknown[]; pagination: { total: number; page: number } };
     expect(body.data).toBeInstanceOf(Array);
     expect(body.pagination).toBeDefined();
     expect(body.pagination.total).toBeGreaterThanOrEqual(1);
@@ -176,7 +176,7 @@ describe("createEntityRoutes", () => {
 
     const res = await app.handle(new Request(`http://localhost/api/actors/${actorId}/notes/${created.id}`));
     expect(res.status).toBe(200);
-    const body = await res.json();
+    const body = (await res.json()) as { title: string };
     expect(body.title).toBe("Find Me");
   });
 
@@ -208,7 +208,7 @@ describe("createEntityRoutes", () => {
       }),
     );
     expect(res.status).toBe(200);
-    const body = await res.json();
+    const body = (await res.json()) as { content: string; title: string };
     expect(body.content).toBe("Updated content");
     expect(body.title).toBe("Before"); // unchanged
   });
