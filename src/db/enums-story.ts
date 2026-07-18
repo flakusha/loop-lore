@@ -46,6 +46,22 @@ export const QuestStatus = {
 } as const;
 export type QuestStatus = (typeof QuestStatus)[keyof typeof QuestStatus];
 
+// ── State Machine ──────────────────────────────────────────
+
+const questStatusDef: StateDef<QuestStatus> = {
+  values: ["active", "completed", "failed", "abandoned"] as const,
+  initial: "active",
+  transitions: {
+    active: ["completed", "failed", "abandoned"],
+    completed: [],
+    failed: [],
+    abandoned: ["active"],
+  },
+  terminal: ["completed", "failed"],
+};
+
+export const questStatusMachine = createMachine(questStatusDef);
+
 // ── Quest Progress ────────────────────────────────────────
 export const QuestProgressStatus = {
   Active: "active",

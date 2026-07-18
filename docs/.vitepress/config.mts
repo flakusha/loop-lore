@@ -23,6 +23,8 @@ export default defineConfig({
       { text: 'Frontend', link: '/frontend/overview', activeMatch: '/frontend/' },
       { text: 'Reference', link: '/reference/api', activeMatch: '/reference/' },
       { text: 'Roadmap', link: '/meta/roadmap' },
+
+      { text: 'Ideas', link: '/ideas/', activeMatch: '/ideas/' },
       { text: 'GitHub', link: 'https://github.com/yourusername/loop-lore' },
     ],
 
@@ -193,6 +195,24 @@ export default defineConfig({
           collapsed: true,
           items: [
             { text: 'VitePress Docs', link: '/meta/vite-docs-proposal' },
+          ],
+        },
+      ],
+
+      '/ideas/': [
+        {
+          text: 'Creative Ideas',
+          collapsed: false,
+          items: [
+            { text: 'Ideas Hub', link: '/ideas/' },
+            { text: 'Immersion & Presentation', link: '/ideas/immersion-presentation' },
+            { text: 'Prompt & Output Control', link: '/ideas/prompt-output-control' },
+            { text: 'Memory, Continuity & Living World', link: '/ideas/memory-continuity' },
+            { text: 'Authoring & Creation', link: '/ideas/authoring-creation' },
+            { text: 'Social & Multiplayer', link: '/ideas/social-multiplayer' },
+            { text: 'Platform & Reach', link: '/ideas/platform-reach' },
+            { text: 'Analytics & Meta', link: '/ideas/analytics-meta' },
+            { text: '3D Worlds & Navigation', link: '/ideas/worlds-3d-navigation' },
           ],
         },
       ],

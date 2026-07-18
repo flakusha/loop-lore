@@ -29,25 +29,24 @@ Partial implementation exists in `src/`. Finishing these is current active work.
 | ----------------------------------------------------------- | ------------------------------------------------------------------------------------- | ---------------------------------------- |
 | Multi-format character import (PNG/YAML/TOML/CHARX)         | `docs/spec/character-setup.md`                                                        | Only JSON import works                   |
 | Impersonation (`chat.impersonate_id`)                       | `docs/spec/character-setup.md`                                                        | Not implemented                          |
-| RPG mechanics (dice, stats, combat, XP, loot)               | `docs/spec/rpg-mechanics.md`                                                          | `src/rpg/` does not exist                |
+| RPG mechanics (dice, stats, combat, XP, loot)               | `docs/spec/rpg-mechanics.md`, `docs/spec/rpg-implementation-roadmap.md`              | `src/rpg/` does not exist                |
 | Three-tier memory system (episodic/semantic/procedural)     | `docs/spec/memory-system.md`                                                          | Only `actor_memories` table exists       |
 | Artifact system (code/docs/datasets as assets)              | `docs/spec/artifacts-system.md`                                                       | Not implemented                          |
 | Agentic workspace mode                                      | `docs/spec/use-case-agentic-workspace.md`                                             | Not implemented                          |
-| Client-side encryption (AES-256-GCM, key hierarchy)         | `docs/frontend/encryption.md`                                                         | Messages stored as plaintext             |
+| Client-side encryption (AES-256-GCM, key hierarchy)         | `docs/frontend/encryption.md`, `docs/spec/encryption-workflow.md`                   | Messages stored as plaintext             |
 | Frontend story mode UI (GM panel, quest log, story chat)    | `docs/frontend/chat/multi-llm-story.md`                                               | Backend `src/story/` exists; no frontend |
-| Message archiving (cascade, restore, purge)                 | `docs/frontend/chat/archiving.md`                                                     | Hard delete only                         |
+| Message archiving (cascade, restore, purge)                 | `docs/frontend/chat/archiving.md`, `docs/spec/archival-workflow.md`                 | Hard delete only                         |
 | Memory selection UI (mid-chat panel, pinning, auto-extract) | `docs/frontend/chat/memories.md`                                                      | Backend reads memories; no UI            |
 | Server-side i18n middleware (`req.t`)                       | `docs/frontend/internationalization.md`                                               | Minimal client-side `__()` only          |
 | Anthropic/Ollama/Bedrock providers                          | `docs/spec/provider-system.md`                                                        | Only OpenAI-compatible exists            |
 | Plugin management API (install/list/enable/disable)         | `docs/spec/plugin-system.md`                                                          | Plugin skeleton loads files; no API      |
-| Signed URLs for asset downloads                             | `docs/spec/assets.md`                                                                 | Uses `raw` endpoint with Bearer auth     |
+| Signed URLs for asset downloads                             | `docs/spec/assets.md`, `docs/spec/access-model-clarification.md`                      | Uses `raw` endpoint with Bearer auth     |
 | `POST /api/auth/register`                                   | `docs/spec/auth-middleware.md`                                                        | Not implemented                          |
 | `/api/sessions` routes                                      | `docs/spec/users-sessions.md`                                                         | Not implemented                          |
-| CSS skeleton shimmer, modal confirm dialogs, browser logger | `docs/frontend/components.md`                                                         | Uses native `confirm()`                  |
-| Async background compression per upload                     | `docs/spec/assets.md`                                                                 | Build-time static compression only       |
-| S3/GCS object store backend                                 | `docs/spec/assets.md`                                                                 | Local filesystem only                    |
-| HTTP/2 and WebSocket in transport layer                     | `docs/spec/transport-unified.md`                                                      | Defined but not integrated               |
-| Local inference (ComfyUI, llama-swap, sd.cpp)               | `docs/spec/integrations/llm-serving.md`, `docs/spec/integrations/image-generation.md` | Implemented in `generation/providers/`   |
+| Notification system with noise filtering                      | `docs/spec/notifications-expansion.md`                                                  | Basic toasts exist; full system needed   |
+| Model comparison reactions                                  | `docs/spec/notifications-expansion.md`                                                  | Reactions table exists; no comparison API|
+| Assistant `/commands` extension                               | `docs/spec/assistant-commands.md`                                                     | No command parser implemented            |
+| Combined filter support                                       | `docs/spec/filtering-pagination.md`                                                    | Single filter only                       |
 
 ## P3 — Deferred Concepts (Post-MVP)
 
@@ -56,7 +55,7 @@ Partial implementation exists in `src/`. Finishing these is current active work.
 | D.1 | Tool / Function Calling — 3-layer architecture                          | `docs/research/tool-calling-architecture.md`        |
 | D.2 | BYOK — user brings own LLM / image-gen; admin can't read keys           | `docs/research/local-remote-inference-uis.md` §10.2 |
 | D.3 | BYOR — user donates local compute as worker node                        | `docs/research/local-remote-inference-uis.md` §10.3 |
-| D.4 | 3D World — world map, location travel, 3D avatars (Three.js)            | `docs/research/local-remote-inference-uis.md` §10.4 |
+| D.4 | 3D World — world map, location travel, 3D avatars (Three.js)            | `docs/research/local-remote-inference-uis.md` §10.4 — see [docs/spec-planned/ideas/worlds-3d-navigation.md](../spec-planned/ideas/worlds-3d-navigation.md) |
 | D.5 | Cross-Chat Autonomous Messages — characters message when "missing" user | `docs/research/local-remote-inference-uis.md` §10.1 |
 | D.6 | Dual Runtime (Bun + Deno) — optional future                             | `docs/research/runtime-migration-bun-deno.md`       |
 | D.7 | LLM native providers (Anthropic, Ollama, Bedrock)                       | `docs/spec/integrations/llm-serving.md`             |
