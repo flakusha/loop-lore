@@ -53,7 +53,7 @@ describe("usersRoutes", () => {
     const app = createApp(db, userId);
     const res = await app.handle(new Request("http://localhost/api/users/me"));
     expect(res.status).toBe(200);
-    const body = (await res.json()) as any;
+    const body = await res.json();
     expect(body.id).toBe(userId);
     expect(body.display_name).toBe("Test User");
     expect(body.username).toBeDefined();
@@ -72,7 +72,7 @@ describe("usersRoutes", () => {
       }),
     );
     expect(res.status).toBe(200);
-    const body = (await res.json()) as any;
+    const body = await res.json();
     expect(body.ok).toBe(true);
 
     const user = await db.selectFrom("users").selectAll().where("id", "=", userId).executeTakeFirst();
@@ -103,7 +103,7 @@ describe("usersRoutes", () => {
       }),
     );
     expect(res.status).toBe(200);
-    const body = (await res.json()) as any;
+    const body = await res.json();
     expect(body.ok).toBe(true);
 
     const user = await db.selectFrom("users").select("settings").where("id", "=", userId).executeTakeFirst();
@@ -135,7 +135,7 @@ describe("usersRoutes", () => {
 
     const res = await adminApp.handle(new Request(`http://localhost/api/users/${userId}`));
     expect(res.status).toBe(200);
-    const body = (await res.json()) as any;
+    const body = await res.json();
     expect(body.id).toBe(userId);
   });
 
