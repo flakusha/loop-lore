@@ -1,0 +1,538 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Git Management Flow — Integration Tests
+# Tests scripts/worktree.sh end-to-end using a temporary git repo.
+# Run: bash tests/worktree-flow.sh
+
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+WORKTREE_SH="$REPO_ROOT/scripts/worktree.sh"
+
+# ── Helpers ──────────────────────────────────────────────────────────
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+NC='\033[0m'
+
+PASS=0
+FAIL=0
+TEST_DIR=""
+
+cleanup() {
+    if [[ -n "$TEST_DIR" && -d "$TEST_DIR" ]]; then
+        # Remove any worktrees still registered
+        local wt_list
+        wt_list=$(git -C "$TEST_DIR" worktree list --porcelain 2>/dev/null | grep "^path " | sed 's/^path //')
+        for wt in $wt_list; do
+            git -C "$TEST_DIR" worktree remove "$wt" --force 2>/dev/null || true
+        done
+        rm -rf "$TEST_DIR"
+    fi
+}
+trap cleanup EXIT
+
+pass() {
+    ((PASS++))
+    echo -e "  ${GREEN}✓${NC} $1"
+}
+
+fail() {
+    ((FAIL++))
+    echo -e "  ${RED}✗${NC} $1"
+}
+
+assert_eq() {
+    local expected="$1" actual="$2" msg="$3"
+    if [[ "$expected" == "$actual" ]]; then
+        pass "$msg"
+    else
+        fail "$msg (expected='$expected', got='$actual')"
+    fi
+}
+
+assert_contains() {
+    local haystack="$1" needle="$2" msg="$3"
+    if [[ "$haystack" == *"$needle"* ]]; then
+        pass "$msg"
+    else
+        fail "$msg (output does not contain '$needle')"
+    fi
+}
+
+assert_exit_nonzero() {
+    local msg="$1"
+    shift
+    if "$@" >/dev/null 2>&1; then
+        fail "$msg (expected non-zero exit, got zero)"
+    else
+        pass "$msg"
+    fi
+}
+
+assert_file_exists() {
+    local path="$1" msg="$2"
+    if [[ -f "$path" ]]; then
+        pass "$msg"
+    else
+        fail "$msg (file not found: $path)"
+    fi
+}
+
+assert_dir_exists() {
+    local path="$1" msg="$2"
+    if [[ -d "$path" ]]; then
+        pass "$msg"
+    else
+        fail "$msg (dir not found: $path)"
+    fi
+}
+
+# ── Setup temporary repo ─────────────────────────────────────────────
+setup_repo() {
+    TEST_DIR=$(mktemp -d)
+    git init "$TEST_DIR" --initial-branch=master >/dev/null 2>&1
+    git -C "$TEST_DIR" config user.name "Test User" >/dev/null 2>&1
+    git -C "$TEST_DIR" config user.email "test@example.com" >/dev/null 2>&1
+
+    # Create initial commit
+    echo "# test repo" > "$TEST_DIR/README.md"
+    git -C "$TEST_DIR" add README.md >/dev/null 2>&1
+    git -C "$TEST_DIR" commit -m "init: test repo" --no-gpg-sign >/dev/null 2>&1
+
+    # Create a remote branch for cleanup tests
+    git -C "$TEST_DIR" branch feature-existing >/dev/null 2>&1
+}
+
+# Run worktree.sh with test repo context
+run_wt() {
+    (cd "$TEST_DIR" && REPO_ROOT="$TEST_DIR" TREE_DIR="$TEST_DIR/tree" bash "$WORKTREE_SH" "$@")
+}
+
+# ── Tests ────────────────────────────────────────────────────────────
+echo ""
+echo -e "${YELLOW}Git Management Flow — Integration Tests${NC}"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo ""
+
+setup_repo
+
+# ── 1. branch_to_path ────────────────────────────────────────────────
+echo -e "${YELLOW}1. branch_to_path${NC}"
+
+result=$(echo "feat/my-feature" | sed 's|/|-|g')
+assert_eq "feat-my-feature" "$result" "slash → dash conversion"
+
+result=$(echo "simple-branch" | sed 's|/|-|g')
+assert_eq "simple-branch" "$result" "no-slash passthrough"
+
+result=$(echo "a/b/c/deep" | sed 's|/|-|g')
+assert_eq "a-b-c-deep" "$result" "multiple slashes"
+
+echo ""
+
+# ── 2. cmd_new — create branch + worktree ────────────────────────────
+echo -e "${YELLOW}2. cmd_new (create branch + worktree)${NC}"
+
+run_wt new feat/test-new >/dev/null 2>&1 || true
+assert_dir_exists "$TEST_DIR/tree/feat-test-new" "worktree directory created"
+assert_dir_exists "$TEST_DIR/tree/feat-test-new/.git" ".git exists in worktree"
+
+branch_exists=$(git -C "$TEST_DIR" rev-parse --verify feat/test-new 2>/dev/null && echo "yes" || echo "no")
+assert_eq "yes" "$branch_exists" "branch feat/test-new created"
+
+echo ""
+
+# ── 3. cmd_create — create worktree for existing branch ─────────────
+echo -e "${YELLOW}3. cmd_create (worktree for existing branch)${NC}"
+
+run_wt create feature-existing >/dev/null 2>&1 || true
+assert_dir_exists "$TEST_DIR/tree/feature-existing" "worktree for feature-existing created"
+
+echo ""
+
+# ── 4. cmd_create — idempotent (already exists) ──────────────────────
+echo -e "${YELLOW}4. cmd_create — idempotent${NC}"
+
+output=$(run_wt create feature-existing 2>&1) || true
+assert_contains "$output" "already exists" "reports already exists"
+
+echo ""
+
+# ── 5. cmd_new — error on existing branch ────────────────────────────
+echo -e "${YELLOW}5. cmd_new — error on existing branch${NC}"
+
+output=$(run_wt new feature-existing 2>&1) || true
+assert_contains "$output" "already exists" "rejects existing branch name"
+
+echo ""
+
+# ── 6. cmd_new — error on non-existent base ─────────────────────────
+echo -e "${YELLOW}6. cmd_new — error on non-existent base${NC}"
+
+output=$(run_wt new feat/no-base non-existent-branch 2>&1) || true
+assert_contains "$output" "does not exist" "rejects non-existent base"
+
+echo ""
+
+# ── 7. cmd_new — custom base branch ─────────────────────────────────
+echo -e "${YELLOW}7. cmd_new — custom base branch${NC}"
+
+git -C "$TEST_DIR" checkout -b custom-base >/dev/null 2>&1
+echo "custom" > "$TEST_DIR/custom.txt"
+git -C "$TEST_DIR" add custom.txt >/dev/null 2>&1
+git -C "$TEST_DIR" commit -m "feat: custom base" --no-gpg-sign >/dev/null 2>&1
+git -C "$TEST_DIR" checkout master >/dev/null 2>&1
+
+run_wt new feat/from-custom custom-base >/dev/null 2>&1 || true
+assert_dir_exists "$TEST_DIR/tree/feat-from-custom" "worktree from custom base created"
+assert_file_exists "$TEST_DIR/tree/feat-from-custom/custom.txt" "custom.txt from base present"
+
+echo ""
+
+# ── 8. cmd_merge — merge source into branch ─────────────────────────
+echo -e "${YELLOW}8. cmd_merge (merge source into branch)${NC}"
+
+git -C "$TEST_DIR/tree/feat-test-new" checkout feat/test-new >/dev/null 2>&1
+echo "new feature" > "$TEST_DIR/tree/feat-test-new/feature.txt"
+git -C "$TEST_DIR/tree/feat-test-new" add feature.txt >/dev/null 2>&1
+git -C "$TEST_DIR/tree/feat-test-new" commit -m "feat: add feature" --no-gpg-sign >/dev/null 2>&1
+
+output=$(run_wt merge feat/test-new custom-base 2>&1) || true
+assert_contains "$output" "Merged" "merge successful"
+assert_file_exists "$TEST_DIR/tree/feat-test-new/custom.txt" "merged file present"
+
+echo ""
+
+# ── 9. cmd_merge — error on missing args ─────────────────────────────
+echo -e "${YELLOW}9. cmd_merge — error on missing args${NC}"
+
+output=$(run_wt merge feat/test-new 2>&1) || true
+assert_contains "$output" "branch and source required" "rejects missing source"
+
+echo ""
+
+# ── 10. cmd_merge — error on non-existent source ─────────────────────
+echo -e "${YELLOW}10. cmd_merge — error on non-existent source${NC}"
+
+output=$(run_wt merge feat/test-new non-existent-branch 2>&1) || true
+assert_contains "$output" "does not exist" "rejects non-existent source"
+
+echo ""
+
+# ── 11. cmd_merge — error on missing branch ──────────────────────────
+echo -e "${YELLOW}11. cmd_merge — error on missing branch${NC}"
+
+output=$(run_wt merge non-existent custom-base 2>&1) || true
+assert_contains "$output" "no worktree found" "rejects missing target branch"
+
+echo ""
+
+# ── 12. cmd_merge — blocks dirty worktree ────────────────────────────
+echo -e "${YELLOW}12. cmd_merge — blocks dirty worktree${NC}"
+
+echo "dirty" >> "$TEST_DIR/tree/feat-test-new/feature.txt"
+output=$(run_wt merge feat/test-new custom-base 2>&1) || true
+assert_contains "$output" "Warning: uncommitted changes" "warns about dirty worktree"
+
+# Clean up dirty state
+git -C "$TEST_DIR/tree/feat-test-new" checkout -- feature.txt 2>/dev/null || true
+
+echo ""
+
+# ── 13. cmd_rebase — rebase onto target ─────────────────────────────
+echo -e "${YELLOW}13. cmd_rebase (rebase onto target)${NC}"
+
+git -C "$TEST_DIR" checkout -b feat-behind master~1 >/dev/null 2>&1
+echo "behind" > "$TEST_DIR/behind.txt"
+git -C "$TEST_DIR" add behind.txt >/dev/null 2>&1
+git -C "$TEST_DIR" commit -m "feat: behind branch" --no-gpg-sign >/dev/null 2>&1
+git -C "$TEST_DIR" checkout master >/dev/null 2>&1
+
+run_wt create feat-behind >/dev/null 2>&1 || true
+assert_dir_exists "$TEST_DIR/tree/feat-behind" "worktree for feat-behind created"
+
+output=$(run_wt rebase feat-behind master 2>&1) || true
+assert_contains "$output" "Rebased" "rebase successful"
+
+echo ""
+
+# ── 14. cmd_rebase — error on missing args ───────────────────────────
+echo -e "${YELLOW}14. cmd_rebase — error on missing args${NC}"
+
+output=$(run_wt rebase 2>&1) || true
+assert_contains "$output" "branch name required" "rejects missing branch"
+
+echo ""
+
+# ── 15. cmd_rebase — error on non-existent onto ──────────────────────
+echo -e "${YELLOW}15. cmd_rebase — error on non-existent onto${NC}"
+
+output=$(run_wt rebase feat-behind non-existent 2>&1) || true
+assert_contains "$output" "does not exist" "rejects non-existent onto"
+
+echo ""
+
+# ── 16. cmd_remove — remove worktree ─────────────────────────────────
+echo -e "${YELLOW}16. cmd_remove (remove worktree)${NC}"
+
+output=$(run_wt remove feat-behind 2>&1) || true
+assert_contains "$output" "Removed" "remove successful"
+
+if [[ ! -d "$TEST_DIR/tree/feat-behind" ]]; then
+    pass "worktree directory removed"
+else
+    fail "worktree directory still exists"
+fi
+
+echo ""
+
+# ── 17. cmd_remove — error on missing branch ─────────────────────────
+echo -e "${YELLOW}17. cmd_remove — error on missing branch${NC}"
+
+output=$(run_wt remove non-existent 2>&1) || true
+assert_contains "$output" "no worktree found" "rejects missing branch"
+
+echo ""
+
+# ── 18. cmd_remove — blocks dirty worktree ───────────────────────────
+echo -e "${YELLOW}18. cmd_remove — blocks dirty worktree${NC}"
+
+echo "dirty" >> "$TEST_DIR/tree/feat-test-new/feature.txt"
+output=$(run_wt remove feat/test-new 2>&1) || true
+assert_contains "$output" "uncommitted changes" "blocks removal of dirty worktree"
+
+# Clean up
+git -C "$TEST_DIR/tree/feat-test-new" checkout -- feature.txt 2>/dev/null || true
+
+echo ""
+
+# ── 19. cmd_list — list worktrees ────────────────────────────────────
+echo -e "${YELLOW}19. cmd_list (list worktrees)${NC}"
+
+output=$(run_wt list 2>&1) || true
+assert_contains "$output" "Active worktrees" "shows header"
+assert_contains "$output" "feat-test-new" "lists feat-test-new"
+assert_contains "$output" "feature-existing" "lists feature-existing"
+
+echo ""
+
+# ── 20. cmd_cleanup — remove stale worktrees ─────────────────────────
+echo -e "${YELLOW}20. cmd_cleanup (remove stale worktrees)${NC}"
+
+git -C "$TEST_DIR" checkout -b stale-branch >/dev/null 2>&1
+echo "stale" > "$TEST_DIR/stale.txt"
+git -C "$TEST_DIR" add stale.txt >/dev/null 2>&1
+git -C "$TEST_DIR" commit -m "feat: stale" --no-gpg-sign >/dev/null 2>&1
+git -C "$TEST_DIR" checkout master >/dev/null 2>&1
+
+run_wt create stale-branch >/dev/null 2>&1 || true
+assert_dir_exists "$TEST_DIR/tree/stale-branch" "stale worktree created"
+
+# Delete the branch (simulates stale)
+git -C "$TEST_DIR" branch -D stale-branch >/dev/null 2>&1
+
+output=$(run_wt cleanup 2>&1) || true
+assert_contains "$output" "Removing stale worktree" "removes stale worktree"
+assert_contains "$output" "Cleanup complete" "reports completion"
+
+echo ""
+
+# ── 21. No args — shows usage ────────────────────────────────────────
+echo -e "${YELLOW}21. No args — shows usage${NC}"
+
+output=$(run_wt 2>&1) || true
+assert_contains "$output" "Usage:" "shows usage on no args"
+assert_contains "$output" "create" "usage mentions create"
+assert_contains "$output" "new" "usage mentions new"
+assert_contains "$output" "merge" "usage mentions merge"
+assert_contains "$output" "finalize" "usage mentions finalize"
+assert_contains "$output" "agent-merge" "usage mentions agent-merge"
+
+echo ""
+
+# ── 22. Unknown command — shows usage ────────────────────────────────
+echo -e "${YELLOW}22. Unknown command — shows usage${NC}"
+
+output=$(run_wt foobar 2>&1) || true
+assert_contains "$output" "Usage:" "shows usage on unknown command"
+
+echo ""
+
+# ── 23. sign — error on missing branch ───────────────────────────────
+echo -e "${YELLOW}23. sign — error on missing branch${NC}"
+
+output=$(run_wt sign 2>&1) || true
+assert_contains "$output" "branch name required" "rejects missing branch"
+
+echo ""
+
+# ── 24. sign — error on non-existent worktree ────────────────────────
+echo -e "${YELLOW}24. sign — error on non-existent worktree${NC}"
+
+output=$(run_wt sign non-existent 2>&1) || true
+assert_contains "$output" "no worktree found" "rejects non-existent worktree"
+
+echo ""
+
+# ── 25. create — error on non-existent branch ────────────────────────
+echo -e "${YELLOW}25. create — error on non-existent branch${NC}"
+
+output=$(run_wt create totally-fake-branch 2>&1) || true
+assert_contains "$output" "does not exist" "rejects non-existent branch"
+
+echo ""
+
+# ── 26. new — blocks protected branch ────────────────────────────────
+echo -e "${YELLOW}26. new — blocks protected branch${NC}"
+
+output=$(run_wt new master 2>&1) || true
+assert_contains "$output" "protected branch" "blocks creating master"
+
+output=$(run_wt new main 2>&1) || true
+assert_contains "$output" "protected branch" "blocks creating main"
+
+echo ""
+
+# ── 27. create — blocks protected branch ─────────────────────────────
+echo -e "${YELLOW}27. create — blocks protected branch${NC}"
+
+output=$(run_wt create master 2>&1) || true
+assert_contains "$output" "protected branch" "blocks creating worktree for master"
+
+echo ""
+
+# ── 28. rebase — blocks protected branch ─────────────────────────────
+echo -e "${YELLOW}28. rebase — blocks protected branch${NC}"
+
+# master exists as a branch, create worktree won't work, but rebase check happens first
+output=$(run_wt rebase master 2>&1) || true
+assert_contains "$output" "cannot rebase protected branch" "blocks rebasing master"
+
+echo ""
+
+# ── 29. finalize — error on missing branch ───────────────────────────
+echo -e "${YELLOW}29. finalize — error on missing branch${NC}"
+
+output=$(run_wt finalize 2>&1) || true
+assert_contains "$output" "branch name required" "rejects missing branch"
+
+echo ""
+
+# ── 30. finalize — error on missing worktree ─────────────────────────
+echo -e "${YELLOW}30. finalize — error on missing worktree${NC}"
+
+output=$(run_wt finalize non-existent 2>&1) || true
+assert_contains "$output" "no worktree found" "rejects missing worktree"
+
+echo ""
+
+# ── 31. finalize — blocks protected branch ───────────────────────────
+echo -e "${YELLOW}31. finalize — blocks protected branch${NC}"
+
+# Need a worktree for master to test this — but create blocks it.
+# So test via the is_protected check in finalize directly.
+# Create a dummy worktree dir to make require_worktree pass, then test protection.
+mkdir -p "$TEST_DIR/tree/master"
+output=$(run_wt finalize master 2>&1) || true
+assert_contains "$output" "protected branch" "blocks finalizing master"
+rm -rf "$TEST_DIR/tree/master"
+
+echo ""
+
+# ── 32. finalize — blocks dirty worktree ─────────────────────────────
+echo -e "${YELLOW}32. finalize — blocks dirty worktree${NC}"
+
+echo "dirty" >> "$TEST_DIR/tree/feat-test-new/feature.txt"
+output=$(run_wt finalize feat/test-new 2>&1) || true
+assert_contains "$output" "uncommitted changes" "blocks finalizing dirty worktree"
+
+# Clean up
+git -C "$TEST_DIR/tree/feat-test-new" checkout -- feature.txt 2>/dev/null || true
+
+echo ""
+
+# ── 33. finalize — no commits beyond base ────────────────────────────
+echo -e "${YELLOW}33. finalize — no commits beyond base${NC}"
+
+# feat/from-custom is already on top of master with no extra commits after rebase
+# Actually it has the custom-base commit. Let's create a fresh one.
+git -C "$TEST_DIR" checkout -b feat-no-commits master >/dev/null 2>&1
+git -C "$TEST_DIR" checkout master >/dev/null 2>&1
+
+run_wt create feat-no-commits >/dev/null 2>&1 || true
+output=$(run_wt finalize feat-no-commits 2>&1) || true
+assert_contains "$output" "no commits beyond" "reports no commits to merge"
+
+echo ""
+
+# ── 34. agent-merge — alias for finalize ─────────────────────────────
+echo -e "${YELLOW}34. agent-merge — alias for finalize${NC}"
+
+output=$(run_wt agent-merge 2>&1) || true
+assert_contains "$output" "branch name required" "agent-merge requires branch name"
+
+echo ""
+
+# ── 35. Full lifecycle — new → commit → finalize ────────────────────
+echo -e "${YELLOW}35. Full lifecycle — new → commit → finalize${NC}"
+
+run_wt new feat/lifecycle >/dev/null 2>&1 || true
+assert_dir_exists "$TEST_DIR/tree/feat-lifecycle" "lifecycle worktree created"
+
+echo "lifecycle" > "$TEST_DIR/tree/feat-lifecycle/lifecycle.txt"
+git -C "$TEST_DIR/tree/feat-lifecycle" add lifecycle.txt >/dev/null 2>&1
+git -C "$TEST_DIR/tree/feat-lifecycle" commit -m "feat: lifecycle test" --no-gpg-sign >/dev/null 2>&1
+
+# Verify it appears in list
+output=$(run_wt list 2>&1) || true
+assert_contains "$output" "feat-lifecycle" "appears in list"
+
+# Finalize (skip bun checks since no package.json in test repo)
+output=$(run_wt finalize feat/lifecycle 2>&1) || true
+assert_contains "$output" "Finalized" "finalize successful"
+
+# Verify worktree removed
+if [[ ! -d "$TEST_DIR/tree/feat-lifecycle" ]]; then
+    pass "worktree removed after finalize"
+else
+    fail "worktree still exists after finalize"
+fi
+
+# Verify branch merged to master
+lifecycle_in_master=$(git -C "$TEST_DIR" log --oneline master | grep "lifecycle test" | head -1)
+assert_contains "$lifecycle_in_master" "lifecycle test" "commit merged to master"
+
+echo ""
+
+# ── 36. Full lifecycle — agent-merge alias ───────────────────────────
+echo -e "${YELLOW}36. Full lifecycle — agent-merge alias${NC}"
+
+run_wt new feat/agent-merge-test >/dev/null 2>&1 || true
+echo "agent-merge" > "$TEST_DIR/tree/feat-agent-merge-test/am.txt"
+git -C "$TEST_DIR/tree/feat-agent-merge-test" add am.txt >/dev/null 2>&1
+git -C "$TEST_DIR/tree/feat-agent-merge-test" commit -m "feat: agent merge test" --no-gpg-sign >/dev/null 2>&1
+
+output=$(run_wt agent-merge feat/agent-merge-test 2>&1) || true
+assert_contains "$output" "Finalized" "agent-merge successful"
+
+if [[ ! -d "$TEST_DIR/tree/feat-agent-merge-test" ]]; then
+    pass "worktree removed after agent-merge"
+else
+    fail "worktree still exists after agent-merge"
+fi
+
+echo ""
+
+# ── Results ──────────────────────────────────────────────────────────
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+TOTAL=$((PASS + FAIL))
+echo -e "${GREEN}$PASS${NC} passed, ${RED}$FAIL${NC} failed, $TOTAL total"
+
+if [[ $FAIL -gt 0 ]]; then
+    echo -e "${RED}SOME TESTS FAILED${NC}"
+    exit 1
+else
+    echo -e "${GREEN}ALL TESTS PASSED${NC}"
+    exit 0
+fi
