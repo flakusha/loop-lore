@@ -31,10 +31,122 @@
 - Guard transitions at the service boundary: read current status, call `machine.canTransition(from, to)`, return early on invalid moves rather than throwing deep in the DB layer. See `SyntheticGenerator.transitionStatus` + `syntheticDataStatusMachine` in `src/db/enums-story.ts` (generated → validated → approved/rejected → archived).
 - Test: every state transition, every terminal state, every composite pair
 
+### State Machine Application Points
+Apply `StateDef` + `StateMachine` to any entity with lifecycle states:
+
+| Entity | Current Pattern | Recommended State Machine |
+|--------|----------------|--------------------------|
+| Generation attempts | `GenerationStatus` enum (pending→processing→streaming→completed/failed/cancelled) | Already has enum; add `StateDef` for transition validation |
+| Messages | `MessageStatus` + `MessageVisibility` (composite) | `CompositeValidator` for status×visibility pairs |
+| Quests | `QuestStatus` (active→completed/failed/abandoned) | `StateDef` with terminal states |
+| Synthetic data | `SyntheticDataStatus` (generated→validated→approved/rejected→archived) | ✅ Already wired via `syntheticDataStatusMachine` |
+| Plugin lifecycle | `enabledMap` in registry (boolean toggle) | Consider `PluginStatus { active, disabled, error }` |
+| World events | Implicit state in `WorldEvent` processing | Low priority — events are fire-and-forget |
+
 ## DB Access
 - Kysely queries always use bind parameters (never string interpolation)
 - Kysely Migrator for schema changes; migration = source of truth
 - Test assertions against raw SQL inserts to catch migration drift
+
+## Discriminated Unions for State Modeling
+Use tagged unions instead of optional properties when an entity can be in one of several distinct states:
+
+```ts
+// ❌ Bad — "impossible states" (loading + error + data all true)
+interface RequestState {
+  loading?: boolean;
+  error?: Error;
+  data?: User[];
+}
+
+// ✅ Good — exactly one state at a time
+type RequestState =
+  | { status: "idle" }
+  | { status: "loading" }
+  | { status: "success"; data: User[] }
+  | { status: "error"; error: Error };
+```
+
+- Discriminator must be a common property with literal type (`status`, `type`, `kind`)
+- TypeScript narrows automatically on `switch (state.status)` or `if (state.status === "success")`
+- Each variant carries only the data relevant to that state
+- Apply to: API responses, UI states, generation pipeline steps, event types
+
+## Exhaustiveness Checking
+Ensure all cases are handled in `switch` over discriminated unions or enums:
+
+```ts
+function assertNever(value: never): never {
+  throw new Error(`Unhandled case: ${JSON.stringify(value)}`);
+}
+
+function handleStatus(status: GenerationStatus): string {
+  switch (status) {
+    case GenerationStatus.Pending: return "waiting";
+    case GenerationStatus.Processing: return "active";
+    case GenerationStatus.Streaming: return "active";
+    case GenerationStatus.Completed: return "done";
+    case GenerationStatus.Failed: return "error";
+    case GenerationStatus.Cancelled: return "aborted";
+    default: return assertNever(status); // Compile error if new case added
+  }
+}
+```
+
+- Extract `assertNever` into `src/utils.ts` — use in every switch over enum/union
+- ESLint rule `@typescript-eslint/switch-exhaustiveness-check` enforces this globally
+- Catches missing cases at compile time, not runtime
+- Apply to: all `switch` on `GenerationStatus`, `MessageStatus`, `QuestStatus`, `ChatMode`, etc.
+
+## Branded Types for ID Safety
+Prevent primitive obsession — mixing up `userId`, `chatId`, `actorId` (all `string`):
+
+```ts
+type Brand<Base, Tag> = Base & { readonly __brand: Tag };
+
+type UserId = Brand<string, "UserId">;
+type ChatId = Brand<string, "ChatId">;
+type ActorId = Brand<string, "ActorId">;
+
+function getUser(id: UserId): Promise<User> { ... }
+
+const userId = "usr_123" as UserId;
+const chatId = "chat_456" as ChatId;
+getUser(userId);  // ✅ ok
+getUser(chatId);  // ❌ compile error
+```
+
+- Add `src/utils/brands.ts` with common branded ID types
+- Use factory functions to create branded values from raw strings
+- Apply to: route params (`/api/users/:id`), DB foreign keys, cross-service IDs
+- Especially valuable when IDs pass through multiple layers (route → service → DB)
+
+## Result Type Pattern
+The codebase already uses `JsonResult<T>` — extend this pattern to all fallible operations:
+
+```ts
+type Result<T, E = Error> =
+  | { ok: true; value: T }
+  | { ok: false; error: E };
+
+// Usage in services
+function parseConfig(raw: string): Result<Config, string> {
+  const parsed = safeJsonParse<Config>(raw);
+  if (!parsed.ok) return { ok: false, error: "Invalid config JSON" };
+  // ... validate fields
+  return { ok: true, value: parsed.value };
+}
+
+// Caller checks .ok — never throws
+const config = parseConfig(dbRow.settings);
+if (!config.ok) return jsonError({ message: config.error, status: 400 });
+// config.value is fully typed
+```
+
+- `safeJsonParse`, `safeJsonStringify`, `jsonParseOr` already follow this pattern
+- Extend to: config validation, asset metadata parsing, LLM response parsing
+- Reserve exceptions for truly exceptional situations (DB connection lost, OOM)
+- Expected failures (validation, parsing, auth) → Result type
 
 ## Async Hygiene
 - Always `await` promises or `.catch()` explicitly

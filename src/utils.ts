@@ -36,3 +36,20 @@ export function asError(error: unknown): Error {
 export function toErrorMessage(error: unknown): string {
   return error instanceof Error ? error.message : "Unknown error";
 }
+
+// ── Exhaustiveness Checking ───────────────────────────────────
+
+/**
+ * Assert that a value is `never` — used in switch default cases
+ * to guarantee all enum/union variants are handled at compile time.
+ *
+ * @example
+ * switch (status) {
+ *   case GenerationStatus.Pending: return "waiting";
+ *   case GenerationStatus.Completed: return "done";
+ *   default: return assertNever(status);
+ * }
+ */
+export function assertNever(value: never): never {
+  throw new Error(`Unhandled case: ${JSON.stringify(value)}`);
+}
