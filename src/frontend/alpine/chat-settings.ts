@@ -22,10 +22,8 @@ export const chatSettings: Partial<ChatState> & ThisType<ChatState> = {
     this._chatSettingsTurnStrategy = chat?.turn_strategy ?? "round_robin";
     this._groupPaused = this.isChatPaused(chat);
     if (chat?.gm_config) {
-      try {
-        const config = JSON.parse(chat.gm_config);
-        this._assistantRole = (config.assistantRole as "off" | "helper" | "gm" | "moderator") || "off";
-      } catch {}
+      const config = jsonParseOr<{ assistantRole?: string }>(chat.gm_config, {});
+      this._assistantRole = (config.assistantRole as "off" | "helper" | "gm" | "moderator") || "off";
     }
     Alpine.store("ui").showChatSettings = true;
   },

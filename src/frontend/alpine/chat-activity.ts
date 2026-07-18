@@ -1,4 +1,4 @@
-import { jsonBody } from "./json";
+import { jsonBody, jsonParseOr } from "./json";
 import { log as rootLog } from "./logger";
 import type { ChatState } from "./types";
 
@@ -16,8 +16,11 @@ export const chatActivity: Partial<ChatState> & ThisType<ChatState> = {
     this._activityEventSource = activitySource;
 
     activitySource.addEventListener("activity", (event: MessageEvent) => {
+      const data = jsonParseOr<{ chats?: Record<string, { unseenCount: number; chatName: string }> }>(
+        event.data,
+        {},
+      );
       try {
-        const data = JSON.parse(event.data);
         const chats: Record<string, { unseenCount: number; chatName: string }> = data.chats ?? {};
 
         const counts: Record<string, number> = {};
