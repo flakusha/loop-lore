@@ -21,6 +21,21 @@ export const chatUtils: Partial<ChatState> & ThisType<ChatState> = {
     return d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
   },
 
+  openContextMenu(event: MouseEvent, msgId: string) {
+    event.preventDefault();
+    event.stopPropagation();
+    this._contextMenu = {
+      visible: true,
+      messageId: msgId,
+      x: Math.min(event.clientX, window.innerWidth - 200),
+      y: Math.min(event.clientY, window.innerHeight - 300),
+    };
+  },
+
+  closeContextMenu() {
+    this._contextMenu = { visible: false, messageId: null, x: 0, y: 0 };
+  },
+
   displayName(msg: { role: string; actor_name?: string }): string {
     if (msg.role === "user") return "You";
     if (msg.role === "system") return "System";
