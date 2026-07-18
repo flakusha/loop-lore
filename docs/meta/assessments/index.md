@@ -33,20 +33,20 @@ features proposed in the **latest analysis** (`docs/spec/use-case-agentic-worksp
 
 ## Files in this folder
 
-| File | Covers | Reintegrate as |
-| ---- | ------ | -------------- |
-| `platform-fit.md` | What already exists and maps cleanly to agentic/business use | appendix to `use-case-agentic-workspace.md` |
-| `agentic-workspace.md` | Deep dive on the agentic workspace mode + orchestration | expansion of `use-case-agentic-workspace.md` |
-| `business-scenarios.md` | Concrete ordinary business/assistant scenarios | new `docs/spec/use-case-*.md` entries |
-| `feature-analysis.md` | How the 34 latest ideas strengthen (or miss) ordinary use | appendix to `docs/spec-planned/ideas/index.md` |
-| `recommendations.md` | Prioritized, reuse-first build plan | input to `docs/meta/roadmap.md` |
+| File                    | Covers                                                       | Reintegrate as                                 |
+| ----------------------- | ------------------------------------------------------------ | ---------------------------------------------- |
+| `platform-fit.md`       | What already exists and maps cleanly to agentic/business use | appendix to `use-case-agentic-workspace.md`    |
+| `agentic-workspace.md`  | Deep dive on the agentic workspace mode + orchestration      | expansion of `use-case-agentic-workspace.md`   |
+| `business-scenarios.md` | Concrete ordinary business/assistant scenarios               | new `docs/spec/use-case-*.md` entries          |
+| `feature-analysis.md`   | How the 34 latest ideas strengthen (or miss) ordinary use    | appendix to `docs/spec-planned/ideas/index.md` |
+| `recommendations.md`    | Prioritized, reuse-first build plan                          | input to `docs/meta/roadmap.md`                |
 
 ## Headline findings
 
 - **The platform is already 70% of an agentic workspace.** Worlds→projects,
   actors→agents, chats→workspaces, assets→artifacts, messages→tool calls — the
   schema and service layer were built generic enough that the agentic-workspace
-  spec needs *no* new tables beyond `locations`/`task_dependencies` and a `mode`
+  spec needs _no_ new tables beyond `locations`/`task_dependencies` and a `mode`
   flag.
 - **The missing 30% is execution + governance, not data modeling.** Tool sandbox,
   RAG/embedding pipeline, audit, RBAC/SSO, cost controls, and a workflow DAG engine
@@ -55,6 +55,6 @@ features proposed in the **latest analysis** (`docs/spec/use-case-agentic-worksp
   #6 regex transforms (structured output), #10 lore-consistency (grounding/fact-
   check), #12/#13 cross-chat memory + knowledge graph (enterprise memory),
   #27–#29 analytics (cost/quality observability), #25 E2E sync (enterprise deploy).
-- **Recommendation:** ship agentic mode as a *thin* extension (mode flag + agent
+- **Recommendation:** ship agentic mode as a _thin_ extension (mode flag + agent
   runtime + tool registry), reuse the plugin system for integrations, and borrow
   the Enterprise RAG pattern for grounding rather than inventing one.

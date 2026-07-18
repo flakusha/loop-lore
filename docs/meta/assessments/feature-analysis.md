@@ -6,45 +6,45 @@ against ordinary agentic / business / assistant needs. Marked **Business win**,
 
 ## Direct business / agentic wins
 
-| # | Idea | Why it matters for ordinary use | Effort |
-| - | ---- | ------------------------------- | ------ |
-| 6 | Regex output transforms | Parse agent/tool output into structured fields at render — core for tool results | Low |
-| 7 | Auto-translation layer | Multilingual business + global teams | Med |
-| 8 | Smart-regen transforms | One-click polish of any draft (reports, emails) | Low |
-| 10 | Lore-consistency checker | **Grounding/fact-check guard** for RAG agents | High |
-| 12 | Cross-chat global memory | Persistent agent persona/knowledge across workspaces | Med |
-| 13 | Memory / knowledge-graph visualizer | Enterprise knowledge graph over `asset_links` | Med |
-| 25 | Cross-device E2E sync | Enterprise/field deployment; `crypto.md` already supports | Med |
-| 26 | Multimodal input | Docs/images/voice as agent input | Med |
-| 27 | Conversation analytics | **Per-agent cost + quality** observability | Low |
-| 28 | Model-comparison dashboard | A/B agent/model quality (`model_comparisons`) | Low |
-| 29 | Synthetic fine-tune export | Improve agents from real runs (`artifacts-system`) | Med |
-| 9 | Prompt/lorebook marketplace | Community agent/template sharing via plugin registry | Med |
-| 18 | Community template share | Share agent/workflow templates (`export.md`) | Low |
-| 19 | Co-authoring presence | Live team editing of agent outputs (WS) | Med |
-| 20 | Shared persistent worlds | Multi-user collaborative workspace (CRDT) | High |
-| 21 | Public story feed + moderation | Internal knowledge publishing + safety | Med |
+| #   | Idea                                | Why it matters for ordinary use                                                  | Effort |
+| --- | ----------------------------------- | -------------------------------------------------------------------------------- | ------ |
+| 6   | Regex output transforms             | Parse agent/tool output into structured fields at render — core for tool results | Low    |
+| 7   | Auto-translation layer              | Multilingual business + global teams                                             | Med    |
+| 8   | Smart-regen transforms              | One-click polish of any draft (reports, emails)                                  | Low    |
+| 10  | Lore-consistency checker            | **Grounding/fact-check guard** for RAG agents                                    | High   |
+| 12  | Cross-chat global memory            | Persistent agent persona/knowledge across workspaces                             | Med    |
+| 13  | Memory / knowledge-graph visualizer | Enterprise knowledge graph over `asset_links`                                    | Med    |
+| 25  | Cross-device E2E sync               | Enterprise/field deployment; `crypto.md` already supports                        | Med    |
+| 26  | Multimodal input                    | Docs/images/voice as agent input                                                 | Med    |
+| 27  | Conversation analytics              | **Per-agent cost + quality** observability                                       | Low    |
+| 28  | Model-comparison dashboard          | A/B agent/model quality (`model_comparisons`)                                    | Low    |
+| 29  | Synthetic fine-tune export          | Improve agents from real runs (`artifacts-system`)                               | Med    |
+| 9   | Prompt/lorebook marketplace         | Community agent/template sharing via plugin registry                             | Med    |
+| 18  | Community template share            | Share agent/workflow templates (`export.md`)                                     | Low    |
+| 19  | Co-authoring presence               | Live team editing of agent outputs (WS)                                          | Med    |
+| 20  | Shared persistent worlds            | Multi-user collaborative workspace (CRDT)                                        | High   |
+| 21  | Public story feed + moderation      | Internal knowledge publishing + safety                                           | Med    |
 
 ## Indirect / enabler wins
 
-| # | Idea | Enabler role |
-| - | ---- | ------------ |
-| 15 | Procedural asset pipelines | Auto-generate charts/diagrams as artifacts |
-| 16 | Plot autopilot | Analogy: agent "next step" proposer |
-| 17 | What-if branch simulator | Analogy: scenario simulation for decisions |
-| 23 | Offline-first PWA + on-device | Private/solo agent on edge |
-| 24 | Mobile-native UX | Field/business mobile agent access |
+| #   | Idea                          | Enabler role                               |
+| --- | ----------------------------- | ------------------------------------------ |
+| 15  | Procedural asset pipelines    | Auto-generate charts/diagrams as artifacts |
+| 16  | Plot autopilot                | Analogy: agent "next step" proposer        |
+| 17  | What-if branch simulator      | Analogy: scenario simulation for decisions |
+| 23  | Offline-first PWA + on-device | Private/solo agent on edge                 |
+| 24  | Mobile-native UX              | Field/business mobile agent access         |
 
 ## RPG-only (low ordinary-use value)
 
-| # | Idea | Note |
-| - | ---- | ---- |
-| 1–5 | Emotion portraits, VN mode, adaptive audio, TTS narration, dynamic music | Immersion; not business-relevant |
-| 11 | Relationship-drift timeline | RPG NPC disposition |
-| 14 | World continues without you | RPG "alive world" |
-| 22 | Async NPC mail | RPG flavor |
-| 30 | Automated balance playtest bot | RPG tuning |
-| 31–34 | 3D worlds & navigation | Presentation; device-gated |
+| #     | Idea                                                                     | Note                             |
+| ----- | ------------------------------------------------------------------------ | -------------------------------- |
+| 1–5   | Emotion portraits, VN mode, adaptive audio, TTS narration, dynamic music | Immersion; not business-relevant |
+| 11    | Relationship-drift timeline                                              | RPG NPC disposition              |
+| 14    | World continues without you                                              | RPG "alive world"                |
+| 22    | Async NPC mail                                                           | RPG flavor                       |
+| 30    | Automated balance playtest bot                                           | RPG tuning                       |
+| 31–34 | 3D worlds & navigation                                                   | Presentation; device-gated       |
 
 ## Coverage gaps the latest analysis does NOT address
 
@@ -69,5 +69,5 @@ ideas are direct or indirect business wins, and the highest-leverage ones (#6,
 the **execution + governance substrate** (sandbox, RAG, audit, RBAC, cost) that
 no current idea fully covers.
 
-*Reintegrate as: appendix to `docs/spec-planned/ideas/index.md` (add a "Business relevance"
-column) + input to `docs/meta/backlog.md`.*
+_Reintegrate as: appendix to `docs/spec-planned/ideas/index.md` (add a "Business relevance"
+column) + input to `docs/meta/backlog.md`._
