@@ -110,3 +110,16 @@ export function extractMentionedActorIds(
 
   return [...new Set(ids)];
 }
+
+/**
+ * Detect initiative claim prefix (>>).
+ * Returns { isInitiative: true, cleanMessage: string } if prefixed.
+ */
+export function parseInitiativeFlag(input: string): { isInitiative: boolean; cleanMessage: string } {
+  const trimmed = input.trim();
+  if (trimmed.startsWith(">>")) {
+    const cleanMessage = trimmed.slice(2).trim();
+    return { isInitiative: true, cleanMessage };
+  }
+  return { isInitiative: false, cleanMessage: trimmed };
+}

@@ -14,6 +14,7 @@
 
 import { Elysia } from "elysia";
 import type { Kysely } from "kysely";
+import { notifyGmAction } from "../notifications/service";
 import type { DB } from "../db/schema";
 import { safeJsonStringify } from "../utils";
 import { jsonResponse, jsonError, jsonPaginated, jsonCreated, HttpStatus } from "./http-utils";
@@ -82,6 +83,10 @@ async function handleNpcState(
     .execute();
 
   const updated = await state.getNpcState(actorId, worldId);
+  void notifyGmAction(database, {
+    worldId,
+    description: `NPC ${actorId} state updated`,
+  }).catch(() => {});
   return jsonResponse(updated);
 }
 
@@ -153,6 +158,17 @@ async function handleLocationState(
   updates.updated_at = new Date().toISOString();
 
   await database.updateTable("location_states").set(updates).where("location_id", "=", locationId).execute();
+  const locWorldRow = await database
+    .selectFrom("location_states")
+    .select("world_id")
+    .where("location_id", "=", locationId)
+    .executeTakeFirst();
+  if (locWorldRow) {
+    void notifyGmAction(database, {
+      worldId: locWorldRow.world_id,
+      description: `Location ${locationId} state updated`,
+    }).catch(() => {});
+  }
   const updated = await state.getLocationState(locationId);
   return jsonResponse(updated);
 }
