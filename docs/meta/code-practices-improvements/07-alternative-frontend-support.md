@@ -7,26 +7,30 @@
   proof that the server can serve non-htmx clients.
 - **View serving is isolated** in `viewRoutes` + `handleNonApiRequest`
   (`src/server.ts` static + `src/elysia-app.ts` catch-all). The API and the
-  HTML views are already separate *routes*; they just share one process.
+  HTML views are already separate _routes_; they just share one process.
 
 ## Gaps
 
 ### 1. Views and API are coupled at the dispatch layer
+
 The catch-all `app.all("/*")` serves views for non-`/api/` paths. There is no
 clean way to run loop-lore as **API-only** (for a React SPA, a mobile app, or
 a native desktop client) without also shipping the htmx frontend.
 
 ### 2. No content negotiation
+
 htmx partials and JSON responses come from different endpoints (or inline
 `Accept` checks). A SPA calling the same URL gets HTML, not JSON. There is no
 uniform `Accept: application/json` → JSON / `text/html` → htmx-partial
 contract.
 
 ### 3. No CORS
+
 Browser clients on a different origin (separate SPA deploy, third-party
 integrations) are blocked. No `Access-Control-Allow-*` handling exists.
 
 ### 4. No `frontend.mode` config
+
 There is no declarative switch for `htmx` (default) / `spa` (mount external
 static dir) / `none` (API only). Operators must fork behavior in code.
 

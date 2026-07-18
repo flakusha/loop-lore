@@ -17,7 +17,7 @@ Reimplementation of SillyTavern with enhanced features:
 
 ```
 docs/
-├── spec/                    Core technical specs (24 files)
+├── spec/                    Core technical specs (25 files)
 │   └── integrations/        External tool integration specs
 ├── spec-planned/            Planned features, roadmaps, ideas
 │   ├── features/            Feature specs (28 files)
@@ -49,6 +49,7 @@ Authoritative technical specs for implemented systems. These are the primary ref
 | [`spec/architecture.md`](./spec/architecture.md)                             | System layers, request flow, asset serving              |
 | [`spec/implementation.md`](./spec/implementation.md)                         | Tech stack, DB approach, assistant, TUI internals       |
 | [`spec/build-deploy.md`](./spec/build-deploy.md)                             | Build pipeline, deployment options                      |
+| [`spec/platform-support.md`](./spec/platform-support.md)                     | Windows, Android, cross-platform compatibility          |
 | [`spec/schema.md`](./spec/schema.md)                                         | Full DB schema: all tables, enums, relationships        |
 | [`spec/messages.md`](./spec/messages.md)                                     | Message persistence, detail levels, tree model          |
 | [`spec/users-sessions.md`](./spec/users-sessions.md)                         | User roles, sessions, demo/solo mode                    |

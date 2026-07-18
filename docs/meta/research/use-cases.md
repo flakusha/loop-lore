@@ -314,14 +314,14 @@ interface ActorRelationship {
 
 Standing affects NPC behavior and quest availability:
 
-| Standing Tier | NPC Behavior | Quest Access | Price Modifier |
-| ------------- | ------------ | ------------ | -------------- |
-| Unknown (-100 to -20) | Hostile, refuses service | None | +50% |
-| Neutral (-19 to +19) | Standard reactions | Basic | 0% |
-| Friendly (+20 to +49) | Helpful, small discounts | Common | -10% |
-| Ally (+50 to +79) | Loyal, shares secrets | Rare | -25% |
-| Hero (+80 to +99) | Devoted, personal quests | Unique | -50% |
-| Legend (+100) | Follows, special rewards | Legendary | Free |
+| Standing Tier         | NPC Behavior             | Quest Access | Price Modifier |
+| --------------------- | ------------------------ | ------------ | -------------- |
+| Unknown (-100 to -20) | Hostile, refuses service | None         | +50%           |
+| Neutral (-19 to +19)  | Standard reactions       | Basic        | 0%             |
+| Friendly (+20 to +49) | Helpful, small discounts | Common       | -10%           |
+| Ally (+50 to +79)     | Loyal, shares secrets    | Rare         | -25%           |
+| Hero (+80 to +99)     | Devoted, personal quests | Unique       | -50%           |
+| Legend (+100)         | Follows, special rewards | Legendary    | Free           |
 
 ### Relationship Decay
 
@@ -329,10 +329,7 @@ Relationships naturally drift without maintenance:
 
 ```typescript
 // Relationship decay model
-function calculateRelationshipDecay(
-  lastInteraction: string,
-  baseDisposition: number
-): number {
+function calculateRelationshipDecay(lastInteraction: string, baseDisposition: number): number {
   const days = (Date.now() - new Date(lastInteraction).getTime()) / (1000 * 60 * 60 * 24);
   const decayRate = 0.01; // 1% per day
   return Math.sign(baseDisposition) * Math.max(0, Math.abs(baseDisposition) * (1 - decayRate * days));
@@ -378,13 +375,13 @@ interface RomanceTrack {
 
 ### Standing System Phases
 
-| Phase | Component | Status |
-| ----- | --------- | ------ |
-| 1 | Standing schema and storage | Planned |
-| 2 | Standing change events | Planned |
-| 3 | NPC reaction modifiers | Planned |
-| 4 | Quest gating by standing | Planned |
-| 5 | Relationship UI | Planned |
+| Phase | Component                   | Status  |
+| ----- | --------------------------- | ------- |
+| 1     | Standing schema and storage | Planned |
+| 2     | Standing change events      | Planned |
+| 3     | NPC reaction modifiers      | Planned |
+| 4     | Quest gating by standing    | Planned |
+| 5     | Relationship UI             | Planned |
 
 ### Relationship Tracking
 

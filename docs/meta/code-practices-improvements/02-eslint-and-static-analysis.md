@@ -19,6 +19,7 @@
 ## Gaps
 
 ### 1. No complexity ceiling → functions run to ~96
+
 `sonarjs/recommended` does **not** set a `cognitive-complexity` cap. The
 result, confirmed by code-health scan:
 
@@ -30,9 +31,11 @@ result, confirmed by code-health scan:
 
 These are the exact functions that resist testing and extension. Add an explicit
 cap (start at 20, tighten to 15) as an error, with targeted `// eslint-disable`
-+ a refactor ticket only where genuinely warranted.
+
+- a refactor ticket only where genuinely warranted.
 
 ### 2. No `eslint-plugin-import`
+
 There is no `import/no-cycle`, `import/order`, or `import/no-unused-modules`.
 Given `src/db/schema.ts` is imported by ~96 files and `src/utils.ts` by ~52,
 **circular-dependency risk is real and currently invisible**. `import/no-cycle`
@@ -40,6 +43,7 @@ would catch it at PR time. `import/order` enforces a consistent header layout
 (cheap, high readability ROI).
 
 ### 3. No `no-misused-promises`
+
 `@typescript-eslint/no-misused-promises` is **not** explicitly set to error.
 This is the rule that catches passing a promise where a boolean/value is
 expected (e.g. `if (someAsyncFn())`, event-handler returns). With many
@@ -47,12 +51,14 @@ expected (e.g. `if (someAsyncFn())`, event-handler returns). With many
 latent class of bugs.
 
 ### 4. No `consistent-type-definitions`
+
 AGENTS.md states **"Interfaces > types"** but nothing enforces it. Mixed
 `interface`/`type` usage drifts. Add
 `@typescript-eslint/consistent-type-definitions: ["error", "interface"]`.
 
 ### 5. Dead code can slip through module boundaries
-`noUnusedLocals` only catches unused symbols *within* a file. Exported-but-
+
+`noUnusedLocals` only catches unused symbols _within_ a file. Exported-but-
 never-imported modules (e.g. a route or helper that lost its only caller)
 are invisible to `tsc`. Add `import/no-unused-modules` (per-file, opt-in) to
 catch orphaned modules. (Note: editor LSP may surface stale "unused"
@@ -60,12 +66,14 @@ diagnostics after refactors — `bun run typecheck` is the source of truth and
 currently passes clean.)
 
 ### 6. Frontend gets a softer ruleset
+
 `eslint.config.mjs` frontend block turns several rules `off`
 (`no-unused-vars: off`, `prefer-node-protocol: off`) and relies on browser
 globals. Combined with the weaker frontend `tsconfig` (see `01`), frontend
 logic is the least-guarded code in the repo.
 
 ### 7. No sorting/consistency linter
+
 `eslint-plugin-perfectionist` (sort imports, exports, object keys) would
 stabilize diffs and pair well with `import/order`. Optional but recommended
 for a project that values "lightweight, maintainable".
@@ -80,7 +88,7 @@ for a project that values "lightweight, maintainable".
    `@/` → type), `import/no-unused-modules` (per-file, opt-in).
 3. **Add `@typescript-eslint/no-misused-promises: error`** backend + frontend.
 4. **Add `@typescript-eslint/consistent-type-definitions: ["error",
-   "interface"]`** to enforce the AGENTS.md convention automatically.
+"interface"]`** to enforce the AGENTS.md convention automatically.
 5. **Tighten frontend ESLint** toward parity with backend; keep only the
    genuinely browser-specific off-switches (`prefer-node-protocol`,
    `no-process-exit` stays error).
