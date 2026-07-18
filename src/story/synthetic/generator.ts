@@ -10,7 +10,7 @@
 import type { Kysely } from "kysely";
 import type { DB } from "../../db/schema";
 import { SyntheticDataType, SyntheticDataStatus, syntheticDataStatusMachine } from "../../db/enums";
-import { uid, jsonParseOr, safeJsonStringify } from "../../utils";
+import { uid, jsonParseOr, safeJsonStringify, assertNever } from "../../utils";
 import type { SyntheticCase, SyntheticSource } from "./types";
 import { getLogger } from "../../logger";
 
@@ -174,9 +174,8 @@ export class SyntheticGenerator {
       case SyntheticDataType.GmEscalation: {
         return this.buildGmEscalation(source);
       }
-      default: {
-        return [];
-      }
+      default:
+        return assertNever(type);
     }
   }
 
