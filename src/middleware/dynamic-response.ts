@@ -149,12 +149,15 @@ export class DynamicResponsePolicy {
   /** Dispatch to the content-module minifier for a given body kind. */
   private async runMinifier(body: string, kind: "html" | "css" | "js"): Promise<string> {
     switch (kind) {
-      case "html":
+      case "html": {
         return minifyHTMLContent(body);
-      case "css":
+      }
+      case "css": {
         return minifyCSS(body);
-      case "js":
+      }
+      case "js": {
         return minifyJS(body);
+      }
     }
   }
 
