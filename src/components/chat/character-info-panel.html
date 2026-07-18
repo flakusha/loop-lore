@@ -5,7 +5,7 @@
   @click="$store.ui.showCharacterInfo = false"
   x-cloak
 ></div>
-<!-- Right panel (character info) -->
+<!-- Right panel (character info + RPG stats) -->
 <aside
   class="right-panel"
   :style="{ display: $store?.ui?.showCharacterInfo ? 'flex' : 'none' }"
@@ -25,6 +25,141 @@
       <div class="empty-state" style="padding: var(--space-4) 0">
         <div class="icon">👤</div>
         <div class="description">Character info will appear here when a chat is selected.</div>
+      </div>
+    </template>
+
+    <!-- RPG Stats Section -->
+    <template x-if="rpgStats">
+      <div style="margin-top: var(--space-4)">
+        <div
+          style="
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-2);
+          "
+        >
+          <h4 style="font-size: 12px; font-weight: 600; margin: 0">Stats</h4>
+          <button class="btn btn-secondary btn-xs" @click="showRpgPanel = !showRpgPanel" title="Expand stats">
+            <span x-text="showRpgPanel ? '−' : '+'"></span>
+          </button>
+        </div>
+
+        <!-- Collapsed view: HP/MP only -->
+        <template x-if="!showRpgPanel">
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-2)">
+            <div
+              style="
+                padding: var(--space-2);
+                background: var(--bg-secondary, #f8f9fa);
+                border-radius: 4px;
+                font-size: 12px;
+              "
+            >
+              <div style="color: var(--text-secondary); margin-bottom: 2px">HP</div>
+              <div><span x-text="rpgStats?.hp || 0"></span>/<span x-text="rpgStats?.maxHp || 0"></span></div>
+            </div>
+            <div
+              style="
+                padding: var(--space-2);
+                background: var(--bg-secondary, #f8f9fa);
+                border-radius: 4px;
+                font-size: 12px;
+              "
+            >
+              <div style="color: var(--text-secondary); margin-bottom: 2px">MP</div>
+              <div><span x-text="rpgStats?.mp || 0"></span>/<span x-text="rpgStats?.maxMp || 0"></span></div>
+            </div>
+          </div>
+        </template>
+
+        <!-- Expanded view: full stats -->
+        <template x-if="showRpgPanel">
+          <div style="margin-top: var(--space-2)">
+            <!-- Level and XP -->
+            <div style="margin-bottom: var(--space-3)">
+              <div style="display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 4px">
+                <span>Level <span x-text="rpgStats?.level || 1"></span></span>
+                <span
+                  >XP: <span x-text="rpgStats?.xp || 0"></span>/<span
+                    x-text="rpgStats?.xpToNext || 100"
+                  ></span
+                ></span>
+              </div>
+              <div
+                style="
+                  height: 4px;
+                  background: var(--border-default, #e9ecef);
+                  border-radius: 2px;
+                  overflow: hidden;
+                "
+              >
+                <div
+                  style="height: 100%; background: #28a745; border-radius: 2px"
+                  :style="{width: (rpgStats ? (rpgStats.xp / rpgStats.xpToNext) * 100 : 0) + '%'}"
+                ></div>
+              </div>
+            </div>
+
+            <!-- Core Stats -->
+            <div style="display: grid; gap: var(--space-1); font-size: 12px">
+              <div style="display: flex; justify-content: space-between">
+                <span style="color: var(--text-secondary)">STR</span>
+                <span
+                  ><span x-text="rpgStats?.str || 10"></span> (<span
+                    x-text="getModifier(rpgStats?.str || 10) >= 0 ? '+' + getModifier(rpgStats?.str || 10) : getModifier(rpgStats?.str || 10)"
+                  ></span
+                  >)</span
+                >
+              </div>
+              <div style="display: flex; justify-content: space-between">
+                <span style="color: var(--text-secondary)">DEX</span>
+                <span
+                  ><span x-text="rpgStats?.dex || 10"></span> (<span
+                    x-text="getModifier(rpgStats?.dex || 10) >= 0 ? '+' + getModifier(rpgStats?.dex || 10) : getModifier(rpgStats?.dex || 10)"
+                  ></span
+                  >)</span
+                >
+              </div>
+              <div style="display: flex; justify-content: space-between">
+                <span style="color: var(--text-secondary)">CON</span>
+                <span
+                  ><span x-text="rpgStats?.con || 10"></span> (<span
+                    x-text="getModifier(rpgStats?.con || 10) >= 0 ? '+' + getModifier(rpgStats?.con || 10) : getModifier(rpgStats?.con || 10)"
+                  ></span
+                  >)</span
+                >
+              </div>
+              <div style="display: flex; justify-content: space-between">
+                <span style="color: var(--text-secondary)">INT</span>
+                <span
+                  ><span x-text="rpgStats?.int || 10"></span> (<span
+                    x-text="getModifier(rpgStats?.int || 10) >= 0 ? '+' + getModifier(rpgStats?.int || 10) : getModifier(rpgStats?.int || 10)"
+                  ></span
+                  >)</span
+                >
+              </div>
+              <div style="display: flex; justify-content: space-between">
+                <span style="color: var(--text-secondary)">WIS</span>
+                <span
+                  ><span x-text="rpgStats?.wis || 10"></span> (<span
+                    x-text="getModifier(rpgStats?.wis || 10) >= 0 ? '+' + getModifier(rpgStats?.wis || 10) : getModifier(rpgStats?.wis || 10)"
+                  ></span
+                  >)</span
+                >
+              </div>
+              <div style="display: flex; justify-content: space-between">
+                <span style="color: var(--text-secondary)">CHA</span>
+                <span
+                  ><span x-text="rpgStats?.cha || 10"></span> (<span
+                    x-text="getModifier(rpgStats?.cha || 10) >= 0 ? '+' + getModifier(rpgStats?.cha || 10) : getModifier(rpgStats?.cha || 10)"
+                  ></span
+                  >)</span
+                >
+              </div>
+            </div>
+          </div>
+        </template>
       </div>
     </template>
   </div>

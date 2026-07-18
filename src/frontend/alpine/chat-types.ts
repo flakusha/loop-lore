@@ -33,6 +33,8 @@ export interface Message {
   generation_time_ms?: number;
   tokens_per_second?: number;
   status?: string;
+  reactions?: { emoji: string; count: number; userReacted: boolean }[];
+  pinned?: boolean;
 }
 
 export interface GroupedMessage extends Message {
@@ -49,6 +51,72 @@ export interface GenerationDetail {
   attemptId?: string;
 }
 
+// ── RPG Stats Types (Phase 1 Foundation) ─────────────────────
+export interface RpgStatBlock {
+  str: number;
+  dex: number;
+  con: number;
+  int: number;
+  wis: number;
+  cha: number;
+}
+
+export interface RpgStats extends RpgStatBlock {
+  level: number;
+  hp: number;
+  maxHp: number;
+  mp: number;
+  maxMp: number;
+  ac: number;
+  initiative: number;
+  xp: number;
+  xpToNext: number;
+}
+
+export interface StatusEffect {
+  id: string;
+  name: string;
+  description: string;
+  duration: number; // -1 = infinite, 0+ = turns remaining
+  modifier: Partial<RpgStatBlock>;
+  icon?: string;
+}
+
+export interface EquipmentSlot {
+  slot: "head" | "chest" | "legs" | "feet" | "hands" | "weapon" | "shield" | "accessory";
+  itemId: string | null;
+  itemName?: string;
+}
+
+// ── Memory Types ───────────────────────────────────────────────
+export interface MemoryEntry {
+  id: string;
+  content: string;
+  type: "episodic" | "semantic" | "procedural";
+  category?: string;
+  confidence: number;
+  importance: number;
+  keywords: string[];
+  sourceMessageId?: string;
+  createdAt: string;
+  expiresAt?: string;
+  pinned?: boolean;
+  tokenCount?: number;
+}
+
+export interface MemoryPanelState {
+  activeTab: "character" | "assistant" | "world";
+  characterMemories: MemoryEntry[];
+  assistantMemories: MemoryEntry[];
+  worldMemories: MemoryEntry[];
+  searchQuery: string;
+  loading: boolean;
+  tokenBudget: number;
+  tokensUsed: number;
+  showCreateForm: boolean;
+  newMemoryContent: string;
+}
+
 export interface ChatState extends AlpineMagicThis {
   isGenerating: boolean;
   generationLabel: string;
@@ -56,7 +124,7 @@ export interface ChatState extends AlpineMagicThis {
   continuingMessageId: string | null;
   isContinuing: boolean;
   _generationEventSource: EventSource | null;
-  chats: Array<{
+  chats: {
     id: string;
     name?: string;
     isPinned?: number;
@@ -65,7 +133,7 @@ export interface ChatState extends AlpineMagicThis {
     turn_strategy?: string;
     story_state?: string;
     gm_config?: string;
-  }>;
+  }[];
   activeChat: string | null;
   messages: Message[];
   loadingMessages: boolean;
@@ -94,7 +162,7 @@ export interface ChatState extends AlpineMagicThis {
   editingMessageId: string | null;
   editContent: string;
   previewMediaAsset: GalleryAsset | null;
-  pendingAssets: Array<{ assetId: string; filename: string }>;
+  pendingAssets: { assetId: string; filename: string }[];
 
   groupedMessages: GroupedMessage[];
   _observer: MutationObserver | null;
@@ -103,6 +171,7 @@ export interface ChatState extends AlpineMagicThis {
   _toggleChatListHandler: (() => void) | null;
   _toggleGalleryHandler: (() => void) | null;
   _toggleCharacterInfoHandler: (() => void) | null;
+  _toggleMemoryPanelHandler: (() => void) | null;
   _panelClickHandler: ((e: MouseEvent) => void) | null;
   _keydownHandler: ((e: KeyboardEvent) => void) | null;
   _chatSettingsName: string;
@@ -128,11 +197,16 @@ export interface ChatState extends AlpineMagicThis {
   _isScrolledUp: boolean;
   _scrollHandler: (() => void) | null;
   _activityEventSource: EventSource | null;
+  _debugView: boolean;
+  _showCommandPalette: boolean;
+  _activeCommand: string;
+  _commandList: { name: string; description: string }[];
+  _filteredCommands: { name: string; description: string }[];
   _chatFilter: string;
-  readonly filteredChats: Array<{ id: string; name?: string }>;
+  readonly filteredChats: { id: string; name?: string }[];
   selectedChats: string[];
   _mentionQuery: string;
-  _mentionResults: Array<{ actor_id: string; name: string; display_name?: string; actor_type?: string }>;
+  _mentionResults: { actor_id: string; name: string; display_name?: string; actor_type?: string }[];
   _showMentionAutocomplete: boolean;
   _chatParticipants: { actor_id: string; name: string; display_name?: string; actor_type?: string }[];
 
@@ -157,6 +231,9 @@ export interface ChatState extends AlpineMagicThis {
   copyMessage(msgId: string, event: Event): Promise<void>;
   removeMessage(msgId: string, event: Event): Promise<void>;
   toggleImpersonate(): Promise<void>;
+  toggleDebugView(): void;
+  handleCommandInput(event: Event): void;
+  selectCommand(name: string): void;
   loadImpersonationState(): Promise<void>;
   loadPersonas(): Promise<void>;
   setPersona(): Promise<void>;
@@ -219,7 +296,7 @@ export interface ChatState extends AlpineMagicThis {
   selectMention(participant: { actor_id: string; name: string }): void;
   hideMentionAutocomplete(): void;
   renameChat(chatId: string): Promise<void>;
-  openRenameModal(chatId: string): void;
+  openRenameModal(chatId: string): Promise<void>;
   confirmRenameChat(): Promise<void>;
   deleteChat(chatId: string, event: Event): Promise<void>;
   toggleChatPin(chatId: string): Promise<void>;
@@ -231,4 +308,31 @@ export interface ChatState extends AlpineMagicThis {
   checkGenerationStatus(chatId: string): Promise<void>;
   registerPanelHandlers(): void;
   unregisterPanelHandlers(): void;
+  toggleReaction(msgId: string, emoji: string): Promise<void>;
+  loadMessageReactions(msgId: string): Promise<void>;
+  loadAllReactions(): Promise<void>;
+  _reactionPicker: { visible: boolean; messageId: string; x: number; y: number };
+  _quickEmojis: string[];
+  showReactionPicker(msgId: string, event: Event): void;
+  closeReactionPicker(): void;
+
+  // ── RPG Stats ───────────────────────────────────────────────
+  rpgStats: RpgStats | null;
+  statusEffects: StatusEffect[];
+  equipment: EquipmentSlot[];
+  loadRpgStats(): Promise<void>;
+  getModifier(stat: number): number;
+  effectiveStat(base: number, effects: StatusEffect[]): number;
+
+  // ── Memory System ───────────────────────────────────────────
+  memoryPanel: MemoryPanelState;
+  loadMemories(): Promise<void>;
+  toggleMemoryPanel(): void;
+  searchMemories(): void;
+  createMemory(): Promise<void>;
+  deleteMemory(memoryId: string): Promise<void>;
+  toggleMemoryPin(memoryId: string): Promise<void>;
+  getFilteredMemories(): MemoryEntry[];
+  getCurrentMemoryList(): MemoryEntry[];
+  updateMemoryTokenCount(): void;
 }

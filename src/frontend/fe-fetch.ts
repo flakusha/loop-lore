@@ -17,7 +17,7 @@ const API_BASE = "";
 function getCsrfToken(): string {
   const meta = document.querySelector<HTMLMetaElement>('meta[name="csrf-token"]');
   if (meta?.content) return meta.content;
-  const match = document.cookie.match(/(?:^|;\s*)csrf_token=([^;]+)/);
+  const match = /(?:^|;\s*)csrf_token=([^;]+)/.exec(document.cookie);
   return match?.[1] ?? "";
 }
 
@@ -25,9 +25,9 @@ export async function feFetch(url: string, options: RequestInit = {}): Promise<R
   const opts: RequestInit = { ...options };
   opts.headers = new Headers(opts.headers ?? {});
   const csrf = getCsrfToken();
-  if (csrf) (opts.headers as Headers).set("X-CSRF-Token", csrf);
+  if (csrf) opts.headers.set("X-CSRF-Token", csrf);
   const token = localStorage.getItem("session_token");
-  if (token) (opts.headers as Headers).set("Authorization", `Bearer ${token}`);
+  if (token) opts.headers.set("Authorization", `Bearer ${token}`);
   opts.signal = AbortSignal.timeout(30_000);
   const res = await fetch(API_BASE + url, opts);
   if (res.status === 401) {

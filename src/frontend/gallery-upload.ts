@@ -22,7 +22,7 @@ export function initDropZone(dropZoneId: string, inputId: string): void {
     if (file && input) {
       const textEl = zone.querySelector(".text");
       if (textEl) textEl.textContent = file.name;
-      input.files = e.dataTransfer!.files;
+      input.files = e.dataTransfer.files;
     }
   });
 

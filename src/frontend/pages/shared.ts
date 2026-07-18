@@ -106,7 +106,6 @@ interface FilterChip {
   label: string;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export interface FilterBarState {
   query: string;
   typeFilter: string;
@@ -139,7 +138,7 @@ globalThis.filterBar = function () {
       if (this.typeFilter !== "all") params.set("type", this.typeFilter);
       if (this.sortBy !== "name") params.set("sort", this.sortBy);
       const url = `${searchUrl}?${params.toString()}`;
-      globalThis.htmx.ajax("GET", url, { target: `#${targetId}`, swap: "innerHTML" } as any);
+      globalThis.htmx.ajax("GET", url, { target: `#${targetId}`, swap: "innerHTML" });
     },
     removeChip(key: string): void {
       if (key === "q") this.query = "";

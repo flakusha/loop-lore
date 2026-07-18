@@ -51,7 +51,7 @@ export const chatVariants: Partial<ChatState> & ThisType<ChatState> = {
   async switchVariant(messageId: string, direction: number) {
     log.info("switchVariant", { messageId, direction });
     const msg = this.messages.find((m) => m.id === messageId);
-    if (!msg || !msg.totalVariants || msg.totalVariants <= 1) return;
+    if (!msg?.totalVariants || msg.totalVariants <= 1) return;
     const newIdx = ((msg.variantIndex ?? 0) + direction + msg.totalVariants) % msg.totalVariants;
     try {
       const res = await apiFetch(`/api/messages/${messageId}/variant`, {

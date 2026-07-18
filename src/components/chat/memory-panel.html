@@ -1,0 +1,133 @@
+<!-- Backdrop for memory panel -->
+<div
+  class="panel-backdrop"
+  x-show="$store.ui.showMemoryPanel"
+  @click="$store.ui.showMemoryPanel = false"
+  x-cloak
+></div>
+<!-- Right panel (memory) -->
+<aside
+  class="right-panel"
+  :style="{ display: $store?.ui?.showMemoryPanel ? 'flex' : 'none' }"
+  x-cloak
+  data-testid="memory-panel"
+>
+  <button class="btn-icon" @click="$store.ui.showMemoryPanel = false" title="Close">&times;</button>
+  <div class="panel-content">
+    <div class="nav-section-title">Memories</div>
+
+    <!-- Tab Navigation -->
+    <div
+      style="
+        display: flex;
+        gap: var(--space-1);
+        margin-bottom: var(--space-3);
+        border-bottom: 1px solid var(--border-default, #e9ecef);
+      "
+    >
+      <button
+        :class="{'tab-active': memoryPanel.activeTab === 'character'}"
+        class="btn btn-secondary btn-xs"
+        @click="memoryPanel.activeTab = 'character'"
+      >
+        Character
+      </button>
+      <button
+        :class="{'tab-active': memoryPanel.activeTab === 'assistant'}"
+        class="btn btn-secondary btn-xs"
+        @click="memoryPanel.activeTab = 'assistant'"
+      >
+        Assistant
+      </button>
+      <button
+        :class="{'tab-active': memoryPanel.activeTab === 'world'}"
+        class="btn btn-secondary btn-xs"
+        @click="memoryPanel.activeTab = 'world'"
+      >
+        World
+      </button>
+    </div>
+
+    <!-- Token Budget -->
+    <div style="font-size: 11px; color: var(--text-secondary); margin-bottom: var(--space-3)">
+      Tokens: <span x-text="memoryPanel.tokensUsed"></span>/<span x-text="memoryPanel.tokenBudget"></span>
+    </div>
+
+    <!-- Search -->
+    <input
+      class="form-input"
+      style="font-size: 13px; margin-bottom: var(--space-3)"
+      placeholder="Search memories..."
+      x-model="memoryPanel.searchQuery"
+      @input="searchMemories()"
+    />
+
+    <!-- Create Form -->
+    <button
+      class="btn btn-primary btn-xs"
+      style="width: 100%; margin-bottom: var(--space-3)"
+      @click="memoryPanel.showCreateForm = !memoryPanel.showCreateForm"
+    >
+      + Add Memory
+    </button>
+
+    <div x-show="memoryPanel.showCreateForm" style="margin-bottom: var(--space-3)">
+      <textarea
+        class="form-input form-textarea"
+        rows="2"
+        style="font-size: 13px; margin-bottom: var(--space-2)"
+        placeholder="Enter memory content..."
+        x-model="memoryPanel.newMemoryContent"
+      ></textarea>
+      <div style="display: flex; gap: var(--space-2)">
+        <button class="btn btn-secondary btn-xs" @click="memoryPanel.showCreateForm = false">Cancel</button>
+        <button class="btn btn-primary btn-xs" @click="createMemory()">Save</button>
+      </div>
+    </div>
+
+    <!-- Memory List -->
+    <div style="display: grid; gap: var(--space-2)">
+      <template x-for="mem in getFilteredMemories()" :key="mem.id">
+        <div
+          style="
+            padding: var(--space-2);
+            background: var(--bg-secondary, #f8f9fa);
+            border-radius: 4px;
+            font-size: 12px;
+          "
+        >
+          <div
+            style="
+              display: flex;
+              justify-content: space-between;
+              align-items: flex-start;
+              margin-bottom: var(--space-1);
+            "
+          >
+            <span x-text="mem.content"></span>
+            <div style="display: flex; gap: 2px">
+              <button
+                class="btn-icon"
+                :class="{'text-warning': mem.pinned}"
+                @click="toggleMemoryPin(mem.id)"
+                title="Pin"
+              >
+                📌
+              </button>
+              <button class="btn-icon" @click="deleteMemory(mem.id)" title="Delete">🗑</button>
+            </div>
+          </div>
+          <div style="display: flex; gap: var(--space-2); font-size: 10px; color: var(--text-secondary)">
+            <span x-text="mem.type"></span>
+            <span x-text="'conf: ' + Math.round(mem.confidence * 100) + '%'"></span>
+            <span x-text="'tokens: ' + (mem.tokenCount || 0)"></span>
+          </div>
+        </div>
+      </template>
+    </div>
+
+    <div x-show="getFilteredMemories().length === 0" class="empty-state" style="padding: var(--space-6)">
+      <div class="title">No memories found</div>
+    </div>
+  </div>
+</aside>

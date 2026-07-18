@@ -111,7 +111,7 @@ export function closeModalOnBackdrop(event: Event): void {
 // ── Theme ────────────────────────────────────────────────────
 
 export function applyTheme(themeId: string): void {
-  const themes: Array<{ id: string; file: string }> = globalThis.__THEMES ?? [];
+  const themes: { id: string; file: string }[] = globalThis.__THEMES ?? [];
   if (!themeId || themes.every((t) => t.id !== themeId)) return;
   for (const t of themes) {
     const link = document.querySelector<HTMLLinkElement>(`#theme-${t.id}`);

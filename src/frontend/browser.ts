@@ -3,6 +3,10 @@
  * Uses native browser APIs: Compression Streams API, WebCrypto API.
  */
 
+import { jsonBody, safeJsonParse } from "./alpine/json";
+import { type BrowserContentEncoding, browserDecodeContent } from "./browser-compress";
+import { browserDecryptContent, browserEncryptContent } from "./browser-crypto";
+
 export type { BrowserContentEncoding, BrowserEncodeResult } from "./browser-compress";
 export { browserDecodeContent, browserEncodeContent } from "./browser-compress";
 export type { BrowserEncryptResult } from "./browser-crypto";
@@ -13,10 +17,6 @@ export {
   browserGenerateKey,
   browserImportKey,
 } from "./browser-crypto";
-
-import { jsonBody, safeJsonParse } from "./alpine/json";
-import { type BrowserContentEncoding, browserDecodeContent } from "./browser-compress";
-import { browserDecryptContent, browserEncryptContent } from "./browser-crypto";
 
 export interface BrowserEncryptedPayload {
   enc: string;
@@ -35,7 +35,7 @@ function uint8ArrayToBase64(buf: Uint8Array): string {
   let binary = "";
   const len = buf.length;
   for (let i = 0; i < len; i++) {
-    binary += String.fromCodePoint(buf[i]!);
+    binary += String.fromCodePoint(buf[i]);
   }
   return btoa(binary);
 }

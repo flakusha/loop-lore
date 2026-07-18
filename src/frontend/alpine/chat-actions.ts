@@ -6,6 +6,46 @@ import type { ChatState } from "./types";
 const log = rootLog.child({ module: "chat-actions" });
 
 export const chatActions: Partial<ChatState> & ThisType<ChatState> = {
+  _showCommandPalette: false,
+  _activeCommand: "",
+  _commandList: [
+    { name: "help", description: "Show available commands" },
+    { name: "roll", description: "Roll dice (e.g., /roll 2d6+3)" },
+    { name: "summarize", description: "Summarize recent messages" },
+    { name: "impersonate", description: "Play as a character" },
+    { name: "narrate", description: "Inject narration text" },
+    { name: "ooc", description: "Out-of-character message" },
+    { name: "debug", description: "Toggle prompt debug view" },
+    { name: "detail", description: "Set detail level (immersion/basic/detailed)" },
+    { name: "improve", description: "Improve text with AI" },
+    { name: "context", description: "Show conversation context" },
+    { name: "clear", description: "Clear chat" },
+    { name: "stats", description: "Show chat statistics" },
+  ] as { name: string; description: string }[],
+  _filteredCommands: [] as { name: string; description: string }[],
+
+  handleCommandInput(event: Event) {
+    const input = event.target as HTMLTextAreaElement;
+    const value = input.value;
+    if (value.startsWith("/") && !value.includes(" ")) {
+      const query = value.slice(1).toLowerCase();
+      this._showCommandPalette = true;
+      this._filteredCommands = query
+        ? this._commandList.filter((c) => c.name.includes(query))
+        : this._commandList;
+    } else {
+      this._showCommandPalette = false;
+    }
+  },
+
+  selectCommand(name: string) {
+    const input = this.$refs?.messageInput as HTMLTextAreaElement | undefined;
+    if (input) {
+      input.value = "/" + name + " ";
+      input.focus();
+    }
+    this._showCommandPalette = false;
+  },
   async toggleImpersonate() {
     if (!this.activeChat || !this.currentCharacter) {
       this.$dispatch?.("show-toast", { type: "warning", message: "No chat or character selected" });

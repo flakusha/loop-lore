@@ -17,20 +17,20 @@ export const adminSystem = {
   loadingSystemConfig: false,
   confirmDeleteConfig: "",
   analyticsSummary: { total: 0, distinct_sessions: 0, distinct_users: 0 },
-  dailyStats: [] as Array<{ count: number; active_users: number; date: string }>,
-  errorEvents: [] as Array<{ id: string; event_type: string; session_id: string | null; created_at: string }>,
+  dailyStats: [] as { count: number; active_users: number; date: string }[],
+  errorEvents: [] as { id: string; event_type: string; session_id: string | null; created_at: string }[],
   loadingAnalytics: false,
   purgingAnalytics: false,
   healthStatus: "unknown",
   healthUptime: 0,
   healthTimestamp: "",
-  healthProviders: [] as Array<{
+  healthProviders: [] as {
     name: string;
     status: string;
     models?: string[];
     latencyMs?: number;
     error?: string;
-  }>,
+  }[],
   loadingHealth: false,
 
   async loadSystemConfig() {

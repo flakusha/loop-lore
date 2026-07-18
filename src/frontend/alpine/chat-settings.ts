@@ -11,8 +11,13 @@ export const chatSettings: Partial<ChatState> & ThisType<ChatState> = {
   _chatSettingsTurnStrategy: "round_robin",
   _selectedPersonaId: null as string | null,
   _impersonatingActorId: null as string | null,
-  _assistantRole: "off" as "off" | "helper" | "gm" | "moderator",
+  _assistantRole: "off",
   _personas: [] as any[],
+  _debugView: false,
+
+  toggleDebugView() {
+    this._debugView = !this._debugView;
+  },
 
   openChatSettings() {
     const chats = this.chats;

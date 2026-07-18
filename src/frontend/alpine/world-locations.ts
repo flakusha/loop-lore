@@ -5,12 +5,12 @@ import type { WorldEditState } from "./world-types";
 const log = rootLog.child({ module: "world-locations" });
 
 export const worldLocations: Partial<WorldEditState> & ThisType<WorldEditState> = {
-  locations: [] as Array<{
+  locations: [] as {
     id: string;
     name: string;
     description: string | null;
     parent_location_id: string | null;
-  }>,
+  }[],
   loadingLocations: false,
   locationsLoaded: false,
   showAddForm: false,
