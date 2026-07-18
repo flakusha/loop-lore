@@ -74,6 +74,47 @@ before building any frontend feature.
 | `docs/frontend/notifications.md`          | Notification system: types, storage, delivery, prompt injection, preferences, lifecycle                               |
 | `docs/frontend/prompt-creation.md`        | Prompt templates, variable injection, actor context, generation tuning                                                |
 
+### Code Practices Research (`docs/meta/code-practices-improvements/`)
+
+Nine **aspirational** analysis docs — current-state audit + improvement plan
+per area. Read the relevant one _before_ refactoring that subsystem, but treat
+them as **research, not-yet-implemented** unless `src/` already matches:
+
+| File                                    | Area      | Headline gap                                                                    |
+| --------------------------------------- | --------- | ------------------------------------------------------------------------------- |
+| `01-strict-typing.md`                   | Types     | Frontend tsconfig weaker; `exactOptionalPropertyTypes` off; `any` in DB wrapper |
+| `02-eslint-and-static-analysis.md`      | Lint      | **Mostly DONE** in `eslint.config.mjs`; complexity cap is `warn`, not `error`   |
+| `03-extensibility-code-patterns.md`     | Patterns  | Dual dispatch (Elysia + catch-all); no event/tool bus                           |
+| `04-code-organization-and-splitting.md` | Structure | `messages.ts` 702L, `generate-route.ts` 636L, god-modules (`utils.ts`)          |
+| `05-testing-e2e-multiple-db.md`         | Tests     | SQLite-only; no PG matrix; no contract tests; no coverage gate                  |
+| `06-schemas-and-openapi.md`             | Schemas   | TypeBox today, no OpenAPI; **Zod docs are wrong** (see precedence below)        |
+| `07-alternative-frontend-support.md`    | Frontends | No `frontend.mode` / CORS / content negotiation                                 |
+| `08-plugins-hooks-integration.md`       | Plugins   | Event bus, tool executor, UI mount, config merge all **unwired**                |
+
+> **Status**: P0 items (event/tool bus, route registry, complexity splits,
+> Zod/TypeBox reconciliation) are **not yet coded**. Do not assume these
+> patterns exist when editing related files — verify against `src/`.
+
+---
+
+## Source of Truth & Documentation Precedence
+
+Docs drift from code. To avoid building on the wrong assumption, follow this
+precedence — **lower number wins**:
+
+1. **`AGENTS.md`** (this file) — project conventions, the contract.
+2. **`.agents/references/banned-patterns.md`** + **`recommendations.md`** — canonical do/don't rules agents must enforce in review.
+3. **`src/` actual code** — the runnable truth. Confirm with `bun run check`.
+4. **`docs/spec/*`** — design specs, **aspirational**. Some describe unbuilt features.
+5. **`docs/meta/code-practices-improvements/*`** — research/audit, **not-yet-implemented** unless code matches.
+
+⚠️ **Zod/TypeBox trap**: `docs/spec/implementation.md` and `docs/spec/api-routes.md`
+describe a **Zod** validation layer in `src/schemas/`. That directory does
+**not** exist. The real stack is **Elysia `t` (TypeBox)** in
+`src/validation/schemas.ts`. **Never copy the Zod examples from the specs.**
+Use TypeBox `t` for new request validation. The Zod migration (doc `06`) is a
+_proposal_, not current code.
+
 ---
 
 ## Project Overview
@@ -191,6 +232,27 @@ See `.agents/references/cli-config.md` for command reference.
 4. Implement: follow conventions above
 5. Verify: `bun run format:fix && bun run check && bun test src/` for server,
    `bun run src/tui/app.ts` for TUI
+
+---
+
+## Agent Enforcement Contract
+
+Before reporting **any** task done, you MUST:
+
+1. Run `bun run check` — typecheck + lint + format + md lint must pass **clean**.
+2. Run `bun test src/` — unit tests green.
+3. For e2e-affecting changes, run `E2E_SAFEGUARD=1 bun test tests/e2e/`.
+4. Fix every ESLint **error**. Do **not** disable rules or add `// eslint-disable`
+   to make `check` pass — refactor instead. Warnings are tracked but
+   non-blocking; the cognitive-complexity cap is intentionally `warn` until the
+   oversized handlers (`04`) are split.
+5. Never introduce banned patterns (`.agents/references/banned-patterns.md`):
+   `any`, boolean-flag state, numeric statuses, bare `.then()`, silent catches,
+   AI SDK wrappers, `console.*` instead of logger, missing ownership checks.
+
+The pre-commit hook enforces the same gates on `git commit`; CI enforces them
+on PRs. Treat a `bun run check` failure as a **blocking error**, not a
+suggestion. If a gate is red, fix the cause — never bypass it.
 
 ---
 

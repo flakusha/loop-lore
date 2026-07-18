@@ -637,11 +637,7 @@ interface SocialIntent {
 ### Social Resolution
 
 ```typescript
-function resolveSocial(
-  intent: SocialIntent,
-  actor: Actor,
-  target: Actor
-): SocialResult {
+function resolveSocial(intent: SocialIntent, actor: Actor, target: Actor): SocialResult {
   const dc = calculateSocialDC(target, intent.type);
   const roll = d20() + getStatModifier(actor, intent.type) + (intent.modifiers?.standing ?? 0);
 
@@ -656,10 +652,10 @@ function resolveSocial(
 
 ### Social Skills
 
-| Skill | Stat | Use Case |
-| ----- | ---- | -------- |
-| Persuasion | CHA | Negotiating, convincing |
-| Intimidation | STR/CHA | Threatening, coercion |
-| Deception | CHA | Lying, disguise, forgery |
-| Insight | WIS | Reading intentions, detecting lies |
-| Performance | CHA | Acting, music, public speaking |
+| Skill        | Stat    | Use Case                           |
+| ------------ | ------- | ---------------------------------- |
+| Persuasion   | CHA     | Negotiating, convincing            |
+| Intimidation | STR/CHA | Threatening, coercion              |
+| Deception    | CHA     | Lying, disguise, forgery           |
+| Insight      | WIS     | Reading intentions, detecting lies |
+| Performance  | CHA     | Acting, music, public speaking     |

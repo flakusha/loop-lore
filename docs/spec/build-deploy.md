@@ -164,3 +164,7 @@ services:
 volumes:
   pgdata:
 ```
+
+## Platform Support
+
+See [`platform-support.md`](./platform-support.md) for Windows, Android (Termux), and cross-platform compatibility notes.

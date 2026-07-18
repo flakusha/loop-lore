@@ -453,7 +453,7 @@ class SurveillanceSafeModeration {
 
     // Red flags from behavior, not content
     return (
-      metrics.message_rate > 100 && metrics.time_window < 60 || // spam
+      (metrics.message_rate > 100 && metrics.time_window < 60) || // spam
       metrics.same_character_repeats > 50 || // botting
       metrics.suspicious_patterns > threshold // pattern matching on metadata
     );

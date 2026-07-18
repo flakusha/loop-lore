@@ -11,7 +11,7 @@
 - **Mock LLM provider** (`src/test-utils/mock-provider.ts`) injected via
   `registerProvider` — generation paths testable without network.
 - **`loadTestConfig`** applies safe defaults (port 0, `:memory:`,
-  `/tmp/...` uploads, auth off) *before* the safeguard check.
+  `/tmp/...` uploads, auth off) _before_ the safeguard check.
 - **Multi-layer gates in `check`**: `typecheck` + `typecheck:frontend` +
   `typecheck:coverage` (85%) + `lint` + `lint:css` + `lint:html` +
   `format` + `md:lint`.
@@ -21,30 +21,36 @@
 ## Gaps
 
 ### 1. Only SQLite is ever tested
+
 `createTestDb()` hardcodes `bun:sqlite`. The Kysely dialect-swap design
 (`createSqliteDialect` in `src/db/index.ts`, documented "swappable to
 Postgres/MySQL") is **never exercised by tests**. A PG-specific migration
 quirk or query would ship untested.
 
 ### 2. No DB-dialect abstraction for tests
+
 There is no `DialectFactory` registry. To test PG you'd have to fork
 `createTestDb`. Extract `createTestDb(dialectFactory?)`.
 
 ### 3. No API contract tests
+
 The REST API is the integration boundary (see `06`, `07`) but nothing
 asserts response shapes stay stable. No contract suite driven by an OpenAPI
 spec (which doesn't exist yet — `06`).
 
 ### 4. No runtime coverage threshold
+
 `check` enforces **type** coverage (85%) but not **line/branch** coverage.
 `bun test --coverage` exists but isn't gated, so untested branches
 accumulate silently.
 
 ### 5. No test-data factories
+
 Seeding/setup repeats inline object literals; a `factory` module
 (`makeChat()`, `makeMessage()`) would cut e2e boilerplate and drift.
 
 ### 6. No performance/load tests
+
 Generation streaming and large-chat pagination have no throughput guard.
 
 ## Recommendations

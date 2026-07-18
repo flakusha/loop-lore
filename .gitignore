@@ -6,6 +6,8 @@ node_modules/
 
 # Runtime data (stale in-project location — migrated to ../loop-lore-data/)
 data/
+# User runtime data directory (SQLite DB, uploads, etc.)
+loop-lore-data/
 
 # Pre-compressed static assets (generated on server start)
 *.br
@@ -32,14 +34,14 @@ config.*.sh
 # Lock files (generated, can be recreated with bun install)
 bun.lock
 
-# User runtime data directory (SQLite DB, uploads, etc.)
-loop-lore-data/
-
 # TODO Remove once confirmed
 .opencode/
 
 # MCPs
 .playwright-mcp/
+
+# Git worktrees (parallel branch development)
+tree/
 
 # Tooling output (reports, analysis, optimization)
 .jscpd-report/

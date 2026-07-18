@@ -21,32 +21,38 @@ are declared but never invoked by core.**
 ## Gaps (critical)
 
 ### 1. No event bus → `eventHandlers` never fire
+
 `registerEventHandler` populates `registry.eventHandlers`, but **nothing in
 core calls `emit()`**. Plugins subscribe to events (`message.created`,
 `generation.started`, …) that are never published. The extension point is
 dead.
 
 ### 2. No tool executor → `tools` never run
+
 `registerTool` populates `registry.tools`, but there is no
 `ToolRegistry.execute(name, params)` that generation/assistant invoke. Tools
 are declared, never called. (`generate-route.ts` has its own internal tool
 handling, separate from the plugin registry.)
 
 ### 3. UI components never mounted
+
 `UIComponentDefinition` (name/location/props) is registered but no view or
 partial reads the registry to inject a component. There is no slot/endpoint
 for a frontend to discover or render plugin UI.
 
 ### 4. `configSchema` never merged
+
 `manifest.configSchema` is declared but not merged into the global `Config`
 at load. Plugins can't extend configuration.
 
 ### 5. Plugin API routes bypass Elysia
+
 `dispatchPluginRoute` linearly scans all plugin routes per request and runs
-*after* Elysia routes via the catch-all — so plugin routes get **no** Elysia
+_after_ Elysia routes via the catch-all — so plugin routes get **no** Elysia
 auth/validation and pay an O(n) scan on every request.
 
 ### 6. Lifecycle & trust gaps
+
 - No dependency ordering or version-compatibility check between plugins.
 - `sandboxed` flag on `ToolDefinition` is declared but unused — no isolation
   is actually applied.
@@ -57,10 +63,10 @@ auth/validation and pay an O(n) scan on every request.
 ## Recommendations (in priority order)
 
 1. **Add a core `EventBus`** (`src/plugins/events.ts`): typed `emit(event, payload)`
-   + `on(event, handler)`. Define a canonical event catalog
-   (`message.created`, `chat.created`, `generation.started`,
-   `generation.completed`, `user.created`, …). Core services call `emit` at
-   the natural seams. `registerEventHandler` subscribes via the bus.
+   - `on(event, handler)`. Define a canonical event catalog
+     (`message.created`, `chat.created`, `generation.started`,
+     `generation.completed`, `user.created`, …). Core services call `emit` at
+     the natural seams. `registerEventHandler` subscribes via the bus.
 2. **Add a `ToolRegistry` executor** (`src/plugins/tools.ts`):
    `execute(name, params)` resolves from `registry.tools`, honors
    `permissions` + `sandbox` (at minimum a documented trust gate), and returns

@@ -42,6 +42,20 @@ TUI built with `blessed` + `blessed-contrib`. Terminal chat interface with integ
 - Assistant Service: /api/assistant
 - Base URL from env or relative
 
+## Platform Notes
+
+### Windows
+
+- TUI works in Windows Terminal, ConEmu, or WSL2
+- Mouse and resize events are not supported on Windows (blessed limitation)
+- For full TUI experience on Windows, use WSL2 or Windows Terminal
+
+### Android (Termux)
+
+- TUI requires terminal with proper terminfo support
+- No native GUI support
+- External server binaries must be compiled for Android or run via Termux packages
+
 ## Startup
 
 ```bash
