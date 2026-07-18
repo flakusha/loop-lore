@@ -310,6 +310,47 @@ Full spec: `docs/spec/integrations/llm-serving.md`, `docs/spec/integrations/imag
 | Mark-read on chat open           | `src/routes/chats.ts`, `src/frontend/alpine/chat.ts`      |
 | Activity SSE listener            | `src/frontend/alpine/chat-activity.ts`                    |
 
+### 21. Notification Expansion — ⬜ Not Started
+
+| Task                              | Files                                    |
+| --------------------------------- | ---------------------------------------- |
+| Notification noise level presets   | `src/notifications/config.ts`           |
+| Fine-tune per-event thresholds   | `src/routes/settings.ts`                |
+| Model comparison reactions table  | `src/db/migrations/`, `src/db/schema-core.ts` |
+| Comparison API endpoints          | `src/routes/reactions.ts`               |
+| Notification service              | `src/notifications/service.ts`          |
+| SSE endpoint for real-time        | `src/routes/notifications-stream.ts`    |
+
+### 22. RPG Mechanics Core — ⬜ Not Started
+
+| Task                              | Files                                    |
+| --------------------------------- | ---------------------------------------- |
+| Dice engine (parse/roll)         | `src/rpg/dice.ts`                       |
+| Stat system                      | `src/rpg/stats.ts`                      |
+| Combat intent extraction         | `src/rpg/combat.ts`                     |
+| Command parser                   | `src/assistant/command-parser.ts`       |
+| /dice, /stats, /attack commands  | `src/assistant/commands/*.ts`           |
+| World rules for command control  | `src/db/schema-core.ts` (world_rules)     |
+
+### 23. Assistant Commands — ⬜ Not Started
+
+| Task                              | Files                                    |
+| --------------------------------- | ---------------------------------------- |
+| /improve text command            | `src/assistant/commands/improve.ts`     |
+| /image generation command        | `src/assistant/commands/image.ts`       |
+| /quest management commands       | `src/assistant/commands/quest.ts`         |
+| Command autocomplete UI          | `src/components/command-autocomplete.html`|
+| Intent detection                 | `src/assistant/intent-detection.ts`       |
+
+### 24. Filtering & Pagination — ⬜ Not Started
+
+| Task                              | Files                                    |
+| --------------------------------- | ---------------------------------------- |
+| Combined filter support           | `src/routes/views.ts`                    |
+| Filter chips component            | `src/components/filter-chips.html`       |
+| Exact-match priority sorting      | `src/search/sorter.ts`                   |
+| Cursor-based pagination           | `src/db/pagination.ts`                   |
+
 ---
 
 ## Known Issues
