@@ -10,6 +10,11 @@
  */
 import type { TurnStrategyFn, GroupTurnContext } from "./types";
 
+// ─── Strategy Registry ─────────────────────────────────────────
+
+import { TurnStrategy } from "../db/enums";
+import type { TurnStrategy as TurnStrategyType } from "../db/enums";
+
 // ─── Helpers ───────────────────────────────────────────────────
 
 /** Weighted random selection using talkativity scores */
@@ -45,6 +50,14 @@ export const sceneBasedSelect: TurnStrategyFn = (participants, currentActorId, c
 
 /** Initiative: weighted random based on talkativity + initiative score */
 export const initiativeSelect: TurnStrategyFn = (participants) => {
+  const hasInitiative = participants.some((p) => (p as { initiativeScore?: number }).initiativeScore);
+  if (hasInitiative) {
+    const boosted = participants.map((p) => ({
+      actorId: p.actorId,
+      talkativity: p.talkativity + ((p as { initiativeScore?: number }).initiativeScore ?? 0) * 3,
+    }));
+    return weightedRandomSelect(boosted);
+  }
   return weightedRandomSelect(participants);
 };
 
@@ -87,11 +100,6 @@ export const hybridSelect: TurnStrategyFn = (
   }
   return sceneBasedSelect(participants, currentActorId, currentTurn, turnOrder);
 };
-
-// ─── Strategy Registry ─────────────────────────────────────────
-
-import { TurnStrategy } from "../db/enums";
-import type { TurnStrategy as TurnStrategyType } from "../db/enums";
 
 export const STRATEGY_MAP: Record<TurnStrategyType, TurnStrategyFn> = {
   [TurnStrategy.RoundRobin]: roundRobinSelect,

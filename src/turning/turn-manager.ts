@@ -91,12 +91,33 @@ export class TurnManager {
         ? await query.where("actors.agent_type", "in", ["ai", "narrator", "npc"]).execute()
         : await query.where("actors.agent_type", "!=", "none").execute();
 
-    return filtered.map((p) => ({
+    const participants: TurnParticipant[] = filtered.map((p) => ({
       actorId: p.actor_id,
       type: p.actor_type,
       agentType: p.agent_type,
       talkativity: p.talkativity ?? 5,
     }));
+
+    // Inject initiative scores when using initiative strategy
+    if (this.state?.strategy === TurnStrategy.Initiative) {
+      const currentScene = "main"; // TODO: detect actual current scene from story_state
+      const initiatives = await this.db
+        .selectFrom("group_initiatives")
+        .select(["actor_id", "score"])
+        .where("chat_id", "=", this.chatId)
+        .where("scene_id", "=", currentScene)
+        .execute();
+
+      const initiativeMap = new Map(initiatives.map((i) => [i.actor_id, i.score]));
+      for (const p of participants) {
+        const score = initiativeMap.get(p.actorId);
+        if (score != null) {
+          p.initiativeScore = score;
+        }
+      }
+    }
+
+    return participants;
   }
 
   private async refreshTurnOrder(mode: "story" | "group" = "story"): Promise<void> {

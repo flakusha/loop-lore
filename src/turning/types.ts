@@ -15,6 +15,8 @@ export interface TurnParticipant {
   agentType: string;
   /** Per-chat participation weight (1-10, default 5) */
   talkativity: number;
+  /** Initiative score from group_initiatives table (scene-level claim count) */
+  initiativeScore?: number;
 }
 
 // ─── Turn Manager State ───────────────────────────────────────
