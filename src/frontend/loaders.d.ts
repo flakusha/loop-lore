@@ -1,110 +1,128 @@
 /**
  * Global ambient type declarations for the frontend bundles.
  *
- * SCRIPT-MODE .d.ts — these declarations are active project-wide without
- * any import side-effect (unlike `declare global { var … }` in module files
- * such as types.ts, which only take effect when that module is imported).
- * The pages bundle (pages.ts) does *not* import types.ts, so every ambient
- * variable that needs to be available on `globalThis` for both the Alpine
- * (chat) and the vanilla-pages bundles MUST live here.
+ * MODULE-MODE .d.ts — uses `declare global { }` to augment `typeof globalThis`.
+ * This file is imported by both entry points:
+ *   - `src/frontend/alpine/index.ts` (Alpine/chat bundle)
+ *   - `src/frontend/pages.ts` (vanilla pages bundle)
  *
- * Interface-only augmentations (Window, DocumentEventMap) can stay in types.ts
- * because they are only consumed by code that already imports types.ts.
+ * IMPORTANT: This file must be imported (not just included via tsconfig) because
+ * it's a module (has `export {}`). Both entry points import it as `"./loaders"`.
+ *
+ * `eslint --fix` can safely transform `declare var` → `declare let` here because
+ * `declare let` inside `declare global` correctly augments `typeof globalThis`.
+ * This eliminates the script-mode gotcha where `declare let` at file scope
+ * creates block-scoped variables that don't appear on `typeof globalThis`.
  */
 
-/* ── Vendor / framework globals ─────────────────────────────── */
+export {};
 
-declare var htmx: {
-  ajax: (method: string, url: string, opts: { target: string; swap: string }) => void;
-  trigger: (elt: EventTarget | string, eventName: string, detail?: unknown) => boolean;
-  defineExtension: (name: string, extension: { onEvent?: (name: string, evt: CustomEvent) => void }) => void;
-  process: (elt: HTMLElement) => void;
-};
+declare global {
+  /* ── Vendor / framework globals ─────────────────────────────── */
 
-declare var Alpine: {
-  $data: (el: HTMLElement) => Record<string, unknown>;
-  initTree: (el: HTMLElement) => void;
-  store: {
-    <T = Record<string, unknown>>(key: string): T;
-    <T = Record<string, unknown>>(key: string, value: T): void;
+  var htmx: {
+    ajax: (method: string, url: string, opts: { target: string; swap: string }) => void;
+    trigger: (elt: EventTarget | string, eventName: string, detail?: unknown) => boolean;
+    defineExtension: (
+      name: string,
+      extension: { onEvent?: (name: string, evt: CustomEvent) => void },
+    ) => void;
+    process: (elt: HTMLElement) => void;
   };
-};
 
-declare var apiFetch: (url: string, options?: RequestInit) => Promise<Response>;
+  var Alpine: {
+    $data: (el: HTMLElement) => Record<string, unknown>;
+    initTree: (el: HTMLElement) => void;
+    store: {
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-parameters -- Alpine.store generic is for caller convenience
+      <T = Record<string, unknown>>(key: string): T;
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-parameters -- Alpine.store generic is for caller convenience
+      <T = Record<string, unknown>>(key: string, value: T): void;
+    };
+  };
 
-/* ── UI helpers (src/frontend/ui.ts) ────────────────────────── */
+  var apiFetch: (url: string, options?: RequestInit) => Promise<Response>;
 
-declare var toggleSidebar: () => void;
-declare var closeSidebar: () => void;
-declare var showToast: (type: string, message: string) => void;
-declare var applyTheme: (themeId: string) => void;
-declare var setLocale: (localeId: string) => void;
-declare var openModal: (id: string) => void;
-declare var closeModal: (el: Element) => void;
-declare var closeModalOnBackdrop: (event: Event) => void;
+  /* ── UI helpers (src/frontend/ui.ts) ────────────────────────── */
 
-/* ── Page-loader functions (attached to globalThis for onclick / x-data) ── */
+  var toggleSidebar: () => void;
+  var closeSidebar: () => void;
+  var showToast: (type: string, message: string) => void;
+  var applyTheme: (themeId: string) => void;
+  var setLocale: (localeId: string) => void;
+  var openModal: (id: string) => void;
+  var closeModal: (el: Element) => void;
+  var closeModalOnBackdrop: (event: Event) => void;
 
-declare var adminPage: any;
-declare var filterCharacters: () => void;
-declare var selectCharacterCard: (id: string) => Promise<void>;
-declare var startChatFromChar: (btn: HTMLElement) => Promise<void>;
-declare var editCharacter: (btn: HTMLElement) => void;
-declare var deleteCharacter: (btn: HTMLElement) => Promise<void>;
-declare var filterAssets: () => void;
-declare var openAssetPreview: (id: string) => Promise<void>;
-declare var copyAssetUrl: () => Promise<void>;
-declare var downloadAsset: () => void;
-declare var deleteAssetPreview: () => Promise<void>;
-declare var loadNewChatPage: () => Promise<void>;
-declare var removeParticipant: (id: string) => void;
-declare var selectActorFromList: (id: string) => void;
-declare var filterWorlds: () => void;
-declare var createWorld: (event: Event) => Promise<void>;
+  /* ── Page-loader functions (attached to globalThis for onclick / x-data) ── */
 
-declare var worldDetail: any;
-declare var questsPage: any;
-declare var filterBar: any;
-declare var personasPage: any;
-declare var settingsModal: any;
-declare var settingsPage: any;
+  var adminPage: any;
+  var filterCharacters: () => void;
+  var selectCharacterCard: (id: string) => Promise<void>;
+  var startChatFromChar: (btn: HTMLElement) => Promise<void>;
+  var editCharacter: (btn: HTMLElement) => void;
+  var deleteCharacter: (btn: HTMLElement) => Promise<void>;
+  var filterAssets: () => void;
+  var openAssetPreview: (id: string) => Promise<void>;
+  var copyAssetUrl: () => Promise<void>;
+  var downloadAsset: () => void;
+  var deleteAssetPreview: () => Promise<void>;
+  var loadNewChatPage: () => Promise<void>;
+  var removeParticipant: (id: string) => void;
+  var selectActorFromList: (id: string) => void;
+  var filterWorlds: () => void;
+  var createWorld: (event: Event) => Promise<void>;
 
-/* ── Loose / vendor-injected globals ────────────────────────── */
+  var worldDetail: any;
+  var questsPage: any;
+  var filterBar: any;
+  var personasPage: any;
+  var settingsModal: any;
+  var settingsPage: any;
 
-declare var currentLocale: string;
-declare var __marked: any;
-declare var __DOMPurify: any;
-declare var __previewAsset: PreviewAsset | null;
-declare var __appInitCount: number;
-declare var __TELEMETRY_FRONTEND_ENABLED: boolean | string | number;
-declare var __: (key: string, fallback?: string) => string;
-declare var __localeStrings: Record<string, string>;
-declare var __THEMES: Array<{ id: string; name: string; file: string }>;
-declare var __chatKey: CryptoKey | null;
-declare var __chatKeyId: string | null;
+  /* ── Loose / vendor-injected globals ────────────────────────── */
 
-/* ── Supporting interfaces ──────────────────────────────────── */
+  var currentLocale: string;
+  var __marked: any;
+  var __DOMPurify: any;
+  var __previewAsset: PreviewAsset | null;
+  var __appInitCount: number;
+  var __TELEMETRY_FRONTEND_ENABLED: boolean | string | number;
+  var __TELEMETRY_FLUSH_INTERVAL: number | undefined;
+  var __USER_ID: string | undefined;
+  var __SESSION_ID: string | undefined;
+  var __: (key: string, fallback?: string) => string;
+  var __localeStrings: Record<string, string>;
+  var __THEMES: { id: string; name: string; file: string }[];
+  var __chatKey: CryptoKey | null;
+  var __chatKeyId: string | null;
 
-interface WorldDetailInit {
-  worldId: string;
-  locations: Array<{
+  /* ── Supporting interfaces ──────────────────────────────────── */
+
+  interface WorldDetailInit {
+    worldId: string;
+    locations: {
+      id: string;
+      name: string;
+      description: string | null;
+      world_id: string;
+    }[];
+  }
+
+  interface PreviewAsset {
     id: string;
-    name: string;
-    description: string | null;
-    world_id: string;
-  }>;
-}
-
-interface PreviewAsset {
-  id: string;
-  filename?: string;
-  mime_type?: string;
-  size_bytes?: number;
-  asset_type?: string;
-  avatar_asset_id?: string;
+    filename?: string;
+    mime_type?: string;
+    size_bytes?: number;
+    asset_type?: string;
+    avatar_asset_id?: string;
+  }
 }
 
 /* ── Vendor module ambient shims ────────────────────────────── */
+/* Note: these are script-mode ambient declarations (not inside declare global) */
+/* They work at file scope in module-mode .d.ts files */
+
 declare module "alpinejs" {
   const Alpine: any;
   export default Alpine;

@@ -49,6 +49,25 @@
       <button class="btn-impersonation-cancel" @click="toggleImpersonate()">Stop</button>
     </div>
     <div class="input-row" style="position: relative">
+      <!-- Slash command palette -->
+      <div
+        class="command-palette"
+        x-show="_showCommandPalette"
+        x-transition
+        x-cloak
+        data-testid="command-palette"
+      >
+        <template x-for="cmd in _filteredCommands" :key="cmd.name">
+          <button
+            class="command-item"
+            @click="selectCommand(cmd.name)"
+            :class="{ 'command-active': cmd.name === _activeCommand }"
+          >
+            <span class="command-name" x-text="'/' + cmd.name"></span>
+            <span class="command-desc" x-text="cmd.description"></span>
+          </button>
+        </template>
+      </div>
       <label class="btn btn-ghost" style="cursor: pointer; font-size: 12px; padding: var(--space-2)">
         📎
         <input
@@ -114,12 +133,16 @@
         rows="1"
         @keydown.enter.shift=""
         @keydown.enter.prevent="sendMessage()"
-        @input="autoResize($el); handleMentionInput($event)"
+        @input="autoResize($el); handleMentionInput($event); handleCommandInput($event)"
         @keydown.escape="hideMentionAutocomplete()"
         required
         :disabled="!activeChat"
         data-testid="message-input"
       ></textarea>
+      <!-- Character counter -->
+      <div class="character-counter" x-show="activeChat && $refs.messageInput?.value?.length > 0">
+        <span x-text="($refs.messageInput?.value?.length || 0)"></span>
+      </div>
       <button
         type="submit"
         class="btn btn-primary"

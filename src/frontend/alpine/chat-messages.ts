@@ -28,6 +28,7 @@ export const chatMessages: Partial<ChatState> & ThisType<ChatState> = {
       this.setupInfiniteScroll();
       this.setupScrollDetection();
     });
+    await this.loadAllReactions();
   },
 
   async loadOlderMessages() {
@@ -162,7 +163,7 @@ export const chatMessages: Partial<ChatState> & ThisType<ChatState> = {
       if (res.ok) {
         this.pendingAssets = [];
         // Connect SSE for streaming generation updates
-        this.connectGenerationSSE(this.activeChat!);
+        this.connectGenerationSSE(this.activeChat);
         await this.loadMessages();
         await this.loadChats();
       } else {
@@ -176,5 +177,40 @@ export const chatMessages: Partial<ChatState> & ThisType<ChatState> = {
       this.$dispatch?.("show-toast", { type: "error", message: "Network error" });
       this.messages = msgs.filter((m) => !m.id.startsWith("temp-"));
     }
+  },
+
+  async toggleReaction(msgId: string, emoji: string) {
+    if (!this.activeChat) return;
+    try {
+      const res = await apiFetch(`/api/messages/${msgId}/reactions`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ emoji }),
+      });
+      if (res.ok) {
+        await this.loadMessageReactions(msgId);
+      }
+    } catch {
+      // non-critical
+    }
+  },
+
+  async loadMessageReactions(msgId: string) {
+    try {
+      const res = await apiFetch(`/api/messages/${msgId}/reactions`);
+      if (res.ok) {
+        const reactions = await res.json();
+        const msg = this.messages.find((m) => m.id === msgId);
+        if (msg) (msg as any).reactions = reactions;
+      }
+    } catch {
+      // ignore
+    }
+  },
+
+  async loadAllReactions() {
+    if (!this.activeChat || this.messages.length === 0) return;
+    const ids = this.messages.map((m) => m.id);
+    await Promise.allSettled(ids.map((id) => this.loadMessageReactions(id)));
   },
 };
