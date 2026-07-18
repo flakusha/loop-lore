@@ -8,7 +8,7 @@
 - **`src/schemas/` does NOT exist.** `docs/spec/implementation.md` and
   `docs/spec/api-routes.md` describe a **Zod** layer in `src/schemas/` with
   per-route companion `.schema.ts` files and `z.infer<>` types — this is
-  **not implemented**. The Zod + OpenAPI migration lives only as a *plan* in
+  **not implemented**. The Zod + OpenAPI migration lives only as a _plan_ in
   `docs/meta/integration-testing-tools.md`.
 - **No OpenAPI document is produced.** There is no `/openapi.json` and no
   Swagger UI. The plan notes `@elysiajs/swagger` would require "a complete
