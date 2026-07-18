@@ -153,6 +153,19 @@ export interface ChatMentions {
   created_at: Generated<string>;
 }
 
+// ── Notifications ──────────────────────────────────────────
+export interface Notifications {
+  id: Generated<string>;
+  user_id: string;
+  type: string;
+  title: string;
+  body: string | null;
+  link: string | null;
+  read: Generated<number>;
+  data: string | null;
+  created_at: Generated<string>;
+}
+
 // ── Characters ────────────────────────────────────────────────
 export interface Characters {
   id: Generated<string>;
