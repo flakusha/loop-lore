@@ -29,6 +29,9 @@ echo "=== loop-lore pre-commit checks ==="
 step "Format: auto-fix" bun run format:fix
 step "Quality: typecheck + lint + format verify + md lint" bun run check
 step "Unit tests" bun test src/
+echo ""
+echo "--- Size guard (warn only, non-blocking) ---"
+bun run size:check || true
 step "E2E tests (safeguarded)" env E2E_SAFEGUARD=1 bun test tests/e2e/
 
 echo ""
