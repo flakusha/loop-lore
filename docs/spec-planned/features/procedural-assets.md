@@ -11,6 +11,7 @@ Extend existing creation pipeline to auto-generate maps, portraits, music, and S
 Current pipeline: Description → Stats → Effects → Image → Placement
 
 Add new stages:
+
 - `audio` - Generate music/SFX
 - `map` - Generate location maps
 - `portrait` - Generate character portraits
@@ -24,9 +25,7 @@ export interface AudioPipeline {
   duration: number; // seconds
 }
 
-export async function generateAudioAsset(
-  input: AudioPipeline
-): Promise<{ assetId: string; url: string }> {
+export async function generateAudioAsset(input: AudioPipeline): Promise<{ assetId: string; url: string }> {
   const prompt = `
 Generate ${input.style} music for: ${input.description}
 Duration: ${input.duration} seconds
@@ -56,9 +55,7 @@ export interface MapPipeline {
   connections: string[]; // Connected location names
 }
 
-export async function generateMapAsset(
-  input: MapPipeline
-): Promise<{ assetId: string; url: string }> {
+export async function generateMapAsset(input: MapPipeline): Promise<{ assetId: string; url: string }> {
   const prompt = `
 Dungeon/minimap style map for: ${input.locationName}
 Description: ${input.description}

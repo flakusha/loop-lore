@@ -25,16 +25,16 @@ Features popular in competing projects but **absent** from loop-lore docs:
 
 ## Themes
 
-| Theme | Doc | Ideas |
-|-------|-----|-------|
-| Immersion & Presentation | [immersion-presentation.md](./immersion-presentation.md) | 1–5 |
-| Prompt & Output Control | [prompt-output-control.md](./prompt-output-control.md) | 6–9 |
-| Memory, Continuity & Living World | [memory-continuity.md](./memory-continuity.md) | 10–14 |
-| Authoring & Creation | [authoring-creation.md](./authoring-creation.md) | 15–18 |
-| Social & Multiplayer | [social-multiplayer.md](./social-multiplayer.md) | 19–22 |
-| Platform & Reach | [platform-reach.md](./platform-reach.md) | 23–26 |
-| Analytics & Meta | [analytics-meta.md](./analytics-meta.md) | 27–30 |
-| 3D Worlds & Navigation | [worlds-3d-navigation.md](./worlds-3d-navigation.md) | 31–34 |
+| Theme                             | Doc                                                      | Ideas |
+| --------------------------------- | -------------------------------------------------------- | ----- |
+| Immersion & Presentation          | [immersion-presentation.md](./immersion-presentation.md) | 1–5   |
+| Prompt & Output Control           | [prompt-output-control.md](./prompt-output-control.md)   | 6–9   |
+| Memory, Continuity & Living World | [memory-continuity.md](./memory-continuity.md)           | 10–14 |
+| Authoring & Creation              | [authoring-creation.md](./authoring-creation.md)         | 15–18 |
+| Social & Multiplayer              | [social-multiplayer.md](./social-multiplayer.md)         | 19–22 |
+| Platform & Reach                  | [platform-reach.md](./platform-reach.md)                 | 23–26 |
+| Analytics & Meta                  | [analytics-meta.md](./analytics-meta.md)                 | 27–30 |
+| 3D Worlds & Navigation            | [worlds-3d-navigation.md](./worlds-3d-navigation.md)     | 31–34 |
 
 ## Top recommendations (high impact, builds on existing specs)
 

@@ -17,7 +17,7 @@ export interface MultimodalInput {
 
 export async function processMultimodal(
   input: MultimodalInput,
-  context: { chatId: string; actorId: string; worldId: string }
+  context: { chatId: string; actorId: string; worldId: string },
 ): Promise<string> {
   switch (input.type) {
     case "image":
@@ -31,7 +31,7 @@ export async function processMultimodal(
 
 async function processImage(
   buffer: ArrayBuffer,
-  context: { chatId: string; actorId: string; worldId: string }
+  context: { chatId: string; actorId: string; worldId: string },
 ): Promise<string> {
   // Get vision model
   const visionModel = getProviderForTask("vision");
@@ -42,17 +42,19 @@ async function processImage(
   // Call vision model
   const response = await fetch(visionModel.endpoint, {
     method: "POST",
-    headers: { "Authorization": `Bearer ${visionModel.apiKey}` },
+    headers: { Authorization: `Bearer ${visionModel.apiKey}` },
     body: JSON.stringify({
       model: visionModel.model,
-      messages: [{
-        role: "user",
-        content: [
-          { type: "text", text: "Describe this image for an RPG character to react to." },
-          { type: "image_url", image_url: { url: `data:image/jpeg;base64,${base64}` } }
-        ]
-      }]
-    })
+      messages: [
+        {
+          role: "user",
+          content: [
+            { type: "text", text: "Describe this image for an RPG character to react to." },
+            { type: "image_url", image_url: { url: `data:image/jpeg;base64,${base64}` } },
+          ],
+        },
+      ],
+    }),
   });
 
   const data = await response.json();
@@ -61,7 +63,7 @@ async function processImage(
 
 async function processVoice(
   buffer: ArrayBuffer,
-  context: { chatId: string; actorId: string; worldId: string }
+  context: { chatId: string; actorId: string; worldId: string },
 ): Promise<string> {
   // Get STT model
   const sttModel = getProviderForTask("stt");
@@ -103,7 +105,7 @@ export function useMultimodalInput() {
         const buffer = await file.arrayBuffer();
         const description = await processMultimodal(
           { type: "image", content: buffer, mimeType: file.type },
-          { chatId: this.chatId, actorId: this.actorId, worldId: this.worldId }
+          { chatId: this.chatId, actorId: this.actorId, worldId: this.worldId },
         );
 
         this.$dispatch("send-message", { content: description });
@@ -130,7 +132,7 @@ export function useMultimodalInput() {
 
         const text = await processMultimodal(
           { type: "voice", content: buffer, mimeType: "audio/webm" },
-          { chatId: this.chatId, actorId: this.actorId, worldId: this.worldId }
+          { chatId: this.chatId, actorId: this.actorId, worldId: this.worldId },
         );
 
         this.$dispatch("send-message", { content: text });

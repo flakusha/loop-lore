@@ -33,7 +33,7 @@ Browser-based 3D for worlds, characters, and navigation. Added per research revi
 - **What**: Generate 3D assets (meshes, scenes, props) from text/prompts via inference
   providers; ingest into the asset system.
 - **Fits**: `docs/spec/assets.md` polymorphic linking + `docs/spec/integrations/
-  image-generation.md` pattern (extend to 3D).
+image-generation.md` pattern (extend to 3D).
 - **Effort**: High
 - **Depends on**: 3D-gen provider, asset pipeline
 

@@ -63,12 +63,12 @@ cost)**.
 
 ## What to explicitly NOT build (borrow instead)
 
-| Don't build | Borrow |
-| ----------- | ------ |
-| Custom RAG framework | Enterprise RAG / GraphRAG adapters |
+| Don't build            | Borrow                                                |
+| ---------------------- | ----------------------------------------------------- |
+| Custom RAG framework   | Enterprise RAG / GraphRAG adapters                    |
 | Custom agent framework | Orchestration via existing `turning/` + `group-chat/` |
-| Custom auth provider | SSO bridge on `auth-middleware` |
-| Custom observability | Extend `logger/` + #27/#28 |
+| Custom auth provider   | SSO bridge on `auth-middleware`                       |
+| Custom observability   | Extend `logger/` + #27/#28                            |
 
 ## Success metrics (proposed)
 
@@ -77,5 +77,5 @@ cost)**.
 - Grounding accuracy (% claims supported by retrieved context, via #10)
 - Time-to-first-agent: from install to a working research/KB agent
 
-*Reintegrate as: input to `docs/meta/roadmap.md` (new "Agentic / Business" track)
-and `docs/meta/backlog.md`.*
+_Reintegrate as: input to `docs/meta/roadmap.md` (new "Agentic / Business" track)
+and `docs/meta/backlog.md`._

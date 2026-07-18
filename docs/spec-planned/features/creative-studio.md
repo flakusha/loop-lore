@@ -7,11 +7,12 @@ Extended assistant capabilities for content creation, document analysis, and RPG
 ## /improve Command
 
 ### Implementation
+
 ```typescript
 // src/assistant/commands/improve.ts
 export async function improveText(
   text: string,
-  context: { chatId: string; actorId: string; worldId: string }
+  context: { chatId: string; actorId: string; worldId: string },
 ): Promise<{ original: string; improved: string; suggestions: string[] }> {
   const prompt = `
 Improve the following text for clarity, grammar, and style:
@@ -35,6 +36,7 @@ Return JSON:
 ```
 
 ### Edge Cases
+
 - Empty text → "Nothing to improve"
 - Text > 10KB → truncate with warning
 - LLM returns invalid JSON → fallback to text
@@ -43,15 +45,14 @@ Return JSON:
 ## /image Command
 
 ### Implementation
+
 ```typescript
 // src/assistant/commands/image.ts
 export async function generateImage(
   prompt: string,
-  options: { style?: string; width?: number; height?: number }
+  options: { style?: string; width?: number; height?: number },
 ): Promise<{ assetId: string; url: string }> {
-  const fullPrompt = options.style
-    ? `${prompt}, style: ${options.style}`
-    : prompt;
+  const fullPrompt = options.style ? `${prompt}, style: ${options.style}` : prompt;
 
   const result = await imageProvider.generate({
     prompt: fullPrompt,
@@ -72,6 +73,7 @@ export async function generateImage(
 ```
 
 ### Edge Cases
+
 - NSFW prompt → profanity filter check
 - Image generation fails → toast error
 - Cost exceeds user balance → reject
@@ -80,11 +82,12 @@ export async function generateImage(
 ## Document Analysis (RAG-style)
 
 ### Implementation
+
 ```typescript
 // src/assistant/commands/analyze.ts
 export async function analyzeDocument(
   assetId: string,
-  query: string
+  query: string,
 ): Promise<{ summary: string; relevantSections: string[] }> {
   // Load document content
   const content = await extractTextFromAsset(assetId);
@@ -107,6 +110,7 @@ Summarize and answer.
 ```
 
 ### Edge Cases
+
 - PDF extraction fails → error with file type
 - Document > 100 pages → summarize first
 - No relevant sections found → "Document doesn't contain relevant info"
@@ -115,11 +119,12 @@ Summarize and answer.
 ## RPG Item Generation
 
 ### Implementation
+
 ```typescript
 // src/assistant/commands/generate-item.ts
 export async function generateItem(
   type: string,
-  context: { worldId: string; actorId: string }
+  context: { worldId: string; actorId: string },
 ): Promise<Item> {
   const worldRules = await getWorldRules(context.worldId);
 
@@ -150,6 +155,7 @@ Return JSON:
 ```
 
 ### Edge Cases
+
 - LLM ignores world rules → validate and retry
 - Item too powerful → cap at world max
 - Duplicate name → append suffix
@@ -158,6 +164,7 @@ Return JSON:
 ## Command Autocomplete
 
 ### Implementation
+
 ```typescript
 // src/frontend/components/command-autocomplete.html
 <div x-data="commandAutocomplete()" class="command-dropdown">
@@ -171,6 +178,7 @@ Return JSON:
 ```
 
 ### Edge Cases
+
 - No matching commands → hide dropdown
 - Too many matches (>20) → show first 20
 - Special characters in command → escape

@@ -19,7 +19,7 @@ export interface LoreViolation {
 export async function checkLoreConsistency(
   content: string,
   worldId: string,
-  context: { actorIds: string[]; locationId?: string }
+  context: { actorIds: string[]; locationId?: string },
 ): Promise<LoreViolation[]> {
   const violations: LoreViolation[] = [];
 
@@ -45,8 +45,8 @@ You are a lore consistency checker. Analyze the following text for violations:
 TEXT: ${content}
 
 KNOWN FACTS:
-${lore.map(l => `- ${l.key}: ${l.content}`).join("\n")}
-${characterFacts.map(f => `- ${f.key}: ${f.content}`).join("\n")}
+${lore.map((l) => `- ${l.key}: ${l.content}`).join("\n")}
+${characterFacts.map((f) => `- ${f.key}: ${f.content}`).join("\n")}
 
 Return JSON array of violations:
 []
@@ -71,13 +71,11 @@ or
 const result = await llmGenerate(params);
 
 if (chat.mode === "story" || world.has_lore_checker) {
-  const violations = await checkLoreConsistency(
-    result.content,
-    chat.world_id,
-    { actorIds: participants.map(p => p.actor_id) }
-  );
+  const violations = await checkLoreConsistency(result.content, chat.world_id, {
+    actorIds: participants.map((p) => p.actor_id),
+  });
 
-  if (violations.some(v => v.severity === "error")) {
+  if (violations.some((v) => v.severity === "error")) {
     // Trigger regeneration or GM escalation
     return regenerateWithCorrection(violations);
   }
@@ -113,6 +111,7 @@ if (chat.mode === "story" || world.has_lore_checker) {
 ## Configuration
 
 Per-world setting:
+
 ```json
 {
   "lore_checker": {
@@ -126,6 +125,7 @@ Per-world setting:
 ## Model Comparison Integration
 
 Violations can be compared:
+
 - Which model produces fewer lore violations?
 - Which model corrects more accurately?
 - Store in `model_comparisons` with `lore_accuracy` metric

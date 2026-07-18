@@ -16,10 +16,7 @@ export interface TranslationContext {
   translateOutput: boolean;
 }
 
-export async function translationMiddleware(
-  req: Request,
-  next: () => Promise<Response>
-): Promise<Response> {
+export async function translationMiddleware(req: Request, next: () => Promise<Response>): Promise<Response> {
   const user = await authenticate(req);
   const userLang = user.settings?.language || "en";
   const modelLang = getModelLanguage(req); // From model config
@@ -36,11 +33,7 @@ export async function translationMiddleware(
   if (originalBody.messages) {
     for (const msg of originalBody.messages) {
       if (msg.role === "user") {
-        msg.content = await translate(
-          msg.content,
-          userLang,
-          modelLang
-        );
+        msg.content = await translate(msg.content, userLang, modelLang);
       }
     }
   }
@@ -61,11 +54,7 @@ export async function translationMiddleware(
   const data = await response.json();
 
   if (data.choices?.[0]?.message?.content) {
-    data.choices[0].message.content = await translate(
-      data.choices[0].message.content,
-      modelLang,
-      userLang
-    );
+    data.choices[0].message.content = await translate(data.choices[0].message.content, modelLang, userLang);
   }
 
   return new Response(JSON.stringify(data), response);
@@ -75,11 +64,7 @@ export async function translationMiddleware(
 ### File: src/i18n/translator.ts
 
 ```typescript
-export async function translate(
-  text: string,
-  from: string,
-  to: string
-): Promise<string> {
+export async function translate(text: string, from: string, to: string): Promise<string> {
   // Try configured provider first
   if (config.translation_provider) {
     return translateWithProvider(text, from, to);
@@ -99,14 +84,10 @@ Translate from ${from} to ${to}. Return only the translated text.
   });
 }
 
-export async function translateWithProvider(
-  text: string,
-  from: string,
-  to: string
-): Promise<string> {
+export async function translateWithProvider(text: string, from: string, to: string): Promise<string> {
   const response = await fetch(config.translation_endpoint, {
     method: "POST",
-    headers: { "Authorization": `Bearer ${config.translation_api_key}` },
+    headers: { Authorization: `Bearer ${config.translation_api_key}` },
     body: JSON.stringify({
       q: text,
       source: from,
@@ -124,7 +105,7 @@ export async function translateWithProvider(
 
 ```typescript
 // src/frontend/alpine/translation-indicator.ts
-export default function() {
+export default function () {
   return {
     translated: false,
     originalText: "",
