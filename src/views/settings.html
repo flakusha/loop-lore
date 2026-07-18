@@ -40,6 +40,13 @@
         <button class="world-edit-tab" :class="{ active: activeTab === 'api' }" @click="activeTab = 'api'">
           API
         </button>
+        <button
+          class="world-edit-tab"
+          :class="{ active: activeTab === 'notifications' }"
+          @click="activeTab = 'notifications'"
+        >
+          Notifications
+        </button>
         <button class="world-edit-tab" :class="{ active: activeTab === 'data' }" @click="activeTab = 'data'">
           Data
         </button>
@@ -226,6 +233,33 @@
               Test Connection
             </button>
           </div>
+        </div>
+      </div>
+
+      <!-- Notifications Tab -->
+      <div
+        x-show="activeTab === 'notifications'"
+        class="settings-tab-content"
+        data-testid="settings-notifications"
+      >
+        <div class="settings-section" x-data="notificationPrefs()" x-init="init()">
+          <h3>Notification Preferences</h3>
+          <p class="muted">Choose which events notify you.</p>
+          <template x-for="t in types" :key="t.key">
+            <label class="pref-row">
+              <input type="checkbox" :checked="enabled[t.key]" @change="toggleType(t.key)" />
+              <span x-text="t.label"></span>
+            </label>
+          </template>
+          <h3>Muted Worlds</h3>
+          <p class="muted">World IDs to silence (comma-separated).</p>
+          <input
+            type="text"
+            class="text-input"
+            :value="mutedWorlds.join(', ')"
+            @change="mutedWorlds = $event.target.value.split(',').map(s => s.trim()).filter(Boolean); save()"
+          />
+          <p class="muted" x-show="saving">Saving…</p>
         </div>
       </div>
 

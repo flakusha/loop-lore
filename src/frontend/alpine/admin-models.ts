@@ -23,7 +23,7 @@ interface ProviderInfo {
 }
 
 interface ModelRolesResponse {
-  roles: Array<{ role: string; provider: string; model: string; source: string }>;
+  roles: { role: string; provider: string; model: string; source: string }[];
   overrides: Record<string, { provider: string; model: string }>;
   validRoles: string[];
 }
@@ -41,7 +41,7 @@ interface PluginInfo {
 export const adminModels = {
   providers: [] as ProviderInfo[],
   providerModels: {} as Record<string, string[]>,
-  modelRoleList: [] as Array<{ role: string; provider: string; model: string }>,
+  modelRoleList: [] as { role: string; provider: string; model: string }[],
   overrides: {} as Record<string, { provider: string; model: string }>,
   loadingModels: false,
   scanning: false,
@@ -113,7 +113,7 @@ export const adminModels = {
   },
   async saveModelRole(role: string) {
     const entry = this.modelRoleList.find((e) => e.role === role);
-    if (!entry || !entry.provider || !entry.model) return;
+    if (!entry?.provider || !entry.model) return;
     const { provider, model } = entry;
     try {
       const res = await apiFetch(`/api/admin/model-roles/${role}`, {
@@ -159,7 +159,7 @@ export const adminModels = {
           if (idx === -1) {
             merged.push(p);
           } else {
-            const existing = merged[idx]!;
+            const existing = merged[idx];
             merged[idx] = {
               ...existing,
               name: existing.name,

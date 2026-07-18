@@ -17,8 +17,9 @@ Alpine.plugin(morph);
 
 // htmx extensions reference `htmx` as a free variable.
 // Bun's require() inlines them in the same module scope where `htmx` is defined.
+// eslint-disable-next-line @typescript-eslint/no-require-imports -- CJS required for htmx extension side effects
 require("htmx.org/dist/ext/alpine-morph.js");
-require("htmx.org/dist/ext/response-targets.js");
+// eslint-disable-next-line @typescript-eslint/no-require-imports
 require("htmx-ext-sse/sse.js");
 
 // Initialize Alpine stores immediately (before Alpine starts auto-initialization)
@@ -28,6 +29,7 @@ Alpine.store("ui", {
   showChatList: false,
   showGallery: false,
   showCharacterInfo: false,
+  showMemoryPanel: false,
   showUploadModal: false,
   showImportForm: false,
   showCreateForm: false,

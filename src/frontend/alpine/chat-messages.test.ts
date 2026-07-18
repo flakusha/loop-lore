@@ -46,6 +46,7 @@ describe("chatMessages", () => {
 
   describe("scrollToBottom", () => {
     test("handles missing element gracefully", () => {
+      // eslint-disable-next-line @typescript-eslint/no-deprecated -- intentional mock for testing
       document.querySelector = () => null;
       expect(() => chatMessages.scrollToBottom!()).not.toThrow();
     });
@@ -53,6 +54,7 @@ describe("chatMessages", () => {
 
   describe("setupInfiniteScroll", () => {
     test("does nothing when sentinel not found", () => {
+      // eslint-disable-next-line @typescript-eslint/no-deprecated -- intentional mock for testing
       document.querySelector = () => null;
       expect(() =>
         chatMessages.setupInfiniteScroll!.call({ scrollObserver: null, loadOlderMessages: () => {} }),
