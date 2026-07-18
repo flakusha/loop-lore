@@ -7,6 +7,7 @@
 import type { Kysely } from "kysely";
 import type { DB } from "../../db/schema";
 import { WorldEventType } from "../../db/enums";
+import { assertNever } from "../../utils";
 import type { WorldEvent } from "../types";
 
 // ── Result Type ──────────────────────────────────────────────
@@ -56,9 +57,8 @@ function validateSingleEvent(
       }
       return { valid: false, reason: `Invalid location modification target: ${locId}` };
     }
-    default: {
-      return { valid: true };
-    }
+    default:
+      return assertNever(event.type);
   }
 }
 
