@@ -1,0 +1,50 @@
+/* ============================================================
+   loop-lore — Theme Base Tokens
+   
+   Shared design tokens across all themes.
+   Each theme file imports this and overrides only color values.
+   
+   Generated from theme analysis — do not edit manually.
+   To add a shared token: add here, remove from all theme files.
+   ============================================================ */
+
+:root {
+  /* ── Typography ─────────────────────────────────────────── */
+  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-mono: "JetBrains Mono", "Fira Code", ui-monospace, monospace;
+
+  /* ── Font Sizes ─────────────────────────────────────────── */
+  --fs-xs: 11px;
+  --fs-sm: 12px;
+  --fs-base-sm: 13px;
+  --fs-base: 14px;
+  --fs-body: 15px;
+  --fs-md: 16px;
+  --fs-lg: 18px;
+  --fs-xl: 20px;
+  --fs-2xl: 24px;
+  --fs-3xl: 32px;
+  --fs-display: 48px;
+
+  /* ── Spacing ────────────────────────────────────────────── */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+
+  /* ── Transitions ────────────────────────────────────────── */
+  --transition-fast: 150ms ease;
+  --transition-normal: 250ms ease;
+  --transition-slow: 400ms ease;
+
+  /* ── Z-Index Scale ──────────────────────────────────────── */
+  --z-base: 1;
+  --z-dropdown: 100;
+  --z-modal: 200;
+  --z-toast: 300;
+}
