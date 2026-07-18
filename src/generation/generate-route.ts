@@ -34,7 +34,7 @@ import { ContextCompactor } from "./context-compactor";
 import type { Config } from "../config/schema";
 import { loadConfig } from "../config/load";
 import { jsonResponse, jsonError } from "../routes/http-utils";
-import { safeJsonStringify } from "../utils";
+import { safeJsonStringify, jsonParseOr } from "../utils";
 import { registry } from "../plugins/registry";
 import type { ToolDefinition } from "../plugins/types";
 
@@ -184,12 +184,7 @@ async function executeToolCalls(toolCalls: ToolCallItem[]): Promise<GenerationMe
       continue;
     }
 
-    let params: Record<string, unknown>;
-    try {
-      params = JSON.parse(tc.function.arguments);
-    } catch {
-      params = {};
-    }
+    let params: Record<string, unknown> = jsonParseOr(tc.function.arguments, {});
 
     try {
       const toolResult = await def.handler(params);

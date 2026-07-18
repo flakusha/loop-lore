@@ -33,12 +33,7 @@ import type { ChunkEvent } from "./providers/types";
 import { getLogger } from "../logger";
 import { selectNextGroupActor } from "../group-chat/turn-selector";
 import { marked } from "marked";
-import {
-  getSmk,
-  isEncryptionEnabled,
-  deriveChatKeyForChat,
-  compressThenEncrypt,
-} from "../crypto";
+import { getSmk, isEncryptionEnabled, deriveChatKeyForChat, compressThenEncrypt } from "../crypto";
 
 export function isLlmGenerationConfigured(config: Config): boolean {
   return (
@@ -190,7 +185,9 @@ export async function triggerAutoGeneration(opts: AutoGenOpts): Promise<void> {
             accumulatedContent += chunk.content;
             buffer?.append(
               "stream-update",
-              renderStreamMessage(actorName, accumulatedContent, tracking?.attemptId ?? "", { thinking: accumulatedThinking }),
+              renderStreamMessage(actorName, accumulatedContent, tracking?.attemptId ?? "", {
+                thinking: accumulatedThinking,
+              }),
             );
           } else if (chunk.type === "thinking" && chunk.content) {
             accumulatedThinking = (accumulatedThinking ?? "") + chunk.content;
@@ -221,7 +218,9 @@ export async function triggerAutoGeneration(opts: AutoGenOpts): Promise<void> {
       finishReason = response.finishReason;
       buffer?.append(
         "stream-update",
-        renderStreamMessage(actorName, accumulatedContent, tracking?.attemptId ?? "", { thinking: accumulatedThinking }),
+        renderStreamMessage(actorName, accumulatedContent, tracking?.attemptId ?? "", {
+          thinking: accumulatedThinking,
+        }),
       );
     }
 

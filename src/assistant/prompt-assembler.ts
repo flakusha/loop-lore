@@ -96,20 +96,17 @@ export class PromptAssembler {
     // sit at the front, so a tail splice would wrongly strip chat history.
     //
     // Jinja chat templates (vLLM, llama.cpp) require all system messages
-    // before any user/assistant message. Single-pass partition into the
-    // final array — system msgs first, everything else in original order.
+    // before any user/assistant message. Single pass: system msgs splice to
+    // front, everything else pushes to end.
     const finalMessages: GenerationMessage[] = [];
-    const deferred: GenerationMessage[] = [];
+    let sysEnd = 0;
     for (const [i, msg] of messages.entries()) {
       if (sections[i]?.dropped) continue;
       if (msg.role === "system") {
-        finalMessages.push(msg);
+        finalMessages.splice(sysEnd++, 0, msg);
       } else {
-        deferred.push(msg);
+        finalMessages.push(msg);
       }
-    }
-    for (const msg of deferred) {
-      finalMessages.push(msg);
     }
 
     return {
