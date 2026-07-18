@@ -1,0 +1,142 @@
+---
+name: worktree-merge
+description: >
+  Merge and rebase operations for loop-lore worktrees. Handles branch
+  integration, conflict resolution, and signed merge commits.
+  Trigger: "merge branch", "rebase onto", "integrate branch", "/merge", "/rebase".
+---
+
+# Worktree Merge & Rebase
+
+## Overview
+
+Loop-lore uses git worktrees for parallel development. `scripts/worktree.sh`
+manages merge/rebase operations within the `./tree/` directory.
+
+**Default base branch**: `master` (may shift to `develop` in future).
+
+---
+
+## Commands
+
+### Merge
+
+Merges a source branch into a worktree's current branch:
+
+```bash
+./scripts/worktree.sh merge <worktree-branch> <source-branch>
+```
+
+Example:
+```bash
+./scripts/worktree.sh merge feat feature-api
+# Merges 'feature-api' into the 'feat' worktree's branch
+```
+
+### Rebase
+
+Rebases a worktree's branch onto a target (default: master):
+
+```bash
+./scripts/worktree.sh rebase <worktree-branch> [onto]
+```
+
+Example:
+```bash
+./scripts/worktree.sh rebase feat          # rebase feat onto master
+./scripts/worktree.sh rebase feat develop  # rebase feat onto develop
+```
+
+---
+
+## Pre-flight Checks
+
+Before merge/rebase, the script:
+
+1. **Verifies worktree exists** — exits with error if branch has no worktree
+2. **Verifies source/target branch exists** — exits with error if not found
+3. **Checks for uncommitted changes** — warns and exits if dirty
+
+If dirty, stash first:
+```bash
+cd tree/<branch>
+git stash
+# ... then run merge/rebase
+git stash pop
+```
+
+---
+
+## Conflict Resolution
+
+### On merge conflict
+
+```bash
+# Script exits with instructions:
+cd tree/<branch>
+# Resolve conflicts in files, then:
+git add .
+git commit  # or git merge --continue
+```
+
+### On rebase conflict
+
+```bash
+# Script exits with instructions:
+cd tree/<branch>
+# Resolve conflicts in files, then:
+git add .
+git rebase --continue
+
+# Or abort:
+git rebase --abort
+```
+
+---
+
+## Signed Merge Commits
+
+Merge commits in worktrees are signed with the agent GPG key (per
+`agent-commit` protocol). The worktree's local git config enables
+`commit.gpgsign=true`.
+
+When committing merge resolutions:
+```bash
+cd tree/<branch>
+GIT_COMMITTER_NAME="<AGENT_GPG_NAME>" \
+GIT_COMMITTER_EMAIL="<AGENT_GPG_EMAIL>" \
+git -c user.signingkey=<AGENT_GPG_KEY_ID> \
+    -c commit.gpgsign=true \
+    commit -S \
+    --author="<user name> <<user email>>"
+```
+
+---
+
+## Typical Workflow
+
+```bash
+# 1. Create feature worktree
+./scripts/worktree.sh new feature-xyz master
+
+# 2. Work on feature (commits happen in tree/feature-xyz)
+
+# 3. Sync with master before merge
+./scripts/worktree.sh rebase feature-xyz master
+
+# 4. Or merge another branch in
+./scripts/worktree.sh merge feature-xyz other-feature
+
+# 5. Verify signature after commit
+cd tree/feature-xyz
+git log --show-signature -1
+```
+
+---
+
+## Hard Rules
+
+- **NEVER force-push** after rebase on shared branches
+- **Always verify** signature after merge commits: `git log --show-signature -1`
+- **On conflict** — resolve manually, never `git add .` blindly
+- **Check dirty state** before merge/rebase — stash if needed
