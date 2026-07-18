@@ -66,14 +66,14 @@ cross-chat memory → `#25` sync across phone/desktop → `#26` voice/image inpu
 
 ## Cross-cutting business requirements
 
-| Requirement | Where satisfied | Gap |
-| ----------- | -------------- | --- |
-| Access control | `auth-middleware`, roles | SSO/SAML, tenant isolation |
-| Confidentiality | `crypto/` AES-256-GCM | — (strong) |
-| Cost governance | token tracking + #27 | per-user/agent budgets |
-| Audit | `logger/` | dedicated audit store |
-| Compliance export | `export.md` | retention policies |
-| Uptime/scale | PG dialect swap | horizontal agent workers |
+| Requirement       | Where satisfied          | Gap                        |
+| ----------------- | ------------------------ | -------------------------- |
+| Access control    | `auth-middleware`, roles | SSO/SAML, tenant isolation |
+| Confidentiality   | `crypto/` AES-256-GCM    | — (strong)                 |
+| Cost governance   | token tracking + #27     | per-user/agent budgets     |
+| Audit             | `logger/`                | dedicated audit store      |
+| Compliance export | `export.md`              | retention policies         |
+| Uptime/scale      | PG dialect swap          | horizontal agent workers   |
 
-*Reintegrate as: new `docs/spec/use-case-{knowledge,research,ops,authoring,team,personal}.md`
-or a single `docs/spec/use-cases-business.md`.*
+_Reintegrate as: new `docs/spec/use-case-{knowledge,research,ops,authoring,team,personal}.md`
+or a single `docs/spec/use-cases-business.md`._

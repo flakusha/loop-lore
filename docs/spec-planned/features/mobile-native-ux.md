@@ -78,7 +78,9 @@ export function useMobileGestures() {
   transition: opacity 0.2s;
 }
 
-.swipe-left .swipe-indicator.reply { opacity: 1; }
+.swipe-left .swipe-indicator.reply {
+  opacity: 1;
+}
 ```
 
 ### Voice Input Integration
@@ -103,7 +105,7 @@ export function useVoiceInput() {
 
       recognition.onresult = (e) => {
         this.transcript = Array.from(e.results)
-          .map(r => r[0].transcript)
+          .map((r) => r[0].transcript)
           .join("");
       };
 

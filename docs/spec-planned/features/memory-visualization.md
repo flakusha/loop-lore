@@ -30,18 +30,10 @@ export class MemoryGraph {
 
   async buildFromWorld(worldId: string): Promise<void> {
     // Get all actors in world
-    const actors = await db
-      .selectFrom("actors")
-      .selectAll()
-      .where("world_id", "=", worldId)
-      .execute();
+    const actors = await db.selectFrom("actors").selectAll().where("world_id", "=", worldId).execute();
 
     // Get locations
-    const locations = await db
-      .selectFrom("locations")
-      .selectAll()
-      .where("world_id", "=", worldId)
-      .execute();
+    const locations = await db.selectFrom("locations").selectAll().where("world_id", "=", worldId).execute();
 
     // Get lore entries
     const lore = await db
