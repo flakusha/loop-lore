@@ -10,7 +10,7 @@
   keep in sync.
 - **Plugin routes are a third dispatch path.** `dispatchPluginRoute`
   (`src/plugins/loader.ts`) linearly scans every registered plugin route per
-  request and runs *after* Elysia routes (via the catch-all).
+  request and runs _after_ Elysia routes (via the catch-all).
 - **Generation already models a pipeline.** Per `AGENTS.md`, `src/generation/`
   has a step-pipeline, cancellation, continuation. This pattern is the
   template the rest of the request layer should copy.
@@ -21,18 +21,21 @@
 ## Gaps
 
 ### 1. Dual dispatch is a maintenance trap
-New endpoints must be added in *both* the Elysia module **and** (if legacy)
+
+New endpoints must be added in _both_ the Elysia module **and** (if legacy)
 `handleApiRequest`. Drift between the two is silent. The catch-all also
 means plugin routes can never participate in Elysia's auth/validation
 pipeline.
 
 ### 2. Handlers exceed safe complexity
+
 `generate-route.ts#handleGenerate` (66), `image-gen-route.ts#handleImageGeneration`
 (64), `auto-gen.ts#triggerAutoGeneration` (58) — see `02` for the full
 list. These are exactly the functions that need to be extensible (hooks,
 pluggable providers) but are too dense to safely modify.
 
 ### 3. No cross-cutting extension seams
+
 There is no shared notion of "a request is about to generate" or "a message
 was created" that features/plugins can hook. The generation pipeline is
 internal; domain events are not emitted.
@@ -41,7 +44,7 @@ internal; domain events are not emitted.
 
 1. **Collapse to one dispatch surface.** Finish migrating all routes into
    Elysia modules; delete `handleApiRequest`'s route knowledge (keep it only
-   as a 404/error fallback). Register plugin routes *into* Elysia at startup
+   as a 404/error fallback). Register plugin routes _into_ Elysia at startup
    (see `08`).
 2. **Extract a route registry.** Replace the 30 inline `app.use(...)` calls
    with an array `const routeModules = [...]` iterated once. Plugins append
