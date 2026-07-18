@@ -138,3 +138,63 @@ Before touching any feature, read the relevant spec in `docs/`:
 3. **Bare `.then()` waterfalls.** Always await or .catch().
 4. **Skipping doc reading.** Always read relevant `docs/` before implementing.
 5. **Pushing without `bun run check`.** Run typecheck + lint + format + md:lint first.
+
+## Implementation Patterns (Quick Reference)
+
+### Options-Object Parameters
+Functions with 3+ params take a single destructured object:
+```ts
+function createQuest({ worldId, name, config, target }: CreateQuestOpts): Promise<string>
+```
+94 `*Opts/*Options/*Params/*Input` interfaces across codebase. Use for all new functions.
+
+### Discriminated Unions for State
+Tagged unions prevent "impossible states":
+```ts
+type RequestState =
+  | { status: "idle" }
+  | { status: "loading" }
+  | { status: "success"; data: User[] }
+  | { status: "error"; error: Error };
+```
+Apply to: API responses, UI states, generation pipeline steps, event types.
+
+### Exhaustiveness Checking
+`assertNever` in default case catches missing enum/union cases at compile time:
+```ts
+function assertNever(value: never): never { throw new Error(`Unhandled: ${value}`); }
+switch (status) {
+  case GenerationStatus.Pending: return "waiting";
+  // ...
+  default: return assertNever(status);
+}
+```
+
+### Branded Types for ID Safety
+Prevent mixing up `userId`, `chatId`, `actorId` (all `string`):
+```ts
+type Brand<Base, Tag> = Base & { readonly __brand: Tag };
+type UserId = Brand<string, "UserId">;
+type ChatId = Brand<string, "ChatId">;
+```
+
+### Result Type Pattern
+`JsonResult<T>` already exists — extend to all fallible operations:
+```ts
+type Result<T, E = Error> = { ok: true; value: T } | { ok: false; error: E };
+```
+Reserve exceptions for truly exceptional situations. Expected failures → Result.
+
+### Factory Functions
+Single export, inferred type via `ReturnType<typeof createXxx>`:
+```ts
+export function createTaskRunner(db: Kysely<DB>, config: RunnerConfig) { ... }
+export type TaskRunner = ReturnType<typeof createTaskRunner>;
+```
+Use for: services with internal state, feature modules with single consumer.
+
+### State Machine Application
+`StateDef` + `StateMachine` from `src/db/state.ts` for lifecycle states:
+- GenerationStatus, MessageStatus×Visibility (composite), QuestStatus
+- Guard at service boundary: `machine.canTransition(from, to)`
+- Never use `is_*` booleans for state axes

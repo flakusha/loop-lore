@@ -66,6 +66,16 @@ Follow coding conventions from `AGENTS.md`:
 - **JSDoc**: All public exports — @param, @returns, @throws, @example
 - **Imports**: Never import DB-specific modules in services/controllers (use Kysely types + db instance)
 
+### Implementation Patterns (see `.agents/references/recommendations.md` for full docs)
+
+- **Options-Object**: `function fn({ a, b, c, d? })` for 3+ params (94 existing interfaces)
+- **Discriminated Unions**: Tagged unions for state modeling, prevent impossible states
+- **Exhaustiveness Checking**: `assertNever` in default switch case for enum/union coverage
+- **Branded Types**: `Brand<string, "UserId">` to prevent ID mix-ups across layers
+- **Result Type**: `{ ok: true, value } | { ok: false, error }` — extend `JsonResult<T>` pattern
+- **Factory Functions**: Single export with `ReturnType<typeof createXxx>` inference
+- **State Machine**: `StateDef` + `StateMachine` for lifecycle states — guard at service boundary
+
 ## 5. Verify
 
 ```bash

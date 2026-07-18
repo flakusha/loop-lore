@@ -30,6 +30,10 @@ Deep-dive docs in `/docs/` — read before touching related code:
 | `docs/spec/api-routes.md`          | API route contract — all endpoints, conventions, error envelope         |
 | `docs/spec/auth-middleware.md`     | Auth middleware — token flow, session model, role guard, rate limiting  |
 | `docs/spec/error-envelope.md`      | Standard error envelope — codes, shapes, patterns, frontend sync        |
+| `docs/spec/access-model-clarification.md` | Gallery access model: auth, ownership, public endpoints        |
+| `docs/spec/archival-workflow.md`   | Message archival: states, transitions, restore/purge workflows          |
+| `docs/spec/assistant-commands.md`  | Assistant command parser and command specification                      |
+| `docs/spec/encryption-workflow.md` | Key hierarchy: SMK, actor keys, encryption/decryption pipeline         |
 | `docs/meta/plan.md`                | MVP implementation checklist with week-by-week tasks                    |
 
 ### Frontend UX Spec (`docs/frontend/`)
@@ -168,7 +172,8 @@ docs/                    Specs, architecture, data model
   missing ownership checks, `void promise` without `.catch()`)
 - **Patterns**: See `.agents/references/recommendations.md` — structured
   logging, input validation checklist, safe JSON IIFE pattern, options-object
-  params
+  params, discriminated unions, exhaustiveness checking, branded types,
+  state machine application, factory functions
 - **Docs metrics**: No quantitative metrics in docs — they go stale. Describe
   behavior qualitatively.
 
