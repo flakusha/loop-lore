@@ -178,29 +178,17 @@ export const ItemVisibility = {
 } as const;
 export type ItemVisibility = (typeof ItemVisibility)[keyof typeof ItemVisibility];
 
-// ── State Machine Definitions ────────────────────────────
+// ── State Machine (used by story/synthetic/generator.ts) ────
 import { createMachine, type StateDef } from "./state";
 
-export const itemVisibilityDef: StateDef<ItemVisibility> = {
-  values: ["visible", "hidden"] as const,
-  initial: "visible",
-  transitions: {
-    visible: ["hidden"],
-    hidden: ["visible"],
-  },
-  terminal: [],
-};
-
-export const itemVisibilityMachine = createMachine(itemVisibilityDef);
-
-export const syntheticDataStatusDef: StateDef<SyntheticDataStatus> = {
+const syntheticDataStatusDef: StateDef<SyntheticDataStatus> = {
   values: ["generated", "validated", "approved", "rejected", "archived"] as const,
   initial: "generated",
   transitions: {
     generated: ["validated", "rejected"],
-    validated: ["approved", "rejected", "archived"],
+    validated: ["approved", "rejected"],
     approved: ["archived"],
-    rejected: ["generated", "archived"],
+    rejected: ["generated"],
     archived: [],
   },
   terminal: ["archived"],
