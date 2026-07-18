@@ -47,7 +47,7 @@ Pattern (Microsoft Enterprise-RAG runbook; GraphRAG for relational knowledge):
 - **Retrieve:** inject top-k chunks into agent context (reuse `generation/`
   prompt-template stage).
 - **Ground/verify:** the proposed **#10 lore-consistency checker** is exactly a
-  fact-verification pass — repurpose it as a *grounding guard* that flags
+  fact-verification pass — repurpose it as a _grounding guard_ that flags
   agent claims contradicting retrieved context.
 - **GraphRAG option:** `#13 memory/knowledge-graph visualizer` already models
   entity edges via `asset_links` — a natural fit for relational enterprise
@@ -76,7 +76,7 @@ From the workspace spec, `chat.mode='agentic'` switches layout:
 - **TUI:** agent list replaces character list; tool output as structured logs;
   task graph via `blessed-contrib`.
 
-This is a *view-mode* change, not a new app — confirm `src/frontend/` htmx
+This is a _view-mode_ change, not a new app — confirm `src/frontend/` htmx
 partials already support mode-switching shells.
 
 ## 6. Observability (non-negotiable for business)
@@ -93,12 +93,12 @@ Agents cost money and fail silently. Reuse:
 
 ## 7. Risk register
 
-| Risk | Mitigation |
-| ---- | ---------- |
-| Tool escape / data exfiltration | Tiered sandbox + egress allowlist |
-| Hallucination on private data | Enterprise RAG + #10 grounding guard |
-| Cost blow-up | Per-agent budgets (#27), `maxTokens` caps |
-| Non-repudiation / compliance | Audit sink on `logger/` |
-| Vendor lock-in on embeddings | Adapter interface, swappable provider |
+| Risk                            | Mitigation                                |
+| ------------------------------- | ----------------------------------------- |
+| Tool escape / data exfiltration | Tiered sandbox + egress allowlist         |
+| Hallucination on private data   | Enterprise RAG + #10 grounding guard      |
+| Cost blow-up                    | Per-agent budgets (#27), `maxTokens` caps |
+| Non-repudiation / compliance    | Audit sink on `logger/`                   |
+| Vendor lock-in on embeddings    | Adapter interface, swappable provider     |
 
-*Reintegrate as: expansion of `docs/spec/use-case-agentic-workspace.md`.*
+_Reintegrate as: expansion of `docs/spec/use-case-agentic-workspace.md`._

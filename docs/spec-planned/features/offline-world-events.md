@@ -38,12 +38,9 @@ export async function processOfflineEvents(): Promise<void> {
       const lastSeen = await getLastActivity(participant.user_id);
       const hoursAway = (Date.now() - lastSeen) / (1000 * 60 * 60);
 
-      if (hoursAway >= 1) { // Only if away 1+ hour
-        const events = await generateOfflineEvents(
-          participant.user_id,
-          world.id,
-          hoursAway
-        );
+      if (hoursAway >= 1) {
+        // Only if away 1+ hour
+        const events = await generateOfflineEvents(participant.user_id, world.id, hoursAway);
 
         for (const event of events) {
           await createNotification({
@@ -53,7 +50,7 @@ export async function processOfflineEvents(): Promise<void> {
             body: event.content,
             link: `/views/chat/${world.chat_id}`,
             noiseLevel: "medium",
-            data: { event_type: event.event_type, actor_id: event.actor_id }
+            data: { event_type: event.event_type, actor_id: event.actor_id },
           });
         }
       }
@@ -64,7 +61,7 @@ export async function processOfflineEvents(): Promise<void> {
 async function generateOfflineEvents(
   userId: string,
   worldId: string,
-  hoursAway: number
+  hoursAway: number,
 ): Promise<OfflineEvent[]> {
   const worldState = await getWorldState(worldId);
   const userActor = await getUserActor(userId, worldId);
@@ -140,6 +137,7 @@ export function getWorldTime(worldId: string): Date {
 ## Configuration
 
 Per-world:
+
 ```json
 {
   "offline_events": {

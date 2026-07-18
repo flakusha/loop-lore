@@ -6,6 +6,7 @@
 // https://typescript-eslint.io/getting-started/typed-linting
 
 import eslint from "@eslint/js";
+import importPlugin from "eslint-plugin-import";
 import prettier from "eslint-config-prettier";
 import markdown from "eslint-plugin-markdown";
 import sonarjs from "eslint-plugin-sonarjs";
@@ -20,6 +21,7 @@ const tsPlugins = {
   "@typescript-eslint": tseslint.plugin,
   unicorn: unicorn.configs["flat/recommended"].plugins.unicorn,
   sonarjs: sonarjs.configs.recommended.plugins.sonarjs,
+  import: importPlugin,
 };
 
 const tsRules = {
@@ -104,6 +106,16 @@ const tsRules = {
   "@typescript-eslint/prefer-nullish-coalescing": "off",
   "@typescript-eslint/no-unnecessary-condition": "off",
   "@typescript-eslint/use-unknown-in-catch-callback-variable": "off",
+  "@typescript-eslint/consistent-type-definitions": ["error", "interface"],
+  "@typescript-eslint/no-misused-promises": "error",
+
+  // ── Complexity ceiling ─────────────────────────────────────
+  "sonarjs/cognitive-complexity": ["warn", 20],
+
+  // ── Import hygiene ─────────────────────────────────────────
+  "import/no-cycle": ["error", { maxDepth: 1 }],
+  "import/first": "error",
+  "import/no-mutable-exports": "error",
 
   // ── Low-value rules generating noise from Elysia/Kysely patterns ──
   "@typescript-eslint/no-unsafe-member-access": "off",
@@ -206,7 +218,11 @@ export default tseslint.config(
   // ── Frontend TypeScript: Browser env, DOM-lib tsconfig ─────────
   {
     files: ["src/frontend/**/*.ts"],
-    extends: [eslint.configs.recommended],
+    extends: [
+      eslint.configs.recommended,
+      ...tseslint.configs.strictTypeChecked,
+      ...tseslint.configs.stylisticTypeChecked,
+    ],
     languageOptions: {
       parser: tseslint.parser,
       parserOptions: {
@@ -261,6 +277,9 @@ export default tseslint.config(
       "@typescript-eslint/no-explicit-any": "off",
       "unicorn/no-await-expression-member": "off",
       "@typescript-eslint/require-await": "off",
+      // Type-aware rules require parserOptions.project — disabled here
+      "@typescript-eslint/no-misused-promises": "off",
+      "import/no-cycle": "off",
     },
   },
   // ── Config/JS files: no TS parser, just Unicorn + SonarJS ─────
@@ -286,6 +305,11 @@ export default tseslint.config(
       "sonarjs/no-identical-functions": "off",
       "@typescript-eslint/no-unused-vars": "off",
       "no-unused-vars": ["warn", { argsIgnorePattern: "^_", varsIgnorePattern: "^_" }],
+      // No TS parser — type-aware rules disabled
+      "@typescript-eslint/no-misused-promises": "off",
+      "@typescript-eslint/consistent-type-definitions": "off",
+      "sonarjs/cognitive-complexity": "off",
+      "import/no-cycle": "off",
     },
   },
   // ── Overrides: test files ─────────────────────────────────────
@@ -326,6 +350,9 @@ export default tseslint.config(
       "@typescript-eslint/prefer-regexp-exec": "off",
       "unicorn/prefer-await": "off",
       "unicorn/prefer-top-level-await": "off",
+      // Type-aware rules require parserOptions.project — disabled here
+      "@typescript-eslint/no-misused-promises": "off",
+      "import/no-cycle": "off",
     },
   },
 );

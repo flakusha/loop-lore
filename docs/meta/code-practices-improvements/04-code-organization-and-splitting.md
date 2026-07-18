@@ -2,12 +2,13 @@
 
 ## Current state (good parts)
 
-The DB layer is already well-split: `schema-core.ts`, `schema-generation.ts`,
-`schema-story.ts`, `schema-content.ts`, `schema-synthetic.ts`,
-`schema-telemetry.ts`, plus `enums-core/-config/-content/-generation/-story.ts`.
-Migrations live in `src/db/migrations/` numbered sequentially with a `parts/`
-subdir. Kysely types are the single source for DB rows; services depend on
-the `Kysely<DB>` instance, not raw modules (per AGENTS.md).
+The DB layer is already well-split: `schema-core.ts`,
+`schema-generation.ts`, `schema-story.ts`, `schema-content.ts`,
+`schema-synthetic.ts`, `schema-telemetry.ts`, plus `enums-core/-config/-
+content/-generation/-story.ts`. Migrations live in `src/db/migrations/`
+numbered sequentially with a `parts/` subdir. Kysely types are the single
+source for DB rows; services depend on the `Kysely<DB>` instance, not raw
+modules (per AGENTS.md).
 
 ## Gaps — oversized modules
 
