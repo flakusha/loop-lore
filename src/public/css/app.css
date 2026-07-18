@@ -280,7 +280,7 @@ body {
 .message {
   display: flex;
   gap: var(--space-3);
-  max-width: 85%;
+  max-width: min(75%, 650px);
   animation: messageIn 0.2s ease-out;
 }
 
@@ -311,6 +311,10 @@ body {
   object-fit: cover;
   flex-shrink: 0;
   margin-top: 4px;
+}
+
+.message .avatar.avatar-spacer {
+  visibility: hidden;
 }
 
 .message .bubble {
@@ -391,10 +395,50 @@ body {
   font-size: 11px;
 }
 
+.message .bubble .meta .edited-label {
+  font-size: 11px;
+  font-style: italic;
+  opacity: 0.6;
+}
+
+/* --- Thinking process --- */
+.thinking-indicator {
+  font-size: 12px;
+  color: var(--text-tertiary);
+  cursor: pointer;
+  padding: var(--space-1) 0;
+  transition: color var(--transition-fast);
+}
+.thinking-indicator:hover {
+  color: var(--text-secondary);
+}
+
+.thinking-block {
+  margin-bottom: var(--space-2);
+}
+.thinking-block summary {
+  font-size: 12px;
+  color: var(--text-tertiary);
+  cursor: pointer;
+}
+.thinking-block summary:hover {
+  color: var(--text-secondary);
+}
+.thinking-content {
+  font-size: 13px;
+  font-style: italic;
+  color: var(--text-secondary);
+  opacity: 0.7;
+  padding: var(--space-2) 0;
+  border-left: 2px solid var(--border-default);
+  padding-left: var(--space-3);
+  margin-top: var(--space-1);
+}
+
 /* --- Message action buttons (shared) --- */
 .btn-icon-action {
-  width: 28px;
-  height: 28px;
+  width: 44px;
+  height: 44px;
   padding: 0;
   border-radius: var(--radius-sm);
   background: transparent;
