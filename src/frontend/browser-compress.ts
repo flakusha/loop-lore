@@ -17,7 +17,7 @@ function uint8ArrayToBase64(buf: Uint8Array): string {
   let binary = "";
   const len = buf.length;
   for (let i = 0; i < len; i++) {
-    binary += String.fromCodePoint(buf[i]!);
+    binary += String.fromCodePoint(buf[i]);
   }
   return btoa(binary);
 }

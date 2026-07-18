@@ -35,7 +35,7 @@ document.addEventListener("htmx:configRequest", (e: CustomEvent<{ headers: Recor
   apiLog.debug("htmx:configRequest", { path: (e as any)?.detail?.path });
   const token = localStorage.getItem("session_token");
   if (token) {
-    e.detail.headers["Authorization"] = "Bearer " + token;
+    e.detail.headers.Authorization = "Bearer " + token;
   }
 });
 
@@ -44,7 +44,7 @@ document.addEventListener("htmx:beforeSwap", () => {
 });
 
 // Trigger page-specific loaders on htmx content swaps (for pages still using JS)
-const PAGE_LOADERS: Map<string, string> = new Map([["#create-chat-form", "loadNewChatPage"]]);
+const PAGE_LOADERS = new Map<string, string>([["#create-chat-form", "loadNewChatPage"]]);
 
 function triggerPageLoaders(): void {
   for (const [sel, fn] of PAGE_LOADERS) {
@@ -132,14 +132,14 @@ document.addEventListener("DOMContentLoaded", initAlpineStores);
 document.addEventListener("DOMContentLoaded", triggerPageLoaders);
 
 // ── hx-on::after-request replacements (success events) ──────
-document.addEventListener("htmx:afterRequest", ((e: Event) => {
+document.addEventListener("htmx:afterRequest", (e: Event) => {
   const detail = (e as CustomEvent<{ successful: boolean; elt: HTMLElement }>).detail;
   if (!detail.successful) return;
   const successEvent = detail.elt.dataset.hxSuccessEvent;
   if (successEvent) {
     document.dispatchEvent(new CustomEvent(successEvent));
   }
-}) as EventListener);
+});
 
 document.addEventListener("asset:uploaded", () => {
   document.querySelector("#upload-modal")?.classList.remove("open");

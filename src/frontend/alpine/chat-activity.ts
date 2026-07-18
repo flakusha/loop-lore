@@ -5,7 +5,7 @@ import type { ChatState } from "./types";
 const log = rootLog.child({ module: "chat-activity" });
 
 export const chatActivity: Partial<ChatState> & ThisType<ChatState> = {
-  _unseenCounts: {} as Record<string, number>,
+  _unseenCounts: {},
   _activityEventSource: null as EventSource | null,
 
   connectActivitySSE() {
@@ -25,7 +25,7 @@ export const chatActivity: Partial<ChatState> & ThisType<ChatState> = {
 
         const counts: Record<string, number> = {};
         for (const [chatId, entry] of Object.entries(chats)) {
-          counts[chatId] = Number(entry.unseenCount) || 0;
+          counts[chatId] = entry.unseenCount || 0;
         }
         this._unseenCounts = counts;
 

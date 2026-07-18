@@ -5,19 +5,19 @@ import type { ChatState } from "./types";
 export const chatGroup: Partial<ChatState> & ThisType<ChatState> = {
   _groupPaused: false,
   _mentionQuery: "",
-  _mentionResults: [] as Array<{
+  _mentionResults: [] as {
     actor_id: string;
     name: string;
     display_name?: string;
     actor_type?: string;
-  }>,
+  }[],
   _showMentionAutocomplete: false,
-  _chatParticipants: [] as Array<{
+  _chatParticipants: [] as {
     actor_id: string;
     name: string;
     display_name?: string;
     actor_type?: string;
-  }>,
+  }[],
 
   isChatPaused(chat: any): boolean {
     if (!chat?.story_state) return false;
@@ -27,6 +27,7 @@ export const chatGroup: Partial<ChatState> & ThisType<ChatState> = {
 
   async toggleGroupPause() {
     const chat = this.currentChat;
+    // eslint-disable-next-line @typescript-eslint/prefer-optional-chain -- false positive: chat already null-checked above
     if (!chat || chat.type !== "group" || !this.activeChat) return;
     const newPaused = !this.isChatPaused(chat);
     try {
@@ -81,7 +82,7 @@ export const chatGroup: Partial<ChatState> & ThisType<ChatState> = {
     const value = textarea.value;
     const cursorPos = textarea.selectionStart;
     const beforeCursor = value.slice(0, cursorPos);
-    const atMatch = beforeCursor.match(/@(\w*)$/);
+    const atMatch = /@(\w*)$/.exec(beforeCursor);
     if (atMatch) {
       this._mentionQuery = (atMatch[1] ?? "").toLowerCase();
       this._showMentionAutocomplete = true;

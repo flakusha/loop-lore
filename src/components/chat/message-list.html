@@ -203,6 +203,35 @@
               x-text="statsLine(msg)"
             ></div>
 
+            <!-- Prompt Debug View -->
+            <template x-if="_debugView && msg.model_id">
+              <div class="debug-panel" data-testid="debug-panel">
+                <div class="debug-row">
+                  <span class="debug-label">Model</span> <span x-text="msg.model_id"></span>
+                </div>
+                <div class="debug-row" x-show="msg.provider">
+                  <span class="debug-label">Provider</span> <span x-text="msg.provider"></span>
+                </div>
+                <div class="debug-row" x-show="msg.token_count_prompt != null">
+                  <span class="debug-label">Prompt tokens</span> <span x-text="msg.token_count_prompt"></span>
+                </div>
+                <div class="debug-row" x-show="msg.token_count_completion != null">
+                  <span class="debug-label">Completion tokens</span>
+                  <span x-text="msg.token_count_completion"></span>
+                </div>
+                <div class="debug-row" x-show="msg.token_count_total != null">
+                  <span class="debug-label">Total tokens</span> <span x-text="msg.token_count_total"></span>
+                </div>
+                <div class="debug-row" x-show="msg.generation_time_ms != null">
+                  <span class="debug-label">Gen time</span>
+                  <span x-text="formattedGenerationTime(msg.generation_time_ms)"></span>
+                </div>
+                <div class="debug-row" x-show="msg.tokens_per_second != null">
+                  <span class="debug-label">Speed</span> <span x-text="formattedTokensPerSecond(msg)"></span>
+                </div>
+              </div>
+            </template>
+
             <!-- Compact mode (Immersion + Basic): hamburger menus -->
             <div class="actions-compact" x-show="detailLevel !== 'Detailed'" :data-detail="detailLevel">
               <!-- Actions hamburger -->
