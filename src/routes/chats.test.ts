@@ -84,7 +84,7 @@ describe("chatsRoutes", () => {
     const app = createApp(db, userId);
     const res = await app.handle(new Request("http://localhost/api/chats"));
     expect(res.status).toBe(200);
-    const body = await res.json();
+    const body = (await res.json()) as { data: unknown[]; pagination: { total: number } };
     expect(body.data).toBeInstanceOf(Array);
     expect(body.pagination.total).toBe(0);
   });
@@ -101,7 +101,7 @@ describe("chatsRoutes", () => {
       }),
     );
     expect(res.status).toBe(201);
-    const body = await res.json();
+    const body = (await res.json()) as { id: string };
     expect(body.id).toBeDefined();
 
     // Verify chat exists in DB
@@ -121,7 +121,7 @@ describe("chatsRoutes", () => {
       }),
     );
     expect(res.status).toBe(201);
-    const body = await res.json();
+    const body = (await res.json()) as { id: string };
     const chat = await db.selectFrom("chats").selectAll().where("id", "=", body.id).executeTakeFirst();
     expect(chat?.type).toBe("group");
     expect(chat?.mode).toBe("group");
@@ -133,7 +133,7 @@ describe("chatsRoutes", () => {
     const app = createApp(db, userId);
     const res = await app.handle(new Request("http://localhost/api/chats"));
     expect(res.status).toBe(200);
-    const body = await res.json();
+    const body = (await res.json()) as { data: unknown[]; pagination: { total: number } };
     expect(body.pagination.total).toBeGreaterThanOrEqual(2);
     expect(body.data.every((c: any) => c.created_by === userId)).toBe(true);
   });
@@ -154,7 +154,7 @@ describe("chatsRoutes", () => {
 
     const res = await app.handle(new Request(`http://localhost/api/chats/${id}`));
     expect(res.status).toBe(200);
-    const body = await res.json();
+    const body = (await res.json()) as { name: string };
     expect(body.name).toBe("Find Me");
   });
 
@@ -185,7 +185,7 @@ describe("chatsRoutes", () => {
       }),
     );
     expect(res.status).toBe(200);
-    const body = await res.json();
+    const body = (await res.json()) as { ok: boolean };
     expect(body.ok).toBe(true);
 
     // Verify update persisted
