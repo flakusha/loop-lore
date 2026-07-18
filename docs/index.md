@@ -36,6 +36,10 @@ features:
   - title: Multi-user Ready
     details: Designed for solo use and multi-user deployments
     icon: <img src="/docs/img/icons/multi-user.svg" alt="" width="32" height="32">
+  - title: Creative Ideas
+    details: Research-driven feature proposals across 8 themes, sourced from competitor analysis
+    icon: <img src="/docs/img/tabler-wand.svg" alt="" width="32" height="32">
+    link: /ideas/
 
 footer: MIT (docs) / LGPL-3.0-or-later (core) | Copyright © 2026-present Loop Lore Contributors
 ---
