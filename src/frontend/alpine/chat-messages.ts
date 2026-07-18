@@ -26,6 +26,7 @@ export const chatMessages: Partial<ChatState> & ThisType<ChatState> = {
     this.$nextTick?.(() => {
       this.scrollToBottom();
       this.setupInfiniteScroll();
+      this.setupScrollDetection();
     });
   },
 
@@ -82,6 +83,26 @@ export const chatMessages: Partial<ChatState> & ThisType<ChatState> = {
       setTimeout(() => {
         el.scrollTop = el.scrollHeight;
       }, 50);
+    }
+  },
+
+  setupScrollDetection() {
+    const el = document.querySelector("#message-list");
+    if (!el) return;
+    this._isScrolledUp = false;
+    this._scrollHandler = () => {
+      const threshold = 100;
+      const atBottom = el.scrollHeight - el.scrollTop - el.clientHeight < threshold;
+      this._isScrolledUp = !atBottom;
+    };
+    el.addEventListener("scroll", this._scrollHandler, { passive: true });
+  },
+
+  scrollToBottomSmooth() {
+    const el = document.querySelector("#message-list");
+    if (el) {
+      el.scrollTo({ top: el.scrollHeight, behavior: "smooth" });
+      this._isScrolledUp = false;
     }
   },
 

@@ -28,7 +28,7 @@
     <div class="error-banner" x-text="loadingError"></div>
   </template>
   <template x-for="msg in groupedMessages" :key="msg.id">
-    <div class="message" :class="msg.role" :data-message-id="msg.id">
+    <div class="message" :class="msg.role" :data-message-id="msg.id" @contextmenu="openContextMenu($event, msg.id)">
       <!-- System / narration: centered narrative line, no bubble, actions, or stats -->
       <template x-if="msg.role === 'system'">
         <div class="system-message" data-testid="system-message">
@@ -191,51 +191,15 @@
               x-text="statsLine(msg)"
             ></div>
 
+            <!-- Inline stats for Basic mode (subtle text, brightens on hover) -->
+            <div
+              class="stats-line stats-basic"
+              x-show="detailLevel === 'Basic' && (msg.generation_time_ms || msg.token_count_total)"
+              x-text="statsLine(msg)"
+            ></div>
+
             <!-- Compact mode (Immersion + Basic): hamburger menus -->
             <div class="actions-compact" x-show="detailLevel !== 'Detailed'" :data-detail="detailLevel">
-              <!-- Info hamburger (Basic mode only) -->
-              <div class="action-hamburger" x-show="detailLevel === 'Basic'">
-                <button
-                  class="btn-icon-action"
-                  :class="_statsOpen[msg.id] ? 'action-active' : ''"
-                  @click="_statsOpen[msg.id] = !_statsOpen[msg.id]"
-                  title="Stats"
-                >
-                  i
-                </button>
-                <div
-                  class="action-dropdown action-dropdown-info"
-                  x-show="_statsOpen[msg.id]"
-                  @click.outside="_statsOpen[msg.id] = false"
-                >
-                  <div class="dropdown-stat" x-show="msg.generation_time_ms">
-                    <span class="stat-label">Time</span>
-                    <span x-text="formattedGenerationTime(msg.generation_time_ms)"></span>
-                  </div>
-                  <div class="dropdown-stat" x-show="msg.token_count_total">
-                    <span class="stat-label">Tokens</span>
-                    <span x-text="msg.token_count_total"></span>
-                  </div>
-                  <div
-                    class="dropdown-stat"
-                    x-show="msg.tokens_per_second || (msg.generation_time_ms && msg.token_count_total)"
-                  >
-                    <span class="stat-label">Speed</span>
-                    <span x-text="formattedTokensPerSecond(msg)"></span>
-                  </div>
-                  <div class="dropdown-stat" x-show="msg.model_id">
-                    <span class="stat-label">Model</span>
-                    <span x-text="msg.model_id"></span>
-                  </div>
-                  <div
-                    class="dropdown-stat-no-data"
-                    x-show="!msg.generation_time_ms && !msg.token_count_total && !msg.model_id"
-                  >
-                    No generation stats available
-                  </div>
-                </div>
-              </div>
-
               <!-- Actions hamburger -->
               <div class="action-hamburger">
                 <button
@@ -307,6 +271,40 @@
       </template>
     </div>
   </template>
+
+  <!-- "New message below" floating button -->
+  <button
+    class="new-message-btn"
+    x-show="_isScrolledUp"
+    x-cloak
+    @click="scrollToBottomSmooth()"
+    data-testid="new-message-btn"
+  >
+    ↓ New messages
+  </button>
+
+  <!-- Context menu (right-click / long-press) -->
+  <div
+    class="context-menu"
+    x-show="_contextMenu.visible"
+    :style="{ left: _contextMenu.x + 'px', top: _contextMenu.y + 'px' }"
+    @click.outside="closeContextMenu()"
+    @keydown.escape.window="closeContextMenu()"
+    data-testid="context-menu"
+    x-cloak
+  >
+    <button @click="copyMessage(_contextMenu.messageId, $event); closeContextMenu()">📋 Copy</button>
+    <button @click="startEdit(_contextMenu.messageId); closeContextMenu()">✏️ Edit</button>
+    <template x-if="(() => { const m = messages.find(msg => msg.id === _contextMenu.messageId); return m && m.role === 'assistant'; })()">
+      <button @click="regenerateVariant(_contextMenu.messageId); closeContextMenu()">♻ Regenerate</button>
+    </template>
+    <template x-if="(() => { const m = messages.find(msg => msg.id === _contextMenu.messageId); return m && (m.status === 'cancelled' || m.status === 'partial'); })()">
+      <button @click="continueMessage(_contextMenu.messageId); closeContextMenu()">↳ Continue</button>
+    </template>
+    <button @click="generateImageFromMessage(_contextMenu.messageId); closeContextMenu()">🖼 Generate Image</button>
+    <div class="context-menu-divider"></div>
+    <button class="dropdown-danger" @click="removeMessage(_contextMenu.messageId, $event); closeContextMenu()">🗑 Remove</button>
+  </div>
 
   <!-- Stream container for SSE streaming generation -->
   <div id="stream-container" x-show="isGenerating" x-cloak data-testid="stream-container"></div>

@@ -136,6 +136,8 @@ globalThis.chatState = function () {
       this.isContinuing = false;
       this.activeAttemptId = null;
       this.continuingMessageId = null;
+      this._isScrolledUp = false;
+      this._contextMenu = { visible: false, messageId: null, x: 0, y: 0 };
 
       // Force-reset panel visibility on every mount (belt-and-suspenders
       // against stale store state from a previous component instance)
@@ -186,6 +188,12 @@ globalThis.chatState = function () {
       if (this.scrollObserver) {
         this.scrollObserver.disconnect();
         this.scrollObserver = null;
+      }
+
+      if (this._scrollHandler) {
+        const el = document.querySelector("#message-list");
+        el?.removeEventListener("scroll", this._scrollHandler);
+        this._scrollHandler = null;
       }
 
       if (globalThis.Alpine) {
