@@ -239,7 +239,7 @@ describe("onValidationError", () => {
       }),
     );
     expect(res.status).toBe(200);
-    const body = (await res.json()) as any;
+    const body = await res.json();
     expect(body.name).toBe("Alice");
     expect(body.age).toBe(25);
   });
@@ -254,7 +254,7 @@ describe("onValidationError", () => {
       }),
     );
     expect(res.status).toBe(422);
-    const body = (await res.json()) as any;
+    const body = await res.json();
     expect(body.error).toBe("Validation failed");
     expect(body.code).toBe("VALIDATION_ERROR");
     expect(Array.isArray(body.details)).toBe(true);
@@ -272,7 +272,7 @@ describe("onValidationError", () => {
       }),
     );
     expect(res.status).toBe(422);
-    const body = (await res.json()) as any;
+    const body = await res.json();
     expect(body.details.length).toBeGreaterThanOrEqual(2);
     const fields = body.details.map((d: { field: string }) => d.field);
     expect(fields).toContain("name");

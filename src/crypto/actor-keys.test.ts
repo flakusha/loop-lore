@@ -19,6 +19,8 @@ import {
 } from "./actor-keys";
 import { initSmk } from "./smk";
 
+import { getSmk } from "./smk";
+
 const VALID_HEX_KEY = "a".repeat(64);
 const ACTOR_ID = "actor-test-001";
 
@@ -42,8 +44,6 @@ afterAll(async () => {
   await initSmk({ required: false, compressThreshold: 128, compressAlgorithm: "gzip" });
   db.destroy();
 });
-
-import { getSmk } from "./smk";
 
 function getSmkKeySafe(): CryptoKey {
   const key = getSmk();

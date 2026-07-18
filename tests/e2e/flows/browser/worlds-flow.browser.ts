@@ -71,6 +71,7 @@ describe("Worlds flow E2E", () => {
 
   describe("World list and navigation", () => {
     test("world list renders seeded worlds", async () => {
+      // eslint-disable-next-line sonarjs/void-use -- fire-and-forget API call in test setup
       void (await createWorldViaApi("API Created World"));
       const page = await ctx.browser.newPage();
       await gotoWorlds(page);
@@ -81,6 +82,7 @@ describe("Worlds flow E2E", () => {
     });
 
     test("clicking a world card navigates to detail page", async () => {
+      // eslint-disable-next-line sonarjs/void-use -- fire-and-forget API call in test setup
       void (await createWorldViaApi("Detail Test World"));
       const page = await ctx.browser.newPage();
       await gotoWorlds(page);
