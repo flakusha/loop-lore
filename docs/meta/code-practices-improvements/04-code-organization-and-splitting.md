@@ -12,14 +12,14 @@ modules (per AGENTS.md).
 
 ## Gaps — oversized modules
 
-| File | ~Lines | Problem |
-|------|---------|----------|
-| `src/routes/messages.ts` | 702 | CRUD + streaming + attachments + archiving in one file |
-| `src/generation/generate-route.ts` | 636 | Orchestration + provider calls + persistence |
-| `src/config/schema.ts` | 692 | Entire config shape in one interface file |
-| `src/server.ts` | 546 | Bootstrap + HTTP serving + static + docs + TLS + plugin load |
-| `src/elysia-app.ts` | ~160 (logic) + 30 manual `app.use` | Manual route registry |
-| `src/plugins/loader.ts` | 194 | Load + onLoad dispatch + shutdown in one fn (complexity 48) |
+| File                               | ~Lines                             | Problem                                                      |
+| ---------------------------------- | ---------------------------------- | ------------------------------------------------------------ |
+| `src/routes/messages.ts`           | 702                                | CRUD + streaming + attachments + archiving in one file       |
+| `src/generation/generate-route.ts` | 636                                | Orchestration + provider calls + persistence                 |
+| `src/config/schema.ts`             | 692                                | Entire config shape in one interface file                    |
+| `src/server.ts`                    | 546                                | Bootstrap + HTTP serving + static + docs + TLS + plugin load |
+| `src/elysia-app.ts`                | ~160 (logic) + 30 manual `app.use` | Manual route registry                                        |
+| `src/plugins/loader.ts`            | 194                                | Load + onLoad dispatch + shutdown in one fn (complexity 48)  |
 
 ## Gaps — god modules
 
@@ -35,7 +35,7 @@ modules (per AGENTS.md).
 - **No route registry** (see `03`): 30+ `app.use(...Routes(handleOpts))`
   lines in `elysia-app.ts` are hand-maintained.
 - **`<200L` convention** (AGENTS.md) is violated by the 4 files above with
-  no mechanical enforcement. `jscpd` checks *duplication* but not *size*.
+  no mechanical enforcement. `jscpd` checks _duplication_ but not _size_.
 
 ## Recommendations
 

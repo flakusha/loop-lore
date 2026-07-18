@@ -382,7 +382,6 @@ rules:
   energy: "unlimited" # No action limit
 ```
 
-
 ---
 
 ## 7. Standing & Reputation Systems Across RPGs
@@ -417,14 +416,14 @@ Most d20 games do not have formal reputation, but D&D has:
 
 Reputation tiers common across systems:
 
-| Tier | Range | Modifier |
-| ---- | ----- | -------- |
-| Unknown | -100 to -20 | -2 |
-| Neutral | -19 to +19 | 0 |
-| Friendly | +20 to +49 | +1 |
-| Ally | +50 to +79 | +2 |
-| Hero | +80 to +99 | +3 |
-| Legend | +100 | +4 |
+| Tier     | Range       | Modifier |
+| -------- | ----------- | -------- |
+| Unknown  | -100 to -20 | -2       |
+| Neutral  | -19 to +19  | 0        |
+| Friendly | +20 to +49  | +1       |
+| Ally     | +50 to +79  | +2       |
+| Hero     | +80 to +99  | +3       |
+| Legend   | +100        | +4       |
 
 Standing change triggers:
 
@@ -469,13 +468,13 @@ Standing integrates with existing systems:
 
 Romance progression stages:
 
-| Stage | Threshold | Effects |
-| ----- | --------- | ------- |
-| None | 0 | No modifiers |
-| Interested | 20 | Persuasion +1 |
-| Flirting | 40 | Persuasion +2, Combat +1 |
-| Dating | 60 | Persuasion +3, Stress Relief 2 |
-| Committed | 80 | Persuasion +4, Combat +2, Stress Relief 3 |
+| Stage      | Threshold | Effects                                   |
+| ---------- | --------- | ----------------------------------------- |
+| None       | 0         | No modifiers                              |
+| Interested | 20        | Persuasion +1                             |
+| Flirting   | 40        | Persuasion +2, Combat +1                  |
+| Dating     | 60        | Persuasion +3, Stress Relief 2            |
+| Committed  | 80        | Persuasion +4, Combat +2, Stress Relief 3 |
 
 Compatibility calculation factors:
 
