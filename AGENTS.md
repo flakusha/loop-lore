@@ -294,22 +294,65 @@ AGENT_GPG_NAME="<committer-name>"
 AGENT_GPG_EMAIL="<committer-email>"
 ```
 
-### Worktree Setup
+### Worktree Commands
 
-`scripts/worktree.sh` auto-configures signing when creating worktrees:
+`scripts/worktree.sh` manages the full worktree lifecycle:
 
 ```bash
-# Auto-configured on create/new:
+# Create branch + worktree (base defaults to master):
 ./scripts/worktree.sh new feature-xyz
+./scripts/worktree.sh new feature-xyz some-base
 
-# Configure on existing worktree:
+# Create worktree for existing branch:
+./scripts/worktree.sh create existing-branch
+
+# Configure GPG signing on existing worktree:
 ./scripts/worktree.sh sign feature-xyz
+
+# Merge source branch into worktree's branch:
+./scripts/worktree.sh merge feature-xyz master
+
+# Rebase worktree's branch onto target (default: master):
+./scripts/worktree.sh rebase feature-xyz
+
+# Remove worktree (blocks if uncommitted changes):
+./scripts/worktree.sh remove feature-xyz
+
+# List all worktrees with status:
+./scripts/worktree.sh list
+
+# Remove worktrees for deleted branches:
+./scripts/worktree.sh cleanup
+
+# Validate + run checks + merge to master + remove worktree:
+./scripts/worktree.sh finalize feature-xyz
+./scripts/worktree.sh agent-merge feature-xyz   # alias
 ```
 
-The script sets `commit.gpgsign=true` and `user.signingkey` in the
-worktree's local git config. It does **NOT** set `user.name`/`user.email`
-— those are provided at commit time via `GIT_COMMITTER_*` env vars
-(Author=user, Committer=agent separation).
+### Guardrails
+
+The script enforces these safety checks:
+
+- **Branch protection**: Cannot `new`, `create`, `rebase`, or `finalize`
+  `master` or `main` directly.
+- **Dirty check**: `remove`, `merge`, `rebase`, and `finalize` abort if
+  the worktree has uncommitted changes.
+- **finalize pipeline**: Verifies clean state → runs `bun run check` →
+  runs `bun test src/` → checks branch has commits beyond base → merges
+  to master → removes worktree. Aborts at any failing step.
+- **Idempotent create**: `create` exits cleanly (exit 0) if worktree
+  already exists.
+- **Existing branch guard**: `new` rejects branch names that already exist.
+
+### Workflow
+
+```
+1. Create:     ./scripts/worktree.sh new feat/my-feature
+2. Work:       cd tree/feat-my-feature && implement feature
+3. Commit:     (agent-commit skill handles GPG signing)
+4. Validate:   ./scripts/worktree.sh finalize feat/my-feature
+               # runs checks, merges to master, removes worktree
+```
 
 ### Agent Commit in Worktree
 
