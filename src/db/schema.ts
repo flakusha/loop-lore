@@ -24,6 +24,7 @@ export interface DB {
   actor_keys: import("./schema-core").ActorKeys;
   group_initiatives: import("./schema-core").GroupInitiatives;
   chat_mentions: import("./schema-core").ChatMentions;
+  notifications: import("./schema-core").Notifications;
   assets: import("./schema-content").Assets;
   asset_links: import("./schema-content").AssetLinks;
   asset_shares: import("./schema-content").AssetShares;
