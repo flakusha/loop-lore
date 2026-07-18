@@ -12,12 +12,7 @@ import {
   HttpStatus,
   ErrorCode,
 } from "./http-utils";
-import {
-  MessageRole,
-  MessageContentType,
-  MessageContentFormat,
-  ContentEncoding,
-} from "../db/enums";
+import { MessageRole, MessageContentType, MessageContentFormat, ContentEncoding } from "../db/enums";
 import { generateResponse, isAssistantEnabled } from "../assistant/service";
 import { filter as filterProfanity } from "../profanity/service";
 import { triggerAutoGeneration, isLlmGenerationConfigured } from "../generation/auto-gen";
@@ -186,7 +181,6 @@ async function resolveMessageContent(
   const chatKey = await deriveChatKeyForChat(database, message.chat_id, smk);
   return decryptThenDecompress(message.content, chatKey.key);
 }
-
 
 export function messagesRoutes(opts: HandlerOpts) {
   const { database, config } = opts;
@@ -547,7 +541,14 @@ export function messagesRoutes(opts: HandlerOpts) {
           }
 
           if (isLlmGenerationConfigured(config)) {
-            void triggerAutoGeneration({ database, config, chatId, parentMessageId: id, userId: actorId, userMessage: filteredContent });
+            void triggerAutoGeneration({
+              database,
+              config,
+              chatId,
+              parentMessageId: id,
+              userId: actorId,
+              userMessage: filteredContent,
+            });
           } else if (isAssistantEnabled(config)) {
             const assistantResponse = generateResponse({ userInput: filteredContent });
             if (assistantResponse) {
