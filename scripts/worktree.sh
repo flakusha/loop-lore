@@ -7,6 +7,12 @@ set -euo pipefail
 REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 TREE_DIR="$REPO_ROOT/tree"
 
+# Source agent credentials if available (GPG signing for worktrees)
+if [[ -f "$REPO_ROOT/.credentials.env" ]]; then
+    # shellcheck source=/dev/null
+    source "$REPO_ROOT/.credentials.env"
+fi
+
 # Colors
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -23,6 +29,9 @@ Usage: $(basename "$0") <command> [args]
 Commands:
   create <branch>           Create worktree for existing branch
   new <branch> [base]       Create new branch + worktree (base defaults to master)
+  sign <branch>             Configure GPG signing for existing worktree
+  merge <branch> <source>   Merge source branch into worktree's branch
+  rebase <branch> [onto]    Rebase worktree's branch onto target (default: master)
   list                      Show all worktrees with status
   cleanup                   Remove worktrees for deleted branches
   remove <branch>           Remove specific worktree
@@ -41,9 +50,78 @@ ensure_tree_dir() {
     mkdir -p "$TREE_DIR"
 }
 
+configure_signing() {
+    local worktree_path="$1"
+
+    if [[ -z "${AGENT_GPG_KEY_ID:-}" ]]; then
+        echo -e "${YELLOW}  Skipped: AGENT_GPG_KEY_ID not set${NC}"
+        return 0
+    fi
+
+    # Verify key exists in GPG keyring
+    if ! gpg --list-keys "$AGENT_GPG_KEY_ID" &>/dev/null; then
+        echo -e "${RED}  Error: GPG key $AGENT_GPG_KEY_ID not found in keyring${NC}"
+        return 1
+    fi
+
+    echo -e "${CYAN}Configuring GPG signing for worktree...${NC}"
+
+    # Enable commit signing (all commits in this worktree are signed)
+    git -C "$worktree_path" config commit.gpgsign true
+
+    # Set agent signing key (local to this worktree only)
+    git -C "$worktree_path" config user.signingkey "$AGENT_GPG_KEY_ID"
+
+    # Do NOT set user.name/user.email here — agent identity is provided
+    # at commit time via GIT_COMMITTER_* env vars (agent-commit protocol).
+    # This preserves Author=user, Committer=agent separation.
+
+    echo -e "${GREEN}  ✓ GPG signing enabled (key: ${AGENT_GPG_KEY_ID:0:8}...)${NC}"
+}
+
 branch_to_path() {
     # Convert branch name to directory path (handle slashes)
     echo "$1" | sed 's|/|-|g'
+}
+
+find_worktree() {
+    # Find worktree path for a branch name, print path or empty
+    local branch="$1"
+    local dir_name
+    dir_name="$(branch_to_path "$branch")"
+    local worktree_path="$TREE_DIR/$dir_name"
+
+    if [[ -d "$worktree_path" ]]; then
+        echo "$worktree_path"
+    fi
+}
+
+require_worktree() {
+    # Like find_worktree but exits with error if not found
+    local branch="$1"
+    local worktree_path
+    worktree_path="$(find_worktree "$branch")"
+
+    if [[ -z "$worktree_path" ]]; then
+        echo -e "${RED}Error: no worktree found for branch '$branch'${NC}"
+        echo "Active worktrees:"
+        git -C "$REPO_ROOT" worktree list
+        exit 1
+    fi
+
+    echo "$worktree_path"
+}
+
+check_dirty() {
+    # Warn if worktree has uncommitted changes
+    local worktree_path="$1"
+    if ! git -C "$worktree_path" diff --quiet 2>/dev/null || \
+       ! git -C "$worktree_path" diff --cached --quiet 2>/dev/null; then
+        echo -e "${YELLOW}  Warning: uncommitted changes in worktree${NC}"
+        echo -e "  Stash with: cd $worktree_path && git stash"
+        return 1
+    fi
+    return 0
 }
 
 cmd_create() {
@@ -75,6 +153,7 @@ cmd_create() {
     ensure_tree_dir
     echo -e "${CYAN}Creating worktree for branch: $branch${NC}"
     git -C "$REPO_ROOT" worktree add "$worktree_path" "$branch"
+    configure_signing "$worktree_path"
     echo -e "${GREEN}✓ Created: $worktree_path${NC}"
     echo -e "  cd $worktree_path"
 }
@@ -113,6 +192,7 @@ cmd_new() {
     ensure_tree_dir
     echo -e "${CYAN}Creating new branch '$branch' from '$base'${NC}"
     git -C "$REPO_ROOT" worktree add -b "$branch" "$worktree_path" "$base"
+    configure_signing "$worktree_path"
     echo -e "${GREEN}✓ Created: $worktree_path${NC}"
     echo -e "  cd $worktree_path"
 }
@@ -181,16 +261,8 @@ cmd_remove() {
         exit 1
     fi
 
-    local dir_name
-    dir_name="$(branch_to_path "$branch")"
-    local worktree_path="$TREE_DIR/$dir_name"
-
-    if [[ ! -d "$worktree_path" ]]; then
-        echo -e "${RED}Error: no worktree found for branch '$branch'${NC}"
-        echo "Active worktrees:"
-        git -C "$REPO_ROOT" worktree list
-        exit 1
-    fi
+    local worktree_path
+    worktree_path="$(require_worktree "$branch")"
 
     echo -e "${CYAN}Removing worktree: $worktree_path${NC}"
     git -C "$REPO_ROOT" worktree remove "$worktree_path"
@@ -258,6 +330,84 @@ cmd_prs() {
     echo -e "${GREEN}Done: $created created, $skipped skipped${NC}"
 }
 
+cmd_sign() {
+    local branch="$1"
+
+    if [[ -z "$branch" ]]; then
+        echo -e "${RED}Error: branch name required${NC}"
+        echo "Usage: $(basename "$0") sign <branch>"
+        exit 1
+    fi
+
+    local worktree_path
+    worktree_path="$(require_worktree "$branch")"
+    configure_signing "$worktree_path"
+}
+
+cmd_merge() {
+    local branch="$1"
+    local source="$2"
+
+    if [[ -z "$branch" ]] || [[ -z "$source" ]]; then
+        echo -e "${RED}Error: branch and source required${NC}"
+        echo "Usage: $(basename "$0") merge <branch> <source>"
+        echo "  Merges <source> branch into <branch>'s worktree"
+        exit 1
+    fi
+
+    local worktree_path
+    worktree_path="$(require_worktree "$branch")"
+
+    # Verify source branch exists
+    if ! git -C "$REPO_ROOT" rev-parse --verify "$source" >/dev/null 2>&1; then
+        echo -e "${RED}Error: source branch '$source' does not exist${NC}"
+        exit 1
+    fi
+
+    check_dirty "$worktree_path" || exit 1
+
+    echo -e "${CYAN}Merging '$source' into '$branch'...${NC}"
+    if git -C "$worktree_path" merge "$source" --no-edit; then
+        echo -e "${GREEN}✓ Merged '$source' into '$branch'${NC}"
+    else
+        echo -e "${RED}✗ Merge conflicts — resolve in $worktree_path${NC}"
+        exit 1
+    fi
+}
+
+cmd_rebase() {
+    local branch="$1"
+    local onto="${2:-master}"
+
+    if [[ -z "$branch" ]]; then
+        echo -e "${RED}Error: branch name required${NC}"
+        echo "Usage: $(basename "$0") rebase <branch> [onto]"
+        echo "  Rebases <branch>'s worktree onto <onto> (default: master)"
+        exit 1
+    fi
+
+    local worktree_path
+    worktree_path="$(require_worktree "$branch")"
+
+    # Verify onto branch exists
+    if ! git -C "$REPO_ROOT" rev-parse --verify "$onto" >/dev/null 2>&1; then
+        echo -e "${RED}Error: target branch '$onto' does not exist${NC}"
+        exit 1
+    fi
+
+    check_dirty "$worktree_path" || exit 1
+
+    echo -e "${CYAN}Rebasing '$branch' onto '$onto'...${NC}"
+    if git -C "$worktree_path" rebase "$onto"; then
+        echo -e "${GREEN}✓ Rebased '$branch' onto '$onto'${NC}"
+    else
+        echo -e "${RED}✗ Rebase conflicts — resolve in $worktree_path${NC}"
+        echo -e "  Then: cd $worktree_path && git rebase --continue"
+        echo -e "  Or:   cd $worktree_path && git rebase --abort"
+        exit 1
+    fi
+}
+
 # Main
 case "${1:-}" in
     create)
@@ -277,6 +427,18 @@ case "${1:-}" in
     remove)
         shift
         cmd_remove "${1:-}"
+        ;;
+    sign)
+        shift
+        cmd_sign "${1:-}"
+        ;;
+    merge)
+        shift
+        cmd_merge "${1:-}" "${2:-}"
+        ;;
+    rebase)
+        shift
+        cmd_rebase "${1:-}" "${2:-}"
         ;;
     prs)
         cmd_prs
