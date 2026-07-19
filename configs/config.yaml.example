@@ -1,0 +1,207 @@
+# loop-lore configuration
+# Supports: YAML (.yaml, .yml) or TOML (.toml)
+# Env vars override values below — see src/config/load.ts for mapping
+# $schema: ./schemas/loop-lore-config.schema.json
+
+server:
+  port: 3000
+  host: "localhost"
+  tls:
+    key: "../loop-lore-data/certs/key.pem"      # auto-generated if missing
+    cert: "../loop-lore-data/certs/cert.pem"    # auto-generated if missing
+
+db:
+  type: sqlite          # "sqlite" or "postgres"
+  sqliteFilename: "../loop-lore-data/loop-lore.db"
+  # For Postgres:
+  # type: postgres
+  # url: "postgres://user:pass@localhost:5432/loop-lore"
+
+assets:
+  enabled: true
+  uploadDir: "../loop-lore-data/uploads"
+  maxFileSize: 10485760  # 10 MB
+  compression: true
+
+assistant:
+  enabled: true
+
+logging:
+  level: debug          # debug | info | warn | error
+  # jsonlPath: "./data/logs/loop-lore.jsonl"   # enable JSONL output
+  # jsonlMaxBytes: 104857600                   # 100 MB rotation
+  # jsonlMaxFiles: 5
+  # dbEnabled: false                           # log_entries table
+  # censorEnabled: true                        # PII redaction (default)
+  # censorFields: ["x-api-key", "authorization"]
+  # queueMaxSize: 10000
+  # maxMessageBytes: 10240
+  # maxMetaBytes: 102400
+  # maxMetaDepth: 5
+  # maxStackBytes: 5120
+
+tui:
+  enabled: true
+
+docs:
+  enabled: true
+  # public: ["guide", "frontend", "assets", "actors"]    # uncomment to restrict visible sections
+
+auth:
+  required: false             # true = remote auth, false = solo/demo mode
+  registrationOpen: true
+  sessionTimeoutHours: 24
+  maxSessionsPerUser: 10
+  demoUsername: demo
+  demoAutoSetup: true
+
+# ── Age Gate ──
+ageGate:
+  enabled: false
+  minimumAge: 18
+  mode: self-declaration    # none | self-declaration | verification
+
+# ── Transport ──
+transport:
+  defaultProtocol: http/1.1
+  enableWebSocket: true
+  enableWebTransport: false
+  enableH2: false
+  enableH3: false
+  compression:
+    enabled: false
+    default: none
+    threshold: 256
+  limits:
+    maxFrameSize: 65536
+    maxPayload: 327680
+    maxConcurrentStreams: 100
+
+# ── Messages ──
+messages:
+  autoHideInvalid: false
+  hideConfirmation: true
+  maxLength: 100000
+  maxGenerationRetries: 3
+  generationTimeoutMs: 30000
+  idempotencyExpiryHours: 24
+
+# ── NSFW ──
+nsfw:
+  allowNsfw: true
+  nsfwMinAge: 18
+
+# ── Generation (LLM Providers) ──
+generation:
+  providers:
+    openaiCompatible: []
+    # Example provider:
+    # - name: default
+    #   label: "Default Provider"
+    #   baseUrl: http://localhost:8080/v1
+    #   apiKey: "sk-optional"
+    #   model: claude-3-opus
+    #   timeout: 30000
+    #   retries: 3
+    #   allowUserApiKey: true
+    #   models:
+    #     claude-3-opus: { contextLimit: 200000, maxOutput: 4000 }
+  defaultProvider: ""
+  defaultModels: {}
+
+  # ── Auto-start external AI servers (optional) ──
+  # Uncomment to spawn llama.cpp / sd-server as child processes at startup.
+  # Servers are skipped gracefully if binaries not found.
+  # autoStart:
+  #   llamaCpp:
+  #     enabled: true
+  #     modelPath: "org/repo:Q4_K_M"
+  #     port: 9011
+  #     alias: my-model                    # model alias for API
+  #     ctxSize: 8192
+  #     threads: -1                        # -1 = auto
+  #     nGpuLayers: auto                   # auto, all, or number
+  #     cacheTypeK: iq4_nl                 # KV cache quant
+  #     cacheTypeV: iq4_nl
+  #     cacheTypeKD: iq4_nl                 # KV cache quant
+  #     cacheTypeVD: iq4_nl
+  #     flashAttn: on                      # on, off, auto
+  #     temp: 1.0                          # sampler defaults
+  #     topK: 40
+  #     topP: 0.95
+  #     minP: 0.01
+  #     repeatPenalty: 1.05
+  #     parallelRequests: 1
+  #     fit: true
+  #     specType: "draft-eagle3,ngram-map-k4v"
+  #     specDraftNMax: 4
+  #     reasoningBudget: -1                # -1 = unlimited thinking
+  #   sdCpp:
+  #     enabled: true
+  #     modelType: checkpoint                  # checkpoint (-m) or diffusion (--diffusion-model)
+  #     modelPath: "/path/to/model.safetensors"
+  #     port: 9010
+  #     # ── For diffusion modelType, provide text encoder ──
+  #     # llmPath: "/path/to/text-encoder.gguf"    # needed for most diffusion models
+  #     # clipLPath: "/path/to/clip-l.gguf"      # SD1.x/SD2.x
+  #     # clipGPath: "/path/to/clip-g.gguf"
+  #     # t5xxlPath: "/path/to/t5xxl.gguf"
+  #     # ── Model components ───────────────────────────
+  #     # vaePath: "/path/to/vae.safetensors"
+  #     # loraDir: "/path/to/loras"
+  #     # controlNetPath: "/path/to/control-net.safetensors"
+  #     # ── Performance ────────────────────────────────
+  #     # fa: true                               # flash attention
+  #     # vaeTiling: true                        # tile VAE for lower VRAM
+  #     # offloadToCPU: true                     # keep weights in RAM
+  #     # maxVram: "6"                           # VRAM budget in GiB
+  #     # rng: cpu
+  #     # samplerRng: cpu
+  #     # cacheMode: spectrum
+  #     # type: q8_0                             # weight quantization
+  #     # backend: "clip=cpu,vae=cpu"
+
+# ── BYO API Keys ──
+byoKey:
+  enabled: true
+  # encryptionKey: "optional-override-for-auth.sessionSecret"
+
+# ── Encryption (at-rest message encryption) ──
+encryption:
+  required: false
+  compressThreshold: 128
+  # compressAlgorithm: gzip            # gzip | brotli | zstd
+
+# ── Response Headers (FExBE: security / isolation / perf / observability) ──
+# Centralized, route-aware header injection. Applied to every response.
+headers:
+  enabled: true
+  referrerPolicy: "strict-origin-when-cross-origin"
+  xContentTypeOptions: true
+  xFrameOptions: DENY                  # DENY | SAMEORIGIN | null
+  permissionsPolicy: "accelerometer=(), camera=(), display-capture=(), geolocation=(), gyroscope=(), microphone=(), usb=()"
+  csp:
+    enabled: true
+    defaultSrc: ["'self'"]
+    scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'"] # Alpine.js uses Function() + @x setAttribute override
+    styleSrc: ["'self'", "'unsafe-inline'"] # inline style= attrs need unsafe-inline
+    imgSrc: ["'self'", "data:", "blob:"]
+    fontSrc: ["'self'"]
+    connectSrc: ["'self'", "wss:", "https:"]
+    objectSrc: ["'none'"]
+    baseUri: ["'self'"]
+    frameAncestors: ["'none'"]
+    upgradeInsecureRequests: true
+    # reportOnly: false                # true = emit Content-Security-Policy-Report-Only (observe, don't enforce)
+  # crossOriginOpenerPolicy: null      # same-origin | same-origin-allow-popups | null
+  # crossOriginEmbedderPolicy: null    # require-corp | null  (keep null until wasm/SAB ready)
+  crossOriginResourcePolicy: cross-origin   # same-origin | cross-origin
+  immutableHashedAssets: true
+  linkPreload: ["/vendor.js", "/app.js", "/css/app.css"]
+  # acceptClientHints: ["Device-Memory", "RTT"]   # needs HTTPS; opt-in client hints
+  # saveData: false
+  earlyHints:
+    enabled: false                     # 103 Early Hints — needs transport support (spike)
+  # reportingEndpoints:
+  #   default: "https://example.com/report"
+  # nel: '{ "report_to": "default", "max_age": 31536000 }'

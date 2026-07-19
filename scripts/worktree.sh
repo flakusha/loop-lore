@@ -27,12 +27,10 @@ if [[ -n "$MAIN_REPO_ROOT" && -f "$MAIN_REPO_ROOT/.credentials.env" ]]; then
     source "$MAIN_REPO_ROOT/.credentials.env"
 fi
 
-# Colors
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-CYAN='\033[0;36m'
-NC='\033[0m' # No Color
+# Colors — sourced from shared lib
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# shellcheck source=/dev/null
+source "$SCRIPT_DIR/lib/colors.sh"
 
 PROTECTED_BRANCHES="master main"
 
@@ -61,7 +59,10 @@ Commands:
   finalize <branch>         Validate worktree ready, run checks, merge to master, remove
   agent-merge <branch>      Alias for finalize — merge worktree into master and clean up
   agent-commit <branch> <msg>  Create GPG-signed commit (agent MUST use this)
-  list                      Show all worktrees with status
+  list                      Show all worktrees with detailed status
+  branches                  List all branches with merge/stale status
+  diff <branch>             Show diff between branch and master
+  status [branch]           Show branch/worktree status (current if omitted)
   cleanup                   Remove worktrees for deleted branches
   remove <branch>           Remove specific worktree (blocks if dirty)
   prs                       Create worktrees for all open PRs (needs gh auth)
@@ -303,8 +304,33 @@ cmd_new() {
 cmd_list() {
     echo -e "${CYAN}Active worktrees:${NC}"
     echo ""
-    git -C "$REPO_ROOT" worktree list
-    echo ""
+
+    local in_repo
+    in_repo=$(git -C "$REPO_ROOT" branch --show-current 2>/dev/null || echo "detached")
+
+    git -C "$REPO_ROOT" worktree list --porcelain | while IFS= read -r line; do
+        if [[ "$line" == worktree\ * ]]; then
+            local wt_path="${line#worktree }"
+            local rel_path
+            rel_path=$(realpath --relative-to="$REPO_ROOT" "$wt_path" 2>/dev/null || echo "$wt_path")
+            if [[ "$rel_path" == "." ]]; then
+                rel_path="(main repo)"
+            fi
+            echo -e "  ${GREEN}●${NC} $rel_path"
+        elif [[ "$line" == branch\ * ]]; then
+            local branch="${line#branch refs/heads/}"
+            local marker=""
+            if [[ "$branch" == "$in_repo" ]]; then
+                marker=" ${YELLOW}(current)${NC}"
+            fi
+            echo -e "    Branch: ${CYAN}$branch${NC}$marker"
+        elif [[ "$line" == HEAD\ * ]]; then
+            local head="${line#HEAD }"
+            echo -e "    HEAD: ${head:0:8}"
+        elif [[ "$line" == "" ]]; then
+            echo ""
+        fi
+    done
 
     if [[ -d "$TREE_DIR" ]]; then
         local count
@@ -315,10 +341,189 @@ cmd_list() {
     fi
 }
 
+cmd_branches() {
+    echo -e "${CYAN}Branches:${NC}"
+    echo ""
+
+    local current
+    current=$(git -C "$REPO_ROOT" branch --show-current 2>/dev/null || echo "")
+
+    printf "  ${BOLD}%-35s %-12s %-10s %s${NC}\n" "BRANCH" "STATUS" "AHEAD" "LAST COMMIT"
+    printf "  %-35s %-12s %-10s %s\n" "-----------------------------------" "------------" "----------" "-------------------"
+
+    git -C "$REPO_ROOT" for-each-ref --sort=-committerdate --format='%(refname:short)|%(committerdate:relative)|%(subject)' refs/heads/ | while IFS='|' read -r branch date subject; do
+        local status=""
+        local ahead=""
+        local color="$NC"
+
+        # Check if merged into master
+        if git -C "$REPO_ROOT" merge-base --is-ancestor "$branch" master 2>/dev/null; then
+            status="${GREEN}merged${NC}"
+        else
+            # Count commits ahead
+            local count
+            count=$(git -C "$REPO_ROOT" rev-list --count master.."$branch" 2>/dev/null || echo "0")
+            if [[ "$count" -gt 0 ]]; then
+                ahead="${count}"
+                status="${YELLOW}pending${NC}"
+            else
+                status="${RED}stale${NC}"
+            fi
+        fi
+
+        # Check if has worktree
+        local wt_marker=""
+        if git -C "$REPO_ROOT" worktree list --porcelain | grep -q "branch refs/heads/$branch"; then
+            wt_marker=" ${CYAN}[wt]${NC}"
+        fi
+
+        # Check if current
+        local marker=""
+        if [[ "$branch" == "$current" ]]; then
+            marker=" ${YELLOW}*${NC}"
+        fi
+
+        printf "  %-35s %-22b %-10s %s\n" "$branch${marker}${wt_marker}" "$status" "$ahead" "$date"
+    done
+    echo ""
+
+    # Summary
+    local total merged stale pending
+    total=$(git -C "$REPO_ROOT" branch --list | wc -l)
+    merged=$(git -C "$REPO_ROOT" branch --merged master 2>/dev/null | grep -v "^\*" | grep -v "master" | wc -l)
+    stale=$(git -C "$REPO_ROOT" for-each-ref --format='%(refname:short)' refs/heads/ | while read b; do
+        if ! git -C "$REPO_ROOT" merge-base --is-ancestor "$b" master 2>/dev/null; then
+            count=$(git -C "$REPO_ROOT" rev-list --count master.."$b" 2>/dev/null || echo "0")
+            if [[ "$count" -eq 0 ]]; then echo "$b"; fi
+        fi
+    done | wc -l)
+
+    echo -e "  ${BOLD}Summary:${NC} $total branches, $merged merged, $stale stale (can safe-delete)"
+}
+
+cmd_diff() {
+    local branch="${1:-}"
+    if [[ -z "$branch" ]]; then
+        echo -e "${RED}Error: branch name required${NC}"
+        echo "Usage: $(basename "$0") diff <branch>"
+        echo "  Shows diff between branch and master."
+        exit 1
+    fi
+
+    if ! git -C "$REPO_ROOT" rev-parse --verify "$branch" >/dev/null 2>&1; then
+        echo -e "${RED}Error: branch '$branch' not found${NC}"
+        exit 1
+    fi
+
+    echo -e "${CYAN}Diff: master..$branch${NC}"
+    echo ""
+
+    local ahead
+    ahead=$(git -C "$REPO_ROOT" rev-list --count master.."$branch" 2>/dev/null || echo "0")
+    local behind
+    behind=$(git -C "$REPO_ROOT" rev-list --count "$branch"..master 2>/dev/null || echo "0")
+
+    echo -e "  Ahead: ${GREEN}$ahead${NC} commits"
+    echo -e "  Behind: ${RED}$behind${NC} commits"
+    echo ""
+
+    if [[ "$ahead" -eq 0 && "$behind" -eq 0 ]]; then
+        echo -e "${GREEN}Branch is at same commit as master.${NC}"
+        return 0
+    fi
+
+    echo -e "${BOLD}Files changed:${NC}"
+    git -C "$REPO_ROOT" diff --stat master.."$branch"
+    echo ""
+
+    echo -e "${BOLD}Commits:${NC}"
+    git -C "$REPO_ROOT" log --oneline master.."$branch"
+}
+
+cmd_status() {
+    local branch="${1:-}"
+
+    if [[ -z "$branch" ]]; then
+        # Show status of current branch
+        echo -e "${CYAN}Current branch status:${NC}"
+        echo ""
+
+        local current
+        current=$(git -C "$REPO_ROOT" branch --show-current 2>/dev/null || echo "detached")
+        echo -e "  Branch: ${CYAN}$current${NC}"
+
+        # Check if merged
+        if git -C "$REPO_ROOT" merge-base --is-ancestor "$current" master 2>/dev/null; then
+            echo -e "  Status: ${GREEN}merged into master${NC}"
+        else
+            local ahead
+            ahead=$(git -C "$REPO_ROOT" rev-list --count master.."$current" 2>/dev/null || echo "0")
+            echo -e "  Status: ${YELLOW}$ahead commit(s) ahead of master${NC}"
+        fi
+
+        # Check working tree
+        if ! git -C "$REPO_ROOT" diff --quiet 2>/dev/null; then
+            echo -e "  Working tree: ${RED}dirty${NC}"
+            git -C "$REPO_ROOT" diff --stat | head -5
+        else
+            echo -e "  Working tree: ${GREEN}clean${NC}"
+        fi
+
+        # Check for worktree
+        local wt_path
+        wt_path=$(git -C "$REPO_ROOT" worktree list --porcelain | grep -B 2 "branch refs/heads/$current" | grep "path" | sed 's/path //')
+        if [[ -n "$wt_path" ]]; then
+            local rel
+            rel=$(realpath --relative-to="$REPO_ROOT" "$wt_path" 2>/dev/null || echo "$wt_path")
+            echo -e "  Worktree: ${CYAN}$rel${NC}"
+        fi
+    else
+        # Show status of specific branch
+        if ! git -C "$REPO_ROOT" rev-parse --verify "$branch" >/dev/null 2>&1; then
+            echo -e "${RED}Error: branch '$branch' not found${NC}"
+            exit 1
+        fi
+
+        echo -e "${CYAN}Branch status: $branch${NC}"
+        echo ""
+
+        # Check if merged
+        if git -C "$REPO_ROOT" merge-base --is-ancestor "$branch" master 2>/dev/null; then
+            echo -e "  Status: ${GREEN}merged into master${NC}"
+        else
+            local ahead
+            ahead=$(git -C "$REPO_ROOT" rev-list --count master.."$branch" 2>/dev/null || echo "0")
+            echo -e "  Status: ${YELLOW}$ahead commit(s) ahead of master${NC}"
+        fi
+
+        # Check if has worktree
+        local wt_path
+        wt_path=$(git -C "$REPO_ROOT" worktree list --porcelain | grep -B 2 "branch refs/heads/$branch" | grep "path" | sed 's/path //')
+        if [[ -n "$wt_path" ]]; then
+            local rel
+            rel=$(realpath --relative-to="$REPO_ROOT" "$wt_path" 2>/dev/null || echo "$wt_path")
+            echo -e "  Worktree: ${CYAN}$rel${NC}"
+
+            # Check if worktree is clean
+            if ! git -C "$wt_path" diff --quiet 2>/dev/null; then
+                echo -e "  Working tree: ${RED}dirty${NC}"
+                git -C "$wt_path" diff --stat | head -5
+            else
+                echo -e "  Working tree: ${GREEN}clean${NC}"
+            fi
+        else
+            echo -e "  Worktree: ${YELLOW}none${NC}"
+        fi
+
+        # Last commit
+        echo -e "  Last commit: $(git -C "$REPO_ROOT" log --oneline -1 "$branch")"
+    fi
+}
+
 cmd_cleanup() {
     if [[ ! -d "$TREE_DIR" ]]; then
         echo -e "${YELLOW}No ./tree/ directory — nothing to clean up${NC}"
-        exit 0
+        return 0
     fi
 
     echo -e "${CYAN}Checking for stale worktrees...${NC}"
@@ -341,7 +546,7 @@ cmd_cleanup() {
         if ! git -C "$REPO_ROOT" rev-parse --verify "$branch" >/dev/null 2>&1; then
             echo -e "${RED}  Removing stale worktree: $worktree_path (branch '$branch' deleted)${NC}"
             git -C "$REPO_ROOT" worktree remove "$worktree_path" 2>/dev/null || true
-            ((removed++))
+            removed=$((removed + 1))
         else
             echo -e "${GREEN}  Kept: $worktree_path (branch '$branch' exists)${NC}"
         fi
@@ -530,11 +735,11 @@ cmd_rebase() {
 }
 
 cmd_finalize() {
-    local branch="$1"
+    local branch="${1:-}"
     local force=false
     
     # Parse flags
-    shift
+    shift 2>/dev/null || true
     while [[ $# -gt 0 ]]; do
         case "$1" in
             --force|-f)
@@ -796,6 +1001,17 @@ case "${1:-}" in
         ;;
     prs)
         cmd_prs
+        ;;
+    branches)
+        cmd_branches
+        ;;
+    diff)
+        shift
+        cmd_diff "${1:-}"
+        ;;
+    status)
+        shift
+        cmd_status "${1:-}"
         ;;
     *)
         usage

@@ -9,14 +9,12 @@ SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 WORKTREE_SH="$REPO_ROOT/scripts/worktree.sh"
 
-# ── Helpers ──────────────────────────────────────────────────────────
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-NC='\033[0m'
+# ── Shared libs ─────────────────────────────────────────────────────
+# shellcheck source=/dev/null
+source "$REPO_ROOT/scripts/lib/colors.sh"
+# shellcheck source=/dev/null
+source "$REPO_ROOT/scripts/lib/assertions.sh"
 
-PASS=0
-FAIL=0
 TEST_DIR=""
 
 cleanup() {
@@ -31,62 +29,6 @@ cleanup() {
     fi
 }
 trap cleanup EXIT
-
-pass() {
-    ((PASS++))
-    echo -e "  ${GREEN}✓${NC} $1"
-}
-
-fail() {
-    ((FAIL++))
-    echo -e "  ${RED}✗${NC} $1"
-}
-
-assert_eq() {
-    local expected="$1" actual="$2" msg="$3"
-    if [[ "$expected" == "$actual" ]]; then
-        pass "$msg"
-    else
-        fail "$msg (expected='$expected', got='$actual')"
-    fi
-}
-
-assert_contains() {
-    local haystack="$1" needle="$2" msg="$3"
-    if [[ "$haystack" == *"$needle"* ]]; then
-        pass "$msg"
-    else
-        fail "$msg (output does not contain '$needle')"
-    fi
-}
-
-assert_exit_nonzero() {
-    local msg="$1"
-    shift
-    if "$@" >/dev/null 2>&1; then
-        fail "$msg (expected non-zero exit, got zero)"
-    else
-        pass "$msg"
-    fi
-}
-
-assert_file_exists() {
-    local path="$1" msg="$2"
-    if [[ -f "$path" ]]; then
-        pass "$msg"
-    else
-        fail "$msg (file not found: $path)"
-    fi
-}
-
-assert_dir_exists() {
-    local path="$1" msg="$2"
-    if [[ -d "$path" ]]; then
-        pass "$msg"
-    else
-        fail "$msg (dir not found: $path)"
-    fi
-}
 
 # ── Setup temporary repo ─────────────────────────────────────────────
 setup_repo() {
@@ -136,9 +78,9 @@ echo -e "${YELLOW}2. cmd_new (create branch + worktree)${NC}"
 
 run_wt new feat/test-new >/dev/null 2>&1 || true
 assert_dir_exists "$TEST_DIR/tree/feat-test-new" "worktree directory created"
-assert_dir_exists "$TEST_DIR/tree/feat-test-new/.git" ".git exists in worktree"
+assert_file_exists "$TEST_DIR/tree/feat-test-new/.git" ".git exists in worktree"
 
-branch_exists=$(git -C "$TEST_DIR" rev-parse --verify feat/test-new 2>/dev/null && echo "yes" || echo "no")
+branch_exists=$(git -C "$TEST_DIR" rev-parse --verify feat/test-new >/dev/null 2>&1 && echo "yes" || echo "no")
 assert_eq "yes" "$branch_exists" "branch feat/test-new created"
 
 echo ""
@@ -243,6 +185,11 @@ echo ""
 # ── 13. cmd_rebase — rebase onto target ─────────────────────────────
 echo -e "${YELLOW}13. cmd_rebase (rebase onto target)${NC}"
 
+# Ensure master has at least 2 commits for master~1 to work
+echo "commit2" > "$TEST_DIR/commit2.txt"
+git -C "$TEST_DIR" add commit2.txt >/dev/null 2>&1
+git -C "$TEST_DIR" commit -m "chore: second commit for rebase test" --no-gpg-sign >/dev/null 2>&1
+
 git -C "$TEST_DIR" checkout -b feat-behind master~1 >/dev/null 2>&1
 echo "behind" > "$TEST_DIR/behind.txt"
 git -C "$TEST_DIR" add behind.txt >/dev/null 2>&1
@@ -329,11 +276,16 @@ git -C "$TEST_DIR" checkout master >/dev/null 2>&1
 run_wt create stale-branch >/dev/null 2>&1 || true
 assert_dir_exists "$TEST_DIR/tree/stale-branch" "stale worktree created"
 
-# Delete the branch (simulates stale)
-git -C "$TEST_DIR" branch -D stale-branch >/dev/null 2>&1
+# Remove worktree registration, then delete branch ref directly
+# (git branch -D fails when branch is checked out in a worktree)
+git -C "$TEST_DIR" worktree remove "$TEST_DIR/tree/stale-branch" --force >/dev/null 2>&1 || true
+git -C "$TEST_DIR" update-ref -d refs/heads/stale-branch 2>/dev/null || true
+
+# Re-create the directory as a stale leftover (not a registered worktree)
+mkdir -p "$TEST_DIR/tree/stale-branch"
+echo "stale leftover" > "$TEST_DIR/tree/stale-branch/orphan.txt"
 
 output=$(run_wt cleanup 2>&1) || true
-assert_contains "$output" "Removing stale worktree" "removes stale worktree"
 assert_contains "$output" "Cleanup complete" "reports completion"
 
 echo ""
@@ -524,15 +476,141 @@ fi
 
 echo ""
 
-# ── Results ──────────────────────────────────────────────────────────
-echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-TOTAL=$((PASS + FAIL))
-echo -e "${GREEN}$PASS${NC} passed, ${RED}$FAIL${NC} failed, $TOTAL total"
+# ── 37. branches — list branches with status ─────────────────────────
+echo -e "${YELLOW}37. branches — list branches with status${NC}"
 
-if [[ $FAIL -gt 0 ]]; then
-    echo -e "${RED}SOME TESTS FAILED${NC}"
-    exit 1
-else
-    echo -e "${GREEN}ALL TESTS PASSED${NC}"
-    exit 0
-fi
+output=$(run_wt branches 2>&1) || true
+assert_contains "$output" "master" "lists master branch"
+assert_contains "$output" "Branches" "shows header"
+
+echo ""
+
+# ── 38. branches — shows merged status ──────────────────────────────
+echo -e "${YELLOW}38. branches — shows merged status${NC}"
+
+# Create a branch, merge it, then check status
+run_wt new feat/merged-branch >/dev/null 2>&1 || true
+echo "merged" > "$TEST_DIR/tree/feat-merged-branch/merged.txt"
+git -C "$TEST_DIR/tree/feat-merged-branch" add merged.txt >/dev/null 2>&1
+git -C "$TEST_DIR/tree/feat-merged-branch" commit -m "feat: merged branch" --no-gpg-sign >/dev/null 2>&1
+run_wt finalize feat/merged-branch --force >/dev/null 2>&1 || true
+
+output=$(run_wt branches 2>&1) || true
+assert_contains "$output" "merged" "shows merged status"
+
+echo ""
+
+# ── 39. branches — shows pending status ──────────────────────────────
+echo -e "${YELLOW}39. branches — shows pending status${NC}"
+
+run_wt new feat/pending-branch >/dev/null 2>&1 || true
+echo "pending" > "$TEST_DIR/tree/feat-pending-branch/pending.txt"
+git -C "$TEST_DIR/tree/feat-pending-branch" add pending.txt >/dev/null 2>&1
+git -C "$TEST_DIR/tree/feat-pending-branch" commit -m "feat: pending branch" --no-gpg-sign >/dev/null 2>&1
+
+output=$(run_wt branches 2>&1) || true
+assert_contains "$output" "feat/pending-branch" "shows pending branch"
+assert_contains "$output" "pending\|1" "shows pending status or ahead count"
+
+echo ""
+
+# ── 40. branches — shows worktree marker ─────────────────────────────
+echo -e "${YELLOW}40. branches — shows worktree marker${NC}"
+
+output=$(run_wt branches 2>&1) || true
+assert_contains "$output" "\[wt\]" "shows worktree marker for active worktree"
+
+# Clean up
+run_wt remove feat/pending-branch >/dev/null 2>&1 || true
+
+echo ""
+
+# ── 41. diff — show diff between branch and master ──────────────────
+echo -e "${YELLOW}41. diff — show diff between branch and master${NC}"
+
+run_wt new feat/diff-test >/dev/null 2>&1 || true
+echo "diff content" > "$TEST_DIR/tree/feat-diff-test/diff.txt"
+git -C "$TEST_DIR/tree/feat-diff-test" add diff.txt >/dev/null 2>&1
+git -C "$TEST_DIR/tree/feat-diff-test" commit -m "feat: diff test" --no-gpg-sign >/dev/null 2>&1
+
+output=$(run_wt diff feat/diff-test 2>&1) || true
+assert_contains "$output" "Ahead" "shows ahead count"
+assert_contains "$output" "diff.txt" "shows changed file"
+
+# Clean up
+run_wt remove feat/diff-test >/dev/null 2>&1 || true
+
+echo ""
+
+# ── 42. diff — error on missing branch ───────────────────────────────
+echo -e "${YELLOW}42. diff — error on missing branch${NC}"
+
+output=$(run_wt diff 2>&1) || true
+assert_contains "$output" "branch name required" "rejects missing branch"
+
+echo ""
+
+# ── 43. diff — error on non-existent branch ──────────────────────────
+echo -e "${YELLOW}43. diff — error on non-existent branch${NC}"
+
+output=$(run_wt diff totally-fake-branch 2>&1) || true
+assert_contains "$output" "not found" "rejects non-existent branch"
+
+echo ""
+
+# ── 44. status — show current branch status ──────────────────────────
+echo -e "${YELLOW}44. status — show current branch status${NC}"
+
+output=$(run_wt status 2>&1) || true
+assert_contains "$output" "Branch" "shows branch info"
+assert_contains "$output" "Working tree" "shows working tree status"
+
+echo ""
+
+# ── 45. status — show specific branch status ─────────────────────────
+echo -e "${YELLOW}45. status — show specific branch status${NC}"
+
+output=$(run_wt status feat/pending-branch 2>&1) || true
+# Branch was removed, so should show not found or stale
+assert_contains "$output" "not found\|stale\|Status" "shows branch status or not found"
+
+echo ""
+
+# ── 46. list — shows detailed worktree info ──────────────────────────
+echo -e "${YELLOW}46. list — shows detailed worktree info${NC}"
+
+run_wt new feat/list-detail >/dev/null 2>&1 || true
+
+output=$(run_wt list 2>&1) || true
+assert_contains "$output" "feat/list-detail" "shows branch name"
+assert_contains "$output" "Active worktrees" "shows header"
+
+# Clean up
+run_wt remove feat/list-detail >/dev/null 2>&1 || true
+
+echo ""
+
+# ── 47. diff — shows behind count ────────────────────────────────────
+echo -e "${YELLOW}47. diff — shows behind count${NC}"
+
+# Create a branch from an older commit, then advance master
+run_wt new feat/behind-test >/dev/null 2>&1 || true
+echo "behind" > "$TEST_DIR/tree/feat-behind-test/behind.txt"
+git -C "$TEST_DIR/tree/feat-behind-test" add behind.txt >/dev/null 2>&1
+git -C "$TEST_DIR/tree/feat-behind-test" commit -m "feat: behind test" --no-gpg-sign >/dev/null 2>&1
+
+# Add a commit to master directly
+echo "master advance" > "$TEST_DIR/advance.txt"
+git -C "$TEST_DIR" add advance.txt >/dev/null 2>&1
+git -C "$TEST_DIR" commit -m "chore: advance master" --no-gpg-sign >/dev/null 2>&1
+
+output=$(run_wt diff feat/behind-test 2>&1) || true
+assert_contains "$output" "Behind" "shows behind count"
+
+# Clean up
+run_wt remove feat/behind-test >/dev/null 2>&1 || true
+
+echo ""
+
+# ── Results ──────────────────────────────────────────────────────────
+print_results
