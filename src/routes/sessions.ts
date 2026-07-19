@@ -9,15 +9,15 @@
  * IP, user-agent, and expiry. The raw token is never stored or returned.
  */
 
-import { Elysia, t } from "elysia";
-import type { Db } from "../db";
-import { getLogger } from "../logger";
-import type { Logger } from "../logger/types";
-import { notFound, unauthorized } from "../validation/middleware";
-import { HttpStatus, jsonError, jsonNoContent, jsonResponse, parsePagination } from "./http-utils";
+import { Elysia, t, } from "elysia";
+import type { Db, } from "../db";
+import { getLogger, } from "../logger";
+import type { Logger, } from "../logger/types";
+import { notFound, unauthorized, } from "../validation/middleware";
+import { HttpStatus, jsonError, jsonNoContent, jsonResponse, parsePagination, } from "./http-utils";
 
 function log(): Logger {
-  return getLogger().child({ module: "sessions" });
+  return getLogger().child({ module: "sessions", },);
 }
 
 interface HandleOpts {
@@ -49,11 +49,11 @@ function sanitizeSession(
   };
 }
 
-export function sessionsRoutes(opts: HandleOpts): Elysia {
-  const { database } = opts;
+export function sessionsRoutes(opts: HandleOpts,): Elysia {
+  const { database, } = opts;
 
   return (
-    new Elysia({ name: "sessions" })
+    new Elysia({ name: "sessions", },)
       /**
        * GET /api/sessions
        *
@@ -61,46 +61,46 @@ export function sessionsRoutes(opts: HandleOpts): Elysia {
        * Admin users can see all sessions; regular users only see their own.
        * Query params: ?page=1&pageSize=50
        */
-      .get("/api/sessions", async (ctx) => {
+      .get("/api/sessions", async (ctx,) => {
         const userId = (ctx as any).userId as string | null;
         const userRole = (ctx as any).userRole as string | null;
         const sessionId = (ctx as any).sessionId as string | null;
 
-        if (!userId) return unauthorized();
+        if (!userId) { return unauthorized(); }
 
-        const { page, pageSize } = parsePagination(new URL(ctx.request.url).searchParams);
+        const { page, pageSize, } = parsePagination(new URL(ctx.request.url,).searchParams,);
         const isAdmin = userRole === "admin";
 
         const baseQuery = database
-          .selectFrom("sessions")
-          .select(["id", "user_id", "ip", "user_agent", "created_at", "last_activity", "expires_at"]);
+          .selectFrom("sessions",)
+          .select(["id", "user_id", "ip", "user_agent", "created_at", "last_activity", "expires_at",],);
 
-        const filteredQuery = isAdmin ? baseQuery : baseQuery.where("user_id", "=", userId);
+        const filteredQuery = isAdmin ? baseQuery : baseQuery.where("user_id", "=", userId,);
 
         const countQuery = isAdmin
-          ? database.selectFrom("sessions").select(database.fn.count("id").as("count"))
+          ? database.selectFrom("sessions",).select(database.fn.count("id",).as("count",),)
           : database
-            .selectFrom("sessions")
-            .select(database.fn.count("id").as("count"))
-            .where("user_id", "=", userId);
+            .selectFrom("sessions",)
+            .select(database.fn.count("id",).as("count",),)
+            .where("user_id", "=", userId,);
 
-        const [rows, countResult] = await Promise.all([
+        const [rows, countResult,] = await Promise.all([
           filteredQuery
-            .orderBy("created_at", "desc")
-            .limit(pageSize)
-            .offset((page - 1) * pageSize)
+            .orderBy("created_at", "desc",)
+            .limit(pageSize,)
+            .offset((page - 1) * pageSize,)
             .execute(),
           countQuery.executeTakeFirst(),
-        ]);
+        ],);
 
-        const total = Number(countResult?.count ?? 0);
-        const sessions = rows.map((s) => sanitizeSession(s, sessionId));
+        const total = Number(countResult?.count ?? 0,);
+        const sessions = rows.map((s,) => sanitizeSession(s, sessionId,));
 
         return jsonResponse({
           data: sessions,
-          pagination: { page, pageSize, total, totalPages: Math.ceil(total / pageSize) },
-        });
-      })
+          pagination: { page, pageSize, total, totalPages: Math.ceil(total / pageSize,), },
+        },);
+      },)
       /**
        * GET /api/sessions/:id
        *
@@ -109,29 +109,29 @@ export function sessionsRoutes(opts: HandleOpts): Elysia {
        */
       .get(
         "/api/sessions/:id",
-        async (ctx) => {
+        async (ctx,) => {
           const userId = (ctx as any).userId as string | null;
           const userRole = (ctx as any).userRole as string | null;
           const currentSessionId = (ctx as any).sessionId as string | null;
           const targetId = (ctx as any).params.id as string;
 
-          if (!userId) return unauthorized();
+          if (!userId) { return unauthorized(); }
 
           const session = await database
-            .selectFrom("sessions")
-            .select(["id", "user_id", "ip", "user_agent", "created_at", "last_activity", "expires_at"])
-            .where("id", "=", targetId)
+            .selectFrom("sessions",)
+            .select(["id", "user_id", "ip", "user_agent", "created_at", "last_activity", "expires_at",],)
+            .where("id", "=", targetId,)
             .executeTakeFirst();
 
-          if (!session) return notFound("Session not found");
+          if (!session) { return notFound("Session not found",); }
 
           if (session.user_id !== userId && userRole !== "admin") {
-            return notFound("Session not found");
+            return notFound("Session not found",);
           }
 
-          return jsonResponse(sanitizeSession(session, currentSessionId));
+          return jsonResponse(sanitizeSession(session, currentSessionId,),);
         },
-        { params: t.Object({ id: t.String() }) },
+        { params: t.Object({ id: t.String(), },), },
       )
       /**
        * DELETE /api/sessions/:id
@@ -143,40 +143,40 @@ export function sessionsRoutes(opts: HandleOpts): Elysia {
        */
       .delete(
         "/api/sessions/:id",
-        async (ctx) => {
+        async (ctx,) => {
           const userId = (ctx as any).userId as string | null;
           const userRole = (ctx as any).userRole as string | null;
           const currentSessionId = (ctx as any).sessionId as string | null;
           const targetId = (ctx as any).params.id as string;
 
-          if (!userId) return unauthorized();
+          if (!userId) { return unauthorized(); }
 
           const session = await database
-            .selectFrom("sessions")
-            .select(["id", "user_id"])
-            .where("id", "=", targetId)
+            .selectFrom("sessions",)
+            .select(["id", "user_id",],)
+            .where("id", "=", targetId,)
             .executeTakeFirst();
 
-          if (!session) return notFound("Session not found");
+          if (!session) { return notFound("Session not found",); }
 
           if (session.user_id !== userId && userRole !== "admin") {
-            return notFound("Session not found");
+            return notFound("Session not found",);
           }
 
           if (targetId === currentSessionId) {
             return jsonError({
               message: "Cannot delete current session. Use /api/auth/logout instead.",
               status: HttpStatus.BadRequest,
-            });
+            },);
           }
 
-          await database.deleteFrom("sessions").where("id", "=", targetId).execute();
+          await database.deleteFrom("sessions",).where("id", "=", targetId,).execute();
 
-          log().info("Session deleted", { sessionId: targetId, byUserId: userId });
+          log().info("Session deleted", { sessionId: targetId, byUserId: userId, },);
 
           return jsonNoContent();
         },
-        { params: t.Object({ id: t.String() }) },
+        { params: t.Object({ id: t.String(), },), },
       ) as unknown as Elysia
   );
 }

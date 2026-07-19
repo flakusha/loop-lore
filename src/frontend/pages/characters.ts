@@ -1,11 +1,11 @@
 // ── Characters page: search, detail modal, actions ────────────
-import { jsonBody } from "../alpine/json";
-import { feFetch } from "../fe-fetch";
-import { showToast } from "../ui";
-import { fetchPartial, filterCards } from "./shared";
+import { jsonBody, } from "../alpine/json";
+import { feFetch, } from "../fe-fetch";
+import { showToast, } from "../ui";
+import { fetchPartial, filterCards, } from "./shared";
 
 globalThis.filterCharacters = function() {
-  const query = document.querySelector<HTMLInputElement>("#character-search")?.value ?? "";
+  const query = document.querySelector<HTMLInputElement>("#character-search",)?.value ?? "";
   filterCards({
     containerId: "#character-grid",
     cardSelector: ".character-card",
@@ -14,85 +14,85 @@ globalThis.filterCharacters = function() {
     query,
     emptyIcon: "👤",
     emptyTitle: "No characters match your search",
-  });
+  },);
 };
 
-globalThis.selectCharacterCard = async function(id: string) {
-  let modal = document.querySelector<HTMLElement>("#character-detail-modal");
+globalThis.selectCharacterCard = async function(id: string,) {
+  let modal = document.querySelector<HTMLElement>("#character-detail-modal",);
 
   if (!modal) {
-    const container = document.querySelector("#modal-container");
-    if (!container) return;
-    const html = await fetchPartial("/partials/characters/detail-modal");
-    if (!html) return;
+    const container = document.querySelector("#modal-container",);
+    if (!container) { return; }
+    const html = await fetchPartial("/partials/characters/detail-modal",);
+    if (!html) { return; }
     container.innerHTML = html;
     // Initialize Alpine on dynamically loaded modal
     if (globalThis.Alpine) {
-      globalThis.Alpine.initTree(container as HTMLElement);
+      globalThis.Alpine.initTree(container as HTMLElement,);
     }
-    modal = document.querySelector<HTMLElement>("#character-detail-modal");
+    modal = document.querySelector<HTMLElement>("#character-detail-modal",);
   }
-  if (!modal) return;
+  if (!modal) { return; }
 
-  const resp = await feFetch(`/api/actors/${id}`);
+  const resp = await feFetch(`/api/actors/${id}`,);
   if (!resp.ok) {
-    console.error("Failed to fetch actor:", resp.status, id);
+    console.error("Failed to fetch actor:", resp.status, id,);
     return;
   }
   const char = await resp.json();
 
   try {
-    modal.querySelector("[data-field='name']")!.textContent = char.display_name || char.name || "";
-    modal.querySelector("[data-field='description']")!.textContent = char.description || "No description";
-    modal.querySelector("[data-field='system-prompt']")!.textContent = char.system_prompt || "No system prompt";
-    modal.querySelector("[data-field='avatar']")!.innerHTML = char.avatar_asset_id
+    modal.querySelector("[data-field='name']",)!.textContent = char.display_name || char.name || "";
+    modal.querySelector("[data-field='description']",)!.textContent = char.description || "No description";
+    modal.querySelector("[data-field='system-prompt']",)!.textContent = char.system_prompt || "No system prompt";
+    modal.querySelector("[data-field='avatar']",)!.innerHTML = char.avatar_asset_id
       ? `<img src="/api/assets/${char.avatar_asset_id}/thumb" style="width:100%;height:100%;object-fit:cover" alt="Avatar" />`
       : "<span>👤</span>";
-    modal.querySelector("[data-action='start-chat']")?.setAttribute("data-id", id);
-    modal.querySelector("[data-action='edit-char']")?.setAttribute("data-id", id);
-    modal.querySelector("[data-action='delete-char']")?.setAttribute("data-id", id);
-    modal.classList.add("open");
+    modal.querySelector("[data-action='start-chat']",)?.setAttribute("data-id", id,);
+    modal.querySelector("[data-action='edit-char']",)?.setAttribute("data-id", id,);
+    modal.querySelector("[data-action='delete-char']",)?.setAttribute("data-id", id,);
+    modal.classList.add("open",);
   } catch {
     /* ignore */
   }
 };
 
-globalThis.startChatFromChar = async function(btn: HTMLElement) {
+globalThis.startChatFromChar = async function(btn: HTMLElement,) {
   const id = btn.dataset.id;
-  if (!id) return;
+  if (!id) { return; }
   try {
     const res = await feFetch("/api/chats", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: jsonBody({ name: "Chat", type: "direct", mode: "direct", participantIds: [id] }),
-    });
+      headers: { "Content-Type": "application/json", },
+      body: jsonBody({ name: "Chat", type: "direct", mode: "direct", participantIds: [id,], },),
+    },);
     if (res.ok) {
       const data = await res.json();
-      location.assign(`/views/chat?chatid=${encodeURIComponent(data.id)}`);
+      location.assign(`/views/chat?chatid=${encodeURIComponent(data.id,)}`,);
     }
   } catch {
     /* ignore */
   }
 };
 
-globalThis.editCharacter = function(btn: HTMLElement) {
+globalThis.editCharacter = function(btn: HTMLElement,) {
   const id = btn.dataset.id;
-  if (id) location.assign(`/character/${id}/edit`);
+  if (id) { location.assign(`/character/${id}/edit`,); }
 };
 
-globalThis.deleteCharacter = async function(btn: HTMLElement) {
+globalThis.deleteCharacter = async function(btn: HTMLElement,) {
   const id = btn.dataset.id;
-  if (!id || !confirm("Delete this character?")) return;
+  if (!id || !confirm("Delete this character?",)) { return; }
   try {
     const res = await feFetch(`/api/actors/${id}`, {
       method: "DELETE",
-    });
+    },);
     if (res.ok) {
-      document.querySelector("#character-detail-modal")?.classList.remove("open");
-      showToast("success", "Character deleted");
-      const grid = document.querySelector("#character-grid");
+      document.querySelector("#character-detail-modal",)?.classList.remove("open",);
+      showToast("success", "Character deleted",);
+      const grid = document.querySelector("#character-grid",);
       if (grid) {
-        htmx.trigger(grid, "load");
+        htmx.trigger(grid, "load",);
       }
     }
   } catch {

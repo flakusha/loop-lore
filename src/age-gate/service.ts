@@ -8,9 +8,9 @@
  * checks pass without touching the database.
  */
 
-import type { Kysely } from "kysely";
-import type { AgeGateConfig } from "../config/schema";
-import type { DB } from "../db/schema";
+import type { Kysely, } from "kysely";
+import type { AgeGateConfig, } from "../config/schema";
+import type { DB, } from "../db/schema";
 
 /** Result of an age gate status check. */
 export interface AgeGateStatus {
@@ -33,16 +33,16 @@ export interface AgeGateAcceptInput {
 // ── Error types ──────────────────────────────────────────────
 
 export class AgeGateError extends Error {
-  constructor(message: string, options?: ErrorOptions) {
-    super(message, options);
+  constructor(message: string, options?: ErrorOptions,) {
+    super(message, options,);
     this.name = "AgeGateError";
   }
 }
 
 export class UnderageError extends AgeGateError {
-  constructor(minimumAge: number, options?: ErrorOptions) {
+  constructor(minimumAge: number, options?: ErrorOptions,) {
     const message = `You must be at least ${minimumAge} years old to use this service.`;
-    super(message, options);
+    super(message, options,);
     this.name = "UnderageError";
   }
 }
@@ -71,13 +71,13 @@ export function getStatus(
   const isEnabled = config.enabled && config.mode !== "none";
 
   if (!isEnabled) {
-    return { isEnabled: false, hasPassed: true, minimumAge: config.minimumAge, mode: "none" };
+    return { isEnabled: false, hasPassed: true, minimumAge: config.minimumAge, mode: "none", };
   }
 
   // User must have a birth date AND have accepted the gate
-  const hasPassed = user?.birth_date != null && Boolean(user?.age_gate_accepted_at);
+  const hasPassed = user?.birth_date != null && Boolean(user?.age_gate_accepted_at,);
 
-  return { isEnabled: true, hasPassed, minimumAge: config.minimumAge, mode: config.mode };
+  return { isEnabled: true, hasPassed, minimumAge: config.minimumAge, mode: config.mode, };
 }
 
 /**
@@ -86,13 +86,13 @@ export function getStatus(
  * @throws {UnderageError} if the user is below the minimum age
  * @throws {AgeGateError} if birthDate is not a valid ISO date
  */
-export function validateAge(birthDate: string, minimumAge: number): void {
-  const parsed = Date.parse(birthDate);
-  if (Number.isNaN(parsed)) {
-    throw new AgeGateError(`Invalid birth date: "${birthDate}". Expected YYYY-MM-DD format.`);
+export function validateAge(birthDate: string, minimumAge: number,): void {
+  const parsed = Date.parse(birthDate,);
+  if (Number.isNaN(parsed,)) {
+    throw new AgeGateError(`Invalid birth date: "${birthDate}". Expected YYYY-MM-DD format.`,);
   }
 
-  const birth = new Date(parsed);
+  const birth = new Date(parsed,);
   const today = new Date();
 
   // Calculate age in years relative to today
@@ -104,7 +104,7 @@ export function validateAge(birthDate: string, minimumAge: number): void {
   }
 
   if (age < minimumAge) {
-    throw new UnderageError(minimumAge);
+    throw new UnderageError(minimumAge,);
   }
 }
 
@@ -114,22 +114,22 @@ export function validateAge(birthDate: string, minimumAge: number): void {
  * @throws {UnderageError} if the user is below the minimum age
  * @throws {AgeGateError} if birth date is invalid
  */
-export async function acceptAgeGate({ database, config, userId, input }: AcceptAgeGateOpts): Promise<void> {
+export async function acceptAgeGate({ database, config, userId, input, }: AcceptAgeGateOpts,): Promise<void> {
   if (!config.enabled || config.mode === "none") {
     // Gate is disabled — no-op but don't error
     return;
   }
 
-  validateAge(input.birthDate, config.minimumAge);
+  validateAge(input.birthDate, config.minimumAge,);
 
   const now = new Date().toISOString();
 
   await database
-    .updateTable("users")
+    .updateTable("users",)
     .set({
       birth_date: input.birthDate,
       age_gate_accepted_at: now,
-    })
-    .where("id", "=", userId)
+    },)
+    .where("id", "=", userId,)
     .execute();
 }

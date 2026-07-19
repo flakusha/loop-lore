@@ -1,7 +1,7 @@
-import { calculateSimilarity } from "../shared";
-import type { Scorer } from "../types";
+import { calculateSimilarity, } from "../shared";
+import type { Scorer, } from "../types";
 
-export const scoreCreativity: Scorer = ({ response, recentTurns }) => {
+export const scoreCreativity: Scorer = ({ response, recentTurns, },) => {
   let score = 65;
 
   const lowerResponse = response.toLowerCase();
@@ -25,7 +25,7 @@ export const scoreCreativity: Scorer = ({ response, recentTurns }) => {
   ];
   let evocativeCount = 0;
   for (const w of evocativeWords) {
-    if (lowerResponse.includes(w)) evocativeCount++;
+    if (lowerResponse.includes(w,)) { evocativeCount++; }
   }
   score += evocativeCount * 5;
 
@@ -33,13 +33,13 @@ export const scoreCreativity: Scorer = ({ response, recentTurns }) => {
     const lastResponses: string[] = [];
     for (const t of recentTurns) {
       const r = t.response ?? "";
-      if (r.length > 50) lastResponses.push(r);
+      if (r.length > 50) { lastResponses.push(r,); }
     }
 
     for (const last of lastResponses) {
-      const similarity = calculateSimilarity(response, last);
-      if (similarity > 0.7) score -= 20;
-      else if (similarity > 0.5) score -= 10;
+      const similarity = calculateSimilarity(response, last,);
+      if (similarity > 0.7) { score -= 20; }
+      else if (similarity > 0.5) { score -= 10; }
     }
   }
 
@@ -52,8 +52,8 @@ export const scoreCreativity: Scorer = ({ response, recentTurns }) => {
     "destiny called",
   ];
   for (const cliche of cliches) {
-    if (lowerResponse.includes(cliche)) score -= 15;
+    if (lowerResponse.includes(cliche,)) { score -= 15; }
   }
 
-  return Math.max(10, Math.min(100, score));
+  return Math.max(10, Math.min(100, score,),);
 };

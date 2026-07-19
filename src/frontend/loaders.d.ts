@@ -21,57 +21,57 @@ declare global {
   /* ── Vendor / framework globals ─────────────────────────────── */
 
   var htmx: {
-    ajax: (method: string, url: string, opts: { target: string; swap: string }) => void;
-    trigger: (elt: EventTarget | string, eventName: string, detail?: unknown) => boolean;
+    ajax: (method: string, url: string, opts: { target: string; swap: string },) => void;
+    trigger: (elt: EventTarget | string, eventName: string, detail?: unknown,) => boolean;
     defineExtension: (
       name: string,
-      extension: { onEvent?: (name: string, evt: CustomEvent) => void },
+      extension: { onEvent?: (name: string, evt: CustomEvent,) => void },
     ) => void;
-    process: (elt: HTMLElement) => void;
+    process: (elt: HTMLElement,) => void;
   };
 
   var Alpine: {
-    $data: (el: HTMLElement) => Record<string, unknown>;
-    initTree: (el: HTMLElement) => void;
+    $data: (el: HTMLElement,) => Record<string, unknown>;
+    initTree: (el: HTMLElement,) => void;
     store: {
       // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-parameters -- Alpine.store generic is for caller convenience
-      <T = Record<string, unknown>>(key: string): T;
+      <T = Record<string, unknown>,>(key: string,): T;
       // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-parameters -- Alpine.store generic is for caller convenience
-      <T = Record<string, unknown>>(key: string, value: T): void;
+      <T = Record<string, unknown>,>(key: string, value: T,): void;
     };
   };
 
-  var apiFetch: (url: string, options?: RequestInit) => Promise<Response>;
+  var apiFetch: (url: string, options?: RequestInit,) => Promise<Response>;
 
   /* ── UI helpers (src/frontend/ui.ts) ────────────────────────── */
 
   var toggleSidebar: () => void;
   var closeSidebar: () => void;
-  var showToast: (type: string, message: string) => void;
-  var applyTheme: (themeId: string) => void;
-  var setLocale: (localeId: string) => void;
-  var openModal: (id: string) => void;
-  var closeModal: (el: Element) => void;
-  var closeModalOnBackdrop: (event: Event) => void;
+  var showToast: (type: string, message: string,) => void;
+  var applyTheme: (themeId: string,) => void;
+  var setLocale: (localeId: string,) => void;
+  var openModal: (id: string,) => void;
+  var closeModal: (el: Element,) => void;
+  var closeModalOnBackdrop: (event: Event,) => void;
 
   /* ── Page-loader functions (attached to globalThis for onclick / x-data) ── */
 
   var adminPage: any;
   var filterCharacters: () => void;
-  var selectCharacterCard: (id: string) => Promise<void>;
-  var startChatFromChar: (btn: HTMLElement) => Promise<void>;
-  var editCharacter: (btn: HTMLElement) => void;
-  var deleteCharacter: (btn: HTMLElement) => Promise<void>;
+  var selectCharacterCard: (id: string,) => Promise<void>;
+  var startChatFromChar: (btn: HTMLElement,) => Promise<void>;
+  var editCharacter: (btn: HTMLElement,) => void;
+  var deleteCharacter: (btn: HTMLElement,) => Promise<void>;
   var filterAssets: () => void;
-  var openAssetPreview: (id: string) => Promise<void>;
+  var openAssetPreview: (id: string,) => Promise<void>;
   var copyAssetUrl: () => Promise<void>;
   var downloadAsset: () => void;
   var deleteAssetPreview: () => Promise<void>;
   var loadNewChatPage: () => Promise<void>;
-  var removeParticipant: (id: string) => void;
-  var selectActorFromList: (id: string) => void;
+  var removeParticipant: (id: string,) => void;
+  var selectActorFromList: (id: string,) => void;
   var filterWorlds: () => void;
-  var createWorld: (event: Event) => Promise<void>;
+  var createWorld: (event: Event,) => Promise<void>;
 
   var worldDetail: any;
   var questsPage: any;
@@ -91,7 +91,7 @@ declare global {
   var __TELEMETRY_FLUSH_INTERVAL: number | undefined;
   var __USER_ID: string | undefined;
   var __SESSION_ID: string | undefined;
-  var __: (key: string, fallback?: string) => string;
+  var __: (key: string, fallback?: string,) => string;
   var __localeStrings: Record<string, string>;
   var __THEMES: { id: string; name: string; file: string }[];
   var __chatKey: CryptoKey | null;

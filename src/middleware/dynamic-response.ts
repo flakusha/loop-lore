@@ -28,10 +28,10 @@
  *     images, fonts, and binary passthrough untouched.
  */
 
-import { brotliCompressSync, gzipSync } from "node:zlib";
-import type { DynamicResponseConfig } from "../config/schema";
-import { minifyCSS, minifyHTMLContent, minifyJS } from "../content/minify";
-import type { Logger } from "../logger";
+import { brotliCompressSync, gzipSync, } from "node:zlib";
+import type { DynamicResponseConfig, } from "../config/schema";
+import { minifyCSS, minifyHTMLContent, minifyJS, } from "../content/minify";
+import type { Logger, } from "../logger";
 
 /** Body content classes this policy knows how to optimize. */
 type BodyKind = "html" | "css" | "js" | "json";
@@ -45,18 +45,18 @@ export interface DynamicApplyOptions {
 }
 
 /** Statuses whose bodies must never be transformed. */
-const BODYLESS_STATUS = new Set([204, 205, 304]);
+const BODYLESS_STATUS = new Set([204, 205, 304,],);
 
 /**
  * Map a `Content-Type` header to a {@link BodyKind}, or null when the type is
  * outside the optimization allowlist.
  */
-function classifyBody(contentType: string): BodyKind | null {
+function classifyBody(contentType: string,): BodyKind | null {
   const ct = contentType.toLowerCase();
-  if (ct.startsWith("text/html")) return "html";
-  if (ct.startsWith("text/css")) return "css";
-  if (ct.startsWith("application/javascript") || ct.startsWith("text/javascript")) return "js";
-  if (ct.startsWith("application/json")) return "json";
+  if (ct.startsWith("text/html",)) { return "html"; }
+  if (ct.startsWith("text/css",)) { return "css"; }
+  if (ct.startsWith("application/javascript",) || ct.startsWith("text/javascript",)) { return "js"; }
+  if (ct.startsWith("application/json",)) { return "json"; }
   return null;
 }
 
@@ -71,7 +71,7 @@ export class DynamicResponsePolicy {
     private readonly config: DynamicResponseConfig,
     logger: Logger,
   ) {
-    this.log = logger.child({ module: "dynamic-response" });
+    this.log = logger.child({ module: "dynamic-response", },);
   }
 
   /**
@@ -80,36 +80,36 @@ export class DynamicResponsePolicy {
    * @param options - request + response to process
    * @returns A new Response (or the original when no step applies).
    */
-  async apply({ request, response }: DynamicApplyOptions): Promise<Response> {
-    if (!this.config.enabled) return response;
-    if (!response.body) return response;
-    if (BODYLESS_STATUS.has(response.status)) return response;
-    if (response.headers.has("Content-Encoding")) return response;
+  async apply({ request, response, }: DynamicApplyOptions,): Promise<Response> {
+    if (!this.config.enabled) { return response; }
+    if (!response.body) { return response; }
+    if (BODYLESS_STATUS.has(response.status,)) { return response; }
+    if (response.headers.has("Content-Encoding",)) { return response; }
 
-    const kind = classifyBody(response.headers.get("content-type") ?? "");
-    if (!kind) return response;
+    const kind = classifyBody(response.headers.get("content-type",) ?? "",);
+    if (!kind) { return response; }
 
     const original = await response.text();
 
     // ── Validate + minify ──────────────────────────────────
     const body = this.config.minify || this.config.validate
-      ? await this.minifyBody({ request, body: original, kind })
+      ? await this.minifyBody({ request, body: original, kind, },)
       : original;
 
     // ── Compress ───────────────────────────────────────────
-    const headers = new Headers(response.headers);
-    headers.delete("Content-Length");
+    const headers = new Headers(response.headers,);
+    headers.delete("Content-Length",);
 
     if (this.config.compress) {
-      const encoded = this.compressBody({ request, body });
+      const encoded = this.compressBody({ request, body, },);
       if (encoded) {
-        headers.set("Content-Encoding", encoded.encoding);
-        headers.set("Vary", this.mergeVary(headers.get("Vary")));
-        return new Response(new Uint8Array(encoded.buffer), { status: response.status, headers });
+        headers.set("Content-Encoding", encoded.encoding,);
+        headers.set("Vary", this.mergeVary(headers.get("Vary",),),);
+        return new Response(new Uint8Array(encoded.buffer,), { status: response.status, headers, },);
       }
     }
 
-    return new Response(body, { status: response.status, headers });
+    return new Response(body, { status: response.status, headers, },);
   }
 
   /**
@@ -125,37 +125,37 @@ export class DynamicResponsePolicy {
     request: Request;
     body: string;
     kind: BodyKind;
-  }): Promise<string> {
+  },): Promise<string> {
     // JSON has no comments/whitespace worth stripping and no cheap validate
     // step here — leave it for the compression pass.
-    if (kind === "json") return body;
+    if (kind === "json") { return body; }
 
     try {
-      const minified = await this.runMinifier(body, kind);
+      const minified = await this.runMinifier(body, kind,);
       // validate-only mode: confirm parse, discard the minified output.
       return this.config.minify ? minified : body;
     } catch (error) {
       this.log.warn({
         message: "Dynamic response failed validation; serving unminified",
-        path: new URL(request.url).pathname,
+        path: new URL(request.url,).pathname,
         kind,
-        error: error instanceof Error ? error.message : String(error),
-      });
+        error: error instanceof Error ? error.message : String(error,),
+      },);
       return body;
     }
   }
 
   /** Dispatch to the content-module minifier for a given body kind. */
-  private async runMinifier(body: string, kind: "html" | "css" | "js"): Promise<string> {
+  private async runMinifier(body: string, kind: "html" | "css" | "js",): Promise<string> {
     switch (kind) {
       case "html": {
-        return minifyHTMLContent(body);
+        return minifyHTMLContent(body,);
       }
       case "css": {
-        return minifyCSS(body);
+        return minifyCSS(body,);
       }
       case "js": {
-        return minifyJS(body);
+        return minifyJS(body,);
       }
     }
   }
@@ -170,25 +170,25 @@ export class DynamicResponsePolicy {
   }: {
     request: Request;
     body: string;
-  }): { encoding: string; buffer: Buffer } | null {
-    const buffer = Buffer.from(body, "utf8");
-    if (buffer.length < this.config.compressThreshold) return null;
+  },): { encoding: string; buffer: Buffer } | null {
+    const buffer = Buffer.from(body, "utf8",);
+    if (buffer.length < this.config.compressThreshold) { return null; }
 
-    const accept = (request.headers.get("accept-encoding") ?? "").toLowerCase();
-    const encoding = this.negotiateEncoding(accept);
-    if (!encoding) return null;
+    const accept = (request.headers.get("accept-encoding",) ?? "").toLowerCase();
+    const encoding = this.negotiateEncoding(accept,);
+    if (!encoding) { return null; }
 
-    const compressed = encoding === "br" ? brotliCompressSync(buffer) : gzipSync(buffer);
-    return { encoding, buffer: compressed };
+    const compressed = encoding === "br" ? brotliCompressSync(buffer,) : gzipSync(buffer,);
+    return { encoding, buffer: compressed, };
   }
 
   /**
    * Choose an encoding from the client's Accept-Encoding, honoring the
    * configured preference. Returns null when no supported encoding is offered.
    */
-  private negotiateEncoding(accept: string): "br" | "gzip" | null {
-    const hasBr = accept.includes("br");
-    const hasGzip = accept.includes("gzip");
+  private negotiateEncoding(accept: string,): "br" | "gzip" | null {
+    const hasBr = accept.includes("br",);
+    const hasGzip = accept.includes("gzip",);
 
     switch (this.config.compressAlgorithm) {
       case "br": {
@@ -198,18 +198,18 @@ export class DynamicResponsePolicy {
         return hasGzip ? "gzip" : null;
       }
       case "auto": {
-        if (hasBr) return "br";
-        if (hasGzip) return "gzip";
+        if (hasBr) { return "br"; }
+        if (hasGzip) { return "gzip"; }
         return null;
       }
     }
   }
 
   /** Merge `Accept-Encoding` into an existing Vary header without duplicates. */
-  private mergeVary(existing: string | null): string {
-    if (!existing) return "Accept-Encoding";
-    const parts = existing.split(",").map((p) => p.trim());
-    if (parts.some((p) => p.toLowerCase() === "accept-encoding")) return existing;
-    return [...parts, "Accept-Encoding"].join(", ");
+  private mergeVary(existing: string | null,): string {
+    if (!existing) { return "Accept-Encoding"; }
+    const parts = existing.split(",",).map((p,) => p.trim());
+    if (parts.some((p,) => p.toLowerCase() === "accept-encoding")) { return existing; }
+    return [...parts, "Accept-Encoding",].join(", ",);
   }
 }

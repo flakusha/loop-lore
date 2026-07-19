@@ -5,18 +5,18 @@
  * creation, progress tracking, milestone hook triggering,
  * completion detection, and reward distribution.
  */
-import type { Kysely } from "kysely";
-import { randomUUID } from "node:crypto";
-import { QuestProgressStatus, QuestStatus, QuestType } from "../db/enums";
-import type { QuestType as QT } from "../db/enums";
-import type { DB } from "../db/schema";
-import { getLogger } from "../logger";
-import { jsonParseOr, safeJsonStringify } from "../utils";
-import { applyEvents } from "./events";
-import { ItemsService } from "./items";
-import { PROGRESS_CALCULATORS } from "./quests/registry";
-import type { QuestConfig, QuestReward, WorldEvent } from "./types";
-import { WorldStateService } from "./world-state";
+import type { Kysely, } from "kysely";
+import { randomUUID, } from "node:crypto";
+import { QuestProgressStatus, QuestStatus, QuestType, } from "../db/enums";
+import type { QuestType as QT, } from "../db/enums";
+import type { DB, } from "../db/schema";
+import { getLogger, } from "../logger";
+import { jsonParseOr, safeJsonStringify, } from "../utils";
+import { applyEvents, } from "./events";
+import { ItemsService, } from "./items";
+import { PROGRESS_CALCULATORS, } from "./quests/registry";
+import type { QuestConfig, QuestReward, WorldEvent, } from "./types";
+import { WorldStateService, } from "./world-state";
 
 // ── Progress Entry ───────────────────────────────────────────
 
@@ -54,10 +54,10 @@ export class QuestEngine {
     deadline?: string;
     rewards?: QuestReward;
     narrativeHooks?: { progress: number; narrative: string }[];
-  }): Promise<string> {
+  },): Promise<string> {
     const id = randomUUID();
     await this.db
-      .insertInto("quests")
+      .insertInto("quests",)
       .values({
         id,
         world_id: params.worldId,
@@ -68,12 +68,12 @@ export class QuestEngine {
         status: QuestStatus.Active,
         priority: params.priority ?? 0,
         config: (() => {
-          const r = safeJsonStringify(params.config);
+          const r = safeJsonStringify(params.config,);
           if (!r.ok) {
             getLogger()
-              .child({ module: "quest-engine" })
-              .error("safeJsonStringify config failed", undefined, { error: r.error });
-            throw new Error("Failed to serialize quest config");
+              .child({ module: "quest-engine", },)
+              .error("safeJsonStringify config failed", undefined, { error: r.error, },);
+            throw new Error("Failed to serialize quest config",);
           }
           return r.value;
         })(),
@@ -82,26 +82,26 @@ export class QuestEngine {
         start_time: new Date().toISOString(),
         deadline: params.deadline ?? null,
         rewards: (() => {
-          const r = safeJsonStringify(params.rewards ?? {});
+          const r = safeJsonStringify(params.rewards ?? {},);
           if (!r.ok) {
             getLogger()
-              .child({ module: "quest-engine" })
-              .error("safeJsonStringify rewards failed", undefined, { error: r.error });
-            throw new Error("Failed to serialize quest rewards");
+              .child({ module: "quest-engine", },)
+              .error("safeJsonStringify rewards failed", undefined, { error: r.error, },);
+            throw new Error("Failed to serialize quest rewards",);
           }
           return r.value;
         })(),
         narrative_hooks: (() => {
-          const r = safeJsonStringify(params.narrativeHooks ?? []);
+          const r = safeJsonStringify(params.narrativeHooks ?? [],);
           if (!r.ok) {
             getLogger()
-              .child({ module: "quest-engine" })
-              .error("safeJsonStringify narrative_hooks failed", undefined, { error: r.error });
-            throw new Error("Failed to serialize quest narrative hooks");
+              .child({ module: "quest-engine", },)
+              .error("safeJsonStringify narrative_hooks failed", undefined, { error: r.error, },);
+            throw new Error("Failed to serialize quest narrative hooks",);
           }
           return r.value;
         })(),
-      })
+      },)
       .execute();
     return id;
   }
@@ -110,21 +110,21 @@ export class QuestEngine {
    * Process a world event and update matching quest progress.
    * Returns all quests that had their progress changed.
    */
-  async processEvent(worldId: string, chatId: string, events: WorldEvent[]): Promise<QuestProgressEntry[]> {
+  async processEvent(worldId: string, chatId: string, events: WorldEvent[],): Promise<QuestProgressEntry[]> {
     const activeQuests = await this.db
-      .selectFrom("quests")
+      .selectFrom("quests",)
       .selectAll()
-      .where("world_id", "=", worldId)
-      .where("status", "=", QuestStatus.Active)
+      .where("world_id", "=", worldId,)
+      .where("status", "=", QuestStatus.Active,)
       .execute();
 
     const results: QuestProgressEntry[] = [];
 
     for (const quest of activeQuests) {
       for (const event of events) {
-        const delta = this.calculateProgress(quest, event);
+        const delta = this.calculateProgress(quest, event,);
         if (delta > 0) {
-          results.push(await this.applyProgress(quest, chatId, delta));
+          results.push(await this.applyProgress(quest, chatId, delta,),);
         }
       }
     }
@@ -141,90 +141,90 @@ export class QuestEngine {
     delta: number,
     sourceMessageId?: string,
   ): Promise<QuestProgressEntry> {
-    const quest = await this.db.selectFrom("quests").selectAll().where("id", "=", questId).executeTakeFirst();
+    const quest = await this.db.selectFrom("quests",).selectAll().where("id", "=", questId,).executeTakeFirst();
 
-    if (!quest) throw new Error(`Quest ${questId} not found`);
+    if (!quest) { throw new Error(`Quest ${questId} not found`,); }
 
-    return this.applyProgress(quest, chatId, delta, sourceMessageId);
+    return this.applyProgress(quest, chatId, delta, sourceMessageId,);
   }
 
   /** Get all active quests for a world */
-  async getActiveQuests(worldId: string) {
+  async getActiveQuests(worldId: string,) {
     return this.db
-      .selectFrom("quests")
+      .selectFrom("quests",)
       .selectAll()
-      .where("world_id", "=", worldId)
-      .where("status", "=", QuestStatus.Active)
-      .orderBy("priority", "desc")
+      .where("world_id", "=", worldId,)
+      .where("status", "=", QuestStatus.Active,)
+      .orderBy("priority", "desc",)
       .execute();
   }
 
   /** Get quest progress for a specific chat */
-  async getChatProgress(questId: string, chatId: string) {
+  async getChatProgress(questId: string, chatId: string,) {
     return this.db
-      .selectFrom("quest_progress")
+      .selectFrom("quest_progress",)
       .selectAll()
-      .where("quest_id", "=", questId)
-      .where("chat_id", "=", chatId)
+      .where("quest_id", "=", questId,)
+      .where("chat_id", "=", chatId,)
       .executeTakeFirst();
   }
 
   /** Fail a quest (e.g., deadline passed) */
-  async fail(questId: string): Promise<void> {
+  async fail(questId: string,): Promise<void> {
     await this.db
-      .updateTable("quests")
-      .set({ status: QuestStatus.Failed })
-      .where("id", "=", questId)
+      .updateTable("quests",)
+      .set({ status: QuestStatus.Failed, },)
+      .where("id", "=", questId,)
       .execute();
 
     await this.db
-      .updateTable("quest_progress")
-      .set({ status: QuestProgressStatus.Failed })
-      .where("quest_id", "=", questId)
+      .updateTable("quest_progress",)
+      .set({ status: QuestProgressStatus.Failed, },)
+      .where("quest_id", "=", questId,)
       .execute();
   }
 
   /** Abandon a quest (GM action) */
-  async abandon(questId: string): Promise<void> {
+  async abandon(questId: string,): Promise<void> {
     await this.db
-      .updateTable("quests")
-      .set({ status: QuestStatus.Abandoned })
-      .where("id", "=", questId)
+      .updateTable("quests",)
+      .set({ status: QuestStatus.Abandoned, },)
+      .where("id", "=", questId,)
       .execute();
 
     await this.db
-      .updateTable("quest_progress")
-      .set({ status: QuestProgressStatus.Ignored })
-      .where("quest_id", "=", questId)
+      .updateTable("quest_progress",)
+      .set({ status: QuestProgressStatus.Ignored, },)
+      .where("quest_id", "=", questId,)
       .execute();
   }
 
   /** Get completion percentage for a quest */
-  async getCompletion(questId: string): Promise<{ progress: number; target: number; percentage: number }> {
+  async getCompletion(questId: string,): Promise<{ progress: number; target: number; percentage: number }> {
     const quest = await this.db
-      .selectFrom("quests")
-      .select(["progress", "target"])
-      .where("id", "=", questId)
+      .selectFrom("quests",)
+      .select(["progress", "target",],)
+      .where("id", "=", questId,)
       .executeTakeFirst();
 
-    if (!quest) throw new Error(`Quest ${questId} not found`);
+    if (!quest) { throw new Error(`Quest ${questId} not found`,); }
 
     return {
       progress: quest.progress,
       target: quest.target,
-      percentage: quest.target > 0 ? Math.round((quest.progress / quest.target) * 100) : 0,
+      percentage: quest.target > 0 ? Math.round((quest.progress / quest.target) * 100,) : 0,
     };
   }
 
   /** Check time-based quests for deadline expiry */
-  async checkTimeQuests(worldId: string): Promise<string[]> {
+  async checkTimeQuests(worldId: string,): Promise<string[]> {
     const now = new Date().toISOString();
     const timeQuests = await this.db
-      .selectFrom("quests")
-      .select(["id", "type", "deadline", "config"])
-      .where("world_id", "=", worldId)
-      .where("status", "=", QuestStatus.Active)
-      .where("type", "=", QuestType.Time)
+      .selectFrom("quests",)
+      .select(["id", "type", "deadline", "config",],)
+      .where("world_id", "=", worldId,)
+      .where("status", "=", QuestStatus.Active,)
+      .where("type", "=", QuestType.Time,)
       .execute();
 
     const expired: string[] = [];
@@ -234,8 +234,8 @@ export class QuestEngine {
         continue;
       }
 
-      await this.fail(quest.id);
-      expired.push(quest.id);
+      await this.fail(quest.id,);
+      expired.push(quest.id,);
     }
 
     return expired;
@@ -261,11 +261,11 @@ export class QuestEngine {
     },
     event: WorldEvent,
   ): number {
-    const config = jsonParseOr(quest.config, null) as QuestConfig | null;
-    if (!config || typeof config.type !== "string") return 0;
+    const config = jsonParseOr(quest.config, null,) as QuestConfig | null;
+    if (!config || typeof config.type !== "string") { return 0; }
     const calculator = PROGRESS_CALCULATORS[quest.type as QT];
-    if (!calculator) return 0;
-    return calculator({ progress: quest.progress, target: quest.target }, config, event);
+    if (!calculator) { return 0; }
+    return calculator({ progress: quest.progress, target: quest.target, }, config, event,);
   }
 
   /**
@@ -288,39 +288,39 @@ export class QuestEngine {
     delta: number,
     sourceMessageId?: string,
   ): Promise<QuestProgressEntry> {
-    const newProgress = Math.min(quest.progress + delta, quest.target);
+    const newProgress = Math.min(quest.progress + delta, quest.target,);
     const completed = newProgress >= quest.target;
 
     await this.db
-      .updateTable("quests")
+      .updateTable("quests",)
       .set({
         progress: newProgress,
-        ...(completed && { status: QuestStatus.Completed, completed_at: new Date().toISOString() }),
-      })
-      .where("id", "=", quest.id)
+        ...(completed && { status: QuestStatus.Completed, completed_at: new Date().toISOString(), }),
+      },)
+      .where("id", "=", quest.id,)
       .execute();
 
     const existingChatProgress = await this.db
-      .selectFrom("quest_progress")
-      .select("id")
-      .where("quest_id", "=", quest.id)
-      .where("chat_id", "=", chatId)
+      .selectFrom("quest_progress",)
+      .select("id",)
+      .where("quest_id", "=", quest.id,)
+      .where("chat_id", "=", chatId,)
       .executeTakeFirst();
 
     if (existingChatProgress) {
       await this.db
-        .updateTable("quest_progress")
+        .updateTable("quest_progress",)
         .set({
           progress: newProgress,
           status: completed ? QuestProgressStatus.Completed : QuestProgressStatus.Active,
           updated_at: new Date().toISOString(),
           completed_at: completed ? new Date().toISOString() : undefined,
-        })
-        .where("id", "=", existingChatProgress.id)
+        },)
+        .where("id", "=", existingChatProgress.id,)
         .execute();
     } else {
       await this.db
-        .insertInto("quest_progress")
+        .insertInto("quest_progress",)
         .values({
           id: randomUUID() as string,
           quest_id: quest.id,
@@ -329,16 +329,16 @@ export class QuestEngine {
           status: completed ? QuestProgressStatus.Completed : QuestProgressStatus.Active,
           contributed_events: sourceMessageId
             ? (() => {
-              const r = safeJsonStringify([sourceMessageId]);
+              const r = safeJsonStringify([sourceMessageId,],);
               return r.ok ? r.value : "[]";
             })()
             : "[]",
           completed_at: completed ? new Date().toISOString() : null,
-        })
+        },)
         .execute();
     }
 
-    const hooks = jsonParseOr(quest.narrative_hooks, []) as { progress: number; narrative: string }[];
+    const hooks = jsonParseOr(quest.narrative_hooks, [],) as { progress: number; narrative: string }[];
     let oldMilestone: { progress: number; narrative: string } | undefined;
     let newMilestone: { progress: number; narrative: string } | undefined;
     for (const h of hooks) {
@@ -346,9 +346,9 @@ export class QuestEngine {
         oldMilestone = h;
       }
       if (
-        h.progress <= newProgress
-        && h.progress > quest.progress
-        && (!newMilestone || h.progress > newMilestone.progress)
+        h.progress <= newProgress &&
+        h.progress > quest.progress &&
+        (!newMilestone || h.progress > newMilestone.progress)
       ) {
         newMilestone = h;
       }
@@ -368,7 +368,7 @@ export class QuestEngine {
     }
 
     if (completed) {
-      await this.distributeRewards(quest.id, quest.world_id, quest.rewards);
+      await this.distributeRewards(quest.id, quest.world_id, quest.rewards,);
     }
 
     return {
@@ -384,21 +384,21 @@ export class QuestEngine {
     };
   }
 
-  private async distributeRewards(questId: string, worldId: string, rewardsJson: string): Promise<void> {
-    const rewards = jsonParseOr(rewardsJson, {}) as QuestReward;
-    if (Object.keys(rewards).length === 0) return;
+  private async distributeRewards(questId: string, worldId: string, rewardsJson: string,): Promise<void> {
+    const rewards = jsonParseOr(rewardsJson, {},) as QuestReward;
+    if (Object.keys(rewards,).length === 0) { return; }
 
     if (rewards.worldChanges && rewards.worldChanges.length > 0 && this.items) {
-      await applyEvents({ db: this.db, worldId, events: rewards.worldChanges });
+      await applyEvents({ db: this.db, worldId, events: rewards.worldChanges, },);
     }
 
     if (rewards.unlockQuests && rewards.unlockQuests.length > 0) {
       for (const subQuestId of rewards.unlockQuests) {
         await this.db
-          .updateTable("quests")
-          .set({ status: QuestStatus.Active })
-          .where("id", "=", subQuestId)
-          .where("status", "=", QuestStatus.Abandoned)
+          .updateTable("quests",)
+          .set({ status: QuestStatus.Active, },)
+          .where("id", "=", subQuestId,)
+          .where("status", "=", QuestStatus.Abandoned,)
           .execute();
       }
     }
@@ -417,7 +417,7 @@ export class QuestEngine {
             properties: {},
             value: 0,
             weight: 0.1,
-          });
+          },);
         }
       }
     }
@@ -429,5 +429,5 @@ export function createQuestEngine(
   worldState?: WorldStateService,
   items?: ItemsService,
 ): QuestEngine {
-  return new QuestEngine(db, worldState, items);
+  return new QuestEngine(db, worldState, items,);
 }

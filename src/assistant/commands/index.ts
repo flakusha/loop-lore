@@ -13,9 +13,9 @@ import "./dice";
 import "./help";
 import "./improve";
 
-export { BUILTIN_COMMANDS, isBuiltinCommand, parseCommand } from "../command-parser";
-export type { ParsedCommand } from "../command-parser";
-export { formatDiceResult, handleRollCommand, parseDiceNotation, rollDice, rollDie } from "./dice";
-export type { DiceResult, DieRoll } from "./dice";
-export { getCommand, listCommands, registerCommand } from "./registry";
-export type { CommandContext, CommandHandler, CommandResult } from "./registry";
+export { BUILTIN_COMMANDS, isBuiltinCommand, parseCommand, } from "../command-parser";
+export type { ParsedCommand, } from "../command-parser";
+export { formatDiceResult, handleRollCommand, parseDiceNotation, rollDice, rollDie, } from "./dice";
+export type { DiceResult, DieRoll, } from "./dice";
+export { getCommand, listCommands, registerCommand, } from "./registry";
+export type { CommandContext, CommandHandler, CommandResult, } from "./registry";

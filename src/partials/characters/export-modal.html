@@ -77,18 +77,18 @@
 </div>
 
 <script>
-window.exportCharacter = function(btn) {
-  const modal = btn.closest(".modal");
-  const format = modal.querySelector("input[name=\"export-format\"]:checked").value;
+window.exportCharacter = function(btn,) {
+  const modal = btn.closest(".modal",);
+  const format = modal.querySelector('input[name="export-format"]:checked',).value;
   const characterId = modal.dataset.characterId;
 
   if (!characterId) {
-    console.error("No character ID found");
+    console.error("No character ID found",);
     return;
   }
 
   // Trigger download
   window.location.href = `/api/characters/${characterId}/export?format=${format}`;
-  window.closeModal(btn);
+  window.closeModal(btn,);
 };
 </script>

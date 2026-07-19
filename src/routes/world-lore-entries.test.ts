@@ -1,19 +1,19 @@
 /**
  * Unit tests for world-lore-entries routes (Elysia plugin)
  */
-import { describe, expect, test } from "bun:test";
-import { worldLoreEntriesRoutes } from "./world-lore-entries";
+import { describe, expect, test, } from "bun:test";
+import { worldLoreEntriesRoutes, } from "./world-lore-entries";
 
 const mockDb = {} as any;
 const mockConfig = {} as any;
 
 describe("worldLoreEntriesRoutes", () => {
   test("exports function", () => {
-    expect(typeof worldLoreEntriesRoutes).toBe("function");
+    expect(typeof worldLoreEntriesRoutes,).toBe("function",);
   });
 
   test("returns Elysia plugin", () => {
-    const plugin = worldLoreEntriesRoutes({ database: mockDb, config: mockConfig });
-    expect(plugin).toBeDefined();
+    const plugin = worldLoreEntriesRoutes({ database: mockDb, config: mockConfig, },);
+    expect(plugin,).toBeDefined();
   });
 });

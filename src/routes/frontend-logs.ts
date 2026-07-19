@@ -13,9 +13,9 @@
  * Elysia plugin — public route (no auth).
  */
 
-import { Elysia } from "elysia";
-import { getLogger } from "../logger";
-import { HttpStatus, jsonError, jsonResponse } from "./http-utils";
+import { Elysia, } from "elysia";
+import { getLogger, } from "../logger";
+import { HttpStatus, jsonError, jsonResponse, } from "./http-utils";
 
 interface FrontendLogEntry {
   level: string;
@@ -30,47 +30,47 @@ interface LogBatch {
 }
 
 export function frontendLogsRoutes() {
-  return new Elysia({ name: "frontend-logs" }).post("/api/frontend/logs", async ({ request }) => {
+  return new Elysia({ name: "frontend-logs", },).post("/api/frontend/logs", async ({ request, },) => {
     let body: LogBatch;
     try {
       body = (await request.json()) as LogBatch;
     } catch {
-      return jsonError({ message: "Invalid JSON body", status: HttpStatus.BadRequest });
+      return jsonError({ message: "Invalid JSON body", status: HttpStatus.BadRequest, },);
     }
 
-    if (!Array.isArray(body.entries) || body.entries.length === 0) {
-      return jsonError({ message: "entries must be a non-empty array", status: HttpStatus.BadRequest });
+    if (!Array.isArray(body.entries,) || body.entries.length === 0) {
+      return jsonError({ message: "entries must be a non-empty array", status: HttpStatus.BadRequest, },);
     }
 
     const log = getLogger();
 
     for (const entry of body.entries) {
-      const meta: Record<string, unknown> = { ...entry.meta, _source: "browser", _module: entry.module };
+      const meta: Record<string, unknown> = { ...entry.meta, _source: "browser", _module: entry.module, };
       const msg = `[FE] ${entry.message}`;
 
       switch (entry.level) {
         case "debug": {
-          log.debug(msg, meta);
+          log.debug(msg, meta,);
           break;
         }
         case "info": {
-          log.info(msg, meta);
+          log.info(msg, meta,);
           break;
         }
         case "warn": {
-          log.warn(msg, meta);
+          log.warn(msg, meta,);
           break;
         }
         case "error": {
-          log.error(msg, undefined, meta);
+          log.error(msg, undefined, meta,);
           break;
         }
         default: {
-          log.info(msg, meta);
+          log.info(msg, meta,);
         }
       }
     }
 
-    return jsonResponse({ ok: true, ingested: body.entries.length });
-  });
+    return jsonResponse({ ok: true, ingested: body.entries.length, },);
+  },);
 }
