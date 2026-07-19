@@ -2,6 +2,8 @@
 
 Features not under active development. `plan.md` tracks active work; `open-items.md` tracks bugs/debt.
 
+> **Tracked as git issues.** Epics and features below are mirrored as git-native-issues (e.g. `EPIC-2025-14`, `FEAT-2025-001`). See the [Issue Tracker](/meta/issues). A cross-reference table is at the bottom of this page.
+
 ## P0 — Immediate Next (v0.1 In-Progress)
 
 Partial implementation exists in `src/`. Finishing these is current active work.
@@ -89,3 +91,30 @@ See `roadmap.md` P1/P2/P3 sections:
 - DAO Governance, AI-Generated Content, XR/VR Integration
 - Real-time Collaboration, Simulation Sandboxes, Edge Computing
 - Quantum-Resistant Cryptography, Neuro-Symbolic AI
+
+<!-- ISSUE-MAP-START -->
+
+## Tracked as Git Issues
+
+> These tasks are tracked as git-native-issues. See the [Issue Tracker](/meta/issues) for live state.
+
+| Issue                                        | Title                                                       | Priority | Source                        |
+| -------------------------------------------- | ----------------------------------------------------------- | -------- | ----------------------------- |
+| [EPIC-2025-11](/meta/issues/#epic-2025-11)   | Admin & Settings                                            | medium   | [meta/backlog](/meta/backlog) |
+| [EPIC-2025-15](/meta/issues/#epic-2025-15)   | i18n & Accessibility                                        | high     | [meta/backlog](/meta/backlog) |
+| [EPIC-2025-16](/meta/issues/#epic-2025-16)   | Observability                                               | medium   | [meta/backlog](/meta/backlog) |
+| [EPIC-2025-17](/meta/issues/#epic-2025-17)   | Encryption Foundation                                       | medium   | [meta/backlog](/meta/backlog) |
+| [FEAT-2025-001](/meta/issues/#feat-2025-001) | Multi-format character import (PNG/YAML/TOML/CHARX)         | low      | [meta/backlog](/meta/backlog) |
+| [FEAT-2025-002](/meta/issues/#feat-2025-002) | Impersonation (chat.impersonate_id)                         | medium   | [meta/backlog](/meta/backlog) |
+| [FEAT-2025-003](/meta/issues/#feat-2025-003) | Three-tier memory system (episodic/semantic/procedural)     | high     | [meta/backlog](/meta/backlog) |
+| [FEAT-2025-004](/meta/issues/#feat-2025-004) | Artifact system (code/docs/datasets as assets)              | medium   | [meta/backlog](/meta/backlog) |
+| [FEAT-2025-005](/meta/issues/#feat-2025-005) | Agentic workspace mode                                      | medium   | [meta/backlog](/meta/backlog) |
+| [FEAT-2025-006](/meta/issues/#feat-2025-006) | Frontend story mode UI (GM panel, quest log, story chat)    | high     | [meta/backlog](/meta/backlog) |
+| [FEAT-2025-007](/meta/issues/#feat-2025-007) | Message archiving (cascade, restore, purge)                 | medium   | [meta/backlog](/meta/backlog) |
+| [FEAT-2025-008](/meta/issues/#feat-2025-008) | Memory selection UI (mid-chat panel, pinning, auto-extract) | medium   | [meta/backlog](/meta/backlog) |
+| [FEAT-2025-009](/meta/issues/#feat-2025-009) | Server-side i18n middleware (req.t)                         | medium   | [meta/backlog](/meta/backlog) |
+| [FEAT-2025-010](/meta/issues/#feat-2025-010) | Anthropic/Ollama/Bedrock providers                          | medium   | [meta/backlog](/meta/backlog) |
+| [FEAT-2025-011](/meta/issues/#feat-2025-011) | Plugin management API (install/list/enable/disable)         | medium   | [meta/backlog](/meta/backlog) |
+| [FEAT-2025-012](/meta/issues/#feat-2025-012) | Signed URLs for asset downloads                             | low      | [meta/backlog](/meta/backlog) |
+
+<!-- ISSUE-MAP-END -->
