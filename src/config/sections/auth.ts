@@ -11,6 +11,8 @@ export const AUTH_DEFAULTS = {
   demoAutoSetup: true,
   adminUsername: "",
   adminPassword: "",
+  jwtSecret: "",
+  jwtExpiresIn: 86_400,
 } satisfies AuthConfig;
 
 export class AuthSection implements AuthConfig {
@@ -22,6 +24,8 @@ export class AuthSection implements AuthConfig {
   demoAutoSetup = AUTH_DEFAULTS.demoAutoSetup;
   adminUsername = AUTH_DEFAULTS.adminUsername;
   adminPassword = AUTH_DEFAULTS.adminPassword;
+  jwtSecret = AUTH_DEFAULTS.jwtSecret;
+  jwtExpiresIn = AUTH_DEFAULTS.jwtExpiresIn;
 
   constructor(overrides?: Partial<AuthConfig>,) {
     Object.assign(this, overrides,);
@@ -67,6 +71,16 @@ export const authMeta = {
       type: "string",
       default: AUTH_DEFAULTS.adminPassword,
       description: "Bootstrap admin password (multi-user mode). Env-only preferred: AUTH_ADMIN_PASSWORD. Never commit.",
+    },
+    jwtSecret: {
+      type: "string",
+      default: AUTH_DEFAULTS.jwtSecret,
+      description: "HMAC-SHA256 secret for JWT signing. Env-only: AUTH_JWT_SECRET. Required when auth.required=true.",
+    },
+    jwtExpiresIn: {
+      type: "integer",
+      default: AUTH_DEFAULTS.jwtExpiresIn,
+      description: "JWT token expiry in seconds (default: 86400 = 24h)",
     },
   },
   required: [
