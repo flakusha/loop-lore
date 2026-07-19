@@ -252,4 +252,22 @@ if [ "$failures" -gt 0 ]; then
   red "=== $failures step(s) failed. Fix above issues and retry ==="
   exit 1
 fi
+
+# Step 5: Version drift check (non-blocking)
+echo ""
+echo "--- Step 5: Version drift check ---"
+LATEST_TAG=$(git tag | grep "^v" | sort -V | tail -1)
+PKG_VERSION=$(bun run -p 'JSON.parse(require("fs").readFileSync("package.json","utf8")).version' 2>/dev/null || echo "")
+if [[ -n "$LATEST_TAG" && -n "$PKG_VERSION" ]]; then
+  TAG_VERSION="${LATEST_TAG#v}"
+  if [[ "$TAG_VERSION" != "$PKG_VERSION" ]]; then
+    yellow "  ⚠ Version drift: package.json=${PKG_VERSION}, latest tag=${TAG_VERSION}"
+    yellow "    Run 'bun run version:sync' to reconcile"
+  else
+    green "  ✓ Version in sync: ${PKG_VERSION}"
+  fi
+else
+  yellow "  ⚠ Skipped: no tags found or could not read package.json"
+fi
+
 green "=== All checks passed ==="

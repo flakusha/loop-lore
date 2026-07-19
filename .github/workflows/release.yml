@@ -53,7 +53,7 @@ jobs:
         run: bun run test:unit:parallel
 
       - name: Run E2E tests
-        run: E2E_SAFEGUARD=1 bun run test:e2e:browser
+        run: E2E_SAFEGUARD=1 bun run test:e2e
 
       - name: Build
         run: bun run build
@@ -72,6 +72,12 @@ jobs:
             git tag -a "$TAG" -m "Release $TAG"
             git push origin "$TAG"
             echo "tag=$TAG" >> $GITHUB_OUTPUT
+
+            # Sync package.json to new version
+            bun run version:sync
+            git add package.json
+            git commit -m "chore(release): sync package.json to $TAG"
+            git push origin HEAD
           else
             echo "No version bump needed"
           fi
