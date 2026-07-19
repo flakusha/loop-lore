@@ -19,12 +19,12 @@ export function chatPinRoutes(opts: HandlerOpts,) {
     new Elysia({ name: "chat-pins", },)
       // List pinned messages for a chat
       .get(
-        "/api/chats/:chatId/pins",
+        "/api/chats/:id/pins",
         async (ctx: any,) => {
           const userId = ctx.userId as string | null;
           if (!userId) { return unauthorized(); }
 
-          const chatId = ctx.params.chatId as string;
+          const chatId = ctx.params.id as string;
 
           const pins = await database
             .selectFrom("chat_pins",)
@@ -46,17 +46,17 @@ export function chatPinRoutes(opts: HandlerOpts,) {
           return Response.json({ data: pins, },);
         },
         {
-          params: t.Object({ chatId: t.String(), },),
+          params: t.Object({ id: t.String(), },),
         },
       )
       // Pin a message
       .post(
-        "/api/chats/:chatId/pins",
+        "/api/chats/:id/pins",
         async (ctx: any,) => {
           const userId = ctx.userId as string | null;
           if (!userId) { return unauthorized(); }
 
-          const chatId = ctx.params.chatId as string;
+          const chatId = ctx.params.id as string;
 
           // Only chat owner, admin, or participants can pin
           const chat = await database
@@ -107,18 +107,18 @@ export function chatPinRoutes(opts: HandlerOpts,) {
           return Response.json({ ok: true, id, },);
         },
         {
-          params: t.Object({ chatId: t.String(), },),
+          params: t.Object({ id: t.String(), },),
           body: t.Object({ messageId: t.String(), },),
         },
       )
       // Unpin a message
       .delete(
-        "/api/chats/:chatId/pins/:pinId",
+        "/api/chats/:id/pins/:pinId",
         async (ctx: any,) => {
           const userId = ctx.userId as string | null;
           if (!userId) { return unauthorized(); }
 
-          const chatId = ctx.params.chatId as string;
+          const chatId = ctx.params.id as string;
           const pinId = ctx.params.pinId as string;
 
           // Only pinner, chat owner, or admin can unpin
@@ -150,7 +150,7 @@ export function chatPinRoutes(opts: HandlerOpts,) {
           return Response.json({ ok: true, },);
         },
         {
-          params: t.Object({ chatId: t.String(), pinId: t.String(), },),
+          params: t.Object({ id: t.String(), pinId: t.String(), },),
         },
       )
   );
