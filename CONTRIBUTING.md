@@ -65,6 +65,23 @@ Use conventional commit format in PR titles:
 | `release/0` | 0.x maintenance          |
 | `release/1` | 1.x maintenance (future) |
 
+## Issue Tracking
+
+loop-lore uses **git-native-issue** for in-repository issue tracking.
+
+```bash
+# Create ticket + worktree
+./scripts/worktree.sh ticket BUG 001 "Fix login crash"
+cd tree/ticket-BUG-2025-001
+
+# List open issues
+./scripts/worktree.sh issues
+```
+
+Extended identifiers: `BUG-2025-001`, `FEA-2025-042`, `EPIC-16`, etc.
+
+See [AGENTS.md](AGENTS.md) for full issue tracking documentation.
+
 ## Documentation
 
 - CI maintenance: `docs/spec/ci-maintenance.md`
