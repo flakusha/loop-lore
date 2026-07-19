@@ -64,7 +64,7 @@ Current status of feature areas. Checkmarks = code exists in `src/`.
 | Q4 | Model-comparison dashboard — A/B agent/model quality        | feature-analysis #28 |
 | Q5 | Bulk data export — zip-all endpoint                         | plan Epic 14         |
 
-See `backlog.md` for full queue, `plan.md` for epic detail.
+See `.plan/backlog.md` for full queue, `plan.md` for epic detail.
 
 ## 🎯 Planned Features
 
@@ -134,7 +134,7 @@ Config: `headers` block in `src/config/schema.ts` + `schema-class.ts`. Post-MVP 
 
 ## Deferred Concepts
 
-Tracked in `backlog.md` (P3 section). Post-MVP: Tool/Function Calling, BYOK, BYOR, 3D World, Cross-Chat Autonomous Messages, Dual Runtime, LLM native providers, Image/Video Generation, Full i18n.
+Tracked in `.plan/backlog.md` (P3 section). Post-MVP: Tool/Function Calling, BYOK, BYOR, 3D World, Cross-Chat Autonomous Messages, Dual Runtime, LLM native providers, Image/Video Generation, Full i18n.
 
 ## Dual-Use Architecture
 
@@ -151,12 +151,12 @@ Federated Identity (Web3/DID), P2P modes (offline-first), Marketplace, Analytics
 
 Research-driven feature proposals, separated by theme and linked from a hub. Derived from competitor analysis (SillyTavern, RisuAI, Agnai) plus community requests. Proposals only — not yet scheduled.
 
-- Hub: [docs/spec-planned/ideas/index.md](../spec-planned/ideas/index.md)
+- Hub: [docs/ideas/index.md](../ideas/index.md)
 - Themes: Immersion & Presentation, Prompt & Output Control, Memory/Continuity, Authoring, Social/Multiplayer, Platform & Reach, Analytics & Meta, 3D Worlds & Navigation — each linked from the hub.
 
 ## Timeline
 
-See `plan.md` for v0.1 checklist, `backlog.md` for future queue, `open-items.md` for technical debt, `CONTRIBUTING.md` for contribution guidelines.
+See `plan.md` for v0.1 checklist, `.plan/backlog.md` for future queue, git issue tracker for technical debt, `CONTRIBUTING.md` for contribution guidelines.
 
 <!-- ISSUE-MAP-START -->
 
