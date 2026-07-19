@@ -205,7 +205,7 @@ export class ResponseHeaderPolicy {
     if (this.config.linkPreload.length === 0) { return ""; }
     return this.config.linkPreload
       .map((path,) => {
-        const as = path.endsWith(".css",) ? "style" : path.endsWith(".js",) ? "script" : "";
+        const as = path.endsWith(".css",) ? "style" : (path.endsWith(".js",) ? "script" : "");
         const suffix = as ? `; as=${as}` : "";
         return `<${path}>; rel=preload${suffix}`;
       },)

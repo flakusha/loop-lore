@@ -64,13 +64,16 @@ class LightLogger implements Logger {
       this.queue.enqueue(entry,);
     } else {
       const prefix = this.bindings.module ? `[${this.bindings.module}]` : "";
-      const fn = numericLevel >= 40
-        ? console.error
-        : numericLevel >= 30
-        ? console.warn
-        : numericLevel >= 20
-        ? console.info
-        : console.debug;
+      let fn: typeof console.error;
+      if (numericLevel >= 40) {
+        fn = console.error;
+      } else if (numericLevel >= 30) {
+        fn = console.warn;
+      } else if (numericLevel >= 20) {
+        fn = console.info;
+      } else {
+        fn = console.debug;
+      }
       if (error) {
         fn(prefix, message, error, meta ?? "",);
       } else {

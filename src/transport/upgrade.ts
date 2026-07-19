@@ -1,9 +1,9 @@
 // src/transport/upgrade.ts — Connection upgrade / protocol migration
-import type { ProtocolHandler, } from "./protocol.unified";
-import type { TransportConfig, } from "./factory";
-import { TransportError, TransportErrorCode, } from "./errors";
 import { TransportProtocol, } from "../db/enums";
+import { TransportError, TransportErrorCode, } from "./errors";
+import type { TransportConfig, } from "./factory";
 import { createProtocol, } from "./factory";
+import type { ProtocolHandler, } from "./protocol.unified";
 
 export interface UpgradeConnectionOpts {
   current: ProtocolHandler;
