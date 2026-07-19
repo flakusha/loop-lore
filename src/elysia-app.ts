@@ -50,6 +50,7 @@ import { personaRoutes } from "./personas/controller";
 import { generationRoutes } from "./generation/controller";
 import { ageGateRoutes } from "./age-gate/controller";
 import { assetRoutes } from "./assets/controller";
+import { sessionsRoutes } from "./routes/sessions";
 import { authenticate } from "./middleware/auth";
 import { onValidationError } from "./validation";
 
@@ -101,6 +102,7 @@ export function createApp(deps: AppDeps): Elysia {
   app.use(settingsRoutes(handleOpts));
   app.use(messageEncryptionRoutes(handleOpts));
   app.use(usersRoutes(handleOpts));
+  app.use(sessionsRoutes(handleOpts));
   app.use(actorItemsRoutes(handleOpts));
   app.use(actorMemoriesRoutes(handleOpts));
   app.use(actorLoreEntriesRoutes(handleOpts));
