@@ -18,9 +18,16 @@ import {
   UserRole,
   UserStatus,
 } from "@/db/enums";
-import type { DB } from "@/db/schema";
-import type { Kysely } from "kysely";
 
+// ── Deterministic IDs ───────────────────────────────────────────
+
+
+/**
+ * E2E Seed Data
+ *
+ * Populates a test database with demo users, characters, and chats.
+ * All IDs are deterministic for cross-flow reference.
+ */
 // ── Deterministic IDs ───────────────────────────────────────────
 
 /** Password is "password" — bcrypt cost 4 for speed */
@@ -33,60 +40,60 @@ const ADMIN_HASH = "$2b$04$8iIP.O0YTEEoM56xn17NiutFxusLfJ7L/DTHZhA2agrM4gXHLD5Uq
 const U = "00000000-0000-4000-a000-000000000000";
 export const SEED = {
   user: {
-    id: `a0000001-0000-4000-a000-${U.slice(24)}`,
+    id: `a0000001-0000-4000-a000-${U.slice(24,)}`,
     username: "e2euser",
     password: "password",
   },
   admin: {
-    id: `a0000002-0000-4000-a000-${U.slice(24)}`,
+    id: `a0000002-0000-4000-a000-${U.slice(24,)}`,
     username: "e2eadmin",
     password: "adminpass",
   },
   character: {
-    id: `a0000003-0000-4000-a000-${U.slice(24)}`,
+    id: `a0000003-0000-4000-a000-${U.slice(24,)}`,
     name: "E2E Test Character",
   },
   soloCharacter: {
-    id: `a0000007-0000-4000-a000-${U.slice(24)}`,
+    id: `a0000007-0000-4000-a000-${U.slice(24,)}`,
     name: "E2E Solo Character",
   },
   chat: {
-    id: `a0000004-0000-4000-a000-${U.slice(24)}`,
+    id: `a0000004-0000-4000-a000-${U.slice(24,)}`,
     name: "E2E Test Chat",
   },
   message: {
-    id: `a0000005-0000-4000-a000-${U.slice(24)}`,
+    id: `a0000005-0000-4000-a000-${U.slice(24,)}`,
     content: "Hello from E2E test",
   },
   asset: {
-    id: `a0000006-0000-4000-a000-${U.slice(24)}`,
+    id: `a0000006-0000-4000-a000-${U.slice(24,)}`,
     filename: "test-image.png",
   },
   solo: {
-    id: `a0000008-0000-4000-a000-${U.slice(24)}`,
+    id: `a0000008-0000-4000-a000-${U.slice(24,)}`,
     username: "demo",
   },
   soloChat: {
-    id: `a0000009-0000-4000-a000-${U.slice(24)}`,
+    id: `a0000009-0000-4000-a000-${U.slice(24,)}`,
     name: "E2E Test Chat",
   },
   world: {
-    id: `a0000010-0000-4000-a000-${U.slice(24)}`,
+    id: `a0000010-0000-4000-a000-${U.slice(24,)}`,
     name: "E2E Test World",
     description: "World for E2E testing",
   },
   location: {
-    id: `a0000011-0000-4000-a000-${U.slice(24)}`,
+    id: `a0000011-0000-4000-a000-${U.slice(24,)}`,
     name: "E2E Test Location",
     description: "A dusty tavern in the starting village",
   },
   item: {
-    id: `a0000012-0000-4000-a000-${U.slice(24)}`,
+    id: `a0000012-0000-4000-a000-${U.slice(24,)}`,
     name: "Iron Sword",
     description: "A plain but reliable blade",
   },
   quest: {
-    id: `a0000013-0000-4000-a000-${U.slice(24)}`,
+    id: `a0000013-0000-4000-a000-${U.slice(24,)}`,
     name: "Retrieve the Lost Artifact",
     description: "Find the ancient relic hidden in the caves beneath the village",
   },
@@ -94,9 +101,9 @@ export const SEED = {
 
 // ── Seed functions ──────────────────────────────────────────────
 
-export async function seedUsers(db: Kysely<DB>): Promise<void> {
+export async function seedUsers(db: Kysely<DB>,): Promise<void> {
   await db
-    .insertInto("users")
+    .insertInto("users",)
     .values([
       {
         id: SEED.user.id,
@@ -116,14 +123,14 @@ export async function seedUsers(db: Kysely<DB>): Promise<void> {
         status: UserStatus.Active,
         settings: "{}",
       },
-    ])
-    .onConflict((oc) => oc.column("username").doNothing())
+    ],)
+    .onConflict((oc,) => oc.column("username",).doNothing())
     .execute();
 
   // chat_participants.actor_id references actors.id, not users.id
   // Create corresponding actor entries for seeded users
   await db
-    .insertInto("actors")
+    .insertInto("actors",)
     .values([
       {
         id: SEED.user.id,
@@ -147,14 +154,14 @@ export async function seedUsers(db: Kysely<DB>): Promise<void> {
         import_spec: "raw",
         data_version: 0,
       },
-    ])
-    .onConflict((oc) => oc.column("id").doNothing())
+    ],)
+    .onConflict((oc,) => oc.column("id",).doNothing())
     .execute();
 }
 
-export async function seedCharacter(db: Kysely<DB>): Promise<void> {
+export async function seedCharacter(db: Kysely<DB>,): Promise<void> {
   await db
-    .insertInto("actors")
+    .insertInto("actors",)
     .values({
       id: SEED.character.id,
       actor_type: ActorType.Character,
@@ -167,38 +174,38 @@ export async function seedCharacter(db: Kysely<DB>): Promise<void> {
       settings: "{}",
       import_spec: "raw",
       data_version: 0,
-    })
+    },)
     .execute();
 }
 
-export async function seedChat(db: Kysely<DB>): Promise<void> {
+export async function seedChat(db: Kysely<DB>,): Promise<void> {
   await db
-    .insertInto("chats")
+    .insertInto("chats",)
     .values({
       id: SEED.chat.id,
       name: SEED.chat.name,
       type: ChatType.Direct,
       mode: ChatMode.Story,
       created_by: SEED.user.id,
-    })
-    .onConflict((oc) => oc.column("id").doNothing())
+    },)
+    .onConflict((oc,) => oc.column("id",).doNothing())
     .execute();
 
   // Add creator as participant
   await db
-    .insertInto("chat_participants")
+    .insertInto("chat_participants",)
     .values({
       chat_id: SEED.chat.id,
       actor_id: SEED.user.id,
       role_in_chat: "owner",
-    })
-    .onConflict((oc) => oc.columns(["chat_id", "actor_id"]).doNothing())
+    },)
+    .onConflict((oc,) => oc.columns(["chat_id", "actor_id",],).doNothing())
     .execute();
 }
 
-export async function seedMessage(db: Kysely<DB>): Promise<void> {
+export async function seedMessage(db: Kysely<DB>,): Promise<void> {
   await db
-    .insertInto("messages")
+    .insertInto("messages",)
     .values({
       id: SEED.message.id,
       chat_id: SEED.chat.id,
@@ -210,13 +217,13 @@ export async function seedMessage(db: Kysely<DB>): Promise<void> {
       content_encoding: "identity",
       status: "confirmed",
       visibility: "visible",
-    })
+    },)
     .execute();
 }
 
-export async function seedWorld(db: Kysely<DB>): Promise<void> {
+export async function seedWorld(db: Kysely<DB>,): Promise<void> {
   await db
-    .insertInto("worlds")
+    .insertInto("worlds",)
     .values({
       id: SEED.world.id,
       owner_id: SEED.user.id,
@@ -225,26 +232,26 @@ export async function seedWorld(db: Kysely<DB>): Promise<void> {
       difficulty_modifier: 1,
       difficulty_reroll: "none",
       difficulty_state: "normal",
-    })
+    },)
     .execute();
 }
 
-export async function seedLocation(db: Kysely<DB>): Promise<void> {
+export async function seedLocation(db: Kysely<DB>,): Promise<void> {
   await db
-    .insertInto("locations")
+    .insertInto("locations",)
     .values({
       id: SEED.location.id,
       world_id: SEED.world.id,
       name: SEED.location.name,
       description: SEED.location.description,
       connections: "[]",
-    })
+    },)
     .execute();
 }
 
-export async function seedItem(db: Kysely<DB>): Promise<void> {
+export async function seedItem(db: Kysely<DB>,): Promise<void> {
   await db
-    .insertInto("items")
+    .insertInto("items",)
     .values({
       id: SEED.item.id,
       world_id: SEED.world.id,
@@ -254,31 +261,31 @@ export async function seedItem(db: Kysely<DB>): Promise<void> {
       rarity: ItemRarity.Common,
       stackable: StackableState.Unique,
       max_stack: 1,
-      properties: JSON.stringify({ damage: 5, type: "slashing" }),
+      properties: JSON.stringify({ damage: 5, type: "slashing", },),
       value: 10,
       weight: 3,
-    })
+    },)
     .execute();
 }
 
-export async function seedWorldItem(db: Kysely<DB>): Promise<void> {
+export async function seedWorldItem(db: Kysely<DB>,): Promise<void> {
   await db
-    .insertInto("world_items")
+    .insertInto("world_items",)
     .values({
-      id: `b0000001-0000-4000-a000-${U.slice(24)}`,
+      id: `b0000001-0000-4000-a000-${U.slice(24,)}`,
       world_id: SEED.world.id,
       item_id: SEED.item.id,
       location_id: SEED.location.id,
       quantity: 1,
       visibility: "visible",
       respawnable: 0,
-    })
+    },)
     .execute();
 }
 
-export async function seedQuest(db: Kysely<DB>): Promise<void> {
+export async function seedQuest(db: Kysely<DB>,): Promise<void> {
   await db
-    .insertInto("quests")
+    .insertInto("quests",)
     .values({
       id: SEED.quest.id,
       world_id: SEED.world.id,
@@ -292,24 +299,24 @@ export async function seedQuest(db: Kysely<DB>): Promise<void> {
       config: "{}",
       progress: 0,
       narrative_hooks: "[]",
-      rewards: JSON.stringify({ xp: 100, gold: 50 }),
-    })
+      rewards: JSON.stringify({ xp: 100, gold: 50, },),
+    },)
     .execute();
 }
 
 /**
  * Seed all test data.
  */
-export async function seedAll(db: Kysely<DB>): Promise<void> {
-  await seedUsers(db);
-  await seedCharacter(db);
-  await seedChat(db);
-  await seedMessage(db);
-  await seedWorld(db);
-  await seedLocation(db);
-  await seedItem(db);
-  await seedWorldItem(db);
-  await seedQuest(db);
+export async function seedAll(db: Kysely<DB>,): Promise<void> {
+  await seedUsers(db,);
+  await seedCharacter(db,);
+  await seedChat(db,);
+  await seedMessage(db,);
+  await seedWorld(db,);
+  await seedLocation(db,);
+  await seedItem(db,);
+  await seedWorldItem(db,);
+  await seedQuest(db,);
 }
 
 /**
@@ -318,9 +325,9 @@ export async function seedAll(db: Kysely<DB>): Promise<void> {
  * mode: getOrCreateSoloUserForAuth looks up role=UserRole.Solo and uses
  * that user's id as the auth context userId.
  */
-export async function seedSolo(db: Kysely<DB>): Promise<void> {
+export async function seedSolo(db: Kysely<DB>,): Promise<void> {
   await db
-    .insertInto("users")
+    .insertInto("users",)
     .values({
       id: SEED.solo.id,
       username: SEED.solo.username,
@@ -328,12 +335,12 @@ export async function seedSolo(db: Kysely<DB>): Promise<void> {
       role: UserRole.Solo,
       status: UserStatus.Active,
       settings: "{}",
-    })
-    .onConflict((oc) => oc.column("username").doNothing())
+    },)
+    .onConflict((oc,) => oc.column("username",).doNothing())
     .execute();
 
   await db
-    .insertInto("actors")
+    .insertInto("actors",)
     .values({
       id: SEED.solo.id,
       actor_type: ActorType.User,
@@ -344,13 +351,13 @@ export async function seedSolo(db: Kysely<DB>): Promise<void> {
       settings: "{}",
       import_spec: "raw",
       data_version: 0,
-    })
-    .onConflict((oc) => oc.column("id").doNothing())
+    },)
+    .onConflict((oc,) => oc.column("id",).doNothing())
     .execute();
 
   // Seed a character visible to solo user (uses separate ID from SEED.character)
   await db
-    .insertInto("actors")
+    .insertInto("actors",)
     .values({
       id: SEED.soloCharacter.id,
       actor_type: ActorType.Character,
@@ -363,29 +370,29 @@ export async function seedSolo(db: Kysely<DB>): Promise<void> {
       settings: "{}",
       import_spec: "raw",
       data_version: 0,
-    })
-    .onConflict((oc) => oc.column("id").doNothing())
+    },)
+    .onConflict((oc,) => oc.column("id",).doNothing())
     .execute();
 
   await db
-    .insertInto("chats")
+    .insertInto("chats",)
     .values({
       id: SEED.soloChat.id,
       name: SEED.soloChat.name,
       type: ChatType.Direct,
       mode: ChatMode.Direct,
       created_by: SEED.solo.id,
-    })
-    .onConflict((oc) => oc.column("id").doNothing())
+    },)
+    .onConflict((oc,) => oc.column("id",).doNothing())
     .execute();
 
   await db
-    .insertInto("chat_participants")
+    .insertInto("chat_participants",)
     .values({
       chat_id: SEED.soloChat.id,
       actor_id: SEED.solo.id,
       role_in_chat: "owner",
-    })
-    .onConflict((oc) => oc.columns(["chat_id", "actor_id"]).doNothing())
+    },)
+    .onConflict((oc,) => oc.columns(["chat_id", "actor_id",],).doNothing())
     .execute();
 }

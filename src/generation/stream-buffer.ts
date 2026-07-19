@@ -15,9 +15,9 @@ export interface StreamEvent {
   sequence: number;
 }
 
-type EventSubscriber = (event: StreamEvent) => void;
+type EventSubscriber = (event: StreamEvent,) => void;
 type DoneSubscriber = () => void;
-type ErrorSubscriber = (error: string) => void;
+type ErrorSubscriber = (error: string,) => void;
 
 // ── Buffer ─────────────────────────────────────────────────
 
@@ -35,10 +35,10 @@ export class StreamBuffer {
   private readonly onError = new Set<ErrorSubscriber>();
 
   /** Append an event to the buffer. Returns sequence number for replay tracking. */
-  append(type: string, html: string): number {
+  append(type: string, html: string,): number {
     const seq = this.sequence++;
-    const event: StreamEvent = { type, html, sequence: seq };
-    this.events.push(event);
+    const event: StreamEvent = { type, html, sequence: seq, };
+    this.events.push(event,);
     this.bytesUsed += html.length;
 
     // Trim oldest when over limit
@@ -47,36 +47,36 @@ export class StreamBuffer {
       this.bytesUsed -= removed.html.length;
     }
 
-    for (const sub of this.onEvent) sub(event);
+    for (const sub of this.onEvent) { sub(event,); }
     return seq;
   }
 
   /** Signal generation completed successfully */
   signalDone(): void {
     this._done = true;
-    for (const sub of this.onDone) sub();
+    for (const sub of this.onDone) { sub(); }
   }
 
   /** Signal generation failed */
-  signalError(error: string): void {
+  signalError(error: string,): void {
     this._error = error;
-    for (const sub of this.onError) sub(error);
+    for (const sub of this.onError) { sub(error,); }
   }
 
   /** Replay events from a given sequence number (0 = all) */
-  replay(fromSequence = 0): StreamEvent[] {
-    return this.events.filter((e) => e.sequence >= fromSequence);
+  replay(fromSequence = 0,): StreamEvent[] {
+    return this.events.filter((e,) => e.sequence >= fromSequence);
   }
 
   /** Subscribe to live events. Returns unsubscribe function. */
-  subscribe(cb: EventSubscriber, onDone?: DoneSubscriber, onError?: ErrorSubscriber): () => void {
-    this.onEvent.add(cb);
-    if (onDone) this.onDone.add(onDone);
-    if (onError) this.onError.add(onError);
+  subscribe(cb: EventSubscriber, onDone?: DoneSubscriber, onError?: ErrorSubscriber,): () => void {
+    this.onEvent.add(cb,);
+    if (onDone) { this.onDone.add(onDone,); }
+    if (onError) { this.onError.add(onError,); }
     return () => {
-      this.onEvent.delete(cb);
-      if (onDone) this.onDone.delete(onDone);
-      if (onError) this.onError.delete(onError);
+      this.onEvent.delete(cb,);
+      if (onDone) { this.onDone.delete(onDone,); }
+      if (onError) { this.onError.delete(onError,); }
     };
   }
 
@@ -102,28 +102,28 @@ export class StreamBuffer {
 const chatBuffers = new Map<string, StreamBuffer>();
 
 /** Get or create a buffer for the given chat */
-export function getOrCreateBuffer(chatId: string): StreamBuffer {
-  let buf = chatBuffers.get(chatId);
+export function getOrCreateBuffer(chatId: string,): StreamBuffer {
+  let buf = chatBuffers.get(chatId,);
   if (!buf) {
     buf = new StreamBuffer();
-    chatBuffers.set(chatId, buf);
+    chatBuffers.set(chatId, buf,);
   }
   return buf;
 }
 
 /** Get existing buffer (undefined if none) */
-export function getBuffer(chatId: string): StreamBuffer | undefined {
-  return chatBuffers.get(chatId);
+export function getBuffer(chatId: string,): StreamBuffer | undefined {
+  return chatBuffers.get(chatId,);
 }
 
 /** Remove a buffer */
-export function removeBuffer(chatId: string): void {
-  chatBuffers.delete(chatId);
+export function removeBuffer(chatId: string,): void {
+  chatBuffers.delete(chatId,);
 }
 
 /** Schedule buffer cleanup after a TTL */
-export function scheduleBufferCleanup(chatId: string, ttlMs = 300_000): void {
+export function scheduleBufferCleanup(chatId: string, ttlMs = 300_000,): void {
   setTimeout(() => {
-    removeBuffer(chatId);
-  }, ttlMs).unref();
+    removeBuffer(chatId,);
+  }, ttlMs,).unref();
 }

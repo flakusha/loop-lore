@@ -2,35 +2,35 @@
 //
 // Pin/unpin messages in a chat.
 // Pins are stored in the `chat_pins` table and displayed in a pinned bar.
-
-import { Elysia, t } from "elysia";
-import type { Kysely } from "kysely";
-import type { DB } from "../db/schema";
-import { uid } from "../utils";
+import type { DB, } from "../db/schema";
+import type { Kysely, } from "kysely";
+import { Elysia, t, } from "elysia";
 import { notFound, unauthorized } from "../validation/middleware";
+import { notFound, unauthorized, } from "../validation/middleware";
+import { uid, } from "../utils";
 
 interface HandlerOpts {
   database: Kysely<DB>;
 }
 
-export function chatPinRoutes(opts: HandlerOpts) {
-  const { database } = opts;
+export function chatPinRoutes(opts: HandlerOpts,) {
+  const { database, } = opts;
 
   return (
-    new Elysia({ name: "chat-pins" })
+    new Elysia({ name: "chat-pins", },)
       // List pinned messages for a chat
       .get(
         "/api/chats/:chatId/pins",
-        async (ctx: any) => {
+        async (ctx: any,) => {
           const userId = ctx.userId as string | null;
-          if (!userId) return unauthorized();
+          if (!userId) { return unauthorized(); }
 
           const chatId = ctx.params.chatId as string;
 
           const pins = await database
-            .selectFrom("chat_pins")
-            .innerJoin("messages", "messages.id", "chat_pins.message_id")
-            .innerJoin("actors", "actors.id", "messages.actor_id")
+            .selectFrom("chat_pins",)
+            .innerJoin("messages", "messages.id", "chat_pins.message_id",)
+            .innerJoin("actors", "actors.id", "messages.actor_id",)
             .select([
               "chat_pins.id",
               "chat_pins.message_id",
@@ -39,119 +39,119 @@ export function chatPinRoutes(opts: HandlerOpts) {
               "messages.content",
               "messages.role",
               "actors.display_name",
-            ])
-            .where("chat_pins.chat_id", "=", chatId)
-            .orderBy("chat_pins.pinned_at", "asc")
+            ],)
+            .where("chat_pins.chat_id", "=", chatId,)
+            .orderBy("chat_pins.pinned_at", "asc",)
             .execute();
 
-          return Response.json({ data: pins });
+          return Response.json({ data: pins, },);
         },
         {
-          params: t.Object({ chatId: t.String() }),
+          params: t.Object({ chatId: t.String(), },),
         },
       )
       // Pin a message
       .post(
         "/api/chats/:chatId/pins",
-        async (ctx: any) => {
+        async (ctx: any,) => {
           const userId = ctx.userId as string | null;
-          if (!userId) return unauthorized();
+          if (!userId) { return unauthorized(); }
 
           const chatId = ctx.params.chatId as string;
 
           // Only chat owner, admin, or participants can pin
           const chat = await database
-            .selectFrom("chats")
-            .select("created_by")
-            .where("id", "=", chatId)
+            .selectFrom("chats",)
+            .select("created_by",)
+            .where("id", "=", chatId,)
             .executeTakeFirst();
-          if (!chat) return notFound("Chat not found");
+          if (!chat) { return notFound("Chat not found",); }
 
           const isOwner = chat.created_by === userId;
           const isAdmin = (ctx.userRole as string | null) === "admin";
           const isParticipant = await database
-            .selectFrom("chat_participants")
-            .select("actor_id")
-            .where("chat_id", "=", chatId)
-            .where("actor_id", "=", userId)
+            .selectFrom("chat_participants",)
+            .select("actor_id",)
+            .where("chat_id", "=", chatId,)
+            .where("actor_id", "=", userId,)
             .executeTakeFirst();
 
           if (!isOwner && !isAdmin && !isParticipant) {
-            return Response.json({ error: "Not authorized to pin" }, { status: 403 });
+            return Response.json({ error: "Not authorized to pin", }, { status: 403, },);
           }
 
-          const { messageId } = ctx.body as { messageId: string };
+          const { messageId, } = ctx.body as { messageId: string };
 
           // Check if already pinned
           const existing = await database
-            .selectFrom("chat_pins")
-            .select("id")
-            .where("chat_id", "=", chatId)
-            .where("message_id", "=", messageId)
+            .selectFrom("chat_pins",)
+            .select("id",)
+            .where("chat_id", "=", chatId,)
+            .where("message_id", "=", messageId,)
             .executeTakeFirst();
 
           if (existing) {
-            return Response.json({ ok: true, id: existing.id, already: true });
+            return Response.json({ ok: true, id: existing.id, already: true, },);
           }
 
           const id = uid();
           await database
-            .insertInto("chat_pins")
+            .insertInto("chat_pins",)
             .values({
               id,
               chat_id: chatId,
               message_id: messageId,
               pinned_by: userId,
-            })
+            },)
             .execute();
 
-          return Response.json({ ok: true, id });
+          return Response.json({ ok: true, id, },);
         },
         {
-          params: t.Object({ chatId: t.String() }),
-          body: t.Object({ messageId: t.String() }),
+          params: t.Object({ chatId: t.String(), },),
+          body: t.Object({ messageId: t.String(), },),
         },
       )
       // Unpin a message
       .delete(
         "/api/chats/:chatId/pins/:pinId",
-        async (ctx: any) => {
+        async (ctx: any,) => {
           const userId = ctx.userId as string | null;
-          if (!userId) return unauthorized();
+          if (!userId) { return unauthorized(); }
 
           const chatId = ctx.params.chatId as string;
           const pinId = ctx.params.pinId as string;
 
           // Only pinner, chat owner, or admin can unpin
           const pin = await database
-            .selectFrom("chat_pins")
-            .select("pinned_by")
-            .where("id", "=", pinId)
+            .selectFrom("chat_pins",)
+            .select("pinned_by",)
+            .where("id", "=", pinId,)
             .executeTakeFirst();
-          if (!pin) return notFound("Pin not found");
+          if (!pin) { return notFound("Pin not found",); }
 
           const chat = await database
-            .selectFrom("chats")
-            .select("created_by")
-            .where("id", "=", chatId)
+            .selectFrom("chats",)
+            .select("created_by",)
+            .where("id", "=", chatId,)
             .executeTakeFirst();
-          if (!chat) return notFound("Chat not found");
+          if (!chat) { return notFound("Chat not found",); }
 
           const isPinner = pin.pinned_by === userId;
           const isOwner = chat.created_by === userId;
           const isAdmin = (ctx.userRole as string | null) === "admin";
 
           if (!isPinner && !isOwner && !isAdmin) {
-            return Response.json({ error: "Not authorized to unpin" }, { status: 403 });
+            return Response.json({ error: "Not authorized to unpin", }, { status: 403, },);
           }
 
-          const deleted = await database.deleteFrom("chat_pins").where("id", "=", pinId).executeTakeFirst();
+          const deleted = await database.deleteFrom("chat_pins",).where("id", "=", pinId,).executeTakeFirst();
 
-          if (!deleted || deleted.numDeletedRows === 0n) return notFound("Pin not found");
-          return Response.json({ ok: true });
+          if (!deleted || deleted.numDeletedRows === 0n) { return notFound("Pin not found",); }
+          return Response.json({ ok: true, },);
         },
         {
-          params: t.Object({ chatId: t.String(), pinId: t.String() }),
+          params: t.Object({ chatId: t.String(), pinId: t.String(), },),
         },
       )
   );

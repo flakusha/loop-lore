@@ -11,25 +11,27 @@
  *   await page.goto(ctx.url + "/views/chat");
  *   await ctx.close();
  */
-
-import { type Browser, chromium } from "@playwright/test";
-import { spawnSync } from "node:child_process";
-import { cpSync, existsSync, mkdirSync, readFileSync, rmSync } from "node:fs";
-import { join } from "node:path";
-import { createTestDb, loadTestConfig, runMigrations } from "./server";
 import "./logger-init";
-import { initAgeGate } from "@/age-gate/controller";
-import type { Config } from "@/config/schema";
-import { initSmk } from "@/crypto";
-import { setTestDatabase } from "@/db/index";
-import type { DB } from "@/db/schema";
-import { createApp } from "@/elysia-app";
-import { initializeProviders } from "@/generation";
-import { createLogger, setGlobalLogger } from "@/logger";
-import { resetSoloUserCache } from "@/middleware/index";
-import { loadAllPlugins, unloadAllPlugins } from "@/plugins";
-import type { Kysely } from "kysely";
-import { seedSolo } from "./seed";
+import type { Config, } from "@/config/schema";
+import type { DB, } from "@/db/schema";
+import type { Kysely, } from "kysely";
+import { cpSync, existsSync, mkdirSync, readFileSync, rmSync } from "node:fs";
+import { cpSync, existsSync, mkdirSync, readFileSync, rmSync, } from "node:fs";
+import { createApp, } from "@/elysia-app";
+import { createLogger, setGlobalLogger, } from "@/logger";
+import { createTestDb, loadTestConfig, runMigrations } from "./server";
+import { createTestDb, loadTestConfig, runMigrations, } from "./server";
+import { initAgeGate, } from "@/age-gate/controller";
+import { initSmk, } from "@/crypto";
+import { initializeProviders, } from "@/generation";
+import { join, } from "node:path";
+import { loadAllPlugins, unloadAllPlugins, } from "@/plugins";
+import { resetSoloUserCache, } from "@/middleware/index";
+import { seedSolo, } from "./seed";
+import { setTestDatabase, } from "@/db/index";
+import { spawnSync, } from "node:child_process";
+import { type Browser, chromium } from "@playwright/test";
+import { type Browser, chromium, } from "@playwright/test";
 
 // ── Types ────────────────────────────────────────────────────
 
@@ -44,22 +46,22 @@ export interface BrowserTestContext {
 // ── Build frontend JS/CSS first ──────────────────────────────
 
 function ensureFrontendBuild(): string {
-  const distPublic = join(import.meta.dir, "..", "..", "..", "dist", "public");
-  const jsPath = join(distPublic, "app.js");
-  if (existsSync(jsPath)) return distPublic;
+  const distPublic = join(import.meta.dir, "..", "..", "..", "dist", "public",);
+  const jsPath = join(distPublic, "app.js",);
+  if (existsSync(jsPath,)) { return distPublic; }
 
-  const result = spawnSync("bun", ["run", "build:frontend"], {
-    stdio: ["ignore", "pipe", "pipe"],
-    cwd: join(import.meta.dir, "..", "..", ".."),
-  });
+  const result = spawnSync("bun", ["run", "build:frontend",], {
+    stdio: ["ignore", "pipe", "pipe",],
+    cwd: join(import.meta.dir, "..", "..", "..",),
+  },);
   if (result.status !== 0) {
-    throw new Error(`Frontend build failed: ${result.stderr?.toString()}`);
+    throw new Error(`Frontend build failed: ${result.stderr?.toString()}`,);
   }
 
-  const srcViews = join(import.meta.dir, "..", "..", "..", "src", "views");
-  const srcPublic = join(import.meta.dir, "..", "..", "..", "src", "public");
-  if (existsSync(srcViews)) cpSync(srcViews, distPublic, { recursive: true, force: true });
-  if (existsSync(srcPublic)) cpSync(srcPublic, distPublic, { recursive: true, force: true });
+  const srcViews = join(import.meta.dir, "..", "..", "..", "src", "views",);
+  const srcPublic = join(import.meta.dir, "..", "..", "..", "src", "public",);
+  if (existsSync(srcViews,)) { cpSync(srcViews, distPublic, { recursive: true, force: true, },); }
+  if (existsSync(srcPublic,)) { cpSync(srcPublic, distPublic, { recursive: true, force: true, },); }
 
   return distPublic;
 }
@@ -73,38 +75,38 @@ export async function createBrowserTest(
 
   // Create DB + run migrations
   const db = createTestDb();
-  await runMigrations(db);
+  await runMigrations(db,);
 
-  const config = loadTestConfig(overrides);
+  const config = loadTestConfig(overrides,);
 
   // Temp upload dir
-  const testRunId = `loop-lore-e2e-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
-  const testUploadDir = join("/tmp", testRunId, "uploads");
+  const testRunId = `loop-lore-e2e-${Date.now()}-${Math.random().toString(36,).slice(2, 8,)}`;
+  const testUploadDir = join("/tmp", testRunId, "uploads",);
   config.assets.uploadDir = testUploadDir;
-  mkdirSync(testUploadDir, { recursive: true });
+  mkdirSync(testUploadDir, { recursive: true, },);
 
   // Initialize singletons
-  const logger = createLogger({ level: "error" });
-  setGlobalLogger(logger);
-  initAgeGate(config.ageGate);
-  await initSmk(config.encryption);
-  initializeProviders(config);
-  await loadAllPlugins(db);
+  const logger = createLogger({ level: "error", },);
+  setGlobalLogger(logger,);
+  initAgeGate(config.ageGate,);
+  await initSmk(config.encryption,);
+  initializeProviders(config,);
+  await loadAllPlugins(db,);
 
   // Seed solo user + character visible to solo context
-  await seedSolo(db);
+  await seedSolo(db,);
   resetSoloUserCache();
 
   // Create Elysia app with a non-API handler that serves static files
   const app = createApp({
     database: db,
     config,
-    handleNonApiRequest: async (request: Request): Promise<Response> => {
-      const url = new URL(request.url);
-      const publicPath = join(publicDir, url.pathname === "/" ? "index.html" : url.pathname);
-      if (publicPath.startsWith(publicDir + "/") && existsSync(publicPath)) {
-        const content = readFileSync(publicPath);
-        const ext = publicPath.split(".").pop()?.toLowerCase() ?? "";
+    handleNonApiRequest: async (request: Request,): Promise<Response> => {
+      const url = new URL(request.url,);
+      const publicPath = join(publicDir, url.pathname === "/" ? "index.html" : url.pathname,);
+      if (publicPath.startsWith(publicDir + "/",) && existsSync(publicPath,)) {
+        const content = readFileSync(publicPath,);
+        const ext = publicPath.split(".",).pop()?.toLowerCase() ?? "";
         const mime: Record<string, string> = {
           html: "text/html",
           css: "text/css",
@@ -115,28 +117,28 @@ export async function createBrowserTest(
           svg: "image/svg+xml",
           ico: "image/x-icon",
         };
-        return new Response(content, { headers: { "Content-Type": mime[ext] ?? "text/plain" } });
+        return new Response(content, { headers: { "Content-Type": mime[ext] ?? "text/plain", }, },);
       }
-      return new Response("Not found", { status: 404 });
+      return new Response("Not found", { status: 404, },);
     },
-  });
+  },);
 
   // Start Bun server
   const bunServer = Bun.serve({
     port: 0,
-    fetch: (req) => app.fetch(req),
-  });
+    fetch: (req,) => app.fetch(req,),
+  },);
 
   const url = `http://localhost:${bunServer.port}`;
 
-  const browser = await chromium.launch({ headless: true });
+  const browser = await chromium.launch({ headless: true, },);
 
   // Create browser context with generous viewport so sidebar nav is visible.
   // Cast to Browser — BrowserContext also has newPage() and is compatible
   // at runtime with the BrowserTestContext interface.
   const browserContext = await browser.newContext({
-    viewport: { width: 1440, height: 900 },
-  });
+    viewport: { width: 1440, height: 900, },
+  },);
 
   return {
     url,
@@ -146,11 +148,11 @@ export async function createBrowserTest(
     close: async () => {
       await browser.close();
       bunServer.stop();
-      setTestDatabase(null);
+      setTestDatabase(null,);
       resetSoloUserCache();
       await unloadAllPlugins();
-      const testDir = join("/tmp", testRunId);
-      if (existsSync(testDir)) rmSync(testDir, { recursive: true, force: true });
+      const testDir = join("/tmp", testRunId,);
+      if (existsSync(testDir,)) { rmSync(testDir, { recursive: true, force: true, },); }
     },
   };
 }

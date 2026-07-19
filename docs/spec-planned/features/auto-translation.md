@@ -16,10 +16,10 @@ export interface TranslationContext {
   translateOutput: boolean;
 }
 
-export async function translationMiddleware(req: Request, next: () => Promise<Response>): Promise<Response> {
-  const user = await authenticate(req);
+export async function translationMiddleware(req: Request, next: () => Promise<Response>,): Promise<Response> {
+  const user = await authenticate(req,);
   const userLang = user.settings?.language || "en";
-  const modelLang = getModelLanguage(req); // From model config
+  const modelLang = getModelLanguage(req,); // From model config
 
   // Only translate if needed
   if (userLang === modelLang) {
@@ -33,41 +33,41 @@ export async function translationMiddleware(req: Request, next: () => Promise<Re
   if (originalBody.messages) {
     for (const msg of originalBody.messages) {
       if (msg.role === "user") {
-        msg.content = await translate(msg.content, userLang, modelLang);
+        msg.content = await translate(msg.content, userLang, modelLang,);
       }
     }
   }
 
   // Create modified request
   const translatedReq = new Request(req, {
-    body: JSON.stringify(originalBody),
-  });
+    body: JSON.stringify(originalBody,),
+  },);
 
   const response = await next();
 
   // Translate output
   if (response.ok && originalBody.stream) {
     // Stream translation (complex)
-    return translateStream(response, modelLang, userLang);
+    return translateStream(response, modelLang, userLang,);
   }
 
   const data = await response.json();
 
   if (data.choices?.[0]?.message?.content) {
-    data.choices[0].message.content = await translate(data.choices[0].message.content, modelLang, userLang);
+    data.choices[0].message.content = await translate(data.choices[0].message.content, modelLang, userLang,);
   }
 
-  return new Response(JSON.stringify(data), response);
+  return new Response(JSON.stringify(data,), response,);
 }
 ```
 
 ### File: src/i18n/translator.ts
 
 ```typescript
-export async function translate(text: string, from: string, to: string): Promise<string> {
+export async function translate(text: string, from: string, to: string,): Promise<string> {
   // Try configured provider first
   if (config.translation_provider) {
-    return translateWithProvider(text, from, to);
+    return translateWithProvider(text, from, to,);
   }
 
   // Fallback to LLM-based translation
@@ -78,23 +78,23 @@ Translate from ${from} to ${to}. Return only the translated text.
 `;
 
   return llmGenerate({
-    messages: [{ role: "user", content: prompt }],
+    messages: [{ role: "user", content: prompt, },],
     temperature: 0.1,
-    maxTokens: Math.max(text.length, 1000),
-  });
+    maxTokens: Math.max(text.length, 1000,),
+  },);
 }
 
-export async function translateWithProvider(text: string, from: string, to: string): Promise<string> {
+export async function translateWithProvider(text: string, from: string, to: string,): Promise<string> {
   const response = await fetch(config.translation_endpoint, {
     method: "POST",
-    headers: { Authorization: `Bearer ${config.translation_api_key}` },
+    headers: { Authorization: `Bearer ${config.translation_api_key}`, },
     body: JSON.stringify({
       q: text,
       source: from,
       target: to,
       format: "text",
-    }),
-  });
+    },),
+  },);
 
   const data = await response.json();
   return data.translatedText;
@@ -117,8 +117,8 @@ export default function() {
 
     showOriginal() {
       // Toggle to show original text
-      this.$el.querySelector(".translated").classList.add("hidden");
-      this.$el.querySelector(".original").classList.remove("hidden");
+      this.$el.querySelector(".translated",).classList.add("hidden",);
+      this.$el.querySelector(".original",).classList.remove("hidden",);
     },
   };
 }

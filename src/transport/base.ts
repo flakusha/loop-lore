@@ -1,7 +1,8 @@
-import { randomUUID } from "node:crypto";
-import type { TransportProtocol } from "../db/enums";
-import { TransportError, TransportErrorCode } from "./errors";
 import type { Connection, ProtocolHandler } from "./protocol.unified";
+import type { Connection, ProtocolHandler, } from "./protocol.unified";
+import type { TransportProtocol, } from "../db/enums";
+import { TransportError, TransportErrorCode, } from "./errors";
+import { randomUUID, } from "node:crypto";
 
 /**
  * Shared options for all transport adapters.
@@ -32,24 +33,24 @@ export abstract class TransportBase<
   protected connection: Connection | undefined;
   protected closed = false;
 
-  constructor(protected readonly options: TOptions) {}
+  constructor(protected readonly options: TOptions,) {}
 
   protected ensureConnected(): Connection {
     if (this.closed || !this.connection) {
       throw new TransportError("connection closed", {
         code: TransportErrorCode.ConnectionClosed,
-      });
+      },);
     }
     return this.connection;
   }
 
   connect(): Promise<Connection> {
     if (this.connection) {
-      return Promise.resolve(this.connection);
+      return Promise.resolve(this.connection,);
     }
 
     this.connection = this.createConnection();
-    return Promise.resolve(this.connection);
+    return Promise.resolve(this.connection,);
   }
 
   /**
@@ -69,12 +70,12 @@ export abstract class TransportBase<
     };
   }
 
-  abstract send(data: string | Uint8Array): Promise<void>;
+  abstract send(data: string | Uint8Array,): Promise<void>;
 
-  get(signature: string): Promise<string> {
+  get(signature: string,): Promise<string> {
     const conn = this.ensureConnected();
     const value = conn.metadata[signature];
-    return Promise.resolve(typeof value === "string" ? value : "");
+    return Promise.resolve(typeof value === "string" ? value : "",);
   }
 
   close(): Promise<void> {

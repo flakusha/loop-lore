@@ -1,4 +1,4 @@
-import { type Kysely, sql } from "kysely";
+import { type Kysely, sql, } from "kysely";
 
 /**
  * Migration 022 — Message reactions and chat pins
@@ -13,53 +13,53 @@ import { type Kysely, sql } from "kysely";
  *   message_id) prevents duplicate pins. Max 3 enforced in application
  *   code, not DB constraint.
  */
-export async function up(database: Kysely<unknown>): Promise<void> {
+export async function up(database: Kysely<unknown>,): Promise<void> {
   // ── message_reactions ──────────────────────────────────────
   await database.schema
-    .createTable("message_reactions")
-    .addColumn("id", "text", (col) => col.primaryKey())
-    .addColumn("message_id", "text", (col) => col.notNull().references("messages.id").onDelete("cascade"))
-    .addColumn("user_id", "text", (col) => col.notNull().references("users.id").onDelete("cascade"))
-    .addColumn("emoji", "text", (col) => col.notNull())
-    .addColumn("created_at", "text", (col) => col.notNull().defaultTo(sql`(datetime('now'))`))
+    .createTable("message_reactions",)
+    .addColumn("id", "text", (col,) => col.primaryKey(),)
+    .addColumn("message_id", "text", (col,) => col.notNull().references("messages.id",).onDelete("cascade",),)
+    .addColumn("user_id", "text", (col,) => col.notNull().references("users.id",).onDelete("cascade",),)
+    .addColumn("emoji", "text", (col,) => col.notNull(),)
+    .addColumn("created_at", "text", (col,) => col.notNull().defaultTo(sql`(datetime('now'))`,),)
     .execute();
 
   await database.schema
-    .createIndex("idx_reactions_message")
-    .on("message_reactions")
-    .column("message_id")
+    .createIndex("idx_reactions_message",)
+    .on("message_reactions",)
+    .column("message_id",)
     .execute();
 
   await database.schema
-    .createIndex("idx_reactions_user")
-    .on("message_reactions")
-    .column("user_id")
+    .createIndex("idx_reactions_user",)
+    .on("message_reactions",)
+    .column("user_id",)
     .execute();
 
   // ── chat_pins ──────────────────────────────────────────────
   await database.schema
-    .createTable("chat_pins")
-    .addColumn("id", "text", (col) => col.primaryKey())
-    .addColumn("chat_id", "text", (col) => col.notNull().references("chats.id").onDelete("cascade"))
-    .addColumn("message_id", "text", (col) => col.notNull().references("messages.id").onDelete("cascade"))
-    .addColumn("pinned_by", "text", (col) => col.notNull().references("users.id"))
-    .addColumn("pinned_at", "text", (col) => col.notNull().defaultTo(sql`(datetime('now'))`))
+    .createTable("chat_pins",)
+    .addColumn("id", "text", (col,) => col.primaryKey(),)
+    .addColumn("chat_id", "text", (col,) => col.notNull().references("chats.id",).onDelete("cascade",),)
+    .addColumn("message_id", "text", (col,) => col.notNull().references("messages.id",).onDelete("cascade",),)
+    .addColumn("pinned_by", "text", (col,) => col.notNull().references("users.id",),)
+    .addColumn("pinned_at", "text", (col,) => col.notNull().defaultTo(sql`(datetime('now'))`,),)
     .execute();
 
   await database.schema
-    .createIndex("idx_pins_chat")
-    .on("chat_pins")
-    .column("chat_id")
+    .createIndex("idx_pins_chat",)
+    .on("chat_pins",)
+    .column("chat_id",)
     .execute();
 
   await database.schema
-    .createIndex("idx_pins_message")
-    .on("chat_pins")
-    .column("message_id")
+    .createIndex("idx_pins_message",)
+    .on("chat_pins",)
+    .column("message_id",)
     .execute();
 }
 
-export async function down(database: Kysely<unknown>): Promise<void> {
-  await database.schema.dropTable("chat_pins").ifExists().execute();
-  await database.schema.dropTable("message_reactions").ifExists().execute();
+export async function down(database: Kysely<unknown>,): Promise<void> {
+  await database.schema.dropTable("chat_pins",).ifExists().execute();
+  await database.schema.dropTable("message_reactions",).ifExists().execute();
 }

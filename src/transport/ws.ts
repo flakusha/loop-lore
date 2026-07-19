@@ -1,7 +1,7 @@
-import { randomUUID } from "node:crypto";
-import { TransportProtocol } from "../db/enums";
-import { TransportBase, type TransportBaseOptions } from "./base";
-import type { Connection } from "./protocol.unified";
+import type { Connection, } from "./protocol.unified";
+import { TransportBase, type TransportBaseOptions, } from "./base";
+import { TransportProtocol, } from "../db/enums";
+import { randomUUID, } from "node:crypto";
 
 interface WsOptions extends TransportBaseOptions {
   url?: string;
@@ -13,8 +13,8 @@ export class WsHandler extends TransportBase<WsOptions> {
   private pingInterval: ReturnType<typeof setInterval> | undefined;
   private pendingMessages: (string | Uint8Array)[] = [];
 
-  constructor(options: WsOptions = {}) {
-    super(options);
+  constructor(options: WsOptions = {},) {
+    super(options,);
   }
 
   protected getProtocol(): TransportProtocol {
@@ -45,22 +45,22 @@ export class WsHandler extends TransportBase<WsOptions> {
     if (this.options.url) {
       this.pingInterval = setInterval(() => {
         (this.ws as any)?.ping?.();
-      }, this.options.pingInterval ?? 30_000);
+      }, this.options.pingInterval ?? 30_000,);
     }
     return conn;
   }
 
-  attach(ws: WebSocket): void {
+  attach(ws: WebSocket,): void {
     this.ws = ws;
   }
 
-  send(data: string | Uint8Array): Promise<void> {
+  send(data: string | Uint8Array,): Promise<void> {
     this.ensureConnected();
 
     if (this.ws?.readyState === WebSocket.OPEN) {
-      this.ws.send(data);
+      this.ws.send(data,);
     } else {
-      this.pendingMessages.push(data);
+      this.pendingMessages.push(data,);
     }
 
     return Promise.resolve();
@@ -68,15 +68,15 @@ export class WsHandler extends TransportBase<WsOptions> {
 
   override close(): Promise<void> {
     if (this.pingInterval) {
-      clearInterval(this.pingInterval);
+      clearInterval(this.pingInterval,);
     }
     if (this.ws) {
-      this.ws.close(1000, "client close");
+      this.ws.close(1000, "client close",);
     }
     return super.close();
   }
 }
 
-export function createWsHandler(options: WsOptions = {}): WsHandler {
-  return new WsHandler(options);
+export function createWsHandler(options: WsOptions = {},): WsHandler {
+  return new WsHandler(options,);
 }

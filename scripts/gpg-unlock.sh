@@ -26,8 +26,8 @@ echo "Unlocking GPG key: ${AGENT_GPG_KEY_ID:0:8}..."
 
 # Sign test data to prompt for passphrase and cache it in gpg-agent
 if echo "unlock" | gpg --pinentry-mode loopback \
-       --sign --local-user "$AGENT_GPG_KEY_ID" \
-       --output /dev/null 2>/dev/null; then
+    --sign --local-user "$AGENT_GPG_KEY_ID" \
+    --output /dev/null 2>/dev/null; then
     echo "Passphrase cached."
     echo "You can now run agent commits. Cache expires after gpg-agent TTL."
 else

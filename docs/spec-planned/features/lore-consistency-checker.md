@@ -25,17 +25,17 @@ export async function checkLoreConsistency(
 
   // Get world lore
   const lore = await db
-    .selectFrom("world_lore_entries")
+    .selectFrom("world_lore_entries",)
     .selectAll()
-    .where("world_id", "=", worldId)
-    .where("status", "=", "enabled")
+    .where("world_id", "=", worldId,)
+    .where("status", "=", "enabled",)
     .execute();
 
   // Get character facts
   const characterFacts = await db
-    .selectFrom("actor_lore_entries")
+    .selectFrom("actor_lore_entries",)
     .selectAll()
-    .where("actor_id", "in", context.actorIds)
+    .where("actor_id", "in", context.actorIds,)
     .execute();
 
   // Build lore prompt
@@ -45,8 +45,8 @@ You are a lore consistency checker. Analyze the following text for violations:
 TEXT: ${content}
 
 KNOWN FACTS:
-${lore.map((l) => `- ${l.key}: ${l.content}`).join("\n")}
-${characterFacts.map((f) => `- ${f.key}: ${f.content}`).join("\n")}
+${lore.map((l,) => `- ${l.key}: ${l.content}`).join("\n",)}
+${characterFacts.map((f,) => `- ${f.key}: ${f.content}`).join("\n",)}
 
 Return JSON array of violations:
 []
@@ -55,12 +55,12 @@ or
 `;
 
   const response = await llmGenerate({
-    messages: [{ role: "user", content: lorePrompt }],
+    messages: [{ role: "user", content: lorePrompt, },],
     json: true,
     temperature: 0.1, // Deterministic
-  });
+  },);
 
-  return JSON.parse(response);
+  return JSON.parse(response,);
 }
 ```
 
@@ -68,16 +68,16 @@ or
 
 ```typescript
 // src/generation/generate-route.ts
-const result = await llmGenerate(params);
+const result = await llmGenerate(params,);
 
 if (chat.mode === "story" || world.has_lore_checker) {
   const violations = await checkLoreConsistency(result.content, chat.world_id, {
-    actorIds: participants.map((p) => p.actor_id),
-  });
+    actorIds: participants.map((p,) => p.actor_id),
+  },);
 
-  if (violations.some((v) => v.severity === "error")) {
+  if (violations.some((v,) => v.severity === "error")) {
     // Trigger regeneration or GM escalation
-    return regenerateWithCorrection(violations);
+    return regenerateWithCorrection(violations,);
   }
 
   // Inject violations into prompt for next turn

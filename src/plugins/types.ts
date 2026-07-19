@@ -3,7 +3,7 @@
  *
  * Reference: docs/spec/plugin-system.md
  * Covers: Plugin, PluginContext, ToolDefinition, AgentRoleDefinition,
- * RouteDefinition, UIComponent, EventHandler, Migration, ConfigSchema.
+ * RouteDefinition, UIComponent, EventHandler, Migration, PluginConfigSchema.
  *
  * @module plugin-types
  */
@@ -39,7 +39,7 @@ export interface PluginManifest {
   uiComponents?: UIComponentDefinition[];
   eventHandlers?: EventHandlerDefinition[];
   migrations?: MigrationDefinition[];
-  configSchema?: ConfigSchema;
+  configSchema?: PluginConfigSchema;
 }
 
 /** Context passed to onLoad */
@@ -111,7 +111,7 @@ export interface MigrationDefinition {
   down?: (db: Kysely<DB>) => Promise<void>;
 }
 
-export interface ConfigSchema {
+export interface PluginConfigSchema {
   type: "object";
   properties: Record<string, unknown>;
   required?: string[];
