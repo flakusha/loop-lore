@@ -1,71 +1,80 @@
-/**
- * Import Route (standalone plugin)
- *
- * Handles actor import via multipart upload. Separate from characters
- * plugin to avoid Elysia body validator consuming the body for multipart
- * requests.
- *
- * Uses onRequest hook to intercept before Elysia body parsing consumes
- * the multipart stream.
- */
+// src/routes/import.ts
+//
+// Character import routes.
+// Handles import via multipart upload with auto-detection.
 
 import { Elysia } from "elysia";
 import crypto from "node:crypto";
 import type { Kysely } from "kysely";
 import type { DB } from "../db/schema";
-import { uid, safeJsonStringify, jsonParseOr } from "../utils";
+import { uid, safeJsonStringify } from "../utils";
 import { jsonError, jsonCreated, HttpStatus } from "./http-utils";
-import { load as yamlLoad } from "js-yaml";
-import { parse as parseToml } from "smol-toml";
-import { extractCharacterDataFromPng } from "../characters/steganography";
+import { parseCharacterCard, validateCharacter } from "../characters/parser";
+import type { CanonicalCharacter } from "../characters/parser";
 import { getOrCreateSoloUserForAuth } from "../middleware/auth";
 
 interface ImportActorOpts {
-  data: Record<string, unknown>;
-  spec?: string;
+  character: CanonicalCharacter;
+  format: string;
+  warnings: string[];
   database: Kysely<DB>;
   userId: string;
 }
 
 async function importActor(opts: ImportActorOpts): Promise<Response> {
-  const { data, spec, database, userId } = opts;
+  const { character, format, warnings, database, userId } = opts;
 
-  const displayName = (data.name ?? data.displayName ?? data.display_name) as string | undefined;
-  if (!displayName) return jsonError({ message: "Actor name is required", status: HttpStatus.BadRequest });
+  // Validate character
+  const validationErrors = validateCharacter(character);
+  if (validationErrors.length > 0) {
+    return jsonError({
+      message: `Validation failed: ${validationErrors.join(", ")}`,
+      status: HttpStatus.BadRequest,
+    });
+  }
 
   const id = uid();
+
+  // Convert alternate_greetings to JSON string
+  let alternateGreetings: string | null = null;
+  if (character.alternate_greetings && character.alternate_greetings.length > 0) {
+    const result = safeJsonStringify(character.alternate_greetings);
+    if (result.ok) alternateGreetings = result.value;
+  }
+
+  // Insert character as actor
   await database
     .insertInto("actors")
     .values({
       id,
       actor_type: "character",
-      display_name: displayName,
+      display_name: character.name,
       user_id: userId,
       owner_id: userId,
       agent_type: "ai",
-      description: (data.description as string | undefined) ?? null,
-      system_prompt: (data.system_prompt as string | undefined) ?? null,
-      welcome_message: (data.first_mes as string | undefined) ?? null,
-      personality: (data.personality as string | undefined) ?? null,
-      scenario: (data.scenario as string | undefined) ?? null,
-      mes_example: (data.mes_example as string | undefined) ?? null,
-      post_history_instructions: (data.post_history_instructions as string | undefined) ?? null,
-      creator_notes: (data.creator_notes as string | undefined) ?? null,
-      creator: (data.creator as string | undefined) ?? null,
-      character_version: (data.character_version as string | undefined) ?? null,
-      import_spec: spec ?? "raw",
-      alternate_greetings: data.alternate_greetings
-        ? (() => {
-            const r = safeJsonStringify(data.alternate_greetings);
-            return r.ok ? r.value : null;
-          })()
-        : null,
+      description: character.description,
+      system_prompt: character.system_prompt ?? null,
+      welcome_message: character.welcome_message ?? null,
+      personality: character.personality ?? null,
+      scenario: character.scenario ?? null,
+      mes_example: character.mes_example ?? null,
+      post_history_instructions: character.post_history_instructions ?? null,
+      creator_notes: character.creator_notes ?? null,
+      creator: character.creator ?? null,
+      character_version: character.character_version ?? null,
+      import_spec: format,
+      alternate_greetings: alternateGreetings,
       settings: "{}",
       data_version: 1,
     })
     .execute();
 
-  return jsonCreated({ id });
+  return jsonCreated({
+    id,
+    name: character.name,
+    format,
+    warnings,
+  });
 }
 
 async function resolveUserId(request: Request, database: Kysely<DB>): Promise<string | null> {
@@ -97,41 +106,27 @@ async function handleImport(request: Request, database: Kysely<DB>, userId: stri
       return jsonError({ message: "file field is required", status: HttpStatus.BadRequest });
 
     const fileBytes = Buffer.from(await file.arrayBuffer());
-    const filename = (file.name ?? "").toLowerCase();
+    const filename = file.name ?? "";
 
-    let data: Record<string, unknown>;
-    let spec: string | undefined;
+    try {
+      // Parse character card with auto-detection
+      const result = await parseCharacterCard(fileBytes, filename);
 
-    if (filename.endsWith(".json")) {
-      const parsed = jsonParseOr(await file.text(), null);
-      if (!parsed || typeof parsed !== "object")
-        return jsonError({ message: "Invalid JSON file", status: HttpStatus.BadRequest });
-      data = parsed;
-      spec = data.spec === "chara_card_v2" ? "chara_card_v2" : undefined;
-    } else if (filename.endsWith(".png")) {
-      const extracted = extractCharacterDataFromPng(fileBytes);
-      if (!extracted)
-        return jsonError({ message: "No character data found in PNG", status: HttpStatus.BadRequest });
-      data = extracted.data;
-      spec = extracted.spec;
-    } else if (filename.endsWith(".yaml") || filename.endsWith(".yml")) {
-      const parsed = yamlLoad(await file.text());
-      if (!parsed || typeof parsed !== "object")
-        return jsonError({ message: "Invalid YAML file", status: HttpStatus.BadRequest });
-      data = parsed as Record<string, unknown>;
-    } else if (filename.endsWith(".toml")) {
-      const parsed = parseToml(await file.text());
-      if (!parsed || typeof parsed !== "object")
-        return jsonError({ message: "Invalid TOML file", status: HttpStatus.BadRequest });
-      data = parsed;
-    } else {
+      // Import the character
+      return await importActor({
+        character: result.character,
+        format: result.format,
+        warnings: result.warnings,
+        database,
+        userId,
+      });
+    } catch (error) {
+      const parseError = error as { code?: string; message?: string; suggestion?: string };
       return jsonError({
-        message: "Unsupported file type. Use .json, .png, .yaml, or .toml",
+        message: parseError.message ?? "Failed to parse character card",
         status: HttpStatus.BadRequest,
       });
     }
-
-    return importActor({ data, spec, database, userId });
   }
 
   return jsonError({ message: "Expected multipart/form-data", status: HttpStatus.BadRequest });

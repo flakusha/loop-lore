@@ -4,6 +4,11 @@ import type { DB } from "../db/schema";
 import { uid, safeJsonStringify, jsonParseOr } from "../utils";
 import { jsonResponse, jsonError, jsonPaginated, jsonCreated, jsonNoContent, HttpStatus } from "./http-utils";
 import { ActorType, AgentType } from "../db/enums";
+import { exportToCcV2Json } from "../characters/exporters/ccv2";
+import { exportToCcV3Json } from "../characters/exporters/ccv3";
+import { exportToYaml } from "../characters/exporters/yaml";
+import { exportToToml } from "../characters/exporters/toml";
+import type { CanonicalCharacter } from "../characters/parser";
 
 interface HandlerOpts {
   database: Kysely<DB>;
@@ -176,5 +181,78 @@ export function charactersRoutes(opts: HandlerOpts) {
 
       await database.deleteFrom("actors").where("id", "=", ctx.params.id).execute();
       return jsonNoContent();
+    })
+    .get("/api/actors/:id/export", async (ctx: any) => {
+      const format = (ctx.query.format as string) ?? "json";
+
+      const actor = await database
+        .selectFrom("actors")
+        .selectAll()
+        .where("id", "=", ctx.params.id)
+        .executeTakeFirst();
+      if (!actor) return jsonError({ message: "Actor not found", status: HttpStatus.NotFound });
+
+      // Solo role is admin-equivalent for own actors
+      const isAdminOrSolo = ctx.userRole === "admin" || ctx.userRole === "solo";
+      if (actor.visibility !== "public" && actor.user_id !== ctx.userId && !isAdminOrSolo) {
+        return jsonError({ message: "Actor not found", status: HttpStatus.NotFound });
+      }
+
+      // Convert to canonical format
+      const canonical: CanonicalCharacter = {
+        name: actor.display_name,
+        description: actor.description ?? "",
+        personality: actor.personality ?? undefined,
+        scenario: actor.scenario ?? undefined,
+        welcome_message: actor.welcome_message ?? undefined,
+        mes_example: actor.mes_example ?? undefined,
+        system_prompt: actor.system_prompt ?? undefined,
+        post_history_instructions: actor.post_history_instructions ?? undefined,
+        creator: actor.creator ?? undefined,
+        creator_notes: actor.creator_notes ?? undefined,
+        character_version: actor.character_version ?? undefined,
+        alternate_greetings: actor.alternate_greetings
+          ? jsonParseOr(actor.alternate_greetings, [])
+          : undefined,
+      };
+
+      const safeName = actor.display_name.replaceAll(/[^a-z0-9]/gi, "_").toLowerCase();
+
+      switch (format) {
+        case "yaml": {
+          return new Response(exportToYaml(canonical), {
+            headers: {
+              "Content-Type": "text/yaml; charset=utf-8",
+              "Content-Disposition": `attachment; filename="${safeName}.yaml"`,
+            },
+          });
+        }
+        case "toml": {
+          return new Response(exportToToml(canonical), {
+            headers: {
+              "Content-Type": "text/plain; charset=utf-8",
+              "Content-Disposition": `attachment; filename="${safeName}.toml"`,
+            },
+          });
+        }
+        case "ccv2": {
+          return new Response(exportToCcV2Json(canonical), {
+            headers: {
+              "Content-Type": "application/json; charset=utf-8",
+              "Content-Disposition": `attachment; filename="${safeName}.json"`,
+            },
+          });
+        }
+        case "ccv3":
+        case "json":
+        default: {
+          return new Response(exportToCcV3Json(canonical), {
+            headers: {
+              "Content-Type": "application/json; charset=utf-8",
+              "Content-Disposition": `attachment; filename="${safeName}.json"`,
+            },
+          });
+        }
+      }
     });
 }
