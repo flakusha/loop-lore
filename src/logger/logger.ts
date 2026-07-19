@@ -4,17 +4,16 @@
  * Flow per log() call:
  *   level filter → timestamp → censor → limits → enqueue
  */
-import { formatTime, unixSec, } from "../utils/date";
-import { formatTime, unixSec, } from "../utils/date";
-import { censorMeta, fieldNamesToRules, } from "./censors";
-import { levelFromConfig, shouldEmit, } from "./levels";
-import { applyLimits, } from "./limits";
-import { AsyncLogQueue, } from "./queue";
-import { ConsoleTransport, } from "./transports/console";
 import type { LogEntry, Logger, LoggerBindings, LogOptions, Transport, } from "./types";
 import type { LogLevel, } from "./types";
 import type { LoggerConfig, SizeLimits, } from "./types";
+import { AsyncLogQueue, } from "./queue";
+import { ConsoleTransport, } from "./transports/console";
 import { LogLevelNumeric, } from "./types";
+import { applyLimits, } from "./limits";
+import { censorMeta, fieldNamesToRules, } from "./censors";
+import { formatTime, unixSec, } from "../utils/date";
+import { levelFromConfig, shouldEmit, } from "./levels";
 
 export class LoggerImpl implements Logger {
   private transports: Transport[];

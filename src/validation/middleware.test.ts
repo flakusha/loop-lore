@@ -15,6 +15,13 @@ import {
 
 // ── Schema validation tests ─────────────────────────────────
 
+import { TypeCompiler, } from "@sinclair/typebox/compiler";
+import { Elysia, t, } from "elysia";
+import { onValidationError, } from "./middleware";
+
+// ── Schema validation tests ─────────────────────────────────
+// ── Schema validation tests ─────────────────────────────────
+
 function compile(schema: any,) {
   return TypeCompiler.Compile(schema,);
 }

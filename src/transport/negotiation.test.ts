@@ -23,6 +23,20 @@ import {
  */
 // ── Test Request Helper ───────────────────────────────────────
 
+
+/**
+ * Tests for transport protocol negotiation.
+ *
+ * Pure functions — no I/O, no mocks needed.
+ */
+// ── Test Request Helper ───────────────────────────────────────
+/**
+ * Tests for transport protocol negotiation.
+ *
+ * Pure functions — no I/O, no mocks needed.
+ */
+// ── Test Request Helper ───────────────────────────────────────
+
 function makeRequest(headers: Record<string, string> = {},): Request {
   return new Request("http://localhost/", { headers: new Headers(headers,), },);
 }

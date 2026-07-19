@@ -29,6 +29,24 @@ import {
  */
 // ── Deterministic IDs ───────────────────────────────────────────
 
+import type { DB, } from "@/db/schema";
+import type { Kysely, } from "kysely";
+
+/**
+ * E2E Seed Data
+ *
+ * Populates a test database with demo users, characters, and chats.
+ * All IDs are deterministic for cross-flow reference.
+ */
+// ── Deterministic IDs ───────────────────────────────────────────
+/**
+ * E2E Seed Data
+ *
+ * Populates a test database with demo users, characters, and chats.
+ * All IDs are deterministic for cross-flow reference.
+ */
+// ── Deterministic IDs ───────────────────────────────────────────
+
 /** Password is "password" — bcrypt cost 4 for speed */
 const PASSWORD_HASH = "$2b$04$anSd/tkwm/jhqfjGUZOdkurfsavDtfDeUM7dwdc/MQY.4upTC8ikG";
 

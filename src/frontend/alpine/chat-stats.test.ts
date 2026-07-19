@@ -1,5 +1,4 @@
 import { describe, expect, test, } from "bun:test";
-import { describe, expect, test, } from "bun:test";
 import { formattedGenerationTime, formattedTokensPerSecond, statsLine, } from "./chat-stats";
 
 describe("formattedGenerationTime", () => {

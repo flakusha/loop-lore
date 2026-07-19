@@ -2,12 +2,11 @@
 //
 // Toggle emoji reactions on messages.
 // Uses toggle semantics: POST adds if absent, removes if present.
-import { Elysia, t, } from "elysia";
-import type { Kysely, } from "kysely";
 import type { DB, } from "../db/schema";
+import type { Kysely, } from "kysely";
+import { Elysia, t, } from "elysia";
+import { notFound, unauthorized, } from "../validation/middleware";
 import { uid, } from "../utils";
-import { notFound, unauthorized, } from "../validation/middleware";
-import { notFound, unauthorized, } from "../validation/middleware";
 
 interface HandlerOpts {
   database: Kysely<DB>;

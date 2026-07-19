@@ -8,6 +8,9 @@ import {
   STRATEGY_MAP,
 } from "./turn-strategies";
 
+import { TurnStrategy, } from "../db/enums";
+import type { TurnParticipant, } from "./types";
+
 const participants: TurnParticipant[] = [
   { actorId: "a1", type: "character", agentType: "ai", talkativity: 5, },
   { actorId: "a2", type: "character", agentType: "ai", talkativity: 3, },

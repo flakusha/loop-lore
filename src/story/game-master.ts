@@ -43,6 +43,37 @@ import type {
  */
 // ── LLM call abstraction ─────────────────────────────────
 
+import type { Kysely, } from "kysely";
+import { randomUUID, } from "node:crypto";
+import type { DB, } from "../db/schema";
+import { GM_DECISIONS, } from "./gm/decisions/registry";
+import type { GenerateTextFn, } from "./gm/decisions/types";
+import { TurnManager, type TurnManagerOptions, } from "./turn-manager";
+import { WorldStateService, } from "./world-state";
+
+/**
+ * Game Master Service
+ *
+ * Orchestrates story progression by selecting actors, constructing
+ * prompts, evaluating responses, and managing escalation.
+ * Supports LLM, Human, and Hybrid Game Master modes.
+ *
+ * llmDecision() calls the generation module via injected generateText
+ * callback — keeps story module decoupled from provider resolution.
+ */
+// ── LLM call abstraction ─────────────────────────────────
+/**
+ * Game Master Service
+ *
+ * Orchestrates story progression by selecting actors, constructing
+ * prompts, evaluating responses, and managing escalation.
+ * Supports LLM, Human, and Hybrid Game Master modes.
+ *
+ * llmDecision() calls the generation module via injected generateText
+ * callback — keeps story module decoupled from provider resolution.
+ */
+// ── LLM call abstraction ─────────────────────────────────
+
 /**
  * Function provided by the caller to actually invoke an LLM.
  * Keeps GameMasterService independent of provider resolution.

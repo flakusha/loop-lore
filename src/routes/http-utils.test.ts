@@ -28,6 +28,22 @@ import {
  */
 // ── jsonResponse ──────────────────────────────────────────────
 
+
+/**
+ * Tests for HTTP response utilities.
+ *
+ * All functions are pure — no DB, no I/O, no mocks needed.
+ * Every test creates a Response and asserts status/body shape.
+ */
+// ── jsonResponse ──────────────────────────────────────────────
+/**
+ * Tests for HTTP response utilities.
+ *
+ * All functions are pure — no DB, no I/O, no mocks needed.
+ * Every test creates a Response and asserts status/body shape.
+ */
+// ── jsonResponse ──────────────────────────────────────────────
+
 describe("jsonResponse", () => {
   test("returns 200 with JSON body", async () => {
     const res = jsonResponse({ ok: true, id: "abc", },);

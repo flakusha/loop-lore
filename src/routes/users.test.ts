@@ -1,11 +1,10 @@
 /**
  * Tests for users routes — profile, settings, admin operations
  */
-import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
-import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
-import { Elysia, } from "elysia";
-import type { Kysely, } from "kysely";
 import type { DB, } from "../db/schema";
+import type { Kysely, } from "kysely";
+import { Elysia, } from "elysia";
+import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import { createLogger, } from "../logger";
 import { createTestDb, } from "../test-utils/create-test-db";
 import { uid, } from "../utils";

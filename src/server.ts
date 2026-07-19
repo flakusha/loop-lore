@@ -1,28 +1,25 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 import { existsSync, readdirSync, readFileSync, statSync, } from "node:fs";
-import { existsSync, readdirSync, readFileSync, statSync, } from "node:fs";
 
-import { serve, } from "bun";
-import { spawnSync, } from "node:child_process";
-import { join, normalize, } from "node:path";
-import { initAgeGate, } from "./age-gate/controller";
-import { ensureTlsCerts, } from "./config/cert";
-import { loadConfig, } from "./config/load";
+import { DynamicResponsePolicy, ResponseHeaderPolicy, } from "./middleware";
+import { ServerExternalManager, } from "./services/server-external-manager";
 import { compressAssets, copyDirectory, } from "./content/compress";
-import { injectContentHashes, } from "./content/hash-injection";
-import { initSmk, } from "./crypto";
+import { createApp, } from "./elysia-app";
+import { createLogger, getLogger, } from "./logger";
+import { dispatchPluginRoute, loadAllPlugins, unloadAllPlugins, } from "./plugins";
+import { ensureTlsCerts, } from "./config/cert";
 import { getDatabase, } from "./db/index";
+import { initAgeGate, } from "./age-gate/controller";
+import { initSmk, } from "./crypto";
+import { initializeProviders, OpenAiCompatibleProvider, registerProvider, } from "./generation";
+import { injectContentHashes, } from "./content/hash-injection";
+import { join, normalize, } from "node:path";
+import { loadConfig, } from "./config/load";
 import { runMigrations, } from "./db/migrate";
 import { seedDefaultActors, } from "./db/seed";
-import { createApp, } from "./elysia-app";
-import { initializeProviders, OpenAiCompatibleProvider, registerProvider, } from "./generation";
-import { initializeProviders, OpenAiCompatibleProvider, registerProvider, } from "./generation";
-import { createLogger, getLogger, } from "./logger";
-import { DynamicResponsePolicy, ResponseHeaderPolicy, } from "./middleware";
-import { dispatchPluginRoute, loadAllPlugins, unloadAllPlugins, } from "./plugins";
-import { dispatchPluginRoute, loadAllPlugins, unloadAllPlugins, } from "./plugins";
-import { ServerExternalManager, } from "./services/server-external-manager";
+import { serve, } from "bun";
+import { spawnSync, } from "node:child_process";
 
 const DOCS_PATH = join(import.meta.dir, "..", "docs", ".vitepress", "dist",);
 
