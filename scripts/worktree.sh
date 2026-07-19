@@ -68,7 +68,7 @@ Commands:
   prs                       Create worktrees for all open PRs (needs gh auth)
   issue <args>              Run git-issue command (native issue tracking)
   epic <epic> [branch]      Create worktree for Epic with standard naming
-  ticket <type> <id> [title] Create issue with extended identifier (BUG/FIX/FEA/IDEA/TASK)
+  ticket <type> <id> [title] Create issue with extended identifier (BUG/FEAT/FIX/IDEA/TASK)
   issues                    List open issues with branch status
 
 Examples:
@@ -1013,7 +1013,7 @@ cmd_epic() {
 cmd_ticket() {
     # Create issue with extended identifier and optional worktree
     # Usage: ./scripts/worktree.sh ticket <type> <id> [title]
-    # Types: BUG, FEA, FIX, IDEA, TASK, SOL
+    # Types: BUG, FEAT, FIX, IDEA, TASK, SOL
     local type="$1"
     local id="$2"
     local title="${3:-}"
@@ -1021,17 +1021,17 @@ cmd_ticket() {
     if [[ -z "$type" ]] || [[ -z "$id" ]]; then
         echo -e "${RED}Error: type and id required${NC}"
         echo "Usage: $(basename "$0") ticket <type> <id> [title]"
-        echo "  Types: BUG, FEA (feature), FIX, IDEA, TASK, SOL (solution)"
+        echo "  Types: BUG, FEAT (feature), FIX, IDEA, TASK, SOL (solution)"
         echo "  Creates issue with identifier: <TYPE>-2025-<id>"
         exit 1
     fi
 
     # Validate type
     case "$type" in
-    BUG | FEA | FIX | IDEA | TASK | SOL) ;;
+    BUG | FEAT | FEA | FIX | IDEA | TASK | SOL) ;;
     *)
         echo -e "${RED}Error: invalid type '$type'${NC}"
-        echo "  Valid types: BUG, FEA, FIX, IDEA, TASK, SOL"
+        echo "  Valid types: BUG, FEAT, FIX, IDEA, TASK, SOL"
         exit 1
         ;;
     esac

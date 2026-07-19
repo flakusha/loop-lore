@@ -2,6 +2,8 @@
 
 Current status of feature areas. Checkmarks = code exists in `src/`.
 
+> **Tracked as git issues.** Roadmap epics/features are mirrored as git-native-issues (e.g. `EPIC-2025-22`, `FEAT-2025-006`). See the [Issue Tracker](/meta/issues). A cross-reference table is at the bottom of this page.
+
 ## ✅ Core Infrastructure (Built)
 
 | Feature                                      | Implementation                                                        |
@@ -155,3 +157,20 @@ Research-driven feature proposals, separated by theme and linked from a hub. Der
 ## Timeline
 
 See `plan.md` for v0.1 checklist, `backlog.md` for future queue, `open-items.md` for technical debt, `CONTRIBUTING.md` for contribution guidelines.
+
+<!-- ISSUE-MAP-START -->
+
+## Tracked as Git Issues
+
+> These tasks are tracked as git-native-issues. See the [Issue Tracker](/meta/issues) for live state.
+
+| Issue                                        | Title                                                           | Priority | Source                        |
+| -------------------------------------------- | --------------------------------------------------------------- | -------- | ----------------------------- |
+| [EPIC-2025-21](/meta/issues/#epic-2025-21)   | Notification Expansion                                          | medium   | [meta/roadmap](/meta/roadmap) |
+| [EPIC-2025-22](/meta/issues/#epic-2025-22)   | RPG Mechanics Core                                              | medium   | [meta/roadmap](/meta/roadmap) |
+| [EPIC-2025-23](/meta/issues/#epic-2025-23)   | Assistant Commands                                              | low      | [meta/roadmap](/meta/roadmap) |
+| [EPIC-2025-24](/meta/issues/#epic-2025-24)   | Filtering & Pagination                                          | low      | [meta/roadmap](/meta/roadmap) |
+| [FEAT-2025-013](/meta/issues/#feat-2025-013) | Regex output transforms (render-time agent/tool output parsing) | low      | [meta/roadmap](/meta/roadmap) |
+| [FEAT-2025-014](/meta/issues/#feat-2025-014) | Smart-regen transforms (one-click draft polish)                 | low      | [meta/roadmap](/meta/roadmap) |
+
+<!-- ISSUE-MAP-END -->
