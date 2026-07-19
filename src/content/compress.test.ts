@@ -57,7 +57,7 @@ describe("walkDirectory", () => {
     writeFileSync(join(dir, "readme.md",), "# Readme",);
     writeFileSync(join(dir, "script.ts",), "// not compressible at build time",);
 
-    const files = walkDirectory(dir,).map((f,) => f.replace(`${dir  }/`, "",));
+    const files = walkDirectory(dir,).map((f,) => f.replace(`${dir}/`, "",));
 
     expect(files,).toContain("style.css",);
     expect(files,).toContain("app.js",);
@@ -98,12 +98,12 @@ describe("compressFile", () => {
 
     await compressFile(filePath,);
 
-    expect(existsSync(`${filePath  }.gz`,),).toBe(true,);
-    expect(existsSync(`${filePath  }.zst`,),).toBe(true,);
-    expect(existsSync(`${filePath  }.br`,),).toBe(true,);
+    expect(existsSync(`${filePath}.gz`,),).toBe(true,);
+    expect(existsSync(`${filePath}.zst`,),).toBe(true,);
+    expect(existsSync(`${filePath}.br`,),).toBe(true,);
 
-    const gzSize = readFileSync(`${filePath  }.gz`,).length;
-    const brSize = readFileSync(`${filePath  }.br`,).length;
+    const gzSize = readFileSync(`${filePath}.gz`,).length;
+    const brSize = readFileSync(`${filePath}.br`,).length;
     expect(gzSize,).toBeGreaterThan(0,);
     expect(brSize,).toBeGreaterThan(0,);
   });
@@ -116,9 +116,9 @@ describe("compressFile", () => {
 
     await compressFile(filePath,);
 
-    expect(existsSync(`${filePath  }.gz`,),).toBe(true,);
-    expect(existsSync(`${filePath  }.zst`,),).toBe(true,);
-    expect(existsSync(`${filePath  }.br`,),).toBe(true,);
+    expect(existsSync(`${filePath}.gz`,),).toBe(true,);
+    expect(existsSync(`${filePath}.zst`,),).toBe(true,);
+    expect(existsSync(`${filePath}.br`,),).toBe(true,);
   });
 
   test("creates compressed files for JS", async () => {
@@ -129,9 +129,9 @@ describe("compressFile", () => {
 
     await compressFile(filePath,);
 
-    expect(existsSync(`${filePath  }.gz`,),).toBe(true,);
-    expect(existsSync(`${filePath  }.zst`,),).toBe(true,);
-    expect(existsSync(`${filePath  }.br`,),).toBe(true,);
+    expect(existsSync(`${filePath}.gz`,),).toBe(true,);
+    expect(existsSync(`${filePath}.zst`,),).toBe(true,);
+    expect(existsSync(`${filePath}.br`,),).toBe(true,);
   });
 });
 

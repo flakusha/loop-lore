@@ -104,7 +104,7 @@ function setPackageJsonVersion(version: string,): void {
   const packageJsonPath = resolve(import.meta.dir, "../../package.json",);
   const packageJson = JSON.parse(readFileSync(packageJsonPath, "utf-8",),);
   packageJson.version = version;
-  writeFileSync(packageJsonPath, `${JSON.stringify(packageJson, null, 2,)  }\n`,);
+  writeFileSync(packageJsonPath, `${JSON.stringify(packageJson, null, 2,)}\n`,);
 }
 
 // Get version from latest tag (source of truth)

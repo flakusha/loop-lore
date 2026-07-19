@@ -47,7 +47,7 @@ export function formatConsole(
   }
 
   if (!isColor) {
-    return `${line  }\n`;
+    return `${line}\n`;
   }
 
   if (mode === "css") {
@@ -57,7 +57,7 @@ export function formatConsole(
 
   // ANSI mode
   const c = LEVEL_COLORS[entry.level] ?? "";
-  return `${c + line + RESET  }\n`;
+  return `${c + line + RESET}\n`;
 }
 
 const LEVEL_CSS: Record<number, string> = {
@@ -91,5 +91,5 @@ export function formatJSONL(entry: LogEntry,): string {
   if (entry.meta && Object.keys(entry.meta,).length > 0) { obj.meta = entry.meta; }
 
   const r = safeJsonStringify(obj,);
-  return `${r.ok ? r.value : "{}"  }\n`;
+  return `${r.ok ? r.value : "{}"}\n`;
 }

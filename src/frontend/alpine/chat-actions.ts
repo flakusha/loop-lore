@@ -41,7 +41,7 @@ export const chatActions: Partial<ChatState> & ThisType<ChatState> = {
   selectCommand(name: string,) {
     const input = this.$refs?.messageInput as HTMLTextAreaElement | undefined;
     if (input) {
-      input.value = `/${  name  } `;
+      input.value = `/${name} `;
       input.focus();
     }
     this._showCommandPalette = false;

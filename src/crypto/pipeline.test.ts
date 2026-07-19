@@ -223,7 +223,7 @@ describe("error paths", () => {
       compAlgo?: string;
       key_id: string;
     };
-    payload.nonce = `${payload.nonce.slice(0, -2,)  }AA`;
+    payload.nonce = `${payload.nonce.slice(0, -2,)}AA`;
     await expect(decryptThenDecompress(JSON.stringify(payload,), cryptoKey,),).rejects.toThrow();
   });
 });
