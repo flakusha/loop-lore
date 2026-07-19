@@ -32,7 +32,7 @@ SPDX-License-Identifier = "LGPL-3.0-or-later"
 path = ["docs/**"]
 precedence = "aggregate"
 SPDX-FileCopyrightText = "2026 Loop Lore Contributors"
-SPDX-License-Identifier = "MIT"
+SPDX-License-Identifier = "Apache-2.0 OR MIT OR CC-BY-4.0"
 
 [[annotations]]
 path = [".agents/**"]
