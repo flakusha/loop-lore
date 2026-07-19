@@ -150,10 +150,11 @@ E2E tests in `tests/e2e/flows/browser/navigation.browser.ts`:
    - Prevent `content-type` vs `Content-Type` casing conflicts
    - Add utility function in `response-headers.ts`
 
-2. **CSP Nonce Support**
-   - Current: `'unsafe-inline'` + `'unsafe-eval'` required for Alpine.js
-   - Alpine uses `new Function()` for expression evaluation (`'unsafe-eval`)
-   - Alpine's `@x` directive override uses innerHTML injection (`'unsafe-inline` needed)
+2. **CSP Nonce Support** ✅
+   - Per-request nonce generated via `src/middleware/csp-nonce.ts` (WeakMap keyed by Request)
+   - Nonce injected into `script-src` CSP directive and inline `<script nonce="...">` tags in layout
+   - Alpine.js still requires `'unsafe-eval'` (uses `new Function()` for expression evaluation)
+   - Layout inline scripts (telemetry, userId) use nonce — no longer need `'unsafe-inline'`
 
 3. **Cache-Control Presets**
    - Configurable max-age per route kind
