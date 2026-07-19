@@ -102,12 +102,57 @@ Authoritative technical specs for implemented systems. These are the primary ref
 
 ---
 
+## Planned Features & Roadmaps (`.plan/`)
+
+Future features, exploration docs, and implementation roadmaps. Not yet implemented.
+
+### Roadmaps (`.plan/roadmaps/`)
+
+| Document                                                                                         | Topics                              |
+| ------------------------------------------------------------------------------------------------ | ----------------------------------- |
+| [`.plan/roadmaps/rpg-implementation-roadmap.md`](./.plan/roadmaps/rpg-implementation-roadmap.md) | RPG mechanics implementation phases |
+| [`.plan/roadmaps/implementation-approaches.md`](./.plan/roadmaps/implementation-approaches.md)   | Technical approach comparison       |
+| [`.plan/roadmaps/implementation-samples.md`](./.plan/roadmaps/implementation-samples.md)         | Code samples and patterns           |
+
+### Features (`.plan/features/`)
+
+| Document                                                                                         | Topics                                         |
+| ------------------------------------------------------------------------------------------------ | ---------------------------------------------- |
+| [`.plan/features/creative-studio.md`](./.plan/features/creative-studio.md)                       | Creative tools and studio features             |
+| [`.plan/features/cross-device-sync.md`](./.plan/features/cross-device-sync.md)                   | Cross-device state synchronization             |
+| [`.plan/features/auto-translation.md`](./.plan/features/auto-translation.md)                     | Auto-translation system                        |
+| [`.plan/features/notifications-expansion.md`](./.plan/features/notifications-expansion.md)       | Extended notification system with noise levels |
+| [`.plan/features/filtering-pagination.md`](./.plan/features/filtering-pagination.md)             | Combined filter and pagination improvements    |
+| [`.plan/features/procedural-assets.md`](./.plan/features/procedural-assets.md)                   | Procedurally generated assets                  |
+| [`.plan/features/plot-autopilot.md`](./.plan/features/plot-autopilot.md)                         | Automated plot progression                     |
+| [`.plan/features/shared-worlds.md`](./.plan/features/shared-worlds.md)                           | Multi-user shared worlds                       |
+| [`.plan/features/memory-visualization.md`](./.plan/features/memory-visualization.md)             | Memory visualization UI                        |
+| [`.plan/features/mobile-native-ux.md`](./.plan/features/mobile-native-ux.md)                     | Mobile/native UX patterns                      |
+| [`.plan/features/multimodal-input.md`](./.plan/features/multimodal-input.md)                     | Multimodal input (voice, image, etc.)          |
+| [`.plan/features/device-tier-gating.md`](./.plan/features/device-tier-gating.md)                 | Feature gating by device capability            |
+| [`.plan/features/lore-consistency-checker.md`](./.plan/features/lore-consistency-checker.md)     | Lore/world consistency validation              |
+| [`.plan/features/offline-world-events.md`](./.plan/features/offline-world-events.md)             | Offline world event system                     |
+| [`.plan/features/personas.md`](./.plan/features/personas.md)                                     | Persona features                               |
+| [`.plan/features/regex-output-transforms.md`](./.plan/features/regex-output-transforms.md)       | Regex-based output transforms                  |
+| [`.plan/features/prompt-injection.md`](./.plan/features/prompt-injection.md)                     | Prompt injection defense                       |
+| [`.plan/features/provider-system.md`](./.plan/features/provider-system.md)                       | LLM provider abstraction                       |
+| [`.plan/features/testing.md`](./.plan/features/testing.md)                                       | Testing strategy and goals                     |
+| [`.plan/features/transport-unified.md`](./.plan/features/transport-unified.md)                   | HTTP/WS/WebTransport abstraction               |
+| [`.plan/features/frontend-extensions.md`](./.plan/features/frontend-extensions.md)               | Frontend extension points                      |
+| [`.plan/features/use-case-agentic-workspace.md`](./.plan/features/use-case-agentic-workspace.md) | Agentic workspace use case                     |
+| [`.plan/features/assets-attribution.md`](./.plan/features/assets-attribution.md)                 | License/attribution for assets                 |
+| [`.plan/features/admin-statistics.md`](./.plan/features/admin-statistics.md)                     | Admin statistics dashboard                     |
+| [`.plan/features/ci-maintenance.md`](./.plan/features/ci-maintenance.md)                         | CI maintenance automation                      |
+| [`.plan/features/e2e-benchmarks.md`](./.plan/features/e2e-benchmarks.md)                         | E2E performance benchmarks                     |
+| [`.plan/features/edge-cases.md`](./.plan/features/edge-cases.md)                                 | Edge case handling                             |
+| [`.plan/features/i18n-implementation.md`](./.plan/features/i18n-implementation.md)               | i18n implementation details                    |
+
 ### Ideas (`ideas/`)
 
 Creative and UX exploration docs, sourced from competitor analysis.
 
-| Document                                                                                         | Topics                                 |
-| ------------------------------------------------------------------------------------------------ | -------------------------------------- |
+| Document                                                               | Topics                                 |
+| ---------------------------------------------------------------------- | -------------------------------------- |
 | [`ideas/index.md`](./ideas/index.md)                                   | Master index: 34 ideas across 8 themes |
 | [`ideas/authoring-creation.md`](./ideas/authoring-creation.md)         | Authoring & creation tools             |
 | [`ideas/immersion-presentation.md`](./ideas/immersion-presentation.md) | Immersion & presentation               |
@@ -186,10 +231,10 @@ Detailed UX specifications for the htmx + Alpine.js web UI.
 
 Project planning, reviews, analysis, and research.
 
-| Document                                     | Topics                       |
-| -------------------------------------------- | ---------------------------- |
-| [`meta/plan.md`](./meta/plan.md)             | MVP implementation checklist |
-| [`meta/roadmap.md`](./meta/roadmap.md)       | Long-term feature roadmap    |
+| Document                               | Topics                       |
+| -------------------------------------- | ---------------------------- |
+| [`meta/plan.md`](./meta/plan.md)       | MVP implementation checklist |
+| [`meta/roadmap.md`](./meta/roadmap.md) | Long-term feature roadmap    |
 
 ### Reviews (`meta/reviews/`)
 
