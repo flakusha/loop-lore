@@ -61,8 +61,14 @@ Then reload: `gpg-connect-agent reloadagent /bye`
 
 ### Per-Session Unlock (User, Once Per Session Before Agent Commits)
 
-Run in a **real terminal — NOT inside opencode**. Use the key ID from
-`.credentials.env`:
+Run this in a **real terminal** (not inside opencode). Use the helper
+script which reads `.credentials.env` automatically:
+
+```bash
+./scripts/gpg-unlock.sh
+```
+
+Or manually — use the key ID from `.credentials.env`:
 
 ```bash
 gpg --pinentry-mode loopback \
@@ -72,11 +78,30 @@ gpg --pinentry-mode loopback \
 
 After TTL expires, run again in a real terminal.
 
+### Non-TTY / CI Environments
+
+In headless environments (CI, SSH without agent forwarding), pinentry
+cannot display. The `gpg_merge_flags()` function in `worktree.sh`
+auto-detects `/tmp/gpg-loopback` — a wrapper that passes
+`--batch --pinentry-mode loopback --passphrase ""` to gpg. Create it:
+
+```bash
+cat > /tmp/gpg-loopback << 'EOF'
+#!/bin/bash
+exec gpg --batch --pinentry-mode loopback --passphrase "" "$@"
+EOF
+chmod +x /tmp/gpg-loopback
+```
+
+When present, `worktree.sh merge` and `finalize` use this wrapper
+automatically for merge commit signing.
+
 ### Agent Commit Behavior
 
 If cache is cold, `git commit -S` fails with a pinentry/no-passphrase
-error. Agent MUST NOT retry silently or fall back to unsigned. On failure:
-stop, tell user to run the unlock command above, then retry.
+error. opencode cannot display pinentry itself. Agent MUST NOT retry
+silently or fall back to unsigned. On failure: stop, tell user to run
+the unlock command above **in their terminal**, then retry.
 
 ---
 
@@ -133,6 +158,20 @@ git -c user.signingkey=<AGENT_GPG_KEY_ID> \
 
 ## Workflow
 
+**MANDATORY**: Use `scripts/worktree.sh agent-commit` for worktree commits.
+
+```bash
+# CORRECT — use the script:
+./scripts/worktree.sh agent-commit <branch> "<type>(<scope>): <subject>"
+
+# WRONG — never use raw git commit in worktrees:
+git commit -S -m "..."
+```
+
+For non-worktree commits (main repo), use the canonical command below.
+
+### Steps
+
 1. **Detect repo commit conventions** — check `git log --oneline -20`.
    Match detected convention exactly.
 
@@ -143,7 +182,9 @@ git -c user.signingkey=<AGENT_GPG_KEY_ID> \
 
 4. **Show full command and message** — wait for user confirmation.
 
-5. **Execute commit** (via canonical command above).
+5. **Execute commit**:
+   - **Worktree**: `./scripts/worktree.sh agent-commit <branch> "<message>"`
+   - **Main repo**: Use canonical command below
 
 6. **Verify**:
    ```bash
