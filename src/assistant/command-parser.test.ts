@@ -1,8 +1,8 @@
-import { BUILTIN_COMMANDS, isBuiltinCommand, parseCommand } from "./command-parser";
-import { BUILTIN_COMMANDS, isBuiltinCommand, parseCommand, } from "./command-parser";
-import { beforeAll, describe, expect, test } from "bun:test";
+import { beforeAll, describe, expect, test, } from "bun:test";
 import { beforeAll, describe, expect, test, } from "bun:test";
 import { createLogger, } from "../logger";
+import { BUILTIN_COMMANDS, isBuiltinCommand, parseCommand, } from "./command-parser";
+import { BUILTIN_COMMANDS, isBuiltinCommand, parseCommand, } from "./command-parser";
 
 beforeAll(() => {
   createLogger({ level: "error", },);

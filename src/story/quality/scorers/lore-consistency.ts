@@ -1,5 +1,5 @@
-import type { Scorer, } from "../types";
 import { extractEntities, } from "../shared";
+import type { Scorer, } from "../types";
 
 export const scoreLoreConsistency: Scorer = ({ response, lore, },) => {
   if (!lore) { return 75; }

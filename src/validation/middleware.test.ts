@@ -1,4 +1,4 @@
-import { describe, expect, test } from "bun:test";
+import { describe, expect, test, } from "bun:test";
 import {
   ActorCreateBody,
   AdminRoleUpdateBody,
@@ -12,7 +12,6 @@ import {
 } from "./schemas";
 
 // ── Schema validation tests ─────────────────────────────────
-
 
 // ── Schema validation tests ─────────────────────────────────
 

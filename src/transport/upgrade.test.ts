@@ -1,12 +1,12 @@
 /**
  * Tests for transport upgrade functionality.
  */
-import type { ProtocolHandler, } from "./protocol.unified";
-import { TransportError, TransportErrorCode, } from "./errors";
-import { TransportProtocol, } from "../db/enums";
-import { afterEach, beforeEach, describe, expect, test } from "bun:test";
 import { afterEach, beforeEach, describe, expect, test, } from "bun:test";
+import { afterEach, beforeEach, describe, expect, test, } from "bun:test";
+import { TransportProtocol, } from "../db/enums";
+import { TransportError, TransportErrorCode, } from "./errors";
 import { createProtocol, } from "./factory";
+import type { ProtocolHandler, } from "./protocol.unified";
 import { upgradeConnection, } from "./upgrade";
 
 describe("upgradeConnection", () => {

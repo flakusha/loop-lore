@@ -1,10 +1,10 @@
-import type { Config, } from "../config/schema";
-import type { DB, } from "./schema";
 import type { Kysely, } from "kysely";
-import { ASSISTANT_SYSTEM_PROMPT, } from "../prompts";
-import { ActorType, AgentType, UserRole, UserStatus, } from "./enums";
+import type { Config, } from "../config/schema";
 import { getLogger, type Logger, } from "../logger";
+import { ASSISTANT_SYSTEM_PROMPT, } from "../prompts";
 import { uid, } from "../utils";
+import { ActorType, AgentType, UserRole, UserStatus, } from "./enums";
+import type { DB, } from "./schema";
 
 const ASSISTANT_ID = "assistant-default";
 
@@ -114,8 +114,8 @@ async function seedBootstrapAdmin(database: Kysely<DB>, config: Config, log: Log
   const password = config.auth.adminPassword;
   if (!username || !password) {
     log.warn(
-      "auth.required=true but no bootstrap admin configured (auth.adminUsername / auth.adminPassword "
-        + "or AUTH_ADMIN_USERNAME / AUTH_ADMIN_PASSWORD). Instance has no admin — set credentials or enable registration.",
+      "auth.required=true but no bootstrap admin configured (auth.adminUsername / auth.adminPassword " +
+        "or AUTH_ADMIN_USERNAME / AUTH_ADMIN_PASSWORD). Instance has no admin — set credentials or enable registration.",
     );
     return;
   }

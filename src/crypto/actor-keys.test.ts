@@ -2,7 +2,7 @@
  * Tests for crypto/actor-keys.ts — Actor key CRUD
  */
 
-import { afterAll, beforeAll, describe, expect, test } from "bun:test";
+import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import {
   ensureActorKey,
   generateActorKey,
@@ -12,7 +12,6 @@ import {
   revokeActorKey,
   rotateActorKey,
 } from "./actor-keys";
-
 
 /**
  * Tests for crypto/actor-keys.ts — Actor key CRUD
