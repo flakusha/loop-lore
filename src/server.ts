@@ -17,6 +17,7 @@ import { ServerExternalManager, } from "./services/server-external-manager";
 import { createLogger, getLogger, } from "./logger";
 import { dispatchPluginRoute, loadAllPlugins, unloadAllPlugins, } from "./plugins";
 import { ensureTlsCerts, } from "./config/cert";
+import { generateNonce, } from "./middleware/csp-nonce";
 import { getDatabase, } from "./db/index";
 import { initSmk, } from "./crypto";
 import { initializeProviders, OpenAiCompatibleProvider, registerProvider, } from "./generation";
@@ -160,6 +161,7 @@ export function createRequestHandler(
   const dynamicPolicy = new DynamicResponsePolicy(config.dynamicResponse, logger,);
 
   return async (request: Request,): Promise<Response> => {
+    generateNonce(request,);
     let response = await app.fetch(request,);
     response = await dynamicPolicy.apply({ request, response, },);
     response = headerPolicy.apply({ request, response, },);
