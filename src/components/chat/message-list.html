@@ -245,7 +245,7 @@
                   ⋮
                 </button>
                 <div
-                  class="action-dropdown"
+                  class="dropdown-base action-dropdown"
                   x-show="_hamburgerOpen[msg.id]"
                   @click.outside="_hamburgerOpen[msg.id] = false"
                 >
@@ -317,7 +317,7 @@
 
   <!-- Context menu (right-click / long-press) -->
   <div
-    class="context-menu"
+    class="dropdown-base context-menu"
     x-show="_contextMenu.visible"
     :style="{ left: _contextMenu.x + 'px', top: _contextMenu.y + 'px' }"
     @click.outside="closeContextMenu()"
