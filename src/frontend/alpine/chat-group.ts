@@ -1,6 +1,6 @@
-import type { ChatState, } from "./types";
 import { apiFetch, } from "./htmx";
 import { jsonBody, jsonParseOr, safeJsonStringify, } from "./json";
+import type { ChatState, } from "./types";
 
 export const chatGroup: Partial<ChatState> & ThisType<ChatState> = {
   _groupPaused: false,

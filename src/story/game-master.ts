@@ -17,9 +17,9 @@ import {
   MessageStatus,
   MessageVisibility,
 } from "../db/enums";
-import { jsonParseOr, safeJsonStringify } from "../utils";
-import { applyEvents, extractEvents, validateEvents } from "./events";
-import { createQualityEvaluator, QualityEvaluator } from "./quality-evaluator";
+import { jsonParseOr, safeJsonStringify, } from "../utils";
+import { applyEvents, extractEvents, validateEvents, } from "./events";
+import { createQualityEvaluator, QualityEvaluator, } from "./quality-evaluator";
 import type {
   GameMasterConfig,
   GameMasterDecision,
@@ -30,7 +30,6 @@ import type {
 } from "./types";
 
 // ── LLM call abstraction ─────────────────────────────────
-
 
 /**
  * Game Master Service

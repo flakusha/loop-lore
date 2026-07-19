@@ -1,9 +1,9 @@
-import type { DB, } from "../db/schema";
 import { Database, } from "bun:sqlite";
 import { Kysely, } from "kysely";
-import { createLogger, } from "../logger";
 import { createSqliteDialect, } from "../db/index";
 import { runMigrations, } from "../db/migrate";
+import type { DB, } from "../db/schema";
+import { createLogger, } from "../logger";
 
 /**
  * Create an in-memory SQLite test database with the full schema

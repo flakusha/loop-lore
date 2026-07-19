@@ -2,7 +2,7 @@
  * Tests for frontend/browser.ts — browser compression and encryption utilities
  */
 
-import { beforeAll, describe, expect, test } from "bun:test";
+import { beforeAll, describe, expect, test, } from "bun:test";
 import {
   browserCompressThenEncrypt,
   browserDecodeContent,
@@ -15,7 +15,6 @@ import {
   browserGenerateKey,
   browserImportKey,
 } from "../browser";
-
 
 /**
  * Tests for frontend/browser.ts — browser compression and encryption utilities

@@ -1,7 +1,7 @@
 /**
  * Tests for generation controller (input validation and non-DB paths).
  */
-import { describe, expect, test } from "bun:test";
+import { describe, expect, test, } from "bun:test";
 import {
   handleCancelGeneration,
   handleGenerationStatus,
@@ -9,7 +9,6 @@ import {
   handleRegenerate,
   handleRetryGeneration,
 } from "./generation-routes";
-
 
 /**
  * Tests for generation controller (input validation and non-DB paths).

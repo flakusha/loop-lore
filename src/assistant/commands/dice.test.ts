@@ -1,7 +1,7 @@
-import { beforeAll, describe, expect, test } from "bun:test";
+import { beforeAll, describe, expect, test, } from "bun:test";
 import { beforeAll, describe, expect, test, } from "bun:test";
 import { createLogger, } from "../../logger";
-import { formatDiceResult, handleRollCommand, parseDiceNotation, rollDice, rollDie } from "./dice";
+import { formatDiceResult, handleRollCommand, parseDiceNotation, rollDice, rollDie, } from "./dice";
 import { formatDiceResult, handleRollCommand, parseDiceNotation, rollDice, rollDie, } from "./dice";
 
 beforeAll(() => {

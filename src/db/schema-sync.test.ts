@@ -1,7 +1,7 @@
-import { SCHEMA, } from "./schema-manifest";
-import { createTestDb, } from "../test-utils/create-test-db";
-import { describe, expect, test } from "bun:test";
 import { describe, expect, test, } from "bun:test";
+import { describe, expect, test, } from "bun:test";
+import { createTestDb, } from "../test-utils/create-test-db";
+import { SCHEMA, } from "./schema-manifest";
 
 /**
  * Schema Sync Test

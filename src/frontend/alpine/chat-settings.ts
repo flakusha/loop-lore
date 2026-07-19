@@ -1,7 +1,7 @@
-import type { ChatState, } from "./types";
 import { apiFetch, } from "./htmx";
 import { jsonBody, jsonParseOr, safeJsonStringify, } from "./json";
 import { log as rootLog, } from "./logger";
+import type { ChatState, } from "./types";
 
 const log = rootLog.child({ module: "chat-settings", },);
 

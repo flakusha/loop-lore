@@ -3,8 +3,7 @@
  *
  * Elysia plugin for persona CRUD operations.
  */
-import { ErrorCode, HttpStatus, jsonCreated, jsonError, jsonNoContent, jsonResponse } from "../routes/http-utils";
-
+import { ErrorCode, HttpStatus, jsonCreated, jsonError, jsonNoContent, jsonResponse, } from "../routes/http-utils";
 
 /**
  * Personas Controller

@@ -5,8 +5,7 @@
  * repetition analysis, and policy analysis.
  */
 
-import type { CancelReason, CancelSource, PolicyIndicatorType, PolicySeverity, PolicyType } from "../db/enums";
-
+import type { CancelReason, CancelSource, PolicyIndicatorType, PolicySeverity, PolicyType, } from "../db/enums";
 
 /**
  * Generation Types — Results & Analysis
