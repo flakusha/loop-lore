@@ -8,8 +8,6 @@
  * llmDecision() calls the generation module via injected generateText
  * callback — keeps story module decoupled from provider resolution.
  */
-import type { Kysely } from "kysely";
-import { randomUUID } from "node:crypto";
 import {
   ContentEncoding,
   GameMasterType,
@@ -19,13 +17,9 @@ import {
   MessageStatus,
   MessageVisibility,
 } from "../db/enums";
-import type { DB } from "../db/schema";
 import { jsonParseOr, safeJsonStringify } from "../utils";
 import { applyEvents, extractEvents, validateEvents } from "./events";
-import { GM_DECISIONS } from "./gm/decisions/registry";
-import type { GenerateTextFn } from "./gm/decisions/types";
 import { createQualityEvaluator, QualityEvaluator } from "./quality-evaluator";
-import { TurnManager, type TurnManagerOptions } from "./turn-manager";
 import type {
   GameMasterConfig,
   GameMasterDecision,
@@ -34,15 +28,27 @@ import type {
   StoryContext,
   WorldEvent,
 } from "./types";
-import { WorldStateService } from "./world-state";
 
+// ── LLM call abstraction ─────────────────────────────────
+
+
+/**
+ * Game Master Service
+ *
+ * Orchestrates story progression by selecting actors, constructing
+ * prompts, evaluating responses, and managing escalation.
+ * Supports LLM, Human, and Hybrid Game Master modes.
+ *
+ * llmDecision() calls the generation module via injected generateText
+ * callback — keeps story module decoupled from provider resolution.
+ */
 // ── LLM call abstraction ─────────────────────────────────
 
 /**
  * Function provided by the caller to actually invoke an LLM.
  * Keeps GameMasterService independent of provider resolution.
  */
-export type { GenerateTextFn } from "./gm/decisions/types";
+export type { GenerateTextFn, } from "./gm/decisions/types";
 
 // ── Story turn row type (from DB) ──────────────────────────
 
@@ -111,20 +117,20 @@ export class GameMasterService {
     return this.chatId;
   }
 
-  private async getGmDecision(context: StoryContext, debugActorId?: string): Promise<GameMasterDecision> {
+  private async getGmDecision(context: StoryContext, debugActorId?: string,): Promise<GameMasterDecision> {
     const turnContext = {
       chatMode: "story" as const,
       isPaused: this.turnManager.isPaused,
     };
-    const actorId = debugActorId ?? (await this.turnManager.selectNextActor(undefined, turnContext));
+    const actorId = debugActorId ?? (await this.turnManager.selectNextActor(undefined, turnContext,));
 
     if (!actorId) {
-      throw new Error("No available actors for next turn");
+      throw new Error("No available actors for next turn",);
     }
 
     const strategy = GM_DECISIONS[this.config.type] ?? GM_DECISIONS[GameMasterType.Llm];
     return strategy(
-      { config: this.config, generateText: this.generateText, db: this.db, chatId: this.chatId },
+      { config: this.config, generateText: this.generateText, db: this.db, chatId: this.chatId, },
       context,
       actorId,
     );
@@ -137,7 +143,7 @@ export class GameMasterService {
     decision: GameMasterDecision,
   ): Promise<void> {
     await this.db
-      .insertInto("story_turns")
+      .insertInto("story_turns",)
       .values({
         id: turnId,
         chat_id: this.getChatIdFromConfig() || "pending",
@@ -150,15 +156,15 @@ export class GameMasterService {
         world_events: "[]",
         quest_progress: "[]",
         gm_decision: (() => {
-          const r = safeJsonStringify(decision);
+          const r = safeJsonStringify(decision,);
           return r.ok ? r.value : "{}";
         })(),
-      })
+      },)
       .execute();
   }
 
-  private buildResult(options: BuildResultOptions): GmTurnResult {
-    const { turn, response, qualityEval, worldEvents, accepted, escalated, regenerationSuggested } = options;
+  private buildResult(options: BuildResultOptions,): GmTurnResult {
+    const { turn, response, qualityEval, worldEvents, accepted, escalated, regenerationSuggested, } = options;
     return {
       turnId: turn.id,
       turnNumber: turn.turn_number,
@@ -167,7 +173,7 @@ export class GameMasterService {
       response,
       qualityEvaluation: qualityEval,
       worldEvents,
-      gmDecision: turn.gm_decision ? jsonParseOr(turn.gm_decision, null) : null,
+      gmDecision: turn.gm_decision ? jsonParseOr(turn.gm_decision, null,) : null,
       accepted,
       escalated,
       regenerationSuggested,
@@ -186,11 +192,11 @@ export class GameMasterService {
     this.chatId = options.chatId;
     this.config = options.gmConfig;
     this.generateText = options.generateText;
-    this.turnManager = new TurnManager({ db: options.db, chatId: options.chatId });
-    this.worldState = new WorldStateService(options.db);
+    this.turnManager = new TurnManager({ db: options.db, chatId: options.chatId, },);
+    this.worldState = new WorldStateService(options.db,);
     this.evaluator = createQualityEvaluator({
       thresholds: options.qualityThresholds as QualityThresholds | undefined,
-    });
+    },);
   }
 
   /** Initialize the GM session */
@@ -212,19 +218,19 @@ export class GameMasterService {
   }
 
   /** Execute one full story turn */
-  async executeTurn(debugActorId?: string): Promise<GmTurnResult> {
-    const context = await this.worldState.buildContext(this.getChatIdFromConfig());
-    if (!context) throw new Error("No story context available");
+  async executeTurn(debugActorId?: string,): Promise<GmTurnResult> {
+    const context = await this.worldState.buildContext(this.getChatIdFromConfig(),);
+    if (!context) { throw new Error("No story context available",); }
 
-    const gmDecision = await this.getGmDecision(context, debugActorId);
+    const gmDecision = await this.getGmDecision(context, debugActorId,);
     const turnId = randomUUID();
     const turnNumber = this.turnManager.currentTurn + 1;
 
     if (gmDecision.narration) {
-      await this.injectNarration(context.world.id, gmDecision.narration);
+      await this.injectNarration(context.world.id, gmDecision.narration,);
     }
 
-    await this.recordGmTurn(context, turnId, turnNumber, gmDecision);
+    await this.recordGmTurn(context, turnId, turnNumber, gmDecision,);
 
     return {
       turnId,
@@ -243,40 +249,40 @@ export class GameMasterService {
   }
 
   /** Accept a response and process it through the full pipeline */
-  async acceptResponse(turnId: string, response: string): Promise<GmTurnResult> {
+  async acceptResponse(turnId: string, response: string,): Promise<GmTurnResult> {
     const turn = await this.db
-      .selectFrom("story_turns")
+      .selectFrom("story_turns",)
       .selectAll()
-      .where("id", "=", turnId)
+      .where("id", "=", turnId,)
       .executeTakeFirst();
 
-    if (!turn) throw new Error(`Turn ${turnId} not found`);
+    if (!turn) { throw new Error(`Turn ${turnId} not found`,); }
 
     const actor = await this.db
-      .selectFrom("actors")
-      .select("display_name")
-      .where("id", "=", turn.actor_id)
+      .selectFrom("actors",)
+      .select("display_name",)
+      .where("id", "=", turn.actor_id,)
       .executeTakeFirst();
 
-    const context = await this.worldState.buildContext(turn.chat_id);
+    const context = await this.worldState.buildContext(turn.chat_id,);
 
     const qualityEval = this.evaluator.evaluate({
       response,
       prompt: turn.prompt_sent,
       actorName: actor?.display_name ?? "unknown",
       context: context ?? undefined,
-    });
+    },);
 
     const worldEvents = extractEvents({
       messageContent: response,
       actorId: turn.actor_id,
       currentLocationId: context?.world.currentLocation.id ?? null,
-    });
+    },);
 
     if (context) {
-      const validated = await validateEvents({ db: this.db, worldId: context.world.id, events: worldEvents });
+      const validated = await validateEvents({ db: this.db, worldId: context.world.id, events: worldEvents, },);
       if (validated.valid) {
-        await applyEvents({ db: this.db, worldId: context.world.id, events: validated.filteredEvents });
+        await applyEvents({ db: this.db, worldId: context.world.id, events: validated.filteredEvents, },);
       }
     }
 
@@ -294,12 +300,12 @@ export class GameMasterService {
           accepted: true,
           escalated: true,
           regenerationSuggested: false,
-        });
+        },);
       }
     }
 
     if (qualityEval.regenerationReason) {
-      const canRegen = await this.turnManager.requestRegeneration(turnId, qualityEval.regenerationReason);
+      const canRegen = await this.turnManager.requestRegeneration(turnId, qualityEval.regenerationReason,);
       regenerationSuggested = true;
       if (canRegen) {
         return this.buildResult({
@@ -310,7 +316,7 @@ export class GameMasterService {
           accepted: false,
           escalated: false,
           regenerationSuggested: true,
-        });
+        },);
       }
       escalated = true;
     }
@@ -318,22 +324,22 @@ export class GameMasterService {
     const accepted = !regenerationSuggested && !escalated;
     if (accepted) {
       await this.db
-        .updateTable("story_turns")
+        .updateTable("story_turns",)
         .set({
           response_received: response,
           quality_score: qualityEval.scores.overall,
           quality_details: (() => {
-            const r = safeJsonStringify(qualityEval.details);
+            const r = safeJsonStringify(qualityEval.details,);
             return r.ok ? r.value : "{}";
           })(),
           status: "accepted",
           completed_at: new Date().toISOString(),
           world_events: (() => {
-            const r = safeJsonStringify(worldEvents);
+            const r = safeJsonStringify(worldEvents,);
             return r.ok ? r.value : "[]";
           })(),
-        })
-        .where("id", "=", turnId)
+        },)
+        .where("id", "=", turnId,)
         .execute();
 
       await this.turnManager.recordTurn();
@@ -347,45 +353,45 @@ export class GameMasterService {
       accepted,
       escalated,
       regenerationSuggested,
-    });
+    },);
   }
 
   /** Human GM provides an override decision */
-  async humanOverride(_chatId: string, turnId: string, decision: GameMasterDecision): Promise<void> {
-    const gmSerialized = safeJsonStringify(decision);
-    if (!gmSerialized.ok) return;
+  async humanOverride(_chatId: string, turnId: string, decision: GameMasterDecision,): Promise<void> {
+    const gmSerialized = safeJsonStringify(decision,);
+    if (!gmSerialized.ok) { return; }
     await this.db
-      .updateTable("story_turns")
+      .updateTable("story_turns",)
       .set({
         gm_decision: gmSerialized.value,
         status: "accepted",
         completed_at: new Date().toISOString(),
-      })
-      .where("id", "=", turnId)
+      },)
+      .where("id", "=", turnId,)
       .execute();
   }
 
   /** Inject narration message into the story timeline */
-  async injectNarration(worldId: string, text: string): Promise<void> {
+  async injectNarration(worldId: string, text: string,): Promise<void> {
     const narrator = await this.db
-      .selectFrom("actors")
-      .select("id")
-      .where("actor_type", "=", "narrator")
-      .where("agent_type", "=", "narrator")
+      .selectFrom("actors",)
+      .select("id",)
+      .where("actor_type", "=", "narrator",)
+      .where("agent_type", "=", "narrator",)
       .executeTakeFirst();
 
-    if (!narrator) return;
+    if (!narrator) { return; }
 
     const chats = await this.db
-      .selectFrom("chats")
-      .select("id")
-      .where("world_id", "=", worldId)
-      .where("mode", "=", "story")
+      .selectFrom("chats",)
+      .select("id",)
+      .where("world_id", "=", worldId,)
+      .where("mode", "=", "story",)
       .execute();
 
     for (const chat of chats) {
       await this.db
-        .insertInto("messages")
+        .insertInto("messages",)
         .values({
           id: randomUUID() as string,
           chat_id: chat.id,
@@ -397,7 +403,7 @@ export class GameMasterService {
           content_encoding: ContentEncoding.Identity,
           status: MessageStatus.Confirmed,
           visibility: MessageVisibility.Visible,
-        })
+        },)
         .execute();
     }
   }

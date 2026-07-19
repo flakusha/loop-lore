@@ -26,12 +26,12 @@
           "properties": {
             "key": {
               "type": "string",
-              "default": "/home/flak/git-ai/loop-lore/loop-lore-data/certs/key.pem",
+              "default": "/home/flak/git-ai/loop-lore/tree/refactor-schema/loop-lore-data/certs/key.pem",
               "description": "Path to TLS private key (PEM)"
             },
             "cert": {
               "type": "string",
-              "default": "/home/flak/git-ai/loop-lore/loop-lore-data/certs/cert.pem",
+              "default": "/home/flak/git-ai/loop-lore/tree/refactor-schema/loop-lore-data/certs/cert.pem",
               "description": "Path to TLS certificate (PEM)"
             }
           },
@@ -61,7 +61,7 @@
         },
         "sqliteFilename": {
           "type": "string",
-          "default": "/home/flak/git-ai/loop-lore/loop-lore-data/loop-lore.db",
+          "default": "/home/flak/git-ai/loop-lore/tree/refactor-schema/loop-lore-data/loop-lore.db",
           "description": "SQLite database file path"
         },
         "url": {
@@ -85,7 +85,7 @@
         },
         "uploadDir": {
           "type": "string",
-          "default": "/home/flak/git-ai/loop-lore/loop-lore-data/uploads",
+          "default": "/home/flak/git-ai/loop-lore/tree/refactor-schema/loop-lore-data/uploads",
           "description": "Directory for uploaded assets"
         },
         "maxFileSize": {
@@ -133,7 +133,6 @@
             "warn",
             "error"
           ],
-          "default": "debug",
           "description": "Log level"
         },
         "jsonlPath": {
@@ -142,22 +141,18 @@
         },
         "jsonlMaxBytes": {
           "type": "integer",
-          "default": 104857600,
           "description": "Max JSONL file bytes before rotation"
         },
         "jsonlMaxFiles": {
           "type": "integer",
-          "default": 5,
           "description": "Max rotated files to keep"
         },
         "dbEnabled": {
           "type": "boolean",
-          "default": false,
           "description": "Enable DB log transport"
         },
         "censorEnabled": {
           "type": "boolean",
-          "default": true,
           "description": "PII redaction"
         },
         "censorFields": {
@@ -169,27 +164,22 @@
         },
         "queueMaxSize": {
           "type": "integer",
-          "default": 10000,
           "description": "Max queue entries"
         },
         "maxMessageBytes": {
           "type": "integer",
-          "default": 10240,
           "description": "Max message string bytes"
         },
         "maxMetaBytes": {
           "type": "integer",
-          "default": 102400,
           "description": "Max meta blob bytes"
         },
         "maxMetaDepth": {
           "type": "integer",
-          "default": 5,
           "description": "Max meta recursion depth"
         },
         "maxStackBytes": {
           "type": "integer",
-          "default": 5120,
           "description": "Max error stack bytes"
         }
       },
@@ -294,6 +284,16 @@
           "type": "boolean",
           "default": true,
           "description": "Auto-create sample data on first demo run"
+        },
+        "adminUsername": {
+          "type": "string",
+          "default": "",
+          "description": "Bootstrap admin username (multi-user mode). Set via config or AUTH_ADMIN_USERNAME env."
+        },
+        "adminPassword": {
+          "type": "string",
+          "default": "",
+          "description": "Bootstrap admin password (multi-user mode). Env-only preferred: AUTH_ADMIN_PASSWORD. Never commit."
         }
       },
       "required": [
@@ -472,19 +472,16 @@
           "properties": {
             "openaiCompatible": {
               "type": "array",
-              "default": [],
               "description": "OpenAI-compatible provider instances"
             }
           }
         },
         "defaultProvider": {
           "type": "string",
-          "default": "",
           "description": "Default provider name"
         },
         "defaultModels": {
           "type": "object",
-          "default": {},
           "description": "Default model per provider"
         },
         "autoStart": {
@@ -497,7 +494,6 @@
               "properties": {
                 "enabled": {
                   "type": "boolean",
-                  "default": false,
                   "description": "Enable auto-start"
                 },
                 "modelPath": {
@@ -506,7 +502,6 @@
                 },
                 "port": {
                   "type": "integer",
-                  "default": 9011,
                   "description": "llama-server port"
                 },
                 "alias": {
@@ -515,7 +510,6 @@
                 },
                 "ctxSize": {
                   "type": "integer",
-                  "default": 8192,
                   "description": "Context size in tokens"
                 },
                 "threads": {
@@ -630,7 +624,6 @@
               "properties": {
                 "enabled": {
                   "type": "boolean",
-                  "default": false,
                   "description": "Enable auto-start"
                 },
                 "modelType": {
@@ -639,7 +632,6 @@
                     "checkpoint",
                     "diffusion"
                   ],
-                  "default": "checkpoint",
                   "description": "checkpoint = standalone (-m), diffusion = component (--diffusion-model, needs llm)"
                 },
                 "modelPath": {
@@ -648,7 +640,6 @@
                 },
                 "port": {
                   "type": "integer",
-                  "default": 9010,
                   "description": "sd-server port"
                 },
                 "llmPath": {
@@ -799,6 +790,291 @@
       "required": [
         "enabled"
       ]
+    },
+    "encryption": {
+      "type": "object",
+      "description": "Encryption / SMK configuration",
+      "properties": {
+        "serverEncryptionKey": {
+          "type": "string",
+          "description": "256-bit hex key. Missing = encryption disabled (dev mode)."
+        },
+        "required": {
+          "type": "boolean",
+          "default": false,
+          "description": "true = refuse to start without SMK (prod guard)"
+        },
+        "compressThreshold": {
+          "type": "integer",
+          "default": 128,
+          "description": "Min bytes before compressing prior to encrypt"
+        },
+        "compressAlgorithm": {
+          "type": "string",
+          "default": "gzip",
+          "description": "Preferred compression algorithm"
+        }
+      },
+      "required": [
+        "required",
+        "compressThreshold",
+        "compressAlgorithm"
+      ]
+    },
+    "headers": {
+      "type": "object",
+      "description": "Response-header policy (browser security / isolation / perf / observability)",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "description": "Master toggle for header injection"
+        },
+        "referrerPolicy": {
+          "type": "string",
+          "description": "Referrer-Policy value"
+        },
+        "xContentTypeOptions": {
+          "type": "boolean",
+          "description": "Emit X-Content-Type-Options: nosniff"
+        },
+        "xFrameOptions": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "enum": [
+            "DENY",
+            "SAMEORIGIN",
+            null
+          ],
+          "description": "X-Frame-Options; null omits"
+        },
+        "permissionsPolicy": {
+          "type": "string",
+          "description": "Permissions-Policy feature delegation"
+        },
+        "csp": {
+          "type": "object",
+          "description": "Content-Security-Policy directive set (HTML only)",
+          "properties": {
+            "enabled": {
+              "type": "boolean"
+            },
+            "defaultSrc": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "scriptSrc": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "styleSrc": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "imgSrc": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "fontSrc": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "connectSrc": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "objectSrc": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "baseUri": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "frameAncestors": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "formAction": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "upgradeInsecureRequests": {
+              "type": "boolean"
+            },
+            "reportOnly": {
+              "type": "boolean",
+              "description": "Emit CSP as Report-Only (observe, not enforce)"
+            }
+          },
+          "required": [
+            "enabled"
+          ]
+        },
+        "crossOriginOpenerPolicy": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "enum": [
+            "same-origin",
+            "same-origin-allow-popups",
+            null
+          ],
+          "description": "COOP; null omits"
+        },
+        "crossOriginEmbedderPolicy": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "enum": [
+            "require-corp",
+            null
+          ],
+          "description": "COEP; self-hosted Alpine/htmx resolved CDN blocker. Still not needed (no wasm/SAB)."
+        },
+        "crossOriginResourcePolicy": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "enum": [
+            "same-origin",
+            "cross-origin",
+            null
+          ],
+          "description": "CORP for static subresources"
+        },
+        "timingAllowOrigin": {
+          "type": "string",
+          "description": "Timing-Allow-Origin; empty string omits"
+        },
+        "immutableHashedAssets": {
+          "type": "boolean",
+          "description": "Append immutable to Cache-Control for content-hashed assets"
+        },
+        "linkPreload": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Link preload hints for HTML documents"
+        },
+        "acceptClientHints": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Accept-CH / Critical-CH client hint tokens"
+        },
+        "saveData": {
+          "type": "boolean",
+          "description": "Advertise Save-Data cooperativeness"
+        },
+        "earlyHints": {
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "enabled"
+          ]
+        },
+        "reportingEndpoints": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          },
+          "description": "Reporting-Endpoints name → URL"
+        },
+        "nel": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "NEL policy JSON; null omits"
+        }
+      },
+      "required": [
+        "enabled",
+        "referrerPolicy",
+        "xContentTypeOptions",
+        "csp",
+        "earlyHints"
+      ]
+    },
+    "dynamicResponse": {
+      "type": "object",
+      "description": "Dynamic-response optimization (minify / validate / compress runtime HTML/CSS/JS/JSON)",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Master toggle"
+        },
+        "minify": {
+          "type": "boolean",
+          "default": true,
+          "description": "Strip whitespace + comments from text bodies"
+        },
+        "validate": {
+          "type": "boolean",
+          "default": true,
+          "description": "Validate html/css/js parse; skip minify + log on failure"
+        },
+        "compress": {
+          "type": "boolean",
+          "default": true,
+          "description": "Apply Content-Encoding based on Accept-Encoding"
+        },
+        "compressAlgorithm": {
+          "type": "string",
+          "enum": [
+            "br",
+            "gzip",
+            "auto"
+          ],
+          "default": "auto",
+          "description": "Preferred algorithm; auto prefers br when advertised"
+        },
+        "compressThreshold": {
+          "type": "number",
+          "default": 512,
+          "description": "Minimum body size (bytes) before compression"
+        }
+      },
+      "required": [
+        "enabled",
+        "minify",
+        "validate",
+        "compress",
+        "compressAlgorithm",
+        "compressThreshold"
+      ]
     }
   },
   "required": [
@@ -812,6 +1088,8 @@
     "auth",
     "transport",
     "messages",
-    "encryption"
+    "encryption",
+    "headers",
+    "dynamicResponse"
   ]
 }

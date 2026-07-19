@@ -84,11 +84,11 @@ type RequestState =
 Ensure all cases are handled in `switch` over discriminated unions or enums:
 
 ```ts
-function assertNever(value: never): never {
-  throw new Error(`Unhandled case: ${JSON.stringify(value)}`);
+function assertNever(value: never,): never {
+  throw new Error(`Unhandled case: ${JSON.stringify(value,)}`,);
 }
 
-function handleStatus(status: GenerationStatus): string {
+function handleStatus(status: GenerationStatus,): string {
   switch (status) {
     case GenerationStatus.Pending:
       return "waiting";
@@ -103,7 +103,7 @@ function handleStatus(status: GenerationStatus): string {
     case GenerationStatus.Cancelled:
       return "aborted";
     default:
-      return assertNever(status); // Compile error if new case added
+      return assertNever(status,); // Compile error if new case added
   }
 }
 ```
@@ -142,21 +142,21 @@ getUser(chatId);  // ❌ compile error
 The codebase already uses `JsonResult<T>` — extend this pattern to all fallible operations:
 
 ```ts
-type Result<T, E = Error> =
+type Result<T, E = Error,> =
   | { ok: true; value: T }
   | { ok: false; error: E };
 
 // Usage in services
-function parseConfig(raw: string): Result<Config, string> {
-  const parsed = safeJsonParse<Config>(raw);
-  if (!parsed.ok) return { ok: false, error: "Invalid config JSON" };
+function parseConfig(raw: string,): Result<Config, string> {
+  const parsed = safeJsonParse<Config>(raw,);
+  if (!parsed.ok) { return { ok: false, error: "Invalid config JSON", }; }
   // ... validate fields
-  return { ok: true, value: parsed.value };
+  return { ok: true, value: parsed.value, };
 }
 
 // Caller checks .ok — never throws
-const config = parseConfig(dbRow.settings);
-if (!config.ok) return jsonError({ message: config.error, status: 400 });
+const config = parseConfig(dbRow.settings,);
+if (!config.ok) { return jsonError({ message: config.error, status: 400, },); }
 // config.value is fully typed
 ```
 
@@ -248,18 +248,18 @@ Separate `interface X { ... }` + `class XImpl implements X { ... }` forces:
 
 ```ts
 // ✅ Factory — single export, zero interface
-export function createTaskRunner(db: Kysely<DB>, config: RunnerConfig) {
+export function createTaskRunner(db: Kysely<DB>, config: RunnerConfig,) {
   const queue: string[] = [];
 
-  async function run(taskId: string): Promise<Result> {
+  async function run(taskId: string,): Promise<Result> {
     // ...
   }
 
-  function cancel(taskId: string): void {
+  function cancel(taskId: string,): void {
     // ...
   }
 
-  return { run, cancel };
+  return { run, cancel, };
 }
 
 export type TaskRunner = ReturnType<typeof createTaskRunner>;
@@ -268,21 +268,21 @@ export type TaskRunner = ReturnType<typeof createTaskRunner>;
 Call site imports one thing, gets full type:
 
 ```ts
-import { createTaskRunner, type TaskRunner } from "./task-runner";
+import { createTaskRunner, type TaskRunner, } from "./task-runner";
 
-const runner = createTaskRunner(db, config);
-const result = await runner.run("task-1");
+const runner = createTaskRunner(db, config,);
+const result = await runner.run("task-1",);
 ```
 
 ### Type inference: `ReturnType<typeof createXxx>`
 
 ```ts
 // Consumer — no interface import needed
-import { type Kysely } from "kysely";
-import { createWidget, type Widget } from "./widget";
+import { type Kysely, } from "kysely";
+import { createWidget, type Widget, } from "./widget";
 
-function handle(widget: Widget): void {
-  console.log(widget.label);
+function handle(widget: Widget,): void {
+  console.log(widget.label,);
 }
 ```
 

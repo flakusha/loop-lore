@@ -1,5 +1,5 @@
-import type { Kysely } from "kysely";
-import { sql } from "kysely";
+import type { Kysely, } from "kysely";
+import { sql, } from "kysely";
 
 /**
  * Migration 023 — Notifications
@@ -17,28 +17,28 @@ import { sql } from "kysely";
  *   unread-count and newest-first list.
  * - `data` is a JSON payload for type-specific context (e.g. message id).
  */
-export async function up(database: Kysely<unknown>): Promise<void> {
+export async function up(database: Kysely<unknown>,): Promise<void> {
   await database.schema
-    .createTable("notifications")
-    .addColumn("id", "text", (col) => col.primaryKey())
-    .addColumn("user_id", "text", (col) => col.notNull().references("users.id").onDelete("cascade"))
-    .addColumn("type", "text", (col) => col.notNull())
-    .addColumn("title", "text", (col) => col.notNull())
-    .addColumn("body", "text")
-    .addColumn("link", "text")
-    .addColumn("read", "integer", (col) => col.notNull().defaultTo(0))
-    .addColumn("data", "text")
-    .addColumn("created_at", "text", (col) => col.notNull().defaultTo(sql`(datetime('now'))`))
+    .createTable("notifications",)
+    .addColumn("id", "text", (col,) => col.primaryKey(),)
+    .addColumn("user_id", "text", (col,) => col.notNull().references("users.id",).onDelete("cascade",),)
+    .addColumn("type", "text", (col,) => col.notNull(),)
+    .addColumn("title", "text", (col,) => col.notNull(),)
+    .addColumn("body", "text",)
+    .addColumn("link", "text",)
+    .addColumn("read", "integer", (col,) => col.notNull().defaultTo(0,),)
+    .addColumn("data", "text",)
+    .addColumn("created_at", "text", (col,) => col.notNull().defaultTo(sql`(datetime('now'))`,),)
     .execute();
 
   await database.schema
-    .createIndex("idx_notifications_user_read")
-    .on("notifications")
-    .columns(["user_id", "read", "created_at"])
+    .createIndex("idx_notifications_user_read",)
+    .on("notifications",)
+    .columns(["user_id", "read", "created_at",],)
     .execute();
 }
 
-export async function down(database: Kysely<unknown>): Promise<void> {
-  await database.schema.dropIndex("idx_notifications_user_read").execute();
-  await database.schema.dropTable("notifications").execute();
+export async function down(database: Kysely<unknown>,): Promise<void> {
+  await database.schema.dropIndex("idx_notifications_user_read",).execute();
+  await database.schema.dropTable("notifications",).execute();
 }

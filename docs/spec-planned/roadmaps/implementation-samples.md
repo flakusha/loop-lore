@@ -6,7 +6,7 @@
 
 ```typescript
 // src/notifications/service.ts
-import { db } from "../db";
+import { db, } from "../db";
 
 export interface NotificationEvent {
   userId: string;
@@ -18,20 +18,20 @@ export interface NotificationEvent {
   data?: unknown;
 }
 
-export async function createNotification(event: NotificationEvent): Promise<void> {
+export async function createNotification(event: NotificationEvent,): Promise<void> {
   // Check user's noise threshold
   const userPrefs = await db
-    .selectFrom("user_notification_prefs")
+    .selectFrom("user_notification_prefs",)
     .selectAll()
-    .where("user_id", "=", event.userId)
+    .where("user_id", "=", event.userId,)
     .executeTakeFirst();
 
   const threshold = userPrefs?.noise_threshold ?? "medium";
-  const noiseLevels = { critical: 0, high: 1, medium: 2, low: 3 };
+  const noiseLevels = { critical: 0, high: 1, medium: 2, low: 3, };
 
   if (noiseLevels[event.noiseLevel] <= noiseLevels[threshold as keyof typeof noiseLevels]) {
     await db
-      .insertInto("notifications")
+      .insertInto("notifications",)
       .values({
         id: crypto.randomUUID(),
         user_id: event.userId,
@@ -40,8 +40,8 @@ export async function createNotification(event: NotificationEvent): Promise<void
         body: event.body,
         link: event.link,
         noise_level: event.noiseLevel,
-        data: event.data ? JSON.stringify(event.data) : null,
-      })
+        data: event.data ? JSON.stringify(event.data,) : null,
+      },)
       .execute();
   }
 }
@@ -79,13 +79,13 @@ export async function postComparison(
   const userId = ctx.user.id;
 
   // Validate message exists and user has access
-  const message = await db.selectFrom("messages").selectAll().where("id", "=", messageId).executeTakeFirst();
+  const message = await db.selectFrom("messages",).selectAll().where("id", "=", messageId,).executeTakeFirst();
 
-  if (!message) return error(404, "Message not found");
+  if (!message) { return error(404, "Message not found",); }
 
   // Insert comparison
   await db
-    .insertInto("model_comparisons")
+    .insertInto("model_comparisons",)
     .values({
       id: crypto.randomUUID(),
       message_id: messageId,
@@ -93,10 +93,10 @@ export async function postComparison(
       reference_model: body.reference_model,
       preference: body.preference as "better" | "worse" | "same",
       confidence: body.confidence ?? 1.0,
-    })
+    },)
     .execute();
 
-  return success(201, { id: crypto.randomUUID() });
+  return success(201, { id: crypto.randomUUID(), },);
 }
 ```
 
@@ -120,30 +120,30 @@ export interface DiceRoll {
   notation: string;
 }
 
-export function rollDice(notation: string, seed?: number): DiceRoll {
-  const match = notation.match(/^(\d*)d(\d+)([+-]\d+)?$/);
-  if (!match) throw new Error(`Invalid dice notation: ${notation}`);
+export function rollDice(notation: string, seed?: number,): DiceRoll {
+  const match = notation.match(/^(\d*)d(\d+)([+-]\d+)?$/,);
+  if (!match) { throw new Error(`Invalid dice notation: ${notation}`,); }
 
-  const count = parseInt(match[1] || "1");
-  const sides = parseInt(match[2]);
-  const modifier = parseInt(match[3] || "0");
+  const count = parseInt(match[1] || "1",);
+  const sides = parseInt(match[2],);
+  const modifier = parseInt(match[3] || "0",);
 
   if (count > 100 || sides > 1000) {
-    throw new Error("Dice notation exceeds limits");
+    throw new Error("Dice notation exceeds limits",);
   }
 
-  const rng = seed !== undefined ? seededRandom(seed) : Math.random;
-  const rolls = Array.from({ length: count }, () => Math.floor(rng() * sides) + 1);
+  const rng = seed !== undefined ? seededRandom(seed,) : Math.random;
+  const rolls = Array.from({ length: count, }, () => Math.floor(rng() * sides,) + 1,);
 
   return {
-    total: rolls.reduce((a, b) => a + b, 0) + modifier,
+    total: rolls.reduce((a, b,) => a + b, 0,) + modifier,
     rolls,
     modifier,
     notation,
   };
 }
 
-function seededRandom(seed: number) {
+function seededRandom(seed: number,) {
   return () => {
     // Simple seeded PRNG for deterministic rolls
     seed = (seed * 9301 + 49297) % 233280;
@@ -166,44 +166,44 @@ function seededRandom(seed: number) {
 
 ```typescript
 // src/archival/service.ts
-export async function archiveChat(chatId: string, userId: string): Promise<void> {
-  const chat = await db.selectFrom("chats").selectAll().where("id", "=", chatId).executeTakeFirst();
+export async function archiveChat(chatId: string, userId: string,): Promise<void> {
+  const chat = await db.selectFrom("chats",).selectAll().where("id", "=", chatId,).executeTakeFirst();
 
   if (!chat || chat.created_by !== userId) {
-    throw new Error("Not authorized");
+    throw new Error("Not authorized",);
   }
 
   // Soft delete - set archived_at
   await db
-    .updateTable("chats")
-    .set({ archived_at: new Date().toISOString() })
-    .where("id", "=", chatId)
+    .updateTable("chats",)
+    .set({ archived_at: new Date().toISOString(), },)
+    .where("id", "=", chatId,)
     .execute();
 
   // Archive all messages
   await db
-    .updateTable("messages")
-    .set({ archived_at: new Date().toISOString() })
-    .where("chat_id", "=", chatId)
+    .updateTable("messages",)
+    .set({ archived_at: new Date().toISOString(), },)
+    .where("chat_id", "=", chatId,)
     .execute();
 }
 
 export async function purgeExpiredArchives(): Promise<number> {
   const cutoff = new Date();
-  cutoff.setDate(cutoff.getDate() - 90); // Configurable
+  cutoff.setDate(cutoff.getDate() - 90,); // Configurable
 
   // Get chats to purge
   const expiredChats = await db
-    .selectFrom("chats")
-    .select("id")
-    .where("archived_at", "!=", null)
-    .where("archived_at", "<", cutoff.toISOString())
+    .selectFrom("chats",)
+    .select("id",)
+    .where("archived_at", "!=", null,)
+    .where("archived_at", "<", cutoff.toISOString(),)
     .execute();
 
   // Cascade delete
   for (const chat of expiredChats) {
-    await db.deleteFrom("messages").where("chat_id", "=", chat.id).execute();
-    await db.deleteFrom("chats").where("id", "=", chat.id).execute();
+    await db.deleteFrom("messages",).where("chat_id", "=", chat.id,).execute();
+    await db.deleteFrom("chats",).where("id", "=", chat.id,).execute();
   }
 
   return expiredChats.length;
@@ -230,34 +230,34 @@ export interface ParsedCommand {
   raw: string;
 }
 
-export function parseCommand(input: string): ParsedCommand | null {
+export function parseCommand(input: string,): ParsedCommand | null {
   const trimmed = input.trim();
-  if (!trimmed.startsWith("/")) return null;
+  if (!trimmed.startsWith("/",)) { return null; }
 
-  const parts = trimmed.slice(1).split(/\s+/);
+  const parts = trimmed.slice(1,).split(/\s+/,);
   return {
     command: parts[0].toLowerCase(),
-    args: parts.slice(1),
+    args: parts.slice(1,),
     raw: trimmed,
   };
 }
 
 // src/assistant/commands/dice.ts
-import { parseCommand } from "../command-parser";
+import { parseCommand, } from "../command-parser";
 
 export async function handleDiceCommand(
   rawInput: string,
   context: { chatId: string; actorId: string },
 ): Promise<string> {
-  const parsed = parseCommand(rawInput);
-  if (!parsed) return "Invalid command";
+  const parsed = parseCommand(rawInput,);
+  if (!parsed) { return "Invalid command"; }
 
   const notation = parsed.args[0];
-  if (!notation) return "Usage: /dice <notation> (e.g., /dice 2d6+3)";
+  if (!notation) { return "Usage: /dice <notation> (e.g., /dice 2d6+3)"; }
 
   try {
-    const result = rollDice(notation);
-    return `🎲 ${notation} = ${result.rolls.join(", ")}${
+    const result = rollDice(notation,);
+    return `🎲 ${notation} = ${result.rolls.join(", ",)}${
       result.modifier ? ` + ${result.modifier}` : ""
     } = **${result.total}**`;
   } catch (e) {
@@ -286,36 +286,36 @@ export interface SignedURL {
   token: string;
 }
 
-export async function createSignedURL(assetId: string, userId: string): Promise<SignedURL> {
-  const asset = await db.selectFrom("assets").selectAll().where("id", "=", assetId).executeTakeFirst();
+export async function createSignedURL(assetId: string, userId: string,): Promise<SignedURL> {
+  const asset = await db.selectFrom("assets",).selectAll().where("id", "=", assetId,).executeTakeFirst();
 
-  if (!asset) throw new Error("Asset not found");
+  if (!asset) { throw new Error("Asset not found",); }
 
   // Check access
   const chatId = asset.chat_id;
   if (chatId) {
     const participant = await db
-      .selectFrom("chat_participants")
+      .selectFrom("chat_participants",)
       .selectAll()
-      .where("chat_id", "=", chatId)
-      .where("user_id", "=", userId)
+      .where("chat_id", "=", chatId,)
+      .where("user_id", "=", userId,)
       .executeTakeFirst();
 
-    if (!participant) throw new Error("Not authorized");
+    if (!participant) { throw new Error("Not authorized",); }
   }
 
   const token = crypto.randomUUID();
-  const expiresAt = new Date(Date.now() + 60 * 60 * 1000).toISOString(); // 1 hour
+  const expiresAt = new Date(Date.now() + 60 * 60 * 1000,).toISOString(); // 1 hour
 
   // Store token
   await db
-    .insertInto("asset_tokens")
+    .insertInto("asset_tokens",)
     .values({
       id: token,
       asset_id: assetId,
       user_id: userId,
       expires_at: expiresAt,
-    })
+    },)
     .execute();
 
   return {

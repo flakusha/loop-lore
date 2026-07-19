@@ -2,9 +2,9 @@
  * Log entry formatters — console pretty-print and JSONL serialization.
  */
 
-import { safeJsonStringify } from "../utils/safe-json";
-import { numericToLabel } from "./levels";
-import type { LogEntry } from "./types";
+import { safeJsonStringify, } from "../utils/safe-json";
+import { numericToLabel, } from "./levels";
+import type { LogEntry, } from "./types";
 
 // ── Console Pretty Format ──────────────────────────────────
 
@@ -24,7 +24,7 @@ const RESET = "\u{1B}[0m";
  *
  * Output: "[time] [LEVEL] [module] message"
  */
-export function formatConsole(entry: LogEntry, isColor?: boolean, mode?: "ansi"): string;
+export function formatConsole(entry: LogEntry, isColor?: boolean, mode?: "ansi",): string;
 export function formatConsole(
   entry: LogEntry,
   isColor?: boolean,
@@ -35,9 +35,9 @@ export function formatConsole(
   isColor = false,
   mode: "ansi" | "css" = "ansi",
 ): string | { formatted: string; css: string } {
-  const levelLabel = numericToLabel(entry.level).padEnd(5);
+  const levelLabel = numericToLabel(entry.level,).padEnd(5,);
   const modulePart = entry.module ? ` [${entry.module}]` : "";
-  const msgResult = safeJsonStringify(entry.message);
+  const msgResult = safeJsonStringify(entry.message,);
   const msg = typeof entry.message === "string" ? entry.message : (msgResult.ok ? msgResult.value : "[unserializable]");
 
   let line = `[${entry.time}] [${levelLabel}]${modulePart} ${msg}`;
@@ -52,7 +52,7 @@ export function formatConsole(
 
   if (mode === "css") {
     const css = LEVEL_CSS[entry.level] ?? "";
-    return { formatted: `%c${line}\n`, css };
+    return { formatted: `%c${line}\n`, css, };
   }
 
   // ANSI mode
@@ -73,8 +73,8 @@ const LEVEL_CSS: Record<number, string> = {
  * Serialize entry as one JSON line for JSONL output.
  * Strips undefined fields, keeps nulls for schema alignment.
  */
-export function formatJSONL(entry: LogEntry): string {
-  const msgResult = safeJsonStringify(entry.message);
+export function formatJSONL(entry: LogEntry,): string {
+  const msgResult = safeJsonStringify(entry.message,);
   const msg = typeof entry.message === "string" ? entry.message : (msgResult.ok ? msgResult.value : "[unserializable]");
   const obj: Record<string, unknown> = {
     level: entry.level,
@@ -83,13 +83,13 @@ export function formatJSONL(entry: LogEntry): string {
     message: msg,
   };
 
-  if (entry.module) obj.module = entry.module;
-  if (entry.requestId) obj.requestId = entry.requestId;
-  if (entry.userId) obj.userId = entry.userId;
-  if (entry.sessionId) obj.sessionId = entry.sessionId;
-  if (entry.error) obj.error = entry.error;
-  if (entry.meta && Object.keys(entry.meta).length > 0) obj.meta = entry.meta;
+  if (entry.module) { obj.module = entry.module; }
+  if (entry.requestId) { obj.requestId = entry.requestId; }
+  if (entry.userId) { obj.userId = entry.userId; }
+  if (entry.sessionId) { obj.sessionId = entry.sessionId; }
+  if (entry.error) { obj.error = entry.error; }
+  if (entry.meta && Object.keys(entry.meta,).length > 0) { obj.meta = entry.meta; }
 
-  const r = safeJsonStringify(obj);
+  const r = safeJsonStringify(obj,);
   return (r.ok ? r.value : "{}") + "\n";
 }

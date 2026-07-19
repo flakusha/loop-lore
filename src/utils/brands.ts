@@ -17,15 +17,15 @@
  */
 
 /** Generic brand type — intersects Base with a readonly tag */
-export type Brand<Base, Tag extends string> = Base & { readonly __brand: Tag };
+export type Brand<Base, Tag extends string,> = Base & { readonly __brand: Tag };
 
 /** Create a branded value from a raw string */
-export function brand<T extends string>(raw: string): Brand<string, T> {
+export function brand<T extends string,>(raw: string,): Brand<string, T> {
   return raw as Brand<string, T>;
 }
 
 /** Extract the underlying string from a branded type */
-export function unbrand<T extends string>(branded: Brand<string, T>): string {
+export function unbrand<T extends string,>(branded: Brand<string, T>,): string {
   return branded;
 }
 

@@ -10,11 +10,11 @@
 //
 // Returns individual rolls + total for display.
 
-import { getLogger, type Logger } from "../../logger";
-import { registerCommand } from "./registry";
+import { getLogger, type Logger, } from "../../logger";
+import { registerCommand, } from "./registry";
 
 /** Lazy logger — only resolved when first used (avoids crash when logger not initialized in tests). */
-const getLog = (): Logger => getLogger().child({ module: "dice" });
+const getLog = (): Logger => getLogger().child({ module: "dice", },);
 
 /** Result of a single die roll */
 export interface DieRoll {
@@ -56,19 +56,19 @@ interface DiceNotation {
  * parseDiceNotation("2d6+3") → { count: 2, sides: 6, modifier: 3, notation: "2d6+3" }
  * parseDiceNotation("d20")   → { count: 1, sides: 20, modifier: 0, notation: "d20" }
  */
-export function parseDiceNotation(notation: string): DiceNotation | null {
+export function parseDiceNotation(notation: string,): DiceNotation | null {
   const trimmed = notation.trim().toLowerCase();
   // Match: optional count + d + sides + optional ±modifier
-  const match = /^(\d+)?d(\d+)([+-]\d+)?$/.exec(trimmed);
-  if (!match) return null;
+  const match = /^(\d+)?d(\d+)([+-]\d+)?$/.exec(trimmed,);
+  if (!match) { return null; }
 
-  const count = match[1] ? parseInt(match[1], 10) : 1;
-  const sides = parseInt(match[2]!, 10);
-  const modifier = match[3] ? parseInt(match[3], 10) : 0;
+  const count = match[1] ? parseInt(match[1], 10,) : 1;
+  const sides = parseInt(match[2]!, 10,);
+  const modifier = match[3] ? parseInt(match[3], 10,) : 0;
 
-  if (count < 1 || count > 100 || sides < 1 || sides > 1000) return null;
+  if (count < 1 || count > 100 || sides < 1 || sides > 1000) { return null; }
 
-  return { count, sides, modifier, notation: trimmed };
+  return { count, sides, modifier, notation: trimmed, };
 }
 
 /**
@@ -77,8 +77,8 @@ export function parseDiceNotation(notation: string): DiceNotation | null {
  * @param sides - Number of sides on the die
  * @returns Random value between 1 and sides (inclusive)
  */
-export function rollDie(sides: number): number {
-  return Math.floor(Math.random() * sides) + 1;
+export function rollDie(sides: number,): number {
+  return Math.floor(Math.random() * sides,) + 1;
 }
 
 /**
@@ -91,16 +91,16 @@ export function rollDie(sides: number): number {
  * rollDice("2d6+3")
  * // → { count: 2, sides: 6, modifier: 3, rolls: [{value: 4}, {value: 5}], total: 12, notation: "2d6+3" }
  */
-export function rollDice(notation: string): DiceResult | null {
-  const parsed = parseDiceNotation(notation);
-  if (!parsed) return null;
+export function rollDice(notation: string,): DiceResult | null {
+  const parsed = parseDiceNotation(notation,);
+  if (!parsed) { return null; }
 
   const rolls: DieRoll[] = [];
   let sum = 0;
 
   for (let i = 0; i < parsed.count; i++) {
-    const value = rollDie(parsed.sides);
-    rolls.push({ value });
+    const value = rollDie(parsed.sides,);
+    rolls.push({ value, },);
     sum += value;
   }
 
@@ -111,9 +111,9 @@ export function rollDice(notation: string): DiceResult | null {
     count: parsed.count,
     sides: parsed.sides,
     modifier: parsed.modifier,
-    rolls: rolls.map((r) => r.value),
+    rolls: rolls.map((r,) => r.value),
     total,
-  });
+  },);
 
   return {
     count: parsed.count,
@@ -131,12 +131,12 @@ export function rollDice(notation: string): DiceResult | null {
  * @param result - Roll result from rollDice()
  * @returns Formatted string (e.g., "🎲 2d6+3: [4, 5] + 3 = 12")
  */
-export function formatDiceResult(result: DiceResult): string {
-  const rollValues = result.rolls.map((r) => r.value).join(", ");
+export function formatDiceResult(result: DiceResult,): string {
+  const rollValues = result.rolls.map((r,) => r.value).join(", ",);
   const modifierStr = result.modifier > 0
     ? ` + ${result.modifier}`
     : (result.modifier < 0
-      ? ` - ${Math.abs(result.modifier)}`
+      ? ` - ${Math.abs(result.modifier,)}`
       : "");
   const diceDesc = `${result.count}d${result.sides}${modifierStr}`;
 
@@ -149,26 +149,26 @@ export function formatDiceResult(result: DiceResult): string {
  * @param args - Command arguments (e.g., ["2d6+3"])
  * @returns Formatted response text
  */
-export function handleRollCommand(args: string[]): string {
+export function handleRollCommand(args: string[],): string {
   const notation = args[0];
   if (!notation) {
     return "Usage: `/roll NdS±M`\nExamples: `/roll 2d6+3`, `/roll d20`, `/roll 4d6-2`";
   }
 
-  const result = rollDice(notation);
+  const result = rollDice(notation,);
   if (!result) {
     return `Invalid dice notation: \`${notation}\`\nExpected format: \`NdS±M\` (e.g., \`2d6+3\`, \`d20\`)`;
   }
 
-  return formatDiceResult(result);
+  return formatDiceResult(result,);
 }
 
-registerCommand("roll", (args) => ({
-  systemMessage: handleRollCommand(args),
+registerCommand("roll", (args,) => ({
+  systemMessage: handleRollCommand(args,),
   handled: true,
-}));
+}),);
 
-registerCommand("dice", (args) => ({
-  systemMessage: handleRollCommand(args),
+registerCommand("dice", (args,) => ({
+  systemMessage: handleRollCommand(args,),
   handled: true,
-}));
+}),);

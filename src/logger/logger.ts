@@ -4,17 +4,17 @@
  * Flow per log() call:
  *   level filter → timestamp → censor → limits → enqueue
  */
-
+import type { LogEntry, Logger, LoggerBindings, LogOptions, Transport, } from "./types";
+import type { LogLevel, } from "./types";
+import type { LoggerConfig, SizeLimits, } from "./types";
+import { AsyncLogQueue, } from "./queue";
+import { ConsoleTransport, } from "./transports/console";
+import { LogLevelNumeric, } from "./types";
+import { applyLimits, } from "./limits";
+import { censorMeta, fieldNamesToRules, } from "./censors";
 import { formatTime, unixSec } from "../utils/date";
-import { censorMeta, fieldNamesToRules } from "./censors";
-import { levelFromConfig, shouldEmit } from "./levels";
-import { applyLimits } from "./limits";
-import { AsyncLogQueue } from "./queue";
-import { ConsoleTransport } from "./transports/console";
-import type { LogEntry, Logger, LoggerBindings, LogOptions, Transport } from "./types";
-import type { LogLevel } from "./types";
-import { LogLevelNumeric } from "./types";
-import type { LoggerConfig, SizeLimits } from "./types";
+import { formatTime, unixSec, } from "../utils/date";
+import { levelFromConfig, shouldEmit, } from "./levels";
 
 export class LoggerImpl implements Logger {
   private transports: Transport[];
@@ -26,10 +26,10 @@ export class LoggerImpl implements Logger {
   private readonly censorFields: string[];
   private readonly limits: Partial<SizeLimits>;
 
-  constructor(config?: Partial<LoggerConfig>, bindings?: LoggerBindings) {
+  constructor(config?: Partial<LoggerConfig>, bindings?: LoggerBindings,) {
     this.bindings = bindings ?? {};
     this.levelString = config?.level ?? "debug";
-    this.threshold = levelFromConfig(this.levelString);
+    this.threshold = levelFromConfig(this.levelString,);
     this.censorEnabled = config?.censorEnabled ?? true;
     this.censorFields = config?.censorFields ?? [];
 
@@ -44,19 +44,19 @@ export class LoggerImpl implements Logger {
         maxMetaDepth?: number;
         maxStackBytes?: number;
       };
-      if (c.maxMessageBytes != null) limitsFromFlat.maxMessageBytes = c.maxMessageBytes;
-      if (c.maxMetaBytes != null) limitsFromFlat.maxMetaBytes = c.maxMetaBytes;
-      if (c.maxMetaDepth != null) limitsFromFlat.maxMetaDepth = c.maxMetaDepth;
-      if (c.maxStackBytes != null) limitsFromFlat.maxStackBytes = c.maxStackBytes;
+      if (c.maxMessageBytes != null) { limitsFromFlat.maxMessageBytes = c.maxMessageBytes; }
+      if (c.maxMetaBytes != null) { limitsFromFlat.maxMetaBytes = c.maxMetaBytes; }
+      if (c.maxMetaDepth != null) { limitsFromFlat.maxMetaDepth = c.maxMetaDepth; }
+      if (c.maxStackBytes != null) { limitsFromFlat.maxStackBytes = c.maxStackBytes; }
     }
-    this.limits = { ...limitsFromNested, ...limitsFromFlat };
+    this.limits = { ...limitsFromNested, ...limitsFromFlat, };
 
-    this.transports = [new ConsoleTransport()];
+    this.transports = [new ConsoleTransport(),];
     // Future: JSONLTransport, DBTransport added here when config provided
 
     this.queue = new AsyncLogQueue(this.transports, {
       queueMaxSize: config?.queueMaxSize ?? 10_000,
-    });
+    },);
     this.queue.start();
   }
 
@@ -68,7 +68,7 @@ export class LoggerImpl implements Logger {
     options?: LogOptions,
   ): void {
     const numericLevel = LogLevelNumeric[level];
-    if (!shouldEmit(numericLevel, this.threshold)) return;
+    if (!shouldEmit(numericLevel, this.threshold,)) { return; }
 
     // Build entry
     const entry: LogEntry = {
@@ -85,36 +85,36 @@ export class LoggerImpl implements Logger {
     }
 
     // Attach meta and censor
-    if (meta && Object.keys(meta).length > 0) {
+    if (meta && Object.keys(meta,).length > 0) {
       entry.meta = options?.skipCensor
         ? meta
-        : censorMeta({ meta, extraRules: fieldNamesToRules(this.censorFields) });
+        : censorMeta({ meta, extraRules: fieldNamesToRules(this.censorFields,), },);
     }
 
     // Apply size limits
-    const limited = applyLimits(entry, this.limits);
+    const limited = applyLimits(entry, this.limits,);
 
     // Enqueue for async dispatch
-    this.queue.enqueue(limited);
+    this.queue.enqueue(limited,);
   }
 
-  debug(message: string | Record<string, unknown>, meta?: Record<string, unknown>): void {
-    this.log("debug", message, undefined, meta);
+  debug(message: string | Record<string, unknown>, meta?: Record<string, unknown>,): void {
+    this.log("debug", message, undefined, meta,);
   }
 
-  info(message: string | Record<string, unknown>, meta?: Record<string, unknown>): void {
-    this.log("info", message, undefined, meta);
+  info(message: string | Record<string, unknown>, meta?: Record<string, unknown>,): void {
+    this.log("info", message, undefined, meta,);
   }
 
-  warn(message: string | Record<string, unknown>, meta?: Record<string, unknown>): void {
-    this.log("warn", message, undefined, meta);
+  warn(message: string | Record<string, unknown>, meta?: Record<string, unknown>,): void {
+    this.log("warn", message, undefined, meta,);
   }
 
-  error(message: string | Record<string, unknown>, error?: Error, meta?: Record<string, unknown>): void {
-    this.log("error", message, error, meta);
+  error(message: string | Record<string, unknown>, error?: Error, meta?: Record<string, unknown>,): void {
+    this.log("error", message, error, meta,);
   }
 
-  child(bindings: LoggerBindings): Logger {
+  child(bindings: LoggerBindings,): Logger {
     return new LoggerImpl(
       {
         level: this.levelString,
@@ -122,20 +122,20 @@ export class LoggerImpl implements Logger {
         censorFields: this.censorFields,
         limits: this.limits,
       },
-      { ...this.bindings, ...bindings },
+      { ...this.bindings, ...bindings, },
     );
   }
 
-  addTransport(transport: Transport): void {
-    this.transports.push(transport);
+  addTransport(transport: Transport,): void {
+    this.transports.push(transport,);
   }
 
-  setBindings(partial: LoggerBindings): void {
-    this.bindings = { ...this.bindings, ...partial };
+  setBindings(partial: LoggerBindings,): void {
+    this.bindings = { ...this.bindings, ...partial, };
   }
 
   async flush(): Promise<void> {
     await this.queue.flush();
-    await Promise.all(this.transports.map((t) => t.flush()));
+    await Promise.all(this.transports.map((t,) => t.flush()),);
   }
 }

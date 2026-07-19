@@ -33,7 +33,7 @@ function readUint32LE(buf: Uint8Array, offset: number,): number {
 
 function startsWith(buf: Uint8Array, prefix: Uint8Array,): boolean {
   if (buf.length < prefix.length) { return false; }
-  for (const [i, byte] of prefix.entries()) { if (buf[i] !== byte) { return false; } }
+  for (const [i, byte,] of prefix.entries()) { if (buf[i] !== byte) { return false; } }
   return true;
 }
 

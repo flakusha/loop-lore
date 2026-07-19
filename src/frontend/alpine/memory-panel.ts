@@ -5,7 +5,7 @@
  * No backend wiring — uses mock data for UI development.
  */
 
-import type { ChatState, MemoryEntry } from "./types";
+import type { ChatState, MemoryEntry, } from "./types";
 
 export const memoryPanel: Partial<ChatState> & ThisType<ChatState> = {
   memoryPanel: {
@@ -32,7 +32,7 @@ export const memoryPanel: Partial<ChatState> & ThisType<ChatState> = {
         category: "lore",
         confidence: 0.9,
         importance: 5,
-        keywords: ["lighthouse", "marsh", "lights"],
+        keywords: ["lighthouse", "marsh", "lights",],
         createdAt: new Date().toISOString(),
         tokenCount: 15,
       },
@@ -46,7 +46,7 @@ export const memoryPanel: Partial<ChatState> & ThisType<ChatState> = {
         category: "preference",
         confidence: 0.8,
         importance: 3,
-        keywords: ["user", "preference", "concise"],
+        keywords: ["user", "preference", "concise",],
         createdAt: new Date().toISOString(),
         tokenCount: 10,
       },
@@ -60,7 +60,7 @@ export const memoryPanel: Partial<ChatState> & ThisType<ChatState> = {
         category: "history",
         confidence: 1,
         importance: 8,
-        keywords: ["Eldoria", "kingdom", "peace"],
+        keywords: ["Eldoria", "kingdom", "peace",],
         createdAt: new Date().toISOString(),
         tokenCount: 12,
       },
@@ -72,7 +72,7 @@ export const memoryPanel: Partial<ChatState> & ThisType<ChatState> = {
       ...this.memoryPanel.assistantMemories,
       ...this.memoryPanel.worldMemories,
     ];
-    this.memoryPanel.tokensUsed = allMemories.reduce((sum, m) => sum + (m.tokenCount || 0), 0);
+    this.memoryPanel.tokensUsed = allMemories.reduce((sum, m,) => sum + (m.tokenCount || 0), 0,);
   },
 
   getFilteredMemories(): MemoryEntry[] {
@@ -97,13 +97,13 @@ export const memoryPanel: Partial<ChatState> & ThisType<ChatState> = {
       }
     }
 
-    if (!query) return memories;
+    if (!query) { return memories; }
 
     return memories.filter(
-      (m) =>
-        m.content.toLowerCase().includes(query)
-        || m.keywords.some((k) => k.toLowerCase().includes(query))
-        || m.category?.toLowerCase().includes(query),
+      (m,) =>
+        m.content.toLowerCase().includes(query,) ||
+        m.keywords.some((k,) => k.toLowerCase().includes(query,)) ||
+        m.category?.toLowerCase().includes(query,),
     );
   },
 
@@ -129,7 +129,7 @@ export const memoryPanel: Partial<ChatState> & ThisType<ChatState> = {
   },
 
   async createMemory() {
-    if (!this.memoryPanel.newMemoryContent.trim()) return;
+    if (!this.memoryPanel.newMemoryContent.trim()) { return; }
 
     const newMemory: MemoryEntry = {
       id: `mem_${Date.now()}`,
@@ -140,10 +140,10 @@ export const memoryPanel: Partial<ChatState> & ThisType<ChatState> = {
       importance: 5,
       keywords: [],
       createdAt: new Date().toISOString(),
-      tokenCount: Math.ceil(this.memoryPanel.newMemoryContent.length / 4),
+      tokenCount: Math.ceil(this.memoryPanel.newMemoryContent.length / 4,),
     };
 
-    this.getCurrentMemoryList().unshift(newMemory);
+    this.getCurrentMemoryList().unshift(newMemory,);
     this.memoryPanel.newMemoryContent = "";
     this.memoryPanel.showCreateForm = false;
 
@@ -153,27 +153,27 @@ export const memoryPanel: Partial<ChatState> & ThisType<ChatState> = {
       ...this.memoryPanel.assistantMemories,
       ...this.memoryPanel.worldMemories,
     ];
-    this.memoryPanel.tokensUsed = allMemories.reduce((sum, m) => sum + (m.tokenCount || 0), 0);
+    this.memoryPanel.tokensUsed = allMemories.reduce((sum, m,) => sum + (m.tokenCount || 0), 0,);
   },
 
-  async deleteMemory(memoryId: string) {
+  async deleteMemory(memoryId: string,) {
     const memories = this.getCurrentMemoryList();
-    const idx = memories.findIndex((m) => m.id === memoryId);
+    const idx = memories.findIndex((m,) => m.id === memoryId);
     if (idx !== -1) {
-      memories.splice(idx, 1);
+      memories.splice(idx, 1,);
       // Update token count inline
       const allMemories = [
         ...this.memoryPanel.characterMemories,
         ...this.memoryPanel.assistantMemories,
         ...this.memoryPanel.worldMemories,
       ];
-      this.memoryPanel.tokensUsed = allMemories.reduce((sum, m) => sum + (m.tokenCount || 0), 0);
+      this.memoryPanel.tokensUsed = allMemories.reduce((sum, m,) => sum + (m.tokenCount || 0), 0,);
     }
   },
 
-  async toggleMemoryPin(memoryId: string) {
+  async toggleMemoryPin(memoryId: string,) {
     const memories = this.getCurrentMemoryList();
-    const mem = memories.find((m) => m.id === memoryId);
+    const mem = memories.find((m,) => m.id === memoryId);
     if (mem) {
       mem.pinned = !mem.pinned;
     }
@@ -185,6 +185,6 @@ export const memoryPanel: Partial<ChatState> & ThisType<ChatState> = {
       ...this.memoryPanel.assistantMemories,
       ...this.memoryPanel.worldMemories,
     ];
-    this.memoryPanel.tokensUsed = allMemories.reduce((sum, m) => sum + (m.tokenCount || 0), 0);
+    this.memoryPanel.tokensUsed = allMemories.reduce((sum, m,) => sum + (m.tokenCount || 0), 0,);
   },
 };

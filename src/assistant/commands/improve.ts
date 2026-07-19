@@ -2,10 +2,10 @@
 //
 // /improve — rewrite user text for better quality.
 
-import { type CommandResult, registerCommand } from "./registry";
+import { type CommandResult, registerCommand, } from "./registry";
 
-registerCommand("improve", (args): CommandResult => {
-  const text = args.join(" ").trim();
+registerCommand("improve", (args,): CommandResult => {
+  const text = args.join(" ",).trim();
 
   if (!text) {
     return {
@@ -15,13 +15,13 @@ registerCommand("improve", (args): CommandResult => {
     };
   }
 
-  const improved = improveText(text);
+  const improved = improveText(text,);
 
   return {
     systemMessage: `**Improved:**\n\n${improved}`,
     handled: true,
   };
-});
+},);
 
 /**
  * Basic text improvement without LLM.
@@ -31,24 +31,24 @@ registerCommand("improve", (args): CommandResult => {
  * the generation pipeline with a "rewrite" prompt. For now, we do
  * basic text cleanup.
  */
-function improveText(text: string): string {
+function improveText(text: string,): string {
   let result = text.trim();
 
   // Capitalize first letter
   if (result.length > 0) {
-    result = result.charAt(0).toUpperCase() + result.slice(1);
+    result = result.charAt(0,).toUpperCase() + result.slice(1,);
   }
 
   // Ensure ends with punctuation
-  if (result.length > 0 && !/[.!?]$/.test(result)) {
+  if (result.length > 0 && !/[.!?]$/.test(result,)) {
     result += ".";
   }
 
   // Fix double spaces
-  result = result.replaceAll(/ {2,}/g, " ");
+  result = result.replaceAll(/ {2,}/g, " ",);
 
   // Fix space before punctuation
-  result = result.replaceAll(/ ([.,!?;:])/g, "$1");
+  result = result.replaceAll(/ ([.,!?;:])/g, "$1",);
 
   return result;
 }

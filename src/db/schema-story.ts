@@ -4,7 +4,6 @@
  * Worlds, locations, story turns, quests, NPC/Location states,
  * items, and world-placed items.
  */
-import type { Generated } from "kysely";
 import type {
   DifficultyReroll,
   DifficultyState,
@@ -22,6 +21,13 @@ import type {
   TurnType,
 } from "./enums";
 
+// ── Worlds ──────────────────────────────────────────────────
+
+/**
+ * DB Schema — Story Domain Tables
+ *
+ * items, and world-placed items.
+ */
 // ── Worlds ──────────────────────────────────────────────────
 export interface Worlds {
   id: Generated<string>;

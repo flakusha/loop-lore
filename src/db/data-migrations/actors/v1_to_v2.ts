@@ -1,4 +1,4 @@
-import type { DataMigration } from "../types";
+import type { DataMigration, } from "../types";
 
 /**
  * Actors v1 → v2: Current format — no transform needed.
@@ -14,7 +14,7 @@ export const migration: DataMigration = {
   toVersion: 2,
   description: "Actors v1 → v2: current format baseline (no transform)",
 
-  async up(db) {
-    await db.updateTable("actors").set({ data_version: 2 }).where("data_version", "=", 1).execute();
+  async up(db,) {
+    await db.updateTable("actors",).set({ data_version: 2, },).where("data_version", "=", 1,).execute();
   },
 };

@@ -12,33 +12,33 @@ let isTracking = false;
 
 document.addEventListener(
   "touchstart",
-  (e: TouchEvent) => {
+  (e: TouchEvent,) => {
     const touch = e.touches[0];
-    if (!touch) return;
+    if (!touch) { return; }
     touchStartX = touch.clientX;
     touchStartY = touch.clientY;
     isTracking = true;
   },
-  { passive: true },
+  { passive: true, },
 );
 
 document.addEventListener(
   "touchmove",
-  (e: TouchEvent) => {
-    if (!isTracking) return;
+  (e: TouchEvent,) => {
+    if (!isTracking) { return; }
     const touch = e.touches[0];
-    if (!touch) return;
+    if (!touch) { return; }
     const dx = touch.clientX - touchStartX;
     const dy = touch.clientY - touchStartY;
 
-    if (Math.abs(dx) < Math.abs(dy)) {
+    if (Math.abs(dx,) < Math.abs(dy,)) {
       isTracking = false;
       return;
     }
 
-    const sidebar = document.querySelector<HTMLElement>("#layout-sidebar");
-    if (!sidebar) return;
-    const isOpen = sidebar.classList.contains("open");
+    const sidebar = document.querySelector<HTMLElement>("#layout-sidebar",);
+    if (!sidebar) { return; }
+    const isOpen = sidebar.classList.contains("open",);
 
     if (dx > 60 && touchStartX < 40 && !isOpen) {
       globalThis.toggleSidebar();
@@ -50,7 +50,7 @@ document.addEventListener(
       isTracking = false;
     }
   },
-  { passive: true },
+  { passive: true, },
 );
 
 document.addEventListener(
@@ -58,5 +58,5 @@ document.addEventListener(
   () => {
     isTracking = false;
   },
-  { passive: true },
+  { passive: true, },
 );

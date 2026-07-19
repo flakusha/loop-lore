@@ -3,10 +3,27 @@
  * Separate bundle loaded only when chat page is active.
  * Exposes on globalThis so chat-utils.ts can use without direct imports.
  */
-import DOMPurify from "dompurify";
-import { marked } from "marked";
+import DOMPurify from "dompurify"
+;
 
-marked.use({ breaks: true, gfm: true });
+import 
+{
+ marked, 
+}
+ from "marked"
+;
 
-globalThis.__marked = marked;
-globalThis.__DOMPurify = DOMPurify;
+
+marked.use(
+{
+ breaks: true, gfm: true, 
+}
+,)
+;
+
+
+globalThis.__marked = marked
+;
+
+globalThis.__DOMPurify = DOMPurify
+;
