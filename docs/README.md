@@ -19,7 +19,7 @@ Reimplementation of SillyTavern with enhanced features:
 docs/
 ├── spec/                    Core technical specs (25 files)
 │   └── integrations/        External tool integration specs
-├── spec-planned/            Planned features, roadmaps, ideas
+├── .plan/            Planned features, roadmaps, ideas
 │   ├── features/            Feature specs (28 files)
 │   ├── roadmaps/            Implementation roadmaps (3 files)
 │   └── ideas/               Creative/UX ideas (9 files)
@@ -102,66 +102,66 @@ Authoritative technical specs for implemented systems. These are the primary ref
 
 ---
 
-## Planned Features & Roadmaps (`spec-planned/`)
+## Planned Features & Roadmaps (`.plan/`)
 
 Future features, exploration docs, and implementation roadmaps. Not yet implemented.
 
-### Roadmaps (`spec-planned/roadmaps/`)
+### Roadmaps (`.plan/roadmaps/`)
 
 | Document                                                                                                       | Topics                              |
 | -------------------------------------------------------------------------------------------------------------- | ----------------------------------- |
-| [`spec-planned/roadmaps/rpg-implementation-roadmap.md`](./spec-planned/roadmaps/rpg-implementation-roadmap.md) | RPG mechanics implementation phases |
-| [`spec-planned/roadmaps/implementation-approaches.md`](./spec-planned/roadmaps/implementation-approaches.md)   | Technical approach comparison       |
-| [`spec-planned/roadmaps/implementation-samples.md`](./spec-planned/roadmaps/implementation-samples.md)         | Code samples and patterns           |
+| [`.plan/roadmaps/rpg-implementation-roadmap.md`](./.plan/roadmaps/rpg-implementation-roadmap.md) | RPG mechanics implementation phases |
+| [`.plan/roadmaps/implementation-approaches.md`](./.plan/roadmaps/implementation-approaches.md)   | Technical approach comparison       |
+| [`.plan/roadmaps/implementation-samples.md`](./.plan/roadmaps/implementation-samples.md)         | Code samples and patterns           |
 
-### Features (`spec-planned/features/`)
+### Features (`.plan/features/`)
 
 | Document                                                                                                       | Topics                                         |
 | -------------------------------------------------------------------------------------------------------------- | ---------------------------------------------- |
-| [`spec-planned/features/creative-studio.md`](./spec-planned/features/creative-studio.md)                       | Creative tools and studio features             |
-| [`spec-planned/features/cross-device-sync.md`](./spec-planned/features/cross-device-sync.md)                   | Cross-device state synchronization             |
-| [`spec-planned/features/auto-translation.md`](./spec-planned/features/auto-translation.md)                     | Auto-translation system                        |
-| [`spec-planned/features/notifications-expansion.md`](./spec-planned/features/notifications-expansion.md)       | Extended notification system with noise levels |
-| [`spec-planned/features/filtering-pagination.md`](./spec-planned/features/filtering-pagination.md)             | Combined filter and pagination improvements    |
-| [`spec-planned/features/procedural-assets.md`](./spec-planned/features/procedural-assets.md)                   | Procedurally generated assets                  |
-| [`spec-planned/features/plot-autopilot.md`](./spec-planned/features/plot-autopilot.md)                         | Automated plot progression                     |
-| [`spec-planned/features/shared-worlds.md`](./spec-planned/features/shared-worlds.md)                           | Multi-user shared worlds                       |
-| [`spec-planned/features/memory-visualization.md`](./spec-planned/features/memory-visualization.md)             | Memory visualization UI                        |
-| [`spec-planned/features/mobile-native-ux.md`](./spec-planned/features/mobile-native-ux.md)                     | Mobile/native UX patterns                      |
-| [`spec-planned/features/multimodal-input.md`](./spec-planned/features/multimodal-input.md)                     | Multimodal input (voice, image, etc.)          |
-| [`spec-planned/features/device-tier-gating.md`](./spec-planned/features/device-tier-gating.md)                 | Feature gating by device capability            |
-| [`spec-planned/features/lore-consistency-checker.md`](./spec-planned/features/lore-consistency-checker.md)     | Lore/world consistency validation              |
-| [`spec-planned/features/offline-world-events.md`](./spec-planned/features/offline-world-events.md)             | Offline world event system                     |
-| [`spec-planned/features/personas.md`](./spec-planned/features/personas.md)                                     | Persona features                               |
-| [`spec-planned/features/regex-output-transforms.md`](./spec-planned/features/regex-output-transforms.md)       | Regex-based output transforms                  |
-| [`spec-planned/features/prompt-injection.md`](./spec-planned/features/prompt-injection.md)                     | Prompt injection defense                       |
-| [`spec-planned/features/provider-system.md`](./spec-planned/features/provider-system.md)                       | LLM provider abstraction                       |
-| [`spec-planned/features/testing.md`](./spec-planned/features/testing.md)                                       | Testing strategy and goals                     |
-| [`spec-planned/features/transport-unified.md`](./spec-planned/features/transport-unified.md)                   | HTTP/WS/WebTransport abstraction               |
-| [`spec-planned/features/frontend-extensions.md`](./spec-planned/features/frontend-extensions.md)               | Frontend extension points                      |
-| [`spec-planned/features/use-case-agentic-workspace.md`](./spec-planned/features/use-case-agentic-workspace.md) | Agentic workspace use case                     |
-| [`spec-planned/features/assets-attribution.md`](./spec-planned/features/assets-attribution.md)                 | License/attribution for assets                 |
-| [`spec-planned/features/admin-statistics.md`](./spec-planned/features/admin-statistics.md)                     | Admin statistics dashboard                     |
-| [`spec-planned/features/ci-maintenance.md`](./spec-planned/features/ci-maintenance.md)                         | CI maintenance automation                      |
-| [`spec-planned/features/e2e-benchmarks.md`](./spec-planned/features/e2e-benchmarks.md)                         | E2E performance benchmarks                     |
-| [`spec-planned/features/edge-cases.md`](./spec-planned/features/edge-cases.md)                                 | Edge case handling                             |
-| [`spec-planned/features/i18n-implementation.md`](./spec-planned/features/i18n-implementation.md)               | i18n implementation details                    |
+| [`.plan/features/creative-studio.md`](./.plan/features/creative-studio.md)                       | Creative tools and studio features             |
+| [`.plan/features/cross-device-sync.md`](./.plan/features/cross-device-sync.md)                   | Cross-device state synchronization             |
+| [`.plan/features/auto-translation.md`](./.plan/features/auto-translation.md)                     | Auto-translation system                        |
+| [`.plan/features/notifications-expansion.md`](./.plan/features/notifications-expansion.md)       | Extended notification system with noise levels |
+| [`.plan/features/filtering-pagination.md`](./.plan/features/filtering-pagination.md)             | Combined filter and pagination improvements    |
+| [`.plan/features/procedural-assets.md`](./.plan/features/procedural-assets.md)                   | Procedurally generated assets                  |
+| [`.plan/features/plot-autopilot.md`](./.plan/features/plot-autopilot.md)                         | Automated plot progression                     |
+| [`.plan/features/shared-worlds.md`](./.plan/features/shared-worlds.md)                           | Multi-user shared worlds                       |
+| [`.plan/features/memory-visualization.md`](./.plan/features/memory-visualization.md)             | Memory visualization UI                        |
+| [`.plan/features/mobile-native-ux.md`](./.plan/features/mobile-native-ux.md)                     | Mobile/native UX patterns                      |
+| [`.plan/features/multimodal-input.md`](./.plan/features/multimodal-input.md)                     | Multimodal input (voice, image, etc.)          |
+| [`.plan/features/device-tier-gating.md`](./.plan/features/device-tier-gating.md)                 | Feature gating by device capability            |
+| [`.plan/features/lore-consistency-checker.md`](./.plan/features/lore-consistency-checker.md)     | Lore/world consistency validation              |
+| [`.plan/features/offline-world-events.md`](./.plan/features/offline-world-events.md)             | Offline world event system                     |
+| [`.plan/features/personas.md`](./.plan/features/personas.md)                                     | Persona features                               |
+| [`.plan/features/regex-output-transforms.md`](./.plan/features/regex-output-transforms.md)       | Regex-based output transforms                  |
+| [`.plan/features/prompt-injection.md`](./.plan/features/prompt-injection.md)                     | Prompt injection defense                       |
+| [`.plan/features/provider-system.md`](./.plan/features/provider-system.md)                       | LLM provider abstraction                       |
+| [`.plan/features/testing.md`](./.plan/features/testing.md)                                       | Testing strategy and goals                     |
+| [`.plan/features/transport-unified.md`](./.plan/features/transport-unified.md)                   | HTTP/WS/WebTransport abstraction               |
+| [`.plan/features/frontend-extensions.md`](./.plan/features/frontend-extensions.md)               | Frontend extension points                      |
+| [`.plan/features/use-case-agentic-workspace.md`](./.plan/features/use-case-agentic-workspace.md) | Agentic workspace use case                     |
+| [`.plan/features/assets-attribution.md`](./.plan/features/assets-attribution.md)                 | License/attribution for assets                 |
+| [`.plan/features/admin-statistics.md`](./.plan/features/admin-statistics.md)                     | Admin statistics dashboard                     |
+| [`.plan/features/ci-maintenance.md`](./.plan/features/ci-maintenance.md)                         | CI maintenance automation                      |
+| [`.plan/features/e2e-benchmarks.md`](./.plan/features/e2e-benchmarks.md)                         | E2E performance benchmarks                     |
+| [`.plan/features/edge-cases.md`](./.plan/features/edge-cases.md)                                 | Edge case handling                             |
+| [`.plan/features/i18n-implementation.md`](./.plan/features/i18n-implementation.md)               | i18n implementation details                    |
 
-### Ideas (`spec-planned/ideas/`)
+### Ideas (`ideas/`)
 
 Creative and UX exploration docs, sourced from competitor analysis.
 
 | Document                                                                                         | Topics                                 |
 | ------------------------------------------------------------------------------------------------ | -------------------------------------- |
-| [`spec-planned/ideas/index.md`](./spec-planned/ideas/index.md)                                   | Master index: 34 ideas across 8 themes |
-| [`spec-planned/ideas/authoring-creation.md`](./spec-planned/ideas/authoring-creation.md)         | Authoring & creation tools             |
-| [`spec-planned/ideas/immersion-presentation.md`](./spec-planned/ideas/immersion-presentation.md) | Immersion & presentation               |
-| [`spec-planned/ideas/memory-continuity.md`](./spec-planned/ideas/memory-continuity.md)           | Memory & continuity systems            |
-| [`spec-planned/ideas/platform-reach.md`](./spec-planned/ideas/platform-reach.md)                 | Platform reach & accessibility         |
-| [`spec-planned/ideas/prompt-output-control.md`](./spec-planned/ideas/prompt-output-control.md)   | Prompt & output control                |
-| [`spec-planned/ideas/social-multiplayer.md`](./spec-planned/ideas/social-multiplayer.md)         | Social & multiplayer                   |
-| [`spec-planned/ideas/worlds-3d-navigation.md`](./spec-planned/ideas/worlds-3d-navigation.md)     | 3D world navigation                    |
-| [`spec-planned/ideas/analytics-meta.md`](./spec-planned/ideas/analytics-meta.md)                 | Analytics & meta features              |
+| [`ideas/index.md`](./ideas/index.md)                                   | Master index: 34 ideas across 8 themes |
+| [`ideas/authoring-creation.md`](./ideas/authoring-creation.md)         | Authoring & creation tools             |
+| [`ideas/immersion-presentation.md`](./ideas/immersion-presentation.md) | Immersion & presentation               |
+| [`ideas/memory-continuity.md`](./ideas/memory-continuity.md)           | Memory & continuity systems            |
+| [`ideas/platform-reach.md`](./ideas/platform-reach.md)                 | Platform reach & accessibility         |
+| [`ideas/prompt-output-control.md`](./ideas/prompt-output-control.md)   | Prompt & output control                |
+| [`ideas/social-multiplayer.md`](./ideas/social-multiplayer.md)         | Social & multiplayer                   |
+| [`ideas/worlds-3d-navigation.md`](./ideas/worlds-3d-navigation.md)     | 3D world navigation                    |
+| [`ideas/analytics-meta.md`](./ideas/analytics-meta.md)                 | Analytics & meta features              |
 
 ---
 
@@ -234,8 +234,6 @@ Project planning, reviews, analysis, and research.
 | Document                                     | Topics                       |
 | -------------------------------------------- | ---------------------------- |
 | [`meta/plan.md`](./meta/plan.md)             | MVP implementation checklist |
-| [`meta/backlog.md`](./meta/backlog.md)       | Future feature queue         |
-| [`meta/open-items.md`](./meta/open-items.md) | Technical debt & bugs        |
 | [`meta/roadmap.md`](./meta/roadmap.md)       | Long-term feature roadmap    |
 
 ### Reviews (`meta/reviews/`)

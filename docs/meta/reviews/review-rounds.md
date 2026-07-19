@@ -1,6 +1,6 @@
 # Code Review Rounds — Status Summary
 
-3 rounds (2026-07-05 through 2026-07-06). 139 findings total. Verification pass on 2026-07-10 confirmed majority resolved. Open items migrated to `open-items.md` and `plan.md`.
+3 rounds (2026-07-05 through 2026-07-06). 139 findings total. Verification pass on 2026-07-10 confirmed majority resolved. Open items migrated to git issue tracker and `plan.md`.
 
 ## Round 1 — Full Code Review (92 findings, 85 files)
 
@@ -47,8 +47,8 @@ All 🔴 (4) and 🟡 (18) items addressed. 2 nits fixed. Critical: missing `x-d
 | TEST.11 | Low      | Route handler isolation missing        |
 | TEST.12 | Low      | RPG mechanics no tests                 |
 
-Tracked in `open-items.md` (TEST.1–TEST.12). Full E2E analysis in `../../spec/testing.md`.
+Tracked in git issue tracker (TEST.1–TEST.12). Full E2E analysis in `../../spec/testing.md`.
 
 ## Open Items
 
-See `open-items.md` for remaining: TEST.1–TEST.12, ENUM.1, MIGRATION.1, MIGRATION.2, CAST.1–CAST.6, ASSISTANT.1–ASSISTANT.3, TUI.1–TUI.3, AGE.1, BUILD.1.
+See git issue tracker for remaining: TEST.1–TEST.12, ENUM.1, MIGRATION.1, MIGRATION.2, CAST.1–CAST.6, ASSISTANT.1–ASSISTANT.3, TUI.1–TUI.3, AGE.1, BUILD.1.
