@@ -77,7 +77,7 @@ describe("Export E2E", () => {
       // ZIP magic bytes "PK\x03\x04"
       const magic = new Uint8Array(buffer,).slice(0, 4,);
       expect(magic[0],).toBe(0x50,);
-      expect(magic[1],).toBe(0x4b,);
+      expect(magic[1],).toBe(0x4B,);
     });
   });
 
