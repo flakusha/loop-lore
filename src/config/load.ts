@@ -2,7 +2,7 @@
 
 import { load as parseYaml } from "js-yaml";
 import { parse as parseToml } from "smol-toml";
-import { readFileSync, existsSync } from "node:fs";
+import { readFileSync, existsSync, statSync } from "node:fs";
 import path from "node:path";
 import { type Config } from "./schema";
 import type { ProviderInstanceConfig } from "./schema";
@@ -83,9 +83,56 @@ function applyEnvironmentOverrides(config: Config, environmentMap: Record<string
   return result as unknown as Config;
 }
 
+/**
+ * Detect if cwd is a git worktree and return the main repo root.
+ *
+ * In a worktree, `.git` is a file containing:
+ *   gitdir: /path/to/main/.git/worktrees/<branch>
+ *
+ * Returns the main repo root (parent of `.git/`) or null if not in a worktree.
+ */
+function findMainRepoRoot(cwd: string): string | null {
+  const gitPath = path.join(cwd, ".git");
+  if (!existsSync(gitPath)) return null;
+
+  // .git is a directory → main repo, not a worktree
+  try {
+    if (statSync(gitPath).isDirectory()) return null;
+  } catch {
+    return null;
+  }
+
+  // .git is a file — we're in a worktree
+  const content = readFileSync(gitPath, "utf8").trim();
+  const match = /^gitdir:\s*(.+)$/.exec(content);
+  if (!match) return null;
+
+  const gitdir = match[1]!;
+  // gitdir points to <main>/.git/worktrees/<branch>
+  // Walk up: worktrees → .git → main root
+  const worktreesDir = path.dirname(gitdir); // <main>/.git/worktrees
+  const gitDir = path.dirname(worktreesDir); // <main>/.git
+  const mainRoot = path.dirname(gitDir); // <main>
+
+  // Verify .git is a directory there (actual main repo)
+  const mainGitPath = path.join(mainRoot, ".git");
+  if (existsSync(mainGitPath)) {
+    try {
+      if (statSync(mainGitPath).isDirectory()) return mainRoot;
+    } catch {
+      // fall through
+    }
+  }
+  return null;
+}
+
 function findConfigFile(cwd: string): { path: string; ext: string } | null {
-  // Search project root first, then a dedicated configs/ directory.
+  // Search project root, configs/ dir, and main repo root (for worktrees).
+  const mainRoot = findMainRepoRoot(cwd);
   const searchDirs = [cwd, path.join(cwd, "configs")];
+  if (mainRoot && mainRoot !== cwd) {
+    searchDirs.push(mainRoot, path.join(mainRoot, "configs"));
+  }
   for (const dir of searchDirs) {
     for (const name of CONFIG_FILES) {
       const fullPath = path.join(dir, name);
@@ -151,6 +198,7 @@ function applyProviderEnvVars(config: Config): void {
 
 function loadConfig(cwd?: string): Config {
   const directory = cwd ?? process.cwd();
+  const mainRoot = findMainRepoRoot(directory);
   let config: Config = structuredClone(new ConfigSchema().defaults);
 
   // 1. Load config file (config.yaml / config.yml / config.toml) — lowest priority
@@ -168,10 +216,12 @@ function loadConfig(cwd?: string): Config {
   }
 
   // 2. Load env.yaml if present — overrides config file values
-  const envYamlPath = firstExisting([
-    path.join(directory, "env.yaml"),
-    path.join(directory, "configs", "env.yaml"),
-  ]);
+  //    Also check main repo root when running in a worktree.
+  const envYamlCandidates = [path.join(directory, "env.yaml"), path.join(directory, "configs", "env.yaml")];
+  if (mainRoot && mainRoot !== directory) {
+    envYamlCandidates.push(path.join(mainRoot, "env.yaml"), path.join(mainRoot, "configs", "env.yaml"));
+  }
+  const envYamlPath = firstExisting(envYamlCandidates);
   if (envYamlPath) {
     try {
       const content = readFileSync(envYamlPath, "utf8");

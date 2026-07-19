@@ -82,6 +82,27 @@ ensure_tree_dir() {
     mkdir -p "$TREE_DIR"
 }
 
+# Create a relative symlink from worktree to main repo's ./configs/ directory.
+# Worktrees share code but not gitignored files — this gives them access to
+# shared config examples without copying. The config loader (src/config/load.ts)
+# also resolves configs from main repo at runtime via findMainRepoRoot().
+link_configs() {
+    local worktree_path="$1"
+    local configs_dir="$REPO_ROOT/configs"
+
+    # Only create if main repo has configs/ and worktree doesn't already have it
+    if [[ ! -d "$configs_dir" ]]; then
+        return 0
+    fi
+    if [[ -e "$worktree_path/configs" || -L "$worktree_path/configs" ]]; then
+        return 0
+    fi
+
+    # Relative symlink: tree/branch -> ../../configs
+    ln -s ../../configs "$worktree_path/configs"
+    echo -e "  ${CYAN}Linked configs/${NC} → ../../configs"
+}
+
 configure_signing() {
     local worktree_path="$1"
 
@@ -228,6 +249,7 @@ cmd_create() {
     echo -e "${CYAN}Creating worktree for branch: $branch${NC}"
     git -C "$REPO_ROOT" worktree add "$worktree_path" "$branch"
     configure_signing "$worktree_path"
+    link_configs "$worktree_path"
     echo -e "${GREEN}✓ Created: $worktree_path${NC}"
     echo -e "  cd $worktree_path"
 }
@@ -273,6 +295,7 @@ cmd_new() {
     echo -e "${CYAN}Creating new branch '$branch' from '$base'${NC}"
     git -C "$REPO_ROOT" worktree add -b "$branch" "$worktree_path" "$base"
     configure_signing "$worktree_path"
+    link_configs "$worktree_path"
     echo -e "${GREEN}✓ Created: $worktree_path${NC}"
     echo -e "  cd $worktree_path"
 }
@@ -407,6 +430,7 @@ cmd_prs() {
         # Fetch the PR branch
         echo -e "${CYAN}  Creating worktree for PR #$number: $title${NC}"
         if git -C "$REPO_ROOT" worktree add "$worktree_path" "origin/$branch" 2>/dev/null; then
+            link_configs "$worktree_path"
             echo -e "${GREEN}  ✓ Created: $worktree_path${NC}"
             ((created++))
         else
@@ -764,7 +788,7 @@ case "${1:-}" in
         ;;
     finalize|agent-merge)
         shift
-        cmd_finalize "${1:-}"
+        cmd_finalize "$@"
         ;;
     agent-commit)
         shift
