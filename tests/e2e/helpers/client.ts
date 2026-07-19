@@ -40,7 +40,7 @@ export function createClient(baseUrl: string,) {
     const res = await fetch(`${baseUrl}${path}`, {
       method,
       headers,
-      body: body instanceof FormData ? body : body === undefined ? undefined : JSON.stringify(body,),
+      body: body instanceof FormData ? body : (body === undefined ? undefined : JSON.stringify(body,)),
       redirect: "manual", // don't follow HX-Redirect
     },);
 
