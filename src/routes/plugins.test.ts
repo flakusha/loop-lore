@@ -1,14 +1,14 @@
 /**
  * Tests for routes/plugins.ts — Plugin Management Routes
  */
-import type { DB, } from "../db/schema";
-import type { Kysely, } from "kysely";
-import { Elysia, } from "elysia";
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
+import { Elysia, } from "elysia";
+import type { Kysely, } from "kysely";
+import type { DB, } from "../db/schema";
 import { createLogger, } from "../logger";
+import { registry, } from "../plugins/registry";
 import { createTestDb, } from "../test-utils/create-test-db";
 import { pluginRoutes, } from "./plugins";
-import { registry, } from "../plugins/registry";
 
 function createPluginApp(db: Kysely<DB>, userRole: string,): Elysia {
   return new Elysia({ name: "test-plugins", },)

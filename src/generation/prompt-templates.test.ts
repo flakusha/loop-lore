@@ -12,6 +12,7 @@ import {
   generatePrompt,
   resolveProfile,
   resolveTemplate,
+  TemplateContext,
 } from "./prompt-templates";
 import type { TemplateContext, } from "./prompt-templates";
 
@@ -26,6 +27,12 @@ import type { TemplateContext, } from "./prompt-templates";
  */
 /**
  * Tests for generation/prompt-templates.ts — image model profiles & templates
+ */
+
+
+/**
+ * Tests for generation/prompt-templates.ts — image model profiles & templates
+
  */
 
 
