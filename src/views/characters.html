@@ -14,6 +14,16 @@
       Import Card
     </button>
     <button
+      class="btn btn-secondary"
+      hx-get="/partials/characters/export-modal"
+      hx-target="#modal-container"
+      hx-swap="innerHTML"
+      hx-on::after-request="window.openModal('export-modal')"
+      data-testid="export-character"
+    >
+      Export All
+    </button>
+    <button
       class="btn btn-primary"
       hx-get="/partials/characters/create-modal"
       hx-target="#modal-container"
