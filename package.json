@@ -64,7 +64,8 @@
     "commit:lint": "bun run src/scripts/commit-check.ts --all",
     "commit:check": "bun run src/scripts/commit-check.ts --staged",
     "version:predict": "bun run src/scripts/version-bump.ts",
-    "version:bump": "bun run src/scripts/version-bump.ts --bump=minor"
+    "version:bump": "bun run src/scripts/version-bump.ts --bump=minor",
+    "ci": "bun run check:ci && bun run test:unit:parallel && E2E_SAFEGUARD=1 bun run test:e2e:browser && bun run build"
   },
   "dependencies": {
     "blessed": "^0.1.81",

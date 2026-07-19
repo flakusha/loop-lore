@@ -1,0 +1,102 @@
+name: Dev Release
+
+on:
+  pull_request:
+    types: [closed]
+    branches: [master]
+
+concurrency:
+  group: dev-release-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  BUN_VERSION: "1.2.x"
+
+jobs:
+  dev-release:
+    name: Dev Release
+    if: github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'master'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: ${{ env.BUN_VERSION }}
+
+      - name: Cache bun install
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.bun/install/cache
+            node_modules
+          key: ${{ runner.os }}-bun-${{ hashFiles('bun.lockb') }}
+          restore-keys: |
+            ${{ runner.os }}-bun-
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Check if dev-release label present
+        id: check_label
+        run: |
+          if echo "${{ github.event.pull_request.labels.*.name }}" | grep -q "dev-release"; then
+            echo "dev_release=true" >> $GITHUB_OUTPUT
+          else
+            echo "dev_release=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Run quality checks
+        run: bun run check:ci
+
+      - name: Run unit tests
+        run: bun run test:unit:parallel
+
+      - name: Run E2E tests
+        run: E2E_SAFEGUARD=1 bun run test:e2e:browser
+
+      - name: Build
+        run: bun run build
+
+      - name: Predict dev version
+        id: version
+        run: |
+          DEV_VERSION=$(bun run version:predict)
+          echo "dev_version=$DEV_VERSION" >> $GITHUB_OUTPUT
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: loop-lore-${{ steps.version.outputs.dev_version }}
+          path: |
+            dist/
+            src/public/
+          retention-days: 7
+
+      - name: Create GitHub Release (Pre-release)
+        if: steps.check_label.outputs.dev_release == 'true'
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: dev-${{ steps.version.outputs.dev_version }}
+          name: Dev Release ${{ steps.version.outputs.dev_version }}
+          body: |
+            ## Dev Release
+            Auto-generated from PR #${{ github.event.pull_request.number }} merge to master.
+
+            **Version:** ${{ steps.version.outputs.dev_version }}
+            **Commit:** ${{ github.event.pull_request.merge_commit_sha }}
+            **Branch:** ${{ github.event.pull_request.head.ref }}
+
+            This is a pre-release for testing purposes.
+          draft: false
+          prerelease: true
+          files: |
+            dist/**
+            src/public/**
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
