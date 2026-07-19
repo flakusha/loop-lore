@@ -6,8 +6,8 @@
  * Each top-level describe creates its own page for isolation.
  */
 
-import { describe, test, expect, beforeAll, afterAll } from "bun:test";
-import { createBrowserTest, type BrowserTestContext } from "../../helpers/browser-server";
+import { afterAll, beforeAll, describe, expect, test } from "bun:test";
+import { type BrowserTestContext, createBrowserTest } from "../../helpers/browser-server";
 
 describe("Smoke E2E", () => {
   let ctx: BrowserTestContext;
@@ -28,218 +28,218 @@ describe("Smoke E2E", () => {
       // navigation errors are handled by subsequent element waits
     }
     // Wait for app-root (layout wraps all views)
-    await page.locator("[data-testid='app-root']").waitFor({ state: 'attached', timeout: 8000 });
+    await page.locator("[data-testid='app-root']").waitFor({ state: "attached", timeout: 8000 });
   }
 
-// ── Chat view ─────────────────────────────────────────────────
+  // ── Chat view ─────────────────────────────────────────────────
 
-describe("Chat view", () => {
-  test("loads chat page with message list container", async () => {
-    const page = await ctx.browser.newPage();
-    await gotoView(page, "/views/chat");
-    await page.waitForSelector("[data-testid='message-list']", { timeout: 5000 });
-    expect(await page.isVisible("[data-testid='message-list']")).toBe(true);
-    await page.close();
+  describe("Chat view", () => {
+    test("loads chat page with message list container", async () => {
+      const page = await ctx.browser.newPage();
+      await gotoView(page, "/views/chat");
+      await page.waitForSelector("[data-testid='message-list']", { timeout: 5000 });
+      expect(await page.isVisible("[data-testid='message-list']")).toBe(true);
+      await page.close();
+    });
+
+    test("has message input and send button", async () => {
+      const page = await ctx.browser.newPage();
+      await gotoView(page, "/views/chat");
+      await page.waitForSelector("[data-testid='message-input']", { state: "attached", timeout: 5000 });
+      await page.waitForSelector("[data-testid='send-button']", { state: "attached", timeout: 5000 });
+      await page.close();
+    });
+
+    test("has sidebar toggle buttons", async () => {
+      const page = await ctx.browser.newPage();
+      await gotoView(page, "/views/chat");
+      await page.locator("[data-testid='toggle-chat-list']").waitFor({ state: "attached", timeout: 5000 });
+      await page.locator("[data-testid='toggle-gallery']").waitFor({ state: "attached", timeout: 5000 });
+      await page.locator("[data-testid='toggle-character-info']").waitFor({ state: "attached", timeout: 5000 });
+      await page.close();
+    });
   });
 
-  test("has message input and send button", async () => {
-    const page = await ctx.browser.newPage();
-    await gotoView(page, "/views/chat");
-    await page.waitForSelector("[data-testid='message-input']", { state: 'attached', timeout: 5000 });
-    await page.waitForSelector("[data-testid='send-button']", { state: 'attached', timeout: 5000 });
-    await page.close();
+  // ── Characters view ───────────────────────────────────────────
+
+  describe("Characters view", () => {
+    test("loads characters page", async () => {
+      const page = await ctx.browser.newPage();
+      await gotoView(page, "/views/characters");
+      // Should show loading, empty, or grid state
+      await page.waitForSelector(
+        "[data-testid='characters-loading'], [data-testid='characters-empty'], [data-testid='character-grid']",
+        { timeout: 5000 },
+      );
+      await page.close();
+    });
+
+    test("create character button exists", async () => {
+      const page = await ctx.browser.newPage();
+      await gotoView(page, "/views/characters");
+      await page.waitForSelector("[data-testid='create-character']", { timeout: 5000 });
+      expect(await page.isVisible("[data-testid='create-character']")).toBe(true);
+      await page.close();
+    });
+
+    test("import character button exists", async () => {
+      const page = await ctx.browser.newPage();
+      await gotoView(page, "/views/characters");
+      await page.waitForSelector("[data-testid='import-character']", { timeout: 5000 });
+      expect(await page.isVisible("[data-testid='import-character']")).toBe(true);
+      await page.close();
+    });
   });
 
-  test("has sidebar toggle buttons", async () => {
-    const page = await ctx.browser.newPage();
-    await gotoView(page, "/views/chat");
-    await page.locator("[data-testid='toggle-chat-list']").waitFor({ state: 'attached', timeout: 5000 });
-    await page.locator("[data-testid='toggle-gallery']").waitFor({ state: 'attached', timeout: 5000 });
-    await page.locator("[data-testid='toggle-character-info']").waitFor({ state: 'attached', timeout: 5000 });
-    await page.close();
-  });
-});
+  // ── Gallery view ──────────────────────────────────────────────
 
-// ── Characters view ───────────────────────────────────────────
+  describe("Gallery view", () => {
+    test("loads gallery page", async () => {
+      const page = await ctx.browser.newPage();
+      await gotoView(page, "/views/gallery");
+      await page.waitForSelector(
+        "[data-testid='asset-grid'], [data-testid='gallery-loading'], [data-testid='gallery-empty']",
+        { timeout: 5000 },
+      );
+      await page.close();
+    });
 
-describe("Characters view", () => {
-  test("loads characters page", async () => {
-    const page = await ctx.browser.newPage();
-    await gotoView(page, "/views/characters");
-    // Should show loading, empty, or grid state
-    await page.waitForSelector(
-      "[data-testid='characters-loading'], [data-testid='characters-empty'], [data-testid='character-grid']",
-      { timeout: 5000 },
-    );
-    await page.close();
+    test("upload button exists", async () => {
+      const page = await ctx.browser.newPage();
+      await gotoView(page, "/views/gallery");
+      await page.waitForSelector("[data-testid='upload-button']", { timeout: 5000 });
+      expect(await page.isVisible("[data-testid='upload-button']")).toBe(true);
+      await page.close();
+    });
   });
 
-  test("create character button exists", async () => {
-    const page = await ctx.browser.newPage();
-    await gotoView(page, "/views/characters");
-    await page.waitForSelector("[data-testid='create-character']", { timeout: 5000 });
-    expect(await page.isVisible("[data-testid='create-character']")).toBe(true);
-    await page.close();
+  // ── Settings view ─────────────────────────────────────────────
+
+  describe("Settings view", () => {
+    test("loads settings page with sections", async () => {
+      const page = await ctx.browser.newPage();
+      await gotoView(page, "/views/settings");
+      await page.waitForSelector("[data-testid='settings-header']", { timeout: 5000 });
+      expect(await page.isVisible("[data-testid='settings-general']")).toBe(true);
+      expect(await page.isVisible("[data-testid='settings-chat']")).toBe(true);
+      expect(await page.isVisible("[data-testid='settings-api']")).toBe(true);
+      expect(await page.isVisible("[data-testid='settings-data']")).toBe(true);
+      await page.close();
+    });
+
+    test("theme and locale selectors present", async () => {
+      const page = await ctx.browser.newPage();
+      await gotoView(page, "/views/settings");
+      await page.waitForSelector("[data-testid='theme-select']", { timeout: 5000 });
+      await page.waitForSelector("[data-testid='locale-select']", { timeout: 5000 });
+      await page.close();
+    });
   });
 
-  test("import character button exists", async () => {
-    const page = await ctx.browser.newPage();
-    await gotoView(page, "/views/characters");
-    await page.waitForSelector("[data-testid='import-character']", { timeout: 5000 });
-    expect(await page.isVisible("[data-testid='import-character']")).toBe(true);
-    await page.close();
-  });
-});
+  // ── Worlds view ───────────────────────────────────────────────
 
-// ── Gallery view ──────────────────────────────────────────────
+  describe("Worlds view", () => {
+    test("loads worlds page", async () => {
+      const page = await ctx.browser.newPage();
+      await gotoView(page, "/views/worlds");
+      // Header is always rendered (not in x-if)
+      await page.waitForSelector("header .title", { timeout: 5000 });
+      const title = await page.textContent("header .title");
+      expect(title).toBe("Worlds");
+      await page.close();
+    });
 
-describe("Gallery view", () => {
-  test("loads gallery page", async () => {
-    const page = await ctx.browser.newPage();
-    await gotoView(page, "/views/gallery");
-    await page.waitForSelector(
-      "[data-testid='asset-grid'], [data-testid='gallery-loading'], [data-testid='gallery-empty']",
-      { timeout: 5000 },
-    );
-    await page.close();
-  });
-
-  test("upload button exists", async () => {
-    const page = await ctx.browser.newPage();
-    await gotoView(page, "/views/gallery");
-    await page.waitForSelector("[data-testid='upload-button']", { timeout: 5000 });
-    expect(await page.isVisible("[data-testid='upload-button']")).toBe(true);
-    await page.close();
-  });
-});
-
-// ── Settings view ─────────────────────────────────────────────
-
-describe("Settings view", () => {
-  test("loads settings page with sections", async () => {
-    const page = await ctx.browser.newPage();
-    await gotoView(page, "/views/settings");
-    await page.waitForSelector("[data-testid='settings-header']", { timeout: 5000 });
-    expect(await page.isVisible("[data-testid='settings-general']")).toBe(true);
-    expect(await page.isVisible("[data-testid='settings-chat']")).toBe(true);
-    expect(await page.isVisible("[data-testid='settings-api']")).toBe(true);
-    expect(await page.isVisible("[data-testid='settings-data']")).toBe(true);
-    await page.close();
+    test("create world button exists", async () => {
+      const page = await ctx.browser.newPage();
+      await gotoView(page, "/views/worlds");
+      await page.locator("[data-testid='create-world']").waitFor({ state: "attached", timeout: 8000 });
+      expect(await page.isVisible("[data-testid='create-world']")).toBe(true);
+      await page.close();
+    });
   });
 
-  test("theme and locale selectors present", async () => {
-    const page = await ctx.browser.newPage();
-    await gotoView(page, "/views/settings");
-    await page.waitForSelector("[data-testid='theme-select']", { timeout: 5000 });
-    await page.waitForSelector("[data-testid='locale-select']", { timeout: 5000 });
-    await page.close();
-  });
-});
+  // ── New Chat view ─────────────────────────────────────────────
 
-// ── Worlds view ───────────────────────────────────────────────
+  describe("New Chat view", () => {
+    test("loads new chat form with all fields", async () => {
+      const page = await ctx.browser.newPage();
+      await gotoView(page, "/views/new-chat");
+      await page.locator("[data-testid='create-chat-form']").waitFor({ state: "attached", timeout: 10_000 });
+      await page.locator("[data-testid='chat-name-input']").waitFor({ state: "attached", timeout: 5000 });
+      await page.locator("[data-testid='chat-type-select']").waitFor({ state: "attached", timeout: 5000 });
+      await page.locator("[data-testid='chat-mode-select']").waitFor({ state: "attached", timeout: 5000 });
+      await page.locator("[data-testid='create-chat-btn']").waitFor({ state: "attached", timeout: 5000 });
+      await page.close();
+    });
 
-describe("Worlds view", () => {
-  test("loads worlds page", async () => {
-    const page = await ctx.browser.newPage();
-    await gotoView(page, "/views/worlds");
-    // Header is always rendered (not in x-if)
-    await page.waitForSelector("header .title", { timeout: 5000 });
-    const title = await page.textContent("header .title");
-    expect(title).toBe("Worlds");
-    await page.close();
-  });
-
-  test("create world button exists", async () => {
-    const page = await ctx.browser.newPage();
-    await gotoView(page, "/views/worlds");
-    await page.locator("[data-testid='create-world']").waitFor({ state: 'attached', timeout: 8000 });
-    expect(await page.isVisible("[data-testid='create-world']")).toBe(true);
-    await page.close();
-  });
-});
-
-// ── New Chat view ─────────────────────────────────────────────
-
-describe("New Chat view", () => {
-  test("loads new chat form with all fields", async () => {
-    const page = await ctx.browser.newPage();
-    await gotoView(page, "/views/new-chat");
-    await page.locator("[data-testid='create-chat-form']").waitFor({ state: 'attached', timeout: 10_000 });
-    await page.locator("[data-testid='chat-name-input']").waitFor({ state: 'attached', timeout: 5000 });
-    await page.locator("[data-testid='chat-type-select']").waitFor({ state: 'attached', timeout: 5000 });
-    await page.locator("[data-testid='chat-mode-select']").waitFor({ state: 'attached', timeout: 5000 });
-    await page.locator("[data-testid='create-chat-btn']").waitFor({ state: 'attached', timeout: 5000 });
-    await page.close();
+    test("can type chat name", async () => {
+      const page = await ctx.browser.newPage();
+      await gotoView(page, "/views/new-chat");
+      await page.locator("[data-testid='chat-name-input']").waitFor({ state: "attached", timeout: 10_000 });
+      const input = page.locator("[data-testid='chat-name-input']");
+      await input.fill("Test Chat from Browser");
+      expect(await input.inputValue()).toBe("Test Chat from Browser");
+      await page.close();
+    });
   });
 
-  test("can type chat name", async () => {
-    const page = await ctx.browser.newPage();
-    await gotoView(page, "/views/new-chat");
-    await page.locator("[data-testid='chat-name-input']").waitFor({ state: 'attached', timeout: 10_000 });
-    const input = page.locator("[data-testid='chat-name-input']");
-    await input.fill("Test Chat from Browser");
-    expect(await input.inputValue()).toBe("Test Chat from Browser");
-    await page.close();
-  });
-});
+  // ── Login view ────────────────────────────────────────────────
 
-// ── Login view ────────────────────────────────────────────────
+  describe("Login view", () => {
+    test("loads login form", async () => {
+      const page = await ctx.browser.newPage();
+      await gotoView(page, "/views/login");
+      await page.locator("[data-testid='username-input']").waitFor({ state: "attached", timeout: 5000 });
+      await page.locator("[data-testid='password-input']").waitFor({ state: "attached", timeout: 5000 });
+      await page.locator("[data-testid='login-submit']").waitFor({ state: "attached", timeout: 5000 });
+      await page.locator("[data-testid='demo-login']").waitFor({ state: "attached", timeout: 5000 });
+      await page.close();
+    });
 
-describe("Login view", () => {
-  test("loads login form", async () => {
-    const page = await ctx.browser.newPage();
-    await gotoView(page, "/views/login");
-    await page.locator("[data-testid='username-input']").waitFor({ state: 'attached', timeout: 5000 });
-    await page.locator("[data-testid='password-input']").waitFor({ state: 'attached', timeout: 5000 });
-    await page.locator("[data-testid='login-submit']").waitFor({ state: 'attached', timeout: 5000 });
-    await page.locator("[data-testid='demo-login']").waitFor({ state: 'attached', timeout: 5000 });
-    await page.close();
-  });
-
-  test("demo login link has correct hx-post", async () => {
-    const page = await ctx.browser.newPage();
-    await gotoView(page, "/views/login");
-    await page.locator("[data-testid='demo-login']").waitFor({ state: 'attached', timeout: 8000 });
-    const link = page.locator("[data-testid='demo-login']");
-    expect(await link.getAttribute("hx-post")).toBe("/api/demo-login");
-    await page.close();
-  });
-});
-
-// ── Layout / Navigation ───────────────────────────────────────
-
-describe("Layout navigation", () => {
-  test("sidebar rendered on chat view", async () => {
-    const page = await ctx.browser.newPage();
-    await gotoView(page, "/views/chat");
-    await page.locator("[data-testid='sidebar']").waitFor({ state: 'attached', timeout: 5000 });
-    expect(await page.locator("[data-testid='nav-chat']").isVisible()).toBe(true);
-    expect(await page.locator("[data-testid='nav-characters']").isVisible()).toBe(true);
-    expect(await page.locator("[data-testid='nav-gallery']").isVisible()).toBe(true);
-    expect(await page.locator("[data-testid='nav-worlds']").isVisible()).toBe(true);
-    await page.close();
+    test("demo login link has correct hx-post", async () => {
+      const page = await ctx.browser.newPage();
+      await gotoView(page, "/views/login");
+      await page.locator("[data-testid='demo-login']").waitFor({ state: "attached", timeout: 8000 });
+      const link = page.locator("[data-testid='demo-login']");
+      expect(await link.getAttribute("hx-post")).toBe("/api/demo-login");
+      await page.close();
+    });
   });
 
-  test("nav links have expected htmx attributes", async () => {
-    const page = await ctx.browser.newPage();
-    await gotoView(page, "/views/chat");
-    await page.locator("[data-testid='nav-chat']").waitFor({ state: 'attached', timeout: 5000 });
-    expect(await page.locator("[data-testid='nav-chat']").getAttribute("hx-get")).toBe("/views/chat");
-    expect(await page.locator("[data-testid='nav-characters']").getAttribute("hx-get")).toBe("/views/characters");
-    expect(await page.locator("[data-testid='nav-gallery']").getAttribute("hx-get")).toBe("/views/gallery");
-    expect(await page.locator("[data-testid='nav-worlds']").getAttribute("hx-get")).toBe("/views/worlds");
-    await page.close();
-  });
+  // ── Layout / Navigation ───────────────────────────────────────
 
-  test("hamburger toggles sidebar open class", async () => {
-    const page = await ctx.browser.newPage();
-    await gotoView(page, "/views/settings");
-    await page.locator("[data-testid='sidebar']").waitFor({ state: 'attached', timeout: 5000 });
-    await page.locator("[data-testid='hamburger']").waitFor({ state: 'attached', timeout: 5000 });
-    await page.click("[data-testid='hamburger']");
-    const classAttr = await page.locator("[data-testid='sidebar']").getAttribute("class");
-    expect(classAttr).toContain("open");
-    await page.close();
+  describe("Layout navigation", () => {
+    test("sidebar rendered on chat view", async () => {
+      const page = await ctx.browser.newPage();
+      await gotoView(page, "/views/chat");
+      await page.locator("[data-testid='sidebar']").waitFor({ state: "attached", timeout: 5000 });
+      expect(await page.locator("[data-testid='nav-chat']").isVisible()).toBe(true);
+      expect(await page.locator("[data-testid='nav-characters']").isVisible()).toBe(true);
+      expect(await page.locator("[data-testid='nav-gallery']").isVisible()).toBe(true);
+      expect(await page.locator("[data-testid='nav-worlds']").isVisible()).toBe(true);
+      await page.close();
+    });
+
+    test("nav links have expected htmx attributes", async () => {
+      const page = await ctx.browser.newPage();
+      await gotoView(page, "/views/chat");
+      await page.locator("[data-testid='nav-chat']").waitFor({ state: "attached", timeout: 5000 });
+      expect(await page.locator("[data-testid='nav-chat']").getAttribute("hx-get")).toBe("/views/chat");
+      expect(await page.locator("[data-testid='nav-characters']").getAttribute("hx-get")).toBe("/views/characters");
+      expect(await page.locator("[data-testid='nav-gallery']").getAttribute("hx-get")).toBe("/views/gallery");
+      expect(await page.locator("[data-testid='nav-worlds']").getAttribute("hx-get")).toBe("/views/worlds");
+      await page.close();
+    });
+
+    test("hamburger toggles sidebar open class", async () => {
+      const page = await ctx.browser.newPage();
+      await gotoView(page, "/views/settings");
+      await page.locator("[data-testid='sidebar']").waitFor({ state: "attached", timeout: 5000 });
+      await page.locator("[data-testid='hamburger']").waitFor({ state: "attached", timeout: 5000 });
+      await page.click("[data-testid='hamburger']");
+      const classAttr = await page.locator("[data-testid='sidebar']").getAttribute("class");
+      expect(classAttr).toContain("open");
+      await page.close();
+    });
   });
-});
 });

@@ -11,41 +11,41 @@
 // (1 = auto-advance without needing @mentions).
 
 import type { Kysely } from "kysely";
-import type { DB } from "../db/schema";
+import { marked } from "marked";
+import { PromptAssembler } from "../assistant/prompt-assembler";
 import type { Config } from "../config/schema";
-import { uid } from "../utils";
+import { compressThenEncrypt, deriveChatKeyForChat, getSmk, isEncryptionEnabled } from "../crypto";
 import {
-  MessageRole,
-  MessageContentType,
-  MessageContentFormat,
-  MessageVisibility,
-  MessageStatus,
-  ContentEncoding,
   CancelReason,
   CancelSource,
+  ContentEncoding,
+  MessageContentFormat,
+  MessageContentType,
+  MessageRole,
+  MessageStatus,
+  MessageVisibility,
 } from "../db/enums";
-import { PromptAssembler } from "../assistant/prompt-assembler";
-import { resolveProvider, listProviders } from "./providers/registry";
+import type { DB } from "../db/schema";
+import { extractMentionedActorIds } from "../group-chat/mention-parser";
+import { selectNextGroupActor } from "../group-chat/turn-selector";
+import { getLogger } from "../logger";
+import { uid } from "../utils";
 import {
-  startGenerationTracking,
+  cancelGenerationByChat,
   completeGeneration,
   failGeneration,
-  cancelGenerationByChat,
   getOrCreateBuffer,
   scheduleBufferCleanup,
+  startGenerationTracking,
 } from "./index";
+import { listProviders, resolveProvider } from "./providers/registry";
 import type { ChunkEvent } from "./providers/types";
-import { getLogger } from "../logger";
-import { selectNextGroupActor } from "../group-chat/turn-selector";
-import { extractMentionedActorIds } from "../group-chat/mention-parser";
-import { marked } from "marked";
-import { getSmk, isEncryptionEnabled, deriveChatKeyForChat, compressThenEncrypt } from "../crypto";
 
 export function isLlmGenerationConfigured(config: Config): boolean {
   return (
-    !!config.generation.defaultProvider ||
-    config.generation.providers.openaiCompatible.length > 0 ||
-    listProviders().length > 0
+    !!config.generation.defaultProvider
+    || config.generation.providers.openaiCompatible.length > 0
+    || listProviders().length > 0
   );
 }
 
@@ -259,11 +259,11 @@ export async function triggerAutoGeneration(opts: AutoGenOpts): Promise<void> {
     const messageId = uid();
     const maxSwipe = parentMessageId
       ? await database
-          .selectFrom("messages")
-          .select(database.fn.max("swipe_index").as("max_idx"))
-          .where("chat_id", "=", chatId)
-          .where("parent_id", "=", parentMessageId)
-          .executeTakeFirst()
+        .selectFrom("messages")
+        .select(database.fn.max("swipe_index").as("max_idx"))
+        .where("chat_id", "=", chatId)
+        .where("parent_id", "=", parentMessageId)
+        .executeTakeFirst()
       : undefined;
     const swipeIndex = parentMessageId ? (maxSwipe?.max_idx ?? 0) + 1 : null;
 
@@ -363,9 +363,9 @@ export async function triggerAutoGeneration(opts: AutoGenOpts): Promise<void> {
     const err = error instanceof Error ? error : new Error(String(error));
     const log = getLogger().child({ module: "auto-gen" });
     if (
-      err.name === "AbortError" ||
-      err.message === "Request cancelled" ||
-      err.message === "Request timed out"
+      err.name === "AbortError"
+      || err.message === "Request cancelled"
+      || err.message === "Request timed out"
     ) {
       log.warn("Auto-generation aborted", { reason: err.message });
     } else {
@@ -537,7 +537,7 @@ function escapeHtml(str: string): string {
     .replaceAll("&", "&amp;")
     .replaceAll("<", "&lt;")
     .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
+    .replaceAll("\"", "&quot;")
     .replaceAll("'", "&#039;");
 }
 
@@ -557,11 +557,14 @@ function renderStreamMessage(
   const safeName = escapeHtml(actorName);
   const rendered = marked.parse(content, { breaks: true, gfm: true }) as string;
   const safeContent = sanitizeHtml(rendered);
-  const streamingAttr = opts?.isFinal ? "" : ' data-streaming="true"';
+  const streamingAttr = opts?.isFinal ? "" : " data-streaming=\"true\"";
   const msgId = opts?.messageId ?? attemptId;
 
   const thinkingBlock = opts?.thinking
-    ? `<details class="thinking-block"><summary>Thinking process</summary><div class="thinking-content">${marked.parse(opts.thinking, { breaks: true, gfm: true }) as string}</div></details>`
+    ? `<details class="thinking-block"><summary>Thinking process</summary><div class="thinking-content">${marked.parse(
+      opts.thinking,
+      { breaks: true, gfm: true },
+    ) as string}</div></details>`
     : "";
 
   const actionsHtml = opts?.isFinal

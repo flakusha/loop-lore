@@ -1,9 +1,9 @@
-import { describe, test, expect } from "bun:test";
-import { safeJsonParse, safeJsonStringify, isJsonString, jsonParseOr } from "./utils";
+import { describe, expect, test } from "bun:test";
+import { isJsonString, jsonParseOr, safeJsonParse, safeJsonStringify } from "./utils";
 
 describe("safeJsonParse", () => {
   test("parses valid JSON", () => {
-    const result = safeJsonParse<{ a: number }>('{"a":1}');
+    const result = safeJsonParse<{ a: number }>("{\"a\":1}");
     expect(result.ok).toBe(true);
     if (result.ok) expect(result.value).toEqual({ a: 1 });
   });
@@ -19,7 +19,7 @@ describe("safeJsonStringify", () => {
   test("stringifies valid objects", () => {
     const result = safeJsonStringify({ a: 1 });
     expect(result.ok).toBe(true);
-    if (result.ok) expect(result.value).toBe('{"a":1}');
+    if (result.ok) expect(result.value).toBe("{\"a\":1}");
   });
 
   test("handles null", () => {
@@ -37,47 +37,47 @@ describe("safeJsonStringify", () => {
   test("supports space parameter", () => {
     const result = safeJsonStringify({ a: 1 }, 2);
     expect(result.ok).toBe(true);
-    if (result.ok) expect(result.value).toBe('{\n  "a": 1\n}');
+    if (result.ok) expect(result.value).toBe("{\n  \"a\": 1\n}");
   });
 
   test("supports options object with space", () => {
     const result = safeJsonStringify({ a: 1 }, { space: 2 });
     expect(result.ok).toBe(true);
-    if (result.ok) expect(result.value).toBe('{\n  "a": 1\n}');
+    if (result.ok) expect(result.value).toBe("{\n  \"a\": 1\n}");
   });
 
   test("guarded option prevents double-encoding", () => {
-    const input = '{"test":1}';
+    const input = "{\"test\":1}";
     const result = safeJsonStringify(input, { guarded: true });
     expect(result.ok).toBe(true);
-    if (result.ok) expect(result.value).toBe('{"test":1}');
+    if (result.ok) expect(result.value).toBe("{\"test\":1}");
   });
 
   test("guarded option with space parameter", () => {
-    const input = '{"test":1}';
+    const input = "{\"test\":1}";
     const result = safeJsonStringify(input, { guarded: true, space: 2 });
     expect(result.ok).toBe(true);
-    if (result.ok) expect(result.value).toBe('{\n  "test": 1\n}');
+    if (result.ok) expect(result.value).toBe("{\n  \"test\": 1\n}");
   });
 
   test("guarded option handles non-JSON strings", () => {
     const result = safeJsonStringify("hello", { guarded: true });
     expect(result.ok).toBe(true);
-    if (result.ok) expect(result.value).toBe('"hello"');
+    if (result.ok) expect(result.value).toBe("\"hello\"");
   });
 
   test("guarded option handles non-string values", () => {
     const result = safeJsonStringify({ a: 1 }, { guarded: true });
     expect(result.ok).toBe(true);
-    if (result.ok) expect(result.value).toBe('{"a":1}');
+    if (result.ok) expect(result.value).toBe("{\"a\":1}");
   });
 });
 
 describe("isJsonString", () => {
   test("returns true for valid JSON strings", () => {
-    expect(isJsonString('{"a":1}')).toBe(true);
+    expect(isJsonString("{\"a\":1}")).toBe(true);
     expect(isJsonString("[1,2,3]")).toBe(true);
-    expect(isJsonString('"hello"')).toBe(true);
+    expect(isJsonString("\"hello\"")).toBe(true);
     expect(isJsonString("null")).toBe(true);
     expect(isJsonString("true")).toBe(true);
     expect(isJsonString("123")).toBe(true);
@@ -102,19 +102,19 @@ describe("safeJsonStringify (guarded)", () => {
   test("stringifies non-string values directly", () => {
     const result = safeJsonStringify({ a: 1 }, { guarded: true });
     expect(result.ok).toBe(true);
-    if (result.ok) expect(result.value).toBe('{"a":1}');
+    if (result.ok) expect(result.value).toBe("{\"a\":1}");
   });
 
   test("parses JSON strings before stringifying (prevents double-encoding)", () => {
-    const result = safeJsonStringify('{"a":1}', { guarded: true });
+    const result = safeJsonStringify("{\"a\":1}", { guarded: true });
     expect(result.ok).toBe(true);
-    if (result.ok) expect(result.value).toBe('{"a":1}');
+    if (result.ok) expect(result.value).toBe("{\"a\":1}");
   });
 
   test("stringifies non-JSON strings as-is", () => {
     const result = safeJsonStringify("hello", { guarded: true });
     expect(result.ok).toBe(true);
-    if (result.ok) expect(result.value).toBe('"hello"');
+    if (result.ok) expect(result.value).toBe("\"hello\"");
   });
 
   test("handles nested JSON strings", () => {
@@ -158,19 +158,19 @@ describe("safeJsonStringify (guarded)", () => {
   test("supports space parameter", () => {
     const result = safeJsonStringify({ a: 1 }, { guarded: true, space: 2 });
     expect(result.ok).toBe(true);
-    if (result.ok) expect(result.value).toBe('{\n  "a": 1\n}');
+    if (result.ok) expect(result.value).toBe("{\n  \"a\": 1\n}");
   });
 
   test("supports space parameter with JSON string input", () => {
-    const result = safeJsonStringify('{"a":1}', { guarded: true, space: 2 });
+    const result = safeJsonStringify("{\"a\":1}", { guarded: true, space: 2 });
     expect(result.ok).toBe(true);
-    if (result.ok) expect(result.value).toBe('{\n  "a": 1\n}');
+    if (result.ok) expect(result.value).toBe("{\n  \"a\": 1\n}");
   });
 });
 
 describe("jsonParseOr", () => {
   test("returns parsed value for valid JSON", () => {
-    const result = jsonParseOr('{"a":1}', { a: 0 });
+    const result = jsonParseOr("{\"a\":1}", { a: 0 });
     expect(result).toEqual({ a: 1 });
   });
 
@@ -187,14 +187,14 @@ describe("jsonParseOr", () => {
 
 describe("double-encoding prevention", () => {
   test("prevents double-encoding with safeJsonStringify (guarded)", () => {
-    const input = '{"nested":{"object":true},"arr":[1,2,3]}';
+    const input = "{\"nested\":{\"object\":true},\"arr\":[1,2,3]}";
     const result = safeJsonStringify(input, { guarded: true });
     expect(result.ok).toBe(true);
     if (result.ok) expect(result.value).toBe(input);
   });
 
   test("safeJsonStringify double-encodes JSON strings", () => {
-    const input = '{"test":1}';
+    const input = "{\"test\":1}";
     const result = safeJsonStringify(input);
     expect(result.ok).toBe(true);
     if (result.ok) {
@@ -204,9 +204,9 @@ describe("double-encoding prevention", () => {
   });
 
   test("guarded version prevents this", () => {
-    const input = '{"test":1}';
+    const input = "{\"test\":1}";
     const result = safeJsonStringify(input, { guarded: true });
     expect(result.ok).toBe(true);
-    if (result.ok) expect(result.value).toBe('{"test":1}');
+    if (result.ok) expect(result.value).toBe("{\"test\":1}");
   });
 });

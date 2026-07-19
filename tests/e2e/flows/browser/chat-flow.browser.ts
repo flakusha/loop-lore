@@ -1,5 +1,3 @@
- 
-
 /**
  * Browser E2E: Chat Flow
  *
@@ -7,9 +5,9 @@
  * Pre-logs in via seeded data (demo/solo mode).
  */
 
-import { describe, test, expect, beforeAll, afterAll } from "bun:test";
-import { createBrowserTest, type BrowserTestContext } from "../../helpers/browser-server";
-import { seedAll, SEED } from "../../helpers/seed";
+import { afterAll, beforeAll, describe, expect, test } from "bun:test";
+import { type BrowserTestContext, createBrowserTest } from "../../helpers/browser-server";
+import { SEED, seedAll } from "../../helpers/seed";
 
 let ctx: BrowserTestContext;
 

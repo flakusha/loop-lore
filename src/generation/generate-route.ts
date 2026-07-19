@@ -7,42 +7,42 @@
  * Streaming returns SSE (text/event-stream). Non-streaming returns JSON.
  */
 
-import { randomUUID } from "node:crypto";
 import type { Kysely } from "kysely";
-import type { DB } from "../db/schema";
-import { getDatabase } from "../db/index";
+import { randomUUID } from "node:crypto";
+import { PromptAssembler } from "../assistant/prompt-assembler";
+import { loadConfig } from "../config/load";
+import type { Config } from "../config/schema";
 import {
-  MessageRole,
-  MessageContentType,
-  MessageContentFormat,
+  CancelReason,
   ContentEncoding,
+  MessageContentFormat,
+  MessageContentType,
+  MessageRole,
   MessageStatus,
   MessageVisibility,
-  CancelReason,
 } from "../db/enums";
+import { getDatabase } from "../db/index";
+import type { DB } from "../db/schema";
+import { registry } from "../plugins/registry";
+import type { ToolDefinition } from "../plugins/types";
+import { jsonError, jsonResponse } from "../routes/http-utils";
+import { jsonParseOr, safeJsonStringify } from "../utils";
 import {
-  startGenerationTracking,
   completeGeneration,
   failGeneration,
   processStreamingChunk,
+  startGenerationTracking,
 } from "./cancellation-manager";
-import type { GenerationOptions, GenerationMessage, GenerationResult } from "./types";
-import type { ChunkEvent } from "./providers/types";
-import { resolveProvider } from "./providers/registry";
-import { PromptAssembler } from "../assistant/prompt-assembler";
 import { ContextCompactor } from "./context-compactor";
-import type { Config } from "../config/schema";
-import { loadConfig } from "../config/load";
-import { jsonResponse, jsonError } from "../routes/http-utils";
-import { safeJsonStringify, jsonParseOr } from "../utils";
-import { registry } from "../plugins/registry";
-import type { ToolDefinition } from "../plugins/types";
+import { resolveProvider } from "./providers/registry";
+import type { ChunkEvent } from "./providers/types";
+import type { GenerationMessage, GenerationOptions, GenerationResult } from "./types";
 
 // ── Helpers ─────────────────────────────────────────────────
 
 function sseData(obj: unknown): string {
   const r = safeJsonStringify(obj);
-  return `data: ${r.ok ? r.value : '{"type":"error","error":"serialize failed"}'}\n\n`;
+  return `data: ${r.ok ? r.value : "{\"type\":\"error\",\"error\":\"serialize failed\"}"}\n\n`;
 }
 
 interface StoreMessageOpts {
@@ -285,20 +285,27 @@ export async function handleGenerate({
   // Sub-objects (repetitionDetection, policyDetection, responseLimit) are
   // consumed downstream — invalid values may cause runtime errors.
 
-  if (!input.chatId || typeof input.chatId !== "string")
+  if (!input.chatId || typeof input.chatId !== "string") {
     return jsonError({ message: "chatId is required", status: 400 });
-  if (!input.parentMessageId || typeof input.parentMessageId !== "string")
+  }
+  if (!input.parentMessageId || typeof input.parentMessageId !== "string") {
     return jsonError({ message: "parentMessageId is required", status: 400 });
-  if (!input.actorId || typeof input.actorId !== "string")
+  }
+  if (!input.actorId || typeof input.actorId !== "string") {
     return jsonError({ message: "actorId is required", status: 400 });
-  if (!input.idempotencyKey || typeof input.idempotencyKey !== "string")
+  }
+  if (!input.idempotencyKey || typeof input.idempotencyKey !== "string") {
     return jsonError({ message: "idempotencyKey is required", status: 400 });
-  if (input.prompt !== undefined && !Array.isArray(input.prompt))
+  }
+  if (input.prompt !== undefined && !Array.isArray(input.prompt)) {
     return jsonError({ message: "prompt must be an array", status: 400 });
-  if (input.provider !== undefined && typeof input.provider !== "string")
+  }
+  if (input.provider !== undefined && typeof input.provider !== "string") {
     return jsonError({ message: "provider must be a string", status: 400 });
-  if (input.modelId !== undefined && typeof input.modelId !== "string")
+  }
+  if (input.modelId !== undefined && typeof input.modelId !== "string") {
     return jsonError({ message: "modelId must be a string", status: 400 });
+  }
 
   // ── Resolve provider + model ──────────────────────────
 
@@ -386,13 +393,12 @@ export async function handleGenerate({
   // ── Build provider request ────────────────────────────
 
   const pluginTools = registry.getAllTools();
-  const tools =
-    pluginTools.length > 0
-      ? pluginTools.map((t: ToolDefinition) => ({
-          type: "function" as const,
-          function: { name: t.name, description: t.description, parameters: t.parameters },
-        }))
-      : undefined;
+  const tools = pluginTools.length > 0
+    ? pluginTools.map((t: ToolDefinition) => ({
+      type: "function" as const,
+      function: { name: t.name, description: t.description, parameters: t.parameters },
+    }))
+    : undefined;
 
   const providerReq = {
     model: resolved.resolvedModel,

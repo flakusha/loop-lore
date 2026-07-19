@@ -14,8 +14,8 @@
 import { Elysia } from "elysia";
 import type { Kysely } from "kysely";
 import type { DB } from "../db/schema";
-import { jsonResponse } from "./http-utils";
 import { unauthorized } from "../validation/middleware";
+import { jsonResponse } from "./http-utils";
 
 interface ActivityEntry {
   unseenCount: number;

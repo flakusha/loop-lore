@@ -1,7 +1,7 @@
 /**
  * Unit tests for messages routes (Elysia plugin)
  */
-import { describe, test, expect } from "bun:test";
+import { describe, expect, test } from "bun:test";
 import { messagesRoutes } from "./messages";
 
 const mockDb = {} as any;

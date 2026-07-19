@@ -10,12 +10,12 @@
 import { spawn } from "bun";
 import { homedir } from "node:os";
 import { join, resolve } from "node:path";
-import type { Logger } from "../../../src/logger";
 import type { LlamaCppAutoStartConfig, SdCppAutoStartConfig } from "../../../src/config/schema";
+import type { Logger } from "../../../src/logger";
 import {
   findBinary,
-  isPortFree,
   isHuggingFaceRef,
+  isPortFree,
   waitForHealth,
   waitForPort,
 } from "../../../src/services/external-server-utils";
@@ -113,10 +113,14 @@ export class ServerExternalManager {
     const proc = spawn({
       cmd: [
         binary,
-        modelFlag, modelValue,
-        "--port", String(opts.port),
-        "--ctx-size", String(opts.ctxSize ?? 8192),
-        "--host", "127.0.0.1",
+        modelFlag,
+        modelValue,
+        "--port",
+        String(opts.port),
+        "--ctx-size",
+        String(opts.ctxSize ?? 8192),
+        "--host",
+        "127.0.0.1",
         "--no-ui",
         ...(opts.extraArgs ?? []),
       ],
@@ -198,9 +202,12 @@ export class ServerExternalManager {
 
     const args: string[] = [
       binary,
-      "--listen-port", String(opts.port),
-      "-l", "127.0.0.1",
-      "-m", resolve(opts.modelPath),
+      "--listen-port",
+      String(opts.port),
+      "-l",
+      "127.0.0.1",
+      "-m",
+      resolve(opts.modelPath),
     ];
     if (opts.llmPath) args.push("--llm", resolve(opts.llmPath));
     if (opts.vaePath) args.push("--vae", resolve(opts.vaePath));

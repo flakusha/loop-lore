@@ -6,15 +6,15 @@
  *
  * Uses in-memory SQLite + a minimal Kysely schema. No LLM, no route wiring.
  */
-import { describe, test, expect, beforeEach, afterAll } from "bun:test";
 import { Database } from "bun:sqlite";
+import { afterAll, beforeEach, describe, expect, test } from "bun:test";
 import { Kysely } from "kysely";
 import { randomUUID } from "node:crypto";
-import type { DB } from "../../db/schema";
+import { SyntheticDataStatus, SyntheticDataType } from "../../db/enums";
 import { createSqliteDialect, setTestDatabase } from "../../db/index";
-import { SyntheticDataType, SyntheticDataStatus } from "../../db/enums";
-import { SyntheticGenerator } from "./generator";
+import type { DB } from "../../db/schema";
 import { jsonParseOr } from "../../utils";
+import { SyntheticGenerator } from "./generator";
 
 // Minimal schema: only the columns the generator reads/writes.
 interface MinimalDB {
@@ -117,8 +117,8 @@ async function seedChatWithData(db: Kysely<MinimalDB>): Promise<{ chatId: string
   await db
     .insertInto("world_states")
     .values([
-      { id: randomUUID(), world_id: worldId, snapshot: '{"t":1}' },
-      { id: randomUUID(), world_id: worldId, snapshot: '{"t":2}' },
+      { id: randomUUID(), world_id: worldId, snapshot: "{\"t\":1}" },
+      { id: randomUUID(), world_id: worldId, snapshot: "{\"t\":2}" },
     ])
     .execute();
 

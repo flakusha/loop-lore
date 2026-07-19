@@ -1,6 +1,6 @@
+import { apiFetch } from "./htmx";
 import { jsonBody } from "./json";
 import { log as rootLog } from "./logger";
-import { apiFetch } from "./htmx";
 import type { ChatState } from "./types";
 
 const log = rootLog.child({ module: "chat-variants" });
@@ -116,10 +116,9 @@ export const chatVariants: Partial<ChatState> & ThisType<ChatState> = {
       }
       this.$dispatch?.("show-toast", {
         type: "info",
-        message:
-          data.resumeFromStep > 0
-            ? `Resuming from step ${data.resumeFromStep + 1} of ${data.totalSteps}...`
-            : "Regenerating response...",
+        message: data.resumeFromStep > 0
+          ? `Resuming from step ${data.resumeFromStep + 1} of ${data.totalSteps}...`
+          : "Regenerating response...",
       });
       this.isGenerating = true;
     } catch {

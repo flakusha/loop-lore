@@ -4,10 +4,10 @@
  * Tests multipart file import: JSON, YAML, TOML, PNG, and error cases.
  */
 
-import { describe, test, expect, beforeAll, afterAll } from "bun:test";
+import { afterAll, beforeAll, describe, expect, test } from "bun:test";
+import { type ApiClient, createClient } from "../helpers/client";
+import { SEED, seedUsers } from "../helpers/seed";
 import { createTestServer, type TestServer } from "../helpers/server";
-import { createClient, type ApiClient } from "../helpers/client";
-import { seedUsers, SEED } from "../helpers/seed";
 
 function makeJsonBlob(data: unknown, filename = "test.json"): File {
   return new File([JSON.stringify(data)], filename, { type: "application/json" });
@@ -73,7 +73,7 @@ describe("Import E2E", () => {
   });
 
   test("POST /api/actors/import imports TOML actor", async () => {
-    const toml = 'name = "Imported TOML"\ndescription = "via multipart"\n';
+    const toml = "name = \"Imported TOML\"\ndescription = \"via multipart\"\n";
     const file = new File([toml], "test.toml", { type: "application/toml" });
     const form = new FormData();
     form.append("file", file);

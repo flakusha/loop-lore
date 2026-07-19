@@ -1,4 +1,4 @@
-import { describe, test, expect } from "bun:test";
+import { describe, expect, test } from "bun:test";
 import { chatMessages } from "./chat-messages";
 
 globalThis.document = {
@@ -56,9 +56,8 @@ describe("chatMessages", () => {
     test("does nothing when sentinel not found", () => {
       // eslint-disable-next-line @typescript-eslint/no-deprecated -- intentional mock for testing
       document.querySelector = () => null;
-      expect(() =>
-        chatMessages.setupInfiniteScroll!.call({ scrollObserver: null, loadOlderMessages: () => {} }),
-      ).not.toThrow();
+      expect(() => chatMessages.setupInfiniteScroll!.call({ scrollObserver: null, loadOlderMessages: () => {} })).not
+        .toThrow();
     });
   });
 });

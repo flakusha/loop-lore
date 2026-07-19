@@ -2,8 +2,8 @@
  * Tests for crypto/smk.ts — Server Master Key loading
  */
 
-import { describe, test, expect, beforeEach, afterAll } from "bun:test";
-import { initSmk, getSmk, isEncryptionEnabled } from "./smk";
+import { afterAll, beforeEach, describe, expect, test } from "bun:test";
+import { getSmk, initSmk, isEncryptionEnabled } from "./smk";
 
 const VALID_64_HEX = "a".repeat(64); // 32 bytes = 256-bit key
 const BASE_ENCRYPTION_CONFIG = { compressThreshold: 128, compressAlgorithm: "gzip" as const };

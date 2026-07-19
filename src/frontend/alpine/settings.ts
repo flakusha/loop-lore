@@ -1,9 +1,9 @@
-import { log as rootLog } from "./logger";
 import { jsonBody } from "./json";
+import { log as rootLog } from "./logger";
 
 const log = rootLog.child({ module: "settings" });
 
-(globalThis as any).settingsPage = function () {
+(globalThis as any).settingsPage = function() {
   return {
     activeTab: "general",
     displayName: "",

@@ -1,15 +1,15 @@
 /**
  * Tests for sessions routes — list, detail, delete (force-logout)
  */
-import { describe, test, expect, beforeAll, afterAll } from "bun:test";
+import { afterAll, beforeAll, describe, expect, test } from "bun:test";
 import { Elysia } from "elysia";
-import { createTestDb } from "../test-utils/create-test-db";
-import { sessionsRoutes } from "./sessions";
-import { createLogger } from "../logger";
-import { uid } from "../utils";
-import crypto from "node:crypto";
 import type { Kysely } from "kysely";
+import crypto from "node:crypto";
 import type { DB } from "../db/schema";
+import { createLogger } from "../logger";
+import { createTestDb } from "../test-utils/create-test-db";
+import { uid } from "../utils";
+import { sessionsRoutes } from "./sessions";
 
 function createApp(
   db: Kysely<DB>,

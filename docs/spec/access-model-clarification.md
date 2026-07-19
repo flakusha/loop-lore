@@ -24,12 +24,12 @@
 
 ### Permission Matrix
 
-| Action    | Master | GM  | Member | Observer | Anonymous   |
-| --------- | ------ | --- | ------ | -------- | ----------- |
-| Read      | ✓      | ✓   | ✓      | ✓        | public only |
-| Write     | ✓      | ✓   | ✓      | ✗        | ✗           |
-| Invite    | ✓      | ✓   | ✗      | ✗        | ✗           |
-| GM Config | ✓      | ✓   | ✗      | ✗        | ✗           |
+| Action    | Master | GM | Member | Observer | Anonymous   |
+| --------- | ------ | -- | ------ | -------- | ----------- |
+| Read      | ✓      | ✓  | ✓      | ✓        | public only |
+| Write     | ✓      | ✓  | ✓      | ✗        | ✗           |
+| Invite    | ✓      | ✓  | ✗      | ✗        | ✗           |
+| GM Config | ✓      | ✓  | ✗      | ✗        | ✗           |
 
 ## Encrypted Content Access
 

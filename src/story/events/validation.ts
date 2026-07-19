@@ -5,8 +5,8 @@
  * Rejects events referencing unknown entities.
  */
 import type { Kysely } from "kysely";
-import type { DB } from "../../db/schema";
 import { WorldEventType } from "../../db/enums";
+import type { DB } from "../../db/schema";
 import { assertNever } from "../../utils";
 import type { WorldEvent } from "../types";
 

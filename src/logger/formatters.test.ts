@@ -2,7 +2,7 @@
  * Tests for logger/formatters.ts — console pretty-print and JSONL serialization
  */
 
-import { describe, test, expect } from "bun:test";
+import { describe, expect, test } from "bun:test";
 import { formatConsole, formatJSONL } from "./formatters";
 import type { LogEntry } from "./types";
 
@@ -60,7 +60,7 @@ describe("formatConsole", () => {
   test("stringifies object messages", () => {
     const entry: LogEntry = { ...baseEntry, message: { key: "val" } };
     const result = formatConsole(entry, false);
-    expect(result).toContain('{"key":"val"}');
+    expect(result).toContain("{\"key\":\"val\"}");
   });
 
   test("no color for unknown level", () => {
@@ -121,6 +121,6 @@ describe("formatJSONL", () => {
     const entry: LogEntry = { ...baseEntry, message: { a: 1 } };
     const result = formatJSONL(entry);
     const parsed = JSON.parse(result);
-    expect(parsed.message).toBe('{"a":1}');
+    expect(parsed.message).toBe("{\"a\":1}");
   });
 });

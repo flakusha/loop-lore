@@ -11,10 +11,10 @@
  * are now applied to every outgoing response.
  */
 
-import { describe, expect, test } from "bun:test";
-import { createRequestHandler } from "@/server";
 import { loadConfig } from "@/config/load";
 import { createLogger } from "@/logger";
+import { createRequestHandler } from "@/server";
+import { describe, expect, test } from "bun:test";
 
 function stubApp(body: string, headers: Record<string, string>, status = 200) {
   return {
@@ -29,7 +29,7 @@ describe("createRequestHandler policy wiring", () => {
   const logger = createLogger({ level: "error" });
 
   test("API responses carry security headers", async () => {
-    const app = stubApp('{"ok":true}', { "content-type": "application/json" });
+    const app = stubApp("{\"ok\":true}", { "content-type": "application/json" });
     const handler = createRequestHandler(app, config, logger);
 
     const res = await handler(new Request("http://localhost/api/auth/me"));
@@ -63,7 +63,7 @@ describe("createRequestHandler policy wiring", () => {
   });
 
   test("route-set headers are not clobbered", async () => {
-    const app = stubApp('{"ok":true}', {
+    const app = stubApp("{\"ok\":true}", {
       "content-type": "application/json",
       "cache-control": "no-store",
     });

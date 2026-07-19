@@ -4,5 +4,5 @@
  * @module validation
  */
 
+export { forbidden, notFound, onValidationError, unauthorized } from "./middleware";
 export * from "./schemas";
-export { onValidationError, unauthorized, forbidden, notFound } from "./middleware";

@@ -11,12 +11,12 @@
 
 import { Elysia } from "elysia";
 import type { Kysely } from "kysely";
-import type { DB } from "../db/schema";
 import type { Config } from "../config/schema";
-import { jsonResponse, jsonError, HttpStatus } from "./http-utils";
-import { uid } from "../utils";
 import { encryptValue } from "../crypto";
-import { unauthorized, forbidden, notFound } from "../validation/middleware";
+import type { DB } from "../db/schema";
+import { uid } from "../utils";
+import { forbidden, notFound, unauthorized } from "../validation/middleware";
+import { HttpStatus, jsonError, jsonResponse } from "./http-utils";
 
 export function apiKeysRoutes({ database, config: cfg }: { database: Kysely<DB>; config: Config }) {
   const config = cfg;
@@ -60,8 +60,9 @@ export function apiKeysRoutes({ database, config: cfg }: { database: Kysely<DB>;
       }
 
       const providerName = body.providerName as string | undefined;
-      if (!providerName)
+      if (!providerName) {
         return jsonError({ message: "providerName is required", status: HttpStatus.BadRequest });
+      }
 
       const apiKey = body.apiKey as string | undefined;
       if (!apiKey) return jsonError({ message: "apiKey is required", status: HttpStatus.BadRequest });

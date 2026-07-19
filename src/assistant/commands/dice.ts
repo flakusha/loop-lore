@@ -133,12 +133,11 @@ export function rollDice(notation: string): DiceResult | null {
  */
 export function formatDiceResult(result: DiceResult): string {
   const rollValues = result.rolls.map((r) => r.value).join(", ");
-  const modifierStr =
-    result.modifier > 0
-      ? ` + ${result.modifier}`
-      : result.modifier < 0
-        ? ` - ${Math.abs(result.modifier)}`
-        : "";
+  const modifierStr = result.modifier > 0
+    ? ` + ${result.modifier}`
+    : (result.modifier < 0
+      ? ` - ${Math.abs(result.modifier)}`
+      : "");
   const diceDesc = `${result.count}d${result.sides}${modifierStr}`;
 
   return `🎲 ${diceDesc}: [${rollValues}]${modifierStr} = **${result.total}**`;

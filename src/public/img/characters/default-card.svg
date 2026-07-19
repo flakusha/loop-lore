@@ -1,31 +1,39 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 170" fill="none">
   <!-- Default character card image (3:4 portrait) -->
-  <rect width="128" height="170" rx="8" fill="#21242c"/>
+  <rect width="128" height="170" rx="8" fill="#21242c" />
   <defs>
     <linearGradient id="cardBg" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#1a1f2e"/>
-      <stop offset="100%" stop-color="#21242c"/>
+      <stop offset="0%" stop-color="#1a1f2e" />
+      <stop offset="100%" stop-color="#21242c" />
     </linearGradient>
     <linearGradient id="accentBar" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#f597e8" stop-opacity="0"/>
-      <stop offset="100%" stop-color="#f597e8" stop-opacity="0.15"/>
+      <stop offset="0%" stop-color="#f597e8" stop-opacity="0" />
+      <stop offset="100%" stop-color="#f597e8" stop-opacity="0.15" />
     </linearGradient>
   </defs>
-  <rect width="128" height="170" rx="8" fill="url(#cardBg)"/>
+  <rect width="128" height="170" rx="8" fill="url(#cardBg)" />
 
   <!-- Subtle pattern -->
   <g opacity="0.04">
-    <circle cx="64" cy="40" r="50" fill="#f597e8"/>
-    <circle cx="64" cy="120" r="40" fill="#7130f8"/>
+    <circle cx="64" cy="40" r="50" fill="#f597e8" />
+    <circle cx="64" cy="120" r="40" fill="#7130f8" />
   </g>
 
   <!-- Character silhouette -->
-  <ellipse cx="64" cy="55" rx="20" ry="22" fill="#3f424a" opacity="0.6"/>
-  <ellipse cx="64" cy="100" rx="32" ry="28" fill="#3f424a" opacity="0.6"/>
+  <ellipse cx="64" cy="55" rx="20" ry="22" fill="#3f424a" opacity="0.6" />
+  <ellipse cx="64" cy="100" rx="32" ry="28" fill="#3f424a" opacity="0.6" />
 
   <!-- Accent bar at bottom -->
-  <rect x="20" y="145" width="88" height="2" rx="1" fill="url(#accentBar)"/>
+  <rect x="20" y="145" width="88" height="2" rx="1" fill="url(#accentBar)" />
 
   <!-- Question mark for "unknown character" -->
-  <text x="64" y="150" text-anchor="middle" font-family="system-ui, sans-serif" font-size="10" fill="#898e93" opacity="0.5">Unknown</text>
+  <text
+    x="64"
+    y="150"
+    text-anchor="middle"
+    font-family="system-ui, sans-serif"
+    font-size="10"
+    fill="#898e93"
+    opacity="0.5"
+  >Unknown</text>
 </svg>

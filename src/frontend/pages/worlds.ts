@@ -1,9 +1,9 @@
 // ── Worlds page: search, create ──────────────────────────────
+import { jsonBody } from "../alpine/json";
+import { log as rootLog } from "../alpine/logger";
 import { feFetch } from "../fe-fetch";
 import { showToast } from "../ui";
 import { filterCards } from "./shared";
-import { log as rootLog } from "../alpine/logger";
-import { jsonBody } from "../alpine/json";
 
 const pageLog = rootLog.child({ module: "worlds" });
 
@@ -14,7 +14,7 @@ interface LocationData {
   world_id: string;
 }
 
-globalThis.filterWorlds = function () {
+globalThis.filterWorlds = function() {
   const query = document.querySelector<HTMLInputElement>("#world-search")?.value ?? "";
   filterCards({
     containerId: "#world-list",
@@ -27,7 +27,7 @@ globalThis.filterWorlds = function () {
   });
 };
 
-globalThis.createWorld = async function (event: Event) {
+globalThis.createWorld = async function(event: Event) {
   event.preventDefault();
   const form = event.target as HTMLFormElement;
   const formData = new FormData(form);
@@ -58,7 +58,7 @@ globalThis.createWorld = async function (event: Event) {
 };
 
 // ── World detail: location CRUD ─────────────────────────────
-globalThis.worldDetail = function (initial: { worldId: string; locations: LocationData[] }) {
+globalThis.worldDetail = function(initial: { worldId: string; locations: LocationData[] }) {
   return {
     worldId: initial.worldId,
     locations: initial.locations || [],

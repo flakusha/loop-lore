@@ -17,10 +17,10 @@ All agent identity comes from `.credentials.env` — never hardcoded.
 Agent acts as **Committer**. User remains **Author**. Git separates these
 two identities; GPG signature is always tied to the Committer (agent).
 
-| Role      | Identity              | GPG Key            |
-|-----------|-----------------------|--------------------|
-| Author    | User (human)          | User key (private) |
-| Committer | Agent                 | Agent key          |
+| Role      | Identity     | GPG Key            |
+| --------- | ------------ | ------------------ |
+| Author    | User (human) | User key (private) |
+| Committer | Agent        | Agent key          |
 
 ---
 
@@ -52,11 +52,13 @@ a warm cache silently — pinentry is never invoked inside opencode.
 ### One-Time System Setup (User, Do Once)
 
 **`~/.gnupg/gpg-agent.conf`** — add if not present:
+
 ```
 allow-loopback-pinentry
 default-cache-ttl 28800
 max-cache-ttl 86400
 ```
+
 Then reload: `gpg-connect-agent reloadagent /bye`
 
 ### Per-Session Unlock (User, Once Per Session Before Agent Commits)

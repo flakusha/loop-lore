@@ -1,5 +1,5 @@
-import { describe, test, expect } from "bun:test";
-import { minifyText, minifyHTMLContent, minifyCSS, minifyJS } from "./minify";
+import { describe, expect, test } from "bun:test";
+import { minifyCSS, minifyHTMLContent, minifyJS, minifyText } from "./minify";
 
 describe("minifyText", () => {
   test("passes normal text through unchanged", () => {
@@ -58,8 +58,8 @@ describe("minifyHTMLContent", () => {
   });
 
   test("removes redundant attributes", async () => {
-    const result = await minifyHTMLContent('<script type="text/javascript">const x=1;</script>');
-    expect(result).not.toContain('type="text/javascript"');
+    const result = await minifyHTMLContent("<script type=\"text/javascript\">const x=1;</script>");
+    expect(result).not.toContain("type=\"text/javascript\"");
   });
 
   test("handles empty input", async () => {

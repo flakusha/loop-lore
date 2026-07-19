@@ -112,5 +112,5 @@ bun run tui
 
 ## License
 
-LGPL-3.0-or-later (core code), MIT (docs), Apache-2.0 OR MIT (plugins)  
+LGPL-3.0-or-later (core code), MIT (docs), Apache-2.0 OR MIT (plugins)\
 See [LICENSE](./LICENSE) and [LICENSES/](./LICENSES/) for full texts.

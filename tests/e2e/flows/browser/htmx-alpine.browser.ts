@@ -8,21 +8,20 @@
  * Pre-logs in via seeded data (demo/solo mode).
  */
 
-import { describe, test, expect, beforeAll, afterAll } from "bun:test";
-import { createBrowserTest, type BrowserTestContext } from "../../helpers/browser-server";
-import { seedAll } from "../../helpers/seed";
+import { afterAll, beforeAll, describe, expect, test } from "bun:test";
+import { type BrowserTestContext, createBrowserTest } from "../../helpers/browser-server";
 import {
-  waitForAlpineReady,
-  navigateViaHtmx,
-  getAlpineStore,
   countToasts,
   dispatchEvent,
+  getAlpineStore,
+  navigateViaHtmx,
+  waitForAlpineReady,
 } from "../../helpers/htmx-alpine";
+import { seedAll } from "../../helpers/seed";
 
 let ctx: BrowserTestContext;
 
 beforeAll(async () => {
-   
   ctx = await createBrowserTest();
   await seedAll(ctx.db);
 }, 45_000);

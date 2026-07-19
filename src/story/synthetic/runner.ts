@@ -18,14 +18,14 @@
  * than fabricating a pass.
  */
 import type { Kysely } from "kysely";
+import { SyntheticDataStatus, SyntheticDataType, SyntheticTestMode } from "../../db/enums";
 import type { DB } from "../../db/schema";
-import { SyntheticDataType, SyntheticDataStatus, SyntheticTestMode } from "../../db/enums";
-import { uid, jsonParseOr } from "../../utils";
-import type { SyntheticCase } from "./types";
-import { SyntheticGenerator } from "./generator";
-import { QualityEvaluator, createQualityEvaluator } from "../quality-evaluator";
-import { TurnManager } from "../turn-manager";
+import { jsonParseOr, uid } from "../../utils";
 import { GameMasterService } from "../game-master";
+import { createQualityEvaluator, QualityEvaluator } from "../quality-evaluator";
+import { TurnManager } from "../turn-manager";
+import { SyntheticGenerator } from "./generator";
+import type { SyntheticCase } from "./types";
 
 export type SyntheticTestStatus = "passed" | "failed" | "skipped";
 
@@ -136,9 +136,9 @@ export class SyntheticTestRunner {
         const r = await this.executeCase(row, c, mode, mutationParams);
         rowResults.push(r);
         if (
-          row.type === SyntheticDataType.QualityEvaluation &&
-          r.status !== "skipped" &&
-          typeof r.actual.score === "number"
+          row.type === SyntheticDataType.QualityEvaluation
+          && r.status !== "skipped"
+          && typeof r.actual.score === "number"
         ) {
           qualityScores.push(r.actual.score);
         }
@@ -146,10 +146,10 @@ export class SyntheticTestRunner {
       results.push(...rowResults);
 
       if (
-        this.autoValidate &&
-        (mode === SyntheticTestMode.Replay || mode === SyntheticTestMode.Regression) &&
-        rowResults.length > 0 &&
-        rowResults.every((r) => r.status === "passed")
+        this.autoValidate
+        && (mode === SyntheticTestMode.Replay || mode === SyntheticTestMode.Regression)
+        && rowResults.length > 0
+        && rowResults.every((r) => r.status === "passed")
       ) {
         await this.generator.transitionStatus(row.id, SyntheticDataStatus.Validated);
       }
@@ -490,8 +490,7 @@ export class SyntheticTestRunner {
 
   private suggestThresholds(scores: number[]): { accept: number; regenerate: number; escalate: number } {
     const sorted = [...scores].sort((a, b) => a - b);
-    const pct = (p: number): number =>
-      sorted[Math.min(sorted.length - 1, Math.floor((sorted.length - 1) * p))] ?? 0;
+    const pct = (p: number): number => sorted[Math.min(sorted.length - 1, Math.floor((sorted.length - 1) * p))] ?? 0;
     return {
       accept: pct(0.5),
       regenerate: pct(0.3),

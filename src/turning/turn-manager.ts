@@ -10,13 +10,13 @@
  * and pass results back via recordTurn().
  */
 import type { Kysely } from "kysely";
-import type { DB } from "../db/schema";
 import { TurnStrategy } from "../db/enums";
 import type { TurnStrategy as TurnStrategyType } from "../db/enums";
-import type { TurnManagerState, GroupTurnContext, TurnParticipant } from "./types";
-import { STRATEGY_MAP } from "./turn-strategies";
-import { jsonParseOr, safeJsonStringify } from "../utils";
+import type { DB } from "../db/schema";
 import { getLogger } from "../logger";
+import { jsonParseOr, safeJsonStringify } from "../utils";
+import { STRATEGY_MAP } from "./turn-strategies";
+import type { GroupTurnContext, TurnManagerState, TurnParticipant } from "./types";
 
 export interface TurnManagerOptions {
   db: Kysely<DB>;
@@ -86,10 +86,9 @@ export class TurnManager {
       ])
       .where("chat_participants.chat_id", "=", this.chatId);
 
-    const filtered =
-      mode === "story"
-        ? await query.where("actors.agent_type", "in", ["ai", "narrator", "npc"]).execute()
-        : await query.where("actors.agent_type", "!=", "none").execute();
+    const filtered = mode === "story"
+      ? await query.where("actors.agent_type", "in", ["ai", "narrator", "npc"]).execute()
+      : await query.where("actors.agent_type", "!=", "none").execute();
 
     const participants: TurnParticipant[] = filtered.map((p) => ({
       actorId: p.actor_id,

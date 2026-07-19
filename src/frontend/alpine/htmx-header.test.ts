@@ -1,4 +1,4 @@
-import { describe, test, expect } from "bun:test";
+import { describe, expect, test } from "bun:test";
 import { normalizeHeaderSlot } from "./htmx-header";
 
 function mockDoc(overrides?: Record<string, any>) {

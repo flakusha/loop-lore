@@ -7,10 +7,10 @@
  */
 
 import { Elysia } from "elysia";
-import type { Db } from "../db";
 import type { Config } from "../config/schema";
-import { jsonResponse, jsonPaginated, HttpStatus } from "./http-utils";
+import type { Db } from "../db";
 import { notFound } from "../validation/middleware";
+import { HttpStatus, jsonPaginated, jsonResponse } from "./http-utils";
 
 async function checkChatOwnership(
   database: Db,

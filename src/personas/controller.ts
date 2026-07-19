@@ -7,15 +7,8 @@ import { Elysia } from "elysia";
 import type { Kysely } from "kysely";
 import type { DB } from "../db/schema";
 import type { RequestContext } from "../middleware/types";
+import { ErrorCode, HttpStatus, jsonCreated, jsonError, jsonNoContent, jsonResponse } from "../routes/http-utils";
 import { PersonasService } from "./service";
-import {
-  jsonResponse,
-  jsonError,
-  jsonCreated,
-  jsonNoContent,
-  HttpStatus,
-  ErrorCode,
-} from "../routes/http-utils";
 
 interface ListPersonasOpts {
   database: Kysely<DB>;

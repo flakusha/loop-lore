@@ -5,8 +5,8 @@
  * with fallback: DB overrides → config defaults → server defaults.
  */
 import type { Kysely } from "kysely";
-import type { DB } from "../db/schema";
 import type { Config } from "../config/schema";
+import type { DB } from "../db/schema";
 import { getProvider } from "../generation/providers/registry";
 import { getLogger } from "../logger";
 
@@ -104,7 +104,7 @@ export async function setModelRoleOverride(
         provider,
         model,
         updated_at: new Date().toISOString(),
-      }),
+      })
     )
     .execute();
 

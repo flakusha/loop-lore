@@ -1,7 +1,7 @@
-import { describe, test, expect, beforeAll, afterAll } from "bun:test";
-import { mkdtempSync, writeFileSync, readFileSync, existsSync, rmSync, mkdirSync } from "node:fs";
+import { afterAll, beforeAll, describe, expect, test } from "bun:test";
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
-import { copyDirectory, walkDirectory, compressFile, compressAssets } from "./compress";
+import { compressAssets, compressFile, copyDirectory, walkDirectory } from "./compress";
 
 let tmpDir: string;
 

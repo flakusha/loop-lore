@@ -3,7 +3,7 @@ import { initTelemetry } from "./telemetry";
 
 const log = rootLog.child({ module: "app" });
 
-globalThis.app = function () {
+globalThis.app = function() {
   return {
     toasts: [] as Array<{ type: string; msg: string; icon: string }>,
     currentTheme: "default",

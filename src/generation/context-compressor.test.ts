@@ -5,8 +5,8 @@
  * system message preservation, and edge cases.
  */
 
-import { describe, it, expect } from "bun:test";
-import { compressMessages, calculateTotalTokens } from "./context-compressor";
+import { describe, expect, it } from "bun:test";
+import { calculateTotalTokens, compressMessages } from "./context-compressor";
 import type { ContextMessage, TokenCountFn } from "./context-window-config";
 import { DEFAULT_CONTEXT_WINDOW } from "./context-window-config";
 

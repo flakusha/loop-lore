@@ -7,8 +7,8 @@
  */
 
 import type { Kysely } from "kysely";
-import type { DB } from "../db/schema";
 import type { Config } from "../config/schema";
+import type { DB } from "../db/schema";
 import { getLogger } from "../logger";
 
 function log() {
@@ -48,7 +48,7 @@ export async function setConfig(
     .onConflict((oc) =>
       oc
         .column("key")
-        .doUpdateSet({ value, description: description ?? null, updated_at: new Date().toISOString() }),
+        .doUpdateSet({ value, description: description ?? null, updated_at: new Date().toISOString() })
     )
     .execute();
 }

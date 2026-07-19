@@ -8,8 +8,8 @@
  */
 
 import type { Kysely } from "kysely";
-import type { DB } from "../db/schema";
 import { GenerationStatus } from "../db/enums";
+import type { DB } from "../db/schema";
 import { getLogger } from "../logger";
 
 // ── Internal: shared state with cancellation-tracker ──────────

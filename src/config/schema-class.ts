@@ -9,33 +9,33 @@
 // schema.ts provides the type interfaces consumed here via `satisfies`.
 // This file is the sole source of truth for defaults, env-map, validation, and JSON Schema.
 
+import { AgeGateMode, DbType, LogLevel } from "../db/enums";
+import { DATA_DIR } from "./constants";
 import type {
-  Config,
-  ServerConfig,
-  DbConfig as DatabaseConfig,
+  AgeGateConfig,
   AssetsConfig,
   AssistantConfig,
-  LoggingConfig,
-  TuiConfig,
-  DocumentationConfig,
-  AgeGateConfig,
   AuthConfig,
-  TransportConfig,
-  TransportCompressionConfig,
-  TransportLimitsConfig,
-  MessagesConfig,
-  NsfwConfig,
+  ByoKeyConfig,
+  Config,
+  DbConfig as DatabaseConfig,
+  DocumentationConfig,
+  DynamicResponseConfig,
+  EncryptionConfig,
   GenerationConfig,
   GenerationProvidersConfig,
-  ProviderInstanceConfig,
-  ByoKeyConfig,
-  EncryptionConfig,
   HeadersConfig,
-  DynamicResponseConfig,
+  LoggingConfig,
+  MessagesConfig,
   ModelRoleAssignment,
+  NsfwConfig,
+  ProviderInstanceConfig,
+  ServerConfig,
+  TransportCompressionConfig,
+  TransportConfig,
+  TransportLimitsConfig,
+  TuiConfig,
 } from "./schema";
-import { DbType, LogLevel, AgeGateMode } from "../db/enums";
-import { DATA_DIR } from "./constants";
 
 // ── Base types ──────────────────────────────────────────────
 
@@ -314,28 +314,28 @@ export class ConfigSchema {
       throw new Error("generation.providers.anthropic requires apiKey");
     }
     if (
-      config.headers.xFrameOptions !== null &&
-      !["DENY", "SAMEORIGIN"].includes(config.headers.xFrameOptions)
+      config.headers.xFrameOptions !== null
+      && !["DENY", "SAMEORIGIN"].includes(config.headers.xFrameOptions)
     ) {
       throw new Error(`Invalid headers.xFrameOptions: "${config.headers.xFrameOptions}"`);
     }
     if (
-      config.headers.crossOriginOpenerPolicy !== null &&
-      !["same-origin", "same-origin-allow-popups"].includes(config.headers.crossOriginOpenerPolicy)
+      config.headers.crossOriginOpenerPolicy !== null
+      && !["same-origin", "same-origin-allow-popups"].includes(config.headers.crossOriginOpenerPolicy)
     ) {
       throw new Error(`Invalid headers.crossOriginOpenerPolicy: "${config.headers.crossOriginOpenerPolicy}"`);
     }
     if (
-      config.headers.crossOriginEmbedderPolicy !== null &&
-      config.headers.crossOriginEmbedderPolicy !== "require-corp"
+      config.headers.crossOriginEmbedderPolicy !== null
+      && config.headers.crossOriginEmbedderPolicy !== "require-corp"
     ) {
       throw new Error(
         `Invalid headers.crossOriginEmbedderPolicy: "${config.headers.crossOriginEmbedderPolicy as string}"`,
       );
     }
     if (
-      config.headers.crossOriginResourcePolicy !== null &&
-      !["same-origin", "cross-origin"].includes(config.headers.crossOriginResourcePolicy)
+      config.headers.crossOriginResourcePolicy !== null
+      && !["same-origin", "cross-origin"].includes(config.headers.crossOriginResourcePolicy)
     ) {
       throw new Error(
         `Invalid headers.crossOriginResourcePolicy: "${config.headers.crossOriginResourcePolicy}"`,
@@ -705,8 +705,7 @@ export class ConfigSchema {
                       type: "string",
                       enum: ["checkpoint", "diffusion"],
                       default: "checkpoint",
-                      description:
-                        "checkpoint = standalone (-m), diffusion = component (--diffusion-model, needs llm)",
+                      description: "checkpoint = standalone (-m), diffusion = component (--diffusion-model, needs llm)",
                     },
                     modelPath: { type: "string", description: "Path to .safetensors model" },
                     port: { type: "integer", default: 9010, description: "sd-server port" },
@@ -848,8 +847,7 @@ export class ConfigSchema {
               type: ["string", "null"],
               enum: ["require-corp", null],
               default: null,
-              description:
-                "COEP; self-hosted Alpine/htmx resolved CDN blocker. Still not needed (no wasm/SAB).",
+              description: "COEP; self-hosted Alpine/htmx resolved CDN blocker. Still not needed (no wasm/SAB).",
             },
             crossOriginResourcePolicy: {
               type: ["string", "null"],
@@ -897,8 +895,7 @@ export class ConfigSchema {
         },
         dynamicResponse: {
           type: "object",
-          description:
-            "Dynamic-response optimization (minify / validate / compress runtime HTML/CSS/JS/JSON)",
+          description: "Dynamic-response optimization (minify / validate / compress runtime HTML/CSS/JS/JSON)",
           properties: {
             enabled: { type: "boolean", default: true, description: "Master toggle" },
             minify: {

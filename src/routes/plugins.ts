@@ -10,10 +10,10 @@
 import { Elysia } from "elysia";
 import type { Kysely } from "kysely";
 import type { DB } from "../db/schema";
-import { jsonResponse, jsonError, HttpStatus } from "./http-utils";
-import { registry } from "../plugins/registry";
 import { getLogger } from "../logger";
+import { registry } from "../plugins/registry";
 import { forbidden } from "../validation/middleware";
+import { HttpStatus, jsonError, jsonResponse } from "./http-utils";
 
 function log() {
   return getLogger().child({ module: "plugins" });
@@ -61,7 +61,7 @@ export function pluginRoutes({ database }: { database: Kysely<DB> }) {
         .onConflict((oc) =>
           oc
             .column("name")
-            .doUpdateSet({ enabled: 1, enabled_at: new Date().toISOString(), disabled_at: null }),
+            .doUpdateSet({ enabled: 1, enabled_at: new Date().toISOString(), disabled_at: null })
         )
         .execute()
         .catch(() => {});
@@ -89,9 +89,7 @@ export function pluginRoutes({ database }: { database: Kysely<DB> }) {
       await database
         .insertInto("plugin_state")
         .values({ name, enabled: 0, disabled_at: new Date().toISOString() })
-        .onConflict((oc) =>
-          oc.column("name").doUpdateSet({ enabled: 0, disabled_at: new Date().toISOString() }),
-        )
+        .onConflict((oc) => oc.column("name").doUpdateSet({ enabled: 0, disabled_at: new Date().toISOString() }))
         .execute()
         .catch(() => {});
 

@@ -126,10 +126,11 @@ export function jsonError(
   code?: ErrorCode,
 ): Response {
   const message = typeof messageOrOptions === "string" ? messageOrOptions : messageOrOptions.message;
-  const resolvedStatus =
-    typeof messageOrOptions === "string" ? status : (messageOrOptions.status ?? HttpStatus.BadRequest);
-  const resolvedCode =
-    (typeof messageOrOptions === "string" ? code : messageOrOptions.code) ?? STATUS_TO_CODE[resolvedStatus];
+  const resolvedStatus = typeof messageOrOptions === "string"
+    ? status
+    : (messageOrOptions.status ?? HttpStatus.BadRequest);
+  const resolvedCode = (typeof messageOrOptions === "string" ? code : messageOrOptions.code)
+    ?? STATUS_TO_CODE[resolvedStatus];
   const body: ApiError = { error: message, code: resolvedCode };
   return Response.json(body, { status: resolvedStatus });
 }
@@ -175,27 +176,25 @@ export function jsonPaginated(
   page?: number,
   pageSize?: number,
 ): Response {
-  const { data, pagination } =
-    typeof dataOrOptions === "object" && !Array.isArray(dataOrOptions)
-      ? {
-          data: dataOrOptions.data,
-          pagination: {
-            total: dataOrOptions.total,
-            page: dataOrOptions.page,
-            pageSize: dataOrOptions.pageSize,
-            totalPages:
-              dataOrOptions.pageSize > 0 ? Math.ceil(dataOrOptions.total / dataOrOptions.pageSize) : 0,
-          },
-        }
-      : {
-          data: dataOrOptions,
-          pagination: {
-            total: total ?? 0,
-            page: page ?? 1,
-            pageSize: pageSize ?? 0,
-            totalPages: pageSize && pageSize > 0 ? Math.ceil((total ?? 0) / pageSize) : 0,
-          },
-        };
+  const { data, pagination } = typeof dataOrOptions === "object" && !Array.isArray(dataOrOptions)
+    ? {
+      data: dataOrOptions.data,
+      pagination: {
+        total: dataOrOptions.total,
+        page: dataOrOptions.page,
+        pageSize: dataOrOptions.pageSize,
+        totalPages: dataOrOptions.pageSize > 0 ? Math.ceil(dataOrOptions.total / dataOrOptions.pageSize) : 0,
+      },
+    }
+    : {
+      data: dataOrOptions,
+      pagination: {
+        total: total ?? 0,
+        page: page ?? 1,
+        pageSize: pageSize ?? 0,
+        totalPages: pageSize && pageSize > 0 ? Math.ceil((total ?? 0) / pageSize) : 0,
+      },
+    };
   return Response.json({ data, pagination }, { status: HttpStatus.OK });
 }
 

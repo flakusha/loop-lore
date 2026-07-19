@@ -1,5 +1,5 @@
-import { describe, test, expect } from "bun:test";
-import { escapeXml, wrapSection, wrapContent, getSessionNonce } from "./xml-utils";
+import { describe, expect, test } from "bun:test";
+import { escapeXml, getSessionNonce, wrapContent, wrapSection } from "./xml-utils";
 import type { WrapperFormat } from "./xml-utils";
 
 describe("getSessionNonce", () => {

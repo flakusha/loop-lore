@@ -25,7 +25,7 @@ document.addEventListener("keydown", (e: KeyboardEvent) => {
   // Ctrl+N — new chat
   if (e.ctrlKey && e.key === "n") {
     e.preventDefault();
-    const link = document.querySelector<HTMLAnchorElement>('[href="/views/new-chat"]');
+    const link = document.querySelector<HTMLAnchorElement>("[href=\"/views/new-chat\"]");
     if (link) {
       link.click();
     } else {
@@ -45,7 +45,7 @@ document.addEventListener("keydown", (e: KeyboardEvent) => {
   // Ctrl+K — focus search
   if (e.ctrlKey && e.key === "k") {
     e.preventDefault();
-    const search = document.querySelector<HTMLInputElement>('.list-search, [type="search"]');
+    const search = document.querySelector<HTMLInputElement>(".list-search, [type=\"search\"]");
     search?.focus();
     return;
   }

@@ -4,14 +4,14 @@
 // resolveProvider() handles resolution order: user BYO key → chat → server default.
 // See docs/spec/provider-system.md.
 
-import type { Config } from "../../config/schema";
 import type { Kysely } from "kysely";
-import type { DB } from "../../db/schema";
-import { getDatabase } from "../../db/index";
+import type { Config } from "../../config/schema";
 import { decryptValue } from "../../crypto";
-import type { LLMProvider, GenerateRequest, GenerateResponse, ChunkEvent } from "./types";
-import { OpenAiCompatibleProvider } from "./openai-compatible";
+import { getDatabase } from "../../db/index";
+import type { DB } from "../../db/schema";
 import { circuitBreaker } from "./circuit-breaker";
+import { OpenAiCompatibleProvider } from "./openai-compatible";
+import type { ChunkEvent, GenerateRequest, GenerateResponse, LLMProvider } from "./types";
 // TODO: register additional providers (Bedrock, Google, Anthropic, Ollama native)
 // when their implementations land.
 
@@ -136,8 +136,8 @@ export function initializeProviders(config: Config): void {
     // TODO: AnthropicProvider when implemented
   }
   if (
-    config.generation.providers.ollamaNative &&
-    !getProvider(config.generation.providers.ollamaNative.name)
+    config.generation.providers.ollamaNative
+    && !getProvider(config.generation.providers.ollamaNative.name)
   ) {
     // TODO: OllamaNativeProvider when implemented
   }

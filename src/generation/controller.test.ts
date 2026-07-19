@@ -1,13 +1,13 @@
 /**
  * Tests for generation controller (input validation and non-DB paths).
  */
-import { describe, test, expect } from "bun:test";
+import { describe, expect, test } from "bun:test";
 import {
   handleCancelGeneration,
   handleGenerationStatus,
   handleListActiveGenerations,
-  handleRetryGeneration,
   handleRegenerate,
+  handleRetryGeneration,
 } from "./generation-routes";
 
 describe("handleCancelGeneration", () => {

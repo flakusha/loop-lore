@@ -1,6 +1,6 @@
-import { describe, test, expect, beforeAll } from "bun:test";
+import { beforeAll, describe, expect, test } from "bun:test";
 import { createLogger } from "../../logger";
-import { parseDiceNotation, rollDice, rollDie, formatDiceResult, handleRollCommand } from "./dice";
+import { formatDiceResult, handleRollCommand, parseDiceNotation, rollDice, rollDie } from "./dice";
 
 beforeAll(() => {
   createLogger({ level: "error" });

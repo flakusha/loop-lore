@@ -3,9 +3,9 @@
  * entries are always included; selective entries only when one of their keys
  * appears in the most recent user message.
  */
-import type { SectionBuilder } from "../types";
-import { parseKeywords, recentUserWords } from "../keywords";
 import { wrapSection } from "../../xml-utils";
+import { parseKeywords, recentUserWords } from "../keywords";
+import type { SectionBuilder } from "../types";
 
 export const loreSection: SectionBuilder = {
   name: "lore",
@@ -22,11 +22,11 @@ export const loreSection: SectionBuilder = {
         .execute(),
       chat.world_id
         ? ctx.db
-            .selectFrom("world_lore_entries")
-            .select(["content", "keys", "position", "constant", "selective"])
-            .where("world_id", "=", chat.world_id)
-            .orderBy("position", "asc")
-            .execute()
+          .selectFrom("world_lore_entries")
+          .select(["content", "keys", "position", "constant", "selective"])
+          .where("world_id", "=", chat.world_id)
+          .orderBy("position", "asc")
+          .execute()
         : Promise.resolve([]),
     ]);
 

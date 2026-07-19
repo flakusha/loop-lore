@@ -17,23 +17,23 @@
  */
 
 import { Elysia } from "elysia";
+import type { Kysely } from "kysely";
+import type { Config } from "../config/schema";
+import type { DB } from "../db/schema";
+import { jsonError } from "../routes/http-utils";
+import { handleImageCaption } from "./caption-route";
+import { handleGenerate } from "./generate-route";
 import {
   handleCancelGeneration,
-  handleGenerationStatus,
-  handleRetryGeneration,
   handleContinueGeneration,
+  handleGenerationStatus,
+  handleGenerationStream,
   handleListActiveGenerations,
   handleRegenerate,
-  handleGenerationStream,
+  handleRetryGeneration,
   handleTestConnection,
 } from "./generation-routes";
-import { handleGenerate } from "./generate-route";
 import { handleImageGeneration } from "./image-gen-route";
-import { handleImageCaption } from "./caption-route";
-import { jsonError } from "../routes/http-utils";
-import type { Config } from "../config/schema";
-import type { Kysely } from "kysely";
-import type { DB } from "../db/schema";
 
 // ── Helpers ──────────────────────────────────────────────────
 

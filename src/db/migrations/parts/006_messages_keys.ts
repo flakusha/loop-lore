@@ -1,4 +1,4 @@
-import { sql, type Kysely } from "kysely";
+import { type Kysely, sql } from "kysely";
 
 export async function up(database: Kysely<unknown>): Promise<void> {
   // ── Messages ──────────────────────────────────────────────
@@ -34,7 +34,8 @@ export async function up(database: Kysely<unknown>): Promise<void> {
     .addColumn("attachments", "text", (col) => col.defaultTo("[]"))
     .execute();
 
-  await database.schema.createIndex("idx_messages_chat_created").on("messages").columns(["chat_id", "created_at"]).execute();
+  await database.schema.createIndex("idx_messages_chat_created").on("messages").columns(["chat_id", "created_at"])
+    .execute();
   await database.schema.createIndex("idx_messages_idempotency").on("messages").column("idempotency_key").execute();
   await database.schema.createIndex("idx_messages_actor").on("messages").column("actor_id").execute();
   await database.schema.createIndex("idx_messages_parent").on("messages").column("parent_id").execute();
@@ -70,7 +71,10 @@ export async function up(database: Kysely<unknown>): Promise<void> {
     .addColumn("updated_at", "text", (col) => col.notNull().defaultTo(sql`(datetime('now'))`))
     .execute();
 
-  await database.schema.createIndex("idx_user_api_keys_user_provider").on("user_api_keys").columns(["user_id", "provider_name"]).execute();
+  await database.schema.createIndex("idx_user_api_keys_user_provider").on("user_api_keys").columns([
+    "user_id",
+    "provider_name",
+  ]).execute();
 }
 
 export async function down(database: Kysely<unknown>): Promise<void> {

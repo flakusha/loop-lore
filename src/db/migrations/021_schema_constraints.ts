@@ -16,7 +16,7 @@
  * the DROP TABLE / RENAME cycle. FK integrity is preserved
  * because all data moves through INSERT ... SELECT.
  */
-import { sql, type Kysely } from "kysely";
+import { type Kysely, sql } from "kysely";
 
 export async function up(database: Kysely<any>): Promise<void> {
   await sql`PRAGMA foreign_keys = OFF`.execute(database);

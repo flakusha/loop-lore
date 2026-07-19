@@ -4,12 +4,12 @@
  * Tests chat export (JSON/MD), bulk data export (ZIP), and asset download.
  */
 
-import { describe, test, expect, beforeAll, afterAll } from "bun:test";
+import { afterAll, beforeAll, describe, expect, test } from "bun:test";
 import { writeFileSync } from "node:fs";
 import { resolve } from "node:path";
+import { type ApiClient, createClient } from "../helpers/client";
+import { SEED, seedAll } from "../helpers/seed";
 import { createTestServer, type TestServer } from "../helpers/server";
-import { createClient, type ApiClient } from "../helpers/client";
-import { seedAll, SEED } from "../helpers/seed";
 
 describe("Export E2E", () => {
   let server: TestServer;
@@ -77,7 +77,7 @@ describe("Export E2E", () => {
       // ZIP magic bytes "PK\x03\x04"
       const magic = new Uint8Array(buffer).slice(0, 4);
       expect(magic[0]).toBe(0x50);
-      expect(magic[1]).toBe(0x4b);
+      expect(magic[1]).toBe(0x4B);
     });
   });
 

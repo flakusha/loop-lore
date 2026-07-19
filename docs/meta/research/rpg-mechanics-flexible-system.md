@@ -157,10 +157,10 @@ function getEffectiveStat(
   worldModifiers: WorldModifier[],
 ): number {
   return (
-    baseStat +
-    equipmentBonuses.reduce((s, b) => s + b.value, 0) +
-    statusEffects.reduce((s, e) => s + e.statModifiers[str], 0) +
-    worldModifiers.reduce((s, w) => s + w.value, 0)
+    baseStat
+    + equipmentBonuses.reduce((s, b) => s + b.value, 0)
+    + statusEffects.reduce((s, e) => s + e.statModifiers[str], 0)
+    + worldModifiers.reduce((s, w) => s + w.value, 0)
   );
 }
 ```
@@ -308,14 +308,14 @@ Skills map to attributes — universal across settings:
 
 ### Difficulty Classes (Universal)
 
-| DC  | Label             | Examples Across Genres                   |
-| --- | ----------------- | ---------------------------------------- |
-| 5   | Trivial           | Open unlocked door, simple recall        |
-| 10  | Easy              | Climb rope, basic computer use           |
-| 15  | Medium            | Pick locked chest, hack basic system     |
-| 20  | Hard              | Lie to expert, bypass security           |
-| 25  | Very Hard         | Sneak past guards, forge documents       |
-| 30  | Nearly Impossible | Disguise as VIP, create untraceable hack |
+| DC | Label             | Examples Across Genres                   |
+| -- | ----------------- | ---------------------------------------- |
+| 5  | Trivial           | Open unlocked door, simple recall        |
+| 10 | Easy              | Climb rope, basic computer use           |
+| 15 | Medium            | Pick locked chest, hack basic system     |
+| 20 | Hard              | Lie to expert, bypass security           |
+| 25 | Very Hard         | Sneak past guards, forge documents       |
+| 30 | Nearly Impossible | Disguise as VIP, create untraceable hack |
 
 ### Skill Check Resolution
 

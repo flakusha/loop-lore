@@ -1,13 +1,13 @@
 import type { Kysely } from "kysely";
 
-import { up as upUsers, down as downUsers } from "./parts/001_users";
-import { up as upAssets, down as downAssets } from "./parts/002_assets";
-import { up as upWorlds, down as downWorlds } from "./parts/003_worlds";
-import { up as upChatsActors, down as downChatsActors } from "./parts/004_chats_actors";
-import { up as upActorData, down as downActorData } from "./parts/005_actor_data";
-import { up as upMessagesKeys, down as downMessagesKeys } from "./parts/006_messages_keys";
-import { up as upStoryGeneration, down as downStoryGeneration } from "./parts/007_story_generation";
-import { up as upModelRoles, down as downModelRoles } from "./parts/008_model_roles";
+import { down as downUsers, up as upUsers } from "./parts/001_users";
+import { down as downAssets, up as upAssets } from "./parts/002_assets";
+import { down as downWorlds, up as upWorlds } from "./parts/003_worlds";
+import { down as downChatsActors, up as upChatsActors } from "./parts/004_chats_actors";
+import { down as downActorData, up as upActorData } from "./parts/005_actor_data";
+import { down as downMessagesKeys, up as upMessagesKeys } from "./parts/006_messages_keys";
+import { down as downStoryGeneration, up as upStoryGeneration } from "./parts/007_story_generation";
+import { down as downModelRoles, up as upModelRoles } from "./parts/008_model_roles";
 
 /**
  * Initial schema migration — orchestrates the split part modules in

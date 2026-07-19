@@ -1,4 +1,4 @@
-import { registerCommand, listCommands } from "./registry";
+import { listCommands, registerCommand } from "./registry";
 
 registerCommand("help", () => {
   const cmds = listCommands();

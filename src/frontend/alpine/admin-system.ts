@@ -1,5 +1,5 @@
-import { log as rootLog } from "./logger";
 import { jsonBody } from "./json";
+import { log as rootLog } from "./logger";
 
 const log = rootLog.child({ module: "admin-system" });
 

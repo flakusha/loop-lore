@@ -1,10 +1,10 @@
 // ── New Chat page: actor search, participant selection, form ──
-import { escapeHtml, filterActors, getErrorMessage } from "./shared";
+import { jsonBody } from "../alpine/json";
 import { feFetch } from "../fe-fetch";
 import { showToast } from "../ui";
-import { jsonBody } from "../alpine/json";
+import { escapeHtml, filterActors, getErrorMessage } from "./shared";
 
-globalThis.loadNewChatPage = async function (): Promise<void> {
+globalThis.loadNewChatPage = async function(): Promise<void> {
   let actors: any[] = [];
   let selected: any[] = [];
 
@@ -59,7 +59,7 @@ globalThis.loadNewChatPage = async function (): Promise<void> {
       .join("");
   }
 
-  globalThis.removeParticipant = function (id: string) {
+  globalThis.removeParticipant = function(id: string) {
     selected = selected.filter((a: any) => a.id !== id);
     renderSelected();
     if (resultsEl) resultsEl.style.display = "none";
@@ -84,34 +84,37 @@ globalThis.loadNewChatPage = async function (): Promise<void> {
     }
   }
 
-  globalThis.selectActorFromList = function (id: string) {
+  globalThis.selectActorFromList = function(id: string) {
     const actor = actors.find((a: any) => a.id === id);
     if (actor) selectActor(actor);
   };
 
   function renderResults(filtered: any[]) {
     if (!resultsEl) return;
-    resultsEl.innerHTML =
-      filtered.length === 0
-        ? '<div style="padding:var(--space-3);color:var(--text-secondary);font-size:13px;text-align:center">No characters found</div>'
-        : filtered
-            .map((a: any) => {
-              const disabled = isGroup() && selected.find((s: any) => s.id === a.id);
-              const onclickAttr = disabled ? "" : `onclick="selectActorFromList('${a.id}')"`;
-              return `<div style="padding:var(--space-2) var(--space-3);cursor:pointer;display:flex;align-items:center;gap:var(--space-2);${disabled ? "opacity:0.4;cursor:default" : ""}" ${onclickAttr} onmouseenter="this.style.background='var(--bg-tertiary)'" onmouseleave="this.style.background=''">
+    resultsEl.innerHTML = filtered.length === 0
+      ? "<div style=\"padding:var(--space-3);color:var(--text-secondary);font-size:13px;text-align:center\">No characters found</div>"
+      : filtered
+        .map((a: any) => {
+          const disabled = isGroup() && selected.find((s: any) => s.id === a.id);
+          const onclickAttr = disabled ? "" : `onclick="selectActorFromList('${a.id}')"`;
+          return `<div style="padding:var(--space-2) var(--space-3);cursor:pointer;display:flex;align-items:center;gap:var(--space-2);${
+            disabled ? "opacity:0.4;cursor:default" : ""
+          }" ${onclickAttr} onmouseenter="this.style.background='var(--bg-tertiary)'" onmouseleave="this.style.background=''">
           <span style="font-size:16px">${a.avatar_asset_id ? "" : "👤"}</span>
           <div>
             <div style="font-size:14px;font-weight:500">${escapeHtml(a.display_name || a.name || "Unknown")}</div>
-            <div style="font-size:12px;color:var(--text-secondary)">${escapeHtml((a.description || "").slice(0, 60))}</div>
+            <div style="font-size:12px;color:var(--text-secondary)">${
+            escapeHtml((a.description || "").slice(0, 60))
+          }</div>
           </div>
-          ${disabled ? '<span style="margin-left:auto;font-size:12px;color:var(--text-secondary)">added</span>' : ""}
+          ${disabled ? "<span style=\"margin-left:auto;font-size:12px;color:var(--text-secondary)\">added</span>" : ""}
         </div>`;
-            })
-            .join("");
+        })
+        .join("");
     resultsEl.style.display = "block";
   }
 
-  searchInput.addEventListener("input", function () {
+  searchInput.addEventListener("input", function() {
     const q = this.value.toLowerCase().trim();
     if (!q) {
       if (resultsEl) resultsEl.style.display = "none";
@@ -120,26 +123,26 @@ globalThis.loadNewChatPage = async function (): Promise<void> {
     renderResults(filterActors(actors, q));
   });
 
-  searchInput.addEventListener("blur", function () {
+  searchInput.addEventListener("blur", function() {
     setTimeout(() => {
       if (resultsEl) resultsEl.style.display = "none";
     }, 200);
   });
 
-  searchInput.addEventListener("focus", function () {
+  searchInput.addEventListener("focus", function() {
     const q = this.value.toLowerCase().trim();
     if (!q) return;
     renderResults(filterActors(actors, q));
   });
 
-  form.addEventListener("submit", async function (e: Event) {
+  form.addEventListener("submit", async function(e: Event) {
     e.preventDefault();
-    const nameInput = form.querySelector<HTMLInputElement>('[name="name"]');
+    const nameInput = form.querySelector<HTMLInputElement>("[name=\"name\"]");
     if (!nameInput) return;
     const name = nameInput.value.trim();
     if (!name) return;
 
-    const btn = form.querySelector<HTMLButtonElement>('[type="submit"]');
+    const btn = form.querySelector<HTMLButtonElement>("[type=\"submit\"]");
     if (btn) {
       btn.disabled = true;
       btn.textContent = "Creating...";

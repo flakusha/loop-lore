@@ -76,7 +76,7 @@ function censorObject(
       result[key] = val.map((item: unknown) =>
         typeof item === "object" && item !== null
           ? censorObject(item as Record<string, unknown>, rules, depth + 1, maxDepth)
-          : item,
+          : item
       );
     } else {
       result[key] = val;

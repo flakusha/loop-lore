@@ -10,13 +10,13 @@
  */
 
 import { Elysia } from "elysia";
-import type { Db } from "../db";
-import type { Config } from "../config/schema";
-import { safeJsonStringify, jsonParseOr } from "../utils";
-import { UserProfileUpdateBody, UserIdParams } from "../validation/schemas";
-import { unauthorized, forbidden, notFound } from "../validation/middleware";
-import { jsonResponse, jsonError, jsonNoContent, HttpStatus } from "./http-utils";
 import { validateAge } from "../age-gate/service";
+import type { Config } from "../config/schema";
+import type { Db } from "../db";
+import { jsonParseOr, safeJsonStringify } from "../utils";
+import { forbidden, notFound, unauthorized } from "../validation/middleware";
+import { UserIdParams, UserProfileUpdateBody } from "../validation/schemas";
+import { HttpStatus, jsonError, jsonNoContent, jsonResponse } from "./http-utils";
 
 export function usersRoutes(opts: { database: Db; config: Config }): Elysia {
   return new Elysia({ name: "users" })
@@ -58,8 +58,9 @@ export function usersRoutes(opts: { database: Db; config: Config }): Elysia {
         }
         if (body.settings) {
           const settingsResult = safeJsonStringify(body.settings);
-          if (!settingsResult.ok)
+          if (!settingsResult.ok) {
             return jsonError({ message: "Invalid settings data", status: HttpStatus.BadRequest });
+          }
           updates.settings = settingsResult.value;
         }
 
@@ -113,8 +114,9 @@ export function usersRoutes(opts: { database: Db; config: Config }): Elysia {
         if (body.displayName !== undefined) updates.display_name = body.displayName;
         if (body.settings) {
           const settingsResult = safeJsonStringify(body.settings);
-          if (!settingsResult.ok)
+          if (!settingsResult.ok) {
             return jsonError({ message: "Invalid settings data", status: HttpStatus.BadRequest });
+          }
           updates.settings = settingsResult.value;
         }
 
@@ -147,8 +149,9 @@ export function usersRoutes(opts: { database: Db; config: Config }): Elysia {
 
       const currentSettings = jsonParseOr<Record<string, unknown>>(user.settings ?? "", {});
       const mergedResult = safeJsonStringify({ ...currentSettings, ...body });
-      if (!mergedResult.ok)
+      if (!mergedResult.ok) {
         return jsonError({ message: "Invalid settings data", status: HttpStatus.BadRequest });
+      }
 
       await opts.database
         .updateTable("users")
@@ -182,8 +185,9 @@ export function usersRoutes(opts: { database: Db; config: Config }): Elysia {
         const merged = { ...currentSettings, ...body };
 
         const mergedResult = safeJsonStringify(merged);
-        if (!mergedResult.ok)
+        if (!mergedResult.ok) {
           return jsonError({ message: "Invalid settings data", status: HttpStatus.BadRequest });
+        }
 
         await opts.database
           .updateTable("users")

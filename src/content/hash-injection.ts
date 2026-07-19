@@ -13,7 +13,7 @@
  * The hash pattern matches bun's 8-char hex output (e.g. `alpine-tx4kdwfm.js`).
  */
 
-import { existsSync, readFileSync, writeFileSync, readdirSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { extname } from "node:path";
 
 const HASH_PATTERN = /^(.+)-([a-z0-9]{8})\.((?:js|css))$/;

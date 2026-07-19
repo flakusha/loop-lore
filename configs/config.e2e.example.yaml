@@ -50,23 +50,23 @@ logging:
 generation:
   providers:
     openaiCompatible:
-      # ── Mock provider (registered by test server, not config) ──
-      # The e2e test server auto-registers MockLLMProvider as
-      # "mock-provider". No real config entry needed — this empty
-      # list is correct for mock-only e2e.
+  # ── Mock provider (registered by test server, not config) ──
+  # The e2e test server auto-registers MockLLMProvider as
+  # "mock-provider". No real config entry needed — this empty
+  # list is correct for mock-only e2e.
 
-    # ── Real provider example (uncomment for live-server e2e) ──
-    # - name: llama-cpp-e2e
-    #   label: "llama.cpp E2E"
-    #   baseUrl: http://localhost:9011/v1
-    #   model: e2e-test-model
-    #   timeout: 30000
-    #   retries: 2
-    #   allowUserApiKey: false
-    #   models:
-    #     e2e-test-model:
-    #       contextLimit: 8192
-    #       maxOutput: 1024
+  # ── Real provider example (uncomment for live-server e2e) ──
+  # - name: llama-cpp-e2e
+  #   label: "llama.cpp E2E"
+  #   baseUrl: http://localhost:9011/v1
+  #   model: e2e-test-model
+  #   timeout: 30000
+  #   retries: 2
+  #   allowUserApiKey: false
+  #   models:
+  #     e2e-test-model:
+  #       contextLimit: 8192
+  #       maxOutput: 1024
 
   defaultProvider: mock-provider
   defaultModels:

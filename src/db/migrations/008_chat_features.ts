@@ -36,15 +36,27 @@ export async function up(database: Kysely<unknown>): Promise<void> {
     .execute();
 
   await database.schema.createIndex("idx_personas_user_id").on("personas").column("user_id").execute();
-  await database.schema.createIndex("idx_personas_default").on("personas").column("user_id").column("is_default").execute();
+  await database.schema.createIndex("idx_personas_default").on("personas").column("user_id").column("is_default")
+    .execute();
 
-  await database.schema.alterTable("chat_participants").addColumn("impersonate_actor_id", "text", (col) => col.references("actors.id")).execute();
+  await database.schema.alterTable("chat_participants").addColumn(
+    "impersonate_actor_id",
+    "text",
+    (col) => col.references("actors.id"),
+  ).execute();
 
-  await database.schema.alterTable("chat_participants").addColumn("persona_id", "text", (col) => col.references("personas.id")).execute();
+  await database.schema.alterTable("chat_participants").addColumn(
+    "persona_id",
+    "text",
+    (col) => col.references("personas.id"),
+  ).execute();
 
-  await database.schema.createIndex("idx_chat_participants_impersonate").on("chat_participants").column("impersonate_actor_id").execute();
+  await database.schema.createIndex("idx_chat_participants_impersonate").on("chat_participants").column(
+    "impersonate_actor_id",
+  ).execute();
 
-  await database.schema.createIndex("idx_chat_participants_persona").on("chat_participants").column("persona_id").execute();
+  await database.schema.createIndex("idx_chat_participants_persona").on("chat_participants").column("persona_id")
+    .execute();
 }
 
 export async function down(database: Kysely<unknown>): Promise<void> {

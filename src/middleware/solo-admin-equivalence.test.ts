@@ -1,10 +1,10 @@
-import { describe, test, expect, beforeAll, afterAll } from "bun:test";
-import { createTestDb } from "../test-utils/create-test-db";
+import { afterAll, beforeAll, describe, expect, test } from "bun:test";
+import type { Kysely } from "kysely";
+import type { AuthConfig } from "../config/schema";
+import type { DB } from "../db/schema";
 import { seedDefaultActors } from "../db/seed";
 import { authenticate, resetSoloUserCache } from "../middleware/auth";
-import type { Kysely } from "kysely";
-import type { DB } from "../db/schema";
-import type { AuthConfig } from "../config/schema";
+import { createTestDb } from "../test-utils/create-test-db";
 
 const soloAuthConfig = {
   required: false,

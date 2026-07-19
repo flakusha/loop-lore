@@ -12,12 +12,12 @@ The chat interface is **centered** with a **configurable maximum width** for the
 
 ## Zone Layout
 
-| #   | Zone                 | Default behavior                                                            | Mobile behavior                                        |
-| --- | -------------------- | --------------------------------------------------------------------------- | ------------------------------------------------------ |
-| 1   | Left panel (sidebar) | Hamburger menu, attaches to browser window left edge or chat area left edge | Always hamburger, full-screen overlay drawer           |
-| 2   | Chat area            | Centered, configurable max-width (default ~720px)                           | Full-width, no centering margin                        |
-| 3   | Right panel          | Slides in from right, pushes chat area chrome on desktop                    | Full-screen overlay drawer (other panel/chat disabled) |
-| 4   | Input area           | Fixed below chat area, same width as chat area                              | Fixed at bottom, full-width                            |
+| # | Zone                 | Default behavior                                                            | Mobile behavior                                        |
+| - | -------------------- | --------------------------------------------------------------------------- | ------------------------------------------------------ |
+| 1 | Left panel (sidebar) | Hamburger menu, attaches to browser window left edge or chat area left edge | Always hamburger, full-screen overlay drawer           |
+| 2 | Chat area            | Centered, configurable max-width (default ~720px)                           | Full-width, no centering margin                        |
+| 3 | Right panel          | Slides in from right, pushes chat area chrome on desktop                    | Full-screen overlay drawer (other panel/chat disabled) |
+| 4 | Input area           | Fixed below chat area, same width as chat area                              | Fixed at bottom, full-width                            |
 
 The left and right panels are used for: chat list, character info, story setup, world/location context, and assistant configuration. In group chat mode (future), a chat admin can freeze panels to prevent users from manipulating story setup.
 

@@ -2,7 +2,7 @@
 //
 // /impersonate — SillyTavern-style impersonation with character selector.
 
-import { registerCommand, type CommandResult } from "./registry";
+import { type CommandResult, registerCommand } from "./registry";
 
 registerCommand("impersonate", async (args): Promise<CommandResult> => {
   if (args.length === 0) {

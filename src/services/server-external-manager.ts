@@ -15,18 +15,18 @@
  */
 
 import { spawn, type Subprocess } from "bun";
-import { platform } from "node:process";
-import { homedir } from "node:os";
-import { readFileSync } from "node:fs";
-import { resolve } from "node:path";
 import { load as parseYaml } from "js-yaml";
-import type { Logger } from "../logger";
+import { readFileSync } from "node:fs";
+import { homedir } from "node:os";
+import { resolve } from "node:path";
+import { platform } from "node:process";
 import type { LlamaCppAutoStartConfig, SdCppAutoStartConfig } from "../config/schema";
+import type { Logger } from "../logger";
 import {
   BINARY_CANDIDATES,
   findBinary,
-  isPortFree,
   isHuggingFaceRef,
+  isPortFree,
   waitForHealth,
   waitForPort,
 } from "./external-server-utils";

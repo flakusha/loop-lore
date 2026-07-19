@@ -1,6 +1,6 @@
 // src/transport/negotiation-parsers.ts — Header parsing helpers for negotiation
 
-import { TransportProtocol, CompressionAlgorithm } from "../db/enums";
+import { CompressionAlgorithm, TransportProtocol } from "../db/enums";
 
 /**
  * Parse `Accept` header into ordered protocol preference list.

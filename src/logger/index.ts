@@ -11,8 +11,8 @@
 import { LoggerImpl } from "./logger";
 import type { Logger, LoggerConfig } from "./types";
 
-export type { Logger, LoggerConfig, LoggerBindings, LogOptions } from "./types";
-export type { LogLevel, LogEntry } from "./types";
+export type { Logger, LoggerBindings, LoggerConfig, LogOptions } from "./types";
+export type { LogEntry, LogLevel } from "./types";
 
 /** Global root logger holder */
 const _root: { instance: Logger | null } = { instance: null };

@@ -10,9 +10,57 @@
     "**/.hermes",
     "**/docs/.vitepress",
     "**/plugins",
+    "**/tree/",
+    "**/schemas/",
     "bun.lock",
-    "*.har"
+    "*.har",
+    "*.db",
+    "*.db-wal",
+    "*.db-shm",
+    "*.pem",
+    "*.log",
+    "*.png",
+    "*.lock",
+    ".env",
+    ".env.*",
+    ".example",
+    "src/views/layout.html",
+    ".github/templates/**",
+    ".githooks/**"
   ],
+  "typescript": {
+    "quoteStyle": "preferDouble",
+    "trailingCommas": "always",
+    "useBraces": "always",
+    "binaryExpression.operatorPosition": "sameLine",
+    "nextControlFlowPosition": "sameLine",
+    "preferHanging": false,
+    "preferSingleLine": false
+  },
+  "json": {
+    "indentWidth": 2
+  },
+  "markdown": {
+    "lineWidth": 120,
+    "textWrap": "maintain"
+  },
+  "markup": {
+    "printWidth": 120,
+    "quotes": "double",
+    "formatComments": true,
+    "closingBracketSameLine": false,
+    "whitespaceSensitivity": "css",
+    "closingTagLineBreakForEmpty": "fit"
+  },
+  "exec": {
+    "cwd": "${configDir}",
+    "commands": [
+      {
+        "command": "shfmt -i 4",
+        "exts": ["sh"]
+      }
+    ]
+  },
   "plugins": [
     "https://plugins.dprint.dev/typescript-0.96.1.wasm",
     "https://plugins.dprint.dev/json-0.23.0.wasm",
@@ -20,6 +68,7 @@
     "https://plugins.dprint.dev/g-plane/malva-v0.16.0.wasm",
     "https://plugins.dprint.dev/g-plane/markup_fmt-v0.27.3.wasm",
     "https://plugins.dprint.dev/g-plane/pretty_yaml-v0.6.0.wasm",
-    "https://plugins.dprint.dev/toml-0.7.0.wasm"
+    "https://plugins.dprint.dev/toml-0.7.0.wasm",
+    "https://plugins.dprint.dev/exec-0.7.3.json@a7898d5f1897e77bff474cec3d948c3ec3a7f455e32de2cc60c8adb9a5dd24aa"
   ]
 }

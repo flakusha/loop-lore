@@ -8,16 +8,16 @@
  */
 
 import type { Kysely } from "kysely";
+import { CancelReason, CancelSource, ChunkAction, GenerationStatus, PolicyType } from "../db/enums";
 import type { DB } from "../db/schema";
-import { GenerationStatus, CancelReason, CancelSource, ChunkAction, PolicyType } from "../db/enums";
-import { DEFAULT_POLICY_DETECTION } from "./types";
-import { detectTheatricalLoop } from "./repetition-detector";
-import { detectPolicyMismatch } from "./policy-detector";
-import { safeTransition } from "./cancellation-tracker";
-import { storePartialContent } from "./continuation";
-import { activeGenerations, chatToAttempt, updateAttemptStatus } from "./cancellation-tracker";
-import { safeJsonStringify } from "../utils";
 import { getLogger } from "../logger";
+import { safeJsonStringify } from "../utils";
+import { safeTransition } from "./cancellation-tracker";
+import { activeGenerations, chatToAttempt, updateAttemptStatus } from "./cancellation-tracker";
+import { storePartialContent } from "./continuation";
+import { detectPolicyMismatch } from "./policy-detector";
+import { detectTheatricalLoop } from "./repetition-detector";
+import { DEFAULT_POLICY_DETECTION } from "./types";
 
 // ── Cancellation logic ────────────────────────────────────
 
@@ -214,10 +214,9 @@ export async function processStreamingChunk({
     const effectiveScore = Math.max(repAnalysis.score, theatreCheck.score);
 
     if (effectiveScore >= 0.85) {
-      const detail =
-        `Repetition: score=${effectiveScore.toFixed(2)}, ` +
-        `patterns=${repAnalysis.patterns.length}, ` +
-        `theatre=${String(theatreCheck.detected)}`;
+      const detail = `Repetition: score=${effectiveScore.toFixed(2)}, `
+        + `patterns=${repAnalysis.patterns.length}, `
+        + `theatre=${String(theatreCheck.detected)}`;
 
       cancelGeneration({
         attemptId,
@@ -261,15 +260,13 @@ export async function processStreamingChunk({
 
     if (policyAnalysis.detected) {
       if (active.policyConfig.cancel) {
-        const mismatchType =
-          active.policyConfig.expectedPolicy === PolicyType.Sfw
-            ? "Explicit content in SFW context"
-            : "SFW content in NSFW context";
+        const mismatchType = active.policyConfig.expectedPolicy === PolicyType.Sfw
+          ? "Explicit content in SFW context"
+          : "SFW content in NSFW context";
 
-        const detail =
-          `Policy mismatch: ${mismatchType}, ` +
-          `confidence=${policyAnalysis.confidence.toFixed(2)}, ` +
-          `indicators=${policyAnalysis.indicators.length}`;
+        const detail = `Policy mismatch: ${mismatchType}, `
+          + `confidence=${policyAnalysis.confidence.toFixed(2)}, `
+          + `indicators=${policyAnalysis.indicators.length}`;
 
         cancelGeneration({
           attemptId,

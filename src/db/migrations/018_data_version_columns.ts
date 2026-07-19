@@ -13,7 +13,7 @@
  * Default 1 = current format. Data migration scripts bump old rows
  * to newer versions when format actually changes.
  */
-import { sql, type Kysely } from "kysely";
+import { type Kysely, sql } from "kysely";
 
 export async function up(database: Kysely<unknown>): Promise<void> {
   await database.schema

@@ -1,10 +1,10 @@
-import { describe, test, expect, beforeAll } from "bun:test";
-import { createTestDb } from "../test-utils/create-test-db";
-import { createLogger } from "../logger";
-import { uid } from "../utils";
+import { beforeAll, describe, expect, test } from "bun:test";
 import type { Kysely } from "kysely";
 import type { DB } from "../db/schema";
-import { NotificationService, notifyMention, NotificationType } from "./service";
+import { createLogger } from "../logger";
+import { createTestDb } from "../test-utils/create-test-db";
+import { uid } from "../utils";
+import { NotificationService, NotificationType, notifyMention } from "./service";
 
 describe("NotificationService", () => {
   let db: Kysely<DB>;

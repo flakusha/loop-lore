@@ -284,7 +284,6 @@ When a story session completes (or hits a checkpoint), synthetic data flows thro
 ## API Endpoints
 
 ### Story Chat Management
-
 ```
 
 POST /api/chats/story # Create story-mode chat
@@ -296,9 +295,7 @@ POST /api/chats/:id/story/step # Single turn (for testing/debugging)
 POST /api/chats/:id/story/configure # Update GM config, turn order, thresholds
 
 ```
-
 ### Game Master
-
 ```
 
 POST /api/chats/:id/gm/turn # Request GM decision for next turn
@@ -307,9 +304,7 @@ POST /api/chats/:id/gm/override # Human GM override
 POST /api/chats/:id/gm/escalate # Escalate current turn to human
 
 ```
-
 ### Quality & Regeneration
-
 ```
 
 POST /api/messages/:id/evaluate # Trigger quality evaluation
@@ -317,9 +312,7 @@ POST /api/messages/:id/regenerate # Request regeneration
 GET /api/messages/:id/attempts # List generation attempts
 
 ```
-
 ### Quests
-
 ```
 
 GET /api/worlds/:worldId/quests # List quests
@@ -330,9 +323,7 @@ POST /api/quests/:id/progress # Manual progress update (GM)
 GET /api/quests/:id/history # Progress history
 
 ```
-
 ### World State
-
 ```
 
 GET /api/worlds/:worldId/state # Current world state snapshot
@@ -341,9 +332,7 @@ GET /api/worlds/:worldId/npcs/:actorId # NPC dynamic state
 GET /api/worlds/:worldId/locations/:id # Location dynamic state
 
 ```
-
 ### Synthetic Data
-
 ```
 
 GET /api/synthetic/scenarios # List with filters
@@ -354,7 +343,6 @@ POST /api/synthetic/test/run # Run test suite
 GET /api/synthetic/test/results/:runId # Test results
 
 ````
-
 ---
 
 ## Configuration

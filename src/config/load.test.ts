@@ -1,7 +1,7 @@
-import { describe, test, expect } from "bun:test";
-import { ConfigSchema } from "./schema-class";
+import { describe, expect, test } from "bun:test";
+import { coerceValue, deepMerge, setByPath, validateConfig } from "./load";
 import type { Config } from "./schema";
-import { deepMerge, validateConfig, coerceValue, setByPath } from "./load";
+import { ConfigSchema } from "./schema-class";
 
 describe("DEFAULTS", () => {
   function defaults() {

@@ -4,7 +4,8 @@
   x-show="$store.ui.showMemoryPanel"
   @click="$store.ui.showMemoryPanel = false"
   x-cloak
-></div>
+>
+</div>
 <!-- Right panel (memory) -->
 <aside
   class="right-panel"
@@ -17,14 +18,7 @@
     <div class="nav-section-title">Memories</div>
 
     <!-- Tab Navigation -->
-    <div
-      style="
-        display: flex;
-        gap: var(--space-1);
-        margin-bottom: var(--space-3);
-        border-bottom: 1px solid var(--border-default, #e9ecef);
-      "
-    >
+    <div style="display: flex; gap: var(--space-1); margin-bottom: var(--space-3); border-bottom: 1px solid var(--border-default, #e9ecef)">
       <button
         :class="{'tab-active': memoryPanel.activeTab === 'character'}"
         class="btn btn-secondary btn-xs"
@@ -88,22 +82,8 @@
     <!-- Memory List -->
     <div style="display: grid; gap: var(--space-2)">
       <template x-for="mem in getFilteredMemories()" :key="mem.id">
-        <div
-          style="
-            padding: var(--space-2);
-            background: var(--bg-secondary, #f8f9fa);
-            border-radius: 4px;
-            font-size: 12px;
-          "
-        >
-          <div
-            style="
-              display: flex;
-              justify-content: space-between;
-              align-items: flex-start;
-              margin-bottom: var(--space-1);
-            "
-          >
+        <div style="padding: var(--space-2); background: var(--bg-secondary, #f8f9fa); border-radius: 4px; font-size: 12px">
+          <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: var(--space-1)">
             <span x-text="mem.content"></span>
             <div style="display: flex; gap: 2px">
               <button

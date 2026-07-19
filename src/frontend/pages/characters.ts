@@ -1,10 +1,10 @@
 // ── Characters page: search, detail modal, actions ────────────
-import { fetchPartial, filterCards } from "./shared";
+import { jsonBody } from "../alpine/json";
 import { feFetch } from "../fe-fetch";
 import { showToast } from "../ui";
-import { jsonBody } from "../alpine/json";
+import { fetchPartial, filterCards } from "./shared";
 
-globalThis.filterCharacters = function () {
+globalThis.filterCharacters = function() {
   const query = document.querySelector<HTMLInputElement>("#character-search")?.value ?? "";
   filterCards({
     containerId: "#character-grid",
@@ -17,7 +17,7 @@ globalThis.filterCharacters = function () {
   });
 };
 
-globalThis.selectCharacterCard = async function (id: string) {
+globalThis.selectCharacterCard = async function(id: string) {
   let modal = document.querySelector<HTMLElement>("#character-detail-modal");
 
   if (!modal) {
@@ -44,8 +44,7 @@ globalThis.selectCharacterCard = async function (id: string) {
   try {
     modal.querySelector("[data-field='name']")!.textContent = char.display_name || char.name || "";
     modal.querySelector("[data-field='description']")!.textContent = char.description || "No description";
-    modal.querySelector("[data-field='system-prompt']")!.textContent =
-      char.system_prompt || "No system prompt";
+    modal.querySelector("[data-field='system-prompt']")!.textContent = char.system_prompt || "No system prompt";
     modal.querySelector("[data-field='avatar']")!.innerHTML = char.avatar_asset_id
       ? `<img src="/api/assets/${char.avatar_asset_id}/thumb" style="width:100%;height:100%;object-fit:cover" alt="Avatar" />`
       : "<span>👤</span>";
@@ -58,7 +57,7 @@ globalThis.selectCharacterCard = async function (id: string) {
   }
 };
 
-globalThis.startChatFromChar = async function (btn: HTMLElement) {
+globalThis.startChatFromChar = async function(btn: HTMLElement) {
   const id = btn.dataset.id;
   if (!id) return;
   try {
@@ -76,12 +75,12 @@ globalThis.startChatFromChar = async function (btn: HTMLElement) {
   }
 };
 
-globalThis.editCharacter = function (btn: HTMLElement) {
+globalThis.editCharacter = function(btn: HTMLElement) {
   const id = btn.dataset.id;
   if (id) location.assign(`/character/${id}/edit`);
 };
 
-globalThis.deleteCharacter = async function (btn: HTMLElement) {
+globalThis.deleteCharacter = async function(btn: HTMLElement) {
   const id = btn.dataset.id;
   if (!id || !confirm("Delete this character?")) return;
   try {

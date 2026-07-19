@@ -137,7 +137,6 @@ function col(type: ColMeta["type"], opts?: Omit<ColMeta, "type">): ColMeta {
 }
 
 export const SCHEMA = new SchemaManifest()
-
   // ── Core: Users ──────────────────────────────────────────────
   .table("users", {
     id: col("text", { primaryKey: true }),
@@ -153,7 +152,6 @@ export const SCHEMA = new SchemaManifest()
     created_at: col("text", { notNull: true }),
     last_seen_at: col("text"),
   })
-
   // ── Core: Personas ───────────────────────────────────────────
   .table("personas", {
     id: col("text", { primaryKey: true }),
@@ -167,7 +165,6 @@ export const SCHEMA = new SchemaManifest()
     created_at: col("text", { notNull: true }),
     updated_at: col("text", { notNull: true }),
   })
-
   // ── Core: Sessions ───────────────────────────────────────────
   .table("sessions", {
     id: col("text", { primaryKey: true }),
@@ -179,7 +176,6 @@ export const SCHEMA = new SchemaManifest()
     last_activity: col("text", { notNull: true }),
     expires_at: col("text", { notNull: true }),
   })
-
   // ── Core: Chats ──────────────────────────────────────────────
   .table("chats", {
     id: col("text", { primaryKey: true }),
@@ -200,7 +196,6 @@ export const SCHEMA = new SchemaManifest()
     created_at: col("text", { notNull: true }),
     updated_at: col("text", { notNull: true }),
   })
-
   // ── Core: Actors ─────────────────────────────────────────────
   .table("actors", {
     id: col("text", { primaryKey: true }),
@@ -228,7 +223,6 @@ export const SCHEMA = new SchemaManifest()
     created_at: col("text", { notNull: true }),
     updated_at: col("text", { notNull: true }),
   })
-
   // ── Core: Chat Participants ──────────────────────────────────
   .table("chat_participants", {
     chat_id: col("text", { notNull: true }),
@@ -241,7 +235,6 @@ export const SCHEMA = new SchemaManifest()
     impersonate_actor_id: col("text"),
     persona_id: col("text"),
   })
-
   // ── Core: Group Initiatives ──────────────────────────────────
   .table("group_initiatives", {
     chat_id: col("text", { notNull: true }),
@@ -251,7 +244,6 @@ export const SCHEMA = new SchemaManifest()
     created_at: col("text", { notNull: true }),
     updated_at: col("text", { notNull: true }),
   })
-
   // ── Core: Chat Mentions ──────────────────────────────────────
   .table("chat_mentions", {
     id: col("text", { primaryKey: true }),
@@ -259,7 +251,6 @@ export const SCHEMA = new SchemaManifest()
     actor_id: col("text", { notNull: true }),
     created_at: col("text", { notNull: true }),
   })
-
   // ── Core: Characters ─────────────────────────────────────────
   .table("characters", {
     id: col("text", { primaryKey: true }),
@@ -273,7 +264,6 @@ export const SCHEMA = new SchemaManifest()
     created_at: col("text", { notNull: true }),
     updated_at: col("text", { notNull: true }),
   })
-
   // ── Core: Messages ───────────────────────────────────────────
   .table("messages", {
     id: col("text", { primaryKey: true }),
@@ -307,7 +297,6 @@ export const SCHEMA = new SchemaManifest()
     archived_at: col("text"),
     attachments: col("text"),
   })
-
   // ── Core: Actor Keys ─────────────────────────────────────────
   .table("actor_keys", {
     id: col("text", { primaryKey: true }),
@@ -320,7 +309,6 @@ export const SCHEMA = new SchemaManifest()
     expires_at: col("text"),
     status: col("text", { notNull: true }),
   })
-
   // ── Core: Actor Notes ────────────────────────────────────────
   .table("actor_notes", {
     id: col("text", { primaryKey: true }),
@@ -333,7 +321,6 @@ export const SCHEMA = new SchemaManifest()
     created_at: col("text", { notNull: true }),
     updated_at: col("text", { notNull: true }),
   })
-
   // ── Core: Actor Items ────────────────────────────────────────
   .table("actor_items", {
     id: col("text", { primaryKey: true }),
@@ -351,7 +338,6 @@ export const SCHEMA = new SchemaManifest()
     created_at: col("text", { notNull: true }),
     updated_at: col("text", { notNull: true }),
   })
-
   // ── Core: User API Keys ──────────────────────────────────────
   .table("user_api_keys", {
     id: col("text", { primaryKey: true }),
@@ -361,7 +347,6 @@ export const SCHEMA = new SchemaManifest()
     created_at: col("text", { notNull: true }),
     updated_at: col("text", { notNull: true }),
   })
-
   // ── Core: Model Role Overrides ───────────────────────────────
   .table("model_role_overrides", {
     role: col("text", { notNull: true }),
@@ -370,7 +355,6 @@ export const SCHEMA = new SchemaManifest()
     created_at: col("text", { notNull: true }),
     updated_at: col("text", { notNull: true }),
   })
-
   // ── Core: System Config ──────────────────────────────────────
   .table("system_config", {
     key: col("text", { primaryKey: true }),
@@ -379,7 +363,6 @@ export const SCHEMA = new SchemaManifest()
     created_at: col("text", { notNull: true }),
     updated_at: col("text", { notNull: true }),
   })
-
   // ── Core: Log Entries ────────────────────────────────────────
   .table("log_entries", {
     id: col("text", { primaryKey: true }),
@@ -398,7 +381,6 @@ export const SCHEMA = new SchemaManifest()
     action: col("text"),
     created_at: col("text", { notNull: true }),
   })
-
   // ── Core: Plugin State ───────────────────────────────────────
   .table("plugin_state", {
     name: col("text", { primaryKey: true }),
@@ -408,7 +390,6 @@ export const SCHEMA = new SchemaManifest()
     created_at: col("text", { notNull: true }),
     updated_at: col("text", { notNull: true }),
   })
-
   // ── Content: Assets ──────────────────────────────────────────
   .table("assets", {
     id: col("text", { primaryKey: true }),
@@ -426,7 +407,6 @@ export const SCHEMA = new SchemaManifest()
     alt_text: col("text"),
     created_at: col("text", { notNull: true }),
   })
-
   // ── Content: Asset Links ─────────────────────────────────────
   .table("asset_links", {
     asset_id: col("text", { notNull: true }),
@@ -436,7 +416,6 @@ export const SCHEMA = new SchemaManifest()
     sort_order: col("integer", { notNull: true }),
     created_at: col("text", { notNull: true }),
   })
-
   // ── Content: Asset Shares ────────────────────────────────────
   .table("asset_shares", {
     id: col("text", { primaryKey: true }),
@@ -445,7 +424,6 @@ export const SCHEMA = new SchemaManifest()
     shared_by_id: col("text", { notNull: true }),
     created_at: col("text", { notNull: true }),
   })
-
   // ── Generation: Generation Attempts ──────────────────────────
   .table("generation_attempts", {
     id: col("text", { primaryKey: true }),
@@ -481,7 +459,6 @@ export const SCHEMA = new SchemaManifest()
     created_at: col("text", { notNull: true }),
     updated_at: col("text", { notNull: true }),
   })
-
   // ── Story: Worlds ────────────────────────────────────────────
   .table("worlds", {
     id: col("text", { primaryKey: true }),
@@ -497,7 +474,6 @@ export const SCHEMA = new SchemaManifest()
     created_at: col("text", { notNull: true }),
     updated_at: col("text", { notNull: true }),
   })
-
   // ── Story: Locations ─────────────────────────────────────────
   .table("locations", {
     id: col("text", { primaryKey: true }),
@@ -509,7 +485,6 @@ export const SCHEMA = new SchemaManifest()
     created_at: col("text", { notNull: true }),
     updated_at: col("text", { notNull: true }),
   })
-
   // ── Story: Story Turns ───────────────────────────────────────
   .table("story_turns", {
     id: col("text", { primaryKey: true }),
@@ -531,7 +506,6 @@ export const SCHEMA = new SchemaManifest()
     created_at: col("text", { notNull: true }),
     updated_at: col("text", { notNull: true }),
   })
-
   // ── Story: Quests ────────────────────────────────────────────
   .table("quests", {
     id: col("text", { primaryKey: true }),
@@ -554,7 +528,6 @@ export const SCHEMA = new SchemaManifest()
     updated_at: col("text", { notNull: true }),
     completed_at: col("text"),
   })
-
   // ── Story: Quest Progress ────────────────────────────────────
   .table("quest_progress", {
     id: col("text", { primaryKey: true }),
@@ -568,7 +541,6 @@ export const SCHEMA = new SchemaManifest()
     updated_at: col("text", { notNull: true }),
     completed_at: col("text"),
   })
-
   // ── Story: World States ──────────────────────────────────────
   .table("world_states", {
     id: col("text", { primaryKey: true }),
@@ -579,7 +551,6 @@ export const SCHEMA = new SchemaManifest()
     description: col("text"),
     created_at: col("text", { notNull: true }),
   })
-
   // ── Story: NPC States ────────────────────────────────────────
   .table("npc_states", {
     id: col("text", { primaryKey: true }),
@@ -595,7 +566,6 @@ export const SCHEMA = new SchemaManifest()
     created_at: col("text", { notNull: true }),
     updated_at: col("text", { notNull: true }),
   })
-
   // ── Story: Location States ───────────────────────────────────
   .table("location_states", {
     id: col("text", { primaryKey: true }),
@@ -611,7 +581,6 @@ export const SCHEMA = new SchemaManifest()
     created_at: col("text", { notNull: true }),
     updated_at: col("text", { notNull: true }),
   })
-
   // ── Story: Items ─────────────────────────────────────────────
   .table("items", {
     id: col("text", { primaryKey: true }),
@@ -628,7 +597,6 @@ export const SCHEMA = new SchemaManifest()
     created_at: col("text", { notNull: true }),
     updated_at: col("text", { notNull: true }),
   })
-
   // ── Story: World Items ───────────────────────────────────────
   .table("world_items", {
     id: col("text", { primaryKey: true }),
@@ -643,7 +611,6 @@ export const SCHEMA = new SchemaManifest()
     created_at: col("text", { notNull: true }),
     updated_at: col("text", { notNull: true }),
   })
-
   // ── Story: Actor Memories ────────────────────────────────────
   .table("actor_memories", {
     id: col("text", { primaryKey: true }),
@@ -661,7 +628,6 @@ export const SCHEMA = new SchemaManifest()
     created_at: col("text", { notNull: true }),
     updated_at: col("text", { notNull: true }),
   })
-
   // ── Story: Actor Lore Entries ────────────────────────────────
   .table("actor_lore_entries", {
     id: col("text", { primaryKey: true }),
@@ -682,7 +648,6 @@ export const SCHEMA = new SchemaManifest()
     created_at: col("text", { notNull: true }),
     updated_at: col("text", { notNull: true }),
   })
-
   // ── Story: World Lore Entries ────────────────────────────────
   .table("world_lore_entries", {
     id: col("text", { primaryKey: true }),
@@ -703,7 +668,6 @@ export const SCHEMA = new SchemaManifest()
     created_at: col("text", { notNull: true }),
     updated_at: col("text", { notNull: true }),
   })
-
   // ── Synthetic: Synthetic Data ────────────────────────────────
   .table("synthetic_data", {
     id: col("text", { primaryKey: true }),
@@ -718,7 +682,6 @@ export const SCHEMA = new SchemaManifest()
     validated_at: col("text"),
     validated_by: col("text"),
   })
-
   // ── Telemetry: Telemetry Events ──────────────────────────────
   .table("telemetry_events", {
     id: col("text", { primaryKey: true }),
@@ -730,7 +693,6 @@ export const SCHEMA = new SchemaManifest()
     source: col("text", { notNull: true }),
     created_at: col("text", { notNull: true }),
   })
-
   // ── Chat: Message Reactions ──────────────────────────────────
   .table("message_reactions", {
     id: col("text", { primaryKey: true }),
@@ -739,7 +701,6 @@ export const SCHEMA = new SchemaManifest()
     emoji: col("text", { notNull: true }),
     created_at: col("text", { notNull: true }),
   })
-
   // ── Chat: Chat Pins ──────────────────────────────────────────
   .table("chat_pins", {
     id: col("text", { primaryKey: true }),
@@ -748,7 +709,6 @@ export const SCHEMA = new SchemaManifest()
     pinned_by: col("text", { notNull: true }),
     pinned_at: col("text", { notNull: true }),
   })
-
   // ── System: Data Migrations (runtime tracking table) ────────
   .table("data_migrations", {
     table_name: col("text", { notNull: true }),

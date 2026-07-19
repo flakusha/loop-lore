@@ -27,12 +27,12 @@
  * Elysia plugin — uses closure injection for database access.
  */
 
-import { readFileSync, existsSync } from "node:fs";
-import { join } from "node:path";
 import { Elysia } from "elysia";
 import type { Kysely } from "kysely";
-import type { DB } from "../db/schema";
+import { existsSync, readFileSync } from "node:fs";
+import { join } from "node:path";
 import { ActorType } from "../db/enums";
+import type { DB } from "../db/schema";
 import { adminViewGuard } from "../middleware/admin-gate";
 import { isFrontendTelemetryEnabled } from "../telemetry/service";
 
@@ -173,7 +173,7 @@ function escapeHtml(str: string): string {
     .replaceAll("&", "&amp;")
     .replaceAll("<", "&lt;")
     .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;");
+    .replaceAll("\"", "&quot;");
 }
 
 function serveView(
@@ -401,7 +401,8 @@ async function serveWorldDetailContent(worldId: string, database: Kysely<DB>): P
     })),
   );
 
-  return htmlResponse(`<div style="max-width:800px;margin:0 auto" x-data="worldDetail({ worldId: '${worldId}', locations: ${locationsJson} })">
+  return htmlResponse(
+    `<div style="max-width:800px;margin:0 auto" x-data="worldDetail({ worldId: '${worldId}', locations: ${locationsJson} })">
       <div class="form-group" style="margin-bottom:var(--space-6)">
         <h2>${name}</h2>
         <p class="description">${desc}</p>
@@ -456,7 +457,8 @@ async function serveWorldDetailContent(worldId: string, database: Kysely<DB>): P
           View Quests
         </a>
       </div>
-    </div>`);
+    </div>`,
+  );
 }
 
 async function serveCharacterEditForm(characterId: string, database: Kysely<DB>): Promise<Response> {
@@ -486,7 +488,7 @@ async function serveCharacterEditForm(characterId: string, database: Kysely<DB>)
     : "<span>👤</span>";
   const avatarId = actor.avatar_asset_id || "";
   const avatarRemoveBtn = actor.avatar_asset_id
-    ? '<button type="button" class="btn btn-danger" onclick="clearAvatar()">Remove</button>'
+    ? "<button type=\"button\" class=\"btn btn-danger\" onclick=\"clearAvatar()\">Remove</button>"
     : "";
 
   return htmlResponse(`<div style="max-width:720px;margin:0 auto;width:100%">
@@ -786,7 +788,6 @@ export function viewRoutes({ database }: { database: Kysely<DB> }) {
         if (!content) return new Response("Not found", { status: 404 });
         return htmlResponse(content);
       })
-
       // ── Dynamic partials (server-rendered data) ─────────────
       .get("/dynamic/characters/grid", async (ctx) => {
         const isHtmx = ctx.request.headers.get("HX-Request") === "true";
@@ -809,7 +810,6 @@ export function viewRoutes({ database }: { database: Kysely<DB> }) {
         }
         return await serveWorldsListDb(database);
       })
-
       // HTMX search endpoints
       .get("/dynamic/gallery/search", async (ctx) => {
         const isHtmx = ctx.request.headers.get("HX-Request") === "true";
@@ -856,7 +856,6 @@ export function viewRoutes({ database }: { database: Kysely<DB> }) {
         }
         return await serveCharacterChatListDb(ctx.params.id, database);
       })
-
       // ── Character routes ───────────────────────────────────────
       .get("/character/:slug", (ctx: any) => {
         const isHtmx = ctx.request.headers.get("HX-Request") === "true";
@@ -888,7 +887,6 @@ export function viewRoutes({ database }: { database: Kysely<DB> }) {
         if (result) return result;
         return new Response("Not found", { status: 404 });
       })
-
       // ── World routes ───────────────────────────────────────────
       .get("/worlds", (ctx: any) => {
         const isHtmx = ctx.request.headers.get("HX-Request") === "true";
@@ -908,7 +906,6 @@ export function viewRoutes({ database }: { database: Kysely<DB> }) {
         if (result) return result;
         return new Response("Not found", { status: 404 });
       })
-
       // ── Admin view (guarded — must precede /views/:name) ─────────
       .guard({ beforeHandle: adminViewGuard }, (app) =>
         app.get("/views/admin", (ctx: any) => {
@@ -916,9 +913,7 @@ export function viewRoutes({ database }: { database: Kysely<DB> }) {
           const result = serveView("admin", isHtmx, ctx.userId, ctx.sessionId);
           if (result) return result;
           return new Response("Not found", { status: 404 });
-        }),
-      )
-
+        }))
       // ── View templates (non-admin) ──────────────────────────────
       .get("/views/:name", (ctx: any) => {
         const isHtmx = ctx.request.headers.get("HX-Request") === "true";

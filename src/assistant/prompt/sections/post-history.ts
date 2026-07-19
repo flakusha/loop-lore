@@ -2,8 +2,8 @@
  * Post-history instructions section — actor-specific guidance appended after
  * the conversation history.
  */
-import type { SectionBuilder } from "../types";
 import { wrapSection } from "../../xml-utils";
+import type { SectionBuilder } from "../types";
 
 export const postHistorySection: SectionBuilder = {
   name: "postHistory",

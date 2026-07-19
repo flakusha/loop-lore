@@ -4,7 +4,8 @@
   x-show="$store.ui.showChatList"
   @click="$store.ui.showChatList = false"
   x-cloak
-></div>
+>
+</div>
 <!-- Chat list panel (component) -->
 <div
   class="chat-list-panel"
@@ -30,14 +31,7 @@
   <div
     class="batch-bar"
     x-show="selectedChats.length > 0"
-    style="
-      display: flex;
-      gap: var(--space-2);
-      padding: var(--space-2) var(--space-3);
-      border-bottom: 1px solid var(--border-default);
-      background: var(--bg-tertiary);
-      align-items: center;
-    "
+    style="display: flex; gap: var(--space-2); padding: var(--space-2) var(--space-3); border-bottom: 1px solid var(--border-default); background: var(--bg-tertiary); align-items: center"
     x-cloak
   >
     <span
@@ -80,7 +74,8 @@
             @click.prevent="toggleChatPin(chat.id)"
             :style="chat.isPinned === 'pinned' ? 'color:var(--accent-yellow)' : ''"
             x-text="chat.isPinned === 'pinned' ? '★' : '☆'"
-          ></button>
+          >
+          </button>
           <button class="btn-icon btn-xs" title="Rename" @click.prevent="renameChat(chat.id)">✏️</button>
           <button class="btn-icon btn-xs" title="Delete" @click.prevent="deleteChat(chat.id, $event)">
             🗑

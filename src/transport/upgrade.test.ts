@@ -1,12 +1,12 @@
 /**
  * Tests for transport upgrade functionality.
  */
-import { describe, test, expect, beforeEach, afterEach } from "bun:test";
-import { upgradeConnection } from "./upgrade";
-import { createProtocol } from "./factory";
+import { afterEach, beforeEach, describe, expect, test } from "bun:test";
 import { TransportProtocol } from "../db/enums";
-import type { ProtocolHandler } from "./protocol.unified";
 import { TransportError, TransportErrorCode } from "./errors";
+import { createProtocol } from "./factory";
+import type { ProtocolHandler } from "./protocol.unified";
+import { upgradeConnection } from "./upgrade";
 
 describe("upgradeConnection", () => {
   let http1Handler: ProtocolHandler;

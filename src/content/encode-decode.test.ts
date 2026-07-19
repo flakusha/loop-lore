@@ -1,6 +1,6 @@
-import { describe, test, expect } from "bun:test";
-import { encodeContent } from "./encode";
+import { describe, expect, test } from "bun:test";
 import { decodeContent } from "./decode";
+import { encodeContent } from "./encode";
 
 const TEST_SAMPLES: { text: string; label: string }[] = [
   { text: "", label: "(empty)" },
@@ -8,7 +8,7 @@ const TEST_SAMPLES: { text: string; label: string }[] = [
   { text: "hello world", label: "hello world" },
   { text: "a".repeat(1000), label: "a".repeat(20) + "..." },
   { text: "The quick brown fox jumps over the lazy dog. ".repeat(10), label: "The quick brown fox ..." },
-  { text: JSON.stringify({ nested: { object: true }, arr: [1, 2, 3] }), label: '{"nested":{"object":...' },
+  { text: JSON.stringify({ nested: { object: true }, arr: [1, 2, 3] }), label: "{\"nested\":{\"object\":..." },
 ];
 
 describe("encode/decode round-trip", () => {

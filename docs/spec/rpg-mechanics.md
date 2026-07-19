@@ -98,9 +98,9 @@ Attributes produce modifiers (like D&D 5e):
 modifier = floor((stat - 10) / 2)
 ```
 
-| Stat | 1   | 8   | 10  | 12  | 16  | 20  | 30  |
-| ---- | --- | --- | --- | --- | --- | --- | --- |
-| Mod  | -5  | -1  | 0   | +1  | +3  | +5  | +10 |
+| Stat | 1  | 8  | 10 | 12 | 16 | 20 | 30  |
+| ---- | -- | -- | -- | -- | -- | -- | --- |
+| Mod  | -5 | -1 | 0  | +1 | +3 | +5 | +10 |
 
 ### Effective Stats (Computed at Use Time)
 
@@ -325,19 +325,18 @@ Skills are derived from attributes:
 
 ### Difficulty Classes
 
-| DC  | Label             | Example                   |
-| --- | ----------------- | ------------------------- |
-| 5   | Trivial           | Open an unlocked door     |
-| 10  | Easy              | Climb a rope              |
-| 15  | Medium            | Pick a locked chest       |
-| 20  | Hard              | Lie to a master detective |
-| 25  | Very Hard         | Sneak past a dragon       |
-| 30  | Nearly Impossible | Disguise as the king      |
+| DC | Label             | Example                   |
+| -- | ----------------- | ------------------------- |
+| 5  | Trivial           | Open an unlocked door     |
+| 10 | Easy              | Climb a rope              |
+| 15 | Medium            | Pick a locked chest       |
+| 20 | Hard              | Lie to a master detective |
+| 25 | Very Hard         | Sneak past a dragon       |
+| 30 | Nearly Impossible | Disguise as the king      |
 
 ### Skill Check Resolution
 
 ```
-
 ---
 
 ## XP and Leveling
@@ -353,13 +352,11 @@ Skills are derived from attributes:
 | Creative solve   | 20-100  | GM/DM awards for clever plays  |
 
 ### Level Progression
-
 ```
 
 XP to next level = currentLevel * 100 + 50
 
 ```
-
 | Level | XP Required | XP to Next |
 | ----- | ----------- | ---------- |
 | 1     | 0           | 150        |
@@ -373,7 +370,6 @@ XP to next level = currentLevel * 100 + 50
 ### Level Up Effects
 
 When a character levels up:
-
 ```
 
 maxHp += conModifier + 5
@@ -382,9 +378,7 @@ maxMp += intModifier + 3
 // Certain levels unlock new abilities (world-defined)
 
 ```
-
 ### XP Injection into Prompt
-
 ```
 
 [Character Stats — {{char}}]
@@ -401,7 +395,6 @@ Chest: Chain Mail (+6 AC)
 Hands: Leather Gloves (+1 DEX)
 
 ```
-
 ---
 
 ## Currency System
@@ -421,7 +414,6 @@ for fast access but it's still an item under the hood.
 ### Shopkeeper Interaction
 
 When a player buys/sells:
-
 ```
 
 ---
@@ -615,7 +607,6 @@ an actor's inventory, on a shopkeeper's shelf, or as a location feature.
 | Enemy    | Location (spawn zone)            | "Spawn 3 goblins in the cave"      |
 
 **Placement validation:**
-
 ```
 
 ### Complete Pipeline Flow
@@ -713,11 +704,9 @@ Step 5: Placement
 When loot tables generate items, the pipeline runs automatically:
 
 ```
-
 ### Auto-Pipeline: NPC Creation
 
 When the GM introduces a new NPC:
-
 ```
 
 ---
@@ -981,7 +970,6 @@ Starting locations:
 **Stage 4: Starter NPCs**
 
 Pipeline creates key NPCs with motivation and stats:
-
 ```
 
 NPCs:
@@ -2233,7 +2221,6 @@ dialogue. The engine only intervenes when the player confirms a transaction
 via a UI action (button click).
 
 ```
-
 **Advantages:** zero new LLM tooling, natural conversation flow.
 **Disadvantages:** harder to enforce mechanical constraints (the LLM might
 "forget" the price).
@@ -2257,7 +2244,6 @@ Regardless of trading approach, the engine enforces these rules:
 ### Currency Exchange
 
 When trading across denominations, the engine uses the exchange rate table:
-
 ```
 
 100 copper = 1 silver
@@ -2265,14 +2251,12 @@ When trading across denominations, the engine uses the exchange rate table:
 10 gold = 1 platinum
 
 ```
-
 The engine auto-converts: if a player has 15 silver and needs to pay 1 gold,
 the engine deducts 10 silver (1 gold equivalent) and leaves 5 silver.
 
 ### Bartering System (Future)
 
 A negotiation mechanic where the LLM mediates haggling:
-
 ```
 
 Player: "I'll give you 30 gold for the sword."
@@ -2281,7 +2265,6 @@ Player: "Deal."
 Engine: validates 40 gold, executes transfer
 
 ```
-
 This is a natural extension of option B/C — no new mechanics needed, just
 prompt engineering for the NPC's pricing logic.
 
@@ -2348,7 +2331,6 @@ and the world. These tools help GMs detect imbalances.
 ### Alert Thresholds
 
 The GM can configure alerts for when metrics drift:
-
 ```
 
 gold_supply > 50000 → "Warning: excessive gold in circulation"
@@ -2356,7 +2338,6 @@ wealth_inequality > 20 → "Warning: one player holds most wealth"
 item_circulation < 10 → "Warning: items are hoarded, not traded"
 
 ```
-
 ### Balancing Levers
 
 GMs can adjust the economy via world rules:
@@ -2396,13 +2377,11 @@ exits via shops/taxes. The engine tracks this automatically.
 ### Inflation / Deflation
 
 The price index adjusts automatically based on supply and demand:
-
 ```
 
 priceIndex = totalGoldInCirculation / baselineGoldSupply
 
 ```
-
 | Index Range | State          | Effect                                  |
 | ----------- | -------------- | --------------------------------------- |
 | < 0.7       | Deflation      | Prices drop, NPCs hoard gold            |
@@ -2419,14 +2398,12 @@ Shop prices are not static — they adjust based on supply, demand, and
 location:
 
 **Price formula:**
-
 ```
 
 finalPrice = basePrice × priceIndex × locationMarkup × demandModifier
 × (1 - reputationDiscount) × scarcityModifier
 
 ```
-
 ### Regional Price Variations
 
 Different locations have different price levels:
@@ -2446,7 +2423,6 @@ The GM sets location markup via world settings or chat rules.
 
 Items track supply levels per location. When actors buy/sell, supply
 adjusts:
-
 ```
 
 // Buying an item
@@ -2462,7 +2438,6 @@ demandModifier *= 0.8; // Price goes down
 }
 
 ```
-
 Supply thresholds (configurable per world):
 
 | Threshold    | Default | Effect                       |
@@ -2538,7 +2513,6 @@ the LLM narrates haggling, the engine validates fairness.
 | Commission  | Yes (escrow)  | Yes              | Quest-linked             |
 
 #### Barter Resolution Pipeline
-
 ```
 
 1. Initiator proposes trade (LLM narrative + TRADE_INTENT)
@@ -2567,11 +2541,9 @@ the LLM narrates haggling, the engine validates fairness.
 8. LLM narrates the completed exchange
 
 ```
-
 #### Value Comparison Engine
 
 Barter trades need fair value estimation. The engine compares:
-
 ```
 
 initiatorValue = sum(item.value × quantity) + initiatorGold
@@ -2584,7 +2556,6 @@ fairnessRating:
 ratio < 0.5 or > 2.0 → "Lopsided"
 
 ```
-
 Value comes from `item_definitions.value` (base gold value). The engine
 can also factor in:
 
@@ -2599,13 +2570,11 @@ can also factor in:
 When the LLM declares a skill check for barter:
 
 **DC computation** (if not set by LLM):
-
 ```
 
 dc = 10 + floor(abs(fairnessRatio - 1.0) * 20)
 
 ```
-
 | Fairness Ratio | Computed DC | Example               |
 | -------------- | ----------- | --------------------- |
 | 0.9–1.1        | 10–12       | Nearly fair trade     |
@@ -2626,7 +2595,6 @@ dc = 10 + floor(abs(fairnessRatio - 1.0) * 20)
 #### Group Chat Multi-Party Trading
 
 In group chats, multiple actors can bid on the same item:
-
 ```
 
 [ACTIVE OFFERS]
@@ -2645,7 +2613,6 @@ e. Start an auction with a deadline
 [/ACTIVE OFFERS]
 
 ```
-
 Auction mechanics:
 
 - LLM narrates the auction, sets deadline (turns or time)
@@ -2657,7 +2624,6 @@ Auction mechanics:
 
 For task-based trades (commissions, deliveries), the engine holds gold
 in escrow:
-
 ```
 
 #### Trade Cooldown & Limits

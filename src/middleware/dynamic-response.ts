@@ -28,10 +28,10 @@
  *     images, fonts, and binary passthrough untouched.
  */
 
-import { gzipSync, brotliCompressSync } from "node:zlib";
+import { brotliCompressSync, gzipSync } from "node:zlib";
 import type { DynamicResponseConfig } from "../config/schema";
+import { minifyCSS, minifyHTMLContent, minifyJS } from "../content/minify";
 import type { Logger } from "../logger";
-import { minifyHTMLContent, minifyCSS, minifyJS } from "../content/minify";
 
 /** Body content classes this policy knows how to optimize. */
 type BodyKind = "html" | "css" | "js" | "json";
@@ -92,10 +92,9 @@ export class DynamicResponsePolicy {
     const original = await response.text();
 
     // ── Validate + minify ──────────────────────────────────
-    const body =
-      this.config.minify || this.config.validate
-        ? await this.minifyBody({ request, body: original, kind })
-        : original;
+    const body = this.config.minify || this.config.validate
+      ? await this.minifyBody({ request, body: original, kind })
+      : original;
 
     // ── Compress ───────────────────────────────────────────
     const headers = new Headers(response.headers);

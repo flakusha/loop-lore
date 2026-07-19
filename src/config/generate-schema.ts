@@ -9,9 +9,9 @@
 import { writeFileSync } from "node:fs";
 import { dirname } from "node:path";
 import { fileURLToPath } from "node:url";
-import { ConfigSchema } from "./schema-class";
 import { createLogger } from "../logger";
 import { safeJsonStringify } from "../utils";
+import { ConfigSchema } from "./schema-class";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const log = createLogger({ level: "info" });

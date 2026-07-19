@@ -1,4 +1,4 @@
-import { sql, type Kysely } from "kysely";
+import { type Kysely, sql } from "kysely";
 
 export async function up(database: Kysely<unknown>): Promise<void> {
   // ── Generation Attempts ────────────────────────────────────
@@ -38,13 +38,24 @@ export async function up(database: Kysely<unknown>): Promise<void> {
     .addColumn("updated_at", "text", (col) => col.notNull().defaultTo(sql`(datetime('now'))`))
     .execute();
 
-  await database.schema.createIndex("idx_generation_attempts_chat").on("generation_attempts").column("chat_id").execute();
-  await database.schema.createIndex("idx_generation_attempts_parent_msg").on("generation_attempts").column("parent_message_id").execute();
-  await database.schema.createIndex("idx_generation_attempts_actor").on("generation_attempts").column("actor_id").execute();
-  await database.schema.createIndex("idx_generation_attempts_idempotency").on("generation_attempts").column("idempotency_key").execute();
-  await database.schema.createIndex("idx_generation_attempts_status").on("generation_attempts").column("status").execute();
-  await database.schema.createIndex("idx_generation_attempts_abort_signal").on("generation_attempts").column("abort_signal_id").execute();
-  await database.schema.createIndex("idx_generation_attempts_parent").on("generation_attempts").column("parent_attempt_id").execute();
+  await database.schema.createIndex("idx_generation_attempts_chat").on("generation_attempts").column("chat_id")
+    .execute();
+  await database.schema.createIndex("idx_generation_attempts_parent_msg").on("generation_attempts").column(
+    "parent_message_id",
+  ).execute();
+  await database.schema.createIndex("idx_generation_attempts_actor").on("generation_attempts").column("actor_id")
+    .execute();
+  await database.schema.createIndex("idx_generation_attempts_idempotency").on("generation_attempts").column(
+    "idempotency_key",
+  ).execute();
+  await database.schema.createIndex("idx_generation_attempts_status").on("generation_attempts").column("status")
+    .execute();
+  await database.schema.createIndex("idx_generation_attempts_abort_signal").on("generation_attempts").column(
+    "abort_signal_id",
+  ).execute();
+  await database.schema.createIndex("idx_generation_attempts_parent").on("generation_attempts").column(
+    "parent_attempt_id",
+  ).execute();
 
   // ── Story Turns ─────────────────────────────────────────────
   await database.schema
@@ -70,7 +81,8 @@ export async function up(database: Kysely<unknown>): Promise<void> {
     .execute();
 
   await database.schema.createIndex("idx_story_turns_chat").on("story_turns").column("chat_id").execute();
-  await database.schema.createIndex("idx_story_turns_chat_number").on("story_turns").columns(["chat_id", "turn_number"]).execute();
+  await database.schema.createIndex("idx_story_turns_chat_number").on("story_turns").columns(["chat_id", "turn_number"])
+    .execute();
   await database.schema.createIndex("idx_story_turns_actor").on("story_turns").column("actor_id").execute();
 
   // ── Quests ──────────────────────────────────────────────────
@@ -118,7 +130,10 @@ export async function up(database: Kysely<unknown>): Promise<void> {
 
   await database.schema.createIndex("idx_quest_progress_quest").on("quest_progress").column("quest_id").execute();
   await database.schema.createIndex("idx_quest_progress_chat").on("quest_progress").column("chat_id").execute();
-  await database.schema.createIndex("idx_quest_progress_quest_chat").on("quest_progress").columns(["quest_id", "chat_id"]).execute();
+  await database.schema.createIndex("idx_quest_progress_quest_chat").on("quest_progress").columns([
+    "quest_id",
+    "chat_id",
+  ]).execute();
 
   // ── World States ────────────────────────────────────────────
   await database.schema
@@ -172,7 +187,8 @@ export async function up(database: Kysely<unknown>): Promise<void> {
     .addColumn("updated_at", "text", (col) => col.notNull().defaultTo(sql`(datetime('now'))`))
     .execute();
 
-  await database.schema.createIndex("idx_location_states_location").on("location_states").column("location_id").execute();
+  await database.schema.createIndex("idx_location_states_location").on("location_states").column("location_id")
+    .execute();
   await database.schema.createIndex("idx_location_states_world").on("location_states").column("world_id").execute();
 
   // ── Synthetic Data ──────────────────────────────────────────

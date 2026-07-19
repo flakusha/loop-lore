@@ -11,9 +11,9 @@
  *   const response = await handler(request, initialContext);
  */
 
-import type { Middleware, RequestContext, RouteHandler } from "./types";
 import { getLogger } from "../logger";
-import { jsonError, HttpStatus, ErrorCode } from "../routes/http-utils";
+import { ErrorCode, HttpStatus, jsonError } from "../routes/http-utils";
+import type { Middleware, RequestContext, RouteHandler } from "./types";
 
 /**
  * Composite handler — middleware chain ready to invoke.
@@ -61,8 +61,7 @@ export async function errorBoundary(
   try {
     return await next();
   } catch (error: unknown) {
-    const logger = (_context as unknown as Record<string, unknown>).logger as
-      import("../logger").Logger | undefined;
+    const logger = (_context as unknown as Record<string, unknown>).logger as import("../logger").Logger | undefined;
     (logger ?? getLogger()).error("Unhandled middleware error", error instanceof Error ? error : undefined);
     const message = error instanceof Error ? error.message : "Internal server error";
     return jsonError({ message, status: HttpStatus.InternalServerError, code: ErrorCode.ServerError });

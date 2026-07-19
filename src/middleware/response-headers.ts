@@ -126,8 +126,7 @@ export class ResponseHeaderPolicy {
 
     // CORP: documents get same-origin, static subresources keep configured value.
     if (cfg.crossOriginResourcePolicy) {
-      headers["Cross-Origin-Resource-Policy"] =
-        kind === "static" ? cfg.crossOriginResourcePolicy : "same-origin";
+      headers["Cross-Origin-Resource-Policy"] = kind === "static" ? cfg.crossOriginResourcePolicy : "same-origin";
     }
 
     if (cfg.timingAllowOrigin) headers["Timing-Allow-Origin"] = cfg.timingAllowOrigin;
@@ -141,8 +140,9 @@ export class ResponseHeaderPolicy {
           headers[headerName] = this.buildCsp();
         }
         if (cfg.crossOriginOpenerPolicy) headers["Cross-Origin-Opener-Policy"] = cfg.crossOriginOpenerPolicy;
-        if (cfg.crossOriginEmbedderPolicy)
+        if (cfg.crossOriginEmbedderPolicy) {
           headers["Cross-Origin-Embedder-Policy"] = cfg.crossOriginEmbedderPolicy;
+        }
         if (cfg.permissionsPolicy) headers["Permissions-Policy"] = cfg.permissionsPolicy;
 
         // Timing-Allow-Origin for performance measurement on static assets
@@ -205,7 +205,7 @@ export class ResponseHeaderPolicy {
     if (this.config.linkPreload.length === 0) return "";
     return this.config.linkPreload
       .map((path) => {
-        const as = path.endsWith(".css") ? "style" : path.endsWith(".js") ? "script" : "";
+        const as = path.endsWith(".css") ? "style" : (path.endsWith(".js") ? "script" : "");
         const suffix = as ? `; as=${as}` : "";
         return `<${path}>; rel=preload${suffix}`;
       })

@@ -2,7 +2,7 @@
 //
 // /ooc — send an out-of-character message.
 
-import { registerCommand, type CommandResult } from "./registry";
+import { type CommandResult, registerCommand } from "./registry";
 
 registerCommand("ooc", async (args): Promise<CommandResult> => {
   if (args.length === 0) {

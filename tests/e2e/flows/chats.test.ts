@@ -5,10 +5,10 @@
  * Requires seeded user in the database.
  */
 
-import { describe, test, expect, beforeAll, afterAll } from "bun:test";
+import { afterAll, beforeAll, describe, expect, test } from "bun:test";
+import { type ApiClient, createClient } from "../helpers/client";
+import { SEED, seedChat, seedUsers } from "../helpers/seed";
 import { createTestServer, type TestServer } from "../helpers/server";
-import { createClient, type ApiClient } from "../helpers/client";
-import { seedUsers, seedChat, SEED } from "../helpers/seed";
 
 describe("Chats E2E", () => {
   let server: TestServer;
@@ -113,15 +113,15 @@ describe("Chats E2E", () => {
     const deleteRes = await api.del(`/api/chats/${chatId}`);
     expect(deleteRes.ok).toBe(true);
 
-const getRes = await api.get(`/api/chats/${chatId}`);
+    const getRes = await api.get(`/api/chats/${chatId}`);
     expect(getRes.status).toBe(404);
     expect(getRes.code).toBeTruthy(); // TEST.2 error envelope
   });
 
   test("seeded chat is accessible", async () => {
-  await seedUsers(server.db);
-  await seedChat(server.db);
-  await api.loginAs(SEED.user.username, SEED.user.password);
+    await seedUsers(server.db);
+    await seedChat(server.db);
+    await api.loginAs(SEED.user.username, SEED.user.password);
 
     const res = await api.get<Record<string, unknown>>(`/api/chats/${SEED.chat.id}`);
     expect(res.ok).toBe(true);

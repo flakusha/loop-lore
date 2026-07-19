@@ -1,7 +1,7 @@
 /**
  * Unit tests for frontend-logs routes (Elysia plugin)
  */
-import { describe, test, expect } from "bun:test";
+import { describe, expect, test } from "bun:test";
 import { frontendLogsRoutes } from "./frontend-logs";
 
 describe("frontendLogsRoutes", () => {

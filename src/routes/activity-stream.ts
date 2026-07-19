@@ -8,12 +8,12 @@
 //
 // Route: GET /api/activity/stream
 
+import { Elysia } from "elysia";
 import type { Kysely } from "kysely";
 import type { DB } from "../db/schema";
-import { Elysia } from "elysia";
-import { jsonError, HttpStatus, ErrorCode } from "./http-utils";
-import { computeActivity } from "./activity";
 import { safeJsonStringify } from "../utils";
+import { computeActivity } from "./activity";
+import { ErrorCode, HttpStatus, jsonError } from "./http-utils";
 
 const POLL_INTERVAL_MS = 5000;
 const KEEPALIVE_MS = 8000;

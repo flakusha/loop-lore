@@ -185,7 +185,6 @@ Table: `actor_memories` — defined in `src/db/schema-story.ts` and `001_init.ts
 ### Memory Lifecycle
 
 ```
-
 - **Hook trigger**: after LLM response, if generation pipeline has capacity
 - **Cron trigger**: periodic sweep (configurable interval), re-processes recent chats
 
@@ -228,7 +227,6 @@ Two columns on the `worlds` table configure lorebook behavior (already in `001_i
 | `token_budget` | INTEGER | `2000`  | Max tokens lore entries can consume in a single prompt |
 
 ### Lore Injection Flow
-
 ```
 
 1. When generating a response, the system collects:
@@ -356,11 +354,9 @@ Recent Transactions:
 Debts accumulate interest daily (configurable per world):
 
 ```
-
 ### LLM GM Economic Events
 
 The GM can inject economic events via tool calls:
-
 ```
 
 [TOOL_CALL]
@@ -378,7 +374,6 @@ The GM can inject economic events via tool calls:
 [/TOOL_CALL]
 
 ```
-
 Event types: `market_crash`, `boom`, `shortage`, `famine`, `plague`,
 `war`, `festival`, `tax_holiday`.
 
@@ -404,7 +399,6 @@ to player-to-player barter.
 When an actor initiates trade, the LLM emits structured intent:
 
 #### Trade Resolution Flow
-
 ```
 
 1. LLM narrates: "I'll trade you my healing potion for that map."
@@ -441,11 +435,9 @@ When an actor initiates trade, the LLM emits structured intent:
 5. LLM narrates the completed exchange
 
 ```
-
 #### Barter Valuation
 
 When items are traded without gold, the engine estimates fairness:
-
 ```
 
 tradeValue = sum(item.value × quantity) for each side
@@ -458,10 +450,8 @@ if ratio > 1.2 and ratio <= 2.0: "Unfair to them"
 if ratio < 0.5 or ratio > 2.0: "Lopsided"
 
 ```
-
 Fairness rating is injected into the prompt so the LLM can narrate
 reactions accordingly:
-
 ```
 
 [TRADE EVALUATION]
@@ -471,7 +461,6 @@ Ratio: 0.46 — Lopsided in their favor. They may refuse or demand more.
 [/TRADE EVALUATION]
 
 ```
-
 #### Barter Skill Check
 
 The engine can trigger a skill check during barter to influence the
@@ -502,7 +491,6 @@ the offered items:
 Both actors receive a trade record in their transaction ledger:
 
 Trade history is prompt-injectable so the LLM can reference past deals:
-
 ```
 
 [Recent Trades — {{char}}]
@@ -512,7 +500,6 @@ Trade history is prompt-injectable so the LLM can reference past deals:
 - Loaned 200g to Rogue Dan (due: 5 days, 2% daily interest)
 
 ```
-
 #### Group Chat Trading
 
 In group chats with multiple actors, trading becomes multi-party:
@@ -521,7 +508,6 @@ In group chats with multiple actors, trading becomes multi-party:
 - Actor C can outbid: "I'll give you two gold for that!"
 - LLM narrates the auction/competition
 - Engine tracks all offers, resolves when accepted
-
 ```
 
 [ACTIVE OFFERS]
@@ -533,7 +519,6 @@ In group chats with multiple actors, trading becomes multi-party:
     [/ACTIVE OFFERS]
 
 ```
-
 #### Trading Restrictions
 
 Worlds can configure trading rules:
@@ -609,7 +594,6 @@ Characters (actors with `actor_type='character'`) have a **state machine** contr
 **Transitions:** `private` ↔ `public` (toggle, always allowed).
 
 **Flow:**
-
 ```
 
 **Default persona:** When a user starts a new chat, their own characters (where `owner_id = user.id` and `actor_type = 'character'`) are suggested as the default persona. If the user has a default persona set (`personas.is_default = 1`), that takes precedence.

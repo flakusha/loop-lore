@@ -7,7 +7,7 @@ import { adminSystem } from "./admin-system";
 import { adminUsers } from "./admin-users";
 import { adminWorlds } from "./admin-worlds";
 
-(globalThis as any).adminPage = function () {
+(globalThis as any).adminPage = function() {
   return {
     // ── Shared state ────────────────────────────────────
     activeTab: "overview",

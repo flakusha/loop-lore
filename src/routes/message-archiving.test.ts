@@ -1,7 +1,7 @@
 /**
  * Tests for message archiving endpoints
  */
-import { describe, test, expect } from "bun:test";
+import { describe, expect, test } from "bun:test";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 
@@ -52,6 +52,6 @@ describe("schema has archived_at", () => {
 describe("PinnedState has archived", () => {
   test("enums-core.ts has Archived PinnedState", () => {
     const content = readFileSync(join(import.meta.dir, "..", "db", "enums-core.ts"), "utf8");
-    expect(content).toContain('Archived: "archived"');
+    expect(content).toContain("Archived: \"archived\"");
   });
 });

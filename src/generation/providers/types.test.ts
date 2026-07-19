@@ -2,8 +2,8 @@
  * Tests for generation/providers/types.ts — Provider error hierarchy
  */
 
-import { describe, test, expect } from "bun:test";
-import { ProviderError, ProviderAuthError, ProviderRateLimitError } from "./types";
+import { describe, expect, test } from "bun:test";
+import { ProviderAuthError, ProviderError, ProviderRateLimitError } from "./types";
 
 describe("ProviderError", () => {
   test("creates basic error with message", () => {

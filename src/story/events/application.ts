@@ -5,11 +5,11 @@
  * Each event type has a dedicated handler.
  */
 import type { Kysely, Transaction } from "kysely";
-import type { DB } from "../../db/schema";
 import { WorldEventType } from "../../db/enums";
-import { safeJsonStringify, assertNever } from "../../utils";
-import type { WorldEvent } from "../types";
+import type { DB } from "../../db/schema";
+import { assertNever, safeJsonStringify } from "../../utils";
 import { ItemsService } from "../items";
+import type { WorldEvent } from "../types";
 
 // ── Result Type ──────────────────────────────────────────────
 

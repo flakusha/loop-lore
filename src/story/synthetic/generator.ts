@@ -8,11 +8,11 @@
  * Design: read-only derivation + insert. No LLM calls, no route wiring.
  */
 import type { Kysely } from "kysely";
+import { SyntheticDataStatus, syntheticDataStatusMachine, SyntheticDataType } from "../../db/enums";
 import type { DB } from "../../db/schema";
-import { SyntheticDataType, SyntheticDataStatus, syntheticDataStatusMachine } from "../../db/enums";
-import { uid, jsonParseOr, safeJsonStringify, assertNever } from "../../utils";
-import type { SyntheticCase, SyntheticSource } from "./types";
 import { getLogger } from "../../logger";
+import { assertNever, jsonParseOr, safeJsonStringify, uid } from "../../utils";
+import type { SyntheticCase, SyntheticSource } from "./types";
 
 const ALL_TYPES: readonly SyntheticDataType[] = [
   SyntheticDataType.TurnSequence,

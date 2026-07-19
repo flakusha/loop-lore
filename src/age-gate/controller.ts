@@ -12,14 +12,14 @@
  * Responses are JSON.
  */
 
+import { Elysia } from "elysia";
 import type { Kysely } from "kysely";
-import type { DB } from "../db/schema";
 import type { AgeGateConfig } from "../config/schema";
 import { AgeGateMode, UserRole } from "../db/enums";
+import type { DB } from "../db/schema";
 import * as AgeGateService from "./service";
-import { Elysia } from "elysia";
 
-import { jsonResponse, jsonError } from "../routes/http-utils";
+import { jsonError, jsonResponse } from "../routes/http-utils";
 
 // ── Age Gate Config Singleton ─────────────────────────────────
 
@@ -192,9 +192,7 @@ export function handleAdminUpdateConfig(userRole: string | null | undefined, bod
 export function ageGateRoutes({ database }: { database: Kysely<DB> }) {
   return new Elysia({ name: "age-gate" })
     .get("/api/age-gate/status", (ctx) => handleGetStatus(database, (ctx as any).userId))
-    .post("/api/age-gate/accept", (ctx) =>
-      handleAccept({ database, userId: (ctx as any).userId, body: ctx.body }),
-    )
+    .post("/api/age-gate/accept", (ctx) => handleAccept({ database, userId: (ctx as any).userId, body: ctx.body }))
     .get("/api/admin/age-gate", (ctx) => handleAdminGetConfig((ctx as any).userRole))
     .put("/api/admin/age-gate", (ctx) => handleAdminUpdateConfig((ctx as any).userRole, ctx.body));
 }

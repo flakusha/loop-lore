@@ -7,7 +7,7 @@
  * Header buttons use inline SVGs directly in HTML templates.
  */
 
-import { readFileSync, writeFileSync, mkdirSync, existsSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { createLogger } from "../logger";
 
@@ -49,8 +49,8 @@ function main() {
     svg = svg.replaceAll(/\s+class="[^"]*"/g, "");
 
     // Ensure consistent attributes for inline use
-    if (!svg.includes('width="24"')) {
-      svg = svg.replaceAll("<svg", '<svg width="24" height="24"');
+    if (!svg.includes("width=\"24\"")) {
+      svg = svg.replaceAll("<svg", "<svg width=\"24\" height=\"24\"");
     }
 
     writeFileSync(dest, svg, "utf8");

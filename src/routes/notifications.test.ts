@@ -1,12 +1,12 @@
-import { describe, test, expect, beforeAll } from "bun:test";
+import { beforeAll, describe, expect, test } from "bun:test";
 import { Elysia } from "elysia";
-import { createTestDb } from "../test-utils/create-test-db";
-import { createLogger } from "../logger";
-import { uid } from "../utils";
 import type { Kysely } from "kysely";
 import type { DB } from "../db/schema";
-import { notificationsRoutes } from "./notifications";
+import { createLogger } from "../logger";
 import { NotificationService, NotificationType } from "../notifications/service";
+import { createTestDb } from "../test-utils/create-test-db";
+import { uid } from "../utils";
+import { notificationsRoutes } from "./notifications";
 
 function createApp(db: Kysely<DB>, userId: string | null): Elysia {
   return new Elysia({ name: "test-notifications" })

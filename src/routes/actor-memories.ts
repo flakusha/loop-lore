@@ -5,8 +5,8 @@
  */
 
 import { Elysia } from "elysia";
-import type { Db } from "../db";
 import type { Config } from "../config/schema";
+import type { Db } from "../db";
 import { createEntityRoutes } from "./entity-routes";
 
 export function actorMemoriesRoutes(opts: { database: Db; config: Config }): Elysia {

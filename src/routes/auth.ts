@@ -11,18 +11,18 @@
  * On failure: error HTML for htmx error swap.
  */
 
-import crypto from "node:crypto";
 import { Elysia } from "elysia";
-import { uid, secureToken } from "../utils";
 import type { Kysely } from "kysely";
-import type { DB } from "../db/schema";
+import crypto from "node:crypto";
 import type { Config } from "../config/schema";
-import { UserStatus, UserRole } from "../db/enums";
-import { jsonResponse, jsonError, HttpStatus } from "./http-utils";
+import { ensureActorKey, getSmk, isEncryptionEnabled } from "../crypto";
+import { UserRole, UserStatus } from "../db/enums";
+import type { DB } from "../db/schema";
 import { getOrCreateSoloUserForAuth } from "../middleware/auth";
 import { createRateLimiter } from "../middleware/rate-limit";
-import { getSmk, isEncryptionEnabled, ensureActorKey } from "../crypto";
-import { unauthorized, notFound } from "../validation/middleware";
+import { secureToken, uid } from "../utils";
+import { notFound, unauthorized } from "../validation/middleware";
+import { HttpStatus, jsonError, jsonResponse } from "./http-utils";
 
 interface HandleOpts {
   database: Kysely<DB>;
@@ -53,10 +53,10 @@ function getClientIp(request: Request): string {
   const directIp = (request as { remoteAddress?: string }).remoteAddress;
   if (directIp) return directIp;
   return (
-    request.headers.get("X-Forwarded-For")?.split(",", 1)[0]?.trim() ??
-    request.headers.get("x-real-ip") ??
-    request.headers.get("CF-Connecting-IP") ??
-    "unknown"
+    request.headers.get("X-Forwarded-For")?.split(",", 1)[0]?.trim()
+      ?? request.headers.get("x-real-ip")
+      ?? request.headers.get("CF-Connecting-IP")
+      ?? "unknown"
   );
 }
 
@@ -69,7 +69,7 @@ function escapeHtml(str: string): string {
     .replaceAll("&", "&amp;")
     .replaceAll("<", "&lt;")
     .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;");
+    .replaceAll("\"", "&quot;");
 }
 
 function errorHtml(msg: string): Response {
@@ -83,7 +83,7 @@ function errorHtml(msg: string): Response {
 async function handleLogin(request: Request, database: Kysely<DB>, config: Config): Promise<Response> {
   const ip = getClientIp(request);
   if (!loginLimiter.check(ip)) {
-    return new Response('<p class="error-msg">Too many attempts. Try again later.</p>', {
+    return new Response("<p class=\"error-msg\">Too many attempts. Try again later.</p>", {
       status: HttpStatus.TooManyRequests,
       headers: { "Content-Type": "text/html; charset=utf-8" },
     });
@@ -191,7 +191,7 @@ async function handleRegister(request: Request, database: Kysely<DB>, config: Co
 
   const ip = getClientIp(request);
   if (!registerLimiter.check(ip)) {
-    return new Response('<p class="error-msg">Too many registration attempts. Try again later.</p>', {
+    return new Response("<p class=\"error-msg\">Too many registration attempts. Try again later.</p>", {
       status: HttpStatus.TooManyRequests,
       headers: { "Content-Type": "text/html; charset=utf-8" },
     });
@@ -363,16 +363,15 @@ export function authPublicRoutes({ database, config }: HandleOpts): Elysia {
   return new Elysia({ name: "auth-public" })
     .post("/api/auth/login", async ({ request }) => handleLogin(request, database, config))
     .post("/api/demo-login", async ({ request }) => handleDemoLogin(request, database, config))
-    .post("/api/auth/register", async ({ request }) =>
-      handleRegister(request, database, config),
-    ) as unknown as Elysia;
+    .post("/api/auth/register", async ({ request }) => handleRegister(request, database, config)) as unknown as Elysia;
 }
 
 export function authProtectedRoutes({ database }: { database: Kysely<DB> }): Elysia {
   return new Elysia({ name: "auth-protected" })
     .post("/api/auth/logout", async ({ request }) => handleLogout(request, database))
-    .get("/api/auth/me", async ({ request, ...rest }) =>
-      handleMe(request, database, (rest as any).userId as string | null | undefined),
+    .get(
+      "/api/auth/me",
+      async ({ request, ...rest }) => handleMe(request, database, (rest as any).userId as string | null | undefined),
     ) as unknown as Elysia;
 }
 
