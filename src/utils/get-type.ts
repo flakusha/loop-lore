@@ -15,17 +15,17 @@
  * getType('hello');     // "string"
  * getType(123);         // "number"
  */
-export function getType(obj: unknown) {
+export function getType(obj: unknown,) {
   const type = typeof obj;
 
   // Handle primitives and functions directly
-  if (type !== "object") return type;
+  if (type !== "object") { return type; }
 
   // Handle null specifically (typeof null === 'object' is a known bug)
-  if (obj === null) return "null";
+  if (obj === null) { return "null"; }
 
   // Use Object.prototype.toString for complex objects
-  return lowerCaseTheFirstLetter(Object.prototype.toString.call(obj).replace(/^\[object (\S+)\]$/, "$1"));
+  return lowerCaseTheFirstLetter(Object.prototype.toString.call(obj,).replace(/^\[object (\S+)\]$/, "$1",),);
 }
 
-const lowerCaseTheFirstLetter = (str: string) => str[0]!.toLowerCase() + str.slice(1);
+const lowerCaseTheFirstLetter = (str: string,) => str[0]!.toLowerCase() + str.slice(1,);

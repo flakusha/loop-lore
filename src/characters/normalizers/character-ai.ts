@@ -3,7 +3,7 @@
 // Character.AI export normalizer.
 // Converts Character.AI format to canonical character card.
 
-import type { CanonicalCharacter } from "../parser";
+import type { CanonicalCharacter, } from "../parser";
 
 interface CharacterAIData {
   name?: string;
@@ -18,7 +18,7 @@ interface CharacterAIData {
 /**
  * Normalize Character.AI format to canonical character card.
  */
-export function normalizeCharacterAI(data: Record<string, unknown>): CanonicalCharacter {
+export function normalizeCharacterAI(data: Record<string, unknown>,): CanonicalCharacter {
   const cardData = data as CharacterAIData;
 
   // Character.AI uses macro syntax in definition field

@@ -6,27 +6,27 @@
  *
  * Uses in-memory SQLite + Kysely test DB. Mocks provider via registry.
  */
-import { Database } from "bun:sqlite";
-import { afterAll, beforeEach, describe, expect, test } from "bun:test";
-import { Kysely } from "kysely";
-import { randomUUID } from "node:crypto";
-import { loadConfig } from "../config/load";
-import type { Config } from "../config/schema";
-import { createSqliteDialect, setTestDatabase } from "../db/index";
-import type { DB } from "../db/schema";
-import { createLogger } from "../logger";
-import { MockLLMProvider } from "../test-utils/mock-provider";
-import { handleGenerate } from "./generate-route";
-import { getProvider, registerProvider } from "./providers/registry";
+import { Database, } from "bun:sqlite";
+import { afterAll, beforeEach, describe, expect, test, } from "bun:test";
+import { Kysely, } from "kysely";
+import { randomUUID, } from "node:crypto";
+import { loadConfig, } from "../config/load";
+import type { Config, } from "../config/schema";
+import { createSqliteDialect, setTestDatabase, } from "../db/index";
+import type { DB, } from "../db/schema";
+import { createLogger, } from "../logger";
+import { MockLLMProvider, } from "../test-utils/mock-provider";
+import { handleGenerate, } from "./generate-route";
+import { getProvider, registerProvider, } from "./providers/registry";
 
 // ── Test DB factory ───────────────────────────────────────────
 
 function createTestDb(): { sqlite: Database; db: Kysely<DB> } {
-  const sqlite = new Database(":memory:");
-  sqlite.run("PRAGMA foreign_keys = ON");
+  const sqlite = new Database(":memory:",);
+  sqlite.run("PRAGMA foreign_keys = ON",);
 
-  const dialect = createSqliteDialect(sqlite);
-  const db = new Kysely<DB>({ dialect });
+  const dialect = createSqliteDialect(sqlite,);
+  const db = new Kysely<DB>({ dialect, },);
 
   // Create minimal schema tables needed by handleGenerate
   sqlite.run(`
@@ -35,14 +35,14 @@ function createTestDb(): { sqlite: Database; db: Kysely<DB> } {
       role TEXT NOT NULL DEFAULT 'user', status TEXT NOT NULL DEFAULT 'active',
       settings TEXT NOT NULL DEFAULT '{}', created_at TEXT NOT NULL DEFAULT (datetime('now'))
     )
-  `);
+  `,);
   sqlite.run(`
     CREATE TABLE chats (
       id TEXT PRIMARY KEY, name TEXT NOT NULL, type TEXT NOT NULL DEFAULT 'direct',
       mode TEXT NOT NULL DEFAULT 'direct', created_by TEXT NOT NULL,
       created_at TEXT NOT NULL DEFAULT (datetime('now')), updated_at TEXT NOT NULL DEFAULT (datetime('now'))
     )
-  `);
+  `,);
   sqlite.run(`
     CREATE TABLE actors (
       id TEXT PRIMARY KEY, actor_type TEXT NOT NULL DEFAULT 'user', display_name TEXT NOT NULL,
@@ -52,7 +52,7 @@ function createTestDb(): { sqlite: Database; db: Kysely<DB> } {
       data_version INTEGER NOT NULL DEFAULT 1, import_spec TEXT NOT NULL DEFAULT '{}',
       created_at TEXT NOT NULL DEFAULT (datetime('now')), updated_at TEXT NOT NULL DEFAULT (datetime('now'))
     )
-  `);
+  `,);
   sqlite.run(`
     CREATE TABLE messages (
       id TEXT PRIMARY KEY, chat_id TEXT NOT NULL, actor_id TEXT NOT NULL,
@@ -65,7 +65,7 @@ function createTestDb(): { sqlite: Database; db: Kysely<DB> } {
       continuation_index INTEGER,
       created_at TEXT NOT NULL DEFAULT (datetime('now'))
     )
-  `);
+  `,);
   sqlite.run(`
     CREATE TABLE generation_attempts (
       id TEXT PRIMARY KEY, chat_id TEXT NOT NULL, parent_message_id TEXT NOT NULL,
@@ -84,7 +84,7 @@ function createTestDb(): { sqlite: Database; db: Kysely<DB> } {
       completed_at TEXT,
       created_at TEXT NOT NULL DEFAULT (datetime('now')), updated_at TEXT NOT NULL DEFAULT (datetime('now'))
     )
-  `);
+  `,);
 
   // Tables needed by PromptAssembler (lore, memories, locations)
   sqlite.run(
@@ -103,15 +103,15 @@ function createTestDb(): { sqlite: Database; db: Kysely<DB> } {
     `CREATE TABLE location_states (location_id TEXT NOT NULL, world_id TEXT NOT NULL, atmosphere TEXT, npcs_present TEXT NOT NULL DEFAULT '[]', items_available TEXT NOT NULL DEFAULT '[]', time_of_day TEXT, weather TEXT, hazards TEXT NOT NULL DEFAULT '[]', created_at TEXT NOT NULL DEFAULT (datetime('now')), updated_at TEXT NOT NULL DEFAULT (datetime('now')))`,
   );
 
-  return { sqlite, db };
+  return { sqlite, db, };
 }
 
 // ── Seed helpers ──────────────────────────────────────────────
 
-async function seedChat(testDb: Kysely<DB>, overrides?: Partial<Record<string, unknown>>): Promise<string> {
+async function seedChat(testDb: Kysely<DB>, overrides?: Partial<Record<string, unknown>>,): Promise<string> {
   const id = (overrides?.id as string) ?? randomUUID();
   await testDb
-    .insertInto("chats")
+    .insertInto("chats",)
     .values({
       id,
       name: "Test Chat",
@@ -119,15 +119,15 @@ async function seedChat(testDb: Kysely<DB>, overrides?: Partial<Record<string, u
       mode: "direct",
       created_by: "user-1",
       ...overrides,
-    })
+    },)
     .execute();
   return id;
 }
 
-async function seedActor(testDb: Kysely<DB>, overrides?: Partial<Record<string, unknown>>): Promise<string> {
+async function seedActor(testDb: Kysely<DB>, overrides?: Partial<Record<string, unknown>>,): Promise<string> {
   const id = (overrides?.id as string) ?? randomUUID();
   await testDb
-    .insertInto("actors")
+    .insertInto("actors",)
     .values({
       id,
       actor_type: "character",
@@ -137,7 +137,7 @@ async function seedActor(testDb: Kysely<DB>, overrides?: Partial<Record<string, 
       data_version: 1,
       import_spec: "{}",
       ...overrides,
-    })
+    },)
     .execute();
   return id;
 }
@@ -150,7 +150,7 @@ async function seedMessage(
 ): Promise<string> {
   const id = (overrides?.id as string) ?? randomUUID();
   await testDb
-    .insertInto("messages")
+    .insertInto("messages",)
     .values({
       id,
       chat_id: chatId,
@@ -163,14 +163,14 @@ async function seedMessage(
       status: "confirmed",
       visibility: "visible",
       ...overrides,
-    })
+    },)
     .execute();
   return id;
 }
 
 // ── Test helpers ──────────────────────────────────────────────
 
-function makeRequest(overrides?: Partial<Record<string, unknown>>): Record<string, unknown> {
+function makeRequest(overrides?: Partial<Record<string, unknown>>,): Record<string, unknown> {
   return {
     chatId: "chat-1",
     parentMessageId: "msg-1",
@@ -191,7 +191,7 @@ function makeConfig(): Config {
         sd: undefined,
       },
       defaultProvider: "mock-provider",
-      defaultModels: { "mock-provider": "mock-model" },
+      defaultModels: { "mock-provider": "mock-model", },
     },
   };
 }
@@ -206,59 +206,59 @@ let mockProvider: MockLLMProvider;
 
 beforeEach(async () => {
   // Init logger for cancellation-tracker
-  createLogger({ level: "error" });
+  createLogger({ level: "error", },);
 
   // Register mock provider — reuse existing entry if present (module-level registry)
-  const existing = getProvider("mock-provider");
+  const existing = getProvider("mock-provider",);
   mockProvider = new MockLLMProvider();
   if (existing) {
-    Object.assign(existing, mockProvider);
+    Object.assign(existing, mockProvider,);
   } else {
-    registerProvider("mock-provider", mockProvider);
+    registerProvider("mock-provider", mockProvider,);
   }
 
   // Clear all test tables
-  await testDb.deleteFrom("generation_attempts").execute();
-  await testDb.deleteFrom("messages").execute();
-  await testDb.deleteFrom("actors").execute();
-  await testDb.deleteFrom("chats").execute();
-  await testDb.deleteFrom("users").execute();
+  await testDb.deleteFrom("generation_attempts",).execute();
+  await testDb.deleteFrom("messages",).execute();
+  await testDb.deleteFrom("actors",).execute();
+  await testDb.deleteFrom("chats",).execute();
+  await testDb.deleteFrom("users",).execute();
 
-  setTestDatabase(testDb);
-});
+  setTestDatabase(testDb,);
+},);
 
 afterAll(() => {
-  setTestDatabase(null);
+  setTestDatabase(null,);
   testSqlite.close();
-});
+},);
 
 // ── Tests ──────────────────────────────────────────────────────
 
 describe("handleGenerate — input validation", () => {
   test("returns 400 when chatId missing", async () => {
-    const body = makeRequest({ chatId: undefined });
-    const res = await handleGenerate({ body });
-    expect(res.status).toBe(400);
+    const body = makeRequest({ chatId: undefined, },);
+    const res = await handleGenerate({ body, },);
+    expect(res.status,).toBe(400,);
     const data = (await res.json()) as Record<string, unknown>;
-    expect(data.error).toContain("chatId");
+    expect(data.error,).toContain("chatId",);
   });
 
   test("returns 400 when parentMessageId missing", async () => {
-    const body = makeRequest({ parentMessageId: undefined });
-    const res = await handleGenerate({ body });
-    expect(res.status).toBe(400);
+    const body = makeRequest({ parentMessageId: undefined, },);
+    const res = await handleGenerate({ body, },);
+    expect(res.status,).toBe(400,);
   });
 
   test("returns 400 when actorId missing", async () => {
-    const body = makeRequest({ actorId: undefined });
-    const res = await handleGenerate({ body });
-    expect(res.status).toBe(400);
+    const body = makeRequest({ actorId: undefined, },);
+    const res = await handleGenerate({ body, },);
+    expect(res.status,).toBe(400,);
   });
 
   test("returns 400 when idempotencyKey missing", async () => {
-    const body = makeRequest({ idempotencyKey: undefined });
-    const res = await handleGenerate({ body });
-    expect(res.status).toBe(400);
+    const body = makeRequest({ idempotencyKey: undefined, },);
+    const res = await handleGenerate({ body, },);
+    expect(res.status,).toBe(400,);
   });
 });
 
@@ -267,184 +267,184 @@ describe("handleGenerate — provider resolution", () => {
     const config = makeConfig();
     config.generation.defaultProvider = "nonexistent";
     // Don't seed chat/actor — should fail at provider resolution before DB
-    const body = makeRequest({ provider: "nonexistent" });
-    const res = await handleGenerate({ body, config });
-    expect(res.status).toBe(422);
+    const body = makeRequest({ provider: "nonexistent", },);
+    const res = await handleGenerate({ body, config, },);
+    expect(res.status,).toBe(422,);
     const data = (await res.json()) as Record<string, unknown>;
-    expect(data.error).toContain("Provider resolution failed");
+    expect(data.error,).toContain("Provider resolution failed",);
   });
 });
 
 describe("handleGenerate — non-streaming (complete)", () => {
   test("returns 200 with generated content using explicit prompt", async () => {
-    const chatId = await seedChat(testDb);
-    const actorId = await seedActor(testDb);
-    const msgId = await seedMessage(testDb, chatId, actorId);
+    const chatId = await seedChat(testDb,);
+    const actorId = await seedActor(testDb,);
+    const msgId = await seedMessage(testDb, chatId, actorId,);
 
     const body = makeRequest({
       chatId,
       actorId,
       parentMessageId: msgId,
-      prompt: [{ role: "user" as const, content: "Test prompt" }],
-    });
+      prompt: [{ role: "user" as const, content: "Test prompt", },],
+    },);
     const config = makeConfig();
-    const res = await handleGenerate({ body, config });
+    const res = await handleGenerate({ body, config, },);
     const data = (await res.json()) as Record<string, unknown>;
 
-    expect(res.status).toBe(200);
-    expect(data.ok).toBe(true);
-    expect(data.content).toBe("Mock response content");
-    expect(data.attemptId).toBeDefined();
-    expect(data.messageId).toBeDefined();
-    expect((data.tokenUsage as Record<string, number>).totalTokens).toBe(30);
+    expect(res.status,).toBe(200,);
+    expect(data.ok,).toBe(true,);
+    expect(data.content,).toBe("Mock response content",);
+    expect(data.attemptId,).toBeDefined();
+    expect(data.messageId,).toBeDefined();
+    expect((data.tokenUsage as Record<string, number>).totalTokens,).toBe(30,);
   });
 
   test("stores message in DB on success", async () => {
-    const chatId = await seedChat(testDb);
-    const actorId = await seedActor(testDb);
-    const msgId = await seedMessage(testDb, chatId, actorId);
+    const chatId = await seedChat(testDb,);
+    const actorId = await seedActor(testDb,);
+    const msgId = await seedMessage(testDb, chatId, actorId,);
 
     const body = makeRequest({
       chatId,
       actorId,
       parentMessageId: msgId,
-      prompt: [{ role: "user" as const, content: "Hi" }],
-    });
+      prompt: [{ role: "user" as const, content: "Hi", },],
+    },);
     const config = makeConfig();
-    await handleGenerate({ body, config });
+    await handleGenerate({ body, config, },);
 
-    const messages = await testDb.selectFrom("messages").selectAll().execute();
-    expect(messages.length).toBeGreaterThanOrEqual(1);
-    const genMsg = messages.find((m) => m.id !== msgId);
-    expect(genMsg).toBeDefined();
+    const messages = await testDb.selectFrom("messages",).selectAll().execute();
+    expect(messages.length,).toBeGreaterThanOrEqual(1,);
+    const genMsg = messages.find((m,) => m.id !== msgId);
+    expect(genMsg,).toBeDefined();
     const msg = genMsg as NonNullable<typeof genMsg>;
-    expect(msg.role).toBe("assistant");
-    expect(msg.content).toBe("Mock response content");
-    expect(msg.chat_id).toBe(chatId);
-    expect(msg.provider).toBe("mock-provider");
-    expect(msg.model_id).toBe("mock-model");
+    expect(msg.role,).toBe("assistant",);
+    expect(msg.content,).toBe("Mock response content",);
+    expect(msg.chat_id,).toBe(chatId,);
+    expect(msg.provider,).toBe("mock-provider",);
+    expect(msg.model_id,).toBe("mock-model",);
   });
 
   test("returns 500 when provider throws", async () => {
-    const prov = getProvider("mock-provider") as MockLLMProvider;
+    const prov = getProvider("mock-provider",) as MockLLMProvider;
     prov.failOnCall = true;
 
-    const chatId = await seedChat(testDb);
-    const actorId = await seedActor(testDb);
-    const msgId = await seedMessage(testDb, chatId, actorId);
+    const chatId = await seedChat(testDb,);
+    const actorId = await seedActor(testDb,);
+    const msgId = await seedMessage(testDb, chatId, actorId,);
 
     const body = makeRequest({
       chatId,
       actorId,
       parentMessageId: msgId,
-      prompt: [{ role: "user" as const, content: "Hi" }],
-    });
+      prompt: [{ role: "user" as const, content: "Hi", },],
+    },);
     const config = makeConfig();
-    const res = await handleGenerate({ body, config });
-    expect(res.status).toBe(500);
+    const res = await handleGenerate({ body, config, },);
+    expect(res.status,).toBe(500,);
     const data = (await res.json()) as Record<string, unknown>;
-    expect(data.error).toContain("Generation failed");
+    expect(data.error,).toContain("Generation failed",);
   });
 });
 
 describe("handleGenerate — streaming (SSE)", () => {
   test("returns SSE stream with content and done events", async () => {
-    const chatId = await seedChat(testDb);
-    const actorId = await seedActor(testDb);
-    const msgId = await seedMessage(testDb, chatId, actorId);
+    const chatId = await seedChat(testDb,);
+    const actorId = await seedActor(testDb,);
+    const msgId = await seedMessage(testDb, chatId, actorId,);
 
     const body = makeRequest({
       chatId,
       actorId,
       parentMessageId: msgId,
-      prompt: [{ role: "user" as const, content: "Stream test" }],
+      prompt: [{ role: "user" as const, content: "Stream test", },],
       stream: true,
-    });
+    },);
     const config = makeConfig();
-    const res = await handleGenerate({ body, config });
+    const res = await handleGenerate({ body, config, },);
 
-    expect(res.status).toBe(200);
-    expect(res.headers.get("Content-Type")).toBe("text/event-stream");
+    expect(res.status,).toBe(200,);
+    expect(res.headers.get("Content-Type",),).toBe("text/event-stream",);
 
     const text = await res.text();
-    expect(text).toContain("Mock ");
-    expect(text).toContain("streamed ");
-    expect(text).toContain("response");
-    expect(text).toContain("\"type\":\"done\"");
+    expect(text,).toContain("Mock ",);
+    expect(text,).toContain("streamed ",);
+    expect(text,).toContain("response",);
+    expect(text,).toContain('"type":"done"',);
   });
 
   test("stores streamed response in DB", async () => {
-    const chatId = await seedChat(testDb);
-    const actorId = await seedActor(testDb);
-    const msgId = await seedMessage(testDb, chatId, actorId);
+    const chatId = await seedChat(testDb,);
+    const actorId = await seedActor(testDb,);
+    const msgId = await seedMessage(testDb, chatId, actorId,);
 
     const body = makeRequest({
       chatId,
       actorId,
       parentMessageId: msgId,
-      prompt: [{ role: "user" as const, content: "Stream test" }],
+      prompt: [{ role: "user" as const, content: "Stream test", },],
       stream: true,
-    });
+    },);
     const config = makeConfig();
-    await handleGenerate({ body, config });
+    await handleGenerate({ body, config, },);
 
     const messages = await testDb
-      .selectFrom("messages")
+      .selectFrom("messages",)
       .selectAll()
-      .where("role", "=", "assistant")
+      .where("role", "=", "assistant",)
       .execute();
-    expect(messages).toHaveLength(1);
-    expect(messages[0]!.content).toBe("Mock streamed response");
+    expect(messages,).toHaveLength(1,);
+    expect(messages[0]!.content,).toBe("Mock streamed response",);
   });
 
   test("returns SSE error event when provider throws during stream", async () => {
-    const prov = getProvider("mock-provider") as MockLLMProvider;
+    const prov = getProvider("mock-provider",) as MockLLMProvider;
     prov.streamError = true;
 
-    const chatId = await seedChat(testDb);
-    const actorId = await seedActor(testDb);
-    const msgId = await seedMessage(testDb, chatId, actorId);
+    const chatId = await seedChat(testDb,);
+    const actorId = await seedActor(testDb,);
+    const msgId = await seedMessage(testDb, chatId, actorId,);
 
     const body = makeRequest({
       chatId,
       actorId,
       parentMessageId: msgId,
-      prompt: [{ role: "user" as const, content: "Stream error" }],
+      prompt: [{ role: "user" as const, content: "Stream error", },],
       stream: true,
-    });
+    },);
     const config = makeConfig();
-    const res = await handleGenerate({ body, config });
+    const res = await handleGenerate({ body, config, },);
 
     const text = await res.text();
     // Should contain error event
-    expect(text).toContain("error");
+    expect(text,).toContain("error",);
   });
 });
 
 describe("handleGenerate — prompt assembly path", () => {
   test("uses PromptAssembler when no explicit prompt given", async () => {
-    const chatId = await seedChat(testDb);
+    const chatId = await seedChat(testDb,);
     const actorId = await seedActor(testDb, {
       id: "actor-prompt-test",
       system_prompt: "You are a test bot.",
-    });
+    },);
     const msgId = await seedMessage(testDb, chatId, actorId, {
       status: "confirmed",
-    });
+    },);
 
     const body = makeRequest({
       chatId,
       actorId: "actor-prompt-test",
       parentMessageId: msgId,
       // No prompt property — triggers PromptAssembler
-    });
+    },);
     const config = makeConfig();
-    const res = await handleGenerate({ body, config });
+    const res = await handleGenerate({ body, config, },);
 
-    expect(res.status).toBe(200);
+    expect(res.status,).toBe(200,);
     const data = (await res.json()) as Record<string, unknown>;
-    expect(data.ok).toBe(true);
+    expect(data.ok,).toBe(true,);
     // PromptAssembler should have included the system prompt
-    expect(data.content).toBeDefined();
+    expect(data.content,).toBeDefined();
   });
 });

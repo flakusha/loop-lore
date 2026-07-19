@@ -8,7 +8,7 @@
  * Reference: docs/spec/integrations/image-generation.md §ComfyUI
  */
 
-import { validateProviderUrl } from "../../utils/url-validation";
+import { validateProviderUrl, } from "../../utils/url-validation";
 
 export type ComfyUIWorkflow = Record<
   string,
@@ -53,14 +53,14 @@ export class ComfyUIClient {
   private timeout: number;
   private pollIntervalMs: number;
 
-  constructor(options: ComfyUIClientOptions) {
-    this.baseUrl = options.baseUrl.replace(/\/+$/, "");
+  constructor(options: ComfyUIClientOptions,) {
+    this.baseUrl = options.baseUrl.replace(/\/+$/, "",);
     this.timeout = options.timeout ?? 120_000;
     this.pollIntervalMs = options.pollIntervalMs ?? 500;
 
-    const validated = validateProviderUrl(this.baseUrl);
+    const validated = validateProviderUrl(this.baseUrl,);
     if (!validated.ok) {
-      throw new Error(`Invalid ComfyUI URL: ${validated.error}`);
+      throw new Error(`Invalid ComfyUI URL: ${validated.error}`,);
     }
   }
 
@@ -70,18 +70,18 @@ export class ComfyUIClient {
    * @param workflow - ComfyUI API-format workflow JSON
    * @returns prompt_id for tracking execution
    */
-  async submitWorkflow(workflow: ComfyUIWorkflow): Promise<ComfyUIPromptResult> {
+  async submitWorkflow(workflow: ComfyUIWorkflow,): Promise<ComfyUIPromptResult> {
     const url = `${this.baseUrl}/prompt`;
     const resp = await fetch(url, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ prompt: workflow }),
-      signal: AbortSignal.timeout(this.timeout),
-    });
+      headers: { "Content-Type": "application/json", },
+      body: JSON.stringify({ prompt: workflow, },),
+      signal: AbortSignal.timeout(this.timeout,),
+    },);
 
     if (!resp.ok) {
       const body = await resp.text().catch(() => "unknown");
-      throw new Error(`ComfyUI prompt submission failed [${resp.status}]: ${body}`);
+      throw new Error(`ComfyUI prompt submission failed [${resp.status}]: ${body}`,);
     }
 
     return (await resp.json()) as ComfyUIPromptResult;
@@ -92,7 +92,7 @@ export class ComfyUIClient {
    *
    * Returns null if not yet complete, throws on failure.
    */
-  async pollResult(promptId: string): Promise<{
+  async pollResult(promptId: string,): Promise<{
     done: boolean;
     images?: { filename: string; subfolder?: string; type?: string }[];
     error?: string;
@@ -100,37 +100,37 @@ export class ComfyUIClient {
     const url = `${this.baseUrl}/history/${promptId}`;
 
     const resp = await fetch(url, {
-      signal: AbortSignal.timeout(10_000),
-    });
+      signal: AbortSignal.timeout(10_000,),
+    },);
 
     if (!resp.ok) {
-      throw new Error(`ComfyUI history fetch failed [${resp.status}]`);
+      throw new Error(`ComfyUI history fetch failed [${resp.status}]`,);
     }
 
     const data = (await resp.json()) as Record<string, ComfyUIExecutionStatus>;
     const entry = data[promptId];
 
     if (!entry) {
-      return { done: false };
+      return { done: false, };
     }
 
     if (entry.status === "completed") {
       const images: { filename: string; subfolder?: string; type?: string }[] = [];
       if (entry.outputs) {
-        for (const nodeOutput of Object.values(entry.outputs)) {
+        for (const nodeOutput of Object.values(entry.outputs,)) {
           if (nodeOutput.images) {
-            images.push(...nodeOutput.images);
+            images.push(...nodeOutput.images,);
           }
         }
       }
-      return { done: true, images };
+      return { done: true, images, };
     }
 
     if (entry.status === "failed" || entry.status === "cancelled") {
-      return { done: true, error: entry.error ?? `execution ${entry.status}` };
+      return { done: true, error: entry.error ?? `execution ${entry.status}`, };
     }
 
-    return { done: false };
+    return { done: false, };
   }
 
   /**
@@ -140,34 +140,34 @@ export class ComfyUIClient {
    * @param timeoutMs - max wait time in ms (overrides client timeout)
    * @returns list of generated image filenames
    */
-  async waitForCompletion(promptId: string, timeoutMs?: number): Promise<string[]> {
+  async waitForCompletion(promptId: string, timeoutMs?: number,): Promise<string[]> {
     const deadline = Date.now() + (timeoutMs ?? this.timeout);
 
     while (Date.now() < deadline) {
-      const result = await this.pollResult(promptId);
+      const result = await this.pollResult(promptId,);
 
       if (result.done) {
         if (result.error) {
-          throw new Error(`ComfyUI execution failed: ${result.error}`);
+          throw new Error(`ComfyUI execution failed: ${result.error}`,);
         }
-        return (result.images ?? []).map((img) => img.filename);
+        return (result.images ?? []).map((img,) => img.filename);
       }
 
-      await new Promise((r) => setTimeout(r, this.pollIntervalMs));
+      await new Promise((r,) => setTimeout(r, this.pollIntervalMs,));
     }
 
-    throw new Error("ComfyUI execution timed out");
+    throw new Error("ComfyUI execution timed out",);
   }
 
   /**
    * Cancel a running execution.
    */
-  async cancelExecution(_promptId?: string): Promise<void> {
+  async cancelExecution(_promptId?: string,): Promise<void> {
     const url = `${this.baseUrl}/interrupt`;
     await fetch(url, {
       method: "POST",
-      signal: AbortSignal.timeout(10_000),
-    });
+      signal: AbortSignal.timeout(10_000,),
+    },);
   }
 
   /**
@@ -176,11 +176,11 @@ export class ComfyUIClient {
   async getNodeInfo(): Promise<Record<string, ComfyUINodeInfo>> {
     const url = `${this.baseUrl}/object_info`;
     const resp = await fetch(url, {
-      signal: AbortSignal.timeout(10_000),
-    });
+      signal: AbortSignal.timeout(10_000,),
+    },);
 
     if (!resp.ok) {
-      throw new Error(`ComfyUI object_info failed [${resp.status}]`);
+      throw new Error(`ComfyUI object_info failed [${resp.status}]`,);
     }
 
     return (await resp.json()) as Record<string, ComfyUINodeInfo>;
@@ -198,19 +198,19 @@ export class ComfyUIClient {
     subfolder?: string,
     type: "output" | "temp" = "output",
   ): Promise<Buffer> {
-    const params = new URLSearchParams({ filename, type });
-    if (subfolder) params.set("subfolder", subfolder);
+    const params = new URLSearchParams({ filename, type, },);
+    if (subfolder) { params.set("subfolder", subfolder,); }
 
     const url = `${this.baseUrl}/view?${params.toString()}`;
     const resp = await fetch(url, {
-      signal: AbortSignal.timeout(30_000),
-    });
+      signal: AbortSignal.timeout(30_000,),
+    },);
 
     if (!resp.ok) {
-      throw new Error(`ComfyUI image download failed [${resp.status}]: ${filename}`);
+      throw new Error(`ComfyUI image download failed [${resp.status}]: ${filename}`,);
     }
 
-    return Buffer.from(await resp.arrayBuffer());
+    return Buffer.from(await resp.arrayBuffer(),);
   }
 
   /**
@@ -218,13 +218,13 @@ export class ComfyUIClient {
    *
    * @returns array of image buffers
    */
-  async runWorkflow(workflow: ComfyUIWorkflow): Promise<Buffer[]> {
-    const { prompt_id } = await this.submitWorkflow(workflow);
-    const filenames = await this.waitForCompletion(prompt_id);
+  async runWorkflow(workflow: ComfyUIWorkflow,): Promise<Buffer[]> {
+    const { prompt_id, } = await this.submitWorkflow(workflow,);
+    const filenames = await this.waitForCompletion(prompt_id,);
 
     const buffers: Buffer[] = [];
     for (const filename of filenames) {
-      buffers.push(await this.downloadImage(filename));
+      buffers.push(await this.downloadImage(filename,),);
     }
     return buffers;
   }

@@ -4,12 +4,12 @@
  * CRUD for per-actor lorebook entries (character_book).
  */
 
-import { Elysia } from "elysia";
-import type { Config } from "../config/schema";
-import type { Db } from "../db";
-import { createEntityRoutes } from "./entity-routes";
+import { Elysia, } from "elysia";
+import type { Config, } from "../config/schema";
+import type { Db, } from "../db";
+import { createEntityRoutes, } from "./entity-routes";
 
-export function actorLoreEntriesRoutes(opts: { database: Db; config: Config }): Elysia {
+export function actorLoreEntriesRoutes(opts: { database: Db; config: Config },): Elysia {
   return createEntityRoutes(
     {
       parentPrefix: "actors",
@@ -20,8 +20,8 @@ export function actorLoreEntriesRoutes(opts: { database: Db; config: Config }): 
       ownershipTable: "actors",
       ownershipFkColumn: "user_id",
       orderBy: [
-        { column: "sort_order", dir: "asc" },
-        { column: "insertion_order", dir: "asc" },
+        { column: "sort_order", dir: "asc", },
+        { column: "insertion_order", dir: "asc", },
       ],
       fieldMappings: {
         name: "name",
@@ -38,7 +38,7 @@ export function actorLoreEntriesRoutes(opts: { database: Db; config: Config }): 
         comment: "comment",
         sortOrder: "sort_order",
       },
-      jsonFields: ["keys", "secondary_keys"],
+      jsonFields: ["keys", "secondary_keys",],
       defaults: {
         selective: 0,
         caseSensitive: 0,
@@ -49,7 +49,7 @@ export function actorLoreEntriesRoutes(opts: { database: Db; config: Config }): 
         priority: 100,
         sortOrder: 0,
       },
-      createRequired: ["content"],
+      createRequired: ["content",],
     },
     opts,
   );

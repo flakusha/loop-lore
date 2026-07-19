@@ -5,10 +5,10 @@
  * Requires seeded chat.
  */
 
-import { afterAll, beforeAll, describe, expect, test } from "bun:test";
-import { type ApiClient, createClient } from "../helpers/client";
-import { SEED, seedAll } from "../helpers/seed";
-import { createTestServer, type TestServer } from "../helpers/server";
+import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
+import { type ApiClient, createClient, } from "../helpers/client";
+import { SEED, seedAll, } from "../helpers/seed";
+import { createTestServer, type TestServer, } from "../helpers/server";
 
 describe("Messages E2E", () => {
   let server: TestServer;
@@ -16,9 +16,9 @@ describe("Messages E2E", () => {
 
   beforeAll(async () => {
     server = await createTestServer();
-    await seedAll(server.db); // seed users, character, chat, message
+    await seedAll(server.db,); // seed users, character, chat, message
     await server.db
-      .insertInto("users")
+      .insertInto("users",)
       .values({
         id: "00000000-0000-4000-b000-000000000099",
         username: "e2eother",
@@ -27,43 +27,43 @@ describe("Messages E2E", () => {
         role: "user",
         status: "active",
         settings: "{}",
-      })
+      },)
       .execute();
-    api = createClient(server.url);
-    await api.loginAs(SEED.user.username, SEED.user.password);
-  });
+    api = createClient(server.url,);
+    await api.loginAs(SEED.user.username, SEED.user.password,);
+  },);
 
   afterAll(() => {
     server.close();
-  });
+  },);
   test("GET /api/chats/:id/messages returns messages", async () => {
     const res = await api.get<{ data: Array<{ id: string; content: string }> }>(
       `/api/chats/${SEED.chat.id}/messages`,
     );
-    expect(res.ok).toBe(true);
-    expect(Array.isArray(res.data!.data)).toBe(true);
-    expect(res.data!.data.length).toBeGreaterThanOrEqual(1);
+    expect(res.ok,).toBe(true,);
+    expect(Array.isArray(res.data!.data,),).toBe(true,);
+    expect(res.data!.data.length,).toBeGreaterThanOrEqual(1,);
   });
 
   test("POST /api/chats/:id/messages creates a new message", async () => {
     const res = await api.post<{ id: string }>(`/api/chats/${SEED.chat.id}/messages`, {
       content: "New E2E message",
       role: "user",
-    });
-    expect(res.ok).toBe(true);
-    expect(res.data!.id).toBeTruthy();
+    },);
+    expect(res.ok,).toBe(true,);
+    expect(res.data!.id,).toBeTruthy();
   });
 
   test("POST /api/chats/:id/messages requires content", async () => {
-    const res = await api.post(`/api/chats/${SEED.chat.id}/messages`, { role: "user" });
-    expect(res.ok).toBe(false);
-    expect(res.status).toBe(422);
+    const res = await api.post(`/api/chats/${SEED.chat.id}/messages`, { role: "user", },);
+    expect(res.ok,).toBe(false,);
+    expect(res.status,).toBe(422,);
   });
 
   test("GET /api/messages/:id returns single message", async () => {
-    const res = await api.get<{ id: string; content: string }>(`/api/messages/${SEED.message.id}`);
-    expect(res.ok).toBe(true);
-    expect(res.data!.content).toBe(SEED.message.content);
+    const res = await api.get<{ id: string; content: string }>(`/api/messages/${SEED.message.id}`,);
+    expect(res.ok,).toBe(true,);
+    expect(res.data!.content,).toBe(SEED.message.content,);
   });
 
   test("DELETE /api/messages/:id soft-deletes message", async () => {
@@ -71,34 +71,34 @@ describe("Messages E2E", () => {
     const createRes = await api.post<{ id: string }>(`/api/chats/${SEED.chat.id}/messages`, {
       content: "Message to delete",
       role: "user",
-    });
+    },);
     const msgId = createRes.data!.id;
 
-    const deleteRes = await api.del(`/api/messages/${msgId}`);
-    expect(deleteRes.ok).toBe(true);
+    const deleteRes = await api.del(`/api/messages/${msgId}`,);
+    expect(deleteRes.ok,).toBe(true,);
 
     // GET should still return it (soft-delete)
-    const getRes = await api.get<{ visibility: string }>(`/api/messages/${msgId}`);
-    expect(getRes.ok).toBe(true);
-    expect(getRes.data!.visibility).toBe("hidden_by_user");
+    const getRes = await api.get<{ visibility: string }>(`/api/messages/${msgId}`,);
+    expect(getRes.ok,).toBe(true,);
+    expect(getRes.data!.visibility,).toBe("hidden_by_user",);
   });
 
   test("GET /api/messages/:id returns 404 for non-existent", async () => {
-    const res = await api.get("/api/messages/00000000-0000-0000-0000-000000000000");
-    expect(res.status).toBe(404);
-    expect(res.code).toBeTruthy(); // TEST.2 error envelope
+    const res = await api.get("/api/messages/00000000-0000-0000-0000-000000000000",);
+    expect(res.status,).toBe(404,);
+    expect(res.code,).toBeTruthy(); // TEST.2 error envelope
   });
 
   test("cross-tenant isolation: User B cannot access User A's message", async () => {
-    const resA = await api.get<{ id: string }>(`/api/messages/${SEED.message.id}`);
-    expect(resA.ok).toBe(true);
-    expect(resA.data!.id).toBe(SEED.message.id);
+    const resA = await api.get<{ id: string }>(`/api/messages/${SEED.message.id}`,);
+    expect(resA.ok,).toBe(true,);
+    expect(resA.data!.id,).toBe(SEED.message.id,);
 
-    const apiB = createClient(server.url);
-    await apiB.loginAs("e2eother", "password");
-    const resB = await apiB.get(`/api/messages/${SEED.message.id}`);
-    expect(resB.ok).toBe(false);
-    expect(resB.status).toBe(404);
-    expect(resB.code).toBeTruthy();
+    const apiB = createClient(server.url,);
+    await apiB.loginAs("e2eother", "password",);
+    const resB = await apiB.get(`/api/messages/${SEED.message.id}`,);
+    expect(resB.ok,).toBe(false,);
+    expect(resB.status,).toBe(404,);
+    expect(resB.code,).toBeTruthy();
   });
 });

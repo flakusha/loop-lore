@@ -2,7 +2,7 @@
  * Logger types — LogEntry, Logger, Transport, support interfaces.
  */
 
-import { LogLevel } from "../db/enums-config";
+import { LogLevel, } from "../db/enums-config";
 
 /** Numeric level values — higher = more severe */
 export const LogLevelNumeric: Record<LogLevel, number> = {
@@ -40,18 +40,18 @@ export interface LogEntry {
 // ── Logger Interface ───────────────────────────────────────
 
 export interface Logger {
-  debug(message: string | Record<string, unknown>, meta?: Record<string, unknown>): void;
-  info(message: string | Record<string, unknown>, meta?: Record<string, unknown>): void;
-  warn(message: string | Record<string, unknown>, meta?: Record<string, unknown>): void;
-  error(message: string | Record<string, unknown>, error?: Error, meta?: Record<string, unknown>): void;
+  debug(message: string | Record<string, unknown>, meta?: Record<string, unknown>,): void;
+  info(message: string | Record<string, unknown>, meta?: Record<string, unknown>,): void;
+  warn(message: string | Record<string, unknown>, meta?: Record<string, unknown>,): void;
+  error(message: string | Record<string, unknown>, error?: Error, meta?: Record<string, unknown>,): void;
 
   /** Create child logger with inherited bindings */
-  child(bindings: LoggerBindings): Logger;
+  child(bindings: LoggerBindings,): Logger;
 
   /** Add a transport at runtime (for DB transport after DB init) */
-  addTransport(transport: Transport): void;
+  addTransport(transport: Transport,): void;
   /** Merge bindings at runtime (e.g. userId/sessionId for telemetry) */
-  setBindings(partial: LoggerBindings): void;
+  setBindings(partial: LoggerBindings,): void;
 
   /** Flush pending entries (await before shutdown) */
   flush(): Promise<void>;
@@ -77,7 +77,7 @@ export interface Transport {
   readonly name: string;
 
   /** Write a single log entry. Must not throw — catch errors internally. */
-  write(entry: LogEntry): Promise<void>;
+  write(entry: LogEntry,): Promise<void>;
 
   /** Flush any pending writes (for transports with internal buffering). */
   flush(): Promise<void>;
@@ -130,6 +130,6 @@ export interface LoggerConfig {
 
 // ── Factory ────────────────────────────────────────────────
 
-export type LoggerFactory = (config?: Partial<LoggerConfig>) => Logger;
+export type LoggerFactory = (config?: Partial<LoggerConfig>,) => Logger;
 
-export { LogLevel } from "../db/enums-config";
+export { LogLevel, } from "../db/enums-config";

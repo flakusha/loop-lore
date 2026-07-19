@@ -38,7 +38,7 @@ setup_repo() {
     git -C "$TEST_DIR" config user.email "test@example.com" >/dev/null 2>&1
 
     # Create initial commit
-    echo "# test repo" > "$TEST_DIR/README.md"
+    echo "# test repo" >"$TEST_DIR/README.md"
     git -C "$TEST_DIR" add README.md >/dev/null 2>&1
     git -C "$TEST_DIR" commit -m "init: test repo" --no-gpg-sign >/dev/null 2>&1
 
@@ -121,7 +121,7 @@ echo ""
 echo -e "${YELLOW}7. cmd_new — custom base branch${NC}"
 
 git -C "$TEST_DIR" checkout -b custom-base >/dev/null 2>&1
-echo "custom" > "$TEST_DIR/custom.txt"
+echo "custom" >"$TEST_DIR/custom.txt"
 git -C "$TEST_DIR" add custom.txt >/dev/null 2>&1
 git -C "$TEST_DIR" commit -m "feat: custom base" --no-gpg-sign >/dev/null 2>&1
 git -C "$TEST_DIR" checkout master >/dev/null 2>&1
@@ -136,7 +136,7 @@ echo ""
 echo -e "${YELLOW}8. cmd_merge (merge source into branch)${NC}"
 
 git -C "$TEST_DIR/tree/feat-test-new" checkout feat/test-new >/dev/null 2>&1
-echo "new feature" > "$TEST_DIR/tree/feat-test-new/feature.txt"
+echo "new feature" >"$TEST_DIR/tree/feat-test-new/feature.txt"
 git -C "$TEST_DIR/tree/feat-test-new" add feature.txt >/dev/null 2>&1
 git -C "$TEST_DIR/tree/feat-test-new" commit -m "feat: add feature" --no-gpg-sign >/dev/null 2>&1
 
@@ -173,7 +173,7 @@ echo ""
 # ── 12. cmd_merge — blocks dirty worktree ────────────────────────────
 echo -e "${YELLOW}12. cmd_merge — blocks dirty worktree${NC}"
 
-echo "dirty" >> "$TEST_DIR/tree/feat-test-new/feature.txt"
+echo "dirty" >>"$TEST_DIR/tree/feat-test-new/feature.txt"
 output=$(run_wt merge feat/test-new custom-base 2>&1) || true
 assert_contains "$output" "Warning: uncommitted changes" "warns about dirty worktree"
 
@@ -186,12 +186,12 @@ echo ""
 echo -e "${YELLOW}13. cmd_rebase (rebase onto target)${NC}"
 
 # Ensure master has at least 2 commits for master~1 to work
-echo "commit2" > "$TEST_DIR/commit2.txt"
+echo "commit2" >"$TEST_DIR/commit2.txt"
 git -C "$TEST_DIR" add commit2.txt >/dev/null 2>&1
 git -C "$TEST_DIR" commit -m "chore: second commit for rebase test" --no-gpg-sign >/dev/null 2>&1
 
 git -C "$TEST_DIR" checkout -b feat-behind master~1 >/dev/null 2>&1
-echo "behind" > "$TEST_DIR/behind.txt"
+echo "behind" >"$TEST_DIR/behind.txt"
 git -C "$TEST_DIR" add behind.txt >/dev/null 2>&1
 git -C "$TEST_DIR" commit -m "feat: behind branch" --no-gpg-sign >/dev/null 2>&1
 git -C "$TEST_DIR" checkout master >/dev/null 2>&1
@@ -245,7 +245,7 @@ echo ""
 # ── 18. cmd_remove — blocks dirty worktree ───────────────────────────
 echo -e "${YELLOW}18. cmd_remove — blocks dirty worktree${NC}"
 
-echo "dirty" >> "$TEST_DIR/tree/feat-test-new/feature.txt"
+echo "dirty" >>"$TEST_DIR/tree/feat-test-new/feature.txt"
 output=$(run_wt remove feat/test-new 2>&1) || true
 assert_contains "$output" "uncommitted changes" "blocks removal of dirty worktree"
 
@@ -268,7 +268,7 @@ echo ""
 echo -e "${YELLOW}20. cmd_cleanup (remove stale worktrees)${NC}"
 
 git -C "$TEST_DIR" checkout -b stale-branch >/dev/null 2>&1
-echo "stale" > "$TEST_DIR/stale.txt"
+echo "stale" >"$TEST_DIR/stale.txt"
 git -C "$TEST_DIR" add stale.txt >/dev/null 2>&1
 git -C "$TEST_DIR" commit -m "feat: stale" --no-gpg-sign >/dev/null 2>&1
 git -C "$TEST_DIR" checkout master >/dev/null 2>&1
@@ -283,7 +283,7 @@ git -C "$TEST_DIR" update-ref -d refs/heads/stale-branch 2>/dev/null || true
 
 # Re-create the directory as a stale leftover (not a registered worktree)
 mkdir -p "$TEST_DIR/tree/stale-branch"
-echo "stale leftover" > "$TEST_DIR/tree/stale-branch/orphan.txt"
+echo "stale leftover" >"$TEST_DIR/tree/stale-branch/orphan.txt"
 
 output=$(run_wt cleanup 2>&1) || true
 assert_contains "$output" "Cleanup complete" "reports completion"
@@ -395,7 +395,7 @@ echo ""
 # ── 32. finalize — blocks dirty worktree ─────────────────────────────
 echo -e "${YELLOW}32. finalize — blocks dirty worktree${NC}"
 
-echo "dirty" >> "$TEST_DIR/tree/feat-test-new/feature.txt"
+echo "dirty" >>"$TEST_DIR/tree/feat-test-new/feature.txt"
 output=$(run_wt finalize feat/test-new 2>&1) || true
 assert_contains "$output" "uncommitted changes" "blocks finalizing dirty worktree"
 
@@ -432,7 +432,7 @@ echo -e "${YELLOW}35. Full lifecycle — new → commit → finalize${NC}"
 run_wt new feat/lifecycle >/dev/null 2>&1 || true
 assert_dir_exists "$TEST_DIR/tree/feat-lifecycle" "lifecycle worktree created"
 
-echo "lifecycle" > "$TEST_DIR/tree/feat-lifecycle/lifecycle.txt"
+echo "lifecycle" >"$TEST_DIR/tree/feat-lifecycle/lifecycle.txt"
 git -C "$TEST_DIR/tree/feat-lifecycle" add lifecycle.txt >/dev/null 2>&1
 git -C "$TEST_DIR/tree/feat-lifecycle" commit -m "feat: lifecycle test" --no-gpg-sign >/dev/null 2>&1
 
@@ -461,7 +461,7 @@ echo ""
 echo -e "${YELLOW}36. Full lifecycle — agent-merge alias${NC}"
 
 run_wt new feat/agent-merge-test >/dev/null 2>&1 || true
-echo "agent-merge" > "$TEST_DIR/tree/feat-agent-merge-test/am.txt"
+echo "agent-merge" >"$TEST_DIR/tree/feat-agent-merge-test/am.txt"
 git -C "$TEST_DIR/tree/feat-agent-merge-test" add am.txt >/dev/null 2>&1
 git -C "$TEST_DIR/tree/feat-agent-merge-test" commit -m "feat: agent merge test" --no-gpg-sign >/dev/null 2>&1
 
@@ -490,7 +490,7 @@ echo -e "${YELLOW}38. branches — shows merged status${NC}"
 
 # Create a branch, merge it, then check status
 run_wt new feat/merged-branch >/dev/null 2>&1 || true
-echo "merged" > "$TEST_DIR/tree/feat-merged-branch/merged.txt"
+echo "merged" >"$TEST_DIR/tree/feat-merged-branch/merged.txt"
 git -C "$TEST_DIR/tree/feat-merged-branch" add merged.txt >/dev/null 2>&1
 git -C "$TEST_DIR/tree/feat-merged-branch" commit -m "feat: merged branch" --no-gpg-sign >/dev/null 2>&1
 run_wt finalize feat/merged-branch --force >/dev/null 2>&1 || true
@@ -504,7 +504,7 @@ echo ""
 echo -e "${YELLOW}39. branches — shows pending status${NC}"
 
 run_wt new feat/pending-branch >/dev/null 2>&1 || true
-echo "pending" > "$TEST_DIR/tree/feat-pending-branch/pending.txt"
+echo "pending" >"$TEST_DIR/tree/feat-pending-branch/pending.txt"
 git -C "$TEST_DIR/tree/feat-pending-branch" add pending.txt >/dev/null 2>&1
 git -C "$TEST_DIR/tree/feat-pending-branch" commit -m "feat: pending branch" --no-gpg-sign >/dev/null 2>&1
 
@@ -529,7 +529,7 @@ echo ""
 echo -e "${YELLOW}41. diff — show diff between branch and master${NC}"
 
 run_wt new feat/diff-test >/dev/null 2>&1 || true
-echo "diff content" > "$TEST_DIR/tree/feat-diff-test/diff.txt"
+echo "diff content" >"$TEST_DIR/tree/feat-diff-test/diff.txt"
 git -C "$TEST_DIR/tree/feat-diff-test" add diff.txt >/dev/null 2>&1
 git -C "$TEST_DIR/tree/feat-diff-test" commit -m "feat: diff test" --no-gpg-sign >/dev/null 2>&1
 
@@ -595,12 +595,12 @@ echo -e "${YELLOW}47. diff — shows behind count${NC}"
 
 # Create a branch from an older commit, then advance master
 run_wt new feat/behind-test >/dev/null 2>&1 || true
-echo "behind" > "$TEST_DIR/tree/feat-behind-test/behind.txt"
+echo "behind" >"$TEST_DIR/tree/feat-behind-test/behind.txt"
 git -C "$TEST_DIR/tree/feat-behind-test" add behind.txt >/dev/null 2>&1
 git -C "$TEST_DIR/tree/feat-behind-test" commit -m "feat: behind test" --no-gpg-sign >/dev/null 2>&1
 
 # Add a commit to master directly
-echo "master advance" > "$TEST_DIR/advance.txt"
+echo "master advance" >"$TEST_DIR/advance.txt"
 git -C "$TEST_DIR" add advance.txt >/dev/null 2>&1
 git -C "$TEST_DIR" commit -m "chore: advance master" --no-gpg-sign >/dev/null 2>&1
 

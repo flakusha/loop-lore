@@ -3,8 +3,8 @@
  *
  * Assets and polymorphic asset links.
  */
-import type { Generated } from "kysely";
-import type { AssetLinkEntity, AssetType, AssetVisibility, StorageBackend } from "./enums";
+import type { Generated, } from "kysely";
+import type { AssetLinkEntity, AssetType, AssetVisibility, StorageBackend, } from "./enums";
 
 // ── Assets ────────────────────────────────────────────────────
 export interface Assets {

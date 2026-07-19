@@ -10,41 +10,41 @@
  * actor, and getOrCreateSoloUserForAuth previously returned early when the
  * user already existed — skipping actor creation.
  */
-import { afterEach, beforeEach, describe, expect, test } from "bun:test";
-import type { Kysely } from "kysely";
-import type { DB } from "../db/schema";
-import { createLogger } from "../logger";
-import { createTestDb } from "../test-utils/create-test-db";
-import { uid } from "../utils";
-import { getOrCreateSoloUserForAuth, resetSoloUserCache } from "./auth";
+import { afterEach, beforeEach, describe, expect, test, } from "bun:test";
+import type { Kysely, } from "kysely";
+import type { DB, } from "../db/schema";
+import { createLogger, } from "../logger";
+import { createTestDb, } from "../test-utils/create-test-db";
+import { uid, } from "../utils";
+import { getOrCreateSoloUserForAuth, resetSoloUserCache, } from "./auth";
 
 describe("getOrCreateSoloUserForAuth — actor creation", () => {
   let db: Kysely<DB>;
 
   beforeEach(async () => {
-    createLogger({ level: "warn" });
-    ({ db } = await createTestDb());
-  });
+    createLogger({ level: "warn", },);
+    ({ db, } = await createTestDb());
+  },);
 
   afterEach(async () => {
     resetSoloUserCache();
     await db.destroy();
-  });
+  },);
 
   test("creates a matching actor for a freshly created solo user", async () => {
-    const solo = await getOrCreateSoloUserForAuth(db, "demo");
-    expect(solo).not.toBeNull();
+    const solo = await getOrCreateSoloUserForAuth(db, "demo",);
+    expect(solo,).not.toBeNull();
 
-    const actor = await db.selectFrom("actors").selectAll().where("id", "=", solo!.id).executeTakeFirst();
-    expect(actor).toBeDefined();
-    expect(actor?.actor_type).toBe("user");
+    const actor = await db.selectFrom("actors",).selectAll().where("id", "=", solo!.id,).executeTakeFirst();
+    expect(actor,).toBeDefined();
+    expect(actor?.actor_type,).toBe("user",);
   });
 
   test("ensures actor exists when solo user was pre-seeded without one", async () => {
     // Simulate src/db/seed.ts: it creates the demo USER but not its actor.
     const preSeededId = uid();
     await db
-      .insertInto("users")
+      .insertInto("users",)
       .values({
         id: preSeededId,
         username: "demo",
@@ -52,27 +52,27 @@ describe("getOrCreateSoloUserForAuth — actor creation", () => {
         role: "solo",
         status: "active",
         settings: "{}",
-      })
+      },)
       .execute();
 
     // A solo user already exists, so getOrCreateSoloUserForAuth resolves it
     // (does NOT create a new user) but MUST create the missing actor.
-    const solo = await getOrCreateSoloUserForAuth(db, "demo");
-    expect(solo?.id).toBe(preSeededId);
+    const solo = await getOrCreateSoloUserForAuth(db, "demo",);
+    expect(solo?.id,).toBe(preSeededId,);
 
-    const actor = await db.selectFrom("actors").selectAll().where("id", "=", preSeededId).executeTakeFirst();
-    expect(actor).toBeDefined();
+    const actor = await db.selectFrom("actors",).selectAll().where("id", "=", preSeededId,).executeTakeFirst();
+    expect(actor,).toBeDefined();
   });
 
   test("is idempotent — the actor is created exactly once across calls", async () => {
-    const solo = await getOrCreateSoloUserForAuth(db, "demo");
-    await getOrCreateSoloUserForAuth(db, "demo");
+    const solo = await getOrCreateSoloUserForAuth(db, "demo",);
+    await getOrCreateSoloUserForAuth(db, "demo",);
 
     const actorCount = await db
-      .selectFrom("actors")
-      .select(db.fn.countAll<number>().as("n"))
-      .where("id", "=", solo!.id)
+      .selectFrom("actors",)
+      .select(db.fn.countAll<number>().as("n",),)
+      .where("id", "=", solo!.id,)
       .executeTakeFirst();
-    expect(actorCount?.n).toBe(1);
+    expect(actorCount?.n,).toBe(1,);
   });
 });

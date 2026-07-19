@@ -4,7 +4,7 @@
  * Worlds, locations, story turns, quests, NPC/Location states,
  * items, and world-placed items.
  */
-import type { Generated } from "kysely";
+import type { Generated, } from "kysely";
 import type {
   DifficultyReroll,
   DifficultyState,

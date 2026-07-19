@@ -7,19 +7,19 @@
  * All return Response objects. Imported by controller.ts dispatch.
  */
 
-import type { Kysely } from "kysely";
-import { CancelReason, CancelSource, GenerationStatus } from "../db/enums";
-import { getDatabase } from "../db/index";
-import type { DB } from "../db/schema";
-import { cancelGenerationByChat, getActiveAttemptId, listActiveGenerations } from "./cancellation-manager";
-import { getPartialContent } from "./continuation";
-import type { ContinueResponse, RetryFromPointResponse } from "./types";
+import type { Kysely, } from "kysely";
+import { CancelReason, CancelSource, GenerationStatus, } from "../db/enums";
+import { getDatabase, } from "../db/index";
+import type { DB, } from "../db/schema";
+import { cancelGenerationByChat, getActiveAttemptId, listActiveGenerations, } from "./cancellation-manager";
+import { getPartialContent, } from "./continuation";
+import type { ContinueResponse, RetryFromPointResponse, } from "./types";
 
-import type { Config } from "../config/schema";
-import { jsonError, jsonResponse } from "../routes/http-utils";
-import { safeJsonStringify } from "../utils";
-import { getBuffer, isChatGenerating } from "./index";
-import { getProvider } from "./providers/registry";
+import type { Config, } from "../config/schema";
+import { jsonError, jsonResponse, } from "../routes/http-utils";
+import { safeJsonStringify, } from "../utils";
+import { getBuffer, isChatGenerating, } from "./index";
+import { getProvider, } from "./providers/registry";
 
 // ── Route: Cancel generation ──────────────────────────────
 
@@ -31,12 +31,12 @@ import { getProvider } from "./providers/registry";
  *   { attemptId: string }            — cancel by attempt ID
  *   { reason?: string, source?: string, detail?: string }
  */
-export function handleCancelGeneration(body: unknown, database?: Kysely<DB>): Response {
+export function handleCancelGeneration(body: unknown, database?: Kysely<DB>,): Response {
   const db = database ?? getDatabase();
-  const input = validateCancel(body);
+  const input = validateCancel(body,);
 
   if (!input) {
-    return jsonError({ message: "Invalid request body", status: 400 });
+    return jsonError({ message: "Invalid request body", status: 400, },);
   }
 
   const reason = (input.reason ?? CancelReason.UserCancel) as CancelReason;
@@ -46,25 +46,25 @@ export function handleCancelGeneration(body: unknown, database?: Kysely<DB>): Re
   const attemptId = input.attemptId;
 
   if (!chatId && !attemptId) {
-    return jsonError({ message: "Either chatId or attemptId is required", status: 400 });
+    return jsonError({ message: "Either chatId or attemptId is required", status: 400, },);
   }
 
-  const resolvedChatId = chatId
-    ?? (() => {
+  const resolvedChatId = chatId ??
+    (() => {
       for (const gen of listActiveGenerations()) {
-        if (gen.attemptId === attemptId) return gen.chatId;
+        if (gen.attemptId === attemptId) { return gen.chatId; }
       }
       return null;
     })();
 
   if (!resolvedChatId) {
-    return jsonError({ message: "No active generation found for the given ID", status: 404 });
+    return jsonError({ message: "No active generation found for the given ID", status: 404, },);
   }
 
-  const isCancelled = cancelGenerationByChat({ db, chatId: resolvedChatId, reason, source, detail });
+  const isCancelled = cancelGenerationByChat({ db, chatId: resolvedChatId, reason, source, detail, },);
 
   if (!isCancelled) {
-    return jsonError({ message: "No active generation found or already cancelled", status: 404 });
+    return jsonError({ message: "No active generation found or already cancelled", status: 404, },);
   }
 
   return jsonResponse({
@@ -73,7 +73,7 @@ export function handleCancelGeneration(body: unknown, database?: Kysely<DB>): Re
     reason,
     source,
     detail,
-  });
+  },);
 }
 
 // ── Route: Check status ───────────────────────────────────
@@ -83,16 +83,16 @@ export function handleCancelGeneration(body: unknown, database?: Kysely<DB>): Re
  *
  * Check whether a chat currently has an active generation.
  */
-export function handleGenerationStatus(chatId: string, _database?: Kysely<DB>): Response {
+export function handleGenerationStatus(chatId: string, _database?: Kysely<DB>,): Response {
   if (!chatId) {
-    return jsonError({ message: "chatId is required", status: 400 });
+    return jsonError({ message: "chatId is required", status: 400, },);
   }
 
-  const isActive = isChatGenerating(chatId);
-  const attemptId = getActiveAttemptId(chatId);
+  const isActive = isChatGenerating(chatId,);
+  const attemptId = getActiveAttemptId(chatId,);
 
   const activeGen = attemptId
-    ? (listActiveGenerations().find((g) => g.attemptId === attemptId) ?? null)
+    ? (listActiveGenerations().find((g,) => g.attemptId === attemptId) ?? null)
     : null;
 
   return jsonResponse({
@@ -109,17 +109,17 @@ export function handleGenerationStatus(chatId: string, _database?: Kysely<DB>): 
         charsReceived: activeGen.charsReceived,
       }
       : null,
-  });
+  },);
 }
 
 // ── Route: Retry with step-from-point ──────────────────────
 
-function validateRetryFromPoint(body: unknown): { chatId: string; attemptId?: string; step?: number } | null {
-  if (!body || typeof body !== "object") return null;
+function validateRetryFromPoint(body: unknown,): { chatId: string; attemptId?: string; step?: number } | null {
+  if (!body || typeof body !== "object") { return null; }
   const b = body as Record<string, unknown>;
-  if (typeof b.chatId !== "string" || !b.chatId) return null;
-  if (b.attemptId !== undefined && typeof b.attemptId !== "string") return null;
-  if (b.step !== undefined && typeof b.step !== "number") return null;
+  if (typeof b.chatId !== "string" || !b.chatId) { return null; }
+  if (b.attemptId !== undefined && typeof b.attemptId !== "string") { return null; }
+  if (b.step !== undefined && typeof b.step !== "number") { return null; }
   return {
     chatId: b.chatId,
     attemptId: b.attemptId,
@@ -133,15 +133,15 @@ function validateRetryFromPoint(body: unknown): { chatId: string; attemptId?: st
  * Cancel active generation and return retry metadata
  * including which step to resume from in a multi-step pipeline.
  */
-export async function handleRetryGeneration(body: unknown, database?: Kysely<DB>): Promise<Response> {
+export async function handleRetryGeneration(body: unknown, database?: Kysely<DB>,): Promise<Response> {
   const db = database ?? getDatabase();
-  const input = validateRetryFromPoint(body);
+  const input = validateRetryFromPoint(body,);
 
   if (!input) {
-    return jsonError({ message: "chatId is required", status: 400 });
+    return jsonError({ message: "chatId is required", status: 400, },);
   }
 
-  const { chatId, attemptId, step } = input;
+  const { chatId, attemptId, step, } = input;
 
   const wasActive = cancelGenerationByChat({
     db,
@@ -149,27 +149,27 @@ export async function handleRetryGeneration(body: unknown, database?: Kysely<DB>
     reason: CancelReason.UserCancel,
     source: CancelSource.User,
     detail: step === undefined ? "User requested regeneration" : `User requested retry from step ${step}`,
-  });
+  },);
 
   let resumeFromStep = 0;
   let totalSteps = 1;
 
   if (attemptId && step != null) {
     const attempt = await db
-      .selectFrom("generation_attempts")
-      .select(["step_index", "total_steps"])
-      .where("id", "=", attemptId)
+      .selectFrom("generation_attempts",)
+      .select(["step_index", "total_steps",],)
+      .where("id", "=", attemptId,)
       .executeTakeFirst();
 
     if (attempt) {
       const maxStep = (attempt.total_steps ?? 1) - 1;
-      resumeFromStep = Math.max(0, Math.min(step, maxStep));
+      resumeFromStep = Math.max(0, Math.min(step, maxStep,),);
       totalSteps = attempt.total_steps ?? 1;
     } else {
-      return jsonError({ message: "Generation attempt not found", status: 404 });
+      return jsonError({ message: "Generation attempt not found", status: 404, },);
     }
   } else if (step != null) {
-    resumeFromStep = Math.max(0, step);
+    resumeFromStep = Math.max(0, step,);
   }
 
   const retryResponse: RetryFromPointResponse = {
@@ -181,7 +181,7 @@ export async function handleRetryGeneration(body: unknown, database?: Kysely<DB>
     totalSteps,
   };
 
-  return jsonResponse(retryResponse);
+  return jsonResponse(retryResponse,);
 }
 
 // ── Route: Continue generation ────────────────────────────
@@ -189,13 +189,13 @@ export async function handleRetryGeneration(body: unknown, database?: Kysely<DB>
 function validateContinue(
   body: unknown,
 ): { messageId: string; chatId: string; actorId: string; modelId?: string; provider?: string } | null {
-  if (!body || typeof body !== "object") return null;
+  if (!body || typeof body !== "object") { return null; }
   const b = body as Record<string, unknown>;
-  if (typeof b.messageId !== "string" || !b.messageId) return null;
-  if (typeof b.chatId !== "string" || !b.chatId) return null;
-  if (typeof b.actorId !== "string" || !b.actorId) return null;
-  if (b.modelId !== undefined && typeof b.modelId !== "string") return null;
-  if (b.provider !== undefined && typeof b.provider !== "string") return null;
+  if (typeof b.messageId !== "string" || !b.messageId) { return null; }
+  if (typeof b.chatId !== "string" || !b.chatId) { return null; }
+  if (typeof b.actorId !== "string" || !b.actorId) { return null; }
+  if (b.modelId !== undefined && typeof b.modelId !== "string") { return null; }
+  if (b.provider !== undefined && typeof b.provider !== "string") { return null; }
   return {
     messageId: b.messageId,
     chatId: b.chatId,
@@ -211,42 +211,42 @@ function validateContinue(
  * Continue a partial/cancelled message. Captures partial content
  * and returns attempt metadata for the frontend to send the LLM request.
  */
-export async function handleContinueGeneration(body: unknown, database?: Kysely<DB>): Promise<Response> {
+export async function handleContinueGeneration(body: unknown, database?: Kysely<DB>,): Promise<Response> {
   const db = database ?? getDatabase();
-  const input = validateContinue(body);
+  const input = validateContinue(body,);
 
   if (!input) {
-    return jsonError({ message: "messageId, chatId, and actorId are required", status: 400 });
+    return jsonError({ message: "messageId, chatId, and actorId are required", status: 400, },);
   }
 
-  const { messageId, chatId, actorId, modelId, provider } = input;
+  const { messageId, chatId, actorId, modelId, provider, } = input;
 
   const lastAttempt = await db
-    .selectFrom("generation_attempts")
-    .select(["id", "status", "model_id", "provider", "step_index", "total_steps"])
-    .where("parent_message_id", "=", messageId)
-    .where("status", "in", [GenerationStatus.Cancelled, GenerationStatus.Failed])
-    .orderBy("created_at", "desc")
+    .selectFrom("generation_attempts",)
+    .select(["id", "status", "model_id", "provider", "step_index", "total_steps",],)
+    .where("parent_message_id", "=", messageId,)
+    .where("status", "in", [GenerationStatus.Cancelled, GenerationStatus.Failed,],)
+    .orderBy("created_at", "desc",)
     .executeTakeFirst();
 
   if (!lastAttempt) {
     return jsonError({
       message: "No cancelled/failed generation attempt found for this message",
       status: 404,
-    });
+    },);
   }
 
   const attempt = lastAttempt;
-  const { content: partialContent } = await getPartialContent(attempt.id, db);
+  const { content: partialContent, } = await getPartialContent(attempt.id, db,);
 
   if (!partialContent) {
-    return jsonError({ message: "No partial content available to continue from", status: 422 });
+    return jsonError({ message: "No partial content available to continue from", status: 422, },);
   }
 
   const continuationCount = await db
-    .selectFrom("generation_attempts")
-    .select("id")
-    .where("parent_attempt_id", "=", attempt.id)
+    .selectFrom("generation_attempts",)
+    .select("id",)
+    .where("parent_attempt_id", "=", attempt.id,)
     .execute();
 
   const continuationNumber = continuationCount.length + 1;
@@ -268,7 +268,7 @@ export async function handleContinueGeneration(body: unknown, database?: Kysely<
     },
   };
 
-  return jsonResponse(response);
+  return jsonResponse(response,);
 }
 
 // ── Route: Cancel generation (validator) ───────────────────
@@ -276,13 +276,13 @@ export async function handleContinueGeneration(body: unknown, database?: Kysely<
 function validateCancel(
   body: unknown,
 ): { chatId?: string; attemptId?: string; reason?: string; source?: string; detail?: string } | null {
-  if (!body || typeof body !== "object") return null;
+  if (!body || typeof body !== "object") { return null; }
   const b = body as Record<string, unknown>;
-  if (b.chatId !== undefined && typeof b.chatId !== "string") return null;
-  if (b.attemptId !== undefined && typeof b.attemptId !== "string") return null;
-  if (b.reason !== undefined && typeof b.reason !== "string") return null;
-  if (b.source !== undefined && typeof b.source !== "string") return null;
-  if (b.detail !== undefined && typeof b.detail !== "string") return null;
+  if (b.chatId !== undefined && typeof b.chatId !== "string") { return null; }
+  if (b.attemptId !== undefined && typeof b.attemptId !== "string") { return null; }
+  if (b.reason !== undefined && typeof b.reason !== "string") { return null; }
+  if (b.source !== undefined && typeof b.source !== "string") { return null; }
+  if (b.detail !== undefined && typeof b.detail !== "string") { return null; }
   return {
     chatId: b.chatId,
     attemptId: b.attemptId,
@@ -294,20 +294,20 @@ function validateCancel(
 
 // ── Route: Regenerate (validator) ─────────────────────────
 
-function validateRegenerate(body: unknown): { chatId: string } | null {
-  if (!body || typeof body !== "object") return null;
+function validateRegenerate(body: unknown,): { chatId: string } | null {
+  if (!body || typeof body !== "object") { return null; }
   const b = body as Record<string, unknown>;
-  if (typeof b.chatId !== "string" || !b.chatId) return null;
-  return { chatId: b.chatId };
+  if (typeof b.chatId !== "string" || !b.chatId) { return null; }
+  return { chatId: b.chatId, };
 }
 
 // ── Route: Test connection (validator) ────────────────────
 
-function validateTestConnection(body: unknown): { provider: string } | null {
-  if (!body || typeof body !== "object") return null;
+function validateTestConnection(body: unknown,): { provider: string } | null {
+  if (!body || typeof body !== "object") { return null; }
   const b = body as Record<string, unknown>;
-  if (typeof b.provider !== "string" || !b.provider) return null;
-  return { provider: b.provider };
+  if (typeof b.provider !== "string" || !b.provider) { return null; }
+  return { provider: b.provider, };
 }
 
 // ── Route: List active generations ─────────────────────────
@@ -317,12 +317,12 @@ function validateTestConnection(body: unknown): { provider: string } | null {
  *
  * List all currently active generation attempts (admin/debugging).
  */
-export function handleListActiveGenerations(_database?: Kysely<DB>): Response {
+export function handleListActiveGenerations(_database?: Kysely<DB>,): Response {
   const active = listActiveGenerations();
   return jsonResponse({
     count: active.length,
     generations: active,
-  });
+  },);
 }
 
 // ── Route: Regenerate from a message ──────────────────────
@@ -333,15 +333,15 @@ export function handleListActiveGenerations(_database?: Kysely<DB>): Response {
  * Cancel current generation and signal frontend to trigger
  * fresh generation for the same parent message.
  */
-export function handleRegenerate(body: unknown, database?: Kysely<DB>): Response {
+export function handleRegenerate(body: unknown, database?: Kysely<DB>,): Response {
   const db = database ?? getDatabase();
-  const input = validateRegenerate(body);
+  const input = validateRegenerate(body,);
 
   if (!input) {
-    return jsonError({ message: "chatId is required", status: 400 });
+    return jsonError({ message: "chatId is required", status: 400, },);
   }
 
-  const { chatId } = input;
+  const { chatId, } = input;
 
   const wasActive = cancelGenerationByChat({
     db,
@@ -349,14 +349,14 @@ export function handleRegenerate(body: unknown, database?: Kysely<DB>): Response
     reason: CancelReason.UserCancel,
     source: CancelSource.User,
     detail: "User requested regeneration (replacing existing response)",
-  });
+  },);
 
   return jsonResponse({
     ok: true,
     chatId,
     cancelled: wasActive,
     ready: true,
-  });
+  },);
 }
 
 // ── Route: SSE generation stream ──────────────────────────
@@ -370,30 +370,30 @@ export function handleRegenerate(body: unknown, database?: Kysely<DB>): Response
  * - Sends keepalive pings every 15s
  * - Closes connection on done/error or 30s of idle (no buffer)
  */
-export function handleGenerationStream(chatId: string, headers?: Headers): Response {
+export function handleGenerationStream(chatId: string, headers?: Headers,): Response {
   if (!chatId) {
-    return jsonError({ message: "chatId is required", status: 400 });
+    return jsonError({ message: "chatId is required", status: 400, },);
   }
 
   // Parse Last-Event-ID for SSE reconnect
-  const lastEventId = headers?.get("Last-Event-ID");
-  const replayFrom = lastEventId ? parseInt(lastEventId, 10) : 0;
+  const lastEventId = headers?.get("Last-Event-ID",);
+  const replayFrom = lastEventId ? parseInt(lastEventId, 10,) : 0;
 
   let cleanup: (() => void) | undefined;
 
   const sseStream = new ReadableStream({
-    async start(controller) {
-      const buffer = await waitForBuffer(chatId, 15_000);
+    async start(controller,) {
+      const buffer = await waitForBuffer(chatId, 15_000,);
       if (!buffer) {
-        controller.enqueue(new TextEncoder().encode("event: stream-error\ndata: No active generation\n\n"));
+        controller.enqueue(new TextEncoder().encode("event: stream-error\ndata: No active generation\n\n",),);
         controller.close();
         return;
       }
 
-      for (const event of buffer.replay(replayFrom)) {
-        const lines = event.html.split("\n");
-        const dataBlock = lines.map((l) => `data: ${l}`).join("\n");
-        controller.enqueue(new TextEncoder().encode(`event: ${event.type}\n${dataBlock}\n\n`));
+      for (const event of buffer.replay(replayFrom,)) {
+        const lines = event.html.split("\n",);
+        const dataBlock = lines.map((l,) => `data: ${l}`).join("\n",);
+        controller.enqueue(new TextEncoder().encode(`event: ${event.type}\n${dataBlock}\n\n`,),);
       }
 
       if (buffer.isDone || buffer.hasError) {
@@ -402,30 +402,30 @@ export function handleGenerationStream(chatId: string, headers?: Headers): Respo
       }
 
       const unsubscribe = buffer.subscribe(
-        (event) => {
+        (event,) => {
           try {
             const dataBlock = event.html
-              .split("\n")
-              .map((l) => `data: ${l}`)
-              .join("\n");
-            controller.enqueue(new TextEncoder().encode(`event: ${event.type}\n${dataBlock}\n\n`));
+              .split("\n",)
+              .map((l,) => `data: ${l}`)
+              .join("\n",);
+            controller.enqueue(new TextEncoder().encode(`event: ${event.type}\n${dataBlock}\n\n`,),);
           } catch {
             // Controller might be closed — ignore
           }
         },
         () => {
           try {
-            controller.enqueue(new TextEncoder().encode("event: stream-done\ndata: {}\n\n"));
+            controller.enqueue(new TextEncoder().encode("event: stream-done\ndata: {}\n\n",),);
             controller.close();
           } catch {
             // Ignore
           }
         },
-        (error: unknown) => {
+        (error: unknown,) => {
           try {
-            const payload = safeJsonStringify({ error: String(error) });
+            const payload = safeJsonStringify({ error: String(error,), },);
             controller.enqueue(
-              new TextEncoder().encode(`event: stream-error\ndata: ${payload.ok ? payload.value : "{}"}\n\n`),
+              new TextEncoder().encode(`event: stream-error\ndata: ${payload.ok ? payload.value : "{}"}\n\n`,),
             );
             controller.close();
           } catch {
@@ -436,21 +436,21 @@ export function handleGenerationStream(chatId: string, headers?: Headers): Respo
 
       const keepalive = setInterval(() => {
         try {
-          controller.enqueue(new TextEncoder().encode(": keepalive\n\n"));
+          controller.enqueue(new TextEncoder().encode(": keepalive\n\n",),);
         } catch {
-          clearInterval(keepalive);
+          clearInterval(keepalive,);
         }
-      }, 15_000);
+      }, 15_000,);
 
       cleanup = () => {
-        clearInterval(keepalive);
+        clearInterval(keepalive,);
         unsubscribe();
       };
     },
     cancel() {
       cleanup?.();
     },
-  });
+  },);
 
   return new Response(sseStream, {
     headers: {
@@ -459,37 +459,37 @@ export function handleGenerationStream(chatId: string, headers?: Headers): Respo
       Connection: "keep-alive",
       "X-Accel-Buffering": "no",
     },
-  });
+  },);
 }
 
 /**
  * Wait up to `timeoutMs` for a StreamBuffer to appear for the given chat.
  * Returns null if timed out or no generation is active.
  */
-async function waitForBuffer(chatId: string, timeoutMs: number): Promise<ReturnType<typeof getBuffer>> {
+async function waitForBuffer(chatId: string, timeoutMs: number,): Promise<ReturnType<typeof getBuffer>> {
   // Buffer may already exist (created before LLM call starts)
-  const existing = getBuffer(chatId);
-  if (existing) return existing;
+  const existing = getBuffer(chatId,);
+  if (existing) { return existing; }
 
   // Poll for buffer — don't check isChatGenerating because the generation
   // may have completed before the SSE client connects. The buffer lives
   // for 300s after completion, so we can still replay events.
-  return new Promise((resolve) => {
+  return new Promise((resolve,) => {
     const start = Date.now();
     const check = () => {
       if (Date.now() - start > timeoutMs) {
-        resolve(undefined);
+        resolve(undefined,);
         return;
       }
-      const buf = getBuffer(chatId);
+      const buf = getBuffer(chatId,);
       if (buf) {
-        resolve(buf);
+        resolve(buf,);
         return;
       }
-      setTimeout(check, 200);
+      setTimeout(check, 200,);
     };
     check();
-  });
+  },);
 }
 
 // ── Route: Test connection ────────────────────────────────────
@@ -500,18 +500,18 @@ async function waitForBuffer(chatId: string, timeoutMs: number): Promise<ReturnT
  * Test connectivity to a provider. Body:
  *   { provider: string, model?: string }
  */
-export async function handleTestConnection(body: unknown, _config?: Config): Promise<Response> {
-  const input = validateTestConnection(body);
+export async function handleTestConnection(body: unknown, _config?: Config,): Promise<Response> {
+  const input = validateTestConnection(body,);
 
   if (!input) {
-    return jsonError({ message: "provider is required", status: 400 });
+    return jsonError({ message: "provider is required", status: 400, },);
   }
 
-  const { provider: providerName } = input;
+  const { provider: providerName, } = input;
 
-  const provider = getProvider(providerName);
+  const provider = getProvider(providerName,);
   if (!provider) {
-    return jsonError({ message: `Provider "${providerName}" not found`, status: 404 });
+    return jsonError({ message: `Provider "${providerName}" not found`, status: 404, },);
   }
 
   try {
@@ -522,12 +522,12 @@ export async function handleTestConnection(body: unknown, _config?: Config): Pro
       model: result.model,
       latencyMs: result.latencyMs,
       error: result.error,
-    });
+    },);
   } catch (error) {
     return jsonResponse({
       ok: false,
       status: "error",
       error: (error as Error).message,
-    });
+    },);
   }
 }
