@@ -1,4 +1,4 @@
-import { sql, type Kysely } from "kysely";
+import { type Kysely, sql } from "kysely";
 
 export async function up(database: Kysely<unknown>): Promise<void> {
   // ── Users ──────────────────────────────────────────────────
@@ -34,7 +34,8 @@ export async function up(database: Kysely<unknown>): Promise<void> {
 
   await database.schema.createIndex("idx_sessions_user_id").on("sessions").column("user_id").execute();
   await database.schema.createIndex("idx_sessions_token_hash").on("sessions").column("token_hash").execute();
-  await database.schema.createIndex("idx_sessions_user_expires").on("sessions").columns(["user_id", "expires_at"]).execute();
+  await database.schema.createIndex("idx_sessions_user_expires").on("sessions").columns(["user_id", "expires_at"])
+    .execute();
 }
 
 export async function down(database: Kysely<unknown>): Promise<void> {

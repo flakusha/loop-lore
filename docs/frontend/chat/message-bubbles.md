@@ -369,20 +369,20 @@ Non-image assets render as file cards:
 
 These are the acceptance criteria. Each case must render correctly.
 
-| #   | Case                             | Expected                                                                                    |
-| --- | -------------------------------- | ------------------------------------------------------------------------------------------- |
-| 1   | User message                     | Right-aligned, pink bg, black text, bottom-right corner flat, max-width 75% capped at 650px |
-| 2   | Character message                | Left-aligned, dark bg, light text, bottom-left corner flat, 36px avatar on left             |
-| 3   | Grouped messages (3 consecutive) | Only first has avatar, only last has full timestamp, others have short time + spacer        |
-| 4   | System message                   | Centered, italic, `◆` marker, no bubble, no avatar, no actions                              |
-| 5   | Long message (500+ words)        | Text wraps, max-width enforced, no horizontal scroll                                        |
-| 6   | Message with wide image          | Image spans full bubble width at top, text below                                            |
-| 7   | Message with tall image          | Image floated right, text wraps around left side                                            |
-| 8   | Message with 2 images            | Grid layout, 2 columns, square crops                                                        |
-| 9   | Partial/cancelled message        | Continue button visible below content                                                       |
-| 10  | Message with thinking            | Immersion: hidden. Basic: `💭` icon. Detailed: collapsible section                          |
-| 11  | Variant switcher                 | `◀ 2/4 ▶` visible on assistant message with 4 variants                                      |
-| 12  | Edited message                   | "(edited)" label in meta line after `edited_at` is set                                      |
-| 13  | Mobile viewport (<768px)         | All touch targets ≥44px, no hover-dependent features                                        |
-| 14  | Message entrance                 | Fade-in from below, 200ms ease-out                                                          |
-| 15  | Scroll position on prepend       | After loading older messages, visible messages don't jump                                   |
+| #  | Case                             | Expected                                                                                    |
+| -- | -------------------------------- | ------------------------------------------------------------------------------------------- |
+| 1  | User message                     | Right-aligned, pink bg, black text, bottom-right corner flat, max-width 75% capped at 650px |
+| 2  | Character message                | Left-aligned, dark bg, light text, bottom-left corner flat, 36px avatar on left             |
+| 3  | Grouped messages (3 consecutive) | Only first has avatar, only last has full timestamp, others have short time + spacer        |
+| 4  | System message                   | Centered, italic, `◆` marker, no bubble, no avatar, no actions                              |
+| 5  | Long message (500+ words)        | Text wraps, max-width enforced, no horizontal scroll                                        |
+| 6  | Message with wide image          | Image spans full bubble width at top, text below                                            |
+| 7  | Message with tall image          | Image floated right, text wraps around left side                                            |
+| 8  | Message with 2 images            | Grid layout, 2 columns, square crops                                                        |
+| 9  | Partial/cancelled message        | Continue button visible below content                                                       |
+| 10 | Message with thinking            | Immersion: hidden. Basic: `💭` icon. Detailed: collapsible section                          |
+| 11 | Variant switcher                 | `◀ 2/4 ▶` visible on assistant message with 4 variants                                      |
+| 12 | Edited message                   | "(edited)" label in meta line after `edited_at` is set                                      |
+| 13 | Mobile viewport (<768px)         | All touch targets ≥44px, no hover-dependent features                                        |
+| 14 | Message entrance                 | Fade-in from below, 200ms ease-out                                                          |
+| 15 | Scroll position on prepend       | After loading older messages, visible messages don't jump                                   |

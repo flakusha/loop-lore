@@ -16,36 +16,31 @@
  */
 
 import { Elysia } from "elysia";
-import type { Db } from "../db";
-import type { Config } from "../config/schema";
-import { jsonResponse, jsonError, jsonNoContent, HttpStatus, ErrorCode, parsePagination } from "./http-utils";
+import { deleteConfig, getAllConfig, setConfig } from "../admin/config";
 import {
-  AdminRoleUpdateBody,
-  AdminSystemConfigBody,
-  AdminModelRoleOverrideBody,
-  AdminChatUpdateBody,
-  UserIdParams,
-  WorldIdParams,
-  ChatIdParams,
-  PaginationQuery,
-} from "../validation/schemas";
-import {
-  scanAllProviders,
-  getHealthCache,
-  getProviderHealth,
-  providerToSummary,
-} from "../admin/provider-health";
-import { listProviders } from "../generation/providers/registry";
-import {
-  VALID_ROLES,
-  resolveAllModelRoles,
-  setModelRoleOverride,
   clearModelRoleOverride,
   getModelRoleOverrides,
   type ModelRole,
+  resolveAllModelRoles,
+  setModelRoleOverride,
+  VALID_ROLES,
 } from "../admin/model-roles";
-import { getAllConfig, setConfig, deleteConfig } from "../admin/config";
+import { getHealthCache, getProviderHealth, providerToSummary, scanAllProviders } from "../admin/provider-health";
+import type { Config } from "../config/schema";
+import type { Db } from "../db";
 import { UserRole } from "../db/enums";
+import { listProviders } from "../generation/providers/registry";
+import {
+  AdminChatUpdateBody,
+  AdminModelRoleOverrideBody,
+  AdminRoleUpdateBody,
+  AdminSystemConfigBody,
+  ChatIdParams,
+  PaginationQuery,
+  UserIdParams,
+  WorldIdParams,
+} from "../validation/schemas";
+import { ErrorCode, HttpStatus, jsonError, jsonNoContent, jsonResponse, parsePagination } from "./http-utils";
 
 /**
  * Check if user role has admin privileges.
@@ -91,10 +86,10 @@ export function adminRoutes(opts: { database: Db; config: Config }): Elysia {
           if (q) {
             const like = `%${q}%`;
             countQuery = countQuery.where((eb) =>
-              eb.or([eb("username", "like", like), eb("display_name", "like", like)]),
+              eb.or([eb("username", "like", like), eb("display_name", "like", like)])
             );
             listQuery = listQuery.where((eb) =>
-              eb.or([eb("username", "like", like), eb("display_name", "like", like)]),
+              eb.or([eb("username", "like", like), eb("display_name", "like", like)])
             );
           }
           if (roleFilter) {
@@ -192,7 +187,6 @@ export function adminRoutes(opts: { database: Db; config: Config }): Elysia {
         },
         { params: UserIdParams },
       )
-
       // ── Stats ──────────────────────────────────────────────
       .get("/api/admin/stats", async (ctx: any) => {
         const { userRole } = ctx;
@@ -224,7 +218,6 @@ export function adminRoutes(opts: { database: Db; config: Config }): Elysia {
           assets: assetCount?.n ?? 0,
         });
       })
-
       // ── Provider management ────────────────────────────────
       .get("/api/admin/providers", (ctx: any) => {
         const { userRole } = ctx;
@@ -287,7 +280,6 @@ export function adminRoutes(opts: { database: Db; config: Config }): Elysia {
           providers: results.map((p) => providerToSummary(p)),
         });
       })
-
       // ── Model role overrides ───────────────────────────────
       .get("/api/admin/model-roles", async (ctx: any) => {
         const { userRole } = ctx;
@@ -385,7 +377,6 @@ export function adminRoutes(opts: { database: Db; config: Config }): Elysia {
         await clearModelRoleOverride(role as ModelRole, opts.database);
         return jsonNoContent();
       })
-
       // ── SD.CPP status ──────────────────────────────────────
       .get("/api/admin/sd-status", async (ctx: any) => {
         const { userRole } = ctx;
@@ -419,7 +410,6 @@ export function adminRoutes(opts: { database: Db; config: Config }): Elysia {
           latencyMs,
         });
       })
-
       // ── System configuration ───────────────────────────────
       .get("/api/admin/system-config", async (ctx: any) => {
         const { userRole } = ctx;
@@ -463,7 +453,6 @@ export function adminRoutes(opts: { database: Db; config: Config }): Elysia {
         await deleteConfig(opts.database, key);
         return jsonNoContent();
       })
-
       // ── World management ───────────────────────────────────
       .get(
         "/api/admin/worlds",
@@ -560,7 +549,6 @@ export function adminRoutes(opts: { database: Db; config: Config }): Elysia {
         },
         { params: WorldIdParams },
       )
-
       // ── Chat management ────────────────────────────────────
       .get(
         "/api/admin/chats",
@@ -697,7 +685,6 @@ export function adminRoutes(opts: { database: Db; config: Config }): Elysia {
         },
         { params: ChatIdParams },
       )
-
       // ── Audit log ──────────────────────────────────────────
       .get(
         "/api/admin/audit",

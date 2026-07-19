@@ -1,8 +1,8 @@
 // src/transport/compression.ts — Transparent compression decorator
 
-import { gzipSync, gunzipSync, brotliCompressSync, brotliDecompressSync } from "node:zlib";
+import { brotliCompressSync, brotliDecompressSync, gunzipSync, gzipSync } from "node:zlib";
 import { CompressionAlgorithm } from "../db/enums";
-import type { ProtocolHandler, Connection } from "./protocol.unified";
+import type { Connection, ProtocolHandler } from "./protocol.unified";
 
 interface CompressionOptions {
   /** Compression level (algorithm-specific). Default varies per algo. */
@@ -120,4 +120,4 @@ export function withCompression({ handler, algorithm, options = {} }: WithCompre
   };
 }
 
-export { compress, decompress, type CompressionOptions };
+export { compress, type CompressionOptions, decompress };

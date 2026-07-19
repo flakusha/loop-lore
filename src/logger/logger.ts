@@ -5,15 +5,15 @@
  *   level filter → timestamp → censor → limits → enqueue
  */
 
+import { formatTime, unixSec } from "../utils/date";
+import { censorMeta, fieldNamesToRules } from "./censors";
+import { levelFromConfig, shouldEmit } from "./levels";
+import { applyLimits } from "./limits";
+import { AsyncLogQueue } from "./queue";
+import { ConsoleTransport } from "./transports/console";
 import type { LogEntry, Logger, LoggerBindings, LogOptions, Transport } from "./types";
 import type { LogLevel } from "./types";
 import { LogLevelNumeric } from "./types";
-import { levelFromConfig, shouldEmit } from "./levels";
-import { applyLimits } from "./limits";
-import { censorMeta, fieldNamesToRules } from "./censors";
-import { unixSec, formatTime } from "../utils/date";
-import { ConsoleTransport } from "./transports/console";
-import { AsyncLogQueue } from "./queue";
 import type { LoggerConfig, SizeLimits } from "./types";
 
 export class LoggerImpl implements Logger {

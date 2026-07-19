@@ -15,12 +15,12 @@
 
 import { Elysia } from "elysia";
 import type { Kysely } from "kysely";
-import type { DB } from "../db/schema";
-import { uid, safeJsonStringify } from "../utils";
-import { jsonResponse, jsonError, jsonPaginated, jsonCreated, jsonNoContent, HttpStatus } from "./http-utils";
-import { ItemsService } from "../story/items";
-import { notFound } from "../validation/middleware";
 import { ItemCategory, ItemRarity } from "../db/enums";
+import type { DB } from "../db/schema";
+import { ItemsService } from "../story/items";
+import { safeJsonStringify, uid } from "../utils";
+import { notFound } from "../validation/middleware";
+import { HttpStatus, jsonCreated, jsonError, jsonNoContent, jsonPaginated, jsonResponse } from "./http-utils";
 
 /** Validate a value against an enum's values. Returns the value if valid, fallback otherwise. */
 function enumOr<T extends string>(value: unknown, validValues: readonly T[], fallback: T): T {

@@ -1,17 +1,17 @@
-import { describe, test, expect, beforeEach, afterAll } from "bun:test";
 import { Database } from "bun:sqlite";
+import { afterAll, beforeEach, describe, expect, test } from "bun:test";
 import { Kysely } from "kysely";
+import { createSqliteDialect, setTestDatabase } from "../db/index";
 import type { DB } from "../db/schema";
+import { createLogger } from "../logger";
 import {
-  getPartialContent,
-  storePartialContent,
   clearPartialContent,
-  mapMessageToAttempt,
   getAttemptForMessage,
+  getPartialContent,
+  mapMessageToAttempt,
+  storePartialContent,
 } from "./continuation";
 import { handleContinueGeneration, handleRetryGeneration } from "./generation-routes";
-import { createLogger } from "../logger";
-import { createSqliteDialect, setTestDatabase } from "../db/index";
 
 // ── Test DB Factory ──────────────────────────────────────────
 
@@ -542,8 +542,7 @@ describe("handleRetryGeneration", () => {
 describe("cancelGeneration captures partial content", () => {
   test("partial content from repetition detector is stored on cancel", async () => {
     createLogger({ level: "error" });
-    const { startGenerationTracking, cancelGeneration, processStreamingChunk } =
-      await import("./cancellation-manager");
+    const { startGenerationTracking, cancelGeneration, processStreamingChunk } = await import("./cancellation-manager");
 
     const options = {
       chatId: "chat-cancel-test",

@@ -19,7 +19,8 @@
   <div
     class="description"
     x-text="$el.closest('[data-empty-description]')?.dataset.emptyDescription || ''"
-  ></div>
+  >
+  </div>
   <template x-if="$el.closest('[data-empty-action]')">
     <a
       class="btn btn-secondary"

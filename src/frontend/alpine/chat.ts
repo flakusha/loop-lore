@@ -1,22 +1,22 @@
 // ── Chat page component (chat.html) — core state + init ────
 
-import { chatMessages } from "./chat-messages";
-import { chatGenerations } from "./chat-generations";
-import { chatVariants } from "./chat-variants";
-import { chatActivity } from "./chat-activity";
-import { chatManagement } from "./chat-management";
-import { chatGroup } from "./chat-group";
-import { chatSettings } from "./chat-settings";
-import { chatEditing } from "./chat-editing";
 import { chatActions } from "./chat-actions";
-import { chatUtils } from "./chat-utils";
-import { getLogger } from "./logger";
+import { chatActivity } from "./chat-activity";
+import { chatEditing } from "./chat-editing";
+import { chatGenerations } from "./chat-generations";
+import { chatGroup } from "./chat-group";
 import { chatKeys } from "./chat-keys";
+import { chatManagement } from "./chat-management";
+import { chatMessages } from "./chat-messages";
 import { chatPanels } from "./chat-panels";
-import { rpgStats } from "./rpg-stats";
-import { memoryPanel } from "./memory-panel";
-import type { AlpineState, ChatState } from "./types";
+import { chatSettings } from "./chat-settings";
+import { chatUtils } from "./chat-utils";
+import { chatVariants } from "./chat-variants";
 import { jsonParseOr } from "./json";
+import { getLogger } from "./logger";
+import { memoryPanel } from "./memory-panel";
+import { rpgStats } from "./rpg-stats";
+import type { AlpineState, ChatState } from "./types";
 
 const g = globalThis as Record<string, unknown>;
 
@@ -26,7 +26,7 @@ g.isChatPaused = (chat: Record<string, unknown>): boolean => {
   return state.isPaused === true;
 };
 
-g.toggleGroupPause = async function () {
+g.toggleGroupPause = async function() {
   const el = document.querySelector<HTMLElement>("[x-data]");
   if (el && typeof Alpine !== "undefined") {
     const data = Alpine.$data(el);
@@ -37,7 +37,7 @@ g.toggleGroupPause = async function () {
   }
 };
 
-globalThis.chatState = function () {
+globalThis.chatState = function() {
   return {
     // ── Core state ──
     isGenerating: false,

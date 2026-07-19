@@ -4,7 +4,7 @@
  * Tests the handleRegister logic via the Elysia plugin.
  * Uses mock database and config to verify behavior without a real DB.
  */
-import { describe, test, expect, beforeEach } from "bun:test";
+import { beforeEach, describe, expect, test } from "bun:test";
 import { authPublicRoutes, resetRegisterRateLimiter } from "./auth";
 
 // ── Helpers ───────────────────────────────────────────────────

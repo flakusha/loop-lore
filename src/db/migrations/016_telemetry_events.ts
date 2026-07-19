@@ -16,9 +16,7 @@ export async function up(database: Kysely<unknown>): Promise<void> {
     .addColumn("event_type", "text", (col) => col.notNull())
     .addColumn("event_data", "text", (col) => col.notNull().defaultTo("{}"))
     .addColumn("source", "text", (col) => col.notNull().defaultTo("server"))
-    .addColumn("created_at", "text", (col) =>
-      col.notNull(),
-    )
+    .addColumn("created_at", "text", (col) => col.notNull())
     .execute();
 
   await database.schema

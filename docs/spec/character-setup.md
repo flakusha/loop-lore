@@ -262,7 +262,7 @@ post_history_instructions = "Always respond in character."
 [character.greetings]
 alternate = [
   "Greetings, traveler. These ruins hold many secrets.",
-  "Well met! I didn't expect company down here."
+  "Well met! I didn't expect company down here.",
 ]
 ```
 
@@ -448,12 +448,12 @@ character_version: "1.0"
 # Upload this file or paste into the character editor.
 
 [character]
-name = ""               # Required
-description = ""        # Required
-personality = ""        # Optional
-scenario = ""           # Optional
-welcome_message = ""    # Optional
-mes_example = ""        # Optional
+name = "" # Required
+description = "" # Required
+personality = "" # Optional
+scenario = "" # Optional
+welcome_message = "" # Optional
+mes_example = "" # Optional
 
 [character.prompts]
 system_prompt = ""

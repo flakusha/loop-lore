@@ -13,10 +13,10 @@
  * Requires seeded user + chat + actor + message.
  */
 
-import { describe, test, expect, beforeAll, afterAll, beforeEach } from "bun:test";
+import { afterAll, beforeAll, beforeEach, describe, expect, test } from "bun:test";
+import { type ApiClient, createClient } from "../helpers/client";
+import { SEED, seedAll } from "../helpers/seed";
 import { createTestServer, type TestServer } from "../helpers/server";
-import { createClient, type ApiClient } from "../helpers/client";
-import { seedAll, SEED } from "../helpers/seed";
 
 describe("Generation E2E", () => {
   let server: TestServer;
@@ -158,7 +158,7 @@ describe("Generation E2E", () => {
 
     const text = await res.text();
     expect(text).toContain("Mock streamed");
-    expect(text).toContain('"type":"done"');
+    expect(text).toContain("\"type\":\"done\"");
   });
 
   test("POST /api/generation/generate stream stores response", async () => {
@@ -215,7 +215,7 @@ describe("Generation E2E", () => {
 
     // SSE error event should be emitted before connection closes
     const text = await res.text();
-    expect(text).toContain('"type":"error"');
+    expect(text).toContain("\"type\":\"error\"");
     expect(text).toContain("Mock stream failure");
   });
 

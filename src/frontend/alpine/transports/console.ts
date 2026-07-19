@@ -4,8 +4,8 @@
  * Uses `formatConsole` with CSS mode for colored output.
  */
 
-import type { LogEntry, Transport } from "../../../logger/types";
 import { formatConsole } from "../../../logger/formatters";
+import type { LogEntry, Transport } from "../../../logger/types";
 
 export class BrowserConsoleTransport implements Transport {
   readonly name = "browser-console";
