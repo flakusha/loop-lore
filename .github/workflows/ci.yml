@@ -43,7 +43,6 @@ jobs:
         with:
           bun-version: latest
       - run: bun install
-      - run: bun run format
       - run: bun run format:dprint
 
   test-unit:
