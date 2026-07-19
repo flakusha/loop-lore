@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "./schemas/loop-lore-config.schema.json",
-  "title": "loop-lore Config",
+  "$id": "./schemas/loop-lore-config.toml.schema.json",
+  "title": "loop-lore Config (TOML-optimized)",
   "type": "object",
   "properties": {
     "server": {
@@ -562,7 +562,8 @@
                   "retries",
                   "allowUserApiKey"
                 ]
-              }
+              },
+              "x-toml-kind": "array-of-tables"
             }
           }
         },
@@ -1219,5 +1220,6 @@
     "encryption",
     "headers",
     "dynamicResponse"
-  ]
+  ],
+  "description": "JSON Schema optimized for TOML language servers (Taplo, Even Better TOML, Tombi). Reference from config.toml via $schema key."
 }

@@ -1,7 +1,7 @@
 # loop-lore configuration (TOML format)
 # Supports: YAML (.yaml, .yml) or TOML (.toml)
 # Env vars override values below — see src/config/load.ts for mapping
-# $schema: ./schemas/loop-lore-config.schema.json
+# $schema: ./schemas/loop-lore-config.toml.schema.json
 
 [server]
 port = 3000

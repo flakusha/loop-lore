@@ -642,6 +642,72 @@ export class ConfigSchema {
                   type: "array",
                   default: [],
                   description: "OpenAI-compatible provider instances",
+                  items: {
+                    type: "object",
+                    description: "Provider instance configuration",
+                    properties: {
+                      name: {
+                        type: "string",
+                        description: "Unique provider instance name (referenced in registry)",
+                      },
+                      label: {
+                        type: "string",
+                        description: "Human-readable label for UI",
+                      },
+                      baseUrl: {
+                        type: "string",
+                        description: "Base URL (e.g. http://localhost:8080/v1)",
+                      },
+                      apiKey: {
+                        type: "string",
+                        description: "Server-level API key (overridden by user BYO key)",
+                      },
+                      model: {
+                        type: "string",
+                        description: "Default model ID",
+                      },
+                      timeout: {
+                        type: "integer",
+                        default: 30_000,
+                        description: "Connection timeout in ms",
+                      },
+                      retries: {
+                        type: "integer",
+                        default: 3,
+                        description: "Max retries for transient failures",
+                      },
+                      allowUserApiKey: {
+                        type: "boolean",
+                        default: true,
+                        description: "Allow user API key override for this provider",
+                      },
+                      headers: {
+                        type: "object",
+                        additionalProperties: { type: "string", },
+                        description: "Extra headers sent with every request",
+                      },
+                      models: {
+                        type: "object",
+                        additionalProperties: {
+                          type: "object",
+                          description: "Model limits",
+                          properties: {
+                            contextLimit: {
+                              type: "integer",
+                              description: "Context window size in tokens",
+                            },
+                            maxOutput: {
+                              type: "integer",
+                              description: "Max output tokens",
+                            },
+                          },
+                          required: ["contextLimit", "maxOutput",],
+                        },
+                        description: "Known models (name → limits)",
+                      },
+                    },
+                    required: ["name", "label", "baseUrl", "model", "timeout", "retries", "allowUserApiKey",],
+                  },
                 },
               },
             },
