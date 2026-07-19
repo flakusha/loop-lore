@@ -1,0 +1,117 @@
+#!/bin/sh
+# Pre-push hook for loop-lore
+# 1. Block agent pushes (Co-authored-by trailer detection)
+# 2. Validate tag pushes match package.json version
+#
+# Install: git config core.hooksPath .githooks && chmod +x .githooks/*
+# Override: git push --no-verify (human approval required)
+
+set -e
+
+REPO_ROOT="$(git rev-parse --show-toplevel)"
+CRED_FILE="$REPO_ROOT/.credentials.env"
+PKG_FILE="$REPO_ROOT/package.json"
+
+red() { printf "\033[31m%s\033[0m\n" "$*"; }
+green() { printf "\033[32m%s\033[0m\n" "$*"; }
+
+# --- Agent push detection ---
+# Agent commits include "Co-authored-by: <agent name> <agent email>" trailer.
+# If any commits being pushed contain this trailer, block the push.
+detect_agent_push() {
+    [[ -f "$CRED_FILE" ]] || return 0
+    # shellcheck source=/dev/null
+    source "$CRED_FILE"
+    local agent_email="${AGENT_GPG_EMAIL:-}"
+    [[ -n "$agent_email" ]] || return 0
+
+    while read local_ref local_sha remote_ref remote_sha; do
+        # Skip delete pushes
+        [[ "$local_sha" != "0000000000000000000000000000000000000000" ]] || continue
+
+        # Determine commit range
+        local range
+        if [[ "$remote_sha" == "0000000000000000000000000000000000000000" ]]; then
+            # New branch — all commits
+            range="$local_sha"
+        else
+            # Update — commits ahead of remote
+            range="$remote_sha..$local_sha"
+        fi
+
+        # Count commits with agent Co-authored-by trailer
+        local agent_commits
+        agent_commits=$(git log "$range" --format='%b' | grep -c "Co-authored-by:.*$agent_email" || true)
+
+        if [[ "$agent_commits" -gt 0 ]]; then
+            red ""
+            red "❌ PUSH BLOCKED: Agent commits detected in $local_ref"
+            red ""
+            red "   Agent commits cannot be pushed directly."
+            red "   Use: ./scripts/worktree.sh finalize <branch>"
+            red "   Then: git push (as human)"
+            red ""
+            red "   Override (human approval required):"
+            red "     git push --no-verify"
+            red ""
+            exit 1
+        fi
+    done
+}
+
+# --- Tag version validation ---
+# Tag name must match package.json version (with v prefix).
+# Pre-release tags (dev/alpha/beta/rc) are allowed to drift.
+validate_tag_push() {
+    [[ -f "$PKG_FILE" ]] || return 0
+
+    # Extract version from package.json
+    local pkg_version
+    pkg_version=$(grep -o '"version": *"[^"]*"' "$PKG_FILE" | head -1 | cut -d'"' -f4)
+    [[ -n "$pkg_version" ]] || return 0
+
+    while read local_ref local_sha remote_ref remote_sha; do
+        # Only check tag pushes
+        [[ "$local_ref" == refs/tags/* ]] || continue
+        local tag_name="${local_ref#refs/tags/}"
+
+        # Pre-release tags: version drift allowed
+        if [[ "$tag_name" =~ -(dev|alpha|beta|rc) ]]; then
+            green "  ✓ Tag '$tag_name' is pre-release — version drift allowed"
+            continue
+        fi
+
+        # Production tag: must match package.json version exactly
+        local expected_tag="v$pkg_version"
+        if [[ "$tag_name" != "$expected_tag" ]]; then
+            red ""
+            red "❌ PUSH BLOCKED: Tag '$tag_name' doesn't match package.json version"
+            red ""
+            red "   Package.json version: $pkg_version"
+            red "   Expected tag:         $expected_tag"
+            red "   Actual tag:           $tag_name"
+            red ""
+            red "   To fix:"
+            red "     git tag -d $tag_name"
+            red "     git tag $expected_tag"
+            red ""
+            red "   Override (human approval required):"
+            red "     git push --no-verify"
+            red ""
+            exit 1
+        fi
+
+        green "  ✓ Tag '$tag_name' matches package.json version $pkg_version"
+    done
+}
+
+# --- Main ---
+echo ""
+echo "=== loop-lore pre-push checks ==="
+echo ""
+
+detect_agent_push
+validate_tag_push
+
+green "=== Pre-push checks passed ==="
+exit 0
