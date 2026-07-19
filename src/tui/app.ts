@@ -10,9 +10,9 @@
  */
 
 import blessed from "blessed";
-import { ChatWidget } from "./chat";
-import { AssetView } from "./asset-view";
 import { getLogger } from "../logger";
+import { AssetView } from "./asset-view";
+import { ChatWidget } from "./chat";
 
 const API_BASE = process.env.LOOP_LORE_API_BASE_URL ?? "http://localhost:3000";
 

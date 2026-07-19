@@ -1,9 +1,9 @@
-import { describe, test, expect, beforeAll, afterAll } from "bun:test";
-import { createTestDb } from "../test-utils/create-test-db";
-import { seedDefaultActors } from "./seed";
-import { createLogger } from "../logger";
+import { afterAll, beforeAll, describe, expect, test } from "bun:test";
 import type { Kysely } from "kysely";
+import { createLogger } from "../logger";
+import { createTestDb } from "../test-utils/create-test-db";
 import type { DB } from "./schema";
+import { seedDefaultActors } from "./seed";
 
 describe("seedDefaultActors", () => {
   let db: Kysely<DB>;

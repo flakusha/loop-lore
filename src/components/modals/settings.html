@@ -4,39 +4,15 @@
   x-on:keydown.escape.window="open = false"
   x-on:settings-modal.window="open = true; load()"
   class="modal-overlay"
-  style="
-    display: none;
-    position: fixed;
-    inset: 0;
-    pointer-events: none;
-    background: rgba(0, 0, 0, 0.5);
-    z-index: var(--z-modal, 1000);
-    align-items: center;
-    justify-content: center;
-  "
+  style="display: none; position: fixed; inset: 0; pointer-events: none; background: rgba(0, 0, 0, 0.5); z-index: var(--z-modal, 1000); align-items: center; justify-content: center"
   x-bind:style="open ? { display: 'flex', pointerEvents: 'auto' } : { display: 'none', pointerEvents: 'none' }"
 >
   <div
     class="modal-content"
-    style="
-      background: var(--bg-secondary, #f8f9fa);
-      border-radius: var(--radius-lg, 12px);
-      max-width: 480px;
-      width: 90%;
-      max-height: 80vh;
-      overflow-y: auto;
-      padding: var(--space-6);
-    "
+    style="background: var(--bg-secondary, #f8f9fa); border-radius: var(--radius-lg, 12px); max-width: 480px; width: 90%; max-height: 80vh; overflow-y: auto; padding: var(--space-6)"
     @click.stop
   >
-    <div
-      style="
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: var(--space-4);
-      "
-    >
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-4)">
       <h2 style="font-size: 18px; font-weight: 600" data-testid="settings-modal-title">Preferences</h2>
       <button class="btn btn-secondary btn-sm" @click="open = false" data-testid="settings-modal-close">
         &times;
@@ -73,19 +49,15 @@
     <div x-show="tab === 'chat'">
       <div class="form-group" style="display: flex; justify-content: space-between; align-items: center">
         <span>Enter to send</span>
-        <label class="toggle"
-          ><input type="checkbox" x-model="enterToSend" @change="save('chat')" /><span
+        <label class="toggle"><input type="checkbox" x-model="enterToSend" @change="save('chat')" /><span
             class="toggle-slider"
-          ></span
-        ></label>
+          ></span></label>
       </div>
       <div class="form-group" style="display: flex; justify-content: space-between; align-items: center">
         <span>Auto-scroll</span>
-        <label class="toggle"
-          ><input type="checkbox" x-model="autoScroll" @change="save('chat')" /><span
+        <label class="toggle"><input type="checkbox" x-model="autoScroll" @change="save('chat')" /><span
             class="toggle-slider"
-          ></span
-        ></label>
+          ></span></label>
       </div>
       <div class="form-group">
         <label class="form-label" for="settings-detail-level">Detail Level</label>

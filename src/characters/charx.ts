@@ -3,9 +3,9 @@
 // CHARX (Character eXchange) format support.
 // ZIP archive containing card.json + assets/ directory.
 
-import type { CharacterAsset } from "./parser";
-import { jsonParseOr } from "../utils/safe-json";
 import JSZip from "jszip";
+import { jsonParseOr } from "../utils/safe-json";
+import type { CharacterAsset } from "./parser";
 
 interface CharxResult {
   card: Record<string, unknown>;

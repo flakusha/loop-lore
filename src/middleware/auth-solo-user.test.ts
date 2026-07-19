@@ -10,13 +10,13 @@
  * actor, and getOrCreateSoloUserForAuth previously returned early when the
  * user already existed — skipping actor creation.
  */
-import { describe, test, expect, beforeEach, afterEach } from "bun:test";
-import { createTestDb } from "../test-utils/create-test-db";
-import { getOrCreateSoloUserForAuth, resetSoloUserCache } from "./auth";
-import { createLogger } from "../logger";
-import { uid } from "../utils";
+import { afterEach, beforeEach, describe, expect, test } from "bun:test";
 import type { Kysely } from "kysely";
 import type { DB } from "../db/schema";
+import { createLogger } from "../logger";
+import { createTestDb } from "../test-utils/create-test-db";
+import { uid } from "../utils";
+import { getOrCreateSoloUserForAuth, resetSoloUserCache } from "./auth";
 
 describe("getOrCreateSoloUserForAuth — actor creation", () => {
   let db: Kysely<DB>;

@@ -8,7 +8,7 @@
  *
  * SQLite 3.35+ supports DROP COLUMN so we recreate the column.
  */
-import { sql, type Kysely } from "kysely";
+import { type Kysely, sql } from "kysely";
 
 export async function up(database: Kysely<any>): Promise<void> {
   await database.schema

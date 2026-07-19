@@ -77,7 +77,6 @@ Extend 1x1 chat to multiple participants (users/characters/assistants). Keep tre
   }
 
 ```
-
 **No UI changes needed** — this is backend-only persistence.
 
 ---

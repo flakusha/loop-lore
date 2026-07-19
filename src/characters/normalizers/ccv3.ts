@@ -62,28 +62,28 @@ export function normalizeCcV3(data: Record<string, unknown>): CanonicalCharacter
 
   const lorebook: LorebookData | undefined = cardData.character_book
     ? {
-        name: cardData.character_book.name,
-        description: cardData.character_book.description,
-        scan_depth: cardData.character_book.scan_depth,
-        token_budget: cardData.character_book.token_budget,
-        recursive_scanning: cardData.character_book.recursive_scanning,
-        entries: (cardData.character_book.entries ?? []).map((entry) => ({
-          keys: entry.keys ?? [],
-          content: entry.content ?? "",
-          enabled: entry.enabled ?? true,
-          insertion_order: entry.insertion_order ?? 0,
-          case_sensitive: entry.case_sensitive ?? false,
-          name: entry.name ?? "",
-          priority: entry.priority ?? 0,
-          id: entry.id ?? 0,
-          comment: entry.comment,
-          selective: entry.selective ?? false,
-          constant: entry.constant ?? false,
-          position: (entry.position as "before_char" | "after_char") ?? "before_char",
-          use_regex: entry.use_regex,
-          extensions: entry.extensions,
-        })),
-      }
+      name: cardData.character_book.name,
+      description: cardData.character_book.description,
+      scan_depth: cardData.character_book.scan_depth,
+      token_budget: cardData.character_book.token_budget,
+      recursive_scanning: cardData.character_book.recursive_scanning,
+      entries: (cardData.character_book.entries ?? []).map((entry) => ({
+        keys: entry.keys ?? [],
+        content: entry.content ?? "",
+        enabled: entry.enabled ?? true,
+        insertion_order: entry.insertion_order ?? 0,
+        case_sensitive: entry.case_sensitive ?? false,
+        name: entry.name ?? "",
+        priority: entry.priority ?? 0,
+        id: entry.id ?? 0,
+        comment: entry.comment,
+        selective: entry.selective ?? false,
+        constant: entry.constant ?? false,
+        position: (entry.position as "before_char" | "after_char") ?? "before_char",
+        use_regex: entry.use_regex,
+        extensions: entry.extensions,
+      })),
+    }
     : undefined;
 
   const assets: CharacterAsset[] | undefined = cardData.assets?.map((asset) => ({

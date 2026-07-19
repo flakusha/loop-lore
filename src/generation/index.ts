@@ -5,118 +5,118 @@
  */
 export type {
   GenerationAttemptRow,
-  GenerationOptions,
   GenerationMessage,
-  RepetitionDetectionConfig,
+  GenerationOptions,
   PolicyDetectionConfig,
+  RepetitionDetectionConfig,
   ResponseLimitConfig,
 } from "./types";
-export { DEFAULT_REPETITION_DETECTION, DEFAULT_POLICY_DETECTION, DEFAULT_RESPONSE_LIMIT } from "./types";
+export { DEFAULT_POLICY_DETECTION, DEFAULT_REPETITION_DETECTION, DEFAULT_RESPONSE_LIMIT } from "./types";
 
 export type {
   GenerationResult,
-  TokenUsage,
-  RepetitionAnalysis,
-  RepetitionPattern,
+  GenerationStep,
   PolicyAnalysis,
   PolicyIndicator,
-  GenerationStep,
+  RepetitionAnalysis,
+  RepetitionPattern,
+  TokenUsage,
 } from "./types";
 
 export type {
   ContinueRequest,
   ContinueResponse,
+  GenerationEvents,
   RetryFromPointRequest,
   RetryFromPointResponse,
-  GenerationEvents,
 } from "./types";
 
 export {
-  startGenerationTracking,
-  completeGeneration,
-  failGeneration,
-  isChatGenerating,
-  getActiveAttemptId,
-  listActiveGenerations,
   cancelGeneration,
   cancelGenerationByChat,
-  getAbortSignal,
-  hasInFlightGeneration,
-  processStreamingChunk,
+  completeGeneration,
+  failGeneration,
   GenerationCancelledError,
+  getAbortSignal,
+  getActiveAttemptId,
+  hasInFlightGeneration,
+  isChatGenerating,
+  listActiveGenerations,
+  processStreamingChunk,
+  startGenerationTracking,
 } from "./cancellation-manager";
 
 export type {
-  CancelGenerationOpts,
   CancelGenerationByChatOpts,
-  ProcessStreamingChunkOpts,
+  CancelGenerationOpts,
   CompleteGenerationOpts,
   FailGenerationOpts,
+  ProcessStreamingChunkOpts,
 } from "./cancellation-manager";
 
 export {
-  getPartialContent,
-  storePartialContent,
-  mapMessageToAttempt,
-  getAttemptForMessage,
   clearPartialContent,
+  getAttemptForMessage,
+  getPartialContent,
+  mapMessageToAttempt,
+  storePartialContent,
 } from "./continuation";
 
 export { completeStep, failStep, getPipelineState, type PipelineState } from "./step-pipeline";
 export type { CompleteStepOpts, FailStepOpts } from "./step-pipeline";
 
 export {
-  getOrCreateBuffer,
   getBuffer,
+  getOrCreateBuffer,
   removeBuffer,
   scheduleBufferCleanup,
   type StreamBuffer,
   type StreamEvent,
 } from "./stream-buffer";
 
-export { StreamingRepetitionDetector, analyzeRepetition, detectTheatricalLoop } from "./repetition-detector";
+export { analyzeRepetition, detectTheatricalLoop, StreamingRepetitionDetector } from "./repetition-detector";
 
 export {
-  type PolicyDetector,
-  registerPolicyDetector,
   clearDetectors,
-  registerDefaultNullDetector,
   detectPolicyMismatch,
+  type PolicyDetector,
+  registerDefaultNullDetector,
+  registerPolicyDetector,
 } from "./policy-detector";
 
 // ── Providers ────────────────────────────────────────────
 
 export type {
-  LLMProvider,
-  ProviderCapabilities,
+  ChunkEvent,
   GenerateRequest,
   GenerateResponse,
-  ChunkEvent,
+  LLMProvider,
+  ProviderAuthError,
+  ProviderCapabilities,
+  ProviderError,
+  ProviderRateLimitError,
   StreamHandler,
   ToolCall,
   ToolDef,
-  ProviderError,
-  ProviderAuthError,
-  ProviderRateLimitError,
 } from "./providers/types";
 
 export {
-  registerProvider,
   getProvider,
-  listProviders,
-  resolveProvider,
   initializeProviders,
+  listProviders,
+  registerProvider,
   type ResolvedProvider,
+  resolveProvider,
   type ResolveProviderOpts,
 } from "./providers/registry";
 
-export { OpenAiCompatibleProvider } from "./providers/openai-compatible";
+export { CircuitBreaker, circuitBreaker, type CircuitBreakerConfig } from "./providers/circuit-breaker";
 export {
   ComfyUIClient,
-  type ComfyUIWorkflow,
-  type ComfyUIPromptResult,
   type ComfyUIClientOptions,
+  type ComfyUIPromptResult,
+  type ComfyUIWorkflow,
 } from "./providers/comfyui";
-export { CircuitBreaker, circuitBreaker, type CircuitBreakerConfig } from "./providers/circuit-breaker";
+export { OpenAiCompatibleProvider } from "./providers/openai-compatible";
 export { callWithFailover } from "./providers/registry";
 // TODO: export additional providers when implemented.

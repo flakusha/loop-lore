@@ -8,8 +8,8 @@
 
 import { Elysia } from "elysia";
 import type { Kysely } from "kysely";
-import type { DB } from "../db/schema";
 import type { Config } from "../config/schema";
+import type { DB } from "../db/schema";
 import { authenticate } from "./auth";
 
 export interface AuthGuardDeps {

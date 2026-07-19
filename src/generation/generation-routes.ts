@@ -8,18 +8,18 @@
  */
 
 import type { Kysely } from "kysely";
-import type { DB } from "../db/schema";
+import { CancelReason, CancelSource, GenerationStatus } from "../db/enums";
 import { getDatabase } from "../db/index";
+import type { DB } from "../db/schema";
 import { cancelGenerationByChat, getActiveAttemptId, listActiveGenerations } from "./cancellation-manager";
 import { getPartialContent } from "./continuation";
-import { CancelReason, CancelSource, GenerationStatus } from "../db/enums";
 import type { ContinueResponse, RetryFromPointResponse } from "./types";
 
-import { getBuffer, isChatGenerating } from "./index";
-import { jsonResponse, jsonError } from "../routes/http-utils";
-import { getProvider } from "./providers/registry";
 import type { Config } from "../config/schema";
+import { jsonError, jsonResponse } from "../routes/http-utils";
 import { safeJsonStringify } from "../utils";
+import { getBuffer, isChatGenerating } from "./index";
+import { getProvider } from "./providers/registry";
 
 // ── Route: Cancel generation ──────────────────────────────
 
@@ -49,9 +49,8 @@ export function handleCancelGeneration(body: unknown, database?: Kysely<DB>): Re
     return jsonError({ message: "Either chatId or attemptId is required", status: 400 });
   }
 
-  const resolvedChatId =
-    chatId ??
-    (() => {
+  const resolvedChatId = chatId
+    ?? (() => {
       for (const gen of listActiveGenerations()) {
         if (gen.attemptId === attemptId) return gen.chatId;
       }
@@ -101,14 +100,14 @@ export function handleGenerationStatus(chatId: string, _database?: Kysely<DB>): 
     attemptId: attemptId ?? null,
     generation: activeGen
       ? {
-          attemptId: activeGen.attemptId,
-          chatId: activeGen.chatId,
-          actorId: activeGen.actorId,
-          status: activeGen.status,
-          elapsedMs: activeGen.elapsed,
-          chunksReceived: activeGen.chunksReceived,
-          charsReceived: activeGen.charsReceived,
-        }
+        attemptId: activeGen.attemptId,
+        chatId: activeGen.chatId,
+        actorId: activeGen.actorId,
+        status: activeGen.status,
+        elapsedMs: activeGen.elapsed,
+        chunksReceived: activeGen.chunksReceived,
+        charsReceived: activeGen.charsReceived,
+      }
       : null,
   });
 }

@@ -7,7 +7,7 @@ import { Elysia, t } from "elysia";
 import type { Kysely } from "kysely";
 import type { DB } from "../db/schema";
 import { uid } from "../utils";
-import { unauthorized, notFound } from "../validation/middleware";
+import { notFound, unauthorized } from "../validation/middleware";
 
 interface HandlerOpts {
   database: Kysely<DB>;

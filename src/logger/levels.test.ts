@@ -2,7 +2,7 @@
  * Tests for logger/levels.ts — log level mapping helpers
  */
 
-import { describe, test, expect } from "bun:test";
+import { describe, expect, test } from "bun:test";
 import { levelFromConfig, numericToLabel, shouldEmit } from "./levels";
 
 describe("levelFromConfig", () => {

@@ -1,12 +1,12 @@
 // ── Gallery page: search, preview, actions ────────────────────
-import { escapeHtml, formatSize, filterCards } from "./shared";
+import { log as rootLog } from "../alpine/logger";
 import { feFetch } from "../fe-fetch";
 import { showToast } from "../ui";
-import { log as rootLog } from "../alpine/logger";
+import { escapeHtml, filterCards, formatSize } from "./shared";
 
 const pageLog = rootLog.child({ module: "gallery" });
 
-globalThis.filterAssets = function () {
+globalThis.filterAssets = function() {
   const query = document.querySelector<HTMLInputElement>("#asset-search")?.value ?? "";
   const type = document.querySelector<HTMLSelectElement>("#asset-type-filter")?.value ?? "all";
   filterCards({
@@ -19,14 +19,14 @@ globalThis.filterAssets = function () {
     emptyTitle: "No assets match your filters",
     emptyStyle: "grid-column: 1 / -1;",
     matchExtra: (card) =>
-      type === "all" ||
-      (card.querySelector(".file-icon")?.textContent === "🎵" && type === "audio") ||
-      (card.querySelector(".file-icon")?.textContent === "🎬" && type === "video") ||
-      (!!card.querySelector("img") && type === "image"),
+      type === "all"
+      || (card.querySelector(".file-icon")?.textContent === "🎵" && type === "audio")
+      || (card.querySelector(".file-icon")?.textContent === "🎬" && type === "video")
+      || (!!card.querySelector("img") && type === "image"),
   });
 };
 
-globalThis.openAssetPreview = async function (id: string) {
+globalThis.openAssetPreview = async function(id: string) {
   pageLog.debug("openAssetPreview", { id });
   try {
     const res = await feFetch(`/api/assets/${id}`);
@@ -41,19 +41,24 @@ globalThis.openAssetPreview = async function (id: string) {
     const body = modal.querySelector("[data-field='preview-body']")!;
     switch (a.asset_type) {
       case "image": {
-        body.innerHTML = `<img src="/api/assets/${a.id}/raw" alt="${escapeHtml(a.filename)}" style="width:100%;display:block" />`;
+        body.innerHTML = `<img src="/api/assets/${a.id}/raw" alt="${
+          escapeHtml(a.filename)
+        }" style="width:100%;display:block" />`;
         break;
       }
       case "audio": {
-        body.innerHTML = `<audio controls style="width:100%;padding:var(--space-6)"><source src="/api/assets/${a.id}/raw" /></audio>`;
+        body.innerHTML =
+          `<audio controls style="width:100%;padding:var(--space-6)"><source src="/api/assets/${a.id}/raw" /></audio>`;
         break;
       }
       case "video": {
-        body.innerHTML = `<video controls style="width:100%;display:block"><source src="/api/assets/${a.id}/raw" /></video>`;
+        body.innerHTML =
+          `<video controls style="width:100%;display:block"><source src="/api/assets/${a.id}/raw" /></video>`;
         break;
       }
       default: {
-        body.innerHTML = `<div style="padding:var(--space-6);text-align:center"><div class="file-icon" style="font-size:48px">📄</div></div>`;
+        body.innerHTML =
+          `<div style="padding:var(--space-6);text-align:center"><div class="file-icon" style="font-size:48px">📄</div></div>`;
       }
     }
     modal.classList.add("open");
@@ -62,7 +67,7 @@ globalThis.openAssetPreview = async function (id: string) {
   }
 };
 
-globalThis.copyAssetUrl = async function () {
+globalThis.copyAssetUrl = async function() {
   const a = globalThis.__previewAsset;
   if (!a?.id) return;
   try {
@@ -73,7 +78,7 @@ globalThis.copyAssetUrl = async function () {
   }
 };
 
-globalThis.downloadAsset = function () {
+globalThis.downloadAsset = function() {
   const a = globalThis.__previewAsset;
   if (!a?.id) return;
   const el = document.createElement("a");
@@ -82,7 +87,7 @@ globalThis.downloadAsset = function () {
   el.click();
 };
 
-globalThis.deleteAssetPreview = async function () {
+globalThis.deleteAssetPreview = async function() {
   const a = globalThis.__previewAsset;
   if (!a?.id || !confirm("Delete this asset?")) return;
   try {

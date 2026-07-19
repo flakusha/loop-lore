@@ -1,7 +1,7 @@
 // src/transport/negotiation.ts — Protocol + compression negotiation
 
-import { TransportProtocol, CompressionAlgorithm } from "../db/enums";
-import { parseAcceptProtocols, parseAcceptEncoding, parseExtensions } from "./negotiation-parsers";
+import { CompressionAlgorithm, TransportProtocol } from "../db/enums";
+import { parseAcceptEncoding, parseAcceptProtocols, parseExtensions } from "./negotiation-parsers";
 
 /**
  * Server-side capabilities advertised during negotiation.
@@ -96,4 +96,4 @@ export function negotiate(
 
 export { DEFAULT_CAPABILITIES };
 
-export { parseAcceptProtocols, parseAcceptEncoding, parseExtensions } from "./negotiation-parsers";
+export { parseAcceptEncoding, parseAcceptProtocols, parseExtensions } from "./negotiation-parsers";

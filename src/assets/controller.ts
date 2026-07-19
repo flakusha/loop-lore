@@ -16,41 +16,34 @@
  *   DELETE /api/assets/:id/links/:linkId — unlink from entity
  */
 
-import { readFileSync, existsSync } from "node:fs";
 import { Elysia } from "elysia";
 import type { Kysely } from "kysely";
-import type { DB } from "../db/schema";
+import { existsSync, readFileSync } from "node:fs";
+import { IMMUTABLE_CACHE_MAX_AGE } from "../config/constants";
+import type { Config } from "../config/schema";
 import { AssetLinkEntity, AssetVisibility } from "../db/enums";
+import type { DB } from "../db/schema";
 import { ErrorCode } from "../routes/http-utils";
+import { HttpStatus, jsonCreated, jsonError, jsonNoContent, jsonPaginated, jsonResponse } from "../routes/http-utils";
 import {
-  jsonResponse,
-  jsonError,
-  jsonPaginated,
-  jsonCreated,
-  jsonNoContent,
-  HttpStatus,
-} from "../routes/http-utils";
-import {
+  canAccessAsset,
   createAsset,
-  listAssets,
+  deleteAsset,
+  detectAssetType,
   getAsset,
   getAssetFilePath,
-  deleteAsset,
-  linkAsset,
-  unlinkAsset,
   getAssetLinks,
-  updateAssetVisibility,
-  shareAsset,
-  unshareAsset,
   getAssetShares,
-  canAccessAsset,
-  detectAssetType,
+  linkAsset,
+  listAssets,
+  shareAsset,
+  unlinkAsset,
+  unshareAsset,
+  updateAssetVisibility,
   validateFileSize,
   validateMimeType,
 } from "./service";
 import type { AssetRecord } from "./service";
-import { IMMUTABLE_CACHE_MAX_AGE } from "../config/constants";
-import type { Config } from "../config/schema";
 
 interface UploadOpts {
   request: Request;
@@ -82,12 +75,13 @@ interface ResolvedAsset {
 /** Extract userId from context or return Unauthorized error. */
 function requireUserId(ctx: unknown): string | Response {
   const userId = (ctx as any).userId as string | null;
-  if (!userId)
+  if (!userId) {
     return jsonError({
       message: "Unauthorized",
       status: HttpStatus.Unauthorized,
       code: ErrorCode.Unauthorized,
     });
+  }
   return userId;
 }
 
@@ -97,8 +91,9 @@ function serveFile(
   contentType: string,
   opts?: { cacheControl?: string; extraHeaders?: Record<string, string> },
 ): Response {
-  if (!existsSync(filePath))
+  if (!existsSync(filePath)) {
     return jsonError({ message: "File not found on disk", status: HttpStatus.NotFound });
+  }
   const data = readFileSync(filePath);
   return new Response(data, {
     headers: {
@@ -116,12 +111,14 @@ async function resolveAsset(
   actorRole: string | null,
 ): Promise<ResolvedAsset | Response> {
   const allowed = await canAccessAsset(database, assetId, actorId, actorRole);
-  if (!allowed)
+  if (!allowed) {
     return jsonError({ message: "Not found", status: HttpStatus.NotFound, code: ErrorCode.NotFound });
+  }
 
   const asset = await getAsset(database, assetId);
-  if (!asset)
+  if (!asset) {
     return jsonError({ message: "Asset not found", status: HttpStatus.NotFound, code: ErrorCode.NotFound });
+  }
 
   return { asset };
 }
@@ -172,12 +169,13 @@ export function assetRoutes({ database, config }: { database: Kysely<DB>; config
       // ── Single asset routes ──────────────────────────
       .get("/api/assets/:id", async (ctx) => {
         const asset = await getAsset(database, ctx.params.id);
-        if (!asset)
+        if (!asset) {
           return jsonError({
             message: "Asset not found",
             status: HttpStatus.NotFound,
             code: ErrorCode.NotFound,
           });
+        }
         return jsonResponse(asset);
       })
       .patch("/api/assets/:id", async (ctx) => {
@@ -186,8 +184,8 @@ export function assetRoutes({ database, config }: { database: Kysely<DB>; config
 
         const body = (await ctx.request.json()) as { visibility?: string };
         if (
-          !body.visibility ||
-          ![AssetVisibility.Private, AssetVisibility.Shared, AssetVisibility.Public].includes(
+          !body.visibility
+          || ![AssetVisibility.Private, AssetVisibility.Shared, AssetVisibility.Public].includes(
             body.visibility as AssetVisibility,
           )
         ) {
@@ -203,12 +201,13 @@ export function assetRoutes({ database, config }: { database: Kysely<DB>; config
           visibility: body.visibility as AssetVisibility,
           actorId: userId,
         });
-        if (!updated)
+        if (!updated) {
           return jsonError({
             message: "Asset not found or not owner",
             status: HttpStatus.NotFound,
             code: ErrorCode.NotFound,
           });
+        }
         return jsonResponse({ id: updated.id, visibility: updated.visibility });
       })
       .delete("/api/assets/:id", async (ctx) => {
@@ -217,12 +216,13 @@ export function assetRoutes({ database, config }: { database: Kysely<DB>; config
           assetId: ctx.params.id,
           uploadDir: config.assets.uploadDir,
         });
-        if (!deleted)
+        if (!deleted) {
           return jsonError({
             message: "Asset not found",
             status: HttpStatus.NotFound,
             code: ErrorCode.NotFound,
           });
+        }
         return jsonNoContent();
       })
       // ── File serving routes ──────────────────────────
@@ -291,16 +291,18 @@ export function assetRoutes({ database, config }: { database: Kysely<DB>; config
       // ── Share sub-routes ─────────────────────────────
       .post("/api/assets/:id/share", async (ctx) => {
         const userId = (ctx as any).userId as string | null;
-        if (!userId)
+        if (!userId) {
           return jsonError({
             message: "Unauthorized",
             status: HttpStatus.Unauthorized,
             code: ErrorCode.Unauthorized,
           });
+        }
 
         const body = (await ctx.request.json()) as { actor_id?: string };
-        if (!body.actor_id)
+        if (!body.actor_id) {
           return jsonError({ message: "actor_id is required", status: HttpStatus.BadRequest });
+        }
 
         const share = await shareAsset({
           database,
@@ -308,18 +310,20 @@ export function assetRoutes({ database, config }: { database: Kysely<DB>; config
           sharedWithId: body.actor_id,
           sharedById: userId,
         });
-        if (!share)
+        if (!share) {
           return jsonError({
             message: "Asset not found or not owner",
             status: HttpStatus.NotFound,
             code: ErrorCode.NotFound,
           });
+        }
         return jsonCreated(share);
       })
       .delete("/api/assets/:id/share", async (ctx) => {
         const body = (await ctx.request.json()) as { actor_id?: string };
-        if (!body.actor_id)
+        if (!body.actor_id) {
           return jsonError({ message: "actor_id is required", status: HttpStatus.BadRequest });
+        }
 
         await unshareAsset({ database, assetId: ctx.params.id, sharedWithId: body.actor_id });
         return jsonNoContent();

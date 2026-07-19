@@ -4,8 +4,8 @@
  * Applied at Logger.log() before queue dispatch.
  */
 
-import type { LogEntry, SizeLimits } from "./types";
 import { safeJsonStringify } from "../utils/safe-json";
+import type { LogEntry, SizeLimits } from "./types";
 
 const DEFAULTS: Required<SizeLimits> = {
   maxMessageBytes: 10_240,
@@ -46,10 +46,9 @@ function truncateMeta(
   const keys = Object.keys(obj).slice(0, maxEntries);
   for (const key of keys) {
     const val = obj[key];
-    result[key] =
-      val !== null && typeof val === "object" && !Array.isArray(val)
-        ? truncateMeta(val as Record<string, unknown>, maxBytes, maxDepth, maxEntries, depth + 1)
-        : val;
+    result[key] = val !== null && typeof val === "object" && !Array.isArray(val)
+      ? truncateMeta(val as Record<string, unknown>, maxBytes, maxDepth, maxEntries, depth + 1)
+      : val;
   }
   if (Object.keys(obj).length > maxEntries) {
     result["[truncated]"] = `${Object.keys(obj).length - maxEntries} excess keys`;

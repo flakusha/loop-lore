@@ -1,7 +1,7 @@
-import { describe, test, expect, beforeAll, afterAll } from "bun:test";
-import { createBrowserTest, type BrowserTestContext } from "../../helpers/browser-server";
-import { seedAll } from "../../helpers/seed";
+import { afterAll, beforeAll, describe, expect, test } from "bun:test";
+import { type BrowserTestContext, createBrowserTest } from "../../helpers/browser-server";
 import { createClient } from "../../helpers/client";
+import { seedAll } from "../../helpers/seed";
 
 describe("Worlds flow E2E", () => {
   let ctx: BrowserTestContext;
@@ -64,7 +64,10 @@ describe("Worlds flow E2E", () => {
       await page.click("[data-testid='create-world']");
       await page.locator("[data-testid='create-world-modal']").waitFor({ state: "visible", timeout: 5000 });
       await page.locator("[data-testid='create-world-form'] #world-name").waitFor({ state: "attached", timeout: 5000 });
-      await page.locator("[data-testid='create-world-form'] button[type='submit']").waitFor({ state: "attached", timeout: 5000 });
+      await page.locator("[data-testid='create-world-form'] button[type='submit']").waitFor({
+        state: "attached",
+        timeout: 5000,
+      });
       await page.close();
     });
   });
@@ -75,7 +78,10 @@ describe("Worlds flow E2E", () => {
       void (await createWorldViaApi("API Created World"));
       const page = await ctx.browser.newPage();
       await gotoWorlds(page);
-      await page.locator("[data-testid='world-list'] .world-name").first().waitFor({ state: "attached", timeout: 10_000 });
+      await page.locator("[data-testid='world-list'] .world-name").first().waitFor({
+        state: "attached",
+        timeout: 10_000,
+      });
       const worldNames = await page.locator("[data-testid='world-list'] .world-name").allTextContents();
       expect(worldNames.some((n: string) => n.includes("API Created World"))).toBe(true);
       await page.close();

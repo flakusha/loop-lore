@@ -6,15 +6,15 @@
  */
 
 // ── Types ────────────────────────────────────────────────
-export type { TurnParticipant, TurnManagerState, GroupTurnContext, TurnStrategyFn } from "./types";
+export type { GroupTurnContext, TurnManagerState, TurnParticipant, TurnStrategyFn } from "./types";
 
 // ── Strategies ───────────────────────────────────────────
 export {
-  roundRobinSelect,
-  sceneBasedSelect,
+  hybridSelect,
   initiativeSelect,
   questDrivenSelect,
-  hybridSelect,
+  roundRobinSelect,
+  sceneBasedSelect,
   STRATEGY_MAP,
 } from "./turn-strategies";
 

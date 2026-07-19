@@ -31,8 +31,8 @@ export const examplesSection: SectionBuilder = {
       const role = ["assistant", "character", "{{char}}"].includes(label)
         ? "character"
         : label === "user" || label === "{{user}}"
-          ? "user"
-          : "user";
+        ? "user"
+        : "user";
       examples.push({ role, content });
     }
 

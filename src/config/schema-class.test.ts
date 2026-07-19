@@ -7,7 +7,7 @@
 
 import { ConfigSchema } from "@/config/schema-class";
 
-import { describe, test, expect } from "bun:test";
+import { describe, expect, test } from "bun:test";
 
 describe("ConfigSchema", () => {
   // ── Defaults sanity ─────────────────────────────────

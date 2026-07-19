@@ -59,13 +59,13 @@ Ordered by user impact × effort. Items with partial `src/` code listed first.
 
 From `docs/meta/assessments/feature-analysis.md`. Not yet in any epic.
 
-| #   | Feature                          | Effort | Business Value | Source               |
-| --- | -------------------------------- | ------ | -------------- | -------------------- |
-| Q1  | Regex output transforms          | Low    | High           | feature-analysis #6  |
-| Q2  | Smart-regen transforms (polish)  | Low    | High           | feature-analysis #8  |
-| Q3  | Conversation analytics dashboard | Low    | Med            | feature-analysis #27 |
-| Q4  | Model-comparison dashboard       | Low    | Med            | feature-analysis #28 |
-| Q5  | Bulk data export (zip-all)       | Low    | Med            | plan Epic 14         |
+| #  | Feature                          | Effort | Business Value | Source               |
+| -- | -------------------------------- | ------ | -------------- | -------------------- |
+| Q1 | Regex output transforms          | Low    | High           | feature-analysis #6  |
+| Q2 | Smart-regen transforms (polish)  | Low    | High           | feature-analysis #8  |
+| Q3 | Conversation analytics dashboard | Low    | Med            | feature-analysis #27 |
+| Q4 | Model-comparison dashboard       | Low    | Med            | feature-analysis #28 |
+| Q5 | Bulk data export (zip-all)       | Low    | Med            | plan Epic 14         |
 
 ## P3 — Deferred Concepts (Post-MVP)
 
