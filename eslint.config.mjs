@@ -166,6 +166,7 @@ export default tseslint.config(
       "docs/research/",
       "migrations/",
       "plugins/",
+      "tree/",
       "bun.lock",
       "*.har",
     ],

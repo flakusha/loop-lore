@@ -2344,7 +2344,7 @@ html {
     border-color 0.15s;
 }
 .reaction-badge:hover {
-  background: var(--color-surface-hover, rgba(128, 128, 128, 0.1));
+  background: var(--color-surface-hover, rgb(128 128 128 / 10%));
 }
 .reaction-active {
   border-color: var(--color-primary);
@@ -2386,7 +2386,7 @@ html {
   display: flex;
   gap: 2px;
   flex-wrap: wrap;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 4px 12px rgb(0 0 0 / 15%);
   max-width: 220px;
 }
 .reaction-option {
@@ -2402,22 +2402,7 @@ html {
   justify-content: center;
 }
 .reaction-option:hover {
-  background: var(--color-surface-hover, rgba(128, 128, 128, 0.1));
-}
-
-/* ── Message Enter Animation ─────────────────────── */
-@keyframes messageSlideIn {
-  from {
-    opacity: 0;
-    transform: translateY(8px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-.message {
-  animation: messageSlideIn 0.2s ease-out;
+  background: var(--color-surface-hover, rgb(128 128 128 / 10%));
 }
 
 /* ── Debug Panel ─────────────────────────────────── */
@@ -2506,7 +2491,7 @@ html {
   background: var(--color-surface, #1f2430);
   border: 1px solid var(--color-border, #333);
   border-radius: 8px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+  box-shadow: 0 8px 24px rgb(0 0 0 / 35%);
   z-index: 50;
 }
 .notif-header {
@@ -2526,7 +2511,7 @@ html {
   cursor: pointer;
 }
 .notif-item.unread {
-  background: rgba(127, 127, 255, 0.08);
+  background: rgb(127 127 255 / 8%);
 }
 .notif-icon {
   flex: 0 0 auto;

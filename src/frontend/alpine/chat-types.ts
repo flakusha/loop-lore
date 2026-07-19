@@ -296,7 +296,7 @@ export interface ChatState extends AlpineMagicThis {
   selectMention(participant: { actor_id: string; name: string }): void;
   hideMentionAutocomplete(): void;
   renameChat(chatId: string): Promise<void>;
-  openRenameModal(chatId: string): Promise<void>;
+  openRenameModal(chatId: string): void;
   confirmRenameChat(): Promise<void>;
   deleteChat(chatId: string, event: Event): Promise<void>;
   toggleChatPin(chatId: string): Promise<void>;
