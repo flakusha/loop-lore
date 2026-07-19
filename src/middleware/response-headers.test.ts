@@ -8,6 +8,7 @@
 
 import { describe, expect, test, } from "bun:test";
 import type { HeadersConfig, } from "../config/schema";
+import { generateNonce, } from "./csp-nonce";
 import { ResponseHeaderPolicy, } from "./response-headers";
 
 function makeConfig(overrides: Partial<HeadersConfig> = {},): HeadersConfig {
@@ -212,5 +213,51 @@ describe("ResponseHeaderPolicy.apply — streaming safe", () => {
     const out = policy.apply({ request: req("GET", "https://x/",), response, },);
     expect(out.status,).toBe(304,);
     expect(await out.text(),).toBe("",);
+  });
+});
+
+describe("ResponseHeaderPolicy.apply — CSP nonce", () => {
+  test("nonce injected into script-src when generateNonce called on request", async () => {
+    const request = req("GET", "https://x/",);
+    const nonce = generateNonce(request,);
+    expect(nonce.length,).toBeGreaterThan(0,);
+
+    const policy = new ResponseHeaderPolicy(makeConfig(),);
+    const response = res(200, { "content-type": "text/html", }, "<html></html>",);
+    const out = policy.apply({ request, response, },);
+    const csp = out.headers.get("Content-Security-Policy",);
+    expect(csp,).toContain(`nonce-${nonce}`,);
+    expect(csp,).toContain("script-src",);
+  });
+
+  test("no nonce in script-src when request has no stored nonce", async () => {
+    const policy = new ResponseHeaderPolicy(makeConfig(),);
+    const response = res(200, { "content-type": "text/html", }, "<html></html>",);
+    const out = policy.apply({ request: req("GET", "https://x/",), response, },);
+    const csp = out.headers.get("Content-Security-Policy",);
+    expect(csp,).not.toContain("nonce-",);
+  });
+
+  test("nonce does not affect non-html routes", async () => {
+    const request = req("GET", "https://x/api/data",);
+    generateNonce(request,);
+
+    const policy = new ResponseHeaderPolicy(makeConfig(),);
+    const response = res(200, { "content-type": "application/json", }, "{}",);
+    const out = policy.apply({ request, response, },);
+    expect(out.headers.get("Content-Security-Policy",),).toBeNull();
+  });
+
+  test("nonce works with reportOnly mode", async () => {
+    const request = req("GET", "https://x/",);
+    const nonce = generateNonce(request,);
+    const base = makeConfig();
+
+    const policy = new ResponseHeaderPolicy(makeConfig({ csp: { ...base.csp, reportOnly: true, }, },),);
+    const response = res(200, { "content-type": "text/html", }, "<html></html>",);
+    const out = policy.apply({ request, response, },);
+    const reportOnly = out.headers.get("Content-Security-Policy-Report-Only",);
+    expect(reportOnly,).toContain(`nonce-${nonce}`,);
+    expect(out.headers.get("Content-Security-Policy",),).toBeNull();
   });
 });
