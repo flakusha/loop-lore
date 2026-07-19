@@ -2638,3 +2638,37 @@ html {
 .rpg-stat-name {
   color: var(--text-secondary);
 }
+
+/* Theme selector dropdown (moved from layout.html inline style) */
+.theme-selector {
+  position: relative;
+  display: inline-block;
+}
+.theme-options {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-md);
+  min-width: 180px;
+  z-index: var(--z-dropdown);
+  padding: var(--space-2) 0;
+}
+.theme-option {
+  padding: var(--space-2) var(--space-3);
+  cursor: pointer;
+  font-size: 13px;
+  white-space: nowrap;
+  transition: background var(--transition-fast);
+}
+.theme-option:hover {
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+}
+.theme-option.active {
+  background: var(--accent-primary);
+  color: #000;
+  font-weight: 600;
+}

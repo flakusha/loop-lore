@@ -4,11 +4,10 @@
 
 import { type CommandResult, registerCommand, } from "./registry";
 
-registerCommand("impersonate", async (args,): Promise<CommandResult> => {
+function buildImpersonateResult(args: string[], usageMsg: string,): CommandResult {
   if (args.length === 0) {
     return {
-      systemMessage:
-        "Usage: /impersonate <character_name> — play as a character. /impersonate off — stop impersonating.",
+      systemMessage: usageMsg,
       action: "impersonate-toggle",
       actionPayload: { mode: "toggle", },
       handled: true,
@@ -31,32 +30,15 @@ registerCommand("impersonate", async (args,): Promise<CommandResult> => {
     actionPayload: { characterName: args.join(" ",), },
     handled: true,
   };
+}
+
+registerCommand("impersonate", async (args,): Promise<CommandResult> => {
+  return buildImpersonateResult(
+    args,
+    "Usage: /impersonate <character_name> — play as a character. /impersonate off — stop impersonating.",
+  );
 },);
 
 registerCommand("char", async (args,): Promise<CommandResult> => {
-  if (args.length === 0) {
-    return {
-      systemMessage: "Usage: /char <character_name> — alias for /impersonate. /char off — stop.",
-      action: "impersonate-toggle",
-      actionPayload: { mode: "toggle", },
-      handled: true,
-    };
-  }
-
-  const target = args.join(" ",).toLowerCase();
-  if (target === "off" || target === "stop") {
-    return {
-      systemMessage: "Stopped impersonating.",
-      action: "impersonate-toggle",
-      actionPayload: { mode: "off", },
-      handled: true,
-    };
-  }
-
-  return {
-    systemMessage: `Impersonating as "${args.join(" ",)}"...`,
-    action: "impersonate-select",
-    actionPayload: { characterName: args.join(" ",), },
-    handled: true,
-  };
+  return buildImpersonateResult(args, "Usage: /char <character_name> — alias for /impersonate. /char off — stop.",);
 },);
