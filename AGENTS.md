@@ -283,6 +283,7 @@ Goal: lightweight, extensible, maintainable, scalable.
 
 Agent commits in worktrees are GPG-signed with the agent's dedicated key.
 Configuration lives in `.credentials.env` (gitignored), never hardcoded.
+**All commits — including merge commits — must be GPG-signed.**
 
 ### Configuration
 
@@ -293,6 +294,44 @@ AGENT_GPG_KEY_ID="<your-gpg-key-fingerprint>"
 AGENT_GPG_NAME="<committer-name>"
 AGENT_GPG_EMAIL="<committer-email>"
 ```
+
+### GPG Passphrase Unlock
+
+Before any agent commits, the gpg-agent passphrase cache must be warm.
+Run once per session in a **real terminal** (not inside opencode):
+
+```bash
+./scripts/gpg-unlock.sh
+```
+
+This reads `.credentials.env`, signs test data to warm the cache.
+After TTL expires (~8h default), run again.
+
+**If unlock fails**, check `~/.gnupg/gpg-agent.conf` has:
+```
+allow-loopback-pinentry
+default-cache-ttl 28800
+max-cache-ttl 86400
+```
+Then reload: `gpg-connect-agent reloadagent /bye`
+
+### Non-TTY / CI Environments
+
+In headless environments (CI, SSH without agent forwarding), pinentry
+cannot display. The `gpg_merge_flags()` function in `worktree.sh`
+auto-detects `/tmp/gpg-loopback` — a wrapper that passes
+`--batch --pinentry-mode loopback --passphrase ""` to gpg. Create it:
+
+```bash
+cat > /tmp/gpg-loopback << 'EOF'
+#!/bin/bash
+exec gpg --batch --pinentry-mode loopback --passphrase "" "$@"
+EOF
+chmod +x /tmp/gpg-loopback
+```
+
+When present, `worktree.sh merge` and `finalize` use this wrapper
+automatically for merge commit signing.
 
 ### Worktree Commands
 
@@ -309,7 +348,7 @@ AGENT_GPG_EMAIL="<committer-email>"
 # Configure GPG signing on existing worktree:
 ./scripts/worktree.sh sign feature-xyz
 
-# Merge source branch into worktree's branch:
+# Merge source branch into worktree's branch (GPG-signed):
 ./scripts/worktree.sh merge feature-xyz master
 
 # Rebase worktree's branch onto target (default: master):
@@ -324,7 +363,7 @@ AGENT_GPG_EMAIL="<committer-email>"
 # Remove worktrees for deleted branches:
 ./scripts/worktree.sh cleanup
 
-# Validate + run checks + merge to master + remove worktree:
+# Validate + run checks + merge to master (signed) + remove worktree:
 ./scripts/worktree.sh finalize feature-xyz
 ./scripts/worktree.sh agent-merge feature-xyz   # alias
 ```
@@ -338,23 +377,48 @@ The script enforces these safety checks:
 - **Dirty check**: `remove`, `merge`, `rebase`, and `finalize` abort if
   the worktree has uncommitted changes.
 - **finalize pipeline**: Verifies clean state → runs `bun run check` →
-  runs `bun test src/` → checks branch has commits beyond base → merges
-  to master → removes worktree. Aborts at any failing step.
+  runs `bun test src/` → checks branch has commits beyond base →
+  **GPG-signed merge into master** → verifies merge signature →
+  removes worktree. Aborts at any failing step.
+- **Merge signing**: `merge` and `finalize` pass `-c commit.gpgsign=true
+  -c user.signingkey=<key>` to git. If `/tmp/gpg-loopback` exists,
+  also sets `-c gpg.program=/tmp/gpg-loopback`.
+- **Merge verification**: After merge, `finalize` runs
+  `git verify-commit` on the merge SHA. Warns if unsigned.
 - **Idempotent create**: `create` exits cleanly (exit 0) if worktree
   already exists.
 - **Existing branch guard**: `new` rejects branch names that already exist.
 
-### Workflow
+### Complete Signed Workflow
 
 ```
-1. Create:     ./scripts/worktree.sh new feat/my-feature
-2. Work:       cd tree/feat-my-feature && implement feature
-3. Commit:     (agent-commit skill handles GPG signing)
-4. Validate:   ./scripts/worktree.sh finalize feat/my-feature
-               # runs checks, merges to master, removes worktree
+1. Unlock:      ./scripts/gpg-unlock.sh              # warm gpg-agent cache
+2. Create:      ./scripts/worktree.sh new feat/my-feature
+3. Work:        cd tree/feat-my-feature && implement feature
+4. Commit:      ./scripts/worktree.sh agent-commit feat/my-feature "feat(scope): subject"
+5. Finalize:    ./scripts/worktree.sh finalize feat/my-feature
+                # runs checks, GPG-signed merge to master, verifies, removes worktree
 ```
 
 ### Agent Commit in Worktree
+
+**MANDATORY**: Agents MUST use `scripts/worktree.sh agent-commit` instead of raw `git commit` commands.
+
+```bash
+# CORRECT — use the script:
+./scripts/worktree.sh agent-commit feature-xyz "feat(scope): add new feature"
+
+# WRONG — never use raw git commit:
+git commit -S -m "..."
+```
+
+The script handles:
+- Reading author identity from worktree's local git config
+- Reading agent identity from `.credentials.env`
+- GPG signing with the agent's key
+- Verifying the signature after commit
+
+Manual commit command (only if script is unavailable):
 
 ```bash
 cd tree/<branch>
@@ -364,7 +428,9 @@ git -c user.signingkey=<AGENT_GPG_KEY_ID> \
     -c commit.gpgsign=true \
     commit -S \
     --author="<user name> <<user email>>" \
-    -m "<type>(<scope>): <subject>"
+    -m "<type>(<scope>): <subject>
+
+Co-authored-by: <AGENT_GPG_NAME> <<AGENT_GPG_EMAIL>>"
 ```
 
 ### Skill Override
