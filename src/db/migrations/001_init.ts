@@ -1,20 +1,12 @@
 import type { Kysely, } from "kysely";
-import { down as downUsers, up as upUsers, } from "./parts/001_users";
-import { down as downUsers, up as upUsers, } from "./parts/001_users";
-import { down as downAssets, up as upAssets, } from "./parts/002_assets";
-import { down as downAssets, up as upAssets, } from "./parts/002_assets";
-import { down as downWorlds, up as upWorlds, } from "./parts/003_worlds";
-import { down as downWorlds, up as upWorlds, } from "./parts/003_worlds";
-import { down as downChatsActors, up as upChatsActors, } from "./parts/004_chats_actors";
-import { down as downChatsActors, up as upChatsActors, } from "./parts/004_chats_actors";
 import { down as downActorData, up as upActorData, } from "./parts/005_actor_data";
-import { down as downActorData, up as upActorData, } from "./parts/005_actor_data";
+import { down as downAssets, up as upAssets, } from "./parts/002_assets";
+import { down as downChatsActors, up as upChatsActors, } from "./parts/004_chats_actors";
 import { down as downMessagesKeys, up as upMessagesKeys, } from "./parts/006_messages_keys";
-import { down as downMessagesKeys, up as upMessagesKeys, } from "./parts/006_messages_keys";
-import { down as downStoryGeneration, up as upStoryGeneration, } from "./parts/007_story_generation";
-import { down as downStoryGeneration, up as upStoryGeneration, } from "./parts/007_story_generation";
 import { down as downModelRoles, up as upModelRoles, } from "./parts/008_model_roles";
-import { down as downModelRoles, up as upModelRoles, } from "./parts/008_model_roles";
+import { down as downStoryGeneration, up as upStoryGeneration, } from "./parts/007_story_generation";
+import { down as downUsers, up as upUsers, } from "./parts/001_users";
+import { down as downWorlds, up as upWorlds, } from "./parts/003_worlds";
 
 /**
  * Initial schema migration — orchestrates the split part modules in

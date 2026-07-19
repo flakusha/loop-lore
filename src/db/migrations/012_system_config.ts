@@ -1,5 +1,4 @@
 import { type Kysely, sql, } from "kysely";
-import { type Kysely, sql, } from "kysely";
 
 /**
  * Migration 012 — System config key-value table

@@ -1,10 +1,7 @@
-import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
-import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
-import { type ApiClient, createClient, } from "../helpers/client";
-import { type ApiClient, createClient, } from "../helpers/client";
 import { SEED, seedUsers, } from "../helpers/seed";
-import { SEED, seedUsers, } from "../helpers/seed";
+import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import { createTestServer, type TestServer, } from "../helpers/server";
+import { type ApiClient, createClient, } from "../helpers/client";
 
 describe("API Keys E2E", () => {
   let server: TestServer;

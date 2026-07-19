@@ -4,18 +4,9 @@
  * Exposes on globalThis so chat-utils.ts can use without direct imports.
  */
 import DOMPurify from "dompurify";
+import { marked, } from "marked";
 
-import {
-  marked,
-} from "marked";
-
-marked.use(
-  {
-    breaks: true,
-    gfm: true,
-  },
-);
+marked.use({ breaks: true, gfm: true, },);
 
 globalThis.__marked = marked;
-
 globalThis.__DOMPurify = DOMPurify;

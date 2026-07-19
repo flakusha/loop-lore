@@ -15,6 +15,20 @@ import type { NpcState, WorldEvent, } from "./story-events-types";
  * world/NPC/location state, and story session context.
  */
 // ─── Game Master Config ──────────────────────────────────────────
+import type { QuestConfig, } from "./quest-types";
+
+/**
+ * Story Feature Types — Core Domain
+ *
+ * world/NPC/location state, and story session context.
+ */
+// ─── Game Master Config ──────────────────────────────────────────
+/**
+ * Story Feature Types — Core Domain
+ *
+ * world/NPC/location state, and story session context.
+ */
+// ─── Game Master Config ──────────────────────────────────────────
 export interface GameMasterConfig {
   type: GMT;
   llmConfig?: {
