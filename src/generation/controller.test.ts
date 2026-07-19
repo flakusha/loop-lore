@@ -15,6 +15,11 @@ import {
  * Tests for generation controller (input validation and non-DB paths).
  */
 
+
+/**
+ * Tests for generation controller (input validation and non-DB paths).
+ */
+
 describe("handleCancelGeneration", () => {
   test("returns 400 when both chatId and attemptId missing", () => {
     const res = handleCancelGeneration({},);

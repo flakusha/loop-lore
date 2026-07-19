@@ -23,7 +23,6 @@ import { adminRoutes, } from "./routes/admin";
 import { ageGateRoutes, } from "./age-gate/controller";
 import { apiKeysRoutes, } from "./routes/api-keys";
 import { assetRoutes, } from "./assets/controller";
-import { authProtectedRoutes, authPublicRoutes } from "./routes/auth";
 import { authProtectedRoutes, authPublicRoutes, } from "./routes/auth";
 import { authenticate, } from "./middleware/auth";
 import { charactersRoutes, } from "./routes/characters";

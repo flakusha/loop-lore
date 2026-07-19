@@ -9,7 +9,6 @@ import type { DB, } from "../db/schema";
 import { Database, } from "bun:sqlite";
 import { Elysia, } from "elysia";
 import { Kysely, } from "kysely";
-import { afterAll, beforeAll, describe, expect, test } from "bun:test";
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import { createSqliteDialect, } from "../db/index";
 import { settingsRoutes, } from "./settings";

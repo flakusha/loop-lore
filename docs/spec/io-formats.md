@@ -663,37 +663,37 @@ loop-lore-export-2026-07-19.zip
 ### 4.1 Auto-Detection Flow
 
 ```typescript
-async function detectFormat(input: Buffer | string): Promise<Format> {
+async function detectFormat(input: Buffer | string,): Promise<Format> {
   // 1. Check magic bytes
-  if (isPngMagic(input)) {
-    return detectPngFormat(input);
+  if (isPngMagic(input,)) {
+    return detectPngFormat(input,);
   }
-  if (isZipMagic(input)) {
+  if (isZipMagic(input,)) {
     return "charx";
   }
 
   // 2. Try JSON parse
   try {
-    const json = JSON.parse(input.toString());
-    if (json.spec === "chara_card_v2") return "ccv2";
-    if (json.spec === "chara_card_v3") return "ccv3";
-    if (json.definition || json.greeting) return "character-ai";
+    const json = JSON.parse(input.toString(),);
+    if (json.spec === "chara_card_v2") { return "ccv2"; }
+    if (json.spec === "chara_card_v3") { return "ccv3"; }
+    if (json.definition || json.greeting) { return "character-ai"; }
     return "json-flat";
   } catch {}
 
   // 3. Try TOML parse
   try {
-    const toml = parse(input.toString());
-    if (toml.character) return "toml";
+    const toml = parse(input.toString(),);
+    if (toml.character) { return "toml"; }
   } catch {}
 
   // 4. Try YAML parse
   try {
-    const yaml = load(input.toString());
-    if (yaml.name || yaml.description) return "yaml";
+    const yaml = load(input.toString(),);
+    if (yaml.name || yaml.description) { return "yaml"; }
   } catch {}
 
-  throw new ImportError("Unable to detect format");
+  throw new ImportError("Unable to detect format",);
 }
 ```
 

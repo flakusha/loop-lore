@@ -2,10 +2,10 @@
 //
 // Character import/export module
 
-export { createCharx, extractCharx, resolveEmbededUri } from "./charx";
+export { createCharx, extractCharx, resolveEmbededUri, } from "./charx";
 export * from "./exporters";
 export * from "./normalizers";
-export { parseCharacterCard, parseCharacterFile, validateCharacter } from "./parser";
+export { parseCharacterCard, parseCharacterFile, validateCharacter, } from "./parser";
 export type {
   CanonicalCharacter,
   CharacterAsset,

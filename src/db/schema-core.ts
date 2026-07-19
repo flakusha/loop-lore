@@ -39,6 +39,19 @@ import type {
  * Users, sessions, chats, actors, participants, messages.
  */
 // ── Users ────────────────────────────────────────────────────
+
+/**
+ * DB Schema — Core Domain Tables
+ *
+ * Users, sessions, chats, actors, participants, messages.
+ */
+// ── Users ────────────────────────────────────────────────────
+/**
+ * DB Schema — Core Domain Tables
+ *
+ * Users, sessions, chats, actors, participants, messages.
+ */
+// ── Users ────────────────────────────────────────────────────
 export interface Users {
   id: Generated<string>;
   username: string;

@@ -57,7 +57,7 @@ const defaultRules: TransformRule[] = [
     id: "narration-color",
     name: "Color narration",
     pattern: ">([\\w\\s]+)<",
-    replacement: "<span class=\"narration\">$1</span>",
+    replacement: '<span class="narration">$1</span>',
     enabled: false,
   },
   {

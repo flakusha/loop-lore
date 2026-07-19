@@ -3,23 +3,23 @@
 // CCv3 exporter for character cards.
 // Converts canonical character card to CCv3 format.
 
-import { safeJsonStringify } from "../../utils/safe-json";
-import type { CanonicalCharacter } from "../parser";
+import { safeJsonStringify, } from "../../utils/safe-json";
+import type { CanonicalCharacter, } from "../parser";
 
 /**
  * Export canonical character card to CCv3 format.
  */
-export function exportToCcV3(character: CanonicalCharacter): Record<string, unknown> {
+export function exportToCcV3(character: CanonicalCharacter,): Record<string, unknown> {
   const data: Record<string, unknown> = {};
 
   // Core fields (same as V2)
-  if (character.name) data.name = character.name;
-  if (character.description) data.description = character.description;
-  if (character.personality) data.personality = character.personality;
-  if (character.scenario) data.scenario = character.scenario;
-  if (character.welcome_message) data.first_mes = character.welcome_message;
-  if (character.mes_example) data.mes_example = character.mes_example;
-  if (character.system_prompt) data.system_prompt = character.system_prompt;
+  if (character.name) { data.name = character.name; }
+  if (character.description) { data.description = character.description; }
+  if (character.personality) { data.personality = character.personality; }
+  if (character.scenario) { data.scenario = character.scenario; }
+  if (character.welcome_message) { data.first_mes = character.welcome_message; }
+  if (character.mes_example) { data.mes_example = character.mes_example; }
+  if (character.system_prompt) { data.system_prompt = character.system_prompt; }
   if (character.post_history_instructions) {
     data.post_history_instructions = character.post_history_instructions;
   }
@@ -33,18 +33,18 @@ export function exportToCcV3(character: CanonicalCharacter): Record<string, unkn
   }
 
   // V3 additions
-  if (character.nickname) data.nickname = character.nickname;
+  if (character.nickname) { data.nickname = character.nickname; }
 
   // Timestamps (milliseconds)
   data.creation_date = Date.now();
   data.modification_date = Date.now();
 
   // Metadata
-  if (character.creator) data.creator = character.creator;
-  if (character.character_version) data.character_version = character.character_version;
+  if (character.creator) { data.creator = character.creator; }
+  if (character.character_version) { data.character_version = character.character_version; }
 
   // Extensions
-  if (character.extensions && Object.keys(character.extensions).length > 0) {
+  if (character.extensions && Object.keys(character.extensions,).length > 0) {
     data.extensions = character.extensions;
   }
 
@@ -56,7 +56,7 @@ export function exportToCcV3(character: CanonicalCharacter): Record<string, unkn
       scan_depth: character.lorebook.scan_depth,
       token_budget: character.lorebook.token_budget,
       recursive_scanning: character.lorebook.recursive_scanning,
-      entries: character.lorebook.entries.map((entry) => ({
+      entries: character.lorebook.entries.map((entry,) => ({
         keys: entry.keys,
         content: entry.content,
         enabled: entry.enabled,
@@ -77,7 +77,7 @@ export function exportToCcV3(character: CanonicalCharacter): Record<string, unkn
 
   // Assets (V3 addition)
   if (character.assets?.length) {
-    data.assets = character.assets.map((asset) => ({
+    data.assets = character.assets.map((asset,) => ({
       type: asset.type,
       name: asset.name,
       uri: asset.uri,
@@ -95,8 +95,8 @@ export function exportToCcV3(character: CanonicalCharacter): Record<string, unkn
 /**
  * Export canonical character card to CCv3 JSON string.
  */
-export function exportToCcV3Json(character: CanonicalCharacter): string {
-  const ccv3 = exportToCcV3(character);
-  const result = safeJsonStringify(ccv3, 2);
-  return result.ok ? result.value : JSON.stringify(ccv3);
+export function exportToCcV3Json(character: CanonicalCharacter,): string {
+  const ccv3 = exportToCcV3(character,);
+  const result = safeJsonStringify(ccv3, 2,);
+  return result.ok ? result.value : JSON.stringify(ccv3,);
 }

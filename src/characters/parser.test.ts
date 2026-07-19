@@ -2,9 +2,9 @@
 //
 // Tests for character card parser and auto-detection.
 
-import { describe, expect, test } from "bun:test";
-import { parseCharacterCard, validateCharacter } from "./parser";
-import type { CanonicalCharacter } from "./parser";
+import { describe, expect, test, } from "bun:test";
+import { parseCharacterCard, validateCharacter, } from "./parser";
+import type { CanonicalCharacter, } from "./parser";
 
 describe("parseCharacterCard", () => {
   test("detects CCv2 JSON format", async () => {
@@ -18,10 +18,10 @@ describe("parseCharacterCard", () => {
       },
     };
 
-    const result = await parseCharacterCard(JSON.stringify(ccv2));
-    expect(result.format).toBe("ccv2");
-    expect(result.character.name).toBe("Test Character");
-    expect(result.character.welcome_message).toBe("Hello!");
+    const result = await parseCharacterCard(JSON.stringify(ccv2,),);
+    expect(result.format,).toBe("ccv2",);
+    expect(result.character.name,).toBe("Test Character",);
+    expect(result.character.welcome_message,).toBe("Hello!",);
   });
 
   test("detects CCv3 JSON format", async () => {
@@ -35,10 +35,10 @@ describe("parseCharacterCard", () => {
       },
     };
 
-    const result = await parseCharacterCard(JSON.stringify(ccv3));
-    expect(result.format).toBe("ccv3");
-    expect(result.character.name).toBe("V3 Character");
-    expect(result.character.nickname).toBe("V3");
+    const result = await parseCharacterCard(JSON.stringify(ccv3,),);
+    expect(result.format,).toBe("ccv3",);
+    expect(result.character.name,).toBe("V3 Character",);
+    expect(result.character.nickname,).toBe("V3",);
   });
 
   test("detects Character.AI format", async () => {
@@ -49,10 +49,10 @@ describe("parseCharacterCard", () => {
       definition: "{{char}} is a helpful assistant.",
     };
 
-    const result = await parseCharacterCard(JSON.stringify(cai));
-    expect(result.format).toBe("character-ai");
-    expect(result.character.name).toBe("CAI Character");
-    expect(result.character.welcome_message).toBe("Hi there!");
+    const result = await parseCharacterCard(JSON.stringify(cai,),);
+    expect(result.format,).toBe("character-ai",);
+    expect(result.character.name,).toBe("CAI Character",);
+    expect(result.character.welcome_message,).toBe("Hi there!",);
   });
 
   test("detects flat JSON format", async () => {
@@ -61,9 +61,9 @@ describe("parseCharacterCard", () => {
       description: "A flat JSON character",
     };
 
-    const result = await parseCharacterCard(JSON.stringify(flat));
-    expect(result.format).toBe("json-flat");
-    expect(result.character.name).toBe("Flat Character");
+    const result = await parseCharacterCard(JSON.stringify(flat,),);
+    expect(result.format,).toBe("json-flat",);
+    expect(result.character.name,).toBe("Flat Character",);
   });
 
   test("detects YAML format", async () => {
@@ -71,10 +71,10 @@ describe("parseCharacterCard", () => {
 description: A YAML character
 personality: Friendly`;
 
-    const result = await parseCharacterCard(yaml);
-    expect(result.format).toBe("yaml");
-    expect(result.character.name).toBe("YAML Character");
-    expect(result.character.personality).toBe("Friendly");
+    const result = await parseCharacterCard(yaml,);
+    expect(result.format,).toBe("yaml",);
+    expect(result.character.name,).toBe("YAML Character",);
+    expect(result.character.personality,).toBe("Friendly",);
   });
 
   test("detects TOML format", async () => {
@@ -82,16 +82,16 @@ personality: Friendly`;
 name = "TOML Character"
 description = "A TOML character"`;
 
-    const result = await parseCharacterCard(toml);
-    expect(result.format).toBe("toml");
-    expect(result.character.name).toBe("TOML Character");
+    const result = await parseCharacterCard(toml,);
+    expect(result.format,).toBe("toml",);
+    expect(result.character.name,).toBe("TOML Character",);
   });
 
   test("throws on invalid format", async () => {
     const invalid = "this is not a character card";
-    await expect(parseCharacterCard(invalid)).rejects.toMatchObject({
+    await expect(parseCharacterCard(invalid,),).rejects.toMatchObject({
       code: "FORMAT_NOT_DETECTED",
-    });
+    },);
   });
 });
 
@@ -102,9 +102,9 @@ describe("validateCharacter", () => {
       description: "",
     };
 
-    const errors = validateCharacter(character);
-    expect(errors).toContain("Name is required");
-    expect(errors).toContain("Description is required");
+    const errors = validateCharacter(character,);
+    expect(errors,).toContain("Name is required",);
+    expect(errors,).toContain("Description is required",);
   });
 
   test("returns no errors for valid character", () => {
@@ -113,8 +113,8 @@ describe("validateCharacter", () => {
       description: "A valid character",
     };
 
-    const errors = validateCharacter(character);
-    expect(errors).toHaveLength(0);
+    const errors = validateCharacter(character,);
+    expect(errors,).toHaveLength(0,);
   });
 });
 
@@ -131,18 +131,18 @@ describe("CCv2 normalization", () => {
         mes_example: "Example dialogue",
         system_prompt: "System prompt",
         post_history_instructions: "Post instructions",
-        alternate_greetings: ["Hello", "Hi"],
-        tags: ["tag1", "tag2"],
+        alternate_greetings: ["Hello", "Hi",],
+        tags: ["tag1", "tag2",],
         creator: "Author",
         character_version: "1.0",
       },
     };
 
-    const result = await parseCharacterCard(JSON.stringify(ccv2));
-    expect(result.character.name).toBe("V2 Char");
-    expect(result.character.welcome_message).toBe("Welcome!");
-    expect(result.character.alternate_greetings).toEqual(["Hello", "Hi"]);
-    expect(result.character.tags).toEqual(["tag1", "tag2"]);
+    const result = await parseCharacterCard(JSON.stringify(ccv2,),);
+    expect(result.character.name,).toBe("V2 Char",);
+    expect(result.character.welcome_message,).toBe("Welcome!",);
+    expect(result.character.alternate_greetings,).toEqual(["Hello", "Hi",],);
+    expect(result.character.tags,).toEqual(["tag1", "tag2",],);
   });
 
   test("handles lorebook entries", async () => {
@@ -154,7 +154,7 @@ describe("CCv2 normalization", () => {
         character_book: {
           entries: [
             {
-              keys: ["keyword"],
+              keys: ["keyword",],
               content: "Lore content",
               enabled: true,
             },
@@ -163,10 +163,10 @@ describe("CCv2 normalization", () => {
       },
     };
 
-    const result = await parseCharacterCard(JSON.stringify(ccv2));
-    expect(result.character.lorebook).toBeDefined();
-    expect(result.character.lorebook?.entries).toHaveLength(1);
-    expect(result.character.lorebook?.entries[0]?.keys).toEqual(["keyword"]);
+    const result = await parseCharacterCard(JSON.stringify(ccv2,),);
+    expect(result.character.lorebook,).toBeDefined();
+    expect(result.character.lorebook?.entries,).toHaveLength(1,);
+    expect(result.character.lorebook?.entries[0]?.keys,).toEqual(["keyword",],);
   });
 });
 
@@ -189,10 +189,10 @@ describe("CCv3 normalization", () => {
       },
     };
 
-    const result = await parseCharacterCard(JSON.stringify(ccv3));
-    expect(result.character.nickname).toBe("V3 Nick");
-    expect(result.character.assets).toHaveLength(1);
-    expect(result.character.assets?.[0]?.uri).toBe("embeded://assets/icon/main.png");
+    const result = await parseCharacterCard(JSON.stringify(ccv3,),);
+    expect(result.character.nickname,).toBe("V3 Nick",);
+    expect(result.character.assets,).toHaveLength(1,);
+    expect(result.character.assets?.[0]?.uri,).toBe("embeded://assets/icon/main.png",);
   });
 
   test("handles V3 lorebook with use_regex", async () => {
@@ -204,7 +204,7 @@ describe("CCv3 normalization", () => {
         character_book: {
           entries: [
             {
-              keys: ["pattern.*"],
+              keys: ["pattern.*",],
               content: "Regex content",
               use_regex: true,
             },
@@ -213,7 +213,7 @@ describe("CCv3 normalization", () => {
       },
     };
 
-    const result = await parseCharacterCard(JSON.stringify(ccv3));
-    expect(result.character.lorebook?.entries[0]?.use_regex).toBe(true);
+    const result = await parseCharacterCard(JSON.stringify(ccv3,),);
+    expect(result.character.lorebook?.entries[0]?.use_regex,).toBe(true,);
   });
 });

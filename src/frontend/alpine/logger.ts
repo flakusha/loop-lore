@@ -4,13 +4,11 @@
  * When transports are provided, entries flow through AsyncLogQueue
  * for batched dispatch. Otherwise falls back to direct console.* calls.
  */
-import type { LogEntry, Logger, LoggerBindings, Transport } from "../../logger/types";
 import type { LogEntry, Logger, LoggerBindings, Transport, } from "../../logger/types";
 import type { LogLevel, } from "../../logger/types";
 import { AsyncLogQueue, } from "./queue";
 import { BrowserConsoleTransport, } from "./transports/console";
 import { LogLevelNumeric, } from "../../logger/types";
-import { formatTime, unixSec } from "../../utils/date";
 import { formatTime, unixSec, } from "../../utils/date";
 import { levelFromConfig, shouldEmit, } from "../../logger/levels";
 

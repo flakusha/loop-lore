@@ -1,5 +1,4 @@
 import type { ContentEncoding, EncodeResult, } from "./types";
-import { brotliCompressSync, gzipSync } from "node:zlib";
 import { brotliCompressSync, gzipSync, } from "node:zlib";
 
 function zstdCompress(data: Buffer,): Buffer {

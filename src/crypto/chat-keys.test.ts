@@ -4,12 +4,10 @@
 import type { DB, } from "../db/schema";
 import { Database, } from "bun:sqlite";
 import { Kysely, } from "kysely";
-import { afterAll, beforeAll, describe, expect, test } from "bun:test";
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import { createSqliteDialect, } from "../db/index";
 import { deriveChatKey, deriveChatKeyForChat, getChatParticipantActorIds, } from "./chat-keys";
 import { generateActorKey, loadActorKeys, } from "./actor-keys";
-import { getSmk, initSmk } from "./smk";
 import { getSmk, initSmk, } from "./smk";
 import { up as migrate, } from "../db/migrations/001_init";
 

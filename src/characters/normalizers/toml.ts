@@ -3,7 +3,7 @@
 // TOML normalizer.
 // Converts TOML format to canonical character card.
 
-import type { CanonicalCharacter } from "../parser";
+import type { CanonicalCharacter, } from "../parser";
 
 interface TomlCharacter {
   character?: {
@@ -33,7 +33,7 @@ interface TomlCharacter {
  * Normalize TOML format to canonical character card.
  * TOML uses [character] section with subsections.
  */
-export function normalizeToml(data: Record<string, unknown>): CanonicalCharacter {
+export function normalizeToml(data: Record<string, unknown>,): CanonicalCharacter {
   const tomlData = data as TomlCharacter;
   const character = tomlData.character ?? {};
 

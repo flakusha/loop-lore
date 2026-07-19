@@ -3,12 +3,12 @@
 // Flat JSON normalizer.
 // Converts flat JSON format to canonical character card.
 
-import type { CanonicalCharacter } from "../parser";
+import type { CanonicalCharacter, } from "../parser";
 
 /**
  * Normalize flat JSON format to canonical character card.
  */
-export function normalizeJsonFlat(data: Record<string, unknown>): CanonicalCharacter {
+export function normalizeJsonFlat(data: Record<string, unknown>,): CanonicalCharacter {
   return {
     name: (data.name as string) ?? "",
     description: (data.description as string) ?? "",

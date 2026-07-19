@@ -1,7 +1,6 @@
 import type { CollectionQuestConfig, TimeQuestConfig, WorldEvent, } from "../types";
 import { PROGRESS_CALCULATORS, } from "./registry";
 import { QuestType, WorldEventType, } from "../../db/enums";
-import { describe, expect, it } from "bun:test";
 import { describe, expect, it, } from "bun:test";
 
 function makeEvent(type: WorldEventType, data: Record<string, unknown> = {},): WorldEvent {
