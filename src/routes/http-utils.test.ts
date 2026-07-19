@@ -4,7 +4,7 @@
  * All functions are pure — no DB, no I/O, no mocks needed.
  * Every test creates a Response and asserts status/body shape.
  */
-import { describe, expect, test } from "bun:test";
+import { describe, expect, test, } from "bun:test";
 import {
   ErrorCode,
   ForbiddenError,
@@ -19,7 +19,6 @@ import {
 } from "./http-utils";
 
 // ── jsonResponse ──────────────────────────────────────────────
-
 
 /**
  * Tests for HTTP response utilities.

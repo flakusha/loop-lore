@@ -1,7 +1,7 @@
-import type { Connection, } from "./protocol.unified";
-import { TransportBase, type TransportBaseOptions, } from "./base";
-import { TransportProtocol, } from "../db/enums";
 import { randomUUID, } from "node:crypto";
+import { TransportProtocol, } from "../db/enums";
+import { TransportBase, type TransportBaseOptions, } from "./base";
+import type { Connection, } from "./protocol.unified";
 
 interface WsOptions extends TransportBaseOptions {
   url?: string;

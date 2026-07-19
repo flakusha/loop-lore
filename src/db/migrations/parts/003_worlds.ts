@@ -1,4 +1,4 @@
-import { type Kysely, sql } from "kysely";
+import { type Kysely, sql, } from "kysely";
 import { type Kysely, sql, } from "kysely";
 
 export async function up(database: Kysely<unknown>,): Promise<void> {

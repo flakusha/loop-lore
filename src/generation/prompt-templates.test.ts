@@ -2,7 +2,7 @@
  * Tests for generation/prompt-templates.ts — image model profiles & templates
  */
 
-import { describe, expect, test } from "bun:test";
+import { describe, expect, test, } from "bun:test";
 import {
   buildImagePrompt,
   buildImagePromptMessages,
@@ -13,7 +13,6 @@ import {
   resolveProfile,
   resolveTemplate,
 } from "./prompt-templates";
-
 
 /**
  * Tests for generation/prompt-templates.ts — image model profiles & templates

@@ -1,10 +1,10 @@
-import { SEED, seedAll } from "../helpers/seed";
-import { SEED, seedAll, } from "../helpers/seed";
-import { afterAll, beforeAll, describe, expect, test } from "bun:test";
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
-import { createTestServer, type TestServer, } from "../helpers/server";
-import { type ApiClient, createClient } from "../helpers/client";
+import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import { type ApiClient, createClient, } from "../helpers/client";
+import { type ApiClient, createClient, } from "../helpers/client";
+import { SEED, seedAll, } from "../helpers/seed";
+import { SEED, seedAll, } from "../helpers/seed";
+import { createTestServer, type TestServer, } from "../helpers/server";
 
 describe("Chat Participants E2E", () => {
   let server: TestServer;
