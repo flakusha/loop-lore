@@ -66,6 +66,10 @@ Commands:
   cleanup                   Remove worktrees for deleted branches
   remove <branch>           Remove specific worktree (blocks if dirty)
   prs                       Create worktrees for all open PRs (needs gh auth)
+  issue <args>              Run git-issue command (native issue tracking)
+  epic <epic> [branch]      Create worktree for Epic with standard naming
+  ticket <type> <id> [title] Create issue with extended identifier (BUG/FIX/FEA/IDEA/TASK)
+  issues                    List open issues with branch status
 
 Examples:
   $(basename "$0") new feature-xyz
@@ -959,6 +963,127 @@ cmd_agent_commit() {
     fi
 }
 
+cmd_issue() {
+    # Run git-issue command with native issue tracking
+    # Usage: ./scripts/worktree.sh issue <args>
+    shift
+    if command -v git-issue &>/dev/null; then
+        git-issue "$@"
+    elif command -v git &>/dev/null && git issue version &>/dev/null; then
+        git issue "$@"
+    else
+        echo -e "${RED}Error: git-issue not installed${NC}"
+        echo "Install: curl -sSL https://raw.githubusercontent.com/remenoscodes/git-native-issue/main/install.sh | sh"
+        exit 1
+    fi
+}
+
+cmd_epic() {
+    # Create worktree for Epic with standard naming
+    # Usage: ./scripts/worktree.sh epic <epic> [branch]
+    # Epic format: EPIC-16 or just 16
+    local epic="$1"
+    local branch="${2:-}"
+
+    if [[ -z "$epic" ]]; then
+        echo -e "${RED}Error: epic identifier required${NC}"
+        echo "Usage: $(basename "$0") epic <epic> [branch]"
+        echo "  Creates worktree for Epic (e.g., EPIC-16 or just 16)"
+        echo "  Branch defaults to 'epic/<epic>'"
+        exit 1
+    fi
+
+    # Normalize epic format (EPIC-16 or 16 -> epic-16)
+    local epic_num="${epic#EPIC-}"
+    local default_branch="epic/$epic_num"
+
+    if [[ -z "$branch" ]]; then
+        branch="$default_branch"
+    fi
+
+    # Check if epic already has a branch
+    if git -C "$REPO_ROOT" rev-parse --verify "$branch" >/dev/null 2>&1; then
+        cmd_create "$branch"
+    else
+        # Create new epic branch
+        cmd_new "$branch" "master"
+    fi
+}
+
+cmd_ticket() {
+    # Create issue with extended identifier and optional worktree
+    # Usage: ./scripts/worktree.sh ticket <type> <id> [title]
+    # Types: BUG, FEA, FIX, IDEA, TASK, SOL
+    local type="$1"
+    local id="$2"
+    local title="${3:-}"
+
+    if [[ -z "$type" ]] || [[ -z "$id" ]]; then
+        echo -e "${RED}Error: type and id required${NC}"
+        echo "Usage: $(basename "$0") ticket <type> <id> [title]"
+        echo "  Types: BUG, FEA (feature), FIX, IDEA, TASK, SOL (solution)"
+        echo "  Creates issue with identifier: <TYPE>-2025-<id>"
+        exit 1
+    fi
+
+    # Validate type
+    case "$type" in
+    BUG | FEA | FIX | IDEA | TASK | SOL) ;;
+    *)
+        echo -e "${RED}Error: invalid type '$type'${NC}"
+        echo "  Valid types: BUG, FEA, FIX, IDEA, TASK, SOL"
+        exit 1
+        ;;
+    esac
+
+    local issue_id="${type}-2025-${id}"
+    local branch="ticket/${issue_id}"
+
+    if [[ -z "$title" ]]; then
+        title="Ticket ${issue_id}"
+    fi
+
+    # Check if branch exists
+    if git -C "$REPO_ROOT" rev-parse --verify "$branch" >/dev/null 2>&1; then
+        echo -e "${YELLOW}Branch '$branch' already exists. Creating worktree...${NC}"
+        cmd_create "$branch"
+    else
+        echo -e "${CYAN}Creating ticket branch and issue: $issue_id${NC}"
+        # Create issue
+        if command -v git-issue &>/dev/null; then
+            git-issue create "$title" -l "$type" -p medium
+        else
+            echo -e "${YELLOW}  Warning: git-issue not installed, skipping issue creation${NC}"
+        fi
+        # Create worktree
+        cmd_new "$branch" "master"
+    fi
+}
+
+cmd_issues() {
+    # List open issues with branch status
+    # Usage: ./scripts/worktree.sh issues
+    echo -e "${CYAN}Open Issues:${NC}"
+    echo ""
+
+    if command -v git-issue &>/dev/null; then
+        git-issue ls --format full
+    elif command -v git &>/dev/null && git issue version &>/dev/null 2>&1; then
+        git issue ls --format full
+    else
+        echo -e "${RED}Error: git-issue not installed${NC}"
+        echo "Install: curl -sSL https://raw.githubusercontent.com/remenoscodes/git-native-issue/main/install.sh | sh"
+        exit 1
+    fi
+
+    echo ""
+    echo -e "${CYAN}Branch Mapping:${NC}"
+    # Show which issues have corresponding branches
+    git -C "$REPO_ROOT" for-each-ref --format='%(refname:short)' refs/heads/ticket/ 2>/dev/null | while read branch; do
+        echo -e "  ${GREEN}●${NC} $branch"
+    done
+}
+
 # Main
 case "${1:-}" in
 create)
@@ -1012,6 +1137,21 @@ diff)
 status)
     shift
     cmd_status "${1:-}"
+    ;;
+issue)
+    shift
+    cmd_issue "$@"
+    ;;
+epic)
+    shift
+    cmd_epic "${1:-}" "${2:-}"
+    ;;
+ticket)
+    shift
+    cmd_ticket "${1:-}" "${2:-}" "${3:-}"
+    ;;
+issues)
+    cmd_issues
     ;;
 *)
     usage

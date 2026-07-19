@@ -1,5 +1,5 @@
-import { chatActions, } from "./chat-actions";
 import { describe, expect, test, } from "bun:test";
+import { chatActions, } from "./chat-actions";
 
 describe("chatActions utility functions", () => {
   describe("formattedGenerationTime", () => {

@@ -4,10 +4,12 @@ import {
   detectPolicyMismatch,
   registerDefaultNullDetector,
   registerPolicyDetector,
+  PolicyDetector,
 } from "./policy-detector";
 import type { PolicyDetector, } from "./policy-detector";
-import { DEFAULT_POLICY_DETECTION, } from "./types";
-import type { PolicyAnalysis, } from "./types";
+
+import { DEFAULT_POLICY_DETECTION, } from "./gen-types-options";
+import type { PolicyAnalysis, } from "./gen-types-results";
 
 interface DetectorResult {
   detected?: boolean;

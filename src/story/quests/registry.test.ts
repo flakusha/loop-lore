@@ -1,7 +1,7 @@
+import { describe, expect, it, } from "bun:test";
+import { QuestType, WorldEventType, } from "../../db/enums";
 import type { CollectionQuestConfig, TimeQuestConfig, WorldEvent, } from "../types";
 import { PROGRESS_CALCULATORS, } from "./registry";
-import { QuestType, WorldEventType, } from "../../db/enums";
-import { describe, expect, it, } from "bun:test";
 
 function makeEvent(type: WorldEventType, data: Record<string, unknown> = {},): WorldEvent {
   return { type, timestamp: "2024-01-01T00:00:00Z", data, description: "", };
