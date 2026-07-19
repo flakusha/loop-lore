@@ -4,7 +4,7 @@ Distributed planning system using git-native-issue. Issues live in `refs/issues/
 
 ## Directory Structure
 
-- `tickets/` — Individual task tickets (BUG-_, FEA-_, FIX-_, IDEA-_, TASK-_, SOL-_)
+- `tickets/` — Individual task tickets (BUG-_, FEAT-_, FIX-_, IDEA-_, TASK-_, SOL-_)
 - `epics/` — Major initiatives (EPIC-*)
 - `solutions/` — Architectural solutions (SOL-*)
 - `seeds/` — Research notes and planning seeds
@@ -14,7 +14,7 @@ Distributed planning system using git-native-issue. Issues live in `refs/issues/
 | Type  | Prefix                      | Purpose |
 | ----- | --------------------------- | ------- |
 | BUG-  | Bug reports                 |         |
-| FEA-  | Feature requests            |         |
+| FEAT- | Feature requests            |         |
 | FIX-  | Non-bug fixes               |         |
 | IDEA- | Research/experimental ideas |         |
 | TASK- | Small tasks                 |         |

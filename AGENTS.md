@@ -234,7 +234,7 @@ Issues live in `refs/issues/<uuid>` and are managed via `git issue` commands.
 | Type  | Prefix                        | Use for |
 | ----- | ----------------------------- | ------- |
 | BUG-  | Bug reports                   |         |
-| FEA-  | Feature requests              |         |
+| FEAT- | Feature requests              |         |
 | FIX-  | Non-bug fixes                 |         |
 | IDEA- | Research/experimental ideas   |         |
 | TASK- | Small tasks                   |         |
