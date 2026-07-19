@@ -231,15 +231,15 @@ Issues live in `refs/issues/<uuid>` and are managed via `git issue` commands.
 
 ### Extended Identifiers
 
-| Type | Prefix | Use for |
-|------|--------|---------|
-| BUG- | Bug reports |
-| FEA- | Feature requests |
-| FIX- | Non-bug fixes |
-| IDEA- | Research/experimental ideas |
-| TASK- | Small tasks |
-| SOL- | Architectural solutions |
-| EPIC- | Major epics (matches plan.md) |
+| Type  | Prefix                        | Use for |
+| ----- | ----------------------------- | ------- |
+| BUG-  | Bug reports                   |         |
+| FEA-  | Feature requests              |         |
+| FIX-  | Non-bug fixes                 |         |
+| IDEA- | Research/experimental ideas   |         |
+| TASK- | Small tasks                   |         |
+| SOL-  | Architectural solutions       |         |
+| EPIC- | Major epics (matches plan.md) |         |
 
 ### Commands
 
@@ -263,6 +263,7 @@ cd tree/epic-16
 ### Commit Trailers
 
 Link commits to issues using trailers:
+
 ```
 Issue: BUG-2025-001
 Epic: EPIC-16
