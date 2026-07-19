@@ -2,24 +2,24 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 import { existsSync, readdirSync, readFileSync, statSync, } from "node:fs";
 
-import { DynamicResponsePolicy, ResponseHeaderPolicy, } from "./middleware";
-import { ServerExternalManager, } from "./services/server-external-manager";
-import { compressAssets, copyDirectory, } from "./content/compress";
-import { createApp, } from "./elysia-app";
-import { createLogger, getLogger, } from "./logger";
-import { dispatchPluginRoute, loadAllPlugins, unloadAllPlugins, } from "./plugins";
-import { ensureTlsCerts, } from "./config/cert";
-import { getDatabase, } from "./db/index";
-import { initAgeGate, } from "./age-gate/controller";
-import { initSmk, } from "./crypto";
-import { initializeProviders, OpenAiCompatibleProvider, registerProvider, } from "./generation";
-import { injectContentHashes, } from "./content/hash-injection";
-import { join, normalize, } from "node:path";
-import { loadConfig, } from "./config/load";
-import { runMigrations, } from "./db/migrate";
-import { seedDefaultActors, } from "./db/seed";
 import { serve, } from "bun";
 import { spawnSync, } from "node:child_process";
+import { join, normalize, } from "node:path";
+import { initAgeGate, } from "./age-gate/controller";
+import { ensureTlsCerts, } from "./config/cert";
+import { loadConfig, } from "./config/load";
+import { compressAssets, copyDirectory, } from "./content/compress";
+import { injectContentHashes, } from "./content/hash-injection";
+import { initSmk, } from "./crypto";
+import { getDatabase, } from "./db/index";
+import { runMigrations, } from "./db/migrate";
+import { seedDefaultActors, } from "./db/seed";
+import { createApp, } from "./elysia-app";
+import { initializeProviders, OpenAiCompatibleProvider, registerProvider, } from "./generation";
+import { createLogger, getLogger, } from "./logger";
+import { DynamicResponsePolicy, ResponseHeaderPolicy, } from "./middleware";
+import { dispatchPluginRoute, loadAllPlugins, unloadAllPlugins, } from "./plugins";
+import { ServerExternalManager, } from "./services/server-external-manager";
 
 const DOCS_PATH = join(import.meta.dir, "..", "docs", ".vitepress", "dist",);
 
