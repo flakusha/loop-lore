@@ -2,7 +2,7 @@
  * Alpine.js Components — Modular Entry (chat page only)
  */
 
-import "./loaders";
+// loaders.d.ts provides ambient global types via tsconfig include — no runtime import needed
 import "./types";
 import "./theme";
 import "./i18n";

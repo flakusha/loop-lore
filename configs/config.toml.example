@@ -2,6 +2,11 @@
 # Supports: YAML (.yaml, .yml) or TOML (.toml)
 # Env vars override values below — see src/config/load.ts for mapping
 # $schema: ./schemas/loop-lore-config.schema.json
+#
+# NOTE: paths below are examples for configs/ directory layout.
+# Defaults are computed from DATA_DIR (src/config/constants.ts) which
+# resolves relative to the source file location, not CWD or config dir.
+# Overriding a path here makes it literal — not relative to this file.
 
 [server]
 port = 3000
