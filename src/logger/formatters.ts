@@ -38,7 +38,7 @@ export function formatConsole(
   const levelLabel = numericToLabel(entry.level,).padEnd(5,);
   const modulePart = entry.module ? ` [${entry.module}]` : "";
   const msgResult = safeJsonStringify(entry.message,);
-  const msg = typeof entry.message === "string" ? entry.message : msgResult.ok ? msgResult.value : "[unserializable]";
+  const msg = typeof entry.message === "string" ? entry.message : (msgResult.ok ? msgResult.value : "[unserializable]");
 
   let line = `[${entry.time}] [${levelLabel}]${modulePart} ${msg}`;
 
@@ -75,7 +75,7 @@ const LEVEL_CSS: Record<number, string> = {
  */
 export function formatJSONL(entry: LogEntry,): string {
   const msgResult = safeJsonStringify(entry.message,);
-  const msg = typeof entry.message === "string" ? entry.message : msgResult.ok ? msgResult.value : "[unserializable]";
+  const msg = typeof entry.message === "string" ? entry.message : (msgResult.ok ? msgResult.value : "[unserializable]");
   const obj: Record<string, unknown> = {
     level: entry.level,
     timestamp: entry.timestamp,
