@@ -27,10 +27,12 @@ if [[ -n "$MAIN_REPO_ROOT" && -f "$MAIN_REPO_ROOT/.credentials.env" ]]; then
     source "$MAIN_REPO_ROOT/.credentials.env"
 fi
 
-# Colors — sourced from shared lib
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-# shellcheck source=/dev/null
-source "$SCRIPT_DIR/lib/colors.sh"
+# Colors
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+CYAN='\033[0;36m'
+NC='\033[0m' # No Color
 
 PROTECTED_BRANCHES="master main"
 
@@ -59,17 +61,10 @@ Commands:
   finalize <branch>         Validate worktree ready, run checks, merge to master, remove
   agent-merge <branch>      Alias for finalize — merge worktree into master and clean up
   agent-commit <branch> <msg>  Create GPG-signed commit (agent MUST use this)
-  list                      Show all worktrees with detailed status
-  branches                  List all branches with merge/stale status
-  diff <branch>             Show diff between branch and master
-  status [branch]           Show branch/worktree status (current if omitted)
+  list                      Show all worktrees with status
   cleanup                   Remove worktrees for deleted branches
   remove <branch>           Remove specific worktree (blocks if dirty)
   prs                       Create worktrees for all open PRs (needs gh auth)
-  issue <args>              Run git-issue command (native issue tracking)
-  epic <epic> [branch]      Create worktree for Epic with standard naming
-  ticket <type> <id> [title] Create issue with extended identifier (BUG/FEAT/FIX/IDEA/TASK)
-  issues                    List open issues with branch status
 
 Examples:
   $(basename "$0") new feature-xyz
@@ -85,27 +80,6 @@ EOF
 
 ensure_tree_dir() {
     mkdir -p "$TREE_DIR"
-}
-
-# Create a relative symlink from worktree to main repo's ./configs/ directory.
-# Worktrees share code but not gitignored files — this gives them access to
-# shared config examples without copying. The config loader (src/config/load.ts)
-# also resolves configs from main repo at runtime via findMainRepoRoot().
-link_configs() {
-    local worktree_path="$1"
-    local configs_dir="$REPO_ROOT/configs"
-
-    # Only create if main repo has configs/ and worktree doesn't already have it
-    if [[ ! -d "$configs_dir" ]]; then
-        return 0
-    fi
-    if [[ -e "$worktree_path/configs" || -L "$worktree_path/configs" ]]; then
-        return 0
-    fi
-
-    # Relative symlink: tree/branch -> ../../configs
-    ln -s ../../configs "$worktree_path/configs"
-    echo -e "  ${CYAN}Linked configs/${NC} → ../../configs"
 }
 
 configure_signing() {
@@ -175,7 +149,7 @@ find_worktree() {
     local branch="$1"
     local dir_name
     dir_name="$(branch_to_path "$branch")"
-
+    
     # Check if current directory IS the worktree for this branch
     local current_branch
     current_branch=$(git -C "$REPO_ROOT" branch --show-current 2>/dev/null || echo "")
@@ -183,7 +157,7 @@ find_worktree() {
         echo "$REPO_ROOT"
         return
     fi
-
+    
     local worktree_path="$TREE_DIR/$dir_name"
     if [[ -d "$worktree_path" ]]; then
         echo "$worktree_path"
@@ -209,8 +183,8 @@ require_worktree() {
 check_dirty() {
     # Warn if worktree has uncommitted changes
     local worktree_path="$1"
-    if ! git -C "$worktree_path" diff --quiet 2>/dev/null ||
-        ! git -C "$worktree_path" diff --cached --quiet 2>/dev/null; then
+    if ! git -C "$worktree_path" diff --quiet 2>/dev/null || \
+       ! git -C "$worktree_path" diff --cached --quiet 2>/dev/null; then
         echo -e "${YELLOW}  Warning: uncommitted changes in worktree${NC}"
         echo -e "  Stash with: cd $worktree_path && git stash"
         return 1
@@ -254,7 +228,6 @@ cmd_create() {
     echo -e "${CYAN}Creating worktree for branch: $branch${NC}"
     git -C "$REPO_ROOT" worktree add "$worktree_path" "$branch"
     configure_signing "$worktree_path"
-    link_configs "$worktree_path"
     echo -e "${GREEN}✓ Created: $worktree_path${NC}"
     echo -e "  cd $worktree_path"
 }
@@ -300,7 +273,6 @@ cmd_new() {
     echo -e "${CYAN}Creating new branch '$branch' from '$base'${NC}"
     git -C "$REPO_ROOT" worktree add -b "$branch" "$worktree_path" "$base"
     configure_signing "$worktree_path"
-    link_configs "$worktree_path"
     echo -e "${GREEN}✓ Created: $worktree_path${NC}"
     echo -e "  cd $worktree_path"
 }
@@ -308,33 +280,8 @@ cmd_new() {
 cmd_list() {
     echo -e "${CYAN}Active worktrees:${NC}"
     echo ""
-
-    local in_repo
-    in_repo=$(git -C "$REPO_ROOT" branch --show-current 2>/dev/null || echo "detached")
-
-    git -C "$REPO_ROOT" worktree list --porcelain | while IFS= read -r line; do
-        if [[ "$line" == worktree\ * ]]; then
-            local wt_path="${line#worktree }"
-            local rel_path
-            rel_path=$(realpath --relative-to="$REPO_ROOT" "$wt_path" 2>/dev/null || echo "$wt_path")
-            if [[ "$rel_path" == "." ]]; then
-                rel_path="(main repo)"
-            fi
-            echo -e "  ${GREEN}●${NC} $rel_path"
-        elif [[ "$line" == branch\ * ]]; then
-            local branch="${line#branch refs/heads/}"
-            local marker=""
-            if [[ "$branch" == "$in_repo" ]]; then
-                marker=" ${YELLOW}(current)${NC}"
-            fi
-            echo -e "    Branch: ${CYAN}$branch${NC}$marker"
-        elif [[ "$line" == HEAD\ * ]]; then
-            local head="${line#HEAD }"
-            echo -e "    HEAD: ${head:0:8}"
-        elif [[ "$line" == "" ]]; then
-            echo ""
-        fi
-    done
+    git -C "$REPO_ROOT" worktree list
+    echo ""
 
     if [[ -d "$TREE_DIR" ]]; then
         local count
@@ -345,189 +292,10 @@ cmd_list() {
     fi
 }
 
-cmd_branches() {
-    echo -e "${CYAN}Branches:${NC}"
-    echo ""
-
-    local current
-    current=$(git -C "$REPO_ROOT" branch --show-current 2>/dev/null || echo "")
-
-    printf "  ${BOLD}%-35s %-12s %-10s %s${NC}\n" "BRANCH" "STATUS" "AHEAD" "LAST COMMIT"
-    printf "  %-35s %-12s %-10s %s\n" "-----------------------------------" "------------" "----------" "-------------------"
-
-    git -C "$REPO_ROOT" for-each-ref --sort=-committerdate --format='%(refname:short)|%(committerdate:relative)|%(subject)' refs/heads/ | while IFS='|' read -r branch date subject; do
-        local status=""
-        local ahead=""
-        local color="$NC"
-
-        # Check if merged into master
-        if git -C "$REPO_ROOT" merge-base --is-ancestor "$branch" master 2>/dev/null; then
-            status="${GREEN}merged${NC}"
-        else
-            # Count commits ahead
-            local count
-            count=$(git -C "$REPO_ROOT" rev-list --count master.."$branch" 2>/dev/null || echo "0")
-            if [[ "$count" -gt 0 ]]; then
-                ahead="${count}"
-                status="${YELLOW}pending${NC}"
-            else
-                status="${RED}stale${NC}"
-            fi
-        fi
-
-        # Check if has worktree
-        local wt_marker=""
-        if git -C "$REPO_ROOT" worktree list --porcelain | grep -q "branch refs/heads/$branch"; then
-            wt_marker=" ${CYAN}[wt]${NC}"
-        fi
-
-        # Check if current
-        local marker=""
-        if [[ "$branch" == "$current" ]]; then
-            marker=" ${YELLOW}*${NC}"
-        fi
-
-        printf "  %-35s %-22b %-10s %s\n" "$branch${marker}${wt_marker}" "$status" "$ahead" "$date"
-    done
-    echo ""
-
-    # Summary
-    local total merged stale pending
-    total=$(git -C "$REPO_ROOT" branch --list | wc -l)
-    merged=$(git -C "$REPO_ROOT" branch --merged master 2>/dev/null | grep -v "^\*" | grep -v "master" | wc -l)
-    stale=$(git -C "$REPO_ROOT" for-each-ref --format='%(refname:short)' refs/heads/ | while read b; do
-        if ! git -C "$REPO_ROOT" merge-base --is-ancestor "$b" master 2>/dev/null; then
-            count=$(git -C "$REPO_ROOT" rev-list --count master.."$b" 2>/dev/null || echo "0")
-            if [[ "$count" -eq 0 ]]; then echo "$b"; fi
-        fi
-    done | wc -l)
-
-    echo -e "  ${BOLD}Summary:${NC} $total branches, $merged merged, $stale stale (can safe-delete)"
-}
-
-cmd_diff() {
-    local branch="${1:-}"
-    if [[ -z "$branch" ]]; then
-        echo -e "${RED}Error: branch name required${NC}"
-        echo "Usage: $(basename "$0") diff <branch>"
-        echo "  Shows diff between branch and master."
-        exit 1
-    fi
-
-    if ! git -C "$REPO_ROOT" rev-parse --verify "$branch" >/dev/null 2>&1; then
-        echo -e "${RED}Error: branch '$branch' not found${NC}"
-        exit 1
-    fi
-
-    echo -e "${CYAN}Diff: master..$branch${NC}"
-    echo ""
-
-    local ahead
-    ahead=$(git -C "$REPO_ROOT" rev-list --count master.."$branch" 2>/dev/null || echo "0")
-    local behind
-    behind=$(git -C "$REPO_ROOT" rev-list --count "$branch"..master 2>/dev/null || echo "0")
-
-    echo -e "  Ahead: ${GREEN}$ahead${NC} commits"
-    echo -e "  Behind: ${RED}$behind${NC} commits"
-    echo ""
-
-    if [[ "$ahead" -eq 0 && "$behind" -eq 0 ]]; then
-        echo -e "${GREEN}Branch is at same commit as master.${NC}"
-        return 0
-    fi
-
-    echo -e "${BOLD}Files changed:${NC}"
-    git -C "$REPO_ROOT" diff --stat master.."$branch"
-    echo ""
-
-    echo -e "${BOLD}Commits:${NC}"
-    git -C "$REPO_ROOT" log --oneline master.."$branch"
-}
-
-cmd_status() {
-    local branch="${1:-}"
-
-    if [[ -z "$branch" ]]; then
-        # Show status of current branch
-        echo -e "${CYAN}Current branch status:${NC}"
-        echo ""
-
-        local current
-        current=$(git -C "$REPO_ROOT" branch --show-current 2>/dev/null || echo "detached")
-        echo -e "  Branch: ${CYAN}$current${NC}"
-
-        # Check if merged
-        if git -C "$REPO_ROOT" merge-base --is-ancestor "$current" master 2>/dev/null; then
-            echo -e "  Status: ${GREEN}merged into master${NC}"
-        else
-            local ahead
-            ahead=$(git -C "$REPO_ROOT" rev-list --count master.."$current" 2>/dev/null || echo "0")
-            echo -e "  Status: ${YELLOW}$ahead commit(s) ahead of master${NC}"
-        fi
-
-        # Check working tree
-        if ! git -C "$REPO_ROOT" diff --quiet 2>/dev/null; then
-            echo -e "  Working tree: ${RED}dirty${NC}"
-            git -C "$REPO_ROOT" diff --stat | head -5
-        else
-            echo -e "  Working tree: ${GREEN}clean${NC}"
-        fi
-
-        # Check for worktree
-        local wt_path
-        wt_path=$(git -C "$REPO_ROOT" worktree list --porcelain | grep -B 2 "branch refs/heads/$current" | grep "path" | sed 's/path //')
-        if [[ -n "$wt_path" ]]; then
-            local rel
-            rel=$(realpath --relative-to="$REPO_ROOT" "$wt_path" 2>/dev/null || echo "$wt_path")
-            echo -e "  Worktree: ${CYAN}$rel${NC}"
-        fi
-    else
-        # Show status of specific branch
-        if ! git -C "$REPO_ROOT" rev-parse --verify "$branch" >/dev/null 2>&1; then
-            echo -e "${RED}Error: branch '$branch' not found${NC}"
-            exit 1
-        fi
-
-        echo -e "${CYAN}Branch status: $branch${NC}"
-        echo ""
-
-        # Check if merged
-        if git -C "$REPO_ROOT" merge-base --is-ancestor "$branch" master 2>/dev/null; then
-            echo -e "  Status: ${GREEN}merged into master${NC}"
-        else
-            local ahead
-            ahead=$(git -C "$REPO_ROOT" rev-list --count master.."$branch" 2>/dev/null || echo "0")
-            echo -e "  Status: ${YELLOW}$ahead commit(s) ahead of master${NC}"
-        fi
-
-        # Check if has worktree
-        local wt_path
-        wt_path=$(git -C "$REPO_ROOT" worktree list --porcelain | grep -B 2 "branch refs/heads/$branch" | grep "path" | sed 's/path //')
-        if [[ -n "$wt_path" ]]; then
-            local rel
-            rel=$(realpath --relative-to="$REPO_ROOT" "$wt_path" 2>/dev/null || echo "$wt_path")
-            echo -e "  Worktree: ${CYAN}$rel${NC}"
-
-            # Check if worktree is clean
-            if ! git -C "$wt_path" diff --quiet 2>/dev/null; then
-                echo -e "  Working tree: ${RED}dirty${NC}"
-                git -C "$wt_path" diff --stat | head -5
-            else
-                echo -e "  Working tree: ${GREEN}clean${NC}"
-            fi
-        else
-            echo -e "  Worktree: ${YELLOW}none${NC}"
-        fi
-
-        # Last commit
-        echo -e "  Last commit: $(git -C "$REPO_ROOT" log --oneline -1 "$branch")"
-    fi
-}
-
 cmd_cleanup() {
     if [[ ! -d "$TREE_DIR" ]]; then
         echo -e "${YELLOW}No ./tree/ directory — nothing to clean up${NC}"
-        return 0
+        exit 0
     fi
 
     echo -e "${CYAN}Checking for stale worktrees...${NC}"
@@ -537,9 +305,9 @@ cmd_cleanup() {
         [[ ! -d "$worktree_path" ]] && continue
 
         local branch
-        branch=$(git -C "$REPO_ROOT" worktree list --porcelain |
-            grep -A 2 "path $(realpath "$worktree_path")" |
-            grep "branch" | sed 's|branch refs/heads/||')
+        branch=$(git -C "$REPO_ROOT" worktree list --porcelain | \
+                 grep -A 2 "path $(realpath "$worktree_path")" | \
+                 grep "branch" | sed 's|branch refs/heads/||')
 
         if [[ -z "$branch" ]]; then
             echo -e "${YELLOW}  Skipped (detached HEAD): $worktree_path${NC}"
@@ -550,7 +318,7 @@ cmd_cleanup() {
         if ! git -C "$REPO_ROOT" rev-parse --verify "$branch" >/dev/null 2>&1; then
             echo -e "${RED}  Removing stale worktree: $worktree_path (branch '$branch' deleted)${NC}"
             git -C "$REPO_ROOT" worktree remove "$worktree_path" 2>/dev/null || true
-            removed=$((removed + 1))
+            ((removed++))
         else
             echo -e "${GREEN}  Kept: $worktree_path (branch '$branch' exists)${NC}"
         fi
@@ -576,8 +344,8 @@ cmd_remove() {
     worktree_path="$(require_worktree "$branch")"
 
     # Block removal if worktree has uncommitted changes
-    if ! git -C "$worktree_path" diff --quiet 2>/dev/null ||
-        ! git -C "$worktree_path" diff --cached --quiet 2>/dev/null; then
+    if ! git -C "$worktree_path" diff --quiet 2>/dev/null || \
+       ! git -C "$worktree_path" diff --cached --quiet 2>/dev/null; then
         echo -e "${RED}Error: worktree has uncommitted changes${NC}"
         echo -e "  Stash or commit first: cd $worktree_path && git stash"
         echo -e "  Or use: git -C $worktree_path diff --stat"
@@ -639,7 +407,6 @@ cmd_prs() {
         # Fetch the PR branch
         echo -e "${CYAN}  Creating worktree for PR #$number: $title${NC}"
         if git -C "$REPO_ROOT" worktree add "$worktree_path" "origin/$branch" 2>/dev/null; then
-            link_configs "$worktree_path"
             echo -e "${GREEN}  ✓ Created: $worktree_path${NC}"
             ((created++))
         else
@@ -739,23 +506,23 @@ cmd_rebase() {
 }
 
 cmd_finalize() {
-    local branch="${1:-}"
+    local branch="$1"
     local force=false
-
+    
     # Parse flags
-    shift 2>/dev/null || true
+    shift
     while [[ $# -gt 0 ]]; do
         case "$1" in
-        --force | -f)
-            force=true
-            shift
-            ;;
-        *)
-            shift
-            ;;
+            --force|-f)
+                force=true
+                shift
+                ;;
+            *)
+                shift
+                ;;
         esac
     done
-
+    
     if [[ -z "$branch" ]]; then
         echo -e "${RED}Error: branch name required${NC}"
         echo "Usage: $(basename "$0") finalize <branch>"
@@ -778,8 +545,8 @@ cmd_finalize() {
     # Step 1: Check for uncommitted changes
     echo -e "${CYAN}Step 1: Checking worktree state...${NC}"
     local has_changes=false
-    if ! git -C "$worktree_path" diff --quiet 2>/dev/null ||
-        ! git -C "$worktree_path" diff --cached --quiet 2>/dev/null; then
+    if ! git -C "$worktree_path" diff --quiet 2>/dev/null || \
+       ! git -C "$worktree_path" diff --cached --quiet 2>/dev/null; then
         has_changes=true
         echo -e "${YELLOW}  ⚠ Uncommitted changes detected${NC}"
         git -C "$worktree_path" diff --stat 2>/dev/null || true
@@ -807,7 +574,7 @@ cmd_finalize() {
         echo -e "${YELLOW}  Skipped: bun or package.json not found${NC}"
     fi
     echo ""
-
+    
     # Step 3: Run tests
     echo -e "${CYAN}Step 3: Running tests (bun test src/)...${NC}"
     if [[ "$force" == "true" ]]; then
@@ -878,7 +645,7 @@ cmd_agent_commit() {
     # Agent MUST use this instead of raw 'git commit' commands.
     local branch="$1"
     local message="$2"
-
+    
     if [[ -z "$branch" ]] || [[ -z "$message" ]]; then
         echo -e "${RED}Error: branch and message required${NC}"
         echo "Usage: $(basename "$0") agent-commit <branch> <message>"
@@ -886,73 +653,73 @@ cmd_agent_commit() {
         echo "  Author = worktree user, Committer = agent (from .credentials.env)"
         exit 1
     fi
-
+    
     # Block on protected branches
     if is_protected "$branch"; then
         echo -e "${RED}Error: cannot agent-commit on protected branch '$branch'${NC}"
         exit 1
     fi
-
+    
     local worktree_path
     worktree_path="$(require_worktree "$branch")"
-
+    
     # Check for staged changes
     if git -C "$worktree_path" diff --cached --quiet 2>/dev/null; then
         echo -e "${RED}Error: no staged changes in worktree${NC}"
         echo "  Stage files first: cd $worktree_path && git add <files>"
         exit 1
     fi
-
+    
     # Verify agent credentials
     if [[ -z "${AGENT_GPG_KEY_ID:-}" ]]; then
         echo -e "${RED}Error: AGENT_GPG_KEY_ID not set in .credentials.env${NC}"
         exit 1
     fi
-
+    
     if [[ -z "${AGENT_GPG_NAME:-}" ]] || [[ -z "${AGENT_GPG_EMAIL:-}" ]]; then
         echo -e "${RED}Error: AGENT_GPG_NAME/AGENT_GPG_EMAIL not set in .credentials.env${NC}"
         exit 1
     fi
-
+    
     # Get author from worktree's local git config
     local author_name
     local author_email
     author_name=$(git -C "$worktree_path" config user.name)
     author_email=$(git -C "$worktree_path" config user.email)
-
+    
     if [[ -z "$author_name" ]] || [[ -z "$author_email" ]]; then
         echo -e "${RED}Error: worktree user.name/user.email not configured${NC}"
         echo "  Run: ./scripts/worktree.sh sign $branch"
         exit 1
     fi
-
+    
     # Verify GPG key is available
     if ! gpg --list-secret-keys "$AGENT_GPG_KEY_ID" &>/dev/null; then
         echo -e "${RED}Error: GPG secret key $AGENT_GPG_KEY_ID not found${NC}"
         echo "  Run: ./scripts/gpg-unlock.sh"
         exit 1
     fi
-
+    
     echo -e "${CYAN}Creating GPG-signed commit in '$branch'...${NC}"
     echo -e "  Author: $author_name <$author_email>"
     echo -e "  Committer: $AGENT_GPG_NAME <$AGENT_GPG_EMAIL>"
     echo -e "  GPG Key: ${AGENT_GPG_KEY_ID:0:8}..."
-
+    
     # Execute commit with proper identity
     # --no-verify: agent MUST run checks separately before committing
     # The pre-commit hook is for manual commits; agent workflow is:
     # 1. Run bun run check && bun test src/
     # 2. ./scripts/worktree.sh agent-commit <branch> "<message>"
     GIT_COMMITTER_NAME="$AGENT_GPG_NAME" \
-        GIT_COMMITTER_EMAIL="$AGENT_GPG_EMAIL" \
-        git -C "$worktree_path" \
+    GIT_COMMITTER_EMAIL="$AGENT_GPG_EMAIL" \
+    git -C "$worktree_path" \
         -c user.signingkey="$AGENT_GPG_KEY_ID" \
         -c commit.gpgsign=true \
         commit -S \
         --no-verify \
         --author="$author_name <$author_email>" \
         -m "$message"
-
+    
     # Verify signature
     local commit_sha
     commit_sha=$(git -C "$worktree_path" rev-parse HEAD)
@@ -963,198 +730,51 @@ cmd_agent_commit() {
     fi
 }
 
-cmd_issue() {
-    # Run git-issue command with native issue tracking
-    # Usage: ./scripts/worktree.sh issue <args>
-    shift
-    if command -v git-issue &>/dev/null; then
-        git-issue "$@"
-    elif command -v git &>/dev/null && git issue version &>/dev/null; then
-        git issue "$@"
-    else
-        echo -e "${RED}Error: git-issue not installed${NC}"
-        echo "Install: curl -sSL https://raw.githubusercontent.com/remenoscodes/git-native-issue/main/install.sh | sh"
-        exit 1
-    fi
-}
-
-cmd_epic() {
-    # Create worktree for Epic with standard naming
-    # Usage: ./scripts/worktree.sh epic <epic> [branch]
-    # Epic format: EPIC-16 or just 16
-    local epic="$1"
-    local branch="${2:-}"
-
-    if [[ -z "$epic" ]]; then
-        echo -e "${RED}Error: epic identifier required${NC}"
-        echo "Usage: $(basename "$0") epic <epic> [branch]"
-        echo "  Creates worktree for Epic (e.g., EPIC-16 or just 16)"
-        echo "  Branch defaults to 'epic/<epic>'"
-        exit 1
-    fi
-
-    # Normalize epic format (EPIC-16 or 16 -> epic-16)
-    local epic_num="${epic#EPIC-}"
-    local default_branch="epic/$epic_num"
-
-    if [[ -z "$branch" ]]; then
-        branch="$default_branch"
-    fi
-
-    # Check if epic already has a branch
-    if git -C "$REPO_ROOT" rev-parse --verify "$branch" >/dev/null 2>&1; then
-        cmd_create "$branch"
-    else
-        # Create new epic branch
-        cmd_new "$branch" "master"
-    fi
-}
-
-cmd_ticket() {
-    # Create issue with extended identifier and optional worktree
-    # Usage: ./scripts/worktree.sh ticket <type> <id> [title]
-    # Types: BUG, FEAT, FIX, IDEA, TASK, SOL
-    local type="$1"
-    local id="$2"
-    local title="${3:-}"
-
-    if [[ -z "$type" ]] || [[ -z "$id" ]]; then
-        echo -e "${RED}Error: type and id required${NC}"
-        echo "Usage: $(basename "$0") ticket <type> <id> [title]"
-        echo "  Types: BUG, FEAT (feature), FIX, IDEA, TASK, SOL (solution)"
-        echo "  Creates issue with identifier: <TYPE>-2025-<id>"
-        exit 1
-    fi
-
-    # Validate type
-    case "$type" in
-    BUG | FEAT | FEA | FIX | IDEA | TASK | SOL) ;;
-    *)
-        echo -e "${RED}Error: invalid type '$type'${NC}"
-        echo "  Valid types: BUG, FEAT, FIX, IDEA, TASK, SOL"
-        exit 1
-        ;;
-    esac
-
-    local issue_id="${type}-2025-${id}"
-    local branch="ticket/${issue_id}"
-
-    if [[ -z "$title" ]]; then
-        title="Ticket ${issue_id}"
-    fi
-
-    # Check if branch exists
-    if git -C "$REPO_ROOT" rev-parse --verify "$branch" >/dev/null 2>&1; then
-        echo -e "${YELLOW}Branch '$branch' already exists. Creating worktree...${NC}"
-        cmd_create "$branch"
-    else
-        echo -e "${CYAN}Creating ticket branch and issue: $issue_id${NC}"
-        # Create issue
-        if command -v git-issue &>/dev/null; then
-            git-issue create "$title" -l "$type" -p medium
-        else
-            echo -e "${YELLOW}  Warning: git-issue not installed, skipping issue creation${NC}"
-        fi
-        # Create worktree
-        cmd_new "$branch" "master"
-    fi
-}
-
-cmd_issues() {
-    # List open issues with branch status
-    # Usage: ./scripts/worktree.sh issues
-    echo -e "${CYAN}Open Issues:${NC}"
-    echo ""
-
-    if command -v git-issue &>/dev/null; then
-        git-issue ls --format full
-    elif command -v git &>/dev/null && git issue version &>/dev/null 2>&1; then
-        git issue ls --format full
-    else
-        echo -e "${RED}Error: git-issue not installed${NC}"
-        echo "Install: curl -sSL https://raw.githubusercontent.com/remenoscodes/git-native-issue/main/install.sh | sh"
-        exit 1
-    fi
-
-    echo ""
-    echo -e "${CYAN}Branch Mapping:${NC}"
-    # Show which issues have corresponding branches
-    git -C "$REPO_ROOT" for-each-ref --format='%(refname:short)' refs/heads/ticket/ 2>/dev/null | while read branch; do
-        echo -e "  ${GREEN}●${NC} $branch"
-    done
-}
-
 # Main
 case "${1:-}" in
-create)
-    shift
-    cmd_create "${1:-}"
-    ;;
-new)
-    shift
-    cmd_new "${1:-}" "${2:-}"
-    ;;
-list)
-    cmd_list
-    ;;
-cleanup)
-    cmd_cleanup
-    ;;
-remove)
-    shift
-    cmd_remove "${1:-}"
-    ;;
-sign)
-    shift
-    cmd_sign "${1:-}"
-    ;;
-merge)
-    shift
-    cmd_merge "${1:-}" "${2:-}"
-    ;;
-rebase)
-    shift
-    cmd_rebase "${1:-}" "${2:-}"
-    ;;
-finalize | agent-merge)
-    shift
-    cmd_finalize "$@"
-    ;;
-agent-commit)
-    shift
-    cmd_agent_commit "${1:-}" "${2:-}"
-    ;;
-prs)
-    cmd_prs
-    ;;
-branches)
-    cmd_branches
-    ;;
-diff)
-    shift
-    cmd_diff "${1:-}"
-    ;;
-status)
-    shift
-    cmd_status "${1:-}"
-    ;;
-issue)
-    shift
-    cmd_issue "$@"
-    ;;
-epic)
-    shift
-    cmd_epic "${1:-}" "${2:-}"
-    ;;
-ticket)
-    shift
-    cmd_ticket "${1:-}" "${2:-}" "${3:-}"
-    ;;
-issues)
-    cmd_issues
-    ;;
-*)
-    usage
-    exit 1
-    ;;
+    create)
+        shift
+        cmd_create "${1:-}"
+        ;;
+    new)
+        shift
+        cmd_new "${1:-}" "${2:-}"
+        ;;
+    list)
+        cmd_list
+        ;;
+    cleanup)
+        cmd_cleanup
+        ;;
+    remove)
+        shift
+        cmd_remove "${1:-}"
+        ;;
+    sign)
+        shift
+        cmd_sign "${1:-}"
+        ;;
+    merge)
+        shift
+        cmd_merge "${1:-}" "${2:-}"
+        ;;
+    rebase)
+        shift
+        cmd_rebase "${1:-}" "${2:-}"
+        ;;
+    finalize|agent-merge)
+        shift
+        cmd_finalize "$@"
+        ;;
+    agent-commit)
+        shift
+        cmd_agent_commit "${1:-}" "${2:-}"
+        ;;
+    prs)
+        cmd_prs
+        ;;
+    *)
+        usage
+        exit 1
+        ;;
 esac
