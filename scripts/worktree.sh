@@ -8,9 +8,23 @@ REPO_ROOT="${REPO_ROOT:-$(cd "$(dirname "$0")/.." && pwd)}"
 TREE_DIR="${TREE_DIR:-$REPO_ROOT/tree}"
 
 # Source agent credentials if available (GPG signing for worktrees)
-if [[ -f "$REPO_ROOT/.credentials.env" ]]; then
+# Always source from main repo, not worktree
+# Walk up directory tree to find .credentials.env
+find_credentials() {
+    local dir="$1"
+    while [[ "$dir" != "/" ]]; do
+        if [[ -f "$dir/.credentials.env" ]]; then
+            echo "$dir"
+            return
+        fi
+        dir=$(dirname "$dir")
+    done
+}
+
+MAIN_REPO_ROOT="${MAIN_REPO_ROOT:-$(find_credentials "$REPO_ROOT")}"
+if [[ -n "$MAIN_REPO_ROOT" && -f "$MAIN_REPO_ROOT/.credentials.env" ]]; then
     # shellcheck source=/dev/null
-    source "$REPO_ROOT/.credentials.env"
+    source "$MAIN_REPO_ROOT/.credentials.env"
 fi
 
 # Colors
@@ -135,8 +149,16 @@ find_worktree() {
     local branch="$1"
     local dir_name
     dir_name="$(branch_to_path "$branch")"
+    
+    # Check if current directory IS the worktree for this branch
+    local current_branch
+    current_branch=$(git -C "$REPO_ROOT" branch --show-current 2>/dev/null || echo "")
+    if [[ "$current_branch" == "$branch" ]]; then
+        echo "$REPO_ROOT"
+        return
+    fi
+    
     local worktree_path="$TREE_DIR/$dir_name"
-
     if [[ -d "$worktree_path" ]]; then
         echo "$worktree_path"
     fi

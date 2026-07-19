@@ -96,11 +96,29 @@ git rebase --abort
 
 ## Signed Merge Commits
 
-Merge commits in worktrees are signed with the agent GPG key (per
-`agent-commit` protocol). The worktree's local git config enables
-`commit.gpgsign=true`.
+**All commits — including merge commits — must be GPG-signed.**
 
-When committing merge resolutions:
+`scripts/worktree.sh` auto-signs merge commits via `gpg_merge_flags()`.
+When `AGENT_GPG_KEY_ID` is set in `.credentials.env` and the secret key
+is available, `merge` and `finalize` pass `-c commit.gpgsign=true
+-c user.signingkey=<key>` to git automatically.
+
+If `/tmp/gpg-loopback` exists (non-TTY wrapper), it is used as
+`gpg.program` for merge commits. See `agent-commit` skill for details.
+
+### Verification
+
+After any merge, verify the signature:
+```bash
+git log --show-signature -1
+git verify-commit HEAD
+```
+
+Both should confirm: Good signature from agent key.
+
+### Manual Merge Commit (Conflict Resolution)
+
+When resolving merge conflicts, sign the commit manually:
 ```bash
 cd tree/<branch>
 GIT_COMMITTER_NAME="<AGENT_GPG_NAME>" \
@@ -116,20 +134,30 @@ git -c user.signingkey=<AGENT_GPG_KEY_ID> \
 ## Typical Workflow
 
 ```bash
+# 0. Unlock GPG (once per session, in real terminal)
+./scripts/gpg-unlock.sh
+
 # 1. Create feature worktree
 ./scripts/worktree.sh new feature-xyz master
 
 # 2. Work on feature (commits happen in tree/feature-xyz)
+cd tree/feature-xyz
+# ... implement feature ...
+# Commit with GPG signing (agent-commit skill)
 
 # 3. Sync with master before merge
 ./scripts/worktree.sh rebase feature-xyz master
 
-# 4. Or merge another branch in
+# 4. Or merge another branch in (auto-signed)
 ./scripts/worktree.sh merge feature-xyz other-feature
 
 # 5. Verify signature after commit
 cd tree/feature-xyz
 git log --show-signature -1
+
+# 6. Finalize: run checks, signed merge to master, remove worktree
+./scripts/worktree.sh finalize feature-xyz
+# Or: ./scripts/worktree.sh agent-merge feature-xyz
 ```
 
 ---

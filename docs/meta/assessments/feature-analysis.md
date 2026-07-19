@@ -69,5 +69,8 @@ ideas are direct or indirect business wins, and the highest-leverage ones (#6,
 the **execution + governance substrate** (sandbox, RAG, audit, RBAC, cost) that
 no current idea fully covers.
 
-_Reintegrate as: appendix to `docs/spec-planned/ideas/index.md` (add a "Business relevance"
-column) + input to `docs/meta/backlog.md`._
+### Cross-references
+
+- **Quick wins** (#6, #8, #18, #27, #28): promoted to `docs/meta/backlog.md` § Quick Wins and `docs/meta/roadmap.md` § v0.1 MVP.
+- **Coverage gaps** (sandbox, RAG, audit, RBAC, cost, DAG, approval gates): tracked as enterprise blockers in `docs/meta/backlog.md` — not yet in any epic. Add to P3 when epics are scoped.
+- **Ideas hub**: appendix to `docs/spec-planned/ideas/index.md` should add a "Business relevance" column per-theme.
