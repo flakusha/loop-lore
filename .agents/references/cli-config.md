@@ -51,6 +51,27 @@ Runs on commit: format → check → unit tests → e2e (with safeguards).
 | `bun run tui`           | Terminal UI      |
 | `bun run build`         | Production build |
 
+## Native Issue Tracking
+
+| Command | Description |
+|---------|-------------|
+| `./scripts/worktree.sh ticket TYPE ID "Title"` | Create ticket + worktree (BUG/FIX/FEA/IDEA/TASK/SOL) |
+| `./scripts/worktree.sh epic NUM` | Create epic branch + worktree |
+| `./scripts/worktree.sh issues` | List open issues with branch mapping |
+| `./scripts/worktree.sh issue <args>` | Run git-issue command directly |
+
+### Extended Identifiers
+
+| Type | Prefix | Example |
+|------|--------|---------|
+| Bug | BUG- | BUG-2025-001 |
+| Feature | FEA- | FEA-2025-042 |
+| Fix | FIX- | FIX-2025-002 |
+| Idea | IDEA- | IDEA-2025-023 |
+| Task | TASK- | TASK-2025-007 |
+| Solution | SOL- | SOL-2025-001 |
+| Epic | EPIC- | EPIC-16 |
+
 ## RTK Commands (Token-Efficient Output)
 
 **Golden Rule**: Always prefix commands with `rtk`. If RTK has a dedicated filter, it uses it. If not, it passes through unchanged. This means RTK is always safe to use.
