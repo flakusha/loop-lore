@@ -5,8 +5,8 @@
 import { describe, expect, test } from "bun:test";
 import { exportToCcV2Json } from "./exporters/ccv2";
 import { exportToCcV3Json } from "./exporters/ccv3";
-import { exportToYaml } from "./exporters/yaml";
 import { exportToToml } from "./exporters/toml";
+import { exportToYaml } from "./exporters/yaml";
 import type { CanonicalCharacter } from "./parser";
 
 const testCharacter: CanonicalCharacter = {
@@ -116,7 +116,7 @@ describe("exportToToml", () => {
     const toml = exportToToml(testCharacter);
 
     expect(toml).toContain("[character]");
-    expect(toml).toContain('name = "Test Character"');
+    expect(toml).toContain("name = \"Test Character\"");
     expect(toml).toContain("personality =");
     expect(toml).toContain("[character.metadata]");
     expect(toml).toContain("[character.prompts]");

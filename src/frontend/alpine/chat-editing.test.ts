@@ -1,5 +1,6 @@
 import type { ChatState, } from "./types";
 import { chatEditing, } from "./chat-editing";
+import { describe, expect, test } from "bun:test";
 import { describe, expect, test, } from "bun:test";
 
 const mockMessage = (id: string, content: string, role: string,) => ({

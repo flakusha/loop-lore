@@ -20,6 +20,11 @@ import type { TemplateContext, } from "./prompt-templates";
  * Tests for generation/prompt-templates.ts — image model profiles & templates
  */
 
+
+/**
+ * Tests for generation/prompt-templates.ts — image model profiles & templates
+ */
+
 describe("resolveTemplate", () => {
   const ctx: TemplateContext = {
     charName: "Alice",

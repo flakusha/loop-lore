@@ -16,6 +16,11 @@ import {
   browserImportKey,
 } from "../browser";
 
+
+/**
+ * Tests for frontend/browser.ts — browser compression and encryption utilities
+ */
+
 const SHORT_TEXT = "Hello, World!";
 const LARGE_TEXT = "The quick brown fox jumps over the lazy dog. ".repeat(200,); // ~8.8KB
 const UNICODE_TEXT = "Hello 世界 🌍 Привет 日本語 🚀 Zażółć gęślą jaźń";

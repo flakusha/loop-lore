@@ -3,17 +3,17 @@
 // Auto-detection and format dispatch for character card imports.
 // Tries each format in order, returning the first successful parse.
 
-import { parse as parseToml } from "smol-toml";
 import { load as yamlLoad } from "js-yaml";
-import { extractCharacterDataFromPng } from "./steganography";
+import { parse as parseToml } from "smol-toml";
+import { jsonParseOr } from "../utils/safe-json";
+import { extractCharx } from "./charx";
 import { normalizeCcV2 } from "./normalizers/ccv2";
 import { normalizeCcV3 } from "./normalizers/ccv3";
 import { normalizeCharacterAI } from "./normalizers/character-ai";
 import { normalizeJsonFlat } from "./normalizers/json-flat";
-import { normalizeYaml } from "./normalizers/yaml";
 import { normalizeToml } from "./normalizers/toml";
-import { extractCharx } from "./charx";
-import { jsonParseOr } from "../utils/safe-json";
+import { normalizeYaml } from "./normalizers/yaml";
+import { extractCharacterDataFromPng } from "./steganography";
 
 // Canonical character card format (superset of CCv2/V3)
 export interface CanonicalCharacter {
@@ -71,7 +71,15 @@ export interface CharacterAsset {
 }
 
 export type CharacterFormat =
-  "ccv2" | "ccv3" | "character-ai" | "json-flat" | "yaml" | "toml" | "png-v2" | "png-v3" | "charx";
+  | "ccv2"
+  | "ccv3"
+  | "character-ai"
+  | "json-flat"
+  | "yaml"
+  | "toml"
+  | "png-v2"
+  | "png-v3"
+  | "charx";
 
 export interface ParseResult {
   character: CanonicalCharacter;
@@ -80,8 +88,7 @@ export interface ParseResult {
 }
 
 export interface ParseError {
-  code:
-    "FORMAT_NOT_DETECTED" | "PARSE_ERROR" | "VALIDATION_ERROR" | "UNSUPPORTED_VERSION" | "FILE_READ_ERROR";
+  code: "FORMAT_NOT_DETECTED" | "PARSE_ERROR" | "VALIDATION_ERROR" | "UNSUPPORTED_VERSION" | "FILE_READ_ERROR";
   message: string;
   details?: {
     line?: number;

@@ -26,6 +26,11 @@ import { getSmk, } from "./smk";
  * Tests for crypto/actor-keys.ts — Actor key CRUD
  */
 
+
+/**
+ * Tests for crypto/actor-keys.ts — Actor key CRUD
+ */
+
 const VALID_HEX_KEY = "a".repeat(64,);
 const ACTOR_ID = "actor-test-001";
 

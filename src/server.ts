@@ -3,6 +3,7 @@
 import { DynamicResponsePolicy, ResponseHeaderPolicy, } from "./middleware";
 import { compressAssets, copyDirectory, } from "./content/compress";
 import { createApp, } from "./elysia-app";
+import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import { existsSync, readdirSync, readFileSync, statSync, } from "node:fs";
 import { initAgeGate, } from "./age-gate/controller";
 import { injectContentHashes, } from "./content/hash-injection";
@@ -15,10 +16,12 @@ import { spawnSync, } from "node:child_process";
 
 import { ServerExternalManager, } from "./services/server-external-manager";
 import { createLogger, getLogger, } from "./logger";
+import { dispatchPluginRoute, loadAllPlugins, unloadAllPlugins } from "./plugins";
 import { dispatchPluginRoute, loadAllPlugins, unloadAllPlugins, } from "./plugins";
 import { ensureTlsCerts, } from "./config/cert";
 import { getDatabase, } from "./db/index";
 import { initSmk, } from "./crypto";
+import { initializeProviders, OpenAiCompatibleProvider, registerProvider } from "./generation";
 import { initializeProviders, OpenAiCompatibleProvider, registerProvider, } from "./generation";
 
 const DOCS_PATH = join(import.meta.dir, "..", "docs", ".vitepress", "dist",);

@@ -23,6 +23,13 @@ import type {
 } from "./enums";
 
 // ── Worlds ──────────────────────────────────────────────────
+
+/**
+ * DB Schema — Story Domain Tables
+ *
+ * items, and world-placed items.
+ */
+// ── Worlds ──────────────────────────────────────────────────
 export interface Worlds {
   id: Generated<string>;
   owner_id: string;

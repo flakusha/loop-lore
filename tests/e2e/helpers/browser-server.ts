@@ -15,9 +15,11 @@ import "./logger-init";
 import type { Config, } from "@/config/schema";
 import type { DB, } from "@/db/schema";
 import type { Kysely, } from "kysely";
+import { cpSync, existsSync, mkdirSync, readFileSync, rmSync } from "node:fs";
 import { cpSync, existsSync, mkdirSync, readFileSync, rmSync, } from "node:fs";
 import { createApp, } from "@/elysia-app";
 import { createLogger, setGlobalLogger, } from "@/logger";
+import { createTestDb, loadTestConfig, runMigrations } from "./server";
 import { createTestDb, loadTestConfig, runMigrations, } from "./server";
 import { initAgeGate, } from "@/age-gate/controller";
 import { initSmk, } from "@/crypto";
@@ -28,6 +30,7 @@ import { resetSoloUserCache, } from "@/middleware/index";
 import { seedSolo, } from "./seed";
 import { setTestDatabase, } from "@/db/index";
 import { spawnSync, } from "node:child_process";
+import { type Browser, chromium } from "@playwright/test";
 import { type Browser, chromium, } from "@playwright/test";
 
 // ── Types ────────────────────────────────────────────────────

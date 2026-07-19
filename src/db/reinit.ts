@@ -5,6 +5,7 @@ import { Database, } from "bun:sqlite";
 import { Kysely, } from "kysely";
 import { createLogger, getLogger, } from "../logger";
 import { createSqliteDialect, getDatabase, } from "./index";
+import { existsSync, unlinkSync } from "node:fs";
 import { existsSync, unlinkSync, } from "node:fs";
 import { runMigrations, } from "./migrate";
 import { seedDefaultActors, } from "./seed";

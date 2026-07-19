@@ -9,13 +9,13 @@
 //   bun run scripts/character-io.ts export-all [--format json|yaml] [--output <dir>]
 //   bun run scripts/character-io.ts detect <file>
 
-import { parseCharacterCard, validateCharacter } from "../src/characters/parser";
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { basename, join } from "node:path";
 import { exportToCcV2Json } from "../src/characters/exporters/ccv2";
 import { exportToCcV3Json } from "../src/characters/exporters/ccv3";
-import { exportToYaml } from "../src/characters/exporters/yaml";
 import { exportToToml } from "../src/characters/exporters/toml";
-import { readFileSync, writeFileSync, mkdirSync, existsSync } from "node:fs";
-import { join, basename } from "node:path";
+import { exportToYaml } from "../src/characters/exporters/yaml";
+import { parseCharacterCard, validateCharacter } from "../src/characters/parser";
 
 const args = process.argv.slice(2);
 const command = args[0];

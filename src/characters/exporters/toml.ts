@@ -3,8 +3,8 @@
 // TOML exporter for character cards.
 // Converts canonical character card to TOML format.
 
-import type { CanonicalCharacter } from "../parser";
 import { stringify as tomlStringify } from "smol-toml";
+import type { CanonicalCharacter } from "../parser";
 
 /**
  * Export canonical character card to TOML format.
