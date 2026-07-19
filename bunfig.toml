@@ -1,0 +1,10 @@
+[install]
+# Shared virtual store across projects/worktrees — warm installs ~7× faster.
+# Packages live in <cache>/links/; node_modules/.bun/<pkg>@<ver> symlinks into it.
+# See https://bun.com/docs/pm/global-store
+globalStore = true
+
+# Isolated linker: two-tier node_modules layout required for globalStore.
+# Top-level packages are symlinks → .bun/<pkg>@<ver>/node_modules/<pkg>.
+# See https://bun.com/docs/pm/isolated-installs
+linker = "isolated"
