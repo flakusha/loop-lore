@@ -18,35 +18,35 @@
  *     ReadableStream passes through without buffering, so SSE is unaffected.
  */
 
-import type { HeadersConfig } from "../config/schema";
+import type { HeadersConfig, } from "../config/schema";
 
 /** Canonical header names for case-insensitive comparison. */
 const CANONICAL_HEADER_NAMES = new Map<string, string>([
-  ["referrer-policy", "Referrer-Policy"],
-  ["x-content-type-options", "X-Content-Type-Options"],
-  ["x-frame-options", "X-Frame-Options"],
-  ["cross-origin-resource-policy", "Cross-Origin-Resource-Policy"],
-  ["cross-origin-opener-policy", "Cross-Origin-Opener-Policy"],
-  ["cross-origin-embedder-policy", "Cross-Origin-Embedder-Policy"],
-  ["permissions-policy", "Permissions-Policy"],
-  ["content-security-policy", "Content-Security-Policy"],
-  ["content-security-policy-report-only", "Content-Security-Policy-Report-Only"],
-  ["accept-ch", "Accept-CH"],
-  ["critical-ch", "Critical-CH"],
-  ["save-data", "Save-Data"],
-  ["reporting-endpoints", "Reporting-Endpoints"],
-  ["link", "Link"],
-  ["nel", "NEL"],
-  ["vary", "Vary"],
-  ["cache-control", "Cache-Control"],
-  ["content-encoding", "Content-Encoding"],
-  ["timing-allow-origin", "Timing-Allow-Origin"],
-]);
+  ["referrer-policy", "Referrer-Policy",],
+  ["x-content-type-options", "X-Content-Type-Options",],
+  ["x-frame-options", "X-Frame-Options",],
+  ["cross-origin-resource-policy", "Cross-Origin-Resource-Policy",],
+  ["cross-origin-opener-policy", "Cross-Origin-Opener-Policy",],
+  ["cross-origin-embedder-policy", "Cross-Origin-Embedder-Policy",],
+  ["permissions-policy", "Permissions-Policy",],
+  ["content-security-policy", "Content-Security-Policy",],
+  ["content-security-policy-report-only", "Content-Security-Policy-Report-Only",],
+  ["accept-ch", "Accept-CH",],
+  ["critical-ch", "Critical-CH",],
+  ["save-data", "Save-Data",],
+  ["reporting-endpoints", "Reporting-Endpoints",],
+  ["link", "Link",],
+  ["nel", "NEL",],
+  ["vary", "Vary",],
+  ["cache-control", "Cache-Control",],
+  ["content-encoding", "Content-Encoding",],
+  ["timing-allow-origin", "Timing-Allow-Origin",],
+],);
 
 /** Normalize header key to canonical casing for case-insensitive comparison. */
-export function normalizeHeaderKey(key: string): string {
+export function normalizeHeaderKey(key: string,): string {
   const lower = key.toLowerCase();
-  return CANONICAL_HEADER_NAMES.get(lower) ?? key;
+  return CANONICAL_HEADER_NAMES.get(lower,) ?? key;
 }
 
 /** Classification of an outgoing response, driving which headers apply. */
@@ -67,7 +67,7 @@ export class ResponseHeaderPolicy {
   /**
    * @param config - Resolved `headers` config block.
    */
-  constructor(private readonly config: HeadersConfig) {}
+  constructor(private readonly config: HeadersConfig,) {}
 
   /**
    * Decorate a response with the configured header set.
@@ -75,40 +75,40 @@ export class ResponseHeaderPolicy {
    * @param options - request + response to process
    * @returns A new Response carrying the merged headers (original untouched).
    */
-  apply({ request, response }: ApplyOptions): Response {
-    if (!this.config.enabled) return response;
+  apply({ request, response, }: ApplyOptions,): Response {
+    if (!this.config.enabled) { return response; }
 
-    const kind = this.classify({ request, response });
+    const kind = this.classify({ request, response, },);
 
     // SSE and streaming responses pass through without wrapping
-    if (kind === "sse") return response;
+    if (kind === "sse") { return response; }
 
-    const additions = this.buildHeaders(kind);
+    const additions = this.buildHeaders(kind,);
 
-    const headers = new Headers(response.headers);
-    for (const [name, value] of Object.entries(additions)) {
-      const canonical = normalizeHeaderKey(name);
+    const headers = new Headers(response.headers,);
+    for (const [name, value,] of Object.entries(additions,)) {
+      const canonical = normalizeHeaderKey(name,);
       // Route-set headers win on conflict (never clobber Content-Type, Cache-Control, SSE).
-      if (headers.has(canonical)) continue;
-      headers.set(canonical, value);
+      if (headers.has(canonical,)) { continue; }
+      headers.set(canonical, value,);
     }
 
     if (kind === "static" && this.config.immutableHashedAssets) {
-      this.augmentImmutable({ request, headers });
+      this.augmentImmutable({ request, headers, },);
     }
 
-    return new Response(response.body, { status: response.status, headers });
+    return new Response(response.body, { status: response.status, headers, },);
   }
 
   /**
    * Classify a response into a route kind.
    * HTML → html; SSE (content-type) → sse; `/api/*` → api; static → static.
    */
-  private classify({ request, response }: ApplyOptions): RouteKind {
-    const contentType = response.headers.get("content-type") ?? "";
-    if (contentType.startsWith("text/html")) return "html";
-    if (contentType.includes("text/event-stream")) return "sse";
-    if (request && new URL(request.url).pathname.startsWith("/api/")) return "api";
+  private classify({ request, response, }: ApplyOptions,): RouteKind {
+    const contentType = response.headers.get("content-type",) ?? "";
+    if (contentType.startsWith("text/html",)) { return "html"; }
+    if (contentType.includes("text/event-stream",)) { return "sse"; }
+    if (request && new URL(request.url,).pathname.startsWith("/api/",)) { return "api"; }
     return "static";
   }
 
@@ -116,20 +116,20 @@ export class ResponseHeaderPolicy {
    * Build the header map for a given route kind. Route headers are not present
    * here — merge logic in {@link apply} handles precedence.
    */
-  private buildHeaders(kind: RouteKind): Record<string, string> {
+  private buildHeaders(kind: RouteKind,): Record<string, string> {
     const cfg = this.config;
     const headers: Record<string, string> = {};
 
-    if (cfg.referrerPolicy) headers["Referrer-Policy"] = cfg.referrerPolicy;
-    if (cfg.xContentTypeOptions) headers["X-Content-Type-Options"] = "nosniff";
-    if (cfg.xFrameOptions) headers["X-Frame-Options"] = cfg.xFrameOptions;
+    if (cfg.referrerPolicy) { headers["Referrer-Policy"] = cfg.referrerPolicy; }
+    if (cfg.xContentTypeOptions) { headers["X-Content-Type-Options"] = "nosniff"; }
+    if (cfg.xFrameOptions) { headers["X-Frame-Options"] = cfg.xFrameOptions; }
 
     // CORP: documents get same-origin, static subresources keep configured value.
     if (cfg.crossOriginResourcePolicy) {
       headers["Cross-Origin-Resource-Policy"] = kind === "static" ? cfg.crossOriginResourcePolicy : "same-origin";
     }
 
-    if (cfg.timingAllowOrigin) headers["Timing-Allow-Origin"] = cfg.timingAllowOrigin;
+    if (cfg.timingAllowOrigin) { headers["Timing-Allow-Origin"] = cfg.timingAllowOrigin; }
 
     switch (kind) {
       case "html": {
@@ -139,11 +139,11 @@ export class ResponseHeaderPolicy {
             : "Content-Security-Policy";
           headers[headerName] = this.buildCsp();
         }
-        if (cfg.crossOriginOpenerPolicy) headers["Cross-Origin-Opener-Policy"] = cfg.crossOriginOpenerPolicy;
+        if (cfg.crossOriginOpenerPolicy) { headers["Cross-Origin-Opener-Policy"] = cfg.crossOriginOpenerPolicy; }
         if (cfg.crossOriginEmbedderPolicy) {
           headers["Cross-Origin-Embedder-Policy"] = cfg.crossOriginEmbedderPolicy;
         }
-        if (cfg.permissionsPolicy) headers["Permissions-Policy"] = cfg.permissionsPolicy;
+        if (cfg.permissionsPolicy) { headers["Permissions-Policy"] = cfg.permissionsPolicy; }
 
         // Timing-Allow-Origin for performance measurement on static assets
         if (cfg.timingAllowOrigin) {
@@ -151,18 +151,18 @@ export class ResponseHeaderPolicy {
         }
 
         const link = this.buildLinkHeader();
-        if (link) headers.Link = link;
+        if (link) { headers.Link = link; }
 
         if (cfg.acceptClientHints.length > 0) {
-          const hints = cfg.acceptClientHints.join(", ");
+          const hints = cfg.acceptClientHints.join(", ",);
           headers["Accept-CH"] = hints;
           headers["Critical-CH"] = hints;
-          if (cfg.saveData) headers["Save-Data"] = "on";
+          if (cfg.saveData) { headers["Save-Data"] = "on"; }
         }
         break;
       }
       case "api": {
-        if (cfg.permissionsPolicy) headers["Permissions-Policy"] = cfg.permissionsPolicy;
+        if (cfg.permissionsPolicy) { headers["Permissions-Policy"] = cfg.permissionsPolicy; }
         break;
       }
     }
@@ -170,8 +170,8 @@ export class ResponseHeaderPolicy {
     // Headers shared by html and api
     if (kind === "html" || kind === "api") {
       const reporting = this.buildReportingEndpoints();
-      if (reporting) headers["Reporting-Endpoints"] = reporting;
-      if (cfg.nel) headers.NEL = cfg.nel;
+      if (reporting) { headers["Reporting-Endpoints"] = reporting; }
+      if (cfg.nel) { headers.NEL = cfg.nel; }
     }
 
     return headers;
@@ -181,53 +181,53 @@ export class ResponseHeaderPolicy {
   private buildCsp(): string {
     const c = this.config.csp;
     const directives: string[] = [];
-    const push = (name: string, values: string[]): void => {
-      if (values.length > 0) directives.push(`${name} ${values.join(" ")}`);
+    const push = (name: string, values: string[],): void => {
+      if (values.length > 0) { directives.push(`${name} ${values.join(" ",)}`,); }
     };
 
-    push("default-src", c.defaultSrc);
-    push("script-src", c.scriptSrc);
-    push("style-src", c.styleSrc);
-    push("img-src", c.imgSrc);
-    push("font-src", c.fontSrc);
-    push("connect-src", c.connectSrc);
-    push("object-src", c.objectSrc);
-    push("base-uri", c.baseUri);
-    push("frame-ancestors", c.frameAncestors);
-    push("form-action", c.formAction);
-    if (c.upgradeInsecureRequests) directives.push("upgrade-insecure-requests");
+    push("default-src", c.defaultSrc,);
+    push("script-src", c.scriptSrc,);
+    push("style-src", c.styleSrc,);
+    push("img-src", c.imgSrc,);
+    push("font-src", c.fontSrc,);
+    push("connect-src", c.connectSrc,);
+    push("object-src", c.objectSrc,);
+    push("base-uri", c.baseUri,);
+    push("frame-ancestors", c.frameAncestors,);
+    push("form-action", c.formAction,);
+    if (c.upgradeInsecureRequests) { directives.push("upgrade-insecure-requests",); }
 
-    return directives.join("; ");
+    return directives.join("; ",);
   }
 
   /** Build `Link: <…>; rel=preload` hints with a best-effort `as` token. */
   private buildLinkHeader(): string {
-    if (this.config.linkPreload.length === 0) return "";
+    if (this.config.linkPreload.length === 0) { return ""; }
     return this.config.linkPreload
-      .map((path) => {
-        const as = path.endsWith(".css") ? "style" : path.endsWith(".js") ? "script" : "";
+      .map((path,) => {
+        const as = path.endsWith(".css",) ? "style" : path.endsWith(".js",) ? "script" : "";
         const suffix = as ? `; as=${as}` : "";
         return `<${path}>; rel=preload${suffix}`;
-      })
-      .join(", ");
+      },)
+      .join(", ",);
   }
 
   /** Build `Reporting-Endpoints: name="url", …` from the config map. */
   private buildReportingEndpoints(): string {
-    const entries = Object.entries(this.config.reportingEndpoints);
-    if (entries.length === 0) return "";
-    return entries.map(([name, url]) => `${name}="${url}"`).join(", ");
+    const entries = Object.entries(this.config.reportingEndpoints,);
+    if (entries.length === 0) { return ""; }
+    return entries.map(([name, url,],) => `${name}="${url}"`).join(", ",);
   }
 
   /**
    * Append `immutable` to an existing `Cache-Control: …max-age…` value when the
    * requested path is a content-hashed asset (safe long-term caching).
    */
-  private augmentImmutable({ request, headers }: { request: Request; headers: Headers }): void {
-    const cacheControl = headers.get("Cache-Control");
-    if (!cacheControl?.includes("max-age")) return;
-    if (HASHED_ASSET_PATTERN.test(new URL(request.url).pathname)) {
-      headers.set("Cache-Control", `${cacheControl}, immutable`);
+  private augmentImmutable({ request, headers, }: { request: Request; headers: Headers },): void {
+    const cacheControl = headers.get("Cache-Control",);
+    if (!cacheControl?.includes("max-age",)) { return; }
+    if (HASHED_ASSET_PATTERN.test(new URL(request.url,).pathname,)) {
+      headers.set("Cache-Control", `${cacheControl}, immutable`,);
     }
   }
 }

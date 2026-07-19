@@ -9,7 +9,7 @@
 //   - load.ts ENV_MAP (env var → dot.path mapping)
 //   - load.ts validateConfig (validation rules)
 
-import type { Config } from "./schema";
+import type { Config, } from "./schema";
 import {
   ageGateMeta,
   AgeGateSection,
@@ -97,59 +97,59 @@ export class ConfigSchema {
   readonly headers = new HeadersSection();
   readonly dynamicResponse = new DynamicResponseSection();
 
-  constructor(overrides?: Partial<Config>) {
-    if (!overrides) return;
+  constructor(overrides?: Partial<Config>,) {
+    if (!overrides) { return; }
 
     if (overrides.server) {
-      Object.assign(this.server, overrides.server);
+      Object.assign(this.server, overrides.server,);
     }
     if (overrides.db) {
-      Object.assign(this.db, overrides.db);
+      Object.assign(this.db, overrides.db,);
     }
     if (overrides.assets) {
-      Object.assign(this.assets, overrides.assets);
+      Object.assign(this.assets, overrides.assets,);
     }
     if (overrides.assistant) {
-      Object.assign(this.assistant, overrides.assistant);
+      Object.assign(this.assistant, overrides.assistant,);
     }
     if (overrides.logging) {
-      Object.assign(this.logging, overrides.logging);
+      Object.assign(this.logging, overrides.logging,);
     }
     if (overrides.tui) {
-      Object.assign(this.tui, overrides.tui);
+      Object.assign(this.tui, overrides.tui,);
     }
     if (overrides.docs) {
-      Object.assign(this.docs, overrides.docs);
+      Object.assign(this.docs, overrides.docs,);
     }
     if (overrides.ageGate) {
-      Object.assign(this.ageGate, overrides.ageGate);
+      Object.assign(this.ageGate, overrides.ageGate,);
     }
     if (overrides.auth) {
-      Object.assign(this.auth, overrides.auth);
+      Object.assign(this.auth, overrides.auth,);
     }
     if (overrides.transport) {
-      Object.assign(this.transport, overrides.transport);
+      Object.assign(this.transport, overrides.transport,);
     }
     if (overrides.messages) {
-      Object.assign(this.messages, overrides.messages);
+      Object.assign(this.messages, overrides.messages,);
     }
     if (overrides.nsfw) {
-      Object.assign(this.nsfw, overrides.nsfw);
+      Object.assign(this.nsfw, overrides.nsfw,);
     }
     if (overrides.generation) {
-      Object.assign(this.generation, overrides.generation);
+      Object.assign(this.generation, overrides.generation,);
     }
     if (overrides.byoKey) {
-      Object.assign(this.byoKey, overrides.byoKey);
+      Object.assign(this.byoKey, overrides.byoKey,);
     }
     if (overrides.encryption) {
-      Object.assign(this.encryption, overrides.encryption);
+      Object.assign(this.encryption, overrides.encryption,);
     }
     if (overrides.headers) {
-      Object.assign(this.headers, overrides.headers);
+      Object.assign(this.headers, overrides.headers,);
     }
     if (overrides.dynamicResponse) {
-      Object.assign(this.dynamicResponse, overrides.dynamicResponse);
+      Object.assign(this.dynamicResponse, overrides.dynamicResponse,);
     }
   }
 
@@ -160,35 +160,35 @@ export class ConfigSchema {
     const map: EnvMap = {};
     const s = new ConfigSchema();
 
-    const add = (prefix: string, obj: Record<string, unknown>) => {
-      for (const [key, val] of Object.entries(obj)) {
+    const add = (prefix: string, obj: Record<string, unknown>,) => {
+      for (const [key, val,] of Object.entries(obj,)) {
         const path = `${prefix}.${key}`;
-        const envKey = path.replaceAll(".", "_").toUpperCase();
-        if (val && typeof val === "object" && !Array.isArray(val)) {
-          add(path, val as Record<string, unknown>);
+        const envKey = path.replaceAll(".", "_",).toUpperCase();
+        if (val && typeof val === "object" && !Array.isArray(val,)) {
+          add(path, val as Record<string, unknown>,);
         } else {
           map[envKey] = path;
         }
       }
     };
 
-    add("server", s.server as unknown as Record<string, unknown>);
-    add("db", s.db as unknown as Record<string, unknown>);
-    add("assets", s.assets as unknown as Record<string, unknown>);
-    add("assistant", s.assistant as unknown as Record<string, unknown>);
-    add("logging", s.logging as unknown as Record<string, unknown>);
-    add("tui", s.tui as unknown as Record<string, unknown>);
-    add("docs", s.docs as unknown as Record<string, unknown>);
-    add("ageGate", s.ageGate as unknown as Record<string, unknown>);
-    add("auth", s.auth as unknown as Record<string, unknown>);
-    add("transport", s.transport as unknown as Record<string, unknown>);
-    add("messages", s.messages as unknown as Record<string, unknown>);
-    add("nsfw", s.nsfw as unknown as Record<string, unknown>);
-    add("generation", s.generation as unknown as Record<string, unknown>);
-    add("byoKey", s.byoKey as unknown as Record<string, unknown>);
-    add("encryption", s.encryption as unknown as Record<string, unknown>);
-    add("headers", s.headers as unknown as Record<string, unknown>);
-    add("dynamicResponse", s.dynamicResponse as unknown as Record<string, unknown>);
+    add("server", s.server as unknown as Record<string, unknown>,);
+    add("db", s.db as unknown as Record<string, unknown>,);
+    add("assets", s.assets as unknown as Record<string, unknown>,);
+    add("assistant", s.assistant as unknown as Record<string, unknown>,);
+    add("logging", s.logging as unknown as Record<string, unknown>,);
+    add("tui", s.tui as unknown as Record<string, unknown>,);
+    add("docs", s.docs as unknown as Record<string, unknown>,);
+    add("ageGate", s.ageGate as unknown as Record<string, unknown>,);
+    add("auth", s.auth as unknown as Record<string, unknown>,);
+    add("transport", s.transport as unknown as Record<string, unknown>,);
+    add("messages", s.messages as unknown as Record<string, unknown>,);
+    add("nsfw", s.nsfw as unknown as Record<string, unknown>,);
+    add("generation", s.generation as unknown as Record<string, unknown>,);
+    add("byoKey", s.byoKey as unknown as Record<string, unknown>,);
+    add("encryption", s.encryption as unknown as Record<string, unknown>,);
+    add("headers", s.headers as unknown as Record<string, unknown>,);
+    add("dynamicResponse", s.dynamicResponse as unknown as Record<string, unknown>,);
 
     // Manual overrides for renamed/mapped env vars that don't follow
     // the SECTION_FIELD → SECTION_FIELD convention
@@ -252,55 +252,55 @@ export class ConfigSchema {
       TESTING_SD_PORT: "testing.sdPort",
     };
 
-    Object.assign(map, RENAMED);
+    Object.assign(map, RENAMED,);
     return map;
   }
 
   // ── Validation ─────────────────────────────────────────
 
-  static validate(config: Config): void {
-    if (!["sqlite", "postgres"].includes(config.db.type)) {
-      throw new Error(`Invalid db.type: "${config.db.type}"`);
+  static validate(config: Config,): void {
+    if (!["sqlite", "postgres",].includes(config.db.type,)) {
+      throw new Error(`Invalid db.type: "${config.db.type}"`,);
     }
     if (config.db.type === "postgres" && !config.db.url) {
-      throw new Error("db.url is required when db.type is 'postgres'");
+      throw new Error("db.url is required when db.type is 'postgres'",);
     }
     if (config.server.port < 0 || config.server.port > 65_535) {
-      throw new Error(`Invalid server.port: ${config.server.port}. Must be 0-65535`);
+      throw new Error(`Invalid server.port: ${config.server.port}. Must be 0-65535`,);
     }
-    if (!["debug", "info", "warn", "error"].includes(config.logging.level)) {
-      throw new Error(`Invalid logging.level: "${config.logging.level}"`);
+    if (!["debug", "info", "warn", "error",].includes(config.logging.level,)) {
+      throw new Error(`Invalid logging.level: "${config.logging.level}"`,);
     }
     for (const p of config.generation.providers.openaiCompatible) {
-      if (!p.baseUrl) throw new Error(`Provider "${p.name}" missing baseUrl`);
-      if (!p.model) throw new Error(`Provider "${p.name}" missing model`);
+      if (!p.baseUrl) { throw new Error(`Provider "${p.name}" missing baseUrl`,); }
+      if (!p.model) { throw new Error(`Provider "${p.name}" missing model`,); }
     }
     if (config.generation.providers.anthropic && !config.generation.providers.anthropic.apiKey) {
-      throw new Error("generation.providers.anthropic requires apiKey");
+      throw new Error("generation.providers.anthropic requires apiKey",);
     }
     if (
-      config.headers.xFrameOptions !== null
-      && !["DENY", "SAMEORIGIN"].includes(config.headers.xFrameOptions)
+      config.headers.xFrameOptions !== null &&
+      !["DENY", "SAMEORIGIN",].includes(config.headers.xFrameOptions,)
     ) {
-      throw new Error(`Invalid headers.xFrameOptions: "${config.headers.xFrameOptions}"`);
+      throw new Error(`Invalid headers.xFrameOptions: "${config.headers.xFrameOptions}"`,);
     }
     if (
-      config.headers.crossOriginOpenerPolicy !== null
-      && !["same-origin", "same-origin-allow-popups"].includes(config.headers.crossOriginOpenerPolicy)
+      config.headers.crossOriginOpenerPolicy !== null &&
+      !["same-origin", "same-origin-allow-popups",].includes(config.headers.crossOriginOpenerPolicy,)
     ) {
-      throw new Error(`Invalid headers.crossOriginOpenerPolicy: "${config.headers.crossOriginOpenerPolicy}"`);
+      throw new Error(`Invalid headers.crossOriginOpenerPolicy: "${config.headers.crossOriginOpenerPolicy}"`,);
     }
     if (
-      config.headers.crossOriginEmbedderPolicy !== null
-      && config.headers.crossOriginEmbedderPolicy !== "require-corp"
+      config.headers.crossOriginEmbedderPolicy !== null &&
+      config.headers.crossOriginEmbedderPolicy !== "require-corp"
     ) {
       throw new Error(
         `Invalid headers.crossOriginEmbedderPolicy: "${config.headers.crossOriginEmbedderPolicy as string}"`,
       );
     }
     if (
-      config.headers.crossOriginResourcePolicy !== null
-      && !["same-origin", "cross-origin"].includes(config.headers.crossOriginResourcePolicy)
+      config.headers.crossOriginResourcePolicy !== null &&
+      !["same-origin", "cross-origin",].includes(config.headers.crossOriginResourcePolicy,)
     ) {
       throw new Error(
         `Invalid headers.crossOriginResourcePolicy: "${config.headers.crossOriginResourcePolicy}"`,
@@ -316,7 +316,7 @@ export class ConfigSchema {
       $id: "./schemas/loop-lore-config.schema.json",
       title: "loop-lore Config",
       type: "object",
-      properties: Object.fromEntries(Object.entries(SECTION_METAS).map(([key, meta]) => [key, meta])),
+      properties: Object.fromEntries(Object.entries(SECTION_METAS,).map(([key, meta,],) => [key, meta,]),),
       required: [
         "server",
         "db",

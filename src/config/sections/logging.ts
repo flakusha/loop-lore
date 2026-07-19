@@ -1,7 +1,7 @@
 // src/config/sections/logging.ts — Logging config section
 
-import { LogLevel } from "../../db/enums";
-import type { LoggingConfig } from "../schema";
+import { LogLevel, } from "../../db/enums";
+import type { LoggingConfig, } from "../schema";
 
 export const LOGGING_DEFAULTS = {
   level: LogLevel.Debug,
@@ -21,8 +21,8 @@ export class LoggingSection implements LoggingConfig {
   maxMetaDepth?: number;
   maxStackBytes?: number;
 
-  constructor(overrides?: Partial<LoggingConfig>) {
-    Object.assign(this, overrides);
+  constructor(overrides?: Partial<LoggingConfig>,) {
+    Object.assign(this, overrides,);
   }
 }
 
@@ -32,10 +32,10 @@ export const loggingMeta = {
   properties: {
     level: {
       type: "string",
-      enum: ["debug", "info", "warn", "error"],
+      enum: ["debug", "info", "warn", "error",],
       description: "Log level",
     },
-    jsonlPath: { type: "string", description: "JSONL output path" },
+    jsonlPath: { type: "string", description: "JSONL output path", },
     jsonlMaxBytes: {
       type: "integer",
       description: "Max JSONL file bytes before rotation",
@@ -44,11 +44,11 @@ export const loggingMeta = {
       type: "integer",
       description: "Max rotated files to keep",
     },
-    dbEnabled: { type: "boolean", description: "Enable DB log transport" },
-    censorEnabled: { type: "boolean", description: "PII redaction" },
+    dbEnabled: { type: "boolean", description: "Enable DB log transport", },
+    censorEnabled: { type: "boolean", description: "PII redaction", },
     censorFields: {
       type: "array",
-      items: { type: "string" },
+      items: { type: "string", },
       description: "Extra PII field patterns",
     },
     queueMaxSize: {
@@ -72,5 +72,5 @@ export const loggingMeta = {
       description: "Max error stack bytes",
     },
   },
-  required: ["level"] as const,
+  required: ["level",] as const,
 };

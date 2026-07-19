@@ -8,8 +8,8 @@
  * `registerPolicyDetector()` at startup.
  */
 
-import { getLogger } from "../logger";
-import type { PolicyAnalysis, PolicyDetectionConfig } from "./types";
+import { getLogger, } from "../logger";
+import type { PolicyAnalysis, PolicyDetectionConfig, } from "./types";
 
 // ── Detector interface ────────────────────────────────────
 
@@ -26,7 +26,7 @@ export interface PolicyDetector {
    * @param config - Detection configuration
    * @returns A PolicyAnalysis describing any violations found
    */
-  analyze(text: string, config: PolicyDetectionConfig): Promise<PolicyAnalysis>;
+  analyze(text: string, config: PolicyDetectionConfig,): Promise<PolicyAnalysis>;
 }
 
 // ── Detector registry ─────────────────────────────────────
@@ -37,8 +37,8 @@ const registeredDetectors: PolicyDetector[] = [];
  * Register a custom policy detector. Detectors run in registration order;
  * the first detector to return `detected: true` short-circuits.
  */
-export function registerPolicyDetector(detector: PolicyDetector): void {
-  registeredDetectors.push(detector);
+export function registerPolicyDetector(detector: PolicyDetector,): void {
+  registeredDetectors.push(detector,);
 }
 
 /**
@@ -53,20 +53,20 @@ export function clearDetectors(): void {
 class NullDetector implements PolicyDetector {
   readonly name = "null";
 
-  analyze(_text: string, _config: PolicyDetectionConfig): Promise<PolicyAnalysis> {
+  analyze(_text: string, _config: PolicyDetectionConfig,): Promise<PolicyAnalysis> {
     return Promise.resolve({
       detected: false,
       policy: _config.expectedPolicy,
       confidence: 0,
       indicators: [],
-    });
+    },);
   }
 }
 
 // Register the null detector by default — no third-party dependency
 // Call this explicitly at startup. Export for use in tests.
 export function registerDefaultNullDetector(): void {
-  registerPolicyDetector(new NullDetector());
+  registerPolicyDetector(new NullDetector(),);
 }
 
 // ── Public API ─────────────────────────────────────────────
@@ -81,7 +81,7 @@ export async function detectPolicyMismatch(
   config: PolicyDetectionConfig,
 ): Promise<PolicyAnalysis> {
   if (!config.enabled || !text) {
-    return { detected: false, policy: config.expectedPolicy, confidence: 0, indicators: [] };
+    return { detected: false, policy: config.expectedPolicy, confidence: 0, indicators: [], };
   }
 
   let bestAnalysis: PolicyAnalysis = {
@@ -93,7 +93,7 @@ export async function detectPolicyMismatch(
 
   for (const detector of registeredDetectors) {
     try {
-      const analysis = await detector.analyze(text, config);
+      const analysis = await detector.analyze(text, config,);
 
       if (analysis.detected) {
         // First positive hit short-circuits
@@ -106,8 +106,8 @@ export async function detectPolicyMismatch(
       }
     } catch (error) {
       getLogger()
-        .child({ module: "policy-detector" })
-        .warn(`${detector.name} failed: ${(error as Error).message}`);
+        .child({ module: "policy-detector", },)
+        .warn(`${detector.name} failed: ${(error as Error).message}`,);
       // Detector failure is non-fatal — continue to next detector
     }
   }

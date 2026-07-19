@@ -10,11 +10,11 @@
 // default an extractive fallback (no network) keeps the feature usable
 // without external dependencies.
 
-import type { GenerationMessage } from "./gen-types-options";
+import type { GenerationMessage, } from "./gen-types-options";
 
 /** char→token heuristic (plan: chars * 0.3) */
-export function estimateTokens(text: string): number {
-  return Math.ceil(text.length * 0.3);
+export function estimateTokens(text: string,): number {
+  return Math.ceil(text.length * 0.3,);
 }
 
 export interface CompactResult {
@@ -24,7 +24,7 @@ export interface CompactResult {
   droppedTokens: number;
 }
 
-export type Summarizer = (segments: string[]) => Promise<string> | string;
+export type Summarizer = (segments: string[],) => Promise<string> | string;
 
 export interface ContextCompactorOptions {
   /** Compact once prompt exceeds this fraction of the budget. */
@@ -50,41 +50,41 @@ export class ContextCompactor {
   private readonly keepLast: number;
   private readonly summarizer: Summarizer;
 
-  constructor(options: ContextCompactorOptions = {}) {
+  constructor(options: ContextCompactorOptions = {},) {
     this.threshold = options.threshold ?? 0.85;
     this.keepLast = options.keepLast ?? 10;
     this.summarizer = options.summarizer ?? extractiveSummarize;
   }
 
   /** Total estimated tokens across a message list. */
-  totalTokens(messages: GenerationMessage[]): number {
-    return messages.reduce((sum, m) => sum + estimateTokens(m.content ?? ""), 0);
+  totalTokens(messages: GenerationMessage[],): number {
+    return messages.reduce((sum, m,) => sum + estimateTokens(m.content ?? "",), 0,);
   }
 
   /**
    * Returns a compacted message list. If under threshold, input is
    * returned unchanged (compacted: false).
    */
-  async compact(messages: GenerationMessage[], tokenBudget: number): Promise<CompactResult> {
-    const total = this.totalTokens(messages);
+  async compact(messages: GenerationMessage[], tokenBudget: number,): Promise<CompactResult> {
+    const total = this.totalTokens(messages,);
     if (total <= tokenBudget * this.threshold || messages.length <= this.keepLast) {
-      return { messages, compacted: false, droppedTokens: 0 };
+      return { messages, compacted: false, droppedTokens: 0, };
     }
 
-    const keep = messages.slice(-this.keepLast);
-    const older = messages.slice(0, messages.length - this.keepLast);
+    const keep = messages.slice(-this.keepLast,);
+    const older = messages.slice(0, messages.length - this.keepLast,);
 
-    const segments = older.map((m) => `${m.role}: ${m.content ?? ""}`);
-    const summary = await this.summarizer(segments);
+    const segments = older.map((m,) => `${m.role}: ${m.content ?? ""}`);
+    const summary = await this.summarizer(segments,);
 
     const summaryMessage: GenerationMessage = {
       role: SUMMARY_ROLE,
       content: `${SUMMARY_PREFIX}\n${summary}`,
     };
 
-    const droppedTokens = this.totalTokens(older);
+    const droppedTokens = this.totalTokens(older,);
     return {
-      messages: [summaryMessage, ...keep],
+      messages: [summaryMessage, ...keep,],
       compacted: true,
       summary,
       droppedTokens,
@@ -96,12 +96,12 @@ export class ContextCompactor {
  * Extractive fallback: keeps the opening context and the final stretch of
  * the older window, trimmed to a sane size. No LLM required.
  */
-function extractiveSummarize(segments: string[]): string {
-  if (segments.length === 0) return "(no earlier context)";
-  const head = segments.slice(0, Math.ceil(segments.length * 0.3));
-  const tail = segments.slice(-Math.ceil(segments.length * 0.2));
-  const parts = [...head, "…", ...tail];
-  const joined = parts.join("\n");
+function extractiveSummarize(segments: string[],): string {
+  if (segments.length === 0) { return "(no earlier context)"; }
+  const head = segments.slice(0, Math.ceil(segments.length * 0.3,),);
+  const tail = segments.slice(-Math.ceil(segments.length * 0.2,),);
+  const parts = [...head, "…", ...tail,];
+  const joined = parts.join("\n",);
   const MAX = 2000;
-  return joined.length > MAX ? `${joined.slice(0, MAX)}…` : joined;
+  return joined.length > MAX ? `${joined.slice(0, MAX,)}…` : joined;
 }

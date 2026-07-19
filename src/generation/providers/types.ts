@@ -3,7 +3,7 @@
 // Every LLM provider implements LLMProvider. Register via registry.
 // See docs/spec/provider-system.md for architecture.
 
-import type { GenerationMessage } from "../gen-types-options";
+import type { GenerationMessage, } from "../gen-types-options";
 
 // ── Capabilities ──────────────────────────────────────────
 
@@ -103,7 +103,7 @@ export interface ChunkEvent {
 }
 
 /** Stream handler called per chunk */
-export type StreamHandler = (chunk: ChunkEvent) => void;
+export type StreamHandler = (chunk: ChunkEvent,) => void;
 
 // ── Error types ───────────────────────────────────────────
 
@@ -119,7 +119,7 @@ export class ProviderError extends Error {
     retryable = false,
     retryAfter?: number,
   ) {
-    super(message, options);
+    super(message, options,);
     this.name = "ProviderError";
     this.statusCode = statusCode;
     this.retryable = retryable;
@@ -128,15 +128,15 @@ export class ProviderError extends Error {
 }
 
 export class ProviderAuthError extends ProviderError {
-  constructor(message = "API key invalid", options?: ErrorOptions) {
-    super(message, options, 401, false, undefined);
+  constructor(message = "API key invalid", options?: ErrorOptions,) {
+    super(message, options, 401, false, undefined,);
     this.name = "ProviderAuthError";
   }
 }
 
 export class ProviderRateLimitError extends ProviderError {
-  constructor(retryAfter?: number, options?: ErrorOptions) {
-    super("Rate limited", options, 429, true, retryAfter);
+  constructor(retryAfter?: number, options?: ErrorOptions,) {
+    super("Rate limited", options, 429, true, retryAfter,);
     this.name = "ProviderRateLimitError";
   }
 }
@@ -147,10 +147,10 @@ export interface LLMProvider {
   readonly capabilities: ProviderCapabilities;
 
   /** Non-streaming generation */
-  complete(req: GenerateRequest): Promise<GenerateResponse>;
+  complete(req: GenerateRequest,): Promise<GenerateResponse>;
 
   /** Streaming generation — calls handler per chunk */
-  stream(req: GenerateRequest, handler: StreamHandler): Promise<GenerateResponse>;
+  stream(req: GenerateRequest, handler: StreamHandler,): Promise<GenerateResponse>;
 
   /** Health check */
   healthCheck(): Promise<{
@@ -164,5 +164,5 @@ export interface LLMProvider {
   listModels(): Promise<string[]>;
 
   /** Generate embeddings (optional — memory system) */
-  embed?(input: string | string[]): Promise<number[][]>;
+  embed?(input: string | string[],): Promise<number[][]>;
 }

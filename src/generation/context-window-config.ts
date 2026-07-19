@@ -32,16 +32,16 @@ export interface ContextWindowConfig {
 // ── Callbacks (opt-in, caller wires the LLM) ────────────────
 
 /** Count tokens in a string. Default: character-based estimate (~4 chars/token) */
-export type TokenCountFn = (text: string) => number;
+export type TokenCountFn = (text: string,) => number;
 
 /** LLM-based summarization: caller injects to avoid circular import */
-export type SummarizeFn = (messages: string[]) => Promise<string>;
+export type SummarizeFn = (messages: string[],) => Promise<string>;
 
 /** LLM-based fact extraction: caller injects to avoid circular import */
 export type ExtractFn = (messagePair: {
   user: string;
   assistant: string;
-}) => Promise<{ content: string; confidence: number; importance: number; keywords: string[] }[]>;
+},) => Promise<{ content: string; confidence: number; importance: number; keywords: string[] }[]>;
 
 // ── Defaults ────────────────────────────────────────────────
 
@@ -54,6 +54,6 @@ export const DEFAULT_CONTEXT_WINDOW: ContextWindowConfig = {
 };
 
 /** Rough token estimate: ~4 characters per token (English-optimized) */
-export function defaultTokenCount(text: string): number {
-  return Math.ceil(text.length / 4);
+export function defaultTokenCount(text: string,): number {
+  return Math.ceil(text.length / 4,);
 }

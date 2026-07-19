@@ -5,10 +5,10 @@
  * Also provides the participant-lookup helper used by the message route.
  */
 
-import type { Kysely } from "kysely";
-import type { DB } from "../db/schema";
-import { loadActorKeys } from "./actor-keys";
-import type { ActorKeyData } from "./actor-keys";
+import type { Kysely, } from "kysely";
+import type { DB, } from "../db/schema";
+import { loadActorKeys, } from "./actor-keys";
+import type { ActorKeyData, } from "./actor-keys";
 
 const HKDF_INFO = "loop-lore-chat-key-v1";
 
@@ -24,15 +24,15 @@ export interface ChatKey {
 /**
  * Get all active participant actor IDs for a chat.
  */
-export async function getChatParticipantActorIds(database: Kysely<DB>, chatId: string): Promise<string[]> {
+export async function getChatParticipantActorIds(database: Kysely<DB>, chatId: string,): Promise<string[]> {
   const rows = await database
-    .selectFrom("chat_participants")
-    .select("actor_id")
-    .where("chat_id", "=", chatId)
-    .orderBy("actor_id", "asc")
+    .selectFrom("chat_participants",)
+    .select("actor_id",)
+    .where("chat_id", "=", chatId,)
+    .orderBy("actor_id", "asc",)
     .execute();
 
-  return rows.map((r) => r.actor_id);
+  return rows.map((r,) => r.actor_id);
 }
 
 /**
@@ -47,24 +47,24 @@ export async function getChatParticipantActorIds(database: Kysely<DB>, chatId: s
  * Deterministic given same participants and chat ID.
  * Changes when participants change (add/remove → new key).
  */
-export async function deriveChatKey(participantKeys: ActorKeyData[], chatId: string): Promise<ChatKey> {
+export async function deriveChatKey(participantKeys: ActorKeyData[], chatId: string,): Promise<ChatKey> {
   if (participantKeys.length === 0) {
-    throw new Error("Cannot derive chat key: no participant keys");
+    throw new Error("Cannot derive chat key: no participant keys",);
   }
 
   // Concatenate all raw keys in sorted order (already sorted by actor_id)
   const ikmLength = participantKeys.length * 32;
-  const ikm = new Uint8Array(ikmLength);
-  for (const [index, participantKey] of participantKeys.entries()) {
-    ikm.set(participantKey.rawKey, index * 32);
+  const ikm = new Uint8Array(ikmLength,);
+  for (const [index, participantKey,] of participantKeys.entries()) {
+    ikm.set(participantKey.rawKey, index * 32,);
   }
 
   // Import as HKDF key material
-  const keyMaterial = await crypto.subtle.importKey("raw", ikm, "HKDF", false, ["deriveKey"]);
+  const keyMaterial = await crypto.subtle.importKey("raw", ikm, "HKDF", false, ["deriveKey",],);
 
   // Derive AES-256-GCM key
-  const salt = new TextEncoder().encode(chatId);
-  const info = new TextEncoder().encode(HKDF_INFO);
+  const salt = new TextEncoder().encode(chatId,);
+  const info = new TextEncoder().encode(HKDF_INFO,);
 
   const derived = await crypto.subtle.deriveKey(
     {
@@ -74,13 +74,13 @@ export async function deriveChatKey(participantKeys: ActorKeyData[], chatId: str
       info,
     },
     keyMaterial,
-    { name: "AES-GCM", length: 256 },
+    { name: "AES-GCM", length: 256, },
     true, // extractable — needed for rawKey export
-    ["encrypt", "decrypt"],
+    ["encrypt", "decrypt",],
   );
 
   // Export raw key for potential serialization
-  const rawKey = new Uint8Array(await crypto.subtle.exportKey("raw", derived));
+  const rawKey = new Uint8Array(await crypto.subtle.exportKey("raw", derived,),);
 
   return {
     key: derived,
@@ -99,7 +99,7 @@ export async function deriveChatKeyForChat(
   chatId: string,
   smk: CryptoKey,
 ): Promise<ChatKey> {
-  const actorIds = await getChatParticipantActorIds(database, chatId);
-  const keys = await loadActorKeys({ database, actorIds, smk });
-  return deriveChatKey(keys, chatId);
+  const actorIds = await getChatParticipantActorIds(database, chatId,);
+  const keys = await loadActorKeys({ database, actorIds, smk, },);
+  return deriveChatKey(keys, chatId,);
 }

@@ -1,4 +1,4 @@
-import type { QuestConfig, WorldEvent } from "../types";
+import type { QuestConfig, WorldEvent, } from "../types";
 
 export interface ProgressCalcContext {
   progress: number;

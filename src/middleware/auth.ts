@@ -9,14 +9,14 @@
  *   4. Token presented + invalid + !required → solo/demo fallback
  */
 
-import type { Kysely } from "kysely";
+import type { Kysely, } from "kysely";
 import crypto from "node:crypto";
-import type { AuthConfig } from "../config/schema";
-import { UserRole, UserStatus } from "../db/enums";
-import type { DB } from "../db/schema";
-import { ErrorCode, HttpStatus, jsonError } from "../routes/http-utils";
-import { uid } from "../utils";
-import type { RequestContext } from "./types";
+import type { AuthConfig, } from "../config/schema";
+import { UserRole, UserStatus, } from "../db/enums";
+import type { DB, } from "../db/schema";
+import { ErrorCode, HttpStatus, jsonError, } from "../routes/http-utils";
+import { uid, } from "../utils";
+import type { RequestContext, } from "./types";
 
 export interface AuthenticateOpts {
   request: Request;
@@ -36,59 +36,59 @@ export async function authenticate({
   request,
   database,
   authConfig,
-}: AuthenticateOpts): Promise<Response | { context: RequestContext }> {
+}: AuthenticateOpts,): Promise<Response | { context: RequestContext }> {
   // ── Extract token: Bearer header > cookie fallback ───────
   let rawToken: string | null = null;
 
-  const authHeader = request.headers.get("Authorization");
-  if (authHeader?.startsWith("Bearer ")) {
-    rawToken = authHeader.slice("Bearer ".length).trim();
+  const authHeader = request.headers.get("Authorization",);
+  if (authHeader?.startsWith("Bearer ",)) {
+    rawToken = authHeader.slice("Bearer ".length,).trim();
   }
 
   // Cookie fallback (set by login/demo-login)
   if (!rawToken) {
-    const cookieHeader = request.headers.get("Cookie");
+    const cookieHeader = request.headers.get("Cookie",);
     if (cookieHeader) {
-      const match = /(?:^|;\s*)ll_token=([^;]+)/.exec(cookieHeader);
-      if (match) rawToken = match[1]!;
+      const match = /(?:^|;\s*)ll_token=([^;]+)/.exec(cookieHeader,);
+      if (match) { rawToken = match[1]!; }
     }
   }
 
   // ── Try token-based auth first (if token presented) ──────
   if (rawToken) {
-    const tokenHash = crypto.createHash("sha256").update(rawToken).digest("hex");
+    const tokenHash = crypto.createHash("sha256",).update(rawToken,).digest("hex",);
 
     const session = await database
-      .selectFrom("sessions")
-      .select(["id", "user_id", "expires_at"])
-      .where("token_hash", "=", tokenHash)
+      .selectFrom("sessions",)
+      .select(["id", "user_id", "expires_at",],)
+      .where("token_hash", "=", tokenHash,)
       .executeTakeFirst();
 
     if (session) {
       // Check expiration
-      if (new Date(session.expires_at) < new Date()) {
-        await database.deleteFrom("sessions").where("id", "=", session.id).execute();
+      if (new Date(session.expires_at,) < new Date()) {
+        await database.deleteFrom("sessions",).where("id", "=", session.id,).execute();
         // Expired — fall through
       } else {
         // Fetch user role
         const user = await database
-          .selectFrom("users")
-          .select(["role"])
-          .where("id", "=", session.user_id)
+          .selectFrom("users",)
+          .select(["role",],)
+          .where("id", "=", session.user_id,)
           .executeTakeFirst();
 
         if (user) {
           // Update last activity + last_seen_at (non-blocking)
           try {
             await database
-              .updateTable("sessions")
-              .set({ last_activity: new Date().toISOString() })
-              .where("id", "=", session.id)
+              .updateTable("sessions",)
+              .set({ last_activity: new Date().toISOString(), },)
+              .where("id", "=", session.id,)
               .execute();
             await database
-              .updateTable("users")
-              .set({ last_seen_at: new Date().toISOString() })
-              .where("id", "=", session.user_id)
+              .updateTable("users",)
+              .set({ last_seen_at: new Date().toISOString(), },)
+              .where("id", "=", session.user_id,)
               .execute();
           } catch {
             /* non-critical */
@@ -104,19 +104,19 @@ export async function authenticate({
         }
 
         // User deleted — clean up and fall through
-        await database.deleteFrom("sessions").where("id", "=", session.id).execute();
+        await database.deleteFrom("sessions",).where("id", "=", session.id,).execute();
       }
     }
   }
 
   // ── Fallback: solo mode if auth not required ──────────────
   if (!authConfig.required) {
-    const soloUser = await getOrCreateSoloUserForAuth(database, authConfig.demoUsername);
+    const soloUser = await getOrCreateSoloUserForAuth(database, authConfig.demoUsername,);
     if (!soloUser) {
       return jsonError({
         message: "Server misconfigured: no solo user",
         status: HttpStatus.InternalServerError,
-      });
+      },);
     }
     return {
       context: {
@@ -132,7 +132,7 @@ export async function authenticate({
     message: "Missing or invalid Authorization header",
     status: HttpStatus.Unauthorized,
     code: ErrorCode.Unauthorized,
-  });
+  },);
 }
 
 // ── Solo user helpers ─────────────────────────────────────────
@@ -150,14 +150,14 @@ export async function getOrCreateSoloUserForAuth(
   database: Kysely<DB>,
   demoUsername: string,
 ): Promise<{ id: string } | null> {
-  const cached = soloUserCache.get(database);
-  if (cached !== undefined) return cached;
+  const cached = soloUserCache.get(database,);
+  if (cached !== undefined) { return cached; }
 
   // Resolve the solo/demo user id (pre-seeded, demo, or created on first run).
   const existing = await database
-    .selectFrom("users")
-    .select(["id"])
-    .where("role", "=", UserRole.Solo)
+    .selectFrom("users",)
+    .select(["id",],)
+    .where("role", "=", UserRole.Solo,)
     .executeTakeFirst();
 
   let soloId: string;
@@ -166,9 +166,9 @@ export async function getOrCreateSoloUserForAuth(
   } else {
     // Check demo user (seeded via src/db/seed.ts or config)
     const demoUser = await database
-      .selectFrom("users")
-      .select(["id"])
-      .where("username", "=", demoUsername)
+      .selectFrom("users",)
+      .select(["id",],)
+      .where("username", "=", demoUsername,)
       .executeTakeFirst();
 
     if (demoUser) {
@@ -178,7 +178,7 @@ export async function getOrCreateSoloUserForAuth(
       soloId = uid();
       try {
         await database
-          .insertInto("users")
+          .insertInto("users",)
           .values({
             id: soloId,
             username: demoUsername,
@@ -186,7 +186,7 @@ export async function getOrCreateSoloUserForAuth(
             role: UserRole.Solo,
             status: UserStatus.Active,
             settings: "{}",
-          })
+          },)
           .execute();
       } catch {
         /* race: another request may have created it — next lookup will find it */
@@ -201,13 +201,13 @@ export async function getOrCreateSoloUserForAuth(
   // but not its actor).
   try {
     const actorExists = await database
-      .selectFrom("actors")
-      .select("id")
-      .where("id", "=", soloId)
+      .selectFrom("actors",)
+      .select("id",)
+      .where("id", "=", soloId,)
       .executeTakeFirst();
     if (!actorExists) {
       await database
-        .insertInto("actors")
+        .insertInto("actors",)
         .values({
           id: soloId,
           actor_type: "user",
@@ -218,15 +218,15 @@ export async function getOrCreateSoloUserForAuth(
           settings: "{}",
           import_spec: "raw",
           data_version: 0,
-        })
+        },)
         .execute();
     }
   } catch {
     /* race-safe: actor may already exist */
   }
 
-  const result = { id: soloId };
-  soloUserCache.set(database, result);
+  const result = { id: soloId, };
+  soloUserCache.set(database, result,);
   return result;
 }
 
@@ -241,9 +241,9 @@ export function resetSoloUserCache(): void {
  * Validate that a session token is well-formed (basic sanity).
  * Returns the raw token string or null.
  */
-export function extractBearerToken(request: Request): string | null {
-  const header = request.headers.get("Authorization");
-  if (!header?.startsWith("Bearer ")) return null;
-  const token = header.slice("Bearer ".length).trim();
+export function extractBearerToken(request: Request,): string | null {
+  const header = request.headers.get("Authorization",);
+  if (!header?.startsWith("Bearer ",)) { return null; }
+  const token = header.slice("Bearer ".length,).trim();
   return token || null;
 }
