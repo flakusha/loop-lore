@@ -7,16 +7,16 @@
  * Depends on cancellation-manager for in-memory generation tracking.
  */
 
-import type { Kysely } from "kysely";
-import { GenerationStatus } from "../db/enums";
-import type { DB } from "../db/schema";
-import { getLogger } from "../logger";
+import type { Kysely, } from "kysely";
+import { GenerationStatus, } from "../db/enums";
+import type { DB, } from "../db/schema";
+import { getLogger, } from "../logger";
 
 // ── Internal: shared state with cancellation-tracker ──────────
 // These are marked @internal in cancellation-tracker and are NOT
 // re-exported through the public cannon-barrel. Import directly.
 
-import { activeGenerations, updateAttemptStatus } from "./cancellation-tracker";
+import { activeGenerations, updateAttemptStatus, } from "./cancellation-tracker";
 
 /**
  * Mark a step as completed in a multi-step generation pipeline.
@@ -32,9 +32,9 @@ export interface CompleteStepOpts {
   db: Kysely<DB>;
 }
 
-export async function completeStep({ attemptId, stepIndex, db }: CompleteStepOpts): Promise<void> {
-  const active = activeGenerations.get(attemptId);
-  if (!active) return;
+export async function completeStep({ attemptId, stepIndex, db, }: CompleteStepOpts,): Promise<void> {
+  const active = activeGenerations.get(attemptId,);
+  if (!active) { return; }
 
   // Advance step index
   active.stepIndex = stepIndex + 1;
@@ -47,11 +47,11 @@ export async function completeStep({ attemptId, stepIndex, db }: CompleteStepOpt
       extra: {
         step_index: active.stepIndex,
       },
-    });
+    },);
   } catch (error: unknown) {
     getLogger()
-      .child({ module: "generation" })
-      .warn("Non-fatal error in completeStep", { error: String(error) });
+      .child({ module: "generation", },)
+      .warn("Non-fatal error in completeStep", { error: String(error,), },);
   }
 }
 
@@ -70,7 +70,7 @@ export interface FailStepOpts {
   db: Kysely<DB>;
 }
 
-export async function failStep({ attemptId, stepIndex, error, db }: FailStepOpts): Promise<void> {
+export async function failStep({ attemptId, stepIndex, error, db, }: FailStepOpts,): Promise<void> {
   try {
     await updateAttemptStatus({
       db,
@@ -81,11 +81,11 @@ export async function failStep({ attemptId, stepIndex, error, db }: FailStepOpts
         step_index: stepIndex,
         completed_at: new Date().toISOString(),
       },
-    });
+    },);
   } catch (updateError: unknown) {
     getLogger()
-      .child({ module: "generation" })
-      .warn("Non-fatal error in failStep", { error: String(updateError) });
+      .child({ module: "generation", },)
+      .warn("Non-fatal error in failStep", { error: String(updateError,), },);
   }
 }
 
@@ -103,9 +103,9 @@ export interface PipelineState {
  * @param db — Kysely DB instance for fallback lookup
  * @returns pipeline state, or null if attempt not found
  */
-export async function getPipelineState(attemptId: string, db: Kysely<DB>): Promise<PipelineState | null> {
+export async function getPipelineState(attemptId: string, db: Kysely<DB>,): Promise<PipelineState | null> {
   // Check in-memory first
-  const active = activeGenerations.get(attemptId);
+  const active = activeGenerations.get(attemptId,);
   if (active) {
     return {
       stepIndex: active.stepIndex,
@@ -116,14 +116,14 @@ export async function getPipelineState(attemptId: string, db: Kysely<DB>): Promi
 
   // Fall back to DB
   const attempt = await db
-    .selectFrom("generation_attempts")
-    .select("step_index")
-    .select("total_steps")
-    .select("status")
-    .where("id", "=", attemptId)
+    .selectFrom("generation_attempts",)
+    .select("step_index",)
+    .select("total_steps",)
+    .select("status",)
+    .where("id", "=", attemptId,)
     .executeTakeFirst();
 
-  if (!attempt) return null;
+  if (!attempt) { return null; }
 
   return {
     stepIndex: attempt.step_index ?? 0,

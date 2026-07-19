@@ -1,10 +1,10 @@
-import type { Kysely } from "kysely";
-import type { Config } from "../config/schema";
-import { getLogger, type Logger } from "../logger";
-import { ASSISTANT_SYSTEM_PROMPT } from "../prompts";
-import { uid } from "../utils";
-import { ActorType, AgentType, UserRole, UserStatus } from "./enums";
-import type { DB } from "./schema";
+import type { Config, } from "../config/schema";
+import type { DB, } from "./schema";
+import type { Kysely, } from "kysely";
+import { ASSISTANT_SYSTEM_PROMPT, } from "../prompts";
+import { ActorType, AgentType, UserRole, UserStatus, } from "./enums";
+import { getLogger, type Logger, } from "../logger";
+import { uid, } from "../utils";
 
 const ASSISTANT_ID = "assistant-default";
 
@@ -19,21 +19,21 @@ const ASSISTANT_ID = "assistant-default";
  *
  * @param database - Kysely instance
  */
-export async function seedDefaultActors(database: Kysely<DB>, config?: Config): Promise<void> {
-  const log = getLogger().child({ module: "seed" });
+export async function seedDefaultActors(database: Kysely<DB>, config?: Config,): Promise<void> {
+  const log = getLogger().child({ module: "seed", },);
 
   // Seed default Assistant actor
   const existingActor = await database
-    .selectFrom("actors")
-    .select("id")
-    .where("id", "=", ASSISTANT_ID)
+    .selectFrom("actors",)
+    .select("id",)
+    .where("id", "=", ASSISTANT_ID,)
     .executeTakeFirst();
 
   if (existingActor) {
-    log.debug("Default Assistant actor already exists — skipping seed");
+    log.debug("Default Assistant actor already exists — skipping seed",);
   } else {
     await database
-      .insertInto("actors")
+      .insertInto("actors",)
       .values({
         id: ASSISTANT_ID,
         actor_type: ActorType.Character,
@@ -48,10 +48,10 @@ export async function seedDefaultActors(database: Kysely<DB>, config?: Config): 
         settings: "{}",
         import_spec: "raw",
         data_version: 1,
-      })
+      },)
       .execute();
 
-    log.info("Default Assistant actor created");
+    log.info("Default Assistant actor created",);
   }
 
   // Mode split: solo/demo mode seeds a demo solo user (admin-equivalent);
@@ -61,15 +61,15 @@ export async function seedDefaultActors(database: Kysely<DB>, config?: Config): 
   if (soloMode) {
     // Seed demo solo user (creates if no admin or solo user exists) — for demo mode admin access
     const hasAdmin = await database
-      .selectFrom("users")
-      .select("id")
-      .where((eb) => eb.or([eb("role", "=", UserRole.Admin), eb("role", "=", UserRole.Solo)]))
+      .selectFrom("users",)
+      .select("id",)
+      .where((eb,) => eb.or([eb("role", "=", UserRole.Admin,), eb("role", "=", UserRole.Solo,),],))
       .executeTakeFirst();
 
     if (!hasAdmin) {
       const soloId = uid();
       await database
-        .insertInto("users")
+        .insertInto("users",)
         .values({
           id: soloId,
           username: config?.auth.demoUsername ?? "demo",
@@ -77,12 +77,12 @@ export async function seedDefaultActors(database: Kysely<DB>, config?: Config): 
           role: UserRole.Solo,
           status: UserStatus.Active,
           settings: "{}",
-        })
+        },)
         .execute();
-      log.info("Demo solo user created (admin-equivalent in solo mode)");
+      log.info("Demo solo user created (admin-equivalent in solo mode)",);
     }
   } else {
-    await seedBootstrapAdmin(database, config, log);
+    await seedBootstrapAdmin(database, config, log,);
   }
 }
 
@@ -98,15 +98,15 @@ export async function seedDefaultActors(database: Kysely<DB>, config?: Config): 
  * @param config - Resolved config (auth.adminUsername / auth.adminPassword or env overrides)
  * @param log - Logger child
  */
-async function seedBootstrapAdmin(database: Kysely<DB>, config: Config, log: Logger): Promise<void> {
+async function seedBootstrapAdmin(database: Kysely<DB>, config: Config, log: Logger,): Promise<void> {
   const existingAdmin = await database
-    .selectFrom("users")
-    .select("id")
-    .where("role", "=", UserRole.Admin)
+    .selectFrom("users",)
+    .select("id",)
+    .where("role", "=", UserRole.Admin,)
     .executeTakeFirst();
 
   if (existingAdmin) {
-    log.debug("Admin user already exists — skipping bootstrap");
+    log.debug("Admin user already exists — skipping bootstrap",);
     return;
   }
 
@@ -123,21 +123,21 @@ async function seedBootstrapAdmin(database: Kysely<DB>, config: Config, log: Log
   const adminId = uid();
   try {
     await database
-      .insertInto("users")
+      .insertInto("users",)
       .values({
         id: adminId,
         username,
         display_name: username,
-        password_hash: await Bun.password.hash(password),
+        password_hash: await Bun.password.hash(password,),
         role: UserRole.Admin,
         status: UserStatus.Active,
         settings: "{}",
-      })
+      },)
       .execute();
 
     // Actor row so the admin can own chats/entities (chat_participants.actor_id → actors.id)
     await database
-      .insertInto("actors")
+      .insertInto("actors",)
       .values({
         id: adminId,
         actor_type: "user",
@@ -148,12 +148,12 @@ async function seedBootstrapAdmin(database: Kysely<DB>, config: Config, log: Log
         settings: "{}",
         import_spec: "raw",
         data_version: 0,
-      })
+      },)
       .execute();
 
-    log.info(`Bootstrap admin "${username}" created`);
+    log.info(`Bootstrap admin "${username}" created`,);
   } catch (error) {
     // Race: another process created the admin concurrently, or username taken.
-    log.debug("Bootstrap admin creation skipped or failed (race/duplicate)", { error: String(error) });
+    log.debug("Bootstrap admin creation skipped or failed (race/duplicate)", { error: String(error,), },);
   }
 }

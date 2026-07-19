@@ -3,14 +3,14 @@
 // Notification REST + SSE routes. Mirrors the activity endpoints
 // (src/routes/activity.ts, activity-stream.ts) for consistency: a polling
 // list plus an SSE stream that pushes when the unread snapshot changes.
-
-import { Elysia, t } from "elysia";
-import type { Kysely } from "kysely";
-import type { DB } from "../db/schema";
-import { NotificationService } from "../notifications/service";
-import { safeJsonStringify } from "../utils";
-import { unauthorized } from "../validation/middleware";
+import type { DB, } from "../db/schema";
+import type { Kysely, } from "kysely";
+import { Elysia, t, } from "elysia";
 import { ErrorCode, HttpStatus, jsonError, jsonResponse } from "./http-utils";
+import { ErrorCode, HttpStatus, jsonError, jsonResponse, } from "./http-utils";
+import { NotificationService, } from "../notifications/service";
+import { safeJsonStringify, } from "../utils";
+import { unauthorized, } from "../validation/middleware";
 
 const POLL_INTERVAL_MS = 5000;
 const KEEPALIVE_MS = 15_000;
@@ -34,26 +34,26 @@ export class NotificationStreamer {
     let keepalive: ReturnType<typeof setInterval> | undefined;
     let lastSnapshot = "";
 
-    const send = (controller: ReadableStreamDefaultController, event: string, data: unknown) => {
+    const send = (controller: ReadableStreamDefaultController, event: string, data: unknown,) => {
       try {
-        const payload = safeJsonStringify(data);
-        controller.enqueue(encoder.encode(`event: ${event}\ndata: ${payload.ok ? payload.value : "{}"}\n\n`));
+        const payload = safeJsonStringify(data,);
+        controller.enqueue(encoder.encode(`event: ${event}\ndata: ${payload.ok ? payload.value : "{}"}\n\n`,),);
       } catch {
         // controller closed — ignore
       }
     };
 
-    const tick = async (controller: ReadableStreamDefaultController): Promise<void> => {
+    const tick = async (controller: ReadableStreamDefaultController,): Promise<void> => {
       try {
-        const service = new NotificationService(this.database);
-        const [count, recent] = await Promise.all([
-          service.getUnreadCount(this.userId),
-          service.list(this.userId, false),
-        ]);
+        const service = new NotificationService(this.database,);
+        const [count, recent,] = await Promise.all([
+          service.getUnreadCount(this.userId,),
+          service.list(this.userId, false,),
+        ],);
         const snap = `${count}:${recent[0]?.id ?? ""}`;
         if (snap !== lastSnapshot) {
           lastSnapshot = snap;
-          send(controller, "notifications", { unreadCount: count, items: recent.slice(0, 10) });
+          send(controller, "notifications", { unreadCount: count, items: recent.slice(0, 10,), },);
         }
       } catch {
         // transient DB error — skip this tick, keep stream alive
@@ -61,30 +61,30 @@ export class NotificationStreamer {
     };
 
     const stream = new ReadableStream({
-      start: async (controller) => {
+      start: async (controller,) => {
         try {
-          const service = new NotificationService(this.database);
-          const [count, recent] = await Promise.all([
-            service.getUnreadCount(this.userId),
-            service.list(this.userId, false),
-          ]);
+          const service = new NotificationService(this.database,);
+          const [count, recent,] = await Promise.all([
+            service.getUnreadCount(this.userId,),
+            service.list(this.userId, false,),
+          ],);
           lastSnapshot = `${count}:${recent[0]?.id ?? ""}`;
-          send(controller, "notifications", { unreadCount: count, items: recent.slice(0, 10) });
+          send(controller, "notifications", { unreadCount: count, items: recent.slice(0, 10,), },);
         } catch (error) {
-          send(controller, "stream-error", { error: String(error) });
+          send(controller, "stream-error", { error: String(error,), },);
         }
 
         timer = setInterval(() => {
-          void tick(controller);
-        }, this.intervalMs);
+          void tick(controller,);
+        }, this.intervalMs,);
 
-        keepalive = setInterval(() => send(controller, "ping", { t: Date.now() }), KEEPALIVE_MS);
+        keepalive = setInterval(() => send(controller, "ping", { t: Date.now(), },), KEEPALIVE_MS,);
       },
       cancel: () => {
-        if (timer) clearInterval(timer);
-        if (keepalive) clearInterval(keepalive);
+        if (timer) { clearInterval(timer,); }
+        if (keepalive) { clearInterval(keepalive,); }
       },
-    });
+    },);
 
     return new Response(stream, {
       headers: {
@@ -93,90 +93,90 @@ export class NotificationStreamer {
         Connection: "keep-alive",
         "X-Accel-Buffering": "no",
       },
-    });
+    },);
   }
 }
 
-export function notificationsRoutes({ database }: { database: Kysely<DB> }) {
-  const idParams = t.Object({ id: t.String() });
-  const markReadBody = t.Object({ read: t.Optional(t.Boolean()) });
-  const enabledSchema = t.Optional(t.Record(t.String(), t.Boolean()));
-  const mutedWorldsSchema = t.Optional(t.Array(t.String()));
-  const prefsBody = t.Object({ enabled: enabledSchema, mutedWorlds: mutedWorldsSchema });
-  return new Elysia({ name: "notifications" })
-    .get("/api/notifications", async (ctx: any) => {
+export function notificationsRoutes({ database, }: { database: Kysely<DB> },) {
+  const idParams = t.Object({ id: t.String(), },);
+  const markReadBody = t.Object({ read: t.Optional(t.Boolean(),), },);
+  const enabledSchema = t.Optional(t.Record(t.String(), t.Boolean(),),);
+  const mutedWorldsSchema = t.Optional(t.Array(t.String(),),);
+  const prefsBody = t.Object({ enabled: enabledSchema, mutedWorlds: mutedWorldsSchema, },);
+  return new Elysia({ name: "notifications", },)
+    .get("/api/notifications", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
-      if (!userId) return unauthorized();
+      if (!userId) { return unauthorized(); }
       const unreadOnly = ctx.query?.unread === "true";
-      const items = await new NotificationService(database).list(userId, unreadOnly);
-      return jsonResponse({ items });
-    })
-    .get("/api/notifications/unread-count", async (ctx: any) => {
+      const items = await new NotificationService(database,).list(userId, unreadOnly,);
+      return jsonResponse({ items, },);
+    },)
+    .get("/api/notifications/unread-count", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
-      if (!userId) return unauthorized();
-      const count = await new NotificationService(database).getUnreadCount(userId);
-      return jsonResponse({ count });
-    })
+      if (!userId) { return unauthorized(); }
+      const count = await new NotificationService(database,).getUnreadCount(userId,);
+      return jsonResponse({ count, },);
+    },)
     .patch(
       "/api/notifications/:id",
-      async (ctx: any) => {
+      async (ctx: any,) => {
         const userId = ctx.userId as string | null;
-        if (!userId) return unauthorized();
+        if (!userId) { return unauthorized(); }
         const id = ctx.params.id as string;
         const body = ctx.body as { read?: boolean };
         if (body.read === true) {
-          await new NotificationService(database).markRead(id, userId);
+          await new NotificationService(database,).markRead(id, userId,);
         }
-        return jsonResponse({ ok: true });
+        return jsonResponse({ ok: true, },);
       },
-      { params: idParams, body: markReadBody },
+      { params: idParams, body: markReadBody, },
     )
-    .patch("/api/notifications/read-all", async (ctx: any) => {
+    .patch("/api/notifications/read-all", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
-      if (!userId) return unauthorized();
-      await new NotificationService(database).markAllRead(userId);
-      return jsonResponse({ ok: true });
-    })
-    .delete("/api/notifications/:id", async (ctx: any) => {
+      if (!userId) { return unauthorized(); }
+      await new NotificationService(database,).markAllRead(userId,);
+      return jsonResponse({ ok: true, },);
+    },)
+    .delete("/api/notifications/:id", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
-      if (!userId) return unauthorized();
-      await new NotificationService(database).delete(ctx.params.id as string, userId);
-      return jsonResponse({ ok: true });
-    })
-    .get("/api/notifications/preferences", async (ctx: any) => {
+      if (!userId) { return unauthorized(); }
+      await new NotificationService(database,).delete(ctx.params.id as string, userId,);
+      return jsonResponse({ ok: true, },);
+    },)
+    .get("/api/notifications/preferences", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
-      if (!userId) return unauthorized();
-      const prefs = await new NotificationService(database).getPrefs(userId);
-      return jsonResponse(prefs);
-    })
+      if (!userId) { return unauthorized(); }
+      const prefs = await new NotificationService(database,).getPrefs(userId,);
+      return jsonResponse(prefs,);
+    },)
     .patch(
       "/api/notifications/preferences",
-      async (ctx: any) => {
+      async (ctx: any,) => {
         const userId = ctx.userId as string | null;
-        if (!userId) return unauthorized();
+        if (!userId) { return unauthorized(); }
         const body = ctx.body as {
           enabled?: Record<string, boolean>;
           mutedWorlds?: string[];
         };
-        const prefs = await new NotificationService(database).setPrefs(userId, {
+        const prefs = await new NotificationService(database,).setPrefs(userId, {
           enabled: body.enabled,
           mutedWorlds: body.mutedWorlds,
-        });
-        return jsonResponse(prefs);
+        },);
+        return jsonResponse(prefs,);
       },
       {
         body: prefsBody,
       },
     )
-    .get("/api/notifications/stream", async (ctx: any) => {
+    .get("/api/notifications/stream", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
       if (!userId) {
         return jsonError({
           message: "Unauthorized",
           status: HttpStatus.Unauthorized,
           code: ErrorCode.Unauthorized,
-        });
+        },);
       }
-      return new NotificationStreamer(database, userId).open();
-    });
+      return new NotificationStreamer(database, userId,).open();
+    },);
 }

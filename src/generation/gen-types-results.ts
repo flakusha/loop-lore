@@ -7,6 +7,13 @@
 
 import type { CancelReason, CancelSource, PolicyIndicatorType, PolicySeverity, PolicyType } from "../db/enums";
 
+
+/**
+ * Generation Types — Results & Analysis
+ *
+ * repetition analysis, and policy analysis.
+ */
+
 export interface GenerationResult {
   /** The generated content */
   content: string;

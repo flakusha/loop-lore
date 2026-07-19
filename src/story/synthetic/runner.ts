@@ -17,15 +17,15 @@
  * falls back to structural / heuristic checks and marks cases skipped rather
  * than fabricating a pass.
  */
-import type { Kysely } from "kysely";
-import { SyntheticDataStatus, SyntheticDataType, SyntheticTestMode } from "../../db/enums";
-import type { DB } from "../../db/schema";
-import { jsonParseOr, uid } from "../../utils";
-import { GameMasterService } from "../game-master";
-import { createQualityEvaluator, QualityEvaluator } from "../quality-evaluator";
-import { TurnManager } from "../turn-manager";
-import { SyntheticGenerator } from "./generator";
-import type { SyntheticCase } from "./types";
+import type { Kysely, } from "kysely";
+import { SyntheticDataStatus, SyntheticDataType, SyntheticTestMode, } from "../../db/enums";
+import type { DB, } from "../../db/schema";
+import { jsonParseOr, uid, } from "../../utils";
+import { GameMasterService, } from "../game-master";
+import { createQualityEvaluator, QualityEvaluator, } from "../quality-evaluator";
+import { TurnManager, } from "../turn-manager";
+import { SyntheticGenerator, } from "./generator";
+import type { SyntheticCase, } from "./types";
 
 export type SyntheticTestStatus = "passed" | "failed" | "skipped";
 
@@ -66,7 +66,7 @@ export interface SyntheticTestRunnerOptions {
   /** Pure-logic scorer (no DB needed). Constructed if omitted. */
   qualityEvaluator?: QualityEvaluator;
   /** Builds a per-chat TurnManager for orchestration replay. */
-  turnManagerFactory?: (chatId: string) => TurnManager;
+  turnManagerFactory?: (chatId: string,) => TurnManager;
   /** Used for live GM escalation decisions if provided. */
   gameMaster?: GameMasterService;
   idGenerator?: () => string;
@@ -89,19 +89,19 @@ interface RowShape {
 export class SyntheticTestRunner {
   private readonly db: Kysely<DB>;
   private readonly evaluator: QualityEvaluator;
-  private readonly turnManagerFactory?: (chatId: string) => TurnManager;
+  private readonly turnManagerFactory?: (chatId: string,) => TurnManager;
   private readonly gameMaster?: GameMasterService;
   private readonly generator: SyntheticGenerator;
   private readonly idGenerator: () => string;
   private readonly defaultIterations: number;
   private readonly autoValidate: boolean;
 
-  constructor(options: SyntheticTestRunnerOptions) {
+  constructor(options: SyntheticTestRunnerOptions,) {
     this.db = options.db;
     this.evaluator = options.qualityEvaluator ?? createQualityEvaluator();
     this.turnManagerFactory = options.turnManagerFactory;
     this.gameMaster = options.gameMaster;
-    this.generator = new SyntheticGenerator({ db: options.db });
+    this.generator = new SyntheticGenerator({ db: options.db, },);
     this.idGenerator = options.idGenerator ?? (() => uid());
     this.defaultIterations = options.defaultIterations ?? 5;
     this.autoValidate = options.autoValidate ?? false;
@@ -123,48 +123,48 @@ export class SyntheticTestRunner {
     const runId = this.idGenerator();
     const startedAt = new Date().toISOString();
 
-    const rows = scenarioIds.length > 0 ? await this.loadRows(scenarioIds) : [];
+    const rows = scenarioIds.length > 0 ? await this.loadRows(scenarioIds,) : [];
     const results: SyntheticTestCaseResult[] = [];
     const qualityScores: number[] = [];
 
     for (const row of rows) {
-      const cases = jsonParseOr<SyntheticCase[]>(row.generated_cases, []);
-      if (!Array.isArray(cases) || cases.length === 0) continue;
+      const cases = jsonParseOr<SyntheticCase[]>(row.generated_cases, [],);
+      if (!Array.isArray(cases,) || cases.length === 0) { continue; }
 
       const rowResults: SyntheticTestCaseResult[] = [];
       for (const c of cases) {
-        const r = await this.executeCase(row, c, mode, mutationParams);
-        rowResults.push(r);
+        const r = await this.executeCase(row, c, mode, mutationParams,);
+        rowResults.push(r,);
         if (
-          row.type === SyntheticDataType.QualityEvaluation
-          && r.status !== "skipped"
-          && typeof r.actual.score === "number"
+          row.type === SyntheticDataType.QualityEvaluation &&
+          r.status !== "skipped" &&
+          typeof r.actual.score === "number"
         ) {
-          qualityScores.push(r.actual.score);
+          qualityScores.push(r.actual.score,);
         }
       }
-      results.push(...rowResults);
+      results.push(...rowResults,);
 
       if (
-        this.autoValidate
-        && (mode === SyntheticTestMode.Replay || mode === SyntheticTestMode.Regression)
-        && rowResults.length > 0
-        && rowResults.every((r) => r.status === "passed")
+        this.autoValidate &&
+        (mode === SyntheticTestMode.Replay || mode === SyntheticTestMode.Regression) &&
+        rowResults.length > 0 &&
+        rowResults.every((r,) => r.status === "passed")
       ) {
-        await this.generator.transitionStatus(row.id, SyntheticDataStatus.Validated);
+        await this.generator.transitionStatus(row.id, SyntheticDataStatus.Validated,);
       }
     }
 
-    const passed = results.filter((r) => r.status === "passed").length;
-    const failed = results.filter((r) => r.status === "failed").length;
-    const skipped = results.filter((r) => r.status === "skipped").length;
+    const passed = results.filter((r,) => r.status === "passed").length;
+    const failed = results.filter((r,) => r.status === "failed").length;
+    const skipped = results.filter((r,) => r.status === "skipped").length;
 
     const executed = results.length - skipped;
     const summary: SyntheticTestRunSummary = {
       passRate: executed > 0 ? passed / executed : 0,
     };
     if (mode === SyntheticTestMode.Calibration && qualityScores.length > 0) {
-      summary.suggestedThresholds = this.suggestThresholds(qualityScores);
+      summary.suggestedThresholds = this.suggestThresholds(qualityScores,);
     }
 
     return {
@@ -193,27 +193,27 @@ export class SyntheticTestRunner {
 
     switch (row.type) {
       case SyntheticDataType.QualityEvaluation: {
-        out = this.runQuality(c, mode, mutationParams);
+        out = this.runQuality(c, mode, mutationParams,);
         break;
       }
       case SyntheticDataType.TurnSequence: {
-        out = this.runTurnSequence(c);
+        out = this.runTurnSequence(c,);
         break;
       }
       case SyntheticDataType.QuestProgression: {
-        out = await this.runQuestProgression(c);
+        out = await this.runQuestProgression(c,);
         break;
       }
       case SyntheticDataType.WorldStateTransition: {
-        out = this.runWorldStateTransition(c);
+        out = this.runWorldStateTransition(c,);
         break;
       }
       case SyntheticDataType.RegenerationCase: {
-        out = this.runGeneric(c, this.regenerationLogic(c));
+        out = this.runGeneric(c, this.regenerationLogic(c,),);
         break;
       }
       case SyntheticDataType.GmEscalation: {
-        out = await this.runGmEscalation(c);
+        out = await this.runGmEscalation(c,);
         break;
       }
       default: {
@@ -221,7 +221,7 @@ export class SyntheticTestRunner {
           status: "skipped",
           expected: c.expected,
           actual: {},
-          reason: `unsupported scenario type: ${String(row.type)}`,
+          reason: `unsupported scenario type: ${String(row.type,)}`,
         };
       }
     }
@@ -252,43 +252,43 @@ export class SyntheticTestRunner {
     const actorName = (input as { actorId?: string }).actorId ?? "narrator";
 
     if (mode === SyntheticTestMode.Mutation) {
-      const variations = Math.max(1, mutationParams?.promptVariations ?? 3);
+      const variations = Math.max(1, mutationParams?.promptVariations ?? 3,);
       const tolerance = (mutationParams?.temperatureVariance ?? 0.2) * 100;
       const scores: number[] = [];
       for (let i = 0; i < variations; i++) {
         const jittered = `${response} ${i}`;
-        const s = this.evaluator.evaluate({ response: jittered, prompt: "", actorName }).scores.overall;
-        scores.push(s);
+        const s = this.evaluator.evaluate({ response: jittered, prompt: "", actorName, },).scores.overall;
+        scores.push(s,);
       }
-      const variance = Math.max(...scores) - Math.min(...scores);
+      const variance = Math.max(...scores,) - Math.min(...scores,);
       const passed = variance <= tolerance;
       return {
         status: passed ? "passed" : "failed",
-        expected: { ...c.expected, tolerance },
-        actual: { scores, variance },
+        expected: { ...c.expected, tolerance, },
+        actual: { scores, variance, },
         reason: passed ? undefined : `variance ${variance} exceeds tolerance ${tolerance}`,
       };
     }
 
     if (mode === SyntheticTestMode.Stress) {
-      const iterations = Math.max(1, this.defaultIterations);
+      const iterations = Math.max(1, this.defaultIterations,);
       const scores: number[] = [];
       for (let i = 0; i < iterations; i++) {
-        scores.push(this.evaluator.evaluate({ response, prompt: "", actorName }).scores.overall);
+        scores.push(this.evaluator.evaluate({ response, prompt: "", actorName, },).scores.overall,);
       }
-      const variance = Math.max(...scores) - Math.min(...scores);
+      const variance = Math.max(...scores,) - Math.min(...scores,);
       const passed = variance === 0;
       return {
         status: passed ? "passed" : "failed",
-        expected: { ...c.expected, iterations },
-        actual: { scores, variance },
+        expected: { ...c.expected, iterations, },
+        actual: { scores, variance, },
         reason: passed ? undefined : `inconsistent across ${iterations} runs (variance ${variance})`,
       };
     }
 
     // replay / regression / calibration
-    const result = this.evaluator.evaluate({ response, prompt: "", actorName });
-    const actual = { score: result.scores.overall, passed: result.passed };
+    const result = this.evaluator.evaluate({ response, prompt: "", actorName, },);
+    const actual = { score: result.scores.overall, passed: result.passed, };
     const expPassed = typeof c.expected.passed === "boolean" ? c.expected.passed : true;
     const minScore = typeof c.expected.minScore === "number" ? c.expected.minScore : 0;
     const passed = result.passed === expPassed && result.scores.overall >= minScore;
@@ -304,7 +304,7 @@ export class SyntheticTestRunner {
 
   // ─── Turn Sequence (structural) ─────────────────────────────
 
-  private runTurnSequence(c: SyntheticCase): {
+  private runTurnSequence(c: SyntheticCase,): {
     status: SyntheticTestStatus;
     expected: Record<string, unknown>;
     actual: Record<string, unknown>;
@@ -323,14 +323,14 @@ export class SyntheticTestRunner {
     return {
       status: wellFormed ? "passed" : "failed",
       expected: c.expected,
-      actual: { nextActorId: nextActorId ?? null, structural: wellFormed },
+      actual: { nextActorId: nextActorId ?? null, structural: wellFormed, },
       reason: wellFormed ? undefined : "malformed expected.nextActorId",
     };
   }
 
   // ─── Quest Progression (read-only) ──────────────────────────
 
-  private async runQuestProgression(c: SyntheticCase): Promise<{
+  private async runQuestProgression(c: SyntheticCase,): Promise<{
     status: SyntheticTestStatus;
     expected: Record<string, unknown>;
     actual: Record<string, unknown>;
@@ -339,22 +339,22 @@ export class SyntheticTestRunner {
     const questId = (c.input as { questId?: string }).questId ?? "";
     const currentProgress = (c.input as { currentProgress?: number }).currentProgress ?? 0;
     const quest = await this.db
-      .selectFrom("quests")
-      .select(["target", "status"])
-      .where("id", "=", questId)
+      .selectFrom("quests",)
+      .select(["target", "status",],)
+      .where("id", "=", questId,)
       .executeTakeFirst();
     if (!quest) {
       return {
         status: "skipped",
         expected: c.expected,
-        actual: { found: false },
+        actual: { found: false, },
         reason: `quest ${questId} not found`,
       };
     }
 
     const target = quest.target || 100;
-    const step = Math.max(1, Math.round(target * 0.1));
-    const nextProgress = Math.min(currentProgress + step, target);
+    const step = Math.max(1, Math.round(target * 0.1,),);
+    const nextProgress = Math.min(currentProgress + step, target,);
     const newStatus = nextProgress >= target ? "completed" : "active";
     const advanced = nextProgress > currentProgress;
 
@@ -367,14 +367,14 @@ export class SyntheticTestRunner {
     return {
       status: passed ? "passed" : "failed",
       expected: c.expected,
-      actual: { target, step, nextProgress, newStatus, advanced },
-      reason: passed ? undefined : `expected status=${String(expStatus)} advanced=${String(expAdvanced)}`,
+      actual: { target, step, nextProgress, newStatus, advanced, },
+      reason: passed ? undefined : `expected status=${String(expStatus,)} advanced=${String(expAdvanced,)}`,
     };
   }
 
   // ─── World State Transition (structural diff) ──────────────
 
-  private runWorldStateTransition(c: SyntheticCase): {
+  private runWorldStateTransition(c: SyntheticCase,): {
     status: SyntheticTestStatus;
     expected: Record<string, unknown>;
     actual: Record<string, unknown>;
@@ -385,12 +385,12 @@ export class SyntheticTestRunner {
     const changedKeys: string[] = [];
     let consistent = true;
 
-    for (const key of Object.keys(from)) {
-      if (!(key in to)) continue;
+    for (const key of Object.keys(from,)) {
+      if (!(key in to)) { continue; }
       const tf = typeof from[key];
       const tt = typeof to[key];
-      if (tf !== tt && !(tf === "object" && tt === "object")) consistent = false;
-      if (from[key] !== to[key]) changedKeys.push(key);
+      if (tf !== tt && !(tf === "object" && tt === "object")) { consistent = false; }
+      if (from[key] !== to[key]) { changedKeys.push(key,); }
     }
 
     const expConsistent = c.expected.consistent !== false;
@@ -398,14 +398,14 @@ export class SyntheticTestRunner {
     return {
       status: passed ? "passed" : "failed",
       expected: c.expected,
-      actual: { changedKeys, consistent },
+      actual: { changedKeys, consistent, },
       reason: passed ? undefined : `consistency ${consistent} vs expected ${expConsistent}`,
     };
   }
 
   // ─── Regeneration (baseline score) ──────────────────────────
 
-  private regenerationLogic(c: SyntheticCase): {
+  private regenerationLogic(c: SyntheticCase,): {
     status: SyntheticTestStatus;
     expected: Record<string, unknown>;
     actual: Record<string, unknown>;
@@ -414,22 +414,22 @@ export class SyntheticTestRunner {
     const originalInput = c.input as { original?: string; actorId?: string };
     const original = originalInput.original ?? "";
     const actorName = originalInput.actorId ?? "narrator";
-    const baseline = this.evaluator.evaluate({ response: original, prompt: "", actorName }).scores.overall;
-    const improvedThresh = Number(c.expected.improvedScore ?? 0.7) * 100;
+    const baseline = this.evaluator.evaluate({ response: original, prompt: "", actorName, },).scores.overall;
+    const improvedThresh = Number(c.expected.improvedScore ?? 0.7,) * 100;
     const warranted = baseline < improvedThresh;
     const expRegen = c.expected.regenerated === true;
     const passed = warranted === expRegen;
     return {
       status: passed ? "passed" : "failed",
       expected: c.expected,
-      actual: { originalScore: baseline, warranted, improvedThresh },
+      actual: { originalScore: baseline, warranted, improvedThresh, },
       reason: passed ? undefined : `warranted ${warranted} vs expected ${expRegen}`,
     };
   }
 
   // ─── GM Escalation (heuristic) ──────────────────────────────
 
-  private async runGmEscalation(c: SyntheticCase): Promise<{
+  private async runGmEscalation(c: SyntheticCase,): Promise<{
     status: SyntheticTestStatus;
     expected: Record<string, unknown>;
     actual: Record<string, unknown>;
@@ -438,15 +438,15 @@ export class SyntheticTestRunner {
     if (!this.gameMaster) {
       const questId = (c.input as { questId?: string }).questId ?? "";
       const quest = await this.db
-        .selectFrom("quests")
-        .select(["status"])
-        .where("id", "=", questId)
+        .selectFrom("quests",)
+        .select(["status",],)
+        .where("id", "=", questId,)
         .executeTakeFirst();
       if (!quest) {
         return {
           status: "skipped",
           expected: c.expected,
-          actual: { found: false },
+          actual: { found: false, },
           reason: `quest ${questId} not found`,
         };
       }
@@ -456,7 +456,7 @@ export class SyntheticTestRunner {
       return {
         status: passed ? "passed" : "failed",
         expected: c.expected,
-        actual: { questStatus: quest.status, escalated },
+        actual: { questStatus: quest.status, escalated, },
         reason: passed ? undefined : `escalated ${escalated} vs expected ${expEsc}`,
       };
     }
@@ -485,24 +485,24 @@ export class SyntheticTestRunner {
     actual: Record<string, unknown>;
     reason?: string;
   } {
-    return { ...computed, expected: c.expected };
+    return { ...computed, expected: c.expected, };
   }
 
-  private suggestThresholds(scores: number[]): { accept: number; regenerate: number; escalate: number } {
-    const sorted = [...scores].sort((a, b) => a - b);
-    const pct = (p: number): number => sorted[Math.min(sorted.length - 1, Math.floor((sorted.length - 1) * p))] ?? 0;
+  private suggestThresholds(scores: number[],): { accept: number; regenerate: number; escalate: number } {
+    const sorted = [...scores,].sort((a, b,) => a - b);
+    const pct = (p: number,): number => sorted[Math.min(sorted.length - 1, Math.floor((sorted.length - 1) * p,),)] ?? 0;
     return {
-      accept: pct(0.5),
-      regenerate: pct(0.3),
-      escalate: pct(0.15),
+      accept: pct(0.5,),
+      regenerate: pct(0.3,),
+      escalate: pct(0.15,),
     };
   }
 
-  private async loadRows(ids: string[]): Promise<RowShape[]> {
+  private async loadRows(ids: string[],): Promise<RowShape[]> {
     return this.db
-      .selectFrom("synthetic_data")
-      .select(["id", "chat_id", "type", "generated_cases"])
-      .where("id", "in", ids)
+      .selectFrom("synthetic_data",)
+      .select(["id", "chat_id", "type", "generated_cases",],)
+      .where("id", "in", ids,)
       .execute();
   }
 }

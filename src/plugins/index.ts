@@ -15,5 +15,5 @@ export type {
   UIComponentDefinition,
   EventHandlerDefinition,
   MigrationDefinition,
-  ConfigSchema,
+  PluginConfigSchema,
 } from "./types";

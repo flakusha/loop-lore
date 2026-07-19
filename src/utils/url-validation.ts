@@ -6,14 +6,14 @@
  * IPs and localhost (the common local inference pattern). Remote URLs
  * require explicit allowlist entries.
  */
-import { isIP } from "node:net";
+import { isIP, } from "node:net";
 
 const LOCAL_IPV4_RANGES: { network: number; mask: number }[] = [
-  { network: 0x0A_00_00_00, mask: 0xFF_00_00_00 }, // 10.0.0.0/8
-  { network: 0xAC_10_00_00, mask: 0xFF_F0_00_00 }, // 172.16.0.0/12
-  { network: 0xC0_A8_00_00, mask: 0xFF_FF_00_00 }, // 192.168.0.0/16
-  { network: 0x7F_00_00_00, mask: 0xFF_00_00_00 }, // 127.0.0.0/8
-  { network: 0xA9_FE_00_00, mask: 0xFF_FF_00_00 }, // 169.254.0.0/16 (link-local)
+  { network: 0x0A_00_00_00, mask: 0xFF_00_00_00, }, // 10.0.0.0/8
+  { network: 0xAC_10_00_00, mask: 0xFF_F0_00_00, }, // 172.16.0.0/12
+  { network: 0xC0_A8_00_00, mask: 0xFF_FF_00_00, }, // 192.168.0.0/16
+  { network: 0x7F_00_00_00, mask: 0xFF_00_00_00, }, // 127.0.0.0/8
+  { network: 0xA9_FE_00_00, mask: 0xFF_FF_00_00, }, // 169.254.0.0/16 (link-local)
 ];
 
 export interface UrlValidationOptions {
@@ -49,22 +49,22 @@ export function validateProviderUrl(
   urlString: string,
   options: UrlValidationOptions = {},
 ): UrlValidationResult {
-  const allowedSchemes = options.allowedSchemes ?? ["http", "https"];
+  const allowedSchemes = options.allowedSchemes ?? ["http", "https",];
   const allowlist = options.allowlist ?? [];
   const blockLocal = options.blockLocalAddrs ?? false;
 
   let parsed: URL;
   try {
-    parsed = new URL(urlString);
+    parsed = new URL(urlString,);
   } catch {
-    return { ok: false, url: urlString, error: "Invalid URL: could not parse" };
+    return { ok: false, url: urlString, error: "Invalid URL: could not parse", };
   }
 
-  if (!allowedSchemes.includes(parsed.protocol.replace(":", ""))) {
+  if (!allowedSchemes.includes(parsed.protocol.replace(":", "",),)) {
     return {
       ok: false,
       url: urlString,
-      error: `Scheme "${parsed.protocol}" not allowed. Must be one of: ${allowedSchemes.join(", ")}`,
+      error: `Scheme "${parsed.protocol}" not allowed. Must be one of: ${allowedSchemes.join(", ",)}`,
     };
   }
 
@@ -73,17 +73,17 @@ export function validateProviderUrl(
   // Check allowlist first (exact match or wildcard suffix "*.example.com")
   for (const allowed of allowlist) {
     if (hostname === allowed) {
-      return { ok: true, url: urlString, local: false };
+      return { ok: true, url: urlString, local: false, };
     }
-    if (allowed.startsWith("*.") && hostname.endsWith(allowed.slice(1))) {
-      return { ok: true, url: urlString, local: false };
+    if (allowed.startsWith("*.",) && hostname.endsWith(allowed.slice(1,),)) {
+      return { ok: true, url: urlString, local: false, };
     }
   }
 
   // Check if it's an IP address
-  const ipVersion = isIP(hostname);
+  const ipVersion = isIP(hostname,);
   if (ipVersion) {
-    const isLocal = isLocalIPv4(hostname) || hostname === "::1" || isLocalIPv6(hostname);
+    const isLocal = isLocalIPv4(hostname,) || hostname === "::1" || isLocalIPv6(hostname,);
 
     if (isLocal) {
       if (blockLocal) {
@@ -94,7 +94,7 @@ export function validateProviderUrl(
           local: true,
         };
       }
-      return { ok: true, url: urlString, local: true };
+      return { ok: true, url: urlString, local: true, };
     }
 
     // Remote IP not in allowlist
@@ -107,7 +107,7 @@ export function validateProviderUrl(
   }
 
   // Hostname (not IP) — check against localhost
-  if (hostname === "localhost" || hostname.endsWith(".local")) {
+  if (hostname === "localhost" || hostname.endsWith(".local",)) {
     if (blockLocal) {
       return {
         ok: false,
@@ -116,7 +116,7 @@ export function validateProviderUrl(
         local: true,
       };
     }
-    return { ok: true, url: urlString, local: true };
+    return { ok: true, url: urlString, local: true, };
   }
 
   // Remote hostname not in allowlist
@@ -140,31 +140,31 @@ export function validateProviderUrls(
   options: UrlValidationOptions = {},
 ): Record<string, UrlValidationResult> {
   const results: Record<string, UrlValidationResult> = {};
-  for (const { name, url } of entries) {
-    results[name] = validateProviderUrl(url, options);
+  for (const { name, url, } of entries) {
+    results[name] = validateProviderUrl(url, options,);
   }
   return results;
 }
 
-function isLocalIPv4(ip: string): boolean {
-  const parts = ip.split(".");
-  if (parts.length !== 4) return false;
+function isLocalIPv4(ip: string,): boolean {
+  const parts = ip.split(".",);
+  if (parts.length !== 4) { return false; }
 
-  const a = parseInt(parts[0]!, 10);
-  const b = parseInt(parts[1]!, 10);
-  const c = parseInt(parts[2]!, 10);
-  const d = parseInt(parts[3]!, 10);
-  if (isNaN(a) || isNaN(b) || isNaN(c) || isNaN(d)) return false;
+  const a = parseInt(parts[0]!, 10,);
+  const b = parseInt(parts[1]!, 10,);
+  const c = parseInt(parts[2]!, 10,);
+  const d = parseInt(parts[3]!, 10,);
+  if (isNaN(a,) || isNaN(b,) || isNaN(c,) || isNaN(d,)) { return false; }
 
   const addr = (a << 24) | (b << 16) | (c << 8) | d;
 
   for (const range of LOCAL_IPV4_RANGES) {
-    if ((addr & range.mask) === range.network) return true;
+    if ((addr & range.mask) === range.network) { return true; }
   }
   return false;
 }
 
-function isLocalIPv6(ip: string): boolean {
+function isLocalIPv6(ip: string,): boolean {
   const lower = ip.toLowerCase();
-  return lower === "::1" || lower.startsWith("fe80:");
+  return lower === "::1" || lower.startsWith("fe80:",);
 }

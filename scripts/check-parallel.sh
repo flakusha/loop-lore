@@ -24,10 +24,10 @@ trap 'rm -rf "$TMPDIR"' EXIT
 FIX_MODE=false
 CI_MODE=false
 for arg in "$@"; do
-  case $arg in
+    case $arg in
     --fix) FIX_MODE=true ;;
     --ci) CI_MODE=true ;;
-  esac
+    esac
 done
 
 # Track results
@@ -39,77 +39,77 @@ WARNINGS=0
 
 # Run a check in background, capture output
 run_check() {
-  local name="$1"
-  local cmd="$2"
-  local output_file="$TMPDIR/$name.log"
-  local exit_file="$TMPDIR/$name.exit"
+    local name="$1"
+    local cmd="$2"
+    local output_file="$TMPDIR/$name.log"
+    local exit_file="$TMPDIR/$name.exit"
 
-  echo -e "${CYAN}Starting: ${name}${NC}" >&2
-  
-  # Run in background
-  (
-    if eval "$cmd" > "$output_file" 2>&1; then
-      echo "0" > "$exit_file"
-    else
-      echo "$?" > "$exit_file"
-    fi
-  ) &
+    echo -e "${CYAN}Starting: ${name}${NC}" >&2
+
+    # Run in background
+    (
+        if eval "$cmd" >"$output_file" 2>&1; then
+            echo "0" >"$exit_file"
+        else
+            echo "$?" >"$exit_file"
+        fi
+    ) &
 }
 
 # Wait for all background checks and collect results
 wait_and_collect() {
-  local pids=("$@")
-  
-  # Wait for all background processes
-  for pid in "${pids[@]}"; do
-    wait "$pid" 2>/dev/null || true
-  done
-  
-  # Collect results
-  for check in "${!RESULTS[@]}"; do
-    local output_file="$TMPDIR/$check.log"
-    local exit_file="$TMPDIR/$check.exit"
-    
-    TOTAL=$((TOTAL + 1))
-    
-    if [[ -f "$exit_file" ]]; then
-      local exit_code
-      exit_code=$(cat "$exit_file")
-      
-      if [[ "$exit_code" == "0" ]]; then
-        PASSED=$((PASSED + 1))
-        echo -e "${GREEN}✓ PASS: ${check}${NC}"
-      else
-        FAILED=$((FAILED + 1))
-        echo -e "${RED}✗ FAIL: ${check}${NC}"
-        echo -e "${RED}Output:${NC}"
-        cat "$output_file" | head -50
-        echo ""
-      fi
-    else
-      FAILED=$((FAILED + 1))
-      echo -e "${RED}✗ FAIL: ${check} (no exit file)${NC}"
-    fi
-  done
+    local pids=("$@")
+
+    # Wait for all background processes
+    for pid in "${pids[@]}"; do
+        wait "$pid" 2>/dev/null || true
+    done
+
+    # Collect results
+    for check in "${!RESULTS[@]}"; do
+        local output_file="$TMPDIR/$check.log"
+        local exit_file="$TMPDIR/$check.exit"
+
+        TOTAL=$((TOTAL + 1))
+
+        if [[ -f "$exit_file" ]]; then
+            local exit_code
+            exit_code=$(cat "$exit_file")
+
+            if [[ "$exit_code" == "0" ]]; then
+                PASSED=$((PASSED + 1))
+                echo -e "${GREEN}✓ PASS: ${check}${NC}"
+            else
+                FAILED=$((FAILED + 1))
+                echo -e "${RED}✗ FAIL: ${check}${NC}"
+                echo -e "${RED}Output:${NC}"
+                cat "$output_file" | head -50
+                echo ""
+            fi
+        else
+            FAILED=$((FAILED + 1))
+            echo -e "${RED}✗ FAIL: ${check} (no exit file)${NC}"
+        fi
+    done
 }
 
 # Define checks
 declare -A CHECKS
 
 # Type checking
-CHECKS[typecheck-backend]="bun run typecheck"
-CHECKS[typecheck-frontend]="bun run typecheck:frontend"
-CHECKS[typecheck-coverage]="bun run typecheck:coverage"
-CHECKS[typecheck-coverage-frontend]="bun run typecheck:coverage:frontend"
+CHECKS[typecheck - backend]="bun run typecheck"
+CHECKS[typecheck - frontend]="bun run typecheck:frontend"
+CHECKS[typecheck - coverage]="bun run typecheck:coverage"
+CHECKS[typecheck - coverage - frontend]="bun run typecheck:coverage:frontend"
 
 # Linting
-CHECKS[lint-ts]="bun run lint"
-CHECKS[lint-css]="bun run lint:css"
-CHECKS[lint-html]="bun run lint:html"
+CHECKS[lint - ts]="bun run lint"
+CHECKS[lint - css]="bun run lint:css"
+CHECKS[lint - html]="bun run lint:html"
 
 # Formatting
-CHECKS[format-dprint]="bun run format:dprint"
-CHECKS[md-lint]="bun run md:lint"
+CHECKS[format - dprint]="bun run format:dprint"
+CHECKS[md - lint]="bun run md:lint"
 
 echo -e "${CYAN}=== loop-lore parallel check runner ===${NC}"
 echo -e "${CYAN}Running ${#CHECKS[@]} checks in parallel...${NC}"
@@ -118,9 +118,9 @@ echo ""
 # Start all checks in parallel
 PIDS=()
 for check in "${!CHECKS[@]}"; do
-  RESULTS[$check]=""
-  run_check "$check" "${CHECKS[$check]}"
-  PIDS+=($!)
+    RESULTS[$check]=""
+    run_check "$check" "${CHECKS[$check]}"
+    PIDS+=($!)
 done
 
 # Wait and collect results
@@ -134,8 +134,8 @@ echo -e "${GREEN}Passed: ${PASSED}${NC}"
 echo -e "${RED}Failed: ${FAILED}${NC}"
 
 if [[ $FAILED -gt 0 ]]; then
-  echo -e "${RED}=== ${FAILED} check(s) failed ===${NC}"
-  exit 1
+    echo -e "${RED}=== ${FAILED} check(s) failed ===${NC}"
+    exit 1
 fi
 
 echo -e "${GREEN}=== All checks passed ===${NC}"

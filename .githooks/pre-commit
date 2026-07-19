@@ -158,6 +158,7 @@ CHECKS=(
   "lint-html"
   "format-dprint"
   "md-lint"
+  "schema-staleness"
 )
 
 CHECK_CMDS=(
@@ -170,6 +171,7 @@ CHECK_CMDS=(
   "bun run lint:html"
   "bun run format:dprint"
   "bun run md:lint"
+  "bun run schemas:check"
 )
 
 PIDS=()

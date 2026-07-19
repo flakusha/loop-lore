@@ -48,7 +48,7 @@ skip itself — more complexity for marginal gain.
 When role guards, rate limiters, and audit logging are needed:
 
 ```typescript
-compose([errorBoundary, rateLimiter, authenticate, requireRole("admin")], dispatchRoutes);
+compose([errorBoundary, rateLimiter, authenticate, requireRole("admin",),], dispatchRoutes,);
 ```
 
 ## Token Format
