@@ -15,16 +15,16 @@ references) plus a concrete improvement plan.
 
 ## Topic index
 
-| #   | File                                    | Area      | Headline gap                                                                                                                   |
-| --- | --------------------------------------- | --------- | ------------------------------------------------------------------------------------------------------------------------------ |
-| 1   | `01-strict-typing.md`                   | Types     | Backend `tsconfig` strong; frontend `tsconfig` weak; `exactOptionalPropertyTypes` missing; `any` casts in DB wrapper           |
-| 2   | `02-eslint-and-static-analysis.md`      | Lint      | No `sonarjs/cognitive-complexity` cap (functions hit ~96); no `eslint-plugin-import` (cycles); no `no-misused-promises`        |
-| 3   | `03-extensibility-code-patterns.md`     | Patterns  | Dual dispatch (Elysia + `handleApiRequest` catch-all); high-complexity handlers; no event/tool bus                             |
-| 4   | `04-code-organization-and-splitting.md` | Structure | `messages.ts` 702L, `generate-route.ts` 636L, `config/schema.ts` 692L, `server.ts` 546L; god-modules (`utils.ts` 52 importers) |
-| 5   | `05-testing-e2e-multiple-db.md`         | Tests     | E2E safeguard good; only SQLite tested; no PG matrix; no contract tests; no coverage threshold in `check`                      |
-| 6   | `06-schemas-and-openapi.md`             | Schemas   | TypeBox today, no OpenAPI export; Zod plan exists but unstarted; DB schema not exported for SDKs                               |
-| 7   | `07-alternative-frontend-support.md`    | Frontends | REST API is the boundary (good); but view-serving + catch-all coupled; no content negotiation / CORS / `frontend.mode`         |
-| 8   | `08-plugins-hooks-integration.md`       | Plugins   | Manifest model strong; **event bus, tool executor, UI mount, config merge all unwired**                                        |
+| # | File                                    | Area      | Headline gap                                                                                                                   |
+| - | --------------------------------------- | --------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| 1 | `01-strict-typing.md`                   | Types     | Backend `tsconfig` strong; frontend `tsconfig` weak; `exactOptionalPropertyTypes` missing; `any` casts in DB wrapper           |
+| 2 | `02-eslint-and-static-analysis.md`      | Lint      | No `sonarjs/cognitive-complexity` cap (functions hit ~96); no `eslint-plugin-import` (cycles); no `no-misused-promises`        |
+| 3 | `03-extensibility-code-patterns.md`     | Patterns  | Dual dispatch (Elysia + `handleApiRequest` catch-all); high-complexity handlers; no event/tool bus                             |
+| 4 | `04-code-organization-and-splitting.md` | Structure | `messages.ts` 702L, `generate-route.ts` 636L, `config/schema.ts` 692L, `server.ts` 546L; god-modules (`utils.ts` 52 importers) |
+| 5 | `05-testing-e2e-multiple-db.md`         | Tests     | E2E safeguard good; only SQLite tested; no PG matrix; no contract tests; no coverage threshold in `check`                      |
+| 6 | `06-schemas-and-openapi.md`             | Schemas   | TypeBox today, no OpenAPI export; Zod plan exists but unstarted; DB schema not exported for SDKs                               |
+| 7 | `07-alternative-frontend-support.md`    | Frontends | REST API is the boundary (good); but view-serving + catch-all coupled; no content negotiation / CORS / `frontend.mode`         |
+| 8 | `08-plugins-hooks-integration.md`       | Plugins   | Manifest model strong; **event bus, tool executor, UI mount, config merge all unwired**                                        |
 
 ## Prioritized roadmap
 

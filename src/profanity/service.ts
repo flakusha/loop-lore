@@ -10,11 +10,11 @@
  */
 
 import {
-  RegExpMatcher,
-  TextCensor,
   asteriskCensorStrategy,
   englishDataset,
   englishRecommendedTransformers,
+  RegExpMatcher,
+  TextCensor,
 } from "obscenity";
 
 const matcher = new RegExpMatcher({

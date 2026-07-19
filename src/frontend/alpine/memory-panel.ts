@@ -101,9 +101,9 @@ export const memoryPanel: Partial<ChatState> & ThisType<ChatState> = {
 
     return memories.filter(
       (m) =>
-        m.content.toLowerCase().includes(query) ||
-        m.keywords.some((k) => k.toLowerCase().includes(query)) ||
-        m.category?.toLowerCase().includes(query),
+        m.content.toLowerCase().includes(query)
+        || m.keywords.some((k) => k.toLowerCase().includes(query))
+        || m.category?.toLowerCase().includes(query),
     );
   },
 

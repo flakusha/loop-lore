@@ -6,11 +6,11 @@
  * Future: delegate to a dedicated LLM with structured output.
  */
 import { QualityDimension } from "../db/enums";
-import { DEFAULT_QUALITY_THRESHOLDS, DEFAULT_QUALITY_WEIGHTS } from "./types";
-import type { QualityScores, QualityEvaluation, QualityThresholds, StoryContext } from "./types";
-import { SCORERS } from "./quality/registry";
 import { getReasoning } from "./quality/reasoning";
+import { SCORERS } from "./quality/registry";
 import type { ScorerContext } from "./quality/types";
+import { DEFAULT_QUALITY_THRESHOLDS, DEFAULT_QUALITY_WEIGHTS } from "./types";
+import type { QualityEvaluation, QualityScores, QualityThresholds, StoryContext } from "./types";
 
 export interface EvaluatorConfig {
   thresholds: QualityThresholds;

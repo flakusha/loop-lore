@@ -2,16 +2,16 @@
 //
 // Character import/export module
 
+export { createCharx, extractCharx, resolveEmbededUri } from "./charx";
+export * from "./exporters";
+export * from "./normalizers";
 export { parseCharacterCard, parseCharacterFile, validateCharacter } from "./parser";
 export type {
   CanonicalCharacter,
-  LorebookData,
-  LorebookEntry,
   CharacterAsset,
   CharacterFormat,
-  ParseResult,
+  LorebookData,
+  LorebookEntry,
   ParseError,
+  ParseResult,
 } from "./parser";
-export { extractCharx, createCharx, resolveEmbededUri } from "./charx";
-export * from "./normalizers";
-export * from "./exporters";

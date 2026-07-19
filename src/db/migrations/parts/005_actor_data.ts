@@ -1,4 +1,4 @@
-import { sql, type Kysely } from "kysely";
+import { type Kysely, sql } from "kysely";
 
 export async function up(database: Kysely<unknown>): Promise<void> {
   // ── Actor Memories ──────────────────────────────────
@@ -19,7 +19,8 @@ export async function up(database: Kysely<unknown>): Promise<void> {
 
   await database.schema.createIndex("idx_actor_memories_actor").on("actor_memories").column("actor_id").execute();
   await database.schema.createIndex("idx_actor_memories_type").on("actor_memories").column("memory_type").execute();
-  await database.schema.createIndex("idx_actor_memories_source_chat").on("actor_memories").column("source_chat_id").execute();
+  await database.schema.createIndex("idx_actor_memories_source_chat").on("actor_memories").column("source_chat_id")
+    .execute();
 
   // ── Actor Notes ──────────────────────────────────────
   await database.schema

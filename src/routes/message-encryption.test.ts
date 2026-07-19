@@ -1,7 +1,7 @@
 /**
  * Unit tests for message-encryption routes (Elysia plugin)
  */
-import { describe, test, expect } from "bun:test";
+import { describe, expect, test } from "bun:test";
 import { messageEncryptionRoutes } from "./message-encryption";
 
 const mockDb = {} as any;

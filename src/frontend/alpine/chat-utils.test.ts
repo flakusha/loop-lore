@@ -2,7 +2,7 @@
  * Tests for frontend/alpine/chat-utils.ts — chat utility functions
  */
 
-import { describe, test, expect } from "bun:test";
+import { describe, expect, test } from "bun:test";
 import { chatUtils } from "./chat-utils";
 
 describe("chatUtils", () => {

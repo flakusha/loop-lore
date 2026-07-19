@@ -2,7 +2,7 @@
  * Tests for crypto/pipeline.ts — compressThenEncrypt / decryptThenDecompress
  */
 
-import { describe, test, expect, beforeAll } from "bun:test";
+import { beforeAll, describe, expect, test } from "bun:test";
 import { compressThenEncrypt, decryptThenDecompress } from "./pipeline";
 
 // Use a shorter key ID since the pipeline just stores it, doesn't validate length

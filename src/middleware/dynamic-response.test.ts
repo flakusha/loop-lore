@@ -6,11 +6,11 @@
  * Constructs Responses and asserts minify / validate / compress behavior.
  */
 
-import { describe, test, expect } from "bun:test";
-import { gunzipSync, brotliDecompressSync } from "node:zlib";
-import { DynamicResponsePolicy } from "./dynamic-response";
+import { describe, expect, test } from "bun:test";
+import { brotliDecompressSync, gunzipSync } from "node:zlib";
 import type { DynamicResponseConfig } from "../config/schema";
 import type { Logger } from "../logger";
+import { DynamicResponsePolicy } from "./dynamic-response";
 
 function makeConfig(overrides: Partial<DynamicResponseConfig> = {}): DynamicResponseConfig {
   return {

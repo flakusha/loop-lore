@@ -2,20 +2,20 @@
  * Tests for age-gate controller.
  */
 /* eslint-disable sonarjs/no-nested-functions */
-import { describe, test, expect, beforeEach, afterEach } from "bun:test";
+import { afterEach, beforeEach, describe, expect, test } from "bun:test";
+import { Elysia } from "elysia";
+import type { Kysely } from "kysely";
+import { AgeGateMode } from "../db/enums";
+import type { DB } from "../db/schema";
 import {
-  handleGetStatus,
+  ageGateRoutes,
+  getRuntimeConfig,
   handleAccept,
   handleAdminGetConfig,
   handleAdminUpdateConfig,
-  ageGateRoutes,
+  handleGetStatus,
   initAgeGate,
-  getRuntimeConfig,
 } from "./controller";
-import { AgeGateMode } from "../db/enums";
-import { Elysia } from "elysia";
-import type { Kysely } from "kysely";
-import type { DB } from "../db/schema";
 
 function createAgeGateApp() {
   const mockDb = createMockDb();
@@ -35,10 +35,12 @@ function createAdminAgeGateApp() {
 function createSelectFrom(): {
   select: () => {
     where: () => {
-      executeTakeFirst: () => Promise<{
-        birth_date: string | null;
-        age_gate_accepted_at: string | null;
-      } | null>;
+      executeTakeFirst: () => Promise<
+        {
+          birth_date: string | null;
+          age_gate_accepted_at: string | null;
+        } | null
+      >;
       execute: () => Promise<unknown[]>;
     };
   };
@@ -97,8 +99,7 @@ function createDbWithUser(birthDate: string | null, acceptedAt: string | null) {
     selectFrom: () => ({
       select: () => ({
         where: () => ({
-          executeTakeFirst: () =>
-            Promise.resolve({ birth_date: birthDate, age_gate_accepted_at: acceptedAt }),
+          executeTakeFirst: () => Promise.resolve({ birth_date: birthDate, age_gate_accepted_at: acceptedAt }),
         }),
       }),
     }),
@@ -200,8 +201,7 @@ describe("age-gate controller", () => {
       ],
     ])("%s", async (_name, config, userId, birthDate, acceptedAt, expectedIsEnabled, expectedHasPassed) => {
       initAgeGate(config);
-      const db =
-        userId === null ? mockDb : (createDbWithUser(birthDate, acceptedAt) as unknown as Kysely<DB>);
+      const db = userId === null ? mockDb : (createDbWithUser(birthDate, acceptedAt) as unknown as Kysely<DB>);
       const res = await handleGetStatus(db, userId);
       const data = (await res.json()) as { isEnabled: boolean; hasPassed: boolean };
       expect(data.isEnabled).toBe(expectedIsEnabled);

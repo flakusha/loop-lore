@@ -136,12 +136,10 @@ export type CrossOriginOpenerPolicy = (typeof CrossOriginOpenerPolicy)[keyof typ
 export const CrossOriginEmbedderPolicy = {
   RequireCorp: "require-corp",
 } as const;
-export type CrossOriginEmbedderPolicy =
-  (typeof CrossOriginEmbedderPolicy)[keyof typeof CrossOriginEmbedderPolicy];
+export type CrossOriginEmbedderPolicy = (typeof CrossOriginEmbedderPolicy)[keyof typeof CrossOriginEmbedderPolicy];
 
 export const CrossOriginResourcePolicy = {
   SameOrigin: "same-origin",
   CrossOrigin: "cross-origin",
 } as const;
-export type CrossOriginResourcePolicy =
-  (typeof CrossOriginResourcePolicy)[keyof typeof CrossOriginResourcePolicy];
+export type CrossOriginResourcePolicy = (typeof CrossOriginResourcePolicy)[keyof typeof CrossOriginResourcePolicy];

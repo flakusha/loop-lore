@@ -4,8 +4,8 @@
  * All table type interfaces + DB aggregate for Kysely.
  * Domain-grouped sub-modules provide per-domain interfaces.
  */
-export * from "./schema-core";
 export * from "./schema-content";
+export * from "./schema-core";
 export * from "./schema-generation";
 export * from "./schema-story";
 export * from "./schema-synthetic";

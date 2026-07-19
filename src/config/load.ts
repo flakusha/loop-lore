@@ -1,9 +1,9 @@
 // src/config/load.ts — Config file loader with env override
 
 import { load as parseYaml } from "js-yaml";
-import { parse as parseToml } from "smol-toml";
-import { readFileSync, existsSync, statSync } from "node:fs";
+import { existsSync, readFileSync, statSync } from "node:fs";
 import path from "node:path";
+import { parse as parseToml } from "smol-toml";
 import { type Config } from "./schema";
 import type { ProviderInstanceConfig } from "./schema";
 import { ConfigSchema } from "./schema-class";
@@ -24,11 +24,10 @@ function deepMerge<T extends Record<string, unknown>>(base: T, overrides: Partia
     const value = overrides[k];
     if (value !== undefined) {
       const baseValue = base[k];
-      const isObject =
-        typeof value === "object" &&
-        !Array.isArray(value) &&
-        typeof baseValue === "object" &&
-        baseValue != null;
+      const isObject = typeof value === "object"
+        && !Array.isArray(value)
+        && typeof baseValue === "object"
+        && baseValue != null;
       result[k] = isObject
         ? (deepMerge(baseValue as Record<string, unknown>, value as Record<string, unknown>) as T[keyof T])
         : (value as T[keyof T]);
@@ -241,4 +240,4 @@ function loadConfig(cwd?: string): Config {
   return config;
 }
 
-export { loadConfig, ENV_MAP, deepMerge, validateConfig, coerceValue, setByPath, applyProviderEnvVars };
+export { applyProviderEnvVars, coerceValue, deepMerge, ENV_MAP, loadConfig, setByPath, validateConfig };
