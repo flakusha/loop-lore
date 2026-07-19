@@ -106,6 +106,7 @@ CHECKS[typecheck - coverage - frontend]="bun run typecheck:coverage:frontend"
 CHECKS[lint - ts]="bun run lint"
 CHECKS[lint - css]="bun run lint:css"
 CHECKS[lint - html]="bun run lint:html"
+CHECKS[lint - html-scripts]="bun run lint:html-scripts"
 
 # Formatting
 CHECKS[format - dprint]="bun run format:dprint"
