@@ -99,3 +99,25 @@ globalThis.deleteCharacter = async function(btn: HTMLElement,) {
     /* ignore */
   }
 };
+
+globalThis.exportCharacter = function(btn: HTMLElement,) {
+  const modal = btn.closest(".modal",);
+  if (!modal) {
+    console.error("No modal found",);
+    return;
+  }
+
+  const format = (
+    modal.querySelector('input[name="export-format"]:checked',) as HTMLInputElement | null
+  )?.value;
+  const characterId = (modal as HTMLElement).dataset.characterId;
+
+  if (!characterId) {
+    console.error("No character ID found",);
+    return;
+  }
+
+  // Trigger download
+  globalThis.location.assign(`/api/characters/${characterId}/export?format=${format}`,);
+  closeModal(btn,);
+};
