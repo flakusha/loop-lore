@@ -60,7 +60,8 @@ Commands:
   rebase <branch> [onto]    Rebase worktree's branch onto target (default: master)
   finalize <branch>         Validate worktree ready, run checks, merge to master, remove
   agent-merge <branch>      Alias for finalize — merge worktree into master and clean up
-  agent-commit <branch> <msg>  Create GPG-signed commit (agent MUST use this)
+  agent-commit <branch> <msg>  Create GPG-signed commit in worktree (agent MUST use this)
+  commit <msg>             Create GPG-signed commit on current branch (including master)
   list                      Show all worktrees with status
   cleanup                   Remove worktrees for deleted branches
   remove <branch>           Remove specific worktree (blocks if dirty)
@@ -73,6 +74,7 @@ Examples:
   $(basename "$0") finalize feature-xyz
   $(basename "$0") agent-merge feature-xyz
   $(basename "$0") agent-commit feature-xyz "feat(scope): add new feature"
+  $(basename "$0") commit "chore: clean up email identities"
   $(basename "$0") list
   $(basename "$0") cleanup
 EOF
@@ -730,6 +732,88 @@ cmd_agent_commit() {
     fi
 }
 
+cmd_commit() {
+    # Direct commit on current branch — for commits on master/main
+    # Usage: ./scripts/worktree.sh commit <message>
+    # Author = local git user, Committer = agent (from .credentials.env)
+    # Works from ANY directory — no worktree lookup.
+    local message="$1"
+
+    if [[ -z "$message" ]]; then
+        echo -e "${RED}Error: commit message required${NC}"
+        echo "Usage: $(basename "$0") commit <message>"
+        echo "  Creates a GPG-signed commit on the current branch"
+        echo "  Author = local git user, Committer = agent (from .credentials.env)"
+        exit 1
+    fi
+
+    # Verify agent credentials
+    if [[ -z "${AGENT_GPG_KEY_ID:-}" ]]; then
+        echo -e "${RED}Error: AGENT_GPG_KEY_ID not set in .credentials.env${NC}"
+        exit 1
+    fi
+
+    if [[ -z "${AGENT_GPG_NAME:-}" ]] || [[ -z "${AGENT_GPG_EMAIL:-}" ]]; then
+        echo -e "${RED}Error: AGENT_GPG_NAME/AGENT_GPG_EMAIL not set in .credentials.env${NC}"
+        exit 1
+    fi
+
+    # Check for staged changes
+    if git diff --cached --quiet 2>/dev/null; then
+        echo -e "${RED}Error: no staged changes${NC}"
+        echo "  Stage files first: git add <files>"
+        exit 1
+    fi
+
+    # Get author from current git config (local or global)
+    local author_name
+    local author_email
+    author_name=$(git config user.name)
+    author_email=$(git config user.email)
+
+    if [[ -z "$author_name" ]] || [[ -z "$author_email" ]]; then
+        echo -e "${RED}Error: git user.name/user.email not configured${NC}"
+        echo "  Run: git config user.name 'Your Name' && git config user.email 'you@example.com'"
+        exit 1
+    fi
+
+    # Verify GPG key is available
+    if ! gpg --list-secret-keys "$AGENT_GPG_KEY_ID" &>/dev/null; then
+        echo -e "${RED}Error: GPG secret key $AGENT_GPG_KEY_ID not found${NC}"
+        echo "  Run: ./scripts/gpg-unlock.sh"
+        exit 1
+    fi
+
+    local current_branch
+    current_branch=$(git branch --show-current 2>/dev/null || echo "(detached)")
+
+    echo -e "${CYAN}Creating GPG-signed commit on '$current_branch'...${NC}"
+    echo -e "  Author: $author_name <$author_email>"
+    echo -e "  Committer: $AGENT_GPG_NAME <$AGENT_GPG_EMAIL>"
+    echo -e "  GPG Key: ${AGENT_GPG_KEY_ID:0:8}..."
+
+    # Execute commit with proper identity
+    # --no-verify: agent MUST run checks separately before committing
+    GIT_COMMITTER_NAME="$AGENT_GPG_NAME" \
+    GIT_COMMITTER_EMAIL="$AGENT_GPG_EMAIL" \
+    git \
+        -c user.signingkey="$AGENT_GPG_KEY_ID" \
+        -c commit.gpgsign=true \
+        commit -S \
+        --no-verify \
+        --author="$author_name <$author_email>" \
+        -m "$message"
+
+    # Verify signature
+    local commit_sha
+    commit_sha=$(git rev-parse HEAD)
+    if git verify-commit "$commit_sha" &>/dev/null; then
+        echo -e "${GREEN}✓ Commit created and GPG-signed: $commit_sha${NC}"
+    else
+        echo -e "${YELLOW}⚠ Commit created but signature verification failed${NC}"
+    fi
+}
+
 # Main
 case "${1:-}" in
     create)
@@ -769,6 +853,10 @@ case "${1:-}" in
     agent-commit)
         shift
         cmd_agent_commit "${1:-}" "${2:-}"
+        ;;
+    commit)
+        shift
+        cmd_commit "${1:-}"
         ;;
     prs)
         cmd_prs
