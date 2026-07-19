@@ -7,7 +7,7 @@
  * Response shape: { type: "suggestion" | "info" | "error", content: string, confidence: number }
  */
 
-import type { Config } from "../config/schema";
+import type { Config, } from "../config/schema";
 
 export interface AssistantResponse {
   type: "suggestion" | "info" | "error";
@@ -30,7 +30,7 @@ const RESPONSE_MAP: Record<string, AssistantResponse[]> = {
       confidence: 0.9,
     },
   ],
-  hello: [{ type: "info", content: "Hello! How can I help you today?", confidence: 0.8 }],
+  hello: [{ type: "info", content: "Hello! How can I help you today?", confidence: 0.8, },],
   "/help": [
     {
       type: "info",
@@ -51,16 +51,16 @@ const RESPONSE_MAP: Record<string, AssistantResponse[]> = {
  * Generate an assistant response based on user input.
  * Returns null if no match found (no response needed).
  */
-export function generateResponse(params: GenerateResponseParams): AssistantResponse | null {
-  const { userInput } = params;
+export function generateResponse(params: GenerateResponseParams,): AssistantResponse | null {
+  const { userInput, } = params;
   const lower = userInput.toLowerCase().trim();
 
   // Check exact matches first (word boundary or start of string)
-  for (const [keyword, responses] of Object.entries(RESPONSE_MAP)) {
+  for (const [keyword, responses,] of Object.entries(RESPONSE_MAP,)) {
     // Use word boundary regex to avoid false positives (e.g., "helpme" matching "help")
-    const escaped = keyword.replaceAll(/[.*+?^${}()|[\]\\]/g, String.raw`\$&`);
-    const pattern = new RegExp(String.raw`\b${escaped}\b`, "i");
-    if (pattern.test(lower)) {
+    const escaped = keyword.replaceAll(/[.*+?^${}()|[\]\\]/g, String.raw`\$&`,);
+    const pattern = new RegExp(String.raw`\b${escaped}\b`, "i",);
+    if (pattern.test(lower,)) {
       return responses[0] ?? null;
     }
   }
@@ -68,6 +68,6 @@ export function generateResponse(params: GenerateResponseParams): AssistantRespo
   return null;
 }
 
-export function isAssistantEnabled(config: Config): boolean {
+export function isAssistantEnabled(config: Config,): boolean {
   return config.assistant?.enabled ?? false;
 }

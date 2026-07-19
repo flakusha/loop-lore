@@ -3,7 +3,7 @@
 // YAML normalizer.
 // Converts YAML format to canonical character card.
 
-import type { CanonicalCharacter } from "../parser";
+import type { CanonicalCharacter, } from "../parser";
 
 interface YamlCharacter {
   name?: string;
@@ -25,7 +25,7 @@ interface YamlCharacter {
  * Normalize YAML format to canonical character card.
  * YAML keys match canonical field names directly.
  */
-export function normalizeYaml(data: Record<string, unknown>): CanonicalCharacter {
+export function normalizeYaml(data: Record<string, unknown>,): CanonicalCharacter {
   const cardData = data as YamlCharacter;
 
   return {

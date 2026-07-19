@@ -1,6 +1,6 @@
-import { log as rootLog } from "./logger";
+import { log as rootLog, } from "./logger";
 
-const log = rootLog.child({ module: "admin-audit" });
+const log = rootLog.child({ module: "admin-audit", },);
 
 interface AuditEntry {
   id: string;
@@ -26,25 +26,25 @@ export const adminAudit = {
     this.loadingAudit = true;
     try {
       let url = `/api/admin/audit?page=${this.auditPage}&pageSize=${(this as any).pageSize}`;
-      if (this.auditEventType) url += `&event_type=${this.auditEventType}`;
-      if (this.auditEntityType) url += `&entity_type=${this.auditEntityType}`;
-      if (this.auditSearch) url += `&q=${encodeURIComponent(this.auditSearch)}`;
-      const res = await fetch(url, { headers: { Accept: "application/json" } });
+      if (this.auditEventType) { url += `&event_type=${this.auditEventType}`; }
+      if (this.auditEntityType) { url += `&entity_type=${this.auditEntityType}`; }
+      if (this.auditSearch) { url += `&q=${encodeURIComponent(this.auditSearch,)}`; }
+      const res = await fetch(url, { headers: { Accept: "application/json", }, },);
       if (res.ok) {
         const data = await res.json();
         this.auditEntries = data.data || [];
         this.auditTotal = data.total || 0;
       }
     } catch {
-      log.warn("Network error loading audit");
+      log.warn("Network error loading audit",);
     } finally {
       this.loadingAudit = false;
     }
   },
   get auditPages(): number {
-    return Math.ceil(this.auditTotal / (this as any).pageSize) || 1;
+    return Math.ceil(this.auditTotal / (this as any).pageSize,) || 1;
   },
-  async goAuditPage(p: number) {
+  async goAuditPage(p: number,) {
     this.auditPage = p;
     await this.loadAudit();
   },

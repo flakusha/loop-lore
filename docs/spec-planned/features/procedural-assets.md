@@ -25,7 +25,7 @@ export interface AudioPipeline {
   duration: number; // seconds
 }
 
-export async function generateAudioAsset(input: AudioPipeline): Promise<{ assetId: string; url: string }> {
+export async function generateAudioAsset(input: AudioPipeline,): Promise<{ assetId: string; url: string }> {
   const prompt = `
 Generate ${input.style} music for: ${input.description}
 Duration: ${input.duration} seconds
@@ -36,13 +36,13 @@ Format: ambient loop
     prompt,
     duration: input.duration,
     style: input.style,
-  });
+  },);
 
   return saveAsset({
     type: "audio",
     url: result.url,
-    metadata: { duration: input.duration, style: input.style },
-  });
+    metadata: { duration: input.duration, style: input.style, },
+  },);
 }
 ```
 
@@ -55,11 +55,11 @@ export interface MapPipeline {
   connections: string[]; // Connected location names
 }
 
-export async function generateMapAsset(input: MapPipeline): Promise<{ assetId: string; url: string }> {
+export async function generateMapAsset(input: MapPipeline,): Promise<{ assetId: string; url: string }> {
   const prompt = `
 Dungeon/minimap style map for: ${input.locationName}
 Description: ${input.description}
-Connected locations: ${input.connections.join(", ")}
+Connected locations: ${input.connections.join(", ",)}
 
 Style: top-down, simple lines, labeled rooms
 `;
@@ -68,13 +68,13 @@ Style: top-down, simple lines, labeled rooms
     prompt,
     width: 1024,
     height: 1024,
-  });
+  },);
 
   return saveAsset({
     type: "image",
     url: result.url,
-    metadata: { map_for: input.locationName },
-  });
+    metadata: { map_for: input.locationName, },
+  },);
 }
 ```
 
@@ -83,10 +83,10 @@ Style: top-down, simple lines, labeled rooms
 ```typescript
 // src/story/pipelines/registry.ts
 export const pipelines = {
-  item: [descriptionStage, statsStage, effectsStage, imageStage, placementStage],
-  location: [descriptionStage, mapStage, audioStage, placementStage],
-  character: [descriptionStage, statsStage, portraitStage],
-  npc: [descriptionStage, statsStage, portraitStage, personalityStage],
+  item: [descriptionStage, statsStage, effectsStage, imageStage, placementStage,],
+  location: [descriptionStage, mapStage, audioStage, placementStage,],
+  character: [descriptionStage, statsStage, portraitStage,],
+  npc: [descriptionStage, statsStage, portraitStage, personalityStage,],
 };
 
 // World config can override pipeline

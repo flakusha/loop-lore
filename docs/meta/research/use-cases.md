@@ -329,10 +329,10 @@ Relationships naturally drift without maintenance:
 
 ```typescript
 // Relationship decay model
-function calculateRelationshipDecay(lastInteraction: string, baseDisposition: number): number {
-  const days = (Date.now() - new Date(lastInteraction).getTime()) / (1000 * 60 * 60 * 24);
+function calculateRelationshipDecay(lastInteraction: string, baseDisposition: number,): number {
+  const days = (Date.now() - new Date(lastInteraction,).getTime()) / (1000 * 60 * 60 * 24);
   const decayRate = 0.01; // 1% per day
-  return Math.sign(baseDisposition) * Math.max(0, Math.abs(baseDisposition) * (1 - decayRate * days));
+  return Math.sign(baseDisposition,) * Math.max(0, Math.abs(baseDisposition,) * (1 - decayRate * days),);
 }
 ```
 

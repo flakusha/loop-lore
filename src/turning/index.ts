@@ -6,7 +6,7 @@
  */
 
 // ── Types ────────────────────────────────────────────────
-export type { GroupTurnContext, TurnManagerState, TurnParticipant, TurnStrategyFn } from "./types";
+export type { GroupTurnContext, TurnManagerState, TurnParticipant, TurnStrategyFn, } from "./types";
 
 // ── Strategies ───────────────────────────────────────────
 export {
@@ -19,4 +19,4 @@ export {
 } from "./turn-strategies";
 
 // ── Turn Manager ─────────────────────────────────────────
-export { TurnManager, type TurnManagerOptions } from "./turn-manager";
+export { TurnManager, type TurnManagerOptions, } from "./turn-manager";

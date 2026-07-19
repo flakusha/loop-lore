@@ -3,7 +3,7 @@
 // CCv2 (Character Card V2) normalizer.
 // Converts CCv2 format to canonical character card.
 
-import type { CanonicalCharacter, LorebookData } from "../parser";
+import type { CanonicalCharacter, LorebookData, } from "../parser";
 
 interface CCv2Data {
   name?: string;
@@ -46,7 +46,7 @@ interface CCv2Data {
 /**
  * Normalize CCv2 format to canonical character card.
  */
-export function normalizeCcV2(data: Record<string, unknown>): CanonicalCharacter {
+export function normalizeCcV2(data: Record<string, unknown>,): CanonicalCharacter {
   // Extract data from envelope if present
   const cardData = (data.data ?? data) as CCv2Data;
 
@@ -57,7 +57,7 @@ export function normalizeCcV2(data: Record<string, unknown>): CanonicalCharacter
       scan_depth: cardData.character_book.scan_depth,
       token_budget: cardData.character_book.token_budget,
       recursive_scanning: cardData.character_book.recursive_scanning,
-      entries: (cardData.character_book.entries ?? []).map((entry) => ({
+      entries: (cardData.character_book.entries ?? []).map((entry,) => ({
         keys: entry.keys ?? [],
         content: entry.content ?? "",
         enabled: entry.enabled ?? true,

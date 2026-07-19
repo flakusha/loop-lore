@@ -2,9 +2,9 @@
 //
 // /context — show current context window info.
 
-import { type CommandResult, registerCommand } from "./registry";
+import { type CommandResult, registerCommand, } from "./registry";
 
-registerCommand("context", async (_args, ctx): Promise<CommandResult> => {
+registerCommand("context", async (_args, ctx,): Promise<CommandResult> => {
   const msgCount = ctx.messages?.length ?? 0;
   const chatName = ctx.activeChat?.id ?? "unknown";
   const charName = ctx.currentCharacter?.display_name || ctx.currentCharacter?.name || "none";
@@ -16,5 +16,5 @@ registerCommand("context", async (_args, ctx): Promise<CommandResult> => {
     `- Messages loaded: ${msgCount}`,
   ];
 
-  return { systemMessage: lines.join("\n"), handled: true };
-});
+  return { systemMessage: lines.join("\n",), handled: true, };
+},);

@@ -9,8 +9,8 @@
 // schema.ts provides the type interfaces consumed here via `satisfies`.
 // This file is the sole source of truth for defaults, env-map, validation, and JSON Schema.
 
-import { AgeGateMode, DbType, LogLevel } from "../db/enums";
-import { DATA_DIR } from "./constants";
+import { AgeGateMode, DbType, LogLevel, } from "../db/enums";
+import { DATA_DIR, } from "./constants";
 import type {
   AgeGateConfig,
   AssetsConfig,
@@ -70,15 +70,15 @@ export class ConfigSchema {
     compression: true,
   } satisfies AssetsConfig;
 
-  readonly assistant = { enabled: true } satisfies AssistantConfig;
+  readonly assistant = { enabled: true, } satisfies AssistantConfig;
 
   readonly logging = {
     level: LogLevel.Debug,
   } satisfies LoggingConfig;
 
-  readonly tui = { enabled: true } satisfies TuiConfig;
+  readonly tui = { enabled: true, } satisfies TuiConfig;
 
-  readonly docs = { enabled: true } satisfies DocumentationConfig;
+  readonly docs = { enabled: true, } satisfies DocumentationConfig;
 
   readonly ageGate = {
     enabled: false,
@@ -157,16 +157,16 @@ export class ConfigSchema {
       "accelerometer=(), camera=(), display-capture=(), geolocation=(), gyroscope=(), microphone=(), usb=()",
     csp: {
       enabled: true,
-      defaultSrc: ["'self'"],
-      scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
-      styleSrc: ["'self'", "'unsafe-inline'"],
-      imgSrc: ["'self'", "data:", "blob:"],
-      fontSrc: ["'self'"],
-      connectSrc: ["'self'", "wss:", "https:"],
-      objectSrc: ["'none'"],
-      baseUri: ["'self'"],
-      frameAncestors: ["'none'"],
-      formAction: ["'self'"],
+      defaultSrc: ["'self'",],
+      scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'",],
+      styleSrc: ["'self'", "'unsafe-inline'",],
+      imgSrc: ["'self'", "data:", "blob:",],
+      fontSrc: ["'self'",],
+      connectSrc: ["'self'", "wss:", "https:",],
+      objectSrc: ["'none'",],
+      baseUri: ["'self'",],
+      frameAncestors: ["'none'",],
+      formAction: ["'self'",],
       upgradeInsecureRequests: true,
       reportOnly: false,
     },
@@ -175,10 +175,10 @@ export class ConfigSchema {
     crossOriginResourcePolicy: "cross-origin",
     timingAllowOrigin: "",
     immutableHashedAssets: true,
-    linkPreload: ["/vendor.js", "/app.js", "/css/app.css"],
+    linkPreload: ["/vendor.js", "/app.js", "/css/app.css",],
     acceptClientHints: [],
     saveData: false,
-    earlyHints: { enabled: false },
+    earlyHints: { enabled: false, },
     reportingEndpoints: {},
     nel: null,
   } satisfies HeadersConfig;
@@ -199,35 +199,35 @@ export class ConfigSchema {
     const map: EnvMap = {};
     const s = new ConfigSchema();
 
-    const add = (prefix: string, obj: Record<string, unknown>) => {
-      for (const [key, val] of Object.entries(obj)) {
+    const add = (prefix: string, obj: Record<string, unknown>,) => {
+      for (const [key, val,] of Object.entries(obj,)) {
         const path = `${prefix}.${key}`;
-        const envKey = path.replaceAll(".", "_").toUpperCase();
-        if (val && typeof val === "object" && !Array.isArray(val)) {
-          add(path, val as Record<string, unknown>);
+        const envKey = path.replaceAll(".", "_",).toUpperCase();
+        if (val && typeof val === "object" && !Array.isArray(val,)) {
+          add(path, val as Record<string, unknown>,);
         } else {
           map[envKey] = path;
         }
       }
     };
 
-    add("server", s.server);
-    add("db", s.db);
-    add("assets", s.assets);
-    add("assistant", s.assistant);
-    add("logging", s.logging);
-    add("tui", s.tui);
-    add("docs", s.docs);
-    add("ageGate", s.ageGate);
-    add("auth", s.auth);
-    add("transport", s.transport);
-    add("messages", s.messages);
-    add("nsfw", s.nsfw);
-    add("generation", s.generation);
-    add("byoKey", s.byoKey);
-    add("encryption", s.encryption);
-    add("headers", s.headers);
-    add("dynamicResponse", s.dynamicResponse);
+    add("server", s.server,);
+    add("db", s.db,);
+    add("assets", s.assets,);
+    add("assistant", s.assistant,);
+    add("logging", s.logging,);
+    add("tui", s.tui,);
+    add("docs", s.docs,);
+    add("ageGate", s.ageGate,);
+    add("auth", s.auth,);
+    add("transport", s.transport,);
+    add("messages", s.messages,);
+    add("nsfw", s.nsfw,);
+    add("generation", s.generation,);
+    add("byoKey", s.byoKey,);
+    add("encryption", s.encryption,);
+    add("headers", s.headers,);
+    add("dynamicResponse", s.dynamicResponse,);
 
     // Manual overrides for renamed/mapped env vars
     map.PORT = "server.port";
@@ -293,49 +293,49 @@ export class ConfigSchema {
 
   // ── Validation ─────────────────────────────────────────
 
-  static validate(config: Config): void {
-    if (!["sqlite", "postgres"].includes(config.db.type)) {
-      throw new Error(`Invalid db.type: "${config.db.type}"`);
+  static validate(config: Config,): void {
+    if (!["sqlite", "postgres",].includes(config.db.type,)) {
+      throw new Error(`Invalid db.type: "${config.db.type}"`,);
     }
     if (config.db.type === "postgres" && !config.db.url) {
-      throw new Error("db.url is required when db.type is 'postgres'");
+      throw new Error("db.url is required when db.type is 'postgres'",);
     }
     if (config.server.port < 0 || config.server.port > 65_535) {
-      throw new Error(`Invalid server.port: ${config.server.port}. Must be 0-65535`);
+      throw new Error(`Invalid server.port: ${config.server.port}. Must be 0-65535`,);
     }
-    if (!["debug", "info", "warn", "error"].includes(config.logging.level)) {
-      throw new Error(`Invalid logging.level: "${config.logging.level}"`);
+    if (!["debug", "info", "warn", "error",].includes(config.logging.level,)) {
+      throw new Error(`Invalid logging.level: "${config.logging.level}"`,);
     }
     for (const p of config.generation.providers.openaiCompatible) {
-      if (!p.baseUrl) throw new Error(`Provider "${p.name}" missing baseUrl`);
-      if (!p.model) throw new Error(`Provider "${p.name}" missing model`);
+      if (!p.baseUrl) { throw new Error(`Provider "${p.name}" missing baseUrl`,); }
+      if (!p.model) { throw new Error(`Provider "${p.name}" missing model`,); }
     }
     if (config.generation.providers.anthropic && !config.generation.providers.anthropic.apiKey) {
-      throw new Error("generation.providers.anthropic requires apiKey");
+      throw new Error("generation.providers.anthropic requires apiKey",);
     }
     if (
-      config.headers.xFrameOptions !== null
-      && !["DENY", "SAMEORIGIN"].includes(config.headers.xFrameOptions)
+      config.headers.xFrameOptions !== null &&
+      !["DENY", "SAMEORIGIN",].includes(config.headers.xFrameOptions,)
     ) {
-      throw new Error(`Invalid headers.xFrameOptions: "${config.headers.xFrameOptions}"`);
+      throw new Error(`Invalid headers.xFrameOptions: "${config.headers.xFrameOptions}"`,);
     }
     if (
-      config.headers.crossOriginOpenerPolicy !== null
-      && !["same-origin", "same-origin-allow-popups"].includes(config.headers.crossOriginOpenerPolicy)
+      config.headers.crossOriginOpenerPolicy !== null &&
+      !["same-origin", "same-origin-allow-popups",].includes(config.headers.crossOriginOpenerPolicy,)
     ) {
-      throw new Error(`Invalid headers.crossOriginOpenerPolicy: "${config.headers.crossOriginOpenerPolicy}"`);
+      throw new Error(`Invalid headers.crossOriginOpenerPolicy: "${config.headers.crossOriginOpenerPolicy}"`,);
     }
     if (
-      config.headers.crossOriginEmbedderPolicy !== null
-      && config.headers.crossOriginEmbedderPolicy !== "require-corp"
+      config.headers.crossOriginEmbedderPolicy !== null &&
+      config.headers.crossOriginEmbedderPolicy !== "require-corp"
     ) {
       throw new Error(
         `Invalid headers.crossOriginEmbedderPolicy: "${config.headers.crossOriginEmbedderPolicy as string}"`,
       );
     }
     if (
-      config.headers.crossOriginResourcePolicy !== null
-      && !["same-origin", "cross-origin"].includes(config.headers.crossOriginResourcePolicy)
+      config.headers.crossOriginResourcePolicy !== null &&
+      !["same-origin", "cross-origin",].includes(config.headers.crossOriginResourcePolicy,)
     ) {
       throw new Error(
         `Invalid headers.crossOriginResourcePolicy: "${config.headers.crossOriginResourcePolicy}"`,
@@ -363,7 +363,7 @@ export class ConfigSchema {
               default: 3000,
               description: "Server port (0 = random)",
             },
-            host: { type: "string", default: "localhost", description: "Server host" },
+            host: { type: "string", default: "localhost", description: "Server host", },
             tls: {
               type: "object",
               description: "TLS certificate configuration",
@@ -379,10 +379,10 @@ export class ConfigSchema {
                   description: "Path to TLS certificate (PEM)",
                 },
               },
-              required: ["key", "cert"],
+              required: ["key", "cert",],
             },
           },
-          required: ["port", "host"],
+          required: ["port", "host",],
         },
         db: {
           type: "object",
@@ -390,7 +390,7 @@ export class ConfigSchema {
           properties: {
             type: {
               type: "string",
-              enum: ["sqlite", "postgres"],
+              enum: ["sqlite", "postgres",],
               default: "sqlite",
               description: "Database type",
             },
@@ -399,15 +399,15 @@ export class ConfigSchema {
               default: `${DATA_DIR}/loop-lore.db`,
               description: "SQLite database file path",
             },
-            url: { type: "string", description: "PostgreSQL connection URL" },
+            url: { type: "string", description: "PostgreSQL connection URL", },
           },
-          required: ["type", "sqliteFilename"],
+          required: ["type", "sqliteFilename",],
         },
         assets: {
           type: "object",
           description: "Asset storage configuration",
           properties: {
-            enabled: { type: "boolean", default: true, description: "Enable asset uploads" },
+            enabled: { type: "boolean", default: true, description: "Enable asset uploads", },
             uploadDir: {
               type: "string",
               default: `${DATA_DIR}/uploads`,
@@ -419,17 +419,17 @@ export class ConfigSchema {
               default: 10_485_760,
               description: "Max upload size in bytes (default 10 MB)",
             },
-            compression: { type: "boolean", default: true, description: "Compress uploaded assets" },
+            compression: { type: "boolean", default: true, description: "Compress uploaded assets", },
           },
-          required: ["enabled", "uploadDir", "maxFileSize", "compression"],
+          required: ["enabled", "uploadDir", "maxFileSize", "compression",],
         },
         assistant: {
           type: "object",
           description: "Assistant configuration",
           properties: {
-            enabled: { type: "boolean", default: true, description: "Enable rule-based assistant" },
+            enabled: { type: "boolean", default: true, description: "Enable rule-based assistant", },
           },
-          required: ["enabled"],
+          required: ["enabled",],
         },
         logging: {
           type: "object",
@@ -437,72 +437,72 @@ export class ConfigSchema {
           properties: {
             level: {
               type: "string",
-              enum: ["debug", "info", "warn", "error"],
+              enum: ["debug", "info", "warn", "error",],
               default: "debug",
               description: "Log level",
             },
-            jsonlPath: { type: "string", description: "JSONL output path" },
+            jsonlPath: { type: "string", description: "JSONL output path", },
             jsonlMaxBytes: {
               type: "integer",
               default: 104_857_600,
               description: "Max JSONL file bytes before rotation",
             },
-            jsonlMaxFiles: { type: "integer", default: 5, description: "Max rotated files to keep" },
-            dbEnabled: { type: "boolean", default: false, description: "Enable DB log transport" },
-            censorEnabled: { type: "boolean", default: true, description: "PII redaction" },
+            jsonlMaxFiles: { type: "integer", default: 5, description: "Max rotated files to keep", },
+            dbEnabled: { type: "boolean", default: false, description: "Enable DB log transport", },
+            censorEnabled: { type: "boolean", default: true, description: "PII redaction", },
             censorFields: {
               type: "array",
-              items: { type: "string" },
+              items: { type: "string", },
               description: "Extra PII field patterns",
             },
-            queueMaxSize: { type: "integer", default: 10_000, description: "Max queue entries" },
-            maxMessageBytes: { type: "integer", default: 10_240, description: "Max message string bytes" },
-            maxMetaBytes: { type: "integer", default: 102_400, description: "Max meta blob bytes" },
-            maxMetaDepth: { type: "integer", default: 5, description: "Max meta recursion depth" },
-            maxStackBytes: { type: "integer", default: 5120, description: "Max error stack bytes" },
+            queueMaxSize: { type: "integer", default: 10_000, description: "Max queue entries", },
+            maxMessageBytes: { type: "integer", default: 10_240, description: "Max message string bytes", },
+            maxMetaBytes: { type: "integer", default: 102_400, description: "Max meta blob bytes", },
+            maxMetaDepth: { type: "integer", default: 5, description: "Max meta recursion depth", },
+            maxStackBytes: { type: "integer", default: 5120, description: "Max error stack bytes", },
           },
-          required: ["level"],
+          required: ["level",],
         },
         tui: {
           type: "object",
           properties: {
-            enabled: { type: "boolean", default: true, description: "Enable TUI mode" },
+            enabled: { type: "boolean", default: true, description: "Enable TUI mode", },
           },
-          required: ["enabled"],
+          required: ["enabled",],
         },
         docs: {
           type: "object",
           properties: {
-            enabled: { type: "boolean", default: true, description: "Enable documentation serving" },
+            enabled: { type: "boolean", default: true, description: "Enable documentation serving", },
             public: {
               type: "array",
-              items: { type: "string" },
+              items: { type: "string", },
               description: "Allowlist of doc path prefixes",
             },
           },
-          required: ["enabled"],
+          required: ["enabled",],
         },
         ageGate: {
           type: "object",
           description: "Age verification configuration",
           properties: {
-            enabled: { type: "boolean", default: false, description: "Enable age gating" },
-            minimumAge: { type: "integer", default: 18, description: "Minimum required age" },
+            enabled: { type: "boolean", default: false, description: "Enable age gating", },
+            minimumAge: { type: "integer", default: 18, description: "Minimum required age", },
             mode: {
               type: "string",
-              enum: ["none", "self-declaration", "verification"],
+              enum: ["none", "self-declaration", "verification",],
               default: "self-declaration",
               description: "Age gate mode",
             },
           },
-          required: ["enabled", "minimumAge", "mode"],
+          required: ["enabled", "minimumAge", "mode",],
         },
         auth: {
           type: "object",
           description: "Authentication configuration",
           properties: {
-            required: { type: "boolean", default: false, description: "Require remote multi-user auth" },
-            registrationOpen: { type: "boolean", default: true, description: "Allow new user registration" },
+            required: { type: "boolean", default: false, description: "Require remote multi-user auth", },
+            registrationOpen: { type: "boolean", default: true, description: "Allow new user registration", },
             sessionTimeoutHours: {
               type: "integer",
               default: 24,
@@ -513,7 +513,7 @@ export class ConfigSchema {
               default: 10,
               description: "Max simultaneous sessions per user",
             },
-            demoUsername: { type: "string", default: "demo", description: "Demo username" },
+            demoUsername: { type: "string", default: "demo", description: "Demo username", },
             demoAutoSetup: {
               type: "boolean",
               default: true,
@@ -546,30 +546,30 @@ export class ConfigSchema {
           properties: {
             defaultProtocol: {
               type: "string",
-              enum: ["http/1.1", "http/2", "http/3", "websocket", "webtransport", "tcp", "tls"],
+              enum: ["http/1.1", "http/2", "http/3", "websocket", "webtransport", "tcp", "tls",],
               default: "http/1.1",
             },
-            enableWebSocket: { type: "boolean", default: true },
-            enableWebTransport: { type: "boolean", default: false },
-            enableH2: { type: "boolean", default: false },
-            enableH3: { type: "boolean", default: false },
+            enableWebSocket: { type: "boolean", default: true, },
+            enableWebTransport: { type: "boolean", default: false, },
+            enableH2: { type: "boolean", default: false, },
+            enableH3: { type: "boolean", default: false, },
             compression: {
               type: "object",
               properties: {
-                enabled: { type: "boolean", default: false },
-                default: { type: "string", enum: ["zstd", "br", "gzip", "none"], default: "none" },
-                threshold: { type: "integer", default: 256 },
+                enabled: { type: "boolean", default: false, },
+                default: { type: "string", enum: ["zstd", "br", "gzip", "none",], default: "none", },
+                threshold: { type: "integer", default: 256, },
               },
-              required: ["enabled", "default", "threshold"],
+              required: ["enabled", "default", "threshold",],
             },
             limits: {
               type: "object",
               properties: {
-                maxFrameSize: { type: "integer", default: 65_536 },
-                maxPayload: { type: "integer", default: 327_680 },
-                maxConcurrentStreams: { type: "integer", default: 100 },
+                maxFrameSize: { type: "integer", default: 65_536, },
+                maxPayload: { type: "integer", default: 327_680, },
+                maxConcurrentStreams: { type: "integer", default: 100, },
               },
-              required: ["maxFrameSize", "maxPayload", "maxConcurrentStreams"],
+              required: ["maxFrameSize", "maxPayload", "maxConcurrentStreams",],
             },
           },
           required: [
@@ -596,7 +596,7 @@ export class ConfigSchema {
               default: true,
               description: "Require confirmation before hiding",
             },
-            maxLength: { type: "integer", default: 100_000, description: "Max content length" },
+            maxLength: { type: "integer", default: 100_000, description: "Max content length", },
             maxGenerationRetries: {
               type: "integer",
               default: 3,
@@ -626,10 +626,10 @@ export class ConfigSchema {
           type: "object",
           description: "NSFW configuration",
           properties: {
-            allowNsfw: { type: "boolean", default: true, description: "Allow NSFW content" },
-            nsfwMinAge: { type: "integer", default: 18, description: "Minimum age for NSFW content" },
+            allowNsfw: { type: "boolean", default: true, description: "Allow NSFW content", },
+            nsfwMinAge: { type: "integer", default: 18, description: "Minimum age for NSFW content", },
           },
-          required: ["allowNsfw", "nsfwMinAge"],
+          required: ["allowNsfw", "nsfwMinAge",],
         },
         generation: {
           type: "object",
@@ -645,8 +645,8 @@ export class ConfigSchema {
                 },
               },
             },
-            defaultProvider: { type: "string", default: "", description: "Default provider name" },
-            defaultModels: { type: "object", default: {}, description: "Default model per provider" },
+            defaultProvider: { type: "string", default: "", description: "Default provider name", },
+            defaultModels: { type: "object", default: {}, description: "Default model per provider", },
             autoStart: {
               type: "object",
               description: "Auto-spawn external AI servers at startup",
@@ -655,83 +655,83 @@ export class ConfigSchema {
                   type: "object",
                   description: "Spawn llama.cpp server as child process",
                   properties: {
-                    enabled: { type: "boolean", default: false, description: "Enable auto-start" },
-                    modelPath: { type: "string", description: "GGUF path or HF ref (org/repo:quant)" },
-                    port: { type: "integer", default: 9011, description: "llama-server port" },
-                    alias: { type: "string", description: "Model alias for API reference" },
-                    ctxSize: { type: "integer", default: 8192, description: "Context size in tokens" },
-                    threads: { type: "integer", description: "CPU threads (-1 = auto)" },
-                    nGpuLayers: { type: "string", description: "GPU layers: number, auto, or all" },
-                    device: { type: "string", description: "Comma-separated GPU device list" },
-                    mlock: { type: "boolean", description: "Force model to stay in RAM" },
+                    enabled: { type: "boolean", default: false, description: "Enable auto-start", },
+                    modelPath: { type: "string", description: "GGUF path or HF ref (org/repo:quant)", },
+                    port: { type: "integer", default: 9011, description: "llama-server port", },
+                    alias: { type: "string", description: "Model alias for API reference", },
+                    ctxSize: { type: "integer", default: 8192, description: "Context size in tokens", },
+                    threads: { type: "integer", description: "CPU threads (-1 = auto)", },
+                    nGpuLayers: { type: "string", description: "GPU layers: number, auto, or all", },
+                    device: { type: "string", description: "Comma-separated GPU device list", },
+                    mlock: { type: "boolean", description: "Force model to stay in RAM", },
                     cacheTypeK: {
                       type: "string",
                       description: "KV cache type for K: f32, f16, q8_0, iq4_nl...",
                     },
-                    cacheTypeV: { type: "string", description: "KV cache type for V" },
-                    cacheRam: { type: "integer", description: "KV cache RAM budget in MiB" },
-                    flashAttn: { type: "string", description: "Flash attention: on, off, or auto" },
-                    swaFull: { type: "boolean", description: "Use full-size SWA cache" },
-                    ropeScaling: { type: "string", description: "RoPE scaling: none, linear, yarn" },
-                    ropeScale: { type: "number", description: "RoPE context scaling factor" },
-                    temp: { type: "number", description: "Temperature sampler default" },
-                    topK: { type: "integer", description: "Top-K sampler default" },
-                    topP: { type: "number", description: "Top-P sampler default" },
-                    minP: { type: "number", description: "Min-P sampler default" },
-                    repeatPenalty: { type: "number", description: "Repeat penalty" },
-                    parallelRequests: { type: "integer", description: "Max parallel requests" },
-                    fit: { type: "boolean", description: "Flash inference tuning" },
+                    cacheTypeV: { type: "string", description: "KV cache type for V", },
+                    cacheRam: { type: "integer", description: "KV cache RAM budget in MiB", },
+                    flashAttn: { type: "string", description: "Flash attention: on, off, or auto", },
+                    swaFull: { type: "boolean", description: "Use full-size SWA cache", },
+                    ropeScaling: { type: "string", description: "RoPE scaling: none, linear, yarn", },
+                    ropeScale: { type: "number", description: "RoPE context scaling factor", },
+                    temp: { type: "number", description: "Temperature sampler default", },
+                    topK: { type: "integer", description: "Top-K sampler default", },
+                    topP: { type: "number", description: "Top-P sampler default", },
+                    minP: { type: "number", description: "Min-P sampler default", },
+                    repeatPenalty: { type: "number", description: "Repeat penalty", },
+                    parallelRequests: { type: "integer", description: "Max parallel requests", },
+                    fit: { type: "boolean", description: "Flash inference tuning", },
                     specType: {
                       type: "string",
                       description: "Speculative decoding: draft-eagle3, ngram-map-k4v...",
                     },
-                    specDraftNMin: { type: "integer", description: "Min draft tokens for spec decoding" },
-                    specDraftNMax: { type: "integer", description: "Max draft tokens for spec decoding" },
+                    specDraftNMin: { type: "integer", description: "Min draft tokens for spec decoding", },
+                    specDraftNMax: { type: "integer", description: "Max draft tokens for spec decoding", },
                     reasoningBudget: {
                       type: "integer",
                       description: "Reasoning budget in tokens (-1 = unlimited)",
                     },
-                    jinja: { type: "boolean", description: "Enable Jinja templates (default enabled)" },
-                    extraArgs: { type: "array", items: { type: "string" }, description: "Extra CLI args" },
+                    jinja: { type: "boolean", description: "Enable Jinja templates (default enabled)", },
+                    extraArgs: { type: "array", items: { type: "string", }, description: "Extra CLI args", },
                   },
-                  required: ["enabled", "modelPath", "port"],
+                  required: ["enabled", "modelPath", "port",],
                 },
                 sdCpp: {
                   type: "object",
                   description: "Spawn sd-server as child process",
                   properties: {
-                    enabled: { type: "boolean", default: false, description: "Enable auto-start" },
+                    enabled: { type: "boolean", default: false, description: "Enable auto-start", },
                     modelType: {
                       type: "string",
-                      enum: ["checkpoint", "diffusion"],
+                      enum: ["checkpoint", "diffusion",],
                       default: "checkpoint",
                       description: "checkpoint = standalone (-m), diffusion = component (--diffusion-model, needs llm)",
                     },
-                    modelPath: { type: "string", description: "Path to .safetensors model" },
-                    port: { type: "integer", default: 9010, description: "sd-server port" },
+                    modelPath: { type: "string", description: "Path to .safetensors model", },
+                    port: { type: "integer", default: 9010, description: "sd-server port", },
                     llmPath: {
                       type: "string",
                       description: "LLM text encoder GGUF. Needed for most diffusion models.",
                     },
-                    clipLPath: { type: "string", description: "CLIP-L text encoder (SD1.x/SD2.x)" },
-                    clipGPath: { type: "string", description: "CLIP-G text encoder" },
-                    t5xxlPath: { type: "string", description: "T5-XXL text encoder" },
-                    vaePath: { type: "string", description: "VAE safetensors path" },
-                    vaeFormat: { type: "string", description: "VAE latent format: auto, flux, sd3, flux2" },
-                    controlNetPath: { type: "string", description: "Control net model path" },
-                    loraDir: { type: "string", description: "LoRA directory path" },
-                    taesdPath: { type: "string", description: "TAESD for fast low-quality decode" },
+                    clipLPath: { type: "string", description: "CLIP-L text encoder (SD1.x/SD2.x)", },
+                    clipGPath: { type: "string", description: "CLIP-G text encoder", },
+                    t5xxlPath: { type: "string", description: "T5-XXL text encoder", },
+                    vaePath: { type: "string", description: "VAE safetensors path", },
+                    vaeFormat: { type: "string", description: "VAE latent format: auto, flux, sd3, flux2", },
+                    controlNetPath: { type: "string", description: "Control net model path", },
+                    loraDir: { type: "string", description: "LoRA directory path", },
+                    taesdPath: { type: "string", description: "TAESD for fast low-quality decode", },
                     hiresUpscalersDir: {
                       type: "string",
                       description: "Highres fix upscaler model directory",
                     },
-                    embdDir: { type: "string", description: "Embeddings directory" },
-                    photoMakerPath: { type: "string", description: "PhotoMaker model path" },
-                    upscaleModelPath: { type: "string", description: "ESRGAN upscale model path" },
-                    fa: { type: "boolean", description: "Global flash attention" },
-                    diffusionFA: { type: "boolean", description: "Flash attention in diffusion model only" },
-                    vaeTiling: { type: "boolean", description: "Process VAE in tiles to reduce memory" },
-                    eagerLoad: { type: "boolean", description: "Load all params at model-load time" },
+                    embdDir: { type: "string", description: "Embeddings directory", },
+                    photoMakerPath: { type: "string", description: "PhotoMaker model path", },
+                    upscaleModelPath: { type: "string", description: "ESRGAN upscale model path", },
+                    fa: { type: "boolean", description: "Global flash attention", },
+                    diffusionFA: { type: "boolean", description: "Flash attention in diffusion model only", },
+                    vaeTiling: { type: "boolean", description: "Process VAE in tiles to reduce memory", },
+                    eagerLoad: { type: "boolean", description: "Load all params at model-load time", },
                     offloadToCPU: {
                       type: "boolean",
                       description: "Place weights in RAM, load to VRAM on demand",
@@ -744,23 +744,23 @@ export class ConfigSchema {
                       type: "boolean",
                       description: "Auto-pick device placements from model size + VRAM budget",
                     },
-                    maxVram: { type: "string", description: "Max VRAM budget in GiB" },
+                    maxVram: { type: "string", description: "Max VRAM budget in GiB", },
                     backend: {
                       type: "string",
                       description: "Runtime backend: e.g. clip=cpu,vae=cuda0,diffusion=vulkan0",
                     },
-                    rng: { type: "string", description: "RNG: std_default, cuda, cpu" },
-                    samplerRng: { type: "string", description: "Sampler RNG. Defaults to --rng." },
-                    type: { type: "string", description: "Weight type: f32, f16, q4_0, q8_0, etc." },
+                    rng: { type: "string", description: "RNG: std_default, cuda, cpu", },
+                    samplerRng: { type: "string", description: "Sampler RNG. Defaults to --rng.", },
+                    type: { type: "string", description: "Weight type: f32, f16, q4_0, q8_0, etc.", },
                     prediction: {
                       type: "string",
                       description: "Prediction type: eps, v, edm_v, sd3_flow, flux_flow",
                     },
-                    cacheMode: { type: "string", description: "Cache: easycache, ucache, dbcache, spectrum" },
-                    cacheOption: { type: "string", description: "Cache params (key=value, comma-separated)" },
-                    extraArgs: { type: "array", items: { type: "string" }, description: "Extra CLI args" },
+                    cacheMode: { type: "string", description: "Cache: easycache, ucache, dbcache, spectrum", },
+                    cacheOption: { type: "string", description: "Cache params (key=value, comma-separated)", },
+                    extraArgs: { type: "array", items: { type: "string", }, description: "Extra CLI args", },
                   },
-                  required: ["enabled", "modelType", "modelPath", "port"],
+                  required: ["enabled", "modelType", "modelPath", "port",],
                 },
               },
             },
@@ -770,16 +770,16 @@ export class ConfigSchema {
           type: "object",
           description: "BYO API Key configuration",
           properties: {
-            enabled: { type: "boolean", default: true, description: "Enable user-owned API keys" },
-            encryptionKey: { type: "string", description: "Encryption key for stored API keys" },
+            enabled: { type: "boolean", default: true, description: "Enable user-owned API keys", },
+            encryptionKey: { type: "string", description: "Encryption key for stored API keys", },
           },
-          required: ["enabled"],
+          required: ["enabled",],
         },
         headers: {
           type: "object",
           description: "Response-header policy (browser security / isolation / perf / observability)",
           properties: {
-            enabled: { type: "boolean", default: true, description: "Master toggle for header injection" },
+            enabled: { type: "boolean", default: true, description: "Master toggle for header injection", },
             referrerPolicy: {
               type: "string",
               default: "strict-origin-when-cross-origin",
@@ -791,8 +791,8 @@ export class ConfigSchema {
               description: "Emit X-Content-Type-Options: nosniff",
             },
             xFrameOptions: {
-              type: ["string", "null"],
-              enum: ["DENY", "SAMEORIGIN", null],
+              type: ["string", "null",],
+              enum: ["DENY", "SAMEORIGIN", null,],
               default: "DENY",
               description: "X-Frame-Options; null omits",
             },
@@ -805,53 +805,53 @@ export class ConfigSchema {
               type: "object",
               description: "Content-Security-Policy directive set (HTML only)",
               properties: {
-                enabled: { type: "boolean", default: true },
-                defaultSrc: { type: "array", items: { type: "string" }, default: ["'self'"] },
+                enabled: { type: "boolean", default: true, },
+                defaultSrc: { type: "array", items: { type: "string", }, default: ["'self'",], },
                 scriptSrc: {
                   type: "array",
-                  items: { type: "string" },
-                  default: ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
+                  items: { type: "string", },
+                  default: ["'self'", "'unsafe-inline'", "'unsafe-eval'",],
                 },
                 styleSrc: {
                   type: "array",
-                  items: { type: "string" },
-                  default: ["'self'", "'unsafe-inline'"],
+                  items: { type: "string", },
+                  default: ["'self'", "'unsafe-inline'",],
                 },
-                imgSrc: { type: "array", items: { type: "string" }, default: ["'self'", "data:", "blob:"] },
-                fontSrc: { type: "array", items: { type: "string" }, default: ["'self'"] },
+                imgSrc: { type: "array", items: { type: "string", }, default: ["'self'", "data:", "blob:",], },
+                fontSrc: { type: "array", items: { type: "string", }, default: ["'self'",], },
                 connectSrc: {
                   type: "array",
-                  items: { type: "string" },
-                  default: ["'self'", "wss:", "https:"],
+                  items: { type: "string", },
+                  default: ["'self'", "wss:", "https:",],
                 },
-                objectSrc: { type: "array", items: { type: "string" }, default: ["'none'"] },
-                baseUri: { type: "array", items: { type: "string" }, default: ["'self'"] },
-                frameAncestors: { type: "array", items: { type: "string" }, default: ["'none'"] },
-                formAction: { type: "array", items: { type: "string" }, default: ["'self'"] },
-                upgradeInsecureRequests: { type: "boolean", default: true },
+                objectSrc: { type: "array", items: { type: "string", }, default: ["'none'",], },
+                baseUri: { type: "array", items: { type: "string", }, default: ["'self'",], },
+                frameAncestors: { type: "array", items: { type: "string", }, default: ["'none'",], },
+                formAction: { type: "array", items: { type: "string", }, default: ["'self'",], },
+                upgradeInsecureRequests: { type: "boolean", default: true, },
                 reportOnly: {
                   type: "boolean",
                   default: false,
                   description: "Emit CSP as Report-Only (observe, not enforce)",
                 },
               },
-              required: ["enabled"],
+              required: ["enabled",],
             },
             crossOriginOpenerPolicy: {
-              type: ["string", "null"],
-              enum: ["same-origin", "same-origin-allow-popups", null],
+              type: ["string", "null",],
+              enum: ["same-origin", "same-origin-allow-popups", null,],
               default: null,
               description: "COOP; null omits",
             },
             crossOriginEmbedderPolicy: {
-              type: ["string", "null"],
-              enum: ["require-corp", null],
+              type: ["string", "null",],
+              enum: ["require-corp", null,],
               default: null,
               description: "COEP; self-hosted Alpine/htmx resolved CDN blocker. Still not needed (no wasm/SAB).",
             },
             crossOriginResourcePolicy: {
-              type: ["string", "null"],
-              enum: ["same-origin", "cross-origin", null],
+              type: ["string", "null",],
+              enum: ["same-origin", "cross-origin", null,],
               default: "cross-origin",
               description: "CORP for static subresources",
             },
@@ -867,37 +867,37 @@ export class ConfigSchema {
             },
             linkPreload: {
               type: "array",
-              items: { type: "string" },
-              default: ["/vendor.js", "/app.js", "/css/app.css"],
+              items: { type: "string", },
+              default: ["/vendor.js", "/app.js", "/css/app.css",],
               description: "Link preload hints for HTML documents",
             },
             acceptClientHints: {
               type: "array",
-              items: { type: "string" },
+              items: { type: "string", },
               default: [],
               description: "Accept-CH / Critical-CH client hint tokens",
             },
-            saveData: { type: "boolean", default: false, description: "Advertise Save-Data cooperativeness" },
+            saveData: { type: "boolean", default: false, description: "Advertise Save-Data cooperativeness", },
             earlyHints: {
               type: "object",
-              properties: { enabled: { type: "boolean", default: false } },
-              required: ["enabled"],
+              properties: { enabled: { type: "boolean", default: false, }, },
+              required: ["enabled",],
             },
             reportingEndpoints: {
               type: "object",
-              additionalProperties: { type: "string" },
+              additionalProperties: { type: "string", },
               default: {},
               description: "Reporting-Endpoints name → URL",
             },
-            nel: { type: ["string", "null"], default: null, description: "NEL policy JSON; null omits" },
+            nel: { type: ["string", "null",], default: null, description: "NEL policy JSON; null omits", },
           },
-          required: ["enabled", "referrerPolicy", "xContentTypeOptions", "csp", "earlyHints"],
+          required: ["enabled", "referrerPolicy", "xContentTypeOptions", "csp", "earlyHints",],
         },
         dynamicResponse: {
           type: "object",
           description: "Dynamic-response optimization (minify / validate / compress runtime HTML/CSS/JS/JSON)",
           properties: {
-            enabled: { type: "boolean", default: true, description: "Master toggle" },
+            enabled: { type: "boolean", default: true, description: "Master toggle", },
             minify: {
               type: "boolean",
               default: true,
@@ -915,7 +915,7 @@ export class ConfigSchema {
             },
             compressAlgorithm: {
               type: "string",
-              enum: ["br", "gzip", "auto"],
+              enum: ["br", "gzip", "auto",],
               default: "auto",
               description: "Preferred algorithm; auto prefers br when advertised",
             },
@@ -925,7 +925,7 @@ export class ConfigSchema {
               description: "Minimum body size (bytes) before compression",
             },
           },
-          required: ["enabled", "minify", "validate", "compress", "compressAlgorithm", "compressThreshold"],
+          required: ["enabled", "minify", "validate", "compress", "compressAlgorithm", "compressThreshold",],
         },
       },
       required: [

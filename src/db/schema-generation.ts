@@ -3,8 +3,8 @@
  *
  * Generation attempt tracking for idempotency, cancellation, retry.
  */
-import type { Generated } from "kysely";
-import type { CancelReason, CancelSource, GenerationStatus } from "./enums";
+import type { Generated, } from "kysely";
+import type { CancelReason, CancelSource, GenerationStatus, } from "./enums";
 
 // ── Generation Attempts ───────────────────────────────────────
 export interface GenerationAttempts {

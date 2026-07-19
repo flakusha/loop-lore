@@ -26,12 +26,12 @@ Return JSON:
 `;
 
   const response = await llmGenerate({
-    messages: [{ role: "user", content: prompt }],
+    messages: [{ role: "user", content: prompt, },],
     json: true,
     temperature: 0.3,
-  });
+  },);
 
-  return JSON.parse(response);
+  return JSON.parse(response,);
 }
 ```
 
@@ -58,17 +58,17 @@ export async function generateImage(
     prompt: fullPrompt,
     width: options.width ?? 512,
     height: options.height ?? 512,
-  });
+  },);
 
   // Save to assets table
   const assetId = await saveAsset({
     chat_id: context.chatId,
     url: result.url,
     type: "image",
-    metadata: { prompt, style: options.style },
-  });
+    metadata: { prompt, style: options.style, },
+  },);
 
-  return { assetId, url: result.url };
+  return { assetId, url: result.url, };
 }
 ```
 
@@ -90,22 +90,22 @@ export async function analyzeDocument(
   query: string,
 ): Promise<{ summary: string; relevantSections: string[] }> {
   // Load document content
-  const content = await extractTextFromAsset(assetId);
+  const content = await extractTextFromAsset(assetId,);
 
   // Chunk for LLM
-  const chunks = chunkDocument(content, 2000);
+  const chunks = chunkDocument(content, 2000,);
 
   // Find relevant chunks
-  const relevant = await findRelevantChunks(chunks, query);
+  const relevant = await findRelevantChunks(chunks, query,);
 
   const prompt = `
-Document: ${relevant.join("\n\n")}
+Document: ${relevant.join("\n\n",)}
 Question: ${query}
 
 Summarize and answer.
 `;
 
-  return llmGenerate({ messages: [{ role: "user", content: prompt }] });
+  return llmGenerate({ messages: [{ role: "user", content: prompt, },], },);
 }
 ```
 
@@ -126,12 +126,12 @@ export async function generateItem(
   type: string,
   context: { worldId: string; actorId: string },
 ): Promise<Item> {
-  const worldRules = await getWorldRules(context.worldId);
+  const worldRules = await getWorldRules(context.worldId,);
 
   const prompt = `
 Generate a ${type} for a fantasy RPG.
 
-World rules: ${JSON.stringify(worldRules.item_templates)}
+World rules: ${JSON.stringify(worldRules.item_templates,)}
 
 Return JSON:
 {
@@ -142,12 +142,12 @@ Return JSON:
 }
 `;
 
-  const result = await llmGenerate({ messages: [{ role: "user", content: prompt }], json: true });
-  const item = JSON.parse(result);
+  const result = await llmGenerate({ messages: [{ role: "user", content: prompt, },], json: true, },);
+  const item = JSON.parse(result,);
 
   // Validate against world rules
-  if (!isValidItem(item, worldRules)) {
-    throw new Error("Generated item violates world rules");
+  if (!isValidItem(item, worldRules,)) {
+    throw new Error("Generated item violates world rules",);
   }
 
   return item;

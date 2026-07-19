@@ -1,9 +1,9 @@
-import type { ChatState } from "./chat-types";
-import type { WorldEditState } from "./world-types";
+import type { ChatState, } from "./chat-types";
+import type { WorldEditState, } from "./world-types";
 
-export type { ChatState, GenerationDetail, GroupedMessage, Message, MessageAttachment } from "./chat-types";
-export type { EquipmentSlot, MemoryEntry, MemoryPanelState, RpgStats, StatusEffect } from "./chat-types";
-export type { WorldEditState } from "./world-types";
+export type { ChatState, GenerationDetail, GroupedMessage, Message, MessageAttachment, } from "./chat-types";
+export type { EquipmentSlot, MemoryEntry, MemoryPanelState, RpgStats, StatusEffect, } from "./chat-types";
+export type { WorldEditState, } from "./world-types";
 
 /**
  * Alpine.js Component Types
@@ -12,13 +12,13 @@ export type { WorldEditState } from "./world-types";
  */
 
 export interface AlpineMagicThis {
-  $dispatch(event: string, detail?: unknown): void;
-  $nextTick(callback?: () => void): Promise<void>;
+  $dispatch(event: string, detail?: unknown,): void;
+  $nextTick(callback?: () => void,): Promise<void>;
   $refs: Record<string, HTMLElement>;
   $el: HTMLElement;
 }
 
-export type AlpineState<T> = T & ThisType<T & AlpineMagicThis>;
+export type AlpineState<T,> = T & ThisType<T & AlpineMagicThis>;
 
 export interface GalleryAsset {
   id: string;
@@ -63,11 +63,11 @@ export interface NotificationBellState {
   refresh: () => Promise<void>;
   connect: () => void;
   toggle: () => void;
-  iconFor: (type: string) => string;
-  markRead: (id: string) => Promise<void>;
+  iconFor: (type: string,) => string;
+  markRead: (id: string,) => Promise<void>;
   markAllRead: () => Promise<void>;
-  dismiss: (id: string) => Promise<void>;
-  goTo: (link: string | null) => void;
+  dismiss: (id: string,) => Promise<void>;
+  goTo: (link: string | null,) => void;
 }
 
 export interface NotificationPrefsState {
@@ -78,8 +78,8 @@ export interface NotificationPrefsState {
   types: { key: string; label: string }[];
   init: () => void;
   refresh: () => Promise<void>;
-  toggleType: (key: string) => Promise<void>;
-  toggleMuteWorld: (worldId: string) => Promise<void>;
+  toggleType: (key: string,) => Promise<void>;
+  toggleMuteWorld: (worldId: string,) => Promise<void>;
   save: () => Promise<void>;
 }
 
@@ -102,12 +102,12 @@ declare global {
       currentLocale: string;
       localeStrings: Record<string, string>;
       init: () => void;
-      applyTheme: (themeId: string) => void;
-      iconFor: (type: string) => string;
+      applyTheme: (themeId: string,) => void;
+      iconFor: (type: string,) => string;
       closeAllModals: () => void;
-      loadLocale: (locale: string) => Promise<void>;
-      setLocale: (localeId: string) => void;
-      __: (key: string, fallback?: string) => string;
+      loadLocale: (locale: string,) => Promise<void>;
+      setLocale: (localeId: string,) => void;
+      __: (key: string, fallback?: string,) => string;
     };
     notificationsBell: () => NotificationBellState;
     notificationPrefs: () => NotificationPrefsState;
@@ -115,33 +115,33 @@ declare global {
     worldEditState: () => AlpineState<WorldEditState>;
     adminPage: () => unknown;
     Alpine: {
-      $data: (el: HTMLElement) => Record<string, unknown>;
-      initTree: (el: HTMLElement) => void;
+      $data: (el: HTMLElement,) => Record<string, unknown>;
+      initTree: (el: HTMLElement,) => void;
       store: {
         // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-parameters -- Alpine.store generic is for caller convenience
-        <T = Record<string, unknown>>(key: string): T;
+        <T = Record<string, unknown>,>(key: string,): T;
         // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-parameters -- Alpine.store generic is for caller convenience
-        <T = Record<string, unknown>>(key: string, value: T): void;
+        <T = Record<string, unknown>,>(key: string, value: T,): void;
       };
     };
     htmx: {
-      ajax: (method: string, url: string, opts: { target: string; swap: string }) => void;
-      trigger: (elt: EventTarget | string, eventName: string, detail?: unknown) => boolean;
+      ajax: (method: string, url: string, opts: { target: string; swap: string },) => void;
+      trigger: (elt: EventTarget | string, eventName: string, detail?: unknown,) => boolean;
       defineExtension: (
         name: string,
-        extension: { onEvent?: (name: string, evt: CustomEvent) => void },
+        extension: { onEvent?: (name: string, evt: CustomEvent,) => void },
       ) => void;
-      process: (elt: HTMLElement) => void;
+      process: (elt: HTMLElement,) => void;
     };
-    __: (key: string, fallback?: string) => string;
+    __: (key: string, fallback?: string,) => string;
     __localeStrings: Record<string, string>;
     __THEMES: { id: string; name: string; file: string }[];
-    apiFetch: (url: string, options?: RequestInit) => Promise<Response>;
+    apiFetch: (url: string, options?: RequestInit,) => Promise<Response>;
     toggleSidebar: () => void;
     closeSidebar: () => void;
-    showToast: (type: string, message: string) => void;
-    applyTheme: (themeId: string) => void;
-    setLocale: (localeId: string) => void;
+    showToast: (type: string, message: string,) => void;
+    applyTheme: (themeId: string,) => void;
+    setLocale: (localeId: string,) => void;
   }
 
   var chatState: Window["chatState"];
