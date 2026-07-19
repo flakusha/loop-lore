@@ -23,6 +23,7 @@ import {
 } from "../db/enums";
 import { getDatabase, } from "../db/index";
 import type { DB, } from "../db/schema";
+import { extractAndStoreMemories, } from "../memory";
 import { registry, } from "../plugins/registry";
 import type { ToolDefinition, } from "../plugins/types";
 import { jsonError, jsonResponse, } from "../routes/http-utils";
@@ -481,6 +482,15 @@ export async function handleGenerate({
         provider: resolved.resolvedProviderName,
       },);
 
+      // Background: extract memories from the generated response
+      void extractAndStoreMemories(database, {
+        db: database,
+        actorId: input.actorId,
+        chatId: input.chatId,
+        messageId,
+        aiContent: result.content,
+      }, resolved.provider,);
+
       return jsonResponse({
         ok: true,
         attemptId,
@@ -595,6 +605,15 @@ export async function handleGenerate({
           provider: resolved.resolvedProviderName,
           continuationNumber: input.continuationNumber,
         },);
+
+        // Background: extract memories from the generated response
+        void extractAndStoreMemories(database, {
+          db: database,
+          actorId: input.actorId,
+          chatId: input.chatId,
+          messageId,
+          aiContent: result.content,
+        }, resolved.provider,);
 
         // Send done event with final data
         controller.enqueue(
