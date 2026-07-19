@@ -79,12 +79,69 @@ echo ""
 echo "=== loop-lore pre-commit checks (parallel) ==="
 echo ""
 
+# Step 0: Tool availability check
+echo "--- Step 0: Tool availability ---"
+TOOLS_WARN=0
+check_tool() {
+  local name="$1"
+  local required="$2"
+  if command -v "$name" &>/dev/null; then
+    green "  ✓ $name: $(command -v "$name")"
+  elif [[ "$required" == "required" ]]; then
+    red "  ✗ $name: not found (REQUIRED — skipping all checks)"
+    return 1
+  else
+    yellow "  ⚠ $name: not found (system-only, not in package.json — some checks may be skipped)"
+    TOOLS_WARN=$((TOOLS_WARN + 1))
+  fi
+  return 0
+}
+
+BUN_OK=true
+DPRINT_OK=true
+check_tool "bun" "required" || BUN_OK=false
+check_tool "node" "optional"
+
+# dprint: required — check global first, then repo version via bunx
+if command -v dprint &>/dev/null; then
+  green "  ✓ dprint: $(command -v dprint) (global)"
+elif command -v bunx &>/dev/null && bunx dprint --version &>/dev/null 2>&1; then
+  green "  ✓ dprint: bunx (repo version from devDependencies)"
+else
+  red "  ✗ dprint: not found (REQUIRED — main formatting tool)"
+  DPRINT_OK=false
+fi
+
+check_tool "gh" "optional"
+check_tool "git" "optional"
+
+if [[ "$TOOLS_WARN" -gt 0 ]]; then
+  yellow "  ($TOOLS_WARN optional tool(s) missing — warnings only, commit proceeds)"
+fi
+
+if [[ "$BUN_OK" == "false" ]]; then
+  red ""
+  red "bun is required to run pre-commit checks. Install: https://bun.sh"
+  red "To commit without checks: git commit --no-verify"
+  exit 1
+fi
+
+if [[ "$DPRINT_OK" == "false" ]]; then
+  red ""
+  red "dprint is the main formatting tool. Install via:"
+  red "  bun install          (uses repo version from devDependencies)"
+  red "  curl -fsSL https://dprint.dev/install | sh  (global install)"
+  red "To commit without checks: git commit --no-verify"
+  exit 1
+fi
+echo ""
+
 # Step 1: Auto-fix formatting (sequential - must run first)
 echo "--- Step 1: Auto-fix formatting ---"
-if bun run format:fix; then
-  green "PASS: Format auto-fix"
+if bun run format:dprint:fix; then
+  green "PASS: dprint auto-fix"
 else
-  red "FAIL: Format auto-fix"
+  red "FAIL: dprint auto-fix"
   failures=$((failures + 1))
 fi
 
@@ -99,7 +156,7 @@ CHECKS=(
   "lint-ts"
   "lint-css"
   "lint-html"
-  "format-check"
+  "format-dprint"
   "md-lint"
 )
 
@@ -111,7 +168,7 @@ CHECK_CMDS=(
   "bun run lint"
   "bun run lint:css"
   "bun run lint:html"
-  "bun run format"
+  "bun run format:dprint"
   "bun run md:lint"
 )
 
@@ -144,10 +201,48 @@ if ! collect_results "${TEST_PIDS[@]}"; then
   failures=$((failures + 1))
 fi
 
-# Step 4: Non-blocking size check
+# Step 4: Non-blocking checks (parallel)
 echo ""
-echo "--- Step 4: Size guard (non-blocking) ---"
-bun run size:check || true
+echo "--- Step 4: Non-blocking checks (parallel) ---"
+GUARD_CHECKS=(
+  "size-check"
+  "spdx-check"
+  "duplication-check"
+)
+
+GUARD_CMDS=(
+  "bun run size:check 2>&1"
+  "bun run spdx:check 2>&1"
+  "bunx jscpd --min-lines 8 --min-tokens 100 --ignore '**/*.test.ts,**/migrations/*' src/ 2>&1 || true"
+)
+
+GUARD_PIDS=()
+for i in "${!GUARD_CHECKS[@]}"; do
+  run_check "${GUARD_CHECKS[$i]}" "${GUARD_CMDS[$i]}"
+  GUARD_PIDS+=($!)
+done
+
+for pid in "${GUARD_PIDS[@]}"; do
+  wait "$pid" 2>/dev/null || true
+done
+
+for check in "${GUARD_CHECKS[@]}"; do
+  exit_file="$TMPDIR/$check.exit"
+  output_file="$TMPDIR/$check.log"
+
+  if [[ -f "$exit_file" ]]; then
+    exit_code=$(cat "$exit_file")
+    if [[ "$exit_code" == "0" ]]; then
+      green "  ✓ $check: passed"
+    else
+      yellow "  ⚠ $check: warnings (non-blocking)"
+      cat "$output_file" | head -10
+      echo ""
+    fi
+  else
+    yellow "  ⚠ $check: skipped (tool not installed)"
+  fi
+done
 
 # Final result
 echo ""
