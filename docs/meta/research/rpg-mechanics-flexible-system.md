@@ -157,10 +157,10 @@ function getEffectiveStat(
   worldModifiers: WorldModifier[],
 ): number {
   return (
-    baseStat
-    + equipmentBonuses.reduce((s, b) => s + b.value, 0)
-    + statusEffects.reduce((s, e) => s + e.statModifiers[str], 0)
-    + worldModifiers.reduce((s, w) => s + w.value, 0)
+    baseStat +
+    equipmentBonuses.reduce((s, b,) => s + b.value, 0,) +
+    statusEffects.reduce((s, e,) => s + e.statModifiers[str], 0,) +
+    worldModifiers.reduce((s, w,) => s + w.value, 0,)
   );
 }
 ```
@@ -595,9 +595,9 @@ interface StandingChangeEvent {
 
 // Example: Quest completion affects standing
 const QUEST_STANDING: Record<string, { faction: string; amount: number }> = {
-  goblin_cave_clear: { faction: "village", amount: 15 },
-  artifact_returned: { faction: "mages_guild", amount: 25 },
-  betrayal: { faction: "kingdom", amount: -30 },
+  goblin_cave_clear: { faction: "village", amount: 15, },
+  artifact_returned: { faction: "mages_guild", amount: 25, },
+  betrayal: { faction: "kingdom", amount: -30, },
 };
 ```
 
@@ -605,10 +605,10 @@ const QUEST_STANDING: Record<string, { faction: string; amount: number }> = {
 
 ```typescript
 // Monthly decay toward neutral
-function calculateStandingDecay(current: number, monthsElapsed: number): number {
+function calculateStandingDecay(current: number, monthsElapsed: number,): number {
   const decayRate = 0.1; // 10% per month
   const decay = current * decayRate * monthsElapsed;
-  return Math.sign(current) * Math.max(0, Math.abs(current) - decay);
+  return Math.sign(current,) * Math.max(0, Math.abs(current,) - decay,);
 }
 ```
 
@@ -637,9 +637,9 @@ interface SocialIntent {
 ### Social Resolution
 
 ```typescript
-function resolveSocial(intent: SocialIntent, actor: Actor, target: Actor): SocialResult {
-  const dc = calculateSocialDC(target, intent.type);
-  const roll = d20() + getStatModifier(actor, intent.type) + (intent.modifiers?.standing ?? 0);
+function resolveSocial(intent: SocialIntent, actor: Actor, target: Actor,): SocialResult {
+  const dc = calculateSocialDC(target, intent.type,);
+  const roll = d20() + getStatModifier(actor, intent.type,) + (intent.modifiers?.standing ?? 0);
 
   return {
     success: roll >= dc,

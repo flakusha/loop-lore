@@ -1,10 +1,10 @@
 // src/transport/upgrade.ts — Connection upgrade / protocol migration
 
-import { TransportProtocol } from "../db/enums";
-import { TransportError, TransportErrorCode } from "./errors";
-import type { TransportConfig } from "./factory";
-import { createProtocol } from "./factory";
-import type { ProtocolHandler } from "./protocol.unified";
+import { TransportProtocol, } from "../db/enums";
+import { TransportError, TransportErrorCode, } from "./errors";
+import type { TransportConfig, } from "./factory";
+import { createProtocol, } from "./factory";
+import type { ProtocolHandler, } from "./protocol.unified";
 
 export interface UpgradeConnectionOpts {
   current: ProtocolHandler;
@@ -43,23 +43,23 @@ export async function upgradeConnection({
   current,
   targetProtocol,
   config,
-}: UpgradeConnectionOpts): Promise<ProtocolHandler> {
+}: UpgradeConnectionOpts,): Promise<ProtocolHandler> {
   const currentConnection = await current.connect();
-  const state = { ...currentConnection.metadata };
+  const state = { ...currentConnection.metadata, };
 
   // ── Validate upgrade path ──────────────────────────────
   const upgradePaths: Record<string, TransportProtocol[]> = {
-    [TransportProtocol.Http1_1]: [TransportProtocol.Http2, TransportProtocol.WebSocket],
-    [TransportProtocol.Http2]: [TransportProtocol.Http3, TransportProtocol.WebSocket],
-    [TransportProtocol.WebSocket]: [TransportProtocol.WebTransport],
-    [TransportProtocol.Tls]: [TransportProtocol.Tls],
+    [TransportProtocol.Http1_1]: [TransportProtocol.Http2, TransportProtocol.WebSocket,],
+    [TransportProtocol.Http2]: [TransportProtocol.Http3, TransportProtocol.WebSocket,],
+    [TransportProtocol.WebSocket]: [TransportProtocol.WebTransport,],
+    [TransportProtocol.Tls]: [TransportProtocol.Tls,],
   };
 
   const allowed = upgradePaths[currentConnection.protocol] ?? [];
-  if (!allowed.includes(targetProtocol)) {
+  if (!allowed.includes(targetProtocol,)) {
     throw new TransportError(
       `upgrade from ${currentConnection.protocol} to ${targetProtocol} not supported`,
-      { code: TransportErrorCode.UpgradeFailed },
+      { code: TransportErrorCode.UpgradeFailed, },
     );
   }
 
@@ -71,19 +71,19 @@ export async function upgradeConnection({
 
   let newHandler: ProtocolHandler;
   try {
-    newHandler = createProtocol(newConfig);
+    newHandler = createProtocol(newConfig,);
   } catch (error) {
     throw new TransportError(`failed to create handler for ${targetProtocol}: ${(error as Error).message}`, {
       code: TransportErrorCode.UpgradeFailed,
       cause: error as Error,
-    });
+    },);
   }
 
   // ── Transfer state ──────────────────────────────────────
   try {
     const newConnection = await newHandler.connect();
     // Merge old state into new connection metadata
-    Object.assign(newConnection.metadata, state, { upgradedFrom: currentConnection.protocol });
+    Object.assign(newConnection.metadata, state, { upgradedFrom: currentConnection.protocol, },);
   } catch (error) {
     // Fallback: try to keep the old handler alive
     try {
@@ -96,7 +96,7 @@ export async function upgradeConnection({
       code: TransportErrorCode.UpgradeFailed,
       recoverable: true,
       cause: error as Error,
-    });
+    },);
   }
 
   // ── Drain and close old handler ─────────────────────────

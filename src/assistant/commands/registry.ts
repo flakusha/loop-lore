@@ -24,7 +24,7 @@ export interface CommandResult {
 }
 
 /** Command handler function signature */
-export type CommandHandler = (args: string[], ctx: CommandContext) => CommandResult | Promise<CommandResult>;
+export type CommandHandler = (args: string[], ctx: CommandContext,) => CommandResult | Promise<CommandResult>;
 
 const handlers = new Map<string, CommandHandler>();
 
@@ -34,8 +34,8 @@ const handlers = new Map<string, CommandHandler>();
  * @param name - Command name (lowercased automatically)
  * @param handler - Handler function
  */
-export function registerCommand(name: string, handler: CommandHandler): void {
-  handlers.set(name.toLowerCase(), handler);
+export function registerCommand(name: string, handler: CommandHandler,): void {
+  handlers.set(name.toLowerCase(), handler,);
 }
 
 /**
@@ -44,8 +44,8 @@ export function registerCommand(name: string, handler: CommandHandler): void {
  * @param name - Command name
  * @returns Handler function, or undefined if not registered
  */
-export function getCommand(name: string): CommandHandler | undefined {
-  return handlers.get(name.toLowerCase());
+export function getCommand(name: string,): CommandHandler | undefined {
+  return handlers.get(name.toLowerCase(),);
 }
 
 /**
@@ -54,5 +54,5 @@ export function getCommand(name: string): CommandHandler | undefined {
  * @returns Array of command names
  */
 export function listCommands(): string[] {
-  return Array.from(handlers.keys());
+  return Array.from(handlers.keys(),);
 }

@@ -5,7 +5,7 @@
  * No backend wiring — uses mock data for UI development.
  */
 
-import type { ChatState, EquipmentSlot, StatusEffect } from "./types";
+import type { ChatState, EquipmentSlot, StatusEffect, } from "./types";
 
 export const rpgStats: Partial<ChatState> & ThisType<ChatState> = {
   rpgStats: null,
@@ -36,32 +36,32 @@ export const rpgStats: Partial<ChatState> & ThisType<ChatState> = {
     this.statusEffects = [] as StatusEffect[];
 
     this.equipment = [
-      { slot: "head", itemId: null },
-      { slot: "chest", itemId: null },
-      { slot: "legs", itemId: null },
-      { slot: "feet", itemId: null },
-      { slot: "hands", itemId: null },
-      { slot: "weapon", itemId: null },
-      { slot: "shield", itemId: null },
-      { slot: "accessory", itemId: null },
+      { slot: "head", itemId: null, },
+      { slot: "chest", itemId: null, },
+      { slot: "legs", itemId: null, },
+      { slot: "feet", itemId: null, },
+      { slot: "hands", itemId: null, },
+      { slot: "weapon", itemId: null, },
+      { slot: "shield", itemId: null, },
+      { slot: "accessory", itemId: null, },
     ] as EquipmentSlot[];
   },
 
   /**
    * Calculate D&D-style modifier: floor((stat - 10) / 2)
    */
-  getModifier(stat: number): number {
-    return Math.floor((stat - 10) / 2);
+  getModifier(stat: number,): number {
+    return Math.floor((stat - 10) / 2,);
   },
 
   /**
    * Calculate effective stat with status effect modifiers.
    * Note: Equipment bonuses applied at use time, not stored.
    */
-  effectiveStat(base: number, effects: StatusEffect[]): number {
+  effectiveStat(base: number, effects: StatusEffect[],): number {
     let total = base;
     for (const effect of effects) {
-      for (const mod of Object.values(effect.modifier)) {
+      for (const mod of Object.values(effect.modifier,)) {
         total += mod;
       }
     }

@@ -1,6 +1,6 @@
 // src/config/sections/assistant.ts — Assistant config section
 
-import type { AssistantConfig } from "../schema";
+import type { AssistantConfig, } from "../schema";
 
 export const ASSISTANT_DEFAULTS = {
   enabled: true,
@@ -9,8 +9,8 @@ export const ASSISTANT_DEFAULTS = {
 export class AssistantSection implements AssistantConfig {
   enabled = ASSISTANT_DEFAULTS.enabled;
 
-  constructor(overrides?: Partial<AssistantConfig>) {
-    Object.assign(this, overrides);
+  constructor(overrides?: Partial<AssistantConfig>,) {
+    Object.assign(this, overrides,);
   }
 }
 
@@ -24,5 +24,5 @@ export const assistantMeta = {
       description: "Enable rule-based assistant",
     },
   },
-  required: ["enabled"] as const,
+  required: ["enabled",] as const,
 };

@@ -1,11 +1,11 @@
 // ── Worlds page: search, create ──────────────────────────────
-import { jsonBody } from "../alpine/json";
-import { log as rootLog } from "../alpine/logger";
-import { feFetch } from "../fe-fetch";
-import { showToast } from "../ui";
-import { filterCards } from "./shared";
+import { jsonBody, } from "../alpine/json";
+import { log as rootLog, } from "../alpine/logger";
+import { feFetch, } from "../fe-fetch";
+import { showToast, } from "../ui";
+import { filterCards, } from "./shared";
 
-const pageLog = rootLog.child({ module: "worlds" });
+const pageLog = rootLog.child({ module: "worlds", },);
 
 interface LocationData {
   id: string;
@@ -15,7 +15,7 @@ interface LocationData {
 }
 
 globalThis.filterWorlds = function() {
-  const query = document.querySelector<HTMLInputElement>("#world-search")?.value ?? "";
+  const query = document.querySelector<HTMLInputElement>("#world-search",)?.value ?? "";
   filterCards({
     containerId: "#world-list",
     cardSelector: ".world-card",
@@ -24,41 +24,41 @@ globalThis.filterWorlds = function() {
     query,
     emptyIcon: "🌍",
     emptyTitle: "No worlds match your search",
-  });
+  },);
 };
 
-globalThis.createWorld = async function(event: Event) {
+globalThis.createWorld = async function(event: Event,) {
   event.preventDefault();
   const form = event.target as HTMLFormElement;
-  const formData = new FormData(form);
+  const formData = new FormData(form,);
   const data: Record<string, unknown> = {};
-  formData.forEach((value, key) => {
+  formData.forEach((value, key,) => {
     data[key] = value;
-  });
-  pageLog.debug("createWorld", { data });
+  },);
+  pageLog.debug("createWorld", { data, },);
   try {
     const res = await feFetch("/api/worlds", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: jsonBody(data),
-    });
-    pageLog.debug("createWorld response", { status: res.status });
+      headers: { "Content-Type": "application/json", },
+      body: jsonBody(data,),
+    },);
+    pageLog.debug("createWorld response", { status: res.status, },);
     if (res.ok) {
       const data = await res.json();
-      document.querySelector("#create-world-modal")?.classList.remove("open");
-      showToast("success", "World created");
-      location.assign(`/worlds/${data.id}/edit`);
+      document.querySelector("#create-world-modal",)?.classList.remove("open",);
+      showToast("success", "World created",);
+      location.assign(`/worlds/${data.id}/edit`,);
     } else {
       const err = await res.json();
-      showToast("error", err.error || "Failed to create world");
+      showToast("error", err.error || "Failed to create world",);
     }
   } catch {
-    showToast("error", "Network error");
+    showToast("error", "Network error",);
   }
 };
 
 // ── World detail: location CRUD ─────────────────────────────
-globalThis.worldDetail = function(initial: { worldId: string; locations: LocationData[] }) {
+globalThis.worldDetail = function(initial: { worldId: string; locations: LocationData[] },) {
   return {
     worldId: initial.worldId,
     locations: initial.locations || [],
@@ -73,57 +73,57 @@ globalThis.worldDetail = function(initial: { worldId: string; locations: Locatio
       return this.locations.length;
     },
 
-    expandLoc(locId: string) {
+    expandLoc(locId: string,) {
       if (this.expandedLoc === locId) {
         this.expandedLoc = "";
         return;
       }
       this.expandedLoc = locId;
-      const loc = this.locations.find((l: LocationData) => l.id === locId);
+      const loc = this.locations.find((l: LocationData,) => l.id === locId);
       if (loc) {
         this.editLocName = loc.name;
         this.editLocDesc = loc.description || "";
       }
     },
 
-    async saveLocation(locId: string) {
+    async saveLocation(locId: string,) {
       try {
         const res = await feFetch(`/api/worlds/${this.worldId}/locations/${locId}`, {
           method: "PUT",
-          headers: { "Content-Type": "application/json" },
+          headers: { "Content-Type": "application/json", },
           body: jsonBody({
             name: this.editLocName.trim(),
             description: this.editLocDesc.trim() || null,
-          }),
-        });
+          },),
+        },);
         if (res.ok) {
-          const loc = this.locations.find((l: LocationData) => l.id === locId);
+          const loc = this.locations.find((l: LocationData,) => l.id === locId);
           if (loc) {
             loc.name = this.editLocName.trim();
             loc.description = this.editLocDesc.trim() || null;
           }
           this.expandedLoc = "";
-          showToast("success", "Location updated");
+          showToast("success", "Location updated",);
         } else {
           const err = await res.json();
-          showToast("error", err.message || "Failed");
+          showToast("error", err.message || "Failed",);
         }
       } catch {
-        showToast("error", "Network error");
+        showToast("error", "Network error",);
       }
     },
 
     async createLocation() {
-      if (!this.newLocationName.trim()) return;
+      if (!this.newLocationName.trim()) { return; }
       try {
         const res = await feFetch(`/api/worlds/${this.worldId}/locations`, {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: { "Content-Type": "application/json", },
           body: jsonBody({
             name: this.newLocationName.trim(),
             description: this.newLocationDesc.trim() || null,
-          }),
-        });
+          },),
+        },);
         if (res.ok) {
           const data = await res.json();
           this.locations.push({
@@ -131,38 +131,38 @@ globalThis.worldDetail = function(initial: { worldId: string; locations: Locatio
             name: this.newLocationName.trim(),
             description: this.newLocationDesc.trim() || null,
             world_id: this.worldId,
-          });
+          },);
           this.showCreateLocation = false;
           this.newLocationName = "";
           this.newLocationDesc = "";
-          showToast("success", "Location created");
+          showToast("success", "Location created",);
         } else {
           const err = await res.json();
-          showToast("error", err.message || "Failed to create location");
+          showToast("error", err.message || "Failed to create location",);
         }
       } catch {
-        showToast("error", "Network error");
+        showToast("error", "Network error",);
       }
     },
 
-    async deleteLocation(locId: string) {
+    async deleteLocation(locId: string,) {
       try {
-        const res = await feFetch(`/api/worlds/${this.worldId}/locations/${locId}`, { method: "DELETE" });
+        const res = await feFetch(`/api/worlds/${this.worldId}/locations/${locId}`, { method: "DELETE", },);
         if (res.ok) {
-          this.locations = this.locations.filter((l: LocationData) => l.id !== locId);
-          showToast("success", "Location deleted");
+          this.locations = this.locations.filter((l: LocationData,) => l.id !== locId);
+          showToast("success", "Location deleted",);
         } else {
           const err = await res.json();
-          showToast("error", err.message || "Failed");
+          showToast("error", err.message || "Failed",);
         }
       } catch {
-        showToast("error", "Network error");
+        showToast("error", "Network error",);
       }
     },
 
     async initializeStates() {
       try {
-        const res = await feFetch(`/api/worlds/${this.worldId}/initialize-states`, { method: "POST" });
+        const res = await feFetch(`/api/worlds/${this.worldId}/initialize-states`, { method: "POST", },);
         if (res.ok) {
           const data = await res.json();
           showToast(
@@ -170,10 +170,10 @@ globalThis.worldDetail = function(initial: { worldId: string; locations: Locatio
             `Initialized ${data.locations_initialized} locations, ${data.npcs_initialized} NPCs`,
           );
         } else {
-          showToast("error", "Failed to initialize states");
+          showToast("error", "Failed to initialize states",);
         }
       } catch {
-        showToast("error", "Network error");
+        showToast("error", "Network error",);
       }
     },
   };

@@ -1,6 +1,6 @@
 // src/config/sections/dynamic-response.ts — Dynamic response config section
 
-import type { DynamicResponseConfig } from "../schema";
+import type { DynamicResponseConfig, } from "../schema";
 
 export const DYNAMIC_RESPONSE_DEFAULTS = {
   enabled: true,
@@ -19,8 +19,8 @@ export class DynamicResponseSection implements DynamicResponseConfig {
   compressAlgorithm = DYNAMIC_RESPONSE_DEFAULTS.compressAlgorithm;
   compressThreshold = DYNAMIC_RESPONSE_DEFAULTS.compressThreshold;
 
-  constructor(overrides?: Partial<DynamicResponseConfig>) {
-    Object.assign(this, overrides);
+  constructor(overrides?: Partial<DynamicResponseConfig>,) {
+    Object.assign(this, overrides,);
   }
 }
 
@@ -28,7 +28,7 @@ export const dynamicResponseMeta = {
   type: "object" as const,
   description: "Dynamic-response optimization (minify / validate / compress runtime HTML/CSS/JS/JSON)",
   properties: {
-    enabled: { type: "boolean", default: DYNAMIC_RESPONSE_DEFAULTS.enabled, description: "Master toggle" },
+    enabled: { type: "boolean", default: DYNAMIC_RESPONSE_DEFAULTS.enabled, description: "Master toggle", },
     minify: {
       type: "boolean",
       default: DYNAMIC_RESPONSE_DEFAULTS.minify,
@@ -46,7 +46,7 @@ export const dynamicResponseMeta = {
     },
     compressAlgorithm: {
       type: "string",
-      enum: ["br", "gzip", "auto"],
+      enum: ["br", "gzip", "auto",],
       default: DYNAMIC_RESPONSE_DEFAULTS.compressAlgorithm,
       description: "Preferred algorithm; auto prefers br when advertised",
     },
@@ -56,5 +56,5 @@ export const dynamicResponseMeta = {
       description: "Minimum body size (bytes) before compression",
     },
   },
-  required: ["enabled", "minify", "validate", "compress", "compressAlgorithm", "compressThreshold"] as const,
+  required: ["enabled", "minify", "validate", "compress", "compressAlgorithm", "compressThreshold",] as const,
 };

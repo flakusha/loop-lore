@@ -5,7 +5,7 @@
  * Handles base URL, auto-auth token injection, response parsing.
  */
 
-export interface ApiResponse<T = unknown> {
+export interface ApiResponse<T = unknown,> {
   ok: boolean;
   status: number;
   data: T | null;
@@ -17,16 +17,16 @@ export interface ApiResponse<T = unknown> {
  * Create an API client bound to a test server URL.
  * After login() is called, subsequent requests include the auth cookie.
  */
-export function createClient(baseUrl: string) {
+export function createClient(baseUrl: string,) {
   let token: string | null = null;
 
-  async function request<T = unknown>(
+  async function request<T = unknown,>(
     method: string,
     path: string,
     body?: unknown,
     opts?: { headers?: Record<string, string> },
   ): Promise<ApiResponse<T>> {
-    const headers: Record<string, string> = { ...opts?.headers };
+    const headers: Record<string, string> = { ...opts?.headers, };
 
     if (body != null && !(body instanceof FormData)) {
       headers["Content-Type"] = "application/json";
@@ -40,14 +40,14 @@ export function createClient(baseUrl: string) {
     const res = await fetch(`${baseUrl}${path}`, {
       method,
       headers,
-      body: body instanceof FormData ? body : body === undefined ? undefined : JSON.stringify(body),
+      body: body instanceof FormData ? body : body === undefined ? undefined : JSON.stringify(body,),
       redirect: "manual", // don't follow HX-Redirect
-    });
+    },);
 
     // Extract Set-Cookie for auth token
-    const setCookie = res.headers.get("Set-Cookie");
+    const setCookie = res.headers.get("Set-Cookie",);
     if (setCookie) {
-      const match = /ll_token=([^;]+)/.exec(setCookie);
+      const match = /ll_token=([^;]+)/.exec(setCookie,);
       if (match) {
         token = match[1] ?? null;
       }
@@ -57,8 +57,8 @@ export function createClient(baseUrl: string) {
     let error: string | null = null;
     let code: string | null = null;
 
-    const contentType = res.headers.get("content-type") ?? "";
-    if (contentType.includes("application/json")) {
+    const contentType = res.headers.get("content-type",) ?? "";
+    if (contentType.includes("application/json",)) {
       try {
         const json = await res.json();
         if (res.ok) {
@@ -82,7 +82,7 @@ export function createClient(baseUrl: string) {
       }
     }
 
-    return { ok: res.ok, status: res.status, data, error, code };
+    return { ok: res.ok, status: res.status, data, error, code, };
   }
 
   return {
@@ -90,32 +90,32 @@ export function createClient(baseUrl: string) {
       return token;
     },
 
-    setToken(t: string | null) {
+    setToken(t: string | null,) {
       token = t;
     },
 
-    get<T = unknown>(path: string): Promise<ApiResponse<T>> {
-      return request<T>("GET", path);
+    get<T = unknown,>(path: string,): Promise<ApiResponse<T>> {
+      return request<T>("GET", path,);
     },
 
-    post<T = unknown>(path: string, body?: unknown): Promise<ApiResponse<T>> {
-      return request<T>("POST", path, body);
+    post<T = unknown,>(path: string, body?: unknown,): Promise<ApiResponse<T>> {
+      return request<T>("POST", path, body,);
     },
 
-    put<T = unknown>(path: string, body?: unknown): Promise<ApiResponse<T>> {
-      return request<T>("PUT", path, body);
+    put<T = unknown,>(path: string, body?: unknown,): Promise<ApiResponse<T>> {
+      return request<T>("PUT", path, body,);
     },
 
-    patch<T = unknown>(path: string, body?: unknown): Promise<ApiResponse<T>> {
-      return request<T>("PATCH", path, body);
+    patch<T = unknown,>(path: string, body?: unknown,): Promise<ApiResponse<T>> {
+      return request<T>("PATCH", path, body,);
     },
 
-    del<T = unknown>(path: string): Promise<ApiResponse<T>> {
-      return request<T>("DELETE", path);
+    del<T = unknown,>(path: string,): Promise<ApiResponse<T>> {
+      return request<T>("DELETE", path,);
     },
 
-    upload<T = unknown>(path: string, formData: FormData): Promise<ApiResponse<T>> {
-      return request<T>("POST", path, formData);
+    upload<T = unknown,>(path: string, formData: FormData,): Promise<ApiResponse<T>> {
+      return request<T>("POST", path, formData,);
     },
 
     /**
@@ -123,7 +123,7 @@ export function createClient(baseUrl: string) {
      * Returns true on success.
      */
     async login(): Promise<boolean> {
-      const res = await this.post("/api/demo-login");
+      const res = await this.post("/api/demo-login",);
       return res.ok;
     },
 
@@ -131,24 +131,24 @@ export function createClient(baseUrl: string) {
      * Authenticate as a specific user via /api/auth/login.
      * Returns true on success.
      */
-    async loginAs(username: string, password: string): Promise<boolean> {
-      const formBody = new URLSearchParams({ username, password }).toString();
-      const headers: Record<string, string> = { "Content-Type": "application/x-www-form-urlencoded" };
-      if (token) headers["Cookie"] = `ll_token=${token}`;
+    async loginAs(username: string, password: string,): Promise<boolean> {
+      const formBody = new URLSearchParams({ username, password, },).toString();
+      const headers: Record<string, string> = { "Content-Type": "application/x-www-form-urlencoded", };
+      if (token) { headers["Cookie"] = `ll_token=${token}`; }
       // Reset process-global login rate limiter so test files don't trip it
       // (limiter is keyed by IP and shared across test servers in the same bun process).
-      const { resetLoginRateLimiter } = await import("@/routes/auth");
+      const { resetLoginRateLimiter, } = await import("@/routes/auth");
       resetLoginRateLimiter();
       const res = await fetch(`${baseUrl}/api/auth/login`, {
         method: "POST",
         headers,
         body: formBody,
         redirect: "manual",
-      });
-      const setCookie = res.headers.get("Set-Cookie");
+      },);
+      const setCookie = res.headers.get("Set-Cookie",);
       if (setCookie) {
-        const match = /ll_token=([^;]+)/.exec(setCookie);
-        if (match) token = match[1] ?? null;
+        const match = /ll_token=([^;]+)/.exec(setCookie,);
+        if (match) { token = match[1] ?? null; }
       }
       return res.ok;
     },

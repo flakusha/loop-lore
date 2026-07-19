@@ -4,8 +4,8 @@
  * Batches entries → dispatches to transports on 100ms interval / 50 entry batch.
  */
 
-import { formatTime, unixSec } from "../utils/date";
-import type { LogEntry, Transport } from "./types";
+import { formatTime, unixSec, } from "../utils/date";
+import type { LogEntry, Transport, } from "./types";
 
 export const DEFAULT_FLUSH_INTERVAL = 100;
 export const DEFAULT_BATCH_SIZE = 50;
@@ -27,7 +27,7 @@ export abstract class AsyncLogQueueBase {
   protected readonly queueMaxSize: number;
   protected droppedCount = 0;
 
-  constructor(transports: Transport[], options?: QueueOptions) {
+  constructor(transports: Transport[], options?: QueueOptions,) {
     this.transports = transports;
     this.flushInterval = options?.flushInterval ?? DEFAULT_FLUSH_INTERVAL;
     this.batchSize = options?.batchSize ?? DEFAULT_BATCH_SIZE;
@@ -35,7 +35,7 @@ export abstract class AsyncLogQueueBase {
   }
 
   start(): void {
-    if (this.timer) return;
+    if (this.timer) { return; }
     this.timer = setInterval(() => {
       void (async () => {
         try {
@@ -44,18 +44,18 @@ export abstract class AsyncLogQueueBase {
           // timer flush — non-critical
         }
       })();
-    }, this.flushInterval);
+    }, this.flushInterval,);
     // Subclass may override: timer.unref() for Node
     this.setupTimerUnref();
   }
 
   stop(): void {
-    if (!this.timer) return;
-    clearInterval(this.timer);
+    if (!this.timer) { return; }
+    clearInterval(this.timer,);
     this.timer = null;
   }
 
-  enqueue(entry: LogEntry): void {
+  enqueue(entry: LogEntry,): void {
     if (this.buffer.length >= this.queueMaxSize) {
       this.droppedCount++;
       return;
@@ -70,11 +70,11 @@ export abstract class AsyncLogQueueBase {
         message: `log queue full — dropped ${this.droppedCount} entries`,
         module: "logger",
       };
-      this.buffer.push(warning);
+      this.buffer.push(warning,);
       this.droppedCount = 0;
     }
 
-    this.buffer.push(entry);
+    this.buffer.push(entry,);
 
     // Flush immediately if batch size reached
     if (this.buffer.length >= this.batchSize) {
@@ -86,26 +86,26 @@ export abstract class AsyncLogQueueBase {
             // microtask flush — non-critical
           }
         })();
-      });
+      },);
     }
   }
 
   abstract flush(): Promise<void>;
 
   protected async flushToTransports(): Promise<void> {
-    const batch = this.buffer.splice(0, this.batchSize);
+    const batch = this.buffer.splice(0, this.batchSize,);
 
     const results = await Promise.allSettled(
-      this.transports.map((transport) => {
-        return Promise.all(batch.map((logEntry) => transport.write(logEntry)));
-      }),
+      this.transports.map((transport,) => {
+        return Promise.all(batch.map((logEntry,) => transport.write(logEntry,)),);
+      },),
     );
 
     // Subclass implements fallback (process.stderr.write or console.error)
-    this.handleTransportFailure(results);
+    this.handleTransportFailure(results,);
   }
 
-  protected abstract handleTransportFailure(results: PromiseSettledResult<Awaited<void>[]>[]): void;
+  protected abstract handleTransportFailure(results: PromiseSettledResult<Awaited<void>[]>[],): void;
 
   protected abstract setupTimerUnref(): void;
 
@@ -119,7 +119,7 @@ export abstract class AsyncLogQueueBase {
             // follow-up flush — non-critical
           }
         })();
-      });
+      },);
     }
   }
 

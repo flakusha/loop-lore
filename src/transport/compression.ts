@@ -1,8 +1,8 @@
 // src/transport/compression.ts — Transparent compression decorator
 
-import { brotliCompressSync, brotliDecompressSync, gunzipSync, gzipSync } from "node:zlib";
-import { CompressionAlgorithm } from "../db/enums";
-import type { Connection, ProtocolHandler } from "./protocol.unified";
+import { brotliCompressSync, brotliDecompressSync, gunzipSync, gzipSync, } from "node:zlib";
+import { CompressionAlgorithm, } from "../db/enums";
+import type { Connection, ProtocolHandler, } from "./protocol.unified";
 
 interface CompressionOptions {
   /** Compression level (algorithm-specific). Default varies per algo. */
@@ -23,14 +23,14 @@ function compress(
     return data;
   }
 
-  const buffer = Buffer.from(data);
+  const buffer = Buffer.from(data,);
 
   switch (algorithm) {
     case "zstd": {
       return new Uint8Array(
-        (Bun.zstdCompressSync as (buf: Buffer, opts?: { level?: number }) => Buffer)(buffer, {
+        (Bun.zstdCompressSync as (buf: Buffer, opts?: { level?: number },) => Buffer)(buffer, {
           level: options.level,
-        }),
+        },),
       );
     }
 
@@ -40,12 +40,12 @@ function compress(
           params: {
             1: options.level ?? 6, // BROTLI_PARAM_QUALITY
           },
-        }),
+        },),
       );
     }
 
     case "gzip": {
-      return new Uint8Array(gzipSync(buffer, { level: options.level ?? 6 }));
+      return new Uint8Array(gzipSync(buffer, { level: options.level ?? 6, },),);
     }
 
     case "none": {
@@ -57,20 +57,20 @@ function compress(
 /**
  * Decompress incoming data using the specified algorithm.
  */
-function decompress(data: Uint8Array, algorithm: CompressionAlgorithm): Uint8Array {
-  const buffer = Buffer.from(data);
+function decompress(data: Uint8Array, algorithm: CompressionAlgorithm,): Uint8Array {
+  const buffer = Buffer.from(data,);
 
   switch (algorithm) {
     case "zstd": {
-      return new Uint8Array((Bun.zstdDecompressSync as (buf: Buffer) => Buffer)(buffer));
+      return new Uint8Array((Bun.zstdDecompressSync as (buf: Buffer,) => Buffer)(buffer,),);
     }
 
     case "br": {
-      return new Uint8Array(brotliDecompressSync(buffer));
+      return new Uint8Array(brotliDecompressSync(buffer,),);
     }
 
     case "gzip": {
-      return new Uint8Array(gunzipSync(buffer));
+      return new Uint8Array(gunzipSync(buffer,),);
     }
 
     case "none": {
@@ -97,21 +97,21 @@ export interface WithCompressionOpts {
  * @param opts.algorithm - Compression algorithm to apply
  * @param opts.options - Tuning options (level, threshold)
  */
-export function withCompression({ handler, algorithm, options = {} }: WithCompressionOpts): ProtocolHandler {
+export function withCompression({ handler, algorithm, options = {}, }: WithCompressionOpts,): ProtocolHandler {
   return {
     async connect(): Promise<Connection> {
       const connection = await handler.connect();
-      return { ...connection, metadata: { ...connection.metadata, compression: algorithm } };
+      return { ...connection, metadata: { ...connection.metadata, compression: algorithm, }, };
     },
 
-    async send(data: string | Uint8Array): Promise<void> {
-      const raw = typeof data === "string" ? new TextEncoder().encode(data) : data;
-      const compressed = compress(raw, algorithm, options);
-      await handler.send(compressed);
+    async send(data: string | Uint8Array,): Promise<void> {
+      const raw = typeof data === "string" ? new TextEncoder().encode(data,) : data;
+      const compressed = compress(raw, algorithm, options,);
+      await handler.send(compressed,);
     },
 
-    async get(signature: string): Promise<string> {
-      return handler.get(signature);
+    async get(signature: string,): Promise<string> {
+      return handler.get(signature,);
     },
 
     async close(): Promise<void> {
@@ -120,4 +120,4 @@ export function withCompression({ handler, algorithm, options = {} }: WithCompre
   };
 }
 
-export { compress, type CompressionOptions, decompress };
+export { compress, type CompressionOptions, decompress, };

@@ -2,9 +2,9 @@
 //
 // /ooc — send an out-of-character message.
 
-import { type CommandResult, registerCommand } from "./registry";
+import { type CommandResult, registerCommand, } from "./registry";
 
-registerCommand("ooc", async (args): Promise<CommandResult> => {
+registerCommand("ooc", async (args,): Promise<CommandResult> => {
   if (args.length === 0) {
     return {
       systemMessage: "Usage: /ooc <text> — send an out-of-character message.",
@@ -12,8 +12,8 @@ registerCommand("ooc", async (args): Promise<CommandResult> => {
     };
   }
   return {
-    systemMessage: `**(OOC)** ${args.join(" ")}`,
+    systemMessage: `**(OOC)** ${args.join(" ",)}`,
     action: "inject-ooc",
     handled: true,
   };
-});
+},);

@@ -1,6 +1,6 @@
 // src/config/sections/auth.ts — Auth config section
 
-import type { AuthConfig } from "../schema";
+import type { AuthConfig, } from "../schema";
 
 export const AUTH_DEFAULTS = {
   required: false,
@@ -23,8 +23,8 @@ export class AuthSection implements AuthConfig {
   adminUsername = AUTH_DEFAULTS.adminUsername;
   adminPassword = AUTH_DEFAULTS.adminPassword;
 
-  constructor(overrides?: Partial<AuthConfig>) {
-    Object.assign(this, overrides);
+  constructor(overrides?: Partial<AuthConfig>,) {
+    Object.assign(this, overrides,);
   }
 }
 
@@ -52,7 +52,7 @@ export const authMeta = {
       default: AUTH_DEFAULTS.maxSessionsPerUser,
       description: "Max simultaneous sessions per user",
     },
-    demoUsername: { type: "string", default: AUTH_DEFAULTS.demoUsername, description: "Demo username" },
+    demoUsername: { type: "string", default: AUTH_DEFAULTS.demoUsername, description: "Demo username", },
     demoAutoSetup: {
       type: "boolean",
       default: AUTH_DEFAULTS.demoAutoSetup,

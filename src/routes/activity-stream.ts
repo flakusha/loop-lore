@@ -8,12 +8,12 @@
 //
 // Route: GET /api/activity/stream
 
-import { Elysia } from "elysia";
-import type { Kysely } from "kysely";
-import type { DB } from "../db/schema";
-import { safeJsonStringify } from "../utils";
-import { computeActivity } from "./activity";
-import { ErrorCode, HttpStatus, jsonError } from "./http-utils";
+import { Elysia, } from "elysia";
+import type { Kysely, } from "kysely";
+import type { DB, } from "../db/schema";
+import { safeJsonStringify, } from "../utils";
+import { computeActivity, } from "./activity";
+import { ErrorCode, HttpStatus, jsonError, } from "./http-utils";
 
 const POLL_INTERVAL_MS = 5000;
 const KEEPALIVE_MS = 8000;
@@ -25,9 +25,9 @@ interface ActivityEntry {
 }
 
 /** Stable signature of an activity snapshot for change detection. */
-function snapshotOf(map: Record<string, ActivityEntry>): string {
+function snapshotOf(map: Record<string, ActivityEntry>,): string {
   const result = safeJsonStringify(
-    Object.entries(map).map(([id, e]) => [id, e.unseenCount, e.lastMessageCreatedAt]),
+    Object.entries(map,).map(([id, e,],) => [id, e.unseenCount, e.lastMessageCreatedAt,]),
   );
   return result.ok ? result.value : "[]";
 }
@@ -51,22 +51,22 @@ export class ActivityStreamer {
     let keepalive: ReturnType<typeof setInterval> | undefined;
     let lastSnapshot = "";
 
-    const send = (controller: ReadableStreamDefaultController, event: string, data: unknown) => {
+    const send = (controller: ReadableStreamDefaultController, event: string, data: unknown,) => {
       try {
-        const payload = safeJsonStringify(data);
-        controller.enqueue(encoder.encode(`event: ${event}\ndata: ${payload.ok ? payload.value : "{}"}\n\n`));
+        const payload = safeJsonStringify(data,);
+        controller.enqueue(encoder.encode(`event: ${event}\ndata: ${payload.ok ? payload.value : "{}"}\n\n`,),);
       } catch {
         // controller closed — ignore
       }
     };
 
-    const tick = async (controller: ReadableStreamDefaultController): Promise<void> => {
+    const tick = async (controller: ReadableStreamDefaultController,): Promise<void> => {
       try {
-        const next = await computeActivity(this.database, this.userId);
-        const nextSnap = snapshotOf(next);
+        const next = await computeActivity(this.database, this.userId,);
+        const nextSnap = snapshotOf(next,);
         if (nextSnap !== lastSnapshot) {
           lastSnapshot = nextSnap;
-          send(controller, "activity", { chats: next });
+          send(controller, "activity", { chats: next, },);
         }
       } catch {
         // transient DB error — skip this tick, keep stream alive
@@ -74,26 +74,26 @@ export class ActivityStreamer {
     };
 
     const stream = new ReadableStream({
-      start: async (controller) => {
+      start: async (controller,) => {
         try {
-          const initial = await computeActivity(this.database, this.userId);
-          lastSnapshot = snapshotOf(initial);
-          send(controller, "activity", { chats: initial });
+          const initial = await computeActivity(this.database, this.userId,);
+          lastSnapshot = snapshotOf(initial,);
+          send(controller, "activity", { chats: initial, },);
         } catch (error) {
-          send(controller, "stream-error", { error: String(error) });
+          send(controller, "stream-error", { error: String(error,), },);
         }
 
         timer = setInterval(() => {
-          void tick(controller);
-        }, this.intervalMs);
+          void tick(controller,);
+        }, this.intervalMs,);
 
-        keepalive = setInterval(() => send(controller, "ping", { t: Date.now() }), KEEPALIVE_MS);
+        keepalive = setInterval(() => send(controller, "ping", { t: Date.now(), },), KEEPALIVE_MS,);
       },
       cancel: () => {
-        if (timer) clearInterval(timer);
-        if (keepalive) clearInterval(keepalive);
+        if (timer) { clearInterval(timer,); }
+        if (keepalive) { clearInterval(keepalive,); }
       },
-    });
+    },);
 
     return new Response(stream, {
       headers: {
@@ -102,21 +102,21 @@ export class ActivityStreamer {
         Connection: "keep-alive",
         "X-Accel-Buffering": "no",
       },
-    });
+    },);
   }
 }
 
-export function activityStreamRoutes({ database }: { database: Kysely<DB> }) {
-  return new Elysia({ name: "activity-stream" }).get("/api/activity/stream", async (ctx) => {
+export function activityStreamRoutes({ database, }: { database: Kysely<DB> },) {
+  return new Elysia({ name: "activity-stream", },).get("/api/activity/stream", async (ctx,) => {
     const userId = (ctx as any).userId as string | null;
     if (!userId) {
       return jsonError({
         message: "Unauthorized",
         status: HttpStatus.Unauthorized,
         code: ErrorCode.Unauthorized,
-      });
+      },);
     }
-    const streamer = new ActivityStreamer(database, userId);
+    const streamer = new ActivityStreamer(database, userId,);
     return streamer.open();
-  });
+  },);
 }

@@ -8,14 +8,14 @@
  * Design: Simple regex-based extraction. No DB access in the parser itself —
  * the caller resolves names to actor IDs.
  */
-import { getLogger, type Logger } from "../logger";
+import { getLogger, type Logger, } from "../logger";
 
 const log: Logger = new Proxy({} as Logger, {
-  get(_target, prop) {
-    const instance = getLogger().child({ module: "mention-parser" });
-    return Reflect.get(instance, prop);
+  get(_target, prop,) {
+    const instance = getLogger().child({ module: "mention-parser", },);
+    return Reflect.get(instance, prop,);
   },
-});
+},);
 
 /** Parsed mention result */
 export interface ParsedMention {
@@ -39,11 +39,11 @@ export interface ParsedMention {
  * @param text - User message content
  * @returns Array of parsed mentions (may be empty)
  */
-export function parseMentions(text: string): ParsedMention[] {
+export function parseMentions(text: string,): ParsedMention[] {
   const mentions: ParsedMention[] = [];
   // Match @ followed by a name (alphanumeric, underscore, hyphen, spaces)
   const mentionRegex = /@([A-Za-z0-9_-]+(?:\s+[A-Za-z0-9_-]+)*)/g;
-  let match = mentionRegex.exec(text);
+  let match = mentionRegex.exec(text,);
 
   while (match !== null) {
     mentions.push({
@@ -51,12 +51,12 @@ export function parseMentions(text: string): ParsedMention[] {
       name: match[1]!,
       start: match.index,
       end: match.index + match[0].length,
-    });
-    match = mentionRegex.exec(text);
+    },);
+    match = mentionRegex.exec(text,);
   }
 
   if (mentions.length > 0) {
-    log.debug("Parsed mentions", { count: mentions.length, names: mentions.map((m) => m.name) });
+    log.debug("Parsed mentions", { count: mentions.length, names: mentions.map((m,) => m.name), },);
   }
 
   return mentions;
@@ -79,12 +79,12 @@ export function resolveMention(
   const lower = name.toLowerCase();
 
   // Exact match first
-  const exact = participants.find((p) => p.displayName.toLowerCase() === lower);
-  if (exact) return exact.actorId;
+  const exact = participants.find((p,) => p.displayName.toLowerCase() === lower);
+  if (exact) { return exact.actorId; }
 
   // Prefix match
-  const prefix = participants.find((p) => p.displayName.toLowerCase().startsWith(lower));
-  if (prefix) return prefix.actorId;
+  const prefix = participants.find((p,) => p.displayName.toLowerCase().startsWith(lower,));
+  if (prefix) { return prefix.actorId; }
 
   return null;
 }
@@ -100,26 +100,26 @@ export function extractMentionedActorIds(
   text: string,
   participants: { actorId: string; displayName: string }[],
 ): string[] {
-  const mentions = parseMentions(text);
+  const mentions = parseMentions(text,);
   const ids: string[] = [];
 
   for (const mention of mentions) {
-    const id = resolveMention(mention.name, participants);
-    if (id) ids.push(id);
+    const id = resolveMention(mention.name, participants,);
+    if (id) { ids.push(id,); }
   }
 
-  return [...new Set(ids)];
+  return [...new Set(ids,),];
 }
 
 /**
  * Detect initiative claim prefix (>>).
  * Returns { isInitiative: true, cleanMessage: string } if prefixed.
  */
-export function parseInitiativeFlag(input: string): { isInitiative: boolean; cleanMessage: string } {
+export function parseInitiativeFlag(input: string,): { isInitiative: boolean; cleanMessage: string } {
   const trimmed = input.trim();
-  if (trimmed.startsWith(">>")) {
-    const cleanMessage = trimmed.slice(2).trim();
-    return { isInitiative: true, cleanMessage };
+  if (trimmed.startsWith(">>",)) {
+    const cleanMessage = trimmed.slice(2,).trim();
+    return { isInitiative: true, cleanMessage, };
   }
-  return { isInitiative: false, cleanMessage: trimmed };
+  return { isInitiative: false, cleanMessage: trimmed, };
 }

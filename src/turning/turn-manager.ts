@@ -9,14 +9,14 @@
  * It does NOT own prompt assembly or LLM calls — callers handle that
  * and pass results back via recordTurn().
  */
-import type { Kysely } from "kysely";
-import { TurnStrategy } from "../db/enums";
-import type { TurnStrategy as TurnStrategyType } from "../db/enums";
-import type { DB } from "../db/schema";
-import { getLogger } from "../logger";
-import { jsonParseOr, safeJsonStringify } from "../utils";
-import { STRATEGY_MAP } from "./turn-strategies";
-import type { GroupTurnContext, TurnManagerState, TurnParticipant } from "./types";
+import type { Kysely, } from "kysely";
+import { TurnStrategy, } from "../db/enums";
+import type { TurnStrategy as TurnStrategyType, } from "../db/enums";
+import type { DB, } from "../db/schema";
+import { getLogger, } from "../logger";
+import { jsonParseOr, safeJsonStringify, } from "../utils";
+import { STRATEGY_MAP, } from "./turn-strategies";
+import type { GroupTurnContext, TurnManagerState, TurnParticipant, } from "./types";
 
 export interface TurnManagerOptions {
   db: Kysely<DB>;
@@ -31,7 +31,7 @@ export class TurnManager {
   private readonly maxRegenerations: number;
   private state: TurnManagerState | null = null;
 
-  constructor(options: TurnManagerOptions) {
+  constructor(options: TurnManagerOptions,) {
     this.db = options.db;
     this.chatId = options.chatId;
     this.maxRegenerations = options.maxRegenerations ?? 3;
@@ -52,18 +52,18 @@ export class TurnManager {
   }
 
   private async persistState(): Promise<void> {
-    if (!this.state) return;
-    const serialized = safeJsonStringify(this.state);
+    if (!this.state) { return; }
+    const serialized = safeJsonStringify(this.state,);
     if (!serialized.ok) {
       getLogger()
-        .child({ module: "turn-manager" })
-        .error("persistState serialization failed", undefined, { error: serialized.error });
+        .child({ module: "turn-manager", },)
+        .error("persistState serialization failed", undefined, { error: serialized.error, },);
       return;
     }
     await this.db
-      .updateTable("chats")
-      .set({ story_state: serialized.value })
-      .where("id", "=", this.chatId)
+      .updateTable("chats",)
+      .set({ story_state: serialized.value, },)
+      .where("id", "=", this.chatId,)
       .execute();
   }
 
@@ -74,23 +74,23 @@ export class TurnManager {
    *
    * @param mode - "story" filters to ai/narrator/npc; "group" includes all non-user agents
    */
-  private async fetchTurnParticipants(mode: "story" | "group" = "story"): Promise<TurnParticipant[]> {
+  private async fetchTurnParticipants(mode: "story" | "group" = "story",): Promise<TurnParticipant[]> {
     const query = this.db
-      .selectFrom("chat_participants")
-      .innerJoin("actors", "actors.id", "chat_participants.actor_id")
+      .selectFrom("chat_participants",)
+      .innerJoin("actors", "actors.id", "chat_participants.actor_id",)
       .select([
         "chat_participants.actor_id",
         "actors.actor_type",
         "actors.agent_type",
         "chat_participants.talkativity",
-      ])
-      .where("chat_participants.chat_id", "=", this.chatId);
+      ],)
+      .where("chat_participants.chat_id", "=", this.chatId,);
 
     const filtered = mode === "story"
-      ? await query.where("actors.agent_type", "in", ["ai", "narrator", "npc"]).execute()
-      : await query.where("actors.agent_type", "!=", "none").execute();
+      ? await query.where("actors.agent_type", "in", ["ai", "narrator", "npc",],).execute()
+      : await query.where("actors.agent_type", "!=", "none",).execute();
 
-    const participants: TurnParticipant[] = filtered.map((p) => ({
+    const participants: TurnParticipant[] = filtered.map((p,) => ({
       actorId: p.actor_id,
       type: p.actor_type,
       agentType: p.agent_type,
@@ -101,15 +101,15 @@ export class TurnManager {
     if (this.state?.strategy === TurnStrategy.Initiative) {
       const currentScene = "main"; // TODO: detect actual current scene from story_state
       const initiatives = await this.db
-        .selectFrom("group_initiatives")
-        .select(["actor_id", "score"])
-        .where("chat_id", "=", this.chatId)
-        .where("scene_id", "=", currentScene)
+        .selectFrom("group_initiatives",)
+        .select(["actor_id", "score",],)
+        .where("chat_id", "=", this.chatId,)
+        .where("scene_id", "=", currentScene,)
         .execute();
 
-      const initiativeMap = new Map(initiatives.map((i) => [i.actor_id, i.score]));
+      const initiativeMap = new Map(initiatives.map((i,) => [i.actor_id, i.score,]),);
       for (const p of participants) {
-        const score = initiativeMap.get(p.actorId);
+        const score = initiativeMap.get(p.actorId,);
         if (score != null) {
           p.initiativeScore = score;
         }
@@ -119,16 +119,16 @@ export class TurnManager {
     return participants;
   }
 
-  private async refreshTurnOrder(mode: "story" | "group" = "story"): Promise<void> {
-    if (!this.state) return;
-    const participants = await this.fetchTurnParticipants(mode);
-    const typeOrder: Record<string, number> = { narrator: 0, ai: 1, npc: 2 };
-    participants.sort((a, b) => {
+  private async refreshTurnOrder(mode: "story" | "group" = "story",): Promise<void> {
+    if (!this.state) { return; }
+    const participants = await this.fetchTurnParticipants(mode,);
+    const typeOrder: Record<string, number> = { narrator: 0, ai: 1, npc: 2, };
+    participants.sort((a, b,) => {
       const aOrder = typeOrder[a.agentType] ?? 99;
       const bOrder = typeOrder[b.agentType] ?? 99;
       return aOrder - bOrder;
-    });
-    this.state.turnOrder = participants.map((p) => p.actorId);
+    },);
+    this.state.turnOrder = participants.map((p,) => p.actorId);
   }
 
   // ─── Initialization ───────────────────────────────────────────
@@ -136,17 +136,17 @@ export class TurnManager {
   /** Load or initialize turn manager state from the DB */
   async initialize(): Promise<void> {
     const chat = await this.db
-      .selectFrom("chats")
-      .select(["story_state", "turn_strategy", "max_turns"])
-      .where("id", "=", this.chatId)
+      .selectFrom("chats",)
+      .select(["story_state", "turn_strategy", "max_turns",],)
+      .where("id", "=", this.chatId,)
       .executeTakeFirst();
 
     if (!chat) {
-      throw new Error(`Chat ${this.chatId} not found`);
+      throw new Error(`Chat ${this.chatId} not found`,);
     }
 
     this.state = chat.story_state
-      ? jsonParseOr(chat.story_state, this.createInitialState())
+      ? jsonParseOr(chat.story_state, this.createInitialState(),)
       : this.createInitialState();
 
     if (chat.turn_strategy) {
@@ -177,9 +177,9 @@ export class TurnManager {
   }
 
   get isComplete(): boolean {
-    if (!this.state) return false;
+    if (!this.state) { return false; }
     const maxTurns = this.state.maxTurns ?? Number.MAX_SAFE_INTEGER;
-    if (maxTurns <= 0) return false;
+    if (maxTurns <= 0) { return false; }
     return this.state.currentTurn >= maxTurns;
   }
 
@@ -194,13 +194,13 @@ export class TurnManager {
     strategy?: TurnStrategyType,
     context?: GroupTurnContext | Record<string, unknown>,
   ): Promise<string | null> {
-    if (!this.state) throw new Error("TurnManager not initialized");
+    if (!this.state) { throw new Error("TurnManager not initialized",); }
 
     const resolvedStrategy = strategy ?? this.state.strategy;
     const mode = context?.chatMode === "group" ? "group" : "story";
-    const participants = await this.fetchTurnParticipants(mode);
+    const participants = await this.fetchTurnParticipants(mode,);
 
-    if (participants.length === 0) return null;
+    if (participants.length === 0) { return null; }
 
     this.state.currentTurn++;
 
@@ -218,54 +218,54 @@ export class TurnManager {
 
   /** Record a completed turn (persists state) */
   async recordTurn(): Promise<void> {
-    if (!this.state) throw new Error("TurnManager not initialized");
+    if (!this.state) { throw new Error("TurnManager not initialized",); }
     this.state.lastTurnCompletedAt = new Date().toISOString();
     await this.persistState();
   }
 
   /** Request regeneration of a failed turn */
-  async requestRegeneration(turnId: string, reason: string): Promise<boolean> {
-    if (!this.state) throw new Error("TurnManager not initialized");
+  async requestRegeneration(turnId: string, reason: string,): Promise<boolean> {
+    if (!this.state) { throw new Error("TurnManager not initialized",); }
 
     const currentAttempt = this.state.pendingRegeneration?.attempt ?? 0;
-    if (currentAttempt >= this.maxRegenerations) return false;
+    if (currentAttempt >= this.maxRegenerations) { return false; }
 
-    this.state.pendingRegeneration = { turnId, attempt: currentAttempt + 1, reason };
+    this.state.pendingRegeneration = { turnId, attempt: currentAttempt + 1, reason, };
     await this.persistState();
     return true;
   }
 
   /** Clear pending regeneration (accepted) */
   async clearRegeneration(): Promise<void> {
-    if (!this.state) return;
+    if (!this.state) { return; }
     this.state.pendingRegeneration = null;
     await this.persistState();
   }
 
   /** Pause turn generation */
   async pause(): Promise<void> {
-    if (!this.state) throw new Error("TurnManager not initialized");
+    if (!this.state) { throw new Error("TurnManager not initialized",); }
     this.state.isPaused = true;
     await this.persistState();
   }
 
   /** Resume turn generation */
   async resume(): Promise<void> {
-    if (!this.state) throw new Error("TurnManager not initialized");
+    if (!this.state) { throw new Error("TurnManager not initialized",); }
     this.state.isPaused = false;
     await this.persistState();
   }
 
   /** Reset turn counter (e.g., new scene) */
   async resetTurnCounter(): Promise<void> {
-    if (!this.state) throw new Error("TurnManager not initialized");
+    if (!this.state) { throw new Error("TurnManager not initialized",); }
     this.state.currentTurn = 0;
     this.state.currentActorId = null;
     await this.persistState();
   }
 
   /** Update turn order (e.g., participant added/removed) */
-  async refreshOrder(mode: "story" | "group" = "story"): Promise<void> {
-    await this.refreshTurnOrder(mode);
+  async refreshOrder(mode: "story" | "group" = "story",): Promise<void> {
+    await this.refreshTurnOrder(mode,);
   }
 }

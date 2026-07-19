@@ -1,8 +1,8 @@
 // src/config/sections/database.ts — Database config section
 
-import { DbType } from "../../db/enums";
-import { DATA_DIR } from "../constants";
-import type { DbConfig as DatabaseConfig } from "../schema";
+import { DbType, } from "../../db/enums";
+import { DATA_DIR, } from "../constants";
+import type { DbConfig as DatabaseConfig, } from "../schema";
 
 export const DATABASE_DEFAULTS = {
   type: DbType.Sqlite,
@@ -14,8 +14,8 @@ export class DatabaseSection implements DatabaseConfig {
   sqliteFilename = DATABASE_DEFAULTS.sqliteFilename;
   url?: string;
 
-  constructor(overrides?: Partial<DatabaseConfig>) {
-    Object.assign(this, overrides);
+  constructor(overrides?: Partial<DatabaseConfig>,) {
+    Object.assign(this, overrides,);
   }
 }
 
@@ -25,7 +25,7 @@ export const databaseMeta = {
   properties: {
     type: {
       type: "string",
-      enum: ["sqlite", "postgres"],
+      enum: ["sqlite", "postgres",],
       default: DATABASE_DEFAULTS.type,
       description: "Database type",
     },
@@ -34,7 +34,7 @@ export const databaseMeta = {
       default: DATABASE_DEFAULTS.sqliteFilename,
       description: "SQLite database file path",
     },
-    url: { type: "string", description: "PostgreSQL connection URL" },
+    url: { type: "string", description: "PostgreSQL connection URL", },
   },
-  required: ["type", "sqliteFilename"] as const,
+  required: ["type", "sqliteFilename",] as const,
 };

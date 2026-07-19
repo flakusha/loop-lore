@@ -1,6 +1,6 @@
 // src/config/sections/encryption.ts — Encryption config section
 
-import type { EncryptionConfig } from "../schema";
+import type { EncryptionConfig, } from "../schema";
 
 export const ENCRYPTION_DEFAULTS = {
   required: false,
@@ -14,8 +14,8 @@ export class EncryptionSection implements EncryptionConfig {
   compressAlgorithm = ENCRYPTION_DEFAULTS.compressAlgorithm;
   serverEncryptionKey?: string;
 
-  constructor(overrides?: Partial<EncryptionConfig>) {
-    Object.assign(this, overrides);
+  constructor(overrides?: Partial<EncryptionConfig>,) {
+    Object.assign(this, overrides,);
   }
 }
 
@@ -43,5 +43,5 @@ export const encryptionMeta = {
       description: "Preferred compression algorithm",
     },
   },
-  required: ["required", "compressThreshold", "compressAlgorithm"] as const,
+  required: ["required", "compressThreshold", "compressAlgorithm",] as const,
 };
