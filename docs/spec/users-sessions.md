@@ -122,7 +122,7 @@ Config keys defined in `src/config/schema.ts` → `AuthConfig`.
 
 Env overrides:
 
-```env
+```shell
 AUTH_REQUIRED=true                  # true=multi-user, false=demo/solo
 AUTH_REGISTRATION_OPEN=true         # allow /api/auth/register (must be enforced)
 SESSION_TIMEOUT_HOURS=24            # idle session timeout

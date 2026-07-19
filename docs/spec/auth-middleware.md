@@ -260,7 +260,7 @@ human accounts are seeded there. Human accounts are created as follows:
 
 Env overrides:
 
-```env
+```shell
 AUTH_ADMIN_USERNAME=admin      # bootstrap admin username (multi-user)
 AUTH_ADMIN_PASSWORD=<secret>   # bootstrap admin password — set via env only
 ```
