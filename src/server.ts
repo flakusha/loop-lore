@@ -205,14 +205,14 @@ function handleDocsRequest(
   let fullPath = normalize(join(DOCS_PATH, docPath,),);
 
   if (!existsSync(fullPath,)) {
-    const htmlPath = fullPath + ".html";
+    const htmlPath = `${fullPath  }.html`;
     if (existsSync(htmlPath,)) {
       fullPath = htmlPath;
     }
   }
 
   // Path traversal guard: must be under DOCS_PATH with trailing separator
-  const docsPathWithSlash = DOCS_PATH + "/";
+  const docsPathWithSlash = `${DOCS_PATH  }/`;
   if (!fullPath.startsWith(docsPathWithSlash,) && fullPath !== DOCS_PATH) {
     return new Response("Documentation not found", { status: 404, },);
   }
@@ -262,12 +262,12 @@ async function start() {
     const publicPath = normalize(join(PUBLIC_DIR, url.pathname === "/" ? "index.html" : url.pathname,),);
 
     // Path traversal guard: must be under PUBLIC_DIR
-    const publicDirWithSlash = PUBLIC_DIR + "/";
+    const publicDirWithSlash = `${PUBLIC_DIR  }/`;
     if (publicPath.startsWith(publicDirWithSlash,) || publicPath === PUBLIC_DIR) {
       let fullPath = publicPath;
 
       if (!existsSync(fullPath,)) {
-        const htmlPath = fullPath + ".html";
+        const htmlPath = `${fullPath  }.html`;
         if (existsSync(htmlPath,)) { fullPath = htmlPath; }
       }
 
