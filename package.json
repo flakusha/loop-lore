@@ -14,6 +14,7 @@
     "db:migrate": "bun run src/db/migrate.ts",
     "db:reinit": "bun run src/db/reinit.ts",
     "config:generate-schema": "bun run src/config/generate-schema.ts",
+    "config:generate-toml-schema": "bun run src/config/generate-toml-schema.ts",
     "schemas:check": "bun run scripts/check-schemas.ts",
     "schemas:check:fix": "bun run scripts/fix-schemas.ts",
     "docs:gen": "bun run scripts/gen-issues-doc.ts",
