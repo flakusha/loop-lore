@@ -49,7 +49,7 @@ async function loadSmk(config: EncryptionConfig): Promise<CryptoKey | null> {
 
   if (!rawHex) {
     if (config.required) {
-      throw new Error(
+      throw new TypeError(
         "SERVER_ENCRYPTION_KEY is required but not set. "
           + "Set ENCRYPTION_REQUIRED=false for dev mode (encryption disabled).",
       );
@@ -60,7 +60,7 @@ async function loadSmk(config: EncryptionConfig): Promise<CryptoKey | null> {
   // Accept hex (64 chars = 32 bytes = 256 bits) or raw key material
   const rawBytes = hexToBytes(rawHex);
   if (rawBytes.length !== 32) {
-    throw new Error(
+    throw new TypeError(
       `SERVER_ENCRYPTION_KEY must be 64 hex chars (32 bytes, 256 bits). Got ${rawBytes.length} bytes.`,
     );
   }
@@ -90,12 +90,12 @@ async function loadSmk(config: EncryptionConfig): Promise<CryptoKey | null> {
 
 function hexToBytes(hex: string): Uint8Array {
   const cleaned = hex.replaceAll("-", "").replaceAll(/\s/g, "");
-  if (cleaned.length % 2 !== 0) throw new Error("Hex string must have even length");
+  if (cleaned.length % 2 !== 0) throw new TypeError("Hex string must have even length");
   const bytes = new Uint8Array(cleaned.length / 2);
   for (let index = 0; index < bytes.length; index++) {
     const val = Number.parseInt(cleaned.slice(index * 2, index * 2 + 2), 16);
     if (Number.isNaN(val)) {
-      throw new Error(
+      throw new TypeError(
         `Invalid hex byte at position ${index * 2}: "${cleaned.slice(index * 2, index * 2 + 2)}"`,
       );
     }
