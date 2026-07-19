@@ -1,14 +1,14 @@
-import { describe, test, expect } from "bun:test";
+import { describe, expect, test } from "bun:test";
+import { TurnStrategy } from "../db/enums";
 import {
-  roundRobinSelect,
-  sceneBasedSelect,
+  hybridSelect,
   initiativeSelect,
   questDrivenSelect,
-  hybridSelect,
+  roundRobinSelect,
+  sceneBasedSelect,
   STRATEGY_MAP,
 } from "./turn-strategies";
 import type { TurnParticipant } from "./types";
-import { TurnStrategy } from "../db/enums";
 
 const participants: TurnParticipant[] = [
   { actorId: "a1", type: "character", agentType: "ai", talkativity: 5 },

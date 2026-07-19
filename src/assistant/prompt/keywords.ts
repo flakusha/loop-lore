@@ -3,8 +3,8 @@
  * for selective relevance filtering.
  */
 import type { Kysely } from "kysely";
-import type { DB } from "../../db/schema";
 import { MessageRole, MessageStatus, MessageVisibility } from "../../db/enums";
+import type { DB } from "../../db/schema";
 import { jsonParseOr } from "../../utils";
 
 /** Parse the `actor_memories.keywords` JSON column (string[] | null). */

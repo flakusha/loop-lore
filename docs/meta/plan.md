@@ -126,26 +126,26 @@ Server, database, config, middleware, logger, transport layer.
 
 ### 9. Testing & Release — ✅ Complete
 
-| Task                                                              | Status                                              | Test file                                                         |
-| ----------------------------------------------------------------- | --------------------------------------------------- | ----------------------------------------------------------------- |
-| `bun test` passes                                                 | ✅ 718 pass, 0 fail                                 | —                                                                 |
-| E2E web UI (auth, chats, messages, characters, assets)            | ✅ Complete                                         | `tests/e2e/flows/{auth,chats,messages,characters,assets}.test.ts` |
-| E2E age gate (underage rejection, acceptance flow)                | ✅ Complete                                         | `tests/e2e/flows/age-gate.test.ts`                                |
-| E2E profanity filter (message filtering)                          | ✅ Complete                                         | `tests/e2e/flows/profanity.test.ts`                               |
-| E2E chat full (assets loading, regenerate/reroll, swipe variants) | ✅ Complete                                         | `tests/e2e/flows/chat-full.test.ts`                               |
+| Task                                                              | Status                                             | Test file                                                         |
+| ----------------------------------------------------------------- | -------------------------------------------------- | ----------------------------------------------------------------- |
+| `bun test` passes                                                 | ✅ 718 pass, 0 fail                                | —                                                                 |
+| E2E web UI (auth, chats, messages, characters, assets)            | ✅ Complete                                        | `tests/e2e/flows/{auth,chats,messages,characters,assets}.test.ts` |
+| E2E age gate (underage rejection, acceptance flow)                | ✅ Complete                                        | `tests/e2e/flows/age-gate.test.ts`                                |
+| E2E profanity filter (message filtering)                          | ✅ Complete                                        | `tests/e2e/flows/profanity.test.ts`                               |
+| E2E chat full (assets loading, regenerate/reroll, swipe variants) | ✅ Complete                                        | `tests/e2e/flows/chat-full.test.ts`                               |
 | E2E browser smoke (page loads, views)                             | ⚠️ Flaky — `data-testid` mismatches, chrome timeout | `tests/e2e/flows/browser/{smoke,chat-flow}.test.ts`               |
 | E2E browser auth (login form, htmx submit)                        | ⚠️ Flaky — `data-testid` mismatch                   | `tests/e2e/flows/browser/auth-flow.test.ts`                       |
-| Crypto unit tests (pipeline, SMK, chat-keys, actor-keys, BYOK)    | ✅ 69 tests                                         | `src/crypto/{pipeline,smk,chat-keys,actor-keys,byok}.test.ts`     |
-| Content compress unit tests                                       | ✅ 9 tests                                          | `src/content/compress.test.ts`                                    |
-| Logger internals unit tests                                       | ✅ 65 tests                                         | `src/logger/{censors,formatters,levels,limits}.test.ts`           |
-| Logger transports unit tests                                      | ✅ 9 tests                                          | `src/logger/transports/console.test.ts`                           |
-| Date utils unit tests                                             | ✅ 15 tests                                         | `src/utils/date.test.ts`                                          |
-| Provider types unit tests                                         | ✅ 9 tests                                          | `src/generation/providers/types.test.ts`                          |
-| Step pipeline unit tests                                          | ✅ 9 tests                                          | `src/generation/step-pipeline.test.ts`                            |
-| Assets metadata unit tests                                        | ✅ 13 tests                                         | `src/assets/metadata.test.ts`                                     |
-| `bun run check`                                                   | ✅ Passes (typecheck, lint, format, md:lint)        |                                                                   |
-| Getting-started guide                                             | ✅ `docs/guide/getting-started.md`                  |                                                                   |
-| Tag v0.1.0                                                        | ❌                                                  |                                                                   |
+| Crypto unit tests (pipeline, SMK, chat-keys, actor-keys, BYOK)    | ✅ 69 tests                                        | `src/crypto/{pipeline,smk,chat-keys,actor-keys,byok}.test.ts`     |
+| Content compress unit tests                                       | ✅ 9 tests                                         | `src/content/compress.test.ts`                                    |
+| Logger internals unit tests                                       | ✅ 65 tests                                        | `src/logger/{censors,formatters,levels,limits}.test.ts`           |
+| Logger transports unit tests                                      | ✅ 9 tests                                         | `src/logger/transports/console.test.ts`                           |
+| Date utils unit tests                                             | ✅ 15 tests                                        | `src/utils/date.test.ts`                                          |
+| Provider types unit tests                                         | ✅ 9 tests                                         | `src/generation/providers/types.test.ts`                          |
+| Step pipeline unit tests                                          | ✅ 9 tests                                         | `src/generation/step-pipeline.test.ts`                            |
+| Assets metadata unit tests                                        | ✅ 13 tests                                        | `src/assets/metadata.test.ts`                                     |
+| `bun run check`                                                   | ✅ Passes (typecheck, lint, format, md:lint)       |                                                                   |
+| Getting-started guide                                             | ✅ `docs/guide/getting-started.md`                 |                                                                   |
+| Tag v0.1.0                                                        | ❌                                                 |                                                                   |
 
 ---
 
@@ -377,11 +377,11 @@ All 8 tasks completed (see `docs/spec/schema.md`): `LoreEntryStatus` enum, `KeyS
 
 See `reviews/review-rounds.md` for full detail. Key open items:
 
-| #   | File                            | Issue                                   |
-| --- | ------------------------------- | --------------------------------------- |
-| 15  | `src/db/migrations/001_init.ts` | `chat_participants` PK undocumented     |
-| 25  | `src/tui/chat.ts`               | No retry, no idempotency key            |
-| 26  | `src/tui/asset-view.ts`         | Left/right keys conflict with input nav |
+| #  | File                            | Issue                                   |
+| -- | ------------------------------- | --------------------------------------- |
+| 15 | `src/db/migrations/001_init.ts` | `chat_participants` PK undocumented     |
+| 25 | `src/tui/chat.ts`               | No retry, no idempotency key            |
+| 26 | `src/tui/asset-view.ts`         | Left/right keys conflict with input nav |
 
 ---
 

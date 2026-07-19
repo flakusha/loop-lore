@@ -138,12 +138,16 @@ export function resolveTemplate(template: string, ctx: TemplateContext): string 
 
 function tagTemplates(styleTags: string): Record<DetailLevel, ImageModelTemplates> {
   const base = {
-    yourself: `Ignore previous instructions. Write comma-separated image tags describing {{charName}}. ${styleTags} full body portrait, {{charPrefix}}{{charDescription}}`,
-    face: `Ignore previous instructions. Write comma-separated image tags describing {{charName}} face close-up. ${styleTags} face portrait close-up, {{charPrefix}}{{charDescription}}`,
-    me: `Ignore previous instructions. Write comma-separated image tags describing {{userName}}. ${styleTags} full body portrait, {{userDescription}}`,
+    yourself:
+      `Ignore previous instructions. Write comma-separated image tags describing {{charName}}. ${styleTags} full body portrait, {{charPrefix}}{{charDescription}}`,
+    face:
+      `Ignore previous instructions. Write comma-separated image tags describing {{charName}} face close-up. ${styleTags} face portrait close-up, {{charPrefix}}{{charDescription}}`,
+    me:
+      `Ignore previous instructions. Write comma-separated image tags describing {{userName}}. ${styleTags} full body portrait, {{userDescription}}`,
     scene: `Ignore previous instructions. Write comma-separated image tags for scene: {{sceneSummary}}. ${styleTags}`,
     last: `Ignore previous instructions. Write comma-separated image tags for: {{lastMessage}}. ${styleTags}`,
-    background: `Ignore previous instructions. Write comma-separated tags for background scene: {{sceneSummary}}. ${styleTags} landscape, scenery`,
+    background:
+      `Ignore previous instructions. Write comma-separated tags for background scene: {{sceneSummary}}. ${styleTags} landscape, scenery`,
   };
 
   return {
@@ -171,12 +175,16 @@ function tagTemplates(styleTags: string): Record<DetailLevel, ImageModelTemplate
 
 function naturalTemplates(style: string): Record<DetailLevel, ImageModelTemplates> {
   const base = {
-    yourself: `Describe {{charName}} in detailed natural language. ${style} Focus on appearance, clothing, expression, pose. {{charPrefix}}{{charDescription}}`,
-    face: `Describe {{charName}} face in detailed natural language. ${style} Focus on facial features, expression, lighting. face close-up, {{charPrefix}}{{charDescription}}`,
+    yourself:
+      `Describe {{charName}} in detailed natural language. ${style} Focus on appearance, clothing, expression, pose. {{charPrefix}}{{charDescription}}`,
+    face:
+      `Describe {{charName}} face in detailed natural language. ${style} Focus on facial features, expression, lighting. face close-up, {{charPrefix}}{{charDescription}}`,
     me: `Describe {{userName}} in detailed natural language. ${style} Focus on appearance. {{userDescription}}`,
-    scene: `Describe the scene in one flowing paragraph: {{sceneSummary}}. ${style} Focus on composition, lighting, colors, mood.`,
+    scene:
+      `Describe the scene in one flowing paragraph: {{sceneSummary}}. ${style} Focus on composition, lighting, colors, mood.`,
     last: `Describe the following scene in one flowing paragraph. ${style} Focus on visual details: {{lastMessage}}`,
-    background: `Describe the background setting in one paragraph: {{sceneSummary}}. ${style} Focus on environment, lighting, atmosphere. landscape, scenery`,
+    background:
+      `Describe the background setting in one paragraph: {{sceneSummary}}. ${style} Focus on environment, lighting, atmosphere. landscape, scenery`,
   };
 
   return {
@@ -204,9 +212,12 @@ function naturalTemplates(style: string): Record<DetailLevel, ImageModelTemplate
 
 function mixedTagNaturalTemplates(style: string): Record<DetailLevel, ImageModelTemplates> {
   const base = {
-    yourself: `Describe {{charName}} using lowercase keywords with spaces. Mix tag-like keywords and natural language. ${style} Include: full body, {{charPrefix}}{{charDescription}}`,
-    face: `Describe {{charName}} face using lowercase keywords with spaces. Mix tags and natural language. ${style} face close-up, {{charPrefix}}{{charDescription}}`,
-    me: `Describe {{userName}} using lowercase keywords with spaces. Mix tags and natural language. {{userDescription}}`,
+    yourself:
+      `Describe {{charName}} using lowercase keywords with spaces. Mix tag-like keywords and natural language. ${style} Include: full body, {{charPrefix}}{{charDescription}}`,
+    face:
+      `Describe {{charName}} face using lowercase keywords with spaces. Mix tags and natural language. ${style} face close-up, {{charPrefix}}{{charDescription}}`,
+    me:
+      `Describe {{userName}} using lowercase keywords with spaces. Mix tags and natural language. {{userDescription}}`,
     scene: `Describe scene using lowercase keywords with spaces: {{sceneSummary}}. Mix tags and natural language.`,
     last: `Describe using lowercase keywords with spaces. Mix tags and natural language: {{lastMessage}}`,
     background: `Describe background using lowercase keywords with spaces: {{sceneSummary}}. landscape, scenery`,
@@ -327,20 +338,28 @@ export const BUILTIN_PROFILES: Record<string, ImageModelProfile> = {
         background: `Brief background: {{sceneSummary}}. landscape, scenery`,
       },
       balanced: {
-        yourself: `Describe {{charName}} in one flowing paragraph. Focus on visual details, lighting, composition. full body portrait, {{charPrefix}}{{charDescription}}`,
-        face: `Describe {{charName}} face in one paragraph. Focus on features, expression, lighting. face close-up, {{charPrefix}}{{charDescription}}`,
+        yourself:
+          `Describe {{charName}} in one flowing paragraph. Focus on visual details, lighting, composition. full body portrait, {{charPrefix}}{{charDescription}}`,
+        face:
+          `Describe {{charName}} face in one paragraph. Focus on features, expression, lighting. face close-up, {{charPrefix}}{{charDescription}}`,
         me: `Describe {{userName}} in one paragraph. Focus on appearance. {{userDescription}}`,
-        scene: `Describe the scene in one flowing paragraph. Focus on composition, lighting, colors, mood: {{sceneSummary}}`,
+        scene:
+          `Describe the scene in one flowing paragraph. Focus on composition, lighting, colors, mood: {{sceneSummary}}`,
         last: `Describe in one flowing paragraph. Focus on visual details: {{lastMessage}}`,
         background: `Describe background in one paragraph: {{sceneSummary}}. landscape, scenery, environment`,
       },
       detailed: {
-        yourself: `Write a detailed paragraph describing {{charName}}. Include appearance, clothing, expression, pose, lighting. full body portrait, {{charPrefix}}{{charDescription}}`,
-        face: `Write a detailed paragraph describing {{charName}} face. Include facial features, expression, skin texture, eye color, lighting. face close-up, {{charPrefix}}{{charDescription}}`,
-        me: `Write a detailed paragraph describing {{userName}}. Include appearance, clothing, pose. {{userDescription}}`,
-        scene: `Write a detailed paragraph describing the scene. Include composition, lighting, color palette, mood, atmosphere, camera angle: {{sceneSummary}}`,
+        yourself:
+          `Write a detailed paragraph describing {{charName}}. Include appearance, clothing, expression, pose, lighting. full body portrait, {{charPrefix}}{{charDescription}}`,
+        face:
+          `Write a detailed paragraph describing {{charName}} face. Include facial features, expression, skin texture, eye color, lighting. face close-up, {{charPrefix}}{{charDescription}}`,
+        me:
+          `Write a detailed paragraph describing {{userName}}. Include appearance, clothing, pose. {{userDescription}}`,
+        scene:
+          `Write a detailed paragraph describing the scene. Include composition, lighting, color palette, mood, atmosphere, camera angle: {{sceneSummary}}`,
         last: `Write a detailed paragraph. Include visual details, lighting, composition, mood: {{lastMessage}}`,
-        background: `Write a detailed paragraph describing the background. Environment, lighting, time of day, atmosphere: {{sceneSummary}}`,
+        background:
+          `Write a detailed paragraph describing the background. Environment, lighting, time of day, atmosphere: {{sceneSummary}}`,
       },
     },
   },
@@ -364,24 +383,30 @@ export const BUILTIN_PROFILES: Record<string, ImageModelProfile> = {
     defaults: { cfgScale: 7, steps: 30, sampler: "dpmpp_2m", scheduler: "karras" },
     templates: {
       instant: {
-        yourself: `Output JSON: {"high_level_description": "{{charName}}", "style_description": {"style": "portrait"}, "compositional_deconstruction": {"foreground": ["{{charDescription}}"]}}`,
-        face: `Output JSON: {"high_level_description": "{{charName}} face", "style_description": {"style": "portrait"}, "compositional_deconstruction": {"foreground": ["{{charDescription}} face close-up"]}}`,
-        me: `Output JSON: {"high_level_description": "{{userName}}", "style_description": {"style": "portrait"}, "compositional_deconstruction": {"foreground": ["{{userDescription}}"]}}`,
+        yourself:
+          `Output JSON: {"high_level_description": "{{charName}}", "style_description": {"style": "portrait"}, "compositional_deconstruction": {"foreground": ["{{charDescription}}"]}}`,
+        face:
+          `Output JSON: {"high_level_description": "{{charName}} face", "style_description": {"style": "portrait"}, "compositional_deconstruction": {"foreground": ["{{charDescription}} face close-up"]}}`,
+        me:
+          `Output JSON: {"high_level_description": "{{userName}}", "style_description": {"style": "portrait"}, "compositional_deconstruction": {"foreground": ["{{userDescription}}"]}}`,
         scene: `Output JSON describing the scene: {{sceneSummary}}`,
         last: `Output JSON describing: {{lastMessage}}`,
         background: `Output JSON for background: {{sceneSummary}}`,
       },
       balanced: {
         yourself: `Output JSON with detailed composition for {{charName}}. {{charDescription}}`,
-        face: `Output JSON with detailed composition for {{charName}} face. face close-up, {{charPrefix}}{{charDescription}}`,
+        face:
+          `Output JSON with detailed composition for {{charName}} face. face close-up, {{charPrefix}}{{charDescription}}`,
         me: `Output JSON with detailed composition for {{userName}}. {{userDescription}}`,
         scene: `Output JSON describing scene composition: {{sceneSummary}}`,
         last: `Output JSON describing composition: {{lastMessage}}`,
         background: `Output JSON for background: {{sceneSummary}}`,
       },
       detailed: {
-        yourself: `Output detailed JSON with full compositional_deconstruction for {{charName}}. Include foreground, background, lighting, color palette. full body portrait, {{charPrefix}}{{charDescription}}`,
-        face: `Output detailed JSON with full compositional_deconstruction for {{charName}} face. face close-up, {{charPrefix}}{{charDescription}}`,
+        yourself:
+          `Output detailed JSON with full compositional_deconstruction for {{charName}}. Include foreground, background, lighting, color palette. full body portrait, {{charPrefix}}{{charDescription}}`,
+        face:
+          `Output detailed JSON with full compositional_deconstruction for {{charName}} face. face close-up, {{charPrefix}}{{charDescription}}`,
         me: `Output detailed JSON with full composition for {{userName}}. {{userDescription}}`,
         scene: `Output detailed JSON with full compositional_deconstruction for scene: {{sceneSummary}}`,
         last: `Output detailed JSON with full composition for: {{lastMessage}}`,

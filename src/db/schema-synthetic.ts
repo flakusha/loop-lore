@@ -4,7 +4,7 @@
  * Captured scenarios for automated testing and QA.
  */
 import type { Generated } from "kysely";
-import type { SyntheticDataType, SyntheticDataStatus } from "./enums";
+import type { SyntheticDataStatus, SyntheticDataType } from "./enums";
 
 // ── Synthetic Data ──────────────────────────────────────────
 export interface SyntheticData {

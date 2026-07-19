@@ -223,11 +223,11 @@ export function detectTheatricalLoop(text: string): { detected: boolean; score: 
 
     // Lines wrapped in *action* or (action)
     if (
-      (trimmed.startsWith("*") && trimmed.endsWith("*")) ||
-      (trimmed.startsWith("(") && trimmed.endsWith(")"))
+      (trimmed.startsWith("*") && trimmed.endsWith("*"))
+      || (trimmed.startsWith("(") && trimmed.endsWith(")"))
     ) {
       actionLineCount++;
-    } else if (trimmed.includes('"') || trimmed.includes("\u{201C}") || trimmed.includes("\u{BB}")) {
+    } else if (trimmed.includes("\"") || trimmed.includes("\u{201C}") || trimmed.includes("\u{BB}")) {
       _dialogueLineCount++;
     }
   }

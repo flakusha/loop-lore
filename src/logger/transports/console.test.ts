@@ -2,9 +2,9 @@
  * Tests for logger/transports/console.ts — ConsoleTransport
  */
 
-import { describe, test, expect } from "bun:test";
-import { ConsoleTransport } from "./console";
+import { describe, expect, test } from "bun:test";
 import type { LogEntry } from "../types";
+import { ConsoleTransport } from "./console";
 
 const infoEntry: LogEntry = {
   level: 20,

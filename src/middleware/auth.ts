@@ -9,14 +9,14 @@
  *   4. Token presented + invalid + !required → solo/demo fallback
  */
 
-import crypto from "node:crypto";
-import { uid } from "../utils";
 import type { Kysely } from "kysely";
-import type { DB } from "../db/schema";
+import crypto from "node:crypto";
 import type { AuthConfig } from "../config/schema";
 import { UserRole, UserStatus } from "../db/enums";
+import type { DB } from "../db/schema";
+import { ErrorCode, HttpStatus, jsonError } from "../routes/http-utils";
+import { uid } from "../utils";
 import type { RequestContext } from "./types";
-import { jsonError, HttpStatus, ErrorCode } from "../routes/http-utils";
 
 export interface AuthenticateOpts {
   request: Request;

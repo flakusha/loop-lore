@@ -1,6 +1,6 @@
 import { jsonBody } from "./json";
 
-(globalThis as any).settingsModal = function () {
+(globalThis as any).settingsModal = function() {
   return {
     open: false,
     tab: "theme",

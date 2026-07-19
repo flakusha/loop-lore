@@ -54,13 +54,13 @@ Current status of feature areas. Checkmarks = code exists in `src/`.
 
 **Quick Wins (Low Effort, High Leverage):**
 
-| #   | Feature                                                     | Source               |
-| --- | ----------------------------------------------------------- | -------------------- |
-| Q1  | Regex output transforms — parse agent/tool output at render | feature-analysis #6  |
-| Q2  | Smart-regen transforms — one-click draft polish             | feature-analysis #8  |
-| Q3  | Conversation analytics — per-chat cost + quality dashboard  | feature-analysis #27 |
-| Q4  | Model-comparison dashboard — A/B agent/model quality        | feature-analysis #28 |
-| Q5  | Bulk data export — zip-all endpoint                         | plan Epic 14         |
+| #  | Feature                                                     | Source               |
+| -- | ----------------------------------------------------------- | -------------------- |
+| Q1 | Regex output transforms — parse agent/tool output at render | feature-analysis #6  |
+| Q2 | Smart-regen transforms — one-click draft polish             | feature-analysis #8  |
+| Q3 | Conversation analytics — per-chat cost + quality dashboard  | feature-analysis #27 |
+| Q4 | Model-comparison dashboard — A/B agent/model quality        | feature-analysis #28 |
+| Q5 | Bulk data export — zip-all endpoint                         | plan Epic 14         |
 
 See `backlog.md` for full queue, `plan.md` for epic detail.
 

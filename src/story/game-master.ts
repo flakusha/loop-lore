@@ -9,32 +9,32 @@
  * callback — keeps story module decoupled from provider resolution.
  */
 import type { Kysely } from "kysely";
-import type { DB } from "../db/schema";
+import { randomUUID } from "node:crypto";
 import {
-  GameMasterType,
   ContentEncoding,
-  MessageRole,
-  MessageContentType,
+  GameMasterType,
   MessageContentFormat,
+  MessageContentType,
+  MessageRole,
   MessageStatus,
   MessageVisibility,
 } from "../db/enums";
-import { randomUUID } from "node:crypto";
-import { safeJsonStringify, jsonParseOr } from "../utils";
+import type { DB } from "../db/schema";
+import { jsonParseOr, safeJsonStringify } from "../utils";
+import { applyEvents, extractEvents, validateEvents } from "./events";
+import { GM_DECISIONS } from "./gm/decisions/registry";
+import type { GenerateTextFn } from "./gm/decisions/types";
+import { createQualityEvaluator, QualityEvaluator } from "./quality-evaluator";
 import { TurnManager, type TurnManagerOptions } from "./turn-manager";
-import { WorldStateService } from "./world-state";
-import { QualityEvaluator, createQualityEvaluator } from "./quality-evaluator";
-import { extractEvents, validateEvents, applyEvents } from "./events";
 import type {
   GameMasterConfig,
   GameMasterDecision,
-  StoryContext,
   QualityEvaluation,
   QualityThresholds,
+  StoryContext,
   WorldEvent,
 } from "./types";
-import { GM_DECISIONS } from "./gm/decisions/registry";
-import type { GenerateTextFn } from "./gm/decisions/types";
+import { WorldStateService } from "./world-state";
 
 // ── LLM call abstraction ─────────────────────────────────
 

@@ -10,10 +10,10 @@
  * Queue overflow: drops oldest entries, logs a warning entry.
  */
 
-import type { LogEntry } from "./types";
-import { AsyncLogQueueBase } from "./queue-base";
+import { formatTime, unixSec } from "../utils/date";
 import { formatJSONL } from "./formatters";
-import { unixSec, formatTime } from "../utils/date";
+import { AsyncLogQueueBase } from "./queue-base";
+import type { LogEntry } from "./types";
 
 export class AsyncLogQueue extends AsyncLogQueueBase {
   override async flush(): Promise<void> {

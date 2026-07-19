@@ -1,5 +1,5 @@
-import { describe, test, expect } from "bun:test";
-import { filter, containsProfanity } from "./service";
+import { describe, expect, test } from "bun:test";
+import { containsProfanity, filter } from "./service";
 
 describe("Profanity Filter", () => {
   describe("filter()", () => {

@@ -5,11 +5,11 @@
  * This file re-exports them for backward compatibility with story/ imports.
  */
 export {
-  roundRobinSelect,
-  sceneBasedSelect,
+  hybridSelect,
   initiativeSelect,
   questDrivenSelect,
-  hybridSelect,
+  roundRobinSelect,
+  sceneBasedSelect,
   STRATEGY_MAP,
 } from "../turning/turn-strategies";
 
