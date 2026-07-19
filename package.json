@@ -1,7 +1,7 @@
 {
   "$schema": "https://raw.githubusercontent.com/SchemaStore/schemastore/master/src/schemas/json/package.json",
   "name": "loop-lore",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "entryPoint": "src/server.ts",
   "license": "LGPL-3.0-or-later",
   "scripts": {
@@ -65,8 +65,9 @@
     "commit:lint": "bun run src/scripts/commit-check.ts --all",
     "commit:check": "bun run src/scripts/commit-check.ts --staged",
     "version:predict": "bun run src/scripts/version-bump.ts",
-    "version:bump": "bun run src/scripts/version-bump.ts --bump=minor",
-    "ci": "bun run check:ci && bun run test:unit:parallel && E2E_SAFEGUARD=1 bun run test:e2e:browser && bun run build"
+    "version:bump": "bun run src/scripts/version-bump.ts --bump",
+    "version:sync": "bun run src/scripts/version-bump.ts --sync",
+    "ci": "bun run check:ci && bun run test:unit:parallel && E2E_SAFEGUARD=1 bun run test:e2e && bun run build"
   },
   "dependencies": {
     "blessed": "^0.1.81",

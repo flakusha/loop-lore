@@ -104,8 +104,8 @@ jobs:
       - name: Setup Playwright
         uses: microsoft/playwright-github-action@v1
 
-      - name: Run E2E browser tests
-        run: E2E_SAFEGUARD=1 bun run test:e2e:browser
+      - name: Run E2E tests
+        run: E2E_SAFEGUARD=1 bun run test:e2e
 
   build:
     name: Build

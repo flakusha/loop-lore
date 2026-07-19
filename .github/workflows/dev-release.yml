@@ -58,7 +58,7 @@ jobs:
         run: bun run test:unit:parallel
 
       - name: Run E2E tests
-        run: E2E_SAFEGUARD=1 bun run test:e2e:browser
+        run: E2E_SAFEGUARD=1 bun run test:e2e
 
       - name: Build
         run: bun run build
