@@ -1,17 +1,15 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
-
 // ESLint flat config — TypeScript + Unicorn + SonarJS
 // https://eslint.org/docs/latest/use/configure/configuration-files
 // https://typescript-eslint.io/getting-started/typed-linting
-
 import eslint from "@eslint/js";
+import globals from "globals";
 import importPlugin from "eslint-plugin-import";
 import markdown from "eslint-plugin-markdown";
 import sonarjs from "eslint-plugin-sonarjs";
-import unicorn from "eslint-plugin-unicorn";
-import globals from "globals";
 import tseslint from "typescript-eslint";
+import unicorn from "eslint-plugin-unicorn";
 
 const projectRoot = import.meta.dirname;
 

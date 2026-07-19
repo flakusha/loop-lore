@@ -1,6 +1,6 @@
 // src/config/sections/transport.ts — Transport config section
 
-import type { TransportConfig, TransportCompressionConfig, TransportLimitsConfig } from "../schema";
+import type { TransportCompressionConfig, TransportConfig, TransportLimitsConfig } from "../schema";
 
 export const TRANSPORT_COMPRESSION_DEFAULTS = {
   enabled: false,

@@ -1,7 +1,7 @@
 // src/config/sections/assets.ts — Assets config section
 
-import type { AssetsConfig } from "../schema";
 import { DATA_DIR } from "../constants";
+import type { AssetsConfig } from "../schema";
 
 export const ASSETS_DEFAULTS = {
   enabled: true,
