@@ -202,7 +202,7 @@ user's **message detail mode** (configurable in settings).
 | ------------- | -------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
 | **Immersion** | None                                                           | No metadata — pure message content                                                                                 |
 | **Basic**     | Generation time, token count                                   | Subtle gray text at bottom of bubble. `--text-tertiary` color, 11px font. Brightens to `--text-secondary` on hover |
-| **Detailed**  | Same as Basic + model name, provider, prompt/completion tokens | Collapsible strip. Collapsed: summary line (e.g. `claude-sonnet                                                    | 3.2s | 245t`). Expanded: full breakdown |
+| **Detailed**  | Same as Basic + model name, provider, prompt/completion tokens | Collapsible strip. Collapsed: summary line (e.g. `claude-sonnet · 3.2s · 245t`). Expanded: full breakdown          |
 
 Stats are generated server-side when the message is created.
 
