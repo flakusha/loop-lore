@@ -20,15 +20,7 @@
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-2)">
           <label
             class="format-option"
-            style="
-              display: flex;
-              align-items: center;
-              gap: var(--space-2);
-              padding: var(--space-3);
-              border: 1px solid var(--border);
-              border-radius: 6px;
-              cursor: pointer;
-            "
+            style="display: flex; align-items: center; gap: var(--space-2); padding: var(--space-3); border: 1px solid var(--border); border-radius: 6px; cursor: pointer"
           >
             <input type="radio" name="export-format" value="png" checked />
             <div>
@@ -38,15 +30,7 @@
           </label>
           <label
             class="format-option"
-            style="
-              display: flex;
-              align-items: center;
-              gap: var(--space-2);
-              padding: var(--space-3);
-              border: 1px solid var(--border);
-              border-radius: 6px;
-              cursor: pointer;
-            "
+            style="display: flex; align-items: center; gap: var(--space-2); padding: var(--space-3); border: 1px solid var(--border); border-radius: 6px; cursor: pointer"
           >
             <input type="radio" name="export-format" value="json" />
             <div>
@@ -56,15 +40,7 @@
           </label>
           <label
             class="format-option"
-            style="
-              display: flex;
-              align-items: center;
-              gap: var(--space-2);
-              padding: var(--space-3);
-              border: 1px solid var(--border);
-              border-radius: 6px;
-              cursor: pointer;
-            "
+            style="display: flex; align-items: center; gap: var(--space-2); padding: var(--space-3); border: 1px solid var(--border); border-radius: 6px; cursor: pointer"
           >
             <input type="radio" name="export-format" value="yaml" />
             <div>
@@ -74,15 +50,7 @@
           </label>
           <label
             class="format-option"
-            style="
-              display: flex;
-              align-items: center;
-              gap: var(--space-2);
-              padding: var(--space-3);
-              border: 1px solid var(--border);
-              border-radius: 6px;
-              cursor: pointer;
-            "
+            style="display: flex; align-items: center; gap: var(--space-2); padding: var(--space-3); border: 1px solid var(--border); border-radius: 6px; cursor: pointer"
           >
             <input type="radio" name="export-format" value="toml" />
             <div>
@@ -109,18 +77,18 @@
 </div>
 
 <script>
-  window.exportCharacter = function (btn) {
-    const modal = btn.closest(".modal");
-    const format = modal.querySelector('input[name="export-format"]:checked').value;
-    const characterId = modal.dataset.characterId;
+window.exportCharacter = function(btn) {
+  const modal = btn.closest(".modal");
+  const format = modal.querySelector("input[name=\"export-format\"]:checked").value;
+  const characterId = modal.dataset.characterId;
 
-    if (!characterId) {
-      console.error("No character ID found");
-      return;
-    }
+  if (!characterId) {
+    console.error("No character ID found");
+    return;
+  }
 
-    // Trigger download
-    window.location.href = `/api/characters/${characterId}/export?format=${format}`;
-    window.closeModal(btn);
-  };
+  // Trigger download
+  window.location.href = `/api/characters/${characterId}/export?format=${format}`;
+  window.closeModal(btn);
+};
 </script>

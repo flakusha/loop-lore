@@ -10,6 +10,13 @@ import { Elysia, } from "elysia";
 import { ErrorCode, HttpStatus, jsonCreated, jsonError, jsonNoContent, jsonResponse, } from "../routes/http-utils";
 import { PersonasService, } from "./service";
 
+
+/**
+ * Personas Controller
+ *
+ * Elysia plugin for persona CRUD operations.
+ */
+
 interface ListPersonasOpts {
   database: Kysely<DB>;
   context: RequestContext;

@@ -4,14 +4,14 @@
 // Handles import via multipart upload with auto-detection.
 
 import { Elysia } from "elysia";
-import crypto from "node:crypto";
 import type { Kysely } from "kysely";
-import type { DB } from "../db/schema";
-import { uid, safeJsonStringify } from "../utils";
-import { jsonError, jsonCreated, HttpStatus } from "./http-utils";
+import crypto from "node:crypto";
 import { parseCharacterCard, validateCharacter } from "../characters/parser";
 import type { CanonicalCharacter } from "../characters/parser";
+import type { DB } from "../db/schema";
 import { getOrCreateSoloUserForAuth } from "../middleware/auth";
+import { safeJsonStringify, uid } from "../utils";
+import { HttpStatus, jsonCreated, jsonError } from "./http-utils";
 
 interface ImportActorOpts {
   character: CanonicalCharacter;
@@ -102,8 +102,9 @@ async function handleImport(request: Request, database: Kysely<DB>, userId: stri
   if (contentType.includes("multipart/form-data")) {
     const formData = await request.formData();
     const file = formData.get("file");
-    if (!file || !(file instanceof File))
+    if (!file || !(file instanceof File)) {
       return jsonError({ message: "file field is required", status: HttpStatus.BadRequest });
+    }
 
     const fileBytes = Buffer.from(await file.arrayBuffer());
     const filename = file.name ?? "";

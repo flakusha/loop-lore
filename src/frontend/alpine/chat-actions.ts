@@ -1,4 +1,5 @@
 import type { ChatState, } from "./types";
+import { formattedGenerationTime, formattedTokensPerSecond, statsLine } from "./chat-stats";
 import { formattedGenerationTime, formattedTokensPerSecond, statsLine, } from "./chat-stats";
 import { jsonBody, } from "./json";
 import { log as rootLog, } from "./logger";

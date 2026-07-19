@@ -1,4 +1,5 @@
 import type { ContentEncoding, } from "./types";
+import { brotliDecompressSync, gunzipSync } from "node:zlib";
 import { brotliDecompressSync, gunzipSync, } from "node:zlib";
 
 function zstdDecompress(data: Buffer,): Buffer {

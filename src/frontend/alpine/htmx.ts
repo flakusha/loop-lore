@@ -1,7 +1,7 @@
 import { feFetch, } from "../fe-fetch";
-import { normalizeHeaderSlot, } from "./htmx-header";
 import { jsonParseOr, } from "./json";
 import { log, } from "./logger";
+import { normalizeHeaderSlot, } from "./htmx-header";
 
 const apiLog = log.child({ module: "api", },);
 
@@ -133,6 +133,8 @@ document.addEventListener("DOMContentLoaded", triggerPageLoaders,);
 
 // ── hx-on::after-request replacements (success events) ──────
 document.addEventListener("htmx:afterRequest", (e: Event,) => {
+  const detail = (e as CustomEvent<{ successful: boolean; elt: HTMLElement }>).detail;
+  const detail = (e as CustomEvent<{ successful: boolean; elt: HTMLElement }>).detail;
   const detail = (e as CustomEvent<{ successful: boolean; elt: HTMLElement }>).detail;
   const detail = (e as CustomEvent<{ successful: boolean; elt: HTMLElement }>).detail;
   if (!detail.successful) { return; }

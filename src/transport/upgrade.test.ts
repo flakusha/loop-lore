@@ -4,6 +4,7 @@
 import type { ProtocolHandler, } from "./protocol.unified";
 import { TransportError, TransportErrorCode, } from "./errors";
 import { TransportProtocol, } from "../db/enums";
+import { afterEach, beforeEach, describe, expect, test } from "bun:test";
 import { afterEach, beforeEach, describe, expect, test, } from "bun:test";
 import { createProtocol, } from "./factory";
 import { upgradeConnection, } from "./upgrade";
