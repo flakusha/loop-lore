@@ -101,6 +101,7 @@ CHECKS=(
   "lint-html"
   "format-check"
   "md-lint"
+  "schema-staleness"
 )
 
 CHECK_CMDS=(
@@ -113,6 +114,7 @@ CHECK_CMDS=(
   "bun run lint:html"
   "bun run format"
   "bun run md:lint"
+  "bun run schemas:check"
 )
 
 PIDS=()
