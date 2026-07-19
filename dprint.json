@@ -26,7 +26,8 @@
     ".example",
     "src/views/layout.html",
     ".github/templates/**",
-    ".githooks/**"
+    ".githooks/**",
+    "*.sh"
   ],
   "typescript": {
     "quoteStyle": "preferDouble",
