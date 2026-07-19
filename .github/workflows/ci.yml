@@ -6,7 +6,8 @@ on:
     branches: [master]
 
 jobs:
-  check:
+  typecheck:
+    name: Type Check
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -14,10 +15,50 @@ jobs:
         with:
           bun-version: latest
       - run: bun install
-      - run: bun run check
-      - run: bun test src/
+      - run: bun run typecheck
+      - run: bun run typecheck:frontend
+      - run: bun run typecheck:coverage
+      - run: bun run typecheck:coverage:frontend
 
-  e2e:
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+      - run: bun install
+      - run: bun run lint
+      - run: bun run lint:css
+      - run: bun run lint:html
+      - run: bun run md:lint
+
+  format:
+    name: Format
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+      - run: bun install
+      - run: bun run format
+      - run: bun run format:dprint
+
+  test-unit:
+    name: Unit Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+      - run: bun install
+      - run: bun run test:unit:parallel
+
+  test-e2e:
+    name: E2E Tests
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -27,3 +68,14 @@ jobs:
       - run: bun install
       - run: bunx playwright install chromium
       - run: E2E_SAFEGUARD=1 bun test tests/e2e/
+
+  size-check:
+    name: Size Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+      - run: bun install
+      - run: bun run size:check
