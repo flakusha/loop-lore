@@ -21,11 +21,11 @@ cleanup() {
     if [[ -n "$TEST_DIR" && -d "$TEST_DIR" ]]; then
         # Remove any worktrees still registered
         local wt_list
-        wt_list=$(git -C "$TEST_DIR" worktree list --porcelain 2>/dev/null | grep "^path " | sed 's/^path //')
+        wt_list=$(git -C "$TEST_DIR" worktree list --porcelain 2>/dev/null | grep "^path " | sed 's/^path //' || true)
         for wt in $wt_list; do
             git -C "$TEST_DIR" worktree remove "$wt" --force 2>/dev/null || true
         done
-        rm -rf "$TEST_DIR"
+        rm -rf "$TEST_DIR" 2>/dev/null || true
     fi
 }
 trap cleanup EXIT
@@ -397,7 +397,7 @@ echo -e "${YELLOW}32. finalize — blocks dirty worktree${NC}"
 
 echo "dirty" >> "$TEST_DIR/tree/feat-test-new/feature.txt"
 output=$(run_wt finalize feat/test-new 2>&1) || true
-assert_contains "$output" "uncommitted changes" "blocks finalizing dirty worktree"
+assert_contains "$output" "Uncommitted changes" "blocks finalizing dirty worktree"
 
 # Clean up
 git -C "$TEST_DIR/tree/feat-test-new" checkout -- feature.txt 2>/dev/null || true
@@ -510,7 +510,8 @@ git -C "$TEST_DIR/tree/feat-pending-branch" commit -m "feat: pending branch" --n
 
 output=$(run_wt branches 2>&1) || true
 assert_contains "$output" "feat/pending-branch" "shows pending branch"
-assert_contains "$output" "pending\|1" "shows pending status or ahead count"
+# "pending" or a numeric ahead count
+assert_contains "$output" "pending" "shows pending status"
 
 echo ""
 
@@ -518,7 +519,7 @@ echo ""
 echo -e "${YELLOW}40. branches — shows worktree marker${NC}"
 
 output=$(run_wt branches 2>&1) || true
-assert_contains "$output" "\[wt\]" "shows worktree marker for active worktree"
+assert_contains "$output" "[wt]" "shows worktree marker for active worktree"
 
 # Clean up
 run_wt remove feat/pending-branch >/dev/null 2>&1 || true
@@ -571,8 +572,8 @@ echo ""
 echo -e "${YELLOW}45. status — show specific branch status${NC}"
 
 output=$(run_wt status feat/pending-branch 2>&1) || true
-# Branch was removed, so should show not found or stale
-assert_contains "$output" "not found\|stale\|Status" "shows branch status or not found"
+assert_contains "$output" "Branch status" "shows branch status header"
+assert_contains "$output" "commit" "shows commit info"
 
 echo ""
 
