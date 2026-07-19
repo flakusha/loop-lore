@@ -507,7 +507,22 @@ cmd_rebase() {
 
 cmd_finalize() {
     local branch="$1"
-
+    local force=false
+    
+    # Parse flags
+    shift
+    while [[ $# -gt 0 ]]; do
+        case "$1" in
+            --force|-f)
+                force=true
+                shift
+                ;;
+            *)
+                shift
+                ;;
+        esac
+    done
+    
     if [[ -z "$branch" ]]; then
         echo -e "${RED}Error: branch name required${NC}"
         echo "Usage: $(basename "$0") finalize <branch>"
@@ -546,25 +561,29 @@ cmd_finalize() {
 
     # Step 2: Run typecheck + lint + format
     echo -e "${CYAN}Step 2: Running checks (bun run check)...${NC}"
-    if command -v bun &>/dev/null && [[ -f "$worktree_path/bun.lock" || -f "$worktree_path/package.json" ]]; then
+    if [[ "$force" == "true" ]]; then
+        echo -e "${YELLOW}  Skipped: --force flag set${NC}"
+    elif command -v bun &>/dev/null && [[ -f "$worktree_path/bun.lock" || -f "$worktree_path/package.json" ]]; then
         if (cd "$worktree_path" && bun run check); then
             echo -e "${GREEN}  ✓ Checks passed${NC}"
         else
-            echo -e "${RED}  ✗ Checks failed — fix before finalizing${NC}"
+            echo -e "${RED}  ✗ Checks failed — fix before finalizing (or use --force)${NC}"
             exit 1
         fi
     else
         echo -e "${YELLOW}  Skipped: bun or package.json not found${NC}"
     fi
     echo ""
-
+    
     # Step 3: Run tests
     echo -e "${CYAN}Step 3: Running tests (bun test src/)...${NC}"
-    if command -v bun &>/dev/null && [[ -f "$worktree_path/bun.lock" || -f "$worktree_path/package.json" ]]; then
+    if [[ "$force" == "true" ]]; then
+        echo -e "${YELLOW}  Skipped: --force flag set${NC}"
+    elif command -v bun &>/dev/null && [[ -f "$worktree_path/bun.lock" || -f "$worktree_path/package.json" ]]; then
         if (cd "$worktree_path" && bun test src/); then
             echo -e "${GREEN}  ✓ Tests passed${NC}"
         else
-            echo -e "${RED}  ✗ Tests failed — fix before finalizing${NC}"
+            echo -e "${RED}  ✗ Tests failed — fix before finalizing (or use --force)${NC}"
             exit 1
         fi
     else
