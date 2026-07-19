@@ -89,3 +89,12 @@ See `roadmap.md` P1/P2/P3 sections:
 - DAO Governance, AI-Generated Content, XR/VR Integration
 - Real-time Collaboration, Simulation Sandboxes, Edge Computing
 - Quantum-Resistant Cryptography, Neuro-Symbolic AI
+
+## Resolution Log
+
+Items completed and merged to master:
+
+- **Epic 12 (Memory Foundation)**: ✅ Complete — keyword filtering, type enum, context compaction, A/N injection implemented — merged to master
+- **Epic 13 (Frontend Responsive)**: ✅ Complete — mobile breakpoints, touch targets, keyboard shortcuts, HTMX implemented — merged to master
+- **Epic 19 (Chat Notifications)**: ✅ Complete — cross-chat SSE, read-state schema, unread badge, toast implemented — merged to master
+- **Epic 10 (Generation Foundation)**: ✅ Complete — tool-call loop, provider failover, SSE reconnect implemented — merged to master
