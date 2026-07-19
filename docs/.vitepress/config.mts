@@ -1,4 +1,9 @@
 import { defineConfig } from 'vitepress'
+import { existsSync, readFileSync } from 'node:fs'
+import { dirname, join } from 'node:path'
+import { fileURLToPath } from 'node:url'
+
+const __dirname = dirname(fileURLToPath(import.meta.url))
 
 export default defineConfig({
   title: 'Loop Lore',
@@ -23,6 +28,7 @@ export default defineConfig({
       { text: 'Frontend', link: '/frontend/overview', activeMatch: '/frontend/' },
       { text: 'Reference', link: '/reference/api', activeMatch: '/reference/' },
       { text: 'Roadmap', link: '/meta/roadmap' },
+      { text: 'Issues', link: '/meta/issues' },
 
       { text: 'Ideas', link: '/ideas/', activeMatch: '/ideas/' },
       { text: 'GitHub', link: 'https://github.com/yourusername/loop-lore' },
@@ -178,6 +184,8 @@ export default defineConfig({
           items: [
             { text: 'MVP Plan', link: '/meta/plan' },
             { text: 'Roadmap', link: '/meta/roadmap' },
+            { text: 'Issue Tracker', link: '/meta/issues' },
+            { text: 'Workflow', link: '/meta/workflow' },
             { text: 'Migration Strategy', link: '/meta/migration-strategy' },
           ],
         },
@@ -245,6 +253,81 @@ export default defineConfig({
 
   markdown: {
     lineNumbers: true,
+    // Disable raw HTML parsing so stray `<...>` in docs (command params, type
+    // placeholders) are escaped as literal text instead of breaking the Vue
+    // template compile. Intentional markup uses standard markdown.
+    html: false,
+    config(md) {
+      // Auto-link git-native-issue extended identifiers (BUG-2025-002, EPIC-2025-14, …)
+      // to the generated issue tracker page at /meta/issues/.
+      const pattern =
+        /(?<![\w/])((?:BUG|FEAT|FEA|FIX|IDEA|TASK|SOL|EPIC|INFRA)-\d{4}-\d{3})(?![\w/-])/g
+      md.core.ruler.push('issue_links', (state) => {
+        const Token = state.Token
+        for (const block of state.tokens) {
+          if (block.type !== 'inline' || !block.children) continue
+          for (let i = 0; i < block.children.length; i++) {
+            const child = block.children[i]
+            if (child.type !== 'text') continue
+            const text = child.content
+            pattern.lastIndex = 0
+            if (!pattern.test(text)) continue
+            pattern.lastIndex = 0
+            const out: InstanceType<typeof Token>[] = []
+            let last = 0
+            let m: RegExpExecArray | null
+            while ((m = pattern.exec(text)) !== null) {
+              const extid = m[0]
+              const anchor = extid.toLowerCase()
+              if (last < m.index) {
+                const t = new Token('text', '', 0)
+                t.content = text.slice(last, m.index)
+                out.push(t)
+              }
+              const open = new Token('link_open', 'a', 1)
+              open.attrs = [
+                ['href', `/meta/issues/#${anchor}`],
+                ['class', 'issue-link'],
+                ['data-issue', extid],
+              ]
+              out.push(open)
+              const label = new Token('text', '', 0)
+              label.content = extid
+              out.push(label)
+              out.push(new Token('link_close', 'a', -1))
+              last = m.index + extid.length
+            }
+            if (last < text.length) {
+              const t = new Token('text', '', 0)
+              t.content = text.slice(last)
+              out.push(t)
+            }
+            block.children = out
+          }
+        }
+      })
+
+      // Escape { and } so Vue never treats {{ }} as interpolation. Pre-existing
+      // docs use mustache-style braces inside code samples and tables.
+      md.core.ruler.push('escape_braces', (state) => {
+        const escape = (s: string): string =>
+          s.replace(/\{/g, '&#123;').replace(/\}/g, '&#125;')
+        for (const block of state.tokens) {
+          if (block.type === 'inline' && block.children) {
+            for (const child of block.children) {
+              if (
+                (child.type === 'text' || child.type === 'code_inline') &&
+                typeof child.content === 'string'
+              ) {
+                child.content = escape(child.content)
+              }
+            }
+          } else if (block.type === 'code_block' && typeof block.content === 'string') {
+            block.content = escape(block.content)
+          }
+        }
+      })
+    },
   },
 
   ignoreDeadLinks: true,
