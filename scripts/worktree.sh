@@ -82,7 +82,13 @@ configure_signing() {
 
     # Verify key exists in GPG keyring
     if ! gpg --list-keys "$AGENT_GPG_KEY_ID" &>/dev/null; then
-        echo -e "${RED}  Error: GPG key $AGENT_GPG_KEY_ID not not found in keyring${NC}"
+        echo -e "${RED}  Error: GPG key $AGENT_GPG_KEY_ID not found in keyring${NC}"
+        return 1
+    fi
+
+    # Verify secret key exists (needed for signing)
+    if ! gpg --list-secret-keys "$AGENT_GPG_KEY_ID" &>/dev/null; then
+        echo -e "${RED}  Error: GPG secret key for $AGENT_GPG_KEY_ID not found — cannot sign${NC}"
         return 1
     fi
 
@@ -125,9 +131,9 @@ require_worktree() {
     worktree_path="$(find_worktree "$branch")"
 
     if [[ -z "$worktree_path" ]]; then
-        echo -e "${RED}Error: no worktree found for branch '$branch'${NC}"
-        echo "Active worktrees:"
-        git -C "$REPO_ROOT" worktree list
+        echo -e "${RED}Error: no worktree found for branch '$branch'${NC}" >&2
+        echo "Active worktrees:" >&2
+        git -C "$REPO_ROOT" worktree list >&2
         exit 1
     fi
 
@@ -466,14 +472,14 @@ cmd_finalize() {
         exit 1
     fi
 
-    local worktree_path
-    worktree_path="$(require_worktree "$branch")"
-
     # Block finalizing protected branches
     if is_protected "$branch"; then
         echo -e "${RED}Error: cannot finalize protected branch '$branch'${NC}"
         exit 1
     fi
+
+    local worktree_path
+    worktree_path="$(require_worktree "$branch")"
 
     echo -e "${CYAN}═══ Finalizing '$branch' ═══${NC}"
     echo ""
