@@ -115,6 +115,45 @@ const tsRules = {
   "import/first": "error",
   "import/no-mutable-exports": "error",
 
+  // ── Array iteration: prefer for-of over .map/.filter/.reduce ──
+  // Enforces in-place modifications to avoid shadow allocations.
+  // https://eslint.org/docs/latest/rules/no-restricted-syntax
+  "no-restricted-syntax": [
+    "warn",
+    {
+      selector: "CallExpression[callee.type='MemberExpression'][callee.property.name='map']",
+      message: "Avoid .map() — use for-of with push() for in-place transformation. Shadow allocation not needed here.",
+    },
+    {
+      selector: "CallExpression[callee.type='MemberExpression'][callee.property.name='filter']",
+      message: "Avoid .filter() — use for-of with push() for in-place filtering. Shadow allocation not needed here.",
+    },
+    {
+      selector: "CallExpression[callee.type='MemberExpression'][callee.property.name='reduce']",
+      message: "Avoid .reduce() — use a for-of loop with an accumulator variable. Clearer control flow.",
+    },
+    {
+      selector: "CallExpression[callee.type='MemberExpression'][callee.property.name='flatMap']",
+      message: "Avoid .flatMap() — use for-of with push() for in-place flattening.",
+    },
+    {
+      selector: "CallExpression[callee.type='MemberExpression'][callee.property.name='every']",
+      message: "Avoid .every() — use a for-of loop with early return. Clearer intent.",
+    },
+    {
+      selector: "CallExpression[callee.type='MemberExpression'][callee.property.name='some']",
+      message: "Avoid .some() — use a for-of loop with early return. Clearer intent.",
+    },
+    {
+      selector: "CallExpression[callee.type='MemberExpression'][callee.property.name='find']",
+      message: "Avoid .find() — use a for-of loop with early return. Clearer intent.",
+    },
+    {
+      selector: "CallExpression[callee.type='MemberExpression'][callee.property.name='findIndex']",
+      message: "Avoid .findIndex() — use a for-of loop with index tracking. Clearer intent.",
+    },
+  ],
+
   // ── Low-value rules generating noise from Elysia/Kysely patterns ──
   "@typescript-eslint/no-unsafe-member-access": "off",
   "@typescript-eslint/no-unsafe-assignment": "off",
@@ -363,6 +402,7 @@ export default tseslint.config(
       "@typescript-eslint/no-floating-promises": "off",
       "sonarjs/explicit-test-skip": "off",
       "@typescript-eslint/no-require-imports": "off",
+      "no-restricted-syntax": "off",
     },
   },
   // ── Overrides: scripts (utility tools, relaxed rules) ─────────────────
@@ -387,6 +427,7 @@ export default tseslint.config(
       // Type-aware rules require parserOptions.project — disabled here
       "@typescript-eslint/no-misused-promises": "off",
       "import/no-cycle": "off",
+      "no-restricted-syntax": "off",
     },
   },
   // ── Overrides: allow bare JSON in implementation files ─────────
