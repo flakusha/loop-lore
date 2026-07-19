@@ -1,15 +1,13 @@
 /**
- * Predict next version from conventional commits.
- *
- * Supports:
- *   - master/main: semver bump (feat→minor, fix→patch, feat!→major)
- *   - release/X: stays within X major version (release/0 → 0.x.y, release/1 → 1.x.y)
- *   - feature branches: dev version (x.y.z-dev.YYYYMMDD.sha)
+ * Version management - Git tags are the single source of truth.
+ * package.json is updated ONLY during release (--bump), never during prediction.
  *
  * Usage:
- *   bun run version:predict              # Show predicted next version
- *   bun run version:bump --bump=minor    # Bump and update package.json
+ *   bun run version:predict              # Show predicted next version (reads tags only)
+ *   bun run version:bump --bump=minor    # Bump version, update package.json, create tag
+ *   bun run version:sync                 # Sync package.json to latest tag (CI/CD)
  */
+
 import { execSync, } from "child_process";
 import { readFileSync, writeFileSync, } from "fs";
 import { resolve, } from "path";
@@ -38,20 +36,44 @@ function formatVersion(v: Version,): string {
     : `${v.major}.${v.minor}.${v.patch}`;
 }
 
-// Parse conventional commits and determine version bump
+function getLatestTag(major?: number,): string | null {
+  try {
+    const pattern = major === undefined ? "^v" : `^v${major}\\.`;
+    const tag = execSync(
+      `git tag | grep "${pattern}" | sort -t. -k2 -k3 -n | tail -1`,
+      { encoding: "utf-8", },
+    ).trim();
+    if (tag) { return tag; }
+    return null;
+  } catch {
+    return null;
+  }
+}
+
+function getCommitsSinceTag(tag: string,): string[] {
+  try {
+    const range = tag ? `${tag}..HEAD` : "";
+    const result = execSync(
+      `git log --pretty=format:%s --no-merges ${range}`,
+      { encoding: "utf-8", },
+    );
+    return result.split("\n",).filter(Boolean,);
+  } catch {
+    return [];
+  }
+}
+
 function determineBump(commits: string[],): "major" | "minor" | "patch" | null {
   let hasMajor = false;
   let hasMinor = false;
   let hasPatch = false;
 
-  const commitPattern = /^(\w+)(?:\(([^)]+)\))?!:\s(.+)$/;
-
   for (const commit of commits) {
-    const match = commitPattern.exec(commit,);
+    const match = /^(\w+)(?:\(([^)]+)\))?(!)?:\s(.+)$/.exec(commit,);
     if (!match) { continue; }
 
     const type = match[1];
-    const breaking = commit.includes("!",);
+    const breaking = match[3] === "!";
 
     if (breaking && (type === "feat" || type === "refactor")) {
       hasMajor = true;
@@ -68,105 +90,139 @@ function determineBump(commits: string[],): "major" | "minor" | "patch" | null {
   return null;
 }
 
-function getCommitsSinceLastTag(): string[] {
-  try {
-    const tag = execSync("git describe --tags --abbrev=0 2>/dev/null || echo ''", {
-      encoding: "utf-8",
-    },).trim();
-    const range = tag ? `${tag}..HEAD` : "";
-    const result = execSync(`git log --pretty=format:%s --no-merges ${range}`, { encoding: "utf-8", },);
-    return result.split("\n",).filter(Boolean,);
-  } catch {
-    return [];
-  }
+function getCurrentBranch(): string {
+  return execSync("git branch --show-current", { encoding: "utf-8", },).trim();
 }
 
-// Script entry point
-function main(): void {
-  const args = Bun.argv.slice(2,);
-  const bumpMode = args.find((arg,) => arg.startsWith("--bump=",))?.split("=", 2,)[1];
-
-  const commits = getCommitsSinceLastTag();
-
+function getPackageJsonVersion(): string {
   const packageJsonPath = resolve(import.meta.dir, "../../package.json",);
   const packageJson = JSON.parse(readFileSync(packageJsonPath, "utf-8",),);
-  const currentVersion = packageJson.version;
-  const parsed = parseVersion(currentVersion,);
+  return packageJson.version;
+}
 
-  const branch = execSync("git branch --show-current", { encoding: "utf-8", },).trim();
+function setPackageJsonVersion(version: string,): void {
+  const packageJsonPath = resolve(import.meta.dir, "../../package.json",);
+  const packageJson = JSON.parse(readFileSync(packageJsonPath, "utf-8",),);
+  packageJson.version = version;
+  writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 2,) + "\n",);
+}
+
+// Get version from latest tag (source of truth)
+function getTagVersion(): string {
+  const latestTag = getLatestTag();
+  if (latestTag) {
+    return latestTag.slice(1,); // remove 'v' prefix
+  }
+  return "0.0.0";
+}
+
+// Predict next version based on commits since latest tag
+function predictVersion(): string {
+  const latestTag = getLatestTag();
+  const commits = getCommitsSinceTag(latestTag || "",);
+  const bump = determineBump(commits,);
+
+  const baseVersion = latestTag ? parseVersion(latestTag.slice(1,),) : { major: 0, minor: 0, patch: 0, };
+  const branch = getCurrentBranch();
   const isMaster = branch === "master" || branch === "main";
   const releaseMatch = branch.match(/^release\/(\d+)/,);
   const releaseMajor = releaseMatch ? parseInt(releaseMatch[1]!,) : null;
-  const bump = determineBump(commits,);
+  const targetMajor = releaseMajor ?? baseVersion.major;
 
-  // Feature branch - dev version
+  // Feature branch -> dev version
   if (!isMaster && !releaseMajor) {
     const date = new Date().toISOString().slice(0, 10,).replaceAll("-", "",);
     const commitSha = execSync("git rev-parse --short=7 HEAD", { encoding: "utf-8", },).trim();
-    const devVersion = formatVersion({
-      ...parsed,
-      prerelease: `${parsed.major}.${parsed.minor}.${parsed.patch}-dev.${date}.${commitSha}`,
+    return formatVersion({
+      ...baseVersion,
+      prerelease: `${baseVersion.major}.${baseVersion.minor}.${baseVersion.patch}-dev.${date}.${commitSha}`,
     },);
-    console.log(devVersion,);
-    process.exit(0,);
   }
 
-  // Release/master branch - calculate bump within target major
-  const targetMajor = releaseMajor ?? parsed.major;
-
+  // No commits since tag -> current tag version
   if (!bump) {
-    // No commits since last tag - output current or latest in series
-    try {
-      const latestTag = execSync(`git tag | grep "^v${targetMajor}\\." | sort -t. -k2 -k3 -n | tail -1`, {
-        encoding: "utf-8",
-      },).trim();
-      if (latestTag) {
-        const latest = parseVersion(latestTag.slice(1,),);
-        console.log(`No version bump (latest in ${targetMajor}.x: ${formatVersion(latest,)})`,);
-        process.exit(0,);
-      }
-    } catch {
-      // ignore
-    }
-    console.log(`No version bump needed (current: ${currentVersion})`,);
-    process.exit(0,);
+    return formatVersion({ ...baseVersion, major: targetMajor, },);
   }
 
   // Find latest tag in target major series
-  let nextVersion: Version;
-  try {
-    const latestTag = execSync(`git tag | grep "^v${targetMajor}\\." | sort -t. -k2 -k3 -n | tail -1`, {
-      encoding: "utf-8",
-    },).trim();
-    if (latestTag) {
-      const latest = parseVersion(latestTag.slice(1,),);
-      if (bump === "major") {
-        nextVersion = { major: latest.major + 1, minor: 0, patch: 0, };
-      } else if (bump === "minor") {
-        nextVersion = { ...latest, minor: latest.minor + 1, patch: 0, };
-      } else {
-        nextVersion = { ...latest, patch: latest.patch + 1, };
-      }
-    } else {
-      // No existing tags in this series - start from x.0.0
-      nextVersion = { major: targetMajor, minor: 0, patch: 0, };
-      if (bump === "patch") {
-        nextVersion.minor = 1; // First patch goes to x.0.1 (since x.0.0 is base)
-      }
-    }
-  } catch {
-    nextVersion = { ...parsed, patch: parsed.patch + 1, };
+  const latestInSeries = getLatestTag(targetMajor,);
+  const base = latestInSeries ? parseVersion(latestInSeries.slice(1,),) : { major: targetMajor, minor: 0, patch: 0, };
+
+  if (bump === "major") {
+    return formatVersion({ major: base.major + 1, minor: 0, patch: 0, },);
+  }
+  if (bump === "minor") {
+    return formatVersion({ ...base, minor: base.minor + 1, patch: 0, },);
+  }
+  return formatVersion({ ...base, patch: base.patch + 1, },);
+}
+
+// Bump version: update package.json, create tag, push
+function bumpVersion(bumpType: "major" | "minor" | "patch",): string {
+  const latestTag = getLatestTag();
+  const baseVersion = latestTag ? parseVersion(latestTag.slice(1,),) : { major: 0, minor: 0, patch: 0, };
+
+  // Validate bump type matches prediction
+  const actualBump = determineBump(getCommitsSinceTag(latestTag || "",),);
+  if (actualBump && actualBump !== bumpType) {
+    console.warn(`Warning: commits suggest ${actualBump} bump, but --bump=${bumpType} requested`,);
   }
 
+  let nextVersion: Version;
+  if (bumpType === "major") {
+    nextVersion = { major: baseVersion.major + 1, minor: 0, patch: 0, };
+  } else if (bumpType === "minor") {
+    nextVersion = { ...baseVersion, minor: baseVersion.minor + 1, patch: 0, };
+  } else {
+    nextVersion = { ...baseVersion, patch: baseVersion.patch + 1, };
+  }
   const next = formatVersion(nextVersion,);
 
-  if (bumpMode) {
-    console.log(`Bumping ${currentVersion} → ${next} (${bump})`,);
-    packageJson.version = next;
-    writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 2,) + "\n",);
-  } else {
-    console.log(`${next} (${bump} bump)`,);
+  console.log(`Bumping ${getTagVersion()} → ${next} (${bumpType})`,);
+  setPackageJsonVersion(next,);
+
+  // Create annotated tag
+  execSync(`git tag -a "v${next}" -m "Release v${next}"`, { stdio: "inherit", },);
+  execSync(`git push origin "v${next}"`, { stdio: "inherit", },);
+
+  return next;
+}
+
+// Sync package.json to latest tag (for CI/CD)
+function syncPackageJson(): void {
+  const tagVersion = getTagVersion();
+  const pkgVersion = getPackageJsonVersion();
+
+  if (tagVersion === pkgVersion) {
+    console.log(`package.json already in sync (${pkgVersion})`,);
+    return;
   }
+
+  console.log(`Syncing package.json: ${pkgVersion} → ${tagVersion}`,);
+  setPackageJsonVersion(tagVersion,);
+}
+
+function main(): void {
+  const args = Bun.argv.slice(2,);
+  const command = args[0];
+
+  if (command === "--sync") {
+    syncPackageJson();
+    return;
+  }
+
+  if (command === "--bump") {
+    const bumpType = args.find((a,) => a.startsWith("--bump=",))?.split("=",)[1] as "major" | "minor" | "patch";
+    if (!bumpType || !["major", "minor", "patch",].includes(bumpType,)) {
+      console.error("Usage: version:bump --bump=major|minor|patch",);
+      process.exit(1,);
+    }
+    bumpVersion(bumpType,);
+    return;
+  }
+
+  // Default: predict
+  console.log(predictVersion(),);
 }
 
 main();
