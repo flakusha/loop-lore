@@ -5,10 +5,10 @@
  * Uses custom ownership check via worlds table.
  */
 
-import { Elysia } from "elysia";
-import type { Config } from "../config/schema";
-import type { Db } from "../db";
-import { createEntityRoutes } from "./entity-routes";
+import { Elysia, } from "elysia";
+import type { Config, } from "../config/schema";
+import type { Db, } from "../db";
+import { createEntityRoutes, } from "./entity-routes";
 
 async function worldOwnershipCheck({
   database,
@@ -22,29 +22,29 @@ async function worldOwnershipCheck({
   _entityId: string | null;
   userId: string | null;
   userRole: string | null;
-}): Promise<boolean> {
+},): Promise<boolean> {
   const db = database as any;
   const world = await db
-    .selectFrom("worlds")
-    .select("owner_id")
-    .where("id", "=", parentId)
+    .selectFrom("worlds",)
+    .select("owner_id",)
+    .where("id", "=", parentId,)
     .executeTakeFirst();
-  if (!world || (world.owner_id !== userId && userRole !== "admin")) return false;
+  if (!world || (world.owner_id !== userId && userRole !== "admin")) { return false; }
 
   const entityId = _entityId;
   if (entityId) {
     const entry = await db
-      .selectFrom("world_lore_entries")
-      .select("id")
-      .where("id", "=", entityId)
-      .where("world_id", "=", parentId)
+      .selectFrom("world_lore_entries",)
+      .select("id",)
+      .where("id", "=", entityId,)
+      .where("world_id", "=", parentId,)
       .executeTakeFirst();
     return !!entry;
   }
   return true;
 }
 
-export function worldLoreEntriesRoutes(opts: { database: Db; config: Config }): Elysia {
+export function worldLoreEntriesRoutes(opts: { database: Db; config: Config },): Elysia {
   return createEntityRoutes(
     {
       parentPrefix: "worlds",
@@ -55,8 +55,8 @@ export function worldLoreEntriesRoutes(opts: { database: Db; config: Config }): 
       ownershipTable: "worlds",
       ownershipFkColumn: "owner_id",
       orderBy: [
-        { column: "sort_order", dir: "asc" },
-        { column: "insertion_order", dir: "asc" },
+        { column: "sort_order", dir: "asc", },
+        { column: "insertion_order", dir: "asc", },
       ],
       fieldMappings: {
         name: "name",
@@ -73,7 +73,7 @@ export function worldLoreEntriesRoutes(opts: { database: Db; config: Config }): 
         comment: "comment",
         sortOrder: "sort_order",
       },
-      jsonFields: ["keys", "secondary_keys"],
+      jsonFields: ["keys", "secondary_keys",],
       defaults: {
         selective: 0,
         caseSensitive: 0,
@@ -84,7 +84,7 @@ export function worldLoreEntriesRoutes(opts: { database: Db; config: Config }): 
         priority: 100,
         sortOrder: 0,
       },
-      createRequired: ["content"],
+      createRequired: ["content",],
       checkOwnership: worldOwnershipCheck,
     },
     opts,

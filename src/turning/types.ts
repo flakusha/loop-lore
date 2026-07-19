@@ -4,7 +4,7 @@
  * Types for turn-based orchestration shared between
  * story mode (TurnManager) and group chat mode (GroupTurnSelector).
  */
-import type { ChatMode, TurnStrategy } from "../db/enums";
+import type { ChatMode, TurnStrategy, } from "../db/enums";
 
 // ─── Turn Participant ─────────────────────────────────────────
 

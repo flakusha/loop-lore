@@ -11,17 +11,17 @@
  *   GET    /api/quests/:questId/progress/:chatId    — get chat progress
  */
 
-import { Elysia } from "elysia";
-import type { Kysely } from "kysely";
-import type { QuestType as QuestTypeEnum } from "../db/enums";
-import type { DB } from "../db/schema";
-import { notifyQuestUpdate } from "../notifications/service";
-import { QuestEngine } from "../story/quest-engine";
-import type { QuestConfig } from "../story/types";
-import { safeJsonStringify } from "../utils";
-import { notFound } from "../validation/middleware";
-import { QuestCreateBody } from "../validation/schemas";
-import { HttpStatus, jsonCreated, jsonError, jsonNoContent, jsonPaginated, jsonResponse } from "./http-utils";
+import { Elysia, } from "elysia";
+import type { Kysely, } from "kysely";
+import type { QuestType as QuestTypeEnum, } from "../db/enums";
+import type { DB, } from "../db/schema";
+import { notifyQuestUpdate, } from "../notifications/service";
+import { QuestEngine, } from "../story/quest-engine";
+import type { QuestConfig, } from "../story/types";
+import { safeJsonStringify, } from "../utils";
+import { notFound, } from "../validation/middleware";
+import { QuestCreateBody, } from "../validation/schemas";
+import { HttpStatus, jsonCreated, jsonError, jsonNoContent, jsonPaginated, jsonResponse, } from "./http-utils";
 
 // ── Handlers ────────────────────────────────────────────────
 
@@ -32,17 +32,17 @@ async function checkQuestAccess(
   userRole: string | null,
 ) {
   const questRow = await database
-    .selectFrom("quests")
-    .select(["world_id"])
-    .where("id", "=", questId)
+    .selectFrom("quests",)
+    .select(["world_id",],)
+    .where("id", "=", questId,)
     .executeTakeFirst();
-  if (!questRow) return null;
+  if (!questRow) { return null; }
   const worldCheck = await database
-    .selectFrom("worlds")
-    .select(["owner_id"])
-    .where("id", "=", questRow.world_id)
+    .selectFrom("worlds",)
+    .select(["owner_id",],)
+    .where("id", "=", questRow.world_id,)
     .executeTakeFirst();
-  if (!worldCheck || (worldCheck.owner_id !== userId && userRole !== "admin")) return null;
+  if (!worldCheck || (worldCheck.owner_id !== userId && userRole !== "admin")) { return null; }
   return questRow;
 }
 
@@ -53,9 +53,9 @@ async function checkWorldAccess(
   userRole: string | null,
 ) {
   const worldCheck = await database
-    .selectFrom("worlds")
-    .select(["owner_id"])
-    .where("id", "=", worldId)
+    .selectFrom("worlds",)
+    .select(["owner_id",],)
+    .where("id", "=", worldId,)
     .executeTakeFirst();
   return !(!worldCheck || (worldCheck.owner_id !== userId && userRole !== "admin"));
 }
@@ -68,30 +68,30 @@ async function handleListQuests(
   userId: string | null,
   userRole: string | null,
 ) {
-  if (!(await checkWorldAccess(database, worldId, userId, userRole))) {
-    return jsonError({ message: "World not found", status: HttpStatus.NotFound });
+  if (!(await checkWorldAccess(database, worldId, userId, userRole,))) {
+    return jsonError({ message: "World not found", status: HttpStatus.NotFound, },);
   }
 
   const offset = (page - 1) * pageSize;
   const countResult = await database
-    .selectFrom("quests")
-    .select(database.fn.countAll<number>().as("total"))
-    .where("world_id", "=", worldId)
-    .where("status", "=", "active")
+    .selectFrom("quests",)
+    .select(database.fn.countAll<number>().as("total",),)
+    .where("world_id", "=", worldId,)
+    .where("status", "=", "active",)
     .executeTakeFirst();
   const total = countResult?.total ?? 0;
 
   const quests = await database
-    .selectFrom("quests")
+    .selectFrom("quests",)
     .selectAll()
-    .where("world_id", "=", worldId)
-    .where("status", "=", "active")
-    .orderBy("priority", "desc")
-    .limit(pageSize)
-    .offset(offset)
+    .where("world_id", "=", worldId,)
+    .where("status", "=", "active",)
+    .orderBy("priority", "desc",)
+    .limit(pageSize,)
+    .offset(offset,)
     .execute();
 
-  return jsonPaginated({ data: quests, total, page, pageSize });
+  return jsonPaginated({ data: quests, total, page, pageSize, },);
 }
 
 async function handleCreateQuest(
@@ -101,27 +101,27 @@ async function handleCreateQuest(
   userRole: string | null,
   body: Record<string, unknown>,
 ) {
-  if (!(await checkWorldAccess(database, worldId, userId, userRole))) {
-    return jsonError({ message: "World not found", status: HttpStatus.NotFound });
+  if (!(await checkWorldAccess(database, worldId, userId, userRole,))) {
+    return jsonError({ message: "World not found", status: HttpStatus.NotFound, },);
   }
 
-  if (!body.name) return jsonError({ message: "name is required", status: HttpStatus.BadRequest });
+  if (!body.name) { return jsonError({ message: "name is required", status: HttpStatus.BadRequest, },); }
 
-  const questId = await new QuestEngine(database).createQuest({
+  const questId = await new QuestEngine(database,).createQuest({
     worldId,
     creatorId: userId!,
     name: body.name as string,
     description: (body.description as string) ?? null,
     type: (body.type as QuestTypeEnum) ?? "collection",
     config: (body.config || {}) as unknown as QuestConfig,
-    target: Number(body.target) || 10,
-    priority: Number(body.priority) || 0,
+    target: Number(body.target,) || 10,
+    priority: Number(body.priority,) || 0,
     deadline: (body.deadline as string) ?? undefined,
     rewards: (body.rewards as Record<string, unknown> | undefined) ?? undefined,
     narrativeHooks: (body.narrativeHooks as { progress: number; narrative: string }[]) ?? undefined,
-  });
+  },);
 
-  return jsonCreated({ id: questId });
+  return jsonCreated({ id: questId, },);
 }
 
 async function handleQuest(
@@ -132,43 +132,43 @@ async function handleQuest(
   userRole: string | null,
   body?: Record<string, unknown>,
 ) {
-  const questRow = await checkQuestAccess(database, questId, userId, userRole);
-  if (!questRow) return notFound("Quest not found");
+  const questRow = await checkQuestAccess(database, questId, userId, userRole,);
+  if (!questRow) { return notFound("Quest not found",); }
 
   if (method === "GET") {
     const quest = await database
-      .selectFrom("quests")
+      .selectFrom("quests",)
       .selectAll()
-      .where("id", "=", questId)
+      .where("id", "=", questId,)
       .executeTakeFirst();
-    return quest ? jsonResponse(quest) : notFound("Quest not found");
+    return quest ? jsonResponse(quest,) : notFound("Quest not found",);
   }
 
   const updates: Record<string, unknown> = {};
-  if (body?.name != null) updates.name = body.name;
-  if (body?.description != null) updates.description = body.description;
-  if (body?.priority != null) updates.priority = body.priority;
-  if (body?.deadline != null) updates.deadline = body.deadline;
+  if (body?.name != null) { updates.name = body.name; }
+  if (body?.description != null) { updates.description = body.description; }
+  if (body?.priority != null) { updates.priority = body.priority; }
+  if (body?.deadline != null) { updates.deadline = body.deadline; }
   if (body?.rewards != null) {
-    const r = safeJsonStringify(body.rewards);
-    if (r.ok) updates.rewards = r.value;
+    const r = safeJsonStringify(body.rewards,);
+    if (r.ok) { updates.rewards = r.value; }
   }
 
-  if (Object.keys(updates).length > 0) {
+  if (Object.keys(updates,).length > 0) {
     updates.updated_at = new Date().toISOString();
-    await database.updateTable("quests").set(updates).where("id", "=", questId).execute();
+    await database.updateTable("quests",).set(updates,).where("id", "=", questId,).execute();
   }
 
   const updated = await database
-    .selectFrom("quests")
+    .selectFrom("quests",)
     .selectAll()
-    .where("id", "=", questId)
+    .where("id", "=", questId,)
     .executeTakeFirst();
   void notifyQuestUpdate(database, {
     worldId: questRow.world_id,
     questName: updated?.name ?? "Quest",
-  }).catch(() => {});
-  return jsonResponse(updated);
+  },).catch(() => {},);
+  return jsonResponse(updated,);
 }
 
 async function handleAbandonQuest(
@@ -177,11 +177,11 @@ async function handleAbandonQuest(
   userId: string | null,
   userRole: string | null,
 ) {
-  const questRow = await checkQuestAccess(database, questId, userId, userRole);
-  if (!questRow) return notFound("Quest not found");
+  const questRow = await checkQuestAccess(database, questId, userId, userRole,);
+  if (!questRow) { return notFound("Quest not found",); }
 
-  const engine = new QuestEngine(database);
-  await engine.abandon(questId);
+  const engine = new QuestEngine(database,);
+  await engine.abandon(questId,);
   return jsonNoContent();
 }
 
@@ -193,50 +193,50 @@ async function handleProgress(
   userRole: string | null,
   body?: Record<string, unknown>,
 ) {
-  const questRow = await checkQuestAccess(database, questId, userId, userRole);
-  if (!questRow) return notFound("Quest not found");
+  const questRow = await checkQuestAccess(database, questId, userId, userRole,);
+  if (!questRow) { return notFound("Quest not found",); }
 
-  const engine = new QuestEngine(database);
+  const engine = new QuestEngine(database,);
   if (chatId) {
-    const progress = await engine.getChatProgress(questId, chatId);
-    return jsonResponse(progress ?? { questId, chatId, progress: 0 });
+    const progress = await engine.getChatProgress(questId, chatId,);
+    return jsonResponse(progress ?? { questId, chatId, progress: 0, },);
   }
 
-  const delta = Number(body?.delta) || 1;
+  const delta = Number(body?.delta,) || 1;
   const sourceMessageId = body?.sourceMessageId as string | undefined;
-  const entry = await engine.advanceProgress(questId, body?.chatId as string, delta, sourceMessageId);
+  const entry = await engine.advanceProgress(questId, body?.chatId as string, delta, sourceMessageId,);
   const questNameRow = await database
-    .selectFrom("quests")
-    .select("name")
-    .where("id", "=", questId)
+    .selectFrom("quests",)
+    .select("name",)
+    .where("id", "=", questId,)
     .executeTakeFirst();
   void notifyQuestUpdate(database, {
     worldId: questRow.world_id,
     chatId: body?.chatId as string | undefined,
     questName: questNameRow?.name ?? "Quest",
-  }).catch(() => {});
-  return jsonResponse(entry);
+  },).catch(() => {},);
+  return jsonResponse(entry,);
 }
 
 // ── Elysia plugin ───────────────────────────────────────────
 
-export function questsRoutes({ database }: { database: Kysely<DB> }): Elysia {
-  return new Elysia({ name: "quests" })
-    .get("/api/worlds/:id/quests", async (ctx: any) => {
+export function questsRoutes({ database, }: { database: Kysely<DB> },): Elysia {
+  return new Elysia({ name: "quests", },)
+    .get("/api/worlds/:id/quests", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
       const userRole = ctx.userRole as string | null;
       return handleListQuests(
         database,
         ctx.params.id as string,
-        Number(ctx.query?.page) || 1,
-        Number(ctx.query?.pageSize) || 20,
+        Number(ctx.query?.page,) || 1,
+        Number(ctx.query?.pageSize,) || 20,
         userId,
         userRole,
       );
-    })
+    },)
     .post(
       "/api/worlds/:id/quests",
-      async (ctx: any) => {
+      async (ctx: any,) => {
         const userId = ctx.userId as string | null;
         const userRole = ctx.userRole as string | null;
         return handleCreateQuest(
@@ -247,14 +247,14 @@ export function questsRoutes({ database }: { database: Kysely<DB> }): Elysia {
           ctx.body as Record<string, unknown>,
         );
       },
-      { body: QuestCreateBody },
+      { body: QuestCreateBody, },
     )
-    .get("/api/quests/:questId", async (ctx: any) => {
+    .get("/api/quests/:questId", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
       const userRole = ctx.userRole as string | null;
-      return handleQuest(database, "GET", ctx.params.questId as string, userId, userRole);
-    })
-    .put("/api/quests/:questId", async (ctx: any) => {
+      return handleQuest(database, "GET", ctx.params.questId as string, userId, userRole,);
+    },)
+    .put("/api/quests/:questId", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
       const userRole = ctx.userRole as string | null;
       return handleQuest(
@@ -265,13 +265,13 @@ export function questsRoutes({ database }: { database: Kysely<DB> }): Elysia {
         userRole,
         ctx.body as Record<string, unknown>,
       );
-    })
-    .delete("/api/quests/:questId", async (ctx: any) => {
+    },)
+    .delete("/api/quests/:questId", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
       const userRole = ctx.userRole as string | null;
-      return handleAbandonQuest(database, ctx.params.questId as string, userId, userRole);
-    })
-    .post("/api/quests/:questId/progress", async (ctx: any) => {
+      return handleAbandonQuest(database, ctx.params.questId as string, userId, userRole,);
+    },)
+    .post("/api/quests/:questId/progress", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
       const userRole = ctx.userRole as string | null;
       return handleProgress(
@@ -282,8 +282,8 @@ export function questsRoutes({ database }: { database: Kysely<DB> }): Elysia {
         userRole,
         ctx.body as Record<string, unknown>,
       );
-    })
-    .get("/api/quests/:questId/progress/:chatId", async (ctx: any) => {
+    },)
+    .get("/api/quests/:questId/progress/:chatId", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
       const userRole = ctx.userRole as string | null;
       return handleProgress(
@@ -293,5 +293,5 @@ export function questsRoutes({ database }: { database: Kysely<DB> }): Elysia {
         userId,
         userRole,
       );
-    }) as unknown as Elysia;
+    },) as unknown as Elysia;
 }

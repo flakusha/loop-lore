@@ -1,7 +1,7 @@
 // src/config/sections/assets.ts — Assets config section
 
-import { DATA_DIR } from "../constants";
-import type { AssetsConfig } from "../schema";
+import { DATA_DIR, } from "../constants";
+import type { AssetsConfig, } from "../schema";
 
 export const ASSETS_DEFAULTS = {
   enabled: true,
@@ -16,8 +16,8 @@ export class AssetsSection implements AssetsConfig {
   maxFileSize = ASSETS_DEFAULTS.maxFileSize;
   compression = ASSETS_DEFAULTS.compression;
 
-  constructor(overrides?: Partial<AssetsConfig>) {
-    Object.assign(this, overrides);
+  constructor(overrides?: Partial<AssetsConfig>,) {
+    Object.assign(this, overrides,);
   }
 }
 
@@ -25,7 +25,7 @@ export const assetsMeta = {
   type: "object" as const,
   description: "Asset storage configuration",
   properties: {
-    enabled: { type: "boolean", default: ASSETS_DEFAULTS.enabled, description: "Enable asset uploads" },
+    enabled: { type: "boolean", default: ASSETS_DEFAULTS.enabled, description: "Enable asset uploads", },
     uploadDir: {
       type: "string",
       default: ASSETS_DEFAULTS.uploadDir,
@@ -43,5 +43,5 @@ export const assetsMeta = {
       description: "Compress uploaded assets",
     },
   },
-  required: ["enabled", "uploadDir", "maxFileSize", "compression"] as const,
+  required: ["enabled", "uploadDir", "maxFileSize", "compression",] as const,
 };

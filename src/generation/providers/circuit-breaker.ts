@@ -44,16 +44,16 @@ export class CircuitBreaker {
    * Register a provider with optional config overrides.
    * Safe to call multiple times — only sets config on first call.
    */
-  register(providerName: string, config?: CircuitBreakerConfig): void {
-    if (this.configs.has(providerName)) return;
-    this.configs.set(providerName, { ...DEFAULT_CONFIG, ...config });
+  register(providerName: string, config?: CircuitBreakerConfig,): void {
+    if (this.configs.has(providerName,)) { return; }
+    this.configs.set(providerName, { ...DEFAULT_CONFIG, ...config, },);
     this.circuits.set(providerName, {
       state: "closed",
       consecutiveFailures: 0,
       lastFailureTime: 0,
       cooldownUntil: 0,
       retryAfterMs: 0,
-    });
+    },);
   }
 
   /**
@@ -61,14 +61,14 @@ export class CircuitBreaker {
    * Returns true if closed or half-open, false if open.
    * Half-open probes are allowed — one request passes through to test recovery.
    */
-  allowRequest(providerName: string): boolean {
-    const cfg = this.configs.get(providerName);
-    if (!cfg?.enabled) return true;
+  allowRequest(providerName: string,): boolean {
+    const cfg = this.configs.get(providerName,);
+    if (!cfg?.enabled) { return true; }
 
-    const circuit = this.circuits.get(providerName);
-    if (!circuit) return true;
+    const circuit = this.circuits.get(providerName,);
+    if (!circuit) { return true; }
 
-    if (circuit.state === "closed") return true;
+    if (circuit.state === "closed") { return true; }
 
     if (circuit.state === "open") {
       // Check if cooldown has expired → transition to half-open
@@ -87,9 +87,9 @@ export class CircuitBreaker {
    * Record a successful request. Resets failure count.
    * If half-open, transitions to closed.
    */
-  onSuccess(providerName: string): void {
-    const circuit = this.circuits.get(providerName);
-    if (!circuit) return;
+  onSuccess(providerName: string,): void {
+    const circuit = this.circuits.get(providerName,);
+    if (!circuit) { return; }
 
     circuit.consecutiveFailures = 0;
     circuit.retryAfterMs = 0;
@@ -103,12 +103,12 @@ export class CircuitBreaker {
    * If threshold exceeded, opens circuit with exponential backoff cooldown.
    * Respects retryAfter if provided (from Retry-After header).
    */
-  onFailure(providerName: string, retryAfterMs?: number): void {
-    const cfg = this.configs.get(providerName);
-    if (!cfg?.enabled) return;
+  onFailure(providerName: string, retryAfterMs?: number,): void {
+    const cfg = this.configs.get(providerName,);
+    if (!cfg?.enabled) { return; }
 
-    const circuit = this.circuits.get(providerName);
-    if (!circuit) return;
+    const circuit = this.circuits.get(providerName,);
+    if (!circuit) { return; }
 
     circuit.consecutiveFailures++;
     circuit.lastFailureTime = Date.now();
@@ -120,18 +120,18 @@ export class CircuitBreaker {
     if (circuit.consecutiveFailures >= cfg.threshold) {
       circuit.state = "open";
       // Exponential backoff: base * 2^(consecutiveFailures - threshold)
-      const backoff = cfg.baseCooldownMs * Math.pow(2, circuit.consecutiveFailures - cfg.threshold);
-      const cooldown = Math.max(backoff, circuit.retryAfterMs);
-      circuit.cooldownUntil = Date.now() + Math.min(cooldown, cfg.maxCooldownMs);
+      const backoff = cfg.baseCooldownMs * Math.pow(2, circuit.consecutiveFailures - cfg.threshold,);
+      const cooldown = Math.max(backoff, circuit.retryAfterMs,);
+      circuit.cooldownUntil = Date.now() + Math.min(cooldown, cfg.maxCooldownMs,);
     }
   }
 
   /**
    * Reset a provider's circuit to closed state.
    */
-  reset(providerName: string): void {
-    const circuit = this.circuits.get(providerName);
-    if (!circuit) return;
+  reset(providerName: string,): void {
+    const circuit = this.circuits.get(providerName,);
+    if (!circuit) { return; }
 
     circuit.state = "closed";
     circuit.consecutiveFailures = 0;
@@ -145,13 +145,13 @@ export class CircuitBreaker {
   getState(
     providerName: string,
   ): { state: CircuitState; consecutiveFailures: number; cooldownRemainingMs: number } | undefined {
-    const circuit = this.circuits.get(providerName);
-    if (!circuit) return undefined;
+    const circuit = this.circuits.get(providerName,);
+    if (!circuit) { return undefined; }
 
     return {
       state: circuit.state,
       consecutiveFailures: circuit.consecutiveFailures,
-      cooldownRemainingMs: Math.max(0, circuit.cooldownUntil - Date.now()),
+      cooldownRemainingMs: Math.max(0, circuit.cooldownUntil - Date.now(),),
     };
   }
 
@@ -164,11 +164,11 @@ export class CircuitBreaker {
     consecutiveFailures: number;
     cooldownRemainingMs: number;
   }[] {
-    return [...this.circuits].map(([name, circuit]) => ({
+    return [...this.circuits,].map(([name, circuit,],) => ({
       name,
       state: circuit.state,
       consecutiveFailures: circuit.consecutiveFailures,
-      cooldownRemainingMs: Math.max(0, circuit.cooldownUntil - Date.now()),
+      cooldownRemainingMs: Math.max(0, circuit.cooldownUntil - Date.now(),),
     }));
   }
 }

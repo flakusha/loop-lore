@@ -2,15 +2,15 @@
  * Log level helpers — numeric mapping and config parsing.
  */
 
-import type { LogLevel as LogLevelT } from "./types";
+import type { LogLevel as LogLevelT, } from "./types";
 
-export { LogLevel, LogLevelNumeric } from "./types";
+export { LogLevel, LogLevelNumeric, } from "./types";
 
 /**
  * Convert config string to numeric threshold.
  * Entries with level < threshold are filtered out.
  */
-export function levelFromConfig(level: LogLevelT): number {
+export function levelFromConfig(level: LogLevelT,): number {
   switch (level) {
     case "debug": {
       return 10;
@@ -33,7 +33,7 @@ export function levelFromConfig(level: LogLevelT): number {
 /**
  * Map numeric level back to string label for console output.
  */
-export function numericToLabel(numeric: number): string {
+export function numericToLabel(numeric: number,): string {
   switch (numeric) {
     case 10: {
       return "DEBUG";
@@ -48,7 +48,7 @@ export function numericToLabel(numeric: number): string {
       return "ERROR";
     }
     default: {
-      return String(numeric);
+      return String(numeric,);
     }
   }
 }
@@ -56,6 +56,6 @@ export function numericToLabel(numeric: number): string {
 /**
  * Check if a numeric log level should be emitted at given threshold.
  */
-export function shouldEmit(entryLevel: number, threshold: number): boolean {
+export function shouldEmit(entryLevel: number, threshold: number,): boolean {
   return entryLevel >= threshold;
 }

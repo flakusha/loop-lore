@@ -6,9 +6,9 @@
  * for the current context and returns its messages. Adding a prompt section
  * is one file + one line in the registry — no edits to the orchestrator.
  */
-import type { Kysely } from "kysely";
-import type { DB } from "../../db/schema";
-import type { GenerationMessage } from "../../generation/gen-types-options";
+import type { Kysely, } from "kysely";
+import type { DB, } from "../../db/schema";
+import type { GenerationMessage, } from "../../generation/gen-types-options";
 
 export interface PromptParams {
   /** Actor generating the response (character/narrator) */
@@ -89,8 +89,8 @@ export interface AssembleContext {
 export interface SectionBuilder {
   /** Must match a {@link PRIORITY} key for token-budget trimming. */
   name: string;
-  enabled: (ctx: AssembleContext) => boolean;
-  build: (ctx: AssembleContext) => GenerationMessage[] | Promise<GenerationMessage[]>;
+  enabled: (ctx: AssembleContext,) => boolean;
+  build: (ctx: AssembleContext,) => GenerationMessage[] | Promise<GenerationMessage[]>;
 }
 
 // ── Priority rank for section dropping ─────────────────────

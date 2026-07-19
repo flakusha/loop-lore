@@ -4,12 +4,12 @@
  * Common helpers used across modules — uid generation,
  * error formatting, and other general-purpose functions.
  */
-import { randomBytes, randomUUID } from "node:crypto";
+import { randomBytes, randomUUID, } from "node:crypto";
 
 // ── Safe JSON (re-exported from no-dep sub-module) ──────────
 
-export type { JsonResult, SafeJsonStringifyOptions } from "./utils/safe-json";
-export { isJsonString, jsonParseOr, jsonStringifyOr, safeJsonParse, safeJsonStringify } from "./utils/safe-json";
+export type { JsonResult, SafeJsonStringifyOptions, } from "./utils/safe-json";
+export { isJsonString, jsonParseOr, jsonStringifyOr, safeJsonParse, safeJsonStringify, } from "./utils/safe-json";
 
 // ── ID Generation ─────────────────────────────────────────────
 
@@ -17,17 +17,17 @@ export { isJsonString, jsonParseOr, jsonStringifyOr, safeJsonParse, safeJsonStri
 export const uid = (): string => randomUUID();
 
 /** Create a cryptographically secure random token (32 hex chars = 128 bits) */
-export const secureToken = (): string => randomBytes(16).toString("hex");
+export const secureToken = (): string => randomBytes(16,).toString("hex",);
 
 // ── Error Helpers ─────────────────────────────────────────────
 
 /** Extract a safe Error object from an unknown thrown value */
-export function asError(error: unknown): Error {
-  return error instanceof Error ? error : new Error(String(error));
+export function asError(error: unknown,): Error {
+  return error instanceof Error ? error : new Error(String(error,),);
 }
 
 /** Extract error message string from an unknown thrown value */
-export function toErrorMessage(error: unknown): string {
+export function toErrorMessage(error: unknown,): string {
   return error instanceof Error ? error.message : "Unknown error";
 }
 
@@ -44,6 +44,6 @@ export function toErrorMessage(error: unknown): string {
  *   default: return assertNever(status);
  * }
  */
-export function assertNever(value: never): never {
-  throw new Error(`Unhandled case: ${JSON.stringify(value)}`);
+export function assertNever(value: never,): never {
+  throw new Error(`Unhandled case: ${JSON.stringify(value,)}`,);
 }

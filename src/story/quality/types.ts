@@ -7,4 +7,4 @@ export interface ScorerContext {
   recentTurns: { response: string | null }[];
 }
 
-export type Scorer = (ctx: ScorerContext) => number;
+export type Scorer = (ctx: ScorerContext,) => number;

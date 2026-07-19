@@ -27,50 +27,50 @@ let _sessionNonce: string | null = null;
 
 export function getSessionNonce(): string {
   if (!_sessionNonce) {
-    const bytes = new Uint8Array(12);
-    crypto.getRandomValues(bytes);
-    _sessionNonce = btoa(String.fromCharCode(...bytes))
-      .replace(/=+$/, "")
-      .slice(0, 12);
+    const bytes = new Uint8Array(12,);
+    crypto.getRandomValues(bytes,);
+    _sessionNonce = btoa(String.fromCharCode(...bytes,),)
+      .replace(/=+$/, "",)
+      .slice(0, 12,);
   }
   return _sessionNonce;
 }
 
-export function escapeXml(content: string): string {
-  return content.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;");
+export function escapeXml(content: string,): string {
+  return content.replaceAll("&", "&amp;",).replaceAll("<", "&lt;",).replaceAll(">", "&gt;",);
 }
 
-function escapeFence(content: string): { escaped: string; fenceLen: number } {
+function escapeFence(content: string,): { escaped: string; fenceLen: number } {
   let maxBackticks = 0;
-  const match = content.match(/`{3,}/g);
+  const match = content.match(/`{3,}/g,);
   if (match) {
     for (const run of match) {
-      if (run.length > maxBackticks) maxBackticks = run.length;
+      if (run.length > maxBackticks) { maxBackticks = run.length; }
     }
   }
-  const fenceLen = Math.max(3, maxBackticks + 1);
-  return { escaped: content, fenceLen };
+  const fenceLen = Math.max(3, maxBackticks + 1,);
+  return { escaped: content, fenceLen, };
 }
 
-function escapeSentinel(content: string, tag: string): string {
+function escapeSentinel(content: string, tag: string,): string {
   return content
-    .replaceAll(new RegExp(`<<${tag}>>`, "g"), `[${tag}]`)
-    .replaceAll(new RegExp(`<</${tag}>>`, "g"), `[/${tag}]`);
+    .replaceAll(new RegExp(`<<${tag}>>`, "g",), `[${tag}]`,)
+    .replaceAll(new RegExp(`<</${tag}>>`, "g",), `[/${tag}]`,);
 }
 
-function wrapXml(tag: string, content: string): string {
-  const safe = escapeXml(content);
+function wrapXml(tag: string, content: string,): string {
+  const safe = escapeXml(content,);
   return `<${tag}>\n${safe}\n</${tag}>`;
 }
 
-function wrapFence(tag: string, content: string): string {
-  const { escaped, fenceLen } = escapeFence(content);
-  const fence = "`".repeat(fenceLen);
+function wrapFence(tag: string, content: string,): string {
+  const { escaped, fenceLen, } = escapeFence(content,);
+  const fence = "`".repeat(fenceLen,);
   return `${fence}${tag}\n${escaped}\n${fence}`;
 }
 
-function wrapSentinel(tag: string, content: string): string {
-  const safe = escapeSentinel(content, tag);
+function wrapSentinel(tag: string, content: string,): string {
+  const safe = escapeSentinel(content, tag,);
   return `<<${tag}>>\n${safe}\n<</${tag}>>`;
 }
 
@@ -82,17 +82,17 @@ function wrapSentinel(tag: string, content: string): string {
  * @param content The section's textual content
  * @param format  Wrapper format — "xml" (default), "fence", or "sentinel"
  */
-export function wrapContent(tag: string, content: string, format: WrapperFormat = "xml"): string {
+export function wrapContent(tag: string, content: string, format: WrapperFormat = "xml",): string {
   switch (format) {
     case "fence": {
-      return wrapFence(tag, content);
+      return wrapFence(tag, content,);
     }
     case "sentinel": {
-      return wrapSentinel(tag, content);
+      return wrapSentinel(tag, content,);
     }
     case "xml":
     default: {
-      return wrapXml(tag, content);
+      return wrapXml(tag, content,);
     }
   }
 }
@@ -101,6 +101,6 @@ export function wrapContent(tag: string, content: string, format: WrapperFormat 
  * Convenience alias — wraps content in XML tags. Kept for backward compatibility
  * with existing section builders. Calls wrapContent(tag, content, "xml").
  */
-export function wrapSection(tag: string, content: string): string {
-  return wrapContent(tag, content, "xml");
+export function wrapSection(tag: string, content: string,): string {
+  return wrapContent(tag, content, "xml",);
 }
