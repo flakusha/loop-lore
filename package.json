@@ -78,7 +78,7 @@
     "htmx-ext-sse": "^2.2.4",
     "js-yaml": "^5.2.1",
     "jszip": "^3.10.1",
-    "kysely": "^0.29.3",
+    "kysely": "^0.29.4",
     "marked": "^18.0.6",
     "obscenity": "^0.4.6",
     "smol-toml": "^1.7.0"
@@ -107,7 +107,7 @@
     "globals": "^17.7.0",
     "htmx.org": "2.0.10",
     "jscpd": "^5.0.12",
-    "markdownlint-cli2": "^0.23.0",
+    "markdownlint-cli2": "^0.23.1",
     "markuplint": "^4.18.3",
     "stylelint": "^17.14.0",
     "stylelint-config-standard": "^40.0.0",
