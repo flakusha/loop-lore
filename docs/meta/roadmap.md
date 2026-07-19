@@ -2,6 +2,8 @@
 
 Current status of feature areas. Checkmarks = code exists in `src/`.
 
+> **Tracked as git issues.** Roadmap epics/features are mirrored as git-native-issues (e.g. `EPIC-2025-22`, `FEAT-2025-006`). See the [Issue Tracker](/meta/issues). A cross-reference table is at the bottom of this page.
+
 ## ✅ Core Infrastructure (Built)
 
 | Feature                                      | Implementation                                                        |
@@ -29,58 +31,58 @@ Current status of feature areas. Checkmarks = code exists in `src/`.
 
 **In Progress (P0):**
 
-| Epic | Feature | Status |
-|------|---------|--------|
-| 16 | Observability — telemetry, admin analytics, CI config, Playwright responsive tests | 🟡 In progress |
+| Epic | Feature                                                                            | Status         |
+| ---- | ---------------------------------------------------------------------------------- | -------------- |
+| 16   | Observability — telemetry, admin analytics, CI config, Playwright responsive tests | 🟡 In progress |
 
 **Not Started — High Priority (P1):**
 
-| Epic | Feature | Effort | Why Prioritize |
-|------|---------|--------|----------------|
-| 14 | Import/Export — character card PNG/YAML/TOML import, chat export, bulk | Low | SillyTavern compatibility; partial code exists |
-| 11 | Admin & Settings — admin UI, per-user prefs, plugin management | Med | Blocks multi-user deployment |
-| 23 | Assistant Commands — /improve, /image, /quest, autocomplete | Low | Instant chat value; command parser partially built |
-| 24 | Filtering & Pagination — combined filters, cursor pagination | Low | Lists unusable past ~50 items |
-| 17 | Encryption Foundation — at-rest AES-256-GCM, per-user keys | Med | Privacy; crypto module fully scaffolded |
-| 10 | Generation Foundation — tool-call loop, provider failover, SSE reconnect | ✅ Complete per plan.md Epic 10 |
-| 15 | i18n & Accessibility — server-side i18n, ARIA, keyboard nav, 10 locales | High | Important but heavy lift |
+| Epic | Feature                                                                  | Effort      | Why Prioritize                                     |
+| ---- | ------------------------------------------------------------------------ | ----------- | -------------------------------------------------- |
+| 14   | Import/Export — character card PNG/YAML/TOML import, chat export, bulk   | Low         | SillyTavern compatibility; partial code exists     |
+| 11   | Admin & Settings — admin UI, per-user prefs, plugin management           | Med         | Blocks multi-user deployment                       |
+| 23   | Assistant Commands — /improve, /image, /quest, autocomplete              | Low         | Instant chat value; command parser partially built |
+| 24   | Filtering & Pagination — combined filters, cursor pagination             | Low         | Lists unusable past ~50 items                      |
+| 17   | Encryption Foundation — at-rest AES-256-GCM, per-user keys               | Med         | Privacy; crypto module fully scaffolded            |
+| 10   | Generation Foundation — tool-call loop, provider failover, SSE reconnect | ✅ Complete | Already done per plan.md Epic 10                   |
+| 15   | i18n & Accessibility — server-side i18n, ARIA, keyboard nav, 10 locales  | High        | Important but heavy lift                           |
 
 **Not Started — Medium Priority (P2):**
 
-| Epic | Feature | Effort |
-|------|---------|--------|
-| 22 | RPG Mechanics Core — dice, stats, combat | Med |
-| 21 | Notification Expansion — noise presets, per-event thresholds | Med |
+| Epic | Feature                                                      | Effort |
+| ---- | ------------------------------------------------------------ | ------ |
+| 22   | RPG Mechanics Core — dice, stats, combat                     | Med    |
+| 21   | Notification Expansion — noise presets, per-event thresholds | Med    |
 
 **Quick Wins (Low Effort, High Leverage):**
 
-| # | Feature | Source |
-|---|---------|--------|
-| Q1 | Regex output transforms — parse agent/tool output at render | feature-analysis #6 |
-| Q2 | Smart-regen transforms — one-click draft polish | feature-analysis #8 |
-| Q3 | Conversation analytics — per-chat cost + quality dashboard | feature-analysis #27 |
-| Q4 | Model-comparison dashboard — A/B agent/model quality | feature-analysis #28 |
-| Q5 | Bulk data export — zip-all endpoint | plan Epic 14 |
+| #  | Feature                                                     | Source               |
+| -- | ----------------------------------------------------------- | -------------------- |
+| Q1 | Regex output transforms — parse agent/tool output at render | feature-analysis #6  |
+| Q2 | Smart-regen transforms — one-click draft polish             | feature-analysis #8  |
+| Q3 | Conversation analytics — per-chat cost + quality dashboard  | feature-analysis #27 |
+| Q4 | Model-comparison dashboard — A/B agent/model quality        | feature-analysis #28 |
+| Q5 | Bulk data export — zip-all endpoint                         | plan Epic 14         |
 
-See `backlog.md` for full queue, `plan.md` for epic detail.
+See `.plan/backlog.md` for full queue, `plan.md` for epic detail.
 
 ## 🎯 Planned Features
 
 ### P1: User-Facing Features
 
-| Feature | Status | Notes |
-|---------|--------|-------|
-| Advanced Memory Systems | 🟡 Partial | `actor_memories` table + keyword filtering done; three-tier (episodic/semantic/procedural) not built |
-| Lorebook/World Info | 🟡 Partial | CRUD exists; sticky entries, cooldowns, activation conditions not implemented |
-| Character Cards (V2/V3 PNG/JSON import/export) | 🟡 Partial | JSON import works; PNG steganography + YAML/TOML not built |
-| Streaming Responses | ✅ Built | `src/generation/stream-buffer.ts`, SSE via generation routes |
-| Multi-modal Support | 🟡 Partial | Image gen (sd.cpp, ComfyUI) built; audio/video not built |
-| Plugin System | 🟡 Partial | Skeleton loads files (`src/plugins/`); no management API |
-| Client Extensions | ⬜ Not built | No WebUI/TUI plugin architecture |
-| Conversation Branching | ⬜ Not built | `parent_id` in schema; tree nav not implemented |
-| Character Relationships | ⬜ Not built | Relationship graph and stat tracking |
-| Co-editing | ⬜ Not built | Real-time collaborative chat editing |
-| Prompt Library | ⬜ Not built | Tagged prompt snippets and templates |
+| Feature                                        | Status       | Notes                                                                                                |
+| ---------------------------------------------- | ------------ | ---------------------------------------------------------------------------------------------------- |
+| Advanced Memory Systems                        | 🟡 Partial   | `actor_memories` table + keyword filtering done; three-tier (episodic/semantic/procedural) not built |
+| Lorebook/World Info                            | 🟡 Partial   | CRUD exists; sticky entries, cooldowns, activation conditions not implemented                        |
+| Character Cards (V2/V3 PNG/JSON import/export) | 🟡 Partial   | JSON import works; PNG steganography + YAML/TOML not built                                           |
+| Streaming Responses                            | ✅ Built     | `src/generation/stream-buffer.ts`, SSE via generation routes                                         |
+| Multi-modal Support                            | 🟡 Partial   | Image gen (sd.cpp, ComfyUI) built; audio/video not built                                             |
+| Plugin System                                  | 🟡 Partial   | Skeleton loads files (`src/plugins/`); no management API                                             |
+| Client Extensions                              | ⬜ Not built | No WebUI/TUI plugin architecture                                                                     |
+| Conversation Branching                         | ⬜ Not built | `parent_id` in schema; tree nav not implemented                                                      |
+| Character Relationships                        | ⬜ Not built | Relationship graph and stat tracking                                                                 |
+| Co-editing                                     | ⬜ Not built | Real-time collaborative chat editing                                                                 |
+| Prompt Library                                 | ⬜ Not built | Tagged prompt snippets and templates                                                                 |
 
 ### P1: Infrastructure
 
@@ -132,7 +134,7 @@ Config: `headers` block in `src/config/schema.ts` + `schema-class.ts`. Post-MVP 
 
 ## Deferred Concepts
 
-Tracked in `backlog.md` (P3 section). Post-MVP: Tool/Function Calling, BYOK, BYOR, 3D World, Cross-Chat Autonomous Messages, Dual Runtime, LLM native providers, Image/Video Generation, Full i18n.
+Tracked in `.plan/backlog.md` (P3 section). Post-MVP: Tool/Function Calling, BYOK, BYOR, 3D World, Cross-Chat Autonomous Messages, Dual Runtime, LLM native providers, Image/Video Generation, Full i18n.
 
 ## Dual-Use Architecture
 
@@ -149,9 +151,26 @@ Federated Identity (Web3/DID), P2P modes (offline-first), Marketplace, Analytics
 
 Research-driven feature proposals, separated by theme and linked from a hub. Derived from competitor analysis (SillyTavern, RisuAI, Agnai) plus community requests. Proposals only — not yet scheduled.
 
-- Hub: [docs/spec-planned/ideas/index.md](../spec-planned/ideas/index.md)
+- Hub: [docs/ideas/index.md](../ideas/index.md)
 - Themes: Immersion & Presentation, Prompt & Output Control, Memory/Continuity, Authoring, Social/Multiplayer, Platform & Reach, Analytics & Meta, 3D Worlds & Navigation — each linked from the hub.
 
 ## Timeline
 
-See `plan.md` for v0.1 checklist, `backlog.md` for future queue, `open-items.md` for technical debt, `CONTRIBUTING.md` for contribution guidelines.
+See `plan.md` for v0.1 checklist, `.plan/backlog.md` for future queue, git issue tracker for technical debt, `CONTRIBUTING.md` for contribution guidelines.
+
+<!-- ISSUE-MAP-START -->
+
+## Tracked as Git Issues
+
+> These tasks are tracked as git-native-issues. See the [Issue Tracker](/meta/issues) for live state.
+
+| Issue                                        | Title                                                           | Priority | Source                        |
+| -------------------------------------------- | --------------------------------------------------------------- | -------- | ----------------------------- |
+| [EPIC-2025-21](/meta/issues/#epic-2025-21)   | Notification Expansion                                          | medium   | [meta/roadmap](/meta/roadmap) |
+| [EPIC-2025-22](/meta/issues/#epic-2025-22)   | RPG Mechanics Core                                              | medium   | [meta/roadmap](/meta/roadmap) |
+| [EPIC-2025-23](/meta/issues/#epic-2025-23)   | Assistant Commands                                              | low      | [meta/roadmap](/meta/roadmap) |
+| [EPIC-2025-24](/meta/issues/#epic-2025-24)   | Filtering & Pagination                                          | low      | [meta/roadmap](/meta/roadmap) |
+| [FEAT-2025-013](/meta/issues/#feat-2025-013) | Regex output transforms (render-time agent/tool output parsing) | low      | [meta/roadmap](/meta/roadmap) |
+| [FEAT-2025-014](/meta/issues/#feat-2025-014) | Smart-regen transforms (one-click draft polish)                 | low      | [meta/roadmap](/meta/roadmap) |
+
+<!-- ISSUE-MAP-END -->

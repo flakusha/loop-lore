@@ -6,7 +6,7 @@ features proposed in the **latest analysis** (`docs/spec/use-case-agentic-worksp
 `docs/ideas/*`, `docs/meta/analysis/*`).
 
 > **Status:** Assessment only. No existing docs modified. Intended to be reintegrated
-> into `docs/spec/`, `docs/spec-planned/ideas/`, and `docs/meta/` once reviewed. Reintegration
+> into `docs/spec/`, `docs/ideas/`, and `docs/meta/` once reviewed. Reintegration
 > hints are noted per file in the "Reintegrate as" line.
 
 ## Scope
@@ -28,7 +28,7 @@ features proposed in the **latest analysis** (`docs/spec/use-case-agentic-worksp
    pattern (Microsoft runbooks, GraphRAG), and **agent sandboxing** (Google Agent
    Sandbox, isolated tool execution).
 3. Folded in the latest in-repo analysis: the agentic-workspace use case and the
-   34 ideas across 8 themes in `docs/spec-planned/ideas/`.
+   34 ideas across 8 themes in `docs/ideas/`.
 4. Produced gap analysis + prioritized recommendations (reuse-first).
 
 ## Files in this folder
@@ -38,7 +38,7 @@ features proposed in the **latest analysis** (`docs/spec/use-case-agentic-worksp
 | `platform-fit.md`       | What already exists and maps cleanly to agentic/business use | appendix to `use-case-agentic-workspace.md`    |
 | `agentic-workspace.md`  | Deep dive on the agentic workspace mode + orchestration      | expansion of `use-case-agentic-workspace.md`   |
 | `business-scenarios.md` | Concrete ordinary business/assistant scenarios               | new `docs/spec/use-case-*.md` entries          |
-| `feature-analysis.md`   | How the 34 latest ideas strengthen (or miss) ordinary use    | appendix to `docs/spec-planned/ideas/index.md` |
+| `feature-analysis.md`   | How the 34 latest ideas strengthen (or miss) ordinary use    | appendix to `docs/ideas/index.md` |
 | `recommendations.md`    | Prioritized, reuse-first build plan                          | input to `docs/meta/roadmap.md`                |
 
 ## Headline findings
