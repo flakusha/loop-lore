@@ -394,9 +394,8 @@ body {
   box-shadow: var(--shadow-lg);
 }
 
-/* --- Context menu --- */
-.context-menu {
-  position: fixed;
+/* --- Dropdown base (shared by context-menu, action-dropdown) --- */
+.dropdown-base {
   background: var(--bg-secondary);
   border: 1px solid var(--border-default);
   border-radius: var(--radius-md);
@@ -407,7 +406,7 @@ body {
   display: flex;
   flex-direction: column;
 }
-.context-menu button {
+.dropdown-base button {
   background: none;
   border: none;
   color: var(--text-secondary);
@@ -419,9 +418,14 @@ body {
   transition: all var(--transition-fast);
   white-space: nowrap;
 }
-.context-menu button:hover {
+.dropdown-base button:hover {
   background: var(--bg-tertiary);
   color: var(--text-primary);
+}
+
+/* --- Context menu --- */
+.context-menu {
+  position: fixed;
 }
 .context-menu .dropdown-danger {
   color: var(--accent-red);
@@ -567,31 +571,6 @@ body {
   position: absolute;
   bottom: calc(100% + 6px);
   right: 0;
-  background: var(--bg-secondary);
-  border: 1px solid var(--border-default);
-  border-radius: var(--radius-md);
-  box-shadow: var(--shadow-lg);
-  min-width: 180px;
-  z-index: var(--z-dropdown);
-  padding: var(--space-1);
-  display: flex;
-  flex-direction: column;
-}
-.action-dropdown button {
-  background: none;
-  border: none;
-  color: var(--text-secondary);
-  cursor: pointer;
-  font-size: 13px;
-  padding: var(--space-2) var(--space-3);
-  border-radius: var(--radius-sm);
-  text-align: left;
-  transition: all var(--transition-fast);
-  white-space: nowrap;
-}
-.action-dropdown button:hover {
-  background: var(--bg-tertiary);
-  color: var(--text-primary);
 }
 .action-dropdown .dropdown-danger {
   color: var(--accent-red);
@@ -1759,7 +1738,7 @@ body {
    LAYOUT: Fixed Header + Sidebar + Content
    ============================================================ */
 
-/* Hamburger button */
+/* Hamburger button — shares .btn-icon styles (see line ~1020) */
 .hamburger {
   width: 36px;
   height: 36px;
@@ -1774,7 +1753,6 @@ body {
   justify-content: center;
   transition: all var(--transition-fast);
 }
-
 .hamburger:hover {
   background: var(--bg-tertiary);
   color: var(--text-primary);
