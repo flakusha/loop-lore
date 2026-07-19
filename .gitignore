@@ -31,9 +31,6 @@ config.e2e.yaml
 # Server launch scripts — user-specific paths, not committed
 config.*.sh
 
-# Lock files (generated, can be recreated with bun install)
-bun.lock
-
 # TODO Remove once confirmed AND agent-related paths
 .opencode/
 .hermes
