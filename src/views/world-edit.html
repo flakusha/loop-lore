@@ -76,17 +76,8 @@
                     placeholder="fantasy, adventure (comma separated)"
                   />
                 </div>
-                <div
-                  style="
-                    display: flex;
-                    gap: var(--space-3);
-                    justify-content: flex-end;
-                    margin-top: var(--space-6);
-                  "
-                >
-                  <a href="/worlds/{{worldId}}" class="btn btn-secondary" data-testid="cancel-edit-world"
-                    >Cancel</a
-                  >
+                <div style="display: flex; gap: var(--space-3); justify-content: flex-end; margin-top: var(--space-6)">
+                  <a href="/worlds/{{worldId}}" class="btn btn-secondary" data-testid="cancel-edit-world">Cancel</a>
                   <button type="submit" class="btn btn-primary" data-testid="save-world-btn">
                     Save World
                   </button>
@@ -96,20 +87,14 @@
 
             <!-- Locations Tab (Alpine-rendered from loadLocations()) -->
             <div x-show="activeTab === 'locations'">
-              <div
-                style="
-                  display: flex;
-                  justify-content: space-between;
-                  align-items: center;
-                  margin-bottom: var(--space-4);
-                "
-              >
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-4)">
                 <h3 style="margin: 0">Locations</h3>
                 <button
                   class="btn btn-primary"
                   @click="showAddForm = !showAddForm"
                   x-text="showAddForm ? 'Cancel' : '+ Add Location'"
-                ></button>
+                >
+                </button>
               </div>
 
               <div class="add-location-form" x-show="showAddForm" x-cloak>
@@ -146,12 +131,7 @@
                   <span class="form-label">Connections (travel links)</span>
                   <template x-for="loc in locations" :key="loc.id">
                     <label
-                      style="
-                        display: flex;
-                        align-items: center;
-                        gap: var(--space-2);
-                        margin-bottom: var(--space-1);
-                      "
+                      style="display: flex; align-items: center; gap: var(--space-2); margin-bottom: var(--space-1)"
                     >
                       <input type="checkbox" :value="loc.id" x-model="newLocConnections" />
                       <span x-text="loc.name"></span>
@@ -172,12 +152,7 @@
                 <template x-for="loc in locations" :key="loc.id">
                   <div
                     class="location-item"
-                    style="
-                      padding: var(--space-3);
-                      border: 1px solid var(--border-default);
-                      border-radius: var(--radius-md);
-                      cursor: pointer;
-                    "
+                    style="padding: var(--space-3); border: 1px solid var(--border-default); border-radius: var(--radius-md); cursor: pointer"
                     @click="expandLoc(loc.id)"
                   >
                     <div style="display: flex; justify-content: space-between; align-items: center">
@@ -187,7 +162,8 @@
                           class="location-desc"
                           x-show="loc.description && expandedLoc !== loc.id"
                           x-text="loc.description"
-                        ></div>
+                        >
+                        </div>
                       </div>
                       <div class="location-actions" @click.stop>
                         <button
@@ -202,11 +178,7 @@
                     <div
                       x-show="expandedLoc === loc.id"
                       @click.stop
-                      style="
-                        margin-top: var(--space-3);
-                        padding-top: var(--space-3);
-                        border-top: 1px solid var(--border-default);
-                      "
+                      style="margin-top: var(--space-3); padding-top: var(--space-3); border-top: 1px solid var(--border-default)"
                     >
                       <div style="display: grid; gap: var(--space-2)">
                         <input

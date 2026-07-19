@@ -6,11 +6,11 @@
  *   Used by the frontend to encrypt messages client-side before sending.
  */
 import { Elysia } from "elysia";
-import type { Db } from "../db";
 import type { Config } from "../config/schema";
-import { jsonResponse, jsonError, HttpStatus } from "./http-utils";
 import { deriveChatKeyForChat, getSmk, isEncryptionEnabled } from "../crypto";
+import type { Db } from "../db";
 import { getLogger, type Logger } from "../logger";
+import { HttpStatus, jsonError, jsonResponse } from "./http-utils";
 
 function log(): Logger {
   return getLogger().child({ module: "routes:message-encryption" });

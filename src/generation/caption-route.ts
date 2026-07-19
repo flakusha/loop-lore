@@ -31,7 +31,8 @@ export async function handleImageCaption(body: unknown): Promise<Response> {
 
     const systemPrompt =
       "Generate a concise one-sentence description of this image. Focus on the main subject and visual elements.";
-    const userPrompt = `Describe this image briefly for accessibility purposes. The image filename is "${asset.filename}".`;
+    const userPrompt =
+      `Describe this image briefly for accessibility purposes. The image filename is "${asset.filename}".`;
 
     try {
       const resolved = await resolveProvider({ config });

@@ -1,13 +1,13 @@
 /**
  * Tests for logger/transports/db.ts — DBTransport
  */
-import { describe, test, expect, beforeAll, afterAll } from "bun:test";
-import { createTestDb } from "../../test-utils/create-test-db";
-import { DBTransport } from "./db";
-import { createLogger } from "../index";
+import { afterAll, beforeAll, describe, expect, test } from "bun:test";
 import type { Kysely } from "kysely";
 import type { DB } from "../../db/schema";
+import { createTestDb } from "../../test-utils/create-test-db";
+import { createLogger } from "../index";
 import type { LogEntry } from "../types";
+import { DBTransport } from "./db";
 
 describe("DBTransport", () => {
   let db: Kysely<DB>;

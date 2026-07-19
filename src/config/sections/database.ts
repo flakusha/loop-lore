@@ -1,8 +1,8 @@
 // src/config/sections/database.ts — Database config section
 
-import type { DbConfig as DatabaseConfig } from "../schema";
 import { DbType } from "../../db/enums";
 import { DATA_DIR } from "../constants";
+import type { DbConfig as DatabaseConfig } from "../schema";
 
 export const DATABASE_DEFAULTS = {
   type: DbType.Sqlite,

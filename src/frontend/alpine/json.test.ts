@@ -2,12 +2,12 @@
  * Tests for frontend/alpine/json.ts — browser-safe JSON utilities
  */
 
-import { describe, test, expect } from "bun:test";
-import { safeJsonParse, safeJsonStringify, jsonParseOr, jsonBody } from "./json";
+import { describe, expect, test } from "bun:test";
+import { jsonBody, jsonParseOr, safeJsonParse, safeJsonStringify } from "./json";
 
 describe("safeJsonParse", () => {
   test("parses valid JSON object", () => {
-    const result = safeJsonParse<{ a: number }>('{"a":1}');
+    const result = safeJsonParse<{ a: number }>("{\"a\":1}");
     expect(result.ok).toBe(true);
     if (result.ok) expect(result.value).toEqual({ a: 1 });
   });
@@ -19,7 +19,7 @@ describe("safeJsonParse", () => {
   });
 
   test("parses valid JSON string", () => {
-    const result = safeJsonParse<string>('"hello"');
+    const result = safeJsonParse<string>("\"hello\"");
     expect(result.ok).toBe(true);
     if (result.ok) expect(result.value).toBe("hello");
   });
@@ -65,7 +65,7 @@ describe("safeJsonStringify", () => {
   test("stringifies valid object", () => {
     const result = safeJsonStringify({ a: 1 });
     expect(result.ok).toBe(true);
-    if (result.ok) expect(result.value).toBe('{"a":1}');
+    if (result.ok) expect(result.value).toBe("{\"a\":1}");
   });
 
   test("stringifies array", () => {
@@ -83,7 +83,7 @@ describe("safeJsonStringify", () => {
   test("stringifies primitive string", () => {
     const result = safeJsonStringify("hello");
     expect(result.ok).toBe(true);
-    if (result.ok) expect(result.value).toBe('"hello"');
+    if (result.ok) expect(result.value).toBe("\"hello\"");
   });
 
   test("stringifies primitive number", () => {
@@ -101,7 +101,7 @@ describe("safeJsonStringify", () => {
   test("supports space parameter for pretty printing", () => {
     const result = safeJsonStringify({ a: 1 }, 2);
     expect(result.ok).toBe(true);
-    if (result.ok) expect(result.value).toBe('{\n  "a": 1\n}');
+    if (result.ok) expect(result.value).toBe("{\n  \"a\": 1\n}");
   });
 
   test("handles circular reference gracefully", () => {
@@ -115,7 +115,7 @@ describe("safeJsonStringify", () => {
 
 describe("jsonParseOr", () => {
   test("returns parsed value on success", () => {
-    expect(jsonParseOr('{"a":1}', { a: 0 })).toEqual({ a: 1 });
+    expect(jsonParseOr("{\"a\":1}", { a: 0 })).toEqual({ a: 1 });
   });
 
   test("returns fallback on failure", () => {
@@ -125,7 +125,7 @@ describe("jsonParseOr", () => {
 
 describe("jsonBody", () => {
   test("returns JSON string for valid data", () => {
-    expect(jsonBody({ a: 1 })).toBe('{"a":1}');
+    expect(jsonBody({ a: 1 })).toBe("{\"a\":1}");
   });
 
   test("throws on circular reference", () => {

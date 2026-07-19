@@ -66,8 +66,7 @@ export const authMeta = {
     adminPassword: {
       type: "string",
       default: AUTH_DEFAULTS.adminPassword,
-      description:
-        "Bootstrap admin password (multi-user mode). Env-only preferred: AUTH_ADMIN_PASSWORD. Never commit.",
+      description: "Bootstrap admin password (multi-user mode). Env-only preferred: AUTH_ADMIN_PASSWORD. Never commit.",
     },
   },
   required: [

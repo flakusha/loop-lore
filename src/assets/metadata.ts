@@ -60,10 +60,9 @@ function parsePngMetadata(buf: Uint8Array): { width: number; height: number; cap
         const key = new TextDecoder().decode(buf.slice(dataStart, nullPos));
         const valStart = nullPos + 1;
         if (valStart < dataEnd) {
-          const val =
-            chunkType === ZTXTSIG && buf[valStart] === 0
-              ? new TextDecoder().decode(buf.slice(valStart + 1, dataEnd))
-              : new TextDecoder().decode(buf.slice(valStart, dataEnd));
+          const val = chunkType === ZTXTSIG && buf[valStart] === 0
+            ? new TextDecoder().decode(buf.slice(valStart + 1, dataEnd))
+            : new TextDecoder().decode(buf.slice(valStart, dataEnd));
           if ((["Description", "Comment", "Title"] as const).includes(key as "Description") && !caption) {
             caption = val;
           }
@@ -103,12 +102,12 @@ function parseJpegMetadata(buf: Uint8Array): { width: number; height: number; ca
 
     // SOF0-SOF15 markers (start of frame) — contains dimensions
     if (
-      marker >= 0xc0 &&
-      marker <= 0xcf &&
-      marker !== 0xc4 &&
-      marker !== 0xc8 &&
-      marker !== 0xcc &&
-      offset + 11 <= buf.length
+      marker >= 0xc0
+      && marker <= 0xcf
+      && marker !== 0xc4
+      && marker !== 0xc8
+      && marker !== 0xcc
+      && offset + 11 <= buf.length
     ) {
       const height = readUint16BE(buf, offset + 5);
       const width = readUint16BE(buf, offset + 7);
@@ -190,17 +189,17 @@ export function extractImageMetadata(buffer: Uint8Array): ImageMetadata {
   }
 
   if (
-    buffer.length >= 12 &&
-    new TextDecoder().decode(buffer.slice(0, 4)) === "RIFF" &&
-    new TextDecoder().decode(buffer.slice(8, 12)) === "WEBP"
+    buffer.length >= 12
+    && new TextDecoder().decode(buffer.slice(0, 4)) === "RIFF"
+    && new TextDecoder().decode(buffer.slice(8, 12)) === "WEBP"
   ) {
     const { width, height } = parseWebpMetadata(buffer);
     return { width, height, format: "webp" };
   }
 
   if (
-    new TextDecoder().decode(buffer.slice(0, 6)) === "GIF87a" ||
-    new TextDecoder().decode(buffer.slice(0, 6)) === "GIF89a"
+    new TextDecoder().decode(buffer.slice(0, 6)) === "GIF87a"
+    || new TextDecoder().decode(buffer.slice(0, 6)) === "GIF89a"
   ) {
     const { width, height } = parseGifMetadata(buffer);
     return { width, height, format: "gif" };

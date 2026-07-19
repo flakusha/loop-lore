@@ -12,24 +12,19 @@
  *   5. decryptThenDecompress(storedJSON, chatKey) → plaintext
  */
 
-export { initSmk, getSmk, isEncryptionEnabled } from "./smk";
 export {
-  generateActorKey,
   ensureActorKey,
-  loadActorKeys,
+  generateActorKey,
   getActorKey,
-  rotateActorKey,
-  revokeActorKey,
   listActorKeys,
+  loadActorKeys,
+  revokeActorKey,
+  rotateActorKey,
 } from "./actor-keys";
 export type { ActorKeyData, ActorKeyMeta } from "./actor-keys";
+export { decryptValue, encryptValue } from "./byok";
 export { deriveChatKey, deriveChatKeyForChat, getChatParticipantActorIds } from "./chat-keys";
 export type { ChatKey } from "./chat-keys";
-export {
-  compressThenEncrypt,
-  decryptThenDecompress,
-  isEncryptedPayload,
-  extractKeyIdFromPayload,
-} from "./pipeline";
+export { compressThenEncrypt, decryptThenDecompress, extractKeyIdFromPayload, isEncryptedPayload } from "./pipeline";
 export type { EncryptedPayload, PipelineConfig } from "./pipeline";
-export { encryptValue, decryptValue } from "./byok";
+export { getSmk, initSmk, isEncryptionEnabled } from "./smk";

@@ -2,16 +2,16 @@
  * Tests for generation/prompt-templates.ts — image model profiles & templates
  */
 
-import { describe, test, expect } from "bun:test";
+import { describe, expect, test } from "bun:test";
 import {
+  buildImagePrompt,
+  buildImagePromptMessages,
+  buildImageSystemPrompt,
   BUILTIN_PROFILES,
   DEFAULT_PROFILE_REGISTRY,
+  generatePrompt,
   resolveProfile,
   resolveTemplate,
-  generatePrompt,
-  buildImageSystemPrompt,
-  buildImagePromptMessages,
-  buildImagePrompt,
 } from "./prompt-templates";
 import type { TemplateContext } from "./prompt-templates";
 

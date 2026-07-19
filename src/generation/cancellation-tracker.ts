@@ -10,15 +10,15 @@
  */
 
 import type { Kysely } from "kysely";
-import type { DB } from "../db/schema";
 import { randomUUID } from "node:crypto";
 import { CancelReason, GenerationStatus, generationStatusMachine, PolicyType } from "../db/enums";
-import { safeJsonStringify } from "../utils";
+import type { DB } from "../db/schema";
 import { getLogger } from "../logger";
-import type { GenerationOptions, GenerationResult, GenerationEvents } from "./types";
-import { DEFAULT_REPETITION_DETECTION, DEFAULT_POLICY_DETECTION, DEFAULT_RESPONSE_LIMIT } from "./types";
-import { StreamingRepetitionDetector } from "./repetition-detector";
+import { safeJsonStringify } from "../utils";
 import { storePartialContent } from "./continuation";
+import { StreamingRepetitionDetector } from "./repetition-detector";
+import type { GenerationEvents, GenerationOptions, GenerationResult } from "./types";
+import { DEFAULT_POLICY_DETECTION, DEFAULT_REPETITION_DETECTION, DEFAULT_RESPONSE_LIMIT } from "./types";
 
 // ── In-memory generation tracking ─────────────────────────
 
@@ -283,15 +283,15 @@ export async function completeGeneration({ attemptId, result, db }: CompleteGene
       repetition_score: result.repetitionScore ?? null,
       repetition_analysis: result.repetitionAnalysis
         ? (() => {
-            const r = safeJsonStringify(result.repetitionAnalysis);
-            return r.ok ? r.value : null;
-          })()
+          const r = safeJsonStringify(result.repetitionAnalysis);
+          return r.ok ? r.value : null;
+        })()
         : null,
       policy_analysis: result.policyAnalysis
         ? (() => {
-            const r = safeJsonStringify(result.policyAnalysis);
-            return r.ok ? r.value : null;
-          })()
+          const r = safeJsonStringify(result.policyAnalysis);
+          return r.ok ? r.value : null;
+        })()
         : null,
       completed_at: new Date().toISOString(),
       ...(result.cancelReason && {
@@ -359,9 +359,9 @@ export function isChatGenerating(chatId: string): boolean {
   if (!attemptId) return false;
   const active = activeGenerations.get(attemptId);
   return (
-    active !== undefined &&
-    active.status !== GenerationStatus.Cancelled &&
-    active.status !== GenerationStatus.Completed
+    active !== undefined
+    && active.status !== GenerationStatus.Cancelled
+    && active.status !== GenerationStatus.Completed
   );
 }
 

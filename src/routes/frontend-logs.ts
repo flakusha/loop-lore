@@ -14,8 +14,8 @@
  */
 
 import { Elysia } from "elysia";
-import { jsonResponse, jsonError, HttpStatus } from "./http-utils";
 import { getLogger } from "../logger";
+import { HttpStatus, jsonError, jsonResponse } from "./http-utils";
 
 interface FrontendLogEntry {
   level: string;
