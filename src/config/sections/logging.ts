@@ -1,7 +1,7 @@
 // src/config/sections/logging.ts — Logging config section
 
-import type { LoggingConfig } from "../schema";
 import { LogLevel } from "../../db/enums";
+import type { LoggingConfig } from "../schema";
 
 export const LOGGING_DEFAULTS = {
   level: LogLevel.Debug,

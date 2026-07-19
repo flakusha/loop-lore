@@ -2,15 +2,15 @@
  * Tests for crypto/chat-keys.ts — Chat key derivation via HKDF
  */
 
-import { describe, test, expect, beforeAll, afterAll } from "bun:test";
 import { Database } from "bun:sqlite";
+import { afterAll, beforeAll, describe, expect, test } from "bun:test";
 import { Kysely } from "kysely";
 import { createSqliteDialect } from "../db/index";
 import { up as migrate } from "../db/migrations/001_init";
 import type { DB } from "../db/schema";
-import { initSmk, getSmk } from "./smk";
 import { generateActorKey, loadActorKeys } from "./actor-keys";
 import { deriveChatKey, deriveChatKeyForChat, getChatParticipantActorIds } from "./chat-keys";
+import { getSmk, initSmk } from "./smk";
 
 const VALID_HEX_KEY = "a".repeat(64);
 const CHAT_ID = "chat-test-001";

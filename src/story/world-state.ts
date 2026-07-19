@@ -6,8 +6,8 @@
  */
 import type { Kysely } from "kysely";
 import type { DB } from "../db/schema";
-import { uid, jsonParseOr } from "../utils";
-import type { StoryContext, NpcState, LocationState, QuestConfig } from "./types";
+import { jsonParseOr, uid } from "../utils";
+import type { LocationState, NpcState, QuestConfig, StoryContext } from "./types";
 
 // ── World State Service ──────────────────────────────────────
 
@@ -105,10 +105,9 @@ export class WorldStateService {
 
     const actors: StoryContext["actors"] = [];
     for (const p of participantRows) {
-      const npcRow =
-        p.agent_type === "npc" || p.agent_type === "ai"
-          ? await this.db.selectFrom("npc_states").selectAll().where("actor_id", "=", p.id).executeTakeFirst()
-          : null;
+      const npcRow = p.agent_type === "npc" || p.agent_type === "ai"
+        ? await this.db.selectFrom("npc_states").selectAll().where("actor_id", "=", p.id).executeTakeFirst()
+        : null;
 
       let npcState: NpcState | undefined;
       if (npcRow) {
@@ -153,23 +152,23 @@ export class WorldStateService {
 
     const turnManagerState = chat.story_state
       ? jsonParseOr(chat.story_state, {
-          currentTurn: 0,
-          currentActorId: null,
-          turnOrder: [],
-          strategy: chat.turn_strategy ?? "hybrid",
-          isPaused: false,
-          lastTurnCompletedAt: null,
-          pendingRegeneration: null,
-        })
+        currentTurn: 0,
+        currentActorId: null,
+        turnOrder: [],
+        strategy: chat.turn_strategy ?? "hybrid",
+        isPaused: false,
+        lastTurnCompletedAt: null,
+        pendingRegeneration: null,
+      })
       : {
-          currentTurn: 0,
-          currentActorId: null,
-          turnOrder: [],
-          strategy: chat.turn_strategy ?? "hybrid",
-          isPaused: false,
-          lastTurnCompletedAt: null,
-          pendingRegeneration: null,
-        };
+        currentTurn: 0,
+        currentActorId: null,
+        turnOrder: [],
+        strategy: chat.turn_strategy ?? "hybrid",
+        isPaused: false,
+        lastTurnCompletedAt: null,
+        pendingRegeneration: null,
+      };
 
     return {
       world: {

@@ -3,8 +3,8 @@
 import type {
   GenerationConfig,
   GenerationProvidersConfig,
-  ProviderInstanceConfig,
   ModelRoleAssignment,
+  ProviderInstanceConfig,
 } from "../schema";
 
 export const GENERATION_PROVIDERS_DEFAULTS = {
@@ -165,8 +165,7 @@ export const generationMeta = {
             modelType: {
               type: "string",
               enum: ["checkpoint", "diffusion"],
-              description:
-                "checkpoint = standalone (-m), diffusion = component (--diffusion-model, needs llm)",
+              description: "checkpoint = standalone (-m), diffusion = component (--diffusion-model, needs llm)",
             },
             modelPath: {
               type: "string",

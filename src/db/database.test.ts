@@ -1,8 +1,8 @@
-import { describe, test, expect, beforeAll, afterAll } from "bun:test";
-import { createTestDb } from "../test-utils/create-test-db";
-import { createLogger } from "../logger";
 import type { Database } from "bun:sqlite";
+import { afterAll, beforeAll, describe, expect, test } from "bun:test";
 import type { Kysely } from "kysely";
+import { createLogger } from "../logger";
+import { createTestDb } from "../test-utils/create-test-db";
 import type { DB } from "./schema";
 
 type Row = Record<string, unknown>;

@@ -5,8 +5,8 @@
  * Catches write errors silently — never throws.
  */
 
-import type { LogEntry, Transport } from "../types";
 import { formatConsole } from "../formatters";
+import type { LogEntry, Transport } from "../types";
 
 const isTty = process.stdout.isTTY;
 

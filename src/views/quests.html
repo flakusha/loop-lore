@@ -37,14 +37,7 @@
       <!-- Quest content when worldId is set -->
       <template x-if="worldId">
         <div style="padding: var(--space-6)">
-          <div
-            style="
-              display: flex;
-              justify-content: space-between;
-              align-items: center;
-              margin-bottom: var(--space-4);
-            "
-          >
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-4)">
             <h2 style="font-size: 18px; font-weight: 600" x-text="worldName || 'Quests'"></h2>
             <button class="btn btn-primary btn-sm" @click="showCreateForm = true">+ New Quest</button>
           </div>
@@ -52,13 +45,7 @@
           <!-- Create Form -->
           <div
             x-show="showCreateForm"
-            style="
-              padding: var(--space-4);
-              background: var(--bg-secondary, #f8f9fa);
-              border-radius: 6px;
-              border: 1px solid var(--border-default, #e9ecef);
-              margin-bottom: var(--space-4);
-            "
+            style="padding: var(--space-4); background: var(--bg-secondary, #f8f9fa); border-radius: 6px; border: 1px solid var(--border-default, #e9ecef); margin-bottom: var(--space-4)"
           >
             <h3 style="font-size: 14px; font-weight: 600; margin-bottom: var(--space-3)">Create Quest</h3>
             <div style="display: grid; gap: var(--space-3)">
@@ -126,34 +113,15 @@
               <div style="display: grid; gap: var(--space-3)">
                 <template x-for="q in quests" :key="q.id">
                   <div
-                    style="
-                      padding: var(--space-4);
-                      background: var(--bg-secondary, #f8f9fa);
-                      border-radius: 6px;
-                      border: 1px solid var(--border-default, #e9ecef);
-                      cursor: pointer;
-                    "
+                    style="padding: var(--space-4); background: var(--bg-secondary, #f8f9fa); border-radius: 6px; border: 1px solid var(--border-default, #e9ecef); cursor: pointer"
                     @click="expandQuest(q.id)"
                   >
                     <div style="display: flex; justify-content: space-between; align-items: flex-start">
                       <div style="flex: 1">
-                        <div
-                          style="
-                            display: flex;
-                            align-items: center;
-                            gap: var(--space-2);
-                            margin-bottom: var(--space-1);
-                          "
-                        >
+                        <div style="display: flex; align-items: center; gap: var(--space-2); margin-bottom: var(--space-1)">
                           <strong style="font-size: 15px" x-text="q.name"></strong>
                           <span
-                            style="
-                              font-size: 10px;
-                              padding: 1px 5px;
-                              border-radius: 3px;
-                              background: var(--bg-tertiary, #fff);
-                              border: 1px solid var(--border-default, #e9ecef);
-                            "
+                            style="font-size: 10px; padding: 1px 5px; border-radius: 3px; background: var(--bg-tertiary, #fff); border: 1px solid var(--border-default, #e9ecef)"
                             x-text="q.type"
                           ></span>
                           <span
@@ -165,37 +133,19 @@
                         <div
                           style="font-size: 13px; color: var(--text-secondary); margin-bottom: var(--space-2)"
                           x-text="q.description || 'No description'"
-                        ></div>
-                        <div
-                          style="
-                            display: flex;
-                            gap: var(--space-4);
-                            font-size: 11px;
-                            color: var(--text-secondary);
-                            margin-bottom: var(--space-2);
-                          "
                         >
+                        </div>
+                        <div style="display: flex; gap: var(--space-4); font-size: 11px; color: var(--text-secondary); margin-bottom: var(--space-2)">
                           <span x-text="'Priority: ' + q.priority"></span>
                           <span x-text="'Progress: ' + (q.progress ?? 0) + '/' + (q.target ?? 0)"></span>
                           <span x-text="'Created: ' + formatDate(q.created_at)"></span>
                         </div>
-                        <div
-                          style="
-                            height: 4px;
-                            background: var(--border-default, #e9ecef);
-                            border-radius: 2px;
-                            overflow: hidden;
-                          "
-                        >
+                        <div style="height: 4px; background: var(--border-default, #e9ecef); border-radius: 2px; overflow: hidden">
                           <div
-                            style="
-                              height: 100%;
-                              background: #28a745;
-                              border-radius: 2px;
-                              transition: width 0.3s;
-                            "
+                            style="height: 100%; background: #28a745; border-radius: 2px; transition: width 0.3s"
                             :style="{width: progressPct(q) + '%'}"
-                          ></div>
+                          >
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -204,11 +154,7 @@
                     <div
                       x-show="expandedQuest === q.id"
                       @click.stop
-                      style="
-                        margin-top: var(--space-3);
-                        padding-top: var(--space-3);
-                        border-top: 1px solid var(--border-default, #e9ecef);
-                      "
+                      style="margin-top: var(--space-3); padding-top: var(--space-3); border-top: 1px solid var(--border-default, #e9ecef)"
                     >
                       <div style="display: grid; gap: var(--space-2)">
                         <label class="form-label" style="font-size: 11px">
@@ -277,12 +223,7 @@
               <!-- Pagination -->
               <div
                 x-show="totalPages > 1"
-                style="
-                  display: flex;
-                  justify-content: center;
-                  gap: var(--space-2);
-                  margin-top: var(--space-4);
-                "
+                style="display: flex; justify-content: center; gap: var(--space-2); margin-top: var(--space-4)"
               >
                 <button class="btn btn-secondary btn-xs" :disabled="page === 1" @click="goPage(page - 1)">
                   Prev

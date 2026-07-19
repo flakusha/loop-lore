@@ -5,10 +5,10 @@
  * placed in locations or carried by NPCs.
  */
 import type { Kysely, Transaction } from "kysely";
-import type { DB } from "../db/schema";
 import type { ItemCategory, ItemRarity } from "../db/enums";
 import { ItemVisibility, StackableState } from "../db/enums";
-import { uid, safeJsonStringify } from "../utils";
+import type { DB } from "../db/schema";
+import { safeJsonStringify, uid } from "../utils";
 
 // ── Item Definition Helpers ───────────────────────────────────
 
@@ -115,9 +115,9 @@ export class ItemsService {
         respawnable: respawnable ? 1 : 0,
         spawn_condition: spawnCondition
           ? (() => {
-              const r = safeJsonStringify(spawnCondition);
-              return r.ok ? r.value : null;
-            })()
+            const r = safeJsonStringify(spawnCondition);
+            return r.ok ? r.value : null;
+          })()
           : null,
       })
       .execute();

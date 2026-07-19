@@ -1,7 +1,7 @@
 /**
  * Unit tests for story-states routes (Elysia plugin)
  */
-import { describe, test, expect } from "bun:test";
+import { describe, expect, test } from "bun:test";
 import { storyStatesRoutes } from "./story-states";
 
 const mockDb = {} as any;

@@ -8,8 +8,8 @@
  * `registerPolicyDetector()` at startup.
  */
 
-import type { PolicyAnalysis, PolicyDetectionConfig } from "./types";
 import { getLogger } from "../logger";
+import type { PolicyAnalysis, PolicyDetectionConfig } from "./types";
 
 // ── Detector interface ────────────────────────────────────
 

@@ -2,8 +2,8 @@
  * Tests for crypto/byok.ts — BYO API key encrypt/decrypt (PBKDF2 + AES-256-GCM)
  */
 
-import { describe, test, expect } from "bun:test";
-import { encryptValue, decryptValue } from "./byok";
+import { describe, expect, test } from "bun:test";
+import { decryptValue, encryptValue } from "./byok";
 
 const SECRET = "test-secret-32-bytes-long!!!!"; // arbitrary passphrase
 

@@ -32,16 +32,16 @@ or any other) surface the right doc and don't build on the wrong assumption.
 
 ## File / Area → Doc map
 
-| You are editing…                              | Read doc                                  | Key caveat                                                                 |
-| --------------------------------------------- | ----------------------------------------- | -------------------------------------------------------------------------- |
-| `tsconfig*.json`, `src/db/index.ts` casts     | `01-strict-typing.md`                     | `exactOptionalPropertyTypes` still off; DB wrapper `any[]` is the only escape |
-| `eslint.config.mjs`, lint rules               | `02-eslint-and-static-analysis.md`        | **Mostly DONE**; complexity cap is `warn@20`, not `error`                  |
-| `elysia-app.ts`, `server.ts` dispatch, routes | `03-extensibility-code-patterns.md`       | Dual dispatch still exists; plugin routes still linear-scanned             |
-| `messages.ts`, `generate-route.ts`, `utils.ts`, `config/schema.ts`, `server.ts` | `04-code-organization-and-splitting.md` | These exceed 200L; split into `index.ts` barrels                  |
-| `tests/e2e/helpers/server.ts`, `createTestDb` | `05-testing-e2e-multiple-db.md`          | Only SQLite tested; `createTestDb` now takes a `DialectFactory`            |
-| `src/validation/schemas.ts`, request bodies  | `06-schemas-and-openapi.md`               | **Zod trap**: specs say Zod/`src/schemas/` — wrong; real is TypeBox       |
-| `src/middleware/`, `elysia-app.ts` view serving, `config/schema.ts` frontend | `07-alternative-frontend-support.md` | No `frontend.mode`/CORS/negotiation yet                                |
-| `src/plugins/*` (events, tools, ui, config)   | `08-plugins-hooks-integration.md`         | Event bus + tool executor **unwired**; `dispatchPluginRoute` still scans   |
+| You are editing…                                                                | Read doc                                | Key caveat                                                                    |
+| ------------------------------------------------------------------------------- | --------------------------------------- | ----------------------------------------------------------------------------- |
+| `tsconfig*.json`, `src/db/index.ts` casts                                       | `01-strict-typing.md`                   | `exactOptionalPropertyTypes` still off; DB wrapper `any[]` is the only escape |
+| `eslint.config.mjs`, lint rules                                                 | `02-eslint-and-static-analysis.md`      | **Mostly DONE**; complexity cap is `warn@20`, not `error`                     |
+| `elysia-app.ts`, `server.ts` dispatch, routes                                   | `03-extensibility-code-patterns.md`     | Dual dispatch still exists; plugin routes still linear-scanned                |
+| `messages.ts`, `generate-route.ts`, `utils.ts`, `config/schema.ts`, `server.ts` | `04-code-organization-and-splitting.md` | These exceed 200L; split into `index.ts` barrels                              |
+| `tests/e2e/helpers/server.ts`, `createTestDb`                                   | `05-testing-e2e-multiple-db.md`         | Only SQLite tested; `createTestDb` now takes a `DialectFactory`               |
+| `src/validation/schemas.ts`, request bodies                                     | `06-schemas-and-openapi.md`             | **Zod trap**: specs say Zod/`src/schemas/` — wrong; real is TypeBox           |
+| `src/middleware/`, `elysia-app.ts` view serving, `config/schema.ts` frontend    | `07-alternative-frontend-support.md`    | No `frontend.mode`/CORS/negotiation yet                                       |
+| `src/plugins/*` (events, tools, ui, config)                                     | `08-plugins-hooks-integration.md`       | Event bus + tool executor **unwired**; `dispatchPluginRoute` still scans      |
 
 ## Hard rules for agents
 

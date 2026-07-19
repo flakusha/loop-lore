@@ -87,7 +87,7 @@ export function featureGate(feature: string): boolean {
 }
 
 // Alpine plugin
-export default function () {
+export default function() {
   return {
     init() {
       const tier = detectDeviceTier();

@@ -76,8 +76,8 @@ artifacts:
   limits: { maxFileSizeMb: 100, maxLineCount: 100000 }
   execution:
     enabled: true; defaultTimeoutMs: 30000
-    allowedLanguages: [javascript, typescript, python, bash]
-    allowedNetwork: false
+      allowedLanguages: [javascript, typescript, python, bash]
+      allowedNetwork: false
   versioning: { enabled: true, strategy: content_hash, maxVersionsPerArtifact: 50 }
 ```
 

@@ -75,14 +75,18 @@ export const chatPanels: Partial<ChatState> & ThisType<ChatState> = {
   },
 
   unregisterPanelHandlers() {
-    if (this._toggleChatListHandler)
+    if (this._toggleChatListHandler) {
       document.removeEventListener("toggle-chat-list", this._toggleChatListHandler);
-    if (this._toggleGalleryHandler)
+    }
+    if (this._toggleGalleryHandler) {
       document.removeEventListener("toggle-gallery", this._toggleGalleryHandler);
-    if (this._toggleCharacterInfoHandler)
+    }
+    if (this._toggleCharacterInfoHandler) {
       document.removeEventListener("toggle-character-info", this._toggleCharacterInfoHandler);
-    if (this._toggleMemoryPanelHandler)
+    }
+    if (this._toggleMemoryPanelHandler) {
       document.removeEventListener("toggle-memory-panel", this._toggleMemoryPanelHandler);
+    }
     if (this._panelClickHandler) document.removeEventListener("click", this._panelClickHandler, true);
     if (this._keydownHandler) document.removeEventListener("keydown", this._keydownHandler);
     if (this._observer) this._observer.disconnect();

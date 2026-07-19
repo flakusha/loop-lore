@@ -1,6 +1,6 @@
 // src/config/sections/headers.ts — Headers config section
 
-import type { HeadersConfig, CspConfig } from "../schema";
+import type { CspConfig, HeadersConfig } from "../schema";
 
 export const CSP_DEFAULTS: CspConfig = {
   enabled: true,

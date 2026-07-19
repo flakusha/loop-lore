@@ -2,7 +2,7 @@
  * Tests for logger/censors.ts — PII censoring engine
  */
 
-import { describe, test, expect } from "bun:test";
+import { describe, expect, test } from "bun:test";
 import { censorMeta, fieldNamesToRules } from "./censors";
 
 describe("censorMeta", () => {

@@ -5,15 +5,15 @@
  * The settings plugin expects `userId` to be populated
  * by the auth guard. We simulate this via `.derive()`.
  */
-import { describe, test, expect, beforeAll, afterAll } from "bun:test";
 import { Database } from "bun:sqlite";
-import { Kysely } from "kysely";
+import { afterAll, beforeAll, describe, expect, test } from "bun:test";
 import { Elysia } from "elysia";
-import { uid } from "../utils";
-import { settingsRoutes } from "./settings";
+import { Kysely } from "kysely";
 import { createSqliteDialect } from "../db/index";
 import { up as migrate } from "../db/migrations/001_init";
 import type { DB } from "../db/schema";
+import { uid } from "../utils";
+import { settingsRoutes } from "./settings";
 
 const TEST_USER_ID = uid();
 

@@ -99,7 +99,7 @@ Actions appear as a **flat button row** always visible below the content:
 
 | Action      | Icon | Available on               | Behavior                                             |
 | ----------- | ---- | -------------------------- | ---------------------------------------------------- |
-| Edit        | ✏️   | Own messages               | Inline textarea edit (see Inline Edit below)         |
+| Edit        | ✏️    | Own messages               | Inline textarea edit (see Inline Edit below)         |
 | Regenerate  | ♻    | Assistant messages         | Full regenerate. Variant-aware (creates new variant) |
 | Continue    | ↳    | Partial/cancelled messages | Appends new content where message left off           |
 | Impersonate | 🎭   | Assistant messages         | Toggle: play as this character (sends as character)  |
@@ -354,20 +354,20 @@ with all available actions:
 
 ## Test Fixtures
 
-| #   | Case                       | Expected                                          |
-| --- | -------------------------- | ------------------------------------------------- |
-| 1   | Hover on user message      | Actions fade in at bottom of bubble, 150ms ease   |
-| 2   | Hover on character message | Same, with avatar visible                         |
-| 3   | Compact mode hamburger     | ⋮ button → dropdown with all available actions    |
-| 4   | Detailed mode buttons      | Flat row of icon buttons always visible           |
-| 5   | Click Copy                 | Toast "Copied", text on clipboard                 |
-| 6   | Click Remove               | Confirmation → message archived, not deleted      |
-| 7   | Edit own message           | Textarea appears, pre-filled, Save/Cancel buttons |
-| 8   | Ctrl+Enter in edit         | Saves edit, "(edited)" label appears              |
-| 9   | Escape in edit             | Cancels edit, reverts to original content         |
-| 10  | Continue on partial        | New content appended, Continue button disappears  |
-| 11  | Regenerate                 | New variant created, variant counter increments   |
-| 12  | Mobile long-press          | Bottom sheet slides up, all actions listed        |
-| 13  | Mobile touch target        | All buttons ≥44×44px                              |
-| 14  | Keyboard Tab focus         | Focus ring visible on message                     |
-| 15  | Ctrl+R on focused message  | Triggers regenerate                               |
+| #  | Case                       | Expected                                          |
+| -- | -------------------------- | ------------------------------------------------- |
+| 1  | Hover on user message      | Actions fade in at bottom of bubble, 150ms ease   |
+| 2  | Hover on character message | Same, with avatar visible                         |
+| 3  | Compact mode hamburger     | ⋮ button → dropdown with all available actions    |
+| 4  | Detailed mode buttons      | Flat row of icon buttons always visible           |
+| 5  | Click Copy                 | Toast "Copied", text on clipboard                 |
+| 6  | Click Remove               | Confirmation → message archived, not deleted      |
+| 7  | Edit own message           | Textarea appears, pre-filled, Save/Cancel buttons |
+| 8  | Ctrl+Enter in edit         | Saves edit, "(edited)" label appears              |
+| 9  | Escape in edit             | Cancels edit, reverts to original content         |
+| 10 | Continue on partial        | New content appended, Continue button disappears  |
+| 11 | Regenerate                 | New variant created, variant counter increments   |
+| 12 | Mobile long-press          | Bottom sheet slides up, all actions listed        |
+| 13 | Mobile touch target        | All buttons ≥44×44px                              |
+| 14 | Keyboard Tab focus         | Focus ring visible on message                     |
+| 15 | Ctrl+R on focused message  | Triggers regenerate                               |

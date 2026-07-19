@@ -11,10 +11,10 @@
 
 import { Elysia, t } from "elysia";
 import type { Db } from "../db";
-import { jsonResponse, jsonError, jsonNoContent, parsePagination, HttpStatus } from "./http-utils";
-import { unauthorized, notFound } from "../validation/middleware";
 import { getLogger } from "../logger";
 import type { Logger } from "../logger/types";
+import { notFound, unauthorized } from "../validation/middleware";
+import { HttpStatus, jsonError, jsonNoContent, jsonResponse, parsePagination } from "./http-utils";
 
 function log(): Logger {
   return getLogger().child({ module: "sessions" });
@@ -80,9 +80,9 @@ export function sessionsRoutes(opts: HandleOpts): Elysia {
         const countQuery = isAdmin
           ? database.selectFrom("sessions").select(database.fn.count("id").as("count"))
           : database
-              .selectFrom("sessions")
-              .select(database.fn.count("id").as("count"))
-              .where("user_id", "=", userId);
+            .selectFrom("sessions")
+            .select(database.fn.count("id").as("count"))
+            .where("user_id", "=", userId);
 
         const [rows, countResult] = await Promise.all([
           filteredQuery
@@ -101,7 +101,6 @@ export function sessionsRoutes(opts: HandleOpts): Elysia {
           pagination: { page, pageSize, total, totalPages: Math.ceil(total / pageSize) },
         });
       })
-
       /**
        * GET /api/sessions/:id
        *
@@ -134,7 +133,6 @@ export function sessionsRoutes(opts: HandleOpts): Elysia {
         },
         { params: t.Object({ id: t.String() }) },
       )
-
       /**
        * DELETE /api/sessions/:id
        *
