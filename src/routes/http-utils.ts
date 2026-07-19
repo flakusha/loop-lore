@@ -272,3 +272,24 @@ export function str(body: Record<string, unknown>, key: string,): string | undef
 export function num(body: Record<string, unknown>, key: string,): number | undefined {
   return body[key] as number | undefined;
 }
+// ── Common error response factories ───────────────────────────
+
+/** 404 Not Found with NOT_FOUND code. */
+export function notFoundResponse(message = "Not found",): Response {
+  return jsonError({ message, status: HttpStatus.NotFound, code: ErrorCode.NotFound, },);
+}
+
+/** 404 "Not found or not owner" — ownership check failure. */
+export function notOwnerResponse(entity = "Resource",): Response {
+  return notFoundResponse(`${entity} not found or not owner`,);
+}
+
+/** 401 Unauthorized. */
+export function unauthorizedResponse(message = "Unauthorized",): Response {
+  return jsonError({ message, status: HttpStatus.Unauthorized, code: ErrorCode.Unauthorized, },);
+}
+
+/** 400 Bad Request with message. */
+export function badRequestResponse(message: string,): Response {
+  return jsonError({ message, status: HttpStatus.BadRequest, code: ErrorCode.BadRequest, },);
+}
