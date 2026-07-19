@@ -33,13 +33,13 @@ features proposed in the **latest analysis** (`docs/spec/use-case-agentic-worksp
 
 ## Files in this folder
 
-| File                    | Covers                                                       | Reintegrate as                                 |
-| ----------------------- | ------------------------------------------------------------ | ---------------------------------------------- |
-| `platform-fit.md`       | What already exists and maps cleanly to agentic/business use | appendix to `use-case-agentic-workspace.md`    |
-| `agentic-workspace.md`  | Deep dive on the agentic workspace mode + orchestration      | expansion of `use-case-agentic-workspace.md`   |
-| `business-scenarios.md` | Concrete ordinary business/assistant scenarios               | new `docs/spec/use-case-*.md` entries          |
-| `feature-analysis.md`   | How the 34 latest ideas strengthen (or miss) ordinary use    | appendix to `docs/ideas/index.md` |
-| `recommendations.md`    | Prioritized, reuse-first build plan                          | input to `docs/meta/roadmap.md`                |
+| File                    | Covers                                                       | Reintegrate as                               |
+| ----------------------- | ------------------------------------------------------------ | -------------------------------------------- |
+| `platform-fit.md`       | What already exists and maps cleanly to agentic/business use | appendix to `use-case-agentic-workspace.md`  |
+| `agentic-workspace.md`  | Deep dive on the agentic workspace mode + orchestration      | expansion of `use-case-agentic-workspace.md` |
+| `business-scenarios.md` | Concrete ordinary business/assistant scenarios               | new `docs/spec/use-case-*.md` entries        |
+| `feature-analysis.md`   | How the 34 latest ideas strengthen (or miss) ordinary use    | appendix to `docs/ideas/index.md`            |
+| `recommendations.md`    | Prioritized, reuse-first build plan                          | input to `docs/meta/roadmap.md`              |
 
 ## Headline findings
 
