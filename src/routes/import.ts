@@ -10,15 +10,15 @@
  */
 
 import { Elysia } from "elysia";
-import crypto from "node:crypto";
-import type { Kysely } from "kysely";
-import type { DB } from "../db/schema";
-import { uid, safeJsonStringify, jsonParseOr } from "../utils";
-import { jsonError, jsonCreated, HttpStatus } from "./http-utils";
 import { load as yamlLoad } from "js-yaml";
+import type { Kysely } from "kysely";
+import crypto from "node:crypto";
 import { parse as parseToml } from "smol-toml";
 import { extractCharacterDataFromPng } from "../characters/steganography";
+import type { DB } from "../db/schema";
 import { getOrCreateSoloUserForAuth } from "../middleware/auth";
+import { jsonParseOr, safeJsonStringify, uid } from "../utils";
+import { HttpStatus, jsonCreated, jsonError } from "./http-utils";
 
 interface ImportActorOpts {
   data: Record<string, unknown>;
@@ -56,9 +56,9 @@ async function importActor(opts: ImportActorOpts): Promise<Response> {
       import_spec: spec ?? "raw",
       alternate_greetings: data.alternate_greetings
         ? (() => {
-            const r = safeJsonStringify(data.alternate_greetings);
-            return r.ok ? r.value : null;
-          })()
+          const r = safeJsonStringify(data.alternate_greetings);
+          return r.ok ? r.value : null;
+        })()
         : null,
       settings: "{}",
       data_version: 1,
@@ -93,8 +93,9 @@ async function handleImport(request: Request, database: Kysely<DB>, userId: stri
   if (contentType.includes("multipart/form-data")) {
     const formData = await request.formData();
     const file = formData.get("file");
-    if (!file || !(file instanceof File))
+    if (!file || !(file instanceof File)) {
       return jsonError({ message: "file field is required", status: HttpStatus.BadRequest });
+    }
 
     const fileBytes = Buffer.from(await file.arrayBuffer());
     const filename = (file.name ?? "").toLowerCase();
@@ -104,25 +105,29 @@ async function handleImport(request: Request, database: Kysely<DB>, userId: stri
 
     if (filename.endsWith(".json")) {
       const parsed = jsonParseOr(await file.text(), null);
-      if (!parsed || typeof parsed !== "object")
+      if (!parsed || typeof parsed !== "object") {
         return jsonError({ message: "Invalid JSON file", status: HttpStatus.BadRequest });
+      }
       data = parsed;
       spec = data.spec === "chara_card_v2" ? "chara_card_v2" : undefined;
     } else if (filename.endsWith(".png")) {
       const extracted = extractCharacterDataFromPng(fileBytes);
-      if (!extracted)
+      if (!extracted) {
         return jsonError({ message: "No character data found in PNG", status: HttpStatus.BadRequest });
+      }
       data = extracted.data;
       spec = extracted.spec;
     } else if (filename.endsWith(".yaml") || filename.endsWith(".yml")) {
       const parsed = yamlLoad(await file.text());
-      if (!parsed || typeof parsed !== "object")
+      if (!parsed || typeof parsed !== "object") {
         return jsonError({ message: "Invalid YAML file", status: HttpStatus.BadRequest });
+      }
       data = parsed as Record<string, unknown>;
     } else if (filename.endsWith(".toml")) {
       const parsed = parseToml(await file.text());
-      if (!parsed || typeof parsed !== "object")
+      if (!parsed || typeof parsed !== "object") {
         return jsonError({ message: "Invalid TOML file", status: HttpStatus.BadRequest });
+      }
       data = parsed;
     } else {
       return jsonError({

@@ -5,10 +5,10 @@
  * Uses the test server + seeded demo user.
  */
 
-import { describe, test, expect, beforeAll, afterAll } from "bun:test";
+import { afterAll, beforeAll, describe, expect, test } from "bun:test";
+import { type ApiClient, createClient } from "../helpers/client";
+import { SEED, seedUsers } from "../helpers/seed";
 import { createTestServer, type TestServer } from "../helpers/server";
-import { createClient, type ApiClient } from "../helpers/client";
-import { seedUsers, SEED } from "../helpers/seed";
 
 describe("Auth E2E", () => {
   let server: TestServer;

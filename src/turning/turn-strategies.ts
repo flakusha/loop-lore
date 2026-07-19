@@ -8,7 +8,7 @@
  * (lightweight turn selection). The context parameter carries mode-specific
  * data without coupling strategies to either use case.
  */
-import type { TurnStrategyFn, GroupTurnContext } from "./types";
+import type { GroupTurnContext, TurnStrategyFn } from "./types";
 
 // ─── Strategy Registry ─────────────────────────────────────────
 

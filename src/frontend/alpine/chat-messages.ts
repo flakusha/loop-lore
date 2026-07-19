@@ -1,7 +1,7 @@
+import { browserCompressThenEncrypt } from "../browser";
 import { jsonBody } from "./json";
 import { log as rootLog } from "./logger";
 import type { ChatState } from "./types";
-import { browserCompressThenEncrypt } from "../browser";
 
 const log = rootLog.child({ module: "chat" });
 

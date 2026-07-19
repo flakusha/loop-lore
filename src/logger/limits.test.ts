@@ -2,7 +2,7 @@
  * Tests for logger/limits.ts — log entry size limits
  */
 
-import { describe, test, expect } from "bun:test";
+import { describe, expect, test } from "bun:test";
 import { applyLimits } from "./limits";
 import type { LogEntry } from "./types";
 

@@ -12,10 +12,10 @@
  *   Or set LL_REAL_E2E_SKIP=1 to skip entirely
  */
 
-import { describe, test, expect, beforeAll, afterAll } from "bun:test";
+import { afterAll, beforeAll, describe, expect, test } from "bun:test";
+import { type ApiClient, createClient } from "../helpers/client";
+import { SEED, seedAll } from "../helpers/seed";
 import { createTestServer, type TestServer } from "../helpers/server";
-import { createClient, type ApiClient } from "../helpers/client";
-import { seedAll, SEED } from "../helpers/seed";
 import { ServerExternalManager, type ServerInstance } from "../helpers/server-external";
 
 import type { Logger } from "../../../src/logger";
@@ -31,9 +31,15 @@ function fmtMsg(msg: string | Record<string, unknown>): string {
 /** Logger — falls back to console if app logger not yet initialized */
 const log: Logger = {
   debug: () => {},
-  info(msg: string | Record<string, unknown>) { console.warn(`[server-external-e2e] ${fmtMsg(msg)}`); },
-  warn(msg: string | Record<string, unknown>) { console.warn(`[server-external-e2e] ${fmtMsg(msg)}`); },
-  error(msg: string | Record<string, unknown>) { console.error(`[server-external-e2e] ${fmtMsg(msg)}`); },
+  info(msg: string | Record<string, unknown>) {
+    console.warn(`[server-external-e2e] ${fmtMsg(msg)}`);
+  },
+  warn(msg: string | Record<string, unknown>) {
+    console.warn(`[server-external-e2e] ${fmtMsg(msg)}`);
+  },
+  error(msg: string | Record<string, unknown>) {
+    console.error(`[server-external-e2e] ${fmtMsg(msg)}`);
+  },
   child: () => log,
   flush: async () => {},
   addTransport: () => {},
@@ -76,22 +82,29 @@ describeReal("Real-Server Generation E2E", () => {
 
     if (llamaModel && !llamaInstance) {
       llamaInstance = await manager.startLlamaCpp({
-        port: llamaPort, modelPath: llamaModel, ctxSize: 8192,
+        port: llamaPort,
+        modelPath: llamaModel,
+        ctxSize: 8192,
         extraArgs: ["--alias", "e2e-model"],
       });
-      log.info(llamaInstance
-        ? `llama.cpp ready :${llamaPort}`
-        : "llama.cpp skipped");
+      log.info(
+        llamaInstance
+          ? `llama.cpp ready :${llamaPort}`
+          : "llama.cpp skipped",
+      );
     }
 
     if (sdModel && !sdInstance) {
       sdInstance = await manager.startSdCpp({
-        port: sdPort, modelPath: sdModel,
+        port: sdPort,
+        modelPath: sdModel,
         extraArgs: ["--rng", "cpu", "--sampler-rng", "cpu"],
       });
-      log.info(sdInstance
-        ? `sd-server ready :${sdPort}`
-        : "sd-server skipped");
+      log.info(
+        sdInstance
+          ? `sd-server ready :${sdPort}`
+          : "sd-server skipped",
+      );
     }
 
     if (!llamaInstance && !sdInstance) {
@@ -108,24 +121,33 @@ describeReal("Real-Server Generation E2E", () => {
 
       const { registerProvider } = await import("@/generation/providers/registry");
       const { OpenAiCompatibleProvider } = await import("@/generation/providers/openai-compatible");
-      registerProvider("real-llama", new OpenAiCompatibleProvider({
-        name: "real-llama", label: "Real llama.cpp",
-        baseUrl: `http://127.0.0.1:${llamaPort}/v1`,
-        model: "e2e-model", timeout: 30_000, retries: 2,
-        allowUserApiKey: false,
-        models: { "e2e-model": { contextLimit: 8192, maxOutput: 1024 } },
-      }));
+      registerProvider(
+        "real-llama",
+        new OpenAiCompatibleProvider({
+          name: "real-llama",
+          label: "Real llama.cpp",
+          baseUrl: `http://127.0.0.1:${llamaPort}/v1`,
+          model: "e2e-model",
+          timeout: 30_000,
+          retries: 2,
+          allowUserApiKey: false,
+          models: { "e2e-model": { contextLimit: 8192, maxOutput: 1024 } },
+        }),
+      );
 
       const res = await api.post<{ ok: boolean; content: string; messageId: string }>(
-        "/api/generation/generate", {
+        "/api/generation/generate",
+        {
           chatId: SEED.chat.id,
           parentMessageId: SEED.message.id,
           actorId: SEED.character.id,
           idempotencyKey: "real-llm-1",
           provider: "real-llama",
           prompt: [{ role: "system", content: "Reply with exactly: OK" }, { role: "user", content: "Say OK" }],
-          maxTokens: 50, temperature: 0,
-        });
+          maxTokens: 50,
+          temperature: 0,
+        },
+      );
 
       expect(res.status).toBe(200);
       if (res.data) {
@@ -140,15 +162,18 @@ describeReal("Real-Server Generation E2E", () => {
       if (!llamaInstance) return;
 
       const res = await api.post<{ content: string; tokenUsage: { completionTokens: number } }>(
-        "/api/generation/generate", {
+        "/api/generation/generate",
+        {
           chatId: SEED.chat.id,
           parentMessageId: SEED.message.id,
           actorId: SEED.character.id,
           idempotencyKey: "real-llm-2",
           provider: "real-llama",
           prompt: [{ role: "user", content: "Write one short sentence." }],
-          maxTokens: 20, temperature: 0,
-        });
+          maxTokens: 20,
+          temperature: 0,
+        },
+      );
 
       expect(res.status).toBe(200);
       if (res.data) {
@@ -181,9 +206,16 @@ describeReal("Real-Server Generation E2E", () => {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          prompt: "a red square", negative_prompt: "",
-          sampler_name: "euler_a", scheduler: "discrete",
-          width: 64, height: 64, batch_size: 1, seed: 42, steps: 5, cfg_scale: 1,
+          prompt: "a red square",
+          negative_prompt: "",
+          sampler_name: "euler_a",
+          scheduler: "discrete",
+          width: 64,
+          height: 64,
+          batch_size: 1,
+          seed: 42,
+          steps: 5,
+          cfg_scale: 1,
         }),
       });
 

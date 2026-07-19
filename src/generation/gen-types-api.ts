@@ -6,7 +6,7 @@
  */
 
 import type { CancelReason } from "../db/enums";
-import type { GenerationResult, RepetitionAnalysis, PolicyAnalysis } from "./gen-types-results";
+import type { GenerationResult, PolicyAnalysis, RepetitionAnalysis } from "./gen-types-results";
 
 // ── Continuation types ─────────────────────────────────────
 

@@ -1,10 +1,10 @@
-import { describe, test, expect } from "bun:test";
+import { describe, expect, test } from "bun:test";
 import {
-  WorkflowKind,
-  WorkflowModality,
   composeWorkflowTags,
   parseWorkflowTag,
   parseWorkflowTags,
+  WorkflowKind,
+  WorkflowModality,
 } from "./workflow-tags";
 
 describe("workflow-tags", () => {

@@ -1,9 +1,9 @@
 /**
  * Tests for negotiation header parsers.
  */
-import { describe, test, expect } from "bun:test";
-import { parseAcceptProtocols, parseAcceptEncoding, parseExtensions } from "./negotiation-parsers";
-import { TransportProtocol, CompressionAlgorithm } from "../db/enums";
+import { describe, expect, test } from "bun:test";
+import { CompressionAlgorithm, TransportProtocol } from "../db/enums";
+import { parseAcceptEncoding, parseAcceptProtocols, parseExtensions } from "./negotiation-parsers";
 
 describe("parseAcceptProtocols", () => {
   test("parses single protocol", () => {

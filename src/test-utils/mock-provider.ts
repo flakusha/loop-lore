@@ -10,9 +10,9 @@
  */
 
 import type {
-  LLMProvider,
   GenerateRequest,
   GenerateResponse,
+  LLMProvider,
   ProviderCapabilities,
   StreamHandler,
 } from "@/generation/providers/types";

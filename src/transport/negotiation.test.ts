@@ -3,16 +3,16 @@
  *
  * Pure functions — no I/O, no mocks needed.
  */
-import { describe, test, expect } from "bun:test";
+import { describe, expect, test } from "bun:test";
+import { CompressionAlgorithm, TransportProtocol } from "../db/enums";
 import {
-  negotiate,
-  parseAcceptProtocols,
-  parseAcceptEncoding,
-  parseExtensions,
   DEFAULT_CAPABILITIES,
+  negotiate,
+  parseAcceptEncoding,
+  parseAcceptProtocols,
+  parseExtensions,
   type ServerCapabilities,
 } from "./negotiation";
-import { TransportProtocol, CompressionAlgorithm } from "../db/enums";
 
 // ── Test Request Helper ───────────────────────────────────────
 

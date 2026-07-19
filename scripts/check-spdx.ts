@@ -61,8 +61,7 @@ function parseReuseToml(content: string): ReuseRule[] {
 
     const license = extractString(block, "SPDX-License-Identifier") ?? "";
     const copyright = extractString(block, "SPDX-FileCopyrightText") ?? "";
-    const precedence =
-      extractString(block, "precedence") ?? "aggregate";
+    const precedence = extractString(block, "precedence") ?? "aggregate";
 
     rules.push({
       paths,
@@ -130,18 +129,16 @@ function checkHeader(content: string, rule: ReuseRule): HeaderCheck {
 
   // Check license: file's license must be one of the allowed licenses
   const allowedLicenses = parseLicenses(rule.license);
-  const licenseOk =
-    foundLicense !== null &&
-    allowedLicenses.some(
+  const licenseOk = foundLicense !== null
+    && allowedLicenses.some(
       (allowed) =>
-        foundLicense === allowed ||
-        foundLicense.includes(allowed),
+        foundLicense === allowed
+        || foundLicense.includes(allowed),
     );
 
   // Check copyright: must contain the expected holder
-  const copyrightOk =
-    foundCopyright !== null &&
-    foundCopyright.includes("Loop Lore Contributors");
+  const copyrightOk = foundCopyright !== null
+    && foundCopyright.includes("Loop Lore Contributors");
 
   return {
     valid: licenseOk && copyrightOk,
@@ -215,10 +212,9 @@ async function main() {
 
   // Collect files to check
   const explicitFiles = process.argv.slice(2);
-  const files =
-    explicitFiles.length > 0
-      ? explicitFiles.filter(hasCheckableExtension).filter((f) => !isExcluded(f))
-      : await getStagedFiles();
+  const files = explicitFiles.length > 0
+    ? explicitFiles.filter(hasCheckableExtension).filter((f) => !isExcluded(f))
+    : await getStagedFiles();
 
   if (files.length === 0) {
     console.log("[spdx] No source files to check.");
@@ -230,9 +226,7 @@ async function main() {
 
   for (const file of files) {
     // Find matching REUSE.toml rule (first match wins)
-    const rule = rules.find((r) =>
-      r.matchers.some((m) => m.test(file)),
-    );
+    const rule = rules.find((r) => r.matchers.some((m) => m.test(file)));
 
     if (!rule) {
       violations.push({
@@ -280,8 +274,7 @@ async function main() {
     "",
     "REUSE.toml rules:",
     ...rules.map(
-      (r) =>
-        `  ${r.paths.join(", ")} → ${r.license}`,
+      (r) => `  ${r.paths.join(", ")} → ${r.license}`,
     ),
   ].join("\n");
 

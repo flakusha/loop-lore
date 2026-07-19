@@ -1,9 +1,9 @@
-import { Kysely, SqliteDialect } from "kysely";
 import { Database } from "bun:sqlite";
+import { Kysely, SqliteDialect } from "kysely";
 import { mkdirSync } from "node:fs";
 import path from "node:path";
-import type { DB } from "./schema";
 import { DATA_DIR } from "../config/constants";
+import type { DB } from "./schema";
 
 interface BunSqliteStatement {
   reader: boolean;
@@ -36,7 +36,7 @@ export function createSqliteDialect(database: Database): SqliteDialect {
         all: (parameters: readonly unknown[]) => statement.all(...(parameters as any[])),
 
         run: (parameters: readonly unknown[]) => statement.run(...(parameters as any[])),
-        iterate: function* (parameters: readonly unknown[]) {
+        iterate: function*(parameters: readonly unknown[]) {
           yield* statement.all(...(parameters as any[]));
         },
       };

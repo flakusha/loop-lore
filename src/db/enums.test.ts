@@ -5,7 +5,7 @@
  * and that their values are non-empty strings. Prevents drift
  * between domain enum files and the barrel re-export.
  */
-import { describe, test, expect } from "bun:test";
+import { describe, expect, test } from "bun:test";
 import * as enums from "./enums";
 
 // ── Expected enum exports per domain ────────────────────────
@@ -81,14 +81,14 @@ describe("enum barrel", () => {
     const expectedNames = Object.keys(EXPECTED_ENUMS).sort();
     const actualNames = Object.keys(enums).filter(
       (k) =>
-        !k.endsWith("Machine") &&
-        !k.endsWith("Def") &&
-        !k.endsWith("Validator") &&
-        k !== "StateMachine" &&
-        k !== "TransitionError" &&
-        k !== "CompositeValidator" &&
-        k !== "createMachine" &&
-        k !== "StateDef",
+        !k.endsWith("Machine")
+        && !k.endsWith("Def")
+        && !k.endsWith("Validator")
+        && k !== "StateMachine"
+        && k !== "TransitionError"
+        && k !== "CompositeValidator"
+        && k !== "createMachine"
+        && k !== "StateDef",
     );
     // Check that expected names are subset of actual names
     for (const name of expectedNames) {

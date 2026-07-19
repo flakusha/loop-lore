@@ -10,12 +10,12 @@
  */
 
 import { Elysia } from "elysia";
-import type { Db } from "../db";
 import type { Config } from "../config/schema";
-import { uid, jsonStringifyOr } from "../utils";
-import { jsonResponse, jsonError, jsonPaginated, jsonCreated, jsonNoContent, HttpStatus } from "./http-utils";
-import { EntityCreateBody, EntityUpdateBody } from "../validation/schemas";
+import type { Db } from "../db";
+import { jsonStringifyOr, uid } from "../utils";
 import { notFound } from "../validation/middleware";
+import { EntityCreateBody, EntityUpdateBody } from "../validation/schemas";
+import { HttpStatus, jsonCreated, jsonError, jsonNoContent, jsonPaginated, jsonResponse } from "./http-utils";
 
 export interface EntityConfig {
   parentPrefix: string;

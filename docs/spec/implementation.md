@@ -162,7 +162,6 @@ finishedAt: string;
 }
 
 ````
-
 When `autoValidate` is set and a `synthetic_data` row passes every case in
 `replay`/`regression`, the runner transitions it to `validated` via
 `syntheticDataStatusMachine` (no free mutation).

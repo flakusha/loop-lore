@@ -10,7 +10,7 @@
       <button class="btn-icon" x-on:click="window.closeModal($el)">&times;</button>
     </div>
     <div class="modal-body">
-      <form onsubmit="return createWorld($event);" data-testid="create-world-form">
+      <form onsubmit="return createWorld($event)" data-testid="create-world-form">
         <div class="form-group">
           <label class="form-label" for="world-name">World Name</label>
           <input
@@ -42,9 +42,7 @@
             placeholder="Full setting description..."
           ></textarea>
         </div>
-        <div
-          style="display: flex; gap: var(--space-3); justify-content: flex-end; margin-top: var(--space-6)"
-        >
+        <div style="display: flex; gap: var(--space-3); justify-content: flex-end; margin-top: var(--space-6)">
           <button type="button" class="btn btn-secondary" x-on:click="window.closeModal($el)">Cancel</button>
           <button type="submit" class="btn btn-primary">Create</button>
         </div>

@@ -4,7 +4,7 @@
  * Manages provider health status and model discovery.
  * Provides rescan capability and cached health results.
  */
-import { listProviders, getProvider } from "../generation/providers/registry";
+import { getProvider, listProviders } from "../generation/providers/registry";
 import { getLogger } from "../logger";
 
 export interface ProviderHealthStatus {
@@ -62,13 +62,13 @@ export async function scanAllProviders(): Promise<ProviderHealthStatus[]> {
     r.status === "fulfilled"
       ? r.value
       : {
-          name: providers[i]!.name,
-          label: providers[i]!.capabilities.label,
-          status: "error" as const,
-          models: [],
-          lastChecked: new Date().toISOString(),
-          error: r.reason instanceof Error ? r.reason.message : "Unknown error",
-        },
+        name: providers[i]!.name,
+        label: providers[i]!.capabilities.label,
+        status: "error" as const,
+        models: [],
+        lastChecked: new Date().toISOString(),
+        error: r.reason instanceof Error ? r.reason.message : "Unknown error",
+      }
   );
 
   state.cache = updated;

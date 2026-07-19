@@ -2,18 +2,18 @@
  * Tests for frontend/browser.ts — browser compression and encryption utilities
  */
 
-import { describe, test, expect, beforeAll } from "bun:test";
+import { beforeAll, describe, expect, test } from "bun:test";
 import {
-  browserEncodeContent,
+  browserCompressThenEncrypt,
   browserDecodeContent,
-  browserEncryptContent,
   browserDecryptContent,
-  browserImportKey,
+  browserDecryptThenDecompress,
+  browserEncodeContent,
+  browserEncryptContent,
+  type BrowserEncryptedPayload,
   browserExportKey,
   browserGenerateKey,
-  browserCompressThenEncrypt,
-  browserDecryptThenDecompress,
-  type BrowserEncryptedPayload,
+  browserImportKey,
 } from "../browser";
 
 const SHORT_TEXT = "Hello, World!";

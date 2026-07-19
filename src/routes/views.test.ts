@@ -1,7 +1,7 @@
 /**
  * Tests for view serving routes - redirect and layout wrapping behavior.
  */
-import { describe, test, expect } from "bun:test";
+import { describe, expect, test } from "bun:test";
 import { viewRoutes } from "./views";
 
 const mockDb = {} as never;
@@ -151,7 +151,7 @@ describe("id verification (URL injection guard)", () => {
     const body = await res.text();
     expect(body).toContain("World not found");
     // The broken shell (edit button pointing at a non-existent world) must not render.
-    expect(body).not.toContain('data-testid="edit-world"');
+    expect(body).not.toContain("data-testid=\"edit-world\"");
   });
 
   test("/worlds/:id/edit with missing world returns not-found", async () => {

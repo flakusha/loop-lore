@@ -1,10 +1,10 @@
-import { log as rootLog } from "./logger";
 import { jsonBody, jsonParseOr } from "./json";
+import { log as rootLog } from "./logger";
 import { worldLocations } from "./world-locations";
 
 const log = rootLog.child({ module: "world-edit" });
 
-(globalThis as any).worldEditState = function () {
+(globalThis as any).worldEditState = function() {
   return {
     worldId: "",
     activeTab: "general",
@@ -49,11 +49,11 @@ const log = rootLog.child({ module: "world-edit" });
       this.saving = true;
       const settings = this.tagsStr
         ? {
-            tags: this.tagsStr
-              .split(",")
-              .map((t: string) => t.trim())
-              .filter(Boolean),
-          }
+          tags: this.tagsStr
+            .split(",")
+            .map((t: string) => t.trim())
+            .filter(Boolean),
+        }
         : {};
       try {
         const res = await fetch(`/api/worlds/${this.worldId}`, {
