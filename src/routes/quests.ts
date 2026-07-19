@@ -4,11 +4,11 @@
  * Wire QuestEngine to REST endpoints:
  *   GET    /api/worlds/:id/quests              — list active quests
  *   POST   /api/worlds/:id/quests              — create quest
- *   GET    /api/quests/:questId                     — get single quest
- *   PUT    /api/quests/:questId                     — update quest
- *   DELETE /api/quests/:questId                     — abandon quest
- *   POST   /api/quests/:questId/progress            — advance progress
- *   GET    /api/quests/:questId/progress/:chatId    — get chat progress
+ *   GET    /api/quests/:id                         — get single quest
+ *   PUT    /api/quests/:id                         — update quest
+ *   DELETE /api/quests/:id                         — abandon quest
+ *   POST   /api/quests/:id/progress                — advance progress
+ *   GET    /api/quests/:id/progress/:chatId         — get chat progress
  */
 
 import { Elysia, } from "elysia";
@@ -249,46 +249,46 @@ export function questsRoutes({ database, }: { database: Kysely<DB> },): Elysia {
       },
       { body: QuestCreateBody, },
     )
-    .get("/api/quests/:questId", async (ctx: any,) => {
+    .get("/api/quests/:id", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
       const userRole = ctx.userRole as string | null;
-      return handleQuest(database, "GET", ctx.params.questId as string, userId, userRole,);
+      return handleQuest(database, "GET", ctx.params.id as string, userId, userRole,);
     },)
-    .put("/api/quests/:questId", async (ctx: any,) => {
+    .put("/api/quests/:id", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
       const userRole = ctx.userRole as string | null;
       return handleQuest(
         database,
         "PUT",
-        ctx.params.questId as string,
+        ctx.params.id as string,
         userId,
         userRole,
         ctx.body as Record<string, unknown>,
       );
     },)
-    .delete("/api/quests/:questId", async (ctx: any,) => {
+    .delete("/api/quests/:id", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
       const userRole = ctx.userRole as string | null;
-      return handleAbandonQuest(database, ctx.params.questId as string, userId, userRole,);
+      return handleAbandonQuest(database, ctx.params.id as string, userId, userRole,);
     },)
-    .post("/api/quests/:questId/progress", async (ctx: any,) => {
+    .post("/api/quests/:id/progress", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
       const userRole = ctx.userRole as string | null;
       return handleProgress(
         database,
-        ctx.params.questId as string,
+        ctx.params.id as string,
         undefined,
         userId,
         userRole,
         ctx.body as Record<string, unknown>,
       );
     },)
-    .get("/api/quests/:questId/progress/:chatId", async (ctx: any,) => {
+    .get("/api/quests/:id/progress/:chatId", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
       const userRole = ctx.userRole as string | null;
       return handleProgress(
         database,
-        ctx.params.questId as string,
+        ctx.params.id as string,
         ctx.params.chatId as string,
         userId,
         userRole,
