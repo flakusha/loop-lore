@@ -5,7 +5,6 @@ import type { DB, } from "../../db/schema";
 import type { Kysely, } from "kysely";
 import type { LogEntry, } from "../types";
 import { DBTransport, } from "./db";
-import { afterAll, beforeAll, describe, expect, test } from "bun:test";
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
 import { createLogger, } from "../index";
 import { createTestDb, } from "../../test-utils/create-test-db";

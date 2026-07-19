@@ -8,7 +8,6 @@ import type { AssetType as AssetTypeT, } from "../db/enums";
 import type { DB, } from "../db/schema";
 import type { Kysely, } from "kysely";
 import { AssetLinkEntity, AssetType, AssetVisibility, StorageBackend, } from "../db/enums";
-import { existsSync, mkdirSync, unlinkSync, writeFileSync } from "node:fs";
 import { existsSync, mkdirSync, unlinkSync, writeFileSync, } from "node:fs";
 import { extractImageMetadata, } from "./metadata";
 import { join, resolve, } from "node:path";

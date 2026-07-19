@@ -114,8 +114,8 @@ async function seedBootstrapAdmin(database: Kysely<DB>, config: Config, log: Log
   const password = config.auth.adminPassword;
   if (!username || !password) {
     log.warn(
-      "auth.required=true but no bootstrap admin configured (auth.adminUsername / auth.adminPassword "
-        + "or AUTH_ADMIN_USERNAME / AUTH_ADMIN_PASSWORD). Instance has no admin — set credentials or enable registration.",
+      "auth.required=true but no bootstrap admin configured (auth.adminUsername / auth.adminPassword " +
+        "or AUTH_ADMIN_USERNAME / AUTH_ADMIN_PASSWORD). Instance has no admin — set credentials or enable registration.",
     );
     return;
   }

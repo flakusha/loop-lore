@@ -12,7 +12,6 @@ import { ConsoleTransport, } from "./transports/console";
 import { LogLevelNumeric, } from "./types";
 import { applyLimits, } from "./limits";
 import { censorMeta, fieldNamesToRules, } from "./censors";
-import { formatTime, unixSec } from "../utils/date";
 import { formatTime, unixSec, } from "../utils/date";
 import { levelFromConfig, shouldEmit, } from "./levels";
 

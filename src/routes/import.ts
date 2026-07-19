@@ -3,15 +3,15 @@
 // Character import routes.
 // Handles import via multipart upload with auto-detection.
 
-import { Elysia } from "elysia";
-import type { Kysely } from "kysely";
+import { Elysia, } from "elysia";
+import type { Kysely, } from "kysely";
 import crypto from "node:crypto";
-import { parseCharacterCard, validateCharacter } from "../characters/parser";
-import type { CanonicalCharacter } from "../characters/parser";
-import type { DB } from "../db/schema";
-import { getOrCreateSoloUserForAuth } from "../middleware/auth";
-import { safeJsonStringify, uid } from "../utils";
-import { HttpStatus, jsonCreated, jsonError } from "./http-utils";
+import { parseCharacterCard, validateCharacter, } from "../characters/parser";
+import type { CanonicalCharacter, } from "../characters/parser";
+import type { DB, } from "../db/schema";
+import { getOrCreateSoloUserForAuth, } from "../middleware/auth";
+import { safeJsonStringify, uid, } from "../utils";
+import { HttpStatus, jsonCreated, jsonError, } from "./http-utils";
 
 interface ImportActorOpts {
   character: CanonicalCharacter;
@@ -21,16 +21,16 @@ interface ImportActorOpts {
   userId: string;
 }
 
-async function importActor(opts: ImportActorOpts): Promise<Response> {
-  const { character, format, warnings, database, userId } = opts;
+async function importActor(opts: ImportActorOpts,): Promise<Response> {
+  const { character, format, warnings, database, userId, } = opts;
 
   // Validate character
-  const validationErrors = validateCharacter(character);
+  const validationErrors = validateCharacter(character,);
   if (validationErrors.length > 0) {
     return jsonError({
-      message: `Validation failed: ${validationErrors.join(", ")}`,
+      message: `Validation failed: ${validationErrors.join(", ",)}`,
       status: HttpStatus.BadRequest,
-    });
+    },);
   }
 
   const id = uid();
@@ -38,13 +38,13 @@ async function importActor(opts: ImportActorOpts): Promise<Response> {
   // Convert alternate_greetings to JSON string
   let alternateGreetings: string | null = null;
   if (character.alternate_greetings && character.alternate_greetings.length > 0) {
-    const result = safeJsonStringify(character.alternate_greetings);
-    if (result.ok) alternateGreetings = result.value;
+    const result = safeJsonStringify(character.alternate_greetings,);
+    if (result.ok) { alternateGreetings = result.value; }
   }
 
   // Insert character as actor
   await database
-    .insertInto("actors")
+    .insertInto("actors",)
     .values({
       id,
       actor_type: "character",
@@ -66,7 +66,7 @@ async function importActor(opts: ImportActorOpts): Promise<Response> {
       alternate_greetings: alternateGreetings,
       settings: "{}",
       data_version: 1,
-    })
+    },)
     .execute();
 
   return jsonCreated({
@@ -74,44 +74,44 @@ async function importActor(opts: ImportActorOpts): Promise<Response> {
     name: character.name,
     format,
     warnings,
-  });
+  },);
 }
 
-async function resolveUserId(request: Request, database: Kysely<DB>): Promise<string | null> {
-  const cookieHeader = request.headers.get("Cookie");
-  const match = cookieHeader ? /ll_token=([^;]+)/.exec(cookieHeader) : null;
+async function resolveUserId(request: Request, database: Kysely<DB>,): Promise<string | null> {
+  const cookieHeader = request.headers.get("Cookie",);
+  const match = cookieHeader ? /ll_token=([^;]+)/.exec(cookieHeader,) : null;
   if (match) {
-    const tokenHash = crypto.createHash("sha256").update(match[1]!).digest("hex");
+    const tokenHash = crypto.createHash("sha256",).update(match[1]!,).digest("hex",);
     const session = await database
-      .selectFrom("sessions")
-      .select(["user_id"])
-      .where("token_hash", "=", tokenHash)
+      .selectFrom("sessions",)
+      .select(["user_id",],)
+      .where("token_hash", "=", tokenHash,)
       .executeTakeFirst();
-    if (session) return session.user_id;
+    if (session) { return session.user_id; }
   }
   // Fallback to solo user
-  const solo = await getOrCreateSoloUserForAuth(database, "solo");
+  const solo = await getOrCreateSoloUserForAuth(database, "solo",);
   return solo?.id ?? null;
 }
 
-async function handleImport(request: Request, database: Kysely<DB>, userId: string): Promise<Response> {
-  if (!userId) return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized });
+async function handleImport(request: Request, database: Kysely<DB>, userId: string,): Promise<Response> {
+  if (!userId) { return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, },); }
 
-  const contentType = request.headers.get("content-type") ?? "";
+  const contentType = request.headers.get("content-type",) ?? "";
 
-  if (contentType.includes("multipart/form-data")) {
+  if (contentType.includes("multipart/form-data",)) {
     const formData = await request.formData();
-    const file = formData.get("file");
+    const file = formData.get("file",);
     if (!file || !(file instanceof File)) {
-      return jsonError({ message: "file field is required", status: HttpStatus.BadRequest });
+      return jsonError({ message: "file field is required", status: HttpStatus.BadRequest, },);
     }
 
-    const fileBytes = Buffer.from(await file.arrayBuffer());
+    const fileBytes = Buffer.from(await file.arrayBuffer(),);
     const filename = file.name ?? "";
 
     try {
       // Parse character card with auto-detection
-      const result = await parseCharacterCard(fileBytes, filename);
+      const result = await parseCharacterCard(fileBytes, filename,);
 
       // Import the character
       return await importActor({
@@ -120,25 +120,25 @@ async function handleImport(request: Request, database: Kysely<DB>, userId: stri
         warnings: result.warnings,
         database,
         userId,
-      });
+      },);
     } catch (error) {
       const parseError = error as { code?: string; message?: string; suggestion?: string };
       return jsonError({
         message: parseError.message ?? "Failed to parse character card",
         status: HttpStatus.BadRequest,
-      });
+      },);
     }
   }
 
-  return jsonError({ message: "Expected multipart/form-data", status: HttpStatus.BadRequest });
+  return jsonError({ message: "Expected multipart/form-data", status: HttpStatus.BadRequest, },);
 }
 
-export function importRoutes({ database }: { database: Kysely<DB> }): Elysia {
-  return new Elysia({ name: "import" }).onRequest(async (ctx: any) => {
-    const url = new URL(ctx.request.url);
+export function importRoutes({ database, }: { database: Kysely<DB> },): Elysia {
+  return new Elysia({ name: "import", },).onRequest(async (ctx: any,) => {
+    const url = new URL(ctx.request.url,);
     if (ctx.request.method === "POST" && url.pathname === "/api/actors/import") {
-      const userId = await resolveUserId(ctx.request, database);
-      return handleImport(ctx.request, database, userId ?? "");
+      const userId = await resolveUserId(ctx.request, database,);
+      return handleImport(ctx.request, database, userId ?? "",);
     }
-  }) as unknown as Elysia;
+  },) as unknown as Elysia;
 }

@@ -1,4 +1,3 @@
-import type { Connection, ProtocolHandler } from "./protocol.unified";
 import type { Connection, ProtocolHandler, } from "./protocol.unified";
 import type { TransportProtocol, } from "../db/enums";
 import { TransportError, TransportErrorCode, } from "./errors";
