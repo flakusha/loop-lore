@@ -5,6 +5,18 @@
  */
 import { ErrorCode, HttpStatus, jsonCreated, jsonError, jsonNoContent, jsonResponse, } from "../routes/http-utils";
 
+import { Elysia, } from "elysia";
+import type { Kysely, } from "kysely";
+import type { DB, } from "../db/schema";
+import type { RequestContext, } from "../middleware/types";
+import { PersonasService, } from "./service";
+
+/**
+ * Personas Controller
+ *
+ * Elysia plugin for persona CRUD operations.
+ */
+
 /**
  * Personas Controller
  *

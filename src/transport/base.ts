@@ -1,8 +1,7 @@
-import { randomUUID, } from "node:crypto";
+import type { Connection, ProtocolHandler, } from "./protocol.unified";
 import type { TransportProtocol, } from "../db/enums";
 import { TransportError, TransportErrorCode, } from "./errors";
-import type { Connection, ProtocolHandler, } from "./protocol.unified";
-import type { Connection, ProtocolHandler, } from "./protocol.unified";
+import { randomUUID, } from "node:crypto";
 
 /**
  * Shared options for all transport adapters.

@@ -1,6 +1,5 @@
-import { brotliCompressSync, gzipSync, } from "node:zlib";
-import { brotliCompressSync, gzipSync, } from "node:zlib";
 import type { ContentEncoding, EncodeResult, } from "./types";
+import { brotliCompressSync, gzipSync, } from "node:zlib";
 
 function zstdCompress(data: Buffer,): Buffer {
   // zstd compression via Bun runtime (type-safe wrapper)

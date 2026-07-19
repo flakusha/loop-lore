@@ -535,7 +535,7 @@ cmd_cleanup() {
         local branch
         branch=$(git -C "$REPO_ROOT" worktree list --porcelain |
             grep -A 2 "path $(realpath "$worktree_path")" |
-            grep "branch" | sed 's|branch refs/heads/||' || true)
+            grep "branch" | sed 's|branch refs/heads/||')
 
         if [[ -z "$branch" ]]; then
             echo -e "${YELLOW}  Skipped (detached HEAD): $worktree_path${NC}"

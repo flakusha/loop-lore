@@ -6,6 +6,9 @@ import {
   registerPolicyDetector,
 } from "./policy-detector";
 
+import { DEFAULT_POLICY_DETECTION, } from "./types";
+import type { PolicyAnalysis, } from "./types";
+
 interface DetectorResult {
   detected?: boolean;
   confidence?: number;

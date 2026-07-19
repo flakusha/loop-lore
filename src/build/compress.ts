@@ -1,12 +1,9 @@
-import { existsSync, readFileSync, writeFileSync, } from "node:fs";
+import { compressFile, copyDirectory, walkDirectory, } from "../content/compress";
+import { createLogger, } from "../logger";
 import { existsSync, readFileSync, writeFileSync, } from "node:fs";
 import { extname, join, } from "node:path";
-import { compressFile, copyDirectory, walkDirectory, } from "../content/compress";
-import { compressFile, copyDirectory, walkDirectory, } from "../content/compress";
 import { injectContentHashes, } from "../content/hash-injection";
 import { minifyCSS, minifyHTMLContent, } from "../content/minify";
-import { minifyCSS, minifyHTMLContent, } from "../content/minify";
-import { createLogger, } from "../logger";
 
 const STRIP_TEST_IDS = process.env.STRIP_TEST_IDS !== "false";
 

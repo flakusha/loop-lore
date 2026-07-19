@@ -1,19 +1,18 @@
 /**
  * Tests for generation/step-pipeline.ts — step pipeline tracking
  */
+import type { ActiveGeneration, } from "./cancellation-tracker";
+import type { DB, } from "../db/schema";
+import { DEFAULT_REPETITION_DETECTION, } from "./types";
 import { Database, } from "bun:sqlite";
-import { afterAll, afterEach, beforeAll, describe, expect, test, } from "bun:test";
-import { afterAll, afterEach, beforeAll, describe, expect, test, } from "bun:test";
-import { Kysely, } from "kysely";
 import { GenerationStatus, PolicyType, } from "../db/enums";
+import { Kysely, } from "kysely";
+import { StreamingRepetitionDetector, } from "./repetition-detector";
+import { activeGenerations, } from "./cancellation-tracker";
+import { afterAll, afterEach, beforeAll, describe, expect, test, } from "bun:test";
+import { completeStep, failStep, getPipelineState, } from "./step-pipeline";
 import { createSqliteDialect, } from "../db/index";
 import { up as migrate, } from "../db/migrations/001_init";
-import type { DB, } from "../db/schema";
-import type { ActiveGeneration, } from "./cancellation-tracker";
-import { activeGenerations, } from "./cancellation-tracker";
-import { StreamingRepetitionDetector, } from "./repetition-detector";
-import { completeStep, failStep, getPipelineState, } from "./step-pipeline";
-import { DEFAULT_REPETITION_DETECTION, } from "./types";
 
 /** Minimal ActiveGeneration factory for test mocks. */
 function makeActiveGen(overrides: Partial<ActiveGeneration>,): ActiveGeneration {
