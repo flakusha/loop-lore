@@ -10,13 +10,13 @@
  */
 
 import { Elysia, t } from "elysia";
-import type { Kysely } from "kysely";
-import type { DB } from "../db/schema";
-import { jsonResponse, jsonError, HttpStatus } from "./http-utils";
-import { jsonParseOr, safeJsonStringify } from "../utils";
 import JSZip from "jszip";
+import type { Kysely } from "kysely";
 import { ActorType } from "../db/enums";
+import type { DB } from "../db/schema";
+import { jsonParseOr, safeJsonStringify } from "../utils";
 import { unauthorized } from "../validation/middleware";
+import { HttpStatus, jsonError, jsonResponse } from "./http-utils";
 
 async function handleGetSettings(database: Kysely<DB>, userId: string): Promise<Response> {
   const user = await database
@@ -92,7 +92,7 @@ async function handleExportAll(database: Kysely<DB>, userId: string): Promise<Re
   return new Response(buffer, {
     headers: {
       "Content-Type": "application/zip",
-      "Content-Disposition": 'attachment; filename="loop-lore-export.zip"',
+      "Content-Disposition": "attachment; filename=\"loop-lore-export.zip\"",
     },
   });
 }

@@ -6,7 +6,7 @@
 //
 // Reuses the existing global `showToast` (declared on Window) for push toasts.
 
-import type { NotificationListItem, NotificationBellState, NotificationPrefsState } from "./types";
+import type { NotificationBellState, NotificationListItem, NotificationPrefsState } from "./types";
 
 const TYPE_ICONS: Record<string, string> = {
   mention: "@",
@@ -32,7 +32,7 @@ const TYPE_LABELS: Record<string, string> = {
 
 let bellStream: EventSource | null = null;
 
-globalThis.notificationsBell = function (): NotificationBellState {
+globalThis.notificationsBell = function(): NotificationBellState {
   return {
     open: false,
     unreadCount: 0,
@@ -111,7 +111,7 @@ globalThis.notificationsBell = function (): NotificationBellState {
   };
 };
 
-globalThis.notificationPrefs = function (): NotificationPrefsState {
+globalThis.notificationPrefs = function(): NotificationPrefsState {
   return {
     loaded: false,
     saving: false,

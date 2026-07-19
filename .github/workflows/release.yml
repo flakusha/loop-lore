@@ -8,7 +8,7 @@ on:
   push:
     branches:
       - master
-      - 'release/**'
+      - "release/**"
 
 jobs:
   ci-checks:

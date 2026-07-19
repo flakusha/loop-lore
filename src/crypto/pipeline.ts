@@ -7,9 +7,9 @@
  * Matches spec at docs/frontend/encryption.md §Compress-Encrypt Pipeline
  */
 
-import { encodeContent, decodeContent } from "../content";
-import { safeJsonParse, safeJsonStringify } from "../utils";
+import { decodeContent, encodeContent } from "../content";
 import type { ContentEncoding } from "../content/types";
+import { safeJsonParse, safeJsonStringify } from "../utils";
 
 const IV_LENGTH = 12;
 const DEFAULT_THRESHOLD = 128;
@@ -52,11 +52,11 @@ export function isEncryptedPayload(storedContent: string): boolean {
   if (!parsed.ok) return false;
   const p = parsed.value;
   return (
-    typeof p.enc === "string" &&
-    typeof p.nonce === "string" &&
-    typeof p.algo === "string" &&
-    p.algo === "aes-256-gcm" &&
-    typeof p.key_id === "string"
+    typeof p.enc === "string"
+    && typeof p.nonce === "string"
+    && typeof p.algo === "string"
+    && p.algo === "aes-256-gcm"
+    && typeof p.key_id === "string"
   );
 }
 

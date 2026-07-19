@@ -1,6 +1,6 @@
+import { formattedGenerationTime, formattedTokensPerSecond, statsLine } from "./chat-stats";
 import { jsonBody } from "./json";
 import { log as rootLog } from "./logger";
-import { statsLine, formattedGenerationTime, formattedTokensPerSecond } from "./chat-stats";
 import type { ChatState } from "./types";
 
 const log = rootLog.child({ module: "chat-actions" });

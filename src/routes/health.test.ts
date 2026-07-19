@@ -5,7 +5,7 @@
  * (the standard fetch handler). No DB or I/O needed — the handler reads
  * from the global provider health cache.
  */
-import { describe, test, expect } from "bun:test";
+import { describe, expect, test } from "bun:test";
 import { healthRoutes } from "./health";
 
 describe("healthRoutes", () => {

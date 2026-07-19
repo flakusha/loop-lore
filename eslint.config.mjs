@@ -6,8 +6,8 @@
 // https://typescript-eslint.io/getting-started/typed-linting
 
 import eslint from "@eslint/js";
-import importPlugin from "eslint-plugin-import";
 import prettier from "eslint-config-prettier";
+import importPlugin from "eslint-plugin-import";
 import markdown from "eslint-plugin-markdown";
 import sonarjs from "eslint-plugin-sonarjs";
 import unicorn from "eslint-plugin-unicorn";

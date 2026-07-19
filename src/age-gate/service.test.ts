@@ -1,9 +1,9 @@
-import { describe, test, expect } from "bun:test";
 import { Database } from "bun:sqlite";
+import { describe, expect, test } from "bun:test";
 import { Kysely } from "kysely";
-import { getStatus, validateAge, acceptAgeGate, AgeGateError, UnderageError } from "./service";
 import type { AgeGateConfig } from "../config/schema";
 import { createSqliteDialect } from "../db/index";
+import { acceptAgeGate, AgeGateError, getStatus, UnderageError, validateAge } from "./service";
 
 // ── Helpers ──────────────────────────────────────────────────
 

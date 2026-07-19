@@ -2,8 +2,8 @@
  * User persona section — when the human user is impersonating a character or
  * has selected a persona, inject that identity into the user slot.
  */
-import type { SectionBuilder } from "../types";
 import { wrapSection } from "../../xml-utils";
+import type { SectionBuilder } from "../types";
 
 export const userPersonaSection: SectionBuilder = {
   name: "userPersona",
@@ -29,10 +29,12 @@ export const userPersonaSection: SectionBuilder = {
       if (impersonatedActor) {
         const personaParts: string[] = [];
         if (impersonatedActor.display_name) personaParts.push(`Name: ${impersonatedActor.display_name}`);
-        if (impersonatedActor.description)
+        if (impersonatedActor.description) {
           personaParts.push(`\nDescription: ${impersonatedActor.description}`);
-        if (impersonatedActor.personality)
+        }
+        if (impersonatedActor.personality) {
           personaParts.push(`\nPersonality: ${impersonatedActor.personality}`);
+        }
 
         if (personaParts.length > 0) {
           return [{ role: "system", content: wrapSection("user_persona", personaParts.join("")) }];

@@ -1,4 +1,4 @@
-import { describe, it, expect } from "bun:test";
+import { describe, expect, it } from "bun:test";
 import { QuestType, WorldEventType } from "../../db/enums";
 import type { CollectionQuestConfig, TimeQuestConfig, WorldEvent } from "../types";
 import { PROGRESS_CALCULATORS } from "./registry";

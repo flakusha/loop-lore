@@ -1,7 +1,7 @@
 import type { Kysely } from "kysely";
 import type { DB } from "../../db/schema";
-import type { DataMigration } from "./types";
 import { getLogger } from "../../logger";
+import type { DataMigration } from "./types";
 
 async function isApplied(db: Kysely<any>, table: string, toVersion: number): Promise<boolean> {
   const row = await db

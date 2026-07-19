@@ -2,9 +2,9 @@
  * Unit tests for PNG steganography character-card reader.
  */
 
-import { describe, test, expect } from "bun:test";
-import { extractCharacterDataFromPng } from "./steganography";
+import { describe, expect, test } from "bun:test";
 import { deflateSync } from "node:zlib";
+import { extractCharacterDataFromPng } from "./steganography";
 
 const PNG_SIG = Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]);
 

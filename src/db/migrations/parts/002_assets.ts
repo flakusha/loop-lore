@@ -1,4 +1,4 @@
-import { sql, type Kysely } from "kysely";
+import { type Kysely, sql } from "kysely";
 
 export async function up(database: Kysely<unknown>): Promise<void> {
   // ── Assets ─────────────────────────────────────────────────
@@ -34,7 +34,8 @@ export async function up(database: Kysely<unknown>): Promise<void> {
     .addPrimaryKeyConstraint("pk_asset_links", ["asset_id", "entity_type", "entity_id"])
     .execute();
 
-  await database.schema.createIndex("idx_asset_links_entity").on("asset_links").columns(["entity_type", "entity_id"]).execute();
+  await database.schema.createIndex("idx_asset_links_entity").on("asset_links").columns(["entity_type", "entity_id"])
+    .execute();
 
   // ── Asset Shares ───────────────────────────────────────────
   await database.schema
@@ -48,7 +49,10 @@ export async function up(database: Kysely<unknown>): Promise<void> {
 
   await database.schema.createIndex("idx_asset_shares_asset").on("asset_shares").column("asset_id").execute();
   await database.schema.createIndex("idx_asset_shares_with").on("asset_shares").column("shared_with_id").execute();
-  await database.schema.createIndex("idx_asset_shares_asset_with").on("asset_shares").columns(["asset_id", "shared_with_id"]).execute();
+  await database.schema.createIndex("idx_asset_shares_asset_with").on("asset_shares").columns([
+    "asset_id",
+    "shared_with_id",
+  ]).execute();
 }
 
 export async function down(database: Kysely<unknown>): Promise<void> {

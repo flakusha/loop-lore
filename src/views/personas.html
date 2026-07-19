@@ -53,14 +53,7 @@
         <template x-for="p in filtered" :key="p.id">
           <div
             class="list-card"
-            style="
-              display: flex;
-              align-items: center;
-              gap: var(--space-4);
-              padding: var(--space-3) var(--space-4);
-              border-bottom: 1px solid var(--border-default);
-              cursor: pointer;
-            "
+            style="display: flex; align-items: center; gap: var(--space-4); padding: var(--space-3) var(--space-4); border-bottom: 1px solid var(--border-default); cursor: pointer"
             @click="editPersona(p)"
             data-testid="persona-item"
           >
@@ -68,21 +61,15 @@
             <div style="flex: 1; min-width: 0">
               <div style="font-weight: 600" x-text="p.name"></div>
               <div
-                style="
-                  font-size: var(--fs-base-sm);
-                  color: var(--text-secondary);
-                  overflow: hidden;
-                  text-overflow: ellipsis;
-                  white-space: nowrap;
-                "
+                style="font-size: var(--fs-base-sm); color: var(--text-secondary); overflow: hidden; text-overflow: ellipsis; white-space: nowrap"
                 x-text="p.description || 'No description'"
-              ></div>
+              >
+              </div>
             </div>
             <div style="display: flex; gap: var(--space-2); flex-shrink: 0">
               <template x-if="p.is_default">
                 <span style="font-size: var(--fs-sm); color: var(--accent-green); padding: 0 var(--space-2)"
-                  >default</span
-                >
+                >default</span>
               </template>
               <button
                 class="btn-icon"
@@ -159,7 +146,8 @@
           :disabled="!formName.trim() || saving"
           x-text="saving ? 'Saving...' : $store.ui.activePersona ? 'Update' : 'Create'"
           data-testid="persona-save-btn"
-        ></button>
+        >
+        </button>
       </div>
     </div>
   </div>

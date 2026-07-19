@@ -2,7 +2,7 @@
 //
 // /summarize — extractive summary of recent messages.
 
-import { registerCommand, type CommandResult } from "./registry";
+import { type CommandResult, registerCommand } from "./registry";
 
 registerCommand("summarize", async (args, ctx): Promise<CommandResult> => {
   if (!ctx.messages || ctx.messages.length === 0) {

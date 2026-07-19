@@ -4,10 +4,10 @@
  * CRUD operations for user personas: identities that users adopt in chats.
  */
 import type { Kysely } from "kysely";
+import { DefaultState } from "../db/enums";
 import type { DB } from "../db/schema";
 import { getLogger } from "../logger";
 import { uid } from "../utils";
-import { DefaultState } from "../db/enums";
 
 export interface CreatePersonaParams {
   userId: string;
@@ -69,8 +69,9 @@ export class PersonasService {
     if (params.avatarAssetId !== undefined) updates.avatar_asset_id = params.avatarAssetId;
     if (params.description !== undefined) updates.description = params.description;
     if (params.title !== undefined) updates.title = params.title;
-    if (params.isDefault !== undefined)
+    if (params.isDefault !== undefined) {
       updates.is_default = params.isDefault ? DefaultState.Default : DefaultState.NotDefault;
+    }
 
     await this.db
       .updateTable("personas")

@@ -50,8 +50,8 @@ async function loadSmk(config: EncryptionConfig): Promise<CryptoKey | null> {
   if (!rawHex) {
     if (config.required) {
       throw new Error(
-        "SERVER_ENCRYPTION_KEY is required but not set. " +
-          "Set ENCRYPTION_REQUIRED=false for dev mode (encryption disabled).",
+        "SERVER_ENCRYPTION_KEY is required but not set. "
+          + "Set ENCRYPTION_REQUIRED=false for dev mode (encryption disabled).",
       );
     }
     return null; // Dev mode — no encryption
@@ -94,10 +94,11 @@ function hexToBytes(hex: string): Uint8Array {
   const bytes = new Uint8Array(cleaned.length / 2);
   for (let index = 0; index < bytes.length; index++) {
     const val = Number.parseInt(cleaned.slice(index * 2, index * 2 + 2), 16);
-    if (Number.isNaN(val))
+    if (Number.isNaN(val)) {
       throw new Error(
         `Invalid hex byte at position ${index * 2}: "${cleaned.slice(index * 2, index * 2 + 2)}"`,
       );
+    }
     bytes[index] = val;
   }
   return bytes;

@@ -17,22 +17,22 @@
 
 import { Elysia } from "elysia";
 import type { Kysely } from "kysely";
-import type { DB } from "../db/schema";
 import type { Config } from "../config/schema";
-import { uid, safeJsonStringify } from "../utils";
 import { DifficultyReroll, DifficultyState } from "../db/enums-story";
+import type { DB } from "../db/schema";
 import { WorldStateService } from "../story/world-state";
-import {
-  jsonResponse,
-  jsonError,
-  jsonPaginated,
-  jsonCreated,
-  jsonNoContent,
-  HttpStatus,
-  ErrorCode,
-} from "./http-utils";
+import { safeJsonStringify, uid } from "../utils";
+import { notFound, unauthorized } from "../validation/middleware";
 import { WorldCreateBody, WorldUpdateBody } from "../validation/schemas";
-import { unauthorized, notFound } from "../validation/middleware";
+import {
+  ErrorCode,
+  HttpStatus,
+  jsonCreated,
+  jsonError,
+  jsonNoContent,
+  jsonPaginated,
+  jsonResponse,
+} from "./http-utils";
 
 interface HandleOpts {
   database: Kysely<DB>;
@@ -157,8 +157,9 @@ async function handleDeleteWorld(
     .where("world_id", "=", worldId)
     .execute();
   const locIds = locationIds.map((l) => l.id);
-  if (locIds.length > 0)
+  if (locIds.length > 0) {
     await database.deleteFrom("location_states").where("location_id", "in", locIds).execute();
+  }
 
   await database.deleteFrom("npc_states").where("world_id", "=", worldId).execute();
   await database.deleteFrom("world_states").where("world_id", "=", worldId).execute();
@@ -298,9 +299,9 @@ async function handleCreateLocation(
       parent_location_id: (body.parentLocationId as string | undefined) ?? null,
       connections: body.connections
         ? (() => {
-            const r = safeJsonStringify(body.connections);
-            return r.ok ? r.value : "[]";
-          })()
+          const r = safeJsonStringify(body.connections);
+          return r.ok ? r.value : "[]";
+        })()
         : "[]",
     })
     .execute();
@@ -349,8 +350,9 @@ async function handleUpdateLocation(
     if (connError) return connError;
 
     const connectionsResult = safeJsonStringify(body.connections);
-    if (!connectionsResult.ok)
+    if (!connectionsResult.ok) {
       return jsonError({ message: "Invalid connections data", status: HttpStatus.BadRequest });
+    }
     updates.connections = connectionsResult.value;
   }
   updates.updated_at = new Date().toISOString();
