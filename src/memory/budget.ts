@@ -74,7 +74,7 @@ export async function getMemoriesWithinBudget(
   db: Kysely<DB>,
   actorId: string,
   config: Partial<MemoryBudgetConfig> = {},
-): Promise<{ content: string; memory_type: string; importance: number; confidence: number; pinned: boolean }[]> {
+): Promise<Array<{ content: string; memory_type: string; importance: number; confidence: number; pinned: boolean }>> {
   const { maxTokens = DEFAULT_MAX_TOKENS, minConfidence = 0.3, respectPins = true, } = config;
 
   // Fetch all memories for the actor, ordered by importance
