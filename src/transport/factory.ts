@@ -1,12 +1,12 @@
 // src/transport/factory.ts — Protocol handler factory
-import type { ProtocolHandler, } from "./protocol.unified";
-import { CompressionAlgorithm, TransportProtocol } from "../db/enums";
 import { CompressionAlgorithm, TransportProtocol, } from "../db/enums";
+import { CompressionAlgorithm, TransportProtocol, } from "../db/enums";
+import { withCompression, } from "./compression";
 import { TransportError, TransportErrorCode, } from "./errors";
 import { createH2Handler, } from "./h2";
 import { createHttp1Handler, } from "./http1";
+import type { ProtocolHandler, } from "./protocol.unified";
 import { createWsHandler, } from "./ws";
-import { withCompression, } from "./compression";
 
 /**
  * Configuration for creating a protocol handler.

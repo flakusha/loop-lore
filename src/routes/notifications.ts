@@ -3,14 +3,14 @@
 // Notification REST + SSE routes. Mirrors the activity endpoints
 // (src/routes/activity.ts, activity-stream.ts) for consistency: a polling
 // list plus an SSE stream that pushes when the unread snapshot changes.
-import type { DB, } from "../db/schema";
-import type { Kysely, } from "kysely";
 import { Elysia, t, } from "elysia";
-import { ErrorCode, HttpStatus, jsonError, jsonResponse } from "./http-utils";
-import { ErrorCode, HttpStatus, jsonError, jsonResponse, } from "./http-utils";
+import type { Kysely, } from "kysely";
+import type { DB, } from "../db/schema";
 import { NotificationService, } from "../notifications/service";
 import { safeJsonStringify, } from "../utils";
 import { unauthorized, } from "../validation/middleware";
+import { ErrorCode, HttpStatus, jsonError, jsonResponse, } from "./http-utils";
+import { ErrorCode, HttpStatus, jsonError, jsonResponse, } from "./http-utils";
 
 const POLL_INTERVAL_MS = 5000;
 const KEEPALIVE_MS = 15_000;

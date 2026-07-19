@@ -1,10 +1,10 @@
-import type { DB, } from "../db/schema";
 import { Database, } from "bun:sqlite";
 import { Kysely, } from "kysely";
-import { createApp, } from "../elysia-app";
-import { createSqliteDialect, } from "../db/index";
 import { loadConfig, } from "../config/load";
+import { createSqliteDialect, } from "../db/index";
 import { up, } from "../db/migrations/001_init";
+import type { DB, } from "../db/schema";
+import { createApp, } from "../elysia-app";
 
 const sqlite = new Database(":memory:",);
 sqlite.run("PRAGMA foreign_keys = ON",);

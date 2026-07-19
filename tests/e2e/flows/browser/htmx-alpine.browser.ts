@@ -8,8 +8,8 @@
  * Pre-logs in via seeded data (demo/solo mode).
  */
 
-import { afterAll, beforeAll, describe, expect, test } from "bun:test";
-import { type BrowserTestContext, createBrowserTest } from "../../helpers/browser-server";
+import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
+import { type BrowserTestContext, createBrowserTest, } from "../../helpers/browser-server";
 import {
   countToasts,
   dispatchEvent,
@@ -17,7 +17,6 @@ import {
   navigateViaHtmx,
   waitForAlpineReady,
 } from "../../helpers/htmx-alpine";
-
 
 /**
  * Browser E2E: htmx + Alpine.js Integration
