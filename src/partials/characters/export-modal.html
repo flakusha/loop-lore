@@ -1,0 +1,126 @@
+<div
+  id="export-modal"
+  class="modal-overlay"
+  x-on:click="window.closeModalOnBackdrop($event)"
+  data-testid="export-character-modal"
+>
+  <div class="modal">
+    <div class="modal-header">
+      <span class="title">Export Character Card</span>
+      <button class="btn-icon" x-on:click="window.closeModal($el)">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div style="margin-bottom: var(--space-4)">
+        <div style="font-weight: 600; margin-bottom: var(--space-2)">Character:</div>
+        <div id="export-character-name" style="color: var(--text-secondary)"></div>
+      </div>
+
+      <div style="margin-bottom: var(--space-4)">
+        <div style="font-weight: 600; margin-bottom: var(--space-2)">Export Format:</div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-2)">
+          <label
+            class="format-option"
+            style="
+              display: flex;
+              align-items: center;
+              gap: var(--space-2);
+              padding: var(--space-3);
+              border: 1px solid var(--border);
+              border-radius: 6px;
+              cursor: pointer;
+            "
+          >
+            <input type="radio" name="export-format" value="png" checked />
+            <div>
+              <div style="font-weight: 500">PNG (Recommended)</div>
+              <div style="font-size: 0.85em; color: var(--text-secondary)">SillyTavern compatible</div>
+            </div>
+          </label>
+          <label
+            class="format-option"
+            style="
+              display: flex;
+              align-items: center;
+              gap: var(--space-2);
+              padding: var(--space-3);
+              border: 1px solid var(--border);
+              border-radius: 6px;
+              cursor: pointer;
+            "
+          >
+            <input type="radio" name="export-format" value="json" />
+            <div>
+              <div style="font-weight: 500">JSON (V3)</div>
+              <div style="font-size: 0.85em; color: var(--text-secondary)">Standard format</div>
+            </div>
+          </label>
+          <label
+            class="format-option"
+            style="
+              display: flex;
+              align-items: center;
+              gap: var(--space-2);
+              padding: var(--space-3);
+              border: 1px solid var(--border);
+              border-radius: 6px;
+              cursor: pointer;
+            "
+          >
+            <input type="radio" name="export-format" value="yaml" />
+            <div>
+              <div style="font-weight: 500">YAML</div>
+              <div style="font-size: 0.85em; color: var(--text-secondary)">Human-readable</div>
+            </div>
+          </label>
+          <label
+            class="format-option"
+            style="
+              display: flex;
+              align-items: center;
+              gap: var(--space-2);
+              padding: var(--space-3);
+              border: 1px solid var(--border);
+              border-radius: 6px;
+              cursor: pointer;
+            "
+          >
+            <input type="radio" name="export-format" value="toml" />
+            <div>
+              <div style="font-weight: 500">TOML</div>
+              <div style="font-size: 0.85em; color: var(--text-secondary)">Config-style</div>
+            </div>
+          </label>
+        </div>
+      </div>
+
+      <div style="display: flex; gap: var(--space-3); justify-content: flex-end">
+        <button type="button" class="btn btn-secondary" x-on:click="window.closeModal($el)">Cancel</button>
+        <button
+          type="button"
+          class="btn btn-primary"
+          x-on:click="window.exportCharacter($el)"
+          data-testid="export-character-btn"
+        >
+          Export
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  window.exportCharacter = function (btn) {
+    const modal = btn.closest(".modal");
+    const format = modal.querySelector('input[name="export-format"]:checked').value;
+    const characterId = modal.dataset.characterId;
+
+    if (!characterId) {
+      console.error("No character ID found");
+      return;
+    }
+
+    // Trigger download
+    window.location.href = `/api/characters/${characterId}/export?format=${format}`;
+    window.closeModal(btn);
+  };
+</script>
