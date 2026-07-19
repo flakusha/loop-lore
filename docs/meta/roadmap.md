@@ -31,6 +31,7 @@ Current status of feature areas. Checkmarks = code exists in `src/`.
 
 **In Progress (P0):**
 
+// hint: Structural and logic conflict. Both design and behavior differ.
 | Epic | Feature                                                                            | Status         |
 | ---- | ---------------------------------------------------------------------------------- | -------------- |
 | 16   | Observability — telemetry, admin analytics, CI config, Playwright responsive tests | 🟡 In progress |
@@ -70,6 +71,7 @@ See `backlog.md` for full queue, `plan.md` for epic detail.
 
 ### P1: User-Facing Features
 
+// hint: Structural and logic conflict. Both design and behavior differ.
 | Feature                                        | Status       | Notes                                                                                                |
 | ---------------------------------------------- | ------------ | ---------------------------------------------------------------------------------------------------- |
 | Advanced Memory Systems                        | 🟡 Partial   | `actor_memories` table + keyword filtering done; three-tier (episodic/semantic/procedural) not built |
@@ -157,8 +159,6 @@ Research-driven feature proposals, separated by theme and linked from a hub. Der
 ## Timeline
 
 See `plan.md` for v0.1 checklist, `backlog.md` for future queue, `open-items.md` for technical debt, `CONTRIBUTING.md` for contribution guidelines.
-
-<!-- ISSUE-MAP-START -->
 
 ## Tracked as Git Issues
 
