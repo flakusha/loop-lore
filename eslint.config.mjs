@@ -1,13 +1,12 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
-// ESLint flat config — TypeScript + Unicorn + SonarJS + Prettier
+// ESLint flat config — TypeScript + Unicorn + SonarJS
 // https://eslint.org/docs/latest/use/configure/configuration-files
 // https://typescript-eslint.io/getting-started/typed-linting
 
 import eslint from "@eslint/js";
 import importPlugin from "eslint-plugin-import";
-import prettier from "eslint-config-prettier";
 import markdown from "eslint-plugin-markdown";
 import sonarjs from "eslint-plugin-sonarjs";
 import unicorn from "eslint-plugin-unicorn";
@@ -148,9 +147,6 @@ const tsRules = {
   "no-empty": "warn",
   "@typescript-eslint/no-empty-function": "warn",
   "@typescript-eslint/no-floating-promises": "off",
-
-  // ── Prettier ───────────────────────────────────────────────
-  ...prettier.rules,
 };
 
 export default tseslint.config(
@@ -181,7 +177,6 @@ export default tseslint.config(
       "no-unused-expressions": "off",
       "padded-blocks": "off",
       "eol-last": "off",
-      ...prettier.rules,
     },
   },
   // ── Server TypeScript: Bun/Node env, full type-checked rules ───
@@ -310,7 +305,6 @@ export default tseslint.config(
     rules: {
       ...unicorn.configs["flat/recommended"].rules,
       ...sonarjs.configs.recommended.rules,
-      ...prettier.rules,
 
       "unicorn/prefer-module": "off",
       "unicorn/prevent-abbreviations": "off",

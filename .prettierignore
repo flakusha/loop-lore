@@ -1,9 +1,0 @@
-dist/
-node_modules/
-data/
-.tmp/
-.hermes/
-docs/.vitepress/
-migrations/
-bun.lock
-*.har

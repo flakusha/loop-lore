@@ -104,6 +104,27 @@ link_configs() {
     echo -e "  ${CYAN}Linked configs/${NC} → ../../configs"
 }
 
+# Symlink node_modules from worktree to main repo — skips bun install entirely.
+# Only useful when deps haven't diverged; if worktree needs different deps,
+# remove the symlink and run `bun install` directly.
+link_node_modules() {
+    local worktree_path="$1"
+    local root_nm="$REPO_ROOT/node_modules"
+
+    # Skip if main repo has no node_modules
+    if [[ ! -d "$root_nm" ]]; then
+        return 0
+    fi
+    # Skip if worktree already has node_modules (real dir or symlink)
+    if [[ -e "$worktree_path/node_modules" || -L "$worktree_path/node_modules" ]]; then
+        return 0
+    fi
+
+    # Relative symlink: tree/branch/node_modules -> ../../node_modules
+    ln -s ../../node_modules "$worktree_path/node_modules"
+    echo -e "  ${CYAN}Linked node_modules/${NC} → ../../node_modules"
+}
+
 configure_signing() {
     local worktree_path="$1"
 
@@ -251,6 +272,7 @@ cmd_create() {
     git -C "$REPO_ROOT" worktree add "$worktree_path" "$branch"
     configure_signing "$worktree_path"
     link_configs "$worktree_path"
+    link_node_modules "$worktree_path"
     echo -e "${GREEN}✓ Created: $worktree_path${NC}"
     echo -e "  cd $worktree_path"
 }
@@ -297,6 +319,7 @@ cmd_new() {
     git -C "$REPO_ROOT" worktree add -b "$branch" "$worktree_path" "$base"
     configure_signing "$worktree_path"
     link_configs "$worktree_path"
+    link_node_modules "$worktree_path"
     echo -e "${GREEN}✓ Created: $worktree_path${NC}"
     echo -e "  cd $worktree_path"
 }
