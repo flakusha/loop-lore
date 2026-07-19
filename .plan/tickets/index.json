@@ -1,0 +1,425 @@
+{
+  "BUG-2025-002": {
+    "hash": "17949fd",
+    "extid": "BUG-2025-002",
+    "type": "BUG",
+    "title": "BUG-2025-002: Browser E2E parallel suite instability",
+    "label": "bug",
+    "priority": "medium",
+    "source": "docs/meta/open-items.md#bug2",
+    "body": "7 Playwright browsers + 7 Bun.serve instances under parallel load trigger timeouts; shared cachedSoloUser singleton corrupts state.\nSource: docs/meta/open-items.md (BUG.2)"
+  },
+  "FIX-2025-003": {
+    "hash": "8ec0ae7",
+    "extid": "FIX-2025-003",
+    "type": "FIX",
+    "title": "FIX-2025-003: Fire-and-forget DB writes mask failures",
+    "label": "fix",
+    "priority": "high",
+    "source": "docs/meta/open-items.md#cast2",
+    "body": "4 `void updateAttemptStatus(...).catch()` on DB writes in src/generation/cancellation-actions.ts. Failure leaves in-memory state out of sync with DB. Fix: log failures, await critical writes.\nSource: docs/meta/open-items.md (CAST.2)"
+  },
+  "INFRA-2025-001": {
+    "hash": "8e5ee40",
+    "extid": "INFRA-2025-001",
+    "type": "INFRA",
+    "title": "INFRA-2025-001: Native git issue tracking integration",
+    "label": "infrastructure",
+    "priority": "high",
+    "source": "AGENTS.md",
+    "body": "Integrate git-native-issue for in-repository planning. Issues live in refs/issues/<uuid>.\nSource: AGENTS.md, .plan/README.md"
+  },
+  "BUG-2025-003": {
+    "hash": "e89c883",
+    "extid": "BUG-2025-003",
+    "type": "BUG",
+    "title": "BUG-2025-003: Browser E2E cascade failure pattern",
+    "label": "bug",
+    "priority": "medium",
+    "source": "docs/meta/open-items.md#bug3",
+    "body": "Any timeout/failure corrupts shared ctx.page, killing all subsequent tests. Fix: each test operates on fresh starting state.\nSource: docs/meta/open-items.md (BUG.3)"
+  },
+  "TASK-2025-001": {
+    "hash": "3213709",
+    "extid": "TASK-2025-001",
+    "type": "TASK",
+    "title": "TASK-2025-001: TUI chat has no retry/idempotency key",
+    "label": "tui",
+    "priority": "low",
+    "source": "docs/meta/open-items.md#tui2",
+    "body": "src/tui/chat.ts sends messages without retry on failure. Add retry logic + idempotency key handling.\nSource: docs/meta/open-items.md (TUI.2)"
+  },
+  "TASK-2025-002": {
+    "hash": "4a0a8e7",
+    "extid": "TASK-2025-002",
+    "type": "TASK",
+    "title": "TASK-2025-002: TUI left/right key conflict",
+    "label": "tui",
+    "priority": "low",
+    "source": "docs/meta/open-items.md#tui3",
+    "body": "src/tui/asset-view.ts:67-71 registers left/right on screen.key, conflicting with input navigation. Scope to active widget context.\nSource: docs/meta/open-items.md (TUI.3)"
+  },
+  "TASK-2025-003": {
+    "hash": "9f4146e",
+    "extid": "TASK-2025-003",
+    "type": "TASK",
+    "title": "TASK-2025-003: View template source/artifact divergence",
+    "label": "debt",
+    "priority": "low",
+    "source": "docs/meta/open-items.md#http2",
+    "body": "src/routes/views.ts serves views dynamically with on-the-fly minification; build-time minified copies in dist/public/ are unused. Consider caching minified templates.\nSource: docs/meta/open-items.md (HTTP.2)"
+  },
+  "TASK-2025-004": {
+    "hash": "4fe3da8",
+    "extid": "TASK-2025-004",
+    "type": "TASK",
+    "title": "TASK-2025-004: E2E: no cancel-during-generation test",
+    "label": "testing",
+    "priority": "medium",
+    "source": "docs/meta/open-items.md#test3",
+    "body": "Cancel endpoint tested but no mid-stream cancellation test. Need: start generation, send cancel while streaming, verify inactive status.\nSource: docs/meta/open-items.md (TEST.3)"
+  },
+  "TASK-2025-005": {
+    "hash": "598d19f",
+    "extid": "TASK-2025-005",
+    "type": "TASK",
+    "title": "TASK-2025-005: E2E: no generation idempotency test",
+    "label": "testing",
+    "priority": "medium",
+    "source": "docs/meta/open-items.md#test4",
+    "body": "Idempotency keys used in tests (12 occurrences) but no duplicate-key test. Need: send same key twice, assert identical response.\nSource: docs/meta/open-items.md (TEST.4)"
+  },
+  "TASK-2025-006": {
+    "hash": "8fc051d",
+    "extid": "TASK-2025-006",
+    "type": "TASK",
+    "title": "TASK-2025-006: E2E: test ordering fragile (shared mutable state)",
+    "label": "testing",
+    "priority": "medium",
+    "source": "docs/meta/open-items.md#test5",
+    "body": "Only generation.test.ts uses beforeEach. Others lack isolation. Fix: add beforeEach for fresh test data.\nSource: docs/meta/open-items.md (TEST.5)"
+  },
+  "TASK-2025-007": {
+    "hash": "0355969",
+    "extid": "TASK-2025-007",
+    "type": "TASK",
+    "title": "TASK-2025-007: E2E: browser auth flow incomplete",
+    "label": "testing",
+    "priority": "medium",
+    "source": "docs/meta/open-items.md#test6",
+    "body": "auth-flow.browser.ts missing successful login, demo login execution, logout, auth-dependent UI.\nSource: docs/meta/open-items.md (TEST.6)"
+  },
+  "TASK-2025-008": {
+    "hash": "dc66429",
+    "extid": "TASK-2025-008",
+    "type": "TASK",
+    "title": "TASK-2025-008: E2E: browser chat flow sends no messages",
+    "label": "testing",
+    "priority": "medium",
+    "source": "docs/meta/open-items.md#test7",
+    "body": "chat-flow.browser.ts only tests panel toggles. Missing message typing, sending, receiving.\nSource: docs/meta/open-items.md (TEST.7)"
+  },
+  "TASK-2025-009": {
+    "hash": "03a4c0e",
+    "extid": "TASK-2025-009",
+    "type": "TASK",
+    "title": "TASK-2025-009: Unit: 17 quick-win source files untested",
+    "label": "testing",
+    "priority": "medium",
+    "source": "docs/meta/open-items.md#test8",
+    "body": "Route unit tests exist (28 files) but many are stubs. Expand coverage for ~1,400 lines of pure logic.\nSource: docs/meta/open-items.md (TEST.8)"
+  },
+  "TASK-2025-010": {
+    "hash": "b3ca1b7",
+    "extid": "TASK-2025-010",
+    "type": "TASK",
+    "title": "TASK-2025-010: Unit: story module nearly untested",
+    "label": "testing",
+    "priority": "medium",
+    "source": "docs/meta/open-items.md#test9",
+    "body": "src/story/ has game-master.test.ts (22 tests) but quest-engine, quality-evaluator, turn-manager, world-state, events/* lack coverage.\nSource: docs/meta/open-items.md (TEST.9)"
+  },
+  "TASK-2025-011": {
+    "hash": "1e95191",
+    "extid": "TASK-2025-011",
+    "type": "TASK",
+    "title": "TASK-2025-011: Unit: route handler isolation missing",
+    "label": "testing",
+    "priority": "low",
+    "source": "docs/meta/open-items.md#test11",
+    "body": "Route unit tests lack handler isolation. Consider mocking DB layer for pure handler tests.\nSource: docs/meta/open-items.md (TEST.11)"
+  },
+  "TASK-2025-012": {
+    "hash": "9d9935c",
+    "extid": "TASK-2025-012",
+    "type": "TASK",
+    "title": "TASK-2025-012: E2E: RPG mechanics no tests",
+    "label": "testing",
+    "priority": "low",
+    "source": "docs/meta/open-items.md#test12",
+    "body": "No rpg.test.ts in e2e. Dice, combat, equipment, XP, loot endpoints untested.\nSource: docs/meta/open-items.md (TEST.12)"
+  },
+  "TASK-2025-013": {
+    "hash": "501788f",
+    "extid": "TASK-2025-013",
+    "type": "TASK",
+    "title": "TASK-2025-013: Nested ternary expressions from dprint reformatting",
+    "label": "lint",
+    "priority": "low",
+    "source": "docs/meta/open-items.md#lint4",
+    "body": "3 files (logger.ts:71, prompt-templates.ts:546, response-headers.ts:208) have unicorn/no-nested-ternary errors. Fix: parenthesize nested ternaries.\nSource: docs/meta/open-items.md (LINT.4)"
+  },
+  "TASK-2025-014": {
+    "hash": "4fc46f6",
+    "extid": "TASK-2025-014",
+    "type": "TASK",
+    "title": "TASK-2025-014: Backend lint errors from new notification files",
+    "label": "lint",
+    "priority": "low",
+    "source": "docs/meta/open-items.md#lint3",
+    "body": "src/notifications/service.ts: 2 errors (unicorn/prefer-export-from, consistent-type-definitions). Fix: re-export properly, use interface.\nSource: docs/meta/open-items.md (LINT.3)"
+  },
+  "IDEA-2025-001": {
+    "hash": "48f6d6e",
+    "extid": "IDEA-2025-001",
+    "type": "IDEA",
+    "title": "IDEA-2025-001: Evaluate Biome as complementary linter/formatter",
+    "label": "idea",
+    "priority": "low",
+    "source": "docs/meta/open-items.md#tool1",
+    "body": "Biome (Rust) could replace Prettier (~25x faster) and cover ~60-70% of non-type-aware ESLint rules. Type-aware rules stay on ESLint. Deferred.\nSource: docs/meta/open-items.md (TOOL.1)"
+  },
+  "EPIC-2025-11": {
+    "hash": "e78120b",
+    "extid": "EPIC-2025-11",
+    "type": "EPIC",
+    "title": "EPIC-2025-11: Admin & Settings",
+    "label": "epic",
+    "priority": "medium",
+    "source": "docs/meta/backlog.md",
+    "body": "Admin UI, per-user prefs, plugin management. Blocks multi-user deployment.\nSource: docs/meta/backlog.md (Epic 11)"
+  },
+  "EPIC-2025-14": {
+    "hash": "6945660",
+    "extid": "EPIC-2025-14",
+    "type": "EPIC",
+    "title": "EPIC-2025-14: Import/Export & Data Portability",
+    "label": "epic",
+    "priority": "medium",
+    "source": "docs/meta/epic-14-plan.md",
+    "body": "Character card multi-format import (CCv2/CCv3/CHARX/PNG), chat export, bulk export.\nSource: docs/meta/epic-14-plan.md, docs/meta/backlog.md (Epic 14)"
+  },
+  "EPIC-2025-15": {
+    "hash": "cf1e173",
+    "extid": "EPIC-2025-15",
+    "type": "EPIC",
+    "title": "EPIC-2025-15: i18n & Accessibility",
+    "label": "epic",
+    "priority": "high",
+    "source": "docs/meta/backlog.md",
+    "body": "Server-side i18n module, ARIA pass, keyboard nav, 10 locales.\nSource: docs/meta/backlog.md (Epic 15)"
+  },
+  "EPIC-2025-16": {
+    "hash": "4c48a4e",
+    "extid": "EPIC-2025-16",
+    "type": "EPIC",
+    "title": "EPIC-2025-16: Observability",
+    "label": "epic",
+    "priority": "medium",
+    "source": "docs/meta/backlog.md",
+    "body": "Telemetry, admin analytics, CI config, Playwright responsive tests. In progress (P0).\nSource: docs/meta/backlog.md (Epic 16)"
+  },
+  "EPIC-2025-17": {
+    "hash": "78d601d",
+    "extid": "EPIC-2025-17",
+    "type": "EPIC",
+    "title": "EPIC-2025-17: Encryption Foundation",
+    "label": "epic",
+    "priority": "medium",
+    "source": "docs/meta/backlog.md",
+    "body": "At-rest AES-256-GCM, per-user keys, browser-side key derivation.\nSource: docs/meta/backlog.md (Epic 17)"
+  },
+  "EPIC-2025-21": {
+    "hash": "c4b708e",
+    "extid": "EPIC-2025-21",
+    "type": "EPIC",
+    "title": "EPIC-2025-21: Notification Expansion",
+    "label": "epic",
+    "priority": "medium",
+    "source": "docs/meta/roadmap.md",
+    "body": "Noise presets, per-event thresholds.\nSource: docs/meta/roadmap.md (Epic 21)"
+  },
+  "EPIC-2025-22": {
+    "hash": "fedd80c",
+    "extid": "EPIC-2025-22",
+    "type": "EPIC",
+    "title": "EPIC-2025-22: RPG Mechanics Core",
+    "label": "epic",
+    "priority": "medium",
+    "source": "docs/meta/roadmap.md",
+    "body": "Dice, stats, combat, equipment, XP, loot.\nSource: docs/meta/roadmap.md (Epic 22)"
+  },
+  "EPIC-2025-23": {
+    "hash": "8c07e16",
+    "extid": "EPIC-2025-23",
+    "type": "EPIC",
+    "title": "EPIC-2025-23: Assistant Commands",
+    "label": "epic",
+    "priority": "low",
+    "source": "docs/meta/roadmap.md",
+    "body": "/improve, /image, /quest, autocomplete. Command parser partially built.\nSource: docs/meta/roadmap.md (Epic 23)"
+  },
+  "EPIC-2025-24": {
+    "hash": "96970f5",
+    "extid": "EPIC-2025-24",
+    "type": "EPIC",
+    "title": "EPIC-2025-24: Filtering & Pagination",
+    "label": "epic",
+    "priority": "low",
+    "source": "docs/meta/roadmap.md",
+    "body": "Combined filters, cursor pagination. Lists unusable past ~50 items.\nSource: docs/meta/roadmap.md (Epic 24)"
+  },
+  "FEAT-2025-001": {
+    "hash": "e5e2faa",
+    "extid": "FEAT-2025-001",
+    "type": "FEAT",
+    "title": "FEAT-2025-001: Multi-format character import (PNG/YAML/TOML/CHARX)",
+    "label": "feature",
+    "priority": "low",
+    "epic": "EPIC-2025-14",
+    "source": "docs/meta/backlog.md",
+    "body": "Only JSON import works today. Add CCv2/CCv3/Character.AI/PNG/CHARX normalizers.\nSource: docs/meta/backlog.md (P2)"
+  },
+  "FEAT-2025-002": {
+    "hash": "bfd09bc",
+    "extid": "FEAT-2025-002",
+    "type": "FEAT",
+    "title": "FEAT-2025-002: Impersonation (chat.impersonate_id)",
+    "label": "feature",
+    "priority": "medium",
+    "source": "docs/meta/backlog.md",
+    "body": "docs/spec/character-setup.md specifies impersonation; not implemented.\nSource: docs/meta/backlog.md (P2)"
+  },
+  "FEAT-2025-003": {
+    "hash": "47c2780",
+    "extid": "FEAT-2025-003",
+    "type": "FEAT",
+    "title": "FEAT-2025-003: Three-tier memory system (episodic/semantic/procedural)",
+    "label": "feature",
+    "priority": "high",
+    "source": "docs/meta/backlog.md",
+    "body": "docs/spec/memory-system.md specifies; only actor_memories table exists.\nSource: docs/meta/backlog.md (P2)"
+  },
+  "FEAT-2025-004": {
+    "hash": "814a41c",
+    "extid": "FEAT-2025-004",
+    "type": "FEAT",
+    "title": "FEAT-2025-004: Artifact system (code/docs/datasets as assets)",
+    "label": "feature",
+    "priority": "medium",
+    "source": "docs/meta/backlog.md",
+    "body": "docs/spec/artifacts-system.md specifies; not implemented.\nSource: docs/meta/backlog.md (P2)"
+  },
+  "FEAT-2025-005": {
+    "hash": "9858f26",
+    "extid": "FEAT-2025-005",
+    "type": "FEAT",
+    "title": "FEAT-2025-005: Agentic workspace mode",
+    "label": "feature",
+    "priority": "medium",
+    "source": "docs/meta/backlog.md",
+    "body": "docs/spec/use-case-agentic-workspace.md specifies; not implemented.\nSource: docs/meta/backlog.md (P2)"
+  },
+  "FEAT-2025-006": {
+    "hash": "77d8aa4",
+    "extid": "FEAT-2025-006",
+    "type": "FEAT",
+    "title": "FEAT-2025-006: Frontend story mode UI (GM panel, quest log, story chat)",
+    "label": "feature",
+    "priority": "high",
+    "epic": "EPIC-2025-22",
+    "source": "docs/meta/backlog.md",
+    "body": "Backend src/story/ exists; no frontend. docs/frontend/chat/multi-llm-story.md.\nSource: docs/meta/backlog.md (P2)"
+  },
+  "FEAT-2025-007": {
+    "hash": "3a92e1e",
+    "extid": "FEAT-2025-007",
+    "type": "FEAT",
+    "title": "FEAT-2025-007: Message archiving (cascade, restore, purge)",
+    "label": "feature",
+    "priority": "medium",
+    "source": "docs/meta/backlog.md",
+    "body": "docs/frontend/chat/archiving.md, docs/spec/archival-workflow.md. Hard delete only today.\nSource: docs/meta/backlog.md (P2)"
+  },
+  "FEAT-2025-008": {
+    "hash": "8039c98",
+    "extid": "FEAT-2025-008",
+    "type": "FEAT",
+    "title": "FEAT-2025-008: Memory selection UI (mid-chat panel, pinning, auto-extract)",
+    "label": "feature",
+    "priority": "medium",
+    "source": "docs/meta/backlog.md",
+    "body": "Backend reads memories; no UI. docs/frontend/chat/memories.md.\nSource: docs/meta/backlog.md (P2)"
+  },
+  "FEAT-2025-009": {
+    "hash": "080ef97",
+    "extid": "FEAT-2025-009",
+    "type": "FEAT",
+    "title": "FEAT-2025-009: Server-side i18n middleware (req.t)",
+    "label": "feature",
+    "priority": "medium",
+    "epic": "EPIC-2025-15",
+    "source": "docs/meta/backlog.md",
+    "body": "docs/frontend/internationalization.md. Minimal client-side __() only.\nSource: docs/meta/backlog.md (P2)"
+  },
+  "FEAT-2025-010": {
+    "hash": "47de52c",
+    "extid": "FEAT-2025-010",
+    "type": "FEAT",
+    "title": "FEAT-2025-010: Anthropic/Ollama/Bedrock providers",
+    "label": "feature",
+    "priority": "medium",
+    "source": "docs/meta/backlog.md",
+    "body": "docs/spec/provider-system.md. Only OpenAI-compatible exists.\nSource: docs/meta/backlog.md (P2)"
+  },
+  "FEAT-2025-011": {
+    "hash": "d80b0c8",
+    "extid": "FEAT-2025-011",
+    "type": "FEAT",
+    "title": "FEAT-2025-011: Plugin management API (install/list/enable/disable)",
+    "label": "feature",
+    "priority": "medium",
+    "source": "docs/meta/backlog.md",
+    "body": "docs/spec/plugin-system.md. Plugin skeleton loads files; no API.\nSource: docs/meta/backlog.md (P2)"
+  },
+  "FEAT-2025-012": {
+    "hash": "afa47aa",
+    "extid": "FEAT-2025-012",
+    "type": "FEAT",
+    "title": "FEAT-2025-012: Signed URLs for asset downloads",
+    "label": "feature",
+    "priority": "low",
+    "source": "docs/meta/backlog.md",
+    "body": "docs/spec/assets.md. Uses raw endpoint with Bearer auth today.\nSource: docs/meta/backlog.md (P2)"
+  },
+  "FEAT-2025-013": {
+    "hash": "f2653c5",
+    "extid": "FEAT-2025-013",
+    "type": "FEAT",
+    "title": "FEAT-2025-013: Regex output transforms (render-time agent/tool output parsing)",
+    "label": "feature",
+    "priority": "low",
+    "source": "docs/meta/roadmap.md",
+    "body": "Quick win Q1. Source: docs/meta/roadmap.md (feature-analysis #6)"
+  },
+  "FEAT-2025-014": {
+    "hash": "77bc0db",
+    "extid": "FEAT-2025-014",
+    "type": "FEAT",
+    "title": "FEAT-2025-014: Smart-regen transforms (one-click draft polish)",
+    "label": "feature",
+    "priority": "low",
+    "source": "docs/meta/roadmap.md",
+    "body": "Quick win Q2. Source: docs/meta/roadmap.md (feature-analysis #8)"
+  }
+}
