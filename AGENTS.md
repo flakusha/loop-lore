@@ -224,53 +224,6 @@ docs/                    Specs, architecture, data model
 
 See `.agents/references/cli-config.md` for command reference.
 
-## Native Issue Tracking
-
-loop-lore uses **git-native-issue** for distributed, Git-embedded issue tracking.
-Issues live in `refs/issues/<uuid>` and are managed via `git issue` commands.
-
-### Extended Identifiers
-
-| Type  | Prefix                        | Use for |
-| ----- | ----------------------------- | ------- |
-| BUG-  | Bug reports                   |         |
-| FEAT- | Feature requests              |         |
-| FIX-  | Non-bug fixes                 |         |
-| IDEA- | Research/experimental ideas   |         |
-| TASK- | Small tasks                   |         |
-| SOL-  | Architectural solutions       |         |
-| EPIC- | Major epics (matches plan.md) |         |
-
-### Commands
-
-```bash
-# Create and work on a ticket
-./scripts/worktree.sh ticket BUG 001 "Fix login crash"
-cd tree/ticket-BUG-2025-001
-
-# Create epic branch
-./scripts/worktree.sh epic 16
-cd tree/epic-16
-
-# List open issues
-./scripts/worktree.sh issues
-
-# Run git-issue directly
-./scripts/worktree.sh issue ls
-./scripts/worktree.sh issue show <id>
-```
-
-### Commit Trailers
-
-Link commits to issues using trailers:
-
-```
-Issue: BUG-2025-001
-Epic: EPIC-16
-Status: done
-Solution: SOL-2025-001
-```
-
 ## Getting Started for Agents
 
 1. Read relevant `docs/` file for the feature you're working on
@@ -309,7 +262,7 @@ Install hooks (one-time):
 
 ```bash
 git config core.hooksPath .githooks
-chmod +x .githooks/*
+chmod +x .githooks/pre-commit
 ```
 
 Triggered on `git commit`. Pipeline:
@@ -323,35 +276,6 @@ Triggered on `git commit`. Pipeline:
 Set `E2E_SAFEGUARD=0` to bypass (dev-only — never in CI).
 
 Goal: lightweight, extensible, maintainable, scalable.
-
----
-
-## Pre-push Hooks
-
-Install hooks (one-time):
-
-```bash
-git config core.hooksPath .githooks
-chmod +x .githooks/*
-```
-
-Triggered on `git push`. Pipeline:
-
-1. **Agent push detection** — blocks pushes containing agent commits
-   (detected via `Co-authored-by` trailer matching `AGENT_GPG_EMAIL`
-   from `.credentials.env`). Agent workflow: commit locally via
-   `worktree.sh agent-commit`, then `worktree.sh finalize` merges to
-   master, human pushes.
-
-2. **Tag version validation** — production tags (e.g., `v0.1.0`) must
-   match `package.json` version exactly. Pre-release tags
-   (`-dev`, `-alpha`, `-beta`, `-rc` suffixes) are allowed to drift.
-
-Override (human approval required):
-
-```bash
-git push --no-verify
-```
 
 ---
 
@@ -384,13 +308,11 @@ This reads `.credentials.env`, signs test data to warm the cache.
 After TTL expires (~8h default), run again.
 
 **If unlock fails**, check `~/.gnupg/gpg-agent.conf` has:
-
 ```
 allow-loopback-pinentry
 default-cache-ttl 28800
 max-cache-ttl 86400
 ```
-
 Then reload: `gpg-connect-agent reloadagent /bye`
 
 ### Non-TTY / CI Environments
@@ -459,7 +381,7 @@ The script enforces these safety checks:
   **GPG-signed merge into master** → verifies merge signature →
   removes worktree. Aborts at any failing step.
 - **Merge signing**: `merge` and `finalize` pass `-c commit.gpgsign=true
--c user.signingkey=<key>` to git. If `/tmp/gpg-loopback` exists,
+  -c user.signingkey=<key>` to git. If `/tmp/gpg-loopback` exists,
   also sets `-c gpg.program=/tmp/gpg-loopback`.
 - **Merge verification**: After merge, `finalize` runs
   `git verify-commit` on the merge SHA. Warns if unsigned.
@@ -491,7 +413,6 @@ git commit -S -m "..."
 ```
 
 The script handles:
-
 - Reading author identity from worktree's local git config
 - Reading agent identity from `.credentials.env`
 - GPG signing with the agent's key

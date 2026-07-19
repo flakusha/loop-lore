@@ -2,8 +2,6 @@
 
 Code quality concerns needing cleanup. Each item links to source files. Items tagged `(plan.md)` also tracked in active v0.1 plan.
 
-> **Tracked as git issues.** Unresolved items below are mirrored as git-native-issues (e.g. `BUG-2025-003`, `TASK-2025-004`). See the [Issue Tracker](/meta/issues). A cross-reference table is at the bottom of this page.
-
 ---
 
 ## DUP.1 Config Defaults Duplicated — Resolved
@@ -218,43 +216,7 @@ Root cause and fix:
 3. Both entry points (`alpine/index.ts`, `pages.ts`) import `./loaders`.
 4. `no-unnecessary-type-assertion: off` still needed for frontend (removes DOM element casts like `as HTMLLinkElement | null`).
 
-## LINT.4 Nested Ternary Expressions from dprint Reformatting
-
-**Severity**: Low — 3 files, `unicorn/no-nested-ternary` errors (auto-fixable)
-Files: `src/frontend/alpine/logger.ts:71`, `src/generation/prompt-templates.ts:546`, `src/middleware/response-headers.ts:208`
-Cause: dprint reformatted ternary expressions, removing parentheses that eslint requires.
-Fix: run `eslint --fix` or manually parenthesize nested ternaries.
-
 ## LINT.3 Backend Lint Errors from New Notification Files
 
 **Severity**: Low — `src/notifications/service.ts`
 2 errors: `unicorn/prefer-export-from` (line 17), `consistent-type-definitions` (line 81). No errors in `src/routes/notifications.ts`. Fix: re-export properly, use interface.
-
-<!-- ISSUE-MAP-START -->
-
-## Tracked as Git Issues
-
-> These tasks are tracked as git-native-issues. See the [Issue Tracker](/meta/issues) for live state.
-
-| Issue                                        | Title                                               | Priority | Source                                                  |
-| -------------------------------------------- | --------------------------------------------------- | -------- | ------------------------------------------------------- |
-| [BUG-2025-002](/meta/issues/#bug-2025-002)   | Browser E2E parallel suite instability              | medium   | [meta/open-items.md#bug2](/meta/open-items.md#bug2)     |
-| [BUG-2025-003](/meta/issues/#bug-2025-003)   | Browser E2E cascade failure pattern                 | medium   | [meta/open-items.md#bug3](/meta/open-items.md#bug3)     |
-| [FIX-2025-003](/meta/issues/#fix-2025-003)   | Fire-and-forget DB writes mask failures             | high     | [meta/open-items.md#cast2](/meta/open-items.md#cast2)   |
-| [IDEA-2025-001](/meta/issues/#idea-2025-001) | Evaluate Biome as complementary linter/formatter    | low      | [meta/open-items.md#tool1](/meta/open-items.md#tool1)   |
-| [TASK-2025-001](/meta/issues/#task-2025-001) | TUI chat has no retry/idempotency key               | low      | [meta/open-items.md#tui2](/meta/open-items.md#tui2)     |
-| [TASK-2025-002](/meta/issues/#task-2025-002) | TUI left/right key conflict                         | low      | [meta/open-items.md#tui3](/meta/open-items.md#tui3)     |
-| [TASK-2025-003](/meta/issues/#task-2025-003) | View template source/artifact divergence            | low      | [meta/open-items.md#http2](/meta/open-items.md#http2)   |
-| [TASK-2025-004](/meta/issues/#task-2025-004) | E2E: no cancel-during-generation test               | medium   | [meta/open-items.md#test3](/meta/open-items.md#test3)   |
-| [TASK-2025-005](/meta/issues/#task-2025-005) | E2E: no generation idempotency test                 | medium   | [meta/open-items.md#test4](/meta/open-items.md#test4)   |
-| [TASK-2025-006](/meta/issues/#task-2025-006) | E2E: test ordering fragile (shared mutable state)   | medium   | [meta/open-items.md#test5](/meta/open-items.md#test5)   |
-| [TASK-2025-007](/meta/issues/#task-2025-007) | E2E: browser auth flow incomplete                   | medium   | [meta/open-items.md#test6](/meta/open-items.md#test6)   |
-| [TASK-2025-008](/meta/issues/#task-2025-008) | E2E: browser chat flow sends no messages            | medium   | [meta/open-items.md#test7](/meta/open-items.md#test7)   |
-| [TASK-2025-009](/meta/issues/#task-2025-009) | Unit: 17 quick-win source files untested            | medium   | [meta/open-items.md#test8](/meta/open-items.md#test8)   |
-| [TASK-2025-010](/meta/issues/#task-2025-010) | Unit: story module nearly untested                  | medium   | [meta/open-items.md#test9](/meta/open-items.md#test9)   |
-| [TASK-2025-011](/meta/issues/#task-2025-011) | Unit: route handler isolation missing               | low      | [meta/open-items.md#test11](/meta/open-items.md#test11) |
-| [TASK-2025-012](/meta/issues/#task-2025-012) | E2E: RPG mechanics no tests                         | low      | [meta/open-items.md#test12](/meta/open-items.md#test12) |
-| [TASK-2025-013](/meta/issues/#task-2025-013) | Nested ternary expressions from dprint reformatting | low      | [meta/open-items.md#lint4](/meta/open-items.md#lint4)   |
-| [TASK-2025-014](/meta/issues/#task-2025-014) | Backend lint errors from new notification files     | low      | [meta/open-items.md#lint3](/meta/open-items.md#lint3)   |
-
-<!-- ISSUE-MAP-END -->
