@@ -165,7 +165,7 @@ Tool-calling loop, provider resilience, streaming reconnect.
 | Circuit breaker pattern                 | `src/generation/providers/circuit-breaker.ts`                         | ✅     |
 | SSE reconnect via `Last-Event-ID`       | `src/generation/generation-routes.ts`, `src/generation/controller.ts` | ✅     |
 
-### 11. Admin & Settings Architecture — ⬜ Not Started
+### 11. Admin & Settings Architecture — ⬜ Not Started [P1]
 
 | Task                       | Files                                       |
 | -------------------------- | ------------------------------------------- |
@@ -216,7 +216,7 @@ Tool-calling loop, provider resilience, streaming reconnect.
 | Message archiving (cascade, restore, purge)      | `src/routes/messages.ts`, `src/db/`                                       |
 | Unit tests                                       | `src/routes/views-search.test.ts`, `src/routes/message-archiving.test.ts` |
 
-### 14. Import/Export & Data Portability — ⬜ Not Started
+### 14. Import/Export & Data Portability — ⬜ Not Started [P1-High]
 
 | Task                              | Files                      |
 | --------------------------------- | -------------------------- |
@@ -228,7 +228,7 @@ Tool-calling loop, provider resilience, streaming reconnect.
 | Bulk data export                  | `src/routes/settings.ts`   |
 | Asset download endpoint           | `src/assets/controller.ts` |
 
-### 15. i18n & Accessibility — ⬜ Not Started
+### 15. i18n & Accessibility — ⬜ Not Started [P2]
 
 | Task                                | Files                                    |
 | ----------------------------------- | ---------------------------------------- |
@@ -258,7 +258,7 @@ Tool-calling loop, provider resilience, streaming reconnect.
 | Playwright responsive tests | `tests/e2e/responsive/`                            |
 | Browser E2E stabilization   | `tests/e2e/flows/browser/`                         |
 
-### 17. Encryption Foundation — ⬜ Not Started
+### 17. Encryption Foundation — ⬜ Not Started [P1]
 
 | Task                                     | Files                     |
 | ---------------------------------------- | ------------------------- |
@@ -274,7 +274,7 @@ Tool-calling loop, provider resilience, streaming reconnect.
 
 See `docs/frontend/encryption.md` for full tier specification.
 
-### 20. E2E Performance Benchmarks — ⬜ Not Started
+### 20. E2E Performance Benchmarks — ⬜ Not Started [P2]
 
 | Task                            | Files                        |
 | ------------------------------- | ---------------------------- |
@@ -310,7 +310,7 @@ Full spec: `docs/spec/integrations/llm-serving.md`, `docs/spec/integrations/imag
 | Mark-read on chat open           | `src/routes/chats.ts`, `src/frontend/alpine/chat.ts`      |
 | Activity SSE listener            | `src/frontend/alpine/chat-activity.ts`                    |
 
-### 21. Notification Expansion — ⬜ Not Started
+### 21. Notification Expansion — ⬜ Not Started [P2]
 
 | Task                             | Files                                         |
 | -------------------------------- | --------------------------------------------- |
@@ -321,7 +321,7 @@ Full spec: `docs/spec/integrations/llm-serving.md`, `docs/spec/integrations/imag
 | Notification service             | `src/notifications/service.ts`                |
 | SSE endpoint for real-time       | `src/routes/notifications-stream.ts`          |
 
-### 22. RPG Mechanics Core — ⬜ Not Started
+### 22. RPG Mechanics Core — ⬜ Not Started [P2]
 
 | Task                            | Files                                 |
 | ------------------------------- | ------------------------------------- |
@@ -332,7 +332,7 @@ Full spec: `docs/spec/integrations/llm-serving.md`, `docs/spec/integrations/imag
 | /dice, /stats, /attack commands | `src/assistant/commands/*.ts`         |
 | World rules for command control | `src/db/schema-core.ts` (world_rules) |
 
-### 23. Assistant Commands — ⬜ Not Started
+### 23. Assistant Commands — ⬜ Not Started [P1-High]
 
 | Task                       | Files                                      |
 | -------------------------- | ------------------------------------------ |
@@ -342,7 +342,7 @@ Full spec: `docs/spec/integrations/llm-serving.md`, `docs/spec/integrations/imag
 | Command autocomplete UI    | `src/components/command-autocomplete.html` |
 | Intent detection           | `src/assistant/intent-detection.ts`        |
 
-### 24. Filtering & Pagination — ⬜ Not Started
+### 24. Filtering & Pagination — ⬜ Not Started [P1-High]
 
 | Task                         | Files                              |
 | ---------------------------- | ---------------------------------- |

@@ -25,31 +25,62 @@ Current status of feature areas. Checkmarks = code exists in `src/`.
 | Web UI view templates                        | `src/views/chat.html`, `gallery.html`, `layout.html`, `settings.html` |
 | HTTP utils                                   | `src/routes/http-utils.ts`                                            |
 
-## 🏗 Integration Phase (Current Focus)
+## 🏗 v0.1 MVP — Active Development
 
-- CRUD route controllers — chats, messages, characters, users, worlds, assets
-- Route router — single dispatch URL→handler (`src/routes/router.ts`)
-- View serving — `/views/chat|gallery|characters|settings` endpoints
-- Assistant service — rule-based MVP (`src/assistant/service.ts`)
-- TUI widgets — chat, input, screen manager (`src/tui/`)
-- Web UI ↔ API wiring — htmx swaps end-to-end
-- Sample plugins — dice/roll tool as early plugin prototype
+**In Progress (P0):**
+
+| Epic | Feature | Status |
+|------|---------|--------|
+| 16 | Observability — telemetry, admin analytics, CI config, Playwright responsive tests | 🟡 In progress |
+
+**Not Started — High Priority (P1):**
+
+| Epic | Feature | Effort | Why Prioritize |
+|------|---------|--------|----------------|
+| 14 | Import/Export — character card PNG/YAML/TOML import, chat export, bulk | Low | SillyTavern compatibility; partial code exists |
+| 11 | Admin & Settings — admin UI, per-user prefs, plugin management | Med | Blocks multi-user deployment |
+| 23 | Assistant Commands — /improve, /image, /quest, autocomplete | Low | Instant chat value; command parser partially built |
+| 24 | Filtering & Pagination — combined filters, cursor pagination | Low | Lists unusable past ~50 items |
+| 17 | Encryption Foundation — at-rest AES-256-GCM, per-user keys | Med | Privacy; crypto module fully scaffolded |
+| 10 | Generation Foundation — tool-call loop, provider failover, SSE reconnect | ✅ Complete per plan.md Epic 10 |
+| 15 | i18n & Accessibility — server-side i18n, ARIA, keyboard nav, 10 locales | High | Important but heavy lift |
+
+**Not Started — Medium Priority (P2):**
+
+| Epic | Feature | Effort |
+|------|---------|--------|
+| 22 | RPG Mechanics Core — dice, stats, combat | Med |
+| 21 | Notification Expansion — noise presets, per-event thresholds | Med |
+
+**Quick Wins (Low Effort, High Leverage):**
+
+| # | Feature | Source |
+|---|---------|--------|
+| Q1 | Regex output transforms — parse agent/tool output at render | feature-analysis #6 |
+| Q2 | Smart-regen transforms — one-click draft polish | feature-analysis #8 |
+| Q3 | Conversation analytics — per-chat cost + quality dashboard | feature-analysis #27 |
+| Q4 | Model-comparison dashboard — A/B agent/model quality | feature-analysis #28 |
+| Q5 | Bulk data export — zip-all endpoint | plan Epic 14 |
+
+See `backlog.md` for full queue, `plan.md` for epic detail.
 
 ## 🎯 Planned Features
 
 ### P1: User-Facing Features
 
-- Advanced Memory Systems: long-term character/world memory with retrieval
-- Lorebook/World Info: sticky entries, cooldowns, activation conditions
-- Character Cards: full V2/V3 PNG and JSON import/export
-- Streaming Responses: real-time token streaming with visual feedback
-- Multi-modal Support: image/audio/video generation and analysis
-- Plugin System: server-side extensions + registry
-- Client Extensions: WebUI/TUI plugin architecture
-- Conversation Branching: tree navigation for chat history
-- Character Relationships: relationship graph and stat tracking
-- Co-editing: real-time collaborative chat editing
-- Prompt Library: tagged prompt snippets and templates
+| Feature | Status | Notes |
+|---------|--------|-------|
+| Advanced Memory Systems | 🟡 Partial | `actor_memories` table + keyword filtering done; three-tier (episodic/semantic/procedural) not built |
+| Lorebook/World Info | 🟡 Partial | CRUD exists; sticky entries, cooldowns, activation conditions not implemented |
+| Character Cards (V2/V3 PNG/JSON import/export) | 🟡 Partial | JSON import works; PNG steganography + YAML/TOML not built |
+| Streaming Responses | ✅ Built | `src/generation/stream-buffer.ts`, SSE via generation routes |
+| Multi-modal Support | 🟡 Partial | Image gen (sd.cpp, ComfyUI) built; audio/video not built |
+| Plugin System | 🟡 Partial | Skeleton loads files (`src/plugins/`); no management API |
+| Client Extensions | ⬜ Not built | No WebUI/TUI plugin architecture |
+| Conversation Branching | ⬜ Not built | `parent_id` in schema; tree nav not implemented |
+| Character Relationships | ⬜ Not built | Relationship graph and stat tracking |
+| Co-editing | ⬜ Not built | Real-time collaborative chat editing |
+| Prompt Library | ⬜ Not built | Tagged prompt snippets and templates |
 
 ### P1: Infrastructure
 
@@ -123,4 +154,4 @@ Research-driven feature proposals, separated by theme and linked from a hub. Der
 
 ## Timeline
 
-See `plan.md` for v0.2 checklist, `backlog.md` for future queue, `open-items.md` for technical debt, `CONTRIBUTING.md` for contribution guidelines.
+See `plan.md` for v0.1 checklist, `backlog.md` for future queue, `open-items.md` for technical debt, `CONTRIBUTING.md` for contribution guidelines.
