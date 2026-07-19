@@ -107,6 +107,22 @@ configure_signing() {
     echo -e "${GREEN}  ✓ GPG signing enabled (key: ${AGENT_GPG_KEY_ID:0:8}...)${NC}"
 }
 
+# Build GPG signing flags for merge commits (sets GIT_MERGE_FLAGS array)
+gpg_merge_flags() {
+    GIT_MERGE_FLAGS=()
+    if [[ -z "${AGENT_GPG_KEY_ID:-}" ]]; then
+        return 0
+    fi
+    if ! gpg --list-secret-keys "$AGENT_GPG_KEY_ID" &>/dev/null; then
+        return 0
+    fi
+    local gpg_bin="gpg"
+    if [[ -x "/tmp/gpg-loopback" ]]; then
+        gpg_bin="/tmp/gpg-loopback"
+    fi
+    GIT_MERGE_FLAGS=(-c commit.gpgsign=true -c user.signingkey="$AGENT_GPG_KEY_ID" -c "gpg.program=$gpg_bin")
+}
+
 branch_to_path() {
     # Convert branch name to directory path (handle slashes)
     echo "$1" | sed 's|/|-|g'
@@ -414,8 +430,11 @@ cmd_merge() {
 
     check_dirty "$worktree_path" || exit 1
 
+    local GIT_MERGE_FLAGS=()
+    gpg_merge_flags
+
     echo -e "${CYAN}Merging '$source' into '$branch'...${NC}"
-    if git -C "$worktree_path" merge "$source" --no-edit; then
+    if git -C "$worktree_path" "${GIT_MERGE_FLAGS[@]}" merge "$source" --no-edit; then
         echo -e "${GREEN}✓ Merged '$source' into '$branch'${NC}"
     else
         echo -e "${RED}✗ Merge conflicts — resolve in $worktree_path${NC}"
@@ -543,8 +562,20 @@ cmd_finalize() {
 
     # Step 5: Merge into master
     echo -e "${CYAN}Step 5: Merging '$branch' into master...${NC}"
-    if git -C "$REPO_ROOT" merge "$branch" --no-edit; then
+    local GIT_MERGE_FLAGS=()
+    gpg_merge_flags
+    if git -C "$REPO_ROOT" "${GIT_MERGE_FLAGS[@]}" merge "$branch" --no-edit; then
         echo -e "${GREEN}  ✓ Merged into master${NC}"
+        # Verify merge commit is signed
+        if [[ ${#GIT_MERGE_FLAGS[@]} -gt 0 ]]; then
+            local merge_sha
+            merge_sha=$(git -C "$REPO_ROOT" rev-parse HEAD)
+            if git -C "$REPO_ROOT" verify-commit "$merge_sha" &>/dev/null; then
+                echo -e "${GREEN}  ✓ Merge commit GPG-signed ($merge_sha)${NC}"
+            else
+                echo -e "${YELLOW}  ⚠ Merge commit not signed — GPG key may be locked${NC}"
+            fi
+        fi
     else
         echo -e "${RED}  ✗ Merge conflicts — resolve manually${NC}"
         exit 1
