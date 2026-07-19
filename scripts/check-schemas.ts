@@ -7,7 +7,7 @@
 //
 // Exits non-zero if any generated file is stale (for pre-commit gate).
 
-import { writeFileSync, readFileSync, existsSync } from "node:fs";
+import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { ConfigSchema } from "../src/config/schema-class";

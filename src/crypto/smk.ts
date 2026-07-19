@@ -95,7 +95,7 @@ function hexToBytes(hex: string): Uint8Array {
   for (let index = 0; index < bytes.length; index++) {
     const val = Number.parseInt(cleaned.slice(index * 2, index * 2 + 2), 16);
     if (Number.isNaN(val)) {
-      throw new TypeError(
+      throw new Error(
         `Invalid hex byte at position ${index * 2}: "${cleaned.slice(index * 2, index * 2 + 2)}"`,
       );
     }

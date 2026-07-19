@@ -3,8 +3,8 @@
 // Interface + defaults + schema metadata for server configuration.
 // Single source of truth for this section's shape and defaults.
 
-import type { ServerConfig, TlsConfig } from "../schema";
 import { DATA_DIR } from "../constants";
+import type { ServerConfig, TlsConfig } from "../schema";
 
 export const SERVER_DEFAULTS = {
   port: 3000,
