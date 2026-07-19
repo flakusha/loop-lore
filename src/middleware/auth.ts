@@ -1,22 +1,33 @@
 /**
- * Auth middleware — session token extraction & validation.
+ * Auth middleware — JWT token verification.
  *
  * Token extraction: Bearer header > Cookie fallback.
  * Auth modes:
- *   1. Token presented + valid → authenticated user context
+ *   1. Token presented + valid JWT → authenticated user context
  *   2. No token + !required → solo/demo user context (cached)
  *   3. No token + required → 401 Unauthorized
  *   4. Token presented + invalid + !required → solo/demo fallback
  */
 
 import type { Kysely, } from "kysely";
-import crypto from "node:crypto";
+import { verifyJwt, } from "../auth/jwt";
 import type { AuthConfig, } from "../config/schema";
 import { UserRole, UserStatus, } from "../db/enums";
 import type { DB, } from "../db/schema";
+import { getLogger, } from "../logger/index";
 import { ErrorCode, HttpStatus, jsonError, } from "../routes/http-utils";
 import { uid, } from "../utils";
 import type { RequestContext, } from "./types";
+
+let _log: ReturnType<typeof getLogger> | null = null;
+function getLog() {
+  try {
+    _log ??= getLogger().child({ module: "auth", },);
+    return _log;
+  } catch {
+    return null;
+  }
+}
 
 export interface AuthenticateOpts {
   request: Request;
@@ -27,7 +38,7 @@ export interface AuthenticateOpts {
 /**
  * Attempt to authenticate the request.
  *
- * Priority: try token (Bearer header > cookie) first. If valid, return
+ * Priority: try JWT (Bearer header > cookie) first. If valid, return
  * that user's context. Otherwise, fall back to solo/demo user if
  * authConfig.required === false. If auth is required and no valid
  * token is provided, return 401.
@@ -54,58 +65,60 @@ export async function authenticate({
     }
   }
 
-  // ── Try token-based auth first (if token presented) ──────
+  // ── Try JWT auth first (if token presented) ──────────────
   if (rawToken) {
-    const tokenHash = crypto.createHash("sha256",).update(rawToken,).digest("hex",);
+    const secret = authConfig.jwtSecret;
+    if (secret) {
+      const result = await verifyJwt({ secret, token: rawToken, },);
 
-    const session = await database
-      .selectFrom("sessions",)
-      .select(["id", "user_id", "expires_at",],)
-      .where("token_hash", "=", tokenHash,)
-      .executeTakeFirst();
+      if (result.valid) {
+        const { payload, } = result;
 
-    if (session) {
-      // Check expiration
-      if (new Date(session.expires_at,) < new Date()) {
-        await database.deleteFrom("sessions",).where("id", "=", session.id,).execute();
-        // Expired — fall through
-      } else {
-        // Fetch user role
-        const user = await database
-          .selectFrom("users",)
-          .select(["role",],)
-          .where("id", "=", session.user_id,)
+        // Check if session still exists (logout = delete session row)
+        const session = await database
+          .selectFrom("sessions",)
+          .select(["id",],)
+          .where("id", "=", payload.sid,)
           .executeTakeFirst();
 
-        if (user) {
-          // Update last activity + last_seen_at (non-blocking)
-          try {
-            await database
-              .updateTable("sessions",)
-              .set({ last_activity: new Date().toISOString(), },)
-              .where("id", "=", session.id,)
-              .execute();
-            await database
-              .updateTable("users",)
-              .set({ last_seen_at: new Date().toISOString(), },)
-              .where("id", "=", session.user_id,)
-              .execute();
-          } catch {
-            /* non-critical */
+        if (session) {
+          // Fetch user to verify they still exist and are active
+          const user = await database
+            .selectFrom("users",)
+            .select(["role", "status",],)
+            .where("id", "=", payload.sub,)
+            .executeTakeFirst();
+
+          if (user && user.status !== UserStatus.Disabled && user.status !== UserStatus.Deactivated) {
+            // Update last activity (non-blocking)
+            try {
+              await database
+                .updateTable("users",)
+                .set({ last_seen_at: new Date().toISOString(), },)
+                .where("id", "=", payload.sub,)
+                .execute();
+            } catch {
+              /* non-critical */
+            }
+
+            return {
+              context: {
+                userId: payload.sub,
+                userRole: user.role,
+                sessionId: payload.sid,
+              },
+            };
           }
 
-          return {
-            context: {
-              userId: session.user_id,
-              userRole: user.role,
-              sessionId: session.id,
-            },
-          };
+          getLog()?.debug("JWT user not found or deactivated", { sub: payload.sub, },);
+        } else {
+          getLog()?.debug("JWT session not found (logged out?)", { sid: payload.sid, },);
         }
-
-        // User deleted — clean up and fall through
-        await database.deleteFrom("sessions",).where("id", "=", session.id,).execute();
+      } else {
+        getLog()?.debug("JWT verification failed", { error: result.error, },);
       }
+    } else {
+      getLog()?.warn("JWT secret not configured — falling back to solo mode",);
     }
   }
 
