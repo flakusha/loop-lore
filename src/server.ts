@@ -18,6 +18,7 @@ import { createApp, } from "./elysia-app";
 import { initializeProviders, OpenAiCompatibleProvider, registerProvider, } from "./generation";
 import { createLogger, getLogger, } from "./logger";
 import { DynamicResponsePolicy, ResponseHeaderPolicy, } from "./middleware";
+import { generateNonce, } from "./middleware/csp-nonce";
 import { dispatchPluginRoute, loadAllPlugins, unloadAllPlugins, } from "./plugins";
 import { ServerExternalManager, } from "./services/server-external-manager";
 
@@ -160,6 +161,7 @@ export function createRequestHandler(
   const dynamicPolicy = new DynamicResponsePolicy(config.dynamicResponse, logger,);
 
   return async (request: Request,): Promise<Response> => {
+    generateNonce(request,);
     let response = await app.fetch(request,);
     response = await dynamicPolicy.apply({ request, response, },);
     response = headerPolicy.apply({ request, response, },);

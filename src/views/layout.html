@@ -40,10 +40,10 @@
     <script src="/pages.js" defer></script>
 
     <!-- Telemetry config injected by server (replaced in wrapWithLayout) -->
-    <script>
+    <script nonce="{{cspNonce}}">
       globalThis.__TELEMETRY_FRONTEND_ENABLED = {{telemetryEnabled}};
     </script>
-    <script>
+    <script nonce="{{cspNonce}}">
       globalThis.__USER_ID = {{userId}}; globalThis.__SESSION_ID = {{sessionId}};
     </script>
 
