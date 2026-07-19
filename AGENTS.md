@@ -224,6 +224,52 @@ docs/                    Specs, architecture, data model
 
 See `.agents/references/cli-config.md` for command reference.
 
+## Native Issue Tracking
+
+loop-lore uses **git-native-issue** for distributed, Git-embedded issue tracking.
+Issues live in `refs/issues/<uuid>` and are managed via `git issue` commands.
+
+### Extended Identifiers
+
+| Type | Prefix | Use for |
+|------|--------|---------|
+| BUG- | Bug reports |
+| FEA- | Feature requests |
+| FIX- | Non-bug fixes |
+| IDEA- | Research/experimental ideas |
+| TASK- | Small tasks |
+| SOL- | Architectural solutions |
+| EPIC- | Major epics (matches plan.md) |
+
+### Commands
+
+```bash
+# Create and work on a ticket
+./scripts/worktree.sh ticket BUG 001 "Fix login crash"
+cd tree/ticket-BUG-2025-001
+
+# Create epic branch
+./scripts/worktree.sh epic 16
+cd tree/epic-16
+
+# List open issues
+./scripts/worktree.sh issues
+
+# Run git-issue directly
+./scripts/worktree.sh issue ls
+./scripts/worktree.sh issue show <id>
+```
+
+### Commit Trailers
+
+Link commits to issues using trailers:
+```
+Issue: BUG-2025-001
+Epic: EPIC-16
+Status: done
+Solution: SOL-2025-001
+```
+
 ## Getting Started for Agents
 
 1. Read relevant `docs/` file for the feature you're working on

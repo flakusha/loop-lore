@@ -26,12 +26,12 @@
           "properties": {
             "key": {
               "type": "string",
-              "default": "/home/flak/git-ai/loop-lore/tree/refactor-schema/loop-lore-data/certs/key.pem",
+              "default": "/home/flak/git-ai/loop-lore/loop-lore-data/certs/key.pem",
               "description": "Path to TLS private key (PEM)"
             },
             "cert": {
               "type": "string",
-              "default": "/home/flak/git-ai/loop-lore/tree/refactor-schema/loop-lore-data/certs/cert.pem",
+              "default": "/home/flak/git-ai/loop-lore/loop-lore-data/certs/cert.pem",
               "description": "Path to TLS certificate (PEM)"
             }
           },
@@ -61,7 +61,7 @@
         },
         "sqliteFilename": {
           "type": "string",
-          "default": "/home/flak/git-ai/loop-lore/tree/refactor-schema/loop-lore-data/loop-lore.db",
+          "default": "/home/flak/git-ai/loop-lore/loop-lore-data/loop-lore.db",
           "description": "SQLite database file path"
         },
         "url": {
@@ -85,7 +85,7 @@
         },
         "uploadDir": {
           "type": "string",
-          "default": "/home/flak/git-ai/loop-lore/tree/refactor-schema/loop-lore-data/uploads",
+          "default": "/home/flak/git-ai/loop-lore/loop-lore-data/uploads",
           "description": "Directory for uploaded assets"
         },
         "maxFileSize": {
@@ -133,6 +133,7 @@
             "warn",
             "error"
           ],
+          "default": "debug",
           "description": "Log level"
         },
         "jsonlPath": {
@@ -141,18 +142,22 @@
         },
         "jsonlMaxBytes": {
           "type": "integer",
+          "default": 104857600,
           "description": "Max JSONL file bytes before rotation"
         },
         "jsonlMaxFiles": {
           "type": "integer",
+          "default": 5,
           "description": "Max rotated files to keep"
         },
         "dbEnabled": {
           "type": "boolean",
+          "default": false,
           "description": "Enable DB log transport"
         },
         "censorEnabled": {
           "type": "boolean",
+          "default": true,
           "description": "PII redaction"
         },
         "censorFields": {
@@ -164,22 +169,27 @@
         },
         "queueMaxSize": {
           "type": "integer",
+          "default": 10000,
           "description": "Max queue entries"
         },
         "maxMessageBytes": {
           "type": "integer",
+          "default": 10240,
           "description": "Max message string bytes"
         },
         "maxMetaBytes": {
           "type": "integer",
+          "default": 102400,
           "description": "Max meta blob bytes"
         },
         "maxMetaDepth": {
           "type": "integer",
+          "default": 5,
           "description": "Max meta recursion depth"
         },
         "maxStackBytes": {
           "type": "integer",
+          "default": 5120,
           "description": "Max error stack bytes"
         }
       },
@@ -288,7 +298,7 @@
         "adminUsername": {
           "type": "string",
           "default": "",
-          "description": "Bootstrap admin username (multi-user mode). Set via config or AUTH_ADMIN_USERNAME env."
+          "description": "Bootstrap admin username (multi-user mode). Env: AUTH_ADMIN_USERNAME."
         },
         "adminPassword": {
           "type": "string",
@@ -472,16 +482,19 @@
           "properties": {
             "openaiCompatible": {
               "type": "array",
+              "default": [],
               "description": "OpenAI-compatible provider instances"
             }
           }
         },
         "defaultProvider": {
           "type": "string",
+          "default": "",
           "description": "Default provider name"
         },
         "defaultModels": {
           "type": "object",
+          "default": {},
           "description": "Default model per provider"
         },
         "autoStart": {
@@ -494,6 +507,7 @@
               "properties": {
                 "enabled": {
                   "type": "boolean",
+                  "default": false,
                   "description": "Enable auto-start"
                 },
                 "modelPath": {
@@ -502,6 +516,7 @@
                 },
                 "port": {
                   "type": "integer",
+                  "default": 9011,
                   "description": "llama-server port"
                 },
                 "alias": {
@@ -510,6 +525,7 @@
                 },
                 "ctxSize": {
                   "type": "integer",
+                  "default": 8192,
                   "description": "Context size in tokens"
                 },
                 "threads": {
@@ -624,6 +640,7 @@
               "properties": {
                 "enabled": {
                   "type": "boolean",
+                  "default": false,
                   "description": "Enable auto-start"
                 },
                 "modelType": {
@@ -632,6 +649,7 @@
                     "checkpoint",
                     "diffusion"
                   ],
+                  "default": "checkpoint",
                   "description": "checkpoint = standalone (-m), diffusion = component (--diffusion-model, needs llm)"
                 },
                 "modelPath": {
@@ -640,6 +658,7 @@
                 },
                 "port": {
                   "type": "integer",
+                  "default": 9010,
                   "description": "sd-server port"
                 },
                 "llmPath": {
@@ -791,50 +810,23 @@
         "enabled"
       ]
     },
-    "encryption": {
-      "type": "object",
-      "description": "Encryption / SMK configuration",
-      "properties": {
-        "serverEncryptionKey": {
-          "type": "string",
-          "description": "256-bit hex key. Missing = encryption disabled (dev mode)."
-        },
-        "required": {
-          "type": "boolean",
-          "default": false,
-          "description": "true = refuse to start without SMK (prod guard)"
-        },
-        "compressThreshold": {
-          "type": "integer",
-          "default": 128,
-          "description": "Min bytes before compressing prior to encrypt"
-        },
-        "compressAlgorithm": {
-          "type": "string",
-          "default": "gzip",
-          "description": "Preferred compression algorithm"
-        }
-      },
-      "required": [
-        "required",
-        "compressThreshold",
-        "compressAlgorithm"
-      ]
-    },
     "headers": {
       "type": "object",
       "description": "Response-header policy (browser security / isolation / perf / observability)",
       "properties": {
         "enabled": {
           "type": "boolean",
+          "default": true,
           "description": "Master toggle for header injection"
         },
         "referrerPolicy": {
           "type": "string",
+          "default": "strict-origin-when-cross-origin",
           "description": "Referrer-Policy value"
         },
         "xContentTypeOptions": {
           "type": "boolean",
+          "default": true,
           "description": "Emit X-Content-Type-Options: nosniff"
         },
         "xFrameOptions": {
@@ -847,10 +839,12 @@
             "SAMEORIGIN",
             null
           ],
+          "default": "DENY",
           "description": "X-Frame-Options; null omits"
         },
         "permissionsPolicy": {
           "type": "string",
+          "default": "accelerometer=(), camera=(), geolocation=(), microphone=(), usb=()",
           "description": "Permissions-Policy feature delegation"
         },
         "csp": {
@@ -858,73 +852,113 @@
           "description": "Content-Security-Policy directive set (HTML only)",
           "properties": {
             "enabled": {
-              "type": "boolean"
+              "type": "boolean",
+              "default": true
             },
             "defaultSrc": {
               "type": "array",
               "items": {
                 "type": "string"
-              }
+              },
+              "default": [
+                "'self'"
+              ]
             },
             "scriptSrc": {
               "type": "array",
               "items": {
                 "type": "string"
-              }
+              },
+              "default": [
+                "'self'",
+                "'unsafe-inline'",
+                "'unsafe-eval'"
+              ]
             },
             "styleSrc": {
               "type": "array",
               "items": {
                 "type": "string"
-              }
+              },
+              "default": [
+                "'self'",
+                "'unsafe-inline'"
+              ]
             },
             "imgSrc": {
               "type": "array",
               "items": {
                 "type": "string"
-              }
+              },
+              "default": [
+                "'self'",
+                "data:",
+                "blob:"
+              ]
             },
             "fontSrc": {
               "type": "array",
               "items": {
                 "type": "string"
-              }
+              },
+              "default": [
+                "'self'"
+              ]
             },
             "connectSrc": {
               "type": "array",
               "items": {
                 "type": "string"
-              }
+              },
+              "default": [
+                "'self'",
+                "wss:",
+                "https:"
+              ]
             },
             "objectSrc": {
               "type": "array",
               "items": {
                 "type": "string"
-              }
+              },
+              "default": [
+                "'none'"
+              ]
             },
             "baseUri": {
               "type": "array",
               "items": {
                 "type": "string"
-              }
+              },
+              "default": [
+                "'self'"
+              ]
             },
             "frameAncestors": {
               "type": "array",
               "items": {
                 "type": "string"
-              }
+              },
+              "default": [
+                "'none'"
+              ]
             },
             "formAction": {
               "type": "array",
               "items": {
                 "type": "string"
-              }
+              },
+              "default": [
+                "'self'"
+              ]
             },
             "upgradeInsecureRequests": {
-              "type": "boolean"
+              "type": "boolean",
+              "default": true
             },
             "reportOnly": {
               "type": "boolean",
+              "default": false,
               "description": "Emit CSP as Report-Only (observe, not enforce)"
             }
           },
@@ -942,6 +976,7 @@
             "same-origin-allow-popups",
             null
           ],
+          "default": null,
           "description": "COOP; null omits"
         },
         "crossOriginEmbedderPolicy": {
@@ -953,6 +988,7 @@
             "require-corp",
             null
           ],
+          "default": null,
           "description": "COEP; self-hosted Alpine/htmx resolved CDN blocker. Still not needed (no wasm/SAB)."
         },
         "crossOriginResourcePolicy": {
@@ -965,14 +1001,17 @@
             "cross-origin",
             null
           ],
+          "default": "cross-origin",
           "description": "CORP for static subresources"
         },
         "timingAllowOrigin": {
           "type": "string",
+          "default": "",
           "description": "Timing-Allow-Origin; empty string omits"
         },
         "immutableHashedAssets": {
           "type": "boolean",
+          "default": true,
           "description": "Append immutable to Cache-Control for content-hashed assets"
         },
         "linkPreload": {
@@ -980,6 +1019,11 @@
           "items": {
             "type": "string"
           },
+          "default": [
+            "/vendor.js",
+            "/app.js",
+            "/css/app.css"
+          ],
           "description": "Link preload hints for HTML documents"
         },
         "acceptClientHints": {
@@ -987,17 +1031,20 @@
           "items": {
             "type": "string"
           },
+          "default": [],
           "description": "Accept-CH / Critical-CH client hint tokens"
         },
         "saveData": {
           "type": "boolean",
+          "default": false,
           "description": "Advertise Save-Data cooperativeness"
         },
         "earlyHints": {
           "type": "object",
           "properties": {
             "enabled": {
-              "type": "boolean"
+              "type": "boolean",
+              "default": false
             }
           },
           "required": [
@@ -1009,6 +1056,7 @@
           "additionalProperties": {
             "type": "string"
           },
+          "default": {},
           "description": "Reporting-Endpoints name → URL"
         },
         "nel": {
@@ -1016,6 +1064,7 @@
             "string",
             "null"
           ],
+          "default": null,
           "description": "NEL policy JSON; null omits"
         }
       },
