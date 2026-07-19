@@ -3,10 +3,10 @@
  *
  * Elysia plugin for persona CRUD operations.
  */
-import { Elysia, } from "elysia";
-import type { Kysely, } from "kysely";
 import type { DB, } from "../db/schema";
+import type { Kysely, } from "kysely";
 import type { RequestContext, } from "../middleware/types";
+import { Elysia, } from "elysia";
 import { ErrorCode, HttpStatus, jsonCreated, jsonError, jsonNoContent, jsonResponse, } from "../routes/http-utils";
 import { PersonasService, } from "./service";
 

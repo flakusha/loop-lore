@@ -38,6 +38,19 @@ import { WorldStateService, } from "./world-state";
 
 // ── LLM call abstraction ─────────────────────────────────
 
+
+/**
+ * Game Master Service
+ *
+ * Orchestrates story progression by selecting actors, constructing
+ * prompts, evaluating responses, and managing escalation.
+ * Supports LLM, Human, and Hybrid Game Master modes.
+ *
+ * llmDecision() calls the generation module via injected generateText
+ * callback — keeps story module decoupled from provider resolution.
+ */
+// ── LLM call abstraction ─────────────────────────────────
+
 /**
  * Function provided by the caller to actually invoke an LLM.
  * Keeps GameMasterService independent of provider resolution.
