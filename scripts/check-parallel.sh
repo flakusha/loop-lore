@@ -107,6 +107,7 @@ CHECKS[lint - ts]="bun run lint"
 CHECKS[lint - css]="bun run lint:css"
 CHECKS[lint - html]="bun run lint:html"
 CHECKS[lint - html-scripts]="bun run lint:html-scripts"
+CHECKS[lint - chaining]="bun run lint:chaining"
 
 # Formatting
 CHECKS[format - dprint]="bun run format:dprint"
