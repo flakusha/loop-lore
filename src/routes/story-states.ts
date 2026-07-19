@@ -6,8 +6,8 @@
  *   GET  /api/worlds/:id/npc-states/:actorId    — get NPC state
  *   PUT  /api/worlds/:id/npc-states/:actorId    — update NPC state
  *   GET  /api/worlds/:id/npcs-at/:locationId    — list NPCs at location
- *   GET  /api/locations/:locationId/state            — get location state
- *   PUT  /api/locations/:locationId/state            — update location state
+ *   GET  /api/locations/:id/state            — get location state
+ *   PUT  /api/locations/:id/state            — update location state
  *   GET  /api/worlds/:id/states                 — list world snapshots (paginated)
  *   POST /api/worlds/:id/states                 — take snapshot
  */
@@ -261,18 +261,18 @@ export function storyStatesRoutes({ database, }: { database: Kysely<DB> },): Ely
         userRole,
       );
     },)
-    .get("/api/locations/:locationId/state", async (ctx: any,) => {
+    .get("/api/locations/:id/state", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
       const userRole = ctx.userRole as string | null;
-      return handleLocationState(database, "GET", ctx.params.locationId as string, userId, userRole,);
+      return handleLocationState(database, "GET", ctx.params.id as string, userId, userRole,);
     },)
-    .put("/api/locations/:locationId/state", async (ctx: any,) => {
+    .put("/api/locations/:id/state", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
       const userRole = ctx.userRole as string | null;
       return handleLocationState(
         database,
         "PUT",
-        ctx.params.locationId as string,
+        ctx.params.id as string,
         userId,
         userRole,
         ctx.body as Record<string, unknown>,
