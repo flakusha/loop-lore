@@ -28,7 +28,6 @@ Merges a source branch into a worktree's current branch:
 ```
 
 Example:
-
 ```bash
 ./scripts/worktree.sh merge feat feature-api
 # Merges 'feature-api' into the 'feat' worktree's branch
@@ -43,7 +42,6 @@ Rebases a worktree's branch onto a target (default: master):
 ```
 
 Example:
-
 ```bash
 ./scripts/worktree.sh rebase feat          # rebase feat onto master
 ./scripts/worktree.sh rebase feat develop  # rebase feat onto develop
@@ -60,7 +58,6 @@ Before merge/rebase, the script:
 3. **Checks for uncommitted changes** — warns and exits if dirty
 
 If dirty, stash first:
-
 ```bash
 cd tree/<branch>
 git stash
@@ -112,7 +109,6 @@ If `/tmp/gpg-loopback` exists (non-TTY wrapper), it is used as
 ### Verification
 
 After any merge, verify the signature:
-
 ```bash
 git log --show-signature -1
 git verify-commit HEAD
@@ -123,7 +119,6 @@ Both should confirm: Good signature from agent key.
 ### Manual Merge Commit (Conflict Resolution)
 
 When resolving merge conflicts, sign the commit manually:
-
 ```bash
 cd tree/<branch>
 GIT_COMMITTER_NAME="<AGENT_GPG_NAME>" \
