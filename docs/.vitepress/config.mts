@@ -113,8 +113,8 @@ export default defineConfig({
           text: 'Integrations',
           collapsed: true,
           items: [
-            { text: 'llama.cpp', link: '/spec/integrations/llama-cpp' },
-            { text: 'stable-diffusion.cpp', link: '/spec/integrations/stable-diffusion-cpp' },
+            { text: 'Image Generation', link: '/spec/integrations/image-generation' },
+            { text: 'LLM Serving', link: '/spec/integrations/llm-serving' },
           ],
         },
         {
@@ -186,23 +186,16 @@ export default defineConfig({
             { text: 'Roadmap', link: '/meta/roadmap' },
             { text: 'Issue Tracker', link: '/meta/issues' },
             { text: 'Workflow', link: '/meta/workflow' },
-            { text: 'Migration Strategy', link: '/meta/migration-strategy' },
           ],
         },
         {
           text: 'Reviews',
           collapsed: true,
           items: [
-            { text: 'DB Schema Interconnection', link: '/meta/reviews/review-db-schema-interconnection' },
-            { text: 'Typecasts Audit', link: '/meta/reviews/review-typecasts' },
-            { text: 'Validation Approaches', link: '/meta/reviews/review-validation-approaches' },
-          ],
-        },
-        {
-          text: 'Proposals',
-          collapsed: true,
-          items: [
-            { text: 'VitePress Docs', link: '/meta/vite-docs-proposal' },
+            { text: 'Alpine + HTMX E2E Feasibility', link: '/meta/reviews/alpine-htmx-e2e-feasibility' },
+            { text: 'Alpine + HTMX Integration', link: '/meta/reviews/alpine-htmx-integration' },
+            { text: 'FE/BE Compatibility', link: '/meta/reviews/fe-be-compatibility' },
+            { text: 'Review Rounds', link: '/meta/reviews/review-rounds' },
           ],
         },
       ],
