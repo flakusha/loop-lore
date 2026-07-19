@@ -76,27 +76,47 @@ md += "> `refs/issues/<uuid>` and referenced from docs via extended identifiers 
 md += `> Total: **${recs.length}** · Open: **${open}** · Closed: **${closed}**\n\n`;
 md += "Regenerate with `bun run docs:gen`.\n\n";
 
-for (const type of order) {
-  const list = groups[type];
-  if (!list?.length) { continue; }
-  md += `## ${type} Issues\n\n`;
-  for (const r of list) {
-    const st = stateByHash[r.hash]?.state ?? "open";
-    const labels = stateByHash[r.hash]?.labels || r.label;
-    const pri = stateByHash[r.hash]?.priority || r.priority;
-    const human = r.title.replace(`${r.extid}: `, "",);
-    md += `### ${r.extid}\n\n`;
-    md += `- **Title:** ${human}\n`;
-    md += `- **State:** ${st}\n`;
-    md += `- **Labels:** ${labels}\n`;
-    md += `- **Priority:** ${pri}\n`;
-    if (r.epic) { md += `- **Epic:** ${r.epic}\n`; }
-    md += `- **Source:** ${r.source}\n`;
-    md += `- **Issue ID:** \`${r.hash}\`\n`;
-    if (r.body) { md += `\n${r.body}\n`; }
-    md += "\n";
-  }
+// Partition into pending (open) and resolved (closed).
+const pending: Record<string, Rec[]> = {};
+const resolved: Record<string, Rec[]> = {};
+for (const r of recs) {
+  const st = stateByHash[r.hash]?.state ?? "open";
+  const bucket = st === "closed" ? resolved : pending;
+  (bucket[r.type] ??= []).push(r,);
 }
+
+function renderSection(groups: Record<string, Rec[]>,): string {
+  let out = "";
+  for (const type of order) {
+    const list = groups[type];
+    if (!list?.length) { continue; }
+    out += `### ${type}\n\n`;
+    for (const r of list) {
+      const st = stateByHash[r.hash]?.state ?? "open";
+      const labels = stateByHash[r.hash]?.labels || r.label;
+      const pri = stateByHash[r.hash]?.priority || r.priority;
+      const human = r.title.replace(`${r.extid}: `, "",);
+      const stateTag = st === "closed" ? " ✅" : "";
+      out += `#### ${r.extid}${stateTag}\n\n`;
+      out += `- **Title:** ${human}\n`;
+      out += `- **State:** ${st}\n`;
+      out += `- **Labels:** ${labels}\n`;
+      out += `- **Priority:** ${pri}\n`;
+      if (r.epic) { out += `- **Epic:** ${r.epic}\n`; }
+      out += `- **Source:** ${r.source}\n`;
+      out += `- **Issue ID:** \`${r.hash}\`\n`;
+      if (r.body) { out += `\n${r.body}\n`; }
+      out += "\n";
+    }
+  }
+  return out;
+}
+
+// Pending first, then resolved.
+md += "## Pending\n\n";
+md += renderSection(pending,);
+md += "## Resolved\n\n";
+md += renderSection(resolved,);
 
 writeFileSync(OUT, md,);
 console.log(`Wrote ${OUT} (${recs.length} issues, ${open} open / ${closed} closed)`,);
