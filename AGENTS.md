@@ -309,7 +309,7 @@ Install hooks (one-time):
 
 ```bash
 git config core.hooksPath .githooks
-chmod +x .githooks/pre-commit
+chmod +x .githooks/*
 ```
 
 Triggered on `git commit`. Pipeline:
@@ -323,6 +323,35 @@ Triggered on `git commit`. Pipeline:
 Set `E2E_SAFEGUARD=0` to bypass (dev-only — never in CI).
 
 Goal: lightweight, extensible, maintainable, scalable.
+
+---
+
+## Pre-push Hooks
+
+Install hooks (one-time):
+
+```bash
+git config core.hooksPath .githooks
+chmod +x .githooks/*
+```
+
+Triggered on `git push`. Pipeline:
+
+1. **Agent push detection** — blocks pushes containing agent commits
+   (detected via `Co-authored-by` trailer matching `AGENT_GPG_EMAIL`
+   from `.credentials.env`). Agent workflow: commit locally via
+   `worktree.sh agent-commit`, then `worktree.sh finalize` merges to
+   master, human pushes.
+
+2. **Tag version validation** — production tags (e.g., `v0.1.0`) must
+   match `package.json` version exactly. Pre-release tags
+   (`-dev`, `-alpha`, `-beta`, `-rc` suffixes) are allowed to drift.
+
+Override (human approval required):
+
+```bash
+git push --no-verify
+```
 
 ---
 
