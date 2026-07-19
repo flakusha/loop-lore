@@ -36,13 +36,13 @@ export function messageReactionsRoutes(opts: HandlerOpts,) {
 
   return (
     new Elysia({ name: "message-reactions", },)
-      // GET /api/messages/:messageId/reactions — grouped reactions
+      // GET /api/messages/:id/reactions — grouped reactions
       .get(
-        "/api/messages/:messageId/reactions",
+        "/api/messages/:id/reactions",
         async (ctx: any,) => {
           const userId = ctx.userId as string | null;
           if (!userId) { return unauthorized(); }
-          const { messageId, } = ctx.params;
+          const messageId = ctx.params.id;
 
           // Verify message exists and user has access
           const msg = await database
@@ -86,18 +86,18 @@ export function messageReactionsRoutes(opts: HandlerOpts,) {
           }));
         },
         {
-          params: t.Object({ messageId: t.String(), },),
+          params: t.Object({ id: t.String(), },),
         },
       )
       // GET /api/messages/quick-emojis — available emoji list
       .get("/api/messages/quick-emojis", () => QUICK_EMOJIS,)
-      // POST /api/messages/:messageId/reactions — toggle reaction
+      // POST /api/messages/:id/reactions — toggle reaction
       .post(
-        "/api/messages/:messageId/reactions",
+        "/api/messages/:id/reactions",
         async (ctx: any,) => {
           const userId = ctx.userId as string | null;
           if (!userId) { return unauthorized(); }
-          const { messageId, } = ctx.params;
+          const messageId = ctx.params.id;
           const { emoji, } = ctx.body as { emoji: string };
 
           if (!emoji || typeof emoji !== "string") {
@@ -141,17 +141,17 @@ export function messageReactionsRoutes(opts: HandlerOpts,) {
           return { toggled: true, emoji, };
         },
         {
-          params: t.Object({ messageId: t.String(), },),
+          params: t.Object({ id: t.String(), },),
           body: t.Object({ emoji: t.String(), },),
         },
       )
-      // DELETE /api/messages/:messageId/reactions — remove user's all reactions
+      // DELETE /api/messages/:id/reactions — remove user's all reactions
       .delete(
-        "/api/messages/:messageId/reactions",
+        "/api/messages/:id/reactions",
         async (ctx: any,) => {
           const userId = ctx.userId as string | null;
           if (!userId) { return unauthorized(); }
-          const { messageId, } = ctx.params;
+          const messageId = ctx.params.id;
 
           await database
             .deleteFrom("message_reactions",)
@@ -162,7 +162,7 @@ export function messageReactionsRoutes(opts: HandlerOpts,) {
           return { ok: true, };
         },
         {
-          params: t.Object({ messageId: t.String(), },),
+          params: t.Object({ id: t.String(), },),
         },
       )
   );
