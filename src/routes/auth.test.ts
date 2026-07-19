@@ -26,6 +26,8 @@ function makeConfig(overrides?: { registrationOpen?: boolean },): any {
       maxSessionsPerUser: 10,
       demoUsername: "demo",
       demoAutoSetup: false,
+      jwtSecret: "test-secret-key-for-jwt-signing",
+      jwtExpiresIn: 86_400,
     },
     encryption: { enabled: false, },
   };

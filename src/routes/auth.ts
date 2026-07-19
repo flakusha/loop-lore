@@ -1,10 +1,10 @@
 /**
  * Auth Routes
  *
- *   POST /api/auth/login      — authenticate, create session, return token
+ *   POST /api/auth/login      — authenticate, create session, return JWT
  *   POST /api/demo-login      — solo/demo mode login (no password)
  *   POST /api/auth/register   — create account + auto-login
- *   POST /api/auth/logout     — delete current session
+ *   POST /api/auth/logout     — revoke session, clear cookie
  *   GET  /api/auth/me         — current user profile
  *
  * Login form submits form-encoded. On success: HX-Redirect + Set-Cookie.
@@ -13,14 +13,14 @@
 
 import { Elysia, } from "elysia";
 import type { Kysely, } from "kysely";
-import crypto from "node:crypto";
+import { signJwt, } from "../auth/jwt";
 import type { Config, } from "../config/schema";
 import { ensureActorKey, getSmk, isEncryptionEnabled, } from "../crypto";
 import { UserRole, UserStatus, } from "../db/enums";
 import type { DB, } from "../db/schema";
 import { getOrCreateSoloUserForAuth, } from "../middleware/auth";
 import { createRateLimiter, } from "../middleware/rate-limit";
-import { secureToken, uid, } from "../utils";
+import { uid, } from "../utils";
 import { notFound, unauthorized, } from "../validation/middleware";
 import { HttpStatus, jsonError, jsonResponse, } from "./http-utils";
 
@@ -41,10 +41,9 @@ const registerLimiter = createRateLimiter({ windowMs: 60 * 60 * 1000, maxRequest
 
 const TOKEN_COOKIE = "ll_token";
 const COOKIE_PATH = "/";
-const COOKIE_MAX_AGE_SECS = 24 * 60 * 60; // 24h
 
-function setTokenCookie(token: string,): string {
-  return `${TOKEN_COOKIE}=${token}; Path=${COOKIE_PATH}; Max-Age=${COOKIE_MAX_AGE_SECS}; HttpOnly; SameSite=Lax`;
+function setTokenCookie(token: string, maxAgeSecs: number,): string {
+  return `${TOKEN_COOKIE}=${token}; Path=${COOKIE_PATH}; Max-Age=${maxAgeSecs}; HttpOnly; SameSite=Lax`;
 }
 
 // ── Helpers ───────────────────────────────────────────────────
@@ -60,10 +59,6 @@ function getClientIp(request: Request,): string {
   );
 }
 
-function computeExpiry(sessionTimeoutHours: number,): string {
-  return new Date(Date.now() + sessionTimeoutHours * 60 * 60 * 1000,).toISOString();
-}
-
 function escapeHtml(str: string,): string {
   return str
     .replaceAll("&", "&amp;",)
@@ -76,6 +71,46 @@ function errorHtml(msg: string,): Response {
   return new Response(`<p class="error-msg">${escapeHtml(msg,)}</p>`, {
     headers: { "Content-Type": "text/html; charset=utf-8", },
   },);
+}
+
+/** Extract session ID from JWT payload without signature verification (for logout). */
+function extractSessionIdFromJwt(token: string,): string | null {
+  try {
+    const parts = token.split(".",);
+    if (parts.length !== 3) { return null; }
+    const payloadB64 = parts[1]!;
+    const base64 = payloadB64.replaceAll("-", "+",).replaceAll("_", "/",);
+    const padded = base64 + "=".repeat((4 - (base64.length % 4)) % 4,);
+    const payloadBytes = Uint8Array.from(atob(padded,), (c,) => c.charCodeAt(0,),);
+    const payload = JSON.parse(new TextDecoder().decode(payloadBytes,),) as { sid?: string };
+    return payload.sid ?? null;
+  } catch {
+    return null;
+  }
+}
+
+/** Extract user ID from JWT payload without signature verification (for /me). */
+function extractUserIdFromJwt(token: string,): string | null {
+  try {
+    const parts = token.split(".",);
+    if (parts.length !== 3) { return null; }
+    const payloadB64 = parts[1]!;
+    const base64 = payloadB64.replaceAll("-", "+",).replaceAll("_", "/",);
+    const padded = base64 + "=".repeat((4 - (base64.length % 4)) % 4,);
+    const payloadBytes = Uint8Array.from(atob(padded,), (c,) => c.charCodeAt(0,),);
+    const payload = JSON.parse(new TextDecoder().decode(payloadBytes,),) as { sub?: string };
+    return payload.sub ?? null;
+  } catch {
+    return null;
+  }
+}
+
+function getTokenFromCookie(request: Request,): string | null {
+  return request.headers
+    .get("Cookie",)
+    ?.split(";",)
+    .find((c,) => c.startsWith("ll_token=",))
+    ?.slice(9,) ?? null;
 }
 
 // ── Handlers ──────────────────────────────────────────────────
@@ -120,18 +155,17 @@ async function handleLogin(request: Request, database: Kysely<DB>, config: Confi
   if (!passwordValid) { return errorHtml("Invalid username or password.",); }
 
   const userAgent = request.headers.get("User-Agent",);
-  const rawToken = secureToken();
-  const tokenHash = crypto.createHash("sha256",).update(rawToken,).digest("hex",);
+  const sessionId = uid();
 
   await database
     .insertInto("sessions",)
     .values({
-      id: uid(),
+      id: sessionId,
       user_id: user.id,
-      token_hash: tokenHash,
+      token_hash: "",
       ip,
       user_agent: userAgent,
-      expires_at: computeExpiry(config.auth.sessionTimeoutHours,),
+      expires_at: new Date(Date.now() + config.auth.sessionTimeoutHours * 60 * 60 * 1000,).toISOString(),
     },)
     .execute();
 
@@ -140,9 +174,26 @@ async function handleLogin(request: Request, database: Kysely<DB>, config: Confi
     await ensureActorKey({ database, actorId: user.id, smk, },);
   }
 
+  const jwtSecret = config.auth.jwtSecret;
+  if (!jwtSecret) {
+    return jsonError({
+      message: "Server misconfigured: JWT secret not set",
+      status: HttpStatus.InternalServerError,
+    },);
+  }
+
+  const jwtExpiresIn = config.auth.jwtExpiresIn ?? 86_400;
+  const token = await signJwt({
+    secret: jwtSecret,
+    userId: user.id,
+    role: user.role,
+    sessionId,
+    expiresInSeconds: jwtExpiresIn,
+  },);
+
   return new Response("OK", {
     status: HttpStatus.OK,
-    headers: { "HX-Redirect": "/views/chat", "Set-Cookie": setTokenCookie(rawToken,), },
+    headers: { "HX-Redirect": "/views/chat", "Set-Cookie": setTokenCookie(token, jwtExpiresIn,), },
   },);
 }
 
@@ -157,18 +208,17 @@ async function handleDemoLogin(request: Request, database: Kysely<DB>, config: C
 
   const ip = getClientIp(request,);
   const userAgent = request.headers.get("User-Agent",);
-  const rawToken = secureToken();
-  const tokenHash = crypto.createHash("sha256",).update(rawToken,).digest("hex",);
+  const sessionId = uid();
 
   await database
     .insertInto("sessions",)
     .values({
-      id: uid(),
+      id: sessionId,
       user_id: soloUser.id,
-      token_hash: tokenHash,
+      token_hash: "",
       ip,
       user_agent: userAgent,
-      expires_at: computeExpiry(config.auth.sessionTimeoutHours,),
+      expires_at: new Date(Date.now() + config.auth.sessionTimeoutHours * 60 * 60 * 1000,).toISOString(),
     },)
     .execute();
 
@@ -177,9 +227,26 @@ async function handleDemoLogin(request: Request, database: Kysely<DB>, config: C
     await ensureActorKey({ database, actorId: soloUser.id, smk, },);
   }
 
+  const jwtSecret = config.auth.jwtSecret;
+  if (!jwtSecret) {
+    return jsonError({
+      message: "Server misconfigured: JWT secret not set",
+      status: HttpStatus.InternalServerError,
+    },);
+  }
+
+  const jwtExpiresIn = config.auth.jwtExpiresIn ?? 86_400;
+  const token = await signJwt({
+    secret: jwtSecret,
+    userId: soloUser.id,
+    role: UserRole.Solo,
+    sessionId,
+    expiresInSeconds: jwtExpiresIn,
+  },);
+
   return new Response("OK", {
     status: HttpStatus.OK,
-    headers: { "HX-Redirect": "/views/chat", "Set-Cookie": setTokenCookie(rawToken,), },
+    headers: { "HX-Redirect": "/views/chat", "Set-Cookie": setTokenCookie(token, jwtExpiresIn,), },
   },);
 }
 
@@ -267,56 +334,57 @@ async function handleRegister(request: Request, database: Kysely<DB>, config: Co
   }
 
   const userAgent = request.headers.get("User-Agent",);
-  const rawToken = secureToken();
-  const tokenHash = crypto.createHash("sha256",).update(rawToken,).digest("hex",);
+  const sessionId = uid();
 
   await database
     .insertInto("sessions",)
     .values({
-      id: uid(),
+      id: sessionId,
       user_id: userId,
-      token_hash: tokenHash,
+      token_hash: "",
       ip,
       user_agent: userAgent,
-      expires_at: computeExpiry(config.auth.sessionTimeoutHours,),
+      expires_at: new Date(Date.now() + config.auth.sessionTimeoutHours * 60 * 60 * 1000,).toISOString(),
     },)
     .execute();
 
+  const jwtSecret = config.auth.jwtSecret;
+  if (!jwtSecret) {
+    return jsonError({
+      message: "Server misconfigured: JWT secret not set",
+      status: HttpStatus.InternalServerError,
+    },);
+  }
+
+  const jwtExpiresIn = config.auth.jwtExpiresIn ?? 86_400;
+  const token = await signJwt({
+    secret: jwtSecret,
+    userId,
+    role: UserRole.User,
+    sessionId,
+    expiresInSeconds: jwtExpiresIn,
+  },);
+
   return new Response("OK", {
     status: HttpStatus.OK,
-    headers: { "HX-Redirect": "/views/chat", "Set-Cookie": setTokenCookie(rawToken,), },
+    headers: { "HX-Redirect": "/views/chat", "Set-Cookie": setTokenCookie(token, jwtExpiresIn,), },
   },);
 }
 
 async function handleLogout(request: Request, database: Kysely<DB>,): Promise<Response> {
-  const token = request.headers
-    .get("Cookie",)
-    ?.split(";",)
-    .find((c,) => c.startsWith("ll_token=",))
-    ?.slice(9,);
-  const sessionId = token ? await getSessionIdFromToken(database, token,) : null;
+  const token = getTokenFromCookie(request,);
+  const sessionId = token ? extractSessionIdFromJwt(token,) : null;
 
-  if (!sessionId) {
-    return new Response(null, {
-      status: HttpStatus.OK,
-      headers: {
-        "Set-Cookie": `${TOKEN_COOKIE}=; Path=${COOKIE_PATH}; Max-Age=0; HttpOnly; SameSite=Lax`,
-      },
-    },);
+  if (sessionId) {
+    await database.deleteFrom("sessions",).where("id", "=", sessionId,).execute();
   }
 
-  await database.deleteFrom("sessions",).where("id", "=", sessionId,).execute();
-  return jsonResponse({ ok: true, }, HttpStatus.OK,);
-}
-
-async function getSessionIdFromToken(database: Kysely<DB>, token: string,): Promise<string | null> {
-  const tokenHash = crypto.createHash("sha256",).update(token,).digest("hex",);
-  const session = await database
-    .selectFrom("sessions",)
-    .select("id",)
-    .where("token_hash", "=", tokenHash,)
-    .executeTakeFirst();
-  return session?.id ?? null;
+  return new Response(null, {
+    status: HttpStatus.OK,
+    headers: {
+      "Set-Cookie": `${TOKEN_COOKIE}=; Path=${COOKIE_PATH}; Max-Age=0; HttpOnly; SameSite=Lax`,
+    },
+  },);
 }
 
 async function handleMe(
@@ -327,20 +395,8 @@ async function handleMe(
   let userId: string | null = derivedUserId;
 
   if (!userId) {
-    const token = request.headers
-      .get("Cookie",)
-      ?.split(";",)
-      .find((c,) => c.startsWith("ll_token=",))
-      ?.slice(9,);
-    const sessionId = token ? await getSessionIdFromToken(database, token,) : null;
-    if (sessionId) {
-      const session = await database
-        .selectFrom("sessions",)
-        .select("user_id",)
-        .where("id", "=", sessionId,)
-        .executeTakeFirst();
-      userId = session?.user_id ?? null;
-    }
+    const token = getTokenFromCookie(request,);
+    userId = token ? extractUserIdFromJwt(token,) : null;
   }
 
   if (!userId) {
