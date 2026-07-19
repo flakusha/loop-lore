@@ -5,7 +5,7 @@ plus analysis of competitor projects (SillyTavern, RisuAI, Agnai) and community
 feature requests. Each theme is broken into its own document and linked below.
 
 > These are **proposals** — not yet scheduled in `docs/meta/roadmap.md` or
-> `docs/meta/backlog.md`. Approved for drafting 2026-07-18; docs may be reorganized
+> `.plan/backlog.md`. Approved for drafting 2026-07-18; docs may be reorganized
 > later.
 
 ## Gap summary
