@@ -17,7 +17,7 @@ describe("Worlds flow E2E", () => {
 
   async function gotoWorlds(page: Awaited<ReturnType<BrowserTestContext["browser"]["newPage"]>>,) {
     try {
-      await page.goto(ctx.url + "/views/worlds", { waitUntil: "domcontentloaded", timeout: 10_000, },);
+      await page.goto(`${ctx.url  }/views/worlds`, { waitUntil: "domcontentloaded", timeout: 10_000, },);
     } catch {}
     await page.locator("[data-testid='app-root']",).waitFor({ state: "attached", timeout: 8000, },);
   }

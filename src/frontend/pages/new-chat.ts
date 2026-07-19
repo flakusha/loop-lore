@@ -166,20 +166,20 @@ globalThis.loadNewChatPage = async function(): Promise<void> {
       if (res.ok) {
         const d = await res.json();
         if (personaId) {
-          feFetch("/api/chats/" + d.id + "/persona", {
+          feFetch(`/api/chats/${  d.id  }/persona`, {
             method: "PUT",
             headers: { "Content-Type": "application/json", },
             body: jsonBody({ personaId, },),
           },);
         }
         if (impersonateId) {
-          feFetch("/api/chats/" + d.id + "/impersonate", {
+          feFetch(`/api/chats/${  d.id  }/impersonate`, {
             method: "PUT",
             headers: { "Content-Type": "application/json", },
             body: jsonBody({ impersonateActorId: impersonateId, },),
           },);
         }
-        location.assign("/views/chat?chatid=" + encodeURIComponent(d.id,),);
+        location.assign(`/views/chat?chatid=${  encodeURIComponent(d.id,)}`,);
       } else {
         showToast("error", await getErrorMessage(res, "Failed to create chat",),);
         if (btn) {

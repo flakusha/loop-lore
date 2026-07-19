@@ -95,9 +95,9 @@ export class AssetView {
         `{bold}Type:{/bold} ${asset.asset_type}\n` +
         `{bold}MIME:{/bold} ${asset.mime_type}\n` +
         `{bold}Size:{/bold} ${sizeStr}\n` +
-        `{bold}Added:{/bold} ${asset.created_at.slice(0, 10,)}\n` +
-        (asset.alt_text ? `{bold}Alt:{/bold} ${asset.alt_text}\n` : "") +
-        `\n{cyan-fg}← → navigate   Del: unlink{/cyan-fg}`,
+        `{bold}Added:{/bold} ${asset.created_at.slice(0, 10,)}\n${ 
+        asset.alt_text ? `{bold}Alt:{/bold} ${asset.alt_text}\n` : "" 
+        }\n{cyan-fg}← → navigate   Del: unlink{/cyan-fg}`,
     );
     /* eslint-enable unicorn/no-incorrect-template-string-interpolation */
 

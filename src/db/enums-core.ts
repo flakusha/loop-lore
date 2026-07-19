@@ -210,3 +210,11 @@ export const ModelRole = {
   Summarization: "summarization",
 } as const;
 export type ModelRole = (typeof ModelRole)[keyof typeof ModelRole];
+
+// ── Encryption Levels ─────────────────────────────────────
+export const EncryptionLevel = {
+  Public: "public",
+  Standard: "standard",
+  Private: "private",
+} as const;
+export type EncryptionLevel = (typeof EncryptionLevel)[keyof typeof EncryptionLevel];

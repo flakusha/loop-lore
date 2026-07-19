@@ -22,7 +22,7 @@ afterAll(async () => {
 
 async function gotoChat(page: Awaited<ReturnType<BrowserTestContext["browser"]["newPage"]>>,) {
   try {
-    await page.goto(ctx.url + "/views/chat", { waitUntil: "domcontentloaded", timeout: 10_000, },);
+    await page.goto(`${ctx.url  }/views/chat`, { waitUntil: "domcontentloaded", timeout: 10_000, },);
   } catch {}
   await page.locator("[data-testid='message-list']",).waitFor({ state: "attached", timeout: 8000, },);
 }

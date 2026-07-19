@@ -68,8 +68,9 @@ export async function encryptAtRest(opts: AtRestEncryptOpts,): Promise<AtRestRes
   }
 
   switch (encryptionLevel) {
-    case "public":
+    case "public": {
       return { storedContent: plaintext, keyId: null, wasEncrypted: false, };
+    }
 
     case "standard": {
       if (!isEncryptionEnabled()) {
@@ -87,15 +88,17 @@ export async function encryptAtRest(opts: AtRestEncryptOpts,): Promise<AtRestRes
       return { storedContent: stored, keyId: chatKey.keyId, wasEncrypted: true, };
     }
 
-    case "private":
+    case "private": {
       // E2E: clients must pre-encrypt before sending. Server cannot encrypt.
       throw new Error(
         "private tier requires client-side E2E encryption. " +
           "Pre-encrypt content before sending to the server.",
       );
+    }
 
-    default:
+    default: {
       throw new Error(`Unknown encryption level: ${String(encryptionLevel,)}`,);
+    }
   }
 }
 
@@ -112,8 +115,9 @@ export async function decryptAtRest(opts: AtRestDecryptOpts,): Promise<string> {
   const { database, chatId, storedContent, encryptionLevel, } = opts;
 
   switch (encryptionLevel) {
-    case "public":
+    case "public": {
       return storedContent;
+    }
 
     case "standard": {
       if (!isEncryptedPayload(storedContent,)) {
@@ -129,15 +133,17 @@ export async function decryptAtRest(opts: AtRestDecryptOpts,): Promise<string> {
       return decryptThenDecompress(storedContent, chatKey.key,);
     }
 
-    case "private":
+    case "private": {
       // E2E: clients must decrypt locally. Server cannot decrypt.
       throw new Error(
         "private tier requires client-side E2E decryption. " +
           "Decrypt content on the client using the chat's private key.",
       );
+    }
 
-    default:
+    default: {
       throw new Error(`Unknown encryption level: ${String(encryptionLevel,)}`,);
+    }
   }
 }
 
