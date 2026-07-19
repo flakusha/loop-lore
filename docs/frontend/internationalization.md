@@ -261,7 +261,7 @@ The translation backend supports two modes:
 
 **Mode 1 — Single model (default):** One LLM handles all target languages.
 
-```env
+```shell
 # Optional dedicated translation LLM. If unset, the main generation LLM is used.
 TRANSLATION_LLM_ENDPOINT=https://api.openai.com/v1/chat/completions
 TRANSLATION_LLM_MODEL=gpt-4o-mini       # Cheap, fast
@@ -270,7 +270,7 @@ TRANSLATION_LLM_API_KEY=sk-...
 
 **Mode 2 — Per-locale models (advanced):** A dictionary mapping locale tags to specific LLM endpoints. Useful when fine-tuned translation models exist for specific language pairs (e.g., a dedicated ja→en model, a ru→en model).
 
-```env
+```shell
 # Per-locale translation LLMs. Falls back to the single model (or main generation LLM)
 # for any locale not listed here.
 TRANSLATION_LLM_MODELS_ja=https://custom-jp-translator.example.com/v1/chat/completions
