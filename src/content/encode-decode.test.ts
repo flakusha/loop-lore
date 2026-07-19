@@ -6,7 +6,7 @@ const TEST_SAMPLES: { text: string; label: string }[] = [
   { text: "", label: "(empty)", },
   { text: "short", label: "short", },
   { text: "hello world", label: "hello world", },
-  { text: "a".repeat(1000,), label: `${"a".repeat(20,)  }...`, },
+  { text: "a".repeat(1000,), label: `${"a".repeat(20,)}...`, },
   { text: "The quick brown fox jumps over the lazy dog. ".repeat(10,), label: "The quick brown fox ...", },
   { text: JSON.stringify({ nested: { object: true, }, arr: [1, 2, 3,], },), label: '{"nested":{"object":...', },
 ];

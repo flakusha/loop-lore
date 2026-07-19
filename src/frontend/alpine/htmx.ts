@@ -35,7 +35,7 @@ document.addEventListener("htmx:configRequest", (e: CustomEvent<{ headers: Recor
   apiLog.debug("htmx:configRequest", { path: (e as any)?.detail?.path, },);
   const token = localStorage.getItem("session_token",);
   if (token) {
-    e.detail.headers.Authorization = `Bearer ${  token}`;
+    e.detail.headers.Authorization = `Bearer ${token}`;
   }
 },);
 

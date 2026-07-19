@@ -14,13 +14,13 @@ async function reinit(): Promise<void> {
   const log = getLogger().child({ module: "reinit", },);
 
   const dbPath = process.env.LOOP_LORE_DB_PATH ?? path.resolve(DATA_DIR, "loop-lore.db",);
-  const walPath = `${dbPath  }-wal`;
-  const shmPath = `${dbPath  }-shm`;
+  const walPath = `${dbPath}-wal`;
+  const shmPath = `${dbPath}-shm`;
 
   // Clean up old mangled path (pre-fix: path.join with absolute DATA_DIR)
   const oldPath = path.join(process.cwd(), DATA_DIR, "loop-lore.db",);
   if (oldPath !== dbPath) {
-    for (const p of [oldPath, `${oldPath  }-wal`, `${oldPath  }-shm`,]) {
+    for (const p of [oldPath, `${oldPath}-wal`, `${oldPath}-shm`,]) {
       if (existsSync(p,)) { unlinkSync(p,); }
     }
   }

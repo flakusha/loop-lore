@@ -14,7 +14,7 @@ describe("Characters flow E2E", () => {
 
   async function gotoCharacters(page: Awaited<ReturnType<BrowserTestContext["browser"]["newPage"]>>,) {
     try {
-      await page.goto(`${ctx.url  }/views/characters`, { waitUntil: "domcontentloaded", timeout: 10_000, },);
+      await page.goto(`${ctx.url}/views/characters`, { waitUntil: "domcontentloaded", timeout: 10_000, },);
     } catch {}
     await page.locator("[data-testid='app-root']",).waitFor({ state: "attached", timeout: 8000, },);
   }

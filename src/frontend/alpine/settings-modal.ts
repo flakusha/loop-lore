@@ -60,7 +60,7 @@ import { jsonBody, } from "./json";
       const themes = globalThis.__THEMES ?? [];
       if (themes.every((t: any,) => t.id !== this.theme)) { return; }
       for (const t of themes) {
-        const link = document.querySelector(`#theme-${  t.id}`,) as HTMLLinkElement | null;
+        const link = document.querySelector(`#theme-${t.id}`,) as HTMLLinkElement | null;
         if (link) { link.disabled = t.id !== this.theme; }
       }
       document.body.classList.toggle("theme-no-icons", this.theme === "no-icons",);

@@ -116,7 +116,7 @@ const log = rootLog.child({ module: "settings", },);
           const themes = (globalThis as any).__THEMES ?? [];
           if (themes.every((t: any,) => t.id !== payload.theme)) { return; }
           for (const t of themes) {
-            const link = document.querySelector(`#theme-${  t.id}`,) as HTMLLinkElement | null;
+            const link = document.querySelector(`#theme-${t.id}`,) as HTMLLinkElement | null;
             if (link) { link.disabled = t.id !== payload.theme; }
           }
           document.body.classList.toggle("theme-no-icons", payload.theme === "no-icons",);

@@ -109,7 +109,7 @@ export const chatMessages: Partial<ChatState> & ThisType<ChatState> = {
 
   autoResize(el: HTMLTextAreaElement,) {
     el.style.height = "auto";
-    el.style.height = `${Math.min(el.scrollHeight, 200,)  }px`;
+    el.style.height = `${Math.min(el.scrollHeight, 200,)}px`;
   },
 
   async sendMessage() {
@@ -125,7 +125,7 @@ export const chatMessages: Partial<ChatState> & ThisType<ChatState> = {
 
     const msgs = this.messages;
     msgs.push({
-      id: `temp-${  Date.now()}`,
+      id: `temp-${Date.now()}`,
       role: "user",
       content: text || "(attached media)",
       created_at: new Date().toISOString(),
