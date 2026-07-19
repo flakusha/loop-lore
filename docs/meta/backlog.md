@@ -2,26 +2,33 @@
 
 Features not under active development. `plan.md` tracks active work; `open-items.md` tracks bugs/debt.
 
-## P0 — Immediate Next (v0.2 In-Progress)
+## P0 — Immediate Next (v0.1 In-Progress)
 
 Partial implementation exists in `src/`. Finishing these is current active work.
 
 | Epic | Item                                                                                   | Source  | Status         |
 | ---- | -------------------------------------------------------------------------------------- | ------- | -------------- |
-| 12   | Memory Foundation — keyword filtering, type enum, context compaction, A/N injection    | plan.md | 🟡 In progress |
-| 13   | Frontend Responsive — mobile breakpoints, touch targets, keyboard shortcuts, HTMX, etc | plan.md | 🟡 In progress |
 | 16   | Observability — telemetry, admin analytics, CI config, Playwright responsive tests     | plan.md | 🟡 In progress |
-| 19   | Chat Notifications — cross-chat SSE, read-state schema, unread badge, toast            | plan.md | 🟡 In progress |
 
-## P1 — Next Cycle (v0.2 Not Started)
+### Completed (moved from P0)
 
-| Epic | Item                                                                                  | plan.md ref |
-| ---- | ------------------------------------------------------------------------------------- | ----------- |
-| 10   | Generation Foundation — tool-call loop, provider failover, SSE reconnect              | Epic 10     |
-| 11   | Admin & Settings — admin middleware, page routes, user prefs modal, plugin management | Epic 11     |
-| 14   | Import/Export — file-based character import, chat export, PNG steganography, bulk     | Epic 14     |
-| 15   | i18n & Accessibility — server-side i18n module, ARIA pass, keyboard nav, 10 locales   | Epic 15     |
-| 17   | Encryption Foundation — AES-256-GCM, per-user keys, browser-side key derivation       | Epic 17     |
+| Epic | Item                                                                                   | Status      |
+| ---- | -------------------------------------------------------------------------------------- | ----------- |
+| 12   | Memory Foundation — keyword filtering, type enum, context compaction, A/N injection    | ✅ Complete |
+| 13   | Frontend Responsive — mobile breakpoints, touch targets, keyboard shortcuts, HTMX, etc | ✅ Complete |
+| 19   | Chat Notifications — cross-chat SSE, read-state schema, unread badge, toast            | ✅ Complete |
+
+## P1 — Next Cycle (v0.1 Not Started)
+
+Ordered by user impact × effort. Items with partial `src/` code listed first.
+
+| Epic | Item                                                                                  | Effort | Partial Code? | plan.md ref |
+| ---- | ------------------------------------------------------------------------------------- | ------ | ------------- | ----------- |
+| 14   | Import/Export — file-based character import, chat export, PNG steganography, bulk     | Low    | Yes           | Epic 14     |
+| 11   | Admin & Settings — admin middleware, page routes, user prefs modal, plugin management | Med    | Yes           | Epic 11     |
+| 17   | Encryption Foundation — AES-256-GCM, per-user keys, browser-side key derivation       | Med    | Yes           | Epic 17     |
+| 10   | Generation Foundation — tool-call loop, provider failover, SSE reconnect              | Med    | ✅ Complete    | Epic 10     |
+| 15   | i18n & Accessibility — server-side i18n module, ARIA pass, keyboard nav, 10 locales   | High   | Minimal       | Epic 15     |
 
 ## P2 — Specified, Not Implemented
 
@@ -45,8 +52,20 @@ Partial implementation exists in `src/`. Finishing these is current active work.
 | `/api/sessions` routes                                      | `docs/spec/users-sessions.md`                                           | Not implemented                           |
 | Notification system with noise filtering                    | `docs/spec/notifications-expansion.md`                                  | Basic toasts exist; full system needed    |
 | Model comparison reactions                                  | `docs/spec/notifications-expansion.md`                                  | Reactions table exists; no comparison API |
-| Assistant `/commands` extension                             | `docs/spec/assistant-commands.md`                                       | No command parser implemented             |
+| Assistant `/commands` extension                             | `docs/spec/assistant-commands.md`                                       | Command parser exists (`src/assistant/command-parser.ts`); no slash commands wired |
 | Combined filter support                                     | `docs/spec/filtering-pagination.md`                                     | Single filter only                        |
+
+## Quick Wins — Low Effort, High Leverage
+
+From `docs/meta/assessments/feature-analysis.md`. Not yet in any epic.
+
+| #  | Feature                           | Effort | Business Value | Source               |
+|----|-----------------------------------|--------|----------------|----------------------|
+| Q1 | Regex output transforms           | Low    | High           | feature-analysis #6  |
+| Q2 | Smart-regen transforms (polish)   | Low    | High           | feature-analysis #8  |
+| Q3 | Conversation analytics dashboard  | Low    | Med            | feature-analysis #27 |
+| Q4 | Model-comparison dashboard        | Low    | Med            | feature-analysis #28 |
+| Q5 | Bulk data export (zip-all)        | Low    | Med            | plan Epic 14         |
 
 ## P3 — Deferred Concepts (Post-MVP)
 

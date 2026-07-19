@@ -60,7 +60,8 @@ WebUI. Built on TypeScript + Bun with dual TUI/Web UI.
 28. **`src/utils/`** — Shared utilities: safe JSON, date helpers.
 29. **`src/views/`** — HTMX page templates (server-rendered web UI).
 30. **`src/public/`** — Static assets for web UI (CSS, images, locales).
-31. **`data/`** — Runtime SQLite DB, uploaded assets.
+31. **`scripts/`** — Dev scripts: worktree management, GPG unlock, commit check, version bump
+32. **`data/`** — Runtime SQLite DB, uploaded assets.
 32. **`docs/`** — Specs, architecture, data model, UX spec.
 
 ## Coding Conventions
@@ -87,6 +88,8 @@ bun run check                # typecheck + lint + format + md:lint
 bun test                     # Run tests (Jest-compatible API)
 bun test --coverage          # Coverage report
 bun run db:migrate           # Run DB migrations
+./scripts/gpg-unlock.sh      # Unlock GPG passphrase (agent commits)
+./scripts/worktree.sh list   # List active worktrees
 ```
 
 ## Key Design Decisions
