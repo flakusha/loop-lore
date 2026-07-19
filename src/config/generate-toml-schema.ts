@@ -45,7 +45,7 @@ function annotateForToml(schema: JSONSchema,): JSONSchema {
 
     // Add TOML array-of-tables hint for arrays of objects
     const items = propSchema.items as JSONSchema | undefined;
-    if (propSchema.type === "array" && items !== undefined && items.type === "object") {
+    if (propSchema.type === "array" && items?.type === "object") {
       (result.properties as Record<string, JSONSchema>)[key] = {
         ...propSchema,
         "x-toml-kind": "array-of-tables",
