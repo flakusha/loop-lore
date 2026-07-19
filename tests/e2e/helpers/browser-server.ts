@@ -101,7 +101,7 @@ export async function createBrowserTest(
     handleNonApiRequest: async (request: Request,): Promise<Response> => {
       const url = new URL(request.url,);
       const publicPath = join(publicDir, url.pathname === "/" ? "index.html" : url.pathname,);
-      if (publicPath.startsWith(`${publicDir  }/`,) && existsSync(publicPath,)) {
+      if (publicPath.startsWith(`${publicDir}/`,) && existsSync(publicPath,)) {
         const content = readFileSync(publicPath,);
         const ext = publicPath.split(".",).pop()?.toLowerCase() ?? "";
         const mime: Record<string, string> = {

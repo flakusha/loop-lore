@@ -133,7 +133,10 @@ async function seedUser(db: Kysely<DB>,) {
   return userId;
 }
 
-async function createAiActor(db: Kysely<DB>, name: string,): Promise<string> {
+async function createAiActor(
+  db: Kysely<DB>,
+  name: string,
+): Promise<string> {
   const id = uid();
   await db
     .insertInto("actors",)
@@ -188,7 +191,11 @@ async function createGroupChat(
   return chatId;
 }
 
-async function addParticipant(db: Kysely<DB>, chatId: string, actorId: string,) {
+async function addParticipant(
+  db: Kysely<DB>,
+  chatId: string,
+  actorId: string,
+) {
   await db
     .insertInto("chat_participants",)
     .values({
@@ -261,7 +268,11 @@ describe("triggerGroupCascade edge cases", () => {
     },);
 
     // Should return without calling triggerAutoGeneration (no messages beyond the initial one)
-    const messages = await db.selectFrom("messages",).select("id",).where("chat_id", "=", chatId,).execute();
+    const messages = await db
+      .selectFrom("messages",)
+      .select("id",)
+      .where("chat_id", "=", chatId,)
+      .execute();
     expect(messages,).toHaveLength(1,);
     expect(messages[0]!.id,).toBe(msgId,);
   });
@@ -287,7 +298,11 @@ describe("triggerGroupCascade edge cases", () => {
     },);
 
     // Only the original message exists — no cascade generation
-    const messages = await db.selectFrom("messages",).select("id",).where("chat_id", "=", chatId,).execute();
+    const messages = await db
+      .selectFrom("messages",)
+      .select("id",)
+      .where("chat_id", "=", chatId,)
+      .execute();
     expect(messages,).toHaveLength(1,);
   });
 
@@ -313,7 +328,11 @@ describe("triggerGroupCascade edge cases", () => {
       depth: 0,
     },);
 
-    const messages = await db.selectFrom("messages",).select("id",).where("chat_id", "=", chatId,).execute();
+    const messages = await db
+      .selectFrom("messages",)
+      .select("id",)
+      .where("chat_id", "=", chatId,)
+      .execute();
     expect(messages,).toHaveLength(1,);
   });
 
@@ -361,7 +380,11 @@ describe("triggerGroupCascade edge cases", () => {
       depth: 0,
     },);
 
-    const messages = await db.selectFrom("messages",).select("id",).where("chat_id", "=", chatId,).execute();
+    const messages = await db
+      .selectFrom("messages",)
+      .select("id",)
+      .where("chat_id", "=", chatId,)
+      .execute();
     expect(messages,).toHaveLength(1,);
   });
 
@@ -387,7 +410,11 @@ describe("triggerGroupCascade edge cases", () => {
       depth: 0,
     },);
 
-    const messages = await db.selectFrom("messages",).select("id",).where("chat_id", "=", chatId,).execute();
+    const messages = await db
+      .selectFrom("messages",)
+      .select("id",)
+      .where("chat_id", "=", chatId,)
+      .execute();
     expect(messages,).toHaveLength(1,);
   });
 
@@ -414,7 +441,11 @@ describe("triggerGroupCascade edge cases", () => {
       depth: 0,
     },);
 
-    const messages = await db.selectFrom("messages",).select("id",).where("chat_id", "=", chatId,).execute();
+    const messages = await db
+      .selectFrom("messages",)
+      .select("id",)
+      .where("chat_id", "=", chatId,)
+      .execute();
     expect(messages,).toHaveLength(1,);
   });
 
@@ -438,7 +469,11 @@ describe("triggerGroupCascade edge cases", () => {
       depth: 0,
     },);
 
-    const messages = await db.selectFrom("messages",).select("id",).where("chat_id", "=", chatId,).execute();
+    const messages = await db
+      .selectFrom("messages",)
+      .select("id",)
+      .where("chat_id", "=", chatId,)
+      .execute();
     expect(messages,).toHaveLength(1,);
   });
 

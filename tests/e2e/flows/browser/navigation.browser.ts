@@ -173,7 +173,7 @@ describe("Navigation E2E", () => {
 
       // Navigate to new-chat via URL
       try {
-        await page.goto(`${ctx.url  }/views/new-chat`, { waitUntil: "domcontentloaded", timeout: 10_000, },);
+        await page.goto(`${ctx.url}/views/new-chat`, { waitUntil: "domcontentloaded", timeout: 10_000, },);
       } catch {}
       await page.locator("[data-testid='create-chat-form']",).waitFor({ state: "attached", timeout: 8000, },);
       expect(page.url(),).toContain("/views/new-chat",);

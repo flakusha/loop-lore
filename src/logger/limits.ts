@@ -64,7 +64,7 @@ function truncateMeta(
     const val = result[key];
     const keyStr = safeJsonStringify(key,);
     const valStr = safeJsonStringify(val,);
-    const pair = `${keyStr.ok ? keyStr.value : "null"  }:${  valStr.ok ? valStr.value : "null"}`;
+    const pair = `${keyStr.ok ? keyStr.value : "null"}:${valStr.ok ? valStr.value : "null"}`;
     if (size + bytes(pair,) + 1 > maxBytes) {
       out["[truncated]"] = `meta exceeds ${maxBytes} bytes`;
       break;
