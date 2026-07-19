@@ -216,6 +216,13 @@ Root cause and fix:
 3. Both entry points (`alpine/index.ts`, `pages.ts`) import `./loaders`.
 4. `no-unnecessary-type-assertion: off` still needed for frontend (removes DOM element casts like `as HTMLLinkElement | null`).
 
+## LINT.4 Nested Ternary Expressions from dprint Reformatting
+
+**Severity**: Low — 3 files, `unicorn/no-nested-ternary` errors (auto-fixable)
+Files: `src/frontend/alpine/logger.ts:71`, `src/generation/prompt-templates.ts:546`, `src/middleware/response-headers.ts:208`
+Cause: dprint reformatted ternary expressions, removing parentheses that eslint requires.
+Fix: run `eslint --fix` or manually parenthesize nested ternaries.
+
 ## LINT.3 Backend Lint Errors from New Notification Files
 
 **Severity**: Low — `src/notifications/service.ts`
