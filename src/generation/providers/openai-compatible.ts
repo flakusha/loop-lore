@@ -5,16 +5,10 @@
 // See docs/spec/provider-system.md for full API mapping.
 
 import type { ProviderInstanceConfig } from "../../config/schema";
-import type {
-  LLMProvider,
-  GenerateRequest,
-  GenerateResponse,
-  ProviderCapabilities,
-  StreamHandler,
-} from "./types";
-import { ProviderError, ProviderAuthError, ProviderRateLimitError } from "./types";
 import { safeJsonParse, safeJsonStringify } from "../../utils";
 import { validateProviderUrl } from "../../utils/url-validation";
+import type { GenerateRequest, GenerateResponse, LLMProvider, ProviderCapabilities, StreamHandler } from "./types";
+import { ProviderAuthError, ProviderError, ProviderRateLimitError } from "./types";
 
 // ── Capabilities ──────────────────────────────────────────
 
@@ -205,16 +199,15 @@ export class OpenAiCompatibleProvider implements LLMProvider {
       }
     }
 
-    const toolCalls =
-      toolCallAccum.size > 0
-        ? [...toolCallAccum]
-            .sort(([a], [b]) => a - b)
-            .map(([, v]) => ({
-              id: v.id ?? "",
-              type: v.type ?? ("function" as const),
-              function: { name: v.function.name ?? "", arguments: v.function.arguments },
-            }))
-        : undefined;
+    const toolCalls = toolCallAccum.size > 0
+      ? [...toolCallAccum]
+        .sort(([a], [b]) => a - b)
+        .map(([, v]) => ({
+          id: v.id ?? "",
+          type: v.type ?? ("function" as const),
+          function: { name: v.function.name ?? "", arguments: v.function.arguments },
+        }))
+      : undefined;
 
     if (toolCalls) {
       for (const tc of toolCalls) {

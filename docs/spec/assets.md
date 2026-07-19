@@ -431,9 +431,7 @@ Table: `asset_versions`
 ### Update Flow
 
 ```
-
 ### API
-
 ```
 
 POST /api/assets/:id/versions
@@ -456,7 +454,6 @@ Response: 200
 { ...version metadata... }
 
 ```
-
 ### UI
 
 In the gallery preview modal, a version selector shows "v3 of 3" with

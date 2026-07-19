@@ -44,14 +44,14 @@ metadata:
 
 Standard frontmatter fields:
 
-| Field        | Required | Description                         |
-| ------------ | -------- | ----------------------------------- |
-| `name`       | Yes      | Lowercase-hyphenated skill name     |
-| `description`| Yes      | Trigger condition + behavior (≤1KiB)|
-| `version`    | Yes      | Semver                              |
-| `author`     | Yes      | Author or project                   |
-| `license`    | Yes      | SPDX identifier (MIT, Apache-2.0)   |
-| `metadata`   | No       | Tool-specific metadata bush         |
+| Field         | Required | Description                          |
+| ------------- | -------- | ------------------------------------ |
+| `name`        | Yes      | Lowercase-hyphenated skill name      |
+| `description` | Yes      | Trigger condition + behavior (≤1KiB) |
+| `version`     | Yes      | Semver                               |
+| `author`      | Yes      | Author or project                    |
+| `license`     | Yes      | SPDX identifier (MIT, Apache-2.0)    |
+| `metadata`    | No       | Tool-specific metadata bush          |
 
 ## Rules Format
 
@@ -75,12 +75,12 @@ How to check the rule was followed.
 
 Each agent tool should map `.agents/` to its native format:
 
-| Tool         | Native Dir          | Adapter Strategy                    |
-| ------------ | ------------------- | ----------------------------------- |
-| OpenCode     | `.config/opencode/` | Symlink or load `rules/` via config |
-| Claude Code  | `.claude/`          | Read `.agents/rules/` at startup    |
-| Cursor       | `.cursor/rules/`    | Symlink `.agents/rules/`            |
-| Copilot      | `.github/copilot-instructions.md` | Merge rules into single file |
+| Tool        | Native Dir                        | Adapter Strategy                    |
+| ----------- | --------------------------------- | ----------------------------------- |
+| OpenCode    | `.config/opencode/`               | Symlink or load `rules/` via config |
+| Claude Code | `.claude/`                        | Read `.agents/rules/` at startup    |
+| Cursor      | `.cursor/rules/`                  | Symlink `.agents/rules/`            |
+| Copilot     | `.github/copilot-instructions.md` | Merge rules into single file        |
 
 ## License
 

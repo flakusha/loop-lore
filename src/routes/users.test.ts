@@ -1,14 +1,14 @@
 /**
  * Tests for users routes — profile, settings, admin operations
  */
-import { describe, test, expect, beforeAll, afterAll } from "bun:test";
+import { afterAll, beforeAll, describe, expect, test } from "bun:test";
 import { Elysia } from "elysia";
-import { createTestDb } from "../test-utils/create-test-db";
-import { usersRoutes } from "./users";
-import { createLogger } from "../logger";
-import { uid } from "../utils";
 import type { Kysely } from "kysely";
 import type { DB } from "../db/schema";
+import { createLogger } from "../logger";
+import { createTestDb } from "../test-utils/create-test-db";
+import { uid } from "../utils";
+import { usersRoutes } from "./users";
 
 function createApp(db: Kysely<DB>, userId: string | null, userRole: string | null = "solo"): Elysia {
   return new Elysia({ name: "test-users" })

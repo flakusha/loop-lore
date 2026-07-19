@@ -35,19 +35,20 @@ type(scope): short imperative description
 
 **Types:**
 
-| Type       | When to use                                      |
-| ---------- | ------------------------------------------------ |
-| `feat`     | New feature for user or codebase                 |
-| `fix`      | Bug fix                                          |
-| `refactor` | Code change that neither fixes nor adds feature  |
-| `test`     | Adding/updating tests (not test infrastructure)  |
-| `docs`     | Documentation only                               |
-| `chore`    | Build, tooling, lint config, deps, formatting    |
-| `style`    | CSS / styling changes (frontend)                 |
+| Type       | When to use                                     |
+| ---------- | ----------------------------------------------- |
+| `feat`     | New feature for user or codebase                |
+| `fix`      | Bug fix                                         |
+| `refactor` | Code change that neither fixes nor adds feature |
+| `test`     | Adding/updating tests (not test infrastructure) |
+| `docs`     | Documentation only                              |
+| `chore`    | Build, tooling, lint config, deps, formatting   |
+| `style`    | CSS / styling changes (frontend)                |
 
 **Scope:** Use the directory or module name, e.g. `providers`, `routes`, `middleware`, `frontend`, `e2e`, `crypto`, `assets`, `story`, `tui`, `db`.
 
 **Subject rules:**
+
 - <50 chars preferred, hard limit 72
 - Imperative mood ("reorder", not "reordered" or "reorders")
 - No trailing period
@@ -61,7 +62,7 @@ Blank line after subject, then:
 - **Why** it changed (motivation, problem being solved)
 - **How** it changed (key implementation details only when non-obvious)
 
-Use bullet points (`- `) for multiple changes. Each bullet is a complete sentence.
+Use bullet points (`-`) for multiple changes. Each bullet is a complete sentence.
 
 ### Examples
 

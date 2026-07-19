@@ -20,12 +20,12 @@
       ></span>
       <template x-if="generationDetail">
         <span class="generation-detail">
-          <span x-show="generationDetail.elapsedMs"
-            >&nbsp;⏱ <span x-text="Math.round(generationDetail.elapsedMs / 1000) + 's'"></span
-          ></span>
-          <span x-show="generationDetail.charsReceived"
-            >&nbsp;📝 <span x-text="generationDetail.charsReceived + ' chars'"></span
-          ></span>
+          <span x-show="generationDetail.elapsedMs">&nbsp;⏱ <span
+              x-text="Math.round(generationDetail.elapsedMs / 1000) + 's'"
+            ></span></span>
+          <span x-show="generationDetail.charsReceived">&nbsp;📝 <span
+              x-text="generationDetail.charsReceived + ' chars'"
+            ></span></span>
           <span x-show="generationDetail.status">&nbsp;· <span x-text="generationDetail.status"></span></span>
         </span>
       </template>
@@ -72,7 +72,7 @@
         📎
         <input
           type="file"
-          accept="image/*,audio/*,video/*"
+          accept="image/*, audio/*, video/*"
           multiple
           style="display: none"
           @change="handleAttach($event)"
@@ -88,36 +88,14 @@
         class="mention-autocomplete"
         @click.outside="hideMentionAutocomplete()"
         data-testid="mention-autocomplete"
-        style="
-          position: absolute;
-          bottom: 100%;
-          left: 40px;
-          right: 40px;
-          max-height: 200px;
-          overflow-y: auto;
-          background: var(--bg-primary, #1a1a2e);
-          border: 1px solid var(--border, #333);
-          border-radius: 8px;
-          box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.3);
-          z-index: 50;
-        "
+        style="position: absolute; bottom: 100%; left: 40px; right: 40px; max-height: 200px; overflow-y: auto; background: var(--bg-primary, #1a1a2e); border: 1px solid var(--border, #333); border-radius: 8px; box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.3); z-index: 50"
       >
         <template x-for="p in _mentionResults" :key="p.actor_id">
           <button
             type="button"
             class="mention-option"
             @click.prevent="selectMention(p)"
-            style="
-              display: block;
-              width: 100%;
-              text-align: left;
-              padding: 8px 12px;
-              border: none;
-              background: none;
-              color: var(--text-primary, #e0e0e0);
-              cursor: pointer;
-              font-size: 14px;
-            "
+            style="display: block; width: 100%; text-align: left; padding: 8px 12px; border: none; background: none; color: var(--text-primary, #e0e0e0); cursor: pointer; font-size: 14px"
             @mouseenter="$el.style.background = 'var(--bg-secondary, #16213e)'"
             @mouseleave="$el.style.background = 'none'"
           >

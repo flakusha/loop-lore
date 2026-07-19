@@ -2,24 +2,24 @@
 // SPDX-FileCopyrightText: 2026 Loop Lore Contributors
 
 import { serve } from "bun";
-import { join, normalize } from "node:path";
-import { existsSync, readFileSync, statSync, readdirSync } from "node:fs";
 import { spawnSync } from "node:child_process";
+import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
+import { join, normalize } from "node:path";
+import { initAgeGate } from "./age-gate/controller";
+import { loadConfig } from "./config/load";
 import { compressAssets, copyDirectory } from "./content/compress";
-import { createApp } from "./elysia-app";
-import { DynamicResponsePolicy, ResponseHeaderPolicy } from "./middleware";
 import { injectContentHashes } from "./content/hash-injection";
 import { runMigrations } from "./db/migrate";
 import { seedDefaultActors } from "./db/seed";
-import { loadConfig } from "./config/load";
-import { initAgeGate } from "./age-gate/controller";
+import { createApp } from "./elysia-app";
+import { DynamicResponsePolicy, ResponseHeaderPolicy } from "./middleware";
 
-import { loadAllPlugins, dispatchPluginRoute, unloadAllPlugins } from "./plugins";
-import { getDatabase } from "./db/index";
-import { initializeProviders, registerProvider, OpenAiCompatibleProvider } from "./generation";
-import { initSmk } from "./crypto";
 import { ensureTlsCerts } from "./config/cert";
+import { initSmk } from "./crypto";
+import { getDatabase } from "./db/index";
+import { initializeProviders, OpenAiCompatibleProvider, registerProvider } from "./generation";
 import { createLogger, getLogger } from "./logger";
+import { dispatchPluginRoute, loadAllPlugins, unloadAllPlugins } from "./plugins";
 import { ServerExternalManager } from "./services/server-external-manager";
 
 const DOCS_PATH = join(import.meta.dir, "..", "docs", ".vitepress", "dist");

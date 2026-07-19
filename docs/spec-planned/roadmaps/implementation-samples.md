@@ -257,7 +257,9 @@ export async function handleDiceCommand(
 
   try {
     const result = rollDice(notation);
-    return `🎲 ${notation} = ${result.rolls.join(", ")}${result.modifier ? ` + ${result.modifier}` : ""} = **${result.total}**`;
+    return `🎲 ${notation} = ${result.rolls.join(", ")}${
+      result.modifier ? ` + ${result.modifier}` : ""
+    } = **${result.total}**`;
   } catch (e) {
     return `Error: ${e instanceof Error ? e.message : "Invalid notation"}`;
   }

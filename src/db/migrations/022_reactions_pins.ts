@@ -1,4 +1,4 @@
-import { sql, type Kysely } from "kysely";
+import { type Kysely, sql } from "kysely";
 
 /**
  * Migration 022 — Message reactions and chat pins
@@ -18,13 +18,10 @@ export async function up(database: Kysely<unknown>): Promise<void> {
   await database.schema
     .createTable("message_reactions")
     .addColumn("id", "text", (col) => col.primaryKey())
-    .addColumn("message_id", "text", (col) =>
-      col.notNull().references("messages.id").onDelete("cascade"))
-    .addColumn("user_id", "text", (col) =>
-      col.notNull().references("users.id").onDelete("cascade"))
+    .addColumn("message_id", "text", (col) => col.notNull().references("messages.id").onDelete("cascade"))
+    .addColumn("user_id", "text", (col) => col.notNull().references("users.id").onDelete("cascade"))
     .addColumn("emoji", "text", (col) => col.notNull())
-    .addColumn("created_at", "text", (col) =>
-      col.notNull().defaultTo(sql`(datetime('now'))`))
+    .addColumn("created_at", "text", (col) => col.notNull().defaultTo(sql`(datetime('now'))`))
     .execute();
 
   await database.schema
@@ -43,14 +40,10 @@ export async function up(database: Kysely<unknown>): Promise<void> {
   await database.schema
     .createTable("chat_pins")
     .addColumn("id", "text", (col) => col.primaryKey())
-    .addColumn("chat_id", "text", (col) =>
-      col.notNull().references("chats.id").onDelete("cascade"))
-    .addColumn("message_id", "text", (col) =>
-      col.notNull().references("messages.id").onDelete("cascade"))
-    .addColumn("pinned_by", "text", (col) =>
-      col.notNull().references("users.id"))
-    .addColumn("pinned_at", "text", (col) =>
-      col.notNull().defaultTo(sql`(datetime('now'))`))
+    .addColumn("chat_id", "text", (col) => col.notNull().references("chats.id").onDelete("cascade"))
+    .addColumn("message_id", "text", (col) => col.notNull().references("messages.id").onDelete("cascade"))
+    .addColumn("pinned_by", "text", (col) => col.notNull().references("users.id"))
+    .addColumn("pinned_at", "text", (col) => col.notNull().defaultTo(sql`(datetime('now'))`))
     .execute();
 
   await database.schema

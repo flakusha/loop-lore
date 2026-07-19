@@ -5,39 +5,39 @@
  */
 
 // ── Core types from ./types barrel ──────────────────────────
-export type { WorldEvent, NpcState, LocationState } from "./types";
+export type { LocationState, NpcState, WorldEvent } from "./types";
 
 export type {
   GameMasterConfig,
-  TurnManagerState,
-  QualityScores,
-  QualityEvaluation,
-  QualityThresholds,
   GameMasterDecision,
+  QualityEvaluation,
+  QualityScores,
+  QualityThresholds,
   StoryContext,
+  TurnManagerState,
 } from "./types";
 export { DEFAULT_QUALITY_THRESHOLDS, DEFAULT_QUALITY_WEIGHTS } from "./types";
 
 export type {
   BaseQuestConfig,
-  TimeQuestConfig,
   CollectionQuestConfig,
-  DestructionQuestConfig,
-  RescueQuestConfig,
-  DiscoveryQuestConfig,
-  SocialQuestConfig,
   CompositeQuestConfig,
+  DestructionQuestConfig,
+  DiscoveryQuestConfig,
   QuestConfig,
-  QuestReward,
   QuestCreateRequest,
   QuestProgressRequest,
+  QuestReward,
+  RescueQuestConfig,
+  SocialQuestConfig,
+  TimeQuestConfig,
 } from "./types";
 
 export type {
-  StartStoryRequest,
-  StepStoryRequest,
   ConfigureStoryRequest,
   GameMasterOverrideRequest,
+  StartStoryRequest,
+  StepStoryRequest,
   SyntheticGenerateRequest,
   SyntheticTestRunRequest,
 } from "./types";
@@ -47,32 +47,32 @@ export { TurnManager, type TurnManagerOptions } from "./turn-manager";
 
 export { GameMasterService, type GmTurnResult } from "./game-master";
 
-export { QualityEvaluator, createQualityEvaluator, type EvaluatorConfig } from "./quality-evaluator";
+export { createQualityEvaluator, type EvaluatorConfig, QualityEvaluator } from "./quality-evaluator";
 
 export { WorldStateService } from "./world-state";
 
 export {
+  type AppliedEvent,
+  applyEvents,
+  type ApplyEventsOpts,
   extractEvents,
   type ExtractEventsOpts,
-  type ValidationResult,
   validateEvents,
   type ValidateEventsOpts,
-  type AppliedEvent,
-  type ApplyEventsOpts,
-  applyEvents,
+  type ValidationResult,
 } from "./events";
 
-export { type ItemDefinition, type ItemInstance, type TransferResult, ItemsService } from "./items";
+export { type ItemDefinition, type ItemInstance, ItemsService, type TransferResult } from "./items";
 
-export { QuestEngine, createQuestEngine, type QuestProgressEntry } from "./quest-engine";
+export { createQuestEngine, QuestEngine, type QuestProgressEntry } from "./quest-engine";
 
 export { SyntheticGenerator, type SyntheticGeneratorOptions } from "./synthetic/generator";
-export type { SyntheticCase, SyntheticSource } from "./synthetic/types";
 export {
+  type SyntheticTestCaseResult,
   SyntheticTestRunner,
   type SyntheticTestRunnerOptions,
   type SyntheticTestRunResult,
-  type SyntheticTestCaseResult,
   type SyntheticTestRunSummary,
   type SyntheticTestStatus,
 } from "./synthetic/runner";
+export type { SyntheticCase, SyntheticSource } from "./synthetic/types";

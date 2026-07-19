@@ -1,7 +1,7 @@
-import { describe, test, expect, beforeAll, afterAll } from "bun:test";
+import { afterAll, beforeAll, describe, expect, test } from "bun:test";
+import { type ApiClient, createClient } from "../helpers/client";
+import { SEED, seedAll } from "../helpers/seed";
 import { createTestServer, type TestServer } from "../helpers/server";
-import { createClient, type ApiClient } from "../helpers/client";
-import { seedAll, SEED } from "../helpers/seed";
 
 describe("Message Variants, Visibility, Status E2E", () => {
   let server: TestServer;

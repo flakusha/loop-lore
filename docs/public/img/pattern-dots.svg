@@ -2,8 +2,8 @@
   <!-- Subtle dot grid pattern for dark backgrounds -->
   <defs>
     <pattern id="dots" width="20" height="20" patternUnits="userSpaceOnUse">
-      <circle cx="10" cy="10" r="1" fill="#3c3f41" opacity="0.4"/>
+      <circle cx="10" cy="10" r="1" fill="#3c3f41" opacity="0.4" />
     </pattern>
   </defs>
-  <rect width="80" height="80" fill="url(#dots)"/>
+  <rect width="80" height="80" fill="url(#dots)" />
 </svg>

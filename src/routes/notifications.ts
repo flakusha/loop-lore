@@ -7,10 +7,10 @@
 import { Elysia, t } from "elysia";
 import type { Kysely } from "kysely";
 import type { DB } from "../db/schema";
-import { jsonResponse, jsonError, HttpStatus, ErrorCode } from "./http-utils";
-import { unauthorized } from "../validation/middleware";
 import { NotificationService } from "../notifications/service";
 import { safeJsonStringify } from "../utils";
+import { unauthorized } from "../validation/middleware";
+import { ErrorCode, HttpStatus, jsonError, jsonResponse } from "./http-utils";
 
 const POLL_INTERVAL_MS = 5000;
 const KEEPALIVE_MS = 15_000;

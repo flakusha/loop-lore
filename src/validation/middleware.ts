@@ -14,7 +14,7 @@
  * @module validation/middleware
  */
 
-import { NotFoundError, ForbiddenError } from "../routes/http-utils";
+import { ForbiddenError, NotFoundError } from "../routes/http-utils";
 
 /**
  * Elysia `onError` handler that standardises validation and service-layer error responses.
@@ -68,8 +68,7 @@ export function onValidationError(
     return {
       error: "Validation failed",
       code: "VALIDATION_ERROR",
-      details:
-        details.length > 0 ? details : [{ field: "body", message: err.message ?? "Validation failed" }],
+      details: details.length > 0 ? details : [{ field: "body", message: err.message ?? "Validation failed" }],
     };
   }
 

@@ -1,50 +1,50 @@
 import { Elysia, t } from "elysia";
 import type { Kysely } from "kysely";
-import type { DB } from "../db/schema";
-import type { Config } from "../config/schema";
-import { uid, safeJsonParse, safeJsonStringify } from "../utils";
-import { notifyMention } from "../notifications/service";
-import {
-  jsonResponse,
-  jsonError,
-  jsonPaginated,
-  jsonCreated,
-  jsonNoContent,
-  HttpStatus,
-  ErrorCode,
-} from "./http-utils";
-import { MessageRole, MessageContentType, MessageContentFormat, ContentEncoding } from "../db/enums";
-import { generateResponse, isAssistantEnabled } from "../assistant/service";
+import { linkAsset } from "../assets/service";
 import { parseCommand } from "../assistant/command-parser";
 import { getCommand } from "../assistant/commands/registry";
 import type { CommandContext } from "../assistant/commands/registry";
-import { filter as filterProfanity } from "../profanity/service";
-import { triggerAutoGeneration, isLlmGenerationConfigured } from "../generation/auto-gen";
-import { getLogger, type Logger } from "../logger";
-import { linkAsset } from "../assets/service";
-import { encodeContent } from "../content/encode";
+import { generateResponse, isAssistantEnabled } from "../assistant/service";
+import type { Config } from "../config/schema";
 import { decodeContent } from "../content/decode";
+import { encodeContent } from "../content/encode";
 import {
-  getSmk,
-  isEncryptionEnabled,
-  deriveChatKeyForChat,
   compressThenEncrypt,
   decryptThenDecompress,
+  deriveChatKeyForChat,
   ensureActorKey,
-  isEncryptedPayload,
   extractKeyIdFromPayload,
+  getSmk,
+  isEncryptedPayload,
+  isEncryptionEnabled,
 } from "../crypto";
+import { ContentEncoding, MessageContentFormat, MessageContentType, MessageRole } from "../db/enums";
+import type { DB } from "../db/schema";
+import { isLlmGenerationConfigured, triggerAutoGeneration } from "../generation/auto-gen";
+import { extractMentionedActorIds, parseInitiativeFlag } from "../group-chat/mention-parser";
+import { getLogger, type Logger } from "../logger";
+import { notifyMention } from "../notifications/service";
+import { filter as filterProfanity } from "../profanity/service";
+import { safeJsonParse, safeJsonStringify, uid } from "../utils";
+import { forbidden, notFound, unauthorized } from "../validation/middleware";
 import {
+  ChatIdParams,
   MessageCreateBody,
-  MessageVisibilityUpdateBody,
+  MessageIdParams,
+  MessagesQuery,
   MessageStatusUpdateBody,
   MessageVariantBody,
-  MessagesQuery,
-  MessageIdParams,
-  ChatIdParams,
+  MessageVisibilityUpdateBody,
 } from "../validation/schemas";
-import { unauthorized, forbidden, notFound } from "../validation/middleware";
-import { extractMentionedActorIds, parseInitiativeFlag } from "../group-chat/mention-parser";
+import {
+  ErrorCode,
+  HttpStatus,
+  jsonCreated,
+  jsonError,
+  jsonNoContent,
+  jsonPaginated,
+  jsonResponse,
+} from "./http-utils";
 
 function log(): Logger {
   return getLogger().child({ module: "messages" });
@@ -124,8 +124,7 @@ async function enrichAttachments(
   attachmentsJson: string | null,
 ): Promise<object | null> {
   if (!attachmentsJson) return null;
-  const parsed =
-    safeJsonParse<{ assetId: string; order: number; caption: string; label: string }[]>(attachmentsJson);
+  const parsed = safeJsonParse<{ assetId: string; order: number; caption: string; label: string }[]>(attachmentsJson);
   if (!parsed.ok) return null;
   const attachData = parsed.value;
   if (!Array.isArray(attachData) || attachData.length === 0) return null;
@@ -370,8 +369,9 @@ export function messagesRoutes(opts: HandlerOpts) {
             .orderBy("created_at", "asc")
             .execute();
           const selected = variants[body.variantIndex];
-          if (!selected)
+          if (!selected) {
             return jsonError({ message: "Invalid variant index", status: HttpStatus.BadRequest });
+          }
 
           return jsonResponse(selected);
         },
@@ -536,10 +536,10 @@ export function messagesRoutes(opts: HandlerOpts) {
                 chatId,
                 activeChat: chatRecord
                   ? {
-                      id: chatRecord.id,
-                      mode: chatRecord.mode ?? undefined,
-                      type: chatRecord.type ?? undefined,
-                    }
+                    id: chatRecord.id,
+                    mode: chatRecord.mode ?? undefined,
+                    type: chatRecord.type ?? undefined,
+                  }
                   : undefined,
                 messages: recentMessages.reverse(),
                 db: database,
@@ -838,8 +838,9 @@ export function messagesRoutes(opts: HandlerOpts) {
             .select("created_by")
             .where("id", "=", message.chat_id)
             .executeTakeFirst();
-          if (!chat || (chat.created_by !== userId && (ctx.userRole as string | null) !== "admin"))
+          if (!chat || (chat.created_by !== userId && (ctx.userRole as string | null) !== "admin")) {
             return notFound("Message not found");
+          }
           await database
             .updateTable("messages")
             .set({ archived_at: new Date().toISOString(), visibility: "auto_hidden" })
@@ -867,8 +868,9 @@ export function messagesRoutes(opts: HandlerOpts) {
             .select("created_by")
             .where("id", "=", message.chat_id)
             .executeTakeFirst();
-          if (!chat || (chat.created_by !== userId && (ctx.userRole as string | null) !== "admin"))
+          if (!chat || (chat.created_by !== userId && (ctx.userRole as string | null) !== "admin")) {
             return notFound("Message not found");
+          }
           await database
             .updateTable("messages")
             .set({ archived_at: null, visibility: "visible" })
@@ -890,8 +892,9 @@ export function messagesRoutes(opts: HandlerOpts) {
             .select("created_by")
             .where("id", "=", chatId)
             .executeTakeFirst();
-          if (!chat || (chat.created_by !== userId && (ctx.userRole as string | null) !== "admin"))
+          if (!chat || (chat.created_by !== userId && (ctx.userRole as string | null) !== "admin")) {
             return notFound("Chat not found");
+          }
           const cutoff = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
           const result = await database
             .deleteFrom("messages")

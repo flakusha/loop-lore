@@ -1,4 +1,4 @@
-import { describe, test, expect } from "bun:test";
+import { describe, expect, test } from "bun:test";
 import { analyzeRepetition, detectTheatricalLoop } from "./repetition-detector";
 import { DEFAULT_REPETITION_DETECTION } from "./types";
 
@@ -29,8 +29,7 @@ describe("analyzeRepetition", () => {
   });
 
   test("does not flag varied text", () => {
-    const varied =
-      "The wizard opened the ancient tome and read the fading inscription aloud to the gathered council.";
+    const varied = "The wizard opened the ancient tome and read the fading inscription aloud to the gathered council.";
     const result = analyzeRepetition(varied, LOOSE_CONFIG);
     expect(result.detected).toBe(false);
   });
