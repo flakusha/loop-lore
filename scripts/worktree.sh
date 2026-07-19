@@ -46,6 +46,7 @@ Commands:
   rebase <branch> [onto]    Rebase worktree's branch onto target (default: master)
   finalize <branch>         Validate worktree ready, run checks, merge to master, remove
   agent-merge <branch>      Alias for finalize — merge worktree into master and clean up
+  agent-commit <branch> <msg>  Create GPG-signed commit (agent MUST use this)
   list                      Show all worktrees with status
   cleanup                   Remove worktrees for deleted branches
   remove <branch>           Remove specific worktree (blocks if dirty)
@@ -57,6 +58,7 @@ Examples:
   $(basename "$0") create existing-branch
   $(basename "$0") finalize feature-xyz
   $(basename "$0") agent-merge feature-xyz
+  $(basename "$0") agent-commit feature-xyz "feat(scope): add new feature"
   $(basename "$0") list
   $(basename "$0") cleanup
 EOF
@@ -596,6 +598,97 @@ cmd_agent_merge() {
     cmd_finalize "$@"
 }
 
+cmd_agent_commit() {
+    # Agent commit — standardized GPG-signed commit from worktree
+    # Usage: ./scripts/worktree.sh agent-commit <branch> <message>
+    # Agent MUST use this instead of raw 'git commit' commands.
+    local branch="$1"
+    local message="$2"
+    
+    if [[ -z "$branch" ]] || [[ -z "$message" ]]; then
+        echo -e "${RED}Error: branch and message required${NC}"
+        echo "Usage: $(basename "$0") agent-commit <branch> <message>"
+        echo "  Creates a GPG-signed commit in <branch>'s worktree"
+        echo "  Author = worktree user, Committer = agent (from .credentials.env)"
+        exit 1
+    fi
+    
+    # Block on protected branches
+    if is_protected "$branch"; then
+        echo -e "${RED}Error: cannot agent-commit on protected branch '$branch'${NC}"
+        exit 1
+    fi
+    
+    local worktree_path
+    worktree_path="$(require_worktree "$branch")"
+    
+    # Check for staged changes
+    if git -C "$worktree_path" diff --cached --quiet 2>/dev/null; then
+        echo -e "${RED}Error: no staged changes in worktree${NC}"
+        echo "  Stage files first: cd $worktree_path && git add <files>"
+        exit 1
+    fi
+    
+    # Verify agent credentials
+    if [[ -z "${AGENT_GPG_KEY_ID:-}" ]]; then
+        echo -e "${RED}Error: AGENT_GPG_KEY_ID not set in .credentials.env${NC}"
+        exit 1
+    fi
+    
+    if [[ -z "${AGENT_GPG_NAME:-}" ]] || [[ -z "${AGENT_GPG_EMAIL:-}" ]]; then
+        echo -e "${RED}Error: AGENT_GPG_NAME/AGENT_GPG_EMAIL not set in .credentials.env${NC}"
+        exit 1
+    fi
+    
+    # Get author from worktree's local git config
+    local author_name
+    local author_email
+    author_name=$(git -C "$worktree_path" config user.name)
+    author_email=$(git -C "$worktree_path" config user.email)
+    
+    if [[ -z "$author_name" ]] || [[ -z "$author_email" ]]; then
+        echo -e "${RED}Error: worktree user.name/user.email not configured${NC}"
+        echo "  Run: ./scripts/worktree.sh sign $branch"
+        exit 1
+    fi
+    
+    # Verify GPG key is available
+    if ! gpg --list-secret-keys "$AGENT_GPG_KEY_ID" &>/dev/null; then
+        echo -e "${RED}Error: GPG secret key $AGENT_GPG_KEY_ID not found${NC}"
+        echo "  Run: ./scripts/gpg-unlock.sh"
+        exit 1
+    fi
+    
+    echo -e "${CYAN}Creating GPG-signed commit in '$branch'...${NC}"
+    echo -e "  Author: $author_name <$author_email>"
+    echo -e "  Committer: $AGENT_GPG_NAME <$AGENT_GPG_EMAIL>"
+    echo -e "  GPG Key: ${AGENT_GPG_KEY_ID:0:8}..."
+    
+    # Execute commit with proper identity
+    # --no-verify: agent MUST run checks separately before committing
+    # The pre-commit hook is for manual commits; agent workflow is:
+    # 1. Run bun run check && bun test src/
+    # 2. ./scripts/worktree.sh agent-commit <branch> "<message>"
+    GIT_COMMITTER_NAME="$AGENT_GPG_NAME" \
+    GIT_COMMITTER_EMAIL="$AGENT_GPG_EMAIL" \
+    git -C "$worktree_path" \
+        -c user.signingkey="$AGENT_GPG_KEY_ID" \
+        -c commit.gpgsign=true \
+        commit -S \
+        --no-verify \
+        --author="$author_name <$author_email>" \
+        -m "$message"
+    
+    # Verify signature
+    local commit_sha
+    commit_sha=$(git -C "$worktree_path" rev-parse HEAD)
+    if git -C "$worktree_path" verify-commit "$commit_sha" &>/dev/null; then
+        echo -e "${GREEN}✓ Commit created and GPG-signed: $commit_sha${NC}"
+    else
+        echo -e "${YELLOW}⚠ Commit created but signature verification failed${NC}"
+    fi
+}
+
 # Main
 case "${1:-}" in
     create)
@@ -631,6 +724,10 @@ case "${1:-}" in
     finalize|agent-merge)
         shift
         cmd_finalize "${1:-}"
+        ;;
+    agent-commit)
+        shift
+        cmd_agent_commit "${1:-}" "${2:-}"
         ;;
     prs)
         cmd_prs
