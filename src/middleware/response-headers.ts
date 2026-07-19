@@ -19,6 +19,7 @@
  */
 
 import type { HeadersConfig, } from "../config/schema";
+import { getNonce, } from "./csp-nonce";
 
 /** Canonical header names for case-insensitive comparison. */
 const CANONICAL_HEADER_NAMES = new Map<string, string>([
@@ -83,7 +84,7 @@ export class ResponseHeaderPolicy {
     // SSE and streaming responses pass through without wrapping
     if (kind === "sse") { return response; }
 
-    const additions = this.buildHeaders(kind,);
+    const additions = this.buildHeaders(kind, request,);
 
     const headers = new Headers(response.headers,);
     for (const [name, value,] of Object.entries(additions,)) {
@@ -116,7 +117,7 @@ export class ResponseHeaderPolicy {
    * Build the header map for a given route kind. Route headers are not present
    * here — merge logic in {@link apply} handles precedence.
    */
-  private buildHeaders(kind: RouteKind,): Record<string, string> {
+  private buildHeaders(kind: RouteKind, request: Request,): Record<string, string> {
     const cfg = this.config;
     const headers: Record<string, string> = {};
 
@@ -137,7 +138,7 @@ export class ResponseHeaderPolicy {
           const headerName = cfg.csp.reportOnly
             ? "Content-Security-Policy-Report-Only"
             : "Content-Security-Policy";
-          headers[headerName] = this.buildCsp();
+          headers[headerName] = this.buildCsp(request,);
         }
         if (cfg.crossOriginOpenerPolicy) { headers["Cross-Origin-Opener-Policy"] = cfg.crossOriginOpenerPolicy; }
         if (cfg.crossOriginEmbedderPolicy) {
@@ -178,15 +179,23 @@ export class ResponseHeaderPolicy {
   }
 
   /** Serialize the CSP directive set into a single header value. */
-  private buildCsp(): string {
+  private buildCsp(request: Request,): string {
     const c = this.config.csp;
+    const nonce = getNonce(request,);
     const directives: string[] = [];
     const push = (name: string, values: string[],): void => {
       if (values.length > 0) { directives.push(`${name} ${values.join(" ",)}`,); }
     };
 
     push("default-src", c.defaultSrc,);
-    push("script-src", c.scriptSrc,);
+
+    // Inject per-request nonce into script-src when available — allows
+    // inline <script nonce="..."> without 'unsafe-inline' for those tags.
+    const scriptSrc = nonce
+      ? [...c.scriptSrc, `'nonce-${nonce}'`,]
+      : c.scriptSrc;
+    push("script-src", scriptSrc,);
+
     push("style-src", c.styleSrc,);
     push("img-src", c.imgSrc,);
     push("font-src", c.fontSrc,);
