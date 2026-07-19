@@ -62,6 +62,7 @@ declare global {
   var startChatFromChar: (btn: HTMLElement,) => Promise<void>;
   var editCharacter: (btn: HTMLElement,) => void;
   var deleteCharacter: (btn: HTMLElement,) => Promise<void>;
+  var exportCharacter: (btn: HTMLElement,) => void;
   var filterAssets: () => void;
   var openAssetPreview: (id: string,) => Promise<void>;
   var copyAssetUrl: () => Promise<void>;

@@ -26,12 +26,12 @@
           "properties": {
             "key": {
               "type": "string",
-              "default": "/home/flak/git-ai/loop-lore/loop-lore-data/certs/key.pem",
+              "default": "/home/flak/git-ai/loop-lore/tree/feat-eslint-enforcement-ext/loop-lore-data/certs/key.pem",
               "description": "Path to TLS private key (PEM)"
             },
             "cert": {
               "type": "string",
-              "default": "/home/flak/git-ai/loop-lore/loop-lore-data/certs/cert.pem",
+              "default": "/home/flak/git-ai/loop-lore/tree/feat-eslint-enforcement-ext/loop-lore-data/certs/cert.pem",
               "description": "Path to TLS certificate (PEM)"
             }
           },
@@ -61,7 +61,7 @@
         },
         "sqliteFilename": {
           "type": "string",
-          "default": "/home/flak/git-ai/loop-lore/loop-lore-data/loop-lore.db",
+          "default": "/home/flak/git-ai/loop-lore/tree/feat-eslint-enforcement-ext/loop-lore-data/loop-lore.db",
           "description": "SQLite database file path"
         },
         "url": {
@@ -85,7 +85,7 @@
         },
         "uploadDir": {
           "type": "string",
-          "default": "/home/flak/git-ai/loop-lore/loop-lore-data/uploads",
+          "default": "/home/flak/git-ai/loop-lore/tree/feat-eslint-enforcement-ext/loop-lore-data/uploads",
           "description": "Directory for uploaded assets"
         },
         "maxFileSize": {
