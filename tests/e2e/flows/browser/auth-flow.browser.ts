@@ -22,7 +22,7 @@ describe("Auth browser E2E", () => {
   },);
 
   async function gotoLogin(page: Awaited<ReturnType<BrowserTestContext["browser"]["newPage"]>>,) {
-    await page.goto(`${ctx.url  }/views/login`, { waitUntil: "domcontentloaded", timeout: 10_000, },);
+    await page.goto(`${ctx.url}/views/login`, { waitUntil: "domcontentloaded", timeout: 10_000, },);
     await page.waitForSelector("[data-testid='login-submit']", { timeout: 5000, },);
   }
 
