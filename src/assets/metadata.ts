@@ -13,7 +13,7 @@ export interface ImageMetadata {
 
 const PNG_HEADER = new Uint8Array([137, 80, 78, 71, 13, 10, 26, 10]);
 const TEXTSIG = 0x74_45_58_74; // 'tEXt' in big-endian
-const ZTXTSIG = 0x7a_54_58_74; // 'zTXt' in big-endian
+const ZTXTSIG = 0x7A_54_58_74; // 'zTXt' in big-endian
 
 function readUint16BE(buf: Uint8Array, offset: number): number {
   return (buf[offset]! << 8) | buf[offset + 1]!;
@@ -49,7 +49,7 @@ function parsePngMetadata(buf: Uint8Array): { width: number; height: number; cap
     const chunkLen = readUint32BE(buf, offset);
     const chunkType = readUint32BE(buf, offset + 4);
 
-    if (chunkType === 0x49_45_4e_44) break; // IEND
+    if (chunkType === 0x49_45_4E_44) break; // IEND
     if (chunkType === TEXTSIG || chunkType === ZTXTSIG) {
       const dataStart = offset + 8;
       const dataEnd = dataStart + chunkLen;
@@ -81,16 +81,16 @@ function parseJpegMetadata(buf: Uint8Array): { width: number; height: number; ca
   let caption: string | undefined;
 
   while (offset + 4 < buf.length) {
-    if (buf[offset] !== 0xff) break;
+    if (buf[offset] !== 0xFF) break;
     const marker = buf[offset + 1]!;
 
-    if ([0xd8, 0xd9, 0x00].includes(marker)) {
+    if ([0xD8, 0xD9, 0x00].includes(marker)) {
       // SOI, EOI, padding
       offset++;
       continue;
     }
 
-    if (marker === 0xfe) {
+    if (marker === 0xFE) {
       // COM (comment) marker
       const segLen = readUint16BE(buf, offset + 2);
       if (segLen >= 3) {
@@ -102,11 +102,11 @@ function parseJpegMetadata(buf: Uint8Array): { width: number; height: number; ca
 
     // SOF0-SOF15 markers (start of frame) — contains dimensions
     if (
-      marker >= 0xc0
-      && marker <= 0xcf
-      && marker !== 0xc4
-      && marker !== 0xc8
-      && marker !== 0xcc
+      marker >= 0xC0
+      && marker <= 0xCF
+      && marker !== 0xC4
+      && marker !== 0xC8
+      && marker !== 0xCC
       && offset + 11 <= buf.length
     ) {
       const height = readUint16BE(buf, offset + 5);
@@ -136,23 +136,23 @@ function parseWebpMetadata(buf: Uint8Array): { width: number; height: number } {
     if (chunkTag === "VP8 " && chunkSize >= 10) {
       // VP8 keyframe header: 3 bytes frame tag, then 16 bits width/height
       const raw = readUint16LE(buf, offset + 14);
-      const width = raw & 0x3f_ff;
-      const height = readUint16LE(buf, offset + 16) & 0x3f_ff;
+      const width = raw & 0x3F_FF;
+      const height = readUint16LE(buf, offset + 16) & 0x3F_FF;
       return { width, height };
     }
 
     if (chunkTag === "VP8L" && chunkSize >= 5) {
       // VP8L lossless header
       const bits = readUint32LE(buf, offset + 12);
-      const width = (bits & 0x3f_ff) + 1;
-      const height = ((bits >> 14) & 0x3f_ff) + 1;
+      const width = (bits & 0x3F_FF) + 1;
+      const height = ((bits >> 14) & 0x3F_FF) + 1;
       return { width, height };
     }
 
     if (chunkTag === "VP8X") {
       // VP8X extended header — bits 16-17 have width/height
-      const width = ((buf[offset + 12]! | (buf[offset + 13]! << 8)) & 0x3f_ff) + 1;
-      const height = ((buf[offset + 14]! | (buf[offset + 15]! << 8)) & 0x3f_ff) + 1;
+      const width = ((buf[offset + 12]! | (buf[offset + 13]! << 8)) & 0x3F_FF) + 1;
+      const height = ((buf[offset + 14]! | (buf[offset + 15]! << 8)) & 0x3F_FF) + 1;
       return { width, height };
     }
 
@@ -183,7 +183,7 @@ export function extractImageMetadata(buffer: Uint8Array): ImageMetadata {
     return { width, height, caption, format: "png" };
   }
 
-  if (buffer[0] === 0xff && buffer[1] === 0xd8) {
+  if (buffer[0] === 0xFF && buffer[1] === 0xD8) {
     const { width, height, caption } = parseJpegMetadata(buffer);
     return { width, height, caption, format: "jpeg" };
   }
