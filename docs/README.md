@@ -108,16 +108,16 @@ Future features, exploration docs, and implementation roadmaps. Not yet implemen
 
 ### Roadmaps (`.plan/roadmaps/`)
 
-| Document                                                                                                       | Topics                              |
-| -------------------------------------------------------------------------------------------------------------- | ----------------------------------- |
+| Document                                                                                         | Topics                              |
+| ------------------------------------------------------------------------------------------------ | ----------------------------------- |
 | [`.plan/roadmaps/rpg-implementation-roadmap.md`](./.plan/roadmaps/rpg-implementation-roadmap.md) | RPG mechanics implementation phases |
 | [`.plan/roadmaps/implementation-approaches.md`](./.plan/roadmaps/implementation-approaches.md)   | Technical approach comparison       |
 | [`.plan/roadmaps/implementation-samples.md`](./.plan/roadmaps/implementation-samples.md)         | Code samples and patterns           |
 
 ### Features (`.plan/features/`)
 
-| Document                                                                                                       | Topics                                         |
-| -------------------------------------------------------------------------------------------------------------- | ---------------------------------------------- |
+| Document                                                                                         | Topics                                         |
+| ------------------------------------------------------------------------------------------------ | ---------------------------------------------- |
 | [`.plan/features/creative-studio.md`](./.plan/features/creative-studio.md)                       | Creative tools and studio features             |
 | [`.plan/features/cross-device-sync.md`](./.plan/features/cross-device-sync.md)                   | Cross-device state synchronization             |
 | [`.plan/features/auto-translation.md`](./.plan/features/auto-translation.md)                     | Auto-translation system                        |
@@ -151,8 +151,8 @@ Future features, exploration docs, and implementation roadmaps. Not yet implemen
 
 Creative and UX exploration docs, sourced from competitor analysis.
 
-| Document                                                                                         | Topics                                 |
-| ------------------------------------------------------------------------------------------------ | -------------------------------------- |
+| Document                                                               | Topics                                 |
+| ---------------------------------------------------------------------- | -------------------------------------- |
 | [`ideas/index.md`](./ideas/index.md)                                   | Master index: 34 ideas across 8 themes |
 | [`ideas/authoring-creation.md`](./ideas/authoring-creation.md)         | Authoring & creation tools             |
 | [`ideas/immersion-presentation.md`](./ideas/immersion-presentation.md) | Immersion & presentation               |
@@ -231,10 +231,10 @@ Detailed UX specifications for the htmx + Alpine.js web UI.
 
 Project planning, reviews, analysis, and research.
 
-| Document                                     | Topics                       |
-| -------------------------------------------- | ---------------------------- |
-| [`meta/plan.md`](./meta/plan.md)             | MVP implementation checklist |
-| [`meta/roadmap.md`](./meta/roadmap.md)       | Long-term feature roadmap    |
+| Document                               | Topics                       |
+| -------------------------------------- | ---------------------------- |
+| [`meta/plan.md`](./meta/plan.md)       | MVP implementation checklist |
+| [`meta/roadmap.md`](./meta/roadmap.md) | Long-term feature roadmap    |
 
 ### Reviews (`meta/reviews/`)
 
