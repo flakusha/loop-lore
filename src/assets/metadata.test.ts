@@ -33,11 +33,11 @@ describe("extractImageMetadata", () => {
 
   describe("JPEG", () => {
     test("extracts width and height from JPEG header", () => {
-      const soi = new Uint8Array([0xff, 0xd8]);
-      const app0 = new Uint8Array([0xff, 0xe0, 0, 16, 74, 70, 73, 70, 0, 1, 2, 0, 0, 1, 0, 1, 0, 0]);
+      const soi = new Uint8Array([0xFF, 0xD8]);
+      const app0 = new Uint8Array([0xFF, 0xE0, 0, 16, 74, 70, 73, 70, 0, 1, 2, 0, 0, 1, 0, 1, 0, 0]);
       const sof0 = new Uint8Array([
-        0xff,
-        0xc0,
+        0xFF,
+        0xC0,
         0,
         17,
         8,
@@ -93,17 +93,17 @@ describe("extractImageMetadata", () => {
       // Data layout: [tag:4][size:4][pad6:6][width:2][height:2][pad:rest]
 
       const riff = new Uint8Array([0x52, 0x49, 0x46, 0x46]); // "RIFF"
-      const fileLen = new Uint8Array([0x1c, 0x00, 0x00, 0x00]); // 28 LE
+      const fileLen = new Uint8Array([0x1C, 0x00, 0x00, 0x00]); // 28 LE
       const webp = new Uint8Array([0x57, 0x45, 0x42, 0x50]); // "WEBP"
       const vp8 = new Uint8Array([0x56, 0x50, 0x38, 0x20]); // "VP8 "
-      const csize = new Uint8Array([0x0e, 0x00, 0x00, 0x00]); // chunkSize=14 LE
+      const csize = new Uint8Array([0x0E, 0x00, 0x00, 0x00]); // chunkSize=14 LE
 
       // 6 pad bytes so width lands at offset+14 (byte 26)
       const pad6 = new Uint8Array([0, 0, 0, 0, 0, 0]);
       // width at byte 26-27 (offset+14): 320 = 0x0140, LE = [0x40, 0x01]
       const wh = new Uint8Array([0x40, 0x01]); // width=320
       // height at byte 28-29 (offset+16): 200 = 0x00C8, LE = [0xC8, 0x00]
-      const ht = new Uint8Array([0xc8, 0x00]);
+      const ht = new Uint8Array([0xC8, 0x00]);
       const rest = new Uint8Array([0, 0]); // fill to chunkSize=14
 
       const buf = new Uint8Array([
@@ -129,17 +129,17 @@ describe("extractImageMetadata", () => {
       // LE bytes: [0x3F, 0xFC, 0x31, 0x00]
 
       const riff = new Uint8Array([0x52, 0x49, 0x46, 0x46]);
-      const fileLen = new Uint8Array([0x1c, 0x00, 0x00, 0x00]); // 28
+      const fileLen = new Uint8Array([0x1C, 0x00, 0x00, 0x00]); // 28
       const webp = new Uint8Array([0x57, 0x45, 0x42, 0x50]);
-      const vp8l = new Uint8Array([0x56, 0x50, 0x38, 0x4c]); // "VP8L"
-      const csize = new Uint8Array([0x0e, 0x00, 0x00, 0x00]); // 14
+      const vp8l = new Uint8Array([0x56, 0x50, 0x38, 0x4C]); // "VP8L"
+      const csize = new Uint8Array([0x0E, 0x00, 0x00, 0x00]); // 14
 
       // 4 pad bytes so bits land at offset+12 (byte 24)
       const pad4 = new Uint8Array([0, 0, 0, 0]);
       // bits at byte 24-27: width=320, height=200
       // width-1=319=0x013F, height-1=199=0x00C7
       // packed: (199<<14)|319 = 0x31C13F, LE: [0x3F, 0xC1, 0x31, 0x00]
-      const bits = new Uint8Array([0x3f, 0xc1, 0x31, 0x00]);
+      const bits = new Uint8Array([0x3F, 0xC1, 0x31, 0x00]);
       const rest = new Uint8Array([0, 0, 0, 0, 0, 0]); // fill to 14
 
       const buf = new Uint8Array([
@@ -164,7 +164,7 @@ describe("extractImageMetadata", () => {
   describe("GIF", () => {
     test("extracts dimensions from GIF87a", () => {
       const header = new TextEncoder().encode("GIF87a");
-      const buf = new Uint8Array([...header, 0x40, 0x01, 0xf4, 0x01, 0, 0, 0]);
+      const buf = new Uint8Array([...header, 0x40, 0x01, 0xF4, 0x01, 0, 0, 0]);
       const result = extractImageMetadata(buf);
       expect(result.format).toBe("gif");
       expect(result.width).toBe(320);
@@ -195,7 +195,7 @@ describe("extractImageMetadata", () => {
     });
 
     test("small buffer returns unknown", () => {
-      const result = extractImageMetadata(new Uint8Array([0xff]));
+      const result = extractImageMetadata(new Uint8Array([0xFF]));
       expect(result.format).toBe("unknown");
     });
   });
