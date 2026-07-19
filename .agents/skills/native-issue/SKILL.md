@@ -13,15 +13,15 @@ live in `refs/issues/<uuid>` as commit chains with trailers for metadata.
 
 ## Extended Identifiers
 
-| Type | Prefix | Use for |
-|------|--------|---------|
-| BUG- | Bug reports |
-| FEA- | Feature requests |
-| FIX- | Non-bug fixes |
-| IDEA- | Research/experimental ideas |
-| TASK- | Small tasks |
-| SOL- | Architectural solutions |
-| EPIC- | Major epics (matches plan.md) |
+| Type  | Prefix                        | Use for |
+| ----- | ----------------------------- | ------- |
+| BUG-  | Bug reports                   |         |
+| FEA-  | Feature requests              |         |
+| FIX-  | Non-bug fixes                 |         |
+| IDEA- | Research/experimental ideas   |         |
+| TASK- | Small tasks                   |         |
+| SOL-  | Architectural solutions       |         |
+| EPIC- | Major epics (matches plan.md) |         |
 
 ## Commands
 
