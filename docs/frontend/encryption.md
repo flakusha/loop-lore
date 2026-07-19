@@ -301,7 +301,7 @@ Actors manage keys at `/settings/keys`:
 
 ## Configuration
 
-```env
+```shell
 SERVER_ENCRYPTION_KEY=         # 256-bit hex. Missing = dev mode (skip encryption)
 ENCRYPTION_REQUIRED=false       # true = refuse to start without SMK
 KEY_ROTATION_DAYS=90            # Auto-rotate primary keys
