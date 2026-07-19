@@ -11,40 +11,40 @@
 
 import type { Config } from "./schema";
 import {
-  ServerSection,
-  DatabaseSection,
-  AssetsSection,
-  AssistantSection,
-  LoggingSection,
-  TuiSection,
-  DocsSection,
-  AgeGateSection,
-  AuthSection,
-  TransportSection,
-  MessagesSection,
-  NsfwSection,
-  GenerationSection,
-  ByoKeySection,
-  EncryptionSection,
-  HeadersSection,
-  DynamicResponseSection,
-  serverMeta,
-  databaseMeta,
-  assetsMeta,
-  assistantMeta,
-  loggingMeta,
-  tuiMeta,
-  docsMeta,
   ageGateMeta,
+  AgeGateSection,
+  assetsMeta,
+  AssetsSection,
+  assistantMeta,
+  AssistantSection,
   authMeta,
-  transportMeta,
-  messagesMeta,
-  nsfwMeta,
-  generationMeta,
+  AuthSection,
   byoKeyMeta,
-  encryptionMeta,
-  headersMeta,
+  ByoKeySection,
+  databaseMeta,
+  DatabaseSection,
+  docsMeta,
+  DocsSection,
   dynamicResponseMeta,
+  DynamicResponseSection,
+  encryptionMeta,
+  EncryptionSection,
+  generationMeta,
+  GenerationSection,
+  headersMeta,
+  HeadersSection,
+  loggingMeta,
+  LoggingSection,
+  messagesMeta,
+  MessagesSection,
+  nsfwMeta,
+  NsfwSection,
+  serverMeta,
+  ServerSection,
+  transportMeta,
+  TransportSection,
+  tuiMeta,
+  TuiSection,
 } from "./sections";
 
 // ── Base types ──────────────────────────────────────────────
@@ -279,28 +279,28 @@ export class ConfigSchema {
       throw new Error("generation.providers.anthropic requires apiKey");
     }
     if (
-      config.headers.xFrameOptions !== null &&
-      !["DENY", "SAMEORIGIN"].includes(config.headers.xFrameOptions)
+      config.headers.xFrameOptions !== null
+      && !["DENY", "SAMEORIGIN"].includes(config.headers.xFrameOptions)
     ) {
       throw new Error(`Invalid headers.xFrameOptions: "${config.headers.xFrameOptions}"`);
     }
     if (
-      config.headers.crossOriginOpenerPolicy !== null &&
-      !["same-origin", "same-origin-allow-popups"].includes(config.headers.crossOriginOpenerPolicy)
+      config.headers.crossOriginOpenerPolicy !== null
+      && !["same-origin", "same-origin-allow-popups"].includes(config.headers.crossOriginOpenerPolicy)
     ) {
       throw new Error(`Invalid headers.crossOriginOpenerPolicy: "${config.headers.crossOriginOpenerPolicy}"`);
     }
     if (
-      config.headers.crossOriginEmbedderPolicy !== null &&
-      config.headers.crossOriginEmbedderPolicy !== "require-corp"
+      config.headers.crossOriginEmbedderPolicy !== null
+      && config.headers.crossOriginEmbedderPolicy !== "require-corp"
     ) {
       throw new Error(
         `Invalid headers.crossOriginEmbedderPolicy: "${config.headers.crossOriginEmbedderPolicy as string}"`,
       );
     }
     if (
-      config.headers.crossOriginResourcePolicy !== null &&
-      !["same-origin", "cross-origin"].includes(config.headers.crossOriginResourcePolicy)
+      config.headers.crossOriginResourcePolicy !== null
+      && !["same-origin", "cross-origin"].includes(config.headers.crossOriginResourcePolicy)
     ) {
       throw new Error(
         `Invalid headers.crossOriginResourcePolicy: "${config.headers.crossOriginResourcePolicy}"`,

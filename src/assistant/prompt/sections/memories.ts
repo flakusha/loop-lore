@@ -2,9 +2,9 @@
  * Memory section — the actor's most important memories, keyword-filtered
  * against the latest user message for relevance.
  */
-import type { SectionBuilder } from "../types";
-import { parseKeywords, recentUserWords } from "../keywords";
 import { wrapSection } from "../../xml-utils";
+import { parseKeywords, recentUserWords } from "../keywords";
+import type { SectionBuilder } from "../types";
 
 export const memorySection: SectionBuilder = {
   name: "memories",

@@ -1,11 +1,11 @@
 /**
  * Tests for transport factory and protocol handlers.
  */
-import { describe, test, expect } from "bun:test";
-import { createProtocol, createHttp1Handler, createH2Handler, createWsHandler } from "./factory";
-import { withCompression, compress, decompress } from "./compression";
-import { TransportProtocol, CompressionAlgorithm } from "../db/enums";
+import { describe, expect, test } from "bun:test";
+import { CompressionAlgorithm, TransportProtocol } from "../db/enums";
+import { compress, decompress, withCompression } from "./compression";
 import { TransportError, TransportErrorCode } from "./errors";
+import { createH2Handler, createHttp1Handler, createProtocol, createWsHandler } from "./factory";
 
 // ── createProtocol / Factory ──────────────────────────────────
 

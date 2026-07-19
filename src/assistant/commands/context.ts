@@ -2,7 +2,7 @@
 //
 // /context — show current context window info.
 
-import { registerCommand, type CommandResult } from "./registry";
+import { type CommandResult, registerCommand } from "./registry";
 
 registerCommand("context", async (_args, ctx): Promise<CommandResult> => {
   const msgCount = ctx.messages?.length ?? 0;

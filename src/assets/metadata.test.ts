@@ -2,7 +2,7 @@
  * Tests for assets/metadata.ts — image metadata extraction from binary headers
  */
 
-import { describe, test, expect } from "bun:test";
+import { describe, expect, test } from "bun:test";
 import { extractImageMetadata } from "./metadata";
 
 describe("extractImageMetadata", () => {

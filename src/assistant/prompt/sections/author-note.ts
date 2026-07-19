@@ -7,8 +7,8 @@
  *
  * XML-delimited to prevent prompt injection via the wrapped content.
  */
-import type { SectionBuilder } from "../types";
 import { wrapSection } from "../../xml-utils";
+import type { SectionBuilder } from "../types";
 
 export const authorNoteSection: SectionBuilder = {
   name: "author-note",

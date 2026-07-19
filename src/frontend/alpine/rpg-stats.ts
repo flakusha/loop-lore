@@ -5,7 +5,7 @@
  * No backend wiring — uses mock data for UI development.
  */
 
-import type { ChatState, StatusEffect, EquipmentSlot } from "./types";
+import type { ChatState, EquipmentSlot, StatusEffect } from "./types";
 
 export const rpgStats: Partial<ChatState> & ThisType<ChatState> = {
   rpgStats: null,

@@ -2,8 +2,8 @@
  * Tests for utils/date.ts — date/time formatting
  */
 
-import { describe, test, expect } from "bun:test";
-import { unixMs, unixSec, tzOffset, formatTime } from "./date";
+import { describe, expect, test } from "bun:test";
+import { formatTime, tzOffset, unixMs, unixSec } from "./date";
 
 describe("unixMs", () => {
   test("returns a number close to Date.now()", () => {

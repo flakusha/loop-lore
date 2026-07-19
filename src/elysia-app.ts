@@ -12,46 +12,46 @@
 
 import { Elysia } from "elysia";
 import { BunAdapter } from "elysia/adapter/bun";
-import type { Db } from "./db";
-import type { Config } from "./config/schema";
-import { handleApiRequest } from "./server";
-import { viewRoutes } from "./routes/views";
-import { healthRoutes } from "./routes/health";
-import { authPublicRoutes, authProtectedRoutes } from "./routes/auth";
-import { settingsRoutes } from "./routes/settings";
-import { activityRoutes } from "./routes/activity";
-import { activityStreamRoutes } from "./routes/activity-stream";
-import { notificationsRoutes } from "./routes/notifications";
-import { apiKeysRoutes } from "./routes/api-keys";
-import { frontendLogsRoutes } from "./routes/frontend-logs";
-import { messageEncryptionRoutes } from "./routes/message-encryption";
-import { usersRoutes } from "./routes/users";
-import { actorItemsRoutes } from "./routes/actor-items";
-import { actorMemoriesRoutes } from "./routes/actor-memories";
-import { actorLoreEntriesRoutes } from "./routes/actor-lore-entries";
-import { actorNotesRoutes } from "./routes/actor-notes";
-import { worldLoreEntriesRoutes } from "./routes/world-lore-entries";
-import { worldsRoutes } from "./routes/worlds";
-import { adminRoutes } from "./routes/admin";
-import { storyTurnsRoutes } from "./routes/story-turns";
-import { storyStatesRoutes } from "./routes/story-states";
-import { storyItemsRoutes } from "./routes/story-items";
-import { questsRoutes } from "./routes/quests";
-import { charactersRoutes } from "./routes/characters";
-import { messagesRoutes } from "./routes/messages";
-import { messageReactionsRoutes } from "./routes/message-reactions";
-import { telemetryRoutes } from "./routes/telemetry";
-import { chatsRoutes } from "./routes/chats";
-import { chatPinRoutes } from "./routes/chat-pins";
-import { chatExportRoutes } from "./routes/chat-export";
-import { importRoutes } from "./routes/import";
-import { pluginRoutes } from "./routes/plugins";
-import { personaRoutes } from "./personas/controller";
-import { generationRoutes } from "./generation/controller";
 import { ageGateRoutes } from "./age-gate/controller";
 import { assetRoutes } from "./assets/controller";
-import { sessionsRoutes } from "./routes/sessions";
+import type { Config } from "./config/schema";
+import type { Db } from "./db";
+import { generationRoutes } from "./generation/controller";
 import { authenticate } from "./middleware/auth";
+import { personaRoutes } from "./personas/controller";
+import { activityRoutes } from "./routes/activity";
+import { activityStreamRoutes } from "./routes/activity-stream";
+import { actorItemsRoutes } from "./routes/actor-items";
+import { actorLoreEntriesRoutes } from "./routes/actor-lore-entries";
+import { actorMemoriesRoutes } from "./routes/actor-memories";
+import { actorNotesRoutes } from "./routes/actor-notes";
+import { adminRoutes } from "./routes/admin";
+import { apiKeysRoutes } from "./routes/api-keys";
+import { authProtectedRoutes, authPublicRoutes } from "./routes/auth";
+import { charactersRoutes } from "./routes/characters";
+import { chatExportRoutes } from "./routes/chat-export";
+import { chatPinRoutes } from "./routes/chat-pins";
+import { chatsRoutes } from "./routes/chats";
+import { frontendLogsRoutes } from "./routes/frontend-logs";
+import { healthRoutes } from "./routes/health";
+import { importRoutes } from "./routes/import";
+import { messageEncryptionRoutes } from "./routes/message-encryption";
+import { messageReactionsRoutes } from "./routes/message-reactions";
+import { messagesRoutes } from "./routes/messages";
+import { notificationsRoutes } from "./routes/notifications";
+import { pluginRoutes } from "./routes/plugins";
+import { questsRoutes } from "./routes/quests";
+import { sessionsRoutes } from "./routes/sessions";
+import { settingsRoutes } from "./routes/settings";
+import { storyItemsRoutes } from "./routes/story-items";
+import { storyStatesRoutes } from "./routes/story-states";
+import { storyTurnsRoutes } from "./routes/story-turns";
+import { telemetryRoutes } from "./routes/telemetry";
+import { usersRoutes } from "./routes/users";
+import { viewRoutes } from "./routes/views";
+import { worldLoreEntriesRoutes } from "./routes/world-lore-entries";
+import { worldsRoutes } from "./routes/worlds";
+import { handleApiRequest } from "./server";
 import { onValidationError } from "./validation";
 
 export interface AppDeps {
@@ -69,7 +69,6 @@ export function createApp(deps: AppDeps): Elysia {
     // ── Validation error handler (must be first) ─────────────
 
     .onError((ctx: any) => onValidationError(ctx.code, ctx.error, ctx.set))
-
     // ── Authentication guard (runs before all routes, populates context) ──────
     .derive(async ({ request }) => {
       const authResult = await authenticate({ request, database, authConfig: config.auth });

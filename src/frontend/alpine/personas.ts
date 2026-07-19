@@ -1,5 +1,5 @@
-import { log as rootLog } from "./logger";
 import { jsonBody } from "./json";
+import { log as rootLog } from "./logger";
 
 const log = rootLog.child({ module: "personas" });
 
@@ -11,7 +11,7 @@ interface PersonaItem {
   is_default: string;
 }
 
-globalThis.personasPage = function () {
+globalThis.personasPage = function() {
   return {
     personas: [] as PersonaItem[],
     filtered: [] as PersonaItem[],

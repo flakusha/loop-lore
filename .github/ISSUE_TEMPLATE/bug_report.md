@@ -5,6 +5,7 @@ A clear description of what the bug is.
 
 **To Reproduce**
 Steps to reproduce the behavior:
+
 1. Go to '...'
 2. Click on '....'
 3. Scroll down to '....'
@@ -17,9 +18,10 @@ What you expected to happen.
 If applicable, add screenshots or log output.
 
 **Environment:**
- - OS: [e.g., Linux]
- - Bun version: [eun --version]
- - Browser: [if frontend issue]
+
+- OS: [e.g., Linux]
+- Bun version: [eun --version]
+- Browser: [if frontend issue]
 
 **Additional context**
 Any other context about the problem.

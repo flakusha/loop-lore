@@ -3,26 +3,26 @@
 // Each section provides: defaults constant, class, and schema metadata.
 // Used by ConfigSchema orchestrator for envMap, validate, and jsonSchema generation.
 
-export { ServerSection, SERVER_DEFAULTS, serverMeta } from "./server";
-export { DatabaseSection, DATABASE_DEFAULTS, databaseMeta } from "./database";
-export { AssetsSection, ASSETS_DEFAULTS, assetsMeta } from "./assets";
-export { AssistantSection, ASSISTANT_DEFAULTS, assistantMeta } from "./assistant";
-export { LoggingSection, LOGGING_DEFAULTS, loggingMeta } from "./logging";
-export { TuiSection, TUI_DEFAULTS, tuiMeta } from "./tui";
-export { DocsSection, DOCS_DEFAULTS, docsMeta } from "./docs";
-export { AgeGateSection, AGE_GATE_DEFAULTS, ageGateMeta } from "./age-gate";
-export { AuthSection, AUTH_DEFAULTS, authMeta } from "./auth";
+export { AGE_GATE_DEFAULTS, ageGateMeta, AgeGateSection } from "./age-gate";
+export { ASSETS_DEFAULTS, assetsMeta, AssetsSection } from "./assets";
+export { ASSISTANT_DEFAULTS, assistantMeta, AssistantSection } from "./assistant";
+export { AUTH_DEFAULTS, authMeta, AuthSection } from "./auth";
+export { BYO_KEY_DEFAULTS, byoKeyMeta, ByoKeySection } from "./byo-key";
+export { DATABASE_DEFAULTS, databaseMeta, DatabaseSection } from "./database";
+export { DOCS_DEFAULTS, docsMeta, DocsSection } from "./docs";
+export { DYNAMIC_RESPONSE_DEFAULTS, dynamicResponseMeta, DynamicResponseSection } from "./dynamic-response";
+export { ENCRYPTION_DEFAULTS, encryptionMeta, EncryptionSection } from "./encryption";
+export { GENERATION_DEFAULTS, generationMeta, GenerationSection } from "./generation";
+export { CSP_DEFAULTS, HEADERS_DEFAULTS, headersMeta, HeadersSection } from "./headers";
+export { LOGGING_DEFAULTS, loggingMeta, LoggingSection } from "./logging";
+export { MESSAGES_DEFAULTS, messagesMeta, MessagesSection } from "./messages";
+export { NSFW_DEFAULTS, nsfwMeta, NsfwSection } from "./nsfw";
+export { SERVER_DEFAULTS, serverMeta, ServerSection } from "./server";
 export {
-  TransportSection,
-  TRANSPORT_DEFAULTS,
   TRANSPORT_COMPRESSION_DEFAULTS,
+  TRANSPORT_DEFAULTS,
   TRANSPORT_LIMITS_DEFAULTS,
   transportMeta,
+  TransportSection,
 } from "./transport";
-export { MessagesSection, MESSAGES_DEFAULTS, messagesMeta } from "./messages";
-export { NsfwSection, NSFW_DEFAULTS, nsfwMeta } from "./nsfw";
-export { GenerationSection, GENERATION_DEFAULTS, generationMeta } from "./generation";
-export { ByoKeySection, BYO_KEY_DEFAULTS, byoKeyMeta } from "./byo-key";
-export { EncryptionSection, ENCRYPTION_DEFAULTS, encryptionMeta } from "./encryption";
-export { HeadersSection, HEADERS_DEFAULTS, CSP_DEFAULTS, headersMeta } from "./headers";
-export { DynamicResponseSection, DYNAMIC_RESPONSE_DEFAULTS, dynamicResponseMeta } from "./dynamic-response";
+export { TUI_DEFAULTS, tuiMeta, TuiSection } from "./tui";
