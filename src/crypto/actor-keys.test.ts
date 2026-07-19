@@ -13,6 +13,18 @@ import {
   rotateActorKey,
 } from "./actor-keys";
 
+import { Database, } from "bun:sqlite";
+import { Kysely, } from "kysely";
+import { createSqliteDialect, } from "../db/index";
+import { up as migrate, } from "../db/migrations/001_init";
+import type { DB, } from "../db/schema";
+import { initSmk, } from "./smk";
+import { getSmk, } from "./smk";
+
+/**
+ * Tests for crypto/actor-keys.ts — Actor key CRUD
+ */
+
 /**
  * Tests for crypto/actor-keys.ts — Actor key CRUD
  */

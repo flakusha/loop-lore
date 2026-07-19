@@ -2,12 +2,11 @@
 //
 // Pin/unpin messages in a chat.
 // Pins are stored in the `chat_pins` table and displayed in a pinned bar.
-import { Elysia, t, } from "elysia";
-import type { Kysely, } from "kysely";
 import type { DB, } from "../db/schema";
+import type { Kysely, } from "kysely";
+import { Elysia, t, } from "elysia";
+import { notFound, unauthorized, } from "../validation/middleware";
 import { uid, } from "../utils";
-import { notFound, unauthorized, } from "../validation/middleware";
-import { notFound, unauthorized, } from "../validation/middleware";
 
 interface HandlerOpts {
   database: Kysely<DB>;

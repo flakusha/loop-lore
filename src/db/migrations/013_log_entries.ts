@@ -1,5 +1,4 @@
 import { type Kysely, sql, } from "kysely";
-import { type Kysely, sql, } from "kysely";
 
 /**
  * Migration 013 — Log entries table for DB transport / audit trail

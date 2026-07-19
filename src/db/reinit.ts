@@ -1,13 +1,12 @@
+import path from "node:path";
+import type { DB, } from "./schema";
+import { DATA_DIR, } from "../config/constants";
 import { Database, } from "bun:sqlite";
 import { Kysely, } from "kysely";
-import { existsSync, unlinkSync, } from "node:fs";
-import { existsSync, unlinkSync, } from "node:fs";
-import path from "node:path";
-import { DATA_DIR, } from "../config/constants";
 import { createLogger, getLogger, } from "../logger";
 import { createSqliteDialect, getDatabase, } from "./index";
+import { existsSync, unlinkSync, } from "node:fs";
 import { runMigrations, } from "./migrate";
-import type { DB, } from "./schema";
 import { seedDefaultActors, } from "./seed";
 
 async function reinit(): Promise<void> {

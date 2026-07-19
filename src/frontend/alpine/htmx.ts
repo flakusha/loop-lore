@@ -134,7 +134,6 @@ document.addEventListener("DOMContentLoaded", triggerPageLoaders,);
 // ── hx-on::after-request replacements (success events) ──────
 document.addEventListener("htmx:afterRequest", (e: Event,) => {
   const detail = (e as CustomEvent<{ successful: boolean; elt: HTMLElement }>).detail;
-  const detail = (e as CustomEvent<{ successful: boolean; elt: HTMLElement }>).detail;
   if (!detail.successful) { return; }
   const successEvent = detail.elt.dataset.hxSuccessEvent;
   if (successEvent) {

@@ -14,6 +14,11 @@ import {
   resolveTemplate,
 } from "./prompt-templates";
 
+
+/**
+ * Tests for generation/prompt-templates.ts — image model profiles & templates
+ */
+
 /**
  * Tests for generation/prompt-templates.ts — image model profiles & templates
  */

@@ -18,6 +18,18 @@ import {
   waitForAlpineReady,
 } from "../../helpers/htmx-alpine";
 
+import { seedAll, } from "../../helpers/seed";
+
+/**
+ * Browser E2E: htmx + Alpine.js Integration
+ *
+ * Tests the bridge layer between htmx DOM swapping and Alpine.js
+ * reactive state. Covers the Round 4 fixes (ALP.1–ALP.7) as
+ * regression tests.
+ *
+ * Pre-logs in via seeded data (demo/solo mode).
+ */
+
 /**
  * Browser E2E: htmx + Alpine.js Integration
  *
