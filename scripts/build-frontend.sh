@@ -11,17 +11,17 @@ SRC_VIEWS="./src/views"
 
 echo "=== Building JS bundles ==="
 bun build \
-  --target browser --minify \
-  --outdir "$DIST" \
-  --banner "(()=>{" --footer "})()" \
-  ./src/frontend/app.ts \
-  ./src/frontend/pages.ts \
-  ./src/frontend/chat-vendor.ts
+    --target browser --minify \
+    --outdir "$DIST" \
+    --banner "(()=>{" --footer "})()" \
+    ./src/frontend/app.ts \
+    ./src/frontend/pages.ts \
+    ./src/frontend/chat-vendor.ts
 
 bun build \
-  --target browser --minify \
-  --outdir "$DIST" \
-  ./src/frontend/vendor.ts
+    --target browser --minify \
+    --outdir "$DIST" \
+    ./src/frontend/vendor.ts
 
 echo "=== Copying Tabler Icons ==="
 bun run src/build/copy-icons.ts

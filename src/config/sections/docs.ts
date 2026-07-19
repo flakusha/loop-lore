@@ -1,6 +1,6 @@
 // src/config/sections/docs.ts — Documentation config section
 
-import type { DocumentationConfig } from "../schema";
+import type { DocumentationConfig, } from "../schema";
 
 export const DOCS_DEFAULTS = {
   enabled: true,
@@ -10,8 +10,8 @@ export class DocsSection implements DocumentationConfig {
   enabled = DOCS_DEFAULTS.enabled;
   public?: string[];
 
-  constructor(overrides?: Partial<DocumentationConfig>) {
-    Object.assign(this, overrides);
+  constructor(overrides?: Partial<DocumentationConfig>,) {
+    Object.assign(this, overrides,);
   }
 }
 
@@ -25,9 +25,9 @@ export const docsMeta = {
     },
     public: {
       type: "array",
-      items: { type: "string" },
+      items: { type: "string", },
       description: "Allowlist of doc path prefixes",
     },
   },
-  required: ["enabled"] as const,
+  required: ["enabled",] as const,
 };

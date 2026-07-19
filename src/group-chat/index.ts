@@ -6,7 +6,7 @@
  */
 
 // ── Turn Selection ─────────────────────────────────────────
-export { selectNextGroupActor, type TurnSelectorOptions } from "./turn-selector";
+export { selectNextGroupActor, type TurnSelectorOptions, } from "./turn-selector";
 
 // ── Mention Parsing ────────────────────────────────────────
 export {

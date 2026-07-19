@@ -16,15 +16,15 @@
  *   DELETE /api/assets/:id/links/:linkId — unlink from entity
  */
 
-import { Elysia } from "elysia";
-import type { Kysely } from "kysely";
-import { existsSync, readFileSync } from "node:fs";
-import { IMMUTABLE_CACHE_MAX_AGE } from "../config/constants";
-import type { Config } from "../config/schema";
-import { AssetLinkEntity, AssetVisibility } from "../db/enums";
-import type { DB } from "../db/schema";
-import { ErrorCode } from "../routes/http-utils";
-import { HttpStatus, jsonCreated, jsonError, jsonNoContent, jsonPaginated, jsonResponse } from "../routes/http-utils";
+import { Elysia, } from "elysia";
+import type { Kysely, } from "kysely";
+import { existsSync, readFileSync, } from "node:fs";
+import { IMMUTABLE_CACHE_MAX_AGE, } from "../config/constants";
+import type { Config, } from "../config/schema";
+import { AssetLinkEntity, AssetVisibility, } from "../db/enums";
+import type { DB, } from "../db/schema";
+import { ErrorCode, } from "../routes/http-utils";
+import { HttpStatus, jsonCreated, jsonError, jsonNoContent, jsonPaginated, jsonResponse, } from "../routes/http-utils";
 import {
   canAccessAsset,
   createAsset,
@@ -43,7 +43,7 @@ import {
   validateFileSize,
   validateMimeType,
 } from "./service";
-import type { AssetRecord } from "./service";
+import type { AssetRecord, } from "./service";
 
 interface UploadOpts {
   request: Request;
@@ -73,14 +73,14 @@ interface ResolvedAsset {
 }
 
 /** Extract userId from context or return Unauthorized error. */
-function requireUserId(ctx: unknown): string | Response {
+function requireUserId(ctx: unknown,): string | Response {
   const userId = (ctx as any).userId as string | null;
   if (!userId) {
     return jsonError({
       message: "Unauthorized",
       status: HttpStatus.Unauthorized,
       code: ErrorCode.Unauthorized,
-    });
+    },);
   }
   return userId;
 }
@@ -91,17 +91,17 @@ function serveFile(
   contentType: string,
   opts?: { cacheControl?: string; extraHeaders?: Record<string, string> },
 ): Response {
-  if (!existsSync(filePath)) {
-    return jsonError({ message: "File not found on disk", status: HttpStatus.NotFound });
+  if (!existsSync(filePath,)) {
+    return jsonError({ message: "File not found on disk", status: HttpStatus.NotFound, },);
   }
-  const data = readFileSync(filePath);
+  const data = readFileSync(filePath,);
   return new Response(data, {
     headers: {
       "Content-Type": contentType,
       "Cache-Control": opts?.cacheControl ?? `public, max-age=${IMMUTABLE_CACHE_MAX_AGE}, immutable`,
       ...opts?.extraHeaders,
     },
-  });
+  },);
 }
 
 async function resolveAsset(
@@ -110,22 +110,22 @@ async function resolveAsset(
   actorId: string | null,
   actorRole: string | null,
 ): Promise<ResolvedAsset | Response> {
-  const allowed = await canAccessAsset(database, assetId, actorId, actorRole);
+  const allowed = await canAccessAsset(database, assetId, actorId, actorRole,);
   if (!allowed) {
-    return jsonError({ message: "Not found", status: HttpStatus.NotFound, code: ErrorCode.NotFound });
+    return jsonError({ message: "Not found", status: HttpStatus.NotFound, code: ErrorCode.NotFound, },);
   }
 
-  const asset = await getAsset(database, assetId);
+  const asset = await getAsset(database, assetId,);
   if (!asset) {
-    return jsonError({ message: "Asset not found", status: HttpStatus.NotFound, code: ErrorCode.NotFound });
+    return jsonError({ message: "Asset not found", status: HttpStatus.NotFound, code: ErrorCode.NotFound, },);
   }
 
-  return { asset };
+  return { asset, };
 }
 
-export function assetRoutes({ database, config }: { database: Kysely<DB>; config: Config }) {
+export function assetRoutes({ database, config, }: { database: Kysely<DB>; config: Config },) {
   return (
-    new Elysia({ name: "assets" })
+    new Elysia({ name: "assets", },)
       .guard({
         beforeHandle: () => {
           if (!config.assets.enabled) {
@@ -133,18 +133,18 @@ export function assetRoutes({ database, config }: { database: Kysely<DB>; config
               message: "Asset system is disabled",
               status: HttpStatus.NotFound,
               code: ErrorCode.NotFound,
-            });
+            },);
           }
         },
-      })
+      },)
       // ── Collection routes ─────────────────────────────
-      .get("/api/assets", async (ctx) => {
-        const searchParams = new URL(ctx.request.url).searchParams;
-        const page = Number(searchParams.get("page") ?? "1");
-        const pageSize = Math.min(Number(searchParams.get("pageSize") ?? "50"), 200);
-        const entityType = searchParams.get("entity_type") ?? undefined;
-        const entityId = searchParams.get("entity_id") ?? undefined;
-        const label = searchParams.get("label") ?? undefined;
+      .get("/api/assets", async (ctx,) => {
+        const searchParams = new URL(ctx.request.url,).searchParams;
+        const page = Number(searchParams.get("page",) ?? "1",);
+        const pageSize = Math.min(Number(searchParams.get("pageSize",) ?? "50",), 200,);
+        const entityType = searchParams.get("entity_type",) ?? undefined;
+        const entityId = searchParams.get("entity_id",) ?? undefined;
+        const label = searchParams.get("label",) ?? undefined;
 
         const result = await listAssets(database, {
           page,
@@ -152,47 +152,47 @@ export function assetRoutes({ database, config }: { database: Kysely<DB>; config
           entityType: entityType as AssetLinkEntity,
           entityId,
           label,
-        });
-        return jsonPaginated({ data: result.data, total: result.total, page, pageSize });
-      })
-      .post("/api/assets", async (ctx) => {
-        const userId = requireUserId(ctx);
-        if (typeof userId !== "string") return userId;
+        },);
+        return jsonPaginated({ data: result.data, total: result.total, page, pageSize, },);
+      },)
+      .post("/api/assets", async (ctx,) => {
+        const userId = requireUserId(ctx,);
+        if (typeof userId !== "string") { return userId; }
         return handleUpload({
           request: ctx.request,
           userId,
           database,
           uploadDir: config.assets.uploadDir,
           maxFileSize: config.assets.maxFileSize,
-        });
-      })
+        },);
+      },)
       // ── Single asset routes ──────────────────────────
-      .get("/api/assets/:id", async (ctx) => {
-        const asset = await getAsset(database, ctx.params.id);
+      .get("/api/assets/:id", async (ctx,) => {
+        const asset = await getAsset(database, ctx.params.id,);
         if (!asset) {
           return jsonError({
             message: "Asset not found",
             status: HttpStatus.NotFound,
             code: ErrorCode.NotFound,
-          });
+          },);
         }
-        return jsonResponse(asset);
-      })
-      .patch("/api/assets/:id", async (ctx) => {
-        const userId = requireUserId(ctx);
-        if (typeof userId !== "string") return userId;
+        return jsonResponse(asset,);
+      },)
+      .patch("/api/assets/:id", async (ctx,) => {
+        const userId = requireUserId(ctx,);
+        if (typeof userId !== "string") { return userId; }
 
         const body = (await ctx.request.json()) as { visibility?: string };
         if (
-          !body.visibility
-          || ![AssetVisibility.Private, AssetVisibility.Shared, AssetVisibility.Public].includes(
+          !body.visibility ||
+          ![AssetVisibility.Private, AssetVisibility.Shared, AssetVisibility.Public,].includes(
             body.visibility as AssetVisibility,
           )
         ) {
           return jsonError({
             message: "Invalid visibility. Must be private, shared, or public",
             status: HttpStatus.BadRequest,
-          });
+          },);
         }
 
         const updated = await updateAssetVisibility({
@@ -200,51 +200,51 @@ export function assetRoutes({ database, config }: { database: Kysely<DB>; config
           assetId: ctx.params.id,
           visibility: body.visibility as AssetVisibility,
           actorId: userId,
-        });
+        },);
         if (!updated) {
           return jsonError({
             message: "Asset not found or not owner",
             status: HttpStatus.NotFound,
             code: ErrorCode.NotFound,
-          });
+          },);
         }
-        return jsonResponse({ id: updated.id, visibility: updated.visibility });
-      })
-      .delete("/api/assets/:id", async (ctx) => {
+        return jsonResponse({ id: updated.id, visibility: updated.visibility, },);
+      },)
+      .delete("/api/assets/:id", async (ctx,) => {
         const deleted = await deleteAsset({
           database,
           assetId: ctx.params.id,
           uploadDir: config.assets.uploadDir,
-        });
+        },);
         if (!deleted) {
           return jsonError({
             message: "Asset not found",
             status: HttpStatus.NotFound,
             code: ErrorCode.NotFound,
-          });
+          },);
         }
         return jsonNoContent();
-      })
+      },)
       // ── File serving routes ──────────────────────────
-      .get("/api/assets/:id/raw", async (ctx) => {
+      .get("/api/assets/:id/raw", async (ctx,) => {
         return handleServeRaw({
           database,
           assetId: ctx.params.id,
           uploadDir: config.assets.uploadDir,
           actorId: (ctx as any).userId ?? null,
           actorRole: (ctx as any).userRole ?? null,
-        });
-      })
-      .get("/api/assets/:id/download", async (ctx) => {
+        },);
+      },)
+      .get("/api/assets/:id/download", async (ctx,) => {
         return handleDownload({
           database,
           assetId: ctx.params.id,
           uploadDir: config.assets.uploadDir,
           actorId: (ctx as any).userId ?? null,
           actorRole: (ctx as any).userRole ?? null,
-        });
-      })
-      .get("/api/assets/:id/thumb", async (ctx) => {
+        },);
+      },)
+      .get("/api/assets/:id/thumb", async (ctx,) => {
         return handleServeCompressed({
           database,
           assetId: ctx.params.id,
@@ -252,9 +252,9 @@ export function assetRoutes({ database, config }: { database: Kysely<DB>; config
           variant: "thumb",
           actorId: (ctx as any).userId ?? null,
           actorRole: (ctx as any).userRole ?? null,
-        });
-      })
-      .get("/api/assets/:id/compressed", async (ctx) => {
+        },);
+      },)
+      .get("/api/assets/:id/compressed", async (ctx,) => {
         return handleServeCompressed({
           database,
           assetId: ctx.params.id,
@@ -262,46 +262,46 @@ export function assetRoutes({ database, config }: { database: Kysely<DB>; config
           variant: "compressed",
           actorId: (ctx as any).userId ?? null,
           actorRole: (ctx as any).userRole ?? null,
-        });
-      })
+        },);
+      },)
       // ── Links sub-routes ─────────────────────────────
-      .get("/api/assets/:id/links", async (ctx) => {
-        const links = await getAssetLinks(database, ctx.params.id);
-        return jsonResponse(links);
-      })
-      .post("/api/assets/:id/links", async (ctx) => {
+      .get("/api/assets/:id/links", async (ctx,) => {
+        const links = await getAssetLinks(database, ctx.params.id,);
+        return jsonResponse(links,);
+      },)
+      .post("/api/assets/:id/links", async (ctx,) => {
         const body = await ctx.request.json();
         await linkAsset({
           database,
           assetId: ctx.params.id,
           link: body as { entityType: AssetLinkEntity; entityId: string; label?: string },
-        });
-        return jsonCreated({ id: ctx.params.id });
-      })
-      .delete("/api/assets/:id/links/:linkId", async (ctx) => {
+        },);
+        return jsonCreated({ id: ctx.params.id, },);
+      },)
+      .delete("/api/assets/:id/links/:linkId", async (ctx,) => {
         const body = (await ctx.request.json()) as { entityType?: string; entityId?: string };
         await unlinkAsset({
           database,
           assetId: ctx.params.id,
           entityType: (body.entityType ?? "") as AssetLinkEntity,
           entityId: body.entityId ?? "",
-        });
+        },);
         return jsonNoContent();
-      })
+      },)
       // ── Share sub-routes ─────────────────────────────
-      .post("/api/assets/:id/share", async (ctx) => {
+      .post("/api/assets/:id/share", async (ctx,) => {
         const userId = (ctx as any).userId as string | null;
         if (!userId) {
           return jsonError({
             message: "Unauthorized",
             status: HttpStatus.Unauthorized,
             code: ErrorCode.Unauthorized,
-          });
+          },);
         }
 
         const body = (await ctx.request.json()) as { actor_id?: string };
         if (!body.actor_id) {
-          return jsonError({ message: "actor_id is required", status: HttpStatus.BadRequest });
+          return jsonError({ message: "actor_id is required", status: HttpStatus.BadRequest, },);
         }
 
         const share = await shareAsset({
@@ -309,29 +309,29 @@ export function assetRoutes({ database, config }: { database: Kysely<DB>; config
           assetId: ctx.params.id,
           sharedWithId: body.actor_id,
           sharedById: userId,
-        });
+        },);
         if (!share) {
           return jsonError({
             message: "Asset not found or not owner",
             status: HttpStatus.NotFound,
             code: ErrorCode.NotFound,
-          });
+          },);
         }
-        return jsonCreated(share);
-      })
-      .delete("/api/assets/:id/share", async (ctx) => {
+        return jsonCreated(share,);
+      },)
+      .delete("/api/assets/:id/share", async (ctx,) => {
         const body = (await ctx.request.json()) as { actor_id?: string };
         if (!body.actor_id) {
-          return jsonError({ message: "actor_id is required", status: HttpStatus.BadRequest });
+          return jsonError({ message: "actor_id is required", status: HttpStatus.BadRequest, },);
         }
 
-        await unshareAsset({ database, assetId: ctx.params.id, sharedWithId: body.actor_id });
+        await unshareAsset({ database, assetId: ctx.params.id, sharedWithId: body.actor_id, },);
         return jsonNoContent();
-      })
-      .get("/api/assets/:id/shares", async (ctx) => {
-        const shares = await getAssetShares(database, ctx.params.id);
-        return jsonResponse(shares);
-      })
+      },)
+      .get("/api/assets/:id/shares", async (ctx,) => {
+        const shares = await getAssetShares(database, ctx.params.id,);
+        return jsonResponse(shares,);
+      },)
   );
 }
 
@@ -341,34 +341,34 @@ async function handleUpload({
   database,
   uploadDir,
   maxFileSize,
-}: UploadOpts): Promise<Response> {
-  const contentType = request.headers.get("content-type") ?? "";
+}: UploadOpts,): Promise<Response> {
+  const contentType = request.headers.get("content-type",) ?? "";
 
-  if (!contentType.includes("multipart/form-data")) {
-    return jsonError({ message: "Expected multipart/form-data", status: HttpStatus.BadRequest });
+  if (!contentType.includes("multipart/form-data",)) {
+    return jsonError({ message: "Expected multipart/form-data", status: HttpStatus.BadRequest, },);
   }
 
   let formData;
   try {
     formData = await request.formData();
   } catch {
-    return jsonError({ message: "Failed to parse multipart form data", status: HttpStatus.BadRequest });
+    return jsonError({ message: "Failed to parse multipart form data", status: HttpStatus.BadRequest, },);
   }
 
-  const file = formData.get("file");
+  const file = formData.get("file",);
   if (!file || !(file instanceof File)) {
-    return jsonError({ message: "file field is required", status: HttpStatus.BadRequest });
+    return jsonError({ message: "file field is required", status: HttpStatus.BadRequest, },);
   }
 
-  const buffer = Buffer.from(await file.arrayBuffer());
-  const sizeError = validateFileSize(buffer.length, maxFileSize);
-  if (sizeError) return jsonError({ message: sizeError, status: HttpStatus.BadRequest });
+  const buffer = Buffer.from(await file.arrayBuffer(),);
+  const sizeError = validateFileSize(buffer.length, maxFileSize,);
+  if (sizeError) { return jsonError({ message: sizeError, status: HttpStatus.BadRequest, },); }
 
   const mimeType = file.type || "application/octet-stream";
-  const mimeError = validateMimeType(mimeType);
-  if (mimeError) return jsonError({ message: mimeError, status: HttpStatus.BadRequest });
+  const mimeError = validateMimeType(mimeType,);
+  if (mimeError) { return jsonError({ message: mimeError, status: HttpStatus.BadRequest, },); }
 
-  const altText = (formData.get("alt_text") as string) ?? undefined;
+  const altText = (formData.get("alt_text",) as string) ?? undefined;
 
   const asset = await createAsset({
     database,
@@ -376,13 +376,13 @@ async function handleUpload({
       ownerId: userId,
       filename: file.name,
       mimeType,
-      assetType: detectAssetType(mimeType),
+      assetType: detectAssetType(mimeType,),
       sizeBytes: buffer.length,
       buffer,
       altText,
     },
     uploadDir,
-  });
+  },);
 
   return jsonCreated({
     id: asset.id,
@@ -392,7 +392,7 @@ async function handleUpload({
     size_bytes: asset.size_bytes,
     storage_backend: asset.storage_backend,
     alt_text: asset.alt_text,
-  });
+  },);
 }
 
 async function handleServeRaw({
@@ -401,10 +401,10 @@ async function handleServeRaw({
   uploadDir,
   actorId,
   actorRole,
-}: ServeRawOpts): Promise<Response> {
-  const resolved = await resolveAsset(database, assetId, actorId, actorRole);
-  if (resolved instanceof Response) return resolved;
-  return serveFile(getAssetFilePath(uploadDir, resolved.asset.storage_path), resolved.asset.mime_type);
+}: ServeRawOpts,): Promise<Response> {
+  const resolved = await resolveAsset(database, assetId, actorId, actorRole,);
+  if (resolved instanceof Response) { return resolved; }
+  return serveFile(getAssetFilePath(uploadDir, resolved.asset.storage_path,), resolved.asset.mime_type,);
 }
 
 async function handleServeCompressed({
@@ -414,19 +414,19 @@ async function handleServeCompressed({
   variant,
   actorId,
   actorRole,
-}: ServeCompressedOpts): Promise<Response> {
-  const resolved = await resolveAsset(database, assetId, actorId, actorRole);
-  if (resolved instanceof Response) return resolved;
+}: ServeCompressedOpts,): Promise<Response> {
+  const resolved = await resolveAsset(database, assetId, actorId, actorRole,);
+  if (resolved instanceof Response) { return resolved; }
 
-  const subDir = `${assetId.slice(0, 2)}/${assetId.slice(2, 4)}`;
+  const subDir = `${assetId.slice(0, 2,)}/${assetId.slice(2, 4,)}`;
   const compressedPath = `compressed/${subDir}/${assetId}_${variant}.webp`;
-  const fullPath = getAssetFilePath(uploadDir, compressedPath);
+  const fullPath = getAssetFilePath(uploadDir, compressedPath,);
 
   // Fall back to raw if no compressed variant
-  if (!existsSync(fullPath)) {
-    return serveFile(getAssetFilePath(uploadDir, resolved.asset.storage_path), resolved.asset.mime_type);
+  if (!existsSync(fullPath,)) {
+    return serveFile(getAssetFilePath(uploadDir, resolved.asset.storage_path,), resolved.asset.mime_type,);
   }
-  return serveFile(fullPath, "image/webp");
+  return serveFile(fullPath, "image/webp",);
 }
 
 async function handleDownload({
@@ -435,12 +435,12 @@ async function handleDownload({
   uploadDir,
   actorId,
   actorRole,
-}: ServeRawOpts): Promise<Response> {
-  const resolved = await resolveAsset(database, assetId, actorId, actorRole);
-  if (resolved instanceof Response) return resolved;
-  const { asset } = resolved;
-  const safeName = asset.filename.replaceAll(/[^\w.-]+/g, "_");
-  return serveFile(getAssetFilePath(uploadDir, asset.storage_path), asset.mime_type, {
-    extraHeaders: { "Content-Disposition": `attachment; filename="${safeName}"` },
-  });
+}: ServeRawOpts,): Promise<Response> {
+  const resolved = await resolveAsset(database, assetId, actorId, actorRole,);
+  if (resolved instanceof Response) { return resolved; }
+  const { asset, } = resolved;
+  const safeName = asset.filename.replaceAll(/[^\w.-]+/g, "_",);
+  return serveFile(getAssetFilePath(uploadDir, asset.storage_path,), asset.mime_type, {
+    extraHeaders: { "Content-Disposition": `attachment; filename="${safeName}"`, },
+  },);
 }

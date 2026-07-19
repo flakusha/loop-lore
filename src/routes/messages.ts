@@ -1,13 +1,13 @@
-import { Elysia, t } from "elysia";
-import type { Kysely } from "kysely";
-import { linkAsset } from "../assets/service";
-import { parseCommand } from "../assistant/command-parser";
-import { getCommand } from "../assistant/commands/registry";
-import type { CommandContext } from "../assistant/commands/registry";
-import { generateResponse, isAssistantEnabled } from "../assistant/service";
-import type { Config } from "../config/schema";
-import { decodeContent } from "../content/decode";
-import { encodeContent } from "../content/encode";
+import { Elysia, t, } from "elysia";
+import type { Kysely, } from "kysely";
+import { linkAsset, } from "../assets/service";
+import { parseCommand, } from "../assistant/command-parser";
+import { getCommand, } from "../assistant/commands/registry";
+import type { CommandContext, } from "../assistant/commands/registry";
+import { generateResponse, isAssistantEnabled, } from "../assistant/service";
+import type { Config, } from "../config/schema";
+import { decodeContent, } from "../content/decode";
+import { encodeContent, } from "../content/encode";
 import {
   compressThenEncrypt,
   decryptThenDecompress,
@@ -18,15 +18,15 @@ import {
   isEncryptedPayload,
   isEncryptionEnabled,
 } from "../crypto";
-import { ContentEncoding, MessageContentFormat, MessageContentType, MessageRole } from "../db/enums";
-import type { DB } from "../db/schema";
-import { isLlmGenerationConfigured, triggerAutoGeneration } from "../generation/auto-gen";
-import { extractMentionedActorIds, parseInitiativeFlag } from "../group-chat/mention-parser";
-import { getLogger, type Logger } from "../logger";
-import { notifyMention } from "../notifications/service";
-import { filter as filterProfanity } from "../profanity/service";
-import { safeJsonParse, safeJsonStringify, uid } from "../utils";
-import { forbidden, notFound, unauthorized } from "../validation/middleware";
+import { ContentEncoding, MessageContentFormat, MessageContentType, MessageRole, } from "../db/enums";
+import type { DB, } from "../db/schema";
+import { isLlmGenerationConfigured, triggerAutoGeneration, } from "../generation/auto-gen";
+import { extractMentionedActorIds, parseInitiativeFlag, } from "../group-chat/mention-parser";
+import { getLogger, type Logger, } from "../logger";
+import { notifyMention, } from "../notifications/service";
+import { filter as filterProfanity, } from "../profanity/service";
+import { safeJsonParse, safeJsonStringify, uid, } from "../utils";
+import { forbidden, notFound, unauthorized, } from "../validation/middleware";
 import {
   ChatIdParams,
   MessageCreateBody,
@@ -47,7 +47,7 @@ import {
 } from "./http-utils";
 
 function log(): Logger {
-  return getLogger().child({ module: "messages" });
+  return getLogger().child({ module: "messages", },);
 }
 
 interface HandlerOpts {
@@ -62,22 +62,22 @@ async function assertChatAccess(
   userRole: string | null | undefined,
 ): Promise<true | Response> {
   const chat = await database
-    .selectFrom("chats")
-    .select("created_by")
-    .where("id", "=", chatId)
+    .selectFrom("chats",)
+    .select("created_by",)
+    .where("id", "=", chatId,)
     .executeTakeFirst();
   if (!chat) {
-    return jsonError({ message: "Chat not found", status: HttpStatus.NotFound, code: ErrorCode.NotFound });
+    return jsonError({ message: "Chat not found", status: HttpStatus.NotFound, code: ErrorCode.NotFound, },);
   }
-  if (chat.created_by === actorId || userRole === "admin" || userRole === "solo") return true;
+  if (chat.created_by === actorId || userRole === "admin" || userRole === "solo") { return true; }
   const participant = await database
-    .selectFrom("chat_participants")
-    .select("actor_id")
-    .where("chat_id", "=", chatId)
-    .where("actor_id", "=", actorId)
+    .selectFrom("chat_participants",)
+    .select("actor_id",)
+    .where("chat_id", "=", chatId,)
+    .where("actor_id", "=", actorId,)
     .executeTakeFirst();
   if (!participant) {
-    return jsonError({ message: "Chat not found", status: HttpStatus.NotFound, code: ErrorCode.NotFound });
+    return jsonError({ message: "Chat not found", status: HttpStatus.NotFound, code: ErrorCode.NotFound, },);
   }
   return true;
 }
@@ -89,9 +89,9 @@ async function requireMessageAccess(
   userRole: string | null,
 ): Promise<{ message: Record<string, unknown>; error: undefined } | { message: undefined; error: Response }> {
   const message = await database
-    .selectFrom("messages")
+    .selectFrom("messages",)
     .selectAll()
-    .where("id", "=", messageId)
+    .where("id", "=", messageId,)
     .executeTakeFirst();
   if (!message) {
     return {
@@ -100,40 +100,40 @@ async function requireMessageAccess(
         message: "Message not found",
         status: HttpStatus.NotFound,
         code: ErrorCode.NotFound,
-      }),
+      },),
     };
   }
 
   const chat = await database
-    .selectFrom("chats")
-    .select("created_by")
-    .where("id", "=", message.chat_id)
+    .selectFrom("chats",)
+    .select("created_by",)
+    .where("id", "=", message.chat_id,)
     .executeTakeFirst();
   if (!chat || (chat.created_by !== userId && userRole !== "admin" && userRole !== "solo")) {
     return {
       message: undefined,
-      error: jsonError({ message: "Message not found", status: HttpStatus.NotFound }),
+      error: jsonError({ message: "Message not found", status: HttpStatus.NotFound, },),
     };
   }
 
-  return { message: message as unknown as Record<string, unknown>, error: undefined };
+  return { message: message as unknown as Record<string, unknown>, error: undefined, };
 }
 
 async function enrichAttachments(
   database: Kysely<DB>,
   attachmentsJson: string | null,
 ): Promise<object | null> {
-  if (!attachmentsJson) return null;
-  const parsed = safeJsonParse<{ assetId: string; order: number; caption: string; label: string }[]>(attachmentsJson);
-  if (!parsed.ok) return null;
+  if (!attachmentsJson) { return null; }
+  const parsed = safeJsonParse<{ assetId: string; order: number; caption: string; label: string }[]>(attachmentsJson,);
+  if (!parsed.ok) { return null; }
   const attachData = parsed.value;
-  if (!Array.isArray(attachData) || attachData.length === 0) return null;
+  if (!Array.isArray(attachData,) || attachData.length === 0) { return null; }
 
-  const assetIds = attachData.map((a) => a.assetId);
-  if (assetIds.length === 0) return null;
+  const assetIds = attachData.map((a,) => a.assetId);
+  if (assetIds.length === 0) { return null; }
 
   const assets = await database
-    .selectFrom("assets")
+    .selectFrom("assets",)
     .select([
       "id",
       "filename",
@@ -144,14 +144,14 @@ async function enrichAttachments(
       "height",
       "alt_text",
       "storage_path",
-    ])
-    .where("id", "in", assetIds)
+    ],)
+    .where("id", "in", assetIds,)
     .execute();
 
-  const assetMap = new Map(assets.map((a) => [a.id, a]));
+  const assetMap = new Map(assets.map((a,) => [a.id, a,]),);
 
-  return attachData.map((a) => {
-    const asset = assetMap.get(a.assetId);
+  return attachData.map((a,) => {
+    const asset = assetMap.get(a.assetId,);
     return {
       assetId: a.assetId,
       order: a.order,
@@ -166,7 +166,7 @@ async function enrichAttachments(
       width: asset?.width ?? 0,
       height: asset?.height ?? 0,
     };
-  });
+  },);
 }
 
 async function resolveMessageContent(
@@ -176,25 +176,25 @@ async function resolveMessageContent(
 ): Promise<string> {
   if (!message.key_id) {
     const enc = message.content_encoding as ContentEncoding;
-    return enc === "identity" ? message.content : decodeContent(message.content, enc);
+    return enc === "identity" ? message.content : decodeContent(message.content, enc,);
   }
 
   const smk = getSmk();
-  if (!smk) throw new Error("Message is encrypted but no SMK loaded. Set SERVER_ENCRYPTION_KEY.");
+  if (!smk) { throw new Error("Message is encrypted but no SMK loaded. Set SERVER_ENCRYPTION_KEY.",); }
 
-  const chatKey = await deriveChatKeyForChat(database, message.chat_id, smk);
-  return decryptThenDecompress(message.content, chatKey.key);
+  const chatKey = await deriveChatKeyForChat(database, message.chat_id, smk,);
+  return decryptThenDecompress(message.content, chatKey.key,);
 }
 
-export function messagesRoutes(opts: HandlerOpts) {
-  const { database, config } = opts;
+export function messagesRoutes(opts: HandlerOpts,) {
+  const { database, config, } = opts;
 
   return (
-    new Elysia({ name: "messages" })
+    new Elysia({ name: "messages", },)
       .get(
         "/api/chats/:id/messages",
-        async (ctx: any) => {
-          const { id: chatId } = ctx.params as { id: string };
+        async (ctx: any,) => {
+          const { id: chatId, } = ctx.params as { id: string };
           const query = ctx.query as { page?: number; pageSize?: number; parentId?: string };
           const page = query.page ?? 1;
           const pageSize = query.pageSize ?? 20;
@@ -202,210 +202,210 @@ export function messagesRoutes(opts: HandlerOpts) {
           const parentId = query.parentId;
 
           let countQuery = database
-            .selectFrom("messages")
-            .select(database.fn.countAll<number>().as("total"))
-            .where("chat_id", "=", chatId)
-            .where("visibility", "=", "visible");
+            .selectFrom("messages",)
+            .select(database.fn.countAll<number>().as("total",),)
+            .where("chat_id", "=", chatId,)
+            .where("visibility", "=", "visible",);
 
-          if (parentId !== undefined) countQuery = countQuery.where("parent_id", "=", parentId);
+          if (parentId !== undefined) { countQuery = countQuery.where("parent_id", "=", parentId,); }
 
           const countResult = await countQuery.executeTakeFirst();
           const total = countResult?.total ?? 0;
 
           let listQuery = database
-            .selectFrom("messages")
+            .selectFrom("messages",)
             .selectAll()
-            .where("chat_id", "=", chatId)
-            .where("visibility", "=", "visible");
-          if (parentId !== undefined) listQuery = listQuery.where("parent_id", "=", parentId);
+            .where("chat_id", "=", chatId,)
+            .where("visibility", "=", "visible",);
+          if (parentId !== undefined) { listQuery = listQuery.where("parent_id", "=", parentId,); }
 
           const messages = await listQuery
-            .orderBy("created_at", "asc")
-            .limit(pageSize)
-            .offset(offset)
+            .orderBy("created_at", "asc",)
+            .limit(pageSize,)
+            .offset(offset,)
             .execute();
 
-          const parentIds = [...new Set(messages.map((m) => m.parent_id).filter(Boolean))];
+          const parentIds = [...new Set(messages.map((m,) => m.parent_id).filter(Boolean,),),];
           const variantCounts = new Map<string, number>();
           const variantIndexes = new Map<string, number>();
 
           if (parentIds.length > 0) {
             const siblings = await database
-              .selectFrom("messages")
-              .select(["id", "parent_id", "swipe_index", "created_at"])
-              .where("parent_id", "in", parentIds as string[])
-              .where("chat_id", "=", chatId)
-              .where("visibility", "=", "visible")
-              .orderBy("swipe_index", "asc")
-              .orderBy("created_at", "asc")
+              .selectFrom("messages",)
+              .select(["id", "parent_id", "swipe_index", "created_at",],)
+              .where("parent_id", "in", parentIds as string[],)
+              .where("chat_id", "=", chatId,)
+              .where("visibility", "=", "visible",)
+              .orderBy("swipe_index", "asc",)
+              .orderBy("created_at", "asc",)
               .execute();
             const groups = new Map<string, { id: string; swipeIndex: number | null; createdAt: string }[]>();
             for (const s of siblings) {
               const pid = s.parent_id!;
-              if (!groups.has(pid)) groups.set(pid, []);
-              groups.get(pid)!.push({ id: s.id, swipeIndex: s.swipe_index, createdAt: s.created_at });
+              if (!groups.has(pid,)) { groups.set(pid, [],); }
+              groups.get(pid,)!.push({ id: s.id, swipeIndex: s.swipe_index, createdAt: s.created_at, },);
             }
-            for (const [pid, items] of groups) {
-              variantCounts.set(pid, items.length);
-              for (const [idx, item] of items.entries()) variantIndexes.set(item.id, idx);
+            for (const [pid, items,] of groups) {
+              variantCounts.set(pid, items.length,);
+              for (const [idx, item,] of items.entries()) { variantIndexes.set(item.id, idx,); }
             }
           }
 
           const enriched = await Promise.all(
-            messages.map(async (m) => {
-              const attachments = await enrichAttachments(database, m.attachments);
+            messages.map(async (m,) => {
+              const attachments = await enrichAttachments(database, m.attachments,);
               try {
-                const content = await resolveMessageContent(database, m, config);
+                const content = await resolveMessageContent(database, m, config,);
                 return {
                   ...m,
                   content,
                   attachments,
-                  variantIndex: m.parent_id ? (variantIndexes.get(m.id) ?? 0) : undefined,
-                  totalVariants: m.parent_id ? (variantCounts.get(m.parent_id) ?? 1) : undefined,
+                  variantIndex: m.parent_id ? (variantIndexes.get(m.id,) ?? 0) : undefined,
+                  totalVariants: m.parent_id ? (variantCounts.get(m.parent_id,) ?? 1) : undefined,
                 };
               } catch {
                 return {
                   ...m,
                   content: "[Encrypted — unable to decrypt]",
                   attachments,
-                  variantIndex: m.parent_id ? (variantIndexes.get(m.id) ?? 0) : undefined,
-                  totalVariants: m.parent_id ? (variantCounts.get(m.parent_id) ?? 1) : undefined,
+                  variantIndex: m.parent_id ? (variantIndexes.get(m.id,) ?? 0) : undefined,
+                  totalVariants: m.parent_id ? (variantCounts.get(m.parent_id,) ?? 1) : undefined,
                 };
               }
-            }),
+            },),
           );
 
-          return jsonPaginated({ data: enriched, total, page, pageSize });
+          return jsonPaginated({ data: enriched, total, page, pageSize, },);
         },
-        { params: ChatIdParams, query: MessagesQuery },
+        { params: ChatIdParams, query: MessagesQuery, },
       )
       .get(
         "/api/messages/:id",
-        async (ctx: any) => {
+        async (ctx: any,) => {
           const userId = ctx.userId as string | null;
-          if (!userId) return unauthorized();
+          if (!userId) { return unauthorized(); }
           const id = (ctx.params as { id: string }).id;
 
-          const { message, error } = await requireMessageAccess(
+          const { message, error, } = await requireMessageAccess(
             database,
             id,
             userId,
             ctx.userRole as string | null,
           );
-          if (error) return error;
+          if (error) { return error; }
 
-          const attachments = await enrichAttachments(database, message.attachments as string | null);
+          const attachments = await enrichAttachments(database, message.attachments as string | null,);
           let content: string;
           try {
-            content = await resolveMessageContent(database, message as any, config);
+            content = await resolveMessageContent(database, message as any, config,);
           } catch {
             content = "[Encrypted — unable to decrypt]";
           }
-          return jsonResponse({ ...message, content, attachments });
+          return jsonResponse({ ...message, content, attachments, },);
         },
-        { params: MessageIdParams },
+        { params: MessageIdParams, },
       )
       .get(
         "/api/messages/:id/variants",
-        async (ctx: any) => {
+        async (ctx: any,) => {
           const userId = ctx.userId as string | null;
-          if (!userId) return unauthorized();
+          if (!userId) { return unauthorized(); }
           const id = (ctx.params as { id: string }).id;
 
-          const { message, error } = await requireMessageAccess(
+          const { message, error, } = await requireMessageAccess(
             database,
             id,
             userId,
             ctx.userRole as string | null,
           );
-          if (error) return error;
+          if (error) { return error; }
 
           const variants = await database
-            .selectFrom("messages")
+            .selectFrom("messages",)
             .selectAll()
-            .where("parent_id", "=", message.parent_id as string)
-            .where("chat_id", "=", message.chat_id as string)
-            .orderBy("swipe_index", "asc")
-            .orderBy("created_at", "asc")
+            .where("parent_id", "=", message.parent_id as string,)
+            .where("chat_id", "=", message.chat_id as string,)
+            .orderBy("swipe_index", "asc",)
+            .orderBy("created_at", "asc",)
             .execute();
 
           const enriched = await Promise.all(
-            variants.map(async (v) => {
+            variants.map(async (v,) => {
               try {
-                const c = await resolveMessageContent(database, v, config);
-                return { ...v, content: c };
+                const c = await resolveMessageContent(database, v, config,);
+                return { ...v, content: c, };
               } catch {
-                return { ...v, content: "[Encrypted — unable to decrypt]" };
+                return { ...v, content: "[Encrypted — unable to decrypt]", };
               }
-            }),
+            },),
           );
 
-          return jsonResponse(enriched);
+          return jsonResponse(enriched,);
         },
-        { params: MessageIdParams },
+        { params: MessageIdParams, },
       )
       .put(
         "/api/messages/:id/variant",
-        async (ctx: any) => {
+        async (ctx: any,) => {
           const userId = ctx.userId as string | null;
-          if (!userId) return unauthorized();
+          if (!userId) { return unauthorized(); }
           const id = (ctx.params as { id: string }).id;
           const body = ctx.body as typeof MessageVariantBody.static;
 
-          const { message, error } = await requireMessageAccess(
+          const { message, error, } = await requireMessageAccess(
             database,
             id,
             userId,
             ctx.userRole as string | null,
           );
-          if (error) return error;
+          if (error) { return error; }
 
           const variants = await database
-            .selectFrom("messages")
+            .selectFrom("messages",)
             .selectAll()
-            .where("parent_id", "=", message.parent_id as string)
-            .where("chat_id", "=", message.chat_id as string)
-            .orderBy("swipe_index", "asc")
-            .orderBy("created_at", "asc")
+            .where("parent_id", "=", message.parent_id as string,)
+            .where("chat_id", "=", message.chat_id as string,)
+            .orderBy("swipe_index", "asc",)
+            .orderBy("created_at", "asc",)
             .execute();
           const selected = variants[body.variantIndex];
           if (!selected) {
-            return jsonError({ message: "Invalid variant index", status: HttpStatus.BadRequest });
+            return jsonError({ message: "Invalid variant index", status: HttpStatus.BadRequest, },);
           }
 
-          return jsonResponse(selected);
+          return jsonResponse(selected,);
         },
-        { params: MessageIdParams, body: MessageVariantBody },
+        { params: MessageIdParams, body: MessageVariantBody, },
       )
       .delete(
         "/api/messages/:id",
-        async (ctx: any) => {
+        async (ctx: any,) => {
           const actorId = ctx.userId as string | null;
-          if (!actorId) return unauthorized();
+          if (!actorId) { return unauthorized(); }
           const id = (ctx.params as { id: string }).id;
 
           const message = await database
-            .selectFrom("messages")
+            .selectFrom("messages",)
             .selectAll()
-            .where("id", "=", id)
+            .where("id", "=", id,)
             .executeTakeFirst();
-          if (!message) return notFound("Message not found");
+          if (!message) { return notFound("Message not found",); }
 
           await database
-            .updateTable("messages")
-            .set({ visibility: "hidden_by_user", hidden_by: actorId })
-            .where("id", "=", id)
+            .updateTable("messages",)
+            .set({ visibility: "hidden_by_user", hidden_by: actorId, },)
+            .where("id", "=", id,)
             .execute();
           return jsonNoContent();
         },
-        { params: MessageIdParams },
+        { params: MessageIdParams, },
       )
       // ── Edit message content (user messages only) ─────────────
       .patch(
         "/api/messages/:id",
-        async (ctx: any) => {
+        async (ctx: any,) => {
           const userId = ctx.userId as string | null;
-          if (!userId) return unauthorized();
+          if (!userId) { return unauthorized(); }
           const id = (ctx.params as { id: string }).id;
           const body = ctx.body as { content?: string };
           const newContent = body?.content;
@@ -415,23 +415,23 @@ export function messagesRoutes(opts: HandlerOpts) {
               message: "Content is required",
               status: HttpStatus.BadRequest,
               code: ErrorCode.ValidationError,
-            });
+            },);
           }
 
           const msg = await database
-            .selectFrom("messages")
-            .select(["id", "actor_id", "role", "chat_id"])
-            .where("id", "=", id)
+            .selectFrom("messages",)
+            .select(["id", "actor_id", "role", "chat_id",],)
+            .where("id", "=", id,)
             .executeTakeFirst();
 
-          if (!msg) return notFound("Message not found");
+          if (!msg) { return notFound("Message not found",); }
 
           if (msg.actor_id !== userId && (ctx.userRole as string | null) !== "admin") {
             return jsonError({
               message: "Cannot edit this message",
               status: HttpStatus.Forbidden,
               code: ErrorCode.Forbidden,
-            });
+            },);
           }
 
           if (msg.role !== "user") {
@@ -439,97 +439,97 @@ export function messagesRoutes(opts: HandlerOpts) {
               message: "Only user messages can be edited",
               status: HttpStatus.BadRequest,
               code: ErrorCode.ValidationError,
-            });
+            },);
           }
 
-          const access = await assertChatAccess(database, msg.chat_id, userId, ctx.userRole as string | null);
-          if (access instanceof Response) return access;
+          const access = await assertChatAccess(database, msg.chat_id, userId, ctx.userRole as string | null,);
+          if (access instanceof Response) { return access; }
 
           await database
-            .updateTable("messages")
+            .updateTable("messages",)
             .set({
               content: newContent.trim(),
               edited_at: new Date().toISOString(),
-            })
-            .where("id", "=", id)
+            },)
+            .where("id", "=", id,)
             .execute();
 
-          log().info("Message edited", { messageId: id, userId });
-          return jsonResponse({ id, content: newContent.trim(), edited_at: true });
+          log().info("Message edited", { messageId: id, userId, },);
+          return jsonResponse({ id, content: newContent.trim(), edited_at: true, },);
         },
         {
-          params: t.Object({ id: t.String() }),
-          body: t.Object({ content: t.String() }),
+          params: t.Object({ id: t.String(), },),
+          body: t.Object({ content: t.String(), },),
         },
       )
       .put(
         "/api/messages/:id/visibility",
-        async (ctx: any) => {
+        async (ctx: any,) => {
           const userId = ctx.userId as string | null;
-          if (!userId) return unauthorized();
+          if (!userId) { return unauthorized(); }
           const id = (ctx.params as { id: string }).id;
           const body = ctx.body as typeof MessageVisibilityUpdateBody.static;
 
-          const { error } = await requireMessageAccess(database, id, userId, ctx.userRole as string | null);
-          if (error) return error;
+          const { error, } = await requireMessageAccess(database, id, userId, ctx.userRole as string | null,);
+          if (error) { return error; }
 
           await database
-            .updateTable("messages")
+            .updateTable("messages",)
             .set({
               visibility: body.visibility,
               hidden_reason: body.reason ?? null,
-            })
-            .where("id", "=", id)
+            },)
+            .where("id", "=", id,)
             .execute();
-          return jsonResponse({ ok: true });
+          return jsonResponse({ ok: true, },);
         },
-        { params: MessageIdParams, body: MessageVisibilityUpdateBody },
+        { params: MessageIdParams, body: MessageVisibilityUpdateBody, },
       )
       .put(
         "/api/messages/:id/status",
-        async (ctx: any) => {
+        async (ctx: any,) => {
           const userRole = ctx.userRole as string | null;
-          if (userRole !== "admin") return forbidden();
+          if (userRole !== "admin") { return forbidden(); }
           const id = (ctx.params as { id: string }).id;
           const body = ctx.body as typeof MessageStatusUpdateBody.static;
 
-          await database.updateTable("messages").set({ status: body.status }).where("id", "=", id).execute();
-          return jsonResponse({ ok: true });
+          await database.updateTable("messages",).set({ status: body.status, },).where("id", "=", id,).execute();
+          return jsonResponse({ ok: true, },);
         },
-        { params: MessageIdParams, body: MessageStatusUpdateBody },
+        { params: MessageIdParams, body: MessageStatusUpdateBody, },
       )
       .post(
         "/api/chats/:id/messages",
-        async (ctx: any) => {
+        async (ctx: any,) => {
           const actorId = ctx.userId as string | null;
-          if (!actorId) return unauthorized();
-          const { id: chatId } = ctx.params as { id: string };
+          if (!actorId) { return unauthorized(); }
+          const { id: chatId, } = ctx.params as { id: string };
           const body = ctx.body as typeof MessageCreateBody.static;
 
-          const filteredContent = filterProfanity(body.content);
-          const { isInitiative, cleanMessage } = parseInitiativeFlag(filteredContent);
+          const filteredContent = filterProfanity(body.content,);
+          const { isInitiative, cleanMessage, } = parseInitiativeFlag(filteredContent,);
           const effectiveContent = isInitiative ? cleanMessage : filteredContent;
 
-          const access = await assertChatAccess(database, chatId, actorId, ctx.userRole as string | null);
-          if (access instanceof Response) return access;
+          const access = await assertChatAccess(database, chatId, actorId, ctx.userRole as string | null,);
+          if (access instanceof Response) { return access; }
 
           // ── Slash command dispatch ────────────────────────────────
-          const parsed = parseCommand(effectiveContent);
+          const parsed = parseCommand(effectiveContent,);
           if (parsed) {
-            const handler = getCommand(parsed.command);
+            const handler = getCommand(parsed.command,);
             if (handler) {
               const chatRecord = await database
-                .selectFrom("chats")
-                .select(["id", "mode", "type", "gm_config"])
-                .where("id", "=", chatId)
+                .selectFrom("chats",)
+                .select(["id", "mode", "type", "gm_config",],)
+                .where("id", "=", chatId,)
                 .executeTakeFirst();
 
               const recentMessages = await database
-                .selectFrom("messages")
-                .select(["id", "role", "content", "created_at"])
-                .where("chat_id", "=", chatId)
-                .orderBy("created_at", "desc")
-                .limit(50)
+                .selectFrom("messages",)
+                .select(["id", "role", "content", "created_at",],)
+                .where("chat_id", "=", chatId,)
+                .orderBy("created_at", "desc",)
+                .limit(50,)
                 .execute();
 
               const cmdCtx: CommandContext = {
@@ -546,13 +546,13 @@ export function messagesRoutes(opts: HandlerOpts) {
                 userId: actorId,
               };
 
-              const result = await handler(parsed.args, cmdCtx);
+              const result = await handler(parsed.args, cmdCtx,);
 
               if (result.handled) {
                 if (result.systemMessage) {
                   const sysMsgId = uid();
                   await database
-                    .insertInto("messages")
+                    .insertInto("messages",)
                     .values({
                       id: sysMsgId,
                       chat_id: chatId,
@@ -567,17 +567,17 @@ export function messagesRoutes(opts: HandlerOpts) {
                       content_encoding: "identity",
                       status: "confirmed",
                       visibility: "visible",
-                    })
+                    },)
                     .execute();
                 }
 
-                log().info("Command dispatched", { command: parsed.command, handled: true });
+                log().info("Command dispatched", { command: parsed.command, handled: true, },);
                 return jsonResponse({
                   command: parsed.command,
                   systemMessage: result.systemMessage ?? null,
                   action: result.action ?? null,
                   actionPayload: result.actionPayload ?? null,
-                });
+                },);
               }
             }
           }
@@ -586,15 +586,15 @@ export function messagesRoutes(opts: HandlerOpts) {
           let contentEncoding: string;
           let storedKeyId: string | null = null;
 
-          if (isEncryptedPayload(filteredContent)) {
+          if (isEncryptedPayload(filteredContent,)) {
             storedContent = filteredContent;
             contentEncoding = "identity";
-            storedKeyId = extractKeyIdFromPayload(filteredContent);
-            log().debug("Client pre-encrypted content detected", { keyId: storedKeyId });
+            storedKeyId = extractKeyIdFromPayload(filteredContent,);
+            log().debug("Client pre-encrypted content detected", { keyId: storedKeyId, },);
           } else if (isEncryptionEnabled()) {
             const smk = getSmk()!;
-            await ensureActorKey({ database, actorId, smk });
-            const chatKey = await deriveChatKeyForChat(database, chatId, smk);
+            await ensureActorKey({ database, actorId, smk, },);
+            const chatKey = await deriveChatKeyForChat(database, chatId, smk,);
             storedContent = await compressThenEncrypt({
               plaintext: filteredContent,
               chatKey: chatKey.key,
@@ -603,7 +603,7 @@ export function messagesRoutes(opts: HandlerOpts) {
                 threshold: config.encryption.compressThreshold,
                 algorithm: config.encryption.compressAlgorithm,
               },
-            });
+            },);
             contentEncoding = "identity";
             storedKeyId = chatKey.keyId;
           } else {
@@ -611,7 +611,7 @@ export function messagesRoutes(opts: HandlerOpts) {
             storedContent = filteredContent;
             contentEncoding = "identity";
             if (filteredContent.length > LARGE_CONTENT_THRESHOLD) {
-              const encoded = encodeContent(filteredContent, "gzip");
+              const encoded = encodeContent(filteredContent, "gzip",);
               storedContent = encoded.encoded;
               contentEncoding = encoded.encoding;
             }
@@ -622,16 +622,16 @@ export function messagesRoutes(opts: HandlerOpts) {
           let msgSwipeIndex: number | null = null;
           if (parentId) {
             const maxSwipe = await database
-              .selectFrom("messages")
-              .select(database.fn.max("swipe_index").as("max_idx"))
-              .where("chat_id", "=", chatId)
-              .where("parent_id", "=", parentId)
+              .selectFrom("messages",)
+              .select(database.fn.max("swipe_index",).as("max_idx",),)
+              .where("chat_id", "=", chatId,)
+              .where("parent_id", "=", parentId,)
               .executeTakeFirst();
             msgSwipeIndex = (maxSwipe?.max_idx ?? 0) + 1;
           }
 
           await database
-            .insertInto("messages")
+            .insertInto("messages",)
             .values({
               id,
               chat_id: chatId,
@@ -647,34 +647,34 @@ export function messagesRoutes(opts: HandlerOpts) {
               visibility: "visible",
               idempotency_key: body.idempotencyKey ?? null,
               swipe_index: msgSwipeIndex,
-            })
+            },)
             .execute();
 
           const attachments = body.attachments;
           if (attachments && attachments.length > 0) {
             const attachData: { assetId: string; order: number; caption: string; label: string }[] = [];
-            for (const [i, a] of attachments.entries()) {
+            for (const [i, a,] of attachments.entries()) {
               await linkAsset({
                 database,
                 assetId: a.assetId,
-                link: { entityType: "message", entityId: id, label: a.label ?? "message-attachment" },
-              });
+                link: { entityType: "message", entityId: id, label: a.label ?? "message-attachment", },
+              },);
               attachData.push({
                 assetId: a.assetId,
                 order: a.order ?? i,
                 caption: a.caption ?? "",
                 label: a.label ?? "message-attachment",
-              });
+              },);
             }
             await database
-              .updateTable("messages")
+              .updateTable("messages",)
               .set({
                 attachments: (() => {
-                  const r = safeJsonStringify(attachData);
+                  const r = safeJsonStringify(attachData,);
                   return r.ok ? r.value : "[]";
                 })(),
-              })
-              .where("id", "=", id)
+              },)
+              .where("id", "=", id,)
               .execute();
           }
 
@@ -683,69 +683,69 @@ export function messagesRoutes(opts: HandlerOpts) {
             const currentScene = "main"; // TODO: detect actual current scene from story_state
 
             const existing = await database
-              .selectFrom("group_initiatives")
-              .select("score")
-              .where("chat_id", "=", chatId)
-              .where("scene_id", "=", currentScene)
-              .where("actor_id", "=", actorId)
+              .selectFrom("group_initiatives",)
+              .select("score",)
+              .where("chat_id", "=", chatId,)
+              .where("scene_id", "=", currentScene,)
+              .where("actor_id", "=", actorId,)
               .executeTakeFirst();
 
             if (existing) {
               await database
-                .updateTable("group_initiatives")
-                .set({ score: existing.score + 1, updated_at: new Date().toISOString() })
-                .where("chat_id", "=", chatId)
-                .where("scene_id", "=", currentScene)
-                .where("actor_id", "=", actorId)
+                .updateTable("group_initiatives",)
+                .set({ score: existing.score + 1, updated_at: new Date().toISOString(), },)
+                .where("chat_id", "=", chatId,)
+                .where("scene_id", "=", currentScene,)
+                .where("actor_id", "=", actorId,)
                 .execute();
             } else {
               await database
-                .insertInto("group_initiatives")
+                .insertInto("group_initiatives",)
                 .values({
                   chat_id: chatId,
                   scene_id: currentScene,
                   actor_id: actorId,
                   score: 1,
-                })
+                },)
                 .execute();
             }
 
-            log().info("Initiative claimed", { chatId, actorId, scene: currentScene });
+            log().info("Initiative claimed", { chatId, actorId, scene: currentScene, },);
           }
 
           // ── Persist @mentions ─────────────────────────────────────
           const participants = await database
-            .selectFrom("chat_participants")
-            .innerJoin("actors", "actors.id", "chat_participants.actor_id")
-            .select(["chat_participants.actor_id", "actors.display_name"])
-            .where("chat_participants.chat_id", "=", chatId)
+            .selectFrom("chat_participants",)
+            .innerJoin("actors", "actors.id", "chat_participants.actor_id",)
+            .select(["chat_participants.actor_id", "actors.display_name",],)
+            .where("chat_participants.chat_id", "=", chatId,)
             .execute();
           const mentionedActorIds = extractMentionedActorIds(
             filteredContent,
-            participants.map((p) => ({ actorId: p.actor_id, displayName: p.display_name })),
+            participants.map((p,) => ({ actorId: p.actor_id, displayName: p.display_name, })),
           );
           if (mentionedActorIds.length > 0) {
             await Promise.all(
-              mentionedActorIds.map(async (actorId: string) => {
+              mentionedActorIds.map(async (actorId: string,) => {
                 try {
                   await database
-                    .insertInto("chat_mentions")
-                    .values({ id: uid(), message_id: id, actor_id: actorId })
+                    .insertInto("chat_mentions",)
+                    .values({ id: uid(), message_id: id, actor_id: actorId, },)
                     .execute();
                 } catch {
                   /* ignore duplicate */
                 }
-              }),
+              },),
             );
             void notifyMention(database, {
               chatId,
               senderId: actorId,
               mentionedActorIds,
               messageId: id,
-            }).catch(() => {});
+            },).catch(() => {},);
           }
 
-          if (isLlmGenerationConfigured(config)) {
+          if (isLlmGenerationConfigured(config,)) {
             void triggerAutoGeneration({
               database,
               config,
@@ -753,19 +753,19 @@ export function messagesRoutes(opts: HandlerOpts) {
               parentMessageId: id,
               userId: actorId,
               userMessage: effectiveContent,
-            });
-          } else if (isAssistantEnabled(config)) {
-            const assistantResponse = generateResponse({ userInput: effectiveContent });
+            },);
+          } else if (isAssistantEnabled(config,)) {
+            const assistantResponse = generateResponse({ userInput: effectiveContent, },);
             if (assistantResponse) {
               const assistantId = uid();
-              const assistantContent = filterProfanity(assistantResponse.content);
+              const assistantContent = filterProfanity(assistantResponse.content,);
 
               log().debug("Assistant reply (rule-based)", {
                 parentId: id,
                 chatId,
                 assistantId,
                 contentLength: assistantContent.length,
-              });
+              },);
 
               let replyStoredContent = assistantContent;
               const replyEncoding = "identity";
@@ -773,7 +773,7 @@ export function messagesRoutes(opts: HandlerOpts) {
 
               if (isEncryptionEnabled()) {
                 const smk = getSmk()!;
-                const chatKey = await deriveChatKeyForChat(database, chatId, smk);
+                const chatKey = await deriveChatKeyForChat(database, chatId, smk,);
                 replyStoredContent = await compressThenEncrypt({
                   plaintext: assistantContent,
                   chatKey: chatKey.key,
@@ -782,18 +782,18 @@ export function messagesRoutes(opts: HandlerOpts) {
                     threshold: config.encryption.compressThreshold,
                     algorithm: config.encryption.compressAlgorithm,
                   },
-                });
+                },);
                 replyKeyId = chatKey.keyId;
               }
 
               const replySwipe = await database
-                .selectFrom("messages")
-                .select(database.fn.max("swipe_index").as("max_idx"))
-                .where("chat_id", "=", chatId)
-                .where("parent_id", "=", id)
+                .selectFrom("messages",)
+                .select(database.fn.max("swipe_index",).as("max_idx",),)
+                .where("chat_id", "=", chatId,)
+                .where("parent_id", "=", id,)
                 .executeTakeFirst();
               await database
-                .insertInto("messages")
+                .insertInto("messages",)
                 .values({
                   id: assistantId,
                   chat_id: chatId,
@@ -808,103 +808,103 @@ export function messagesRoutes(opts: HandlerOpts) {
                   status: "confirmed",
                   visibility: "visible",
                   swipe_index: (replySwipe?.max_idx ?? 0) + 1,
-                })
+                },)
                 .execute();
 
-              return jsonCreated({ id, assistantMessage: { id: assistantId, content: assistantContent } });
+              return jsonCreated({ id, assistantMessage: { id: assistantId, content: assistantContent, }, },);
             }
           }
 
-          return jsonCreated({ id });
+          return jsonCreated({ id, },);
         },
-        { params: ChatIdParams, body: MessageCreateBody },
+        { params: ChatIdParams, body: MessageCreateBody, },
       )
       // ── Message archiving ──────────────────────────────────────
       .post(
         "/api/messages/:id/archive",
-        async (ctx: any) => {
+        async (ctx: any,) => {
           const userId = ctx.userId as string | null;
-          if (!userId) return unauthorized();
+          if (!userId) { return unauthorized(); }
           const id = (ctx.params as { id: string }).id;
 
           const message = await database
-            .selectFrom("messages")
+            .selectFrom("messages",)
             .selectAll()
-            .where("id", "=", id)
+            .where("id", "=", id,)
             .executeTakeFirst();
-          if (!message) return notFound("Message not found");
+          if (!message) { return notFound("Message not found",); }
           const chat = await database
-            .selectFrom("chats")
-            .select("created_by")
-            .where("id", "=", message.chat_id)
+            .selectFrom("chats",)
+            .select("created_by",)
+            .where("id", "=", message.chat_id,)
             .executeTakeFirst();
           if (!chat || (chat.created_by !== userId && (ctx.userRole as string | null) !== "admin")) {
-            return notFound("Message not found");
+            return notFound("Message not found",);
           }
           await database
-            .updateTable("messages")
-            .set({ archived_at: new Date().toISOString(), visibility: "auto_hidden" })
-            .where("id", "=", id)
+            .updateTable("messages",)
+            .set({ archived_at: new Date().toISOString(), visibility: "auto_hidden", },)
+            .where("id", "=", id,)
             .execute();
-          return jsonResponse({ ok: true });
+          return jsonResponse({ ok: true, },);
         },
-        { params: MessageIdParams },
+        { params: MessageIdParams, },
       )
       .post(
         "/api/messages/:id/restore",
-        async (ctx: any) => {
+        async (ctx: any,) => {
           const userId = ctx.userId as string | null;
-          if (!userId) return unauthorized();
+          if (!userId) { return unauthorized(); }
           const id = (ctx.params as { id: string }).id;
 
           const message = await database
-            .selectFrom("messages")
+            .selectFrom("messages",)
             .selectAll()
-            .where("id", "=", id)
+            .where("id", "=", id,)
             .executeTakeFirst();
-          if (!message) return notFound("Message not found");
+          if (!message) { return notFound("Message not found",); }
           const chat = await database
-            .selectFrom("chats")
-            .select("created_by")
-            .where("id", "=", message.chat_id)
+            .selectFrom("chats",)
+            .select("created_by",)
+            .where("id", "=", message.chat_id,)
             .executeTakeFirst();
           if (!chat || (chat.created_by !== userId && (ctx.userRole as string | null) !== "admin")) {
-            return notFound("Message not found");
+            return notFound("Message not found",);
           }
           await database
-            .updateTable("messages")
-            .set({ archived_at: null, visibility: "visible" })
-            .where("id", "=", id)
+            .updateTable("messages",)
+            .set({ archived_at: null, visibility: "visible", },)
+            .where("id", "=", id,)
             .execute();
-          return jsonResponse({ ok: true });
+          return jsonResponse({ ok: true, },);
         },
-        { params: MessageIdParams },
+        { params: MessageIdParams, },
       )
       .post(
         "/api/chats/:id/messages/purge",
-        async (ctx: any) => {
+        async (ctx: any,) => {
           const userId = ctx.userId as string | null;
-          if (!userId) return unauthorized();
-          const { id: chatId } = ctx.params as { id: string };
+          if (!userId) { return unauthorized(); }
+          const { id: chatId, } = ctx.params as { id: string };
 
           const chat = await database
-            .selectFrom("chats")
-            .select("created_by")
-            .where("id", "=", chatId)
+            .selectFrom("chats",)
+            .select("created_by",)
+            .where("id", "=", chatId,)
             .executeTakeFirst();
           if (!chat || (chat.created_by !== userId && (ctx.userRole as string | null) !== "admin")) {
-            return notFound("Chat not found");
+            return notFound("Chat not found",);
           }
-          const cutoff = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
+          const cutoff = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000,).toISOString();
           const result = await database
-            .deleteFrom("messages")
-            .where("chat_id", "=", chatId)
-            .where("archived_at", "is not", null)
-            .where("archived_at", "<", cutoff)
+            .deleteFrom("messages",)
+            .where("chat_id", "=", chatId,)
+            .where("archived_at", "is not", null,)
+            .where("archived_at", "<", cutoff,)
             .execute();
-          return jsonResponse({ ok: true, purged: Number(result[0]?.numDeletedRows ?? 0) });
+          return jsonResponse({ ok: true, purged: Number(result[0]?.numDeletedRows ?? 0,), },);
         },
-        { params: ChatIdParams },
+        { params: ChatIdParams, },
       )
   );
 }

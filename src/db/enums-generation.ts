@@ -5,7 +5,7 @@
  * and streaming chunk actions.
  */
 
-import { createMachine, type StateDef } from "./state";
+import { createMachine, type StateDef, } from "./state";
 
 // ── Generation Attempts ───────────────────────────────────
 export const GenerationStatus = {
@@ -21,20 +21,20 @@ export type GenerationStatus = (typeof GenerationStatus)[keyof typeof Generation
 // ── State Machine ──────────────────────────────────────────
 
 const generationStatusDef: StateDef<GenerationStatus> = {
-  values: ["pending", "processing", "streaming", "completed", "failed", "cancelled"] as const,
+  values: ["pending", "processing", "streaming", "completed", "failed", "cancelled",] as const,
   initial: "pending",
   transitions: {
-    pending: ["processing"],
-    processing: ["streaming", "completed", "failed", "cancelled"],
-    streaming: ["completed", "failed", "cancelled"],
+    pending: ["processing",],
+    processing: ["streaming", "completed", "failed", "cancelled",],
+    streaming: ["completed", "failed", "cancelled",],
     completed: [],
     failed: [],
     cancelled: [],
   },
-  terminal: ["completed", "failed", "cancelled"],
+  terminal: ["completed", "failed", "cancelled",],
 };
 
-export const generationStatusMachine = createMachine(generationStatusDef);
+export const generationStatusMachine = createMachine(generationStatusDef,);
 
 export const CancelReason = {
   UserCancel: "user_cancel",

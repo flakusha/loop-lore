@@ -4,12 +4,12 @@
  * CRUD for memories stored per actor.
  */
 
-import { Elysia } from "elysia";
-import type { Config } from "../config/schema";
-import type { Db } from "../db";
-import { createEntityRoutes } from "./entity-routes";
+import { Elysia, } from "elysia";
+import type { Config, } from "../config/schema";
+import type { Db, } from "../db";
+import { createEntityRoutes, } from "./entity-routes";
 
-export function actorMemoriesRoutes(opts: { database: Db; config: Config }): Elysia {
+export function actorMemoriesRoutes(opts: { database: Db; config: Config },): Elysia {
   return createEntityRoutes(
     {
       parentPrefix: "actors",
@@ -20,10 +20,10 @@ export function actorMemoriesRoutes(opts: { database: Db; config: Config }): Ely
       ownershipTable: "actors",
       ownershipFkColumn: "user_id",
       orderBy: [
-        { column: "importance", dir: "desc" },
-        { column: "created_at", dir: "desc" },
+        { column: "importance", dir: "desc", },
+        { column: "created_at", dir: "desc", },
       ],
-      filterField: { param: "type", column: "memory_type" },
+      filterField: { param: "type", column: "memory_type", },
       fieldMappings: {
         content: "content",
         memoryType: "memory_type",
@@ -33,13 +33,13 @@ export function actorMemoriesRoutes(opts: { database: Db; config: Config }): Ely
         sourceChatId: "source_chat_id",
         expiresAt: "expires_at",
       },
-      jsonFields: ["keywords"],
+      jsonFields: ["keywords",],
       defaults: {
         memoryType: "fact",
         confidence: 1,
         importance: 1,
       },
-      createRequired: ["content"],
+      createRequired: ["content",],
     },
     opts,
   );

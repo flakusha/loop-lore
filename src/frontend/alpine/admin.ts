@@ -1,11 +1,11 @@
 // ── Admin Page component (admin.html) — orchestrator ──────────
 
-import { adminAudit } from "./admin-audit";
-import { adminChats } from "./admin-chats";
-import { adminModels } from "./admin-models";
-import { adminSystem } from "./admin-system";
-import { adminUsers } from "./admin-users";
-import { adminWorlds } from "./admin-worlds";
+import { adminAudit, } from "./admin-audit";
+import { adminChats, } from "./admin-chats";
+import { adminModels, } from "./admin-models";
+import { adminSystem, } from "./admin-system";
+import { adminUsers, } from "./admin-users";
+import { adminWorlds, } from "./admin-worlds";
 
 (globalThis as any).adminPage = function() {
   return {
@@ -15,7 +15,7 @@ import { adminWorlds } from "./admin-worlds";
     pageSize: 20,
 
     // Overview
-    stats: { users: 0, chats: 0, messages: 0, characters: 0, assets: 0, worlds: 0 },
+    stats: { users: 0, chats: 0, messages: 0, characters: 0, assets: 0, worlds: 0, },
     recentEntries: [] as {
       id: string;
       level: number;
@@ -40,9 +40,9 @@ import { adminWorlds } from "./admin-worlds";
       await this.loadOverview();
     },
 
-    showTab(tab: string) {
+    showTab(tab: string,) {
       this.activeTab = tab;
-      if (this.tabsLoaded[tab]) return;
+      if (this.tabsLoaded[tab]) { return; }
       this.tabsLoaded[tab] = true;
       switch (tab) {
         case "overview": {
@@ -90,26 +90,26 @@ import { adminWorlds } from "./admin-worlds";
       }
     },
 
-    formatDate(iso: string | null): string {
-      if (!iso) return "-";
-      return new Date(iso).toLocaleDateString();
+    formatDate(iso: string | null,): string {
+      if (!iso) { return "-"; }
+      return new Date(iso,).toLocaleDateString();
     },
 
-    displayKey(key: string): string {
-      return key.replaceAll("_", " ").replaceAll(/\b\w/g, (c) => c.toUpperCase());
+    displayKey(key: string,): string {
+      return key.replaceAll("_", " ",).replaceAll(/\b\w/g, (c,) => c.toUpperCase(),);
     },
 
     // ── Overview ────────────────────────────────────────
     async loadOverview() {
       try {
-        const [statsRes, auditRes] = await Promise.all([
-          fetch("/api/admin/stats", { headers: { Accept: "application/json" } }),
-          fetch("/api/admin/audit?page=1&pageSize=10", { headers: { Accept: "application/json" } }),
-        ]);
-        if (statsRes.ok) this.stats = await statsRes.json();
+        const [statsRes, auditRes,] = await Promise.all([
+          fetch("/api/admin/stats", { headers: { Accept: "application/json", }, },),
+          fetch("/api/admin/audit?page=1&pageSize=10", { headers: { Accept: "application/json", }, },),
+        ],);
+        if (statsRes.ok) { this.stats = await statsRes.json(); }
         if (auditRes.ok) {
           const d = await auditRes.json();
-          this.recentEntries = (d.data || []).slice(0, 10);
+          this.recentEntries = (d.data || []).slice(0, 10,);
         }
       } catch {
         /* ignore */

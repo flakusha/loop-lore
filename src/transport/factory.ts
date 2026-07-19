@@ -1,12 +1,12 @@
 // src/transport/factory.ts — Protocol handler factory
 
-import { CompressionAlgorithm, TransportProtocol } from "../db/enums";
-import { withCompression } from "./compression";
-import { TransportError, TransportErrorCode } from "./errors";
-import { createH2Handler } from "./h2";
-import { createHttp1Handler } from "./http1";
-import type { ProtocolHandler } from "./protocol.unified";
-import { createWsHandler } from "./ws";
+import { CompressionAlgorithm, TransportProtocol, } from "../db/enums";
+import { withCompression, } from "./compression";
+import { TransportError, TransportErrorCode, } from "./errors";
+import { createH2Handler, } from "./h2";
+import { createHttp1Handler, } from "./http1";
+import type { ProtocolHandler, } from "./protocol.unified";
+import { createWsHandler, } from "./ws";
 
 /**
  * Configuration for creating a protocol handler.
@@ -59,7 +59,7 @@ export interface TransportConfig {
  * });
  * ```
  */
-export function createProtocol(config: TransportConfig): ProtocolHandler {
+export function createProtocol(config: TransportConfig,): ProtocolHandler {
   let handler: ProtocolHandler;
 
   switch (config.protocol) {
@@ -68,7 +68,7 @@ export function createProtocol(config: TransportConfig): ProtocolHandler {
         port: config.port,
         host: config.host,
         tls: config.tls,
-      });
+      },);
       break;
     }
 
@@ -77,7 +77,7 @@ export function createProtocol(config: TransportConfig): ProtocolHandler {
         port: config.port,
         host: config.host,
         tls: config.tls,
-      });
+      },);
       break;
     }
 
@@ -85,7 +85,7 @@ export function createProtocol(config: TransportConfig): ProtocolHandler {
       handler = createWsHandler({
         port: config.port,
         host: config.host,
-      });
+      },);
       break;
     }
 
@@ -96,26 +96,26 @@ export function createProtocol(config: TransportConfig): ProtocolHandler {
       throw new TransportError(`protocol "${config.protocol}" not yet implemented`, {
         code: TransportErrorCode.ProtocolUnsupported,
         recoverable: true,
-      });
+      },);
     }
 
     default: {
-      throw new TransportError(`unknown protocol: ${String(config.protocol)}`, {
+      throw new TransportError(`unknown protocol: ${String(config.protocol,)}`, {
         code: TransportErrorCode.ProtocolUnsupported,
-      });
+      },);
     }
   }
 
   // Apply compression wrapper if configured
   const algo = config.compression ?? CompressionAlgorithm.None;
   if (algo !== CompressionAlgorithm.None) {
-    handler = withCompression({ handler, algorithm: algo });
+    handler = withCompression({ handler, algorithm: algo, },);
   }
 
   return handler;
 }
 
-export { withCompression } from "./compression";
-export { createH2Handler } from "./h2";
-export { createHttp1Handler } from "./http1";
-export { createWsHandler } from "./ws";
+export { withCompression, } from "./compression";
+export { createH2Handler, } from "./h2";
+export { createHttp1Handler, } from "./http1";
+export { createWsHandler, } from "./ws";

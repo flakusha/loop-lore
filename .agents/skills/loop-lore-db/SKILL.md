@@ -151,7 +151,7 @@ Key enums from `enums-story.ts`:
 ## Schema Type Pattern
 
 ```ts
-import { Generated, GeneratedAlways } from "kysely";
+import { Generated, GeneratedAlways, } from "kysely";
 
 export interface Messages {
   id: GeneratedAlways<string>; // Auto-generated UUID
@@ -193,19 +193,19 @@ export interface Messages {
 
 ```ts
 // src/db/migrations/001_initial.ts
-import type { Kysely } from "kysely";
+import type { Kysely, } from "kysely";
 
-export async function up(db: Kysely<unknown>): Promise<void> {
+export async function up(db: Kysely<unknown>,): Promise<void> {
   await db.schema
-    .createTable("users")
-    .addColumn("id", "text", (c) => c.notNull().primaryKey())
-    .addColumn("username", "text", (c) => c.notNull().unique())
-    .addColumn("role", "text", (c) => c.notNull().defaultTo("user"))
+    .createTable("users",)
+    .addColumn("id", "text", (c,) => c.notNull().primaryKey(),)
+    .addColumn("username", "text", (c,) => c.notNull().unique(),)
+    .addColumn("role", "text", (c,) => c.notNull().defaultTo("user",),)
     .execute();
 }
 
-export async function down(db: Kysely<unknown>): Promise<void> {
-  await db.schema.dropTable("users").execute();
+export async function down(db: Kysely<unknown>,): Promise<void> {
+  await db.schema.dropTable("users",).execute();
 }
 ```
 
@@ -214,21 +214,21 @@ Run: `bun run db:migrate`
 ## Common Query Patterns
 
 ```ts
-import { db } from "../db";
-import { GenerationStatus, MessageVisibility } from "../db/enums";
+import { db, } from "../db";
+import { GenerationStatus, MessageVisibility, } from "../db/enums";
 
 // Select with enum filter
 const messages = await db
-  .selectFrom("messages")
-  .where("visibility", "=", MessageVisibility.Visible)
-  .where("chat_id", "=", chatId)
-  .orderBy("created_at", "asc")
+  .selectFrom("messages",)
+  .where("visibility", "=", MessageVisibility.Visible,)
+  .where("chat_id", "=", chatId,)
+  .orderBy("created_at", "asc",)
   .selectAll()
   .execute();
 
 // Insert with required GeneratedAlways fields omitted
 await db
-  .insertInto("messages")
+  .insertInto("messages",)
   .values({
     chat_id: chatId,
     actor_id: actorId,
@@ -239,14 +239,14 @@ await db
     content_encoding: ContentEncoding.None,
     visibility: MessageVisibility.Visible,
     status: MessageStatus.Sent,
-  })
+  },)
   .execute();
 
 // Update
 await db
-  .updateTable("messages")
-  .set({ status: MessageStatus.Confirmed })
-  .where("id", "=", messageId)
+  .updateTable("messages",)
+  .set({ status: MessageStatus.Confirmed, },)
+  .where("id", "=", messageId,)
   .execute();
 ```
 

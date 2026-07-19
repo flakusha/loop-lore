@@ -19,36 +19,36 @@ export interface RateLimitConfig {
   maxRequests: number;
 }
 
-export function createRateLimiter(config: RateLimitConfig) {
+export function createRateLimiter(config: RateLimitConfig,) {
   const buckets = new Map<string, RateBucket>();
 
   // Prune stale buckets every 2x window to prevent unbounded memory growth
   const pruneInterval = setInterval(() => {
     const cutoff = Date.now() - config.windowMs * 2;
-    for (const [key, bucket] of buckets) {
-      if (bucket.windowStart < cutoff) buckets.delete(key);
+    for (const [key, bucket,] of buckets) {
+      if (bucket.windowStart < cutoff) { buckets.delete(key,); }
     }
-  }, config.windowMs * 2);
+  }, config.windowMs * 2,);
 
   /** Check if request is allowed. Returns true if within limit. */
-  function check(key: string): boolean {
+  function check(key: string,): boolean {
     const now = Date.now();
-    const bucket = buckets.get(key);
+    const bucket = buckets.get(key,);
 
     if (!bucket || now - bucket.windowStart > config.windowMs) {
-      buckets.set(key, { count: 1, windowStart: now });
+      buckets.set(key, { count: 1, windowStart: now, },);
       return true;
     }
 
-    if (bucket.count >= config.maxRequests) return false;
+    if (bucket.count >= config.maxRequests) { return false; }
 
     bucket.count++;
     return true;
   }
 
   /** Reset counter for a specific key */
-  function reset(key: string): void {
-    buckets.delete(key);
+  function reset(key: string,): void {
+    buckets.delete(key,);
   }
 
   /** Clear all buckets and stop pruning */
@@ -57,11 +57,11 @@ export function createRateLimiter(config: RateLimitConfig) {
   }
 
   function destroy(): void {
-    clearInterval(pruneInterval);
+    clearInterval(pruneInterval,);
     buckets.clear();
   }
 
-  return { check, reset, clear: clearAll, destroy };
+  return { check, reset, clear: clearAll, destroy, };
 }
 
 export type RateLimiter = ReturnType<typeof createRateLimiter>;

@@ -16,13 +16,13 @@
  *   POST /api/generation/test-connection — Test provider connection
  */
 
-import { Elysia } from "elysia";
-import type { Kysely } from "kysely";
-import type { Config } from "../config/schema";
-import type { DB } from "../db/schema";
-import { jsonError } from "../routes/http-utils";
-import { handleImageCaption } from "./caption-route";
-import { handleGenerate } from "./generate-route";
+import { Elysia, } from "elysia";
+import type { Kysely, } from "kysely";
+import type { Config, } from "../config/schema";
+import type { DB, } from "../db/schema";
+import { jsonError, } from "../routes/http-utils";
+import { handleImageCaption, } from "./caption-route";
+import { handleGenerate, } from "./generate-route";
 import {
   handleCancelGeneration,
   handleContinueGeneration,
@@ -33,83 +33,83 @@ import {
   handleRetryGeneration,
   handleTestConnection,
 } from "./generation-routes";
-import { handleImageGeneration } from "./image-gen-route";
+import { handleImageGeneration, } from "./image-gen-route";
 
 // ── Helpers ──────────────────────────────────────────────────
 
 /** Parse JSON request body, returning an error Response on parse failure */
-async function parseJsonBody(request: Request): Promise<unknown> {
+async function parseJsonBody(request: Request,): Promise<unknown> {
   try {
     return await request.json();
   } catch (parseError) {
-    return jsonError({ message: `Invalid JSON: ${(parseError as Error).message}`, status: 400 });
+    return jsonError({ message: `Invalid JSON: ${(parseError as Error).message}`, status: 400, },);
   }
 }
 
 // ── Plugin ───────────────────────────────────────────────────
 
-export function generationRoutes({ database, config }: { database: Kysely<DB>; config: Config }): Elysia {
-  const app = new Elysia({ name: "generation" });
+export function generationRoutes({ database, config, }: { database: Kysely<DB>; config: Config },): Elysia {
+  const app = new Elysia({ name: "generation", },);
 
-  app.post("/api/generation/generate", async (ctx) => {
-    const body = await parseJsonBody(ctx.request);
-    if (body instanceof Response) return body;
-    return handleGenerate({ body, database, config, userId: (ctx as any).userId ?? undefined });
-  });
+  app.post("/api/generation/generate", async (ctx,) => {
+    const body = await parseJsonBody(ctx.request,);
+    if (body instanceof Response) { return body; }
+    return handleGenerate({ body, database, config, userId: (ctx as any).userId ?? undefined, },);
+  },);
 
-  app.post("/api/generation/cancel", async (ctx) => {
-    const body = await parseJsonBody(ctx.request);
-    if (body instanceof Response) return body;
-    return handleCancelGeneration(body, database);
-  });
+  app.post("/api/generation/cancel", async (ctx,) => {
+    const body = await parseJsonBody(ctx.request,);
+    if (body instanceof Response) { return body; }
+    return handleCancelGeneration(body, database,);
+  },);
 
-  app.get("/api/generation/status/:chatId", (ctx) => {
-    return handleGenerationStatus(ctx.params.chatId, database);
-  });
+  app.get("/api/generation/status/:chatId", (ctx,) => {
+    return handleGenerationStatus(ctx.params.chatId, database,);
+  },);
 
-  app.get("/api/generation/stream/:chatId", (ctx) => {
-    return handleGenerationStream(ctx.params.chatId, ctx.request.headers);
-  });
+  app.get("/api/generation/stream/:chatId", (ctx,) => {
+    return handleGenerationStream(ctx.params.chatId, ctx.request.headers,);
+  },);
 
   app.get("/api/generation/active", () => {
-    return handleListActiveGenerations(database);
-  });
+    return handleListActiveGenerations(database,);
+  },);
 
-  app.post("/api/generation/retry", async (ctx) => {
-    const body = await parseJsonBody(ctx.request);
-    if (body instanceof Response) return body;
-    return handleRetryGeneration(body, database);
-  });
+  app.post("/api/generation/retry", async (ctx,) => {
+    const body = await parseJsonBody(ctx.request,);
+    if (body instanceof Response) { return body; }
+    return handleRetryGeneration(body, database,);
+  },);
 
-  app.post("/api/generation/continue", async (ctx) => {
-    const body = await parseJsonBody(ctx.request);
-    if (body instanceof Response) return body;
-    return handleContinueGeneration(body, database);
-  });
+  app.post("/api/generation/continue", async (ctx,) => {
+    const body = await parseJsonBody(ctx.request,);
+    if (body instanceof Response) { return body; }
+    return handleContinueGeneration(body, database,);
+  },);
 
-  app.post("/api/generation/regenerate", async (ctx) => {
-    const body = await parseJsonBody(ctx.request);
-    if (body instanceof Response) return body;
-    return handleRegenerate(body, database);
-  });
+  app.post("/api/generation/regenerate", async (ctx,) => {
+    const body = await parseJsonBody(ctx.request,);
+    if (body instanceof Response) { return body; }
+    return handleRegenerate(body, database,);
+  },);
 
-  app.post("/api/generation/image", async (ctx) => {
-    const body = await parseJsonBody(ctx.request);
-    if (body instanceof Response) return body;
-    return handleImageGeneration(body);
-  });
+  app.post("/api/generation/image", async (ctx,) => {
+    const body = await parseJsonBody(ctx.request,);
+    if (body instanceof Response) { return body; }
+    return handleImageGeneration(body,);
+  },);
 
-  app.post("/api/generation/caption", async (ctx) => {
-    const body = await parseJsonBody(ctx.request);
-    if (body instanceof Response) return body;
-    return handleImageCaption(body);
-  });
+  app.post("/api/generation/caption", async (ctx,) => {
+    const body = await parseJsonBody(ctx.request,);
+    if (body instanceof Response) { return body; }
+    return handleImageCaption(body,);
+  },);
 
-  app.post("/api/generation/test-connection", async (ctx) => {
-    const body = await parseJsonBody(ctx.request);
-    if (body instanceof Response) return body;
-    return handleTestConnection(body, config);
-  });
+  app.post("/api/generation/test-connection", async (ctx,) => {
+    const body = await parseJsonBody(ctx.request,);
+    if (body instanceof Response) { return body; }
+    return handleTestConnection(body, config,);
+  },);
 
   return app;
 }

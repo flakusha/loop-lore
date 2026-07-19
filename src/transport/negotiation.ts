@@ -1,7 +1,7 @@
 // src/transport/negotiation.ts — Protocol + compression negotiation
 
-import { CompressionAlgorithm, TransportProtocol } from "../db/enums";
-import { parseAcceptEncoding, parseAcceptProtocols, parseExtensions } from "./negotiation-parsers";
+import { CompressionAlgorithm, TransportProtocol, } from "../db/enums";
+import { parseAcceptEncoding, parseAcceptProtocols, parseExtensions, } from "./negotiation-parsers";
 
 /**
  * Server-side capabilities advertised during negotiation.
@@ -36,11 +36,11 @@ export interface NegotiationResult {
 }
 
 const DEFAULT_CAPABILITIES: ServerCapabilities = {
-  protocols: [TransportProtocol.Http1_1],
-  compression: [CompressionAlgorithm.Zstd, CompressionAlgorithm.Brotli, CompressionAlgorithm.Gzip],
+  protocols: [TransportProtocol.Http1_1,],
+  compression: [CompressionAlgorithm.Zstd, CompressionAlgorithm.Brotli, CompressionAlgorithm.Gzip,],
   maxFrameSize: 0x1_00_00,
   maxPayload: 0x5_00_00,
-  extensions: ["compression/zstd", "compression/br", "handshake/v1"],
+  extensions: ["compression/zstd", "compression/br", "handshake/v1",],
 };
 
 /**
@@ -60,30 +60,30 @@ export function negotiate(
   serverCaps: ServerCapabilities = DEFAULT_CAPABILITIES,
 ): NegotiationResult {
   // ── Protocol ──────────────────────────────────────────
-  const acceptProtocols = parseAcceptProtocols(request.headers.get("accept"));
+  const acceptProtocols = parseAcceptProtocols(request.headers.get("accept",),);
   let protocol = serverCaps.protocols[0] ?? TransportProtocol.Http1_1;
 
   for (const candidate of acceptProtocols) {
-    if (serverCaps.protocols.includes(candidate)) {
+    if (serverCaps.protocols.includes(candidate,)) {
       protocol = candidate;
       break;
     }
   }
 
   // ── Compression ───────────────────────────────────────
-  const acceptEncoding = parseAcceptEncoding(request.headers.get("accept-encoding"));
+  const acceptEncoding = parseAcceptEncoding(request.headers.get("accept-encoding",),);
   let compression: CompressionAlgorithm = CompressionAlgorithm.None;
 
   for (const candidate of acceptEncoding) {
-    if (serverCaps.compression.includes(candidate)) {
+    if (serverCaps.compression.includes(candidate,)) {
       compression = candidate;
       break;
     }
   }
 
   // ── Extensions ────────────────────────────────────────
-  const clientExtensions = parseExtensions(request.headers.get("sec-websocket-extensions"));
-  const extensions = serverCaps.extensions.filter((ext) => clientExtensions.includes(ext));
+  const clientExtensions = parseExtensions(request.headers.get("sec-websocket-extensions",),);
+  const extensions = serverCaps.extensions.filter((ext,) => clientExtensions.includes(ext,));
 
   return {
     protocol,
@@ -94,6 +94,6 @@ export function negotiate(
   };
 }
 
-export { DEFAULT_CAPABILITIES };
+export { DEFAULT_CAPABILITIES, };
 
-export { parseAcceptEncoding, parseAcceptProtocols, parseExtensions } from "./negotiation-parsers";
+export { parseAcceptEncoding, parseAcceptProtocols, parseExtensions, } from "./negotiation-parsers";

@@ -24,13 +24,13 @@ export interface ArcPlan {
   completed: boolean;
 }
 
-export async function generateNextBeats(worldId: string, currentStoryState: string): Promise<PlotBeat[]> {
-  const arcPlan = await getCurrentArcPlan(worldId);
+export async function generateNextBeats(worldId: string, currentStoryState: string,): Promise<PlotBeat[]> {
+  const arcPlan = await getCurrentArcPlan(worldId,);
 
   const prompt = `
 You are a story planner. Given the current story state and arc plan, propose 3-5 next plot beats.
 
-ARC PLAN: ${JSON.stringify(arcPlan)}
+ARC PLAN: ${JSON.stringify(arcPlan,)}
 CURRENT STATE: ${currentStoryState}
 
 Return JSON array of beats:
@@ -41,21 +41,21 @@ Return JSON array of beats:
 `;
 
   const response = await llmGenerate({
-    messages: [{ role: "user", content: prompt }],
+    messages: [{ role: "user", content: prompt, },],
     json: true,
     temperature: 0.7,
-  });
+  },);
 
-  return JSON.parse(response);
+  return JSON.parse(response,);
 }
 
-export async function applyBeat(beatId: string, chatId: string): Promise<void> {
-  const beat = await db.selectFrom("plot_beats").selectAll().where("id", "=", beatId).executeTakeFirst();
+export async function applyBeat(beatId: string, chatId: string,): Promise<void> {
+  const beat = await db.selectFrom("plot_beats",).selectAll().where("id", "=", beatId,).executeTakeFirst();
 
-  if (!beat) throw new Error("Beat not found");
+  if (!beat) { throw new Error("Beat not found",); }
 
   // Update story state
-  await db.updateTable("chats").set({ current_beat: beatId }).where("id", "=", chatId).execute();
+  await db.updateTable("chats",).set({ current_beat: beatId, },).where("id", "=", chatId,).execute();
 
   // Generate intro message for beat
   const intro = await llmGenerate({
@@ -65,15 +65,15 @@ export async function applyBeat(beatId: string, chatId: string): Promise<void> {
         content: `Start the scene: ${beat.description}`,
       },
     ],
-  });
+  },);
 
   // Send as system message
   await createMessage({
     chat_id: chatId,
     sender_type: "system",
     content: intro,
-    metadata: { plot_beat: beatId },
-  });
+    metadata: { plot_beat: beatId, },
+  },);
 }
 ```
 
@@ -100,7 +100,7 @@ export async function applyBeat(beatId: string, chatId: string): Promise<void> {
 ### File: src/story/arc-planner.ts
 
 ```typescript
-export async function createArcPlan(worldId: string, premise: string): Promise<ArcPlan> {
+export async function createArcPlan(worldId: string, premise: string,): Promise<ArcPlan> {
   const prompt = `
 Create a story arc plan for: ${premise}
 
@@ -116,21 +116,21 @@ Return JSON:
 `;
 
   const response = await llmGenerate({
-    messages: [{ role: "user", content: prompt }],
+    messages: [{ role: "user", content: prompt, },],
     json: true,
-  });
+  },);
 
-  const plan = JSON.parse(response);
+  const plan = JSON.parse(response,);
 
   await db
-    .insertInto("story_arcs")
+    .insertInto("story_arcs",)
     .values({
       id: crypto.randomUUID(),
       world_id: worldId,
       title: plan.title,
-      plan_data: JSON.stringify(plan),
+      plan_data: JSON.stringify(plan,),
       created_at: new Date().toISOString(),
-    })
+    },)
     .execute();
 
   return plan;

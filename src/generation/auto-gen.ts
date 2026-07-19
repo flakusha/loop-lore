@@ -10,11 +10,11 @@
 // Controlled by `chats.max_turns` (max cascade depth) and `chats.auto_advance`
 // (1 = auto-advance without needing @mentions).
 
-import type { Kysely } from "kysely";
-import { marked } from "marked";
-import { PromptAssembler } from "../assistant/prompt-assembler";
-import type { Config } from "../config/schema";
-import { compressThenEncrypt, deriveChatKeyForChat, getSmk, isEncryptionEnabled } from "../crypto";
+import type { Kysely, } from "kysely";
+import { marked, } from "marked";
+import { PromptAssembler, } from "../assistant/prompt-assembler";
+import type { Config, } from "../config/schema";
+import { compressThenEncrypt, deriveChatKeyForChat, getSmk, isEncryptionEnabled, } from "../crypto";
 import {
   CancelReason,
   CancelSource,
@@ -25,11 +25,11 @@ import {
   MessageStatus,
   MessageVisibility,
 } from "../db/enums";
-import type { DB } from "../db/schema";
-import { extractMentionedActorIds } from "../group-chat/mention-parser";
-import { selectNextGroupActor } from "../group-chat/turn-selector";
-import { getLogger } from "../logger";
-import { uid } from "../utils";
+import type { DB, } from "../db/schema";
+import { extractMentionedActorIds, } from "../group-chat/mention-parser";
+import { selectNextGroupActor, } from "../group-chat/turn-selector";
+import { getLogger, } from "../logger";
+import { uid, } from "../utils";
 import {
   cancelGenerationByChat,
   completeGeneration,
@@ -38,14 +38,14 @@ import {
   scheduleBufferCleanup,
   startGenerationTracking,
 } from "./index";
-import { listProviders, resolveProvider } from "./providers/registry";
-import type { ChunkEvent } from "./providers/types";
+import { listProviders, resolveProvider, } from "./providers/registry";
+import type { ChunkEvent, } from "./providers/types";
 
-export function isLlmGenerationConfigured(config: Config): boolean {
+export function isLlmGenerationConfigured(config: Config,): boolean {
   return (
-    !!config.generation.defaultProvider
-    || config.generation.providers.openaiCompatible.length > 0
-    || listProviders().length > 0
+    !!config.generation.defaultProvider ||
+    config.generation.providers.openaiCompatible.length > 0 ||
+    listProviders().length > 0
   );
 }
 
@@ -80,11 +80,11 @@ export interface AutoGenOpts {
  * greeting), generation runs directly without an attempt row to avoid
  * the NOT NULL FK constraint on `generation_attempts.parent_message_id`.
  */
-export async function triggerAutoGeneration(opts: AutoGenOpts): Promise<void> {
-  const { database, config, chatId, parentMessageId, userId, userMessage } = opts;
+export async function triggerAutoGeneration(opts: AutoGenOpts,): Promise<void> {
+  const { database, config, chatId, parentMessageId, userId, userMessage, } = opts;
   const cascadeDepth = opts._cascadeDepth ?? 0;
   const cascadeActorId = opts._cascadeActorId;
-  if (!isLlmGenerationConfigured(config)) return;
+  if (!isLlmGenerationConfigured(config,)) { return; }
 
   let attemptId: string | undefined;
 
@@ -96,13 +96,13 @@ export async function triggerAutoGeneration(opts: AutoGenOpts): Promise<void> {
         reason: CancelReason.UserCancel,
         source: CancelSource.System,
         detail: "New auto-generation starting",
-      });
+      },);
     }
 
     const chat = await database
-      .selectFrom("chats")
-      .select(["type", "turn_strategy"])
-      .where("id", "=", chatId)
+      .selectFrom("chats",)
+      .select(["type", "turn_strategy",],)
+      .where("id", "=", chatId,)
       .executeTakeFirst();
 
     let characterId: string;
@@ -113,47 +113,47 @@ export async function triggerAutoGeneration(opts: AutoGenOpts): Promise<void> {
         // Cascade mode: use the pre-selected actor
         characterId = cascadeActorId;
         const selected = await database
-          .selectFrom("actors")
-          .select(["display_name"])
-          .where("id", "=", characterId)
+          .selectFrom("actors",)
+          .select(["display_name",],)
+          .where("id", "=", characterId,)
           .executeTakeFirst();
         characterName = selected?.display_name ?? "Unknown";
       } else {
-        const selectedId = await selectNextGroupActor({ db: database, chatId, userMessage });
-        if (!selectedId) return;
+        const selectedId = await selectNextGroupActor({ db: database, chatId, userMessage, },);
+        if (!selectedId) { return; }
         const selected = await database
-          .selectFrom("actors")
-          .select(["display_name"])
-          .where("id", "=", selectedId)
+          .selectFrom("actors",)
+          .select(["display_name",],)
+          .where("id", "=", selectedId,)
           .executeTakeFirst();
-        if (!selected) return;
+        if (!selected) { return; }
         characterId = selectedId;
         characterName = selected.display_name;
       }
     } else {
       const character = await database
-        .selectFrom("chat_participants")
-        .innerJoin("actors", "actors.id", "chat_participants.actor_id")
-        .where("chat_participants.chat_id", "=", chatId)
-        .where("chat_participants.actor_id", "!=", userId)
-        .select(["actors.id", "actors.display_name"])
+        .selectFrom("chat_participants",)
+        .innerJoin("actors", "actors.id", "chat_participants.actor_id",)
+        .where("chat_participants.chat_id", "=", chatId,)
+        .where("chat_participants.actor_id", "!=", userId,)
+        .select(["actors.id", "actors.display_name",],)
         .executeTakeFirst();
-      if (!character) return;
+      if (!character) { return; }
       characterId = character.id;
       characterName = character.display_name;
     }
 
-    const resolved = await resolveProvider({ userId, config, db: database });
-    const assembler = new PromptAssembler(database);
+    const resolved = await resolveProvider({ userId, config, db: database, },);
+    const assembler = new PromptAssembler(database,);
 
     let groupParticipantIds: string[] | undefined;
     if (chat?.type === "group") {
       const participants = await database
-        .selectFrom("chat_participants")
-        .select(["actor_id"])
-        .where("chat_id", "=", chatId)
+        .selectFrom("chat_participants",)
+        .select(["actor_id",],)
+        .where("chat_id", "=", chatId,)
         .execute();
-      groupParticipantIds = participants.map((p) => p.actor_id).filter((id) => id !== characterId);
+      groupParticipantIds = participants.map((p,) => p.actor_id).filter((id,) => id !== characterId);
     }
 
     const prompt = await assembler.assemble({
@@ -161,7 +161,7 @@ export async function triggerAutoGeneration(opts: AutoGenOpts): Promise<void> {
       chatId,
       modelId: resolved.resolvedModel,
       groupParticipantIds,
-    });
+    },);
 
     // For initial greeting (no parentMessageId), skip generation tracking
     // to avoid NOT NULL FK constraint on generation_attempts.parent_message_id.
@@ -178,28 +178,28 @@ export async function triggerAutoGeneration(opts: AutoGenOpts): Promise<void> {
           idempotencyKey: uid(),
         },
         db: database,
-      });
+      },);
       attemptId = tracking.attemptId;
     }
 
     const actorName = characterName;
     const lastMsg = prompt.messages[prompt.messages.length - 1];
-    const log = getLogger().child({ module: "auto-gen" });
+    const log = getLogger().child({ module: "auto-gen", },);
 
     log.info("LLM request", {
       model: resolved.resolvedModel,
       provider: resolved.resolvedProviderName,
       messageCount: prompt.messages.length,
       lastRole: lastMsg?.role,
-      lastContentPreview: lastMsg?.content?.slice(0, 200),
-    });
+      lastContentPreview: lastMsg?.content?.slice(0, 200,),
+    },);
 
     let accumulatedContent = "";
     let accumulatedThinking: string | undefined;
-    let tokenUsage = { promptTokens: 0, completionTokens: 0, totalTokens: 0 };
+    let tokenUsage = { promptTokens: 0, completionTokens: 0, totalTokens: 0, };
     let finishReason: "stop" | "length" | "error" | "cancelled" = "stop";
     const canStream = resolved.provider.capabilities.streaming;
-    const buffer = parentMessageId ? getOrCreateBuffer(chatId) : undefined;
+    const buffer = parentMessageId ? getOrCreateBuffer(chatId,) : undefined;
 
     if (canStream) {
       const finalResponse = await resolved.provider.stream(
@@ -207,17 +207,17 @@ export async function triggerAutoGeneration(opts: AutoGenOpts): Promise<void> {
           model: resolved.resolvedModel,
           messages: prompt.messages,
           apiKey: resolved.resolvedApiKey,
-          params: { temperature: 0.9, maxTokens: 2048 },
+          params: { temperature: 0.9, maxTokens: 2048, },
           signal: tracking?.abortSignal,
         },
-        (chunk: ChunkEvent) => {
+        (chunk: ChunkEvent,) => {
           if (chunk.type === "content" && chunk.content) {
             accumulatedContent += chunk.content;
             buffer?.append(
               "stream-update",
               renderStreamMessage(actorName, accumulatedContent, tracking?.attemptId ?? "", {
                 thinking: accumulatedThinking,
-              }),
+              },),
             );
           } else if (chunk.type === "thinking" && chunk.content) {
             accumulatedThinking = (accumulatedThinking ?? "") + chunk.content;
@@ -235,9 +235,9 @@ export async function triggerAutoGeneration(opts: AutoGenOpts): Promise<void> {
         model: resolved.resolvedModel,
         messages: prompt.messages,
         apiKey: resolved.resolvedApiKey,
-        params: { temperature: 0.9, maxTokens: 2048 },
+        params: { temperature: 0.9, maxTokens: 2048, },
         signal: tracking?.abortSignal,
-      });
+      },);
       accumulatedContent = response.content;
       accumulatedThinking = response.thinking;
       tokenUsage = {
@@ -250,19 +250,19 @@ export async function triggerAutoGeneration(opts: AutoGenOpts): Promise<void> {
         "stream-update",
         renderStreamMessage(actorName, accumulatedContent, tracking?.attemptId ?? "", {
           thinking: accumulatedThinking,
-        }),
+        },),
       );
     }
 
-    log.info("LLM response", { contentLength: accumulatedContent.length, finishReason, ...tokenUsage });
+    log.info("LLM response", { contentLength: accumulatedContent.length, finishReason, ...tokenUsage, },);
 
     const messageId = uid();
     const maxSwipe = parentMessageId
       ? await database
-        .selectFrom("messages")
-        .select(database.fn.max("swipe_index").as("max_idx"))
-        .where("chat_id", "=", chatId)
-        .where("parent_id", "=", parentMessageId)
+        .selectFrom("messages",)
+        .select(database.fn.max("swipe_index",).as("max_idx",),)
+        .where("chat_id", "=", chatId,)
+        .where("parent_id", "=", parentMessageId,)
         .executeTakeFirst()
       : undefined;
     const swipeIndex = parentMessageId ? (maxSwipe?.max_idx ?? 0) + 1 : null;
@@ -272,7 +272,7 @@ export async function triggerAutoGeneration(opts: AutoGenOpts): Promise<void> {
     const contentEncoding = ContentEncoding.Identity;
     if (isEncryptionEnabled()) {
       const smk = getSmk()!;
-      const chatKey = await deriveChatKeyForChat(database, chatId, smk);
+      const chatKey = await deriveChatKeyForChat(database, chatId, smk,);
       storedContent = await compressThenEncrypt({
         plaintext: accumulatedContent,
         chatKey: chatKey.key,
@@ -281,12 +281,12 @@ export async function triggerAutoGeneration(opts: AutoGenOpts): Promise<void> {
           threshold: config.encryption.compressThreshold,
           algorithm: config.encryption.compressAlgorithm,
         },
-      });
+      },);
       storedKeyId = chatKey.keyId;
     }
 
     await database
-      .insertInto("messages")
+      .insertInto("messages",)
       .values({
         id: messageId,
         chat_id: chatId,
@@ -306,7 +306,7 @@ export async function triggerAutoGeneration(opts: AutoGenOpts): Promise<void> {
         status: MessageStatus.Confirmed,
         visibility: MessageVisibility.Visible,
         swipe_index: swipeIndex,
-      })
+      },)
       .execute();
 
     if (attemptId) {
@@ -319,7 +319,7 @@ export async function triggerAutoGeneration(opts: AutoGenOpts): Promise<void> {
           cancelled: finishReason === "cancelled",
         },
         db: database,
-      });
+      },);
 
       buffer?.append(
         "stream-update",
@@ -327,10 +327,10 @@ export async function triggerAutoGeneration(opts: AutoGenOpts): Promise<void> {
           messageId,
           isFinal: true,
           thinking: accumulatedThinking,
-        }),
+        },),
       );
       buffer?.signalDone();
-      scheduleBufferCleanup(chatId);
+      scheduleBufferCleanup(chatId,);
     }
 
     // ── Group chat cascade: trigger next AI turn if applicable ──
@@ -344,32 +344,32 @@ export async function triggerAutoGeneration(opts: AutoGenOpts): Promise<void> {
         aiContent: accumulatedContent,
         previousActorId: characterId,
         depth: cascadeDepth,
-      }).catch(() => {
+      },).catch(() => {
         /* errors logged inside triggerGroupCascade */
-      });
+      },);
     }
   } catch (error) {
     if (attemptId) {
       try {
-        await failGeneration({ attemptId, error: error as Error, db: database });
+        await failGeneration({ attemptId, error: error as Error, db: database, },);
       } catch {}
     }
     try {
-      const buf = getOrCreateBuffer(chatId);
-      buf.signalError((error as Error).message);
-      scheduleBufferCleanup(chatId);
+      const buf = getOrCreateBuffer(chatId,);
+      buf.signalError((error as Error).message,);
+      scheduleBufferCleanup(chatId,);
     } catch {}
 
-    const err = error instanceof Error ? error : new Error(String(error));
-    const log = getLogger().child({ module: "auto-gen" });
+    const err = error instanceof Error ? error : new Error(String(error,),);
+    const log = getLogger().child({ module: "auto-gen", },);
     if (
-      err.name === "AbortError"
-      || err.message === "Request cancelled"
-      || err.message === "Request timed out"
+      err.name === "AbortError" ||
+      err.message === "Request cancelled" ||
+      err.message === "Request timed out"
     ) {
-      log.warn("Auto-generation aborted", { reason: err.message });
+      log.warn("Auto-generation aborted", { reason: err.message, },);
     } else {
-      log.error("Auto-generation failed", err);
+      log.error("Auto-generation failed", err,);
     }
   }
 }
@@ -406,35 +406,35 @@ export interface GroupCascadeOpts {
  * - No eligible AI participants remain
  * - An error occurs
  */
-export async function triggerGroupCascade(opts: GroupCascadeOpts): Promise<void> {
-  const { database, config, chatId, userId, aiContent, previousActorId, depth } = opts;
-  const log = getLogger().child({ module: "auto-gen-cascade" });
+export async function triggerGroupCascade(opts: GroupCascadeOpts,): Promise<void> {
+  const { database, config, chatId, userId, aiContent, previousActorId, depth, } = opts;
+  const log = getLogger().child({ module: "auto-gen-cascade", },);
 
   // Fetch chat cascade config
   const chat = await database
-    .selectFrom("chats")
-    .select(["max_turns", "auto_advance", "story_state"])
-    .where("id", "=", chatId)
+    .selectFrom("chats",)
+    .select(["max_turns", "auto_advance", "story_state",],)
+    .where("id", "=", chatId,)
     .executeTakeFirst();
 
-  if (!chat) return;
+  if (!chat) { return; }
 
   const maxTurns = chat.max_turns ?? 3;
   const autoAdvance = (chat.auto_advance ?? 0) > 0;
 
   // Depth check: max_turns=0 means no cascade, max_turns=1 means 1 AI reply per user message
-  if (maxTurns === 0) return;
+  if (maxTurns === 0) { return; }
   if (depth >= maxTurns) {
-    log.debug("Cascade depth limit reached", { depth, maxTurns });
+    log.debug("Cascade depth limit reached", { depth, maxTurns, },);
     return;
   }
 
   // Check if paused
   if (chat.story_state) {
     try {
-      const state = JSON.parse(chat.story_state) as { isPaused?: boolean };
+      const state = JSON.parse(chat.story_state,) as { isPaused?: boolean };
       if (state.isPaused) {
-        log.debug("Chat paused, cascade stopped");
+        log.debug("Chat paused, cascade stopped",);
         return;
       }
     } catch {
@@ -444,15 +444,15 @@ export async function triggerGroupCascade(opts: GroupCascadeOpts): Promise<void>
 
   // Get all AI participants
   const participants = await database
-    .selectFrom("chat_participants")
-    .innerJoin("actors", "actors.id", "chat_participants.actor_id")
-    .select(["chat_participants.actor_id", "actors.actor_type", "actors.agent_type", "actors.display_name"])
-    .where("chat_participants.chat_id", "=", chatId)
-    .where("actors.agent_type", "!=", "none")
+    .selectFrom("chat_participants",)
+    .innerJoin("actors", "actors.id", "chat_participants.actor_id",)
+    .select(["chat_participants.actor_id", "actors.actor_type", "actors.agent_type", "actors.display_name",],)
+    .where("chat_participants.chat_id", "=", chatId,)
+    .where("actors.agent_type", "!=", "none",)
     .execute();
 
-  const aiParticipants = participants.filter((p) => p.actor_type !== "user");
-  if (aiParticipants.length === 0) return;
+  const aiParticipants = participants.filter((p,) => p.actor_type !== "user");
+  if (aiParticipants.length === 0) { return; }
 
   // Determine if cascade should continue
   let nextActorId: string | null = null;
@@ -460,11 +460,11 @@ export async function triggerGroupCascade(opts: GroupCascadeOpts): Promise<void>
   // Check for @mentions in the AI response
   const mentionedIds = extractMentionedActorIds(
     aiContent,
-    aiParticipants.map((p) => ({ actorId: p.actor_id, displayName: p.display_name })),
+    aiParticipants.map((p,) => ({ actorId: p.actor_id, displayName: p.display_name, })),
   );
 
   // Filter out the previous actor from mentions (can't mention yourself)
-  const validMentions = mentionedIds.filter((id) => id !== previousActorId);
+  const validMentions = mentionedIds.filter((id,) => id !== previousActorId);
 
   if (validMentions.length > 0) {
     // Pick the first mentioned actor
@@ -473,7 +473,7 @@ export async function triggerGroupCascade(opts: GroupCascadeOpts): Promise<void>
       nextActorId,
       mentioned: validMentions,
       depth,
-    });
+    },);
   } else if (autoAdvance && aiParticipants.length > 1) {
     // Auto-advance: select next actor excluding the one that just spoke
     // Reuse the turn selector with the AI's content as context
@@ -481,40 +481,40 @@ export async function triggerGroupCascade(opts: GroupCascadeOpts): Promise<void>
       db: database,
       chatId,
       userMessage: undefined, // No user message — let strategy decide
-    });
+    },);
     // If the strategy selects the same actor, skip
     if (nextActorId === previousActorId) {
       // Try to find a different actor
-      const others = aiParticipants.filter((p) => p.actor_id !== previousActorId);
+      const others = aiParticipants.filter((p,) => p.actor_id !== previousActorId);
       nextActorId = others.length > 0 ? others[0]!.actor_id : null;
     }
     if (nextActorId) {
       log.info("Cascade: auto-advance selected next actor", {
         nextActorId,
         depth,
-      });
+      },);
     }
   }
 
-  if (!nextActorId) return;
+  if (!nextActorId) { return; }
 
   // Find the last message ID to use as parent for the next generation
   const lastMessage = await database
-    .selectFrom("messages")
-    .select("id")
-    .where("chat_id", "=", chatId)
-    .orderBy("created_at", "desc")
-    .limit(1)
+    .selectFrom("messages",)
+    .select("id",)
+    .where("chat_id", "=", chatId,)
+    .orderBy("created_at", "desc",)
+    .limit(1,)
     .executeTakeFirst();
 
-  if (!lastMessage) return;
+  if (!lastMessage) { return; }
 
   // Trigger generation for the next actor
   log.info("Cascade: triggering next generation", {
     nextActorId,
     depth: depth + 1,
     maxTurns,
-  });
+  },);
 
   try {
     await triggerAutoGeneration({
@@ -526,26 +526,26 @@ export async function triggerGroupCascade(opts: GroupCascadeOpts): Promise<void>
       userMessage: undefined,
       _cascadeDepth: depth + 1,
       _cascadeActorId: nextActorId,
-    });
+    },);
   } catch (error) {
-    log.error("Cascade generation failed", error as Error);
+    log.error("Cascade generation failed", error as Error,);
   }
 }
 
-function escapeHtml(str: string): string {
+function escapeHtml(str: string,): string {
   return str
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll("\"", "&quot;")
-    .replaceAll("'", "&#039;");
+    .replaceAll("&", "&amp;",)
+    .replaceAll("<", "&lt;",)
+    .replaceAll(">", "&gt;",)
+    .replaceAll('"', "&quot;",)
+    .replaceAll("'", "&#039;",);
 }
 
-function sanitizeHtml(html: string): string {
+function sanitizeHtml(html: string,): string {
   return html
-    .replaceAll(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, "")
-    .replaceAll(/\bon\w+="[^"]*"/gi, "")
-    .replaceAll(/\bon\w+='[^']*'/gi, "");
+    .replaceAll(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, "",)
+    .replaceAll(/\bon\w+="[^"]*"/gi, "",)
+    .replaceAll(/\bon\w+='[^']*'/gi, "",);
 }
 
 function renderStreamMessage(
@@ -554,16 +554,16 @@ function renderStreamMessage(
   attemptId: string,
   opts?: { messageId?: string; isFinal?: boolean; thinking?: string },
 ): string {
-  const safeName = escapeHtml(actorName);
-  const rendered = marked.parse(content, { breaks: true, gfm: true }) as string;
-  const safeContent = sanitizeHtml(rendered);
-  const streamingAttr = opts?.isFinal ? "" : " data-streaming=\"true\"";
+  const safeName = escapeHtml(actorName,);
+  const rendered = marked.parse(content, { breaks: true, gfm: true, },) as string;
+  const safeContent = sanitizeHtml(rendered,);
+  const streamingAttr = opts?.isFinal ? "" : ' data-streaming="true"';
   const msgId = opts?.messageId ?? attemptId;
 
   const thinkingBlock = opts?.thinking
     ? `<details class="thinking-block"><summary>Thinking process</summary><div class="thinking-content">${marked.parse(
       opts.thinking,
-      { breaks: true, gfm: true },
+      { breaks: true, gfm: true, },
     ) as string}</div></details>`
     : "";
 

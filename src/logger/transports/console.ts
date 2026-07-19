@@ -5,8 +5,8 @@
  * Catches write errors silently — never throws.
  */
 
-import { formatConsole } from "../formatters";
-import type { LogEntry, Transport } from "../types";
+import { formatConsole, } from "../formatters";
+import type { LogEntry, Transport, } from "../types";
 
 const isTty = process.stdout.isTTY;
 
@@ -15,15 +15,15 @@ export class ConsoleTransport implements Transport {
 
   readonly name = "console";
 
-  constructor(isColor?: boolean) {
+  constructor(isColor?: boolean,) {
     this.isColor = isColor ?? isTty;
   }
 
-  write(entry: LogEntry): Promise<void> {
+  write(entry: LogEntry,): Promise<void> {
     try {
-      const line = formatConsole(entry, this.isColor);
+      const line = formatConsole(entry, this.isColor,);
       const stream = entry.level >= 30 ? process.stderr : process.stdout;
-      stream.write(line);
+      stream.write(line,);
     } catch {
       // Silently ignore write errors — logging must not crash the app
     }

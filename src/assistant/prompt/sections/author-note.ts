@@ -7,18 +7,18 @@
  *
  * XML-delimited to prevent prompt injection via the wrapped content.
  */
-import { wrapSection } from "../../xml-utils";
-import type { SectionBuilder } from "../types";
+import { wrapSection, } from "../../xml-utils";
+import type { SectionBuilder, } from "../types";
 
 export const authorNoteSection: SectionBuilder = {
   name: "author-note",
-  enabled: (ctx) => {
+  enabled: (ctx,) => {
     const note = ctx.actor.post_history_instructions;
     return !!note && note.trim().length > 0;
   },
-  build: async (ctx) => {
+  build: async (ctx,) => {
     const note = ctx.actor.post_history_instructions!;
-    const wrappedNote = wrapSection("author_note", note);
-    return [{ role: "system", content: wrappedNote }];
+    const wrappedNote = wrapSection("author_note", note,);
+    return [{ role: "system", content: wrappedNote, },];
   },
 };

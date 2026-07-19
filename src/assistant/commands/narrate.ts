@@ -2,9 +2,9 @@
 //
 // /narrate — inject a narration as system message.
 
-import { type CommandResult, registerCommand } from "./registry";
+import { type CommandResult, registerCommand, } from "./registry";
 
-registerCommand("narrate", async (args): Promise<CommandResult> => {
+registerCommand("narrate", async (args,): Promise<CommandResult> => {
   if (args.length === 0) {
     return {
       systemMessage: "Usage: /narrate <text> — inject a narration as system message.",
@@ -12,8 +12,8 @@ registerCommand("narrate", async (args): Promise<CommandResult> => {
     };
   }
   return {
-    systemMessage: args.join(" "),
+    systemMessage: args.join(" ",),
     action: "inject-narration",
     handled: true,
   };
-});
+},);

@@ -1,12 +1,12 @@
-import { QuestType } from "../../db/enums";
-import { calculateCollectionProgress } from "./calculators/collection";
-import { calculateCompositeProgress } from "./calculators/composite";
-import { calculateDestructionProgress } from "./calculators/destruction";
-import { calculateDiscoveryProgress } from "./calculators/discovery";
-import { calculateRescueProgress } from "./calculators/rescue";
-import { calculateSocialProgress } from "./calculators/social";
-import { calculateTimeProgress } from "./calculators/time";
-import type { ProgressCalculator } from "./types";
+import { QuestType, } from "../../db/enums";
+import { calculateCollectionProgress, } from "./calculators/collection";
+import { calculateCompositeProgress, } from "./calculators/composite";
+import { calculateDestructionProgress, } from "./calculators/destruction";
+import { calculateDiscoveryProgress, } from "./calculators/discovery";
+import { calculateRescueProgress, } from "./calculators/rescue";
+import { calculateSocialProgress, } from "./calculators/social";
+import { calculateTimeProgress, } from "./calculators/time";
+import type { ProgressCalculator, } from "./types";
 
 export const PROGRESS_CALCULATORS: Record<QuestType, ProgressCalculator> = {
   [QuestType.Destruction]: calculateDestructionProgress,

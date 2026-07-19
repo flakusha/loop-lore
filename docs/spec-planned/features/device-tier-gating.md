@@ -49,8 +49,8 @@ export function getCapabilities(): DeviceCapabilities {
 
 function checkWebGL2(): boolean {
   try {
-    const canvas = document.createElement("canvas");
-    return !!canvas.getContext("webgl2");
+    const canvas = document.createElement("canvas",);
+    return !!canvas.getContext("webgl2",);
   } catch {
     return false;
   }
@@ -64,9 +64,9 @@ function checkWebGPU(): boolean {
 ### File: src/frontend/alpine/feature-gate.ts
 
 ```typescript
-export function featureGate(feature: string): boolean {
+export function featureGate(feature: string,): boolean {
   const tier = detectDeviceTier();
-  const userOverride = getUserSetting(`enable_${feature}`);
+  const userOverride = getUserSetting(`enable_${feature}`,);
 
   // User can override in settings
   if (userOverride !== undefined) {
@@ -75,15 +75,15 @@ export function featureGate(feature: string): boolean {
 
   // Feature tier requirements
   const requirements: Record<string, DeviceTier[]> = {
-    "3d_world_map": ["high"],
-    "3d_avatars": ["high", "medium"],
-    "3d_assets": ["high"],
-    immersive_audio: ["medium", "high"],
-    high_quality_images: ["medium", "high"],
-    regex_transforms: ["low", "medium", "high"], // Always available
+    "3d_world_map": ["high",],
+    "3d_avatars": ["high", "medium",],
+    "3d_assets": ["high",],
+    immersive_audio: ["medium", "high",],
+    high_quality_images: ["medium", "high",],
+    regex_transforms: ["low", "medium", "high",], // Always available
   };
 
-  return requirements[feature]?.includes(tier) ?? true;
+  return requirements[feature]?.includes(tier,) ?? true;
 }
 
 // Alpine plugin
@@ -95,8 +95,8 @@ export default function() {
       this.$store.device.capabilities = getCapabilities();
     },
 
-    isFeatureEnabled(feature: string) {
-      return featureGate(feature);
+    isFeatureEnabled(feature: string,) {
+      return featureGate(feature,);
     },
   };
 }
@@ -110,12 +110,12 @@ export class WorldMap3D {
   private renderer: THREE.WebGLRenderer | null = null;
 
   async init() {
-    if (!featureGate("3d_world_map")) {
-      console.log("3D disabled for this device, using 2D fallback");
+    if (!featureGate("3d_world_map",)) {
+      console.log("3D disabled for this device, using 2D fallback",);
       return this.init2DFallback();
     }
 
-    this.renderer = new THREE.WebGLRenderer({ antialias: true });
+    this.renderer = new THREE.WebGLRenderer({ antialias: true, },);
     // ... 3D initialization
   }
 

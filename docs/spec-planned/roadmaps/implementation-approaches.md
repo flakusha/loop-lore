@@ -21,13 +21,13 @@ export function buildFilterQuery(
   for (const filter of filters) {
     switch (filter.operator) {
       case "eq":
-        query = query.where(filter.field, "=", filter.value);
+        query = query.where(filter.field, "=", filter.value,);
         break;
       case "in":
-        query = query.where(filter.field, "in", filter.value as string[]);
+        query = query.where(filter.field, "in", filter.value as string[],);
         break;
       case "contains":
-        query = query.where(filter.field, "like", `%${filter.value}%`);
+        query = query.where(filter.field, "like", `%${filter.value}%`,);
         break;
     }
   }
@@ -53,8 +53,8 @@ export function buildFilterQuery(
 
 ```typescript
 // src/integrity/checker.ts
-import { createHash } from "crypto";
-import { readFileSync } from "fs";
+import { createHash, } from "crypto";
+import { readFileSync, } from "fs";
 
 export interface IntegrityReport {
   verified: boolean;
@@ -62,20 +62,20 @@ export interface IntegrityReport {
   missingFiles: string[];
 }
 
-export async function checkIntegrity(expectedHashes: Record<string, string>): Promise<IntegrityReport> {
+export async function checkIntegrity(expectedHashes: Record<string, string>,): Promise<IntegrityReport> {
   const modified: string[] = [];
   const missing: string[] = [];
 
-  for (const [file, expectedHash] of Object.entries(expectedHashes)) {
+  for (const [file, expectedHash,] of Object.entries(expectedHashes,)) {
     try {
-      const content = readFileSync(file);
-      const actualHash = createHash("sha256").update(content).digest("hex");
+      const content = readFileSync(file,);
+      const actualHash = createHash("sha256",).update(content,).digest("hex",);
 
       if (actualHash !== expectedHash) {
-        modified.push(file);
+        modified.push(file,);
       }
     } catch {
-      missing.push(file);
+      missing.push(file,);
     }
   }
 
@@ -113,20 +113,21 @@ export async function checkCommandPermission(
   worldId: string,
   userId: string,
 ): Promise<boolean> {
-  const world = await db.selectFrom("worlds").select("rules").where("id", "=", worldId).executeTakeFirst();
+  const world = await db.selectFrom("worlds",).select("rules",).where("id", "=", worldId,).executeTakeFirst();
 
-  if (!world?.rules) return true; // No rules = all allowed
+  if (!world?.rules) { return true; // No rules = all allowed
+   }
 
-  const rules = JSON.parse(world.rules || "{}") as WorldRules;
+  const rules = JSON.parse(world.rules || "{}",) as WorldRules;
 
   // Check blacklist first
-  if (rules.blacklisted_commands?.includes(command)) {
+  if (rules.blacklisted_commands?.includes(command,)) {
     return false;
   }
 
   // Check whitelist if exists
   if (rules.allowed_commands?.length > 0) {
-    return rules.allowed_commands.includes(command);
+    return rules.allowed_commands.includes(command,);
   }
 
   return true;
@@ -147,46 +148,46 @@ export async function checkCommandPermission(
 
 ```typescript
 // src/routes/notifications-stream.ts
-export function notificationStream(ctx: any) {
+export function notificationStream(ctx: any,) {
   const userId = ctx.user.id;
 
   return new Response(
     new ReadableStream({
-      async start(controller) {
+      async start(controller,) {
         const encoder = new TextEncoder();
 
         // Send existing unread
         const unread = await db
-          .selectFrom("notifications")
+          .selectFrom("notifications",)
           .selectAll()
-          .where("user_id", "=", userId)
-          .where("read", "=", 0)
+          .where("user_id", "=", userId,)
+          .where("read", "=", 0,)
           .execute();
 
         for (const n of unread) {
-          controller.enqueue(encoder.encode(`data: ${JSON.stringify(n)}\n\n`));
+          controller.enqueue(encoder.encode(`data: ${JSON.stringify(n,)}\n\n`,),);
         }
 
         // Poll for new notifications
         const interval = setInterval(async () => {
           const latest = await db
-            .selectFrom("notifications")
+            .selectFrom("notifications",)
             .selectAll()
-            .where("user_id", "=", userId)
-            .where("created_at", ">", lastCheck)
+            .where("user_id", "=", userId,)
+            .where("created_at", ">", lastCheck,)
             .execute();
 
           for (const n of latest) {
-            controller.enqueue(encoder.encode(`data: ${JSON.stringify(n)}\n\n`));
+            controller.enqueue(encoder.encode(`data: ${JSON.stringify(n,)}\n\n`,),);
           }
-        }, 30000); // 30s fallback
+        }, 30000,); // 30s fallback
 
         ctx.req.signal.addEventListener("close", () => {
-          clearInterval(interval);
+          clearInterval(interval,);
           controller.close();
-        });
+        },);
       },
-    }),
+    },),
     {
       headers: {
         "Content-Type": "text/event-stream",
@@ -212,46 +213,46 @@ export function notificationStream(ctx: any) {
 
 ```typescript
 // src/archival/cascade.ts
-export async function archiveChatWithAssets(chatId: string, userId: string): Promise<void> {
-  await db.transaction().execute(async (trx) => {
+export async function archiveChatWithAssets(chatId: string, userId: string,): Promise<void> {
+  await db.transaction().execute(async (trx,) => {
     // Archive chat
     await trx
-      .updateTable("chats")
-      .set({ archived_at: new Date().toISOString() })
-      .where("id", "=", chatId)
+      .updateTable("chats",)
+      .set({ archived_at: new Date().toISOString(), },)
+      .where("id", "=", chatId,)
       .execute();
 
     // Archive messages and link assets
-    const messages = await trx.selectFrom("messages").select("id").where("chat_id", "=", chatId).execute();
+    const messages = await trx.selectFrom("messages",).select("id",).where("chat_id", "=", chatId,).execute();
 
     for (const msg of messages) {
       await trx
-        .updateTable("messages")
-        .set({ archived_at: new Date().toISOString() })
-        .where("id", "=", msg.id)
+        .updateTable("messages",)
+        .set({ archived_at: new Date().toISOString(), },)
+        .where("id", "=", msg.id,)
         .execute();
 
       // Link attached assets
-      const attachments = JSON.parse(msg.attachments || "[]");
+      const attachments = JSON.parse(msg.attachments || "[]",);
       for (const assetId of attachments) {
         await trx
-          .insertInto("archived_asset_links")
+          .insertInto("archived_asset_links",)
           .values({
             chat_id: chatId,
             asset_id: assetId,
             archived_at: new Date().toISOString(),
-          })
+          },)
           .execute();
 
         // Soft-delete asset
         await trx
-          .updateTable("assets")
-          .set({ archived_at: new Date().toISOString() })
-          .where("id", "=", assetId)
+          .updateTable("assets",)
+          .set({ archived_at: new Date().toISOString(), },)
+          .where("id", "=", assetId,)
           .execute();
       }
     }
-  });
+  },);
 }
 ```
 

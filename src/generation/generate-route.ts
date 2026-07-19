@@ -7,11 +7,11 @@
  * Streaming returns SSE (text/event-stream). Non-streaming returns JSON.
  */
 
-import type { Kysely } from "kysely";
-import { randomUUID } from "node:crypto";
-import { PromptAssembler } from "../assistant/prompt-assembler";
-import { loadConfig } from "../config/load";
-import type { Config } from "../config/schema";
+import type { Kysely, } from "kysely";
+import { randomUUID, } from "node:crypto";
+import { PromptAssembler, } from "../assistant/prompt-assembler";
+import { loadConfig, } from "../config/load";
+import type { Config, } from "../config/schema";
 import {
   CancelReason,
   ContentEncoding,
@@ -21,28 +21,28 @@ import {
   MessageStatus,
   MessageVisibility,
 } from "../db/enums";
-import { getDatabase } from "../db/index";
-import type { DB } from "../db/schema";
-import { registry } from "../plugins/registry";
-import type { ToolDefinition } from "../plugins/types";
-import { jsonError, jsonResponse } from "../routes/http-utils";
-import { jsonParseOr, safeJsonStringify } from "../utils";
+import { getDatabase, } from "../db/index";
+import type { DB, } from "../db/schema";
+import { registry, } from "../plugins/registry";
+import type { ToolDefinition, } from "../plugins/types";
+import { jsonError, jsonResponse, } from "../routes/http-utils";
+import { jsonParseOr, safeJsonStringify, } from "../utils";
 import {
   completeGeneration,
   failGeneration,
   processStreamingChunk,
   startGenerationTracking,
 } from "./cancellation-manager";
-import { ContextCompactor } from "./context-compactor";
-import { resolveProvider } from "./providers/registry";
-import type { ChunkEvent } from "./providers/types";
-import type { GenerationMessage, GenerationOptions, GenerationResult } from "./types";
+import { ContextCompactor, } from "./context-compactor";
+import { resolveProvider, } from "./providers/registry";
+import type { ChunkEvent, } from "./providers/types";
+import type { GenerationMessage, GenerationOptions, GenerationResult, } from "./types";
 
 // ── Helpers ─────────────────────────────────────────────────
 
-function sseData(obj: unknown): string {
-  const r = safeJsonStringify(obj);
-  return `data: ${r.ok ? r.value : "{\"type\":\"error\",\"error\":\"serialize failed\"}"}\n\n`;
+function sseData(obj: unknown,): string {
+  const r = safeJsonStringify(obj,);
+  return `data: ${r.ok ? r.value : '{"type":"error","error":"serialize failed"}'}\n\n`;
 }
 
 interface StoreMessageOpts {
@@ -65,12 +65,12 @@ async function storeGeneratedMessage({
   modelId,
   provider,
   continuationNumber,
-}: StoreMessageOpts): Promise<string> {
+}: StoreMessageOpts,): Promise<string> {
   const messageId = randomUUID();
   const status = result.cancelled ? MessageStatus.Partial : MessageStatus.Confirmed;
 
   await database
-    .insertInto("messages")
+    .insertInto("messages",)
     .values({
       id: messageId,
       chat_id: chatId,
@@ -89,7 +89,7 @@ async function storeGeneratedMessage({
       status,
       visibility: MessageVisibility.Visible,
       continuation_index: continuationNumber ?? null,
-    })
+    },)
     .execute();
 
   return messageId;
@@ -121,7 +121,7 @@ function buildGenerationResult(
     },
     generationTimeMs: 0,
     cancelled,
-    ...(cancelReason && { cancelReason }),
+    ...(cancelReason && { cancelReason, }),
   };
 }
 
@@ -139,7 +139,7 @@ async function storeGenerationResult(opts: {
   modelId: string;
   provider: string;
   continuationNumber?: number;
-}): Promise<string> {
+},): Promise<string> {
   const messageId = await storeGeneratedMessage({
     database: opts.db,
     chatId: opts.chatId,
@@ -149,9 +149,9 @@ async function storeGenerationResult(opts: {
     modelId: opts.modelId,
     provider: opts.provider,
     continuationNumber: opts.continuationNumber,
-  });
+  },);
 
-  await completeGeneration({ attemptId: opts.attemptId, result: opts.result, db: opts.db });
+  await completeGeneration({ attemptId: opts.attemptId, result: opts.result, db: opts.db, },);
 
   return messageId;
 }
@@ -169,36 +169,36 @@ interface ToolCallItem {
  * Execute tool calls and return tool result messages.
  * Looks up ToolDefinition from the plugin registry by name.
  */
-async function executeToolCalls(toolCalls: ToolCallItem[]): Promise<GenerationMessage[]> {
+async function executeToolCalls(toolCalls: ToolCallItem[],): Promise<GenerationMessage[]> {
   const toolDefs = registry.getAllTools();
   const results: GenerationMessage[] = [];
 
   for (const tc of toolCalls) {
-    const def = toolDefs.find((d) => d.name === tc.function.name);
+    const def = toolDefs.find((d,) => d.name === tc.function.name);
     if (!def) {
       results.push({
         role: "tool",
-        content: JSON.stringify({ error: `Tool not found: ${tc.function.name}` }),
+        content: JSON.stringify({ error: `Tool not found: ${tc.function.name}`, },),
         tool_call_id: tc.id,
-      });
+      },);
       continue;
     }
 
-    const params: Record<string, unknown> = jsonParseOr(tc.function.arguments, {});
+    const params: Record<string, unknown> = jsonParseOr(tc.function.arguments, {},);
 
     try {
-      const toolResult = await def.handler(params);
+      const toolResult = await def.handler(params,);
       results.push({
         role: "tool",
         content: toolResult.content,
         tool_call_id: tc.id,
-      });
+      },);
     } catch (error) {
       results.push({
         role: "tool",
-        content: JSON.stringify({ error: (error as Error).message }),
+        content: JSON.stringify({ error: (error as Error).message, },),
         tool_call_id: tc.id,
-      });
+      },);
     }
   }
 
@@ -275,7 +275,7 @@ export async function handleGenerate({
   database: _database,
   config: _config,
   userId,
-}: HandleGenerateOpts): Promise<Response> {
+}: HandleGenerateOpts,): Promise<Response> {
   const database = _database ?? getDatabase();
   const cfg = _config ?? loadConfig();
   const input = body as GenerateRequest;
@@ -286,25 +286,25 @@ export async function handleGenerate({
   // consumed downstream — invalid values may cause runtime errors.
 
   if (!input.chatId || typeof input.chatId !== "string") {
-    return jsonError({ message: "chatId is required", status: 400 });
+    return jsonError({ message: "chatId is required", status: 400, },);
   }
   if (!input.parentMessageId || typeof input.parentMessageId !== "string") {
-    return jsonError({ message: "parentMessageId is required", status: 400 });
+    return jsonError({ message: "parentMessageId is required", status: 400, },);
   }
   if (!input.actorId || typeof input.actorId !== "string") {
-    return jsonError({ message: "actorId is required", status: 400 });
+    return jsonError({ message: "actorId is required", status: 400, },);
   }
   if (!input.idempotencyKey || typeof input.idempotencyKey !== "string") {
-    return jsonError({ message: "idempotencyKey is required", status: 400 });
+    return jsonError({ message: "idempotencyKey is required", status: 400, },);
   }
-  if (input.prompt !== undefined && !Array.isArray(input.prompt)) {
-    return jsonError({ message: "prompt must be an array", status: 400 });
+  if (input.prompt !== undefined && !Array.isArray(input.prompt,)) {
+    return jsonError({ message: "prompt must be an array", status: 400, },);
   }
   if (input.provider !== undefined && typeof input.provider !== "string") {
-    return jsonError({ message: "provider must be a string", status: 400 });
+    return jsonError({ message: "provider must be a string", status: 400, },);
   }
   if (input.modelId !== undefined && typeof input.modelId !== "string") {
-    return jsonError({ message: "modelId must be a string", status: 400 });
+    return jsonError({ message: "modelId must be a string", status: 400, },);
   }
 
   // ── Resolve provider + model ──────────────────────────
@@ -317,9 +317,9 @@ export async function handleGenerate({
       userId,
       config: cfg,
       db: database,
-    });
+    },);
   } catch (error) {
-    return jsonError({ message: `Provider resolution failed: ${(error as Error).message}`, status: 422 });
+    return jsonError({ message: `Provider resolution failed: ${(error as Error).message}`, status: 422, },);
   }
 
   // ── Assemble prompt ───────────────────────────────────
@@ -332,20 +332,20 @@ export async function handleGenerate({
     systemPrompt = input.systemPrompt;
   } else {
     try {
-      const assembler = new PromptAssembler(database);
+      const assembler = new PromptAssembler(database,);
       const assembled = await assembler.assemble({
         actorId: input.actorId,
         chatId: input.chatId,
         modelId: resolved.resolvedModel,
         systemPromptOverride: input.systemPrompt,
-      });
+      },);
       messages = assembled.messages;
       systemPrompt = assembled.systemPrompt;
 
       if (assembled.tokenCount > assembled.tokenBudget * 0.85) {
         try {
-          const compactor = new ContextCompactor({ threshold: 0.85, keepLast: 10 });
-          const { messages: compacted, compacted: didCompact } = await compactor.compact(
+          const compactor = new ContextCompactor({ threshold: 0.85, keepLast: 10, },);
+          const { messages: compacted, compacted: didCompact, } = await compactor.compact(
             messages,
             assembled.tokenBudget,
           );
@@ -357,7 +357,7 @@ export async function handleGenerate({
         }
       }
     } catch (error) {
-      return jsonError({ message: `Prompt assembly failed: ${(error as Error).message}`, status: 422 });
+      return jsonError({ message: `Prompt assembly failed: ${(error as Error).message}`, status: 422, },);
     }
   }
 
@@ -388,15 +388,15 @@ export async function handleGenerate({
 
   // ── Track generation attempt ─────────────────────────
 
-  const { attemptId, abortSignal } = await startGenerationTracking({ options: genOptions, db: database });
+  const { attemptId, abortSignal, } = await startGenerationTracking({ options: genOptions, db: database, },);
 
   // ── Build provider request ────────────────────────────
 
   const pluginTools = registry.getAllTools();
   const tools = pluginTools.length > 0
-    ? pluginTools.map((t: ToolDefinition) => ({
+    ? pluginTools.map((t: ToolDefinition,) => ({
       type: "function" as const,
-      function: { name: t.name, description: t.description, parameters: t.parameters },
+      function: { name: t.name, description: t.description, parameters: t.parameters, },
     }))
     : undefined;
 
@@ -434,7 +434,7 @@ export async function handleGenerate({
         const response = await resolved.provider.complete({
           ...providerReq,
           messages: currentMessages,
-        });
+        },);
 
         if (!response.toolCalls || response.toolCalls.length === 0) {
           finalResponse = response;
@@ -447,21 +447,21 @@ export async function handleGenerate({
           {
             role: "assistant" as const,
             content: response.content || "",
-            tool_calls: response.toolCalls.map((tc) => ({
+            tool_calls: response.toolCalls.map((tc,) => ({
               id: tc.id,
               type: "function" as const,
-              function: { name: tc.function.name, arguments: tc.function.arguments },
+              function: { name: tc.function.name, arguments: tc.function.arguments, },
             })),
           },
         ];
 
         // Execute tools and append results
-        const toolResults = await executeToolCalls(response.toolCalls);
-        currentMessages = [...currentMessages, ...toolResults];
+        const toolResults = await executeToolCalls(response.toolCalls,);
+        currentMessages = [...currentMessages, ...toolResults,];
       }
 
       if (!finalResponse) {
-        throw new Error(`Tool call loop exceeded max rounds (${MAX_TOOL_ROUNDS})`);
+        throw new Error(`Tool call loop exceeded max rounds (${MAX_TOOL_ROUNDS})`,);
       }
 
       const result = buildGenerationResult(
@@ -479,7 +479,7 @@ export async function handleGenerate({
         actorId: input.actorId,
         modelId: resolved.resolvedModel,
         provider: resolved.resolvedProviderName,
-      });
+      },);
 
       return jsonResponse({
         ok: true,
@@ -489,15 +489,15 @@ export async function handleGenerate({
         thinking: result.thinking,
         tokenUsage: result.tokenUsage,
         finishReason: finalResponse.finishReason,
-      });
+      },);
     } catch (error) {
       const errMsg = (error as Error).message;
       try {
-        await failGeneration({ attemptId, error: error as Error, db: database });
+        await failGeneration({ attemptId, error: error as Error, db: database, },);
       } catch {
         // failGeneration already logs errors
       }
-      return jsonError({ message: `Generation failed: ${errMsg}`, status: 500 });
+      return jsonError({ message: `Generation failed: ${errMsg}`, status: 500, },);
     }
   }
 
@@ -509,7 +509,7 @@ export async function handleGenerate({
   let abortController: AbortController | null = null;
 
   const sseStream = new ReadableStream({
-    async start(controller) {
+    async start(controller,) {
       try {
         abortController = new AbortController();
         let currentMessages = messages;
@@ -521,20 +521,20 @@ export async function handleGenerate({
           let roundThinking = "";
 
           const response = await resolved.provider.stream(
-            { ...providerReq, messages: currentMessages, signal: abortController.signal },
-            (chunk: ChunkEvent) => {
+            { ...providerReq, messages: currentMessages, signal: abortController.signal, },
+            (chunk: ChunkEvent,) => {
               if (chunk.type === "content" && chunk.content) {
                 accumulatedContent += chunk.content;
                 roundContent += chunk.content;
-                void processStreamingChunk({ attemptId, chunk: chunk.content, db: database });
+                void processStreamingChunk({ attemptId, chunk: chunk.content, db: database, },);
                 controller.enqueue(
-                  new TextEncoder().encode(sseData({ type: "content", content: chunk.content })),
+                  new TextEncoder().encode(sseData({ type: "content", content: chunk.content, },),),
                 );
               } else if (chunk.type === "thinking" && chunk.content) {
                 accumulatedThinking += chunk.content;
                 roundThinking += chunk.content;
                 controller.enqueue(
-                  new TextEncoder().encode(sseData({ type: "thinking", content: chunk.content })),
+                  new TextEncoder().encode(sseData({ type: "thinking", content: chunk.content, },),),
                 );
               }
             },
@@ -547,7 +547,7 @@ export async function handleGenerate({
 
           // Emit tool_call events to client
           for (const tc of response.toolCalls) {
-            controller.enqueue(new TextEncoder().encode(sseData({ type: "tool_call", toolCall: tc })));
+            controller.enqueue(new TextEncoder().encode(sseData({ type: "tool_call", toolCall: tc, },),),);
           }
 
           // Add assistant message with tool calls
@@ -556,21 +556,21 @@ export async function handleGenerate({
             {
               role: "assistant" as const,
               content: roundContent || "",
-              tool_calls: response.toolCalls.map((tc) => ({
+              tool_calls: response.toolCalls.map((tc,) => ({
                 id: tc.id,
                 type: "function" as const,
-                function: { name: tc.function.name, arguments: tc.function.arguments },
+                function: { name: tc.function.name, arguments: tc.function.arguments, },
               })),
             },
           ];
 
           // Execute tools and append results
-          const toolResults = await executeToolCalls(response.toolCalls);
-          currentMessages = [...currentMessages, ...toolResults];
+          const toolResults = await executeToolCalls(response.toolCalls,);
+          currentMessages = [...currentMessages, ...toolResults,];
         }
 
         if (!finalResponse) {
-          throw new Error(`Tool call loop exceeded max rounds (${MAX_TOOL_ROUNDS})`);
+          throw new Error(`Tool call loop exceeded max rounds (${MAX_TOOL_ROUNDS})`,);
         }
 
         // Provider stream completed — handle result
@@ -594,7 +594,7 @@ export async function handleGenerate({
           modelId: resolved.resolvedModel,
           provider: resolved.resolvedProviderName,
           continuationNumber: input.continuationNumber,
-        });
+        },);
 
         // Send done event with final data
         controller.enqueue(
@@ -607,7 +607,7 @@ export async function handleGenerate({
               finishReason: finalResponse.finishReason,
               tokenUsage: result.tokenUsage,
               cancelled: result.cancelled,
-            }),
+            },),
           ),
         );
         controller.close();
@@ -616,12 +616,12 @@ export async function handleGenerate({
 
         // Fail tracking
         try {
-          await failGeneration({ attemptId, error: error as Error, db: database });
+          await failGeneration({ attemptId, error: error as Error, db: database, },);
         } catch {
           /* empty */
         }
 
-        controller.enqueue(new TextEncoder().encode(sseData({ type: "error", error: streamError })));
+        controller.enqueue(new TextEncoder().encode(sseData({ type: "error", error: streamError, },),),);
         controller.close();
       }
     },
@@ -629,7 +629,7 @@ export async function handleGenerate({
       // Client disconnected — abort the provider request via controller
       abortController?.abort();
     },
-  });
+  },);
 
   return new Response(sseStream, {
     headers: {
@@ -638,5 +638,5 @@ export async function handleGenerate({
       Connection: "keep-alive",
       "X-Accel-Buffering": "no",
     },
-  });
+  },);
 }

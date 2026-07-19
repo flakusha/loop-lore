@@ -40,8 +40,8 @@ const TAG_RE = /^(?<kind>character|item|monster|location):(?<modality>image|vide
  * @param tags - tags to encode
  * @returns strings like `"character:image"`, `"location:video"`
  */
-export function composeWorkflowTags(tags: readonly WorkflowTag[]): string[] {
-  return tags.map((t) => `${t.kind}:${t.modality}`);
+export function composeWorkflowTags(tags: readonly WorkflowTag[],): string[] {
+  return tags.map((t,) => `${t.kind}:${t.modality}`);
 }
 
 /**
@@ -50,9 +50,9 @@ export function composeWorkflowTags(tags: readonly WorkflowTag[]): string[] {
  * @param tag - string like `"item:image"`
  * @returns the parsed tag, or `null` if malformed
  */
-export function parseWorkflowTag(tag: string): WorkflowTag | null {
-  const match = TAG_RE.exec(tag.trim().toLowerCase());
-  if (!match?.groups) return null;
+export function parseWorkflowTag(tag: string,): WorkflowTag | null {
+  const match = TAG_RE.exec(tag.trim().toLowerCase(),);
+  if (!match?.groups) { return null; }
   return {
     kind: match.groups.kind as WorkflowKind,
     modality: match.groups.modality as WorkflowModality,
@@ -65,11 +65,11 @@ export function parseWorkflowTag(tag: string): WorkflowTag | null {
  * @param tags - raw tag strings
  * @returns validated tags (empty-safe)
  */
-export function parseWorkflowTags(tags: readonly string[]): WorkflowTag[] {
+export function parseWorkflowTags(tags: readonly string[],): WorkflowTag[] {
   const out: WorkflowTag[] = [];
   for (const tag of tags) {
-    const parsed = parseWorkflowTag(tag);
-    if (parsed) out.push(parsed);
+    const parsed = parseWorkflowTag(tag,);
+    if (parsed) { out.push(parsed,); }
   }
   return out;
 }

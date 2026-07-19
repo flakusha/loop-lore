@@ -5,7 +5,7 @@
  */
 
 // ── Core types from ./types barrel ──────────────────────────
-export type { LocationState, NpcState, WorldEvent } from "./types";
+export type { LocationState, NpcState, WorldEvent, } from "./types";
 
 export type {
   GameMasterConfig,
@@ -16,7 +16,7 @@ export type {
   StoryContext,
   TurnManagerState,
 } from "./types";
-export { DEFAULT_QUALITY_THRESHOLDS, DEFAULT_QUALITY_WEIGHTS } from "./types";
+export { DEFAULT_QUALITY_THRESHOLDS, DEFAULT_QUALITY_WEIGHTS, } from "./types";
 
 export type {
   BaseQuestConfig,
@@ -43,13 +43,13 @@ export type {
 } from "./types";
 
 // ── Services ────────────────────────────────────────────────
-export { TurnManager, type TurnManagerOptions } from "./turn-manager";
+export { TurnManager, type TurnManagerOptions, } from "./turn-manager";
 
-export { GameMasterService, type GmTurnResult } from "./game-master";
+export { GameMasterService, type GmTurnResult, } from "./game-master";
 
-export { createQualityEvaluator, type EvaluatorConfig, QualityEvaluator } from "./quality-evaluator";
+export { createQualityEvaluator, type EvaluatorConfig, QualityEvaluator, } from "./quality-evaluator";
 
-export { WorldStateService } from "./world-state";
+export { WorldStateService, } from "./world-state";
 
 export {
   type AppliedEvent,
@@ -62,11 +62,11 @@ export {
   type ValidationResult,
 } from "./events";
 
-export { type ItemDefinition, type ItemInstance, ItemsService, type TransferResult } from "./items";
+export { type ItemDefinition, type ItemInstance, ItemsService, type TransferResult, } from "./items";
 
-export { createQuestEngine, QuestEngine, type QuestProgressEntry } from "./quest-engine";
+export { createQuestEngine, QuestEngine, type QuestProgressEntry, } from "./quest-engine";
 
-export { SyntheticGenerator, type SyntheticGeneratorOptions } from "./synthetic/generator";
+export { SyntheticGenerator, type SyntheticGeneratorOptions, } from "./synthetic/generator";
 export {
   type SyntheticTestCaseResult,
   SyntheticTestRunner,
@@ -75,4 +75,4 @@ export {
   type SyntheticTestRunSummary,
   type SyntheticTestStatus,
 } from "./synthetic/runner";
-export type { SyntheticCase, SyntheticSource } from "./synthetic/types";
+export type { SyntheticCase, SyntheticSource, } from "./synthetic/types";

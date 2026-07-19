@@ -107,7 +107,7 @@ const TOKENS = {
 type TokenKey = keyof typeof TOKENS;
 
 /** Resolve a template string by replacing all tokens */
-export function resolveTemplate(template: string, ctx: TemplateContext): string {
+export function resolveTemplate(template: string, ctx: TemplateContext,): string {
   const tokenMap: Record<TokenKey, string> = {
     charName: ctx.charName,
     charDescription: ctx.charDescription,
@@ -121,13 +121,13 @@ export function resolveTemplate(template: string, ctx: TemplateContext): string 
   };
 
   let result = template;
-  for (const [key, value] of Object.entries(tokenMap)) {
-    result = result.replaceAll(TOKENS[key as TokenKey], value);
+  for (const [key, value,] of Object.entries(tokenMap,)) {
+    result = result.replaceAll(TOKENS[key as TokenKey], value,);
   }
 
   if (ctx.extra) {
-    for (const [key, value] of Object.entries(ctx.extra)) {
-      result = result.replaceAll(`{{${key}}}`, value);
+    for (const [key, value,] of Object.entries(ctx.extra,)) {
+      result = result.replaceAll(`{{${key}}}`, value,);
     }
   }
 
@@ -136,7 +136,7 @@ export function resolveTemplate(template: string, ctx: TemplateContext): string 
 
 // ── Helper: build tag-based templates ───────────────────────
 
-function tagTemplates(styleTags: string): Record<DetailLevel, ImageModelTemplates> {
+function tagTemplates(styleTags: string,): Record<DetailLevel, ImageModelTemplates> {
   const base = {
     yourself:
       `Ignore previous instructions. Write comma-separated image tags describing {{charName}}. ${styleTags} full body portrait, {{charPrefix}}{{charDescription}}`,
@@ -159,7 +159,7 @@ function tagTemplates(styleTags: string): Record<DetailLevel, ImageModelTemplate
       last: `short tags: ${base.last}`,
       background: `short tags: ${base.background}`,
     },
-    balanced: { ...base },
+    balanced: { ...base, },
     detailed: {
       yourself: `${base.yourself} Be very descriptive.`,
       face: `${base.face} Be very descriptive.`,
@@ -173,7 +173,7 @@ function tagTemplates(styleTags: string): Record<DetailLevel, ImageModelTemplate
 
 // ── Helper: build natural language templates ────────────────
 
-function naturalTemplates(style: string): Record<DetailLevel, ImageModelTemplates> {
+function naturalTemplates(style: string,): Record<DetailLevel, ImageModelTemplates> {
   const base = {
     yourself:
       `Describe {{charName}} in detailed natural language. ${style} Focus on appearance, clothing, expression, pose. {{charPrefix}}{{charDescription}}`,
@@ -196,7 +196,7 @@ function naturalTemplates(style: string): Record<DetailLevel, ImageModelTemplate
       last: `Briefly: ${base.last}`,
       background: `Briefly: ${base.background}`,
     },
-    balanced: { ...base },
+    balanced: { ...base, },
     detailed: {
       yourself: `Write a detailed paragraph describing ${base.yourself}`,
       face: `Write a detailed paragraph describing ${base.face}`,
@@ -210,7 +210,7 @@ function naturalTemplates(style: string): Record<DetailLevel, ImageModelTemplate
 
 // ── Helper: build mixed tag+natural templates ───────────────
 
-function mixedTagNaturalTemplates(style: string): Record<DetailLevel, ImageModelTemplates> {
+function mixedTagNaturalTemplates(style: string,): Record<DetailLevel, ImageModelTemplates> {
   const base = {
     yourself:
       `Describe {{charName}} using lowercase keywords with spaces. Mix tag-like keywords and natural language. ${style} Include: full body, {{charPrefix}}{{charDescription}}`,
@@ -232,7 +232,7 @@ function mixedTagNaturalTemplates(style: string): Record<DetailLevel, ImageModel
       last: `short: ${base.last}`,
       background: `short: ${base.background}`,
     },
-    balanced: { ...base },
+    balanced: { ...base, },
     detailed: {
       yourself: `${base.yourself} Be very descriptive.`,
       face: `${base.face} Be very descriptive.`,
@@ -254,80 +254,80 @@ export const BUILTIN_PROFILES: Record<string, ImageModelProfile> = {
   sd1: {
     id: "sd1",
     name: "Stable Diffusion 1.x/2.x",
-    families: ["sd1", "sd2"],
+    families: ["sd1", "sd2",],
     promptFormat: "tags",
     maxTokenHint: 75,
-    defaults: { cfgScale: 7, steps: 25, sampler: "euler_a", scheduler: "karras" },
-    templates: tagTemplates(TAG_STYLE),
+    defaults: { cfgScale: 7, steps: 25, sampler: "euler_a", scheduler: "karras", },
+    templates: tagTemplates(TAG_STYLE,),
   },
 
   sdxl: {
     id: "sdxl",
     name: "SDXL",
-    families: ["sdxl"],
+    families: ["sdxl",],
     promptFormat: "tags",
     maxTokenHint: 150,
-    defaults: { cfgScale: 7, steps: 28, sampler: "euler_a", scheduler: "karras" },
-    templates: tagTemplates(TAG_STYLE),
+    defaults: { cfgScale: 7, steps: 28, sampler: "euler_a", scheduler: "karras", },
+    templates: tagTemplates(TAG_STYLE,),
   },
 
   illustrious: {
     id: "illustrious",
     name: "Illustrious (Danbooru tags)",
-    families: ["illustrious", "sdxl"],
+    families: ["illustrious", "sdxl",],
     promptFormat: "tags",
     maxTokenHint: 150,
-    defaults: { cfgScale: 5, steps: 28, sampler: "euler_a", scheduler: "karras" },
-    templates: tagTemplates("masterpiece, best quality, highres"),
+    defaults: { cfgScale: 5, steps: 28, sampler: "euler_a", scheduler: "karras", },
+    templates: tagTemplates("masterpiece, best quality, highres",),
   },
 
   noob: {
     id: "noob",
     name: "NoobAI (Danbooru+E621 tags)",
-    families: ["noob", "sdxl"],
+    families: ["noob", "sdxl",],
     promptFormat: "tags",
     maxTokenHint: 150,
-    defaults: { cfgScale: 5, steps: 28, sampler: "euler_a", scheduler: "karras" },
-    templates: tagTemplates("masterpiece, best quality, highres"),
+    defaults: { cfgScale: 5, steps: 28, sampler: "euler_a", scheduler: "karras", },
+    templates: tagTemplates("masterpiece, best quality, highres",),
   },
 
   pony: {
     id: "pony",
     name: "Pony (score tags)",
-    families: ["pony", "sdxl"],
+    families: ["pony", "sdxl",],
     promptFormat: "tags",
     maxTokenHint: 150,
-    defaults: { cfgScale: 7.5, steps: 30, sampler: "euler_a", scheduler: "karras" },
-    templates: tagTemplates("score_9, score_8_up, score_7_up, score_6_up, score_5_up"),
+    defaults: { cfgScale: 7.5, steps: 30, sampler: "euler_a", scheduler: "karras", },
+    templates: tagTemplates("score_9, score_8_up, score_7_up, score_6_up, score_5_up",),
   },
 
   sd3: {
     id: "sd3",
     name: "Stable Diffusion 3/3.5",
-    families: ["sd3"],
+    families: ["sd3",],
     promptFormat: "natural",
     maxTokenHint: 300,
-    defaults: { cfgScale: 7, steps: 28, sampler: "dpmpp_2m", scheduler: "karras" },
-    templates: naturalTemplates(NATURAL_STYLE),
+    defaults: { cfgScale: 7, steps: 28, sampler: "dpmpp_2m", scheduler: "karras", },
+    templates: naturalTemplates(NATURAL_STYLE,),
   },
 
   flux: {
     id: "flux",
     name: "FLUX (dev/schnell/klein)",
-    families: ["flux"],
+    families: ["flux",],
     promptFormat: "natural",
     maxTokenHint: 300,
-    defaults: { cfgScale: 7, steps: 25, sampler: "euler", scheduler: "default" },
-    templates: naturalTemplates(NATURAL_STYLE),
+    defaults: { cfgScale: 7, steps: 25, sampler: "euler", scheduler: "default", },
+    templates: naturalTemplates(NATURAL_STYLE,),
   },
 
   krea2: {
     id: "krea2",
     name: "Krea 2",
-    families: ["krea2"],
+    families: ["krea2",],
     promptFormat: "natural",
     maxTokenHint: 300,
-    defaults: { cfgScale: 7, steps: 12, sampler: "euler", scheduler: "default" },
+    defaults: { cfgScale: 7, steps: 12, sampler: "euler", scheduler: "default", },
     templates: {
       instant: {
         yourself: `Describe {{charName}} briefly. {{charPrefix}}{{charDescription}}`,
@@ -367,20 +367,20 @@ export const BUILTIN_PROFILES: Record<string, ImageModelProfile> = {
   anima: {
     id: "anima",
     name: "Anima (tags + natural language)",
-    families: ["anima"],
+    families: ["anima",],
     promptFormat: "tags-and-natural",
     maxTokenHint: 150,
-    defaults: { cfgScale: 7, steps: 25, sampler: "euler_a", scheduler: "karras" },
-    templates: mixedTagNaturalTemplates(ANIME_STYLE),
+    defaults: { cfgScale: 7, steps: 25, sampler: "euler_a", scheduler: "karras", },
+    templates: mixedTagNaturalTemplates(ANIME_STYLE,),
   },
 
   ideogram: {
     id: "ideogram",
     name: "Ideogram 4 (JSON captions)",
-    families: ["ideogram"],
+    families: ["ideogram",],
     promptFormat: "json",
     maxTokenHint: 300,
-    defaults: { cfgScale: 7, steps: 30, sampler: "dpmpp_2m", scheduler: "karras" },
+    defaults: { cfgScale: 7, steps: 30, sampler: "dpmpp_2m", scheduler: "karras", },
     templates: {
       instant: {
         yourself:
@@ -418,21 +418,21 @@ export const BUILTIN_PROFILES: Record<string, ImageModelProfile> = {
   qwen: {
     id: "qwen",
     name: "Qwen Image 2.0",
-    families: ["qwen"],
+    families: ["qwen",],
     promptFormat: "natural",
     maxTokenHint: 1000,
-    defaults: { cfgScale: 7, steps: 28, sampler: "dpmpp_2m", scheduler: "karras" },
-    templates: naturalTemplates(NATURAL_STYLE),
+    defaults: { cfgScale: 7, steps: 28, sampler: "dpmpp_2m", scheduler: "karras", },
+    templates: naturalTemplates(NATURAL_STYLE,),
   },
 
   chroma: {
     id: "chroma",
     name: "Chroma",
-    families: ["chroma"],
+    families: ["chroma",],
     promptFormat: "natural",
     maxTokenHint: 300,
-    defaults: { cfgScale: 7, steps: 25, sampler: "euler", scheduler: "default" },
-    templates: naturalTemplates(NATURAL_STYLE),
+    defaults: { cfgScale: 7, steps: 25, sampler: "euler", scheduler: "default", },
+    templates: naturalTemplates(NATURAL_STYLE,),
   },
 };
 
@@ -442,21 +442,21 @@ export const DEFAULT_PROFILE_REGISTRY: ImageModelProfileRegistry = {
   profiles: BUILTIN_PROFILES,
   defaultProfileId: "sdxl",
   modelMatching: [
-    { pattern: "illustrious", profileId: "illustrious" },
-    { pattern: "noobai", profileId: "noob" },
-    { pattern: "noob", profileId: "noob" },
-    { pattern: "pony", profileId: "pony" },
-    { pattern: "sd1", profileId: "sd1" },
-    { pattern: "sd2", profileId: "sd1" },
-    { pattern: "sd3", profileId: "sd3" },
-    { pattern: "sd3.5", profileId: "sd3" },
-    { pattern: "flux", profileId: "flux" },
-    { pattern: "krea", profileId: "krea2" },
-    { pattern: "anima", profileId: "anima" },
-    { pattern: "ideogram", profileId: "ideogram" },
-    { pattern: "qwen", profileId: "qwen" },
-    { pattern: "chroma", profileId: "chroma" },
-    { pattern: "sdxl", profileId: "sdxl" },
+    { pattern: "illustrious", profileId: "illustrious", },
+    { pattern: "noobai", profileId: "noob", },
+    { pattern: "noob", profileId: "noob", },
+    { pattern: "pony", profileId: "pony", },
+    { pattern: "sd1", profileId: "sd1", },
+    { pattern: "sd2", profileId: "sd1", },
+    { pattern: "sd3", profileId: "sd3", },
+    { pattern: "sd3.5", profileId: "sd3", },
+    { pattern: "flux", profileId: "flux", },
+    { pattern: "krea", profileId: "krea2", },
+    { pattern: "anima", profileId: "anima", },
+    { pattern: "ideogram", profileId: "ideogram", },
+    { pattern: "qwen", profileId: "qwen", },
+    { pattern: "chroma", profileId: "chroma", },
+    { pattern: "sdxl", profileId: "sdxl", },
   ],
 };
 
@@ -496,7 +496,7 @@ export function resolveProfile(
   if (!profileId && opts.modelName && registry.modelMatching) {
     const lower = opts.modelName.toLowerCase();
     for (const rule of registry.modelMatching) {
-      if (lower.includes(rule.pattern)) {
+      if (lower.includes(rule.pattern,)) {
         profileId = rule.profileId;
         break;
       }
@@ -514,7 +514,7 @@ export function resolveProfile(
   const fallbackMode = modeKey === "free" ? "last" : modeKey;
   const template = modeTemplates[fallbackMode] ?? modeTemplates.yourself;
 
-  return { profile, template, resolvedProfileId: profileId };
+  return { profile, template, resolvedProfileId: profileId, };
 }
 
 /**
@@ -527,9 +527,9 @@ export function generatePrompt(
   ctx: TemplateContext,
   opts: ResolveProfileOptions = {},
 ): { prompt: string; profile: ImageModelProfile; resolvedProfileId: string } {
-  const { profile, template, resolvedProfileId } = resolveProfile(mode, detail, opts);
+  const { profile, template, resolvedProfileId, } = resolveProfile(mode, detail, opts,);
   return {
-    prompt: resolveTemplate(template, ctx),
+    prompt: resolveTemplate(template, ctx,),
     profile,
     resolvedProfileId,
   };
@@ -552,7 +552,7 @@ function systemPromptForFamily(
         `No explanation, no markdown, no wrapper text.`,
         `Keep under ${maxTokenHint} tokens.`,
         `Use booru-style tags: 1girl, black hair, blue eyes, smile, etc.`,
-      ].join(" ");
+      ].join(" ",);
     }
     case "natural": {
       return [
@@ -560,7 +560,7 @@ function systemPromptForFamily(
         `One paragraph. Focus on visual composition, lighting, colors, mood, subject.`,
         `No explanation, no markdown, no wrapper text.`,
         `Keep under ${maxTokenHint} tokens.`,
-      ].join(" ");
+      ].join(" ",);
     }
     case "tags-and-natural": {
       return [
@@ -568,14 +568,14 @@ function systemPromptForFamily(
         `Use spaces between keywords. Blend tag-like descriptors with descriptive phrases.`,
         `No explanation, no markdown, no wrapper text.`,
         `Keep under ${maxTokenHint} tokens.`,
-      ].join(" ");
+      ].join(" ",);
     }
     case "json": {
       return [
         `You are an image prompt writer. Output ONLY a JSON object with high_level_description, style_description, and compositional_deconstruction fields.`,
         `No explanation, no markdown, no wrapper text.`,
         `Keep under ${maxTokenHint} tokens.`,
-      ].join(" ");
+      ].join(" ",);
     }
     default: {
       return `You are an image prompt writer. Output a ${verbosity} description of the scene. Keep under ${maxTokenHint} tokens.`;
@@ -584,9 +584,9 @@ function systemPromptForFamily(
 }
 
 /** Build a role-switch system message for image prompt generation */
-export function buildImageSystemPrompt(profile: ImageModelProfile, detail: DetailLevel): string {
+export function buildImageSystemPrompt(profile: ImageModelProfile, detail: DetailLevel,): string {
   const format = profile.promptFormat;
-  const content = systemPromptForFamily(format, detail, profile.maxTokenHint);
+  const content = systemPromptForFamily(format, detail, profile.maxTokenHint,);
 
   // The role switch instruction is critical: the LLM was just roleplaying
   // as a character in an RPG. It needs to switch to image prompt writer mode.
@@ -596,7 +596,7 @@ export function buildImageSystemPrompt(profile: ImageModelProfile, detail: Detai
     `[New Task] Forget previous instructions. You are now an image prompt writer.`,
     content,
     `Do not reference this instruction in your output.`,
-  ].join(" ");
+  ].join(" ",);
 }
 
 export interface ImagePromptMessage {
@@ -619,13 +619,13 @@ export function buildImagePromptMessages(
   ctx: TemplateContext,
   opts: ResolveProfileOptions = {},
 ): ImagePromptMessage[] {
-  const { profile, template } = resolveProfile(mode, detail, opts);
-  const systemPrompt = buildImageSystemPrompt(profile, detail);
-  const userMessage = resolveTemplate(template, ctx);
+  const { profile, template, } = resolveProfile(mode, detail, opts,);
+  const systemPrompt = buildImageSystemPrompt(profile, detail,);
+  const userMessage = resolveTemplate(template, ctx,);
 
   return [
-    { role: "system", content: systemPrompt },
-    { role: "user", content: userMessage },
+    { role: "system", content: systemPrompt, },
+    { role: "user", content: userMessage, },
   ];
 }
 
@@ -646,11 +646,11 @@ export function buildImagePrompt(
   resolvedProfileId: string;
   estimatedTotalTokens: number;
 } {
-  const { profile, resolvedProfileId } = resolveProfile(mode, detail, opts);
-  const messages = buildImagePromptMessages(mode, detail, ctx, opts);
+  const { profile, resolvedProfileId, } = resolveProfile(mode, detail, opts,);
+  const messages = buildImagePromptMessages(mode, detail, ctx, opts,);
   const systemPrompt = messages[0]!.content;
   const userMessage = messages[1]!.content;
-  const estimatedTotalTokens = systemPrompt.split(/\s+/).length + userMessage.split(/\s+/).length;
+  const estimatedTotalTokens = systemPrompt.split(/\s+/,).length + userMessage.split(/\s+/,).length;
 
   return {
     messages,

@@ -5,8 +5,8 @@
  * and the event callback interface for streaming lifecycle.
  */
 
-import type { CancelReason } from "../db/enums";
-import type { GenerationResult, PolicyAnalysis, RepetitionAnalysis } from "./gen-types-results";
+import type { CancelReason, } from "../db/enums";
+import type { GenerationResult, PolicyAnalysis, RepetitionAnalysis, } from "./gen-types-results";
 
 // ── Continuation types ─────────────────────────────────────
 
@@ -81,14 +81,14 @@ export interface RetryFromPointResponse {
 // ── Events ─────────────────────────────────────────────────
 
 export interface GenerationEvents {
-  onStart?: (attemptId: string) => void;
-  onStreamingStart?: (attemptId: string) => void;
-  onChunk?: (attemptId: string, chunk: string, isThinking: boolean) => void;
-  onThinking?: (attemptId: string, thinking: string) => void;
-  onComplete?: (attemptId: string, result: GenerationResult) => void;
-  onCancel?: (attemptId: string, reason: CancelReason, detail: string) => void;
-  onError?: (attemptId: string, error: Error) => void;
-  onRepetitionDetected?: (attemptId: string, analysis: RepetitionAnalysis) => void;
-  onPolicyMismatch?: (attemptId: string, analysis: PolicyAnalysis) => void;
-  onResponseLimitReached?: (attemptId: string, count: number) => void;
+  onStart?: (attemptId: string,) => void;
+  onStreamingStart?: (attemptId: string,) => void;
+  onChunk?: (attemptId: string, chunk: string, isThinking: boolean,) => void;
+  onThinking?: (attemptId: string, thinking: string,) => void;
+  onComplete?: (attemptId: string, result: GenerationResult,) => void;
+  onCancel?: (attemptId: string, reason: CancelReason, detail: string,) => void;
+  onError?: (attemptId: string, error: Error,) => void;
+  onRepetitionDetected?: (attemptId: string, analysis: RepetitionAnalysis,) => void;
+  onPolicyMismatch?: (attemptId: string, analysis: PolicyAnalysis,) => void;
+  onResponseLimitReached?: (attemptId: string, count: number,) => void;
 }

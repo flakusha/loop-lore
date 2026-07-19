@@ -5,42 +5,42 @@
 // GET /api/chats/:id/export?format=markdown|json
 // Returns the chat content in the requested format.
 
-import { Elysia, t } from "elysia";
-import type { Kysely } from "kysely";
-import { MessageRole, MessageStatus, MessageVisibility } from "../db/enums";
-import type { DB } from "../db/schema";
-import { notFound, unauthorized } from "../validation/middleware";
+import { Elysia, t, } from "elysia";
+import type { Kysely, } from "kysely";
+import { MessageRole, MessageStatus, MessageVisibility, } from "../db/enums";
+import type { DB, } from "../db/schema";
+import { notFound, unauthorized, } from "../validation/middleware";
 
 interface HandlerOpts {
   database: Kysely<DB>;
 }
 
-export function chatExportRoutes(opts: HandlerOpts) {
-  const { database } = opts;
+export function chatExportRoutes(opts: HandlerOpts,) {
+  const { database, } = opts;
 
-  return new Elysia({ name: "chat-export" }).get(
+  return new Elysia({ name: "chat-export", },).get(
     "/api/chats/:id/export",
-    async (ctx: any) => {
+    async (ctx: any,) => {
       const userId = ctx.userId as string | null;
-      if (!userId) return unauthorized();
+      if (!userId) { return unauthorized(); }
 
       const chatId = ctx.params.id as string;
       const format = (ctx.query.format as string) ?? "markdown";
 
       // Verify chat exists and user has access
       const chat = await database
-        .selectFrom("chats")
-        .select(["id", "name", "type", "mode", "created_at"])
-        .where("id", "=", chatId)
-        .where("created_by", "=", userId)
+        .selectFrom("chats",)
+        .select(["id", "name", "type", "mode", "created_at",],)
+        .where("id", "=", chatId,)
+        .where("created_by", "=", userId,)
         .executeTakeFirst();
 
-      if (!chat) return notFound("Chat not found");
+      if (!chat) { return notFound("Chat not found",); }
 
       // Fetch all confirmed, visible messages
       const messages = await database
-        .selectFrom("messages")
-        .innerJoin("actors", "actors.id", "messages.actor_id")
+        .selectFrom("messages",)
+        .innerJoin("actors", "actors.id", "messages.actor_id",)
         .select([
           "messages.id",
           "messages.content",
@@ -49,12 +49,12 @@ export function chatExportRoutes(opts: HandlerOpts) {
           "messages.model_id",
           "messages.token_count_total",
           "actors.display_name",
-        ])
-        .where("messages.chat_id", "=", chatId)
-        .where("messages.status", "=", MessageStatus.Confirmed)
-        .where("messages.visibility", "=", MessageVisibility.Visible)
-        .where("messages.role", "in", [MessageRole.User, MessageRole.Assistant, MessageRole.Character])
-        .orderBy("messages.created_at", "asc")
+        ],)
+        .where("messages.chat_id", "=", chatId,)
+        .where("messages.status", "=", MessageStatus.Confirmed,)
+        .where("messages.visibility", "=", MessageVisibility.Visible,)
+        .where("messages.role", "in", [MessageRole.User, MessageRole.Assistant, MessageRole.Character,],)
+        .orderBy("messages.created_at", "asc",)
         .execute();
 
       if (format === "json") {
@@ -66,7 +66,7 @@ export function chatExportRoutes(opts: HandlerOpts) {
             mode: chat.mode,
             created_at: chat.created_at,
           },
-          messages: messages.map((m) => ({
+          messages: messages.map((m,) => ({
             id: m.id,
             role: m.role,
             author: m.display_name,
@@ -76,7 +76,7 @@ export function chatExportRoutes(opts: HandlerOpts) {
             token_count: m.token_count_total,
           })),
           exported_at: new Date().toISOString(),
-        });
+        },);
       }
 
       // Markdown format
@@ -96,28 +96,28 @@ export function chatExportRoutes(opts: HandlerOpts) {
         const roleLabel = msg.role === MessageRole.User ? "You" : author;
 
         if (roleLabel !== lastAuthor) {
-          lines.push(`### ${roleLabel}`, "");
+          lines.push(`### ${roleLabel}`, "",);
         }
-        lines.push(msg.content, "");
+        lines.push(msg.content, "",);
         lastAuthor = roleLabel;
       }
 
-      const markdown = lines.join("\n");
-      const safeName = chat.name.replaceAll(/[^a-z0-9]/gi, "_");
+      const markdown = lines.join("\n",);
+      const safeName = chat.name.replaceAll(/[^a-z0-9]/gi, "_",);
       return new Response(markdown, {
         headers: {
           "Content-Type": "text/markdown; charset=utf-8",
           "Content-Disposition": `attachment; filename="${safeName}.md"`,
         },
-      });
+      },);
     },
     {
-      params: t.Object({ id: t.String() }),
+      params: t.Object({ id: t.String(), },),
       query: t.Optional(
         /* eslint-disable unicorn/max-nested-calls -- Elysia TypeBox schema nesting is inherent to framework */
         t.Object({
-          format: t.Optional(t.String()),
-        }),
+          format: t.Optional(t.String(),),
+        },),
         /* eslint-enable unicorn/max-nested-calls */
       ),
     },

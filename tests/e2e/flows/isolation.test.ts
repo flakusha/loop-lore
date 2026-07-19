@@ -5,10 +5,10 @@
  * Uses two separate client instances with different auth tokens.
  */
 
-import { afterAll, beforeAll, describe, expect, test } from "bun:test";
-import { type ApiClient, createClient } from "../helpers/client";
-import { SEED, seedCharacter, seedUsers } from "../helpers/seed";
-import { createTestServer, type TestServer } from "../helpers/server";
+import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
+import { type ApiClient, createClient, } from "../helpers/client";
+import { SEED, seedCharacter, seedUsers, } from "../helpers/seed";
+import { createTestServer, type TestServer, } from "../helpers/server";
 
 describe("Cross-Tenant Isolation E2E", () => {
   let server: TestServer;
@@ -16,13 +16,13 @@ describe("Cross-Tenant Isolation E2E", () => {
   let userB: ApiClient;
 
   beforeAll(async () => {
-    server = await createTestServer({ auth: { required: true } });
-    await seedUsers(server.db);
-    await seedCharacter(server.db);
+    server = await createTestServer({ auth: { required: true, }, },);
+    await seedUsers(server.db,);
+    await seedCharacter(server.db,);
 
     // Create a second regular user (non-admin) for isolation testing
     await server.db
-      .insertInto("users")
+      .insertInto("users",)
       .values({
         id: "00000000-0000-4000-b000-000000000099",
         username: "e2eother",
@@ -31,37 +31,37 @@ describe("Cross-Tenant Isolation E2E", () => {
         role: "user",
         status: "active",
         settings: "{}",
-      })
+      },)
       .execute();
 
-    userA = createClient(server.url);
-    userB = createClient(server.url);
+    userA = createClient(server.url,);
+    userB = createClient(server.url,);
 
-    await new Promise((r) => setTimeout(r, 200));
+    await new Promise((r,) => setTimeout(r, 200,));
 
-    const aOk = await userA.loginAs(SEED.user.username, SEED.user.password);
-    expect(aOk).toBe(true);
+    const aOk = await userA.loginAs(SEED.user.username, SEED.user.password,);
+    expect(aOk,).toBe(true,);
 
-    const bOk = await userB.loginAs("e2eother", "password");
-    expect(bOk).toBe(true);
-  }, 30_000);
+    const bOk = await userB.loginAs("e2eother", "password",);
+    expect(bOk,).toBe(true,);
+  }, 30_000,);
 
   afterAll(() => {
     server.close();
-  });
+  },);
 
   test("User A creates chat — User B gets 403/404", async () => {
     const createRes = await userA.post<{ id: string }>("/api/chats", {
       name: "Isolation Chat",
       type: "direct",
       mode: "direct",
-    });
-    expect(createRes.ok).toBe(true);
-    expect(createRes.data?.id).toBeTruthy();
+    },);
+    expect(createRes.ok,).toBe(true,);
+    expect(createRes.data?.id,).toBeTruthy();
 
-    const getRes = await userB.get(`/api/chats/${createRes.data!.id}`);
-    expect(getRes.ok).toBe(false);
-    expect([403, 404]).toContain(getRes.status);
+    const getRes = await userB.get(`/api/chats/${createRes.data!.id}`,);
+    expect(getRes.ok,).toBe(false,);
+    expect([403, 404,],).toContain(getRes.status,);
   });
 
   test("User A still accesses own chat after B rejected", async () => {
@@ -69,17 +69,17 @@ describe("Cross-Tenant Isolation E2E", () => {
       name: "Own Chat",
       type: "direct",
       mode: "direct",
-    });
-    expect(createRes.ok).toBe(true);
+    },);
+    expect(createRes.ok,).toBe(true,);
 
-    const getRes = await userA.get(`/api/chats/${createRes.data!.id}`);
-    expect(getRes.ok).toBe(true);
+    const getRes = await userA.get(`/api/chats/${createRes.data!.id}`,);
+    expect(getRes.ok,).toBe(true,);
   });
 
   test("User B cannot access user A's character", async () => {
-    const getRes = await userB.get(`/api/actors/${SEED.character.id}`);
-    expect(getRes.ok).toBe(false);
-    expect([403, 404]).toContain(getRes.status);
+    const getRes = await userB.get(`/api/actors/${SEED.character.id}`,);
+    expect(getRes.ok,).toBe(false,);
+    expect([403, 404,],).toContain(getRes.status,);
   });
 
   test("User B cannot delete user A's chat", async () => {
@@ -87,16 +87,16 @@ describe("Cross-Tenant Isolation E2E", () => {
       name: "Delete Target",
       type: "direct",
       mode: "direct",
-    });
-    expect(createRes.ok).toBe(true);
+    },);
+    expect(createRes.ok,).toBe(true,);
     const chatId = createRes.data!.id;
 
-    const deleteRes = await userB.del(`/api/chats/${chatId}`);
-    expect(deleteRes.ok).toBe(false);
-    expect([403, 404]).toContain(deleteRes.status);
+    const deleteRes = await userB.del(`/api/chats/${chatId}`,);
+    expect(deleteRes.ok,).toBe(false,);
+    expect([403, 404,],).toContain(deleteRes.status,);
 
-    const getRes = await userA.get(`/api/chats/${chatId}`);
-    expect(getRes.ok).toBe(true);
+    const getRes = await userA.get(`/api/chats/${chatId}`,);
+    expect(getRes.ok,).toBe(true,);
   });
 
   test("User B cannot list user A's chats", async () => {
@@ -104,12 +104,12 @@ describe("Cross-Tenant Isolation E2E", () => {
       name: "Hidden Chat",
       type: "direct",
       mode: "direct",
-    });
-    expect(createRes.ok).toBe(true);
+    },);
+    expect(createRes.ok,).toBe(true,);
 
-    const listRes = await userB.get<{ data: Array<{ id: string }> }>("/api/chats");
-    expect(listRes.ok).toBe(true);
-    const ids = listRes.data!.data.map((c: { id: string }) => c.id);
-    expect(ids).not.toContain(createRes.data!.id);
+    const listRes = await userB.get<{ data: Array<{ id: string }> }>("/api/chats",);
+    expect(listRes.ok,).toBe(true,);
+    const ids = listRes.data!.data.map((c: { id: string },) => c.id);
+    expect(ids,).not.toContain(createRes.data!.id,);
   });
 });

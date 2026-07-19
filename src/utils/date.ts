@@ -16,7 +16,7 @@ export function unixMs(): number {
  * Unix epoch seconds — use for JSONL log entries.
  */
 export function unixSec(): number {
-  return Math.floor(Date.now() / 1000);
+  return Math.floor(Date.now() / 1000,);
 }
 
 /**
@@ -26,7 +26,7 @@ export function unixSec(): number {
  * Falls back to getTimezoneOffset arithmetic if Intl fails or no tz given.
  * Honors Node.js `TZ` environment variable by default.
  */
-export function tzOffset(date?: Date, tz?: string): string {
+export function tzOffset(date?: Date, tz?: string,): string {
   const d = date ?? new Date();
 
   if (tz) {
@@ -40,11 +40,11 @@ export function tzOffset(date?: Date, tz?: string): string {
         hour: "2-digit",
         minute: "2-digit",
         second: "2-digit",
-      }).formatToParts(d);
-      const offsetPart = parts.find((p) => p.type === "timeZoneName")?.value;
+      },).formatToParts(d,);
+      const offsetPart = parts.find((p,) => p.type === "timeZoneName")?.value;
       if (offsetPart) {
         // "GMT+02:00" → "+02:00", "GMT-05:00" → "-05:00", "GMT" → "+00:00"
-        const normalized = offsetPart.replace("GMT", "");
+        const normalized = offsetPart.replace("GMT", "",);
         return normalized || "+00:00";
       }
     } catch {
@@ -55,12 +55,12 @@ export function tzOffset(date?: Date, tz?: string): string {
   // Fallback: getTimezoneOffset returns minutes opposite sign
   const offsetMin = -d.getTimezoneOffset();
   const sign = offsetMin >= 0 ? "+" : "-";
-  const abs = Math.abs(offsetMin);
-  return `${sign}${String(Math.floor(abs / 60)).padStart(2, "0")}:${String(abs % 60).padStart(2, "0")}`;
+  const abs = Math.abs(offsetMin,);
+  return `${sign}${String(Math.floor(abs / 60,),).padStart(2, "0",)}:${String(abs % 60,).padStart(2, "0",)}`;
 }
 
-function pad(n: number, len = 2): string {
-  return String(n).padStart(len, "0");
+function pad(n: number, len = 2,): string {
+  return String(n,).padStart(len, "0",);
 }
 
 /**
@@ -87,9 +87,9 @@ export function formatTime(options?: {
   date?: Date | number;
   style?: "compact" | "standard";
   tz?: string;
-}): string {
+},): string {
   const raw = options?.date ?? new Date();
-  const d = raw instanceof Date ? raw : new Date(raw);
+  const d = raw instanceof Date ? raw : new Date(raw,);
   const style = options?.style ?? "standard"; // Default to standard for parseability
   const tz = options?.tz;
 
@@ -108,22 +108,22 @@ export function formatTime(options?: {
       second: "2-digit",
       fractionalSecondDigits: 3,
       timeZoneName: "longOffset",
-    });
-    const parts = fmt.formatToParts(d);
-    const get = (type: string): number => Number(parts.find((p) => p.type === type)?.value ?? 0);
+    },);
+    const parts = fmt.formatToParts(d,);
+    const get = (type: string,): number => Number(parts.find((p,) => p.type === type)?.value ?? 0,);
 
-    y = get("year");
-    mo = get("month");
-    day = get("day");
-    h = get("hour");
-    mi = get("minute");
-    s = get("second");
-    ms = get("fractionalSecond");
-    const offsetRaw = parts.find((p) => p.type === "timeZoneName")?.value ?? "GMT";
-    offset = (offsetRaw.startsWith("GMT") ? offsetRaw.slice(3) : offsetRaw) || "+00:00";
-    if (!offset.includes(":")) {
+    y = get("year",);
+    mo = get("month",);
+    day = get("day",);
+    h = get("hour",);
+    mi = get("minute",);
+    s = get("second",);
+    ms = get("fractionalSecond",);
+    const offsetRaw = parts.find((p,) => p.type === "timeZoneName")?.value ?? "GMT";
+    offset = (offsetRaw.startsWith("GMT",) ? offsetRaw.slice(3,) : offsetRaw) || "+00:00";
+    if (!offset.includes(":",)) {
       // Handle "+0200" → "+02:00"
-      offset = offset.slice(0, 3) + ":" + offset.slice(3);
+      offset = offset.slice(0, 3,) + ":" + offset.slice(3,);
     }
   } else {
     y = d.getFullYear();
@@ -133,14 +133,14 @@ export function formatTime(options?: {
     mi = d.getMinutes();
     s = d.getSeconds();
     ms = d.getMilliseconds();
-    offset = tzOffset(d);
+    offset = tzOffset(d,);
   }
 
   if (style === "compact") {
     // Compact: "20260704T143000.123+02:00" — denser, sortable, NOT parseable by Date
-    return `${y}${pad(mo)}${pad(day)}T${pad(h)}${pad(mi)}${pad(s)}.${pad(ms, 3)}${offset}`;
+    return `${y}${pad(mo,)}${pad(day,)}T${pad(h,)}${pad(mi,)}${pad(s,)}.${pad(ms, 3,)}${offset}`;
   }
 
   // standard: "2026-07-04T14:30:00.123+02:00" — full ISO 8601, parseable by Date.parse()
-  return `${y}-${pad(mo)}-${pad(day)}T${pad(h)}:${pad(mi)}:${pad(s)}.${pad(ms, 3)}${offset}`;
+  return `${y}-${pad(mo,)}-${pad(day,)}T${pad(h,)}:${pad(mi,)}:${pad(s,)}.${pad(ms, 3,)}${offset}`;
 }

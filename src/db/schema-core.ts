@@ -3,7 +3,7 @@
  *
  * Users, sessions, chats, actors, participants, messages.
  */
-import type { Generated } from "kysely";
+import type { Generated, } from "kysely";
 import type {
   ActorItemType,
   ActorType,

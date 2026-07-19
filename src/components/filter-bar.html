@@ -1,13 +1,14 @@
-<!-- Filter Bar Component
-     Reusable: search input, type/sort dropdowns, active chips, clear all.
-     Alpine-managed.
-     Place inside a .list-toolbar container. Override defaults via data attributes
-     on the parent:
-       data-search-placeholder="Search…"
-       data-search-label="Search"
-       data-show-type-filter="true"
-       data-search-url="/dynamic/gallery/search"
-       data-target-id="asset-grid"
+<!--
+  Filter Bar Component
+  Reusable: search input, type/sort dropdowns, active chips, clear all.
+  Alpine-managed.
+  Place inside a .list-toolbar container. Override defaults via data attributes
+  on the parent:
+    data-search-placeholder="Search…"
+    data-search-label="Search"
+    data-show-type-filter="true"
+    data-search-url="/dynamic/gallery/search"
+    data-target-id="asset-grid"
 -->
 <div x-data="filterBar()" data-testid="filter-bar" style="display: contents">
   <input

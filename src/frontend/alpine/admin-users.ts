@@ -1,7 +1,7 @@
-import { jsonBody } from "./json";
-import { log as rootLog } from "./logger";
+import { jsonBody, } from "./json";
+import { log as rootLog, } from "./logger";
 
-const log = rootLog.child({ module: "admin-users" });
+const log = rootLog.child({ module: "admin-users", },);
 
 interface UserRow {
   id: string;
@@ -30,29 +30,29 @@ export const adminUsers = {
     try {
       const self = this as any;
       let url = `/api/admin/users?page=${self.userPage}&pageSize=${self.pageSize}`;
-      if (self.userSearch) url += `&q=${encodeURIComponent(self.userSearch)}`;
-      if (self.userRoleFilter) url += `&role=${self.userRoleFilter}`;
-      if (self.userStatusFilter) url += `&status=${self.userStatusFilter}`;
-      const res = await fetch(url, { headers: { Accept: "application/json" } });
+      if (self.userSearch) { url += `&q=${encodeURIComponent(self.userSearch,)}`; }
+      if (self.userRoleFilter) { url += `&role=${self.userRoleFilter}`; }
+      if (self.userStatusFilter) { url += `&status=${self.userStatusFilter}`; }
+      const res = await fetch(url, { headers: { Accept: "application/json", }, },);
       if (res.ok) {
         const data = await res.json();
         this.users = data.data || [];
         this.userTotal = data.total || 0;
       }
     } catch {
-      log.warn("Network error loading users");
+      log.warn("Network error loading users",);
     } finally {
       this.loadingUsers = false;
     }
   },
   get userPages(): number {
-    return Math.ceil(this.userTotal / (this as any).pageSize) || 1;
+    return Math.ceil(this.userTotal / (this as any).pageSize,) || 1;
   },
-  async goUsersPage(p: number) {
+  async goUsersPage(p: number,) {
     this.userPage = p;
     await this.loadUsers();
   },
-  startEditRole(u: UserRow) {
+  startEditRole(u: UserRow,) {
     this.editRoleUserId = u.id;
     this.editRoleValue = u.role;
   },
@@ -61,40 +61,40 @@ export const adminUsers = {
     this.editRoleValue = "";
   },
   async saveRole() {
-    if (!this.editRoleUserId) return;
+    if (!this.editRoleUserId) { return; }
     try {
       const res = await apiFetch(`/api/admin/users/${this.editRoleUserId}/role`, {
         method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: jsonBody({ role: this.editRoleValue }),
-      });
+        headers: { "Content-Type": "application/json", },
+        body: jsonBody({ role: this.editRoleValue, },),
+      },);
       if (res.ok) {
-        showToast("success", "Role updated");
+        showToast("success", "Role updated",);
         this.cancelEditRole();
         await this.loadUsers();
       } else {
         const err = await res.json();
-        showToast("error", err.error || "Failed");
+        showToast("error", err.error || "Failed",);
       }
     } catch {
-      showToast("error", "Network error");
+      showToast("error", "Network error",);
     }
   },
-  async deleteUser(userId: string) {
-    if (this.confirmDeleteUser !== userId) return;
+  async deleteUser(userId: string,) {
+    if (this.confirmDeleteUser !== userId) { return; }
     try {
-      const res = await apiFetch(`/api/admin/users/${userId}`, { method: "DELETE" });
+      const res = await apiFetch(`/api/admin/users/${userId}`, { method: "DELETE", },);
       if (res.ok) {
-        showToast("success", "User deleted");
+        showToast("success", "User deleted",);
         this.confirmDeleteUser = "";
         await this.loadUsers();
         await (this as any).loadOverview();
       } else {
         const err = await res.json();
-        showToast("error", err.error || "Failed");
+        showToast("error", err.error || "Failed",);
       }
     } catch {
-      showToast("error", "Network error");
+      showToast("error", "Network error",);
     }
   },
   searchUsers() {

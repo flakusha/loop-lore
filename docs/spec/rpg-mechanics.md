@@ -199,7 +199,7 @@ Standard RPG dice notation:
 ### Dice Parser
 
 ```typescript
-function rollDice(notation: string): { total: number; rolls: number[]; modifier: number };
+function rollDice(notation: string,): { total: number; rolls: number[]; modifier: number };
 ```
 
 ### Pre-Seeded Dice Queue (Deterministic Mode)

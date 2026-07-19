@@ -4,17 +4,17 @@
  * Tests multipart file import: JSON, YAML, TOML, PNG, and error cases.
  */
 
-import { afterAll, beforeAll, describe, expect, test } from "bun:test";
-import { type ApiClient, createClient } from "../helpers/client";
-import { SEED, seedUsers } from "../helpers/seed";
-import { createTestServer, type TestServer } from "../helpers/server";
+import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
+import { type ApiClient, createClient, } from "../helpers/client";
+import { SEED, seedUsers, } from "../helpers/seed";
+import { createTestServer, type TestServer, } from "../helpers/server";
 
-function makeJsonBlob(data: unknown, filename = "test.json"): File {
-  return new File([JSON.stringify(data)], filename, { type: "application/json" });
+function makeJsonBlob(data: unknown, filename = "test.json",): File {
+  return new File([JSON.stringify(data,),], filename, { type: "application/json", },);
 }
 
-function makeYamlBlob(data: unknown, filename = "test.yaml"): File {
-  return new File([JSON.stringify(data)], filename, { type: "application/yaml" });
+function makeYamlBlob(data: unknown, filename = "test.yaml",): File {
+  return new File([JSON.stringify(data,),], filename, { type: "application/yaml", },);
 }
 
 describe("Import E2E", () => {
@@ -23,107 +23,107 @@ describe("Import E2E", () => {
 
   beforeAll(async () => {
     server = await createTestServer();
-    api = createClient(server.url);
-    await seedUsers(server.db);
-    await api.loginAs(SEED.user.username, SEED.user.password);
-  });
+    api = createClient(server.url,);
+    await seedUsers(server.db,);
+    await api.loginAs(SEED.user.username, SEED.user.password,);
+  },);
 
   afterAll(() => {
     server.close();
-  });
+  },);
 
   test("POST /api/actors/import imports JSON actor", async () => {
-    const file = makeJsonBlob({ name: "Imported JSON", description: "via multipart" }, "imported.json");
+    const file = makeJsonBlob({ name: "Imported JSON", description: "via multipart", }, "imported.json",);
     const form = new FormData();
-    form.append("file", file);
+    form.append("file", file,);
 
-    const res = await api.upload<{ id: string }>("/api/actors/import", form);
-    expect(res.ok).toBe(true);
-    expect(res.data!.id).toBeTruthy();
+    const res = await api.upload<{ id: string }>("/api/actors/import", form,);
+    expect(res.ok,).toBe(true,);
+    expect(res.data!.id,).toBeTruthy();
 
     // Verify actor exists
-    const getRes = await api.get<{ display_name: string }>(`/api/actors/${res.data!.id}`);
-    expect(getRes.ok).toBe(true);
-    expect(getRes.data!.display_name).toBe("Imported JSON");
+    const getRes = await api.get<{ display_name: string }>(`/api/actors/${res.data!.id}`,);
+    expect(getRes.ok,).toBe(true,);
+    expect(getRes.data!.display_name,).toBe("Imported JSON",);
   });
 
   test("POST /api/actors/import imports YAML actor", async () => {
-    const file = makeYamlBlob({ name: "Imported YAML", description: "via multipart" }, "imported.yaml");
+    const file = makeYamlBlob({ name: "Imported YAML", description: "via multipart", }, "imported.yaml",);
     const form = new FormData();
-    form.append("file", file);
+    form.append("file", file,);
 
-    const res = await api.upload<{ id: string }>("/api/actors/import", form);
-    expect(res.ok).toBe(true);
-    expect(res.data!.id).toBeTruthy();
+    const res = await api.upload<{ id: string }>("/api/actors/import", form,);
+    expect(res.ok,).toBe(true,);
+    expect(res.data!.id,).toBeTruthy();
 
-    const getRes = await api.get<{ display_name: string }>(`/api/actors/${res.data!.id}`);
-    expect(getRes.data!.display_name).toBe("Imported YAML");
+    const getRes = await api.get<{ display_name: string }>(`/api/actors/${res.data!.id}`,);
+    expect(getRes.data!.display_name,).toBe("Imported YAML",);
   });
 
   test("POST /api/actors/import imports YML extension", async () => {
-    const file = makeYamlBlob({ name: "Imported YML", description: "yml extension" }, "imported.yml");
+    const file = makeYamlBlob({ name: "Imported YML", description: "yml extension", }, "imported.yml",);
     const form = new FormData();
-    form.append("file", file);
+    form.append("file", file,);
 
-    const res = await api.upload<{ id: string }>("/api/actors/import", form);
-    expect(res.ok).toBe(true);
+    const res = await api.upload<{ id: string }>("/api/actors/import", form,);
+    expect(res.ok,).toBe(true,);
 
-    const getRes = await api.get<{ display_name: string }>(`/api/actors/${res.data!.id}`);
-    expect(getRes.data!.display_name).toBe("Imported YML");
+    const getRes = await api.get<{ display_name: string }>(`/api/actors/${res.data!.id}`,);
+    expect(getRes.data!.display_name,).toBe("Imported YML",);
   });
 
   test("POST /api/actors/import imports TOML actor", async () => {
-    const toml = "name = \"Imported TOML\"\ndescription = \"via multipart\"\n";
-    const file = new File([toml], "test.toml", { type: "application/toml" });
+    const toml = 'name = "Imported TOML"\ndescription = "via multipart"\n';
+    const file = new File([toml,], "test.toml", { type: "application/toml", },);
     const form = new FormData();
-    form.append("file", file);
+    form.append("file", file,);
 
-    const res = await api.upload<{ id: string }>("/api/actors/import", form);
-    expect(res.ok).toBe(true);
+    const res = await api.upload<{ id: string }>("/api/actors/import", form,);
+    expect(res.ok,).toBe(true,);
 
-    const getRes = await api.get<{ display_name: string }>(`/api/actors/${res.data!.id}`);
-    expect(getRes.data!.display_name).toBe("Imported TOML");
+    const getRes = await api.get<{ display_name: string }>(`/api/actors/${res.data!.id}`,);
+    expect(getRes.data!.display_name,).toBe("Imported TOML",);
   });
 
   test("POST /api/actors/import rejects unsupported extension", async () => {
-    const file = new File(["hello"], "test.txt", { type: "text/plain" });
+    const file = new File(["hello",], "test.txt", { type: "text/plain", },);
     const form = new FormData();
-    form.append("file", file);
+    form.append("file", file,);
 
-    const res = await api.upload("/api/actors/import", form);
-    expect(res.ok).toBe(false);
-    expect(res.status).toBe(400);
-    expect(res.error).toContain("Unsupported file type");
+    const res = await api.upload("/api/actors/import", form,);
+    expect(res.ok,).toBe(false,);
+    expect(res.status,).toBe(400,);
+    expect(res.error,).toContain("Unsupported file type",);
   });
 
   test("POST /api/actors/import rejects missing file field", async () => {
     const form = new FormData();
-    form.append("notfile", "value");
+    form.append("notfile", "value",);
 
-    const res = await api.upload("/api/actors/import", form);
-    expect(res.ok).toBe(false);
-    expect(res.status).toBe(400);
-    expect(res.error).toContain("file field is required");
+    const res = await api.upload("/api/actors/import", form,);
+    expect(res.ok,).toBe(false,);
+    expect(res.status,).toBe(400,);
+    expect(res.error,).toContain("file field is required",);
   });
 
   test("POST /api/actors/import rejects invalid JSON", async () => {
-    const file = new File(["{not json}"], "bad.json", { type: "application/json" });
+    const file = new File(["{not json}",], "bad.json", { type: "application/json", },);
     const form = new FormData();
-    form.append("file", file);
+    form.append("file", file,);
 
-    const res = await api.upload("/api/actors/import", form);
-    expect(res.ok).toBe(false);
-    expect(res.status).toBe(400);
+    const res = await api.upload("/api/actors/import", form,);
+    expect(res.ok,).toBe(false,);
+    expect(res.status,).toBe(400,);
   });
 
   test("POST /api/actors/import rejects actor without name", async () => {
-    const file = makeJsonBlob({ description: "nameless" }, "noname.json");
+    const file = makeJsonBlob({ description: "nameless", }, "noname.json",);
     const form = new FormData();
-    form.append("file", file);
+    form.append("file", file,);
 
-    const res = await api.upload("/api/actors/import", form);
-    expect(res.ok).toBe(false);
-    expect(res.status).toBe(400);
-    expect(res.error).toContain("Actor name is required");
+    const res = await api.upload("/api/actors/import", form,);
+    expect(res.ok,).toBe(false,);
+    expect(res.status,).toBe(400,);
+    expect(res.error,).toContain("Actor name is required",);
   });
 });

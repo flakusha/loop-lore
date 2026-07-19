@@ -12,14 +12,14 @@ DIM='\033[2m'
 NC='\033[0m' # No Color
 
 # ── Logging ─────────────────────────────────────────────────────────
-info()    { echo -e "${CYAN}$*${NC}"; }
+info() { echo -e "${CYAN}$*${NC}"; }
 success() { echo -e "${GREEN}$*${NC}"; }
-warn()    { echo -e "${YELLOW}$*${NC}"; }
-error()   { echo -e "${RED}$*${NC}"; }
-bold()    { echo -e "${BOLD}$*${NC}"; }
+warn() { echo -e "${YELLOW}$*${NC}"; }
+error() { echo -e "${RED}$*${NC}"; }
+bold() { echo -e "${BOLD}$*${NC}"; }
 
 # ── Status indicators ───────────────────────────────────────────────
-dot_green()  { echo -e "${GREEN}●${NC}"; }
+dot_green() { echo -e "${GREEN}●${NC}"; }
 dot_yellow() { echo -e "${YELLOW}●${NC}"; }
-dot_red()    { echo -e "${RED}●${NC}"; }
-dot_cyan()   { echo -e "${CYAN}●${NC}"; }
+dot_red() { echo -e "${RED}●${NC}"; }
+dot_cyan() { echo -e "${CYAN}●${NC}"; }

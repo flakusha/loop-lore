@@ -3,7 +3,7 @@
  *
  * Opt-in anonymized event tracking for operational observability.
  */
-import type { Generated } from "kysely";
+import type { Generated, } from "kysely";
 
 export interface TelemetryEvents {
   id: Generated<string>;

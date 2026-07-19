@@ -3,8 +3,8 @@
  *
  * Quest configs, rewards, and creation/progress request types.
  */
-import type { QuestType as QT } from "../db/enums";
-import type { WorldEvent } from "./story-events-types";
+import type { QuestType as QT, } from "../db/enums";
+import type { WorldEvent, } from "./story-events-types";
 
 // ─── Quest Configs ───────────────────────────────────────────────
 export interface BaseQuestConfig {

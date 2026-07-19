@@ -15,25 +15,25 @@
 const API_BASE = "";
 
 function getCsrfToken(): string {
-  const meta = document.querySelector<HTMLMetaElement>("meta[name=\"csrf-token\"]");
-  if (meta?.content) return meta.content;
-  const match = /(?:^|;\s*)csrf_token=([^;]+)/.exec(document.cookie);
+  const meta = document.querySelector<HTMLMetaElement>('meta[name="csrf-token"]',);
+  if (meta?.content) { return meta.content; }
+  const match = /(?:^|;\s*)csrf_token=([^;]+)/.exec(document.cookie,);
   return match?.[1] ?? "";
 }
 
-export async function feFetch(url: string, options: RequestInit = {}): Promise<Response> {
-  const opts: RequestInit = { ...options };
-  opts.headers = new Headers(opts.headers ?? {});
+export async function feFetch(url: string, options: RequestInit = {},): Promise<Response> {
+  const opts: RequestInit = { ...options, };
+  opts.headers = new Headers(opts.headers ?? {},);
   const csrf = getCsrfToken();
-  if (csrf) opts.headers.set("X-CSRF-Token", csrf);
-  const token = localStorage.getItem("session_token");
-  if (token) opts.headers.set("Authorization", `Bearer ${token}`);
-  opts.signal = AbortSignal.timeout(30_000);
-  const res = await fetch(API_BASE + url, opts);
+  if (csrf) { opts.headers.set("X-CSRF-Token", csrf,); }
+  const token = localStorage.getItem("session_token",);
+  if (token) { opts.headers.set("Authorization", `Bearer ${token}`,); }
+  opts.signal = AbortSignal.timeout(30_000,);
+  const res = await fetch(API_BASE + url, opts,);
   if (res.status === 401) {
-    const redirect = encodeURIComponent(location.pathname + location.search);
-    location.assign(`/views/login?redirect=${redirect}`);
-    throw new Error("Unauthorized");
+    const redirect = encodeURIComponent(location.pathname + location.search,);
+    location.assign(`/views/login?redirect=${redirect}`,);
+    throw new Error("Unauthorized",);
   }
   return res;
 }

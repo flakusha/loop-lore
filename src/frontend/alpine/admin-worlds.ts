@@ -1,6 +1,6 @@
-import { log as rootLog } from "./logger";
+import { log as rootLog, } from "./logger";
 
-const log = rootLog.child({ module: "admin-worlds" });
+const log = rootLog.child({ module: "admin-worlds", },);
 
 interface WorldRow {
   id: string;
@@ -23,41 +23,41 @@ export const adminWorlds = {
     this.loadingWorlds = true;
     try {
       let url = `/api/admin/worlds?page=${this.worldPage}&pageSize=${(this as any).pageSize}`;
-      if (this.worldSearch) url += `&q=${encodeURIComponent(this.worldSearch)}`;
-      const res = await fetch(url, { headers: { Accept: "application/json" } });
+      if (this.worldSearch) { url += `&q=${encodeURIComponent(this.worldSearch,)}`; }
+      const res = await fetch(url, { headers: { Accept: "application/json", }, },);
       if (res.ok) {
         const data = await res.json();
         this.worlds = data.data || [];
         this.worldTotal = data.total || 0;
       }
     } catch {
-      log.warn("Network error loading worlds");
+      log.warn("Network error loading worlds",);
     } finally {
       this.loadingWorlds = false;
     }
   },
   get worldPages(): number {
-    return Math.ceil(this.worldTotal / (this as any).pageSize) || 1;
+    return Math.ceil(this.worldTotal / (this as any).pageSize,) || 1;
   },
-  async goWorldsPage(p: number) {
+  async goWorldsPage(p: number,) {
     this.worldPage = p;
     await this.loadWorlds();
   },
-  async deleteWorld(worldId: string) {
-    if (this.confirmDeleteWorld !== worldId) return;
+  async deleteWorld(worldId: string,) {
+    if (this.confirmDeleteWorld !== worldId) { return; }
     try {
-      const res = await apiFetch(`/api/admin/worlds/${worldId}`, { method: "DELETE" });
+      const res = await apiFetch(`/api/admin/worlds/${worldId}`, { method: "DELETE", },);
       if (res.ok) {
-        showToast("success", "World deleted");
+        showToast("success", "World deleted",);
         this.confirmDeleteWorld = "";
         await this.loadWorlds();
         await (this as any).loadOverview();
       } else {
         const err = await res.json();
-        showToast("error", err.error || "Failed");
+        showToast("error", err.error || "Failed",);
       }
     } catch {
-      showToast("error", "Network error");
+      showToast("error", "Network error",);
     }
   },
   searchWorlds() {

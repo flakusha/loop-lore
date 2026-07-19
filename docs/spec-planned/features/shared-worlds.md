@@ -10,34 +10,34 @@ Multiplayer co-op storytelling on one world with CRDT sync.
 
 ```typescript
 // src/crdt/world-document.ts
-import { Doc, List, Map as YMap } from "yjs";
+import { Doc, List, Map as YMap, } from "yjs";
 
 export class SharedWorldDocument {
   private doc: Doc;
   private state: YMap<any>;
   private actors: List<any>;
 
-  constructor(worldId: string) {
+  constructor(worldId: string,) {
     this.doc = new Doc();
     this.doc.name = `world-${worldId}`;
 
-    this.state = this.doc.getMap("state");
-    this.actors = this.doc.getArray("actors");
+    this.state = this.doc.getMap("state",);
+    this.actors = this.doc.getArray("actors",);
   }
 
-  updateActor(actorId: string, updates: Partial<ActorState>) {
-    const index = this.actors.toArray().findIndex((a) => a.id === actorId);
+  updateActor(actorId: string, updates: Partial<ActorState>,) {
+    const index = this.actors.toArray().findIndex((a,) => a.id === actorId);
     if (index >= 0) {
-      this.actors.delete(index, 1);
+      this.actors.delete(index, 1,);
     }
-    this.actors.push([{ id: actorId, ...updates }]);
+    this.actors.push([{ id: actorId, ...updates, },],);
   }
 
-  onUpdate(callback: (update: any) => void) {
-    this.doc.on("update", callback);
+  onUpdate(callback: (update: any,) => void,) {
+    this.doc.on("update", callback,);
   }
 
-  connect(provider: WebsocketProvider) {
+  connect(provider: WebsocketProvider,) {
     provider.doc = this.doc;
   }
 }
@@ -47,32 +47,32 @@ export class SharedWorldDocument {
 
 ```typescript
 // src/transport/websocket-world.ts
-export function createWorldSync(worldId: string, userId: string): WebsocketProvider {
-  const ws = new WebsocketProvider(`ws://${location.host}/ws/world/${worldId}`, worldId, new Doc());
+export function createWorldSync(worldId: string, userId: string,): WebsocketProvider {
+  const ws = new WebsocketProvider(`ws://${location.host}/ws/world/${worldId}`, worldId, new Doc(),);
 
   // Send presence
-  ws.on("status", ({ status }) => {
+  ws.on("status", ({ status, },) => {
     if (status === "connected") {
-      sendPresence(userId, "online");
+      sendPresence(userId, "online",);
     }
-  });
+  },);
 
   // Receive updates
-  ws.on("sync", (update) => {
-    applyWorldUpdate(update);
-  });
+  ws.on("sync", (update,) => {
+    applyWorldUpdate(update,);
+  },);
 
   return ws;
 }
 
-function sendPresence(userId: string, status: string) {
+function sendPresence(userId: string, status: string,) {
   // Broadcast to other participants
   ws.send(
     JSON.stringify({
       type: "presence",
       userId,
       status,
-    }),
+    },),
   );
 }
 ```
@@ -81,7 +81,7 @@ function sendPresence(userId: string, status: string) {
 
 ```typescript
 // Last-write-wins with timestamps
-export function resolveActorState(local: ActorState, remote: ActorState): ActorState {
+export function resolveActorState(local: ActorState, remote: ActorState,): ActorState {
   // Compare modification times
   if (local.updated_at > remote.updated_at) {
     return local;
@@ -90,14 +90,14 @@ export function resolveActorState(local: ActorState, remote: ActorState): ActorS
 }
 
 // Merge stats (additive)
-export function mergeStats(local: Stats, remote: Stats): Stats {
+export function mergeStats(local: Stats, remote: Stats,): Stats {
   return {
     ...local,
     ...remote,
     // For numeric stats, take max
-    hp: Math.max(local.hp, remote.hp),
+    hp: Math.max(local.hp, remote.hp,),
     // For inventory, merge
-    inventory: [...new Set([...local.inventory, ...remote.inventory])],
+    inventory: [...new Set([...local.inventory, ...remote.inventory,],),],
   };
 }
 ```
@@ -111,13 +111,13 @@ export function usePresence() {
     participants: [],
 
     init() {
-      this.presence = new SharedWorldDocument(this.worldId);
-      this.presence.onUpdate(this.handleUpdate.bind(this));
+      this.presence = new SharedWorldDocument(this.worldId,);
+      this.presence.onUpdate(this.handleUpdate.bind(this,),);
     },
 
-    handleUpdate(update) {
+    handleUpdate(update,) {
       const actors = this.presence.actors.toArray();
-      this.participants = actors.map((actor) => ({
+      this.participants = actors.map((actor,) => ({
         ...actor,
         isOnline: actor.last_seen > Date.now() - 300000, // 5 min
       }));

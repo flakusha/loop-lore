@@ -13,23 +13,23 @@
  * not a gate. The real size cap is indirect: `sonarjs/cognitive-complexity`
  * (warn@20) in `eslint.config.mjs`.
  */
-import { Glob } from "bun";
+import { Glob, } from "bun";
 
 const LIMIT = 250;
-const glob = new Glob("src/**/*.ts");
+const glob = new Glob("src/**/*.ts",);
 
 let warnings = 0;
 for await (const file of glob.scan()) {
-  if (file.includes(".test.") || file.includes("/migrations/")) continue;
-  const text = await Bun.file(file).text();
-  const lines = text.split("\n").length;
+  if (file.includes(".test.",) || file.includes("/migrations/",)) { continue; }
+  const text = await Bun.file(file,).text();
+  const lines = text.split("\n",).length;
   if (lines > LIMIT) {
-    console.warn(`[size] ${file}: ${lines}L exceeds ${LIMIT}L soft limit — consider splitting (see 04)`);
+    console.warn(`[size] ${file}: ${lines}L exceeds ${LIMIT}L soft limit — consider splitting (see 04)`,);
     warnings++;
   }
 }
 
 if (warnings > 0) {
-  console.warn(`[size] ${warnings} file(s) over ${LIMIT}L. Non-blocking — split when convenient.`);
+  console.warn(`[size] ${warnings} file(s) over ${LIMIT}L. Non-blocking — split when convenient.`,);
 }
-process.exit(0);
+process.exit(0,);

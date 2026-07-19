@@ -52,7 +52,7 @@ export async function registerDevice(
   const deviceId = crypto.randomUUID();
 
   await db
-    .insertInto("user_devices")
+    .insertInto("user_devices",)
     .values({
       id: deviceId,
       user_id: userId,
@@ -61,7 +61,7 @@ export async function registerDevice(
       public_key: deviceInfo.publicKey,
       created_at: new Date().toISOString(),
       last_seen: new Date().toISOString(),
-    })
+    },)
     .execute();
 
   return deviceId;
@@ -83,22 +83,22 @@ export interface UserDevices {
 
 ```typescript
 // src/routes/sync.ts
-export async function GET(req: Request) {
-  const user = await authenticate(req);
-  const deviceId = req.headers.get("X-Device-ID");
-  const lastSync = req.query.get("since");
+export async function GET(req: Request,) {
+  const user = await authenticate(req,);
+  const deviceId = req.headers.get("X-Device-ID",);
+  const lastSync = req.query.get("since",);
 
   // Get messages since last sync
   const messages = await db
-    .selectFrom("messages")
+    .selectFrom("messages",)
     .selectAll()
-    .where("chat_id", "in", user.chatIds)
-    .where("created_at", ">", lastSync)
+    .where("chat_id", "in", user.chatIds,)
+    .where("created_at", ">", lastSync,)
     .execute();
 
   // Wrap each message's key for this device
   const encryptedMessages = await Promise.all(
-    messages.map(async (msg) => ({
+    messages.map(async (msg,) => ({
       id: msg.id,
       chatId: msg.chat_id,
       encryptedContent: msg.content, // Already encrypted
@@ -110,7 +110,7 @@ export async function GET(req: Request) {
   return success(200, {
     messages: encryptedMessages,
     timestamp: new Date().toISOString(),
-  });
+  },);
 }
 ```
 

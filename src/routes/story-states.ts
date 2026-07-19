@@ -12,14 +12,14 @@
  *   POST /api/worlds/:id/states                 — take snapshot
  */
 
-import { Elysia } from "elysia";
-import type { Kysely } from "kysely";
-import type { DB } from "../db/schema";
-import { notifyGmAction } from "../notifications/service";
-import { WorldStateService } from "../story/world-state";
-import { safeJsonStringify } from "../utils";
-import { notFound } from "../validation/middleware";
-import { HttpStatus, jsonCreated, jsonError, jsonPaginated, jsonResponse } from "./http-utils";
+import { Elysia, } from "elysia";
+import type { Kysely, } from "kysely";
+import type { DB, } from "../db/schema";
+import { notifyGmAction, } from "../notifications/service";
+import { WorldStateService, } from "../story/world-state";
+import { safeJsonStringify, } from "../utils";
+import { notFound, } from "../validation/middleware";
+import { HttpStatus, jsonCreated, jsonError, jsonPaginated, jsonResponse, } from "./http-utils";
 
 // ── Handlers ────────────────────────────────────────────────
 
@@ -33,24 +33,24 @@ async function handleNpcState(
   body?: Record<string, unknown>,
 ) {
   const worldCheck = await database
-    .selectFrom("worlds")
-    .select(["owner_id"])
-    .where("id", "=", worldId)
+    .selectFrom("worlds",)
+    .select(["owner_id",],)
+    .where("id", "=", worldId,)
     .executeTakeFirst();
   if (!worldCheck || (worldCheck.owner_id !== userId && userRole !== "admin")) {
-    return jsonError({ message: "NPC state not found", status: HttpStatus.NotFound });
+    return jsonError({ message: "NPC state not found", status: HttpStatus.NotFound, },);
   }
 
-  const state = new WorldStateService(database);
+  const state = new WorldStateService(database,);
   if (method === "GET") {
-    const npcState = await state.getNpcState(actorId, worldId);
-    if (!npcState) return notFound("NPC state not found");
-    return jsonResponse(npcState);
+    const npcState = await state.getNpcState(actorId, worldId,);
+    if (!npcState) { return notFound("NPC state not found",); }
+    return jsonResponse(npcState,);
   }
 
   const updates: Record<string, unknown> = {};
-  const intFields: Record<string, string> = { health: "health" };
-  const strFields: Record<string, string> = { mentalState: "mental_state" };
+  const intFields: Record<string, string> = { health: "health", };
+  const strFields: Record<string, string> = { mentalState: "mental_state", };
   const jsonFields: Record<string, string> = {
     knowledge: "knowledge",
     relationships: "relationships",
@@ -58,36 +58,36 @@ async function handleNpcState(
     schedule: "schedule",
   };
 
-  for (const [k, col] of Object.entries(intFields)) {
-    if (body?.[k] != null) updates[col] = body[k];
+  for (const [k, col,] of Object.entries(intFields,)) {
+    if (body?.[k] != null) { updates[col] = body[k]; }
   }
-  for (const [k, col] of Object.entries(strFields)) {
-    if (body?.[k] != null) updates[col] = body[k];
+  for (const [k, col,] of Object.entries(strFields,)) {
+    if (body?.[k] != null) { updates[col] = body[k]; }
   }
-  for (const [k, col] of Object.entries(jsonFields)) {
+  for (const [k, col,] of Object.entries(jsonFields,)) {
     if (body?.[k] == null) {
       continue;
     }
 
-    const r = safeJsonStringify(body[k]);
-    if (r.ok) updates[col] = r.value;
+    const r = safeJsonStringify(body[k],);
+    if (r.ok) { updates[col] = r.value; }
   }
-  if (body?.locationId != null) updates.location_id = body.locationId;
+  if (body?.locationId != null) { updates.location_id = body.locationId; }
   updates.updated_at = new Date().toISOString();
 
   await database
-    .updateTable("npc_states")
-    .set(updates)
-    .where("actor_id", "=", actorId)
-    .where("world_id", "=", worldId)
+    .updateTable("npc_states",)
+    .set(updates,)
+    .where("actor_id", "=", actorId,)
+    .where("world_id", "=", worldId,)
     .execute();
 
-  const updated = await state.getNpcState(actorId, worldId);
+  const updated = await state.getNpcState(actorId, worldId,);
   void notifyGmAction(database, {
     worldId,
     description: `NPC ${actorId} state updated`,
-  }).catch(() => {});
-  return jsonResponse(updated);
+  },).catch(() => {},);
+  return jsonResponse(updated,);
 }
 
 async function handleNpcsAtLocation(
@@ -98,17 +98,17 @@ async function handleNpcsAtLocation(
   userRole: string | null,
 ) {
   const worldCheck = await database
-    .selectFrom("worlds")
-    .select(["owner_id"])
-    .where("id", "=", worldId)
+    .selectFrom("worlds",)
+    .select(["owner_id",],)
+    .where("id", "=", worldId,)
     .executeTakeFirst();
   if (!worldCheck || (worldCheck.owner_id !== userId && userRole !== "admin")) {
-    return jsonError({ message: "Location not found", status: HttpStatus.NotFound });
+    return jsonError({ message: "Location not found", status: HttpStatus.NotFound, },);
   }
 
-  const state = new WorldStateService(database);
-  const npcs = await state.getNpcsAtLocation(locationId);
-  return jsonResponse(npcs);
+  const state = new WorldStateService(database,);
+  const npcs = await state.getNpcsAtLocation(locationId,);
+  return jsonResponse(npcs,);
 }
 
 async function handleLocationState(
@@ -120,24 +120,24 @@ async function handleLocationState(
   body?: Record<string, unknown>,
 ) {
   const locWorld = await database
-    .selectFrom("location_states")
-    .innerJoin("worlds", "worlds.id", "location_states.world_id")
-    .select(["worlds.owner_id"])
-    .where("location_states.location_id", "=", locationId)
+    .selectFrom("location_states",)
+    .innerJoin("worlds", "worlds.id", "location_states.world_id",)
+    .select(["worlds.owner_id",],)
+    .where("location_states.location_id", "=", locationId,)
     .executeTakeFirst();
   if (!locWorld || (locWorld.owner_id !== userId && userRole !== "admin")) {
-    return jsonError({ message: "Location not found", status: HttpStatus.NotFound });
+    return jsonError({ message: "Location not found", status: HttpStatus.NotFound, },);
   }
 
-  const state = new WorldStateService(database);
+  const state = new WorldStateService(database,);
   if (method === "GET") {
-    const locState = await state.getLocationState(locationId);
-    if (!locState) return notFound("Location state not found");
-    return jsonResponse(locState);
+    const locState = await state.getLocationState(locationId,);
+    if (!locState) { return notFound("Location state not found",); }
+    return jsonResponse(locState,);
   }
 
   const updates: Record<string, unknown> = {};
-  const strFields = ["description_override", "atmosphere", "time_of_day", "weather"] as const;
+  const strFields = ["description_override", "atmosphere", "time_of_day", "weather",] as const;
   const jsonFields: Record<string, string> = {
     npcsPresent: "npcs_present",
     itemsAvailable: "items_available",
@@ -145,32 +145,32 @@ async function handleLocationState(
   };
 
   for (const f of strFields) {
-    if (body?.[f] != null) updates[f] = body[f];
+    if (body?.[f] != null) { updates[f] = body[f]; }
   }
-  for (const [k, col] of Object.entries(jsonFields)) {
+  for (const [k, col,] of Object.entries(jsonFields,)) {
     if (body?.[k] == null) {
       continue;
     }
 
-    const r = safeJsonStringify(body[k]);
-    if (r.ok) updates[col] = r.value;
+    const r = safeJsonStringify(body[k],);
+    if (r.ok) { updates[col] = r.value; }
   }
   updates.updated_at = new Date().toISOString();
 
-  await database.updateTable("location_states").set(updates).where("location_id", "=", locationId).execute();
+  await database.updateTable("location_states",).set(updates,).where("location_id", "=", locationId,).execute();
   const locWorldRow = await database
-    .selectFrom("location_states")
-    .select("world_id")
-    .where("location_id", "=", locationId)
+    .selectFrom("location_states",)
+    .select("world_id",)
+    .where("location_id", "=", locationId,)
     .executeTakeFirst();
   if (locWorldRow) {
     void notifyGmAction(database, {
       worldId: locWorldRow.world_id,
       description: `Location ${locationId} state updated`,
-    }).catch(() => {});
+    },).catch(() => {},);
   }
-  const updated = await state.getLocationState(locationId);
-  return jsonResponse(updated);
+  const updated = await state.getLocationState(locationId,);
+  return jsonResponse(updated,);
 }
 
 async function handleWorldStates(
@@ -184,32 +184,32 @@ async function handleWorldStates(
   body?: Record<string, unknown>,
 ) {
   const worldCheck = await database
-    .selectFrom("worlds")
-    .select(["owner_id"])
-    .where("id", "=", worldId)
+    .selectFrom("worlds",)
+    .select(["owner_id",],)
+    .where("id", "=", worldId,)
     .executeTakeFirst();
   if (!worldCheck || (worldCheck.owner_id !== userId && userRole !== "admin")) {
-    return jsonError({ message: "World not found", status: HttpStatus.NotFound });
+    return jsonError({ message: "World not found", status: HttpStatus.NotFound, },);
   }
 
-  const state = new WorldStateService(database);
+  const state = new WorldStateService(database,);
   if (method === "GET") {
     const offset = (page - 1) * pageSize;
     const countResult = await database
-      .selectFrom("world_states")
-      .select(database.fn.countAll<number>().as("total"))
-      .where("world_id", "=", worldId)
+      .selectFrom("world_states",)
+      .select(database.fn.countAll<number>().as("total",),)
+      .where("world_id", "=", worldId,)
       .executeTakeFirst();
     const total = countResult?.total ?? 0;
     const snapshots = await database
-      .selectFrom("world_states")
+      .selectFrom("world_states",)
       .selectAll()
-      .where("world_id", "=", worldId)
-      .orderBy("created_at", "desc")
-      .limit(pageSize)
-      .offset(offset)
+      .where("world_id", "=", worldId,)
+      .orderBy("created_at", "desc",)
+      .limit(pageSize,)
+      .offset(offset,)
       .execute();
-    return jsonPaginated({ data: snapshots, total, page, pageSize });
+    return jsonPaginated({ data: snapshots, total, page, pageSize, },);
   }
 
   const id = await state.snapshot(
@@ -218,14 +218,14 @@ async function handleWorldStates(
     (body?.messageId as string) ?? undefined,
     (body?.description as string) ?? undefined,
   );
-  return jsonCreated({ id });
+  return jsonCreated({ id, },);
 }
 
 // ── Elysia plugin ───────────────────────────────────────────
 
-export function storyStatesRoutes({ database }: { database: Kysely<DB> }): Elysia {
-  return new Elysia({ name: "story-states" })
-    .get("/api/worlds/:id/npc-states/:actorId", async (ctx: any) => {
+export function storyStatesRoutes({ database, }: { database: Kysely<DB> },): Elysia {
+  return new Elysia({ name: "story-states", },)
+    .get("/api/worlds/:id/npc-states/:actorId", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
       const userRole = ctx.userRole as string | null;
       return handleNpcState(
@@ -236,8 +236,8 @@ export function storyStatesRoutes({ database }: { database: Kysely<DB> }): Elysi
         userId,
         userRole,
       );
-    })
-    .put("/api/worlds/:id/npc-states/:actorId", async (ctx: any) => {
+    },)
+    .put("/api/worlds/:id/npc-states/:actorId", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
       const userRole = ctx.userRole as string | null;
       return handleNpcState(
@@ -249,8 +249,8 @@ export function storyStatesRoutes({ database }: { database: Kysely<DB> }): Elysi
         userRole,
         ctx.body as Record<string, unknown>,
       );
-    })
-    .get("/api/worlds/:id/npcs-at/:locationId", async (ctx: any) => {
+    },)
+    .get("/api/worlds/:id/npcs-at/:locationId", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
       const userRole = ctx.userRole as string | null;
       return handleNpcsAtLocation(
@@ -260,13 +260,13 @@ export function storyStatesRoutes({ database }: { database: Kysely<DB> }): Elysi
         userId,
         userRole,
       );
-    })
-    .get("/api/locations/:locationId/state", async (ctx: any) => {
+    },)
+    .get("/api/locations/:locationId/state", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
       const userRole = ctx.userRole as string | null;
-      return handleLocationState(database, "GET", ctx.params.locationId as string, userId, userRole);
-    })
-    .put("/api/locations/:locationId/state", async (ctx: any) => {
+      return handleLocationState(database, "GET", ctx.params.locationId as string, userId, userRole,);
+    },)
+    .put("/api/locations/:locationId/state", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
       const userRole = ctx.userRole as string | null;
       return handleLocationState(
@@ -277,8 +277,8 @@ export function storyStatesRoutes({ database }: { database: Kysely<DB> }): Elysi
         userRole,
         ctx.body as Record<string, unknown>,
       );
-    })
-    .get("/api/worlds/:id/states", async (ctx: any) => {
+    },)
+    .get("/api/worlds/:id/states", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
       const userRole = ctx.userRole as string | null;
       return handleWorldStates(
@@ -287,11 +287,11 @@ export function storyStatesRoutes({ database }: { database: Kysely<DB> }): Elysi
         ctx.params.id as string,
         userId,
         userRole,
-        Number(ctx.query?.page) || 1,
-        Number(ctx.query?.pageSize) || 20,
+        Number(ctx.query?.page,) || 1,
+        Number(ctx.query?.pageSize,) || 20,
       );
-    })
-    .post("/api/worlds/:id/states", async (ctx: any) => {
+    },)
+    .post("/api/worlds/:id/states", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
       const userRole = ctx.userRole as string | null;
       return handleWorldStates(
@@ -304,5 +304,5 @@ export function storyStatesRoutes({ database }: { database: Kysely<DB> }): Elysi
         20,
         ctx.body as Record<string, unknown>,
       );
-    }) as unknown as Elysia;
+    },) as unknown as Elysia;
 }

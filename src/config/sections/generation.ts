@@ -27,13 +27,13 @@ export class GenerationSection implements GenerationConfig {
   modelRoles: Record<string, ModelRoleAssignment> = {};
   autoStart: GenerationConfig["autoStart"];
 
-  constructor(overrides?: Partial<GenerationConfig>) {
-    if (!overrides) return;
+  constructor(overrides?: Partial<GenerationConfig>,) {
+    if (!overrides) { return; }
 
     const { providers, ...rest } = overrides;
-    Object.assign(this, rest);
+    Object.assign(this, rest,);
     if (providers) {
-      this.providers = { ...this.providers, ...providers };
+      this.providers = { ...this.providers, ...providers, };
     }
   }
 }
@@ -67,18 +67,18 @@ export const generationMeta = {
           type: "object",
           description: "Spawn llama.cpp server as child process",
           properties: {
-            enabled: { type: "boolean", description: "Enable auto-start" },
+            enabled: { type: "boolean", description: "Enable auto-start", },
             modelPath: {
               type: "string",
               description: "GGUF path or HF ref (org/repo:quant)",
             },
-            port: { type: "integer", description: "llama-server port" },
-            alias: { type: "string", description: "Model alias for API reference" },
+            port: { type: "integer", description: "llama-server port", },
+            alias: { type: "string", description: "Model alias for API reference", },
             ctxSize: {
               type: "integer",
               description: "Context size in tokens",
             },
-            threads: { type: "integer", description: "CPU threads (-1 = auto)" },
+            threads: { type: "integer", description: "CPU threads (-1 = auto)", },
             nGpuLayers: {
               type: "string",
               description: "GPU layers: number, auto, or all",
@@ -95,7 +95,7 @@ export const generationMeta = {
               type: "string",
               description: "KV cache type for K: f32, f16, q8_0, iq4_nl...",
             },
-            cacheTypeV: { type: "string", description: "KV cache type for V" },
+            cacheTypeV: { type: "string", description: "KV cache type for V", },
             cacheRam: {
               type: "integer",
               description: "KV cache RAM budget in MiB",
@@ -116,11 +116,11 @@ export const generationMeta = {
               type: "number",
               description: "RoPE context scaling factor",
             },
-            temp: { type: "number", description: "Temperature sampler default" },
-            topK: { type: "integer", description: "Top-K sampler default" },
-            topP: { type: "number", description: "Top-P sampler default" },
-            minP: { type: "number", description: "Min-P sampler default" },
-            repeatPenalty: { type: "number", description: "Repeat penalty" },
+            temp: { type: "number", description: "Temperature sampler default", },
+            topK: { type: "integer", description: "Top-K sampler default", },
+            topP: { type: "number", description: "Top-P sampler default", },
+            minP: { type: "number", description: "Min-P sampler default", },
+            repeatPenalty: { type: "number", description: "Repeat penalty", },
             parallelRequests: {
               type: "integer",
               description: "Max parallel requests",
@@ -151,27 +151,27 @@ export const generationMeta = {
             },
             extraArgs: {
               type: "array",
-              items: { type: "string" },
+              items: { type: "string", },
               description: "Extra CLI args",
             },
           },
-          required: ["enabled", "modelPath", "port"],
+          required: ["enabled", "modelPath", "port",],
         },
         sdCpp: {
           type: "object",
           description: "Spawn sd-server as child process",
           properties: {
-            enabled: { type: "boolean", description: "Enable auto-start" },
+            enabled: { type: "boolean", description: "Enable auto-start", },
             modelType: {
               type: "string",
-              enum: ["checkpoint", "diffusion"],
+              enum: ["checkpoint", "diffusion",],
               description: "checkpoint = standalone (-m), diffusion = component (--diffusion-model, needs llm)",
             },
             modelPath: {
               type: "string",
               description: "Path to .safetensors model",
             },
-            port: { type: "integer", description: "sd-server port" },
+            port: { type: "integer", description: "sd-server port", },
             llmPath: {
               type: "string",
               description: "LLM text encoder GGUF. Needed for most diffusion models.",
@@ -180,8 +180,8 @@ export const generationMeta = {
               type: "string",
               description: "CLIP-L text encoder (SD1.x/SD2.x)",
             },
-            clipGPath: { type: "string", description: "CLIP-G text encoder" },
-            t5xxlPath: { type: "string", description: "T5-XXL text encoder" },
+            clipGPath: { type: "string", description: "CLIP-G text encoder", },
+            t5xxlPath: { type: "string", description: "T5-XXL text encoder", },
             vaePath: {
               type: "string",
               description: "VAE safetensors path",
@@ -194,7 +194,7 @@ export const generationMeta = {
               type: "string",
               description: "Control net model path",
             },
-            loraDir: { type: "string", description: "LoRA directory path" },
+            loraDir: { type: "string", description: "LoRA directory path", },
             taesdPath: {
               type: "string",
               description: "TAESD for fast low-quality decode",
@@ -203,7 +203,7 @@ export const generationMeta = {
               type: "string",
               description: "Highres fix upscaler model directory",
             },
-            embdDir: { type: "string", description: "Embeddings directory" },
+            embdDir: { type: "string", description: "Embeddings directory", },
             photoMakerPath: {
               type: "string",
               description: "PhotoMaker model path",
@@ -274,11 +274,11 @@ export const generationMeta = {
             },
             extraArgs: {
               type: "array",
-              items: { type: "string" },
+              items: { type: "string", },
               description: "Extra CLI args",
             },
           },
-          required: ["enabled", "modelType", "modelPath", "port"],
+          required: ["enabled", "modelType", "modelPath", "port",],
         },
       },
     },

@@ -97,10 +97,10 @@ interface RulesModule {
 
   // Hooks into resolution pipeline
   hooks: {
-    beforeRoll?: (context: RollContext) => RollContext;
-    afterRoll?: (result: RollResult) => RollResult;
-    beforeDamage?: (damage: Damage) => Damage;
-    afterDamage?: (damage: Damage, target: Actor) => void;
+    beforeRoll?: (context: RollContext,) => RollContext;
+    afterRoll?: (result: RollResult,) => RollResult;
+    beforeDamage?: (damage: Damage,) => Damage;
+    afterDamage?: (damage: Damage, target: Actor,) => void;
   };
 
   // Configurable options
@@ -118,14 +118,14 @@ const MODULES: Record<string, RulesModule> = {
 ### Loading Pattern
 
 ```typescript
-function loadWorldRules(worldId: string): RulesEngine {
-  const world = db.selectFrom("worlds").where("id", "=", worldId);
+function loadWorldRules(worldId: string,): RulesEngine {
+  const world = db.selectFrom("worlds",).where("id", "=", worldId,);
   const modules = world.rules.modules || {};
 
   const engine = new RulesEngine();
-  for (const [id, config] of Object.entries(modules)) {
+  for (const [id, config,] of Object.entries(modules,)) {
     const mod = MODULES[id];
-    if (mod) engine.register(mod, config);
+    if (mod) { engine.register(mod, config,); }
   }
   return engine;
 }
@@ -181,9 +181,9 @@ async function resolveCombat(
 
 ```typescript
 // World defines available attributes
-const fantasyAttributes = ["str", "dex", "con", "int", "wis", "cha"];
-const cyberpunkAttributes = ["str", "dex", "con", "int", "wis", "cha", "tech"];
-const superheroAttributes = ["str", "dex", "con", "int", "wis", "cha", "pow"];
+const fantasyAttributes = ["str", "dex", "con", "int", "wis", "cha",];
+const cyberpunkAttributes = ["str", "dex", "con", "int", "wis", "cha", "tech",];
+const superheroAttributes = ["str", "dex", "con", "int", "wis", "cha", "pow",];
 
 interface ActorStats {
   base: Record<string, number>; // Configurable by world
@@ -207,11 +207,11 @@ interface Skill {
 
 // Universal skill list that adapts
 const universalSkills = [
-  { id: "athletics", attribute: "str", categories: ["physical"] },
-  { id: "stealth", attribute: "dex", categories: ["physical", "subterfuge"] },
-  { id: "hacking", attribute: "int", categories: ["modern", "cyberpunk"] },
-  { id: "arcana", attribute: "int", categories: ["fantasy", "magic"] },
-  { id: "medicine", attribute: "wis", categories: ["modern", "fantasy"] },
+  { id: "athletics", attribute: "str", categories: ["physical",], },
+  { id: "stealth", attribute: "dex", categories: ["physical", "subterfuge",], },
+  { id: "hacking", attribute: "int", categories: ["modern", "cyberpunk",], },
+  { id: "arcana", attribute: "int", categories: ["fantasy", "magic",], },
+  { id: "medicine", attribute: "wis", categories: ["modern", "fantasy",], },
 ];
 ```
 
@@ -240,18 +240,18 @@ interface EnergySystem {
 class ActionBuilder {
   private energy = 0;
 
-  spend(base: number): this {
+  spend(base: number,): this {
     this.energy += base;
     return this;
   }
 
-  add(variable: number): this {
+  add(variable: number,): this {
     this.energy += variable;
     return this;
   }
 
   // Check if actor has enough energy
-  canPay(actor: Actor): boolean {
+  canPay(actor: Actor,): boolean {
     return actor.energy.current >= this.energy;
   }
 }
@@ -287,7 +287,7 @@ interface MetaCurrency {
 }
 
 // Award triggers (narrative)
-const META_TRIGGERS = ["good_roleplay", "creative_solution", "character_development", "story_advancement"];
+const META_TRIGGERS = ["good_roleplay", "creative_solution", "character_development", "story_advancement",];
 ```
 
 ### Integration with Rewards
@@ -398,10 +398,10 @@ const neuralInterface: ItemTemplate = {
   category: "tool",
   slot: "amulet",
   properties: {
-    stat_bonuses: { int: 2 },
+    stat_bonuses: { int: 2, },
   },
   module_data: {
-    cybernetics: { humanity_loss: -1 },
+    cybernetics: { humanity_loss: -1, },
   },
 };
 ```
@@ -434,7 +434,7 @@ interface LevelProgression {
 // D&D 5e style
 const dndProgression: LevelProgression = {
   formula: "polynomial",
-  polynomial: { a: 0, b: 100, c: 0 }, // level * 100
+  polynomial: { a: 0, b: 100, c: 0, }, // level * 100
   on_level_up: {
     hp_bonus: "con_mod",
     stat_increases: 1, // Every 4 levels
@@ -477,7 +477,7 @@ interface MechanicsTestCase {
 
   // Expected outputs
   expected_success_rate: number; // Statistical
-  expected_damage_range?: [number, number];
+  expected_damage_range?: [number, number,];
   expected_effects?: string[];
 }
 
@@ -487,7 +487,7 @@ const combatTests = [
     name: "level_5_vs_level_3",
     system: "d20",
     action: "attack",
-    actor_stats: { str: 16, dex: 14 },
+    actor_stats: { str: 16, dex: 14, },
     dc: 13, // Typical AC
     expected_success_rate: 0.65, // 65% hit chance
   },
@@ -579,8 +579,8 @@ interface RelationshipEffect {
 
 // Example: Rival relationship
 const RIVAL_EFFECTS: RelationshipEffect[] = [
-  { type: "disposition", target: "other", modifier: -2, condition: "combat" },
-  { type: "respect", target: "self", modifier: +1 }, // Motivated by rivalry
+  { type: "disposition", target: "other", modifier: -2, condition: "combat", },
+  { type: "respect", target: "self", modifier: +1, }, // Motivated by rivalry
 ];
 ```
 

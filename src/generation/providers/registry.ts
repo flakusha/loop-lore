@@ -4,14 +4,14 @@
 // resolveProvider() handles resolution order: user BYO key → chat → server default.
 // See docs/spec/provider-system.md.
 
-import type { Kysely } from "kysely";
-import type { Config } from "../../config/schema";
-import { decryptValue } from "../../crypto";
-import { getDatabase } from "../../db/index";
-import type { DB } from "../../db/schema";
-import { circuitBreaker } from "./circuit-breaker";
-import { OpenAiCompatibleProvider } from "./openai-compatible";
-import type { ChunkEvent, GenerateRequest, GenerateResponse, LLMProvider } from "./types";
+import type { Kysely, } from "kysely";
+import type { Config, } from "../../config/schema";
+import { decryptValue, } from "../../crypto";
+import { getDatabase, } from "../../db/index";
+import type { DB, } from "../../db/schema";
+import { circuitBreaker, } from "./circuit-breaker";
+import { OpenAiCompatibleProvider, } from "./openai-compatible";
+import type { ChunkEvent, GenerateRequest, GenerateResponse, LLMProvider, } from "./types";
 // TODO: register additional providers (Bedrock, Google, Anthropic, Ollama native)
 // when their implementations land.
 
@@ -19,19 +19,19 @@ import type { ChunkEvent, GenerateRequest, GenerateResponse, LLMProvider } from 
 
 const registry = new Map<string, LLMProvider>();
 
-export function registerProvider(name: string, provider: LLMProvider): void {
-  if (registry.has(name)) {
+export function registerProvider(name: string, provider: LLMProvider,): void {
+  if (registry.has(name,)) {
     return; // Idempotent — already registered (e.g. from test setup or previous init)
   }
-  registry.set(name, provider);
+  registry.set(name, provider,);
 }
 
-export function getProvider(name: string): LLMProvider | undefined {
-  return registry.get(name);
+export function getProvider(name: string,): LLMProvider | undefined {
+  return registry.get(name,);
 }
 
 export function listProviders(): { name: string; capabilities: LLMProvider["capabilities"] }[] {
-  return [...registry].map(([name, provider]) => ({
+  return [...registry,].map(([name, provider,],) => ({
     name,
     capabilities: provider.capabilities,
   }));
@@ -69,7 +69,7 @@ export async function resolveProvider({
   userId,
   config,
   db,
-}: ResolveProviderOpts): Promise<ResolvedProvider> {
+}: ResolveProviderOpts,): Promise<ResolvedProvider> {
   let resolvedProviderName = provider ?? config.generation.defaultProvider;
   let resolvedModel = model ?? "";
 
@@ -80,14 +80,14 @@ export async function resolveProvider({
     const database = db ?? getDatabase();
     try {
       const row = await database
-        .selectFrom("user_api_keys")
+        .selectFrom("user_api_keys",)
         .selectAll()
-        .where("user_id", "=", userId)
-        .where("provider_name", "=", resolvedProviderName)
+        .where("user_id", "=", userId,)
+        .where("provider_name", "=", resolvedProviderName,)
         .executeTakeFirst();
 
       if (row) {
-        resolvedApiKey = await decryptValue(row.api_key_encrypted, config.byoKey.encryptionKey);
+        resolvedApiKey = await decryptValue(row.api_key_encrypted, config.byoKey.encryptionKey,);
       }
     } catch {
       // Logged but non-fatal — fall through to server key
@@ -106,7 +106,7 @@ export async function resolveProvider({
     resolvedModel = config.generation.defaultModels[resolvedProviderName] ?? "";
   }
 
-  const resolvedProvider = resolvedProviderName ? getProvider(resolvedProviderName) : undefined;
+  const resolvedProvider = resolvedProviderName ? getProvider(resolvedProviderName,) : undefined;
   if (!resolvedProvider) {
     throw new Error(
       `No provider resolved for "${resolvedProviderName}". Configure a provider in config file or LLM_PROVIDER_* env vars.`,
@@ -122,22 +122,22 @@ export async function resolveProvider({
 }
 
 /** Initialize providers from config on startup */
-export function initializeProviders(config: Config): void {
+export function initializeProviders(config: Config,): void {
   for (const instance of config.generation.providers.openaiCompatible) {
-    if (getProvider(instance.name)) {
+    if (getProvider(instance.name,)) {
       continue;
     }
 
-    const provider = new OpenAiCompatibleProvider(instance);
-    registerProvider(instance.name, provider);
-    circuitBreaker.register(instance.name);
+    const provider = new OpenAiCompatibleProvider(instance,);
+    registerProvider(instance.name, provider,);
+    circuitBreaker.register(instance.name,);
   }
-  if (config.generation.providers.anthropic && !getProvider(config.generation.providers.anthropic.name)) {
+  if (config.generation.providers.anthropic && !getProvider(config.generation.providers.anthropic.name,)) {
     // TODO: AnthropicProvider when implemented
   }
   if (
-    config.generation.providers.ollamaNative
-    && !getProvider(config.generation.providers.ollamaNative.name)
+    config.generation.providers.ollamaNative &&
+    !getProvider(config.generation.providers.ollamaNative.name,)
   ) {
     // TODO: OllamaNativeProvider when implemented
   }
@@ -154,29 +154,29 @@ export function initializeProviders(config: Config): void {
 export async function callWithFailover(
   providers: { name: string; provider: LLMProvider }[],
   req: GenerateRequest,
-  handler?: (chunk: ChunkEvent) => void,
+  handler?: (chunk: ChunkEvent,) => void,
 ): Promise<GenerateResponse> {
   const errors: string[] = [];
 
-  for (const { name, provider: prov } of providers) {
-    if (!circuitBreaker.allowRequest(name)) {
-      const state = circuitBreaker.getState(name);
+  for (const { name, provider: prov, } of providers) {
+    if (!circuitBreaker.allowRequest(name,)) {
+      const state = circuitBreaker.getState(name,);
       const remaining = state?.cooldownRemainingMs ?? 0;
-      errors.push(`${name}: circuit open (${Math.ceil(remaining / 1000)}s cooldown remaining)`);
+      errors.push(`${name}: circuit open (${Math.ceil(remaining / 1000,)}s cooldown remaining)`,);
       continue;
     }
 
     try {
-      const response = handler ? await prov.stream(req, handler) : await prov.complete(req);
+      const response = handler ? await prov.stream(req, handler,) : await prov.complete(req,);
 
-      circuitBreaker.onSuccess(name);
+      circuitBreaker.onSuccess(name,);
       return response;
     } catch (error) {
       const err = error as Error & { retryable?: boolean; retryAfter?: number };
-      circuitBreaker.onFailure(name, err.retryAfter ? err.retryAfter * 1000 : undefined);
-      errors.push(`${name}: ${err.message}`);
+      circuitBreaker.onFailure(name, err.retryAfter ? err.retryAfter * 1000 : undefined,);
+      errors.push(`${name}: ${err.message}`,);
     }
   }
 
-  throw new Error(`All providers failed: ${errors.join("; ")}`);
+  throw new Error(`All providers failed: ${errors.join("; ",)}`,);
 }

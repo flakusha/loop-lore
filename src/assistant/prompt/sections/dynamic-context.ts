@@ -8,16 +8,16 @@
  * end of context is the standard approach — the system prefix stays static,
  * only the tail changes each turn, minimizing compute on cache miss.
  */
-import type { SectionBuilder } from "../types";
+import type { SectionBuilder, } from "../types";
 
 export const dynamicContextSection: SectionBuilder = {
   name: "dynamicContext",
   enabled: () => true,
   build: async () => {
     const now = new Date();
-    const dateStr = now.toISOString().split("T", 1)[0] ?? "unknown";
-    const timeStr = now.toTimeString().split(" ", 1)[0] ?? "unknown";
+    const dateStr = now.toISOString().split("T", 1,)[0] ?? "unknown";
+    const timeStr = now.toTimeString().split(" ", 1,)[0] ?? "unknown";
     const content = `[Current date: ${dateStr} ${timeStr}]`;
-    return [{ role: "user", content }];
+    return [{ role: "user", content, },];
   },
 };

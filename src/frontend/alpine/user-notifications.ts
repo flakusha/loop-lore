@@ -6,7 +6,7 @@
 //
 // Reuses the existing global `showToast` (declared on Window) for push toasts.
 
-import type { NotificationBellState, NotificationListItem, NotificationPrefsState } from "./types";
+import type { NotificationBellState, NotificationListItem, NotificationPrefsState, } from "./types";
 
 const TYPE_ICONS: Record<string, string> = {
   mention: "@",
@@ -45,67 +45,67 @@ globalThis.notificationsBell = function(): NotificationBellState {
 
     async refresh() {
       try {
-        const res = await fetch("/api/notifications?unread=true");
-        if (!res.ok) return;
+        const res = await fetch("/api/notifications?unread=true",);
+        if (!res.ok) { return; }
         const data = (await res.json()) as { items: NotificationListItem[] };
         this.items = data.items ?? [];
-        this.unreadCount = this.items.filter((i) => !i.read).length;
+        this.unreadCount = this.items.filter((i,) => !i.read).length;
       } catch {
         /* ignore */
       }
     },
 
     connect() {
-      if (bellStream) return;
-      bellStream = new EventSource("/api/notifications/stream");
-      bellStream.addEventListener("notifications", (ev: MessageEvent) => {
+      if (bellStream) { return; }
+      bellStream = new EventSource("/api/notifications/stream",);
+      bellStream.addEventListener("notifications", (ev: MessageEvent,) => {
         try {
-          const data = JSON.parse(ev.data) as { unreadCount: number; items: NotificationListItem[] };
-          const known = new Set(this.items.map((i) => i.id));
+          const data = JSON.parse(ev.data,) as { unreadCount: number; items: NotificationListItem[] };
+          const known = new Set(this.items.map((i,) => i.id),);
           for (const n of data.items) {
-            if (!known.has(n.id)) globalThis.showToast("info", n.title);
+            if (!known.has(n.id,)) { globalThis.showToast("info", n.title,); }
           }
           this.items = data.items;
-          this.unreadCount = data.unreadCount ?? data.items.filter((i) => !i.read).length;
+          this.unreadCount = data.unreadCount ?? data.items.filter((i,) => !i.read).length;
         } catch {
           /* ignore malformed frame */
         }
-      });
+      },);
     },
 
     toggle() {
       this.open = !this.open;
-      if (this.open) void this.refresh();
+      if (this.open) { void this.refresh(); }
     },
 
-    iconFor(type: string): string {
+    iconFor(type: string,): string {
       return TYPE_ICONS[type] ?? "i";
     },
 
-    async markRead(id: string) {
+    async markRead(id: string,) {
       await fetch(`/api/notifications/${id}`, {
         method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ read: true }),
-      });
-      this.items = this.items.map((i) => (i.id === id ? { ...i, read: 1 } : i));
-      this.unreadCount = this.items.filter((i) => !i.read).length;
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ read: true, },),
+      },);
+      this.items = this.items.map((i,) => (i.id === id ? { ...i, read: 1, } : i));
+      this.unreadCount = this.items.filter((i,) => !i.read).length;
     },
 
     async markAllRead() {
-      await fetch("/api/notifications/read-all", { method: "PATCH" });
-      this.items = this.items.map((i) => ({ ...i, read: 1 }));
+      await fetch("/api/notifications/read-all", { method: "PATCH", },);
+      this.items = this.items.map((i,) => ({ ...i, read: 1, }));
       this.unreadCount = 0;
     },
 
-    async dismiss(id: string) {
-      await fetch(`/api/notifications/${id}`, { method: "DELETE" });
-      this.items = this.items.filter((i) => i.id !== id);
-      this.unreadCount = this.items.filter((i) => !i.read).length;
+    async dismiss(id: string,) {
+      await fetch(`/api/notifications/${id}`, { method: "DELETE", },);
+      this.items = this.items.filter((i,) => i.id !== id);
+      this.unreadCount = this.items.filter((i,) => !i.read).length;
     },
 
-    goTo(link: string | null) {
-      if (link) globalThis.location.assign(link);
+    goTo(link: string | null,) {
+      if (link) { globalThis.location.assign(link,); }
       this.open = false;
     },
   };
@@ -117,7 +117,7 @@ globalThis.notificationPrefs = function(): NotificationPrefsState {
     saving: false,
     enabled: {},
     mutedWorlds: [] as string[],
-    types: Object.keys(TYPE_LABELS).map((key) => ({ key, label: TYPE_LABELS[key] ?? key })),
+    types: Object.keys(TYPE_LABELS,).map((key,) => ({ key, label: TYPE_LABELS[key] ?? key, })),
 
     init() {
       void this.refresh();
@@ -125,8 +125,8 @@ globalThis.notificationPrefs = function(): NotificationPrefsState {
 
     async refresh() {
       try {
-        const res = await fetch("/api/notifications/preferences");
-        if (!res.ok) return;
+        const res = await fetch("/api/notifications/preferences",);
+        if (!res.ok) { return; }
         const data = (await res.json()) as {
           enabled: Record<string, boolean>;
           mutedWorlds: string[];
@@ -139,14 +139,14 @@ globalThis.notificationPrefs = function(): NotificationPrefsState {
       }
     },
 
-    async toggleType(key: string) {
-      this.enabled = { ...this.enabled, [key]: !this.enabled[key] };
+    async toggleType(key: string,) {
+      this.enabled = { ...this.enabled, [key]: !this.enabled[key], };
       await this.save();
     },
 
-    async toggleMuteWorld(worldId: string) {
-      const has = this.mutedWorlds.includes(worldId);
-      this.mutedWorlds = has ? this.mutedWorlds.filter((w) => w !== worldId) : [...this.mutedWorlds, worldId];
+    async toggleMuteWorld(worldId: string,) {
+      const has = this.mutedWorlds.includes(worldId,);
+      this.mutedWorlds = has ? this.mutedWorlds.filter((w,) => w !== worldId) : [...this.mutedWorlds, worldId,];
       await this.save();
     },
 
@@ -155,9 +155,9 @@ globalThis.notificationPrefs = function(): NotificationPrefsState {
       try {
         await fetch("/api/notifications/preferences", {
           method: "PATCH",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ enabled: this.enabled, mutedWorlds: this.mutedWorlds }),
-        });
+          headers: { "Content-Type": "application/json", },
+          body: JSON.stringify({ enabled: this.enabled, mutedWorlds: this.mutedWorlds, },),
+        },);
       } catch {
         /* ignore */
       } finally {

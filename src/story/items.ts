@@ -4,11 +4,11 @@
  * Manage item definitions (templates) and world item instances
  * placed in locations or carried by NPCs.
  */
-import type { Kysely, Transaction } from "kysely";
-import type { ItemCategory, ItemRarity } from "../db/enums";
-import { ItemVisibility, StackableState } from "../db/enums";
-import type { DB } from "../db/schema";
-import { safeJsonStringify, uid } from "../utils";
+import type { Kysely, Transaction, } from "kysely";
+import type { ItemCategory, ItemRarity, } from "../db/enums";
+import { ItemVisibility, StackableState, } from "../db/enums";
+import type { DB, } from "../db/schema";
+import { safeJsonStringify, uid, } from "../utils";
 
 // ── Item Definition Helpers ───────────────────────────────────
 
@@ -49,13 +49,13 @@ export interface TransferResult {
 // ── Service ───────────────────────────────────────────────────
 
 export class ItemsService {
-  constructor(private readonly db: Kysely<DB>) {}
+  constructor(private readonly db: Kysely<DB>,) {}
 
   /** Create a new item definition */
-  async createDefinition(def: ItemDefinition): Promise<string> {
+  async createDefinition(def: ItemDefinition,): Promise<string> {
     const id = uid();
     await this.db
-      .insertInto("items")
+      .insertInto("items",)
       .values({
         id,
         world_id: def.worldId,
@@ -66,27 +66,27 @@ export class ItemsService {
         stackable: def.stackable ? StackableState.Stackable : StackableState.Unique,
         max_stack: def.maxStack,
         properties: (() => {
-          const r = safeJsonStringify(def.properties);
+          const r = safeJsonStringify(def.properties,);
           return r.ok ? r.value : "{}";
         })(),
         value: def.value,
         weight: def.weight,
-      })
+      },)
       .execute();
     return id;
   }
 
   /** Get item definition by ID */
-  async getDefinition(itemId: string) {
-    return this.db.selectFrom("items").selectAll().where("id", "=", itemId).executeTakeFirst();
+  async getDefinition(itemId: string,) {
+    return this.db.selectFrom("items",).selectAll().where("id", "=", itemId,).executeTakeFirst();
   }
 
   /** List item definitions in a world */
-  async listDefinitions(worldId: string, category?: ItemCategory) {
-    let query = this.db.selectFrom("items").selectAll().where("world_id", "=", worldId);
+  async listDefinitions(worldId: string, category?: ItemCategory,) {
+    let query = this.db.selectFrom("items",).selectAll().where("world_id", "=", worldId,);
 
     if (category) {
-      query = query.where("category", "=", category);
+      query = query.where("category", "=", category,);
     }
 
     return query.execute();
@@ -104,7 +104,7 @@ export class ItemsService {
   ): Promise<string> {
     const id = uid();
     await this.db
-      .insertInto("world_items")
+      .insertInto("world_items",)
       .values({
         id,
         world_id: worldId,
@@ -115,20 +115,20 @@ export class ItemsService {
         respawnable: respawnable ? 1 : 0,
         spawn_condition: spawnCondition
           ? (() => {
-            const r = safeJsonStringify(spawnCondition);
+            const r = safeJsonStringify(spawnCondition,);
             return r.ok ? r.value : null;
           })()
           : null,
-      })
+      },)
       .execute();
     return id;
   }
 
   /** Give item instance to an NPC */
-  async giveToNpc(itemId: string, actorId: string, worldId: string, quantity = 1): Promise<string> {
+  async giveToNpc(itemId: string, actorId: string, worldId: string, quantity = 1,): Promise<string> {
     const id = uid();
     await this.db
-      .insertInto("world_items")
+      .insertInto("world_items",)
       .values({
         id,
         world_id: worldId,
@@ -139,16 +139,16 @@ export class ItemsService {
         visibility: ItemVisibility.Visible,
         respawnable: 0,
         spawn_condition: null,
-      })
+      },)
       .execute();
     return id;
   }
 
   /** Get items at a location */
-  async getAtLocation(locationId: string, includeHidden = false) {
+  async getAtLocation(locationId: string, includeHidden = false,) {
     let query = this.db
-      .selectFrom("world_items")
-      .innerJoin("items", "items.id", "world_items.item_id")
+      .selectFrom("world_items",)
+      .innerJoin("items", "items.id", "world_items.item_id",)
       .select([
         "world_items.id as world_item_id",
         "world_items.item_id",
@@ -163,21 +163,21 @@ export class ItemsService {
         "items.properties",
         "items.value",
         "items.weight",
-      ])
-      .where("world_items.location_id", "=", locationId);
+      ],)
+      .where("world_items.location_id", "=", locationId,);
 
     if (!includeHidden) {
-      query = query.where("world_items.visibility", "=", "visible");
+      query = query.where("world_items.visibility", "=", "visible",);
     }
 
     return query.execute();
   }
 
   /** Get items carried by an NPC */
-  async getNpcInventory(actorId: string) {
+  async getNpcInventory(actorId: string,) {
     return this.db
-      .selectFrom("world_items")
-      .innerJoin("items", "items.id", "world_items.item_id")
+      .selectFrom("world_items",)
+      .innerJoin("items", "items.id", "world_items.item_id",)
       .select([
         "world_items.id as world_item_id",
         "world_items.item_id",
@@ -190,8 +190,8 @@ export class ItemsService {
         "items.properties",
         "items.value",
         "items.weight",
-      ])
-      .where("world_items.owner_actor_id", "=", actorId)
+      ],)
+      .where("world_items.owner_actor_id", "=", actorId,)
       .execute();
   }
 
@@ -206,63 +206,63 @@ export class ItemsService {
     const db = trx ?? this.db;
 
     const source = await db
-      .selectFrom("world_items")
+      .selectFrom("world_items",)
       .selectAll()
-      .where("id", "=", worldItemId)
+      .where("id", "=", worldItemId,)
       .executeTakeFirst();
 
     if (!source) {
-      return { success: false, fromRemaining: 0, toQuantity: 0, transferred: 0 };
+      return { success: false, fromRemaining: 0, toQuantity: 0, transferred: 0, };
     }
 
-    const actualTransfer = Math.min(quantity, source.quantity);
+    const actualTransfer = Math.min(quantity, source.quantity,);
     const remaining = source.quantity - actualTransfer;
 
     if (remaining <= 0) {
       // Transfer all — update row with new owner
       await db
-        .updateTable("world_items")
+        .updateTable("world_items",)
         .set({
           quantity: 0,
           location_id: toLocationId ?? null,
           owner_actor_id: toActorId ?? null,
-        })
-        .where("id", "=", worldItemId)
+        },)
+        .where("id", "=", worldItemId,)
         .execute();
     } else {
       // Partial — reduce source
       await db
-        .updateTable("world_items")
-        .set({ quantity: remaining })
-        .where("id", "=", worldItemId)
+        .updateTable("world_items",)
+        .set({ quantity: remaining, },)
+        .where("id", "=", worldItemId,)
         .execute();
     }
 
     // Create or add to destination
     if (toLocationId || toActorId) {
       let query = db
-        .selectFrom("world_items")
+        .selectFrom("world_items",)
         .selectAll()
-        .where("item_id", "=", source.item_id)
-        .where("world_id", "=", source.world_id);
+        .where("item_id", "=", source.item_id,)
+        .where("world_id", "=", source.world_id,);
 
       if (toLocationId) {
-        query = query.where("location_id", "=", toLocationId);
+        query = query.where("location_id", "=", toLocationId,);
       } else if (toActorId) {
-        query = query.where("owner_actor_id", "=", toActorId);
+        query = query.where("owner_actor_id", "=", toActorId,);
       }
 
       const existing = await query.executeTakeFirst();
 
       if (existing) {
         await db
-          .updateTable("world_items")
-          .set({ quantity: existing.quantity + actualTransfer })
-          .where("id", "=", existing.id)
+          .updateTable("world_items",)
+          .set({ quantity: existing.quantity + actualTransfer, },)
+          .where("id", "=", existing.id,)
           .execute();
       } else {
         await db
-          .insertInto("world_items")
+          .insertInto("world_items",)
           .values({
             id: uid(),
             world_id: source.world_id,
@@ -273,7 +273,7 @@ export class ItemsService {
             visibility: ItemVisibility.Visible,
             respawnable: 0,
             spawn_condition: null,
-          })
+          },)
           .execute();
       }
     }
@@ -287,30 +287,30 @@ export class ItemsService {
   }
 
   /** Remove item instance */
-  async destroy(worldItemId: string, quantity?: number, trx?: Transaction<DB>): Promise<boolean> {
+  async destroy(worldItemId: string, quantity?: number, trx?: Transaction<DB>,): Promise<boolean> {
     const db = trx ?? this.db;
 
     if (quantity === undefined) {
-      await db.deleteFrom("world_items").where("id", "=", worldItemId).execute();
+      await db.deleteFrom("world_items",).where("id", "=", worldItemId,).execute();
       return true;
     }
 
     const source = await db
-      .selectFrom("world_items")
+      .selectFrom("world_items",)
       .selectAll()
-      .where("id", "=", worldItemId)
+      .where("id", "=", worldItemId,)
       .executeTakeFirst();
 
-    if (!source) return false;
+    if (!source) { return false; }
 
     const remaining = source.quantity - quantity;
     if (remaining <= 0) {
-      await db.deleteFrom("world_items").where("id", "=", worldItemId).execute();
+      await db.deleteFrom("world_items",).where("id", "=", worldItemId,).execute();
     } else {
       await db
-        .updateTable("world_items")
-        .set({ quantity: remaining })
-        .where("id", "=", worldItemId)
+        .updateTable("world_items",)
+        .set({ quantity: remaining, },)
+        .where("id", "=", worldItemId,)
         .execute();
     }
 

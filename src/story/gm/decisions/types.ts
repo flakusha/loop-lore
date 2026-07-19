@@ -6,10 +6,10 @@
  * {@link GameMasterType} in the registry so adding a mode is one file + one
  * registry line — no switch to edit.
  */
-import type { Kysely } from "kysely";
-import type { DB } from "../../../db/schema";
-import type { GenerationMessage } from "../../../generation/types";
-import type { GameMasterConfig, GameMasterDecision, StoryContext } from "../../types";
+import type { Kysely, } from "kysely";
+import type { DB, } from "../../../db/schema";
+import type { GenerationMessage, } from "../../../generation/types";
+import type { GameMasterConfig, GameMasterDecision, StoryContext, } from "../../types";
 
 /** Function provided by the caller to actually invoke an LLM. */
 export type GenerateTextFn = (params: {
@@ -19,7 +19,7 @@ export type GenerateTextFn = (params: {
   maxTokens?: number;
   provider?: string;
   model?: string;
-}) => Promise<string>;
+},) => Promise<string>;
 
 /** Shared dependencies every decision strategy needs from the GM service. */
 export interface GmDecisionDeps {
