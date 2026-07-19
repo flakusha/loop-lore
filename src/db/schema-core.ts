@@ -3,7 +3,6 @@
  *
  * Users, sessions, chats, actors, participants, messages.
  */
-import type { Generated } from "kysely";
 import type {
   ActorItemType,
   ActorType,
@@ -31,6 +30,13 @@ import type {
   UserStatus,
 } from "./enums";
 
+// ── Users ────────────────────────────────────────────────────
+
+/**
+ * DB Schema — Core Domain Tables
+ *
+ * Users, sessions, chats, actors, participants, messages.
+ */
 // ── Users ────────────────────────────────────────────────────
 export interface Users {
   id: Generated<string>;

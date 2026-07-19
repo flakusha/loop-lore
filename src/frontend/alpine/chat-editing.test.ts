@@ -1,8 +1,9 @@
+import type { ChatState, } from "./types";
+import { chatEditing, } from "./chat-editing";
 import { describe, expect, test } from "bun:test";
-import { chatEditing } from "./chat-editing";
-import type { ChatState } from "./types";
+import { describe, expect, test, } from "bun:test";
 
-const mockMessage = (id: string, content: string, role: string) => ({
+const mockMessage = (id: string, content: string, role: string,) => ({
   id,
   content,
   role,
@@ -16,32 +17,32 @@ describe("chatEditing", () => {
     test("sets editingMessageId and editContent for matching message", () => {
       const mockState: MockEditState = {
         messages: [
-          mockMessage("msg-1", "Hello world", "user"),
-          mockMessage("msg-2", "Hi there", "assistant"),
+          mockMessage("msg-1", "Hello world", "user",),
+          mockMessage("msg-2", "Hi there", "assistant",),
         ],
         editingMessageId: null,
         editContent: "",
         pendingAssets: [],
       };
 
-      chatEditing.startEdit!.call(mockState, "msg-1");
+      chatEditing.startEdit!.call(mockState, "msg-1",);
 
-      expect(mockState.editingMessageId).toBe("msg-1");
-      expect(mockState.editContent).toBe("Hello world");
+      expect(mockState.editingMessageId,).toBe("msg-1",);
+      expect(mockState.editContent,).toBe("Hello world",);
     });
 
     test("does nothing when message not found", () => {
       const mockState: MockEditState = {
-        messages: [mockMessage("msg-1", "Hello", "user")],
+        messages: [mockMessage("msg-1", "Hello", "user",),],
         editingMessageId: null,
         editContent: "",
         pendingAssets: [],
       };
 
-      chatEditing.startEdit!.call(mockState, "msg-99");
+      chatEditing.startEdit!.call(mockState, "msg-99",);
 
-      expect(mockState.editingMessageId).toBeNull();
-      expect(mockState.editContent).toBe("");
+      expect(mockState.editingMessageId,).toBeNull();
+      expect(mockState.editContent,).toBe("",);
     });
 
     test("handles empty messages array", () => {
@@ -52,10 +53,10 @@ describe("chatEditing", () => {
         pendingAssets: [],
       };
 
-      chatEditing.startEdit!.call(mockState, "msg-1");
+      chatEditing.startEdit!.call(mockState, "msg-1",);
 
-      expect(mockState.editingMessageId).toBeNull();
-      expect(mockState.editContent).toBe("");
+      expect(mockState.editingMessageId,).toBeNull();
+      expect(mockState.editContent,).toBe("",);
     });
   });
 
@@ -68,10 +69,10 @@ describe("chatEditing", () => {
         pendingAssets: [],
       };
 
-      chatEditing.cancelEdit!.call(mockState);
+      chatEditing.cancelEdit!.call(mockState,);
 
-      expect(mockState.editingMessageId).toBeNull();
-      expect(mockState.editContent).toBe("");
+      expect(mockState.editingMessageId,).toBeNull();
+      expect(mockState.editContent,).toBe("",);
     });
 
     test("works when no edit is active", () => {
@@ -82,9 +83,9 @@ describe("chatEditing", () => {
         pendingAssets: [],
       };
 
-      expect(() => chatEditing.cancelEdit!.call(mockState)).not.toThrow();
-      expect(mockState.editingMessageId).toBeNull();
-      expect(mockState.editContent).toBe("");
+      expect(() => chatEditing.cancelEdit!.call(mockState,)).not.toThrow();
+      expect(mockState.editingMessageId,).toBeNull();
+      expect(mockState.editContent,).toBe("",);
     });
   });
 
@@ -95,17 +96,17 @@ describe("chatEditing", () => {
         editingMessageId: null,
         editContent: "",
         pendingAssets: [
-          { assetId: "asset-1", filename: "img1.png" },
-          { assetId: "asset-2", filename: "img2.png" },
-          { assetId: "asset-3", filename: "img3.png" },
+          { assetId: "asset-1", filename: "img1.png", },
+          { assetId: "asset-2", filename: "img2.png", },
+          { assetId: "asset-3", filename: "img3.png", },
         ],
       };
 
-      chatEditing.removePendingAsset!.call(mockState, "asset-2");
+      chatEditing.removePendingAsset!.call(mockState, "asset-2",);
 
-      expect(mockState.pendingAssets.length).toBe(2);
-      expect(mockState.pendingAssets[0].assetId).toBe("asset-1");
-      expect(mockState.pendingAssets[1].assetId).toBe("asset-3");
+      expect(mockState.pendingAssets.length,).toBe(2,);
+      expect(mockState.pendingAssets[0].assetId,).toBe("asset-1",);
+      expect(mockState.pendingAssets[1].assetId,).toBe("asset-3",);
     });
 
     test("does nothing for non-existent asset id", () => {
@@ -113,12 +114,12 @@ describe("chatEditing", () => {
         messages: [],
         editingMessageId: null,
         editContent: "",
-        pendingAssets: [{ assetId: "asset-1", filename: "img1.png" }],
+        pendingAssets: [{ assetId: "asset-1", filename: "img1.png", },],
       };
 
-      chatEditing.removePendingAsset!.call(mockState, "asset-99");
+      chatEditing.removePendingAsset!.call(mockState, "asset-99",);
 
-      expect(mockState.pendingAssets.length).toBe(1);
+      expect(mockState.pendingAssets.length,).toBe(1,);
     });
 
     test("handles empty pending assets", () => {
@@ -129,9 +130,9 @@ describe("chatEditing", () => {
         pendingAssets: [],
       };
 
-      chatEditing.removePendingAsset!.call(mockState, "asset-1");
+      chatEditing.removePendingAsset!.call(mockState, "asset-1",);
 
-      expect(mockState.pendingAssets.length).toBe(0);
+      expect(mockState.pendingAssets.length,).toBe(0,);
     });
   });
 });

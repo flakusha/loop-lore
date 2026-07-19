@@ -4,13 +4,13 @@
  * CRUD for per-actor inventory items.
  */
 
-import { Elysia } from "elysia";
-import type { Config } from "../config/schema";
-import type { Db } from "../db";
-import { EquipState } from "../db/enums";
-import { createEntityRoutes } from "./entity-routes";
+import { Elysia, } from "elysia";
+import type { Config, } from "../config/schema";
+import type { Db, } from "../db";
+import { EquipState, } from "../db/enums";
+import { createEntityRoutes, } from "./entity-routes";
 
-export function actorItemsRoutes(opts: { database: Db; config: Config }): Elysia {
+export function actorItemsRoutes(opts: { database: Db; config: Config },): Elysia {
   return createEntityRoutes(
     {
       parentPrefix: "actors",
@@ -21,10 +21,10 @@ export function actorItemsRoutes(opts: { database: Db; config: Config }): Elysia
       ownershipTable: "actors",
       ownershipFkColumn: "user_id",
       orderBy: [
-        { column: "sort_order", dir: "asc" },
-        { column: "created_at", dir: "desc" },
+        { column: "sort_order", dir: "asc", },
+        { column: "created_at", dir: "desc", },
       ],
-      filterField: { param: "type", column: "item_type" },
+      filterField: { param: "type", column: "item_type", },
       fieldMappings: {
         name: "name",
         description: "description",
@@ -37,14 +37,14 @@ export function actorItemsRoutes(opts: { database: Db; config: Config }): Elysia
         equipped: "equipped",
         sortOrder: "sort_order",
       },
-      jsonFields: ["tags", "metadata"],
+      jsonFields: ["tags", "metadata",],
       defaults: {
         itemType: "misc",
         quantity: 1,
         equipped: EquipState.Unequipped,
         sortOrder: 0,
       },
-      createRequired: ["name"],
+      createRequired: ["name",],
     },
     opts,
   );

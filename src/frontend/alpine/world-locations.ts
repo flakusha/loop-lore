@@ -1,8 +1,8 @@
-import { jsonBody } from "./json";
-import { log as rootLog } from "./logger";
-import type { WorldEditState } from "./world-types";
+import { jsonBody, } from "./json";
+import { log as rootLog, } from "./logger";
+import type { WorldEditState, } from "./world-types";
 
-const log = rootLog.child({ module: "world-locations" });
+const log = rootLog.child({ module: "world-locations", },);
 
 export const worldLocations: Partial<WorldEditState> & ThisType<WorldEditState> = {
   locations: [] as {
@@ -28,35 +28,35 @@ export const worldLocations: Partial<WorldEditState> & ThisType<WorldEditState> 
     this.locationsLoaded = false;
     try {
       const res = await fetch(`/api/worlds/${this.worldId}/locations`, {
-        headers: { Accept: "application/json" },
-      });
+        headers: { Accept: "application/json", },
+      },);
       if (res.ok) {
         const data = await res.json();
-        this.locations = (data.data || []).map((l: Record<string, unknown>) => ({
+        this.locations = (data.data || []).map((l: Record<string, unknown>,) => ({
           ...l,
           connections: (l as { connections?: unknown[] }).connections || [],
         }));
         this.locationsLoaded = true;
       }
     } catch (error) {
-      log.warn("loadLocations failed", { error: String(error) });
+      log.warn("loadLocations failed", { error: String(error,), },);
     }
     this.loadingLocations = false;
   },
 
   async addLocation() {
-    if (!this.newLocName.trim()) return;
+    if (!this.newLocName.trim()) { return; }
     try {
       const res = await fetch(`/api/worlds/${this.worldId}/locations`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", },
         body: jsonBody({
           name: this.newLocName,
           description: this.newLocDesc,
           parentLocationId: this.newLocParentId || null,
           connections: this.newLocConnections,
-        }),
-      });
+        },),
+      },);
       if (res.ok) {
         this.newLocName = "";
         this.newLocDesc = "";
@@ -65,60 +65,60 @@ export const worldLocations: Partial<WorldEditState> & ThisType<WorldEditState> 
         await this.loadLocations();
       } else {
         const err = await res.json();
-        showToast("error", err.error || "Failed to add location");
+        showToast("error", err.error || "Failed to add location",);
       }
     } catch {
-      showToast("error", "Network error");
+      showToast("error", "Network error",);
     }
   },
 
-  expandLoc(locId: string) {
+  expandLoc(locId: string,) {
     if (this.expandedLoc === locId) {
       this.expandedLoc = "";
       return;
     }
     this.expandedLoc = locId;
-    const loc = this.locations.find((l) => l.id === locId);
+    const loc = this.locations.find((l,) => l.id === locId);
     if (loc) {
       this.editLocName = loc.name;
       this.editLocDesc = loc.description || "";
     }
   },
 
-  async saveLocation(locId: string) {
+  async saveLocation(locId: string,) {
     try {
       const res = await fetch(`/api/worlds/${this.worldId}/locations/${locId}`, {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", },
         body: jsonBody({
           name: this.editLocName.trim(),
           description: this.editLocDesc.trim() || null,
-        }),
-      });
+        },),
+      },);
       if (res.ok) {
-        const loc = this.locations.find((l) => l.id === locId);
+        const loc = this.locations.find((l,) => l.id === locId);
         if (loc) {
           loc.name = this.editLocName.trim();
           loc.description = this.editLocDesc.trim() || null;
         }
         this.expandedLoc = "";
-        showToast("success", "Location updated");
+        showToast("success", "Location updated",);
       } else {
         const err = await res.json();
-        showToast("error", err.message || "Failed");
+        showToast("error", err.message || "Failed",);
       }
     } catch {
-      showToast("error", "Network error");
+      showToast("error", "Network error",);
     }
   },
 
-  async deleteLocation(locId: string) {
-    if (!confirm("Delete this location?")) return;
+  async deleteLocation(locId: string,) {
+    if (!confirm("Delete this location?",)) { return; }
     try {
-      const res = await fetch(`/api/worlds/${this.worldId}/locations/${locId}`, { method: "DELETE" });
-      if (res.ok) await this.loadLocations();
+      const res = await fetch(`/api/worlds/${this.worldId}/locations/${locId}`, { method: "DELETE", },);
+      if (res.ok) { await this.loadLocations(); }
     } catch {
-      showToast("error", "Failed to delete location");
+      showToast("error", "Failed to delete location",);
     }
   },
 };

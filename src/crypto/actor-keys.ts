@@ -5,9 +5,9 @@
  * Keys are stored in `actor_keys` table, encrypted at rest by SMK.
  */
 
-import type { Kysely } from "kysely";
-import type { DB } from "../db/schema";
-import { uid } from "../utils";
+import type { Kysely, } from "kysely";
+import type { DB, } from "../db/schema";
+import { uid, } from "../utils";
 
 const IV_LENGTH = 12; // 96-bit nonce for GCM
 
@@ -60,34 +60,34 @@ export interface GetActorKeyOpts {
 
 // ── Internal helpers ───────────────────────────────────────
 
-function encryptWithSmk(smk: CryptoKey, rawKey: Uint8Array): Promise<string> {
-  return encryptBytes(smk, rawKey);
+function encryptWithSmk(smk: CryptoKey, rawKey: Uint8Array,): Promise<string> {
+  return encryptBytes(smk, rawKey,);
 }
 
-async function decryptWithSmk(smk: CryptoKey, encryptedValue: string): Promise<Uint8Array> {
-  return decryptBytes(smk, encryptedValue);
+async function decryptWithSmk(smk: CryptoKey, encryptedValue: string,): Promise<Uint8Array> {
+  return decryptBytes(smk, encryptedValue,);
 }
 
-async function encryptBytes(key: CryptoKey, plaintext: Uint8Array): Promise<string> {
-  const iv = crypto.getRandomValues(new Uint8Array(IV_LENGTH));
-  const input = toBufferSource(plaintext);
-  const ciphertext = await crypto.subtle.encrypt({ name: "AES-GCM", iv }, key, input);
-  const ivB64 = new Uint8Array(iv).toBase64();
-  const ctB64 = new Uint8Array(ciphertext).toBase64();
+async function encryptBytes(key: CryptoKey, plaintext: Uint8Array,): Promise<string> {
+  const iv = crypto.getRandomValues(new Uint8Array(IV_LENGTH,),);
+  const input = toBufferSource(plaintext,);
+  const ciphertext = await crypto.subtle.encrypt({ name: "AES-GCM", iv, }, key, input,);
+  const ivB64 = new Uint8Array(iv,).toBase64();
+  const ctB64 = new Uint8Array(ciphertext,).toBase64();
   return `${ivB64}:${ctB64}`;
 }
 
-async function decryptBytes(key: CryptoKey, encrypted: string): Promise<Uint8Array> {
-  const colonIdx = encrypted.indexOf(":");
-  if (colonIdx === -1) throw new Error("Invalid encrypted key format");
-  const iv = toBufferSource(Uint8Array.fromBase64(encrypted.slice(0, colonIdx)));
-  const data = toBufferSource(Uint8Array.fromBase64(encrypted.slice(colonIdx + 1)));
-  const plaintext = await crypto.subtle.decrypt({ name: "AES-GCM", iv }, key, data);
-  return new Uint8Array(plaintext);
+async function decryptBytes(key: CryptoKey, encrypted: string,): Promise<Uint8Array> {
+  const colonIdx = encrypted.indexOf(":",);
+  if (colonIdx === -1) { throw new Error("Invalid encrypted key format",); }
+  const iv = toBufferSource(Uint8Array.fromBase64(encrypted.slice(0, colonIdx,),),);
+  const data = toBufferSource(Uint8Array.fromBase64(encrypted.slice(colonIdx + 1,),),);
+  const plaintext = await crypto.subtle.decrypt({ name: "AES-GCM", iv, }, key, data,);
+  return new Uint8Array(plaintext,);
 }
 
 /** Workaround for Bun's Uint8Array generics vs Web Crypto BufferSource. */
-function toBufferSource(arr: Uint8Array): Uint8Array<ArrayBuffer> {
+function toBufferSource(arr: Uint8Array,): Uint8Array<ArrayBuffer> {
   return arr as unknown as Uint8Array<ArrayBuffer>;
 }
 
@@ -103,13 +103,13 @@ export async function generateActorKey({
   actorId,
   smk,
   name = "primary",
-}: GenerateActorKeyOpts): Promise<string> {
+}: GenerateActorKeyOpts,): Promise<string> {
   const id = uid();
-  const rawKey = crypto.getRandomValues(new Uint8Array(32));
-  const encryptedKey = await encryptWithSmk(smk, rawKey);
+  const rawKey = crypto.getRandomValues(new Uint8Array(32,),);
+  const encryptedKey = await encryptWithSmk(smk, rawKey,);
 
   await database
-    .insertInto("actor_keys")
+    .insertInto("actor_keys",)
     .values({
       id,
       actor_id: actorId,
@@ -117,7 +117,7 @@ export async function generateActorKey({
       key_type: "primary",
       encrypted_key: encryptedKey,
       status: "active",
-    })
+    },)
     .execute();
 
   return id;
@@ -129,17 +129,17 @@ export async function generateActorKey({
  *
  * @returns The active key's ID.
  */
-export async function ensureActorKey({ database, actorId, smk }: EnsureActorKeyOpts): Promise<string> {
+export async function ensureActorKey({ database, actorId, smk, }: EnsureActorKeyOpts,): Promise<string> {
   const existing = await database
-    .selectFrom("actor_keys")
-    .select("id")
-    .where("actor_id", "=", actorId)
-    .where("status", "=", "active")
+    .selectFrom("actor_keys",)
+    .select("id",)
+    .where("actor_id", "=", actorId,)
+    .where("status", "=", "active",)
     .executeTakeFirst();
 
-  if (existing) return existing.id;
+  if (existing) { return existing.id; }
 
-  return generateActorKey({ database, actorId, smk });
+  return generateActorKey({ database, actorId, smk, },);
 }
 
 /**
@@ -147,28 +147,28 @@ export async function ensureActorKey({ database, actorId, smk }: EnsureActorKeyO
  *
  * Returns keys sorted by actor_id for deterministic HKDF input.
  */
-export async function loadActorKeys({ database, actorIds, smk }: LoadActorKeysOpts): Promise<ActorKeyData[]> {
-  if (actorIds.length === 0) return [];
+export async function loadActorKeys({ database, actorIds, smk, }: LoadActorKeysOpts,): Promise<ActorKeyData[]> {
+  if (actorIds.length === 0) { return []; }
 
   const rows = await database
-    .selectFrom("actor_keys")
+    .selectFrom("actor_keys",)
     .selectAll()
-    .where("actor_id", "in", actorIds)
-    .where("status", "=", "active")
-    .orderBy("actor_id", "asc")
+    .where("actor_id", "in", actorIds,)
+    .where("status", "=", "active",)
+    .orderBy("actor_id", "asc",)
     .execute();
 
   const results: ActorKeyData[] = [];
   for (const row of rows) {
-    if (!row.encrypted_key) continue;
-    const rawKey = await decryptWithSmk(smk, row.encrypted_key);
+    if (!row.encrypted_key) { continue; }
+    const rawKey = await decryptWithSmk(smk, row.encrypted_key,);
     results.push({
       keyId: row.id,
       actorId: row.actor_id,
       rawKey,
       name: row.name,
       status: row.status,
-    });
+    },);
   }
 
   return results;
@@ -177,12 +177,12 @@ export async function loadActorKeys({ database, actorIds, smk }: LoadActorKeysOp
 /**
  * Get a single key by ID (for key_id lookup on message read).
  */
-export async function getActorKey({ database, keyId, smk }: GetActorKeyOpts): Promise<ActorKeyData | null> {
-  const row = await database.selectFrom("actor_keys").selectAll().where("id", "=", keyId).executeTakeFirst();
+export async function getActorKey({ database, keyId, smk, }: GetActorKeyOpts,): Promise<ActorKeyData | null> {
+  const row = await database.selectFrom("actor_keys",).selectAll().where("id", "=", keyId,).executeTakeFirst();
 
-  if (!row?.encrypted_key) return null;
+  if (!row?.encrypted_key) { return null; }
 
-  const rawKey = await decryptWithSmk(smk, row.encrypted_key);
+  const rawKey = await decryptWithSmk(smk, row.encrypted_key,);
   return {
     keyId: row.id,
     actorId: row.actor_id,
@@ -198,41 +198,41 @@ export async function getActorKey({ database, keyId, smk }: GetActorKeyOpts): Pr
  *
  * @returns The new key ID.
  */
-export async function rotateActorKey({ database, actorId, smk }: GenerateActorKeyOpts): Promise<string> {
+export async function rotateActorKey({ database, actorId, smk, }: GenerateActorKeyOpts,): Promise<string> {
   // Expire all current active keys for this actor
   await database
-    .updateTable("actor_keys")
+    .updateTable("actor_keys",)
     .set({
       status: "expired",
       expires_at: new Date().toISOString(),
-    })
-    .where("actor_id", "=", actorId)
-    .where("status", "=", "active")
+    },)
+    .where("actor_id", "=", actorId,)
+    .where("status", "=", "active",)
     .execute();
 
   // Generate new key
-  return generateActorKey({ database, actorId, smk, name: "primary" });
+  return generateActorKey({ database, actorId, smk, name: "primary", },);
 }
 
 /**
  * Revoke a specific key by ID. Irreversible.
  */
-export async function revokeActorKey(database: Kysely<DB>, keyId: string): Promise<void> {
-  await database.updateTable("actor_keys").set({ status: "revoked" }).where("id", "=", keyId).execute();
+export async function revokeActorKey(database: Kysely<DB>, keyId: string,): Promise<void> {
+  await database.updateTable("actor_keys",).set({ status: "revoked", },).where("id", "=", keyId,).execute();
 }
 
 /**
  * List all keys for an actor (metadata only, no key material).
  */
-export async function listActorKeys(database: Kysely<DB>, actorId: string): Promise<ActorKeyMeta[]> {
+export async function listActorKeys(database: Kysely<DB>, actorId: string,): Promise<ActorKeyMeta[]> {
   const rows = await database
-    .selectFrom("actor_keys")
-    .select(["id", "actor_id", "name", "key_type", "status", "created_at", "expires_at"])
-    .where("actor_id", "=", actorId)
-    .orderBy("created_at", "desc")
+    .selectFrom("actor_keys",)
+    .select(["id", "actor_id", "name", "key_type", "status", "created_at", "expires_at",],)
+    .where("actor_id", "=", actorId,)
+    .orderBy("created_at", "desc",)
     .execute();
 
-  return rows.map((r) => ({
+  return rows.map((r,) => ({
     id: r.id,
     actorId: r.actor_id,
     name: r.name,

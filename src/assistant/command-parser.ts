@@ -5,10 +5,10 @@
 //
 // Example: "/roll 2d6+3 hello" → { command: "roll", args: ["2d6+3", "hello"], raw: "/roll 2d6+3 hello" }
 
-import { getLogger, type Logger } from "../logger";
+import { getLogger, type Logger, } from "../logger";
 
 /** Lazy logger — only resolved when first used. */
-const getLog = (): Logger => getLogger().child({ module: "command-parser" });
+const getLog = (): Logger => getLogger().child({ module: "command-parser", },);
 
 /** Parsed slash command result */
 export interface ParsedCommand {
@@ -34,20 +34,20 @@ export interface ParsedCommand {
  * parseCommand("hello")        → null
  * parseCommand("/")            → null
  */
-export function parseCommand(input: string): ParsedCommand | null {
+export function parseCommand(input: string,): ParsedCommand | null {
   const trimmed = input.trim();
-  if (!trimmed.startsWith("/") || trimmed.length < 2) return null;
+  if (!trimmed.startsWith("/",) || trimmed.length < 2) { return null; }
 
   // Split on first whitespace to separate command from args
-  const spaceIdx = trimmed.indexOf(" ");
-  const command = (spaceIdx === -1 ? trimmed.slice(1) : trimmed.slice(1, spaceIdx)).toLowerCase();
-  const rawArgs = spaceIdx === -1 ? "" : trimmed.slice(spaceIdx + 1);
-  const args = rawArgs.split(/\s+/).filter(Boolean);
+  const spaceIdx = trimmed.indexOf(" ",);
+  const command = (spaceIdx === -1 ? trimmed.slice(1,) : trimmed.slice(1, spaceIdx,)).toLowerCase();
+  const rawArgs = spaceIdx === -1 ? "" : trimmed.slice(spaceIdx + 1,);
+  const args = rawArgs.split(/\s+/,).filter(Boolean,);
 
-  if (!command) return null;
+  if (!command) { return null; }
 
-  getLog().debug("Parsed command", { command, args });
-  return { command, args, raw: trimmed };
+  getLog().debug("Parsed command", { command, args, },);
+  return { command, args, raw: trimmed, };
 }
 
 /** All registered command names */
@@ -70,6 +70,6 @@ export const BUILTIN_COMMANDS = [
 ] as const;
 
 /** Check if a command name is a built-in command */
-export function isBuiltinCommand(command: string): boolean {
-  return (BUILTIN_COMMANDS as readonly string[]).includes(command.toLowerCase());
+export function isBuiltinCommand(command: string,): boolean {
+  return (BUILTIN_COMMANDS as readonly string[]).includes(command.toLowerCase(),);
 }

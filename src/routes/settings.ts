@@ -9,23 +9,23 @@
  * Elysia plugin — uses auth guard for authentication (context.userId available).
  */
 
-import { Elysia, t } from "elysia";
+import { Elysia, t, } from "elysia";
 import JSZip from "jszip";
-import type { Kysely } from "kysely";
-import { ActorType } from "../db/enums";
-import type { DB } from "../db/schema";
-import { jsonParseOr, safeJsonStringify } from "../utils";
-import { unauthorized } from "../validation/middleware";
-import { HttpStatus, jsonError, jsonResponse } from "./http-utils";
+import type { Kysely, } from "kysely";
+import { ActorType, } from "../db/enums";
+import type { DB, } from "../db/schema";
+import { jsonParseOr, safeJsonStringify, } from "../utils";
+import { unauthorized, } from "../validation/middleware";
+import { HttpStatus, jsonError, jsonResponse, } from "./http-utils";
 
-async function handleGetSettings(database: Kysely<DB>, userId: string): Promise<Response> {
+async function handleGetSettings(database: Kysely<DB>, userId: string,): Promise<Response> {
   const user = await database
-    .selectFrom("users")
-    .select("settings")
-    .where("id", "=", userId)
+    .selectFrom("users",)
+    .select("settings",)
+    .where("id", "=", userId,)
     .executeTakeFirst();
-  const settings = user?.settings ? jsonParseOr(user.settings, {}) : {};
-  return jsonResponse(settings);
+  const settings = user?.settings ? jsonParseOr(user.settings, {},) : {};
+  return jsonResponse(settings,);
 }
 
 async function handleUpdateSettings(
@@ -34,95 +34,95 @@ async function handleUpdateSettings(
   body: Record<string, unknown>,
 ): Promise<Response> {
   const current = await database
-    .selectFrom("users")
-    .select("settings")
-    .where("id", "=", userId)
+    .selectFrom("users",)
+    .select("settings",)
+    .where("id", "=", userId,)
     .executeTakeFirst();
 
-  const currentSettings = current?.settings ? jsonParseOr(current.settings, {}) : {};
-  const merged = { ...currentSettings, ...body };
+  const currentSettings = current?.settings ? jsonParseOr(current.settings, {},) : {};
+  const merged = { ...currentSettings, ...body, };
 
-  const mergedResult = safeJsonStringify(merged);
+  const mergedResult = safeJsonStringify(merged,);
   if (!mergedResult.ok) {
-    return jsonError({ message: "Invalid settings data", status: HttpStatus.BadRequest });
+    return jsonError({ message: "Invalid settings data", status: HttpStatus.BadRequest, },);
   }
 
   await database
-    .updateTable("users")
-    .set({ settings: mergedResult.value })
-    .where("id", "=", userId)
+    .updateTable("users",)
+    .set({ settings: mergedResult.value, },)
+    .where("id", "=", userId,)
     .execute();
-  return jsonResponse(merged);
+  return jsonResponse(merged,);
 }
 
-async function handleExportAll(database: Kysely<DB>, userId: string): Promise<Response> {
+async function handleExportAll(database: Kysely<DB>, userId: string,): Promise<Response> {
   const user = await database
-    .selectFrom("users")
-    .select("settings")
-    .where("id", "=", userId)
+    .selectFrom("users",)
+    .select("settings",)
+    .where("id", "=", userId,)
     .executeTakeFirst();
-  const settings = user?.settings ? jsonParseOr(user.settings, {}) : {};
+  const settings = user?.settings ? jsonParseOr(user.settings, {},) : {};
 
   const characters = await database
-    .selectFrom("actors")
+    .selectFrom("actors",)
     .selectAll()
-    .where("owner_id", "=", userId)
-    .where("actor_type", "=", ActorType.Character)
+    .where("owner_id", "=", userId,)
+    .where("actor_type", "=", ActorType.Character,)
     .execute();
 
-  const chats = await database.selectFrom("chats").selectAll().where("created_by", "=", userId).execute();
+  const chats = await database.selectFrom("chats",).selectAll().where("created_by", "=", userId,).execute();
 
   const assets = await database
-    .selectFrom("assets")
-    .select(["id", "filename", "mime_type", "asset_type", "size_bytes", "created_at"])
-    .where("owner_id", "=", userId)
+    .selectFrom("assets",)
+    .select(["id", "filename", "mime_type", "asset_type", "size_bytes", "created_at",],)
+    .where("owner_id", "=", userId,)
     .execute();
 
   const zip = new JSZip();
-  const settingsStr = safeJsonStringify(settings);
-  const charactersStr = safeJsonStringify(characters);
-  const chatsStr = safeJsonStringify(chats);
-  const assetsStr = safeJsonStringify(assets);
-  zip.file("settings.json", settingsStr.ok ? settingsStr.value : "{}");
-  zip.file("characters.json", charactersStr.ok ? charactersStr.value : "[]");
-  zip.file("chats.json", chatsStr.ok ? chatsStr.value : "[]");
-  zip.file("assets.json", assetsStr.ok ? assetsStr.value : "[]");
+  const settingsStr = safeJsonStringify(settings,);
+  const charactersStr = safeJsonStringify(characters,);
+  const chatsStr = safeJsonStringify(chats,);
+  const assetsStr = safeJsonStringify(assets,);
+  zip.file("settings.json", settingsStr.ok ? settingsStr.value : "{}",);
+  zip.file("characters.json", charactersStr.ok ? charactersStr.value : "[]",);
+  zip.file("chats.json", chatsStr.ok ? chatsStr.value : "[]",);
+  zip.file("assets.json", assetsStr.ok ? assetsStr.value : "[]",);
 
-  const buffer = await zip.generateAsync({ type: "arraybuffer" });
+  const buffer = await zip.generateAsync({ type: "arraybuffer", },);
   return new Response(buffer, {
     headers: {
       "Content-Type": "application/zip",
-      "Content-Disposition": "attachment; filename=\"loop-lore-export.zip\"",
+      "Content-Disposition": 'attachment; filename="loop-lore-export.zip"',
     },
-  });
+  },);
 }
 
-export function settingsRoutes({ database }: { database: Kysely<DB> }) {
-  return new Elysia({ name: "settings" })
-    .get("/api/settings", async (ctx) => {
+export function settingsRoutes({ database, }: { database: Kysely<DB> },) {
+  return new Elysia({ name: "settings", },)
+    .get("/api/settings", async (ctx,) => {
       const userId = (ctx as any).userId as string | null;
       if (!userId) {
         return unauthorized();
       }
-      return handleGetSettings(database, userId);
-    })
+      return handleGetSettings(database, userId,);
+    },)
     .patch(
       "/api/settings",
-      async (ctx: any) => {
+      async (ctx: any,) => {
         const userId = ctx.userId as string | null;
         if (!userId) {
           return unauthorized();
         }
         const body = ctx.body as Record<string, unknown>;
-        return handleUpdateSettings(database, userId, body);
+        return handleUpdateSettings(database, userId, body,);
       },
-      { body: t.Any() },
+      { body: t.Any(), },
     )
-    .get("/api/settings/export", async (ctx) => {
+    .get("/api/settings/export", async (ctx,) => {
       const userId = (ctx as any).userId as string | null;
       if (!userId) {
         return unauthorized();
       }
-      return handleExportAll(database, userId);
-    });
+      return handleExportAll(database, userId,);
+    },);
 }

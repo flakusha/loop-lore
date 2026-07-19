@@ -12,8 +12,8 @@ export interface DiceRoll {
   notation: string;
 }
 
-export function rollDice(notation: string): DiceRoll;
-export function rollDice(notation: string, seed?: number): DiceRoll; // deterministic mode
+export function rollDice(notation: string,): DiceRoll;
+export function rollDice(notation: string, seed?: number,): DiceRoll; // deterministic mode
 ```
 
 **Notation**: d4, d6, d8, d12, d20, 2d6+3, etc.

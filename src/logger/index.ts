@@ -8,21 +8,21 @@
  *   const reqLog = log.child({ requestId: "abc" });
  */
 
-import { LoggerImpl } from "./logger";
-import type { Logger, LoggerConfig } from "./types";
+import { LoggerImpl, } from "./logger";
+import type { Logger, LoggerConfig, } from "./types";
 
-export type { Logger, LoggerBindings, LoggerConfig, LogOptions } from "./types";
-export type { LogEntry, LogLevel } from "./types";
+export type { Logger, LoggerBindings, LoggerConfig, LogOptions, } from "./types";
+export type { LogEntry, LogLevel, } from "./types";
 
 /** Global root logger holder */
-const _root: { instance: Logger | null } = { instance: null };
+const _root: { instance: Logger | null } = { instance: null, };
 
 /**
  * Create a new root logger instance.
  * If global root not yet set, assigns it.
  */
-export function createLogger(config?: Partial<LoggerConfig>): Logger {
-  const instance = new LoggerImpl(config);
+export function createLogger(config?: Partial<LoggerConfig>,): Logger {
+  const instance = new LoggerImpl(config,);
   _root.instance ??= instance;
   return instance;
 }
@@ -31,13 +31,13 @@ export function createLogger(config?: Partial<LoggerConfig>): Logger {
  * Get the global root logger. Throws if not yet initialized.
  */
 export function getLogger(): Logger {
-  if (!_root.instance) throw new Error("Logger not initialized — call createLogger() first");
+  if (!_root.instance) { throw new Error("Logger not initialized — call createLogger() first",); }
   return _root.instance;
 }
 
 /**
  * Set or replace the global root logger.
  */
-export function setGlobalLogger(logger: Logger): void {
+export function setGlobalLogger(logger: Logger,): void {
   _root.instance = logger;
 }

@@ -4,11 +4,11 @@
  * Validate extracted events against current world state.
  * Rejects events referencing unknown entities.
  */
-import type { Kysely } from "kysely";
-import { WorldEventType } from "../../db/enums";
-import type { DB } from "../../db/schema";
-import { assertNever } from "../../utils";
-import type { WorldEvent } from "../types";
+import type { Kysely, } from "kysely";
+import { WorldEventType, } from "../../db/enums";
+import type { DB, } from "../../db/schema";
+import { assertNever, } from "../../utils";
+import type { WorldEvent, } from "../types";
 
 // ── Result Type ──────────────────────────────────────────────
 
@@ -36,11 +36,11 @@ function validateSingleEvent(
   switch (event.type) {
     case WorldEventType.LocationChange: {
       const targetName = (event.data.toLocationName as string | undefined)?.toLowerCase();
-      if (targetName && locationNames.has(targetName)) {
-        event.locationId = locationNames.get(targetName);
-        return { valid: true };
+      if (targetName && locationNames.has(targetName,)) {
+        event.locationId = locationNames.get(targetName,);
+        return { valid: true, };
       }
-      return { valid: false, reason: `Unknown location: ${targetName}` };
+      return { valid: false, reason: `Unknown location: ${targetName}`, };
     }
     case WorldEventType.CombatEvent:
     case WorldEventType.NpcStateChange:
@@ -48,47 +48,47 @@ function validateSingleEvent(
     case WorldEventType.WorldLoreUpdate:
     case WorldEventType.ItemTransfer:
     case WorldEventType.QuestProgress: {
-      return { valid: true };
+      return { valid: true, };
     }
     case WorldEventType.LocationModification: {
       const locId = event.data.locationId as string;
-      if (locId && locationIds.has(locId)) {
-        return { valid: true };
+      if (locId && locationIds.has(locId,)) {
+        return { valid: true, };
       }
-      return { valid: false, reason: `Invalid location modification target: ${locId}` };
+      return { valid: false, reason: `Invalid location modification target: ${locId}`, };
     }
     default: {
-      return assertNever(event.type);
+      return assertNever(event.type,);
     }
   }
 }
 
 /** Validate extracted events against current world state */
-export async function validateEvents({ db, worldId, events }: ValidateEventsOpts): Promise<ValidationResult> {
+export async function validateEvents({ db, worldId, events, }: ValidateEventsOpts,): Promise<ValidationResult> {
   const filteredEvents: WorldEvent[] = [];
   const rejections: string[] = [];
 
   const locations = await db
-    .selectFrom("locations")
-    .select(["id", "name"])
-    .where("world_id", "=", worldId)
+    .selectFrom("locations",)
+    .select(["id", "name",],)
+    .where("world_id", "=", worldId,)
     .execute();
 
   const locationNames = new Map<string, string>();
   const locationIds = new Set<string>();
   for (const l of locations) {
-    locationNames.set(l.name.toLowerCase(), l.id);
-    locationIds.add(l.id);
+    locationNames.set(l.name.toLowerCase(), l.id,);
+    locationIds.add(l.id,);
   }
 
   for (const event of events) {
-    const result = validateSingleEvent(event, locationNames, locationIds);
+    const result = validateSingleEvent(event, locationNames, locationIds,);
     if (result.valid) {
-      filteredEvents.push(event);
+      filteredEvents.push(event,);
     } else {
-      rejections.push(result.reason);
+      rejections.push(result.reason,);
     }
   }
 
-  return { valid: rejections.length === 0, filteredEvents, rejections };
+  return { valid: rejections.length === 0, filteredEvents, rejections, };
 }

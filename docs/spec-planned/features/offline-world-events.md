@@ -22,25 +22,25 @@ export interface OfflineEvent {
 // Scheduler runs every hour
 export async function processOfflineEvents(): Promise<void> {
   const worlds = await db
-    .selectFrom("worlds")
+    .selectFrom("worlds",)
     .selectAll()
-    .where("offline_events_enabled", "=", true)
+    .where("offline_events_enabled", "=", true,)
     .execute();
 
   for (const world of worlds) {
     const participants = await db
-      .selectFrom("chat_participants")
+      .selectFrom("chat_participants",)
       .selectAll()
-      .where("chat_id", "in", world.chat_ids)
+      .where("chat_id", "in", world.chat_ids,)
       .execute();
 
     for (const participant of participants) {
-      const lastSeen = await getLastActivity(participant.user_id);
+      const lastSeen = await getLastActivity(participant.user_id,);
       const hoursAway = (Date.now() - lastSeen) / (1000 * 60 * 60);
 
       if (hoursAway >= 1) {
         // Only if away 1+ hour
-        const events = await generateOfflineEvents(participant.user_id, world.id, hoursAway);
+        const events = await generateOfflineEvents(participant.user_id, world.id, hoursAway,);
 
         for (const event of events) {
           await createNotification({
@@ -50,8 +50,8 @@ export async function processOfflineEvents(): Promise<void> {
             body: event.content,
             link: `/views/chat/${world.chat_id}`,
             noiseLevel: "medium",
-            data: { event_type: event.event_type, actor_id: event.actor_id },
-          });
+            data: { event_type: event.event_type, actor_id: event.actor_id, },
+          },);
         }
       }
     }
@@ -63,16 +63,16 @@ async function generateOfflineEvents(
   worldId: string,
   hoursAway: number,
 ): Promise<OfflineEvent[]> {
-  const worldState = await getWorldState(worldId);
-  const userActor = await getUserActor(userId, worldId);
-  const npcs = await getNPCs(worldId);
+  const worldState = await getWorldState(worldId,);
+  const userActor = await getUserActor(userId, worldId,);
+  const npcs = await getNPCs(worldId,);
 
   const prompt = `
 You are a world simulator. Generate events that occurred while the user was away.
 
-World state: ${JSON.stringify(worldState)}
-User character: ${JSON.stringify(userActor)}
-NPCs: ${JSON.stringify(npcs)}
+World state: ${JSON.stringify(worldState,)}
+User character: ${JSON.stringify(userActor,)}
+NPCs: ${JSON.stringify(npcs,)}
 
 Time away: ${hoursAway} hours
 
@@ -84,12 +84,12 @@ Generate 1-3 events. Return JSON:
 `;
 
   const response = await llmGenerate({
-    messages: [{ role: "user", content: prompt }],
+    messages: [{ role: "user", content: prompt, },],
     json: true,
     temperature: 0.7,
-  });
+  },);
 
-  return JSON.parse(response);
+  return JSON.parse(response,);
 }
 ```
 
@@ -112,16 +112,16 @@ offline_event: "NPC/world event while you were away"
 
 ```typescript
 // src/world/clock.ts
-export function getWorldTime(worldId: string): Date {
+export function getWorldTime(worldId: string,): Date {
   const world = await db
-    .selectFrom("worlds")
-    .select("time_scale")
-    .where("id", "=", worldId)
+    .selectFrom("worlds",)
+    .select("time_scale",)
+    .where("id", "=", worldId,)
     .executeTakeFirst();
 
   // time_scale: 1 = real time, 24 = 1 day = 1 hour
   const scale = world?.time_scale ?? 1;
-  return new Date(Date.now() * scale);
+  return new Date(Date.now() * scale,);
 }
 ```
 

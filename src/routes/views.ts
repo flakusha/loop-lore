@@ -27,19 +27,19 @@
  * Elysia plugin — uses closure injection for database access.
  */
 
-import { Elysia } from "elysia";
-import type { Kysely } from "kysely";
-import { existsSync, readFileSync } from "node:fs";
-import { join } from "node:path";
-import { ActorType } from "../db/enums";
-import type { DB } from "../db/schema";
-import { adminViewGuard } from "../middleware/admin-gate";
-import { isFrontendTelemetryEnabled } from "../telemetry/service";
+import { Elysia, } from "elysia";
+import type { Kysely, } from "kysely";
+import { existsSync, readFileSync, } from "node:fs";
+import { join, } from "node:path";
+import { ActorType, } from "../db/enums";
+import type { DB, } from "../db/schema";
+import { adminViewGuard, } from "../middleware/admin-gate";
+import { isFrontendTelemetryEnabled, } from "../telemetry/service";
 
-const VIEWS_DIR = join(import.meta.dir, "..", "views");
-const PARTIALS_DIR = join(import.meta.dir, "..", "partials");
-const COMPONENTS_DIR = join(import.meta.dir, "..", "components");
-const ICONS_DIR = join(import.meta.dir, "..", "..", "dist", "public", "icons", "tabler");
+const VIEWS_DIR = join(import.meta.dir, "..", "views",);
+const PARTIALS_DIR = join(import.meta.dir, "..", "partials",);
+const COMPONENTS_DIR = join(import.meta.dir, "..", "components",);
+const ICONS_DIR = join(import.meta.dir, "..", "..", "dist", "public", "icons", "tabler",);
 
 const ALLOWED_VIEWS = new Set([
   "chat",
@@ -57,7 +57,7 @@ const ALLOWED_VIEWS = new Set([
   "admin",
   "quests",
   "register",
-]);
+],);
 
 const ALLOWED_PARTIALS = new Set([
   "characters/create-modal",
@@ -68,7 +68,7 @@ const ALLOWED_PARTIALS = new Set([
   "worlds/create-modal",
   "worlds/edit-modal",
   "modals/settings",
-]);
+],);
 
 const viewCache = new Map<string, string>();
 
@@ -78,31 +78,31 @@ function wrapWithLayout(
   userId?: string | null,
   sessionId?: string | null,
 ): string {
-  const layoutPath = join(VIEWS_DIR, "layout.html");
-  if (!existsSync(layoutPath)) return content;
+  const layoutPath = join(VIEWS_DIR, "layout.html",);
+  if (!existsSync(layoutPath,)) { return content; }
 
-  let layout = readFileSync(layoutPath, "utf8");
-  layout = layout.replace("{{{content}}}", () => content);
-  layout = layout.replace("{{telemetryEnabled}}", () => (isFrontendTelemetryEnabled() ? "true" : "false"));
-  layout = layout.replace("{{userId}}", () => JSON.stringify(userId ?? null));
-  layout = layout.replace("{{sessionId}}", () => JSON.stringify(sessionId ?? null));
-  if (title) layout = layout.replace(/<title>.*?<\/title>/, () => `<title>${title} — Loop Lore</title>`);
+  let layout = readFileSync(layoutPath, "utf8",);
+  layout = layout.replace("{{{content}}}", () => content,);
+  layout = layout.replace("{{telemetryEnabled}}", () => (isFrontendTelemetryEnabled() ? "true" : "false"),);
+  layout = layout.replace("{{userId}}", () => JSON.stringify(userId ?? null,),);
+  layout = layout.replace("{{sessionId}}", () => JSON.stringify(sessionId ?? null,),);
+  if (title) { layout = layout.replace(/<title>.*?<\/title>/, () => `<title>${title} — Loop Lore</title>`,); }
   return layout;
 }
 
-function resolveIncludes(content: string, chain = new Set<string>()): string {
-  return content.replaceAll(/\{\{>\s*([\w./-]+)\s*\}\}/g, (_match, includePath: string) => {
-    const resolved = join(COMPONENTS_DIR, includePath);
-    if (chain.has(resolved)) {
-      throw new Error(`Circular include detected: ${includePath} (resolved to ${resolved})`);
+function resolveIncludes(content: string, chain = new Set<string>(),): string {
+  return content.replaceAll(/\{\{>\s*([\w./-]+)\s*\}\}/g, (_match, includePath: string,) => {
+    const resolved = join(COMPONENTS_DIR, includePath,);
+    if (chain.has(resolved,)) {
+      throw new Error(`Circular include detected: ${includePath} (resolved to ${resolved})`,);
     }
-    if (!existsSync(resolved)) {
-      throw new Error(`Include not found: ${includePath} (resolved to ${resolved})`);
+    if (!existsSync(resolved,)) {
+      throw new Error(`Include not found: ${includePath} (resolved to ${resolved})`,);
     }
-    const included = readFileSync(resolved, "utf8");
-    chain.add(resolved);
-    return resolveIncludes(included, chain);
-  });
+    const included = readFileSync(resolved, "utf8",);
+    chain.add(resolved,);
+    return resolveIncludes(included, chain,);
+  },);
 }
 
 /**
@@ -113,25 +113,25 @@ function resolveIncludes(content: string, chain = new Set<string>()): string {
  * Falls back to a comment placeholder if the icon file is missing so
  * the page still renders (visible indicator for debugging).
  */
-function resolveIcons(content: string): string {
-  return content.replaceAll(/\{\{icon:([\w-]+)\}\}/g, (_match, name: string) => {
-    const iconPath = join(ICONS_DIR, `${name}.svg`);
-    if (!existsSync(iconPath)) {
+function resolveIcons(content: string,): string {
+  return content.replaceAll(/\{\{icon:([\w-]+)\}\}/g, (_match, name: string,) => {
+    const iconPath = join(ICONS_DIR, `${name}.svg`,);
+    if (!existsSync(iconPath,)) {
       return `<!-- icon not found: ${name} -->`;
     }
-    return readFileSync(iconPath, "utf8");
-  });
+    return readFileSync(iconPath, "utf8",);
+  },);
 }
 
-function loadView(viewName: string): string {
-  const cached = viewCache.get(viewName);
-  if (cached !== undefined) return cached;
+function loadView(viewName: string,): string {
+  const cached = viewCache.get(viewName,);
+  if (cached !== undefined) { return cached; }
 
-  const viewPath = join(VIEWS_DIR, `${viewName}.html`);
-  if (!existsSync(viewPath)) return "";
-  const content = readFileSync(viewPath, "utf8");
-  const resolved = resolveIcons(resolveIncludes(content));
-  viewCache.set(viewName, resolved);
+  const viewPath = join(VIEWS_DIR, `${viewName}.html`,);
+  if (!existsSync(viewPath,)) { return ""; }
+  const content = readFileSync(viewPath, "utf8",);
+  const resolved = resolveIcons(resolveIncludes(content,),);
+  viewCache.set(viewName, resolved,);
   return resolved;
 }
 
@@ -142,10 +142,10 @@ function respond(
   userId?: string | null,
   sessionId?: string | null,
 ): Response {
-  const body = isHtmx ? content : wrapWithLayout(content, title, userId, sessionId);
+  const body = isHtmx ? content : wrapWithLayout(content, title, userId, sessionId,);
   return new Response(body, {
-    headers: { "Content-Type": "text/html; charset=utf-8" },
-  });
+    headers: { "Content-Type": "text/html; charset=utf-8", },
+  },);
 }
 
 function notFoundView(
@@ -157,23 +157,23 @@ function notFoundView(
 ): Response {
   const content = `<div class="empty-state" style="padding: var(--space-12)">
       <div class="icon">⚠️</div>
-      <div class="title">${escapeHtml(message)}</div>
+      <div class="title">${escapeHtml(message,)}</div>
     </div>`;
-  return respond(content, isHtmx, title, userId, sessionId);
+  return respond(content, isHtmx, title, userId, sessionId,);
 }
 
-function htmlResponse(body: string): Response {
+function htmlResponse(body: string,): Response {
   return new Response(body, {
-    headers: { "Content-Type": "text/html; charset=utf-8" },
-  });
+    headers: { "Content-Type": "text/html; charset=utf-8", },
+  },);
 }
 
-function escapeHtml(str: string): string {
+function escapeHtml(str: string,): string {
   return str
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll("\"", "&quot;");
+    .replaceAll("&", "&amp;",)
+    .replaceAll("<", "&lt;",)
+    .replaceAll(">", "&gt;",)
+    .replaceAll('"', "&quot;",);
 }
 
 function serveView(
@@ -183,13 +183,13 @@ function serveView(
   sessionId?: string | null,
 ): Response | null {
   viewName = viewName === "assets" ? "gallery" : viewName;
-  if (!ALLOWED_VIEWS.has(viewName)) return null;
+  if (!ALLOWED_VIEWS.has(viewName,)) { return null; }
 
-  const content = loadView(viewName);
-  if (!content) return null;
+  const content = loadView(viewName,);
+  if (!content) { return null; }
 
-  const title = viewName === "index" ? undefined : viewName.charAt(0).toUpperCase() + viewName.slice(1);
-  return respond(content, isHtmx, title, userId, sessionId);
+  const title = viewName === "index" ? undefined : viewName.charAt(0,).toUpperCase() + viewName.slice(1,);
+  return respond(content, isHtmx, title, userId, sessionId,);
 }
 
 function serveCharacterChatList(
@@ -198,11 +198,11 @@ function serveCharacterChatList(
   userId?: string | null,
   sessionId?: string | null,
 ): Response | null {
-  let content = loadView("character-chat-list");
-  if (!content) return null;
+  let content = loadView("character-chat-list",);
+  if (!content) { return null; }
 
-  content = content.replace("{{characterSlug}}", () => slug);
-  return respond(content, isHtmx, `${slug} — Chats`, userId, sessionId);
+  content = content.replace("{{characterSlug}}", () => slug,);
+  return respond(content, isHtmx, `${slug} — Chats`, userId, sessionId,);
 }
 
 function serveCharacterChat(
@@ -212,14 +212,14 @@ function serveCharacterChat(
   userId?: string | null,
   sessionId?: string | null,
 ): Response | null {
-  const content = loadView("chat");
-  if (!content) return null;
+  const content = loadView("chat",);
+  if (!content) { return null; }
 
-  return respond(content, isHtmx, `${slug} — Chat`, userId, sessionId);
+  return respond(content, isHtmx, `${slug} — Chat`, userId, sessionId,);
 }
 
-function serveWorldsList(isHtmx = false, userId?: string | null, sessionId?: string | null): Response | null {
-  return serveView("worlds", isHtmx, userId, sessionId);
+function serveWorldsList(isHtmx = false, userId?: string | null, sessionId?: string | null,): Response | null {
+  return serveView("worlds", isHtmx, userId, sessionId,);
 }
 
 async function serveWorldDetail(
@@ -229,14 +229,14 @@ async function serveWorldDetail(
   userId?: string | null,
   sessionId?: string | null,
 ): Promise<Response | null> {
-  const world = await database.selectFrom("worlds").select("id").where("id", "=", worldId).executeTakeFirst();
-  if (!world) return notFoundView("World not found", isHtmx, "World not found", userId, sessionId);
+  const world = await database.selectFrom("worlds",).select("id",).where("id", "=", worldId,).executeTakeFirst();
+  if (!world) { return notFoundView("World not found", isHtmx, "World not found", userId, sessionId,); }
 
-  let content = loadView("world-detail");
-  if (!content) return null;
+  let content = loadView("world-detail",);
+  if (!content) { return null; }
 
-  content = content.replace("{{worldId}}", () => worldId);
-  return respond(content, isHtmx, "World — Details", userId, sessionId);
+  content = content.replace("{{worldId}}", () => worldId,);
+  return respond(content, isHtmx, "World — Details", userId, sessionId,);
 }
 
 async function serveWorldEdit(
@@ -246,14 +246,14 @@ async function serveWorldEdit(
   userId?: string | null,
   sessionId?: string | null,
 ): Promise<Response | null> {
-  const world = await database.selectFrom("worlds").select("id").where("id", "=", worldId).executeTakeFirst();
-  if (!world) return notFoundView("World not found", isHtmx, "World not found", userId, sessionId);
+  const world = await database.selectFrom("worlds",).select("id",).where("id", "=", worldId,).executeTakeFirst();
+  if (!world) { return notFoundView("World not found", isHtmx, "World not found", userId, sessionId,); }
 
-  let content = loadView("world-edit");
-  if (!content) return null;
+  let content = loadView("world-edit",);
+  if (!content) { return null; }
 
-  content = content.replace("{{worldId}}", () => worldId);
-  return respond(content, isHtmx, "Edit World", userId, sessionId);
+  content = content.replace("{{worldId}}", () => worldId,);
+  return respond(content, isHtmx, "Edit World", userId, sessionId,);
 }
 
 async function serveCharacterEdit(
@@ -264,37 +264,37 @@ async function serveCharacterEdit(
   sessionId?: string | null,
 ): Promise<Response | null> {
   const actor = await database
-    .selectFrom("actors")
-    .select("id")
-    .where("id", "=", characterId)
+    .selectFrom("actors",)
+    .select("id",)
+    .where("id", "=", characterId,)
     .executeTakeFirst();
-  if (!actor) return notFoundView("Character not found", isHtmx, "Character not found", userId, sessionId);
+  if (!actor) { return notFoundView("Character not found", isHtmx, "Character not found", userId, sessionId,); }
 
-  let content = loadView("character-edit");
-  if (!content) return null;
+  let content = loadView("character-edit",);
+  if (!content) { return null; }
 
-  content = content.replace("{{characterId}}", () => characterId);
-  return respond(content, isHtmx, "Edit Character", userId, sessionId);
+  content = content.replace("{{characterId}}", () => characterId,);
+  return respond(content, isHtmx, "Edit Character", userId, sessionId,);
 }
 
 // ── Static partials (read from file) ─────────────────────────
 
-function serveStaticPartial(name: string, searchParams?: URLSearchParams): string | null {
-  if (!ALLOWED_PARTIALS.has(name)) return null;
+function serveStaticPartial(name: string, searchParams?: URLSearchParams,): string | null {
+  if (!ALLOWED_PARTIALS.has(name,)) { return null; }
 
-  const partialPath = join(PARTIALS_DIR, `${name}.html`);
-  if (existsSync(partialPath)) {
-    let content = readFileSync(partialPath, "utf8");
-    if (searchParams?.has("worldId")) {
-      content = content.replace("{{worldId}}", () => searchParams.get("worldId")!);
+  const partialPath = join(PARTIALS_DIR, `${name}.html`,);
+  if (existsSync(partialPath,)) {
+    let content = readFileSync(partialPath, "utf8",);
+    if (searchParams?.has("worldId",)) {
+      content = content.replace("{{worldId}}", () => searchParams.get("worldId",)!,);
     }
     return content;
   }
 
   // Fallback to components dir
-  const componentPath = join(COMPONENTS_DIR, `${name}.html`);
-  if (existsSync(componentPath)) {
-    return readFileSync(componentPath, "utf8");
+  const componentPath = join(COMPONENTS_DIR, `${name}.html`,);
+  if (existsSync(componentPath,)) {
+    return readFileSync(componentPath, "utf8",);
   }
 
   return null;
@@ -302,19 +302,19 @@ function serveStaticPartial(name: string, searchParams?: URLSearchParams): strin
 
 // ── Dynamic partials (server-rendered) ───────────────────────
 
-function formatSize(bytes: number): string {
-  if (bytes < 1024) return `${bytes} B`;
-  if (bytes < 1_048_576) return `${(bytes / 1024).toFixed(1)} KB`;
-  return `${(bytes / 1_048_576).toFixed(1)} MB`;
+function formatSize(bytes: number,): string {
+  if (bytes < 1024) { return `${bytes} B`; }
+  if (bytes < 1_048_576) { return `${(bytes / 1024).toFixed(1,)} KB`; }
+  return `${(bytes / 1_048_576).toFixed(1,)} MB`;
 }
 
-async function serveCharactersGrid(database: Kysely<DB>): Promise<Response> {
+async function serveCharactersGrid(database: Kysely<DB>,): Promise<Response> {
   const actors = await database
-    .selectFrom("actors")
+    .selectFrom("actors",)
     .selectAll()
-    .where("actor_type", "!=", ActorType.User)
-    .orderBy("display_name", "asc")
-    .limit(200)
+    .where("actor_type", "!=", ActorType.User,)
+    .orderBy("display_name", "asc",)
+    .limit(200,)
     .execute();
 
   if (actors.length === 0) {
@@ -322,16 +322,16 @@ async function serveCharactersGrid(database: Kysely<DB>): Promise<Response> {
       <div class="icon">👤</div>
       <div class="title">No characters found</div>
       <div class="description">Create your first character to start roleplaying.</div>
-    </div>`);
+    </div>`,);
   }
 
   const cards = actors
-    .map((c) => {
+    .map((c,) => {
       const avatar = c.avatar_asset_id
         ? `<img src="/api/assets/${c.avatar_asset_id}/thumb" alt="Avatar" />`
         : "<span>👤</span>";
-      const name = escapeHtml(c.display_name);
-      const desc = escapeHtml(c.description || "No description");
+      const name = escapeHtml(c.display_name,);
+      const desc = escapeHtml(c.description || "No description",);
       return `<div class="character-card" onclick="selectCharacterCard('${c.id}')" data-testid="character-card-${c.id}">
       <div class="card-img">${avatar}</div>
       <div class="card-body">
@@ -339,61 +339,61 @@ async function serveCharactersGrid(database: Kysely<DB>): Promise<Response> {
         <div class="description">${desc}</div>
       </div>
     </div>`;
-    })
-    .join("");
+    },)
+    .join("",);
 
-  return htmlResponse(cards);
+  return htmlResponse(cards,);
 }
 
-async function serveWorldsListDb(database: Kysely<DB>): Promise<Response> {
-  const worlds = await database.selectFrom("worlds").selectAll().orderBy("name", "asc").limit(100).execute();
+async function serveWorldsListDb(database: Kysely<DB>,): Promise<Response> {
+  const worlds = await database.selectFrom("worlds",).selectAll().orderBy("name", "asc",).limit(100,).execute();
 
   if (worlds.length === 0) {
     return htmlResponse(`<div class="empty-state" style="padding: var(--space-12)">
       <div class="icon">🌍</div>
       <div class="title">No worlds found</div>
       <div class="description">Create your first world.</div>
-    </div>`);
+    </div>`,);
   }
 
   const items = worlds
-    .map((w) => {
-      const name = escapeHtml(w.name);
-      const desc = escapeHtml(w.description || "No description");
+    .map((w,) => {
+      const name = escapeHtml(w.name,);
+      const desc = escapeHtml(w.description || "No description",);
       return `<div class="world-card" onclick="location.assign('/worlds/${w.id}')" data-testid="world-card-${w.id}">
       <div class="world-header"><h3 class="world-name">${name}</h3><span class="world-id">ID: ${w.id}</span></div>
       <div class="world-description">${desc}</div>
       <div class="world-meta"><span class="tag">0 chats</span></div>
     </div>`;
-    })
-    .join("");
+    },)
+    .join("",);
 
-  return htmlResponse(items);
+  return htmlResponse(items,);
 }
 
-async function serveWorldDetailContent(worldId: string, database: Kysely<DB>): Promise<Response> {
-  const world = await database.selectFrom("worlds").selectAll().where("id", "=", worldId).executeTakeFirst();
+async function serveWorldDetailContent(worldId: string, database: Kysely<DB>,): Promise<Response> {
+  const world = await database.selectFrom("worlds",).selectAll().where("id", "=", worldId,).executeTakeFirst();
 
   if (!world) {
     return htmlResponse(`<div class="empty-state" style="padding: var(--space-12)">
       <div class="icon">⚠️</div>
       <div class="title">World not found</div>
-    </div>`);
+    </div>`,);
   }
 
-  const name = escapeHtml(world.name);
-  const desc = escapeHtml(world.description || "");
-  const lore = escapeHtml(world.lore || "No lore provided.");
+  const name = escapeHtml(world.name,);
+  const desc = escapeHtml(world.description || "",);
+  const lore = escapeHtml(world.lore || "No lore provided.",);
 
   const locations = await database
-    .selectFrom("locations")
+    .selectFrom("locations",)
     .selectAll()
-    .where("world_id", "=", worldId)
-    .orderBy("name", "asc")
+    .where("world_id", "=", worldId,)
+    .orderBy("name", "asc",)
     .execute();
 
   const locationsJson = JSON.stringify(
-    locations.map((l) => ({
+    locations.map((l,) => ({
       id: l.id,
       name: l.name,
       description: l.description,
@@ -461,34 +461,34 @@ async function serveWorldDetailContent(worldId: string, database: Kysely<DB>): P
   );
 }
 
-async function serveCharacterEditForm(characterId: string, database: Kysely<DB>): Promise<Response> {
+async function serveCharacterEditForm(characterId: string, database: Kysely<DB>,): Promise<Response> {
   const actor = await database
-    .selectFrom("actors")
+    .selectFrom("actors",)
     .selectAll()
-    .where("id", "=", characterId)
+    .where("id", "=", characterId,)
     .executeTakeFirst();
 
   if (!actor) {
     return htmlResponse(`<div class="empty-state" style="padding: var(--space-12)">
       <div class="icon">⚠️</div>
       <div class="title">Character not found</div>
-    </div>`);
+    </div>`,);
   }
 
-  const name = escapeHtml(actor.display_name || "");
-  const desc = escapeHtml(actor.description || "");
-  const systemPrompt = escapeHtml(actor.system_prompt || "");
-  const personality = escapeHtml(actor.personality || "");
-  const welcome = escapeHtml(actor.welcome_message || "");
-  const scenario = escapeHtml(actor.scenario || "");
-  const mesExample = escapeHtml(actor.mes_example || "");
-  const postHistory = escapeHtml(actor.post_history_instructions || "");
+  const name = escapeHtml(actor.display_name || "",);
+  const desc = escapeHtml(actor.description || "",);
+  const systemPrompt = escapeHtml(actor.system_prompt || "",);
+  const personality = escapeHtml(actor.personality || "",);
+  const welcome = escapeHtml(actor.welcome_message || "",);
+  const scenario = escapeHtml(actor.scenario || "",);
+  const mesExample = escapeHtml(actor.mes_example || "",);
+  const postHistory = escapeHtml(actor.post_history_instructions || "",);
   const avatarHtml = actor.avatar_asset_id
     ? `<img src="/api/assets/${actor.avatar_asset_id}/thumb" style="width:100%;height:100%;object-fit:cover" alt="Avatar" />`
     : "<span>👤</span>";
   const avatarId = actor.avatar_asset_id || "";
   const avatarRemoveBtn = actor.avatar_asset_id
-    ? "<button type=\"button\" class=\"btn btn-danger\" onclick=\"clearAvatar()\">Remove</button>"
+    ? '<button type="button" class="btn btn-danger" onclick="clearAvatar()">Remove</button>'
     : "";
 
   return htmlResponse(`<div style="max-width:720px;margin:0 auto;width:100%">
@@ -543,16 +543,16 @@ async function serveCharacterEditForm(characterId: string, database: Kysely<DB>)
           <button type="button" class="btn btn-primary" onclick="saveCharacterEdit('${characterId}')" data-testid="save-character-btn">Save Character</button>
         </div>
       </form>
-    </div>`);
+    </div>`,);
 }
 
-async function serveCharacterChatListDb(slug: string, database: Kysely<DB>): Promise<Response> {
+async function serveCharacterChatListDb(slug: string, database: Kysely<DB>,): Promise<Response> {
   const chats = await database
-    .selectFrom("chats")
+    .selectFrom("chats",)
     .selectAll()
-    .where("name", "like", `%${slug}%`)
-    .orderBy("updated_at", "desc")
-    .limit(50)
+    .where("name", "like", `%${slug}%`,)
+    .orderBy("updated_at", "desc",)
+    .limit(50,)
     .execute();
 
   if (chats.length === 0) {
@@ -562,24 +562,24 @@ async function serveCharacterChatListDb(slug: string, database: Kysely<DB>): Pro
   }
 
   const items = chats
-    .map((c) => {
-      const name = escapeHtml(c.name);
+    .map((c,) => {
+      const name = escapeHtml(c.name,);
       return `<div class="chat-item" onclick="location.assign('/views/chat?chatid=${c.id}')" data-testid="chat-item-${c.id}">
       <div class="chat-info"><h4 class="chat-name">${name}</h4><p class="chat-preview">No messages yet</p></div>
-      <span class="chat-time">${c.updated_at ? new Date(c.updated_at).toLocaleDateString() : ""}</span>
+      <span class="chat-time">${c.updated_at ? new Date(c.updated_at,).toLocaleDateString() : ""}</span>
     </div>`;
-    })
-    .join("");
+    },)
+    .join("",);
 
-  return htmlResponse(items);
+  return htmlResponse(items,);
 }
 
-async function serveGalleryGrid(database: Kysely<DB>): Promise<Response> {
+async function serveGalleryGrid(database: Kysely<DB>,): Promise<Response> {
   const assets = await database
-    .selectFrom("assets")
+    .selectFrom("assets",)
     .selectAll()
-    .orderBy("filename", "asc")
-    .limit(200)
+    .orderBy("filename", "asc",)
+    .limit(200,)
     .execute();
 
   if (assets.length === 0) {
@@ -587,13 +587,13 @@ async function serveGalleryGrid(database: Kysely<DB>): Promise<Response> {
       <div class="icon">📁</div>
       <div class="title">No assets found</div>
       <div class="description">Upload images, audio, or video to get started.</div>
-    </div>`);
+    </div>`,);
   }
 
-  function thumbForAsset(a: (typeof assets)[number]): string {
+  function thumbForAsset(a: (typeof assets)[number],): string {
     switch (a.asset_type) {
       case "image": {
-        return `<img src="/api/assets/${a.id}/thumb" alt="${escapeHtml(a.filename)}" loading="lazy" />`;
+        return `<img src="/api/assets/${a.id}/thumb" alt="${escapeHtml(a.filename,)}" loading="lazy" />`;
       }
       case "audio": {
         return `<div class="file-icon">🎵</div>`;
@@ -608,56 +608,56 @@ async function serveGalleryGrid(database: Kysely<DB>): Promise<Response> {
   }
 
   const cards = assets
-    .map((a) => {
-      const filename = escapeHtml(a.filename);
-      const size = formatSize(a.size_bytes);
+    .map((a,) => {
+      const filename = escapeHtml(a.filename,);
+      const size = formatSize(a.size_bytes,);
       return `<div class="asset-card" onclick="openAssetPreview('${a.id}')" data-testid="asset-card-${a.id}">
-      <div class="thumb">${thumbForAsset(a)}</div>
+      <div class="thumb">${thumbForAsset(a,)}</div>
       <div class="details">
         <span class="name">${filename}</span>
         <span class="type">${size}</span>
       </div>
     </div>`;
-    })
-    .join("");
+    },)
+    .join("",);
 
-  return htmlResponse(cards);
+  return htmlResponse(cards,);
 }
 
 // ── Dynamic search endpoints (HTMX active search) ───────────
 
-async function serveGallerySearch(database: Kysely<DB>, params: URLSearchParams): Promise<Response> {
-  const query = params.get("q")?.toLowerCase().trim() ?? "";
-  const type = params.get("type") ?? "all";
-  const sort = params.get("sort") ?? "name";
+async function serveGallerySearch(database: Kysely<DB>, params: URLSearchParams,): Promise<Response> {
+  const query = params.get("q",)?.toLowerCase().trim() ?? "";
+  const type = params.get("type",) ?? "all";
+  const sort = params.get("sort",) ?? "name";
 
-  let qb = database.selectFrom("assets").selectAll();
+  let qb = database.selectFrom("assets",).selectAll();
 
   if (query) {
-    qb = qb.where("filename", "like", `%${query}%`);
+    qb = qb.where("filename", "like", `%${query}%`,);
   }
   if (type !== "all") {
-    qb = qb.where("asset_type", "=", type as any);
+    qb = qb.where("asset_type", "=", type as any,);
   }
 
-  if (sort === "newest") qb = qb.orderBy("created_at", "desc");
-  else if (sort === "oldest") qb = qb.orderBy("created_at", "asc");
-  else qb = qb.orderBy("filename", "asc");
+  if (sort === "newest") { qb = qb.orderBy("created_at", "desc",); }
+  else if (sort === "oldest") { qb = qb.orderBy("created_at", "asc",); }
+  else { qb = qb.orderBy("filename", "asc",); }
 
-  const assets = await qb.limit(200).execute();
+  const assets = await qb.limit(200,).execute();
 
   if (assets.length === 0) {
     return htmlResponse(`<div class="empty-state" style="grid-column:1/-1" data-testid="gallery-empty">
       <div class="icon">📁</div>
       <div class="title">No assets match your search</div>
       <div class="description">Try different search terms.</div>
-    </div>`);
+    </div>`,);
   }
 
-  function thumbForAsset(a: (typeof assets)[number]): string {
+  function thumbForAsset(a: (typeof assets)[number],): string {
     switch (a.asset_type) {
       case "image": {
-        return `<img src="/api/assets/${a.id}/thumb" alt="${escapeHtml(a.filename)}" loading="lazy" />`;
+        return `<img src="/api/assets/${a.id}/thumb" alt="${escapeHtml(a.filename,)}" loading="lazy" />`;
       }
       case "audio": {
         return `<div class="file-icon">🎵</div>`;
@@ -672,53 +672,53 @@ async function serveGallerySearch(database: Kysely<DB>, params: URLSearchParams)
   }
 
   const cards = assets
-    .map((a) => {
-      const filename = escapeHtml(a.filename);
-      const size = formatSize(a.size_bytes);
+    .map((a,) => {
+      const filename = escapeHtml(a.filename,);
+      const size = formatSize(a.size_bytes,);
       return `<div class="asset-card" onclick="openAssetPreview('${a.id}')" data-testid="asset-card-${a.id}">
-      <div class="thumb">${thumbForAsset(a)}</div>
+      <div class="thumb">${thumbForAsset(a,)}</div>
       <div class="details">
         <span class="name">${filename}</span>
         <span class="type">${size}</span>
       </div>
     </div>`;
-    })
-    .join("");
+    },)
+    .join("",);
 
-  return htmlResponse(cards);
+  return htmlResponse(cards,);
 }
 
-async function serveCharactersSearch(database: Kysely<DB>, params: URLSearchParams): Promise<Response> {
-  const query = params.get("q")?.toLowerCase().trim() ?? "";
-  const sort = params.get("sort") ?? "name";
+async function serveCharactersSearch(database: Kysely<DB>, params: URLSearchParams,): Promise<Response> {
+  const query = params.get("q",)?.toLowerCase().trim() ?? "";
+  const sort = params.get("sort",) ?? "name";
 
-  let qb = database.selectFrom("actors").selectAll().where("actor_type", "!=", ActorType.User);
+  let qb = database.selectFrom("actors",).selectAll().where("actor_type", "!=", ActorType.User,);
 
   if (query) {
-    qb = qb.where("display_name", "like", `%${query}%`);
+    qb = qb.where("display_name", "like", `%${query}%`,);
   }
 
-  if (sort === "newest") qb = qb.orderBy("created_at", "desc");
-  else if (sort === "oldest") qb = qb.orderBy("created_at", "asc");
-  else qb = qb.orderBy("display_name", "asc");
+  if (sort === "newest") { qb = qb.orderBy("created_at", "desc",); }
+  else if (sort === "oldest") { qb = qb.orderBy("created_at", "asc",); }
+  else { qb = qb.orderBy("display_name", "asc",); }
 
-  const actors = await qb.limit(200).execute();
+  const actors = await qb.limit(200,).execute();
 
   if (actors.length === 0) {
     return htmlResponse(`<div class="empty-state" style="padding: var(--space-12)" data-testid="characters-empty">
       <div class="icon">👤</div>
       <div class="title">No characters match your search</div>
       <div class="description">Try different search terms.</div>
-    </div>`);
+    </div>`,);
   }
 
   const cards = actors
-    .map((c) => {
+    .map((c,) => {
       const avatar = c.avatar_asset_id
         ? `<img src="/api/assets/${c.avatar_asset_id}/thumb" alt="Avatar" />`
         : "<span>👤</span>";
-      const name = escapeHtml(c.display_name);
-      const desc = escapeHtml(c.description || "No description");
+      const name = escapeHtml(c.display_name,);
+      const desc = escapeHtml(c.description || "No description",);
       return `<div class="character-card" onclick="selectCharacterCard('${c.id}')" data-testid="character-card-${c.id}">
       <div class="card-img">${avatar}</div>
       <div class="card-body">
@@ -726,151 +726,151 @@ async function serveCharactersSearch(database: Kysely<DB>, params: URLSearchPara
         <div class="description">${desc}</div>
       </div>
     </div>`;
-    })
-    .join("");
+    },)
+    .join("",);
 
-  return htmlResponse(cards);
+  return htmlResponse(cards,);
 }
 
-async function serveWorldsSearch(database: Kysely<DB>, params: URLSearchParams): Promise<Response> {
-  const query = params.get("q")?.toLowerCase().trim() ?? "";
-  const sort = params.get("sort") ?? "name";
+async function serveWorldsSearch(database: Kysely<DB>, params: URLSearchParams,): Promise<Response> {
+  const query = params.get("q",)?.toLowerCase().trim() ?? "";
+  const sort = params.get("sort",) ?? "name";
 
-  let qb = database.selectFrom("worlds").selectAll();
+  let qb = database.selectFrom("worlds",).selectAll();
 
   if (query) {
-    qb = qb.where("name", "like", `%${query}%`);
+    qb = qb.where("name", "like", `%${query}%`,);
   }
 
-  if (sort === "newest") qb = qb.orderBy("created_at", "desc");
-  else if (sort === "oldest") qb = qb.orderBy("created_at", "asc");
-  else qb = qb.orderBy("name", "asc");
+  if (sort === "newest") { qb = qb.orderBy("created_at", "desc",); }
+  else if (sort === "oldest") { qb = qb.orderBy("created_at", "asc",); }
+  else { qb = qb.orderBy("name", "asc",); }
 
-  const worlds = await qb.limit(100).execute();
+  const worlds = await qb.limit(100,).execute();
 
   if (worlds.length === 0) {
     return htmlResponse(`<div class="empty-state" style="padding: var(--space-12)">
       <div class="icon">🌍</div>
       <div class="title">No worlds match your search</div>
       <div class="description">Try different search terms.</div>
-    </div>`);
+    </div>`,);
   }
 
   const items = worlds
-    .map((w) => {
-      const name = escapeHtml(w.name);
-      const desc = escapeHtml(w.description || "No description");
+    .map((w,) => {
+      const name = escapeHtml(w.name,);
+      const desc = escapeHtml(w.description || "No description",);
       return `<div class="world-card" onclick="location.assign('/worlds/${w.id}')" data-testid="world-card-${w.id}">
       <div class="world-header"><h3 class="world-name">${name}</h3><span class="world-id">ID: ${w.id}</span></div>
       <div class="world-description">${desc}</div>
       <div class="world-meta"><span class="tag">0 chats</span></div>
     </div>`;
-    })
-    .join("");
+    },)
+    .join("",);
 
-  return htmlResponse(items);
+  return htmlResponse(items,);
 }
 
 // ── Elysia plugin ───────────────────────────────────────────
 
-export function viewRoutes({ database }: { database: Kysely<DB> }) {
+export function viewRoutes({ database, }: { database: Kysely<DB> },) {
   return (
-    new Elysia({ name: "views" })
+    new Elysia({ name: "views", },)
       // ── Static partials (lazy-loaded modals, skeletons) ──────
-      .get("/partials/:page/:section", (ctx) => {
-        const isHtmx = ctx.request.headers.get("HX-Request") === "true";
+      .get("/partials/:page/:section", (ctx,) => {
+        const isHtmx = ctx.request.headers.get("HX-Request",) === "true";
         if (!isHtmx) {
-          return new Response(null, { status: 302, headers: { Location: "/views/" } });
+          return new Response(null, { status: 302, headers: { Location: "/views/", }, },);
         }
         const name = `${ctx.params.page}/${ctx.params.section}`;
-        const url = new URL(ctx.request.url);
-        const content = serveStaticPartial(name, url.searchParams);
-        if (!content) return new Response("Not found", { status: 404 });
-        return htmlResponse(content);
-      })
+        const url = new URL(ctx.request.url,);
+        const content = serveStaticPartial(name, url.searchParams,);
+        if (!content) { return new Response("Not found", { status: 404, },); }
+        return htmlResponse(content,);
+      },)
       // ── Dynamic partials (server-rendered data) ─────────────
-      .get("/dynamic/characters/grid", async (ctx) => {
-        const isHtmx = ctx.request.headers.get("HX-Request") === "true";
+      .get("/dynamic/characters/grid", async (ctx,) => {
+        const isHtmx = ctx.request.headers.get("HX-Request",) === "true";
         if (!isHtmx) {
-          return new Response(null, { status: 302, headers: { Location: "/views/" } });
+          return new Response(null, { status: 302, headers: { Location: "/views/", }, },);
         }
-        return await serveCharactersGrid(database);
-      })
-      .get("/dynamic/gallery/grid", async (ctx) => {
-        const isHtmx = ctx.request.headers.get("HX-Request") === "true";
+        return await serveCharactersGrid(database,);
+      },)
+      .get("/dynamic/gallery/grid", async (ctx,) => {
+        const isHtmx = ctx.request.headers.get("HX-Request",) === "true";
         if (!isHtmx) {
-          return new Response(null, { status: 302, headers: { Location: "/views/" } });
+          return new Response(null, { status: 302, headers: { Location: "/views/", }, },);
         }
-        return await serveGalleryGrid(database);
-      })
-      .get("/dynamic/worlds/list", async (ctx) => {
-        const isHtmx = ctx.request.headers.get("HX-Request") === "true";
+        return await serveGalleryGrid(database,);
+      },)
+      .get("/dynamic/worlds/list", async (ctx,) => {
+        const isHtmx = ctx.request.headers.get("HX-Request",) === "true";
         if (!isHtmx) {
-          return new Response(null, { status: 302, headers: { Location: "/views/" } });
+          return new Response(null, { status: 302, headers: { Location: "/views/", }, },);
         }
-        return await serveWorldsListDb(database);
-      })
+        return await serveWorldsListDb(database,);
+      },)
       // HTMX search endpoints
-      .get("/dynamic/gallery/search", async (ctx) => {
-        const isHtmx = ctx.request.headers.get("HX-Request") === "true";
+      .get("/dynamic/gallery/search", async (ctx,) => {
+        const isHtmx = ctx.request.headers.get("HX-Request",) === "true";
         if (!isHtmx) {
-          return new Response(null, { status: 302, headers: { Location: "/views/" } });
+          return new Response(null, { status: 302, headers: { Location: "/views/", }, },);
         }
-        const url = new URL(ctx.request.url);
-        return await serveGallerySearch(database, url.searchParams);
-      })
-      .get("/dynamic/characters/search", async (ctx) => {
-        const isHtmx = ctx.request.headers.get("HX-Request") === "true";
+        const url = new URL(ctx.request.url,);
+        return await serveGallerySearch(database, url.searchParams,);
+      },)
+      .get("/dynamic/characters/search", async (ctx,) => {
+        const isHtmx = ctx.request.headers.get("HX-Request",) === "true";
         if (!isHtmx) {
-          return new Response(null, { status: 302, headers: { Location: "/views/" } });
+          return new Response(null, { status: 302, headers: { Location: "/views/", }, },);
         }
-        const url = new URL(ctx.request.url);
-        return await serveCharactersSearch(database, url.searchParams);
-      })
-      .get("/dynamic/worlds/search", async (ctx) => {
-        const isHtmx = ctx.request.headers.get("HX-Request") === "true";
+        const url = new URL(ctx.request.url,);
+        return await serveCharactersSearch(database, url.searchParams,);
+      },)
+      .get("/dynamic/worlds/search", async (ctx,) => {
+        const isHtmx = ctx.request.headers.get("HX-Request",) === "true";
         if (!isHtmx) {
-          return new Response(null, { status: 302, headers: { Location: "/views/" } });
+          return new Response(null, { status: 302, headers: { Location: "/views/", }, },);
         }
-        const url = new URL(ctx.request.url);
-        return await serveWorldsSearch(database, url.searchParams);
-      })
-      .get("/dynamic/worlds/:id/detail", async (ctx) => {
-        const isHtmx = ctx.request.headers.get("HX-Request") === "true";
+        const url = new URL(ctx.request.url,);
+        return await serveWorldsSearch(database, url.searchParams,);
+      },)
+      .get("/dynamic/worlds/:id/detail", async (ctx,) => {
+        const isHtmx = ctx.request.headers.get("HX-Request",) === "true";
         if (!isHtmx) {
-          return new Response(null, { status: 302, headers: { Location: "/views/" } });
+          return new Response(null, { status: 302, headers: { Location: "/views/", }, },);
         }
-        return await serveWorldDetailContent(ctx.params.id, database);
-      })
-      .get("/dynamic/characters/:id/edit-form", async (ctx) => {
-        const isHtmx = ctx.request.headers.get("HX-Request") === "true";
+        return await serveWorldDetailContent(ctx.params.id, database,);
+      },)
+      .get("/dynamic/characters/:id/edit-form", async (ctx,) => {
+        const isHtmx = ctx.request.headers.get("HX-Request",) === "true";
         if (!isHtmx) {
-          return new Response(null, { status: 302, headers: { Location: "/views/" } });
+          return new Response(null, { status: 302, headers: { Location: "/views/", }, },);
         }
-        return await serveCharacterEditForm(ctx.params.id, database);
-      })
-      .get("/dynamic/characters/:id/chat-list", async (ctx) => {
-        const isHtmx = ctx.request.headers.get("HX-Request") === "true";
+        return await serveCharacterEditForm(ctx.params.id, database,);
+      },)
+      .get("/dynamic/characters/:id/chat-list", async (ctx,) => {
+        const isHtmx = ctx.request.headers.get("HX-Request",) === "true";
         if (!isHtmx) {
-          return new Response(null, { status: 302, headers: { Location: "/views/" } });
+          return new Response(null, { status: 302, headers: { Location: "/views/", }, },);
         }
-        return await serveCharacterChatListDb(ctx.params.id, database);
-      })
+        return await serveCharacterChatListDb(ctx.params.id, database,);
+      },)
       // ── Character routes ───────────────────────────────────────
-      .get("/character/:slug", (ctx: any) => {
-        const isHtmx = ctx.request.headers.get("HX-Request") === "true";
-        const result = serveCharacterChatList(ctx.params.slug, isHtmx, ctx.userId, ctx.sessionId);
-        if (result) return result;
-        return new Response("Not found", { status: 404 });
-      })
-      .get("/character/:slug/edit", async (ctx: any) => {
-        const isHtmx = ctx.request.headers.get("HX-Request") === "true";
-        const result = await serveCharacterEdit(ctx.params.slug, database, isHtmx, ctx.userId, ctx.sessionId);
-        if (result) return result;
-        return new Response("Not found", { status: 404 });
-      })
-      .get("/character/:slug/:chatId", (ctx: any) => {
-        const isHtmx = ctx.request.headers.get("HX-Request") === "true";
+      .get("/character/:slug", (ctx: any,) => {
+        const isHtmx = ctx.request.headers.get("HX-Request",) === "true";
+        const result = serveCharacterChatList(ctx.params.slug, isHtmx, ctx.userId, ctx.sessionId,);
+        if (result) { return result; }
+        return new Response("Not found", { status: 404, },);
+      },)
+      .get("/character/:slug/edit", async (ctx: any,) => {
+        const isHtmx = ctx.request.headers.get("HX-Request",) === "true";
+        const result = await serveCharacterEdit(ctx.params.slug, database, isHtmx, ctx.userId, ctx.sessionId,);
+        if (result) { return result; }
+        return new Response("Not found", { status: 404, },);
+      },)
+      .get("/character/:slug/:chatId", (ctx: any,) => {
+        const isHtmx = ctx.request.headers.get("HX-Request",) === "true";
         const result = serveCharacterChat(
           ctx.params.slug,
           ctx.params.chatId,
@@ -878,65 +878,65 @@ export function viewRoutes({ database }: { database: Kysely<DB> }) {
           ctx.userId,
           ctx.sessionId,
         );
-        if (result) return result;
-        return new Response("Not found", { status: 404 });
-      })
-      .get("/characters/:id/edit", async (ctx: any) => {
-        const isHtmx = ctx.request.headers.get("HX-Request") === "true";
-        const result = await serveCharacterEdit(ctx.params.id, database, isHtmx, ctx.userId, ctx.sessionId);
-        if (result) return result;
-        return new Response("Not found", { status: 404 });
-      })
+        if (result) { return result; }
+        return new Response("Not found", { status: 404, },);
+      },)
+      .get("/characters/:id/edit", async (ctx: any,) => {
+        const isHtmx = ctx.request.headers.get("HX-Request",) === "true";
+        const result = await serveCharacterEdit(ctx.params.id, database, isHtmx, ctx.userId, ctx.sessionId,);
+        if (result) { return result; }
+        return new Response("Not found", { status: 404, },);
+      },)
       // ── World routes ───────────────────────────────────────────
-      .get("/worlds", (ctx: any) => {
-        const isHtmx = ctx.request.headers.get("HX-Request") === "true";
-        const result = serveWorldsList(isHtmx, ctx.userId, ctx.sessionId);
-        if (result) return result;
-        return new Response("Not found", { status: 404 });
-      })
-      .get("/worlds/:id", async (ctx: any) => {
-        const isHtmx = ctx.request.headers.get("HX-Request") === "true";
-        const result = await serveWorldDetail(ctx.params.id, database, isHtmx, ctx.userId, ctx.sessionId);
-        if (result) return result;
-        return new Response("Not found", { status: 404 });
-      })
-      .get("/worlds/:id/edit", async (ctx: any) => {
-        const isHtmx = ctx.request.headers.get("HX-Request") === "true";
-        const result = await serveWorldEdit(ctx.params.id, database, isHtmx, ctx.userId, ctx.sessionId);
-        if (result) return result;
-        return new Response("Not found", { status: 404 });
-      })
+      .get("/worlds", (ctx: any,) => {
+        const isHtmx = ctx.request.headers.get("HX-Request",) === "true";
+        const result = serveWorldsList(isHtmx, ctx.userId, ctx.sessionId,);
+        if (result) { return result; }
+        return new Response("Not found", { status: 404, },);
+      },)
+      .get("/worlds/:id", async (ctx: any,) => {
+        const isHtmx = ctx.request.headers.get("HX-Request",) === "true";
+        const result = await serveWorldDetail(ctx.params.id, database, isHtmx, ctx.userId, ctx.sessionId,);
+        if (result) { return result; }
+        return new Response("Not found", { status: 404, },);
+      },)
+      .get("/worlds/:id/edit", async (ctx: any,) => {
+        const isHtmx = ctx.request.headers.get("HX-Request",) === "true";
+        const result = await serveWorldEdit(ctx.params.id, database, isHtmx, ctx.userId, ctx.sessionId,);
+        if (result) { return result; }
+        return new Response("Not found", { status: 404, },);
+      },)
       // ── Admin view (guarded — must precede /views/:name) ─────────
-      .guard({ beforeHandle: adminViewGuard }, (app) =>
-        app.get("/views/admin", (ctx: any) => {
-          const isHtmx = ctx.request.headers.get("HX-Request") === "true";
-          const result = serveView("admin", isHtmx, ctx.userId, ctx.sessionId);
-          if (result) return result;
-          return new Response("Not found", { status: 404 });
-        }))
+      .guard({ beforeHandle: adminViewGuard, }, (app,) =>
+        app.get("/views/admin", (ctx: any,) => {
+          const isHtmx = ctx.request.headers.get("HX-Request",) === "true";
+          const result = serveView("admin", isHtmx, ctx.userId, ctx.sessionId,);
+          if (result) { return result; }
+          return new Response("Not found", { status: 404, },);
+        },),)
       // ── View templates (non-admin) ──────────────────────────────
-      .get("/views/:name", (ctx: any) => {
-        const isHtmx = ctx.request.headers.get("HX-Request") === "true";
+      .get("/views/:name", (ctx: any,) => {
+        const isHtmx = ctx.request.headers.get("HX-Request",) === "true";
         const name = ctx.params.name as string;
 
         // Redirect .html extensions to clean path; non-allowed views to /views/
-        const cleanName = name.replace(/\.html?$/i, "");
-        const isHtmlExtension = /\.html?$/i.test(name);
+        const cleanName = name.replace(/\.html?$/i, "",);
+        const isHtmlExtension = /\.html?$/i.test(name,);
         if (isHtmlExtension) {
-          if (ALLOWED_VIEWS.has(cleanName)) {
-            return new Response(null, { status: 302, headers: { Location: `/views/${cleanName}` } });
+          if (ALLOWED_VIEWS.has(cleanName,)) {
+            return new Response(null, { status: 302, headers: { Location: `/views/${cleanName}`, }, },);
           }
-          return new Response(null, { status: 302, headers: { Location: "/views/" } });
+          return new Response(null, { status: 302, headers: { Location: "/views/", }, },);
         }
-        if (!ALLOWED_VIEWS.has(name)) {
-          return new Response(null, { status: 302, headers: { Location: "/views/" } });
+        if (!ALLOWED_VIEWS.has(name,)) {
+          return new Response(null, { status: 302, headers: { Location: "/views/", }, },);
         }
 
-        const result = serveView(name, isHtmx, ctx.userId, ctx.sessionId);
-        if (result) return result;
-        return new Response("Not found", { status: 404 });
-      })
+        const result = serveView(name, isHtmx, ctx.userId, ctx.sessionId,);
+        if (result) { return result; }
+        return new Response("Not found", { status: 404, },);
+      },)
   );
 }
 
-export { serveView };
+export { serveView, };
