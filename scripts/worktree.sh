@@ -764,7 +764,7 @@ case "${1:-}" in
         ;;
     finalize|agent-merge)
         shift
-        cmd_finalize "${1:-}"
+        cmd_finalize "$@"
         ;;
     agent-commit)
         shift
