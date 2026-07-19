@@ -117,6 +117,10 @@ interface AuthConfig {
   adminUsername?: string;
   /** Bootstrap admin password (multi-user mode). Env-only preferred; AUTH_ADMIN_PASSWORD. Never commit. */
   adminPassword?: string;
+  /** HMAC-SHA256 secret for JWT signing. Required when auth.required=true. Env-only: AUTH_JWT_SECRET. */
+  jwtSecret?: string;
+  /** JWT token expiry in seconds (default: 86400 = 24h) */
+  jwtExpiresIn?: number;
 }
 
 interface TransportCompressionConfig {
