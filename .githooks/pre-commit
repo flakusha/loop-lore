@@ -1,39 +1,155 @@
 #!/bin/sh
 # Pre-commit hook for loop-lore
 # Install: git config core.hooksPath .githooks && chmod +x .githooks/pre-commit
+#
+# Parallel execution: runs independent checks concurrently for faster feedback
 
 set -u
 
 failures=0
+TMPDIR="${TMPDIR:-/tmp}/loop-lore-precommit-$$"
+mkdir -p "$TMPDIR"
+trap 'rm -rf "$TMPDIR"' EXIT
 
 red() { printf "\033[31m%s\033[0m\n" "$*"; }
 green() { printf "\033[32m%s\033[0m\n" "$*"; }
 yellow() { printf "\033[33m%s\033[0m\n" "$*"; }
+cyan() { printf "\033[36m%s\033[0m\n" "$*"; }
 
-step() {
-  desc="$1"
-  shift
+run_check() {
+  local name="$1"
+  local cmd="$2"
+  local output_file="$TMPDIR/$name.log"
+  local exit_file="$TMPDIR/$name.exit"
+
+  cyan "Starting: $name"
+  
+  (
+    if eval "$cmd" > "$output_file" 2>&1; then
+      echo "0" > "$exit_file"
+    else
+      echo "$?" > "$exit_file"
+    fi
+  ) &
+}
+
+collect_results() {
+  local pids=("$@")
+  local total=0
+  local passed=0
+  local failed=0
+
+  for pid in "${pids[@]}"; do
+    wait "$pid" 2>/dev/null || true
+  done
+
+  for check in "${CHECKS[@]}"; do
+    local output_file="$TMPDIR/$check.log"
+    local exit_file="$TMPDIR/$check.exit"
+    total=$((total + 1))
+
+    if [[ -f "$exit_file" ]]; then
+      local exit_code
+      exit_code=$(cat "$exit_file")
+
+      if [[ "$exit_code" == "0" ]]; then
+        passed=$((passed + 1))
+        green "✓ PASS: $check"
+      else
+        failed=$((failed + 1))
+        red "✗ FAIL: $check"
+        cat "$output_file" | head -30
+        echo ""
+      fi
+    else
+      failed=$((failed + 1))
+      red "✗ FAIL: $check (no exit file)"
+    fi
+  done
+
   echo ""
-  echo "--- $desc ---"
-  if "$@"; then
-    green "PASS: $desc"
-  else
-    red "FAIL: $desc"
-    failures=$((failures + 1))
-  fi
+  echo "Total: $total"
+  green "Passed: $passed"
+  red "Failed: $failed"
+
+  return $failed
 }
 
 echo ""
-echo "=== loop-lore pre-commit checks ==="
-
-step "Format: auto-fix" bun run format:fix
-step "Quality: typecheck + lint + format verify + md lint" bun run check
-step "Unit tests" bun test src/
+echo "=== loop-lore pre-commit checks (parallel) ==="
 echo ""
-echo "--- Size guard (warn only, non-blocking) ---"
-bun run size:check || true
-step "E2E tests (safeguarded)" env E2E_SAFEGUARD=1 bun test tests/e2e/
 
+# Step 1: Auto-fix formatting (sequential - must run first)
+echo "--- Step 1: Auto-fix formatting ---"
+if bun run format:fix; then
+  green "PASS: Format auto-fix"
+else
+  red "FAIL: Format auto-fix"
+  failures=$((failures + 1))
+fi
+
+# Step 2: Run all checks in parallel
+echo ""
+echo "--- Step 2: Quality checks (parallel) ---"
+CHECKS=(
+  "typecheck-backend"
+  "typecheck-frontend"
+  "typecheck-coverage"
+  "typecheck-coverage-frontend"
+  "lint-ts"
+  "lint-css"
+  "lint-html"
+  "format-check"
+  "md-lint"
+)
+
+CHECK_CMDS=(
+  "bun run typecheck"
+  "bun run typecheck:frontend"
+  "bun run typecheck:coverage"
+  "bun run typecheck:coverage:frontend"
+  "bun run lint"
+  "bun run lint:css"
+  "bun run lint:html"
+  "bun run format"
+  "bun run md:lint"
+)
+
+PIDS=()
+for i in "${!CHECKS[@]}"; do
+  run_check "${CHECKS[$i]}" "${CHECK_CMDS[$i]}"
+  PIDS+=($!)
+done
+
+if ! collect_results "${PIDS[@]}"; then
+  failures=$((failures + 1))
+fi
+
+# Step 3: Run tests in parallel
+echo ""
+echo "--- Step 3: Tests (parallel) ---"
+TEST_CHECKS=("unit-tests" "e2e-tests")
+TEST_CMDS=(
+  "bun test src/"
+  "env E2E_SAFEGUARD=1 bun test tests/e2e/"
+)
+
+TEST_PIDS=()
+for i in "${!TEST_CHECKS[@]}"; do
+  run_check "${TEST_CHECKS[$i]}" "${TEST_CMDS[$i]}"
+  TEST_PIDS+=($!)
+done
+
+if ! collect_results "${TEST_PIDS[@]}"; then
+  failures=$((failures + 1))
+fi
+
+# Step 4: Non-blocking size check
+echo ""
+echo "--- Step 4: Size guard (non-blocking) ---"
+bun run size:check || true
+
+# Final result
 echo ""
 if [ "$failures" -gt 0 ]; then
   red "=== $failures step(s) failed. Fix above issues and retry ==="
