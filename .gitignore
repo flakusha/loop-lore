@@ -49,3 +49,9 @@ tree/
 .jscpd-report/
 token-optimizer/
 docs/meta/refactoring-analysis.md
+
+# VitePress compiled output (generated from .mts)
+docs/.vitepress/config.mjs
+
+# Auto-generated issue tracker (regenerate with docs:gen)
+docs/meta/issues.md
