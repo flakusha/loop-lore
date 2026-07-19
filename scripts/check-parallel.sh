@@ -138,5 +138,22 @@ if [[ $FAILED -gt 0 ]]; then
     exit 1
 fi
 
+# Non-blocking: version drift check
+echo ""
+echo -e "${CYAN}=== Non-blocking checks ===${NC}"
+LATEST_TAG=$(git tag | grep "^v" | sort -V | tail -1)
+PKG_VERSION=$(bun run -p 'JSON.parse(require("fs").readFileSync("package.json","utf8")).version' 2>/dev/null || echo "")
+if [[ -n "$LATEST_TAG" && -n "$PKG_VERSION" ]]; then
+    TAG_VERSION="${LATEST_TAG#v}"
+    if [[ "$TAG_VERSION" != "$PKG_VERSION" ]]; then
+        echo -e "${YELLOW}⚠ Version drift: package.json=${PKG_VERSION}, latest tag=${TAG_VERSION}${NC}"
+        echo -e "${YELLOW}  Run 'bun run version:sync' to reconcile${NC}"
+    else
+        echo -e "${GREEN}✓ Version in sync: ${PKG_VERSION}${NC}"
+    fi
+else
+    echo -e "${YELLOW}⚠ Version check skipped: no tags found${NC}"
+fi
+
 echo -e "${GREEN}=== All checks passed ===${NC}"
 exit 0
