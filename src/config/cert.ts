@@ -10,9 +10,9 @@
 
 import { existsSync, mkdirSync } from "node:fs";
 import { dirname } from "node:path";
+import { platform } from "node:process";
 import { getLogger } from "../logger";
 import type { TlsConfig } from "./schema";
-import { platform } from "node:process";
 
 export type TlsFiles = TlsConfig;
 
@@ -72,10 +72,9 @@ export function ensureTlsCerts(configPath: TlsFiles): TlsFiles | null {
     }
   }
 
-  const platformHint =
-    platform === "win32"
-      ? "Install OpenSSL for Windows (https://slproweb.com/products/Win32OpenSSL.html) or configure certs manually."
-      : "Install OpenSSL or configure certs manually.";
+  const platformHint = platform === "win32"
+    ? "Install OpenSSL for Windows (https://slproweb.com/products/Win32OpenSSL.html) or configure certs manually."
+    : "Install OpenSSL or configure certs manually.";
 
   getTlsLog().warn(`Failed to generate certificate. ${platformHint}`);
   getTlsLog().warn("Falling back to HTTP only.");

@@ -26,8 +26,10 @@ export const llmDecision: GmDecisionStrategy = async (deps, context, actorId) =>
     `Current scene: ${location.name}. ${location.atmosphere ?? ""}`,
     ...(context.activeQuests.length > 0
       ? [
-          `Active quest: "${context.activeQuests[0]!.name}" (${context.activeQuests[0]!.progress}/${context.activeQuests[0]!.target})`,
-        ]
+        `Active quest: "${context.activeQuests[0]!.name}" (${context.activeQuests[0]!.progress}/${
+          context.activeQuests[0]!.target
+        })`,
+      ]
       : []),
     ...(context.recentTurns.length > 0
       ? [`Previous turn: "${context.recentTurns.at(-1)?.response?.slice(0, 200) ?? "none"}"`]

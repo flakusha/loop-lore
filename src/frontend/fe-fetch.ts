@@ -15,7 +15,7 @@
 const API_BASE = "";
 
 function getCsrfToken(): string {
-  const meta = document.querySelector<HTMLMetaElement>('meta[name="csrf-token"]');
+  const meta = document.querySelector<HTMLMetaElement>("meta[name=\"csrf-token\"]");
   if (meta?.content) return meta.content;
   const match = /(?:^|;\s*)csrf_token=([^;]+)/.exec(document.cookie);
   return match?.[1] ?? "";

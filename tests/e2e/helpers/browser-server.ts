@@ -12,24 +12,24 @@
  *   await ctx.close();
  */
 
-import { chromium, type Browser } from "@playwright/test";
-import { join } from "node:path";
-import { existsSync, readFileSync, mkdirSync, rmSync, cpSync } from "node:fs";
+import { type Browser, chromium } from "@playwright/test";
 import { spawnSync } from "node:child_process";
-import { createTestDb, runMigrations, loadTestConfig } from "./server";
+import { cpSync, existsSync, mkdirSync, readFileSync, rmSync } from "node:fs";
+import { join } from "node:path";
+import { createTestDb, loadTestConfig, runMigrations } from "./server";
 import "./logger-init";
-import { createApp } from "@/elysia-app";
-import { seedSolo } from "./seed";
-import { createLogger, setGlobalLogger } from "@/logger";
 import { initAgeGate } from "@/age-gate/controller";
-import { initializeProviders } from "@/generation";
-import { setTestDatabase } from "@/db/index";
-import { initSmk } from "@/crypto";
-import { resetSoloUserCache } from "@/middleware/index";
-import type { DB } from "@/db/schema";
 import type { Config } from "@/config/schema";
-import type { Kysely } from "kysely";
+import { initSmk } from "@/crypto";
+import { setTestDatabase } from "@/db/index";
+import type { DB } from "@/db/schema";
+import { createApp } from "@/elysia-app";
+import { initializeProviders } from "@/generation";
+import { createLogger, setGlobalLogger } from "@/logger";
+import { resetSoloUserCache } from "@/middleware/index";
 import { loadAllPlugins, unloadAllPlugins } from "@/plugins";
+import type { Kysely } from "kysely";
+import { seedSolo } from "./seed";
 
 // ── Types ────────────────────────────────────────────────────
 
@@ -106,9 +106,14 @@ export async function createBrowserTest(
         const content = readFileSync(publicPath);
         const ext = publicPath.split(".").pop()?.toLowerCase() ?? "";
         const mime: Record<string, string> = {
-          html: "text/html", css: "text/css", js: "application/javascript",
-          png: "image/png", jpg: "image/jpeg", jpeg: "image/jpeg",
-          svg: "image/svg+xml", ico: "image/x-icon",
+          html: "text/html",
+          css: "text/css",
+          js: "application/javascript",
+          png: "image/png",
+          jpg: "image/jpeg",
+          jpeg: "image/jpeg",
+          svg: "image/svg+xml",
+          ico: "image/x-icon",
         };
         return new Response(content, { headers: { "Content-Type": mime[ext] ?? "text/plain" } });
       }

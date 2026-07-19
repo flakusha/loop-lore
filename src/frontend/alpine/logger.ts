@@ -5,11 +5,11 @@
  * for batched dispatch. Otherwise falls back to direct console.* calls.
  */
 
-import type { Logger, LoggerBindings, LogEntry, Transport } from "../../logger/types";
+import { levelFromConfig, shouldEmit } from "../../logger/levels";
+import type { LogEntry, Logger, LoggerBindings, Transport } from "../../logger/types";
 import type { LogLevel } from "../../logger/types";
 import { LogLevelNumeric } from "../../logger/types";
-import { levelFromConfig, shouldEmit } from "../../logger/levels";
-import { unixSec, formatTime } from "../../utils/date";
+import { formatTime, unixSec } from "../../utils/date";
 import { AsyncLogQueue } from "./queue";
 import { BrowserConsoleTransport } from "./transports/console";
 
@@ -64,14 +64,11 @@ class LightLogger implements Logger {
       this.queue.enqueue(entry);
     } else {
       const prefix = this.bindings.module ? `[${this.bindings.module}]` : "";
-      const fn =
-        numericLevel >= 40
-          ? console.error
-          : numericLevel >= 30
-            ? console.warn
-            : numericLevel >= 20
-              ? console.info
-              : console.debug;
+      let fn: typeof console.debug;
+      if (numericLevel >= 40) fn = console.error;
+      else if (numericLevel >= 30) fn = console.warn;
+      else if (numericLevel >= 20) fn = console.info;
+      else fn = console.debug;
       if (error) {
         fn(prefix, message, error, meta ?? "");
       } else {

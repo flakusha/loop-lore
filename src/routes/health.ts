@@ -5,10 +5,10 @@
  * No authentication required (used by load balancers, monitoring).
  */
 import { Elysia } from "elysia";
-import type { Db } from "../db";
-import type { Config } from "../config/schema";
-import { jsonResponse } from "./http-utils";
 import { getHealthCache, hasUnhealthyProviders, providerToSummary } from "../admin/provider-health";
+import type { Config } from "../config/schema";
+import type { Db } from "../db";
+import { jsonResponse } from "./http-utils";
 
 const startTime = Date.now();
 

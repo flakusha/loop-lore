@@ -5,30 +5,30 @@
  * Call createTestServer() in setup, use the returned URL for fetch calls.
  */
 
-import { Database } from "bun:sqlite";
-import { Kysely, type Dialect } from "kysely";
-import { existsSync, mkdirSync, rmSync } from "node:fs";
-import { resolve } from "node:path";
 import { createSqliteDialect, setTestDatabase } from "@/db/index";
 import { up as migrate } from "@/db/migrations/001_init";
+import { Database } from "bun:sqlite";
+import { type Dialect, Kysely } from "kysely";
+import { existsSync, mkdirSync, rmSync } from "node:fs";
+import { resolve } from "node:path";
 import "./logger-init";
-import { createApp } from "@/elysia-app";
-import { createRequestHandler } from "@/server";
-import { loadConfig } from "@/config/load";
-import { createLogger, setGlobalLogger } from "@/logger";
 import { initAgeGate } from "@/age-gate/controller";
-import { initializeProviders, registerProvider, getProvider } from "@/generation";
-import { MockLLMProvider } from "@/test-utils/mock-provider";
-import { initSmk } from "@/crypto";
-import { resetLoginRateLimiter } from "@/routes/auth";
-import type { DB } from "@/db/schema";
+import { loadConfig } from "@/config/load";
 import type { Config } from "@/config/schema";
+import { initSmk } from "@/crypto";
+import type { DB } from "@/db/schema";
+import { createApp } from "@/elysia-app";
+import { getProvider, initializeProviders, registerProvider } from "@/generation";
+import { createLogger, setGlobalLogger } from "@/logger";
 import { resetSoloUserCache } from "@/middleware/index";
+import { resetLoginRateLimiter } from "@/routes/auth";
+import { createRequestHandler } from "@/server";
+import { MockLLMProvider } from "@/test-utils/mock-provider";
 
 /**
  * Handle import route before Elysia (body consumed by Elysia otherwise).
  */
- 
+
 export async function _handleImportRequest(request: Request, database: Kysely<DB>, config: Config): Promise<Response> {
   const { uid, safeJsonStringify, jsonParseOr } = await import("@/utils");
   const { jsonError, jsonCreated, HttpStatus } = await import("@/routes/http-utils");
@@ -63,8 +63,9 @@ export async function _handleImportRequest(request: Request, database: Kysely<DB
   if (contentType.includes("multipart/form-data")) {
     const formData = await request.formData();
     const file = formData.get("file");
-    if (!file || !(file instanceof File))
+    if (!file || !(file instanceof File)) {
       return jsonError({ message: "file field is required", status: HttpStatus.BadRequest });
+    }
 
     const fileBytes = Buffer.from(await file.arrayBuffer());
     const filename = (file.name ?? "").toLowerCase();
@@ -74,28 +75,35 @@ export async function _handleImportRequest(request: Request, database: Kysely<DB
 
     if (filename.endsWith(".json")) {
       const parsed = jsonParseOr(await file.text(), null);
-      if (!parsed || typeof parsed !== "object")
+      if (!parsed || typeof parsed !== "object") {
         return jsonError({ message: "Invalid JSON file", status: HttpStatus.BadRequest });
+      }
       data = parsed;
       spec = data.spec === "chara_card_v2" ? "chara_card_v2" : undefined;
     } else if (filename.endsWith(".png")) {
       const extracted = extractCharacterDataFromPng(fileBytes);
-      if (!extracted)
+      if (!extracted) {
         return jsonError({ message: "No character data found in PNG", status: HttpStatus.BadRequest });
+      }
       data = extracted.data;
       spec = extracted.spec;
     } else if (filename.endsWith(".yaml") || filename.endsWith(".yml")) {
       const parsed = yamlLoad(await file.text());
-      if (!parsed || typeof parsed !== "object")
+      if (!parsed || typeof parsed !== "object") {
         return jsonError({ message: "Invalid YAML file", status: HttpStatus.BadRequest });
+      }
       data = parsed as Record<string, unknown>;
     } else if (filename.endsWith(".toml")) {
       const parsed = parseToml(await file.text());
-      if (!parsed || typeof parsed !== "object")
+      if (!parsed || typeof parsed !== "object") {
         return jsonError({ message: "Invalid TOML file", status: HttpStatus.BadRequest });
+      }
       data = parsed;
     } else {
-      return jsonError({ message: "Unsupported file type. Use .json, .png, .yaml, or .toml", status: HttpStatus.BadRequest });
+      return jsonError({
+        message: "Unsupported file type. Use .json, .png, .yaml, or .toml",
+        status: HttpStatus.BadRequest,
+      });
     }
 
     const displayName = (data.name ?? data.displayName ?? data.display_name) as string | undefined;
@@ -105,8 +113,12 @@ export async function _handleImportRequest(request: Request, database: Kysely<DB
     await database
       .insertInto("actors")
       .values({
-        id, actor_type: "character", display_name: displayName,
-        user_id: userId, owner_id: userId, agent_type: "ai",
+        id,
+        actor_type: "character",
+        display_name: displayName,
+        user_id: userId,
+        owner_id: userId,
+        agent_type: "ai",
         description: (data.description as string | undefined) ?? null,
         system_prompt: (data.system_prompt as string | undefined) ?? null,
         welcome_message: (data.first_mes as string | undefined) ?? null,
@@ -118,8 +130,14 @@ export async function _handleImportRequest(request: Request, database: Kysely<DB
         creator: (data.creator as string | undefined) ?? null,
         character_version: (data.character_version as string | undefined) ?? null,
         import_spec: spec ?? "raw",
-        alternate_greetings: data.alternate_greetings ? (() => { const r = safeJsonStringify(data.alternate_greetings); return r.ok ? r.value : null; })() : null,
-        settings: "{}", data_version: 1,
+        alternate_greetings: data.alternate_greetings
+          ? (() => {
+            const r = safeJsonStringify(data.alternate_greetings);
+            return r.ok ? r.value : null;
+          })()
+          : null,
+        settings: "{}",
+        data_version: 1,
       })
       .execute();
     return jsonCreated({ id });
@@ -266,7 +284,10 @@ function mergeGeneration(base: Config["generation"], overrides: Partial<Config["
         // openaiCompatible is an array — deep merge
         result.providers[key as keyof typeof result.providers] = val as never;
       } else if (val && typeof val === "object") {
-        result.providers[key as keyof typeof result.providers] = { ...((base.providers as unknown as Record<string, unknown>)[key] as Record<string, unknown>), ...(val as Record<string, unknown>) } as never;
+        result.providers[key as keyof typeof result.providers] = {
+          ...((base.providers as unknown as Record<string, unknown>)[key] as Record<string, unknown>),
+          ...(val as Record<string, unknown>),
+        } as never;
       }
     }
   }

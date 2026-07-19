@@ -2,7 +2,7 @@
 //
 // /detail — set message detail level (immersion, basic, detailed).
 
-import { registerCommand, type CommandResult } from "./registry";
+import { type CommandResult, registerCommand } from "./registry";
 
 registerCommand("detail", async (args): Promise<CommandResult> => {
   const level = (args[0] || "").toLowerCase();

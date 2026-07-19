@@ -101,7 +101,6 @@ The i18n module is organized into these source files:
   match their language. Narrate actions and descriptions in Japanese.
 
 ````
-
 The language directive is **not hardcoded** — it is a template parameter derived from the _chat's generation language_ setting.
 
 ### Chat-Level Setting
@@ -417,7 +416,6 @@ New file: `src/i18n/index.ts`
 ### `translateContent` Flow
 
 ```
-
 ---
 
 ## Roadmap Integration
@@ -477,5 +475,4 @@ All language identifiers use BCP-47 format for consistency with the `Accept-Lang
 ## Migration from v0 (No i18n)
 
 Existing code that hardcodes UI strings (e.g., `res.send("<h1>Chats</h1>")`) needs to be updated to use `t("nav.chats")`:
-
 ```

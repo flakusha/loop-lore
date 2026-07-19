@@ -6,11 +6,11 @@
 // docs/frontend/chat/prompt-creation.md for section ordering rationale.
 
 import type { Kysely } from "kysely";
-import type { DB } from "../db/schema";
-import type { GenerationMessage } from "../generation/gen-types-options";
 import { ChatMode } from "../db/enums";
-import { defaultTokenCount } from "../generation/context-window-config";
+import type { DB } from "../db/schema";
 import { ContextCompactor } from "../generation/context-compactor";
+import { defaultTokenCount } from "../generation/context-window-config";
+import type { GenerationMessage } from "../generation/gen-types-options";
 import { PROMPT_SECTIONS } from "./prompt/registry";
 import { PRIORITY } from "./prompt/types";
 import type { AssembleContext, AssembledPrompt, PromptParams, PromptSectionReport } from "./prompt/types";
@@ -79,8 +79,8 @@ export class PromptAssembler {
         .filter((s) => !s.dropped && PRIORITY[s.name as keyof typeof PRIORITY] > 0)
         .sort(
           (a, b) =>
-            (PRIORITY[b.name as keyof typeof PRIORITY] ?? 99) -
-            (PRIORITY[a.name as keyof typeof PRIORITY] ?? 99),
+            (PRIORITY[b.name as keyof typeof PRIORITY] ?? 99)
+            - (PRIORITY[a.name as keyof typeof PRIORITY] ?? 99),
         );
 
       for (const section of ordered) {

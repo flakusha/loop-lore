@@ -1,7 +1,7 @@
-import { log } from "./logger";
-import { jsonParseOr } from "./json";
 import { feFetch } from "../fe-fetch";
 import { normalizeHeaderSlot } from "./htmx-header";
+import { jsonParseOr } from "./json";
+import { log } from "./logger";
 
 const apiLog = log.child({ module: "api" });
 

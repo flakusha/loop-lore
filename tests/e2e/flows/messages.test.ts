@@ -5,10 +5,10 @@
  * Requires seeded chat.
  */
 
-import { describe, test, expect, beforeAll, afterAll } from "bun:test";
+import { afterAll, beforeAll, describe, expect, test } from "bun:test";
+import { type ApiClient, createClient } from "../helpers/client";
+import { SEED, seedAll } from "../helpers/seed";
 import { createTestServer, type TestServer } from "../helpers/server";
-import { createClient, type ApiClient } from "../helpers/client";
-import { seedAll, SEED } from "../helpers/seed";
 
 describe("Messages E2E", () => {
   let server: TestServer;
@@ -54,7 +54,7 @@ describe("Messages E2E", () => {
     expect(res.data!.id).toBeTruthy();
   });
 
-test("POST /api/chats/:id/messages requires content", async () => {
+  test("POST /api/chats/:id/messages requires content", async () => {
     const res = await api.post(`/api/chats/${SEED.chat.id}/messages`, { role: "user" });
     expect(res.ok).toBe(false);
     expect(res.status).toBe(422);

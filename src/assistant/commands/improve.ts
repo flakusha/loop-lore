@@ -2,7 +2,7 @@
 //
 // /improve — rewrite user text for better quality.
 
-import { registerCommand, type CommandResult } from "./registry";
+import { type CommandResult, registerCommand } from "./registry";
 
 registerCommand("improve", (args): CommandResult => {
   const text = args.join(" ").trim();

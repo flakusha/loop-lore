@@ -1,45 +1,45 @@
 import { Elysia, t } from "elysia";
 import type { Kysely } from "kysely";
-import type { DB } from "../db/schema";
-import { uid, safeJsonParse, safeJsonStringify } from "../utils";
-import {
-  jsonResponse,
-  jsonError,
-  jsonPaginated,
-  jsonCreated,
-  jsonNoContent,
-  HttpStatus,
-  ErrorCode,
-} from "./http-utils";
-import {
-  ChatType,
-  ChatMode,
-  ChatParticipantRole,
-  MessageRole,
-  MessageContentType,
-  MessageContentFormat,
-  ContentEncoding,
-  PinnedState,
-} from "../db/enums";
 import { getRuntimeConfig } from "../age-gate/controller";
 import { getStatus } from "../age-gate/service";
+import type { Config } from "../config/schema";
 import {
+  ChatMode,
+  ChatParticipantRole,
+  ChatType,
+  ContentEncoding,
+  MessageContentFormat,
+  MessageContentType,
+  MessageRole,
+  PinnedState,
+} from "../db/enums";
+import type { DB } from "../db/schema";
+import { isLlmGenerationConfigured, triggerAutoGeneration } from "../generation/auto-gen";
+import { notifyChatInvite } from "../notifications/service";
+import { safeJsonParse, safeJsonStringify, uid } from "../utils";
+import { forbidden, notFound, unauthorized } from "../validation/middleware";
+import {
+  BatchIdsBody,
   ChatCreateBody,
-  ChatUpdateBody,
   ChatIdParams,
+  ChatImpersonateBody,
+  ChatLocationUpdateBody,
+  ChatMarkReadBody,
   ChatParticipantParams,
   ChatParticipantUpdateBody,
-  ChatLocationUpdateBody,
   ChatPersonaUpdateBody,
-  ChatImpersonateBody,
-  ChatMarkReadBody,
-  BatchIdsBody,
+  ChatUpdateBody,
   PaginationQuery,
 } from "../validation/schemas";
-import { unauthorized, forbidden, notFound } from "../validation/middleware";
-import { notifyChatInvite } from "../notifications/service";
-import { triggerAutoGeneration, isLlmGenerationConfigured } from "../generation/auto-gen";
-import type { Config } from "../config/schema";
+import {
+  ErrorCode,
+  HttpStatus,
+  jsonCreated,
+  jsonError,
+  jsonNoContent,
+  jsonPaginated,
+  jsonResponse,
+} from "./http-utils";
 
 interface HandlerOpts {
   database: Kysely<DB>;
@@ -263,7 +263,7 @@ export function chatsRoutes(opts: HandlerOpts) {
           return new Response(json.ok ? json.value : "[]", {
             headers: {
               "Content-Type": "application/json",
-              "Content-Disposition": 'attachment; filename="chats-export.json"',
+              "Content-Disposition": "attachment; filename=\"chats-export.json\"",
             },
           });
         },
@@ -282,8 +282,9 @@ export function chatsRoutes(opts: HandlerOpts) {
             .select("created_by")
             .where("id", "=", id)
             .executeTakeFirst();
-          if (!chat || (chat.created_by !== userId && userRole !== "admin"))
+          if (!chat || (chat.created_by !== userId && userRole !== "admin")) {
             return notFound("Chat not found");
+          }
 
           const chatData = await database
             .selectFrom("chats")
@@ -339,8 +340,9 @@ export function chatsRoutes(opts: HandlerOpts) {
           if (body.mode) updates.mode = body.mode;
           if (body.turnStrategy) updates.turn_strategy = body.turnStrategy;
           if (body.worldId) updates.world_id = body.worldId;
-          if (typeof body.isPinned === "boolean")
+          if (typeof body.isPinned === "boolean") {
             updates.is_pinned = body.isPinned ? PinnedState.Pinned : PinnedState.Unpinned;
+          }
           if (typeof body.isPaused === "boolean") {
             const current = fullChat.story_state
               ? safeJsonParse<Record<string, unknown>>(fullChat.story_state)
@@ -395,7 +397,7 @@ export function chatsRoutes(opts: HandlerOpts) {
                   "in",
                   database.selectFrom("story_turns").select("id").where("chat_id", "=", id),
                 ),
-              ]),
+              ])
             )
             .execute();
           await database.deleteFrom("story_turns").where("chat_id", "=", id).execute();
@@ -428,8 +430,9 @@ export function chatsRoutes(opts: HandlerOpts) {
             .select("created_by")
             .where("id", "=", id)
             .executeTakeFirst();
-          if (!chat || (chat.created_by !== userId && userRole !== "admin"))
+          if (!chat || (chat.created_by !== userId && userRole !== "admin")) {
             return notFound("Chat not found");
+          }
 
           const messages = await database
             .selectFrom("messages")
@@ -447,14 +450,13 @@ export function chatsRoutes(opts: HandlerOpts) {
           for (const m of messages) if (m.actor_id) actorIds.add(m.actor_id);
           for (const p of participants) actorIds.add(p.actor_id);
 
-          const actors =
-            actorIds.size > 0
-              ? await database
-                  .selectFrom("actors")
-                  .select(["id", "display_name", "actor_type"])
-                  .where("id", "in", [...actorIds])
-                  .execute()
-              : [];
+          const actors = actorIds.size > 0
+            ? await database
+              .selectFrom("actors")
+              .select(["id", "display_name", "actor_type"])
+              .where("id", "in", [...actorIds])
+              .execute()
+            : [];
           const assetLinks = await database
             .selectFrom("asset_links")
             .select(["asset_id", "entity_type", "entity_id", "label"])
@@ -515,8 +517,9 @@ export function chatsRoutes(opts: HandlerOpts) {
             .select("created_by")
             .where("id", "=", id)
             .executeTakeFirst();
-          if (!chat || (chat.created_by !== userId && userRole !== "admin"))
+          if (!chat || (chat.created_by !== userId && userRole !== "admin")) {
             return notFound("Chat not found");
+          }
 
           const participants = await database
             .selectFrom("chat_participants")
@@ -541,8 +544,9 @@ export function chatsRoutes(opts: HandlerOpts) {
             .select("created_by")
             .where("id", "=", id)
             .executeTakeFirst();
-          if (!chat || (chat.created_by !== userId && userRole !== "admin"))
+          if (!chat || (chat.created_by !== userId && userRole !== "admin")) {
             return notFound("Chat not found");
+          }
 
           const role = body.role ?? "member";
           try {
@@ -580,17 +584,20 @@ export function chatsRoutes(opts: HandlerOpts) {
             .select("created_by")
             .where("id", "=", id)
             .executeTakeFirst();
-          if (!chat || (chat.created_by !== userId && userRole !== "admin"))
+          if (!chat || (chat.created_by !== userId && userRole !== "admin")) {
             return notFound("Chat not found");
+          }
 
           const updates: Record<string, unknown> = {};
-          if (typeof body.talkativity === "number")
+          if (typeof body.talkativity === "number") {
             updates.talkativity = Math.min(10, Math.max(1, body.talkativity));
+          }
           if (typeof body.initiative === "number") updates.initiative = body.initiative;
           if (typeof body.role === "string") updates.role_in_chat = body.role;
 
-          if (Object.keys(updates).length === 0)
+          if (Object.keys(updates).length === 0) {
             return jsonError({ message: "No valid fields to update", status: HttpStatus.BadRequest });
+          }
           await database
             .updateTable("chat_participants")
             .set(updates)
@@ -614,8 +621,9 @@ export function chatsRoutes(opts: HandlerOpts) {
             .select("created_by")
             .where("id", "=", id)
             .executeTakeFirst();
-          if (!chat || (chat.created_by !== userId && userRole !== "admin"))
+          if (!chat || (chat.created_by !== userId && userRole !== "admin")) {
             return notFound("Chat not found");
+          }
 
           await database
             .deleteFrom("chat_participants")
@@ -640,8 +648,9 @@ export function chatsRoutes(opts: HandlerOpts) {
             .select("created_by")
             .where("id", "=", id)
             .executeTakeFirst();
-          if (!chat || (chat.created_by !== userId && userRole !== "admin"))
+          if (!chat || (chat.created_by !== userId && userRole !== "admin")) {
             return notFound("Chat not found");
+          }
 
           const fullChat = await database
             .selectFrom("chats")
@@ -650,8 +659,9 @@ export function chatsRoutes(opts: HandlerOpts) {
             .executeTakeFirst();
           if (!fullChat) return notFound("Chat not found");
 
-          if (!fullChat.world_id)
+          if (!fullChat.world_id) {
             return jsonError({ message: "Chat has no world assigned", status: HttpStatus.BadRequest });
+          }
 
           const locationId = body.locationId;
           if (locationId === null) {
@@ -694,8 +704,9 @@ export function chatsRoutes(opts: HandlerOpts) {
             .select("created_by")
             .where("id", "=", id)
             .executeTakeFirst();
-          if (!chat || (chat.created_by !== userId && userRole !== "admin"))
+          if (!chat || (chat.created_by !== userId && userRole !== "admin")) {
             return notFound("Chat not found");
+          }
 
           await database
             .updateTable("chat_participants")
@@ -721,8 +732,9 @@ export function chatsRoutes(opts: HandlerOpts) {
             .select("created_by")
             .where("id", "=", id)
             .executeTakeFirst();
-          if (!chat || (chat.created_by !== userId && userRole !== "admin"))
+          if (!chat || (chat.created_by !== userId && userRole !== "admin")) {
             return notFound("Chat not found");
+          }
 
           await database
             .updateTable("chat_participants")

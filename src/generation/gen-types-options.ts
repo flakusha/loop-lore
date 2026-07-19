@@ -6,8 +6,8 @@
  */
 
 import type { Selectable } from "kysely";
-import type { GenerationAttempts } from "../db/schema";
 import { PolicyType } from "../db/enums";
+import type { GenerationAttempts } from "../db/schema";
 
 // ── DB-backed types ─────────────────────────────────────────
 /** A fully resolved generation attempt row from the DB */

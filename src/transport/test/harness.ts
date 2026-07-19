@@ -1,7 +1,7 @@
 // src/transport/test/harness.ts — Protocol validation test harness
 
+import { CompressionAlgorithm, TransportProtocol } from "../../db/enums";
 import type { ProtocolHandler } from "../protocol.unified";
-import { TransportProtocol, CompressionAlgorithm } from "../../db/enums";
 
 /**
  * Individual test case within a transport test suite.

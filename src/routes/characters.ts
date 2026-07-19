@@ -1,9 +1,9 @@
 import { Elysia } from "elysia";
 import type { Kysely } from "kysely";
-import type { DB } from "../db/schema";
-import { uid, safeJsonStringify, jsonParseOr } from "../utils";
-import { jsonResponse, jsonError, jsonPaginated, jsonCreated, jsonNoContent, HttpStatus } from "./http-utils";
 import { ActorType, AgentType } from "../db/enums";
+import type { DB } from "../db/schema";
+import { jsonParseOr, safeJsonStringify, uid } from "../utils";
+import { HttpStatus, jsonCreated, jsonError, jsonNoContent, jsonPaginated, jsonResponse } from "./http-utils";
 
 interface HandlerOpts {
   database: Kysely<DB>;
@@ -45,8 +45,9 @@ export function charactersRoutes(opts: HandlerOpts) {
       if (!userId) return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized });
 
       const displayName = body.displayName as string | undefined;
-      if (!displayName)
+      if (!displayName) {
         return jsonError({ message: "displayName is required", status: HttpStatus.BadRequest });
+      }
 
       const id = uid();
       await database
@@ -150,8 +151,9 @@ export function charactersRoutes(opts: HandlerOpts) {
       if (body.characterVersion) updates.character_version = body.characterVersion;
       if (body.settings) {
         const settingsResult = safeJsonStringify(body.settings);
-        if (!settingsResult.ok)
+        if (!settingsResult.ok) {
           return jsonError({ message: "Invalid settings data", status: HttpStatus.BadRequest });
+        }
         updates.settings = settingsResult.value;
       }
       updates.updated_at = new Date().toISOString();

@@ -6,16 +6,16 @@
  *
  * Uses in-memory SQLite + Kysely test DB. Mocks generateText callback.
  */
-import { describe, test, expect, beforeEach, afterAll } from "bun:test";
 import { Database } from "bun:sqlite";
+import { afterAll, beforeEach, describe, expect, test } from "bun:test";
 import { Kysely } from "kysely";
 import { randomUUID } from "node:crypto";
+import { GameMasterType } from "../db/enums";
+import { createSqliteDialect, setTestDatabase } from "../db/index";
 import type { DB } from "../db/schema";
 import { createLogger } from "../logger";
-import { createSqliteDialect, setTestDatabase } from "../db/index";
 import { GameMasterService, type GenerateTextFn } from "./game-master";
 import type { GameMasterConfig, QualityThresholds } from "./types";
-import { GameMasterType } from "../db/enums";
 
 // ── Test DB factory ───────────────────────────────────────────
 
@@ -640,10 +640,9 @@ describe("GameMasterService — acceptResponse", () => {
     await gm.initialize();
 
     // Response with good quality markers
-    const response =
-      "I am ready. *He steps forward confidently.* Because the shadows cannot stop us. " +
-      "The moonlight reveals the path ahead, and the ancient whispers guide our way. " +
-      "This unexpected quest requires courage!";
+    const response = "I am ready. *He steps forward confidently.* Because the shadows cannot stop us. "
+      + "The moonlight reveals the path ahead, and the ancient whispers guide our way. "
+      + "This unexpected quest requires courage!";
 
     const result = await gm.acceptResponse(turnId, response);
 
