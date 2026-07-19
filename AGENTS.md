@@ -308,11 +308,13 @@ This reads `.credentials.env`, signs test data to warm the cache.
 After TTL expires (~8h default), run again.
 
 **If unlock fails**, check `~/.gnupg/gpg-agent.conf` has:
+
 ```
 allow-loopback-pinentry
 default-cache-ttl 28800
 max-cache-ttl 86400
 ```
+
 Then reload: `gpg-connect-agent reloadagent /bye`
 
 ### Non-TTY / CI Environments
@@ -381,7 +383,7 @@ The script enforces these safety checks:
   **GPG-signed merge into master** → verifies merge signature →
   removes worktree. Aborts at any failing step.
 - **Merge signing**: `merge` and `finalize` pass `-c commit.gpgsign=true
-  -c user.signingkey=<key>` to git. If `/tmp/gpg-loopback` exists,
+-c user.signingkey=<key>` to git. If `/tmp/gpg-loopback` exists,
   also sets `-c gpg.program=/tmp/gpg-loopback`.
 - **Merge verification**: After merge, `finalize` runs
   `git verify-commit` on the merge SHA. Warns if unsigned.
@@ -413,6 +415,7 @@ git commit -S -m "..."
 ```
 
 The script handles:
+
 - Reading author identity from worktree's local git config
 - Reading agent identity from `.credentials.env`
 - GPG signing with the agent's key

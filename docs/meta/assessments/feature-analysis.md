@@ -64,8 +64,8 @@ and the agentic spec's "what exists":
 ## Verdict
 
 The latest analysis is **RPG-first but quietly agentic-friendly**: ~16 of 34
-ideas are direct or indirect business wins, and the highest-leverage ones (#6,
-#8, #27, #28, #18) are **low effort**. The real gap is not feature ideas — it is
+ideas are direct or indirect business wins, and the highest-leverage ones
+(#6, #8, #27, #28, #18) are **low effort**. The real gap is not feature ideas — it is
 the **execution + governance substrate** (sandbox, RAG, audit, RBAC, cost) that
 no current idea fully covers.
 
