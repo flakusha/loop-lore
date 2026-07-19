@@ -98,16 +98,16 @@ describe("sessionsRoutes", () => {
     const app = createApp(db, userId, "user", sessionId1);
     const res = await app.handle(new Request("http://localhost/api/sessions"));
     expect(res.status).toBe(200);
-    const body = await res.json();
+    const body = (await res.json()) as { data: Record<string, unknown>[]; pagination: { total: number } };
     expect(body.data).toHaveLength(2);
     expect(body.pagination.total).toBe(2);
 
-    const current = body.data.find((s: any) => s.isCurrent === true);
+    const current = body.data.find((s) => s.isCurrent === true);
     expect(current).toBeDefined();
-    expect(current.id).toBe(sessionId1);
+    expect(current!.id).toBe(sessionId1);
 
-    const other = body.data.find((s: any) => s.id === sessionId2);
-    expect(other.isCurrent).toBe(false);
+    const other = body.data.find((s) => s.id === sessionId2);
+    expect(other!.isCurrent).toBe(false);
 
     // token_hash must NOT be exposed
     for (const s of body.data) {
@@ -133,8 +133,8 @@ describe("sessionsRoutes", () => {
     const app = createApp(db, userId, "user");
     const res = await app.handle(new Request("http://localhost/api/sessions"));
     expect(res.status).toBe(200);
-    const body = await res.json();
-    const ids = body.data.map((s: any) => s.id);
+    const body = (await res.json()) as { data: Record<string, unknown>[] };
+    const ids = body.data.map((s) => s.id as string);
     expect(ids).not.toContain(otherSessionId);
   });
 
@@ -155,9 +155,9 @@ describe("sessionsRoutes", () => {
     const app = createApp(db, adminId, "admin");
     const res = await app.handle(new Request("http://localhost/api/sessions"));
     expect(res.status).toBe(200);
-    const body = await res.json();
+    const body = (await res.json()) as { data: Record<string, unknown>[] };
     // Should see sessions from multiple users
-    const userIds = new Set(body.data.map((s: any) => s.userId));
+    const userIds = new Set(body.data.map((s) => s.userId as string));
     expect(userIds.size).toBeGreaterThan(1);
   });
 
@@ -180,7 +180,13 @@ describe("sessionsRoutes", () => {
     const app = createApp(db, userId, "user", sessionId);
     const res = await app.handle(new Request(`http://localhost/api/sessions/${sessionId}`));
     expect(res.status).toBe(200);
-    const body = await res.json();
+    const body = (await res.json()) as {
+      id: string;
+      userId: string;
+      ip: string;
+      isCurrent: boolean;
+      token_hash?: string;
+    };
     expect(body.id).toBe(sessionId);
     expect(body.userId).toBe(userId);
     expect(body.ip).toBe("127.0.0.1");
@@ -248,7 +254,7 @@ describe("sessionsRoutes", () => {
     const app = createApp(db, adminId, "admin", adminSessionId);
     const res = await app.handle(new Request(`http://localhost/api/sessions/${targetSessionId}`));
     expect(res.status).toBe(200);
-    const body = await res.json();
+    const body = (await res.json()) as { id: string; userId: string };
     expect(body.id).toBe(targetSessionId);
     expect(body.userId).toBe(otherUserId);
   });
@@ -308,7 +314,7 @@ describe("sessionsRoutes", () => {
       new Request(`http://localhost/api/sessions/${currentSessionId}`, { method: "DELETE" }),
     );
     expect(res.status).toBe(400);
-    const body = await res.json();
+    const body = (await res.json()) as { error: string };
     expect(body.error).toContain("current session");
   });
 

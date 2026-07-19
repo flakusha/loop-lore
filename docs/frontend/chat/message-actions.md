@@ -267,8 +267,8 @@ Users can reply to a specific message, creating a visual thread.
 └─────────────────────────────────────────┘
 ```
 
-3. × dismisses the reply (cancels, returns to normal input)
-4. On send: message created with `parent_id` pointing to replied-to message
+1. × dismisses the reply (cancels, returns to normal input)
+2. On send: message created with `parent_id` pointing to replied-to message
 
 ### Thread Display
 
