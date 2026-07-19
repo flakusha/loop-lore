@@ -389,8 +389,8 @@ See `reviews/review-rounds.md` for full detail. Key open items:
 
 ## Cross-Reference
 
-- Active development & bugs: `plan.md`, `open-items.md`
-- Future / deferred: `backlog.md`
+- Active development & bugs: `plan.md`, git issue tracker
+- Future / deferred: `.plan/backlog.md`
 - Long-term vision: `roadmap.md`
 - DB: `schema.md`
 - Frontend UX: `frontend/overview.md`, `frontend/chat/`
