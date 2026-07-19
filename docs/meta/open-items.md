@@ -1,6 +1,6 @@
 # Open Items (Technical Debt)
 
-Code quality concerns needing cleanup. Each item links to source files. Items tagged `(plan.md)` also tracked in active v0.2 plan.
+Code quality concerns needing cleanup. Each item links to source files. Items tagged `(plan.md)` also tracked in active v0.1 plan.
 
 ---
 
