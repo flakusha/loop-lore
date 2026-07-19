@@ -63,7 +63,7 @@ export async function verifyPassphrase(opts: VerifyPassphraseOpts,): Promise<boo
     .where("status", "=", "active",)
     .executeTakeFirst();
 
-  if (!row || !row.encrypted_key) { return false; }
+  if (!row?.encrypted_key) { return false; }
 
   return Bun.password.verify(passphrase, row.encrypted_key,);
 }
@@ -84,7 +84,7 @@ export async function storeUserKey(opts: StoreUserKeyOpts,): Promise<string> {
   // Hash passphrase with Argon2id
   const passphraseHash = await Bun.password.hash(passphrase, {
     algorithm: "argon2id",
-    memoryCost: 65536, // 64 MB
+    memoryCost: 65_536, // 64 MB
     timeCost: 3,
   },);
 

@@ -1,4 +1,7 @@
+import { TypeCompiler, } from "@sinclair/typebox/compiler";
 import { describe, expect, test, } from "bun:test";
+import { Elysia, t, } from "elysia";
+import { onValidationError, } from "./middleware";
 import {
   ActorCreateBody,
   AdminRoleUpdateBody,
@@ -11,15 +14,6 @@ import {
   WorldCreateBody,
 } from "./schemas";
 
-// ── Schema validation tests ─────────────────────────────────
-
-// ── Schema validation tests ─────────────────────────────────
-
-import { TypeCompiler, } from "@sinclair/typebox/compiler";
-import { Elysia, t, } from "elysia";
-import { onValidationError, } from "./middleware";
-
-// ── Schema validation tests ─────────────────────────────────
 // ── Schema validation tests ─────────────────────────────────
 
 function compile(schema: any,) {
