@@ -147,6 +147,21 @@ const tsRules = {
   "no-empty": "warn",
   "@typescript-eslint/no-empty-function": "warn",
   "@typescript-eslint/no-floating-promises": "off",
+
+  // ── Banned pattern enforcement (banned-patterns.md) ─────────
+  // Starting as "warn" — upgrade to "error" after existing violations are fixed
+  "no-restricted-syntax": [
+    "warn",
+    {
+      selector: "CallExpression[callee.object.name='JSON'][callee.property.name='parse']",
+      message: "Use safeJsonParse<T>() or jsonParseOr() from utils instead of bare JSON.parse",
+    },
+    {
+      selector: "CallExpression[callee.object.name='JSON'][callee.property.name='stringify']",
+      message: "Use safeJsonStringify() from utils instead of bare JSON.stringify",
+    },
+  ],
+  "prefer-template": "warn",
 };
 
 export default tseslint.config(
@@ -268,6 +283,14 @@ export default tseslint.config(
       // Frontend DOM patterns
       "@typescript-eslint/prefer-regexp-exec": "off",
       "@typescript-eslint/no-unnecessary-type-conversion": "off",
+      // Enforce apiFetch over bare fetch in frontend (warn — upgrade after violations fixed)
+      "no-restricted-globals": [
+        "warn",
+        {
+          name: "fetch",
+          message: "Use apiFetch() from fe-fetch.ts instead of bare fetch (handles auth, CSRF, 401 redirect)",
+        },
+      ],
     },
   },
   // ── E2E test TypeScript: Bun test env ──────────────────────
@@ -364,6 +387,41 @@ export default tseslint.config(
       // Type-aware rules require parserOptions.project — disabled here
       "@typescript-eslint/no-misused-promises": "off",
       "import/no-cycle": "off",
+    },
+  },
+  // ── Overrides: allow bare JSON in implementation files ─────────
+  {
+    files: [
+      "src/utils/safe-json.ts",
+      "src/frontend/alpine/json.ts",
+    ],
+    rules: {
+      "no-restricted-syntax": "off",
+    },
+  },
+  // ── Overrides: allow bare fetch in fe-fetch implementation ─────
+  {
+    files: [
+      "src/frontend/fe-fetch.ts",
+    ],
+    rules: {
+      "no-restricted-globals": "off",
+    },
+  },
+  // ── Overrides: allow JSON.stringify in assertNever ──────────────
+  {
+    files: [
+      "src/utils.ts",
+    ],
+    rules: {
+      "no-restricted-syntax": [
+        "warn",
+        {
+          selector: "CallExpression[callee.object.name='JSON'][callee.property.name='parse']",
+          message: "Use safeJsonParse<T>() or jsonParseOr() from utils instead of bare JSON.parse",
+        },
+        // Allow JSON.stringify in assertNever (used for error messages only)
+      ],
     },
   },
 );
