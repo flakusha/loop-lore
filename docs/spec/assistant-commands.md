@@ -25,7 +25,7 @@ export function parseCommand(input: string,): ParsedCommand | null;
 
 ### Dice Rolling
 
-/dice <notation>
+/dice `<notation>`
 
 - /dice 2d6+3 -> rolls 2d6, adds 3
 - Returns result with individual rolls
