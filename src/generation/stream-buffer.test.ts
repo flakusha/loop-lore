@@ -1,11 +1,5 @@
-import { describe, test, expect } from "bun:test";
-import {
-  StreamBuffer,
-  getOrCreateBuffer,
-  getBuffer,
-  removeBuffer,
-  scheduleBufferCleanup,
-} from "./stream-buffer";
+import { describe, expect, test } from "bun:test";
+import { getBuffer, getOrCreateBuffer, removeBuffer, scheduleBufferCleanup, StreamBuffer } from "./stream-buffer";
 
 describe("StreamBuffer", () => {
   test("append assigns incrementing sequence and stores event", () => {

@@ -105,7 +105,7 @@ export async function translateWithProvider(text: string, from: string, to: stri
 
 ```typescript
 // src/frontend/alpine/translation-indicator.ts
-export default function () {
+export default function() {
   return {
     translated: false,
     originalText: "",

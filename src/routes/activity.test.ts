@@ -1,7 +1,7 @@
 /**
  * Unit tests for activity routes (Elysia plugin)
  */
-import { describe, test, expect } from "bun:test";
+import { describe, expect, test } from "bun:test";
 import { activityRoutes } from "./activity";
 
 const mockDb = {} as any;

@@ -1,6 +1,6 @@
-import { describe, test, expect, beforeAll } from "bun:test";
-import { parseMentions, resolveMention, extractMentionedActorIds } from "./mention-parser";
+import { beforeAll, describe, expect, test } from "bun:test";
 import { createLogger } from "../logger";
+import { extractMentionedActorIds, parseMentions, resolveMention } from "./mention-parser";
 
 beforeAll(() => {
   createLogger({ level: "error" });

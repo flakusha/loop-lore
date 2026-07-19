@@ -6,9 +6,9 @@
  * Pure logic — constructs Responses and asserts header sets per route kind.
  */
 
-import { describe, test, expect } from "bun:test";
-import { ResponseHeaderPolicy } from "./response-headers";
+import { describe, expect, test } from "bun:test";
 import type { HeadersConfig } from "../config/schema";
+import { ResponseHeaderPolicy } from "./response-headers";
 
 function makeConfig(overrides: Partial<HeadersConfig> = {}): HeadersConfig {
   const base: HeadersConfig = {
@@ -176,14 +176,14 @@ describe("ResponseHeaderPolicy.apply — observability + client hints", () => {
     const policy = new ResponseHeaderPolicy(
       makeConfig({
         reportingEndpoints: { default: "https://x/report" },
-        nel: '{ "report_to": "default", "max_age": 31536000 }',
+        nel: "{ \"report_to\": \"default\", \"max_age\": 31536000 }",
         acceptClientHints: ["Device-Memory", "RTT"],
         saveData: true,
       }),
     );
     const response = res(200, { "content-type": "text/html" }, "<html></html>");
     const out = policy.apply({ request: req("GET", "https://x/"), response });
-    expect(out.headers.get("Reporting-Endpoints")).toBe('default="https://x/report"');
+    expect(out.headers.get("Reporting-Endpoints")).toBe("default=\"https://x/report\"");
     expect(out.headers.get("NEL")).toContain("report_to");
     expect(out.headers.get("Accept-CH")).toBe("Device-Memory, RTT");
     expect(out.headers.get("Critical-CH")).toBe("Device-Memory, RTT");

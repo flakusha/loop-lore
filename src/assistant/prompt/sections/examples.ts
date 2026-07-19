@@ -30,9 +30,9 @@ export const examplesSection: SectionBuilder = {
       const content = trimmed.slice(colonIdx + 1).trim();
       const role = ["assistant", "character", "{{char}}"].includes(label)
         ? "character"
-        : label === "user" || label === "{{user}}"
+        : (label === "user" || label === "{{user}}"
           ? "user"
-          : "user";
+          : "user");
       examples.push({ role, content });
     }
 

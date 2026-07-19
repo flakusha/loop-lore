@@ -1,11 +1,19 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none" stroke="#f597e8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  viewBox="0 0 32 32"
+  fill="none"
+  stroke="#f597e8"
+  stroke-width="1.8"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
   <!-- Assistant: robot/assistant head with speech -->
-  <rect x="6" y="5" width="12" height="14" rx="3"/>
-  <circle cx="10" cy="12" r="1.5" fill="#f597e8" stroke="none"/>
-  <circle cx="14" cy="12" r="1.5" fill="#f597e8" stroke="none"/>
-  <path d="M9 16l4 2 4-2"/>
-  <line x1="8" y1="3" x2="8" y2="5"/>
-  <line x1="16" y1="3" x2="16" y2="5"/>
-  <path d="M20 12l4 2-4 2"/>
-  <path d="M20 10l6-3v8l-6-3"/>
+  <rect x="6" y="5" width="12" height="14" rx="3" />
+  <circle cx="10" cy="12" r="1.5" fill="#f597e8" stroke="none" />
+  <circle cx="14" cy="12" r="1.5" fill="#f597e8" stroke="none" />
+  <path d="M9 16l4 2 4-2" />
+  <line x1="8" y1="3" x2="8" y2="5" />
+  <line x1="16" y1="3" x2="16" y2="5" />
+  <path d="M20 12l4 2-4 2" />
+  <path d="M20 10l6-3v8l-6-3" />
 </svg>

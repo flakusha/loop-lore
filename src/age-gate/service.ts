@@ -9,8 +9,8 @@
  */
 
 import type { Kysely } from "kysely";
-import type { DB } from "../db/schema";
 import type { AgeGateConfig } from "../config/schema";
+import type { DB } from "../db/schema";
 
 /** Result of an age gate status check. */
 export interface AgeGateStatus {

@@ -4,7 +4,7 @@
  * Lightweight tests — the auth guard is a thin wrapper around
  * the existing authenticate() function (tested via e2e).
  */
-import { describe, test, expect } from "bun:test";
+import { describe, expect, test } from "bun:test";
 import { Elysia } from "elysia";
 import { authGuard } from "./elysia-auth";
 

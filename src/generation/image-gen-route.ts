@@ -1,8 +1,8 @@
-import { createAsset, linkAsset } from "../assets/service";
 import { extractImageMetadata } from "../assets/metadata";
+import { createAsset, linkAsset } from "../assets/service";
 import { loadConfig } from "../config/load";
 import { getDatabase } from "../db/index";
-import { uid, safeJsonStringify } from "../utils";
+import { safeJsonStringify, uid } from "../utils";
 import { validateProviderUrl } from "../utils/url-validation";
 
 interface ImageGenBody {
@@ -34,8 +34,7 @@ export async function handleImageGeneration(body: unknown): Promise<Response> {
   if (!sdConfig) {
     return Response.json(
       {
-        error:
-          "No image generation provider configured. Set config.generation.providers.sd in your config file.",
+        error: "No image generation provider configured. Set config.generation.providers.sd in your config file.",
         status: 501,
       },
       { status: 501 },
@@ -233,7 +232,9 @@ export async function handleImageGeneration(body: unknown): Promise<Response> {
     default: {
       return Response.json(
         {
-          error: `Image gen API family "${String(sdConfig.apiFamily)}" not implemented. Use "openai", "sdapi", or "sdcpp".`,
+          error: `Image gen API family "${
+            String(sdConfig.apiFamily)
+          }" not implemented. Use "openai", "sdapi", or "sdcpp".`,
           status: 501,
         },
         { status: 501 },

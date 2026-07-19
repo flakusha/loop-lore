@@ -29,9 +29,9 @@
  *                 XFrameOption, CrossOriginOpenerPolicy, CrossOriginEmbedderPolicy,
  *                 CrossOriginResourcePolicy
  */
-export * from "./enums-core";
+export * from "./enums-config";
 export * from "./enums-content";
+export * from "./enums-core";
 export * from "./enums-generation";
 export * from "./enums-story";
-export * from "./enums-config";
 export * from "./state";
