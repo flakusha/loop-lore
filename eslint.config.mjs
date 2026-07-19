@@ -115,11 +115,19 @@ const tsRules = {
   "import/first": "error",
   "import/no-mutable-exports": "error",
 
-  // ── Array iteration: prefer for-of over .map/.filter/.reduce ──
+  // ── Array iteration + banned patterns: prefer for-of over .map/.filter/.reduce ──
   // Enforces in-place modifications to avoid shadow allocations.
   // https://eslint.org/docs/latest/rules/no-restricted-syntax
   "no-restricted-syntax": [
     "warn",
+    {
+      selector: "CallExpression[callee.object.name='JSON'][callee.property.name='parse']",
+      message: "Use safeJsonParse<T>() or jsonParseOr() from utils instead of bare JSON.parse",
+    },
+    {
+      selector: "CallExpression[callee.object.name='JSON'][callee.property.name='stringify']",
+      message: "Use safeJsonStringify() from utils instead of bare JSON.stringify",
+    },
     {
       selector: "CallExpression[callee.type='MemberExpression'][callee.property.name='map']",
       message: "Avoid .map() — use for-of with push() for in-place transformation. Shadow allocation not needed here.",
@@ -137,6 +145,10 @@ const tsRules = {
       message: "Avoid .flatMap() — use for-of with push() for in-place flattening.",
     },
     {
+      selector: "CallExpression[callee.type='MemberExpression'][callee.property.name='flat']",
+      message: "Avoid .flat() — use for-of with push() to flatten in-place. Shadow allocation not needed here.",
+    },
+    {
       selector: "CallExpression[callee.type='MemberExpression'][callee.property.name='every']",
       message: "Avoid .every() — use a for-of loop with early return. Clearer intent.",
     },
@@ -152,16 +164,7 @@ const tsRules = {
       selector: "CallExpression[callee.type='MemberExpression'][callee.property.name='findIndex']",
       message: "Avoid .findIndex() — use a for-of loop with index tracking. Clearer intent.",
     },
-    {
-      selector: "CallExpression[callee.object.name='JSON'][callee.property.name='parse']",
-      message: "Use safeJsonParse<T>() or jsonParseOr() from utils instead of bare JSON.parse",
-    },
-    {
-      selector: "CallExpression[callee.object.name='JSON'][callee.property.name='stringify']",
-      message: "Use safeJsonStringify() from utils instead of bare JSON.stringify",
-    },
   ],
-
   // ── Low-value rules generating noise from Elysia/Kysely patterns ──
   "@typescript-eslint/no-unsafe-member-access": "off",
   "@typescript-eslint/no-unsafe-assignment": "off",
