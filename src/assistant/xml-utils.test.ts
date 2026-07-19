@@ -1,6 +1,6 @@
+import type { WrapperFormat, } from "./xml-utils";
 import { describe, expect, test, } from "bun:test";
 import { escapeXml, getSessionNonce, wrapContent, wrapSection, } from "./xml-utils";
-import type { WrapperFormat, } from "./xml-utils";
 
 describe("getSessionNonce", () => {
   test("returns 12-character string", () => {

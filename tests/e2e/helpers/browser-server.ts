@@ -11,25 +11,24 @@
  *   await page.goto(ctx.url + "/views/chat");
  *   await ctx.close();
  */
-
-import { type Browser, chromium, } from "@playwright/test";
-import { spawnSync, } from "node:child_process";
-import { cpSync, existsSync, mkdirSync, readFileSync, rmSync, } from "node:fs";
-import { join, } from "node:path";
-import { createTestDb, loadTestConfig, runMigrations, } from "./server";
 import "./logger-init";
-import { initAgeGate, } from "@/age-gate/controller";
 import type { Config, } from "@/config/schema";
-import { initSmk, } from "@/crypto";
-import { setTestDatabase, } from "@/db/index";
 import type { DB, } from "@/db/schema";
-import { createApp, } from "@/elysia-app";
-import { initializeProviders, } from "@/generation";
-import { createLogger, setGlobalLogger, } from "@/logger";
-import { resetSoloUserCache, } from "@/middleware/index";
-import { loadAllPlugins, unloadAllPlugins, } from "@/plugins";
 import type { Kysely, } from "kysely";
+import { cpSync, existsSync, mkdirSync, readFileSync, rmSync, } from "node:fs";
+import { createApp, } from "@/elysia-app";
+import { createLogger, setGlobalLogger, } from "@/logger";
+import { createTestDb, loadTestConfig, runMigrations, } from "./server";
+import { initAgeGate, } from "@/age-gate/controller";
+import { initSmk, } from "@/crypto";
+import { initializeProviders, } from "@/generation";
+import { join, } from "node:path";
+import { loadAllPlugins, unloadAllPlugins, } from "@/plugins";
+import { resetSoloUserCache, } from "@/middleware/index";
 import { seedSolo, } from "./seed";
+import { setTestDatabase, } from "@/db/index";
+import { spawnSync, } from "node:child_process";
+import { type Browser, chromium, } from "@playwright/test";
 
 // ── Types ────────────────────────────────────────────────────
 
