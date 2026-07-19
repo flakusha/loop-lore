@@ -4,8 +4,7 @@
   x-show="$store.ui.showCharacterInfo"
   @click="$store.ui.showCharacterInfo = false"
   x-cloak
->
-</div>
+></div>
 <!-- Right panel (character info + RPG stats) -->
 <aside
   class="right-panel"
@@ -60,16 +59,17 @@
             <div class="rpg-xp-section">
               <div class="rpg-xp-row">
                 <span>Level <span x-text="rpgStats?.level || 1"></span></span>
-                <span>XP: <span x-text="rpgStats?.xp || 0"></span>/<span
+                <span
+                  >XP: <span x-text="rpgStats?.xp || 0"></span>/<span
                     x-text="rpgStats?.xpToNext || 100"
-                  ></span></span>
+                  ></span
+                ></span>
               </div>
               <div class="rpg-progress-track">
                 <div
                   class="rpg-progress-fill"
                   :style="{width: (rpgStats ? (rpgStats.xp / rpgStats.xpToNext) * 100 : 0) + '%'}"
-                >
-                </div>
+                ></div>
               </div>
             </div>
 
@@ -77,39 +77,57 @@
             <div class="rpg-core-stats">
               <div class="rpg-stat-row">
                 <span class="rpg-stat-name">STR</span>
-                <span><span x-text="rpgStats?.str || 10"></span> (<span
+                <span
+                  ><span x-text="rpgStats?.str || 10"></span> (<span
                     x-text="getModifier(rpgStats?.str || 10) >= 0 ? '+' + getModifier(rpgStats?.str || 10) : getModifier(rpgStats?.str || 10)"
-                  ></span>)</span>
+                  ></span
+                  >)</span
+                >
               </div>
               <div class="rpg-stat-row">
                 <span class="rpg-stat-name">DEX</span>
-                <span><span x-text="rpgStats?.dex || 10"></span> (<span
+                <span
+                  ><span x-text="rpgStats?.dex || 10"></span> (<span
                     x-text="getModifier(rpgStats?.dex || 10) >= 0 ? '+' + getModifier(rpgStats?.dex || 10) : getModifier(rpgStats?.dex || 10)"
-                  ></span>)</span>
+                  ></span
+                  >)</span
+                >
               </div>
               <div class="rpg-stat-row">
                 <span class="rpg-stat-name">CON</span>
-                <span><span x-text="rpgStats?.con || 10"></span> (<span
+                <span
+                  ><span x-text="rpgStats?.con || 10"></span> (<span
                     x-text="getModifier(rpgStats?.con || 10) >= 0 ? '+' + getModifier(rpgStats?.con || 10) : getModifier(rpgStats?.con || 10)"
-                  ></span>)</span>
+                  ></span
+                  >)</span
+                >
               </div>
               <div class="rpg-stat-row">
                 <span class="rpg-stat-name">INT</span>
-                <span><span x-text="rpgStats?.int || 10"></span> (<span
+                <span
+                  ><span x-text="rpgStats?.int || 10"></span> (<span
                     x-text="getModifier(rpgStats?.int || 10) >= 0 ? '+' + getModifier(rpgStats?.int || 10) : getModifier(rpgStats?.int || 10)"
-                  ></span>)</span>
+                  ></span
+                  >)</span
+                >
               </div>
               <div class="rpg-stat-row">
                 <span class="rpg-stat-name">WIS</span>
-                <span><span x-text="rpgStats?.wis || 10"></span> (<span
+                <span
+                  ><span x-text="rpgStats?.wis || 10"></span> (<span
                     x-text="getModifier(rpgStats?.wis || 10) >= 0 ? '+' + getModifier(rpgStats?.wis || 10) : getModifier(rpgStats?.wis || 10)"
-                  ></span>)</span>
+                  ></span
+                  >)</span
+                >
               </div>
               <div class="rpg-stat-row">
                 <span class="rpg-stat-name">CHA</span>
-                <span><span x-text="rpgStats?.cha || 10"></span> (<span
+                <span
+                  ><span x-text="rpgStats?.cha || 10"></span> (<span
                     x-text="getModifier(rpgStats?.cha || 10) >= 0 ? '+' + getModifier(rpgStats?.cha || 10) : getModifier(rpgStats?.cha || 10)"
-                  ></span>)</span>
+                  ></span
+                  >)</span
+                >
               </div>
             </div>
           </div>
