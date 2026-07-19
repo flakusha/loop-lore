@@ -335,4 +335,6 @@ export interface ChatState extends AlpineMagicThis {
   getFilteredMemories(): MemoryEntry[];
   getCurrentMemoryList(): MemoryEntry[];
   updateMemoryTokenCount(): void;
+  _getCharacterActorId(): string | null;
+  _updateTokenCount(): void;
 }

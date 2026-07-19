@@ -1,11 +1,16 @@
 /**
  * Memory Panel Component
  *
- * Phase 1 Foundation: Memory display, search, create.
- * No backend wiring — uses mock data for UI development.
+ * Wires the memory panel UI to the backend CRUD API at /api/actors/:id/memories.
+ * Loads character memories from the active chat's actor participants.
  */
 
 import type { ChatState, MemoryEntry, } from "./types";
+
+/** Estimate tokens from content length (~4 chars per token). */
+function estimateTokens(content: string,): number {
+  return Math.ceil(content.length / 4,);
+}
 
 export const memoryPanel: Partial<ChatState> & ThisType<ChatState> = {
   memoryPanel: {
@@ -21,58 +26,64 @@ export const memoryPanel: Partial<ChatState> & ThisType<ChatState> = {
     newMemoryContent: "",
   },
 
+  /**
+   * Get the character actor ID from chat participants.
+   * In a character chat, the first non-user participant is the character.
+   */
+  _getCharacterActorId(): string | null {
+    const participants = this._chatParticipants;
+    if (!participants || participants.length === 0) { return null; }
+
+    // Find the first participant that is NOT the current user
+    const charParticipant = participants.find(
+      (p,) => p.actor_id !== this.userRole && p.display_name !== this.userDisplayName,
+    );
+    return charParticipant?.actor_id ?? null;
+  },
+
   async loadMemories() {
-    // Phase 1: Mock data for UI development
-    // TODO: Replace with actual API call when backend is ready
-    this.memoryPanel.characterMemories = [
-      {
-        id: "mem_1",
-        content: "The old lighthouse keeper mentioned strange lights in the marsh.",
-        type: "episodic",
-        category: "lore",
-        confidence: 0.9,
-        importance: 5,
-        keywords: ["lighthouse", "marsh", "lights",],
-        createdAt: new Date().toISOString(),
-        tokenCount: 15,
-      },
-    ];
+    this.memoryPanel.loading = true;
+    try {
+      const actorId = this._getCharacterActorId();
+      if (!actorId) {
+        this.memoryPanel.characterMemories = [];
+        return;
+      }
 
-    this.memoryPanel.assistantMemories = [
-      {
-        id: "mem_2",
-        content: "User prefers concise narrative responses.",
-        type: "procedural",
-        category: "preference",
-        confidence: 0.8,
-        importance: 3,
-        keywords: ["user", "preference", "concise",],
-        createdAt: new Date().toISOString(),
-        tokenCount: 10,
-      },
-    ];
+      const res = await fetch(`/api/actors/${actorId}/memories`,);
+      if (!res.ok) { return; }
+      const data = await res.json() as {
+        items: Array<{
+          id: string;
+          content: string;
+          memory_type: string;
+          confidence: number;
+          importance: number;
+          keywords: string | string[];
+          source_chat_id?: string;
+          pinned?: boolean;
+          created_at: string;
+        }>;
+      };
 
-    this.memoryPanel.worldMemories = [
-      {
-        id: "mem_3",
-        content: "The kingdom of Eldoria has been at peace for 50 years.",
-        type: "semantic",
-        category: "history",
-        confidence: 1,
-        importance: 8,
-        keywords: ["Eldoria", "kingdom", "peace",],
-        createdAt: new Date().toISOString(),
-        tokenCount: 12,
-      },
-    ];
+      this.memoryPanel.characterMemories = (data.items ?? []).map((m,) => ({
+        id: m.id,
+        content: m.content,
+        type: m.memory_type as MemoryEntry["type"],
+        confidence: m.confidence,
+        importance: m.importance,
+        keywords: typeof m.keywords === "string" ? JSON.parse(m.keywords || "[]",) : (m.keywords ?? []),
+        pinned: !!m.pinned,
+        createdAt: m.created_at,
+        tokenCount: estimateTokens(m.content,),
+      }));
 
-    // Update token count inline
-    const allMemories = [
-      ...this.memoryPanel.characterMemories,
-      ...this.memoryPanel.assistantMemories,
-      ...this.memoryPanel.worldMemories,
-    ];
-    this.memoryPanel.tokensUsed = allMemories.reduce((sum, m,) => sum + (m.tokenCount || 0), 0,);
+      this._updateTokenCount();
+    } catch {
+      // Silently fail — memories are non-critical
+    } finally {
+      this.memoryPanel.loading = false;
+    }
   },
 
   getFilteredMemories(): MemoryEntry[] {
@@ -102,8 +113,7 @@ export const memoryPanel: Partial<ChatState> & ThisType<ChatState> = {
     return memories.filter(
       (m,) =>
         m.content.toLowerCase().includes(query,) ||
-        m.keywords.some((k,) => k.toLowerCase().includes(query,)) ||
-        m.category?.toLowerCase().includes(query,),
+        m.keywords.some((k,) => k.toLowerCase().includes(query,)),
     );
   },
 
@@ -125,61 +135,104 @@ export const memoryPanel: Partial<ChatState> & ThisType<ChatState> = {
   },
 
   searchMemories() {
-    // Method for triggering reactivity on search input
+    // Triggers Alpine reactivity via x-model
   },
 
   async createMemory() {
     if (!this.memoryPanel.newMemoryContent.trim()) { return; }
 
-    const newMemory: MemoryEntry = {
-      id: `mem_${Date.now()}`,
-      content: this.memoryPanel.newMemoryContent.trim(),
-      type: "episodic",
-      category: "manual",
-      confidence: 1,
-      importance: 5,
-      keywords: [],
-      createdAt: new Date().toISOString(),
-      tokenCount: Math.ceil(this.memoryPanel.newMemoryContent.length / 4,),
-    };
+    const actorId = this._getCharacterActorId();
+    if (!actorId) { return; }
 
-    this.getCurrentMemoryList().unshift(newMemory,);
-    this.memoryPanel.newMemoryContent = "";
-    this.memoryPanel.showCreateForm = false;
+    try {
+      const res = await fetch(`/api/actors/${actorId}/memories`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({
+          content: this.memoryPanel.newMemoryContent.trim(),
+          memoryType: "episodic",
+          confidence: 1,
+          importance: 5,
+          keywords: [],
+        },),
+      },);
 
-    // Update token count inline
-    const allMemories = [
-      ...this.memoryPanel.characterMemories,
-      ...this.memoryPanel.assistantMemories,
-      ...this.memoryPanel.worldMemories,
-    ];
-    this.memoryPanel.tokensUsed = allMemories.reduce((sum, m,) => sum + (m.tokenCount || 0), 0,);
+      if (!res.ok) { return; }
+      const created = await res.json() as {
+        id: string;
+        content: string;
+        memory_type: string;
+        confidence: number;
+        importance: number;
+        keywords: string | string[];
+        created_at: string;
+      };
+
+      const newMemory: MemoryEntry = {
+        id: created.id,
+        content: created.content,
+        type: created.memory_type as MemoryEntry["type"],
+        confidence: created.confidence,
+        importance: created.importance,
+        keywords: typeof created.keywords === "string"
+          ? JSON.parse(created.keywords || "[]",)
+          : (created.keywords ?? []),
+        createdAt: created.created_at,
+        tokenCount: estimateTokens(created.content,),
+      };
+
+      this.getCurrentMemoryList().unshift(newMemory,);
+      this.memoryPanel.newMemoryContent = "";
+      this.memoryPanel.showCreateForm = false;
+      this._updateTokenCount();
+    } catch {
+      // Silently fail
+    }
   },
 
   async deleteMemory(memoryId: string,) {
+    const actorId = this._getCharacterActorId();
+    if (!actorId) { return; }
+
+    try {
+      await fetch(`/api/actors/${actorId}/memories/${memoryId}`, {
+        method: "DELETE",
+      },);
+    } catch {
+      // proceed with local removal even if API fails
+    }
+
     const memories = this.getCurrentMemoryList();
     const idx = memories.findIndex((m,) => m.id === memoryId);
     if (idx !== -1) {
       memories.splice(idx, 1,);
-      // Update token count inline
-      const allMemories = [
-        ...this.memoryPanel.characterMemories,
-        ...this.memoryPanel.assistantMemories,
-        ...this.memoryPanel.worldMemories,
-      ];
-      this.memoryPanel.tokensUsed = allMemories.reduce((sum, m,) => sum + (m.tokenCount || 0), 0,);
+      this._updateTokenCount();
     }
   },
 
   async toggleMemoryPin(memoryId: string,) {
+    const actorId = this._getCharacterActorId();
+    if (!actorId) { return; }
+
     const memories = this.getCurrentMemoryList();
     const mem = memories.find((m,) => m.id === memoryId);
-    if (mem) {
+    if (!mem) { return; }
+
+    mem.pinned = !mem.pinned;
+
+    try {
+      await fetch(`/api/actors/${actorId}/memories/${memoryId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({ pinned: mem.pinned, },),
+      },);
+    } catch {
+      // Revert on failure
       mem.pinned = !mem.pinned;
     }
   },
 
-  updateMemoryTokenCount() {
+  _updateTokenCount() {
     const allMemories = [
       ...this.memoryPanel.characterMemories,
       ...this.memoryPanel.assistantMemories,
