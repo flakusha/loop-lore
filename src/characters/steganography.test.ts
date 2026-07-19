@@ -25,7 +25,7 @@ function pngWithTextChunk(type: string, keyword: string, text: string,): Buffer 
   let chunkData: Buffer;
 
   if (type === "tEXt") {
-    chunkData = Buffer.from(keyword + "\u{0}" + text, "latin1",);
+    chunkData = Buffer.from(`${keyword  }\u{0}${  text}`, "latin1",);
   } else if (type === "zTXt") {
     const compressed = deflateSync(Buffer.from(text, "utf8",),);
     chunkData = Buffer.concat([keyBuf, nullByte, Buffer.from([0,],), compressed,],);

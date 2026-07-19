@@ -152,6 +152,14 @@ const tsRules = {
       selector: "CallExpression[callee.type='MemberExpression'][callee.property.name='findIndex']",
       message: "Avoid .findIndex() — use a for-of loop with index tracking. Clearer intent.",
     },
+    {
+      selector: "CallExpression[callee.object.name='JSON'][callee.property.name='parse']",
+      message: "Use safeJsonParse<T>() or jsonParseOr() from utils instead of bare JSON.parse",
+    },
+    {
+      selector: "CallExpression[callee.object.name='JSON'][callee.property.name='stringify']",
+      message: "Use safeJsonStringify() from utils instead of bare JSON.stringify",
+    },
   ],
 
   // ── Low-value rules generating noise from Elysia/Kysely patterns ──
@@ -189,17 +197,6 @@ const tsRules = {
 
   // ── Banned pattern enforcement (banned-patterns.md) ─────────
   // Starting as "warn" — upgrade to "error" after existing violations are fixed
-  "no-restricted-syntax": [
-    "warn",
-    {
-      selector: "CallExpression[callee.object.name='JSON'][callee.property.name='parse']",
-      message: "Use safeJsonParse<T>() or jsonParseOr() from utils instead of bare JSON.parse",
-    },
-    {
-      selector: "CallExpression[callee.object.name='JSON'][callee.property.name='stringify']",
-      message: "Use safeJsonStringify() from utils instead of bare JSON.stringify",
-    },
-  ],
   "prefer-template": "warn",
 };
 

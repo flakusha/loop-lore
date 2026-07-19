@@ -102,7 +102,7 @@ function resolveUploadDir(uploadDir: string,): string {
 
   // Block dangerous system roots
   for (const forbidden of FORBIDDEN_ROOTS) {
-    if (normalized === forbidden || normalized.startsWith(forbidden + "/",)) {
+    if (normalized === forbidden || normalized.startsWith(`${forbidden  }/`,)) {
       // /home is special: block root and direct children (/home/user),
       // but allow deeper paths (/home/user/projects)
       if (forbidden === "/home" && normalized !== "/home") {

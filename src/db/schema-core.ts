@@ -14,6 +14,7 @@ import type {
   ChatType,
   ContentEncoding,
   DefaultState,
+  EncryptionLevel,
   EquipState,
   KeyStatus,
   KeyType,
@@ -110,6 +111,7 @@ export interface Chats {
   auto_advance: number | null;
   parent_chat_id: string | null;
   is_pinned: Generated<PinnedState>;
+  encryption_level: Generated<EncryptionLevel>;
   created_at: Generated<string>;
   updated_at: Generated<string>;
 }

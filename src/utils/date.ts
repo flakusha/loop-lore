@@ -123,7 +123,7 @@ export function formatTime(options?: {
     offset = (offsetRaw.startsWith("GMT",) ? offsetRaw.slice(3,) : offsetRaw) || "+00:00";
     if (!offset.includes(":",)) {
       // Handle "+0200" → "+02:00"
-      offset = offset.slice(0, 3,) + ":" + offset.slice(3,);
+      offset = `${offset.slice(0, 3,)  }:${  offset.slice(3,)}`;
     }
   } else {
     y = d.getFullYear();
