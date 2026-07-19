@@ -1,14 +1,14 @@
 /**
  * Tests for characters (actors) routes — CRUD + visibility + card export
  */
-import type { DB, } from "../db/schema";
-import type { Kysely, } from "kysely";
-import { Elysia, } from "elysia";
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
-import { charactersRoutes, } from "./characters";
+import { Elysia, } from "elysia";
+import type { Kysely, } from "kysely";
+import type { DB, } from "../db/schema";
 import { createLogger, } from "../logger";
 import { createTestDb, } from "../test-utils/create-test-db";
 import { uid, } from "../utils";
+import { charactersRoutes, } from "./characters";
 
 function createApp(db: Kysely<DB>, userId: string, userRole = "solo",): Elysia {
   return new Elysia({ name: "test-characters", },)

@@ -1,5 +1,5 @@
-import type { ContentEncoding, } from "./types";
 import { brotliDecompressSync, gunzipSync, } from "node:zlib";
+import type { ContentEncoding, } from "./types";
 
 function zstdDecompress(data: Buffer,): Buffer {
   // zstd decompression via Bun runtime (type-safe wrapper)

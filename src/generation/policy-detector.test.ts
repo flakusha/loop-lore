@@ -1,13 +1,13 @@
 import { describe, expect, test, } from "bun:test";
+import { DEFAULT_POLICY_DETECTION, } from "./gen-types-options";
+import type { PolicyAnalysis, } from "./gen-types-results";
 import {
   clearDetectors,
   detectPolicyMismatch,
   registerDefaultNullDetector,
   registerPolicyDetector,
 } from "./policy-detector";
-
-import { DEFAULT_POLICY_DETECTION, } from "./types";
-import type { PolicyAnalysis, } from "./types";
+import type { PolicyDetector, } from "./policy-detector";
 
 interface DetectorResult {
   detected?: boolean;

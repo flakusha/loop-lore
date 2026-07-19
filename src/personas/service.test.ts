@@ -1,9 +1,9 @@
-import type { DB, } from "../db/schema";
-import type { Kysely, } from "kysely";
-import { PersonasService, } from "./service";
 import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
+import type { Kysely, } from "kysely";
+import type { DB, } from "../db/schema";
 import { createLogger, } from "../logger";
 import { createTestDb, } from "../test-utils/create-test-db";
+import { PersonasService, } from "./service";
 
 let db: Kysely<DB>;
 let service: PersonasService;

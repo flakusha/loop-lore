@@ -28,7 +28,6 @@ import {
  */
 // ── jsonResponse ──────────────────────────────────────────────
 
-
 /**
  * Tests for HTTP response utilities.
  *
