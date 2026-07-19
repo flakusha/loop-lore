@@ -1,19 +1,19 @@
 // src/config/sections/headers.ts — Headers config section
 
-import type { CspConfig, HeadersConfig } from "../schema";
+import type { CspConfig, HeadersConfig, } from "../schema";
 
 export const CSP_DEFAULTS: CspConfig = {
   enabled: true,
-  defaultSrc: ["'self'"],
-  scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
-  styleSrc: ["'self'", "'unsafe-inline'"],
-  imgSrc: ["'self'", "data:", "blob:"],
-  fontSrc: ["'self'"],
-  connectSrc: ["'self'", "wss:", "https:"],
-  objectSrc: ["'none'"],
-  baseUri: ["'self'"],
-  frameAncestors: ["'none'"],
-  formAction: ["'self'"],
+  defaultSrc: ["'self'",],
+  scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'",],
+  styleSrc: ["'self'", "'unsafe-inline'",],
+  imgSrc: ["'self'", "data:", "blob:",],
+  fontSrc: ["'self'",],
+  connectSrc: ["'self'", "wss:", "https:",],
+  objectSrc: ["'none'",],
+  baseUri: ["'self'",],
+  frameAncestors: ["'none'",],
+  formAction: ["'self'",],
   upgradeInsecureRequests: true,
   reportOnly: false,
 };
@@ -31,10 +31,10 @@ export const HEADERS_DEFAULTS: HeadersConfig = {
   crossOriginResourcePolicy: "cross-origin" as const,
   timingAllowOrigin: "",
   immutableHashedAssets: true,
-  linkPreload: ["/vendor.js", "/app.js", "/css/app.css"],
+  linkPreload: ["/vendor.js", "/app.js", "/css/app.css",],
   acceptClientHints: [],
   saveData: false,
-  earlyHints: { enabled: false },
+  earlyHints: { enabled: false, },
   reportingEndpoints: {},
   nel: null,
 };
@@ -45,38 +45,38 @@ export class HeadersSection implements HeadersConfig {
   xContentTypeOptions = HEADERS_DEFAULTS.xContentTypeOptions;
   xFrameOptions = HEADERS_DEFAULTS.xFrameOptions;
   permissionsPolicy = HEADERS_DEFAULTS.permissionsPolicy;
-  csp: CspConfig = { ...HEADERS_DEFAULTS.csp };
+  csp: CspConfig = { ...HEADERS_DEFAULTS.csp, };
   crossOriginOpenerPolicy = HEADERS_DEFAULTS.crossOriginOpenerPolicy;
   crossOriginEmbedderPolicy = HEADERS_DEFAULTS.crossOriginEmbedderPolicy;
   crossOriginResourcePolicy = HEADERS_DEFAULTS.crossOriginResourcePolicy;
   timingAllowOrigin = HEADERS_DEFAULTS.timingAllowOrigin;
   immutableHashedAssets = HEADERS_DEFAULTS.immutableHashedAssets;
-  linkPreload = [...HEADERS_DEFAULTS.linkPreload];
-  acceptClientHints = [...HEADERS_DEFAULTS.acceptClientHints];
+  linkPreload = [...HEADERS_DEFAULTS.linkPreload,];
+  acceptClientHints = [...HEADERS_DEFAULTS.acceptClientHints,];
   saveData = HEADERS_DEFAULTS.saveData;
-  earlyHints = { ...HEADERS_DEFAULTS.earlyHints };
+  earlyHints = { ...HEADERS_DEFAULTS.earlyHints, };
   reportingEndpoints: Record<string, string> = {};
   nel = HEADERS_DEFAULTS.nel;
 
-  constructor(overrides?: Partial<HeadersConfig>) {
-    if (!overrides) return;
+  constructor(overrides?: Partial<HeadersConfig>,) {
+    if (!overrides) { return; }
 
     const { csp, earlyHints, linkPreload, acceptClientHints, reportingEndpoints, ...rest } = overrides;
-    Object.assign(this, rest);
+    Object.assign(this, rest,);
     if (csp) {
-      this.csp = { ...this.csp, ...csp };
+      this.csp = { ...this.csp, ...csp, };
     }
     if (earlyHints) {
-      this.earlyHints = { ...this.earlyHints, ...earlyHints };
+      this.earlyHints = { ...this.earlyHints, ...earlyHints, };
     }
     if (linkPreload) {
-      this.linkPreload = [...linkPreload];
+      this.linkPreload = [...linkPreload,];
     }
     if (acceptClientHints) {
-      this.acceptClientHints = [...acceptClientHints];
+      this.acceptClientHints = [...acceptClientHints,];
     }
     if (reportingEndpoints) {
-      this.reportingEndpoints = { ...reportingEndpoints };
+      this.reportingEndpoints = { ...reportingEndpoints, };
     }
   }
 }
@@ -98,8 +98,8 @@ export const headersMeta = {
       description: "Emit X-Content-Type-Options: nosniff",
     },
     xFrameOptions: {
-      type: ["string", "null"],
-      enum: ["DENY", "SAMEORIGIN", null],
+      type: ["string", "null",],
+      enum: ["DENY", "SAMEORIGIN", null,],
       description: "X-Frame-Options; null omits",
     },
     permissionsPolicy: {
@@ -110,38 +110,38 @@ export const headersMeta = {
       type: "object",
       description: "Content-Security-Policy directive set (HTML only)",
       properties: {
-        enabled: { type: "boolean" },
-        defaultSrc: { type: "array", items: { type: "string" } },
-        scriptSrc: { type: "array", items: { type: "string" } },
-        styleSrc: { type: "array", items: { type: "string" } },
-        imgSrc: { type: "array", items: { type: "string" } },
-        fontSrc: { type: "array", items: { type: "string" } },
-        connectSrc: { type: "array", items: { type: "string" } },
-        objectSrc: { type: "array", items: { type: "string" } },
-        baseUri: { type: "array", items: { type: "string" } },
-        frameAncestors: { type: "array", items: { type: "string" } },
-        formAction: { type: "array", items: { type: "string" } },
-        upgradeInsecureRequests: { type: "boolean" },
+        enabled: { type: "boolean", },
+        defaultSrc: { type: "array", items: { type: "string", }, },
+        scriptSrc: { type: "array", items: { type: "string", }, },
+        styleSrc: { type: "array", items: { type: "string", }, },
+        imgSrc: { type: "array", items: { type: "string", }, },
+        fontSrc: { type: "array", items: { type: "string", }, },
+        connectSrc: { type: "array", items: { type: "string", }, },
+        objectSrc: { type: "array", items: { type: "string", }, },
+        baseUri: { type: "array", items: { type: "string", }, },
+        frameAncestors: { type: "array", items: { type: "string", }, },
+        formAction: { type: "array", items: { type: "string", }, },
+        upgradeInsecureRequests: { type: "boolean", },
         reportOnly: {
           type: "boolean",
           description: "Emit CSP as Report-Only (observe, not enforce)",
         },
       },
-      required: ["enabled"],
+      required: ["enabled",],
     },
     crossOriginOpenerPolicy: {
-      type: ["string", "null"],
-      enum: ["same-origin", "same-origin-allow-popups", null],
+      type: ["string", "null",],
+      enum: ["same-origin", "same-origin-allow-popups", null,],
       description: "COOP; null omits",
     },
     crossOriginEmbedderPolicy: {
-      type: ["string", "null"],
-      enum: ["require-corp", null],
+      type: ["string", "null",],
+      enum: ["require-corp", null,],
       description: "COEP; self-hosted Alpine/htmx resolved CDN blocker. Still not needed (no wasm/SAB).",
     },
     crossOriginResourcePolicy: {
-      type: ["string", "null"],
-      enum: ["same-origin", "cross-origin", null],
+      type: ["string", "null",],
+      enum: ["same-origin", "cross-origin", null,],
       description: "CORP for static subresources",
     },
     timingAllowOrigin: {
@@ -154,12 +154,12 @@ export const headersMeta = {
     },
     linkPreload: {
       type: "array",
-      items: { type: "string" },
+      items: { type: "string", },
       description: "Link preload hints for HTML documents",
     },
     acceptClientHints: {
       type: "array",
-      items: { type: "string" },
+      items: { type: "string", },
       description: "Accept-CH / Critical-CH client hint tokens",
     },
     saveData: {
@@ -168,18 +168,18 @@ export const headersMeta = {
     },
     earlyHints: {
       type: "object",
-      properties: { enabled: { type: "boolean" } },
-      required: ["enabled"],
+      properties: { enabled: { type: "boolean", }, },
+      required: ["enabled",],
     },
     reportingEndpoints: {
       type: "object",
-      additionalProperties: { type: "string" },
+      additionalProperties: { type: "string", },
       description: "Reporting-Endpoints name → URL",
     },
     nel: {
-      type: ["string", "null"],
+      type: ["string", "null",],
       description: "NEL policy JSON; null omits",
     },
   },
-  required: ["enabled", "referrerPolicy", "xContentTypeOptions", "csp", "earlyHints"] as const,
+  required: ["enabled", "referrerPolicy", "xContentTypeOptions", "csp", "earlyHints",] as const,
 };

@@ -1,14 +1,14 @@
 // ── Gallery page: search, preview, actions ────────────────────
-import { log as rootLog } from "../alpine/logger";
-import { feFetch } from "../fe-fetch";
-import { showToast } from "../ui";
-import { escapeHtml, filterCards, formatSize } from "./shared";
+import { log as rootLog, } from "../alpine/logger";
+import { feFetch, } from "../fe-fetch";
+import { showToast, } from "../ui";
+import { escapeHtml, filterCards, formatSize, } from "./shared";
 
-const pageLog = rootLog.child({ module: "gallery" });
+const pageLog = rootLog.child({ module: "gallery", },);
 
 globalThis.filterAssets = function() {
-  const query = document.querySelector<HTMLInputElement>("#asset-search")?.value ?? "";
-  const type = document.querySelector<HTMLSelectElement>("#asset-type-filter")?.value ?? "all";
+  const query = document.querySelector<HTMLInputElement>("#asset-search",)?.value ?? "";
+  const type = document.querySelector<HTMLSelectElement>("#asset-type-filter",)?.value ?? "all";
   filterCards({
     containerId: "#asset-grid",
     cardSelector: ".asset-card",
@@ -18,31 +18,31 @@ globalThis.filterAssets = function() {
     emptyIcon: "📁",
     emptyTitle: "No assets match your filters",
     emptyStyle: "grid-column: 1 / -1;",
-    matchExtra: (card) =>
-      type === "all"
-      || (card.querySelector(".file-icon")?.textContent === "🎵" && type === "audio")
-      || (card.querySelector(".file-icon")?.textContent === "🎬" && type === "video")
-      || (!!card.querySelector("img") && type === "image"),
-  });
+    matchExtra: (card,) =>
+      type === "all" ||
+      (card.querySelector(".file-icon",)?.textContent === "🎵" && type === "audio") ||
+      (card.querySelector(".file-icon",)?.textContent === "🎬" && type === "video") ||
+      (!!card.querySelector("img",) && type === "image"),
+  },);
 };
 
-globalThis.openAssetPreview = async function(id: string) {
-  pageLog.debug("openAssetPreview", { id });
+globalThis.openAssetPreview = async function(id: string,) {
+  pageLog.debug("openAssetPreview", { id, },);
   try {
-    const res = await feFetch(`/api/assets/${id}`);
-    if (!res.ok) return;
+    const res = await feFetch(`/api/assets/${id}`,);
+    if (!res.ok) { return; }
     const a = await res.json();
     globalThis.__previewAsset = a;
-    const modal = document.querySelector<HTMLElement>("#preview-modal");
-    if (!modal) return;
-    modal.querySelector("[data-field='filename']")!.textContent = a.filename || "Asset";
-    modal.querySelector("[data-field='mime']")!.textContent = a.mime_type || "";
-    modal.querySelector("[data-field='size']")!.textContent = formatSize(a.size_bytes);
-    const body = modal.querySelector("[data-field='preview-body']")!;
+    const modal = document.querySelector<HTMLElement>("#preview-modal",);
+    if (!modal) { return; }
+    modal.querySelector("[data-field='filename']",)!.textContent = a.filename || "Asset";
+    modal.querySelector("[data-field='mime']",)!.textContent = a.mime_type || "";
+    modal.querySelector("[data-field='size']",)!.textContent = formatSize(a.size_bytes,);
+    const body = modal.querySelector("[data-field='preview-body']",)!;
     switch (a.asset_type) {
       case "image": {
         body.innerHTML = `<img src="/api/assets/${a.id}/raw" alt="${
-          escapeHtml(a.filename)
+          escapeHtml(a.filename,)
         }" style="width:100%;display:block" />`;
         break;
       }
@@ -61,7 +61,7 @@ globalThis.openAssetPreview = async function(id: string) {
           `<div style="padding:var(--space-6);text-align:center"><div class="file-icon" style="font-size:48px">📄</div></div>`;
       }
     }
-    modal.classList.add("open");
+    modal.classList.add("open",);
   } catch {
     /* ignore */
   }
@@ -69,19 +69,19 @@ globalThis.openAssetPreview = async function(id: string) {
 
 globalThis.copyAssetUrl = async function() {
   const a = globalThis.__previewAsset;
-  if (!a?.id) return;
+  if (!a?.id) { return; }
   try {
-    await navigator.clipboard.writeText(`${location.origin}/api/assets/${a.id}/raw`);
-    showToast("success", "URL copied");
+    await navigator.clipboard.writeText(`${location.origin}/api/assets/${a.id}/raw`,);
+    showToast("success", "URL copied",);
   } catch {
-    showToast("error", "Failed to copy");
+    showToast("error", "Failed to copy",);
   }
 };
 
 globalThis.downloadAsset = function() {
   const a = globalThis.__previewAsset;
-  if (!a?.id) return;
-  const el = document.createElement("a");
+  if (!a?.id) { return; }
+  const el = document.createElement("a",);
   el.href = `/api/assets/${a.id}/raw`;
   el.download = a.filename || "asset";
   el.click();
@@ -89,17 +89,17 @@ globalThis.downloadAsset = function() {
 
 globalThis.deleteAssetPreview = async function() {
   const a = globalThis.__previewAsset;
-  if (!a?.id || !confirm("Delete this asset?")) return;
+  if (!a?.id || !confirm("Delete this asset?",)) { return; }
   try {
-    const res = await feFetch(`/api/assets/${a.id}`, { method: "DELETE" });
+    const res = await feFetch(`/api/assets/${a.id}`, { method: "DELETE", },);
     if (res.ok) {
-      document.querySelector("#preview-modal")?.classList.remove("open");
+      document.querySelector("#preview-modal",)?.classList.remove("open",);
       globalThis.__previewAsset = null;
-      showToast("success", "Asset deleted");
-      const grid = document.querySelector("#asset-grid");
-      if (grid) htmx.trigger(grid, "load");
+      showToast("success", "Asset deleted",);
+      const grid = document.querySelector("#asset-grid",);
+      if (grid) { htmx.trigger(grid, "load",); }
     }
   } catch {
-    showToast("error", "Failed to delete");
+    showToast("error", "Failed to delete",);
   }
 };

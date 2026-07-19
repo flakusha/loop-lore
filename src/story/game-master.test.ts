@@ -6,16 +6,16 @@
  *
  * Uses in-memory SQLite + Kysely test DB. Mocks generateText callback.
  */
-import { Database } from "bun:sqlite";
-import { afterAll, beforeEach, describe, expect, test } from "bun:test";
-import { Kysely } from "kysely";
-import { randomUUID } from "node:crypto";
-import { GameMasterType } from "../db/enums";
-import { createSqliteDialect, setTestDatabase } from "../db/index";
-import type { DB } from "../db/schema";
-import { createLogger } from "../logger";
-import { GameMasterService, type GenerateTextFn } from "./game-master";
-import type { GameMasterConfig, QualityThresholds } from "./types";
+import { Database, } from "bun:sqlite";
+import { afterAll, beforeEach, describe, expect, test, } from "bun:test";
+import { Kysely, } from "kysely";
+import { randomUUID, } from "node:crypto";
+import { GameMasterType, } from "../db/enums";
+import { createSqliteDialect, setTestDatabase, } from "../db/index";
+import type { DB, } from "../db/schema";
+import { createLogger, } from "../logger";
+import { GameMasterService, type GenerateTextFn, } from "./game-master";
+import type { GameMasterConfig, QualityThresholds, } from "./types";
 
 // ── Test DB factory ───────────────────────────────────────────
 
@@ -25,11 +25,11 @@ interface TestDbResult {
 }
 
 function createTestDb(): TestDbResult {
-  const sqlite = new Database(":memory:");
-  sqlite.run("PRAGMA foreign_keys = ON");
+  const sqlite = new Database(":memory:",);
+  sqlite.run("PRAGMA foreign_keys = ON",);
 
-  const dialect = createSqliteDialect(sqlite);
-  const db = new Kysely<DB>({ dialect });
+  const dialect = createSqliteDialect(sqlite,);
+  const db = new Kysely<DB>({ dialect, },);
 
   // Core tables
   sqlite.run(`
@@ -38,7 +38,7 @@ function createTestDb(): TestDbResult {
       role TEXT NOT NULL DEFAULT 'user', status TEXT NOT NULL DEFAULT 'active',
       settings TEXT NOT NULL DEFAULT '{}', created_at TEXT NOT NULL DEFAULT (datetime('now'))
     )
-  `);
+  `,);
   sqlite.run(`
     CREATE TABLE chats (
       id TEXT PRIMARY KEY, name TEXT NOT NULL, type TEXT NOT NULL DEFAULT 'direct',
@@ -47,7 +47,7 @@ function createTestDb(): TestDbResult {
       gm_config TEXT, turn_strategy TEXT, max_turns INTEGER, auto_advance INTEGER,
       created_at TEXT NOT NULL DEFAULT (datetime('now')), updated_at TEXT NOT NULL DEFAULT (datetime('now'))
     )
-  `);
+  `,);
   sqlite.run(`
     CREATE TABLE actors (
       id TEXT PRIMARY KEY, actor_type TEXT NOT NULL DEFAULT 'user', display_name TEXT NOT NULL,
@@ -57,7 +57,7 @@ function createTestDb(): TestDbResult {
       data_version INTEGER NOT NULL DEFAULT 1, import_spec TEXT NOT NULL DEFAULT '{}',
       created_at TEXT NOT NULL DEFAULT (datetime('now')), updated_at TEXT NOT NULL DEFAULT (datetime('now'))
     )
-  `);
+  `,);
   sqlite.run(`
     CREATE TABLE chat_participants (
       chat_id TEXT NOT NULL, actor_id TEXT NOT NULL,
@@ -68,7 +68,7 @@ function createTestDb(): TestDbResult {
       joined_at TEXT NOT NULL DEFAULT (datetime('now')),
       PRIMARY KEY (chat_id, actor_id)
     )
-  `);
+  `,);
   sqlite.run(`
     CREATE TABLE messages (
       id TEXT PRIMARY KEY, chat_id TEXT NOT NULL, actor_id TEXT NOT NULL,
@@ -81,7 +81,7 @@ function createTestDb(): TestDbResult {
       continuation_index INTEGER,
       created_at TEXT NOT NULL DEFAULT (datetime('now'))
     )
-  `);
+  `,);
 
   // Story domain tables
   sqlite.run(`
@@ -94,7 +94,7 @@ function createTestDb(): TestDbResult {
       difficulty_state TEXT NOT NULL DEFAULT 'alive',
       created_at TEXT NOT NULL DEFAULT (datetime('now')), updated_at TEXT NOT NULL DEFAULT (datetime('now'))
     )
-  `);
+  `,);
   sqlite.run(`
     CREATE TABLE locations (
       id TEXT PRIMARY KEY, world_id TEXT, name TEXT NOT NULL,
@@ -102,7 +102,7 @@ function createTestDb(): TestDbResult {
       parent_location_id TEXT,
       created_at TEXT NOT NULL DEFAULT (datetime('now')), updated_at TEXT NOT NULL DEFAULT (datetime('now'))
     )
-  `);
+  `,);
   sqlite.run(`
     CREATE TABLE location_states (
       location_id TEXT NOT NULL, world_id TEXT NOT NULL,
@@ -112,7 +112,7 @@ function createTestDb(): TestDbResult {
       created_at TEXT NOT NULL DEFAULT (datetime('now')),
       updated_at TEXT NOT NULL DEFAULT (datetime('now'))
     )
-  `);
+  `,);
   sqlite.run(`
     CREATE TABLE story_turns (
       id TEXT PRIMARY KEY, chat_id TEXT NOT NULL, turn_number INTEGER NOT NULL,
@@ -126,7 +126,7 @@ function createTestDb(): TestDbResult {
       completed_at TEXT,
       created_at TEXT NOT NULL DEFAULT (datetime('now')), updated_at TEXT NOT NULL DEFAULT (datetime('now'))
     )
-  `);
+  `,);
   sqlite.run(`
     CREATE TABLE npc_states (
       id TEXT PRIMARY KEY, actor_id TEXT NOT NULL, world_id TEXT NOT NULL,
@@ -136,7 +136,7 @@ function createTestDb(): TestDbResult {
       inventory TEXT NOT NULL DEFAULT '[]', schedule TEXT NOT NULL DEFAULT '{}',
       created_at TEXT NOT NULL DEFAULT (datetime('now')), updated_at TEXT NOT NULL DEFAULT (datetime('now'))
     )
-  `);
+  `,);
   sqlite.run(`
     CREATE TABLE quests (
       id TEXT PRIMARY KEY, world_id TEXT NOT NULL, creator_id TEXT NOT NULL,
@@ -149,7 +149,7 @@ function createTestDb(): TestDbResult {
       created_at TEXT NOT NULL DEFAULT (datetime('now')), updated_at TEXT NOT NULL DEFAULT (datetime('now')),
       completed_at TEXT
     )
-  `);
+  `,);
 
   // Tables needed by PromptAssembler (used in llmDecision)
   sqlite.run(
@@ -162,15 +162,15 @@ function createTestDb(): TestDbResult {
     `CREATE TABLE actor_memories (id TEXT PRIMARY KEY, actor_id TEXT NOT NULL, content TEXT NOT NULL, memory_type TEXT NOT NULL DEFAULT 'fact', confidence REAL NOT NULL DEFAULT 1, importance INTEGER NOT NULL DEFAULT 1, keywords TEXT DEFAULT '[]', created_at TEXT NOT NULL DEFAULT (datetime('now')), updated_at TEXT NOT NULL DEFAULT (datetime('now')))`,
   );
 
-  return { sqlite, db };
+  return { sqlite, db, };
 }
 
 // ── Seed helpers ──────────────────────────────────────────────
 
-async function seedChat(db: Kysely<DB>, overrides?: Record<string, unknown>): Promise<string> {
+async function seedChat(db: Kysely<DB>, overrides?: Record<string, unknown>,): Promise<string> {
   const id = (overrides?.id as string | undefined) ?? randomUUID();
   await db
-    .insertInto("chats")
+    .insertInto("chats",)
     .values({
       id,
       name: "Test Story",
@@ -178,15 +178,15 @@ async function seedChat(db: Kysely<DB>, overrides?: Record<string, unknown>): Pr
       mode: "story",
       created_by: "user-1",
       ...overrides,
-    })
+    },)
     .execute();
   return id;
 }
 
-async function seedWorld(db: Kysely<DB>): Promise<string> {
+async function seedWorld(db: Kysely<DB>,): Promise<string> {
   const id = randomUUID();
   await db
-    .insertInto("worlds")
+    .insertInto("worlds",)
     .values({
       id,
       owner_id: "user-1",
@@ -196,7 +196,7 @@ async function seedWorld(db: Kysely<DB>): Promise<string> {
       difficulty_modifier: 1,
       difficulty_reroll: "none",
       difficulty_state: "normal",
-    })
+    },)
     .execute();
   return id;
 }
@@ -208,19 +208,19 @@ async function seedLocation(
 ): Promise<string> {
   const id = (overrides?.id as string | undefined) ?? randomUUID();
   await db
-    .insertInto("locations")
+    .insertInto("locations",)
     .values({
       id,
       world_id: worldId,
       name: "Tavern",
       connections: "[]",
       ...overrides,
-    })
+    },)
     .execute();
 
   // Also create location_state
   await db
-    .insertInto("location_states")
+    .insertInto("location_states",)
     .values({
       location_id: id,
       world_id: worldId,
@@ -228,16 +228,16 @@ async function seedLocation(
       npcs_present: "[]",
       items_available: "[]",
       hazards: "[]",
-    })
+    },)
     .execute();
 
   return id;
 }
 
-async function seedActor(db: Kysely<DB>, overrides?: Record<string, unknown>): Promise<string> {
+async function seedActor(db: Kysely<DB>, overrides?: Record<string, unknown>,): Promise<string> {
   const id = (overrides?.id as string | undefined) ?? randomUUID();
   await db
-    .insertInto("actors")
+    .insertInto("actors",)
     .values({
       id,
       actor_type: "character",
@@ -247,19 +247,19 @@ async function seedActor(db: Kysely<DB>, overrides?: Record<string, unknown>): P
       data_version: 1,
       import_spec: "{}",
       ...overrides,
-    })
+    },)
     .execute();
   return id;
 }
 
-async function seedParticipant(db: Kysely<DB>, chatId: string, actorId: string): Promise<void> {
+async function seedParticipant(db: Kysely<DB>, chatId: string, actorId: string,): Promise<void> {
   await db
-    .insertInto("chat_participants")
+    .insertInto("chat_participants",)
     .values({
       chat_id: chatId,
       actor_id: actorId,
       role_in_chat: "member",
-    })
+    },)
     .execute();
 }
 
@@ -271,7 +271,7 @@ async function seedStoryTurn(
 ): Promise<string> {
   const id = (overrides?.id as string | undefined) ?? randomUUID();
   await db
-    .insertInto("story_turns")
+    .insertInto("story_turns",)
     .values({
       id,
       chat_id: chatId,
@@ -284,7 +284,7 @@ async function seedStoryTurn(
       world_events: "[]",
       quest_progress: "[]",
       ...overrides,
-    })
+    },)
     .execute();
   return id;
 }
@@ -335,43 +335,43 @@ const testSqlite = testEnv.sqlite;
 const testDb = testEnv.db;
 
 beforeEach(async () => {
-  createLogger({ level: "error" });
-  setTestDatabase(testDb);
+  createLogger({ level: "error", },);
+  setTestDatabase(testDb,);
 
   // Clear all test tables
-  await testDb.deleteFrom("story_turns").execute();
-  await testDb.deleteFrom("messages").execute();
-  await testDb.deleteFrom("chat_participants").execute();
-  await testDb.deleteFrom("npc_states").execute();
-  await testDb.deleteFrom("quests").execute();
-  await testDb.deleteFrom("location_states").execute();
-  await testDb.deleteFrom("locations").execute();
-  await testDb.deleteFrom("worlds").execute();
-  await testDb.deleteFrom("actors").execute();
-  await testDb.deleteFrom("chats").execute();
-  await testDb.deleteFrom("users").execute();
-});
+  await testDb.deleteFrom("story_turns",).execute();
+  await testDb.deleteFrom("messages",).execute();
+  await testDb.deleteFrom("chat_participants",).execute();
+  await testDb.deleteFrom("npc_states",).execute();
+  await testDb.deleteFrom("quests",).execute();
+  await testDb.deleteFrom("location_states",).execute();
+  await testDb.deleteFrom("locations",).execute();
+  await testDb.deleteFrom("worlds",).execute();
+  await testDb.deleteFrom("actors",).execute();
+  await testDb.deleteFrom("chats",).execute();
+  await testDb.deleteFrom("users",).execute();
+},);
 
 afterAll(() => {
-  setTestDatabase(null);
+  setTestDatabase(null,);
   testSqlite.close();
-});
+},);
 
 // ── Tests ──────────────────────────────────────────────────────
 
 describe("GameMasterService — constructor & state", () => {
   test("creates instance with default getter values before init", () => {
-    const generateText: GenerateTextFn = () => Promise.resolve("test");
+    const generateText: GenerateTextFn = () => Promise.resolve("test",);
     const gm = new GameMasterService({
       db: testDb,
       chatId: "nonexistent",
       gmConfig: makeLlmConfig(),
       generateText,
-    });
+    },);
 
-    expect(gm.currentTurn).toBe(0);
-    expect(gm.isPaused).toBe(true); // state is null → ?? true
-    expect(gm.isComplete).toBe(false);
+    expect(gm.currentTurn,).toBe(0,);
+    expect(gm.isPaused,).toBe(true,); // state is null → ?? true
+    expect(gm.isComplete,).toBe(false,);
   });
 
   test("initialize loads state from DB", async () => {
@@ -384,32 +384,32 @@ describe("GameMasterService — constructor & state", () => {
         isPaused: false,
         lastTurnCompletedAt: null,
         pendingRegeneration: null,
-      }),
-    });
+      },),
+    },);
 
-    const generateText: GenerateTextFn = () => Promise.resolve("test");
+    const generateText: GenerateTextFn = () => Promise.resolve("test",);
     const gm = new GameMasterService({
       db: testDb,
       chatId,
       gmConfig: makeLlmConfig(),
       generateText,
-    });
+    },);
 
     await gm.initialize();
-    expect(gm.currentTurn).toBe(5);
-    expect(gm.isPaused).toBe(false);
+    expect(gm.currentTurn,).toBe(5,);
+    expect(gm.isPaused,).toBe(false,);
   });
 
   test("initialize throws for nonexistent chat", async () => {
-    const generateText: GenerateTextFn = () => Promise.resolve("test");
+    const generateText: GenerateTextFn = () => Promise.resolve("test",);
     const gm = new GameMasterService({
       db: testDb,
       chatId: "no-such-chat",
       gmConfig: makeLlmConfig(),
       generateText,
-    });
+    },);
 
-    await expect(gm.initialize()).rejects.toThrow("not found");
+    await expect(gm.initialize(),).rejects.toThrow("not found",);
   });
 
   test("pause and resume delegate to turn manager", async () => {
@@ -422,23 +422,23 @@ describe("GameMasterService — constructor & state", () => {
         isPaused: false,
         lastTurnCompletedAt: null,
         pendingRegeneration: null,
-      }),
-    });
+      },),
+    },);
 
-    const generateText: GenerateTextFn = () => Promise.resolve("test");
+    const generateText: GenerateTextFn = () => Promise.resolve("test",);
     const gm = new GameMasterService({
       db: testDb,
       chatId,
       gmConfig: makeLlmConfig(),
       generateText,
-    });
+    },);
     await gm.initialize();
 
-    expect(gm.isPaused).toBe(false);
+    expect(gm.isPaused,).toBe(false,);
     await gm.pause();
-    expect(gm.isPaused).toBe(true);
+    expect(gm.isPaused,).toBe(true,);
     await gm.resume();
-    expect(gm.isPaused).toBe(false);
+    expect(gm.isPaused,).toBe(false,);
   });
 });
 
@@ -448,26 +448,26 @@ describe("GameMasterService — executeTurn", () => {
     worldId: string;
     actorId: string;
   }> {
-    const worldId = await seedWorld(testDb);
-    const locId = await seedLocation(testDb, worldId);
+    const worldId = await seedWorld(testDb,);
+    const locId = await seedLocation(testDb, worldId,);
     const chatId = await seedChat(testDb, {
       world_id: worldId,
       current_location_id: locId,
-    });
-    const actorId = await seedActor(testDb);
-    await seedParticipant(testDb, chatId, actorId);
-    return { chatId, worldId, actorId };
+    },);
+    const actorId = await seedActor(testDb,);
+    await seedParticipant(testDb, chatId, actorId,);
+    return { chatId, worldId, actorId, };
   }
 
   test("LLM mode: full flow with generateText, creates turn, returns result", async () => {
-    const { chatId, actorId } = await seedStoryWorld();
+    const { chatId, actorId, } = await seedStoryWorld();
     let generateCalled = false;
 
-    const generateText: GenerateTextFn = (params) => {
+    const generateText: GenerateTextFn = (params,) => {
       generateCalled = true;
-      expect(params.systemPrompt).toBeDefined();
-      expect(params.messages.length).toBeGreaterThanOrEqual(1);
-      return Promise.resolve("*He nods thoughtfully.* I shall investigate the ancient ruins.");
+      expect(params.systemPrompt,).toBeDefined();
+      expect(params.messages.length,).toBeGreaterThanOrEqual(1,);
+      return Promise.resolve("*He nods thoughtfully.* I shall investigate the ancient ruins.",);
     };
 
     const gm = new GameMasterService({
@@ -475,35 +475,35 @@ describe("GameMasterService — executeTurn", () => {
       chatId,
       gmConfig: makeLlmConfig(),
       generateText,
-    });
+    },);
 
-    const result = await gm.executeTurn(actorId);
+    const result = await gm.executeTurn(actorId,);
 
-    expect(generateCalled).toBe(true);
-    expect(result.turnId).toBeDefined();
-    expect(result.turnNumber).toBe(1);
-    expect(result.actorId).toBe(actorId);
-    expect(result.prompt).toBeDefined();
-    expect(result.response).toBeNull();
-    expect(result.gmDecision).toBeDefined();
-    expect(result.gmDecision?.nextActorId).toBe(actorId);
-    expect(result.narration).toBeNull();
+    expect(generateCalled,).toBe(true,);
+    expect(result.turnId,).toBeDefined();
+    expect(result.turnNumber,).toBe(1,);
+    expect(result.actorId,).toBe(actorId,);
+    expect(result.prompt,).toBeDefined();
+    expect(result.response,).toBeNull();
+    expect(result.gmDecision,).toBeDefined();
+    expect(result.gmDecision?.nextActorId,).toBe(actorId,);
+    expect(result.narration,).toBeNull();
 
     // Verify story_turn was created in DB
-    const turns = await testDb.selectFrom("story_turns").selectAll().where("chat_id", "=", chatId).execute();
-    expect(turns).toHaveLength(1);
-    expect(turns[0]!.id).toBe(result.turnId);
-    expect(turns[0]!.status).toBe("pending");
-    expect(turns[0]!.gm_decision).toBeDefined();
+    const turns = await testDb.selectFrom("story_turns",).selectAll().where("chat_id", "=", chatId,).execute();
+    expect(turns,).toHaveLength(1,);
+    expect(turns[0]!.id,).toBe(result.turnId,);
+    expect(turns[0]!.status,).toBe("pending",);
+    expect(turns[0]!.gm_decision,).toBeDefined();
   });
 
   test("Human mode: returns minimal prompt, no LLM call", async () => {
-    const { chatId } = await seedStoryWorld();
+    const { chatId, } = await seedStoryWorld();
     let generateCalled = false;
 
     const generateText: GenerateTextFn = () => {
       generateCalled = true;
-      return Promise.resolve("should not be called");
+      return Promise.resolve("should not be called",);
     };
 
     const gm = new GameMasterService({
@@ -511,23 +511,23 @@ describe("GameMasterService — executeTurn", () => {
       chatId,
       gmConfig: makeHumanConfig(),
       generateText,
-    });
+    },);
     await gm.initialize();
 
     const result = await gm.executeTurn();
 
-    expect(generateCalled).toBe(false);
-    expect(result.prompt).toContain("[Human GM]");
-    expect(result.gmDecision).toBeDefined();
+    expect(generateCalled,).toBe(false,);
+    expect(result.prompt,).toContain("[Human GM]",);
+    expect(result.gmDecision,).toBeDefined();
   });
 
   test("Hybrid mode: calls LLM, works like LLM mode", async () => {
-    const { chatId, actorId } = await seedStoryWorld();
+    const { chatId, actorId, } = await seedStoryWorld();
     let generateCalled = false;
 
     const generateText: GenerateTextFn = () => {
       generateCalled = true;
-      return Promise.resolve("The hero advances cautiously.");
+      return Promise.resolve("The hero advances cautiously.",);
     };
 
     const gm = new GameMasterService({
@@ -535,32 +535,32 @@ describe("GameMasterService — executeTurn", () => {
       chatId,
       gmConfig: makeHybridConfig(),
       generateText,
-    });
+    },);
 
-    const result = await gm.executeTurn(actorId);
+    const result = await gm.executeTurn(actorId,);
 
-    expect(generateCalled).toBe(true);
-    expect(result.turnId).toBeDefined();
-    expect(result.turnNumber).toBe(1);
+    expect(generateCalled,).toBe(true,);
+    expect(result.turnId,).toBeDefined();
+    expect(result.turnNumber,).toBe(1,);
   });
 
   test("throws when no story context available (no world_id)", async () => {
-    const chatId = await seedChat(testDb); // no world_id
+    const chatId = await seedChat(testDb,); // no world_id
 
-    const generateText: GenerateTextFn = () => Promise.resolve("test");
+    const generateText: GenerateTextFn = () => Promise.resolve("test",);
     const gm = new GameMasterService({
       db: testDb,
       chatId,
       gmConfig: makeLlmConfig(),
       generateText,
-    });
+    },);
 
-    await expect(gm.executeTurn()).rejects.toThrow("No story context available");
+    await expect(gm.executeTurn(),).rejects.toThrow("No story context available",);
   });
 
   test("throws when no actors available", async () => {
-    const worldId = await seedWorld(testDb);
-    const locId = await seedLocation(testDb, worldId);
+    const worldId = await seedWorld(testDb,);
+    const locId = await seedLocation(testDb, worldId,);
     const chatId = await seedChat(testDb, {
       world_id: worldId,
       current_location_id: locId,
@@ -572,98 +572,98 @@ describe("GameMasterService — executeTurn", () => {
         isPaused: false,
         lastTurnCompletedAt: null,
         pendingRegeneration: null,
-      }),
-    });
+      },),
+    },);
     // No chat_participants → no actors
 
-    const generateText: GenerateTextFn = () => Promise.resolve("test");
+    const generateText: GenerateTextFn = () => Promise.resolve("test",);
     const gm = new GameMasterService({
       db: testDb,
       chatId,
       gmConfig: makeLlmConfig(),
       generateText,
-    });
+    },);
     await gm.initialize();
 
-    await expect(gm.executeTurn()).rejects.toThrow("No available actors");
+    await expect(gm.executeTurn(),).rejects.toThrow("No available actors",);
   });
 
   test("LLM decision falls back to hardcoded prompt on generateText error", async () => {
-    const { chatId } = await seedStoryWorld();
+    const { chatId, } = await seedStoryWorld();
 
-    const generateText: GenerateTextFn = () => Promise.reject(new Error("LLM unavailable"));
+    const generateText: GenerateTextFn = () => Promise.reject(new Error("LLM unavailable",),);
 
     const gm = new GameMasterService({
       db: testDb,
       chatId,
       gmConfig: makeLlmConfig(),
       generateText,
-    });
+    },);
     await gm.initialize();
 
     // Should not throw — falls back to hardcodedPrompt
     const result = await gm.executeTurn();
-    expect(result.turnId).toBeDefined();
-    expect(result.prompt).toBeDefined();
+    expect(result.turnId,).toBeDefined();
+    expect(result.prompt,).toBeDefined();
     // Hardcoded prompt includes actor name
-    expect(result.prompt).toContain("Hero");
+    expect(result.prompt,).toContain("Hero",);
   });
 });
 
 describe("GameMasterService — acceptResponse", () => {
   test("throws when turn not found", async () => {
-    const generateText: GenerateTextFn = () => Promise.resolve("test");
+    const generateText: GenerateTextFn = () => Promise.resolve("test",);
     const gm = new GameMasterService({
       db: testDb,
       chatId: "chat-1",
       gmConfig: makeLlmConfig(),
       generateText,
-    });
+    },);
 
-    await expect(gm.acceptResponse("no-such-turn", "response")).rejects.toThrow(
+    await expect(gm.acceptResponse("no-such-turn", "response",),).rejects.toThrow(
       "Turn no-such-turn not found",
     );
   });
 
   test("full accept path: quality evaluation, events, DB update", async () => {
-    const chatId = await seedChat(testDb);
-    const actorId = await seedActor(testDb, { display_name: "Hero" });
-    const turnId = await seedStoryTurn(testDb, chatId, actorId);
+    const chatId = await seedChat(testDb,);
+    const actorId = await seedActor(testDb, { display_name: "Hero", },);
+    const turnId = await seedStoryTurn(testDb, chatId, actorId,);
 
-    const generateText: GenerateTextFn = () => Promise.resolve("test");
+    const generateText: GenerateTextFn = () => Promise.resolve("test",);
     const gm = new GameMasterService({
       db: testDb,
       chatId,
       gmConfig: makeLlmConfig(),
       generateText,
-    });
+    },);
     await gm.initialize();
 
     // Response with good quality markers
-    const response = "I am ready. *He steps forward confidently.* Because the shadows cannot stop us. "
-      + "The moonlight reveals the path ahead, and the ancient whispers guide our way. "
-      + "This unexpected quest requires courage!";
+    const response = "I am ready. *He steps forward confidently.* Because the shadows cannot stop us. " +
+      "The moonlight reveals the path ahead, and the ancient whispers guide our way. " +
+      "This unexpected quest requires courage!";
 
-    const result = await gm.acceptResponse(turnId, response);
+    const result = await gm.acceptResponse(turnId, response,);
 
-    expect(result.accepted).toBe(true);
-    expect(result.response).toBe(response);
-    expect(result.qualityEvaluation).toBeDefined();
-    expect(result.qualityEvaluation?.passed).toBe(true);
-    expect(result.qualityEvaluation?.scores.overall).toBeGreaterThanOrEqual(70);
-    expect(result.regenerationSuggested).toBe(false);
-    expect(result.escalated).toBe(false);
+    expect(result.accepted,).toBe(true,);
+    expect(result.response,).toBe(response,);
+    expect(result.qualityEvaluation,).toBeDefined();
+    expect(result.qualityEvaluation?.passed,).toBe(true,);
+    expect(result.qualityEvaluation?.scores.overall,).toBeGreaterThanOrEqual(70,);
+    expect(result.regenerationSuggested,).toBe(false,);
+    expect(result.escalated,).toBe(false,);
 
     // DB turn updated
     const turn = await testDb
-      .selectFrom("story_turns")
+      .selectFrom("story_turns",)
       .selectAll()
-      .where("id", "=", turnId)
+      .where("id", "=", turnId,)
       .executeTakeFirst();
-    expect(turn).toBeDefined();
-    expect(turn?.status).toBe("accepted");
-    expect(turn?.response_received).toBe(response);
-    expect(turn?.quality_score).toBe(result.qualityEvaluation?.scores.overall);
+    expect(turn,).toBeDefined();
+    expect(turn?.status,).toBe("accepted",);
+    expect(turn?.response_received,).toBe(response,);
+    expect(turn?.quality_score,).toBe(result.qualityEvaluation?.scores.overall,);
   });
 
   test("escalation path: custom thresholds trigger escalation", async () => {
@@ -676,12 +676,12 @@ describe("GameMasterService — acceptResponse", () => {
         isPaused: false,
         lastTurnCompletedAt: null,
         pendingRegeneration: null,
-      }),
-    });
-    const actorId = await seedActor(testDb, { display_name: "Hero" });
-    const turnId = await seedStoryTurn(testDb, chatId, actorId);
+      },),
+    },);
+    const actorId = await seedActor(testDb, { display_name: "Hero", },);
+    const turnId = await seedStoryTurn(testDb, chatId, actorId,);
 
-    const generateText: GenerateTextFn = () => Promise.resolve("test");
+    const generateText: GenerateTextFn = () => Promise.resolve("test",);
     const thresholds: QualityThresholds = {
       accept: 100,
       regenerate: 30,
@@ -695,18 +695,18 @@ describe("GameMasterService — acceptResponse", () => {
       gmConfig: makeLlmConfig(),
       generateText,
       qualityThresholds: thresholds,
-    });
+    },);
     await gm.initialize();
 
     // "ok" response scores ~60, which is < 80 (escalate) but >= 30 (regenerate)
     // → escalationReason set, regenerationReason NOT set (60 < 30 is false)
-    const result = await gm.acceptResponse(turnId, "ok");
+    const result = await gm.acceptResponse(turnId, "ok",);
 
-    expect(result.escalated).toBe(true);
-    expect(result.accepted).toBe(false);
-    expect(result.regenerationSuggested).toBe(false);
-    expect(result.qualityEvaluation).toBeDefined();
-    expect(result.qualityEvaluation?.scores.overall).toBeLessThan(80);
+    expect(result.escalated,).toBe(true,);
+    expect(result.accepted,).toBe(false,);
+    expect(result.regenerationSuggested,).toBe(false,);
+    expect(result.qualityEvaluation,).toBeDefined();
+    expect(result.qualityEvaluation?.scores.overall,).toBeLessThan(80,);
   });
 
   test("regeneration path: custom thresholds trigger regeneration", async () => {
@@ -719,12 +719,12 @@ describe("GameMasterService — acceptResponse", () => {
         isPaused: false,
         lastTurnCompletedAt: null,
         pendingRegeneration: null,
-      }),
-    });
-    const actorId = await seedActor(testDb, { display_name: "Hero" });
-    const turnId = await seedStoryTurn(testDb, chatId, actorId);
+      },),
+    },);
+    const actorId = await seedActor(testDb, { display_name: "Hero", },);
+    const turnId = await seedStoryTurn(testDb, chatId, actorId,);
 
-    const generateText: GenerateTextFn = () => Promise.resolve("test");
+    const generateText: GenerateTextFn = () => Promise.resolve("test",);
     // "ok" scores ~60 overall with no context
     // Set escalate < 60 (no escalation), regen > 60 (triggers regen), accept > 60 (not accepted)
     const thresholds: QualityThresholds = {
@@ -740,118 +740,118 @@ describe("GameMasterService — acceptResponse", () => {
       gmConfig: makeLlmConfig(),
       generateText,
       qualityThresholds: thresholds,
-    });
+    },);
     await gm.initialize();
 
-    const result = await gm.acceptResponse(turnId, "ok");
+    const result = await gm.acceptResponse(turnId, "ok",);
 
     // With overall ~60, should be below accept(80) but above regen(61) → regeneration
-    expect(result.regenerationSuggested).toBe(true);
-    expect(result.accepted).toBe(false);
+    expect(result.regenerationSuggested,).toBe(true,);
+    expect(result.accepted,).toBe(false,);
   });
 
   test("humanOverride updates turn with decision", async () => {
-    const chatId = await seedChat(testDb);
-    const actorId = await seedActor(testDb);
-    const turnId = await seedStoryTurn(testDb, chatId, actorId);
+    const chatId = await seedChat(testDb,);
+    const actorId = await seedActor(testDb,);
+    const turnId = await seedStoryTurn(testDb, chatId, actorId,);
 
-    const generateText: GenerateTextFn = () => Promise.resolve("test");
+    const generateText: GenerateTextFn = () => Promise.resolve("test",);
     const gm = new GameMasterService({
       db: testDb,
       chatId,
       gmConfig: makeHumanConfig(),
       generateText,
-    });
+    },);
 
     const decision = {
       nextActorId: actorId,
       turnPrompt: "Human GM override prompt",
-      turnConstraints: { maxTokens: 500 },
+      turnConstraints: { maxTokens: 500, },
       questUpdates: [],
       worldStateChanges: [],
     };
 
-    await gm.humanOverride(chatId, turnId, decision);
+    await gm.humanOverride(chatId, turnId, decision,);
 
     const turn = await testDb
-      .selectFrom("story_turns")
+      .selectFrom("story_turns",)
       .selectAll()
-      .where("id", "=", turnId)
+      .where("id", "=", turnId,)
       .executeTakeFirst();
-    expect(turn).toBeDefined();
-    expect(turn?.status).toBe("accepted");
-    expect(turn?.gm_decision).toBeDefined();
+    expect(turn,).toBeDefined();
+    expect(turn?.status,).toBe("accepted",);
+    expect(turn?.gm_decision,).toBeDefined();
 
-    const parsed = JSON.parse(turn?.gm_decision ?? "") as { nextActorId: string; turnPrompt: string };
-    expect(parsed.nextActorId).toBe(actorId);
-    expect(parsed.turnPrompt).toBe("Human GM override prompt");
+    const parsed = JSON.parse(turn?.gm_decision ?? "",) as { nextActorId: string; turnPrompt: string };
+    expect(parsed.nextActorId,).toBe(actorId,);
+    expect(parsed.turnPrompt,).toBe("Human GM override prompt",);
   });
 });
 
 describe("GameMasterService — injectNarration", () => {
   test("creates messages when narrator actor exists", async () => {
-    const worldId = await seedWorld(testDb);
+    const worldId = await seedWorld(testDb,);
     const chatId = await seedChat(testDb, {
       world_id: worldId,
       mode: "story",
-    });
+    },);
 
     // Narrator actor
     const narratorId = await seedActor(testDb, {
       actor_type: "narrator",
       agent_type: "narrator",
       display_name: "Narrator",
-    });
+    },);
 
     // Also create a second story-mode chat
     await seedChat(testDb, {
       id: randomUUID(),
       world_id: worldId,
       mode: "story",
-    });
+    },);
 
-    const generateText: GenerateTextFn = () => Promise.resolve("test");
+    const generateText: GenerateTextFn = () => Promise.resolve("test",);
     const gm = new GameMasterService({
       db: testDb,
       chatId,
       gmConfig: makeLlmConfig(),
       generateText,
-    });
+    },);
 
-    await gm.injectNarration(worldId, "The wind howls through the valley.");
+    await gm.injectNarration(worldId, "The wind howls through the valley.",);
 
     const messages = await testDb
-      .selectFrom("messages")
+      .selectFrom("messages",)
       .selectAll()
-      .where("actor_id", "=", narratorId)
+      .where("actor_id", "=", narratorId,)
       .execute();
-    expect(messages).toHaveLength(2); // 2 story-mode chats
+    expect(messages,).toHaveLength(2,); // 2 story-mode chats
     for (const msg of messages) {
-      expect(msg.content).toBe("The wind howls through the valley.");
-      expect(msg.role).toBe("system");
-      expect(msg.content_type).toBe("narration");
+      expect(msg.content,).toBe("The wind howls through the valley.",);
+      expect(msg.role,).toBe("system",);
+      expect(msg.content_type,).toBe("narration",);
     }
   });
 
   test("no-op when no narrator actor exists", async () => {
-    const worldId = await seedWorld(testDb);
+    const worldId = await seedWorld(testDb,);
     const chatId = await seedChat(testDb, {
       world_id: worldId,
       mode: "story",
-    });
+    },);
     // No narrator actor
 
-    const generateText: GenerateTextFn = () => Promise.resolve("test");
+    const generateText: GenerateTextFn = () => Promise.resolve("test",);
     const gm = new GameMasterService({
       db: testDb,
       chatId,
       gmConfig: makeLlmConfig(),
       generateText,
-    });
+    },);
 
-    await gm.injectNarration(worldId, "Test narration");
+    await gm.injectNarration(worldId, "Test narration",);
 
-    const messages = await testDb.selectFrom("messages").selectAll().execute();
-    expect(messages).toHaveLength(0);
+    const messages = await testDb.selectFrom("messages",).selectAll().execute();
+    expect(messages,).toHaveLength(0,);
   });
 });

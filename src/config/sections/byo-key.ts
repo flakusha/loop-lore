@@ -1,6 +1,6 @@
 // src/config/sections/byo-key.ts — BYO API Key config section
 
-import type { ByoKeyConfig } from "../schema";
+import type { ByoKeyConfig, } from "../schema";
 
 export const BYO_KEY_DEFAULTS = {
   enabled: true,
@@ -10,8 +10,8 @@ export class ByoKeySection implements ByoKeyConfig {
   enabled = BYO_KEY_DEFAULTS.enabled;
   encryptionKey?: string;
 
-  constructor(overrides?: Partial<ByoKeyConfig>) {
-    Object.assign(this, overrides);
+  constructor(overrides?: Partial<ByoKeyConfig>,) {
+    Object.assign(this, overrides,);
   }
 }
 
@@ -29,5 +29,5 @@ export const byoKeyMeta = {
       description: "Encryption key for stored API keys",
     },
   },
-  required: ["enabled"] as const,
+  required: ["enabled",] as const,
 };

@@ -7,7 +7,7 @@
 
 // ── Story Turns ───────────────────────────────────────────
 // ── State Machine (used by story/synthetic/generator.ts) ────
-import { createMachine, type StateDef } from "./state";
+import { createMachine, type StateDef, } from "./state";
 
 export const TurnType = {
   CharacterAction: "character_action",
@@ -52,18 +52,18 @@ export type QuestStatus = (typeof QuestStatus)[keyof typeof QuestStatus];
 // ── State Machine ──────────────────────────────────────────
 
 const questStatusDef: StateDef<QuestStatus> = {
-  values: ["active", "completed", "failed", "abandoned"] as const,
+  values: ["active", "completed", "failed", "abandoned",] as const,
   initial: "active",
   transitions: {
-    active: ["completed", "failed", "abandoned"],
+    active: ["completed", "failed", "abandoned",],
     completed: [],
     failed: [],
-    abandoned: ["active"],
+    abandoned: ["active",],
   },
-  terminal: ["completed", "failed"],
+  terminal: ["completed", "failed",],
 };
 
-export const questStatusMachine = createMachine(questStatusDef);
+export const questStatusMachine = createMachine(questStatusDef,);
 
 // ── Quest Progress ────────────────────────────────────────
 export const QuestProgressStatus = {
@@ -198,16 +198,16 @@ export const ItemVisibility = {
 export type ItemVisibility = (typeof ItemVisibility)[keyof typeof ItemVisibility];
 
 const syntheticDataStatusDef: StateDef<SyntheticDataStatus> = {
-  values: ["generated", "validated", "approved", "rejected", "archived"] as const,
+  values: ["generated", "validated", "approved", "rejected", "archived",] as const,
   initial: "generated",
   transitions: {
-    generated: ["validated", "rejected"],
-    validated: ["approved", "rejected"],
-    approved: ["archived"],
-    rejected: ["generated"],
+    generated: ["validated", "rejected",],
+    validated: ["approved", "rejected",],
+    approved: ["archived",],
+    rejected: ["generated",],
     archived: [],
   },
-  terminal: ["archived"],
+  terminal: ["archived",],
 };
 
-export const syntheticDataStatusMachine = createMachine(syntheticDataStatusDef);
+export const syntheticDataStatusMachine = createMachine(syntheticDataStatusDef,);
