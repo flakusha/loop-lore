@@ -4,15 +4,15 @@
  * Resolves model role assignments (main, captioning, moderation)
  * with fallback: DB overrides → config defaults → server defaults.
  */
-import type { Kysely } from "kysely";
-import type { Config } from "../config/schema";
-import type { DB } from "../db/schema";
-import { getProvider } from "../generation/providers/registry";
-import { getLogger } from "../logger";
+import type { Kysely, } from "kysely";
+import type { Config, } from "../config/schema";
+import type { DB, } from "../db/schema";
+import { getProvider, } from "../generation/providers/registry";
+import { getLogger, } from "../logger";
 
 export type ModelRole = "main" | "captioning" | "moderation";
 
-export const VALID_ROLES: ModelRole[] = ["main", "captioning", "moderation"];
+export const VALID_ROLES: ModelRole[] = ["main", "captioning", "moderation",];
 
 export interface ResolvedModelRole {
   role: ModelRole;
@@ -34,48 +34,48 @@ export async function resolveModelRole(
   config: Config,
   db: Kysely<DB>,
 ): Promise<ResolvedModelRole> {
-  if (!VALID_ROLES.includes(role)) {
-    throw new Error(`Invalid model role: "${role}". Must be one of: ${VALID_ROLES.join(", ")}`);
+  if (!VALID_ROLES.includes(role,)) {
+    throw new Error(`Invalid model role: "${role}". Must be one of: ${VALID_ROLES.join(", ",)}`,);
   }
 
   // 1. DB overrides
   try {
     const dbOverride = await db
-      .selectFrom("model_role_overrides")
-      .where("role", "=", role)
+      .selectFrom("model_role_overrides",)
+      .where("role", "=", role,)
       .selectAll()
       .executeTakeFirst();
 
     if (dbOverride) {
-      return { role, provider: dbOverride.provider, model: dbOverride.model, source: "db" };
+      return { role, provider: dbOverride.provider, model: dbOverride.model, source: "db", };
     }
   } catch (error) {
     getLogger()
-      .child({ module: "model-roles" })
-      .warn("Failed to read DB override", { role, error: (error as Error).message });
+      .child({ module: "model-roles", },)
+      .warn("Failed to read DB override", { role, error: (error as Error).message, },);
   }
 
   // 2. Config defaults
   const configRole = config.generation.modelRoles?.[role];
   if (configRole) {
-    return { role, provider: configRole.provider, model: configRole.model, source: "config" };
+    return { role, provider: configRole.provider, model: configRole.model, source: "config", };
   }
 
   // 3. Server defaults
   const defaultProvider = config.generation.defaultProvider;
   if (defaultProvider) {
     const defaultModel = config.generation.defaultModels[defaultProvider] ?? "";
-    return { role, provider: defaultProvider, model: defaultModel, source: "default" };
+    return { role, provider: defaultProvider, model: defaultModel, source: "default", };
   }
 
-  return { role, provider: "", model: "", source: "default" };
+  return { role, provider: "", model: "", source: "default", };
 }
 
 /**
  * Resolve all model roles at once.
  */
-export async function resolveAllModelRoles(config: Config, db: Kysely<DB>): Promise<ResolvedModelRole[]> {
-  return Promise.all(VALID_ROLES.map((role) => resolveModelRole(role, config, db)));
+export async function resolveAllModelRoles(config: Config, db: Kysely<DB>,): Promise<ResolvedModelRole[]> {
+  return Promise.all(VALID_ROLES.map((role,) => resolveModelRole(role, config, db,)),);
 }
 
 /**
@@ -87,40 +87,40 @@ export async function setModelRoleOverride(
   model: string,
   db: Kysely<DB>,
 ): Promise<void> {
-  if (!VALID_ROLES.includes(role)) {
-    throw new Error(`Invalid model role: "${role}"`);
+  if (!VALID_ROLES.includes(role,)) {
+    throw new Error(`Invalid model role: "${role}"`,);
   }
 
-  const providerInstance = getProvider(provider);
+  const providerInstance = getProvider(provider,);
   if (!providerInstance) {
-    throw new Error(`Provider "${provider}" not found`);
+    throw new Error(`Provider "${provider}" not found`,);
   }
 
   await db
-    .insertInto("model_role_overrides")
-    .values({ role, provider, model })
-    .onConflict((oc) =>
-      oc.column("role").doUpdateSet({
+    .insertInto("model_role_overrides",)
+    .values({ role, provider, model, },)
+    .onConflict((oc,) =>
+      oc.column("role",).doUpdateSet({
         provider,
         model,
         updated_at: new Date().toISOString(),
-      })
+      },)
     )
     .execute();
 
-  getLogger().child({ module: "model-roles" }).info("Model role override set", { role, provider, model });
+  getLogger().child({ module: "model-roles", },).info("Model role override set", { role, provider, model, },);
 }
 
 /**
  * Clear a model role override from the DB (revert to config/default).
  */
-export async function clearModelRoleOverride(role: ModelRole, db: Kysely<DB>): Promise<void> {
-  if (!VALID_ROLES.includes(role)) {
-    throw new Error(`Invalid model role: "${role}"`);
+export async function clearModelRoleOverride(role: ModelRole, db: Kysely<DB>,): Promise<void> {
+  if (!VALID_ROLES.includes(role,)) {
+    throw new Error(`Invalid model role: "${role}"`,);
   }
 
-  await db.deleteFrom("model_role_overrides").where("role", "=", role).execute();
-  getLogger().child({ module: "model-roles" }).info("Model role override cleared", { role });
+  await db.deleteFrom("model_role_overrides",).where("role", "=", role,).execute();
+  getLogger().child({ module: "model-roles", },).info("Model role override cleared", { role, },);
 }
 
 /**
@@ -129,10 +129,10 @@ export async function clearModelRoleOverride(role: ModelRole, db: Kysely<DB>): P
 export async function getModelRoleOverrides(
   db: Kysely<DB>,
 ): Promise<Record<string, { provider: string; model: string }>> {
-  const rows = await db.selectFrom("model_role_overrides").selectAll().execute();
+  const rows = await db.selectFrom("model_role_overrides",).selectAll().execute();
   const overrides: Record<string, { provider: string; model: string }> = {};
   for (const row of rows) {
-    overrides[row.role] = { provider: row.provider, model: row.model };
+    overrides[row.role] = { provider: row.provider, model: row.model, };
   }
   return overrides;
 }

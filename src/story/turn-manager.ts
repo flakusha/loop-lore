@@ -7,4 +7,4 @@
  * Story-specific extensions (quality evaluation, world events) are handled
  * by GameMasterService, not by TurnManager itself.
  */
-export { TurnManager, type TurnManagerOptions } from "../turning/turn-manager";
+export { TurnManager, type TurnManagerOptions, } from "../turning/turn-manager";

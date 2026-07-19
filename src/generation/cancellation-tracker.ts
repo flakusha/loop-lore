@@ -9,16 +9,16 @@
  * Used by: cancellation-actions.ts, step-pipeline.ts, controller.ts
  */
 
-import type { Kysely } from "kysely";
-import { randomUUID } from "node:crypto";
-import { CancelReason, GenerationStatus, generationStatusMachine, PolicyType } from "../db/enums";
-import type { DB } from "../db/schema";
-import { getLogger } from "../logger";
-import { safeJsonStringify } from "../utils";
-import { storePartialContent } from "./continuation";
-import { StreamingRepetitionDetector } from "./repetition-detector";
-import type { GenerationEvents, GenerationOptions, GenerationResult } from "./types";
-import { DEFAULT_POLICY_DETECTION, DEFAULT_REPETITION_DETECTION, DEFAULT_RESPONSE_LIMIT } from "./types";
+import type { Kysely, } from "kysely";
+import { randomUUID, } from "node:crypto";
+import { CancelReason, GenerationStatus, generationStatusMachine, PolicyType, } from "../db/enums";
+import type { DB, } from "../db/schema";
+import { getLogger, } from "../logger";
+import { safeJsonStringify, } from "../utils";
+import { storePartialContent, } from "./continuation";
+import { StreamingRepetitionDetector, } from "./repetition-detector";
+import type { GenerationEvents, GenerationOptions, GenerationResult, } from "./types";
+import { DEFAULT_POLICY_DETECTION, DEFAULT_REPETITION_DETECTION, DEFAULT_RESPONSE_LIMIT, } from "./types";
 
 // ── In-memory generation tracking ─────────────────────────
 
@@ -64,10 +64,10 @@ interface TransitionOpts {
  * Validate and apply a status transition on an active generation.
  * Logs a warning on invalid transitions but does not block (defensive).
  */
-export function safeTransition({ active, to, log }: TransitionOpts): void {
+export function safeTransition({ active, to, log, }: TransitionOpts,): void {
   const from = active.status;
-  if (!generationStatusMachine.canTransition(from, to)) {
-    log.warn("Invalid generation status transition", { from, to, attemptId: active.attemptId });
+  if (!generationStatusMachine.canTransition(from, to,)) {
+    log.warn("Invalid generation status transition", { from, to, attemptId: active.attemptId, },);
   }
   active.status = to;
 }
@@ -81,7 +81,7 @@ async function insertAttempt(
   abortSignalId: string,
 ): Promise<void> {
   await db
-    .insertInto("generation_attempts")
+    .insertInto("generation_attempts",)
     .values({
       id: attemptId,
       chat_id: options.chatId,
@@ -113,7 +113,7 @@ async function insertAttempt(
       partial_content: options.partialContent ?? null,
       step_index: options.stepIndex ?? 0,
       total_steps: options.totalSteps ?? 1,
-    })
+    },)
     .execute();
 }
 
@@ -130,21 +130,21 @@ export async function updateAttemptStatus({
   attemptId,
   status,
   extra,
-}: UpdateAttemptStatusOpts): Promise<void> {
+}: UpdateAttemptStatusOpts,): Promise<void> {
   const update: Record<string, unknown> = {
     status,
     updated_at: new Date().toISOString(),
   };
 
   if (extra) {
-    for (const [key, value] of Object.entries(extra)) {
+    for (const [key, value,] of Object.entries(extra,)) {
       if (value !== undefined && value !== null) {
         update[key] = value;
       }
     }
   }
 
-  await db.updateTable("generation_attempts").set(update).where("id", "=", attemptId).execute();
+  await db.updateTable("generation_attempts",).set(update,).where("id", "=", attemptId,).execute();
 }
 
 // ── Start generation tracking ─────────────────────────────
@@ -159,7 +159,7 @@ export interface StartGenerationTrackingOpts {
  * Register a new generation attempt. Returns the attempt ID and the
  * AbortSignal (already connected) that the LLM caller should use.
  */
-export async function startGenerationTracking({ options, db, events }: StartGenerationTrackingOpts): Promise<{
+export async function startGenerationTracking({ options, db, events, }: StartGenerationTrackingOpts,): Promise<{
   attemptId: string;
   abortSignal: AbortSignal;
 }> {
@@ -181,7 +181,7 @@ export async function startGenerationTracking({ options, db, events }: StartGene
     actorId: options.actorId,
     abortController,
     startedAt: Date.now(),
-    repetitionDetector: new StreamingRepetitionDetector(repetitionConfig),
+    repetitionDetector: new StreamingRepetitionDetector(repetitionConfig,),
     policyConfig: {
       expectedPolicy: policyConfig.expectedPolicy,
       cancel: policyConfig.autoCancel,
@@ -207,38 +207,38 @@ export async function startGenerationTracking({ options, db, events }: StartGene
   // Fully detach any existing generation for this chat before registering new one.
   // This prevents orphaned generations and the race where an old error handler
   // deletes the new chatToAttempt entry.
-  const oldAttemptId = chatToAttempt.get(options.chatId);
+  const oldAttemptId = chatToAttempt.get(options.chatId,);
   if (oldAttemptId) {
-    const old = activeGenerations.get(oldAttemptId);
+    const old = activeGenerations.get(oldAttemptId,);
     if (old) {
       old.abortController.abort();
-      old.events?.onCancel?.(oldAttemptId, CancelReason.ChatSwitch, "Replaced by new generation");
-      activeGenerations.delete(oldAttemptId);
+      old.events?.onCancel?.(oldAttemptId, CancelReason.ChatSwitch, "Replaced by new generation",);
+      activeGenerations.delete(oldAttemptId,);
     }
   }
 
-  activeGenerations.set(attemptId, active);
-  chatToAttempt.set(options.chatId, attemptId);
+  activeGenerations.set(attemptId, active,);
+  chatToAttempt.set(options.chatId, attemptId,);
 
   // Persist to DB — await critical writes to prevent in-memory/DB drift
   try {
-    await insertAttempt(db, options, attemptId, abortSignalId);
+    await insertAttempt(db, options, attemptId, abortSignalId,);
   } catch (error: unknown) {
     getLogger()
-      .child({ module: "generation" })
-      .warn("Failed to persist attempt", { error: String(error) });
+      .child({ module: "generation", },)
+      .warn("Failed to persist attempt", { error: String(error,), },);
   }
 
-  events?.onStart?.(attemptId);
+  events?.onStart?.(attemptId,);
   try {
-    await updateAttemptStatus({ db, attemptId, status: GenerationStatus.Processing });
+    await updateAttemptStatus({ db, attemptId, status: GenerationStatus.Processing, },);
   } catch (error: unknown) {
     getLogger()
-      .child({ module: "generation" })
-      .warn("Status update failed", { error: String(error) });
+      .child({ module: "generation", },)
+      .warn("Status update failed", { error: String(error,), },);
   }
 
-  return { attemptId, abortSignal: abortController.signal };
+  return { attemptId, abortSignal: abortController.signal, };
 }
 
 // ── Complete generation ───────────────────────────────────
@@ -253,15 +253,15 @@ export interface CompleteGenerationOpts {
   db: Kysely<DB>;
 }
 
-export async function completeGeneration({ attemptId, result, db }: CompleteGenerationOpts): Promise<void> {
-  const active = activeGenerations.get(attemptId);
-  if (!active) return;
+export async function completeGeneration({ attemptId, result, db, }: CompleteGenerationOpts,): Promise<void> {
+  const active = activeGenerations.get(attemptId,);
+  if (!active) { return; }
 
   // Capture partial content if generation was cancelled
   if (result.cancelled) {
     const partialContent = active.repetitionDetector.getBufferText();
     if (partialContent) {
-      storePartialContent(attemptId, partialContent);
+      storePartialContent(attemptId, partialContent,);
     }
   }
 
@@ -283,13 +283,13 @@ export async function completeGeneration({ attemptId, result, db }: CompleteGene
       repetition_score: result.repetitionScore ?? null,
       repetition_analysis: result.repetitionAnalysis
         ? (() => {
-          const r = safeJsonStringify(result.repetitionAnalysis);
+          const r = safeJsonStringify(result.repetitionAnalysis,);
           return r.ok ? r.value : null;
         })()
         : null,
       policy_analysis: result.policyAnalysis
         ? (() => {
-          const r = safeJsonStringify(result.policyAnalysis);
+          const r = safeJsonStringify(result.policyAnalysis,);
           return r.ok ? r.value : null;
         })()
         : null,
@@ -300,13 +300,13 @@ export async function completeGeneration({ attemptId, result, db }: CompleteGene
         cancel_source: result.cancelSource,
       }),
     },
-  });
+  },);
 
-  active.events?.onComplete?.(attemptId, result);
+  active.events?.onComplete?.(attemptId, result,);
 
   // Clean up tracking
-  activeGenerations.delete(attemptId);
-  chatToAttempt.delete(active.chatId);
+  activeGenerations.delete(attemptId,);
+  chatToAttempt.delete(active.chatId,);
 }
 
 // ── Error handling ────────────────────────────────────────
@@ -320,14 +320,14 @@ export interface FailGenerationOpts {
   db: Kysely<DB>;
 }
 
-export async function failGeneration({ attemptId, error, db }: FailGenerationOpts): Promise<void> {
-  const active = activeGenerations.get(attemptId);
+export async function failGeneration({ attemptId, error, db, }: FailGenerationOpts,): Promise<void> {
+  const active = activeGenerations.get(attemptId,);
 
   // Capture partial content before cleanup
   if (active) {
     const partialContent = active.repetitionDetector.getBufferText();
     if (partialContent) {
-      storePartialContent(attemptId, partialContent);
+      storePartialContent(attemptId, partialContent,);
     }
   }
 
@@ -339,13 +339,13 @@ export async function failGeneration({ attemptId, error, db }: FailGenerationOpt
       error_message: error.message,
       completed_at: new Date().toISOString(),
     },
-  });
+  },);
 
-  active?.events?.onError?.(attemptId, error);
+  active?.events?.onError?.(attemptId, error,);
 
   if (active) {
-    activeGenerations.delete(attemptId);
-    chatToAttempt.delete(active.chatId);
+    activeGenerations.delete(attemptId,);
+    chatToAttempt.delete(active.chatId,);
   }
 }
 
@@ -354,22 +354,22 @@ export async function failGeneration({ attemptId, error, db }: FailGenerationOpt
 /**
  * Check if a chat currently has an active generation.
  */
-export function isChatGenerating(chatId: string): boolean {
-  const attemptId = chatToAttempt.get(chatId);
-  if (!attemptId) return false;
-  const active = activeGenerations.get(attemptId);
+export function isChatGenerating(chatId: string,): boolean {
+  const attemptId = chatToAttempt.get(chatId,);
+  if (!attemptId) { return false; }
+  const active = activeGenerations.get(attemptId,);
   return (
-    active !== undefined
-    && active.status !== GenerationStatus.Cancelled
-    && active.status !== GenerationStatus.Completed
+    active !== undefined &&
+    active.status !== GenerationStatus.Cancelled &&
+    active.status !== GenerationStatus.Completed
   );
 }
 
 /**
  * Get the attempt ID for an active chat generation, if any.
  */
-export function getActiveAttemptId(chatId: string): string | undefined {
-  return chatToAttempt.get(chatId);
+export function getActiveAttemptId(chatId: string,): string | undefined {
+  return chatToAttempt.get(chatId,);
 }
 
 /**
@@ -387,7 +387,7 @@ export function listActiveGenerations(): {
   const now = Date.now();
   const result: ReturnType<typeof listActiveGenerations> = [];
 
-  for (const [attemptId, active] of activeGenerations) {
+  for (const [attemptId, active,] of activeGenerations) {
     result.push({
       attemptId,
       chatId: active.chatId,
@@ -396,7 +396,7 @@ export function listActiveGenerations(): {
       elapsed: now - active.startedAt,
       chunksReceived: active.chunksReceived,
       charsReceived: active.charsReceived,
-    });
+    },);
   }
 
   return result;

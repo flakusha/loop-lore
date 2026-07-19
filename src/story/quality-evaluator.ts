@@ -5,12 +5,12 @@
  * For v1, uses heuristic-based scoring with rule checks.
  * Future: delegate to a dedicated LLM with structured output.
  */
-import { QualityDimension } from "../db/enums";
-import { getReasoning } from "./quality/reasoning";
-import { SCORERS } from "./quality/registry";
-import type { ScorerContext } from "./quality/types";
-import { DEFAULT_QUALITY_THRESHOLDS, DEFAULT_QUALITY_WEIGHTS } from "./types";
-import type { QualityEvaluation, QualityScores, QualityThresholds, StoryContext } from "./types";
+import { QualityDimension, } from "../db/enums";
+import { getReasoning, } from "./quality/reasoning";
+import { SCORERS, } from "./quality/registry";
+import type { ScorerContext, } from "./quality/types";
+import { DEFAULT_QUALITY_THRESHOLDS, DEFAULT_QUALITY_WEIGHTS, } from "./types";
+import type { QualityEvaluation, QualityScores, QualityThresholds, StoryContext, } from "./types";
 
 export interface EvaluatorConfig {
   thresholds: QualityThresholds;
@@ -26,12 +26,12 @@ export interface EvaluateParams {
 
 const DEFAULT_EVALUATOR_CONFIG: EvaluatorConfig = {
   thresholds: DEFAULT_QUALITY_THRESHOLDS,
-  weights: { ...DEFAULT_QUALITY_WEIGHTS },
+  weights: { ...DEFAULT_QUALITY_WEIGHTS, },
 };
 
-const DIMENSIONS = Object.values(QualityDimension);
+const DIMENSIONS = Object.values(QualityDimension,);
 
-function toScorerContext(params: EvaluateParams): ScorerContext {
+function toScorerContext(params: EvaluateParams,): ScorerContext {
   return {
     response: params.response,
     prompt: params.prompt,
@@ -46,29 +46,29 @@ export class QualityEvaluator {
   private readonly config: EvaluatorConfig;
   private readonly scorers = SCORERS;
 
-  constructor(config?: Partial<EvaluatorConfig>) {
+  constructor(config?: Partial<EvaluatorConfig>,) {
     this.config = {
-      thresholds: { ...DEFAULT_EVALUATOR_CONFIG.thresholds, ...config?.thresholds },
-      weights: { ...DEFAULT_EVALUATOR_CONFIG.weights, ...config?.weights },
+      thresholds: { ...DEFAULT_EVALUATOR_CONFIG.thresholds, ...config?.thresholds, },
+      weights: { ...DEFAULT_EVALUATOR_CONFIG.weights, ...config?.weights, },
     };
   }
 
-  private computeScores(params: EvaluateParams): QualityScores {
-    const ctx = toScorerContext(params);
+  private computeScores(params: EvaluateParams,): QualityScores {
+    const ctx = toScorerContext(params,);
     const scores = {} as Omit<QualityScores, "overall">;
     for (const dim of DIMENSIONS) {
-      scores[dim] = this.scorers[dim](ctx);
+      scores[dim] = this.scorers[dim](ctx,);
     }
     const overall = Math.round(
-      DIMENSIONS.reduce((sum, dim) => sum + scores[dim] * this.config.weights[dim], 0),
+      DIMENSIONS.reduce((sum, dim,) => sum + scores[dim] * this.config.weights[dim], 0,),
     );
-    return { ...scores, overall };
+    return { ...scores, overall, };
   }
 
-  private buildDetails(scores: QualityScores): QualityEvaluation["details"] {
+  private buildDetails(scores: QualityScores,): QualityEvaluation["details"] {
     const details = {} as QualityEvaluation["details"];
     for (const dim of DIMENSIONS) {
-      details[dim] = { score: scores[dim], reasoning: getReasoning(dim, scores[dim]) };
+      details[dim] = { score: scores[dim], reasoning: getReasoning(dim, scores[dim],), };
     }
     return details;
   }
@@ -77,10 +77,10 @@ export class QualityEvaluator {
    * Evaluate a generated response against the story context.
    * Returns detailed scores and a pass/regenerate/escalate decision.
    */
-  evaluate(params: EvaluateParams): QualityEvaluation {
-    const scores = this.computeScores(params);
+  evaluate(params: EvaluateParams,): QualityEvaluation {
+    const scores = this.computeScores(params,);
     const overall = scores.overall;
-    const details = this.buildDetails(scores);
+    const details = this.buildDetails(scores,);
 
     const thresholds = this.config.thresholds;
     let regenerationReason: string | null = null;
@@ -93,8 +93,8 @@ export class QualityEvaluator {
     }
 
     let lowest = Infinity;
-    for (const d of Object.values(details)) {
-      if (d.score < lowest) lowest = d.score;
+    for (const d of Object.values(details,)) {
+      if (d.score < lowest) { lowest = d.score; }
     }
     if (lowest < thresholds.escalate && !escalationReason) {
       escalationReason = `Dimension score ${lowest} below escalation threshold`;
@@ -110,11 +110,11 @@ export class QualityEvaluator {
   }
 
   /** Get the raw dimension scores without full evaluation metadata */
-  computeScore(params: EvaluateParams): QualityScores {
-    return this.computeScores(params);
+  computeScore(params: EvaluateParams,): QualityScores {
+    return this.computeScores(params,);
   }
 }
 
-export function createQualityEvaluator(config?: Partial<EvaluatorConfig>): QualityEvaluator {
-  return new QualityEvaluator(config);
+export function createQualityEvaluator(config?: Partial<EvaluatorConfig>,): QualityEvaluator {
+  return new QualityEvaluator(config,);
 }

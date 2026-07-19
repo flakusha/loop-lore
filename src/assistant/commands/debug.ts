@@ -2,7 +2,7 @@
 //
 // /debug — toggle prompt debug view.
 
-import { type CommandResult, registerCommand } from "./registry";
+import { type CommandResult, registerCommand, } from "./registry";
 
 registerCommand("debug", async (): Promise<CommandResult> => {
   return {
@@ -10,4 +10,4 @@ registerCommand("debug", async (): Promise<CommandResult> => {
     action: "toggle-debug-view",
     handled: true,
   };
-});
+},);

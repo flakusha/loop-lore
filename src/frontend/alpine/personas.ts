@@ -1,7 +1,7 @@
-import { jsonBody } from "./json";
-import { log as rootLog } from "./logger";
+import { jsonBody, } from "./json";
+import { log as rootLog, } from "./logger";
 
-const log = rootLog.child({ module: "personas" });
+const log = rootLog.child({ module: "personas", },);
 
 interface PersonaItem {
   id: string;
@@ -24,37 +24,37 @@ globalThis.personasPage = function() {
     formIsDefault: false,
 
     async init() {
-      if (!globalThis.Alpine) return;
-      Alpine.store("ui", Alpine.store("ui") || {});
-      const ui = Alpine.store("ui");
-      if (!("showPersonaForm" in ui)) ui.showPersonaForm = false;
-      if (!("activePersona" in ui)) ui.activePersona = null;
+      if (!globalThis.Alpine) { return; }
+      Alpine.store("ui", Alpine.store("ui",) || {},);
+      const ui = Alpine.store("ui",);
+      if (!("showPersonaForm" in ui)) { ui.showPersonaForm = false; }
+      if (!("activePersona" in ui)) { ui.activePersona = null; }
       await this.loadPersonas();
     },
 
     async loadPersonas() {
       this.loading = true;
       try {
-        const res = await fetch("/api/personas", { headers: { Accept: "application/json" } });
+        const res = await fetch("/api/personas", { headers: { Accept: "application/json", }, },);
         if (res.ok) {
           const data = await res.json();
-          this.personas = Array.isArray(data) ? data : [];
+          this.personas = Array.isArray(data,) ? data : [];
           this.filterList();
         }
       } catch (error) {
-        log.warn("loadPersonas failed", { error: String(error) });
+        log.warn("loadPersonas failed", { error: String(error,), },);
       }
       this.loading = false;
     },
 
     filterList() {
       const q = this.search.toLowerCase().trim();
-      this.filtered = q ? this.personas.filter((p) => p.name.toLowerCase().includes(q)) : this.personas;
+      this.filtered = q ? this.personas.filter((p,) => p.name.toLowerCase().includes(q,)) : this.personas;
     },
 
-    editPersona(p: PersonaItem) {
-      if (!globalThis.Alpine) return;
-      const ui = Alpine.store("ui");
+    editPersona(p: PersonaItem,) {
+      if (!globalThis.Alpine) { return; }
+      const ui = Alpine.store("ui",);
       ui.activePersona = p;
       this.formName = p.name;
       this.formTitle = p.title || "";
@@ -65,26 +65,26 @@ globalThis.personasPage = function() {
 
     async savePersona() {
       const name = this.formName.trim();
-      if (!name) return;
+      if (!name) { return; }
 
-      if (!globalThis.Alpine) return;
-      const ui = Alpine.store("ui");
+      if (!globalThis.Alpine) { return; }
+      const ui = Alpine.store("ui",);
       const active = ui.activePersona as PersonaItem | null;
       this.saving = true;
 
       try {
         const url = active ? `/api/personas/${active.id}` : "/api/personas";
         const method = active ? "PATCH" : "POST";
-        const body: Record<string, unknown> = { name };
-        if (this.formTitle) body.title = this.formTitle;
-        if (this.formDescription) body.description = this.formDescription;
-        if (active) body.isDefault = this.formIsDefault;
+        const body: Record<string, unknown> = { name, };
+        if (this.formTitle) { body.title = this.formTitle; }
+        if (this.formDescription) { body.description = this.formDescription; }
+        if (active) { body.isDefault = this.formIsDefault; }
 
         const res = await fetch(url, {
           method,
-          headers: { "Content-Type": "application/json", Accept: "application/json" },
-          body: jsonBody(body),
-        });
+          headers: { "Content-Type": "application/json", Accept: "application/json", },
+          body: jsonBody(body,),
+        },);
 
         if (res.ok) {
           ui.showPersonaForm = false;
@@ -96,21 +96,21 @@ globalThis.personasPage = function() {
           await this.loadPersonas();
         }
       } catch (error) {
-        log.warn("savePersona failed", { error: String(error) });
+        log.warn("savePersona failed", { error: String(error,), },);
       }
       this.saving = false;
     },
 
-    async deletePersona(id: string) {
-      if (!confirm("Delete this persona?")) return;
+    async deletePersona(id: string,) {
+      if (!confirm("Delete this persona?",)) { return; }
       try {
-        const res = await fetch(`/api/personas/${id}`, { method: "DELETE" });
+        const res = await fetch(`/api/personas/${id}`, { method: "DELETE", },);
         if (res.ok) {
-          this.personas = this.personas.filter((p) => p.id !== id);
+          this.personas = this.personas.filter((p,) => p.id !== id);
           this.filterList();
         }
       } catch (error) {
-        log.warn("deletePersona failed", { error: String(error) });
+        log.warn("deletePersona failed", { error: String(error,), },);
       }
     },
 

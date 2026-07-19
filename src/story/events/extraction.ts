@@ -5,8 +5,8 @@
  * regex pattern matching and keyword analysis.
  * Future: delegate to lightweight LLM for structured extraction.
  */
-import { WorldEventType } from "../../db/enums";
-import type { WorldEvent } from "../types";
+import { WorldEventType, } from "../../db/enums";
+import type { WorldEvent, } from "../types";
 
 // ── Location Change Patterns ─────────────────────────────────
 
@@ -72,14 +72,14 @@ export function extractEvents({
   messageContent,
   actorId,
   currentLocationId,
-}: ExtractEventsOpts): WorldEvent[] {
+}: ExtractEventsOpts,): WorldEvent[] {
   const events: WorldEvent[] = [];
   const timestamp = new Date().toISOString();
   const lower = messageContent.toLowerCase();
 
   // Location change detection
   for (const pattern of locationPatterns) {
-    const match = pattern.exec(messageContent);
+    const match = pattern.exec(messageContent,);
     if (match?.[1]) {
       events.push({
         type: WorldEventType.LocationChange,
@@ -92,13 +92,13 @@ export function extractEvents({
           reason: "narrative",
         },
         description: `${actorId} moved to ${match[1].trim()}`,
-      });
+      },);
     }
   }
 
   // Time advancement detection
   for (const pattern of timePatterns) {
-    if (pattern.test(messageContent)) {
+    if (pattern.test(messageContent,)) {
       events.push({
         type: WorldEventType.TimeAdvancement,
         actorId,
@@ -109,14 +109,14 @@ export function extractEvents({
           reason: "narrative time skip",
         },
         description: "Time advanced in the narrative",
-      });
+      },);
       break;
     }
   }
 
   // Combat detection
   for (const pattern of combatPatterns) {
-    if (pattern.test(messageContent)) {
+    if (pattern.test(messageContent,)) {
       events.push({
         type: WorldEventType.CombatEvent,
         actorId,
@@ -127,34 +127,34 @@ export function extractEvents({
           damage: 0,
           damageType: "physical",
           statusEffects: [],
-          defeated: lower.includes("defeated") || lower.includes("killed") || lower.includes("slain"),
+          defeated: lower.includes("defeated",) || lower.includes("killed",) || lower.includes("slain",),
         },
         description: "Combat occurred in the narrative",
-      });
+      },);
       break;
     }
   }
 
   // NPC state change detection
   for (const pattern of npcPatterns) {
-    if (pattern.test(messageContent)) {
+    if (pattern.test(messageContent,)) {
       events.push({
         type: WorldEventType.NpcStateChange,
         actorId,
         timestamp,
         data: {
           npcActorId: actorId,
-          changes: { mental_state: "changed" },
+          changes: { mental_state: "changed", },
         },
         description: "NPC state changed",
-      });
+      },);
       break;
     }
   }
 
   // Item transfer detection
   for (const pattern of itemPatterns) {
-    const match = pattern.exec(messageContent);
+    const match = pattern.exec(messageContent,);
     if (match?.[1]) {
       events.push({
         type: WorldEventType.ItemTransfer,
@@ -162,23 +162,23 @@ export function extractEvents({
         timestamp,
         data: {
           fromActorId: null,
-          toActorId: match[0].toLowerCase().includes("drops") || match[0].toLowerCase().includes("leaves")
+          toActorId: match[0].toLowerCase().includes("drops",) || match[0].toLowerCase().includes("leaves",)
             ? null
             : actorId,
           itemName: match[1].trim(),
           quantity: 1,
         },
         description: `Item interaction: ${match[1].trim()}`,
-      });
+      },);
     }
   }
 
   // Lore update detection (new facts about the world revealed)
   for (const pattern of lorePatterns) {
-    if (pattern.test(messageContent)) {
+    if (pattern.test(messageContent,)) {
       // Extract the sentence containing the lore
-      const sentences = messageContent.split(/[.!?]+/);
-      const loreSentence = sentences.find((s) => pattern.test(s));
+      const sentences = messageContent.split(/[.!?]+/,);
+      const loreSentence = sentences.find((s,) => pattern.test(s,));
       if (loreSentence) {
         events.push({
           type: WorldEventType.WorldLoreUpdate,
@@ -190,7 +190,7 @@ export function extractEvents({
             confidence: 0.5,
           },
           description: "New world lore revealed",
-        });
+        },);
       }
       break;
     }

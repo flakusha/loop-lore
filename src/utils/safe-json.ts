@@ -7,13 +7,13 @@
 // ── Result Type ──────────────────────────────────────────────
 
 /** Result of a safe JSON parse or stringify operation */
-export type JsonResult<T> = { ok: true; value: T } | { ok: false; error: Error };
+export type JsonResult<T,> = { ok: true; value: T } | { ok: false; error: Error };
 
 // ── Error Helper ─────────────────────────────────────────────
 
 /** Extract a safe Error object from an unknown thrown value */
-function asError(error: unknown): Error {
-  return error instanceof Error ? error : new Error(String(error));
+function asError(error: unknown,): Error {
+  return error instanceof Error ? error : new Error(String(error,),);
 }
 
 // ── Parse ────────────────────────────────────────────────────
@@ -21,20 +21,20 @@ function asError(error: unknown): Error {
 /**
  * Parse JSON safely. Never throws — returns a discriminated union.
  */
-export function safeJsonParse<T = unknown>(text: string): JsonResult<T> {
+export function safeJsonParse<T = unknown,>(text: string,): JsonResult<T> {
   try {
-    const value = JSON.parse(text) as T;
-    return { ok: true, value };
+    const value = JSON.parse(text,) as T;
+    return { ok: true, value, };
   } catch (error) {
-    return { ok: false, error: asError(error) };
+    return { ok: false, error: asError(error,), };
   }
 }
 
 /**
  * Parse JSON, returning the value or `fallback` on failure.
  */
-export function jsonParseOr<T>(text: string, fallback: T): T {
-  const result = safeJsonParse<T>(text);
+export function jsonParseOr<T,>(text: string, fallback: T,): T {
+  const result = safeJsonParse<T>(text,);
   return result.ok ? result.value : fallback;
 }
 
@@ -69,14 +69,14 @@ export function safeJsonStringify(
     let toStringify = value;
     if (guarded && typeof value === "string") {
       try {
-        toStringify = JSON.parse(value) as unknown;
+        toStringify = JSON.parse(value,) as unknown;
       } catch {
         // value is not a valid JSON string — stringify as-is
       }
     }
-    return { ok: true, value: JSON.stringify(toStringify, null, space) };
+    return { ok: true, value: JSON.stringify(toStringify, null, space,), };
   } catch (error) {
-    return { ok: false, error: asError(error) };
+    return { ok: false, error: asError(error,), };
   }
 }
 
@@ -88,8 +88,8 @@ export function safeJsonStringify(
  *   jsonStringifyOr({ a: 1 })         // '{"a":1}'
  *   jsonStringifyOr(bad, "[]")         // '[]'
  */
-export function jsonStringifyOr(value: unknown, fallback = "{}"): string {
-  const r = safeJsonStringify(value);
+export function jsonStringifyOr(value: unknown, fallback = "{}",): string {
+  const r = safeJsonStringify(value,);
   return r.ok ? r.value : fallback;
 }
 
@@ -98,10 +98,10 @@ export function jsonStringifyOr(value: unknown, fallback = "{}"): string {
 /**
  * Check if a value is a valid JSON string.
  */
-export function isJsonString(value: unknown): value is string {
-  if (typeof value !== "string") return false;
+export function isJsonString(value: unknown,): value is string {
+  if (typeof value !== "string") { return false; }
   try {
-    JSON.parse(value);
+    JSON.parse(value,);
     return true;
   } catch {
     return false;

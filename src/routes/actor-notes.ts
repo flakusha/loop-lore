@@ -4,12 +4,12 @@
  * CRUD for per-actor reference notes.
  */
 
-import { Elysia } from "elysia";
-import type { Config } from "../config/schema";
-import type { Db } from "../db";
-import { createEntityRoutes } from "./entity-routes";
+import { Elysia, } from "elysia";
+import type { Config, } from "../config/schema";
+import type { Db, } from "../db";
+import { createEntityRoutes, } from "./entity-routes";
 
-export function actorNotesRoutes(opts: { database: Db; config: Config }): Elysia {
+export function actorNotesRoutes(opts: { database: Db; config: Config },): Elysia {
   return createEntityRoutes(
     {
       parentPrefix: "actors",
@@ -20,11 +20,11 @@ export function actorNotesRoutes(opts: { database: Db; config: Config }): Elysia
       ownershipTable: "actors",
       ownershipFkColumn: "user_id",
       orderBy: [
-        { column: "pinned", dir: "desc" },
-        { column: "sort_order", dir: "asc" },
-        { column: "created_at", dir: "desc" },
+        { column: "pinned", dir: "desc", },
+        { column: "sort_order", dir: "asc", },
+        { column: "created_at", dir: "desc", },
       ],
-      filterField: { param: "category", column: "category" },
+      filterField: { param: "category", column: "category", },
       fieldMappings: {
         title: "title",
         content: "content",
@@ -38,7 +38,7 @@ export function actorNotesRoutes(opts: { database: Db; config: Config }): Elysia
         pinned: 0,
         sortOrder: 0,
       },
-      createRequired: ["title", "content"],
+      createRequired: ["title", "content",],
     },
     opts,
   );

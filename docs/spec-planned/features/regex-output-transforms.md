@@ -21,22 +21,22 @@ export interface TransformRule {
 export class OutputTransformEngine {
   private rules: TransformRule[] = [];
 
-  addRule(rule: TransformRule): void {
-    this.rules.push(rule);
+  addRule(rule: TransformRule,): void {
+    this.rules.push(rule,);
   }
 
-  removeRule(id: string): void {
-    this.rules = this.rules.filter((r) => r.id !== id);
+  removeRule(id: string,): void {
+    this.rules = this.rules.filter((r,) => r.id !== id);
   }
 
-  transform(text: string): string {
+  transform(text: string,): string {
     let result = text;
-    for (const rule of this.rules.filter((r) => r.enabled)) {
+    for (const rule of this.rules.filter((r,) => r.enabled)) {
       try {
-        const regex = new RegExp(rule.pattern, rule.flags || "");
-        result = result.replace(regex, rule.replacement);
+        const regex = new RegExp(rule.pattern, rule.flags || "",);
+        result = result.replace(regex, rule.replacement,);
       } catch (e) {
-        console.warn(`Invalid regex in rule ${rule.id}:`, e);
+        console.warn(`Invalid regex in rule ${rule.id}:`, e,);
       }
     }
     return result;
@@ -57,7 +57,7 @@ const defaultRules: TransformRule[] = [
     id: "narration-color",
     name: "Color narration",
     pattern: ">([\\w\\s]+)<",
-    replacement: "<span class=\"narration\">$1</span>",
+    replacement: '<span class="narration">$1</span>',
     enabled: false,
   },
   {
@@ -94,7 +94,7 @@ const defaultRules: TransformRule[] = [
 
 ```typescript
 // In message rendering pipeline
-const transformedContent = transformEngine.transform(rawMessage.content);
+const transformedContent = transformEngine.transform(rawMessage.content,);
 // Then pass to markdown renderer
 ```
 

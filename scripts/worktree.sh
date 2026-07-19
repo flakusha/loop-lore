@@ -171,7 +171,7 @@ find_worktree() {
     local branch="$1"
     local dir_name
     dir_name="$(branch_to_path "$branch")"
-    
+
     # Check if current directory IS the worktree for this branch
     local current_branch
     current_branch=$(git -C "$REPO_ROOT" branch --show-current 2>/dev/null || echo "")
@@ -179,7 +179,7 @@ find_worktree() {
         echo "$REPO_ROOT"
         return
     fi
-    
+
     local worktree_path="$TREE_DIR/$dir_name"
     if [[ -d "$worktree_path" ]]; then
         echo "$worktree_path"
@@ -205,8 +205,8 @@ require_worktree() {
 check_dirty() {
     # Warn if worktree has uncommitted changes
     local worktree_path="$1"
-    if ! git -C "$worktree_path" diff --quiet 2>/dev/null || \
-       ! git -C "$worktree_path" diff --cached --quiet 2>/dev/null; then
+    if ! git -C "$worktree_path" diff --quiet 2>/dev/null ||
+        ! git -C "$worktree_path" diff --cached --quiet 2>/dev/null; then
         echo -e "${YELLOW}  Warning: uncommitted changes in worktree${NC}"
         echo -e "  Stash with: cd $worktree_path && git stash"
         return 1
@@ -533,9 +533,9 @@ cmd_cleanup() {
         [[ ! -d "$worktree_path" ]] && continue
 
         local branch
-        branch=$(git -C "$REPO_ROOT" worktree list --porcelain | \
-                 grep -A 2 "path $(realpath "$worktree_path")" | \
-                 grep "branch" | sed 's|branch refs/heads/||' || true)
+        branch=$(git -C "$REPO_ROOT" worktree list --porcelain |
+            grep -A 2 "path $(realpath "$worktree_path")" |
+            grep "branch" | sed 's|branch refs/heads/||' || true)
 
         if [[ -z "$branch" ]]; then
             echo -e "${YELLOW}  Skipped (detached HEAD): $worktree_path${NC}"
@@ -572,8 +572,8 @@ cmd_remove() {
     worktree_path="$(require_worktree "$branch")"
 
     # Block removal if worktree has uncommitted changes
-    if ! git -C "$worktree_path" diff --quiet 2>/dev/null || \
-       ! git -C "$worktree_path" diff --cached --quiet 2>/dev/null; then
+    if ! git -C "$worktree_path" diff --quiet 2>/dev/null ||
+        ! git -C "$worktree_path" diff --cached --quiet 2>/dev/null; then
         echo -e "${RED}Error: worktree has uncommitted changes${NC}"
         echo -e "  Stash or commit first: cd $worktree_path && git stash"
         echo -e "  Or use: git -C $worktree_path diff --stat"
@@ -737,21 +737,21 @@ cmd_rebase() {
 cmd_finalize() {
     local branch="${1:-}"
     local force=false
-    
+
     # Parse flags
     shift 2>/dev/null || true
     while [[ $# -gt 0 ]]; do
         case "$1" in
-            --force|-f)
-                force=true
-                shift
-                ;;
-            *)
-                shift
-                ;;
+        --force | -f)
+            force=true
+            shift
+            ;;
+        *)
+            shift
+            ;;
         esac
     done
-    
+
     if [[ -z "$branch" ]]; then
         echo -e "${RED}Error: branch name required${NC}"
         echo "Usage: $(basename "$0") finalize <branch>"
@@ -774,8 +774,8 @@ cmd_finalize() {
     # Step 1: Check for uncommitted changes
     echo -e "${CYAN}Step 1: Checking worktree state...${NC}"
     local has_changes=false
-    if ! git -C "$worktree_path" diff --quiet 2>/dev/null || \
-       ! git -C "$worktree_path" diff --cached --quiet 2>/dev/null; then
+    if ! git -C "$worktree_path" diff --quiet 2>/dev/null ||
+        ! git -C "$worktree_path" diff --cached --quiet 2>/dev/null; then
         has_changes=true
         echo -e "${YELLOW}  ⚠ Uncommitted changes detected${NC}"
         git -C "$worktree_path" diff --stat 2>/dev/null || true
@@ -803,7 +803,7 @@ cmd_finalize() {
         echo -e "${YELLOW}  Skipped: bun or package.json not found${NC}"
     fi
     echo ""
-    
+
     # Step 3: Run tests
     echo -e "${CYAN}Step 3: Running tests (bun test src/)...${NC}"
     if [[ "$force" == "true" ]]; then
@@ -874,7 +874,7 @@ cmd_agent_commit() {
     # Agent MUST use this instead of raw 'git commit' commands.
     local branch="$1"
     local message="$2"
-    
+
     if [[ -z "$branch" ]] || [[ -z "$message" ]]; then
         echo -e "${RED}Error: branch and message required${NC}"
         echo "Usage: $(basename "$0") agent-commit <branch> <message>"
@@ -882,73 +882,73 @@ cmd_agent_commit() {
         echo "  Author = worktree user, Committer = agent (from .credentials.env)"
         exit 1
     fi
-    
+
     # Block on protected branches
     if is_protected "$branch"; then
         echo -e "${RED}Error: cannot agent-commit on protected branch '$branch'${NC}"
         exit 1
     fi
-    
+
     local worktree_path
     worktree_path="$(require_worktree "$branch")"
-    
+
     # Check for staged changes
     if git -C "$worktree_path" diff --cached --quiet 2>/dev/null; then
         echo -e "${RED}Error: no staged changes in worktree${NC}"
         echo "  Stage files first: cd $worktree_path && git add <files>"
         exit 1
     fi
-    
+
     # Verify agent credentials
     if [[ -z "${AGENT_GPG_KEY_ID:-}" ]]; then
         echo -e "${RED}Error: AGENT_GPG_KEY_ID not set in .credentials.env${NC}"
         exit 1
     fi
-    
+
     if [[ -z "${AGENT_GPG_NAME:-}" ]] || [[ -z "${AGENT_GPG_EMAIL:-}" ]]; then
         echo -e "${RED}Error: AGENT_GPG_NAME/AGENT_GPG_EMAIL not set in .credentials.env${NC}"
         exit 1
     fi
-    
+
     # Get author from worktree's local git config
     local author_name
     local author_email
     author_name=$(git -C "$worktree_path" config user.name)
     author_email=$(git -C "$worktree_path" config user.email)
-    
+
     if [[ -z "$author_name" ]] || [[ -z "$author_email" ]]; then
         echo -e "${RED}Error: worktree user.name/user.email not configured${NC}"
         echo "  Run: ./scripts/worktree.sh sign $branch"
         exit 1
     fi
-    
+
     # Verify GPG key is available
     if ! gpg --list-secret-keys "$AGENT_GPG_KEY_ID" &>/dev/null; then
         echo -e "${RED}Error: GPG secret key $AGENT_GPG_KEY_ID not found${NC}"
         echo "  Run: ./scripts/gpg-unlock.sh"
         exit 1
     fi
-    
+
     echo -e "${CYAN}Creating GPG-signed commit in '$branch'...${NC}"
     echo -e "  Author: $author_name <$author_email>"
     echo -e "  Committer: $AGENT_GPG_NAME <$AGENT_GPG_EMAIL>"
     echo -e "  GPG Key: ${AGENT_GPG_KEY_ID:0:8}..."
-    
+
     # Execute commit with proper identity
     # --no-verify: agent MUST run checks separately before committing
     # The pre-commit hook is for manual commits; agent workflow is:
     # 1. Run bun run check && bun test src/
     # 2. ./scripts/worktree.sh agent-commit <branch> "<message>"
     GIT_COMMITTER_NAME="$AGENT_GPG_NAME" \
-    GIT_COMMITTER_EMAIL="$AGENT_GPG_EMAIL" \
-    git -C "$worktree_path" \
+        GIT_COMMITTER_EMAIL="$AGENT_GPG_EMAIL" \
+        git -C "$worktree_path" \
         -c user.signingkey="$AGENT_GPG_KEY_ID" \
         -c commit.gpgsign=true \
         commit -S \
         --no-verify \
         --author="$author_name <$author_email>" \
         -m "$message"
-    
+
     # Verify signature
     local commit_sha
     commit_sha=$(git -C "$worktree_path" rev-parse HEAD)
@@ -961,60 +961,60 @@ cmd_agent_commit() {
 
 # Main
 case "${1:-}" in
-    create)
-        shift
-        cmd_create "${1:-}"
-        ;;
-    new)
-        shift
-        cmd_new "${1:-}" "${2:-}"
-        ;;
-    list)
-        cmd_list
-        ;;
-    cleanup)
-        cmd_cleanup
-        ;;
-    remove)
-        shift
-        cmd_remove "${1:-}"
-        ;;
-    sign)
-        shift
-        cmd_sign "${1:-}"
-        ;;
-    merge)
-        shift
-        cmd_merge "${1:-}" "${2:-}"
-        ;;
-    rebase)
-        shift
-        cmd_rebase "${1:-}" "${2:-}"
-        ;;
-    finalize|agent-merge)
-        shift
-        cmd_finalize "$@"
-        ;;
-    agent-commit)
-        shift
-        cmd_agent_commit "${1:-}" "${2:-}"
-        ;;
-    prs)
-        cmd_prs
-        ;;
-    branches)
-        cmd_branches
-        ;;
-    diff)
-        shift
-        cmd_diff "${1:-}"
-        ;;
-    status)
-        shift
-        cmd_status "${1:-}"
-        ;;
-    *)
-        usage
-        exit 1
-        ;;
+create)
+    shift
+    cmd_create "${1:-}"
+    ;;
+new)
+    shift
+    cmd_new "${1:-}" "${2:-}"
+    ;;
+list)
+    cmd_list
+    ;;
+cleanup)
+    cmd_cleanup
+    ;;
+remove)
+    shift
+    cmd_remove "${1:-}"
+    ;;
+sign)
+    shift
+    cmd_sign "${1:-}"
+    ;;
+merge)
+    shift
+    cmd_merge "${1:-}" "${2:-}"
+    ;;
+rebase)
+    shift
+    cmd_rebase "${1:-}" "${2:-}"
+    ;;
+finalize | agent-merge)
+    shift
+    cmd_finalize "$@"
+    ;;
+agent-commit)
+    shift
+    cmd_agent_commit "${1:-}" "${2:-}"
+    ;;
+prs)
+    cmd_prs
+    ;;
+branches)
+    cmd_branches
+    ;;
+diff)
+    shift
+    cmd_diff "${1:-}"
+    ;;
+status)
+    shift
+    cmd_status "${1:-}"
+    ;;
+*)
+    usage
+    exit 1
+    ;;
 esac

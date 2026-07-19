@@ -1,6 +1,6 @@
 // src/config/sections/messages.ts — Messages config section
 
-import type { MessagesConfig } from "../schema";
+import type { MessagesConfig, } from "../schema";
 
 export const MESSAGES_DEFAULTS = {
   autoHideInvalid: false,
@@ -19,8 +19,8 @@ export class MessagesSection implements MessagesConfig {
   generationTimeoutMs = MESSAGES_DEFAULTS.generationTimeoutMs;
   idempotencyExpiryHours = MESSAGES_DEFAULTS.idempotencyExpiryHours;
 
-  constructor(overrides?: Partial<MessagesConfig>) {
-    Object.assign(this, overrides);
+  constructor(overrides?: Partial<MessagesConfig>,) {
+    Object.assign(this, overrides,);
   }
 }
 
@@ -38,7 +38,7 @@ export const messagesMeta = {
       default: MESSAGES_DEFAULTS.hideConfirmation,
       description: "Require confirmation before hiding",
     },
-    maxLength: { type: "integer", default: MESSAGES_DEFAULTS.maxLength, description: "Max content length" },
+    maxLength: { type: "integer", default: MESSAGES_DEFAULTS.maxLength, description: "Max content length", },
     maxGenerationRetries: {
       type: "integer",
       default: MESSAGES_DEFAULTS.maxGenerationRetries,

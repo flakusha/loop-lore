@@ -12,33 +12,33 @@
  *   Or set LL_REAL_E2E_SKIP=1 to skip entirely
  */
 
-import { afterAll, beforeAll, describe, expect, test } from "bun:test";
-import { type ApiClient, createClient } from "../helpers/client";
-import { SEED, seedAll } from "../helpers/seed";
-import { createTestServer, type TestServer } from "../helpers/server";
-import { ServerExternalManager, type ServerInstance } from "../helpers/server-external";
+import { afterAll, beforeAll, describe, expect, test, } from "bun:test";
+import { type ApiClient, createClient, } from "../helpers/client";
+import { SEED, seedAll, } from "../helpers/seed";
+import { createTestServer, type TestServer, } from "../helpers/server";
+import { ServerExternalManager, type ServerInstance, } from "../helpers/server-external";
 
-import type { Logger } from "../../../src/logger";
-import { safeJsonStringify } from "../../../src/utils";
+import type { Logger, } from "../../../src/logger";
+import { safeJsonStringify, } from "../../../src/utils";
 
 /** Format log message — stringify objects via safe wrapper */
-function fmtMsg(msg: string | Record<string, unknown>): string {
-  if (typeof msg === "string") return msg;
-  const r = safeJsonStringify(msg);
-  return r.ok ? r.value : String(msg);
+function fmtMsg(msg: string | Record<string, unknown>,): string {
+  if (typeof msg === "string") { return msg; }
+  const r = safeJsonStringify(msg,);
+  return r.ok ? r.value : String(msg,);
 }
 
 /** Logger — falls back to console if app logger not yet initialized */
 const log: Logger = {
   debug: () => {},
-  info(msg: string | Record<string, unknown>) {
-    console.warn(`[server-external-e2e] ${fmtMsg(msg)}`);
+  info(msg: string | Record<string, unknown>,) {
+    console.warn(`[server-external-e2e] ${fmtMsg(msg,)}`,);
   },
-  warn(msg: string | Record<string, unknown>) {
-    console.warn(`[server-external-e2e] ${fmtMsg(msg)}`);
+  warn(msg: string | Record<string, unknown>,) {
+    console.warn(`[server-external-e2e] ${fmtMsg(msg,)}`,);
   },
-  error(msg: string | Record<string, unknown>) {
-    console.error(`[server-external-e2e] ${fmtMsg(msg)}`);
+  error(msg: string | Record<string, unknown>,) {
+    console.error(`[server-external-e2e] ${fmtMsg(msg,)}`,);
   },
   child: () => log,
   flush: async () => {},
@@ -59,20 +59,20 @@ describeReal("Real-Server Generation E2E", () => {
   let sdPort = 9010;
 
   beforeAll(async () => {
-    manager = new ServerExternalManager(log);
-    server = await createTestServer({ auth: { required: true } });
-    await seedAll(server.db);
-    api = createClient(server.url);
-    await api.loginAs(SEED.user.username, SEED.user.password);
-  });
+    manager = new ServerExternalManager(log,);
+    server = await createTestServer({ auth: { required: true, }, },);
+    await seedAll(server.db,);
+    api = createClient(server.url,);
+    await api.loginAs(SEED.user.username, SEED.user.password,);
+  },);
 
   afterAll(async () => {
-    if (server) server.close();
-    if (manager) await manager.stopAll();
-  });
+    if (server) { server.close(); }
+    if (manager) { await manager.stopAll(); }
+  },);
 
   async function ensureServers() {
-    if (llamaInstance && sdInstance) return;
+    if (llamaInstance && sdInstance) { return; }
 
     const testing = server.config.testing;
     const llamaModel = testing?.llamaModel ?? "";
@@ -85,8 +85,8 @@ describeReal("Real-Server Generation E2E", () => {
         port: llamaPort,
         modelPath: llamaModel,
         ctxSize: 8192,
-        extraArgs: ["--alias", "e2e-model"],
-      });
+        extraArgs: ["--alias", "e2e-model",],
+      },);
       log.info(
         llamaInstance
           ? `llama.cpp ready :${llamaPort}`
@@ -98,8 +98,8 @@ describeReal("Real-Server Generation E2E", () => {
       sdInstance = await manager.startSdCpp({
         port: sdPort,
         modelPath: sdModel,
-        extraArgs: ["--rng", "cpu", "--sampler-rng", "cpu"],
-      });
+        extraArgs: ["--rng", "cpu", "--sampler-rng", "cpu",],
+      },);
       log.info(
         sdInstance
           ? `sd-server ready :${sdPort}`
@@ -108,7 +108,7 @@ describeReal("Real-Server Generation E2E", () => {
     }
 
     if (!llamaInstance && !sdInstance) {
-      log.warn("no servers available");
+      log.warn("no servers available",);
     }
   }
 
@@ -117,10 +117,10 @@ describeReal("Real-Server Generation E2E", () => {
   describe("llama.cpp", () => {
     test("real LLM completes generation", async () => {
       await ensureServers();
-      if (!llamaInstance) return;
+      if (!llamaInstance) { return; }
 
-      const { registerProvider } = await import("@/generation/providers/registry");
-      const { OpenAiCompatibleProvider } = await import("@/generation/providers/openai-compatible");
+      const { registerProvider, } = await import("@/generation/providers/registry");
+      const { OpenAiCompatibleProvider, } = await import("@/generation/providers/openai-compatible");
       registerProvider(
         "real-llama",
         new OpenAiCompatibleProvider({
@@ -131,8 +131,8 @@ describeReal("Real-Server Generation E2E", () => {
           timeout: 30_000,
           retries: 2,
           allowUserApiKey: false,
-          models: { "e2e-model": { contextLimit: 8192, maxOutput: 1024 } },
-        }),
+          models: { "e2e-model": { contextLimit: 8192, maxOutput: 1024, }, },
+        },),
       );
 
       const res = await api.post<{ ok: boolean; content: string; messageId: string }>(
@@ -143,23 +143,23 @@ describeReal("Real-Server Generation E2E", () => {
           actorId: SEED.character.id,
           idempotencyKey: "real-llm-1",
           provider: "real-llama",
-          prompt: [{ role: "system", content: "Reply with exactly: OK" }, { role: "user", content: "Say OK" }],
+          prompt: [{ role: "system", content: "Reply with exactly: OK", }, { role: "user", content: "Say OK", },],
           maxTokens: 50,
           temperature: 0,
         },
       );
 
-      expect(res.status).toBe(200);
+      expect(res.status,).toBe(200,);
       if (res.data) {
-        expect(res.data.ok).toBe(true);
-        expect(res.data.content).toBeTruthy();
-        expect(res.data.messageId).toBeTruthy();
+        expect(res.data.ok,).toBe(true,);
+        expect(res.data.content,).toBeTruthy();
+        expect(res.data.messageId,).toBeTruthy();
       }
     });
 
     test("real LLM respects maxTokens", async () => {
       await ensureServers();
-      if (!llamaInstance) return;
+      if (!llamaInstance) { return; }
 
       const res = await api.post<{ content: string; tokenUsage: { completionTokens: number } }>(
         "/api/generation/generate",
@@ -169,16 +169,16 @@ describeReal("Real-Server Generation E2E", () => {
           actorId: SEED.character.id,
           idempotencyKey: "real-llm-2",
           provider: "real-llama",
-          prompt: [{ role: "user", content: "Write one short sentence." }],
+          prompt: [{ role: "user", content: "Write one short sentence.", },],
           maxTokens: 20,
           temperature: 0,
         },
       );
 
-      expect(res.status).toBe(200);
+      expect(res.status,).toBe(200,);
       if (res.data) {
-        expect(res.data.tokenUsage.completionTokens).toBeGreaterThan(0);
-        expect(res.data.tokenUsage.completionTokens).toBeLessThanOrEqual(30);
+        expect(res.data.tokenUsage.completionTokens,).toBeGreaterThan(0,);
+        expect(res.data.tokenUsage.completionTokens,).toBeLessThanOrEqual(30,);
       }
     });
   });
@@ -188,23 +188,23 @@ describeReal("Real-Server Generation E2E", () => {
   describe("sd-server", () => {
     test("health check returns samplers", async () => {
       await ensureServers();
-      if (!sdInstance) return;
+      if (!sdInstance) { return; }
 
-      const res = await fetch(`http://127.0.0.1:${sdPort}/sdapi/v1/samplers`);
-      expect(res.ok).toBe(true);
+      const res = await fetch(`http://127.0.0.1:${sdPort}/sdapi/v1/samplers`,);
+      expect(res.ok,).toBe(true,);
       const data = (await res.json()) as Array<{ name: string }>;
-      expect(Array.isArray(data)).toBe(true);
-      expect(data.length).toBeGreaterThan(0);
-      expect(data.some((s) => s.name === "euler_a")).toBe(true);
+      expect(Array.isArray(data,),).toBe(true,);
+      expect(data.length,).toBeGreaterThan(0,);
+      expect(data.some((s,) => s.name === "euler_a"),).toBe(true,);
     });
 
     test("txt2img generates image", async () => {
       await ensureServers();
-      if (!sdInstance) return;
+      if (!sdInstance) { return; }
 
       const res = await fetch(`http://127.0.0.1:${sdPort}/sdapi/v1/txt2img`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", },
         body: JSON.stringify({
           prompt: "a red square",
           negative_prompt: "",
@@ -216,28 +216,28 @@ describeReal("Real-Server Generation E2E", () => {
           seed: 42,
           steps: 5,
           cfg_scale: 1,
-        }),
-      });
+        },),
+      },);
 
-      expect(res.ok).toBe(true);
+      expect(res.ok,).toBe(true,);
       const data = (await res.json()) as { images: string[] };
-      expect(Array.isArray(data.images)).toBe(true);
-      expect(data.images.length).toBeGreaterThan(0);
-      expect(data.images[0]!.length).toBeGreaterThan(10);
-      expect(data.images[0]).toMatch(/^[A-Za-z0-9+/]+=*$/);
+      expect(Array.isArray(data.images,),).toBe(true,);
+      expect(data.images.length,).toBeGreaterThan(0,);
+      expect(data.images[0]!.length,).toBeGreaterThan(10,);
+      expect(data.images[0],).toMatch(/^[A-Za-z0-9+/]+=*$/,);
     });
 
     test("handles missing prompt gracefully", async () => {
       await ensureServers();
-      if (!sdInstance) return;
+      if (!sdInstance) { return; }
 
       const res = await fetch(`http://127.0.0.1:${sdPort}/sdapi/v1/txt2img`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({}),
-      });
-      expect(res.status).toBeGreaterThanOrEqual(400);
-      expect(res.status).toBeLessThan(500);
+        headers: { "Content-Type": "application/json", },
+        body: JSON.stringify({},),
+      },);
+      expect(res.status,).toBeGreaterThanOrEqual(400,);
+      expect(res.status,).toBeLessThan(500,);
     });
   });
-});
+},);

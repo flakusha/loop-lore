@@ -4,8 +4,8 @@
  * Manages provider health status and model discovery.
  * Provides rescan capability and cached health results.
  */
-import { getProvider, listProviders } from "../generation/providers/registry";
-import { getLogger } from "../logger";
+import { getProvider, listProviders, } from "../generation/providers/registry";
+import { getLogger, } from "../logger";
 
 export interface ProviderHealthStatus {
   name: string;
@@ -17,7 +17,7 @@ export interface ProviderHealthStatus {
   error?: string;
 }
 
-const state = { cache: [] as ProviderHealthStatus[] };
+const state = { cache: [] as ProviderHealthStatus[], };
 
 /**
  * Scan all registered providers for health and model discovery.
@@ -25,11 +25,11 @@ const state = { cache: [] as ProviderHealthStatus[] };
  */
 export async function scanAllProviders(): Promise<ProviderHealthStatus[]> {
   const providers = listProviders();
-  getLogger().child({ module: "provider-health" }).info("Scanning providers", { count: providers.length });
+  getLogger().child({ module: "provider-health", },).info("Scanning providers", { count: providers.length, },);
 
   const results = await Promise.allSettled(
-    providers.map(async (p) => {
-      const provider = getProvider(p.name);
+    providers.map(async (p,) => {
+      const provider = getProvider(p.name,);
       if (!provider) {
         return {
           name: p.name,
@@ -41,7 +41,7 @@ export async function scanAllProviders(): Promise<ProviderHealthStatus[]> {
         };
       }
 
-      const [health, models] = await Promise.allSettled([provider.healthCheck(), provider.listModels()]);
+      const [health, models,] = await Promise.allSettled([provider.healthCheck(), provider.listModels(),],);
 
       const healthResult = health.status === "fulfilled" ? health.value : null;
       const modelsResult = models.status === "fulfilled" ? models.value : [];
@@ -53,12 +53,12 @@ export async function scanAllProviders(): Promise<ProviderHealthStatus[]> {
         models: modelsResult,
         latencyMs: healthResult?.latencyMs,
         lastChecked: new Date().toISOString(),
-        error: healthResult?.error ?? (health.status === "rejected" ? String(health.reason) : undefined),
+        error: healthResult?.error ?? (health.status === "rejected" ? String(health.reason,) : undefined),
       };
-    }),
+    },),
   );
 
-  const updated = results.map((r, i) =>
+  const updated = results.map((r, i,) =>
     r.status === "fulfilled"
       ? r.value
       : {
@@ -73,12 +73,12 @@ export async function scanAllProviders(): Promise<ProviderHealthStatus[]> {
 
   state.cache = updated;
 
-  const healthy = updated.filter((p) => p.status === "healthy").length;
+  const healthy = updated.filter((p,) => p.status === "healthy").length;
   const failed = updated.length - healthy;
   if (failed > 0) {
-    getLogger().child({ module: "provider-health" }).warn("Some providers unreachable", { healthy, failed });
+    getLogger().child({ module: "provider-health", },).warn("Some providers unreachable", { healthy, failed, },);
   } else {
-    getLogger().child({ module: "provider-health" }).info("All providers healthy", { count: healthy });
+    getLogger().child({ module: "provider-health", },).info("All providers healthy", { count: healthy, },);
   }
 
   return updated;
@@ -94,28 +94,28 @@ export function getHealthCache(): ProviderHealthStatus[] {
 /**
  * Get health for a single provider by name.
  */
-export function getProviderHealth(name: string): ProviderHealthStatus | undefined {
-  return state.cache.find((p) => p.name === name);
+export function getProviderHealth(name: string,): ProviderHealthStatus | undefined {
+  return state.cache.find((p,) => p.name === name);
 }
 
 /**
  * Check if any providers are unhealthy.
  */
 export function hasUnhealthyProviders(): boolean {
-  return state.cache.some((p) => p.status !== "healthy");
+  return state.cache.some((p,) => p.status !== "healthy");
 }
 
 /**
  * Get list of unhealthy provider names.
  */
 export function getUnhealthyProviders(): string[] {
-  return state.cache.filter((p) => p.status !== "healthy").map((p) => p.name);
+  return state.cache.filter((p,) => p.status !== "healthy").map((p,) => p.name);
 }
 
 /**
  * Serialize a provider health status for API responses.
  */
-export function providerToSummary(p: ProviderHealthStatus) {
+export function providerToSummary(p: ProviderHealthStatus,) {
   return {
     name: p.name,
     label: p.label,

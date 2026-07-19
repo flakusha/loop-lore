@@ -17,7 +17,7 @@ export {
   startGenerationTracking,
 } from "./cancellation-tracker";
 
-export type { CompleteGenerationOpts, FailGenerationOpts, UpdateAttemptStatusOpts } from "./cancellation-tracker";
+export type { CompleteGenerationOpts, FailGenerationOpts, UpdateAttemptStatusOpts, } from "./cancellation-tracker";
 
 export {
   cancelGeneration,

@@ -10,14 +10,14 @@
  * Queue overflow: drops oldest entries, logs a warning entry.
  */
 
-import { formatTime, unixSec } from "../utils/date";
-import { formatJSONL } from "./formatters";
-import { AsyncLogQueueBase } from "./queue-base";
-import type { LogEntry } from "./types";
+import { formatTime, unixSec, } from "../utils/date";
+import { formatJSONL, } from "./formatters";
+import { AsyncLogQueueBase, } from "./queue-base";
+import type { LogEntry, } from "./types";
 
 export class AsyncLogQueue extends AsyncLogQueueBase {
   override async flush(): Promise<void> {
-    if (this.flushing || this.buffer.length === 0) return;
+    if (this.flushing || this.buffer.length === 0) { return; }
 
     this.flushing = true;
     try {
@@ -29,20 +29,20 @@ export class AsyncLogQueue extends AsyncLogQueueBase {
     this.scheduleFollowupFlush();
   }
 
-  protected handleTransportFailure(results: PromiseSettledResult<Awaited<void>[]>[]): void {
+  protected handleTransportFailure(results: PromiseSettledResult<Awaited<void>[]>[],): void {
     for (const result of results) {
-      if (result.status !== "rejected") continue;
+      if (result.status !== "rejected") { continue; }
 
       const fallback: LogEntry = {
         level: 40,
         timestamp: unixSec(),
         time: formatTime(),
         message: "transport write failed",
-        error: String(result.reason),
+        error: String(result.reason,),
         module: "logger",
       };
       try {
-        process.stderr.write(formatJSONL(fallback));
+        process.stderr.write(formatJSONL(fallback,),);
       } catch {
         // Last resort — swallow
       }
@@ -58,11 +58,11 @@ export class AsyncLogQueue extends AsyncLogQueueBase {
 
   /** Sync fallback for emergency shutdown — writes directly to stderr. */
   flushSync(): void {
-    const batch = [...this.buffer];
+    const batch = [...this.buffer,];
     this.buffer.length = 0;
     for (const entry of batch) {
       try {
-        process.stderr.write(formatJSONL(entry));
+        process.stderr.write(formatJSONL(entry,),);
       } catch {
         // Swallow
       }

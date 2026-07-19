@@ -4,7 +4,7 @@
  * Break circular dependency between story-types and quest-types.
  * Leaf node — no imports from other story type modules.
  */
-import type { WorldEventType as WET } from "../db/enums";
+import type { WorldEventType as WET, } from "../db/enums";
 
 // ─── World Events ────────────────────────────────────────────────
 export interface WorldEvent {
