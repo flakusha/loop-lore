@@ -35,17 +35,17 @@ const tsRules = {
   "unicorn/consistent-boolean-name": "off",
   "unicorn/filename-case": [
     "warn",
-    { cases: { kebabCase: true, pascalCase: true, snakeCase: true }, multipleFileExtensions: false },
+    { cases: { kebabCase: true, pascalCase: true, snakeCase: true, }, multipleFileExtensions: false, },
   ],
   "unicorn/consistent-function-scoping": "warn",
   "unicorn/custom-error-definition": "off",
   "unicorn/throw-new-error": "error",
   "unicorn/no-await-expression-member": "error",
-  "unicorn/switch-case-braces": ["error", "always"],
+  "unicorn/switch-case-braces": ["error", "always",],
   "unicorn/no-unnecessary-await": "error",
   "unicorn/expiring-todo-comments": "warn",
   "unicorn/prefer-top-level-await": "error",
-  "unicorn/catch-error-name": ["error", { name: "error" }],
+  "unicorn/catch-error-name": ["error", { name: "error", },],
   "unicorn/prefer-optional-catch-binding": "error",
   "unicorn/import-style": "off",
   "unicorn/no-top-level-side-effects": "off",
@@ -96,7 +96,7 @@ const tsRules = {
   "preserve-caught-error": "off",
 
   // ── TypeScript shared overrides ────────────────────────────
-  "@typescript-eslint/no-unused-vars": ["error", { argsIgnorePattern: "^_", varsIgnorePattern: "^_" }],
+  "@typescript-eslint/no-unused-vars": ["error", { argsIgnorePattern: "^_", varsIgnorePattern: "^_", },],
   "@typescript-eslint/non-nullable-type-assertion-style": "off",
   "@typescript-eslint/no-confusing-void-expression": "off",
   "@typescript-eslint/await-thenable": "off",
@@ -104,14 +104,14 @@ const tsRules = {
   "@typescript-eslint/prefer-nullish-coalescing": "off",
   "@typescript-eslint/no-unnecessary-condition": "off",
   "@typescript-eslint/use-unknown-in-catch-callback-variable": "off",
-  "@typescript-eslint/consistent-type-definitions": ["error", "interface"],
+  "@typescript-eslint/consistent-type-definitions": ["error", "interface",],
   "@typescript-eslint/no-misused-promises": "error",
 
   // ── Complexity ceiling ─────────────────────────────────────
-  "sonarjs/cognitive-complexity": ["warn", 20],
+  "sonarjs/cognitive-complexity": ["warn", 20,],
 
   // ── Import hygiene ─────────────────────────────────────────
-  "import/no-cycle": ["error", { maxDepth: 1 }],
+  "import/no-cycle": ["error", { maxDepth: 1, },],
   "import/first": "error",
   "import/no-mutable-exports": "error",
 
@@ -170,7 +170,7 @@ export default tseslint.config(
   // ── Markdown files: extract & lint code blocks ─────────────────
   ...markdown.configs.recommended,
   {
-    files: ["**/*.md/**"],
+    files: ["**/*.md/**",],
     rules: {
       "no-undef": "off",
       "no-unused-vars": "off",
@@ -181,8 +181,8 @@ export default tseslint.config(
   },
   // ── Server TypeScript: Bun/Node env, full type-checked rules ───
   {
-    files: ["src/**/*.ts"],
-    ignores: ["src/frontend/**/*.ts"],
+    files: ["src/**/*.ts",],
+    ignores: ["src/frontend/**/*.ts",],
     extends: [
       eslint.configs.recommended,
       ...tseslint.configs.strictTypeChecked,
@@ -206,13 +206,13 @@ export default tseslint.config(
       "unicorn/no-process-exit": "off",
       "@typescript-eslint/restrict-template-expressions": [
         "error",
-        { allowNumber: true, allowBoolean: true, allowAny: false, allowNullish: true },
+        { allowNumber: true, allowBoolean: true, allowAny: false, allowNullish: true, },
       ],
     },
   },
   // ── Frontend TypeScript: Browser env, DOM-lib tsconfig ─────────
   {
-    files: ["src/frontend/**/*.ts"],
+    files: ["src/frontend/**/*.ts",],
     extends: [
       eslint.configs.recommended,
       ...tseslint.configs.strictTypeChecked,
@@ -255,7 +255,7 @@ export default tseslint.config(
       // Frontend Alpine/htmx globals are `any`-typed — relax template/expression rules
       "@typescript-eslint/restrict-template-expressions": [
         "error",
-        { allowNumber: true, allowBoolean: true, allowAny: true, allowNullish: true },
+        { allowNumber: true, allowBoolean: true, allowAny: true, allowNullish: true, },
       ],
       "@typescript-eslint/restrict-plus-operands": "off",
       "@typescript-eslint/no-dynamic-delete": "off",
@@ -272,7 +272,7 @@ export default tseslint.config(
   },
   // ── E2E test TypeScript: Bun test env ──────────────────────
   {
-    files: ["tests/e2e/**/*.ts"],
+    files: ["tests/e2e/**/*.ts",],
     languageOptions: {
       parser: tseslint.parser,
       globals: {
@@ -295,9 +295,9 @@ export default tseslint.config(
   },
   // ── Config/JS files: no TS parser, just Unicorn + SonarJS ─────
   {
-    files: ["**/*.mjs", "**/*.cjs", "**/*.js"],
-    ignores: ["src/**/*.ts", "node_modules/**"],
-    extends: [eslint.configs.recommended],
+    files: ["**/*.mjs", "**/*.cjs", "**/*.js",],
+    ignores: ["src/**/*.ts", "node_modules/**",],
+    extends: [eslint.configs.recommended,],
     plugins: {
       unicorn: unicorn.configs["flat/recommended"].plugins.unicorn,
       sonarjs: sonarjs.configs.recommended.plugins.sonarjs,
@@ -314,7 +314,7 @@ export default tseslint.config(
       "sonarjs/no-empty-function": "off",
       "sonarjs/no-identical-functions": "off",
       "@typescript-eslint/no-unused-vars": "off",
-      "no-unused-vars": ["warn", { argsIgnorePattern: "^_", varsIgnorePattern: "^_" }],
+      "no-unused-vars": ["warn", { argsIgnorePattern: "^_", varsIgnorePattern: "^_", },],
       // No TS parser — type-aware rules disabled
       "@typescript-eslint/no-misused-promises": "off",
       "@typescript-eslint/consistent-type-definitions": "off",
@@ -324,7 +324,7 @@ export default tseslint.config(
   },
   // ── Overrides: test files ─────────────────────────────────────
   {
-    files: ["**/*.test.ts", "**/*.spec.ts", "**/__tests__/**/*.ts"],
+    files: ["**/*.test.ts", "**/*.spec.ts", "**/__tests__/**/*.ts",],
     rules: {
       "sonarjs/no-identical-functions": "off",
       "unicorn/consistent-function-scoping": "off",
@@ -344,7 +344,7 @@ export default tseslint.config(
   },
   // ── Overrides: scripts (utility tools, relaxed rules) ─────────────────
   {
-    files: ["src/scripts/**/*.ts"],
+    files: ["src/scripts/**/*.ts",],
     rules: {
       "unicorn/text-encoding-identifier-case": "off",
       "unicorn/escape-case": "off",

@@ -149,7 +149,7 @@ Before touching any feature, read the relevant spec in `docs/`:
 Functions with 3+ params take a single destructured object:
 
 ```ts
-function createQuest({ worldId, name, config, target }: CreateQuestOpts): Promise<string>;
+function createQuest({ worldId, name, config, target, }: CreateQuestOpts,): Promise<string>;
 ```
 
 94 `*Opts/*Options/*Params/*Input` interfaces across codebase. Use for all new functions.
@@ -173,15 +173,15 @@ Apply to: API responses, UI states, generation pipeline steps, event types.
 `assertNever` in default case catches missing enum/union cases at compile time:
 
 ```ts
-function assertNever(value: never): never {
-  throw new Error(`Unhandled: ${value}`);
+function assertNever(value: never,): never {
+  throw new Error(`Unhandled: ${value}`,);
 }
 switch (status) {
   case GenerationStatus.Pending:
     return "waiting";
   // ...
   default:
-    return assertNever(status);
+    return assertNever(status,);
 }
 ```
 
@@ -190,7 +190,7 @@ switch (status) {
 Prevent mixing up `userId`, `chatId`, `actorId` (all `string`):
 
 ```ts
-type Brand<Base, Tag> = Base & { readonly __brand: Tag };
+type Brand<Base, Tag,> = Base & { readonly __brand: Tag };
 type UserId = Brand<string, "UserId">;
 type ChatId = Brand<string, "ChatId">;
 ```
@@ -200,7 +200,7 @@ type ChatId = Brand<string, "ChatId">;
 `JsonResult<T>` already exists — extend to all fallible operations:
 
 ```ts
-type Result<T, E = Error> = { ok: true; value: T } | { ok: false; error: E };
+type Result<T, E = Error,> = { ok: true; value: T } | { ok: false; error: E };
 ```
 
 Reserve exceptions for truly exceptional situations. Expected failures → Result.

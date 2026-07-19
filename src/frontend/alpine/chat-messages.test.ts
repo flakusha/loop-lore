@@ -1,11 +1,11 @@
-import { describe, expect, test } from "bun:test";
-import { chatMessages } from "./chat-messages";
+import { describe, expect, test, } from "bun:test";
+import { chatMessages, } from "./chat-messages";
 
 globalThis.document = {
-  createElement: (tag: string) => {
-    const el: any = { style: {}, value: "", tagName: tag.toUpperCase() };
-    Object.defineProperty(el, "scrollHeight", { value: 20, writable: true, configurable: true });
-    if (tag === "textarea") el.scrollHeight = 20;
+  createElement: (tag: string,) => {
+    const el: any = { style: {}, value: "", tagName: tag.toUpperCase(), };
+    Object.defineProperty(el, "scrollHeight", { value: 20, writable: true, configurable: true, },);
+    if (tag === "textarea") { el.scrollHeight = 20; }
     return el;
   },
   querySelector: null,
@@ -14,33 +14,33 @@ globalThis.document = {
 describe("chatMessages", () => {
   describe("autoResize", () => {
     test("resizes textarea based on content", () => {
-      const textarea = document.createElement("textarea");
+      const textarea = document.createElement("textarea",);
       textarea.style.height = "auto";
-      Object.defineProperty(textarea, "scrollHeight", { value: 60, writable: true, configurable: true });
+      Object.defineProperty(textarea, "scrollHeight", { value: 60, writable: true, configurable: true, },);
 
-      chatMessages.autoResize!.call({}, textarea);
+      chatMessages.autoResize!.call({}, textarea,);
 
-      expect(textarea.style.height).toBe("60px");
+      expect(textarea.style.height,).toBe("60px",);
     });
 
     test("caps height at 200px", () => {
-      const textarea = document.createElement("textarea");
+      const textarea = document.createElement("textarea",);
       textarea.style.height = "auto";
-      Object.defineProperty(textarea, "scrollHeight", { value: 500, writable: true, configurable: true });
+      Object.defineProperty(textarea, "scrollHeight", { value: 500, writable: true, configurable: true, },);
 
-      chatMessages.autoResize!.call({}, textarea);
+      chatMessages.autoResize!.call({}, textarea,);
 
-      expect(textarea.style.height).toBe("200px");
+      expect(textarea.style.height,).toBe("200px",);
     });
 
     test("handles empty textarea", () => {
-      const textarea = document.createElement("textarea");
+      const textarea = document.createElement("textarea",);
       textarea.style.height = "auto";
-      Object.defineProperty(textarea, "scrollHeight", { value: 20, writable: true, configurable: true });
+      Object.defineProperty(textarea, "scrollHeight", { value: 20, writable: true, configurable: true, },);
 
-      chatMessages.autoResize!.call({}, textarea);
+      chatMessages.autoResize!.call({}, textarea,);
 
-      expect(textarea.style.height).toBe("20px");
+      expect(textarea.style.height,).toBe("20px",);
     });
   });
 
@@ -56,7 +56,7 @@ describe("chatMessages", () => {
     test("does nothing when sentinel not found", () => {
       // eslint-disable-next-line @typescript-eslint/no-deprecated -- intentional mock for testing
       document.querySelector = () => null;
-      expect(() => chatMessages.setupInfiniteScroll!.call({ scrollObserver: null, loadOlderMessages: () => {} })).not
+      expect(() => chatMessages.setupInfiniteScroll!.call({ scrollObserver: null, loadOlderMessages: () => {}, },)).not
         .toThrow();
     });
   });

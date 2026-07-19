@@ -1,7 +1,7 @@
 // src/transport/test/harness.ts — Protocol validation test harness
 
-import { CompressionAlgorithm, TransportProtocol } from "../../db/enums";
-import type { ProtocolHandler } from "../protocol.unified";
+import { CompressionAlgorithm, TransportProtocol, } from "../../db/enums";
+import type { ProtocolHandler, } from "../protocol.unified";
 
 /**
  * Individual test case within a transport test suite.
@@ -10,15 +10,15 @@ export interface TransportTestSuite {
   /** Verify connection establishment. */
   connect: () => Promise<void>;
   /** Verify send/receive round-trip. */
-  sendRecv: (payloads: string[]) => Promise<void>;
+  sendRecv: (payloads: string[],) => Promise<void>;
   /** Verify backpressure handling under large payloads. */
-  backpressure: (size: number) => Promise<void>;
+  backpressure: (size: number,) => Promise<void>;
   /** Verify reconnection after close. */
   reconnect: () => Promise<void>;
   /** Verify compression round-trip for a specific algorithm. */
-  compression: (algo: CompressionAlgorithm) => Promise<void>;
+  compression: (algo: CompressionAlgorithm,) => Promise<void>;
   /** Verify protocol upgrade path. */
-  upgrade: (from: TransportProtocol, to: TransportProtocol) => Promise<void>;
+  upgrade: (from: TransportProtocol, to: TransportProtocol,) => Promise<void>;
 }
 
 /**
@@ -58,8 +58,8 @@ export async function validateProtocol(
   const results: TestResult[] = [];
   const startTime = performance.now();
 
-  for (const [name, testFn] of Object.entries(tests)) {
-    if (typeof testFn !== "function") continue;
+  for (const [name, testFn,] of Object.entries(tests,)) {
+    if (typeof testFn !== "function") { continue; }
 
     const testStart = performance.now();
     let passed = false;
@@ -71,7 +71,7 @@ export async function validateProtocol(
       await (testFn as () => Promise<void>)();
       passed = true;
     } catch (error_) {
-      error = error_ instanceof Error ? error_.message : String(error_);
+      error = error_ instanceof Error ? error_.message : String(error_,);
     }
 
     results.push({
@@ -79,12 +79,12 @@ export async function validateProtocol(
       passed,
       durationMs: performance.now() - testStart,
       error,
-    });
+    },);
   }
 
   const totalDurationMs = performance.now() - startTime;
-  const passed = results.filter((r) => r.passed).length;
-  const failed = results.filter((r) => !r.passed).length;
+  const passed = results.filter((r,) => r.passed).length;
+  const failed = results.filter((r,) => !r.passed).length;
 
   return {
     // set by caller after validateProtocol() returns; protocol name not known here
@@ -108,21 +108,21 @@ export function buildDefaultTests(): TransportTestSuite {
       // Connection lifecycle tested by the caller with a fresh handler
     },
 
-    sendRecv(payloads: string[]): Promise<void> {
+    sendRecv(payloads: string[],): Promise<void> {
       // Send/receive tested by the caller with a connected handler
       for (const payload of payloads) {
         // Verify payload is a string (basic sanity)
         if (typeof payload !== "string") {
-          throw new TypeError(`expected string payload, got ${typeof payload}`);
+          throw new TypeError(`expected string payload, got ${typeof payload}`,);
         }
       }
       return Promise.resolve();
     },
 
-    backpressure(size: number): Promise<void> {
+    backpressure(size: number,): Promise<void> {
       // Backpressure test: send a large payload and verify it doesn't throw
       if (size <= 0) {
-        throw new TypeError("backpressure size must be > 0");
+        throw new TypeError("backpressure size must be > 0",);
       }
       return Promise.resolve();
     },
@@ -131,12 +131,12 @@ export function buildDefaultTests(): TransportTestSuite {
       // Reconnection tested by the caller (close + connect cycle)
     },
 
-    async compression(_algo: CompressionAlgorithm) {
+    async compression(_algo: CompressionAlgorithm,) {
       // Compression round-trip tested by the caller with compressed handler
       // no-op for no-op default
     },
 
-    async upgrade(_from: TransportProtocol, _to: TransportProtocol) {
+    async upgrade(_from: TransportProtocol, _to: TransportProtocol,) {
       // Upgrade tested by the caller with upgradeConnection()
     },
   };

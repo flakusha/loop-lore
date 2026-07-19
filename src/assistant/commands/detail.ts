@@ -2,12 +2,12 @@
 //
 // /detail — set message detail level (immersion, basic, detailed).
 
-import { type CommandResult, registerCommand } from "./registry";
+import { type CommandResult, registerCommand, } from "./registry";
 
-registerCommand("detail", async (args): Promise<CommandResult> => {
+registerCommand("detail", async (args,): Promise<CommandResult> => {
   const level = (args[0] || "").toLowerCase();
-  const validLevels = ["immersion", "basic", "detailed"];
-  if (!validLevels.includes(level)) {
+  const validLevels = ["immersion", "basic", "detailed",];
+  if (!validLevels.includes(level,)) {
     return {
       systemMessage: "Usage: /detail <immersion|basic|detailed> — set message detail level.",
       handled: true,
@@ -15,7 +15,7 @@ registerCommand("detail", async (args): Promise<CommandResult> => {
   }
   return {
     action: "set-detail-level",
-    actionPayload: { level },
+    actionPayload: { level, },
     handled: true,
   };
-});
+},);

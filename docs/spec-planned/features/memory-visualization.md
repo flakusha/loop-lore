@@ -28,18 +28,18 @@ export class MemoryGraph {
   private nodes: Map<string, MemoryNode> = new Map();
   private edges: MemoryEdge[] = [];
 
-  async buildFromWorld(worldId: string): Promise<void> {
+  async buildFromWorld(worldId: string,): Promise<void> {
     // Get all actors in world
-    const actors = await db.selectFrom("actors").selectAll().where("world_id", "=", worldId).execute();
+    const actors = await db.selectFrom("actors",).selectAll().where("world_id", "=", worldId,).execute();
 
     // Get locations
-    const locations = await db.selectFrom("locations").selectAll().where("world_id", "=", worldId).execute();
+    const locations = await db.selectFrom("locations",).selectAll().where("world_id", "=", worldId,).execute();
 
     // Get lore entries
     const lore = await db
-      .selectFrom("world_lore_entries")
+      .selectFrom("world_lore_entries",)
       .selectAll()
-      .where("world_id", "=", worldId)
+      .where("world_id", "=", worldId,)
       .execute();
 
     // Build nodes
@@ -49,7 +49,7 @@ export class MemoryGraph {
         type: "character",
         label: actor.name,
         data: actor,
-      });
+      },);
     }
 
     for (const loc of locations) {
@@ -58,7 +58,7 @@ export class MemoryGraph {
         type: "location",
         label: loc.name,
         data: loc,
-      });
+      },);
     }
 
     // Build edges from memories
@@ -70,45 +70,45 @@ export class MemoryGraph {
         type: "fact",
         label: entry.key,
         data: entry,
-      });
+      },);
 
       // Connect to characters who know this
       const knowingActors = await db
-        .selectFrom("actor_memories")
-        .select("actor_id")
-        .where("memory_key", "=", entry.key)
+        .selectFrom("actor_memories",)
+        .select("actor_id",)
+        .where("memory_key", "=", entry.key,)
         .execute();
 
-      for (const { actor_id } of knowingActors) {
+      for (const { actor_id, } of knowingActors) {
         this.edges.push({
           source: actor_id,
           target: factId,
           type: "knows",
-        });
+        },);
       }
     }
 
     // Build location visit edges from messages
-    await this.buildVisitEdges(worldId);
+    await this.buildVisitEdges(worldId,);
   }
 
-  private async buildVisitEdges(worldId: string): Promise<void> {
+  private async buildVisitEdges(worldId: string,): Promise<void> {
     const moves = await db
-      .selectFrom("messages")
+      .selectFrom("messages",)
       .selectAll()
-      .where("world_id", "=", worldId)
-      .where("content", "like", "%moved to%")
+      .where("world_id", "=", worldId,)
+      .where("content", "like", "%moved to%",)
       .execute();
 
     // Parse and create edges
     for (const msg of moves) {
-      const match = msg.content.match(/moved to ([A-Za-z\s]+)/);
+      const match = msg.content.match(/moved to ([A-Za-z\s]+)/,);
       if (match) {
         const locName = match[1];
         const loc = await db
-          .selectFrom("locations")
+          .selectFrom("locations",)
           .selectAll()
-          .where("name", "=", locName)
+          .where("name", "=", locName,)
           .executeTakeFirst();
 
         if (loc) {
@@ -116,7 +116,7 @@ export class MemoryGraph {
             source: msg.actor_id,
             target: loc.id,
             type: "visited",
-          });
+          },);
         }
       }
     }
@@ -128,15 +128,15 @@ export class MemoryGraph {
 
 ```typescript
 // src/frontend/alpine/memory-graph.ts
-import { Network } from "vis-network/standalone";
+import { Network, } from "vis-network/standalone";
 
 export function useMemoryGraph() {
   return {
     network: null as Network | null,
 
-    async init(container: HTMLElement, worldId: string) {
+    async init(container: HTMLElement, worldId: string,) {
       const graph = new MemoryGraph();
-      await graph.buildFromWorld(worldId);
+      await graph.buildFromWorld(worldId,);
 
       const data = {
         nodes: graph.nodes.values(),
@@ -144,27 +144,27 @@ export function useMemoryGraph() {
       };
 
       const options = {
-        physics: { stabilization: false },
-        interaction: { hover: true },
+        physics: { stabilization: false, },
+        interaction: { hover: true, },
         nodes: {
           shape: "dot",
           size: 15,
-          font: { size: 14 },
+          font: { size: 14, },
         },
       };
 
-      this.network = new Network(container, data, options);
+      this.network = new Network(container, data, options,);
 
-      this.network.on("click", (params) => {
+      this.network.on("click", (params,) => {
         if (params.nodes.length) {
-          this.showNodeDetail(params.nodes[0]);
+          this.showNodeDetail(params.nodes[0],);
         }
-      });
+      },);
     },
 
-    showNodeDetail(nodeId: string) {
-      const node = this.network?.getNode(nodeId);
-      this.$dispatch("show-memory-detail", { node });
+    showNodeDetail(nodeId: string,) {
+      const node = this.network?.getNode(nodeId,);
+      this.$dispatch("show-memory-detail", { node, },);
     },
   };
 }

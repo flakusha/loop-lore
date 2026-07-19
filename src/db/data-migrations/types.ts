@@ -1,5 +1,5 @@
-import type { Kysely } from "kysely";
-import type { DB } from "../../db/schema";
+import type { Kysely, } from "kysely";
+import type { DB, } from "../../db/schema";
 
 /**
  * Data Migration Interface
@@ -31,7 +31,7 @@ export interface DataMigration {
    * After transforming, SET data_version = toVersion.
    * Must be idempotent: running twice on same data is safe.
    */
-  up(db: Kysely<DB>): Promise<void>;
+  up(db: Kysely<DB>,): Promise<void>;
 }
 
 /**

@@ -1,6 +1,6 @@
-import { TransportProtocol } from "../db/enums";
+import { TransportProtocol, } from "../db/enums";
 
-import { TransportBase, type TransportBaseOptions } from "./base";
+import { TransportBase, type TransportBaseOptions, } from "./base";
 
 interface H2Options extends TransportBaseOptions {
   maxConcurrentStreams?: number;
@@ -9,8 +9,8 @@ interface H2Options extends TransportBaseOptions {
 export class H2Handler extends TransportBase<H2Options> {
   private streams = new Map<number, { read: Uint8Array[]; write: Uint8Array[] }>();
 
-  constructor(options: H2Options = {}) {
-    super(options);
+  constructor(options: H2Options = {},) {
+    super(options,);
   }
 
   protected getProtocol(): TransportProtocol {
@@ -25,7 +25,7 @@ export class H2Handler extends TransportBase<H2Options> {
     };
   }
 
-  send(_data: string | Uint8Array): Promise<void> {
+  send(_data: string | Uint8Array,): Promise<void> {
     this.ensureConnected();
     return Promise.resolve();
   }
@@ -36,6 +36,6 @@ export class H2Handler extends TransportBase<H2Options> {
   }
 }
 
-export function createH2Handler(options: H2Options = {}): H2Handler {
-  return new H2Handler(options);
+export function createH2Handler(options: H2Options = {},): H2Handler {
+  return new H2Handler(options,);
 }

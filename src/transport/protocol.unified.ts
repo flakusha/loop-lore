@@ -1,8 +1,8 @@
 // src/transport/protocol.unified.ts — Core transport interfaces
 
-import type { TransportProtocol } from "../db/enums";
+import type { TransportProtocol, } from "../db/enums";
 
-export type { TransportProtocol } from "../db/enums";
+export type { TransportProtocol, } from "../db/enums";
 
 /**
  * Represents an established transport connection.
@@ -32,10 +32,10 @@ export interface ProtocolHandler {
   connect(): Promise<Connection>;
 
   /** Send data over the connection. Throws on closed/failed connection. */
-  send(data: string | Uint8Array): Promise<void>;
+  send(data: string | Uint8Array,): Promise<void>;
 
   /** Retrieve negotiated value by signature key. */
-  get(signature: string): Promise<string>;
+  get(signature: string,): Promise<string>;
 
   /** Graceful close — drain in-flight, then tear down. */
   close(): Promise<void>;
@@ -46,9 +46,9 @@ export interface ProtocolHandler {
  * Adapters can implement this to emit connection lifecycle events.
  */
 export interface ProtocolEvents {
-  on(event: "open", listener: (connection: Connection) => void): void;
-  on(event: "message", listener: (data: string | Uint8Array) => void): void;
-  on(event: "error", listener: (error: Error) => void): void;
-  on(event: "close", listener: (code: number, reason: string) => void): void;
-  off(event: string, listener: (...args: unknown[]) => void): void;
+  on(event: "open", listener: (connection: Connection,) => void,): void;
+  on(event: "message", listener: (data: string | Uint8Array,) => void,): void;
+  on(event: "error", listener: (error: Error,) => void,): void;
+  on(event: "close", listener: (code: number, reason: string,) => void,): void;
+  off(event: string, listener: (...args: unknown[]) => void,): void;
 }

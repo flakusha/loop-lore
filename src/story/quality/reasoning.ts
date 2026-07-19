@@ -1,6 +1,6 @@
-import { QualityDimension } from "../../db/enums";
+import { QualityDimension, } from "../../db/enums";
 
-export function getReasoning(dimension: QualityDimension, score: number): string {
+export function getReasoning(dimension: QualityDimension, score: number,): string {
   /* eslint-disable unicorn/switch-case-braces */
   if (score >= 80) {
     switch (dimension) {

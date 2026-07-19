@@ -1,11 +1,11 @@
 // Quests Page component (quests.html)
-import { jsonBody } from "../alpine/json";
-import { log as rootLog } from "../alpine/logger";
-import { feFetch } from "../fe-fetch";
-import { showToast } from "../ui";
-import { getErrorMessage } from "./shared";
+import { jsonBody, } from "../alpine/json";
+import { log as rootLog, } from "../alpine/logger";
+import { feFetch, } from "../fe-fetch";
+import { showToast, } from "../ui";
+import { getErrorMessage, } from "./shared";
 
-const log = rootLog.child({ module: "quests" });
+const log = rootLog.child({ module: "quests", },);
 
 interface QuestRow {
   id: string;
@@ -46,26 +46,26 @@ globalThis.questsPage = function() {
     confirmDeleteQuest: "",
 
     get totalPages(): number {
-      return Math.ceil(this.total / this.pageSize) || 1;
+      return Math.ceil(this.total / this.pageSize,) || 1;
     },
 
     async init() {
-      const params = new URLSearchParams(globalThis.location.search);
-      this.worldId = params.get("worldId") || "";
+      const params = new URLSearchParams(globalThis.location.search,);
+      this.worldId = params.get("worldId",) || "";
 
       if (this.worldId) {
         // Verify the world exists before rendering — a stale/deleted id
         // in the URL must not force a blank quests page.
         try {
           const wRes = await feFetch(`/api/worlds/${this.worldId}`, {
-            headers: { Accept: "application/json" },
-          });
+            headers: { Accept: "application/json", },
+          },);
           if (!wRes.ok) {
-            globalThis.location.assign("/views/quests");
+            globalThis.location.assign("/views/quests",);
             return;
           }
         } catch {
-          globalThis.location.assign("/views/quests");
+          globalThis.location.assign("/views/quests",);
           return;
         }
         await this.loadQuests();
@@ -76,18 +76,18 @@ globalThis.questsPage = function() {
 
     async loadWorlds() {
       try {
-        const res = await feFetch("/api/worlds?pageSize=100", { headers: { Accept: "application/json" } });
+        const res = await feFetch("/api/worlds?pageSize=100", { headers: { Accept: "application/json", }, },);
         if (res.ok) {
           const data = await res.json();
           this.worldOptions = data.data || [];
         }
       } catch {
-        log.warn("Failed to load worlds");
+        log.warn("Failed to load worlds",);
       }
     },
 
-    goToWorld(id: string) {
-      if (!id) return;
+    goToWorld(id: string,) {
+      if (!id) { return; }
       globalThis.location.search = `?worldId=${id}`;
     },
 
@@ -96,7 +96,7 @@ globalThis.questsPage = function() {
       try {
         const res = await feFetch(
           `/api/worlds/${this.worldId}/quests?page=${this.page}&pageSize=${this.pageSize}`,
-          { headers: { Accept: "application/json" } },
+          { headers: { Accept: "application/json", }, },
         );
         if (res.ok) {
           const data = await res.json();
@@ -105,66 +105,66 @@ globalThis.questsPage = function() {
         }
         if (!this.worldName) {
           const wRes = await feFetch(`/api/worlds/${this.worldId}`, {
-            headers: { Accept: "application/json" },
-          });
+            headers: { Accept: "application/json", },
+          },);
           if (wRes.ok) {
             const wData = await wRes.json();
             this.worldName = wData.name || "";
           }
         }
       } catch {
-        showToast("error", "Failed to load quests");
+        showToast("error", "Failed to load quests",);
       } finally {
         this.loading = false;
       }
     },
 
-    async goPage(p: number) {
+    async goPage(p: number,) {
       this.page = p;
       await this.loadQuests();
     },
 
     async createQuest() {
-      if (!this.createName.trim()) return;
+      if (!this.createName.trim()) { return; }
       try {
         const body: Record<string, unknown> = {
           name: this.createName.trim(),
           description: this.createDescription.trim() || null,
           type: this.createType,
-          priority: Number(this.createPriority) || 5,
+          priority: Number(this.createPriority,) || 5,
         };
         const res = await feFetch(`/api/worlds/${this.worldId}/quests`, {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: jsonBody(body),
-        });
+          headers: { "Content-Type": "application/json", },
+          body: jsonBody(body,),
+        },);
         if (res.ok) {
-          showToast("success", "Quest created");
+          showToast("success", "Quest created",);
           this.showCreateForm = false;
           this.createName = "";
           this.createDescription = "";
           await this.loadQuests();
         } else {
-          showToast("error", await getErrorMessage(res, "Failed to create quest"));
+          showToast("error", await getErrorMessage(res, "Failed to create quest",),);
         }
       } catch {
-        showToast("error", "Network error");
+        showToast("error", "Network error",);
       }
     },
 
-    async deleteQuest(questId: string) {
-      if (this.confirmDeleteQuest !== questId) return;
+    async deleteQuest(questId: string,) {
+      if (this.confirmDeleteQuest !== questId) { return; }
       try {
-        const res = await feFetch(`/api/quests/${questId}`, { method: "DELETE" });
+        const res = await feFetch(`/api/quests/${questId}`, { method: "DELETE", },);
         if (res.ok) {
-          showToast("success", "Quest deleted");
+          showToast("success", "Quest deleted",);
           this.confirmDeleteQuest = "";
           await this.loadQuests();
         } else {
-          showToast("error", await getErrorMessage(res, "Failed to delete quest"));
+          showToast("error", await getErrorMessage(res, "Failed to delete quest",),);
         }
       } catch {
-        showToast("error", "Network error");
+        showToast("error", "Network error",);
       }
     },
 
@@ -174,23 +174,23 @@ globalThis.questsPage = function() {
     editPriority: 5,
     advanceDelta: 1,
 
-    formatDate(iso: string | null): string {
-      if (!iso) return "-";
-      return new Date(iso).toLocaleDateString();
+    formatDate(iso: string | null,): string {
+      if (!iso) { return "-"; }
+      return new Date(iso,).toLocaleDateString();
     },
 
-    progressPct(q: QuestRow): number {
-      if (!q.target || q.target <= 0) return 0;
-      return Math.min(100, Math.round(((q.progress ?? 0) / q.target) * 100));
+    progressPct(q: QuestRow,): number {
+      if (!q.target || q.target <= 0) { return 0; }
+      return Math.min(100, Math.round(((q.progress ?? 0) / q.target) * 100,),);
     },
 
-    expandQuest(questId: string) {
+    expandQuest(questId: string,) {
       if (this.expandedQuest === questId) {
         this.expandedQuest = "";
         return;
       }
       this.expandedQuest = questId;
-      const q = this.quests.find((x: QuestRow) => x.id === questId);
+      const q = this.quests.find((x: QuestRow,) => x.id === questId);
       if (q) {
         this.editName = q.name;
         this.editDescription = q.description || "";
@@ -198,46 +198,46 @@ globalThis.questsPage = function() {
       }
     },
 
-    async saveQuest(questId: string) {
+    async saveQuest(questId: string,) {
       try {
         const res = await feFetch(`/api/quests/${questId}`, {
           method: "PUT",
-          headers: { "Content-Type": "application/json" },
+          headers: { "Content-Type": "application/json", },
           body: jsonBody({
             name: this.editName.trim(),
             description: this.editDescription.trim() || null,
-            priority: Number(this.editPriority) || 5,
-          }),
-        });
+            priority: Number(this.editPriority,) || 5,
+          },),
+        },);
         if (res.ok) {
-          showToast("success", "Quest updated");
+          showToast("success", "Quest updated",);
           this.expandedQuest = "";
           await this.loadQuests();
         } else {
-          showToast("error", await getErrorMessage(res, "Failed"));
+          showToast("error", await getErrorMessage(res, "Failed",),);
         }
       } catch {
-        showToast("error", "Network error");
+        showToast("error", "Network error",);
       }
     },
 
-    async advanceQuest(questId: string) {
+    async advanceQuest(questId: string,) {
       try {
         const res = await feFetch(`/api/quests/${questId}/progress`, {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: jsonBody({ delta: Number(this.advanceDelta) || 1 }),
-        });
+          headers: { "Content-Type": "application/json", },
+          body: jsonBody({ delta: Number(this.advanceDelta,) || 1, },),
+        },);
         if (res.ok) {
           const entry = await res.json();
-          const q = this.quests.find((x: QuestRow) => x.id === questId);
-          if (q) q.progress = entry.progress ?? (q.progress ?? 0) + (Number(this.advanceDelta) || 1);
-          showToast("success", "Progress advanced");
+          const q = this.quests.find((x: QuestRow,) => x.id === questId);
+          if (q) { q.progress = entry.progress ?? (q.progress ?? 0) + (Number(this.advanceDelta,) || 1); }
+          showToast("success", "Progress advanced",);
         } else {
-          showToast("error", await getErrorMessage(res, "Failed"));
+          showToast("error", await getErrorMessage(res, "Failed",),);
         }
       } catch {
-        showToast("error", "Network error");
+        showToast("error", "Network error",);
       }
     },
   };

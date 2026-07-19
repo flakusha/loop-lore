@@ -34,7 +34,7 @@ export class MockLLMProvider implements LLMProvider {
   readonly capabilities = MOCK_CAPABILITIES;
 
   /** Throw ProviderError on complete()/stream() */
-  set failOnCall(v: boolean) {
+  set failOnCall(v: boolean,) {
     this._failOnCall = v;
   }
   get failOnCall(): boolean {
@@ -42,48 +42,48 @@ export class MockLLMProvider implements LLMProvider {
   }
 
   /** Throw on stream() specifically */
-  set streamError(v: boolean) {
+  set streamError(v: boolean,) {
     this._streamError = v;
   }
   get streamError(): boolean {
     return this._streamError;
   }
 
-  complete(_req: GenerateRequest): Promise<GenerateResponse> {
-    if (this._failOnCall) throw new Error("Mock provider failure");
+  complete(_req: GenerateRequest,): Promise<GenerateResponse> {
+    if (this._failOnCall) { throw new Error("Mock provider failure",); }
     return Promise.resolve({
       content: "Mock response content",
       thinking: undefined,
       finishReason: "stop",
-      usage: { promptTokens: 10, completionTokens: 20, totalTokens: 30 },
-    });
+      usage: { promptTokens: 10, completionTokens: 20, totalTokens: 30, },
+    },);
   }
 
-  stream(_req: GenerateRequest, handler: StreamHandler): Promise<GenerateResponse> {
+  stream(_req: GenerateRequest, handler: StreamHandler,): Promise<GenerateResponse> {
     if (this._streamError) {
-      throw new Error("Mock stream failure");
+      throw new Error("Mock stream failure",);
     }
-    handler({ type: "content", content: "Mock " });
-    handler({ type: "content", content: "streamed " });
-    handler({ type: "content", content: "response" });
+    handler({ type: "content", content: "Mock ", },);
+    handler({ type: "content", content: "streamed ", },);
+    handler({ type: "content", content: "response", },);
     handler({
       type: "done",
       finishReason: "stop",
-      usage: { promptTokens: 10, completionTokens: 20, totalTokens: 30 },
-    });
+      usage: { promptTokens: 10, completionTokens: 20, totalTokens: 30, },
+    },);
     return Promise.resolve({
       content: "Mock streamed response",
       thinking: undefined,
       finishReason: "stop",
-      usage: { promptTokens: 10, completionTokens: 20, totalTokens: 30 },
-    });
+      usage: { promptTokens: 10, completionTokens: 20, totalTokens: 30, },
+    },);
   }
 
   healthCheck(): Promise<{ status: "ok" }> {
-    return Promise.resolve({ status: "ok" as const });
+    return Promise.resolve({ status: "ok" as const, },);
   }
 
   listModels(): Promise<string[]> {
-    return Promise.resolve(["mock-model"]);
+    return Promise.resolve(["mock-model",],);
   }
 }

@@ -11,7 +11,7 @@ export interface ParsedCommand {
   raw: string;
 }
 
-export function parseCommand(input: string): ParsedCommand | null;
+export function parseCommand(input: string,): ParsedCommand | null;
 ```
 
 ## Built-in Commands

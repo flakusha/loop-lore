@@ -3,7 +3,7 @@
 // CCv3 (Character Card V3) normalizer.
 // Converts CCv3 format to canonical character card.
 
-import type { CanonicalCharacter, CharacterAsset, LorebookData } from "../parser";
+import type { CanonicalCharacter, CharacterAsset, LorebookData, } from "../parser";
 
 interface CCv3Data {
   name?: string;
@@ -56,7 +56,7 @@ interface CCv3Data {
 /**
  * Normalize CCv3 format to canonical character card.
  */
-export function normalizeCcV3(data: Record<string, unknown>): CanonicalCharacter {
+export function normalizeCcV3(data: Record<string, unknown>,): CanonicalCharacter {
   // Extract data from envelope if present
   const cardData = (data.data ?? data) as CCv3Data;
 
@@ -67,7 +67,7 @@ export function normalizeCcV3(data: Record<string, unknown>): CanonicalCharacter
       scan_depth: cardData.character_book.scan_depth,
       token_budget: cardData.character_book.token_budget,
       recursive_scanning: cardData.character_book.recursive_scanning,
-      entries: (cardData.character_book.entries ?? []).map((entry) => ({
+      entries: (cardData.character_book.entries ?? []).map((entry,) => ({
         keys: entry.keys ?? [],
         content: entry.content ?? "",
         enabled: entry.enabled ?? true,
@@ -86,7 +86,7 @@ export function normalizeCcV3(data: Record<string, unknown>): CanonicalCharacter
     }
     : undefined;
 
-  const assets: CharacterAsset[] | undefined = cardData.assets?.map((asset) => ({
+  const assets: CharacterAsset[] | undefined = cardData.assets?.map((asset,) => ({
     type: asset.type ?? "unknown",
     name: asset.name ?? "unnamed",
     uri: asset.uri ?? "",

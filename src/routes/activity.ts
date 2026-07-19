@@ -11,11 +11,11 @@
  * Elysia plugin — uses auth guard for authentication.
  */
 
-import { Elysia } from "elysia";
-import type { Kysely } from "kysely";
-import type { DB } from "../db/schema";
-import { unauthorized } from "../validation/middleware";
-import { jsonResponse } from "./http-utils";
+import { Elysia, } from "elysia";
+import type { Kysely, } from "kysely";
+import type { DB, } from "../db/schema";
+import { unauthorized, } from "../validation/middleware";
+import { jsonResponse, } from "./http-utils";
 
 interface ActivityEntry {
   unseenCount: number;
@@ -38,62 +38,62 @@ export async function computeActivity(
   userId: string,
 ): Promise<Record<string, ActivityEntry>> {
   const participants = await database
-    .selectFrom("chat_participants")
-    .select(["chat_id", "last_read_message_id"])
-    .where("actor_id", "=", userId)
+    .selectFrom("chat_participants",)
+    .select(["chat_id", "last_read_message_id",],)
+    .where("actor_id", "=", userId,)
     .execute();
 
-  if (participants.length === 0) return {};
+  if (participants.length === 0) { return {}; }
 
   const lastReadByChat = new Map<string, string | null>();
-  const chatIds = participants.map((p) => {
-    lastReadByChat.set(p.chat_id, p.last_read_message_id);
+  const chatIds = participants.map((p,) => {
+    lastReadByChat.set(p.chat_id, p.last_read_message_id,);
     return p.chat_id;
-  });
+  },);
 
   const chats = await database
-    .selectFrom("chats")
-    .select(["id", "name"])
-    .where("id", "in", chatIds)
+    .selectFrom("chats",)
+    .select(["id", "name",],)
+    .where("id", "in", chatIds,)
     .execute();
-  const chatNames = new Map(chats.map((c) => [c.id, c.name]));
+  const chatNames = new Map(chats.map((c,) => [c.id, c.name,]),);
 
   const latestMessages = await database
-    .selectFrom("messages")
-    .select(["chat_id", database.fn.max("created_at").as("latest_created")])
-    .where("chat_id", "in", chatIds)
-    .where("visibility", "=", "visible")
-    .groupBy("chat_id")
+    .selectFrom("messages",)
+    .select(["chat_id", database.fn.max("created_at",).as("latest_created",),],)
+    .where("chat_id", "in", chatIds,)
+    .where("visibility", "=", "visible",)
+    .groupBy("chat_id",)
     .execute();
-  const latestByChat = new Map(latestMessages.map((m) => [m.chat_id, m.latest_created]));
+  const latestByChat = new Map(latestMessages.map((m,) => [m.chat_id, m.latest_created,]),);
 
-  const lastReadIds = [...lastReadByChat.values()].filter(Boolean) as string[];
+  const lastReadIds = [...lastReadByChat.values(),].filter(Boolean,) as string[];
   const lastReadMap = new Map<string, string>();
   if (lastReadIds.length > 0) {
     const lastReadMsgs = await database
-      .selectFrom("messages")
-      .select(["id", "created_at"])
-      .where("id", "in", lastReadIds)
+      .selectFrom("messages",)
+      .select(["id", "created_at",],)
+      .where("id", "in", lastReadIds,)
       .execute();
     for (const msg of lastReadMsgs) {
-      lastReadMap.set(msg.id, msg.created_at);
+      lastReadMap.set(msg.id, msg.created_at,);
     }
   }
 
   const result: Record<string, ActivityEntry> = {};
 
   for (const chatId of chatIds) {
-    const lastReadId = lastReadByChat.get(chatId);
-    const lastReadCreatedAt = lastReadId ? lastReadMap.get(lastReadId) : undefined;
+    const lastReadId = lastReadByChat.get(chatId,);
+    const lastReadCreatedAt = lastReadId ? lastReadMap.get(lastReadId,) : undefined;
 
     let query = database
-      .selectFrom("messages")
-      .select(database.fn.countAll<number>().as("count"))
-      .where("chat_id", "=", chatId)
-      .where("visibility", "=", "visible");
+      .selectFrom("messages",)
+      .select(database.fn.countAll<number>().as("count",),)
+      .where("chat_id", "=", chatId,)
+      .where("visibility", "=", "visible",);
 
     if (lastReadCreatedAt) {
-      query = query.where("created_at", ">", lastReadCreatedAt);
+      query = query.where("created_at", ">", lastReadCreatedAt,);
     }
 
     const countResult = await query.executeTakeFirst();
@@ -101,21 +101,21 @@ export async function computeActivity(
 
     result[chatId] = {
       unseenCount,
-      lastMessageCreatedAt: latestByChat.get(chatId) ?? null,
-      chatName: chatNames.get(chatId) ?? "Unknown",
+      lastMessageCreatedAt: latestByChat.get(chatId,) ?? null,
+      chatName: chatNames.get(chatId,) ?? "Unknown",
     };
   }
 
   return result;
 }
 
-export function activityRoutes({ database }: { database: Kysely<DB> }) {
-  return new Elysia({ name: "activity" }).get("/api/chats/activity", async (ctx) => {
+export function activityRoutes({ database, }: { database: Kysely<DB> },) {
+  return new Elysia({ name: "activity", },).get("/api/chats/activity", async (ctx,) => {
     const userId = (ctx as any).userId as string | null;
     if (!userId) {
       return unauthorized();
     }
-    const chats = await computeActivity(database, userId);
-    return jsonResponse({ chats } satisfies ActivityResponse);
-  });
+    const chats = await computeActivity(database, userId,);
+    return jsonResponse({ chats, } satisfies ActivityResponse,);
+  },);
 }
