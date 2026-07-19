@@ -2,8 +2,8 @@
  * Story context section — current location and its state (time / weather /
  * atmosphere), only for story-mode chats.
  */
-import type { SectionBuilder } from "../types";
 import { wrapSection } from "../../xml-utils";
+import type { SectionBuilder } from "../types";
 
 export const storyContextSection: SectionBuilder = {
   name: "storyContext",

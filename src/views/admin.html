@@ -55,14 +55,7 @@
 
       <!-- Overview Tab -->
       <div x-show="activeTab === 'overview'">
-        <div
-          style="
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-            gap: var(--space-4);
-            padding: var(--space-6);
-          "
-        >
+        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: var(--space-4); padding: var(--space-6)">
           <div class="admin-stat-card">
             <div class="admin-stat-value" x-text="stats.users">0</div>
             <div class="admin-stat-label">Users</div>
@@ -91,13 +84,7 @@
         <div style="padding: 0 var(--space-6) var(--space-6)" x-show="recentEntries.length > 0">
           <h3 style="font-size: 14px; font-weight: 600; margin-bottom: var(--space-3)">Recent Activity</h3>
           <template x-for="e in recentEntries" :key="e.id">
-            <div
-              style="
-                padding: var(--space-2) 0;
-                border-bottom: 1px solid var(--border-default, #e9ecef);
-                font-size: 13px;
-              "
-            >
+            <div style="padding: var(--space-2) 0; border-bottom: 1px solid var(--border-default, #e9ecef); font-size: 13px">
               <span x-text="formatDate(e.created_at)"></span>
               <span style="margin: 0 4px">—</span>
               <span x-text="e.message" style="color: var(--text-secondary, #6c757d)"></span>
@@ -114,15 +101,7 @@
         </div>
         <template x-if="!loadingUsers">
           <div style="padding: var(--space-6)">
-            <div
-              style="
-                display: flex;
-                gap: var(--space-3);
-                margin-bottom: var(--space-4);
-                flex-wrap: wrap;
-                align-items: center;
-              "
-            >
+            <div style="display: flex; gap: var(--space-3); margin-bottom: var(--space-4); flex-wrap: wrap; align-items: center">
               <input
                 class="form-input"
                 type="search"
@@ -261,15 +240,7 @@
         </div>
         <template x-if="!loadingWorlds">
           <div style="padding: var(--space-6)">
-            <div
-              style="
-                display: flex;
-                gap: var(--space-3);
-                margin-bottom: var(--space-4);
-                flex-wrap: wrap;
-                align-items: center;
-              "
-            >
+            <div style="display: flex; gap: var(--space-3); margin-bottom: var(--space-4); flex-wrap: wrap; align-items: center">
               <input
                 class="form-input"
                 type="search"
@@ -356,15 +327,7 @@
         </div>
         <template x-if="!loadingChats">
           <div style="padding: var(--space-6)">
-            <div
-              style="
-                display: flex;
-                gap: var(--space-3);
-                margin-bottom: var(--space-4);
-                flex-wrap: wrap;
-                align-items: center;
-              "
-            >
+            <div style="display: flex; gap: var(--space-3); margin-bottom: var(--space-4); flex-wrap: wrap; align-items: center">
               <input
                 class="form-input"
                 type="search"
@@ -520,26 +483,16 @@
                       <td x-text="e.event_type || '-'" style="font-size: 12px"></td>
                       <td
                         x-text="e.message"
-                        style="
-                          font-size: 12px;
-                          max-width: 300px;
-                          overflow: hidden;
-                          text-overflow: ellipsis;
-                          white-space: nowrap;
-                        "
-                      ></td>
+                        style="font-size: 12px; max-width: 300px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap"
+                      >
+                      </td>
                     </tr>
                   </template>
                 </tbody>
               </table>
               <div
                 x-show="auditPages > 1"
-                style="
-                  display: flex;
-                  justify-content: center;
-                  gap: var(--space-2);
-                  margin-top: var(--space-4);
-                "
+                style="display: flex; justify-content: center; gap: var(--space-2); margin-top: var(--space-4)"
               >
                 <button
                   class="btn btn-secondary btn-xs"
@@ -579,7 +532,8 @@
                 @click="rescanProviders()"
                 :disabled="scanning"
                 x-text="scanning ? 'Scanning...' : 'Rescan Providers'"
-              ></button>
+              >
+              </button>
             </div>
             <div style="margin-bottom: var(--space-6)">
               <h3 style="font-size: 16px; font-weight: 600; margin-bottom: var(--space-3)">
@@ -587,17 +541,7 @@
               </h3>
               <div style="display: grid; gap: var(--space-3)">
                 <template x-for="r in modelRoleList" :key="r.role">
-                  <div
-                    style="
-                      display: grid;
-                      grid-template-columns: 120px 1fr 1fr auto;
-                      gap: var(--space-3);
-                      align-items: center;
-                      padding: var(--space-3);
-                      background: var(--bg-secondary, #f8f9fa);
-                      border-radius: 6px;
-                    "
-                  >
+                  <div style="display: grid; grid-template-columns: 120px 1fr 1fr auto; gap: var(--space-3); align-items: center; padding: var(--space-3); background: var(--bg-secondary, #f8f9fa); border-radius: 6px">
                     <div style="font-weight: 500; text-transform: capitalize" x-text="r.role"></div>
                     <select
                       class="form-input"
@@ -640,22 +584,8 @@
               <h3 style="font-size: 16px; font-weight: 600; margin-bottom: var(--space-3)">Providers</h3>
               <div style="display: grid; gap: var(--space-3)">
                 <template x-for="p in providers" :key="p.name">
-                  <div
-                    style="
-                      padding: var(--space-4);
-                      background: var(--bg-secondary, #f8f9fa);
-                      border-radius: 6px;
-                      border: 1px solid var(--border-default, #e9ecef);
-                    "
-                  >
-                    <div
-                      style="
-                        display: flex;
-                        justify-content: space-between;
-                        align-items: center;
-                        margin-bottom: var(--space-2);
-                      "
-                    >
+                  <div style="padding: var(--space-4); background: var(--bg-secondary, #f8f9fa); border-radius: 6px; border: 1px solid var(--border-default, #e9ecef)">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-2)">
                       <div style="display: flex; align-items: center; gap: var(--space-2)">
                         <span
                           style="display: inline-block; width: 8px; height: 8px; border-radius: 50%"
@@ -667,57 +597,38 @@
                           x-text="'(' + p.name + ')'"
                         ></span>
                       </div>
-                      <div
-                        style="
-                          display: flex;
-                          align-items: center;
-                          gap: var(--space-3);
-                          font-size: 12px;
-                          color: var(--text-secondary, #6c757d);
-                        "
-                      >
+                      <div style="display: flex; align-items: center; gap: var(--space-3); font-size: 12px; color: var(--text-secondary, #6c757d)">
                         <span x-text="p.modelCount + ' model(s)'"></span>
                         <span x-show="p.latencyMs" x-text="p.latencyMs + 'ms'"></span>
                         <button
                           class="btn btn-secondary btn-xs"
                           @click="expandProvider = expandProvider === p.name ? '' : p.name"
                           x-text="expandProvider === p.name ? 'Collapse' : 'Expand'"
-                        ></button>
+                        >
+                        </button>
                       </div>
                     </div>
                     <div
                       x-show="p.error"
                       style="font-size: 12px; color: #dc3545; margin-bottom: var(--space-2)"
                       x-text="p.error"
-                    ></div>
+                    >
+                    </div>
                     <div x-show="expandProvider === p.name" style="margin-top: var(--space-2)">
-                      <div
-                        style="
-                          font-size: 12px;
-                          color: var(--text-secondary, #6c757d);
-                          margin-bottom: var(--space-1);
-                        "
-                      >
+                      <div style="font-size: 12px; color: var(--text-secondary, #6c757d); margin-bottom: var(--space-1)">
                         Available Models:
                       </div>
                       <div style="display: flex; flex-wrap: wrap; gap: 4px">
                         <template x-for="m in getProviderModels(p.name)" :key="m">
                           <span
-                            style="
-                              font-size: 11px;
-                              padding: 2px 6px;
-                              background: var(--bg-tertiary, #fff);
-                              border: 1px solid var(--border-default, #e9ecef);
-                              border-radius: 4px;
-                            "
+                            style="font-size: 11px; padding: 2px 6px; background: var(--bg-tertiary, #fff); border: 1px solid var(--border-default, #e9ecef); border-radius: 4px"
                             x-text="m"
                           ></span>
                         </template>
                         <span
                           x-show="getProviderModels(p.name).length === 0"
                           style="font-size: 12px; color: var(--text-secondary, #6c757d)"
-                          >No models discovered</span
-                        >
+                        >No models discovered</span>
                       </div>
                     </div>
                   </div>
@@ -729,22 +640,8 @@
               <h3 style="font-size: 16px; font-weight: 600; margin-bottom: var(--space-3)">
                 Stable Diffusion
               </h3>
-              <div
-                style="
-                  padding: var(--space-4);
-                  background: var(--bg-secondary, #f8f9fa);
-                  border-radius: 6px;
-                  border: 1px solid var(--border-default, #e9ecef);
-                "
-              >
-                <div
-                  style="
-                    display: flex;
-                    align-items: center;
-                    gap: var(--space-2);
-                    margin-bottom: var(--space-3);
-                  "
-                >
+              <div style="padding: var(--space-4); background: var(--bg-secondary, #f8f9fa); border-radius: 6px; border: 1px solid var(--border-default, #e9ecef)">
+                <div style="display: flex; align-items: center; gap: var(--space-2); margin-bottom: var(--space-3)">
                   <span
                     style="display: inline-block; width: 8px; height: 8px; border-radius: 50%"
                     :style="{background: sdStatus === 'running' ? '#28a745' : sdStatus === 'stopped' ? '#dc3545' : '#ffc107'}"
@@ -759,27 +656,22 @@
                     Refresh
                   </button>
                 </div>
-                <div
-                  style="
-                    display: grid;
-                    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-                    gap: var(--space-3);
-                    font-size: 13px;
-                  "
-                >
+                <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: var(--space-3); font-size: 13px">
                   <div>
                     <div style="color: var(--text-secondary, #6c757d); margin-bottom: 2px">Status</div>
                     <div
                       style="font-weight: 500"
                       x-text="sdStatus === 'running' ? 'Active' : sdStatus === 'stopped' ? 'Not running' : 'Unknown'"
-                    ></div>
+                    >
+                    </div>
                   </div>
                   <div>
                     <div style="color: var(--text-secondary, #6c757d); margin-bottom: 2px">Latency</div>
                     <div
                       style="font-weight: 500"
                       x-text="sdLatencyMs != null ? sdLatencyMs + 'ms' : '—'"
-                    ></div>
+                    >
+                    </div>
                   </div>
                   <div>
                     <div style="color: var(--text-secondary, #6c757d); margin-bottom: 2px">Port</div>
@@ -792,18 +684,9 @@
                     <div style="font-weight: 500">SD.CPP, ComfyUI, External API</div>
                   </div>
                 </div>
-                <div
-                  style="
-                    margin-top: var(--space-3);
-                    padding-top: var(--space-3);
-                    border-top: 1px solid var(--border-default, #e9ecef);
-                    font-size: 12px;
-                    color: var(--text-secondary, #6c757d);
-                  "
-                >
-                  Image generation will be available once a Stable Diffusion backend is configured. Supported
-                  backends: local SD.CPP server, ComfyUI workflow engine, or external API (e.g. Stability AI,
-                  Replicate).
+                <div style="margin-top: var(--space-3); padding-top: var(--space-3); border-top: 1px solid var(--border-default, #e9ecef); font-size: 12px; color: var(--text-secondary, #6c757d)">
+                  Image generation will be available once a Stable Diffusion backend is configured. Supported backends:
+                  local SD.CPP server, ComfyUI workflow engine, or external API (e.g. Stability AI, Replicate).
                 </div>
               </div>
             </div>
@@ -826,17 +709,7 @@
             </template>
             <div style="display: grid; gap: var(--space-3)">
               <template x-for="p in pluginList" :key="p.name">
-                <div
-                  style="
-                    padding: var(--space-4);
-                    background: var(--bg-secondary, #f8f9fa);
-                    border-radius: 6px;
-                    border: 1px solid var(--border-default, #e9ecef);
-                    display: flex;
-                    justify-content: space-between;
-                    align-items: center;
-                  "
-                >
+                <div style="padding: var(--space-4); background: var(--bg-secondary, #f8f9fa); border-radius: 6px; border: 1px solid var(--border-default, #e9ecef); display: flex; justify-content: space-between; align-items: center">
                   <div>
                     <strong x-text="p.name"></strong>
                     <span
@@ -850,7 +723,8 @@
                     <div
                       style="font-size: 12px; color: var(--text-secondary); margin-top: 2px"
                       x-text="p.description"
-                    ></div>
+                    >
+                    </div>
                   </div>
                   <div style="display: flex; align-items: center; gap: var(--space-3)">
                     <span
@@ -885,23 +759,15 @@
           <div style="padding: var(--space-6)">
             <div style="display: grid; gap: var(--space-4)">
               <template x-for="c in systemConfig" :key="c.key">
-                <div
-                  style="
-                    display: grid;
-                    grid-template-columns: 200px 1fr auto auto;
-                    gap: var(--space-3);
-                    align-items: center;
-                    padding: var(--space-3);
-                    border-bottom: 1px solid var(--border-default, #e9ecef);
-                  "
-                >
+                <div style="display: grid; grid-template-columns: 200px 1fr auto auto; gap: var(--space-3); align-items: center; padding: var(--space-3); border-bottom: 1px solid var(--border-default, #e9ecef)">
                   <div>
                     <span x-text="displayKey(c.key)" style="font-weight: 500; font-size: 13px"></span>
                     <div
                       x-text="c.description"
                       style="font-size: 11px; color: var(--text-secondary)"
                       x-show="c.description"
-                    ></div>
+                    >
+                    </div>
                   </div>
                   <input
                     class="form-input"
@@ -937,28 +803,14 @@
         </div>
         <template x-if="!loadingAnalytics">
           <div style="padding: var(--space-6)">
-            <div
-              style="
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                margin-bottom: var(--space-4);
-              "
-            >
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-4)">
               <h3 style="font-size: 16px; font-weight: 600">Telemetry Summary</h3>
               <div style="display: flex; gap: var(--space-2)">
                 <button class="btn btn-secondary btn-xs" @click="loadAnalytics()">Refresh</button>
                 <button class="btn btn-danger btn-xs" @click="purgeAnalytics()">Purge Old</button>
               </div>
             </div>
-            <div
-              style="
-                display: grid;
-                grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-                gap: var(--space-4);
-                margin-bottom: var(--space-6);
-              "
-            >
+            <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: var(--space-4); margin-bottom: var(--space-6)">
               <div class="admin-stat-card">
                 <div class="admin-stat-value" x-text="analyticsSummary.total">0</div>
                 <div class="admin-stat-label">Total Events</div>
@@ -1036,14 +888,7 @@
         </div>
         <template x-if="!loadingHealth">
           <div style="padding: var(--space-6)">
-            <div
-              style="
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                margin-bottom: var(--space-4);
-              "
-            >
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-4)">
               <div style="display: flex; align-items: center; gap: var(--space-3)">
                 <h3 style="font-size: 16px; font-weight: 600">Server Health</h3>
                 <span
@@ -1054,14 +899,7 @@
               </div>
               <button class="btn btn-secondary btn-xs" @click="loadHealth()">Refresh</button>
             </div>
-            <div
-              style="
-                display: grid;
-                grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-                gap: var(--space-4);
-                margin-bottom: var(--space-6);
-              "
-            >
+            <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: var(--space-4); margin-bottom: var(--space-6)">
               <div class="admin-stat-card">
                 <div class="admin-stat-value" x-text="healthUptime"></div>
                 <div class="admin-stat-label">Uptime (s)</div>
@@ -1074,14 +912,16 @@
                 <div
                   class="admin-stat-value"
                   x-text="healthProviders.filter(p => p.status === 'healthy').length"
-                ></div>
+                >
+                </div>
                 <div class="admin-stat-label">Healthy</div>
               </div>
               <div class="admin-stat-card">
                 <div
                   class="admin-stat-value"
                   x-text="healthProviders.filter(p => p.status !== 'healthy').length"
-                ></div>
+                >
+                </div>
                 <div class="admin-stat-label">Degraded</div>
               </div>
             </div>
@@ -1094,25 +934,9 @@
             <h3 style="font-size: 14px; font-weight: 600; margin-bottom: var(--space-3)">Providers</h3>
             <div style="display: grid; gap: var(--space-3)">
               <template x-for="p in healthProviders" :key="p.name">
-                <div
-                  style="
-                    padding: var(--space-3);
-                    background: var(--bg-secondary, #f8f9fa);
-                    border-radius: 6px;
-                    border: 1px solid var(--border-default, #e9ecef);
-                    display: flex;
-                    align-items: center;
-                    gap: var(--space-3);
-                  "
-                >
+                <div style="padding: var(--space-3); background: var(--bg-secondary, #f8f9fa); border-radius: 6px; border: 1px solid var(--border-default, #e9ecef); display: flex; align-items: center; gap: var(--space-3)">
                   <span
-                    style="
-                      display: inline-block;
-                      width: 10px;
-                      height: 10px;
-                      border-radius: 50%;
-                      flex-shrink: 0;
-                    "
+                    style="display: inline-block; width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0"
                     :style="{background: p.status === 'healthy' ? '#28a745' : p.status === 'degraded' ? '#ffc107' : '#dc3545'}"
                   ></span>
                   <strong style="font-size: 14px" x-text="p.name"></strong>
@@ -1132,14 +956,7 @@
                   ></span>
                   <span
                     x-show="p.error"
-                    style="
-                      font-size: 11px;
-                      color: #dc3545;
-                      max-width: 300px;
-                      overflow: hidden;
-                      text-overflow: ellipsis;
-                      white-space: nowrap;
-                    "
+                    style="font-size: 11px; color: #dc3545; max-width: 300px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap"
                     x-text="p.error"
                   ></span>
                 </div>

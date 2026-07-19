@@ -13,11 +13,11 @@
  */
 import type { Kysely } from "kysely";
 import type { DB } from "../db/schema";
-import type { GroupTurnContext } from "../turning/types";
-import { TurnManager } from "../turning/turn-manager";
-import { extractMentionedActorIds } from "./mention-parser";
 import { getLogger, type Logger } from "../logger";
+import { TurnManager } from "../turning/turn-manager";
+import type { GroupTurnContext } from "../turning/types";
 import { safeJsonParse } from "../utils";
+import { extractMentionedActorIds } from "./mention-parser";
 
 const log: Logger = new Proxy({} as Logger, {
   get(_target, prop) {

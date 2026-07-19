@@ -10,9 +10,9 @@ export { selectNextGroupActor, type TurnSelectorOptions } from "./turn-selector"
 
 // ── Mention Parsing ────────────────────────────────────────
 export {
+  extractMentionedActorIds,
+  type ParsedMention,
+  parseInitiativeFlag,
   parseMentions,
   resolveMention,
-  extractMentionedActorIds,
-  parseInitiativeFlag,
-  type ParsedMention,
 } from "./mention-parser";

@@ -1,7 +1,7 @@
 /**
  * Unit tests for api-keys routes (Elysia plugin)
  */
-import { describe, test, expect } from "bun:test";
+import { describe, expect, test } from "bun:test";
 import { apiKeysRoutes } from "./api-keys";
 
 const mockDb = {} as any;

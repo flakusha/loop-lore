@@ -1,12 +1,12 @@
-import { describe, test, expect } from "bun:test";
+import { describe, expect, test } from "bun:test";
 import {
-  registerPolicyDetector,
   clearDetectors,
-  registerDefaultNullDetector,
   detectPolicyMismatch,
+  registerDefaultNullDetector,
+  registerPolicyDetector,
 } from "./policy-detector";
-import { DEFAULT_POLICY_DETECTION } from "./types";
 import type { PolicyDetector } from "./policy-detector";
+import { DEFAULT_POLICY_DETECTION } from "./types";
 import type { PolicyAnalysis } from "./types";
 
 interface DetectorResult {

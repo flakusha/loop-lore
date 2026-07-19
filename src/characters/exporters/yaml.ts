@@ -3,8 +3,8 @@
 // YAML exporter for character cards.
 // Converts canonical character card to YAML format.
 
-import type { CanonicalCharacter } from "../parser";
 import { dump as yamlDump } from "js-yaml";
+import type { CanonicalCharacter } from "../parser";
 
 /**
  * Export canonical character card to YAML format.

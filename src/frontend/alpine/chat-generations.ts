@@ -1,6 +1,6 @@
+import { apiFetch } from "./htmx";
 import { jsonBody, jsonParseOr } from "./json";
 import { log as rootLog } from "./logger";
-import { apiFetch } from "./htmx";
 import type { ChatState } from "./types";
 
 const log = rootLog.child({ module: "chat" });
@@ -70,12 +70,12 @@ export const chatGenerations: Partial<ChatState> & ThisType<ChatState> = {
         this.activeAttemptId = data.attemptId;
         this.generationDetail = data.generation
           ? {
-              attemptId: data.generation.attemptId,
-              status: data.generation.status,
-              elapsedMs: data.generation.elapsedMs,
-              chunksReceived: data.generation.chunksReceived,
-              charsReceived: data.generation.charsReceived,
-            }
+            attemptId: data.generation.attemptId,
+            status: data.generation.status,
+            elapsedMs: data.generation.elapsedMs,
+            chunksReceived: data.generation.chunksReceived,
+            charsReceived: data.generation.charsReceived,
+          }
           : null;
         const detail = this.generationDetail;
         if (detail) {

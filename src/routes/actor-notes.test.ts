@@ -1,7 +1,7 @@
 /**
  * Unit tests for actor-notes routes (Elysia plugin)
  */
-import { describe, test, expect } from "bun:test";
+import { describe, expect, test } from "bun:test";
 import { actorNotesRoutes } from "./actor-notes";
 
 const mockDb = {} as any;

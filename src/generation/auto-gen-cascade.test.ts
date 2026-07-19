@@ -9,12 +9,12 @@
  * prevent real LLM calls; verifies cascade logic via early returns
  * and mock call counts.
  */
-import { describe, test, expect, beforeEach, afterAll, mock } from "bun:test";
-import { createTestDb } from "../test-utils/create-test-db";
-import { uid } from "../utils";
-import { createLogger } from "../logger";
+import { afterAll, beforeEach, describe, expect, mock, test } from "bun:test";
 import type { Kysely } from "kysely";
 import type { DB } from "../db/schema";
+import { createLogger } from "../logger";
+import { createTestDb } from "../test-utils/create-test-db";
+import { uid } from "../utils";
 
 // ── Mock generation deps (prevents real LLM calls) ──────────────
 
@@ -23,7 +23,7 @@ const mockStartGenerationTracking = mock(() =>
   Promise.resolve({
     attemptId: "mock-attempt-id",
     abortSignal: new AbortController().signal,
-  }),
+  })
 );
 const mockCompleteGeneration = mock(() => Promise.resolve());
 
@@ -51,13 +51,13 @@ mock.module("./providers/registry", () => ({
             thinking: undefined,
             finishReason: "stop" as const,
             usage: { promptTokens: 0, completionTokens: 0, totalTokens: 0 },
-          }),
+          })
         ),
       },
       resolvedModel: "mock-model",
       resolvedApiKey: "mock-key",
       resolvedProviderName: "mock-provider",
-    }),
+    })
   ),
   listProviders: mock(() => ["mock-provider"]),
 }));

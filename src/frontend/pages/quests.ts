@@ -1,9 +1,9 @@
 // Quests Page component (quests.html)
+import { jsonBody } from "../alpine/json";
+import { log as rootLog } from "../alpine/logger";
 import { feFetch } from "../fe-fetch";
 import { showToast } from "../ui";
 import { getErrorMessage } from "./shared";
-import { log as rootLog } from "../alpine/logger";
-import { jsonBody } from "../alpine/json";
 
 const log = rootLog.child({ module: "quests" });
 
@@ -25,7 +25,7 @@ interface WorldOption {
   name: string;
 }
 
-globalThis.questsPage = function () {
+globalThis.questsPage = function() {
   return {
     worldId: "",
     worldName: "",

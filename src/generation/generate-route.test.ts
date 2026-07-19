@@ -6,18 +6,18 @@
  *
  * Uses in-memory SQLite + Kysely test DB. Mocks provider via registry.
  */
-import { describe, test, expect, beforeEach, afterAll } from "bun:test";
 import { Database } from "bun:sqlite";
+import { afterAll, beforeEach, describe, expect, test } from "bun:test";
 import { Kysely } from "kysely";
 import { randomUUID } from "node:crypto";
+import { loadConfig } from "../config/load";
+import type { Config } from "../config/schema";
+import { createSqliteDialect, setTestDatabase } from "../db/index";
 import type { DB } from "../db/schema";
 import { createLogger } from "../logger";
-import { createSqliteDialect, setTestDatabase } from "../db/index";
-import { registerProvider, getProvider } from "./providers/registry";
-import { handleGenerate } from "./generate-route";
-import type { Config } from "../config/schema";
-import { loadConfig } from "../config/load";
 import { MockLLMProvider } from "../test-utils/mock-provider";
+import { handleGenerate } from "./generate-route";
+import { getProvider, registerProvider } from "./providers/registry";
 
 // ── Test DB factory ───────────────────────────────────────────
 
@@ -370,7 +370,7 @@ describe("handleGenerate — streaming (SSE)", () => {
     expect(text).toContain("Mock ");
     expect(text).toContain("streamed ");
     expect(text).toContain("response");
-    expect(text).toContain('"type":"done"');
+    expect(text).toContain("\"type\":\"done\"");
   });
 
   test("stores streamed response in DB", async () => {

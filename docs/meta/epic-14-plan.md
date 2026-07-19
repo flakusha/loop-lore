@@ -1,7 +1,7 @@
 # Epic 14: Import/Export & Data Portability — Implementation Plan
 
-**Status:** Research Complete, Awaiting User Decisions  
-**Worktree:** `tree/feat-14-io`  
+**Status:** Research Complete, Awaiting User Decisions\
+**Worktree:** `tree/feat-14-io`\
 **Branch:** `feat-14-io`
 
 ---

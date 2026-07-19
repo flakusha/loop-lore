@@ -1,5 +1,5 @@
-import { minify as minifyHTML } from "html-minifier-terser";
 import CleanCSS from "clean-css";
+import { minify as minifyHTML } from "html-minifier-terser";
 import { minify as terserMinify } from "terser";
 
 const defaultHTMLOptions = {

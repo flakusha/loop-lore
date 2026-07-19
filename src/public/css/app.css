@@ -1508,9 +1508,7 @@ body {
   font-size: 18px;
   line-height: 1;
   border-radius: var(--radius-sm);
-  transition:
-    color var(--transition-fast),
-    background var(--transition-fast);
+  transition: color var(--transition-fast), background var(--transition-fast);
 }
 .toast .close:hover,
 .toast .close:focus-visible {
@@ -2339,9 +2337,7 @@ html {
   background: var(--color-surface);
   font-size: 13px;
   cursor: pointer;
-  transition:
-    background 0.15s,
-    border-color 0.15s;
+  transition: background 0.15s, border-color 0.15s;
 }
 .reaction-badge:hover {
   background: var(--color-surface-hover, rgb(128 128 128 / 10%));

@@ -6,22 +6,22 @@
 
 Bun provides first-class support for Linux, macOS, and Windows (v1.0+). Android support is available via community builds (Termux) starting with v1.3.14.
 
-| Platform          | Status          | Notes                                                                 |
-| ----------------- | --------------- | --------------------------------------------------------------------- |
-| Linux x64/arm64   | ✅ Full         | Native builds, glibc and musl variants                                |
-| macOS x64/arm64   | ✅ Full         | Native builds                                                         |
-| Windows x64/arm64 | ✅ Full         | Requires Windows 10 version 1809+                                     |
+| Platform          | Status         | Notes                                                                 |
+| ----------------- | -------------- | --------------------------------------------------------------------- |
+| Linux x64/arm64   | ✅ Full        | Native builds, glibc and musl variants                                |
+| macOS x64/arm64   | ✅ Full        | Native builds                                                         |
+| Windows x64/arm64 | ✅ Full        | Requires Windows 10 version 1809+                                     |
 | Android (Termux)  | ⚠️ Experimental | Community builds via glibc-runner or official ARM64 builds (v1.3.14+) |
 
 ### Deno
 
 Deno does not officially support Android or mobile platforms. Experimental support exists via Termux with manual patching.
 
-| Platform          | Status       | Notes                                              |
-| ----------------- | ------------ | -------------------------------------------------- |
-| Linux x64/arm64   | ✅ Full      | Native builds                                      |
-| macOS x64/arm64   | ✅ Full      | Native builds                                      |
-| Windows x64/arm64 | ✅ Full      | Native builds                                      |
+| Platform          | Status      | Notes                                              |
+| ----------------- | ----------- | -------------------------------------------------- |
+| Linux x64/arm64   | ✅ Full     | Native builds                                      |
+| macOS x64/arm64   | ✅ Full     | Native builds                                      |
+| Windows x64/arm64 | ✅ Full     | Native builds                                      |
 | Android (Termux)  | ⚠️ Community | Requires glibc-runner shim, manual binary patching |
 
 ## Windows Support
@@ -170,8 +170,8 @@ Both Bun and Deno support WASM. Consider:
 | -------- | ------------ | --- | ------ | --- | -------- | ---------------- |
 | Linux    | Bun/Deno     | ✅  | ✅     | ✅  | ✅       | ✅               |
 | macOS    | Bun/Deno     | ✅  | ✅     | ✅  | ✅       | ✅               |
-| Windows  | Bun          | ⚠️  | ✅     | ✅  | ✅       | ⚠️ (binaries)    |
-| Android  | Bun (Termux) | ⚠️  | ✅     | ✅  | ✅       | ❌ (native only) |
+| Windows  | Bun          | ⚠️   | ✅     | ✅  | ✅       | ⚠️ (binaries)     |
+| Android  | Bun (Termux) | ⚠️   | ✅     | ✅  | ✅       | ❌ (native only) |
 
 ## Recommendations
 

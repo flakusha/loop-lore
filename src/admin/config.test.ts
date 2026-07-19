@@ -1,12 +1,12 @@
 /**
  * Tests for admin/config.ts — System Config CRUD
  */
-import { describe, test, expect, beforeAll, afterAll } from "bun:test";
-import { createTestDb } from "../test-utils/create-test-db";
-import { getAllConfig, getConfig, setConfig, deleteConfig } from "./config";
-import { createLogger } from "../logger";
+import { afterAll, beforeAll, describe, expect, test } from "bun:test";
 import type { Kysely } from "kysely";
 import type { DB } from "../db/schema";
+import { createLogger } from "../logger";
+import { createTestDb } from "../test-utils/create-test-db";
+import { deleteConfig, getAllConfig, getConfig, setConfig } from "./config";
 
 describe("getAllConfig", () => {
   let db: Kysely<DB>;

@@ -1,7 +1,7 @@
 /**
  * Unit tests for quests routes (Elysia plugin)
  */
-import { describe, test, expect } from "bun:test";
+import { describe, expect, test } from "bun:test";
 import { questsRoutes } from "./quests";
 
 const mockDb = {} as any;

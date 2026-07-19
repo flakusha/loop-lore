@@ -2,20 +2,20 @@
  * Tests for crypto/actor-keys.ts — Actor key CRUD
  */
 
-import { describe, test, expect, beforeAll, afterAll } from "bun:test";
 import { Database } from "bun:sqlite";
+import { afterAll, beforeAll, describe, expect, test } from "bun:test";
 import { Kysely } from "kysely";
 import { createSqliteDialect } from "../db/index";
 import { up as migrate } from "../db/migrations/001_init";
 import type { DB } from "../db/schema";
 import {
-  generateActorKey,
   ensureActorKey,
-  loadActorKeys,
+  generateActorKey,
   getActorKey,
-  rotateActorKey,
-  revokeActorKey,
   listActorKeys,
+  loadActorKeys,
+  revokeActorKey,
+  rotateActorKey,
 } from "./actor-keys";
 import { initSmk } from "./smk";
 

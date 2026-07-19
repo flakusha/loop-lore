@@ -5,10 +5,10 @@
  */
 
 import { Elysia } from "elysia";
-import type { Db } from "../db";
 import type { Config } from "../config/schema";
-import { createEntityRoutes } from "./entity-routes";
+import type { Db } from "../db";
 import { EquipState } from "../db/enums";
+import { createEntityRoutes } from "./entity-routes";
 
 export function actorItemsRoutes(opts: { database: Db; config: Config }): Elysia {
   return createEntityRoutes(

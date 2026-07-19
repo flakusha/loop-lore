@@ -9,10 +9,10 @@
 // so a notification failure never breaks the primary request.
 
 import type { Kysely } from "kysely";
-import type { DB } from "../db/schema";
 import { NotificationType } from "../db/enums-core";
-import { uid, jsonParseOr, safeJsonStringify } from "../utils";
+import type { DB } from "../db/schema";
 import { getLogger } from "../logger";
+import { jsonParseOr, safeJsonStringify, uid } from "../utils";
 
 export { NotificationType } from "../db/enums-core";
 
@@ -322,8 +322,8 @@ export async function notifyQuestUpdate(
   const userIds = opts.chatId
     ? await participantActorIds(db, opts.chatId)
     : opts.worldId
-      ? await worldParticipantActorIds(db, opts.worldId)
-      : [];
+    ? await worldParticipantActorIds(db, opts.worldId)
+    : [];
   for (const userId of userIds) {
     await svc.create({
       userId,

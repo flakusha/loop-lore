@@ -49,9 +49,8 @@ export function filterCards(opts: FilterCardsOptions): void {
   for (const card of cards) {
     const name = (card.querySelector(opts.nameSelector)?.textContent ?? "").toLowerCase();
     const desc = (card.querySelector(opts.descSelector)?.textContent ?? "").toLowerCase();
-    const match =
-      (!query || name.includes(query) || desc.includes(query)) &&
-      (opts.matchExtra ? opts.matchExtra(card) : true);
+    const match = (!query || name.includes(query) || desc.includes(query))
+      && (opts.matchExtra ? opts.matchExtra(card) : true);
     (card as HTMLElement).style.display = match ? "" : "none";
     if (match) visible++;
   }
@@ -116,7 +115,7 @@ export interface FilterBarState {
   clearAll(): void;
 }
 
-globalThis.filterBar = function () {
+globalThis.filterBar = function() {
   return {
     query: "",
     typeFilter: "all",
@@ -130,8 +129,7 @@ globalThis.filterBar = function () {
     },
     triggerSearch(): void {
       const el = (this as any).$el as HTMLElement;
-      const searchUrl =
-        el.closest<HTMLElement>("[data-search-url]")?.dataset.searchUrl ?? "/dynamic/gallery/search";
+      const searchUrl = el.closest<HTMLElement>("[data-search-url]")?.dataset.searchUrl ?? "/dynamic/gallery/search";
       const targetId = el.closest<HTMLElement>("[data-target-id]")?.dataset.targetId ?? "asset-grid";
       const params = new URLSearchParams();
       if (this.query) params.set("q", this.query);

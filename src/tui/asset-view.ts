@@ -67,9 +67,8 @@ export class AssetView {
     // Navigation: left/right cycle through assets
     screen.key(["left", "right"], (_ch: string, key: { name: string }) => {
       if (!this.box.visible || this.assets.length === 0) return;
-      this.currentIndex =
-        (key.name === "left" ? this.currentIndex - 1 + this.assets.length : this.currentIndex + 1) %
-        this.assets.length;
+      this.currentIndex = (key.name === "left" ? this.currentIndex - 1 + this.assets.length : this.currentIndex + 1)
+        % this.assets.length;
       this.renderCurrent();
       screen.render();
     });
@@ -92,13 +91,13 @@ export class AssetView {
     );
 
     this.infoLabel.setContent(
-      `{bold}Name:{/bold} ${asset.filename}\n` +
-        `{bold}Type:{/bold} ${asset.asset_type}\n` +
-        `{bold}MIME:{/bold} ${asset.mime_type}\n` +
-        `{bold}Size:{/bold} ${sizeStr}\n` +
-        `{bold}Added:{/bold} ${asset.created_at.slice(0, 10)}\n` +
-        (asset.alt_text ? `{bold}Alt:{/bold} ${asset.alt_text}\n` : "") +
-        `\n{cyan-fg}← → navigate   Del: unlink{/cyan-fg}`,
+      `{bold}Name:{/bold} ${asset.filename}\n`
+        + `{bold}Type:{/bold} ${asset.asset_type}\n`
+        + `{bold}MIME:{/bold} ${asset.mime_type}\n`
+        + `{bold}Size:{/bold} ${sizeStr}\n`
+        + `{bold}Added:{/bold} ${asset.created_at.slice(0, 10)}\n`
+        + (asset.alt_text ? `{bold}Alt:{/bold} ${asset.alt_text}\n` : "")
+        + `\n{cyan-fg}← → navigate   Del: unlink{/cyan-fg}`,
     );
     /* eslint-enable unicorn/no-incorrect-template-string-interpolation */
 

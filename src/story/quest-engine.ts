@@ -6,17 +6,17 @@
  * completion detection, and reward distribution.
  */
 import type { Kysely } from "kysely";
-import type { DB } from "../db/schema";
-import { QuestType, QuestStatus, QuestProgressStatus } from "../db/enums";
-import type { QuestType as QT } from "../db/enums";
 import { randomUUID } from "node:crypto";
-import type { QuestConfig, QuestReward, WorldEvent } from "./types";
-import { safeJsonStringify, jsonParseOr } from "../utils";
+import { QuestProgressStatus, QuestStatus, QuestType } from "../db/enums";
+import type { QuestType as QT } from "../db/enums";
+import type { DB } from "../db/schema";
 import { getLogger } from "../logger";
-import { WorldStateService } from "./world-state";
-import { ItemsService } from "./items";
+import { jsonParseOr, safeJsonStringify } from "../utils";
 import { applyEvents } from "./events";
+import { ItemsService } from "./items";
 import { PROGRESS_CALCULATORS } from "./quests/registry";
+import type { QuestConfig, QuestReward, WorldEvent } from "./types";
+import { WorldStateService } from "./world-state";
 
 // ── Progress Entry ───────────────────────────────────────────
 
@@ -329,9 +329,9 @@ export class QuestEngine {
           status: completed ? QuestProgressStatus.Completed : QuestProgressStatus.Active,
           contributed_events: sourceMessageId
             ? (() => {
-                const r = safeJsonStringify([sourceMessageId]);
-                return r.ok ? r.value : "[]";
-              })()
+              const r = safeJsonStringify([sourceMessageId]);
+              return r.ok ? r.value : "[]";
+            })()
             : "[]",
           completed_at: completed ? new Date().toISOString() : null,
         })
@@ -342,14 +342,16 @@ export class QuestEngine {
     let oldMilestone: { progress: number; narrative: string } | undefined;
     let newMilestone: { progress: number; narrative: string } | undefined;
     for (const h of hooks) {
-      if (h.progress <= quest.progress && (!oldMilestone || h.progress > oldMilestone.progress))
+      if (h.progress <= quest.progress && (!oldMilestone || h.progress > oldMilestone.progress)) {
         oldMilestone = h;
+      }
       if (
-        h.progress <= newProgress &&
-        h.progress > quest.progress &&
-        (!newMilestone || h.progress > newMilestone.progress)
-      )
+        h.progress <= newProgress
+        && h.progress > quest.progress
+        && (!newMilestone || h.progress > newMilestone.progress)
+      ) {
         newMilestone = h;
+      }
     }
 
     let milestoneText: string | null = null;

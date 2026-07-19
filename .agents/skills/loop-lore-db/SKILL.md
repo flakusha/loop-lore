@@ -93,61 +93,60 @@ export const MessageVisibility = {
   Redacted: "redacted",
 } as const;
 
-export type MessageVisibility =
-  (typeof MessageVisibility)[keyof typeof MessageVisibility];
+export type MessageVisibility = (typeof MessageVisibility)[keyof typeof MessageVisibility];
 ```
 
 Key enums from `enums-core.ts`:
 
-| Enum                       | Values                                                                          |
-| -------------------------- | ------------------------------------------------------------------------------- |
-| `UserRole`                 | `admin`, `user`, `viewer`, `solo`                                               |
-| `UserStatus`               | `active`, `inactive`, `banned`                                                  |
-| `MessageVisibility`        | `visible`, `hidden_by_user`, `hidden_by_moderator`, `auto_hidden`, `redacted`   |
-| `MessageStatus`            | `sending`, `sent`, `confirmed`, `failed`, `cancelled`                           |
-| `MessageRole`              | `user`, `assistant`, `system`, `tool`                                           |
-| `MessageContentType`       | `text`, `image`, `audio`, `video`, `code`, `file`                               |
-| `MessageContentFormat`     | `markdown`, `plain`, `html`, `json`                                             |
-| `ContentEncoding`          | `none`, `gzip`, `zstd`, `brotli`                                                |
-| `ActorType`                | `user`, `character`, `narrator`, `system`                                       |
-| `AgentType`                | `none`, `ai`, `narrator`, `npc`                                                 |
-| `ActorVisibility`          | `visible`, `hidden`, `archived`                                                 |
-| `ChatType`                 | `user_character`, `user_user`, `user_assistant`                                 |
-| `ChatMode`                 | `story`, `group`, `freeform`                                                    |
-| `ChatPurpose`              | `chat`, `roleplay`, `story_generation`, `content_generation`, `data_generation` |
-| `TurnStrategy`             | `round_robin`, `scene_based`, `initiative`, `quest_driven`, `hybrid`            |
-| `ChatParticipantRole`      | `owner`, `participant`, `observer`                                              |
-| `PinnedState`              | `pinned`, `unpinned`                                                            |
-| `DefaultState`             | `default`, `not_default`                                                        |
-| `EquipState`               | `equipped`, `unequipped`                                                        |
-| `StackableState`           | `stackable`, `not_stackable`                                                    |
+| Enum                   | Values                                                                          |
+| ---------------------- | ------------------------------------------------------------------------------- |
+| `UserRole`             | `admin`, `user`, `viewer`, `solo`                                               |
+| `UserStatus`           | `active`, `inactive`, `banned`                                                  |
+| `MessageVisibility`    | `visible`, `hidden_by_user`, `hidden_by_moderator`, `auto_hidden`, `redacted`   |
+| `MessageStatus`        | `sending`, `sent`, `confirmed`, `failed`, `cancelled`                           |
+| `MessageRole`          | `user`, `assistant`, `system`, `tool`                                           |
+| `MessageContentType`   | `text`, `image`, `audio`, `video`, `code`, `file`                               |
+| `MessageContentFormat` | `markdown`, `plain`, `html`, `json`                                             |
+| `ContentEncoding`      | `none`, `gzip`, `zstd`, `brotli`                                                |
+| `ActorType`            | `user`, `character`, `narrator`, `system`                                       |
+| `AgentType`            | `none`, `ai`, `narrator`, `npc`                                                 |
+| `ActorVisibility`      | `visible`, `hidden`, `archived`                                                 |
+| `ChatType`             | `user_character`, `user_user`, `user_assistant`                                 |
+| `ChatMode`             | `story`, `group`, `freeform`                                                    |
+| `ChatPurpose`          | `chat`, `roleplay`, `story_generation`, `content_generation`, `data_generation` |
+| `TurnStrategy`         | `round_robin`, `scene_based`, `initiative`, `quest_driven`, `hybrid`            |
+| `ChatParticipantRole`  | `owner`, `participant`, `observer`                                              |
+| `PinnedState`          | `pinned`, `unpinned`                                                            |
+| `DefaultState`         | `default`, `not_default`                                                        |
+| `EquipState`           | `equipped`, `unequipped`                                                        |
+| `StackableState`       | `stackable`, `not_stackable`                                                    |
 
 Key enums from `enums-generation.ts`:
 
-| Enum                  | Values                                                          |
-| --------------------- | --------------------------------------------------------------- |
-| `GenerationStatus`    | `pending`, `processing`, `streaming`, `completed`, `failed`, `cancelled` |
-| `CancelReason`        | `user_cancel`, `repetition_detected`, `policy_mismatch`, `response_limit`, `chat_switch`, `timeout`, `error` |
-| `CancelSource`        | `user`, `system`, `detector`                                     |
-| `ChunkAction`         | `append`, `replace_last`, `thinking_start`, `thinking_end`       |
+| Enum               | Values                                                                                                       |
+| ------------------ | ------------------------------------------------------------------------------------------------------------ |
+| `GenerationStatus` | `pending`, `processing`, `streaming`, `completed`, `failed`, `cancelled`                                     |
+| `CancelReason`     | `user_cancel`, `repetition_detected`, `policy_mismatch`, `response_limit`, `chat_switch`, `timeout`, `error` |
+| `CancelSource`     | `user`, `system`, `detector`                                                                                 |
+| `ChunkAction`      | `append`, `replace_last`, `thinking_start`, `thinking_end`                                                   |
 
 Key enums from `enums-story.ts`:
 
-| Enum                   | Values                                                           |
-| ---------------------- | ---------------------------------------------------------------- |
-| `QuestStatus`          | `active`, `completed`, `failed`, `abandoned`                     |
-| `QuestType`            | `main`, `side`, `radiant`, `event`                               |
-| `QuestProgressStatus`  | `not_started`, `in_progress`, `completed`, `failed`              |
-| `TurnType`             | `player`, `gm`, `npc`, `narration`, `combat`                    |
-| `TurnStatus`           | `pending`, `in_progress`, `completed`, `failed`, `cancelled`     |
-| `SyntheticDataType`    | `chat_message`, `story_turn`, `quest`, `lore`, `world_state`    |
-| `SyntheticDataStatus`  | `generated`, `validated`, `approved`, `rejected`, `archived`     |
-| `SyntheticTestMode`    | `off`, `quality`, `adversarial`, `coverage`                      |
-| `WorldEventType`       | `narrative`, `combat`, `environmental`, `social`, `quest`        |
-| `QualityDimension`     | `coherence`, `creativity`, `consistency`, `engagement`, `relevance` |
-| `ItemCategory`         | `weapon`, `armor`, `consumable`, `key`, `misc`, `currency`       |
-| `ItemRarity`           | `common`, `uncommon`, `rare`, `epic`, `legendary`                |
-| `ItemVisibility`       | `visible`, `hidden`, `revealed`                                   |
+| Enum                  | Values                                                              |
+| --------------------- | ------------------------------------------------------------------- |
+| `QuestStatus`         | `active`, `completed`, `failed`, `abandoned`                        |
+| `QuestType`           | `main`, `side`, `radiant`, `event`                                  |
+| `QuestProgressStatus` | `not_started`, `in_progress`, `completed`, `failed`                 |
+| `TurnType`            | `player`, `gm`, `npc`, `narration`, `combat`                        |
+| `TurnStatus`          | `pending`, `in_progress`, `completed`, `failed`, `cancelled`        |
+| `SyntheticDataType`   | `chat_message`, `story_turn`, `quest`, `lore`, `world_state`        |
+| `SyntheticDataStatus` | `generated`, `validated`, `approved`, `rejected`, `archived`        |
+| `SyntheticTestMode`   | `off`, `quality`, `adversarial`, `coverage`                         |
+| `WorldEventType`      | `narrative`, `combat`, `environmental`, `social`, `quest`           |
+| `QualityDimension`    | `coherence`, `creativity`, `consistency`, `engagement`, `relevance` |
+| `ItemCategory`        | `weapon`, `armor`, `consumable`, `key`, `misc`, `currency`          |
+| `ItemRarity`          | `common`, `uncommon`, `rare`, `epic`, `legendary`                   |
+| `ItemVisibility`      | `visible`, `hidden`, `revealed`                                     |
 
 ## Schema Type Pattern
 
@@ -155,34 +154,34 @@ Key enums from `enums-story.ts`:
 import { Generated, GeneratedAlways } from "kysely";
 
 export interface Messages {
-  id: GeneratedAlways<string>;     // Auto-generated UUID
-  chat_id: string;                  // FK → chats.id
-  actor_id: string;                 // FK → actors.id
-  parent_id: string | null;         // FK → messages.id (tree model)
-  role: MessageRole;                // Enum: user, assistant, system, tool
-  content: string;                  // Message body
-  key_id: string | null;            // FK → actor_keys.id (encryption)
+  id: GeneratedAlways<string>; // Auto-generated UUID
+  chat_id: string; // FK → chats.id
+  actor_id: string; // FK → actors.id
+  parent_id: string | null; // FK → messages.id (tree model)
+  role: MessageRole; // Enum: user, assistant, system, tool
+  content: string; // Message body
+  key_id: string | null; // FK → actor_keys.id (encryption)
   content_format: MessageContentFormat; // markdown, plain, html, json
   content_type: MessageContentType; // text, image, audio, video, code, file
-  content_encoding: ContentEncoding;   // none, gzip, zstd, brotli
-  model_id: string | null;          // Model used for generation
-  provider: string | null;          // Provider name
+  content_encoding: ContentEncoding; // none, gzip, zstd, brotli
+  model_id: string | null; // Model used for generation
+  provider: string | null; // Provider name
   token_count_prompt: number | null;
   token_count_completion: number | null;
   token_count_total: number | null;
   token_cost: number | null;
   generation_time_ms: number | null;
   tokens_per_second: number | null;
-  status: MessageStatus;            // Enum
-  visibility: MessageVisibility;    // Enum
-  hidden_by: string | null;         // FK → users.id
+  status: MessageStatus; // Enum
+  visibility: MessageVisibility; // Enum
+  hidden_by: string | null; // FK → users.id
   hidden_reason: string | null;
-  idempotency_key: string | null;   // Dedup for retries
+  idempotency_key: string | null; // Dedup for retries
   continuation_index: number | null; // Chunk index for continuation
-  swipe_index: number | null;       // Alternative reply index
-  created_at: Generated<string>;    // Auto-timestamp
+  swipe_index: number | null; // Alternative reply index
+  created_at: Generated<string>; // Auto-timestamp
   edited_at: string | null;
-  attachments: string | null;       // JSON array of asset refs
+  attachments: string | null; // JSON array of asset refs
 }
 ```
 
@@ -216,7 +215,7 @@ Run: `bun run db:migrate`
 
 ```ts
 import { db } from "../db";
-import { MessageVisibility, GenerationStatus } from "../db/enums";
+import { GenerationStatus, MessageVisibility } from "../db/enums";
 
 // Select with enum filter
 const messages = await db

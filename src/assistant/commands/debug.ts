@@ -2,7 +2,7 @@
 //
 // /debug — toggle prompt debug view.
 
-import { registerCommand, type CommandResult } from "./registry";
+import { type CommandResult, registerCommand } from "./registry";
 
 registerCommand("debug", async (): Promise<CommandResult> => {
   return {

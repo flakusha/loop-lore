@@ -7,8 +7,8 @@
 
 import { Elysia, t } from "elysia";
 import type { Kysely } from "kysely";
-import type { DB } from "../db/schema";
 import { MessageRole, MessageStatus, MessageVisibility } from "../db/enums";
+import type { DB } from "../db/schema";
 import { notFound, unauthorized } from "../validation/middleware";
 
 interface HandlerOpts {
@@ -30,7 +30,7 @@ function escapeHtml(text: string): string {
     .replaceAll("&", "&amp;")
     .replaceAll("<", "&lt;")
     .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
+    .replaceAll("\"", "&quot;")
     .replaceAll("'", "&#039;");
 }
 

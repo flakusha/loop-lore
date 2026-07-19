@@ -6,7 +6,7 @@
  * Truncation-only MVP: summarization via SummarizeFn callback.
  */
 
-import type { ContextMessage, ContextWindowConfig, TokenCountFn, SummarizeFn } from "./context-window-config";
+import type { ContextMessage, ContextWindowConfig, SummarizeFn, TokenCountFn } from "./context-window-config";
 import { DEFAULT_CONTEXT_WINDOW, defaultTokenCount } from "./context-window-config";
 
 // ── Public exports ──────────────────────────────────────────

@@ -386,7 +386,7 @@ post_history_instructions = "Always respond in character."
 [character.greetings]
 alternate = [
   "Greetings, traveler. These ruins hold many secrets.",
-  "Well met! I didn't expect company down here."
+  "Well met! I didn't expect company down here.",
 ]
 ```
 
@@ -525,27 +525,27 @@ Styled format for web viewing and archival.
   <head>
     <title>Chat with Lyra</title>
     <style>
-      /* Embedded CSS for self-contained file */
-      body {
-        font-family: sans-serif;
-        max-width: 800px;
-        margin: 0 auto;
-      }
-      .message {
-        padding: 10px;
-        margin: 10px 0;
-        border-radius: 8px;
-      }
-      .user {
-        background: #e3f2fd;
-      }
-      .assistant {
-        background: #f3e5f5;
-      }
-      .metadata {
-        color: #666;
-        font-size: 0.9em;
-      }
+    /* Embedded CSS for self-contained file */
+    body {
+      font-family: sans-serif;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    .message {
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 8px;
+    }
+    .user {
+      background: #e3f2fd;
+    }
+    .assistant {
+      background: #f3e5f5;
+    }
+    .metadata {
+      color: #666;
+      font-size: 0.9em;
+    }
     </style>
   </head>
   <body>

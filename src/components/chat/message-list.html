@@ -149,9 +149,7 @@
                   </button>
                 </span>
               </template>
-              <template
-                x-if="msg.role === 'assistant' && (msg.status === 'cancelled' || msg.status === 'partial')"
-              >
+              <template x-if="msg.role === 'assistant' && (msg.status === 'cancelled' || msg.status === 'partial')">
                 <button
                   class="btn-icon-action action-continue"
                   title="Continue"
@@ -194,14 +192,16 @@
               class="stats-line"
               x-show="detailLevel === 'Detailed' && (msg.model_id || msg.provider)"
               x-text="statsLine(msg)"
-            ></div>
+            >
+            </div>
 
             <!-- Inline stats for Basic mode (subtle text, brightens on hover) -->
             <div
               class="stats-line stats-basic"
               x-show="detailLevel === 'Basic' && (msg.generation_time_ms || msg.token_count_total)"
               x-text="statsLine(msg)"
-            ></div>
+            >
+            </div>
 
             <!-- Prompt Debug View -->
             <template x-if="_debugView && msg.model_id">
@@ -268,9 +268,7 @@
                       ▶ Next Variant
                     </button>
                   </template>
-                  <template
-                    x-if="msg.role === 'assistant' && (msg.status === 'cancelled' || msg.status === 'partial')"
-                  >
+                  <template x-if="msg.role === 'assistant' && (msg.status === 'cancelled' || msg.status === 'partial')">
                     <button @click="continueMessage(msg.id); _hamburgerOpen[msg.id] = false">
                       ↳ Continue
                     </button>
