@@ -108,7 +108,7 @@ CHECKS[lint-css]="bun run lint:css"
 CHECKS[lint-html]="bun run lint:html"
 
 # Formatting
-CHECKS[format]="bun run format"
+CHECKS[format-dprint]="bun run format:dprint"
 CHECKS[md-lint]="bun run md:lint"
 
 echo -e "${CYAN}=== loop-lore parallel check runner ===${NC}"
