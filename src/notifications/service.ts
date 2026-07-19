@@ -321,9 +321,9 @@ export async function notifyQuestUpdate(
   const svc = new NotificationService(db,);
   const userIds = opts.chatId
     ? await participantActorIds(db, opts.chatId,)
-    : opts.worldId
-    ? await worldParticipantActorIds(db, opts.worldId,)
-    : [];
+    : (opts.worldId
+      ? await worldParticipantActorIds(db, opts.worldId,)
+      : []);
   for (const userId of userIds) {
     await svc.create({
       userId,
