@@ -4,7 +4,7 @@
 
 import { type CommandResult, registerCommand, } from "./registry";
 
-registerCommand("summarize", async (args, ctx,): Promise<CommandResult> => {
+function buildSummary(args: string[], ctx: { messages?: { role: string; content: string }[] },): CommandResult {
   if (!ctx.messages || ctx.messages.length === 0) {
     return { systemMessage: "No messages to summarize.", handled: true, };
   }
@@ -25,27 +25,12 @@ registerCommand("summarize", async (args, ctx,): Promise<CommandResult> => {
   ];
 
   return { systemMessage: lines.join("\n",), handled: true, };
+}
+
+registerCommand("summarize", async (args, ctx,): Promise<CommandResult> => {
+  return buildSummary(args, ctx,);
 },);
 
 registerCommand("sum", async (args, ctx,): Promise<CommandResult> => {
-  const count = parseInt(args[0] || "10", 10,) || 10;
-  if (!ctx.messages || ctx.messages.length === 0) {
-    return { systemMessage: "No messages to summarize.", handled: true, };
-  }
-
-  const recent = ctx.messages.slice(-count,);
-  const userMsgs = recent.filter((m,) => m.role === "user");
-  const aiMsgs = recent.filter((m,) => m.role === "assistant" || m.role === "character");
-
-  const lines = [
-    `**Conversation Summary** (last ${count} messages):`,
-    "",
-    `**User messages:** ${userMsgs.length}`,
-    ...userMsgs.map((m,) => `- ${m.content.slice(0, 100,)}...`),
-    "",
-    `**AI responses:** ${aiMsgs.length}`,
-    ...aiMsgs.map((m,) => `- ${m.content.slice(0, 100,)}...`),
-  ];
-
-  return { systemMessage: lines.join("\n",), handled: true, };
+  return buildSummary(args, ctx,);
 },);
