@@ -667,19 +667,15 @@ cmd_finalize() {
 
     # Step 6: Merge into master
     echo -e "${CYAN}Step 6: Merging '$branch' into master...${NC}"
-    local GIT_MERGE_FLAGS=()
-    gpg_merge_flags
-    if git -C "$REPO_ROOT" "${GIT_MERGE_FLAGS[@]}" merge "$branch" --no-edit; then
+    if git -C "$REPO_ROOT" merge "$branch" --no-edit; then
         echo -e "${GREEN}  ✓ Merged into master${NC}"
         # Verify merge commit is signed
-        if [[ ${#GIT_MERGE_FLAGS[@]} -gt 0 ]]; then
-            local merge_sha
-            merge_sha=$(git -C "$REPO_ROOT" rev-parse HEAD)
-            if git -C "$REPO_ROOT" verify-commit "$merge_sha" &>/dev/null; then
-                echo -e "${GREEN}  ✓ Merge commit GPG-signed ($merge_sha)${NC}"
-            else
-                echo -e "${YELLOW}  ⚠ Merge commit not signed — GPG key may be locked${NC}"
-            fi
+        local merge_sha
+        merge_sha=$(git -C "$REPO_ROOT" rev-parse HEAD)
+        if git -C "$REPO_ROOT" verify-commit "$merge_sha" &>/dev/null; then
+            echo -e "${GREEN}  ✓ Merge commit GPG-signed ($merge_sha)${NC}"
+        else
+            echo -e "${YELLOW}  ⚠ Merge commit not signed — GPG key may be locked${NC}"
         fi
     else
         echo -e "${RED}  ✗ Merge conflicts — resolve manually${NC}"
