@@ -155,9 +155,6 @@ Server, database, config, middleware, logger, transport layer.
 
 ## v0.1 — Foundation Completion
 
-> **Source of truth for task status:** `.plan/backlog.md` (active queue) and `.plan/epics/` (detailed plans).
-> This file retains completed-epic reference tables and architectural context.
-
 ### 10. Generation Foundation — ✅ Complete
 
 Tool-calling loop, provider resilience, streaming reconnect.
@@ -235,7 +232,7 @@ Tool-calling loop, provider resilience, streaming reconnect.
 | Bulk data export                  | `src/routes/settings.ts`   |
 | Asset download endpoint           | `src/assets/controller.ts` |
 
-### 15. i18n & Accessibility — ⬜ Not Started [P1]
+### 15. i18n & Accessibility — ⬜ Not Started [P2]
 
 | Task                                | Files                                    |
 | ----------------------------------- | ---------------------------------------- |
@@ -358,49 +355,95 @@ Full spec: `docs/spec/integrations/llm-serving.md`, `docs/spec/integrations/imag
 | Exact-match priority sorting | `src/search/sorter.ts`             |
 | Cursor-based pagination      | `src/db/pagination.ts`             |
 
+### 25. Memory Systems — ⬜ Not Started [P2]
+
+| Task                                  | Files                              |
+| ------------------------------------- | ---------------------------------- |
+| Three-tier memory system              | `src/memory/backend.ts`            |
+| Memory backend abstraction            | `src/memory/backend.ts`            |
+| Semantic memory extraction            | `src/memory/extraction.ts`         |
+| Procedural memory pattern learning    | `src/memory/learning.ts`           |
+| Memory search optimization            | `src/memory/search.ts`             |
+| Memory relationship ranking           | `src/memory/ranking.ts`            |
+| Memory auto-rewording                 | `src/memory/rewording.ts`          |
+| Memory context injection              | `src/memory/context.ts`            |
+| Memory visualization (graph/timeline)   | `src/memory/visualization.ts`      |
+| Memory selection UI                   | `src/components/chat/memory-panel.html` |
+
+See `.plan/features/epic-2026-25-memory-systems.md` for full spec.
+
+### 26. Avatar & Expression System — ⬜ Not Started [P2]
+
+| Task                              | Files                                 |
+| --------------------------------- | ------------------------------------- |
+| Three.js dependency               | `package.json`                        |
+| Avatar scene manager              | `src/frontend/3d/avatar-scene.ts`     |
+| VRM loader                        | `src/frontend/3d/vrm-loader.ts`       |
+| Expression controller             | `src/frontend/3d/expression-controller.ts` |
+| Emotion detection from text       | `src/characters/emotion-detection.ts` |
+| Avatar preview in editor          | `src/views/character-editor.html`     |
+| Model upload endpoint             | `src/routes/characters.ts`            |
+
+See `.plan/features/epic-2026-26-avatar-expression.md` for full spec.
+
+### 27. Testing Infrastructure — ⬜ Not Started [P1]
+
+| Task                              | Files                              |
+| --------------------------------- | ---------------------------------- |
+| E2E parallel suite fix            | `tests/e2e/helpers/server.ts`        |
+| E2E cascade failure fix           | `tests/e2e/flows/browser/`         |
+| Cancel-during-generation test     | `tests/e2e/flows/generation.test.ts` |
+| Generation idempotency test       | `tests/e2e/flows/generation.test.ts` |
+| Browser auth flow tests           | `tests/e2e/flows/browser/auth-flow.browser.ts` |
+| Browser chat flow tests           | `tests/e2e/flows/browser/chat-flow.browser.ts` |
+| Low-coverage route tests          | `src/routes/*.test.ts`             |
+| Story module tests                | `src/story/*.test.ts`              |
+| E2E performance benchmarks        | `scripts/bench-*.ts`               |
+
+See `.plan/features/epic-2026-27-testing-infrastructure.md` for full spec.
+
 ---
 
 ## Known Issues
 
-> **Full tracker:** `.plan/open-items.md` — all bugs, debt, and schema issues with resolution status.
-> Below: summary of active (unresolved) items only.
+### Resolved (2026-07-15)
 
-### Active Issues
+- **Boolean integer flags → typed state enums:** 5 columns converted to string enums with state machines. Migration 010 handles data transform.
 
-| ID     | Severity | Summary                                                                         |
-| ------ | -------- | ------------------------------------------------------------------------------- |
-| BUG.2  | Medium   | Browser E2E parallel suite instability — shared `cachedSoloUser` corrupts state |
-| BUG.3  | Medium   | Browser E2E cascade failure — shared `ctx.page` propagates timeouts             |
-| CAST.2 | High     | Fire-and-forget DB writes mask failures in `cancellation-actions.ts`            |
-| TUI.2  | Low      | No retry/idempotency key in TUI chat                                            |
-| TUI.3  | Low      | Left/right key conflict in TUI asset view                                       |
-| TEST.3 | Medium   | No cancel-during-generation E2E test                                            |
-| TEST.4 | Medium   | No generation idempotency E2E test                                              |
-| TEST.5 | Medium   | E2E test ordering fragile (shared mutable state)                                |
-| TEST.6 | Medium   | Browser auth flow incomplete                                                    |
-| TEST.7 | Medium   | Browser chat flow sends no messages                                             |
-| TEST.8 | Medium   | 17 quick-win source files untested                                              |
-| TEST.9 | Medium   | Story module nearly untested                                                    |
-| LINT.3 | Low      | 2 lint errors in `src/notifications/service.ts`                                 |
+### Resolved (2026-07-10)
 
-### Resolved
+- **TS strict-typing debt:** `Database`→`Db` alias rename; `bun run typecheck` clean.
 
-See `.plan/open-items.md` for full resolution log (DUP.1–8, BUG.1, SCHEMA.1–2, CAST.1/3–6, MIGRATION.1, UTIL.1, ENUM.1–2, ASSISTANT.1–3, TUI.1, AGE.1, BUILD.1, HTTP.1, TEST.1–2/10–12, LINT.1–2.1).
+### Browser E2E Instability
+
+- **Solo/Seed User ID Mismatch** — seed solo user with `UserRole.Solo` or login as seeded user.
+- **Parallel Suite Instability** — 7 browser E2E test files sharing `cachedSoloUser` singleton corrupt state. Fix: per-request singleton or shared fixture.
+- **Cascade Failure Pattern** — single test timeout kills all subsequent tests via shared `ctx.page`.
+
+### Schema Hardening — Resolved (2026-07-16)
+
+All 8 tasks completed (see `docs/spec/schema.md`): `LoreEntryStatus` enum, `KeyStatus` + state machine, naming alignment, `public_key` DDL column.
+
+### Remaining Review Findings (Round 3, 2026-07-06)
+
+See `reviews/review-rounds.md` for full detail. Key open items:
+
+| #  | File                            | Issue                                   |
+| -- | ------------------------------- | --------------------------------------- |
+| 15 | `src/db/migrations/001_init.ts` | `chat_participants` PK undocumented     |
+| 25 | `src/tui/chat.ts`               | No retry, no idempotency key            |
+| 26 | `src/tui/asset-view.ts`         | Left/right keys conflict with input nav |
 
 ---
 
 ## Cross-Reference
 
-| What                | Where                                    |
-| ------------------- | ---------------------------------------- |
-| Active task queue   | `.plan/backlog.md`                       |
-| Detailed epic plans | `.plan/epics/`                           |
-| Bug/debt tracker    | `.plan/open-items.md`                    |
-| Git issue tracker   | Issue Tracker (`EPIC-*`, `FEAT-*`)       |
-| Future/deferred     | `.plan/backlog.md` P3 section            |
-| Long-term vision    | `roadmap.md`                             |
-| DB schema           | `schema.md`                              |
-| Frontend UX         | `frontend/overview.md`, `frontend/chat/` |
-| TUI                 | `tui.md`                                 |
-| Assets              | `assets.md`                              |
-| Build               | `package.json` scripts                   |
+- Active development & bugs: `plan.md`, git issue tracker
+- Future / deferred: `.plan/backlog.md`
+- Long-term vision: `roadmap.md`
+- DB: `schema.md`
+- Frontend UX: `frontend/overview.md`, `frontend/chat/`
+- TUI: `tui.md`
+- Assets: `assets.md`
+- Build: `package.json` scripts
+- **Epic Features**: `.plan/features/` — Detailed epic plans with linked tasks
