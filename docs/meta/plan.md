@@ -410,6 +410,8 @@ See `.plan/features/epic-2026-27-testing-infrastructure.md` for full spec.
 | 3D model support                | `src/assets/model-validator.ts`    |
 | Asset versioning system           | `src/db/migrations/019_asset_versions.sql` |
 | Asset templates and presets       | `src/assets/templates.ts`          |
+| Asset storage compression         | `src/assets/storage/compressed.ts` |
+| Asset encryption-at-rest          | `src/assets/storage/encrypted.ts`  |
 
 See `.plan/features/epic-2026-28-asset-expansion.md` for full spec.
 
