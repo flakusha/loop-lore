@@ -7,7 +7,7 @@
 import type { ProviderInstanceConfig, } from "../../config/schema";
 import { safeJsonParse, safeJsonStringify, } from "../../utils";
 import { validateProviderUrl, } from "../../utils/url-validation";
-import type { GenerateRequest, GenerateResponse, LLMProvider, ProviderCapabilities, StreamHandler, } from "./types";
+import type { GenerateRequest, GenerateResponse, LLMProvider, ModelInfo, ProviderCapabilities, StreamHandler, } from "./types";
 import { ProviderAuthError, ProviderError, ProviderRateLimitError, } from "./types";
 
 // ── Capabilities ──────────────────────────────────────────
@@ -31,6 +31,27 @@ function parseSSELine(line: string,): Record<string, string> | null {
   if (payload === "[DONE]") { return { _done: "true", }; }
   const parsed = safeJsonParse<Record<string, string>>(payload,);
   return parsed.ok ? parsed.value : null;
+}
+
+// ── Model metadata extraction ─────────────────────────────
+
+/**
+ * Map an OpenAI-compatible /v1/models entry to ModelInfo.
+ * Carries provider-reported fields when present; advisory only.
+ */
+function modelInfoFromOpenAi(raw: Record<string, unknown>,): ModelInfo {
+  const id = typeof raw.id === "string" ? raw.id : "";
+  const info: ModelInfo = { id, raw, };
+  const ownedBy = raw.owned_by ?? raw.ownedBy;
+  if (typeof ownedBy === "string") { info.ownedBy = ownedBy; }
+  if (typeof raw.context_length === "number") { info.contextWindow = raw.context_length; }
+  if (typeof raw.max_output === "number") { info.maxOutput = raw.max_output; }
+  if (typeof raw.thinking === "boolean") { info.thinking = raw.thinking; }
+  if (typeof raw.tool_calling === "boolean") { info.toolCalling = raw.tool_calling; }
+  if (Array.isArray(raw.modalities,)) { info.modalities = raw.modalities.map(String,); }
+  const sizeMatch = id.match(/(\d+(?:\.\d+)?\s*[bB])/i,);
+  if (sizeMatch) { info.paramSize = sizeMatch[1]!.replace(/\s+/g, "",); }
+  return info;
 }
 
 // ── Provider class ────────────────────────────────────────
@@ -238,7 +259,7 @@ export class OpenAiCompatibleProvider implements LLMProvider {
       const latencyMs = Date.now() - start;
       return {
         status: models.length > 0 ? "ok" : "degraded",
-        model: models[0],
+        model: models[0]?.id,
         latencyMs,
       };
     } catch (error) {
@@ -252,7 +273,7 @@ export class OpenAiCompatibleProvider implements LLMProvider {
 
   // ── List models ────────────────────────────────────────
 
-  async listModels(): Promise<string[]> {
+  async listModels(): Promise<ModelInfo[]> {
     const url = new URL(`${this.baseUrl}/models`,);
     const response = await this.fetchRaw(url.href, undefined, undefined,);
 
@@ -260,8 +281,8 @@ export class OpenAiCompatibleProvider implements LLMProvider {
       await this.handleErrorResponse(response,);
     }
 
-    const data = (await response.json()) as { data?: { id: string }[] };
-    return data.data?.map((m,) => m.id) ?? [];
+    const data = (await response.json()) as { data?: Record<string, unknown>[] };
+    return data.data?.map((m,) => modelInfoFromOpenAi(m,),) ?? [];
   }
 
   // ── Internal helpers ───────────────────────────────────

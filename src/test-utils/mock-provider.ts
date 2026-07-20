@@ -13,6 +13,7 @@ import type {
   GenerateRequest,
   GenerateResponse,
   LLMProvider,
+  ModelInfo,
   ProviderCapabilities,
   StreamHandler,
 } from "@/generation/providers/types";
@@ -83,7 +84,7 @@ export class MockLLMProvider implements LLMProvider {
     return Promise.resolve({ status: "ok" as const, },);
   }
 
-  listModels(): Promise<string[]> {
-    return Promise.resolve(["mock-model",],);
+  listModels(): Promise<ModelInfo[]> {
+    return Promise.resolve([{ id: "mock-model", },],);
   }
 }
