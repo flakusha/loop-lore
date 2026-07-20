@@ -747,6 +747,41 @@ Issue: `EPIC-2026-52`.
 
 ---
 
+### 53. External Integrations: Provider Expansion — ⬜ Not Started [P1-High]
+
+Expand the provider system to cover all major local and remote inference platforms: LLM text (Anthropic, Gemini, Groq, DeepSeek, Mistral, Together, Fireworks, HuggingFace), image generation (DALL-E 3, Stability AI, Replicate), embeddings (OpenAI, Cohere, Jina, local), voice/TTS/STT (ElevenLabs, OpenAI, Piper, Whisper, Deepgram), and infrastructure (failover chains, API key management, health dashboard, model catalog sync, auto-start expansion, cost tracking). Currently: OpenAI-compatible + ComfyUI only.
+
+| Task                                            | Issue      | Effort |
+| ----------------------------------------------- | ---------- | ------ |
+| Anthropic native provider (Claude Messages)     | `FEAT-076` | High   |
+| Google Gemini native provider                   | `FEAT-077` | High   |
+| Groq provider (ultra-fast inference)            | `FEAT-078` | Low    |
+| Together AI & Fireworks provider                | `FEAT-079` | Low    |
+| DeepSeek provider                               | `FEAT-080` | Low    |
+| Mistral native provider                         | `FEAT-081` | Medium |
+| Ollama native provider (implement existing)     | `FEAT-082` | Medium |
+| HuggingFace Inference API provider              | `FEAT-083` | Medium |
+| DALL-E 3 image provider                         | `FEAT-084` | Medium |
+| Stability AI image provider                     | `FEAT-085` | Medium |
+| Replicate image provider                        | `FEAT-086` | Medium |
+| Cloud embedding providers                       | `FEAT-087` | High   |
+| Local embedding providers                       | `FEAT-088` | Medium |
+| ElevenLabs TTS provider                         | `FEAT-089` | Medium |
+| OpenAI TTS + Whisper STT provider               | `FEAT-090` | Medium |
+| Local TTS/STT providers (Piper, faster-whisper) | `FEAT-091` | Medium |
+| Provider failover chains                        | `FEAT-092` | High   |
+| Per-provider API key management UI              | `FEAT-093` | High   |
+| Provider health dashboard                       | `FEAT-094` | Medium |
+| Model catalog sync                              | `FEAT-095` | Medium |
+| Auto-start expansion (Ollama, vLLM, SGLang)     | `FEAT-096` | High   |
+| Provider usage cost tracking                    | `FEAT-097` | Medium |
+
+Detail: `docs/meta/external-integrations-plan.md`
+
+Issue: `EPIC-046`.
+
+---
+
 ## Quick-Win Features
 
 Smaller features extracted from feature-analysis that can ship independently:
