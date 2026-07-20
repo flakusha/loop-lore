@@ -32,18 +32,18 @@ Current status of feature areas. Checkmarks = code exists in `src/`.
 
 > **Detailed task breakdown:** `docs/meta/plan.md` (completed epics) and `.plan/backlog.md` (active queue).
 
-| Epic | Feature | Status |
-| ---- | ------- | ------ |
-| 16 | Observability — telemetry, admin analytics, CI config | 🟡 In progress |
-| 14 | Import/Export — character card PNG/YAML/TOML import | ⬜ P1 |
-| 11 | Admin & Settings — admin UI, per-user prefs | ⬜ P1 |
-| 23 | Assistant Commands — /improve, /image, /quest | ⬜ P1 |
-| 24 | Filtering & Pagination — combined filters, cursor pagination | ⬜ P1 |
-| 17 | Encryption Foundation — at-rest AES-256-GCM | ⬜ P1 |
-| 10 | Generation Foundation — tool-call loop, provider failover | ✅ Complete |
-| 15 | i18n & Accessibility — server-side i18n, ARIA, keyboard nav | ⬜ P1 |
-| 22 | RPG Mechanics Core — dice, stats, combat | ⬜ P2 |
-| 21 | Notification Expansion — noise presets, per-event thresholds | ⬜ P2 |
+| Epic | Feature                                                      | Status         |
+| ---- | ------------------------------------------------------------ | -------------- |
+| 16   | Observability — telemetry, admin analytics, CI config        | 🟡 In progress |
+| 14   | Import/Export — character card PNG/YAML/TOML import          | ⬜ P1          |
+| 11   | Admin & Settings — admin UI, per-user prefs                  | ⬜ P1          |
+| 23   | Assistant Commands — /improve, /image, /quest                | ⬜ P1          |
+| 24   | Filtering & Pagination — combined filters, cursor pagination | ⬜ P1          |
+| 17   | Encryption Foundation — at-rest AES-256-GCM                  | ⬜ P1          |
+| 10   | Generation Foundation — tool-call loop, provider failover    | ✅ Complete    |
+| 15   | i18n & Accessibility — server-side i18n, ARIA, keyboard nav  | ⬜ P1          |
+| 22   | RPG Mechanics Core — dice, stats, combat                     | ⬜ P2          |
+| 21   | Notification Expansion — noise presets, per-event thresholds | ⬜ P2          |
 
 ### Quick Wins
 
@@ -56,19 +56,19 @@ See `.plan/backlog.md` § Quick Wins for the full queue (Q1–Q5).
 
 ### User-Facing Features
 
-| Feature | Status | Spec |
-| ------- | ------ | ---- |
-| Advanced Memory Systems | 🟡 Partial | `docs/spec/memory-system.md` |
-| Lorebook/World Info | 🟡 Partial | `docs/spec/actors.md` |
-| Character Cards (V2/V3 PNG/JSON) | 🟡 Partial | `docs/spec/character-setup.md` |
-| Streaming Responses | ✅ Built | `src/generation/stream-buffer.ts` |
-| Multi-modal Support | 🟡 Partial | Image gen built; audio/video not |
-| Plugin System | 🟡 Partial | `src/plugins/` skeleton; no API |
-| Client Extensions | ⬜ Not built | — |
-| Conversation Branching | ⬜ Not built | `parent_id` in schema |
-| Character Relationships | ⬜ Not built | — |
-| Co-editing | ⬜ Not built | — |
-| Prompt Library | ⬜ Not built | — |
+| Feature                          | Status       | Spec                              |
+| -------------------------------- | ------------ | --------------------------------- |
+| Advanced Memory Systems          | 🟡 Partial   | `docs/spec/memory-system.md`      |
+| Lorebook/World Info              | 🟡 Partial   | `docs/spec/actors.md`             |
+| Character Cards (V2/V3 PNG/JSON) | 🟡 Partial   | `docs/spec/character-setup.md`    |
+| Streaming Responses              | ✅ Built     | `src/generation/stream-buffer.ts` |
+| Multi-modal Support              | 🟡 Partial   | Image gen built; audio/video not  |
+| Plugin System                    | 🟡 Partial   | `src/plugins/` skeleton; no API   |
+| Client Extensions                | ⬜ Not built | —                                 |
+| Conversation Branching           | ⬜ Not built | `parent_id` in schema             |
+| Character Relationships          | ⬜ Not built | —                                 |
+| Co-editing                       | ⬜ Not built | —                                 |
+| Prompt Library                   | ⬜ Not built | —                                 |
 
 ### Infrastructure
 
@@ -108,7 +108,7 @@ Federated Identity (Web3/DID), P2P modes (offline-first), Marketplace, Analytics
 
 ## Creative Ideas (Research)
 
-Research-driven feature proposals, separated by theme and linked from a hub. Derived from competitor analysis (SillyTavern, RisuAI, Agnai) plus community requests. Proposals only — not yet scheduled.
+Research-driven feature proposals, separated by theme and linked from a hub. Derived from analysis of community projects (SillyTavern, RisuAI, Agnai) plus community requests. Proposals only — not yet scheduled.
 
 - Hub: [docs/ideas/index.md](../ideas/index.md)
 - Themes: Immersion & Presentation, Prompt & Output Control, Memory/Continuity, Authoring, Social/Multiplayer, Platform & Reach, Analytics & Meta, 3D Worlds & Navigation — each linked from the hub.
@@ -123,13 +123,13 @@ See `docs/meta/plan.md` for completed epics, `.plan/backlog.md` for active queue
 
 > **Full issue list:** `.plan/tickets/` and `.plan/epics/`. Issues are created via `./scripts/worktree.sh ticket`.
 
-| Issue | Title | Priority | Source |
-| ----- | ----- | -------- | ------ |
-| [EPIC-2026-21](/meta/issues/#epic-2026-21) | Notification Expansion | medium | `.plan/backlog.md` |
-| [EPIC-2026-22](/meta/issues/#epic-2026-22) | RPG Mechanics Core | medium | `.plan/backlog.md` |
-| [EPIC-2026-23](/meta/issues/#epic-2026-23) | Assistant Commands | low | `.plan/backlog.md` |
-| [EPIC-2026-24](/meta/issues/#epic-2026-24) | Filtering & Pagination | low | `.plan/backlog.md` |
-| [FEAT-2026-013](/meta/issues/#feat-2026-013) | Regex output transforms | low | `.plan/backlog.md` |
-| [FEAT-2026-014](/meta/issues/#feat-2026-014) | Smart-regen transforms | low | `.plan/backlog.md` |
+| Issue                                        | Title                   | Priority | Source             |
+| -------------------------------------------- | ----------------------- | -------- | ------------------ |
+| [EPIC-2026-21](/meta/issues/#epic-2026-21)   | Notification Expansion  | medium   | `.plan/backlog.md` |
+| [EPIC-2026-22](/meta/issues/#epic-2026-22)   | RPG Mechanics Core      | medium   | `.plan/backlog.md` |
+| [EPIC-2026-23](/meta/issues/#epic-2026-23)   | Assistant Commands      | low      | `.plan/backlog.md` |
+| [EPIC-2026-24](/meta/issues/#epic-2026-24)   | Filtering & Pagination  | low      | `.plan/backlog.md` |
+| [FEAT-2026-013](/meta/issues/#feat-2026-013) | Regex output transforms | low      | `.plan/backlog.md` |
+| [FEAT-2026-014](/meta/issues/#feat-2026-014) | Smart-regen transforms  | low      | `.plan/backlog.md` |
 
 <!-- ISSUE-MAP-END -->
