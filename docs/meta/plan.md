@@ -2,7 +2,9 @@
 
 **v0.1 MVP — Epics 1–19: foundation hardening.**
 
-> **Task tracking moved to git issues.** Active epics and features are tracked as git-native-issues (e.g. `EPIC-2025-16`, `FEAT-2025-001`). See the [Issue Tracker](/meta/issues). This plan is the original MVP scope; current active work lives in issues.
+> **Task tracking moved to git issues.** Active epics and features are tracked as git-native-issues (e.g. `EPIC-2026-16`, `FEAT-2026-001`). See the [Issue Tracker](/meta/issues) for live state. The [backlog](/.plan/backlog) contains the full queue.
+
+**Cross-reference:** Each issue ID (e.g. `EPIC-2026-14`) links to its entry in the Issue Tracker via VitePress deep-linking.
 
 ---
 

@@ -81,6 +81,8 @@ Examples:
   $(basename "$0") agent-commit feature-xyz "feat(scope): add new feature"
   agent-commit <branch> <msg>  Create GPG-signed commit in worktree (agent MUST use this)
   commit <msg>             Create GPG-signed commit on current branch (including master)
+  ticket <TYPE> <NUM> <title> [body]  Create git-native-issue ticket with extid
+  issues                    List all open issues
   list                      Show all worktrees with status
   cleanup                   Remove worktrees for deleted branches
   remove <branch>           Remove specific worktree (blocks if dirty)
@@ -320,7 +322,6 @@ cmd_new() {
     echo -e "${GREEN}✓ Created: $worktree_path${NC}"
     echo -e "  cd $worktree_path"
 }
-
 cmd_list() {
     echo -e "${CYAN}Active worktrees:${NC}"
     echo ""
@@ -1109,6 +1110,7 @@ cmd_epic() {
 }
 
 cmd_ticket() {
+// hint: Structural and logic conflict. Both design and behavior differ.
     # Create issue with extended identifier and optional worktree
     # Usage: ./scripts/worktree.sh ticket <type> <id> [title]
     # Types: BUG, FEAT, FIX, IDEA, TASK, SOL
@@ -1159,6 +1161,7 @@ cmd_ticket() {
 }
 
 cmd_issues() {
+// hint: Structural and logic conflict. Both design and behavior differ.
     # List open issues with branch status
     # Usage: ./scripts/worktree.sh issues
     echo -e "${CYAN}Open Issues:${NC}"
@@ -1297,6 +1300,13 @@ issues)
     commit)
         shift
         cmd_commit "${1:-}"
+        ;;
+    ticket)
+        shift
+        cmd_ticket "${1:-}" "${2:-}" "${3:-}"
+        ;;
+    issues)
+        cmd_issues
         ;;
     prs)
         cmd_prs
