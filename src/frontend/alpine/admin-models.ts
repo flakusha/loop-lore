@@ -119,6 +119,35 @@ export const adminModels = {
   getProviderModels(name: string,): ModelInfo[] {
     return this.providerModels[name] || [];
   },
+  getSelectedModel(role: string,): ModelInfo | undefined {
+    const entry = this.modelRoleList.find((e,) => e.role === role);
+    if (!entry?.provider || !entry.model) { return undefined; }
+    return (this.providerModels[entry.provider] || []).find((m,) => m.id === entry.model);
+  },
+  modelSummary(m: ModelInfo | undefined,): string {
+    if (!m) { return ""; }
+    const parts: string[] = [];
+    if (m.paramSize) { parts.push(m.paramSize,); }
+    if (m.contextWindow) { parts.push(`${m.contextWindow} ctx`,); }
+    if (m.thinking) { parts.push("thinking",); }
+    if (m.toolCalling) { parts.push("tools",); }
+    if (m.modalities?.length) { parts.push(m.modalities.join("/",),); }
+    return parts.join(" · ",);
+  },
+  modelSuitability(m: ModelInfo | undefined,): string {
+    if (!m) { return ""; }
+    const ctx = m.contextWindow ?? 0;
+    const size = m.paramSize ? parseFloat(m.paramSize,) : NaN;
+    const lightweight = (!Number.isNaN(size,) && size <= 3) || (ctx > 0 && ctx < 8192);
+    if (lightweight) {
+      return "Lightweight — better for captioning, moderation, monitoring, censoring than roleplay";
+    }
+    const capable = ctx >= 32_000 || (!Number.isNaN(size,) && size >= 8);
+    if (capable) {
+      return "Capable — suited to long-form roleplay and storytelling";
+    }
+    return "";
+  },
   onRoleProviderChange(role: string,) {
     const entry = this.modelRoleList.find((e,) => e.role === role);
     if (entry) { entry.model = ""; }
