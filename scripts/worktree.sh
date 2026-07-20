@@ -62,6 +62,8 @@ Commands:
   agent-merge <branch>      Alias for finalize — merge worktree into master and clean up
   agent-commit <branch> <msg>  Create GPG-signed commit in worktree (agent MUST use this)
   commit <msg>             Create GPG-signed commit on current branch (including master)
+  ticket <TYPE> <NUM> <title> [body]  Create git-native-issue ticket with extid
+  issues                    List all open issues
   list                      Show all worktrees with status
   cleanup                   Remove worktrees for deleted branches
   remove <branch>           Remove specific worktree (blocks if dirty)
@@ -277,6 +279,52 @@ cmd_new() {
     configure_signing "$worktree_path"
     echo -e "${GREEN}✓ Created: $worktree_path${NC}"
     echo -e "  cd $worktree_path"
+}
+
+cmd_ticket() {
+    # Create a git-native-issue ticket with extended ID
+    # Usage: ./scripts/worktree.sh ticket <TYPE> <NUM> <title> [body]
+    local type="$1"
+    local num="$2"
+    local title="$3"
+    local body="${4:-}"
+
+    if [[ -z "$type" ]] || [[ -z "$num" ]] || [[ -z "$title" ]]; then
+        echo -e "${RED}Error: type, number, and title required${NC}"
+        echo "Usage: $(basename "$0") ticket <TYPE> <NUM> <title> [body]"
+        echo "  TYPE: BUG, FEAT, FIX, IDEA, TASK, SOL, INFRA"
+        echo "  NUM: 4-digit year-number (e.g., 2025-001)"
+        echo "  Example: $(basename "$0") ticket FEAT 2025-015 'New feature title'"
+        exit 1
+    fi
+
+    # Normalize type to uppercase
+    type=$(echo "$type" | tr '[:lower:]' '[:upper:]')
+    
+    # Validate type
+    case "$type" in
+        BUG|FEAT|FIX|IDEA|TASK|SOL|INFRA|EPIC) ;;
+        *) echo -e "${RED}Error: unknown type '$type'${NC}"; exit 1 ;;
+    esac
+
+    local extid="${type}-${num}"
+    local full_title="${extid}: ${title}"
+
+    # Check if already exists
+    if git -C "$REPO_ROOT" issue search "${extid}:" 2>/dev/null | grep -q "${extid}:"; then
+        echo -e "${YELLOW}Ticket ${extid} already exists${NC}"
+        exit 0
+    fi
+
+    echo -e "${CYAN}Creating ticket: ${extid}${NC}"
+    git -C "$REPO_ROOT" issue create "$full_title" -m "$body"
+    echo -e "${GREEN}✓ Created ticket ${extid}${NC}"
+}
+
+cmd_issues() {
+    # List all open issues
+    echo -e "${CYAN}Open issues:${NC}"
+    git -C "$REPO_ROOT" issue ls --format oneline 2>/dev/null | head -50
 }
 
 cmd_list() {
@@ -857,6 +905,13 @@ case "${1:-}" in
     commit)
         shift
         cmd_commit "${1:-}"
+        ;;
+    ticket)
+        shift
+        cmd_ticket "${1:-}" "${2:-}" "${3:-}"
+        ;;
+    issues)
+        cmd_issues
         ;;
     prs)
         cmd_prs
