@@ -145,6 +145,10 @@ openaiCompatible = []
 # jinja = true
 # extraArgs = ["--log-colors", "on"]
 #
+# [generation.autoStart.llamaSwap]
+# enabled = true
+# configPath = "~/git-ai/ai-scripts/llama-swap.yaml"  # ~ expands to $HOME
+#
 # [generation.autoStart.sdCpp]
 # enabled = true
 # modelType = "checkpoint"             # checkpoint (-m) or diffusion (--diffusion-model)
