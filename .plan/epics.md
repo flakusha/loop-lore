@@ -40,6 +40,7 @@
 | — | Assistant/GM Flows Reconciliation | ⬜ Not Started | Medium | 0 |
 | — | Chat/Group Chat Transfer & Location Change | ⬜ Not Started | Medium | 0 |
 | — | RPG Mechanics & Extensible Game Systems | ⬜ Not Started | Medium | 19 |
+| — | World & Locations | ⬜ Not Started | Medium | 0 |
 | — | Deno Support (Possible Node) | ⬜ Not Started | Low | 0 |
 | — | Two-Factor / Multi-Factor Auth | ⬜ Not Started | Medium | 0 |
 | — | LLM Request Throughput & Message Scheduling | ⬜ Not Started | Medium | 0 |
