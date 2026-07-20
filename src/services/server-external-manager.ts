@@ -68,6 +68,19 @@ export class ServerExternalManager {
    * modelPath accepts local path (/path/to/model.gguf) or HuggingFace ID (org/repo:quant).
    * Skips (returns null) if binary not found or port unavailable.
    */
+  // ── Helper: expand ~ to home directory ─────────────────────
+  private expandPath(path: string,): string {
+    if (path.startsWith("~",)) {
+      return `${homedir()}${path.slice(1,)}`;
+    }
+    return path;
+  }
+
+  /**
+   * Start llama.cpp server on given port.
+   * modelPath accepts local path (/path/to/model.gguf) or HuggingFace ID (org/repo:quant).
+   * Skips (returns null) if binary not found or port unavailable.
+   */
   async startLlamaCpp(opts: LlamaCppOptions,): Promise<ServerInstance | null> {
     const binary = findBinary("llama-cpp",);
     if (!binary) {
@@ -83,7 +96,7 @@ export class ServerExternalManager {
 
     const isHF = isHuggingFaceRef(opts.modelPath,);
     const modelFlag = isHF ? "-hf" : "-m";
-    const modelValue = isHF ? opts.modelPath : resolve(opts.modelPath,);
+    const modelValue = isHF ? opts.modelPath : resolve(this.expandPath(opts.modelPath,),);
     this.log.info("Starting llama.cpp", { binary, port: opts.port, model: modelValue, isHF, },);
 
     const args: string[] = [
@@ -169,12 +182,7 @@ export class ServerExternalManager {
       return null;
     }
 
-    // Expand ~ to home directory
-    const home = homedir();
-    const expandedPath = opts.configPath.startsWith("~",)
-      ? `${home}${opts.configPath.slice(1,)}`
-      : opts.configPath;
-    const resolvedConfig = resolve(expandedPath,);
+    const resolvedConfig = resolve(this.expandPath(opts.configPath,),);
     // llama-swap listens on `startPort` from its own config (default 8080).
     // The spawn command does not pass --port, so read the real port here.
     const port = this.resolveLlamaSwapPort(resolvedConfig,);
@@ -248,33 +256,36 @@ export class ServerExternalManager {
     const args: string[] = [binary, "--listen-port", String(opts.port,), "-l", "127.0.0.1",];
 
     // ── Model loading ─────────────────────────────────────
+    const modelPath = this.expandPath(opts.modelPath,);
     if (modelType === "diffusion") {
       if (!opts.llmPath) {
         this.log.warn(
           "sd-cpp diffusion model missing llmPath — model may fail to load if it needs a text encoder",
         );
       }
-      args.push("--diffusion-model", resolve(opts.modelPath,),);
-      if (opts.llmPath) { args.push("--llm", resolve(opts.llmPath,),); }
-      if (opts.vaePath) { args.push("--vae", resolve(opts.vaePath,),); }
+      args.push("--diffusion-model", resolve(modelPath,),);
+      if (opts.llmPath) { args.push("--llm", resolve(this.expandPath(opts.llmPath,),),); }
+      if (opts.vaePath) { args.push("--vae", resolve(this.expandPath(opts.vaePath,),),); }
     } else {
-      args.push("-m", resolve(opts.modelPath,),);
+      args.push("-m", resolve(modelPath,),);
     }
 
     // ── Text encoders ─────────────────────────────────────
-    if (opts.clipLPath) { args.push("--clip_l", resolve(opts.clipLPath,),); }
-    if (opts.clipGPath) { args.push("--clip_g", resolve(opts.clipGPath,),); }
-    if (opts.t5xxlPath) { args.push("--t5xxl", resolve(opts.t5xxlPath,),); }
+    if (opts.clipLPath) { args.push("--clip_l", resolve(this.expandPath(opts.clipLPath,),),); }
+    if (opts.clipGPath) { args.push("--clip_g", resolve(this.expandPath(opts.clipGPath,),),); }
+    if (opts.t5xxlPath) { args.push("--t5xxl", resolve(this.expandPath(opts.t5xxlPath,),),); }
 
     // ── Model components ──────────────────────────────────
     if (opts.vaeFormat) { args.push("--vae-format", opts.vaeFormat,); }
-    if (opts.controlNetPath) { args.push("--control-net", resolve(opts.controlNetPath,),); }
-    if (opts.loraDir) { args.push("--lora-model-dir", resolve(opts.loraDir,),); }
-    if (opts.taesdPath) { args.push("--taesd", resolve(opts.taesdPath,),); }
-    if (opts.hiresUpscalersDir) { args.push("--hires-upscalers-dir", resolve(opts.hiresUpscalersDir,),); }
-    if (opts.embdDir) { args.push("--embd-dir", resolve(opts.embdDir,),); }
-    if (opts.photoMakerPath) { args.push("--photo-maker", resolve(opts.photoMakerPath,),); }
-    if (opts.upscaleModelPath) { args.push("--upscale-model", resolve(opts.upscaleModelPath,),); }
+    if (opts.controlNetPath) { args.push("--control-net", resolve(this.expandPath(opts.controlNetPath,),),); }
+    if (opts.loraDir) { args.push("--lora-model-dir", resolve(this.expandPath(opts.loraDir,),),); }
+    if (opts.taesdPath) { args.push("--taesd", resolve(this.expandPath(opts.taesdPath,),),); }
+    if (opts.hiresUpscalersDir) {
+      args.push("--hires-upscalers-dir", resolve(this.expandPath(opts.hiresUpscalersDir,),),);
+    }
+    if (opts.embdDir) { args.push("--embd-dir", resolve(this.expandPath(opts.embdDir,),),); }
+    if (opts.photoMakerPath) { args.push("--photo-maker", resolve(this.expandPath(opts.photoMakerPath,),),); }
+    if (opts.upscaleModelPath) { args.push("--upscale-model", resolve(this.expandPath(opts.upscaleModelPath,),),); }
 
     // ── Boolean flags (add only if true) ──────────────────
     if (opts.fa) { args.push("--fa",); }
