@@ -27,6 +27,7 @@
 | — | Platform Research & Feature Adoption | 🟡 Permanently Ongoing | Medium | 3 |
 | — | User Story & Use Case Improvements | 🟡 Permanently Ongoing | Medium | 2 |
 | — | Tooling Support & Improvement | 🟡 Permanently Ongoing | Medium | 4 |
+| — | Logic Reconciliation | 🟡 Permanently Ongoing | High | 11 |
 
 ### Additional Epics
 
@@ -38,7 +39,9 @@
 | — | Impersonation System | ⬜ Not Started | Medium | 0 |
 | — | Assistant/GM Flows Reconciliation | ⬜ Not Started | Medium | 0 |
 | — | Chat/Group Chat Transfer & Location Change | ⬜ Not Started | Medium | 0 |
-| — | RPG Mechanics & Extensible Game Systems | ⬜ Not Started | Medium | 0 |
+| — | RPG Mechanics & Extensible Game Systems | ⬜ Not Started | Medium | 19 |
+| — | Deno Support (Possible Node) | ⬜ Not Started | Low | 0 |
+| — | Two-Factor / Multi-Factor Auth | ⬜ Not Started | Medium | 0 |
 | — | Platform Integrations | 📝 Draft (TBD) | Low | 0 |
 
 ## Active Epics
