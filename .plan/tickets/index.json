@@ -717,5 +717,19 @@
       "encryption"
     ],
     "source": ".plan/tickets/TASK-asset-storage-compression.md"
+  },
+  "TASK-plugin-management-api": {
+    "hash": "pending",
+    "extid": "TASK-plugin-management-api",
+    "type": "TASK",
+    "title": "Plugin management API (install/list/enable/disable)",
+    "label": "task",
+    "priority": "medium",
+    "epic": "EPIC-2026-11",
+    "tags": [
+      "plugin",
+      "admin"
+    ],
+    "source": ".plan/tickets/TASK-plugin-management-api.md"
   }
 }
