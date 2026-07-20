@@ -368,6 +368,15 @@ automatically for merge commit signing.
 # Validate + run checks + merge to master (signed) + remove worktree:
 ./scripts/worktree.sh finalize feature-xyz
 ./scripts/worktree.sh agent-merge feature-xyz   # alias
+
+# Direct GPG-signed commit on master (no worktree):
+./scripts/worktree.sh commit "chore: update documentation"
+
+# Create ticket + worktree:
+./scripts/worktree.sh ticket FEAT 026 "Mobile-Native UX Implementation"
+
+# List issues:
+./scripts/worktree.sh issues
 ```
 
 ### Guardrails
