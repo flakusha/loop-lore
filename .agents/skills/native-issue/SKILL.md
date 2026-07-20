@@ -46,11 +46,65 @@ live in `refs/issues/<uuid>` as commit chains with trailers for metadata.
 # Lists open issues with branch mapping
 ```
 
+### Show / Inspect an Issue
+
+```bash
+./scripts/worktree.sh show TASK-001
+# Full issue detail (metadata, body, trailers)
+```
+
+### Search Issues
+
+```bash
+./scripts/worktree.sh search "combat"
+# Fuzzy search across all issues
+```
+
+### Comment on an Issue
+
+```bash
+./scripts/worktree.sh comment TASK-001 -m "blocked on schema"
+# Appends a comment to the issue chain
+```
+
+### Edit an Issue
+
+```bash
+./scripts/worktree.sh edit TASK-001 --title "New title" --body "New body"
+# Amends issue metadata/body
+```
+
+### Change Issue State
+
+```bash
+./scripts/worktree.sh state TASK-001 in_progress
+# Transitions issue status (open|in_progress|done|blocked)
+```
+
+### Attach Files
+
+```bash
+./scripts/worktree.sh attach TASK-001 ./spec.md
+# Attach a single file to the issue
+./scripts/worktree.sh attach-dir TASK-001 ./design-notes/
+# Attach every file in a directory
+```
+
 ### Run git-issue Directly
 
 ```bash
-./scripts/worktree.sh issue <args>
-# Passes through to git-issue command
+./scripts/worktree.sh gi <args>
+# Passes through to git-issue command (alias for `issue`)
+```
+
+### Shortcut: `git issue` in Worktree
+
+All subcommands above also work via the canonical `issue` dispatch:
+
+```bash
+./scripts/worktree.sh issue show TASK-001
+./scripts/worktree.sh issue search "combat"
+./scripts/worktree.sh issue attach TASK-001 ./spec.md
 ```
 
 ## Commit Trailers
