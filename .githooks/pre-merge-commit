@@ -1,0 +1,117 @@
+#!/bin/sh
+# Pre-merge-commit hook — validate merge conflict resolution
+#
+# Runs after `git merge` resolves conflicts but before commit.
+# Checks for:
+#   1. Conflict markers left in files (<<<<<<, =======, >>>>>>)
+#   2. TypeScript compilation errors
+#   3. Test failures on resolved code
+#
+# Install: git config core.hooksPath .githooks && chmod +x .githooks/pre-merge-commit
+
+set -u
+
+failures=0
+
+red() { printf "\033[31m%s\033[0m\n" "$*"; }
+green() { printf "\033[32m%s\033[0m\n" "$*"; }
+yellow() { printf "\033[33m%s\033[0m\n" "$*"; }
+cyan() { printf "\033[36m%s\033[0m\n" "$*"; }
+
+echo ""
+echo "=== loop-lore pre-merge-commit ==="
+echo ""
+
+# ── Step 1: Check for conflict markers ───────────────────────
+echo "--- Step 1: Conflict markers ---"
+
+# Get files that were involved in this merge (MERGE_HEAD exists during merge)
+if [[ -f .git/MERGE_HEAD ]]; then
+  MERGE_BASE=$(git merge-base HEAD MERGE_HEAD 2>/dev/null)
+  CONFLICT_FILES=$(git diff --name-only --diff-filter=U 2>/dev/null || true)
+
+  if [[ -n "$CONFLICT_FILES" ]]; then
+    red "Unresolved conflicts found in:"
+    echo "$CONFLICT_FILES" | while read -r f; do
+      red "  $f"
+    done
+    failures=$((failures + 1))
+  else
+    green "  ✓ No unresolved conflicts"
+  fi
+
+  # Check for leftover conflict markers in staged files
+  STAGED_FILES=$(git diff --cached --name-only --diff-filter=ACM 2>/dev/null || true)
+  if [[ -n "$STAGED_FILES" ]]; then
+    MARKER_FILES=""
+    for file in $STAGED_FILES; do
+      if [[ -f "$file" ]] && grep -qE '^[<>=]{7}' "$file" 2>/dev/null; then
+        MARKER_FILES="$MARKER_FILES $file"
+      fi
+    done
+
+    if [[ -n "$MARKER_FILES" ]]; then
+      red "Conflict markers found in resolved files:"
+      for file in $MARKER_FILES; do
+        red "  $file"
+        grep -nE '^[<>=]{7}' "$file" | head -5
+      done
+      failures=$((failures + 1))
+    else
+      green "  ✓ No conflict markers in resolved files"
+    fi
+  fi
+else
+  yellow "  Skipped: not a merge (no MERGE_HEAD)"
+fi
+
+# ── Step 2: Typecheck resolved code ──────────────────────────
+echo ""
+echo "--- Step 2: Typecheck ---"
+if command -v bun &>/dev/null; then
+  if bun run typecheck 2>/dev/null; then
+    green "  ✓ TypeScript compiles clean"
+  else
+    red "  ✗ TypeScript errors after merge"
+    failures=$((failures + 1))
+  fi
+else
+  yellow "  Skipped: bun not installed"
+fi
+
+# ── Step 3: Run unit tests ───────────────────────────────────
+echo ""
+echo "--- Step 3: Unit tests ---"
+if command -v bun &>/dev/null; then
+  if bun test src/ 2>/dev/null; then
+    green "  ✓ Unit tests pass"
+  else
+    red "  ✗ Unit tests fail after merge"
+    failures=$((failures + 1))
+  fi
+else
+  yellow "  Skipped: bun not installed"
+fi
+
+# ── Step 4: Check merge commit message format ────────────────
+echo ""
+echo "--- Step 4: Merge commit message ---"
+MERGE_MSG_FILE=".git/MERGE_MSG"
+if [[ -f "$MERGE_MSG_FILE" ]]; then
+  FIRST_LINE=$(head -1 "$MERGE_MSG_FILE")
+  if echo "$FIRST_LINE" | grep -qE "^(Merge|merge|Merge branch|Merge pull request)"; then
+    green "  ✓ Merge message format OK"
+  else
+    yellow "  ⚠ Unusual merge message: $FIRST_LINE"
+  fi
+fi
+
+# ── Result ────────────────────────────────────────────────────
+echo ""
+if [ "$failures" -gt 0 ]; then
+  red "=== $failures check(s) failed — merge commit blocked ==="
+  red "Resolve issues above, then retry: git commit"
+  exit 1
+fi
+
+green "=== Merge validation passed ==="
