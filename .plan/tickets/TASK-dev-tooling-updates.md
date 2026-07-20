@@ -1,6 +1,6 @@
 # TASK: Dev Tooling Updates — Biome, dprint, stylelint
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Complete
 **Priority:** Medium (chore)
 **Effort:** Low
 
