@@ -127,6 +127,21 @@ configure_signing() {
     echo -e "${GREEN}  ✓ GPG signing enabled (key: ${AGENT_GPG_KEY_ID:0:8}...)${NC}"
 }
 
+# Configure git hooks path for worktree (absolute path so hooks resolve correctly)
+configure_hooks() {
+    local worktree_path="$1"
+    local hooks_dir="$REPO_ROOT/.githooks"
+
+    if [[ ! -d "$hooks_dir" ]]; then
+        echo -e "${YELLOW}  Skipped: no .githooks/ directory${NC}"
+        return 0
+    fi
+
+    # Use absolute path — relative paths resolve against gitdir, not worktree
+    git -C "$worktree_path" config core.hooksPath "$hooks_dir"
+    echo -e "${GREEN}  ✓ Hooks configured: $hooks_dir${NC}"
+}
+
 # Build GPG signing flags for merge commits (sets GIT_MERGE_FLAGS array)
 gpg_merge_flags() {
     GIT_MERGE_FLAGS=()
@@ -232,6 +247,7 @@ cmd_create() {
     echo -e "${CYAN}Creating worktree for branch: $branch${NC}"
     git -C "$REPO_ROOT" worktree add "$worktree_path" "$branch"
     configure_signing "$worktree_path"
+    configure_hooks "$worktree_path"
     echo -e "${GREEN}✓ Created: $worktree_path${NC}"
     echo -e "  cd $worktree_path"
 }
@@ -277,6 +293,7 @@ cmd_new() {
     echo -e "${CYAN}Creating new branch '$branch' from '$base'${NC}"
     git -C "$REPO_ROOT" worktree add -b "$branch" "$worktree_path" "$base"
     configure_signing "$worktree_path"
+    configure_hooks "$worktree_path"
     echo -e "${GREEN}✓ Created: $worktree_path${NC}"
     echo -e "  cd $worktree_path"
 }
@@ -480,6 +497,7 @@ cmd_sign() {
     local worktree_path
     worktree_path="$(require_worktree "$branch")"
     configure_signing "$worktree_path"
+    configure_hooks "$worktree_path"
 }
 
 cmd_merge() {
