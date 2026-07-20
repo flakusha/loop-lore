@@ -1,8 +1,9 @@
 #!/bin/sh
-# Pre-commit hook for loop-lore
-# Install: git config core.hooksPath .githooks && chmod +x .githooks/pre-commit
+# Pre-commit hook for loop-lore — staged files only (fast)
 #
-# Parallel execution: runs independent checks concurrently for faster feedback
+# Checks only staged files for formatting + lint.
+# For full checks: run `bun run check` or use pre-commit:full.
+# Install: git config core.hooksPath .githooks && chmod +x .githooks/pre-commit
 
 set -u
 
@@ -16,258 +17,114 @@ green() { printf "\033[32m%s\033[0m\n" "$*"; }
 yellow() { printf "\033[33m%s\033[0m\n" "$*"; }
 cyan() { printf "\033[36m%s\033[0m\n" "$*"; }
 
-run_check() {
-  local name="$1"
-  local cmd="$2"
-  local output_file="$TMPDIR/$name.log"
-  local exit_file="$TMPDIR/$name.exit"
-
-  cyan "Starting: $name"
-  
-  (
-    if eval "$cmd" > "$output_file" 2>&1; then
-      echo "0" > "$exit_file"
-    else
-      echo "$?" > "$exit_file"
-    fi
-  ) &
-}
-
-collect_results() {
-  local pids=("$@")
-  local total=0
-  local passed=0
-  local failed=0
-
-  for pid in "${pids[@]}"; do
-    wait "$pid" 2>/dev/null || true
-  done
-
-  for check in "${CHECKS[@]}"; do
-    local output_file="$TMPDIR/$check.log"
-    local exit_file="$TMPDIR/$check.exit"
-    total=$((total + 1))
-
-    if [[ -f "$exit_file" ]]; then
-      local exit_code
-      exit_code=$(cat "$exit_file")
-
-      if [[ "$exit_code" == "0" ]]; then
-        passed=$((passed + 1))
-        green "✓ PASS: $check"
-      else
-        failed=$((failed + 1))
-        red "✗ FAIL: $check"
-        cat "$output_file" | head -30
-        echo ""
-      fi
-    else
-      failed=$((failed + 1))
-      red "✗ FAIL: $check (no exit file)"
-    fi
-  done
-
-  echo ""
-  echo "Total: $total"
-  green "Passed: $passed"
-  red "Failed: $failed"
-
-  return $failed
-}
-
 echo ""
-echo "=== loop-lore pre-commit checks (parallel) ==="
+echo "=== loop-lore pre-commit (staged files) ==="
 echo ""
 
-# Step 0: Tool availability check
-echo "--- Step 0: Tool availability ---"
-TOOLS_WARN=0
-check_tool() {
-  local name="$1"
-  local required="$2"
-  if command -v "$name" &>/dev/null; then
-    green "  ✓ $name: $(command -v "$name")"
-  elif [[ "$required" == "required" ]]; then
-    red "  ✗ $name: not found (REQUIRED — skipping all checks)"
-    return 1
+# ── Get staged files ──────────────────────────────────────────
+STAGED_TS=$(git diff --cached --name-only --diff-filter=ACM | grep -E '\.tsx?$' || true)
+STAGED_CSS=$(git diff --cached --name-only --diff-filter=ACM | grep -E '\.css$' || true)
+STAGED_MD=$(git diff --cached --name-only --diff-filter=ACM | grep -E '\.mdx?$' || true)
+STAGED_HTML=$(git diff --cached --name-only --diff-filter=ACM | grep -E '\.html$' || true)
+STAGED_JSON=$(git diff --cached --name-only --diff-filter=ACM | grep -E '\.json$' || true)
+
+if [[ -z "$STAGED_TS" && -z "$STAGED_CSS" && -z "$STAGED_MD" && -z "$STAGED_HTML" && -z "$STAGED_JSON" ]]; then
+  yellow "No staged files to check — skipping"
+  exit 0
+fi
+
+echo "Staged files:"
+[[ -n "$STAGED_TS" ]] && echo "  TS/TSX: $(echo "$STAGED_TS" | wc -l | tr -d ' ')"
+[[ -n "$STAGED_CSS" ]] && echo "  CSS: $(echo "$STAGED_CSS" | wc -l | tr -d ' ')"
+[[ -n "$STAGED_MD" ]] && echo "  MD: $(echo "$STAGED_MD" | wc -l | tr -d ' ')"
+[[ -n "$STAGED_HTML" ]] && echo "  HTML: $(echo "$STAGED_HTML" | wc -l | tr -d ' ')"
+[[ -n "$STAGED_JSON" ]] && echo "  JSON: $(echo "$STAGED_JSON" | wc -l | tr -d ' ')"
+echo ""
+
+# ── Step 1: Auto-fix formatting on staged files ───────────────
+echo "--- Step 1: Format staged files ---"
+FORMAT_FILES=""
+[[ -n "$STAGED_TS" ]] && FORMAT_FILES="$FORMAT_FILES $STAGED_TS"
+[[ -n "$STAGED_CSS" ]] && FORMAT_FILES="$FORMAT_FILES $STAGED_CSS"
+[[ -n "$STAGED_MD" ]] && FORMAT_FILES="$FORMAT_FILES $STAGED_MD"
+[[ -n "$STAGED_HTML" ]] && FORMAT_FILES="$FORMAT_FILES $STAGED_HTML"
+[[ -n "$STAGED_JSON" ]] && FORMAT_FILES="$FORMAT_FILES $STAGED_JSON"
+
+if [[ -n "$FORMAT_FILES" ]]; then
+  if echo "$FORMAT_FILES" | xargs dprint fmt 2>/dev/null; then
+    green "PASS: formatting"
+    # Re-stage formatted files
+    echo "$FORMAT_FILES" | xargs git add 2>/dev/null
   else
-    yellow "  ⚠ $name: not found (system-only, not in package.json — some checks may be skipped)"
-    TOOLS_WARN=$((TOOLS_WARN + 1))
+    red "FAIL: formatting"
+    failures=$((failures + 1))
   fi
-  return 0
-}
-
-BUN_OK=true
-DPRINT_OK=true
-check_tool "bun" "required" || BUN_OK=false
-check_tool "node" "optional"
-
-# dprint: required — check global first, then repo version via bunx
-if command -v dprint &>/dev/null; then
-  green "  ✓ dprint: $(command -v dprint) (global)"
-elif command -v bunx &>/dev/null && bunx dprint --version &>/dev/null 2>&1; then
-  green "  ✓ dprint: bunx (repo version from devDependencies)"
-else
-  red "  ✗ dprint: not found (REQUIRED — main formatting tool)"
-  DPRINT_OK=false
 fi
 
-check_tool "gh" "optional"
-check_tool "git" "optional"
-
-if [[ "$TOOLS_WARN" -gt 0 ]]; then
-  yellow "  ($TOOLS_WARN optional tool(s) missing — warnings only, commit proceeds)"
-fi
-
-if [[ "$BUN_OK" == "false" ]]; then
-  red ""
-  red "bun is required to run pre-commit checks. Install: https://bun.sh"
-  red "To commit without checks: git commit --no-verify"
-  exit 1
-fi
-
-if [[ "$DPRINT_OK" == "false" ]]; then
-  red ""
-  red "dprint is the main formatting tool. Install via:"
-  red "  bun install          (uses repo version from devDependencies)"
-  red "  curl -fsSL https://dprint.dev/install | sh  (global install)"
-  red "To commit without checks: git commit --no-verify"
-  exit 1
-fi
+# ── Step 2: Lint staged files ────────────────────────────────
 echo ""
+echo "--- Step 2: Lint staged files ---"
 
-# Step 1: Auto-fix formatting (sequential - must run first)
-echo "--- Step 1: Auto-fix formatting ---"
-if bun run format:dprint:fix; then
-  green "PASS: dprint auto-fix"
-else
-  red "FAIL: dprint auto-fix"
-  failures=$((failures + 1))
-fi
-
-# Step 2: Run all checks in parallel
-echo ""
-echo "--- Step 2: Quality checks (parallel) ---"
-CHECKS=(
-  "typecheck-backend"
-  "typecheck-frontend"
-  "typecheck-coverage"
-  "typecheck-coverage-frontend"
-  "lint-ts"
-  "lint-css"
-  "lint-html"
-  "format-dprint"
-  "md-lint"
-  "schema-staleness"
-)
-
-CHECK_CMDS=(
-  "bun run typecheck"
-  "bun run typecheck:frontend"
-  "bun run typecheck:coverage"
-  "bun run typecheck:coverage:frontend"
-  "bun run lint"
-  "bun run lint:css"
-  "bun run lint:html"
-  "bun run format:dprint"
-  "bun run md:lint"
-  "bun run schemas:check"
-)
-
-PIDS=()
-for i in "${!CHECKS[@]}"; do
-  run_check "${CHECKS[$i]}" "${CHECK_CMDS[$i]}"
-  PIDS+=($!)
-done
-
-if ! collect_results "${PIDS[@]}"; then
-  failures=$((failures + 1))
-fi
-
-# Step 3: Run tests in parallel
-echo ""
-echo "--- Step 3: Tests (parallel) ---"
-TEST_CHECKS=("unit-tests" "e2e-tests")
-TEST_CMDS=(
-  "bun test src/"
-  "env E2E_SAFEGUARD=1 bun test tests/e2e/"
-)
-
-TEST_PIDS=()
-for i in "${!TEST_CHECKS[@]}"; do
-  run_check "${TEST_CHECKS[$i]}" "${TEST_CMDS[$i]}"
-  TEST_PIDS+=($!)
-done
-
-if ! collect_results "${TEST_PIDS[@]}"; then
-  failures=$((failures + 1))
-fi
-
-# Step 4: Non-blocking checks (parallel)
-echo ""
-echo "--- Step 4: Non-blocking checks (parallel) ---"
-GUARD_CHECKS=(
-  "size-check"
-  "spdx-check"
-  "duplication-check"
-)
-
-GUARD_CMDS=(
-  "bun run size:check 2>&1"
-  "bun run spdx:check 2>&1"
-  "bunx jscpd --min-lines 8 --min-tokens 100 --ignore '**/*.test.ts,**/migrations/*' src/ 2>&1 || true"
-)
-
-GUARD_PIDS=()
-for i in "${!GUARD_CHECKS[@]}"; do
-  run_check "${GUARD_CHECKS[$i]}" "${GUARD_CMDS[$i]}"
-  GUARD_PIDS+=($!)
-done
-
-for pid in "${GUARD_PIDS[@]}"; do
-  wait "$pid" 2>/dev/null || true
-done
-
-for check in "${GUARD_CHECKS[@]}"; do
-  exit_file="$TMPDIR/$check.exit"
-  output_file="$TMPDIR/$check.log"
-
-  if [[ -f "$exit_file" ]]; then
-    exit_code=$(cat "$exit_file")
-    if [[ "$exit_code" == "0" ]]; then
-      green "  ✓ $check: passed"
-    else
-      yellow "  ⚠ $check: warnings (non-blocking)"
-      cat "$output_file" | head -10
-      echo ""
-    fi
+if [[ -n "$STAGED_TS" ]]; then
+  cyan "Linting TypeScript..."
+  if echo "$STAGED_TS" | xargs bunx eslint --no-error-on-unmatched-pattern 2>/dev/null; then
+    green "  ✓ TypeScript lint passed"
   else
-    yellow "  ⚠ $check: skipped (tool not installed)"
+    red "  ✗ TypeScript lint failed"
+    failures=$((failures + 1))
   fi
-done
+fi
 
-# Final result
+if [[ -n "$STAGED_CSS" ]]; then
+  cyan "Linting CSS..."
+  if echo "$STAGED_CSS" | xargs bunx stylelint 2>/dev/null; then
+    green "  ✓ CSS lint passed"
+  else
+    red "  ✗ CSS lint failed"
+    failures=$((failures + 1))
+  fi
+fi
+
+if [[ -n "$STAGED_MD" ]]; then
+  cyan "Linting Markdown..."
+  if echo "$STAGED_MD" | xargs bunx markdownlint 2>/dev/null; then
+    green "  ✓ Markdown lint passed"
+  else
+    red "  ✗ Markdown lint failed"
+    failures=$((failures + 1))
+  fi
+fi
+
+if [[ -n "$STAGED_HTML" ]]; then
+  cyan "Checking HTML..."
+  # markuplint on staged files only
+  if echo "$STAGED_HTML" | xargs bunx markuplint --allow-warnings 2>/dev/null; then
+    green "  ✓ HTML lint passed"
+  else
+    yellow "  ⚠ HTML lint warnings (non-blocking)"
+  fi
+fi
+
+# ── Step 3: SPDX headers on staged source files ──────────────
+echo ""
+echo "--- Step 3: SPDX headers ---"
+STAGED_SOURCE=$(echo "$STAGED_TS $STAGED_CSS $STAGED_HTML" | tr ' ' '\n' | grep -v '^$' || true)
+if [[ -n "$STAGED_SOURCE" ]]; then
+  if echo "$STAGED_SOURCE" | xargs bun run scripts/check-spdx.ts 2>/dev/null; then
+    green "  ✓ SPDX headers OK"
+  else
+    yellow "  ⚠ SPDX header warnings (non-blocking)"
+  fi
+fi
+
+# ── Final result ──────────────────────────────────────────────
 echo ""
 if [ "$failures" -gt 0 ]; then
-  red "=== $failures step(s) failed. Fix above issues and retry ==="
+  red "=== $failures check(s) failed — commit blocked ==="
+  red "To commit without checks: git commit --no-verify"
   exit 1
 fi
 
-# Step 5: Version drift check (non-blocking)
+green "=== Staged files OK ==="
 echo ""
-echo "--- Step 5: Version drift check ---"
-LATEST_TAG=$(git tag | grep "^v" | sort -V | tail -1)
-PKG_VERSION=$(bun run -p 'JSON.parse(require("fs").readFileSync("package.json","utf8")).version' 2>/dev/null || echo "")
-if [[ -n "$LATEST_TAG" && -n "$PKG_VERSION" ]]; then
-  TAG_VERSION="${LATEST_TAG#v}"
-  if [[ "$TAG_VERSION" != "$PKG_VERSION" ]]; then
-    yellow "  ⚠ Version drift: package.json=${PKG_VERSION}, latest tag=${TAG_VERSION}"
-    yellow "    Run 'bun run version:sync' to reconcile"
-  else
-    green "  ✓ Version in sync: ${PKG_VERSION}"
-  fi
-else
-  yellow "  ⚠ Skipped: no tags found or could not read package.json"
-fi
-
-green "=== All checks passed ==="
+echo "Tip: run 'bun run check' for full typecheck + tests"
