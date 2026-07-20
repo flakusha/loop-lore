@@ -54,7 +54,7 @@
     "test": "bun test --isolate",
     "test:watch": "bun test --watch",
     "test:coverage": "bun test --coverage",
-    "test:unit": "bun test src/",
+    "test:unit": "bun test src/ --isolate",
     "test:unit:parallel": "bun test src/ --concurrency=$(nproc)",
     "test:e2e": "HTTP_PROXY= NO_PROXY=* bun test tests/e2e/",
     "test:e2e:browser": "for f in tests/e2e/flows/browser/*.browser.ts; do bun test --max-concurrency=1 \"./$f\" || exit 1; sleep 0.3; done",
