@@ -56,8 +56,7 @@ function modelInfoFromOpenAi(raw: Record<string, unknown>,): ModelInfo {
   if (typeof raw.thinking === "boolean") { info.thinking = raw.thinking; }
   if (typeof raw.tool_calling === "boolean") { info.toolCalling = raw.tool_calling; }
   if (Array.isArray(raw.modalities,)) { info.modalities = raw.modalities.map(String,); }
-  const sizeRe = /(\d+(?:\.\d+)?\s*[bB])/i;
-  const sizeMatch = sizeRe.exec(id,);
+  const sizeMatch = /(\d+(?:\.\d+)?\s*[bB])/i.exec(id,);
   if (sizeMatch) { info.paramSize = sizeMatch[1]!.replaceAll(/\s+/g, "",); }
   return info;
 }

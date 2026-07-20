@@ -84,12 +84,14 @@ function parseExtractionResponse(content: string,): ExtractedMemory[] | null {
       return JSON.parse(trimmed,) as ExtractedMemory[];
     }
 
-    const jsonMatch = /```(?:json)?\s*\n?([\s\S]*?)\n?```/.exec(trimmed,);
+    const fenceRe = /```(?:json)?\s*\n?([\s\S]*?)\n?```/;
+    const jsonMatch = fenceRe.exec(trimmed,);
     if (jsonMatch?.[1]) {
       return JSON.parse(jsonMatch[1],) as ExtractedMemory[];
     }
 
-    const arrayMatch = /\[[\s\S]*\]/.exec(trimmed,);
+    const arrayRe = /\[[\s\S]*\]/;
+    const arrayMatch = arrayRe.exec(trimmed,);
     if (arrayMatch) {
       return JSON.parse(arrayMatch[0],) as ExtractedMemory[];
     }
