@@ -1,7 +1,7 @@
 # TASK: Branch Workflow — dev → stg → master
 
-**Status:** ⬜ Not Started
-**Priority:** Medium
+**Status:** ⬜ Post-0.1.0 (implement after full 0.1.0 confirmation)
+**Priority:** Low
 **Effort:** Med
 
 ## Summary
