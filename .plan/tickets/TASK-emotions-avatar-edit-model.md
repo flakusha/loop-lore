@@ -17,7 +17,38 @@ Generate character avatars with different emotional expressions (happy, sad, ang
 
 ## Why Blocked
 
-### A. Edit Model Instability
+### A. Backend Architecture: Flat Avatar Model
+
+**Current model:** `character → avatar` (one-to-one)
+
+```
+Characters table:
+  id | name | avatar_url | ...
+```
+
+**Required model:** `character → avatars[]` (one-to-many, emotion-tagged)
+
+```
+Character avatars table (proposed):
+  id | character_id | emotion | asset_id | is_default | ...
+```
+
+**Impact:**
+- `src/routes/characters.ts` — avatar CRUD is single-value, not array
+- `src/db/schema-*.ts` — `avatar_url` column on characters, not separate table
+- `src/views/characters.html` — single avatar display/edit
+- `src/views/chat.html` — avatar in message header assumes one avatar
+- `src/frontend/alpine/chat.ts` — avatar URL from character object, no emotion context
+- `src/assets/service.ts` — polymorphic linking is `asset → character`, not `asset → character + emotion`
+
+**Migration path:**
+1. Create `character_avatars` table (character_id, emotion, asset_id, is_default)
+2. Migrate existing `avatar_url` from characters table → new table with `emotion=neutral`
+3. Update character CRUD to manage avatar collection
+4. Update chat UI to select avatar by emotion
+5. Add API endpoint: `GET /api/characters/:id/avatars?emotion=happy`
+
+### B. Edit Model Instability
 
 | Model Type | Edit Support | Stability | Notes |
 | ---------- | ------------ | --------- | ----- |
