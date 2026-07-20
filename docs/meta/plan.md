@@ -402,6 +402,17 @@ See `.plan/features/epic-2026-26-avatar-expression.md` for full spec.
 
 See `.plan/features/epic-2026-27-testing-infrastructure.md` for full spec.
 
+### 28. Asset Support Expansion — ⬜ Not Started [P2]
+
+| Task                              | Files                              |
+| --------------------------------- | ---------------------------------- |
+| RPG token and map assets          | `src/assets/token-overlay.ts`      |
+| 3D model support                | `src/assets/model-validator.ts`    |
+| Asset versioning system           | `src/db/migrations/019_asset_versions.sql` |
+| Asset templates and presets       | `src/assets/templates.ts`          |
+
+See `.plan/features/epic-2026-28-asset-expansion.md` for full spec.
+
 ---
 
 ## Known Issues
