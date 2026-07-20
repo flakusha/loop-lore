@@ -1,6 +1,6 @@
 # Implementation Plan
 
-**v0.1 MVP — Epics 1–19: foundation hardening.**
+**v0.1 MVP — Epics 1–19: foundation hardening. Epics 20–51: future development.**
 
 > **Task tracking moved to git issues.** Active epics and features are tracked as git-native-issues (e.g. `EPIC-2026-16`, `FEAT-2026-001`). See the [Issue Tracker](/meta/issues) for live state. The [backlog](/.plan/backlog) contains the full queue.
 
@@ -357,96 +357,96 @@ Full spec: `docs/spec/integrations/llm-serving.md`, `docs/spec/integrations/imag
 
 ### 25. Memory Systems — ⬜ Not Started [P2]
 
-| Task                                  | Files                              |
-| ------------------------------------- | ---------------------------------- |
-| Three-tier memory system              | `src/memory/backend.ts`            |
-| Memory backend abstraction            | `src/memory/backend.ts`            |
-| Semantic memory extraction            | `src/memory/extraction.ts`         |
-| Procedural memory pattern learning    | `src/memory/learning.ts`           |
-| Memory search optimization            | `src/memory/search.ts`             |
-| Memory relationship ranking           | `src/memory/ranking.ts`            |
-| Memory auto-rewording                 | `src/memory/rewording.ts`          |
-| Memory context injection              | `src/memory/context.ts`            |
-| Memory visualization (graph/timeline)   | `src/memory/visualization.ts`      |
+| Task                                  | Files                                   |
+| ------------------------------------- | --------------------------------------- |
+| Three-tier memory system              | `src/memory/backend.ts`                 |
+| Memory backend abstraction            | `src/memory/backend.ts`                 |
+| Semantic memory extraction            | `src/memory/extraction.ts`              |
+| Procedural memory pattern learning    | `src/memory/learning.ts`                |
+| Memory search optimization            | `src/memory/search.ts`                  |
+| Memory relationship ranking           | `src/memory/ranking.ts`                 |
+| Memory auto-rewording                 | `src/memory/rewording.ts`               |
+| Memory context injection              | `src/memory/context.ts`                 |
+| Memory visualization (graph/timeline) | `src/memory/visualization.ts`           |
 | Memory selection UI                   | `src/components/chat/memory-panel.html` |
 
 See `.plan/features/epic-2026-25-memory-systems.md` for full spec.
 
 ### 26. Avatar & Expression System — ⬜ Not Started [P2]
 
-| Task                              | Files                                 |
-| --------------------------------- | ------------------------------------- |
-| Three.js dependency               | `package.json`                        |
-| Avatar scene manager              | `src/frontend/3d/avatar-scene.ts`     |
-| VRM loader                        | `src/frontend/3d/vrm-loader.ts`       |
-| Expression controller             | `src/frontend/3d/expression-controller.ts` |
-| Emotion detection from text       | `src/characters/emotion-detection.ts` |
-| Avatar preview in editor          | `src/views/character-editor.html`     |
-| Model upload endpoint             | `src/routes/characters.ts`            |
+| Task                        | Files                                      |
+| --------------------------- | ------------------------------------------ |
+| Three.js dependency         | `package.json`                             |
+| Avatar scene manager        | `src/frontend/3d/avatar-scene.ts`          |
+| VRM loader                  | `src/frontend/3d/vrm-loader.ts`            |
+| Expression controller       | `src/frontend/3d/expression-controller.ts` |
+| Emotion detection from text | `src/characters/emotion-detection.ts`      |
+| Avatar preview in editor    | `src/views/character-editor.html`          |
+| Model upload endpoint       | `src/routes/characters.ts`                 |
 
 See `.plan/features/epic-2026-26-avatar-expression.md` for full spec.
 
 ### 27. Testing Infrastructure — ⬜ Not Started [P1]
 
-| Task                              | Files                              |
-| --------------------------------- | ---------------------------------- |
-| E2E parallel suite fix            | `tests/e2e/helpers/server.ts`        |
-| E2E cascade failure fix           | `tests/e2e/flows/browser/`         |
-| Cancel-during-generation test     | `tests/e2e/flows/generation.test.ts` |
-| Generation idempotency test       | `tests/e2e/flows/generation.test.ts` |
-| Browser auth flow tests           | `tests/e2e/flows/browser/auth-flow.browser.ts` |
-| Browser chat flow tests           | `tests/e2e/flows/browser/chat-flow.browser.ts` |
-| Low-coverage route tests          | `src/routes/*.test.ts`             |
-| Story module tests                | `src/story/*.test.ts`              |
-| E2E performance benchmarks        | `scripts/bench-*.ts`               |
+| Task                          | Files                                          |
+| ----------------------------- | ---------------------------------------------- |
+| E2E parallel suite fix        | `tests/e2e/helpers/server.ts`                  |
+| E2E cascade failure fix       | `tests/e2e/flows/browser/`                     |
+| Cancel-during-generation test | `tests/e2e/flows/generation.test.ts`           |
+| Generation idempotency test   | `tests/e2e/flows/generation.test.ts`           |
+| Browser auth flow tests       | `tests/e2e/flows/browser/auth-flow.browser.ts` |
+| Browser chat flow tests       | `tests/e2e/flows/browser/chat-flow.browser.ts` |
+| Low-coverage route tests      | `src/routes/*.test.ts`                         |
+| Story module tests            | `src/story/*.test.ts`                          |
+| E2E performance benchmarks    | `scripts/bench-*.ts`                           |
 
 See `.plan/features/epic-2026-27-testing-infrastructure.md` for full spec.
 
 ### 28. Asset Support Expansion — ⬜ Not Started [P2]
 
-| Task                              | Files                              |
-| --------------------------------- | ---------------------------------- |
-| RPG token and map assets          | `src/assets/token-overlay.ts`      |
-| 3D model support                | `src/assets/model-validator.ts`    |
-| Asset versioning system           | `src/db/migrations/019_asset_versions.sql` |
-| Asset templates and presets       | `src/assets/templates.ts`          |
-| Asset storage compression         | `src/assets/storage/compressed.ts` |
-| Asset encryption-at-rest          | `src/assets/storage/encrypted.ts`  |
+| Task                        | Files                                      |
+| --------------------------- | ------------------------------------------ |
+| RPG token and map assets    | `src/assets/token-overlay.ts`              |
+| 3D model support            | `src/assets/model-validator.ts`            |
+| Asset versioning system     | `src/db/migrations/019_asset_versions.sql` |
+| Asset templates and presets | `src/assets/templates.ts`                  |
+| Asset storage compression   | `src/assets/storage/compressed.ts`         |
+| Asset encryption-at-rest    | `src/assets/storage/encrypted.ts`          |
 
 See `.plan/features/epic-2026-28-asset-expansion.md` for full spec.
 
 ### 29. Provider & Plugin Ecosystem — ⬜ Not Started [P2]
 
-| Task                              | Files                              |
-| --------------------------------- | ---------------------------------- |
-| Anthropic/Ollama/Bedrock providers | `src/providers/anthropic.ts`       |
-| Plugin management API             | `src/routes/plugins.ts`            |
-| Provider model metadata display   | `src/admin/models.ts`              |
+| Task                               | Files                        |
+| ---------------------------------- | ---------------------------- |
+| Anthropic/Ollama/Bedrock providers | `src/providers/anthropic.ts` |
+| Plugin management API              | `src/routes/plugins.ts`      |
+| Provider model metadata display    | `src/admin/models.ts`        |
 
 See `.plan/features/epic-2026-29-provider-plugin-ecosystem.md` for full spec.
 
 ### 30. Assistant Intelligence — ⬜ Not Started [P2]
 
-| Task                              | Files                              |
-| --------------------------------- | ---------------------------------- |
-| Regex output transforms           | `src/assistant/transforms/regex.ts` |
-| Smart-regen transforms            | `src/assistant/transforms/smart-regen.ts` |
-| Creative Studio Extension         | `src/assistant/commands/`          |
-| Lore Consistency Checker          | `src/assistant/lore-checker.ts`    |
-| Prompt Injection Risk Analysis    | `src/assistant/prompt-safety.ts`   |
+| Task                           | Files                                     |
+| ------------------------------ | ----------------------------------------- |
+| Regex output transforms        | `src/assistant/transforms/regex.ts`       |
+| Smart-regen transforms         | `src/assistant/transforms/smart-regen.ts` |
+| Creative Studio Extension      | `src/assistant/commands/`                 |
+| Lore Consistency Checker       | `src/assistant/lore-checker.ts`           |
+| Prompt Injection Risk Analysis | `src/assistant/prompt-safety.ts`          |
 
 See `.plan/features/epic-2026-30-assistant-intelligence.md` for full spec.
 
 ### 31. World Persistence & Sync — ⬜ Not Started [P2]
 
-| Task                              | Files                              |
-| --------------------------------- | ---------------------------------- |
-| Cross-Device E2E Sync             | `src/sync/protocol.ts`             |
-| Impersonation                     | `src/routes/chats.ts`              |
-| Agentic workspace mode            | `src/workspace/`                   |
-| World simulation while offline    | `src/world/simulation.ts`          |
-| Personas                          | `src/personas/controller.ts`       |
-| Shared persistent worlds          | `src/world/shared.ts`              |
+| Task                           | Files                        |
+| ------------------------------ | ---------------------------- |
+| Cross-Device E2E Sync          | `src/sync/protocol.ts`       |
+| Impersonation                  | `src/routes/chats.ts`        |
+| Agentic workspace mode         | `src/workspace/`             |
+| World simulation while offline | `src/world/simulation.ts`    |
+| Personas                       | `src/personas/controller.ts` |
+| Shared persistent worlds       | `src/world/shared.ts`        |
 
 See `.plan/features/epic-2026-31-world-persistence-sync.md` for full spec.
 
@@ -458,13 +458,13 @@ See `.plan/features/epic-2026-31-world-persistence-sync.md` for full spec.
 
 Docker hardening, Kubernetes packaging, health endpoints for orchestrators.
 
-| Task | Files | Effort |
-| ---- | ----- | ------ |
-| Non-root Docker user, read-only layers | `Dockerfile` | Low |
-| `/health` + `/health/ready` endpoints | `src/routes/health.ts` (new) | Med |
-| Compose variant for N app replicas + PG + nginx | `docker-compose.yml` | Low |
-| K8s manifests (Deployment, Service, Ingress) | `deploy/k8s/*.yaml` (new) | Med |
-| Deploy guide (topologies A–E) | `docs/guide/deployment.md` (new) | Med |
+| Task                                            | Files                            | Effort |
+| ----------------------------------------------- | -------------------------------- | ------ |
+| Non-root Docker user, read-only layers          | `Dockerfile`                     | Low    |
+| `/health` + `/health/ready` endpoints           | `src/routes/health.ts` (new)     | Med    |
+| Compose variant for N app replicas + PG + nginx | `docker-compose.yml`             | Low    |
+| K8s manifests (Deployment, Service, Ingress)    | `deploy/k8s/*.yaml` (new)        | Med    |
+| Deploy guide (topologies A–E)                   | `docs/guide/deployment.md` (new) | Med    |
 
 See `.plan/epics/epic-deployment-topologies.md` for full spec.
 **Depends on:** Epic 33 (Multi-Instance Reconciliation).
@@ -473,13 +473,13 @@ See `.plan/epics/epic-deployment-topologies.md` for full spec.
 
 Migration leadership, schema drift detection, cross-instance real-time.
 
-| Task | Files | Effort |
-| ---- | ----- | ------ |
-| Postgres advisory-lock leader election | `src/db/migrate.ts` | Med |
-| SQLite single-instance guard | `src/db/migrate.ts`, `src/db/index.ts` | Low |
-| `SchemaManifest.verify()` at startup | `src/db/schema-manifest.ts` | Low |
-| Drift policy: strict vs repair | `src/config/sections/database.ts` | Med |
-| Optional Redis pub/sub for SSE | `src/routes/activity-stream.ts` | Med |
+| Task                                   | Files                                  | Effort |
+| -------------------------------------- | -------------------------------------- | ------ |
+| Postgres advisory-lock leader election | `src/db/migrate.ts`                    | Med    |
+| SQLite single-instance guard           | `src/db/migrate.ts`, `src/db/index.ts` | Low    |
+| `SchemaManifest.verify()` at startup   | `src/db/schema-manifest.ts`            | Low    |
+| Drift policy: strict vs repair         | `src/config/sections/database.ts`      | Med    |
+| Optional Redis pub/sub for SSE         | `src/routes/activity-stream.ts`        | Med    |
 
 See `.plan/epics/epic-multi-instance-reconciliation.md` for full spec.
 
@@ -487,12 +487,12 @@ See `.plan/epics/epic-multi-instance-reconciliation.md` for full spec.
 
 Backend selection guards, `data_version` optimistic concurrency, ACID reference.
 
-| Task | Files | Effort |
-| ---- | ----- | ------ |
-| Reject `type=sqlite` + multi-instance | `src/config/sections/database.ts` | Low |
-| `data_version` write-path enforcement | route handlers, `src/db/*` | Med |
-| `409 Conflict` on version mismatch | `src/routes/http-utils.ts` | Low |
-| ACID matrix documentation | `docs/spec/deployment.md` (new) | Low |
+| Task                                  | Files                             | Effort |
+| ------------------------------------- | --------------------------------- | ------ |
+| Reject `type=sqlite` + multi-instance | `src/config/sections/database.ts` | Low    |
+| `data_version` write-path enforcement | route handlers, `src/db/*`        | Med    |
+| `409 Conflict` on version mismatch    | `src/routes/http-utils.ts`        | Low    |
+| ACID matrix documentation             | `docs/spec/deployment.md` (new)   | Low    |
 
 See `.plan/epics/epic-data-integrity-acid.md` for full spec.
 **Depends on:** Epic 33 (Multi-Instance Reconciliation).
@@ -501,13 +501,13 @@ See `.plan/epics/epic-data-integrity-acid.md` for full spec.
 
 Extensible enumeration framework: built-in defaults + operator extensions + precompiled merge.
 
-| Task | Files | Effort |
-| ---- | ----- | ------ |
-| ECE types + built-in loader | `src/config/ece/*` (new) | Med |
-| Extension store (DB or config) | `src/db/migrations/*` | Med |
-| Merge + precompile + validate | `src/config/ece/compile.ts` | Med |
-| Avatar emotions instance | `src/config/ece/defaults/emotions.ts` | Low |
-| Per-message emotion override | `src/routes/messages.ts` | Med |
+| Task                           | Files                                 | Effort |
+| ------------------------------ | ------------------------------------- | ------ |
+| ECE types + built-in loader    | `src/config/ece/*` (new)              | Med    |
+| Extension store (DB or config) | `src/db/migrations/*`                 | Med    |
+| Merge + precompile + validate  | `src/config/ece/compile.ts`           | Med    |
+| Avatar emotions instance       | `src/config/ece/defaults/emotions.ts` | Low    |
+| Per-message emotion override   | `src/routes/messages.ts`              | Med    |
 
 See `.plan/epics/epic-config-extensions.md` for full spec.
 
@@ -515,13 +515,13 @@ See `.plan/epics/epic-config-extensions.md` for full spec.
 
 Context sliding window, transitions, NSFW controls, moderation primitives.
 
-| Task | Files | Effort |
-| ---- | ----- | ------ |
-| Context sliding-window + memory promotion | `src/chat/context-window.ts` (new) | High |
-| Transition narration + context-cut flow | `src/chat/transitions.ts` (new) | Med |
-| NSFW enable/disable + moderation events | `src/middleware/nsfw-gate.ts` (new) | Med |
-| User block / ban / shadow / flag | `src/chat/moderation.ts` (new) | High |
-| Local random-event generator | `src/chat/events.ts` (new) | Med |
+| Task                                      | Files                               | Effort |
+| ----------------------------------------- | ----------------------------------- | ------ |
+| Context sliding-window + memory promotion | `src/chat/context-window.ts` (new)  | High   |
+| Transition narration + context-cut flow   | `src/chat/transitions.ts` (new)     | Med    |
+| NSFW enable/disable + moderation events   | `src/middleware/nsfw-gate.ts` (new) | Med    |
+| User block / ban / shadow / flag          | `src/chat/moderation.ts` (new)      | High   |
+| Local random-event generator              | `src/chat/events.ts` (new)          | Med    |
 
 See `.plan/epics/epic-chat-lifecycle-moderation.md` for full spec.
 
@@ -529,13 +529,13 @@ See `.plan/epics/epic-chat-lifecycle-moderation.md` for full spec.
 
 Plugin API (install/list/enable/disable), hook system, tool executor, UI mount.
 
-| Task | Files | Effort |
-| ---- | ----- | ------ |
-| Plugin management API | `src/routes/plugins.ts` | Med |
-| Event bus (publish/subscribe) | `src/plugins/event-bus.ts` (new) | Med |
-| Tool executor framework | `src/plugins/tool-executor.ts` (new) | High |
-| UI mount points | `src/plugins/ui-mount.ts` (new) | Med |
-| Plugin sandbox (permissions) | `src/plugins/sandbox.ts` (new) | High |
+| Task                          | Files                                | Effort |
+| ----------------------------- | ------------------------------------ | ------ |
+| Plugin management API         | `src/routes/plugins.ts`              | Med    |
+| Event bus (publish/subscribe) | `src/plugins/event-bus.ts` (new)     | Med    |
+| Tool executor framework       | `src/plugins/tool-executor.ts` (new) | High   |
+| UI mount points               | `src/plugins/ui-mount.ts` (new)      | Med    |
+| Plugin sandbox (permissions)  | `src/plugins/sandbox.ts` (new)       | High   |
 
 See `.plan/epics/epic-plugin-system.md` for full spec.
 
@@ -543,13 +543,13 @@ See `.plan/epics/epic-plugin-system.md` for full spec.
 
 Encounters, monsters, diplomacy, karma, travel, time tracking, cataclysms.
 
-| Task | Files | Effort |
-| ---- | ----- | ------ |
-| Encounter system | `src/world/encounters.ts` (new) | High |
-| Monster/NPC AI behaviors | `src/world/monster-ai.ts` (new) | High |
-| Diplomacy + karma tracking | `src/world/diplomacy.ts` (new) | Med |
-| Travel + time tracking | `src/world/travel.ts` (new) | Med |
-| Cataclysm / world events | `src/world/events.ts` (new) | Med |
+| Task                       | Files                           | Effort |
+| -------------------------- | ------------------------------- | ------ |
+| Encounter system           | `src/world/encounters.ts` (new) | High   |
+| Monster/NPC AI behaviors   | `src/world/monster-ai.ts` (new) | High   |
+| Diplomacy + karma tracking | `src/world/diplomacy.ts` (new)  | Med    |
+| Travel + time tracking     | `src/world/travel.ts` (new)     | Med    |
+| Cataclysm / world events   | `src/world/events.ts` (new)     | Med    |
 
 See `.plan/epics/epic-world-locations.md` for full spec.
 
@@ -557,13 +557,13 @@ See `.plan/epics/epic-world-locations.md` for full spec.
 
 Equipment, consumables, crafting materials, unique items, inventory management.
 
-| Task | Files | Effort |
-| ---- | ----- | ------ |
-| Equipment slots + stat modifiers | `src/rpg/equipment.ts` (new) | Med |
-| Consumable use + cooldown | `src/rpg/consumables.ts` (new) | Low |
-| Crafting recipe system | `src/rpg/crafting.ts` (new) | High |
-| Unique item world-scoping | `src/rpg/unique-items.ts` (new) | Med |
-| Inventory UI | `src/views/inventory.html` (new) | Med |
+| Task                             | Files                            | Effort |
+| -------------------------------- | -------------------------------- | ------ |
+| Equipment slots + stat modifiers | `src/rpg/equipment.ts` (new)     | Med    |
+| Consumable use + cooldown        | `src/rpg/consumables.ts` (new)   | Low    |
+| Crafting recipe system           | `src/rpg/crafting.ts` (new)      | High   |
+| Unique item world-scoping        | `src/rpg/unique-items.ts` (new)  | Med    |
+| Inventory UI                     | `src/views/inventory.html` (new) | Med    |
 
 See `.plan/epics/epic-item-system-extensions.md` for full spec.
 
@@ -571,13 +571,13 @@ See `.plan/epics/epic-item-system-extensions.md` for full spec.
 
 LLM-authored blog posts, deep research, comments, followings, privacy tiers.
 
-| Task | Files | Effort |
-| ---- | ----- | ------ |
-| Blog post schema (chat-shaped record) | `src/db/schema.ts` | Med |
-| LLM authoring modes (automated/deep research/news) | `src/blog/authoring.ts` (new) | High |
-| Research-source gathering + citation | `src/blog/research.ts` (new) | High |
-| Comments (threaded, moderated) | `src/blog/comments.ts` (new) | Med |
-| Followings + privacy tiers | `src/blog/social.ts` (new) | Med |
+| Task                                               | Files                         | Effort |
+| -------------------------------------------------- | ----------------------------- | ------ |
+| Blog post schema (chat-shaped record)              | `src/db/schema.ts`            | Med    |
+| LLM authoring modes (automated/deep research/news) | `src/blog/authoring.ts` (new) | High   |
+| Research-source gathering + citation               | `src/blog/research.ts` (new)  | High   |
+| Comments (threaded, moderated)                     | `src/blog/comments.ts` (new)  | Med    |
+| Followings + privacy tiers                         | `src/blog/social.ts` (new)    | Med    |
 
 See `.plan/epics/epic-blog-system.md` for full spec.
 
@@ -585,11 +585,11 @@ See `.plan/epics/epic-blog-system.md` for full spec.
 
 Transfer chat ownership, move chats between worlds/locations, context migration.
 
-| Task | Files | Effort |
-| ---- | ----- | ------ |
-| Chat transfer API | `src/routes/chats.ts` | Med |
-| Location change with context migration | `src/chat/transitions.ts` | Med |
-| Transfer UI (owner selector) | `src/views/chat.html` | Low |
+| Task                                   | Files                     | Effort |
+| -------------------------------------- | ------------------------- | ------ |
+| Chat transfer API                      | `src/routes/chats.ts`     | Med    |
+| Location change with context migration | `src/chat/transitions.ts` | Med    |
+| Transfer UI (owner selector)           | `src/views/chat.html`     | Low    |
 
 See `.plan/epics/epic-chat-transfer-location.md` for full spec.
 
@@ -597,12 +597,12 @@ See `.plan/epics/epic-chat-transfer-location.md` for full spec.
 
 Stable Diffusion integration, intent detection, scenario source bridge.
 
-| Task | Files | Effort |
-| ---- | ----- | ------ |
-| SD request/response adapter | `src/assistant/sd.ts` (new) | Med |
-| Intent detection + routing | `src/assistant/intent.ts` (new) | High |
-| Approved tool-execution allowlist | `src/assistant/tools.ts` (new) | Med |
-| Scenario source store + reuse | `src/assistant/scenario-source.ts` (new) | Med |
+| Task                              | Files                                    | Effort |
+| --------------------------------- | ---------------------------------------- | ------ |
+| SD request/response adapter       | `src/assistant/sd.ts` (new)              | Med    |
+| Intent detection + routing        | `src/assistant/intent.ts` (new)          | High   |
+| Approved tool-execution allowlist | `src/assistant/tools.ts` (new)           | Med    |
+| Scenario source store + reuse     | `src/assistant/scenario-source.ts` (new) | Med    |
 
 See `.plan/epics/epic-assistant-generation-extensions.md` for full spec.
 
@@ -610,13 +610,13 @@ See `.plan/epics/epic-assistant-generation-extensions.md` for full spec.
 
 Intimacy, seduction, relationships, adult encounters, desires, body systems.
 
-| Task | Files | Effort |
-| ---- | ----- | ------ |
-| Intimacy system (levels, actions, thresholds) | `src/rpg/intimacy.ts` (new) | High |
-| Seduction + desire system | `src/rpg/seduction.ts` (new) | High |
-| Relationship progression | `src/rpg/relationships.ts` (new) | Med |
-| Arousal state + body systems | `src/rpg/body-systems.ts` (new) | High |
-| NSFW content gates | `src/middleware/nsfw-gate.ts` | Med |
+| Task                                          | Files                            | Effort |
+| --------------------------------------------- | -------------------------------- | ------ |
+| Intimacy system (levels, actions, thresholds) | `src/rpg/intimacy.ts` (new)      | High   |
+| Seduction + desire system                     | `src/rpg/seduction.ts` (new)     | High   |
+| Relationship progression                      | `src/rpg/relationships.ts` (new) | Med    |
+| Arousal state + body systems                  | `src/rpg/body-systems.ts` (new)  | High   |
+| NSFW content gates                            | `src/middleware/nsfw-gate.ts`    | Med    |
 
 See `.plan/epics/epic-nsfw-game-mechanics.md` for full spec.
 
@@ -624,15 +624,134 @@ See `.plan/epics/epic-nsfw-game-mechanics.md` for full spec.
 
 Shareability, licensing, epochs, maps, location assets, chat mode switches.
 
-| Task | Files | Effort |
-| ---- | ----- | ------ |
-| World license + attribution model | `src/worlds/license.ts` (new) | Med |
-| Epoch + time-scale engine | `src/worlds/timescale.ts` (new) | Med |
-| 2D/3D map data model | `src/worlds/maps.ts` (new) | High |
-| Location asset/resource generation | `src/worlds/resources.ts` (new) | Med |
-| Chat mode switch state machine | `src/chat/mode-switch.ts` (new) | Med |
+| Task                               | Files                           | Effort |
+| ---------------------------------- | ------------------------------- | ------ |
+| World license + attribution model  | `src/worlds/license.ts` (new)   | Med    |
+| Epoch + time-scale engine          | `src/worlds/timescale.ts` (new) | Med    |
+| 2D/3D map data model               | `src/worlds/maps.ts` (new)      | High   |
+| Location asset/resource generation | `src/worlds/resources.ts` (new) | Med    |
+| Chat mode switch state machine     | `src/chat/mode-switch.ts` (new) | Med    |
 
 See `.plan/epics/epic-worlds-extension.md` for full spec.
+
+### 45. API Versioning Strategy — ⬜ Not Started
+
+Full-transitive backend API compatibility. URL prefix versioning (`/api/v1/`, `/api/v2/`), deprecation headers, shared business logic layer.
+
+| Task                                    | Files                                    | Effort |
+| --------------------------------------- | ---------------------------------------- | ------ |
+| Version prefix routing (Elysia groups)  | `src/routes/v1/`, `src/elysia-app.ts`   | Med    |
+| Response envelope `meta.api_version`    | `src/routes/http-utils.ts`               | Low    |
+| Legacy `/api/*` → `/api/v1/*` redirect  | `src/elysia-app.ts`                      | Low    |
+| Sunset/Deprecation/Link headers         | `src/middleware/deprecation.ts` (new)    | Low    |
+| OpenAPI/Swagger generation              | `src/routes/openapi.ts` (new)            | High   |
+
+See `docs/spec/api-versioning.md` for full spec. Issue: `EPIC-2026-32`.
+
+### 46. DB Versioning & Migrations Reconciliation — ⬜ Not Started
+
+Schema version tracking, content format versioning, migration gap documentation, migration testing.
+
+| Task                                     | Files                                    | Effort |
+| ---------------------------------------- | ---------------------------------------- | ------ |
+| `schema_version` table + queryable getter | `src/db/schema.ts`, `migrations/`      | Low    |
+| Migration gap documentation (002-007)    | `docs/spec/migrations.md`                | Low    |
+| Content versioning framework (registry)  | `src/db/content-versioning.ts` (new)     | Med    |
+| Migration test suite (`:memory:`)        | `tests/e2e/migrations.test.ts`           | Med    |
+
+See `docs/spec/db-versioning.md` for full spec. Issue: `EPIC-2026-33`.
+
+### 47. Conversation Branching — ⬜ Not Started
+
+Tree-structured message history for drafts and alternatives. `parent_id` already exists in schema.
+
+| Task                                    | Files                                    | Effort |
+| --------------------------------------- | ---------------------------------------- | ------ |
+| Branch data model (trunk vs branch)     | `src/db/schema.ts`                       | Med    |
+| Branch navigation API                   | `src/routes/messages.ts`                 | Med    |
+| Branch UI controls (navigator)          | `src/views/chat.html`                    | Med    |
+
+Issue: `EPIC-2026-34`.
+
+### 48. Plugin Extension Points — ⬜ Not Started
+
+Wire registered-but-unwired plugin extension points. Registry exists (`src/plugins/types.ts`, `src/plugins/registry.ts`) but hooks are not called.
+
+| Task                                    | Files                                    | Effort |
+| --------------------------------------- | ---------------------------------------- | ------ |
+| EventBus wiring (lifecycle hooks)       | `src/plugins/event-bus.ts` (new)         | Med    |
+| ToolExecutor (plugin tools via /assist) | `src/plugins/tool-executor.ts` (new)     | Med    |
+| UI component mount points               | `src/frontend/plugin-mount.ts` (new)     | Med    |
+| Plugin config merge                      | `src/plugins/config-merge.ts` (new)      | Low    |
+
+See `docs/meta/code-practices-improvements/08-plugins-hooks-integration.md`. Issue: `EPIC-2026-35`.
+
+### 49. Memory & Knowledge Systems — ⬜ Not Started
+
+Three-tier memory (episodic/semantic/procedural), lorebook activation conditions, memory selection UI.
+
+| Task                                    | Files                                    | Effort |
+| --------------------------------------- | ---------------------------------------- | ------ |
+| Episodic memory (summary, search, consolidation) | `src/memory/episodic.ts` (new)  | High   |
+| Semantic memory (knowledge graph)       | `src/memory/semantic.ts` (new)           | High   |
+| Procedural memory (user rules/prefs)    | `src/memory/procedural.ts` (new)         | Med    |
+| Lorebook activation conditions          | `src/lorebook/triggers.ts` (new)         | Med    |
+| Memory selection UI (per-chat toggles)  | `src/views/chat.html`                    | Med    |
+| Cross-chat memory sharing               | `src/memory/sharing.ts` (new)            | Med    |
+| Memory consolidation                    | `src/memory/consolidation.ts` (new)      | Med    |
+
+Issue: `EPIC-2026-36`.
+
+### 50. Analytics & Observability — ⬜ Not Started
+
+Conversation analytics dashboard, model A/B comparison, knowledge graph visualization.
+
+| Task                                    | Files                                    | Effort |
+| --------------------------------------- | ---------------------------------------- | ------ |
+| Conversation analytics dashboard        | `src/routes/analytics.ts` (new)          | High   |
+| Model comparison A/B (uses `model_comparisons`) | `src/routes/analytics.ts`        | Med    |
+| Knowledge graph visualization           | `src/routes/analytics.ts` (new)          | High   |
+| Generation quality metrics              | `src/analytics/quality.ts` (new)         | Med    |
+
+Issue: `EPIC-2026-37`.
+
+### 51. Output Control & Transforms — ⬜ Not Started
+
+Regex output transforms, smart-regen, prompt library, lore-consistency checker.
+
+| Task                                    | Files                                    | Effort |
+| --------------------------------------- | ---------------------------------------- | ------ |
+| Regex output transforms (post-gen)      | `src/generation/transforms.ts` (new)     | Low    |
+| Smart-regen polish (partial message fix) | `src/generation/smart-regen.ts` (new)    | Med    |
+| Prompt library (save/reuse templates)   | `src/routes/prompts.ts` (new)            | Med    |
+| Lore-consistency checker                 | `src/lorebook/consistency.ts` (new)      | High   |
+
+Issue: `EPIC-2026-38`.
+
+---
+
+## Quick-Win Features
+
+Smaller features extracted from feature-analysis that can ship independently:
+
+| Feature                       | Issue        | Effort |
+| ----------------------------- | ------------ | ------ |
+| Model capability registry     | `FEAT-2026-067` | Low  |
+| Token budget advisor          | `FEAT-2026-068` | Low  |
+| Context window monitor        | `FEAT-2026-069` | Low  |
+| Quick-regen button            | `FEAT-2026-070` | Low  |
+| Response length control       | `FEAT-2026-071` | Low  |
+| Smart context pruning         | `FEAT-2026-072` | Med  |
+
+---
+
+## Security Features
+
+| Feature                       | Issue        | Effort |
+| ----------------------------- | ------------ | ------ |
+| Multi-user memory isolation   | `FEAT-2026-073` | Med  |
+| Memory consent prompts        | `FEAT-2026-074` | Low  |
+| Memory access audit log       | `FEAT-2026-075` | Med  |
 
 ---
 
@@ -678,4 +797,7 @@ See `reviews/review-rounds.md` for full detail. Key open items:
 - TUI: `tui.md`
 - Assets: `assets.md`
 - Build: `package.json` scripts
+- **Future Features**: `future-features-plan.md` — Full plan with EPIC-2026-32 through EPIC-2026-38
+- **API Versioning**: `spec/api-versioning.md` — Versioning strategy spec
+- **DB Versioning**: `spec/db-versioning.md` — DB reconciliation spec
 - **Epic Features**: `.plan/features/` — Detailed epic plans with linked tasks
