@@ -39,7 +39,7 @@
 | — | Impersonation System | ⬜ Not Started | Medium | 0 |
 | — | Assistant/GM Flows Reconciliation | ⬜ Not Started | Medium | 0 |
 | — | Chat/Group Chat Transfer & Location Change | ⬜ Not Started | Medium | 0 |
-| — | RPG Mechanics & Extensible Game Systems | ⬜ Not Started | Medium | 19 |
+| — | RPG Mechanics & Extensible Game Systems | ⬜ Not Started | Medium | 20 |
 | — | World & Locations | ⬜ Not Started | Medium | 2 |
 | — | Battle & Action Systems | ⬜ Not Started | Medium | 0 |
 | — | Plugin System & Extensibility | ⬜ Not Started | High | 6 |
@@ -49,6 +49,16 @@
 | — | Two-Factor / Multi-Factor Auth | ⬜ Not Started | Medium | 0 |
 | — | LLM Request Throughput & Message Scheduling | ⬜ Not Started | Medium | 0 |
 | — | Platform Integrations | 📝 Draft (TBD) | Low | 0 |
+| — | Magic & Spell Systems | ⬜ Not Started | Medium | 0 |
+| — | Crafting & Professions | ⬜ Not Started | Medium | 0 |
+| — | Companion, Pet & Mount Systems | ⬜ Not Started | Medium | 0 |
+| — | Housing & Base Building | ⬜ Not Started | Medium | 0 |
+| — | Stealth & Crime Systems | ⬜ Not Started | Medium | 0 |
+| — | Disease & Poison Systems | ⬜ Not Started | Medium | 0 |
+| — | Social Interaction Systems | ⬜ Not Started | Medium | 0 |
+| — | Weather & Environmental Effects | ⬜ Not Started | Medium | 0 |
+| — | Exploration & Discovery Systems | ⬜ Not Started | Medium | 0 |
+| — | Economy & Trading Systems | ⬜ Not Started | Medium | 0 |
 
 ## Active Epics
 
