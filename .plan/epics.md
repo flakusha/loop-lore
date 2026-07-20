@@ -114,6 +114,7 @@ Deferred or long-term infrastructure work.
 | Platform Integrations                 | 📝 Draft       | Low      | `epic-platform-integrations.md`           |
 | Testing & Benchmarking                | ⬜ Not Started | High     | `epic-testing-benchmarking.md`            |
 | Embeddable Engine (Far Fetched)       | ⬜ Not Started | Low      | `epic-embeddable-engine-game-frontend.md` |
+| OpenAPI-Driven API Reference          | ⬜ Not Started | High     | `epic-openapi-reference.md`               |
 
 ### Generation & Atmosphere Epics
 

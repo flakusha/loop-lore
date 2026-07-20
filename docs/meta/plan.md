@@ -638,13 +638,13 @@ See `.plan/epics/epic-worlds-extension.md` for full spec.
 
 Full-transitive backend API compatibility. URL prefix versioning (`/api/v1/`, `/api/v2/`), deprecation headers, shared business logic layer.
 
-| Task                                    | Files                                    | Effort |
-| --------------------------------------- | ---------------------------------------- | ------ |
-| Version prefix routing (Elysia groups)  | `src/routes/v1/`, `src/elysia-app.ts`   | Med    |
-| Response envelope `meta.api_version`    | `src/routes/http-utils.ts`               | Low    |
-| Legacy `/api/*` → `/api/v1/*` redirect  | `src/elysia-app.ts`                      | Low    |
-| Sunset/Deprecation/Link headers         | `src/middleware/deprecation.ts` (new)    | Low    |
-| OpenAPI/Swagger generation              | `src/routes/openapi.ts` (new)            | High   |
+| Task                                   | Files                                 | Effort |
+| -------------------------------------- | ------------------------------------- | ------ |
+| Version prefix routing (Elysia groups) | `src/routes/v1/`, `src/elysia-app.ts` | Med    |
+| Response envelope `meta.api_version`   | `src/routes/http-utils.ts`            | Low    |
+| Legacy `/api/*` → `/api/v1/*` redirect | `src/elysia-app.ts`                   | Low    |
+| Sunset/Deprecation/Link headers        | `src/middleware/deprecation.ts` (new) | Low    |
+| OpenAPI/Swagger generation             | `src/routes/openapi.ts` (new)         | High   |
 
 See `docs/spec/api-versioning.md` for full spec. Issue: `EPIC-2026-32`.
 
@@ -652,12 +652,12 @@ See `docs/spec/api-versioning.md` for full spec. Issue: `EPIC-2026-32`.
 
 Schema version tracking, content format versioning, migration gap documentation, migration testing.
 
-| Task                                     | Files                                    | Effort |
-| ---------------------------------------- | ---------------------------------------- | ------ |
-| `schema_version` table + queryable getter | `src/db/schema.ts`, `migrations/`      | Low    |
-| Migration gap documentation (002-007)    | `docs/spec/migrations.md`                | Low    |
-| Content versioning framework (registry)  | `src/db/content-versioning.ts` (new)     | Med    |
-| Migration test suite (`:memory:`)        | `tests/e2e/migrations.test.ts`           | Med    |
+| Task                                      | Files                                | Effort |
+| ----------------------------------------- | ------------------------------------ | ------ |
+| `schema_version` table + queryable getter | `src/db/schema.ts`, `migrations/`    | Low    |
+| Migration gap documentation (002-007)     | `docs/spec/migrations.md`            | Low    |
+| Content versioning framework (registry)   | `src/db/content-versioning.ts` (new) | Med    |
+| Migration test suite (`:memory:`)         | `tests/e2e/migrations.test.ts`       | Med    |
 
 See `docs/spec/db-versioning.md` for full spec. Issue: `EPIC-2026-33`.
 
@@ -665,11 +665,11 @@ See `docs/spec/db-versioning.md` for full spec. Issue: `EPIC-2026-33`.
 
 Tree-structured message history for drafts and alternatives. `parent_id` already exists in schema.
 
-| Task                                    | Files                                    | Effort |
-| --------------------------------------- | ---------------------------------------- | ------ |
-| Branch data model (trunk vs branch)     | `src/db/schema.ts`                       | Med    |
-| Branch navigation API                   | `src/routes/messages.ts`                 | Med    |
-| Branch UI controls (navigator)          | `src/views/chat.html`                    | Med    |
+| Task                                | Files                    | Effort |
+| ----------------------------------- | ------------------------ | ------ |
+| Branch data model (trunk vs branch) | `src/db/schema.ts`       | Med    |
+| Branch navigation API               | `src/routes/messages.ts` | Med    |
+| Branch UI controls (navigator)      | `src/views/chat.html`    | Med    |
 
 Issue: `EPIC-2026-34`.
 
@@ -677,12 +677,12 @@ Issue: `EPIC-2026-34`.
 
 Wire registered-but-unwired plugin extension points. Registry exists (`src/plugins/types.ts`, `src/plugins/registry.ts`) but hooks are not called.
 
-| Task                                    | Files                                    | Effort |
-| --------------------------------------- | ---------------------------------------- | ------ |
-| EventBus wiring (lifecycle hooks)       | `src/plugins/event-bus.ts` (new)         | Med    |
-| ToolExecutor (plugin tools via /assist) | `src/plugins/tool-executor.ts` (new)     | Med    |
-| UI component mount points               | `src/frontend/plugin-mount.ts` (new)     | Med    |
-| Plugin config merge                      | `src/plugins/config-merge.ts` (new)      | Low    |
+| Task                                    | Files                                | Effort |
+| --------------------------------------- | ------------------------------------ | ------ |
+| EventBus wiring (lifecycle hooks)       | `src/plugins/event-bus.ts` (new)     | Med    |
+| ToolExecutor (plugin tools via /assist) | `src/plugins/tool-executor.ts` (new) | Med    |
+| UI component mount points               | `src/frontend/plugin-mount.ts` (new) | Med    |
+| Plugin config merge                     | `src/plugins/config-merge.ts` (new)  | Low    |
 
 See `docs/meta/code-practices-improvements/08-plugins-hooks-integration.md`. Issue: `EPIC-2026-35`.
 
@@ -690,15 +690,15 @@ See `docs/meta/code-practices-improvements/08-plugins-hooks-integration.md`. Iss
 
 Three-tier memory (episodic/semantic/procedural), lorebook activation conditions, memory selection UI.
 
-| Task                                    | Files                                    | Effort |
-| --------------------------------------- | ---------------------------------------- | ------ |
-| Episodic memory (summary, search, consolidation) | `src/memory/episodic.ts` (new)  | High   |
-| Semantic memory (knowledge graph)       | `src/memory/semantic.ts` (new)           | High   |
-| Procedural memory (user rules/prefs)    | `src/memory/procedural.ts` (new)         | Med    |
-| Lorebook activation conditions          | `src/lorebook/triggers.ts` (new)         | Med    |
-| Memory selection UI (per-chat toggles)  | `src/views/chat.html`                    | Med    |
-| Cross-chat memory sharing               | `src/memory/sharing.ts` (new)            | Med    |
-| Memory consolidation                    | `src/memory/consolidation.ts` (new)      | Med    |
+| Task                                             | Files                               | Effort |
+| ------------------------------------------------ | ----------------------------------- | ------ |
+| Episodic memory (summary, search, consolidation) | `src/memory/episodic.ts` (new)      | High   |
+| Semantic memory (knowledge graph)                | `src/memory/semantic.ts` (new)      | High   |
+| Procedural memory (user rules/prefs)             | `src/memory/procedural.ts` (new)    | Med    |
+| Lorebook activation conditions                   | `src/lorebook/triggers.ts` (new)    | Med    |
+| Memory selection UI (per-chat toggles)           | `src/views/chat.html`               | Med    |
+| Cross-chat memory sharing                        | `src/memory/sharing.ts` (new)       | Med    |
+| Memory consolidation                             | `src/memory/consolidation.ts` (new) | Med    |
 
 Issue: `EPIC-2026-36`.
 
@@ -706,12 +706,12 @@ Issue: `EPIC-2026-36`.
 
 Conversation analytics dashboard, model A/B comparison, knowledge graph visualization.
 
-| Task                                    | Files                                    | Effort |
-| --------------------------------------- | ---------------------------------------- | ------ |
-| Conversation analytics dashboard        | `src/routes/analytics.ts` (new)          | High   |
+| Task                                            | Files                            | Effort |
+| ----------------------------------------------- | -------------------------------- | ------ |
+| Conversation analytics dashboard                | `src/routes/analytics.ts` (new)  | High   |
 | Model comparison A/B (uses `model_comparisons`) | `src/routes/analytics.ts`        | Med    |
-| Knowledge graph visualization           | `src/routes/analytics.ts` (new)          | High   |
-| Generation quality metrics              | `src/analytics/quality.ts` (new)         | Med    |
+| Knowledge graph visualization                   | `src/routes/analytics.ts` (new)  | High   |
+| Generation quality metrics                      | `src/analytics/quality.ts` (new) | Med    |
 
 Issue: `EPIC-2026-37`.
 
@@ -719,14 +719,31 @@ Issue: `EPIC-2026-37`.
 
 Regex output transforms, smart-regen, prompt library, lore-consistency checker.
 
-| Task                                    | Files                                    | Effort |
-| --------------------------------------- | ---------------------------------------- | ------ |
-| Regex output transforms (post-gen)      | `src/generation/transforms.ts` (new)     | Low    |
-| Smart-regen polish (partial message fix) | `src/generation/smart-regen.ts` (new)    | Med    |
-| Prompt library (save/reuse templates)   | `src/routes/prompts.ts` (new)            | Med    |
-| Lore-consistency checker                 | `src/lorebook/consistency.ts` (new)      | High   |
+| Task                                     | Files                                 | Effort |
+| ---------------------------------------- | ------------------------------------- | ------ |
+| Regex output transforms (post-gen)       | `src/generation/transforms.ts` (new)  | Low    |
+| Smart-regen polish (partial message fix) | `src/generation/smart-regen.ts` (new) | Med    |
+| Prompt library (save/reuse templates)    | `src/routes/prompts.ts` (new)         | Med    |
+| Lore-consistency checker                 | `src/lorebook/consistency.ts` (new)   | High   |
 
 Issue: `EPIC-2026-38`.
+
+### 52. OpenAPI-Driven API Reference — ⬜ Not Started [P1-High]
+
+Auto-generate API Reference from OpenAPI spec derived from TypeScript sources.
+Eliminates stale docs — reference always matches code.
+
+| Task                                     | Files                                 | Effort |
+| ---------------------------------------- | ------------------------------------- | ------ |
+| Add `@elysiajs/swagger` to Elysia app    | `src/elysia-app.ts`                   | Low    |
+| Export static OpenAPI spec at build time | `scripts/gen-openapi.ts` (new)        | Med    |
+| Transform spec → VitePress markdown      | `scripts/gen-api-docs.ts` (new)       | Med    |
+| Generate per-tag API pages               | `docs/reference/api/*.md` (generated) | Med    |
+| Integrate into `docs:build` pipeline     | `package.json`                        | Low    |
+| Add OpenAPI freshness check to CI        | CI config                             | Low    |
+| Enrich with examples + auth annotations  | `src/routes/*.ts` + schemas           | High   |
+
+Issue: `EPIC-2026-52`.
 
 ---
 
@@ -734,24 +751,24 @@ Issue: `EPIC-2026-38`.
 
 Smaller features extracted from feature-analysis that can ship independently:
 
-| Feature                       | Issue        | Effort |
-| ----------------------------- | ------------ | ------ |
-| Model capability registry     | `FEAT-2026-067` | Low  |
-| Token budget advisor          | `FEAT-2026-068` | Low  |
-| Context window monitor        | `FEAT-2026-069` | Low  |
-| Quick-regen button            | `FEAT-2026-070` | Low  |
-| Response length control       | `FEAT-2026-071` | Low  |
-| Smart context pruning         | `FEAT-2026-072` | Med  |
+| Feature                   | Issue           | Effort |
+| ------------------------- | --------------- | ------ |
+| Model capability registry | `FEAT-2026-067` | Low    |
+| Token budget advisor      | `FEAT-2026-068` | Low    |
+| Context window monitor    | `FEAT-2026-069` | Low    |
+| Quick-regen button        | `FEAT-2026-070` | Low    |
+| Response length control   | `FEAT-2026-071` | Low    |
+| Smart context pruning     | `FEAT-2026-072` | Med    |
 
 ---
 
 ## Security Features
 
-| Feature                       | Issue        | Effort |
-| ----------------------------- | ------------ | ------ |
-| Multi-user memory isolation   | `FEAT-2026-073` | Med  |
-| Memory consent prompts        | `FEAT-2026-074` | Low  |
-| Memory access audit log       | `FEAT-2026-075` | Med  |
+| Feature                     | Issue           | Effort |
+| --------------------------- | --------------- | ------ |
+| Multi-user memory isolation | `FEAT-2026-073` | Med    |
+| Memory consent prompts      | `FEAT-2026-074` | Low    |
+| Memory access audit log     | `FEAT-2026-075` | Med    |
 
 ---
 
