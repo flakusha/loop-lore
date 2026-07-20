@@ -40,9 +40,11 @@
 | — | Assistant/GM Flows Reconciliation | ⬜ Not Started | Medium | 0 |
 | — | Chat/Group Chat Transfer & Location Change | ⬜ Not Started | Medium | 0 |
 | — | RPG Mechanics & Extensible Game Systems | ⬜ Not Started | Medium | 19 |
-| — | World & Locations | ⬜ Not Started | Medium | 0 |
+| — | World & Locations | ⬜ Not Started | Medium | 1 |
 | — | Battle & Action Systems | ⬜ Not Started | Medium | 0 |
-| — | Plugin System & Extensibility | ⬜ Not Started | High | 0 |
+| — | Plugin System & Extensibility | ⬜ Not Started | High | 6 |
+| — | Testing & Benchmarking | ⬜ Not Started | High | 0 |
+| — | AO NSFW Game Mechanics | 📝 Draft | Medium | 14 |
 | — | Deno Support (Possible Node) | ⬜ Not Started | Low | 0 |
 | — | Two-Factor / Multi-Factor Auth | ⬜ Not Started | Medium | 0 |
 | — | LLM Request Throughput & Message Scheduling | ⬜ Not Started | Medium | 0 |
