@@ -38,9 +38,21 @@ interface PluginInfo {
   routeCount: number;
 }
 
+interface ModelInfo {
+  id: string;
+  ownedBy?: string;
+  contextWindow?: number;
+  maxOutput?: number;
+  thinking?: boolean;
+  modalities?: string[];
+  toolCalling?: boolean;
+  paramSize?: string;
+  raw?: Record<string, unknown>;
+}
+
 export const adminModels = {
   providers: [] as ProviderInfo[],
-  providerModels: {} as Record<string, string[]>,
+  providerModels: {} as Record<string, ModelInfo[]>,
   modelRoleList: [] as { role: string; provider: string; model: string }[],
   overrides: {} as Record<string, { provider: string; model: string }>,
   loadingModels: false,
@@ -98,13 +110,13 @@ export const adminModels = {
       log.warn("Failed to load model roles",);
     }
   },
-  getModelsForRole(role: string,): string[] {
+  getModelsForRole(role: string,): ModelInfo[] {
     const entry = this.modelRoleList.find((e,) => e.role === role);
     const provider = entry?.provider;
     if (!provider) { return []; }
     return this.providerModels[provider] || [];
   },
-  getProviderModels(name: string,): string[] {
+  getProviderModels(name: string,): ModelInfo[] {
     return this.providerModels[name] || [];
   },
   onRoleProviderChange(role: string,) {
