@@ -1,3 +1,5 @@
+> High-level notes — may drift from implementation. Authoritative source is `src/` and AGENTS.md.
+
 # API Route Contract
 
 ## Conventions
@@ -31,10 +33,12 @@ Response:
 
 ### Validation
 
-Request body validation uses Zod schemas defined per route group in companion
-`.schema.ts` files. Route handlers call `schema.parse(body)` after
-`parseBody()` — invalid requests return 422 with field-level details. See
-`docs/spec/implementation.md#runtime-validation-layer` for full design.
+Request body validation uses Elysia TypeBox (`t`) schemas defined per route
+group in `src/validation/schemas.ts`. Route handlers validate the parsed body
+against the schema after `parseBody()` — invalid requests return 422 with
+field-level details. See `docs/spec/implementation.md#runtime-validation-layer`
+for full design. (A `src/schemas/` Zod layer does not exist; the Zod/OpenAPI
+migration is aspirational.)
 
 ---
 

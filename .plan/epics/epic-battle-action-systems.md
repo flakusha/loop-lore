@@ -472,3 +472,9 @@ interface BackgroundTransition {
 - Performance optimization
 - Balance tuning
 - Documentation
+
+## Related Epics
+
+- **Epic Platform Research** — combat / trading / skill-check adoption tracked there.
+- **Epic RPG Mechanics** — combat, loot, inventory, skills shared; this epic owns battle UI/flow, RPG owns the mechanics.
+- **Epic World & Locations** — encounters, monsters, and location-based random encounters overlap; world owns location data.

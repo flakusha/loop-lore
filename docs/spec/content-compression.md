@@ -1,3 +1,5 @@
+> High-level notes — may drift from implementation. Authoritative source is `src/` and AGENTS.md.
+
 # Content Compression
 
 Status: Built. Used by crypto pipeline, build pipeline, storage layer.

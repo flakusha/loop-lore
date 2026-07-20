@@ -244,3 +244,10 @@ interface WorldMechanicsConfig {
 - `docs/spec/rpg-mechanics.md` — RPG mechanics spec
 - `docs/spec/rpg-implementation-roadmap.md` — implementation roadmap
 - `docs/spec/plugin-system.md` — plugin system spec
+
+## Related Epics
+
+- **Epic Platform Research** — feature-adoption source for RPG systems.
+- **Epic World & Locations** — world-level modifiers / factions overlap; delegates world state to that epic.
+- **Epic Battle & Action Systems** — combat, loot, inventory, skills shared; coordinate ownership there.
+- **Epic Plugin System** — mechanics registry is plugin-based (`plugins/core/`).

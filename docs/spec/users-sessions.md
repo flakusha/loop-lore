@@ -1,3 +1,5 @@
+> High-level notes — may drift from implementation. Authoritative source is `src/` and AGENTS.md.
+
 # Users, Roles & Sessions
 
 ## Overview
@@ -112,7 +114,7 @@ On violation: `429 Too Many Requests` with `ErrorCode.TOO_MANY_REQUESTS`.
 ### Option 3: Containerized + reverse proxy (production)
 
 - Each Bun instance behind nginx/caddy
-- Postgres/MySQL backend
+- Postgres backend
 - Redis for session cache (optional)
 - Horizontal scale via additional Bun workers
 

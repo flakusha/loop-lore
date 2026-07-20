@@ -1,6 +1,6 @@
 # Epic 14: Import/Export & Data Portability — Implementation Plan
 
-**Status:** ✅ Complete (reconciled 2026-07-19)\
+**Status:** 📝 Doc reconciled — feature NOT yet built (reconciled 2026-07-19)\
 **Worktree:** `tree/feat-14-io`\
 **Branch:** `feat-14-io`
 

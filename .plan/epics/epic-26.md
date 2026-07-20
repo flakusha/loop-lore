@@ -16,7 +16,7 @@
 | Schema sync test       | `src/db/schema-sync.test.ts`              | ✅    | Proves `verify()` works; no startup enforcement.                                |
 | Data transforms        | `data_migrations` table                   | ✅    | Tracks `from_version → to_version` rewrites, separate from DDL.                 |
 | Session state          | `src/db/schema-core.ts` (`sessions`)      | ✅    | Persisted in DB — instances stateless, scalable in principle.                   |
-| Real-time (SSE)        | `src/routes/activity-stream.ts` (Epic 19) | ✅    | **Per-process** — clients on other replicas don't get events.                   |
+| Real-time (SSE)        | `src/routes/activity-stream.ts`           | ✅    | **Per-process** — clients on other replicas don't get events.                   |
 | Advisory lock / leader | —                                         | ❌    | No `pg_advisory_lock`, no wait-for-ready.                                       |
 | Startup drift check    | —                                         | ❌    | `SchemaManifest.verify()` not invoked at boot.                                  |
 
@@ -28,7 +28,7 @@ architecture.md claims multi-user = "reverse proxy + multiple Bun workers or con
 
 1. **Migration race.** Cold deploy: every replica runs the Migrator. Concurrent DDL corrupts SQLite; errors/double-applies on Postgres.
 2. **Schema drift.** A stale instance on an older image can serve against a migrated DB. `SchemaManifest.verify()` detects it but is unused at boot.
-3. **Real-time is per-process.** SSE (Epic 19) only reaches clients on the same replica.
+3. **Real-time is per-process.** SSE (implemented in `src/routes/activity-stream.ts`) only reaches clients on the same replica.
 
 This epic makes multi-instance boot deterministic and drift-safe.
 
@@ -115,3 +115,14 @@ This epic makes multi-instance boot deterministic and drift-safe.
 - Epic 25 (Deployment Topologies) — consumes these guards
 - Epic 27 (Data Integrity & ACID) — backend selection guards
 - `docs/meta/plan.md` — epic registry
+
+## Related Epics
+
+- **Epic 25 (Deployment Topologies)** — this epic's migration-leadership / drift guards gate the multi-instance topologies D/E.
+- **Epic 27 (Data Integrity & ACID)** — backend-selection guards complement this epic; sequenced together after Epic 26 (order 26 → 27 → 25).
+- **Epic Testing & QA** — migration-leader + drift integration tests live under its QA umbrella.
+
+## Scope Boundary
+
+- **IN:** migration leadership, startup schema-drift enforcement, optional cross-instance SSE bus.
+- **OUT:** backend-selection/ACID guards (Epic 27); deploy manifests/K8s (Epic 25); SSE feature itself stays owned by `src/routes/activity-stream.ts`.
