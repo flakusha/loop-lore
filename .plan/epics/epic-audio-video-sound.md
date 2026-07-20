@@ -143,6 +143,67 @@ interface AudioLayer {
 - [ ] Video generation queue (long-running)
 - [ ] Device-tier gating (GPU required)
 
+### Phase 5 — Gallery Asset Reuse & Multimodal Generation
+
+Leverage existing gallery assets (`src/assets/`) with metadata (`alt_text`,
+`mime_type`, `width/height/duration`, `metadata` JSON) as input for edit/creation.
+This enables multimodal generation: image→video, audio→enhanced, narration→sound.
+
+- [ ] Asset metadata extraction for generation context
+  - Read `alt_text`, `mime_type`, dimensions, duration from asset record
+  - Parse `metadata` JSON for additional context (camera angle, mood, etc.)
+  - Use `asset_links` labels as semantic tags
+- [ ] Image-to-video pipeline
+  - Select gallery image → generate video continuation
+  - Use image metadata (alt_text, dimensions) as prompt context
+  - ComfyUI Wan/LTX workflow for img2vid
+- [ ] Audio enhancement pipeline
+  - Select gallery audio → enhance (noise removal, mastering, format convert)
+  - Use audio metadata (duration, sample rate) as constraints
+  - ComfyUI audio upscale workflow
+- [ ] Multimodal generation orchestrator
+  - Route requests across modalities (image, audio, video, text)
+  - Detect input modality from asset type
+  - Chain providers: e.g. TTS→audio enhance→ambient mix
+- [ ] Asset reuse API
+  - `POST /api/generate/from-asset` — generate new content from existing asset
+  - `GET /api/assets/:id/generation-context` — extract metadata for prompts
+  - `POST /api/generate/multimodal` — chain across modalities
+
+### Phase 6 — Narration & Sounding
+
+Full narration pipeline: read text aloud with character voice, emotion, and
+ambient sound backing. "Sounding" = TTS + ambient + SFX mixed together.
+
+- [ ] Narration pipeline
+  - Detect narration markers in messages (`*action*`, `"dialogue"`, `narrator:`)
+  - Split into segments: speech (TTS), action (SFX), description (ambient)
+  - Generate each segment with appropriate provider
+  - Mix into single audio track with proper timing
+- [ ] Character voice mapping
+  - Per-character voice preset (provider + voice_id + speed + pitch)
+  - Emotion detection from text (LLM or regex on narration markers)
+  - Map emotion → voice parameters (whisper, shout, laugh, cry)
+- [ ] Ambient backing tracks
+  - Auto-select ambient based on location/scene tags
+  - Mix at lower volume under narration
+  - Crossfade on scene transitions
+- [ ] SFX insertion
+  - Detect action verbs → inject SFX at correct timestamp
+  - `*draws sword*` → metallic unsheathe SFX
+  - `*door creaks open*` → creak SFX
+  - `*fire crackles*` → fire ambience
+- [ ] Narration playback controller
+  - Synchronized text highlighting (karaoke mode)
+  - Pause/resume/seek across mixed tracks
+  - Speed control (0.5x - 2.0x)
+  - Per-layer volume (voice/ambient/SFX)
+- [ ] Narration asset storage
+  - Store generated narration as composite asset
+  - Link to message + character + location
+  - Cache for replay (avoid re-generation)
+  - Version tracking (regenerate with different settings)
+
 ## Dependencies
 
 - Existing: `src/generation/providers/comfyui.ts` (for ComfyUI audio/video)
