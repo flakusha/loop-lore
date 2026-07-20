@@ -53,7 +53,8 @@ import {
 } from "./service";
 import type { AssetRecord, } from "./service";
 
-interface UploadOpts {
+/** Upload options — also used by elysia-app.ts for the standalone POST /api/assets route. */
+export interface UploadOpts {
   request: Request;
   userId: string;
   database: Kysely<DB>;
@@ -155,17 +156,12 @@ export function assetRoutes({ database, config, }: { database: Kysely<DB>; confi
         },);
         return jsonPaginated({ data: result.data, total: result.total, page, pageSize, },);
       },)
-      .post("/api/assets", async (ctx,) => {
-        const userId = requireUserId(ctx,);
-        if (typeof userId !== "string") { return userId; }
-        return handleUpload({
-          request: ctx.request,
-          userId,
-          database,
-          uploadDir: config.assets.uploadDir,
-          maxFileSize: config.assets.maxFileSize,
-        },);
-      },)
+      // NOTE: POST /api/assets is registered directly in elysia-app.ts (not here)
+      // as a workaround for Elysia 1.4.x body consumption: when a child plugin
+      // containing routes that call request.json() is .use()d into a parent,
+      // Elysia's internal body parser consumes the multipart body stream before
+      // the upload handler can call request.formData(). Registering the multipart
+      // route directly on the parent app avoids this issue.
       // ── Single asset routes ──────────────────────────
       .get("/api/assets/:id", async (ctx,) => {
         const asset = await getAsset(database, ctx.params.id,);
@@ -312,7 +308,7 @@ export function assetRoutes({ database, config, }: { database: Kysely<DB>; confi
   );
 }
 
-async function handleUpload({
+export async function handleUpload({
   request,
   userId,
   database,
