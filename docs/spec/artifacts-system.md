@@ -1,3 +1,5 @@
+> High-level notes — may drift from implementation. Authoritative source is `src/` and AGENTS.md.
+
 # Artifacts System Specification
 
 Extends Assets system for code, documents, datasets, notebooks — non-media creative outputs.

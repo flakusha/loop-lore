@@ -1,3 +1,5 @@
+> High-level notes — may drift from implementation. Authoritative source is `src/` and AGENTS.md.
+
 # Logging
 
 Unified structured logging. Zero deps. Async queue + PII censor + JSONL/DB transports.

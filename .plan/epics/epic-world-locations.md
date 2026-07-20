@@ -9,6 +9,17 @@
 
 World and location system — overall conditions, lore following/quality investigation on creation, overall style (fantasy, real, cyberpunk, sci-fi, etc.), random location generation, anomalies/effects, item search/generation, unique places, resource extraction, persistent storage, NPC placement/migration/inventories.
 
+## Slicing
+
+This epic is too large to ship in one pass (8 phases, ~100 interface blocks). Propose splitting into 2–4 independently shippable sub-epics, sequenced so each delivers user-visible value:
+
+1. **Travel & Time** — World Conditions, environmental state (weather/time/season), travel between locations, random location generation. Lowest coupling; good first slice.
+2. **NPCs & Memories** — NPC placement/migration/inventories, NPC memories (overlaps `docs/spec/actors.md` memory system — owning epic: actor/memory subsystem), persistent storage.
+3. **Encounters & Monsters** — anomalies/effects, resource extraction, item search/generation, unique places. Overlaps Epic RPG Mechanics & Epic Battle Action Systems (combat/loot); coordinate ownership there.
+4. **Diplomacy & Karma** — world-level modifiers, factions, reputation/karma, lore-following/quality-investigation on creation.
+
+**Overlap note:** World Conditions/style and item generation overlap Epic Platform Research (feature-adoption tracking) and the RPG/Battle epics (mechanics, combat, loot). Style-specific asset generation overlaps image-gen work; lore/quality investigation overlaps assistant/TTS RAG work. Each sub-epic above should delegate the overlapping piece to its owning epic rather than re-specifying it.
+
 ## Core Features
 
 ### World Conditions
@@ -1324,3 +1335,10 @@ interface FormattingRules {
 - Performance optimization
 - World sharing
 - Documentation
+
+## Related Epics
+
+- **Epic Platform Research** — world style / style-specific asset & NPC generation are adoption candidates tracked there.
+- **Epic RPG Mechanics** — world-level modifiers, factions, reputation/karma overlap; RPG owns the mechanics, this epic owns location/world data.
+- **Epic Battle & Action Systems** — encounters, monsters, and location-based random encounters overlap; battle owns combat flow.
+- **Epic 27 (Data Integrity & ACID)** — persistent world/location storage relies on `data_version` concurrency guards once enforced.

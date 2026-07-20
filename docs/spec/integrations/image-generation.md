@@ -1,3 +1,5 @@
+> High-level notes — may drift from implementation. Authoritative source is `src/` and AGENTS.md.
+
 # Image Generation: sd-server Integration
 
 Backend: `stable-diffusion.cpp` (`sd-server`). Local image generation server using `stable-diffusion.cpp` with three API families.

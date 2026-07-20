@@ -1,3 +1,5 @@
+> High-level notes — may drift from implementation. Authoritative source is `src/` and AGENTS.md.
+
 # TUI Implementation Details
 
 TUI built with `blessed` + `blessed-contrib`. Terminal chat interface with integrated asset viewer.

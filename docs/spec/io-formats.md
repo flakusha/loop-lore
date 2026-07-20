@@ -1,3 +1,5 @@
+> High-level notes — may drift from implementation. Authoritative source is `src/` and AGENTS.md.
+
 # IO Formats — Import/Export Specifications
 
 **Epic 14: Import/Export & Data Portability**

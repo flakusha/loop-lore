@@ -80,3 +80,10 @@ loop-lore already covers (do NOT re-research): multi-LLM story/GM, character car
 - Slash commands: https://deepwiki.com/SillyTavern/SillyTavern/7.1-slash-command-system
 - RisuAI: https://risuai.net/
 - Character.AI memories: https://blog.character.ai/helping-characters-remember-what-matters-most/
+
+## Related Epics
+
+- **Epic World & Locations** — world style / style-specific asset & NPC generation are adoption candidates tracked here.
+- **Epic RPG Mechanics** — RPG systems (dice, combat, loot, quests) are direct adoption targets.
+- **Epic Battle & Action Systems** — combat, trading, skill-checks adoption tracked here.
+- **Image-Generation / TTS / RAG** — candidates #1/#2/#3 in this epic; **no dedicated epics exist yet** — keep adoption tracked here until split out.

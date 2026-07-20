@@ -3,7 +3,7 @@
 **Status:** Draft — description under `tree/chore-docs-reconcile` (docs chore)\
 **Proposed Epic Branch:** `epic/27`\
 **Owner:** TBD\
-**Depends on:** Epic 26 (reconciliation), Epic 25 (deployment packaging)
+**Depends on:** Epic 26 (Multi-Instance Reconciliation) — hard prerequisite. Epic 27 and Epic 25 are independently sequenced after Epic 26 (suggested order: 26 → 27 → 25); neither lists the other as a dependency. Epic 25 consumes this epic's backend guards but is not a prerequisite.
 
 ---
 
@@ -129,3 +129,14 @@ The integrity contract is implicit and partly unenforced:
 - Epic 26 (Multi-Instance Reconciliation) — leadership/drift
 - `docs/spec/architecture.md` — stale MySQL claim
 - `docs/meta/plan.md` — epic registry
+
+## Related Epics
+
+- **Epic 26 (Multi-Instance Reconciliation)** — migration leadership / drift detection; `data_version` enforcement here complements its concurrency model.
+- **Epic 25 (Deployment Topologies)** — consumes the backend-selection + ACID guards produced here to gate SQLite-vs-Postgres topologies.
+- **Epic 27 → Epic Testing & QA** — `data_version` optimistic-concurrency (Phase 2) needs the concurrency test work tracked in Epic Testing & QA (integration conflict tests, type/complexity gates).
+
+## Scope Boundary
+
+- **IN:** backend-selection guards, `data_version` write-path enforcement, ACID reference doc.
+- **OUT:** migration leadership/orchestration (Epic 26 owns it); deploy manifests/K8s (Epic 25 owns it); general test infrastructure (Epic Testing & QA owns it).
