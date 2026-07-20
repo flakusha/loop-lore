@@ -541,40 +541,54 @@
               </h3>
               <div style="display: grid; gap: var(--space-3)">
                 <template x-for="r in modelRoleList" :key="r.role">
-                  <div style="display: grid; grid-template-columns: 120px 1fr 1fr auto; gap: var(--space-3); align-items: center; padding: var(--space-3); background: var(--bg-secondary, #f8f9fa); border-radius: 6px">
-                    <div style="font-weight: 500; text-transform: capitalize" x-text="r.role"></div>
-                    <select
-                      class="form-input"
-                      style="font-size: 13px"
-                      x-model="r.provider"
-                      @change="onRoleProviderChange(r.role)"
+                  <div style="display: flex; flex-direction: column; gap: var(--space-2); padding: var(--space-3); background: var(--bg-secondary, #f8f9fa); border-radius: 6px">
+                    <div style="display: grid; grid-template-columns: 120px 1fr 1fr auto; gap: var(--space-3); align-items: center">
+                      <div style="font-weight: 500; text-transform: capitalize" x-text="r.role"></div>
+                      <select
+                        class="form-input"
+                        style="font-size: 13px"
+                        x-model="r.provider"
+                        @change="onRoleProviderChange(r.role)"
+                      >
+                        <option value="">Select provider...</option>
+                        <template x-for="p in providers" :key="p.name">
+                          <option :value="p.name" x-text="p.label"></option>
+                        </template>
+                      </select>
+                      <select class="form-input" style="font-size: 13px" x-model="r.model">
+                        <option value="">Select model...</option>
+                        <template x-for="m in getModelsForRole(r.role)" :key="m.id">
+                          <option :value="m.id" x-text="m.id + (modelSummary(m) ? ' — ' + modelSummary(m) : '')">
+                          </option>
+                        </template>
+                      </select>
+                      <div style="display: flex; gap: 4px">
+                        <button
+                          class="btn btn-primary btn-xs"
+                          @click="saveModelRole(r.role)"
+                          :disabled="!r.provider || !r.model"
+                        >
+                          Save
+                        </button>
+                        <button
+                          class="btn btn-secondary btn-xs"
+                          @click="clearModelRole(r.role)"
+                          x-show="overrides[r.role]"
+                        >
+                          Clear
+                        </button>
+                      </div>
+                    </div>
+                    <div
+                      x-show="getSelectedModel(r.role)"
+                      style="font-size: 11px; color: var(--text-secondary, #6c757d); display: flex; flex-wrap: wrap; gap: 6px; align-items: center"
                     >
-                      <option value="">Select provider...</option>
-                      <template x-for="p in providers" :key="p.name">
-                        <option :value="p.name" x-text="p.label"></option>
-                      </template>
-                    </select>
-                    <select class="form-input" style="font-size: 13px" x-model="r.model">
-                      <option value="">Select model...</option>
-                      <template x-for="m in getModelsForRole(r.role)" :key="m.id">
-                        <option :value="m.id" x-text="m.id"></option>
-                      </template>
-                    </select>
-                    <div style="display: flex; gap: 4px">
-                      <button
-                        class="btn btn-primary btn-xs"
-                        @click="saveModelRole(r.role)"
-                        :disabled="!r.provider || !r.model"
-                      >
-                        Save
-                      </button>
-                      <button
-                        class="btn btn-secondary btn-xs"
-                        @click="clearModelRole(r.role)"
-                        x-show="overrides[r.role]"
-                      >
-                        Clear
-                      </button>
+                      <span x-text="modelSummary(getSelectedModel(r.role))"></span>
+                      <span
+                        x-show="modelSuitability(getSelectedModel(r.role))"
+                        style="font-size: 10px; padding: 1px 6px; background: var(--bg-tertiary, #fff); border: 1px solid var(--border-default, #e9ecef); border-radius: 10px; color: var(--text-secondary, #6c757d)"
+                        x-text="modelSuitability(getSelectedModel(r.role))"
+                      ></span>
                     </div>
                   </div>
                 </template>
@@ -646,6 +660,12 @@
                                 style="font-size: 10px; padding: 1px 5px; background: var(--bg-secondary, #f8f9fa); border: 1px solid var(--border-default, #e9ecef); border-radius: 10px; color: var(--text-secondary, #6c757d)"
                                 x-text="m.modalities.join(',')"
                               ></span>
+                            </div>
+                            <div
+                              x-show="modelSuitability(m)"
+                              style="margin-top: 4px; font-size: 10px; color: var(--text-secondary, #6c757d)"
+                              x-text="modelSuitability(m)"
+                            >
                             </div>
                           </div>
                         </template>
