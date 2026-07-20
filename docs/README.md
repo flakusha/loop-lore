@@ -149,7 +149,7 @@ Future features, exploration docs, and implementation roadmaps. Not yet implemen
 
 ### Ideas (`ideas/`)
 
-Creative and UX exploration docs, sourced from competitor analysis.
+Creative and UX exploration docs, sourced from analysis of community projects.
 
 | Document                                                               | Topics                                 |
 | ---------------------------------------------------------------------- | -------------------------------------- |
