@@ -1,3 +1,5 @@
+> High-level notes — may drift from implementation. Authoritative source is `src/` and AGENTS.md.
+
 # Implementation Details
 
 ## Technology Stack
@@ -17,8 +19,9 @@
 - **Middleware**: Lightweight composable pipeline (auth, role guard, logging)
   built on Bun fetch; no framework
 - **Validation**: Kysely type system at compile time; runtime validation via
-  [Zod](https://zod.dev) — schema-per-route pattern with shared field fragments,
-  logger integration, and optional TypeBox swap for smaller bundle footprint
+  Elysia's TypeBox-based `t` schemas in `src/validation/schemas.ts` — schema-per-route
+  group with shared field fragments, logger integration. (A Zod migration is
+  aspirational — see `docs/meta/code-practices-improvements/06-schemas-and-openapi.md`.)
 
 ### Frontend
 
@@ -97,33 +100,33 @@ limiting beyond login.
 
 ### Runtime Validation Layer
 
-Request/response validation lives in `src/schemas/` using Zod (primary) or
-TypeBox (swap-in alternative). Each route group gets a companion schema file
-(`chats.schema.ts` alongside `chats.ts`).
+> Note: a `src/schemas/` Zod layer does not exist. The implemented stack is
+> Elysia `t` (TypeBox) schemas centralized in `src/validation/schemas.ts`. The
+> design below describes the **current** TypeBox approach; the Zod/OpenAPI
+> migration is aspirational only (see `docs/meta/code-practices-improvements/06-schemas-and-openapi.md`).
+
+Request/response validation lives in `src/validation/schemas.ts` using Elysia's
+TypeBox `t` schemas. Each route group defines its request/response schemas there.
 
 #### Design
 
 - **Single source of truth**: Schema = TypeScript type + runtime validation +
-  OpenAPI documentation. Use `z.infer<typeof schema>` for types.
-- **Composition**: Shared field fragments (`src/schemas/shared-fields.ts`)
+  OpenAPI documentation. Use `t.Static<typeof schema>` for inferred types.
+- **Composition**: Shared field fragments in `src/validation/schemas.ts`
   eliminate per-field duplication across schemas — e.g. `uidField`,
   `displayNameField`, `optionalDescription`, `paginationQuery`.
 - **Enum sharing**: Route schemas import enum definitions from `src/db/enums.ts`
   (already single source of truth) — no enum duplication.
 - **DB separation**: Kysely table types (`src/db/schema-*.ts`) remain unchanged
-  — they describe DB rows. Zod schemas describe API contracts. Field overlap
-  (~40%) is inherent: the API contract is a different boundary than the DB
-  schema.
+  — they describe DB rows. Validation schemas describe API contracts. Field
+  overlap (~40%) is inherent: the API contract is a different boundary than the
+  DB schema.
 - **Logger integration**: Validation failures log at debug level via
   `getLogger().child({ module: "validation", requestId, userId })` — detailed
   issues in dev, silent in prod (error code returned to client).
 - **No rewrite**: Existing route handlers, factories, seed data, and Kysely
-  types are unaffected. Zod is additive — it wraps the existing `parseBody()`
-  result and provides typed `.data`.
-
-#### Pattern
-
-See `src/schemas/shared-fields.ts` for Zod schema fragments.
+  types are unaffected. The TypeBox schema validates the parsed body and
+  provides typed `.data`.
 
 ### Database Layer
 

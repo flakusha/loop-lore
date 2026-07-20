@@ -40,7 +40,7 @@
 | — | Assistant/GM Flows Reconciliation | ⬜ Not Started | Medium | 0 |
 | — | Chat/Group Chat Transfer & Location Change | ⬜ Not Started | Medium | 0 |
 | — | RPG Mechanics & Extensible Game Systems | ⬜ Not Started | Medium | 19 |
-| — | World & Locations | ⬜ Not Started | Medium | 1 |
+| — | World & Locations | ⬜ Not Started | Medium | 2 |
 | — | Battle & Action Systems | ⬜ Not Started | Medium | 0 |
 | — | Plugin System & Extensibility | ⬜ Not Started | High | 6 |
 | — | Testing & Benchmarking | ⬜ Not Started | High | 0 |
