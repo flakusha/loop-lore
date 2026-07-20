@@ -165,6 +165,10 @@ generation:
   #     # cacheMode: spectrum
   #     # type: q8_0                             # weight quantization
   #     # backend: "clip=cpu,vae=cpu"
+  #   # ── llama-swap proxy (auto-start) ─────────────────────
+  #   # llamaSwap:
+  #   #   enabled: true
+  #   #   configPath: "~/git-ai/ai-scripts/llama-swap.yaml"  # ~ expands to $HOME
 
 # ── BYO API Keys ──
 byoKey:
