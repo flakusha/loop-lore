@@ -98,6 +98,16 @@ World and location system — overall conditions, lore following/quality investi
 - Diplomatic missions and quests
 - Peace/war state management
 
+### NPC: Memories & Standing
+- NPC memory of player interactions
+- NPC memory of world events
+- NPC standing with player (hostile→exalted)
+- NPC relationship tracking
+- NPC emotional state
+- NPC grudge/friendship system
+- NPC memory decay over time
+- NPC memory sharing between NPCs
+
 ### World Character Karma & Standing
 - Character karma system (good/evil/neutral)
 - Reputation tracking per faction/location
@@ -106,6 +116,16 @@ World and location system — overall conditions, lore following/quality investi
 - Karma-based quest availability
 - Karma-based item access
 - Karma-based world state changes
+
+### Message Formatting & Language
+- World-specific message formatting
+- Slang and dialect based on setting
+- Language level (formal, casual, archaic, slang)
+- NPC speech patterns
+- Setting-appropriate terminology
+- Character voice consistency
+- Cultural references and idioms
+- Translation/localization support
 
 ### Distance & Time Travel
 - Distance calculation between locations
@@ -630,6 +650,190 @@ interface KarmaEffect {
 }
 ```
 
+### NPC Memory System
+
+```typescript
+interface NPCMemory {
+  npcId: string;
+  memories: Memory[];
+  emotionalState: EmotionalState;
+  relationships: NPCRelationship[];
+  grudges: Grudge[];
+  friendships: Friendship[];
+  memoryDecay: MemoryDecayConfig;
+}
+
+interface Memory {
+  id: string;
+  type: 'interaction' | 'event' | 'observation' | 'rumor';
+  content: string;
+  timestamp: Date;
+  importance: number; // 0-100
+  emotionalImpact: number; // -100 to 100
+  participants: string[]; // character/NPC IDs
+  location: string;
+  decayRate: number; // how fast memory fades
+  shared: boolean; // shared with other NPCs
+}
+
+interface EmotionalState {
+  happiness: number; // -100 to 100
+  anger: number; // -100 to 100
+  fear: number; // -100 to 100
+  sadness: number; // -100 to 100
+  surprise: number; // -100 to 100
+  disgust: number; // -100 to 100
+  trust: number; // -100 to 100
+  dominant: string; // dominant emotion
+}
+
+interface NPCRelationship {
+  targetId: string; // character/NPC ID
+  standing: number; // -100 to 100
+  type: 'stranger' | 'acquaintance' | 'friend' | 'ally' | 'rival' | 'enemy';
+  history: RelationshipEvent[];
+  lastInteraction: Date;
+  emotionalBond: number; // -100 to 100
+}
+
+interface Grudge {
+  targetId: string;
+  reason: string;
+  intensity: number; // 0-100
+  timestamp: Date;
+  resolved: boolean;
+  resolution?: string;
+}
+
+interface Friendship {
+  targetId: string;
+  level: number; // 0-100
+  sharedExperiences: string[];
+  trust: number; // 0-100
+  loyalty: number; // 0-100
+}
+
+interface MemoryDecayConfig {
+  baseDecayRate: number; // per day
+  importanceMultiplier: number; // important memories decay slower
+  emotionalMultiplier: number; // emotional memories decay slower
+  sharedMemoryBonus: number; // shared memories decay slower
+  reinforcementThreshold: number; // reinforced memories don't decay
+}
+```
+
+### Message Formatting System
+
+```typescript
+interface MessageFormatting {
+  worldId: string;
+  style: WorldStyle;
+  language: LanguageConfig;
+  npcSpeech: NPCSpeechConfig;
+  formatting: FormattingRules;
+}
+
+interface LanguageConfig {
+  level: 'formal' | 'casual' | 'archaic' | 'slang' | 'technical' | 'poetic';
+  dialect: string;
+  slang: SlangDictionary;
+  idioms: IdiomDictionary;
+  culturalReferences: CulturalReference[];
+  terminology: TerminologySet;
+}
+
+interface SlangDictionary {
+  [word: string]: {
+    meaning: string;
+    usage: 'common' | 'rare' | 'archaic' | 'regional';
+    context: string;
+    alternatives: string[];
+  };
+}
+
+interface IdiomDictionary {
+  [idiom: string]: {
+    meaning: string;
+    origin: string;
+    usage: string;
+    alternatives: string[];
+  };
+}
+
+interface CulturalReference {
+  id: string;
+  name: string;
+  description: string;
+  usage: string;
+  context: string;
+  alternatives: string[];
+}
+
+interface TerminologySet {
+  [term: string]: {
+    definition: string;
+    category: string;
+    synonyms: string[];
+    antonyms: string[];
+    usage: string;
+  };
+}
+
+interface NPCSpeechConfig {
+  patterns: SpeechPattern[];
+  vocabulary: VocabularyLevel;
+  grammar: GrammarRules;
+  pronunciation: PronunciationRules;
+  accent: AccentConfig;
+}
+
+interface SpeechPattern {
+  id: string;
+  name: string;
+  pattern: string; // regex or template
+  usage: 'common' | 'rare' | 'archaic' | 'regional';
+  context: string;
+  examples: string[];
+}
+
+interface VocabularyLevel {
+  level: 'simple' | 'moderate' | 'complex' | 'archaic' | 'technical';
+  wordChoice: 'common' | 'formal' | 'slang' | 'poetic';
+  sentenceStructure: 'simple' | 'complex' | 'mixed';
+}
+
+interface GrammarRules {
+  tense: 'past' | 'present' | 'future' | 'mixed';
+  person: 'first' | 'second' | 'third' | 'mixed';
+  formality: 'formal' | 'casual' | 'mixed';
+  contractions: boolean;
+  slang: boolean;
+}
+
+interface PronunciationRules {
+  accent: string;
+  emphasis: 'standard' | 'regional' | 'foreign';
+  mispronunciations: string[];
+  speechImpediments: string[];
+}
+
+interface AccentConfig {
+  type: 'standard' | 'regional' | 'foreign' | 'fictional';
+  name: string;
+  description: string;
+  examples: string[];
+}
+
+interface FormattingRules {
+  messageLength: 'short' | 'medium' | 'long' | 'variable';
+  punctuation: 'standard' | 'minimal' | 'excessive';
+  capitalization: 'standard' | 'all_caps' | 'lowercase' | 'mixed';
+  emojis: boolean;
+  abbreviations: boolean;
+  slang: boolean;
+}
+```
+
 ## Tasks
 
 - [ ] Design world data model
@@ -662,6 +866,14 @@ interface KarmaEffect {
 - [ ] Implement random encounter system
 - [ ] Implement monster/enemy NPC system
 - [ ] Implement diplomacy system
+- [ ] Implement NPC memory system
+- [ ] Implement NPC emotional state
+- [ ] Implement NPC relationships (grudges, friendships)
+- [ ] Implement memory decay system
+- [ ] Implement message formatting system
+- [ ] Implement slang/dialect system
+- [ ] Implement NPC speech patterns
+- [ ] Implement world-specific terminology
 - [ ] Implement karma and standing system
 - [ ] Implement game-inspired systems (radiant quests, crime/bounty, faction reputation, etc.)
 - [ ] Create world management UI
@@ -675,6 +887,7 @@ interface KarmaEffect {
 - [ ] Create random encounter UI
 - [ ] Create monster compendium UI
 - [ ] Create diplomacy UI
+- [ ] Create NPC memory/relationship UI
 - [ ] Create karma/standing UI
 - [ ] Write tests for world system
 
@@ -778,6 +991,20 @@ interface KarmaEffect {
 - How to handle karma resets?
 - Should standing be per-faction or global?
 - How to balance karma effects?
+
+### NPC Memories
+- How many memories per NPC is reasonable?
+- How fast should memories decay?
+- Should NPCs share memories with each other?
+- How to handle NPC emotional state changes?
+- Should NPCs remember player actions across sessions?
+
+### Message Formatting
+- How to balance slang vs. readability?
+- Should slang be world-specific or character-specific?
+- How to handle language level changes?
+- Should formatting be automatic or player-controlled?
+- How to maintain character voice consistency?
 
 ## Implementation Phases
 
