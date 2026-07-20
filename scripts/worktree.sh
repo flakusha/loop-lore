@@ -62,23 +62,33 @@ Commands:
   agent-merge <branch>      Alias for finalize — merge worktree into master and clean up
   agent-commit <branch> <msg>  Create GPG-signed commit in worktree (agent MUST use this)
   commit <msg>             Create GPG-signed commit on current branch (including master)
-  ticket <TYPE> <NUM> <title> [body]  Create git-native-issue ticket with extid
-  issues                    List all open issues
   list                      Show all worktrees with status
   cleanup                   Remove worktrees for deleted branches
   remove <branch>           Remove specific worktree (blocks if dirty)
   prs                       Create worktrees for all open PRs (needs gh auth)
 
+Issue Tracking (git-issue):
+  ticket <TYPE> <NUM> <title> [body]  Create git-native-issue ticket with extid
+  issues [--all] [--format FORMAT]    List issues (default: open, oneline)
+  show <ID>                           Show issue details and comments
+  comment <ID> -m <text>              Add comment to issue
+  edit <ID> [--label/--assignee/--priority]  Edit issue metadata
+  state <ID> <STATE>                  Change issue state (open/closed)
+  search <PATTERN>                    Search issues by text
+  attach <ID> <FILE>                  Attach file to issue comment
+  attach-dir <ID> <DIR>               Attach all files in directory
+
+Aliases:
+  gi                                  Shortcut for git-issue commands
+
 Examples:
   $(basename "$0") new feature-xyz
-  $(basename "$0") new feature-xyz master
-  $(basename "$0") create existing-branch
-  $(basename "$0") finalize feature-xyz
-  $(basename "$0") agent-merge feature-xyz
-  $(basename "$0") agent-commit feature-xyz "feat(scope): add new feature"
-  $(basename "$0") commit "chore: clean up email identities"
-  $(basename "$0") list
-  $(basename "$0") cleanup
+  $(basename "$0") ticket TASK 001 "Fix login"
+  $(basename "$0") issues --all
+  $(basename "$0") show TASK-001
+  $(basename "$0") comment TASK-001 -m "Added description"
+  $(basename "$0") attach TASK-001 ./docs/spec.md
+  $(basename "$0") gi ls
 EOF
 }
 
@@ -292,9 +302,9 @@ cmd_ticket() {
     if [[ -z "$type" ]] || [[ -z "$num" ]] || [[ -z "$title" ]]; then
         echo -e "${RED}Error: type, number, and title required${NC}"
         echo "Usage: $(basename "$0") ticket <TYPE> <NUM> <title> [body]"
-        echo "  TYPE: BUG, FEAT, FIX, IDEA, TASK, SOL, INFRA"
-        echo "  NUM: 4-digit year-number (e.g., 2025-001)"
-        echo "  Example: $(basename "$0") ticket FEAT 2025-015 'New feature title'"
+        echo "  TYPE: BUG, FEAT, FIX, IDEA, TASK, SOL, INFRA, EPIC"
+        echo "  NUM: 3-digit number (e.g., 001, 015)"
+        echo "  Example: $(basename "$0") ticket TASK 001 'Fix login'"
         exit 1
     fi
 
@@ -322,9 +332,220 @@ cmd_ticket() {
 }
 
 cmd_issues() {
-    # List all open issues
-    echo -e "${CYAN}Open issues:${NC}"
-    git -C "$REPO_ROOT" issue ls --format oneline 2>/dev/null | head -50
+    # List issues with optional filters
+    # Usage: ./scripts/worktree.sh issues [--all] [--format FORMAT]
+    local show_all=false
+    local format="oneline"
+    
+    while [[ $# -gt 0 ]]; do
+        case "$1" in
+            --all|-a)
+                show_all=true
+                shift
+                ;;
+            --format|-f)
+                format="$2"
+                shift 2
+                ;;
+            *)
+                shift
+                ;;
+        esac
+    done
+    
+    echo -e "${CYAN}Issues:${NC}"
+    if [[ "$show_all" == true ]]; then
+        git -C "$REPO_ROOT" issue ls --format "$format" 2>/dev/null
+    else
+        git -C "$REPO_ROOT" issue ls --format "$format" 2>/dev/null | head -50
+    fi
+}
+
+cmd_show() {
+    # Show issue details and comments
+    # Usage: ./scripts/worktree.sh show <ID>
+    local id="$1"
+    
+    if [[ -z "$id" ]]; then
+        echo -e "${RED}Error: issue ID required${NC}"
+        echo "Usage: $(basename "$0") show <ID>"
+        exit 1
+    fi
+    
+    # Try to find by extid pattern (e.g., TASK-001)
+    if [[ "$id" =~ ^[A-Z]+-[0-9]+$ ]]; then
+        # Search for the issue by title pattern
+        local found_id
+        found_id=$(git -C "$REPO_ROOT" issue ls 2>/dev/null | grep -m1 "${id}:" | awk '{print $1}')
+        if [[ -n "$found_id" ]]; then
+            id="$found_id"
+        fi
+    fi
+    
+    git -C "$REPO_ROOT" issue show "$id" 2>/dev/null
+}
+
+cmd_comment() {
+    # Add comment to issue
+    # Usage: ./scripts/worktree.sh comment <ID> -m <text>
+    local id="$1"
+    shift
+    
+    if [[ -z "$id" ]]; then
+        echo -e "${RED}Error: issue ID required${NC}"
+        echo "Usage: $(basename "$0") comment <ID> -m <text>"
+        exit 1
+    fi
+    
+    # Try to find by extid pattern (e.g., TASK-001)
+    if [[ "$id" =~ ^[A-Z]+-[0-9]+$ ]]; then
+        local found_id
+        found_id=$(git -C "$REPO_ROOT" issue ls 2>/dev/null | grep -m1 "${id}:" | awk '{print $1}')
+        if [[ -n "$found_id" ]]; then
+            id="$found_id"
+        fi
+    fi
+    
+    git -C "$REPO_ROOT" issue comment "$id" "$@" 2>/dev/null
+}
+
+cmd_edit() {
+    # Edit issue metadata
+    # Usage: ./scripts/worktree.sh edit <ID> [--label/--assignee/--priority]
+    local id="$1"
+    shift
+    
+    if [[ -z "$id" ]]; then
+        echo -e "${RED}Error: issue ID required${NC}"
+        echo "Usage: $(basename "$0") edit <ID> [options]"
+        exit 1
+    fi
+    
+    # Try to find by extid pattern (e.g., TASK-001)
+    if [[ "$id" =~ ^[A-Z]+-[0-9]+$ ]]; then
+        local found_id
+        found_id=$(git -C "$REPO_ROOT" issue ls 2>/dev/null | grep -m1 "${id}:" | awk '{print $1}')
+        if [[ -n "$found_id" ]]; then
+            id="$found_id"
+        fi
+    fi
+    
+    git -C "$REPO_ROOT" issue edit "$id" "$@" 2>/dev/null
+}
+
+cmd_state() {
+    # Change issue state
+    # Usage: ./scripts/worktree.sh state <ID> <STATE>
+    local id="$1"
+    local state="$2"
+    
+    if [[ -z "$id" ]] || [[ -z "$state" ]]; then
+        echo -e "${RED}Error: issue ID and state required${NC}"
+        echo "Usage: $(basename "$0") state <ID> <STATE>"
+        echo "  STATE: open, closed"
+        exit 1
+    fi
+    
+    # Try to find by extid pattern (e.g., TASK-001)
+    if [[ "$id" =~ ^[A-Z]+-[0-9]+$ ]]; then
+        local found_id
+        found_id=$(git -C "$REPO_ROOT" issue ls 2>/dev/null | grep -m1 "${id}:" | awk '{print $1}')
+        if [[ -n "$found_id" ]]; then
+            id="$found_id"
+        fi
+    fi
+    
+    git -C "$REPO_ROOT" issue state "$id" "$state" 2>/dev/null
+}
+
+cmd_search() {
+    # Search issues by text pattern
+    # Usage: ./scripts/worktree.sh search <PATTERN>
+    local pattern="$1"
+    
+    if [[ -z "$pattern" ]]; then
+        echo -e "${RED}Error: search pattern required${NC}"
+        echo "Usage: $(basename "$0") search <PATTERN>"
+        exit 1
+    fi
+    
+    echo -e "${CYAN}Searching issues for: ${pattern}${NC}"
+    git -C "$REPO_ROOT" issue search "$pattern" 2>/dev/null
+}
+
+cmd_attach() {
+    # Attach file to issue as comment
+    # Usage: ./scripts/worktree.sh attach <ID> <FILE>
+    local id="$1"
+    local file="$2"
+    
+    if [[ -z "$id" ]] || [[ -z "$file" ]]; then
+        echo -e "${RED}Error: issue ID and file required${NC}"
+        echo "Usage: $(basename "$0") attach <ID> <FILE>"
+        exit 1
+    fi
+    
+    if [[ ! -f "$file" ]]; then
+        echo -e "${RED}Error: file not found: $file${NC}"
+        exit 1
+    fi
+    
+    # Try to find by extid pattern (e.g., TASK-001)
+    if [[ "$id" =~ ^[A-Z]+-[0-9]+$ ]]; then
+        local found_id
+        found_id=$(git -C "$REPO_ROOT" issue ls 2>/dev/null | grep -m1 "${id}:" | awk '{print $1}')
+        if [[ -n "$found_id" ]]; then
+            id="$found_id"
+        fi
+    fi
+    
+    # Read file content and create comment
+    local content
+    content=$(cat "$file")
+    local filename
+    filename=$(basename "$file")
+    
+    echo -e "${CYAN}Attaching $filename to issue $id...${NC}"
+    git -C "$REPO_ROOT" issue comment "$id" -m "## Attachment: $filename
+
+\`\`\`
+$content
+\`\`\`" 2>/dev/null
+    echo -e "${GREEN}✓ Attached $filename${NC}"
+}
+
+cmd_attach_dir() {
+    # Attach all files in directory to issue
+    # Usage: ./scripts/worktree.sh attach-dir <ID> <DIR>
+    local id="$1"
+    local dir="$2"
+    
+    if [[ -z "$id" ]] || [[ -z "$dir" ]]; then
+        echo -e "${RED}Error: issue ID and directory required${NC}"
+        echo "Usage: $(basename "$0") attach-dir <ID> <DIR>"
+        exit 1
+    fi
+    
+    if [[ ! -d "$dir" ]]; then
+        echo -e "${RED}Error: directory not found: $dir${NC}"
+        exit 1
+    fi
+    
+    echo -e "${CYAN}Attaching files from $dir to issue $id...${NC}"
+    local count=0
+    for file in "$dir"/*; do
+        if [[ -f "$file" ]]; then
+            cmd_attach "$id" "$file"
+            ((count++))
+        fi
+    done
+    echo -e "${GREEN}✓ Attached $count files${NC}"
+}
+
+cmd_gi() {
+    # Shortcut for git-issue commands
+    # Usage: ./scripts/worktree.sh gi <args>
+    git -C "$REPO_ROOT" issue "$@" 2>/dev/null
 }
 
 cmd_list() {
@@ -920,10 +1141,43 @@ case "${1:-}" in
         ;;
     ticket)
         shift
-        cmd_ticket "${1:-}" "${2:-}" "${3:-}"
+        cmd_ticket "${1:-}" "${2:-}" "${3:-}" "${4:-}"
         ;;
     issues)
-        cmd_issues
+        shift
+        cmd_issues "$@"
+        ;;
+    show)
+        shift
+        cmd_show "${1:-}"
+        ;;
+    comment)
+        shift
+        cmd_comment "$@"
+        ;;
+    edit)
+        shift
+        cmd_edit "$@"
+        ;;
+    state)
+        shift
+        cmd_state "${1:-}" "${2:-}"
+        ;;
+    search)
+        shift
+        cmd_search "${1:-}"
+        ;;
+    attach)
+        shift
+        cmd_attach "${1:-}" "${2:-}"
+        ;;
+    attach-dir)
+        shift
+        cmd_attach_dir "${1:-}" "${2:-}"
+        ;;
+    gi)
+        shift
+        cmd_gi "$@"
         ;;
     prs)
         cmd_prs
