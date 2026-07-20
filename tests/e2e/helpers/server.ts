@@ -224,7 +224,7 @@ function enforceE2eSafeguard(config: Config,): void {
     throw new Error(msg,);
   }
 
-  console.log("[E2E_SAFEGUARD] Config is safe (:memory: DB, /tmp/ uploads, auth disabled)",);
+  // Only log if env override detected (suppress noise in normal runs)
 }
 
 /**
@@ -249,6 +249,9 @@ export function loadTestConfig(
   config.assets.maxFileSize = 10 * 1024 * 1024; // 10 MB
   config.assets.uploadDir = "/tmp/loop-lore-e2e-placeholder";
   config.auth.required = false;
+  // JWT secret is required by all login handlers (demo-login, login, register).
+  // Use a deterministic test secret so JWT verify works in authenticate().
+  config.auth.jwtSecret ||= "e2e-test-jwt-secret";
   enforceE2eSafeguard(config,);
 
   if (overrides) {
@@ -359,7 +362,12 @@ export async function createTestServer(
   const handler = createRequestHandler(app, config, logger,);
 
   const bunServer = Bun.serve({ port: 0, fetch: handler, },);
-  const url = `http://localhost:${bunServer.port}`;
+  // Use 127.0.0.1 instead of localhost to avoid lean-ctx proxy interception
+  // Also bypass HTTP_PROXY for test-local fetch calls
+  const url = `http://127.0.0.1:${bunServer.port}`;
+  process.env.NO_PROXY = process.env.NO_PROXY
+    ? `${process.env.NO_PROXY},127.0.0.1,localhost`
+    : "127.0.0.1,localhost";
 
   return {
     url,
