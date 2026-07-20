@@ -28,8 +28,6 @@ export default defineConfig({
       { text: 'Frontend', link: '/frontend/overview', activeMatch: '/frontend/' },
       { text: 'Reference', link: '/reference/api', activeMatch: '/reference/' },
       { text: 'Roadmap', link: '/meta/roadmap' },
-      { text: 'Issues', link: '/meta/issues' },
-
       { text: 'Ideas', link: '/ideas/', activeMatch: '/ideas/' },
       { text: 'GitHub', link: 'https://github.com/yourusername/loop-lore' },
     ],
@@ -184,7 +182,6 @@ export default defineConfig({
           items: [
             { text: 'MVP Plan', link: '/meta/plan' },
             { text: 'Roadmap', link: '/meta/roadmap' },
-            { text: 'Issue Tracker', link: '/meta/issues' },
             { text: 'Workflow', link: '/meta/workflow' },
           ],
         },
