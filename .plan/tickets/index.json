@@ -701,5 +701,21 @@
       "template"
     ],
     "source": ".plan/tickets/TASK-asset-templates.md"
+  },
+  "TASK-asset-storage-compression": {
+    "hash": "pending",
+    "extid": "TASK-asset-storage-compression",
+    "type": "TASK",
+    "title": "Asset storage compression and encryption",
+    "label": "task",
+    "priority": "medium",
+    "epic": "EPIC-2026-28",
+    "tags": [
+      "asset",
+      "storage",
+      "compression",
+      "encryption"
+    ],
+    "source": ".plan/tickets/TASK-asset-storage-compression.md"
   }
 }
