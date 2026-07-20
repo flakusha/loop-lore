@@ -175,6 +175,16 @@ interface WorldMechanicsConfig {
 - Should questions have time limits?
 - How to handle "none of the above" options?
 - Should questions be voice-acted or text-only?
+- How to handle state transitions between question and free-form modes?
+- Should question mode be triggered automatically or manually?
+- How to maintain immersion during mode switches?
+
+### State Management
+- How to handle concurrent modes (e.g., trading during battle)?
+- Should modes be mutually exclusive or layered?
+- How to persist mode state across sessions?
+- Should mode transitions be reversible?
+- How to handle mode conflicts (e.g., battle interrupting trade)?
 
 ### Integration
 - How should RPG mechanics interact with LLM generation?
