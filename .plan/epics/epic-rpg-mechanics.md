@@ -136,17 +136,77 @@ interface WorldMechanicsConfig {
 - [ ] Skill/ability system
 - [ ] XP/leveling system
 - [ ] Loot system
-- [ ] Quest system
+- [ ] Quest system (main, side, chains, story end conditions)
 - [ ] Achievement system
 - [ ] Buffs/debuffs system
 - [ ] Inventory system
-- [ ] Item system with parameters
+- [ ] Item system with parameters and gameplay impact
 - [ ] Item economics and money
 - [ ] Unique items
+- [ ] Crafting system (recipes, limitations, pre-compiled items)
+- [ ] RPG chat with question-based gameplay
 - [ ] Per-world mechanics configuration
 - [ ] Plugin mechanics API
 - [ ] Admin/GM mechanics UI
 - [ ] Mechanics disable/enable per world
+
+## Open Questions
+
+### Quest System
+- How should quest chains handle branching paths?
+- Should failed quests be retryable or permanent?
+- How to handle party death — full reset or checkpoint system?
+- Should quests have dynamic difficulty based on party level?
+
+### Crafting System
+- Should crafting success be purely random or skill-based?
+- How to handle recipe discovery — find, buy, or unlock?
+- Should crafted items be tradeable?
+- How to balance crafting vs. loot drops?
+
+### Item System
+- How to handle item scaling with character level?
+- Should items have durability degradation over time?
+- How to balance unique vs. common items?
+- Should items have set bonuses or individual bonuses?
+
+### RPG Chat Questions
+- How many options per question is optimal (2-4)?
+- Should questions have time limits?
+- How to handle "none of the above" options?
+- Should questions be voice-acted or text-only?
+
+### Integration
+- How should RPG mechanics interact with LLM generation?
+- Should mechanics be enforced or suggested?
+- How to handle player vs. character knowledge?
+- Should mechanics be visible to all players or hidden?
+
+## Implementation Phases
+
+### Phase 1: Core Systems
+- Mechanics registry
+- Stats system
+- Dice system
+- Combat basics
+
+### Phase 2: Extended Systems
+- Quest system
+- Crafting system
+- Item system
+- Inventory system
+
+### Phase 3: Advanced Features
+- RPG chat questions
+- Achievement system
+- Buffs/debuffs system
+- Skill trees
+
+### Phase 4: Polish & Integration
+- UI/UX refinement
+- Performance optimization
+- Plugin API
+- Documentation
 
 ## Files
 
