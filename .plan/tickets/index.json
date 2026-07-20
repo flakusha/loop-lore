@@ -319,7 +319,8 @@
     "label": "feature",
     "priority": "medium",
     "source": "docs/meta/backlog.md",
-    "body": "docs/spec/artifacts-system.md specifies; not implemented.\nSource: docs/meta/backlog.md (P2)"
+    "body": "docs/spec/artifacts-system.md specifies; not implemented.\nSource: docs/meta/backlog.md (P2)",
+    "epic": "EPIC-2026-28"
   },
   "FEAT-2026-005": {
     "hash": "9858f26",
@@ -602,7 +603,8 @@
     "priority": "medium",
     "source": ".plan/features/procedural-assets.md",
     "body": "# Procedural Asset Pipelines Implementation\n\n## Overview\n\nExtend existing creation pipeline to auto-generate maps, portraits, music, and SFX.\n\n## Implementation\n\n### Extend Pipeline Stages\n\nCurrent pipeline: Description → Stats → Effects → Image → Placement\n\nAdd new stages:\n\n- `audio` - Generate music/SFX\n- `map` - Generate location maps\n- `portrait` - Generate character portraits\n\n### File: src/story/pipelines/audio.ts\n\n```typescript\nexport interface AudioPipeline {\n  description: string;\n  style: string; // ambient, combat, sad, triumphant\n  duration: number; // seconds\n}\n\nexport async function generateAudioAsset(input: AudioPipeline,): Promise<{ assetId: string; url: string }> {\n  const prompt = `\nGenerate ${input.style} music for: ${input.description}\nDuration: ${input.duration} seconds\nFormat: ambient loop\n`;\n\n  const result = await audioProvider.generate({\n    prompt,\n    duration: input.duration,\n    style: input.style,\n  },);\n\n  return saveAsset({\n    type: \"audio\",\n    url: result.url,\n    metadata: { duration: input.duration, style: input.style, },\n  },);\n}\n```\n\n### File: src/story/pipelines/map.ts\n\n```typescript\nexport interface MapPipeline {\n  locationName: string;\n  description: string;\n  connections: string[]; // Connected location names\n}\n\nexport async function generateMapAsset(input: MapPipeline,): Promise<{ assetId: string; url: string }> {\n  const prompt = `\nDungeon/minimap style map for: ${input.locationName}\nDescription: ${input.description}\nConnected locations: ${input.connections.join(\", \",)}\n\nStyle: top-down, simple lines, labeled rooms\n`;\n\n  const result = await imageProvider.generate({\n    prompt,\n    width: 1024,\n    height: 1024,\n  },);\n\n  return saveAsset({\n    type: \"image\",\n    url: result.url,\n    metadata: { map_for: input.locationName, },\n  },);\n}\n```\n\n### Integration with World Rules\n\n```typescript\n// src/story/pipelines/registry.ts\nexport const pipelines = {\n  item: [descriptionStage, statsStage, effectsStage, imageStage, placementStage,],\n  location: [descriptionStage, mapStage, audioStage, placementStage,],\n  character: [descriptionStage, statsStage, portraitStage,],\n  npc: [descriptionStage, statsStage, portraitStage, personalityStage,],\n};\n\n// World config can override pipeline\nconst worldPipeline = world.rules?.pipelines?.location || pipelines.location;\n```\n\n## Edge Cases\n\n- Audio generation fails → fallback to silence\n- Map too complex → simplify prompt\n- Portrait style mismatch → use world default\n- Large batch generation → queue with progress\n- Asset storage full → reject with error\n- Provider rate limited → retry with backoff\n\n## Configuration\n\n```yaml\nprocedural_assets:\n  enabled: true\n  providers:\n    image: \"sd.cpp\"\n    audio: \"musicgen\"\n    map: \"sd.cpp\"\n  defaults:\n    map_style: \"dungeon\"\n    portrait_style: \"portrait\"\n    audio_style: \"ambient\"\n```\n",
-    "type": "FEAT"
+    "type": "FEAT",
+    "epic": "EPIC-2026-28"
   },
   "FEAT-2026-032": {
     "hash": "caadeb8",
@@ -633,5 +635,71 @@
     "priority": "medium",
     "source": "AGENTS.md",
     "body": "Show context window, param size, thinking/tools/modalities capabilities for each model in admin Models tab."
+  },
+  "EPIC-2026-28": {
+    "hash": "pending",
+    "extid": "EPIC-2026-28",
+    "type": "EPIC",
+    "title": "EPIC-2026-28: Asset Support Expansion",
+    "label": "epic",
+    "priority": "medium",
+    "source": ".plan/features/epic-2026-28-asset-expansion.md",
+    "body": "Expand asset system beyond images/audio/video to include RPG-specific assets (tokens, maps, item cards), business documents (PDFs, spreadsheets), 3D models, video cutscenes, and asset versioning."
+  },
+  "TASK-asset-rpg-tokens": {
+    "hash": "pending",
+    "extid": "TASK-asset-rpg-tokens",
+    "type": "TASK",
+    "title": "RPG token and map assets",
+    "label": "task",
+    "priority": "medium",
+    "epic": "EPIC-2026-28",
+    "tags": [
+      "asset",
+      "rpg"
+    ],
+    "source": ".plan/tickets/TASK-asset-rpg-tokens.md"
+  },
+  "TASK-asset-3d-models": {
+    "hash": "pending",
+    "extid": "TASK-asset-3d-models",
+    "type": "TASK",
+    "title": "3D model support",
+    "label": "task",
+    "priority": "low",
+    "epic": "EPIC-2026-28",
+    "tags": [
+      "asset",
+      "3d"
+    ],
+    "source": ".plan/tickets/TASK-asset-3d-models.md"
+  },
+  "TASK-asset-versioning": {
+    "hash": "pending",
+    "extid": "TASK-asset-versioning",
+    "type": "TASK",
+    "title": "Asset versioning system",
+    "label": "task",
+    "priority": "medium",
+    "epic": "EPIC-2026-28",
+    "tags": [
+      "asset",
+      "versioning"
+    ],
+    "source": ".plan/tickets/TASK-asset-versioning.md"
+  },
+  "TASK-asset-templates": {
+    "hash": "pending",
+    "extid": "TASK-asset-templates",
+    "type": "TASK",
+    "title": "Asset templates and presets",
+    "label": "task",
+    "priority": "low",
+    "epic": "EPIC-2026-28",
+    "tags": [
+      "asset",
+      "template"
+    ],
+    "source": ".plan/tickets/TASK-asset-templates.md"
   }
 }
