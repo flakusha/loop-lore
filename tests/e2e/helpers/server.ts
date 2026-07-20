@@ -224,7 +224,7 @@ function enforceE2eSafeguard(config: Config,): void {
     throw new Error(msg,);
   }
 
-  console.log("[E2E_SAFEGUARD] Config is safe (:memory: DB, /tmp/ uploads, auth disabled)",);
+  // Only log if env override detected (suppress noise in normal runs)
 }
 
 /**
