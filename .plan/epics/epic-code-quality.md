@@ -84,3 +84,8 @@ Grounded against `eslint.config.mjs` and `docs/meta/code-practices-improvements/
 - `docs/meta/code-practices-improvements/02-eslint-and-static-analysis.md` — rule recommendations
 - typescript-eslint v8 rules: `no-explicit-any`, `no-floating-promises`, `consistent-type-definitions` (https://typescript-eslint.io/rules/)
 - `eslint-plugin-import-x` (https://www.npmjs.com/package/eslint-plugin-import-x), `eslint-plugin-perfectionist` (https://www.npmjs.com/package/eslint-plugin-perfectionist)
+
+## Related Epics
+
+- **Epic Testing & QA** — the type-coverage (85%) and cognitive-complexity gates are enforced in `bun run check`, which QA owns; raise-floor tasks here feed QA metrics.
+- **Epic Tooling Improvement** — lint/format toolchain (ESLint-centric vs Biome) is shared ownership; see its formatter-drift caution.

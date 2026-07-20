@@ -1,3 +1,5 @@
+> High-level notes — may drift from implementation. Authoritative source is `src/` and AGENTS.md.
+
 # Application Architecture
 
 ## Overview
@@ -30,7 +32,7 @@ A request traverses four layers top-to-bottom:
 **4. Data Layer** — Abstracted storage backend:
 
 - Default: SQLite via `bun:sqlite` (zero-config, local solo use)
-- Swappable: Postgres/MySQL via Kysely dialect swap (multi-user production)
+- Swappable: Postgres via Kysely dialect swap (multi-user production)
 
 ### Client Layer
 
@@ -56,7 +58,7 @@ Domain logic isolated in service modules. Each service depends only on the DB ad
 
 ### Data Layer
 
-Abstracted through `DatabaseAdapter` interface. Default: SQLite (zero-config). Swappable to Postgres/MySQL for multi-user production.
+Abstracted through `DatabaseAdapter` interface. Default: SQLite (zero-config). Swappable to Postgres for multi-user production.
 
 ## Request Flow (Web)
 

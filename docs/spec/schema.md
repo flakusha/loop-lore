@@ -1,3 +1,5 @@
+> High-level notes — may drift from implementation. Authoritative source is `src/` and AGENTS.md.
+
 # Database Schema
 
 > **Primary source of truth:** `src/db/migrations/001_init.ts` (DDL) and `src/db/schema-*.ts` (Kysely types).

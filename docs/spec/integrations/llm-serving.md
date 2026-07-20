@@ -1,3 +1,5 @@
+> High-level notes — may drift from implementation. Authoritative source is `src/` and AGENTS.md.
+
 # LLM Serving Backend Integration
 
 Backend LLM server options for loop-lore's generation module (`src/generation/`).
