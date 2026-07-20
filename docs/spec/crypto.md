@@ -1,3 +1,5 @@
+> High-level notes — may drift from implementation. Authoritative source is `src/` and AGENTS.md.
+
 # Server-Side Crypto Architecture
 
 Status: Core built. Key management UI pending.
