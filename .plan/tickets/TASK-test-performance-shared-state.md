@@ -16,13 +16,13 @@ Test suite already runs in parallel and passes. This task iron out shared state 
 
 ## Known Shared State Issues
 
-| Area | Problem | Impact |
-| ---- | ------- | ------ |
-| Provider registry | Singleton shared across test files | Flaky provider tests |
-| Stream buffer store | Global state leaks between tests | Intermittent failures |
-| Plugin registry | Shared plugin instances | Test interference |
-| DB connections | Multiple test files open connections | Connection pool exhaustion |
-| E2E browser | `cachedSoloUser` singleton | Parallel suite corruption |
+| Area                | Problem                              | Impact                     |
+| ------------------- | ------------------------------------ | -------------------------- |
+| Provider registry   | Singleton shared across test files   | Flaky provider tests       |
+| Stream buffer store | Global state leaks between tests     | Intermittent failures      |
+| Plugin registry     | Shared plugin instances              | Test interference          |
+| DB connections      | Multiple test files open connections | Connection pool exhaustion |
+| E2E browser         | `cachedSoloUser` singleton           | Parallel suite corruption  |
 
 ## Tasks
 

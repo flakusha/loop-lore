@@ -23,19 +23,19 @@ Improve frontend E2E test coverage and reliability. Currently 12/158 e2e failure
 
 ### Failing (12/158)
 
-| Area | Failures | Root Cause |
-| ---- | -------- | ---------- |
-| Assets (POST /api/assets) | 4 | Multipart upload endpoint or asset service |
-| Import (POST /api/actors/import) | 6 | Import succeeds but GET returns non-ok |
-| Chat Full (asset upload) | 1 | Same as Assets |
-| Story (GET /api/worlds/:id/items) | 1 | Items endpoint returns falsy |
+| Area                              | Failures | Root Cause                                 |
+| --------------------------------- | -------- | ------------------------------------------ |
+| Assets (POST /api/assets)         | 4        | Multipart upload endpoint or asset service |
+| Import (POST /api/actors/import)  | 6        | Import succeeds but GET returns non-ok     |
+| Chat Full (asset upload)          | 1        | Same as Assets                             |
+| Story (GET /api/worlds/:id/items) | 1        | Items endpoint returns falsy               |
 
 ### Browser Tests (Flaky)
 
-| Test | Issue |
-| ---- | ------- |
-| smoke.test.ts | `data-testid` mismatches, chrome timeout |
-| auth-flow.browser.ts | `data-testid` mismatch |
+| Test                 | Issue                                        |
+| -------------------- | -------------------------------------------- |
+| smoke.test.ts        | `data-testid` mismatches, chrome timeout     |
+| auth-flow.browser.ts | `data-testid` mismatch                       |
 | chat-flow.browser.ts | Only tests panel toggles, no message sending |
 
 ## Investigation Areas
