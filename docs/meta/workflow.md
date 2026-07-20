@@ -21,7 +21,7 @@ the docs and commit trailers:
 | `EPIC-`  | Major epics                   |
 | `INFRA-` | Infrastructure                |
 
-Identifier format: `<TYPE>-YYYY-<NNN>` (e.g. `BUG-2025-002`, `FEAT-2025-001`).
+Identifier format: `<TYPE>-YYYY-<NNN>` (e.g. `BUG-2026-002`, `FEAT-2026-001`).
 
 ### Commands
 
@@ -36,9 +36,9 @@ Identifier format: `<TYPE>-YYYY-<NNN>` (e.g. `BUG-2025-002`, `FEAT-2025-001`).
 git issue create "Title" -m "Body" -l feature -p medium
 
 # Show / comment / close
-git issue show BUG-2025-002
-git issue comment BUG-2025-002 -m "Reproduced on Firefox"
-git issue state BUG-2025-002 closed
+git issue show BUG-2026-002
+git issue comment BUG-2026-002 -m "Reproduced on Firefox"
+git issue state BUG-2026-002 closed
 ```
 
 The full issue list is published in the docs site at
@@ -46,7 +46,7 @@ The full issue list is published in the docs site at
 
 ### Linking issues in docs
 
-Any extended identifier written in a doc (e.g. `EPIC-2025-16`, `FEAT-2025-003`)
+Any extended identifier written in a doc (e.g. `EPIC-2026-16`, `FEAT-2026-003`)
 is automatically hyperlinked to its entry in the Issue Tracker by the Vitepress
 markdown plugin. No manual markup required.
 
@@ -55,10 +55,10 @@ markdown plugin. No manual markup required.
 Link commits to issues so they are traceable:
 
 ```
-Issue: BUG-2025-002
-Epic: EPIC-2025-16
+Issue: BUG-2026-002
+Epic: EPIC-2026-16
 Status: done
-Solution: SOL-2025-001
+Solution: SOL-2026-001
 ```
 
 ## Worktrees (parallel development)
@@ -74,7 +74,7 @@ on simultaneously without stashing.
 ./scripts/worktree.sh new feat-my-feature
 
 # Create a ticket branch + worktree (issue already created)
-./scripts/worktree.sh new ticket/BUG-2025-002 master
+./scripts/worktree.sh new ticket/BUG-2026-002 master
 
 # List / clean up
 ./scripts/worktree.sh list
@@ -107,15 +107,15 @@ merge commit automatically.
 ```bash
 # 1. Create issue + worktree
 ./scripts/worktree.sh ticket BUG 002 "Browser E2E parallel instability"
-#    → issue BUG-2025-002, branch ticket/BUG-2025-002, worktree tree/ticket-BUG-2025-002
+#    → issue BUG-2026-002, branch ticket/BUG-2026-002, worktree tree/ticket-BUG-2026-002
 
 # 2. Work in the worktree
-cd tree/ticket-BUG-2025-002
+cd tree/ticket-BUG-2026-002
 # ... edit, test ...
 
 # 3. Commit (GPG-signed)
-./scripts/worktree.sh agent-commit ticket-BUG-2025-002 "fix(e2e): isolate cachedSoloUser"
+./scripts/worktree.sh agent-commit ticket-BUG-2026-002 "fix(e2e): isolate cachedSoloUser"
 
 # 4. Merge back to master (GPG-signed merge, worktree removed)
-./scripts/worktree.sh finalize ticket-BUG-2025-002
+./scripts/worktree.sh finalize ticket-BUG-2026-002
 ```
