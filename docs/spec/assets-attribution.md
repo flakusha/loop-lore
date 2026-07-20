@@ -1,3 +1,5 @@
+> High-level notes — may drift from implementation. Authoritative source is `src/` and AGENTS.md.
+
 # Asset Credits & Licensing
 
 Third-party assets used in Loop Lore. Original works are provided under LGPL-3.0-or-later.

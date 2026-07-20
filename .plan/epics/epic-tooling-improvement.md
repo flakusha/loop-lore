@@ -33,4 +33,11 @@ Tooling support and improvement — repo worktree management, agent support, IO,
 - `scripts/gpg-unlock.sh` — GPG signing
 - `.agents/` — agent configuration
 - `.githooks/` — git hooks
-- `docs/meta/build-deploy.md` — build documentation
+- `docs/spec/build-deploy.md` — build documentation
+
+> **Caution — formatter/linter drift:** Per AGENTS.md the project tooling is ESLint-centric (`eslint.config.mjs`, `bun run check`). The linked `TASK-dev-tooling-updates` already pins Biome 2.5.4. Adopting Biome as more than a secondary checker risks formatter/config drift unless it **replaces** ESLint as the single source of truth for lint+format. Keep one canonical toolchain until that migration is deliberately completed.
+
+## Related Epics
+
+- **Epic Code Quality & Best Practices** — lint/format ownership overlaps; Biome adoption must be reconciled with the ESLint-centric `bun run check` pipeline (see caution above).
+- **Epic Testing & QA** — tooling improvements feed CI gates that QA relies on.
