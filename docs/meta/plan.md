@@ -169,7 +169,7 @@ Tool-calling loop, provider resilience, streaming reconnect.
 | Circuit breaker pattern                 | `src/generation/providers/circuit-breaker.ts`                         | ✅     |
 | SSE reconnect via `Last-Event-ID`       | `src/generation/generation-routes.ts`, `src/generation/controller.ts` | ✅     |
 
-### 11. Admin & Settings Architecture — ⬜ Not Started [P1]
+### 11. Admin & Settings Architecture — ✅ Complete (core) [P1]
 
 | Task                       | Files                                       |
 | -------------------------- | ------------------------------------------- |
@@ -414,6 +414,41 @@ See `.plan/features/epic-2026-27-testing-infrastructure.md` for full spec.
 | Asset encryption-at-rest          | `src/assets/storage/encrypted.ts`  |
 
 See `.plan/features/epic-2026-28-asset-expansion.md` for full spec.
+
+### 29. Provider & Plugin Ecosystem — ⬜ Not Started [P2]
+
+| Task                              | Files                              |
+| --------------------------------- | ---------------------------------- |
+| Anthropic/Ollama/Bedrock providers | `src/providers/anthropic.ts`       |
+| Plugin management API             | `src/routes/plugins.ts`            |
+| Provider model metadata display   | `src/admin/models.ts`              |
+
+See `.plan/features/epic-2026-29-provider-plugin-ecosystem.md` for full spec.
+
+### 30. Assistant Intelligence — ⬜ Not Started [P2]
+
+| Task                              | Files                              |
+| --------------------------------- | ---------------------------------- |
+| Regex output transforms           | `src/assistant/transforms/regex.ts` |
+| Smart-regen transforms            | `src/assistant/transforms/smart-regen.ts` |
+| Creative Studio Extension         | `src/assistant/commands/`          |
+| Lore Consistency Checker          | `src/assistant/lore-checker.ts`    |
+| Prompt Injection Risk Analysis    | `src/assistant/prompt-safety.ts`   |
+
+See `.plan/features/epic-2026-30-assistant-intelligence.md` for full spec.
+
+### 31. World Persistence & Sync — ⬜ Not Started [P2]
+
+| Task                              | Files                              |
+| --------------------------------- | ---------------------------------- |
+| Cross-Device E2E Sync             | `src/sync/protocol.ts`             |
+| Impersonation                     | `src/routes/chats.ts`              |
+| Agentic workspace mode            | `src/workspace/`                   |
+| World simulation while offline    | `src/world/simulation.ts`          |
+| Personas                          | `src/personas/controller.ts`       |
+| Shared persistent worlds          | `src/world/shared.ts`              |
+
+See `.plan/features/epic-2026-31-world-persistence-sync.md` for full spec.
 
 ---
 
