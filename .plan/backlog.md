@@ -91,6 +91,7 @@ From `docs/meta/assessments/feature-analysis.md`. Not yet in any epic.
 | `TASK-epic14-import-export-reconciliation` | Epic 14 reconciliation — already implemented | — | — |
 | `TASK-epic11-admin-settings-reconciliation` | Epic 11 reconciliation — already implemented | — | — |
 | `TASK-epic17-encryption-e2e-expansion`  | Encryption — e2e, asset encryption, access mgmt, key rotation | High | High |
+| `TASK-encryption-architecture-clarification` | Encryption architecture — symmetric vs asymmetric models | High | High |
 | `TASK-encryption-wire-message-pipeline` | Wire message pipeline — encrypt/decrypt on write/read | Med | High |
 | `TASK-encryption-key-management-ui`     | Key management UI — view/generate/rotate/revoke keys | Med | High |
 | `TASK-encryption-group-key-distribution`| Group key distribution — join/leave key handling | Med | High |
