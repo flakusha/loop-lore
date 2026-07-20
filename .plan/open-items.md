@@ -306,6 +306,29 @@ Fix: run `eslint --fix` or manually parenthesize nested ternaries.
 
 <!-- ISSUE-MAP-START -->
 
+
+## TEST.3 E2E — Asset Upload Failures
+
+**Severity**: Medium — `tests/e2e/flows/assets.test.ts`
+POST /api/assets returns non-ok. Cascading failures: GET returns uploaded asset, links, delete all fail. Likely multipart handling or asset service issue.
+
+
+## TEST.4 E2E — Actor Import GET Returns Non-OK
+
+**Severity**: Medium — `tests/e2e/flows/import.test.ts`
+Import succeeds (returns id) but GET /api/actors/:id returns non-ok. May be actor GET route or permission issue.
+
+
+## TEST.5 E2E — World Items Endpoint Returns Falsy
+
+**Severity**: Low — `tests/e2e/flows/story.test.ts`
+GET /api/worlds/:id/items returns falsy. Story items endpoint not working correctly.
+
+
+## TEST.6 Unit Coverage Gaps — Low-Coverage Routes
+
+**Severity**: Medium — routes layer
+Critical routes below 10% statement coverage: worlds (4%), story-items (5.3%), messages (5.6%), quests (6.7%), story-states (8.3%). Target: 80%+ coverage.
 ## Tracked as Git Issues
 
 > These tasks are tracked as git-native-issues. See the [Issue Tracker](/meta/issues) for live state.
