@@ -141,6 +141,34 @@ export class ProviderRateLimitError extends ProviderError {
   }
 }
 
+// ── Model metadata ────────────────────────────────────────
+
+/**
+ * Provider-reported model metadata. Advisory only — not authoritative.
+ * Populated from the provider's model listing when available
+ * (e.g. OpenAI-compatible /v1/models). Absent fields mean "unknown".
+ */
+export interface ModelInfo {
+  /** Provider-specific model identifier */
+  id: string;
+  /** Owning org/creator, if reported */
+  ownedBy?: string;
+  /** Context window size in tokens, if reported */
+  contextWindow?: number;
+  /** Max output tokens, if reported */
+  maxOutput?: number;
+  /** Whether the model supports thinking/reasoning */
+  thinking?: boolean;
+  /** Modalities supported (e.g. "text", "image", "audio") */
+  modalities?: string[];
+  /** Whether tool/function calling is supported */
+  toolCalling?: boolean;
+  /** Parameter size if reported or parseable from id (e.g. "8B", "70B") */
+  paramSize?: string;
+  /** Raw provider-reported object (passthrough, advisory) */
+  raw?: Record<string, unknown>;
+}
+
 // ── Provider interface ────────────────────────────────────
 
 export interface LLMProvider {
@@ -160,8 +188,8 @@ export interface LLMProvider {
     error?: string;
   }>;
 
-  /** List available models (GET /v1/models) */
-  listModels(): Promise<string[]>;
+  /** List available models with provider-reported metadata (GET /v1/models) */
+  listModels(): Promise<ModelInfo[]>;
 
   /** Generate embeddings (optional — memory system) */
   embed?(input: string | string[],): Promise<number[][]>;
