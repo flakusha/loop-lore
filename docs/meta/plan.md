@@ -262,7 +262,7 @@ Tool-calling loop, provider resilience, streaming reconnect.
 | Playwright responsive tests | `tests/e2e/responsive/`                            |
 | Browser E2E stabilization   | `tests/e2e/flows/browser/`                         |
 
-### 17. Encryption Foundation — ⬜ Not Started [P1]
+### 17. Encryption Foundation — ⬜ Not Started [P1] (expanded 2026-07-20)
 
 | Task                                     | Files                     |
 | ---------------------------------------- | ------------------------- |
