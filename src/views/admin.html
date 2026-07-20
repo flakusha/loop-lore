@@ -556,8 +556,8 @@
                     </select>
                     <select class="form-input" style="font-size: 13px" x-model="r.model">
                       <option value="">Select model...</option>
-                      <template x-for="m in getModelsForRole(r.role)" :key="m">
-                        <option :value="m" x-text="m"></option>
+                      <template x-for="m in getModelsForRole(r.role)" :key="m.id">
+                        <option :value="m.id" x-text="m.id"></option>
                       </template>
                     </select>
                     <div style="display: flex; gap: 4px">
@@ -618,12 +618,20 @@
                       <div style="font-size: 12px; color: var(--text-secondary, #6c757d); margin-bottom: var(--space-1)">
                         Available Models:
                       </div>
-                      <div style="display: flex; flex-wrap: wrap; gap: 4px">
-                        <template x-for="m in getProviderModels(p.name)" :key="m">
-                          <span
-                            style="font-size: 11px; padding: 2px 6px; background: var(--bg-tertiary, #fff); border: 1px solid var(--border-default, #e9ecef); border-radius: 4px"
-                            x-text="m"
-                          ></span>
+                      <div style="display: flex; flex-wrap: wrap; gap: 8px">
+                        <template x-for="m in getProviderModels(p.name)" :key="m.id">
+                          <div
+                            style="font-size: 11px; padding: 6px 8px; background: var(--bg-tertiary, #fff); border: 1px solid var(--border-default, #e9ecef); border-radius: 4px; min-width: 150px"
+                          >
+                            <div style="font-weight: 600; margin-bottom: 3px" x-text="m.id"></div>
+                            <div style="display: flex; flex-wrap: wrap; gap: 3px">
+                              <span x-show="m.contextWindow" style="font-size: 10px; padding: 1px 5px; background: var(--bg-secondary, #f8f9fa); border: 1px solid var(--border-default, #e9ecef); border-radius: 10px; color: var(--text-secondary, #6c757d)" x-text="m.contextWindow + ' ctx'"></span>
+                              <span x-show="m.paramSize" style="font-size: 10px; padding: 1px 5px; background: var(--bg-secondary, #f8f9fa); border: 1px solid var(--border-default, #e9ecef); border-radius: 10px; color: var(--text-secondary, #6c757d)" x-text="m.paramSize"></span>
+                              <span x-show="m.thinking" style="font-size: 10px; padding: 1px 5px; background: var(--bg-secondary, #f8f9fa); border: 1px solid var(--border-default, #e9ecef); border-radius: 10px; color: var(--text-secondary, #6c757d)">thinking</span>
+                              <span x-show="m.toolCalling" style="font-size: 10px; padding: 1px 5px; background: var(--bg-secondary, #f8f9fa); border: 1px solid var(--border-default, #e9ecef); border-radius: 10px; color: var(--text-secondary, #6c757d)">tools</span>
+                              <span x-show="m.modalities && m.modalities.length" style="font-size: 10px; padding: 1px 5px; background: var(--bg-secondary, #f8f9fa); border: 1px solid var(--border-default, #e9ecef); border-radius: 10px; color: var(--text-secondary, #6c757d)" x-text="m.modalities.join(',')"></span>
+                            </div>
+                          </div>
                         </template>
                         <span
                           x-show="getProviderModels(p.name).length === 0"
