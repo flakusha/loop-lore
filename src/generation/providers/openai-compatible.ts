@@ -7,7 +7,14 @@
 import type { ProviderInstanceConfig, } from "../../config/schema";
 import { safeJsonParse, safeJsonStringify, } from "../../utils";
 import { validateProviderUrl, } from "../../utils/url-validation";
-import type { GenerateRequest, GenerateResponse, LLMProvider, ModelInfo, ProviderCapabilities, StreamHandler, } from "./types";
+import type {
+  GenerateRequest,
+  GenerateResponse,
+  LLMProvider,
+  ModelInfo,
+  ProviderCapabilities,
+  StreamHandler,
+} from "./types";
 import { ProviderAuthError, ProviderError, ProviderRateLimitError, } from "./types";
 
 // ── Capabilities ──────────────────────────────────────────
@@ -49,8 +56,9 @@ function modelInfoFromOpenAi(raw: Record<string, unknown>,): ModelInfo {
   if (typeof raw.thinking === "boolean") { info.thinking = raw.thinking; }
   if (typeof raw.tool_calling === "boolean") { info.toolCalling = raw.tool_calling; }
   if (Array.isArray(raw.modalities,)) { info.modalities = raw.modalities.map(String,); }
-  const sizeMatch = id.match(/(\d+(?:\.\d+)?\s*[bB])/i,);
-  if (sizeMatch) { info.paramSize = sizeMatch[1]!.replace(/\s+/g, "",); }
+  const sizeRe = /(\d+(?:\.\d+)?\s*[bB])/i;
+  const sizeMatch = sizeRe.exec(id,);
+  if (sizeMatch) { info.paramSize = sizeMatch[1]!.replaceAll(/\s+/g, "",); }
   return info;
 }
 
@@ -282,7 +290,7 @@ export class OpenAiCompatibleProvider implements LLMProvider {
     }
 
     const data = (await response.json()) as { data?: Record<string, unknown>[] };
-    return data.data?.map((m,) => modelInfoFromOpenAi(m,),) ?? [];
+    return data.data?.map((m,) => modelInfoFromOpenAi(m,)) ?? [];
   }
 
   // ── Internal helpers ───────────────────────────────────
