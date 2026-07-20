@@ -1,24 +1,25 @@
 # Epic 2026-26: Avatar & Expression System
 
-**Status:** Not Started (P2)
+**Status:** ⬜ Not Started (P2)
 **Priority:** Medium
-**Source:** .plan/tickets/TASK-3d-character-avatars.md
+**Source:** .plan/tickets/, user expansion 2026-07-19
 
 ## Summary
 
-3D character avatars with emotion detection and expression mapping.
+3D character avatars with emotion detection and expression mapping. Includes: 3D avatars, animated mugshots, emotion detection, chat backgrounds, and section navigation.
 
 ## Linked Tasks
 
 | Task | Title | Priority | Status |
 | ---- | ----- | -------- | ------ |
-| FEAT-2026-020 | Device Tier Gating Implementation | Medium | Not Started |
-| FEAT-2026-021 | E2E Performance Benchmarks | Medium | Not Started |
-| FEAT-2026-022 | Edge Cases Deep Dive | Medium | Not Started |
-| TASK-3d-character-avatars.md | 3D Character Avatars | Low | Not Started |
-| TASK-emotions-avatar-edit-model.md | Emotions Avatar Edit Model | Medium | Not Started |
-| TASK-dynamic-avatars-dota-style.md | Dynamic Avatars Dota Style | Medium | Not Started |
-| TASK-emotion-intent-detection.md | Emotion Intent Detection | Medium | Not Started |
+| TASK-3d-character-avatars.md | 3D Character Avatars (Three.js/VRM) | High | Not Started |
+| TASK-emotions-avatar-edit-model.md | Emotions Avatar Edit Model | High | Blocked (edit model) |
+| TASK-rigged-model-buffer-render.md | Rigged Model Buffer Render (sprite sheets) | Medium | Not Started |
+| TASK-dynamic-avatars-dota-style.md | Dynamic Avatars Dota Style (animated mugshots) | High | Not Started |
+| TASK-emotion-intent-detection.md | Emotion Intent Detection (extensible emotions) | Medium | Not Started |
+| TASK-chat-backgrounds-location-sync.md | Chat Backgrounds (static/dynamic + location sync) | Medium | Not Started |
+| TASK-chat-sectioning-multi-location.md | Chat Sectioning (multi-location spanning, research) | High | Not Started |
+| TASK-chat-flow-section-navigation.md | Chat Flow (section navigation & story spanning UI) | Medium | Not Started |
 
 ## Implementation Plan
 
