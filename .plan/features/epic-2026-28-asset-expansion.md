@@ -18,6 +18,7 @@ Expand asset system beyond images/audio/video to include RPG-specific assets (to
 | TASK-asset-3d-models.md | 3D model support | Low | Not Started |
 | TASK-asset-versioning.md | Asset versioning system | Medium | Not Started |
 | TASK-asset-templates.md | Asset templates and presets | Low | Not Started |
+| TASK-asset-storage-compression.md | Asset storage compression and encryption | Medium | Not Started |
 
 ## Asset Types by Domain
 
@@ -59,6 +60,12 @@ Expand asset system beyond images/audio/video to include RPG-specific assets (to
 
 ## Implementation Phases
 
+### Phase 0: Storage Foundation (Current → Future)
+- [x] Flat filesystem storage (UUID-derived paths) — current default
+- [ ] Encryption-at-rest (AES-256-GCM) — mandatory for sensitive assets
+- [ ] Compression pipeline (gzip/zstd/brotli) — for compressible data
+- [ ] Object store backend (S3/GCS) — configurable via env vars
+
 ### Phase 1: Document Support (PDF/Business)
 - [ ] PDF preview/thumbnail generation
 - [ ] Spreadsheet metadata extraction
@@ -95,6 +102,9 @@ Expand asset system beyond images/audio/video to include RPG-specific assets (to
 - `src/assets/controller.ts` — Extended for new types
 - `src/assets/metadata.ts` — PDF/3D metadata
 - `src/assets/templates.ts` — Template system
+- `src/assets/storage/backend.ts` — Storage abstraction
+- `src/assets/storage/encrypted.ts` — Encryption wrapper
+- `src/assets/storage/compressed.ts` — Compression wrapper
 - `src/db/schema-assets.ts` — Versioning tables
 - `src/frontend/components/asset-preview.html` — Extended previews
 - `src/frontend/components/asset-version-modal.html` — Version UI
