@@ -452,6 +452,190 @@ See `.plan/features/epic-2026-31-world-persistence-sync.md` for full spec.
 
 ---
 
+## v0.2+ — Extended Epics
+
+### 32. Deployment Topologies & Packaging — 📝 Draft
+
+Docker hardening, Kubernetes packaging, health endpoints for orchestrators.
+
+| Task | Files | Effort |
+| ---- | ----- | ------ |
+| Non-root Docker user, read-only layers | `Dockerfile` | Low |
+| `/health` + `/health/ready` endpoints | `src/routes/health.ts` (new) | Med |
+| Compose variant for N app replicas + PG + nginx | `docker-compose.yml` | Low |
+| K8s manifests (Deployment, Service, Ingress) | `deploy/k8s/*.yaml` (new) | Med |
+| Deploy guide (topologies A–E) | `docs/guide/deployment.md` (new) | Med |
+
+See `.plan/epics/epic-deployment-topologies.md` for full spec.
+**Depends on:** Epic 33 (Multi-Instance Reconciliation).
+
+### 33. Multi-Instance Reconciliation — 📝 Draft
+
+Migration leadership, schema drift detection, cross-instance real-time.
+
+| Task | Files | Effort |
+| ---- | ----- | ------ |
+| Postgres advisory-lock leader election | `src/db/migrate.ts` | Med |
+| SQLite single-instance guard | `src/db/migrate.ts`, `src/db/index.ts` | Low |
+| `SchemaManifest.verify()` at startup | `src/db/schema-manifest.ts` | Low |
+| Drift policy: strict vs repair | `src/config/sections/database.ts` | Med |
+| Optional Redis pub/sub for SSE | `src/routes/activity-stream.ts` | Med |
+
+See `.plan/epics/epic-multi-instance-reconciliation.md` for full spec.
+
+### 34. Data Integrity & ACID Guarantees — 📝 Draft
+
+Backend selection guards, `data_version` optimistic concurrency, ACID reference.
+
+| Task | Files | Effort |
+| ---- | ----- | ------ |
+| Reject `type=sqlite` + multi-instance | `src/config/sections/database.ts` | Low |
+| `data_version` write-path enforcement | route handlers, `src/db/*` | Med |
+| `409 Conflict` on version mismatch | `src/routes/http-utils.ts` | Low |
+| ACID matrix documentation | `docs/spec/deployment.md` (new) | Low |
+
+See `.plan/epics/epic-data-integrity-acid.md` for full spec.
+**Depends on:** Epic 33 (Multi-Instance Reconciliation).
+
+### 35. Configuration Extensions (ECE) — 📝 Draft
+
+Extensible enumeration framework: built-in defaults + operator extensions + precompiled merge.
+
+| Task | Files | Effort |
+| ---- | ----- | ------ |
+| ECE types + built-in loader | `src/config/ece/*` (new) | Med |
+| Extension store (DB or config) | `src/db/migrations/*` | Med |
+| Merge + precompile + validate | `src/config/ece/compile.ts` | Med |
+| Avatar emotions instance | `src/config/ece/defaults/emotions.ts` | Low |
+| Per-message emotion override | `src/routes/messages.ts` | Med |
+
+See `.plan/epics/epic-config-extensions.md` for full spec.
+
+### 36. Chat Lifecycle & Moderation — ⬜ Not Started
+
+Context sliding window, transitions, NSFW controls, moderation primitives.
+
+| Task | Files | Effort |
+| ---- | ----- | ------ |
+| Context sliding-window + memory promotion | `src/chat/context-window.ts` (new) | High |
+| Transition narration + context-cut flow | `src/chat/transitions.ts` (new) | Med |
+| NSFW enable/disable + moderation events | `src/middleware/nsfw-gate.ts` (new) | Med |
+| User block / ban / shadow / flag | `src/chat/moderation.ts` (new) | High |
+| Local random-event generator | `src/chat/events.ts` (new) | Med |
+
+See `.plan/epics/epic-chat-lifecycle-moderation.md` for full spec.
+
+### 37. Plugin System & Extensibility — ⬜ Not Started
+
+Plugin API (install/list/enable/disable), hook system, tool executor, UI mount.
+
+| Task | Files | Effort |
+| ---- | ----- | ------ |
+| Plugin management API | `src/routes/plugins.ts` | Med |
+| Event bus (publish/subscribe) | `src/plugins/event-bus.ts` (new) | Med |
+| Tool executor framework | `src/plugins/tool-executor.ts` (new) | High |
+| UI mount points | `src/plugins/ui-mount.ts` (new) | Med |
+| Plugin sandbox (permissions) | `src/plugins/sandbox.ts` (new) | High |
+
+See `.plan/epics/epic-plugin-system.md` for full spec.
+
+### 38. World & Locations — ⬜ Not Started
+
+Encounters, monsters, diplomacy, karma, travel, time tracking, cataclysms.
+
+| Task | Files | Effort |
+| ---- | ----- | ------ |
+| Encounter system | `src/world/encounters.ts` (new) | High |
+| Monster/NPC AI behaviors | `src/world/monster-ai.ts` (new) | High |
+| Diplomacy + karma tracking | `src/world/diplomacy.ts` (new) | Med |
+| Travel + time tracking | `src/world/travel.ts` (new) | Med |
+| Cataclysm / world events | `src/world/events.ts` (new) | Med |
+
+See `.plan/epics/epic-world-locations.md` for full spec.
+
+### 39. Item System Extensions — ⬜ Not Started
+
+Equipment, consumables, crafting materials, unique items, inventory management.
+
+| Task | Files | Effort |
+| ---- | ----- | ------ |
+| Equipment slots + stat modifiers | `src/rpg/equipment.ts` (new) | Med |
+| Consumable use + cooldown | `src/rpg/consumables.ts` (new) | Low |
+| Crafting recipe system | `src/rpg/crafting.ts` (new) | High |
+| Unique item world-scoping | `src/rpg/unique-items.ts` (new) | Med |
+| Inventory UI | `src/views/inventory.html` (new) | Med |
+
+See `.plan/epics/epic-item-system-extensions.md` for full spec.
+
+### 40. Blog System — ⬜ Not Started
+
+LLM-authored blog posts, deep research, comments, followings, privacy tiers.
+
+| Task | Files | Effort |
+| ---- | ----- | ------ |
+| Blog post schema (chat-shaped record) | `src/db/schema.ts` | Med |
+| LLM authoring modes (automated/deep research/news) | `src/blog/authoring.ts` (new) | High |
+| Research-source gathering + citation | `src/blog/research.ts` (new) | High |
+| Comments (threaded, moderated) | `src/blog/comments.ts` (new) | Med |
+| Followings + privacy tiers | `src/blog/social.ts` (new) | Med |
+
+See `.plan/epics/epic-blog-system.md` for full spec.
+
+### 41. Chat Transfer & Location Change — ⬜ Not Started
+
+Transfer chat ownership, move chats between worlds/locations, context migration.
+
+| Task | Files | Effort |
+| ---- | ----- | ------ |
+| Chat transfer API | `src/routes/chats.ts` | Med |
+| Location change with context migration | `src/chat/transitions.ts` | Med |
+| Transfer UI (owner selector) | `src/views/chat.html` | Low |
+
+See `.plan/epics/epic-chat-transfer-location.md` for full spec.
+
+### 42. Assistant Generation Extensions — ⬜ Not Started
+
+Stable Diffusion integration, intent detection, scenario source bridge.
+
+| Task | Files | Effort |
+| ---- | ----- | ------ |
+| SD request/response adapter | `src/assistant/sd.ts` (new) | Med |
+| Intent detection + routing | `src/assistant/intent.ts` (new) | High |
+| Approved tool-execution allowlist | `src/assistant/tools.ts` (new) | Med |
+| Scenario source store + reuse | `src/assistant/scenario-source.ts` (new) | Med |
+
+See `.plan/epics/epic-assistant-generation-extensions.md` for full spec.
+
+### 43. NSFW Game Mechanics — 📝 Draft
+
+Intimacy, seduction, relationships, adult encounters, desires, body systems.
+
+| Task | Files | Effort |
+| ---- | ----- | ------ |
+| Intimacy system (levels, actions, thresholds) | `src/rpg/intimacy.ts` (new) | High |
+| Seduction + desire system | `src/rpg/seduction.ts` (new) | High |
+| Relationship progression | `src/rpg/relationships.ts` (new) | Med |
+| Arousal state + body systems | `src/rpg/body-systems.ts` (new) | High |
+| NSFW content gates | `src/middleware/nsfw-gate.ts` | Med |
+
+See `.plan/epics/epic-nsfw-game-mechanics.md` for full spec.
+
+### 44. Worlds Extension — ⬜ Not Started
+
+Shareability, licensing, epochs, maps, location assets, chat mode switches.
+
+| Task | Files | Effort |
+| ---- | ----- | ------ |
+| World license + attribution model | `src/worlds/license.ts` (new) | Med |
+| Epoch + time-scale engine | `src/worlds/timescale.ts` (new) | Med |
+| 2D/3D map data model | `src/worlds/maps.ts` (new) | High |
+| Location asset/resource generation | `src/worlds/resources.ts` (new) | Med |
+| Chat mode switch state machine | `src/chat/mode-switch.ts` (new) | Med |
+
+See `.plan/epics/epic-worlds-extension.md` for full spec.
+
+---
+
 ## Known Issues
 
 ### Resolved (2026-07-15)
