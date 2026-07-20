@@ -1,0 +1,163 @@
+#!/bin/sh
+# Pre-commit:full — full codebase checks (typecheck + lint + tests)
+#
+# This is the thorough version. For fast staged-only checks, use pre-commit.
+# Usage: git commit -c core.hooksPath=.githooks --full
+#   or:  .githooks/pre-commit:full (manual run)
+
+set -u
+
+failures=0
+TMPDIR="${TMPDIR:-/tmp}/loop-lore-precommit-full-$$"
+mkdir -p "$TMPDIR"
+trap 'rm -rf "$TMPDIR"' EXIT
+
+red() { printf "\033[31m%s\033[0m\n" "$*"; }
+green() { printf "\033[32m%s\033[0m\n" "$*"; }
+yellow() { printf "\033[33m%s\033[0m\n" "$*"; }
+cyan() { printf "\033[36m%s\033[0m\n" "$*"; }
+
+run_check() {
+  local name="$1"
+  local cmd="$2"
+  local output_file="$TMPDIR/$name.log"
+  local exit_file="$TMPDIR/$name.exit"
+
+  cyan "Starting: $name"
+  (
+    if eval "$cmd" > "$output_file" 2>&1; then
+      echo "0" > "$exit_file"
+    else
+      echo "$?" > "$exit_file"
+    fi
+  ) &
+}
+
+collect_results() {
+  local pids=("$@")
+  for pid in "${pids[@]}"; do
+    wait "$pid" 2>/dev/null || true
+  done
+
+  local total=0 passed=0 failed=0
+  for check in "${CHECKS[@]}"; do
+    local exit_file="$TMPDIR/$check.exit"
+    local output_file="$TMPDIR/$check.log"
+    total=$((total + 1))
+    if [[ -f "$exit_file" ]]; then
+      local exit_code
+      exit_code=$(cat "$exit_file")
+      if [[ "$exit_code" == "0" ]]; then
+        passed=$((passed + 1))
+        green "✓ PASS: $check"
+      else
+        failed=$((failed + 1))
+        red "✗ FAIL: $check"
+        head -30 "$output_file"
+        echo ""
+      fi
+    else
+      failed=$((failed + 1))
+      red "✗ FAIL: $check (no exit file)"
+    fi
+  done
+
+  echo ""
+  echo "Total: $total"
+  green "Passed: $passed"
+  red "Failed: $failed"
+  return $failed
+}
+
+echo ""
+echo "=== loop-lore pre-commit:full (full codebase) ==="
+echo ""
+
+# ── Step 0: Tool check ───────────────────────────────────────
+echo "--- Step 0: Tool availability ---"
+if ! command -v bun &>/dev/null; then
+  red "bun is required. Install: https://bun.sh"
+  exit 1
+fi
+green "  ✓ bun: $(command -v bun)"
+
+# ── Step 1: Auto-fix formatting ──────────────────────────────
+echo ""
+echo "--- Step 1: Auto-fix formatting ---"
+if bun run format:dprint:fix; then
+  green "PASS: dprint auto-fix"
+else
+  red "FAIL: dprint auto-fix"
+  failures=$((failures + 1))
+fi
+
+# ── Step 2: Quality checks (parallel) ────────────────────────
+echo ""
+echo "--- Step 2: Quality checks (parallel) ---"
+CHECKS=(
+  "typecheck-backend"
+  "typecheck-frontend"
+  "lint-ts"
+  "lint-css"
+  "format-dprint"
+  "md-lint"
+  "schema-staleness"
+)
+
+CHECK_CMDS=(
+  "bun run typecheck"
+  "bun run typecheck:frontend"
+  "bun run lint"
+  "bun run lint:css"
+  "bun run format:dprint"
+  "bun run md:lint"
+  "bun run schemas:check"
+)
+
+PIDS=()
+for i in "${!CHECKS[@]}"; do
+  run_check "${CHECKS[$i]}" "${CHECK_CMDS[$i]}"
+  PIDS+=($!)
+done
+
+if ! collect_results "${PIDS[@]}"; then
+  failures=$((failures + 1))
+fi
+
+# ── Step 3: Tests (parallel) ─────────────────────────────────
+echo ""
+echo "--- Step 3: Tests (parallel) ---"
+CHECKS=("unit-tests" "e2e-tests")
+CHECK_CMDS=(
+  "bun test src/"
+  "env E2E_SAFEGUARD=1 bun test tests/e2e/"
+)
+
+PIDS=()
+for i in "${!CHECKS[@]}"; do
+  run_check "${CHECKS[$i]}" "${CHECK_CMDS[$i]}"
+  PIDS+=($!)
+done
+
+if ! collect_results "${PIDS[@]}"; then
+  failures=$((failures + 1))
+fi
+
+# ── Step 4: Non-blocking checks ──────────────────────────────
+echo ""
+echo "--- Step 4: Non-blocking checks ---"
+for check in "size-check" "spdx-check"; do
+  if bun run "$check" 2>/dev/null; then
+    green "  ✓ $check: passed"
+  else
+    yellow "  ⚠ $check: warnings (non-blocking)"
+  fi
+done
+
+# ── Result ────────────────────────────────────────────────────
+echo ""
+if [ "$failures" -gt 0 ]; then
+  red "=== $failures step(s) failed ==="
+  exit 1
+fi
+green "=== All checks passed ==="
