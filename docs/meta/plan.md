@@ -367,21 +367,21 @@ Full spec: `docs/spec/integrations/llm-serving.md`, `docs/spec/integrations/imag
 
 ### Active Issues
 
-| ID | Severity | Summary |
-| --- | -------- | ------- |
-| BUG.2 | Medium | Browser E2E parallel suite instability — shared `cachedSoloUser` corrupts state |
-| BUG.3 | Medium | Browser E2E cascade failure — shared `ctx.page` propagates timeouts |
-| CAST.2 | High | Fire-and-forget DB writes mask failures in `cancellation-actions.ts` |
-| TUI.2 | Low | No retry/idempotency key in TUI chat |
-| TUI.3 | Low | Left/right key conflict in TUI asset view |
-| TEST.3 | Medium | No cancel-during-generation E2E test |
-| TEST.4 | Medium | No generation idempotency E2E test |
-| TEST.5 | Medium | E2E test ordering fragile (shared mutable state) |
-| TEST.6 | Medium | Browser auth flow incomplete |
-| TEST.7 | Medium | Browser chat flow sends no messages |
-| TEST.8 | Medium | 17 quick-win source files untested |
-| TEST.9 | Medium | Story module nearly untested |
-| LINT.3 | Low | 2 lint errors in `src/notifications/service.ts` |
+| ID     | Severity | Summary                                                                         |
+| ------ | -------- | ------------------------------------------------------------------------------- |
+| BUG.2  | Medium   | Browser E2E parallel suite instability — shared `cachedSoloUser` corrupts state |
+| BUG.3  | Medium   | Browser E2E cascade failure — shared `ctx.page` propagates timeouts             |
+| CAST.2 | High     | Fire-and-forget DB writes mask failures in `cancellation-actions.ts`            |
+| TUI.2  | Low      | No retry/idempotency key in TUI chat                                            |
+| TUI.3  | Low      | Left/right key conflict in TUI asset view                                       |
+| TEST.3 | Medium   | No cancel-during-generation E2E test                                            |
+| TEST.4 | Medium   | No generation idempotency E2E test                                              |
+| TEST.5 | Medium   | E2E test ordering fragile (shared mutable state)                                |
+| TEST.6 | Medium   | Browser auth flow incomplete                                                    |
+| TEST.7 | Medium   | Browser chat flow sends no messages                                             |
+| TEST.8 | Medium   | 17 quick-win source files untested                                              |
+| TEST.9 | Medium   | Story module nearly untested                                                    |
+| LINT.3 | Low      | 2 lint errors in `src/notifications/service.ts`                                 |
 
 ### Resolved
 
@@ -391,16 +391,16 @@ See `.plan/open-items.md` for full resolution log (DUP.1–8, BUG.1, SCHEMA.1–
 
 ## Cross-Reference
 
-| What | Where |
-| ---- | ----- |
-| Active task queue | `.plan/backlog.md` |
-| Detailed epic plans | `.plan/epics/` |
-| Bug/debt tracker | `.plan/open-items.md` |
-| Git issue tracker | Issue Tracker (`EPIC-*`, `FEAT-*`) |
-| Future/deferred | `.plan/backlog.md` P3 section |
-| Long-term vision | `roadmap.md` |
-| DB schema | `schema.md` |
-| Frontend UX | `frontend/overview.md`, `frontend/chat/` |
-| TUI | `tui.md` |
-| Assets | `assets.md` |
-| Build | `package.json` scripts |
+| What                | Where                                    |
+| ------------------- | ---------------------------------------- |
+| Active task queue   | `.plan/backlog.md`                       |
+| Detailed epic plans | `.plan/epics/`                           |
+| Bug/debt tracker    | `.plan/open-items.md`                    |
+| Git issue tracker   | Issue Tracker (`EPIC-*`, `FEAT-*`)       |
+| Future/deferred     | `.plan/backlog.md` P3 section            |
+| Long-term vision    | `roadmap.md`                             |
+| DB schema           | `schema.md`                              |
+| Frontend UX         | `frontend/overview.md`, `frontend/chat/` |
+| TUI                 | `tui.md`                                 |
+| Assets              | `assets.md`                              |
+| Build               | `package.json` scripts                   |

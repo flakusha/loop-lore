@@ -10,11 +10,11 @@ Update dev tooling to latest versions. Isolated from other changes — no functi
 
 ## Versions
 
-| Tool | Current | Target | Notes |
-| ---- | ------- | ------ | ----- |
-| `@biomejs/biome` | (current) | 2.5.4 | Linter/formatter |
-| `dprint` | (current) | 0.55.2 | Additional formatter |
-| `stylelint` | (current) | 17.14.1 | CSS linting |
+| Tool             | Current   | Target  | Notes                |
+| ---------------- | --------- | ------- | -------------------- |
+| `@biomejs/biome` | (current) | 2.5.4   | Linter/formatter     |
+| `dprint`         | (current) | 0.55.2  | Additional formatter |
+| `stylelint`      | (current) | 17.14.1 | CSS linting          |
 
 ## Tasks
 

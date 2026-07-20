@@ -26,11 +26,11 @@ master ← finalized releases, highest protection, reproducible CI/CD
 
 ### Branch Protection Rules
 
-| Branch | Protected | Force Push | Direct Commits | CI Gate | Merge Required |
-| ------ | --------- | ---------- | -------------- | ------- | -------------- |
-| `dev` | No | Yes | Yes | Optional | No |
-| `stg` | Yes | No | No | Required | PR from `dev` |
-| `master` | Yes | No | No | Required | PR from `stg` |
+| Branch   | Protected | Force Push | Direct Commits | CI Gate  | Merge Required |
+| -------- | --------- | ---------- | -------------- | -------- | -------------- |
+| `dev`    | No        | Yes        | Yes            | Optional | No             |
+| `stg`    | Yes       | No         | No             | Required | PR from `dev`  |
+| `master` | Yes       | No         | No             | Required | PR from `stg`  |
 
 ### Release Flow
 

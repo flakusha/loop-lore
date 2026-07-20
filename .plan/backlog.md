@@ -70,14 +70,14 @@ From `docs/meta/assessments/feature-analysis.md`. Not yet in any epic.
 
 ## Chore Tasks — Infrastructure & DevOps
 
-| Ticket | Task | Effort | Priority |
-| ------ | ---- | ------ | -------- |
-| `TASK-dev-tooling-updates` | Biome 2.5.4, dprint 0.55.2, stylelint 17.14.1 | Low | Medium |
-| `TASK-regex-extraction-tests` | Regex to constants + unit tests | Low–Med | Medium |
-| `TASK-branch-workflow-dev-stg-master` | dev→stg→master branch workflow | Med | Medium |
-| `TASK-test-performance-shared-state` | Test isolation, parallel ironing | Med | Medium |
-| `TASK-agents-scripts-worktree-docs` | AGENTS.md + .agents worktree docs | Low | Medium |
-| `TASK-frontend-e2e-improvements-draft` | Frontend E2E stabilization (draft) | High | Low |
+| Ticket                                 | Task                                          | Effort  | Priority |
+| -------------------------------------- | --------------------------------------------- | ------- | -------- |
+| `TASK-dev-tooling-updates`             | Biome 2.5.4, dprint 0.55.2, stylelint 17.14.1 | Low     | Medium   |
+| `TASK-regex-extraction-tests`          | Regex to constants + unit tests               | Low–Med | Medium   |
+| `TASK-branch-workflow-dev-stg-master`  | dev→stg→master branch workflow                | Med     | Medium   |
+| `TASK-test-performance-shared-state`   | Test isolation, parallel ironing              | Med     | Medium   |
+| `TASK-agents-scripts-worktree-docs`    | AGENTS.md + .agents worktree docs             | Low     | Medium   |
+| `TASK-frontend-e2e-improvements-draft` | Frontend E2E stabilization (draft)            | High    | Low      |
 
 ## P3 — Deferred Concepts (Post-MVP)
 
