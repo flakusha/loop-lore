@@ -404,6 +404,13 @@ interface BackgroundTransition {
 - Should battles be instanced or world-based?
 - How to balance LLM involvement vs. scripted mechanics?
 
+### State Switching & Mode Transitions
+- How to handle smooth transitions between gameplay modes?
+- Should mode switches be explicit or implicit?
+- How to maintain immersion during mode changes?
+- Should mode transitions have animations/effects?
+- How to handle partial mode transitions (e.g., trading during battle)?
+
 ### Trading System
 - How to handle NPC trading prices?
 - Should player-to-player trading be secure?
