@@ -233,6 +233,7 @@ export async function down(database: Kysely<any>,): Promise<void> {
     .addColumn("auto_advance", "integer",)
     .addColumn("parent_chat_id", "text",)
     .addColumn("is_pinned", "integer", (col,) => col.notNull().defaultTo(0,),)
+    .addColumn("encryption_level", "text", (col,) => col.notNull().defaultTo("public",),)
     .addColumn("created_at", "text", (col,) => col.notNull().defaultTo(sql`(datetime('now'))`,),)
     .addColumn("updated_at", "text", (col,) => col.notNull().defaultTo(sql`(datetime('now'))`,),)
     .addForeignKeyConstraint("fk_chats_created_by", ["created_by",], "users", ["id",],)
