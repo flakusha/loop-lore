@@ -5,13 +5,14 @@
  * Provides rescan capability and cached health results.
  */
 import { getProvider, listProviders, } from "../generation/providers/registry";
+import type { ModelInfo, } from "../generation/providers/types";
 import { getLogger, } from "../logger";
 
 export interface ProviderHealthStatus {
   name: string;
   label: string;
   status: "healthy" | "unreachable" | "error";
-  models: string[];
+  models: ModelInfo[];
   latencyMs?: number;
   lastChecked: string;
   error?: string;
