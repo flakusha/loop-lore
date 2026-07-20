@@ -18,6 +18,29 @@
 | 19 | Chat Notifications | ✅ Complete | — | 0 |
 | 26 | Avatar & Expression | ⬜ Not Started | Medium | 8 |
 
+### Permanently Ongoing Epics
+
+| Epic | Name | Status | Priority | Tickets |
+| ---- | ---- | ------ | -------- | ------- |
+| — | Code Quality & Best Practices | 🟡 Permanently Ongoing | High | 2 |
+| — | Testing & Quality Assurance | 🟡 Permanently Ongoing | High | 2 |
+| — | Platform Research & Feature Adoption | 🟡 Permanently Ongoing | Medium | 3 |
+| — | User Story & Use Case Improvements | 🟡 Permanently Ongoing | Medium | 2 |
+| — | Tooling Support & Improvement | 🟡 Permanently Ongoing | Medium | 4 |
+
+### Additional Epics
+
+| Epic | Name | Status | Priority | Tickets |
+| ---- | ---- | ------ | -------- | ------- |
+| — | Headless Mode & Alternative Frontends | ⬜ Not Started | Medium | 0 |
+| — | Transport Layer Expansion | ⬜ Not Started | Medium | 0 |
+| — | Multi-Session Support | ⬜ Not Started | Medium | 0 |
+| — | Impersonation System | ⬜ Not Started | Medium | 0 |
+| — | Assistant/GM Flows Reconciliation | ⬜ Not Started | Medium | 0 |
+| — | Chat/Group Chat Transfer & Location Change | ⬜ Not Started | Medium | 0 |
+| — | RPG Mechanics & Extensible Game Systems | ⬜ Not Started | Medium | 0 |
+| — | Platform Integrations | 📝 Draft (TBD) | Low | 0 |
+
 ## Active Epics
 
 ### Epic 16: Observability
