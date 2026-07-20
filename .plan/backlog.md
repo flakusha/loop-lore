@@ -91,6 +91,13 @@ From `docs/meta/assessments/feature-analysis.md`. Not yet in any epic.
 | `TASK-epic14-import-export-reconciliation` | Epic 14 reconciliation — already implemented | — | — |
 | `TASK-epic11-admin-settings-reconciliation` | Epic 11 reconciliation — already implemented | — | — |
 | `TASK-epic17-encryption-e2e-expansion`  | Encryption — e2e, asset encryption, access mgmt, key rotation | High | High |
+| `TASK-encryption-wire-message-pipeline` | Wire message pipeline — encrypt/decrypt on write/read | Med | High |
+| `TASK-encryption-key-management-ui`     | Key management UI — view/generate/rotate/revoke keys | Med | High |
+| `TASK-encryption-group-key-distribution`| Group key distribution — join/leave key handling | Med | High |
+| `TASK-encryption-key-rotation`          | Key rotation — auto + manual, re-encrypt history | Med | Medium |
+| `TASK-encryption-asset-encryption`      | Asset encryption — encrypt blobs, tier inheritance | Med | Medium |
+| `TASK-encryption-access-management`     | Access management — time-based expiry, admin grants | Med | Medium |
+| `TASK-encryption-browser-pre-encrypt`   | Browser pre-encrypt — wire existing browser.ts | Low–Med | Low |
 | `TASK-conversation-branching`           | Conversation branching — tree-based chat history | Med | Medium |
 | `TASK-character-relationships`          | Character relationships — inter-character bonds | Med | Medium |
 | `TASK-prompt-library`                   | Prompt library — reusable prompt templates | Low–Med | Low |
