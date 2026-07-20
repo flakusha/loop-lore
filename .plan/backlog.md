@@ -34,6 +34,7 @@ Ordered by user impact × effort. Items with partial `src/` code listed first.
 
 | Feature                                                     | Spec                                                                    | Notes                                                                              |
 | ----------------------------------------------------------- | ----------------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
+| E2E Performance Benchmarks                                  | `docs/spec/e2e-benchmarks.md`                                           | Benchmark runner, diff/trend scripts, CI integration                               |
 | Multi-format character import (PNG/YAML/TOML/CHARX)         | `docs/spec/character-setup.md`                                          | Only JSON import works                                                             |
 | Impersonation (`chat.impersonate_id`)                       | `docs/spec/character-setup.md`                                          | Not implemented                                                                    |
 | RPG mechanics (dice, stats, combat, XP, loot)               | `docs/spec/rpg-mechanics.md`, `docs/spec/rpg-implementation-roadmap.md` | `src/rpg/` does not exist                                                          |
@@ -66,6 +67,17 @@ From `docs/meta/assessments/feature-analysis.md`. Not yet in any epic.
 | Q3 | Conversation analytics dashboard | Low    | Med            | feature-analysis #27 |
 | Q4 | Model-comparison dashboard       | Low    | Med            | feature-analysis #28 |
 | Q5 | Bulk data export (zip-all)       | Low    | Med            | plan Epic 14         |
+
+## Chore Tasks — Infrastructure & DevOps
+
+| Ticket | Task | Effort | Priority |
+| ------ | ---- | ------ | -------- |
+| `TASK-dev-tooling-updates` | Biome 2.5.4, dprint 0.55.2, stylelint 17.14.1 | Low | Medium |
+| `TASK-regex-extraction-tests` | Regex to constants + unit tests | Low–Med | Medium |
+| `TASK-branch-workflow-dev-stg-master` | dev→stg→master branch workflow | Med | Medium |
+| `TASK-test-performance-shared-state` | Test isolation, parallel ironing | Med | Medium |
+| `TASK-agents-scripts-worktree-docs` | AGENTS.md + .agents worktree docs | Low | Medium |
+| `TASK-frontend-e2e-improvements-draft` | Frontend E2E stabilization (draft) | High | Low |
 
 ## P3 — Deferred Concepts (Post-MVP)
 
