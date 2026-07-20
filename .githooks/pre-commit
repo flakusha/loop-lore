@@ -51,7 +51,7 @@ FORMAT_FILES=""
 [[ -n "$STAGED_JSON" ]] && FORMAT_FILES="$FORMAT_FILES $STAGED_JSON"
 
 if [[ -n "$FORMAT_FILES" ]]; then
-  if echo "$FORMAT_FILES" | xargs dprint fmt 2>/dev/null; then
+  if echo "$FORMAT_FILES" | xargs dprint fmt --allow-no-files 2>/dev/null; then
     green "PASS: formatting"
     # Re-stage formatted files
     echo "$FORMAT_FILES" | xargs git add 2>/dev/null
@@ -87,7 +87,7 @@ fi
 
 if [[ -n "$STAGED_MD" ]]; then
   cyan "Linting Markdown..."
-  if echo "$STAGED_MD" | xargs bunx markdownlint 2>/dev/null; then
+  if echo "$STAGED_MD" | xargs bunx markdownlint-cli2 2>/dev/null; then
     green "  ✓ Markdown lint passed"
   else
     red "  ✗ Markdown lint failed"
