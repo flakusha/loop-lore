@@ -81,6 +81,10 @@ From `docs/meta/assessments/feature-analysis.md`. Not yet in any epic.
 | `TASK-github-pages-vitepress`           | GitHub Pages VitePress docs site              | Low–Med | Low      |
 | `TASK-thinking-tag-context-prune`       | LLM `<think>` tag context pruning             | Med     | Medium   |
 | `TASK-emotions-avatar-edit-model`       | Emotions avatar — edit model support (blocked) | High | Low      |
+| `TASK-3d-character-avatars`             | 3D character avatars (Three.js/VRM)           | High | Low      |
+| `TASK-rigged-model-buffer-render`       | Pre-rendered sprite sheets from rigged models | Med  | Low      |
+| `TASK-dynamic-avatars-dota-style`       | Animated mugshots (Dota 2 style)              | High | Low      |
+| `TASK-emotion-intent-detection`         | Emotion detection + extensible emotion system | Med  | Medium   |
 
 ## P3 — Deferred Concepts (Post-MVP)
 
