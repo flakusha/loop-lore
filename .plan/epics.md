@@ -42,6 +42,7 @@
 | — | RPG Mechanics & Extensible Game Systems | ⬜ Not Started | Medium | 19 |
 | — | Deno Support (Possible Node) | ⬜ Not Started | Low | 0 |
 | — | Two-Factor / Multi-Factor Auth | ⬜ Not Started | Medium | 0 |
+| — | LLM Request Throughput & Message Scheduling | ⬜ Not Started | Medium | 0 |
 | — | Platform Integrations | 📝 Draft (TBD) | Low | 0 |
 
 ## Active Epics
