@@ -29,7 +29,7 @@ export default defineConfig({
       { text: 'Reference', link: '/reference/api', activeMatch: '/reference/' },
       { text: 'Roadmap', link: '/meta/roadmap' },
       { text: 'Ideas', link: '/ideas/', activeMatch: '/ideas/' },
-      { text: 'GitHub', link: 'https://github.com/yourusername/loop-lore' },
+      { text: 'GitHub', link: 'https://github.com/flakusha/loop-lore' },
     ],
 
     sidebar: {
@@ -219,11 +219,11 @@ export default defineConfig({
     logo: '/logo.svg',
 
     socialLinks: [
-      { icon: 'github', link: 'https://github.com/yourusername/loop-lore' },
+      { icon: 'github', link: 'https://github.com/flakusha/loop-lore' },
     ],
 
     editLink: {
-      pattern: 'https://github.com/yourusername/loop-lore/edit/main/docs/:path',
+      pattern: 'https://github.com/flakusha/loop-lore/edit/main/docs/:path',
       text: 'Edit this page on GitHub',
     },
 
