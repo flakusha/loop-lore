@@ -59,6 +59,7 @@
 | — | Weather & Environmental Effects | ⬜ Not Started | Medium | 0 |
 | — | Exploration & Discovery Systems | ⬜ Not Started | Medium | 0 |
 | — | Economy & Trading Systems | ⬜ Not Started | Medium | 0 |
+| — | Item System Extensions | ⬜ Not Started | High | 6 |
 
 ## Active Epics
 
