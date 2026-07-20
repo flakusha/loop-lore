@@ -5,11 +5,11 @@
 
 import { Elysia, } from "elysia";
 import type { Kysely, } from "kysely";
-import crypto from "node:crypto";
 import { parseCharacterCard, validateCharacter, } from "../characters/parser";
 import type { CanonicalCharacter, } from "../characters/parser";
+import type { AuthConfig, } from "../config/schema";
 import type { DB, } from "../db/schema";
-import { getOrCreateSoloUserForAuth, } from "../middleware/auth";
+import { authenticate, } from "../middleware/auth";
 import { safeJsonStringify, uid, } from "../utils";
 import { HttpStatus, jsonCreated, jsonError, } from "./http-utils";
 
@@ -77,23 +77,6 @@ async function importActor(opts: ImportActorOpts,): Promise<Response> {
   },);
 }
 
-async function resolveUserId(request: Request, database: Kysely<DB>,): Promise<string | null> {
-  const cookieHeader = request.headers.get("Cookie",);
-  const match = cookieHeader ? /ll_token=([^;]+)/.exec(cookieHeader,) : null;
-  if (match) {
-    const tokenHash = crypto.createHash("sha256",).update(match[1]!,).digest("hex",);
-    const session = await database
-      .selectFrom("sessions",)
-      .select(["user_id",],)
-      .where("token_hash", "=", tokenHash,)
-      .executeTakeFirst();
-    if (session) { return session.user_id; }
-  }
-  // Fallback to solo user
-  const solo = await getOrCreateSoloUserForAuth(database, "solo",);
-  return solo?.id ?? null;
-}
-
 async function handleImport(request: Request, database: Kysely<DB>, userId: string,): Promise<Response> {
   if (!userId) { return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, },); }
 
@@ -133,12 +116,14 @@ async function handleImport(request: Request, database: Kysely<DB>, userId: stri
   return jsonError({ message: "Expected multipart/form-data", status: HttpStatus.BadRequest, },);
 }
 
-export function importRoutes({ database, }: { database: Kysely<DB> },): Elysia {
+export function importRoutes({ database, config, }: { database: Kysely<DB>; config: { auth: AuthConfig } },): Elysia {
   return new Elysia({ name: "import", },).onRequest(async (ctx: any,) => {
     const url = new URL(ctx.request.url,);
     if (ctx.request.method === "POST" && url.pathname === "/api/actors/import") {
-      const userId = await resolveUserId(ctx.request, database,);
-      return handleImport(ctx.request, database, userId ?? "",);
+      // onRequest runs before .derive(), so we must authenticate directly
+      const authResult = await authenticate({ request: ctx.request, database, authConfig: config.auth, },);
+      if (authResult instanceof Response) { return authResult; }
+      return handleImport(ctx.request, database, authResult.context.userId!,);
     }
   },) as unknown as Elysia;
 }

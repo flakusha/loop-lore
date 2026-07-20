@@ -73,7 +73,7 @@ describe("Import E2E", () => {
   });
 
   test("POST /api/actors/import imports TOML actor", async () => {
-    const toml = 'name = "Imported TOML"\ndescription = "via multipart"\n';
+    const toml = '[character]\nname = "Imported TOML"\ndescription = "via multipart"\n';
     const file = new File([toml,], "test.toml", { type: "application/toml", },);
     const form = new FormData();
     form.append("file", file,);
@@ -93,7 +93,7 @@ describe("Import E2E", () => {
     const res = await api.upload("/api/actors/import", form,);
     expect(res.ok,).toBe(false,);
     expect(res.status,).toBe(400,);
-    expect(res.error,).toContain("Unsupported file type",);
+    expect(res.error,).toContain("Unable to detect character card format",);
   });
 
   test("POST /api/actors/import rejects missing file field", async () => {
@@ -124,6 +124,6 @@ describe("Import E2E", () => {
     const res = await api.upload("/api/actors/import", form,);
     expect(res.ok,).toBe(false,);
     expect(res.status,).toBe(400,);
-    expect(res.error,).toContain("Actor name is required",);
+    expect(res.error,).toContain("Name is required",);
   });
 });
