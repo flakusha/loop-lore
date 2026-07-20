@@ -85,3 +85,8 @@ Grounded against `docs/meta/code-practices-improvements/05-testing-e2e-multiple-
 - Bun test + coverage: https://bun.sh/docs/cli/test
 - Playwright + htmx/Alpine: assert on swapped DOM, `htmx:afterSwap`; SSE via `route.fulfill`; Alpine state via `Alpine.$data(el)` — https://playwright.dev/, https://htmx.org/docs/, https://github.com/cjr47/htmx_alpine_playwright_tutorial
 - SQLite↔PG pitfalls: type affinity, JSON (jsonb vs string), RETURNING, ON CONFLICT, boolean (0/1), LIMIT/OFFSET, dates (ISO TEXT vs timestamptz)
+
+## Related Epics
+
+- **Epic Code Quality & Best Practices** — type-coverage + complexity gates in `check` originate from Code Quality tasks; QA consumes those metrics.
+- **Epic 27 (Data Integrity & ACID)** — `data_version` optimistic-concurrency needs dedicated concurrency tests (parallel writes → 409 conflict); see Epic 27 Phase 2.

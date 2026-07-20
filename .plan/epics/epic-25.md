@@ -3,7 +3,7 @@
 **Status:** Draft — description under `tree/chore-docs-reconcile` (docs chore)\
 **Proposed Epic Branch:** `epic/25`\
 **Owner:** TBD\
-**Depends on:** Epic 26 (reconciliation guards), Epic 27 (ACID/config guards)
+**Depends on:** Epic 26 (reconciliation guards) — hard prerequisite. Epic 25 and Epic 27 are independently sequenced after Epic 26 (suggested order: 26 → 27 → 25); neither lists the other as a dependency.
 
 ---
 
@@ -107,3 +107,9 @@
 - Epic 26 (Multi-Instance Reconciliation) — migration leadership, drift
 - Epic 27 (Data Integrity & ACID) — backend guards, ACID matrix
 - `docs/meta/plan.md` — epic registry
+
+## Related Epics
+
+- **Epic 26 (Multi-Instance Reconciliation)** — provides migration leadership / schema-drift guards this epic consumes for topologies D/E.
+- **Epic 27 (Data Integrity & ACID)** — supplies backend-selection + `data_version` guards that gate SQLite-vs-Postgres topology decisions.
+- **Epic 14 (Import/Export)** — deploy artifacts may ship baked data; out of scope here.

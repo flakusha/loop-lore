@@ -1,3 +1,5 @@
+> High-level notes — may drift from implementation. Authoritative source is `src/` and AGENTS.md.
+
 # Additional Use Case: Agentic Assistant Workspace
 
 Secondary mode beyond RPG roleplay chat. Core entities repurposed.
