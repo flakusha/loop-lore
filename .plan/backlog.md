@@ -85,6 +85,8 @@ From `docs/meta/assessments/feature-analysis.md`. Not yet in any epic.
 | `TASK-rigged-model-buffer-render`       | Pre-rendered sprite sheets from rigged models | Med  | Low      |
 | `TASK-dynamic-avatars-dota-style`       | Animated mugshots (Dota 2 style)              | High | Low      |
 | `TASK-emotion-intent-detection`         | Emotion detection + extensible emotion system | Med  | Medium   |
+| `TASK-chat-backgrounds-location-sync`   | Chat backgrounds — static/dynamic + location sync | Med–High | Low |
+| `TASK-chat-sectioning-multi-location`   | Chat sectioning — multi-location spanning (research) | High | Medium |
 
 ## P3 — Deferred Concepts (Post-MVP)
 
