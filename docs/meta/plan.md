@@ -220,7 +220,7 @@ Tool-calling loop, provider resilience, streaming reconnect.
 | Message archiving (cascade, restore, purge)      | `src/routes/messages.ts`, `src/db/`                                       |
 | Unit tests                                       | `src/routes/views-search.test.ts`, `src/routes/message-archiving.test.ts` |
 
-### 14. Import/Export & Data Portability — ⬜ Not Started [P1-High]
+### 14. Import/Export & Data Portability — ✅ Complete [P1-High]
 
 | Task                              | Files                      |
 | --------------------------------- | -------------------------- |
