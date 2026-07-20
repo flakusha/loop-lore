@@ -87,6 +87,7 @@ From `docs/meta/assessments/feature-analysis.md`. Not yet in any epic.
 | `TASK-emotion-intent-detection`         | Emotion detection + extensible emotion system | Med  | Medium   |
 | `TASK-chat-backgrounds-location-sync`   | Chat backgrounds — static/dynamic + location sync | Med–High | Low |
 | `TASK-chat-sectioning-multi-location`   | Chat sectioning — multi-location spanning (research) | High | Medium |
+| `TASK-chat-flow-section-navigation`     | Chat flow — section navigation & story spanning UI  | Med  | Medium |
 
 ## P3 — Deferred Concepts (Post-MVP)
 
