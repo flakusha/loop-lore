@@ -71,6 +71,77 @@ World and location system — overall conditions, lore following/quality investi
 - NPC inventories and trading
 - NPC behavior and schedules
 
+### Distance & Time Travel
+- Distance calculation between locations
+- Travel time estimation
+- Travel mechanics (walking, riding, flying, teleportation)
+- Travel hazards and encounters
+- Fast travel unlock system
+- Travel resource consumption (food, water, stamina)
+
+### Time Tracking & Progression
+- Time tracking in locations/world
+- Time progression based on:
+  - Quest execution (main/side quests)
+  - Message count (time attack mode)
+  - Location transfers only
+- Connection with global objectives
+- Time-based events and triggers
+- Day/night cycle effects
+- Seasonal changes
+- Time-limited quests/events
+
+## Game-Inspired Expansions
+
+### From Skyrim/Bethesda Games
+- **Radiant Quest System**: Procedurally generated quests based on location/state
+- **Crime & Bounty System**: Criminal actions tracked, bounty hunters
+- **Faction Reputation**: Standing with different factions affects gameplay
+- **Hearthfire Housing**: Player-owned locations, customization, storage
+- **Dragon Breaks**: World-altering events, timeline changes
+
+### From The Witcher 3
+- **Monster Contracts**: Bounty hunting system
+- **Gwent-style Mini-games**: In-world card/board games
+- **Question Mark Exploration**: Hidden locations to discover
+- **Sunset/Sunrise Mechanics**: Time affects NPC behavior and quests
+- **Mutagen System**: Character modification through world exploration
+
+### From Dark Souls/Elden Ring
+- **Bonfire System**: Checkpoint/rest locations
+- **Soul/Run Retrieval**: Death mechanics, item recovery
+- **World Tendency**: World state affects difficulty and NPCs
+- **Illusory Walls**: Hidden paths and secrets
+- **Message System**: Player-created hints in world
+
+### From Minecraft/Sandbox Games
+- **Biome System**: Different terrain types with unique resources
+- **Redstone-style Logic**: Location-based triggers and circuits
+- **Villager Trading**: NPC economy and trading
+- **Enchanting/Anvil**: Item enhancement at specific locations
+- **Nether/End Dimensions**: Alternative world layers
+
+### From Baldur's Gate 3
+- **Camp System**: Rest/recuperation locations
+- **Companion Approval**: NPC relationship tracking
+- **Inspiration System**: Bonus for creative solutions
+- **Illithid Powers**: Special abilities with world consequences
+- **Tadpole System**: Infection/progression mechanics
+
+### From Fallout Series
+- **V.A.T.S. System**: Targeted combat mechanics
+- **S.P.E.C.I.A.L. Stats**: Character creation and progression
+- **Settlement Building**: Player-created locations
+- **Radiation System**: Environmental hazard tracking
+- **Companion Loyalty**: Deep NPC relationship system
+
+### From MMOs (WoW, FFXIV)
+- **Dungeon Finder**: Location matchmaking system
+- **World Bosses**: Shared world events
+- **Daily/Weekly Quests**: Recurring objectives
+- **Reputation Grinds**: Faction standing progression
+- **Mount System**: Travel companions and speed
+
 ## Design
 
 ### World Structure
@@ -86,6 +157,8 @@ interface World {
   npcs: NPC[];
   resources: Resource[];
   anomalies: Anomaly[];
+  timeTracking: WorldTimeTracking;
+  travelSystem: TravelSystem;
 }
 
 interface WorldStyle {
@@ -102,6 +175,103 @@ interface WorldConditions {
   season: Season;
   globalModifiers: Modifier[];
   history: WorldEvent[];
+}
+```
+
+### Time Tracking System
+
+```typescript
+interface WorldTimeTracking {
+  mode: 'quest_execution' | 'message_count' | 'transfers_only' | 'real_time';
+  currentTime: WorldTime;
+  timeScale: number; // 1 real second = X world minutes
+  questTimeTracking: QuestTimeTracking;
+  messageTimeTracking: MessageTimeTracking;
+  globalObjectives: GlobalObjective[];
+}
+
+interface WorldTime {
+  day: number;
+  hour: number;
+  minute: number;
+  season: Season;
+  year: number;
+}
+
+interface QuestTimeTracking {
+  mainQuestTime: number; // total time spent on main quests
+  sideQuestTime: number; // total time spent on side quests
+  activeQuestTime: number; // time on current quest
+  questTimeLimits: Map<string, number>; // quest ID → time limit
+}
+
+interface MessageTimeTracking {
+  messagesPerTimeUnit: number; // messages = time progression
+  transferTimeOnly: boolean; // only count transfers
+  timeAttackMode: boolean; // time attack mode
+  messageThreshold: number; // messages before time advances
+}
+
+interface GlobalObjective {
+  id: string;
+  name: string;
+  description: string;
+  timeLimit?: number; // world time seconds
+  progress: number; // 0-100
+  completed: boolean;
+  consequences: ObjectiveConsequence[];
+}
+```
+
+### Travel System
+
+```typescript
+interface TravelSystem {
+  distanceMatrix: DistanceMatrix;
+  travelModes: TravelMode[];
+  fastTravel: FastTravelSystem;
+  travelHazards: TravelHazard[];
+  travelResources: TravelResource[];
+}
+
+interface DistanceMatrix {
+  // Location A → Location B → distance in world units
+  distances: Map<string, Map<string, number>>;
+  // Travel time calculation
+  calculateTravelTime(from: string, to: string, mode: TravelMode): number;
+}
+
+interface TravelMode {
+  id: string;
+  name: string;
+  speed: number; // world units per hour
+  requirements: TravelRequirement[];
+  hazards: string[]; // hazard IDs
+  resourceCost: TravelResourceCost;
+}
+
+interface FastTravelSystem {
+  unlockedLocations: string[]; // location IDs
+  unlockRequirements: Map<string, UnlockRequirement>;
+  travelCost: Map<string, number>; // location ID → cost
+  cooldown: Map<string, number>; // location ID → cooldown seconds
+}
+
+interface TravelHazard {
+  id: string;
+  name: string;
+  type: 'environmental' | 'enemy' | 'obstacle' | 'event';
+  chance: number; // 0-1
+  effect: HazardEffect;
+  avoidance: AvoidanceMethod;
+}
+
+interface TravelResource {
+  id: string;
+  name: string;
+  type: 'food' | 'water' | 'stamina' | 'fuel' | 'money';
+  consumptionRate: number; // per world unit traveled
+  replenishMethod: string;
 }
 ```
 
@@ -122,6 +292,25 @@ interface Location {
   storage: PersistentStorage;
   discovered: boolean;
   unique: boolean;
+  travelConnections: TravelConnection[];
+  timeEvents: TimeEvent[];
+}
+
+interface TravelConnection {
+  targetLocationId: string;
+  distance: number; // world units
+  travelModes: string[]; // travel mode IDs
+  hazards: string[]; // hazard IDs
+  discovered: boolean;
+}
+
+interface TimeEvent {
+  id: string;
+  name: string;
+  trigger: TimeTrigger;
+  effect: TimeEffect;
+  recurring: boolean;
+  interval?: number; // world time seconds
 }
 
 interface LocationType {
@@ -228,8 +417,25 @@ interface NPCMigration {
 - [ ] Implement NPC placement system
 - [ ] Implement NPC migration system
 - [ ] Implement NPC inventories
+- [ ] Implement distance calculation system
+- [ ] Implement travel time estimation
+- [ ] Implement travel mechanics (walking, riding, flying, teleportation)
+- [ ] Implement travel hazards and encounters
+- [ ] Implement fast travel unlock system
+- [ ] Implement travel resource consumption
+- [ ] Implement time tracking system
+- [ ] Implement quest-based time progression
+- [ ] Implement message-based time progression (time attack)
+- [ ] Implement transfer-based time progression
+- [ ] Implement global objectives with time limits
+- [ ] Implement day/night cycle effects
+- [ ] Implement seasonal changes
+- [ ] Implement time-limited quests/events
+- [ ] Implement game-inspired systems (radiant quests, crime/bounty, faction reputation, etc.)
 - [ ] Create world management UI
 - [ ] Create location explorer UI
+- [ ] Create travel UI
+- [ ] Create time tracking UI
 - [ ] Create anomaly interaction UI
 - [ ] Create resource extraction UI
 - [ ] Create persistent storage UI
@@ -288,6 +494,27 @@ interface NPCMigration {
 - How to handle storage theft?
 - Should storage have maintenance costs?
 
+### Distance & Travel
+- How to calculate distance between locations (Euclidean, Manhattan, graph-based)?
+- Should travel time be real-time or accelerated?
+- How to handle travel interruptions (combat, events)?
+- Should fast travel have a cost or cooldown?
+- How to balance travel speed vs. world size?
+
+### Time Tracking
+- What triggers time progression (quests, messages, transfers, real-time)?
+- How to balance time scale (1 real second = X world minutes)?
+- Should time tracking be visible to players or hidden?
+- How to handle time-limited quests (failure conditions)?
+- Should time affect NPC behavior and schedules?
+
+### Game-Inspired Systems
+- Which game systems are most applicable to loop-lore?
+- How to adapt single-player mechanics for multiplayer/chat?
+- Should game systems be optional or mandatory?
+- How to balance complexity vs. accessibility?
+- Should game systems be plugin-based or core?
+
 ## Implementation Phases
 
 ### Phase 1: Core World
@@ -308,7 +535,23 @@ interface NPCMigration {
 - NPC migration
 - NPC inventories
 
-### Phase 4: Polish & Integration
+### Phase 4: Travel & Time
+- Distance calculation
+- Travel mechanics
+- Fast travel system
+- Time tracking system
+- Quest/message/transfer time progression
+- Global objectives with time limits
+
+### Phase 5: Game-Inspired Systems
+- Radiant quest system
+- Crime & bounty system
+- Faction reputation
+- Monster contracts
+- Camp/rest system
+- Settlement building
+
+### Phase 6: Polish & Integration
 - UI/UX refinement
 - Performance optimization
 - World sharing
