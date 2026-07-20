@@ -71,6 +71,42 @@ World and location system — overall conditions, lore following/quality investi
 - NPC inventories and trading
 - NPC behavior and schedules
 
+### Random Encounters
+- Random encounter mechanics based on story notes
+- Random encounter generation (procedural)
+- Assistant/GM-driven encounter creation
+- Encounter difficulty scaling
+- Encounter types (combat, dialogue, event, puzzle)
+- Encounter rewards and consequences
+- Encounter history and tracking
+
+### NPC: Monsters & Enemies
+- Monster/enemy NPC types
+- Monster behavior patterns (aggressive, passive, territorial)
+- Monster difficulty scaling by location
+- Monster loot tables
+- Monster spawning mechanics
+- Boss monsters and rare spawns
+- Monster migration and territory control
+
+### NPC: Diplomacy
+- Diplomatic NPC interactions
+- Faction reputation system
+- Diplomacy options (negotiate, bribe, threaten, ally)
+- Diplomatic consequences
+- Alliance and rivalry tracking
+- Diplomatic missions and quests
+- Peace/war state management
+
+### World Character Karma & Standing
+- Character karma system (good/evil/neutral)
+- Reputation tracking per faction/location
+- Standing tiers (hostile, unfriendly, neutral, friendly, honored, revered, exalted)
+- Karma-based NPC reactions
+- Karma-based quest availability
+- Karma-based item access
+- Karma-based world state changes
+
 ### Distance & Time Travel
 - Distance calculation between locations
 - Travel time estimation
@@ -402,6 +438,198 @@ interface NPCMigration {
 }
 ```
 
+### Random Encounter System
+
+```typescript
+interface RandomEncounter {
+  id: string;
+  name: string;
+  type: 'combat' | 'dialogue' | 'event' | 'puzzle' | 'trade' | 'quest';
+  trigger: EncounterTrigger;
+  difficulty: number; // 0-100
+  requirements: EncounterRequirement[];
+  rewards: EncounterReward[];
+  consequences: EncounterConsequence[];
+  storyNotes: string; // LLM context for generation
+  assistantDriven: boolean; // GM/assistant creates encounter
+}
+
+interface EncounterTrigger {
+  type: 'random' | 'location_based' | 'time_based' | 'quest_based' | 'story_based';
+  chance: number; // 0-1
+  conditions: TriggerCondition[];
+  cooldown: number; // seconds between encounters
+}
+
+interface EncounterContext {
+  location: Location;
+  party: Party;
+  worldState: WorldState;
+  recentEvents: WorldEvent[];
+  storyNotes: string;
+}
+```
+
+### Monster & Enemy System
+
+```typescript
+interface Monster {
+  id: string;
+  name: string;
+  type: MonsterType;
+  difficulty: number; // 0-100
+  behavior: MonsterBehavior;
+  stats: MonsterStats;
+  lootTable: LootTable;
+  spawnConditions: SpawnCondition[];
+  territory: Territory;
+  migration: MonsterMigration;
+}
+
+interface MonsterType {
+  category: 'beast' | 'humanoid' | 'undead' | 'elemental' | 'dragon' | 'custom';
+  subcategory: string;
+  size: 'tiny' | 'small' | 'medium' | 'large' | 'huge' | 'gargantuan';
+  alignment: 'lawful' | 'neutral' | 'chaotic';
+}
+
+interface MonsterBehavior {
+  aggression: number; // 0-100
+  intelligence: number; // 0-100
+  packBehavior: boolean;
+  territorial: boolean;
+  nocturnal: boolean;
+  huntingPattern: 'ambush' | 'patrol' | 'nest' | 'migration';
+}
+
+interface MonsterStats {
+  health: number;
+  damage: number;
+  defense: number;
+  speed: number;
+  abilities: MonsterAbility[];
+  resistances: DamageResistance[];
+  weaknesses: DamageWeakness[];
+}
+
+interface MonsterMigration {
+  canMigrate: boolean;
+  preferredLocations: string[];
+  migrationTriggers: MigrationTrigger[];
+  migrationChance: number; // 0-1
+  packSize: number;
+}
+```
+
+### Diplomacy System
+
+```typescript
+interface DiplomacySystem {
+  factions: Faction[];
+  relationships: FactionRelationship[];
+  diplomaticActions: DiplomaticAction[];
+  alliances: Alliance[];
+  wars: War[];
+}
+
+interface Faction {
+  id: string;
+  name: string;
+  description: string;
+  alignment: Alignment;
+  values: FactionValue[];
+  territory: string[];
+  leaders: string[]; // NPC IDs
+  members: string[]; // NPC IDs
+}
+
+interface FactionRelationship {
+  factionA: string;
+  factionB: string;
+  standing: number; // -100 to 100
+  status: 'allied' | 'friendly' | 'neutral' | 'unfriendly' | 'hostile' | 'at_war';
+  history: RelationshipEvent[];
+}
+
+interface DiplomaticAction {
+  id: string;
+  name: string;
+  type: 'negotiate' | 'bribe' | 'threaten' | 'ally' | 'declare_war' | 'peace_treaty' | 'trade_agreement';
+  requirements: DiplomaticRequirement[];
+  effects: DiplomaticEffect[];
+  consequences: DiplomaticConsequence[];
+}
+
+interface Alliance {
+  id: string;
+  factions: string[];
+  type: 'defensive' | 'offensive' | 'trade' | 'research';
+  terms: AllianceTerms;
+  status: 'active' | 'broken' | 'proposed';
+  duration: number; // world time seconds
+}
+```
+
+### Karma & Standing System
+
+```typescript
+interface KarmaSystem {
+  characterKarma: CharacterKarma;
+  factionStanding: FactionStanding[];
+  worldReputation: WorldReputation;
+  karmaEffects: KarmaEffect[];
+}
+
+interface CharacterKarma {
+  overall: number; // -100 (evil) to 100 (good)
+  categories: KarmaCategory[];
+  history: KarmaEvent[];
+  tier: KarmaTier;
+}
+
+interface KarmaCategory {
+  name: string;
+  value: number; // -100 to 100
+  description: string;
+}
+
+interface KarmaTier {
+  name: string; // 'saint', 'hero', 'neutral', 'villain', 'tyrant'
+  threshold: number;
+  effects: KarmaTierEffect[];
+}
+
+interface FactionStanding {
+  factionId: string;
+  standing: number; // -100 to 100
+  tier: StandingTier;
+  history: StandingEvent[];
+  questsCompleted: number;
+  questsFailed: number;
+  itemsTraded: number;
+  enemiesKilled: number;
+}
+
+interface StandingTier {
+  name: string; // 'exalted', 'revered', 'honored', 'friendly', 'neutral', 'unfriendly', 'hostile'
+  threshold: number;
+  effects: StandingTierEffect[];
+}
+
+interface WorldReputation {
+  overall: number; // -100 to 100
+  categories: ReputationCategory[];
+  titles: string[];
+  achievements: string[];
+}
+
+interface KarmaEffect {
+  type: 'npc_reaction' | 'quest_availability' | 'item_access' | 'price_modifier' | 'world_state';
+  condition: KarmaCondition;
+  effect: KarmaEffectValue;
+}
+```
+
 ## Tasks
 
 - [ ] Design world data model
@@ -431,6 +659,10 @@ interface NPCMigration {
 - [ ] Implement day/night cycle effects
 - [ ] Implement seasonal changes
 - [ ] Implement time-limited quests/events
+- [ ] Implement random encounter system
+- [ ] Implement monster/enemy NPC system
+- [ ] Implement diplomacy system
+- [ ] Implement karma and standing system
 - [ ] Implement game-inspired systems (radiant quests, crime/bounty, faction reputation, etc.)
 - [ ] Create world management UI
 - [ ] Create location explorer UI
@@ -440,6 +672,10 @@ interface NPCMigration {
 - [ ] Create resource extraction UI
 - [ ] Create persistent storage UI
 - [ ] Create NPC management UI
+- [ ] Create random encounter UI
+- [ ] Create monster compendium UI
+- [ ] Create diplomacy UI
+- [ ] Create karma/standing UI
 - [ ] Write tests for world system
 
 ## Files
@@ -515,6 +751,34 @@ interface NPCMigration {
 - How to balance complexity vs. accessibility?
 - Should game systems be plugin-based or core?
 
+### Random Encounters
+- How often should random encounters occur?
+- Should encounters be purely random or story-driven?
+- How to balance encounter difficulty?
+- Should encounters be visible or hidden?
+- How to handle encounter avoidance?
+
+### Monsters & Enemies
+- How many monster types per world is reasonable?
+- Should monsters have persistent territories?
+- How to handle monster respawning?
+- Should monsters drop loot based on difficulty?
+- How to balance boss monsters?
+
+### Diplomacy
+- How many factions per world is reasonable?
+- Should diplomacy be player-driven or automated?
+- How to handle faction wars?
+- Should diplomacy affect NPC behavior?
+- How to balance diplomatic options?
+
+### Karma & Standing
+- How visible should karma be to players?
+- Should karma affect NPC reactions?
+- How to handle karma resets?
+- Should standing be per-faction or global?
+- How to balance karma effects?
+
 ## Implementation Phases
 
 ### Phase 1: Core World
@@ -543,7 +807,19 @@ interface NPCMigration {
 - Quest/message/transfer time progression
 - Global objectives with time limits
 
-### Phase 5: Game-Inspired Systems
+### Phase 5: Encounters & Combat
+- Random encounter system
+- Monster/enemy NPC system
+- Combat mechanics integration
+- Loot and rewards
+
+### Phase 6: Diplomacy & Karma
+- Faction system
+- Diplomacy mechanics
+- Karma and standing system
+- World state management
+
+### Phase 7: Game-Inspired Systems
 - Radiant quest system
 - Crime & bounty system
 - Faction reputation
@@ -551,7 +827,7 @@ interface NPCMigration {
 - Camp/rest system
 - Settlement building
 
-### Phase 6: Polish & Integration
+### Phase 8: Polish & Integration
 - UI/UX refinement
 - Performance optimization
 - World sharing
