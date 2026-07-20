@@ -193,6 +193,7 @@ export const SCHEMA = new SchemaManifest()
     auto_advance: col("integer",),
     parent_chat_id: col("text",),
     is_pinned: col("text", { notNull: true, },),
+    encryption_level: col("text", { notNull: true, },),
     created_at: col("text", { notNull: true, },),
     updated_at: col("text", { notNull: true, },),
   },)
@@ -708,6 +709,18 @@ export const SCHEMA = new SchemaManifest()
     message_id: col("text", { notNull: true, },),
     pinned_by: col("text", { notNull: true, },),
     pinned_at: col("text", { notNull: true, },),
+  },)
+  // ── User: Notifications ──────────────────────────────────────
+  .table("notifications", {
+    id: col("text", { primaryKey: true, },),
+    user_id: col("text", { notNull: true, },),
+    type: col("text", { notNull: true, },),
+    title: col("text", { notNull: true, },),
+    body: col("text",),
+    link: col("text",),
+    read: col("integer", { notNull: true, },),
+    data: col("text",),
+    created_at: col("text", { notNull: true, },),
   },)
   // ── System: Data Migrations (runtime tracking table) ────────
   .table("data_migrations", {

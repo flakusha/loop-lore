@@ -51,7 +51,7 @@
     "check:ci": "./scripts/check-parallel.sh --ci",
     "check:fix": "./scripts/check-parallel.sh --fix",
     "check:full": "bun run build:frontend && bun run check",
-    "test": "bun test",
+    "test": "bun test --isolate",
     "test:watch": "bun test --watch",
     "test:coverage": "bun test --coverage",
     "test:unit": "bun test src/",
