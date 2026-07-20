@@ -80,6 +80,7 @@ From `docs/meta/assessments/feature-analysis.md`. Not yet in any epic.
 | `TASK-frontend-e2e-improvements-draft` | Frontend E2E stabilization (draft)            | High    | Low      |
 | `TASK-github-pages-vitepress`           | GitHub Pages VitePress docs site              | Low–Med | Low      |
 | `TASK-thinking-tag-context-prune`       | LLM `<think>` tag context pruning             | Med     | Medium   |
+| `TASK-emotions-avatar-edit-model`       | Emotions avatar — edit model support (blocked) | High | Low      |
 
 ## P3 — Deferred Concepts (Post-MVP)
 
