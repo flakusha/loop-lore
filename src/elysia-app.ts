@@ -126,6 +126,33 @@ export function createApp(deps: AppDeps,): Elysia {
   app.use(assetRoutes(handleOpts,),);
   app.use(viewRoutes({ database: handleOpts.database, },),);
 
+  // ── Asset upload (standalone route) ──────────────────────────
+  // WORKAROUND: Elysia 1.4.x body consumption bug. When a child plugin
+  // containing routes that call request.json() is .use()d into a parent,
+  // Elysia's internal body parser consumes the multipart body stream before
+  // the upload handler can call request.formData(). Registering the multipart
+  // route directly on the parent app avoids this issue.
+  // See: https://github.com/elysiajs/elysia/issues/XXX (if filed)
+  app.post("/api/assets", async (ctx: any,) => {
+    const userId = ctx.userId as string | null;
+    if (!userId) {
+      const { unauthorizedResponse, } = await import("./routes/http-utils");
+      return unauthorizedResponse();
+    }
+    if (!config.assets.enabled) {
+      const { notFoundResponse, } = await import("./routes/http-utils");
+      return notFoundResponse("Asset system is disabled",);
+    }
+    const { handleUpload, } = await import("./assets/controller");
+    return handleUpload({
+      request: ctx.request,
+      userId,
+      database,
+      uploadDir: config.assets.uploadDir,
+      maxFileSize: config.assets.maxFileSize,
+    },);
+  },);
+
   // ── Convenience redirects ─────────────────────────────────────
   const redirectTo = (location: string,): Response =>
     new Response(null, { status: 302, headers: { Location: location, }, },);
