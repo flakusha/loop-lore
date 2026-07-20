@@ -79,6 +79,40 @@ World and location system — overall conditions, lore following/quality investi
 - Encounter types (combat, dialogue, event, puzzle)
 - Encounter rewards and consequences
 - Encounter history and tracking
+- **Travel between locations random encounters**
+- Encounter triggers during travel
+- Travel-specific encounter types
+- Encounter avoidance and mitigation
+
+### Time-Limited Locations
+- Location time limits (temporary access)
+- Time-limited events at locations
+- Location expiration and renewal
+- Time-based location changes
+- Location availability windows
+- Seasonal location access
+- Event-based location unlocking
+
+### Global Cataclysms & Events
+- World-altering cataclysms
+- Natural disasters (earthquakes, floods, volcanic eruptions)
+- Magical cataclysms (mana storms, dimensional rifts)
+- Political upheavals (wars, revolutions, regime changes)
+- Pandemic events
+- Technological breakthroughs
+- Cultural movements
+- Event propagation and impact
+- Cataclysm recovery and rebuilding
+
+### Global Memories & Cross-Group Impact
+- Global memory system (world remembers all player actions)
+- Cross-group impact (actions of one quest group affect another)
+- Time lag between events and actual impact
+- Reputation spillover between groups
+- World state evolution based on player actions
+- Historical event tracking
+- Global consequence propagation
+- Delayed reaction system
 
 ### NPC: Monsters & Enemies
 - Monster/enemy NPC types
@@ -475,10 +509,17 @@ interface RandomEncounter {
 }
 
 interface EncounterTrigger {
-  type: 'random' | 'location_based' | 'time_based' | 'quest_based' | 'story_based';
+  type: 'random' | 'location_based' | 'time_based' | 'quest_based' | 'story_based' | 'travel_based';
   chance: number; // 0-1
   conditions: TriggerCondition[];
   cooldown: number; // seconds between encounters
+}
+
+interface TravelEncounter extends RandomEncounter {
+  travelPhase: 'departure' | 'journey' | 'arrival';
+  distanceTrigger: number; // world units traveled
+  locationProximity: string; // near which location
+  travelRisk: number; // 0-100
 }
 
 interface EncounterContext {
@@ -487,6 +528,190 @@ interface EncounterContext {
   worldState: WorldState;
   recentEvents: WorldEvent[];
   storyNotes: string;
+}
+```
+
+### Time-Limited Location System
+
+```typescript
+interface TimeLimitedLocation {
+  locationId: string;
+  timeLimit: LocationTimeLimit;
+  expiration: LocationExpiration;
+  renewal: LocationRenewal;
+  changes: LocationChange[];
+}
+
+interface LocationTimeLimit {
+  type: 'temporary' | 'event_based' | 'seasonal' | 'quest_based' | 'cataclysm_based';
+  duration: number; // world time seconds
+  startTime: Date;
+  endTime: Date;
+  extensions: TimeExtension[];
+}
+
+interface LocationExpiration {
+  action: 'despawn' | 'transform' | 'lock' | 'destroy' | 'archive';
+  warningTime: number; // seconds before expiration
+  warningMessage: string;
+  cleanup: CleanupAction[];
+}
+
+interface LocationRenewal {
+  renewable: boolean;
+  conditions: RenewalCondition[];
+  cooldown: number; // world time seconds
+  cost: RenewalCost;
+}
+
+interface LocationChange {
+  trigger: 'time' | 'event' | 'player_action' | 'cataclysm';
+  changeType: 'appearance' | 'access' | 'resources' | 'npcs' | 'anomalies';
+  description: string;
+  effects: ChangeEffect[];
+}
+```
+
+### Global Cataclysm System
+
+```typescript
+interface GlobalCataclysm {
+  id: string;
+  name: string;
+  type: 'natural' | 'magical' | 'political' | 'technological' | 'cultural' | 'pandemic';
+  severity: number; // 0-100
+  duration: number; // world time seconds
+  propagation: CataclysmPropagation;
+  impact: CataclysmImpact;
+  recovery: CataclysmRecovery;
+}
+
+interface CataclysmPropagation {
+  speed: number; // world units per hour
+  radius: number; // world units
+  affectedLocations: string[];
+  cascadingEffects: CascadingEffect[];
+  warningTime: number; // seconds before impact
+}
+
+interface CataclysmImpact {
+  locationDamage: Map<string, number>; // location ID → damage %
+  npcImpact: Map<string, NPCImpact>; // NPC ID → impact
+  resourceDepletion: Map<string, number>; // resource ID → depletion %
+  infrastructureDamage: Map<string, number>; // structure ID → damage %
+  populationImpact: number; // population change %
+  economyImpact: number; // economic change %
+}
+
+interface CataclysmRecovery {
+  autoRecovery: boolean;
+  recoveryRate: number; // per world time hour
+  playerAssisted: boolean;
+  recoveryActions: RecoveryAction[];
+  permanentChanges: PermanentChange[];
+}
+
+interface GlobalEvent {
+  id: string;
+  name: string;
+  type: 'cataclysm' | 'celebration' | 'discovery' | 'invasion' | 'festival' | 'crisis';
+  scope: 'local' | 'regional' | 'global';
+  triggers: EventTrigger[];
+  effects: EventEffect[];
+  duration: number; // world time seconds
+  recurring: boolean;
+  recurrenceInterval?: number; // world time seconds
+}
+```
+
+### Global Memory & Cross-Group Impact System
+
+```typescript
+interface GlobalMemory {
+  worldId: string;
+  memories: GlobalMemoryEntry[];
+  crossGroupImpacts: CrossGroupImpact[];
+  timeLags: TimeLag[];
+  reputationSpillover: ReputationSpillover[];
+  worldStateEvolution: WorldStateEvolution[];
+}
+
+interface GlobalMemoryEntry {
+  id: string;
+  type: 'player_action' | 'world_event' | 'cataclysm' | 'diplomatic' | 'economic';
+  content: string;
+  timestamp: Date;
+  importance: number; // 0-100
+  participants: string[]; // group/character IDs
+  location: string;
+  worldStateChange: WorldStateChange;
+  propagationDelay: number; // world time seconds
+}
+
+interface CrossGroupImpact {
+  sourceGroupId: string;
+  targetGroupId: string;
+  impactType: 'reputation' | 'resource' | 'access' | 'hostility' | 'alliance';
+  magnitude: number; // -100 to 100
+  delay: number; // world time seconds
+  conditions: ImpactCondition[];
+  propagationPath: string[]; // location IDs
+}
+
+interface TimeLag {
+  eventId: string;
+  actualImpactTime: Date;
+  perceivedImpactTime: Date;
+  lagDuration: number; // world time seconds
+  lagReason: string;
+  propagationFactors: PropagationFactor[];
+}
+
+interface ReputationSpillover {
+  sourceGroup: string;
+  targetGroup: string;
+  spilloverType: 'positive' | 'negative' | 'neutral';
+  magnitude: number; // 0-100
+  decayRate: number; // per world time hour
+  conditions: SpilloverCondition[];
+}
+
+interface WorldStateEvolution {
+  evolutionType: 'gradual' | 'sudden' | 'cascading' | 'cyclical';
+  triggers: EvolutionTrigger[];
+  changes: EvolutionChange[];
+  timeline: EvolutionTimeline[];
+  reversibility: boolean;
+}
+```
+
+### Global Consequence Propagation
+
+```typescript
+interface ConsequencePropagation {
+  sourceEvent: string;
+  propagationChain: PropagationStep[];
+  finalImpact: FinalImpact;
+  totalDelay: number; // world time seconds
+  visibility: 'immediate' | 'delayed' | 'hidden';
+}
+
+interface PropagationStep {
+  stepNumber: number;
+  location: string;
+  delay: number; // world time seconds
+  effect: PropagationEffect;
+  amplification: number; // 0-2 (1 = normal)
+  dampening: number; // 0-1 (1 = fully dampened)
+}
+
+interface FinalImpact {
+  location: string;
+  effect: string;
+  magnitude: number; // 0-100
+  duration: number; // world time seconds
+  reversibility: boolean;
+  recoveryActions: string[];
 }
 ```
 
@@ -864,6 +1089,15 @@ interface FormattingRules {
 - [ ] Implement seasonal changes
 - [ ] Implement time-limited quests/events
 - [ ] Implement random encounter system
+- [ ] Implement travel-based random encounters
+- [ ] Implement time-limited locations
+- [ ] Implement global cataclysms & events
+- [ ] Implement global memory system
+- [ ] Implement cross-group impact system
+- [ ] Implement time lag system
+- [ ] Implement reputation spillover
+- [ ] Implement world state evolution
+- [ ] Implement consequence propagation
 - [ ] Implement monster/enemy NPC system
 - [ ] Implement diplomacy system
 - [ ] Implement NPC memory system
@@ -889,6 +1123,8 @@ interface FormattingRules {
 - [ ] Create diplomacy UI
 - [ ] Create NPC memory/relationship UI
 - [ ] Create karma/standing UI
+- [ ] Create cataclysm event UI
+- [ ] Create global memory UI
 - [ ] Write tests for world system
 
 ## Files
@@ -1005,6 +1241,35 @@ interface FormattingRules {
 - How to handle language level changes?
 - Should formatting be automatic or player-controlled?
 - How to maintain character voice consistency?
+
+### Travel Encounters
+- How often should travel encounters occur?
+- Should encounters be based on travel distance or time?
+- How to handle encounter avoidance during travel?
+- Should travel encounters be different from location encounters?
+- How to balance travel risk vs. reward?
+
+### Time-Limited Locations
+- How long should temporary locations last?
+- Should players be warned before location expiration?
+- How to handle items/NPCs in expiring locations?
+- Should locations be renewable?
+- How to balance temporary vs. permanent locations?
+
+### Global Cataclysms
+- How often should cataclysms occur?
+- Should cataclysms be predictable or random?
+- How to handle cataclysm recovery?
+- Should cataclysms have permanent effects?
+- How to balance cataclysm severity?
+
+### Global Memories & Cross-Group Impact
+- How long should global memories persist?
+- How to handle time lag between events and impact?
+- Should cross-group impact be visible to players?
+- How to balance reputation spillover?
+- Should world state evolution be automatic or player-driven?
+- How to handle conflicting actions from different groups?
 
 ## Implementation Phases
 
