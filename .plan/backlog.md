@@ -10,12 +10,15 @@ Partial implementation exists in `src/`. Finishing these is current active work.
 | ---- | ---------------------------------------------------------------------------------- | ------- | -------------- |
 | 16   | Observability — telemetry, admin analytics, CI config, Playwright responsive tests | plan.md | 🟡 In progress |
 
-### Completed (moved from P0)
+### Completed (moved from P0/P1)
 
 | Epic | Item                                                                                   | Status      |
 | ---- | -------------------------------------------------------------------------------------- | ----------- |
+| 10   | Generation Foundation — tool-call loop, provider failover, SSE reconnect              | ✅ Complete |
+| 11   | Admin & Settings — admin middleware, page routes, user prefs modal, plugin management | ✅ Complete |
 | 12   | Memory Foundation — keyword filtering, type enum, context compaction, A/N injection    | ✅ Complete |
 | 13   | Frontend Responsive — mobile breakpoints, touch targets, keyboard shortcuts, HTMX, etc | ✅ Complete |
+| 14   | Import/Export — file-based character import, chat export, PNG steganography, bulk     | ✅ Complete |
 | 19   | Chat Notifications — cross-chat SSE, read-state schema, unread badge, toast            | ✅ Complete |
 
 ## P1 — Next Cycle (v0.1 Not Started)
@@ -24,10 +27,7 @@ Ordered by user impact × effort. Items with partial `src/` code listed first.
 
 | Epic | Item                                                                                  | Effort | Partial Code? | plan.md ref |
 | ---- | ------------------------------------------------------------------------------------- | ------ | ------------- | ----------- |
-| 14   | Import/Export — file-based character import, chat export, PNG steganography, bulk     | Low    | Yes           | Epic 14     |
-| 11   | Admin & Settings — admin middleware, page routes, user prefs modal, plugin management | Med    | Yes           | Epic 11     |
-| 17   | Encryption Foundation — AES-256-GCM, per-user keys, browser-side key derivation       | Med    | Yes           | Epic 17     |
-| 10   | Generation Foundation — tool-call loop, provider failover, SSE reconnect              | Med    | ✅ Complete   | Epic 10     |
+| 17   | Encryption Foundation — e2e AES-256-GCM, asset encryption, access mgmt, key rotation | High   | Spec only     | Epic 17     |
 | 15   | i18n & Accessibility — server-side i18n module, ARIA pass, keyboard nav, 10 locales   | High   | Minimal       | Epic 15     |
 
 ## P2 — Specified, Not Implemented
@@ -35,13 +35,13 @@ Ordered by user impact × effort. Items with partial `src/` code listed first.
 | Feature                                                     | Spec                                                                    | Notes                                                                              |
 | ----------------------------------------------------------- | ----------------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
 | E2E Performance Benchmarks                                  | `docs/spec/e2e-benchmarks.md`                                           | Benchmark runner, diff/trend scripts, CI integration                               |
-| Multi-format character import (PNG/YAML/TOML/CHARX)         | `docs/spec/character-setup.md`                                          | Only JSON import works                                                             |
+| ~~Multi-format character import (PNG/YAML/TOML/CHARX)~~ | ~~`docs/spec/character-setup.md`~~ | ✅ Implemented (Epic 14) |
 | Impersonation (`chat.impersonate_id`)                       | `docs/spec/character-setup.md`                                          | Not implemented                                                                    |
 | RPG mechanics (dice, stats, combat, XP, loot)               | `docs/spec/rpg-mechanics.md`, `docs/spec/rpg-implementation-roadmap.md` | `src/rpg/` does not exist                                                          |
 | Three-tier memory system (episodic/semantic/procedural)     | `docs/spec/memory-system.md`                                            | Only `actor_memories` table exists                                                 |
 | Artifact system (code/docs/datasets as assets)              | `docs/spec/artifacts-system.md`                                         | Not implemented                                                                    |
 | Agentic workspace mode                                      | `docs/spec/use-case-agentic-workspace.md`                               | Not implemented                                                                    |
-| Client-side encryption (AES-256-GCM, key hierarchy)         | `docs/frontend/encryption.md`, `docs/spec/encryption-workflow.md`       | Messages stored as plaintext                                                       |
+| ~~Client-side encryption (AES-256-GCM, key hierarchy)~~ | ~~`docs/frontend/encryption.md`, `docs/spec/encryption-workflow.md`~~ | ✅ Covered by expanded Epic 17 |
 | Frontend story mode UI (GM panel, quest log, story chat)    | `docs/frontend/chat/multi-llm-story.md`                                 | Backend `src/story/` exists; no frontend                                           |
 | Message archiving (cascade, restore, purge)                 | `docs/frontend/chat/archiving.md`, `docs/spec/archival-workflow.md`     | Hard delete only                                                                   |
 | Memory selection UI (mid-chat panel, pinning, auto-extract) | `docs/frontend/chat/memories.md`                                        | Backend reads memories; no UI                                                      |
@@ -66,7 +66,7 @@ From `docs/meta/assessments/feature-analysis.md`. Not yet in any epic.
 | Q2 | Smart-regen transforms (polish)  | Low    | High           | feature-analysis #8  |
 | Q3 | Conversation analytics dashboard | Low    | Med            | feature-analysis #27 |
 | Q4 | Model-comparison dashboard       | Low    | Med            | feature-analysis #28 |
-| Q5 | Bulk data export (zip-all)       | Low    | Med            | plan Epic 14         |
+| Q5 | Bulk data export (zip-all)       | Low    | Med            | ✅ Done (Epic 14) |
 
 ## Chore Tasks — Infrastructure & DevOps
 
@@ -88,6 +88,12 @@ From `docs/meta/assessments/feature-analysis.md`. Not yet in any epic.
 | `TASK-chat-backgrounds-location-sync`   | Chat backgrounds — static/dynamic + location sync | Med–High | Low |
 | `TASK-chat-sectioning-multi-location`   | Chat sectioning — multi-location spanning (research) | High | Medium |
 | `TASK-chat-flow-section-navigation`     | Chat flow — section navigation & story spanning UI  | Med  | Medium |
+| `TASK-epic14-import-export-reconciliation` | Epic 14 reconciliation — already implemented | — | — |
+| `TASK-epic11-admin-settings-reconciliation` | Epic 11 reconciliation — already implemented | — | — |
+| `TASK-epic17-encryption-e2e-expansion`  | Encryption — e2e, asset encryption, access mgmt, key rotation | High | High |
+| `TASK-conversation-branching`           | Conversation branching — tree-based chat history | Med | Medium |
+| `TASK-character-relationships`          | Character relationships — inter-character bonds | Med | Medium |
+| `TASK-prompt-library`                   | Prompt library — reusable prompt templates | Low–Med | Low |
 
 ## P3 — Deferred Concepts (Post-MVP)
 
