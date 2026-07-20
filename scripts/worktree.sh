@@ -626,11 +626,11 @@ cmd_finalize() {
     echo ""
     
     # Step 3: Run tests
-    echo -e "${CYAN}Step 3: Running tests (bun test src/)...${NC}"
+    echo -e "${CYAN}Step 3: Running tests (bun run test:unit)...${NC}"
     if [[ "$force" == "true" ]]; then
         echo -e "${YELLOW}  Skipped: --force flag set${NC}"
     elif command -v bun &>/dev/null && [[ -f "$worktree_path/bun.lock" || -f "$worktree_path/package.json" ]]; then
-        if (cd "$worktree_path" && bun test src/); then
+        if (cd "$worktree_path" && bun run test:unit); then
             echo -e "${GREEN}  ✓ Tests passed${NC}"
         else
             echo -e "${RED}  ✗ Tests failed — fix before finalizing (or use --force)${NC}"
@@ -653,8 +653,20 @@ cmd_finalize() {
     echo -e "${GREEN}  ✓ Branch has $ahead commit(s) beyond $base${NC}"
     echo ""
 
-    # Step 5: Merge into master
-    echo -e "${CYAN}Step 5: Merging '$branch' into master...${NC}"
+    # Step 5: Remove worktree (must happen before merge — git can't merge a checked-out branch)
+    echo -e "${CYAN}Step 5: Removing worktree...${NC}"
+    local worktree_abs
+    worktree_abs=$(cd "$worktree_path" && pwd)
+    if git worktree remove "$worktree_abs" --force 2>/dev/null; then
+        echo -e "${GREEN}  ✓ Worktree removed${NC}"
+    else
+        echo -e "${RED}  ✗ Failed to remove worktree — remove manually${NC}"
+        exit 1
+    fi
+    echo ""
+
+    # Step 6: Merge into master
+    echo -e "${CYAN}Step 6: Merging '$branch' into master...${NC}"
     local GIT_MERGE_FLAGS=()
     gpg_merge_flags
     if git -C "$REPO_ROOT" "${GIT_MERGE_FLAGS[@]}" merge "$branch" --no-edit; then
@@ -675,10 +687,10 @@ cmd_finalize() {
     fi
     echo ""
 
-    # Step 6: Remove worktree
-    echo -e "${CYAN}Step 6: Removing worktree...${NC}"
-    git -C "$REPO_ROOT" worktree remove "$worktree_path"
-    echo -e "${GREEN}  ✓ Worktree removed${NC}"
+    # Step 7: Delete branch
+    echo -e "${CYAN}Step 7: Deleting branch '$branch'...${NC}"
+    git -C "$REPO_ROOT" branch -d "$branch" 2>/dev/null || git -C "$REPO_ROOT" branch -D "$branch"
+    echo -e "${GREEN}  ✓ Branch deleted${NC}"
     echo ""
 
     echo -e "${GREEN}═══ Finalized '$branch' — merged to master ═══${NC}"
