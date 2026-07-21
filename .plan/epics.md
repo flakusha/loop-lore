@@ -19,7 +19,7 @@
 | 11 | Admin & Settings             | ✅ Complete (core) | plan.md §11 | `epic-14.md` |
 | 12 | Memory Foundation            | ✅ Complete        | plan.md §12 | —            |
 | 13 | Frontend Responsive          | ✅ Complete        | plan.md §13 | —            |
-| 14 | Import/Export                | ✅ Complete        | plan.md §14 | `epic-14.md` |
+| 14 | Import/Export                | ✅ Complete        | plan.md §14 | `epic-import-export-io.md` |
 | 18 | Local Inference Integrations | ✅ Complete        | plan.md §18 | —            |
 | 19 | Chat Notifications           | ✅ Complete        | plan.md §19 | —            |
 
@@ -28,7 +28,7 @@
 | #  | Name                        | Status         | Priority | Plan Ref    | Epic File    |
 | -- | --------------------------- | -------------- | -------- | ----------- | ------------ |
 | 15 | i18n & Accessibility        | ⬜ Not Started | High     | plan.md §15 | —            |
-| 16 | Observability & CI          | 🟡 In Progress | High     | plan.md §16 | `epic-16.md` |
+| 16 | Observability & CI          | 🟡 In Progress | High     | plan.md §16 | `epic-observability-telemetry.md` |
 | 17 | Encryption Foundation       | ⬜ Not Started | High     | plan.md §17 | —            |
 | 20 | E2E Performance Benchmarks  | ⬜ Not Started | Medium   | plan.md §20 |              |
 | 21 | Notification Expansion      | ⬜ Not Started | Medium   | plan.md §21 |              |
@@ -125,6 +125,32 @@ Content generation beyond text — images, audio, video, 3D.
 | ComfyUI Plugin & Workflow Templates | ⬜ Not Started | High     | `epic-comfyui-plugin.md`    |
 | Audio, Video & Sound Generation     | ⬜ Not Started | Medium   | `epic-audio-video-sound.md` |
 | 3D Asset Generation (Future)        | ⬜ Not Started | Low      | `epic-3d-generation.md`     |
+
+---
+
+## Chat UX Tasks (New — Docs Reconciliation 2026-07-21)
+
+Chat-specific features extracted from epic overlap and new requirements.
+These are standalone tasks (not numbered epics) tracked under existing
+epics where applicable.
+
+| Task                                       | Effort | Epic(s)                | Status         |
+| ------------------------------------------ | ------ | ---------------------- | -------------- |
+| Chat Room Search & Join                    | Med    | 36, 41                 | ⬜ Not Started |
+| Chat Room Filters                          | Med    | 24, 36                 | ⬜ Not Started |
+| Chat Message Search & Filter               | Med–High | 24, 36              | ⬜ Not Started |
+| Chat Autorenaming                          | Low    | 36                     | ⬜ Not Started |
+| Visual Novel Mode                          | Med    | Immersion & Presentation | ⬜ Not Started |
+| 3D View Modes (consolidated)               | High   | 26, 28                 | ⬜ Not Started |
+| Text Effects & Overlays                    | Med    | Immersion & Presentation | ⬜ Not Started |
+
+**Cross-references:**
+- `docs/frontend/chat/search-and-filter.md` — UX spec for search + filters
+- `docs/frontend/chat/visual-novel-mode.md` — UX spec for VN mode
+- `docs/frontend/chat/text-effects-overlays.md` — UX spec for effects/overlays
+- Epic 24 (Filtering & Pagination) — general filter infrastructure
+- Epic 36 (Chat Lifecycle) — chat context, transitions
+- Epic 41 (Chat Transfer) — location transfer, search for joinable chats
 
 ---
 
