@@ -1,3 +1,6 @@
+> **Superseded by:** `TASK-3d-view-modes.md` — all content consolidated there.
+> Implement from the consolidated task. This file preserved for reference only.
+
 # TASK: 3D Character Avatars
 
 **Status:** ⬜ Not Started
@@ -27,11 +30,11 @@ Replace static 2D character images with 3D rendered avatars using Three.js or si
 
 ### Model Format
 
-| Format | Use Case | Notes |
-| ------ | -------- | ----- |
-| VRM | Anime/VTuber style | Humanoid, blend shapes, spring bones |
-| GLTF/GLB | General 3D | Universal, PBR materials |
-| FBX | Game engines | Legacy, complex rigging |
+| Format   | Use Case           | Notes                                |
+| -------- | ------------------ | ------------------------------------ |
+| VRM      | Anime/VTuber style | Humanoid, blend shapes, spring bones |
+| GLTF/GLB | General 3D         | Universal, PBR materials             |
+| FBX      | Game engines       | Legacy, complex rigging              |
 
 **Recommendation:** VRM for character avatars (humanoid focus, blend shapes for expressions)
 
@@ -48,13 +51,13 @@ Character Avatar (VRM/GLTF)
 
 ### Expression System
 
-| Emotion | VRM Blend Shapes |
-| ------- | ---------------- |
-| Happy | happy, smileLeft, smileRight |
-| Sad | sad, cry |
-| Angry | angry, frown |
-| Surprised | surprise, openMouth |
-| Neutral | default |
+| Emotion   | VRM Blend Shapes             |
+| --------- | ---------------------------- |
+| Happy     | happy, smileLeft, smileRight |
+| Sad       | sad, cry                     |
+| Angry     | angry, frown                 |
+| Surprised | surprise, openMouth          |
+| Neutral   | default                      |
 
 ## Tasks
 
@@ -105,12 +108,12 @@ Character Avatar (VRM/GLTF)
 
 ## Performance Considerations
 
-| Metric | Target | Notes |
-| ------ | ------ | ----- |
-| Model load | < 2s | Cache after first load |
+| Metric            | Target  | Notes                     |
+| ----------------- | ------- | ------------------------- |
+| Model load        | < 2s    | Cache after first load    |
 | Expression change | < 100ms | Blend shape interpolation |
-| Memory | < 50MB | LOD, model disposal |
-| FPS | 30+ | Idle animation only |
+| Memory            | < 50MB  | LOD, model disposal       |
+| FPS               | 30+     | Idle animation only       |
 
 ## Risk
 
