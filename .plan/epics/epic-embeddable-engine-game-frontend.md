@@ -27,11 +27,11 @@ low-priority / vision-grade.
 
 ## Embeddable Backend
 
-| Surface | Description |
-|---------|-------------|
-| Generation API | Other apps request LLM generation |
-| World/state API | Read/write world + story state |
-| Auth boundary | Scoped API keys per consuming app |
+| Surface         | Description                       |
+| --------------- | --------------------------------- |
+| Generation API  | Other apps request LLM generation |
+| World/state API | Read/write world + story state    |
+| Auth boundary   | Scoped API keys per consuming app |
 
 ## Event-Story Engine
 
@@ -41,7 +41,7 @@ interactions. Emits an event stream consumable by any frontend.
 ```typescript
 interface StoryEvent {
   id: string;
-  type: 'narrative' | 'state_change' | 'interaction';
+  type: "narrative" | "state_change" | "interaction";
   payload: unknown;
   timestamp: number;
 }
@@ -49,22 +49,22 @@ interface StoryEvent {
 
 ## 2D / 3D Game Frontend
 
-| Layer | Implementation |
-|-------|----------------|
-| Rendering | Browser (canvas/WebGL) or native OS |
-| Realtime | WebSocket / WebTransport (see transport-expansion) |
+| Layer              | Implementation                                           |
+| ------------------ | -------------------------------------------------------- |
+| Rendering          | Browser (canvas/WebGL) or native OS                      |
+| Realtime           | WebSocket / WebTransport (see transport-expansion)       |
 | Interactive scenes | 2D scene with clickable components propagating into chat |
 
 ```typescript
 interface InteractiveScene {
   id: string;
-  components: SceneComponent[];   // clickable
-  on_click: (c: SceneComponent) => StoryEvent;
+  components: SceneComponent[]; // clickable
+  on_click: (c: SceneComponent,) => StoryEvent;
 }
 
 interface SceneComponent {
   id: string;
-  bounds: [number, number, number, number];
+  bounds: [number, number, number, number,];
   label: string;
 }
 ```

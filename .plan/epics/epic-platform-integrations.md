@@ -11,18 +11,18 @@ Integrations with other platforms — draft, to be confirmed. Potential integrat
 
 ## Potential Integrations
 
-| Platform | Integration Type | Status |
-| -------- | ---------------- | ------- |
-| SillyTavern | Character card import/export | ✅ Partial (Epic 14) |
-| RisuAI | Character card import | ⬜ Not Started |
-| Character.AI | Character import | ⬜ Not Started |
-| OpenAI API | LLM provider | ✅ Built |
-| Anthropic API | LLM provider | ⬜ Not Started |
-| Ollama | Local LLM | ⬜ Not Started |
-| Stable Diffusion | Image generation | ⬜ Not Started |
-| ComfyUI | Image generation | ⬜ Not Started |
-| Discord | Bot integration | ⬜ Not Started |
-| Telegram | Bot integration | ⬜ Not Started |
+| Platform         | Integration Type             | Status               |
+| ---------------- | ---------------------------- | -------------------- |
+| SillyTavern      | Character card import/export | ✅ Partial (Epic 14) |
+| RisuAI           | Character card import        | ⬜ Not Started       |
+| Character.AI     | Character import             | ⬜ Not Started       |
+| OpenAI API       | LLM provider                 | ✅ Built             |
+| Anthropic API    | LLM provider                 | ⬜ Not Started       |
+| Ollama           | Local LLM                    | ⬜ Not Started       |
+| Stable Diffusion | Image generation             | ⬜ Not Started       |
+| ComfyUI          | Image generation             | ⬜ Not Started       |
+| Discord          | Bot integration              | ⬜ Not Started       |
+| Telegram         | Bot integration              | ⬜ Not Started       |
 
 ## Scope
 

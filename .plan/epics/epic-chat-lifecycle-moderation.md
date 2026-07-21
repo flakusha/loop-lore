@@ -23,12 +23,12 @@ focuses on lifecycle, safety, and context continuity.
 
 ### Context Sliding Window
 
-| Concern | Description |
-|---------|-------------|
-| Sliding window | Trim old context to fit token budget; promote important turns to memory |
-| Related memories | Inject character / world / assistant memories relevant to active context |
-| Related events | Surface active world/local events that should bias generation |
-| Local random events | Inject low-stakes stochastic events to keep chats alive |
+| Concern             | Description                                                              |
+| ------------------- | ------------------------------------------------------------------------ |
+| Sliding window      | Trim old context to fit token budget; promote important turns to memory  |
+| Related memories    | Inject character / world / assistant memories relevant to active context |
+| Related events      | Surface active world/local events that should bias generation            |
+| Local random events | Inject low-stakes stochastic events to keep chats alive                  |
 
 ```typescript
 interface ContextWindow {
@@ -42,15 +42,15 @@ interface ContextWindow {
 
 ### Chat Transitions
 
-| Transition | Trigger | Side effects |
-|------------|---------|--------------|
-| Message with description | User/LLM narrates a scene change | Append transitional system message |
-| Context cut | Window overflow or explicit cut | Promote retained context to memory |
-| Dynamic location generation | Movement into undefined space | Generate location on demand (see world-locations) |
+| Transition                  | Trigger                          | Side effects                                      |
+| --------------------------- | -------------------------------- | ------------------------------------------------- |
+| Message with description    | User/LLM narrates a scene change | Append transitional system message                |
+| Context cut                 | Window overflow or explicit cut  | Promote retained context to memory                |
+| Dynamic location generation | Movement into undefined space    | Generate location on demand (see world-locations) |
 
 ```typescript
 interface ChatTransition {
-  type: 'description' | 'context_cut' | 'location_change';
+  type: "description" | "context_cut" | "location_change";
   actor: ActorRef;
   narration?: string;
   promoted_memory_ids: string[];
@@ -62,36 +62,36 @@ interface ChatTransition {
 
 ### Loop / Hallucination Protection
 
-| Guard | Mechanism |
-|------|-----------|
-| Repetition detection | Flag n-gram loops in generation (see generation/repetition) |
-| Hallucinated entity guard | Validate referenced entities exist in world state |
-| Consistency check | Compare new claims against established facts |
+| Guard                     | Mechanism                                                   |
+| ------------------------- | ----------------------------------------------------------- |
+| Repetition detection      | Flag n-gram loops in generation (see generation/repetition) |
+| Hallucinated entity guard | Validate referenced entities exist in world state           |
+| Consistency check         | Compare new claims against established facts                |
 
 ### NSFW Control
 
-| Control | Scope |
-|---------|-------|
-| Disablement / enablement | Per-chat, per-user, per-world toggle |
-| Moderation events | Non-public audit of NSFW gate decisions |
+| Control                  | Scope                                   |
+| ------------------------ | --------------------------------------- |
+| Disablement / enablement | Per-chat, per-user, per-world toggle    |
+| Moderation events        | Non-public audit of NSFW gate decisions |
 
 ### Moderation & Self-Moderation
 
-| Capability | Description |
-|------------|-------------|
-| Block users | Prevent a user from contacting / chatting the blocker |
-| Bans | Admin-level removal of participation |
+| Capability             | Description                                                                        |
+| ---------------------- | ---------------------------------------------------------------------------------- |
+| Block users            | Prevent a user from contacting / chatting the blocker                              |
+| Bans                   | Admin-level removal of participation                                               |
 | Shadowing / collapsing | Undesired messages hidden or collapsed for other viewers (chat / blogs / comments) |
-| Flagging | Internal (mod queue) + external (reported) flag pathways |
+| Flagging               | Internal (mod queue) + external (reported) flag pathways                           |
 
 ```typescript
 interface ModerationAction {
-  type: 'block' | 'ban' | 'shadow' | 'collapse' | 'flag';
+  type: "block" | "ban" | "shadow" | "collapse" | "flag";
   target_actor: ActorRef;
-  scope: 'chat' | 'blog' | 'comment' | 'global';
-  actor: ActorRef;          // who applied
+  scope: "chat" | "blog" | "comment" | "global";
+  actor: ActorRef; // who applied
   reason?: string;
-  internal: boolean;        // true = mod queue, false = external report
+  internal: boolean; // true = mod queue, false = external report
 }
 ```
 

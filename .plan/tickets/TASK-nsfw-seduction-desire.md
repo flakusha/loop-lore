@@ -12,24 +12,28 @@ Implement seduction mechanics with desire profiles (turn-ons, turn-offs, fetishe
 ## Core Features
 
 ### Desire Profiles
+
 - Turn-ons: traits/actions that increase attraction
 - Turn-offs: traits/actions that decrease attraction
 - Fetishes: specific kinks with mechanical effects
 - Hard limits: never-acceptable boundaries (enforced mechanically)
 
 ### Seduction Skills
+
 - Flirting, Dirty Talk, Massage, Dancing, Sexting, etc.
 - Skills improve with practice
 - Effectiveness modified by target's desire profile
 - Failure consequences (embarrassment, rejection, intimacy loss)
 
 ### Arousal State
+
 - 0-100 scale (calm → aroused → desperate → climax)
 - Buildup rate modified by context
 - Decay rate when not stimulated
 - Effects at each threshold (behavior changes, unlock actions)
 
 ### Arousal Modifiers
+
 - Location (public = faster buildup, more risk)
 - Partner (new partner, familiar partner, forbidden partner)
 - Items (toys, aphrodisiacs, alcohol)
@@ -40,21 +44,21 @@ Implement seduction mechanics with desire profiles (turn-ons, turn-offs, fetishe
 ```typescript
 interface SeductionManager {
   // Desire profiles
-  getDesireProfile(characterId: string): Promise<DesireProfile>;
-  updateDesireProfile(characterId: string, updates: Partial<DesireProfile>): Promise<void>;
-  
+  getDesireProfile(characterId: string,): Promise<DesireProfile>;
+  updateDesireProfile(characterId: string, updates: Partial<DesireProfile>,): Promise<void>;
+
   // Seduction attempts
-  attemptSeduction(seducer: string, target: string, action: SeductionAction): Promise<SeductionResult>;
-  
+  attemptSeduction(seducer: string, target: string, action: SeductionAction,): Promise<SeductionResult>;
+
   // Arousal
-  getArousal(characterId: string): Promise<ArousalState>;
-  modifyArousal(characterId: string, delta: number, source: string): Promise<void>;
-  processArousalDecay(characterId: string): Promise<void>;
-  
+  getArousal(characterId: string,): Promise<ArousalState>;
+  modifyArousal(characterId: string, delta: number, source: string,): Promise<void>;
+  processArousalDecay(characterId: string,): Promise<void>;
+
   // Skills
-  getSeductionSkills(characterId: string): Promise<SeductionSkill[]>;
-  improveSkill(characterId: string, skillId: string, amount: number): Promise<void>;
-  checkSkillSuccess(characterId: string, skillId: string, target: string): Promise<boolean>;
+  getSeductionSkills(characterId: string,): Promise<SeductionSkill[]>;
+  improveSkill(characterId: string, skillId: string, amount: number,): Promise<void>;
+  checkSkillSuccess(characterId: string, skillId: string, target: string,): Promise<boolean>;
 }
 
 interface SeductionResult {

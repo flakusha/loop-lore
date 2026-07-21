@@ -40,7 +40,7 @@ interface MapTile {
   notes: string;
 }
 
-type VisibilityLevel = 'hidden' | 'fog' | 'visible' | 'revealed';
+type VisibilityLevel = "hidden" | "fog" | "visible" | "revealed";
 ```
 
 ### Fog of War
@@ -58,28 +58,28 @@ interface FogOfWar {
 interface RevealedTile {
   x: number;
   y: number;
-  revealed_by: 'vision' | 'scout' | 'magic' | 'item' | 'quest';
+  revealed_by: "vision" | "scout" | "magic" | "item" | "quest";
   reveal_time: Date;
-  persistence: 'temporary' | 'permanent';
+  persistence: "temporary" | "permanent";
 }
 
-type VisionType = 'normal' | 'darkvision' | 'truesight' | 'tremorsense' | 'blindsight';
+type VisionType = "normal" | "darkvision" | "truesight" | "tremorsense" | "blindsight";
 ```
 
 ## Discovery System
 
 ### Discovery Types
 
-| Type | Description | Rewards |
-|------|-------------|---------|
-| **Location** | New area discovered | XP, map marker |
-| **Secret Area** | Hidden room/zone | Loot, quest |
-| **Landmark** | Notable feature | XP, lore |
-| **Resource Node** | Gathering spot | Materials |
-| **Dungeon** | Dungeon entrance | Dungeon access |
-| **NPC** | Hidden NPC | Quest, trade |
-| **Lore** | Story fragment | Knowledge, XP |
-| **Treasure** | Hidden cache | Valuables |
+| Type              | Description         | Rewards        |
+| ----------------- | ------------------- | -------------- |
+| **Location**      | New area discovered | XP, map marker |
+| **Secret Area**   | Hidden room/zone    | Loot, quest    |
+| **Landmark**      | Notable feature     | XP, lore       |
+| **Resource Node** | Gathering spot      | Materials      |
+| **Dungeon**       | Dungeon entrance    | Dungeon access |
+| **NPC**           | Hidden NPC          | Quest, trade   |
+| **Lore**          | Story fragment      | Knowledge, XP  |
+| **Treasure**      | Hidden cache        | Valuables      |
 
 ### Discovery Structure
 
@@ -98,13 +98,13 @@ interface Discovery {
 }
 
 interface DiscoveryRequirement {
-  type: 'skill' | 'item' | 'quest' | 'level' | 'perception' | 'magic';
+  type: "skill" | "item" | "quest" | "level" | "perception" | "magic";
   value: number | string;
   description: string;
 }
 
 interface DiscoveryReward {
-  type: 'xp' | 'item' | 'currency' | 'lore' | 'reputation' | 'unlock';
+  type: "xp" | "item" | "currency" | "lore" | "reputation" | "unlock";
   value: number | string;
   rarity?: Rarity;
 }
@@ -123,7 +123,7 @@ interface DiscoveryCheck {
 }
 
 interface DiscoveryModifier {
-  type: 'perception' | 'skill' | 'item' | 'magic' | 'race' | 'class';
+  type: "perception" | "skill" | "item" | "magic" | "race" | "class";
   value: number;
   source: string;
 }
@@ -164,7 +164,7 @@ interface NavigationRoute {
 }
 
 interface NavigationHazard {
-  type: 'terrain' | 'weather' | 'creature' | 'bandit' | 'magical';
+  type: "terrain" | "weather" | "creature" | "bandit" | "magical";
   severity: number; // 1-10
   avoidance_dc: number;
   consequence: HazardConsequence;
@@ -173,14 +173,14 @@ interface NavigationHazard {
 
 ### Navigation Skills
 
-| Skill | Effect | DC Range |
-|-------|--------|----------|
-| **Pathfinding** | Faster travel | 10-25 |
-| **Cartography** | Map accuracy | 10-20 |
-| **Survival** | Resource finding | 10-20 |
-| **Tracking** | Following trails | 10-25 |
-| **Navigation** | Direction sense | 10-20 |
-| **Perception** | Spotting hazards | 10-25 |
+| Skill           | Effect           | DC Range |
+| --------------- | ---------------- | -------- |
+| **Pathfinding** | Faster travel    | 10-25    |
+| **Cartography** | Map accuracy     | 10-20    |
+| **Survival**    | Resource finding | 10-20    |
+| **Tracking**    | Following trails | 10-25    |
+| **Navigation**  | Direction sense  | 10-20    |
+| **Perception**  | Spotting hazards | 10-25    |
 
 ## Cartography System
 
@@ -200,7 +200,7 @@ interface Cartography {
 interface MapAnnotation {
   x: number;
   y: number;
-  type: 'note' | 'warning' | 'resource' | 'danger' | 'poi';
+  type: "note" | "warning" | "resource" | "danger" | "poi";
   text: string;
   icon: string;
 }
@@ -215,13 +215,13 @@ interface MapCopy {
 
 ### Map Quality
 
-| Quality | Accuracy | Detail | Value |
-|---------|----------|--------|-------|
-| **Rough Sketch** | 20-40% | Low | 10-50g |
-| **Basic Map** | 40-60% | Medium | 50-200g |
-| **Detailed Map** | 60-80% | High | 200-500g |
-| **Expert Map** | 80-95% | Very High | 500-2000g |
-| **Perfect Map** | 95-100% | Complete | 2000-10000g |
+| Quality          | Accuracy | Detail    | Value       |
+| ---------------- | -------- | --------- | ----------- |
+| **Rough Sketch** | 20-40%   | Low       | 10-50g      |
+| **Basic Map**    | 40-60%   | Medium    | 50-200g     |
+| **Detailed Map** | 60-80%   | High      | 200-500g    |
+| **Expert Map**   | 80-95%   | Very High | 500-2000g   |
+| **Perfect Map**  | 95-100%  | Complete  | 2000-10000g |
 
 ## Secret & Hidden Content
 
@@ -231,7 +231,7 @@ interface MapCopy {
 interface Secret {
   id: string;
   name: string;
-  type: 'room' | 'passage' | 'treasure' | 'lore' | 'npc' | 'quest' | 'shortcut';
+  type: "room" | "passage" | "treasure" | "lore" | "npc" | "quest" | "shortcut";
   location: WorldLocation;
   discovery_dc: number;
   discovery_method: DiscoveryMethod[];
@@ -253,29 +253,29 @@ interface SecretContent {
 
 ### Hidden Content Discovery
 
-| Method | DC Modifier | Notes |
-|--------|-------------|-------|
-| **Active Search** | -5 | Taking time to search |
-| **Perception Check** | Base | Passive awareness |
-| **Magic Detection** | -10 | Detect magic/hidden |
-| **Item Interaction** | -15 | Using specific items |
-| **NPC Hint** | -20 | Following clues |
-| **Quest Trigger** | Auto | Quest-related |
+| Method               | DC Modifier | Notes                 |
+| -------------------- | ----------- | --------------------- |
+| **Active Search**    | -5          | Taking time to search |
+| **Perception Check** | Base        | Passive awareness     |
+| **Magic Detection**  | -10         | Detect magic/hidden   |
+| **Item Interaction** | -15         | Using specific items  |
+| **NPC Hint**         | -20         | Following clues       |
+| **Quest Trigger**    | Auto        | Quest-related         |
 
 ## Exploration Rewards
 
 ### Exploration XP
 
-| Discovery | XP Reward |
-|-----------|-----------|
-| New Area | 10-50 |
-| Secret Area | 50-200 |
-| Landmark | 25-100 |
-| Resource Node | 10-30 |
-| Dungeon Entrance | 100-500 |
-| Hidden NPC | 50-150 |
-| Lore Fragment | 25-75 |
-| Treasure Cache | 50-300 |
+| Discovery        | XP Reward |
+| ---------------- | --------- |
+| New Area         | 10-50     |
+| Secret Area      | 50-200    |
+| Landmark         | 25-100    |
+| Resource Node    | 10-30     |
+| Dungeon Entrance | 100-500   |
+| Hidden NPC       | 50-150    |
+| Lore Fragment    | 25-75     |
+| Treasure Cache   | 50-300    |
 
 ### Exploration Achievements
 
@@ -284,7 +284,7 @@ interface ExplorationAchievement {
   id: string;
   name: string;
   description: string;
-  category: 'explorer' | 'cartographer' | 'discoverer' | 'adventurer' | 'legendary';
+  category: "explorer" | "cartographer" | "discoverer" | "adventurer" | "legendary";
   requirements: AchievementRequirement[];
   rewards: AchievementReward[];
   progress: number; // 0-100
@@ -308,10 +308,10 @@ interface Travel {
   arrival_time: Date;
 }
 
-type TravelMode = 'walking' | 'running' | 'riding' | 'flying' | 'swimming' | 'teleport' | 'vehicle';
+type TravelMode = "walking" | "running" | "riding" | "flying" | "swimming" | "teleport" | "vehicle";
 
 interface TravelEncounter {
-  type: 'combat' | 'social' | 'discovery' | 'hazard' | 'rest' | 'trade';
+  type: "combat" | "social" | "discovery" | "hazard" | "rest" | "trade";
   probability: number; // 0-100
   difficulty: number;
   rewards: EncounterReward[];
@@ -320,15 +320,15 @@ interface TravelEncounter {
 
 ### Travel Speed
 
-| Mode | Base Speed | Terrain Modifier |
-|------|------------|------------------|
-| **Walking** | 3 mph | -0-50% |
-| **Running** | 6 mph | -0-50% |
-| **Horse** | 8 mph | -0-30% |
-| **Flying** | 20 mph | -0-20% |
-| **Swimming** | 2 mph | -0-50% |
-| **Teleport** | Instant | None |
-| **Vehicle** | 10-30 mph | -0-40% |
+| Mode         | Base Speed | Terrain Modifier |
+| ------------ | ---------- | ---------------- |
+| **Walking**  | 3 mph      | -0-50%           |
+| **Running**  | 6 mph      | -0-50%           |
+| **Horse**    | 8 mph      | -0-30%           |
+| **Flying**   | 20 mph     | -0-20%           |
+| **Swimming** | 2 mph      | -0-50%           |
+| **Teleport** | Instant    | None             |
+| **Vehicle**  | 10-30 mph  | -0-40%           |
 
 ## Integration Points
 

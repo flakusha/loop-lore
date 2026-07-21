@@ -30,9 +30,9 @@ Message Tree:
 interface MessageBranch {
   id: string;
   chatId: string;
-  parentMessageId: string;     // Branch point
-  branchName?: string;         // Optional label
-  createdBy: string;           // User who created branch
+  parentMessageId: string; // Branch point
+  branchName?: string; // Optional label
+  createdBy: string; // User who created branch
   createdAt: Date;
 }
 ```

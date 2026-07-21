@@ -12,6 +12,7 @@ Implement trauma system for negative NSFW experiences: trauma types (violation, 
 ## Core Features
 
 ### Trauma Types
+
 - Violation: non-consensual experiences
 - Betrayal: partner infidelity/breaking trust
 - Humiliation: public embarrassment
@@ -20,12 +21,14 @@ Implement trauma system for negative NSFW experiences: trauma types (violation, 
 - Rejection: harsh romantic/sexual rejection
 
 ### Trauma Effects
+
 - Trigger situations: what causes flashbacks/distress
 - Avoidance behaviors: what the character avoids
 - Trust modifiers: difficulty trusting certain partner types
 - Therapy progress: 0-100 recovery through treatment
 
 ### Recovery Mechanics
+
 - Therapy sessions (NPC or player-driven)
 - Positive experiences (counter-conditioning)
 - Time healing (passive recovery)
@@ -33,6 +36,7 @@ Implement trauma system for negative NSFW experiences: trauma types (violation, 
 - Full recovery possible
 
 ### Trauma Prevention
+
 - Aftercare reduces trauma risk
 - Consent checking prevents violation trauma
 - Communication reduces misunderstanding trauma

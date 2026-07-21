@@ -12,18 +12,21 @@ Implement comprehensive quest system with main quests, side quests, connection t
 ## Quest Types
 
 ### Main Quests
+
 - Primary story arc quests
 - Sequential progression
 - Major story milestones
 - Critical path quests
 
 ### Side Quests
+
 - Optional quests
 - Parallel progression
 - World-building quests
 - Character development quests
 
 ### Connection to Other Systems
+
 - Link quests to character stats
 - Link quests to inventory/items
 - Link quests to skills/abilities
@@ -31,6 +34,7 @@ Implement comprehensive quest system with main quests, side quests, connection t
 - Link quests to world state
 
 ### Story End Conditions
+
 - Quest completion (success)
 - Quest failure (conditions not met)
 - Party death (all members dead)
@@ -45,20 +49,20 @@ Implement comprehensive quest system with main quests, side quests, connection t
 ```typescript
 interface Quest {
   id: string;
-  type: 'main' | 'side' | 'daily' | 'weekly';
+  type: "main" | "side" | "daily" | "weekly";
   title: string;
   description: string;
   objectives: QuestObjective[];
   rewards: QuestReward[];
   prerequisites: QuestPrerequisite[];
   timeLimit?: number; // seconds
-  status: 'available' | 'active' | 'completed' | 'failed' | 'abandoned';
+  status: "available" | "active" | "completed" | "failed" | "abandoned";
   storyEndCondition: StoryEndCondition;
 }
 
 interface QuestObjective {
   id: string;
-  type: 'kill' | 'collect' | 'talk' | 'explore' | 'craft' | 'custom';
+  type: "kill" | "collect" | "talk" | "explore" | "craft" | "custom";
   target: string;
   count: number;
   current: number;
@@ -66,7 +70,7 @@ interface QuestObjective {
 }
 
 interface StoryEndCondition {
-  type: 'success' | 'failure' | 'party_dead' | 'time_limit' | 'abandoned' | 'branch';
+  type: "success" | "failure" | "party_dead" | "time_limit" | "abandoned" | "branch";
   conditions: Record<string, unknown>;
   consequences: QuestConsequence[];
 }
@@ -92,7 +96,7 @@ interface QuestChain {
   name: string;
   quests: string[]; // ordered quest IDs
   currentIndex: number;
-  status: 'active' | 'completed' | 'failed';
+  status: "active" | "completed" | "failed";
 }
 ```
 

@@ -28,12 +28,12 @@ User request → Assistant processes → Generate content → Quality check → 
 
 ### Quality Gating
 
-| Gate | Check | Action |
-| ---- | ----- | ------- |
-| Schema validation | Valid data structure | Reject if invalid |
-| Consistency check | Matches world/setting | Warn if inconsistent |
-| Duplicate check | No existing duplicates | Warn if duplicate |
-| User confirmation | Explicit approval | Require approval |
+| Gate              | Check                  | Action               |
+| ----------------- | ---------------------- | -------------------- |
+| Schema validation | Valid data structure   | Reject if invalid    |
+| Consistency check | Matches world/setting  | Warn if inconsistent |
+| Duplicate check   | No existing duplicates | Warn if duplicate    |
+| User confirmation | Explicit approval      | Require approval     |
 
 ## Tasks
 

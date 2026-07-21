@@ -12,24 +12,28 @@ Implement RPG-specific asset types: tokens for characters/NPCs, battle maps with
 ## Requirements
 
 ### Token Assets
+
 - Square/hex grid support (1x1, 2x2, 3x3 tokens)
 - Transparent background preservation
 - Token ring color customization
 - Status overlay support (conditions, HP, etc.)
 
 ### Battle Map Assets
+
 - Grid overlay computation (square/hex)
 - Fog of war masking
 - Measurement tool integration
 - Dynamic lighting zones
 
 ### Item Card Assets
+
 - Template-based rendering
 - Rarity color coding
 - Stat block injection
 - Tooltip on hover
 
 ### Spell Icon Assets
+
 - Sprite sheet support
 - Icon sizing presets (16x16, 32x32, 64x64)
 - Animation support (future)
@@ -44,6 +48,7 @@ Implement RPG-specific asset types: tokens for characters/NPCs, battle maps with
 6. Add preview components for each type
 
 ## Files
+
 - `src/db/enums.ts` — Extend AssetType
 - `src/assets/token-overlay.ts` — Token rendering
 - `src/assets/battlemap.ts` — Grid computation

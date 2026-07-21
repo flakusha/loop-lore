@@ -16,30 +16,35 @@ Instead of free-text input, players receive structured questions/choices that dr
 ## Features
 
 ### Question-Based Gameplay
+
 - **Multiple Choice Questions**: Players select from predefined options
 - **Branching Narratives**: Choices affect story direction
 - **Consequence Tracking**: Choices have lasting impact
 - **Question Types**: Dialogue, action, exploration, combat
 
 ### LLM Post-Completion Questioning
+
 - After LLM generates narrative, present follow-up questions
 - Clarify ambiguous situations
 - Offer alternative interpretations
 - Validate player intent
 
 ### Creative Re-Review & Reiteration
+
 - Internal review of generated content
 - Quality assessment and improvement
 - Alternative narrative generation
 - Creative direction refinement
 
 ### Turn Management After Answer Selection
+
 - Process selected answer
 - Update game state
 - Generate next narrative segment
 - Present new questions
 
 ### Frontend Navigation Integration
+
 - Mouse click selection
 - Keyboard navigation (arrow keys, number keys)
 - Touch support for mobile
@@ -52,7 +57,7 @@ Instead of free-text input, players receive structured questions/choices that dr
 ```typescript
 interface RPGQuestion {
   id: string;
-  type: 'dialogue' | 'action' | 'exploration' | 'combat' | 'custom';
+  type: "dialogue" | "action" | "exploration" | "combat" | "custom";
   text: string;
   options: RPGQuestionOption[];
   context: QuestionContext;
@@ -96,16 +101,16 @@ Question Flow:
 ```typescript
 interface LLMQuestionFlow {
   // Generate narrative with question prompts
-  generateNarrativeWithContext(context: GameContext): Promise<Narrative>;
-  
+  generateNarrativeWithContext(context: GameContext,): Promise<Narrative>;
+
   // Generate follow-up questions after narrative
-  generateFollowUpQuestions(narrative: Narrative): Promise<RPGQuestion[]>;
-  
+  generateFollowUpQuestions(narrative: Narrative,): Promise<RPGQuestion[]>;
+
   // Re-review and improve narrative
-  reReviewNarrative(narrative: Narrative): Promise<Narrative>;
-  
+  reReviewNarrative(narrative: Narrative,): Promise<Narrative>;
+
   // Process player choice and generate continuation
-  processChoiceAndContinue(choice: PlayerChoice): Promise<Narrative>;
+  processChoiceAndContinue(choice: PlayerChoice,): Promise<Narrative>;
 }
 ```
 
@@ -114,17 +119,17 @@ interface LLMQuestionFlow {
 ```typescript
 interface QuestionNavigation {
   // Mouse/keyboard navigation
-  selectOption(index: number): void;
+  selectOption(index: number,): void;
   navigateUp(): void;
   navigateDown(): void;
   confirmSelection(): void;
-  
+
   // Touch support
-  touchSelect(optionId: string): void;
-  swipeNavigation(direction: 'up' | 'down'): void;
-  
+  touchSelect(optionId: string,): void;
+  swipeNavigation(direction: "up" | "down",): void;
+
   // Accessibility
-  announceOption(option: RPGQuestionOption): void;
+  announceOption(option: RPGQuestionOption,): void;
   readQuestionAloud(): void;
 }
 ```

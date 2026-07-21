@@ -34,12 +34,12 @@ Cache to assets/ with metadata tag
 
 ### Display
 
-| Context | Method |
-| ------- | ------ |
-| Web UI | CSS sprite animation or canvas draw |
-| TUI | ASCII art from sprite (image-to-text) |
+| Context      | Method                                |
+| ------------ | ------------------------------------- |
+| Web UI       | CSS sprite animation or canvas draw   |
+| TUI          | ASCII art from sprite (image-to-text) |
 | Chat message | `<img>` with CSS class for expression |
-| Export | Individual PNGs per expression |
+| Export       | Individual PNGs per expression        |
 
 ## Tasks
 
@@ -87,12 +87,12 @@ Cache to assets/ with metadata tag
 
 ## Performance
 
-| Metric | Target | Notes |
-| ------ | ------ | ----- |
-| Generation time | < 10s per character | Offline, async |
-| Sprite sheet size | < 200KB | AVIF, 5 expressions |
-| Display load | < 100ms | Cached, HTTP/2 |
-| TUI render | < 50ms | libsixel/chafa |
+| Metric            | Target              | Notes               |
+| ----------------- | ------------------- | ------------------- |
+| Generation time   | < 10s per character | Offline, async      |
+| Sprite sheet size | < 200KB             | AVIF, 5 expressions |
+| Display load      | < 100ms             | Cached, HTTP/2      |
+| TUI render        | < 50ms              | libsixel/chafa      |
 
 ## Risk
 
