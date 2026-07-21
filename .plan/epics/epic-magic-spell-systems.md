@@ -20,7 +20,7 @@ interface SpellSchool {
   name: string; // 'evocation', 'necromancy', 'illusion', 'divination', etc.
   description: string;
   element: ElementalAffinity;
-  difficulty: 'beginner' | 'intermediate' | 'advanced' | 'master';
+  difficulty: "beginner" | "intermediate" | "advanced" | "master";
   prerequisites: SpellPrerequisite[];
 }
 
@@ -31,17 +31,29 @@ interface ElementalAffinity {
   resistance: Element;
 }
 
-type Element = 'fire' | 'water' | 'earth' | 'air' | 'lightning' | 'ice' | 'arcane' | 'holy' | 'shadow' | 'nature' | 'psychic' | 'necrotic';
+type Element =
+  | "fire"
+  | "water"
+  | "earth"
+  | "air"
+  | "lightning"
+  | "ice"
+  | "arcane"
+  | "holy"
+  | "shadow"
+  | "nature"
+  | "psychic"
+  | "necrotic";
 ```
 
 ### Magic System Paradigms
 
-| Paradigm | Description | Config |
-|----------|-------------|--------|
-| **Vancian** | Prepare spells in advance, slots refresh on rest | `magic.paradigm: 'vancian'` |
-| **Mana Pool** | Spend mana to cast, regenerates over time | `magic.paradigm: 'mana'` |
-| **Component** | Requires physical/spiritual components | `magic.paradigm: 'component'` |
-| **Hybrid** | Mix of paradigms per world | `magic.paradigm: 'hybrid'` |
+| Paradigm      | Description                                      | Config                        |
+| ------------- | ------------------------------------------------ | ----------------------------- |
+| **Vancian**   | Prepare spells in advance, slots refresh on rest | `magic.paradigm: 'vancian'`   |
+| **Mana Pool** | Spend mana to cast, regenerates over time        | `magic.paradigm: 'mana'`      |
+| **Component** | Requires physical/spiritual components           | `magic.paradigm: 'component'` |
+| **Hybrid**    | Mix of paradigms per world                       | `magic.paradigm: 'hybrid'`    |
 
 ### Spell Structure
 
@@ -51,7 +63,7 @@ interface Spell {
   name: string;
   school: SpellSchool;
   level: number; // 0-9 cantrip to 9th level
-  casting_time: 'action' | 'bonus_action' | 'reaction' | 'ritual' | 'concentration';
+  casting_time: "action" | "bonus_action" | "reaction" | "ritual" | "concentration";
   range: number; // in feet, 0 = self
   components: SpellComponent[];
   duration: number; // in rounds, 0 = instant
@@ -65,15 +77,15 @@ interface Spell {
 }
 
 interface SpellComponent {
-  type: 'verbal' | 'somatic' | 'material' | 'focus';
+  type: "verbal" | "somatic" | "material" | "focus";
   description: string;
   consumed: boolean;
   cost?: number; // gold value for material components
 }
 
 interface SpellEffect {
-  type: 'damage' | 'heal' | 'buff' | 'debuff' | 'utility' | 'summon' | 'teleport' | 'control';
-  target: 'self' | 'single' | 'aoe' | 'cone' | 'line' | 'sphere';
+  type: "damage" | "heal" | "buff" | "debuff" | "utility" | "summon" | "teleport" | "control";
+  target: "self" | "single" | "aoe" | "cone" | "line" | "sphere";
   element?: Element;
   dice?: DiceExpression;
   status_effect?: StatusEffect;
@@ -88,8 +100,8 @@ interface MagicResource {
   current: number;
   max: number;
   regeneration_rate: number; // per round or per turn
-  regen_type: 'passive' | 'active' | 'on_kill' | 'on_hit';
-  overflow_behavior: 'waste' | 'convert_to_temp' | 'damage';
+  regen_type: "passive" | "active" | "on_kill" | "on_hit";
+  overflow_behavior: "waste" | "convert_to_temp" | "damage";
 }
 
 interface ManaModifiers {
@@ -113,7 +125,7 @@ interface SpellCrafting {
 }
 
 interface SpellModification {
-  type: 'element_shift' | 'range_boost' | 'damage_boost' | 'duration_boost' | 'aoe_change';
+  type: "element_shift" | "range_boost" | "damage_boost" | "duration_boost" | "aoe_change";
   cost_multiplier: number;
   stability_penalty: number;
 }
@@ -141,14 +153,14 @@ interface Enchanting {
 interface Enchantment {
   id: string;
   name: string;
-  type: 'weapon' | 'armor' | 'accessory' | 'consumable';
+  type: "weapon" | "armor" | "accessory" | "consumable";
   effect: SpellEffect;
   charges: number; // -1 = unlimited
-  recharging_method: 'soul_gem' | 'rest' | 'time' | 'none';
+  recharging_method: "soul_gem" | "rest" | "time" | "none";
 }
 
 interface SoulGem {
-  size: 'petty' | 'lesser' | 'common' | 'greater' | 'grand' | 'black';
+  size: "petty" | "lesser" | "common" | "greater" | "grand" | "black";
   filled: boolean;
   creature_type: string;
   soul_strength: number;
@@ -159,13 +171,13 @@ interface SoulGem {
 
 ### Learning Spells
 
-| Method | Description | Success Rate |
-|--------|-------------|--------------|
-| **Spell Tomes** | Learn from books | 100% (if requirements met) |
-| **Experimentation** | Discover through trial | Skill-based |
-| **Quests** | Unlock through story | Guaranteed |
-| **NPC Teaching** | Learn from mentors | Relationship-based |
-| **World Discovery** | Find in the world | Random |
+| Method              | Description            | Success Rate               |
+| ------------------- | ---------------------- | -------------------------- |
+| **Spell Tomes**     | Learn from books       | 100% (if requirements met) |
+| **Experimentation** | Discover through trial | Skill-based                |
+| **Quests**          | Unlock through story   | Guaranteed                 |
+| **NPC Teaching**    | Learn from mentors     | Relationship-based         |
+| **World Discovery** | Find in the world      | Random                     |
 
 ### Spell Mastery
 
@@ -173,7 +185,7 @@ interface SoulGem {
 interface SpellMastery {
   spell_id: string;
   times_cast: number;
-  mastery_level: 'novice' | 'adept' | 'expert' | 'master';
+  mastery_level: "novice" | "adept" | "expert" | "master";
   bonuses: MasteryBonus[];
   special_effects: MasteryEffect[];
 }

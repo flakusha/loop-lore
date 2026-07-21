@@ -24,6 +24,7 @@ Participants share a symmetric key
 ```
 
 **Characteristics:**
+
 - Single shared key per chat
 - Key exchange via dedicated endpoint
 - Admin cannot read (zero-knowledge)
@@ -42,6 +43,7 @@ Public/private key pairs
 ```
 
 **Characteristics:**
+
 - Public/private key pairs per user
 - Access control: who can decrypt (not who can see)
 - Admin manages access (not content)
@@ -50,14 +52,14 @@ Public/private key pairs
 
 ## Key Differences
 
-| Aspect | Symmetric | Asymmetric |
-| ------ | --------- | ---------- |
-| Key type | Shared secret | Public/private pair |
-| Key exchange | Endpoint between users | Key grants |
-| Admin access | None (zero-knowledge) | Manages access (not content) |
-| Sharing | Explicit key share | Grant access |
-| Rotation | On message periods | On access revocation |
-| Use case | Group/team chats | Private DMs |
+| Aspect       | Symmetric              | Asymmetric                   |
+| ------------ | ---------------------- | ---------------------------- |
+| Key type     | Shared secret          | Public/private pair          |
+| Key exchange | Endpoint between users | Key grants                   |
+| Admin access | None (zero-knowledge)  | Manages access (not content) |
+| Sharing      | Explicit key share     | Grant access                 |
+| Rotation     | On message periods     | On access revocation         |
+| Use case     | Group/team chats       | Private DMs                  |
 
 ## Implementation Impact
 

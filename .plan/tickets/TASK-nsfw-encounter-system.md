@@ -12,21 +12,25 @@ Implement structured adult encounter system with phases (foreplay, building, cli
 ## Core Features
 
 ### Encounter Types
+
 - Romantic, Passionate, Experimental, Dominant, Submissive, Public, Voyeuristic, Group, Roleplay, Rough, Tender
 
 ### Encounter Phases
+
 - Foreplay: teasing, arousal building
 - Building: intensity increasing
 - Climax: peak moment
 - Aftercare: emotional processing, recovery
 
 ### Skill Checks
+
 - Skills tested during each phase
 - Success/failure affects outcomes
 - Partner compatibility affects difficulty
 - Location affects modifiers
 
 ### Outcomes
+
 - Satisfaction: mood/intimacy bonuses
 - Pregnancy: reproductive consequences
 - Bonding: relationship strengthening

@@ -12,22 +12,24 @@ Epic 11 (Admin & Settings) was listed as "⬜ P1 — Not Started" in backlog and
 ## What's Implemented
 
 ### Admin UI (`src/frontend/alpine/admin.ts` + sub-modules)
+
 Full admin page with 10 tabs:
 
-| Tab | Module | Status |
-| ----- | ------------------- | ------ |
-| Overview | `admin.ts` | ✅ Stats, recent entries |
-| Users | `admin-users.ts` | ✅ User management |
-| Worlds | `admin-worlds.ts` | ✅ World permissions |
-| Chats | `admin-chats.ts` | ✅ Chat management |
-| Audit | `admin-audit.ts` | ✅ Audit log |
-| Models | `admin-models.ts` | ✅ Model roles, provider health |
-| Plugins | (inline) | ✅ Plugin list |
-| System | `admin-system.ts` | ✅ System config |
-| Analytics | (inline) | ✅ Analytics dashboard |
-| Health | (inline) | ✅ Health checks |
+| Tab       | Module            | Status                          |
+| --------- | ----------------- | ------------------------------- |
+| Overview  | `admin.ts`        | ✅ Stats, recent entries        |
+| Users     | `admin-users.ts`  | ✅ User management              |
+| Worlds    | `admin-worlds.ts` | ✅ World permissions            |
+| Chats     | `admin-chats.ts`  | ✅ Chat management              |
+| Audit     | `admin-audit.ts`  | ✅ Audit log                    |
+| Models    | `admin-models.ts` | ✅ Model roles, provider health |
+| Plugins   | (inline)          | ✅ Plugin list                  |
+| System    | `admin-system.ts` | ✅ System config                |
+| Analytics | (inline)          | ✅ Analytics dashboard          |
+| Health    | (inline)          | ✅ Health checks                |
 
 ### Settings
+
 - Chat settings modal: `src/components/chat/chat-settings-modal.html`
 - App settings modal: `src/components/modals/settings.html`
 - Settings frontend: `src/frontend/alpine/settings.ts`
@@ -35,18 +37,19 @@ Full admin page with 10 tabs:
 - Settings modal frontend: `src/frontend/alpine/settings-modal.ts`
 
 ### Admin Middleware
+
 - `src/middleware/admin-gate.ts` — role-based access control
 - `src/db/seed-bootstrap-admin.test.ts` — admin seeding
 
 ## Expansion Opportunities (new tickets)
 
-| Item | Effort | Priority |
-| ---- | ------ | -------- |
-| Plugin management API (install/enable/disable) | Med | Medium |
-| User preferences modal (per-user settings) | Low | Medium |
-| Admin dashboard analytics (charts, trends) | Med | Low |
-| Bulk user operations (ban, role change) | Low | Medium |
-| System config editor (live config changes) | Med | Low |
+| Item                                           | Effort | Priority |
+| ---------------------------------------------- | ------ | -------- |
+| Plugin management API (install/enable/disable) | Med    | Medium   |
+| User preferences modal (per-user settings)     | Low    | Medium   |
+| Admin dashboard analytics (charts, trends)     | Med    | Low      |
+| Bulk user operations (ban, role change)        | Low    | Medium   |
+| System config editor (live config changes)     | Med    | Low      |
 
 ## Files (already exist)
 

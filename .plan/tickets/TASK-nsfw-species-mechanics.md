@@ -12,6 +12,7 @@ Implement species-specific NSFW mechanics: different reproductive systems, heat/
 ## Core Features
 
 ### Species Variations
+
 - Humanoid (standard)
 - Feline (barbed penis, induced ovulation)
 - Canine (knot, heat cycles)
@@ -27,18 +28,21 @@ Implement species-specific NSFW mechanics: different reproductive systems, heat/
 - Mechanical (no biological systems)
 
 ### Reproductive Differences
+
 - Live birth vs egg-laying vs budding vs spore
 - Variable gestation periods
 - Litter sizes
 - Hybrid viability
 
 ### Physical Differences
+
 - Size variations (affects compatibility)
 - Unique appendages (tail, tentacles, wings)
 - Texture differences (fur, scales, slime)
 - Temperature differences (fire, ice)
 
 ### Species Compatibility
+
 - Compatible species for reproduction
 - Compatible species for pleasure
 - Incompatible species (mechanical barriers)

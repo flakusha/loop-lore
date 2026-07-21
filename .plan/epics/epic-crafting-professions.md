@@ -14,27 +14,27 @@ Comprehensive crafting and profession system — crafting disciplines, recipe di
 
 ### Core Disciplines
 
-| Discipline | Description | Key Stats | Products |
-|------------|-------------|-----------|----------|
-| **Alchemy** | Potion brewing, poison crafting | INT, WIS | Potions, poisons, elixirs |
-| **Smithing** | Weapon & armor forging | STR, CON | Weapons, armor, tools |
-| **Enchanting** | Magical item enhancement | INT, CHA | Enchanted items, scrolls |
-| **Cooking** | Meal preparation, buff food | WIS, DEX | Meals, snacks, drinks |
-| **Tailoring** | Cloth & leather armor | DEX, INT | Cloth armor, bags, cloaks |
-| **Woodworking** | Bows, staves, furniture | DEX, STR | Ranged weapons, staves, furniture |
-| **Jewelry** | Rings, amulets, gems | DEX, INT | Accessories, gem cutting |
-| **Engineering** | Gadgets, mechanisms, traps | INT, DEX | Gadgets, traps, mechanical items |
+| Discipline      | Description                     | Key Stats | Products                          |
+| --------------- | ------------------------------- | --------- | --------------------------------- |
+| **Alchemy**     | Potion brewing, poison crafting | INT, WIS  | Potions, poisons, elixirs         |
+| **Smithing**    | Weapon & armor forging          | STR, CON  | Weapons, armor, tools             |
+| **Enchanting**  | Magical item enhancement        | INT, CHA  | Enchanted items, scrolls          |
+| **Cooking**     | Meal preparation, buff food     | WIS, DEX  | Meals, snacks, drinks             |
+| **Tailoring**   | Cloth & leather armor           | DEX, INT  | Cloth armor, bags, cloaks         |
+| **Woodworking** | Bows, staves, furniture         | DEX, STR  | Ranged weapons, staves, furniture |
+| **Jewelry**     | Rings, amulets, gems            | DEX, INT  | Accessories, gem cutting          |
+| **Engineering** | Gadgets, mechanisms, traps      | INT, DEX  | Gadgets, traps, mechanical items  |
 
 ### Specialized Disciplines
 
-| Discipline | Description | Products |
-|------------|-------------|----------|
-| **Farming** | Crop growing, animal husbandry | Food, materials, reagents |
-| **Fishing** | Fish catching, aquatic resources | Fish, pearls, treasure |
-| **Mining** | Ore extraction, gem finding | Ores, gems, stone |
-| **Herbalism** | Herb gathering, plant knowledge | Herbs, reagents, dyes |
-| **Skinning** | Animal hide harvesting | Leather, fur, bones |
-| **Logging** | Wood harvesting | Lumber, branches, sap |
+| Discipline    | Description                      | Products                  |
+| ------------- | -------------------------------- | ------------------------- |
+| **Farming**   | Crop growing, animal husbandry   | Food, materials, reagents |
+| **Fishing**   | Fish catching, aquatic resources | Fish, pearls, treasure    |
+| **Mining**    | Ore extraction, gem finding      | Ores, gems, stone         |
+| **Herbalism** | Herb gathering, plant knowledge  | Herbs, reagents, dyes     |
+| **Skinning**  | Animal hide harvesting           | Leather, fur, bones       |
+| **Logging**   | Wood harvesting                  | Lumber, branches, sap     |
 
 ## Crafting System
 
@@ -77,15 +77,15 @@ interface QualityRange {
 interface CraftingStation {
   id: string;
   name: string;
-  type: 'anvil' | 'forge' | 'workbench' | 'cauldron' | 'loom' | 'furnace' | 'kitchen' | 'enchanting_table';
+  type: "anvil" | "forge" | "workbench" | "cauldron" | "loom" | "furnace" | "kitchen" | "enchanting_table";
   tier: number; // 1-5
   bonuses: CraftingBonus[];
-  location: 'player_home' | 'world' | 'guild' | 'portable';
+  location: "player_home" | "world" | "guild" | "portable";
   durability: number;
 }
 
 interface CraftingBonus {
-  type: 'speed' | 'quality' | 'success' | 'material_saving';
+  type: "speed" | "quality" | "success" | "material_saving";
   value: number;
   condition?: string;
 }
@@ -142,7 +142,7 @@ interface Specialization {
 
 interface ProfessionUnlock {
   level: number;
-  type: 'recipe' | 'technique' | 'station' | 'material' | 'title';
+  type: "recipe" | "technique" | "station" | "material" | "title";
   id: string;
   description: string;
 }
@@ -150,13 +150,13 @@ interface ProfessionUnlock {
 
 ### Profession Titles
 
-| Level | Title | Bonuses |
-|-------|-------|---------|
-| 1-25 | Apprentice | Basic recipes |
-| 26-50 | Journeyman | +5% success, tier 2 recipes |
-| 51-75 | Expert | +10% quality, tier 3 recipes |
-| 76-99 | Master | +15% speed, tier 4 recipes |
-| 100 | Grandmaster | +20% all, tier 5 recipes, unique recipes |
+| Level | Title       | Bonuses                                  |
+| ----- | ----------- | ---------------------------------------- |
+| 1-25  | Apprentice  | Basic recipes                            |
+| 26-50 | Journeyman  | +5% success, tier 2 recipes              |
+| 51-75 | Expert      | +10% quality, tier 3 recipes             |
+| 76-99 | Master      | +15% speed, tier 4 recipes               |
+| 100   | Grandmaster | +20% all, tier 5 recipes, unique recipes |
 
 ### Material Gathering
 
@@ -164,18 +164,18 @@ interface ProfessionUnlock {
 interface GatheringNode {
   id: string;
   name: string;
-  type: 'ore_vein' | 'herb_patch' | 'tree' | 'fishing_spot' | 'animal';
+  type: "ore_vein" | "herb_patch" | "tree" | "fishing_spot" | "animal";
   location: WorldLocation;
   respawn_time: number;
   skill_required: number;
   materials: GatheringMaterial[];
-  rarity: 'common' | 'uncommon' | 'rare' | 'epic' | 'legendary';
+  rarity: "common" | "uncommon" | "rare" | "epic" | "legendary";
 }
 
 interface GatheringMaterial {
   item_id: string;
-  quantity_range: [number, number];
-  quality_range: [number, number];
+  quantity_range: [number, number,];
+  quality_range: [number, number,];
   drop_chance: number;
 }
 ```
@@ -184,14 +184,14 @@ interface GatheringMaterial {
 
 ### Discovery Methods
 
-| Method | Description | Success Rate |
-|--------|-------------|--------------|
-| **Experimentation** | Combine materials randomly | Skill-based |
-| **Recipe Books** | Learn from written sources | 100% |
-| **NPC Teaching** | Learn from crafters | Relationship-based |
-| **Quest Rewards** | Unlock through story | Guaranteed |
-| **World Discovery** | Find hidden recipes | Random |
-| **Reverse Engineering** | Deconstruct existing items | Skill-based |
+| Method                  | Description                | Success Rate       |
+| ----------------------- | -------------------------- | ------------------ |
+| **Experimentation**     | Combine materials randomly | Skill-based        |
+| **Recipe Books**        | Learn from written sources | 100%               |
+| **NPC Teaching**        | Learn from crafters        | Relationship-based |
+| **Quest Rewards**       | Unlock through story       | Guaranteed         |
+| **World Discovery**     | Find hidden recipes        | Random             |
+| **Reverse Engineering** | Deconstruct existing items | Skill-based        |
 
 ### Experimentation System
 
@@ -219,14 +219,14 @@ interface Experimentation {
 
 ### Item Quality
 
-| Quality | Name | Bonuses |
-|---------|------|---------|
-| 0-20 | Poor | -20% stats |
-| 21-40 | Common | Base stats |
-| 41-60 | Uncommon | +10% stats |
-| 61-80 | Rare | +25% stats, 1 bonus |
-| 81-99 | Epic | +50% stats, 2 bonuses |
-| 100 | Legendary | +75% stats, 3 bonuses, unique effect |
+| Quality | Name      | Bonuses                              |
+| ------- | --------- | ------------------------------------ |
+| 0-20    | Poor      | -20% stats                           |
+| 21-40   | Common    | Base stats                           |
+| 41-60   | Uncommon  | +10% stats                           |
+| 61-80   | Rare      | +25% stats, 1 bonus                  |
+| 81-99   | Epic      | +50% stats, 2 bonuses                |
+| 100     | Legendary | +75% stats, 3 bonuses, unique effect |
 
 ## Integration Points
 

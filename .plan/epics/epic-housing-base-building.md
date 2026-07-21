@@ -12,15 +12,15 @@ Player housing and base building system — personal homes, guild halls, craftin
 
 ## Housing Types
 
-| Type | Size | Cost | Features |
-|------|------|------|----------|
-| **Apartment** | Small | Low | Basic storage, bed |
-| **Cottage** | Medium | Medium | Small garden, crafting space |
-| **House** | Large | High | Multiple rooms, yard |
-| **Manor** | Very High | Very High | Estate, servants, stables |
-| **Castle** | Massive | Legendary | Fortifications, army quarters |
-| **Guild Hall** | Variable | Guild | Shared space, guild bank |
-| **Floating Island** | Variable | Legendary | Flying base, unique features |
+| Type                | Size      | Cost      | Features                      |
+| ------------------- | --------- | --------- | ----------------------------- |
+| **Apartment**       | Small     | Low       | Basic storage, bed            |
+| **Cottage**         | Medium    | Medium    | Small garden, crafting space  |
+| **House**           | Large     | High      | Multiple rooms, yard          |
+| **Manor**           | Very High | Very High | Estate, servants, stables     |
+| **Castle**          | Massive   | Legendary | Fortifications, army quarters |
+| **Guild Hall**      | Variable  | Guild     | Shared space, guild bank      |
+| **Floating Island** | Variable  | Legendary | Flying base, unique features  |
 
 ## Housing Structure
 
@@ -46,7 +46,17 @@ interface PlayerHousing {
 interface Room {
   id: string;
   name: string;
-  type: 'bedroom' | 'kitchen' | 'workshop' | 'storage' | 'trophy' | 'library' | 'armory' | 'garden' | 'stable' | 'dungeon';
+  type:
+    | "bedroom"
+    | "kitchen"
+    | "workshop"
+    | "storage"
+    | "trophy"
+    | "library"
+    | "armory"
+    | "garden"
+    | "stable"
+    | "dungeon";
   size: number; // grid units
   furniture: FurnitureItem[];
   bonuses: RoomBonus[];
@@ -54,7 +64,7 @@ interface Room {
 }
 
 interface ExteriorSpace {
-  type: 'yard' | 'garden' | 'courtyard' | 'balcony' | 'rooftop' | 'underground';
+  type: "yard" | "garden" | "courtyard" | "balcony" | "rooftop" | "underground";
   size: number;
   features: ExteriorFeature[];
   crops?: CropPlot[];
@@ -69,7 +79,7 @@ interface ExteriorSpace {
 ```typescript
 interface ConstructionProject {
   id: string;
-  type: 'build' | 'upgrade' | 'repair' | 'expand';
+  type: "build" | "upgrade" | "repair" | "expand";
   target: HousingTarget;
   materials: ConstructionMaterial[];
   time_required: number; // in hours
@@ -100,7 +110,7 @@ interface Worker {
 interface Blueprint {
   id: string;
   name: string;
-  type: 'room' | 'building' | 'decoration' | 'furniture';
+  type: "room" | "building" | "decoration" | "furniture";
   tier: number;
   materials: ConstructionMaterial[];
   time_required: number;
@@ -114,15 +124,15 @@ interface Blueprint {
 
 ### Furniture Categories
 
-| Category | Examples | Bonuses |
-|----------|----------|---------|
-| **Beds** | Simple bed, royal bed | Rest quality, comfort |
-| **Tables** | Dining table, workbench | Crafting speed, social |
-| **Storage** | Chest, wardrobe, shelf | Storage capacity |
-| **Lighting** | Candle, chandelier, lamp | Visibility, mood |
-| **Seating** | Chair, throne, bench | Comfort, prestige |
-| **Decoration** | Painting, rug, plant | Aesthetics, morale |
-| **Functional** | Forge, loom, alchemy table | Crafting bonuses |
+| Category       | Examples                   | Bonuses                |
+| -------------- | -------------------------- | ---------------------- |
+| **Beds**       | Simple bed, royal bed      | Rest quality, comfort  |
+| **Tables**     | Dining table, workbench    | Crafting speed, social |
+| **Storage**    | Chest, wardrobe, shelf     | Storage capacity       |
+| **Lighting**   | Candle, chandelier, lamp   | Visibility, mood       |
+| **Seating**    | Chair, throne, bench       | Comfort, prestige      |
+| **Decoration** | Painting, rug, plant       | Aesthetics, morale     |
+| **Functional** | Forge, loom, alchemy table | Crafting bonuses       |
 
 ### Furniture Structure
 
@@ -132,17 +142,17 @@ interface FurnitureItem {
   item_id: string;
   name: string;
   category: FurnitureCategory;
-  size: [number, number]; // grid width, height
+  size: [number, number,]; // grid width, height
   position: Position3D;
   rotation: number;
   condition: number; // 0-100
   bonuses: FurnitureBonus[];
   style: FurnitureStyle;
-  rarity: 'common' | 'uncommon' | 'rare' | 'epic' | 'legendary';
+  rarity: "common" | "uncommon" | "rare" | "epic" | "legendary";
 }
 
 interface FurnitureBonus {
-  type: 'comfort' | 'storage' | 'crafting' | 'social' | 'prestige' | 'defense';
+  type: "comfort" | "storage" | "crafting" | "social" | "prestige" | "defense";
   value: number;
   condition?: string;
 }
@@ -156,7 +166,7 @@ interface FurnitureBonus {
 interface StorageContainer {
   id: string;
   name: string;
-  type: 'chest' | 'wardrobe' | 'vault' | 'display' | 'refrigerator' | 'safe';
+  type: "chest" | "wardrobe" | "vault" | "display" | "refrigerator" | "safe";
   capacity: number;
   items: InventoryItem[];
   access_control: AccessControl;
@@ -212,7 +222,7 @@ interface VisitorLog {
   activities: VisitorActivity[];
 }
 
-type VisitorActivity = 'visited' | 'used_station' | 'traded' | 'decorated' | 'raided';
+type VisitorActivity = "visited" | "used_station" | "traded" | "decorated" | "raided";
 
 interface HouseParty {
   host_id: string;
@@ -245,24 +255,24 @@ interface GuildHall {
 ### Rest & Comfort
 
 | Comfort Level | Rest Bonus | Duration |
-|---------------|------------|----------|
-| **Poor** | +5% XP | 1 hour |
-| **Decent** | +10% XP | 2 hours |
-| **Good** | +15% XP | 3 hours |
-| **Excellent** | +20% XP | 4 hours |
-| **Luxurious** | +25% XP | 5 hours |
+| ------------- | ---------- | -------- |
+| **Poor**      | +5% XP     | 1 hour   |
+| **Decent**    | +10% XP    | 2 hours  |
+| **Good**      | +15% XP    | 3 hours  |
+| **Excellent** | +20% XP    | 4 hours  |
+| **Luxurious** | +25% XP    | 5 hours  |
 
 ### Room Bonuses
 
-| Room Type | Bonus |
-|-----------|-------|
-| **Bedroom** | Rest quality, comfort |
-| **Kitchen** | Cooking speed, food quality |
-| **Workshop** | Crafting speed, quality |
-| **Library** | Skill learning speed |
-| **Armory** | Equipment maintenance |
-| **Garden** | Herb/farming yield |
-| **Stable** | Mount happiness, speed |
+| Room Type    | Bonus                       |
+| ------------ | --------------------------- |
+| **Bedroom**  | Rest quality, comfort       |
+| **Kitchen**  | Cooking speed, food quality |
+| **Workshop** | Crafting speed, quality     |
+| **Library**  | Skill learning speed        |
+| **Armory**   | Equipment maintenance       |
+| **Garden**   | Herb/farming yield          |
+| **Stable**   | Mount happiness, speed      |
 
 ## Integration Points
 
