@@ -20,10 +20,10 @@ New use cases and user story improvements. Continuously improve user experience 
 
 ## Linked Tasks
 
-| Task | Title | Priority | Status |
-| ---- | ----- | -------- | ------ |
-| TASK-chat-flow-section-navigation | Chat flow section navigation | Medium | Not Started |
-| TASK-chat-backgrounds-location-sync | Chat backgrounds location sync | Medium | Not Started |
+| Task                                | Title                          | Priority | Status      |
+| ----------------------------------- | ------------------------------ | -------- | ----------- |
+| TASK-chat-flow-section-navigation   | Chat flow section navigation   | Medium   | Not Started |
+| TASK-chat-backgrounds-location-sync | Chat backgrounds location sync | Medium   | Not Started |
 
 ## Files
 

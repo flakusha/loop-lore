@@ -12,6 +12,7 @@ Implement NSFW-specific emotional state tracking: arousal, happiness, comfort, t
 ## Core Features
 
 ### Emotional Dimensions
+
 - Arousal (0-100)
 - Happiness (0-100)
 - Comfort (0-100)
@@ -22,12 +23,14 @@ Implement NSFW-specific emotional state tracking: arousal, happiness, comfort, t
 - Guilt (0-100)
 
 ### Mood Effects
+
 - Nervousness/shame → increases seduction resistance
 - Excitement → increases arousal buildup
 - Happiness/comfort → improves performance
 - Strong emotions → stronger memories
 
 ### Mood Modifiers
+
 - Partner behavior
 - Location atmosphere
 - Items/drugs
@@ -35,6 +38,7 @@ Implement NSFW-specific emotional state tracking: arousal, happiness, comfort, t
 - Trauma triggers
 
 ### Emotional History
+
 - Track significant emotional events
 - Emotional patterns over time
 - Trauma from negative experiences

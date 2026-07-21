@@ -12,6 +12,7 @@ Implement state management for quest system with mode transitions between quest 
 ## Core Features
 
 ### Quest States
+
 - **Inactive**: Quest not started
 - **Active**: Quest in progress
 - **Completed**: Quest successfully finished
@@ -20,6 +21,7 @@ Implement state management for quest system with mode transitions between quest 
 - **Paused**: Quest temporarily paused
 
 ### Quest Mode Transitions
+
 - Inactive → Active (quest accepted)
 - Active → Completed (quest finished)
 - Active → Failed (quest failed)
@@ -29,6 +31,7 @@ Implement state management for quest system with mode transitions between quest 
 - Failed → Active (quest retried)
 
 ### Integration Modes
+
 - Quest + Battle (combat quests)
 - Quest + Trading (trade quests)
 - Quest + Exploration (exploration quests)
@@ -40,25 +43,25 @@ Implement state management for quest system with mode transitions between quest 
 ```typescript
 interface QuestStateManager {
   // Quest state management
-  getQuestState(questId: string): Promise<QuestState>;
-  setQuestState(questId: string, state: QuestState): Promise<void>;
-  updateQuestState(questId: string, updates: Partial<QuestState>): Promise<void>;
-  
+  getQuestState(questId: string,): Promise<QuestState>;
+  setQuestState(questId: string, state: QuestState,): Promise<void>;
+  updateQuestState(questId: string, updates: Partial<QuestState>,): Promise<void>;
+
   // Quest mode transitions
-  transitionQuest(questId: string, from: QuestState, to: QuestState): Promise<TransitionResult>;
-  canTransition(questId: string, from: QuestState, to: QuestState): boolean;
-  getAvailableTransitions(questId: string): QuestTransition[];
-  
+  transitionQuest(questId: string, from: QuestState, to: QuestState,): Promise<TransitionResult>;
+  canTransition(questId: string, from: QuestState, to: QuestState,): boolean;
+  getAvailableTransitions(questId: string,): QuestTransition[];
+
   // Quest integration
-  startQuestBattle(questId: string, battleId: string): Promise<void>;
-  endQuestBattle(questId: string, battleId: string): Promise<void>;
-  startQuestTrade(questId: string, tradeId: string): Promise<void>;
-  endQuestTrade(questId: string, tradeId: string): Promise<void>;
-  
+  startQuestBattle(questId: string, battleId: string,): Promise<void>;
+  endQuestBattle(questId: string, battleId: string,): Promise<void>;
+  startQuestTrade(questId: string, tradeId: string,): Promise<void>;
+  endQuestTrade(questId: string, tradeId: string,): Promise<void>;
+
   // Quest persistence
-  saveQuestState(questId: string): Promise<void>;
-  loadQuestState(questId: string): Promise<QuestState>;
-  clearQuestState(questId: string): Promise<void>;
+  saveQuestState(questId: string,): Promise<void>;
+  loadQuestState(questId: string,): Promise<QuestState>;
+  clearQuestState(questId: string,): Promise<void>;
 }
 
 interface QuestState {
@@ -76,7 +79,7 @@ interface QuestState {
   metadata: Record<string, unknown>;
 }
 
-type QuestStatus = 'inactive' | 'active' | 'completed' | 'failed' | 'abandoned' | 'paused';
+type QuestStatus = "inactive" | "active" | "completed" | "failed" | "abandoned" | "paused";
 
 interface QuestProgress {
   current: number;
@@ -88,7 +91,7 @@ interface QuestProgress {
 interface QuestObjective {
   id: string;
   description: string;
-  status: 'pending' | 'active' | 'completed' | 'failed';
+  status: "pending" | "active" | "completed" | "failed";
   progress: number;
   required: boolean;
   dependencies: string[];
@@ -96,7 +99,7 @@ interface QuestObjective {
 
 interface QuestReward {
   id: string;
-  type: 'experience' | 'item' | 'currency' | 'reputation' | 'unlock';
+  type: "experience" | "item" | "currency" | "reputation" | "unlock";
   value: unknown;
   claimed: boolean;
 }

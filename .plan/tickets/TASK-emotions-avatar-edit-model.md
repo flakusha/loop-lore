@@ -34,6 +34,7 @@ Character avatars table (proposed):
 ```
 
 **Impact:**
+
 - `src/routes/characters.ts` — avatar CRUD is single-value, not array
 - `src/db/schema-*.ts` — `avatar_url` column on characters, not separate table
 - `src/views/characters.html` — single avatar display/edit
@@ -42,6 +43,7 @@ Character avatars table (proposed):
 - `src/assets/service.ts` — polymorphic linking is `asset → character`, not `asset → character + emotion`
 
 **Migration path:**
+
 1. Create `character_avatars` table (character_id, emotion, asset_id, is_default)
 2. Migrate existing `avatar_url` from characters table → new table with `emotion=neutral`
 3. Update character CRUD to manage avatar collection
@@ -50,15 +52,15 @@ Character avatars table (proposed):
 
 ### B. Edit Model Instability
 
-| Model Type | Edit Support | Stability | Notes |
-| ---------- | ------------ | --------- | ----- |
-| Stable Diffusion XL | ❌ No edit | — | Standard generation only |
-| Stable Diffusion 3 | ❌ No edit | — | Standard generation only |
-| Flux.1 | ❌ Limited | — | Inpainting only, not true edit |
-| sd.cpp native | ⚠️ Partial | Low | Supports some edit models but unstable |
-| ComfyUI | ⚠️ Partial | Low | Edit workflows exist but inconsistent |
-| DALL-E 3 | ❌ No edit | — | Generation only |
-| Midjourney | ❌ No edit | — | Generation only |
+| Model Type          | Edit Support | Stability | Notes                                  |
+| ------------------- | ------------ | --------- | -------------------------------------- |
+| Stable Diffusion XL | ❌ No edit   | —         | Standard generation only               |
+| Stable Diffusion 3  | ❌ No edit   | —         | Standard generation only               |
+| Flux.1              | ❌ Limited   | —         | Inpainting only, not true edit         |
+| sd.cpp native       | ⚠️ Partial    | Low       | Supports some edit models but unstable |
+| ComfyUI             | ⚠️ Partial    | Low       | Edit workflows exist but inconsistent  |
+| DALL-E 3            | ❌ No edit   | —         | Generation only                        |
+| Midjourney          | ❌ No edit   | —         | Generation only                        |
 
 **Core issue:** Most multimodal models (generate + edit) are self-hosted and lack stability for production use. Generation and edit are separate capabilities — few models support both.
 
@@ -92,13 +94,13 @@ Image Gen Providers:
 
 ### Emotion Mapping
 
-| Emotion | Prompt Modifier | Example |
-| ------- | --------------- | ------- |
-| Happy | smiling, bright eyes | "character portrait, smiling" |
-| Sad | tearful, downcast | "character portrait, sad expression" |
-| Angry | furrowed brow, intense | "character portrait, angry" |
-| Surprised | wide eyes, open mouth | "character portrait, surprised" |
-| Neutral | default expression | "character portrait" (base) |
+| Emotion   | Prompt Modifier        | Example                              |
+| --------- | ---------------------- | ------------------------------------ |
+| Happy     | smiling, bright eyes   | "character portrait, smiling"        |
+| Sad       | tearful, downcast      | "character portrait, sad expression" |
+| Angry     | furrowed brow, intense | "character portrait, angry"          |
+| Surprised | wide eyes, open mouth  | "character portrait, surprised"      |
+| Neutral   | default expression     | "character portrait" (base)          |
 
 ### Storage
 
@@ -139,6 +141,7 @@ Image Gen Providers:
 ## Monitoring Criteria
 
 Revisit when:
+
 - [ ] sd.cpp edit models pass 95%+ consistency test
 - [ ] ComfyUI edit workflows稳定 for production use
 - [ ] Alternative services (Replicate,fal.ai) offer stable edit APIs

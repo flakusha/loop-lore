@@ -12,11 +12,13 @@ Clear interface and database separation between persistent character features an
 ## Core Problem
 
 Character data currently mixes:
+
 - **Persistent features** (personality, traits, attributes, visuals) — set once, rarely change
 - **Session/story overrides** (clothes, lore, skill modifiers) — change per world/story
 - **World-specific state** (buffs/debuffs, karma, standing) — per-world, not global
 
 Need clean separation so:
+
 - Characters are portable across worlds without data loss
 - World-specific modifications don't corrupt base character
 - Multiple worlds can have different overrides for same character
@@ -25,6 +27,7 @@ Need clean separation so:
 ## Data Layers
 
 ### Layer 0: Character Core (Persistent, Immutable to World)
+
 Set at character creation. Never modified by world/story.
 
 ```typescript
@@ -34,22 +37,22 @@ interface CharacterCore {
   species: string;
   gender: string;
   age: number;
-  
+
   // Personality (immutable)
   personality_traits: PersonalityTrait[];
   core_values: string[];
   fears: string[];
   desires: string[];
-  
+
   // Physical (birth suit — base appearance)
-  physique: PhysiqueProfile;     // Body system (TASK-nsfw-body-physical)
-  appearance: AppearanceProfile;  // Natural appearance
+  physique: PhysiqueProfile; // Body system (TASK-nsfw-body-physical)
+  appearance: AppearanceProfile; // Natural appearance
   voice: VoiceProfile;
-  
+
   // Base attributes (start values)
-  base_stats: CharacterStats;     // STR, DEX, CON, INT, WIS, CHA
-  base_skills: CharacterSkills;   // Skill starting levels
-  
+  base_stats: CharacterStats; // STR, DEX, CON, INT, WIS, CHA
+  base_skills: CharacterSkills; // Skill starting levels
+
   // Creator metadata
   creator_id: string;
   created_at: Date;
@@ -59,54 +62,56 @@ interface CharacterCore {
 ```
 
 ### Layer 1: Character Equipment (Current State)
+
 Clothes, gear, items currently equipped. Can change freely.
 
 ```typescript
 interface CharacterEquipment {
   character_id: string;
-  
+
   // Visual overrides
-  outfit: Outfit;              // Current clothes
-  accessories: Accessory[];    // Jewelry, glasses, etc.
+  outfit: Outfit; // Current clothes
+  accessories: Accessory[]; // Jewelry, glasses, etc.
   hairstyle: Hairstyle;
-  body_modifications: BodyModification[];  // Piercings, tattoos
-  
+  body_modifications: BodyModification[]; // Piercings, tattoos
+
   // Stat modifiers from equipment
   stat_bonuses: StatModifier[];
   skill_bonuses: SkillModifier[];
-  
+
   // Equipment slots
   slots: EquipmentSlot[];
 }
 ```
 
 ### Layer 2: World Overlay (Per-World)
+
 Modifications applied by specific world/location. Does not travel with character.
 
 ```typescript
 interface WorldCharacterOverlay {
   character_id: string;
   world_id: string;
-  
+
   // Lore modifications for this world
-  lore_overrides: LoreOverride[];    // "In this world, character is a thief"
-  backstory_additions: string[];     // World-specific backstory
+  lore_overrides: LoreOverride[]; // "In this world, character is a thief"
+  backstory_additions: string[]; // World-specific backstory
   relationship_overrides: RelationshipOverride[];
-  
+
   // Skill modifications for this world
-  skill_modifiers: SkillModifier[];  // +10 sword in this world
-  unlocked_abilities: string[];      // Abilities only in this world
-  
+  skill_modifiers: SkillModifier[]; // +10 sword in this world
+  unlocked_abilities: string[]; // Abilities only in this world
+
   // World-based attributes
-  buffs: Buff[];                     // Active buffs in this world
-  debuffs: Debuff[];                 // Active debuffs in this world
-  status_effects: StatusEffect[];    // Poison, blessed, cursed, etc.
-  
+  buffs: Buff[]; // Active buffs in this world
+  debuffs: Debuff[]; // Active debuffs in this world
+  status_effects: StatusEffect[]; // Poison, blessed, cursed, etc.
+
   // Karma & standing (per-world)
   karma: KarmaRecord;
   standings: StandingRecord[];
-  world_views: WorldView[];          // Beliefs/opinions in this world
-  
+  world_views: WorldView[]; // Beliefs/opinions in this world
+
   // Location-specific
   location_bonuses: LocationBonus[];
   location_penalties: LocationPenalty[];
@@ -114,6 +119,7 @@ interface WorldCharacterOverlay {
 ```
 
 ### Layer 3: Story Overlay (Per-Story/Session)
+
 Temporary modifications for current story arc.
 
 ```typescript
@@ -121,16 +127,16 @@ interface StoryCharacterOverlay {
   character_id: string;
   story_id: string;
   session_id: string;
-  
+
   // Story-specific changes
   temporary_traits: TemporaryTrait[];
-  story_knowledge: string[];     // Things learned in this story
+  story_knowledge: string[]; // Things learned in this story
   story_relationships: StoryRelationship[];
-  
+
   // Temporary stat changes
   temporary_buffs: Buff[];
   temporary_debuffs: Debuff[];
-  
+
   // Story arc state
   arc_progress: ArcProgress;
   arc_decisions: ArcDecision[];
@@ -220,6 +226,7 @@ CREATE TABLE character_defaults (
 ## Resolution Order
 
 When querying character state, merge layers in order:
+
 1. Character Core (base)
 2. Equipment (current gear)
 3. World Overlay (world-specific)
@@ -228,13 +235,13 @@ When querying character state, merge layers in order:
 Later layers override earlier ones. Equipment overrides core stats. World overrides equipment.
 
 ```typescript
-function resolveCharacter(characterId: string, worldId: string, storyId?: string): ResolvedCharacter {
-  const core = getCharacterCore(characterId);
-  const equipment = getEquipment(characterId);
-  const worldOverlay = getWorldOverlay(characterId, worldId);
-  const storyOverlay = storyId ? getStoryOverlay(characterId, storyId) : null;
-  
-  return mergeLayers(core, equipment, worldOverlay, storyOverlay);
+function resolveCharacter(characterId: string, worldId: string, storyId?: string,): ResolvedCharacter {
+  const core = getCharacterCore(characterId,);
+  const equipment = getEquipment(characterId,);
+  const worldOverlay = getWorldOverlay(characterId, worldId,);
+  const storyOverlay = storyId ? getStoryOverlay(characterId, storyId,) : null;
+
+  return mergeLayers(core, equipment, worldOverlay, storyOverlay,);
 }
 ```
 

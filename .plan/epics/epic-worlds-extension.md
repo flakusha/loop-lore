@@ -10,7 +10,7 @@
 
 Extends the World & Locations foundation (see `epic-world-locations.md`, which
 already covers cataclysms, events, and propagation). This epic adds the
-*social / temporal / spatial / interaction* layers that epic does not:
+_social / temporal / spatial / interaction_ layers that epic does not:
 
 - **Shareability** — license, attribution, allowed/prohibited use
 - **Global time scale** — epochs, scale size, related memories
@@ -20,13 +20,13 @@ already covers cataclysms, events, and propagation). This epic adds the
 
 ## Shareability & Licensing
 
-| Aspect | Description |
-|--------|-------------|
-| Shareability | Export / import worlds between users |
-| License | SPDX or custom license attached to a world |
-| Attribution | Author credit retained on share |
-| Allowed use | Permitted derivative / commercial use |
-| Prohibited use | Banned remix / redistro patterns |
+| Aspect         | Description                                |
+| -------------- | ------------------------------------------ |
+| Shareability   | Export / import worlds between users       |
+| License        | SPDX or custom license attached to a world |
+| Attribution    | Author credit retained on share            |
+| Allowed use    | Permitted derivative / commercial use      |
+| Prohibited use | Banned remix / redistro patterns           |
 
 ```typescript
 interface WorldLicense {
@@ -40,40 +40,40 @@ interface WorldLicense {
 
 ## Global Time Scale
 
-| Concept | Description |
-|---------|-------------|
-| Epochs | Named eras partitioning world history |
-| Scale size | Relative time compression vs real time |
-| Related memories | Memories tagged to epoch / timescale |
+| Concept          | Description                            |
+| ---------------- | -------------------------------------- |
+| Epochs           | Named eras partitioning world history  |
+| Scale size       | Relative time compression vs real time |
+| Related memories | Memories tagged to epoch / timescale   |
 
 ```typescript
 interface WorldTimeScale {
   world_id: string;
   epoch: string;
-  scale_size: number;       // world-minutes per real-minute
+  scale_size: number; // world-minutes per real-minute
   epoch_memories: MemoryRef[];
 }
 ```
 
 ## Maps (2D / 3D)
 
-| Representation | Use |
-|---------------|-----|
-| 2D map | Top-down navigation, regions |
-| 3D map | Spatial exploration, in-app interaction |
+| Representation | Use                                     |
+| -------------- | --------------------------------------- |
+| 2D map         | Top-down navigation, regions            |
+| 3D map         | Spatial exploration, in-app interaction |
 
 ## Location Assets & Resources
 
-| Asset | Tracking |
-|-------|----------|
-| Items | Spawned at location, inventory-linked |
-| Unique items | Single-instance, world-scoped |
-| Resources | Renewable / depletable pools |
+| Asset        | Tracking                              |
+| ------------ | ------------------------------------- |
+| Items        | Spawned at location, inventory-linked |
+| Unique items | Single-instance, world-scoped         |
+| Resources    | Renewable / depletable pools          |
 
 ```typescript
 interface LocationResource {
   location_id: string;
-  kind: 'item' | 'unique_item' | 'resource';
+  kind: "item" | "unique_item" | "resource";
   amount: number;
   regen?: ResourceRegen;
 }
@@ -81,14 +81,14 @@ interface LocationResource {
 
 ## Chat Mode Switches
 
-| Mode | Behavior |
-|------|----------|
-| Battle | Route to combat orchestration |
-| Question | Q&A / lore mode |
-| Inventory | Item management interactions |
+| Mode      | Behavior                      |
+| --------- | ----------------------------- |
+| Battle    | Route to combat orchestration |
+| Question  | Q&A / lore mode               |
+| Inventory | Item management interactions  |
 
 ```typescript
-type ChatMode = 'normal' | 'battle' | 'question' | 'inventory';
+type ChatMode = "normal" | "battle" | "question" | "inventory";
 ```
 
 ## Tasks

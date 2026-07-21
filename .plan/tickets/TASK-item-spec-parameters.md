@@ -12,6 +12,7 @@ Implement comprehensive item specification and parameters system with gameplay i
 ## Item Specification
 
 ### Item Types
+
 - **Weapons**: Swords, bows, staffs, daggers, etc.
 - **Armor**: Helmets, chestplates, gauntlets, boots, etc.
 - **Consumables**: Potions, food, scrolls, etc.
@@ -21,6 +22,7 @@ Implement comprehensive item specification and parameters system with gameplay i
 - **Containers**: Bags, chests, pouches, etc.
 
 ### Item Properties
+
 - **Base Stats**: Damage, defense, healing, etc.
 - **Durability**: Current/max durability
 - **Weight**: Inventory weight impact
@@ -33,18 +35,21 @@ Implement comprehensive item specification and parameters system with gameplay i
 ## Parameters System
 
 ### Stat Parameters
+
 - **Primary Stats**: Strength, dexterity, constitution, etc.
 - **Secondary Stats**: Critical chance, dodge, block, etc.
 - **Resistances**: Fire, ice, lightning, poison, etc.
 - **Bonuses**: XP bonus, gold bonus, etc.
 
 ### Dynamic Parameters
+
 - **Enchantments**: Magical enhancements
 - **Socketed Gems**: Gem insertion for bonuses
 - **Set Bonuses**: Bonus for wearing set pieces
 - **Temporary Buffs**: Time-limited enhancements
 
 ### Parameter Scaling
+
 - **Level Scaling**: Stats increase with item level
 - **Quality Scaling**: Stats increase with quality
 - **Enchantment Scaling**: Stats increase with enchantment level
@@ -52,18 +57,21 @@ Implement comprehensive item specification and parameters system with gameplay i
 ## Gameplay Impact
 
 ### Combat Impact
+
 - **Damage Calculation**: Weapon damage + stats + bonuses
 - **Defense Calculation**: Armor defense + stats + bonuses
 - **Critical Hits**: Based on weapon/character stats
 - **Damage Types**: Physical, magical, elemental
 
 ### Character Impact
+
 - **Stat Modifiers**: Items modify character stats
 - **Skill Modifiers**: Items modify skill effectiveness
 - **Movement Speed**: Armor weight affects speed
 - **Inventory Capacity**: Container size affects capacity
 
 ### Economic Impact
+
 - **Buy/Sell Prices**: Based on rarity, quality, demand
 - **Repair Costs**: Based on durability and quality
 - **Crafting Costs**: Based on material quality
@@ -114,7 +122,7 @@ interface Durability {
 interface ItemParameter {
   id: string;
   name: string;
-  type: 'stat' | 'resistance' | 'bonus' | 'restriction';
+  type: "stat" | "resistance" | "bonus" | "restriction";
   value: number;
   scaling: ScalingConfig;
   conditions: ParameterCondition[];

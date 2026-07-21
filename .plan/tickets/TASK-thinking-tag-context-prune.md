@@ -17,12 +17,12 @@ Prune `<think>...</think>` (and similar chain-of-thought tags) from LLM response
 
 ## Tags to Handle
 
-| Tag | Source | Notes |
-| --- | ------ | ----- |
-| `<think>...</think>` | DeepSeek, some OpenAI models | Most common |
-| `<reasoning>...</reasoning>` | Some models | Alternate format |
-| `<reflection>...</reflection>` | Some models | Self-correction |
-| `<thought>...</thought>` | Some models | Variant |
+| Tag                            | Source                       | Notes            |
+| ------------------------------ | ---------------------------- | ---------------- |
+| `<think>...</think>`           | DeepSeek, some OpenAI models | Most common      |
+| `<reasoning>...</reasoning>`   | Some models                  | Alternate format |
+| `<reflection>...</reflection>` | Some models                  | Self-correction  |
+| `<thought>...</thought>`       | Some models                  | Variant          |
 
 ## Design Decisions
 
@@ -43,6 +43,7 @@ Prune `<think>...</think>` (and similar chain-of-thought tags) from LLM response
 LLM providers (OpenAI, Anthropic) cache `system` messages for reuse. If we modify the system prompt to include "ignore thinking tags" or similar, it may cause cache misses.
 
 **Mitigation:**
+
 - Do NOT add "ignore thinking" instructions to system prompt
 - Prune at storage/display layer, not at prompt level
 - Let LLM generate thinking freely — we remove it after
@@ -96,13 +97,13 @@ LLM providers (OpenAI, Anthropic) cache `system` messages for reuse. If we modif
 
 ## Edge Cases
 
-| Case | Behavior |
-| ---- | -------- |
-| Nested tags | Prune outermost, keep inner if any |
-| Thinking spans multiple messages | Prune per-message |
-| User disables pruning mid-chat | Existing messages unchanged, new messages pruned |
-| API returns thinking in content | Prune at storage, not at API boundary |
-| Streaming with thinking | Show in `<details>` during stream, prune on final store |
+| Case                             | Behavior                                                |
+| -------------------------------- | ------------------------------------------------------- |
+| Nested tags                      | Prune outermost, keep inner if any                      |
+| Thinking spans multiple messages | Prune per-message                                       |
+| User disables pruning mid-chat   | Existing messages unchanged, new messages pruned        |
+| API returns thinking in content  | Prune at storage, not at API boundary                   |
+| Streaming with thinking          | Show in `<details>` during stream, prune on final store |
 
 ## Risk
 

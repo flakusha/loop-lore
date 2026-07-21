@@ -23,66 +23,77 @@ This epic is too large to ship in one pass (8 phases, ~100 interface blocks). Pr
 ## Core Features
 
 ### World Conditions
+
 - Global world state and settings
 - Environmental conditions (weather, time of day, season)
 - World-level modifiers and effects
 - World history and progression
 
 ### Lore Following / Quality Investigation
+
 - Lore consistency checking on creation
 - Quality assessment of generated content
 - Lore conflict detection
 - Lore enrichment suggestions
 
 ### World Style
+
 - Fantasy, real, cyberpunk, sci-fi, etc.
 - Style-specific asset generation
 - Style-specific NPC behavior
 - Style-specific item properties
 
 ### No Quality Check — Random Locations
+
 - Random location generation without strict quality gates
 - Procedural generation algorithms
 - Location variety and uniqueness
 - Emergent gameplay from random generation
 
 ### Anomalies & Effects
+
 - Location-specific anomalies (positive/negative)
 - Environmental effects on characters
 - Temporary and permanent anomalies
 - Anomaly discovery and interaction
 
 ### Item Search & Generation
+
 - Location-specific item discovery
 - Procedural item generation
 - Unique item placement
 - Item rarity based on location
 
 ### Unique Places Generation
+
 - Procedural unique location generation
 - Named locations with special properties
 - Landmark generation
 - Secret/hidden locations
 
 ### Resource Extraction
+
 - Exploitable resources per location
 - Resource extraction mechanics
 - Resource regeneration over time
 - Resource quality and rarity
 
 ### Persistent Storage
+
 - Persistent item storage at locations
 - Re-visiting locations retains items
 - Storage capacity limits
 - Storage security (theft protection)
 
 ### NPC Placement & Migration
+
 - NPC placement at locations
 - NPC migration between locations
 - NPC inventories and trading
 - NPC behavior and schedules
 
 ### Random Encounters
+
 - Random encounter mechanics based on story notes
 - Random encounter generation (procedural)
 - Assistant/GM-driven encounter creation
@@ -96,6 +107,7 @@ This epic is too large to ship in one pass (8 phases, ~100 interface blocks). Pr
 - Encounter avoidance and mitigation
 
 ### Time-Limited Locations
+
 - Location time limits (temporary access)
 - Time-limited events at locations
 - Location expiration and renewal
@@ -105,6 +117,7 @@ This epic is too large to ship in one pass (8 phases, ~100 interface blocks). Pr
 - Event-based location unlocking
 
 ### Global Cataclysms & Events
+
 - World-altering cataclysms
 - Natural disasters (earthquakes, floods, volcanic eruptions)
 - Magical cataclysms (mana storms, dimensional rifts)
@@ -116,6 +129,7 @@ This epic is too large to ship in one pass (8 phases, ~100 interface blocks). Pr
 - Cataclysm recovery and rebuilding
 
 ### Global Memories & Cross-Group Impact
+
 - Global memory system (world remembers all player actions)
 - Cross-group impact (actions of one quest group affect another)
 - Time lag between events and actual impact
@@ -126,6 +140,7 @@ This epic is too large to ship in one pass (8 phases, ~100 interface blocks). Pr
 - Delayed reaction system
 
 ### NPC: Monsters & Enemies
+
 - Monster/enemy NPC types
 - Monster behavior patterns (aggressive, passive, territorial)
 - Monster difficulty scaling by location
@@ -135,6 +150,7 @@ This epic is too large to ship in one pass (8 phases, ~100 interface blocks). Pr
 - Monster migration and territory control
 
 ### NPC: Diplomacy
+
 - Diplomatic NPC interactions
 - Faction reputation system
 - Diplomacy options (negotiate, bribe, threaten, ally)
@@ -144,6 +160,7 @@ This epic is too large to ship in one pass (8 phases, ~100 interface blocks). Pr
 - Peace/war state management
 
 ### NPC: Memories & Standing
+
 - NPC memory of player interactions
 - NPC memory of world events
 - NPC standing with player (hostile→exalted)
@@ -154,6 +171,7 @@ This epic is too large to ship in one pass (8 phases, ~100 interface blocks). Pr
 - NPC memory sharing between NPCs
 
 ### World Character Karma & Standing
+
 - Character karma system (good/evil/neutral)
 - Reputation tracking per faction/location
 - Standing tiers (hostile, unfriendly, neutral, friendly, honored, revered, exalted)
@@ -163,6 +181,7 @@ This epic is too large to ship in one pass (8 phases, ~100 interface blocks). Pr
 - Karma-based world state changes
 
 ### Message Formatting & Language
+
 - World-specific message formatting
 - Slang and dialect based on setting
 - Language level (formal, casual, archaic, slang)
@@ -173,6 +192,7 @@ This epic is too large to ship in one pass (8 phases, ~100 interface blocks). Pr
 - Translation/localization support
 
 ### Distance & Time Travel
+
 - Distance calculation between locations
 - Travel time estimation
 - Travel mechanics (walking, riding, flying, teleportation)
@@ -181,6 +201,7 @@ This epic is too large to ship in one pass (8 phases, ~100 interface blocks). Pr
 - Travel resource consumption (food, water, stamina)
 
 ### Time Tracking & Progression
+
 - Time tracking in locations/world
 - Time progression based on:
   - Quest execution (main/side quests)
@@ -195,6 +216,7 @@ This epic is too large to ship in one pass (8 phases, ~100 interface blocks). Pr
 ## Game-Inspired Expansions
 
 ### From Skyrim/Bethesda Games
+
 - **Radiant Quest System**: Procedurally generated quests based on location/state
 - **Crime & Bounty System**: Criminal actions tracked, bounty hunters
 - **Faction Reputation**: Standing with different factions affects gameplay
@@ -202,6 +224,7 @@ This epic is too large to ship in one pass (8 phases, ~100 interface blocks). Pr
 - **Dragon Breaks**: World-altering events, timeline changes
 
 ### From The Witcher 3
+
 - **Monster Contracts**: Bounty hunting system
 - **Gwent-style Mini-games**: In-world card/board games
 - **Question Mark Exploration**: Hidden locations to discover
@@ -209,6 +232,7 @@ This epic is too large to ship in one pass (8 phases, ~100 interface blocks). Pr
 - **Mutagen System**: Character modification through world exploration
 
 ### From Dark Souls/Elden Ring
+
 - **Bonfire System**: Checkpoint/rest locations
 - **Soul/Run Retrieval**: Death mechanics, item recovery
 - **World Tendency**: World state affects difficulty and NPCs
@@ -216,6 +240,7 @@ This epic is too large to ship in one pass (8 phases, ~100 interface blocks). Pr
 - **Message System**: Player-created hints in world
 
 ### From Minecraft/Sandbox Games
+
 - **Biome System**: Different terrain types with unique resources
 - **Redstone-style Logic**: Location-based triggers and circuits
 - **Villager Trading**: NPC economy and trading
@@ -223,6 +248,7 @@ This epic is too large to ship in one pass (8 phases, ~100 interface blocks). Pr
 - **Nether/End Dimensions**: Alternative world layers
 
 ### From Baldur's Gate 3
+
 - **Camp System**: Rest/recuperation locations
 - **Companion Approval**: NPC relationship tracking
 - **Inspiration System**: Bonus for creative solutions
@@ -230,6 +256,7 @@ This epic is too large to ship in one pass (8 phases, ~100 interface blocks). Pr
 - **Tadpole System**: Infection/progression mechanics
 
 ### From Fallout Series
+
 - **V.A.T.S. System**: Targeted combat mechanics
 - **S.P.E.C.I.A.L. Stats**: Character creation and progression
 - **Settlement Building**: Player-created locations
@@ -237,6 +264,7 @@ This epic is too large to ship in one pass (8 phases, ~100 interface blocks). Pr
 - **Companion Loyalty**: Deep NPC relationship system
 
 ### From MMOs (WoW, FFXIV)
+
 - **Dungeon Finder**: Location matchmaking system
 - **World Bosses**: Shared world events
 - **Daily/Weekly Quests**: Recurring objectives
@@ -263,7 +291,7 @@ interface World {
 }
 
 interface WorldStyle {
-  type: 'fantasy' | 'real' | 'cyberpunk' | 'scifi' | 'postapocalyptic' | 'custom';
+  type: "fantasy" | "real" | "cyberpunk" | "scifi" | "postapocalyptic" | "custom";
   substyle?: string;
   assetSet: string;
   npcBehaviorSet: string;
@@ -283,7 +311,7 @@ interface WorldConditions {
 
 ```typescript
 interface WorldTimeTracking {
-  mode: 'quest_execution' | 'message_count' | 'transfers_only' | 'real_time';
+  mode: "quest_execution" | "message_count" | "transfers_only" | "real_time";
   currentTime: WorldTime;
   timeScale: number; // 1 real second = X world minutes
   questTimeTracking: QuestTimeTracking;
@@ -339,7 +367,7 @@ interface DistanceMatrix {
   // Location A → Location B → distance in world units
   distances: Map<string, Map<string, number>>;
   // Travel time calculation
-  calculateTravelTime(from: string, to: string, mode: TravelMode): number;
+  calculateTravelTime(from: string, to: string, mode: TravelMode,): number;
 }
 
 interface TravelMode {
@@ -361,7 +389,7 @@ interface FastTravelSystem {
 interface TravelHazard {
   id: string;
   name: string;
-  type: 'environmental' | 'enemy' | 'obstacle' | 'event';
+  type: "environmental" | "enemy" | "obstacle" | "event";
   chance: number; // 0-1
   effect: HazardEffect;
   avoidance: AvoidanceMethod;
@@ -370,7 +398,7 @@ interface TravelHazard {
 interface TravelResource {
   id: string;
   name: string;
-  type: 'food' | 'water' | 'stamina' | 'fuel' | 'money';
+  type: "food" | "water" | "stamina" | "fuel" | "money";
   consumptionRate: number; // per world unit traveled
   replenishMethod: string;
 }
@@ -415,9 +443,9 @@ interface TimeEvent {
 }
 
 interface LocationType {
-  category: 'dungeon' | 'town' | 'wilderness' | 'dungeon' | 'special';
+  category: "dungeon" | "town" | "wilderness" | "dungeon" | "special";
   subcategory: string;
-  generation: 'procedural' | 'handcrafted' | 'hybrid';
+  generation: "procedural" | "handcrafted" | "hybrid";
 }
 
 interface LocationConditions {
@@ -435,7 +463,7 @@ interface LocationConditions {
 interface Anomaly {
   id: string;
   name: string;
-  type: 'positive' | 'negative' | 'neutral';
+  type: "positive" | "negative" | "neutral";
   effect: AnomalyEffect;
   duration: number; // seconds, -1 for permanent
   discoveryChance: number; // 0-1
@@ -459,7 +487,7 @@ interface LocationResource {
   id: string;
   resourceId: string;
   quantity: number;
-  quality: 'common' | 'uncommon' | 'rare' | 'epic' | 'legendary';
+  quality: "common" | "uncommon" | "rare" | "epic" | "legendary";
   regenerationRate: number; // per hour
   extractionDifficulty: number; // 0-100
   discovered: boolean;
@@ -509,7 +537,7 @@ interface NPCMigration {
 interface RandomEncounter {
   id: string;
   name: string;
-  type: 'combat' | 'dialogue' | 'event' | 'puzzle' | 'trade' | 'quest';
+  type: "combat" | "dialogue" | "event" | "puzzle" | "trade" | "quest";
   trigger: EncounterTrigger;
   difficulty: number; // 0-100
   requirements: EncounterRequirement[];
@@ -520,14 +548,14 @@ interface RandomEncounter {
 }
 
 interface EncounterTrigger {
-  type: 'random' | 'location_based' | 'time_based' | 'quest_based' | 'story_based' | 'travel_based';
+  type: "random" | "location_based" | "time_based" | "quest_based" | "story_based" | "travel_based";
   chance: number; // 0-1
   conditions: TriggerCondition[];
   cooldown: number; // seconds between encounters
 }
 
 interface TravelEncounter extends RandomEncounter {
-  travelPhase: 'departure' | 'journey' | 'arrival';
+  travelPhase: "departure" | "journey" | "arrival";
   distanceTrigger: number; // world units traveled
   locationProximity: string; // near which location
   travelRisk: number; // 0-100
@@ -554,7 +582,7 @@ interface TimeLimitedLocation {
 }
 
 interface LocationTimeLimit {
-  type: 'temporary' | 'event_based' | 'seasonal' | 'quest_based' | 'cataclysm_based';
+  type: "temporary" | "event_based" | "seasonal" | "quest_based" | "cataclysm_based";
   duration: number; // world time seconds
   startTime: Date;
   endTime: Date;
@@ -562,7 +590,7 @@ interface LocationTimeLimit {
 }
 
 interface LocationExpiration {
-  action: 'despawn' | 'transform' | 'lock' | 'destroy' | 'archive';
+  action: "despawn" | "transform" | "lock" | "destroy" | "archive";
   warningTime: number; // seconds before expiration
   warningMessage: string;
   cleanup: CleanupAction[];
@@ -576,8 +604,8 @@ interface LocationRenewal {
 }
 
 interface LocationChange {
-  trigger: 'time' | 'event' | 'player_action' | 'cataclysm';
-  changeType: 'appearance' | 'access' | 'resources' | 'npcs' | 'anomalies';
+  trigger: "time" | "event" | "player_action" | "cataclysm";
+  changeType: "appearance" | "access" | "resources" | "npcs" | "anomalies";
   description: string;
   effects: ChangeEffect[];
 }
@@ -589,7 +617,7 @@ interface LocationChange {
 interface GlobalCataclysm {
   id: string;
   name: string;
-  type: 'natural' | 'magical' | 'political' | 'technological' | 'cultural' | 'pandemic';
+  type: "natural" | "magical" | "political" | "technological" | "cultural" | "pandemic";
   severity: number; // 0-100
   duration: number; // world time seconds
   propagation: CataclysmPropagation;
@@ -625,8 +653,8 @@ interface CataclysmRecovery {
 interface GlobalEvent {
   id: string;
   name: string;
-  type: 'cataclysm' | 'celebration' | 'discovery' | 'invasion' | 'festival' | 'crisis';
-  scope: 'local' | 'regional' | 'global';
+  type: "cataclysm" | "celebration" | "discovery" | "invasion" | "festival" | "crisis";
+  scope: "local" | "regional" | "global";
   triggers: EventTrigger[];
   effects: EventEffect[];
   duration: number; // world time seconds
@@ -649,7 +677,7 @@ interface GlobalMemory {
 
 interface GlobalMemoryEntry {
   id: string;
-  type: 'player_action' | 'world_event' | 'cataclysm' | 'diplomatic' | 'economic';
+  type: "player_action" | "world_event" | "cataclysm" | "diplomatic" | "economic";
   content: string;
   timestamp: Date;
   importance: number; // 0-100
@@ -662,7 +690,7 @@ interface GlobalMemoryEntry {
 interface CrossGroupImpact {
   sourceGroupId: string;
   targetGroupId: string;
-  impactType: 'reputation' | 'resource' | 'access' | 'hostility' | 'alliance';
+  impactType: "reputation" | "resource" | "access" | "hostility" | "alliance";
   magnitude: number; // -100 to 100
   delay: number; // world time seconds
   conditions: ImpactCondition[];
@@ -681,14 +709,14 @@ interface TimeLag {
 interface ReputationSpillover {
   sourceGroup: string;
   targetGroup: string;
-  spilloverType: 'positive' | 'negative' | 'neutral';
+  spilloverType: "positive" | "negative" | "neutral";
   magnitude: number; // 0-100
   decayRate: number; // per world time hour
   conditions: SpilloverCondition[];
 }
 
 interface WorldStateEvolution {
-  evolutionType: 'gradual' | 'sudden' | 'cascading' | 'cyclical';
+  evolutionType: "gradual" | "sudden" | "cascading" | "cyclical";
   triggers: EvolutionTrigger[];
   changes: EvolutionChange[];
   timeline: EvolutionTimeline[];
@@ -704,7 +732,7 @@ interface ConsequencePropagation {
   propagationChain: PropagationStep[];
   finalImpact: FinalImpact;
   totalDelay: number; // world time seconds
-  visibility: 'immediate' | 'delayed' | 'hidden';
+  visibility: "immediate" | "delayed" | "hidden";
 }
 
 interface PropagationStep {
@@ -743,10 +771,10 @@ interface Monster {
 }
 
 interface MonsterType {
-  category: 'beast' | 'humanoid' | 'undead' | 'elemental' | 'dragon' | 'custom';
+  category: "beast" | "humanoid" | "undead" | "elemental" | "dragon" | "custom";
   subcategory: string;
-  size: 'tiny' | 'small' | 'medium' | 'large' | 'huge' | 'gargantuan';
-  alignment: 'lawful' | 'neutral' | 'chaotic';
+  size: "tiny" | "small" | "medium" | "large" | "huge" | "gargantuan";
+  alignment: "lawful" | "neutral" | "chaotic";
 }
 
 interface MonsterBehavior {
@@ -755,7 +783,7 @@ interface MonsterBehavior {
   packBehavior: boolean;
   territorial: boolean;
   nocturnal: boolean;
-  huntingPattern: 'ambush' | 'patrol' | 'nest' | 'migration';
+  huntingPattern: "ambush" | "patrol" | "nest" | "migration";
 }
 
 interface MonsterStats {
@@ -803,14 +831,14 @@ interface FactionRelationship {
   factionA: string;
   factionB: string;
   standing: number; // -100 to 100
-  status: 'allied' | 'friendly' | 'neutral' | 'unfriendly' | 'hostile' | 'at_war';
+  status: "allied" | "friendly" | "neutral" | "unfriendly" | "hostile" | "at_war";
   history: RelationshipEvent[];
 }
 
 interface DiplomaticAction {
   id: string;
   name: string;
-  type: 'negotiate' | 'bribe' | 'threaten' | 'ally' | 'declare_war' | 'peace_treaty' | 'trade_agreement';
+  type: "negotiate" | "bribe" | "threaten" | "ally" | "declare_war" | "peace_treaty" | "trade_agreement";
   requirements: DiplomaticRequirement[];
   effects: DiplomaticEffect[];
   consequences: DiplomaticConsequence[];
@@ -819,9 +847,9 @@ interface DiplomaticAction {
 interface Alliance {
   id: string;
   factions: string[];
-  type: 'defensive' | 'offensive' | 'trade' | 'research';
+  type: "defensive" | "offensive" | "trade" | "research";
   terms: AllianceTerms;
-  status: 'active' | 'broken' | 'proposed';
+  status: "active" | "broken" | "proposed";
   duration: number; // world time seconds
 }
 ```
@@ -880,7 +908,7 @@ interface WorldReputation {
 }
 
 interface KarmaEffect {
-  type: 'npc_reaction' | 'quest_availability' | 'item_access' | 'price_modifier' | 'world_state';
+  type: "npc_reaction" | "quest_availability" | "item_access" | "price_modifier" | "world_state";
   condition: KarmaCondition;
   effect: KarmaEffectValue;
 }
@@ -901,7 +929,7 @@ interface NPCMemory {
 
 interface Memory {
   id: string;
-  type: 'interaction' | 'event' | 'observation' | 'rumor';
+  type: "interaction" | "event" | "observation" | "rumor";
   content: string;
   timestamp: Date;
   importance: number; // 0-100
@@ -926,7 +954,7 @@ interface EmotionalState {
 interface NPCRelationship {
   targetId: string; // character/NPC ID
   standing: number; // -100 to 100
-  type: 'stranger' | 'acquaintance' | 'friend' | 'ally' | 'rival' | 'enemy';
+  type: "stranger" | "acquaintance" | "friend" | "ally" | "rival" | "enemy";
   history: RelationshipEvent[];
   lastInteraction: Date;
   emotionalBond: number; // -100 to 100
@@ -970,7 +998,7 @@ interface MessageFormatting {
 }
 
 interface LanguageConfig {
-  level: 'formal' | 'casual' | 'archaic' | 'slang' | 'technical' | 'poetic';
+  level: "formal" | "casual" | "archaic" | "slang" | "technical" | "poetic";
   dialect: string;
   slang: SlangDictionary;
   idioms: IdiomDictionary;
@@ -981,7 +1009,7 @@ interface LanguageConfig {
 interface SlangDictionary {
   [word: string]: {
     meaning: string;
-    usage: 'common' | 'rare' | 'archaic' | 'regional';
+    usage: "common" | "rare" | "archaic" | "regional";
     context: string;
     alternatives: string[];
   };
@@ -1027,43 +1055,43 @@ interface SpeechPattern {
   id: string;
   name: string;
   pattern: string; // regex or template
-  usage: 'common' | 'rare' | 'archaic' | 'regional';
+  usage: "common" | "rare" | "archaic" | "regional";
   context: string;
   examples: string[];
 }
 
 interface VocabularyLevel {
-  level: 'simple' | 'moderate' | 'complex' | 'archaic' | 'technical';
-  wordChoice: 'common' | 'formal' | 'slang' | 'poetic';
-  sentenceStructure: 'simple' | 'complex' | 'mixed';
+  level: "simple" | "moderate" | "complex" | "archaic" | "technical";
+  wordChoice: "common" | "formal" | "slang" | "poetic";
+  sentenceStructure: "simple" | "complex" | "mixed";
 }
 
 interface GrammarRules {
-  tense: 'past' | 'present' | 'future' | 'mixed';
-  person: 'first' | 'second' | 'third' | 'mixed';
-  formality: 'formal' | 'casual' | 'mixed';
+  tense: "past" | "present" | "future" | "mixed";
+  person: "first" | "second" | "third" | "mixed";
+  formality: "formal" | "casual" | "mixed";
   contractions: boolean;
   slang: boolean;
 }
 
 interface PronunciationRules {
   accent: string;
-  emphasis: 'standard' | 'regional' | 'foreign';
+  emphasis: "standard" | "regional" | "foreign";
   mispronunciations: string[];
   speechImpediments: string[];
 }
 
 interface AccentConfig {
-  type: 'standard' | 'regional' | 'foreign' | 'fictional';
+  type: "standard" | "regional" | "foreign" | "fictional";
   name: string;
   description: string;
   examples: string[];
 }
 
 interface FormattingRules {
-  messageLength: 'short' | 'medium' | 'long' | 'variable';
-  punctuation: 'standard' | 'minimal' | 'excessive';
-  capitalization: 'standard' | 'all_caps' | 'lowercase' | 'mixed';
+  messageLength: "short" | "medium" | "long" | "variable";
+  punctuation: "standard" | "minimal" | "excessive";
+  capitalization: "standard" | "all_caps" | "lowercase" | "mixed";
   emojis: boolean;
   abbreviations: boolean;
   slang: boolean;
@@ -1155,42 +1183,49 @@ interface FormattingRules {
 ## Open Questions
 
 ### World Generation
+
 - How to balance procedural vs. handcrafted content?
 - Should worlds be finite or infinite?
 - How to handle world persistence across sessions?
 - Should worlds be shareable between players?
 
 ### Location Generation
+
 - How many locations per world is optimal?
 - Should locations have prerequisites for discovery?
 - How to handle location revisiting?
 - Should locations change over time?
 
 ### Anomalies
+
 - How many anomalies per location is reasonable?
 - Should anomalies be visible or hidden?
 - How to handle anomaly stacking?
 - Should anomalies affect NPCs differently?
 
 ### Resources
+
 - How to balance resource regeneration rates?
 - Should resources be finite or infinite?
 - How to handle resource competition between players?
 - Should resources have quality tiers?
 
 ### NPCs
+
 - How many NPCs per location is reasonable?
 - Should NPCs have persistent inventories?
 - How to handle NPC death?
 - Should NPCs remember player interactions?
 
 ### Persistent Storage
+
 - How much storage per location is reasonable?
 - Should storage be accessible to all players?
 - How to handle storage theft?
 - Should storage have maintenance costs?
 
 ### Distance & Travel
+
 - How to calculate distance between locations (Euclidean, Manhattan, graph-based)?
 - Should travel time be real-time or accelerated?
 - How to handle travel interruptions (combat, events)?
@@ -1198,6 +1233,7 @@ interface FormattingRules {
 - How to balance travel speed vs. world size?
 
 ### Time Tracking
+
 - What triggers time progression (quests, messages, transfers, real-time)?
 - How to balance time scale (1 real second = X world minutes)?
 - Should time tracking be visible to players or hidden?
@@ -1205,6 +1241,7 @@ interface FormattingRules {
 - Should time affect NPC behavior and schedules?
 
 ### Game-Inspired Systems
+
 - Which game systems are most applicable to loop-lore?
 - How to adapt single-player mechanics for multiplayer/chat?
 - Should game systems be optional or mandatory?
@@ -1212,6 +1249,7 @@ interface FormattingRules {
 - Should game systems be plugin-based or core?
 
 ### Random Encounters
+
 - How often should random encounters occur?
 - Should encounters be purely random or story-driven?
 - How to balance encounter difficulty?
@@ -1219,6 +1257,7 @@ interface FormattingRules {
 - How to handle encounter avoidance?
 
 ### Monsters & Enemies
+
 - How many monster types per world is reasonable?
 - Should monsters have persistent territories?
 - How to handle monster respawning?
@@ -1226,6 +1265,7 @@ interface FormattingRules {
 - How to balance boss monsters?
 
 ### Diplomacy
+
 - How many factions per world is reasonable?
 - Should diplomacy be player-driven or automated?
 - How to handle faction wars?
@@ -1233,6 +1273,7 @@ interface FormattingRules {
 - How to balance diplomatic options?
 
 ### Karma & Standing
+
 - How visible should karma be to players?
 - Should karma affect NPC reactions?
 - How to handle karma resets?
@@ -1240,6 +1281,7 @@ interface FormattingRules {
 - How to balance karma effects?
 
 ### NPC Memories
+
 - How many memories per NPC is reasonable?
 - How fast should memories decay?
 - Should NPCs share memories with each other?
@@ -1247,6 +1289,7 @@ interface FormattingRules {
 - Should NPCs remember player actions across sessions?
 
 ### Message Formatting
+
 - How to balance slang vs. readability?
 - Should slang be world-specific or character-specific?
 - How to handle language level changes?
@@ -1254,6 +1297,7 @@ interface FormattingRules {
 - How to maintain character voice consistency?
 
 ### Travel Encounters
+
 - How often should travel encounters occur?
 - Should encounters be based on travel distance or time?
 - How to handle encounter avoidance during travel?
@@ -1261,6 +1305,7 @@ interface FormattingRules {
 - How to balance travel risk vs. reward?
 
 ### Time-Limited Locations
+
 - How long should temporary locations last?
 - Should players be warned before location expiration?
 - How to handle items/NPCs in expiring locations?
@@ -1268,6 +1313,7 @@ interface FormattingRules {
 - How to balance temporary vs. permanent locations?
 
 ### Global Cataclysms
+
 - How often should cataclysms occur?
 - Should cataclysms be predictable or random?
 - How to handle cataclysm recovery?
@@ -1275,6 +1321,7 @@ interface FormattingRules {
 - How to balance cataclysm severity?
 
 ### Global Memories & Cross-Group Impact
+
 - How long should global memories persist?
 - How to handle time lag between events and impact?
 - Should cross-group impact be visible to players?
@@ -1285,24 +1332,28 @@ interface FormattingRules {
 ## Implementation Phases
 
 ### Phase 1: Core World
+
 - World data model
 - World conditions
 - World style system
 - Basic location generation
 
 ### Phase 2: Location Features
+
 - Anomaly system
 - Resource extraction
 - Item search/generation
 - Unique places generation
 
 ### Phase 3: Persistence & NPCs
+
 - Persistent storage
 - NPC placement
 - NPC migration
 - NPC inventories
 
 ### Phase 4: Travel & Time
+
 - Distance calculation
 - Travel mechanics
 - Fast travel system
@@ -1311,18 +1362,21 @@ interface FormattingRules {
 - Global objectives with time limits
 
 ### Phase 5: Encounters & Combat
+
 - Random encounter system
 - Monster/enemy NPC system
 - Combat mechanics integration
 - Loot and rewards
 
 ### Phase 6: Diplomacy & Karma
+
 - Faction system
 - Diplomacy mechanics
 - Karma and standing system
 - World state management
 
 ### Phase 7: Game-Inspired Systems
+
 - Radiant quest system
 - Crime & bounty system
 - Faction reputation
@@ -1331,6 +1385,7 @@ interface FormattingRules {
 - Settlement building
 
 ### Phase 8: Polish & Integration
+
 - UI/UX refinement
 - Performance optimization
 - World sharing

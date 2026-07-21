@@ -31,12 +31,12 @@ All routes mounted as Elysia plugins via `app.use(xxxRoutes(handleOpts))` in `sr
 
 ### Rules
 
-| Change Type | Action | Example |
-|-------------|--------|---------|
-| **Additive** (new field, new optional param, new endpoint) | Add to current version | `GET /api/v1/actors` adds `avatar_url` field |
-| **Breaking** (renamed field, removed endpoint, changed pagination) | New version | Pagination shape changes → v2 |
-| **Deprecation** | Headers on old version | `Sunset`, `Deprecation`, `Link` headers |
-| **Removal** | After N-1 versions | v1 removed when v3 ships |
+| Change Type                                                        | Action                 | Example                                      |
+| ------------------------------------------------------------------ | ---------------------- | -------------------------------------------- |
+| **Additive** (new field, new optional param, new endpoint)         | Add to current version | `GET /api/v1/actors` adds `avatar_url` field |
+| **Breaking** (renamed field, removed endpoint, changed pagination) | New version            | Pagination shape changes → v2                |
+| **Deprecation**                                                    | Headers on old version | `Sunset`, `Deprecation`, `Link` headers      |
+| **Removal**                                                        | After N-1 versions     | v1 removed when v3 ships                     |
 
 ---
 
@@ -110,30 +110,30 @@ src/routes/
 ### Mounting (elysia-app.ts)
 
 ```ts
-import { v1Routes } from "./routes/v1";
-import { v2Routes } from "./routes/v2";
+import { v1Routes, } from "./routes/v1";
+import { v2Routes, } from "./routes/v2";
 
 // Versioned routes
-app.use(v1Routes(handleOpts));   // /api/v1/*
-app.use(v2Routes(handleOpts));   // /api/v2/*
+app.use(v1Routes(handleOpts,),); // /api/v1/*
+app.use(v2Routes(handleOpts,),); // /api/v2/*
 
 // Legacy redirect: /api/{resource} → /api/v1/{resource}
-app.all("/api/:resource", versionRedirect("v1"));
-app.all("/api/:resource/*", versionRedirect("v1"));
+app.all("/api/:resource", versionRedirect("v1",),);
+app.all("/api/:resource/*", versionRedirect("v1",),);
 ```
 
 ### Version Resolver Middleware
 
 ```ts
 // Resolves version from URL path (/api/v1/...) or falls back to Accept header
-export function resolveVersion(request: Request): string {
-  const url = new URL(request.url);
-  const pathMatch = url.pathname.match(/^\/api\/v(\d+)\//);
-  if (pathMatch) return pathMatch[1];
+export function resolveVersion(request: Request,): string {
+  const url = new URL(request.url,);
+  const pathMatch = url.pathname.match(/^\/api\/v(\d+)\//,);
+  if (pathMatch) { return pathMatch[1]; }
 
   // Content negotiation fallback
-  const accept = request.headers.get("Accept") ?? "";
-  const vndMatch = accept.match(/application\/vnd\.loop-lore\.v(\d+)\+json/);
+  const accept = request.headers.get("Accept",) ?? "";
+  const vndMatch = accept.match(/application\/vnd\.loop-lore\.v(\d+)\+json/,);
   return vndMatch?.[1] ?? "1"; // default to v1
 }
 ```
@@ -144,31 +144,31 @@ Version-specific handlers call the same services:
 
 ```ts
 // routes/v1/actors.ts
-import { actorService } from "../../services/actor";
+import { actorService, } from "../../services/actor";
 
 // V1 response shape
-app.get("/api/v1/actors/:id", async (ctx) => {
-  const actor = await actorService.getById(ctx.params.id);
-  return { data: formatV1(actor), meta: { api_version: "1" } };
-});
+app.get("/api/v1/actors/:id", async (ctx,) => {
+  const actor = await actorService.getById(ctx.params.id,);
+  return { data: formatV1(actor,), meta: { api_version: "1", }, };
+},);
 
 // routes/v2/actors.ts
-app.get("/api/v2/actors/:id", async (ctx) => {
-  const actor = await actorService.getById(ctx.params.id);
-  return { data: formatV2(actor), meta: { api_version: "2" } };
-});
+app.get("/api/v2/actors/:id", async (ctx,) => {
+  const actor = await actorService.getById(ctx.params.id,);
+  return { data: formatV2(actor,), meta: { api_version: "2", }, };
+},);
 ```
 
 ---
 
 ## Migration Timeline
 
-| Phase | What | Effort |
-|-------|------|--------|
-| **Phase 0** (now) | Add `meta.api_version` to all existing responses. No URL change. | Low |
-| **Phase 1** | Create `src/routes/v1/` dir, move current route modules. Mount under `/api/v1/`. Keep `/api/` → redirect. | Med |
-| **Phase 2** | When first breaking change needed, create `src/routes/v2/`. | Low |
-| **Phase 3** | Deprecate v1 headers. After 12 months, remove v1. | Low |
+| Phase             | What                                                                                                      | Effort |
+| ----------------- | --------------------------------------------------------------------------------------------------------- | ------ |
+| **Phase 0** (now) | Add `meta.api_version` to all existing responses. No URL change.                                          | Low    |
+| **Phase 1**       | Create `src/routes/v1/` dir, move current route modules. Mount under `/api/v1/`. Keep `/api/` → redirect. | Med    |
+| **Phase 2**       | When first breaking change needed, create `src/routes/v2/`.                                               | Low    |
+| **Phase 3**       | Deprecate v1 headers. After 12 months, remove v1.                                                         | Low    |
 
 ---
 
