@@ -12,24 +12,29 @@ Implement NSFW-specific location mechanics: privacy levels, atmosphere modifiers
 ## Core Features
 
 ### Location Types
+
 - Bedroom, Bathroom, Kitchen, Dungeon, Brothel, Tavern, Alley, Forest, Beach, Hot Spring, Carriage, Throne Room, Temple, Library, Garden, Balcony, Stage, Club, etc.
 
 ### Privacy Levels
+
 - Public: high discovery risk, arousal modifier
 - Semi-private: moderate risk
 - Private: low risk
 - Isolated: no risk
 
 ### Atmosphere
+
 - Romantic, Dangerous, Comfortable, Exotic, Seedy
 - Affects arousal buildup, mood, encounter type availability
 
 ### Equipment
+
 - Location-specific equipment (bed, bondage furniture, etc.)
 - Enables specific techniques/actions
 - Can be brought to locations
 
 ### Discovery Risk
+
 - Chance of being caught
 - Consequences if caught (reputation, social, legal)
 - Risk modifiers (time of day, noise, visibility)

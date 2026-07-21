@@ -12,18 +12,21 @@ Implement asset versioning to track changes, enable rollbacks, and maintain hist
 ## Requirements
 
 ### Version Tracking
+
 - New `asset_versions` table
 - Each upload creates new version
 - Version metadata: changelog, size, dimensions
 - Current version pointer in `assets` table
 
 ### Version Management
+
 - List all versions of an asset
 - View specific version
 - Rollback to previous version
 - Delete specific version
 
 ### API Endpoints
+
 - `GET /api/assets/:id/versions` — List versions
 - `GET /api/assets/:id/versions/:version` — Get version
 - `POST /api/assets/:id/versions` — Upload new version
@@ -39,6 +42,7 @@ Implement asset versioning to track changes, enable rollbacks, and maintain hist
 5. Update asset preview to show version history
 
 ## Files
+
 - `src/db/migrations/019_asset_versions.sql` — Migration
 - `src/assets/service.ts` — Version-aware create
 - `src/assets/controller.ts` — Version endpoints

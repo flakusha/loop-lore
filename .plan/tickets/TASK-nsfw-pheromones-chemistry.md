@@ -12,12 +12,14 @@ Implement pheromone system (natural/synthetic attraction), aphrodisiac items/eff
 ## Core Features
 
 ### Pheromones
+
 - Natural pheromones per species/character
 - Modified by state (heat, arousal, stress)
 - Species compatibility
 - Affects nearby characters
 
 ### Aphrodisiacs
+
 - Natural, alchemical, magical, technological types
 - Effects: arousal boost, buildup rate, resistance reduction
 - Application methods: consumed, inhaled, contact, injected
@@ -25,11 +27,13 @@ Implement pheromone system (natural/synthetic attraction), aphrodisiac items/eff
 - Detection difficulty
 
 ### Chemical Resistance
+
 - Base resistance per character
 - Modified by species, willpower, experience
 - Can be trained through exposure
 
 ### Heat/Rut Cycles
+
 - Species-specific reproductive cycles
 - Phase progression (normal → pre-heat → heat → post-heat)
 - Mechanical effects (arousal multiplier, pheromone boost, fertility, mood)

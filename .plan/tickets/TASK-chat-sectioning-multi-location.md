@@ -30,11 +30,11 @@ Needed:   Chat → World → Location(s) (multiple, sequential)
 
 ### 1. Chat Section Model
 
-| Approach | Description | Pros | Cons |
-| -------- | ----------- | ---- | ---- |
-| **Sections** | Chat has ordered sections, each tied to location | Simple, clear boundaries | Rigid, requires explicit transitions |
-| **Timeline** | Chat is continuous timeline with location metadata per message | Flexible, natural flow | Complex query, no clear boundaries |
-| **Hybrid** | Sections with timeline within each section | Best of both | More complex schema |
+| Approach     | Description                                                    | Pros                     | Cons                                 |
+| ------------ | -------------------------------------------------------------- | ------------------------ | ------------------------------------ |
+| **Sections** | Chat has ordered sections, each tied to location               | Simple, clear boundaries | Rigid, requires explicit transitions |
+| **Timeline** | Chat is continuous timeline with location metadata per message | Flexible, natural flow   | Complex query, no clear boundaries   |
+| **Hybrid**   | Sections with timeline within each section                     | Best of both             | More complex schema                  |
 
 **Recommendation:** Hybrid — sections for location grouping, timeline within sections.
 
@@ -46,25 +46,25 @@ interface ChatSection {
   chatId: string;
   locationId: string;
   worldId: string;
-  order: number;                    // Position in chat
-  title?: string;                   // "The Dark Forest", "Tavern"
-  backgroundId?: string;            // Section-specific background
+  order: number; // Position in chat
+  title?: string; // "The Dark Forest", "Tavern"
+  backgroundId?: string; // Section-specific background
   startedAt: Date;
-  endedAt?: Date;                   // null = current section
-  transitionType?: TransitionType;  // How we arrived here
+  endedAt?: Date; // null = current section
+  transitionType?: TransitionType; // How we arrived here
 }
 
-type TransitionType = 
-  | 'walk'        // Normal travel
-  | 'teleport'    // Instant
-  | 'cutscene'    // Narrative transition
-  | 'combat'      // Forced move
-  | 'choice'      // User selected
-  | 'narrative';  // Story-driven
+type TransitionType =
+  | "walk" // Normal travel
+  | "teleport" // Instant
+  | "cutscene" // Narrative transition
+  | "combat" // Forced move
+  | "choice" // User selected
+  | "narrative"; // Story-driven
 
 interface ChatMessage {
   // ... existing fields
-  sectionId: string;                // Which section this message belongs to
+  sectionId: string; // Which section this message belongs to
 }
 ```
 
@@ -88,25 +88,25 @@ UI Update:
 
 ### 4. Group Chat Complexity
 
-| Scenario | Challenge |
-| -------- | --------- |
-| All members move together | Simple — one section change |
-| Split party | Multiple sections per chat (parallel) |
-| Member joins from different location | Section fork or merge |
-| Combat scatter | Temporary section splits |
+| Scenario                             | Challenge                             |
+| ------------------------------------ | ------------------------------------- |
+| All members move together            | Simple — one section change           |
+| Split party                          | Multiple sections per chat (parallel) |
+| Member joins from different location | Section fork or merge                 |
+| Combat scatter                       | Temporary section splits              |
 
 **Recommendation:** Start with "all members move together" — simplest, covers 80% use case.
 
 ### 5. Context Preservation
 
-| Context | Across Sections | Notes |
-| ------- | --------------- | ----- |
-| Conversation history | ✅ Yes | Full history accessible |
-| Character relationships | ✅ Yes | Persistent |
-| Inventory/items | ✅ Yes | Carried between locations |
-| Active quests | ✅ Yes | Quest state persists |
-| NPC memories | ⚠️ Partial | NPCs remember meeting, not location details |
-| Location-specific knowledge | ❌ No | Each location has own context |
+| Context                     | Across Sections | Notes                                       |
+| --------------------------- | --------------- | ------------------------------------------- |
+| Conversation history        | ✅ Yes          | Full history accessible                     |
+| Character relationships     | ✅ Yes          | Persistent                                  |
+| Inventory/items             | ✅ Yes          | Carried between locations                   |
+| Active quests               | ✅ Yes          | Quest state persists                        |
+| NPC memories                | ⚠️ Partial       | NPCs remember meeting, not location details |
+| Location-specific knowledge | ❌ No           | Each location has own context               |
 
 ## Tasks
 
@@ -169,12 +169,12 @@ UI Update:
 
 ## Migration Considerations
 
-| Existing Data | Migration Strategy |
-| ------------- | ------------------ |
+| Existing Data       | Migration Strategy                                  |
+| ------------------- | --------------------------------------------------- |
 | Chats with messages | Create single section per chat, backfill section_id |
-| Group chats | Same — one section per chat |
-| Chat exports | Include section metadata |
-| Archived chats | Sections preserved, read-only |
+| Group chats         | Same — one section per chat                         |
+| Chat exports        | Include section metadata                            |
+| Archived chats      | Sections preserved, read-only                       |
 
 ## Risk
 

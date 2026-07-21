@@ -12,6 +12,7 @@ Implement sexual reputation system with promiscuity/skill/kinkiness/fidelity/dan
 ## Core Features
 
 ### Reputation Scores
+
 - Overall reputation (-100 to 100)
 - Promiscuity (0-100) — how many partners known
 - Skill (0-100) — reputation for sexual skill
@@ -20,17 +21,20 @@ Implement sexual reputation system with promiscuity/skill/kinkiness/fidelity/dan
 - Danger (0-100) — reputation for risky behavior
 
 ### Rumors
+
 - True/false rumors about sexual activity
 - Spread chance based on witnesses, gossip skill
 - Effects on reputation and relationships
 - Can be started, denied, or confirmed
 
 ### Conquest Tracking
+
 - Known sexual partners
 - Relationship history
 - Notable encounters
 
 ### Social Effects
+
 - Reputation affects seduction difficulty
 - More reputation = more offers
 - Jealousy risk from partners

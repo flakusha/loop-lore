@@ -12,6 +12,7 @@ Expand user seeding beyond assistant/admin/solo to support configurable addition
 ## Current State
 
 Currently only 3 user roles:
+
 - **Admin** — full access
 - **Assistant** — LLM assistant
 - **Solo** — single-user mode (optional, for fast retesting)
@@ -21,18 +22,18 @@ Currently only 3 user roles:
 ### Additional User Roles
 
 ```typescript
-type UserRole = 
-  | 'admin'          // Full system access
-  | 'moderator'      // Content moderation, user management
-  | 'assistant'      // LLM assistant
-  | 'creator'        // Character/world creation
-  | 'player'         // Standard player
-  | 'viewer'         // Read-only access
-  | 'solo'           // Solo mode (fast retesting)
-  | 'guest'          // Limited access, no persistence
-  | 'bot'            // Automated/bot user
-  | 'tester'         // QA/testing role
-  | 'custom';        // Custom role with specific permissions
+type UserRole =
+  | "admin" // Full system access
+  | "moderator" // Content moderation, user management
+  | "assistant" // LLM assistant
+  | "creator" // Character/world creation
+  | "player" // Standard player
+  | "viewer" // Read-only access
+  | "solo" // Solo mode (fast retesting)
+  | "guest" // Limited access, no persistence
+  | "bot" // Automated/bot user
+  | "tester" // QA/testing role
+  | "custom"; // Custom role with specific permissions
 ```
 
 ### Seeding Configuration
@@ -41,44 +42,44 @@ type UserRole =
 # config.yaml
 seeding:
   enabled: true
-  
+
   # Default users to seed
   users:
     - username: admin
-      password: ${ADMIN_PASSWORD}  # From env
+      password: ${ADMIN_PASSWORD} # From env
       role: admin
       seed_data: true
-      
+
     - username: moderator
       password: ${MOD_PASSWORD}
       role: moderator
       seed_data: true
-      
+
     - username: creator
       password: ${CREATOR_PASSWORD}
       role: creator
       seed_data: true
-      
+
     - username: player1
       password: ${PLAYER1_PASSWORD}
       role: player
       seed_data: true
-      
+
     - username: player2
       password: ${PLAYER2_PASSWORD}
       role: player
       seed_data: true
-      
+
     - username: tester
       password: ${TESTER_PASSWORD}
       role: tester
       seed_data: true
-      
+
     - username: guest
       password: ${GUEST_PASSWORD}
       role: guest
       seed_data: false
-      
+
   # Seed data templates
   seed_data:
     characters:
@@ -86,16 +87,16 @@ seeding:
         species: "human"
         visibility: "public"
         role: "player"
-        
+
     worlds:
       - name: "Test World"
         visibility: "public"
         creator: "creator"
-        
+
     chats:
       - participants: ["player1", "player2"]
         type: "private"
-        
+
   # Environment-specific overrides
   environments:
     development:
@@ -103,13 +104,13 @@ seeding:
         - username: dev_admin
           role: admin
           seed_data: true
-          
+
     testing:
       users:
         - username: test_user
           role: player
           seed_data: true
-          
+
     staging:
       users:
         - username: staging_admin
@@ -129,7 +130,7 @@ interface SeedingConfig {
 
 interface SeedUser {
   username: string;
-  password: string;  // Can reference env vars
+  password: string; // Can reference env vars
   role: UserRole;
   seed_data: boolean;
   metadata?: Record<string, unknown>;
@@ -146,23 +147,23 @@ interface SeedData {
 interface SeedCharacter {
   name: string;
   species: string;
-  visibility: 'private' | 'public';
-  role: string;  // Which user role this is for
+  visibility: "private" | "public";
+  role: string; // Which user role this is for
   personality?: PersonalityTrait[];
   stats?: CharacterStats;
 }
 
 interface SeedWorld {
   name: string;
-  visibility: 'private' | 'public';
-  creator: string;  // Username of creator
+  visibility: "private" | "public";
+  creator: string; // Username of creator
   locations?: SeedLocation[];
   npcs?: SeedNPC[];
 }
 
 interface SeedChat {
-  participants: string[];  // Usernames
-  type: 'private' | 'group' | 'public';
+  participants: string[]; // Usernames
+  type: "private" | "group" | "public";
   initial_messages?: string[];
 }
 
@@ -215,47 +216,55 @@ interface RolePermissions {
   permissions: Permission[];
 }
 
-type Permission = 
-  | 'chat.create'
-  | 'chat.join'
-  | 'chat.delete'
-  | 'character.create'
-  | 'character.edit_own'
-  | 'character.edit_any'
-  | 'character.delete_own'
-  | 'character.delete_any'
-  | 'world.create'
-  | 'world.edit_own'
-  | 'world.edit_any'
-  | 'world.delete_own'
-  | 'world.delete_any'
-  | 'user.view'
-  | 'user.edit'
-  | 'user.delete'
-  | 'user.ban'
-  | 'moderation.review'
-  | 'moderation.action'
-  | 'admin.settings'
-  | 'admin.users'
-  | 'admin.system'
-  | 'export.own'
-  | 'export.any'
-  | 'import.own'
-  | 'import.any';
+type Permission =
+  | "chat.create"
+  | "chat.join"
+  | "chat.delete"
+  | "character.create"
+  | "character.edit_own"
+  | "character.edit_any"
+  | "character.delete_own"
+  | "character.delete_any"
+  | "world.create"
+  | "world.edit_own"
+  | "world.edit_any"
+  | "world.delete_own"
+  | "world.delete_any"
+  | "user.view"
+  | "user.edit"
+  | "user.delete"
+  | "user.ban"
+  | "moderation.review"
+  | "moderation.action"
+  | "admin.settings"
+  | "admin.users"
+  | "admin.system"
+  | "export.own"
+  | "export.any"
+  | "import.own"
+  | "import.any";
 
 // Default permission sets
 const DEFAULT_PERMISSIONS: Record<UserRole, Permission[]> = {
-  admin: ['*'],  // All permissions
-  moderator: ['chat.*', 'character.view', 'moderation.*', 'user.view', 'user.ban'],
-  assistant: ['chat.join', 'character.view'],
-  creator: ['character.*', 'world.*', 'export.own', 'import.own'],
-  player: ['chat.create', 'chat.join', 'character.create', 'character.edit_own', 'world.create', 'world.edit_own', 'export.own'],
-  viewer: ['chat.join', 'character.view', 'world.view'],
-  solo: ['*'],  // Full access in solo mode
-  guest: ['chat.join', 'character.view'],
-  bot: ['chat.join', 'chat.create'],
-  tester: ['*'],  // Full access for testing
-  custom: [],  // Custom set
+  admin: ["*",], // All permissions
+  moderator: ["chat.*", "character.view", "moderation.*", "user.view", "user.ban",],
+  assistant: ["chat.join", "character.view",],
+  creator: ["character.*", "world.*", "export.own", "import.own",],
+  player: [
+    "chat.create",
+    "chat.join",
+    "character.create",
+    "character.edit_own",
+    "world.create",
+    "world.edit_own",
+    "export.own",
+  ],
+  viewer: ["chat.join", "character.view", "world.view",],
+  solo: ["*",], // Full access in solo mode
+  guest: ["chat.join", "character.view",],
+  bot: ["chat.join", "chat.create",],
+  tester: ["*",], // Full access for testing
+  custom: [], // Custom set
 };
 ```
 

@@ -19,26 +19,26 @@ with three capabilities not covered there:
    reusable assistant scenario sources for future generation of scenarios.
 
 This epic assumes the confirmation/quality gating flow from
-`epic-assistant-gm-flows.md` still applies; it adds the *routing* and *media*
+`epic-assistant-gm-flows.md` still applies; it adds the _routing_ and _media_
 layers on top.
 
 ## Stable Diffusion Integration
 
 ### Generation Targets
 
-| Entity | Asset kind |
-|--------|-----------|
-| Character | Portrait |
-| Item | Icon / render |
-| Location | Scene art |
-| World | Map / mood art |
+| Entity    | Asset kind     |
+| --------- | -------------- |
+| Character | Portrait       |
+| Item      | Icon / render  |
+| Location  | Scene art      |
+| World     | Map / mood art |
 
 ```typescript
 interface SDRequest {
   prompt: string;
   negative_prompt?: string;
   entity_ref: EntityRef;
-  size: [number, number];
+  size: [number, number,];
   seed?: number;
 }
 ```
@@ -47,19 +47,19 @@ interface SDRequest {
 
 ### Routing Decision
 
-| Intent | Route | Approval |
-|--------|-------|----------|
-| Generate content | Generation pipeline | Quality + user confirm |
-| Direct tool execution | Approved tool bus | Pre-approved allowlist |
-| External API call | API integration framework | Per-call policy |
+| Intent                | Route                     | Approval               |
+| --------------------- | ------------------------- | ---------------------- |
+| Generate content      | Generation pipeline       | Quality + user confirm |
+| Direct tool execution | Approved tool bus         | Pre-approved allowlist |
+| External API call     | API integration framework | Per-call policy        |
 
 ```typescript
-type AssistantIntent = 'generate' | 'tool_exec' | 'api_call';
+type AssistantIntent = "generate" | "tool_exec" | "api_call";
 
 interface IntentResult {
   intent: AssistantIntent;
   confidence: number;
-  target: string;            // tool id or api id or generation template
+  target: string; // tool id or api id or generation template
   requires_approval: boolean;
 }
 ```
@@ -73,7 +73,7 @@ assistant later consumes when building scenarios. Bridges into `epic-blog-system
 ```typescript
 interface ScenarioSource {
   id: string;
-  origin: 'creative_llm' | 'blog_seed' | 'manual';
+  origin: "creative_llm" | "blog_seed" | "manual";
   world_sketch: string;
   reusable: boolean;
 }

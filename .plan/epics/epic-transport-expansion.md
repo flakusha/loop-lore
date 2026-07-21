@@ -15,19 +15,19 @@ the existing handlers are server-reachable.
 
 ## Current State Re-Survey (2026-07-20)
 
-| Area                 | File(s)                                   | State     | Notes                                                                                  |
-| -------------------- | ----------------------------------------- | --------- | -------------------------------------------------------------------------------------- |
-| HTTP/1.1 handler     | `src/transport/http1.ts`                  | ✅ Built  | `Http1Handler` — keep-alive, idle timeout.                                             |
-| HTTP/2 handler       | `src/transport/h2.ts`                     | ✅ Built  | `H2Handler` — multiplexing, server-push metadata, stream tracking, close().            |
-| WebSocket handler    | `src/transport/ws.ts`                     | ✅ Built  | `WsHandler` — ping/pending-queue, connection lifecycle.                                |
-| Negotiation          | `src/transport/negotiation.ts`            | ✅ Built  | Server capabilities + `negotiate()`; **default capability list advertises HTTP/1.1 only** (gap — H2/WS not yet offered). |
-| Upgrade              | `src/transport/upgrade.ts`                | ✅ Built  | Graceful protocol upgrade with fallback.                                              |
-| Compression          | `src/transport/compression.ts`           | ✅ Built  | gzip/zstd/brotli wrappers + `withCompression`.                                        |
-| Factory / barrel     | `src/transport/factory.ts`, `index.ts`    | ✅ Built  | `createProtocol()` dispatcher; exports all handlers.                                   |
-| Test harness         | `src/transport/test/harness.ts`          | ✅ Built  | `buildDefaultTests`, `validateProtocol`, `TestReport`.                                |
-| HTTP/3 (QUIC)        | —                                         | ❌ Missing | No QUIC handler, no `TransportProtocol.Http3` enum usage.                             |
-| WebTransport         | —                                         | ❌ Missing | No WebTransport handler, no `TransportProtocol.WebTransport` enum usage.              |
-| Server-side wiring   | `src/server.ts`, `src/config/schema.ts`  | ❌ Gap    | Existing H2/WS handlers are not yet advertised/served by the HTTP server (negotiation defaults to 1.1). |
+| Area               | File(s)                                 | State      | Notes                                                                                                                    |
+| ------------------ | --------------------------------------- | ---------- | ------------------------------------------------------------------------------------------------------------------------ |
+| HTTP/1.1 handler   | `src/transport/http1.ts`                | ✅ Built   | `Http1Handler` — keep-alive, idle timeout.                                                                               |
+| HTTP/2 handler     | `src/transport/h2.ts`                   | ✅ Built   | `H2Handler` — multiplexing, server-push metadata, stream tracking, close().                                              |
+| WebSocket handler  | `src/transport/ws.ts`                   | ✅ Built   | `WsHandler` — ping/pending-queue, connection lifecycle.                                                                  |
+| Negotiation        | `src/transport/negotiation.ts`          | ✅ Built   | Server capabilities + `negotiate()`; **default capability list advertises HTTP/1.1 only** (gap — H2/WS not yet offered). |
+| Upgrade            | `src/transport/upgrade.ts`              | ✅ Built   | Graceful protocol upgrade with fallback.                                                                                 |
+| Compression        | `src/transport/compression.ts`          | ✅ Built   | gzip/zstd/brotli wrappers + `withCompression`.                                                                           |
+| Factory / barrel   | `src/transport/factory.ts`, `index.ts`  | ✅ Built   | `createProtocol()` dispatcher; exports all handlers.                                                                     |
+| Test harness       | `src/transport/test/harness.ts`         | ✅ Built   | `buildDefaultTests`, `validateProtocol`, `TestReport`.                                                                   |
+| HTTP/3 (QUIC)      | —                                       | ❌ Missing | No QUIC handler, no `TransportProtocol.Http3` enum usage.                                                                |
+| WebTransport       | —                                       | ❌ Missing | No WebTransport handler, no `TransportProtocol.WebTransport` enum usage.                                                 |
+| Server-side wiring | `src/server.ts`, `src/config/schema.ts` | ❌ Gap     | Existing H2/WS handlers are not yet advertised/served by the HTTP server (negotiation defaults to 1.1).                  |
 
 ## Scope
 

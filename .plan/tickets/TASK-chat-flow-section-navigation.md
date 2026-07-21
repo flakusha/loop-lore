@@ -173,20 +173,20 @@ UI/UX for navigating chat sections like a story — location chapters with visua
 
 ## Responsive Design
 
-| Breakpoint | Layout |
-| ---------- | ------ |
-| Desktop (>1024px) | Story map side panel + inline dividers |
-| Tablet (768-1024px) | Collapsible map + inline dividers |
-| Mobile (<768px) | Bottom sheet map + minimal dividers |
+| Breakpoint          | Layout                                 |
+| ------------------- | -------------------------------------- |
+| Desktop (>1024px)   | Story map side panel + inline dividers |
+| Tablet (768-1024px) | Collapsible map + inline dividers      |
+| Mobile (<768px)     | Bottom sheet map + minimal dividers    |
 
 ## Performance
 
-| Metric | Target | Notes |
-| ---- | ------ | ----- |
-| Section jump | < 100ms | Virtual scroll |
-| Map render | < 50ms | Memoized |
-| Transfer | < 300ms | Optimistic UI |
-| Background swap | < 500ms | Crossfade |
+| Metric          | Target  | Notes          |
+| --------------- | ------- | -------------- |
+| Section jump    | < 100ms | Virtual scroll |
+| Map render      | < 50ms  | Memoized       |
+| Transfer        | < 300ms | Optimistic UI  |
+| Background swap | < 500ms | Crossfade      |
 
 ## Risk
 

@@ -20,18 +20,25 @@ Define and track relationships between characters — allies, rivals, family, ro
 ### Relationship Types
 
 ```typescript
-type RelationshipType = 
-  | 'ally' | 'rival' | 'family' | 'romantic' | 'mentor' | 'subordinate'
-  | 'enemy' | 'neutral' | 'custom';
+type RelationshipType =
+  | "ally"
+  | "rival"
+  | "family"
+  | "romantic"
+  | "mentor"
+  | "subordinate"
+  | "enemy"
+  | "neutral"
+  | "custom";
 
 interface CharacterRelationship {
   id: string;
   fromActorId: string;
   toActorId: string;
   type: RelationshipType;
-  strength: number;           // 0-100 (how strong the bond)
-  description?: string;       // "Childhood friends", "Sworn enemies"
-  bidirectional: boolean;     // Does A→B imply B→A?
+  strength: number; // 0-100 (how strong the bond)
+  description?: string; // "Childhood friends", "Sworn enemies"
+  bidirectional: boolean; // Does A→B imply B→A?
   metadata?: Record<string, unknown>;
 }
 ```

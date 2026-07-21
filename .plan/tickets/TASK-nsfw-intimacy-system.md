@@ -12,11 +12,13 @@ Implement intimacy level system between characters with progression thresholds, 
 ## Core Features
 
 ### Intimacy Levels
+
 - Strangers (0) → Acquaintances (10) → Friends (25) → Close Friends (40) → Romantic Interest (55) → Dating (70) → Intimate (85) → Soulbonded (100)
 - Each level unlocks new interaction types
 - Levels can decrease through neglect, betrayal, or negative actions
 
 ### Intimacy Actions
+
 - Verbal actions (compliments, dirty talk, confessing feelings)
 - Physical actions (touching, kissing, holding hands, more intimate)
 - Gift actions (giving items, crafting for partner)
@@ -24,12 +26,14 @@ Implement intimacy level system between characters with progression thresholds, 
 - Intimate actions (adult interactions, vulnerability)
 
 ### Threshold Events
+
 - New interaction types unlock at each level
 - NPC reactions change at thresholds
 - Gameplay effects (discounts, quests, dialogue options)
 - Memory creation at significant thresholds
 
 ### Integration
+
 - Connects to relationship system (existing)
 - Connects to trust system (existing)
 - Connects to mood system (TASK-nsfw-mood-emotional)
@@ -40,19 +44,19 @@ Implement intimacy level system between characters with progression thresholds, 
 ```typescript
 interface IntimacyManager {
   // Get/set intimacy between characters
-  getIntimacy(charA: string, charB: string): Promise<IntimacyRecord>;
-  setIntimacy(charA: string, charB: string, value: number): Promise<void>;
-  modifyIntimacy(charA: string, charB: string, delta: number, reason: string): Promise<void>;
-  
+  getIntimacy(charA: string, charB: string,): Promise<IntimacyRecord>;
+  setIntimacy(charA: string, charB: string, value: number,): Promise<void>;
+  modifyIntimacy(charA: string, charB: string, delta: number, reason: string,): Promise<void>;
+
   // Process intimacy action
-  processAction(action: IntimacyAction, actor: string, target: string): Promise<IntimacyResult>;
-  
+  processAction(action: IntimacyAction, actor: string, target: string,): Promise<IntimacyResult>;
+
   // Check thresholds
-  checkThresholds(charA: string, charB: string): Promise<ThresholdEvent[]>;
-  getUnlockedInteractions(charA: string, charB: string): Promise<string[]>;
-  
+  checkThresholds(charA: string, charB: string,): Promise<ThresholdEvent[]>;
+  getUnlockedInteractions(charA: string, charB: string,): Promise<string[]>;
+
   // Intimacy decay
-  processDecay(charA: string, charB: string, daysSinceInteraction: number): Promise<void>;
+  processDecay(charA: string, charB: string, daysSinceInteraction: number,): Promise<void>;
 }
 
 interface IntimacyRecord {
@@ -66,7 +70,15 @@ interface IntimacyRecord {
   decay_paused: boolean;
 }
 
-type IntimacyTier = 'strangers' | 'acquaintances' | 'friends' | 'close_friends' | 'romantic_interest' | 'dating' | 'intimate' | 'soulbonded';
+type IntimacyTier =
+  | "strangers"
+  | "acquaintances"
+  | "friends"
+  | "close_friends"
+  | "romantic_interest"
+  | "dating"
+  | "intimate"
+  | "soulbonded";
 
 interface IntimacyResult {
   success: boolean;

@@ -21,12 +21,12 @@ Chat/group chat transfer and location change mechanics improvement. Shared chat 
 
 ### Transfer Mechanics
 
-| Scenario | Behavior |
-| -------- | -------- |
-| Single user moves | Chat transfers to new location |
-| Group moves together | Shared chat continues |
-| Party splits | Branch chat per location |
-| Party reunites | Merge chats |
+| Scenario             | Behavior                       |
+| -------------------- | ------------------------------ |
+| Single user moves    | Chat transfers to new location |
+| Group moves together | Shared chat continues          |
+| Party splits         | Branch chat per location       |
+| Party reunites       | Merge chats                    |
 
 ### Shared Chat Model
 

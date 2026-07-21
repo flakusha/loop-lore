@@ -12,16 +12,19 @@ LLM request throughput management and message scheduling/queuing system. Handle 
 ## Core Problems
 
 ### Local Inference Limitations
+
 - Local LLMs (Ollama, llama.cpp, etc.) have limited throughput
 - Concurrent requests can overwhelm local inference
 - Need intelligent queuing and scheduling
 
 ### Message State Machine Extension
+
 - Current states: pending, generating, complete, failed
 - New states: queued, scheduled, paused
 - State transitions and validation
 
 ### Paired Chat Generation
+
 - Multiple chats may compete for LLM resources
 - Need priority-based scheduling
 - Paused chats should yield to active chats
@@ -75,7 +78,7 @@ generating → cancelled
 ```typescript
 interface ChatGenerationConfig {
   chatId: string;
-  priority: 'high' | 'medium' | 'low';
+  priority: "high" | "medium" | "low";
   maxConcurrent: number;
   pausedGeneration: boolean;
   scheduledMessages: ScheduledMessage[];
@@ -85,7 +88,7 @@ interface ScheduledMessage {
   id: string;
   scheduledAt: Date;
   priority: number;
-  state: 'scheduled' | 'queued' | 'paused';
+  state: "scheduled" | "queued" | "paused";
 }
 ```
 
@@ -95,16 +98,16 @@ interface ScheduledMessage {
 interface LLMResourceManager {
   // Track active requests per provider
   activeRequests: Map<string, number>;
-  
+
   // Queue pending requests
   requestQueue: PriorityQueue<LLMRequest>;
-  
+
   // Rate limiting
   rateLimiter: RateLimiter;
-  
+
   // Scheduling
   scheduler: MessageScheduler;
-  
+
   // State management
   stateMachine: MessageStateMachine;
 }
@@ -113,36 +116,42 @@ interface LLMResourceManager {
 ## Features
 
 ### Queue Management
+
 - Priority-based request queuing
 - Fair queuing across chats
 - Queue depth monitoring
 - Queue overflow handling
 
 ### Rate Limiting
+
 - Per-provider rate limits
 - Concurrent request limits
 - Token budget limits
 - Adaptive rate limiting
 
 ### Scheduling
+
 - Time-based message scheduling
 - Priority-based scheduling
 - Resource-aware scheduling
 - Schedule persistence
 
 ### State Machine
+
 - Extended message states
 - State transition validation
 - State persistence
 - State recovery on restart
 
 ### Paused Generation
+
 - Pause active generation
 - Resume paused generation
 - Yield to higher priority
 - Scheduled message downgrade
 
 ### Monitoring
+
 - Queue depth metrics
 - Request latency tracking
 - Throughput monitoring

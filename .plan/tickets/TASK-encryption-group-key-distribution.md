@@ -18,13 +18,13 @@ Handle key distribution when participants join/leave encrypted chats. New partic
 
 ## Scenarios
 
-| Event | Action |
-| ----- | ------ |
-| Participant joins standard chat | Wrap chat key with new participant's actor key |
-| Participant joins private chat | Same — wrap chat key |
+| Event                            | Action                                                  |
+| -------------------------------- | ------------------------------------------------------- |
+| Participant joins standard chat  | Wrap chat key with new participant's actor key          |
+| Participant joins private chat   | Same — wrap chat key                                    |
 | Participant leaves standard chat | Rotate chat key, re-encrypt with remaining participants |
-| Participant leaves private chat | Same — rotate + re-encrypt |
-| New message after rotation | Encrypted with new key only |
+| Participant leaves private chat  | Same — rotate + re-encrypt                              |
+| New message after rotation       | Encrypted with new key only                             |
 
 ## Tasks
 

@@ -23,14 +23,14 @@ User-facing prompt library — save, share, and reuse prompt templates. Users ca
 interface PromptTemplate {
   id: string;
   userId: string;
-  name: string;                    // "Fantasy GM", "Detective Noir"
-  category: PromptCategory;        // system | character | scenario | custom
-  content: string;                 // Template text with {{variables}}
-  variables: TemplateVariable[];   // {{char}}, {{user}}, etc.
-  visibility: 'private' | 'shared' | 'public';
+  name: string; // "Fantasy GM", "Detective Noir"
+  category: PromptCategory; // system | character | scenario | custom
+  content: string; // Template text with {{variables}}
+  variables: TemplateVariable[]; // {{char}}, {{user}}, etc.
+  visibility: "private" | "shared" | "public";
   tags: string[];
   usageCount: number;
-  rating: number;                  // Community rating
+  rating: number; // Community rating
 }
 ```
 

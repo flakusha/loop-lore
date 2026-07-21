@@ -14,14 +14,14 @@ Disease and poison mechanics — afflictions, symptoms, cures, resistance, and h
 
 ### Disease Types
 
-| Type | Transmission | Severity | Duration |
-|------|--------------|----------|----------|
-| **Plague** | Airborne, contact | Severe | Days-weeks |
-| **Curse** | Magical | Variable | Until cured |
-| **Parasite** | Contact, ingestion | Moderate | Days-months |
-| **Infection** | Wounds | Mild-moderate | Days |
-| **Madness** | Magical, trauma | Severe | Permanent until cured |
-| **Degenerative** | Age, exposure | Gradual | Permanent |
+| Type             | Transmission       | Severity      | Duration              |
+| ---------------- | ------------------ | ------------- | --------------------- |
+| **Plague**       | Airborne, contact  | Severe        | Days-weeks            |
+| **Curse**        | Magical            | Variable      | Until cured           |
+| **Parasite**     | Contact, ingestion | Moderate      | Days-months           |
+| **Infection**    | Wounds             | Mild-moderate | Days                  |
+| **Madness**      | Magical, trauma    | Severe        | Permanent until cured |
+| **Degenerative** | Age, exposure      | Gradual       | Permanent             |
 
 ### Disease Structure
 
@@ -30,7 +30,7 @@ interface Disease {
   id: string;
   name: string;
   type: DiseaseType;
-  severity: 'mild' | 'moderate' | 'severe' | 'fatal';
+  severity: "mild" | "moderate" | "severe" | "fatal";
   transmission: TransmissionType[];
   incubation_period: number; // in hours
   duration: number; // in hours, -1 = permanent
@@ -52,7 +52,7 @@ interface DiseaseStage {
 }
 
 interface Symptom {
-  type: 'stat_reduction' | 'periodic_damage' | 'movement_slow' | 'visual' | 'behavioral' | 'incapacitation';
+  type: "stat_reduction" | "periodic_damage" | "movement_slow" | "visual" | "behavioral" | "incapacitation";
   severity: number; // 1-10
   description: string;
   onset: number; // hours after infection
@@ -78,13 +78,13 @@ interface DiseaseInstance {
 
 ### Poison Types
 
-| Type | Application | Effect | Duration |
-|------|-------------|--------|----------|
-| **Contact** | Touch, trap | Immediate | Minutes |
-| **Ingested** | Food, drink | Delayed | Hours |
-| **Inhaled** | Gas, smoke | Immediate | Minutes |
-| **Injected** | Weapon, needle | Immediate | Minutes-hours |
-| **Magical** | Spell, enchantment | Variable | Variable |
+| Type         | Application        | Effect    | Duration      |
+| ------------ | ------------------ | --------- | ------------- |
+| **Contact**  | Touch, trap        | Immediate | Minutes       |
+| **Ingested** | Food, drink        | Delayed   | Hours         |
+| **Inhaled**  | Gas, smoke         | Immediate | Minutes       |
+| **Injected** | Weapon, needle     | Immediate | Minutes-hours |
+| **Magical**  | Spell, enchantment | Variable  | Variable      |
 
 ### Poison Structure
 
@@ -104,7 +104,7 @@ interface Poison {
 }
 
 interface PoisonEffect {
-  type: 'damage' | 'stat_drain' | 'status_effect' | 'hallucination' | 'paralysis' | 'sleep' | 'death';
+  type: "damage" | "stat_drain" | "status_effect" | "hallucination" | "paralysis" | "sleep" | "death";
   magnitude: number;
   interval: number; // damage per interval in minutes
   save_type: SaveType;
@@ -124,7 +124,7 @@ interface Dosage {
 interface PoisonApplication {
   poison: Poison;
   target: Character;
-  method: 'weapon' | 'food' | 'trap' | 'direct' | 'gas';
+  method: "weapon" | "food" | "trap" | "direct" | "gas";
   dosage: number;
   detection_check: number;
   resistance_check: number;
@@ -145,14 +145,14 @@ interface PoisonResult {
 
 ### Cure Types
 
-| Type | Source | Effectiveness |
-|------|--------|---------------|
-| **Antidote** | Alchemy | 100% if correct |
-| **Herbal Remedy** | Herbalism | 50-80% |
-| **Healing Magic** | Divine/Arcane | 70-100% |
-| **Rest** | Natural | 20-50% |
-| **Surgery** | Skill-based | 60-90% |
-| **Prayer** | Faith-based | Variable |
+| Type              | Source        | Effectiveness   |
+| ----------------- | ------------- | --------------- |
+| **Antidote**      | Alchemy       | 100% if correct |
+| **Herbal Remedy** | Herbalism     | 50-80%          |
+| **Healing Magic** | Divine/Arcane | 70-100%         |
+| **Rest**          | Natural       | 20-50%          |
+| **Surgery**       | Skill-based   | 60-90%          |
+| **Prayer**        | Faith-based   | Variable        |
 
 ### Cure Structure
 
@@ -160,7 +160,7 @@ interface PoisonResult {
 interface Cure {
   id: string;
   name: string;
-  type: 'antidote' | 'herbal' | 'magical' | 'surgical' | 'rest' | 'prayer';
+  type: "antidote" | "herbal" | "magical" | "surgical" | "rest" | "prayer";
   target_diseases: string[];
   target_poisons: string[];
   ingredients: CureIngredient[];
@@ -226,13 +226,13 @@ interface ToleranceMap {
 
 ### Saving Throws
 
-| Condition | Save Type | DC Range |
-|-----------|-----------|----------|
-| **Disease Exposure** | CON | 10-25 |
-| **Poison Ingestion** | CON | 10-30 |
-| **Poison Contact** | DEX | 10-20 |
-| **Magical Affliction** | WIS | 15-30 |
-| **Curse** | CHA | 15-25 |
+| Condition              | Save Type | DC Range |
+| ---------------------- | --------- | -------- |
+| **Disease Exposure**   | CON       | 10-25    |
+| **Poison Ingestion**   | CON       | 10-30    |
+| **Poison Contact**     | DEX       | 10-20    |
+| **Magical Affliction** | WIS       | 15-30    |
+| **Curse**              | CHA       | 15-25    |
 
 ## Alchemy Integration
 

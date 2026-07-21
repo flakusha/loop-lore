@@ -12,17 +12,20 @@ Epic 14 (Import/Export) was listed as "⬜ P1 — Not Started" in backlog and ro
 ## What's Implemented
 
 ### Import (`src/routes/import.ts`)
+
 - Multipart file upload with auto-detection
 - Format detection: JSON, YAML, TOML, PNG-embedded (V2/V3), CHARX (ZIP)
 - Character validation on import
 - Inserts as actor with full metadata
 
 ### Export (`src/routes/export.ts`)
+
 - Bulk export as ZIP archive
 - Includes: characters, chats, worlds
 - Manifest with version, timestamp, format
 
 ### Character Card Export (`src/routes/characters.ts`)
+
 - `GET /api/actors/:id/card` — V2 character card
 - Multi-format exporters in `src/characters/exporters/`:
   - `ccv2.ts` — SillyTavern V2 JSON
@@ -31,9 +34,11 @@ Epic 14 (Import/Export) was listed as "⬜ P1 — Not Started" in backlog and ro
   - `toml.ts` — TOML format
 
 ### Chat Export (`src/routes/chat-export.ts`)
+
 - Chat export endpoints (separate from bulk export)
 
 ### Parser (`src/characters/parser.ts`)
+
 - `parseCharacterCard()` — auto-detect format
 - `validateCharacter()` — schema validation
 - `CanonicalCharacter` — normalized internal format

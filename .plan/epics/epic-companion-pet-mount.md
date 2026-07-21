@@ -14,12 +14,12 @@ Companion, pet, and mount system — NPC companions with loyalty/progression, pe
 
 ### Companion Types
 
-| Type | Description | Progression |
-|------|-------------|-------------|
-| **Story Companion** | NPCs from quests, unique backstories | Relationship-based |
-| **Hired Mercenary** | Temporary combat allies | Gold-based |
-| **Summoned Creature** | Magic-summoned allies | Duration-based |
-| **Familiar** | Bonded magical creatures | Spirit-bound |
+| Type                  | Description                          | Progression        |
+| --------------------- | ------------------------------------ | ------------------ |
+| **Story Companion**   | NPCs from quests, unique backstories | Relationship-based |
+| **Hired Mercenary**   | Temporary combat allies              | Gold-based         |
+| **Summoned Creature** | Magic-summoned allies                | Duration-based     |
+| **Familiar**          | Bonded magical creatures             | Spirit-bound       |
 
 ### Companion Structure
 
@@ -27,7 +27,7 @@ Companion, pet, and mount system — NPC companions with loyalty/progression, pe
 interface Companion {
   id: string;
   name: string;
-  type: 'story' | 'mercenary' | 'summoned' | 'familiar';
+  type: "story" | "mercenary" | "summoned" | "familiar";
   actor: Actor; // Uses existing actor system
   loyalty: number; // 0-100
   relationship: RelationshipType;
@@ -48,7 +48,7 @@ interface CompanionProgression {
 }
 
 interface AIBehavior {
-  combat_role: 'tank' | 'dps' | 'healer' | 'support';
+  combat_role: "tank" | "dps" | "healer" | "support";
   aggression: number; // 0-100
   self_preservation: number; // 0-100
   loyalty_threshold: number; // Below this, companion may leave
@@ -71,31 +71,31 @@ interface Relationship {
   romance_available: boolean;
 }
 
-type RelationshipType = 'friendly' | 'romantic' | 'mentor_student' | 'rivalry' | 'professional';
+type RelationshipType = "friendly" | "romantic" | "mentor_student" | "rivalry" | "professional";
 ```
 
 ### Companion Loyalty Events
 
-| Event | Loyalty Effect | Notes |
-|-------|----------------|-------|
-| Completing quests together | +5-15 | Shared experiences |
-| Giving gifts | +1-10 | Based on preference |
-| Winning battles | +3-8 | Combat effectiveness |
-| Losing battles | -2-5 | Morale impact |
-| Ignoring companion | -1/day | Neglect |
-| Betrayal decisions | -20-50 | Major story impact |
-| Saving companion life | +15-25 | Heroic moment |
+| Event                      | Loyalty Effect | Notes                |
+| -------------------------- | -------------- | -------------------- |
+| Completing quests together | +5-15          | Shared experiences   |
+| Giving gifts               | +1-10          | Based on preference  |
+| Winning battles            | +3-8           | Combat effectiveness |
+| Losing battles             | -2-5           | Morale impact        |
+| Ignoring companion         | -1/day         | Neglect              |
+| Betrayal decisions         | -20-50         | Major story impact   |
+| Saving companion life      | +15-25         | Heroic moment        |
 
 ## Pet System
 
 ### Pet Types
 
-| Type | Description | Abilities |
-|------|-------------|-----------|
-| **Combat Pet** | Fights alongside player | Combat skills |
-| **Utility Pet** | Provides utility bonuses | Gathering, crafting bonuses |
-| **Cosmetic Pet** | Visual companion | Emotes, following |
-| **Battle Pet** | Pet-vs-pet combat | Pet battle skills |
+| Type             | Description              | Abilities                   |
+| ---------------- | ------------------------ | --------------------------- |
+| **Combat Pet**   | Fights alongside player  | Combat skills               |
+| **Utility Pet**  | Provides utility bonuses | Gathering, crafting bonuses |
+| **Cosmetic Pet** | Visual companion         | Emotes, following           |
+| **Battle Pet**   | Pet-vs-pet combat        | Pet battle skills           |
 
 ### Pet Structure
 
@@ -104,8 +104,8 @@ interface Pet {
   id: string;
   name: string;
   species: string;
-  type: 'combat' | 'utility' | 'cosmetic' | 'battle';
-  rarity: 'common' | 'uncommon' | 'rare' | 'epic' | 'legendary';
+  type: "combat" | "utility" | "cosmetic" | "battle";
+  rarity: "common" | "uncommon" | "rare" | "epic" | "legendary";
   level: number;
   experience: number;
   stats: PetStats;
@@ -133,7 +133,7 @@ interface PetStats {
 interface TamingAttempt {
   target: WildPet;
   tamer: Character;
-  method: 'food' | 'combat' | 'seduction' | 'magic' | 'trap';
+  method: "food" | "combat" | "seduction" | "magic" | "trap";
   success_chance: number;
   items_used: Item[];
   result: TamingResult;
@@ -172,15 +172,15 @@ interface EvolutionStage {
 
 ### Mount Types
 
-| Type | Speed | Terrain | Special |
-|------|-------|---------|---------|
-| **Horse** | Fast | Land | Endurance |
-| **Dragon** | Very Fast | Air/Land | Flying, fire breath |
-| **Griffin** | Fast | Air/Land | Flying, dive attack |
-| **Wolf** | Medium | Land | Pack bonus |
-| **Bear** | Slow | Land | Tank, carry capacity |
-| **Boat** | Medium | Water | Naval travel |
-| **Mechanical** | Variable | Land/Air | Customizable |
+| Type           | Speed     | Terrain  | Special              |
+| -------------- | --------- | -------- | -------------------- |
+| **Horse**      | Fast      | Land     | Endurance            |
+| **Dragon**     | Very Fast | Air/Land | Flying, fire breath  |
+| **Griffin**    | Fast      | Air/Land | Flying, dive attack  |
+| **Wolf**       | Medium    | Land     | Pack bonus           |
+| **Bear**       | Slow      | Land     | Tank, carry capacity |
+| **Boat**       | Medium    | Water    | Naval travel         |
+| **Mechanical** | Variable  | Land/Air | Customizable         |
 
 ### Mount Structure
 
@@ -189,7 +189,7 @@ interface Mount {
   id: string;
   name: string;
   species: string;
-  type: 'land' | 'air' | 'water' | 'amphibious';
+  type: "land" | "air" | "water" | "amphibious";
   speed: number;
   stamina: number;
   carry_capacity: number;
@@ -210,7 +210,7 @@ interface MountTraining {
 }
 
 interface MountEquipment {
-  slot: 'saddle' | 'barding' | 'accessory' | 'bags';
+  slot: "saddle" | "barding" | "accessory" | "bags";
   item: Item;
   bonuses: MountBonus[];
 }
@@ -254,7 +254,7 @@ interface BattleStats {
 interface BattleAbility {
   id: string;
   name: string;
-  type: 'attack' | 'buff' | 'debuff' | 'heal';
+  type: "attack" | "buff" | "debuff" | "heal";
   element?: Element;
   power: number;
   accuracy: number;
