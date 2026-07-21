@@ -14,18 +14,18 @@ Weather and environmental mechanics — dynamic weather systems, terrain effects
 
 ### Weather Types
 
-| Type | Effects | Duration | Frequency |
-|------|---------|----------|-----------|
-| **Clear** | None | Variable | Common |
-| **Cloudy** | Minor visibility | Hours | Common |
-| **Rain** | Movement slow, fire weakness | Hours | Common |
-| **Storm** | Lightning, flooding, visibility | Hours | Uncommon |
-| **Snow** | Movement slow, cold damage | Hours-days | Seasonal |
-| **Blizzard** | Severe cold, visibility, movement | Hours | Rare |
-| **Fog** | Major visibility reduction | Hours | Uncommon |
-| **Sandstorm** | Visibility, damage, navigation | Hours | Rare |
-| **Heatwave** | Stamina drain, fire bonus | Days | Rare |
-| **Magical Storm** | Wild magic, elemental surges | Hours | Very rare |
+| Type              | Effects                           | Duration   | Frequency |
+| ----------------- | --------------------------------- | ---------- | --------- |
+| **Clear**         | None                              | Variable   | Common    |
+| **Cloudy**        | Minor visibility                  | Hours      | Common    |
+| **Rain**          | Movement slow, fire weakness      | Hours      | Common    |
+| **Storm**         | Lightning, flooding, visibility   | Hours      | Uncommon  |
+| **Snow**          | Movement slow, cold damage        | Hours-days | Seasonal  |
+| **Blizzard**      | Severe cold, visibility, movement | Hours      | Rare      |
+| **Fog**           | Major visibility reduction        | Hours      | Uncommon  |
+| **Sandstorm**     | Visibility, damage, navigation    | Hours      | Rare      |
+| **Heatwave**      | Stamina drain, fire bonus         | Days       | Rare      |
+| **Magical Storm** | Wild magic, elemental surges      | Hours      | Very rare |
 
 ### Weather Structure
 
@@ -43,7 +43,7 @@ interface WeatherState {
 }
 
 interface WeatherEffect {
-  type: 'movement' | 'combat' | 'magic' | 'visibility' | 'stamina' | 'damage' | 'healing';
+  type: "movement" | "combat" | "magic" | "visibility" | "stamina" | "damage" | "healing";
   modifier: number;
   element?: Element;
   condition?: string;
@@ -82,14 +82,14 @@ interface WeatherForecast {
 
 ### Zone Types
 
-| Zone | Temperature | Weather Patterns | Terrain |
-|------|-------------|------------------|---------|
-| **Tropical** | Hot, humid | Rain, storms, monsoons | Jungle, beach |
-| **Arid** | Hot, dry | Sandstorms, heatwaves | Desert, canyon |
-| **Temperate** | Moderate | Rain, snow, clear | Forest, plains |
-| **Continental** | Variable | Snow, storms, clear | Mountains, hills |
-| **Polar** | Cold | Blizzards, snow, ice | Tundra, glacier |
-| **Magical** | Variable | Magical storms, anomalies | Enchanted areas |
+| Zone            | Temperature | Weather Patterns          | Terrain          |
+| --------------- | ----------- | ------------------------- | ---------------- |
+| **Tropical**    | Hot, humid  | Rain, storms, monsoons    | Jungle, beach    |
+| **Arid**        | Hot, dry    | Sandstorms, heatwaves     | Desert, canyon   |
+| **Temperate**   | Moderate    | Rain, snow, clear         | Forest, plains   |
+| **Continental** | Variable    | Snow, storms, clear       | Mountains, hills |
+| **Polar**       | Cold        | Blizzards, snow, ice      | Tundra, glacier  |
+| **Magical**     | Variable    | Magical storms, anomalies | Enchanted areas  |
 
 ### Climate Structure
 
@@ -98,8 +98,8 @@ interface ClimateZone {
   id: string;
   name: string;
   type: ClimateType;
-  temperature_range: [number, number];
-  precipitation_range: [number, number];
+  temperature_range: [number, number,];
+  precipitation_range: [number, number,];
   seasonal_variations: SeasonalVariation[];
   weather_probabilities: WeatherProbability[];
   hazards: EnvironmentalHazard[];
@@ -117,16 +117,16 @@ interface SeasonalVariation {
 
 ### Terrain Types
 
-| Type | Movement | Combat | Special |
-|------|----------|--------|---------|
-| **Plains** | Normal | Normal | Open field |
-| **Forest** | Slowed | Cover bonus | Stealth bonus |
-| **Mountains** | Difficult | High ground | Climbing required |
-| **Swamp** | Very slow | Poison risk | Disease risk |
-| **Desert** | Normal | Heat stress | Water drain |
-| **Snow** | Slowed | Cold damage | Frostbite risk |
-| **Water** | Swimming | Penalties | Drowning risk |
-| **Underground** | Variable | Darkness | Claustrophobia |
+| Type            | Movement  | Combat      | Special           |
+| --------------- | --------- | ----------- | ----------------- |
+| **Plains**      | Normal    | Normal      | Open field        |
+| **Forest**      | Slowed    | Cover bonus | Stealth bonus     |
+| **Mountains**   | Difficult | High ground | Climbing required |
+| **Swamp**       | Very slow | Poison risk | Disease risk      |
+| **Desert**      | Normal    | Heat stress | Water drain       |
+| **Snow**        | Slowed    | Cold damage | Frostbite risk    |
+| **Water**       | Swimming  | Penalties   | Drowning risk     |
+| **Underground** | Variable  | Darkness    | Claustrophobia    |
 
 ### Terrain Structure
 
@@ -145,7 +145,7 @@ interface Terrain {
 }
 
 interface TerrainHazard {
-  type: 'damage' | 'movement' | 'status' | 'environmental';
+  type: "damage" | "movement" | "status" | "environmental";
   severity: number; // 1-10
   trigger_chance: number; // 0-100
   effect: HazardEffect;
@@ -156,16 +156,16 @@ interface TerrainHazard {
 
 ### Hazard Types
 
-| Type | Effect | Avoidance |
-|------|--------|-----------|
-| **Lava** | Fire damage | Fire resistance, flight |
-| **Acid Pool** | Acid damage | Acid resistance, avoidance |
-| **Quicksand** | Entrapment | DEX check, rope |
-| **Poison Gas** | Poison damage | Gas mask, CON save |
-| **Electrified** | Lightning damage | Lightning resistance |
-| **Radiation** | Gradual damage | Protection gear |
-| **Wild Magic** | Random effects | Magic resistance |
-| **Gravity** | Movement/change | Strength/magic |
+| Type            | Effect           | Avoidance                  |
+| --------------- | ---------------- | -------------------------- |
+| **Lava**        | Fire damage      | Fire resistance, flight    |
+| **Acid Pool**   | Acid damage      | Acid resistance, avoidance |
+| **Quicksand**   | Entrapment       | DEX check, rope            |
+| **Poison Gas**  | Poison damage    | Gas mask, CON save         |
+| **Electrified** | Lightning damage | Lightning resistance       |
+| **Radiation**   | Gradual damage   | Protection gear            |
+| **Wild Magic**  | Random effects   | Magic resistance           |
+| **Gravity**     | Movement/change  | Strength/magic             |
 
 ### Hazard Structure
 
@@ -174,7 +174,7 @@ interface EnvironmentalHazard {
   id: string;
   name: string;
   type: HazardType;
-  severity: 'minor' | 'moderate' | 'severe' | 'extreme';
+  severity: "minor" | "moderate" | "severe" | "extreme";
   damage_per_round: number;
   status_effects: StatusEffect[];
   trigger_radius: number;
@@ -197,7 +197,7 @@ interface EnvironmentalCombatModifier {
 }
 
 interface CombatEffect {
-  type: 'attack' | 'defense' | 'damage' | 'magic' | 'movement' | 'initiative';
+  type: "attack" | "defense" | "damage" | "magic" | "movement" | "initiative";
   element?: Element;
   modifier: number;
   condition?: string;
@@ -206,14 +206,14 @@ interface CombatEffect {
 
 ### Weather Combat Modifiers
 
-| Weather | Ranged | Magic | Fire | Ice | Lightning | Movement |
-|---------|--------|-------|------|-----|-----------|----------|
-| **Rain** | -10% | Normal | -20% | +10% | +20% | -10% |
-| **Storm** | -25% | -10% | -30% | +20% | +50% | -25% |
-| **Snow** | -15% | Normal | -10% | +30% | Normal | -20% |
-| **Fog** | -30% | Normal | Normal | Normal | Normal | -10% |
-| **Sandstorm** | -40% | -20% | +10% | -10% | -20% | -30% |
-| **Heatwave** | Normal | Normal | +30% | -30% | Normal | -15% |
+| Weather       | Ranged | Magic  | Fire   | Ice    | Lightning | Movement |
+| ------------- | ------ | ------ | ------ | ------ | --------- | -------- |
+| **Rain**      | -10%   | Normal | -20%   | +10%   | +20%      | -10%     |
+| **Storm**     | -25%   | -10%   | -30%   | +20%   | +50%      | -25%     |
+| **Snow**      | -15%   | Normal | -10%   | +30%   | Normal    | -20%     |
+| **Fog**       | -30%   | Normal | Normal | Normal | Normal    | -10%     |
+| **Sandstorm** | -40%   | -20%   | +10%   | -10%   | -20%      | -30%     |
+| **Heatwave**  | Normal | Normal | +30%   | -30%   | Normal    | -15%     |
 
 ### Exploration Effects
 
@@ -225,7 +225,7 @@ interface ExplorationModifier {
 }
 
 interface ExplorationEffect {
-  type: 'visibility' | 'navigation' | 'gathering' | 'stealth' | 'travel_speed';
+  type: "visibility" | "navigation" | "gathering" | "stealth" | "travel_speed";
   modifier: number;
   skill_check_dc?: number;
 }
@@ -235,14 +235,14 @@ interface ExplorationEffect {
 
 ### Time Periods
 
-| Period | Light Level | Effects |
-|--------|-------------|---------|
-| **Dawn** | Low → Medium | Transition, special events |
-| **Day** | Full | Normal visibility |
-| **Dusk** | Medium → Low | Transition, special events |
-| **Night** | Low | Stealth bonus, undead bonus |
-| **Midnight** | Very Low | Special events, magic bonus |
-| **Twilight** | Variable | Magical effects |
+| Period       | Light Level  | Effects                     |
+| ------------ | ------------ | --------------------------- |
+| **Dawn**     | Low → Medium | Transition, special events  |
+| **Day**      | Full         | Normal visibility           |
+| **Dusk**     | Medium → Low | Transition, special events  |
+| **Night**    | Low          | Stealth bonus, undead bonus |
+| **Midnight** | Very Low     | Special events, magic bonus |
+| **Twilight** | Variable     | Magical effects             |
 
 ### Time Structure
 
@@ -259,7 +259,15 @@ interface GameTime {
 }
 
 interface MoonPhase {
-  phase: 'new' | 'waxing_crescent' | 'first_quarter' | 'waxing_gibbous' | 'full' | 'waning_gibbous' | 'last_quarter' | 'waning_crescent';
+  phase:
+    | "new"
+    | "waxing_crescent"
+    | "first_quarter"
+    | "waxing_gibbous"
+    | "full"
+    | "waning_gibbous"
+    | "last_quarter"
+    | "waning_crescent";
   effects: MoonEffect[];
 }
 ```
@@ -282,11 +290,11 @@ interface SeasonalEffects {
 
 ### Seasonal Events
 
-| Season | Events | Effects |
-|--------|--------|---------|
-| **Spring** | Blooming, rain | Herb growth, flooding |
-| **Summer** | Heat, storms | Fire risk, growth |
-| **Autumn** | Harvest, wind | Resource gathering |
+| Season     | Events          | Effects               |
+| ---------- | --------------- | --------------------- |
+| **Spring** | Blooming, rain  | Herb growth, flooding |
+| **Summer** | Heat, storms    | Fire risk, growth     |
+| **Autumn** | Harvest, wind   | Resource gathering    |
 | **Winter** | Snow, blizzards | Cold damage, scarcity |
 
 ## Magical Environment
@@ -295,7 +303,7 @@ interface SeasonalEffects {
 
 ```typescript
 interface MagicalWeather {
-  type: 'wild_magic' | 'elemental_surge' | 'arcane_storm' | 'divine_light' | 'shadow_fall';
+  type: "wild_magic" | "elemental_surge" | "arcane_storm" | "divine_light" | "shadow_fall";
   intensity: number; // 0-100
   effects: MagicalEffect[];
   duration: number;
@@ -303,10 +311,10 @@ interface MagicalWeather {
 }
 
 interface MagicalEffect {
-  type: 'spell_boost' | 'spell_failure' | 'random_effect' | 'elemental_change' | 'summon';
+  type: "spell_boost" | "spell_failure" | "random_effect" | "elemental_change" | "summon";
   element?: Element;
   magnitude: number;
-  target: 'self' | 'area' | 'world';
+  target: "self" | "area" | "world";
 }
 ```
 

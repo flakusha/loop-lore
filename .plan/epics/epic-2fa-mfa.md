@@ -12,27 +12,32 @@ Add two-factor (2FA) and multi-factor (MFA) authentication support. Enhance secu
 ## Scope
 
 ### TOTP (Time-based One-Time Password)
+
 - Google Authenticator / Authy support
 - QR code generation
 - Backup codes generation and storage
 - TOTP verification flow
 
 ### SMS Verification
+
 - SMS code delivery
 - Code verification
 - Rate limiting and abuse prevention
 
 ### E-mail Verification
+
 - E-mail code delivery
 - Code verification
 - E-mail change verification
 
 ### Hardware Keys (WebAuthn/FIDO2)
+
 - YubiKey support
 - Platform authenticators (Touch ID, Windows Hello)
 - Registration and authentication flows
 
 ### Recovery
+
 - Backup codes generation
 - Recovery key generation
 - Account recovery flow

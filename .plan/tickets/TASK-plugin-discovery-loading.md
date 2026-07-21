@@ -12,6 +12,7 @@ Implement plugin discovery and loading system for finding, validating, and loadi
 ## Core Features
 
 ### Plugin Discovery
+
 - Local plugin directory scanning
 - npm package discovery
 - Git repository discovery
@@ -19,6 +20,7 @@ Implement plugin discovery and loading system for finding, validating, and loadi
 - Plugin registry integration
 
 ### Plugin Validation
+
 - Plugin manifest validation
 - Dependency validation
 - Permission validation
@@ -26,6 +28,7 @@ Implement plugin discovery and loading system for finding, validating, and loadi
 - Security validation
 
 ### Plugin Loading
+
 - Dynamic plugin loading
 - Plugin caching
 - Plugin hot-reloading
@@ -38,52 +41,52 @@ Implement plugin discovery and loading system for finding, validating, and loadi
 interface PluginDiscovery {
   // Discover plugins from various sources
   discover(): Promise<Plugin[]>;
-  
+
   // Discover plugins from local directory
   discoverLocal(): Promise<Plugin[]>;
-  
+
   // Discover plugins from npm
   discoverNpm(): Promise<Plugin[]>;
-  
+
   // Discover plugins from git
   discoverGit(): Promise<Plugin[]>;
-  
+
   // Discover plugins from URL
-  discoverUrl(url: string): Promise<Plugin[]>;
+  discoverUrl(url: string,): Promise<Plugin[]>;
 }
 
 interface PluginValidator {
   // Validate plugin manifest
-  validateManifest(manifest: PluginManifest): ValidationResult;
-  
+  validateManifest(manifest: PluginManifest,): ValidationResult;
+
   // Validate plugin dependencies
-  validateDependencies(plugin: Plugin): ValidationResult;
-  
+  validateDependencies(plugin: Plugin,): ValidationResult;
+
   // Validate plugin permissions
-  validatePermissions(plugin: Plugin): ValidationResult;
-  
+  validatePermissions(plugin: Plugin,): ValidationResult;
+
   // Validate plugin version
-  validateVersion(plugin: Plugin): ValidationResult;
-  
+  validateVersion(plugin: Plugin,): ValidationResult;
+
   // Validate plugin security
-  validateSecurity(plugin: Plugin): ValidationResult;
+  validateSecurity(plugin: Plugin,): ValidationResult;
 }
 
 interface PluginLoader {
   // Load plugin
-  load(plugin: Plugin): Promise<LoadResult>;
-  
+  load(plugin: Plugin,): Promise<LoadResult>;
+
   // Unload plugin
-  unload(pluginId: string): Promise<UnloadResult>;
-  
+  unload(pluginId: string,): Promise<UnloadResult>;
+
   // Reload plugin
-  reload(pluginId: string): Promise<ReloadResult>;
-  
+  reload(pluginId: string,): Promise<ReloadResult>;
+
   // Get loaded plugins
   getLoaded(): Plugin[];
-  
+
   // Check if plugin is loaded
-  isLoaded(pluginId: string): boolean;
+  isLoaded(pluginId: string,): boolean;
 }
 
 interface PluginManifest {
