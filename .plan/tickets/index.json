@@ -775,4 +775,82 @@
     "priority": "medium",
     "source": ".plan/features/epic-2026-31-world-persistence-sync.md"
   }
+,
+  "TASK-chat-room-search-join": {
+    "hash": "20c7472",
+    "extid": "TASK-chat-room-search-join",
+    "type": "TASK",
+    "title": "Chat room search and join",
+    "label": "task",
+    "priority": "medium",
+    "epic": "EPIC-2026-36",
+    "tags": ["chat", "search", "ux"],
+    "source": ".plan/tickets/TASK-chat-room-search-join.md"
+  },
+  "TASK-chat-room-filters": {
+    "hash": "70f8e8d",
+    "extid": "TASK-chat-room-filters",
+    "type": "TASK",
+    "title": "Chat room filters",
+    "label": "task",
+    "priority": "medium",
+    "epic": "EPIC-2026-36",
+    "tags": ["chat", "filter", "ux"],
+    "source": ".plan/tickets/TASK-chat-room-filters.md"
+  },
+  "TASK-chat-message-search": {
+    "hash": "b983dc4",
+    "extid": "TASK-chat-message-search",
+    "type": "TASK",
+    "title": "Chat message search",
+    "label": "task",
+    "priority": "medium",
+    "epic": "EPIC-2026-36",
+    "tags": ["chat", "search", "fts5"],
+    "source": ".plan/tickets/TASK-chat-message-search.md"
+  },
+  "TASK-chat-autorenaming": {
+    "hash": "dae84ed",
+    "extid": "TASK-chat-autorenaming",
+    "type": "TASK",
+    "title": "Chat auto-renaming",
+    "label": "task",
+    "priority": "medium",
+    "epic": "EPIC-2026-36",
+    "tags": ["chat", "ux", "naming"],
+    "source": ".plan/tickets/TASK-chat-autorenaming.md"
+  },
+  "TASK-visual-novel-mode": {
+    "hash": "b45761d",
+    "extid": "TASK-visual-novel-mode",
+    "type": "TASK",
+    "title": "Visual novel mode",
+    "label": "task",
+    "priority": "medium",
+    "epic": "EPIC-2026-36",
+    "tags": ["chat", "vn", "ux"],
+    "source": ".plan/tickets/TASK-visual-novel-mode.md"
+  },
+  "TASK-3d-view-modes": {
+    "hash": "bd70e0f",
+    "extid": "TASK-3d-view-modes",
+    "type": "TASK",
+    "title": "3D view modes",
+    "label": "task",
+    "priority": "medium",
+    "epic": "EPIC-2026-36",
+    "tags": ["chat", "3d", "avatar"],
+    "source": ".plan/tickets/TASK-3d-view-modes.md"
+  },
+  "TASK-text-effects-overlays": {
+    "hash": "149948e",
+    "extid": "TASK-text-effects-overlays",
+    "type": "TASK",
+    "title": "Text effects and overlays",
+    "label": "task",
+    "priority": "medium",
+    "epic": "EPIC-2026-36",
+    "tags": ["chat", "effects", "ux"],
+    "source": ".plan/tickets/TASK-text-effects-overlays.md"
+  }
 }
