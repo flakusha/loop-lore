@@ -20,13 +20,13 @@ Immersive chat backgrounds that change based on character location, conversation
 
 ### Background Types
 
-| Type | Description | Performance | Use Case |
-| ---- | ----------- | ----------- | -------- |
-| Static | Single image | Low | Default, low-end devices |
-| Parallax | Multi-layer scroll | Med | Depth effect on scroll |
-| Animated | CSS/WebGL animation | Med–High | Weather, time-of-day |
-| Video | Looping video | High | Cinematic moments |
-| Particle | Shader-based | Med | Ambient effects (rain, snow, fire) |
+| Type     | Description         | Performance | Use Case                           |
+| -------- | ------------------- | ----------- | ---------------------------------- |
+| Static   | Single image        | Low         | Default, low-end devices           |
+| Parallax | Multi-layer scroll  | Med         | Depth effect on scroll             |
+| Animated | CSS/WebGL animation | Med–High    | Weather, time-of-day               |
+| Video    | Looping video       | High        | Cinematic moments                  |
+| Particle | Shader-based        | Med         | Ambient effects (rain, snow, fire) |
 
 ### Location Sync
 
@@ -44,14 +44,14 @@ Chat Context:
 
 ### Action Sync
 
-| Action | Background Effect |
-| ------ | ----------------- |
-| Exploration | Calm, ambient |
-| Combat | Intense, red tint, shake |
-| Dialogue | Neutral, character-focused |
-| Discovery | Flash, particle burst |
-| Rest | Dim, warm tones |
-| Travel | Parallax scroll, motion blur |
+| Action      | Background Effect            |
+| ----------- | ---------------------------- |
+| Exploration | Calm, ambient                |
+| Combat      | Intense, red tint, shake     |
+| Dialogue    | Neutral, character-focused   |
+| Discovery   | Flash, particle burst        |
+| Rest        | Dim, warm tones              |
+| Travel      | Parallax scroll, motion blur |
 
 ## Background Data Model
 
@@ -59,33 +59,33 @@ Chat Context:
 interface ChatBackground {
   id: string;
   name: string;
-  type: 'static' | 'parallax' | 'animated' | 'video' | 'particle';
-  locationId?: string;           // Tied to world location
-  assetId?: string;              // Static/video asset
+  type: "static" | "parallax" | "animated" | "video" | "particle";
+  locationId?: string; // Tied to world location
+  assetId?: string; // Static/video asset
   animationConfig?: AnimationConfig;
   particles?: ParticleConfig;
-  priority: number;              // Conflict resolution
+  priority: number; // Conflict resolution
   conditions?: BackgroundCondition[];
 }
 
 interface AnimationConfig {
-  type: 'css' | 'webgl';
-  keyframes: string;             // CSS animation or shader code
-  duration: number;              // ms
+  type: "css" | "webgl";
+  keyframes: string; // CSS animation or shader code
+  duration: number; // ms
   loop: boolean;
 }
 
 interface ParticleConfig {
-  type: 'rain' | 'snow' | 'fire' | 'dust' | 'magic' | 'custom';
-  intensity: number;             // 0-1
+  type: "rain" | "snow" | "fire" | "dust" | "magic" | "custom";
+  intensity: number; // 0-1
   color?: string;
   speed?: number;
 }
 
 interface BackgroundCondition {
-  type: 'location' | 'action' | 'time' | 'emotion' | 'custom';
+  type: "location" | "action" | "time" | "emotion" | "custom";
   value: string;
-  operator: 'equals' | 'contains' | 'gt' | 'lt';
+  operator: "equals" | "contains" | "gt" | "lt";
 }
 ```
 
@@ -156,13 +156,13 @@ interface BackgroundCondition {
 
 ## Performance
 
-| Type | Target | Notes |
-| ---- | ------ | ----- |
-| Static load | < 200ms | WebP/AVIF, lazy |
-| Parallax FPS | 30+ | requestAnimationFrame |
-| Particle count | < 100 | Ambient only |
-| Transition | < 500ms | Crossfade |
-| Memory | < 50MB | Cache, dispose |
+| Type           | Target  | Notes                 |
+| -------------- | ------- | --------------------- |
+| Static load    | < 200ms | WebP/AVIF, lazy       |
+| Parallax FPS   | 30+     | requestAnimationFrame |
+| Particle count | < 100   | Ambient only          |
+| Transition     | < 500ms | Crossfade             |
+| Memory         | < 50MB  | Cache, dispose        |
 
 ## Risk
 

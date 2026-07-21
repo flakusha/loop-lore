@@ -32,19 +32,19 @@ Emotions (extensible):
 
 ```typescript
 interface Emotion {
-  id: string;                    // "happy", "custom-pensive"
-  name: string;                  // Display name: "Happy", "Pensive"
-  category: EmotionCategory;     // basic | complex | custom
-  portrait: PortraitRef;         // Reference to precompiled portrait
-  keywords: string[];            // Detection keywords
-  priority: number;              // Conflict resolution (higher = wins)
-  parentId?: string;             // For emotion hierarchies (happy → ecstatic)
+  id: string; // "happy", "custom-pensive"
+  name: string; // Display name: "Happy", "Pensive"
+  category: EmotionCategory; // basic | complex | custom
+  portrait: PortraitRef; // Reference to precompiled portrait
+  keywords: string[]; // Detection keywords
+  priority: number; // Conflict resolution (higher = wins)
+  parentId?: string; // For emotion hierarchies (happy → ecstatic)
 }
 
-type EmotionCategory = 'basic' | 'complex' | 'custom' | 'system';
+type EmotionCategory = "basic" | "complex" | "custom" | "system";
 
 interface PortraitRef {
-  type: 'static' | 'sprite-sheet' | '3d-model' | 'rigged';
+  type: "static" | "sprite-sheet" | "3d-model" | "rigged";
   assetId: string;
   metadata?: Record<string, unknown>;
 }
@@ -137,11 +137,11 @@ Portrait Selection:
 
 ## Detection Accuracy
 
-| Method | Accuracy | Cost | Speed |
-| ------ | -------- | ---- | ----- |
-| Rule-based | ~70% | Free | < 1ms |
-| LLM-based | ~90% | ~$0.001/msg | ~200ms |
-| Hybrid | ~85% | Low | ~50ms |
+| Method     | Accuracy | Cost        | Speed  |
+| ---------- | -------- | ----------- | ------ |
+| Rule-based | ~70%     | Free        | < 1ms  |
+| LLM-based  | ~90%     | ~$0.001/msg | ~200ms |
+| Hybrid     | ~85%     | Low         | ~50ms  |
 
 ## Files to Modify (Emotion-to-Prompt)
 

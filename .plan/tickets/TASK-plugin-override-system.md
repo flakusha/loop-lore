@@ -12,6 +12,7 @@ Implement override system for plugins to replace, extend, or wrap existing syste
 ## Core Features
 
 ### Method Overrides
+
 - Function replacement
 - Function extension
 - Function wrapping
@@ -19,6 +20,7 @@ Implement override system for plugins to replace, extend, or wrap existing syste
 - Method validation
 
 ### Class Overrides
+
 - Class replacement
 - Class extension
 - Class wrapping
@@ -26,6 +28,7 @@ Implement override system for plugins to replace, extend, or wrap existing syste
 - Instance modification
 
 ### Configuration Overrides
+
 - Configuration replacement
 - Configuration extension
 - Configuration merging
@@ -33,6 +36,7 @@ Implement override system for plugins to replace, extend, or wrap existing syste
 - Configuration rollback
 
 ### Override Management
+
 - Override registration
 - Override unregistration
 - Override validation
@@ -44,31 +48,31 @@ Implement override system for plugins to replace, extend, or wrap existing syste
 ```typescript
 interface OverrideSystem {
   // Register override
-  register(override: PluginOverride): void;
-  
+  register(override: PluginOverride,): void;
+
   // Unregister override
-  unregister(overrideId: string): void;
-  
+  unregister(overrideId: string,): void;
+
   // Apply overrides
-  apply(target: string): Function;
-  
+  apply(target: string,): Function;
+
   // Get overrides for target
-  getOverrides(target: string): PluginOverride[];
-  
+  getOverrides(target: string,): PluginOverride[];
+
   // Validate override
-  validate(override: PluginOverride): ValidationResult;
-  
+  validate(override: PluginOverride,): ValidationResult;
+
   // Resolve conflicts
-  resolveConflicts(overrides: PluginOverride[]): PluginOverride[];
-  
+  resolveConflicts(overrides: PluginOverride[],): PluginOverride[];
+
   // Rollback override
-  rollback(overrideId: string): void;
+  rollback(overrideId: string,): void;
 }
 
 interface PluginOverride {
   id: string;
   target: string;
-  type: 'replace' | 'extend' | 'wrap';
+  type: "replace" | "extend" | "wrap";
   implementation: Function;
   conditions: OverrideCondition[];
   priority: number;
@@ -77,13 +81,13 @@ interface PluginOverride {
 }
 
 interface OverrideCondition {
-  type: 'always' | 'when' | 'unless' | 'custom';
+  type: "always" | "when" | "unless" | "custom";
   condition: Function;
   description: string;
 }
 
 interface OverrideValidator {
-  validate(override: PluginOverride): ValidationResult;
+  validate(override: PluginOverride,): ValidationResult;
 }
 
 interface ValidationResult {
@@ -101,14 +105,15 @@ interface OverrideChain {
 interface OverrideConflict {
   target: string;
   overrides: PluginOverride[];
-  type: 'replace' | 'extend' | 'wrap';
-  resolution: 'first' | 'last' | 'priority' | 'merge' | 'error';
+  type: "replace" | "extend" | "wrap";
+  resolution: "first" | "last" | "priority" | "merge" | "error";
 }
 ```
 
 ## Override Types
 
 ### Method Overrides
+
 - Replace method implementation
 - Extend method with additional functionality
 - Wrap method with pre/post processing
@@ -116,6 +121,7 @@ interface OverrideConflict {
 - Validate method signature
 
 ### Class Overrides
+
 - Replace class implementation
 - Extend class with additional methods
 - Wrap class with proxy
@@ -123,6 +129,7 @@ interface OverrideConflict {
 - Modify class instance
 
 ### Configuration Overrides
+
 - Replace configuration values
 - Extend configuration with new values
 - Merge configuration values

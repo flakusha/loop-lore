@@ -9,16 +9,16 @@
 
 ## Current State Assessment
 
-| Area                   | File(s)                                   | State | Notes                                                                           |
-| ---------------------- | ----------------------------------------- | ----- | ------------------------------------------------------------------------------- |
-| Kysely Migrator runner | `src/db/migrate.ts`                       | ✅    | Runs on **every** boot. **No leader election** — N replicas race.               |
-| Schema manifest        | `src/db/schema-manifest.ts`               | ✅    | `verify()` diffs declared vs actual schema. **Test-only** — not run at startup. |
-| Schema sync test       | `src/db/schema-sync.test.ts`              | ✅    | Proves `verify()` works; no startup enforcement.                                |
-| Data transforms        | `data_migrations` table                   | ✅    | Tracks `from_version → to_version` rewrites, separate from DDL.                 |
-| Session state          | `src/db/schema-core.ts` (`sessions`)      | ✅    | Persisted in DB — instances stateless, scalable in principle.                   |
-| Real-time (SSE)        | `src/routes/activity-stream.ts`           | ✅    | **Per-process** — clients on other replicas don't get events.                   |
-| Advisory lock / leader | —                                         | ❌    | No `pg_advisory_lock`, no wait-for-ready.                                       |
-| Startup drift check    | —                                         | ❌    | `SchemaManifest.verify()` not invoked at boot.                                  |
+| Area                   | File(s)                              | State | Notes                                                                           |
+| ---------------------- | ------------------------------------ | ----- | ------------------------------------------------------------------------------- |
+| Kysely Migrator runner | `src/db/migrate.ts`                  | ✅    | Runs on **every** boot. **No leader election** — N replicas race.               |
+| Schema manifest        | `src/db/schema-manifest.ts`          | ✅    | `verify()` diffs declared vs actual schema. **Test-only** — not run at startup. |
+| Schema sync test       | `src/db/schema-sync.test.ts`         | ✅    | Proves `verify()` works; no startup enforcement.                                |
+| Data transforms        | `data_migrations` table              | ✅    | Tracks `from_version → to_version` rewrites, separate from DDL.                 |
+| Session state          | `src/db/schema-core.ts` (`sessions`) | ✅    | Persisted in DB — instances stateless, scalable in principle.                   |
+| Real-time (SSE)        | `src/routes/activity-stream.ts`      | ✅    | **Per-process** — clients on other replicas don't get events.                   |
+| Advisory lock / leader | —                                    | ❌    | No `pg_advisory_lock`, no wait-for-ready.                                       |
+| Startup drift check    | —                                    | ❌    | `SchemaManifest.verify()` not invoked at boot.                                  |
 
 ---
 

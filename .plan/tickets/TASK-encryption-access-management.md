@@ -42,9 +42,9 @@ interface AccessGrant {
   chatId: string;
   participantId: string;
   grantedAt: Date;
-  expiresAt: Date | null;        // null = no expiry
-  revokedAt: Date | null;        // null = not revoked
-  keyId: string;                 // Which key was granted
+  expiresAt: Date | null; // null = no expiry
+  revokedAt: Date | null; // null = not revoked
+  keyId: string; // Which key was granted
 }
 ```
 

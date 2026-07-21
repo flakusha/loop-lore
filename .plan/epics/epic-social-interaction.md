@@ -14,16 +14,16 @@ Social interaction mechanics — persuasion, intimidation, deception, barter, le
 
 ### Core Social Skills
 
-| Skill | Primary Stat | Description |
-|-------|--------------|-------------|
-| **Persuasion** | CHA | Convince through logic/emotion |
-| **Intimidation** | STR/CHA | Threaten/coerce |
-| **Deception** | CHA | Lie/mislead |
-| **Insight** | WIS | Detect lies/read emotions |
-| **Performance** | CHA | Entertain/impress |
-| **Barter** | CHA/INT | Trade negotiation |
-| **Leadership** | CHA/WIS | Command/inspire |
-| **Diplomacy** | CHA/INT | Formal negotiations |
+| Skill            | Primary Stat | Description                    |
+| ---------------- | ------------ | ------------------------------ |
+| **Persuasion**   | CHA          | Convince through logic/emotion |
+| **Intimidation** | STR/CHA      | Threaten/coerce                |
+| **Deception**    | CHA          | Lie/mislead                    |
+| **Insight**      | WIS          | Detect lies/read emotions      |
+| **Performance**  | CHA          | Entertain/impress              |
+| **Barter**       | CHA/INT      | Trade negotiation              |
+| **Leadership**   | CHA/WIS      | Command/inspire                |
+| **Diplomacy**    | CHA/INT      | Formal negotiations            |
 
 ### Skill Structure
 
@@ -40,7 +40,7 @@ interface SocialSkill {
 }
 
 interface SocialModifier {
-  type: 'relationship' | 'reputation' | 'mood' | 'knowledge' | 'circumstance' | 'equipment';
+  type: "relationship" | "reputation" | "mood" | "knowledge" | "circumstance" | "equipment";
   value: number;
   source: string;
 }
@@ -58,12 +58,12 @@ interface PersuasionAttempt {
   skill: SocialSkill;
   dc: number;
   modifiers: PersuasionModifier[];
-  stakes: 'low' | 'medium' | 'high' | 'critical';
+  stakes: "low" | "medium" | "high" | "critical";
   result: PersuasionResult;
 }
 
 interface PersuasionModifier {
-  type: 'relationship' | 'shared_interest' | 'evidence' | 'threat' | 'bribe' | 'mood';
+  type: "relationship" | "shared_interest" | "evidence" | "threat" | "bribe" | "mood";
   value: number;
   description: string;
 }
@@ -80,15 +80,15 @@ interface PersuasionResult {
 
 ### Persuasion Strategies
 
-| Strategy | DC Modifier | Risk |
-|----------|-------------|------|
-| **Logical Appeal** | -5 | Low |
-| **Emotional Appeal** | -3 | Medium |
-| **Flattery** | -2 | Low |
-| **Bribe** | -10 | Medium |
-| **Threat** | -8 | High |
-| **Blackmail** | -15 | Critical |
-| **Evidence** | -12 | Low |
+| Strategy             | DC Modifier | Risk     |
+| -------------------- | ----------- | -------- |
+| **Logical Appeal**   | -5          | Low      |
+| **Emotional Appeal** | -3          | Medium   |
+| **Flattery**         | -2          | Low      |
+| **Bribe**            | -10         | Medium   |
+| **Threat**           | -8          | High     |
+| **Blackmail**        | -15         | Critical |
+| **Evidence**         | -12         | Low      |
 
 ## Intimidation System
 
@@ -98,7 +98,7 @@ interface PersuasionResult {
 interface IntimidationAttempt {
   intimidator: Character;
   target: Character | NPC;
-  method: 'verbal' | 'physical' | 'display' | 'threat';
+  method: "verbal" | "physical" | "display" | "threat";
   dc: number;
   power_difference: number; // level/stats difference
   result: IntimidationResult;
@@ -106,7 +106,7 @@ interface IntimidationAttempt {
 
 interface IntimidationResult {
   success: boolean;
-  compliance_level: 'full' | 'partial' | 'temporary' | 'none';
+  compliance_level: "full" | "partial" | "temporary" | "none";
   fear_induced: number; // 0-100
   relationship_damage: number;
   retaliation_chance: number;
@@ -115,14 +115,14 @@ interface IntimidationResult {
 
 ### Intimidation Factors
 
-| Factor | Effect |
-|--------|--------|
-| **Size Difference** | +/-5-15 |
-| **Weapon Display** | +5-10 |
-| **Reputation** | +/-10-20 |
-| **Group Advantage** | +5-15 |
-| **Target's Courage** | -10-10 |
-| **Previous Relationship** | -20-20 |
+| Factor                    | Effect   |
+| ------------------------- | -------- |
+| **Size Difference**       | +/-5-15  |
+| **Weapon Display**        | +5-10    |
+| **Reputation**            | +/-10-20 |
+| **Group Advantage**       | +5-15    |
+| **Target's Courage**      | -10-10   |
+| **Previous Relationship** | -20-20   |
 
 ## Deception System
 
@@ -141,7 +141,7 @@ interface DeceptionAttempt {
 
 interface DeceptionResult {
   success: boolean;
-  belief_level: 'complete' | 'partial' | 'suspicious' | 'disbelief';
+  belief_level: "complete" | "partial" | "suspicious" | "disbelief";
   suspicion_gained: number;
   insight_check: number;
   consequences: DeceptionConsequence[];
@@ -161,7 +161,7 @@ interface InsightCheck {
 }
 
 interface Tell {
-  type: 'body_language' | 'voice' | 'inconsistency' | 'micro_expression';
+  type: "body_language" | "voice" | "inconsistency" | "micro_expression";
   detectability: number;
   reliability: number; // 0-100
 }
@@ -197,7 +197,7 @@ interface BarterItem {
 }
 
 interface BarterModifier {
-  type: 'relationship' | 'reputation' | 'supply_demand' | 'urgency' | 'skill';
+  type: "relationship" | "reputation" | "supply_demand" | "urgency" | "skill";
   value: number;
 }
 
@@ -212,15 +212,15 @@ interface BarterResult {
 
 ### Price Factors
 
-| Factor | Price Effect |
-|--------|--------------|
-| **High Supply** | -10-30% |
-| **Low Supply** | +10-50% |
-| **Urgency** | +20-100% |
-| **Relationship** | -10-20% |
-| **Reputation** | -5-15% |
-| **Barter Skill** | -5-25% |
-| **Bulk Purchase** | -5-15% |
+| Factor            | Price Effect |
+| ----------------- | ------------ |
+| **High Supply**   | -10-30%      |
+| **Low Supply**    | +10-50%      |
+| **Urgency**       | +20-100%     |
+| **Relationship**  | -10-20%      |
+| **Reputation**    | -5-15%       |
+| **Barter Skill**  | -5-25%       |
+| **Bulk Purchase** | -5-15%       |
 
 ## Leadership System
 
@@ -237,11 +237,11 @@ interface Leadership {
   commands: Command[];
 }
 
-type LeadershipStyle = 'authoritarian' | 'democratic' | 'laissez_faire' | 'transformational' | 'servant';
+type LeadershipStyle = "authoritarian" | "democratic" | "laissez_faire" | "transformational" | "servant";
 
 interface Command {
   id: string;
-  type: 'move' | 'attack' | 'defend' | 'retreat' | 'hold' | 'special';
+  type: "move" | "attack" | "defend" | "retreat" | "hold" | "special";
   target: string;
   compliance_chance: number;
   execution_quality: number;
@@ -259,14 +259,14 @@ interface MoraleState {
 }
 
 interface MoraleModifier {
-  type: 'victory' | 'defeat' | 'leader' | 'environment' | 'supply' | 'rest';
+  type: "victory" | "defeat" | "leader" | "environment" | "supply" | "rest";
   value: number;
   duration: number;
 }
 
 interface MoraleThreshold {
   level: number;
-  effect: 'inspired' | 'normal' | 'shaken' | 'routed' | 'mutiny';
+  effect: "inspired" | "normal" | "shaken" | "routed" | "mutiny";
   bonuses: StatModifier[];
 }
 ```
@@ -305,13 +305,13 @@ interface PublicOpinion {
 
 ### Reputation Effects
 
-| Standing | Title | Effects |
-|----------|-------|---------|
-| -1000 to -500 | Hated | Attack on sight, no services |
-| -499 to -100 | Unfriendly | Higher prices, limited services |
-| -99 to 99 | Neutral | Standard prices/services |
-| 100 to 499 | Friendly | Discounts, special services |
-| 500 to 1000 | Exalted | Best prices, unique rewards |
+| Standing      | Title      | Effects                         |
+| ------------- | ---------- | ------------------------------- |
+| -1000 to -500 | Hated      | Attack on sight, no services    |
+| -499 to -100  | Unfriendly | Higher prices, limited services |
+| -99 to 99     | Neutral    | Standard prices/services        |
+| 100 to 499    | Friendly   | Discounts, special services     |
+| 500 to 1000   | Exalted    | Best prices, unique rewards     |
 
 ## Social Encounters
 
@@ -349,7 +349,7 @@ interface SocialSkillCheck {
 ```typescript
 interface SocialEvent {
   id: string;
-  type: 'feast' | 'tournament' | 'ball' | 'council' | 'negotiation' | 'trial';
+  type: "feast" | "tournament" | "ball" | "council" | "negotiation" | "trial";
   participants: Character[];
   agenda: AgendaItem[];
   outcomes: SocialOutcome[];

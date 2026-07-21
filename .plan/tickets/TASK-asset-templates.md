@@ -12,6 +12,7 @@ Create asset templates and presets for common use cases, enabling one-click gene
 ## Requirements
 
 ### Template Types
+
 - Character token templates (square/hex, ring colors)
 - Map templates (grid sizes, fog presets)
 - Item card templates (rarity styles, stat layouts)
@@ -19,6 +20,7 @@ Create asset templates and presets for common use cases, enabling one-click gene
 - Presentation templates (slide layouts)
 
 ### Template Features
+
 - User-created templates
 - World-scoped templates
 - Community template sharing
@@ -26,6 +28,7 @@ Create asset templates and presets for common use cases, enabling one-click gene
 - Style presets (dark, light, fantasy, sci-fi)
 
 ### API Endpoints
+
 - `GET /api/templates` — List templates
 - `POST /api/templates` — Create template
 - `GET /api/templates/:id` — Get template
@@ -42,6 +45,7 @@ Create asset templates and presets for common use cases, enabling one-click gene
 5. Implement preset rendering
 
 ## Files
+
 - `src/db/migrations/020_asset_templates.sql` — Migration
 - `src/assets/templates.ts` — Template service
 - `src/assets/controller.ts` — Template endpoints

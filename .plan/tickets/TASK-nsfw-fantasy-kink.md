@@ -12,20 +12,24 @@ Implement fantasy/kink system with kink discovery, fantasy fulfillment mechanics
 ## Core Features
 
 ### Fantasy Categories
+
 - Power Exchange, Exhibitionism, Voyeurism, Roleplay, Sensation, Group, Taboo, Transformation, Worship, Pet Play, Monster, Breeding, Pain Play, Bondage, Service, Degradation, Praise
 
 ### Kink Discovery
+
 - Characters discover new kinks through play
 - Discovery depends on context, partner, openness
 - Initial reaction (positive/neutral/negative/shocked)
 - Kink evolves with experience
 
 ### Fantasy Fulfillment
+
 - Requirements: partner type, location, equipment, scenario
 - Effects: satisfaction bonus, intimacy bonus, mood bonus, memory strength
 - Risks: reputation, emotional, physical, discovery
 
 ### Hard Limits
+
 - Mechanically enforced boundaries
 - Cannot be overridden by seduction/skills
 - Set during character creation or discovered through play

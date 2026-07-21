@@ -20,12 +20,12 @@ Tooling support and improvement — repo worktree management, agent support, IO,
 
 ## Linked Tasks
 
-| Task | Title | Priority | Status |
-| ---- | ----- | -------- | ------ |
-| TASK-dev-tooling-updates | Biome 2.5.4, dprint 0.55.2, stylelint 17.14.1 | — | ✅ Complete |
-| TASK-agents-scripts-worktree-docs | AGENTS.md + .agents worktree docs | Low | Not Started |
-| TASK-branch-workflow-dev-stg-master | dev→stg→master branch workflow | Low | Post-0.1.0 |
-| TASK-github-pages-vitepress | GitHub Pages VitePress docs site | Low | Not Started |
+| Task                                | Title                                         | Priority | Status      |
+| ----------------------------------- | --------------------------------------------- | -------- | ----------- |
+| TASK-dev-tooling-updates            | Biome 2.5.4, dprint 0.55.2, stylelint 17.14.1 | —        | ✅ Complete |
+| TASK-agents-scripts-worktree-docs   | AGENTS.md + .agents worktree docs             | Low      | Not Started |
+| TASK-branch-workflow-dev-stg-master | dev→stg→master branch workflow                | Low      | Post-0.1.0  |
+| TASK-github-pages-vitepress         | GitHub Pages VitePress docs site              | Low      | Not Started |
 
 ## Files
 

@@ -32,18 +32,18 @@ Current status of feature areas. Checkmarks = code exists in `src/`.
 
 > **Detailed task breakdown:** `docs/meta/plan.md` (completed epics) and `.plan/backlog.md` (active queue).
 
-| Epic | Feature                                                      | Status         |
-| ---- | ------------------------------------------------------------ | -------------- |
-| 16   | Observability — telemetry, admin analytics, CI config        | 🟡 In progress |
-| 14   | Import/Export — character card PNG/YAML/TOML import          | ✅ Complete    |
-| 11   | Admin & Settings — admin UI, per-user prefs                  | ✅ Complete (core) |
-| 23   | Assistant Commands — /improve, /image, /quest                | ⬜ P1          |
-| 24   | Filtering & Pagination — combined filters, cursor pagination | ⬜ P1          |
-| 17   | Encryption Foundation — e2e AES-256-GCM, symmetric/asymmetric | ⬜ P1          |
-| 10   | Generation Foundation — tool-call loop, provider failover    | ✅ Complete    |
-| 15   | i18n & Accessibility — server-side i18n, ARIA, keyboard nav  | ⬜ P1          |
-| 22   | RPG Mechanics Core — dice, stats, combat                     | ⬜ P2          |
-| 21   | Notification Expansion — noise presets, per-event thresholds | ⬜ P2          |
+| Epic | Feature                                                       | Status             |
+| ---- | ------------------------------------------------------------- | ------------------ |
+| 16   | Observability — telemetry, admin analytics, CI config         | 🟡 In progress     |
+| 14   | Import/Export — character card PNG/YAML/TOML import           | ✅ Complete        |
+| 11   | Admin & Settings — admin UI, per-user prefs                   | ✅ Complete (core) |
+| 23   | Assistant Commands — /improve, /image, /quest                 | ⬜ P1              |
+| 24   | Filtering & Pagination — combined filters, cursor pagination  | ⬜ P1              |
+| 17   | Encryption Foundation — e2e AES-256-GCM, symmetric/asymmetric | ⬜ P1              |
+| 10   | Generation Foundation — tool-call loop, provider failover     | ✅ Complete        |
+| 15   | i18n & Accessibility — server-side i18n, ARIA, keyboard nav   | ⬜ P1              |
+| 22   | RPG Mechanics Core — dice, stats, combat                      | ⬜ P2              |
+| 21   | Notification Expansion — noise presets, per-event thresholds  | ⬜ P2              |
 
 ### Quick Wins
 

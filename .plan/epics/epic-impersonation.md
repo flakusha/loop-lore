@@ -21,12 +21,12 @@ Character impersonation — 1 character can be impersonated once per world (exce
 
 ### Rules
 
-| Scenario | Impersonation Allowed |
-| -------- | --------------------- |
-| World chat | 1 character per world |
-| Private chat | No limit (disconnected) |
-| Disconnected chat | No limit |
-| Group chat | 1 character per world |
+| Scenario          | Impersonation Allowed   |
+| ----------------- | ----------------------- |
+| World chat        | 1 character per world   |
+| Private chat      | No limit (disconnected) |
+| Disconnected chat | No limit                |
+| Group chat        | 1 character per world   |
 
 ### Memory Implications
 

@@ -26,31 +26,31 @@ interface StealthState {
 }
 
 interface StealthModifier {
-  type: 'light' | 'noise' | 'movement' | 'equipment' | 'skill' | 'magic';
+  type: "light" | "noise" | "movement" | "equipment" | "skill" | "magic";
   value: number; // positive = more visible, negative = more hidden
   source: string;
 }
 
 interface DetectionRecord {
   detector_id: string;
-  detection_type: 'visual' | 'audio' | 'magical' | 'intuition';
+  detection_type: "visual" | "audio" | "magical" | "intuition";
   confidence: number; // 0-100
   timestamp: Date;
-  action_taken: 'ignore' | 'investigate' | 'alert' | 'attack';
+  action_taken: "ignore" | "investigate" | "alert" | "attack";
 }
 ```
 
 ### Stealth Actions
 
-| Action | Skill Check | Detection Risk | Notes |
-|--------|-------------|----------------|-------|
-| **Sneak** | DEX + Stealth | Low | Movement while hidden |
-| **Hide** | DEX + Stealth | None | Become stationary |
-| **Pickpocket** | DEX + Sleight | Medium | Steal from NPCs |
-| **Lockpick** | DEX + Lockpick | Low | Open locked containers |
-| **Disable Trap** | INT + Trap | Medium | Neutralize traps |
-| **Eavesdrop** | WIS + Perception | Low | Listen to conversations |
-| **Assassinate** | DEX + Stealth | High | Silent kill attempt |
+| Action           | Skill Check      | Detection Risk | Notes                   |
+| ---------------- | ---------------- | -------------- | ----------------------- |
+| **Sneak**        | DEX + Stealth    | Low            | Movement while hidden   |
+| **Hide**         | DEX + Stealth    | None           | Become stationary       |
+| **Pickpocket**   | DEX + Sleight    | Medium         | Steal from NPCs         |
+| **Lockpick**     | DEX + Lockpick   | Low            | Open locked containers  |
+| **Disable Trap** | INT + Trap       | Medium         | Neutralize traps        |
+| **Eavesdrop**    | WIS + Perception | Low            | Listen to conversations |
+| **Assassinate**  | DEX + Stealth    | High           | Silent kill attempt     |
 
 ### Detection System
 
@@ -70,7 +70,7 @@ interface DetectionCheck {
 interface DetectionResult {
   detected: boolean;
   confidence: number; // 0-100
-  alert_level: 'none' | 'suspicious' | 'alert' | 'combat';
+  alert_level: "none" | "suspicious" | "alert" | "combat";
   response: NPCResponse;
 }
 ```
@@ -79,16 +79,16 @@ interface DetectionResult {
 
 ### Crime Types
 
-| Crime | Severity | Bounty | Notes |
-|-------|----------|--------|-------|
-| **Trespassing** | Minor | 10-50g | Entering restricted areas |
-| **Theft** | Moderate | 50-200g | Stealing items |
-| **Pickpocketing** | Moderate | 50-150g | Stealing from NPCs |
-| **Assault** | Serious | 200-500g | Attacking NPCs |
-| **Murder** | Severe | 500-2000g | Killing NPCs |
-| **Treason** | Capital | 5000g+ | Crimes against the state |
-| **Smuggling** | Moderate | 100-300g | Illegal goods |
-| **Trespassing** | Minor | 10-50g | Restricted areas |
+| Crime             | Severity | Bounty    | Notes                     |
+| ----------------- | -------- | --------- | ------------------------- |
+| **Trespassing**   | Minor    | 10-50g    | Entering restricted areas |
+| **Theft**         | Moderate | 50-200g   | Stealing items            |
+| **Pickpocketing** | Moderate | 50-150g   | Stealing from NPCs        |
+| **Assault**       | Serious  | 200-500g  | Attacking NPCs            |
+| **Murder**        | Severe   | 500-2000g | Killing NPCs              |
+| **Treason**       | Capital  | 5000g+    | Crimes against the state  |
+| **Smuggling**     | Moderate | 100-300g  | Illegal goods             |
+| **Trespassing**   | Minor    | 10-50g    | Restricted areas          |
 
 ### Crime Detection
 
@@ -114,7 +114,7 @@ interface Witness {
 }
 
 interface Evidence {
-  type: 'physical' | 'testimony' | 'magical' | 'circumstantial';
+  type: "physical" | "testimony" | "magical" | "circumstantial";
   strength: number; // 0-100
   planted: boolean;
   discovered: boolean;
@@ -129,8 +129,8 @@ interface Bounty {
   target_id: string;
   crime_id: string;
   amount: number;
-  issuer: 'city' | 'guild' | 'player' | 'faction';
-  status: 'active' | 'claimed' | 'expired' | 'pardoned';
+  issuer: "city" | "guild" | "player" | "faction";
+  status: "active" | "claimed" | "expired" | "pardoned";
   hunters: BountyHunter[];
   expiry: Date;
 }
@@ -146,14 +146,14 @@ interface BountyHunter {
 
 ### Lock Complexity
 
-| Lock Level | Skill Required | Tools | Time |
-|------------|----------------|-------|------|
-| **Simple** | 10 | Basic picks | 5s |
-| **Easy** | 25 | Standard picks | 10s |
-| **Medium** | 40 | Quality picks | 20s |
-| **Hard** | 60 | Master picks | 30s |
-| **Very Hard** | 80 | Expert picks | 45s |
-| **Legendary** | 95 | Special picks | 60s |
+| Lock Level    | Skill Required | Tools          | Time |
+| ------------- | -------------- | -------------- | ---- |
+| **Simple**    | 10             | Basic picks    | 5s   |
+| **Easy**      | 25             | Standard picks | 10s  |
+| **Medium**    | 40             | Quality picks  | 20s  |
+| **Hard**      | 60             | Master picks   | 30s  |
+| **Very Hard** | 80             | Expert picks   | 45s  |
+| **Legendary** | 95             | Special picks  | 60s  |
 
 ### Lockpicking Mechanic
 
@@ -198,7 +198,7 @@ interface PickpocketTarget {
 }
 
 interface Pocket {
-  location: 'front' | 'back' | 'belt' | 'bag' | 'hidden';
+  location: "front" | "back" | "belt" | "bag" | "hidden";
   items: InventoryItem[];
   difficulty: number;
   discovered: boolean;
@@ -237,13 +237,13 @@ interface Guard {
   alert_level: number; // 0-100
   detection_radius: number;
   response_time: number; // seconds
-  force_level: 'verbal' | 'arrest' | 'lethal';
+  force_level: "verbal" | "arrest" | "lethal";
 }
 
 interface GuardResponse {
   crime: CrimeInstance;
   guards_alerted: Guard[];
-  response_type: 'investigate' | 'pursue' | 'arrest' | 'attack' | 'ignore';
+  response_type: "investigate" | "pursue" | "arrest" | "attack" | "ignore";
   pursuit_duration: number;
   escape_chance: number;
 }

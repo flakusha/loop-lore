@@ -11,6 +11,7 @@ E2E encryption for private chats/worlds/locations, asset encryption, access mana
 ## Encryption Models
 
 ### Symmetric (Local/Public Chats)
+
 - Shared key per chat
 - Key exchange endpoint between users
 - DB stores encrypted (AES-256-GCM)
@@ -19,6 +20,7 @@ E2E encryption for private chats/worlds/locations, asset encryption, access mana
 - Key rotation on message periods
 
 ### Asymmetric (E2E/Private Chats)
+
 - Public/private key pairs per user
 - Only access is required (not privacy)
 - Admin manages access (not content)
@@ -27,20 +29,21 @@ E2E encryption for private chats/worlds/locations, asset encryption, access mana
 
 ## Linked Tasks
 
-| Task | Title | Priority | Status |
-| ---- | ----- | -------- | ------ |
-| TASK-encryption-architecture-clarification.md | Symmetric vs asymmetric architecture | High | Not Started |
-| TASK-encryption-wire-message-pipeline.md | Wire message pipeline (encrypt/decrypt on write/read) | High | Not Started |
-| TASK-encryption-key-management-ui.md | Key management UI (view/generate/rotate/revoke) | High | Not Started |
-| TASK-encryption-group-key-distribution.md | Group key distribution (join/leave key handling) | High | Not Started |
-| TASK-encryption-key-rotation.md | Key rotation (auto + manual, re-encrypt history) | Medium | Not Started |
-| TASK-encryption-asset-encryption.md | Asset encryption (encrypt blobs, tier inheritance) | Medium | Not Started |
-| TASK-encryption-access-management.md | Access management (time-based expiry, admin grants) | Medium | Not Started |
-| TASK-encryption-browser-pre-encrypt.md | Browser pre-encrypt (fallbacks, platform, CSP) | Medium | Not Started |
+| Task                                          | Title                                                 | Priority | Status      |
+| --------------------------------------------- | ----------------------------------------------------- | -------- | ----------- |
+| TASK-encryption-architecture-clarification.md | Symmetric vs asymmetric architecture                  | High     | Not Started |
+| TASK-encryption-wire-message-pipeline.md      | Wire message pipeline (encrypt/decrypt on write/read) | High     | Not Started |
+| TASK-encryption-key-management-ui.md          | Key management UI (view/generate/rotate/revoke)       | High     | Not Started |
+| TASK-encryption-group-key-distribution.md     | Group key distribution (join/leave key handling)      | High     | Not Started |
+| TASK-encryption-key-rotation.md               | Key rotation (auto + manual, re-encrypt history)      | Medium   | Not Started |
+| TASK-encryption-asset-encryption.md           | Asset encryption (encrypt blobs, tier inheritance)    | Medium   | Not Started |
+| TASK-encryption-access-management.md          | Access management (time-based expiry, admin grants)   | Medium   | Not Started |
+| TASK-encryption-browser-pre-encrypt.md        | Browser pre-encrypt (fallbacks, platform, CSP)        | Medium   | Not Started |
 
 ## Implementation Phases
 
 ### Phase 1: Crypto Foundation (exists)
+
 - [x] SMK (Server Master Key) — `src/crypto/smk.ts`
 - [x] Actor keys — `src/crypto/actor-keys.ts`
 - [x] Chat keys — `src/crypto/chat-keys.ts`
@@ -49,17 +52,20 @@ E2E encryption for private chats/worlds/locations, asset encryption, access mana
 - [x] 69 unit tests passing
 
 ### Phase 2: Message Pipeline
+
 - [ ] Wire encrypt/decrypt into message routes
 - [ ] Encryption tier column (public/standard/private)
 - [ ] Fallback handling (missing key, unavailable crypto)
 
 ### Phase 3: Key Management
+
 - [ ] Key management UI (/settings/keys)
 - [ ] Group key distribution (join/leave)
 - [ ] Key rotation (auto + manual)
 - [ ] Access management (time-based expiry)
 
 ### Phase 4: Asset & E2E
+
 - [ ] Asset encryption (blobs, tier inheritance)
 - [ ] Browser pre-encrypt (Web Crypto API)
 - [ ] Fallbacks (HTTP, old browsers, mobile)

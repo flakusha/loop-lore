@@ -14,15 +14,15 @@ Economy and trading mechanics — currency systems, market dynamics, trading, au
 
 ### Currency Types
 
-| Type | Value | Use |
-|------|-------|-----|
-| **Copper** | 1 | Common purchases |
-| **Silver** | 10 | Standard trade |
-| **Gold** | 100 | Major purchases |
-| **Platinum** | 1000 | Luxury items |
-| **Gems** | Variable | High-value storage |
-| **Faction Currency** | Variable | Faction-specific |
-| **Premium** | Variable | Special purchases |
+| Type                 | Value    | Use                |
+| -------------------- | -------- | ------------------ |
+| **Copper**           | 1        | Common purchases   |
+| **Silver**           | 10       | Standard trade     |
+| **Gold**             | 100      | Major purchases    |
+| **Platinum**         | 1000     | Luxury items       |
+| **Gems**             | Variable | High-value storage |
+| **Faction Currency** | Variable | Faction-specific   |
+| **Premium**          | Variable | Special purchases  |
 
 ### Currency Structure
 
@@ -32,7 +32,7 @@ interface Currency {
   name: string;
   symbol: string;
   value: number; // relative to base currency
-  type: 'standard' | 'faction' | 'premium' | 'special';
+  type: "standard" | "faction" | "premium" | "special";
   exchange_rate: ExchangeRate;
   inflation_rate: number;
   max_supply: number;
@@ -57,7 +57,7 @@ interface Market {
   id: string;
   name: string;
   location: WorldLocation;
-  type: 'general' | 'specialized' | 'black_market' | 'auction' | 'player';
+  type: "general" | "specialized" | "black_market" | "auction" | "player";
   vendors: Vendor[];
   inventory: MarketItem[];
   prices: PriceHistory[];
@@ -84,7 +84,7 @@ interface MarketItem {
   current_price: number;
   supply: number; // 0-100
   demand: number; // 0-100
-  trend: 'rising' | 'falling' | 'stable';
+  trend: "rising" | "falling" | "stable";
 }
 ```
 
@@ -101,7 +101,7 @@ interface PriceSystem {
 }
 
 interface PriceModifier {
-  type: 'supply' | 'demand' | 'event' | 'season' | 'reputation' | 'tax' | 'discount';
+  type: "supply" | "demand" | "event" | "season" | "reputation" | "tax" | "discount";
   value: number; // percentage
   duration: number; // in minutes
   source: string;
@@ -127,7 +127,7 @@ interface SupplyDemand {
 }
 
 interface SupplyDemandFactor {
-  type: 'production' | 'consumption' | 'import' | 'export' | 'event' | 'season';
+  type: "production" | "consumption" | "import" | "export" | "event" | "season";
   impact: number; // -100 to 100
   duration: number;
   source: string;
@@ -147,7 +147,7 @@ interface PlayerTrade {
   recipient_items: TradeItem[];
   initiator_gold: number;
   recipient_gold: number;
-  status: 'pending' | 'accepted' | 'rejected' | 'completed' | 'cancelled';
+  status: "pending" | "accepted" | "rejected" | "completed" | "cancelled";
   timestamp: Date;
   location: WorldLocation;
 }
@@ -197,7 +197,7 @@ interface Auction {
   bidders: Bid[];
   start_time: Date;
   end_time: Date;
-  status: 'active' | 'sold' | 'expired' | 'cancelled';
+  status: "active" | "sold" | "expired" | "cancelled";
   category: ItemCategory;
   fees: AuctionFees;
 }
@@ -218,15 +218,15 @@ interface AuctionFees {
 
 ### Auction Features
 
-| Feature | Description |
-|---------|-------------|
-| **Bidding** | Place bids on items |
-| **Buyout** | Instant purchase at set price |
+| Feature              | Description                   |
+| -------------------- | ----------------------------- |
+| **Bidding**          | Place bids on items           |
+| **Buyout**           | Instant purchase at set price |
 | **Snipe Protection** | Extension on last-second bids |
-| **Categories** | Item filtering |
-| **Search** | Text/attribute search |
-| **Watchlist** | Track interesting auctions |
-| **History** | Price history for items |
+| **Categories**       | Item filtering                |
+| **Search**           | Text/attribute search         |
+| **Watchlist**        | Track interesting auctions    |
+| **History**          | Price history for items       |
 
 ## Banking System
 
@@ -237,7 +237,7 @@ interface Bank {
   id: string;
   name: string;
   location: WorldLocation;
-  type: 'national' | 'faction' | 'player' | 'guild';
+  type: "national" | "faction" | "player" | "guild";
   accounts: BankAccount[];
   services: BankService[];
   interest_rate: number;
@@ -248,7 +248,7 @@ interface Bank {
 interface BankAccount {
   id: string;
   owner_id: string;
-  type: 'checking' | 'savings' | 'guild' | 'investment';
+  type: "checking" | "savings" | "guild" | "investment";
   balance: number;
   currency: Currency;
   transactions: Transaction[];
@@ -258,7 +258,7 @@ interface BankAccount {
 
 interface Transaction {
   id: string;
-  type: 'deposit' | 'withdrawal' | 'transfer' | 'interest' | 'fee' | 'loan';
+  type: "deposit" | "withdrawal" | "transfer" | "interest" | "fee" | "loan";
   amount: number;
   from_account?: string;
   to_account?: string;
@@ -269,14 +269,14 @@ interface Transaction {
 
 ### Banking Services
 
-| Service | Description | Fee |
-|---------|-------------|-----|
-| **Storage** | Secure item storage | 1-5% |
-| **Transfer** | Send money to others | 0.5-2% |
-| **Loan** | Borrow money | 5-15% interest |
-| **Investment** | Earn interest | 1-5% return |
-| **Exchange** | Currency conversion | 1-3% |
-| **Safe Deposit** | Secure item vault | Fixed fee |
+| Service          | Description          | Fee            |
+| ---------------- | -------------------- | -------------- |
+| **Storage**      | Secure item storage  | 1-5%           |
+| **Transfer**     | Send money to others | 0.5-2%         |
+| **Loan**         | Borrow money         | 5-15% interest |
+| **Investment**   | Earn interest        | 1-5% return    |
+| **Exchange**     | Currency conversion  | 1-3%           |
+| **Safe Deposit** | Secure item vault    | Fixed fee      |
 
 ## Economic Simulation
 
@@ -290,12 +290,12 @@ interface EconomicState {
   gold_supply: number;
   price_index: number;
   market_confidence: number; // 0-100
-  economic_cycle: 'recession' | 'recovery' | 'growth' | 'peak';
+  economic_cycle: "recession" | "recovery" | "growth" | "peak";
 }
 
 interface EconomicEvent {
   id: string;
-  type: 'boom' | 'bust' | 'war' | 'discovery' | 'plague' | 'harvest' | 'drought';
+  type: "boom" | "bust" | "war" | "discovery" | "plague" | "harvest" | "drought";
   impact: EconomicImpact;
   duration: number; // in game days
   affected_regions: string[];
@@ -314,7 +314,7 @@ interface EconomicImpact {
 
 ```typescript
 interface MarketManipulation {
-  type: 'monopoly' | 'price_fixing' | 'hoarding' | 'smuggling' | 'counterfeiting';
+  type: "monopoly" | "price_fixing" | "hoarding" | "smuggling" | "counterfeiting";
   target: Market | ItemCategory;
   manipulator: Character;
   success_chance: number;
@@ -340,7 +340,7 @@ interface GuildBank {
 interface GuildAccount {
   id: string;
   name: string;
-  type: 'general' | 'raid' | 'crafting' | 'events';
+  type: "general" | "raid" | "crafting" | "events";
   balance: number;
   permissions: AccountPermission[];
 }
@@ -352,9 +352,9 @@ interface GuildAccount {
 interface GuildTax {
   id: string;
   name: string;
-  type: 'income' | 'trade' | 'raid_loot' | 'crafting' | 'donation';
+  type: "income" | "trade" | "raid_loot" | "crafting" | "donation";
   rate: number; // percentage
-  collection_method: 'automatic' | 'manual';
+  collection_method: "automatic" | "manual";
   revenue: number;
   exemptions: TaxExemption[];
 }

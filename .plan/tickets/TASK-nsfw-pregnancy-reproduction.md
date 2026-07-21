@@ -12,6 +12,7 @@ Implement pregnancy/reproduction mechanics: pregnancy chance calculation, pregna
 ## Core Features
 
 ### Pregnancy Chance
+
 - Base chance per encounter
 - Fertility modifier
 - Heat cycle modifier
@@ -19,18 +20,21 @@ Implement pregnancy/reproduction mechanics: pregnancy chance calculation, pregna
 - Species compatibility modifier
 
 ### Pregnancy State
+
 - Gestation tracking (day-by-day)
 - Stage progression (early, mid, late, labor)
 - Health/complications
 - Effects on mother (stamina, sensitivity, mood, cravings)
 
 ### Species-Specific
+
 - Live birth vs egg-laying
 - Variable gestation periods
 - Litter sizes
 - Hybrid viability
 
 ### Offspring
+
 - Trait inheritance
 - Species determination
 - Stat generation

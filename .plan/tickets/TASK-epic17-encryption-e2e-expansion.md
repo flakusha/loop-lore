@@ -17,12 +17,14 @@ Expand Epic 17 from "at-rest AES-256-GCM" to full e2e encryption scope: private 
 ## Current State
 
 ### What Exists (spec only, not implemented)
+
 - `docs/spec/encryption-workflow.md` — 3-tier model (public/standard/private), key hierarchy, integrity verification
 - `docs/spec/crypto.md` — encryption spec (actor keys, chat keys, BYOK, SMK)
 - `docs/frontend/encryption.md` — frontend UX spec
 - Messages stored as **plaintext** in DB
 
 ### What's Missing
+
 - No encryption code in `src/`
 - No key management system
 - No access control for encrypted content
@@ -33,11 +35,11 @@ Expand Epic 17 from "at-rest AES-256-GCM" to full e2e encryption scope: private 
 
 ### Encryption Tiers
 
-| Tier | Scope | Encryption | Key Management |
-| ---- | ----- | ---------- | -------------- |
-| **Public** | Public chats, world info | None (plaintext) | None |
-| **Standard** | User's private chats | AES-256-GCM at-rest | User key derived from password |
-| **Private** | Private chats with participants | E2E AES-256-GCM | Shared keys, rotation on leave |
+| Tier         | Scope                           | Encryption          | Key Management                 |
+| ------------ | ------------------------------- | ------------------- | ------------------------------ |
+| **Public**   | Public chats, world info        | None (plaintext)    | None                           |
+| **Standard** | User's private chats            | AES-256-GCM at-rest | User key derived from password |
+| **Private**  | Private chats with participants | E2E AES-256-GCM     | Shared keys, rotation on leave |
 
 ### Key Hierarchy
 
