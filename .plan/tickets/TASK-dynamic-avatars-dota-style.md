@@ -1,3 +1,6 @@
+> **Superseded by:** `TASK-3d-view-modes.md` — all content consolidated there.
+> Implement from the consolidated task. This file preserved for reference only.
+
 # TASK: Dynamic Avatars — Dota 2 Style Animated Mugshots
 
 **Status:** ⬜ Not Started
@@ -12,6 +15,7 @@ Animated character mugshots inspired by Dota 2 hero portraits — breathing anim
 ## Inspiration
 
 Dota 2 hero portraits:
+
 - Subtle breathing animation (chest/shoulder movement)
 - Eye tracking (follows cursor or random movement)
 - Expression shifts (idle → alert → combat)
@@ -32,23 +36,23 @@ Base Layer (VRM/Spine 2D)
 
 ### Animation States
 
-| State | Description | Trigger |
-| ----- | ----------- | ------- |
-| Idle | Default breathing, random blinks | Default |
-| Alert | Eyes widen, slight lean forward | User typing |
-| Happy | Smile, head tilt | Positive message |
-| Sad | Downturn, slow blink | Negative message |
-| Angry | Furrowed, intense stare | Conflict |
-| Speaking | Mouth movement sync | LLM generating |
+| State    | Description                      | Trigger          |
+| -------- | -------------------------------- | ---------------- |
+| Idle     | Default breathing, random blinks | Default          |
+| Alert    | Eyes widen, slight lean forward  | User typing      |
+| Happy    | Smile, head tilt                 | Positive message |
+| Sad      | Downturn, slow blink             | Negative message |
+| Angry    | Furrowed, intense stare          | Conflict         |
+| Speaking | Mouth movement sync              | LLM generating   |
 
 ### Tech Stack
 
-| Component | Library | Notes |
-| --------- | ------- | ----- |
+| Component | Library                 | Notes                      |
+| --------- | ----------------------- | -------------------------- |
 | 2D rigged | Spine 2D or DragonBones | Lightweight,广泛 supported |
-| 3D rigged | Three.js + VRM | Full 3D, more complex |
-| Particles | PixiJS or WebGL shaders | Ambient effects |
-| Audio | Howler.js | Spatial audio |
+| 3D rigged | Three.js + VRM          | Full 3D, more complex      |
+| Particles | PixiJS or WebGL shaders | Ambient effects            |
+| Audio     | Howler.js               | Spatial audio              |
 
 ## Tasks
 
@@ -101,12 +105,12 @@ Base Layer (VRM/Spine 2D)
 
 ## Performance
 
-| Metric | Target | Notes |
-| ------ | ------ | ----- |
-| Animation FPS | 30+ | Idle animation |
-| Memory | < 100MB | Sprite sheets + audio |
-| Load time | < 2s | Cached rig files |
-| Particle count | < 50 | Ambient only |
+| Metric         | Target  | Notes                 |
+| -------------- | ------- | --------------------- |
+| Animation FPS  | 30+     | Idle animation        |
+| Memory         | < 100MB | Sprite sheets + audio |
+| Load time      | < 2s    | Cached rig files      |
+| Particle count | < 50    | Ambient only          |
 
 ## Art Requirements
 
