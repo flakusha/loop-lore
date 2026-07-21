@@ -38,6 +38,7 @@ boilerplate is shared; only the wire-specific `send()` and protocol metadata dif
 `createProtocol(config)` — dispatches to the right adapter.
 
 Selection priority (already-negotiated → explicit):
+
 1. `config.protocol` (post-negotiation result)
 2. `Accept` header (see Negotiation)
 3. ALPN (TLS) — handled by the server socket layer, surfaced into `config`
@@ -48,14 +49,14 @@ compression wrapper (`withCompression`) is applied here when `config.compression
 
 ## Built-in Adapters
 
-| Protocol  | File       | State        | Features                                            |
-| --------- | ---------- | ------------ | --------------------------------------------------- |
-| HTTP/1.1  | `http1.ts` | ✅ Functional | keep-alive, idle timeout                            |
-| HTTP/2    | `h2.ts`    | ⚠️ Stub      | metadata claims multiplexing/server-push; `send()` is a no-op — **[GAP]** not server-wired |
-| WebSocket | `ws.ts`    | ✅ Functional | binary/text frames, ping/pong, pending-queue, `attach()` for server-side |
-| SSE       | —          | ❌ Missing    | **[GAP]** not in `TransportProtocol` enum; see SSE section |
-| HTTP/3    | —          | ❌ Missing    | **[GAP]** enum present, no handler (QUIC)           |
-| WebTransport | —       | ❌ Missing    | **[GAP]** enum present, no handler                  |
+| Protocol     | File       | State         | Features                                                                                   |
+| ------------ | ---------- | ------------- | ------------------------------------------------------------------------------------------ |
+| HTTP/1.1     | `http1.ts` | ✅ Functional | keep-alive, idle timeout                                                                   |
+| HTTP/2       | `h2.ts`    | ⚠️ Stub        | metadata claims multiplexing/server-push; `send()` is a no-op — **[GAP]** not server-wired |
+| WebSocket    | `ws.ts`    | ✅ Functional | binary/text frames, ping/pong, pending-queue, `attach()` for server-side                   |
+| SSE          | —          | ❌ Missing    | **[GAP]** not in `TransportProtocol` enum; see SSE section                                 |
+| HTTP/3       | —          | ❌ Missing    | **[GAP]** enum present, no handler (QUIC)                                                  |
+| WebTransport | —          | ❌ Missing    | **[GAP]** enum present, no handler                                                         |
 
 > **Reconcile note:** `epic-transport-expansion.md` marks `h2.ts` as "Built". The handler
 > class exists but `send()` does not transmit; treat HTTP/2 as stubbed until server wiring
@@ -66,16 +67,19 @@ compression wrapper (`withCompression`) is applied here when `config.compression
 ## Protocol Deep Dives
 
 ### HTTP/1.1 — `http1.ts`
+
 Baseline request/response. Keep-alive + idle timeout. Used for all standard REST routes
 (`docs/spec/api-routes.md`) and static asset serving. No multiplexing — one request per
 connection; the server relies on connection pooling. Sufficient for the current htmx/Alpine
 web UI where each interaction is a discrete request.
 
 ### HTTP/2 — `h2.ts` **[GAP: stub]**
+
 Multiplexed streams over one TCP connection; removes head-of-line blocking; server push for
 proactive asset delivery.
 
 **Why it matters here:**
+
 - **Asset pipeline** (`docs/spec/assets.md`) — push referenced images/audio alongside a chat
   page load instead of waiting for the client to discover and request them.
 - **Parallel generation** — fan out multiple LLM provider calls (or multi-LLM story turns,
@@ -87,10 +91,12 @@ proactive asset delivery.
 hook, and advertising H2 in `DEFAULT_CAPABILITIES`.
 
 ### HTTP/3 / QUIC **[GAP: missing]**
+
 UDP-based, 0-RTT resumption, independent streams (no HOL blocking even at packet level),
 built-in encryption. Depends on Bun gaining stable QUIC listeners.
 
 **Why it matters here:**
+
 - **Low-latency mobile / offline-first PWA** (`docs/ideas/platform-reach.md` #23) — reconnect
   after sleep without TCP handshake penalty; resilient on flaky cellular.
 - **Cross-device E2E sync** (#25) — faster resume of encrypted sync streams across networks.
@@ -98,10 +104,12 @@ built-in encryption. Depends on Bun gaining stable QUIC listeners.
 Fallback chain: HTTP/3 → HTTP/2 → HTTP/1.1, selected via ALPN then header negotiation.
 
 ### WebSocket — `ws.ts`
+
 Full-duplex, message-oriented. Real client + `attach()` for server-side upgrade. Ping/pong
 keepalive, pending-message queue while connecting.
 
 **Why it matters here:**
+
 - **TUI client** (`src/tui/app.ts`) — persistent connection for live chat, no polling.
 - **Real-time chat** — streaming generation tokens, typing indicators, presence.
 - **E2E-encrypted payloads** (`docs/spec/crypto.md`) — binary framing carries ciphertext;
@@ -111,10 +119,12 @@ keepalive, pending-message queue while connecting.
 encrypted frames, and server advertisement.
 
 ### Server-Sent Events (SSE) **[GAP: missing — enum + handler]**
+
 Unidirectional server→client streaming over plain HTTP/1.1 or HTTP/2. Simpler than WebSocket
 when the client never needs to send on the same channel.
 
 **Why it matters here:**
+
 - **Generation streaming** (`docs/frontend/chat/generation.md`) — token-by-token typing
   indicator without a full WS upgrade; the web UI can subscribe via `EventSource`.
 - **Notifications** (`docs/frontend/notifications.md`) — server-pushed toasts, moderation
@@ -126,10 +136,12 @@ when the client never needs to send on the same channel.
 chunk emission. Negotiated via `Accept: text/event-stream`.
 
 ### WebTransport **[GAP: missing]**
+
 Bidirectional streams + unreliable datagrams over QUIC. Superset of WS (multiple streams,
 out-of-order datagrams) without TCP HOL blocking.
 
 **Why it matters here:**
+
 - **Real-time co-authoring** (#19) — separate streams per collaborator cursor/typing without
   head-of-line blocking.
 - **Group chat** (`docs/frontend/chat/group-chat.md`) — per-participant streams, initiative
@@ -163,13 +175,13 @@ Capabilities: `maxFrameSize` (64 KiB default), `maxPayload` (320 KiB), `extensio
 
 ### Negotiation & Upgrade Matrix
 
-| From ↓ / To → | HTTP/1.1 | HTTP/2 | WebSocket | SSE | WebTransport |
-| ------------- | -------- | ------ | --------- | --- | ------------ |
-| HTTP/1.1      | —        | ALPN   | `Upgrade` | `Accept: text/event-stream` | HTTP/3+ ALPN |
-| HTTP/2        | ALPN     | —      | `Upgrade` over h2 | native stream | ALPN |
-| WebSocket     | fallback | —      | —         | n/a | `Upgrade` to WT |
-| SSE           | native   | native | n/a       | —   | n/a |
-| WebTransport  | fallback | —      | fallback   | n/a  | —            |
+| From ↓ / To → | HTTP/1.1 | HTTP/2 | WebSocket         | SSE                         | WebTransport    |
+| ------------- | -------- | ------ | ----------------- | --------------------------- | --------------- |
+| HTTP/1.1      | —        | ALPN   | `Upgrade`         | `Accept: text/event-stream` | HTTP/3+ ALPN    |
+| HTTP/2        | ALPN     | —      | `Upgrade` over h2 | native stream               | ALPN            |
+| WebSocket     | fallback | —      | —                 | n/a                         | `Upgrade` to WT |
+| SSE           | native   | native | n/a               | —                           | n/a             |
+| WebTransport  | fallback | —      | fallback          | n/a                         | —               |
 
 Priority: explicit config → `Accept` → ALPN → fallback. `upgradeConnection()` transfers
 state via `Connection.metadata` with automatic fallback on failure.
@@ -197,21 +209,21 @@ must extend the default suite.
 Which future feature consumes which protocol. This is the contract between transport and
 the rest of the roadmap.
 
-| Feature (source)                              | Protocol(s)            | Why |
-| --------------------------------------------- | ---------------------- | --- |
-| REST routes, static assets (`api-routes.md`)  | HTTP/1.1 (+ H2 push)   | discrete requests, htmx |
-| Chat generation streaming (`chat/generation.md`) | SSE (web), WS (TUI) | token-by-token |
-| TUI client (`src/tui/app.ts`)                 | WebSocket              | persistent live connection |
-| Typing / presence indicators                 | SSE / WS / WT          | downstream-only or bidirectional |
-| Group chat (`chat/group-chat.md`)            | WebSocket, WebTransport | multi-participant streams |
-| Co-authoring (#19)                            | WebSocket, WebTransport | per-user streams, no HOL block |
-| Notifications (`notifications.md`)           | SSE, WebSocket         | server push, toasts |
-| Async NPC mail (#22)                          | SSE / notifications channel | server→client delivery |
-| Asset pipeline (`assets.md`)                 | HTTP/2 server push     | proactive delivery |
-| Multi-LLM story (`multi-llm-story.md`)       | HTTP/2 streams         | parallel turns |
-| Cross-device E2E sync (#25, `crypto.md`)     | HTTP/3 / WS binary     | fast resume, ciphertext frames |
-| Offline-first PWA (#23)                       | HTTP/3 / WS            | resilient reconnect |
-| Horizontal scaling (Redis WS, roadmap)        | WebSocket + broker     | shared connection state |
+| Feature (source)                                 | Protocol(s)                 | Why                              |
+| ------------------------------------------------ | --------------------------- | -------------------------------- |
+| REST routes, static assets (`api-routes.md`)     | HTTP/1.1 (+ H2 push)        | discrete requests, htmx          |
+| Chat generation streaming (`chat/generation.md`) | SSE (web), WS (TUI)         | token-by-token                   |
+| TUI client (`src/tui/app.ts`)                    | WebSocket                   | persistent live connection       |
+| Typing / presence indicators                     | SSE / WS / WT               | downstream-only or bidirectional |
+| Group chat (`chat/group-chat.md`)                | WebSocket, WebTransport     | multi-participant streams        |
+| Co-authoring (#19)                               | WebSocket, WebTransport     | per-user streams, no HOL block   |
+| Notifications (`notifications.md`)               | SSE, WebSocket              | server push, toasts              |
+| Async NPC mail (#22)                             | SSE / notifications channel | server→client delivery           |
+| Asset pipeline (`assets.md`)                     | HTTP/2 server push          | proactive delivery               |
+| Multi-LLM story (`multi-llm-story.md`)           | HTTP/2 streams              | parallel turns                   |
+| Cross-device E2E sync (#25, `crypto.md`)         | HTTP/3 / WS binary          | fast resume, ciphertext frames   |
+| Offline-first PWA (#23)                          | HTTP/3 / WS                 | resilient reconnect              |
+| Horizontal scaling (Redis WS, roadmap)           | WebSocket + broker          | shared connection state          |
 
 ---
 
@@ -221,11 +233,11 @@ POP3 / IMAP / SMTP / XMPP / MQTT are **not** part of the unified transport abstr
 They are application-level (or federation-level) concerns and belong in the
 **plugin / integration layer** (`docs/spec/plugin-system.md`), not `src/transport/`.
 
-| Protocol | Would live in | Loop-lore relevance |
-| -------- | ------------- | ------------------- |
-| XMPP     | federation plugin | possible decentralized chat federation (future) |
+| Protocol       | Would live in                   | Loop-lore relevance                                  |
+| -------------- | ------------------------------- | ---------------------------------------------------- |
+| XMPP           | federation plugin               | possible decentralized chat federation (future)      |
 | SMTP/IMAP/POP3 | notification/integration plugin | async NPC mail (#22) could bridge to email; not core |
-| MQTT     | IoT/integration plugin | not currently needed; possible device sync |
+| MQTT           | IoT/integration plugin          | not currently needed; possible device sync           |
 
 **Position:** keep `TransportProtocol` to real wire transports (HTTP/1.1, HTTP/2, HTTP/3,
 WebSocket, SSE, WebTransport, and the low-level Tcp/Tls primitives). Federation/external
@@ -233,14 +245,14 @@ protocols sit above the app layer and reuse the negotiated transport, not extend
 
 ## Integration Points
 
-| Layer               | Entry Point                                                             |
-| ------------------- | ----------------------------------------------------------------------- |
-| Server (HTTP/HTTPS) | `src/server.ts` → `createProtocol({ protocol: 'http/1.1' })`            |
-| WebSocket           | `src/server.ts` → upgrade → `createProtocol({ protocol: 'websocket' })` |
+| Layer               | Entry Point                                                                                           |
+| ------------------- | ----------------------------------------------------------------------------------------------------- |
+| Server (HTTP/HTTPS) | `src/server.ts` → `createProtocol({ protocol: 'http/1.1' })`                                          |
+| WebSocket           | `src/server.ts` → upgrade → `createProtocol({ protocol: 'websocket' })`                               |
 | SSE                 | `src/server.ts` → `Accept: text/event-stream` route → `createProtocol({ protocol: 'sse' })` **[GAP]** |
-| WebTransport        | `src/server.ts` → WT endpoint **[GAP]**                                 |
-| Client (TUI)        | `src/tui/app.ts` → `createProtocol({ protocol: 'websocket' })`          |
-| Client (Web)        | Static JS → `new WebSocket()` / `new WebTransport()` / `EventSource`    |
+| WebTransport        | `src/server.ts` → WT endpoint **[GAP]**                                                               |
+| Client (TUI)        | `src/tui/app.ts` → `createProtocol({ protocol: 'websocket' })`                                        |
+| Client (Web)        | Static JS → `new WebSocket()` / `new WebTransport()` / `EventSource`                                  |
 
 ## Config — `src/config/schema.ts`
 

@@ -12,6 +12,7 @@ Implement crafting system with recipes, logic limitations, and pre-compiled item
 ## Crafting Recipes
 
 ### Recipe Structure
+
 - Input items (ingredients)
 - Output item (result)
 - Crafting time
@@ -19,6 +20,7 @@ Implement crafting system with recipes, logic limitations, and pre-compiled item
 - Success/failure chance
 
 ### Recipe Types
+
 - Standard crafting (combine items)
 - Refining (improve item quality)
 - Enchanting (add magical properties)
@@ -28,6 +30,7 @@ Implement crafting system with recipes, logic limitations, and pre-compiled item
 ## Logic Limitations
 
 ### Crafting Constraints
+
 - Skill level requirements
 - Tool requirements
 - Location requirements (forge, workbench, etc.)
@@ -35,6 +38,7 @@ Implement crafting system with recipes, logic limitations, and pre-compiled item
 - Recipe discovery requirements
 
 ### Failure Conditions
+
 - Insufficient materials
 - Insufficient skill level
 - Missing required tools
@@ -44,12 +48,14 @@ Implement crafting system with recipes, logic limitations, and pre-compiled item
 ## Pre-compiled Items
 
 ### Item Templates
+
 - Pre-defined item templates
 - Parameterized item generation
 - Item quality tiers
 - Item rarity system
 
 ### Lists with Setup
+
 - Crafting material lists
 - Recipe ingredient lists
 - Tool requirement lists
@@ -64,7 +70,7 @@ interface CraftingRecipe {
   id: string;
   name: string;
   description: string;
-  type: 'standard' | 'refining' | 'enchanting' | 'alchemy' | 'smithing';
+  type: "standard" | "refining" | "enchanting" | "alchemy" | "smithing";
   inputs: CraftingInput[];
   outputs: CraftingOutput[];
   craftingTime: number; // seconds
@@ -78,13 +84,13 @@ interface CraftingRecipe {
 interface CraftingInput {
   itemId: string;
   quantity: number;
-  quality?: 'common' | 'uncommon' | 'rare' | 'epic' | 'legendary';
+  quality?: "common" | "uncommon" | "rare" | "epic" | "legendary";
 }
 
 interface CraftingOutput {
   itemId: string;
   quantity: number;
-  quality: 'common' | 'uncommon' | 'rare' | 'epic' | 'legendary';
+  quality: "common" | "uncommon" | "rare" | "epic" | "legendary";
   chance: number; // 0-1
 }
 ```
@@ -95,10 +101,10 @@ interface CraftingOutput {
 interface ItemTemplate {
   id: string;
   name: string;
-  type: 'weapon' | 'armor' | 'consumable' | 'material' | 'tool';
+  type: "weapon" | "armor" | "consumable" | "material" | "tool";
   baseStats: Record<string, number>;
   qualityTiers: QualityTier[];
-  rarity: 'common' | 'uncommon' | 'rare' | 'epic' | 'legendary';
+  rarity: "common" | "uncommon" | "rare" | "epic" | "legendary";
 }
 
 interface QualityTier {

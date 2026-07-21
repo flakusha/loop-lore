@@ -12,6 +12,7 @@ Battle UI, battle mechanics (turn-based, scripted, LLM-involved), utilities for 
 ## Core Features
 
 ### Battle UI
+
 - Reduced chat message size for battle
 - Minimal inter-actor communications
 - Battle-specific message formatting
@@ -23,17 +24,20 @@ Battle UI, battle mechanics (turn-based, scripted, LLM-involved), utilities for 
 ### Battle Mechanics
 
 #### Turn-Based System
+
 - Initiative calculation
 - Turn order management
 - Action points per turn
 - Turn time limits (optional)
 
 #### Battle Modes
+
 - **Fully Scripted**: Pre-defined battle logic, no LLM involvement
 - **Half-LLM Involved**: LGM generates narrative, mechanics are scripted
 - **Full LLM**: LLM controls all aspects (narrative, mechanics, NPC decisions)
 
 #### Battle Actions
+
 - Attack (melee, ranged, magic)
 - Defend (block, dodge, parry)
 - Use item (potion, scroll, etc.)
@@ -43,6 +47,7 @@ Battle UI, battle mechanics (turn-based, scripted, LLM-involved), utilities for 
 - Negotiate (diplomatic solution)
 
 #### Battle State
+
 - Character health/mana/stamina
 - Status effects (buffs/debuffs)
 - Positioning (front/back/flank)
@@ -50,6 +55,7 @@ Battle UI, battle mechanics (turn-based, scripted, LLM-involved), utilities for 
 - Battle modifiers
 
 ### Battle Utilities
+
 - Dice roller integration
 - Stat calculator
 - Damage calculator
@@ -61,6 +67,7 @@ Battle UI, battle mechanics (turn-based, scripted, LLM-involved), utilities for 
 ## Similar Mechanics
 
 ### Trading System
+
 - NPC trading interface
 - Buy/sell mechanics
 - Price negotiation (LLM-driven)
@@ -69,6 +76,7 @@ Battle UI, battle mechanics (turn-based, scripted, LLM-involved), utilities for 
 - Market dynamics (supply/demand)
 
 ### Inventory Management
+
 - Inventory grid/list view
 - Item organization (sort, filter, search)
 - Item comparison
@@ -77,6 +85,7 @@ Battle UI, battle mechanics (turn-based, scripted, LLM-involved), utilities for 
 - Weight/encumbrance system
 
 ### Items Transfer
+
 - Player-to-player trading
 - Item dropping/picking up
 - Item gifting
@@ -85,6 +94,7 @@ Battle UI, battle mechanics (turn-based, scripted, LLM-involved), utilities for 
 - Item lending
 
 ### Spells & Actions
+
 - Spell system (learn, cast, upgrade)
 - Action system (skills, abilities)
 - Cooldown management
@@ -93,6 +103,7 @@ Battle UI, battle mechanics (turn-based, scripted, LLM-involved), utilities for 
 - Spell/action combinations
 
 ### Skill Rolls & Checks
+
 - Skill check mechanics (d20, d100, custom)
 - Difficulty classes (DC)
 - Skill modifiers
@@ -103,6 +114,7 @@ Battle UI, battle mechanics (turn-based, scripted, LLM-involved), utilities for 
 ## Far-Fetched Features
 
 ### Dynamic Backgrounds
+
 - Scene-based background generation
 - Character placement in scene
 - Movement and progress visualization
@@ -111,6 +123,7 @@ Battle UI, battle mechanics (turn-based, scripted, LLM-involved), utilities for 
 - Interactive background elements
 
 ### Scene Visualization
+
 - Top-down or isometric view
 - Character sprites/avatars
 - Movement animations
@@ -125,8 +138,8 @@ Battle UI, battle mechanics (turn-based, scripted, LLM-involved), utilities for 
 ```typescript
 interface Battle {
   id: string;
-  type: 'pve' | 'pvp' | 'hybrid';
-  mode: 'scripted' | 'half_llm' | 'full_llm';
+  type: "pve" | "pvp" | "hybrid";
+  mode: "scripted" | "half_llm" | "full_llm";
   state: BattleState;
   participants: BattleParticipant[];
   turnOrder: string[]; // participant IDs
@@ -137,7 +150,7 @@ interface Battle {
 }
 
 interface BattleState {
-  phase: 'setup' | 'active' | 'paused' | 'completed' | 'fled';
+  phase: "setup" | "active" | "paused" | "completed" | "fled";
   round: number;
   startTime: Date;
   endTime?: Date;
@@ -146,7 +159,7 @@ interface BattleState {
 
 interface BattleParticipant {
   id: string;
-  type: 'player' | 'npc' | 'monster';
+  type: "player" | "npc" | "monster";
   team: string;
   stats: BattleStats;
   position: BattlePosition;
@@ -172,14 +185,14 @@ interface BattleStats {
 interface BattlePosition {
   x: number;
   y: number;
-  zone: 'front' | 'back' | 'flank' | 'center';
-  facing: 'north' | 'south' | 'east' | 'west';
+  zone: "front" | "back" | "flank" | "center";
+  facing: "north" | "south" | "east" | "west";
 }
 
 interface BattleAction {
   id: string;
   name: string;
-  type: 'attack' | 'defend' | 'item' | 'spell' | 'ability' | 'flee' | 'negotiate';
+  type: "attack" | "defend" | "item" | "spell" | "ability" | "flee" | "negotiate";
   cost: ActionCost;
   effects: ActionEffect[];
   requirements: ActionRequirement[];
@@ -195,8 +208,8 @@ interface ActionCost {
 }
 
 interface ActionEffect {
-  type: 'damage' | 'heal' | 'buff' | 'debuff' | 'status' | 'movement' | 'special';
-  target: 'self' | 'single' | 'area' | 'all_enemies' | 'all_allies';
+  type: "damage" | "heal" | "buff" | "debuff" | "status" | "movement" | "special";
+  target: "self" | "single" | "area" | "all_enemies" | "all_allies";
   value: number;
   duration?: number; // turns
   condition?: string;
@@ -207,11 +220,11 @@ interface ActionEffect {
 
 ```typescript
 interface BattleMode {
-  type: 'scripted' | 'half_llm' | 'full_llm';
+  type: "scripted" | "half_llm" | "full_llm";
   llmInvolvement: LLMInvolvement;
   narrativeGeneration: boolean;
   npcDecisionMaking: boolean;
-  mechanicCalculation: 'scripted' | 'llm' | 'hybrid';
+  mechanicCalculation: "scripted" | "llm" | "hybrid";
 }
 
 interface LLMInvolvement {
@@ -227,16 +240,16 @@ interface LLMInvolvement {
 ```typescript
 interface Trade {
   id: string;
-  type: 'npc' | 'player' | 'auction';
+  type: "npc" | "player" | "auction";
   participants: TradeParticipant[];
   offers: TradeOffer[];
-  status: 'pending' | 'active' | 'completed' | 'cancelled';
+  status: "pending" | "active" | "completed" | "cancelled";
   history: TradeHistoryEntry[];
 }
 
 interface TradeParticipant {
   id: string;
-  type: 'player' | 'npc';
+  type: "player" | "npc";
   inventory: string[]; // item IDs
   currency: number;
   reputation: number; // affects prices
@@ -248,7 +261,7 @@ interface TradeOffer {
   items: TradeItem[];
   currency: number;
   conditions: string[];
-  status: 'pending' | 'accepted' | 'rejected' | 'countered';
+  status: "pending" | "accepted" | "rejected" | "countered";
 }
 
 interface TradeItem {
@@ -282,11 +295,11 @@ interface SkillCheck {
 interface SkillModifier {
   source: string; // 'stat', 'item', 'buff', 'situation'
   value: number;
-  type: 'bonus' | 'penalty';
+  type: "bonus" | "penalty";
 }
 
 interface DiceRoll {
-  type: 'd4' | 'd6' | 'd8' | 'd10' | 'd12' | 'd20' | 'd100' | 'custom';
+  type: "d4" | "d6" | "d8" | "d10" | "d12" | "d20" | "d100" | "custom";
   count: number;
   results: number[];
   total: number;
@@ -301,7 +314,7 @@ interface SkillCheckResult {
 }
 
 interface SkillCheckConsequence {
-  type: 'success' | 'failure' | 'partial' | 'critical_success' | 'critical_failure';
+  type: "success" | "failure" | "partial" | "critical_success" | "critical_failure";
   effect: string;
   duration?: number;
   reversible: boolean;
@@ -321,18 +334,18 @@ interface DynamicBackground {
 }
 
 interface Scene {
-  type: 'dungeon' | 'town' | 'wilderness' | 'dungeon' | 'special';
+  type: "dungeon" | "town" | "wilderness" | "dungeon" | "special";
   subType: string;
-  mood: 'peaceful' | 'tense' | 'dangerous' | 'mysterious';
-  timeOfDay: 'dawn' | 'day' | 'dusk' | 'night';
-  weather: 'clear' | 'cloudy' | 'rain' | 'snow' | 'fog';
+  mood: "peaceful" | "tense" | "dangerous" | "mysterious";
+  timeOfDay: "dawn" | "day" | "dusk" | "night";
+  weather: "clear" | "cloudy" | "rain" | "snow" | "fog";
 }
 
 interface CharacterPlacement {
   characterId: string;
   position: { x: number; y: number };
-  animation: 'idle' | 'walking' | 'running' | 'fighting' | 'talking';
-  facing: 'north' | 'south' | 'east' | 'west';
+  animation: "idle" | "walking" | "running" | "fighting" | "talking";
+  facing: "north" | "south" | "east" | "west";
 }
 
 interface EnvironmentState {
@@ -345,8 +358,8 @@ interface EnvironmentState {
 interface BackgroundTransition {
   from: string; // scene ID
   to: string; // scene ID
-  trigger: 'movement' | 'time' | 'event' | 'manual';
-  animation: 'fade' | 'slide' | 'zoom' | 'dissolve';
+  trigger: "movement" | "time" | "event" | "manual";
+  animation: "fade" | "slide" | "zoom" | "dissolve";
   duration: number; // seconds
 }
 ```
@@ -398,6 +411,7 @@ interface BackgroundTransition {
 ## Open Questions
 
 ### Battle System
+
 - How many participants per battle is reasonable?
 - Should battles be real-time or turn-based?
 - How to handle battle disconnections?
@@ -405,6 +419,7 @@ interface BackgroundTransition {
 - How to balance LLM involvement vs. scripted mechanics?
 
 ### State Switching & Mode Transitions
+
 - How to handle smooth transitions between gameplay modes?
 - Should mode switches be explicit or implicit?
 - How to maintain immersion during mode changes?
@@ -412,24 +427,28 @@ interface BackgroundTransition {
 - How to handle partial mode transitions (e.g., trading during battle)?
 
 ### Trading System
+
 - How to handle NPC trading prices?
 - Should player-to-player trading be secure?
 - How to prevent trade scams?
 - Should there be a global market/auction house?
 
 ### Inventory Management
+
 - How many inventory slots is reasonable?
 - Should inventory have weight limits?
 - How to handle inventory overflow?
 - Should inventory be sortable/filterable?
 
 ### Skill Checks
+
 - How to display dice rolls to players?
 - Should critical success/failure be visible?
 - How to handle multiple skill checks in sequence?
 - Should skill checks be automatic or player-triggered?
 
 ### Dynamic Backgrounds
+
 - How to generate backgrounds procedurally?
 - Should backgrounds be interactive?
 - How to handle background transitions?
@@ -438,36 +457,42 @@ interface BackgroundTransition {
 ## Implementation Phases
 
 ### Phase 1: Battle Core
+
 - Battle data model
 - Turn-based mechanics
 - Battle UI (reduced messages)
 - Basic battle actions
 
 ### Phase 2: Battle Modes
+
 - Scripted battle mode
 - Half-LLM battle mode
 - Full-LLM battle mode
 - Battle utilities
 
 ### Phase 3: Trading & Inventory
+
 - Trading system
 - Inventory management UI
 - Items transfer
 - Market dynamics
 
 ### Phase 4: Spells & Skills
+
 - Spells & actions system
 - Skill rolls & checks
 - Skill check UI
 - Spell/action combinations
 
 ### Phase 5: Dynamic Backgrounds (Far-Fetched)
+
 - Scene generation
 - Character placement
 - Background transitions
 - Interactive elements
 
 ### Phase 6: Polish & Integration
+
 - UI/UX refinement
 - Performance optimization
 - Balance tuning

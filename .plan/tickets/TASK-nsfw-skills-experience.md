@@ -12,15 +12,18 @@ Implement sexual skill system with skill categories (foreplay, oral, penetrative
 ## Core Features
 
 ### Skill Categories
+
 - Foreplay, Oral, Penetrative, Anal, Manual, Toys, BDSM, Massage, Striptease, Dirty Talk, Roleplay, Aftercare, Dominance, Submission, Exhibitionism, Voyeurism, Stamina, Sensitivity, Creativity, Communication
 
 ### Skill Progression
+
 - Skills improve through use
 - Experience points per action
 - Level-up unlocks new techniques
 - Skill synergies (boost related skills)
 
 ### Techniques
+
 - Unlocked at skill level thresholds
 - Require specific skill combinations
 - Have arousal/satisfaction/intimacy effects
@@ -28,6 +31,7 @@ Implement sexual skill system with skill categories (foreplay, oral, penetrative
 - Have risks (injury, stamina cost)
 
 ### Experience Tracking
+
 - Total experience per skill
 - Partner-specific experience
 - Context-specific experience (location, scenario)

@@ -12,6 +12,7 @@ Implement body/physical attribute systems: physique profiles (stamina, flexibili
 ## Core Features
 
 ### Physique Profile
+
 - Stamina: affects encounter duration
 - Flexibility: affects available positions/actions
 - Sensitivity: affects arousal buildup rate
@@ -19,6 +20,7 @@ Implement body/physical attribute systems: physique profiles (stamina, flexibili
 - Size/Build: affects compatibility with partners
 
 ### Appearance
+
 - Beauty: base attractiveness
 - Charisma: personality-based attraction
 - Style: clothing/fashion sense
@@ -26,12 +28,14 @@ Implement body/physical attribute systems: physique profiles (stamina, flexibili
 - Temporary modifiers: clothing, magic, potions
 
 ### Body Modifications
+
 - Piercings: attractiveness/erogenous effects
 - Tattoos: intimidation/fetish appeal
 - Scars: history/story effects
 - Implants: magical/technological enhancements
 
 ### Compatibility
+
 - Size compatibility between partners
 - Species compatibility
 - Physique interaction effects
