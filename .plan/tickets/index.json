@@ -954,5 +954,20 @@
       "ux"
     ],
     "source": ".plan/tickets/TASK-chat-context-feature-permissions.md"
+  },
+  "TASK-data-migration-transitivity": {
+    "hash": "50ad4c1",
+    "extid": "TASK-data-migration-transitivity",
+    "type": "TASK",
+    "title": "Data migration transitivity tracking",
+    "label": "task",
+    "priority": "medium",
+    "epic": "EPIC-2026-34",
+    "tags": [
+      "db",
+      "migration",
+      "data-integrity"
+    ],
+    "source": ".plan/tickets/TASK-data-migration-transitivity.md"
   }
 }
