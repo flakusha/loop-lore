@@ -1,6 +1,6 @@
 # TASK: Character vs World Data Separation
 
-**Epic:** World & Locations / RPG Mechanics
+**Epic:** Character Core System
 **Priority:** High
 **Effort:** Very High
 **Status:** Not Started
@@ -32,26 +32,37 @@ Set at character creation. Never modified by world/story.
 
 ```typescript
 interface CharacterCore {
+  // Identity (immutable)
   id: string;
   name: string;
   species: string;
   gender: string;
   age: number;
 
-  // Personality (immutable)
-  personality_traits: PersonalityTrait[];
-  core_values: string[];
-  fears: string[];
-  desires: string[];
+  // Mandatory fields
+  description: string; // Full character description/backstory
+  personality: string; // Personality summary (immutable)
 
-  // Physical (birth suit — base appearance)
-  physique: PhysiqueProfile; // Body system (TASK-nsfw-body-physical)
-  appearance: AppearanceProfile; // Natural appearance
-  voice: VoiceProfile;
+  // Optional fields
+  nickname?: string;
+  scenario?: string;
+  welcome_message?: string;
+  mes_example?: string;
+  system_prompt?: string;
+  post_history_instructions?: string;
+  alternate_greetings?: string[];
+  tags?: string[];
+  creator?: string;
+  creator_notes?: string;
+  character_version?: string;
 
-  // Base attributes (start values)
-  base_stats: CharacterStats; // STR, DEX, CON, INT, WIS, CHA
-  base_skills: CharacterSkills; // Skill starting levels
+  // NSFW content rating
+  content_rating: ContentRating;
+  nsfw_categories: string[];
+  nsfw_hard_limits: string[];
+
+  // Permanent traits (immutable)
+  permanent_traits: PermanentTraits;
 
   // Creator metadata
   creator_id: string;
@@ -59,6 +70,13 @@ interface CharacterCore {
   visibility: CharacterVisibility;
   licensing: CharacterLicensing;
 }
+
+type ContentRating =
+  | "sfw"
+  | "nsfw_mild"
+  | "nsfw_moderate"
+  | "nsfw_intense"
+  | "nsfw_extreme";
 ```
 
 ### Layer 1: Character Equipment (Current State)
@@ -70,10 +88,10 @@ interface CharacterEquipment {
   character_id: string;
 
   // Visual overrides
-  outfit: Outfit; // Current clothes
-  accessories: Accessory[]; // Jewelry, glasses, etc.
+  outfit: Outfit;
+  accessories: Accessory[];
   hairstyle: Hairstyle;
-  body_modifications: BodyModification[]; // Piercings, tattoos
+  body_modifications: BodyModification[];
 
   // Stat modifiers from equipment
   stat_bonuses: StatModifier[];
@@ -93,24 +111,27 @@ interface WorldCharacterOverlay {
   character_id: string;
   world_id: string;
 
+  // World traits (applied by world context)
+  world_traits: WorldTraits;
+
   // Lore modifications for this world
-  lore_overrides: LoreOverride[]; // "In this world, character is a thief"
-  backstory_additions: string[]; // World-specific backstory
+  lore_overrides: LoreOverride[];
+  backstory_additions: string[];
   relationship_overrides: RelationshipOverride[];
 
   // Skill modifications for this world
-  skill_modifiers: SkillModifier[]; // +10 sword in this world
-  unlocked_abilities: string[]; // Abilities only in this world
+  skill_modifiers: SkillModifier[];
+  unlocked_abilities: string[];
 
   // World-based attributes
-  buffs: Buff[]; // Active buffs in this world
-  debuffs: Debuff[]; // Active debuffs in this world
-  status_effects: StatusEffect[]; // Poison, blessed, cursed, etc.
+  buffs: Buff[];
+  debuffs: Debuff[];
+  status_effects: StatusEffect[];
 
   // Karma & standing (per-world)
   karma: KarmaRecord;
   standings: StandingRecord[];
-  world_views: WorldView[]; // Beliefs/opinions in this world
+  world_views: WorldView[];
 
   // Location-specific
   location_bonuses: LocationBonus[];
@@ -130,7 +151,7 @@ interface StoryCharacterOverlay {
 
   // Story-specific changes
   temporary_traits: TemporaryTrait[];
-  story_knowledge: string[]; // Things learned in this story
+  story_knowledge: string[];
   story_relationships: StoryRelationship[];
 
   // Temporary stat changes
@@ -153,12 +174,22 @@ CREATE TABLE character_core (
   species TEXT NOT NULL,
   gender TEXT NOT NULL,
   age INTEGER NOT NULL,
-  personality_traits JSON NOT NULL,
-  core_values JSON NOT NULL,
-  physique JSON NOT NULL,
-  appearance JSON NOT NULL,
-  base_stats JSON NOT NULL,
-  base_skills JSON NOT NULL,
+  description TEXT NOT NULL,
+  personality TEXT NOT NULL,
+  nickname TEXT,
+  scenario TEXT,
+  welcome_message TEXT,
+  mes_example TEXT,
+  system_prompt TEXT,
+  post_history_instructions TEXT,
+  alternate_greetings JSON NOT NULL DEFAULT '[]',
+  tags JSON NOT NULL DEFAULT '[]',
+  creator TEXT,
+  creator_notes TEXT,
+  character_version TEXT NOT NULL DEFAULT '1.0',
+  content_rating TEXT NOT NULL DEFAULT 'sfw',
+  nsfw_categories JSON NOT NULL DEFAULT '[]',
+  nsfw_hard_limits JSON NOT NULL DEFAULT '[]',
   creator_id TEXT NOT NULL,
   visibility TEXT NOT NULL DEFAULT 'private',
   licensing JSON,
@@ -170,7 +201,7 @@ CREATE TABLE character_core (
 CREATE TABLE character_equipment (
   id TEXT PRIMARY KEY,
   character_id TEXT NOT NULL REFERENCES character_core(id),
-  slot TEXT NOT NULL,           -- 'head', 'torso', 'legs', 'feet', 'accessory1', etc.
+  slot TEXT NOT NULL,
   item_id TEXT NOT NULL,
   stat_bonuses JSON,
   skill_bonuses JSON,
@@ -183,6 +214,7 @@ CREATE TABLE world_character_overlay (
   id TEXT PRIMARY KEY,
   character_id TEXT NOT NULL REFERENCES character_core(id),
   world_id TEXT NOT NULL,
+  world_traits JSON NOT NULL DEFAULT '{}',
   lore_overrides JSON,
   skill_modifiers JSON,
   buffs JSON,
@@ -210,6 +242,49 @@ CREATE TABLE story_character_overlay (
   UNIQUE(character_id, story_id, session_id)
 );
 
+-- Permanent traits (Layer 0)
+CREATE TABLE character_permanent_traits (
+  id TEXT PRIMARY KEY,
+  character_id TEXT NOT NULL REFERENCES character_core(id) UNIQUE,
+  identity JSON NOT NULL DEFAULT '{}',      -- name, species, gender, age, birth_date
+  personality JSON NOT NULL DEFAULT '{}',    -- traits, core_values, fears, desires, alignment, ideals, strives
+  physical JSON NOT NULL DEFAULT '{}',       -- size, complexity, features, physique, natural_appearance, voice
+  social JSON NOT NULL DEFAULT '{}',         -- friendliness, talkativity, activity_level, talk_style
+  preferences JSON NOT NULL DEFAULT '{}',    -- food_preference, comfort_preference
+  background JSON NOT NULL DEFAULT '{}',     -- homeland, culture, education, formative_events, secrets
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+-- World traits (Layer 2)
+CREATE TABLE character_world_traits (
+  id TEXT PRIMARY KEY,
+  character_id TEXT NOT NULL REFERENCES character_core(id),
+  world_id TEXT NOT NULL REFERENCES worlds(id),
+  environmental JSON NOT NULL DEFAULT '{}',  -- stat_modifiers, skill_modifiers, resistances, vulnerabilities
+  cultural JSON NOT NULL DEFAULT '{}',        -- speech_patterns, behavioral_modifiers, social_norms, taboos
+  magical JSON NOT NULL DEFAULT '{}',         -- abilities, restrictions, mana_modifier, magic_resistance
+  social JSON NOT NULL DEFAULT '{}',          -- faction_standings, reputation, titles, notoriety
+  equipment JSON NOT NULL DEFAULT '{}',       -- clothes, accessories, weapons, other_items (world-specific)
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  UNIQUE(character_id, world_id)
+);
+
+-- Location traits
+CREATE TABLE character_location_traits (
+  id TEXT PRIMARY KEY,
+  character_id TEXT NOT NULL REFERENCES character_core(id),
+  location_id TEXT NOT NULL REFERENCES locations(id),
+  world_id TEXT NOT NULL REFERENCES worlds(id),
+  bonuses JSON NOT NULL DEFAULT '{}',        -- stat_modifiers, skill_modifiers, comfort_level, safety_level
+  penalties JSON NOT NULL DEFAULT '{}',       -- stat_modifiers, skill_modifiers, discomfort, danger
+  effects JSON NOT NULL DEFAULT '[]',         -- StatusEffect[]
+  equipment_override JSON DEFAULT '{}',       -- clothes, accessories, weapons, other_items (location-specific)
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  UNIQUE(character_id, location_id)
+);
+
 -- Initial karma/standing defaults
 CREATE TABLE character_defaults (
   id TEXT PRIMARY KEY,
@@ -235,7 +310,11 @@ When querying character state, merge layers in order:
 Later layers override earlier ones. Equipment overrides core stats. World overrides equipment.
 
 ```typescript
-function resolveCharacter(characterId: string, worldId: string, storyId?: string,): ResolvedCharacter {
+function resolveCharacter(
+  characterId: string,
+  worldId: string,
+  storyId?: string,
+): ResolvedCharacter {
   const core = getCharacterCore(characterId,);
   const equipment = getEquipment(characterId,);
   const worldOverlay = getWorldOverlay(characterId, worldId,);
@@ -247,16 +326,33 @@ function resolveCharacter(characterId: string, worldId: string, storyId?: string
 
 ## Tasks
 
+### Phase 1: Schema & Core (Week 1-2)
+
 - [ ] Design layer architecture
 - [ ] Design database schema for all 4 layers
+- [ ] Add NSFW content rating fields
+- [ ] Add mandatory/optional field definitions
 - [ ] Implement Character Core CRUD
+- [ ] Implement Permanent Traits schema
+
+### Phase 2: Equipment & Overlays (Week 2-3)
+
 - [ ] Implement Equipment system
 - [ ] Implement World Overlay CRUD
+- [ ] Implement World Traits CRUD
+- [ ] Implement Location Traits CRUD
 - [ ] Implement Story Overlay CRUD
+
+### Phase 3: Resolution & Merge (Week 3-4)
+
 - [ ] Implement layer resolution/merge logic
+- [ ] Implement personality integrity enforcement
 - [ ] Implement conflict detection between layers
 - [ ] Implement undo/rollback for overlays
 - [ ] Implement overlay diff viewing
+
+### Phase 4: Integration & Testing (Week 4-5)
+
 - [ ] Implement character portability (export/import with overlays)
 - [ ] Write tests for layer resolution
 - [ ] Write tests for overlay merging
@@ -267,7 +363,18 @@ function resolveCharacter(characterId: string, worldId: string, storyId?: string
 - `src/characters/core.ts` — Character Core CRUD
 - `src/characters/equipment.ts` — Equipment system
 - `src/characters/world-overlay.ts` — World Overlay CRUD
+- `src/characters/world-traits.ts` — World Traits CRUD
+- `src/characters/location-traits.ts` — Location Traits CRUD
 - `src/characters/story-overlay.ts` — Story Overlay CRUD
 - `src/characters/resolver.ts` — Layer resolution/merge
 - `src/characters/types.ts` — Type definitions
 - `src/db/migrations/` — Schema migrations
+
+## Related
+
+- TASK-character-personality-integrity.md — Personality is immutable (Layer 0)
+- TASK-character-mood-happiness.md — Mood affects expression
+- TASK-character-relationships.md — Per-world relationships
+- TASK-character-multi-avatar.md — Context-aware avatars
+- TASK-character-creator-prerogative.md — Availability and licensing
+- epic-character-core-system.md — Parent epic
