@@ -34,9 +34,33 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     .alterTable("actor_memories",)
     .addColumn("context", "text",)
     .execute();
+  // ── Memory scope and visibility (three-tier system) ────────
+  await database.schema
+    .alterTable("actor_memories",)
+    .addColumn("world_id", "text",)
+    .execute();
+
+  await database.schema
+    .alterTable("actor_memories",)
+    .addColumn("user_id", "text",)
+    .execute();
+
+  await database.schema
+    .alterTable("actor_memories",)
+    .addColumn("scope", "text", (col,) => col.notNull().defaultTo("character",),)
+    .execute();
+
+  await database.schema
+    .alterTable("actor_memories",)
+    .addColumn("pinned", "integer", (col,) => col.notNull().defaultTo(0,),)
+    .execute();
 }
 
 export async function down(database: Kysely<unknown>,): Promise<void> {
+  await database.schema.alterTable("actor_memories",).dropColumn("pinned",).execute();
+  await database.schema.alterTable("actor_memories",).dropColumn("scope",).execute();
+  await database.schema.alterTable("actor_memories",).dropColumn("user_id",).execute();
+  await database.schema.alterTable("actor_memories",).dropColumn("world_id",).execute();
   await database.schema.alterTable("actor_memories",).dropColumn("context",).execute();
   await database.schema.alterTable("actor_memories",).dropColumn("source_message_id",).execute();
   await database.schema.alterTable("actor_memories",).dropColumn("last_accessed_at",).execute();

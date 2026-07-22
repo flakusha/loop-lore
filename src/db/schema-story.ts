@@ -220,6 +220,10 @@ export interface ActorMemories {
   last_accessed_at: Generated<string | null>;
   source_message_id: string | null;
   context: string | null;
+  world_id: string | null;
+  user_id: string | null;
+  scope: string;
+  pinned: Generated<number>;
   created_at: Generated<string>;
   updated_at: Generated<string>;
 }
