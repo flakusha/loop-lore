@@ -969,5 +969,53 @@
       "data-integrity"
     ],
     "source": ".plan/tickets/TASK-data-migration-transitivity.md"
+  },
+  "TASK-context-window-monitor": {
+    "hash": "pending",
+    "extid": "TASK-context-window-monitor",
+    "type": "TASK",
+    "title": "Context window monitor (FEAT-069)",
+    "label": "task",
+    "priority": "medium",
+    "epic": "EPIC-2026-36",
+    "tags": ["chat", "context", "tokens", "ux"],
+    "source": ".plan/tickets/TASK-context-window-monitor.md",
+    "git_issue": "FEAT-069"
+  },
+  "TASK-smart-context-pruning": {
+    "hash": "pending",
+    "extid": "TASK-smart-context-pruning",
+    "type": "TASK",
+    "title": "Smart context pruning (FEAT-072)",
+    "label": "task",
+    "priority": "medium",
+    "epic": "EPIC-2026-36",
+    "tags": ["chat", "context", "pruning", "memory"],
+    "source": ".plan/tickets/TASK-smart-context-pruning.md",
+    "git_issue": "FEAT-072"
+  },
+  "TASK-quick-regen-button": {
+    "hash": "pending",
+    "extid": "TASK-quick-regen-button",
+    "type": "TASK",
+    "title": "Quick-regen button (FEAT-070)",
+    "label": "task",
+    "priority": "low",
+    "epic": "EPIC-2026-51",
+    "tags": ["chat", "regen", "ux"],
+    "source": ".plan/tickets/TASK-quick-regen-button.md",
+    "git_issue": "FEAT-070"
+  },
+  "TASK-response-length-control": {
+    "hash": "pending",
+    "extid": "TASK-response-length-control",
+    "type": "TASK",
+    "title": "Response length control (FEAT-071)",
+    "label": "task",
+    "priority": "low",
+    "epic": "EPIC-2026-51",
+    "tags": ["chat", "generation", "ux"],
+    "source": ".plan/tickets/TASK-response-length-control.md",
+    "git_issue": "FEAT-071"
   }
 }
