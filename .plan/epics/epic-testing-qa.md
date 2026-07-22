@@ -20,10 +20,23 @@ Debugging, unit tests, e2e tests, browser tests, and test infrastructure improve
 
 ## Linked Tasks
 
-| Task                                 | Title                              | Priority | Status      |
-| ------------------------------------ | ---------------------------------- | -------- | ----------- |
-| TASK-test-performance-shared-state   | Test isolation, parallel ironing   | Medium   | Not Started |
-| TASK-frontend-e2e-improvements-draft | Frontend E2E stabilization (draft) | High     | Not Started |
+| Task                                 | Title                                                       | Priority | Status      |
+| ------------------------------------ | ----------------------------------------------------------- | -------- | ----------- |
+| TASK-2026-013                        | Nested ternary expressions from dprint reformatting         | High     | Not Started |
+| TASK-2026-014                        | Backend lint errors from new notification files             | High     | Not Started |
+| TASK-2026-015                        | Fix DB migration test failures (missing down + schema sync) | High     | Not Started |
+| TASK-2026-016                        | Fix crypto test isolation (138 pass isolated, ~20 in suite) | High     | Not Started |
+| TASK-2026-021                        | Fix generation test failures (mock provider + streaming)    | High     | Not Started |
+| TASK-2026-008                        | E2E: browser chat flow sends no messages                    | High     | Not Started |
+| TASK-2026-017                        | Add unit tests — untested modules batch (7 modules)         | Medium   | Not Started |
+| TASK-2026-009                        | Unit: 17 quick-win source files untested                    | Medium   | Not Started |
+| TASK-2026-010                        | Unit: story module nearly untested                          | Medium   | Not Started |
+| TASK-2026-018                        | Expand coverage — assistant module (42 src / 3 tests)       | Medium   | Not Started |
+| TASK-2026-019                        | Expand coverage — config module (24 src / 2 tests)          | Medium   | Not Started |
+| TASK-2026-020                        | Expand coverage — transport + group-chat modules            | Medium   | Not Started |
+| TASK-2026-006                        | E2E: test ordering fragile (shared mutable state)           | Medium   | Not Started |
+| TASK-2026-011                        | Unit: route handler isolation missing                       | Medium   | Not Started |
+| TASK-frontend-e2e-improvements-draft | Frontend E2E stabilization (draft)                          | High     | Not Started |
 
 ## Metrics
 
@@ -61,14 +74,14 @@ Grounded against `docs/meta/code-practices-improvements/05-testing-e2e-multiple-
 
 ## Extended Scope / Candidate Tasks
 
-| Task                       | Title                                                                   | Priority                                          | Status      |
-| -------------------------- | ----------------------------------------------------------------------- | ------------------------------------------------- | ----------- |
-| TASK-test-dialect-matrix   | Parameterize `createTestDb(DialectFactory)`; CI matrix `DIALECT=sqlite  | pg`(GitHub`services: postgres` or Testcontainers) | High        |
-| TASK-test-pg-pitfalls      | Cross-dialect guard tests: JSON, RETURNING, ON CONFLICT, boolean, dates | High                                              | Not Started |
-| TASK-test-factories        | Add `src/test-utils/factories.ts` typed builders; migrate e2e setup     | Med                                               | Not Started |
-| TASK-test-runtime-coverage | Gate `bun test --coverage` with floor (start 60%) in `check`            | Med                                               | Not Started |
-| TASK-test-contract         | Contract suite once OpenAPI exists (`tests/contract/` per route)        | Med                                               | Not Started |
-| TASK-test-load             | Smoke load test for `/api/messages` streaming on seeded chat            | Low                                               | Not Started |
+| Task                       | Title                                                                   | Priority | Status      |
+| -------------------------- | ----------------------------------------------------------------------- | -------- | ----------- |
+| TASK-test-dialect-matrix   | Parameterize `createTestDb(DialectFactory)`; CI matrix sqlite/pg        | High     | Not Started |
+| TASK-test-pg-pitfalls      | Cross-dialect guard tests: JSON, RETURNING, ON CONFLICT, boolean, dates | High     | Not Started |
+| TASK-test-factories        | Add `src/test-utils/factories.ts` typed builders; migrate e2e setup     | Med      | Not Started |
+| TASK-test-runtime-coverage | Gate `bun test --coverage` with floor (start 60%) in `check`            | Med      | Not Started |
+| TASK-test-contract         | Contract suite once OpenAPI exists (`tests/contract/` per route)        | Med      | Not Started |
+| TASK-test-load             | Smoke load test for `/api/messages` streaming on seeded chat            | Low      | Not Started |
 
 ## Open Questions
 
