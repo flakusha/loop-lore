@@ -224,6 +224,8 @@ export interface ActorMemories {
   user_id: string | null;
   scope: string;
   pinned: Generated<number>;
+  privacy: string;
+  shareability: string | null;
   created_at: Generated<string>;
   updated_at: Generated<string>;
 }
