@@ -1,6 +1,6 @@
 # TASK: Wire memory provision into prompt assembly
 
-**Issue:** 3bfb101
+**Issue:** 3bfb101c-e553-4879-b239-a817bc68a83f
 **Status:** open
 **Priority:** high
 **Epic:** EPIC-2026-37
