@@ -4,6 +4,7 @@
  * All table type interfaces + DB aggregate for Kysely.
  * Domain-grouped sub-modules provide per-domain interfaces.
  */
+export * from "./schema-character";
 export * from "./schema-content";
 export * from "./schema-core";
 export * from "./schema-generation";
@@ -53,4 +54,19 @@ export interface DB {
   telemetry_events: import("./schema-telemetry").TelemetryEvents;
   message_reactions: import("./schema-core").MessageReactions;
   chat_pins: import("./schema-core").ChatPins;
+  // Character systems
+  character_permanent_traits: import("./schema-character").CharacterPermanentTraits;
+  character_world_traits: import("./schema-character").CharacterWorldTraits;
+  character_location_traits: import("./schema-character").CharacterLocationTraits;
+  character_mood: import("./schema-character").CharacterMood;
+  mood_events: import("./schema-character").MoodEvents;
+  character_relationships: import("./schema-character").CharacterRelationships;
+  character_avatars: import("./schema-character").CharacterAvatars;
+  character_avatar_config: import("./schema-character").CharacterAvatarConfig;
+  world_avatar_config: import("./schema-character").WorldAvatarConfig;
+  emotions: import("./schema-character").Emotions;
+  character_emotions: import("./schema-character").CharacterEmotions;
+  character_availability: import("./schema-character").CharacterAvailability;
+  character_licensing: import("./schema-character").CharacterLicensing;
+  admin_character_overrides: import("./schema-character").AdminCharacterOverrides;
 }

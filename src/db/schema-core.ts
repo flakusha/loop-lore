@@ -13,6 +13,7 @@ import type {
   ChatPurpose,
   ChatType,
   ContentEncoding,
+  ContentRating,
   DefaultState,
   EncryptionLevel,
   EquipState,
@@ -130,6 +131,7 @@ export interface Actors {
   settings: string;
   data_version: Generated<number>;
   visibility: Generated<ActorVisibility>;
+  content_rating: Generated<ContentRating>;
   welcome_message: string | null;
   personality: string | null;
   scenario: string | null;
