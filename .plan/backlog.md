@@ -67,10 +67,14 @@ Ordered by user impact × effort. Items with partial `src/` code listed first.
 | Chat external music linking (no server download)                        | `TASK-chat-external-music-linking.md`                                   | Browser-native embeds from Spotify/YouTube/SoundCloud; copyright-safe              |
 | Context-based feature permissions (UI gating)                           | `TASK-chat-context-feature-permissions.md`                              | UI features gated by chat/world/location context                                   |
 | Data migration transitivity tracking (migrated-validated states)        | `TASK-data-migration-transitivity.md`                                   | Migration states beyond data_version for rollback/safety                           |
-| Context window monitor (token usage indicator)                          | `TASK-context-window-monitor.md`                                        | FEAT-069 — progress bar, threshold colors, per-chat setting                        |
-| Smart context pruning (score-based trimming + memory promotion)         | `TASK-smart-context-pruning.md`                                         | FEAT-072 — message scoring, pruning pipeline, promotion to actor_memories          |
-| Quick-regen button (one-click response regeneration)                    | `TASK-quick-regen-button.md`                                            | FEAT-070 — archive original, re-generate with overrides                            |
-| Response length control (presets + custom max_tokens)                   | `TASK-response-length-control.md`                                       | FEAT-071 — Short/Medium/Long/Custom presets, per-chat override                     |
+| Context window monitor (token usage indicator)                          | `TASK-context-window-monitor.md`                                        | FEAT-069 — ✅ Complete: sliding window, mode features, token budget                |
+| Smart context pruning (score-based trimming + memory promotion)         | `TASK-smart-context-pruning.md`                                         | FEAT-072 — ✅ Complete: context window, transitions, mode-aware features           |
+| Quick-regen button (one-click response regeneration)                    | `TASK-quick-regen-button.md`                                            | FEAT-070 — ✅ Complete: response length presets, resolution, fallback chain        |
+| Response length control (presets + custom max_tokens)                   | `TASK-response-length-control.md`                                       | FEAT-071 — ✅ Complete: Short/Medium/Long/Custom presets, per-chat override        |
+| Wire memory provision into prompt assembly                              | `TASK-memory-provision-wiring.md`                                       | Privacy-aware, scope-aware memory injection into prompts                           |
+| Implement memory decay logic                                            | `TASK-memory-decay-logic.md`                                            | Time-based decay using decay_rate, strength, last_accessed_at columns              |
+| Extract chat business logic from routes                                 | `TASK-chat-route-extraction.md`                                         | Move logic from chats.ts/messages.ts into service.ts                               |
+| Implement memory promotion pipeline                                     | `TASK-memory-promotion-pipeline.md`                                     | Wire promotedToMemory: extract → scope detect → store                              |
 
 ## Generation Templates (FEAT-065 — expanded)
 
