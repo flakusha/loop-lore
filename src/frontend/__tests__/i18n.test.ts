@@ -8,6 +8,8 @@ import {
   flattenTranslations,
   interpolate,
   getSavedLocale,
+  saveLocale,
+  createFrontendTranslator,
   SUPPORTED_LOCALES,
   LOCALE_REGISTRY,
   DEFAULT_LOCALE,
@@ -24,6 +26,16 @@ const mockLocalStorage = {
   key: (index: number) => [...storage.keys()][index] ?? null,
 };
 Object.defineProperty(globalThis, "localStorage", { value: mockLocalStorage, writable: true });
+
+// Mock document for cookie and DOM operations
+const mockDocument = {
+  cookie: "",
+  documentElement: {
+    lang: "en",
+    dir: "ltr",
+  },
+};
+Object.defineProperty(globalThis, "document", { value: mockDocument, writable: true });
 
 describe("resolveKey", () => {
   const map = {
@@ -97,6 +109,59 @@ describe("getSavedLocale", () => {
   it("returns default for invalid locale", () => {
     storage.set("locale", "xx");
     expect(getSavedLocale()).toBe(DEFAULT_LOCALE);
+  });
+});
+
+describe("saveLocale", () => {
+  beforeEach(() => {
+    storage.clear();
+    mockDocument.cookie = "";
+    mockDocument.documentElement.lang = "en";
+    mockDocument.documentElement.dir = "ltr";
+  });
+
+  it("saves locale to localStorage", () => {
+    saveLocale("ja");
+    expect(storage.get("locale")).toBe("ja");
+  });
+
+  it("overwrites previous locale", () => {
+    saveLocale("ja");
+    saveLocale("fr");
+    expect(storage.get("locale")).toBe("fr");
+  });
+});
+
+describe("createFrontendTranslator", () => {
+  it("returns primary translation when available", () => {
+    const translations = { auth: { login: "Iniciar sesión" } };
+    const t = createFrontendTranslator(translations);
+    expect(t("auth.login")).toBe("Iniciar sesión");
+  });
+
+  it("returns key path when translation missing", () => {
+    const translations = {};
+    const t = createFrontendTranslator(translations);
+    expect(t("auth.login")).toBe("auth.login");
+  });
+
+  it("interpolates parameters", () => {
+    const translations = { greeting: { hello: "Hola {name}" } };
+    const t = createFrontendTranslator(translations);
+    expect(t("greeting.hello", { name: "Mundo" })).toBe("Hola Mundo");
+  });
+
+  it("falls back to fallback locale translations", () => {
+    const primary = {};
+    const fallback = { auth: { login: "Log In" } };
+    const t = createFrontendTranslator(primary, fallback);
+    expect(t("auth.login")).toBe("Log In");
+  });
+
+  it("returns key path for deeply nested missing key", () => {
+    const translations = { common: { save: "Guardar" } };
+    const t = createFrontendTranslator(translations);
+    expect(t("deeply.nested.missing")).toBe("deeply.nested.missing");
   });
 });
 
