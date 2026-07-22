@@ -54,9 +54,21 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     .alterTable("actor_memories",)
     .addColumn("pinned", "integer", (col,) => col.notNull().defaultTo(0,),)
     .execute();
+  // ── Memory privacy and shareability ───────────────────────
+  await database.schema
+    .alterTable("actor_memories",)
+    .addColumn("privacy", "text", (col,) => col.notNull().defaultTo("shared",),)
+    .execute();
+
+  await database.schema
+    .alterTable("actor_memories",)
+    .addColumn("shareability", "text",)
+    .execute();
 }
 
 export async function down(database: Kysely<unknown>,): Promise<void> {
+  await database.schema.alterTable("actor_memories",).dropColumn("shareability",).execute();
+  await database.schema.alterTable("actor_memories",).dropColumn("privacy",).execute();
   await database.schema.alterTable("actor_memories",).dropColumn("pinned",).execute();
   await database.schema.alterTable("actor_memories",).dropColumn("scope",).execute();
   await database.schema.alterTable("actor_memories",).dropColumn("user_id",).execute();
