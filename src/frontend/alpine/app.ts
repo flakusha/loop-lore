@@ -14,6 +14,24 @@ globalThis.app = function() {
     toasts: [] as Array<{ type: string; msg: string; icon: string }>,
     toasts: [] as Array<{ type: string; msg: string; icon: string }>,
     toasts: [] as Array<{ type: string; msg: string; icon: string }>,
+    toasts: [] as Array<{ type: string; msg: string; icon: string }>,
+    toasts: [] as Array<{ type: string; msg: string; icon: string }>,
+    toasts: [] as Array<{ type: string; msg: string; icon: string }>,
+    toasts: [] as Array<{ type: string; msg: string; icon: string }>,
+    toasts: [] as Array<{ type: string; msg: string; icon: string }>,
+    toasts: [] as Array<{ type: string; msg: string; icon: string }>,
+    toasts: [] as Array<{ type: string; msg: string; icon: string }>,
+    toasts: [] as Array<{ type: string; msg: string; icon: string }>,
+    toasts: [] as Array<{ type: string; msg: string; icon: string }>,
+    toasts: [] as Array<{ type: string; msg: string; icon: string }>,
+    toasts: [] as Array<{ type: string; msg: string; icon: string }>,
+    toasts: [] as Array<{ type: string; msg: string; icon: string }>,
+    toasts: [] as Array<{ type: string; msg: string; icon: string }>,
+    toasts: [] as Array<{ type: string; msg: string; icon: string }>,
+    toasts: [] as Array<{ type: string; msg: string; icon: string }>,
+    toasts: [] as Array<{ type: string; msg: string; icon: string }>,
+    toasts: [] as Array<{ type: string; msg: string; icon: string }>,
+    toasts: [] as Array<{ type: string; msg: string; icon: string }>,
     currentTheme: "default",
     sidebarOpen: false,
     currentLocale: "en",
@@ -98,6 +116,8 @@ globalThis.app = function() {
       localStorage.setItem("locale", localeId,);
       this.currentLocale = localeId;
       this.loadLocale(localeId,);
+      // Set cookie for server-side locale detection
+      document.cookie = `ll_locale=${localeId}; path=/; SameSite=Lax; max-age=31536000`;
     },
 
     async logout() {
