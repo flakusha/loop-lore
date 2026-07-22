@@ -1,0 +1,89 @@
+{
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "confirm": "Confirm",
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "warning": "Warning",
+    "info": "Info",
+    "close": "Close",
+    "back": "Back",
+    "next": "Next",
+    "previous": "Previous",
+    "search": "Search",
+    "noResults": "No results found",
+    "required": "Required",
+    "optional": "Optional"
+  },
+  "auth": {
+    "login": "Log In",
+    "logout": "Log Out",
+    "register": "Register",
+    "username": "Username",
+    "password": "Password",
+    "displayName": "Display Name",
+    "invalidCredentials": "Invalid username or password",
+    "accountLocked": "Account is locked",
+    "sessionExpired": "Session expired, please log in again"
+  },
+  "chat": {
+    "sendMessage": "Send Message",
+    "noMessages": "No messages yet",
+    "typing": "Typing...",
+    "reply": "Reply",
+    "edit": "Edit",
+    "delete": "Delete Message",
+    "copy": "Copy",
+    "translatedFrom": "Translated from {locale}",
+    "showOriginal": "Show Original",
+    "showTranslation": "Show Translation"
+  },
+  "settings": {
+    "title": "Settings",
+    "language": "Language",
+    "theme": "Theme",
+    "appearance": "Appearance",
+    "notifications": "Notifications",
+    "privacy": "Privacy",
+    "account": "Account",
+    "saved": "Settings saved"
+  },
+  "admin": {
+    "title": "Administration",
+    "users": "Users",
+    "models": "Models",
+    "system": "System",
+    "logs": "Logs",
+    "noAccess": "You don't have access to this page"
+  },
+  "errors": {
+    "notFound": "Not found",
+    "unauthorized": "Unauthorized",
+    "forbidden": "Forbidden",
+    "serverError": "Internal server error",
+    "validationFailed": "Validation failed",
+    "badRequest": "Bad request",
+    "conflict": "Conflict",
+    "rateLimited": "Too many requests, please try again later"
+  },
+  "characters": {
+    "title": "Characters",
+    "create": "Create Character",
+    "edit": "Edit Character",
+    "delete": "Delete Character",
+    "name": "Name",
+    "description": "Description",
+    "avatar": "Avatar"
+  },
+  "worlds": {
+    "title": "Worlds",
+    "create": "Create World",
+    "edit": "Edit World",
+    "delete": "Delete World",
+    "name": "Name",
+    "description": "Description"
+  }
+}

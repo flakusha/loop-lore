@@ -17,6 +17,7 @@ import type { Config, } from "./config/schema";
 import type { Db, } from "./db";
 import { generationRoutes, } from "./generation/controller";
 import { authenticate, } from "./middleware/auth";
+import { createI18nContext, detectLocale, } from "./middleware/i18n";
 import { personaRoutes, } from "./personas/controller";
 import { activityRoutes, } from "./routes/activity";
 import { activityStreamRoutes, } from "./routes/activity-stream";
@@ -33,6 +34,7 @@ import { chatPinRoutes, } from "./routes/chat-pins";
 import { chatsRoutes, } from "./routes/chats";
 import { frontendLogsRoutes, } from "./routes/frontend-logs";
 import { healthRoutes, } from "./routes/health";
+import { i18nRoutes, } from "./routes/i18n";
 import { importRoutes, } from "./routes/import";
 import { messageEncryptionRoutes, } from "./routes/message-encryption";
 import { messageReactionsRoutes, } from "./routes/message-reactions";
@@ -74,18 +76,26 @@ export function createApp(deps: AppDeps,): Elysia {
       // When auth fails, we still return values (will be null)
       // Route handlers check for userId === null and return 401
       if (authResult instanceof Response) {
-        return { userId: null, userRole: null, sessionId: null, };
+        // Still detect locale even when auth fails
+        const locale = detectLocale(request,);
+        const i18n = createI18nContext(locale,);
+        return { userId: null, userRole: null, sessionId: null, ...i18n, };
       }
+      // Detect locale and create translator
+      const locale = detectLocale(request,);
+      const i18n = createI18nContext(locale,);
       return {
         userId: authResult.context.userId,
         userRole: authResult.context.userRole,
         sessionId: authResult.context.sessionId,
+        ...i18n,
       };
     },);
 
   // ── Public routes (auth runs but won't block) ───────────────────────────────
   app.use(authPublicRoutes(handleOpts,),);
   app.use(healthRoutes(handleOpts,),);
+  app.use(i18nRoutes(handleOpts,),);
   app.use(telemetryRoutes(handleOpts,),);
   app.use(frontendLogsRoutes(),);
 
