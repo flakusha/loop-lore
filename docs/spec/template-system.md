@@ -11,6 +11,7 @@
 Loop-lore needs a **unified prompt template system** spanning all generation modalities. Each modality (LLM, image, video, audio) has distinct prompt construction requirements: context injection strategy, logic, detail level, description form (tags vs natural language vs JSON vs SSML), and context limits all vary per modality and per model family.
 
 This spec defines a shared `TemplateRegistry` interface and per-modality template schemas so that:
+
 1. Users can save/customize templates per modality
 2. Each model family auto-resolves to the correct template
 3. Video/audio scaffold now, wire later
@@ -20,7 +21,7 @@ This spec defines a shared `TemplateRegistry` interface and per-modality templat
 ## Shared Interface
 
 ```typescript
-interface TemplateRegistry<TTemplate, TContext> {
+interface TemplateRegistry<TTemplate, TContext,> {
   /** Built-in read-only templates */
   builtins: Record<string, TTemplate>;
   /** User-created templates (from DB) */
@@ -28,19 +29,19 @@ interface TemplateRegistry<TTemplate, TContext> {
   /** Model name → template ID matching (first match wins) */
   modelMatching: { pattern: string; templateId: string }[];
 
-  resolve(modelName?: string, templateId?: string): TTemplate;
-  render(template: TTemplate, ctx: TContext): string;
+  resolve(modelName?: string, templateId?: string,): TTemplate;
+  render(template: TTemplate, ctx: TContext,): string;
 }
 ```
 
 ### Modality Implementations
 
-| Modality | Registry File | Template Type | Context Type |
-| -------- | ------------- | ------------ | ------------ |
-| LLM | `src/assistant/prompt/registry.ts` | `LlmPromptTemplate` | `AssembleContext` |
-| Image | `src/generation/prompt-templates.ts` | `ImageModelProfile` | `TemplateContext` |
-| Video | `src/generation/video-prompt-templates.ts` | `VideoPromptTemplate` | `VideoTemplateContext` |
-| Audio | `src/generation/audio-prompt-templates.ts` | `AudioPromptTemplate` | `AudioTemplateContext` |
+| Modality | Registry File                              | Template Type         | Context Type           |
+| -------- | ------------------------------------------ | --------------------- | ---------------------- |
+| LLM      | `src/assistant/prompt/registry.ts`         | `LlmPromptTemplate`   | `AssembleContext`      |
+| Image    | `src/generation/prompt-templates.ts`       | `ImageModelProfile`   | `TemplateContext`      |
+| Video    | `src/generation/video-prompt-templates.ts` | `VideoPromptTemplate` | `VideoTemplateContext` |
+| Audio    | `src/generation/audio-prompt-templates.ts` | `AudioPromptTemplate` | `AudioTemplateContext` |
 
 ---
 
@@ -84,38 +85,38 @@ CREATE TABLE template_variables (
 All modalities share a `resolveTemplate(body, ctx)` function:
 
 ```typescript
-function resolveTemplate(body: string, ctx: Record<string, string>): string {
-  return body.replaceAll(/\{\{(\w+)\}\}/g, (_, key) => ctx[key] ?? "");
+function resolveTemplate(body: string, ctx: Record<string, string>,): string {
+  return body.replaceAll(/\{\{(\w+)\}\}/g, (_, key,) => ctx[key] ?? "",);
 }
 ```
 
 ### Cross-Modality Variables
 
-| Variable | LLM | Image | Video | Audio |
-| -------- | ---- | ----- | ----- | ----- |
-| `{{charName}}` | ✅ | ✅ | ✅ | ✅ |
-| `{{charDescription}}` | ✅ | ✅ | ✅ | — |
-| `{{userName}}` | ✅ | ✅ | ✅ | — |
-| `{{userDescription}}` | ✅ | ✅ | ✅ | — |
-| `{{chatHistory}}` | ✅ | ✅ | — | — |
-| `{{sceneSummary}}` | ✅ | ✅ | ✅ | — |
-| `{{lastMessage}}` | ✅ | ✅ | ✅ | ✅ (TTS text) |
-| `{{negativePrompt}}` | — | ✅ | ✅ | — |
-| `{{motion}}` | — | — | ✅ | — |
-| `{{cameraMovement}}` | — | — | ✅ | — |
-| `{{speaker}}` | — | — | — | ✅ |
-| `{{emotion}}` | — | — | — | ✅ |
-| `{{genre}}` | — | — | — | ✅ |
+| Variable              | LLM | Image | Video | Audio         |
+| --------------------- | --- | ----- | ----- | ------------- |
+| `{{charName}}`        | ✅  | ✅    | ✅    | ✅            |
+| `{{charDescription}}` | ✅  | ✅    | ✅    | —             |
+| `{{userName}}`        | ✅  | ✅    | ✅    | —             |
+| `{{userDescription}}` | ✅  | ✅    | ✅    | —             |
+| `{{chatHistory}}`     | ✅  | ✅    | —     | —             |
+| `{{sceneSummary}}`    | ✅  | ✅    | ✅    | —             |
+| `{{lastMessage}}`     | ✅  | ✅    | ✅    | ✅ (TTS text) |
+| `{{negativePrompt}}`  | —   | ✅    | ✅    | —             |
+| `{{motion}}`          | —   | —     | ✅    | —             |
+| `{{cameraMovement}}`  | —   | —     | ✅    | —             |
+| `{{speaker}}`         | —   | —     | —     | ✅            |
+| `{{emotion}}`         | —   | —     | —     | ✅            |
+| `{{genre}}`           | —   | —     | —     | ✅            |
 
 ---
 
 ## Detail Levels (unified)
 
-| Level | Tokens (approx) | Use Case |
-| ----- | --------------- | -------- |
-| `instant` | 160 | Quick drafts, low-latency |
-| `balanced` | 320 | General purpose |
-| `detailed` | 600 | Maximum quality, high context |
+| Level      | Tokens (approx) | Use Case                      |
+| ---------- | --------------- | ----------------------------- |
+| `instant`  | 160             | Quick drafts, low-latency     |
+| `balanced` | 320             | General purpose               |
+| `detailed` | 600             | Maximum quality, high context |
 
 > Video/audio may extend token hints per subtype (TTS short, music long).
 
@@ -142,12 +143,12 @@ Mirror `DEFAULT_PROFILE_REGISTRY.modelMatching` from `src/generation/prompt-temp
 
 ```typescript
 modelMatching: [
-  { pattern: "flux", templateId: "flux" },
-  { pattern: "sd3", templateId: "sd3" },
-  { pattern: "wan", templateId: "wan" },
-  { pattern: "eleven", templateId: "elevenlabs" },
+  { pattern: "flux", templateId: "flux", },
+  { pattern: "sd3", templateId: "sd3", },
+  { pattern: "wan", templateId: "wan", },
+  { pattern: "eleven", templateId: "elevenlabs", },
   // ...
-]
+];
 ```
 
 Resolution order: explicit `templateId` → `modelName` match → default per modality.
@@ -156,15 +157,15 @@ Resolution order: explicit `templateId` → `modelName` match → default per mo
 
 ## Migration Path
 
-| Phase | Work | Files |
-| ----- | ---- | ----- |
-| 1 | Unified `prompt_templates` + `template_variables` tables | `src/db/migrations/0XX_templates.ts` |
-| 2 | `template-service.ts` (CRUD + render) | `src/generation/template-service.ts` |
-| 3 | API routes | `src/routes/templates.ts` |
-| 4 | Image wiring (FEAT-065-IMG) | `src/generation/image-gen-route.ts` |
-| 5 | LLM wiring (FEAT-065-LLM) | `src/assistant/prompt-assembler.ts` |
-| 6 | Video scaffold (FEAT-065-VID) | `src/generation/video-prompt-templates.ts` |
-| 7 | Audio scaffold (FEAT-065-AUD) | `src/generation/audio-prompt-templates.ts` |
+| Phase | Work                                                     | Files                                      |
+| ----- | -------------------------------------------------------- | ------------------------------------------ |
+| 1     | Unified `prompt_templates` + `template_variables` tables | `src/db/migrations/0XX_templates.ts`       |
+| 2     | `template-service.ts` (CRUD + render)                    | `src/generation/template-service.ts`       |
+| 3     | API routes                                               | `src/routes/templates.ts`                  |
+| 4     | Image wiring (FEAT-065-IMG)                              | `src/generation/image-gen-route.ts`        |
+| 5     | LLM wiring (FEAT-065-LLM)                                | `src/assistant/prompt-assembler.ts`        |
+| 6     | Video scaffold (FEAT-065-VID)                            | `src/generation/video-prompt-templates.ts` |
+| 7     | Audio scaffold (FEAT-065-AUD)                            | `src/generation/audio-prompt-templates.ts` |
 
 ---
 

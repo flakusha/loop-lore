@@ -33,27 +33,27 @@ count, activity date, and more. Combined filter support fills the Epic 24 gap.
 
 ### Filter Dimensions
 
-| Filter          | Type         | Implementation          |
-| --------------- | ------------ | ----------------------- |
-| Type            | Chips        | All / Direct / Group    |
-| World           | Dropdown     | All worlds / specific   |
-| Tags            | Multi-select | Character/chat tags     |
-| Participant count| Range       | 1 / 2 / 3-5 / 6+       |
-| Message count   | Range        | <10 / 10-50 / 50-200 / 200+ |
-| Has attachments | Toggle       | Only chats with media   |
-| Last active     | Dropdown     | Today / Week / Month / Older |
-| Pinned          | Toggle       | Only pinned chats       |
-| Has world       | Toggle       | World-linked vs freeform|
+| Filter            | Type         | Implementation               |
+| ----------------- | ------------ | ---------------------------- |
+| Type              | Chips        | All / Direct / Group         |
+| World             | Dropdown     | All worlds / specific        |
+| Tags              | Multi-select | Character/chat tags          |
+| Participant count | Range        | 1 / 2 / 3-5 / 6+             |
+| Message count     | Range        | <10 / 10-50 / 50-200 / 200+  |
+| Has attachments   | Toggle       | Only chats with media        |
+| Last active       | Dropdown     | Today / Week / Month / Older |
+| Pinned            | Toggle       | Only pinned chats            |
+| Has world         | Toggle       | World-linked vs freeform     |
 
 ### Filter State
 
 ```typescript
 interface ChatFilters {
   type?: "direct" | "group";
-  world?: string;           // world ID
-  tags?: string[];          // tag names
+  world?: string; // world ID
+  tags?: string[]; // tag names
   participantCount?: string; // "1" | "2" | "3-5" | "6+"
-  messageCount?: string;    // "<10" | "10-50" | "50-200" | "200+"
+  messageCount?: string; // "<10" | "10-50" | "50-200" | "200+"
   hasAttachments?: boolean;
   lastActive?: "today" | "week" | "month" | "older";
   pinned?: boolean;
@@ -86,6 +86,7 @@ Filters compose with AND logic. Omitted parameters = no filter on that dimension
 
 The general filtering infrastructure from Epic 24 is needed for full
 server-side combined filters. For v1:
+
 - Client-side: apply all filters on loaded chats (fast, <100 chats)
 - Server-side: apply only the primary filter (type or world), paginate
 - v2: full server-side filter composition when Epic 24 is implemented

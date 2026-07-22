@@ -17,6 +17,7 @@ Design the **video generation prompt template system** — schema, variables, mo
 ### Current State
 
 ❌ **Not implemented**. Docs mention video models as future:
+
 - `docs/spec/integrations/image-generation.md`: "Wan 2.1/2.2 (video), LTX-2.3 (video+audio)"
 - No `src/generation/video-*` files exist
 
@@ -26,14 +27,14 @@ Design the **video generation prompt template system** — schema, variables, mo
 
 ### Model Families (proposed)
 
-| Family | Style | Notes |
-| ------ | ----- | ----- |
-| Wan 2.1/2.2 | Natural language + motion | Alibaba, open-weight |
-| LTX-2.3 | Natural + audio | Lightricks, video+audio |
-| SVD (Stable Video Diffusion) | Image-to-video | Stability |
-| AnimateDiff | Motion modules | SD extension |
-| Mochi | Natural language | Genmo |
-| HunyuanVideo | Natural language | Tencent |
+| Family                       | Style                     | Notes                   |
+| ---------------------------- | ------------------------- | ----------------------- |
+| Wan 2.1/2.2                  | Natural language + motion | Alibaba, open-weight    |
+| LTX-2.3                      | Natural + audio           | Lightricks, video+audio |
+| SVD (Stable Video Diffusion) | Image-to-video            | Stability               |
+| AnimateDiff                  | Motion modules            | SD extension            |
+| Mochi                        | Natural language          | Genmo                   |
+| HunyuanVideo                 | Natural language          | Tencent                 |
 
 ### Prompt Formats (proposed)
 
@@ -43,15 +44,15 @@ Design the **video generation prompt template system** — schema, variables, mo
 
 ### Variables (proposed)
 
-| Variable | Source | Example |
-| -------- | ------ | ------- |
-| `{{subject}}` | actors.display_name / user input | "Aria casting a spell" |
-| `{{motion}}` | user input / scene | "slowly raises hands, energy swirls" |
-| `{{style}}` | world/actor style settings | "cinematic, volumetric lighting" |
-| `{{duration}}` | request param | "4s" |
-| `{{aspectRatio}}` | request param | "16:9" |
-| `{{cameraMovement}}` | request param | "slow dolly in" |
-| `{{negativePrompt}}` | request param | "blurry, distorted" |
+| Variable             | Source                           | Example                              |
+| -------------------- | -------------------------------- | ------------------------------------ |
+| `{{subject}}`        | actors.display_name / user input | "Aria casting a spell"               |
+| `{{motion}}`         | user input / scene               | "slowly raises hands, energy swirls" |
+| `{{style}}`          | world/actor style settings       | "cinematic, volumetric lighting"     |
+| `{{duration}}`       | request param                    | "4s"                                 |
+| `{{aspectRatio}}`    | request param                    | "16:9"                               |
+| `{{cameraMovement}}` | request param                    | "slow dolly in"                      |
+| `{{negativePrompt}}` | request param                    | "blurry, distorted"                  |
 
 ### Detail Levels (mirror image system)
 

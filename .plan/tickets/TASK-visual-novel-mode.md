@@ -52,14 +52,14 @@ sender) + associated background image:
 ```typescript
 interface VnScene {
   messageId: string;
-  backgroundUrl?: string;     // location/asset image
+  backgroundUrl?: string; // location/asset image
   characterName: string;
-  characterAvatar?: string;   // portrait image or 3D render
-  text: string;               // message content (markdown)
-  thinking?: string;          // LLM thinking (collapsed)
+  characterAvatar?: string; // portrait image or 3D render
+  text: string; // message content (markdown)
+  thinking?: string; // LLM thinking (collapsed)
   attachments?: MessageAttachment[];
   transition?: TransitionType;
-  emotion?: string;           // detected emotion for portrait swap
+  emotion?: string; // detected emotion for portrait swap
 }
 
 type TransitionType = "fade" | "cut" | "dissolve" | "slide" | "wipe";
@@ -67,11 +67,11 @@ type TransitionType = "fade" | "cut" | "dissolve" | "slide" | "wipe";
 
 ### Layout Options
 
-| Mode      | Layout                                         |
-| --------- | ---------------------------------------------- |
+| Mode      | Layout                                                    |
+| --------- | --------------------------------------------------------- |
 | `overlay` | Image fills scene, text in semi-transparent box at bottom |
-| `below`   | Image top 60%, text panel bottom 40%           |
-| `split`   | Portrait left 40%, text right 60%              |
+| `below`   | Image top 60%, text panel bottom 40%                      |
+| `split`   | Portrait left 40%, text right 60%                         |
 
 ### Key Components
 
@@ -161,12 +161,12 @@ src/frontend/vn/
 
 ## Performance
 
-| Metric            | Target  | Notes                         |
-| ----------------- | ------- | ----------------------------- |
-| Scene transition  | < 400ms | Preload next image            |
-| Image load        | < 500ms | WebP/AVIF, lazy load          |
-| Typewriter FPS    | 30+     | requestAnimationFrame          |
-| Memory (images)   | < 100MB | Current + 2 preloaded scenes  |
+| Metric           | Target  | Notes                        |
+| ---------------- | ------- | ---------------------------- |
+| Scene transition | < 400ms | Preload next image           |
+| Image load       | < 500ms | WebP/AVIF, lazy load         |
+| Typewriter FPS   | 30+     | requestAnimationFrame        |
+| Memory (images)  | < 100MB | Current + 2 preloaded scenes |
 
 ## Acceptance Criteria
 

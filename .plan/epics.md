@@ -13,35 +13,35 @@
 
 ### v0.1 Foundation (Complete)
 
-| #  | Name                         | Status             | Plan Ref    | Epic File    |
-| -- | ---------------------------- | ------------------ | ----------- | ------------ |
-| 10 | Generation Foundation        | ✅ Complete        | plan.md §10 | —            |
-| 11 | Admin & Settings             | ✅ Complete (core) | plan.md §11 | `epic-14.md` |
-| 12 | Memory Foundation            | ✅ Complete        | plan.md §12 | —            |
-| 13 | Frontend Responsive          | ✅ Complete        | plan.md §13 | —            |
+| #  | Name                         | Status             | Plan Ref    | Epic File                  |
+| -- | ---------------------------- | ------------------ | ----------- | -------------------------- |
+| 10 | Generation Foundation        | ✅ Complete        | plan.md §10 | —                          |
+| 11 | Admin & Settings             | ✅ Complete (core) | plan.md §11 | `epic-14.md`               |
+| 12 | Memory Foundation            | ✅ Complete        | plan.md §12 | —                          |
+| 13 | Frontend Responsive          | ✅ Complete        | plan.md §13 | —                          |
 | 14 | Import/Export                | ✅ Complete        | plan.md §14 | `epic-import-export-io.md` |
-| 18 | Local Inference Integrations | ✅ Complete        | plan.md §18 | —            |
-| 19 | Chat Notifications           | ✅ Complete        | plan.md §19 | —            |
+| 18 | Local Inference Integrations | ✅ Complete        | plan.md §18 | —                          |
+| 19 | Chat Notifications           | ✅ Complete        | plan.md §19 | —                          |
 
 ### v0.1 Active (In Progress / Not Started)
 
-| #  | Name                        | Status         | Priority | Plan Ref    | Epic File    |
-| -- | --------------------------- | -------------- | -------- | ----------- | ------------ |
-| 15 | i18n & Accessibility        | ⬜ Not Started | High     | plan.md §15 | —            |
+| #  | Name                        | Status         | Priority | Plan Ref    | Epic File                         |
+| -- | --------------------------- | -------------- | -------- | ----------- | --------------------------------- |
+| 15 | i18n & Accessibility        | ⬜ Not Started | High     | plan.md §15 | —                                 |
 | 16 | Observability & CI          | 🟡 In Progress | High     | plan.md §16 | `epic-observability-telemetry.md` |
-| 17 | Encryption Foundation       | ⬜ Not Started | High     | plan.md §17 | —            |
-| 20 | E2E Performance Benchmarks  | ⬜ Not Started | Medium   | plan.md §20 |              |
-| 21 | Notification Expansion      | ⬜ Not Started | Medium   | plan.md §21 |              |
-| 22 | RPG Mechanics Core          | ⬜ Not Started | Medium   | plan.md §22 |              |
-| 23 | Assistant Commands          | ⬜ Not Started | Medium   | plan.md §23 |              |
-| 24 | Filtering & Pagination      | ⬜ Not Started | Medium   | plan.md §24 |              |
-| 25 | Memory Systems              | ⬜ Not Started | Medium   | plan.md §25 |              |
-| 26 | Avatar & Expression System  | ⬜ Not Started | Medium   | plan.md §26 |              |
-| 27 | Testing Infrastructure      | ⬜ Not Started | High     | plan.md §27 |              |
-| 28 | Asset Support Expansion     | ⬜ Not Started | Medium   | plan.md §28 |              |
-| 29 | Provider & Plugin Ecosystem | ⬜ Not Started | Medium   | plan.md §29 |              |
-| 30 | Assistant Intelligence      | ⬜ Not Started | Medium   | plan.md §30 |              |
-| 31 | World Persistence & Sync    | ⬜ Not Started | Medium   | plan.md §31 |              |
+| 17 | Encryption Foundation       | ⬜ Not Started | High     | plan.md §17 | —                                 |
+| 20 | E2E Performance Benchmarks  | ⬜ Not Started | Medium   | plan.md §20 |                                   |
+| 21 | Notification Expansion      | ⬜ Not Started | Medium   | plan.md §21 |                                   |
+| 22 | RPG Mechanics Core          | ⬜ Not Started | Medium   | plan.md §22 |                                   |
+| 23 | Assistant Commands          | ⬜ Not Started | Medium   | plan.md §23 |                                   |
+| 24 | Filtering & Pagination      | ⬜ Not Started | Medium   | plan.md §24 |                                   |
+| 25 | Memory Systems              | ⬜ Not Started | Medium   | plan.md §25 |                                   |
+| 26 | Avatar & Expression System  | ⬜ Not Started | Medium   | plan.md §26 |                                   |
+| 27 | Testing Infrastructure      | ⬜ Not Started | High     | plan.md §27 |                                   |
+| 28 | Asset Support Expansion     | ⬜ Not Started | Medium   | plan.md §28 |                                   |
+| 29 | Provider & Plugin Ecosystem | ⬜ Not Started | Medium   | plan.md §29 |                                   |
+| 30 | Assistant Intelligence      | ⬜ Not Started | Medium   | plan.md §30 |                                   |
+| 31 | World Persistence & Sync    | ⬜ Not Started | Medium   | plan.md §31 |                                   |
 
 ### New Epics (from docs reconciliation)
 
@@ -134,23 +134,24 @@ Chat-specific features extracted from epic overlap and new requirements.
 These are standalone tasks (not numbered epics) tracked under existing
 epics where applicable.
 
-| Task                                       | Effort | Epic(s)                | Status         |
-| ------------------------------------------ | ------ | ---------------------- | -------------- |
-| Chat Room Search & Join                    | Med    | 36, 41                 | ⬜ Not Started |
-| Chat Room Filters                          | Med    | 24, 36                 | ⬜ Not Started |
-| Chat Message Search & Filter               | Med–High | 24, 36              | ⬜ Not Started |
-| Chat Autorenaming                          | Low    | 36                     | ⬜ Not Started |
-| Visual Novel Mode                          | Med    | Immersion & Presentation | ⬜ Not Started |
-| 3D View Modes (consolidated)               | High   | 26, 28                 | ⬜ Not Started |
-| Text Effects & Overlays                    | Med    | Immersion & Presentation | ⬜ Not Started |
-| Character Multi-Personality System         | High   | 22                     | ⬜ Not Started |
-| Character Mood Swings & Happiness Meter   | Med    | 22                     | ⬜ Not Started |
-| Character Memory Injection & Privacy      | High   | 25                     | ⬜ Not Started |
-| Chat External Music Linking               | Low    | 36                       | ⬜ Not Started |
-| Context-Based Feature Permissions (UI Gating) | Med  | 37                       | ⬜ Not Started |
-| Data Migration Transitivity Tracking            | Medium | 34                 | ⬜ Not Started |
+| Task                                          | Effort   | Epic(s)                  | Status         |
+| --------------------------------------------- | -------- | ------------------------ | -------------- |
+| Chat Room Search & Join                       | Med      | 36, 41                   | ⬜ Not Started |
+| Chat Room Filters                             | Med      | 24, 36                   | ⬜ Not Started |
+| Chat Message Search & Filter                  | Med–High | 24, 36                   | ⬜ Not Started |
+| Chat Autorenaming                             | Low      | 36                       | ⬜ Not Started |
+| Visual Novel Mode                             | Med      | Immersion & Presentation | ⬜ Not Started |
+| 3D View Modes (consolidated)                  | High     | 26, 28                   | ⬜ Not Started |
+| Text Effects & Overlays                       | Med      | Immersion & Presentation | ⬜ Not Started |
+| Character Multi-Personality System            | High     | 22                       | ⬜ Not Started |
+| Character Mood Swings & Happiness Meter       | Med      | 22                       | ⬜ Not Started |
+| Character Memory Injection & Privacy          | High     | 25                       | ⬜ Not Started |
+| Chat External Music Linking                   | Low      | 36                       | ⬜ Not Started |
+| Context-Based Feature Permissions (UI Gating) | Med      | 37                       | ⬜ Not Started |
+| Data Migration Transitivity Tracking          | Medium   | 34                       | ⬜ Not Started |
 
 **Cross-references:**
+
 - `docs/frontend/chat/search-and-filter.md` — UX spec for search + filters
 - `docs/frontend/chat/visual-novel-mode.md` — UX spec for VN mode
 - `docs/frontend/chat/text-effects-overlays.md` — UX spec for effects/overlays

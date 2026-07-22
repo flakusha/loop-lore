@@ -27,11 +27,11 @@ lean on existing message, asset, generation, and comment pipelines.
 
 ### Authoring Modes
 
-| Mode | Information source | Notes |
-| --- | --- | --- |
+| Mode                          | Information source                                 | Notes                                                                |
+| ----------------------------- | -------------------------------------------------- | -------------------------------------------------------------------- |
 | **Automated (internal-only)** | World/character state, memories, lorebooks via RAG | No external calls; retrieval-augmented generation from local DB only |
-| **Deep research** | External web search + internal RAG | Requires research tooling; cites external sources |
-| **News** | External feeds + internal RAG | Time-sensitive; feeds on curated or scraped sources |
+| **Deep research**             | External web search + internal RAG                 | Requires research tooling; cites external sources                    |
+| **News**                      | External feeds + internal RAG                      | Time-sensitive; feeds on curated or scraped sources                  |
 
 ### RAG — Retrieval-Augmented Generation
 
@@ -67,10 +67,10 @@ interface BlogResearchSource {
 
 ### Behavior Controls
 
-| Control | Description |
-| --- | --- |
-| Disable questionable LLM behavior | Gate off risky generation patterns (hallucinated facts, off-topic content, inappropriate material) |
-| Disable questionable human behavior | Moderation on human-authored posts and comments |
+| Control                             | Description                                                                                        |
+| ----------------------------------- | -------------------------------------------------------------------------------------------------- |
+| Disable questionable LLM behavior   | Gate off risky generation patterns (hallucinated facts, off-topic content, inappropriate material) |
+| Disable questionable human behavior | Moderation on human-authored posts and comments                                                    |
 
 ---
 
@@ -83,35 +83,35 @@ surface differs.
 
 ### Authoring Workflow
 
-| Step | Action | Notes |
-| --- | --- | --- |
-| **Draft** | Author writes post in markdown editor | Auto-saved; private until published |
-| **Media** | Insert images, audio, video inline | Reuse asset upload + gallery linkage |
-| **Tags** | Assign categories / tags | For discovery and filtering |
-| **Preview** | Preview post as readers will see it | WYSIWYG or rendered markdown |
-| **Publish** | Make post visible at chosen tier | Public / followers / private |
-| **Schedule** | Set future publish date | Queued publish at specified time |
-| **Edit** | Update published or draft post | Version history; edits logged |
+| Step         | Action                                | Notes                                |
+| ------------ | ------------------------------------- | ------------------------------------ |
+| **Draft**    | Author writes post in markdown editor | Auto-saved; private until published  |
+| **Media**    | Insert images, audio, video inline    | Reuse asset upload + gallery linkage |
+| **Tags**     | Assign categories / tags              | For discovery and filtering          |
+| **Preview**  | Preview post as readers will see it   | WYSIWYG or rendered markdown         |
+| **Publish**  | Make post visible at chosen tier      | Public / followers / private         |
+| **Schedule** | Set future publish date               | Queued publish at specified time     |
+| **Edit**     | Update published or draft post        | Version history; edits logged        |
 
 ### Post Management
 
-| Feature | Description |
-| --- | --- |
-| **Draft management** | List, resume, delete drafts |
-| **Version history** | Track edits; restore previous versions |
-| **Bulk operations** | Multi-select: delete, archive, change visibility |
-| **Post analytics** | View count, comment count, follower engagement |
-| **Re-publish** | Unarchive or republish previously hidden/disabled posts |
+| Feature              | Description                                             |
+| -------------------- | ------------------------------------------------------- |
+| **Draft management** | List, resume, delete drafts                             |
+| **Version history**  | Track edits; restore previous versions                  |
+| **Bulk operations**  | Multi-select: delete, archive, change visibility        |
+| **Post analytics**   | View count, comment count, follower engagement          |
+| **Re-publish**       | Unarchive or republish previously hidden/disabled posts |
 
 ### Tags & Categories
 
 ```typescript
 interface BlogPostTags {
   post_id: string;
-  tags: string[];              // user-defined free tags
-  category?: string;           // optional single category
-  world_id?: string;           // link to a world context
-  character_id?: string;       // link to a character context
+  tags: string[]; // user-defined free tags
+  category?: string; // optional single category
+  world_id?: string; // link to a world context
+  character_id?: string; // link to a character context
 }
 ```
 
@@ -120,9 +120,9 @@ interface BlogPostTags {
 ```typescript
 interface BlogSchedule {
   post_id: string;
-  scheduled_at: Date;          // future publish time
+  scheduled_at: Date; // future publish time
   status: "pending" | "published" | "cancelled";
-  visibility: PrivacyTier;     // tier to apply on publish
+  visibility: PrivacyTier; // tier to apply on publish
 }
 ```
 
@@ -147,39 +147,39 @@ and after publication.
 
 ### Moderation Pipeline
 
-| Stage | Action | Trigger |
-| --- | --- | --- |
-| **Pre-publish review** | Generated content queued for admin/user review | Auto-generated posts |
-| **Post-publish moderation** | Hide or disable content that violates rules | Flagged by users or automated filters |
-| **Comment moderation** | Per-comment approve/remove/hide | User or admin action |
-| **Bulk moderation** | Admin batch operations on flagged content | Admin panel |
+| Stage                       | Action                                         | Trigger                               |
+| --------------------------- | ---------------------------------------------- | ------------------------------------- |
+| **Pre-publish review**      | Generated content queued for admin/user review | Auto-generated posts                  |
+| **Post-publish moderation** | Hide or disable content that violates rules    | Flagged by users or automated filters |
+| **Comment moderation**      | Per-comment approve/remove/hide                | User or admin action                  |
+| **Bulk moderation**         | Admin batch operations on flagged content      | Admin panel                           |
 
 ### Moderation Actions
 
-| Action | Effect |
-| --- | --- |
-| **Hide** | Content invisible to non-admins; author can still see it |
+| Action      | Effect                                                               |
+| ----------- | -------------------------------------------------------------------- |
+| **Hide**    | Content invisible to non-admins; author can still see it             |
 | **Disable** | Content removed from all views; soft-deleted with restore capability |
-| **Approve** | Content cleared for public visibility |
-| **Flag** | Content marked for review; stays visible but enters moderation queue |
+| **Approve** | Content cleared for public visibility                                |
+| **Flag**    | Content marked for review; stays visible but enters moderation queue |
 
 ### Behavior Disable Gates
 
 ```typescript
 interface ModerationConfig {
   // LLM behavior gates
-  auto_moderate_generated: boolean;        // queue all LLM posts for review
-  blocked_content_patterns: string[];      // regex patterns to reject
-  max_generated_posts_per_hour: number;    // rate limit LLM authoring
-  
+  auto_moderate_generated: boolean; // queue all LLM posts for review
+  blocked_content_patterns: string[]; // regex patterns to reject
+  max_generated_posts_per_hour: number; // rate limit LLM authoring
+
   // Human behavior gates
-  require_approval_for_comments: boolean;  // pre-approve comments
-  max_links_per_post: number;             // anti-spam
-  banned_words: string[];                  // content filter
-  
+  require_approval_for_comments: boolean; // pre-approve comments
+  max_links_per_post: number; // anti-spam
+  banned_words: string[]; // content filter
+
   // Hide/disable policies
-  auto_hide_threshold: number;            // flags before auto-hide
-  auto_disable_threshold: number;         // flags before auto-disable
+  auto_hide_threshold: number; // flags before auto-hide
+  auto_disable_threshold: number; // flags before auto-disable
 }
 ```
 
@@ -192,13 +192,13 @@ storage model for post content.
 
 ### Record Schema Reuse
 
-| Chat concept | Blog reuse |
-| --- | --- |
-| Message record | Blog post body — series of chat-shaped messages |
-| Message metadata | Post title, author, tags, timestamps |
-| Message attachments | Post media (images, audio, documents) |
-| Message threading | Comment trees on posts |
-| Detail levels | Draft / published / archived states |
+| Chat concept        | Blog reuse                                      |
+| ------------------- | ----------------------------------------------- |
+| Message record      | Blog post body — series of chat-shaped messages |
+| Message metadata    | Post title, author, tags, timestamps            |
+| Message attachments | Post media (images, audio, documents)           |
+| Message threading   | Comment trees on posts                          |
+| Detail levels       | Draft / published / archived states             |
 
 ### Asset Generation & Attachment
 
@@ -212,7 +212,7 @@ Blog posts reuse the full asset pipeline:
 ```typescript
 interface BlogPostAsset {
   asset_id: string;
-  position: number;           // inline position in post body
+  position: number; // inline position in post body
   display: "inline" | "hero" | "gallery" | "attachment";
   generation_params?: GenerationParams; // if LLM-generated
 }
@@ -227,7 +227,7 @@ interface BlogComment {
   id: string;
   post_id: string;
   author: ActorRef;
-  parent_comment_id?: string;  // threaded replies
+  parent_comment_id?: string; // threaded replies
   body: string;
   assets?: AssetRef[];
   moderation_state: ModerationState;
@@ -250,14 +250,14 @@ items as part of blog content — seeded from the blog or prompted by users.
 
 ### Generation Capabilities
 
-| Output type | Description | Feeds into |
-| --- | --- | --- |
-| **World seeds** | New world concepts, lore, geography, cultures | World subsystem (Epic 38/44) |
-| **Idea proposals** | Gameplay ideas, scenario hooks, narrative threads | Assistant scenario source |
-| **Experience descriptions** | Immersive location/experience writeups | World detail, character memories |
-| **Scenario blueprints** | Structured encounters, events, quests | Quest engine (Epic 22) |
-| **Item concepts** | New items with stats, descriptions, lore | Item system (Epic 39) |
-| **NPC profiles** | Generated characters with backstories | Actor/character system |
+| Output type                 | Description                                       | Feeds into                       |
+| --------------------------- | ------------------------------------------------- | -------------------------------- |
+| **World seeds**             | New world concepts, lore, geography, cultures     | World subsystem (Epic 38/44)     |
+| **Idea proposals**          | Gameplay ideas, scenario hooks, narrative threads | Assistant scenario source        |
+| **Experience descriptions** | Immersive location/experience writeups            | World detail, character memories |
+| **Scenario blueprints**     | Structured encounters, events, quests             | Quest engine (Epic 22)           |
+| **Item concepts**           | New items with stats, descriptions, lore          | Item system (Epic 39)            |
+| **NPC profiles**            | Generated characters with backstories             | Actor/character system           |
 
 ### Structured Output
 
@@ -269,10 +269,10 @@ interface CreativeGeneration {
   id: string;
   type: "world_seed" | "idea" | "experience" | "scenario" | "item" | "npc";
   title: string;
-  description: string;         // rich markdown
+  description: string; // rich markdown
   structured_data?: WorldSeed | ItemBlueprint | ScenarioBlueprint;
   promotion_state: "draft" | "suggested" | "promoted" | "rejected";
-  source_post_id?: string;     // originating blog post
+  source_post_id?: string; // originating blog post
   tags: string[];
 }
 
@@ -325,19 +325,19 @@ Posts and profiles support tiered visibility with follower-based access.
 
 ### Post Visibility
 
-| Tier | Who can see | Notes |
-| --- | --- | --- |
-| **Public** | Everyone (including unauthenticated) | Discoverable, indexable |
-| **Followers** | Author's followers only | Requires follow relationship |
-| **Private** | Author only | Drafts, personal notes |
+| Tier          | Who can see                          | Notes                        |
+| ------------- | ------------------------------------ | ---------------------------- |
+| **Public**    | Everyone (including unauthenticated) | Discoverable, indexable      |
+| **Followers** | Author's followers only              | Requires follow relationship |
+| **Private**   | Author only                          | Drafts, personal notes       |
 
 ### Profile Visibility
 
-| Tier | Who can see the profile | Notes |
-| --- | --- | --- |
-| **Public** | Everyone | Profile bio, post count, follower count |
-| **Followers** | Followers only | Detailed profile, activity feed |
-| **Private** | Author only | Full profile, analytics |
+| Tier          | Who can see the profile | Notes                                   |
+| ------------- | ----------------------- | --------------------------------------- |
+| **Public**    | Everyone                | Profile bio, post count, follower count |
+| **Followers** | Followers only          | Detailed profile, activity feed         |
+| **Private**   | Author only             | Full profile, analytics                 |
 
 ### Follower Tiers
 
@@ -356,21 +356,21 @@ interface FollowerRelationship {
 
 interface FollowerTierConfig {
   tier: FollowerTier;
-  min_level?: number;          // optional: follower must reach level N
-  post_access: PrivacyTier;    // what posts this tier can see
-  comment_access: boolean;     // can this tier comment
-  asset_access: boolean;       // can this tier see premium assets
+  min_level?: number; // optional: follower must reach level N
+  post_access: PrivacyTier; // what posts this tier can see
+  comment_access: boolean; // can this tier comment
+  asset_access: boolean; // can this tier see premium assets
 }
 ```
 
 ### Default Tier Configuration
 
-| Tier | Post access | Comments | Assets |
-| --- | --- | --- | --- |
-| **Reader** | Public posts | Public posts only | Public only |
-| **Subscriber** | Public + Followers | All posts | All public assets |
-| **Patron** | All posts | All posts | All assets + premium |
-| **VIP** | All posts + private previews | All posts | All assets + early access |
+| Tier           | Post access                  | Comments          | Assets                    |
+| -------------- | ---------------------------- | ----------------- | ------------------------- |
+| **Reader**     | Public posts                 | Public posts only | Public only               |
+| **Subscriber** | Public + Followers           | All posts         | All public assets         |
+| **Patron**     | All posts                    | All posts         | All assets + premium      |
+| **VIP**        | All posts + private previews | All posts         | All assets + early access |
 
 ---
 

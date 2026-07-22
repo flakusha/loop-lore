@@ -36,16 +36,16 @@ Expanded Epic 40 (Blog System) with full human authoring support alongside exist
 
 ### Git issues created (in master repo)
 
-| ID | Title |
-|---|---|
-| 3f5f343 | FEA Blog: Human authoring UI |
-| 0aec837 | FEA Blog: Draft management |
-| ae4bfe2 | FEA Blog: Tags and categories |
-| cd3e698 | FEA Blog: Scheduled publishing |
-| fb17310 | FEA Blog: Post management |
-| be60182 | FEA Blog: Content moderation pipeline |
+| ID      | Title                                   |
+| ------- | --------------------------------------- |
+| 3f5f343 | FEA Blog: Human authoring UI            |
+| 0aec837 | FEA Blog: Draft management              |
+| ae4bfe2 | FEA Blog: Tags and categories           |
+| cd3e698 | FEA Blog: Scheduled publishing          |
+| fb17310 | FEA Blog: Post management               |
+| be60182 | FEA Blog: Content moderation pipeline   |
 | d8cf081 | FEA Blog: Visibility and follower tiers |
-| 3c16044 | FEA Blog: Creative world generation |
+| 3c16044 | FEA Blog: Creative world generation     |
 
 ### Migration
 
