@@ -138,6 +138,9 @@ export interface Chats {
   is_pinned: Generated<PinnedState>;
   created_at: Generated<string>;
   updated_at: Generated<string>;
+  response_length_preset: Generated<string>;
+  response_length_custom: number | null;
+  context_max_tokens: number | null;
 }
 
 // ── Actors ────────────────────────────────────────────────────
