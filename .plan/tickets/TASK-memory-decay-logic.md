@@ -1,6 +1,6 @@
 # TASK: Implement memory decay logic
 
-**Issue:** d1b048b
+**Issue:** d1b048b4-509a-43e8-b175-4798aa3c74fe
 **Status:** open
 **Priority:** medium
 **Epic:** EPIC-2026-37
