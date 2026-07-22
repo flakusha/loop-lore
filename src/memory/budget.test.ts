@@ -2,7 +2,8 @@
  * Memory budget tests.
  */
 import { describe, expect, it, } from "bun:test";
-import { estimateTokens, selectWithinBudget, } from "./budget";
+import { estimateTokens, } from "../chat/token-utils";
+import { selectWithinBudget, } from "./budget";
 
 describe("estimateTokens", () => {
   it("estimates tokens from text length", () => {

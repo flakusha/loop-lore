@@ -3,7 +3,8 @@
  *
  * Re-exports all memory services: extraction, budget, purge, provision, shareability.
  */
-export { estimateTokens, getMemoriesWithinBudget, selectWithinBudget, } from "./budget";
+export { estimateTokens, } from "../chat/token-utils";
+export { getMemoriesWithinBudget, selectWithinBudget, } from "./budget";
 export { extractAndStoreMemories, extractMemories, storeMemories, } from "./extraction";
 export { provisionMemories, } from "./provision";
 export { applyDecay, purgeStaleMemories, touchMemory, } from "./purge";
