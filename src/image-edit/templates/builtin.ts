@@ -8,7 +8,68 @@
  * @module builtin-templates
  */
 
-import type { WorkflowTemplate, } from "../types";
+import type { ComfyUIWorkflow, } from "../../generation/providers/comfyui";
+import type { LoraEntry, WorkflowTemplate, } from "../types";
+
+// ── LORA Helpers ─────────────────────────────────────────────
+
+/** Parse LoRA entries from comma-separated string: "path:strength,path:strength" */
+function parseLoraString(loraStr: string,): LoraEntry[] {
+  const entries: LoraEntry[] = [];
+  if (!loraStr.trim()) { return entries; }
+
+  for (const entry of loraStr.split(",",)) {
+    const trimmed = entry.trim();
+    if (!trimmed) { continue; }
+    const colonIdx = trimmed.lastIndexOf(":",);
+    if (colonIdx > 0) {
+      const path = trimmed.slice(0, colonIdx,);
+      const strength = Number.parseFloat(trimmed.slice(colonIdx + 1,),);
+      if (path && !Number.isNaN(strength,)) {
+        entries.push({ path, strength, },);
+      }
+    } else {
+      entries.push({ path: trimmed, strength: 1, },);
+    }
+  }
+  return entries;
+}
+
+/**
+ * Build ComfyUI LORA nodes from a list of LoraEntry objects.
+ * Returns workflow nodes and the final model/clip output refs
+ * after all LORAs have been applied.
+ */
+function buildLoraNodes(
+  loras: LoraEntry[],
+  startModelRef: [string, number,],
+  startClipRef: [string, number,],
+): { nodes: ComfyUIWorkflow; modelRef: [string, number,]; clipRef: [string, number,] } {
+  const nodes: ComfyUIWorkflow = {};
+  let currentModel = startModelRef;
+  let currentClip = startClipRef;
+  let nodeIndex = 100; // Start LORA nodes at 100 to avoid collisions
+
+  for (const lora of loras) {
+    const id = String(nodeIndex,);
+    nodes[id] = {
+      inputs: {
+        lora_name: lora.path,
+        strength_model: lora.strength,
+        strength_clip: lora.strength,
+        model: currentModel,
+        clip: currentClip,
+      },
+      class_type: "LoraLoader",
+      _meta: { title: `LoRA: ${lora.path}`, },
+    };
+    currentModel = [id, 0,];
+    currentClip = [id, 1,];
+    nodeIndex++;
+  }
+
+  return { nodes, modelRef: currentModel, clipRef: currentClip, };
+}
 
 // ── txt2img ──────────────────────────────────────────────────
 
@@ -93,34 +154,25 @@ const txt2img: WorkflowTemplate = {
       max: 2_147_483_647,
       description: "-1 for random",
     },
+    {
+      name: "loras",
+      type: "string",
+      label: "LoRAs",
+      description: "Comma-separated LoRA entries: path:strength,... (e.g. detail_enhancer:0.8,style_cartoon:0.6)",
+      default: "",
+    },
   ],
   build(params,) {
     const seed = (params.seed as number) ?? -1;
     const actualSeed = seed === -1 ? Math.floor(Math.random() * 2_147_483_647,) : seed;
+    const loras = parseLoraString((params.loras as string) ?? "",);
 
-    return {
+    // Base workflow nodes — checkpoint + latent only
+    const baseNodes: ComfyUIWorkflow = {
       "1": {
-        inputs: {
-          checkpoint_name: "model.safetensors",
-        },
+        inputs: { checkpoint_name: "model.safetensors", },
         class_type: "CheckpointLoaderSimple",
         _meta: { title: "Load Checkpoint", },
-      },
-      "2": {
-        inputs: {
-          text: (params.prompt) ?? "",
-          clip: ["1", 1,],
-        },
-        class_type: "CLIPTextEncode",
-        _meta: { title: "Positive Prompt", },
-      },
-      "3": {
-        inputs: {
-          text: (params.negative_prompt) ?? "",
-          clip: ["1", 1,],
-        },
-        class_type: "CLIPTextEncode",
-        _meta: { title: "Negative Prompt", },
       },
       "4": {
         inputs: {
@@ -131,6 +183,32 @@ const txt2img: WorkflowTemplate = {
         class_type: "EmptyLatentImage",
         _meta: { title: "Empty Latent Image", },
       },
+    };
+
+    // Apply LORAs if present — chain model/clip through LORA nodes
+    let modelRef: [string, number,] = ["1", 0,];
+    let clipRef: [string, number,] = ["1", 1,];
+    let loraNodes: ComfyUIWorkflow = {};
+
+    if (loras.length > 0) {
+      const result = buildLoraNodes(loras, modelRef, clipRef,);
+      loraNodes = result.nodes;
+      modelRef = result.modelRef;
+      clipRef = result.clipRef;
+    }
+
+    // CLIP text encode + KSampler + decode + save — uses modelRef/clipRef
+    const outputNodes: ComfyUIWorkflow = {
+      "2": {
+        inputs: { text: (params.prompt) ?? "", clip: clipRef, },
+        class_type: "CLIPTextEncode",
+        _meta: { title: "Positive Prompt", },
+      },
+      "3": {
+        inputs: { text: (params.negative_prompt) ?? "", clip: clipRef, },
+        class_type: "CLIPTextEncode",
+        _meta: { title: "Negative Prompt", },
+      },
       "5": {
         inputs: {
           seed: actualSeed,
@@ -139,7 +217,7 @@ const txt2img: WorkflowTemplate = {
           sampler_name: (params.sampler) ?? "euler",
           scheduler: "normal",
           denoise: 1,
-          model: ["1", 0,],
+          model: modelRef,
           positive: ["2", 0,],
           negative: ["3", 0,],
           latent_image: ["4", 0,],
@@ -148,22 +226,18 @@ const txt2img: WorkflowTemplate = {
         _meta: { title: "KSampler", },
       },
       "6": {
-        inputs: {
-          samples: ["5", 0,],
-          vae: ["1", 2,],
-        },
+        inputs: { samples: ["5", 0,], vae: ["1", 2,], },
         class_type: "VAEDecode",
         _meta: { title: "VAE Decode", },
       },
       "7": {
-        inputs: {
-          filename_prefix: "loop-lore",
-          images: ["6", 0,],
-        },
+        inputs: { filename_prefix: "loop-lore", images: ["6", 0,], },
         class_type: "SaveImage",
         _meta: { title: "Save Image", },
       },
     };
+
+    return { ...baseNodes, ...loraNodes, ...outputNodes, };
   },
 };
 
