@@ -1,7 +1,7 @@
 # TASK: ComfyUI Node Discovery
 
 **Priority:** High
-**Status:** ⬜ Not Started
+**Status:** ✅ Done
 **Epic:** epic-comfyui-plugin
 
 ## Description
