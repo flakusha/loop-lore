@@ -3,7 +3,7 @@
 **Epic:** RPG Mechanics & Extensible Game Systems
 **Priority:** High
 **Effort:** Medium
-**Status:** Not Started
+**Status:** In Progress (schema done, needs routes)
 
 ## Summary
 
