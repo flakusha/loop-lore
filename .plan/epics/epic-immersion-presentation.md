@@ -11,15 +11,15 @@
 
 ## Tasks
 
-| Task                                    | Files                                          | Effort | Source          | Task File                              |
-| --------------------------------------- | ---------------------------------------------- | ------ | --------------- | -------------------------------------- |
-| Emotion-reactive portraits              | `src/assets/emotion-portraits.ts` (new)        | Med    | ideas #1        | —                                      |
-| Visual Novel Mode renderer              | `src/frontend/vn/` (new)                       | Med    | ideas #2        | `TASK-visual-novel-mode.md`            |
-| Text Effects & Overlays                 | `src/frontend/effects/` (new)                  | Med    | —               | `TASK-text-effects-overlays.md`        |
-| 3D View Modes (consolidated)            | `src/frontend/3d/`, `src/frontend/avatar/`     | High   | —               | `TASK-3d-view-modes.md`                |
-| Adaptive soundscape & music             | `src/generation/soundscape.ts` (new)           | Med    | ideas #3        | —                                      |
-| Karaoke TTS                             | `src/generation/karaoke-tts.ts` (new)          | High   | ideas #4        | —                                      |
-| Director's Mode (cinematic metadata)    | `src/story/director-mode.ts` (new)             | High   | ideas #5        | —                                      |
+| Task                                 | Files                                      | Effort | Source   | Task File                       |
+| ------------------------------------ | ------------------------------------------ | ------ | -------- | ------------------------------- |
+| Emotion-reactive portraits           | `src/assets/emotion-portraits.ts` (new)    | Med    | ideas #1 | —                               |
+| Visual Novel Mode renderer           | `src/frontend/vn/` (new)                   | Med    | ideas #2 | `TASK-visual-novel-mode.md`     |
+| Text Effects & Overlays              | `src/frontend/effects/` (new)              | Med    | —        | `TASK-text-effects-overlays.md` |
+| 3D View Modes (consolidated)         | `src/frontend/3d/`, `src/frontend/avatar/` | High   | —        | `TASK-3d-view-modes.md`         |
+| Adaptive soundscape & music          | `src/generation/soundscape.ts` (new)       | Med    | ideas #3 | —                               |
+| Karaoke TTS                          | `src/generation/karaoke-tts.ts` (new)      | High   | ideas #4 | —                               |
+| Director's Mode (cinematic metadata) | `src/story/director-mode.ts` (new)         | High   | ideas #5 | —                               |
 
 ## Ideas Merged
 

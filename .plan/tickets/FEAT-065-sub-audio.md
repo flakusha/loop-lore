@@ -24,11 +24,11 @@ Design the **audio/sound generation prompt template system** — schema, variabl
 
 ### Sub-types (proposed)
 
-| Type | Model Families | Prompt Format |
-| ---- | -------------- | ------------- |
-| **TTS** (voice) | ElevenLabs v3, OpenAI TTS, Piper, Bark | natural + SSML |
-| **SFX** (sound design) | ElevenLabs SFX, Stable Audio | natural + JSON |
-| **Music** | MusicGen, Suno-style, Udio | natural + JSON (genre/mood) |
+| Type                   | Model Families                         | Prompt Format               |
+| ---------------------- | -------------------------------------- | --------------------------- |
+| **TTS** (voice)        | ElevenLabs v3, OpenAI TTS, Piper, Bark | natural + SSML              |
+| **SFX** (sound design) | ElevenLabs SFX, Stable Audio           | natural + JSON              |
+| **Music**              | MusicGen, Suno-style, Udio             | natural + JSON (genre/mood) |
 
 ### Model Families (proposed)
 
@@ -48,16 +48,16 @@ Design the **audio/sound generation prompt template system** — schema, variabl
 
 ### Variables (proposed)
 
-| Variable | Source | Example |
-| -------- | ------ | ------- |
-| `{{speaker}}` | actors.display_name / voice_id | "Aria" |
-| `{{emotion}}` | request param | "excited" |
-| `{{tone}}` | request param | "whisper" |
-| `{{pace}}` | request param | "slow" |
-| `{{genre}}` | request param | "fantasy orchestral" |
-| `{{mood}}` | request param | "epic battle" |
-| `{{instrumentation}}` | request param | "drums, brass" |
-| `{{text}}` | message content | "The dragon awakens..." |
+| Variable              | Source                         | Example                 |
+| --------------------- | ------------------------------ | ----------------------- |
+| `{{speaker}}`         | actors.display_name / voice_id | "Aria"                  |
+| `{{emotion}}`         | request param                  | "excited"               |
+| `{{tone}}`            | request param                  | "whisper"               |
+| `{{pace}}`            | request param                  | "slow"                  |
+| `{{genre}}`           | request param                  | "fantasy orchestral"    |
+| `{{mood}}`            | request param                  | "epic battle"           |
+| `{{instrumentation}}` | request param                  | "drums, brass"          |
+| `{{text}}`            | message content                | "The dragon awakens..." |
 
 ### Detail Levels (proposed)
 
