@@ -20,33 +20,52 @@ const DEFAULT_STALE_AFTER_CHATS = 10;
  * Apply decay to memory confidence.
  * Reduces confidence by decayRate for memories that were accessed.
  */
+/**
+ * Apply time-based decay to memory strength.
+ *
+ * Uses per-memory `decay_rate` and elapsed time since `last_accessed_at`
+ * to reduce `strength`. Memories with higher decay_rate fade faster.
+ *
+ * Formula: strength -= decay_rate × elapsed_days
+ * Strength is clamped to [0, 1].
+ *
+ * @param db - Kysely instance
+ * @param opts - Optional overrides
+ * @returns Number of memories affected
+ */
 export async function applyDecay(
   db: Kysely<DB>,
-  opts: { decayRate?: number } = {},
+  opts: { now?: Date } = {},
 ): Promise<number> {
-  const decayRate = opts.decayRate ?? 0.01;
+  const now = opts.now ?? new Date();
 
-  // Reduce confidence for accessed memories
-  const accessed = await db
+  const memories = await db
     .selectFrom("actor_memories",)
-    .select(["id", "confidence",],)
-    .where("last_accessed_at", "is not", null,)
-    .where("confidence", ">", 0,)
+    .select(["id", "strength", "decay_rate", "last_accessed_at",],)
+    .where("strength", ">", 0,)
+    .where("decay_rate", ">", 0,)
     .execute();
 
   let affected = 0;
-  for (const mem of accessed) {
-    const newConf = Math.max(0, mem.confidence - decayRate,);
-    await db
-      .updateTable("actor_memories",)
-      .set({ confidence: newConf, },)
-      .where("id", "=", mem.id,)
-      .execute();
-    affected++;
+  for (const mem of memories) {
+    const lastAccessed = mem.last_accessed_at ?? mem.id; // fallback to creation
+    const elapsedMs = now.getTime() - new Date(lastAccessed,).getTime();
+    const elapsedDays = Math.max(0, elapsedMs / (1000 * 60 * 60 * 24),);
+    const decay = mem.decay_rate * elapsedDays;
+    const newStrength = Math.max(0, mem.strength - decay,);
+
+    if (newStrength !== mem.strength) {
+      await db
+        .updateTable("actor_memories",)
+        .set({ strength: newStrength, },)
+        .where("id", "=", mem.id,)
+        .execute();
+      affected++;
+    }
   }
 
   if (affected > 0) {
-    getLog().info("Applied memory decay", { affected, decayRate, },);
+    getLog().info("Applied memory decay", { affected, },);
   }
   return affected;
 }
@@ -63,6 +82,7 @@ export async function purgeStaleMemories(
     staleAfterChats = DEFAULT_STALE_AFTER_CHATS,
     hardDelete = false,
     minConfidence = 0.2,
+    minStrength = 0.1,
   } = config;
 
   const staleThreshold = new Date(Date.now() - staleAfterChats * 24 * 60 * 60 * 1000,).toISOString();
@@ -78,6 +98,7 @@ export async function purgeStaleMemories(
         ],)
       )
       .where("confidence", "<", minConfidence,)
+      .where("strength", "<", minStrength,)
       .execute();
 
     let deleted = 0;
@@ -103,6 +124,7 @@ export async function purgeStaleMemories(
       ],)
     )
     .where("confidence", ">", minConfidence,)
+    .where("strength", "<", minStrength,)
     .execute();
 
   let stale = 0;
@@ -122,15 +144,25 @@ export async function purgeStaleMemories(
 }
 
 /**
- * Update last_accessed_at when a memory is used in a prompt.
+ * Update last_accessed_at and boost strength when a memory is used in a prompt.
+ *
+ * Access-recency boost: strength is increased by 0.1 (clamped to 1.0)
+ * when a memory is accessed, making recently-used memories more durable.
+ *
+ * @param db - Kysely instance
+ * @param memoryId - ID of the memory to touch
  */
 export async function touchMemory(
   db: Kysely<DB>,
   memoryId: string,
 ): Promise<void> {
+  const now = new Date().toISOString();
   await db
     .updateTable("actor_memories",)
-    .set({ last_accessed_at: new Date().toISOString(), },)
+    .set((eb,) => ({
+      last_accessed_at: now,
+      strength: eb("strength", "+", 0.1,),
+    }))
     .where("id", "=", memoryId,)
     .execute();
 }
