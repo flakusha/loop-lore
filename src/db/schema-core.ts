@@ -29,6 +29,7 @@ import type {
   TurnStrategy,
   UserRole,
   UserStatus,
+  ContentRating,
 } from "./enums";
 
 // ── Users ────────────────────────────────────────────────────
@@ -40,6 +41,31 @@ import type {
  */
 // ── Users ────────────────────────────────────────────────────
 
+/**
+ * DB Schema — Core Domain Tables
+ *
+ * Users, sessions, chats, actors, participants, messages.
+ */
+// ── Users ────────────────────────────────────────────────────
+/**
+ * DB Schema — Core Domain Tables
+ *
+ * Users, sessions, chats, actors, participants, messages.
+ */
+// ── Users ────────────────────────────────────────────────────
+
+/**
+ * DB Schema — Core Domain Tables
+ *
+ * Users, sessions, chats, actors, participants, messages.
+ */
+// ── Users ────────────────────────────────────────────────────
+/**
+ * DB Schema — Core Domain Tables
+ *
+ * Users, sessions, chats, actors, participants, messages.
+ */
+// ── Users ────────────────────────────────────────────────────
 /**
  * DB Schema — Core Domain Tables
  *
@@ -128,6 +154,7 @@ export interface Actors {
   settings: string;
   data_version: Generated<number>;
   visibility: Generated<ActorVisibility>;
+  content_rating: Generated<ContentRating>;
   welcome_message: string | null;
   personality: string | null;
   scenario: string | null;
