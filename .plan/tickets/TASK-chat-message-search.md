@@ -62,14 +62,14 @@ Click result → navigate to chat, scroll to message, flash-highlight
 
 ### Specialized Searches
 
-| Search Type     | Query Parameter         | Description                     |
-| --------------- | ----------------------- | ------------------------------- |
-| Assets in chat  | `hasAttachment=true`    | Messages with any attachment    |
-| Images only     | `attachmentType=image`  | Messages with image attachments |
-| Music/links     | `linkPattern=youtube`   | Messages containing URL patterns|
-| By role         | `role=character`        | Messages from specific role     |
-| Date range      | `dateFrom=&dateTo=`     | Messages in time window         |
-| Regex           | `pattern=<regex>`       | Content regex match (v2)        |
+| Search Type    | Query Parameter        | Description                      |
+| -------------- | ---------------------- | -------------------------------- |
+| Assets in chat | `hasAttachment=true`   | Messages with any attachment     |
+| Images only    | `attachmentType=image` | Messages with image attachments  |
+| Music/links    | `linkPattern=youtube`  | Messages containing URL patterns |
+| By role        | `role=character`       | Messages from specific role      |
+| Date range     | `dateFrom=&dateTo=`    | Messages in time window          |
+| Regex          | `pattern=<regex>`      | Content regex match (v2)         |
 
 ### FTS Implementation
 
@@ -113,10 +113,10 @@ interface MessageSearchResult {
   chatCharacterName: string;
   role: "user" | "character" | "assistant" | "system";
   content: string;
-  matchContext: string;       // highlighted snippet (50-100 chars around match)
+  matchContext: string; // highlighted snippet (50-100 chars around match)
   createdAt: string;
   attachments?: MessageAttachment[];
-  matchScore: number;         // FTS relevance score
+  matchScore: number; // FTS relevance score
 }
 
 interface MessageSearchResponse {
@@ -192,12 +192,12 @@ interface MessageSearchResponse {
 
 ## Performance
 
-| Metric             | Target  | Notes                          |
-| ------------------ | ------- | ------------------------------ |
-| In-chat search     | < 200ms | FTS5 with index                |
-| Cross-chat search  | < 500ms | FTS5 across all user messages  |
-| Highlight render   | < 16ms  | CSS highlight, no DOM rewrite  |
-| FTS index size     | < 2x    | Message table size overhead    |
+| Metric            | Target  | Notes                         |
+| ----------------- | ------- | ----------------------------- |
+| In-chat search    | < 200ms | FTS5 with index               |
+| Cross-chat search | < 500ms | FTS5 across all user messages |
+| Highlight render  | < 16ms  | CSS highlight, no DOM rewrite |
+| FTS index size    | < 2x    | Message table size overhead   |
 
 ## Acceptance Criteria
 

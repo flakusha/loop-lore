@@ -39,50 +39,50 @@ and information density without breaking immersion.
 
 All effects are CSS-only (no JS animation loops):
 
-| Effect       | CSS Property           | Use Case                    |
-| ------------ | ---------------------- | --------------------------- |
-| Typewriter   | `@keyframes` + width  | VN mode text reveal          |
-| Glow         | `text-shadow`          | Magic, emphasis              |
-| Fade-in      | `opacity` transition   | Message appear               |
-| Color tint   | `color`                | Speaker/emotion distinction  |
-| Shake        | `transform: translateX`| Impact, surprise             |
-| Pulse        | `transform: scale`     | Important message            |
-| Blur reveal  | `filter: blur`         | Dreamlike, flashback         |
-| Wave         | `transform: translateY`| Magic, dreamlike             |
+| Effect      | CSS Property            | Use Case                    |
+| ----------- | ----------------------- | --------------------------- |
+| Typewriter  | `@keyframes` + width    | VN mode text reveal         |
+| Glow        | `text-shadow`           | Magic, emphasis             |
+| Fade-in     | `opacity` transition    | Message appear              |
+| Color tint  | `color`                 | Speaker/emotion distinction |
+| Shake       | `transform: translateX` | Impact, surprise            |
+| Pulse       | `transform: scale`      | Important message           |
+| Blur reveal | `filter: blur`          | Dreamlike, flashback        |
+| Wave        | `transform: translateY` | Magic, dreamlike            |
 
 ### Overlay System
 
 Lightweight DOM elements positioned relative to message bubbles:
 
-| Overlay       | Position          | Data Source              |
-| ------------- | ----------------- | ------------------------ |
-| Status bar    | Above message     | RPG stats (HP, MP, etc.) |
-| Condition icons| Right of text    | Auto-detected or GM-set  |
-| Location badge| Section boundary  | Chat section location    |
-| Time badge    | Bottom-right      | In-world or real time    |
+| Overlay         | Position         | Data Source              |
+| --------------- | ---------------- | ------------------------ |
+| Status bar      | Above message    | RPG stats (HP, MP, etc.) |
+| Condition icons | Right of text    | Auto-detected or GM-set  |
+| Location badge  | Section boundary | Chat section location    |
+| Time badge      | Bottom-right     | In-world or real time    |
 
 ### Decoration System
 
 Visual styling applied to the entire message bubble:
 
-| Decoration      | Visual                        | Trigger                |
-| --------------- | ----------------------------- | ---------------------- |
-| Border accent   | Colored left border (4px)     | Speaker identity       |
-| Background tint | Subtle background color shift | Emotion / scene type   |
-| Glow ring       | Outer glow around bubble      | Important / critical   |
-| Dim             | Reduced opacity (0.6)         | Flashback / memory     |
-| Highlight       | Yellow background (20%)       | Search match / pinned  |
+| Decoration      | Visual                        | Trigger               |
+| --------------- | ----------------------------- | --------------------- |
+| Border accent   | Colored left border (4px)     | Speaker identity      |
+| Background tint | Subtle background color shift | Emotion / scene type  |
+| Glow ring       | Outer glow around bubble      | Important / critical  |
+| Dim             | Reduced opacity (0.6)         | Flashback / memory    |
+| Highlight       | Yellow background (20%)       | Search match / pinned |
 
 ### Emotion → Effect Mapping
 
-| Emotion   | Effect                    | CSS                      |
-| --------- | ------------------------- | ------------------------ |
-| Angry     | Shake (subtle)            | `translateX` oscillation |
-| Surprised | Pulse                     | `scale(1.02)`            |
-| Scared    | Wave                      | `translateY` sinusoidal  |
-| Happy     | Glow (warm color)         | `text-shadow` amber      |
-| Sad       | Fade-in (slower, 400ms)   | `opacity` transition     |
-| Magic     | Rainbow (brief, 1s)       | `background-clip` anim   |
+| Emotion   | Effect                  | CSS                      |
+| --------- | ----------------------- | ------------------------ |
+| Angry     | Shake (subtle)          | `translateX` oscillation |
+| Surprised | Pulse                   | `scale(1.02)`            |
+| Scared    | Wave                    | `translateY` sinusoidal  |
+| Happy     | Glow (warm color)       | `text-shadow` amber      |
+| Sad       | Fade-in (slower, 400ms) | `opacity` transition     |
+| Magic     | Rainbow (brief, 1s)     | `background-clip` anim   |
 
 ### Performance
 
@@ -166,12 +166,12 @@ Visual styling applied to the entire message bubble:
 
 ## Performance
 
-| Metric           | Target  | Notes                          |
-| ---------------- | ------- | ------------------------------ |
-| Effect render    | < 16ms  | CSS-only, no JS animation      |
-| Overlay render   | < 10ms  | Lightweight DOM elements       |
-| Memory overhead  | < 5MB   | CSS classes, no heavy assets   |
-| Reduced motion   | 0ms     | All effects skipped            |
+| Metric          | Target | Notes                        |
+| --------------- | ------ | ---------------------------- |
+| Effect render   | < 16ms | CSS-only, no JS animation    |
+| Overlay render  | < 10ms | Lightweight DOM elements     |
+| Memory overhead | < 5MB  | CSS classes, no heavy assets |
+| Reduced motion  | 0ms    | All effects skipped          |
 
 ## Acceptance Criteria
 

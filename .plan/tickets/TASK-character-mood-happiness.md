@@ -25,24 +25,24 @@ mood instability).
 
 ### Happiness Meter
 
-| Range | Label | Personality Impact |
-|---|---|---|
-| 0-20 | Depressed | Withdrawn, negative dialogue, reduced cooperation |
-| 21-40 | Sad | Less enthusiastic, shorter responses, slower trust |
-| 41-60 | Neutral | Baseline personality, normal behavior |
-| 61-80 | Happy | More enthusiastic, cooperative, open |
-| 81-100 | Joyful | Exuberant, takes risks, shares secrets more readily |
+| Range  | Label     | Personality Impact                                  |
+| ------ | --------- | --------------------------------------------------- |
+| 0-20   | Depressed | Withdrawn, negative dialogue, reduced cooperation   |
+| 21-40  | Sad       | Less enthusiastic, shorter responses, slower trust  |
+| 41-60  | Neutral   | Baseline personality, normal behavior               |
+| 61-80  | Happy     | More enthusiastic, cooperative, open                |
+| 81-100 | Joyful    | Exuberant, takes risks, shares secrets more readily |
 
 ### Mood Change Triggers
 
-| Trigger | Effect | Notes |
-|---|---|---|
-| Positive events | +happiness | Success, praise, gifts, bonding |
-| Negative events | -happiness | Failure, criticism, loss, conflict |
-| Time decay | Toward neutral | Natural drift toward baseline |
-| Relationship changes | Variable | Friendship, romance, betrayal |
-| World events | Variable | Cataclysms, prosperity, war |
-| Character traits | Modifier | Optimistic characters recover faster |
+| Trigger              | Effect         | Notes                                |
+| -------------------- | -------------- | ------------------------------------ |
+| Positive events      | +happiness     | Success, praise, gifts, bonding      |
+| Negative events      | -happiness     | Failure, criticism, loss, conflict   |
+| Time decay           | Toward neutral | Natural drift toward baseline        |
+| Relationship changes | Variable       | Friendship, romance, betrayal        |
+| World events         | Variable       | Cataclysms, prosperity, war          |
+| Character traits     | Modifier       | Optimistic characters recover faster |
 
 ### Preferred Moods
 
@@ -51,7 +51,7 @@ Characters can have preferred mood states:
 ```typescript
 interface MoodPreference {
   character_id: string;
-  preferred_range: [number, number]; // e.g., [60, 100] for "prefers happy"
+  preferred_range: [number, number,]; // e.g., [60, 100] for "prefers happy"
   preferred_moods: MoodLabel[]; // ["content", "playful", "affectionate"]
   mood_stability: number; // 0-100, higher = slower mood changes
   recovery_rate: number; // Happiness recovered per turn when positive
@@ -108,7 +108,6 @@ interface MoodPersonalityImpact {
 
 Medium — happiness meter affects narrative output. If happiness is too easy to max/min,
 characters become one-dimensional. Needs balanced recovery rates and meaningful triggers.
-
 
 ## Files
 

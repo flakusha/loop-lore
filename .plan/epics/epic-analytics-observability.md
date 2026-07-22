@@ -11,18 +11,18 @@ Conversation analytics dashboard, model A/B comparison, knowledge graph visualiz
 
 ## Tasks
 
-| Task                                            | Files                            | Effort | Source         |
-| ----------------------------------------------- | -------------------------------- | ------ | -------------- |
-| Conversation analytics dashboard                | `src/routes/analytics.ts` (new)  | High   | plan.md §50    |
-| Model comparison A/B (uses `model_comparisons`) | `src/routes/analytics.ts`        | Med    | plan.md §50    |
-| Knowledge graph visualization                   | `src/routes/analytics.ts` (new)  | High   | plan.md §50    |
-| Generation quality metrics                      | `src/analytics/quality.ts` (new) | Med    | plan.md §50    |
-| Sentiment over time per chat                    | `src/analytics/sentiment.ts`     | Med    | ideas #27      |
-| Word clouds per chat                            | `src/analytics/wordcloud.ts`     | Low    | ideas #27      |
-| Token cost tracking dashboard                   | `src/analytics/cost.ts`          | Med    | ideas #27      |
-| Story-beat map per chat                         | `src/analytics/storybeats.ts`    | Med    | ideas #27      |
-| Synthetic fine-tune data export                 | `src/analytics/finetune-export.ts` | High | ideas #29      |
-| Automated balance playtest bot                  | `src/analytics/playtest-bot.ts`  | High   | ideas #30      |
+| Task                                            | Files                              | Effort | Source      |
+| ----------------------------------------------- | ---------------------------------- | ------ | ----------- |
+| Conversation analytics dashboard                | `src/routes/analytics.ts` (new)    | High   | plan.md §50 |
+| Model comparison A/B (uses `model_comparisons`) | `src/routes/analytics.ts`          | Med    | plan.md §50 |
+| Knowledge graph visualization                   | `src/routes/analytics.ts` (new)    | High   | plan.md §50 |
+| Generation quality metrics                      | `src/analytics/quality.ts` (new)   | Med    | plan.md §50 |
+| Sentiment over time per chat                    | `src/analytics/sentiment.ts`       | Med    | ideas #27   |
+| Word clouds per chat                            | `src/analytics/wordcloud.ts`       | Low    | ideas #27   |
+| Token cost tracking dashboard                   | `src/analytics/cost.ts`            | Med    | ideas #27   |
+| Story-beat map per chat                         | `src/analytics/storybeats.ts`      | Med    | ideas #27   |
+| Synthetic fine-tune data export                 | `src/analytics/finetune-export.ts` | High   | ideas #29   |
+| Automated balance playtest bot                  | `src/analytics/playtest-bot.ts`    | High   | ideas #30   |
 
 ## Ideas Merged
 
