@@ -50,6 +50,7 @@ declare global {
   var showToast: (type: string, message: string,) => void;
   var applyTheme: (themeId: string,) => void;
   var setLocale: (localeId: string,) => void;
+  var t: (key: string, params?: Record<string, string>) => string;
   var openModal: (id: string,) => void;
   var closeModal: (el: Element,) => void;
   var closeModalOnBackdrop: (event: Event,) => void;
