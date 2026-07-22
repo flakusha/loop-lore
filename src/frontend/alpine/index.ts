@@ -20,3 +20,6 @@ import "./shortcuts";
 import "./settings-modal";
 import "./rpg-stats";
 import "./memory-panel";
+import "./context-window";
+import "./response-length";
+import "./command-buttons";

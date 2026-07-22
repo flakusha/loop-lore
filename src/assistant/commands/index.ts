@@ -12,6 +12,14 @@ import "./context";
 import "./dice";
 import "./help";
 import "./improve";
+import "./image";
+import "./quest";
+import "./video";
+import "./sfx";
+import "./music";
+import "./caption";
+import "./create";
+import "./review";
 
 export { BUILTIN_COMMANDS, isBuiltinCommand, parseCommand, } from "../command-parser";
 export type { ParsedCommand, } from "../command-parser";
