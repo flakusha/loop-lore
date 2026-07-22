@@ -10,6 +10,22 @@ import type { MemoryType, } from "../db/enums-story";
 /** Memory scope determines ownership and injection target. */
 export type MemoryScope = "character" | "assistant" | "world";
 
+/** Memory privacy level — controls who can see this memory. */
+export type MemoryPrivacy = "public" | "shared" | "private" | "secret";
+
+/**
+ * Shareability configuration for a memory.
+ * Controls how likely a character is to reveal this memory in conversation.
+ */
+export interface MemoryShareability {
+  /** Base probability of sharing (0-1). Modified by relationship/trust. */
+  shareProbability: number;
+  /** Characters this memory can ALWAYS be shared with (bypasses probability). */
+  trustedActorIds: string[];
+  /** Characters this memory can NEVER be shared with. */
+  blockedActorIds: string[];
+}
+
 /** A single memory entry stored in the database. */
 export interface MemoryEntry {
   id: string;
@@ -25,6 +41,10 @@ export interface MemoryEntry {
   sourceMessageId?: string;
   pinned: boolean;
   scope: MemoryScope;
+  /** Privacy level — controls visibility in group chats and to other characters. */
+  privacy: MemoryPrivacy;
+  /** Shareability config — JSON-encoded, controls who this memory can be revealed to. */
+  shareability: string | null;
   expiresAt?: string;
   createdAt: string;
   updatedAt: string;
@@ -81,4 +101,6 @@ export interface PurgeConfig {
   hardDelete: boolean;
   /** Minimum confidence to survive purge. */
   minConfidence: number;
+  /** Minimum strength to survive purge (strength decays over time). */
+  minStrength: number;
 }

@@ -1,19 +1,68 @@
 /**
- * Chat module — context window monitoring, response length control,
- * and smart context pruning.
+ * Chat Module
+ *
+ * Chat lifecycle management: context windows, transitions,
+ * moderation primitives, and service layer.
+ *
+ * @module chat
  */
+export type {
+  ChatMode,
+  ChatTransition,
+  ContextThreshold,
+  ContextThresholds,
+  ContextWindow,
+  EventRef,
+  MemoryRef,
+  MessageRef,
+  MessageScore,
+  ModeFeatureFlags,
+  ModerationAction,
+  ModerationActionType,
+  ModerationScope,
+  ResponseLengthConfig,
+  ResponseLengthPreset,
+  TransitionType,
+} from "./types";
 
-export { computeContextWindow, countMessageTokens, getStatus, THRESHOLDS, } from "./token-counter";
-export type { ContextStatus, CountableMessage, TokenCountResult, } from "./token-counter";
+export { MODE_DEFAULTS, resolveFeatureFlags, RESPONSE_LENGTH_DEFAULTS, } from "./types";
 
 export {
-  buildLengthConfig,
-  computeMaxTokens,
-  DEFAULT_RESPONSE_LENGTH,
-  LENGTH_PRESETS,
-  parseLengthConfig,
-} from "./response-length";
-export type { LengthPreset, ResponseLengthConfig, } from "./response-length";
+  computeContextWindow,
+  getThresholdState,
+  injectEvents,
+  injectMemories,
+} from "./context-window";
+export { estimateTokens, } from "./token-utils";
 
-export { DEFAULT_PRUNING_CONFIG, pruneMessages, scoreMessage, SCORING_WEIGHTS, STRATEGY_CONFIGS, } from "./pruning";
-export type { MessageScore, PruneResult, PruningConfig, PruningStrategy, ScorableMessage, } from "./pruning";
+export {
+  createTransition,
+  detectTransitionType,
+  isTransitionMessage,
+  selectMessagesForPromotion,
+} from "./transitions";
+
+export {
+  buildRenamePrompt,
+  generateRuleName,
+} from "./auto-rename";
+
+export {
+  clampTokenCount,
+  isValidPreset,
+  resolveResponseLength,
+} from "./response-length";
+
+export {
+  checkModerationPermission,
+  createModerationAction,
+  getShadowState,
+  isBanned,
+  isBlocked,
+} from "./moderation";
+
+export {
+  getChatContext,
+  getFeatureFlags,
+  getResponseLength,
+} from "./service";

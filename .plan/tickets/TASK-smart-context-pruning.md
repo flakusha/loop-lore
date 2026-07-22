@@ -1,79 +1,150 @@
-# TASK: Smart Context Pruning (FEAT-072)
+# TASK: Smart Context Pruning
 
 **Status:** ⬜ Not Started
 **Priority:** Medium
 **Effort:** Med
-**Epic:** Epic 36 (Chat Lifecycle & Moderation)
-**Tags:** chat, context, pruning, memory
-**Git Issue:** FEAT-072
+**Epic:** Epic 36 (Chat Lifecycle)
+**Tags:** chat, context, pruning, memory, llm
+**Source:** FEAT-072 (git issue)
 
 ## Summary
 
-Score-based pruning of chat context to fit token budget. Older, low-importance messages are removed while important content (character moments, lore, decisions) is promoted to long-term memory.
+Intelligent context trimming that preserves important messages when the
+context window fills up. Instead of dropping the oldest messages, score
+messages by relevance (recency, role, content importance) and prune
+low-value ones first. Promote pruned messages to long-term character
+memory when they contain significant content.
 
 ## Rationale
 
-- Context windows are finite — long chats need intelligent pruning
-- Not all messages are equal — some contain critical information
-- Automatic promotion to memory preserves important content
-- Score-based approach is transparent and tunable
+- Naive FIFO pruning loses important context (key plot points, decisions)
+- Users are surprised when "that thing we discussed" vanishes from context
+- Promoting pruned content to memory keeps it accessible without bloating context
+- Related to FEAT-069 (Context Window Monitor) — shows what will be pruned
 
 ## Current State
 
-- Context compaction at 85% threshold (summarize older half)
-- No scoring system for message importance
-- No promotion to memory during pruning
-- No user control over pruning strategy
+- No context window management exists (Epic 36 not started)
+- Messages loaded by scroll, no token-aware loading
+- No message importance scoring
+- No promotion-to-memory pipeline
+- `actor_memories` table exists (migration 011) but unused for chat promotion
 
 ## Architecture
 
-### Importance Scoring
+### Pruning Strategy
+
+```
+Context window full (>= 95% of max_tokens)
+  ↓
+Score all messages in context:
+  - Recency: newer = higher score
+  - Role: system > character > assistant > user (for RPG importance)
+  - Content: messages with decisions, names, locations score higher
+  - References: messages referenced by later messages score higher
+  ↓
+Sort by score ascending (lowest = most prunable)
+  ↓
+Prune lowest-scored messages until context fits (target: 80%)
+  ↓
+Promote pruned messages with score > threshold to actor_memories
+  ↓
+Rebuild context: retained messages + injected memories
+```
+
+### Message Scoring
 
 ```typescript
 interface MessageScore {
-  messageId: string;
-  relevanceScore: number; // 0-1, based on keywords, role, recency
-  importanceScore: number; // 0-1, based on content type (lore, decision, emotion)
-  combinedScore: number; // weighted combination
-  shouldPromote: boolean; // if importanceScore > threshold
-  shouldPrune: boolean; // if combinedScore < threshold
+  message_id: string;
+  recency_score: number; // 0-1, linear decay from newest
+  role_score: number; // 0-1, role importance weight
+  content_score: number; // 0-1, NER/entity density + action verbs
+  reference_score: number; // 0-1, how often referenced by later messages
+  total_score: number; // weighted sum
 }
 ```
 
-### Scoring Factors
+### Promotion Threshold
 
-| Factor         | Weight | Description                              |
-| -------------- | ------ | ---------------------------------------- |
-| Recency        | 0.3    | Recent messages score higher             |
-| Role           | 0.2    | User/character messages > system         |
-| Keywords       | 0.2    | Lore, decision, emotion keywords         |
-| Memory links   | 0.15   | Messages linked to existing memories     |
-| Attachments    | 0.1    | Messages with images/audio are important |
-| User reactions | 0.05   | Messages with reactions/likes            |
+Messages with `total_score > PROMOTION_THRESHOLD` (default 0.6) are
+promoted to `actor_memories` before pruning. This ensures important
+context survives in long-term memory even when removed from active window.
 
-### Pruning Strategy
+### API Changes
 
-1. Calculate scores for all messages
-2. Sort by combinedScore (ascending)
-3. Remove lowest-scoring messages until under budget
-4. Promote high-importance messages to memory before removal
-5. Insert a system message noting what was pruned
+```typescript
+// Add to message list response
+interface MessageListResponse {
+  messages: Message[];
+  context: {
+    total_tokens: number;
+    max_tokens: number;
+    pruned_count: number;
+    promoted_count: number;
+  };
+}
+```
 
 ## Tasks
 
-- [ ] Implement message scoring algorithm
-- [ ] Add pruning strategy configuration (aggressiveness, thresholds)
-- [ ] Implement memory promotion for high-importance messages
-- [ ] Add pruning notification system message
-- [ ] Add UI control for pruning strategy (aggressive/conservative)
-- [ ] Write tests for scoring and pruning logic
+### Phase 1: Message Scoring
+
+- [ ] Create `src/chat/message-scorer.ts` — scoring logic
+- [ ] Implement recency scoring (linear decay)
+- [ ] Implement role scoring (system > character > assistant > user)
+- [ ] Implement content scoring (entity extraction, action verbs)
+- [ ] Implement reference scoring (back-reference counting)
+- [ ] Unit tests for each scoring component
+
+### Phase 2: Pruning Pipeline
+
+- [ ] Create `src/chat/context-pruner.ts` — pruning orchestration
+- [ ] Implement score-based message selection for pruning
+- [ ] Implement token-aware pruning (prune until fits budget)
+- [ ] Implement memory promotion for high-score pruned messages
+- [ ] Wire into `src/turning/turn-manager.ts` (context assembly)
+
+### Phase 3: Memory Integration
+
+- [ ] Create promotion logic: message → actor_memories
+- [ ] Add `source` field to actor_memories: "chat_promotion"
+- [ ] Add `original_message_id` reference for traceability
+- [ ] Deduplication: don't promote if similar memory exists
+- [ ] Wire into `src/actor-memories/` service
+
+### Phase 4: Frontend Awareness
+
+- [ ] Add context pruned count to message list response
+- [ ] Show "X messages pruned, Y promoted to memory" in chat info
+- [ ] Optional: show pruned messages in a "history" panel (read-only)
+- [ ] Wire to FEAT-069 (Context Window Monitor) for visual feedback
+
+## Files to Create
+
+- `src/chat/message-scorer.ts` — message importance scoring
+- `src/chat/context-pruner.ts` — pruning orchestration + memory promotion
+
+## Files to Modify
+
+- `src/turning/turn-manager.ts` — integrate pruning into context assembly
+- `src/routes/messages.ts` — add context info to message list response
+- `src/actor-memories/service.ts` — add chat promotion support
+- `src/db/migrations/008_chat_features.ts` — extend with pruning settings columns (in-place)
+- `src/db/data-migrations/messages/v1_to_v2.ts` — bump data_version for promotion tracking
+
+## Acceptance Criteria
+
+- [ ] Messages scored correctly by all four dimensions
+- [ ] Pruning removes lowest-scored messages first
+- [ ] High-score pruned messages promoted to actor_memories
+- [ ] Context window stays within token budget after pruning
+- [ ] Promotion deduplication prevents redundant memories
+- [ ] No performance degradation on message list loading
+- [ ] All existing message tests pass
 
 ## Risk
 
-Medium — aggressive pruning can lose important context. Need careful tuning of scoring weights and user controls.
-
-## Files
-
-- `src/chat/pruning.ts` — scoring and pruning logic
-- `src/frontend/components/pruning-settings.html` — UI controls
-- `src/frontend/alpine/pruning.ts` — frontend state
+Med — touches the generation pipeline (turn-manager) which is core to
+chat. Pruning logic must not break message ordering or character context.
+Test thoroughly with long conversations.

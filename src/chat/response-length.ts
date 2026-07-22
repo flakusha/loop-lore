@@ -1,94 +1,67 @@
 /**
- * Response Length Control (FEAT-071)
+ * Response Length Control
  *
- * Preset response length control — Short, Medium, Long, and Custom.
- * Users can set a default length that influences how the assistant
- * generates responses via the `max_tokens` parameter.
+ * Resolves per-chat response length configuration using a fallback chain:
+ *   chat-specific override → user global setting → server default
+ *
+ * Provides preset definitions (Short/Medium/Long/Custom) and resolution logic.
  */
+import type { ResponseLengthConfig, ResponseLengthPreset, } from "./types";
+import { RESPONSE_LENGTH_DEFAULTS, } from "./types";
 
-/** Available length presets */
-export type LengthPreset = "short" | "medium" | "long" | "custom";
-
-/** Configuration stored in user settings */
-export interface ResponseLengthConfig {
-  preset: LengthPreset;
-  customMin?: number;
-  customMax?: number;
-  /** Computed max_tokens passed to LLM provider */
-  maxTokens: number;
-}
-
-/** Preset definitions with token ranges */
-export const LENGTH_PRESETS: Record<Exclude<LengthPreset, "custom">, { label: string; min: number; max: number }> = {
-  short: { label: "Short", min: 50, max: 150, },
-  medium: { label: "Medium", min: 150, max: 400, },
-  long: { label: "Long", min: 400, max: 1000, },
-} as const;
-
-/** Default configuration (Medium preset) */
-export const DEFAULT_RESPONSE_LENGTH: ResponseLengthConfig = {
-  preset: "medium",
-  maxTokens: LENGTH_PRESETS.medium.max,
-};
+// ─── Resolution ───────────────────────────────────────────────
 
 /**
- * Compute max_tokens from a preset.
+ * Resolve the effective response length for a chat.
  *
- * @param preset - Length preset
- * @param customMax - Custom max for "custom" preset
- * @returns Token count for max_tokens parameter
- */
-export function computeMaxTokens(preset: LengthPreset, customMax?: number,): number {
-  if (preset === "custom") {
-    return Math.max(1, customMax ?? LENGTH_PRESETS.medium.max,);
-  }
-  return LENGTH_PRESETS[preset].max;
-}
-
-/**
- * Build a full ResponseLengthConfig from preset + optional custom values.
+ * Fallback chain:
+ *   1. Chat-specific preset + custom value (from chats table)
+ *   2. User global setting (from users.settings JSON)
+ *   3. Server default from config.yaml
  *
- * @param preset - Length preset
- * @param customMin - Custom min (for custom preset)
- * @param customMax - Custom max (for custom preset)
- * @returns Complete config with computed maxTokens
+ * @param chatPreset - Per-chat preset from DB (null if not set)
+ * @param chatCustom - Per-chat custom token count from DB (null if not set)
+ * @param userPreset - User's global preference (null if not set)
+ * @param serverDefault - Server default from config (default: "medium")
+ * @returns Resolved configuration with effective maxTokens
  */
-export function buildLengthConfig(
-  preset: LengthPreset,
-  customMin?: number,
-  customMax?: number,
+export function resolveResponseLength(
+  chatPreset: ResponseLengthPreset | null | undefined,
+  chatCustom: number | null | undefined,
+  userPreset: ResponseLengthPreset | null | undefined,
+  serverDefault: ResponseLengthPreset = "medium",
 ): ResponseLengthConfig {
+  const preset = chatPreset ?? userPreset ?? serverDefault;
+
+  if (preset === "custom") {
+    const customTokens = clampTokenCount(chatCustom ?? RESPONSE_LENGTH_DEFAULTS.custom,);
+    return { preset: "custom", maxTokens: customTokens, };
+  }
+
   return {
     preset,
-    customMin,
-    customMax,
-    maxTokens: computeMaxTokens(preset, customMax,),
+    maxTokens: RESPONSE_LENGTH_DEFAULTS[preset] ?? RESPONSE_LENGTH_DEFAULTS.medium,
   };
 }
 
+// ─── Validation ───────────────────────────────────────────────
+
 /**
- * Parse a ResponseLengthConfig from a user settings JSON blob.
- * Returns default if missing or invalid.
+ * Clamp a token count to the allowed range (50–2000).
  *
- * @param settings - Parsed user settings object
- * @returns Validated config or default
+ * @param tokens - Raw token count
+ * @returns Clamped value within bounds
  */
-export function parseLengthConfig(settings: Record<string, unknown> | null | undefined,): ResponseLengthConfig {
-  if (!settings?.responseLength) {
-    return { ...DEFAULT_RESPONSE_LENGTH, };
-  }
+export function clampTokenCount(tokens: number,): number {
+  return Math.max(50, Math.min(2000, Math.round(tokens,),),);
+}
 
-  const raw = settings.responseLength as Record<string, unknown>;
-  const preset = raw.preset as string;
-  const validPresets: LengthPreset[] = ["short", "medium", "long", "custom",];
-
-  if (!validPresets.includes(preset as LengthPreset,)) {
-    return { ...DEFAULT_RESPONSE_LENGTH, };
-  }
-
-  return buildLengthConfig(
-    preset as LengthPreset,
-    raw.customMin as number | undefined,
-    raw.customMax as number | undefined,
-  );
+/**
+ * Check if a preset string is a valid ResponseLengthPreset.
+ *
+ * @param value - String to validate
+ * @returns True if valid preset
+ */
+export function isValidPreset(value: string,): value is ResponseLengthPreset {
+  return (["short", "medium", "long", "custom",] as const).includes(value as never,);
 }
