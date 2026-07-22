@@ -774,8 +774,7 @@
     "label": "epic",
     "priority": "medium",
     "source": ".plan/features/epic-2026-31-world-persistence-sync.md"
-  }
-,
+  },
   "TASK-chat-room-search-join": {
     "hash": "20c7472",
     "extid": "TASK-chat-room-search-join",
@@ -784,7 +783,11 @@
     "label": "task",
     "priority": "medium",
     "epic": "EPIC-2026-36",
-    "tags": ["chat", "search", "ux"],
+    "tags": [
+      "chat",
+      "search",
+      "ux"
+    ],
     "source": ".plan/tickets/TASK-chat-room-search-join.md"
   },
   "TASK-chat-room-filters": {
@@ -795,7 +798,11 @@
     "label": "task",
     "priority": "medium",
     "epic": "EPIC-2026-36",
-    "tags": ["chat", "filter", "ux"],
+    "tags": [
+      "chat",
+      "filter",
+      "ux"
+    ],
     "source": ".plan/tickets/TASK-chat-room-filters.md"
   },
   "TASK-chat-message-search": {
@@ -806,7 +813,11 @@
     "label": "task",
     "priority": "medium",
     "epic": "EPIC-2026-36",
-    "tags": ["chat", "search", "fts5"],
+    "tags": [
+      "chat",
+      "search",
+      "fts5"
+    ],
     "source": ".plan/tickets/TASK-chat-message-search.md"
   },
   "TASK-chat-autorenaming": {
@@ -817,7 +828,11 @@
     "label": "task",
     "priority": "medium",
     "epic": "EPIC-2026-36",
-    "tags": ["chat", "ux", "naming"],
+    "tags": [
+      "chat",
+      "ux",
+      "naming"
+    ],
     "source": ".plan/tickets/TASK-chat-autorenaming.md"
   },
   "TASK-visual-novel-mode": {
@@ -828,7 +843,11 @@
     "label": "task",
     "priority": "medium",
     "epic": "EPIC-2026-36",
-    "tags": ["chat", "vn", "ux"],
+    "tags": [
+      "chat",
+      "vn",
+      "ux"
+    ],
     "source": ".plan/tickets/TASK-visual-novel-mode.md"
   },
   "TASK-3d-view-modes": {
@@ -839,7 +858,11 @@
     "label": "task",
     "priority": "medium",
     "epic": "EPIC-2026-36",
-    "tags": ["chat", "3d", "avatar"],
+    "tags": [
+      "chat",
+      "3d",
+      "avatar"
+    ],
     "source": ".plan/tickets/TASK-3d-view-modes.md"
   },
   "TASK-text-effects-overlays": {
@@ -850,7 +873,86 @@
     "label": "task",
     "priority": "medium",
     "epic": "EPIC-2026-36",
-    "tags": ["chat", "effects", "ux"],
+    "tags": [
+      "chat",
+      "effects",
+      "ux"
+    ],
     "source": ".plan/tickets/TASK-text-effects-overlays.md"
+  },
+  "TASK-character-multi-personality": {
+    "hash": "ee28436",
+    "extid": "TASK-character-multi-personality",
+    "type": "TASK",
+    "title": "Character multi-personality system",
+    "label": "task",
+    "priority": "medium",
+    "epic": "EPIC-2026-22",
+    "tags": [
+      "character",
+      "personality",
+      "rpg"
+    ],
+    "source": ".plan/tickets/TASK-character-multi-personality.md"
+  },
+  "TASK-character-mood-happiness": {
+    "hash": "84f501e",
+    "extid": "TASK-character-mood-happiness",
+    "type": "TASK",
+    "title": "Character mood swings and happiness meter",
+    "label": "task",
+    "priority": "medium",
+    "epic": "EPIC-2026-22",
+    "tags": [
+      "character",
+      "mood",
+      "rpg"
+    ],
+    "source": ".plan/tickets/TASK-character-mood-happiness.md"
+  },
+  "TASK-character-memory-injection": {
+    "hash": "80af077",
+    "extid": "TASK-character-memory-injection",
+    "type": "TASK",
+    "title": "Character memory injection probability and privacy",
+    "label": "task",
+    "priority": "medium",
+    "epic": "EPIC-2026-25",
+    "tags": [
+      "character",
+      "memory",
+      "privacy"
+    ],
+    "source": ".plan/tickets/TASK-character-memory-injection.md"
+  },
+  "TASK-chat-external-music-linking": {
+    "hash": "fac9d16",
+    "extid": "TASK-chat-external-music-linking",
+    "type": "TASK",
+    "title": "Chat external music linking",
+    "label": "task",
+    "priority": "low",
+    "epic": "EPIC-2026-36",
+    "tags": [
+      "chat",
+      "music",
+      "atmosphere"
+    ],
+    "source": ".plan/tickets/TASK-chat-external-music-linking.md"
+  },
+  "TASK-chat-context-feature-permissions": {
+    "hash": "6b7448a",
+    "extid": "TASK-chat-context-feature-permissions",
+    "type": "TASK",
+    "title": "Context-based feature permissions (UI gating)",
+    "label": "task",
+    "priority": "medium",
+    "epic": "EPIC-2026-37",
+    "tags": [
+      "chat",
+      "permissions",
+      "ux"
+    ],
+    "source": ".plan/tickets/TASK-chat-context-feature-permissions.md"
   }
 }

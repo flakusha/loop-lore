@@ -61,6 +61,11 @@ Ordered by user impact × effort. Items with partial `src/` code listed first.
 | Visual novel mode (image + text overlay, transitions)       | `docs/frontend/chat/visual-novel-mode.md`                              | `TASK-visual-novel-mode.md` — 3 layout modes, typewriter, scene transitions       |
 | 3D view modes (permanent/collapsible/inline panels)         | `TASK-3d-view-modes.md`                                                | Consolidated from 3 old tasks: VRM avatars, GLTF, Spine 2D, device tier gating   |
 | Text effects & overlays (glow, shake, status bars, icons)   | `docs/frontend/chat/text-effects-overlays.md`                          | `TASK-text-effects-overlays.md` — CSS effects, overlay components, decoration    |
+| Character multi-personality (personality switching, world/chat locking) | `TASK-character-multi-personality.md`                                | Mood system needs personality switching, world/chat config locking          |
+| Mood swings & happiness meter (mood impact on personality)              | `TASK-character-mood-happiness.md`                                   | Happiness level affects personality, dialogue, and behavior                 |
+| Memory injection probability & privacy (secrets sharing)                | `TASK-character-memory-injection.md`                                 | Not all memories injected; privacy levels, comfort-based sharing           |
+| Chat external music linking (no server download)                        | `TASK-chat-external-music-linking.md`                                | Browser-native embeds from Spotify/YouTube/SoundCloud; copyright-safe       |
+| Context-based feature permissions (UI gating)                           | `TASK-chat-context-feature-permissions.md`                           | UI features gated by chat/world/location context                           |
 
 ## Generation Templates (FEAT-065 — expanded)
 

@@ -143,6 +143,11 @@ epics where applicable.
 | Visual Novel Mode                          | Med    | Immersion & Presentation | ⬜ Not Started |
 | 3D View Modes (consolidated)               | High   | 26, 28                 | ⬜ Not Started |
 | Text Effects & Overlays                    | Med    | Immersion & Presentation | ⬜ Not Started |
+| Character Multi-Personality System         | High   | 22                     | ⬜ Not Started |
+| Character Mood Swings & Happiness Meter   | Med    | 22                     | ⬜ Not Started |
+| Character Memory Injection & Privacy      | High   | 25                     | ⬜ Not Started |
+| Chat External Music Linking               | Low    | 36                       | ⬜ Not Started |
+| Context-Based Feature Permissions (UI Gating) | Med  | 37                       | ⬜ Not Started |
 
 **Cross-references:**
 - `docs/frontend/chat/search-and-filter.md` — UX spec for search + filters
@@ -151,6 +156,11 @@ epics where applicable.
 - Epic 24 (Filtering & Pagination) — general filter infrastructure
 - Epic 36 (Chat Lifecycle) — chat context, transitions
 - Epic 41 (Chat Transfer) — location transfer, search for joinable chats
+- `TASK-character-multi-personality.md` — personality switching, world/chat locking
+- `TASK-character-mood-happiness.md` — happiness meter, mood impact on personality
+- `TASK-character-memory-injection.md` — injection probability, privacy levels, secrets
+- `TASK-chat-external-music-linking.md` — external service embeds, no server download
+- `TASK-chat-context-feature-permissions.md` — UI feature gating based on context
 
 ---
 
