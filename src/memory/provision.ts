@@ -168,7 +168,8 @@ function checkScope(
 /**
  * Check if a memory's privacy level allows it to be shared with the viewer.
  *
- * Uses shareability config for secret memories.
+ * Note: secret memories are handled by evaluateMemory before this is called.
+ * Only public, shared, and private reach here.
  *
  * @returns Rejection reason, or null if privacy allows sharing
  */
@@ -180,27 +181,13 @@ function checkPrivacy(
   const privacy = memory.privacy ?? "shared";
 
   if (privacy === "public" || privacy === "shared") {
-    return null; // Always visible in provision context (participation already checked)
+    return null;
   }
 
   // Private: only owner sees
   if (privacy === "private") {
     if (ownerId !== ctx.viewerId) { return "privacy:private_not_owner"; }
     return null;
-  }
-
-  // Secret: evaluate shareability
-  if (privacy === "secret") {
-    const config = parseShareability(memory.shareability,);
-    const decision = evaluateShareability({
-      privacy,
-      ownerId,
-      viewerId: ctx.viewerId,
-      shareability: config,
-      trustModifier: ctx.trustModifier,
-      randomFn: ctx.randomFn,
-    },);
-    return decision === "share" ? null : "privacy:secret_not_shared";
   }
 
   return "privacy:unknown";
