@@ -1,6 +1,6 @@
 # TASK: Implement memory promotion pipeline
 
-**Issue:** 22f6cd9
+**Issue:** 22f6cd99-562f-4df1-a09a-f7f343a41b69
 **Status:** open
 **Priority:** medium
 **Epic:** EPIC-2026-37
