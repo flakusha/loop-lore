@@ -23,39 +23,39 @@ presentation without altering content. They are:
 
 ### Effect Types
 
-| Effect        | Description                                    | Implementation     |
-| ------------- | ---------------------------------------------- | ------------------ |
-| Typewriter    | Character-by-character reveal                  | CSS animation      |
-| Glow          | Soft colored glow around text                  | `text-shadow`      |
-| Fade-in       | Opacity transition on message appear           | CSS `opacity`      |
-| Color tint    | Text color shift based on speaker/emotion      | CSS `color`        |
-| Shake         | Brief horizontal shake (impact, surprise)      | CSS `transform`    |
-| Pulse         | Scale pulse (emphasis, important message)      | CSS `transform`    |
-| Blur reveal   | Text starts blurred, sharpens on focus         | CSS `filter`       |
-| Wave          | Sinusoidal vertical offset (dreamlike, magic)  | CSS `transform`    |
-| Rainbow       | Animated color cycle (rare, special moments)   | CSS `background`   |
+| Effect      | Description                                   | Implementation   |
+| ----------- | --------------------------------------------- | ---------------- |
+| Typewriter  | Character-by-character reveal                 | CSS animation    |
+| Glow        | Soft colored glow around text                 | `text-shadow`    |
+| Fade-in     | Opacity transition on message appear          | CSS `opacity`    |
+| Color tint  | Text color shift based on speaker/emotion     | CSS `color`      |
+| Shake       | Brief horizontal shake (impact, surprise)     | CSS `transform`  |
+| Pulse       | Scale pulse (emphasis, important message)     | CSS `transform`  |
+| Blur reveal | Text starts blurred, sharpens on focus        | CSS `filter`     |
+| Wave        | Sinusoidal vertical offset (dreamlike, magic) | CSS `transform`  |
+| Rainbow     | Animated color cycle (rare, special moments)  | CSS `background` |
 
 ### Per-Role Effects
 
 Default effect assignments by message role:
 
-| Role        | Default Effect     | Trigger              |
-| ----------- | ------------------ | -------------------- |
-| Character   | Fade-in            | Message appears      |
-| User        | None               | —                    |
-| Narrator    | Fade-in + italic   | Message appears      |
-| System      | None               | Always instant       |
+| Role      | Default Effect   | Trigger         |
+| --------- | ---------------- | --------------- |
+| Character | Fade-in          | Message appears |
+| User      | None             | —               |
+| Narrator  | Fade-in + italic | Message appears |
+| System    | None             | Always instant  |
 
 **Emotion-triggered effects** (when emotion detection is active):
 
-| Emotion   | Effect                    |
-| --------- | ------------------------- |
-| Angry     | Shake (subtle)            |
-| Surprised | Pulse                     |
-| Scared    | Wave                      |
-| Happy     | Glow (warm color)         |
-| Sad       | Fade-in (slower, 400ms)   |
-| Magic     | Rainbow (brief, 1s)       |
+| Emotion   | Effect                  |
+| --------- | ----------------------- |
+| Angry     | Shake (subtle)          |
+| Surprised | Pulse                   |
+| Scared    | Wave                    |
+| Happy     | Glow (warm color)       |
+| Sad       | Fade-in (slower, 400ms) |
+| Magic     | Rainbow (brief, 1s)     |
 
 ### Effect Configuration
 
@@ -65,16 +65,17 @@ Per-chat settings:
 interface TextEffectSettings {
   enabled: boolean;
   typewriter: boolean;
-  typewriterSpeed: number;      // ms per char (20-100, default 30)
-  emotionEffects: boolean;      // auto-apply based on detected emotion
-  globalEffects: string[];      // enabled effect types
-  reducedMotion: boolean;       // respect prefers-reduced-motion
+  typewriterSpeed: number; // ms per char (20-100, default 30)
+  emotionEffects: boolean; // auto-apply based on detected emotion
+  globalEffects: string[]; // enabled effect types
+  reducedMotion: boolean; // respect prefers-reduced-motion
 }
 ```
 
 ### Performance
 
 All text effects are CSS-only (no JS animation loops):
+
 - `text-shadow` for glow
 - `@keyframes` for typewriter, shake, pulse, wave
 - `transition` for fade-in, blur
@@ -115,16 +116,16 @@ Small icons indicating message context:
 [message bubble] 🗡️ 💀 ✨     ← condition icons
 ```
 
-| Icon | Meaning                         |
-| ---- | ------------------------------- |
-| 🗡️  | Combat context                  |
-| 💀   | Danger / death threat           |
-| ✨   | Magic / supernatural            |
-| 🌙   | Nighttime / dark setting        |
-| 🔥   | Fire / intense emotion          |
-| 💕   | Romance / affection             |
-| ⚠️   | Warning / tension               |
-| 🎵   | Music / sound reference         |
+| Icon | Meaning                  |
+| ---- | ------------------------ |
+| 🗡️    | Combat context           |
+| 💀   | Danger / death threat    |
+| ✨   | Magic / supernatural     |
+| 🌙   | Nighttime / dark setting |
+| 🔥   | Fire / intense emotion   |
+| 💕   | Romance / affection      |
+| ⚠️    | Warning / tension        |
+| 🎵   | Music / sound reference  |
 
 - Position: right side of message, after text
 - Size: 14px, slightly transparent
@@ -167,37 +168,37 @@ Visual styling applied to the entire message bubble based on context.
 
 ### Decoration Types
 
-| Decoration     | Visual                              | Trigger                    |
-| -------------- | ----------------------------------- | -------------------------- |
-| Border accent  | Colored left border (4px)           | Speaker identity           |
-| Background tint| Subtle background color shift       | Emotion / scene type       |
-| Glow ring      | Outer glow around bubble            | Important / critical msg   |
-| Dim            | Reduced opacity (0.6)               | Flashback / memory         |
-| Highlight      | Yellow background (20% opacity)     | Search match / pinned      |
+| Decoration      | Visual                          | Trigger                  |
+| --------------- | ------------------------------- | ------------------------ |
+| Border accent   | Colored left border (4px)       | Speaker identity         |
+| Background tint | Subtle background color shift   | Emotion / scene type     |
+| Glow ring       | Outer glow around bubble        | Important / critical msg |
+| Dim             | Reduced opacity (0.6)           | Flashback / memory       |
+| Highlight       | Yellow background (20% opacity) | Search match / pinned    |
 
 ### Border Accent Colors
 
 Each character gets a unique border color (derived from their avatar
 or configurable):
 
-| Character    | Border Color | Notes              |
-| ------------ | ------------ | ------------------ |
-| Elara        | `#7c3aed`    | Purple             |
-| Marcus       | `#2563eb`    | Blue               |
-| Narrator     | `#6b7280`    | Gray               |
-| System       | none         | No border          |
-| User         | `#f597e8`    | Pink (accent)      |
+| Character | Border Color | Notes         |
+| --------- | ------------ | ------------- |
+| Elara     | `#7c3aed`    | Purple        |
+| Marcus    | `#2563eb`    | Blue          |
+| Narrator  | `#6b7280`    | Gray          |
+| System    | none         | No border     |
+| User      | `#f597e8`    | Pink (accent) |
 
 ### Background Tint Mapping
 
-| Scene Type   | Tint Color              | Opacity |
-| ------------ | ----------------------- | ------- |
-| Combat       | `--accent-red`          | 5%      |
-| Romance      | `--accent-pink`         | 5%      |
-| Mystery      | `--accent-purple`       | 5%      |
-| Peaceful     | `--accent-green`        | 5%      |
-| Horror       | `--accent-dark`         | 8%      |
-| Default      | none                    | 0%      |
+| Scene Type | Tint Color        | Opacity |
+| ---------- | ----------------- | ------- |
+| Combat     | `--accent-red`    | 5%      |
+| Romance    | `--accent-pink`   | 5%      |
+| Mystery    | `--accent-purple` | 5%      |
+| Peaceful   | `--accent-green`  | 5%      |
+| Horror     | `--accent-dark`   | 8%      |
+| Default    | none              | 0%      |
 
 **Detection:** keyword-based (simple) or LLM-classified (future).
 
@@ -215,19 +216,19 @@ interface OverlaySettings {
   typewriterDefault: boolean;
 
   // Overlays
-  statusBarEnabled: boolean;      // RPG status above messages
+  statusBarEnabled: boolean; // RPG status above messages
   conditionIconsEnabled: boolean; // auto-detected icons
-  locationBadgeEnabled: boolean;  // location context
-  timeBadgeEnabled: boolean;      // timestamp display
+  locationBadgeEnabled: boolean; // location context
+  timeBadgeEnabled: boolean; // timestamp display
 
   // Decoration
-  borderAccentsEnabled: boolean;  // colored left borders
-  backgroundTintsEnabled: boolean;// scene-type background tints
-  dimFlashbacksEnabled: boolean;  // dimmed flashback messages
+  borderAccentsEnabled: boolean; // colored left borders
+  backgroundTintsEnabled: boolean; // scene-type background tints
+  dimFlashbacksEnabled: boolean; // dimmed flashback messages
 
   // Performance
-  reducedMotion: boolean;         // respect system preference
-  maxEffectsPerMessage: number;   // cap effect count (default 3)
+  reducedMotion: boolean; // respect system preference
+  maxEffectsPerMessage: number; // cap effect count (default 3)
 }
 ```
 
@@ -241,16 +242,16 @@ Custom text effects and overlays can be registered via the plugin system:
 interface TextEffectPlugin {
   id: string;
   name: string;
-  render: (message: Message, context: ChatContext) => HTMLElement | null;
-  priority: number;  // lower = applied first
+  render: (message: Message, context: ChatContext,) => HTMLElement | null;
+  priority: number; // lower = applied first
 }
 
 interface OverlayPlugin {
   id: string;
   name: string;
   position: "above" | "below" | "left" | "right";
-  render: (message: Message, context: ChatContext) => HTMLElement | null;
-  condition: (message: Message, context: ChatContext) => boolean;
+  render: (message: Message, context: ChatContext,) => HTMLElement | null;
+  condition: (message: Message, context: ChatContext,) => boolean;
 }
 ```
 
@@ -301,12 +302,12 @@ Registration: `src/plugins/registry.ts` (existing plugin infrastructure).
 
 ## Performance
 
-| Metric           | Target  | Notes                          |
-| ---------------- | ------- | ------------------------------ |
-| Effect render    | < 16ms  | CSS-only, no JS animation      |
-| Overlay render   | < 10ms  | Lightweight DOM elements       |
-| Memory overhead  | < 5MB   | CSS classes, no heavy assets   |
-| Reduced motion   | 0ms     | All effects skipped            |
+| Metric          | Target | Notes                        |
+| --------------- | ------ | ---------------------------- |
+| Effect render   | < 16ms | CSS-only, no JS animation    |
+| Overlay render  | < 10ms | Lightweight DOM elements     |
+| Memory overhead | < 5MB  | CSS classes, no heavy assets |
+| Reduced motion  | 0ms    | All effects skipped          |
 
 ## Risk
 

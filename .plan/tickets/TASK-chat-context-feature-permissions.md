@@ -49,18 +49,18 @@ interface PermissionCondition {
 
 ### Feature Registry
 
-| Feature ID | Description | Default |
-|---|---|---|
-| `send_text` | Send text messages | Always allowed |
-| `send_image` | Attach images | Chat/world dependent |
-| `send_audio` | Attach audio | Chat/world dependent |
-| `use_commands` | Slash commands | Chat/world dependent |
-| `create_poll` | Create polls | Group chat only |
-| `transfer_chat` | Transfer chat location | World-dependent |
-| `summon_character` | Summon characters | World-dependent |
-| `open_inventory` | Open inventory | RPG mode only |
-| `battle_mode` | Enter battle mode | Location-dependent |
-| `export_chat` | Export chat | Owner/admin only |
+| Feature ID         | Description            | Default              |
+| ------------------ | ---------------------- | -------------------- |
+| `send_text`        | Send text messages     | Always allowed       |
+| `send_image`       | Attach images          | Chat/world dependent |
+| `send_audio`       | Attach audio           | Chat/world dependent |
+| `use_commands`     | Slash commands         | Chat/world dependent |
+| `create_poll`      | Create polls           | Group chat only      |
+| `transfer_chat`    | Transfer chat location | World-dependent      |
+| `summon_character` | Summon characters      | World-dependent      |
+| `open_inventory`   | Open inventory         | RPG mode only        |
+| `battle_mode`      | Enter battle mode      | Location-dependent   |
+| `export_chat`      | Export chat            | Owner/admin only     |
 
 ### UI Gating Implementation
 
@@ -99,22 +99,22 @@ function resolveFeaturePermission(
   user: User,
 ): FeaturePermission {
   // 1. Check global permissions (from user role)
-  const global = getGlobalPermission(feature_id, user.role);
+  const global = getGlobalPermission(feature_id, user.role,);
 
   // 2. Check world permissions (from world config)
-  const world = getWorldPermission(feature_id, context.world_id);
+  const world = getWorldPermission(feature_id, context.world_id,);
 
   // 3. Check chat permissions (from chat config)
-  const chat = getChatPermission(feature_id, context.chat_id);
+  const chat = getChatPermission(feature_id, context.chat_id,);
 
   // 4. Check location permissions (from location config)
-  const location = getLocationPermission(feature_id, context.location_id);
+  const location = getLocationPermission(feature_id, context.location_id,);
 
   // 5. Evaluate dynamic conditions
-  const conditionsMet = evaluateConditions(feature_id, context, user);
+  const conditionsMet = evaluateConditions(feature_id, context, user,);
 
   // Merge: most restrictive wins
-  return mergePermissions(global, world, chat, location, conditionsMet);
+  return mergePermissions(global, world, chat, location, conditionsMet,);
 }
 ```
 
@@ -142,7 +142,6 @@ function resolveFeaturePermission(
 Medium — permission resolution across nested contexts (global → world → chat → location)
 can produce conflicting rules. Need clear precedence and a debug/tracing tool for
 operators to understand why a feature is hidden/disabled.
-
 
 ## Files
 

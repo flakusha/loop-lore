@@ -24,13 +24,13 @@ share links that appear as playable embeds in chat.
 
 ### Supported Services
 
-| Service | Embed Method | Limitations |
-|---|---|---|
-| **Spotify** | oEmbed / iframe | Requires public track/playlist |
-| **YouTube Music** | iframe embed | May have regional restrictions |
-| **SoundCloud** | oEmbed API | Public tracks only |
-| **Apple Music** | iframe embed | Requires public link |
-| **Bandcamp** | iframe embed | Direct artist support |
+| Service           | Embed Method    | Limitations                    |
+| ----------------- | --------------- | ------------------------------ |
+| **Spotify**       | oEmbed / iframe | Requires public track/playlist |
+| **YouTube Music** | iframe embed    | May have regional restrictions |
+| **SoundCloud**    | oEmbed API      | Public tracks only             |
+| **Apple Music**   | iframe embed    | Requires public link           |
+| **Bandcamp**      | iframe embed    | Direct artist support          |
 
 ### Music Link Message
 
@@ -73,6 +73,7 @@ interface MusicMetadata {
 ### Server-Side (No Content Download)
 
 The server ONLY:
+
 - Validates that the URL is from a supported service
 - Fetches oEmbed metadata (title, artist, thumbnail, embed HTML)
 
@@ -81,21 +82,21 @@ The server ONLY:
 
 ```typescript
 interface MusicLinkService {
-  validateUrl(url: string): Promise<boolean>;
-  fetchMetadata(url: string): Promise<MusicMetadata>;
-  getEmbedHtml(url: string): Promise<string>;
+  validateUrl(url: string,): Promise<boolean>;
+  fetchMetadata(url: string,): Promise<MusicMetadata>;
+  getEmbedHtml(url: string,): Promise<string>;
 }
 ```
 
 ### Chat Atmosphere Controls
 
-| Setting | Description |
-|---|---|
-| **Auto-expand** | Whether music players expand automatically |
-| **Autoplay** | Never (copyright-safe) — user must click play |
-| **Queue** | Multiple music links form a playlist |
-| **Volume sync** | All players in a chat share volume level |
-| **NSFW filter** | Hide music links flagged explicit |
+| Setting         | Description                                   |
+| --------------- | --------------------------------------------- |
+| **Auto-expand** | Whether music players expand automatically    |
+| **Autoplay**    | Never (copyright-safe) — user must click play |
+| **Queue**       | Multiple music links form a playlist          |
+| **Volume sync** | All players in a chat share volume level      |
+| **NSFW filter** | Hide music links flagged explicit             |
 
 ## Integration Points
 
@@ -120,7 +121,6 @@ interface MusicLinkService {
 Low — server never hosts audio content. Main risk: external service embed availability
 (rate limiting, API changes, regional restrictions). Embed HTML from oEmbed may break
 if services change their embed format.
-
 
 ## Files
 
