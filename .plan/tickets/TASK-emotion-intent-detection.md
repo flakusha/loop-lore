@@ -1,29 +1,23 @@
 # TASK: Emotion Intent Detection & Extensible Emotion System
 
-**Status:** ⬜ Not Started
+**Epic:** Character Core System
 **Priority:** Medium
-**Effort:** Med
-**Related:** TASK-emotions-avatar-edit-model, TASK-3d-character-avatars, TASK-rigged-model-buffer-render
+**Effort:** Medium
+**Status:** Not Started
+**Related:** TASK-character-multi-avatar, TASK-character-mood-happiness
 
 ## Summary
 
-Build an extensible emotion system: admin/user-defined emotion list, LLM-based intent detection from chat messages, and precompiled portrait selection. Characters react emotionally to conversation.
+Extensible emotion system: admin/user-defined emotion list, LLM-based or rule-based intent detection from chat messages, and integration with avatar selection. Characters react emotionally to conversation.
 
-## Rationale
-
-- Fixed emotion set (happy/sad/angry) is limiting — users want custom expressions
-- Group chats have multiple characters reacting differently to same message
-- Emotional continuity across conversation (mood carries over)
-- Precompiled portraits = fast, no generation delay
-
-## Architecture
+## Design
 
 ### Emotion Registry
 
 ```
 Emotions (extensible):
   ├── Built-in: happy, sad, angry, surprised, neutral, love, fear, disgust
-  ├── User-defined: custom emotions with portrait mappings
+  ├── User-defined: custom emotions with avatar mappings
   ├── Admin-defined: system-wide custom emotions
   └── Per-character: character-specific emotion overrides
 ```
@@ -34,20 +28,17 @@ Emotions (extensible):
 interface Emotion {
   id: string; // "happy", "custom-pensive"
   name: string; // Display name: "Happy", "Pensive"
-  category: EmotionCategory; // basic | complex | custom
-  portrait: PortraitRef; // Reference to precompiled portrait
+  category: EmotionCategory; // basic | complex | custom | system
   keywords: string[]; // Detection keywords
   priority: number; // Conflict resolution (higher = wins)
   parentId?: string; // For emotion hierarchies (happy → ecstatic)
+
+  // Avatar mapping
+  default_avatar_id?: string; // Default avatar for this emotion
+  avatar_tags: string[]; // Tags to match in avatar selection
 }
 
 type EmotionCategory = "basic" | "complex" | "custom" | "system";
-
-interface PortraitRef {
-  type: "static" | "sprite-sheet" | "3d-model" | "rigged";
-  assetId: string;
-  metadata?: Record<string, unknown>;
-}
 ```
 
 ### Detection Pipeline
@@ -66,22 +57,101 @@ Emotion Resolution:
   ├── Group chat: each character gets own emotion
   └── Emotional continuity (decay from previous state)
   ↓
-Portrait Selection:
-  ├── Look up emotion → portrait mapping
-  ├── Fallback to neutral if no portrait
-  └── Cache mapping for session
+Avatar Selection:
+  ├── Look up emotion → avatar mapping
+  ├── Select avatar based on context
+  └── Fallback to default if no match
+```
+
+### Detection Methods
+
+| Method     | Accuracy | Cost        | Speed  |
+| ---------- | -------- | ----------- | ------ |
+| Rule-based | ~70%     | Free        | < 1ms  |
+| LLM-based  | ~90%     | ~$0.001/msg | ~200ms |
+| Hybrid     | ~85%     | Low         | ~50ms  |
+
+### Emotion Resolution
+
+When multiple emotions detected:
+
+```typescript
+interface EmotionResolution {
+  primary: Emotion; // Highest priority emotion
+  secondary: Emotion[]; // Other detected emotions
+  confidence: number; // 0-100
+  context: string; // What triggered this emotion
+}
+```
+
+## Integration Points
+
+### With Multi-Avatar System
+
+Detected emotions drive avatar selection:
+
+```typescript
+// Emotion detected
+const emotion = detectEmotion(message,);
+
+// Select avatar based on emotion
+const avatar = selectAvatar(characterId, {
+  emotion: emotion.id,
+  mood: moodState.mood_label,
+  context: currentContext,
+},);
+```
+
+### With Mood System
+
+Emotions affect mood:
+
+```typescript
+// Emotion affects mood
+const moodChange = {
+  emotion: "happy",
+  happiness_change: +10,
+  duration: 3, // turns
+};
+
+// Update mood
+updateMood(characterId, moodChange,);
+```
+
+### With Chat Generation
+
+Emotions are injected into prompt:
+
+```
+[Emotion — {{char}}]
+Detected: happy (confidence: 85%)
+Trigger: Player gave gift
+Avatar: happy_smile.png
+```
+
+### With Group Chat
+
+Each character gets own emotion:
+
+```typescript
+// Group chat: multiple emotions
+const emotions = {
+  alice: detectEmotion(message, "alice",), // happy
+  bob: detectEmotion(message, "bob",), // neutral
+  charlie: detectEmotion(message, "charlie",), // surprised
+};
 ```
 
 ## Tasks
 
 ### Phase 1: Emotion Schema & CRUD
 
-- [ ] Create `emotions` table (id, name, category, keywords, priority, portrait_id)
-- [ ] Create `character_emotions` table (character_id, emotion_id, portrait_id, override)
+- [ ] Create `emotions` table
+- [ ] Create `character_emotions` table
 - [ ] Add CRUD endpoints: `GET/POST/PUT/DELETE /api/emotions`
 - [ ] Add character emotion assignment: `POST /api/characters/:id/emotions`
 - [ ] Seed built-in emotions (happy, sad, angry, surprised, neutral, love, fear, disgust)
-- [ ] Admin UI: emotion manager (list, create, edit, delete, preview portrait)
+- [ ] Admin UI: emotion manager (list, create, edit, delete, preview avatar)
 
 ### Phase 2: Intent Detection
 
@@ -97,26 +167,20 @@ Portrait Selection:
 - [ ] Hybrid mode: rules first, LLM if confidence < threshold
 - [ ] Unit tests for all detection methods
 
-### Phase 3: Group Chat Emotion
+### Phase 3: Integration
 
-- [ ] Per-character emotion detection (same message, different reactions)
-- [ ] Emotion conflict resolution (two characters react oppositely)
-- [ ] Character relationship context (rival vs friend affects emotion)
-- [ ] Group mood aggregation (overall chat atmosphere)
+- [ ] Integrate with multi-avatar system (avatar selection)
+- [ ] Integrate with mood system (mood updates)
+- [ ] Integrate with chat generation (prompt injection)
+- [ ] Integrate with group chat (per-character emotions)
+- [ ] Add emotion display in chat UI
 
-### Phase 4: Emotional Continuity
+### Phase 4: Testing
 
-- [ ] Emotion decay over time (anger fades, happiness lingers)
-- [ ] Conversation context window (last N messages affect current emotion)
-- [ ] User preference: "characters remember mood" toggle
-- [ ] Emotional momentum (repeated sad messages → deeper sadness)
-
-### Phase 5: Portrait Precompilation
-
-- [ ] On emotion create/update: trigger portrait generation (if edit model available)
-- [ ] Fallback: use static placeholder until portrait ready
-- [ ] Portrait cache invalidation on emotion delete
-- [ ] Batch generation: generate all emotion portraits for character
+- [ ] Unit tests for emotion detection
+- [ ] Unit tests for emotion resolution
+- [ ] Integration tests with avatar selection
+- [ ] Integration tests with mood system
 
 ## Files to Create
 
@@ -130,24 +194,20 @@ Portrait Selection:
 
 - `src/db/schema.ts` — add emotion tables
 - `src/db/migrations/` — migration for emotion tables
-- `src/assistant/prompt/sections/` — inject emotion context into prompt
-- `src/generation/generate-route.ts` — emotion-aware generation
+- `src/assistant/prompt/sections/emotion-context.ts` — inject detected emotion into LLM context
+- `src/generation/prompt-builder.ts` — emotion-aware prompt assembly
+- `src/characters/avatar-selector.ts` — emotion-based selection
+- `src/characters/mood.ts` — emotion mood updates
 - `src/views/chat.html` — display emotion indicator
 - `src/views/settings.html` — emotion preferences
 
-## Detection Accuracy
-
-| Method     | Accuracy | Cost        | Speed  |
-| ---------- | -------- | ----------- | ------ |
-| Rule-based | ~70%     | Free        | < 1ms  |
-| LLM-based  | ~90%     | ~$0.001/msg | ~200ms |
-| Hybrid     | ~85%     | Low         | ~50ms  |
-
-## Files to Modify (Emotion-to-Prompt)
-
-- `src/assistant/prompt/sections/emotion-context.ts` — inject detected emotion into LLM context
-- `src/generation/prompt-builder.ts` — emotion-aware prompt assembly
-
 ## Risk
 
-Med — requires emotion schema design, detection pipeline, group chat complexity, portrait generation integration.
+Med — requires emotion schema design, detection pipeline, group chat complexity, avatar integration.
+
+## Related
+
+- TASK-character-multi-avatar.md — Avatar selection by emotion
+- TASK-character-mood-happiness.md — Emotions affect mood
+- TASK-character-personality-integrity.md — Emotions affect expression, not personality
+- epic-character-core-system.md — Parent epic
