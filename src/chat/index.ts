@@ -2,7 +2,7 @@
  * Chat Module
  *
  * Chat lifecycle management: context windows, transitions,
- * and moderation primitives.
+ * moderation primitives, and service layer.
  *
  * @module chat
  */
@@ -41,3 +41,28 @@ export {
   isTransitionMessage,
   selectMessagesForPromotion,
 } from "./transitions";
+
+export {
+  buildRenamePrompt,
+  generateRuleName,
+} from "./auto-rename";
+
+export {
+  clampTokenCount,
+  isValidPreset,
+  resolveResponseLength,
+} from "./response-length";
+
+export {
+  checkModerationPermission,
+  createModerationAction,
+  getShadowState,
+  isBanned,
+  isBlocked,
+} from "./moderation";
+
+export {
+  getChatContext,
+  getFeatureFlags,
+  getResponseLength,
+} from "./service";
