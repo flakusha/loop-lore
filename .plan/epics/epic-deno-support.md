@@ -33,6 +33,30 @@ Add Deno (and possible Node.js) support alongside Bun. Allow running loop-lore o
 - [ ] Test core functionality on Deno
 - [ ] Document Deno setup and usage
 
+### Fresh.js Frontend Strategy
+
+Fresh.js (Deno-native, islands architecture, zero client JS by default) can serve
+as an alternative frontend for the headless API. Integration points:
+
+| Concern | Solution |
+|---------|----------|
+| Entry point | `src/runtime/deno/fresh.ts` — Fresh app adapter |
+| Routing | Fresh routes consume OpenAPI endpoints |
+| State | Fresh handlers call `/api/*` endpoints |
+| Build target | `deno task fresh:build` → static assets |
+| Deployment | Deno Deploy native, Docker fallback |
+
+## Tasks (Deno + Fresh.js)
+
+- [ ] Create `src/runtime/adapters/` abstraction layer
+- [ ] Add Fresh.js frontend entry point with OpenAPI client
+- [ ] Replace Bun-specific APIs: `bun:sqlite` → `drizzle-sqlite` or Deno KV
+- [ ] Migrate `process.versions.bun` checks to runtime feature detection
+- [ ] Create `deno.json` with tasks for dev/build/deploy
+- [ ] Test Fresh.js frontend against OpenAPI backend
+- [ ] Add Deno Deploy configuration (`deployctl.json`)
+- [ ] Document Fresh.js setup in `docs/spec/deno-support.md`
+
 ## Files
 
 - `src/runtime/` — runtime abstraction (does not exist yet)
