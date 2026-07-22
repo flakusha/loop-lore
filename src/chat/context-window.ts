@@ -15,6 +15,7 @@ import type {
   MemoryRef,
   MessageRef,
 } from "./types";
+import { resolveFeatureFlags, } from "./types";
 
 // ─── Default Configuration ────────────────────────────────────
 
@@ -50,14 +51,24 @@ export function estimateTokens(text: string,): number {
  *
  * @param messages - Messages in chronological order (oldest first)
  * @param maxTokens - Maximum token budget for the context window
- * @param thresholds - Threshold configuration for monitoring
+ * @param options - Mode, participants, and threshold configuration
  * @returns Complete context window state
  */
 export function computeContextWindow(
   messages: MessageRef[],
   maxTokens: number,
-  thresholds: ContextThresholds = DEFAULT_THRESHOLDS,
+  options: {
+    mode?: "direct" | "group" | "story";
+    activeParticipants?: string[];
+    currentTurnActorId?: string | null;
+    thresholds?: ContextThresholds;
+  } = {},
 ): ContextWindow {
+  const mode = options.mode ?? "direct";
+  const activeParticipants = options.activeParticipants ?? [];
+  const currentTurnActorId = options.currentTurnActorId ?? null;
+  const thresholds = options.thresholds ?? DEFAULT_THRESHOLDS;
+  const features = resolveFeatureFlags(mode,);
   let totalTokens = 0;
   const retained: MessageRef[] = [];
 
@@ -78,14 +89,18 @@ export function computeContextWindow(
     : 0;
 
   return {
+    mode,
     maxTokens,
     retained,
     promotedToMemory: [], // populated by pruning pipeline
     injectedMemories: [], // populated by memory injection
     injectedEvents: [], // populated by event injection
+    activeParticipants,
+    currentTurnActorId,
     totalTokens,
     usagePercentage,
     willTrim: usagePercentage >= thresholds.imminent,
+    features,
   };
 }
 

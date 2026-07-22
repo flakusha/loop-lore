@@ -5,6 +5,73 @@
  * and moderation primitives. Used by the context window manager,
  * transition system, and message routes.
  */
+// ─── Chat Mode Configuration ──────────────────────────────────
+
+/** Chat modes from the DB enum */
+export type ChatMode = "direct" | "group" | "story";
+
+/** Feature flags per chat mode */
+export interface ModeFeatureFlags {
+  /** Context window management (sliding window, pruning) */
+  contextWindow: boolean;
+  /** Chat transitions (scene changes, context cuts) */
+  transitions: boolean;
+  /** Memory injection from characters/world */
+  memoryInjection: boolean;
+  /** Turn-based orchestration */
+  turnOrchestration: boolean;
+  /** Visual novel mode */
+  visualNovel: boolean;
+  /** Response length control */
+  responseLength: boolean;
+  /** Chat autonaming */
+  autoRename: boolean;
+  /** Quick-regen */
+  quickRegen: boolean;
+}
+
+/** Default feature flags per chat mode */
+export const MODE_DEFAULTS: Record<ChatMode, ModeFeatureFlags> = {
+  direct: {
+    contextWindow: true,
+    transitions: true,
+    memoryInjection: true,
+    turnOrchestration: false,
+    visualNovel: true,
+    responseLength: true,
+    autoRename: true,
+    quickRegen: true,
+  },
+  group: {
+    contextWindow: true,
+    transitions: true,
+    memoryInjection: true,
+    turnOrchestration: true,
+    visualNovel: false, // group chat has multiple speakers
+    responseLength: true,
+    autoRename: true,
+    quickRegen: true,
+  },
+  story: {
+    contextWindow: true,
+    transitions: true,
+    memoryInjection: true,
+    turnOrchestration: true,
+    visualNovel: true,
+    responseLength: true,
+    autoRename: true,
+    quickRegen: true,
+  },
+} as const;
+
+/** Resolve feature flags for a chat, merging mode defaults with per-chat overrides */
+export function resolveFeatureFlags(
+  mode: ChatMode,
+  overrides?: Partial<ModeFeatureFlags>,
+): ModeFeatureFlags {
+  const defaults = MODE_DEFAULTS[mode] ?? MODE_DEFAULTS.direct;
+  return { ...defaults, ...overrides, };
+}
 
 // ─── Context Window ───────────────────────────────────────────
 
@@ -20,6 +87,8 @@ export interface MessageRef {
 /** A memory reference injected into context */
 export interface MemoryRef {
   memoryId: string;
+  /** Which actor this memory belongs to (for group chat per-character injection) */
+  actorId: string;
   source: "character" | "world" | "assistant" | "chat_promotion";
   content: string;
   tokenCount: number;
@@ -36,22 +105,30 @@ export interface EventRef {
 
 /** Complete context window state for a chat */
 export interface ContextWindow {
+  /** Chat mode */
+  mode: ChatMode;
   /** Maximum token budget for this context window */
   maxTokens: number;
   /** Messages currently in the active context */
   retained: MessageRef[];
   /** Messages promoted to long-term memory (removed from active context) */
   promotedToMemory: MessageRef[];
-  /** Character/world/assistant memories injected into context */
+  /** Character/world/assistant memories injected into context (per-actor in group) */
   injectedMemories: MemoryRef[];
   /** Active world/local events injected into context */
   injectedEvents: EventRef[];
+  /** Active participants (for group/story mode) */
+  activeParticipants: string[];
+  /** Current turn actor (for turn-based modes) */
+  currentTurnActorId: string | null;
   /** Total tokens used across all components */
   totalTokens: number;
   /** Percentage of max tokens used (0-100) */
   usagePercentage: number;
   /** Whether context will be trimmed on next message */
   willTrim: boolean;
+  /** Feature flags for this chat mode */
+  features: ModeFeatureFlags;
 }
 
 /** Threshold state for context window monitoring */
