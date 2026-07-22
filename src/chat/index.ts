@@ -29,11 +29,11 @@ export { MODE_DEFAULTS, resolveFeatureFlags, RESPONSE_LENGTH_DEFAULTS, } from ".
 
 export {
   computeContextWindow,
-  estimateTokens,
   getThresholdState,
   injectEvents,
   injectMemories,
 } from "./context-window";
+export { estimateTokens, } from "./token-utils";
 
 export {
   createTransition,
