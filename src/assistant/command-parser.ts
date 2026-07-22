@@ -67,6 +67,13 @@ export const BUILTIN_COMMANDS = [
   "debug",
   "detail",
   "context",
+  "image",
+  "quest",
+  "video",
+  "sfx",
+  "sound",
+  "music",
+  "caption",
 ] as const;
 
 /** Check if a command name is a built-in command */
