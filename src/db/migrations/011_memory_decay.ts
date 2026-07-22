@@ -23,9 +23,22 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     .alterTable("actor_memories",)
     .addColumn("last_accessed_at", "text",)
     .execute();
+
+  // ── Chat promotion tracking (FEAT-072) ──────────────────────
+  await database.schema
+    .alterTable("actor_memories",)
+    .addColumn("source_message_id", "text",)
+    .execute();
+
+  await database.schema
+    .alterTable("actor_memories",)
+    .addColumn("context", "text",)
+    .execute();
 }
 
 export async function down(database: Kysely<unknown>,): Promise<void> {
+  await database.schema.alterTable("actor_memories",).dropColumn("context",).execute();
+  await database.schema.alterTable("actor_memories",).dropColumn("source_message_id",).execute();
   await database.schema.alterTable("actor_memories",).dropColumn("last_accessed_at",).execute();
   await database.schema.alterTable("actor_memories",).dropColumn("strength",).execute();
   await database.schema.alterTable("actor_memories",).dropColumn("decay_rate",).execute();
