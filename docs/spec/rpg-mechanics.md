@@ -1,3 +1,5 @@
+> High-level notes — may drift from implementation. Authoritative source is `src/` and AGENTS.md.
+
 # RPG Mechanics Specification
 
 > ⚠️ **Status:** NOT IMPLEMENTED. No dice engine, no stat system, no combat, no

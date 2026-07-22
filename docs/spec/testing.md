@@ -1,3 +1,5 @@
+> High-level notes — may drift from implementation. Authoritative source is `src/` and AGENTS.md.
+
 # Testing Strategy
 
 Unit tests, integration tests, E2E. Bun test runner, Jest-compatible API.
@@ -34,12 +36,18 @@ Multi-component, often with test DB. Examples: DB schema/constraints, age gate s
 
 ### Schema Validation in Tests
 
-API responses validated against Zod schemas. Companion schema files (e.g. `src/routes/chats.schema.ts`) define request/response shapes. Tests import schemas and validate responses — zero production overhead.
+API responses validated against Elysia TypeBox (`t`) schemas in
+`src/validation/schemas.ts`. Route groups define request/response shapes there;
+tests import schemas and validate responses — zero production overhead.
 
-#### Contract Testing Pipeline (planned)
+#### Contract Testing Pipeline (aspirational)
 
-1. Zod schemas as single source of truth
-2. `@asteasolutions/zod-to-openapi` → OpenAPI 3.x served at `/api/docs`
+> Note: a `src/schemas/` Zod layer does not exist; the Zod/OpenAPI pipeline below
+> is aspirational (see `docs/meta/code-practices-improvements/06-schemas-and-openapi.md`).
+> The current stack is Elysia `t` (TypeBox) in `src/validation/schemas.ts`.
+
+1. TypeBox schemas as single source of truth
+2. `elysia-swagger` / OpenAPI 3.x served at `/api/docs`
 3. **Schemathesis** — property-based fuzzing of OpenAPI spec in CI
 
 ### Manual Testing
