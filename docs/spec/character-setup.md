@@ -67,6 +67,145 @@ Use cases:
 - **Writing**: author voices multiple characters in a collaborative story
 - **Testing**: creator playtests their character by playing the user role
 
+## Mandatory vs Optional Fields
+
+### Mandatory Fields (Required for All Characters)
+
+| Field         | Type   | Description                          |
+| ------------- | ------ | ------------------------------------ |
+| `name`        | string | Character display name               |
+| `description` | string | Full character description/backstory |
+| `personality` | string | Personality summary (immutable)      |
+
+### Optional Fields
+
+| Field                       | Type     | Default | Description                     |
+| --------------------------- | -------- | ------- | ------------------------------- |
+| `nickname`                  | string   | null    | Alternative name                |
+| `scenario`                  | string   | ""      | RP setting/context              |
+| `welcome_message`           | string   | ""      | First message to user           |
+| `mes_example`               | string   | ""      | Example dialogue                |
+| `system_prompt`             | string   | ""      | System prompt override          |
+| `post_history_instructions` | string   | ""      | Instructions after chat history |
+| `alternate_greetings`       | string[] | []      | Alternative welcome messages    |
+| `tags`                      | string[] | []      | Classification tags             |
+| `creator`                   | string   | ""      | Creator name                    |
+| `creator_notes`             | string   | ""      | Creator notes                   |
+| `character_version`         | string   | "1.0"   | Creator's version string        |
+
+---
+
+## NSFW Content Rating
+
+Characters can be classified by content rating for age verification and content filtering.
+
+### Content Rating Values
+
+| Rating          | Description                                                 |
+| --------------- | ----------------------------------------------------------- |
+| `sfw`           | Safe for work, no adult content                             |
+| `nsfw_mild`     | Mild adult themes (romance, mild violence)                  |
+| `nsfw_moderate` | Moderate adult content (explicit violence, strong language) |
+| `nsfw_intense`  | Intense adult content (sexual content, graphic violence)    |
+| `nsfw_extreme`  | Extreme adult content (no restrictions)                     |
+
+### NSFW Fields
+
+| Field              | Type     | Default | Description             |
+| ------------------ | -------- | ------- | ----------------------- |
+| `content_rating`   | enum     | "sfw"   | Content classification  |
+| `nsfw_categories`  | string[] | []      | Allowed NSFW categories |
+| `nsfw_hard_limits` | string[] | []      | Never-allowed content   |
+
+### Age Verification
+
+Characters with NSFW content require age verification:
+
+- `sfw` characters: No age verification required
+- `nsfw_mild` characters: Age verification required (13+)
+- `nsfw_moderate` characters: Age verification required (18+)
+- `nsfw_intense` characters: Age verification required (18+)
+- `nsfw_extreme` characters: Age verification required (18+)
+
+---
+
+## Personality Integrity
+
+**CRITICAL: Personality change is PROHIBITED.**
+
+Core personality traits are immutable across worlds, stories, and sessions. What CAN change is how personality is EXPRESSED based on context.
+
+### What Changes vs What Doesn't
+
+| What CAN Change (Expression)  | What CANNOT Change (Core)     |
+| ----------------------------- | ----------------------------- |
+| Mood (happiness level)        | Personality traits            |
+| Emotional expression          | Core values                   |
+| Behavioral modifiers          | Fears and desires             |
+| Speech tone (formal/informal) | Temperament                   |
+| Cooperation level             | Alignment                     |
+| Quirk suppression (temporary) | Identity (name, species, age) |
+
+### World/Story Behavioral Modifiers
+
+Worlds and stories can add behavioral modifiers that affect HOW personality is expressed:
+
+```typescript
+interface BehavioralModifier {
+  type: "speech" | "behavior" | "emotional" | "social" | "quirk_suppression";
+  // Modifies expression, NOT personality traits
+}
+```
+
+**World CAN:**
+
+- Lock personality expression (suppress certain traits)
+- Add behavioral modifiers (e.g., "in this world, she is more cautious")
+- Override speech patterns (formal vs informal)
+- Suppress quirks temporarily
+
+**World CANNOT:**
+
+- Change personality traits (wise → foolish)
+- Alter core values (honest → deceptive)
+- Modify fears or desires
+- Change temperament or alignment
+
+---
+
+## Description Transfer
+
+Characters can transfer descriptions between each other.
+
+### Transfer Types
+
+| Type     | Description                                  |
+| -------- | -------------------------------------------- |
+| `copy`   | Copy description from source to target       |
+| `merge`  | Merge descriptions, combining unique content |
+| `append` | Append source description to target          |
+
+### Transfer Interface
+
+```typescript
+interface DescriptionTransfer {
+  source_character_id: string;
+  target_character_id: string;
+  transfer_type: "copy" | "merge" | "append";
+  fields: string[]; // Which fields to transfer
+  overwrite: boolean; // Replace existing or merge
+}
+```
+
+### Use Cases
+
+- Clone character with modified description
+- Merge descriptions from multiple sources
+- Import description from external system
+- Backup/restore description variants
+
+---
+
 ## Character ↔ Persona Relationship
 
 ### Data Model
