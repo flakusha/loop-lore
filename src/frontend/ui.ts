@@ -127,21 +127,38 @@ export function getTheme(): string {
 
 // ── Locale ──────────────────────────────────────────────────
 
+import {
+  type TranslationMap,
+  resolveKey,
+  loadTranslations,
+  saveLocale,
+  applyDirection,
+} from "./i18n";
+
+/**
+ * Resolve a translation key against the global locale strings.
+ * Falls back to key display if not found.
+ */
+export function t(key: string, params?: Record<string, string>): string {
+  const map = (globalThis.__localeStrings ?? {}) as TranslationMap;
+  const value = resolveKey(map, key);
+  if (value === undefined) return key;
+  if (params) {
+    return value.replace(/\{(\w+)\}/g, (_, name) => params[name] ?? `{${name}}`);
+  }
+  return value;
+}
+
 export async function loadLocale(locale: string,): Promise<void> {
-  try {
-    const res = await fetch(`/locales/${locale}.json`,);
-    if (res.ok) {
-      const strings = await res.json();
-      globalThis.__localeStrings = strings;
-    }
-  } catch {
-    // keys display as-is
+  const strings = await loadTranslations(locale);
+  if (strings) {
+    globalThis.__localeStrings = strings as any;
+    applyDirection(locale as any);
   }
 }
 
 export function setLocale(localeId: string,): void {
-  localStorage.setItem("locale", localeId,);
-  globalThis.currentLocale = localeId;
+  saveLocale(localeId as any);
   loadLocale(localeId,);
 }
 
@@ -161,6 +178,7 @@ globalThis.closeSidebar = closeSidebar;
 globalThis.showToast = showToast;
 globalThis.applyTheme = applyTheme;
 globalThis.setLocale = setLocale;
+globalThis.t = t;
 globalThis.openModal = openModal;
 globalThis.closeModal = closeModal;
 globalThis.closeModalOnBackdrop = closeModalOnBackdrop;
