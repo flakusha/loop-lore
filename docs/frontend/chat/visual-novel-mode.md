@@ -24,12 +24,12 @@ immersive single-character interactions.
 
 ## Activation
 
-| Method              | Behavior                                          |
-| ------------------- | ------------------------------------------------- |
-| Chat settings       | Toggle "Visual Novel Mode" in chat configuration  |
-| Slash command       | `/vn on` / `/vn off` (future)                     |
-| Per-chat default    | Set in character or world settings                |
-| Per-message override| Not supported — mode is chat-wide                 |
+| Method               | Behavior                                         |
+| -------------------- | ------------------------------------------------ |
+| Chat settings        | Toggle "Visual Novel Mode" in chat configuration |
+| Slash command        | `/vn on` / `/vn off` (future)                    |
+| Per-chat default     | Set in character or world settings               |
+| Per-message override | Not supported — mode is chat-wide                |
 
 When activated, the chat area transitions from bubble layout to VN layout.
 Message history is preserved — scrolling up shows earlier "scenes."
@@ -59,6 +59,7 @@ dialogue box at the bottom:
 ```
 
 **Dialogue box:**
+
 - Positioned at bottom of scene area
 - Background: `rgba(0, 0, 0, 0.75)` (configurable opacity)
 - Border-radius: `--radius-md`
@@ -87,6 +88,7 @@ Image at top, text in a separate panel below (classic VN style):
 ```
 
 **Text panel:**
+
 - Background: `--bg-primary` (solid, not transparent)
 - Takes remaining 40% of scene area
 - Full markdown rendering (same as bubble mode)
@@ -117,12 +119,12 @@ Side-by-side: portrait on left, text on right:
 
 Background and portrait images scale to fit the scene area:
 
-| Scale Mode | Behavior                                    | Best for                    |
-| ---------- | ------------------------------------------- | --------------------------- |
-| `contain`  | Fit within area, letterbox if needed        | Preserve aspect ratio       |
-| `cover`    | Fill area, crop overflow                    | Cinematic backgrounds       |
-| `fill`     | Stretch to fill (distort if needed)         | Rarely used                 |
-| `auto`     | `cover` for backgrounds, `contain` for portraits | Default                |
+| Scale Mode | Behavior                                         | Best for              |
+| ---------- | ------------------------------------------------ | --------------------- |
+| `contain`  | Fit within area, letterbox if needed             | Preserve aspect ratio |
+| `cover`    | Fill area, crop overflow                         | Cinematic backgrounds |
+| `fill`     | Stretch to fill (distort if needed)              | Rarely used           |
+| `auto`     | `cover` for backgrounds, `contain` for portraits | Default               |
 
 **User preference:** stored in chat settings, default `auto`.
 
@@ -135,6 +137,7 @@ Background and portrait images scale to fit the scene area:
 When a character speaks, their portrait appears (modes 2 and 3):
 
 **Positioning:**
+
 - Left side for character messages (default)
 - Right side for user messages (if user avatar configured)
 - Center for system/narration messages (no portrait, text centered)
@@ -154,17 +157,18 @@ detected emotion. Fallback: use the base avatar for all messages.
 
 When the background changes (location change, new scene, time skip):
 
-| Transition | Visual                                  | Duration |
-| ---------- | --------------------------------------- | -------- |
-| `fade`     | Crossfade old → new                     | 400ms    |
-| `cut`      | Instant swap                            | 0ms      |
-| `dissolve` | Pixelated dissolve                      | 600ms    |
-| `slide`    | New image slides in from right          | 300ms    |
-| `wipe`     | Horizontal wipe reveal                  | 400ms    |
+| Transition | Visual                         | Duration |
+| ---------- | ------------------------------ | -------- |
+| `fade`     | Crossfade old → new            | 400ms    |
+| `cut`      | Instant swap                   | 0ms      |
+| `dissolve` | Pixelated dissolve             | 600ms    |
+| `slide`    | New image slides in from right | 300ms    |
+| `wipe`     | Horizontal wipe reveal         | 400ms    |
 
 **Default:** `fade`. Configurable per-chat or per-world.
 
 **Trigger points:**
+
 - Location change (section divider in sectioned chats)
 - Time-of-day change (if world has time system)
 - Explicit user action (`/scene <location>` command)
@@ -198,12 +202,12 @@ When enabled, text reveals character-by-character:
 
 Per-message text styling based on message role:
 
-| Role        | Style                                         |
-| ----------- | --------------------------------------------- |
-| Character   | `--text-primary`, normal weight                |
-| User        | `--text-primary`, slightly dimmer              |
-| Narrator    | `--text-secondary`, italic                     |
-| System      | `--text-tertiary`, small, centered             |
+| Role      | Style                              |
+| --------- | ---------------------------------- |
+| Character | `--text-primary`, normal weight    |
+| User      | `--text-primary`, slightly dimmer  |
+| Narrator  | `--text-secondary`, italic         |
+| System    | `--text-tertiary`, small, centered |
 
 ---
 
@@ -213,13 +217,13 @@ Per-message text styling based on message role:
 
 Users can navigate between scenes (previous/next background + dialogue):
 
-| Control     | Action                                      |
-| ----------- | ------------------------------------------- |
-| `←` / `→`  | Previous/next message (with background)     |
-| `Space`     | Advance to next message (typewriter: reveal) |
-| `Click`     | Same as Space                               |
-| Scroll up   | View previous scenes (backgrounds change)   |
-| Scene map   | Mini-map of scenes (future, optional)       |
+| Control   | Action                                       |
+| --------- | -------------------------------------------- |
+| `←` / `→` | Previous/next message (with background)      |
+| `Space`   | Advance to next message (typewriter: reveal) |
+| `Click`   | Same as Space                                |
+| Scroll up | View previous scenes (backgrounds change)    |
+| Scene map | Mini-map of scenes (future, optional)        |
 
 ### Auto-Advance
 
@@ -243,12 +247,12 @@ interface VnModeSettings {
   imageScaling: "contain" | "cover" | "fill" | "auto";
   transition: "fade" | "cut" | "dissolve" | "slide" | "wipe";
   typewriter: boolean;
-  typewriterSpeed: number;     // ms per character
+  typewriterSpeed: number; // ms per character
   autoAdvance: boolean;
-  autoAdvanceDelay: number;    // seconds
-  dialogueBoxOpacity: number;  // 0-1 (overlay mode)
-  portraitSize: number;        // percentage of scene width
-  splitRatio: number;          // portrait:text ratio (e.g. 40)
+  autoAdvanceDelay: number; // seconds
+  dialogueBoxOpacity: number; // 0-1 (overlay mode)
+  portraitSize: number; // percentage of scene width
+  splitRatio: number; // portrait:text ratio (e.g. 40)
 }
 ```
 
@@ -290,12 +294,12 @@ interface VnModeSettings {
 
 ## Performance
 
-| Metric            | Target  | Notes                         |
-| ----------------- | ------- | ----------------------------- |
-| Scene transition  | < 400ms | Preload next image            |
-| Image load        | < 500ms | WebP/AVIF, lazy load          |
-| Typewriter FPS    | 30+     | requestAnimationFrame          |
-| Memory (images)   | < 100MB | Current + 2 preloaded scenes  |
+| Metric           | Target  | Notes                        |
+| ---------------- | ------- | ---------------------------- |
+| Scene transition | < 400ms | Preload next image           |
+| Image load       | < 500ms | WebP/AVIF, lazy load         |
+| Typewriter FPS   | 30+     | requestAnimationFrame        |
+| Memory (images)  | < 100MB | Current + 2 preloaded scenes |
 
 ## Risk
 

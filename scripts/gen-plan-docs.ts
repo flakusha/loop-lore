@@ -8,13 +8,13 @@
  *
  * Usage: bun run scripts/gen-plan-docs.ts
  */
-import { existsSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
-import { join } from "node:path";
+import { existsSync, readdirSync, readFileSync, writeFileSync, } from "node:fs";
+import { join, } from "node:path";
 
 const ROOT = process.cwd();
-const EPICS_DIR = join(ROOT, ".plan/epics");
-const BACKLOG = join(ROOT, ".plan/backlog.md");
-const OUT_EPICS = join(ROOT, "docs/meta/epics.md");
+const EPICS_DIR = join(ROOT, ".plan/epics",);
+const BACKLOG = join(ROOT, ".plan/backlog.md",);
+const OUT_EPICS = join(ROOT, "docs/meta/epics.md",);
 
 interface Epic {
   file: string;
@@ -28,27 +28,27 @@ interface Epic {
   tasks: string[];
 }
 
-function parseEpic(filePath: string): Epic | null {
-  const raw = readFileSync(filePath, "utf8");
-  const filename = filePath.split("/").pop() ?? "";
+function parseEpic(filePath: string,): Epic | null {
+  const raw = readFileSync(filePath, "utf8",);
+  const filename = filePath.split("/",).pop() ?? "";
 
   // Extract title from heading
-  const titleMatch = raw.match(/^#\s+(?:EPIC:\s*)?(.+)$/m);
-  const title = titleMatch?.[1]?.trim() ?? filename.replace(/\.md$/, "");
+  const titleMatch = raw.match(/^#\s+(?:EPIC:\s*)?(.+)$/m,);
+  const title = titleMatch?.[1]?.trim() ?? filename.replace(/\.md$/, "",);
 
   // Extract metadata fields
-  const statusMatch = raw.match(/\*\*Status:\*\*\s*(.+)/);
-  const priorityMatch = raw.match(/\*\*Priority:\*\*\s*(.+)/);
-  const effortMatch = raw.match(/\*\*Effort:\*\*\s*(.+)/);
-  const typeMatch = raw.match(/\*\*Type:\*\*\s*(.+)/);
-  const tagsMatch = raw.match(/\*\*Tags:\*\*\s*(.+)/);
+  const statusMatch = raw.match(/\*\*Status:\*\*\s*(.+)/,);
+  const priorityMatch = raw.match(/\*\*Priority:\*\*\s*(.+)/,);
+  const effortMatch = raw.match(/\*\*Effort:\*\*\s*(.+)/,);
+  const typeMatch = raw.match(/\*\*Type:\*\*\s*(.+)/,);
+  const tagsMatch = raw.match(/\*\*Tags:\*\*\s*(.+)/,);
 
   // Extract overview (first paragraph after ## Overview)
-  const overviewMatch = raw.match(/## Overview\s*\n\s*\n([\s\S]*?)(?=\n##)/);
-  const overview = overviewMatch?.[1]?.trim().split("\n")[0] ?? "";
+  const overviewMatch = raw.match(/## Overview\s*\n\s*\n([\s\S]*?)(?=\n##)/,);
+  const overview = overviewMatch?.[1]?.trim().split("\n",)[0] ?? "";
 
   // Count tasks
-  const taskMatches = raw.match(/- \[ \]/g) ?? [];
+  const taskMatches = raw.match(/- \[ \]/g,) ?? [];
 
   return {
     file: filename,
@@ -57,27 +57,27 @@ function parseEpic(filePath: string): Epic | null {
     priority: priorityMatch?.[1]?.trim() ?? "Unknown",
     effort: effortMatch?.[1]?.trim() ?? "Unknown",
     type: typeMatch?.[1]?.trim() ?? "Feature",
-    tags: tagsMatch?.[1]?.split(",").map((t) => t.trim()) ?? [],
+    tags: tagsMatch?.[1]?.split(",",).map((t,) => t.trim()) ?? [],
     overview,
     tasks: taskMatches.map(() => ""),
   };
 }
 
 // Read all epic files
-if (!existsSync(EPICS_DIR)) {
-  console.error(`Epics directory not found: ${EPICS_DIR}`);
-  process.exit(1);
+if (!existsSync(EPICS_DIR,)) {
+  console.error(`Epics directory not found: ${EPICS_DIR}`,);
+  process.exit(1,);
 }
 
-const files = readdirSync(EPICS_DIR).filter(
-  (f) => f.startsWith("epic-") && f.endsWith(".md"),
+const files = readdirSync(EPICS_DIR,).filter(
+  (f,) => f.startsWith("epic-",) && f.endsWith(".md",),
 );
 
 const epics: Epic[] = [];
 for (const f of files) {
-  const epic = parseEpic(join(EPICS_DIR, f));
+  const epic = parseEpic(join(EPICS_DIR, f,),);
   if (epic) {
-    epics.push(epic);
+    epics.push(epic,);
   }
 }
 
@@ -88,12 +88,12 @@ const statusOrder: Record<string, number> = {
   "🟡 In Progress": 2,
   "✅ Complete": 3,
 };
-epics.sort((a, b) => {
+epics.sort((a, b,) => {
   const sa = statusOrder[a.status] ?? 99;
   const sb = statusOrder[b.status] ?? 99;
-  if (sa !== sb) return sa - sb;
-  return a.title.localeCompare(b.title);
-});
+  if (sa !== sb) { return sa - sb; }
+  return a.title.localeCompare(b.title,);
+},);
 
 // Build markdown
 let md = "# Epics Index\n\n";
@@ -107,7 +107,8 @@ md += "| Status | Title | Priority | Effort | Tasks | File |\n";
 md += "| ------ | ----- | -------- | ------ | ----- | ---- |\n";
 for (const e of epics) {
   const taskCount = e.tasks.length;
-  md += `| ${e.status} | ${e.title} | ${e.priority} | ${e.effort} | ${taskCount} | [${e.file}](/.plan/epics/${e.file}) |\n`;
+  md +=
+    `| ${e.status} | ${e.title} | ${e.priority} | ${e.effort} | ${taskCount} | [${e.file}](/.plan/epics/${e.file}) |\n`;
 }
 
 md += "\n---\n\n";
@@ -121,7 +122,7 @@ for (const e of epics) {
   md += `- **Effort:** ${e.effort}\n`;
   md += `- **Type:** ${e.type}\n`;
   if (e.tags.length > 0) {
-    md += `- **Tags:** ${e.tags.join(", ")}\n`;
+    md += `- **Tags:** ${e.tags.join(", ",)}\n`;
   }
   md += `- **File:** \`.plan/epics/${e.file}\`\n`;
   if (e.overview) {
@@ -131,11 +132,11 @@ for (const e of epics) {
 }
 
 // Backlog reference
-if (existsSync(BACKLOG)) {
+if (existsSync(BACKLOG,)) {
   md += "---\n\n";
   md += "## Backlog\n\n";
   md += "Full backlog with prioritized tasks: [.plan/backlog.md](/.plan/backlog.md)\n\n";
 }
 
-writeFileSync(OUT_EPICS, md);
-console.log(`Wrote ${OUT_EPICS} (${epics.length} epics)`);
+writeFileSync(OUT_EPICS, md,);
+console.log(`Wrote ${OUT_EPICS} (${epics.length} epics)`,);

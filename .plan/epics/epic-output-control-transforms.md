@@ -11,16 +11,16 @@ Regex output transforms, smart-regen, prompt library, lore-consistency checker, 
 
 ## Tasks
 
-| Task                                     | Files                                 | Effort | Source            |
-| ---------------------------------------- | ------------------------------------- | ------ | ----------------- |
-| Regex output transforms (post-gen)       | `src/generation/transforms.ts` (new)  | Low    | plan.md §51       |
-| Smart-regen polish (partial message fix) | `src/generation/smart-regen.ts` (new) | Med    | plan.md §51       |
-| Prompt library (save/reuse templates)    | `src/routes/prompts.ts` (new)         | Med    | plan.md §51       |
-| Lore-consistency checker                 | `src/lorebook/consistency.ts` (new)   | High   | plan.md §51       |
-| Regex output transforms (render-time)    | `src/frontend/render-transforms.ts`   | Low    | ideas #6          |
-| Auto-translation layer                   | `src/generation/translate.ts` (new)   | Med    | ideas #7          |
-| Smart-regen style rewrites               | `src/generation/smart-regen.ts`       | Low    | ideas #8          |
-| Prompt-template marketplace              | `src/routes/marketplace.ts` (new)     | Med    | ideas #9          |
+| Task                                     | Files                                 | Effort | Source      |
+| ---------------------------------------- | ------------------------------------- | ------ | ----------- |
+| Regex output transforms (post-gen)       | `src/generation/transforms.ts` (new)  | Low    | plan.md §51 |
+| Smart-regen polish (partial message fix) | `src/generation/smart-regen.ts` (new) | Med    | plan.md §51 |
+| Prompt library (save/reuse templates)    | `src/routes/prompts.ts` (new)         | Med    | plan.md §51 |
+| Lore-consistency checker                 | `src/lorebook/consistency.ts` (new)   | High   | plan.md §51 |
+| Regex output transforms (render-time)    | `src/frontend/render-transforms.ts`   | Low    | ideas #6    |
+| Auto-translation layer                   | `src/generation/translate.ts` (new)   | Med    | ideas #7    |
+| Smart-regen style rewrites               | `src/generation/smart-regen.ts`       | Low    | ideas #8    |
+| Prompt-template marketplace              | `src/routes/marketplace.ts` (new)     | Med    | ideas #9    |
 
 ## Ideas Merged
 

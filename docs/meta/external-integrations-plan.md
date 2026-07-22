@@ -194,34 +194,34 @@ Per-provider/user/model token usage and cost estimation.
 
 ### Phase 2: More LLM Providers (Week 3)
 
-4. FEAT-077 (Gemini) — multimodal differentiator
-5. FEAT-080 (DeepSeek) — cost optimization
-6. FEAT-081 (Mistral) — EU compliance
-7. FEAT-079 (Together/Fireworks) — fallback pool
-8. FEAT-083 (HuggingFace) — long tail models
+1. FEAT-077 (Gemini) — multimodal differentiator
+2. FEAT-080 (DeepSeek) — cost optimization
+3. FEAT-081 (Mistral) — EU compliance
+4. FEAT-079 (Together/Fireworks) — fallback pool
+5. FEAT-083 (HuggingFace) — long tail models
 
 ### Phase 3: Image + Embeddings (Week 4)
 
-9. FEAT-084 (DALL-E 3) — popular image API
-10. FEAT-085 (Stability AI) — SD3/FLUX
-11. FEAT-086 (Replicate) — model catalog
-12. FEAT-087 (Cloud embeddings) — memory system
-13. FEAT-088 (Local embeddings) — zero-cost option
+1. FEAT-084 (DALL-E 3) — popular image API
+2. FEAT-085 (Stability AI) — SD3/FLUX
+3. FEAT-086 (Replicate) — model catalog
+4. FEAT-087 (Cloud embeddings) — memory system
+5. FEAT-088 (Local embeddings) — zero-cost option
 
 ### Phase 4: Voice (Week 5)
 
-14. FEAT-089 (ElevenLabs TTS)
-15. FEAT-090 (OpenAI TTS + Whisper)
-16. FEAT-091 (Local TTS/STT)
+1. FEAT-089 (ElevenLabs TTS)
+2. FEAT-090 (OpenAI TTS + Whisper)
+3. FEAT-091 (Local TTS/STT)
 
 ### Phase 5: Infrastructure (Week 6)
 
-17. FEAT-092 (Failover chains)
-18. FEAT-093 (Key management UI)
-19. FEAT-094 (Health dashboard)
-20. FEAT-095 (Model catalog sync)
-21. FEAT-096 (Auto-start expansion)
-22. FEAT-097 (Cost tracking)
+1. FEAT-092 (Failover chains)
+2. FEAT-093 (Key management UI)
+3. FEAT-094 (Health dashboard)
+4. FEAT-095 (Model catalog sync)
+5. FEAT-096 (Auto-start expansion)
+6. FEAT-097 (Cost tracking)
 
 ---
 
