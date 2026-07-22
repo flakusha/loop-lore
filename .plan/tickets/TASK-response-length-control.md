@@ -1,79 +1,146 @@
-# TASK: Response Length Control (FEAT-071)
+# TASK: Response Length Control
 
 **Status:** ⬜ Not Started
 **Priority:** Low
 **Effort:** Low
-**Epic:** Epic 51 (Response Controls)
-**Tags:** chat, generation, ux
-**Git Issue:** FEAT-071
+**Epic:** Epic 51 (Output Control & Transforms)
+**Tags:** chat, generation, ux, llm
+**Source:** FEAT-071 (git issue)
 
 ## Summary
 
-Preset response length control — Short, Medium, Long, and Custom. Users can set a default length that influences how the assistant generates responses.
+User-configurable response length for LLM generation. Controls max_tokens
+per response, with presets (Short/Medium/Long/Custom) and per-chat overrides.
+Shows estimated token count in the input area.
 
 ## Rationale
 
-- Users have different preferences for response verbosity
-- Some contexts need concise answers, others need detail
-- Custom presets allow fine-grained control
-- Persistent setting avoids repeated configuration
+- Some chats need brief exchanges (combat, quick RP), others need detailed narration
+- Without control, LLMs default to medium length — often too long for fast-paced scenes
+- Per-chat override means users set it once per conversation style
+- Token cost awareness: shorter responses = cheaper generation
 
 ## Current State
 
-- No response length control
-- Model generates at its default length
-- No user preference for verbosity
+- `max_tokens` exists in generation config (global default)
+- No per-chat or per-user override
+- No UI for changing response length
+- No presets
 
 ## Architecture
 
 ### Length Presets
 
-| Preset | Description                   | Token Range |
-| ------ | ----------------------------- | ----------- |
-| Short  | Brief, to-the-point responses | 50–150      |
-| Medium | Balanced detail (default)     | 150–400     |
-| Long   | Detailed, thorough responses  | 400–1000    |
-| Custom | User-defined token range      | User set    |
+| Preset | max_tokens | Description                      |
+| ------ | ---------- | -------------------------------- |
+| Short  | 150        | Quick replies, combat, reactions |
+| Medium | 500        | Default, balanced                |
+| Long   | 1000       | Detailed narration, descriptions |
+| Custom | user-set   | Slider: 50–2000                  |
 
-### Implementation
+### Per-Chat Override
 
 ```typescript
-interface ResponseLengthConfig {
-  preset: "short" | "medium" | "long" | "custom";
-  customMin?: number;
-  customMax?: number;
-  maxTokens: number; // computed from preset
+// Add to chats table
+interface Chat {
+  // ... existing fields
+  response_length_preset?: "short" | "medium" | "long" | "custom";
+  response_length_custom?: number; // 50-2000, only when preset = "custom"
 }
 ```
 
-### UI
+### Resolution Order
 
-- Dropdown in chat settings or input area
-- Shows preset names with token ranges
-- Custom option opens a slider or input fields
-- Persists as user preference
+```
+Chat-specific override (if set)
+  ↓ (fallback)
+User global setting (if set)
+  ↓ (fallback)
+Server default from config.yaml
+```
 
-### Backend Integration
+### UI Component
 
-- `max_tokens` parameter passed to LLM provider
-- Can be overridden per-chat via chat settings
-- World configs can set default response length
+```
+Chat settings panel:
+┌─────────────────────────────────────┐
+│ Response Length                     │
+│ [Short] [Medium●] [Long] [Custom]  │
+│                                     │
+│ Custom: ████████░░░ 500 tokens      │
+│ (only shown when Custom selected)   │
+└─────────────────────────────────────┘
+
+Input area footer:
+┌─────────────────────────────────────┐
+│ [input area]           [Len: Med]   │
+└─────────────────────────────────────┘
+```
+
+### API Changes
+
+```typescript
+// Add to chat settings response
+interface ChatSettings {
+  // ... existing fields
+  response_length: {
+    preset: "short" | "medium" | "long" | "custom";
+    max_tokens: number; // resolved value
+  };
+}
+```
 
 ## Tasks
 
-- [ ] Add response length config to user settings
-- [ ] Add length preset dropdown to chat UI
-- [ ] Wire `max_tokens` to generation request
-- [ ] Add custom preset UI (min/max inputs)
-- [ ] Write tests for length config validation
+### Phase 1: Schema & Backend
+
+- [ ] Add `response_length_preset`, `response_length_custom` to chats table
+- [ ] Extend `008_chat_features.ts` migration (in-place) with new columns
+- [ ] Implement resolution: chat → user → server default
+- [ ] Add to chat settings endpoint response
+- [ ] Wire into generation pipeline (pass resolved max_tokens)
+
+### Phase 2: Frontend Settings
+
+- [ ] Add response length selector to chat settings panel
+- [ ] Preset buttons: Short, Medium, Long, Custom
+- [ ] Custom slider (50–2000 tokens)
+- [ ] Persist per-chat setting
+- [ ] Show current setting in input area footer
+
+### Phase 3: Generation Integration
+
+- [ ] Pass resolved max_tokens to generation call
+- [ ] Override global config when chat-specific is set
+- [ ] Token budget check (don't exceed context window)
+- [ ] Log response length for analytics
+
+## Files to Create
+
+- `src/chat/response-length.ts` — resolution logic
+
+## Files to Modify
+
+- `src/db/migrations/008_chat_features.ts` — add columns (in-place extension)
+- `src/routes/chats.ts` — include response_length in settings response
+- `src/generation/auto-gen.ts` — pass resolved max_tokens
+- `src/views/chat-settings.html` — length selector UI
+- `src/frontend/alpine/chat.ts` — length state
+- `src/public/css/app.css` — slider + preset button styles
+
+## Acceptance Criteria
+
+- [ ] Preset buttons toggle correctly
+- [ ] Custom slider updates max_tokens value
+- [ ] Setting persists per-chat
+- [ ] Generation uses resolved max_tokens
+- [ ] Fallback chain works: chat → user → server
+- [ ] Token budget doesn't exceed context window
+- [ ] Setting visible in input area footer
+- [ ] All existing generation tests pass
 
 ## Risk
 
-Low — simple parameter passing to existing generation flow.
-
-## Files
-
-- `src/routes/settings.ts` — add response length config
-- `src/frontend/components/response-length-control.html` — UI dropdown
-- `src/frontend/alpine/settings.ts` — length state
-- `src/generation/generate-route.ts` — pass max_tokens from config
+Low — simple schema addition + config resolution. No complex logic.
+Main risk is token budget interaction with context window (handled by
+FEAT-069/072 context monitoring).

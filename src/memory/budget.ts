@@ -5,21 +5,12 @@
  * Drops low-confidence memories first; pinned memories are never dropped.
  */
 import type { Kysely, } from "kysely";
+import { estimateTokens, } from "../chat/token-utils";
 import type { DB, } from "../db";
 import type { MemoryBudgetConfig, } from "./types";
 
 /** Default budget: 1024 tokens (~4K chars). */
 const DEFAULT_MAX_TOKENS = 1024;
-
-/** Rough chars-per-token estimate for English text. */
-const CHARS_PER_TOKEN = 4;
-
-/**
- * Estimate token count from text. Not exact — good enough for budget enforcement.
- */
-export function estimateTokens(text: string,): number {
-  return Math.ceil(text.length / CHARS_PER_TOKEN,);
-}
 
 /**
  * Select memories within a token budget.

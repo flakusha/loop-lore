@@ -113,6 +113,9 @@ export interface Chats {
   parent_chat_id: string | null;
   is_pinned: Generated<PinnedState>;
   encryption_level: Generated<EncryptionLevel>;
+  response_length_preset: Generated<string>;
+  response_length_custom: number | null;
+  context_max_tokens: number | null;
   created_at: Generated<string>;
   updated_at: Generated<string>;
 }

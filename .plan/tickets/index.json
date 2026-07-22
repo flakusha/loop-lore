@@ -971,7 +971,7 @@
     "source": ".plan/tickets/TASK-data-migration-transitivity.md"
   },
   "TASK-context-window-monitor": {
-    "hash": "pending",
+    "hash": "eae1a01",
     "extid": "TASK-context-window-monitor",
     "type": "TASK",
     "title": "Context window monitor (FEAT-069)",
@@ -983,7 +983,7 @@
     "git_issue": "FEAT-069"
   },
   "TASK-smart-context-pruning": {
-    "hash": "pending",
+    "hash": "a40f001",
     "extid": "TASK-smart-context-pruning",
     "type": "TASK",
     "title": "Smart context pruning (FEAT-072)",
@@ -995,7 +995,7 @@
     "git_issue": "FEAT-072"
   },
   "TASK-quick-regen-button": {
-    "hash": "pending",
+    "hash": "a35f001",
     "extid": "TASK-quick-regen-button",
     "type": "TASK",
     "title": "Quick-regen button (FEAT-070)",
@@ -1007,7 +1007,7 @@
     "git_issue": "FEAT-070"
   },
   "TASK-response-length-control": {
-    "hash": "pending",
+    "hash": "4a28001",
     "extid": "TASK-response-length-control",
     "type": "TASK",
     "title": "Response length control (FEAT-071)",
@@ -1017,5 +1017,53 @@
     "tags": ["chat", "generation", "ux"],
     "source": ".plan/tickets/TASK-response-length-control.md",
     "git_issue": "FEAT-071"
+  },
+  "TASK-memory-provision-wiring": {
+    "hash": "3bfb101",
+    "extid": "TASK-memory-provision-wiring",
+    "type": "TASK",
+    "title": "Wire memory provision into prompt assembly",
+    "label": "task",
+    "priority": "high",
+    "epic": "EPIC-2026-37",
+    "tags": ["memory", "prompt", "privacy"],
+    "source": ".plan/tickets/TASK-memory-provision-wiring.md",
+    "git_issue": "3bfb101"
+  },
+  "TASK-memory-decay-logic": {
+    "hash": "d1b048b",
+    "extid": "TASK-memory-decay-logic",
+    "type": "TASK",
+    "title": "Implement memory decay logic",
+    "label": "task",
+    "priority": "medium",
+    "epic": "EPIC-2026-37",
+    "tags": ["memory", "decay", "purge"],
+    "source": ".plan/tickets/TASK-memory-decay-logic.md",
+    "git_issue": "d1b048b"
+  },
+  "TASK-chat-route-extraction": {
+    "hash": "db5a19a",
+    "extid": "TASK-chat-route-extraction",
+    "type": "TASK",
+    "title": "Extract chat business logic from routes",
+    "label": "task",
+    "priority": "medium",
+    "epic": "EPIC-2026-37",
+    "tags": ["chat", "service", "refactor"],
+    "source": ".plan/tickets/TASK-chat-route-extraction.md",
+    "git_issue": "db5a19a"
+  },
+  "TASK-memory-promotion-pipeline": {
+    "hash": "22f6cd9",
+    "extid": "TASK-memory-promotion-pipeline",
+    "type": "TASK",
+    "title": "Implement memory promotion pipeline",
+    "label": "task",
+    "priority": "medium",
+    "epic": "EPIC-2026-37",
+    "tags": ["memory", "promotion", "transitions"],
+    "source": ".plan/tickets/TASK-memory-promotion-pipeline.md",
+    "git_issue": "22f6cd9"
   }
 }
