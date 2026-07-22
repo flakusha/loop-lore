@@ -632,7 +632,7 @@ cmd_finalize() {
     if [[ "$force" == "true" ]]; then
         echo -e "${YELLOW}  Skipped: --force flag set${NC}"
     elif command -v bun &>/dev/null && [[ -f "$worktree_path/bun.lock" || -f "$worktree_path/package.json" ]]; then
-        if (cd "$worktree_path" && bun run check); then
+        if (cd "$worktree_path" && unset REPO_ROOT && bun run check); then
             echo -e "${GREEN}  ✓ Checks passed${NC}"
         else
             echo -e "${RED}  ✗ Checks failed — fix before finalizing (or use --force)${NC}"
@@ -648,7 +648,7 @@ cmd_finalize() {
     if [[ "$force" == "true" ]]; then
         echo -e "${YELLOW}  Skipped: --force flag set${NC}"
     elif command -v bun &>/dev/null && [[ -f "$worktree_path/bun.lock" || -f "$worktree_path/package.json" ]]; then
-        if (cd "$worktree_path" && bun run test:unit); then
+        if (cd "$worktree_path" && unset REPO_ROOT && bun run test:unit); then
             echo -e "${GREEN}  ✓ Tests passed${NC}"
         else
             echo -e "${RED}  ✗ Tests failed — fix before finalizing (or use --force)${NC}"
