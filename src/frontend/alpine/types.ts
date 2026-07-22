@@ -100,7 +100,7 @@ declare global {
       currentTheme: string;
       sidebarOpen: boolean;
       currentLocale: string;
-      localeStrings: Record<string, string>;
+      localeStrings: Record<string, unknown>;
       init: () => void;
       applyTheme: (themeId: string,) => void;
       iconFor: (type: string,) => string;
