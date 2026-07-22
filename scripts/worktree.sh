@@ -173,6 +173,35 @@ branch_to_path() {
     echo "$1" | sed 's|/|-|g'
 }
 
+resolve_branch() {
+    # Resolve a branch name or worktree directory name to the actual branch.
+    # Users often pass the directory name (tree/feature-foo) instead of the
+    # branch name (feature/foo). This function handles both cases.
+    local input="$1"
+
+    # Already a valid branch?
+    if git -C "$REPO_ROOT" rev-parse --verify "$input" >/dev/null 2>&1; then
+        echo "$input"
+        return
+    fi
+
+    # Might be a directory name — find the worktree and read its HEAD
+    local dir_name
+    dir_name="$(branch_to_path "$input")"
+    local worktree_path="$TREE_DIR/$dir_name"
+    if [[ -d "$worktree_path" ]]; then
+        local head_ref
+        head_ref=$(git -C "$worktree_path" symbolic-ref --short HEAD 2>/dev/null || echo "")
+        if [[ -n "$head_ref" ]]; then
+            echo "$head_ref"
+            return
+        fi
+    fi
+
+    # Could not resolve
+    echo ""
+}
+
 find_worktree() {
     # Find worktree path for a branch name, print path or empty
     local branch="$1"
@@ -817,6 +846,14 @@ cmd_finalize() {
         echo "Usage: $(basename "$0") finalize <branch>"
         echo "  Validates worktree is clean, runs checks, merges to master, removes worktree"
         exit 1
+    fi
+
+    # Resolve directory names (feature-foo) to branch names (feature/foo)
+    local resolved
+    resolved="$(resolve_branch "$branch")"
+    if [[ -n "$resolved" ]] && [[ "$resolved" != "$branch" ]]; then
+        echo -e "${YELLOW}  ℹ Resolved '$branch' → branch '$resolved'${NC}"
+        branch="$resolved"
     fi
 
     # Block finalizing protected branches
