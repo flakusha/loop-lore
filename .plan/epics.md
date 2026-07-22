@@ -149,6 +149,10 @@ epics where applicable.
 | Chat External Music Linking                   | Low      | 36                       | ⬜ Not Started |
 | Context-Based Feature Permissions (UI Gating) | Med      | 37                       | ⬜ Not Started |
 | Data Migration Transitivity Tracking          | Medium   | 34                       | ⬜ Not Started |
+| Context Window Monitor (FEAT-069)             | Low–Med  | 36                       | ⬜ Not Started |
+| Smart Context Pruning (FEAT-072)              | Med      | 36                       | ⬜ Not Started |
+| Quick-Regen Button (FEAT-070)                 | Low      | 51                       | ⬜ Not Started |
+| Response Length Control (FEAT-071)            | Low      | 51                       | ⬜ Not Started |
 
 **Cross-references:**
 
@@ -159,11 +163,14 @@ epics where applicable.
 - Epic 36 (Chat Lifecycle) — chat context, transitions
 - Epic 41 (Chat Transfer) — location transfer, search for joinable chats
 - `TASK-character-multi-personality.md` — personality switching, world/chat locking
-- `TASK-character-mood-happiness.md` — happiness meter, mood impact on personality
+- `TASK-data-migration-transitivity.md` — migration state lifecycle, validation gating
+- `TASK-context-window-monitor.md` — token usage indicator, threshold colors
+- `TASK-smart-context-pruning.md` — score-based pruning, memory promotion
+- `TASK-quick-regen-button.md` — one-click response regeneration
+- `TASK-response-length-control.md` — Short/Medium/Long/Custom presets
 - `TASK-character-memory-injection.md` — injection probability, privacy levels, secrets
 - `TASK-chat-external-music-linking.md` — external service embeds, no server download
 - `TASK-chat-context-feature-permissions.md` — UI feature gating based on context
-- `TASK-data-migration-transitivity.md` — migration state lifecycle, validation gating
 
 ---
 
