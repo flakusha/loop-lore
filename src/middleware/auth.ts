@@ -18,6 +18,7 @@ import { getLogger, } from "../logger/index";
 import { ErrorCode, HttpStatus, jsonError, } from "../routes/http-utils";
 import { uid, } from "../utils";
 import type { RequestContext, } from "./types";
+import { createRequestContext, } from "./types";
 
 let _log: ReturnType<typeof getLogger> | null = null;
 function getLog() {
@@ -102,11 +103,11 @@ export async function authenticate({
             }
 
             return {
-              context: {
+              context: createRequestContext({
                 userId: payload.sub,
                 userRole: user.role,
                 sessionId: payload.sid,
-              },
+              },),
             };
           }
 
@@ -132,15 +133,17 @@ export async function authenticate({
       },);
     }
     return {
-      context: {
+      context: createRequestContext({
         userId: soloUser.id,
         userRole: UserRole.Solo,
         sessionId: null,
-      },
+      },),
     };
   }
 
   // ── Auth required, no valid token ─────────────────────────
+  // Note: Auth runs before i18n context, so error messages stay in English.
+  // The i18n middleware will handle locale detection for subsequent middleware.
   return jsonError({
     message: "Missing or invalid Authorization header",
     status: HttpStatus.Unauthorized,
