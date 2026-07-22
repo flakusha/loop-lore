@@ -28,6 +28,7 @@ import { adminRoutes, } from "./routes/admin";
 import { apiKeysRoutes, } from "./routes/api-keys";
 import { authProtectedRoutes, authPublicRoutes, } from "./routes/auth";
 import { characterAvatarsRoutes, } from "./routes/character-avatars";
+import { characterIoRoutes, } from "./routes/character-io";
 import { characterMoodRoutes, } from "./routes/character-mood";
 import { characterRelationshipsRoutes, } from "./routes/character-relationships";
 import { characterTraitsRoutes, } from "./routes/character-traits";
@@ -122,6 +123,7 @@ export function createApp(deps: AppDeps,): Elysia {
   app.use(characterMoodRoutes(handleOpts,),);
   app.use(characterRelationshipsRoutes(handleOpts,),);
   app.use(characterAvatarsRoutes(handleOpts,),);
+  app.use(characterIoRoutes(handleOpts,),);
   app.use(messagesRoutes(handleOpts,),);
   app.use(messageReactionsRoutes(handleOpts,),);
   app.use(chatsRoutes(handleOpts,),);
