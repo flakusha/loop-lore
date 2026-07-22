@@ -1,17 +1,15 @@
 # TASK: Character Creator Prerogative & Availability
 
-**Epic:** RPG Mechanics & Extensible Game Systems
+**Epic:** Character Core System
 **Priority:** High
 **Effort:** Medium
 **Status:** In Progress (schema done, needs routes)
 
 ## Summary
 
-Implement character availability controls (private, public, activity restrictions) and attribution licensing system (CC, proprietary, opt-in).
+Character availability controls (private, public, activity restrictions) and attribution licensing system with two modes: creator-controlled (CC licenses) OR full public domain (CC0). Admin management for disputes and policy enforcement.
 
-## Character Availability
-
-Creator controls who can use their character and how.
+## Design
 
 ### Availability Settings
 
@@ -42,29 +40,29 @@ interface UsagePolicy {
   banned_activities: ActivityType[]; // Explicit bans
 
   // Context restrictions
-  public_chats: boolean; // Can appear in public chats
-  private_chats: boolean; // Can appear in private chats
-  group_chats: boolean; // Can appear in group chats
-  solo_chats: boolean; // Can be used in solo mode
+  public_chats: boolean;
+  private_chats: boolean;
+  group_chats: boolean;
+  solo_chats: boolean;
 
   // NSFW restrictions
-  nsfw_allowed: boolean; // Can participate in NSFW content
-  nsfw_categories: string[]; // Allowed NSFW categories
-  nsfw_hard_limits: string[]; // Never allowed
+  nsfw_allowed: boolean;
+  nsfw_categories: string[];
+  nsfw_hard_limits: string[];
 }
 
 type ActivityType =
-  | "chat" // Basic conversation
-  | "roleplay" // Roleplay scenarios
-  | "nsfw" // Adult content
-  | "combat" // Battle/combat
-  | "trading" // Trade/economy
-  | "questing" // Quest participation
-  | "group_activity" // Group events
-  | "world_event" // World-level events
-  | "export" // Can be exported
-  | "remix" // Can be modified by others
-  | "commercial"; // Commercial use
+  | "chat"
+  | "roleplay"
+  | "nsfw"
+  | "combat"
+  | "trading"
+  | "questing"
+  | "group_activity"
+  | "world_event"
+  | "export"
+  | "remix"
+  | "commercial";
 
 interface ActivityRestriction {
   activity: ActivityType;
@@ -76,43 +74,153 @@ interface ShareSettings {
   can_be_shared: boolean;
   share_requires_approval: boolean;
   max_copies: number | null; // null = unlimited
-  share_with_credit: boolean; // Must credit original creator
+  share_with_credit: boolean;
 }
 ```
 
-### Database Schema
+### Licensing System
 
-```sql
-CREATE TABLE character_availability (
-  id TEXT PRIMARY KEY,
-  character_id TEXT NOT NULL REFERENCES character_core(id) UNIQUE,
-  visibility TEXT NOT NULL DEFAULT 'private',
-  usage_policy JSON NOT NULL DEFAULT '{}',
-  activity_restrictions JSON NOT NULL DEFAULT '[]',
-  share_settings JSON NOT NULL DEFAULT '{}',
-  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
-);
+Two modes: creator-controlled OR full public domain.
 
-CREATE TABLE character_access_grants (
-  id TEXT PRIMARY KEY,
-  character_id TEXT NOT NULL REFERENCES character_core(id),
-  user_id TEXT NOT NULL,
-  granted_by TEXT NOT NULL,
-  permissions JSON NOT NULL,    -- What they can do
-  expires_at DATETIME,          -- Optional expiry
-  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  UNIQUE(character_id, user_id)
-);
+#### Mode 1: Creator-Controlled
 
--- Filter for character selection screen
-CREATE INDEX idx_character_availability_visibility ON character_availability(visibility);
-CREATE INDEX idx_character_availability_creator ON character_availability(character_id);
+Creator chooses license from CC options or custom terms:
+
+```typescript
+type CreatorLicense =
+  | "all_rights" // Default — no sharing
+  | "cc_by" // Creative Commons Attribution
+  | "cc_by_sa" // CC Attribution-ShareAlike
+  | "cc_by_nc" // CC Attribution-NonCommercial
+  | "cc_by_nc_sa" // CC Attribution-NonCommercial-ShareAlike
+  | "cc_by_nd" // CC Attribution-NoDerivs
+  | "cc_by_nc_nd" // CC Attribution-NonCommercial-NoDerivs
+  | "custom"; // Custom license terms
+```
+
+#### Mode 2: Full Public Domain
+
+No restrictions, no attribution required:
+
+```typescript
+type PublicDomainLicense =
+  | "cc0" // Creative Commons Zero — public domain
+  | "public_domain"; // Explicit public domain declaration
+```
+
+**Public Domain characteristics:**
+
+- No attribution required
+- No restrictions on use
+- No restrictions on modification
+- No restrictions on commercial use
+- No restrictions on distribution
+- Creator waives all rights
+
+#### License Selection
+
+```typescript
+interface LicenseSelection {
+  character_id: string;
+
+  // License mode
+  mode: "creator_controlled" | "public_domain";
+
+  // Creator-controlled options
+  creator_license?: CreatorLicense;
+  custom_license_text?: string;
+
+  // Public domain options
+  public_domain_license?: PublicDomainLicense;
+
+  // Attribution (required for CC, optional for public domain)
+  attribution: AttributionSettings;
+
+  // Derivative works
+  derivatives: DerivativeSettings;
+
+  // Commercial use
+  commercial: CommercialSettings;
+}
+
+interface AttributionSettings {
+  require_attribution: boolean; // Must credit creator
+  attribution_text?: string; // Custom attribution text
+  attribution_url?: string; // Link to creator profile
+  show_in_character_card: boolean;
+}
+
+interface DerivativeSettings {
+  allow_derivatives: boolean;
+  share_alike: boolean; // Derivatives must use same license
+  require_approval: boolean;
+  max_derivative_depth: number;
+}
+
+interface CommercialSettings {
+  allow_commercial: boolean;
+  royalty_percentage: number; // 0-100
+  commercial_approval: boolean;
+}
+```
+
+### Admin Management
+
+Admins can manage characters for policy enforcement:
+
+```typescript
+interface AdminCharacterManagement {
+  admin_id: string;
+  character_id: string;
+
+  // Actions
+  action:
+    | "visibility_override" // Force private/public
+    | "license_override" // Change license
+    | "ban" // Ban character
+    | "approve" // Approve character
+    | "restrict" // Add restrictions
+    | "warn" // Warn creator
+    | "remove"; // Remove character;
+
+  // Details
+  reason: string;
+  timestamp: Date;
+  expires_at?: Date; // Temporary restrictions
+  notify_creator: boolean;
+  appeal_allowed: boolean;
+}
+
+interface AdminPolicyOverride {
+  // System-wide policies
+  content_policy: ContentPolicy;
+  age_requirement: number;
+  nsfw_policy: NsfwPolicy;
+  licensing_policy: LicensingPolicy;
+}
+
+interface ContentPolicy {
+  allowed_content: string[];
+  banned_content: string[];
+  review_required: boolean;
+  auto_moderation: boolean;
+}
+
+interface NsfwPolicy {
+  require_age_verification: boolean;
+  allowed_nsfw_levels: string[];
+  nsfw_in_public: boolean;
+  nsfw_marking_required: boolean;
+}
+
+interface LicensingPolicy {
+  allowed_licenses: string[];
+  require_attribution: boolean;
+  default_license: string;
+}
 ```
 
 ### Character Screen Filters
-
-Add to character selection/browse screen:
 
 ```typescript
 interface CharacterFilter {
@@ -131,6 +239,11 @@ interface CharacterFilter {
   // NSFW filters
   nsfw_level?: "none" | "mild" | "moderate" | "intense" | "extreme";
 
+  // License filters
+  license_type?: string;
+  allows_derivatives?: boolean;
+  allows_commercial?: boolean;
+
   // Availability filters
   available_for?: "my_private" | "my_public" | "group" | "all";
 
@@ -140,110 +253,123 @@ interface CharacterFilter {
 }
 ```
 
-## Attribution Licensing
+## Integration Points
 
-Creator controls how their character can be used by others.
+### With Character Core
 
-### License Types
+Availability is part of character metadata:
 
 ```typescript
-interface CharacterLicensing {
-  character_id: string;
-
-  // License type
-  license: LicenseType;
-
-  // Attribution requirements
-  attribution: AttributionSettings;
-
-  // Derivative works
-  derivatives: DerivativeSettings;
-
-  // Commercial use
-  commercial: CommercialSettings;
-}
-
-type LicenseType =
-  | "all_rights" // Default — no sharing
-  | "cc_by" // Creative Commons Attribution
-  | "cc_by_sa" // CC Attribution-ShareAlike
-  | "cc_by_nc" // CC Attribution-NonCommercial
-  | "cc_by_nc_sa" // CC Attribution-NonCommercial-ShareAlike
-  | "cc_by_nd" // CC Attribution-NoDerivs
-  | "cc_by_nc_nd" // CC Attribution-NonCommercial-NoDerivs
-  | "cc0" // Public domain
-  | "custom"; // Custom license terms
-
-interface AttributionSettings {
-  require_attribution: boolean; // Must credit creator
-  attribution_text?: string; // Custom attribution text
-  attribution_url?: string; // Link to creator profile
-  show_in_character_card: boolean; // Show attribution in card
-}
-
-interface DerivativeSettings {
-  allow_derivatives: boolean; // Can others create variants
-  share_alike: boolean; // Derivatives must use same license
-  require_approval: boolean; // Creator must approve derivatives
-  max_derivative_depth: number; // How many generations of derivatives
-}
-
-interface CommercialSettings {
-  allow_commercial: boolean; // Can be used commercially
-  royalty_percentage: number; // Creator's royalty (0-100)
-  commercial_approval: boolean; // Creator must approve commercial use
+interface CharacterCore {
+  // ... other fields ...
+  availability: CharacterAvailability;
+  licensing: LicenseSelection;
 }
 ```
 
-### Database Schema
+### With Import/Export
 
-```sql
-CREATE TABLE character_licensing (
-  id TEXT PRIMARY KEY,
-  character_id TEXT NOT NULL REFERENCES character_core(id) UNIQUE,
-  license TEXT NOT NULL DEFAULT 'all_rights',
-  attribution JSON NOT NULL DEFAULT '{}',
-  derivatives JSON NOT NULL DEFAULT '{}',
-  commercial JSON NOT NULL DEFAULT '{}',
-  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
-);
+License information is preserved during import/export:
 
--- Track character lineage (derivatives)
-CREATE TABLE character_derivatives (
-  id TEXT PRIMARY KEY,
-  original_id TEXT NOT NULL REFERENCES character_core(id),
-  derivative_id TEXT NOT NULL REFERENCES character_core(id),
-  license_at_creation TEXT NOT NULL,  -- License when derivative was created
-  approved_by_creator BOOLEAN NOT NULL DEFAULT FALSE,
-  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  UNIQUE(original_id, derivative_id)
-);
+```typescript
+// Import preserves license
+const imported = importCharacter(file,);
+// imported.licensing = original license (or default if none)
+
+// Export includes license
+const exported = exportCharacter(character, "png",);
+// exported includes license metadata in card
+```
+
+### With Chat Generation
+
+Availability affects who can use the character:
+
+```typescript
+// Check availability before allowing character in chat
+const canUse = checkAvailability(characterId, userId, chatType,);
+// Returns: { allowed: boolean, reason?: string }
+```
+
+### With Admin Panel
+
+Admins can manage characters:
+
+```typescript
+// Admin overrides
+const adminAction = {
+  action: "visibility_override",
+  character_id: "char_123",
+  reason: "Violates content policy",
+  admin_id: "admin_456",
+  expires_at: null, // Permanent
+};
 ```
 
 ## Tasks
 
-- [ ] Design availability system architecture
-- [ ] Design licensing system architecture
-- [ ] Implement Character Availability CRUD
-- [ ] Implement Usage Policy
-- [ ] Implement Activity Restrictions
-- [ ] Implement Share Settings
-- [ ] Implement Access Grants (per-user permissions)
-- [ ] Implement Character Screen Filters
-- [ ] Implement License Types
-- [ ] Implement Attribution Settings
-- [ ] Implement Derivative Works tracking
-- [ ] Implement Commercial Settings
-- [ ] Implement Character Lineage tracking
-- [ ] Write tests for availability system
-- [ ] Write tests for licensing system
+### Phase 1: Schema & Core (Week 1)
 
-## Files
+- [ ] Create `character_availability` table
+- [ ] Create `character_licensing` table
+- [ ] Create `admin_character_overrides` table
+- [ ] Implement availability CRUD
+- [ ] Implement licensing CRUD
+- [ ] Add license validation
 
-- `src/characters/availability.ts` — availability system
-- `src/characters/licensing.ts` — licensing system
-- `src/characters/access-grants.ts` — per-user permissions
-- `src/characters/filters.ts` — character screen filters
-- `src/characters/derivatives.ts` — derivative tracking
-- `src/characters/types.ts` — type definitions
+### Phase 2: Admin Management (Week 2)
+
+- [ ] Implement admin override system
+- [ ] Add content policy enforcement
+- [ ] Add NSFW policy enforcement
+- [ ] Add licensing policy enforcement
+- [ ] Add admin notification system
+
+### Phase 3: Integration (Week 3)
+
+- [ ] Integrate with character CRUD
+- [ ] Integrate with import/export
+- [ ] Integrate with chat generation
+- [ ] Add character screen filters
+- [ ] Add availability checks
+
+### Phase 4: UI & Testing (Week 4)
+
+- [ ] Add availability editor in character UI
+- [ ] Add license selector UI
+- [ ] Add admin management UI
+- [ ] Write unit tests for availability
+- [ ] Write unit tests for licensing
+- [ ] Write integration tests with admin system
+
+## Files to Create
+
+- `src/characters/availability.ts` — Availability CRUD
+- `src/characters/licensing.ts` — Licensing CRUD
+- `src/characters/admin-management.ts` — Admin overrides
+- `src/characters/filters.ts` — Character screen filters
+- `src/db/schema-availability.ts` — Availability tables
+- `src/routes/character-availability.ts` — API endpoints
+- `src/components/availability-editor.html` — UI component
+- `src/components/license-selector.html` — License UI
+
+## Files to Modify
+
+- `src/db/schema-core.ts` — Availability column types
+- `src/db/migrations/` — New tables
+- `src/characters/core.ts` — Availability integration
+- `src/characters/parser.ts` — License import/export
+- `src/routes/characters.ts` — Availability checks
+- `src/views/character-editor.html` — Availability UI
+- `src/admin/` — Admin management
+
+## Risk
+
+Medium — licensing complexity, admin override ethics, content policy enforcement. Need clear documentation and appeal process.
+
+## Related
+
+- TASK-character-world-data-separation.md — Character core
+- TASK-character-personality-integrity.md — Personality is immutable
+- epic-character-core-system.md — Parent epic
+- epic-import-export-io.md — Import/export integration
