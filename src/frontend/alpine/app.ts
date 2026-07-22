@@ -1,5 +1,12 @@
 import { log as rootLog, } from "./logger";
 import { initTelemetry, } from "./telemetry";
+import {
+  type TranslationMap,
+  resolveKey,
+  getSavedLocale,
+  saveLocale,
+  applyDirection,
+} from "../i18n";
 
 const log = rootLog.child({ module: "app", },);
 
@@ -8,12 +15,13 @@ globalThis.app = function() {
     toasts: [] as Array<{ type: string; msg: string; icon: string }>,
     currentTheme: "default",
     sidebarOpen: false,
-    currentLocale: "en",
-    localeStrings: {} as Record<string, string>,
+    currentLocale: getSavedLocale(),
+    localeStrings: {} as TranslationMap,
     pageTitle: "loop-lore",
 
     __(key: string, fallback?: string,): string {
-      return this.localeStrings[key] || fallback || key;
+      const value = resolveKey(this.localeStrings as TranslationMap, key);
+      return value ?? fallback ?? key;
     },
 
     init() {
@@ -27,7 +35,12 @@ globalThis.app = function() {
         this.currentTheme = savedTheme;
       }
       this.applyTheme(this.currentTheme,);
-      this.loadLocale("en",);
+
+      // Load saved locale (cookie already set by server)
+      const locale = getSavedLocale();
+      this.currentLocale = locale;
+      applyDirection(locale);
+      this.loadLocale(locale);
     },
 
     applyTheme(themeId: string,) {
@@ -61,12 +74,13 @@ globalThis.app = function() {
       try {
         const res = await fetch(`/locales/${locale}.json`,);
         if (res.ok) {
-          const strings = await res.json();
+          const strings = await res.json() as TranslationMap;
           this.localeStrings = strings;
-          globalThis.__localeStrings = strings;
+          globalThis.__localeStrings = strings as any;
+          applyDirection(locale as any,);
         }
       } catch {
-        // fallback
+        // fallback to key display
       }
     },
 
@@ -87,11 +101,9 @@ globalThis.app = function() {
     },
 
     setLocale(localeId: string,) {
-      localStorage.setItem("locale", localeId,);
+      saveLocale(localeId as any,);
       this.currentLocale = localeId;
       this.loadLocale(localeId,);
-      // Set cookie for server-side locale detection
-      document.cookie = `ll_locale=${localeId}; path=/; SameSite=Lax; max-age=31536000`;
     },
 
     async logout() {
