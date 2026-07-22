@@ -19,6 +19,8 @@ export type {
   ImageEditProvider,
   ImageEditRequest,
   ImageEditResult,
+  LoraEntry,
+  LoraTemplateParams,
   TemplateParameter,
   TemplateParamType,
   WorkflowTemplate,

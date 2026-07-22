@@ -29,7 +29,28 @@ export type TemplateParamType =
   | "number"
   | "boolean"
   | "select"
-  | "image";
+  | "image"
+  | "lora";
+
+// ── LORA Support ─────────────────────────────────────────────
+
+/** A single LoRA model entry */
+export interface LoraEntry {
+  /** Path to LoRA file (relative to loraModelDir or absolute) */
+  path: string;
+  /** Strength multiplier (0.0–2.0 typical) */
+  strength: number;
+  /** Whether this is a high-noise LoRA (applied at higher denoise) */
+  isHighNoise?: boolean;
+}
+
+/** LORA-aware template extension */
+export interface LoraTemplateParams {
+  /** Available LoRA models for selection */
+  available_loras?: { path: string; label: string }[];
+  /** Default LoRA entries */
+  default_loras?: LoraEntry[];
+}
 
 /** A single parameter exposed in the template UI */
 export interface TemplateParameter {
