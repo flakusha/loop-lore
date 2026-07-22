@@ -148,6 +148,7 @@ epics where applicable.
 | Character Memory Injection & Privacy      | High   | 25                     | ⬜ Not Started |
 | Chat External Music Linking               | Low    | 36                       | ⬜ Not Started |
 | Context-Based Feature Permissions (UI Gating) | Med  | 37                       | ⬜ Not Started |
+| Data Migration Transitivity Tracking            | Medium | 34                 | ⬜ Not Started |
 
 **Cross-references:**
 - `docs/frontend/chat/search-and-filter.md` — UX spec for search + filters
@@ -161,6 +162,7 @@ epics where applicable.
 - `TASK-character-memory-injection.md` — injection probability, privacy levels, secrets
 - `TASK-chat-external-music-linking.md` — external service embeds, no server download
 - `TASK-chat-context-feature-permissions.md` — UI feature gating based on context
+- `TASK-data-migration-transitivity.md` — migration state lifecycle, validation gating
 
 ---
 
