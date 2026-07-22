@@ -3,7 +3,7 @@
 **Epic:** Character Core System
 **Priority:** High
 **Effort:** Medium
-**Status:** Not Started
+**Status:** In Progress (services + routes done, needs validation)
 **Supersedes:** TASK-character-multi-personality.md
 
 ## Summary
