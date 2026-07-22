@@ -7,7 +7,7 @@
  * This module computes transition metadata — the actual message
  * archiving and memory promotion are handled by the message routes.
  */
-import { estimateTokens, } from "./context-window";
+import { estimateTokens, } from "./token-utils";
 import type { ChatTransition, MessageRef, TransitionType, } from "./types";
 
 // ─── Transition Detection ─────────────────────────────────────
@@ -98,18 +98,17 @@ export function selectMessagesForPromotion(
   const promoted: string[] = [];
   let totalTokens = 0;
 
-  // Walk from oldest to newest, promote messages that won't fit
-  // (simple age-based promotion; scoring is in message-scorer.ts)
   for (const msg of messages) {
     const msgTokens = msg.tokenCount || estimateTokens(msg.content,);
     totalTokens += msgTokens;
 
-    // Promote messages that are beyond the token budget
-    // Only promote if the message has meaningful content
-    // (length-based heuristic; will use score-based threshold from message-scorer.ts)
-    const contentLength = msg.content.length;
-    const hasSignificantContent = contentLength > 50 && (contentLength / 200) >= promotionThreshold;
-    if (totalTokens > maxTokens && hasSignificantContent) {
+    if (totalTokens <= maxTokens) { continue; }
+
+    // Use composite score when available; fall back to length heuristic
+    const effectiveScore = msg.score ?? (msg.content.length > 50
+      ? Math.min(1, msg.content.length / 200,)
+      : 0);
+    if (effectiveScore >= promotionThreshold) {
       promoted.push(msg.messageId,);
     }
   }
