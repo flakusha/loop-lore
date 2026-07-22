@@ -7,6 +7,7 @@
  * @module chat
  */
 export type {
+  ChatMode,
   ChatTransition,
   ContextThreshold,
   ContextThresholds,
@@ -15,6 +16,7 @@ export type {
   MemoryRef,
   MessageRef,
   MessageScore,
+  ModeFeatureFlags,
   ModerationAction,
   ModerationActionType,
   ModerationScope,
@@ -23,7 +25,7 @@ export type {
   TransitionType,
 } from "./types";
 
-export { RESPONSE_LENGTH_DEFAULTS, } from "./types";
+export { MODE_DEFAULTS, resolveFeatureFlags, RESPONSE_LENGTH_DEFAULTS, } from "./types";
 
 export {
   computeContextWindow,
