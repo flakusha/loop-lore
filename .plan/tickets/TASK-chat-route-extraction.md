@@ -1,6 +1,6 @@
 # TASK: Extract chat business logic from routes
 
-**Issue:** db5a19a
+**Issue:** db5a19ae-d4b9-4860-9905-96036be43286
 **Status:** open
 **Priority:** medium
 **Epic:** EPIC-2026-37
