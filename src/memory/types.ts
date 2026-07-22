@@ -101,4 +101,6 @@ export interface PurgeConfig {
   hardDelete: boolean;
   /** Minimum confidence to survive purge. */
   minConfidence: number;
+  /** Minimum strength to survive purge (strength decays over time). */
+  minStrength: number;
 }
