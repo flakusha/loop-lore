@@ -67,6 +67,10 @@ Ordered by user impact × effort. Items with partial `src/` code listed first.
 | Chat external music linking (no server download)                        | `TASK-chat-external-music-linking.md`                                   | Browser-native embeds from Spotify/YouTube/SoundCloud; copyright-safe              |
 | Context-based feature permissions (UI gating)                           | `TASK-chat-context-feature-permissions.md`                              | UI features gated by chat/world/location context                                   |
 | Data migration transitivity tracking (migrated-validated states)        | `TASK-data-migration-transitivity.md`                                   | Migration states beyond data_version for rollback/safety                           |
+| Context window monitor (token usage indicator)                          | `TASK-context-window-monitor.md`                                        | FEAT-069 — progress bar, threshold colors, per-chat setting                        |
+| Smart context pruning (score-based trimming + memory promotion)         | `TASK-smart-context-pruning.md`                                         | FEAT-072 — message scoring, pruning pipeline, promotion to actor_memories          |
+| Quick-regen button (one-click response regeneration)                    | `TASK-quick-regen-button.md`                                            | FEAT-070 — archive original, re-generate with overrides                            |
+| Response length control (presets + custom max_tokens)                   | `TASK-response-length-control.md`                                       | FEAT-071 — Short/Medium/Long/Custom presets, per-chat override                     |
 
 ## Generation Templates (FEAT-065 — expanded)
 
