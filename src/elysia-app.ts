@@ -34,6 +34,7 @@ import { characterMoodRoutes, } from "./routes/character-mood";
 import { characterRelationshipsRoutes, } from "./routes/character-relationships";
 import { characterTraitsRoutes, } from "./routes/character-traits";
 import { charactersRoutes, } from "./routes/characters";
+import { chatContextRoutes, } from "./routes/chat-context";
 import { chatExportRoutes, } from "./routes/chat-export";
 import { chatPinRoutes, } from "./routes/chat-pins";
 import { chatsRoutes, } from "./routes/chats";
@@ -139,6 +140,7 @@ export function createApp(deps: AppDeps,): Elysia {
   app.use(chatsRoutes(handleOpts,),);
   app.use(chatPinRoutes(handleOpts,),);
   app.use(chatExportRoutes(handleOpts,),);
+  app.use(chatContextRoutes(handleOpts,),);
   app.use(importRoutes(handleOpts,),);
   app.use(personaRoutes(handleOpts,),);
   app.use(generationRoutes(handleOpts,),);
