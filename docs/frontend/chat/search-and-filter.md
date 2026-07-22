@@ -26,6 +26,7 @@ When the hamburger sidebar is open, a search input sits at the top of the
 ```
 
 **Behavior:**
+
 - Debounced input (300ms) — filters the chat list in-place (client-side for
   loaded chats, server-side for broader search)
 - Matching: character name, chat name/title, world name, tags
@@ -44,15 +45,15 @@ Returns chats matching the query across all user's chats. Response:
 ```typescript
 interface ChatSearchResult {
   chatId: string;
-  chatName: string;           // auto-generated or user-set name
+  chatName: string; // auto-generated or user-set name
   characterName: string;
-  characterAvatar: string;    // URL
+  characterAvatar: string; // URL
   worldName?: string;
   lastMessagePreview: string;
   lastMessageAt: string;
   messageCount: number;
   participantCount: number;
-  matchContext: string;       // snippet showing where match occurred
+  matchContext: string; // snippet showing where match occurred
 }
 ```
 
@@ -79,6 +80,7 @@ interface JoinableChat {
 ```
 
 **Join flow:**
+
 1. User searches or browses joinable chats
 2. Clicks "Join" on a chat
 3. Confirmation dialog (optional, configurable)
@@ -86,6 +88,7 @@ interface JoinableChat {
 5. History visible from join point forward (or full history if public)
 
 **Transfer to new location** (within a chat):
+
 - Discussed in `epic-chat-transfer-location.md` and
   `TASK-chat-sectioning-multi-location.md`
 - When a user transfers, the chat's location updates and a section
@@ -113,22 +116,23 @@ Below the search input, a row of filter chips narrows the chat list:
 
 **Filter dimensions:**
 
-| Filter          | Type       | Options                                                         |
-| --------------- | ---------- | --------------------------------------------------------------- |
-| Type            | Chips      | All, Direct, Group                                              |
-| World           | Dropdown   | All worlds, specific world names                                |
-| Tags            | Multi-select| User-defined tags on chats (if implemented) or character tags  |
-| Participant count | Range    | 1 (solo), 2, 3-5, 6+                                           |
-| Message count   | Range      | <10, 10-50, 50-200, 200+                                       |
-| Has attachments | Toggle     | Show only chats with media                                      |
-| Last active     | Dropdown   | Today, This week, This month, Older                            |
-| Pinned          | Toggle     | Show only pinned chats                                          |
-| Has world       | Toggle     | Show only world-linked chats vs freeform                       |
+| Filter            | Type         | Options                                                       |
+| ----------------- | ------------ | ------------------------------------------------------------- |
+| Type              | Chips        | All, Direct, Group                                            |
+| World             | Dropdown     | All worlds, specific world names                              |
+| Tags              | Multi-select | User-defined tags on chats (if implemented) or character tags |
+| Participant count | Range        | 1 (solo), 2, 3-5, 6+                                          |
+| Message count     | Range        | <10, 10-50, 50-200, 200+                                      |
+| Has attachments   | Toggle       | Show only chats with media                                    |
+| Last active       | Dropdown     | Today, This week, This month, Older                           |
+| Pinned            | Toggle       | Show only pinned chats                                        |
+| Has world         | Toggle       | Show only world-linked chats vs freeform                      |
 
 **Combined filters:** Multiple filters compose with AND logic. Selecting
 "All" on any dimension clears that filter.
 
 **Active filters display:**
+
 - Active filters shown as removable chips below the filter row
 - "Clear all" link when ≥1 filter active
 - Filter state persisted in `localStorage` (survives page reload)
@@ -180,6 +184,7 @@ Within an open chat, a search icon in the chat header opens a search bar:
 ```
 
 **Behavior:**
+
 - Searches message `content` field (text)
 - Highlighted matches in message bubbles (yellow background, `--accent-yellow`)
 - "N of M matches" counter with up/down arrows to jump between matches
@@ -203,15 +208,16 @@ interface MessageSearchResult {
   chatId: string;
   chatName: string;
   role: "user" | "character" | "assistant" | "system";
-  content: string;           // full content
-  matchContext: string;      // highlighted snippet
+  content: string; // full content
+  matchContext: string; // highlighted snippet
   createdAt: string;
   attachments?: MessageAttachment[];
-  matchScore: number;        // relevance score (FTS)
+  matchScore: number; // relevance score (FTS)
 }
 ```
 
 **Search result UI:**
+
 - List of matching messages, grouped by chat
 - Each result shows: avatar, role badge, chat name, snippet with highlights
 - Click result → navigate to that chat, scroll to message, flash-highlight
@@ -244,6 +250,7 @@ GET /api/messages/search?chatId=<id>&linkPattern=youtube|spotify|soundcloud
 filterable by domain. Audio links get a special music note icon.
 
 **Common link patterns:**
+
 - Music: youtube.com, spotify.com, soundcloud.com, bandcamp.com
 - Images: imgur.com, i.redd.it, pixiv.net
 - Documents: docs.google.com, notion.so
@@ -252,21 +259,21 @@ filterable by domain. Audio links get a special music note icon.
 
 Filter messages by sender:
 
-| Filter     | Description                           |
-| ---------- | ------------------------------------- |
-| All        | All roles                             |
-| User       | Messages from the current user        |
-| Character  | Messages from AI characters           |
-| Assistant  | Messages from the assistant/GM        |
-| System     | System/narration messages             |
+| Filter    | Description                    |
+| --------- | ------------------------------ |
+| All       | All roles                      |
+| User      | Messages from the current user |
+| Character | Messages from AI characters    |
+| Assistant | Messages from the assistant/GM |
+| System    | System/narration messages      |
 
 ### Search Performance
 
-| Scope             | Engine           | Notes                                    |
-| ----------------- | ---------------- | ---------------------------------------- |
-| In-chat (v1)      | LIKE + trigram   | Adequate for <10K messages per chat      |
-| Cross-chat (v1)   | FTS5 virtual table| SQLite FTS5 with porter tokenizer       |
-| Cross-chat (v2)   | PG full-text     | When migrating to Postgres               |
+| Scope           | Engine             | Notes                               |
+| --------------- | ------------------ | ----------------------------------- |
+| In-chat (v1)    | LIKE + trigram     | Adequate for <10K messages per chat |
+| Cross-chat (v1) | FTS5 virtual table | SQLite FTS5 with porter tokenizer   |
+| Cross-chat (v2) | PG full-text       | When migrating to Postgres          |
 
 **Index:** `messages_fts` virtual table on `content` column, updated on
 message insert/edit. Rebuild on migration.

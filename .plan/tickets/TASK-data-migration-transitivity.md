@@ -26,11 +26,11 @@ progress tracking.
 
 ```typescript
 type MigrationState =
-  | "legacy"           // Original format, pre-migration
-  | "migrating"        // In-progress transition
-  | "migrated"         // Transformed, not validated
-  | "validated"        // Migrated + passed integrity checks
-  | "failed";          // Validation failed, requires manual intervention
+  | "legacy" // Original format, pre-migration
+  | "migrating" // In-progress transition
+  | "migrated" // Transformed, not validated
+  | "validated" // Migrated + passed integrity checks
+  | "failed"; // Validation failed, requires manual intervention
 
 interface DataTransitivity {
   table_name: string;
@@ -40,7 +40,7 @@ interface DataTransitivity {
   validated_at?: Date;
   version_from?: number;
   version_to?: number;
-  signature?: string;  // Hash of migrated data for integrity
+  signature?: string; // Hash of migrated data for integrity
 }
 ```
 
@@ -65,7 +65,6 @@ interface DataTransitivity {
 - `src/db/migrations/` — state transition logic
 - `src/services/migration-tracker.ts` — state management
 - `src/routes/admin/migrations.ts` — state queries
-
 
 ## Risk
 
