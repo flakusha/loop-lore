@@ -9,8 +9,8 @@
 import type { Kysely, } from "kysely";
 import type { DB, } from "../db/schema";
 import { computeContextWindow, } from "./context-window";
-import { estimateTokens, } from "./context-window";
 import { resolveResponseLength, } from "./response-length";
+import { estimateTokens, } from "./token-utils";
 import type { ResponseLengthPreset, } from "./types";
 import { resolveFeatureFlags, } from "./types";
 import type { ContextWindow, ModeFeatureFlags, ResponseLengthConfig, } from "./types";
