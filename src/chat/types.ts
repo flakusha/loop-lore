@@ -82,6 +82,8 @@ export interface MessageRef {
   content: string;
   tokenCount: number;
   createdAt: string;
+  /** Composite importance score (0-1). When absent, falls back to length heuristic. */
+  score?: number;
 }
 
 /** A memory reference injected into context */
