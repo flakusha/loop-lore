@@ -66,6 +66,7 @@ Ordered by user impact × effort. Items with partial `src/` code listed first.
 | Memory injection probability & privacy (secrets sharing)                | `TASK-character-memory-injection.md`                                 | Not all memories injected; privacy levels, comfort-based sharing           |
 | Chat external music linking (no server download)                        | `TASK-chat-external-music-linking.md`                                | Browser-native embeds from Spotify/YouTube/SoundCloud; copyright-safe       |
 | Context-based feature permissions (UI gating)                           | `TASK-chat-context-feature-permissions.md`                           | UI features gated by chat/world/location context                           |
+| Data migration transitivity tracking (migrated-validated states)        | `TASK-data-migration-transitivity.md`                           | Migration states beyond data_version for rollback/safety                    |
 
 ## Generation Templates (FEAT-065 — expanded)
 
