@@ -1,3 +1,5 @@
+> High-level notes — may drift from implementation. Authoritative source is `src/` and AGENTS.md.
+
 # Advanced Memory Systems Specification
 
 ⚠️ **Status: NOT IMPLEMENTED.** Three-tier memory (episodic/semantic/procedural) is aspirational.

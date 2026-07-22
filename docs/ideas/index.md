@@ -1,7 +1,7 @@
 # Creative Ideas Hub
 
 Research-driven feature proposals for loop-lore, derived from a deep-dive of `docs/`
-plus analysis of competitor projects (SillyTavern, RisuAI, Agnai) and community
+plus analysis of community projects (SillyTavern, RisuAI, Agnai) and community
 feature requests. Each theme is broken into its own document and linked below.
 
 > These are **proposals** — not yet scheduled in `docs/meta/roadmap.md` or

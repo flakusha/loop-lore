@@ -32,28 +32,56 @@ Ordered by user impact × effort. Items with partial `src/` code listed first.
 
 ## P2 — Specified, Not Implemented
 
-| Feature                                                     | Spec                                                                    | Notes                                                                              |
-| ----------------------------------------------------------- | ----------------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
-| Multi-format character import (PNG/YAML/TOML/CHARX)         | `docs/spec/character-setup.md`                                          | Only JSON import works                                                             |
-| Impersonation (`chat.impersonate_id`)                       | `docs/spec/character-setup.md`                                          | Not implemented                                                                    |
-| RPG mechanics (dice, stats, combat, XP, loot)               | `docs/spec/rpg-mechanics.md`, `docs/spec/rpg-implementation-roadmap.md` | `src/rpg/` does not exist                                                          |
-| Three-tier memory system (episodic/semantic/procedural)     | `docs/spec/memory-system.md`                                            | Only `actor_memories` table exists                                                 |
-| Artifact system (code/docs/datasets as assets)              | `docs/spec/artifacts-system.md`                                         | Not implemented                                                                    |
-| Agentic workspace mode                                      | `docs/spec/use-case-agentic-workspace.md`                               | Not implemented                                                                    |
-| Client-side encryption (AES-256-GCM, key hierarchy)         | `docs/frontend/encryption.md`, `docs/spec/encryption-workflow.md`       | Messages stored as plaintext                                                       |
-| Frontend story mode UI (GM panel, quest log, story chat)    | `docs/frontend/chat/multi-llm-story.md`                                 | Backend `src/story/` exists; no frontend                                           |
-| Message archiving (cascade, restore, purge)                 | `docs/frontend/chat/archiving.md`, `docs/spec/archival-workflow.md`     | Hard delete only                                                                   |
-| Memory selection UI (mid-chat panel, pinning, auto-extract) | `docs/frontend/chat/memories.md`                                        | Backend reads memories; no UI                                                      |
-| Server-side i18n middleware (`req.t`)                       | `docs/frontend/internationalization.md`                                 | Minimal client-side `__()` only                                                    |
-| Anthropic/Ollama/Bedrock providers                          | `docs/spec/provider-system.md`                                          | Only OpenAI-compatible exists                                                      |
-| Plugin management API (install/list/enable/disable)         | `docs/spec/plugin-system.md`                                            | Plugin skeleton loads files; no API                                                |
-| Signed URLs for asset downloads                             | `docs/spec/assets.md`, `docs/spec/access-model-clarification.md`        | Uses `raw` endpoint with Bearer auth                                               |
-| `POST /api/auth/register`                                   | `docs/spec/auth-middleware.md`                                          | Not implemented                                                                    |
-| `/api/sessions` routes                                      | `docs/spec/users-sessions.md`                                           | Not implemented                                                                    |
-| Notification system with noise filtering                    | `docs/spec/notifications-expansion.md`                                  | Basic toasts exist; full system needed                                             |
-| Model comparison reactions                                  | `docs/spec/notifications-expansion.md`                                  | Reactions table exists; no comparison API                                          |
-| Assistant `/commands` extension                             | `docs/spec/assistant-commands.md`                                       | Command parser exists (`src/assistant/command-parser.ts`); no slash commands wired |
-| Combined filter support                                     | `docs/spec/filtering-pagination.md`                                     | Single filter only                                                                 |
+| Feature                                                                 | Spec                                                                    | Notes                                                                              |
+| ----------------------------------------------------------------------- | ----------------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
+| Multi-format character import (PNG/YAML/TOML/CHARX)                     | `docs/spec/character-setup.md`                                          | Only JSON import works                                                             |
+| Impersonation (`chat.impersonate_id`)                                   | `docs/spec/character-setup.md`                                          | Not implemented                                                                    |
+| RPG mechanics (dice, stats, combat, XP, loot)                           | `docs/spec/rpg-mechanics.md`, `docs/spec/rpg-implementation-roadmap.md` | `src/rpg/` does not exist                                                          |
+| Three-tier memory system (episodic/semantic/procedural)                 | `docs/spec/memory-system.md`                                            | Only `actor_memories` table exists                                                 |
+| Artifact system (code/docs/datasets as assets)                          | `docs/spec/artifacts-system.md`                                         | Not implemented                                                                    |
+| Agentic workspace mode                                                  | `docs/spec/use-case-agentic-workspace.md`                               | Not implemented                                                                    |
+| Client-side encryption (AES-256-GCM, key hierarchy)                     | `docs/frontend/encryption.md`, `docs/spec/encryption-workflow.md`       | Messages stored as plaintext                                                       |
+| Frontend story mode UI (GM panel, quest log, story chat)                | `docs/frontend/chat/multi-llm-story.md`                                 | Backend `src/story/` exists; no frontend                                           |
+| Message archiving (cascade, restore, purge)                             | `docs/frontend/chat/archiving.md`, `docs/spec/archival-workflow.md`     | Hard delete only                                                                   |
+| Memory selection UI (mid-chat panel, pinning, auto-extract)             | `docs/frontend/chat/memories.md`                                        | Backend reads memories; no UI                                                      |
+| Server-side i18n middleware (`req.t`)                                   | `docs/frontend/internationalization.md`                                 | Minimal client-side `__()` only                                                    |
+| Anthropic/Ollama/Bedrock providers                                      | `docs/spec/provider-system.md`                                          | Only OpenAI-compatible exists                                                      |
+| Plugin management API (install/list/enable/disable)                     | `docs/spec/plugin-system.md`                                            | Plugin skeleton loads files; no API                                                |
+| Signed URLs for asset downloads                                         | `docs/spec/assets.md`, `docs/spec/access-model-clarification.md`        | Uses `raw` endpoint with Bearer auth                                               |
+| `POST /api/auth/register`                                               | `docs/spec/auth-middleware.md`                                          | Not implemented                                                                    |
+| `/api/sessions` routes                                                  | `docs/spec/users-sessions.md`                                           | Not implemented                                                                    |
+| Notification system with noise filtering                                | `docs/spec/notifications-expansion.md`                                  | Basic toasts exist; full system needed                                             |
+| Model comparison reactions                                              | `docs/spec/notifications-expansion.md`                                  | Reactions table exists; no comparison API                                          |
+| Assistant `/commands` extension                                         | `docs/spec/assistant-commands.md`                                       | Command parser exists (`src/assistant/command-parser.ts`); no slash commands wired |
+| Combined filter support                                                 | `docs/spec/filtering-pagination.md`                                     | Single filter only                                                                 |
+| Chat room search & join (find/join chats, location-aware)               | `docs/frontend/chat/search-and-filter.md`                               | `TASK-chat-room-search-join.md` — sidebar search, joinable discovery               |
+| Chat room filters (type, world, tags, participant count)                | `docs/frontend/chat/search-and-filter.md`                               | `TASK-chat-room-filters.md` — filter chips, combined filters (Epic 24 gap)         |
+| Chat message search & filter (FTS, assets, links, role)                 | `docs/frontend/chat/search-and-filter.md`                               | `TASK-chat-message-search.md` — FTS5 index, in-chat + cross-chat search            |
+| Chat autorenaming (context-based auto-title)                            | `docs/frontend/chat/overview.md`                                        | `TASK-chat-autorenaming.md` — rule-based + LLM rename                              |
+| Visual novel mode (image + text overlay, transitions)                   | `docs/frontend/chat/visual-novel-mode.md`                               | `TASK-visual-novel-mode.md` — 3 layout modes, typewriter, scene transitions        |
+| 3D view modes (permanent/collapsible/inline panels)                     | `TASK-3d-view-modes.md`                                                 | Consolidated from 3 old tasks: VRM avatars, GLTF, Spine 2D, device tier gating     |
+| Text effects & overlays (glow, shake, status bars, icons)               | `docs/frontend/chat/text-effects-overlays.md`                           | `TASK-text-effects-overlays.md` — CSS effects, overlay components, decoration      |
+| Character multi-personality (personality switching, world/chat locking) | `TASK-character-multi-personality.md`                                   | Mood system needs personality switching, world/chat config locking                 |
+| Mood swings & happiness meter (mood impact on personality)              | `TASK-character-mood-happiness.md`                                      | Happiness level affects personality, dialogue, and behavior                        |
+| Memory injection probability & privacy (secrets sharing)                | `TASK-character-memory-injection.md`                                    | Not all memories injected; privacy levels, comfort-based sharing                   |
+| Chat external music linking (no server download)                        | `TASK-chat-external-music-linking.md`                                   | Browser-native embeds from Spotify/YouTube/SoundCloud; copyright-safe              |
+| Context-based feature permissions (UI gating)                           | `TASK-chat-context-feature-permissions.md`                              | UI features gated by chat/world/location context                                   |
+| Data migration transitivity tracking (migrated-validated states)        | `TASK-data-migration-transitivity.md`                                   | Migration states beyond data_version for rollback/safety                           |
+
+## Generation Templates (FEAT-065 — expanded)
+
+Unified prompt template system across LLM, image, video, audio. Image templates
+already implemented (`src/generation/prompt-templates.ts`); LLM assembler hardcoded
+(`src/assistant/prompt-assembler.ts`); video/audio not started.
+
+| Item                                     | Spec / Plan                                         | Status     |
+| ---------------------------------------- | --------------------------------------------------- | ---------- |
+| FEAT-065 parent (expanded scope)         | `.plan/tickets/FEAT-065-prompt-library-expanded.md` | 📋 Planned |
+| FEAT-065-LLM: LLM prompt templates       | `.plan/tickets/FEAT-065-sub-llm.md`                 | 📋 Planned |
+| FEAT-065-IMG: Image template persistence | `.plan/tickets/FEAT-065-sub-image.md`               | 📋 Planned |
+| FEAT-065-VID: Video generation templates | `.plan/tickets/FEAT-065-sub-video.md`               | 📋 Planned |
+| FEAT-065-AUD: Audio/sound templates      | `.plan/tickets/FEAT-065-sub-audio.md`               | 📋 Planned |
+| Unified Template Registry spec           | `docs/spec/template-system.md`                      | 📋 Draft   |
 
 ## Quick Wins — Low Effort, High Leverage
 
