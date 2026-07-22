@@ -149,6 +149,10 @@ epics where applicable.
 | Chat External Music Linking                   | Low      | 36                       | ⬜ Not Started |
 | Context-Based Feature Permissions (UI Gating) | Med      | 37                       | ⬜ Not Started |
 | Data Migration Transitivity Tracking          | Medium   | 34                       | ⬜ Not Started |
+| Context Window Monitor (FEAT-069)             | Low–Med  | 36                       | ⬜ Not Started |
+| Smart Context Pruning (FEAT-072)              | Med      | 36                       | ⬜ Not Started |
+| Quick-Regen Button (FEAT-070)                 | Low      | 51                       | ⬜ Not Started |
+| Response Length Control (FEAT-071)            | Low      | 51                       | ⬜ Not Started |
 
 **Cross-references:**
 
