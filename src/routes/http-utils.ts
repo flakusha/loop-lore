@@ -7,6 +7,7 @@
  * @module http-utils
  */
 
+import type { TranslatorFn, } from "../i18n/types";
 import { safeJsonStringify, } from "../utils";
 
 // ── HTTP status code constants ────────────────────────────────
@@ -275,18 +276,20 @@ export function num(body: Record<string, unknown>, key: string,): number | undef
 // ── Common error response factories ───────────────────────────
 
 /** 404 Not Found with NOT_FOUND code. */
-export function notFoundResponse(message = "Not found",): Response {
-  return jsonError({ message, status: HttpStatus.NotFound, code: ErrorCode.NotFound, },);
+export function notFoundResponse(message?: string, t?: TranslatorFn,): Response {
+  const msg = message ?? t?.("errors.notFound",) ?? "Not found";
+  return jsonError({ message: msg, status: HttpStatus.NotFound, code: ErrorCode.NotFound, },);
 }
 
 /** 404 "Not found or not owner" — ownership check failure. */
-export function notOwnerResponse(entity = "Resource",): Response {
-  return notFoundResponse(`${entity} not found or not owner`,);
+export function notOwnerResponse(entity = "Resource", t?: TranslatorFn,): Response {
+  return notFoundResponse(`${entity} ${t?.("errors.notFound",) ?? "not found or not owner"}`, t,);
 }
 
 /** 401 Unauthorized. */
-export function unauthorizedResponse(message = "Unauthorized",): Response {
-  return jsonError({ message, status: HttpStatus.Unauthorized, code: ErrorCode.Unauthorized, },);
+export function unauthorizedResponse(message?: string, t?: TranslatorFn,): Response {
+  const msg = message ?? t?.("errors.unauthorized",) ?? "Unauthorized";
+  return jsonError({ message: msg, status: HttpStatus.Unauthorized, code: ErrorCode.Unauthorized, },);
 }
 
 /** 400 Bad Request with message. */

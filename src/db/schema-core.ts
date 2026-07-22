@@ -354,3 +354,18 @@ export interface ChatPins {
   pinned_by: string;
   pinned_at: Generated<string>;
 }
+
+// ── Message Translations ────────────────────────────────────
+export interface MessageTranslations {
+  id: Generated<string>;
+  /** FK → messages.id */
+  message_id: string;
+  /** Locale code: "ja", "de", etc. */
+  locale: string;
+  /** Translated content */
+  content: string;
+  /** Translation provider: "manual", "google", "deepl", etc. */
+  provider: string | null;
+  created_at: Generated<string>;
+  updated_at: string | null;
+}

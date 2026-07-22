@@ -90,6 +90,8 @@ globalThis.app = function() {
       localStorage.setItem("locale", localeId,);
       this.currentLocale = localeId;
       this.loadLocale(localeId,);
+      // Set cookie for server-side locale detection
+      document.cookie = `ll_locale=${localeId}; path=/; SameSite=Lax; max-age=31536000`;
     },
 
     async logout() {

@@ -21,6 +21,7 @@ export interface DB {
   characters: import("./schema-core").Characters;
   personas: import("./schema-core").Personas;
   messages: import("./schema-core").Messages;
+  message_translations: import("./schema-core").MessageTranslations;
   actor_keys: import("./schema-core").ActorKeys;
   group_initiatives: import("./schema-core").GroupInitiatives;
   chat_mentions: import("./schema-core").ChatMentions;
