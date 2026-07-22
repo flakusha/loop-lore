@@ -25,12 +25,12 @@ state.
 
 ### Personality Switching Modes
 
-| Mode | Trigger | Description |
-|---|---|---|
-| **Random** | Turn-based or time-based | Personality changes randomly at intervals |
-| **Stimulus** | Events, mood, world state | Personality shifts based on triggers |
-| **Locked** | World/chat config | Personality fixed to a specific variant |
-| **Manual** | User/command | User selects active personality |
+| Mode         | Trigger                   | Description                               |
+| ------------ | ------------------------- | ----------------------------------------- |
+| **Random**   | Turn-based or time-based  | Personality changes randomly at intervals |
+| **Stimulus** | Events, mood, world state | Personality shifts based on triggers      |
+| **Locked**   | World/chat config         | Personality fixed to a specific variant   |
+| **Manual**   | User/command              | User selects active personality           |
 
 ### Personality Definition
 

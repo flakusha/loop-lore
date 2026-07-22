@@ -55,27 +55,27 @@ interface LlmTemplateSection {
 
 ### Variables
 
-| Variable | Source | Example |
-| -------- | ------ | ------- |
-| `{{charName}}` | actors.display_name | "Aria" |
-| `{{charDescription}}` | actors.description | "A skilled elven archer..." |
-| `{{userDescription}}` | user persona / actors (user) | "A weary traveler" |
-| `{{chatHistory}}` | messages (latest N) | "Aria: Hello!\nUser: Hi" |
-| `{{sceneSummary}}` | chats.world_id → location_states | "Forest clearing at dusk" |
-| `{{loreEntries}}` | actor_lore_entries + world_lore_entries | "The ancient pact..." |
-| `{{memories}}` | actor_memories (semantic) | "- Fought dragon" |
-| `{{postHistory}}` | actors.post_history_instructions | "Always respond in character" |
-| `{{examples}}` | actors.mes_example | "Aria: *draws bow*" |
+| Variable              | Source                                  | Example                       |
+| --------------------- | --------------------------------------- | ----------------------------- |
+| `{{charName}}`        | actors.display_name                     | "Aria"                        |
+| `{{charDescription}}` | actors.description                      | "A skilled elven archer..."   |
+| `{{userDescription}}` | user persona / actors (user)            | "A weary traveler"            |
+| `{{chatHistory}}`     | messages (latest N)                     | "Aria: Hello!\nUser: Hi"      |
+| `{{sceneSummary}}`    | chats.world_id → location_states        | "Forest clearing at dusk"     |
+| `{{loreEntries}}`     | actor_lore_entries + world_lore_entries | "The ancient pact..."         |
+| `{{memories}}`        | actor_memories (semantic)               | "- Fought dragon"             |
+| `{{postHistory}}`     | actors.post_history_instructions        | "Always respond in character" |
+| `{{examples}}`        | actors.mes_example                      | "Aria: _draws bow_"           |
 
 ### Preset Library (built-in)
 
-| Preset | Use Case | Sections |
-| ------ | -------- | -------- |
-| `roleplay` | Character chat | system, actor-header, lore, memory, post-history, chat-history |
-| `assistant` | Assistant mode | system (ASSISTANT_SYSTEM_PROMPT), user-persona, chat-history |
-| `story-gm` | RPG turn | system, actor-header, story-context, recent-events, chat-history |
-| `code` | Code gen | system (code instructions), chat-history |
-| `creative` | Creative writing | system, actor-header, examples, chat-history |
+| Preset      | Use Case         | Sections                                                         |
+| ----------- | ---------------- | ---------------------------------------------------------------- |
+| `roleplay`  | Character chat   | system, actor-header, lore, memory, post-history, chat-history   |
+| `assistant` | Assistant mode   | system (ASSISTANT_SYSTEM_PROMPT), user-persona, chat-history     |
+| `story-gm`  | RPG turn         | system, actor-header, story-context, recent-events, chat-history |
+| `code`      | Code gen         | system (code instructions), chat-history                         |
+| `creative`  | Creative writing | system, actor-header, examples, chat-history                     |
 
 ### API
 

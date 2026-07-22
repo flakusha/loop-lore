@@ -46,13 +46,13 @@ interface MemoryInjectionEvent {
 
 ### Memory Privacy Levels
 
-| Level | Description | Sharing |
-|---|---|---|
-| **Absolute** | Never shared, completely isolated | Only character knows |
-| **Isolated** | Only in private one-on-one chats | Never in group/public |
-| **Localized** | Shared within specific world/context | World-scoped |
-| **Contextual** | Shared based on relationship/context | Conditional |
-| **Public** | Can be shared freely | Any context |
+| Level          | Description                          | Sharing               |
+| -------------- | ------------------------------------ | --------------------- |
+| **Absolute**   | Never shared, completely isolated    | Only character knows  |
+| **Isolated**   | Only in private one-on-one chats     | Never in group/public |
+| **Localized**  | Shared within specific world/context | World-scoped          |
+| **Contextual** | Shared based on relationship/context | Conditional           |
+| **Public**     | Can be shared freely                 | Any context           |
 
 ```typescript
 type MemoryPrivacyLevel = "absolute" | "isolated" | "localized" | "contextual" | "public";
@@ -100,7 +100,7 @@ function shouldInjectMemory(
   let prob = config.base_probability;
 
   // Context relevance boost
-  if (isContextRelevant(memory, context)) {
+  if (isContextRelevant(memory, context,)) {
     prob *= config.context_boost;
   }
 
@@ -108,10 +108,10 @@ function shouldInjectMemory(
   prob += (Math.random() - 0.5) * config.randomness;
 
   // Mood/comfort modifier
-  prob *= getComfortModifier(character, memory);
+  prob *= getComfortModifier(character, memory,);
 
   // Privacy check
-  if (!checkPrivacy(memory, context)) {
+  if (!checkPrivacy(memory, context,)) {
     return false;
   }
 
@@ -142,7 +142,6 @@ function shouldInjectMemory(
 Medium-High — injection probability affects narrative quality. Too frequent = noisy context;
 too rare = character feels amnesiac. Privacy level edge cases need careful testing (e.g.,
 absolute-memory leaked in group chat).
-
 
 ## Files
 

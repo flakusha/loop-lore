@@ -4,7 +4,7 @@
 **Priority**: high
 **Labels**: generation, prompts, templates
 **Assignee**:
-**Epic**: EPIC-38 (Output Control & Transforms) — *proposed split: new EPIC-Generation-Templates*
+**Epic**: EPIC-38 (Output Control & Transforms) — _proposed split: new EPIC-Generation-Templates_
 **Related**: FEAT-084 (DALL-E 3), FEAT-085 (Stability AI), FEAT-086 (Replicate), FEAT-090 (OpenAI TTS+Whisper), FEAT-089 (ElevenLabs), FEAT-091 (Local TTS/STT)
 
 ---
@@ -15,12 +15,12 @@ Unified **prompt template system** for all generation modalities — LLM text, i
 
 ### Current State
 
-| Modality | Code Status | Template System |
-| -------- | ----------- | --------------- |
-| **LLM text** | ✅ `src/generation/generate-route.ts`, `src/assistant/prompt-assembler.ts` | Section-based assembler (hardcoded sections, no user templates) |
-| **Image** | ✅ `src/generation/image-gen-route.ts`, `src/generation/prompt-templates.ts` | **Implemented** — 13 model families, 4 prompt formats, 3 detail levels, 8 gen modes |
-| **Video** | ❌ Not implemented | None — docs mention Wan 2.1/2.2, LTX-2.3 as future |
-| **Audio/Sound** | ❌ Not implemented | None — docs mention ElevenLabs, OpenAI TTS, Piper as future |
+| Modality        | Code Status                                                                  | Template System                                                                     |
+| --------------- | ---------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
+| **LLM text**    | ✅ `src/generation/generate-route.ts`, `src/assistant/prompt-assembler.ts`   | Section-based assembler (hardcoded sections, no user templates)                     |
+| **Image**       | ✅ `src/generation/image-gen-route.ts`, `src/generation/prompt-templates.ts` | **Implemented** — 13 model families, 4 prompt formats, 3 detail levels, 8 gen modes |
+| **Video**       | ❌ Not implemented                                                           | None — docs mention Wan 2.1/2.2, LTX-2.3 as future                                  |
+| **Audio/Sound** | ❌ Not implemented                                                           | None — docs mention ElevenLabs, OpenAI TTS, Piper as future                         |
 
 ### Problem Statement
 
@@ -119,10 +119,10 @@ Unified **prompt template system** for all generation modalities — LLM text, i
 
 ## Subtasks
 
-| ID | Title | Modality | Status |
-| -- | ----- | -------- | ------ |
-| FEAT-065-LLM | LLM prompt template system | LLM | 📋 Planned |
-| FEAT-065-IMG | Image prompt template persistence | Image | 📋 Planned |
-| FEAT-065-VID | Video generation templates | Video | 📋 Planned |
-| FEAT-065-AUD | Audio/sound generation templates | Audio | 📋 Planned |
-| FEAT-065-REG | Unified template registry | Cross-modality | 📋 Planned |
+| ID           | Title                             | Modality       | Status     |
+| ------------ | --------------------------------- | -------------- | ---------- |
+| FEAT-065-LLM | LLM prompt template system        | LLM            | 📋 Planned |
+| FEAT-065-IMG | Image prompt template persistence | Image          | 📋 Planned |
+| FEAT-065-VID | Video generation templates        | Video          | 📋 Planned |
+| FEAT-065-AUD | Audio/sound generation templates  | Audio          | 📋 Planned |
+| FEAT-065-REG | Unified template registry         | Cross-modality | 📋 Planned |

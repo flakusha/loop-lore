@@ -6,7 +6,7 @@
 **Epic:** Epic 26 (Avatar & Expression), Epic 28 (Asset Support)
 **Tags:** 3d, avatar, webgl, threejs, view-mode
 **Supersedes:** `TASK-3d-character-avatars.md`, `TASK-asset-3d-models.md`,
-  `TASK-dynamic-avatars-dota-style.md`
+`TASK-dynamic-avatars-dota-style.md`
 **Spec:** `docs/frontend/chat/visual-novel-mode.md` §Character Portraits
 
 ## Summary
@@ -18,11 +18,11 @@ tasks into one coherent implementation.
 
 ## Superseded Tasks
 
-| Old Task | What It Covered | What's New Here |
-| -------- | --------------- | ----------------- |
-| `TASK-3d-character-avatars.md` | VRM avatars, expressions, Three.js | Consolidated as Phase 1-2 |
-| `TASK-asset-3d-models.md` | GLTF validation, preview | Consolidated as Phase 3 |
-| `TASK-dynamic-avatars-dota-style.md` | Animated 2D mugshots, Spine | Consolidated as Phase 4 |
+| Old Task                             | What It Covered                    | What's New Here           |
+| ------------------------------------ | ---------------------------------- | ------------------------- |
+| `TASK-3d-character-avatars.md`       | VRM avatars, expressions, Three.js | Consolidated as Phase 1-2 |
+| `TASK-asset-3d-models.md`            | GLTF validation, preview           | Consolidated as Phase 3   |
+| `TASK-dynamic-avatars-dota-style.md` | Animated 2D mugshots, Spine        | Consolidated as Phase 4   |
 
 > **Migration note:** The old files should be updated with a redirect
 > to this task. Their content is preserved here — nothing is lost.
@@ -38,13 +38,13 @@ tasks into one coherent implementation.
 
 ### 3D Tech Stack
 
-| Component    | Library              | Notes                            |
-| ------------ | -------------------- | -------------------------------- |
-| Scene        | Three.js             | Core 3D rendering                |
-| VRM Loader   | @pixiv/three-vrm     | Humanoid avatar format           |
-| GLTF Loader  | three GLTFLoader     | General 3D model support         |
-| Post-process | three postprocessing | Bloom, outline, SSAO             |
-| Animation    | Three.js AnimationMixer | Idle, expression, gesture     |
+| Component    | Library                 | Notes                     |
+| ------------ | ----------------------- | ------------------------- |
+| Scene        | Three.js                | Core 3D rendering         |
+| VRM Loader   | @pixiv/three-vrm        | Humanoid avatar format    |
+| GLTF Loader  | three GLTFLoader        | General 3D model support  |
+| Post-process | three postprocessing    | Bloom, outline, SSAO      |
+| Animation    | Three.js AnimationMixer | Idle, expression, gesture |
 
 ### View Modes
 
@@ -104,11 +104,11 @@ Small 3D preview within message bubbles:
 
 ### Model Formats
 
-| Format      | Use Case           | Support Level |
-| ----------- | ------------------ | ------------- |
-| VRM         | Character avatars  | Full (Phase 1)|
-| GLTF/GLB    | Objects, scenes    | Full (Phase 3)|
-| FBX         | Game engines       | Not supported |
+| Format   | Use Case          | Support Level  |
+| -------- | ----------------- | -------------- |
+| VRM      | Character avatars | Full (Phase 1) |
+| GLTF/GLB | Objects, scenes   | Full (Phase 3) |
+| FBX      | Game engines      | Not supported  |
 
 ### Expression System (VRM)
 
@@ -123,11 +123,11 @@ Small 3D preview within message bubbles:
 
 ### Device Tier Gating
 
-| Tier     | WebGL2 | Memory | Feature                        |
-| -------- | ------ | ------ | ------------------------------ |
-| High     | ✅     | ≥4GB   | Full 3D, animations, particles |
-| Medium   | ✅     | ≥2GB   | 3D avatars, no particles       |
-| Low      | ❌     | <2GB   | 2D fallback (static images)    |
+| Tier   | WebGL2 | Memory | Feature                        |
+| ------ | ------ | ------ | ------------------------------ |
+| High   | ✅     | ≥4GB   | Full 3D, animations, particles |
+| Medium | ✅     | ≥2GB   | 3D avatars, no particles       |
+| Low    | ❌     | <2GB   | 2D fallback (static images)    |
 
 Detection: `src/frontend/alpine/device-tier.ts` (exists in index.json).
 
@@ -220,15 +220,15 @@ Detection: `src/frontend/alpine/device-tier.ts` (exists in index.json).
 
 ## Performance
 
-| Metric            | Target  | Notes                         |
-| ----------------- | ------- | ----------------------------- |
-| Model load        | < 2s    | Cache after first load        |
-| Expression change | < 100ms | Blend shape interpolation     |
-| Idle animation    | 30+ FPS | requestAnimationFrame          |
-| Memory (3D)       | < 80MB  | LOD, model disposal           |
-| Memory (2D spine) | < 50MB  | Sprite sheets + audio         |
-| Inline snapshot   | < 50ms  | WebGL → canvas capture        |
-| Particle count    | < 50    | Ambient only                  |
+| Metric            | Target  | Notes                     |
+| ----------------- | ------- | ------------------------- |
+| Model load        | < 2s    | Cache after first load    |
+| Expression change | < 100ms | Blend shape interpolation |
+| Idle animation    | 30+ FPS | requestAnimationFrame     |
+| Memory (3D)       | < 80MB  | LOD, model disposal       |
+| Memory (2D spine) | < 50MB  | Sprite sheets + audio     |
+| Inline snapshot   | < 50ms  | WebGL → canvas capture    |
+| Particle count    | < 50    | Ambient only              |
 
 ## Migration from Old Tasks
 
