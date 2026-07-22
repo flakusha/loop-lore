@@ -7,7 +7,8 @@
  *
  * Pure functions for the filtering logic; DB queries are in the service layer.
  */
-import { estimateTokens, selectWithinBudget, } from "./budget";
+import { estimateTokens, } from "../chat/token-utils";
+import { selectWithinBudget, } from "./budget";
 import { evaluateShareability, parseShareability, } from "./shareability";
 import type { MemoryEntry, MemoryPrivacy, } from "./types";
 
