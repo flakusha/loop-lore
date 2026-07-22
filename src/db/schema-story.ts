@@ -218,6 +218,8 @@ export interface ActorMemories {
   strength: Generated<number>;
   expires_at: string | null;
   last_accessed_at: Generated<string | null>;
+  source_message_id: string | null;
+  context: string | null;
   created_at: Generated<string>;
   updated_at: Generated<string>;
 }
