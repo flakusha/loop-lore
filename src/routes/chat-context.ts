@@ -25,7 +25,10 @@ import {
   jsonResponse,
 } from "./http-utils";
 
-const log = getLogger().child({ module: "chat-context", },);
+/** Lazy logger — resolved at request time, not module load. */
+function log() {
+  return getLogger().child({ module: "chat-context", },);
+}
 
 interface HandlerOpts {
   database: Kysely<DB>;
@@ -168,7 +171,7 @@ async function handleRegenerateMessage(
   // Determine parent for the new generation
   const effectiveParentId = parentId ?? message.parent_id ?? null;
 
-  log.info("Message regeneration requested", {
+  log().info("Message regeneration requested", {
     chatId,
     messageId,
     parentId: effectiveParentId,
