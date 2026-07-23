@@ -1099,5 +1099,23 @@
     ],
     "source": ".plan/tickets/TASK-memory-promotion-pipeline.md",
     "git_issue": "22f6cd9"
+  },
+  "TASK-info-bubbles": {
+    "hash": "a1b2c3d",
+    "extid": "TASK-info-bubbles",
+    "type": "TASK",
+    "title": "Info Bubbles (help tooltips in config menus)",
+    "label": "task",
+    "priority": "medium",
+    "epic": "EPIC-048",
+    "tags": [
+      "ui",
+      "ux",
+      "i18n",
+      "components",
+      "tooltips"
+    ],
+    "source": ".plan/tickets/TASK-info-bubbles.md",
+    "git_issue": "a1b2c3d"
   }
 }
