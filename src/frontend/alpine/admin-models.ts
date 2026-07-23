@@ -201,6 +201,7 @@ export const adminModels = {
             merged.push(p,);
           } else {
             const existing = merged[idx];
+            if (!existing) { continue; }
             merged[idx] = {
               ...existing,
               name: existing.name,
