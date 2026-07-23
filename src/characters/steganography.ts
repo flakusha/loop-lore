@@ -9,7 +9,7 @@
  */
 
 import { inflateSync, } from "node:zlib";
-import { safeJsonParse, } from "../utils/safe-json";
+import { safeFromBase64, safeJsonParse, } from "../utils";
 
 export interface ExtractedCharacter {
   /** Parsed card payload. For V2 cards this is the `data` object. */
@@ -98,8 +98,11 @@ function tryParseCharacter(text: string | null,): ExtractedCharacter | null {
   const candidates: string[] = [];
   candidates.push(text,);
   try {
-    const decoded = Buffer.from(text, "base64",).toString("utf8",);
-    if (decoded.trim().startsWith("{",)) { candidates.push(decoded,); }
+    const decodedResult = safeFromBase64(text,);
+    if (decodedResult.ok) {
+      const decoded = decodedResult.buffer.toString("utf8",);
+      if (decoded.trim().startsWith("{",)) { candidates.push(decoded,); }
+    }
   } catch {
     /* not base64 */
   }

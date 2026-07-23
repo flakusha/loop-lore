@@ -1,38 +1,25 @@
-import { brotliCompressSync, gzipSync, } from "node:zlib";
 import type { ContentEncoding, EncodeResult, } from "./types";
-
-function zstdCompress(data: Buffer,): Buffer {
-  // zstd compression via Bun runtime (type-safe wrapper)
-  const bun = Bun as { zstdCompressSync?: (data: Buffer,) => Buffer };
-  const fn = bun.zstdCompressSync;
-  if (fn) {
-    return fn(data,);
-  }
-  throw new Error("zstd compression not available",);
-}
+import { safeCompress, safeFromString, safeToBase64, } from "../utils";
 
 export function encodeContent(plaintext: string, encoding: ContentEncoding,): EncodeResult {
   if (encoding === "identity" || !plaintext) {
     return { encoded: plaintext, encoding: "identity", };
   }
 
-  const buffer = Buffer.from(plaintext, "utf8",);
-
-  switch (encoding) {
-    case "gzip": {
-      const compressed = gzipSync(buffer,);
-      return { encoded: Buffer.from(compressed,).toBase64(), encoding: "gzip", };
-    }
-    case "zstd": {
-      const compressed = zstdCompress(buffer,);
-      return { encoded: Buffer.from(compressed,).toBase64(), encoding: "zstd", };
-    }
-    case "brotli": {
-      const compressed = brotliCompressSync(buffer,);
-      return { encoded: Buffer.from(compressed,).toBase64(), encoding: "brotli", };
-    }
-    default: {
-      return { encoded: plaintext, encoding: "identity", };
-    }
+  const bufferResult = safeFromString(plaintext, "utf8",);
+  if (!bufferResult.ok) {
+    throw bufferResult.error;
   }
+
+  const compressedResult = safeCompress(bufferResult.buffer, encoding,);
+  if (!compressedResult.ok) {
+    throw compressedResult.error;
+  }
+
+  const base64Result = safeToBase64(compressedResult.buffer,);
+  if (!base64Result.ok) {
+    throw base64Result.error;
+  }
+
+  return { encoded: base64Result.buffer, encoding, };
 }
