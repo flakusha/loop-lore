@@ -307,3 +307,7 @@ interface BattleAbility {
 - **Epic Battle & Action Systems** — Combat integration
 - **Epic World & Locations** — Wild spawns, terrain
 - **Epic Actor System** — Personality, memory
+
+## Linked Tasks
+
+- TASK-companion-pet-mount.md

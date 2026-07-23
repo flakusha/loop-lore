@@ -3,6 +3,7 @@
 **Status:** ⬜ Not Started
 **Priority:** Medium
 **Effort:** Very High
+**Issue:** `fd70c95`
 **Type:** Feature Epic
 **Tags:** housing, base-building, decoration, storage, crafting-stations
 
@@ -311,3 +312,7 @@ interface GuildHall {
 - **Epic World & Locations** — Land placement
 - **Epic Social System** — Visiting, parties
 - **Epic Guild System** — Guild halls
+
+## Linked Tasks
+
+- TASK-housing-base-building.md

@@ -53,3 +53,7 @@ Journey Chat
 - `src/group-chat/` — branching logic
 - `src/db/schema-chats.ts` — location-aware schema
 - `src/frontend/alpine/chat.ts` — transfer UI
+
+## Linked Tasks
+
+- TASK-chat-transfer-location.md

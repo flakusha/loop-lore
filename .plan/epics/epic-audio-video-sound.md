@@ -232,3 +232,11 @@ ambient sound backing. "Sounding" = TTS + ambient + SFX mixed together.
 3. **Caching:** Should generated audio be cached? For how long?
 4. **Licensing:** Are there licensing concerns with generated audio?
 5. **Device requirements:** Video generation needs GPU — how to gate?
+
+## Linked Tasks
+
+- TASK-ambient-sound-system.md
+- TASK-audio-player-component.md
+- TASK-multimodal-asset-reuse.md
+- TASK-narration-pipeline.md
+- TASK-tts-edge-integration.md

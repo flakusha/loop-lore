@@ -3,6 +3,7 @@
 **Status:** ⬜ Not Started
 **Priority:** Low
 **Effort:** Medium
+**Issue:** `821ab24`
 **Type:** Research Epic
 
 ## Summary
@@ -64,3 +65,7 @@ as an alternative frontend for the headless API. Integration points:
 - `src/db/index.ts` — SQLite layer (needs abstraction)
 - `deno.json` — Deno configuration
 - `docs/spec/deno-support.md` — Deno support specification
+
+## Linked Tasks
+
+- TASK-deno-support.md

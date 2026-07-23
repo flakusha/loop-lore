@@ -3,7 +3,7 @@
 **Status:** ⬜ Not Started
 **Priority:** Medium
 **Plan.md:** §50
-**Issue:** `EPIC-2026-37`
+**Issue:** `0aa1e33`
 
 ## Summary
 
@@ -33,3 +33,7 @@ Conversation analytics dashboard, model A/B comparison, knowledge graph visualiz
 - `model_comparisons` table (specced in `docs/spec/notifications-expansion.md`)
 - Artifacts system for fine-tune export (`docs/spec/artifacts-system.md`)
 - RPG engine for playtest bot (`docs/spec/rpg-mechanics.md`)
+
+## Linked Tasks
+
+- TASK-analytics-observability.md

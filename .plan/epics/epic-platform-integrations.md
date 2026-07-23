@@ -44,3 +44,7 @@ Integrations with other platforms — draft, to be confirmed. Potential integrat
 - `src/integrations/` — integration modules (does not exist yet)
 - `src/routes/integrations.ts` — integration API endpoints
 - `docs/spec/integrations/` — integration specifications
+
+## Linked Tasks
+
+- TASK-platform-integrations.md
