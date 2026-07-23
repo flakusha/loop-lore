@@ -9,7 +9,8 @@
  */
 
 import { inflateSync, } from "node:zlib";
-import { safeFromBase64, safeJsonParse, } from "../utils";
+import { safeJsonParse, } from "../utils";
+import { safeFromBase64, } from "../utils/safe-buffer";
 
 export interface ExtractedCharacter {
   /** Parsed card payload. For V2 cards this is the `data` object. */
