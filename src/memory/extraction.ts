@@ -97,7 +97,7 @@ function parseExtractionResponse(content: string,): ExtractedMemory[] | null {
   }
 
   if (!jsonStr) { return null; }
-  const result = jsonParseOr<ExtractedMemory[]>(jsonStr, []);
+  const result = jsonParseOr<ExtractedMemory[]>(jsonStr, [],);
   return result.length > 0 ? result : null;
 }
 

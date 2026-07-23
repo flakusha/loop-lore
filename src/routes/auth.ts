@@ -82,7 +82,7 @@ function extractSessionIdFromJwt(token: string,): string | null {
     const base64 = payloadB64.replaceAll("-", "+",).replaceAll("_", "/",);
     const padded = base64 + "=".repeat((4 - (base64.length % 4)) % 4,);
     const payloadBytes = Uint8Array.from(atob(padded,), (c,) => c.charCodeAt(0,),);
-    const payload = jsonParseOr<{ sid?: string }>(new TextDecoder().decode(payloadBytes,), {});
+    const payload = jsonParseOr<{ sid?: string }>(new TextDecoder().decode(payloadBytes,), {},);
     return payload.sid ?? null;
   } catch {
     return null;
@@ -98,7 +98,7 @@ function extractUserIdFromJwt(token: string,): string | null {
     const base64 = payloadB64.replaceAll("-", "+",).replaceAll("_", "/",);
     const padded = base64 + "=".repeat((4 - (base64.length % 4)) % 4,);
     const payloadBytes = Uint8Array.from(atob(padded,), (c,) => c.charCodeAt(0,),);
-    const payload = jsonParseOr<{ sub?: string }>(new TextDecoder().decode(payloadBytes,), {});
+    const payload = jsonParseOr<{ sub?: string }>(new TextDecoder().decode(payloadBytes,), {},);
     return payload.sub ?? null;
   } catch {
     return null;
