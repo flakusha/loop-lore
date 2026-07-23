@@ -58,8 +58,8 @@ Commands:
   rebase <branch> [onto]    Rebase worktree's branch onto target (default: master)
   finalize <branch>         Validate worktree ready, run checks, merge to master, remove
   agent-merge <branch>      Alias for finalize — merge worktree into master and clean up
-// hint: Logic changed on both sides. Requires understanding intent of each change.
-  agent-commit <branch> <msg>  Create GPG-signed commit (agent MUST use this)
+  agent-commit <branch> <msg>  Create GPG-signed commit in worktree (agent MUST use this)
+  commit <msg>             Create GPG-signed commit on current branch (including master)
   list                      Show all worktrees with detailed status
   branches                  List all branches with merge/stale status
   diff <branch>             Show diff between branch and master
@@ -67,37 +67,31 @@ Commands:
   cleanup                   Remove worktrees for deleted branches
   remove <branch>           Remove specific worktree (blocks if dirty)
   prs                       Create worktrees for all open PRs (needs gh auth)
-  issue <args>              Run git-issue command (native issue tracking)
   epic <epic> [branch]      Create worktree for Epic with standard naming
-  ticket <type> <id> [title] Create issue with extended identifier (BUG/FEAT/FIX/IDEA/TASK)
-  issues                    List open issues with branch status
+
+Issue Tracking (git-issue):
+  ticket <TYPE> <NUM> <title> [body]  Create ticket (TYPE-YYYY-NNN format)
+  issues [--all] [--format FORMAT]    List issues (default: open, oneline)
+  issue <args>              Run git-issue command (native issue tracking)
+  show <ID>                           Show issue details and comments
+  comment <ID> -m <text>              Add comment to issue
+  edit <ID> [--label/--assignee/--priority]  Edit issue metadata
+  state <ID> <STATE>                  Change issue state (open/closed)
+  search <PATTERN>                    Search issues by text
+  attach <ID> <FILE>                  Attach file to issue comment
+  attach-dir <ID> <DIR>               Attach all files in directory
+
+Aliases:
+  gi                                  Shortcut for git-issue commands
 
 Examples:
   $(basename "$0") new feature-xyz
-  $(basename "$0") new feature-xyz master
-  $(basename "$0") create existing-branch
-  $(basename "$0") finalize feature-xyz
-  $(basename "$0") agent-merge feature-xyz
-  $(basename "$0") agent-commit feature-xyz "feat(scope): add new feature"
-  agent-commit <branch> <msg>  Create GPG-signed commit in worktree (agent MUST use this)
-  commit <msg>             Create GPG-signed commit on current branch (including master)
-  ticket <TYPE> <NUM> <title> [body]  Create git-native-issue ticket with extid
-  issues                    List all open issues
-  list                      Show all worktrees with status
-  cleanup                   Remove worktrees for deleted branches
-  remove <branch>           Remove specific worktree (blocks if dirty)
-  prs                       Create worktrees for all open PRs (needs gh auth)
-
-Examples:
-  $(basename "$0") new feature-xyz
-  $(basename "$0") new feature-xyz master
-  $(basename "$0") create existing-branch
-  $(basename "$0") finalize feature-xyz
-  $(basename "$0") agent-merge feature-xyz
-  $(basename "$0") agent-commit feature-xyz "feat(scope): add new feature"
-  $(basename "$0") commit "chore: clean up email identities"
-  $(basename "$0") list
-  $(basename "$0") cleanup
+  $(basename "$0") ticket TASK 001 "Fix login"
+  $(basename "$0") issues --all
+  $(basename "$0") show TASK-001
+  $(basename "$0") comment TASK-001 -m "Added description"
+  $(basename "$0") attach TASK-001 ./docs/spec.md
+  $(basename "$0") gi ls
 EOF
 }
 
@@ -1173,54 +1167,107 @@ cmd_epic() {
 }
 
 cmd_ticket() {
-// hint: Structural and logic conflict. Both design and behavior differ.
-    # Create issue with extended identifier and optional worktree
-    # Usage: ./scripts/worktree.sh ticket <type> <id> [title]
-    # Types: BUG, FEAT, FIX, IDEA, TASK, SOL
-    local type="$1"
-    local id="$2"
-    local title="${3:-}"
+    # Create a git-native-issue ticket with year-prefixed ID
+    # Usage: ./scripts/worktree.sh ticket <TYPE> <NUM> <title> [body] [options]
+    # IDs use format: TYPE-YYYY-NNN (e.g., TASK-2026-025, FEAT-2026-001)
+    local type=""
+    local num=""
+    local title=""
+    local body=""
+    local labels=()
+    local priority=""
 
-    if [[ -z "$type" ]] || [[ -z "$id" ]]; then
-        echo -e "${RED}Error: type and id required${NC}"
-        echo "Usage: $(basename "$0") ticket <type> <id> [title]"
-        echo "  Types: BUG, FEAT (feature), FIX, IDEA, TASK, SOL (solution)"
-        echo "  Creates issue with identifier: <TYPE>-2025-<id>"
+    # Parse required positional args
+    type="${1:-}"
+    num="${2:-}"
+    title="${3:-}"
+    body="${4:-}"
+
+    if [[ -z "$type" ]] || [[ -z "$num" ]] || [[ -z "$title" ]]; then
+        echo -e "${RED}Error: type, number, and title required${NC}"
+        echo "Usage: $(basename "$0") ticket <TYPE> <NUM> <title> [body] [options]"
+        echo "  TYPE: BUG, FEAT, FIX, IDEA, TASK, SOL, INFRA, EPIC"
+        echo "  NUM: 3-digit number (e.g., 025, 001)"
+        echo "  IDs use format TYPE-YYYY-NNN (e.g., TASK-2026-025)"
+        echo ""
+        echo "Options:"
+        echo "  -l, --label <label>    Add label (repeatable)"
+        echo "  -p, --priority <level> Set priority: low, medium, high, critical"
+        echo ""
+        echo "Example: $(basename "$0") ticket TASK 025 'Fix login' -l backend -l bug -p high"
         exit 1
     fi
 
+    # Parse optional flags (shift past the 4 positional args)
+    shift 4 2>/dev/null || true
+    while [[ $# -gt 0 ]]; do
+        case "$1" in
+            -l|--label)
+                labels+=("$2")
+                shift 2
+                ;;
+            -p|--priority)
+                priority="$2"
+                shift 2
+                ;;
+            *)
+                echo -e "${RED}Unknown option: $1${NC}"
+                exit 1
+                ;;
+        esac
+    done
+
+    # Normalize type to uppercase
+    type=$(echo "$type" | tr '[:lower:]' '[:upper:]')
+    
     # Validate type
     case "$type" in
-    BUG | FEAT | FEA | FIX | IDEA | TASK | SOL) ;;
-    *)
-        echo -e "${RED}Error: invalid type '$type'${NC}"
-        echo "  Valid types: BUG, FEAT, FIX, IDEA, TASK, SOL"
-        exit 1
-        ;;
+        BUG|FEAT|FIX|IDEA|TASK|SOL|INFRA|EPIC) ;;
+        *) echo -e "${RED}Error: unknown type '$type'${NC}"; exit 1 ;;
     esac
 
-    local issue_id="${type}-2025-${id}"
-    local branch="ticket/${issue_id}"
-
-    if [[ -z "$title" ]]; then
-        title="Ticket ${issue_id}"
+    # Validate priority if provided
+    if [[ -n "$priority" ]]; then
+        case "$priority" in
+            low|medium|high|critical) ;;
+            *) echo -e "${RED}Error: unknown priority '$priority' (use: low, medium, high, critical)${NC}"; exit 1 ;;
+        esac
     fi
 
-    # Check if branch exists
-    if git -C "$REPO_ROOT" rev-parse --verify "$branch" >/dev/null 2>&1; then
-        echo -e "${YELLOW}Branch '$branch' already exists. Creating worktree...${NC}"
-        cmd_create "$branch"
-    else
-        echo -e "${CYAN}Creating ticket branch and issue: $issue_id${NC}"
-        # Create issue
-        if command -v git-issue &>/dev/null; then
-            git-issue create "$title" -l "$type" -p medium
-        else
-            echo -e "${YELLOW}  Warning: git-issue not installed, skipping issue creation${NC}"
-        fi
-        # Create worktree
-        cmd_new "$branch" "master"
+    local year
+    year=$(date +%Y)
+    local extid="${type}-${year}-${num}"
+    local full_title="${extid}: ${title}"
+
+    # Check if already exists
+    if git -C "$REPO_ROOT" issue search "${extid}:" 2>/dev/null | grep -q "${extid}:"; then
+        echo -e "${YELLOW}Ticket ${extid} already exists${NC}"
+        exit 0
     fi
+
+    echo -e "${CYAN}Creating ticket: ${extid}${NC}"
+    local issue_hash
+    issue_hash=$(git -C "$REPO_ROOT" issue create "$full_title" -m "$body")
+
+    # Extract issue hash from output (format: "Created issue <hash>")
+    local hash
+    hash=$(echo "$issue_hash" | grep -oP '[0-9a-f]{7,}')
+
+    # Add labels if provided
+    if [[ ${#labels[@]} -gt 0 ]] && [[ -n "$hash" ]]; then
+        local label_cmd=(git -C "$REPO_ROOT" issue edit "$hash")
+        for label in "${labels[@]}"; do
+            label_cmd+=(-l "$label")
+        done
+        "${label_cmd[@]}"
+    fi
+
+    # Add priority if provided
+    if [[ -n "$priority" ]] && [[ -n "$hash" ]]; then
+        git -C "$REPO_ROOT" issue edit "$hash" -p "$priority"
+    fi
+
+    echo -e "${GREEN}✓ Created ticket ${extid}${NC}"
 }
 
 cmd_issues() {
@@ -1250,78 +1297,6 @@ cmd_issues() {
 
 # Main
 case "${1:-}" in
-// hint: Logic changed on both sides. Requires understanding intent of each change.
-create)
-    shift
-    cmd_create "${1:-}"
-    ;;
-new)
-    shift
-    cmd_new "${1:-}" "${2:-}"
-    ;;
-list)
-    cmd_list
-    ;;
-cleanup)
-    cmd_cleanup
-    ;;
-remove)
-    shift
-    cmd_remove "${1:-}"
-    ;;
-sign)
-    shift
-    cmd_sign "${1:-}"
-    ;;
-merge)
-    shift
-    cmd_merge "${1:-}" "${2:-}"
-    ;;
-rebase)
-    shift
-    cmd_rebase "${1:-}" "${2:-}"
-    ;;
-finalize | agent-merge)
-    shift
-    cmd_finalize "$@"
-    ;;
-agent-commit)
-    shift
-    cmd_agent_commit "${1:-}" "${2:-}"
-    ;;
-prs)
-    cmd_prs
-    ;;
-branches)
-    cmd_branches
-    ;;
-diff)
-    shift
-    cmd_diff "${1:-}"
-    ;;
-status)
-    shift
-    cmd_status "${1:-}"
-    ;;
-issue)
-    shift
-    cmd_issue "$@"
-    ;;
-epic)
-    shift
-    cmd_epic "${1:-}" "${2:-}"
-    ;;
-ticket)
-    shift
-    cmd_ticket "${1:-}" "${2:-}" "${3:-}"
-    ;;
-issues)
-    cmd_issues
-    ;;
-*)
-    usage
-    exit 1
-    ;;
     create)
         shift
         cmd_create "${1:-}"
@@ -1366,10 +1341,43 @@ issues)
         ;;
     ticket)
         shift
-        cmd_ticket "${1:-}" "${2:-}" "${3:-}"
+        cmd_ticket "$@"
         ;;
     issues)
-        cmd_issues
+        shift
+        cmd_issues "$@"
+        ;;
+    show)
+        shift
+        cmd_show "${1:-}"
+        ;;
+    comment)
+        shift
+        cmd_comment "$@"
+        ;;
+    edit)
+        shift
+        cmd_edit "$@"
+        ;;
+    state)
+        shift
+        cmd_state "${1:-}" "${2:-}"
+        ;;
+    search)
+        shift
+        cmd_search "${1:-}"
+        ;;
+    attach)
+        shift
+        cmd_attach "${1:-}" "${2:-}"
+        ;;
+    attach-dir)
+        shift
+        cmd_attach_dir "${1:-}" "${2:-}"
+        ;;
+    gi)
+        shift
+        cmd_gi "$@"
         ;;
     prs)
         cmd_prs
