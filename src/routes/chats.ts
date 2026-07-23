@@ -22,6 +22,7 @@ import {
 } from "../db/enums";
 import type { DB, } from "../db/schema";
 import { isLlmGenerationConfigured, triggerAutoGeneration, } from "../generation/auto-gen";
+import { getLogger, type Logger, } from "../logger";
 import { notifyChatInvite, } from "../notifications/service";
 import { safeJsonStringify, uid, } from "../utils";
 import {
@@ -48,6 +49,10 @@ import {
   notFoundResponse as notFound,
   unauthorizedResponse as unauthorized,
 } from "./http-utils";
+
+function log(): Logger {
+  return getLogger().child({ module: "chats", },);
+}
 
 interface HandlerOpts {
   database: Kysely<DB>;
@@ -408,6 +413,31 @@ export function chatsRoutes(opts: HandlerOpts,) {
               .insertInto("chat_participants",)
               .values({ chat_id: id, actor_id: body.actorId, role_in_chat: role as ChatParticipantRole, },)
               .execute();
+
+            // Distribute encryption keys if chat is encrypted
+            const chatRecord = await database
+              .selectFrom("chats",)
+              .select("encryption_level",)
+              .where("id", "=", id,)
+              .executeTakeFirst();
+
+            if (chatRecord?.encryption_level === "standard") {
+              try {
+                const { distributeKeysOnJoin, } = await import("../crypto/key-distribution");
+                await distributeKeysOnJoin(database, id, body.actorId,);
+                log().info("Distributed encryption keys to new participant", {
+                  chatId: id,
+                  participantId: body.actorId,
+                },);
+              } catch (keyError) {
+                log().warn("Failed to distribute keys (non-fatal)", {
+                  chatId: id,
+                  participantId: body.actorId,
+                  error: String(keyError,),
+                },);
+              }
+            }
+
             void notifyChatInvite(database, {
               chatId: id,
               invitedUserId: body.actorId,
@@ -484,6 +514,31 @@ export function chatsRoutes(opts: HandlerOpts,) {
             .where("chat_id", "=", id,)
             .where("actor_id", "=", actorId,)
             .execute();
+
+          // Rotate encryption key on participant leave (forward secrecy)
+          const chatRecord = await database
+            .selectFrom("chats",)
+            .select("encryption_level",)
+            .where("id", "=", id,)
+            .executeTakeFirst();
+
+          if (chatRecord?.encryption_level === "standard") {
+            try {
+              const { rotateKeyOnLeave, } = await import("../crypto/key-distribution");
+              await rotateKeyOnLeave(database, id, actorId,);
+              log().info("Rotated encryption key after participant leave", {
+                chatId: id,
+                departedParticipantId: actorId,
+              },);
+            } catch (keyError) {
+              log().warn("Failed to rotate key on leave (non-fatal)", {
+                chatId: id,
+                departedParticipantId: actorId,
+                error: String(keyError,),
+              },);
+            }
+          }
+
           return jsonNoContent();
         },
         { params: ChatParticipantParams, },
