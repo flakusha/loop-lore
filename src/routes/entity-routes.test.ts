@@ -18,6 +18,7 @@ const mockConfig = {} as any;
 
 const NOTES_CONFIG: EntityConfig = {
   parentPrefix: "actors",
+  parentParam: "actorId",
   entityPath: "notes",
   entityName: "Note",
   tableName: "actor_notes",

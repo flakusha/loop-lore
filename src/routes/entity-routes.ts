@@ -19,6 +19,7 @@ import { HttpStatus, jsonCreated, jsonError, jsonNoContent, jsonPaginated, jsonR
 
 export interface EntityConfig {
   parentPrefix: string;
+  parentParam?: string;
   entityPath: string;
   entityName: string;
   tableName: string;
@@ -80,7 +81,8 @@ function buildUpdateValues({
 }
 
 export function createEntityRoutes(config: EntityConfig, opts: { database: Db; config: Config },): Elysia {
-  const basePath = `/api/${config.parentPrefix}/:id/${config.entityPath}`;
+  const parentParam = config.parentParam ?? "id";
+  const basePath = `/api/${config.parentPrefix}/:${parentParam}/${config.entityPath}`;
   const withIdPath = `${basePath}/:entityId`;
 
   async function checkOwnership(
@@ -111,7 +113,7 @@ export function createEntityRoutes(config: EntityConfig, opts: { database: Db; c
   return new Elysia({ name: config.entityPath, },)
     .get(basePath, async (ctx,) => {
       const db = opts.database as any;
-      const { id: parentId, } = ctx.params as any;
+      const parentId = (ctx.params as any)[parentParam];
       const userId = (ctx as any).userId as string | null;
       const userRole = (ctx as any).userRole as string | null;
       const searchParams = new URL((ctx as any).request.url,).searchParams;
@@ -154,7 +156,7 @@ export function createEntityRoutes(config: EntityConfig, opts: { database: Db; c
       basePath,
       async (ctx,) => {
         const db = opts.database as any;
-        const { id: parentId, } = ctx.params as any;
+        const parentId = (ctx.params as any)[parentParam];
         const userId = (ctx as any).userId as string | null;
         const userRole = (ctx as any).userRole as string | null;
         const body = ((ctx as any).body || {}) as Record<string, unknown>;
@@ -185,7 +187,8 @@ export function createEntityRoutes(config: EntityConfig, opts: { database: Db; c
     )
     .get(withIdPath, async (ctx,) => {
       const db = opts.database as any;
-      const { id: parentId, entityId, } = ctx.params as any;
+      const parentId = (ctx.params as any)[parentParam];
+      const { entityId, } = ctx.params as any;
       const userId = (ctx as any).userId as string | null;
       const userRole = (ctx as any).userRole as string | null;
 
@@ -208,7 +211,8 @@ export function createEntityRoutes(config: EntityConfig, opts: { database: Db; c
       withIdPath,
       async (ctx,) => {
         const db = opts.database as any;
-        const { id: parentId, entityId, } = ctx.params as any;
+        const parentId = (ctx.params as any)[parentParam];
+        const { entityId, } = ctx.params as any;
         const userId = (ctx as any).userId as string | null;
         const userRole = (ctx as any).userRole as string | null;
         const body = ((ctx as any).body || {}) as Record<string, unknown>;
@@ -244,7 +248,8 @@ export function createEntityRoutes(config: EntityConfig, opts: { database: Db; c
     )
     .delete(withIdPath, async (ctx,) => {
       const db = opts.database as any;
-      const { id: parentId, entityId, } = ctx.params as any;
+      const parentId = (ctx.params as any)[parentParam];
+      const { entityId, } = ctx.params as any;
       const userId = (ctx as any).userId as string | null;
       const userRole = (ctx as any).userRole as string | null;
 
