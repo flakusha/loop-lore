@@ -146,45 +146,45 @@ All `void` promise sites resolved.
 All bare `JSON.parse` in production code replaced with `jsonParseOr` or `safeJsonParse`.
 All bare `JSON.stringify` in production code replaced with `jsonStringifyOr`, `jsonBody`, or `safeJsonStringify`.
 
-| File | Sites Migrated |
-| ---- | -------------- |
-| `src/memory/extraction.ts` | 3 `JSON.parse` → `jsonParseOr` |
-| `src/generation/auto-gen.ts` | 1 `JSON.parse` → `jsonParseOr` |
-| `src/characters/services/avatar-service.ts` | 5 `JSON.parse` + 1 `JSON.stringify` → `jsonParseOr`/`jsonStringifyOr` |
-| `src/characters/services/mood-service.ts` | 1 `JSON.parse` → `jsonParseOr` |
-| `src/characters/services/relationships-service.ts` | 1 `JSON.parse` → `jsonParseOr` |
-| `src/characters/exporters/character-systems.ts` | 4 `JSON.parse` → `jsonParseOr` |
-| `src/routes/auth.ts` | 2 `JSON.parse` → `jsonParseOr` |
-| `src/routes/export.ts` | 1 `JSON.parse` → `jsonParseOr` |
-| `src/crypto/e2e/key-bundle.ts` | 1 `JSON.parse` + 2 `JSON.stringify` → `jsonParseOr`/`jsonStringifyOr` |
-| `src/auth/jwt.ts` | 1 `JSON.parse` → `jsonParseOr` |
-| `src/generation/generate-route.ts` | 2 `JSON.stringify` → `jsonStringifyOr` |
-| `src/generation/providers/comfyui.ts` | 1 `JSON.stringify` → `jsonStringifyOr` |
-| `src/frontend/alpine/memory-panel.ts` | 2 `JSON.parse` + 2 `JSON.stringify` → `jsonParseOr`/`jsonBody` |
-| `src/frontend/alpine/user-notifications.ts` | 1 `JSON.parse` + 2 `JSON.stringify` → `jsonParseOr`/`jsonBody` |
-| `src/frontend/alpine/chat-messages.ts` | 1 `JSON.stringify` → `jsonBody` |
+| File                                               | Sites Migrated                                                        |
+| -------------------------------------------------- | --------------------------------------------------------------------- |
+| `src/memory/extraction.ts`                         | 3 `JSON.parse` → `jsonParseOr`                                        |
+| `src/generation/auto-gen.ts`                       | 1 `JSON.parse` → `jsonParseOr`                                        |
+| `src/characters/services/avatar-service.ts`        | 5 `JSON.parse` + 1 `JSON.stringify` → `jsonParseOr`/`jsonStringifyOr` |
+| `src/characters/services/mood-service.ts`          | 1 `JSON.parse` → `jsonParseOr`                                        |
+| `src/characters/services/relationships-service.ts` | 1 `JSON.parse` → `jsonParseOr`                                        |
+| `src/characters/exporters/character-systems.ts`    | 4 `JSON.parse` → `jsonParseOr`                                        |
+| `src/routes/auth.ts`                               | 2 `JSON.parse` → `jsonParseOr`                                        |
+| `src/routes/export.ts`                             | 1 `JSON.parse` → `jsonParseOr`                                        |
+| `src/crypto/e2e/key-bundle.ts`                     | 1 `JSON.parse` + 2 `JSON.stringify` → `jsonParseOr`/`jsonStringifyOr` |
+| `src/auth/jwt.ts`                                  | 1 `JSON.parse` → `jsonParseOr`                                        |
+| `src/generation/generate-route.ts`                 | 2 `JSON.stringify` → `jsonStringifyOr`                                |
+| `src/generation/providers/comfyui.ts`              | 1 `JSON.stringify` → `jsonStringifyOr`                                |
+| `src/frontend/alpine/memory-panel.ts`              | 2 `JSON.parse` + 2 `JSON.stringify` → `jsonParseOr`/`jsonBody`        |
+| `src/frontend/alpine/user-notifications.ts`        | 1 `JSON.parse` + 2 `JSON.stringify` → `jsonParseOr`/`jsonBody`        |
+| `src/frontend/alpine/chat-messages.ts`             | 1 `JSON.stringify` → `jsonBody`                                       |
 
 ### 5.2 Safe Buffer Adoption — Complete
 
-| File | Sites Migrated |
-| ---- | -------------- |
-| `src/content/encode.ts` | Rewritten to use `safeCompress`/`safeFromString`/`safeToBase64` |
-| `src/content/decode.ts` | Rewritten to use `safeDecompress`/`safeFromBase64` |
-| `src/transport/compression.ts` | Uses `safeFromUint8Array` for size validation |
-| `src/characters/parser.ts` | `Buffer.from(input)` → `safeFromString` |
-| `src/characters/steganography.ts` | `Buffer.from(text, "base64")` → `safeFromBase64` |
-| `src/assets/controller.ts` | `Buffer.from(arrayBuffer)` → `safeFromUint8Array` |
-| `src/routes/import.ts` | `Buffer.from(arrayBuffer)` → `safeFromUint8Array` |
-| `src/generation/image-gen-route.ts` | 3 `Buffer.from(b64, "base64")` → `safeFromBase64` |
-| `src/crypto/e2e/key-bundle.ts` | `Buffer.from(b64, "base64")` → `safeFromBase64`, `Buffer.toString("base64")` → `safeToBase64` |
+| File                                | Sites Migrated                                                                                |
+| ----------------------------------- | --------------------------------------------------------------------------------------------- |
+| `src/content/encode.ts`             | Rewritten to use `safeCompress`/`safeFromString`/`safeToBase64`                               |
+| `src/content/decode.ts`             | Rewritten to use `safeDecompress`/`safeFromBase64`                                            |
+| `src/transport/compression.ts`      | Uses `safeFromUint8Array` for size validation                                                 |
+| `src/characters/parser.ts`          | `Buffer.from(input)` → `safeFromString`                                                       |
+| `src/characters/steganography.ts`   | `Buffer.from(text, "base64")` → `safeFromBase64`                                              |
+| `src/assets/controller.ts`          | `Buffer.from(arrayBuffer)` → `safeFromUint8Array`                                             |
+| `src/routes/import.ts`              | `Buffer.from(arrayBuffer)` → `safeFromUint8Array`                                             |
+| `src/generation/image-gen-route.ts` | 3 `Buffer.from(b64, "base64")` → `safeFromBase64`                                             |
+| `src/crypto/e2e/key-bundle.ts`      | `Buffer.from(b64, "base64")` → `safeFromBase64`, `Buffer.toString("base64")` → `safeToBase64` |
 
 ### 5.3 Safe Fetch Adoption — Complete
 
-| File | Change |
-| ---- | ------ |
-| `src/frontend/fe-fetch.ts` | Rewritten to delegate to `safeFetch` (unified frontend/backend) |
-| `src/frontend/alpine/transports/server.ts` | Bare `fetch` → `safeFetch` with auth injection |
-| `src/frontend/alpine/transports/telemetry.ts` | Bare `fetch` fallback → `safeFetch` |
+| File                                          | Change                                                          |
+| --------------------------------------------- | --------------------------------------------------------------- |
+| `src/frontend/fe-fetch.ts`                    | Rewritten to delegate to `safeFetch` (unified frontend/backend) |
+| `src/frontend/alpine/transports/server.ts`    | Bare `fetch` → `safeFetch` with auth injection                  |
+| `src/frontend/alpine/transports/telemetry.ts` | Bare `fetch` fallback → `safeFetch`                             |
 
 ### 5.4 Barrel Bypass — Fixed
 

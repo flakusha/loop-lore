@@ -35,17 +35,20 @@ label. On hover (desktop) or click (touch), a popover appears with the
 help text.
 
 **Trigger modes:**
+
 - `hover` — popover appears on mouseenter, disappears on mouseleave
 - `click` — popover toggles on click (for touch devices and keyboard)
 - `auto` — hover on desktop, click on touch (default)
 
 **Props:**
+
 - `key` — i18n message key (e.g. `"settings.theme.help"`)
 - `placement` — `"top" | "right" | "bottom" | "left"` (default: `"top"`)
 - `mode` — `"hover" | "click" | "auto"` (default: `"auto"`)
 - `icon` — optional custom icon (default: `(?)` styled as a subtle help icon)
 
 **Rendering:**
+
 - Uses `t(key)` to resolve the help text from the message catalog
 - Popover is positioned with a small arrow pointing to the trigger
 - Dismisses on Escape, click-away, or mouseleave (for hover mode)
@@ -61,6 +64,7 @@ All help text keys follow the pattern:
 ```
 
 Examples:
+
 ```jsonc
 {
   "settings.theme.help": "Choose a color scheme. Changes apply immediately.",
