@@ -137,6 +137,8 @@ export async function storeMemories(
         importance: memory.importance,
         keywords: JSON.stringify(memory.keywords,),
         source_chat_id: chatId,
+        scope: "character",
+        privacy: "shared",
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
       },)

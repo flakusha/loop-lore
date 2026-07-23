@@ -292,6 +292,12 @@ export function unauthorizedResponse(message?: string, t?: TranslatorFn,): Respo
   return jsonError({ message: msg, status: HttpStatus.Unauthorized, code: ErrorCode.Unauthorized, },);
 }
 
+/** 403 Forbidden. */
+export function forbiddenResponse(message?: string, t?: TranslatorFn,): Response {
+  const msg = message ?? t?.("errors.forbidden",) ?? "Forbidden";
+  return jsonError({ message: msg, status: HttpStatus.Forbidden, code: ErrorCode.Forbidden, },);
+}
+
 /** 400 Bad Request with message. */
 export function badRequestResponse(message: string,): Response {
   return jsonError({ message, status: HttpStatus.BadRequest, code: ErrorCode.BadRequest, },);
