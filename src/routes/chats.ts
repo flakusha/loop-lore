@@ -4,6 +4,7 @@ import { getRuntimeConfig, } from "../age-gate/controller";
 import { getStatus, } from "../age-gate/service";
 import {
   batchArchiveChats,
+  batchDeleteChats,
   batchExportChats,
   checkChatAccess,
   createChat,
@@ -37,12 +38,15 @@ import {
   PaginationQuery,
 } from "../validation/schemas";
 import {
+  forbiddenResponse as forbidden,
   HttpStatus,
   jsonCreated,
   jsonError,
   jsonNoContent,
   jsonPaginated,
   jsonResponse,
+  notFoundResponse as notFound,
+  unauthorizedResponse as unauthorized,
 } from "./http-utils";
 
 interface HandlerOpts {
@@ -142,7 +146,7 @@ export function chatsRoutes(opts: HandlerOpts,) {
 
           // If no welcome message was created for any participant, trigger
           // LLM auto-generation so the assistant sends an initial greeting.
-          if (characterActors.length === 0 && participantIds && participantIds.length > 0) {
+          if (characterActors.length === 0 && body.participantIds && body.participantIds.length > 0) {
             const { database: db, config, } = opts;
             if (isLlmGenerationConfigured(config,)) {
               void triggerAutoGeneration({
