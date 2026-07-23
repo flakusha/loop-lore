@@ -25,6 +25,7 @@ export type { ActorKeyData, ActorKeyMeta, } from "./actor-keys";
 export { decryptValue, encryptValue, } from "./byok";
 export { deriveChatKey, deriveChatKeyForChat, getChatParticipantActorIds, } from "./chat-keys";
 export type { ChatKey, } from "./chat-keys";
+export { distributeKeysOnJoin, resolveChatKey, rotateKeyOnLeave, } from "./key-distribution";
 export { compressThenEncrypt, decryptThenDecompress, extractKeyIdFromPayload, isEncryptedPayload, } from "./pipeline";
 export type { EncryptedPayload, PipelineConfig, } from "./pipeline";
 export { getSmk, initSmk, isEncryptionEnabled, } from "./smk";
