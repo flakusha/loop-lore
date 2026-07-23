@@ -928,21 +928,11 @@ cmd_finalize() {
     echo -e "${GREEN}  ✓ Branch has $ahead commit(s) beyond $base${NC}"
     echo ""
 
-    # Step 5: Remove worktree (must happen before merge — git can't merge a checked-out branch)
-    echo -e "${CYAN}Step 5: Removing worktree...${NC}"
-    local worktree_abs
-    worktree_abs=$(cd "$worktree_path" && pwd)
-    if git worktree remove "$worktree_abs" --force 2>/dev/null; then
-        echo -e "${GREEN}  ✓ Worktree removed${NC}"
-    else
-        echo -e "${RED}  ✗ Failed to remove worktree — remove manually${NC}"
-        exit 1
-    fi
-    echo ""
-
-    # Step 6: Merge into master
-    echo -e "${CYAN}Step 6: Merging '$branch' into master...${NC}"
-    if git -C "$REPO_ROOT" merge "$branch" --no-edit; then
+    # Step 5: Merge into master (worktree stays until merge succeeds)
+    echo -e "${CYAN}Step 5: Merging '$branch' into master...${NC}"
+    local GIT_MERGE_FLAGS=()
+    gpg_merge_flags
+    if git -C "$REPO_ROOT" "${GIT_MERGE_FLAGS[@]}" merge "$branch" --no-edit; then
         echo -e "${GREEN}  ✓ Merged into master${NC}"
         # Verify merge commit is signed
         local merge_sha
@@ -953,8 +943,20 @@ cmd_finalize() {
             echo -e "${YELLOW}  ⚠ Merge commit not signed — GPG key may be locked${NC}"
         fi
     else
-        echo -e "${RED}  ✗ Merge conflicts — resolve manually${NC}"
+        echo -e "${RED}  ✗ Merge conflicts — worktree preserved at $worktree_path${NC}"
+        echo -e "  Resolve conflicts, then re-run: $(basename "$0") finalize $branch"
         exit 1
+    fi
+    echo ""
+
+    # Step 6: Remove worktree (only AFTER successful merge)
+    echo -e "${CYAN}Step 6: Removing worktree...${NC}"
+    local worktree_abs
+    worktree_abs=$(cd "$worktree_path" && pwd)
+    if git worktree remove "$worktree_abs" --force 2>/dev/null; then
+        echo -e "${GREEN}  ✓ Worktree removed${NC}"
+    else
+        echo -e "${YELLOW}  ⚠ Failed to remove worktree — remove manually: git worktree remove $worktree_abs${NC}"
     fi
     echo ""
 
