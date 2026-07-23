@@ -68,7 +68,7 @@ Commands:
   prs                       Create worktrees for all open PRs (needs gh auth)
 
 Issue Tracking (git-issue):
-  ticket <TYPE> <NUM> <title> [body]  Create git-native-issue ticket with extid
+  ticket <TYPE> <NUM> <title> [body]  Create ticket (TYPE-YYYY-NNN format)
   issues [--all] [--format FORMAT]    List issues (default: open, oneline)
   show <ID>                           Show issue details and comments
   comment <ID> -m <text>              Add comment to issue
@@ -338,21 +338,55 @@ cmd_new() {
 }
 
 cmd_ticket() {
-    # Create a git-native-issue ticket with extended ID
-    # Usage: ./scripts/worktree.sh ticket <TYPE> <NUM> <title> [body]
-    local type="$1"
-    local num="$2"
-    local title="$3"
-    local body="${4:-}"
+    # Create a git-native-issue ticket with year-prefixed ID
+    # Usage: ./scripts/worktree.sh ticket <TYPE> <NUM> <title> [body] [options]
+    # IDs use format: TYPE-YYYY-NNN (e.g., TASK-2026-025, FEAT-2026-001)
+    local type=""
+    local num=""
+    local title=""
+    local body=""
+    local labels=()
+    local priority=""
+
+    # Parse required positional args
+    type="${1:-}"
+    num="${2:-}"
+    title="${3:-}"
+    body="${4:-}"
 
     if [[ -z "$type" ]] || [[ -z "$num" ]] || [[ -z "$title" ]]; then
         echo -e "${RED}Error: type, number, and title required${NC}"
-        echo "Usage: $(basename "$0") ticket <TYPE> <NUM> <title> [body]"
+        echo "Usage: $(basename "$0") ticket <TYPE> <NUM> <title> [body] [options]"
         echo "  TYPE: BUG, FEAT, FIX, IDEA, TASK, SOL, INFRA, EPIC"
-        echo "  NUM: 3-digit number (e.g., 001, 015)"
-        echo "  Example: $(basename "$0") ticket TASK 001 'Fix login'"
+        echo "  NUM: 3-digit number (e.g., 025, 001)"
+        echo "  IDs use format TYPE-YYYY-NNN (e.g., TASK-2026-025)"
+        echo ""
+        echo "Options:"
+        echo "  -l, --label <label>    Add label (repeatable)"
+        echo "  -p, --priority <level> Set priority: low, medium, high, critical"
+        echo ""
+        echo "Example: $(basename "$0") ticket TASK 025 'Fix login' -l backend -l bug -p high"
         exit 1
     fi
+
+    # Parse optional flags (shift past the 4 positional args)
+    shift 4 2>/dev/null || true
+    while [[ $# -gt 0 ]]; do
+        case "$1" in
+            -l|--label)
+                labels+=("$2")
+                shift 2
+                ;;
+            -p|--priority)
+                priority="$2"
+                shift 2
+                ;;
+            *)
+                echo -e "${RED}Unknown option: $1${NC}"
+                exit 1
+                ;;
+        esac
+    done
 
     # Normalize type to uppercase
     type=$(echo "$type" | tr '[:lower:]' '[:upper:]')
@@ -363,7 +397,17 @@ cmd_ticket() {
         *) echo -e "${RED}Error: unknown type '$type'${NC}"; exit 1 ;;
     esac
 
-    local extid="${type}-${num}"
+    # Validate priority if provided
+    if [[ -n "$priority" ]]; then
+        case "$priority" in
+            low|medium|high|critical) ;;
+            *) echo -e "${RED}Error: unknown priority '$priority' (use: low, medium, high, critical)${NC}"; exit 1 ;;
+        esac
+    fi
+
+    local year
+    year=$(date +%Y)
+    local extid="${type}-${year}-${num}"
     local full_title="${extid}: ${title}"
 
     # Check if already exists
@@ -373,7 +417,27 @@ cmd_ticket() {
     fi
 
     echo -e "${CYAN}Creating ticket: ${extid}${NC}"
-    git -C "$REPO_ROOT" issue create "$full_title" -m "$body"
+    local issue_hash
+    issue_hash=$(git -C "$REPO_ROOT" issue create "$full_title" -m "$body")
+
+    # Extract issue hash from output (format: "Created issue <hash>")
+    local hash
+    hash=$(echo "$issue_hash" | grep -oP '[0-9a-f]{7,}')
+
+    # Add labels if provided
+    if [[ ${#labels[@]} -gt 0 ]] && [[ -n "$hash" ]]; then
+        local label_cmd=(git -C "$REPO_ROOT" issue edit "$hash")
+        for label in "${labels[@]}"; do
+            label_cmd+=(-l "$label")
+        done
+        "${label_cmd[@]}"
+    fi
+
+    # Add priority if provided
+    if [[ -n "$priority" ]] && [[ -n "$hash" ]]; then
+        git -C "$REPO_ROOT" issue edit "$hash" -p "$priority"
+    fi
+
     echo -e "${GREEN}✓ Created ticket ${extid}${NC}"
 }
 
@@ -1193,7 +1257,7 @@ case "${1:-}" in
         ;;
     ticket)
         shift
-        cmd_ticket "${1:-}" "${2:-}" "${3:-}" "${4:-}"
+        cmd_ticket "$@"
         ;;
     issues)
         shift
