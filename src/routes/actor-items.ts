@@ -14,6 +14,7 @@ export function actorItemsRoutes(opts: { database: Db; config: Config },): Elysi
   return createEntityRoutes(
     {
       parentPrefix: "actors",
+      parentParam: "actorId",
       entityPath: "items",
       entityName: "Item",
       tableName: "actor_items",

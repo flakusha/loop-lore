@@ -7,12 +7,12 @@
  *   GET    /api/worlds/:id                — get single world
  *   PUT    /api/worlds/:id                — update world
  *   DELETE /api/worlds/:id                — delete world
- *   GET    /api/worlds/:id/locations              — list locations
- *   POST   /api/worlds/:id/locations              — create location
- *   GET    /api/worlds/:id/locations/:locId       — get location
- *   PUT    /api/worlds/:id/locations/:locId       — update location
- *   DELETE /api/worlds/:id/locations/:locId       — delete location
- *   POST   /api/worlds/:id/initialize-states      — initialize location & NPC states
+ *   GET    /api/worlds/:worldId/locations              — list locations
+ *   POST   /api/worlds/:worldId/locations              — create location
+ *   GET    /api/worlds/:worldId/locations/:locId       — get location
+ *   PUT    /api/worlds/:worldId/locations/:locId       — update location
+ *   DELETE /api/worlds/:worldId/locations/:locId       — delete location
+ *   POST   /api/worlds/:worldId/initialize-states      — initialize location & NPC states
  */
 
 import { Elysia, } from "elysia";
@@ -398,19 +398,19 @@ export function worldsRoutes({ database, }: HandleOpts,): Elysia {
       },
       { body: WorldCreateBody, },
     )
-    .get("/api/worlds/:id", async (ctx: any,) => {
+    .get("/api/worlds/:worldId", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
       const userRole = ctx.userRole as string | null;
-      return handleGetWorld(database, ctx.params.id as string, userId, userRole,);
+      return handleGetWorld(database, ctx.params.worldId as string, userId, userRole,);
     },)
     .put(
-      "/api/worlds/:id",
+      "/api/worlds/:worldId",
       async (ctx: any,) => {
         const userId = ctx.userId as string | null;
         const userRole = ctx.userRole as string | null;
         return handleUpdateWorld(
           database,
-          ctx.params.id as string,
+          ctx.params.worldId as string,
           ctx.body as Record<string, unknown>,
           userId,
           userRole,
@@ -418,66 +418,66 @@ export function worldsRoutes({ database, }: HandleOpts,): Elysia {
       },
       { body: WorldUpdateBody, },
     )
-    .delete("/api/worlds/:id", async (ctx: any,) => {
+    .delete("/api/worlds/:worldId", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
       const userRole = ctx.userRole as string | null;
-      return handleDeleteWorld(database, ctx.params.id as string, userId, userRole,);
+      return handleDeleteWorld(database, ctx.params.worldId as string, userId, userRole,);
     },)
-    .get("/api/worlds/:id/locations", async (ctx: any,) => {
+    .get("/api/worlds/:worldId/locations", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
       const userRole = ctx.userRole as string | null;
       const page = Number(ctx.query?.page,) || 1;
       const pageSize = Number(ctx.query?.pageSize,) || 20;
-      return handleListLocations(database, ctx.params.id as string, page, pageSize, userId, userRole,);
+      return handleListLocations(database, ctx.params.worldId as string, page, pageSize, userId, userRole,);
     },)
-    .post("/api/worlds/:id/locations", async (ctx: any,) => {
+    .post("/api/worlds/:worldId/locations", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
       const userRole = ctx.userRole as string | null;
       return handleCreateLocation(
         database,
-        ctx.params.id as string,
+        ctx.params.worldId as string,
         ctx.body as Record<string, unknown>,
         userId,
         userRole,
       );
     },)
-    .get("/api/worlds/:id/locations/:locId", async (ctx: any,) => {
+    .get("/api/worlds/:worldId/locations/:locId", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
       const userRole = ctx.userRole as string | null;
       return handleGetLocation(
         database,
-        ctx.params.id as string,
+        ctx.params.worldId as string,
         ctx.params.locId as string,
         userId,
         userRole,
       );
     },)
-    .put("/api/worlds/:id/locations/:locId", async (ctx: any,) => {
+    .put("/api/worlds/:worldId/locations/:locId", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
       const userRole = ctx.userRole as string | null;
       return handleUpdateLocation(
         database,
-        ctx.params.id as string,
+        ctx.params.worldId as string,
         ctx.params.locId as string,
         ctx.body as Record<string, unknown>,
         userId,
         userRole,
       );
     },)
-    .delete("/api/worlds/:id/locations/:locId", async (ctx: any,) => {
+    .delete("/api/worlds/:worldId/locations/:locId", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
       const userRole = ctx.userRole as string | null;
       return handleDeleteLocation(
         database,
-        ctx.params.id as string,
+        ctx.params.worldId as string,
         ctx.params.locId as string,
         userId,
         userRole,
       );
     },)
-    .post("/api/worlds/:id/initialize-states", async (ctx: any,) => {
+    .post("/api/worlds/:worldId/initialize-states", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
       const userRole = ctx.userRole as string | null;
-      return handleInitializeStates(database, ctx.params.id as string, userId, userRole,);
+      return handleInitializeStates(database, ctx.params.worldId as string, userId, userRole,);
     },) as unknown as Elysia;
 }

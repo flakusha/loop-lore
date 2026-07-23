@@ -13,6 +13,7 @@ export function actorLoreEntriesRoutes(opts: { database: Db; config: Config },):
   return createEntityRoutes(
     {
       parentPrefix: "actors",
+      parentParam: "actorId",
       entityPath: "lore-entries",
       entityName: "Lore entry",
       tableName: "actor_lore_entries",
