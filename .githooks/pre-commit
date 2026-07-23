@@ -27,8 +27,9 @@ STAGED_CSS=$(git diff --cached --name-only --diff-filter=ACM | grep -E '\.css$' 
 STAGED_MD=$(git diff --cached --name-only --diff-filter=ACM | grep -E '\.mdx?$' || true)
 STAGED_HTML=$(git diff --cached --name-only --diff-filter=ACM | grep -E '\.html$' || true)
 STAGED_JSON=$(git diff --cached --name-only --diff-filter=ACM | grep -E '\.json$' || true)
+STAGED_SH=$(git diff --cached --name-only --diff-filter=ACM | grep -E '\.sh$' || true)
 
-if [[ -z "$STAGED_TS" && -z "$STAGED_CSS" && -z "$STAGED_MD" && -z "$STAGED_HTML" && -z "$STAGED_JSON" ]]; then
+if [[ -z "$STAGED_TS" && -z "$STAGED_CSS" && -z "$STAGED_MD" && -z "$STAGED_HTML" && -z "$STAGED_JSON" && -z "$STAGED_SH" ]]; then
   yellow "No staged files to check — skipping"
   exit 0
 fi
@@ -39,6 +40,7 @@ echo "Staged files:"
 [[ -n "$STAGED_MD" ]] && echo "  MD: $(echo "$STAGED_MD" | wc -l | tr -d ' ')"
 [[ -n "$STAGED_HTML" ]] && echo "  HTML: $(echo "$STAGED_HTML" | wc -l | tr -d ' ')"
 [[ -n "$STAGED_JSON" ]] && echo "  JSON: $(echo "$STAGED_JSON" | wc -l | tr -d ' ')"
+[[ -n "$STAGED_SH" ]] && echo "  SH: $(echo "$STAGED_SH" | wc -l | tr -d ' ')"
 echo ""
 
 # ── Step 1: Auto-fix formatting on staged files ───────────────
@@ -57,6 +59,17 @@ if [[ -n "$FORMAT_FILES" ]]; then
     echo "$FORMAT_FILES" | xargs git add 2>/dev/null
   else
     red "FAIL: formatting"
+    failures=$((failures + 1))
+  fi
+fi
+
+# Shell scripts: shfmt format
+if [[ -n "$STAGED_SH" ]]; then
+  if echo "$STAGED_SH" | xargs shfmt -w -i 2 -ci -bn 2>/dev/null; then
+    green "PASS: shell formatting"
+    echo "$STAGED_SH" | xargs git add 2>/dev/null
+  else
+    red "FAIL: shell formatting"
     failures=$((failures + 1))
   fi
 fi
@@ -105,10 +118,20 @@ if [[ -n "$STAGED_HTML" ]]; then
   fi
 fi
 
+if [[ -n "$STAGED_SH" ]]; then
+  cyan "Linting shell scripts..."
+  if echo "$STAGED_SH" | xargs shellcheck -x -s bash -S error 2>/dev/null; then
+    green "  ✓ Shell lint passed"
+  else
+    red "  ✗ Shell lint failed"
+    failures=$((failures + 1))
+  fi
+fi
+
 # ── Step 3: SPDX headers on staged source files ──────────────
 echo ""
 echo "--- Step 3: SPDX headers ---"
-STAGED_SOURCE=$(echo "$STAGED_TS $STAGED_CSS $STAGED_HTML" | tr ' ' '\n' | grep -v '^$' || true)
+STAGED_SOURCE=$(echo "$STAGED_TS $STAGED_CSS $STAGED_HTML $STAGED_SH" | tr ' ' '\n' | grep -v '^$' || true)
 if [[ -n "$STAGED_SOURCE" ]]; then
   if echo "$STAGED_SOURCE" | xargs bun run scripts/check-spdx.ts 2>/dev/null; then
     green "  ✓ SPDX headers OK"
