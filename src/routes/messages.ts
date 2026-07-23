@@ -5,6 +5,13 @@ import { parseCommand, } from "../assistant/command-parser";
 import { getCommand, } from "../assistant/commands/registry";
 import type { CommandContext, } from "../assistant/commands/registry";
 import { generateResponse, isAssistantEnabled, } from "../assistant/service";
+import {
+  createTransition,
+  detectTransitionType,
+  generateRuleName,
+  isTransitionMessage,
+} from "../chat";
+import { checkChatAccess, getMessageWithAccess, type ServiceError, } from "../chat/service";
 import type { Config, } from "../config/schema";
 import { decodeContent, } from "../content/decode";
 import { encodeContent, } from "../content/encode";
@@ -55,68 +62,25 @@ interface HandlerOpts {
   config: Config;
 }
 
-async function assertChatAccess(
-  database: Kysely<DB>,
-  chatId: string,
-  actorId: string,
-  userRole: string | null | undefined,
-): Promise<true | Response> {
-  const chat = await database
-    .selectFrom("chats",)
-    .select("created_by",)
-    .where("id", "=", chatId,)
-    .executeTakeFirst();
-  if (!chat) {
-    return jsonError({ message: "Chat not found", status: HttpStatus.NotFound, code: ErrorCode.NotFound, },);
+/** Convert a ServiceError into an HTTP Response */
+function serviceErrorToResponse(error: ServiceError,): Response {
+  switch (error.code) {
+    case "forbidden": {
+      return jsonError({ message: error.message, status: HttpStatus.Forbidden, code: ErrorCode.Forbidden, },);
+    }
+    case "bad_request": {
+      return jsonError({ message: error.message, status: HttpStatus.BadRequest, code: ErrorCode.ValidationError, },);
+    }
+    case "not_found":
+    default: {
+      return jsonError({ message: error.message, status: HttpStatus.NotFound, code: ErrorCode.NotFound, },);
+    }
   }
-  if (chat.created_by === actorId || userRole === "admin" || userRole === "solo") { return true; }
-  const participant = await database
-    .selectFrom("chat_participants",)
-    .select("actor_id",)
-    .where("chat_id", "=", chatId,)
-    .where("actor_id", "=", actorId,)
-    .executeTakeFirst();
-  if (!participant) {
-    return jsonError({ message: "Chat not found", status: HttpStatus.NotFound, code: ErrorCode.NotFound, },);
-  }
-  return true;
 }
 
-async function requireMessageAccess(
-  database: Kysely<DB>,
-  messageId: string,
-  userId: string | null,
-  userRole: string | null,
-): Promise<{ message: Record<string, unknown>; error: undefined } | { message: undefined; error: Response }> {
-  const message = await database
-    .selectFrom("messages",)
-    .selectAll()
-    .where("id", "=", messageId,)
-    .executeTakeFirst();
-  if (!message) {
-    return {
-      message: undefined,
-      error: jsonError({
-        message: "Message not found",
-        status: HttpStatus.NotFound,
-        code: ErrorCode.NotFound,
-      },),
-    };
-  }
-
-  const chat = await database
-    .selectFrom("chats",)
-    .select("created_by",)
-    .where("id", "=", message.chat_id,)
-    .executeTakeFirst();
-  if (!chat || (chat.created_by !== userId && userRole !== "admin" && userRole !== "solo")) {
-    return {
-      message: undefined,
-      error: jsonError({ message: "Message not found", status: HttpStatus.NotFound, },),
-    };
-  }
-
-  return { message: message as unknown as Record<string, unknown>, error: undefined, };
+/** Type guard: check if a value is a ServiceError (not a message record) */
+function isServiceError(value: Record<string, unknown> | ServiceError,): value is ServiceError {
+  return "code" in value && typeof (value as ServiceError).code === "string";
 }
 
 async function enrichAttachments(
@@ -286,13 +250,14 @@ export function messagesRoutes(opts: HandlerOpts,) {
           if (!userId) { return unauthorized(); }
           const id = (ctx.params as { id: string }).id;
 
-          const { message, error, } = await requireMessageAccess(
+          const msgResult = await getMessageWithAccess(
             database,
             id,
             userId,
             ctx.userRole as string | null,
           );
-          if (error) { return error; }
+          if (isServiceError(msgResult,)) { return serviceErrorToResponse(msgResult,); }
+          const message = msgResult;
 
           const attachments = await enrichAttachments(database, message.attachments as string | null,);
           let content: string;
@@ -312,13 +277,14 @@ export function messagesRoutes(opts: HandlerOpts,) {
           if (!userId) { return unauthorized(); }
           const id = (ctx.params as { id: string }).id;
 
-          const { message, error, } = await requireMessageAccess(
+          const msgResult = await getMessageWithAccess(
             database,
             id,
             userId,
             ctx.userRole as string | null,
           );
-          if (error) { return error; }
+          if (isServiceError(msgResult,)) { return serviceErrorToResponse(msgResult,); }
+          const message = msgResult;
 
           const variants = await database
             .selectFrom("messages",)
@@ -352,13 +318,14 @@ export function messagesRoutes(opts: HandlerOpts,) {
           const id = (ctx.params as { id: string }).id;
           const body = ctx.body as typeof MessageVariantBody.static;
 
-          const { message, error, } = await requireMessageAccess(
+          const msgResult = await getMessageWithAccess(
             database,
             id,
             userId,
             ctx.userRole as string | null,
           );
-          if (error) { return error; }
+          if (isServiceError(msgResult,)) { return serviceErrorToResponse(msgResult,); }
+          const message = msgResult;
 
           const variants = await database
             .selectFrom("messages",)
@@ -442,8 +409,8 @@ export function messagesRoutes(opts: HandlerOpts,) {
             },);
           }
 
-          const access = await assertChatAccess(database, msg.chat_id, userId, ctx.userRole as string | null,);
-          if (access instanceof Response) { return access; }
+          const access = await checkChatAccess(database, msg.chat_id, userId, ctx.userRole as string | null,);
+          if (!access.ok) { return serviceErrorToResponse(access.error,); }
 
           let storedContent = newContent.trim();
           const contentEncoding = "identity";
@@ -494,8 +461,8 @@ export function messagesRoutes(opts: HandlerOpts,) {
           const id = (ctx.params as { id: string }).id;
           const body = ctx.body as typeof MessageVisibilityUpdateBody.static;
 
-          const { error, } = await requireMessageAccess(database, id, userId, ctx.userRole as string | null,);
-          if (error) { return error; }
+          const msgResult = await getMessageWithAccess(database, id, userId, ctx.userRole as string | null,);
+          if (isServiceError(msgResult,)) { return serviceErrorToResponse(msgResult,); }
 
           await database
             .updateTable("messages",)
@@ -534,8 +501,8 @@ export function messagesRoutes(opts: HandlerOpts,) {
           const { isInitiative, cleanMessage, } = parseInitiativeFlag(filteredContent,);
           const effectiveContent = isInitiative ? cleanMessage : filteredContent;
 
-          const access = await assertChatAccess(database, chatId, actorId, ctx.userRole as string | null,);
-          if (access instanceof Response) { return access; }
+          const access = await checkChatAccess(database, chatId, actorId, ctx.userRole as string | null,);
+          if (!access.ok) { return serviceErrorToResponse(access.error,); }
 
           // ── Slash command dispatch ────────────────────────────────
           const parsed = parseCommand(effectiveContent,);
@@ -787,6 +754,97 @@ export function messagesRoutes(opts: HandlerOpts,) {
               mentionedActorIds,
               messageId: id,
             },).catch(() => {},);
+          }
+
+          // ── Auto-rename chat if this is the first user message ─────────────
+          // Only for direct chats with default name
+          const chatRecord = await database
+            .selectFrom("chats",)
+            .select(["name", "mode", "current_location_id", "world_id",],)
+            .where("id", "=", chatId,)
+            .executeTakeFirst();
+
+          if (
+            chatRecord?.mode === "direct" && (chatRecord.name === "New Chat" || chatRecord.name === "")
+          ) {
+            // Fetch character name for rename
+            const charActor = await database
+              .selectFrom("chat_participants",)
+              .innerJoin("actors", "actors.id", "chat_participants.actor_id",)
+              .select(["actors.display_name",],)
+              .where("chat_participants.chat_id", "=", chatId,)
+              .where("actors.agent_type", "in", ["ai", "narrator", "npc",],)
+              .executeTakeFirst();
+
+            let locationName: string | null = null;
+            if (chatRecord.current_location_id) {
+              const loc = await database
+                .selectFrom("locations",)
+                .select("name",)
+                .where("id", "=", chatRecord.current_location_id,)
+                .executeTakeFirst();
+              locationName = loc?.name ?? null;
+            }
+
+            const renameResult = generateRuleName(
+              charActor?.display_name ?? "",
+              locationName,
+              effectiveContent,
+            );
+
+            await database
+              .updateTable("chats",)
+              .set({ name: renameResult.name, updated_at: new Date().toISOString(), },)
+              .where("id", "=", chatId,)
+              .execute();
+
+            log().debug("Auto-renamed chat", { chatId, newName: renameResult.name, },);
+          }
+
+          // ── Detect scene transitions ────────────────────────────────────────
+          if (isTransitionMessage(effectiveContent,)) {
+            const transitionType = detectTransitionType(effectiveContent, !!chatRecord?.current_location_id,);
+
+            if (transitionType === "location_change" && chatRecord?.world_id) {
+              // Location change detected — update chat location if mentioned
+              const locationMatch =
+                /\b(go to|travel to|head to|enter|arrive at|visit)\s+(?:the\s+)?([A-Z][a-z]+(?:\s[A-Z][a-z]+)*)/i
+                  .exec(effectiveContent,);
+              if (locationMatch?.[2]) {
+                const location = await database
+                  .selectFrom("locations",)
+                  .select("id",)
+                  .where("world_id", "=", chatRecord.world_id,)
+                  .where("name", "like", `%${locationMatch[2]}%`,)
+                  .executeTakeFirst();
+
+                if (location) {
+                  await database
+                    .updateTable("chats",)
+                    .set({ current_location_id: location.id, updated_at: new Date().toISOString(), },)
+                    .where("id", "=", chatId,)
+                    .execute();
+
+                  log().info("Location change detected", { chatId, locationId: location.id, },);
+                }
+              }
+            }
+
+            // Create transition event for context cuts
+            if (transitionType === "context_cut") {
+              const transition = createTransition({
+                actorId,
+                narration: `Context cut: ${effectiveContent.slice(0, 100,)}`,
+                promotedMemoryIds: [],
+              },);
+
+              log().info("Context cut transition detected", {
+                chatId,
+                actorId,
+                transitionType,
+                transition,
+              },);
+            }
           }
 
           if (isLlmGenerationConfigured(config,)) {
