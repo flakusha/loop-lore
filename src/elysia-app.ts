@@ -42,6 +42,7 @@ import { frontendLogsRoutes, } from "./routes/frontend-logs";
 import { healthRoutes, } from "./routes/health";
 import { i18nRoutes, } from "./routes/i18n";
 import { importRoutes, } from "./routes/import";
+import { keyManagementRoutes, } from "./routes/key-management";
 import { messageEncryptionRoutes, } from "./routes/message-encryption";
 import { messageReactionsRoutes, } from "./routes/message-reactions";
 import { messagesRoutes, } from "./routes/messages";
@@ -115,6 +116,7 @@ export function createApp(deps: AppDeps,): Elysia {
   app.use(apiKeysRoutes(handleOpts,),);
   app.use(settingsRoutes(handleOpts,),);
   app.use(messageEncryptionRoutes(handleOpts,),);
+  app.use(keyManagementRoutes({ database: handleOpts.database, },),);
   app.use(usersRoutes(handleOpts,),);
   app.use(sessionsRoutes(handleOpts,),);
   app.use(actorItemsRoutes(handleOpts,),);

@@ -445,17 +445,41 @@ export function messagesRoutes(opts: HandlerOpts,) {
           const access = await assertChatAccess(database, msg.chat_id, userId, ctx.userRole as string | null,);
           if (access instanceof Response) { return access; }
 
+          let storedContent = newContent.trim();
+          const contentEncoding = "identity";
+          let storedKeyId: string | null = null;
+
+          if (isEncryptedPayload(newContent.trim(),)) {
+            storedContent = newContent.trim();
+            storedKeyId = extractKeyIdFromPayload(newContent.trim(),);
+          } else if (isEncryptionEnabled()) {
+            const smk = getSmk()!;
+            const chatKey = await deriveChatKeyForChat(database, msg.chat_id, smk,);
+            storedContent = await compressThenEncrypt({
+              plaintext: newContent.trim(),
+              chatKey: chatKey.key,
+              keyId: chatKey.keyId,
+              config: {
+                threshold: config.encryption.compressThreshold,
+                algorithm: config.encryption.compressAlgorithm,
+              },
+            },);
+            storedKeyId = chatKey.keyId;
+          }
+
           await database
             .updateTable("messages",)
             .set({
-              content: newContent.trim(),
+              content: storedContent,
+              key_id: storedKeyId,
+              content_encoding: contentEncoding as ContentEncoding,
               edited_at: new Date().toISOString(),
             },)
             .where("id", "=", id,)
             .execute();
 
           log().info("Message edited", { messageId: id, userId, },);
-          return jsonResponse({ id, content: newContent.trim(), edited_at: true, },);
+          return jsonResponse({ id, content: storedContent, edited_at: true, },);
         },
         {
           params: t.Object({ id: t.String(), },),
@@ -551,6 +575,25 @@ export function messagesRoutes(opts: HandlerOpts,) {
               if (result.handled) {
                 if (result.systemMessage) {
                   const sysMsgId = uid();
+                  let sysStoredContent = result.systemMessage;
+                  const sysContentEncoding = "identity";
+                  let sysKeyId: string | null = null;
+
+                  if (isEncryptionEnabled()) {
+                    const smk = getSmk()!;
+                    const chatKey = await deriveChatKeyForChat(database, chatId, smk,);
+                    sysStoredContent = await compressThenEncrypt({
+                      plaintext: result.systemMessage,
+                      chatKey: chatKey.key,
+                      keyId: chatKey.keyId,
+                      config: {
+                        threshold: config.encryption.compressThreshold,
+                        algorithm: config.encryption.compressAlgorithm,
+                      },
+                    },);
+                    sysKeyId = chatKey.keyId;
+                  }
+
                   await database
                     .insertInto("messages",)
                     .values({
@@ -559,12 +602,13 @@ export function messagesRoutes(opts: HandlerOpts,) {
                       actor_id: actorId,
                       // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion -- Kysely enum type mismatch
                       role: MessageRole.System as any,
-                      content: result.systemMessage,
+                      content: sysStoredContent,
+                      key_id: sysKeyId,
                       // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion -- Kysely enum type mismatch
                       content_format: MessageContentFormat.Markdown as any,
                       // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion -- Kysely enum type mismatch
                       content_type: MessageContentType.Text as any,
-                      content_encoding: "identity",
+                      content_encoding: sysContentEncoding as ContentEncoding,
                       status: "confirmed",
                       visibility: "visible",
                     },)
@@ -642,7 +686,7 @@ export function messagesRoutes(opts: HandlerOpts,) {
               key_id: storedKeyId,
               content_type: body.contentType ?? MessageContentType.Text,
               content_format: MessageContentFormat.Markdown,
-              content_encoding: contentEncoding as "identity" | "gzip" | "zstd" | "brotli",
+              content_encoding: contentEncoding as ContentEncoding,
               status: "confirmed",
               visibility: "visible",
               idempotency_key: body.idempotencyKey ?? null,
