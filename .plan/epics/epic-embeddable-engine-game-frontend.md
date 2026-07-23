@@ -85,3 +85,7 @@ interface SceneComponent {
 - `src/story/event-stream.ts` — event emission
 - `src/frontend/game/` — 2D / 3D frontend (future)
 - depends on `src/transport/ws.ts`, `src/transport/webtransport.ts` (transport-expansion)
+
+## Linked Tasks
+
+- TASK-embeddable-engine-game-frontend.md

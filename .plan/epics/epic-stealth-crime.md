@@ -3,6 +3,7 @@
 **Status:** ⬜ Not Started
 **Priority:** Medium
 **Effort:** High
+**Issue:** `2b7280b`
 **Type:** Feature Epic
 **Tags:** stealth, crime, thievery, bounties, law, detection
 
@@ -337,3 +338,7 @@ interface BlackMarketItem {
 - **Epic NPC System** — NPC awareness, reactions
 - **Epic Economy System** — Bounties, fines
 - **Epic Faction System** — Law enforcement
+
+## Linked Tasks
+
+- TASK-stealth-crime.md

@@ -42,3 +42,7 @@
 - `TASK-chat-backgrounds-location-sync.md` — backgrounds for VN mode scenes
 - `TASK-emotion-intent-detection.md` — emotion triggers for effects + portraits
 - `TASK-info-bubbles.md` — reusable help tooltip component for config menus (i18n)
+
+## Linked Tasks
+
+- TASK-immersion-presentation.md

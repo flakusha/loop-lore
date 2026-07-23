@@ -165,3 +165,7 @@ interface SceneObject {
 3. **Performance:** How many 3D objects can render at 60fps on mid-range devices?
 4. **Streaming:** Should 3D generation stream progress or return complete model?
 5. **Caching:** Should generated 3D models be cached client-side?
+
+## Linked Tasks
+
+- TASK-3d-generation.md

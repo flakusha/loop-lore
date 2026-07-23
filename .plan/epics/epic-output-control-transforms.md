@@ -32,3 +32,7 @@ Regex output transforms, smart-regen, prompt library, lore-consistency checker, 
 - i18n (`docs/frontend/internationalization.md`) for auto-translation
 - Export/share infra (`docs/frontend/chat/export.md`) for marketplace
 - Plugin registry for marketplace versioning
+
+## Linked Tasks
+
+- TASK-output-control-transforms.md

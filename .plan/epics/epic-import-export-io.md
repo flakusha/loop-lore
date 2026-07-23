@@ -190,3 +190,7 @@ None required — PNG metadata and ZIP extraction use native Bun APIs.
 - `docs/spec/character-setup.md` — Character system overview
 - `docs/spec/assets.md` — Asset pipeline
 - `docs/meta/plan.md` — v0.1 implementation plan
+
+## Linked Tasks
+
+- TASK-import-export-io.md

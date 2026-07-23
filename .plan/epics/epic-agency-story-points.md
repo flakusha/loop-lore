@@ -37,3 +37,7 @@ causal agent (emergent narrative, §6.7) rather than a passive reader.
 
 `epic-rpg-mechanics.md`, `epic-assistant-generation-extensions.md`,
 `epic-emergent-narrative-design.md`
+
+## Linked Tasks
+
+- TASK-agency-story-points.md

@@ -42,3 +42,7 @@ switch. Mixing families risks inconsistency and a dominant strategy.
 
 `epic-rpg-mechanics.md`, `epic-battle-action-systems.md`, `epic-config-extensions.md`
 (ECE can model resolution families as extensible enums)
+
+## Linked Tasks
+
+- TASK-resolution-system.md

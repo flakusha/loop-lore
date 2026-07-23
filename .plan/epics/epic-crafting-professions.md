@@ -3,6 +3,7 @@
 **Status:** ⬜ Not Started
 **Priority:** Medium
 **Effort:** Very High
+**Issue:** `328843b`
 **Type:** Feature Epic
 **Tags:** crafting, professions, alchemy, smithing, enchanting, cooking, farming
 
@@ -265,3 +266,7 @@ interface Experimentation {
 - **Epic World & Locations** — Gathering nodes, crafting stations
 - **Epic Battle & Action Systems** — Crafted combat items
 - **Epic Plugin System** — Disciplines/recipes extensibility
+
+## Linked Tasks
+
+- TASK-crafting-professions.md

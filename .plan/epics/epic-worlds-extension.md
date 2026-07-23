@@ -3,6 +3,7 @@
 **Status:** ⬜ Not Started
 **Priority:** Medium
 **Effort:** High
+**Issue:** `6c84baa`
 **Type:** Feature Epic
 **Tags:** worlds, shareability, license, epochs, maps, mode-switch
 
@@ -109,3 +110,7 @@ type ChatMode = "normal" | "battle" | "question" | "inventory";
 - `src/worlds/resources.ts` — location assets + resources
 - `src/chat/mode-switch.ts` — chat mode routing
 - `src/db/schema.ts` — world_license, world_timescale, location_resource tables
+
+## Linked Tasks
+
+- TASK-worlds-extension.md

@@ -3,6 +3,7 @@
 **Status:** ⬜ Not Started
 **Priority:** High
 **Effort:** Very High
+**Issue:** `e8b0c6b`
 **Type:** Feature Epic
 
 ## Summary
@@ -441,3 +442,7 @@ interface IsolationContext {
 - Plugin development tools
 - Plugin documentation
 - Performance optimization
+
+## Linked Tasks
+
+- TASK-plugin-system.md
