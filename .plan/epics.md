@@ -154,10 +154,10 @@ epics where applicable.
 | Smart Context Pruning (FEAT-072)              | Med      | 36                       | ✅ Complete    |
 | Quick-Regen Button (FEAT-070)                 | Low      | 51                       | ✅ Complete    |
 | Response Length Control (FEAT-071)            | Low      | 51                       | ✅ Complete    |
-| Wire Memory Provision into Prompt Assembly    | Med      | 37                       | ⬜ Not Started |
-| Implement Memory Decay Logic                  | Med      | 37                       | ⬜ Not Started |
-| Extract Chat Business Logic from Routes       | Med      | 37                       | ⬜ Not Started |
-| Implement Memory Promotion Pipeline           | Med      | 37                       | ⬜ Not Started |
+| Wire Memory Provision into Prompt Assembly    | Med      | 36                       | ⬜ Not Started |
+| Implement Memory Decay Logic                  | Med      | 36                       | ⬜ Not Started |
+| Extract Chat Business Logic from Routes       | Med      | 36                       | ⬜ Not Started |
+| Implement Memory Promotion Pipeline           | Med      | 36                       | ⬜ Not Started |
 
 **Cross-references:**
 
@@ -169,9 +169,9 @@ epics where applicable.
 - Epic 41 (Chat Transfer) — location transfer, search for joinable chats
 - `TASK-character-multi-personality.md` — personality switching, world/chat locking
 - `TASK-character-mood-happiness.md` — happiness meter, mood impact on personality
-- `TASK-character-memory-injection.md` — injection probability, privacy levels, secrets
+- `TASK-character-memory-injection.md` — injection probability, privacy levels, secrets (Epic 36)
 - `TASK-chat-external-music-linking.md` — external service embeds, no server download
-- `TASK-chat-context-feature-permissions.md` — UI feature gating based on context
+- `TASK-chat-context-feature-permissions.md` — UI feature gating based on context (Epic 36)
 - `TASK-info-bubbles.md` — reusable help tooltip component for config menus (i18n)
 - `TASK-data-migration-transitivity.md` — migration state lifecycle, validation gating
 

@@ -97,16 +97,37 @@ interface ModerationAction {
 
 ## Tasks
 
-- [ ] Context sliding-window + memory-promotion pipeline
-- [ ] Related-memory / related-event injection hooks
-- [ ] Local random-event generator
-- [ ] Transition narration + context-cut promotion flow
-- [ ] Dynamic location generation trigger
-- [ ] Repetition + hallucination reconciliation guards
-- [ ] NSFW enable/disable + non-public moderation events
-- [ ] User block / ban primitives + permission checks
-- [ ] Shadow / collapse rendering for chat, blogs, comments
-- [ ] Internal + external flagging pathways + mod queue
+### Core Context & Memory (High Priority)
+
+- [x] Context sliding-window + memory-promotion → TASK-context-cut-memory-promotion
+- [x] Related-memory / related-event injection hooks → TASK-related-memory-event-injection-hooks
+- [x] Local random-event generator → TASK-local-random-event-generator
+- [x] Repetition + hallucination guards → TASK-repetition-hallucination-guards
+- [x] Context window monitor → TASK-context-window-monitor (✅ done)
+- [x] Smart context pruning → TASK-smart-context-pruning (✅ done)
+- [x] Memory promotion pipeline → TASK-memory-promotion-pipeline
+- [x] Memory decay logic → TASK-memory-decay-logic
+- [x] Memory provision wiring → TASK-memory-provision-wiring
+- [x] Memory trust modifier wiring → TASK-memory-trust-modifier-wiring
+- [x] Chat route extraction → TASK-chat-route-extraction
+- [x] Character memory injection → TASK-character-memory-injection
+- [x] Context feature permissions → TASK-chat-context-feature-permissions
+- [x] Chat autorenaming → TASK-chat-autorenaming (✅ done)
+
+### Chat Discovery (Medium Priority)
+
+- [ ] Chat room search & join → TASK-chat-room-search-join
+- [ ] Chat room filters → TASK-chat-room-filters
+- [ ] Chat message search → TASK-chat-message-search
+- [ ] Chat external music linking → TASK-chat-external-music-linking
+
+### Moderation (Low Priority — Postpone)
+
+- [ ] NSFW enable/disable + mod events → TASK-nsfw-gate-moderation-events
+- [ ] User block / ban / shadow → TASK-user-block-ban-shadow
+- [ ] Internal + external flagging → TASK-internal-external-flagging
+- [ ] Moderation privacy foundation → TASK-moderation-privacy-first-foundation
+- [ ] AI Dungeon moderation lesson → TASK-ai-dungeon-moderation-lesson
 
 ## Files
 
