@@ -33,7 +33,7 @@ import {
   notOwnerResponse,
   unauthorizedResponse,
 } from "../routes/http-utils";
-import { safeFromUint8Array, } from "../utils";
+import { safeFromUint8Array, } from "../utils/safe-buffer";
 import {
   canAccessAsset,
   createAsset,

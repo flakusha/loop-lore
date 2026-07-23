@@ -2,7 +2,7 @@
 
 import { brotliCompressSync, brotliDecompressSync, gunzipSync, gzipSync, } from "node:zlib";
 import { CompressionAlgorithm, } from "../db/enums";
-import { safeFromUint8Array, } from "../utils";
+import { safeFromUint8Array, } from "../utils/safe-buffer";
 import type { Connection, ProtocolHandler, } from "./protocol.unified";
 
 interface CompressionOptions {
