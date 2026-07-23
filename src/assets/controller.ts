@@ -33,6 +33,7 @@ import {
   notOwnerResponse,
   unauthorizedResponse,
 } from "../routes/http-utils";
+import { safeFromUint8Array, } from "../utils";
 import {
   canAccessAsset,
   createAsset,
@@ -52,7 +53,6 @@ import {
   validateMimeType,
 } from "./service";
 import type { AssetRecord, } from "./service";
-import { safeFromUint8Array, } from "../utils";
 
 /** Upload options — also used by elysia-app.ts for the standalone POST /api/assets route. */
 export interface UploadOpts {

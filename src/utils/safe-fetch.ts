@@ -99,7 +99,7 @@ const DEFAULT_MAX_SIZE = 10_485_760; // 10 MB
  * - sessionToken/apiKey/authorization → Authorization header (mirrors feFetch)
  * - extraHeaders merged last (highest priority)
  */
-function buildAuthHeaders(auth: FetchAuth | undefined): Record<string, string> {
+function buildAuthHeaders(auth: FetchAuth | undefined,): Record<string, string> {
   if (!auth) { return {}; }
 
   const headers: Record<string, string> = {};
@@ -109,11 +109,11 @@ function buildAuthHeaders(auth: FetchAuth | undefined): Record<string, string> {
   }
 
   if (auth.authorization) {
-    headers["Authorization"] = auth.authorization;
+    headers.Authorization = auth.authorization;
   } else if (auth.sessionToken) {
-    headers["Authorization"] = `Bearer ${auth.sessionToken}`;
+    headers.Authorization = `Bearer ${auth.sessionToken}`;
   } else if (auth.apiKey) {
-    headers["Authorization"] = `Bearer ${auth.apiKey}`;
+    headers.Authorization = `Bearer ${auth.apiKey}`;
   }
 
   if (auth.extraHeaders) {
@@ -171,13 +171,13 @@ export async function safeFetch<T = unknown,>(
   const timeoutId = setTimeout(() => controller.abort(), timeout,);
   const combinedSignal = externalSignal
     ? (() => {
-        const combined = new AbortController();
-        if (externalSignal.aborted) { combined.abort(); }
-        else { externalSignal.addEventListener("abort", () => combined.abort(), { once: true, }); }
-        if (controller.signal.aborted) { combined.abort(); }
-        else { controller.signal.addEventListener("abort", () => combined.abort(), { once: true, }); }
-        return combined.signal;
-      })()
+      const combined = new AbortController();
+      if (externalSignal.aborted) { combined.abort(); }
+      else { externalSignal.addEventListener("abort", () => combined.abort(), { once: true, },); }
+      if (controller.signal.aborted) { combined.abort(); }
+      else { controller.signal.addEventListener("abort", () => combined.abort(), { once: true, },); }
+      return combined.signal;
+    })()
     : controller.signal;
 
   try {
@@ -213,7 +213,7 @@ export async function safeFetch<T = unknown,>(
       onAuthError?.();
       return {
         ok: false,
-        error: new Error("Unauthorized"),
+        error: new Error("Unauthorized",),
         status: 401,
         headers: response.headers,
       };
@@ -226,7 +226,7 @@ export async function safeFetch<T = unknown,>(
       if (!Number.isNaN(size,) && size > maxSize) {
         return {
           ok: false,
-          error: new Error(`Response too large: ${size} bytes (max: ${maxSize})`),
+          error: new Error(`Response too large: ${size} bytes (max: ${maxSize})`,),
           status: response.status,
           headers: response.headers,
         };
@@ -236,7 +236,7 @@ export async function safeFetch<T = unknown,>(
     if (!response.ok) {
       return {
         ok: false,
-        error: new Error(`HTTP ${response.status}: ${response.statusText}`),
+        error: new Error(`HTTP ${response.status}: ${response.statusText}`,),
         status: response.status,
         headers: response.headers,
       };
@@ -248,7 +248,7 @@ export async function safeFetch<T = unknown,>(
       if (text.length > maxSize) {
         return {
           ok: false,
-          error: new Error(`Response body too large: ${text.length} chars (max: ${maxSize})`),
+          error: new Error(`Response body too large: ${text.length} chars (max: ${maxSize})`,),
           status: response.status,
           headers: response.headers,
         };
@@ -269,9 +269,9 @@ export async function safeFetch<T = unknown,>(
     const text = await response.text();
     return { ok: true, data: text as unknown as T, status: response.status, headers: response.headers, };
   } catch (error) {
-    const err = error instanceof Error ? error : new Error(String(error,));
+    const err = error instanceof Error ? error : new Error(String(error,),);
     if (err.name === "AbortError") {
-      return { ok: false, error: new Error(`Request timed out after ${timeout}ms`), };
+      return { ok: false, error: new Error(`Request timed out after ${timeout}ms`,), };
     }
     return { ok: false, error: err, };
   } finally {
@@ -313,11 +313,11 @@ export async function safeFetchWithRetry<T = unknown,>(
     // Exponential backoff
     if (attempt < retries) {
       const delay = Math.min(baseDelay * 2 ** attempt, 10_000,);
-      const { promise, resolve, } = Promise.withResolvers<void>();
+      const { promise, resolve, } = Promise.withResolvers<undefined>();
       setTimeout(resolve, delay,);
       await promise;
     }
   }
 
-  return { ok: false, error: lastError ?? new Error("Max retries exceeded"), };
+  return { ok: false, error: lastError ?? new Error("Max retries exceeded",), };
 }

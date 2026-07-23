@@ -5,8 +5,8 @@
  * Loads character memories from the active chat's actor participants.
  */
 
-import type { ChatState, MemoryEntry, } from "./types";
 import { jsonBody, jsonParseOr, } from "./json";
+import type { ChatState, MemoryEntry, } from "./types";
 /** Estimate tokens from content length (~4 chars per token). */
 function estimateTokens(content: string,): number {
   return Math.ceil(content.length / 4,);
@@ -72,7 +72,7 @@ export const memoryPanel: Partial<ChatState> & ThisType<ChatState> = {
         type: m.memory_type as MemoryEntry["type"],
         confidence: m.confidence,
         importance: m.importance,
-        keywords: typeof m.keywords === "string" ? jsonParseOr<string[]>(m.keywords || "[]", []) : (m.keywords ?? []),
+        keywords: typeof m.keywords === "string" ? jsonParseOr<string[]>(m.keywords || "[]", [],) : (m.keywords ?? []),
         pinned: !!m.pinned,
         createdAt: m.created_at,
         tokenCount: estimateTokens(m.content,),
@@ -154,7 +154,7 @@ export const memoryPanel: Partial<ChatState> & ThisType<ChatState> = {
           confidence: 1,
           importance: 5,
           keywords: [],
-        }),
+        },),
       },);
       if (!res.ok) { return; }
       const created = await res.json() as {
@@ -174,7 +174,7 @@ export const memoryPanel: Partial<ChatState> & ThisType<ChatState> = {
         confidence: created.confidence,
         importance: created.importance,
         keywords: typeof created.keywords === "string"
-          ? jsonParseOr<string[]>(created.keywords || "[]", [])
+          ? jsonParseOr<string[]>(created.keywords || "[]", [],)
           : (created.keywords ?? []),
         createdAt: created.created_at,
         tokenCount: estimateTokens(created.content,),
@@ -223,7 +223,7 @@ export const memoryPanel: Partial<ChatState> & ThisType<ChatState> = {
       await fetch(`/api/actors/${actorId}/memories/${memoryId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json", },
-        body: jsonBody({ pinned: mem.pinned, }),
+        body: jsonBody({ pinned: mem.pinned, },),
       },);
     } catch {
       // Revert on failure

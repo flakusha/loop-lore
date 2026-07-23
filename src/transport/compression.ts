@@ -12,7 +12,6 @@ interface CompressionOptions {
   threshold?: number;
 }
 
-
 /**
  * Compress outgoing data using the specified algorithm.
  */
