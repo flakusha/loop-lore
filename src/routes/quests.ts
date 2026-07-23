@@ -222,12 +222,12 @@ async function handleProgress(
 
 export function questsRoutes({ database, }: { database: Kysely<DB> },): Elysia {
   return new Elysia({ name: "quests", },)
-    .get("/api/worlds/:id/quests", async (ctx: any,) => {
+    .get("/api/worlds/:worldId/quests", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
       const userRole = ctx.userRole as string | null;
       return handleListQuests(
         database,
-        ctx.params.id as string,
+        ctx.params.worldId as string,
         Number(ctx.query?.page,) || 1,
         Number(ctx.query?.pageSize,) || 20,
         userId,
@@ -235,13 +235,13 @@ export function questsRoutes({ database, }: { database: Kysely<DB> },): Elysia {
       );
     },)
     .post(
-      "/api/worlds/:id/quests",
+      "/api/worlds/:worldId/quests",
       async (ctx: any,) => {
         const userId = ctx.userId as string | null;
         const userRole = ctx.userRole as string | null;
         return handleCreateQuest(
           database,
-          ctx.params.id as string,
+          ctx.params.worldId as string,
           userId,
           userRole,
           ctx.body as Record<string, unknown>,

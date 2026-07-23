@@ -2,15 +2,15 @@
  * Story Items Routes (World-level item definitions + world item instances)
  *
  * Wraps ItemsService for frontend access:
- *   GET    /api/worlds/:id/items            — list item definitions (paginated)
- *   POST   /api/worlds/:id/items            — create item definition
- *   GET    /api/worlds/:id/items/:id        — get definition
- *   PUT    /api/worlds/:id/items/:id        — update definition
- *   DELETE /api/worlds/:id/items/:id        — delete definition
- *   GET    /api/worlds/:id/items/:id/instances — list placed instances
- *   POST   /api/worlds/:id/item-instances   — place item in location / give to NPC
- *   POST   /api/worlds/:id/item-instances/:instanceId/transfer — move items
- *   DELETE /api/worlds/:id/item-instances/:instanceId — destroy instance
+ *   GET    /api/worlds/:worldId/items            — list item definitions (paginated)
+ *   POST   /api/worlds/:worldId/items            — create item definition
+ *   GET    /api/worlds/:worldId/items/:id        — get definition
+ *   PUT    /api/worlds/:worldId/items/:id        — update definition
+ *   DELETE /api/worlds/:worldId/items/:id        — delete definition
+ *   GET    /api/worlds/:worldId/items/:id/instances — list placed instances
+ *   POST   /api/worlds/:worldId/item-instances   — place item in location / give to NPC
+ *   POST   /api/worlds/:worldId/item-instances/:instanceId/transfer — move items
+ *   DELETE /api/worlds/:worldId/item-instances/:instanceId — destroy instance
  */
 
 import { Elysia, } from "elysia";
@@ -210,7 +210,7 @@ async function handleInstance(
 
 export function storyItemsRoutes({ database, }: { database: Kysely<DB> },): Elysia {
   return new Elysia({ name: "story-items", },)
-    .post("/api/worlds/:id/item-instances", async (ctx: any,) => {
+    .post("/api/worlds/:worldId/item-instances", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
       const userRole = ctx.userRole as string | null;
       const worldId = ctx.params.id as string;
@@ -243,7 +243,7 @@ export function storyItemsRoutes({ database, }: { database: Kysely<DB> },): Elys
 
       return jsonCreated({ id, },);
     },)
-    .get("/api/worlds/:id/item-instances", async (ctx: any,) => {
+    .get("/api/worlds/:worldId/item-instances", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
       const userRole = ctx.userRole as string | null;
       const worldId = ctx.params.id as string;
@@ -260,61 +260,61 @@ export function storyItemsRoutes({ database, }: { database: Kysely<DB> },): Elys
       const instances = await query.execute();
       return jsonResponse(instances,);
     },)
-    .get("/api/worlds/:id/items/:itemId/instances", async (ctx: any,) => {
+    .get("/api/worlds/:worldId/items/:itemId/instances", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
       const userRole = ctx.userRole as string | null;
       return handleInstances(
         database,
-        ctx.params.id as string,
+        ctx.params.worldId as string,
         ctx.params.itemId as string,
         userId,
         userRole,
       );
     },)
-    .get("/api/worlds/:id/items/:itemId", async (ctx: any,) => {
+    .get("/api/worlds/:worldId/items/:itemId", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
       const userRole = ctx.userRole as string | null;
       return handleDefinition(
         database,
         "GET",
-        ctx.params.id as string,
+        ctx.params.worldId as string,
         ctx.params.itemId as string,
         userId,
         userRole,
       );
     },)
-    .put("/api/worlds/:id/items/:itemId", async (ctx: any,) => {
+    .put("/api/worlds/:worldId/items/:itemId", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
       const userRole = ctx.userRole as string | null;
       return handleDefinition(
         database,
         "PUT",
-        ctx.params.id as string,
+        ctx.params.worldId as string,
         ctx.params.itemId as string,
         userId,
         userRole,
         ctx.body as Record<string, unknown>,
       );
     },)
-    .delete("/api/worlds/:id/items/:itemId", async (ctx: any,) => {
+    .delete("/api/worlds/:worldId/items/:itemId", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
       const userRole = ctx.userRole as string | null;
       return handleDeleteDefinition(
         database,
-        ctx.params.id as string,
+        ctx.params.worldId as string,
         ctx.params.itemId as string,
         userId,
         userRole,
       );
     },)
-    .get("/api/worlds/:id/items", async (ctx: any,) => {
+    .get("/api/worlds/:worldId/items", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
       const userRole = ctx.userRole as string | null;
       const category = ctx.query?.category as string | undefined;
       return handleDefinitions(
         database,
         "GET",
-        ctx.params.id as string,
+        ctx.params.worldId as string,
         userId,
         userRole,
         Number(ctx.query?.page,) || 1,
@@ -322,13 +322,13 @@ export function storyItemsRoutes({ database, }: { database: Kysely<DB> },): Elys
         category,
       );
     },)
-    .post("/api/worlds/:id/items", async (ctx: any,) => {
+    .post("/api/worlds/:worldId/items", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
       const userRole = ctx.userRole as string | null;
       return handleDefinitions(
         database,
         "POST",
-        ctx.params.id as string,
+        ctx.params.worldId as string,
         userId,
         userRole,
         1,
@@ -337,24 +337,24 @@ export function storyItemsRoutes({ database, }: { database: Kysely<DB> },): Elys
         ctx.body as Record<string, unknown>,
       );
     },)
-    .post("/api/worlds/:id/item-instances/:instanceId/transfer", async (ctx: any,) => {
+    .post("/api/worlds/:worldId/item-instances/:instanceId/transfer", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
       const userRole = ctx.userRole as string | null;
       return handleTransfer(
         database,
-        ctx.params.id as string,
+        ctx.params.worldId as string,
         ctx.params.instanceId as string,
         userId,
         userRole,
         ctx.body as Record<string, unknown>,
       );
     },)
-    .delete("/api/worlds/:id/item-instances/:instanceId", async (ctx: any,) => {
+    .delete("/api/worlds/:worldId/item-instances/:instanceId", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
       const userRole = ctx.userRole as string | null;
       return handleInstance(
         database,
-        ctx.params.id as string,
+        ctx.params.worldId as string,
         ctx.params.instanceId as string,
         userId,
         userRole,

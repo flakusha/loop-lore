@@ -74,11 +74,11 @@ export function charactersRoutes(opts: HandlerOpts,) {
 
       return jsonCreated({ id, },);
     },)
-    .get("/api/actors/:id", async (ctx: any,) => {
+    .get("/api/actors/:actorId", async (ctx: any,) => {
       const actor = await database
         .selectFrom("actors",)
         .selectAll()
-        .where("id", "=", ctx.params.id,)
+        .where("id", "=", ctx.params.actorId,)
         .executeTakeFirst();
       if (!actor) { return jsonError({ message: "Actor not found", status: HttpStatus.NotFound, },); }
 
@@ -89,11 +89,11 @@ export function charactersRoutes(opts: HandlerOpts,) {
       }
       return jsonResponse(actor,);
     },)
-    .get("/api/actors/:id/card", async (ctx: any,) => {
+    .get("/api/actors/:actorId/card", async (ctx: any,) => {
       const actor = await database
         .selectFrom("actors",)
         .selectAll()
-        .where("id", "=", ctx.params.id,)
+        .where("id", "=", ctx.params.actorId,)
         .executeTakeFirst();
       if (!actor) { return jsonError({ message: "Actor not found", status: HttpStatus.NotFound, },); }
 
@@ -125,7 +125,7 @@ export function charactersRoutes(opts: HandlerOpts,) {
       };
       return jsonResponse(card,);
     },)
-    .put("/api/actors/:id", async (ctx: any,) => {
+    .put("/api/actors/:actorId", async (ctx: any,) => {
       const body = ctx.body as Record<string, unknown>;
       const userId = ctx.userId as string | null;
       if (!userId) { return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, },); }
@@ -133,7 +133,7 @@ export function charactersRoutes(opts: HandlerOpts,) {
       const actor = await database
         .selectFrom("actors",)
         .selectAll()
-        .where("id", "=", ctx.params.id,)
+        .where("id", "=", ctx.params.actorId,)
         .executeTakeFirst();
       if (!actor) { return jsonError({ message: "Actor not found", status: HttpStatus.NotFound, },); }
 
@@ -163,17 +163,17 @@ export function charactersRoutes(opts: HandlerOpts,) {
       }
       updates.updated_at = new Date().toISOString();
 
-      await database.updateTable("actors",).set(updates,).where("id", "=", ctx.params.id,).execute();
+      await database.updateTable("actors",).set(updates,).where("id", "=", ctx.params.actorId,).execute();
       return jsonResponse({ ok: true, },);
     },)
-    .delete("/api/actors/:id", async (ctx: any,) => {
+    .delete("/api/actors/:actorId", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
       if (!userId) { return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, },); }
 
       const actor = await database
         .selectFrom("actors",)
         .selectAll()
-        .where("id", "=", ctx.params.id,)
+        .where("id", "=", ctx.params.actorId,)
         .executeTakeFirst();
       if (!actor) { return jsonError({ message: "Actor not found", status: HttpStatus.NotFound, },); }
 
@@ -181,16 +181,16 @@ export function charactersRoutes(opts: HandlerOpts,) {
         return jsonError({ message: "Forbidden", status: HttpStatus.Forbidden, },);
       }
 
-      await database.deleteFrom("actors",).where("id", "=", ctx.params.id,).execute();
+      await database.deleteFrom("actors",).where("id", "=", ctx.params.actorId,).execute();
       return jsonNoContent();
     },)
-    .get("/api/actors/:id/export", async (ctx: any,) => {
+    .get("/api/actors/:actorId/export", async (ctx: any,) => {
       const format = (ctx.query.format as string) ?? "json";
 
       const actor = await database
         .selectFrom("actors",)
         .selectAll()
-        .where("id", "=", ctx.params.id,)
+        .where("id", "=", ctx.params.actorId,)
         .executeTakeFirst();
       if (!actor) { return jsonError({ message: "Actor not found", status: HttpStatus.NotFound, },); }
 
