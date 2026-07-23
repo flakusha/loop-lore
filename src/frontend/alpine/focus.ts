@@ -104,10 +104,8 @@ export function focusMainContent(): void {
  * Set focus to an element by ID.
  */
 export function focusById(id: string,): void {
-  const element = document.getElementById(id,);
-  if (element && typeof element.focus === "function") {
-    element.focus();
-  }
+  const element = document.querySelector<HTMLElement>(`#${id}`,);
+  element?.focus();
 }
 
 /**
@@ -190,7 +188,7 @@ export function onEscapeKey(handler: () => void,): () => void {
  */
 export function handleEscapeKey(): void {
   const sidebar = document.querySelector("#layout-sidebar",);
-  if (sidebar && sidebar.classList.contains("open",)) {
+  if (sidebar?.classList.contains("open",)) {
     globalThis.closeSidebar?.();
     return;
   }
