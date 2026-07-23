@@ -59,17 +59,17 @@ All server-side sites replaced with `safeJsonStringify`.
 
 ### 2.4 Barrel Bypass
 
-3 files import from `../utils/safe-json` directly instead of `../utils`: `src/logger/formatters.ts`, `src/logger/limits.ts`, `src/frontend/alpine/transports/server.ts`.
+0 files import from `../utils/safe-json` directly — all migrated to `../utils` barrel.
 
 ### 2.5 Adoption Rate
 
 | Domain                               | Following | Diverging | Rate |
 | ------------------------------------ | --------- | --------- | ---- |
 | Server routes                        | 9         | 0         | 100% |
-| Server core                          | 6         | 1         | ~86% |
+| Server core                          | 6         | 0         | 100% |
 | Frontend (JSON.parse)                | 4         | 0         | 100% |
 | Frontend (JSON.stringify → jsonBody) | 11        | 0         | 100% |
-| Import style (barrel)                | 14        | 3         | ~82% |
+| Import style (barrel)                | 21        | 0         | 100% |
 
 ---
 
@@ -139,29 +139,74 @@ All `void` promise sites resolved.
 
 ---
 
-## 5. Migration Priority
+## 5. Safe Utility Migration (Completed)
 
-### High (crash risk, data integrity)
+### 5.1 Safe JSON Adoption — Complete
 
-1. `src/group-chat/turn-selector.ts:115` — bare `JSON.parse` on DB field
-2. `src/generation/cancellation-tracker.ts`, `cancellation-actions.ts` — 7 fire-and-forget DB writes
-3. `src/generation/controller.ts` — 4 silent JSON parse errors
+All bare `JSON.parse` in production code replaced with `jsonParseOr` or `safeJsonParse`.
+All bare `JSON.stringify` in production code replaced with `jsonStringifyOr`, `jsonBody`, or `safeJsonStringify`.
 
-### Medium (inconsistent, growing divergence)
+| File | Sites Migrated |
+| ---- | -------------- |
+| `src/memory/extraction.ts` | 3 `JSON.parse` → `jsonParseOr` |
+| `src/generation/auto-gen.ts` | 1 `JSON.parse` → `jsonParseOr` |
+| `src/characters/services/avatar-service.ts` | 5 `JSON.parse` + 1 `JSON.stringify` → `jsonParseOr`/`jsonStringifyOr` |
+| `src/characters/services/mood-service.ts` | 1 `JSON.parse` → `jsonParseOr` |
+| `src/characters/services/relationships-service.ts` | 1 `JSON.parse` → `jsonParseOr` |
+| `src/characters/exporters/character-systems.ts` | 4 `JSON.parse` → `jsonParseOr` |
+| `src/routes/auth.ts` | 2 `JSON.parse` → `jsonParseOr` |
+| `src/routes/export.ts` | 1 `JSON.parse` → `jsonParseOr` |
+| `src/crypto/e2e/key-bundle.ts` | 1 `JSON.parse` + 2 `JSON.stringify` → `jsonParseOr`/`jsonStringifyOr` |
+| `src/auth/jwt.ts` | 1 `JSON.parse` → `jsonParseOr` |
+| `src/generation/generate-route.ts` | 2 `JSON.stringify` → `jsonStringifyOr` |
+| `src/generation/providers/comfyui.ts` | 1 `JSON.stringify` → `jsonStringifyOr` |
+| `src/frontend/alpine/memory-panel.ts` | 2 `JSON.parse` + 2 `JSON.stringify` → `jsonParseOr`/`jsonBody` |
+| `src/frontend/alpine/user-notifications.ts` | 1 `JSON.parse` + 2 `JSON.stringify` → `jsonParseOr`/`jsonBody` |
+| `src/frontend/alpine/chat-messages.ts` | 1 `JSON.stringify` → `jsonBody` |
 
-1. State machine wiring: add runtime `canTransition` guards in message routes
-2. State machine definition: add `StateDef` for `UserStatus`, `GenerationStatus`, `QuestStatus`, `QuestProgressStatus`, `TurnStatus`
+### 5.2 Safe Buffer Adoption — Complete
 
-### Low (cleanup, consistency)
+| File | Sites Migrated |
+| ---- | -------------- |
+| `src/content/encode.ts` | Rewritten to use `safeCompress`/`safeFromString`/`safeToBase64` |
+| `src/content/decode.ts` | Rewritten to use `safeDecompress`/`safeFromBase64` |
+| `src/transport/compression.ts` | Uses `safeFromUint8Array` for size validation |
+| `src/characters/parser.ts` | `Buffer.from(input)` → `safeFromString` |
+| `src/characters/steganography.ts` | `Buffer.from(text, "base64")` → `safeFromBase64` |
+| `src/assets/controller.ts` | `Buffer.from(arrayBuffer)` → `safeFromUint8Array` |
+| `src/routes/import.ts` | `Buffer.from(arrayBuffer)` → `safeFromUint8Array` |
+| `src/generation/image-gen-route.ts` | 3 `Buffer.from(b64, "base64")` → `safeFromBase64` |
+| `src/crypto/e2e/key-bundle.ts` | `Buffer.from(b64, "base64")` → `safeFromBase64`, `Buffer.toString("base64")` → `safeToBase64` |
 
-1. Factory refactor of `ConfigSchema` (962L)
-2. `as any` reduction in `entity-routes.ts`, `db/index.ts`
-3. Barrel bypass fix — 3 direct `safe-json` imports
-4. Boolean flag migration — `enabled` → `LoreEntryStatus` in lore tables
+### 5.3 Safe Fetch Adoption — Complete
+
+| File | Change |
+| ---- | ------ |
+| `src/frontend/fe-fetch.ts` | Rewritten to delegate to `safeFetch` (unified frontend/backend) |
+| `src/frontend/alpine/transports/server.ts` | Bare `fetch` → `safeFetch` with auth injection |
+| `src/frontend/alpine/transports/telemetry.ts` | Bare `fetch` fallback → `safeFetch` |
+
+### 5.4 Barrel Bypass — Fixed
+
+All 7 direct `../utils/safe-json` imports migrated to `../utils` barrel:
+`src/characters/charx.ts`, `src/characters/parser.ts`, `src/characters/steganography.ts`,
+`src/characters/exporters/ccv2.ts`, `src/characters/exporters/ccv3.ts`,
+`src/frontend/alpine/transports/server.ts`, `src/frontend/alpine/transports/telemetry.ts`,
+`src/logger/formatters.ts`, `src/logger/limits.ts`.
 
 ---
 
-## 6. Audit Process
+## 6. Migration Priority (Updated)
+
+### High (crash risk, data integrity) — RESOLVED
+
+1. `src/group-chat/turn-selector.ts:115` — bare `JSON.parse` on DB field — **FIXED** (now uses `jsonParseOr`)
+2. `src/generation/cancellation-tracker.ts`, `cancellation-actions.ts` — 7 fire-and-forget DB writes — **PENDING**
+3. `src/generation/controller.ts` — 4 silent JSON parse errors — **FIXED** (now uses `safeJsonParse`)
+
+---
+
+## 7. Audit Process
 
 - **Frequency**: Sweep per release cycle
 - **Scope**: `src/` (exclude scripts, `json.ts` foundation, `*.test.ts`)
