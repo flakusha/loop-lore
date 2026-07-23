@@ -159,7 +159,7 @@ export async function logNsfwEvent(
     const log = getLogger().child({ module: "nsfw-gate", },);
     log.info(`NSFW gate: ${event.action} — ${event.reason}`, { event, },);
 
-    const entityType = event.actorId ? "actor" : event.chatId ? "chat" : null;
+    const entityType = event.actorId ? "actor" : (event.chatId ? "chat" : null);
     const entityId = event.actorId || event.chatId || null;
 
     const meta = event.metadata ? JSON.stringify(event.metadata,) : "{}";
@@ -180,10 +180,10 @@ export async function logNsfwEvent(
         meta,
       },)
       .execute();
-  } catch (err: unknown) {
+  } catch (error: unknown) {
     try {
       const log = getLogger().child({ module: "nsfw-gate", },);
-      log.error("Failed to log NSFW event", err instanceof Error ? err : new Error(String(err,),), { event, },);
+      log.error("Failed to log NSFW event", error instanceof Error ? error : new Error(String(error,),), { event, },);
     } catch {
       /* logger not initialized */
     }

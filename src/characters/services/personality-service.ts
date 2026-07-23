@@ -191,6 +191,7 @@ export async function resolveCharacterTraits(
   // Collect violations (for audit/logging)
   const violations: PersonalityLockResult[] = [];
   for (const row of permanentRows) {
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion -- WorldTraitCategory ≠ TraitCategory
     const lock = checkPersonalityIntegrity(row.trait_name, row.trait_category as TraitCategory,);
     if (!lock.allowed) {
       violations.push(lock,);
@@ -253,10 +254,11 @@ export async function getBehavioralModifiers(
 
   const modifiers: Record<string, string> = {};
   for (const row of rows) {
-    if (row.trait_name.startsWith("behavioral_modifier:",)) {
-      const name = row.trait_name.slice("behavioral_modifier:".length,);
-      modifiers[name] = row.trait_value;
+    if (!row.trait_name.startsWith("behavioral_modifier:",)) {
+      continue;
     }
+    const name = row.trait_name.slice("behavioral_modifier:".length,);
+    modifiers[name] = row.trait_value;
   }
 
   return modifiers;
