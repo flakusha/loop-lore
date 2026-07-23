@@ -5,7 +5,8 @@
 
 import { load as yamlLoad, } from "js-yaml";
 import { parse as parseToml, } from "smol-toml";
-import { jsonParseOr, safeFromString, } from "../utils";
+import { jsonParseOr, } from "../utils";
+import { safeFromString, } from "../utils/safe-buffer";
 import { extractCharx, } from "./charx";
 import { normalizeCcV2, } from "./normalizers/ccv2";
 import { normalizeCcV3, } from "./normalizers/ccv3";
