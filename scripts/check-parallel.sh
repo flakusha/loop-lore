@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# test
 # Parallel check runner for loop-lore
 # Runs independent checks in parallel and aggregates results
 # Usage: ./scripts/check-parallel.sh [--fix] [--ci]
@@ -24,10 +25,10 @@ trap 'rm -rf "$TMPDIR"' EXIT
 FIX_MODE=false
 CI_MODE=false
 for arg in "$@"; do
-    case $arg in
+  case $arg in
     --fix) FIX_MODE=true ;;
     --ci) CI_MODE=true ;;
-    esac
+  esac
 done
 
 # Track results
@@ -39,58 +40,58 @@ WARNINGS=0
 
 # Run a check in background, capture output
 run_check() {
-    local name="$1"
-    local cmd="$2"
-    local output_file="$TMPDIR/$name.log"
-    local exit_file="$TMPDIR/$name.exit"
+  local name="$1"
+  local cmd="$2"
+  local output_file="$TMPDIR/$name.log"
+  local exit_file="$TMPDIR/$name.exit"
 
-    echo -e "${CYAN}Starting: ${name}${NC}" >&2
+  echo -e "${CYAN}Starting: ${name}${NC}" >&2
 
-    # Run in background
-    (
-        if eval "$cmd" >"$output_file" 2>&1; then
-            echo "0" >"$exit_file"
-        else
-            echo "$?" >"$exit_file"
-        fi
-    ) &
+  # Run in background
+  (
+    if eval "$cmd" >"$output_file" 2>&1; then
+      echo "0" >"$exit_file"
+    else
+      echo "$?" >"$exit_file"
+    fi
+  ) &
 }
 
 # Wait for all background checks and collect results
 wait_and_collect() {
-    local pids=("$@")
+  local pids=("$@")
 
-    # Wait for all background processes
-    for pid in "${pids[@]}"; do
-        wait "$pid" 2>/dev/null || true
-    done
+  # Wait for all background processes
+  for pid in "${pids[@]}"; do
+    wait "$pid" 2>/dev/null || true
+  done
 
-    # Collect results
-    for check in "${!RESULTS[@]}"; do
-        local output_file="$TMPDIR/$check.log"
-        local exit_file="$TMPDIR/$check.exit"
+  # Collect results
+  for check in "${!RESULTS[@]}"; do
+    local output_file="$TMPDIR/$check.log"
+    local exit_file="$TMPDIR/$check.exit"
 
-        TOTAL=$((TOTAL + 1))
+    TOTAL=$((TOTAL + 1))
 
-        if [[ -f "$exit_file" ]]; then
-            local exit_code
-            exit_code=$(cat "$exit_file")
+    if [[ -f "$exit_file" ]]; then
+      local exit_code
+      exit_code=$(cat "$exit_file")
 
-            if [[ "$exit_code" == "0" ]]; then
-                PASSED=$((PASSED + 1))
-                echo -e "${GREEN}✓ PASS: ${check}${NC}"
-            else
-                FAILED=$((FAILED + 1))
-                echo -e "${RED}✗ FAIL: ${check}${NC}"
-                echo -e "${RED}Output:${NC}"
-                cat "$output_file" | head -50
-                echo ""
-            fi
-        else
-            FAILED=$((FAILED + 1))
-            echo -e "${RED}✗ FAIL: ${check} (no exit file)${NC}"
-        fi
-    done
+      if [[ "$exit_code" == "0" ]]; then
+        PASSED=$((PASSED + 1))
+        echo -e "${GREEN}✓ PASS: ${check}${NC}"
+      else
+        FAILED=$((FAILED + 1))
+        echo -e "${RED}✗ FAIL: ${check}${NC}"
+        echo -e "${RED}Output:${NC}"
+        cat "$output_file" | head -50
+        echo ""
+      fi
+    else
+      FAILED=$((FAILED + 1))
+      echo -e "${RED}✗ FAIL: ${check} (no exit file)${NC}"
+    fi
+  done
 }
 
 # Define checks
@@ -106,7 +107,7 @@ CHECKS[typecheck - coverage - frontend]="bun run typecheck:coverage:frontend"
 CHECKS[lint - ts]="bun run lint"
 CHECKS[lint - css]="bun run lint:css"
 CHECKS[lint - html]="bun run lint:html"
-CHECKS[lint - html-scripts]="bun run lint:html-scripts"
+CHECKS[lint - html - scripts]="bun run lint:html-scripts"
 CHECKS[lint - chaining]="bun run lint:chaining"
 
 # Build verification (non-emitting — catches bundler-level import resolution errors)
@@ -127,9 +128,9 @@ echo ""
 # Start all checks in parallel
 PIDS=()
 for check in "${!CHECKS[@]}"; do
-    RESULTS[$check]=""
-    run_check "$check" "${CHECKS[$check]}"
-    PIDS+=($!)
+  RESULTS[$check]=""
+  run_check "$check" "${CHECKS[$check]}"
+  PIDS+=($!)
 done
 
 # Wait and collect results
@@ -143,8 +144,8 @@ echo -e "${GREEN}Passed: ${PASSED}${NC}"
 echo -e "${RED}Failed: ${FAILED}${NC}"
 
 if [[ $FAILED -gt 0 ]]; then
-    echo -e "${RED}=== ${FAILED} check(s) failed ===${NC}"
-    exit 1
+  echo -e "${RED}=== ${FAILED} check(s) failed ===${NC}"
+  exit 1
 fi
 
 # Non-blocking: version drift check
@@ -153,25 +154,25 @@ echo -e "${CYAN}=== Non-blocking checks ===${NC}"
 LATEST_TAG=$(git tag --list 'v*' | sort -V | tail -1)
 PKG_VERSION=$(bun -p 'JSON.parse(require("fs").readFileSync("package.json","utf8")).version' 2>/dev/null || echo "")
 if [[ -n "$LATEST_TAG" && -n "$PKG_VERSION" ]]; then
-    TAG_VERSION="${LATEST_TAG#v}"
-    if [[ "$TAG_VERSION" != "$PKG_VERSION" ]]; then
-        echo -e "${YELLOW}⚠ Version drift: package.json=${PKG_VERSION}, latest tag=${TAG_VERSION}${NC}"
-        echo -e "${YELLOW}  Run 'bun run version:sync' to reconcile${NC}"
-    else
-        echo -e "${GREEN}✓ Version in sync: ${PKG_VERSION}${NC}"
-    fi
+  TAG_VERSION="${LATEST_TAG#v}"
+  if [[ "$TAG_VERSION" != "$PKG_VERSION" ]]; then
+    echo -e "${YELLOW}⚠ Version drift: package.json=${PKG_VERSION}, latest tag=${TAG_VERSION}${NC}"
+    echo -e "${YELLOW}  Run 'bun run version:sync' to reconcile${NC}"
+  else
+    echo -e "${GREEN}✓ Version in sync: ${PKG_VERSION}${NC}"
+  fi
 else
-    echo -e "${YELLOW}⚠ Version check skipped: no tags found${NC}"
+  echo -e "${YELLOW}⚠ Version check skipped: no tags found${NC}"
 fi
 
 # Non-blocking: code duplication (jscpd:full) — recommendation/warning level
 JCPD_OUTPUT=$(bun run jscpd:full 2>&1) || true
 if echo "$JCPD_OUTPUT" | grep -q "Found"; then
-    CLONE_COUNT=$(echo "$JCPD_OUTPUT" | grep -c "Clone found" || true)
-    echo -e "${YELLOW}⚠ Code duplication detected (jscpd:full): ${CLONE_COUNT} clones${NC}"
-    echo -e "${YELLOW}  Run 'bun run jscpd:full' for full report${NC}"
+  CLONE_COUNT=$(echo "$JCPD_OUTPUT" | grep -c "Clone found" || true)
+  echo -e "${YELLOW}⚠ Code duplication detected (jscpd:full): ${CLONE_COUNT} clones${NC}"
+  echo -e "${YELLOW}  Run 'bun run jscpd:full' for full report${NC}"
 else
-    echo -e "${GREEN}✓ No code duplication issues (jscpd:full)${NC}"
+  echo -e "${GREEN}✓ No code duplication issues (jscpd:full)${NC}"
 fi
 
 echo -e "${GREEN}=== All checks passed ===${NC}"
