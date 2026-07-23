@@ -1,5 +1,5 @@
-import type { ContentEncoding, } from "./types";
 import { safeDecompress, safeFromBase64, } from "../utils";
+import type { ContentEncoding, } from "./types";
 
 export function decodeContent(stored: string, encoding: ContentEncoding,): string {
   if (encoding === "identity" || !stored) {

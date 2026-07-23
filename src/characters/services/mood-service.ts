@@ -83,7 +83,7 @@ export class MoodService {
       baseMood: row.base_mood,
       currentMood: row.current_mood,
       moodStability: row.mood_stability,
-      expressionModifiers: jsonParseOr(row.expression_modifiers, {}),
+      expressionModifiers: jsonParseOr(row.expression_modifiers, {},),
       lastMoodChange: row.last_mood_change,
     };
   }
