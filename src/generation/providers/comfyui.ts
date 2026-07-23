@@ -9,6 +9,7 @@
  */
 
 import { validateProviderUrl, } from "../../utils/url-validation";
+import { jsonStringifyOr, safeFromUint8Array, } from "../../utils";
 
 export type ComfyUIWorkflow = Record<
   string,
@@ -74,8 +75,7 @@ export class ComfyUIClient {
     const url = `${this.baseUrl}/prompt`;
     const resp = await fetch(url, {
       method: "POST",
-      headers: { "Content-Type": "application/json", },
-      body: JSON.stringify({ prompt: workflow, },),
+      body: jsonStringifyOr({ prompt: workflow, },),
       signal: AbortSignal.timeout(this.timeout,),
     },);
 
@@ -210,7 +210,9 @@ export class ComfyUIClient {
       throw new Error(`ComfyUI image download failed [${resp.status}]: ${filename}`,);
     }
 
-    return Buffer.from(await resp.arrayBuffer(),);
+    const result = safeFromUint8Array(Buffer.from(await resp.arrayBuffer(),),);
+    if (!result.ok) { throw result.error; }
+    return result.buffer;
   }
 
   /**

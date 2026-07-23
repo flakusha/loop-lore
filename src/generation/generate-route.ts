@@ -27,7 +27,7 @@ import { extractAndStoreMemories, } from "../memory";
 import { registry, } from "../plugins/registry";
 import type { ToolDefinition, } from "../plugins/types";
 import { jsonError, jsonResponse, } from "../routes/http-utils";
-import { jsonParseOr, safeJsonStringify, } from "../utils";
+import { jsonParseOr, jsonStringifyOr, safeJsonStringify, } from "../utils";
 import {
   completeGeneration,
   failGeneration,
@@ -179,7 +179,7 @@ async function executeToolCalls(toolCalls: ToolCallItem[],): Promise<GenerationM
     if (!def) {
       results.push({
         role: "tool",
-        content: JSON.stringify({ error: `Tool not found: ${tc.function.name}`, },),
+        content: jsonStringifyOr({ error: `Tool not found: ${tc.function.name}`, },),
         tool_call_id: tc.id,
       },);
       continue;
@@ -197,7 +197,7 @@ async function executeToolCalls(toolCalls: ToolCallItem[],): Promise<GenerationM
     } catch (error) {
       results.push({
         role: "tool",
-        content: JSON.stringify({ error: (error as Error).message, },),
+        content: jsonStringifyOr({ error: (error as Error).message, },),
         tool_call_id: tc.id,
       },);
     }

@@ -3,7 +3,7 @@
 // CCv3 exporter for character cards.
 // Converts canonical character card to CCv3 format.
 
-import { safeJsonStringify, } from "../../utils/safe-json";
+import { safeJsonStringify, } from "../../utils";
 import type { CanonicalCharacter, } from "../parser";
 import { exportBaseFields, exportLorebook, } from "./shared";
 

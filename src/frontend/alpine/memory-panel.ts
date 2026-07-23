@@ -6,7 +6,7 @@
  */
 
 import type { ChatState, MemoryEntry, } from "./types";
-
+import { jsonBody, jsonParseOr, } from "./json";
 /** Estimate tokens from content length (~4 chars per token). */
 function estimateTokens(content: string,): number {
   return Math.ceil(content.length / 4,);
@@ -72,7 +72,7 @@ export const memoryPanel: Partial<ChatState> & ThisType<ChatState> = {
         type: m.memory_type as MemoryEntry["type"],
         confidence: m.confidence,
         importance: m.importance,
-        keywords: typeof m.keywords === "string" ? JSON.parse(m.keywords || "[]",) : (m.keywords ?? []),
+        keywords: typeof m.keywords === "string" ? jsonParseOr<string[]>(m.keywords || "[]", []) : (m.keywords ?? []),
         pinned: !!m.pinned,
         createdAt: m.created_at,
         tokenCount: estimateTokens(m.content,),
@@ -148,15 +148,14 @@ export const memoryPanel: Partial<ChatState> & ThisType<ChatState> = {
       const res = await fetch(`/api/actors/${actorId}/memories`, {
         method: "POST",
         headers: { "Content-Type": "application/json", },
-        body: JSON.stringify({
+        body: jsonBody({
           content: this.memoryPanel.newMemoryContent.trim(),
           memoryType: "episodic",
           confidence: 1,
           importance: 5,
           keywords: [],
-        },),
+        }),
       },);
-
       if (!res.ok) { return; }
       const created = await res.json() as {
         id: string;
@@ -175,7 +174,7 @@ export const memoryPanel: Partial<ChatState> & ThisType<ChatState> = {
         confidence: created.confidence,
         importance: created.importance,
         keywords: typeof created.keywords === "string"
-          ? JSON.parse(created.keywords || "[]",)
+          ? jsonParseOr<string[]>(created.keywords || "[]", [])
           : (created.keywords ?? []),
         createdAt: created.created_at,
         tokenCount: estimateTokens(created.content,),
@@ -224,7 +223,7 @@ export const memoryPanel: Partial<ChatState> & ThisType<ChatState> = {
       await fetch(`/api/actors/${actorId}/memories/${memoryId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json", },
-        body: JSON.stringify({ pinned: mem.pinned, },),
+        body: jsonBody({ pinned: mem.pinned, }),
       },);
     } catch {
       // Revert on failure

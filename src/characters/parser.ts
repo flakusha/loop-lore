@@ -5,7 +5,7 @@
 
 import { load as yamlLoad, } from "js-yaml";
 import { parse as parseToml, } from "smol-toml";
-import { jsonParseOr, } from "../utils/safe-json";
+import { jsonParseOr, safeFromString, } from "../utils";
 import { extractCharx, } from "./charx";
 import { normalizeCcV2, } from "./normalizers/ccv2";
 import { normalizeCcV3, } from "./normalizers/ccv3";
@@ -119,7 +119,14 @@ function isZipMagic(data: Buffer,): boolean {
  */
 export async function parseCharacterCard(input: Buffer | string, _filename?: string,): Promise<ParseResult> {
   const warnings: string[] = [];
-  const data = typeof input === "string" ? Buffer.from(input,) : input;
+  let data: Buffer;
+  if (typeof input === "string") {
+    const result = safeFromString(input,);
+    if (!result.ok) { throw result.error; }
+    data = result.buffer;
+  } else {
+    data = input;
+  }
 
   // 1. Check magic bytes for PNG
   if (isPngMagic(data,)) {
