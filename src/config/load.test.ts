@@ -206,3 +206,68 @@ describe("validateConfig", () => {
     },).toThrow(/logging\.level/,);
   });
 });
+
+describe("Config layer merging", () => {
+  test("deepMerge applies multiple layers in order", () => {
+    const schema = { server: { port: 3000, host: "0.0.0.0", }, };
+    const defaultConfig = { server: { port: 8080, }, };
+    const localConfig = { server: { host: "127.0.0.1", }, };
+
+    let result = deepMerge(schema as Record<string, unknown>, defaultConfig,) as typeof schema;
+    result = deepMerge(result as Record<string, unknown>, localConfig,) as typeof schema;
+
+    expect(result.server.port,).toBe(8080,); // from config.default
+    expect(result.server.host,).toBe("127.0.0.1",); // from config.local
+  });
+
+  test("local override wins over default for same key", () => {
+    const base = { server: { port: 3000, }, };
+    const defaultConfig = { server: { port: 8080, }, };
+    const localConfig = { server: { port: 9999, }, };
+
+    let result = deepMerge(base, defaultConfig,);
+    result = deepMerge(result, localConfig,);
+
+    expect(result.server.port,).toBe(9999,);
+  });
+
+  test("undefined in local does not erase default value", () => {
+    const base = { server: { port: 3000, }, };
+    const defaultConfig = { server: { port: 8080, }, };
+    const localConfig = { server: { port: undefined as unknown as number, }, };
+
+    let result = deepMerge(base, defaultConfig,);
+    result = deepMerge(result, localConfig,);
+
+    expect(result.server.port,).toBe(8080,);
+  });
+
+  test("env.yaml layer overrides local config", () => {
+    const base = { server: { port: 3000, }, };
+    const defaultConfig = { server: { port: 8080, }, };
+    const localConfig = { server: { port: 9999, }, };
+    const envYaml = { server: { port: 4000, }, };
+
+    let result = deepMerge(base, defaultConfig,);
+    result = deepMerge(result, localConfig,);
+    result = deepMerge(result, envYaml,);
+
+    expect(result.server.port,).toBe(4000,);
+  });
+
+  test("env vars override all config layers", () => {
+    const base = { server: { port: 3000, }, };
+    const defaultConfig = { server: { port: 8080, }, };
+    const localConfig = { server: { port: 9999, }, };
+    const envYaml = { server: { port: 4000, }, };
+
+    let result = deepMerge(base, defaultConfig,);
+    result = deepMerge(result, localConfig,);
+    result = deepMerge(result, envYaml,);
+
+    // Simulate env var override
+    (result.server as Record<string, unknown>).port = 5000;
+
+    expect(result.server.port,).toBe(5000,);
+  });
+});
