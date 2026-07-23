@@ -114,7 +114,7 @@ export function scoreMessage(msg: ScorableMessage,): MessageScore {
   if (recencyScore > 0.7) { reasons.push("recent",); }
 
   // Role: user/character messages score higher than system (0.2 weight)
-  const roleScore = msg.role === "user" || msg.role === "character" ? 1.0 : 0.3;
+  const roleScore = msg.role === "user" || msg.role === "character" ? 1 : 0.3;
   if (roleScore > 0.5) { reasons.push("participant",); }
 
   // Keywords: lore, decision, emotion, location (0.2 weight)
@@ -123,21 +123,21 @@ export function scoreMessage(msg: ScorableMessage,): MessageScore {
   const decisionMatches = DECISION_KEYWORDS.filter((kw,) => lowerContent.includes(kw,)).length;
   const emotionMatches = EMOTION_KEYWORDS.filter((kw,) => lowerContent.includes(kw,)).length;
   const locationMatches = LORE_CONTENT_KEYWORDS.filter((kw,) => lowerContent.includes(kw,)).length;
-  const keywordScore = Math.min(1.0, (loreMatches + decisionMatches + emotionMatches + locationMatches) / 4,);
+  const keywordScore = Math.min(1, (loreMatches + decisionMatches + emotionMatches + locationMatches) / 4,);
   if (keywordScore > 0.3) {
     reasons.push(`keywords(${loreMatches + decisionMatches + emotionMatches + locationMatches})`,);
   }
 
   // Memory links (0.15 weight)
-  const memoryLinkScore = msg.hasMemoryLink ? 1.0 : 0;
+  const memoryLinkScore = msg.hasMemoryLink ? 1 : 0;
   if (memoryLinkScore > 0) { reasons.push("memory-linked",); }
 
   // Attachments (0.1 weight)
-  const attachmentScore = msg.hasAttachment ? 1.0 : 0;
+  const attachmentScore = msg.hasAttachment ? 1 : 0;
   if (attachmentScore > 0) { reasons.push("has-attachment",); }
 
   // Reactions (0.05 weight)
-  const reactionScore = Math.min(1.0, (msg.reactionCount ?? 0) / 5,);
+  const reactionScore = Math.min(1, (msg.reactionCount ?? 0) / 5,);
   if (reactionScore > 0) { reasons.push(`reactions(${msg.reactionCount})`,); }
 
   const relevanceScore = recencyScore * SCORING_WEIGHTS.recency +
@@ -220,8 +220,7 @@ export function pruneMessages(
   const promoted: ScorableMessage[] = [];
   const pruned: ScorableMessage[] = [];
 
-  for (let i = 0; i < messages.length; i++) {
-    const msg = messages[i];
+  for (const [i, msg,] of messages.entries()) {
     const score = scores[i];
     if (!msg || !score) { continue; }
 
@@ -240,9 +239,9 @@ export function pruneMessages(
   if (config.insertSummary && pruned.length > 0) {
     const promotedCount = promoted.length;
     const prunedCount = pruned.length;
-    summary = `[Context Pruned] Removed ${prunedCount} message(s)` +
-      (promotedCount > 0 ? `, promoted ${promotedCount} to memory` : "") +
-      `. Strategy: ${config.strategy}.`;
+    summary = `[Context Pruned] Removed ${prunedCount} message(s)${
+      promotedCount > 0 ? `, promoted ${promotedCount} to memory` : ""
+    }. Strategy: ${config.strategy}.`;
   }
 
   const tokensSaved = pruned.reduce((sum, msg,) => sum + Math.ceil(msg.content.length * 0.3,), 0,);

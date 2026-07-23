@@ -7,6 +7,7 @@ export { estimateTokens, } from "../chat/token-utils";
 export { getMemoriesWithinBudget, selectWithinBudget, } from "./budget";
 export { extractAndStoreMemories, extractMemories, storeMemories, } from "./extraction";
 export { provisionMemories, } from "./provision";
+export type { ProvisionContext, ProvisionResult, } from "./provision";
 export { applyDecay, purgeStaleMemories, touchMemory, } from "./purge";
 export { evaluateShareability, isMemoryVisible, parseShareability, } from "./shareability";
 export type { ShareabilityConfig, } from "./shareability";
@@ -18,7 +19,5 @@ export type {
   MemoryPrivacy,
   MemoryScope,
   MemorySelectionOpts,
-  ProvisionContext,
-  ProvisionResult,
   PurgeConfig,
 } from "./types";

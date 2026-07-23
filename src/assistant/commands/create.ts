@@ -13,6 +13,13 @@
 
 import { type CommandResult, registerCommand, } from "./registry";
 
+const typeLabels: Record<string, string> = {
+  char: "character",
+  character: "character",
+  loc: "location",
+  location: "location",
+};
+
 registerCommand("create", async (args,): Promise<CommandResult> => {
   const entityType = (args[0] || "").toLowerCase();
   const description = args.slice(1,).join(" ",).trim();
@@ -43,7 +50,7 @@ registerCommand("create", async (args,): Promise<CommandResult> => {
   // TODO: Apply quality gating (schema validation, consistency check, duplicate check)
   // TODO: Require user confirmation before creating
 
-  const typeLabel = entityType === "char" ? "character" : entityType === "loc" ? "location" : entityType;
+  const typeLabel = typeLabels[entityType] ?? entityType;
 
   return {
     systemMessage: `**Created ${typeLabel}:** ${description}\n\nThe entity has been added to your world.`,

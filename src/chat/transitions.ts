@@ -168,7 +168,7 @@ export async function promoteMessagesToMemories(
     if (!msg) { continue; }
 
     // Detect scope from message content
-    const scope = detectScope(msg.content, msg.role, worldId, participantIds,);
+    const scope = detectScope(msg.content, msg.role, worldId ?? null, participantIds,);
 
     // Extract memories from the message content
     const extracted = [{
@@ -191,7 +191,7 @@ export async function promoteMessagesToMemories(
  * Detect memory scope from message content.
  */
 function detectScope(
-  content: string,
+  _content: string,
   role: string,
   worldId: string | null,
   _participantIds: string[],
