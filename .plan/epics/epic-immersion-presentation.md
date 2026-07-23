@@ -17,6 +17,7 @@
 | Visual Novel Mode renderer           | `src/frontend/vn/` (new)                   | Med    | ideas #2 | `TASK-visual-novel-mode.md`     |
 | Text Effects & Overlays              | `src/frontend/effects/` (new)              | Med    | —        | `TASK-text-effects-overlays.md` |
 | 3D View Modes (consolidated)         | `src/frontend/3d/`, `src/frontend/avatar/` | High   | —        | `TASK-3d-view-modes.md`         |
+| Info Bubbles (help tooltips)         | `src/frontend/components/info-bubble.html`   | Low    | —        | `TASK-info-bubbles.md`        |
 | Adaptive soundscape & music          | `src/generation/soundscape.ts` (new)       | Med    | ideas #3 | —                               |
 | Karaoke TTS                          | `src/generation/karaoke-tts.ts` (new)      | High   | ideas #4 | —                               |
 | Director's Mode (cinematic metadata) | `src/story/director-mode.ts` (new)         | High   | ideas #5 | —                               |
@@ -40,3 +41,4 @@
 - `TASK-3d-view-modes.md` — 3D avatars, GLTF, view modes (supersedes 3 old tasks)
 - `TASK-chat-backgrounds-location-sync.md` — backgrounds for VN mode scenes
 - `TASK-emotion-intent-detection.md` — emotion triggers for effects + portraits
+- `TASK-info-bubbles.md` — reusable help tooltip component for config menus (i18n)
