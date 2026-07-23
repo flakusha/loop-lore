@@ -3,6 +3,7 @@
 **Status:** Draft
 **Priority:** Medium
 **Effort:** Very High
+**Issue:** `30a1b4b`
 **Tags:** nsfw, rpg, game-mechanics, adult, intimacy, relationships
 
 ## Overview
@@ -840,3 +841,7 @@ interface Rumor {
 - **Epic: Logic Reconciliation** — NSFW support, moderation, safety
 - **Epic: Plugin System** — NSFW content modding via plugins
 - **Epic: Assistant/GM Flows** — GM-driven NSFW scenarios
+
+## Linked Tasks
+
+- TASK-nsfw-game-mechanics.md

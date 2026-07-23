@@ -116,3 +116,7 @@ interface ModerationAction {
 - `src/chat/moderation.ts` — blocks, bans, shadowing, flags
 - `src/middleware/nsfw-gate.ts` — NSFW toggle enforcement
 - `src/db/schema.ts` — moderation_action, block, flag tables
+
+## Linked Tasks
+
+- TASK-chat-lifecycle-moderation.md

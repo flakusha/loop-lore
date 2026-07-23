@@ -140,3 +140,7 @@ The integrity contract is implicit and partly unenforced:
 
 - **IN:** backend-selection guards, `data_version` write-path enforcement, ACID reference doc.
 - **OUT:** migration leadership/orchestration (Epic 26 owns it); deploy manifests/K8s (Epic 25 owns it); general test infrastructure (Epic Testing & QA owns it).
+
+## Linked Tasks
+
+- TASK-data-integrity-acid.md

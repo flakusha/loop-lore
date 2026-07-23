@@ -3,6 +3,7 @@
 **Status:** ⬜ Not Started
 **Priority:** Medium
 **Effort:** High
+**Issue:** `3fe9de8`
 **Type:** Feature Epic
 **Tags:** weather, environment, effects, climate, terrain, hazards
 
@@ -356,3 +357,7 @@ interface MagicalEffect {
 - **Epic Magic System** — Magical weather
 - **Epic Exploration System** — Travel, navigation
 - **Epic NPC System** — NPC behavior
+
+## Linked Tasks
+
+- TASK-weather-environment.md

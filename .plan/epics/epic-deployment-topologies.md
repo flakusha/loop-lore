@@ -113,3 +113,7 @@
 - **Epic 26 (Multi-Instance Reconciliation)** — provides migration leadership / schema-drift guards this epic consumes for topologies D/E.
 - **Epic 27 (Data Integrity & ACID)** — supplies backend-selection + `data_version` guards that gate SQLite-vs-Postgres topology decisions.
 - **Epic 14 (Import/Export)** — deploy artifacts may ship baked data; out of scope here.
+
+## Linked Tasks
+
+- TASK-deployment-topologies.md

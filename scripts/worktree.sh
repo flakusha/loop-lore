@@ -68,7 +68,7 @@ Commands:
   prs                       Create worktrees for all open PRs (needs gh auth)
 
 Issue Tracking (git-issue):
-  ticket <TYPE> <NUM> <title> [body]  Create ticket (TYPE-YYYY-NNN format)
+  ticket <TYPE> <title> [body]        Create .plan/tickets/ file + git issue
   issues [--all] [--format FORMAT]    List issues (default: open, oneline)
   show <ID>                           Show issue details and comments
   comment <ID> -m <text>              Add comment to issue
@@ -83,7 +83,8 @@ Aliases:
 
 Examples:
   $(basename "$0") new feature-xyz
-  $(basename "$0") ticket TASK 001 "Fix login"
+  $(basename "$0") ticket TASK "Fix login" -l backend -l bug -p high
+  $(basename "$0") ticket FEAT "Add dark mode" -e epic-ui --effort Large
   $(basename "$0") issues --all
   $(basename "$0") show TASK-001
   $(basename "$0") comment TASK-001 -m "Added description"
@@ -338,39 +339,39 @@ cmd_new() {
 }
 
 cmd_ticket() {
-  # Create a git-native-issue ticket with year-prefixed ID
-  # Usage: ./scripts/worktree.sh ticket <TYPE> <NUM> <title> [body] [options]
-  # IDs use format: TYPE-YYYY-NNN (e.g., TASK-2026-025, FEAT-2026-001)
+  # Create a .plan/tickets/ file AND a git-native-issue
+  # Usage: ./scripts/worktree.sh ticket <TYPE> <title> [body] [options]
+  # Creates: .plan/tickets/TASK-{name}.md + git issue with Plan spec comment
   local type=""
-  local num=""
   local title=""
   local body=""
   local labels=()
   local priority=""
+  local epic=""
+  local effort="Medium"
 
   # Parse required positional args
   type="${1:-}"
-  num="${2:-}"
-  title="${3:-}"
-  body="${4:-}"
+  title="${2:-}"
+  body="${3:-}"
 
-  if [[ -z "$type" ]] || [[ -z "$num" ]] || [[ -z "$title" ]]; then
-    echo -e "${RED}Error: type, number, and title required${NC}"
-    echo "Usage: $(basename "$0") ticket <TYPE> <NUM> <title> [body] [options]"
-    echo "  TYPE: BUG, FEAT, FIX, IDEA, TASK, SOL, INFRA, EPIC"
-    echo "  NUM: 3-digit number (e.g., 025, 001)"
-    echo "  IDs use format TYPE-YYYY-NNN (e.g., TASK-2026-025)"
+  if [[ -z "$type" ]] || [[ -z "$title" ]]; then
+    echo -e "${RED}Error: type and title required${NC}"
+    echo "Usage: $(basename "$0") ticket <TYPE> <title> [body] [options]"
+    echo "  TYPE: BUG, FEAT, FIX, IDEA, TASK, SOL, INFRA"
     echo ""
     echo "Options:"
     echo "  -l, --label <label>    Add label (repeatable)"
     echo "  -p, --priority <level> Set priority: low, medium, high, critical"
+    echo "  -e, --epic <epic>      Link to epic (e.g., epic-plugin-system)"
+    echo "  --effort <level>       Set effort: Small, Medium, Large, XL"
     echo ""
-    echo "Example: $(basename "$0") ticket TASK 025 'Fix login' -l backend -l bug -p high"
+    echo "Example: $(basename "$0") ticket TASK 'Fix login' -l backend -l bug -p high -e epic-auth"
     exit 1
   fi
 
-  # Parse optional flags (shift past the 4 positional args)
-  shift 4 2>/dev/null || true
+  # Parse optional flags (shift past the 3 positional args)
+  shift 3 2>/dev/null || true
   while [[ $# -gt 0 ]]; do
     case "$1" in
       -l | --label)
@@ -379,6 +380,14 @@ cmd_ticket() {
         ;;
       -p | --priority)
         priority="$2"
+        shift 2
+        ;;
+      -e | --epic)
+        epic="$2"
+        shift 2
+        ;;
+      --effort)
+        effort="$2"
         shift 2
         ;;
       *)
@@ -393,7 +402,7 @@ cmd_ticket() {
 
   # Validate type
   case "$type" in
-    BUG | FEAT | FIX | IDEA | TASK | SOL | INFRA | EPIC) ;;
+    BUG | FEAT | FIX | IDEA | TASK | SOL | INFRA) ;;
     *)
       echo -e "${RED}Error: unknown type '$type'${NC}"
       exit 1
@@ -411,40 +420,91 @@ cmd_ticket() {
     esac
   fi
 
-  local year
-  year=$(date +%Y)
-  local extid="${type}-${year}-${num}"
-  local full_title="${extid}: ${title}"
+  # Generate ticket name from title (kebab-case, lowercase, remove special chars)
+  local ticket_name
+  ticket_name=$(echo "$title" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9]/-/g' | sed 's/--*/-/g' | sed 's/^-//' | sed 's/-$//' | cut -c1-60)
 
-  # Check if already exists
-  if git -C "$REPO_ROOT" issue search "${extid}:" 2>/dev/null | grep -q "${extid}:"; then
-    echo -e "${YELLOW}Ticket ${extid} already exists${NC}"
+  local ticket_file=".plan/tickets/${type}-${ticket_name}.md"
+
+  # Check if ticket file already exists
+  if [[ -f "$ticket_file" ]]; then
+    echo -e "${YELLOW}Ticket file already exists: $ticket_file${NC}"
     exit 0
   fi
 
-  echo -e "${CYAN}Creating ticket: ${extid}${NC}"
+  # Create .plan/tickets/ directory if needed
+  mkdir -p .plan/tickets
+
+  # Create ticket file with frontmatter
+  echo -e "${CYAN}Creating ticket file: ${ticket_file}${NC}"
+  cat >"$ticket_file" <<EOF
+# ${type}: ${title}
+
+**Status:** ⬜ Not Started
+**Priority:** ${priority:-Medium}
+**Effort:** ${effort}
+EOF
+
+  # Add epic if provided
+  if [[ -n "$epic" ]]; then
+    echo "**Epic:** ${epic}" >>"$ticket_file"
+  fi
+
+  cat >>"$ticket_file" <<EOF
+
+## Summary
+
+${body:-No description provided.}
+
+## Acceptance Criteria
+
+- [ ] Implementation complete
+- [ ] Tests passing
+- [ ] Documentation updated
+EOF
+
+  echo -e "${GREEN}  ✓ Created ticket file${NC}"
+
+  # Create git issue with title embedding the extid
+  local year
+  year=$(date +%Y)
+  local extid="${type}-${ticket_name}"
+  local full_title="${extid}: ${title}"
+
+  echo -e "${CYAN}Creating git issue: ${extid}${NC}"
   local issue_hash
-  issue_hash=$(git -C "$REPO_ROOT" issue create "$full_title" -m "$body")
+  issue_hash=$(git -C "$REPO_ROOT" issue create "$full_title" -m "$body" 2>&1)
 
   # Extract issue hash from output (format: "Created issue <hash>")
   local hash
   hash=$(echo "$issue_hash" | grep -oP '[0-9a-f]{7,}')
 
-  # Add labels if provided
-  if [[ ${#labels[@]} -gt 0 ]] && [[ -n "$hash" ]]; then
-    local label_cmd=(git -C "$REPO_ROOT" issue edit "$hash")
-    for label in "${labels[@]}"; do
-      label_cmd+=(-l "$label")
-    done
-    "${label_cmd[@]}"
-  fi
+  if [[ -n "$hash" ]]; then
+    # Add Plan spec comment linking to the ticket file
+    git -C "$REPO_ROOT" issue comment "$hash" -m "Plan spec: ${ticket_file}" 2>/dev/null || true
 
-  # Add priority if provided
-  if [[ -n "$priority" ]] && [[ -n "$hash" ]]; then
-    git -C "$REPO_ROOT" issue edit "$hash" -p "$priority"
+    # Add labels if provided
+    if [[ ${#labels[@]} -gt 0 ]]; then
+      local label_cmd=(git -C "$REPO_ROOT" issue edit "$hash")
+      for label in "${labels[@]}"; do
+        label_cmd+=(-l "$label")
+      done
+      "${label_cmd[@]}" 2>/dev/null || true
+    fi
+
+    # Add priority if provided
+    if [[ -n "$priority" ]]; then
+      git -C "$REPO_ROOT" issue edit "$hash" -p "$priority" 2>/dev/null || true
+    fi
+
+    echo -e "${GREEN}  ✓ Created git issue${NC}"
+  else
+    echo -e "${YELLOW}  ⚠ Could not extract issue hash — issue may not have been created${NC}"
   fi
 
   echo -e "${GREEN}✓ Created ticket ${extid}${NC}"
+  echo -e "  Ticket file: ${ticket_file}"
+  [[ -n "$hash" ]] && echo -e "  Git issue: ${hash}"
 }
 
 cmd_issues() {

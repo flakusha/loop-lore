@@ -2,19 +2,16 @@
 
 ## Documentation Philosophy
 
-`docs/` holds exactly two kinds of content:
-
-1. **Strictly generated API concepts** — material derived automatically from
-   source (routes, schemas, types) by a tool/script, not hand-written.
-   Today the only generated doc is `docs/meta/issues.md` (built by
-   `bun run docs:gen` → `scripts/gen-issues-doc.ts`).
-2. **High-level notes** — prose that may describe intent, decisions, or
-   architecture, but is **non-authoritative** and may drift from `src/`.
-   Hand-written spec files under `docs/spec/` carry a banner stating this.
+`docs/` holds **non-authoritative** reference material — prose that may describe
+intent, decisions, or architecture, but may drift from `src/`. Hand-written spec
+files under `docs/spec/` carry a banner stating this.
 
 The authoritative precedence is:
 
-**AGENTS.md > `src/` > `docs/spec`**
+**AGENTS.md > `.plan/` > `src/` > `docs/spec`**
+
+Task tracking and feature specs live in `.plan/` (source of truth). `docs/`
+contains supporting documentation and research.
 
 If a hand-written doc contradicts `src/`, treat `src/` as correct and reconcile
 the doc — correct it, mark it aspirational, or trim it. Never present a

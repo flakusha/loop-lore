@@ -868,3 +868,7 @@ CREATE TABLE description_transfers (
 - `.plan/tickets/TASK-character-creator-prerogative.md` — Licensing
 - `.plan/tickets/TASK-emotions-avatar-edit-model.md` — Avatar system
 - `.plan/tickets/TASK-emotion-intent-detection.md` — Emotion detection
+
+## Linked Tasks
+
+- TASK-character-core-system.md

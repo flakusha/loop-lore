@@ -41,3 +41,7 @@ social layer that predates engines (forum-RP reputation/consent systems, §4.3).
 `epic-worlds-extension.md`, `epic-social-interaction.md`,
 `epic-crafting-professions.md` (reputation-gated blueprints), `epic-rpg-mechanics.md`,
 `epic-emergent-narrative-design.md`
+
+## Linked Tasks
+
+- TASK-faction-reputation.md

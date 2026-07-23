@@ -3,6 +3,7 @@
 **Status:** ⬜ Not Started
 **Priority:** Medium
 **Effort:** High
+**Issue:** `8104527`
 **Type:** Feature Epic
 **Tags:** disease, poison, ailments, healing, resistance, alchemy
 
@@ -299,3 +300,7 @@ interface PoisonRecipe {
 - **Epic Combat System** — Poison weapons
 - **Epic NPC System** — NPC infection
 - **Epic World & Locations** — Plague zones
+
+## Linked Tasks
+
+- TASK-disease-poison.md
