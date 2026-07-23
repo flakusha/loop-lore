@@ -14,6 +14,11 @@ interface HandlerOpts {
   database: Kysely<DB>;
 }
 
+/** Convert boolean to 0/1 integer, with fallback for undefined. */
+function booleanToInt(value: boolean | undefined, fallback: number,): number {
+  return value === undefined ? fallback : (value ? 1 : 0);
+}
+
 export function characterLicensingRoutes(opts: HandlerOpts,) {
   const { database, } = opts;
 
@@ -65,9 +70,9 @@ export function characterLicensingRoutes(opts: HandlerOpts,) {
             license_type: (licenseType as any) ?? existing.license_type,
             custom_license_text: customLicenseText ?? existing.custom_license_text,
             attribution: attribution ?? existing.attribution,
-            allow_derivatives: allowDerivatives !== undefined ? (allowDerivatives ? 1 : 0) : existing.allow_derivatives,
-            allow_commercial: allowCommercial !== undefined ? (allowCommercial ? 1 : 0) : existing.allow_commercial,
-            share_alike: shareAlike !== undefined ? (shareAlike ? 1 : 0) : existing.share_alike,
+            allow_derivatives: booleanToInt(allowDerivatives, existing.allow_derivatives,),
+            allow_commercial: booleanToInt(allowCommercial, existing.allow_commercial,),
+            share_alike: booleanToInt(shareAlike, existing.share_alike,),
             updated_at: new Date().toISOString(),
           },)
           .where("id", "=", existing.id,)
@@ -84,9 +89,9 @@ export function characterLicensingRoutes(opts: HandlerOpts,) {
           license_type: (licenseType as any) ?? "proprietary",
           custom_license_text: customLicenseText ?? null,
           attribution: attribution ?? null,
-          allow_derivatives: allowDerivatives !== undefined ? (allowDerivatives ? 1 : 0) : 1,
-          allow_commercial: allowCommercial !== undefined ? (allowCommercial ? 1 : 0) : 0,
-          share_alike: shareAlike !== undefined ? (shareAlike ? 1 : 0) : 0,
+          allow_derivatives: booleanToInt(allowDerivatives, 1,),
+          allow_commercial: booleanToInt(allowCommercial, 0,),
+          share_alike: booleanToInt(shareAlike, 0,),
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString(),
         },)
