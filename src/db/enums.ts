@@ -33,6 +33,7 @@ export * from "./enums-character";
 export * from "./enums-config";
 export * from "./enums-content";
 export * from "./enums-core";
+export * from "./enums-crafting";
 export * from "./enums-generation";
 export * from "./enums-story";
 export * from "./state";
