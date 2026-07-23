@@ -1,6 +1,6 @@
 # Backlog
 
-Features not under active development. `plan.md` tracks active work; `open-items.md` tracks bugs/debt.
+Features not under active development. `plan.md` tracks active work; `docs/meta/open-items.md` tracks bugs/debt.
 
 ## P0 — Immediate Next (v0.1 In-Progress)
 
