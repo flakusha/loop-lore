@@ -28,3 +28,7 @@ Builder-layer tools: procedural asset generation, plot autopilot, what-if branch
 - Quest engine for plot autopilot
 - Conversation branching for what-if simulator
 - Export/share infra for community templates
+
+## Linked Tasks
+
+- TASK-authoring-creation.md

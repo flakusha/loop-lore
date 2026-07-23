@@ -3,6 +3,7 @@
 **Status:** ⬜ Not Started
 **Priority:** Medium
 **Effort:** Very High
+**Issue:** `772d0e5`
 **Type:** Feature Epic
 **Tags:** economy, trading, currency, market, auction, banking
 
@@ -399,3 +400,7 @@ interface GuildTax {
 - **Epic Faction System** — Faction currency
 - **Epic Crafting System** — Item sales
 - **Epic Guild System** — Guild banking
+
+## Linked Tasks
+
+- TASK-economy-trading.md

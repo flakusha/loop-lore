@@ -3,6 +3,7 @@
 **Status:** ⬜ Not Started
 **Priority:** Medium
 **Effort:** High
+**Issue:** `29d4e8c`
 **Type:** Feature Epic
 **Tags:** assistant, stable-diffusion, intent-detection, tool-execution, scenario-source
 
@@ -492,3 +493,7 @@ User prompt → Intent detection → Entity type routing → Generation pipeline
 - Generated assets (images, audio) linked via asset system
 - Version tracking for regenerated content
 - Ownership tracking (who generated what)
+
+## Linked Tasks
+
+- TASK-assistant-generation-extensions.md

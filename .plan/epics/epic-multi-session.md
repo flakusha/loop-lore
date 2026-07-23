@@ -31,3 +31,7 @@ Support multiple sessions for the same user. Enable concurrent access from diffe
 - `src/db/schema-sessions.ts` — session schema
 - `src/routes/sessions.ts` — session management API
 - `src/frontend/alpine/settings.ts` — session management UI
+
+## Linked Tasks
+
+- TASK-multi-session.md

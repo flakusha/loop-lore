@@ -3,6 +3,7 @@
 **Status:** ⬜ Not Started
 **Priority:** High
 **Effort:** High
+**Issue:** `7cbf607`
 **Type:** Feature Epic
 **Tags:** items, durability, effects, stats, unique-items, dupe-protection, balance
 
@@ -399,3 +400,7 @@ interface ScalingImplementation {
 - **Epic Crafting & Professions** — Repair, enchanting
 - **Epic Economy & Trading** — Item value, trading
 - **Epic Battle & Action Systems** — Combat effects
+
+## Linked Tasks
+
+- TASK-item-system-extensions.md

@@ -272,3 +272,7 @@ interface WorldMechanicsConfig {
 - **Epic World & Locations** — world-level modifiers / factions overlap; delegates world state to that epic.
 - **Epic Battle & Action Systems** — combat, loot, inventory, skills shared; coordinate ownership there.
 - **Epic Plugin System** — mechanics registry is plugin-based (`plugins/core/`).
+
+## Linked Tasks
+
+- TASK-rpg-mechanics.md

@@ -131,3 +131,7 @@ Two approaches for spec→VitePress markdown:
 
 - **EPIC-2026-32** — API Versioning Strategy (prerequisite for versioned spec)
 - **EPIC-2026-16** — Observability & CI (CI integration)
+
+## Linked Tasks
+
+- TASK-openapi-reference.md
