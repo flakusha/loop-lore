@@ -1,0 +1,129 @@
+<!-- Key Management Settings Tab -->
+<div x-data="keyManagement()" x-init="init()" class="p-4 space-y-4">
+  <h2 class="text-lg font-semibold" x-text="t('keys.title') || 'Encryption Keys'"></h2>
+
+  <!-- Error message -->
+  <template x-if="error">
+    <div class="p-3 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 rounded-lg text-sm" x-text="error">
+    </div>
+  </template>
+
+  <!-- Loading indicator -->
+  <template x-if="loading">
+    <div class="text-center py-4 text-gray-500">
+      <span class="animate-spin inline-block w-5 h-5 border-2 border-current border-t-transparent rounded-full"></span>
+    </div>
+  </template>
+
+  <!-- Actions -->
+  <div class="flex gap-2 flex-wrap">
+    <button
+      @click="showGenerateModal = true"
+      class="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded-lg transition-colors"
+    >
+      <span x-text="t('keys.generate') || 'Generate New Key'"></span>
+    </button>
+    <button
+      @click="rotateKey()"
+      :disabled="loading"
+      class="px-3 py-1.5 bg-yellow-600 hover:bg-yellow-700 text-white text-sm rounded-lg transition-colors disabled:opacity-50"
+    >
+      <span x-text="t('keys.rotate') || 'Rotate Primary Key'"></span>
+    </button>
+  </div>
+
+  <!-- Keys list -->
+  <div class="space-y-2">
+    <template x-if="!loading && keys.length === 0">
+      <p class="text-gray-500 text-sm" x-text="t('keys.noKeys') || 'No encryption keys found.'"></p>
+    </template>
+
+    <template x-for="key in keys" :key="key.id">
+      <div class="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
+        <div class="space-y-1">
+          <div class="font-medium" x-text="key.name"></div>
+          <div class="text-xs text-gray-500 space-x-3">
+            <span x-text="'ID: ' + key.id.slice(0, 8) + '...'"></span>
+            <span x-text="'Created: ' + formatDate(key.createdAt)"></span>
+            <template x-if="key.expiresAt">
+              <span x-text="'Expires: ' + formatDate(key.expiresAt)"></span>
+            </template>
+          </div>
+        </div>
+        <div class="flex items-center gap-3">
+          <span class="text-xs font-medium uppercase" :class="statusColor(key.status)" x-text="key.status"></span>
+          <template x-if="key.status === 'active'">
+            <button @click="confirmRevoke(key)" class="text-red-600 hover:text-red-700 text-sm">
+              <span x-text="t('keys.revoke') || 'Revoke'"></span>
+            </button>
+          </template>
+        </div>
+      </div>
+    </template>
+  </div>
+
+  <!-- Generate Key Modal -->
+  <template x-if="showGenerateModal">
+    <div
+      class="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
+      @click.self="showGenerateModal = false"
+    >
+      <div class="bg-white dark:bg-gray-800 rounded-lg p-6 w-full max-w-md space-y-4">
+        <h3 class="text-lg font-semibold" x-text="t('keys.generateTitle') || 'Generate New Key'"></h3>
+        <div>
+          <label class="block text-sm font-medium mb-1" x-text="t('keys.nameLabel') || 'Key Name'"></label>
+          <input
+            type="text"
+            x-model="newKeyName"
+            @keydown.enter="generateKey()"
+            class="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600"
+            :placeholder="t('keys.namePlaceholder') || 'e.g., backup-key'"
+            autofocus
+          >
+        </div>
+        <div class="flex justify-end gap-2">
+          <button @click="showGenerateModal = false" class="px-3 py-1.5 text-gray-600 hover:text-gray-800 text-sm">
+            <span x-text="t('common.cancel') || 'Cancel'"></span>
+          </button>
+          <button
+            @click="generateKey()"
+            :disabled="!newKeyName.trim() || loading"
+            class="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded-lg disabled:opacity-50"
+          >
+            <span x-text="t('keys.generate') || 'Generate'"></span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </template>
+
+  <!-- Revoke Confirmation Modal -->
+  <template x-if="showRevokeModal">
+    <div class="fixed inset-0 bg-black/50 flex items-center justify-center z-50" @click.self="showRevokeModal = false">
+      <div class="bg-white dark:bg-gray-800 rounded-lg p-6 w-full max-w-md space-y-4">
+        <h3 class="text-lg font-semibold text-red-600" x-text="t('keys.revokeTitle') || 'Revoke Key'"></h3>
+        <p class="text-sm text-gray-600 dark:text-gray-400">
+          <span
+            x-text="t('keys.revokeWarning') || 'Warning: This action is irreversible. Messages encrypted with this key will become permanently inaccessible.'"
+          ></span>
+        </p>
+        <p class="text-sm font-medium">
+          <span x-text="t('keys.revokeConfirm') || 'Key to revoke:'"></span>
+          <span class="text-red-600" x-text="revokeKeyName"></span>
+        </p>
+        <div class="flex justify-end gap-2">
+          <button @click="showRevokeModal = false" class="px-3 py-1.5 text-gray-600 hover:text-gray-800 text-sm">
+            <span x-text="t('common.cancel') || 'Cancel'"></span>
+          </button>
+          <button
+            @click="revokeKey()"
+            :disabled="loading"
+            class="px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white text-sm rounded-lg disabled:opacity-50"
+          >
+            <span x-text="t('keys.revokeConfirmButton') || 'Revoke Key'"></span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </template>
+</div>
