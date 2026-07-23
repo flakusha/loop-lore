@@ -17,6 +17,12 @@ const ENV_MAP: Record<string, string> = ConfigSchema.envMap();
 // Config file candidates in priority order
 const CONFIG_FILES = ["config.yaml", "config.yml", "config.toml",];
 
+// Optional config layers (merged in order, each overriding the previous):
+//   config.default.* → team-shared defaults (committed to git)
+//   config.local.*   → per-developer overrides (gitignored)
+const DEFAULT_CONFIG_FILES = ["config.default.yaml", "config.default.yml", "config.default.toml",];
+const LOCAL_CONFIG_FILES = ["config.local.yaml", "config.local.yml", "config.local.toml",];
+
 function deepMerge<T extends Record<string, unknown>,>(base: T, overrides: Partial<T>,): T {
   const result = { ...base, };
   for (const key of Object.keys(overrides,)) {
@@ -125,7 +131,7 @@ function findMainRepoRoot(cwd: string,): string | null {
   return null;
 }
 
-function findConfigFile(cwd: string,): { path: string; ext: string } | null {
+function findConfigFile(cwd: string, fileNames: string[] = CONFIG_FILES,): { path: string; ext: string } | null {
   // Search project root, configs/ dir, and main repo root (for worktrees).
   const mainRoot = findMainRepoRoot(cwd,);
   const searchDirs = [cwd, path.join(cwd, "configs",),];
@@ -133,7 +139,7 @@ function findConfigFile(cwd: string,): { path: string; ext: string } | null {
     searchDirs.push(mainRoot, path.join(mainRoot, "configs",),);
   }
   for (const dir of searchDirs) {
-    for (const name of CONFIG_FILES) {
+    for (const name of fileNames) {
       const fullPath = path.join(dir, name,);
       if (existsSync(fullPath,)) {
         return { path: fullPath, ext: name.split(".",).pop() as string, };
@@ -200,21 +206,35 @@ function loadConfig(cwd?: string,): Config {
   const mainRoot = findMainRepoRoot(directory,);
   let config: Config = structuredClone(new ConfigSchema().defaults,);
 
-  // 1. Load config file (config.yaml / config.yml / config.toml) — lowest priority
-  const found = findConfigFile(directory,);
-  if (found) {
+  // 1. Load config.default.* if present — team-shared defaults (committed to git)
+  const defaultFound = findConfigFile(directory, DEFAULT_CONFIG_FILES,);
+  if (defaultFound) {
     try {
-      const content = readFileSync(found.path, "utf8",);
-      const parsed = parseFileContent(content, found.ext,);
+      const content = readFileSync(defaultFound.path, "utf8",);
+      const parsed = parseFileContent(content, defaultFound.ext,);
       config = deepMerge(config as unknown as Record<string, unknown>, parsed,) as unknown as Config;
     } catch (error) {
-      throw new Error(`Failed to parse config file ${found.path}: ${(error as Error).message}`, {
+      throw new Error(`Failed to parse config file ${defaultFound.path}: ${(error as Error).message}`, {
         cause: error,
       },);
     }
   }
 
-  // 2. Load env.yaml if present — overrides config file values
+  // 2. Load config.local.* if present — per-developer overrides (gitignored)
+  const localFound = findConfigFile(directory, LOCAL_CONFIG_FILES,);
+  if (localFound) {
+    try {
+      const content = readFileSync(localFound.path, "utf8",);
+      const parsed = parseFileContent(content, localFound.ext,);
+      config = deepMerge(config as unknown as Record<string, unknown>, parsed,) as unknown as Config;
+    } catch (error) {
+      throw new Error(`Failed to parse config file ${localFound.path}: ${(error as Error).message}`, {
+        cause: error,
+      },);
+    }
+  }
+
+  // 3. Load env.yaml if present — overrides config file values
   //    Also check main repo root when running in a worktree.
   const envYamlCandidates = [path.join(directory, "env.yaml",), path.join(directory, "configs", "env.yaml",),];
   if (mainRoot && mainRoot !== directory) {
@@ -233,11 +253,21 @@ function loadConfig(cwd?: string,): Config {
     }
   }
 
-  // 3. Apply env var overrides — highest priority
+  // 4. Apply env var overrides — highest priority
   config = applyEnvironmentOverrides(config, ENV_MAP,);
   applyProviderEnvVars(config,);
   validateConfig(config,);
   return config;
 }
 
-export { applyProviderEnvVars, coerceValue, deepMerge, ENV_MAP, loadConfig, setByPath, validateConfig, };
+export {
+  applyProviderEnvVars,
+  coerceValue,
+  deepMerge,
+  DEFAULT_CONFIG_FILES,
+  ENV_MAP,
+  loadConfig,
+  LOCAL_CONFIG_FILES,
+  setByPath,
+  validateConfig,
+};
