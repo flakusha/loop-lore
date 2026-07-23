@@ -1,8 +1,11 @@
 // ── Characters page: search, detail modal, actions ────────────
 import { jsonBody, } from "../alpine/json";
+import { log as rootLog, } from "../alpine/logger";
 import { feFetch, } from "../fe-fetch";
 import { showToast, } from "../ui";
 import { fetchPartial, filterCards, } from "./shared";
+
+const log = rootLog.child({ module: "characters-page", },);
 
 globalThis.filterCharacters = function() {
   const query = document.querySelector<HTMLInputElement>("#character-search",)?.value ?? "";
@@ -36,7 +39,7 @@ globalThis.selectCharacterCard = async function(id: string,) {
 
   const resp = await feFetch(`/api/actors/${id}`,);
   if (!resp.ok) {
-    console.error("Failed to fetch actor:", resp.status, id,);
+    log.error("Failed to fetch actor", undefined, { status: resp.status, id, },);
     return;
   }
   const char = await resp.json();
@@ -103,7 +106,7 @@ globalThis.deleteCharacter = async function(btn: HTMLElement,) {
 globalThis.exportCharacter = function(btn: HTMLElement,) {
   const modal = btn.closest(".modal",);
   if (!modal) {
-    console.error("No modal found",);
+    log.error("No modal found",);
     return;
   }
 
@@ -113,11 +116,11 @@ globalThis.exportCharacter = function(btn: HTMLElement,) {
   const characterId = (modal as HTMLElement).dataset.characterId;
 
   if (!characterId) {
-    console.error("No character ID found",);
+    log.error("No character ID found",);
     return;
   }
 
-  // Trigger download
-  globalThis.location.assign(`/api/characters/${characterId}/export?format=${format}`,);
+  // Trigger download — backend uses /api/actors/:actorId/export
+  globalThis.location.assign(`/api/actors/${characterId}/export?format=${format}`,);
   closeModal(btn,);
 };
