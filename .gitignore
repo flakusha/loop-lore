@@ -22,6 +22,11 @@ config.yaml
 config.yml
 config.toml
 
+# Per-developer config overrides (gitignored, merged on top of config.default.*)
+config.local.yaml
+config.local.yml
+config.local.toml
+
 # Per-backend config files — user-specific, contain paths/secrets/tokens
 config.llama-swap.yaml
 config.llama-cpp.yaml
