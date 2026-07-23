@@ -3,13 +3,13 @@
  *
  * Exposes WorldStateService for read access to NPC states, location states,
  * world snapshots, and NPCs-at-location queries:
- *   GET  /api/worlds/:id/npc-states/:actorId    — get NPC state
- *   PUT  /api/worlds/:id/npc-states/:actorId    — update NPC state
- *   GET  /api/worlds/:id/npcs-at/:locationId    — list NPCs at location
+ *   GET  /api/worlds/:worldId/npc-states/:actorId    — get NPC state
+ *   PUT  /api/worlds/:worldId/npc-states/:actorId    — update NPC state
+ *   GET  /api/worlds/:worldId/npcs-at/:locationId    — list NPCs at location
  *   GET  /api/locations/:id/state            — get location state
  *   PUT  /api/locations/:id/state            — update location state
- *   GET  /api/worlds/:id/states                 — list world snapshots (paginated)
- *   POST /api/worlds/:id/states                 — take snapshot
+ *   GET  /api/worlds/:worldId/states                 — list world snapshots (paginated)
+ *   POST /api/worlds/:worldId/states                 — take snapshot
  */
 
 import { Elysia, } from "elysia";
@@ -225,37 +225,37 @@ async function handleWorldStates(
 
 export function storyStatesRoutes({ database, }: { database: Kysely<DB> },): Elysia {
   return new Elysia({ name: "story-states", },)
-    .get("/api/worlds/:id/npc-states/:actorId", async (ctx: any,) => {
+    .get("/api/worlds/:worldId/npc-states/:actorId", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
       const userRole = ctx.userRole as string | null;
       return handleNpcState(
         database,
         "GET",
-        ctx.params.id as string,
+        ctx.params.worldId as string,
         ctx.params.actorId as string,
         userId,
         userRole,
       );
     },)
-    .put("/api/worlds/:id/npc-states/:actorId", async (ctx: any,) => {
+    .put("/api/worlds/:worldId/npc-states/:actorId", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
       const userRole = ctx.userRole as string | null;
       return handleNpcState(
         database,
         "PUT",
-        ctx.params.id as string,
+        ctx.params.worldId as string,
         ctx.params.actorId as string,
         userId,
         userRole,
         ctx.body as Record<string, unknown>,
       );
     },)
-    .get("/api/worlds/:id/npcs-at/:locationId", async (ctx: any,) => {
+    .get("/api/worlds/:worldId/npcs-at/:locationId", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
       const userRole = ctx.userRole as string | null;
       return handleNpcsAtLocation(
         database,
-        ctx.params.id as string,
+        ctx.params.worldId as string,
         ctx.params.locationId as string,
         userId,
         userRole,
@@ -264,7 +264,7 @@ export function storyStatesRoutes({ database, }: { database: Kysely<DB> },): Ely
     .get("/api/locations/:id/state", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
       const userRole = ctx.userRole as string | null;
-      return handleLocationState(database, "GET", ctx.params.id as string, userId, userRole,);
+      return handleLocationState(database, "GET", ctx.params.worldId as string, userId, userRole,);
     },)
     .put("/api/locations/:id/state", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
@@ -272,32 +272,32 @@ export function storyStatesRoutes({ database, }: { database: Kysely<DB> },): Ely
       return handleLocationState(
         database,
         "PUT",
-        ctx.params.id as string,
+        ctx.params.worldId as string,
         userId,
         userRole,
         ctx.body as Record<string, unknown>,
       );
     },)
-    .get("/api/worlds/:id/states", async (ctx: any,) => {
+    .get("/api/worlds/:worldId/states", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
       const userRole = ctx.userRole as string | null;
       return handleWorldStates(
         database,
         "GET",
-        ctx.params.id as string,
+        ctx.params.worldId as string,
         userId,
         userRole,
         Number(ctx.query?.page,) || 1,
         Number(ctx.query?.pageSize,) || 20,
       );
     },)
-    .post("/api/worlds/:id/states", async (ctx: any,) => {
+    .post("/api/worlds/:worldId/states", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
       const userRole = ctx.userRole as string | null;
       return handleWorldStates(
         database,
         "POST",
-        ctx.params.id as string,
+        ctx.params.worldId as string,
         userId,
         userRole,
         1,

@@ -48,6 +48,7 @@ export function worldLoreEntriesRoutes(opts: { database: Db; config: Config },):
   return createEntityRoutes(
     {
       parentPrefix: "worlds",
+      parentParam: "worldId",
       entityPath: "lore-entries",
       entityName: "Lore entry",
       tableName: "world_lore_entries",

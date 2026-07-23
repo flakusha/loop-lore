@@ -13,6 +13,7 @@ export function actorMemoriesRoutes(opts: { database: Db; config: Config },): El
   return createEntityRoutes(
     {
       parentPrefix: "actors",
+      parentParam: "actorId",
       entityPath: "memories",
       entityName: "Memory",
       tableName: "actor_memories",
