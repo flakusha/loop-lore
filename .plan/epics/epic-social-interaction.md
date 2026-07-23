@@ -3,6 +3,7 @@
 **Status:** ⬜ Not Started
 **Priority:** Medium
 **Effort:** High
+**Issue:** `697652f`
 **Type:** Feature Epic
 **Tags:** social, persuasion, intimidation, deception, barter, leadership, reputation
 
@@ -394,3 +395,7 @@ interface SocialEvent {
 - **Epic Faction System** — Faction reputation
 - **Epic Economy System** — Trading, barter
 - **Epic Quest System** — Social objectives
+
+## Linked Tasks
+
+- TASK-social-interaction.md

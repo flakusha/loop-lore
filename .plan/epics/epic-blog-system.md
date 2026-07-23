@@ -3,6 +3,7 @@
 **Status:** ⬜ Not Started
 **Priority:** Medium
 **Effort:** High
+**Issue:** `8b193c8`
 **Type:** Feature Epic
 **Tags:** blog, llm-authored, human-authored, comments, followings, privacy, assets, moderation, rag, creative-generation
 
@@ -435,3 +436,7 @@ interface FollowerTierConfig {
 - Assistant intelligence (Epic 30) — scenario source consumption
 - Memory systems (Epic 25) — RAG retrieval from memories
 - Plugin system (Epic 37) — research tool plugins
+
+## Linked Tasks
+
+- TASK-blog-system.md

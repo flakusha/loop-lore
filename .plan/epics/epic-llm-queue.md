@@ -3,6 +3,7 @@
 **Status:** ⬜ Not Started
 **Priority:** Medium
 **Effort:** Large
+**Issue:** `6ed8545`
 **Type:** Feature Epic
 
 ## Summary
@@ -191,3 +192,7 @@ interface LLMResourceManager {
 - `docs/spec/implementation.md` — implementation spec
 - `docs/spec/generation.md` — generation spec (if exists)
 - `src/generation/` — existing generation modules
+
+## Linked Tasks
+
+- TASK-llm-queue.md

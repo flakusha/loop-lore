@@ -26,3 +26,7 @@ Observability — telemetry, admin analytics, CI config, Playwright responsive t
 ## Solution
 
 SOL-2025-001
+
+## Linked Tasks
+
+- TASK-observability-telemetry.md

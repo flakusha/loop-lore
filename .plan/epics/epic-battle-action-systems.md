@@ -3,6 +3,7 @@
 **Status:** ⬜ Not Started
 **Priority:** Medium
 **Effort:** Very High
+**Issue:** `baa672b`
 **Type:** Feature Epic
 
 ## Summary
@@ -503,3 +504,7 @@ interface BackgroundTransition {
 - **Epic Platform Research** — combat / trading / skill-check adoption tracked there.
 - **Epic RPG Mechanics** — combat, loot, inventory, skills shared; this epic owns battle UI/flow, RPG owns the mechanics.
 - **Epic World & Locations** — encounters, monsters, and location-based random encounters overlap; world owns location data.
+
+## Linked Tasks
+
+- TASK-battle-action-systems.md

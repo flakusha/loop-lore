@@ -51,3 +51,7 @@ User request → Assistant processes → Generate content → Quality check → 
 - `src/assistant/prompt/templates/` — prompt templates
 - `src/components/generation-preview.html` — preview component
 - `src/validation/` — quality validation
+
+## Linked Tasks
+
+- TASK-assistant-gm-flows.md
