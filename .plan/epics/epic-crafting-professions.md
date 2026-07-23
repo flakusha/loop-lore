@@ -198,6 +198,18 @@ Multi-system epic combining:
 
 ## Linked Tasks
 
+### Done
+
+- TASK-context-cut-memory-promotion ✅
+- TASK-related-memory-event-injection-hooks ✅
+- TASK-repetition-hallucination-guards ✅
+- TASK-local-random-event-generator ✅
+- TASK-character-memory-injection ✅
+- TASK-character-memory-injection-privacy ✅
+- TASK-memory-selection-ui ✅
+
+### In Progress / Open
+
 - TASK-crafting-professions.md
 - TASK-rpg-crafting-professions.md
 - TASK-crafting-system.md
@@ -205,13 +217,24 @@ Multi-system epic combining:
 - TASK-memory-promotion-pipeline.md
 - TASK-memory-provision-wiring.md
 - TASK-memory-trust-modifier-wiring.md
-- TASK-context-cut-memory-promotion.md
-- TASK-character-memory-injection.md
-- TASK-related-memory-event-injection-hooks.md
-- TASK-repetition-hallucination-guards.md
 - TASK-chat-route-extraction.md
 - TASK-chat-context-feature-permissions.md
-- TASK-local-random-event-generator.md
+
+### New (from lint/merge review)
+
+- TASK-epic-36-lint-fix-array-method-warnings — 59 warnings, 10 files
+- TASK-epic-36-lint-cognitive-complexity-misc — complexity + misc warnings
+- TASK-implement-memory-decay-logic — decay_rate/strength columns unused
+- TASK-wire-memory-promotion-pipeline — ContextWindow.promotedToMemory empty
+- TASK-wire-memory-provision-context — buildProvisionContext missing params
+- TASK-wire-trust-modifier-to-relationships — trustModifier never set
+- TASK-extract-chat-route-business-logic — chats.ts 785L, messages.ts 910L
+- TASK-implement-ui-feature-permissions — no UI-level feature gating
+- TASK-complete-crafting-system-services — 6 services missing (professions, stations, quality, process, gathering, discovery)
+- TASK-implement-crafting-ui — no crafting UI exists
+
+### Postponed (Moderation)
+
 - TASK-internal-external-flagging.md
 - TASK-nsfw-gate-moderation-events.md
 - TASK-user-block-ban-shadow.md

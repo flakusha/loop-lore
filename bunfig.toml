@@ -10,3 +10,4 @@ linker = "isolated"
 
 [test]
 preload = ["./tests/setup-globals.ts"]
+pathIgnorePatterns = ["tree/**"]
