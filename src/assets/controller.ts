@@ -54,6 +54,7 @@ import {
 } from "./service";
 import type { AssetRecord, } from "./service";
 
+
 /** Upload options — also used by elysia-app.ts for the standalone POST /api/assets route. */
 export interface UploadOpts {
   request: Request;
