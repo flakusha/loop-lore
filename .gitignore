@@ -35,6 +35,7 @@ config.*.sh
 .opencode/
 .hermes
 .tmp
+.omp/
 
 # MCPs
 .playwright-mcp/
