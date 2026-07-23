@@ -41,7 +41,7 @@ config.*.sh
 .playwright-mcp/
 
 # Git worktrees (parallel branch development)
-tree/
+tree/*
 
 # Agent credentials (GPG keys, signing config — never commit)
 .credentials.env
