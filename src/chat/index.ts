@@ -19,3 +19,20 @@ export type { LengthPreset, ResponseLengthConfig, } from "./response-length";
 
 export { DEFAULT_PRUNING_CONFIG, pruneMessages, scoreMessage, SCORING_WEIGHTS, STRATEGY_CONFIGS, } from "./pruning";
 export type { MessageScore, PruneResult, PruningConfig, PruningStrategy, ScorableMessage, } from "./pruning";
+
+export {
+  checkModerationPermission,
+  createModerationAction,
+  getShadowState,
+  isBanned,
+  isBlocked,
+} from "./moderation";
+
+export {
+  checkChatAccess,
+  getChatContext,
+  getFeatureFlags,
+  getMessageWithAccess,
+  getResponseLength,
+  type ServiceError,
+} from "./service";
