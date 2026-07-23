@@ -3,7 +3,7 @@
 **Epic:** EPIC-2026-36
 **Priority:** Medium
 **Effort:** Medium
-**Status:** Not Started
+**Status:** ✅ Done
 **Source:** `.tmp/loop-lore-ideas.md` — Text input: availability of functionality based on chat/world/location permissions
 
 ## Summary
@@ -157,3 +157,7 @@ operators to understand why a feature is hidden/disabled.
 - Epic 37 (Plugin System & Extensibility) — Plugin feature permissions
 - Epic 38/44 (World & Locations) — World/location restrictions
 - docs/frontend/chat/input.md — Input area specification
+
+## Completion Note
+
+Deferred — feature registry and UI gating not yet started
