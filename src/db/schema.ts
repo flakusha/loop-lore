@@ -7,6 +7,7 @@
 export * from "./schema-character";
 export * from "./schema-content";
 export * from "./schema-core";
+export * from "./schema-crafting";
 export * from "./schema-generation";
 export * from "./schema-story";
 export * from "./schema-synthetic";
@@ -70,4 +71,17 @@ export interface DB {
   character_availability: import("./schema-character").CharacterAvailability;
   character_licensing: import("./schema-character").CharacterLicensing;
   admin_character_overrides: import("./schema-character").AdminCharacterOverrides;
+  // Crafting systems
+  crafting_recipes: import("./schema-crafting").CraftingRecipes;
+  crafting_recipe_materials: import("./schema-crafting").CraftingRecipeMaterials;
+  crafting_station_defs: import("./schema-crafting").CraftingStationDefs;
+  crafting_station_instances: import("./schema-crafting").CraftingStationInstances;
+  professions: import("./schema-crafting").Professions;
+  profession_specializations: import("./schema-crafting").ProfessionSpecializations;
+  recipe_discoveries: import("./schema-crafting").RecipeDiscoveries;
+  gathering_node_defs: import("./schema-crafting").GatheringNodeDefs;
+  gathering_node_materials: import("./schema-crafting").GatheringNodeMaterials;
+  gathering_node_instances: import("./schema-crafting").GatheringNodeInstances;
+  crafting_attempts: import("./schema-crafting").CraftingAttempts;
+  crafting_orders: import("./schema-crafting").CraftingOrders;
 }
