@@ -51,10 +51,11 @@ describe("GET /api/plugins", () => {
     const app = createPluginApp(db, "admin",);
     const res = await app.handle(new Request("http://localhost/api/plugins",),);
     expect(res.status,).toBe(200,);
-    const body = (await res.json()) as unknown[];
+    const body = (await res.json()) as { name: string; enabled: boolean }[];
     expect(Array.isArray(body,),).toBe(true,);
-    expect(body[0],).toHaveProperty("name", "test-plugin",);
-    expect(body[0],).toHaveProperty("enabled", true,);
+    const plugin = body.find((p,) => p.name === "test-plugin");
+    expect(plugin,).toBeDefined();
+    expect(plugin!.enabled,).toBe(true,);
   });
 });
 
