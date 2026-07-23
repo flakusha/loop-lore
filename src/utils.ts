@@ -19,7 +19,14 @@ export { safeFetch, safeFetchWithRetry, } from "./utils/safe-fetch";
 // ── Safe Buffer ─────────────────────────────────────────────
 
 export type { BufferResult, CompressionAlgorithm, } from "./utils/safe-buffer";
-export { safeCompress, safeDecompress, safeFromBase64, safeFromUint8Array, safeFromString, safeToBase64, } from "./utils/safe-buffer";
+export {
+  safeCompress,
+  safeDecompress,
+  safeFromBase64,
+  safeFromString,
+  safeFromUint8Array,
+  safeToBase64,
+} from "./utils/safe-buffer";
 
 // ── ID Generation ─────────────────────────────────────────────
 

@@ -348,7 +348,7 @@ export class RelationshipsService {
       trust: row.trust,
       familiarity: row.familiarity,
       isBidirectional: row.is_bidirectional === 1,
-      metadata: jsonParseOr(row.metadata, {}),
+      metadata: jsonParseOr(row.metadata, {},),
       createdAt: row.created_at,
       updatedAt: row.updated_at,
     };
