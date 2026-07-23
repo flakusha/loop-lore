@@ -3,6 +3,7 @@
 **Status:** ⬜ Not Started
 **Priority:** Medium
 **Effort:** Medium
+**Issue:** `280c355`
 **Type:** Feature Epic
 
 ## Summary
@@ -66,3 +67,7 @@ Add two-factor (2FA) and multi-factor (MFA) authentication support. Enhance secu
 - `src/routes/auth.ts` — auth routes (expand)
 - `src/frontend/` — 2FA setup UI components
 - `docs/spec/2fa.md` — 2FA specification
+
+## Linked Tasks
+
+- TASK-2fa-mfa.md

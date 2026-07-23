@@ -176,3 +176,7 @@ extensions surface a clear error at precompile time.
   instance, per-message avatar-emotion intent contract.
 - **OUT:** emotion art/ML generation; generic plugin SDK (Epic Plugin System owns it); per-feature
   UI beyond avatar emotions for v1; broad migration of all enums to ECE (Phase 3 is incremental).
+
+## Linked Tasks
+
+- TASK-config-extensions.md

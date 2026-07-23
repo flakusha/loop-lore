@@ -3,6 +3,7 @@
 **Status:** ⬜ Not Started
 **Priority:** Medium
 **Effort:** High
+**Issue:** `a8b30aa`
 **Type:** Feature Epic
 **Tags:** exploration, discovery, mapping, navigation, secrets, rewards
 
@@ -367,3 +368,7 @@ interface TravelEncounter {
 - **Epic Quest System** — Discovery objectives
 - **Epic Combat System** — Travel encounters
 - **Epic Crafting System** — Map making
+
+## Linked Tasks
+
+- TASK-exploration-discovery.md

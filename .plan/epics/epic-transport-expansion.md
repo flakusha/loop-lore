@@ -65,3 +65,7 @@ the existing handlers are server-reachable.
 
 - **IN:** new protocol handlers (H3/WebTransport), server wiring for existing H2/WS, stream optimization.
 - **OUT:** application-level real-time features (SSE in `src/routes/activity-stream.ts`); general lint/format (Epic Code Quality).
+
+## Linked Tasks
+
+- TASK-transport-expansion.md

@@ -62,3 +62,7 @@ the API-first architecture.
 - `src/routes/` — API routes
 - `docs/spec/api-routes.md` — API documentation
 - `docs/spec/architecture.md` — architecture spec
+
+## Linked Tasks
+
+- TASK-headless-alternative-frontends.md

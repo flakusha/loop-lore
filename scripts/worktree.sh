@@ -70,7 +70,7 @@ Commands:
   epic <epic> [branch]      Create worktree for Epic with standard naming
 
 Issue Tracking (git-issue):
-  ticket <TYPE> <NUM> <title> [body]  Create ticket (TYPE-YYYY-NNN format)
+  ticket <TYPE> <title> [body]        Create .plan/tickets/ file + git issue
   issues [--all] [--format FORMAT]    List issues (default: open, oneline)
   issue <args>              Run git-issue command (native issue tracking)
   show <ID>                           Show issue details and comments
@@ -86,7 +86,8 @@ Aliases:
 
 Examples:
   $(basename "$0") new feature-xyz
-  $(basename "$0") ticket TASK 001 "Fix login"
+  $(basename "$0") ticket TASK "Fix login" -l backend -l bug -p high
+  $(basename "$0") ticket FEAT "Add dark mode" -e epic-ui --effort Large
   $(basename "$0") issues --all
   $(basename "$0") show TASK-001
   $(basename "$0") comment TASK-001 -m "Added description"
