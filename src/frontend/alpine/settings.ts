@@ -3,6 +3,15 @@ import { log as rootLog, } from "./logger";
 
 const log = rootLog.child({ module: "settings", },);
 
+interface LocaleInfo {
+  id: string;
+  name: string;
+  nativeName: string;
+  direction: "ltr" | "rtl";
+}
+
+type LocaleInfoArray = LocaleInfo[];
+
 (globalThis as any).settingsPage = function() {
   return {
     activeTab: "general",
@@ -10,6 +19,7 @@ const log = rootLog.child({ module: "settings", },);
     birthDate: "",
     theme: "default",
     locale: "en",
+    locales: [] as LocaleInfoArray,
     enterToSend: true,
     autoScroll: true,
     inlinePreview: true,
@@ -37,7 +47,33 @@ const log = rootLog.child({ module: "settings", },);
       if (preview !== null) { this.inlinePreview = preview === "1"; }
       const detail = localStorage.getItem("chat-detail-level",);
       if (detail) { this.detailLevel = detail; }
+      await this.loadLocales();
       await this.loadSettings();
+    },
+
+    async loadLocales() {
+      try {
+        const res = await fetch("/api/i18n/locales", { headers: { Accept: "application/json", }, },);
+        if (res.ok) {
+          const data = await res.json();
+          this.locales = data.locales as LocaleInfoArray;
+        }
+      } catch (error) {
+        log.warn("loadLocales failed", { error: String(error,), },);
+        // Fallback to default locales
+        this.locales = [
+          { id: "en", name: "English", nativeName: "English", direction: "ltr", },
+          { id: "es", name: "Spanish", nativeName: "Español", direction: "ltr", },
+          { id: "fr", name: "French", nativeName: "Français", direction: "ltr", },
+          { id: "de", name: "German", nativeName: "Deutsch", direction: "ltr", },
+          { id: "ja", name: "Japanese", nativeName: "日本語", direction: "ltr", },
+          { id: "ko", name: "Korean", nativeName: "한국어", direction: "ltr", },
+          { id: "zh", name: "Chinese", nativeName: "中文", direction: "ltr", },
+          { id: "pt", name: "Portuguese", nativeName: "Português", direction: "ltr", },
+          { id: "ru", name: "Russian", nativeName: "Русский", direction: "ltr", },
+          { id: "ar", name: "Arabic", nativeName: "العربية", direction: "rtl", },
+        ];
+      }
     },
 
     async loadSettings() {
@@ -124,6 +160,12 @@ const log = rootLog.child({ module: "settings", },);
         }
         if (payload.locale) {
           localStorage.setItem("locale", payload.locale as string,);
+          // Use new i18n API endpoint for locale
+          await fetch("/api/i18n/locale", {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json", Accept: "application/json", },
+            body: jsonBody({ locale: payload.locale, },),
+          },);
         }
         const res = await fetch("/api/users/me/settings", {
           method: "PATCH",
