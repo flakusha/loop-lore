@@ -6,6 +6,7 @@
  */
 
 import { getLogger, } from "../logger/index";
+import { jsonParseOr, } from "../utils";
 
 let _log: ReturnType<typeof getLogger> | null = null;
 function getLog() {
@@ -159,7 +160,7 @@ export async function verifyJwt(opts: VerifyJwtOpts,): Promise<JwtResult> {
 
     const payloadBytes = base64urlDecode(payloadB64,);
     const payloadStr = new TextDecoder().decode(payloadBytes,);
-    const payload = JSON.parse(payloadStr,) as JwtPayload;
+    const payload = jsonParseOr<JwtPayload>(payloadStr, {} as JwtPayload,);
 
     // Check expiration
     const now = Math.floor(Date.now() / 1000,);
