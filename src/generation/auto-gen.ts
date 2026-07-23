@@ -89,7 +89,6 @@ export function createDefaultDeps(): GenDeps {
     triggerGroupCascade,
   };
 }
-
 export function isLlmGenerationConfigured(config: Config,): boolean {
   return (
     !!config.generation.defaultProvider ||
@@ -628,4 +627,47 @@ function renderStreamMessage(
     : "";
 
   return `<div class="message assistant" data-message-id="${msgId}"${streamingAttr}><div class="bubble"><div class="meta"><span class="name">${safeName}</span><span class="time">just now</span></div>${thinkingBlock}<div class="content">${safeContent}</div>${actionsHtml}</div></div>`;
+}
+
+/** Injectable dependencies for generation functions. */
+export interface GenDeps {
+  cancelGenerationByChat: typeof cancelGenerationByChat;
+  completeGeneration: typeof completeGeneration;
+  failGeneration: typeof failGeneration;
+  getOrCreateBuffer: typeof getOrCreateBuffer;
+  scheduleBufferCleanup: typeof scheduleBufferCleanup;
+  startGenerationTracking: typeof startGenerationTracking;
+  resolveProvider: typeof resolveProvider;
+  listProviders: typeof listProviders;
+  isEncryptionEnabled: () => boolean;
+  getSmk: () => CryptoKey | null;
+  deriveChatKeyForChat: typeof deriveChatKeyForChat;
+  compressThenEncrypt: typeof compressThenEncrypt;
+  markedParse: (src: string, opts?: Record<string, unknown>,) => string;
+  createPromptAssembler: (db: Kysely<DB>,) => PromptAssembler;
+  /** Self-references for recursive calls (set automatically). */
+  triggerAutoGeneration?: (opts: AutoGenOpts,) => Promise<void>;
+  triggerGroupCascade?: (opts: GroupCascadeOpts,) => Promise<void>;
+}
+
+/** Return the real production implementations. */
+export function createDefaultDeps(): GenDeps {
+  return {
+    cancelGenerationByChat,
+    completeGeneration,
+    failGeneration,
+    getOrCreateBuffer,
+    scheduleBufferCleanup,
+    startGenerationTracking,
+    resolveProvider,
+    listProviders,
+    isEncryptionEnabled,
+    getSmk,
+    deriveChatKeyForChat,
+    compressThenEncrypt,
+    markedParse: (src, opts?,) => marked.parse(src, opts ?? {},) as string,
+    createPromptAssembler: (db,) => new PromptAssembler(db,),
+    triggerAutoGeneration,
+    triggerGroupCascade,
+  };
 }
