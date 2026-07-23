@@ -19,7 +19,7 @@
  * const decompressed = result.buffer;
  */
 
-import { brotliDecompressSync, brotliCompressSync, gunzipSync, gzipSync, } from "node:zlib";
+import { brotliCompressSync, brotliDecompressSync, gunzipSync, gzipSync, } from "node:zlib";
 
 // ── Types ────────────────────────────────────────────────────
 
@@ -51,11 +51,11 @@ const DEFAULT_MAX_BASE64_LEN = 20_971_520; // 20 MB encoded
  */
 export function safeFromBase64(encoded: string, maxSize = DEFAULT_MAX_SIZE,): BufferResult<Buffer> {
   if (encoded.length === 0) {
-    return { ok: false, error: new Error("Empty base64 input"), };
+    return { ok: false, error: new Error("Empty base64 input",), };
   }
 
   if (encoded.length > DEFAULT_MAX_BASE64_LEN) {
-    return { ok: false, error: new Error(`Base64 input too large: ${encoded.length} chars`), };
+    return { ok: false, error: new Error(`Base64 input too large: ${encoded.length} chars`,), };
   }
 
   try {
@@ -65,13 +65,13 @@ export function safeFromBase64(encoded: string, maxSize = DEFAULT_MAX_SIZE,): Bu
     if (buffer.length > maxSize) {
       return {
         ok: false,
-        error: new Error(`Decoded buffer too large: ${buffer.length} bytes (max: ${maxSize})`),
+        error: new Error(`Decoded buffer too large: ${buffer.length} bytes (max: ${maxSize})`,),
       };
     }
 
     return { ok: true, buffer, };
   } catch (error) {
-    return { ok: false, error: error instanceof Error ? error : new Error(String(error,)), };
+    return { ok: false, error: error instanceof Error ? error : new Error(String(error,),), };
   }
 }
 
@@ -86,7 +86,7 @@ export function safeToBase64(buffer: Buffer, maxSize = DEFAULT_MAX_SIZE,): Buffe
   if (buffer.length > maxSize) {
     return {
       ok: false,
-      error: new Error(`Buffer too large to encode: ${buffer.length} bytes (max: ${maxSize})`),
+      error: new Error(`Buffer too large to encode: ${buffer.length} bytes (max: ${maxSize})`,),
     };
   }
 
@@ -126,7 +126,7 @@ export function safeDecompress(
       ok: false,
       error: new Error(
         `Compressed data too large for safe decompression: ${data.length} bytes ` +
-        `(max: ${Math.floor(maxSize / maxRatio)} bytes for ${maxRatio}x ratio)`,
+          `(max: ${Math.floor(maxSize / maxRatio,)} bytes for ${maxRatio}x ratio)`,
       ),
     };
   }
@@ -148,13 +148,13 @@ export function safeDecompress(
         const bun = Bun as { zstdDecompressSync?: (data: Buffer,) => Buffer };
         const fn = bun.zstdDecompressSync;
         if (!fn) {
-          return { ok: false, error: new Error("zstd decompression not available"), };
+          return { ok: false, error: new Error("zstd decompression not available",), };
         }
         decompressed = fn(data,);
         break;
       }
       default: {
-        return { ok: false, error: new Error(`Unknown algorithm: ${algorithm}`), };
+        return { ok: false, error: new Error(`Unknown algorithm: ${algorithm as string}`,), };
       }
     }
 
@@ -174,14 +174,14 @@ export function safeDecompress(
         ok: false,
         error: new Error(
           `Compression ratio ${decompressed.length / data.length}x exceeds limit ${maxRatio}x ` +
-          `(possible zip bomb: ${data.length}B → ${decompressed.length}B)`,
+            `(possible zip bomb: ${data.length}B → ${decompressed.length}B)`,
         ),
       };
     }
 
     return { ok: true, buffer: decompressed, };
   } catch (error) {
-    return { ok: false, error: error instanceof Error ? error : new Error(String(error,)), };
+    return { ok: false, error: error instanceof Error ? error : new Error(String(error,),), };
   }
 }
 
@@ -201,7 +201,7 @@ export function safeCompress(
   if (data.length > maxSize) {
     return {
       ok: false,
-      error: new Error(`Input too large to compress: ${data.length} bytes (max: ${maxSize})`),
+      error: new Error(`Input too large to compress: ${data.length} bytes (max: ${maxSize})`,),
     };
   }
 
@@ -221,19 +221,19 @@ export function safeCompress(
         const bun = Bun as { zstdCompressSync?: (data: Buffer,) => Buffer };
         const fn = bun.zstdCompressSync;
         if (!fn) {
-          return { ok: false, error: new Error("zstd compression not available"), };
+          return { ok: false, error: new Error("zstd compression not available",), };
         }
         compressed = fn(data,);
         break;
       }
       default: {
-        return { ok: false, error: new Error(`Unknown algorithm: ${algorithm}`), };
+        return { ok: false, error: new Error(`Unknown algorithm: ${algorithm as string}`,), };
       }
     }
 
     return { ok: true, buffer: compressed, };
   } catch (error) {
-    return { ok: false, error: error instanceof Error ? error : new Error(String(error,)), };
+    return { ok: false, error: error instanceof Error ? error : new Error(String(error,),), };
   }
 }
 
@@ -255,14 +255,14 @@ export function safeFromString(
   if (text.length > maxSize) {
     return {
       ok: false,
-      error: new Error(`String too large: ${text.length} chars (max: ${maxSize})`),
+      error: new Error(`String too large: ${text.length} chars (max: ${maxSize})`,),
     };
   }
 
   try {
     return { ok: true, buffer: Buffer.from(text, encoding,), };
   } catch (error) {
-    return { ok: false, error: error instanceof Error ? error : new Error(String(error,)), };
+    return { ok: false, error: error instanceof Error ? error : new Error(String(error,),), };
   }
 }
 
@@ -280,7 +280,7 @@ export function safeFromUint8Array(
   if (uint8.byteLength > maxSize) {
     return {
       ok: false,
-      error: new Error(`Uint8Array too large: ${uint8.byteLength} bytes (max: ${maxSize})`),
+      error: new Error(`Uint8Array too large: ${uint8.byteLength} bytes (max: ${maxSize})`,),
     };
   }
 

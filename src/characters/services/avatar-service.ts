@@ -342,8 +342,8 @@ export class AvatarService {
       id: row.id,
       actorId: row.actor_id,
       selectionRule: row.selection_rule,
-      weights: jsonParseOr<Record<AvatarTagType, number>>(row.weights, {} as Record<AvatarTagType, number>),
-      fallbackChain: jsonParseOr<AvatarTagType[]>(row.fallback_chain, [] as AvatarTagType[]),
+      weights: jsonParseOr<Record<AvatarTagType, number>>(row.weights, {} as Record<AvatarTagType, number>,),
+      fallbackChain: jsonParseOr<AvatarTagType[]>(row.fallback_chain, [] as AvatarTagType[],),
       createdAt: row.created_at,
       updatedAt: row.updated_at,
     };
@@ -372,7 +372,10 @@ export class AvatarService {
       .executeTakeFirst();
 
     if (existingRow) {
-      const existingWeights = jsonParseOr<Record<AvatarTagType, number>>(existingRow.weights, {} as Record<AvatarTagType, number>);
+      const existingWeights = jsonParseOr<Record<AvatarTagType, number>>(
+        existingRow.weights,
+        {} as Record<AvatarTagType, number>,
+      );
       const mergedWeights = config.weights
         ? { ...existingWeights, ...config.weights, }
         : existingWeights;
@@ -443,7 +446,9 @@ export class AvatarService {
       worldId: row.world_id,
       actorId: row.actor_id,
       selectionRuleOverride: row.selection_rule_override as AvatarSelectionRule | undefined,
-      weightsOverride: row.weights_override ? jsonParseOr<Record<AvatarTagType, number>>(row.weights_override, {} as Record<AvatarTagType, number>) : undefined,
+      weightsOverride: row.weights_override
+        ? jsonParseOr<Record<AvatarTagType, number>>(row.weights_override, {} as Record<AvatarTagType, number>,)
+        : undefined,
     };
   }
 
@@ -525,7 +530,7 @@ export class AvatarService {
       actorId: row.actor_id,
       assetId: row.asset_id,
       label: row.label,
-      tags: jsonParseOr(row.tags, {}),
+      tags: jsonParseOr(row.tags, {},),
       isPrimary: row.is_primary === 1,
       sortOrder: row.sort_order,
       createdAt: row.created_at,

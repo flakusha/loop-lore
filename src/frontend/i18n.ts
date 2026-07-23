@@ -18,23 +18,23 @@ export interface LocaleInfo {
 
 /** All supported locales with metadata */
 export const LOCALE_REGISTRY: Record<Locale, LocaleInfo> = {
-  en: { id: "en", name: "English", nativeName: "English", direction: "ltr" },
-  es: { id: "es", name: "Spanish", nativeName: "Español", direction: "ltr" },
-  fr: { id: "fr", name: "French", nativeName: "Français", direction: "ltr" },
-  de: { id: "de", name: "German", nativeName: "Deutsch", direction: "ltr" },
-  ja: { id: "ja", name: "Japanese", nativeName: "日本語", direction: "ltr" },
-  ko: { id: "ko", name: "Korean", nativeName: "한국어", direction: "ltr" },
-  zh: { id: "zh", name: "Chinese", nativeName: "中文", direction: "ltr" },
-  pt: { id: "pt", name: "Portuguese", nativeName: "Português", direction: "ltr" },
-  ru: { id: "ru", name: "Russian", nativeName: "Русский", direction: "ltr" },
-  ar: { id: "ar", name: "Arabic", nativeName: "العربية", direction: "rtl" },
+  en: { id: "en", name: "English", nativeName: "English", direction: "ltr", },
+  es: { id: "es", name: "Spanish", nativeName: "Español", direction: "ltr", },
+  fr: { id: "fr", name: "French", nativeName: "Français", direction: "ltr", },
+  de: { id: "de", name: "German", nativeName: "Deutsch", direction: "ltr", },
+  ja: { id: "ja", name: "Japanese", nativeName: "日本語", direction: "ltr", },
+  ko: { id: "ko", name: "Korean", nativeName: "한국어", direction: "ltr", },
+  zh: { id: "zh", name: "Chinese", nativeName: "中文", direction: "ltr", },
+  pt: { id: "pt", name: "Portuguese", nativeName: "Português", direction: "ltr", },
+  ru: { id: "ru", name: "Russian", nativeName: "Русский", direction: "ltr", },
+  ar: { id: "ar", name: "Arabic", nativeName: "العربية", direction: "rtl", },
 };
 
 /** Default locale */
 export const DEFAULT_LOCALE: Locale = "en";
 
 /** All supported locale IDs */
-export const SUPPORTED_LOCALES = Object.keys(LOCALE_REGISTRY) as Locale[];
+export const SUPPORTED_LOCALES = Object.keys(LOCALE_REGISTRY,) as Locale[];
 
 /** Nested translation map */
 export interface TranslationMap {
@@ -52,7 +52,7 @@ export function resolveKey(
   map: TranslationMap,
   key: string,
 ): string | undefined {
-  const parts = key.split(".");
+  const parts = key.split(".",);
   let current: TranslationMap | string = map;
 
   for (const part of parts) {
@@ -82,13 +82,13 @@ export function flattenTranslations(
 ): Map<string, string> {
   const result = new Map<string, string>();
 
-  for (const [key, value] of Object.entries(map)) {
+  for (const [key, value,] of Object.entries(map,)) {
     const fullKey = prefix ? `${prefix}.${key}` : key;
     if (typeof value === "string") {
-      result.set(fullKey, value);
+      result.set(fullKey, value,);
     } else if (typeof value === "object" && value !== null) {
-      for (const [nestedKey, nestedValue] of flattenTranslations(value, fullKey)) {
-        result.set(nestedKey, nestedValue);
+      for (const [nestedKey, nestedValue,] of flattenTranslations(value, fullKey,)) {
+        result.set(nestedKey, nestedValue,);
       }
     }
   }
@@ -106,7 +106,7 @@ export function interpolate(
   template: string,
   params: Record<string, string>,
 ): string {
-  return template.replace(/\{(\w+)\}/g, (_, name) => params[name] ?? `{${name}}`);
+  return template.replace(/\{(\w+)\}/g, (_, name,) => params[name] ?? `{${name}}`,);
 }
 
 /**
@@ -114,9 +114,9 @@ export function interpolate(
  *
  * @returns The nested translation map, or null on failure.
  */
-export async function loadTranslations(locale: string): Promise<TranslationMap | null> {
+export async function loadTranslations(locale: string,): Promise<TranslationMap | null> {
   try {
-    const res = await fetch(`/locales/${locale}.json`);
+    const res = await fetch(`/locales/${locale}.json`,);
     if (res.ok) {
       return await res.json() as TranslationMap;
     }
@@ -131,8 +131,8 @@ export async function loadTranslations(locale: string): Promise<TranslationMap |
  * Returns the saved locale if valid, otherwise the default.
  */
 export function getSavedLocale(): Locale {
-  const saved = localStorage.getItem("locale");
-  if (saved && (SUPPORTED_LOCALES as string[]).includes(saved)) {
+  const saved = localStorage.getItem("locale",);
+  if (saved && (SUPPORTED_LOCALES as string[]).includes(saved,)) {
     return saved as Locale;
   }
   return DEFAULT_LOCALE;
@@ -141,8 +141,8 @@ export function getSavedLocale(): Locale {
 /**
  * Save locale preference to localStorage and set cookie for server.
  */
-export function saveLocale(locale: Locale): void {
-  localStorage.setItem("locale", locale);
+export function saveLocale(locale: Locale,): void {
+  localStorage.setItem("locale", locale,);
   // Cookie for server-side detection (middleware reads this)
   document.cookie = `ll_locale=${locale}; path=/; SameSite=Lax; max-age=31536000`;
   // Update global ref
@@ -158,7 +158,7 @@ export function saveLocale(locale: Locale): void {
 /**
  * Apply RTL direction based on locale.
  */
-export function applyDirection(locale: Locale): void {
+export function applyDirection(locale: Locale,): void {
   const info = LOCALE_REGISTRY[locale];
   if (info) {
     document.documentElement.dir = info.direction;
@@ -178,16 +178,16 @@ export function createFrontendTranslator(
   translations: TranslationMap,
   fallbackLocale?: TranslationMap,
 ) {
-  return function t(key: string, params?: Record<string, string>): string {
-    let value = resolveKey(translations, key);
+  return function t(key: string, params?: Record<string, string>,): string {
+    let value = resolveKey(translations, key,);
     if (value === undefined && fallbackLocale) {
-      value = resolveKey(fallbackLocale, key);
+      value = resolveKey(fallbackLocale, key,);
     }
     if (value === undefined) {
       return key;
     }
     if (params) {
-      return interpolate(value, params);
+      return interpolate(value, params,);
     }
     return value;
   };
