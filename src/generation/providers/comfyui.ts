@@ -8,7 +8,8 @@
  * Reference: docs/spec/integrations/image-generation.md §ComfyUI
  */
 
-import { jsonStringifyOr, safeFromUint8Array, } from "../../utils";
+import { jsonStringifyOr, } from "../../utils";
+import { safeFromUint8Array, } from "../../utils/safe-buffer";
 import { validateProviderUrl, } from "../../utils/url-validation";
 
 export type ComfyUIWorkflow = Record<

@@ -2,7 +2,8 @@ import { extractImageMetadata, } from "../assets/metadata";
 import { createAsset, linkAsset, } from "../assets/service";
 import { loadConfig, } from "../config/load";
 import { getDatabase, } from "../db/index";
-import { safeFromBase64, safeJsonStringify, uid, } from "../utils";
+import { safeJsonStringify, uid, } from "../utils";
+import { safeFromBase64, } from "../utils/safe-buffer";
 import { validateProviderUrl, } from "../utils/url-validation";
 
 interface ImageGenBody {

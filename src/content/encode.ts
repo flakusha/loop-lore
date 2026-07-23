@@ -1,4 +1,4 @@
-import { safeCompress, safeFromString, safeToBase64, } from "../utils";
+import { safeCompress, safeFromString, safeToBase64, } from "../utils/safe-buffer";
 import type { ContentEncoding, EncodeResult, } from "./types";
 
 export function encodeContent(plaintext: string, encoding: ContentEncoding,): EncodeResult {

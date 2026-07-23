@@ -109,6 +109,13 @@ CHECKS[lint - html]="bun run lint:html"
 CHECKS[lint - html-scripts]="bun run lint:html-scripts"
 CHECKS[lint - chaining]="bun run lint:chaining"
 
+# Build verification (non-emitting — catches bundler-level import resolution errors)
+BUILD_TMP="$TMPDIR/build-check"
+mkdir -p "$BUILD_TMP"
+trap 'rm -rf "$TMPDIR"' EXIT
+CHECKS[build - frontend]="bun build --target browser --outdir $BUILD_TMP ./src/frontend/app.ts ./src/frontend/pages.ts ./src/frontend/chat-vendor.ts ./src/frontend/vendor.ts"
+CHECKS[build - backend]="bun build --target bun --outdir $BUILD_TMP ./src/server.ts"
+
 # Formatting
 CHECKS[format - dprint]="bun run format:dprint"
 CHECKS[md - lint]="bun run md:lint"
