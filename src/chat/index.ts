@@ -62,7 +62,17 @@ export {
 } from "./moderation";
 
 export {
+  checkChatAccess,
   getChatContext,
   getFeatureFlags,
+  getMessageWithAccess,
   getResponseLength,
+  type ServiceError,
 } from "./service";
+
+export {
+  detectHallucinations,
+  type HallucinationAnalysis,
+  type HallucinationCheckOpts,
+  type HallucinationFlag,
+} from "./hallucination-guard";
