@@ -6,8 +6,8 @@
 //
 // Reuses the existing global `showToast` (declared on Window) for push toasts.
 
-import type { NotificationBellState, NotificationListItem, NotificationPrefsState, } from "./types";
 import { jsonBody, jsonParseOr, } from "./json";
+import type { NotificationBellState, NotificationListItem, NotificationPrefsState, } from "./types";
 
 const TYPE_ICONS: Record<string, string> = {
   mention: "@",
@@ -60,9 +60,12 @@ globalThis.notificationsBell = function(): NotificationBellState {
       if (bellStream) { return; }
       bellStream = new EventSource("/api/notifications/stream",);
       bellStream.addEventListener("notifications", (ev: MessageEvent,) => {
-        const data = jsonParseOr<{ unreadCount: number; items: NotificationListItem[] }>(ev.data, { unreadCount: 0, items: [], });
-        if (!data.items.length && !data.unreadCount) { return; }
-        const known = new Set(this.items.map((i,) => i.id,),);
+        const data = jsonParseOr<{ unreadCount: number; items: NotificationListItem[] }>(ev.data, {
+          unreadCount: 0,
+          items: [],
+        },);
+        if (data.items.length === 0 && !data.unreadCount) { return; }
+        const known = new Set(this.items.map((i,) => i.id),);
         for (const n of data.items) {
           if (!known.has(n.id,)) { globalThis.showToast("info", n.title,); }
         }
@@ -84,7 +87,7 @@ globalThis.notificationsBell = function(): NotificationBellState {
       await fetch(`/api/notifications/${id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json", },
-        body: jsonBody({ read: true, }),
+        body: jsonBody({ read: true, },),
       },);
       this.items = this.items.map((i,) => (i.id === id ? { ...i, read: 1, } : i));
       this.unreadCount = this.items.filter((i,) => !i.read).length;
@@ -154,7 +157,7 @@ globalThis.notificationPrefs = function(): NotificationPrefsState {
         await fetch("/api/notifications/preferences", {
           method: "PATCH",
           headers: { "Content-Type": "application/json", },
-          body: jsonBody({ enabled: this.enabled, mutedWorlds: this.mutedWorlds, }),
+          body: jsonBody({ enabled: this.enabled, mutedWorlds: this.mutedWorlds, },),
         },);
       } catch {
         /* ignore */

@@ -185,7 +185,7 @@ export const chatMessages: Partial<ChatState> & ThisType<ChatState> = {
       const res = await apiFetch(`/api/messages/${msgId}/reactions`, {
         method: "POST",
         headers: { "Content-Type": "application/json", },
-        body: jsonBody({ emoji, }),
+        body: jsonBody({ emoji, },),
       },);
       if (res.ok) {
         await this.loadMessageReactions(msgId,);
