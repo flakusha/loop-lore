@@ -58,7 +58,22 @@ async function dispatchQuestAction(ctx: DispatchCtx, description: string, chatId
     return;
   }
   try {
-    const res = await apiFetch("/api/quests", {
+    // Fetch chat to get world_id (backend requires /api/worlds/:worldId/quests)
+    const chatRes = await apiFetch(`/api/chats/${chatId}`,);
+    if (!chatRes.ok) {
+      ctx.$dispatch?.("show-toast", { type: "error", message: "Failed to load chat for quest creation", },);
+      return;
+    }
+    const chat = await chatRes.json();
+    const worldId = chat.world_id;
+    if (!worldId) {
+      ctx.$dispatch?.("show-toast", {
+        type: "warning",
+        message: "Quests require a world — this chat has no world assigned",
+      },);
+      return;
+    }
+    const res = await apiFetch(`/api/worlds/${worldId}/quests`, {
       method: "POST",
       headers: { "Content-Type": "application/json", },
       body: jsonBody({ chatId, description, },),

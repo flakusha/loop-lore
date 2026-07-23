@@ -1,12 +1,15 @@
 // ── Partials fetch helper ───────────────────────────────────
 // Partials routes require HX-Request header to prevent direct navigation
 
+import { log as rootLog, } from "../alpine/logger";
+
+const log = rootLog.child({ module: "shared", },);
 const PARTIALS_HEADERS = { "HX-Request": "true", } as const;
 
 export async function fetchPartial(path: string,): Promise<string | null> {
   const resp = await fetch(path, { headers: PARTIALS_HEADERS, },);
   if (!resp.ok) {
-    console.error(`Failed to load partial ${path}:`, resp.status,);
+    log.error(`Failed to load partial ${path}`, undefined, { status: resp.status, },);
     return null;
   }
   return resp.text();
