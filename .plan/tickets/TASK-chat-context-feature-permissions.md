@@ -1,6 +1,6 @@
 # TASK: Context-Based Feature Permissions (UI Gating)
 
-**Epic:** Plugin System & Extensibility
+**Epic:** EPIC-2026-36
 **Priority:** Medium
 **Effort:** Medium
 **Status:** Not Started

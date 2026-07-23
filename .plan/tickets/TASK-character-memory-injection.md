@@ -1,6 +1,6 @@
 # TASK: Character Memory Injection Probability & Privacy
 
-**Epic:** Memory Systems
+**Epic:** EPIC-2026-36
 **Priority:** Medium
 **Effort:** High
 **Status:** Not Started

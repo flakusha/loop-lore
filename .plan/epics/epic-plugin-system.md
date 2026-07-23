@@ -446,3 +446,18 @@ interface IsolationContext {
 ## Linked Tasks
 
 - TASK-plugin-system.md
+
+## Cross-References
+
+**Memory & Chat Lifecycle → Epic 36 (Chat Lifecycle & Moderation)**
+
+The following memory-related tasks have been migrated to Epic 36 as they are core to chat context management, not plugin infrastructure:
+
+- TASK-memory-promotion-pipeline.md — memory extraction from promoted context
+- TASK-memory-decay-logic.md — time-based memory decay
+- TASK-memory-provision-wiring.md — privacy-aware memory injection
+- TASK-memory-trust-modifier-wiring.md — trust-based memory sharing
+- TASK-character-memory-injection.md — injection probability & privacy
+- TASK-chat-route-extraction.md — chat business logic extraction
+
+**Plugin System Focus:** Plugin infrastructure (hooks, overrides, security, lifecycle) remains in Epic 37. Memory injection via plugins should reference Epic 36 for the core pipeline.
