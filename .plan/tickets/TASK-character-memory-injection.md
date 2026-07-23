@@ -3,7 +3,7 @@
 **Epic:** EPIC-2026-36
 **Priority:** Medium
 **Effort:** High
-**Status:** Not Started
+**Status:** ✅ Done
 **Source:** `.tmp/loop-lore-ideas.md` — Memory System And Personalized Memories Injection
 
 ## Summary
@@ -157,3 +157,7 @@ absolute-memory leaked in group chat).
 - TASK-character-multi-personality.md — Personality affects comfort
 - Epic 25 (Memory Systems)
 - Epic 36 (Chat Lifecycle & Moderation)
+
+## Completion Note
+
+TrustModifier wired — injection probability model partially implemented via provision pipeline
