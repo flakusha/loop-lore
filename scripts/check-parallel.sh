@@ -150,7 +150,7 @@ fi
 # Non-blocking: version drift check
 echo ""
 echo -e "${CYAN}=== Non-blocking checks ===${NC}"
-LATEST_TAG=$(git tag | grep "^v" | sort -V | tail -1)
+LATEST_TAG=$(git tag --list 'v*' | sort -V | tail -1)
 PKG_VERSION=$(bun -p 'JSON.parse(require("fs").readFileSync("package.json","utf8")).version' 2>/dev/null || echo "")
 if [[ -n "$LATEST_TAG" && -n "$PKG_VERSION" ]]; then
     TAG_VERSION="${LATEST_TAG#v}"
