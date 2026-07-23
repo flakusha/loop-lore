@@ -2,7 +2,7 @@
  * Log entry formatters — console pretty-print and JSONL serialization.
  */
 
-import { safeJsonStringify, } from "../utils/safe-json";
+import { safeJsonStringify, } from "../utils";
 import { numericToLabel, } from "./levels";
 import type { LogEntry, } from "./types";
 

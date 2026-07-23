@@ -8,6 +8,7 @@ import type { Kysely, } from "kysely";
 import { randomUUID, } from "node:crypto";
 import type { RelationshipEventType, RelationshipType, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
+import { jsonParseOr, } from "../../utils";
 
 /** Options for creating a relationship */
 export interface CreateRelationshipOpts {
@@ -347,7 +348,7 @@ export class RelationshipsService {
       trust: row.trust,
       familiarity: row.familiarity,
       isBidirectional: row.is_bidirectional === 1,
-      metadata: JSON.parse(row.metadata,),
+      metadata: jsonParseOr(row.metadata, {}),
       createdAt: row.created_at,
       updatedAt: row.updated_at,
     };

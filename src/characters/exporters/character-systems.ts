@@ -10,6 +10,7 @@ import { AvatarService, } from "../services/avatar-service";
 import { MoodService, } from "../services/mood-service";
 import { RelationshipsService, } from "../services/relationships-service";
 import { TraitsService, } from "../services/traits-service";
+import { jsonParseOr, } from "../../utils";
 
 /** Complete character systems export */
 export interface CharacterSystemsExport {
@@ -155,10 +156,10 @@ export async function exportCharacterSystems(
   if (availability) {
     exportData.availability = {
       status: availability.status,
-      usagePolicy: JSON.parse(availability.usage_policy ?? "{}",),
-      activityRestrictions: JSON.parse(availability.activity_restrictions ?? "{}",),
-      contentPolicy: JSON.parse(availability.content_policy ?? "{}",),
-      nsfwPolicy: JSON.parse(availability.nsfw_policy ?? "{}",),
+      usagePolicy: jsonParseOr(availability.usage_policy ?? "{}", {}),
+      activityRestrictions: jsonParseOr(availability.activity_restrictions ?? "{}", {}),
+      contentPolicy: jsonParseOr(availability.content_policy ?? "{}", {}),
+      nsfwPolicy: jsonParseOr(availability.nsfw_policy ?? "{}", {}),
     };
   }
 

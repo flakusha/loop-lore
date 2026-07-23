@@ -6,6 +6,7 @@
 import type { Kysely, } from "kysely";
 import { randomUUID, } from "node:crypto";
 import type { DB, } from "../../db/schema";
+import { jsonParseOr, } from "../../utils";
 
 /** Options for creating mood state */
 export interface CreateMoodOpts {
@@ -82,7 +83,7 @@ export class MoodService {
       baseMood: row.base_mood,
       currentMood: row.current_mood,
       moodStability: row.mood_stability,
-      expressionModifiers: JSON.parse(row.expression_modifiers,),
+      expressionModifiers: jsonParseOr(row.expression_modifiers, {}),
       lastMoodChange: row.last_mood_change,
     };
   }

@@ -7,6 +7,7 @@
 // Reuses the existing global `showToast` (declared on Window) for push toasts.
 
 import type { NotificationBellState, NotificationListItem, NotificationPrefsState, } from "./types";
+import { jsonBody, jsonParseOr, } from "./json";
 
 const TYPE_ICONS: Record<string, string> = {
   mention: "@",
@@ -59,17 +60,14 @@ globalThis.notificationsBell = function(): NotificationBellState {
       if (bellStream) { return; }
       bellStream = new EventSource("/api/notifications/stream",);
       bellStream.addEventListener("notifications", (ev: MessageEvent,) => {
-        try {
-          const data = JSON.parse(ev.data,) as { unreadCount: number; items: NotificationListItem[] };
-          const known = new Set(this.items.map((i,) => i.id),);
-          for (const n of data.items) {
-            if (!known.has(n.id,)) { globalThis.showToast("info", n.title,); }
-          }
-          this.items = data.items;
-          this.unreadCount = data.unreadCount ?? data.items.filter((i,) => !i.read).length;
-        } catch {
-          /* ignore malformed frame */
+        const data = jsonParseOr<{ unreadCount: number; items: NotificationListItem[] }>(ev.data, { unreadCount: 0, items: [], });
+        if (!data.items.length && !data.unreadCount) { return; }
+        const known = new Set(this.items.map((i,) => i.id,),);
+        for (const n of data.items) {
+          if (!known.has(n.id,)) { globalThis.showToast("info", n.title,); }
         }
+        this.items = data.items;
+        this.unreadCount = data.unreadCount ?? data.items.filter((i,) => !i.read).length;
       },);
     },
 
@@ -86,7 +84,7 @@ globalThis.notificationsBell = function(): NotificationBellState {
       await fetch(`/api/notifications/${id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json", },
-        body: JSON.stringify({ read: true, },),
+        body: jsonBody({ read: true, }),
       },);
       this.items = this.items.map((i,) => (i.id === id ? { ...i, read: 1, } : i));
       this.unreadCount = this.items.filter((i,) => !i.read).length;
@@ -156,7 +154,7 @@ globalThis.notificationPrefs = function(): NotificationPrefsState {
         await fetch("/api/notifications/preferences", {
           method: "PATCH",
           headers: { "Content-Type": "application/json", },
-          body: JSON.stringify({ enabled: this.enabled, mutedWorlds: this.mutedWorlds, },),
+          body: jsonBody({ enabled: this.enabled, mutedWorlds: this.mutedWorlds, }),
         },);
       } catch {
         /* ignore */
