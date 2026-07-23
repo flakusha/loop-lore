@@ -66,7 +66,7 @@ registerCommand("quest", async (args,): Promise<CommandResult> => {
       };
     }
 
-    default:
+    default: {
       return {
         systemMessage: "Usage: /quest [list|create|status|complete] [args...]\n\n" +
           "- /quest list — List active quests\n" +
@@ -75,5 +75,6 @@ registerCommand("quest", async (args,): Promise<CommandResult> => {
           "- /quest complete <name> — Mark quest as complete",
         handled: true,
       };
+    }
   }
 },);

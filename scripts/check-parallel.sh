@@ -144,7 +144,7 @@ fi
 echo ""
 echo -e "${CYAN}=== Non-blocking checks ===${NC}"
 LATEST_TAG=$(git tag | grep "^v" | sort -V | tail -1)
-PKG_VERSION=$(bun run -p 'JSON.parse(require("fs").readFileSync("package.json","utf8")).version' 2>/dev/null || echo "")
+PKG_VERSION=$(bun -p 'JSON.parse(require("fs").readFileSync("package.json","utf8")).version' 2>/dev/null || echo "")
 if [[ -n "$LATEST_TAG" && -n "$PKG_VERSION" ]]; then
     TAG_VERSION="${LATEST_TAG#v}"
     if [[ "$TAG_VERSION" != "$PKG_VERSION" ]]; then
@@ -155,6 +155,16 @@ if [[ -n "$LATEST_TAG" && -n "$PKG_VERSION" ]]; then
     fi
 else
     echo -e "${YELLOW}⚠ Version check skipped: no tags found${NC}"
+fi
+
+# Non-blocking: code duplication (jscpd:full) — recommendation/warning level
+JCPD_OUTPUT=$(bun run jscpd:full 2>&1) || true
+if echo "$JCPD_OUTPUT" | grep -q "Found"; then
+    CLONE_COUNT=$(echo "$JCPD_OUTPUT" | grep -c "Clone found" || true)
+    echo -e "${YELLOW}⚠ Code duplication detected (jscpd:full): ${CLONE_COUNT} clones${NC}"
+    echo -e "${YELLOW}  Run 'bun run jscpd:full' for full report${NC}"
+else
+    echo -e "${GREEN}✓ No code duplication issues (jscpd:full)${NC}"
 fi
 
 echo -e "${GREEN}=== All checks passed ===${NC}"

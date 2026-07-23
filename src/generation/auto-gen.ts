@@ -41,6 +41,24 @@ import {
 import { listProviders, resolveProvider, } from "./providers/registry";
 import type { ChunkEvent, } from "./providers/types";
 
+
+// src/generation/auto-gen.ts
+//
+// Shared auto-generation logic — called when a user message is posted and
+// when a new chat is created (initial greeting). Extracted from routes/
+// so both messages.ts and chats.ts can trigger generation without
+// duplicating the orchestration logic.
+//
+// Group chat cascade: after an AI response is saved, the system checks for
+// @mentions in the content and auto-triggers the next character's turn.
+// Controlled by `chats.max_turns` (max cascade depth) and `chats.auto_advance`
+// (1 = auto-advance without needing @mentions).
+// ── Dependency Injection ────────────────────────────────────────
+//
+// All external module calls are routed through GenDeps so tests can
+// inject mocks without using Bun's mock.module (which leaks across
+// test files in the same process).
+
 export function isLlmGenerationConfigured(config: Config,): boolean {
   return (
     !!config.generation.defaultProvider ||
@@ -70,6 +88,8 @@ export interface AutoGenOpts {
    * When set, overrides the normal turn-selection logic.
    */
   _cascadeActorId?: string;
+  /** Injectable dependencies — omit for production (uses real implementations). */
+  deps?: Partial<GenDeps>;
 }
 
 /**
@@ -84,13 +104,17 @@ export async function triggerAutoGeneration(opts: AutoGenOpts,): Promise<void> {
   const { database, config, chatId, parentMessageId, userId, userMessage, } = opts;
   const cascadeDepth = opts._cascadeDepth ?? 0;
   const cascadeActorId = opts._cascadeActorId;
-  if (!isLlmGenerationConfigured(config,)) { return; }
+  const d = { ...createDefaultDeps(), ...opts.deps, };
+  if (
+    d.listProviders().length === 0 && !config.generation.defaultProvider &&
+    config.generation.providers.openaiCompatible.length === 0
+  ) { return; }
 
   let attemptId: string | undefined;
 
   try {
     if (parentMessageId) {
-      cancelGenerationByChat({
+      d.cancelGenerationByChat({
         db: database,
         chatId,
         reason: CancelReason.UserCancel,
@@ -143,8 +167,8 @@ export async function triggerAutoGeneration(opts: AutoGenOpts,): Promise<void> {
       characterName = character.display_name;
     }
 
-    const resolved = await resolveProvider({ userId, config, db: database, },);
-    const assembler = new PromptAssembler(database,);
+    const resolved = await d.resolveProvider({ userId, config, db: database, },);
+    const assembler = d.createPromptAssembler(database,);
 
     let groupParticipantIds: string[] | undefined;
     if (chat?.type === "group") {
@@ -167,7 +191,7 @@ export async function triggerAutoGeneration(opts: AutoGenOpts,): Promise<void> {
     // to avoid NOT NULL FK constraint on generation_attempts.parent_message_id.
     let tracking: { attemptId: string; abortSignal: AbortSignal } | undefined;
     if (parentMessageId) {
-      tracking = await startGenerationTracking({
+      tracking = await d.startGenerationTracking({
         options: {
           chatId,
           parentMessageId,
@@ -199,7 +223,7 @@ export async function triggerAutoGeneration(opts: AutoGenOpts,): Promise<void> {
     let tokenUsage = { promptTokens: 0, completionTokens: 0, totalTokens: 0, };
     let finishReason: "stop" | "length" | "error" | "cancelled" = "stop";
     const canStream = resolved.provider.capabilities.streaming;
-    const buffer = parentMessageId ? getOrCreateBuffer(chatId,) : undefined;
+    const buffer = parentMessageId ? d.getOrCreateBuffer(chatId,) : undefined;
 
     if (canStream) {
       const finalResponse = await resolved.provider.stream(
@@ -215,7 +239,7 @@ export async function triggerAutoGeneration(opts: AutoGenOpts,): Promise<void> {
             accumulatedContent += chunk.content;
             buffer?.append(
               "stream-update",
-              renderStreamMessage(actorName, accumulatedContent, tracking?.attemptId ?? "", {
+              renderStreamMessage(actorName, accumulatedContent, tracking?.attemptId ?? "", d.markedParse, {
                 thinking: accumulatedThinking,
               },),
             );
@@ -248,7 +272,7 @@ export async function triggerAutoGeneration(opts: AutoGenOpts,): Promise<void> {
       finishReason = response.finishReason;
       buffer?.append(
         "stream-update",
-        renderStreamMessage(actorName, accumulatedContent, tracking?.attemptId ?? "", {
+        renderStreamMessage(actorName, accumulatedContent, tracking?.attemptId ?? "", d.markedParse, {
           thinking: accumulatedThinking,
         },),
       );
@@ -270,10 +294,10 @@ export async function triggerAutoGeneration(opts: AutoGenOpts,): Promise<void> {
     let storedContent: string = accumulatedContent;
     let storedKeyId: string | null = null;
     const contentEncoding = ContentEncoding.Identity;
-    if (isEncryptionEnabled()) {
-      const smk = getSmk()!;
-      const chatKey = await deriveChatKeyForChat(database, chatId, smk,);
-      storedContent = await compressThenEncrypt({
+    if (d.isEncryptionEnabled()) {
+      const smk = d.getSmk()!;
+      const chatKey = await d.deriveChatKeyForChat(database, chatId, smk,);
+      storedContent = await d.compressThenEncrypt({
         plaintext: accumulatedContent,
         chatKey: chatKey.key,
         keyId: chatKey.keyId,
@@ -310,7 +334,7 @@ export async function triggerAutoGeneration(opts: AutoGenOpts,): Promise<void> {
       .execute();
 
     if (attemptId) {
-      await completeGeneration({
+      await d.completeGeneration({
         attemptId,
         result: {
           content: accumulatedContent,
@@ -323,20 +347,20 @@ export async function triggerAutoGeneration(opts: AutoGenOpts,): Promise<void> {
 
       buffer?.append(
         "stream-update",
-        renderStreamMessage(actorName, accumulatedContent, tracking!.attemptId, {
+        renderStreamMessage(actorName, accumulatedContent, tracking!.attemptId, d.markedParse, {
           messageId,
           isFinal: true,
           thinking: accumulatedThinking,
         },),
       );
       buffer?.signalDone();
-      scheduleBufferCleanup(chatId,);
+      d.scheduleBufferCleanup(chatId,);
     }
 
     // ── Group chat cascade: trigger next AI turn if applicable ──
     if (chat?.type === "group" && finishReason !== "cancelled") {
       // Fire-and-forget: cascade runs in background, errors logged internally
-      triggerGroupCascade({
+      d.triggerGroupCascade!({
         database,
         config,
         chatId,
@@ -344,6 +368,7 @@ export async function triggerAutoGeneration(opts: AutoGenOpts,): Promise<void> {
         aiContent: accumulatedContent,
         previousActorId: characterId,
         depth: cascadeDepth,
+        deps: opts.deps,
       },).catch(() => {
         /* errors logged inside triggerGroupCascade */
       },);
@@ -351,13 +376,13 @@ export async function triggerAutoGeneration(opts: AutoGenOpts,): Promise<void> {
   } catch (error) {
     if (attemptId) {
       try {
-        await failGeneration({ attemptId, error: error as Error, db: database, },);
+        await d.failGeneration({ attemptId, error: error as Error, db: database, },);
       } catch {}
     }
     try {
-      const buf = getOrCreateBuffer(chatId,);
+      const buf = d.getOrCreateBuffer(chatId,);
       buf.signalError((error as Error).message,);
-      scheduleBufferCleanup(chatId,);
+      d.scheduleBufferCleanup(chatId,);
     } catch {}
 
     const err = error instanceof Error ? error : new Error(String(error,),);
@@ -390,6 +415,8 @@ export interface GroupCascadeOpts {
   previousActorId: string;
   /** Current cascade depth (0 = first AI response after user message) */
   depth: number;
+  /** Injectable dependencies — omit for production (uses real implementations). */
+  deps?: Partial<GenDeps>;
 }
 
 /**
@@ -408,6 +435,7 @@ export interface GroupCascadeOpts {
  */
 export async function triggerGroupCascade(opts: GroupCascadeOpts,): Promise<void> {
   const { database, config, chatId, userId, aiContent, previousActorId, depth, } = opts;
+  const d = { ...createDefaultDeps(), ...opts.deps, };
   const log = getLogger().child({ module: "auto-gen-cascade", },);
 
   // Fetch chat cascade config
@@ -513,7 +541,7 @@ export async function triggerGroupCascade(opts: GroupCascadeOpts,): Promise<void
   },);
 
   try {
-    await triggerAutoGeneration({
+    await d.triggerAutoGeneration!({
       database,
       config,
       chatId,
@@ -522,6 +550,7 @@ export async function triggerGroupCascade(opts: GroupCascadeOpts,): Promise<void
       userMessage: undefined,
       _cascadeDepth: depth + 1,
       _cascadeActorId: nextActorId,
+      deps: opts.deps,
     },);
   } catch (error) {
     log.error("Cascade generation failed", error as Error,);
@@ -548,19 +577,19 @@ function renderStreamMessage(
   actorName: string,
   content: string,
   attemptId: string,
+  markedParse: (s: string,) => string,
   opts?: { messageId?: string; isFinal?: boolean; thinking?: string },
 ): string {
   const safeName = escapeHtml(actorName,);
-  const rendered = marked.parse(content, { breaks: true, gfm: true, },) as string;
+  const rendered = markedParse(content,);
   const safeContent = sanitizeHtml(rendered,);
   const streamingAttr = opts?.isFinal ? "" : ' data-streaming="true"';
   const msgId = opts?.messageId ?? attemptId;
 
   const thinkingBlock = opts?.thinking
-    ? `<details class="thinking-block"><summary>Thinking process</summary><div class="thinking-content">${marked.parse(
-      opts.thinking,
-      { breaks: true, gfm: true, },
-    ) as string}</div></details>`
+    ? `<details class="thinking-block"><summary>Thinking process</summary><div class="thinking-content">${
+      markedParse(opts.thinking,)
+    }</div></details>`
     : "";
 
   const actionsHtml = opts?.isFinal
@@ -568,4 +597,47 @@ function renderStreamMessage(
     : "";
 
   return `<div class="message assistant" data-message-id="${msgId}"${streamingAttr}><div class="bubble"><div class="meta"><span class="name">${safeName}</span><span class="time">just now</span></div>${thinkingBlock}<div class="content">${safeContent}</div>${actionsHtml}</div></div>`;
+}
+
+/** Injectable dependencies for generation functions. */
+export interface GenDeps {
+  cancelGenerationByChat: typeof cancelGenerationByChat;
+  completeGeneration: typeof completeGeneration;
+  failGeneration: typeof failGeneration;
+  getOrCreateBuffer: typeof getOrCreateBuffer;
+  scheduleBufferCleanup: typeof scheduleBufferCleanup;
+  startGenerationTracking: typeof startGenerationTracking;
+  resolveProvider: typeof resolveProvider;
+  listProviders: typeof listProviders;
+  isEncryptionEnabled: () => boolean;
+  getSmk: () => CryptoKey | null;
+  deriveChatKeyForChat: typeof deriveChatKeyForChat;
+  compressThenEncrypt: typeof compressThenEncrypt;
+  markedParse: (src: string, opts?: Record<string, unknown>,) => string;
+  createPromptAssembler: (db: Kysely<DB>,) => PromptAssembler;
+  /** Self-references for recursive calls (set automatically). */
+  triggerAutoGeneration?: (opts: AutoGenOpts,) => Promise<void>;
+  triggerGroupCascade?: (opts: GroupCascadeOpts,) => Promise<void>;
+}
+
+/** Return the real production implementations. */
+export function createDefaultDeps(): GenDeps {
+  return {
+    cancelGenerationByChat,
+    completeGeneration,
+    failGeneration,
+    getOrCreateBuffer,
+    scheduleBufferCleanup,
+    startGenerationTracking,
+    resolveProvider,
+    listProviders,
+    isEncryptionEnabled,
+    getSmk,
+    deriveChatKeyForChat,
+    compressThenEncrypt,
+    markedParse: (src, opts?,) => marked.parse(src, opts ?? {},) as string,
+    createPromptAssembler: (db,) => new PromptAssembler(db,),
+    triggerAutoGeneration,
+    triggerGroupCascade,
+  };
 }

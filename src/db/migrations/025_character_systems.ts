@@ -251,3 +251,21 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     .addColumn("created_at", "text", (col,) => col.notNull(),)
     .execute();
 }
+
+export async function down(database: Kysely<unknown>,): Promise<void> {
+  await database.schema.dropTable("admin_character_overrides",).execute();
+  await database.schema.dropTable("character_licensing",).execute();
+  await database.schema.dropTable("character_availability",).execute();
+  await database.schema.dropTable("character_emotions",).execute();
+  await database.schema.dropTable("emotions",).execute();
+  await database.schema.dropTable("world_avatar_config",).execute();
+  await database.schema.dropTable("character_avatar_config",).execute();
+  await database.schema.dropTable("character_avatars",).execute();
+  await database.schema.dropTable("character_relationships",).execute();
+  await database.schema.dropTable("mood_events",).execute();
+  await database.schema.dropTable("character_mood",).execute();
+  await database.schema.dropTable("character_location_traits",).execute();
+  await database.schema.dropTable("character_world_traits",).execute();
+  await database.schema.dropTable("character_permanent_traits",).execute();
+  await database.schema.alterTable("actors",).dropColumn("content_rating",).execute();
+}
