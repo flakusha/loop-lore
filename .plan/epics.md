@@ -1,7 +1,7 @@
 # Epics Consolidation
 
 **Last Updated:** 2026-07-20
-**Source:** `.plan/epics/`, `.plan/features/`, `.plan/tickets/`, `.plan/backlog.md`
+**Source:** `.plan/epics/`, `.plan/tickets/`, `.plan/backlog.md`
 
 > **Numbering rule:** `docs/meta/plan.md` is the canonical source for epic numbers.
 > `.plan/epics/` files use **name-based filenames** (no number prefix) to avoid collisions.
