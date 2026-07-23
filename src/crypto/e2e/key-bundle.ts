@@ -13,7 +13,7 @@
 
 import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
-import { uid, } from "../../utils";
+import { jsonParseOr, jsonStringifyOr, safeFromBase64, safeToBase64, uid, } from "../../utils";
 
 // ── Types ──────────────────────────────────────────────────
 
@@ -64,9 +64,14 @@ export async function encryptChatKeyForUser(
     chatKeyRaw.buffer as ArrayBuffer,
   );
 
+  const encResult = safeToBase64(Buffer.from(encrypted,),);
+  const ivResult = safeToBase64(Buffer.from(iv,),);
+  if (!encResult.ok) { throw encResult.error; }
+  if (!ivResult.ok) { throw ivResult.error; }
+
   return {
-    encryptedChatKey: Buffer.from(encrypted,).toString("base64",),
-    iv: Buffer.from(iv,).toString("base64",),
+    encryptedChatKey: encResult.buffer,
+    iv: ivResult.buffer,
     userKeyId,
     algorithm: "aes-256-gcm",
   };
@@ -83,8 +88,12 @@ export async function decryptChatKeyFromBundle(
   bundle: KeyBundle,
   userKey: CryptoKey,
 ): Promise<Uint8Array> {
-  const iv = Buffer.from(bundle.iv, "base64",);
-  const encrypted = Buffer.from(bundle.encryptedChatKey, "base64",);
+  const ivResult = safeFromBase64(bundle.iv,);
+  const encryptedResult = safeFromBase64(bundle.encryptedChatKey,);
+  if (!ivResult.ok) { throw ivResult.error; }
+  if (!encryptedResult.ok) { throw encryptedResult.error; }
+  const iv = new Uint8Array(ivResult.buffer,);
+  const encrypted = new Uint8Array(encryptedResult.buffer,);
 
   const decrypted = await crypto.subtle.decrypt(
     { name: "AES-GCM", iv, },
@@ -114,7 +123,7 @@ export async function storeKeyBundle(opts: StoreKeyBundleOpts,): Promise<string>
   if (existing) {
     await database
       .updateTable("actor_keys",)
-      .set({ encrypted_key: JSON.stringify(bundle,), },)
+      .set({ encrypted_key: jsonStringifyOr(bundle,), },)
       .where("id", "=", existing.id,)
       .execute();
     return existing.id;
@@ -128,7 +137,7 @@ export async function storeKeyBundle(opts: StoreKeyBundleOpts,): Promise<string>
       actor_id: userId,
       name: `e2e-bundle:${chatId}`,
       key_type: "encryption",
-      encrypted_key: JSON.stringify(bundle,),
+      encrypted_key: jsonStringifyOr(bundle,),
       status: "active",
     },)
     .execute();
@@ -154,11 +163,7 @@ export async function loadKeyBundle(
 
   if (!row?.encrypted_key) { return null; }
 
-  try {
-    return JSON.parse(row.encrypted_key,) as KeyBundle;
-  } catch {
-    return null;
-  }
+  return jsonParseOr<KeyBundle>(row.encrypted_key, {} as KeyBundle,);
 }
 
 /**

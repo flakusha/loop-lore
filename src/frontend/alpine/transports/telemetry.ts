@@ -5,7 +5,7 @@
  * Falls back to fetch() with keepalive when sendBeacon unavailable.
  */
 import type { LogEntry, Transport, } from "../../../logger/types";
-import { safeJsonStringify, } from "../../../utils/safe-json";
+import { safeFetch, safeJsonStringify, } from "../../../utils";
 
 const LEVEL_MAP: Record<number, string> = {
   10: "trace",
@@ -46,11 +46,12 @@ export class TelemetryTransport implements Transport {
       const blob = new Blob([body.value,], { type: "application/json", },);
       navigator.sendBeacon(this.url, blob,);
     } catch {
-      fetch(this.url, {
+      void safeFetch(this.url, {
         method: "POST",
-        headers: { "Content-Type": "application/json", },
-        body: body.value,
+        body: payload,
         keepalive: true,
+        handle401: false,
+        timeout: 10_000,
       },).catch(() => {},);
     }
 

@@ -29,7 +29,7 @@ import type { DB, } from "../db/schema";
 import { extractMentionedActorIds, } from "../group-chat/mention-parser";
 import { selectNextGroupActor, } from "../group-chat/turn-selector";
 import { getLogger, } from "../logger";
-import { uid, } from "../utils";
+import { jsonParseOr, uid, } from "../utils";
 import {
   cancelGenerationByChat,
   completeGeneration,
@@ -490,14 +490,10 @@ export async function triggerGroupCascade(opts: GroupCascadeOpts,): Promise<void
 
   // Check if paused
   if (chat.story_state) {
-    try {
-      const state = JSON.parse(chat.story_state,) as { isPaused?: boolean };
-      if (state.isPaused) {
-        log.debug("Chat paused, cascade stopped",);
-        return;
-      }
-    } catch {
-      // malformed story_state — ignore
+    const state = jsonParseOr<{ isPaused?: boolean }>(chat.story_state, {});
+    if (state.isPaused) {
+      log.debug("Chat paused, cascade stopped",);
+      return;
     }
   }
 

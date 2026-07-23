@@ -5,7 +5,7 @@
  */
 
 import type { LogEntry, Transport, } from "../../../logger/types";
-import { safeJsonStringify, } from "../../../utils/safe-json";
+import { safeFetch, } from "../../../utils";
 
 export class ServerTransport implements Transport {
   readonly name = "server";
@@ -30,17 +30,15 @@ export class ServerTransport implements Transport {
 
     try {
       const token = typeof localStorage === "undefined" ? null : localStorage.getItem("session_token",);
-      const body = safeJsonStringify({ entries: batch, },);
-      if (!body.ok) { return; }
 
-      await fetch("/api/frontend/logs", {
+      await safeFetch("/api/frontend/logs", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          ...(token && { Authorization: `Bearer ${token}`, }),
-        },
-        body: body.value,
+        body: { entries: batch, },
+        auth: { sessionToken: token ?? undefined, },
+        handle401: false,
+        timeout: 10_000,
       },);
+      // Fire-and-forget — errors are silently discarded
     } catch {
       // Server unreachable — discard batch
     }

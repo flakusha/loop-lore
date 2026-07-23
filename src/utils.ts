@@ -11,6 +11,16 @@ import { randomBytes, randomUUID, } from "node:crypto";
 export type { JsonResult, SafeJsonStringifyOptions, } from "./utils/safe-json";
 export { isJsonString, jsonParseOr, jsonStringifyOr, safeJsonParse, safeJsonStringify, } from "./utils/safe-json";
 
+// ── Safe Fetch ──────────────────────────────────────────────
+
+export type { FetchAuth, FetchResult, SafeFetchOptions, } from "./utils/safe-fetch";
+export { safeFetch, safeFetchWithRetry, } from "./utils/safe-fetch";
+
+// ── Safe Buffer ─────────────────────────────────────────────
+
+export type { BufferResult, CompressionAlgorithm, } from "./utils/safe-buffer";
+export { safeCompress, safeDecompress, safeFromBase64, safeFromUint8Array, safeFromString, safeToBase64, } from "./utils/safe-buffer";
+
 // ── ID Generation ─────────────────────────────────────────────
 
 /** Create a DB-safe UUID string (v4, RFC 4122) */

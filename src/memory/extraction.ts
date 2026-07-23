@@ -9,6 +9,7 @@ import { randomUUID, } from "node:crypto";
 import type { DB, } from "../db";
 import type { LLMProvider, } from "../generation/providers/types";
 import { getLogger, } from "../logger";
+import { jsonParseOr, } from "../utils";
 import type { ExtractedMemory, ExtractionOpts, } from "./types";
 
 function getLog() {
@@ -78,28 +79,26 @@ export async function extractMemories(
  * Parse the LLM extraction response into structured memories.
  */
 function parseExtractionResponse(content: string,): ExtractedMemory[] | null {
-  try {
-    const trimmed = content.trim();
-    if (trimmed.startsWith("[",)) {
-      return JSON.parse(trimmed,) as ExtractedMemory[];
-    }
+  const trimmed = content.trim();
+  let jsonStr: string | null = null;
 
+  if (trimmed.startsWith("[",)) {
+    jsonStr = trimmed;
+  } else {
     const fenceRe = /```(?:json)?\s*\n?([\s\S]*?)\n?```/;
     const jsonMatch = fenceRe.exec(trimmed,);
-    if (jsonMatch?.[1]) {
-      return JSON.parse(jsonMatch[1],) as ExtractedMemory[];
-    }
+    if (jsonMatch?.[1]) { jsonStr = jsonMatch[1]; }
 
-    const arrayRe = /\[[\s\S]*\]/;
-    const arrayMatch = arrayRe.exec(trimmed,);
-    if (arrayMatch) {
-      return JSON.parse(arrayMatch[0],) as ExtractedMemory[];
+    if (!jsonStr) {
+      const arrayRe = /\[[\s\S]*\]/;
+      const arrayMatch = arrayRe.exec(trimmed,);
+      if (arrayMatch) { jsonStr = arrayMatch[0]; }
     }
-
-    return null;
-  } catch {
-    return null;
   }
+
+  if (!jsonStr) { return null; }
+  const result = jsonParseOr<ExtractedMemory[]>(jsonStr, []);
+  return result.length > 0 ? result : null;
 }
 
 /**

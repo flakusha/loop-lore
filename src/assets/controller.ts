@@ -52,6 +52,7 @@ import {
   validateMimeType,
 } from "./service";
 import type { AssetRecord, } from "./service";
+import { safeFromUint8Array, } from "../utils";
 
 /** Upload options — also used by elysia-app.ts for the standalone POST /api/assets route. */
 export interface UploadOpts {
@@ -332,8 +333,9 @@ export async function handleUpload({
   if (!file || !(file instanceof File)) {
     return badRequestResponse("file field is required",);
   }
-
-  const buffer = Buffer.from(await file.arrayBuffer(),);
+  const bufferResult = safeFromUint8Array(Buffer.from(await file.arrayBuffer(),),);
+  if (!bufferResult.ok) { return badRequestResponse(bufferResult.error.message,); }
+  const buffer = bufferResult.buffer;
   const sizeError = validateFileSize(buffer.length, maxFileSize,);
   if (sizeError) { return badRequestResponse(sizeError,); }
 
