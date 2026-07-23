@@ -66,6 +66,7 @@ async function fetchActorMemories(
     pinned: Boolean(r.pinned,),
     scope: (r.scope ?? "character") as MemoryEntry["scope"],
     privacy: (r.privacy ?? "shared") as MemoryEntry["privacy"],
+    importance: r.importance,
     shareability: r.shareability,
     expiresAt: r.expires_at ?? undefined,
     createdAt: r.created_at,

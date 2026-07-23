@@ -78,7 +78,7 @@ export function getStatus(percentage: number,): ContextStatus {
  */
 export function computeContextWindow(
   messages: CountableMessage[],
-  maxTokens: number = 32_000,
+  maxTokens = 32_000,
   threshold: number = THRESHOLDS.critical,
 ): TokenCountResult {
   const currentTokens = countMessageTokens(messages,);
