@@ -440,7 +440,7 @@ export async function triggerGroupCascade(opts: GroupCascadeOpts,): Promise<void
 
   // Check if paused
   if (chat.story_state) {
-    const state = jsonParseOr<{ isPaused?: boolean }>(chat.story_state, {});
+    const state = jsonParseOr<{ isPaused?: boolean }>(chat.story_state, {},);
     if (state.isPaused) {
       log.debug("Chat paused, cascade stopped",);
       return;
