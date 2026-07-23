@@ -135,6 +135,7 @@ export function getTheme(): string {
   return localStorage.getItem("theme-preference",) || "default";
 }
 
+
 /**
  * Resolve a translation key against the global locale strings.
  * Falls back to key display if not found.
