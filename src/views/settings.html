@@ -1,11 +1,19 @@
 <!-- Settings Page -->
 <div class="app-layout" x-data="settingsPage()" x-init="init()">
   <header id="header-slot" class="main-header" data-page="settings" data-testid="settings-header">
-    <button class="hamburger" x-on:click="window.toggleSidebar()" data-testid="hamburger">☰</button>
+    <button class="hamburger" x-on:click="window.toggleSidebar()" data-testid="hamburger" aria-label="Toggle sidebar">
+      ☰
+    </button>
     <span class="title" x-text="'Settings'"></span>
     <div class="actions">
       <template x-if="activeTab === 'general'">
-        <button class="btn btn-primary" @click="saveGeneral()" :disabled="!loaded" data-testid="save-general">
+        <button
+          class="btn btn-primary"
+          @click="saveGeneral()"
+          :disabled="!loaded"
+          data-testid="save-general"
+          type="submit"
+        >
           Save General
         </button>
       </template>
@@ -26,28 +34,55 @@
   <main class="main-content">
     <div class="chat-area" style="max-width: 960px; margin: 0 auto; width: 100%">
       <!-- Tab Bar -->
-      <div class="world-edit-tabs">
+      <div class="world-edit-tabs" role="tablist" aria-label="Settings tabs">
         <button
           class="world-edit-tab"
           :class="{ active: activeTab === 'general' }"
           @click="activeTab = 'general'"
+          role="tab"
+          :aria-selected="activeTab === 'general'"
+          id="tab-general"
         >
           General
         </button>
-        <button class="world-edit-tab" :class="{ active: activeTab === 'chat' }" @click="activeTab = 'chat'">
+        <button
+          class="world-edit-tab"
+          :class="{ active: activeTab === 'chat' }"
+          @click="activeTab = 'chat'"
+          role="tab"
+          :aria-selected="activeTab === 'chat'"
+          id="tab-chat"
+        >
           Chat
         </button>
-        <button class="world-edit-tab" :class="{ active: activeTab === 'api' }" @click="activeTab = 'api'">
+        <button
+          class="world-edit-tab"
+          :class="{ active: activeTab === 'api' }"
+          @click="activeTab = 'api'"
+          role="tab"
+          :aria-selected="activeTab === 'api'"
+          id="tab-api"
+        >
           API
         </button>
         <button
           class="world-edit-tab"
           :class="{ active: activeTab === 'notifications' }"
           @click="activeTab = 'notifications'"
+          role="tab"
+          :aria-selected="activeTab === 'notifications'"
+          id="tab-notifications"
         >
           Notifications
         </button>
-        <button class="world-edit-tab" :class="{ active: activeTab === 'data' }" @click="activeTab = 'data'">
+        <button
+          class="world-edit-tab"
+          :class="{ active: activeTab === 'data' }"
+          @click="activeTab = 'data'"
+          role="tab"
+          :aria-selected="activeTab === 'data'"
+          id="tab-data"
+        >
           Data
         </button>
         <button class="world-edit-tab" :class="{ active: activeTab === 'keys' }" @click="activeTab = 'keys'">
@@ -56,7 +91,14 @@
       </div>
 
       <!-- General Tab -->
-      <div x-show="activeTab === 'general'" class="settings-tab-content" data-testid="settings-general">
+      <div
+        x-show="activeTab === 'general'"
+        class="settings-tab-content"
+        data-testid="settings-general"
+        role="tabpanel"
+        aria-labelledby="tab-general"
+        tabindex="0"
+      >
         <div class="settings-section">
           <div class="form-group">
             <label class="form-label" for="displayName">Display Name</label>
@@ -67,6 +109,7 @@
               name="displayName"
               x-model="displayName"
               placeholder="Your display name"
+              required
             />
           </div>
 
@@ -83,6 +126,7 @@
               data-testid="theme-select"
               x-model="theme"
               @change="saveGeneral()"
+              aria-label="Theme selection"
             >
               <option value="default">Default (Dark)</option>
               <option value="light">Light</option>
@@ -105,8 +149,13 @@
               data-testid="locale-select"
               x-model="locale"
               @change="saveGeneral()"
+              aria-label="Language selection"
             >
-              <option value="en">English</option>
+              <template x-for="loc in locales" :key="loc.id">
+                <option :value="loc.id" :data-lang="loc.direction" :selected="loc.id === locale">
+                  <span x-text="loc.name"></span> (<span x-text="loc.nativeName"></span>)
+                </option>
+              </template>
             </select>
           </div>
         </div>
