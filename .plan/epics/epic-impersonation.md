@@ -49,3 +49,7 @@ Character impersonation — 1 character can be impersonated once per world (exce
 - `src/routes/chats.ts` — impersonation endpoints
 - `src/frontend/alpine/chat.ts` — impersonation UI
 - `src/assistant/prompt/sections/` — impersonation context
+
+## Linked Tasks
+
+- TASK-impersonation.md

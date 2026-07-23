@@ -35,3 +35,7 @@ these principles keep it from collapsing.
 
 `epic-rpg-mechanics.md`, `epic-worlds-extension.md`, `epic-social-interaction.md`,
 `epic-multi-session.md`
+
+## Linked Tasks
+
+- TASK-emergent-narrative-design.md

@@ -126,3 +126,7 @@ This epic makes multi-instance boot deterministic and drift-safe.
 
 - **IN:** migration leadership, startup schema-drift enforcement, optional cross-instance SSE bus.
 - **OUT:** backend-selection/ACID guards (Epic 27); deploy manifests/K8s (Epic 25); SSE feature itself stays owned by `src/routes/activity-stream.ts`.
+
+## Linked Tasks
+
+- TASK-multi-instance-reconciliation.md

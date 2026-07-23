@@ -3,6 +3,7 @@
 **Status:** ⬜ Not Started
 **Priority:** Medium
 **Effort:** Very High
+**Issue:** `e03faaf`
 **Type:** Feature Epic
 **Tags:** magic, spells, mana, elements, casting, enchanting
 
@@ -228,3 +229,7 @@ interface SpellMastery {
 - **Epic Battle & Action Systems** — Combat spell actions
 - **Epic Plugin System** — Schools/elements extensibility
 - **Epic World & Locations** — Magic zones, ley lines
+
+## Linked Tasks
+
+- TASK-magic-spell-systems.md

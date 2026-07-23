@@ -3,6 +3,7 @@
 **Status:** ⬜ Not Started
 **Priority:** Medium
 **Effort:** Very High
+**Issue:** `136d857`
 **Type:** Feature Epic
 
 ## Summary
@@ -1397,3 +1398,7 @@ interface FormattingRules {
 - **Epic RPG Mechanics** — world-level modifiers, factions, reputation/karma overlap; RPG owns the mechanics, this epic owns location/world data.
 - **Epic Battle & Action Systems** — encounters, monsters, and location-based random encounters overlap; battle owns combat flow.
 - **Epic 27 (Data Integrity & ACID)** — persistent world/location storage relies on `data_version` concurrency guards once enforced.
+
+## Linked Tasks
+
+- TASK-world-locations.md

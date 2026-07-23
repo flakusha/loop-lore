@@ -132,3 +132,8 @@ User selects template → fills params → frontend sends POST /api/comfyui/run
 2. **Workflow versioning:** How to handle template updates when ComfyUI nodes change?
 3. **Sandboxing:** Should ComfyUI workflows run in a sandboxed context?
 4. **Pricing:** Should workflow runs be rate-limited or metered?
+
+## Linked Tasks
+
+- TASK-comfyui-node-discovery.md
+- TASK-comfyui-template-registry.md
