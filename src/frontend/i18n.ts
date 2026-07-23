@@ -106,7 +106,7 @@ export function interpolate(
   template: string,
   params: Record<string, string>,
 ): string {
-  return template.replace(/\{(\w+)\}/g, (_, name,) => params[name] ?? `{${name}}`,);
+  return template.replaceAll(/\{(\w+)\}/g, (_, name,) => params[name] ?? `{${name}}`,);
 }
 
 /**
@@ -144,6 +144,7 @@ export function getSavedLocale(): Locale {
 export function saveLocale(locale: Locale,): void {
   localStorage.setItem("locale", locale,);
   // Cookie for server-side detection (middleware reads this)
+  // eslint-disable-next-line unicorn/no-document-cookie
   document.cookie = `ll_locale=${locale}; path=/; SameSite=Lax; max-age=31536000`;
   // Update global ref
   globalThis.currentLocale = locale;

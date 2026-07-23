@@ -41,13 +41,13 @@ export const EXTERNAL_APIS: Record<string, { description: string; requires_appro
  * Keyword patterns for intent classification.
  * Each pattern is matched case-insensitively against the user input.
  */
-const INTENT_PATTERNS: Array<{
+const INTENT_PATTERNS: {
   intent: AssistantIntent;
   target: string;
   confidence: number;
   requires_approval: boolean;
   patterns: RegExp[];
-}> = [
+}[] = [
   // Generation intents — require quality + user confirmation
   {
     intent: "generate",
@@ -140,7 +140,7 @@ export function detectIntent(input: string,): IntentResult {
 
   // Check slash commands first — they're always tool_exec
   if (trimmed.startsWith("/",)) {
-    const cmdMatch = trimmed.match(/^\/(\w+)/,);
+    const cmdMatch = /^\/(\w+)/.exec(trimmed,);
     if (cmdMatch) {
       const cmd = cmdMatch[1];
       if (cmd && APPROVED_TOOLS[cmd]) {

@@ -43,7 +43,7 @@ registerCommand("create", async (args,): Promise<CommandResult> => {
   // TODO: Apply quality gating (schema validation, consistency check, duplicate check)
   // TODO: Require user confirmation before creating
 
-  const typeLabel = entityType === "char" ? "character" : entityType === "loc" ? "location" : entityType;
+  const typeLabel = entityType === "char" ? "character" : (entityType === "loc" ? "location" : entityType);
 
   return {
     systemMessage: `**Created ${typeLabel}:** ${description}\n\nThe entity has been added to your world.`,
