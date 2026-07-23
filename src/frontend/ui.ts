@@ -128,37 +128,37 @@ export function getTheme(): string {
 // ── Locale ──────────────────────────────────────────────────
 
 import {
-  type TranslationMap,
-  resolveKey,
-  loadTranslations,
-  saveLocale,
   applyDirection,
+  loadTranslations,
+  resolveKey,
+  saveLocale,
+  type TranslationMap,
 } from "./i18n";
 
 /**
  * Resolve a translation key against the global locale strings.
  * Falls back to key display if not found.
  */
-export function t(key: string, params?: Record<string, string>): string {
+export function t(key: string, params?: Record<string, string>,): string {
   const map = (globalThis.__localeStrings ?? {}) as TranslationMap;
-  const value = resolveKey(map, key);
-  if (value === undefined) return key;
+  const value = resolveKey(map, key,);
+  if (value === undefined) { return key; }
   if (params) {
-    return value.replace(/\{(\w+)\}/g, (_, name) => params[name] ?? `{${name}}`);
+    return value.replace(/\{(\w+)\}/g, (_, name,) => params[name] ?? `{${name}}`,);
   }
   return value;
 }
 
 export async function loadLocale(locale: string,): Promise<void> {
-  const strings = await loadTranslations(locale);
+  const strings = await loadTranslations(locale,);
   if (strings) {
     globalThis.__localeStrings = strings as any;
-    applyDirection(locale as any);
+    applyDirection(locale as any,);
   }
 }
 
 export function setLocale(localeId: string,): void {
-  saveLocale(localeId as any);
+  saveLocale(localeId as any,);
   loadLocale(localeId,);
 }
 
