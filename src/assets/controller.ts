@@ -54,8 +54,6 @@ import {
 } from "./service";
 import type { AssetRecord, } from "./service";
 
-import { safeFromUint8Array, } from "../utils";
-
 /**
  * Asset Controller
  *
