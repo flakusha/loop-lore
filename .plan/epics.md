@@ -143,7 +143,7 @@ epics where applicable.
 | Visual Novel Mode                             | Med      | Immersion & Presentation | ⬜ Not Started |
 | 3D View Modes (consolidated)                  | High     | 26, 28                   | ⬜ Not Started |
 | Text Effects & Overlays                       | Med      | Immersion & Presentation | ⬜ Not Started |
-| Info Bubbles (help tooltips in config menus) | Low      | Immersion & Presentation | ⬜ Not Started |
+| Info Bubbles (help tooltips in config menus)  | Low      | Immersion & Presentation | ⬜ Not Started |
 | Character Multi-Personality System            | High     | 22                       | ⬜ Not Started |
 | Character Mood Swings & Happiness Meter       | Med      | 22                       | ⬜ Not Started |
 | Character Memory Injection & Privacy          | High     | 25                       | 🟡 In Progress |
