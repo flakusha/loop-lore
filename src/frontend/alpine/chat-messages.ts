@@ -162,8 +162,16 @@ export const chatMessages: Partial<ChatState> & ThisType<ChatState> = {
       },);
       if (res.ok) {
         this.pendingAssets = [];
-        // Connect SSE for streaming generation updates
-        this.connectGenerationSSE(this.activeChat,);
+        const data = await res.json();
+
+        // Dispatch command action if present (e.g. /image → POST /api/generation/image)
+        if (data.action) {
+          await this.dispatchCommandAction(data.action, data.actionPayload ?? null, this.activeChat,);
+        } else {
+          // Normal message — connect SSE for LLM streaming generation
+          this.connectGenerationSSE(this.activeChat,);
+        }
+
         await this.loadMessages();
         await this.loadChats();
       } else {

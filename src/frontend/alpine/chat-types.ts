@@ -234,6 +234,7 @@ export interface ChatState extends AlpineMagicThis {
   toggleDebugView(): void;
   handleCommandInput(event: Event,): void;
   selectCommand(name: string,): void;
+  dispatchCommandAction(action: string, payload: Record<string, unknown> | null, chatId: string,): Promise<void>;
   loadImpersonationState(): Promise<void>;
   loadPersonas(): Promise<void>;
   setPersona(): Promise<void>;
