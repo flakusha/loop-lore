@@ -194,6 +194,9 @@ export const SCHEMA = new SchemaManifest()
     parent_chat_id: col("text",),
     is_pinned: col("text", { notNull: true, },),
     encryption_level: col("text", { notNull: true, },),
+    response_length_preset: col("text",),
+    response_length_custom: col("text",),
+    context_max_tokens: col("integer",),
     created_at: col("text", { notNull: true, },),
     updated_at: col("text", { notNull: true, },),
   },)
@@ -221,6 +224,7 @@ export const SCHEMA = new SchemaManifest()
     creator: col("text",),
     character_version: col("text",),
     import_spec: col("text", { notNull: true, },),
+    content_rating: col("text", { notNull: true, },),
     created_at: col("text", { notNull: true, },),
     updated_at: col("text", { notNull: true, },),
   },)
@@ -617,6 +621,7 @@ export const SCHEMA = new SchemaManifest()
     id: col("text", { primaryKey: true, },),
     actor_id: col("text", { notNull: true, },),
     source_chat_id: col("text",),
+    source_message_id: col("text",),
     content: col("text", { notNull: true, },),
     memory_type: col("text", { notNull: true, },),
     confidence: col("real", { notNull: true, },),
@@ -624,6 +629,13 @@ export const SCHEMA = new SchemaManifest()
     keywords: col("text", { notNull: true, },),
     decay_rate: col("real", { notNull: true, },),
     strength: col("real", { notNull: true, },),
+    context: col("text",),
+    world_id: col("text",),
+    user_id: col("text",),
+    scope: col("text",),
+    pinned: col("text",),
+    privacy: col("text",),
+    shareability: col("text",),
     expires_at: col("text",),
     last_accessed_at: col("text",),
     created_at: col("text", { notNull: true, },),
@@ -729,4 +741,172 @@ export const SCHEMA = new SchemaManifest()
     to_version: col("integer", { notNull: true, },),
     description: col("text", { notNull: true, },),
     applied_at: col("text", { notNull: true, },),
+  },)
+  // ── Character: Permanent Traits ──────────────────────────────
+  .table("character_permanent_traits", {
+    id: col("text", { primaryKey: true, },),
+    actor_id: col("text", { notNull: true, },),
+    trait_category: col("text", { notNull: true, },),
+    trait_name: col("text", { notNull: true, },),
+    trait_value: col("text", { notNull: true, },),
+    immutable: col("integer", { notNull: true, },),
+    created_at: col("text", { notNull: true, },),
+    updated_at: col("text", { notNull: true, },),
+  },)
+  // ── Character: World Traits ──────────────────────────────────
+  .table("character_world_traits", {
+    id: col("text", { primaryKey: true, },),
+    actor_id: col("text", { notNull: true, },),
+    world_id: col("text", { notNull: true, },),
+    trait_category: col("text", { notNull: true, },),
+    trait_name: col("text", { notNull: true, },),
+    trait_value: col("text", { notNull: true, },),
+    created_at: col("text", { notNull: true, },),
+    updated_at: col("text", { notNull: true, },),
+  },)
+  // ── Character: Location Traits ───────────────────────────────
+  .table("character_location_traits", {
+    id: col("text", { primaryKey: true, },),
+    actor_id: col("text", { notNull: true, },),
+    location_id: col("text", { notNull: true, },),
+    trait_name: col("text", { notNull: true, },),
+    trait_value: col("text", { notNull: true, },),
+    bonus: col("integer",),
+    penalty: col("integer",),
+    effects: col("text",),
+    equipment_override: col("text",),
+    created_at: col("text", { notNull: true, },),
+    updated_at: col("text", { notNull: true, },),
+  },)
+  // ── Character: Mood ──────────────────────────────────────────
+  .table("character_mood", {
+    id: col("text", { primaryKey: true, },),
+    actor_id: col("text", { notNull: true, },),
+    world_id: col("text",),
+    happiness: col("integer", { notNull: true, },),
+    base_mood: col("text", { notNull: true, },),
+    current_mood: col("text", { notNull: true, },),
+    mood_stability: col("real", { notNull: true, },),
+    expression_modifiers: col("text",),
+    last_mood_change: col("text", { notNull: true, },),
+    created_at: col("text", { notNull: true, },),
+    updated_at: col("text", { notNull: true, },),
+  },)
+  // ── Character: Mood Events ───────────────────────────────────
+  .table("mood_events", {
+    id: col("text", { primaryKey: true, },),
+    actor_id: col("text", { notNull: true, },),
+    world_id: col("text",),
+    event_type: col("text", { notNull: true, },),
+    happiness_delta: col("integer", { notNull: true, },),
+    mood_override: col("text",),
+    source: col("text", { notNull: true, },),
+    source_id: col("text",),
+    created_at: col("text", { notNull: true, },),
+  },)
+  // ── Character: Relationships ─────────────────────────────────
+  .table("character_relationships", {
+    id: col("text", { primaryKey: true, },),
+    actor_id: col("text", { notNull: true, },),
+    target_actor_id: col("text", { notNull: true, },),
+    world_id: col("text",),
+    relationship_type: col("text", { notNull: true, },),
+    standing: col("integer", { notNull: true, },),
+    trust: col("integer", { notNull: true, },),
+    familiarity: col("integer", { notNull: true, },),
+    is_bidirectional: col("integer", { notNull: true, },),
+    metadata: col("text",),
+    created_at: col("text", { notNull: true, },),
+    updated_at: col("text", { notNull: true, },),
+  },)
+  // ── Character: Avatars ───────────────────────────────────────
+  .table("character_avatars", {
+    id: col("text", { primaryKey: true, },),
+    actor_id: col("text", { notNull: true, },),
+    asset_id: col("text", { notNull: true, },),
+    label: col("text", { notNull: true, },),
+    tags: col("text", { notNull: true, },),
+    is_primary: col("integer", { notNull: true, },),
+    sort_order: col("integer", { notNull: true, },),
+    created_at: col("text", { notNull: true, },),
+    updated_at: col("text", { notNull: true, },),
+  },)
+  // ── Character: Avatar Config ─────────────────────────────────
+  .table("character_avatar_config", {
+    id: col("text", { primaryKey: true, },),
+    actor_id: col("text", { notNull: true, },),
+    selection_rule: col("text", { notNull: true, },),
+    weights: col("text",),
+    fallback_chain: col("text",),
+    created_at: col("text", { notNull: true, },),
+    updated_at: col("text", { notNull: true, },),
+  },)
+  // ── World: Avatar Config ─────────────────────────────────────
+  .table("world_avatar_config", {
+    id: col("text", { primaryKey: true, },),
+    world_id: col("text", { notNull: true, },),
+    actor_id: col("text", { notNull: true, },),
+    selection_rule_override: col("text",),
+    weights_override: col("text",),
+    created_at: col("text", { notNull: true, },),
+    updated_at: col("text", { notNull: true, },),
+  },)
+  // ── Character: Emotions ──────────────────────────────────────
+  .table("emotions", {
+    id: col("text", { primaryKey: true, },),
+    name: col("text", { notNull: true, },),
+    display_name: col("text", { notNull: true, },),
+    category: col("text", { notNull: true, },),
+    valence: col("real", { notNull: true, },),
+    arousal: col("real", { notNull: true, },),
+    icon: col("text",),
+    created_at: col("text", { notNull: true, },),
+  },)
+  // ── Character: Character Emotions ────────────────────────────
+  .table("character_emotions", {
+    id: col("text", { primaryKey: true, },),
+    actor_id: col("text", { notNull: true, },),
+    emotion_id: col("text", { notNull: true, },),
+    intensity: col("real", { notNull: true, },),
+    context: col("text",),
+    expires_at: col("text",),
+    created_at: col("text", { notNull: true, },),
+    updated_at: col("text", { notNull: true, },),
+  },)
+  // ── Character: Availability ──────────────────────────────────
+  .table("character_availability", {
+    id: col("text", { primaryKey: true, },),
+    actor_id: col("text", { notNull: true, },),
+    status: col("text", { notNull: true, },),
+    usage_policy: col("text",),
+    activity_restrictions: col("text",),
+    content_policy: col("text",),
+    nsfw_policy: col("text",),
+    created_at: col("text", { notNull: true, },),
+    updated_at: col("text", { notNull: true, },),
+  },)
+  // ── Character: Licensing ─────────────────────────────────────
+  .table("character_licensing", {
+    id: col("text", { primaryKey: true, },),
+    actor_id: col("text", { notNull: true, },),
+    license_type: col("text", { notNull: true, },),
+    custom_license_text: col("text",),
+    attribution: col("text",),
+    allow_derivatives: col("integer", { notNull: true, },),
+    allow_commercial: col("integer", { notNull: true, },),
+    share_alike: col("integer", { notNull: true, },),
+    created_at: col("text", { notNull: true, },),
+    updated_at: col("text", { notNull: true, },),
+  },)
+  // ── Admin: Character Overrides ───────────────────────────────
+  .table("admin_character_overrides", {
+    id: col("text", { primaryKey: true, },),
+    actor_id: col("text", { notNull: true, },),
+    admin_id: col("text", { notNull: true, },),
+    action: col("text", { notNull: true, },),
+    visibility_override: col("text",),
+    license_override: col("text",),
+    reason: col("text",),
+    expires_at: col("text",),
+    created_at: col("text", { notNull: true, },),
   },);
