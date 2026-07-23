@@ -1101,7 +1101,7 @@
     "git_issue": "22f6cd9"
   },
   "TASK-info-bubbles": {
-    "hash": "a1b2c3d",
+    "hash": "0d07f56",
     "extid": "TASK-info-bubbles",
     "type": "TASK",
     "title": "Info Bubbles (help tooltips in config menus)",
@@ -1116,6 +1116,6 @@
       "tooltips"
     ],
     "source": ".plan/tickets/TASK-info-bubbles.md",
-    "git_issue": "a1b2c3d"
+    "git_issue": "TASK-071"
   }
 }
