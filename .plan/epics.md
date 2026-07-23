@@ -1,7 +1,7 @@
 # Epics Consolidation
 
 **Last Updated:** 2026-07-20
-**Source:** `.plan/epics/`, `.plan/features/`, `.plan/tickets/`, `.plan/backlog.md`
+**Source:** `.plan/epics/`, `.plan/tickets/`, `.plan/backlog.md`
 
 > **Numbering rule:** `docs/meta/plan.md` is the canonical source for epic numbers.
 > `.plan/epics/` files use **name-based filenames** (no number prefix) to avoid collisions.
@@ -143,6 +143,7 @@ epics where applicable.
 | Visual Novel Mode                             | Med      | Immersion & Presentation | ⬜ Not Started |
 | 3D View Modes (consolidated)                  | High     | 26, 28                   | ⬜ Not Started |
 | Text Effects & Overlays                       | Med      | Immersion & Presentation | ⬜ Not Started |
+| Info Bubbles (help tooltips in config menus) | Low      | Immersion & Presentation | ⬜ Not Started |
 | Character Multi-Personality System            | High     | 22                       | ⬜ Not Started |
 | Character Mood Swings & Happiness Meter       | Med      | 22                       | ⬜ Not Started |
 | Character Memory Injection & Privacy          | High     | 25                       | 🟡 In Progress |
@@ -171,6 +172,7 @@ epics where applicable.
 - `TASK-character-memory-injection.md` — injection probability, privacy levels, secrets
 - `TASK-chat-external-music-linking.md` — external service embeds, no server download
 - `TASK-chat-context-feature-permissions.md` — UI feature gating based on context
+- `TASK-info-bubbles.md` — reusable help tooltip component for config menus (i18n)
 - `TASK-data-migration-transitivity.md` — migration state lifecycle, validation gating
 
 ---
