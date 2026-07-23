@@ -10,7 +10,7 @@ import type { CanonicalCharacter, } from "../characters/parser";
 import type { AuthConfig, } from "../config/schema";
 import type { DB, } from "../db/schema";
 import { authenticate, } from "../middleware/auth";
-import { safeJsonStringify, uid, } from "../utils";
+import { safeFromUint8Array, safeJsonStringify, uid, } from "../utils";
 import { HttpStatus, jsonCreated, jsonError, } from "./http-utils";
 
 interface ImportActorOpts {
@@ -89,7 +89,11 @@ async function handleImport(request: Request, database: Kysely<DB>, userId: stri
       return jsonError({ message: "file field is required", status: HttpStatus.BadRequest, },);
     }
 
-    const fileBytes = Buffer.from(await file.arrayBuffer(),);
+    const fileBytesResult = safeFromUint8Array(Buffer.from(await file.arrayBuffer(),),);
+    if (!fileBytesResult.ok) {
+      return jsonError({ message: fileBytesResult.error.message, status: HttpStatus.BadRequest, },);
+    }
+    const fileBytes = fileBytesResult.buffer;
     const filename = file.name ?? "";
 
     try {

@@ -2,6 +2,7 @@
 
 import { brotliCompressSync, brotliDecompressSync, gunzipSync, gzipSync, } from "node:zlib";
 import { CompressionAlgorithm, } from "../db/enums";
+import { safeFromUint8Array, } from "../utils";
 import type { Connection, ProtocolHandler, } from "./protocol.unified";
 
 interface CompressionOptions {
@@ -10,6 +11,7 @@ interface CompressionOptions {
   /** Minimum payload size (bytes) before compression kicks in. Default 256. */
   threshold?: number;
 }
+
 
 /**
  * Compress outgoing data using the specified algorithm.
@@ -23,7 +25,16 @@ function compress(
     return data;
   }
 
-  const buffer = Buffer.from(data,);
+  if (algorithm === "none") {
+    return data;
+  }
+
+  // Use safeBuffer for size validation
+  const bufferResult = safeFromUint8Array(data,);
+  if (!bufferResult.ok) {
+    throw bufferResult.error;
+  }
+  const buffer = bufferResult.buffer;
 
   switch (algorithm) {
     case "zstd": {
@@ -47,10 +58,6 @@ function compress(
     case "gzip": {
       return new Uint8Array(gzipSync(buffer, { level: options.level ?? 6, },),);
     }
-
-    case "none": {
-      return data;
-    }
   }
 }
 
@@ -58,7 +65,16 @@ function compress(
  * Decompress incoming data using the specified algorithm.
  */
 function decompress(data: Uint8Array, algorithm: CompressionAlgorithm,): Uint8Array {
-  const buffer = Buffer.from(data,);
+  if (algorithm === "none") {
+    return data;
+  }
+
+  // Use safeBuffer for size validation
+  const bufferResult = safeFromUint8Array(data,);
+  if (!bufferResult.ok) {
+    throw bufferResult.error;
+  }
+  const buffer = bufferResult.buffer;
 
   switch (algorithm) {
     case "zstd": {
@@ -71,10 +87,6 @@ function decompress(data: Uint8Array, algorithm: CompressionAlgorithm,): Uint8Ar
 
     case "gzip": {
       return new Uint8Array(gunzipSync(buffer,),);
-    }
-
-    case "none": {
-      return data;
     }
   }
 }
