@@ -909,4 +909,174 @@ export const SCHEMA = new SchemaManifest()
     reason: col("text",),
     expires_at: col("text",),
     created_at: col("text", { notNull: true, },),
+  },)
+  // ── Crafting: Recipes ────────────────────────────────────────
+  .table("crafting_recipes", {
+    id: col("text", { primaryKey: true, },),
+    world_id: col("text", { notNull: true, },),
+    name: col("text", { notNull: true, },),
+    description: col("text",),
+    discipline: col("text", { notNull: true, },),
+    tier: col("integer", { notNull: true, },),
+    level_required: col("integer", { notNull: true, },),
+    output_item_id: col("text", { notNull: true, },),
+    output_quantity: col("integer", { notNull: true, },),
+    crafting_time_seconds: col("integer", { notNull: true, },),
+    base_success_chance: col("real", { notNull: true, },),
+    base_quality_min: col("integer", { notNull: true, },),
+    base_quality_max: col("integer", { notNull: true, },),
+    perfect_threshold: col("integer", { notNull: true, },),
+    station_type_required: col("text",),
+    discovered_by_default: col("integer", { notNull: true, },),
+    tags: col("text", { notNull: true, },),
+    created_at: col("text", { notNull: true, },),
+    updated_at: col("text", { notNull: true, },),
+  },)
+  // ── Crafting: Recipe Materials ───────────────────────────────
+  .table("crafting_recipe_materials", {
+    id: col("text", { primaryKey: true, },),
+    recipe_id: col("text", { notNull: true, },),
+    item_id: col("text", { notNull: true, },),
+    quantity: col("integer", { notNull: true, },),
+    slot_type: col("text", { notNull: true, },),
+    quality_requirement: col("text",),
+    bonus_effect: col("text",),
+    sort_order: col("integer", { notNull: true, },),
+    created_at: col("text", { notNull: true, },),
+  },)
+  // ── Crafting: Station Definitions ────────────────────────────
+  .table("crafting_station_defs", {
+    id: col("text", { primaryKey: true, },),
+    world_id: col("text", { notNull: true, },),
+    name: col("text", { notNull: true, },),
+    description: col("text",),
+    station_type: col("text", { notNull: true, },),
+    tier: col("integer", { notNull: true, },),
+    speed_bonus: col("real", { notNull: true, },),
+    quality_bonus: col("real", { notNull: true, },),
+    success_bonus: col("real", { notNull: true, },),
+    material_saving_chance: col("real", { notNull: true, },),
+    max_durability: col("integer", { notNull: true, },),
+    created_at: col("text", { notNull: true, },),
+    updated_at: col("text", { notNull: true, },),
+  },)
+  // ── Crafting: Station Instances ──────────────────────────────
+  .table("crafting_station_instances", {
+    id: col("text", { primaryKey: true, },),
+    station_def_id: col("text", { notNull: true, },),
+    world_id: col("text", { notNull: true, },),
+    location_id: col("text",),
+    owner_actor_id: col("text",),
+    current_durability: col("integer", { notNull: true, },),
+    is_active: col("integer", { notNull: true, },),
+    created_at: col("text", { notNull: true, },),
+    updated_at: col("text", { notNull: true, },),
+  },)
+  // ── Crafting: Professions ────────────────────────────────────
+  .table("professions", {
+    id: col("text", { primaryKey: true, },),
+    actor_id: col("text", { notNull: true, },),
+    world_id: col("text", { notNull: true, },),
+    discipline: col("text", { notNull: true, },),
+    level: col("integer", { notNull: true, },),
+    experience: col("integer", { notNull: true, },),
+    title: col("text", { notNull: true, },),
+    created_at: col("text", { notNull: true, },),
+    updated_at: col("text", { notNull: true, },),
+  },)
+  // ── Crafting: Profession Specializations ─────────────────────
+  .table("profession_specializations", {
+    id: col("text", { primaryKey: true, },),
+    profession_id: col("text", { notNull: true, },),
+    name: col("text", { notNull: true, },),
+    description: col("text",),
+    bonus_type: col("text", { notNull: true, },),
+    bonus_value: col("real", { notNull: true, },),
+    requirement_level: col("integer", { notNull: true, },),
+    requirement_specializations: col("text", { notNull: true, },),
+    is_active: col("integer", { notNull: true, },),
+    created_at: col("text", { notNull: true, },),
+  },)
+  // ── Crafting: Recipe Discoveries ─────────────────────────────
+  .table("recipe_discoveries", {
+    id: col("text", { primaryKey: true, },),
+    actor_id: col("text", { notNull: true, },),
+    world_id: col("text", { notNull: true, },),
+    recipe_id: col("text", { notNull: true, },),
+    discovery_method: col("text", { notNull: true, },),
+    discovered_at: col("text", { notNull: true, },),
+    mastery_level: col("integer", { notNull: true, },),
+  },)
+  // ── Crafting: Gathering Node Definitions ─────────────────────
+  .table("gathering_node_defs", {
+    id: col("text", { primaryKey: true, },),
+    world_id: col("text", { notNull: true, },),
+    name: col("text", { notNull: true, },),
+    description: col("text",),
+    node_type: col("text", { notNull: true, },),
+    skill_required: col("integer", { notNull: true, },),
+    respawn_time_seconds: col("integer", { notNull: true, },),
+    rarity: col("text", { notNull: true, },),
+    max_uses: col("integer", { notNull: true, },),
+    created_at: col("text", { notNull: true, },),
+    updated_at: col("text", { notNull: true, },),
+  },)
+  // ── Crafting: Gathering Node Materials ───────────────────────
+  .table("gathering_node_materials", {
+    id: col("text", { primaryKey: true, },),
+    node_def_id: col("text", { notNull: true, },),
+    item_id: col("text", { notNull: true, },),
+    min_quantity: col("integer", { notNull: true, },),
+    max_quantity: col("integer", { notNull: true, },),
+    drop_chance: col("real", { notNull: true, },),
+    min_quality: col("text",),
+    max_quality: col("text",),
+    sort_order: col("integer", { notNull: true, },),
+    created_at: col("text", { notNull: true, },),
+  },)
+  // ── Crafting: Gathering Node Instances ───────────────────────
+  .table("gathering_node_instances", {
+    id: col("text", { primaryKey: true, },),
+    node_def_id: col("text", { notNull: true, },),
+    world_id: col("text", { notNull: true, },),
+    location_id: col("text",),
+    current_uses: col("integer", { notNull: true, },),
+    is_depleted: col("integer", { notNull: true, },),
+    respawn_at: col("text",),
+    created_at: col("text", { notNull: true, },),
+    updated_at: col("text", { notNull: true, },),
+  },)
+  // ── Crafting: Crafting Attempts ──────────────────────────────
+  .table("crafting_attempts", {
+    id: col("text", { primaryKey: true, },),
+    actor_id: col("text", { notNull: true, },),
+    world_id: col("text", { notNull: true, },),
+    recipe_id: col("text", { notNull: true, },),
+    station_instance_id: col("text",),
+    materials_used: col("text", { notNull: true, },),
+    status: col("text", { notNull: true, },),
+    quality_achieved: col("integer", { notNull: true, },),
+    output_item_id: col("text",),
+    output_quantity: col("integer", { notNull: true, },),
+    experience_gained: col("integer", { notNull: true, },),
+    skill_increase: col("integer", { notNull: true, },),
+    bonus_effects: col("text", { notNull: true, },),
+    duration_ms: col("integer", { notNull: true, },),
+    created_at: col("text", { notNull: true, },),
+  },)
+  // ── Crafting: Crafting Orders ────────────────────────────────
+  .table("crafting_orders", {
+    id: col("text", { primaryKey: true, },),
+    world_id: col("text", { notNull: true, },),
+    requester_actor_id: col("text", { notNull: true, },),
+    crafter_actor_id: col("text",),
+    recipe_id: col("text", { notNull: true, },),
+    quantity: col("integer", { notNull: true, },),
+    max_quality: col("text",),
+    offered_payment: col("integer", { notNull: true, },),
+    offered_materials: col("text", { notNull: true, },),
+    status: col("text", { notNull: true, },),
+    deadline: col("text",),
+    created_at: col("text", { notNull: true, },),
+    updated_at: col("text", { notNull: true, },),
   },);

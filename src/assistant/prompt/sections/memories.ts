@@ -1,9 +1,17 @@
 /**
  * Memory section — the actor's most important memories, provision-filtered
- * by scope, privacy, shareability, and token budget.
+ * by scope, privacy, shareability, and token budget, then injection-filtered
+ * by probability, comfort, and context relevance.
  */
 import type { Kysely, } from "kysely";
+import { RelationshipsService, } from "../../../characters/services/relationships-service";
 import type { DB, } from "../../../db/schema";
+import {
+  DEFAULT_COMFORT,
+  DEFAULT_INJECTION_CONFIG,
+  type InjectionContext,
+  selectMemoriesForInjection,
+} from "../../../memory/injection";
 import { type ProvisionContext, provisionMemories, } from "../../../memory/provision";
 import type { MemoryEntry, } from "../../../memory/types";
 import { safeJsonParse, } from "../../../utils";
@@ -11,7 +19,53 @@ import { wrapSection, } from "../../xml-utils";
 import type { SectionBuilder, } from "../types";
 
 /**
+ * Compute the trust modifier for a viewer based on average trust
+ * across all chat participants.
+ *
+ * Trust ranges from -100 (distrust) to +100 (complete trust).
+ * Normalized to -1..+1 for the provision algorithm.
+ *
+ * @param db - Kysely instance
+ * @param viewerId - The actor whose memories are being provisioned
+ * @param participantIds - All other participants in the chat
+ * @param worldId - Current world for scoped relationships
+ * @returns Trust modifier between -1 and +1
+ */
+async function computeTrustModifier(
+  db: Kysely<DB>,
+  viewerId: string,
+  participantIds: string[],
+  worldId: string | null,
+): Promise<number> {
+  if (participantIds.length === 0) { return 0; }
+
+  const relationshipsService = new RelationshipsService(db,);
+  let totalTrust = 0;
+  let count = 0;
+
+  for (const participantId of participantIds) {
+    if (participantId === viewerId) { continue; }
+    const rel = await relationshipsService.getRelationship(
+      viewerId,
+      participantId,
+      worldId ?? undefined,
+    );
+    if (rel) {
+      totalTrust += rel.trust;
+      count++;
+    }
+  }
+
+  // Average trust normalized to -1..+1
+  if (count === 0) { return 0; }
+  return Math.max(-1, Math.min(1, (totalTrust / count) / 100,),);
+}
+
+/**
  * Build a ProvisionContext from the prompt assembly context.
+ *
+ * Includes trust modifier computed from character relationships
+ * to enable trust-augmented memory sharing probability.
  */
 async function buildProvisionContext(
   db: Kysely<DB>,
@@ -25,12 +79,16 @@ async function buildProvisionContext(
     .where("chat_id", "=", chatId,)
     .execute();
 
+  const participantIds = participants.map((p,) => p.actor_id);
+  const trustModifier = await computeTrustModifier(db, actorId, participantIds, worldId,);
+
   return {
     viewerId: actorId,
     ownerId: actorId,
     chatId,
     worldId,
-    participantIds: participants.map((p,) => p.actor_id),
+    participantIds,
+    trustModifier,
   };
 }
 
@@ -88,10 +146,33 @@ export const memorySection: SectionBuilder = {
       ctx.chat.world_id,
     );
 
-    const result = provisionMemories(memories, provisionCtx, 1024,);
-    if (result.accepted.length === 0) { return []; }
+    // Step 1: Provision filter (scope, privacy, shareability, token budget)
+    const provisionResult = provisionMemories(memories, provisionCtx, 1024,);
+    if (provisionResult.accepted.length === 0) { return []; }
 
-    const memoryText = result.accepted
+    // Step 2: Injection filter (probability, comfort, context relevance)
+    const injectionCtx: InjectionContext = {
+      chatId: ctx.chat.id,
+      worldId: ctx.chat.world_id,
+      locationId: ctx.chat.current_location_id,
+      isPrivateChat: provisionCtx.participantIds.length <= 2,
+      participantCount: provisionCtx.participantIds.length,
+      turnNumber: 0, // TODO: pass actual turn number from context
+      currentKeywords: [], // TODO: extract from current message
+      averageIntimacy: 50, // TODO: compute from relationships
+      moodModifier: 0, // TODO: pass from character mood
+    };
+
+    const injectionResult = selectMemoriesForInjection(
+      provisionResult.accepted,
+      DEFAULT_INJECTION_CONFIG,
+      injectionCtx,
+      DEFAULT_COMFORT,
+    );
+
+    if (injectionResult.selected.length === 0) { return []; }
+
+    const memoryText = injectionResult.selected
       .map((m,) => `- [${m.memoryType}] ${m.content}`)
       .join("\n",);
 

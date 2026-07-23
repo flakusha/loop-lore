@@ -21,6 +21,10 @@ interface ReviewIssue {
   severity: "warning" | "error" | "info";
 }
 
+function formatIssueLines(items: ReviewIssue[], prefix: string,): string {
+  return Array.from(items, (i,) => `- ${prefix} ${i.field}: ${i.issue}`,).join("\n",);
+}
+
 registerCommand("review", async (args, ctx,): Promise<CommandResult> => {
   const target = (args[0] || "character").toLowerCase();
   const db = getDatabase();
@@ -98,15 +102,15 @@ registerCommand("review", async (args, ctx,): Promise<CommandResult> => {
 
       if (errors.length > 0) {
         report += `**Errors (${errors.length}):**\n`;
-        report += errors.map((i,) => `- ❌ ${i.field}: ${i.issue}`).join("\n",) + "\n\n";
+        report += `${formatIssueLines(errors, "❌",)}\n\n`;
       }
       if (warnings.length > 0) {
         report += `**Warnings (${warnings.length}):**\n`;
-        report += warnings.map((i,) => `- ⚠️ ${i.field}: ${i.issue}`).join("\n",) + "\n\n";
+        report += `${formatIssueLines(warnings, "⚠️",)}\n\n`;
       }
       if (info.length > 0) {
         report += `**Suggestions (${info.length}):**\n`;
-        report += info.map((i,) => `- 💡 ${i.field}: ${i.issue}`).join("\n",) + "\n\n";
+        report += `${formatIssueLines(info, "💡",)}\n\n`;
       }
 
       report += issues.length === 0
@@ -172,15 +176,15 @@ registerCommand("review", async (args, ctx,): Promise<CommandResult> => {
 
         if (errors.length > 0) {
           report += `**Errors (${errors.length}):**\n`;
-          report += errors.map((i,) => `- ❌ ${i.field}: ${i.issue}`).join("\n",) + "\n\n";
+          report += `${formatIssueLines(errors, "❌",)}\n\n`;
         }
         if (warnings.length > 0) {
           report += `**Warnings (${warnings.length}):**\n`;
-          report += warnings.map((i,) => `- ⚠️ ${i.field}: ${i.issue}`).join("\n",) + "\n\n";
+          report += `${formatIssueLines(warnings, "⚠️",)}\n\n`;
         }
         if (info.length > 0) {
           report += `**Suggestions (${info.length}):**\n`;
-          report += info.map((i,) => `- 💡 ${i.field}: ${i.issue}`).join("\n",) + "\n\n";
+          report += `${formatIssueLines(info, "💡",)}\n\n`;
         }
         report += `**Summary:** ${errors.length} errors, ${warnings.length} warnings, ${info.length} suggestions`;
       }
@@ -242,15 +246,15 @@ registerCommand("review", async (args, ctx,): Promise<CommandResult> => {
 
         if (errors.length > 0) {
           report += `**Errors (${errors.length}):**\n`;
-          report += errors.map((i,) => `- ❌ ${i.field}: ${i.issue}`).join("\n",) + "\n\n";
+          report += `${formatIssueLines(errors, "❌",)}\n\n`;
         }
         if (warnings.length > 0) {
           report += `**Warnings (${warnings.length}):**\n`;
-          report += warnings.map((i,) => `- ⚠️ ${i.field}: ${i.issue}`).join("\n",) + "\n\n";
+          report += `${formatIssueLines(warnings, "⚠️",)}\n\n`;
         }
         if (info.length > 0) {
           report += `**Suggestions (${info.length}):**\n`;
-          report += info.map((i,) => `- 💡 ${i.field}: ${i.issue}`).join("\n",) + "\n\n";
+          report += `${formatIssueLines(info, "💡",)}\n\n`;
         }
         report += `**Summary:** ${errors.length} errors, ${warnings.length} warnings, ${info.length} suggestions`;
       }
