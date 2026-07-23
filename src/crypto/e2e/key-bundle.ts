@@ -13,7 +13,8 @@
 
 import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
-import { jsonParseOr, jsonStringifyOr, safeFromBase64, safeToBase64, uid, } from "../../utils";
+import { jsonParseOr, jsonStringifyOr, uid, } from "../../utils";
+import { safeFromBase64, safeToBase64, } from "../../utils/safe-buffer";
 
 // ── Types ──────────────────────────────────────────────────
 
