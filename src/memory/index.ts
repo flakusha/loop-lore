@@ -1,11 +1,25 @@
 /**
  * Memory system — public API.
  *
- * Re-exports all memory services: extraction, budget, purge, provision, shareability.
+ * Re-exports all memory services: extraction, budget, purge, provision, shareability, injection.
  */
 export { estimateTokens, } from "../chat/token-utils";
 export { getMemoriesWithinBudget, selectWithinBudget, } from "./budget";
 export { extractAndStoreMemories, extractMemories, storeMemories, } from "./extraction";
+export {
+  DEFAULT_COMFORT,
+  DEFAULT_INJECTION_CONFIG,
+  selectMemoriesForInjection,
+  shouldInjectMemory,
+  toBasePrivacy,
+} from "./injection";
+export type {
+  InjectionContext,
+  InjectionPrivacyLevel,
+  MemoryComfort,
+  MemoryInjectionConfig,
+  MemoryInjectionEvent,
+} from "./injection";
 export { provisionMemories, } from "./provision";
 export type { ProvisionContext, ProvisionResult, } from "./provision";
 export { applyDecay, purgeStaleMemories, touchMemory, } from "./purge";
@@ -14,6 +28,7 @@ export type { ShareabilityConfig, } from "./shareability";
 export type {
   ExtractedMemory,
   ExtractionOpts,
+  InjectionPrivacyLevel as InjectionPrivacyLevelType,
   MemoryBudgetConfig,
   MemoryEntry,
   MemoryPrivacy,

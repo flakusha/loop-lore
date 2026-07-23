@@ -161,6 +161,9 @@ function createTestDb(): TestDbResult {
   sqlite.run(
     `CREATE TABLE actor_memories (id TEXT PRIMARY KEY, actor_id TEXT NOT NULL, content TEXT NOT NULL, memory_type TEXT NOT NULL DEFAULT 'fact', confidence REAL NOT NULL DEFAULT 1, importance INTEGER NOT NULL DEFAULT 1, keywords TEXT DEFAULT '[]', created_at TEXT NOT NULL DEFAULT (datetime('now')), updated_at TEXT NOT NULL DEFAULT (datetime('now')))`,
   );
+  sqlite.run(
+    `CREATE TABLE world_states (id TEXT PRIMARY KEY, world_id TEXT NOT NULL, snapshot TEXT NOT NULL DEFAULT '', trigger_message_id TEXT, trigger_turn_id TEXT, description TEXT, created_at TEXT NOT NULL DEFAULT (datetime('now')))`,
+  );
 
   return { sqlite, db, };
 }
