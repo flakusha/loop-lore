@@ -129,8 +129,9 @@ registerCommand("create", async (args, ctx,): Promise<CommandResult> => {
           .execute();
 
         return {
-          systemMessage: `**Character created:** ${entityData.name ?? "Unnamed"}\n\n` +
-            (entityData.description ?? description),
+          systemMessage: `**Character created:** ${entityData.name ?? "Unnamed"}\n\n${
+            entityData.description ?? description
+          }`,
           action: "create-entity",
           actionPayload: { entityType: label, id, name: entityData.name, },
           handled: true,
@@ -155,8 +156,9 @@ registerCommand("create", async (args, ctx,): Promise<CommandResult> => {
           .execute();
 
         return {
-          systemMessage: `**Location created:** ${entityData.name ?? "Unnamed"}\n\n` +
-            (entityData.description ?? description),
+          systemMessage: `**Location created:** ${entityData.name ?? "Unnamed"}\n\n${
+            entityData.description ?? description
+          }`,
           action: "create-entity",
           actionPayload: { entityType: label, id, name: entityData.name, },
           handled: true,
@@ -179,8 +181,9 @@ registerCommand("create", async (args, ctx,): Promise<CommandResult> => {
           .execute();
 
         return {
-          systemMessage: `**World created:** ${entityData.name ?? "Unnamed"}\n\n` +
-            (entityData.description ?? description),
+          systemMessage: `**World created:** ${entityData.name ?? "Unnamed"}\n\n${
+            entityData.description ?? description
+          }`,
           action: "create-entity",
           actionPayload: { entityType: label, id, name: entityData.name, },
           handled: true,
@@ -210,8 +213,9 @@ registerCommand("create", async (args, ctx,): Promise<CommandResult> => {
           .execute();
 
         return {
-          systemMessage: `**Item created:** ${entityData.name ?? "Unnamed"}\n\n` +
-            (entityData.description ?? description),
+          systemMessage: `**Item created:** ${entityData.name ?? "Unnamed"}\n\n${
+            entityData.description ?? description
+          }`,
           action: "create-entity",
           actionPayload: { entityType: label, id, name: entityData.name, },
           handled: true,

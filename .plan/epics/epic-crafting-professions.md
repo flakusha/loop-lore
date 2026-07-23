@@ -1,19 +1,29 @@
-# EPIC: Crafting & Professions
+# EPIC-036: Crafting, Memory & Chat Systems
 
-**Status:** ⬜ Not Started
-**Priority:** Medium
+**Status:** 🟡 In Progress
+**Priority:** High
 **Effort:** Very High
 **Issue:** `328843b`
 **Type:** Feature Epic
-**Tags:** crafting, professions, alchemy, smithing, enchanting, cooking, farming
+**Tags:** crafting, professions, memory, context, chat, moderation
 
 ## Overview
 
-Comprehensive crafting and profession system — crafting disciplines, recipe discovery, material gathering, crafting stations, profession progression, and economic integration. Supports multiple crafting paradigms from simple recipe-based to complex experimentation systems.
+Multi-system epic combining:
 
-## Crafting Disciplines
+1. **Crafting & Professions** — full RPG crafting system with disciplines, recipes, gathering, stations, profession progression
+2. **Memory Systems** — decay, promotion pipeline, provision wiring, trust-augmented sharing
+3. **Chat Infrastructure** — context window management, event injection, route extraction
+4. **Content Quality** — repetition/hallucination guards
+5. **Moderation** — flagging, NSFW gating, user management (postponed)
 
-### Core Disciplines
+---
+
+## 1. Crafting & Professions
+
+### Crafting Disciplines
+
+**Core:**
 
 | Discipline      | Description                     | Key Stats | Products                          |
 | --------------- | ------------------------------- | --------- | --------------------------------- |
@@ -26,7 +36,7 @@ Comprehensive crafting and profession system — crafting disciplines, recipe di
 | **Jewelry**     | Rings, amulets, gems            | DEX, INT  | Accessories, gem cutting          |
 | **Engineering** | Gadgets, mechanisms, traps      | INT, DEX  | Gadgets, traps, mechanical items  |
 
-### Specialized Disciplines
+**Gathering:**
 
 | Discipline    | Description                      | Products                  |
 | ------------- | -------------------------------- | ------------------------- |
@@ -37,119 +47,14 @@ Comprehensive crafting and profession system — crafting disciplines, recipe di
 | **Skinning**  | Animal hide harvesting           | Leather, fur, bones       |
 | **Logging**   | Wood harvesting                  | Lumber, branches, sap     |
 
-## Crafting System
+### Crafting System
 
-### Recipe Structure
-
-```typescript
-interface Recipe {
-  id: string;
-  name: string;
-  discipline: CraftingDiscipline;
-  tier: number; // 1-10
-  level_required: number;
-  materials: RecipeMaterial[];
-  station_required: CraftingStation;
-  crafting_time: number; // in seconds
-  success_chance: number;
-  quality_range: QualityRange;
-  discovered: boolean;
-  discovery_method: DiscoveryMethod;
-}
-
-interface RecipeMaterial {
-  item_id: string;
-  quantity: number;
-  quality_requirement?: number;
-  optional: boolean;
-  bonus_effect?: string;
-}
-
-interface QualityRange {
-  min: number; // 0-100
-  max: number;
-  perfect_threshold: number;
-}
-```
-
-### Crafting Stations
-
-```typescript
-interface CraftingStation {
-  id: string;
-  name: string;
-  type: "anvil" | "forge" | "workbench" | "cauldron" | "loom" | "furnace" | "kitchen" | "enchanting_table";
-  tier: number; // 1-5
-  bonuses: CraftingBonus[];
-  location: "player_home" | "world" | "guild" | "portable";
-  durability: number;
-}
-
-interface CraftingBonus {
-  type: "speed" | "quality" | "success" | "material_saving";
-  value: number;
-  condition?: string;
-}
-```
-
-### Crafting Process
-
-```typescript
-interface CraftingAttempt {
-  recipe: Recipe;
-  crafter: Character;
-  station: CraftingStation;
-  materials: InventoryItem[];
-  skill_level: number;
-  luck_modifier: number;
-  quality_target: number;
-  result: CraftingResult;
-}
-
-interface CraftingResult {
-  success: boolean;
-  item?: CraftedItem;
-  quality: number; // 0-100
-  bonus_effects: string[];
-  materials_lost: InventoryItem[];
-  experience_gained: number;
-  skill_increase: number;
-}
-```
-
-## Profession System
+- **Recipes** — tiered recipe definitions with materials, station requirements, quality ranges
+- **Stations** — world-placed crafting stations with tier bonuses (speed, quality, success, material saving)
+- **Process** — crafting attempt with success/failure/critical outcomes, experience gain, skill increase
+- **Quality** — 6-tier quality system (Poor → Legendary) with stat bonuses
 
 ### Profession Progression
-
-```typescript
-interface Profession {
-  id: string;
-  name: string;
-  discipline: CraftingDiscipline;
-  level: number;
-  experience: number;
-  title: string; // 'Apprentice', 'Journeyman', 'Expert', 'Master', 'Grandmaster'
-  specializations: Specialization[];
-  unlocks: ProfessionUnlock[];
-}
-
-interface Specialization {
-  id: string;
-  name: string;
-  description: string;
-  bonuses: SpecializationBonus[];
-  requirements: SpecializationRequirement[];
-}
-
-interface ProfessionUnlock {
-  level: number;
-  type: "recipe" | "technique" | "station" | "material" | "title";
-  id: string;
-  description: string;
-}
-```
-
-### Profession Titles
 
 | Level | Title       | Bonuses                                  |
 | ----- | ----------- | ---------------------------------------- |
@@ -159,31 +64,7 @@ interface ProfessionUnlock {
 | 76-99 | Master      | +15% speed, tier 4 recipes               |
 | 100   | Grandmaster | +20% all, tier 5 recipes, unique recipes |
 
-### Material Gathering
-
-```typescript
-interface GatheringNode {
-  id: string;
-  name: string;
-  type: "ore_vein" | "herb_patch" | "tree" | "fishing_spot" | "animal";
-  location: WorldLocation;
-  respawn_time: number;
-  skill_required: number;
-  materials: GatheringMaterial[];
-  rarity: "common" | "uncommon" | "rare" | "epic" | "legendary";
-}
-
-interface GatheringMaterial {
-  item_id: string;
-  quantity_range: [number, number,];
-  quality_range: [number, number,];
-  drop_chance: number;
-}
-```
-
-## Recipe Discovery
-
-### Discovery Methods
+### Recipe Discovery
 
 | Method                  | Description                | Success Rate       |
 | ----------------------- | -------------------------- | ------------------ |
@@ -194,79 +75,143 @@ interface GatheringMaterial {
 | **World Discovery**     | Find hidden recipes        | Random             |
 | **Reverse Engineering** | Deconstruct existing items | Skill-based        |
 
-### Experimentation System
+---
 
-```typescript
-interface Experimentation {
-  materials: InventoryItem[];
-  station: CraftingStation;
-  skill_level: number;
-  luck: number;
-  possible_results: ExperimentResult[];
-  discovery_chance: number;
-  failure_effects: FailureEffect[];
-}
-```
+## 2. Memory Systems
 
-## Economic Integration
+### Memory Decay (TASK-memory-decay-logic)
 
-### Crafting Economy
+- **Problem:** `decay_rate`, `strength`, `last_accessed_at` columns exist but no logic uses them
+- **Solution:** Implement time-based decay: `strength -= decay_rate × elapsed_days`, clamped to [0,1]
+- **Files:** `src/memory/purge.ts` (extend)
 
-- **Material Market** — Buy/sell materials at dynamic prices
-- **Crafted Item Market** — Sell crafted items to players/NPCs
-- **Supply & Demand** — Prices fluctuate based on availability
-- **Crafting Orders** — Players request specific items
-- **Guild Workshops** — Shared crafting facilities
+### Memory Promotion Pipeline (TASK-memory-promotion-pipeline)
 
-### Item Quality
+- **Problem:** `ContextWindow.promotedToMemory` always empty; `selectMessagesForPromotion()` finds candidates but nothing extracts memories from them
+- **Solution:** Wire message → memory extraction pipeline: detect important messages, extract key facts, store as memories
+- **Files:** `src/memory/extraction.ts` (extend), `src/chat/context-window.ts` (modify)
 
-| Quality | Name      | Bonuses                              |
-| ------- | --------- | ------------------------------------ |
-| 0-20    | Poor      | -20% stats                           |
-| 21-40   | Common    | Base stats                           |
-| 41-60   | Uncommon  | +10% stats                           |
-| 61-80   | Rare      | +25% stats, 1 bonus                  |
-| 81-99   | Epic      | +50% stats, 2 bonuses                |
-| 100     | Legendary | +75% stats, 3 bonuses, unique effect |
+### Memory Provision Wiring (TASK-memory-provision-wiring)
+
+- **Problem:** `buildProvisionContext()` builds context but doesn't pass all needed parameters
+- **Solution:** Wire full provision context including trust, mood, and relationship data
+- **Files:** `src/assistant/prompt/sections/memories.ts` (modify)
+
+### Trust Modifier (TASK-memory-trust-modifier-wiring)
+
+- **Problem:** `ProvisionContext.trustModifier` exists but is never set
+- **Solution:** Query `RelationshipsService` for trust between actor and participants, normalize -100..+100 → -1..+1
+- **Files:** `src/assistant/prompt/sections/memories.ts` (modify)
+
+### Context Cut & Memory Promotion (TASK-context-cut-memory-promotion)
+
+- **Problem:** When context window fills, old messages are trimmed without promoting important context
+- **Solution:** Auto-promote key decisions, character moments, and high-importance content to memory before trimming
+- **Files:** `src/chat/context-window.ts` (modify), `src/chat/pruning.ts` (modify)
+
+### Character Memory Injection (TASK-character-memory-injection)
+
+- **Problem:** No probability-based injection with privacy levels
+- **Solution:** Configurable injection probability, privacy levels (absolute/isolated, localized), comfort system, secret sharing
+- **Files:** `src/memory/provision.ts` (extend), new privacy model
+
+### Related Memory & Event Injection Hooks (TASK-related-memory-event-injection-hooks)
+
+- **Problem:** No pipeline for injecting related memories and active world events into chat context
+- **Solution:** Create injection hooks for character/world/assistant memories + active world events
+- **Files:** `src/assistant/prompt/sections/memories.ts` (modify), `src/assistant/prompt/sections/events.ts` (new)
+
+---
+
+## 3. Chat Infrastructure
+
+### Route Extraction (TASK-chat-route-extraction)
+
+- **Problem:** `src/routes/chats.ts` (785 lines) and `src/routes/messages.ts` (910 lines) contain business logic
+- **Solution:** Move business logic to service layer; routes become thin HTTP adapters
+- **Files:** `src/chat/service.ts` (modify), `src/routes/chats.ts` (modify), `src/routes/messages.ts` (modify)
+
+### Context-Based Feature Permissions (TASK-chat-context-feature-permissions)
+
+- **Problem:** No UI-level feature gating based on context
+- **Solution:** Feature registry with permission model; UI elements enabled/disabled based on chat/world/location context
+- **Files:** `src/chat/feature-permissions.ts` (new), `src/db/schema-permissions.ts` (new), `src/frontend/alpine/feature-gate.ts` (new)
+
+### Repetition & Hallucination Guards (TASK-repetition-hallucination-guards)
+
+- **Problem:** LLMs can get stuck in repetition loops or hallucinate entities
+- **Solution:** Extend n-gram detection + new hallucination guard that checks entity existence against world state
+- **Files:** `src/generation/repetition-detector.ts` (extend), `src/chat/hallucination-guard.ts` (new)
+
+### Local Random Event Generator (TASK-local-random-event-generator)
+
+- **Problem:** Chats feel static without ambient activity
+- **Solution:** Stochastic event injection for ambient life (weather changes, NPC activity, environmental sounds)
+- **Files:** `src/chat/random-events.ts` (new), `src/chat/context-window.ts` (modify)
+
+---
+
+## 4. Moderation (Postponed)
+
+- **TASK-internal-external-flagging** — mod queue + user reports
+- **TASK-nsfw-gate-moderation-events** — NSFW toggle + audit
+- **TASK-user-block-ban-shadow** — block/ban/shadow primitives
+
+---
 
 ## Integration Points
 
 - **RPG Mechanics** — Stats affect crafting success, quality, speed
 - **Inventory System** — Material storage, crafted item management
 - **Economy System** — Trading, market, currency
-- **World & Locations** — Gathering nodes, crafting stations
-- **Plugin System** — Disciplines/recipes extensible
-
-## Open Questions
-
-- Should crafting be instant or time-based?
-- How to handle crafting failure (material loss, explosion, etc.)?
-- Should crafted items be bind-on-create or tradeable?
-- How to balance crafting vs. loot drops?
-- Should there be crafting specializations or generalists?
+- **World & Locations** — Gathering nodes, crafting stations, event injection
+- **Plugin System** — Disciplines/recipes extensibility
+- **Memory System** — Decay, promotion, provision, trust
+- **Prompt Assembly** — Memory/event injection into context
 
 ## Files
 
+### Crafting
+
 - `src/rpg/crafting/` — crafting system root
-- `src/rpg/crafting/recipes.ts` — recipe definitions
-- `src/rpg/crafting/stations.ts` — crafting stations
-- `src/rpg/crafting/process.ts` — crafting process
-- `src/rpg/crafting/professions.ts` — profession system
-- `src/rpg/crafting/gathering.ts` — material gathering
-- `src/rpg/crafting/discovery.ts` — recipe discovery
-- `src/rpg/crafting/quality.ts` — quality system
-- `src/rpg/crafting/economics.ts` — crafting economy
 - `src/db/schema-crafting.ts` — crafting tables
+- `src/db/enums-crafting.ts` — crafting enums
+- `src/db/migrations/026_crafting_professions.ts` — migration
 - `src/routes/crafting.ts` — crafting API
 
-## Related Epics
+### Memory
 
-- **Epic RPG Mechanics** — Core stats, inventory integration
-- **Epic Magic & Spell Systems** — Enchanting, magical crafting
-- **Epic World & Locations** — Gathering nodes, crafting stations
-- **Epic Battle & Action Systems** — Crafted combat items
-- **Epic Plugin System** — Disciplines/recipes extensibility
+- `src/memory/provision.ts` — memory filtering & injection
+- `src/memory/purge.ts` — decay & purge
+- `src/memory/extraction.ts` — memory extraction from messages
+- `src/memory/shareability.ts` — sharing probability
+- `src/assistant/prompt/sections/memories.ts` — prompt assembly
+
+### Chat
+
+- `src/chat/context-window.ts` — context window management
+- `src/chat/pruning.ts` — context pruning
+- `src/chat/service.ts` — chat business logic
+- `src/chat/hallucination-guard.ts` — hallucination detection (new)
+- `src/chat/random-events.ts` — event injection (new)
+- `src/chat/feature-permissions.ts` — UI gating (new)
 
 ## Linked Tasks
 
 - TASK-crafting-professions.md
+- TASK-rpg-crafting-professions.md
+- TASK-crafting-system.md
+- TASK-memory-decay-logic.md
+- TASK-memory-promotion-pipeline.md
+- TASK-memory-provision-wiring.md
+- TASK-memory-trust-modifier-wiring.md
+- TASK-context-cut-memory-promotion.md
+- TASK-character-memory-injection.md
+- TASK-related-memory-event-injection-hooks.md
+- TASK-repetition-hallucination-guards.md
+- TASK-chat-route-extraction.md
+- TASK-chat-context-feature-permissions.md
+- TASK-local-random-event-generator.md
+- TASK-internal-external-flagging.md
+- TASK-nsfw-gate-moderation-events.md
+- TASK-user-block-ban-shadow.md
