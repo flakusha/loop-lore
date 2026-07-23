@@ -59,7 +59,7 @@ export async function storeScenarioSource(
 export async function findScenarioSources(
   _db: Kysely<DB>,
   _query: string,
-  _limit: number = 10,
+  _limit = 10,
 ): Promise<ScenarioSource[]> {
   // TODO: Query scenario_sources table with FTS
   // TODO: Match against world_sketch and tags

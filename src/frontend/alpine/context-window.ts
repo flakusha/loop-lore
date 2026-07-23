@@ -28,32 +28,42 @@ interface ContextWindowState {
     /** Status color class for the progress bar */
     get statusColor(): string {
       switch (this.status) {
-        case "ok":
+        case "ok": {
           return "bg-green-500";
-        case "warning":
+        }
+        case "warning": {
           return "bg-yellow-500";
-        case "critical":
+        }
+        case "critical": {
           return "bg-red-500";
-        case "danger":
+        }
+        case "danger": {
           return "bg-red-700";
-        default:
+        }
+        default: {
           return "bg-green-500";
+        }
       }
     },
 
     /** Status text for tooltip */
     get statusText(): string {
       switch (this.status) {
-        case "ok":
+        case "ok": {
           return "Plenty of room";
-        case "warning":
+        }
+        case "warning": {
           return "Approaching limit";
-        case "critical":
+        }
+        case "critical": {
           return "Near limit, compaction triggered";
-        case "danger":
+        }
+        case "danger": {
           return "Danger, consider pruning/summarizing";
-        default:
+        }
+        default: {
           return "";
+        }
       }
     },
 
@@ -95,15 +105,17 @@ interface ContextWindowState {
 
     /** Trigger a warning toast if at 75% threshold */
     checkWarning(): void {
-      if (this.percentage >= 75 && this.percentage < 85) {
-        const event = new CustomEvent("show-toast", {
-          detail: {
-            type: "warning",
-            message: `Context window at ${this.percentage}% — consider pruning or summarizing.`,
-          },
-        },);
-        document.dispatchEvent(event,);
+      if (!(this.percentage >= 75 && this.percentage < 85)) {
+        return;
       }
+
+      const event = new CustomEvent("show-toast", {
+        detail: {
+          type: "warning",
+          message: `Context window at ${this.percentage}% — consider pruning or summarizing.`,
+        },
+      },);
+      document.dispatchEvent(event,);
     },
   };
 };

@@ -1,12 +1,12 @@
+import {
+  applyDirection,
+  getSavedLocale,
+  resolveKey,
+  saveLocale,
+  type TranslationMap,
+} from "../i18n";
 import { log as rootLog, } from "./logger";
 import { initTelemetry, } from "./telemetry";
-import {
-  type TranslationMap,
-  resolveKey,
-  getSavedLocale,
-  saveLocale,
-  applyDirection,
-} from "../i18n";
 
 const log = rootLog.child({ module: "app", },);
 
@@ -20,7 +20,7 @@ globalThis.app = function() {
     pageTitle: "loop-lore",
 
     __(key: string, fallback?: string,): string {
-      const value = resolveKey(this.localeStrings as TranslationMap, key);
+      const value = resolveKey(this.localeStrings as TranslationMap, key,);
       return value ?? fallback ?? key;
     },
 
@@ -39,8 +39,8 @@ globalThis.app = function() {
       // Load saved locale (cookie already set by server)
       const locale = getSavedLocale();
       this.currentLocale = locale;
-      applyDirection(locale);
-      this.loadLocale(locale);
+      applyDirection(locale,);
+      this.loadLocale(locale,);
     },
 
     applyTheme(themeId: string,) {
