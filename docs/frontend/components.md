@@ -127,6 +127,47 @@ Used in: zero chats, zero messages, zero characters, zero assets, search-no-resu
 
 **Removable variant**: chip with × button. Used in tag inputs and entity selection.
 
+
+## Info Bubbles (Help Tooltips)
+
+**Structure**: a `(?)` help icon placed inline next to a field label. On hover (desktop) or click (touch), a popover appears with contextual help text.
+
+**Trigger icon**:
+- Rendered as a small `(?)` or `ⓘ` glyph
+- Color: `--info-bubble-icon` (default: `#888`)
+- Hover state: `--info-bubble-icon-hover` (default: `--accent-primary`)
+- Size: 14px × 14px, vertical-align: middle
+
+**Popover**:
+- Background: `--info-bubble-bg` (default: `--bg-popover`)
+- Text: `--info-bubble-text` (default: `--text-secondary`)
+- Border: 1px solid `--info-bubble-border`
+- Shadow: `--info-bubble-shadow`
+- Border-radius: `--radius-sm` (6px)
+- Arrow: 6px triangle pointing to the trigger
+- Max-width: 240px
+- Padding: 8px 12px
+- Font-size: 13px, line-height: 1.4
+
+**Trigger modes**:
+- `hover` — appears on mouseenter, disappears on mouseleave (desktop default)
+- `click` — toggles on click (touch/keyboard default)
+- `auto` — hover on desktop, click on touch (component default)
+
+**Behavior**:
+- Dismisses on Escape, click-away, or mouseleave (hover mode)
+- Keyboard accessible: trigger is focusable, Escape dismisses
+- ARIA: `aria-describedby` links trigger to popover content
+- i18n: text resolved via `t(key)` from message catalog (Layer 1)
+
+**Usage**:
+```html
+<label>
+  Theme
+  <info-bubble key="settings.theme.help"></info-bubble>
+</label>
+```
+
 ---
 
 ## Frontend Logger

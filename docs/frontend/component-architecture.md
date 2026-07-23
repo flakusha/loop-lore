@@ -31,3 +31,4 @@
 - `components/header/header.html` - Page header (OOB swap)
 - `components/modals/` - Reusable modal components
 - `components/galleries/` - Asset gallery components
+- `components/info-bubble.html` - Reusable help tooltip component
