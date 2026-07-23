@@ -10,7 +10,12 @@
  * This is the single canonical request helper for non-Alpine (vanilla) pages.
  * Alpine/chat code keeps `apiFetch` (alpine/htmx.ts) which delegates here so the
  * header + 401 logic lives in exactly one place.
+ *
+ * Internally delegates to `safeFetch` (src/utils/safe-fetch.ts) for timeout,
+ * safe JSON, and error handling — unifying frontend and backend fetch behavior.
  */
+
+import { safeFetch, } from "../utils";
 
 const API_BASE = "";
 
@@ -22,18 +27,41 @@ function getCsrfToken(): string {
 }
 
 export async function feFetch(url: string, options: RequestInit = {},): Promise<Response> {
-  const opts: RequestInit = { ...options, };
-  opts.headers = new Headers(opts.headers ?? {},);
-  const csrf = getCsrfToken();
-  if (csrf) { opts.headers.set("X-CSRF-Token", csrf,); }
   const token = localStorage.getItem("session_token",);
-  if (token) { opts.headers.set("Authorization", `Bearer ${token}`,); }
-  opts.signal = AbortSignal.timeout(30_000,);
-  const res = await fetch(API_BASE + url, opts,);
-  if (res.status === 401) {
-    const redirect = encodeURIComponent(location.pathname + location.search,);
-    location.assign(`/views/login?redirect=${redirect}`,);
-    throw new Error("Unauthorized",);
+  const csrf = getCsrfToken();
+
+  // Use safeFetch with parseJson=false to get raw text, then construct Response
+  // This preserves the Response API for existing callers while using safeFetch
+  // for timeout, header injection, and 401 handling
+  const result = await safeFetch<string>(API_BASE + url, {
+    method: options.method,
+    headers: options.headers,
+    body: options.body as unknown,
+    credentials: options.credentials,
+    mode: options.mode,
+    cache: options.cache,
+    redirect: options.redirect,
+    referrerPolicy: options.referrerPolicy,
+    integrity: options.integrity,
+    keepalive: options.keepalive,
+    parseJson: false,
+    auth: { csrfToken: csrf || undefined, sessionToken: token ?? undefined, },
+    handle401: true,
+    onAuthError: () => {
+      const redirect = encodeURIComponent(location.pathname + location.search,);
+      location.assign(`/views/login?redirect=${redirect}`,);
+    },
+  },);
+
+  if (!result.ok) {
+    if (result.status === 401) {
+      throw new Error("Unauthorized",);
+    }
+    throw result.error;
   }
-  return res;
+
+  return new Response(result.data, {
+    status: result.status,
+    headers: result.headers,
+  },);
 }
