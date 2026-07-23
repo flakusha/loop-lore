@@ -18,15 +18,9 @@ export { safeFetch, safeFetchWithRetry, } from "./utils/safe-fetch";
 
 // ── Safe Buffer ─────────────────────────────────────────────
 
-export type { BufferResult, CompressionAlgorithm, } from "./utils/safe-buffer";
-export {
-  safeCompress,
-  safeDecompress,
-  safeFromBase64,
-  safeFromString,
-  safeFromUint8Array,
-  safeToBase64,
-} from "./utils/safe-buffer";
+// NOTE: safe-buffer functions (safeFromBase64, safeToBase64, safeCompress, etc.)
+// must NOT be re-exported here — they depend on node:zlib which breaks
+// the browser build (--target browser). Import directly from "./utils/safe-buffer".
 
 // ── ID Generation ─────────────────────────────────────────────
 
