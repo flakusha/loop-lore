@@ -10,7 +10,8 @@ import type { CanonicalCharacter, } from "../characters/parser";
 import type { AuthConfig, } from "../config/schema";
 import type { DB, } from "../db/schema";
 import { authenticate, } from "../middleware/auth";
-import { safeFromUint8Array, safeJsonStringify, uid, } from "../utils";
+import { safeJsonStringify, uid, } from "../utils";
+import { safeFromUint8Array, } from "../utils/safe-buffer";
 import { HttpStatus, jsonCreated, jsonError, } from "./http-utils";
 
 interface ImportActorOpts {
