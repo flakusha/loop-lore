@@ -88,7 +88,10 @@ export async function handleImageGeneration(body: unknown,): Promise<Response> {
       }
 
       const data = (await resp.json()) as { data: { b64_json: string }[] };
-      images = data.data.map((d,) => { const r = safeFromBase64(d.b64_json,); return r.ok ? r.buffer : Buffer.alloc(0,); });
+      images = data.data.map((d,) => {
+        const r = safeFromBase64(d.b64_json,);
+        return r.ok ? r.buffer : Buffer.alloc(0,);
+      },);
       mimeType = outputFormat === "jpeg" ? "image/jpeg" : "image/png";
 
       break;
@@ -126,7 +129,10 @@ export async function handleImageGeneration(body: unknown,): Promise<Response> {
       }
 
       const sdData = (await resp.json()) as { images: string[] };
-      images = sdData.images.map((b64,) => { const r = safeFromBase64(b64,); return r.ok ? r.buffer : Buffer.alloc(0,); });
+      images = sdData.images.map((b64,) => {
+        const r = safeFromBase64(b64,);
+        return r.ok ? r.buffer : Buffer.alloc(0,);
+      },);
       mimeType = "image/png";
 
       break;
@@ -224,7 +230,10 @@ export async function handleImageGeneration(body: unknown,): Promise<Response> {
         return Response.json({ error: "sd.cpp job timed out", status: 504, }, { status: 504, },);
       }
 
-      images = jobImages.map((b64,) => { const r = safeFromBase64(b64,); return r.ok ? r.buffer : Buffer.alloc(0,); });
+      images = jobImages.map((b64,) => {
+        const r = safeFromBase64(b64,);
+        return r.ok ? r.buffer : Buffer.alloc(0,);
+      },);
       mimeType = "image/png";
 
       break;

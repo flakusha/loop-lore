@@ -6,11 +6,11 @@
  */
 import type { Kysely, } from "kysely";
 import type { DB, } from "../../db/schema";
+import { jsonParseOr, } from "../../utils";
 import { AvatarService, } from "../services/avatar-service";
 import { MoodService, } from "../services/mood-service";
 import { RelationshipsService, } from "../services/relationships-service";
 import { TraitsService, } from "../services/traits-service";
-import { jsonParseOr, } from "../../utils";
 
 /** Complete character systems export */
 export interface CharacterSystemsExport {
@@ -156,10 +156,10 @@ export async function exportCharacterSystems(
   if (availability) {
     exportData.availability = {
       status: availability.status,
-      usagePolicy: jsonParseOr(availability.usage_policy ?? "{}", {}),
-      activityRestrictions: jsonParseOr(availability.activity_restrictions ?? "{}", {}),
-      contentPolicy: jsonParseOr(availability.content_policy ?? "{}", {}),
-      nsfwPolicy: jsonParseOr(availability.nsfw_policy ?? "{}", {}),
+      usagePolicy: jsonParseOr(availability.usage_policy ?? "{}", {},),
+      activityRestrictions: jsonParseOr(availability.activity_restrictions ?? "{}", {},),
+      contentPolicy: jsonParseOr(availability.content_policy ?? "{}", {},),
+      nsfwPolicy: jsonParseOr(availability.nsfw_policy ?? "{}", {},),
     };
   }
 

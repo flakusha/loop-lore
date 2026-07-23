@@ -14,8 +14,8 @@ import { exportToYaml, } from "../characters/exporters/yaml";
 import type { CanonicalCharacter, } from "../characters/parser";
 import type { DB, } from "../db/schema";
 import { getOrCreateSoloUserForAuth, } from "../middleware/auth";
-import { HttpStatus, jsonError, } from "./http-utils";
 import { jsonParseOr, } from "../utils";
+import { HttpStatus, jsonError, } from "./http-utils";
 
 interface HandlerOpts {
   database: Kysely<DB>;
@@ -102,7 +102,7 @@ export function exportRoutes({ database, }: HandlerOpts,): Elysia {
             post_history_instructions: char.post_history_instructions ?? undefined,
             creator: char.creator ?? undefined,
             creator_notes: char.creator_notes ?? undefined,
-            alternate_greetings: char.alternate_greetings ? jsonParseOr(char.alternate_greetings, []) : undefined,
+            alternate_greetings: char.alternate_greetings ? jsonParseOr(char.alternate_greetings, [],) : undefined,
           };
 
           const filename = char.display_name.replaceAll(/[^a-z0-9]/gi, "_",).toLowerCase();
