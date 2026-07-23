@@ -4,7 +4,8 @@ import { jsonBody, jsonParseOr, } from "./json";
 import { log as rootLog, } from "./logger";
 
 const log = rootLog.child({ module: "chat", },);
-
+const getDOMPurify = () => (globalThis as any).__DOMPurify as { sanitize(html: string,): string } | undefined;
+const getDOMPurify = () => (globalThis as any).__DOMPurify as { sanitize(html: string,): string } | undefined;
 export const chatGenerations: Partial<ChatState> & ThisType<ChatState> = {
   connectGenerationSSE(chatId: string,) {
     if (this._generationEventSource) {
@@ -17,7 +18,10 @@ export const chatGenerations: Partial<ChatState> & ThisType<ChatState> = {
 
     es.addEventListener("stream-update", (event: MessageEvent,) => {
       const container = document.querySelector("#stream-container",);
-      if (container) { container.innerHTML = event.data; }
+      if (container) {
+        const DOMPurify = getDOMPurify();
+        container.innerHTML = DOMPurify ? DOMPurify.sanitize(event.data,) : event.data;
+      }
       this.activeAttemptId = chatId;
     },);
 

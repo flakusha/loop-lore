@@ -255,8 +255,15 @@ describe("dispatchCommandAction", () => {
   });
 
   describe("create-quest", () => {
-    test("fires POST to /api/quests with description + chatId", async () => {
-      mockFetch(200,);
+    test("fetches chat world_id then fires POST to /api/worlds/:wid/quests", async () => {
+      let callCount = 0;
+      fetchHandler = (url, _opts,) => {
+        callCount++;
+        if (url === "/api/chats/chat-1") {
+          return Response.json({ id: "chat-1", world_id: "world-42", }, { status: 200, },);
+        }
+        return Response.json({}, { status: 200, },);
+      };
       const ctx = buildCtx();
       await chatActions.dispatchCommandAction!.call(
         ctx as any,
@@ -265,14 +272,40 @@ describe("dispatchCommandAction", () => {
         "chat-1",
       );
 
-      expect(fetchCalls.length,).toBe(1,);
-      expect(fetchCalls[0]?.url,).toBe("/api/quests",);
-      const body = JSON.parse(fetchCalls[0]?.opts.body as string,);
+      expect(callCount,).toBe(2,);
+      expect(fetchCalls[0]?.url,).toBe("/api/chats/chat-1",);
+      expect(fetchCalls[1]?.url,).toBe("/api/worlds/world-42/quests",);
+      expect(fetchCalls[1]?.opts.method,).toBe("POST",);
+      const body = JSON.parse(fetchCalls[1]?.opts.body as string,);
       expect(body,).toEqual({ chatId: "chat-1", description: "defeat the dragon", },);
     });
 
+    test("shows warning when chat has no world_id", async () => {
+      fetchHandler = (url, _opts,) => {
+        if (url === "/api/chats/chat-1") {
+          return Response.json({ id: "chat-1", world_id: null, }, { status: 200, },);
+        }
+        return Response.json({}, { status: 200, },);
+      };
+      const ctx = buildCtx();
+      await chatActions.dispatchCommandAction!.call(
+        ctx as any,
+        "create-quest",
+        { description: "defeat the dragon", },
+        "chat-1",
+      );
+
+      expect(ctx.toasts[0]?.type,).toBe("warning",);
+      expect(ctx.toasts[0]?.message,).toContain("require a world",);
+    });
+
     test("shows success toast on 200", async () => {
-      mockFetch(200,);
+      fetchHandler = (url, _opts,) => {
+        if (url === "/api/chats/chat-1") {
+          return Response.json({ id: "chat-1", world_id: "w1", }, { status: 200, },);
+        }
+        return Response.json({}, { status: 200, },);
+      };
       const ctx = buildCtx();
       await chatActions.dispatchCommandAction!.call(
         ctx as any,
@@ -285,7 +318,12 @@ describe("dispatchCommandAction", () => {
     });
 
     test("shows error toast on failure", async () => {
-      mockFetch(500, { error: "db error", },);
+      fetchHandler = (url, _opts,) => {
+        if (url === "/api/chats/chat-1") {
+          return Response.json({ id: "chat-1", world_id: "w1", }, { status: 200, },);
+        }
+        return Response.json({ error: "db error", }, { status: 500, },);
+      };
       const ctx = buildCtx();
       await chatActions.dispatchCommandAction!.call(
         ctx as any,
