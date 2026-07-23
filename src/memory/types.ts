@@ -14,6 +14,20 @@ export type MemoryScope = "character" | "assistant" | "world";
 export type MemoryPrivacy = "public" | "shared" | "private" | "secret";
 
 /**
+ * Extended injection privacy levels.
+ * Maps to base MemoryPrivacy for provision pipeline compatibility.
+ */
+export type InjectionPrivacyLevel =
+  | "absolute"
+  | "isolated"
+  | "localized"
+  | "contextual"
+  | "shared"
+  | "public"
+  | "private"
+  | "secret";
+
+/**
  * Shareability configuration for a memory.
  * Controls how likely a character is to reveal this memory in conversation.
  */

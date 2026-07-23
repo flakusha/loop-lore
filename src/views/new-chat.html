@@ -80,6 +80,44 @@
               <option value="">Default</option>
             </select>
           </div>
+          <div class="form-group" id="memory-carry-group" style="display: none">
+            <label class="form-label">Memory Carry</label>
+            <p style="font-size: 12px; color: var(--text-secondary); margin-bottom: var(--space-2)">
+              Choose which memories the character brings into this chat.
+            </p>
+            <div style="display: flex; flex-direction: column; gap: var(--space-2)">
+              <label style="display: flex; align-items: center; gap: var(--space-2); font-size: 13px; cursor: pointer">
+                <input type="radio" name="memory_carry" value="full" checked />
+                Full carry — all memories included (default)
+              </label>
+              <label style="display: flex; align-items: center; gap: var(--space-2); font-size: 13px; cursor: pointer">
+                <input type="radio" name="memory_carry" value="selective" />
+                Selective — pick specific memories
+              </label>
+              <label style="display: flex; align-items: center; gap: var(--space-2); font-size: 13px; cursor: pointer">
+                <input type="radio" name="memory_carry" value="fresh" />
+                Start fresh — no memories carried forward
+              </label>
+            </div>
+            <!-- Selective memory list -->
+            <div
+              id="memory-selective-list"
+              style="display: none; margin-top: var(--space-3); max-height: 300px; overflow-y: auto; border: 1px solid var(--border-default, #e9ecef); border-radius: var(--radius-md); padding: var(--space-2)"
+            >
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-2)">
+                <span style="font-size: 12px; color: var(--text-secondary)" id="memory-count-label">0 memories</span>
+                <button type="button" class="btn btn-secondary btn-xs" id="memory-select-all-btn">Select All</button>
+              </div>
+              <div id="memory-checkbox-list"></div>
+            </div>
+            <!-- Token estimate -->
+            <div
+              id="memory-token-estimate"
+              style="display: none; font-size: 11px; color: var(--text-secondary); margin-top: var(--space-2)"
+            >
+              Estimated token cost: <span id="memory-token-count">0</span> tokens
+            </div>
+          </div>
           <div style="display: flex; gap: var(--space-3); justify-content: flex-end; margin-top: var(--space-6)">
             <a class="btn btn-secondary" href="/views/chat" data-testid="cancel-create-chat">Cancel</a>
             <button type="submit" class="btn btn-primary" data-testid="create-chat-btn">Create Chat</button>
