@@ -64,7 +64,7 @@ globalThis.notificationsBell = function(): NotificationBellState {
           unreadCount: 0,
           items: [],
         },);
-        if (!data.items.length && !data.unreadCount) { return; }
+        if (data.items.length === 0 && !data.unreadCount) { return; }
         const known = new Set(this.items.map((i,) => i.id),);
         for (const n of data.items) {
           if (!known.has(n.id,)) { globalThis.showToast("info", n.title,); }
