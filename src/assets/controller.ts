@@ -54,6 +54,26 @@ import {
 } from "./service";
 import type { AssetRecord, } from "./service";
 
+import { safeFromUint8Array, } from "../utils";
+
+/**
+ * Asset Controller
+ *
+ * Route handlers for asset CRUD operations.
+ * Delegates to asset service for business logic.
+ *
+ *   GET    /api/assets              — list assets (paginated, filterable)
+ *   POST   /api/assets              — upload new asset (multipart)
+ *   GET    /api/assets/:id          — get asset metadata
+ *   GET    /api/assets/:id/raw      — serve original file
+ *   GET    /api/assets/:id/download — download file (attachment)
+ *   GET    /api/assets/:id/thumb    — serve thumbnail
+ *   GET    /api/assets/:id/compressed — serve compressed variant
+ *   DELETE /api/assets/:id          — delete asset
+ *   POST   /api/assets/:id/links    — link to entity
+ *   DELETE /api/assets/:id/links/:linkId — unlink from entity
+ */
+
 /** Upload options — also used by elysia-app.ts for the standalone POST /api/assets route. */
 export interface UploadOpts {
   request: Request;
