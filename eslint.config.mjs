@@ -15,6 +15,81 @@ import tseslint from "typescript-eslint";
 
 const projectRoot = import.meta.dirname;
 
+// ── Custom no-restricted-syntax rules ──────────────────────
+// Extracted from tsRules for readability — shared across server + frontend.
+const customRestrictedSyntax = [
+  // JSON safety
+  {
+    selector: "CallExpression[callee.object.name='JSON'][callee.property.name='parse']",
+    message: "Use safeJsonParse<T>() or jsonParseOr() from utils instead of bare JSON.parse",
+  },
+  {
+    selector: "CallExpression[callee.object.name='JSON'][callee.property.name='stringify']",
+    message: "Use safeJsonStringify() from utils instead of bare JSON.stringify",
+  },
+  // Array iteration: prefer for-of over .map/.filter/.reduce
+  // Enforces in-place modifications to avoid shadow allocations.
+  // https://eslint.org/docs/latest/rules/no-restricted-syntax
+  {
+    selector: "CallExpression[callee.type='MemberExpression'][callee.property.name='map']",
+    message: "Avoid .map() — use for-of with push() for in-place transformation. Shadow allocation not needed here.",
+  },
+  {
+    selector: "CallExpression[callee.type='MemberExpression'][callee.property.name='filter']",
+    message: "Avoid .filter() — use for-of with push() for in-place filtering. Shadow allocation not needed here.",
+  },
+  {
+    selector: "CallExpression[callee.type='MemberExpression'][callee.property.name='reduce']",
+    message: "Avoid .reduce() — use a for-of loop with an accumulator variable. Clearer control flow.",
+  },
+  {
+    selector: "CallExpression[callee.type='MemberExpression'][callee.property.name='flatMap']",
+    message: "Avoid .flatMap() — use for-of with push() for in-place flattening.",
+  },
+  {
+    selector: "CallExpression[callee.type='MemberExpression'][callee.property.name='flat']",
+    message: "Avoid .flat() — use for-of with push() to flatten in-place. Shadow allocation not needed here.",
+  },
+  {
+    selector: "CallExpression[callee.type='MemberExpression'][callee.property.name='every']",
+    message: "Avoid .every() — use a for-of loop with early return. Clearer intent.",
+  },
+  {
+    selector: "CallExpression[callee.type='MemberExpression'][callee.property.name='some']",
+    message: "Avoid .some() — use a for-of loop with early return. Clearer intent.",
+  },
+  {
+    selector: "CallExpression[callee.type='MemberExpression'][callee.property.name='find']",
+    message: "Avoid .find() — use a for-of loop with early return. Clearer intent.",
+  },
+  {
+    selector: "CallExpression[callee.type='MemberExpression'][callee.property.name='findIndex']",
+    message: "Avoid .findIndex() — use a for-of loop with index tracking. Clearer intent.",
+  },
+  // Naked Buffer: ban deprecated/unsafe patterns
+  // Bun alternatives: Bun.file().text()/.arrayBuffer(), Buffer.from(data, encoding)
+  {
+    selector: "NewExpression[callee.name='Buffer']",
+    message: "new Buffer() is deprecated. Use Buffer.from() or Bun.file() instead.",
+  },
+  {
+    selector: "MemberExpression[object.name='Buffer'][property.name='allocUnsafe']",
+    message: "Buffer.allocUnsafe() exposes uninitialized memory. Use Buffer.alloc() or Bun.file() instead.",
+  },
+  {
+    selector: "MemberExpression[object.name='Buffer'][property.name='allocUnsafeSlow']",
+    message: "Buffer.allocUnsafeSlow() exposes uninitialized memory. Use Buffer.alloc() or Bun.file() instead.",
+  },
+  {
+    selector: "MemberExpression[object.name='Buffer'][property.name='isBuffer']",
+    message: "Buffer.isBuffer() is unnecessary. Use instanceof Uint8Array or Bun.Buffer instead.",
+  },
+  {
+    selector: "MemberExpression[object.name='Buffer'][property.name='poolSize']",
+    message: "Buffer.poolSize is a deprecated internal. Remove this reference.",
+  },
+];
+
 // Shared rules for all TS source files (server + frontend)
 const tsPlugins = {
   "@typescript-eslint": tseslint.plugin,
@@ -115,56 +190,8 @@ const tsRules = {
   "import/first": "error",
   "import/no-mutable-exports": "error",
 
-  // ── Array iteration + banned patterns: prefer for-of over .map/.filter/.reduce ──
-  // Enforces in-place modifications to avoid shadow allocations.
-  // https://eslint.org/docs/latest/rules/no-restricted-syntax
-  "no-restricted-syntax": [
-    "warn",
-    {
-      selector: "CallExpression[callee.object.name='JSON'][callee.property.name='parse']",
-      message: "Use safeJsonParse<T>() or jsonParseOr() from utils instead of bare JSON.parse",
-    },
-    {
-      selector: "CallExpression[callee.object.name='JSON'][callee.property.name='stringify']",
-      message: "Use safeJsonStringify() from utils instead of bare JSON.stringify",
-    },
-    {
-      selector: "CallExpression[callee.type='MemberExpression'][callee.property.name='map']",
-      message: "Avoid .map() — use for-of with push() for in-place transformation. Shadow allocation not needed here.",
-    },
-    {
-      selector: "CallExpression[callee.type='MemberExpression'][callee.property.name='filter']",
-      message: "Avoid .filter() — use for-of with push() for in-place filtering. Shadow allocation not needed here.",
-    },
-    {
-      selector: "CallExpression[callee.type='MemberExpression'][callee.property.name='reduce']",
-      message: "Avoid .reduce() — use a for-of loop with an accumulator variable. Clearer control flow.",
-    },
-    {
-      selector: "CallExpression[callee.type='MemberExpression'][callee.property.name='flatMap']",
-      message: "Avoid .flatMap() — use for-of with push() for in-place flattening.",
-    },
-    {
-      selector: "CallExpression[callee.type='MemberExpression'][callee.property.name='flat']",
-      message: "Avoid .flat() — use for-of with push() to flatten in-place. Shadow allocation not needed here.",
-    },
-    {
-      selector: "CallExpression[callee.type='MemberExpression'][callee.property.name='every']",
-      message: "Avoid .every() — use a for-of loop with early return. Clearer intent.",
-    },
-    {
-      selector: "CallExpression[callee.type='MemberExpression'][callee.property.name='some']",
-      message: "Avoid .some() — use a for-of loop with early return. Clearer intent.",
-    },
-    {
-      selector: "CallExpression[callee.type='MemberExpression'][callee.property.name='find']",
-      message: "Avoid .find() — use a for-of loop with early return. Clearer intent.",
-    },
-    {
-      selector: "CallExpression[callee.type='MemberExpression'][callee.property.name='findIndex']",
-      message: "Avoid .findIndex() — use a for-of loop with index tracking. Clearer intent.",
-    },
-  ],
+  // ── Custom restricted syntax ────────────────────────────────
+  "no-restricted-syntax": ["warn", ...customRestrictedSyntax],
   // ── Low-value rules generating noise from Elysia/Kysely patterns ──
   "@typescript-eslint/no-unsafe-member-access": "off",
   "@typescript-eslint/no-unsafe-assignment": "off",
@@ -457,11 +484,8 @@ export default tseslint.config(
     rules: {
       "no-restricted-syntax": [
         "warn",
-        {
-          selector: "CallExpression[callee.object.name='JSON'][callee.property.name='parse']",
-          message: "Use safeJsonParse<T>() or jsonParseOr() from utils instead of bare JSON.parse",
-        },
         // Allow JSON.stringify in assertNever (used for error messages only)
+        ...customRestrictedSyntax.filter((rule,) => rule.selector !== "CallExpression[callee.object.name='JSON'][callee.property.name='stringify']",),
       ],
     },
   },
