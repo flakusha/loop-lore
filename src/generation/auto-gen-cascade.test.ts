@@ -5,9 +5,8 @@
  * no @mentions + auto_advance off, self-mention filtering,
  * auto-advance with single participant, auto-advance same-actor fallback.
  *
- * Uses in-memory SQLite via createTestDb(). Mocks generation deps to
- * prevent real LLM calls; verifies cascade logic via early returns
- * and mock call counts.
+ * Uses in-memory SQLite via createTestDb(). Injects mock deps via the
+ * `deps` parameter to avoid Bun's mock.module (which leaks across files).
  */
 import { afterAll, beforeEach, describe, expect, mock, test, } from "bun:test";
 import type { Kysely, } from "kysely";
@@ -15,10 +14,12 @@ import type { DB, } from "../db/schema";
 import { createLogger, } from "../logger";
 import { createTestDb, } from "../test-utils/create-test-db";
 import { uid, } from "../utils";
+import { triggerGroupCascade, } from "./auto-gen";
+import type { GenDeps, } from "./auto-gen";
 
 // ── Mock generation deps (prevents real LLM calls) ──────────────
 
-const mockCancelGenerationByChat = mock(() => Promise.resolve());
+const mockCancelGenerationByChat = mock(() => false);
 const mockStartGenerationTracking = mock(() =>
   Promise.resolve({
     attemptId: "mock-attempt-id",
@@ -26,65 +27,56 @@ const mockStartGenerationTracking = mock(() =>
   },)
 );
 const mockCompleteGeneration = mock(() => Promise.resolve());
+const mockFailGeneration = mock(() => Promise.resolve());
 
-mock.module("./index", () => ({
-  startGenerationTracking: mockStartGenerationTracking,
-  completeGeneration: mockCompleteGeneration,
-  failGeneration: mock(() => Promise.resolve()),
-  cancelGenerationByChat: mockCancelGenerationByChat,
-  getOrCreateBuffer: mock(() => ({
-    append: mock(() => {},),
-    signalDone: mock(() => {},),
-    signalError: mock(() => {},),
-  })),
-  scheduleBufferCleanup: mock(() => {},),
-}),);
-
-mock.module("./providers/registry", () => ({
-  resolveProvider: mock(() =>
-    Promise.resolve({
-      provider: {
-        capabilities: { streaming: false, },
-        complete: mock(() =>
-          Promise.resolve({
-            content: "",
-            thinking: undefined,
-            finishReason: "stop" as const,
-            usage: { promptTokens: 0, completionTokens: 0, totalTokens: 0, },
-          },)
-        ),
-      },
-      resolvedModel: "mock-model",
-      resolvedApiKey: "mock-key",
-      resolvedProviderName: "mock-provider",
-    },)
-  ),
-  listProviders: mock(() => ["mock-provider",]),
-}),);
-
-mock.module("../assistant/prompt-assembler", () => ({
-  PromptAssembler: class {
-    async assemble() {
-      return { messages: [{ role: "system" as const, content: "test", },], };
-    }
-  },
-}),);
-
-mock.module("../crypto", () => ({
-  isEncryptionEnabled: mock(() => false),
-  getSmk: mock(() => null),
-  deriveChatKeyForChat: mock(() => Promise.resolve({ key: null, keyId: null, },)),
-  compressThenEncrypt: mock((args: any,) => Promise.resolve(args.plaintext,)),
-}),);
-
-mock.module("marked", () => ({
-  marked: { parse: (s: string,) => `<p>${s}</p>`, },
-}),);
-
-// ── Import after mocks ──────────────────────────────────────────
-
-// eslint-disable-next-line import/first -- mock.module() must precede imports in Bun tests
-import { triggerGroupCascade, } from "./auto-gen";
+function createMockDeps(): Partial<GenDeps> {
+  const mockBuffer = {
+    append: mock(() => {/* noop */},),
+    signalDone: mock(() => {/* noop */},),
+    signalError: mock(() => {/* noop */},),
+  };
+  return {
+    cancelGenerationByChat: mockCancelGenerationByChat,
+    startGenerationTracking: mockStartGenerationTracking,
+    completeGeneration: mockCompleteGeneration,
+    failGeneration: mockFailGeneration,
+    getOrCreateBuffer: mock(() => mockBuffer),
+    scheduleBufferCleanup: mock(() => {/* noop */},),
+    resolveProvider: mock(() =>
+      Promise.resolve({
+        provider: {
+          capabilities: { streaming: false, },
+          complete: mock(() =>
+            Promise.resolve({
+              content: "",
+              thinking: undefined,
+              finishReason: "stop" as const,
+              usage: { promptTokens: 0, completionTokens: 0, totalTokens: 0, },
+            },)
+          ),
+          stream: mock(() => Promise.resolve()),
+          healthCheck: mock(() => Promise.resolve(true,)),
+          listModels: mock(() => Promise.resolve([],)),
+        },
+        resolvedModel: "mock-model",
+        resolvedApiKey: "mock-key",
+        resolvedProviderName: "mock-provider",
+      },)
+    ),
+    listProviders: mock(() => [{ name: "mock-provider", capabilities: { streaming: false, }, },]),
+    isEncryptionEnabled: () => false,
+    getSmk: () => null,
+    deriveChatKeyForChat: mock(() =>
+      Promise.resolve({ key: {} as CryptoKey, keyId: "mock-key-id", rawKey: {} as CryptoKey, },)
+    ),
+    compressThenEncrypt: mock((args: any,) => Promise.resolve(args.plaintext,)),
+    createPromptAssembler: () =>
+      ({
+        assemble: async () => ({ messages: [{ role: "system" as const, content: "test", },], }),
+      }) as any,
+    markedParse: (s: string,) => `<p>${s}</p>`,
+  } as unknown as Partial<GenDeps>;
+}
 
 // ── Helpers ─────────────────────────────────────────────────────
 
@@ -265,6 +257,7 @@ describe("triggerGroupCascade edge cases", () => {
       aiContent: "Hello @Bob",
       previousActorId: actorA,
       depth: 0,
+      deps: createMockDeps(),
     },);
 
     // Should return without calling triggerAutoGeneration (no messages beyond the initial one)
@@ -295,6 +288,7 @@ describe("triggerGroupCascade edge cases", () => {
       aiContent: "Hello @Bob",
       previousActorId: actorA,
       depth: 2,
+      deps: createMockDeps(),
     },);
 
     // Only the original message exists — no cascade generation
@@ -326,6 +320,7 @@ describe("triggerGroupCascade edge cases", () => {
       aiContent: "Hello @Bob",
       previousActorId: actorA,
       depth: 0,
+      deps: createMockDeps(),
     },);
 
     const messages = await db
@@ -378,6 +373,7 @@ describe("triggerGroupCascade edge cases", () => {
       aiContent: "Hello",
       previousActorId: userId,
       depth: 0,
+      deps: createMockDeps(),
     },);
 
     const messages = await db
@@ -408,6 +404,7 @@ describe("triggerGroupCascade edge cases", () => {
       aiContent: "Just a plain message, no mentions",
       previousActorId: actorA,
       depth: 0,
+      deps: createMockDeps(),
     },);
 
     const messages = await db
@@ -439,6 +436,7 @@ describe("triggerGroupCascade edge cases", () => {
       aiContent: "I, @Alice, think so",
       previousActorId: actorA,
       depth: 0,
+      deps: createMockDeps(),
     },);
 
     const messages = await db
@@ -467,6 +465,7 @@ describe("triggerGroupCascade edge cases", () => {
       aiContent: "Speaking to myself",
       previousActorId: actorA,
       depth: 0,
+      deps: createMockDeps(),
     },);
 
     const messages = await db
@@ -494,11 +493,7 @@ describe("triggerGroupCascade edge cases", () => {
     // Reset mock counts from any prior calls
     mockCancelGenerationByChat.mockClear();
 
-    // The cascade should:
-    // 1. Find no @mentions → fall through to auto-advance
-    // 2. Call selectNextGroupActor (uses real TurnManager on test DB)
-    // 3. If it selects the same actor as previousActorId (A), fall back to B or C
-    // 4. Call triggerAutoGeneration → which calls cancelGenerationByChat
+    const deps = createMockDeps();
     await triggerGroupCascade({
       database: db,
       config: makeConfig(),
@@ -507,6 +502,7 @@ describe("triggerGroupCascade edge cases", () => {
       aiContent: "Hello everyone",
       previousActorId: actorA,
       depth: 0,
+      deps,
     },);
 
     // triggerAutoGeneration was called → cancelGenerationByChat was invoked
