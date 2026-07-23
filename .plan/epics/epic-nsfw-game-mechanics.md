@@ -1,7 +1,7 @@
 # Epic: AO NSFW Game Mechanics
 
 **Status:** Draft
-**Priority:** Medium
+**Priority:** High
 **Effort:** Very High
 **Issue:** `30a1b4b`
 **Tags:** nsfw, rpg, game-mechanics, adult, intimacy, relationships
