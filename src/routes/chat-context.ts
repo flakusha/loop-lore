@@ -10,7 +10,8 @@
 
 import { Elysia, t, } from "elysia";
 import type { Kysely, } from "kysely";
-import { computeContextWindow, } from "../chat";
+import { computeContextWindow, estimateTokens, getThresholdState, } from "../chat";
+import type { MessageRef, } from "../chat";
 import type { Config, } from "../config/schema";
 import { CancelReason, CancelSource, } from "../db/enums";
 import type { DB, } from "../db/schema";
@@ -76,7 +77,7 @@ async function handleGetContext(
   // Fetch recent messages (last 100 for token counting)
   const messages = await database
     .selectFrom("messages",)
-    .select(["role", "content",],)
+    .select(["id", "role", "content", "created_at",],)
     .where("chat_id", "=", chatId,)
     .orderBy("created_at", "desc",)
     .limit(100,)
@@ -85,18 +86,23 @@ async function handleGetContext(
   // Determine max tokens from config or model
   const maxTokens = 32_000; // Default; could be overridden per-chat/model
 
-  const result = computeContextWindow(
-    messages.map((m,) => ({ role: m.role as "system" | "user" | "assistant" | "character", content: m.content, })),
-    maxTokens,
-  );
+  const messageRefs: MessageRef[] = messages.map((m,) => ({
+    messageId: m.id,
+    role: m.role,
+    content: m.content,
+    tokenCount: estimateTokens(m.content,),
+    createdAt: m.created_at,
+  }));
+
+  const result = computeContextWindow(messageRefs, maxTokens,);
 
   return jsonResponse({
     chatId,
-    currentTokens: result.currentTokens,
+    currentTokens: result.totalTokens,
     maxTokens: result.maxTokens,
-    percentage: Math.round(result.percentage * 100,),
-    status: result.status,
-    threshold: result.threshold,
+    percentage: result.usagePercentage,
+    status: getThresholdState(result.usagePercentage,),
+    willTrim: result.willTrim,
   },);
 }
 
@@ -188,11 +194,17 @@ interface AuthContext {
 export function chatContextRoutes(opts: HandlerOpts,): Elysia {
   const { database, } = opts;
 
+  const regenerateBodySchema = t.Object({
+    chatId: t.String(),
+    messageId: t.String(),
+    parentId: t.Optional(t.String(),),
+  },);
+
   return new Elysia({ name: "chat-context", },)
     .get(
       "/api/chats/:id/context",
       async (ctx,) => {
-        const { id: chatId, } = ctx.params as { id: string };
+        const { id: chatId, } = ctx.params;
         const auth = ctx as unknown as AuthContext;
         return handleGetContext(database, chatId, auth.userId, auth.userRole,);
       },
@@ -219,11 +231,7 @@ export function chatContextRoutes(opts: HandlerOpts,): Elysia {
         );
       },
       {
-        body: t.Object({
-          chatId: t.String(),
-          messageId: t.String(),
-          parentId: t.Optional(t.String(),),
-        },),
+        body: regenerateBodySchema,
       },
     ) as unknown as Elysia;
 }
