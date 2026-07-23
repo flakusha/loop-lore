@@ -1,9 +1,81 @@
 import { formattedGenerationTime, formattedTokensPerSecond, statsLine, } from "./chat-stats";
+import { apiFetch, } from "./htmx";
 import { jsonBody, } from "./json";
 import { log as rootLog, } from "./logger";
 import type { ChatState, } from "./types";
 
 const log = rootLog.child({ module: "chat-actions", },);
+
+/** Context shape needed by command action dispatch helpers. */
+interface DispatchCtx {
+  $dispatch?: (event: string, detail: Record<string, unknown>,) => void;
+  connectGenerationSSE: (chatId: string,) => void;
+}
+
+/** Handle 501 / error / success for generation-type command actions. */
+async function dispatchGenerationAction(
+  ctx: DispatchCtx,
+  endpoint: string,
+  body: Record<string, unknown>,
+  label: string,
+  chatId: string,
+) {
+  const prompt = (body.prompt as string) ?? "";
+  if (!prompt && !body.assetIds) {
+    ctx.$dispatch?.("show-toast", { type: "warning", message: `No input provided for ${label.toLowerCase()}`, },);
+    return;
+  }
+  try {
+    const res = await apiFetch(endpoint, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", },
+      body: jsonBody(body,),
+    },);
+    if (res.ok) {
+      ctx.$dispatch?.("show-toast", { type: "info", message: `${label} started`, },);
+      ctx.connectGenerationSSE(chatId,);
+    } else if (res.status === 501) {
+      ctx.$dispatch?.("show-toast", {
+        type: "info",
+        message: `${label} not configured — provider TBD`,
+      },);
+    } else {
+      const err = await res.json();
+      ctx.$dispatch?.("show-toast", {
+        type: "error",
+        message: err.error || `Failed: ${label.toLowerCase()}`,
+      },);
+    }
+  } catch {
+    ctx.$dispatch?.("show-toast", { type: "error", message: `Network error: ${label.toLowerCase()}`, },);
+  }
+}
+
+/** Dispatch create-quest command action. */
+async function dispatchQuestAction(ctx: DispatchCtx, description: string, chatId: string,) {
+  if (!description) {
+    ctx.$dispatch?.("show-toast", { type: "warning", message: "No quest description provided", },);
+    return;
+  }
+  try {
+    const res = await apiFetch("/api/quests", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", },
+      body: jsonBody({ chatId, description, },),
+    },);
+    if (res.ok) {
+      ctx.$dispatch?.("show-toast", { type: "info", message: "Quest created", },);
+    } else {
+      const err = await res.json();
+      ctx.$dispatch?.("show-toast", {
+        type: "error",
+        message: err.error || "Failed to create quest",
+      },);
+    }
+  } catch {
+    ctx.$dispatch?.("show-toast", { type: "error", message: "Network error creating quest", },);
+  }
+}
 
 export const chatActions: Partial<ChatState> & ThisType<ChatState> = {
   _showCommandPalette: false,
@@ -54,6 +126,79 @@ export const chatActions: Partial<ChatState> & ThisType<ChatState> = {
       input.focus();
     }
     this._showCommandPalette = false;
+  },
+
+  /**
+   * Dispatch a command action returned by the backend.
+   *
+   * Maps action strings to the appropriate API endpoint and fires the request.
+   * Generation actions connect SSE for real-time progress streaming.
+   *
+   * @param action - Action identifier from CommandResult.action
+   * @param payload - Action payload from CommandResult.actionPayload
+   * @param chatId - Active chat ID
+   */
+  async dispatchCommandAction(action: string, payload: Record<string, unknown> | null, chatId: string,) {
+    log.info("dispatchCommandAction", { action, chatId, },);
+
+    if (action === "generate-image") {
+      await dispatchGenerationAction(
+        this,
+        "/api/generation/image",
+        {
+          prompt: (payload?.prompt as string) ?? "",
+          chatId,
+        },
+        "Image generation",
+        chatId,
+      );
+      return;
+    }
+
+    if (action === "generate-caption") {
+      const assetIds = (payload?.assetIds as string[]) ?? [];
+      if (assetIds.length === 0) {
+        this.$dispatch?.("show-toast", { type: "warning", message: "No assets to caption", },);
+        return;
+      }
+      await dispatchGenerationAction(
+        this,
+        "/api/generation/caption",
+        {
+          chatId,
+          assetIds,
+        },
+        "Captioning",
+        chatId,
+      );
+      return;
+    }
+
+    if (["generate-music", "generate-sfx", "generate-video",].includes(action,)) {
+      const label = action.replace("generate-", "",);
+      this.$dispatch?.("show-toast", {
+        type: "info",
+        message: `${label} generation not yet implemented`,
+      },);
+      log.info("Unimplemented generation action", { action, },);
+      return;
+    }
+
+    if (action === "create-quest") {
+      await dispatchQuestAction(this, (payload?.description as string) ?? "", chatId,);
+      return;
+    }
+
+    if (action === "review-entity") {
+      log.info("review-entity action — display only", { payload, },);
+      return;
+    }
+
+    log.warn("Unknown command action", { action, },);
+    this.$dispatch?.("show-toast", {
+      type: "warning",
+      message: `Unknown action: ${action}`,
+    },);
   },
   async toggleImpersonate() {
     if (!this.activeChat || !this.currentCharacter) {

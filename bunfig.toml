@@ -6,5 +6,7 @@ globalStore = true
 
 # Isolated linker: two-tier node_modules layout required for globalStore.
 # Top-level packages are symlinks → .bun/<pkg>@<ver>/node_modules/<pkg>.
-# See https://bun.com/docs/pm/isolated-installs
 linker = "isolated"
+
+[test]
+preload = ["./tests/setup-globals.ts"]
