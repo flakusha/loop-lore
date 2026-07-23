@@ -1,6 +1,6 @@
 # TASK: Context Cut & Memory Promotion
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done
 **Priority:** high
 **Effort:** Medium
 **Epic:** EPIC-2026-36
@@ -38,3 +38,7 @@ When context window fills up, old messages are trimmed. Important context (key d
 - TASK-memory-promotion-pipeline.md — extraction pipeline
 - TASK-smart-context-pruning.md — pruning logic
 - Epic 36 (Chat Lifecycle & Moderation)
+
+## Completion Note
+
+Created src/chat/memory-promotion.ts — bridges pruning to memory storage

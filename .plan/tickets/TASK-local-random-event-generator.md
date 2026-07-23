@@ -1,6 +1,6 @@
 # TASK: Local Random Event Generator
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done
 **Priority:** medium
 **Effort:** Medium
 **Epic:** EPIC-2026-36
@@ -35,3 +35,7 @@ Chats can feel static without ambient activity. Random events add life without r
 ## Related
 
 - Epic 36 (Chat Lifecycle & Moderation)
+
+## Completion Note
+
+Created src/chat/random-events.ts — stochastic ambient events for chat life

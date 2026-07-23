@@ -1,6 +1,6 @@
 # TASK: Related Memory & Event Injection Hooks
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done
 **Priority:** high
 **Effort:** Medium
 **Epic:** EPIC-2026-36
@@ -38,3 +38,7 @@ Context window needs to inject relevant memories (character, world, assistant) a
 - TASK-memory-provision-wiring.md — memory filtering
 - TASK-smart-context-pruning.md — context pruning
 - Epic 36 (Chat Lifecycle & Moderation)
+
+## Completion Note
+
+Event injection section created in prompt assembly (events.ts) + random event generator (random-events.ts)

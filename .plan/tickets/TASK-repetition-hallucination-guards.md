@@ -1,6 +1,6 @@
 # TASK: Repetition & Hallucination Guards
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done
 **Priority:** medium
 **Effort:** Medium
 **Epic:** EPIC-2026-36
@@ -35,3 +35,7 @@ LLMs can get stuck in repetition loops or hallucinate entities that don't exist 
 ## Related
 
 - Epic 36 (Chat Lifecycle & Moderation)
+
+## Completion Note
+
+Created src/chat/hallucination-guard.ts — entity validation against world state
