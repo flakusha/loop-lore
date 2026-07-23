@@ -1037,6 +1037,46 @@ body {
   color: var(--text-primary);
 }
 
+/* Focus-visible styles for keyboard navigation */
+.btn:focus-visible,
+.btn-icon:focus-visible {
+  outline: 2px solid var(--accent-primary);
+  outline-offset: 2px;
+}
+
+.btn-secondary:focus-visible,
+.btn-ghost:focus-visible {
+  outline: 2px solid var(--text-secondary);
+  outline-offset: 2px;
+}
+
+.btn-danger:focus-visible {
+  outline: 2px solid #ff4757;
+  outline-offset: 2px;
+}
+
+/* Focus styles for form elements */
+.form-input:focus-visible,
+.form-select:focus-visible,
+.text-input:focus-visible {
+  outline: 2px solid var(--accent-primary);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+/* Focus styles for toggle checkboxes */
+.toggle input:focus-visible + .toggle-slider {
+  outline: 2px solid var(--accent-primary);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+/* Focus styles for tab buttons */
+.world-edit-tab:focus-visible {
+  outline: 2px solid var(--accent-primary);
+  outline-offset: 2px;
+}
+
 .btn-danger {
   background: var(--accent-red);
   color: #fff;
