@@ -4,9 +4,18 @@ import { feFetch, } from "../fe-fetch";
 import { showToast, } from "../ui";
 import { escapeHtml, filterActors, getErrorMessage, } from "./shared";
 
+/** Estimate tokens from content length (~4 chars per token). */
+function estimateTokens(content: string,): number {
+  return Math.ceil(content.length / 4,);
+}
+
 globalThis.loadNewChatPage = async function(): Promise<void> {
   let actors: any[] = [];
   let selected: any[] = [];
+  let characterMemories: Array<
+    { id: string; content: string; type: string; importance: number; pinned: boolean; tokens: number }
+  > = [];
+  let selectedMemoryIds = new Set<string>();
 
   try {
     const res = await feFetch("/api/actors?pageSize=200",);
@@ -43,8 +52,123 @@ globalThis.loadNewChatPage = async function(): Promise<void> {
 
   const impersonateGroup = document.querySelector("#impersonate-group",) as HTMLElement | null;
   const impersonateToggle = document.querySelector("#impersonate-toggle",) as HTMLInputElement | null;
+  const memoryCarryGroup = document.querySelector("#memory-carry-group",) as HTMLElement | null;
+  const memorySelectiveList = document.querySelector("#memory-selective-list",) as HTMLElement | null;
+  const memoryCheckboxList = document.querySelector("#memory-checkbox-list",) as HTMLElement | null;
+  const memoryCountLabel = document.querySelector("#memory-count-label",) as HTMLElement | null;
+  const memoryTokenEstimate = document.querySelector("#memory-token-estimate",) as HTMLElement | null;
+  const memoryTokenCount = document.querySelector("#memory-token-count",) as HTMLElement | null;
+  const memorySelectAllBtn = document.querySelector("#memory-select-all-btn",) as HTMLButtonElement | null;
 
   const isGroup = () => chatType.value === "group";
+
+  // ── Memory carry logic ──────────────────────────────────────
+
+  async function loadMemoriesForActor(actorId: string,) {
+    try {
+      const res = await feFetch(`/api/actors/${actorId}/memories`,);
+      if (!res.ok) { return; }
+      const data = await res.json() as {
+        items: Array<{
+          id: string;
+          content: string;
+          memory_type: string;
+          importance: number;
+          pinned?: boolean;
+        }>;
+      };
+      characterMemories = (data.items ?? []).map((m,) => ({
+        id: m.id,
+        content: m.content,
+        type: m.memory_type,
+        importance: m.importance,
+        pinned: !!m.pinned,
+        tokens: estimateTokens(m.content,),
+      }));
+      selectedMemoryIds = new Set(characterMemories.map((m,) => m.id),);
+      renderMemoryList();
+    } catch {
+      characterMemories = [];
+    }
+  }
+
+  function renderMemoryList() {
+    if (!memoryCheckboxList || !memoryCountLabel) { return; }
+
+    const selectedTokens = characterMemories
+      .filter((m,) => selectedMemoryIds.has(m.id,))
+      .reduce((sum, m,) => sum + m.tokens, 0,);
+
+    memoryCountLabel.textContent = `${characterMemories.length} memories`;
+    if (memoryTokenCount) { memoryTokenCount.textContent = String(selectedTokens,); }
+    if (memoryTokenEstimate) {
+      memoryTokenEstimate.style.display = characterMemories.length > 0 ? "block" : "none";
+    }
+
+    memoryCheckboxList.innerHTML = characterMemories
+      .map((m,) => {
+        const checked = selectedMemoryIds.has(m.id,) ? "checked" : "";
+        const preview = m.content.length > 80 ? `${m.content.slice(0, 80,)}...` : m.content;
+        return `<label style="display: flex; align-items: flex-start; gap: var(--space-2); padding: var(--space-1) 0; font-size: 12px; cursor: pointer; border-bottom: 1px solid var(--border-default, #f0f0f0)">
+          <input type="checkbox" value="${m.id}" ${checked} onchange="window._toggleMemorySelect('${m.id}', this.checked)" style="margin-top: 2px" />
+          <div>
+            <div style="color: var(--text-primary)">${escapeHtml(preview,)}</div>
+            <div style="font-size: 10px; color: var(--text-secondary)">${m.type} · ${m.tokens} tokens${
+          m.pinned ? " · 📌" : ""
+        }</div>
+          </div>
+        </label>`;
+      },)
+      .join("",);
+  }
+
+  (globalThis as any)._toggleMemorySelect = function(id: string, checked: boolean,) {
+    if (checked) {
+      selectedMemoryIds.add(id,);
+    } else {
+      selectedMemoryIds.delete(id,);
+    }
+    renderMemoryList();
+  };
+
+  // Memory carry radio buttons
+  const memoryRadios = document.querySelectorAll<HTMLInputElement>('input[name="memory_carry"]',);
+  for (const radio of memoryRadios) {
+    radio.addEventListener("change", () => {
+      const mode = radio.value;
+      if (memorySelectiveList) {
+        memorySelectiveList.style.display = mode === "selective" ? "block" : "none";
+      }
+    },);
+  }
+
+  // Select all / deselect all
+  if (memorySelectAllBtn) {
+    memorySelectAllBtn.addEventListener("click", () => {
+      const allSelected = selectedMemoryIds.size === characterMemories.length;
+      if (allSelected) {
+        selectedMemoryIds.clear();
+        memorySelectAllBtn.textContent = "Select All";
+      } else {
+        selectedMemoryIds = new Set(characterMemories.map((m,) => m.id),);
+        memorySelectAllBtn.textContent = "Deselect All";
+      }
+      renderMemoryList();
+    },);
+  }
+
+  // Show memory carry when character is selected
+  function updateMemoryCarryVisibility() {
+    if (!memoryCarryGroup) {
+      return;
+    }
+
+    const hasCharacter = selected.length > 0 && !isGroup();
+    memoryCarryGroup.style.display = hasCharacter ? "block" : "none";
+    if (hasCharacter && selected[0]) {
+      loadMemoriesForActor(selected[0].id,);
+    }
+  }
 
   function renderSelected() {
     if (!selectedEl) { return; }
@@ -62,6 +186,7 @@ globalThis.loadNewChatPage = async function(): Promise<void> {
   globalThis.removeParticipant = function(id: string,) {
     selected = selected.filter((a: any,) => a.id !== id);
     renderSelected();
+    updateMemoryCarryVisibility();
     if (resultsEl) { resultsEl.style.display = "none"; }
     if (impersonateGroup && impersonateToggle) {
       impersonateGroup.style.display = selected.length === 1 ? "" : "none";
@@ -76,6 +201,7 @@ globalThis.loadNewChatPage = async function(): Promise<void> {
       selected = [actor,];
     }
     renderSelected();
+    updateMemoryCarryVisibility();
     if (searchInput) { searchInput.value = ""; }
     if (resultsEl) { resultsEl.style.display = "none"; }
     if (impersonateGroup && impersonateToggle) {
@@ -151,6 +277,11 @@ globalThis.loadNewChatPage = async function(): Promise<void> {
     try {
       const personaId = (document.querySelector("#persona-select",) as HTMLSelectElement)?.value || undefined;
       const impersonateId = impersonateToggle?.checked && selected.length === 1 ? selected[0].id : undefined;
+      const memoryCarryMode =
+        (document.querySelector('input[name="memory_carry"]:checked',) as HTMLInputElement)?.value || "full";
+      const memoryCarryIds = memoryCarryMode === "selective"
+        ? Array.from(selectedMemoryIds,)
+        : undefined;
       const res = await feFetch("/api/chats", {
         method: "POST",
         headers: { "Content-Type": "application/json", },
@@ -161,6 +292,8 @@ globalThis.loadNewChatPage = async function(): Promise<void> {
           participantIds: selected.map((a: any,) => a.id),
           personaId,
           impersonateActorId: impersonateId,
+          memoryCarry: memoryCarryMode,
+          memoryCarryIds,
         },),
       },);
       if (res.ok) {
