@@ -8,6 +8,7 @@ import type { Kysely, } from "kysely";
 import { randomUUID, } from "node:crypto";
 import type { AvatarSelectionRule, AvatarTagType, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
+import { jsonParseOr, jsonStringifyOr, } from "../../utils";
 
 /** Options for creating an avatar */
 export interface CreateAvatarOpts {
@@ -341,8 +342,8 @@ export class AvatarService {
       id: row.id,
       actorId: row.actor_id,
       selectionRule: row.selection_rule,
-      weights: JSON.parse(row.weights,),
-      fallbackChain: JSON.parse(row.fallback_chain,),
+      weights: jsonParseOr<Record<AvatarTagType, number>>(row.weights, {} as Record<AvatarTagType, number>),
+      fallbackChain: jsonParseOr<AvatarTagType[]>(row.fallback_chain, [] as AvatarTagType[]),
       createdAt: row.created_at,
       updatedAt: row.updated_at,
     };
@@ -371,12 +372,12 @@ export class AvatarService {
       .executeTakeFirst();
 
     if (existingRow) {
-      const existingWeights = JSON.parse(existingRow.weights,) as Record<AvatarTagType, number>;
+      const existingWeights = jsonParseOr<Record<AvatarTagType, number>>(existingRow.weights, {} as Record<AvatarTagType, number>);
       const mergedWeights = config.weights
         ? { ...existingWeights, ...config.weights, }
         : existingWeights;
       const fallbackChain = config.fallbackChain
-        ? JSON.stringify(config.fallbackChain,)
+        ? jsonStringifyOr(config.fallbackChain,)
         : existingRow.fallback_chain;
 
       await this.db
@@ -442,7 +443,7 @@ export class AvatarService {
       worldId: row.world_id,
       actorId: row.actor_id,
       selectionRuleOverride: row.selection_rule_override as AvatarSelectionRule | undefined,
-      weightsOverride: row.weights_override ? JSON.parse(row.weights_override,) : undefined,
+      weightsOverride: row.weights_override ? jsonParseOr<Record<AvatarTagType, number>>(row.weights_override, {} as Record<AvatarTagType, number>) : undefined,
     };
   }
 
@@ -524,7 +525,7 @@ export class AvatarService {
       actorId: row.actor_id,
       assetId: row.asset_id,
       label: row.label,
-      tags: JSON.parse(row.tags,),
+      tags: jsonParseOr(row.tags, {}),
       isPrimary: row.is_primary === 1,
       sortOrder: row.sort_order,
       createdAt: row.created_at,

@@ -29,7 +29,7 @@ import type { DB, } from "../db/schema";
 import { extractMentionedActorIds, } from "../group-chat/mention-parser";
 import { selectNextGroupActor, } from "../group-chat/turn-selector";
 import { getLogger, } from "../logger";
-import { uid, } from "../utils";
+import { jsonParseOr, uid, } from "../utils";
 import {
   cancelGenerationByChat,
   completeGeneration,
@@ -40,56 +40,6 @@ import {
 } from "./index";
 import { listProviders, resolveProvider, } from "./providers/registry";
 import type { ChunkEvent, } from "./providers/types";
-
-// ── Dependency Injection ────────────────────────────────────────
-//
-// All external module calls are routed through GenDeps so tests can
-// inject mocks without using Bun's mock.module (which leaks across
-// test files in the same process).
-
-/** Injectable dependencies for generation functions. */
-export interface GenDeps {
-  cancelGenerationByChat: typeof cancelGenerationByChat;
-  completeGeneration: typeof completeGeneration;
-  failGeneration: typeof failGeneration;
-  getOrCreateBuffer: typeof getOrCreateBuffer;
-  scheduleBufferCleanup: typeof scheduleBufferCleanup;
-  startGenerationTracking: typeof startGenerationTracking;
-  resolveProvider: typeof resolveProvider;
-  listProviders: typeof listProviders;
-  isEncryptionEnabled: () => boolean;
-  getSmk: () => CryptoKey | null;
-  deriveChatKeyForChat: typeof deriveChatKeyForChat;
-  compressThenEncrypt: typeof compressThenEncrypt;
-  markedParse: (src: string, opts?: Record<string, unknown>,) => string;
-  createPromptAssembler: (db: Kysely<DB>,) => PromptAssembler;
-  /** Self-references for recursive calls (set automatically). */
-  triggerAutoGeneration?: (opts: AutoGenOpts,) => Promise<void>;
-  triggerGroupCascade?: (opts: GroupCascadeOpts,) => Promise<void>;
-}
-
-/** Return the real production implementations. */
-export function createDefaultDeps(): GenDeps {
-  return {
-    cancelGenerationByChat,
-    completeGeneration,
-    failGeneration,
-    getOrCreateBuffer,
-    scheduleBufferCleanup,
-    startGenerationTracking,
-    resolveProvider,
-    listProviders,
-    isEncryptionEnabled,
-    getSmk,
-    deriveChatKeyForChat,
-    compressThenEncrypt,
-    markedParse: (src, opts?,) => marked.parse(src, opts ?? {},) as string,
-    createPromptAssembler: (db,) => new PromptAssembler(db,),
-    triggerAutoGeneration,
-    triggerGroupCascade,
-  };
-}
-
 export function isLlmGenerationConfigured(config: Config,): boolean {
   return (
     !!config.generation.defaultProvider ||
@@ -490,14 +440,10 @@ export async function triggerGroupCascade(opts: GroupCascadeOpts,): Promise<void
 
   // Check if paused
   if (chat.story_state) {
-    try {
-      const state = JSON.parse(chat.story_state,) as { isPaused?: boolean };
-      if (state.isPaused) {
-        log.debug("Chat paused, cascade stopped",);
-        return;
-      }
-    } catch {
-      // malformed story_state — ignore
+    const state = jsonParseOr<{ isPaused?: boolean }>(chat.story_state, {});
+    if (state.isPaused) {
+      log.debug("Chat paused, cascade stopped",);
+      return;
     }
   }
 
@@ -632,4 +578,47 @@ function renderStreamMessage(
     : "";
 
   return `<div class="message assistant" data-message-id="${msgId}"${streamingAttr}><div class="bubble"><div class="meta"><span class="name">${safeName}</span><span class="time">just now</span></div>${thinkingBlock}<div class="content">${safeContent}</div>${actionsHtml}</div></div>`;
+}
+
+/** Injectable dependencies for generation functions. */
+export interface GenDeps {
+  cancelGenerationByChat: typeof cancelGenerationByChat;
+  completeGeneration: typeof completeGeneration;
+  failGeneration: typeof failGeneration;
+  getOrCreateBuffer: typeof getOrCreateBuffer;
+  scheduleBufferCleanup: typeof scheduleBufferCleanup;
+  startGenerationTracking: typeof startGenerationTracking;
+  resolveProvider: typeof resolveProvider;
+  listProviders: typeof listProviders;
+  isEncryptionEnabled: () => boolean;
+  getSmk: () => CryptoKey | null;
+  deriveChatKeyForChat: typeof deriveChatKeyForChat;
+  compressThenEncrypt: typeof compressThenEncrypt;
+  markedParse: (src: string, opts?: Record<string, unknown>,) => string;
+  createPromptAssembler: (db: Kysely<DB>,) => PromptAssembler;
+  /** Self-references for recursive calls (set automatically). */
+  triggerAutoGeneration?: (opts: AutoGenOpts,) => Promise<void>;
+  triggerGroupCascade?: (opts: GroupCascadeOpts,) => Promise<void>;
+}
+
+/** Return the real production implementations. */
+export function createDefaultDeps(): GenDeps {
+  return {
+    cancelGenerationByChat,
+    completeGeneration,
+    failGeneration,
+    getOrCreateBuffer,
+    scheduleBufferCleanup,
+    startGenerationTracking,
+    resolveProvider,
+    listProviders,
+    isEncryptionEnabled,
+    getSmk,
+    deriveChatKeyForChat,
+    compressThenEncrypt,
+    markedParse: (src, opts?,) => marked.parse(src, opts ?? {},) as string,
+    createPromptAssembler: (db,) => new PromptAssembler(db,),
+    triggerAutoGeneration,
+    triggerGroupCascade,
+  };
 }

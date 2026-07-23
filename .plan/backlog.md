@@ -1,6 +1,6 @@
 # Backlog
 
-Features not under active development. `plan.md` tracks active work; `open-items.md` tracks bugs/debt.
+Features not under active development. `plan.md` tracks active work; `docs/meta/open-items.md` tracks bugs/debt.
 
 ## P0 — Immediate Next (v0.1 In-Progress)
 
@@ -61,6 +61,7 @@ Ordered by user impact × effort. Items with partial `src/` code listed first.
 | Visual novel mode (image + text overlay, transitions)                   | `docs/frontend/chat/visual-novel-mode.md`                               | `TASK-visual-novel-mode.md` — 3 layout modes, typewriter, scene transitions        |
 | 3D view modes (permanent/collapsible/inline panels)                     | `TASK-3d-view-modes.md`                                                 | Consolidated from 3 old tasks: VRM avatars, GLTF, Spine 2D, device tier gating     |
 | Text effects & overlays (glow, shake, status bars, icons)               | `docs/frontend/chat/text-effects-overlays.md`                           | `TASK-text-effects-overlays.md` — CSS effects, overlay components, decoration      |
+| Info bubbles (help tooltips in config menus, i18n)                    | `TASK-info-bubbles.md`                                                | `epic-immersion-presentation.md` (EPIC-048) — reusable `(?)` component for Settings, Character, World, Admin menus |
 | Character multi-personality (personality switching, world/chat locking) | `TASK-character-multi-personality.md`                                   | Mood system needs personality switching, world/chat config locking                 |
 | Mood swings & happiness meter (mood impact on personality)              | `TASK-character-mood-happiness.md`                                      | Happiness level affects personality, dialogue, and behavior                        |
 | Memory injection probability & privacy (secrets sharing)                | `TASK-character-memory-injection.md`                                    | Not all memories injected; privacy levels, comfort-based sharing                   |

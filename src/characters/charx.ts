@@ -4,7 +4,7 @@
 // ZIP archive containing card.json + assets/ directory.
 
 import JSZip from "jszip";
-import { jsonParseOr, } from "../utils/safe-json";
+import { jsonParseOr, } from "../utils";
 import type { CharacterAsset, } from "./parser";
 
 interface CharxResult {
