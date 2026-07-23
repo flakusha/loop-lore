@@ -1,6 +1,6 @@
 # TASK: Memory Selection UI
 
-**Status:** ⬜ Not Started
+**Status:** ✅ Done
 **Priority:** medium
 **Effort:** Medium
 **Epic:** epic-memory-systems
@@ -14,3 +14,7 @@ Memory selection UI: mid-chat panel, pinning, auto-extract, memory browsing. Bac
 - [ ] Implementation complete
 - [ ] Tests passing
 - [ ] Documentation updated
+
+## Completion Note
+
+Implemented: memory carry section in new-chat form (full/selective/fresh modes), memory checkbox list with token estimates, mid-chat memory panel already existed (memory-panel.html + memory-panel.ts)
