@@ -11,8 +11,8 @@ createLogger({ level: "error", },);
 // ── Helpers ──────────────────────────────────────────────────
 
 function createTestDb(): Kysely<any> {
-  const db = new Database(":memory:",);
-  const kysely = new Kysely({ dialect: createSqliteDialect(db,), },);
+  const db = new Database(":memory:");
+  const kysely = new Kysely({ dialect: createSqliteDialect(db), });
 
   // Create minimal schema
   db.exec(`
@@ -59,7 +59,7 @@ function createTestDb(): Kysely<any> {
       UNIQUE(actor_id, world_id)
     );
     INSERT INTO actors (id) VALUES ('actor-1'), ('actor-2');
-  `,);
+  `);
 
   return kysely;
 }
@@ -86,15 +86,15 @@ describe("SeductionService", () => {
       const service = new SeductionService(db,);
 
       const success = await service.updateDesireProfile("actor-1", {
-        turnOns: ["intelligence", "humor",],
-        hardLimits: ["cruelty",],
-      },);
+        turnOns: ["intelligence", "humor"],
+        hardLimits: ["cruelty"],
+      });
 
       expect(success,).toBe(true,);
 
       const profile = await service.getDesireProfile("actor-1",);
-      expect(profile.turnOns,).toEqual(["intelligence", "humor",],);
-      expect(profile.hardLimits,).toEqual(["cruelty",],);
+      expect(profile.turnOns,).toEqual(["intelligence", "humor"],);
+      expect(profile.hardLimits,).toEqual(["cruelty"],);
     });
   });
 
