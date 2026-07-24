@@ -9,10 +9,8 @@
  * Uses closure injection (not .state()/.decorate()) to avoid Elysia's
  * complex type inference issues when merging plugins.
  */
-import { openapi, } from "@elysia/openapi";
 import { Elysia, } from "elysia";
 import { BunAdapter, } from "elysia/adapter/bun";
-import { readFileSync, } from "node:fs";
 import { ageGateRoutes, } from "./age-gate/controller";
 import { assetRoutes, } from "./assets/controller";
 import type { Config, } from "./config/schema";
@@ -31,14 +29,10 @@ import { adminRoutes, } from "./routes/admin";
 import { adminCharacterOverridesRoutes, } from "./routes/admin-character-overrides";
 import { adminNsfwRoutes, } from "./routes/admin-nsfw";
 import { adminTemplateRoutes, } from "./routes/admin-templates";
-import { analyticsRoutes, } from "./routes/analytics";
 import { apiKeysRoutes, } from "./routes/api-keys";
 import { authProtectedRoutes, authPublicRoutes, } from "./routes/auth";
-import { battleRoutes, } from "./routes/battle";
-import { blogRoutes, } from "./routes/blog";
 import { characterAvailabilityRoutes, } from "./routes/character-availability";
 import { characterAvatarsRoutes, } from "./routes/character-avatars";
-import { characterEmotionAvatarsRoutes, } from "./routes/character-emotion-avatars";
 import { characterEmotionsRoutes, } from "./routes/character-emotions";
 import { characterIoRoutes, } from "./routes/character-io";
 import { characterLicensingRoutes, } from "./routes/character-licensing";
@@ -50,8 +44,6 @@ import { chatContextRoutes, } from "./routes/chat-context";
 import { chatExportRoutes, } from "./routes/chat-export";
 import { chatPinRoutes, } from "./routes/chat-pins";
 import { chatsRoutes, } from "./routes/chats";
-import { exportRoutes, } from "./routes/export";
-import { exportSseRoutes, } from "./routes/export-sse";
 import { frontendLogsRoutes, } from "./routes/frontend-logs";
 import { healthRoutes, } from "./routes/health";
 import { i18nRoutes, } from "./routes/i18n";
@@ -60,13 +52,9 @@ import { keyManagementRoutes, } from "./routes/key-management";
 import { messageEncryptionRoutes, } from "./routes/message-encryption";
 import { messageReactionsRoutes, } from "./routes/message-reactions";
 import { messagesRoutes, } from "./routes/messages";
-import { modelComparisonsRoutes, } from "./routes/model-comparisons";
 import { notificationsRoutes, } from "./routes/notifications";
-import { nsfwRoutes, } from "./routes/nsfw";
-import { nsfwModerationRoutes, } from "./routes/nsfw-moderation";
 import { pluginRoutes, } from "./routes/plugins";
 import { questsRoutes, } from "./routes/quests";
-import { rpgRoutes, } from "./routes/rpg";
 import { sessionsRoutes, } from "./routes/sessions";
 import { settingsRoutes, } from "./routes/settings";
 import { storyItemsRoutes, } from "./routes/story-items";
@@ -91,31 +79,10 @@ export function createApp(deps: AppDeps,): Elysia {
 
   const handleOpts = { database, config, };
 
-  // Read version from package.json for OpenAPI spec
-  const pkg = JSON.parse(readFileSync(new URL("../package.json", import.meta.url,), "utf8",),) as { version: string };
-  const appVersion: string = pkg.version;
-
   const app = new Elysia({ adapter: BunAdapter, },)
     // ── Validation error handler (must be first) ─────────────
 
     .onError((ctx: any,) => onValidationError(ctx.code, ctx.error, ctx.set,))
-    // ── OpenAPI / Scalar UI (dev-only, gated on docs.enabled) ──────────────
-    .use(
-      config.docs.enabled
-        ? openapi({
-          path: "/openapi",
-          documentation: {
-            info: {
-              title: "Loop Lore API",
-              version: appVersion,
-              description: "Loop Lore — SillyTavern RPG chat reimplementation API reference.",
-            },
-          },
-        },)
-        : new Elysia(),
-    )
-    // ── Redirect /docs/api → /openapi (Scalar UI) ───────────────────────────
-    .get("/docs/api", () => new Response(null, { status: 302, headers: { Location: "/openapi", }, },),)
     // ── Authentication guard (runs before all routes, populates context) ──────
     .derive(async ({ request, },) => {
       const authResult = await authenticate({ request, database, authConfig: config.auth, },);
@@ -143,8 +110,6 @@ export function createApp(deps: AppDeps,): Elysia {
   app.use(healthRoutes(handleOpts,),);
   app.use(i18nRoutes(handleOpts,),);
   app.use(telemetryRoutes(handleOpts,),);
-  app.use(analyticsRoutes(handleOpts,),);
-  app.use(modelComparisonsRoutes(handleOpts,),);
   app.use(frontendLogsRoutes(),);
 
   // ── Auth protected routes ───────────────────────────────────────────────────
@@ -154,7 +119,6 @@ export function createApp(deps: AppDeps,): Elysia {
   app.use(activityRoutes(handleOpts,),);
   app.use(activityStreamRoutes(handleOpts,),);
   app.use(notificationsRoutes(handleOpts,),);
-  app.use(blogRoutes(handleOpts,),);
   app.use(apiKeysRoutes(handleOpts,),);
   app.use(settingsRoutes(handleOpts,),);
   app.use(messageEncryptionRoutes(handleOpts,),);
@@ -179,7 +143,6 @@ export function createApp(deps: AppDeps,): Elysia {
   app.use(characterRelationshipsRoutes(handleOpts,),);
   app.use(characterAvatarsRoutes(handleOpts,),);
   app.use(characterEmotionsRoutes(handleOpts,),);
-  app.use(characterEmotionAvatarsRoutes(handleOpts,),);
   app.use(characterAvailabilityRoutes(handleOpts,),);
   app.use(characterLicensingRoutes(handleOpts,),);
   app.use(adminCharacterOverridesRoutes(handleOpts,),);
@@ -193,15 +156,9 @@ export function createApp(deps: AppDeps,): Elysia {
   app.use(chatExportRoutes(handleOpts,),);
   app.use(chatContextRoutes(handleOpts,),);
   app.use(importRoutes(handleOpts,),);
-  app.use(exportRoutes(handleOpts,),);
-  app.use(exportSseRoutes(handleOpts,),);
   app.use(personaRoutes(handleOpts,),);
   app.use(generationRoutes(handleOpts,),);
   app.use(ageGateRoutes(handleOpts,),);
-  app.use(nsfwRoutes(handleOpts,),);
-  app.use(nsfwModerationRoutes(handleOpts,),);
-  app.use(battleRoutes(handleOpts,),);
-  app.use(rpgRoutes(handleOpts,),);
   app.use(assetRoutes(handleOpts,),);
   app.use(viewRoutes({ database: handleOpts.database, },),);
 
@@ -223,39 +180,23 @@ export function createApp(deps: AppDeps,): Elysia {
       return notFoundResponse("Asset system is disabled",);
     }
     const { handleUpload, } = await import("./assets/controller");
-    const chatId = (ctx.query?.chatId as string) ?? undefined;
     return handleUpload({
       request: ctx.request,
       userId,
       database,
       uploadDir: config.assets.uploadDir,
       maxFileSize: config.assets.maxFileSize,
-      chatId,
-      config,
     },);
   },);
 
   // ── Convenience redirects ─────────────────────────────────────
+  const redirectTo = (location: string,): Response =>
+    new Response(null, { status: 302, headers: { Location: location, }, },);
 
   // Authenticated users land on the chat; everyone else on the login screen.
-  app.get(
-    "/",
-    (ctx: any,) =>
-      new Response(null, { status: 302, headers: { Location: ctx.userId ? "/views/chat-list" : "/views/login", }, },),
-  );
-  app.get(
-    "/chat",
-    (ctx: any,) =>
-      new Response(null, { status: 302, headers: { Location: ctx.userId ? "/views/chat-list" : "/views/login", }, },),
-  );
-  app.get(
-    "/register",
-    (ctx: any,) =>
-      new Response(null, {
-        status: 302,
-        headers: { Location: ctx.userId ? "/views/chat-list" : "/views/register", },
-      },),
-  );
+  app.get("/", (ctx: any,) => redirectTo(ctx.userId ? "/views/chat" : "/views/login",),);
+  app.get("/chat", (ctx: any,) => redirectTo(ctx.userId ? "/views/chat" : "/views/login",),);
+  app.get("/register", (ctx: any,) => redirectTo(ctx.userId ? "/views/chat" : "/views/register",),);
 
   // ── Catch-all: delegate to existing dispatch logic ───────────────────────────
   app.all("/*", async ({ request, },) => {
