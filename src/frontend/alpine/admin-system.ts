@@ -32,6 +32,10 @@ export const adminSystem = {
     error?: string;
   }[],
   loadingHealth: false,
+  healthAutoRefresh: false,
+  healthRefreshInterval: null as ReturnType<typeof setInterval> | null,
+  nsfwConfig: { allowNsfw: true, nsfwMinAge: 18, },
+  loadingNsfw: false,
 
   async loadSystemConfig() {
     this.loadingSystemConfig = true;
@@ -133,6 +137,50 @@ export const adminSystem = {
       showToast("error", "Failed to load health status",);
     } finally {
       this.loadingHealth = false;
+    }
+  },
+
+  toggleHealthAutoRefresh() {
+    this.healthAutoRefresh = !this.healthAutoRefresh;
+    if (this.healthAutoRefresh) {
+      this.healthRefreshInterval = setInterval(() => {
+        this.loadHealth();
+      }, 10_000,); // 10 seconds
+    } else if (this.healthRefreshInterval) {
+      clearInterval(this.healthRefreshInterval,);
+      this.healthRefreshInterval = null;
+    }
+  },
+
+  async loadNsfwConfig() {
+    this.loadingNsfw = true;
+    try {
+      const res = await fetch("/api/admin/nsfw", { headers: { Accept: "application/json", }, },);
+      if (res.ok) {
+        this.nsfwConfig = await res.json();
+      }
+    } catch {
+      log.warn("Failed to load NSFW config",);
+    } finally {
+      this.loadingNsfw = false;
+    }
+  },
+
+  async saveNsfwConfig() {
+    try {
+      const res = await apiFetch("/api/admin/nsfw", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json", },
+        body: jsonBody(this.nsfwConfig,),
+      },);
+      if (res.ok) {
+        showToast("success", "NSFW policy saved",);
+      } else {
+        const err = await res.json();
+        showToast("error", err.message || "Failed",);
+      }
+    } catch {
+      showToast("error", "Network error",);
     }
   },
 };
