@@ -1,6 +1,7 @@
 // ── Characters page: search, detail modal, actions ────────────
 import { jsonBody, } from "../alpine/json";
 import { log as rootLog, } from "../alpine/logger";
+import { fetchMood, happinessColor, moodToEmoji, moodToLabel, } from "../alpine/mood-panel";
 import { feFetch, } from "../fe-fetch";
 import { showToast, } from "../ui";
 import { fetchPartial, filterCards, } from "./shared";
@@ -55,6 +56,26 @@ globalThis.selectCharacterCard = async function(id: string,) {
     modal.querySelector("[data-action='edit-char']",)?.setAttribute("data-id", id,);
     modal.querySelector("[data-action='delete-char']",)?.setAttribute("data-id", id,);
     modal.classList.add("open",);
+
+    // Load mood data for this character
+    const moodSection = modal.querySelector<HTMLElement>("[data-field='mood-section']",);
+    if (moodSection) {
+      const mood = await fetchMood(id,);
+      if (mood) {
+        moodSection.style.display = "block";
+        const emojiEl = modal.querySelector<HTMLElement>("[data-field='mood-emoji']",);
+        const labelEl = modal.querySelector<HTMLElement>("[data-field='mood-label']",);
+        const barEl = modal.querySelector<HTMLElement>("[data-field='mood-bar']",);
+        const happinessEl = modal.querySelector<HTMLElement>("[data-field='mood-happiness']",);
+        if (emojiEl) { emojiEl.textContent = moodToEmoji(mood.currentMood,); }
+        if (labelEl) { labelEl.textContent = moodToLabel(mood.currentMood,); }
+        if (barEl) {
+          barEl.style.width = `${mood.happiness}%`;
+          barEl.style.backgroundColor = happinessColor(mood.happiness,);
+        }
+        if (happinessEl) { happinessEl.textContent = `${mood.happiness}%`; }
+      }
+    }
   } catch {
     /* ignore */
   }
