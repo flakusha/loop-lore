@@ -1,10 +1,5 @@
 // ── Chat page component (chat.html) — core state + init ────
-import {
-  addScene,
-  destroyVnRenderer,
-  initVnRenderer,
-  type VnMessage,
-} from "../vn";
+
 import { chatActions, } from "./chat-actions";
 import { chatActivity, } from "./chat-activity";
 import { chatEditing, } from "./chat-editing";
@@ -20,6 +15,7 @@ import { chatVariants, } from "./chat-variants";
 import { jsonParseOr, } from "./json";
 import { getLogger, } from "./logger";
 import { memoryPanel, } from "./memory-panel";
+import { createMoodPanelState, } from "./mood-panel";
 import { rpgStats, } from "./rpg-stats";
 import type { AlpineState, ChatState, } from "./types";
 
@@ -51,13 +47,6 @@ globalThis.chatState = function() {
     continuingMessageId: null as string | null,
     isContinuing: false,
     _generationEventSource: null as EventSource | null,
-    // VN mode state
-    _vnEnabled: false,
-    _vnLayout: "overlay" as "overlay" | "below" | "split",
-    _vnTypewriter: true,
-    _vnTypewriterSpeed: 30,
-    _vnTransition: "fade" as "fade" | "cut" | "dissolve" | "slide" | "wipe",
-    _vnAutoAdvance: false,
     chats: [] as { id: string; name?: string }[],
     activeChat: null as string | null,
     messages: [] as {
@@ -143,20 +132,15 @@ globalThis.chatState = function() {
     ...rpgStats,
     showRpgPanel: false as boolean,
 
-    // ── Mood System ──
-    ...moodState,
-
     // ── Memory Panel State ──
     ...memoryPanel,
 
     // ── Mood Panel State ──
     _moodPanel: createMoodPanelState(),
     async loadMoodPanel(actorId: string,) {
-      await Promise.allSettled([
-        this._moodPanel.loadMood(actorId,),
-        this._moodPanel.loadEmotions(actorId,),
-        this._moodPanel.loadEmotionDefs(),
-      ],);
+      await this._moodPanel.loadMood(actorId,);
+      await this._moodPanel.loadEmotions(actorId,);
+      await this._moodPanel.loadEmotionDefs();
     },
 
     // ── Sub-module state + methods ──
@@ -260,50 +244,7 @@ globalThis.chatState = function() {
           uiStore.hasActiveChat = false;
         }
       }
-
-      // Cleanup VN renderer
-      destroyVnRenderer();
     },
-
-    // ── VN Mode Lifecycle ──
-
-    /** Initialize or destroy VN renderer based on current state. */
-    updateVnMode() {
-      const container = document.querySelector<HTMLElement>("#vn-container",);
-      if (!container) { return; }
-
-      if (this._vnEnabled && this.activeChat) {
-        const vnMessages: VnMessage[] = this.messages.map((m,) => ({
-          id: m.id,
-          role: (m.role as VnMessage["role"]) ?? "assistant",
-          name: m.actor_name,
-          content: m.content,
-          thinking: m.thinking,
-          avatar_asset_id: undefined,
-          background_url: undefined,
-        }));
-        const chat = this.chats.find((c,) => c.id === this.activeChat);
-        const gmConfig = jsonParseOr<Record<string, unknown>>(chat?.gm_config ?? "{}", {},);
-        initVnRenderer(container, vnMessages, gmConfig, this.activeChat,);
-      } else {
-        destroyVnRenderer();
-      }
-    },
-
-    /** Push a new message into the live VN renderer (for streaming). */
-    pushVnScene(msg: { id: string; role: string; name?: string; content: string; thinking?: string },) {
-      if (!this._vnEnabled) { return; }
-      addScene({
-        id: msg.id,
-        role: (msg.role as VnMessage["role"]) ?? "assistant",
-        name: msg.name,
-        content: msg.content,
-        thinking: msg.thinking,
-      },);
-    },
-
-    // ── GM Panel State ──
-    showGmPanel: false as boolean,
 
     async loadUserInfo() {
       try {
@@ -330,45 +271,6 @@ globalThis.chatState = function() {
       } catch {
         this.$dispatch("show-toast", { type: "error", message: "Failed to load chats", },);
       }
-    },
-
-    _searchDebounce: null as ReturnType<typeof setTimeout> | null,
-    _searchResults: null as {
-      chatId: string;
-      chatName: string;
-      chatType: string;
-      chatMode: string;
-      lastMessageAt: string;
-      characterName: string;
-      characterAvatar: string | null;
-      worldId: string | null;
-    }[] | null,
-
-    async searchChats(query: string,) {
-      // Clear previous debounce
-      if (this._searchDebounce) {
-        clearTimeout(this._searchDebounce,);
-      }
-
-      // If query is empty, clear results and show all chats
-      if (!query.trim()) {
-        this._searchResults = null;
-        return;
-      }
-
-      // Debounce 300ms
-      this._searchDebounce = setTimeout(async () => {
-        try {
-          const params = new URLSearchParams({ q: query, limit: "20", },);
-          const res = await apiFetch(`/api/chats/search?${params.toString()}`,);
-          if (res.ok) {
-            const data = await res.json();
-            this._searchResults = data.data || [];
-          }
-        } catch {
-          // Non-critical — fall back to client-side filter
-        }
-      }, 300,);
     },
 
     async selectChat(chatId: string,) {
@@ -398,7 +300,7 @@ globalThis.chatState = function() {
       this.currentPage = 1;
       this.hasMoreMessages = true;
       this.loadingOlder = false;
-      await Promise.all([this.loadMessages(), this.loadGalleryAssets(), this.loadCharacterInfo(), this.loadMood(),],);
+      await Promise.all([this.loadMessages(), this.loadGalleryAssets(), this.loadCharacterInfo(),],);
       await this.markChatAsRead(chatId,);
       await this.loadChatKey(chatId,);
       await this.loadImpersonationState();
@@ -407,8 +309,6 @@ globalThis.chatState = function() {
       if (this.currentCharacter?.id) {
         await this.loadMoodPanel(this.currentCharacter.id,);
       }
-      // Initialize VN mode if enabled
-      this.updateVnMode();
     },
 
     getChatId() {
