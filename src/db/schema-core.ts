@@ -100,6 +100,7 @@ export interface Chats {
   current_location_id: string | null;
   story_state: string | null;
   gm_config: string | null;
+  visual_novel: Generated<number>;
   turn_strategy: TurnStrategy | null;
   max_turns: number | null;
   auto_advance: number | null;
