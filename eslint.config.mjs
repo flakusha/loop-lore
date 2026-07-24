@@ -66,6 +66,11 @@ const customRestrictedSyntax = [
     selector: "CallExpression[callee.type='MemberExpression'][callee.property.name='findIndex']",
     message: "Avoid .findIndex() — use a for-of loop with index tracking. Clearer intent.",
   },
+  // Promise.all — prefer Promise.allSettled for partial-failure resilience
+  {
+    selector: "CallExpression[callee.object.name='Promise'][callee.property.name='all']",
+    message: "Prefer Promise.allSettled() over Promise.all() — handle partial failures instead of complete abort.",
+  },
   // Naked Buffer: ban deprecated/unsafe patterns
   // Bun alternatives: Bun.file().text()/.arrayBuffer(), Buffer.from(data, encoding)
   {
@@ -191,7 +196,7 @@ const tsRules = {
   "import/no-mutable-exports": "error",
 
   // ── Custom restricted syntax ────────────────────────────────
-  "no-restricted-syntax": ["warn", ...customRestrictedSyntax],
+  "no-restricted-syntax": ["warn", ...customRestrictedSyntax,],
   // ── Low-value rules generating noise from Elysia/Kysely patterns ──
   "@typescript-eslint/no-unsafe-member-access": "off",
   "@typescript-eslint/no-unsafe-assignment": "off",
@@ -485,7 +490,9 @@ export default tseslint.config(
       "no-restricted-syntax": [
         "warn",
         // Allow JSON.stringify in assertNever (used for error messages only)
-        ...customRestrictedSyntax.filter((rule,) => rule.selector !== "CallExpression[callee.object.name='JSON'][callee.property.name='stringify']",),
+        ...customRestrictedSyntax.filter((rule,) =>
+          rule.selector !== "CallExpression[callee.object.name='JSON'][callee.property.name='stringify']"
+        ),
       ],
     },
   },
