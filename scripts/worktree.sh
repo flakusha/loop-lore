@@ -1058,12 +1058,14 @@ cmd_finalize() {
   echo -e "${GREEN}  ✓ Branch has $ahead commit(s) beyond $base${NC}"
   echo ""
 
-  # Step 5: Merge into master (worktree stays until merge succeeds)
-  echo -e "${CYAN}Step 5: Merging '$branch' into master...${NC}"
+  # Step 5: Merge into base branch (worktree stays until merge succeeds)
+  local target_branch
+  target_branch=$(git -C "$REPO_ROOT" branch --show-current)
+  echo -e "${CYAN}Step 5: Merging '$branch' into $target_branch...${NC}"
   local GIT_MERGE_FLAGS=()
   gpg_merge_flags
   if git -C "$REPO_ROOT" "${GIT_MERGE_FLAGS[@]}" merge "$branch" --no-edit; then
-    echo -e "${GREEN}  ✓ Merged into master${NC}"
+    echo -e "${GREEN}  ✓ Merged into $target_branch${NC}"
     # Verify merge commit is signed
     local merge_sha
     merge_sha=$(git -C "$REPO_ROOT" rev-parse HEAD)
