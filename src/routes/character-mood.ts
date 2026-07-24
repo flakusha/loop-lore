@@ -15,6 +15,22 @@ interface HandlerOpts {
   database: Kysely<DB>;
 }
 
+/** Check if user owns the actor (or is admin/solo) */
+async function checkActorOwnership(
+  database: Kysely<DB>,
+  actorId: string,
+  userId: string | null,
+  userRole: string | null,
+): Promise<boolean> {
+  const actor = await database
+    .selectFrom("actors",)
+    .select("owner_id",)
+    .where("id", "=", actorId,)
+    .executeTakeFirst();
+  if (!actor) { return false; }
+  return actor.owner_id === userId || userRole === "admin" || userRole === "solo";
+}
+
 export function characterMoodRoutes(opts: HandlerOpts,) {
   const { database, } = opts;
   const moodService = new MoodService(database,);
@@ -27,6 +43,10 @@ export function characterMoodRoutes(opts: HandlerOpts,) {
       const { actorId, } = ctx.params as { actorId: string };
       const worldId = ctx.query.worldId as string | undefined;
 
+      if (!(await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,))) {
+        return jsonError({ message: "Actor not found", status: HttpStatus.NotFound, },);
+      }
+
       const mood = await moodService.getMood(actorId, worldId,);
       if (!mood) { return jsonError({ message: "Mood not found", status: HttpStatus.NotFound, },); }
       return jsonResponse(mood,);
@@ -37,6 +57,10 @@ export function characterMoodRoutes(opts: HandlerOpts,) {
 
       const { actorId, } = ctx.params as { actorId: string };
       const body = ctx.body as Record<string, unknown>;
+
+      if (!(await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,))) {
+        return jsonError({ message: "Actor not found", status: HttpStatus.NotFound, },);
+      }
 
       const worldId = body.worldId as string | undefined;
       const happiness = body.happiness as number | undefined;
@@ -59,6 +83,10 @@ export function characterMoodRoutes(opts: HandlerOpts,) {
       const { actorId, } = ctx.params as { actorId: string };
       const body = ctx.body as Record<string, unknown>;
 
+      if (!(await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,))) {
+        return jsonError({ message: "Actor not found", status: HttpStatus.NotFound, },);
+      }
+
       const worldId = body.worldId as string | undefined;
       const happiness = body.happiness as number | undefined;
       const currentMood = body.currentMood as string | undefined;
@@ -80,6 +108,10 @@ export function characterMoodRoutes(opts: HandlerOpts,) {
       const { actorId, } = ctx.params as { actorId: string };
       const body = ctx.body as Record<string, unknown>;
 
+      if (!(await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,))) {
+        return jsonError({ message: "Actor not found", status: HttpStatus.NotFound, },);
+      }
+
       const worldId = body.worldId as string | undefined;
       const delta = body.delta as number | undefined;
 
@@ -96,6 +128,10 @@ export function characterMoodRoutes(opts: HandlerOpts,) {
 
       const { actorId, } = ctx.params as { actorId: string };
       const body = ctx.body as Record<string, unknown>;
+
+      if (!(await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,))) {
+        return jsonError({ message: "Actor not found", status: HttpStatus.NotFound, },);
+      }
 
       const worldId = body.worldId as string | undefined;
       const eventType = body.eventType as string | undefined;
@@ -129,6 +165,10 @@ export function characterMoodRoutes(opts: HandlerOpts,) {
       const { actorId, } = ctx.params as { actorId: string };
       const worldId = ctx.query.worldId as string | undefined;
       const limit = Number(ctx.query.limit,) || 50;
+
+      if (!(await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,))) {
+        return jsonError({ message: "Actor not found", status: HttpStatus.NotFound, },);
+      }
 
       const events = await moodService.getEvents(actorId, worldId, limit,);
       return jsonResponse(events,);

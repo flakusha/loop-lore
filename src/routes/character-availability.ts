@@ -14,6 +14,22 @@ interface HandlerOpts {
   database: Kysely<DB>;
 }
 
+/** Check if user owns the actor (or is admin/solo) */
+async function checkActorOwnership(
+  database: Kysely<DB>,
+  actorId: string,
+  userId: string | null,
+  userRole: string | null,
+): Promise<boolean> {
+  const actor = await database
+    .selectFrom("actors",)
+    .select("owner_id",)
+    .where("id", "=", actorId,)
+    .executeTakeFirst();
+  if (!actor) { return false; }
+  return actor.owner_id === userId || userRole === "admin" || userRole === "solo";
+}
+
 export function characterAvailabilityRoutes(opts: HandlerOpts,) {
   const { database, } = opts;
 
@@ -24,6 +40,10 @@ export function characterAvailabilityRoutes(opts: HandlerOpts,) {
       if (!userId) { return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, },); }
 
       const { actorId, } = ctx.params as { actorId: string };
+
+      if (!(await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,))) {
+        return jsonError({ message: "Actor not found", status: HttpStatus.NotFound, },);
+      }
 
       const availability = await database
         .selectFrom("character_availability",)
@@ -42,6 +62,10 @@ export function characterAvailabilityRoutes(opts: HandlerOpts,) {
       if (!userId) { return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, },); }
 
       const { actorId, } = ctx.params as { actorId: string };
+
+      if (!(await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,))) {
+        return jsonError({ message: "Actor not found", status: HttpStatus.NotFound, },);
+      }
       const body = ctx.body as Record<string, unknown>;
 
       const status = body.status as string | undefined;
@@ -99,6 +123,10 @@ export function characterAvailabilityRoutes(opts: HandlerOpts,) {
       if (!userId) { return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, },); }
 
       const { actorId, } = ctx.params as { actorId: string };
+
+      if (!(await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,))) {
+        return jsonError({ message: "Actor not found", status: HttpStatus.NotFound, },);
+      }
 
       await database
         .deleteFrom("character_availability",)

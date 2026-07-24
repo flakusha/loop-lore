@@ -427,5 +427,219 @@
     ],
     "source": ".plan/tickets/TASK-info-bubbles.md",
     "git_issue": "TASK-071"
+  },
+  "TASK-wire-gm-service-story-mode": {
+    "hash": "pending",
+    "extid": "TASK-wire-gm-service-story-mode",
+    "type": "TASK",
+    "title": "Wire GameMasterService into story mode generation",
+    "label": "task",
+    "priority": "high",
+    "epic": "EPIC-2026-28",
+    "tags": [
+      "story",
+      "generation",
+      "wiring"
+    ],
+    "source": ".plan/tickets/TASK-wire-gm-service-story-mode.md"
+  },
+  "TASK-fix-turn-number-double-count": {
+    "hash": "pending",
+    "extid": "TASK-fix-turn-number-double-count",
+    "type": "TASK",
+    "title": "Fix turn number double-count in TurnManager/executeTurn",
+    "label": "task",
+    "priority": "high",
+    "epic": "EPIC-2026-28",
+    "tags": [
+      "turning",
+      "bug"
+    ],
+    "source": ".plan/tickets/TASK-fix-turn-number-double-count.md"
+  },
+  "TASK-wire-memory-injection": {
+    "hash": "pending",
+    "extid": "TASK-wire-memory-injection",
+    "type": "TASK",
+    "title": "Wire memory injection into generation pipeline",
+    "label": "task",
+    "priority": "high",
+    "epic": "EPIC-2026-28",
+    "tags": [
+      "memory",
+      "wiring"
+    ],
+    "source": ".plan/tickets/TASK-wire-memory-injection.md"
+  },
+  "TASK-wire-context-pruning": {
+    "hash": "pending",
+    "extid": "TASK-wire-context-pruning",
+    "type": "TASK",
+    "title": "Wire context pruning into prompt assembly",
+    "label": "task",
+    "priority": "high",
+    "epic": "EPIC-2026-28",
+    "tags": [
+      "pruning",
+      "memory",
+      "wiring"
+    ],
+    "source": ".plan/tickets/TASK-wire-context-pruning.md"
+  },
+  "TASK-wire-auto-rename": {
+    "hash": "pending",
+    "extid": "TASK-wire-auto-rename",
+    "type": "TASK",
+    "title": "Wire auto-rename into message pipeline",
+    "label": "task",
+    "priority": "high",
+    "epic": "EPIC-2026-28",
+    "tags": [
+      "chat",
+      "wiring"
+    ],
+    "source": ".plan/tickets/TASK-wire-auto-rename.md"
+  },
+  "TASK-wire-transitions": {
+    "hash": "pending",
+    "extid": "TASK-wire-transitions",
+    "type": "TASK",
+    "title": "Wire chat transitions into message pipeline",
+    "label": "task",
+    "priority": "high",
+    "epic": "EPIC-2026-28",
+    "tags": [
+      "chat",
+      "transitions",
+      "wiring"
+    ],
+    "source": ".plan/tickets/TASK-wire-transitions.md"
+  },
+  "TASK-add-ownership-checks-characters": {
+    "hash": "pending",
+    "extid": "TASK-add-ownership-checks-characters",
+    "type": "TASK",
+    "title": "Add ownership checks to character routes",
+    "label": "task",
+    "priority": "high",
+    "epic": "EPIC-2026-28",
+    "tags": [
+      "security",
+      "characters"
+    ],
+    "source": ".plan/tickets/TASK-add-ownership-checks-characters.md"
+  },
+  "TASK-fix-message-reactions-access": {
+    "hash": "pending",
+    "extid": "TASK-fix-message-reactions-access",
+    "type": "TASK",
+    "title": "Fix message-reactions DELETE access check",
+    "label": "task",
+    "priority": "medium",
+    "epic": "EPIC-2026-28",
+    "tags": [
+      "security",
+      "reactions"
+    ],
+    "source": ".plan/tickets/TASK-fix-message-reactions-access.md"
+  },
+  "TASK-fix-import-ssrf": {
+    "hash": "pending",
+    "extid": "TASK-fix-import-ssrf",
+    "type": "TASK",
+    "title": "Fix SSRF risk in import route",
+    "label": "task",
+    "priority": "medium",
+    "epic": "EPIC-2026-28",
+    "tags": [
+      "security",
+      "ssrf"
+    ],
+    "source": ".plan/tickets/TASK-fix-import-ssrf.md"
+  },
+  "TASK-fix-server-startup-race": {
+    "hash": "pending",
+    "extid": "TASK-fix-server-startup-race",
+    "type": "TASK",
+    "title": "Fix server startup migration race",
+    "label": "task",
+    "priority": "medium",
+    "epic": "EPIC-2026-28",
+    "tags": [
+      "server",
+      "db",
+      "bug"
+    ],
+    "source": ".plan/tickets/TASK-fix-server-startup-race.md"
+  },
+  "TASK-test-chat-module": {
+    "hash": "pending",
+    "extid": "TASK-test-chat-module",
+    "type": "TASK",
+    "title": "Add unit tests for chat module (15 files, 0 tests)",
+    "label": "task",
+    "priority": "medium",
+    "epic": "EPIC-2026-28",
+    "tags": [
+      "testing",
+      "chat"
+    ],
+    "source": ".plan/tickets/TASK-test-chat-module.md"
+  },
+  "TASK-test-auth-module": {
+    "hash": "pending",
+    "extid": "TASK-test-auth-module",
+    "type": "TASK",
+    "title": "Add unit tests for auth module (2 files, 0 tests)",
+    "label": "task",
+    "priority": "medium",
+    "epic": "EPIC-2026-28",
+    "tags": [
+      "testing",
+      "auth"
+    ],
+    "source": ".plan/tickets/TASK-test-auth-module.md"
+  },
+  "TASK-test-untested-routes": {
+    "hash": "pending",
+    "extid": "TASK-test-untested-routes",
+    "type": "TASK",
+    "title": "Add tests for untested routes (13 files)",
+    "label": "task",
+    "priority": "medium",
+    "epic": "EPIC-2026-28",
+    "tags": [
+      "testing",
+      "routes"
+    ],
+    "source": ".plan/tickets/TASK-test-untested-routes.md"
+  },
+  "TASK-dedupe-message-access-checks": {
+    "hash": "pending",
+    "extid": "TASK-dedupe-message-access-checks",
+    "type": "TASK",
+    "title": "Consolidate duplicate message access checks",
+    "label": "task",
+    "priority": "medium",
+    "epic": "EPIC-2026-28",
+    "tags": [
+      "dedupe",
+      "refactor"
+    ],
+    "source": ".plan/tickets/TASK-dedupe-message-access-checks.md"
+  },
+  "TASK-reconciliation-plan": {
+    "hash": "pending",
+    "extid": "TASK-reconciliation-plan",
+    "type": "TASK",
+    "title": "Backend logic reconciliation plan",
+    "label": "task",
+    "priority": "high",
+    "epic": "epic-logic-reconciliation",
+    "tags": [
+      "planning",
+      "reconciliation"
+    ],
+    "source": ".plan/tickets/TASK-reconciliation-plan.md"
   }
 }
