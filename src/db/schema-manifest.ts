@@ -1080,4 +1080,131 @@ export const SCHEMA = new SchemaManifest()
     deadline: col("text",),
     created_at: col("text", { notNull: true, },),
     updated_at: col("text", { notNull: true, },),
+  },)
+  // ── NSFW: Character Intimacy ────────────────────────────────
+  .table("character_intimacy", {
+    id: col("text", { primaryKey: true, },),
+    actor_id: col("text", { notNull: true, },),
+    target_actor_id: col("text", { notNull: true, },),
+    world_id: col("text",),
+    score: col("integer", { notNull: true, },),
+    action_history: col("text", { notNull: true, },),
+    unlocked_thresholds: col("text", { notNull: true, },),
+    created_at: col("text", { notNull: true, },),
+    updated_at: col("text", { notNull: true, },),
+  },)
+  // ── NSFW: Character Arousal ─────────────────────────────────
+  .table("character_arousal", {
+    id: col("text", { primaryKey: true, },),
+    actor_id: col("text", { notNull: true, },),
+    world_id: col("text",),
+    level: col("integer", { notNull: true, },),
+    buildup_rate: col("real", { notNull: true, },),
+    decay_rate: col("real", { notNull: true, },),
+    modifiers: col("text", { notNull: true, },),
+    last_update: col("text", { notNull: true, },),
+    created_at: col("text", { notNull: true, },),
+    updated_at: col("text", { notNull: true, },),
+  },)
+  // ── NSFW: Character Desire Profile ──────────────────────────
+  .table("character_desire_profile", {
+    id: col("text", { primaryKey: true, },),
+    actor_id: col("text", { notNull: true, },),
+    turn_ons: col("text", { notNull: true, },),
+    turn_offs: col("text", { notNull: true, },),
+    fetishes: col("text", { notNull: true, },),
+    hard_limits: col("text", { notNull: true, },),
+    current_desire: col("integer", { notNull: true, },),
+    desire_decay_rate: col("real", { notNull: true, },),
+    desire_buildup_rate: col("real", { notNull: true, },),
+    created_at: col("text", { notNull: true, },),
+    updated_at: col("text", { notNull: true, },),
+  },)
+  // ── NSFW: Character Seduction Skills ────────────────────────
+  .table("character_seduction_skills", {
+    id: col("text", { primaryKey: true, },),
+    actor_id: col("text", { notNull: true, },),
+    skill_category: col("text", { notNull: true, },),
+    skill_name: col("text", { notNull: true, },),
+    level: col("integer", { notNull: true, },),
+    xp: col("integer", { notNull: true, },),
+    xp_to_next: col("integer", { notNull: true, },),
+    created_at: col("text", { notNull: true, },),
+    updated_at: col("text", { notNull: true, },),
+  },)
+  // ── NSFW: Encounters ────────────────────────────────────────
+  .table("nsfw_encounters", {
+    id: col("text", { primaryKey: true, },),
+    world_id: col("text",),
+    encounter_type: col("text", { notNull: true, },),
+    intensity: col("text", { notNull: true, },),
+    narrative_style: col("text", { notNull: true, },),
+    participants: col("text", { notNull: true, },),
+    phases: col("text", { notNull: true, },),
+    current_phase: col("integer", { notNull: true, },),
+    outcomes: col("text", { notNull: true, },),
+    content_tags: col("text", { notNull: true, },),
+    completed: col("integer", { notNull: true, },),
+    created_at: col("text", { notNull: true, },),
+    updated_at: col("text", { notNull: true, },),
+  },)
+  // ── NSFW: Character Body Profile ────────────────────────────
+  .table("character_body_profile", {
+    id: col("text", { primaryKey: true, },),
+    actor_id: col("text", { notNull: true, },),
+    stamina: col("integer", { notNull: true, },),
+    flexibility: col("integer", { notNull: true, },),
+    sensitivity: col("integer", { notNull: true, },),
+    endurance: col("integer", { notNull: true, },),
+    size_category: col("text", { notNull: true, },),
+    build: col("text", { notNull: true, },),
+    beauty: col("integer", { notNull: true, },),
+    charisma: col("integer", { notNull: true, },),
+    style: col("integer", { notNull: true, },),
+    scent: col("text",),
+    modifications: col("text", { notNull: true, },),
+    created_at: col("text", { notNull: true, },),
+    updated_at: col("text", { notNull: true, },),
+  },)
+  // ── NSFW: Character Heat Cycle ──────────────────────────────
+  .table("character_heat_cycle", {
+    id: col("text", { primaryKey: true, },),
+    actor_id: col("text", { notNull: true, },),
+    species: col("text", { notNull: true, },),
+    cycle_length_days: col("integer", { notNull: true, },),
+    current_phase: col("text", { notNull: true, },),
+    days_until_next_heat: col("integer", { notNull: true, },),
+    effects: col("text", { notNull: true, },),
+    created_at: col("text", { notNull: true, },),
+    updated_at: col("text", { notNull: true, },),
+  },)
+  // ── NSFW: Character Fantasies ───────────────────────────────
+  .table("character_fantasies", {
+    id: col("text", { primaryKey: true, },),
+    actor_id: col("text", { notNull: true, },),
+    fantasy_name: col("text", { notNull: true, },),
+    category: col("text", { notNull: true, },),
+    intensity: col("text", { notNull: true, },),
+    requirements: col("text", { notNull: true, },),
+    fulfillment_effects: col("text", { notNull: true, },),
+    risks: col("text", { notNull: true, },),
+    discovered_through: col("text",),
+    initial_reaction: col("text", { notNull: true, },),
+    current_feeling: col("text", { notNull: true, },),
+    times_explored: col("integer", { notNull: true, },),
+    created_at: col("text", { notNull: true, },),
+    updated_at: col("text", { notNull: true, },),
+  },)
+  // ── NSFW: Location NSFW Config ──────────────────────────────
+  .table("location_nsfw_config", {
+    id: col("text", { primaryKey: true, },),
+    location_id: col("text", { notNull: true, },),
+    location_type: col("text", { notNull: true, },),
+    privacy_level: col("text", { notNull: true, },),
+    discovery_chance: col("integer", { notNull: true, },),
+    atmosphere: col("text", { notNull: true, },),
+    equipment: col("text", { notNull: true, },),
+    risks: col("text", { notNull: true, },),
+    created_at: col("text", { notNull: true, },),
+    updated_at: col("text", { notNull: true, },),
   },);
