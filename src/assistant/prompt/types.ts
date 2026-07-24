@@ -33,6 +33,10 @@ export interface PromptParams {
   groupParticipantIds?: string[];
   /** Explicit selective keys for lore/memory relevance filtering (overrides auto-derived from last user message) */
   selectiveKeys?: string[];
+  /** Current emotion context for avatar selection and prompt context */
+  emotion?: string;
+  /** Emotion avatar asset ID to use for this generation (if pre-selected) */
+  emotionAvatar?: string;
 }
 
 export interface PromptSectionReport {
@@ -101,6 +105,7 @@ export const PRIORITY = {
   authorNote: 0,
   groupParticipants: 0,
   userPersona: 0,
+  emotionAvatar: 0,
   chatHistory: 0,
   storyContext: 1,
   lore: 2,
