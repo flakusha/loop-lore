@@ -551,6 +551,8 @@ interface CharactersConfig {
   enabled: boolean;
   /** Default character templates to seed. Never overrides existing DB records. */
   templates: {
+    /** Hard ID for deterministic test reseeding (optional — generated if omitted) */
+    id?: string;
     name: string;
     description: string;
     personality?: string;
@@ -560,6 +562,16 @@ interface CharactersConfig {
     mes_example?: string;
     tags?: string[];
     creator?: string;
+    /** Visibility level. Default "public" */
+    visibility?: "private" | "public";
+    /** Content rating. Default "sfw" */
+    content_rating?: "sfw" | "nsfw_mild" | "nsfw_moderate" | "nsfw_intense" | "nsfw_extreme";
+    /** User roles that can see/use this character. Default ["user", "admin"] */
+    target_roles?: ("admin" | "user" | "viewer" | "solo")[];
+    /** Character can be used as template for user-created chars */
+    is_template?: boolean;
+    /** Auto-add to new users' character list */
+    is_default?: boolean;
   }[];
 }
 
