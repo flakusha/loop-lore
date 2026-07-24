@@ -34,7 +34,7 @@ YELLOW='\033[1;33m'
 CYAN='\033[0;36m'
 NC='\033[0m' # No Color
 
-PROTECTED_BRANCHES="master main"
+PROTECTED_BRANCHES="master main stg dev"
 
 is_protected() {
   local branch="$1"

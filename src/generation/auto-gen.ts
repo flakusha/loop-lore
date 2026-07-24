@@ -33,6 +33,7 @@ import { getLogger, } from "../logger";
 import { type GameMasterConfig, GameMasterService, } from "../story";
 import type { GenerateTextFn, } from "../story/game-master";
 import { jsonParseOr, uid, } from "../utils";
+import { getRegisteredHooks, runHookChain, } from "./hooks";
 import {
   cancelGenerationByChat,
   completeGeneration,
@@ -278,6 +279,29 @@ export async function triggerAutoGeneration(opts: AutoGenOpts,): Promise<void> {
     }
 
     log.info("LLM response", { contentLength: accumulatedContent.length, finishReason, ...tokenUsage, },);
+
+    // Run content hooks (mood, emotion, NSFW, moderation) before storing
+    const hookResult = await runHookChain({
+      hooks: [...getRegisteredHooks(),],
+      context: {
+        chatId,
+        actorId: characterId,
+        userId,
+        content: accumulatedContent,
+        nsfwPolicy: undefined,
+        privacyLevel: "standard",
+        config,
+        nsfwConfig: config.nsfw ?? { allowNsfw: false, nsfwMinAge: 0, },
+        db: database,
+      },
+    },);
+
+    if (!hookResult.allowed) {
+      log.warn("Generation blocked by content hooks", {
+        reason: hookResult.events.map((e,) => e.reason).join("; ",),
+      },);
+      return;
+    }
 
     const messageId = uid();
     const maxSwipe = parentMessageId

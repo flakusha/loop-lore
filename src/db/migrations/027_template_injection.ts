@@ -13,3 +13,10 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     .addColumn("template_overrides", "text", (col,) => col.notNull().defaultTo("{}",),)
     .execute();
 }
+
+export async function down(database: Kysely<unknown>,): Promise<void> {
+  await database.schema
+    .alterTable("actors",)
+    .dropColumn("template_overrides",)
+    .execute();
+}
