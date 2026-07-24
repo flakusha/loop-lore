@@ -184,18 +184,18 @@ export class SeductionService {
     await this.getDesireProfile(actorId,);
 
     const now = new Date().toISOString();
-    const setClause: Record<string, unknown> = { updated_at: now, };
+    const fields: Record<string, unknown> = { updated_at: now, };
 
-    if (updates.turnOns !== undefined) { setClause.turn_ons = JSON.stringify(updates.turnOns,); }
-    if (updates.turnOffs !== undefined) { setClause.turn_offs = JSON.stringify(updates.turnOffs,); }
-    if (updates.fetishes !== undefined) { setClause.fetishes = JSON.stringify(updates.fetishes,); }
-    if (updates.hardLimits !== undefined) { setClause.hard_limits = JSON.stringify(updates.hardLimits,); }
-    if (updates.desireDecayRate !== undefined) { setClause.desire_decay_rate = updates.desireDecayRate; }
-    if (updates.desireBuildupRate !== undefined) { setClause.desire_buildup_rate = updates.desireBuildupRate; }
+    if (updates.turnOns !== undefined) { fields.turn_ons = JSON.stringify(updates.turnOns,); }
+    if (updates.turnOffs !== undefined) { fields.turn_offs = JSON.stringify(updates.turnOffs,); }
+    if (updates.fetishes !== undefined) { fields.fetishes = JSON.stringify(updates.fetishes,); }
+    if (updates.hardLimits !== undefined) { fields.hard_limits = JSON.stringify(updates.hardLimits,); }
+    if (updates.desireDecayRate !== undefined) { fields.desire_decay_rate = updates.desireDecayRate; }
+    if (updates.desireBuildupRate !== undefined) { fields.desire_buildup_rate = updates.desireBuildupRate; }
 
     const result = await this.db
       .updateTable("character_desire_profile",)
-      .set(setClause,)
+      .set(fields,)
       .where("actor_id", "=", actorId,)
       .executeTakeFirst();
 

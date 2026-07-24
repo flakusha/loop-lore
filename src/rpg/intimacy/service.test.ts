@@ -15,7 +15,7 @@ function createTestDb(): Kysely<any> {
   const kysely = new Kysely({ dialect: createSqliteDialect(db,), },);
 
   // Create minimal schema
-  db.exec(`
+  db.run(`
     CREATE TABLE actors (
       id TEXT PRIMARY KEY,
       content_rating TEXT NOT NULL DEFAULT 'sfw'
