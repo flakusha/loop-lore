@@ -1,12 +1,13 @@
 // src/config/templates-loader.ts — Template config file loader
 //
-// Finds and loads template YAML files from configs/templates/ directory.
+// Finds and loads template config files (YAML or TOML) from configs/templates/ directory.
+// YAML takes priority over TOML (if both exist, YAML wins).
 // Applies per-domain merge strategies (replace, extend, override).
-// Reuses existing infrastructure: findConfigFile, parseFileContent, deepMerge.
 
 import { load as parseYaml, } from "js-yaml";
 import { existsSync, readFileSync, statSync, } from "node:fs";
 import path from "node:path";
+import { parse as parseToml, } from "smol-toml";
 import type {
   AvatarTemplateConfig,
   ImageEditTemplateConfig,
@@ -19,16 +20,20 @@ import { TEMPLATES_DEFAULTS, } from "./sections/templates";
 
 // ── File Discovery ──────────────────────────────────────────
 
-/** Template file names mapped to domain keys */
+/** Template file names mapped to domain keys. YAML before TOML (YAML wins). */
 const TEMPLATE_FILES: Record<string, keyof TemplatesConfig> = {
   "llm.yaml": "llm",
   "llm.yml": "llm",
+  "llm.toml": "llm",
   "sd.yaml": "sd",
   "sd.yml": "sd",
+  "sd.toml": "sd",
   "avatar.yaml": "avatar",
   "avatar.yml": "avatar",
+  "avatar.toml": "avatar",
   "image-edit.yaml": "imageEdit",
   "image-edit.yml": "imageEdit",
+  "image-edit.toml": "imageEdit",
 };
 
 /**
@@ -100,8 +105,12 @@ function findTemplateFiles(cwd: string,): Map<string, string> {
 
 // ── Parsing ─────────────────────────────────────────────────
 
-function parseYamlFile(filePath: string,): Record<string, unknown> {
+function parseTemplateFile(filePath: string,): Record<string, unknown> {
   const content = readFileSync(filePath, "utf8",);
+  const ext = path.extname(filePath,).slice(1,);
+  if (ext === "toml") {
+    return parseToml(content,);
+  }
   return parseYaml(content,) as Record<string, unknown>;
 }
 
@@ -259,7 +268,7 @@ export function loadTemplateConfig(cwd?: string,): TemplatesConfig {
   // Process each found template file
   for (const [domain, filePath,] of templateFiles) {
     try {
-      const raw = parseYamlFile(filePath,);
+      const raw = parseTemplateFile(filePath,);
       const strategy = (raw.merge as MergeStrategy) ?? "extend";
 
       switch (domain) {

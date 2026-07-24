@@ -113,6 +113,60 @@ openaiCompatible = []
 # contextLimit = 200000
 # maxOutput = 4000
 
+# ── Image generation providers (sd.cpp) ────────────────────
+# sd = []
+#
+# [[generation.providers.sd]]
+# name = "sd-cpp-local"
+# label = "SD CPP Local"
+# baseUrl = "http://localhost:9010"
+# apiFamily = "sdapi"
+# purpose = "both"                    # generate | edit | both
+# timeout = 10000
+# generationTimeout = 120000
+#
+# [generation.providers.sd.defaults]
+# width = 512
+# height = 512
+# steps = 20
+# cfgScale = 2.0
+# sampler = "euler_a"
+# scheduler = "discrete"
+# negativePrompt = "worst quality, incorrect anatomy"
+#
+# ── Separate servers for generation and editing ──
+# [[generation.providers.sd]]
+# name = "sd-gen"
+# label = "SD Image Gen"
+# baseUrl = "http://localhost:9010"
+# apiFamily = "sdapi"
+# purpose = "generate"
+# timeout = 10000
+# generationTimeout = 120000
+#
+# [generation.providers.sd.defaults]
+# width = 1024
+# height = 1024
+# steps = 25
+# cfgScale = 7.0
+# sampler = "euler_a"
+#
+# [[generation.providers.sd]]
+# name = "sd-edit"
+# label = "SD Image Edit"
+# baseUrl = "http://localhost:9011"
+# apiFamily = "sdapi"
+# purpose = "edit"
+# timeout = 10000
+# generationTimeout = 120000
+#
+# [generation.providers.sd.defaults]
+# width = 512
+# height = 512
+# steps = 20
+# cfgScale = 2.0
+# sampler = "euler_a"
+
 # Example auto-start (spawn llama.cpp / sd-server as child processes):
 # [generation.autoStart.llamaCpp]
 # enabled = true

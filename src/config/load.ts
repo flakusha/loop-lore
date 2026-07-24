@@ -208,6 +208,7 @@ function loadConfig(cwd?: string,): Config {
   let config: Config = structuredClone(new ConfigSchema().defaults,);
 
   // 1. Load config.default.* if present — team-shared defaults (committed to git)
+  //    Priority: .yaml > .yml > .toml (first found wins)
   const defaultFound = findConfigFile(directory, DEFAULT_CONFIG_FILES,);
   if (defaultFound) {
     try {
@@ -222,6 +223,7 @@ function loadConfig(cwd?: string,): Config {
   }
 
   // 2. Load config.local.* if present — per-developer overrides (gitignored)
+  //    Priority: .yaml > .yml > .toml (first found wins)
   const localFound = findConfigFile(directory, LOCAL_CONFIG_FILES,);
   if (localFound) {
     try {
@@ -235,20 +237,28 @@ function loadConfig(cwd?: string,): Config {
     }
   }
 
-  // 3. Load env.yaml if present — overrides config file values
+  // 3. Load env config if present — overrides config file values
+  //    YAML takes priority over TOML (if both exist, YAML wins).
   //    Also check main repo root when running in a worktree.
-  const envYamlCandidates = [path.join(directory, "env.yaml",), path.join(directory, "configs", "env.yaml",),];
+  const envConfigCandidates = [
+    path.join(directory, "env.yaml",), path.join(directory, "configs", "env.yaml",),
+    path.join(directory, "env.toml",), path.join(directory, "configs", "env.toml",),
+  ];
   if (mainRoot && mainRoot !== directory) {
-    envYamlCandidates.push(path.join(mainRoot, "env.yaml",), path.join(mainRoot, "configs", "env.yaml",),);
+    envConfigCandidates.push(
+      path.join(mainRoot, "env.yaml",), path.join(mainRoot, "configs", "env.yaml",),
+      path.join(mainRoot, "env.toml",), path.join(mainRoot, "configs", "env.toml",),
+    );
   }
-  const envYamlPath = firstExisting(envYamlCandidates,);
-  if (envYamlPath) {
+  const envConfigPath = firstExisting(envConfigCandidates,);
+  if (envConfigPath) {
+    const ext = envConfigPath.split(".").pop() as string;
     try {
-      const content = readFileSync(envYamlPath, "utf8",);
-      const parsed = parseFileContent(content, "yaml",);
+      const content = readFileSync(envConfigPath, "utf8",);
+      const parsed = parseFileContent(content, ext,);
       config = deepMerge(config as unknown as Record<string, unknown>, parsed,) as unknown as Config;
     } catch (error) {
-      throw new Error(`Failed to parse env.yaml: ${(error as Error).message}`, {
+      throw new Error(`Failed to parse ${envConfigPath}: ${(error as Error).message}`, {
         cause: error,
       },);
     }
@@ -260,6 +270,12 @@ function loadConfig(cwd?: string,): Config {
 
   // 5. Load template configs from configs/templates/ directory
   config.templates = loadTemplateConfig(directory,);
+
+  // 6. Backward compat: wrap single sd provider object in array
+  const sd = config.generation.providers.sd;
+  if (sd && !Array.isArray(sd,)) {
+    config.generation.providers.sd = [sd,];
+  }
 
   validateConfig(config,);
   return config;

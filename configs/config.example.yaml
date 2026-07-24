@@ -112,6 +112,23 @@ generation:
     #   models:
     #     claude-3-opus: { contextLimit: 200000, maxOutput: 4000 }
   defaultProvider: ""
+
+  # ── Image generation providers (sd.cpp) ──────────────────
+  # sd:
+  #   - name: sd-cpp-local
+  #     label: "SD CPP Local"
+  #     baseUrl: http://localhost:9010
+  #     apiFamily: sdapi
+  #     purpose: both                # generate | edit | both
+  #     timeout: 10000
+  #     generationTimeout: 120000
+  #     defaults:
+  #       width: 512
+  #       height: 512
+  #       steps: 20
+  #       cfgScale: 2.0
+  #       sampler: euler_a
+  #       negativePrompt: "worst quality"
   defaultModels: {}
 
   # ── Auto-start external AI servers (optional) ──
