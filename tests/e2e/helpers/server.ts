@@ -6,7 +6,7 @@
  */
 
 import { createSqliteDialect, setTestDatabase, } from "@/db/index";
-import { up as migrate, } from "@/db/migrations/001_init";
+import { runMigrations as runAllMigrations, } from "@/db/migrate";
 import { Database, } from "bun:sqlite";
 import { type Dialect, Kysely, } from "kysely";
 import { existsSync, mkdirSync, rmSync, } from "node:fs";
@@ -182,10 +182,10 @@ export function createTestDb(dialectFactory: DialectFactory = sqliteInMemory,): 
 }
 
 /**
- * Run the init migration on a test database.
+ * Run all migrations on a test database.
  */
 export async function runMigrations(db: Kysely<DB>,): Promise<void> {
-  await migrate(db as unknown as Kysely<unknown>,);
+  await runAllMigrations(db as never,);
 }
 
 /**
