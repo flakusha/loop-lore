@@ -21,7 +21,7 @@ import type {
   XFrameOption,
 } from "../db/enums";
 
-import type { TemplatesConfig } from "./sections/templates";
+import type { TemplatesConfig, } from "./sections/templates";
 
 interface TlsConfig {
   /** Path to TLS private key (PEM). Auto-generated if missing. */
@@ -705,11 +705,11 @@ export type {
   ProviderInstanceConfig,
   SdCppAutoStartConfig,
   ServerConfig,
+  TemplatesConfig,
   TestingConfig,
   TlsConfig,
   TransportCompressionConfig,
   TransportConfig,
   TransportLimitsConfig,
   TuiConfig,
-  TemplatesConfig,
 };
