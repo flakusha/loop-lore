@@ -77,6 +77,8 @@ export interface CreateChatParams {
   currentLocationId?: string | null;
   turnStrategy?: string | null;
   participantIds?: string[];
+  gmConfig?: Record<string, unknown> | null;
+  visualNovel?: boolean;
 }
 
 /**
@@ -101,6 +103,8 @@ export async function createChat(
       world_id: params.worldId ?? null,
       current_location_id: params.currentLocationId ?? null,
       turn_strategy: (params.turnStrategy as never) ?? null,
+      gm_config: params.gmConfig ? JSON.stringify(params.gmConfig,) : null,
+      visual_novel: params.visualNovel ? 1 : 0,
     },)
     .execute();
 
@@ -163,6 +167,8 @@ export interface UpdateChatParams {
   isPaused?: boolean;
   freezePanel?: boolean;
   userRole?: string | null;
+  gmConfig?: Record<string, unknown> | null;
+  visualNovel?: boolean;
 }
 
 /**
@@ -216,6 +222,12 @@ export async function updateChat(
     const state = { ...(current?.ok && current.value), isPanelFrozen: params.freezePanel, };
     const serialized = safeJsonStringify(state,);
     updates.story_state = serialized.ok ? serialized.value : fullChat.story_state;
+  }
+  if (params.gmConfig !== undefined) {
+    updates.gm_config = params.gmConfig ? JSON.stringify(params.gmConfig,) : null;
+  }
+  if (typeof params.visualNovel === "boolean") {
+    updates.visual_novel = params.visualNovel ? 1 : 0;
   }
 
   await database.updateTable("chats",).set(updates,).where("id", "=", chatId,).execute();
