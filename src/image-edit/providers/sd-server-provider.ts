@@ -128,6 +128,7 @@ export class SDServerEditProvider implements ImageEditProvider {
     onProgress?.({ status: "running", message: "Generating image...", },);
 
     const prompt = (params.prompt as string) ?? "";
+    const emotion = (params.emotion as string) ?? "";
     const negative = (params.negative_prompt as string) ?? "";
     const width = (params.width as number) ?? cfg.defaults.width;
     const height = (params.height as number) ?? cfg.defaults.height;
@@ -136,9 +137,13 @@ export class SDServerEditProvider implements ImageEditProvider {
     const sampler = (params.sampler as string) ?? cfg.defaults.sampler;
     const seed = (params.seed as number) ?? -1;
 
+    // Apply emotion modifier to prompt if provided
+    const emotionModifier = emotion ? this.getEmotionModifier(emotion,) : "";
+    const finalPrompt = emotionModifier ? `${prompt}, ${emotionModifier}` : prompt;
+
     if (this.apiFamily === "sdcpp") {
       return this.sdcppGenerate("txt2img", {
-        prompt,
+        prompt: finalPrompt,
         negative_prompt: negative,
         width,
         height,
@@ -153,7 +158,7 @@ export class SDServerEditProvider implements ImageEditProvider {
 
     if (this.apiFamily === "sdapi") {
       return this.sdapiGenerate("txt2img", {
-        prompt,
+        prompt: finalPrompt,
         negative_prompt: negative,
         width,
         height,
@@ -167,11 +172,39 @@ export class SDServerEditProvider implements ImageEditProvider {
 
     // OpenAI family
     return this.openaiGenerate({
-      prompt,
+      prompt: finalPrompt,
       n: 1,
       size: `${width}x${height}`,
       output_format: "png",
     },);
+  }
+
+  /**
+   * Get emotion-based prompt modifier for SD generation.
+   * Maps emotion types to descriptive prompt suffixes.
+   */
+  private getEmotionModifier(emotion: string,): string {
+    const modifiers: Record<string, string> = {
+      happy: "happy expression, smiling, bright eyes, cheerful",
+      sad: "sad expression, downcast eyes, melancholy, sorrowful",
+      angry: "angry expression, furrowed brow, intense gaze, furious",
+      fearful: "fearful expression, wide eyes, trembling, scared",
+      surprised: "surprised expression, raised eyebrows, wide eyes, astonished",
+      disgusted: "disgusted expression, wrinkled nose, repulsed",
+      neutral: "neutral expression, calm face, natural look",
+      excited: "excited expression, enthusiastic, eager, thrilled",
+      anxious: "anxious expression, worried brow, nervous, tense",
+      calm: "calm expression, serene face, peaceful, composed",
+      confused: "confused expression, tilted head, puzzled, bewildered",
+      proud: "proud expression, confident, chin up, dignified",
+      shameful: "shameful expression, looking away, embarrassed, guilty",
+      loving: "loving expression, warm gaze, tender, affectionate",
+      jealous: "jealous expression, envious, bitter, resentful",
+      grateful: "grateful expression, thankful, appreciative, warm",
+      bored: "bored expression, disinterested, vacant stare, apathetic",
+      contemptuous: "contemptuous expression, sneering, disdainful look",
+    };
+    return modifiers[emotion] ?? "";
   }
 
   private async executeImg2Img(
