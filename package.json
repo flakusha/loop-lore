@@ -79,7 +79,7 @@
     "elysia": "^1.4.29",
     "htmx-ext-alpine-morph": "^2.0.2",
     "htmx-ext-sse": "^2.2.4",
-    "js-yaml": "^5.2.1",
+    "js-yaml": "^5.2.2",
     "jszip": "^3.10.1",
     "kysely": "^0.29.4",
     "marked": "^18.0.7",

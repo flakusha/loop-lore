@@ -13,7 +13,10 @@ import type { ImageProviderConfig, } from "../config/schema";
 import type { ImageApiFamily, } from "../db/enums-config";
 import { getLogger, } from "../logger";
 
-const log = getLogger().child({ module: "sd-discovery", },);
+/** Lazy logger — avoids top-level init-order crash */
+function log() {
+  return getLogger().child({ module: "sd-discovery", },);
+}
 
 export interface DiscoveredBackend {
   /** API family */
@@ -78,7 +81,7 @@ async function probePort(
     return null;
   }
 
-  log.info({ message: "Discovered SD backend", apiFamily: entry.apiFamily, baseUrl, },);
+  log().info({ message: "Discovered SD backend", apiFamily: entry.apiFamily, baseUrl, },);
 
   return {
     apiFamily: entry.apiFamily,
@@ -108,7 +111,7 @@ export async function discoverBackends(options?: DiscoveryOptions,): Promise<Dis
   }
 
   if (discovered.length === 0) {
-    log.debug({ message: "No SD backends discovered on well-known ports", },);
+    log().debug({ message: "No SD backends discovered on well-known ports", },);
   }
 
   return discovered;

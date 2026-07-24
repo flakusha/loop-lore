@@ -23,7 +23,7 @@ import {
   type SubstitutionVars,
 } from "./workflow-substitutor";
 
-const log = getLogger();
+/** Lazy logger access — avoids top-level init-order crash */
 
 /** Workflow metadata parsed from filename */
 interface WorkflowMeta {
@@ -148,7 +148,7 @@ class WorkflowLoader {
     try {
       filenames = await readdir(dirPath,);
     } catch (error) {
-      log.warn({ message: "Failed to read workflows directory", path: dirPath, error: String(error,), },);
+      getLogger().warn({ message: "Failed to read workflows directory", path: dirPath, error: String(error,), },);
       return;
     }
 
@@ -167,12 +167,12 @@ class WorkflowLoader {
         const content = await readFile(filePath, "utf8",);
         const parsed = jsonParseOr<ComfyUIWorkflow | null>(content, null,);
         if (!parsed) {
-          log.warn({ message: "Invalid JSON in workflow file", file: filename, },);
+          getLogger().warn({ message: "Invalid JSON in workflow file", file: filename, },);
           continue;
         }
 
         if (!this.isValidWorkflow(parsed,)) {
-          log.warn({ message: "Invalid workflow format, skipping", file: filename, },);
+          getLogger().warn({ message: "Invalid workflow format, skipping", file: filename, },);
           continue;
         }
 
@@ -182,9 +182,9 @@ class WorkflowLoader {
           workflow: parsed,
         },);
 
-        log.debug({ message: "Loaded workflow", name, nodes: Object.keys(parsed,).length, },);
+        getLogger().debug({ message: "Loaded workflow", name, nodes: Object.keys(parsed,).length, },);
       } catch (error) {
-        log.warn({
+        getLogger().warn({
           message: "Failed to load workflow",
           file: filename,
           error: String(error,),
@@ -192,7 +192,7 @@ class WorkflowLoader {
       }
     }
 
-    log.info({ message: "Workflows loaded", count: this.cache.size, dir: dirPath, },);
+    getLogger().info({ message: "Workflows loaded", count: this.cache.size, dir: dirPath, },);
   }
 
   /**

@@ -14,6 +14,7 @@ import {
   saveLocale,
   SUPPORTED_LOCALES,
 } from "../i18n";
+import { t, } from "../ui";
 
 // Mock localStorage for Bun test environment
 const storage = new Map<string, string>();
@@ -69,6 +70,12 @@ describe("resolveKey", () => {
 
   it("returns undefined when path crosses non-object", () => {
     expect(resolveKey(map, "common.save.something",),).toBeUndefined();
+  });
+
+  it("returns undefined for non-string key", () => {
+    expect(resolveKey(map, undefined as unknown as string,),).toBeUndefined();
+    expect(resolveKey(map, null as unknown as string,),).toBeUndefined();
+    expect(resolveKey(map, 42 as unknown as string,),).toBeUndefined();
   });
 });
 
@@ -201,5 +208,33 @@ describe("LOCALE_REGISTRY", () => {
 
   it("english is LTR", () => {
     expect(LOCALE_REGISTRY.en.direction,).toBe("ltr",);
+  });
+});
+
+describe("globalThis.t (from ui.ts)", () => {
+  beforeEach(() => {
+    (globalThis as any).__localeStrings = {
+      common: { save: "Save", cancel: "Cancel", },
+      greeting: { hello: "Hello {name}", },
+    };
+  },);
+
+  it("returns translated string for valid key", () => {
+    expect(t("common.save",),).toBe("Save",);
+  });
+
+  it("returns key fallback when missing", () => {
+    expect(t("missing.key",),).toBe("missing.key",);
+  });
+
+  it("interpolates params", () => {
+    expect(t("greeting.hello", { name: "World", },),).toBe("Hello World",);
+  });
+
+  it("returns empty string for non-string key (TypeError guard)", () => {
+    expect(t(undefined as unknown as string,),).toBe("",);
+    expect(t(null as unknown as string,),).toBe("",);
+    expect(t(42 as unknown as string,),).toBe("",);
+    expect(t({} as unknown as string,),).toBe("",);
   });
 });
