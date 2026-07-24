@@ -7,6 +7,8 @@
  * @module comfyui-provider
  */
 
+import { loadConfig, } from "../../config/load";
+import { pickSdProvider, } from "../../config/schema";
 import { ComfyUIClient, } from "../../generation/providers/comfyui";
 import { getLogger, } from "../../logger";
 import { uid, } from "../../utils";
@@ -39,12 +41,13 @@ export class ComfyUIEditProvider implements ImageEditProvider {
 
   private getClient(): ComfyUIClient {
     if (!this.client) {
-      // ComfyUI default port is 8188; no autoStart config yet
-      const baseUrl = "http://127.0.0.1:8188";
+      const config = loadConfig();
+      const sdConfig = pickSdProvider(config.generation.providers.sd, "edit",);
+      const baseUrl = sdConfig?.baseUrl ?? "http://127.0.0.1:8188";
 
       this.client = new ComfyUIClient({
         baseUrl,
-        timeout: 120_000,
+        timeout: sdConfig?.generationTimeout ?? 120_000,
         pollIntervalMs: 500,
       },);
     }
