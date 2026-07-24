@@ -47,7 +47,7 @@ export async function handleImageCaption(body: unknown,): Promise<Response> {
       };
 
       const result = await resolved.provider.complete(genReq,);
-      const caption = result.content.replaceAll(/^["']|["']$/g, "",).trim();
+      const caption = result.content.replaceAll(/^["']|["']$/g, "",).trim().replaceAll(/<[^>]*>/g, "",).slice(0, 500,);
 
       await db.updateTable("assets",).set({ alt_text: caption, },).where("id", "=", assetId,).execute();
 
