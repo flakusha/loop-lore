@@ -99,26 +99,48 @@ export class StreamBuffer {
 
 // ── Global store ──────────────────────────────────────────
 
+const MAX_BUFFERS = 1000;
 const chatBuffers = new Map<string, StreamBuffer>();
+const bufferAccessOrder: string[] = [];
+
+/** Move chatId to end of access order (most recently used) */
+function touchBuffer(chatId: string,): void {
+  const idx = bufferAccessOrder.indexOf(chatId,);
+  if (idx !== -1) { bufferAccessOrder.splice(idx, 1,); }
+  bufferAccessOrder.push(chatId,);
+}
+
+/** Evict least recently used buffer when over limit */
+function evictOldestBuffer(): void {
+  if (chatBuffers.size <= MAX_BUFFERS) { return; }
+  const oldest = bufferAccessOrder.shift();
+  if (oldest) { chatBuffers.delete(oldest,); }
+}
 
 /** Get or create a buffer for the given chat */
 export function getOrCreateBuffer(chatId: string,): StreamBuffer {
   let buf = chatBuffers.get(chatId,);
   if (!buf) {
+    evictOldestBuffer();
     buf = new StreamBuffer();
     chatBuffers.set(chatId, buf,);
   }
+  touchBuffer(chatId,);
   return buf;
 }
 
 /** Get existing buffer (undefined if none) */
 export function getBuffer(chatId: string,): StreamBuffer | undefined {
-  return chatBuffers.get(chatId,);
+  const buf = chatBuffers.get(chatId,);
+  if (buf) { touchBuffer(chatId,); }
+  return buf;
 }
 
 /** Remove a buffer */
 export function removeBuffer(chatId: string,): void {
   chatBuffers.delete(chatId,);
+  const idx = bufferAccessOrder.indexOf(chatId,);
+  if (idx !== -1) { bufferAccessOrder.splice(idx, 1,); }
 }
 
 /** Schedule buffer cleanup after a TTL */

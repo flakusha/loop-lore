@@ -14,6 +14,7 @@ import { loadConfig, } from "../config/load";
 import type { Config, } from "../config/schema";
 import {
   CancelReason,
+  ChunkAction,
   ContentEncoding,
   MessageContentFormat,
   MessageContentType,
@@ -34,8 +35,9 @@ import {
   startGenerationTracking,
 } from "./cancellation-manager";
 import { ContextCompactor, } from "./context-compactor";
-import { resolveProvider, } from "./providers/registry";
+import { buildFailoverList, callWithFailover, resolveProvider, } from "./providers/registry";
 import type { ChunkEvent, } from "./providers/types";
+import { getOrCreateBuffer, scheduleBufferCleanup, } from "./stream-buffer";
 import type { GenerationMessage, GenerationOptions, GenerationResult, } from "./types";
 
 // ── Helpers ─────────────────────────────────────────────────
@@ -362,6 +364,23 @@ export async function handleGenerate({
 
   // ── Build generation options for tracking ─────────────
 
+  // Resolution chain: explicit request → chat setting → config default → provider capability
+  let resolvedStream = input.stream;
+  if (resolvedStream === undefined) {
+    // Load chat's streaming setting
+    const chatRow = await database
+      .selectFrom("chats",)
+      .select(["streaming",],)
+      .where("id", "=", input.chatId,)
+      .executeTakeFirst();
+    const chatStreaming = chatRow?.streaming;
+    const configDefault = cfg.generation.defaultStream;
+    const providerCapable = resolved.provider.capabilities.streaming;
+    resolvedStream = chatStreaming === 1 ||
+      (chatStreaming == null && configDefault === true) ||
+      (chatStreaming == null && configDefault == null && providerCapable);
+  }
+
   const genOptions: GenerationOptions = {
     chatId: input.chatId,
     parentMessageId: input.parentMessageId,
@@ -373,7 +392,7 @@ export async function handleGenerate({
     maxTokens: input.maxTokens,
     topP: input.topP,
     systemPrompt,
-    stream: input.stream ?? false,
+    stream: resolvedStream,
     idempotencyKey: input.idempotencyKey,
     repetitionDetection: input.repetitionDetection,
     policyDetection: input.policyDetection,
@@ -405,7 +424,7 @@ export async function handleGenerate({
     tools,
     apiKey: resolved.resolvedApiKey,
     params: {
-      stream: input.stream ?? false,
+      stream: resolvedStream,
       temperature: input.temperature,
       maxTokens: input.maxTokens,
       topP: input.topP,
@@ -422,15 +441,18 @@ export async function handleGenerate({
     signal: abortSignal,
   };
 
+  // Build failover list: primary provider first, then all others
+  const failoverList = buildFailoverList(resolved.resolvedProviderName, cfg,);
+
   // ── Non-streaming path ─────────────────────────────────
 
-  if (!input.stream) {
+  if (!resolvedStream) {
     try {
       let currentMessages = messages;
-      let finalResponse: Awaited<ReturnType<typeof resolved.provider.complete>> | null = null;
+      let finalResponse: Awaited<ReturnType<typeof callWithFailover>> | null = null;
 
       for (let round = 0; round < MAX_TOOL_ROUNDS; round++) {
-        const response = await resolved.provider.complete({
+        const response = await callWithFailover(failoverList, {
           ...providerReq,
           messages: currentMessages,
         },);
@@ -515,32 +537,40 @@ export async function handleGenerate({
   let accumulatedContent = "";
   let accumulatedThinking = "";
   let abortController: AbortController | null = null;
+  const buffer = getOrCreateBuffer(input.chatId,);
 
   const sseStream = new ReadableStream({
     async start(controller,) {
       try {
         abortController = new AbortController();
         let currentMessages = messages;
-        let finalResponse: Awaited<ReturnType<typeof resolved.provider.stream>> | null = null;
+        let finalResponse: Awaited<ReturnType<typeof callWithFailover>> | null = null;
 
         for (let round = 0; round < MAX_TOOL_ROUNDS; round++) {
           let roundContent = "";
-          // eslint-disable-next-line @typescript-eslint/no-unused-vars
-          let roundThinking = "";
+          let _roundThinking = "";
 
-          const response = await resolved.provider.stream(
+          const response = await callWithFailover(
+            failoverList,
             { ...providerReq, messages: currentMessages, signal: abortController.signal, },
             (chunk: ChunkEvent,) => {
               if (chunk.type === "content" && chunk.content) {
                 accumulatedContent += chunk.content;
                 roundContent += chunk.content;
-                void processStreamingChunk({ attemptId, chunk: chunk.content, db: database, },);
+                // Feed chunk to repetition/policy detector
+                void processStreamingChunk({ attemptId, chunk: chunk.content, db: database, },).then((action,) => {
+                  if (action !== ChunkAction.Continue) {
+                    // Detector triggered cancel — abort the stream
+                    abortController?.abort();
+                  }
+                },);
+                // Emit to inline SSE consumer
                 controller.enqueue(
                   new TextEncoder().encode(sseData({ type: "content", content: chunk.content, },),),
                 );
               } else if (chunk.type === "thinking" && chunk.content) {
                 accumulatedThinking += chunk.content;
-                roundThinking += chunk.content;
+                _roundThinking += chunk.content;
                 controller.enqueue(
                   new TextEncoder().encode(sseData({ type: "thinking", content: chunk.content, },),),
                 );
@@ -613,7 +643,11 @@ export async function handleGenerate({
           aiContent: result.content,
         }, resolved.provider,);
 
-        // Send done event with final data
+        // Signal done on StreamBuffer for GET /stream/:chatId consumers
+        buffer.signalDone();
+        scheduleBufferCleanup(input.chatId,);
+
+        // Send done event to inline SSE consumer with final metadata
         controller.enqueue(
           new TextEncoder().encode(
             sseData({
@@ -637,6 +671,10 @@ export async function handleGenerate({
         } catch {
           /* empty */
         }
+
+        // Signal error on StreamBuffer for GET /stream/:chatId consumers
+        buffer.signalError(streamError,);
+        scheduleBufferCleanup(input.chatId,);
 
         controller.enqueue(new TextEncoder().encode(sseData({ type: "error", error: streamError, },),),);
         controller.close();
