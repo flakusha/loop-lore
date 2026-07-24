@@ -35,14 +35,10 @@ import {
   ChatParticipantParams,
   ChatParticipantUpdateBody,
   ChatPersonaUpdateBody,
-  ChatRenameBody,
   ChatUpdateBody,
-  ErrorResponse,
   PaginationQuery,
-  SuccessResponse,
 } from "../validation/schemas";
 import {
-  ErrorCode,
   forbiddenResponse as forbidden,
   HttpStatus,
   jsonCreated,
@@ -72,7 +68,7 @@ export function chatsRoutes(opts: HandlerOpts,) {
         "/api/chats",
         async (ctx: any,) => {
           const userId = ctx.userId as string | null;
-          if (!userId) { return unauthorized(undefined, ctx.t,); }
+          if (!userId) { return unauthorized(); }
           const page = (ctx.query.page as number) ?? 1;
           const pageSize = (ctx.query.pageSize as number) ?? 20;
           const offset = (page - 1) * pageSize;
@@ -94,29 +90,13 @@ export function chatsRoutes(opts: HandlerOpts,) {
             .execute();
           return jsonPaginated({ data: chats, total, page, pageSize, },);
         },
-        {
-          query: PaginationQuery,
-          response: {
-            200: t.Object({
-              data: t.Array(t.Any(),),
-              total: t.Number(),
-              page: t.Number(),
-              pageSize: t.Number(),
-            },),
-            401: ErrorResponse,
-          },
-          detail: {
-            summary: "List chats",
-            description: "List chats for the authenticated user, ordered by most recently updated.",
-            tags: ["Chats",],
-          },
-        },
+        { query: PaginationQuery, },
       )
       .post(
         "/api/chats",
         async (ctx: any,) => {
           const userId = ctx.userId as string | null;
-          if (!userId) { return unauthorized(undefined, ctx.t,); }
+          if (!userId) { return unauthorized(); }
 
           const ageGateConfig = getRuntimeConfig();
           if (ageGateConfig.enabled && ageGateConfig.mode !== "none") {
@@ -126,7 +106,7 @@ export function chatsRoutes(opts: HandlerOpts,) {
               .where("id", "=", userId,)
               .executeTakeFirst();
             const st = getStatus(ageGateConfig, user ?? null,);
-            if (!st.hasPassed) { return forbidden("Age gate not accepted",); }
+            if (!st.hasPassed) { return forbidden("Age gate not passed",); }
           }
 
           const body = ctx.body as typeof ChatCreateBody.static;
@@ -141,8 +121,6 @@ export function chatsRoutes(opts: HandlerOpts,) {
             participantIds: body.participantIds,
             gmConfig: body.gmConfig ?? undefined,
             visualNovel: body.visualNovel ?? undefined,
-            memoryCarry: body.memoryCarry ?? undefined,
-            memoryCarryIds: body.memoryCarryIds ?? undefined,
           },);
 
           const characterActors = await database
@@ -184,51 +162,47 @@ export function chatsRoutes(opts: HandlerOpts,) {
                 chatId: newChatId,
                 parentMessageId: null,
                 userId,
-                requestId: (ctx.request as Request).headers.get("x-request-id",) ?? undefined,
               },);
             }
           }
 
           return jsonCreated({ id: newChatId, },);
         },
-        {
-          body: ChatCreateBody,
-          response: { 201: t.Object({ id: t.String(), },), 401: ErrorResponse, 403: ErrorResponse, },
-        },
+        { body: ChatCreateBody, },
       )
       // ── Batch chat operations ──────────────────────────────────
       .post(
         "/api/chats/batch/archive",
         async (ctx: any,) => {
           const userId = ctx.userId as string | null;
-          if (!userId) { return unauthorized(undefined, ctx.t,); }
+          if (!userId) { return unauthorized(); }
           const ids = (ctx.body as { ids: string[] }).ids;
           const archived = await batchArchiveChats(database, ids, userId,);
-          if (archived.length === 0) { return notFound(ctx.t?.("chats.noChatsFound",) ?? "No chats found",); }
+          if (archived.length === 0) { return notFound("No chats found",); }
           return jsonResponse({ ok: true, archived: archived.length, },);
         },
-        { body: BatchIdsBody, response: { 200: SuccessResponse, 401: ErrorResponse, 404: ErrorResponse, }, },
+        { body: BatchIdsBody, },
       )
       .post(
         "/api/chats/batch/delete",
         async (ctx: any,) => {
           const userId = ctx.userId as string | null;
-          if (!userId) { return unauthorized(undefined, ctx.t,); }
+          if (!userId) { return unauthorized(); }
           const ids = (ctx.body as { ids: string[] }).ids;
           const deleted = await batchDeleteChats(database, ids, userId,);
-          if (deleted === 0) { return notFound(ctx.t?.("chats.noChatsFound",) ?? "No chats found",); }
+          if (deleted === 0) { return notFound("No chats found",); }
           return jsonResponse({ ok: true, deleted, },);
         },
-        { body: BatchIdsBody, response: { 200: SuccessResponse, 401: ErrorResponse, 404: ErrorResponse, }, },
+        { body: BatchIdsBody, },
       )
       .post(
         "/api/chats/batch/export",
         async (ctx: any,) => {
           const userId = ctx.userId as string | null;
-          if (!userId) { return unauthorized(undefined, ctx.t,); }
+          if (!userId) { return unauthorized(); }
           const ids = (ctx.body as { ids: string[] }).ids;
           const exportData = await batchExportChats(database, ids, userId,);
-          if (!exportData) { return notFound(ctx.t?.("chats.noChatsFound",) ?? "No chats found",); }
+          if (!exportData) { return notFound("No chats found",); }
           const json = safeJsonStringify(exportData,);
           return new Response(json.ok ? json.value : "[]", {
             headers: {
@@ -237,7 +211,7 @@ export function chatsRoutes(opts: HandlerOpts,) {
             },
           },);
         },
-        { body: BatchIdsBody, response: { 200: SuccessResponse, 401: ErrorResponse, 404: ErrorResponse, }, },
+        { body: BatchIdsBody, },
       )
       .get(
         "/api/chats/:id",
@@ -245,16 +219,16 @@ export function chatsRoutes(opts: HandlerOpts,) {
           const userId = ctx.userId as string | null;
           const userRole = ctx.userRole as string | null;
           const id = (ctx.params as { id: string }).id;
-          if (!userId) { return unauthorized(undefined, ctx.t,); }
+          if (!userId) { return unauthorized(); }
 
           const access = await checkChatAccess(database, id, userId, userRole,);
-          if (!access.ok) { return notFound(access.error.message, ctx.t,); }
+          if (!access.ok) { return notFound(access.error.message,); }
 
           const result = await getChat(database, id,);
-          if (!result) { return notFound(ctx.t?.("chats.chatNotFound",) ?? "Chat not found",); }
+          if (!result) { return notFound("Chat not found",); }
           return jsonResponse({ ...result.chat, participants: result.participants, },);
         },
-        { params: ChatIdParams, response: { 200: t.Any(), 401: ErrorResponse, 404: ErrorResponse, }, },
+        { params: ChatIdParams, },
       )
       .put(
         "/api/chats/:id",
@@ -263,10 +237,10 @@ export function chatsRoutes(opts: HandlerOpts,) {
           const userRole = ctx.userRole as string | null;
           const id = (ctx.params as { id: string }).id;
           const body = ctx.body as typeof ChatUpdateBody.static;
-          if (!userId) { return unauthorized(undefined, ctx.t,); }
+          if (!userId) { return unauthorized(); }
 
           const access = await checkChatAccess(database, id, userId, userRole,);
-          if (!access.ok) { return forbidden(undefined, ctx.t,); }
+          if (!access.ok) { return forbidden(); }
 
           const result = await updateChat(database, id, {
             name: body.name,
@@ -278,7 +252,6 @@ export function chatsRoutes(opts: HandlerOpts,) {
             freezePanel: body.freezePanel,
             gmConfig: body.gmConfig ?? undefined,
             visualNovel: body.visualNovel ?? undefined,
-            streaming: body.streaming,
             userRole,
           },);
           if ("code" in result) {
@@ -289,11 +262,7 @@ export function chatsRoutes(opts: HandlerOpts,) {
           }
           return jsonResponse({ ok: true, },);
         },
-        {
-          body: ChatUpdateBody,
-          params: ChatIdParams,
-          response: { 200: SuccessResponse, 401: ErrorResponse, 403: ErrorResponse, 404: ErrorResponse, },
-        },
+        { body: ChatUpdateBody, params: ChatIdParams, },
       )
       .delete(
         "/api/chats/:id",
@@ -301,66 +270,15 @@ export function chatsRoutes(opts: HandlerOpts,) {
           const userId = ctx.userId as string | null;
           const userRole = ctx.userRole as string | null;
           const id = (ctx.params as { id: string }).id;
-          if (!userId) { return unauthorized(undefined, ctx.t,); }
+          if (!userId) { return unauthorized(); }
 
           const access = await checkChatAccess(database, id, userId, userRole,);
-          if (!access.ok) { return forbidden(undefined, ctx.t,); }
+          if (!access.ok) { return forbidden(); }
 
           await deleteChat(database, id,);
           return jsonNoContent();
         },
-        { params: ChatIdParams, response: { 204: t.Void(), 401: ErrorResponse, 403: ErrorResponse, }, },
-      )
-      .post(
-        "/api/chats/:id/rename",
-        async (ctx: any,) => {
-          const userId = ctx.userId as string | null;
-          const userRole = ctx.userRole as string | null;
-          const id = (ctx.params as { id: string }).id;
-          const body = ctx.body as typeof ChatRenameBody.static;
-          if (!userId) { return unauthorized(undefined, ctx.t,); }
-
-          const access = await checkChatAccess(database, id, userId, userRole,);
-          if (!access.ok) { return forbidden(undefined, ctx.t,); }
-
-          // Validate name length
-          if (!body.name || body.name.length > 60) {
-            return jsonError("Name must be 1-60 characters", HttpStatus.BadRequest, ErrorCode.BadRequest,);
-          }
-
-          // Validate name_source
-          const validSources = ["manual", "auto-rule", "auto-llm",];
-          if (!body.name_source || !validSources.includes(body.name_source,)) {
-            return jsonError("Invalid name_source value", HttpStatus.BadRequest, ErrorCode.BadRequest,);
-          }
-
-          // Check for duplicate name in same chat (different chat with same name)
-          const existing = await database
-            .selectFrom("chats",)
-            .select("id",)
-            .where("name", "=", body.name,)
-            .where("id", "!=", id,)
-            .where("created_by", "=", userId,)
-            .executeTakeFirst();
-
-          if (existing) {
-            return jsonError("Name already in use", HttpStatus.BadRequest, ErrorCode.BadRequest,);
-          }
-
-          // Update chat with new name
-          await database
-            .updateTable("chats",)
-            .set({ name: body.name, name_source: body.name_source, },)
-            .where("id", "=", id,)
-            .execute();
-
-          return jsonResponse({ ok: true, },);
-        },
-        {
-          body: ChatRenameBody,
-          params: ChatIdParams,
-          response: { 200: SuccessResponse, 400: ErrorResponse, 401: ErrorResponse, 403: ErrorResponse, },
-        },
+        { params: ChatIdParams, },
       )
       .get(
         "/api/chats/:id/export",
@@ -368,7 +286,7 @@ export function chatsRoutes(opts: HandlerOpts,) {
           const userId = ctx.userId as string | null;
           const userRole = ctx.userRole as string | null;
           const id = (ctx.params as { id: string }).id;
-          if (!userId) { return unauthorized(undefined, ctx.t,); }
+          if (!userId) { return unauthorized(); }
 
           const chat = await database
             .selectFrom("chats",)
@@ -376,7 +294,7 @@ export function chatsRoutes(opts: HandlerOpts,) {
             .where("id", "=", id,)
             .executeTakeFirst();
           if (!chat || (chat.created_by !== userId && userRole !== "admin")) {
-            return notFound(ctx.t?.("chats.chatNotFound",) ?? "Chat not found",);
+            return notFound("Chat not found",);
           }
 
           const messages = await database
@@ -447,7 +365,7 @@ export function chatsRoutes(opts: HandlerOpts,) {
             },
           },);
         },
-        { params: ChatIdParams, response: { 200: t.Any(), 401: ErrorResponse, 404: ErrorResponse, }, },
+        { params: ChatIdParams, },
       )
       .get(
         "/api/chats/:id/participants",
@@ -455,7 +373,7 @@ export function chatsRoutes(opts: HandlerOpts,) {
           const userId = ctx.userId as string | null;
           const userRole = ctx.userRole as string | null;
           const id = (ctx.params as { id: string }).id;
-          if (!userId) { return unauthorized(undefined, ctx.t,); }
+          if (!userId) { return unauthorized(); }
 
           const chat = await database
             .selectFrom("chats",)
@@ -463,7 +381,7 @@ export function chatsRoutes(opts: HandlerOpts,) {
             .where("id", "=", id,)
             .executeTakeFirst();
           if (!chat || (chat.created_by !== userId && userRole !== "admin")) {
-            return notFound(ctx.t?.("chats.chatNotFound",) ?? "Chat not found",);
+            return notFound("Chat not found",);
           }
 
           const participants = await database
@@ -473,7 +391,7 @@ export function chatsRoutes(opts: HandlerOpts,) {
             .execute();
           return jsonResponse(participants,);
         },
-        { params: ChatIdParams, response: { 200: t.Array(t.Any(),), 401: ErrorResponse, 404: ErrorResponse, }, },
+        { params: ChatIdParams, },
       )
       .post(
         "/api/chats/:id/participants",
@@ -482,7 +400,7 @@ export function chatsRoutes(opts: HandlerOpts,) {
           const userRole = ctx.userRole as string | null;
           const id = (ctx.params as { id: string }).id;
           const body = ctx.body as { actorId: string; role?: string };
-          if (!userId) { return unauthorized(undefined, ctx.t,); }
+          if (!userId) { return unauthorized(); }
 
           const chat = await database
             .selectFrom("chats",)
@@ -490,7 +408,7 @@ export function chatsRoutes(opts: HandlerOpts,) {
             .where("id", "=", id,)
             .executeTakeFirst();
           if (!chat || (chat.created_by !== userId && userRole !== "admin")) {
-            return notFound(ctx.t?.("chats.chatNotFound",) ?? "Chat not found",);
+            return notFound("Chat not found",);
           }
 
           const role = body.role ?? "member";
@@ -538,11 +456,6 @@ export function chatsRoutes(opts: HandlerOpts,) {
           params: ChatIdParams,
           // eslint-disable-next-line unicorn/max-nested-calls
           body: t.Object({ actorId: t.String({ minLength: 1, },), role: t.Optional(t.String(),), },),
-          response: {
-            201: t.Object({ id: t.String(), },),
-            401: ErrorResponse,
-            404: ErrorResponse,
-          },
         },
       )
       .put(
@@ -552,7 +465,7 @@ export function chatsRoutes(opts: HandlerOpts,) {
           const userRole = ctx.userRole as string | null;
           const { id, actorId, } = ctx.params as { id: string; actorId: string };
           const body = ctx.body as typeof ChatParticipantUpdateBody.static;
-          if (!userId) { return unauthorized(undefined, ctx.t,); }
+          if (!userId) { return unauthorized(); }
 
           const chat = await database
             .selectFrom("chats",)
@@ -560,7 +473,7 @@ export function chatsRoutes(opts: HandlerOpts,) {
             .where("id", "=", id,)
             .executeTakeFirst();
           if (!chat || (chat.created_by !== userId && userRole !== "admin")) {
-            return notFound(ctx.t?.("chats.chatNotFound",) ?? "Chat not found",);
+            return notFound("Chat not found",);
           }
 
           const updates: Record<string, unknown> = {};
@@ -571,7 +484,7 @@ export function chatsRoutes(opts: HandlerOpts,) {
           if (typeof body.role === "string") { updates.role_in_chat = body.role; }
 
           if (Object.keys(updates,).length === 0) {
-            return jsonError({ message: "chats.noValidFields", status: HttpStatus.BadRequest, t: ctx.t, },);
+            return jsonError({ message: "No valid fields to update", status: HttpStatus.BadRequest, },);
           }
           await database
             .updateTable("chat_participants",)
@@ -581,11 +494,7 @@ export function chatsRoutes(opts: HandlerOpts,) {
             .execute();
           return jsonResponse({ ok: true, },);
         },
-        {
-          params: ChatParticipantParams,
-          body: ChatParticipantUpdateBody,
-          response: { 200: SuccessResponse, 401: ErrorResponse, 404: ErrorResponse, },
-        },
+        { params: ChatParticipantParams, body: ChatParticipantUpdateBody, },
       )
       .delete(
         "/api/chats/:id/participants/:actorId",
@@ -593,7 +502,7 @@ export function chatsRoutes(opts: HandlerOpts,) {
           const userId = ctx.userId as string | null;
           const userRole = ctx.userRole as string | null;
           const { id, actorId, } = ctx.params as { id: string; actorId: string };
-          if (!userId) { return unauthorized(undefined, ctx.t,); }
+          if (!userId) { return unauthorized(); }
 
           const chat = await database
             .selectFrom("chats",)
@@ -601,7 +510,7 @@ export function chatsRoutes(opts: HandlerOpts,) {
             .where("id", "=", id,)
             .executeTakeFirst();
           if (!chat || (chat.created_by !== userId && userRole !== "admin")) {
-            return notFound(ctx.t?.("chats.chatNotFound",) ?? "Chat not found",);
+            return notFound("Chat not found",);
           }
 
           await database
@@ -636,7 +545,7 @@ export function chatsRoutes(opts: HandlerOpts,) {
 
           return jsonNoContent();
         },
-        { params: ChatParticipantParams, response: { 204: t.Void(), 401: ErrorResponse, 404: ErrorResponse, }, },
+        { params: ChatParticipantParams, },
       )
       .put(
         "/api/chats/:id/location",
@@ -645,7 +554,7 @@ export function chatsRoutes(opts: HandlerOpts,) {
           const userRole = ctx.userRole as string | null;
           const id = (ctx.params as { id: string }).id;
           const body = ctx.body as typeof ChatLocationUpdateBody.static;
-          if (!userId) { return unauthorized(undefined, ctx.t,); }
+          if (!userId) { return unauthorized(); }
 
           const chat = await database
             .selectFrom("chats",)
@@ -653,7 +562,7 @@ export function chatsRoutes(opts: HandlerOpts,) {
             .where("id", "=", id,)
             .executeTakeFirst();
           if (!chat || (chat.created_by !== userId && userRole !== "admin")) {
-            return notFound(ctx.t?.("chats.chatNotFound",) ?? "Chat not found",);
+            return notFound("Chat not found",);
           }
 
           const fullChat = await database
@@ -661,10 +570,10 @@ export function chatsRoutes(opts: HandlerOpts,) {
             .selectAll()
             .where("id", "=", id,)
             .executeTakeFirst();
-          if (!fullChat) { return notFound(ctx.t?.("chats.chatNotFound",) ?? "Chat not found",); }
+          if (!fullChat) { return notFound("Chat not found",); }
 
           if (!fullChat.world_id) {
-            return jsonError({ message: "chats.noWorldAssigned", status: HttpStatus.BadRequest, t: ctx.t, },);
+            return jsonError({ message: "Chat has no world assigned", status: HttpStatus.BadRequest, },);
           }
 
           const locationId = body.locationId;
@@ -683,7 +592,7 @@ export function chatsRoutes(opts: HandlerOpts,) {
             .where("id", "=", locationId,)
             .where("world_id", "=", fullChat.world_id,)
             .executeTakeFirst();
-          if (!location) { return notFound(ctx.t?.("chats.locationNotFound",) ?? "Location not found",); }
+          if (!location) { return notFound("Location not found in this world",); }
 
           await database
             .updateTable("chats",)
@@ -692,11 +601,7 @@ export function chatsRoutes(opts: HandlerOpts,) {
             .execute();
           return jsonResponse({ ok: true, current_location_id: locationId, location_name: location.name, },);
         },
-        {
-          body: ChatLocationUpdateBody,
-          params: ChatIdParams,
-          response: { 200: SuccessResponse, 401: ErrorResponse, 404: ErrorResponse, },
-        },
+        { body: ChatLocationUpdateBody, params: ChatIdParams, },
       )
       .put(
         "/api/chats/:id/persona",
@@ -705,7 +610,7 @@ export function chatsRoutes(opts: HandlerOpts,) {
           const userRole = ctx.userRole as string | null;
           const id = (ctx.params as { id: string }).id;
           const body = ctx.body as typeof ChatPersonaUpdateBody.static;
-          if (!userId) { return unauthorized(undefined, ctx.t,); }
+          if (!userId) { return unauthorized(); }
 
           const chat = await database
             .selectFrom("chats",)
@@ -713,7 +618,7 @@ export function chatsRoutes(opts: HandlerOpts,) {
             .where("id", "=", id,)
             .executeTakeFirst();
           if (!chat || (chat.created_by !== userId && userRole !== "admin")) {
-            return notFound(ctx.t?.("chats.chatNotFound",) ?? "Chat not found",);
+            return notFound("Chat not found",);
           }
 
           await database
@@ -724,11 +629,7 @@ export function chatsRoutes(opts: HandlerOpts,) {
             .execute();
           return jsonResponse({ ok: true, },);
         },
-        {
-          body: ChatPersonaUpdateBody,
-          params: ChatIdParams,
-          response: { 200: SuccessResponse, 401: ErrorResponse, 404: ErrorResponse, },
-        },
+        { body: ChatPersonaUpdateBody, params: ChatIdParams, },
       )
       .put(
         "/api/chats/:id/impersonate",
@@ -737,7 +638,7 @@ export function chatsRoutes(opts: HandlerOpts,) {
           const userRole = ctx.userRole as string | null;
           const id = (ctx.params as { id: string }).id;
           const body = ctx.body as typeof ChatImpersonateBody.static;
-          if (!userId) { return unauthorized(undefined, ctx.t,); }
+          if (!userId) { return unauthorized(); }
 
           const chat = await database
             .selectFrom("chats",)
@@ -745,7 +646,7 @@ export function chatsRoutes(opts: HandlerOpts,) {
             .where("id", "=", id,)
             .executeTakeFirst();
           if (!chat || (chat.created_by !== userId && userRole !== "admin")) {
-            return notFound(ctx.t?.("chats.chatNotFound",) ?? "Chat not found",);
+            return notFound("Chat not found",);
           }
 
           await database
@@ -756,11 +657,7 @@ export function chatsRoutes(opts: HandlerOpts,) {
             .execute();
           return jsonResponse({ ok: true, },);
         },
-        {
-          body: ChatImpersonateBody,
-          params: ChatIdParams,
-          response: { 200: SuccessResponse, 401: ErrorResponse, 404: ErrorResponse, },
-        },
+        { body: ChatImpersonateBody, params: ChatIdParams, },
       )
       .put(
         "/api/chats/:id/mark-read",
@@ -768,7 +665,7 @@ export function chatsRoutes(opts: HandlerOpts,) {
           const userId = ctx.userId as string | null;
           const id = (ctx.params as { id: string }).id;
           const body = ctx.body as typeof ChatMarkReadBody.static;
-          if (!userId) { return unauthorized(undefined, ctx.t,); }
+          if (!userId) { return unauthorized(); }
 
           const participant = await database
             .selectFrom("chat_participants",)
@@ -776,9 +673,7 @@ export function chatsRoutes(opts: HandlerOpts,) {
             .where("chat_id", "=", id,)
             .where("actor_id", "=", userId,)
             .executeTakeFirst();
-          if (!participant) {
-            return forbidden(ctx.t?.("chats.notParticipant",) ?? "Not a participant of this chat",);
-          }
+          if (!participant) { return forbidden("Not a participant of this chat",); }
 
           const message = await database
             .selectFrom("messages",)
@@ -786,7 +681,7 @@ export function chatsRoutes(opts: HandlerOpts,) {
             .where("id", "=", body.messageId,)
             .where("chat_id", "=", id,)
             .executeTakeFirst();
-          if (!message) { return notFound(ctx.t?.("chats.messageNotFound",) ?? "Message not found",); }
+          if (!message) { return notFound("Message not found in this chat",); }
 
           await database
             .updateTable("chat_participants",)
@@ -797,11 +692,7 @@ export function chatsRoutes(opts: HandlerOpts,) {
 
           return jsonResponse({ ok: true, },);
         },
-        {
-          body: ChatMarkReadBody,
-          params: ChatIdParams,
-          response: { 200: SuccessResponse, 401: ErrorResponse, 404: ErrorResponse, },
-        },
+        { body: ChatMarkReadBody, params: ChatIdParams, },
       )
   );
 }
