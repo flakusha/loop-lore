@@ -15,6 +15,22 @@ interface HandlerOpts {
   database: Kysely<DB>;
 }
 
+/** Check if user owns the actor (or is admin/solo) */
+async function checkActorOwnership(
+  database: Kysely<DB>,
+  actorId: string,
+  userId: string | null,
+  userRole: string | null,
+): Promise<boolean> {
+  const actor = await database
+    .selectFrom("actors",)
+    .select("owner_id",)
+    .where("id", "=", actorId,)
+    .executeTakeFirst();
+  if (!actor) { return false; }
+  return actor.owner_id === userId || userRole === "admin" || userRole === "solo";
+}
+
 export function characterRelationshipsRoutes(opts: HandlerOpts,) {
   const { database, } = opts;
   const relationshipsService = new RelationshipsService(database,);
@@ -25,6 +41,10 @@ export function characterRelationshipsRoutes(opts: HandlerOpts,) {
       if (!userId) { return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, },); }
 
       const { actorId, } = ctx.params as { actorId: string };
+
+      if (!(await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,))) {
+        return jsonError({ message: "Actor not found", status: HttpStatus.NotFound, },);
+      }
       const worldId = ctx.query.worldId as string | undefined;
 
       const relationships = await relationshipsService.getRelationships(actorId, worldId,);
@@ -35,6 +55,10 @@ export function characterRelationshipsRoutes(opts: HandlerOpts,) {
       if (!userId) { return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, },); }
 
       const { actorId, targetActorId, } = ctx.params as { actorId: string; targetActorId: string };
+
+      if (!(await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,))) {
+        return jsonError({ message: "Actor not found", status: HttpStatus.NotFound, },);
+      }
       const worldId = ctx.query.worldId as string | undefined;
 
       const relationship = await relationshipsService.getRelationship(actorId, targetActorId, worldId,);
@@ -46,6 +70,10 @@ export function characterRelationshipsRoutes(opts: HandlerOpts,) {
       if (!userId) { return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, },); }
 
       const { actorId, } = ctx.params as { actorId: string };
+
+      if (!(await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,))) {
+        return jsonError({ message: "Actor not found", status: HttpStatus.NotFound, },);
+      }
       const body = ctx.body as Record<string, unknown>;
 
       const targetActorId = body.targetActorId as string | undefined;
@@ -82,6 +110,10 @@ export function characterRelationshipsRoutes(opts: HandlerOpts,) {
       if (!userId) { return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, },); }
 
       const { actorId, targetActorId, } = ctx.params as { actorId: string; targetActorId: string };
+
+      if (!(await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,))) {
+        return jsonError({ message: "Actor not found", status: HttpStatus.NotFound, },);
+      }
       const body = ctx.body as Record<string, unknown>;
 
       const worldId = body.worldId as string | undefined;
@@ -105,6 +137,10 @@ export function characterRelationshipsRoutes(opts: HandlerOpts,) {
       if (!userId) { return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, },); }
 
       const { actorId, targetActorId, } = ctx.params as { actorId: string; targetActorId: string };
+
+      if (!(await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,))) {
+        return jsonError({ message: "Actor not found", status: HttpStatus.NotFound, },);
+      }
       const worldId = ctx.query.worldId as string | undefined;
 
       await relationshipsService.deleteRelationship(actorId, targetActorId, worldId,);
@@ -115,6 +151,10 @@ export function characterRelationshipsRoutes(opts: HandlerOpts,) {
       if (!userId) { return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, },); }
 
       const { actorId, } = ctx.params as { actorId: string };
+
+      if (!(await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,))) {
+        return jsonError({ message: "Actor not found", status: HttpStatus.NotFound, },);
+      }
       const body = ctx.body as Record<string, unknown>;
 
       const targetActorId = body.targetActorId as string | undefined;

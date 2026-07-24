@@ -15,6 +15,22 @@ interface HandlerOpts {
   database: Kysely<DB>;
 }
 
+/** Check if user owns the actor (or is admin/solo) */
+async function checkActorOwnership(
+  database: Kysely<DB>,
+  actorId: string,
+  userId: string | null,
+  userRole: string | null,
+): Promise<boolean> {
+  const actor = await database
+    .selectFrom("actors",)
+    .select("owner_id",)
+    .where("id", "=", actorId,)
+    .executeTakeFirst();
+  if (!actor) { return false; }
+  return actor.owner_id === userId || userRole === "admin" || userRole === "solo";
+}
+
 export function characterTraitsRoutes(opts: HandlerOpts,) {
   const { database, } = opts;
   const traitsService = new TraitsService(database,);
@@ -26,6 +42,10 @@ export function characterTraitsRoutes(opts: HandlerOpts,) {
       if (!userId) { return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, },); }
 
       const { actorId, } = ctx.params as { actorId: string };
+
+      if (!(await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,))) {
+        return jsonError({ message: "Actor not found", status: HttpStatus.NotFound, },);
+      }
       const traits = await traitsService.getPermanentTraits(actorId,);
       return jsonResponse(traits,);
     },)
@@ -34,6 +54,10 @@ export function characterTraitsRoutes(opts: HandlerOpts,) {
       if (!userId) { return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, },); }
 
       const { actorId, traitName, } = ctx.params as { actorId: string; traitName: string };
+
+      if (!(await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,))) {
+        return jsonError({ message: "Actor not found", status: HttpStatus.NotFound, },);
+      }
       const trait = await traitsService.getPermanentTrait(actorId, traitName,);
       if (!trait) { return jsonError({ message: "Trait not found", status: HttpStatus.NotFound, },); }
       return jsonResponse(trait,);
@@ -43,6 +67,10 @@ export function characterTraitsRoutes(opts: HandlerOpts,) {
       if (!userId) { return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, },); }
 
       const { actorId, } = ctx.params as { actorId: string };
+
+      if (!(await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,))) {
+        return jsonError({ message: "Actor not found", status: HttpStatus.NotFound, },);
+      }
       const body = ctx.body as Record<string, unknown>;
 
       const category = body.category as string | undefined;
@@ -66,6 +94,10 @@ export function characterTraitsRoutes(opts: HandlerOpts,) {
       if (!userId) { return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, },); }
 
       const { actorId, traitName, } = ctx.params as { actorId: string; traitName: string };
+
+      if (!(await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,))) {
+        return jsonError({ message: "Actor not found", status: HttpStatus.NotFound, },);
+      }
       const body = ctx.body as Record<string, unknown>;
 
       const value = body.value as string | undefined;
@@ -84,6 +116,10 @@ export function characterTraitsRoutes(opts: HandlerOpts,) {
       if (!userId) { return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, },); }
 
       const { actorId, traitName, } = ctx.params as { actorId: string; traitName: string };
+
+      if (!(await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,))) {
+        return jsonError({ message: "Actor not found", status: HttpStatus.NotFound, },);
+      }
       await traitsService.deletePermanentTrait(actorId, traitName,);
       return jsonNoContent();
     },)
@@ -93,6 +129,10 @@ export function characterTraitsRoutes(opts: HandlerOpts,) {
       if (!userId) { return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, },); }
 
       const { actorId, worldId, } = ctx.params as { actorId: string; worldId: string };
+
+      if (!(await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,))) {
+        return jsonError({ message: "Actor not found", status: HttpStatus.NotFound, },);
+      }
       const traits = await traitsService.getWorldTraits(actorId, worldId,);
       return jsonResponse(traits,);
     },)
@@ -101,6 +141,10 @@ export function characterTraitsRoutes(opts: HandlerOpts,) {
       if (!userId) { return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, },); }
 
       const { actorId, worldId, traitName, } = ctx.params as { actorId: string; worldId: string; traitName: string };
+
+      if (!(await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,))) {
+        return jsonError({ message: "Actor not found", status: HttpStatus.NotFound, },);
+      }
       const trait = await traitsService.getWorldTrait(actorId, worldId, traitName,);
       if (!trait) { return jsonError({ message: "Trait not found", status: HttpStatus.NotFound, },); }
       return jsonResponse(trait,);
@@ -110,6 +154,10 @@ export function characterTraitsRoutes(opts: HandlerOpts,) {
       if (!userId) { return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, },); }
 
       const { actorId, worldId, } = ctx.params as { actorId: string; worldId: string };
+
+      if (!(await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,))) {
+        return jsonError({ message: "Actor not found", status: HttpStatus.NotFound, },);
+      }
       const body = ctx.body as Record<string, unknown>;
 
       const category = body.category as string | undefined;
@@ -134,6 +182,10 @@ export function characterTraitsRoutes(opts: HandlerOpts,) {
       if (!userId) { return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, },); }
 
       const { actorId, worldId, traitName, } = ctx.params as { actorId: string; worldId: string; traitName: string };
+
+      if (!(await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,))) {
+        return jsonError({ message: "Actor not found", status: HttpStatus.NotFound, },);
+      }
       const body = ctx.body as Record<string, unknown>;
 
       const value = body.value as string | undefined;
@@ -152,6 +204,10 @@ export function characterTraitsRoutes(opts: HandlerOpts,) {
       if (!userId) { return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, },); }
 
       const { actorId, worldId, traitName, } = ctx.params as { actorId: string; worldId: string; traitName: string };
+
+      if (!(await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,))) {
+        return jsonError({ message: "Actor not found", status: HttpStatus.NotFound, },);
+      }
       await traitsService.deleteWorldTrait(actorId, worldId, traitName,);
       return jsonNoContent();
     },)
@@ -161,6 +217,10 @@ export function characterTraitsRoutes(opts: HandlerOpts,) {
       if (!userId) { return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, },); }
 
       const { actorId, locationId, } = ctx.params as { actorId: string; locationId: string };
+
+      if (!(await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,))) {
+        return jsonError({ message: "Actor not found", status: HttpStatus.NotFound, },);
+      }
       const traits = await traitsService.getLocationTraits(actorId, locationId,);
       return jsonResponse(traits,);
     },)
@@ -173,6 +233,10 @@ export function characterTraitsRoutes(opts: HandlerOpts,) {
         locationId: string;
         traitName: string;
       };
+
+      if (!(await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,))) {
+        return jsonError({ message: "Actor not found", status: HttpStatus.NotFound, },);
+      }
       const trait = await traitsService.getLocationTrait(actorId, locationId, traitName,);
       if (!trait) { return jsonError({ message: "Trait not found", status: HttpStatus.NotFound, },); }
       return jsonResponse(trait,);
@@ -182,6 +246,10 @@ export function characterTraitsRoutes(opts: HandlerOpts,) {
       if (!userId) { return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, },); }
 
       const { actorId, locationId, } = ctx.params as { actorId: string; locationId: string };
+
+      if (!(await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,))) {
+        return jsonError({ message: "Actor not found", status: HttpStatus.NotFound, },);
+      }
       const body = ctx.body as Record<string, unknown>;
 
       const name = body.name as string | undefined;
@@ -214,6 +282,10 @@ export function characterTraitsRoutes(opts: HandlerOpts,) {
         locationId: string;
         traitName: string;
       };
+
+      if (!(await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,))) {
+        return jsonError({ message: "Actor not found", status: HttpStatus.NotFound, },);
+      }
       const body = ctx.body as Record<string, unknown>;
 
       const value = body.value as string | undefined;
@@ -243,6 +315,10 @@ export function characterTraitsRoutes(opts: HandlerOpts,) {
         locationId: string;
         traitName: string;
       };
+
+      if (!(await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,))) {
+        return jsonError({ message: "Actor not found", status: HttpStatus.NotFound, },);
+      }
       await traitsService.deleteLocationTrait(actorId, locationId, traitName,);
       return jsonNoContent();
     },)
@@ -252,6 +328,10 @@ export function characterTraitsRoutes(opts: HandlerOpts,) {
       if (!userId) { return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, },); }
 
       const { actorId, } = ctx.params as { actorId: string };
+
+      if (!(await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,))) {
+        return jsonError({ message: "Actor not found", status: HttpStatus.NotFound, },);
+      }
       const worldId = ctx.query.worldId as string | undefined;
       const locationId = ctx.query.locationId as string | undefined;
 

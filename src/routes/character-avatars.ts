@@ -14,6 +14,22 @@ interface HandlerOpts {
   database: Kysely<DB>;
 }
 
+/** Check if user owns the actor (or is admin/solo) */
+async function checkActorOwnership(
+  database: Kysely<DB>,
+  actorId: string,
+  userId: string | null,
+  userRole: string | null,
+): Promise<boolean> {
+  const actor = await database
+    .selectFrom("actors",)
+    .select("owner_id",)
+    .where("id", "=", actorId,)
+    .executeTakeFirst();
+  if (!actor) { return false; }
+  return actor.owner_id === userId || userRole === "admin" || userRole === "solo";
+}
+
 export function characterAvatarsRoutes(opts: HandlerOpts,) {
   const { database, } = opts;
   const avatarService = new AvatarService(database,);
@@ -24,6 +40,10 @@ export function characterAvatarsRoutes(opts: HandlerOpts,) {
       if (!userId) { return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, },); }
 
       const { actorId, } = ctx.params as { actorId: string };
+
+      if (!(await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,))) {
+        return jsonError({ message: "Actor not found", status: HttpStatus.NotFound, },);
+      }
       const avatars = await avatarService.getAvatars(actorId,);
       return jsonResponse(avatars,);
     },)
@@ -31,7 +51,13 @@ export function characterAvatarsRoutes(opts: HandlerOpts,) {
       const userId = ctx.userId as string | null;
       if (!userId) { return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, },); }
 
+      const { actorId, } = ctx.params as { actorId: string };
       const { avatarId, } = ctx.params as { avatarId: string };
+
+      if (!(await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,))) {
+        return jsonError({ message: "Actor not found", status: HttpStatus.NotFound, },);
+      }
+
       const avatar = await avatarService.getAvatar(avatarId,);
       if (!avatar) { return jsonError({ message: "Avatar not found", status: HttpStatus.NotFound, },); }
       return jsonResponse(avatar,);
@@ -41,6 +67,10 @@ export function characterAvatarsRoutes(opts: HandlerOpts,) {
       if (!userId) { return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, },); }
 
       const { actorId, } = ctx.params as { actorId: string };
+
+      if (!(await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,))) {
+        return jsonError({ message: "Actor not found", status: HttpStatus.NotFound, },);
+      }
       const body = ctx.body as Record<string, unknown>;
 
       const assetId = body.assetId as string | undefined;
@@ -67,8 +97,13 @@ export function characterAvatarsRoutes(opts: HandlerOpts,) {
       const userId = ctx.userId as string | null;
       if (!userId) { return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, },); }
 
+      const { actorId, } = ctx.params as { actorId: string };
       const { avatarId, } = ctx.params as { avatarId: string };
       const body = ctx.body as Record<string, unknown>;
+
+      if (!(await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,))) {
+        return jsonError({ message: "Actor not found", status: HttpStatus.NotFound, },);
+      }
 
       const label = body.label as string | undefined;
       const tags = body.tags as Record<string, string[]> | undefined;
@@ -87,7 +122,13 @@ export function characterAvatarsRoutes(opts: HandlerOpts,) {
       const userId = ctx.userId as string | null;
       if (!userId) { return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, },); }
 
+      const { actorId, } = ctx.params as { actorId: string };
       const { avatarId, } = ctx.params as { avatarId: string };
+
+      if (!(await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,))) {
+        return jsonError({ message: "Actor not found", status: HttpStatus.NotFound, },);
+      }
+
       await avatarService.deleteAvatar(avatarId,);
       return jsonNoContent();
     },)
@@ -96,6 +137,10 @@ export function characterAvatarsRoutes(opts: HandlerOpts,) {
       if (!userId) { return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, },); }
 
       const { actorId, } = ctx.params as { actorId: string };
+
+      if (!(await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,))) {
+        return jsonError({ message: "Actor not found", status: HttpStatus.NotFound, },);
+      }
       const body = ctx.body as Record<string, unknown>;
 
       const emotion = body.emotion as string | undefined;
@@ -122,6 +167,10 @@ export function characterAvatarsRoutes(opts: HandlerOpts,) {
       if (!userId) { return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, },); }
 
       const { actorId, } = ctx.params as { actorId: string };
+
+      if (!(await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,))) {
+        return jsonError({ message: "Actor not found", status: HttpStatus.NotFound, },);
+      }
       const config = await avatarService.getAvatarConfig(actorId,);
       return jsonResponse(config,);
     },)
@@ -130,6 +179,10 @@ export function characterAvatarsRoutes(opts: HandlerOpts,) {
       if (!userId) { return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, },); }
 
       const { actorId, } = ctx.params as { actorId: string };
+
+      if (!(await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,))) {
+        return jsonError({ message: "Actor not found", status: HttpStatus.NotFound, },);
+      }
       const body = ctx.body as Record<string, unknown>;
 
       const selectionRule = body.selectionRule as string | undefined;
@@ -148,6 +201,11 @@ export function characterAvatarsRoutes(opts: HandlerOpts,) {
       if (!userId) { return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, },); }
 
       const { worldId, actorId, } = ctx.params as { worldId: string; actorId: string };
+
+      if (!(await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,))) {
+        return jsonError({ message: "Actor not found", status: HttpStatus.NotFound, },);
+      }
+
       const config = await avatarService.getWorldAvatarConfig(actorId, worldId,);
       return jsonResponse(config,);
     },)
@@ -157,6 +215,10 @@ export function characterAvatarsRoutes(opts: HandlerOpts,) {
 
       const { worldId, actorId, } = ctx.params as { worldId: string; actorId: string };
       const body = ctx.body as Record<string, unknown>;
+
+      if (!(await checkActorOwnership(database, actorId, userId, ctx.userRole as string | null,))) {
+        return jsonError({ message: "Actor not found", status: HttpStatus.NotFound, },);
+      }
 
       const selectionRuleOverride = body.selectionRuleOverride as string | undefined;
       const weightsOverride = body.weightsOverride as Record<string, number> | undefined;
