@@ -716,11 +716,11 @@ export function pickSdProvider(
   if (!providers || providers.length === 0) { return undefined; }
 
   // Prefer exact purpose match
-  const exact = providers.find((p,) => p.purpose === purpose,);
+  const exact = providers.find((p,) => p.purpose === purpose);
   if (exact) { return exact; }
 
   // Fall back to "both"
-  const both = providers.find((p,) => p.purpose === "both" || !p.purpose,);
+  const both = providers.find((p,) => p.purpose === "both" || !p.purpose);
   if (both) { return both; }
 
   // Last resort: first provider
@@ -735,10 +735,10 @@ export type {
   AutoStartConfig,
   BedrockProviderConfig,
   ByoKeyConfig,
+  CharactersConfig,
   Config,
   CspConfig,
   DatabaseConfig as DbConfig,
-  CharactersConfig,
   DocumentationConfig,
   DynamicResponseConfig,
   EncryptionConfig,
