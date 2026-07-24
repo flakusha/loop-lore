@@ -121,6 +121,10 @@ CHECKS[build - backend]="bun build --target bun --outdir $BUILD_TMP ./src/server
 CHECKS[format - dprint]="bun run format:dprint"
 CHECKS[md - lint]="bun run md:lint"
 
+# Tests
+CHECKS[test - unit]="bun run test:unit"
+CHECKS[test - e2e]="E2E_SAFEGUARD=1 bun run test:e2e"
+
 echo -e "${CYAN}=== loop-lore parallel check runner ===${NC}"
 echo -e "${CYAN}Running ${#CHECKS[@]} checks in parallel...${NC}"
 echo ""

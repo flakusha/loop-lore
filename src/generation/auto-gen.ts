@@ -34,6 +34,7 @@ import { type GameMasterConfig, GameMasterService, } from "../story";
 import type { GenerateTextFn, } from "../story/game-master";
 import { jsonParseOr, uid, } from "../utils";
 import { getRegisteredHooks, runHookChain, } from "./hooks";
+import type { HookEventType, } from "./hooks";
 import {
   cancelGenerationByChat,
   completeGeneration,
@@ -329,6 +330,29 @@ export async function triggerAutoGeneration(opts: AutoGenOpts,): Promise<void> {
 
     log.info("LLM response", { contentLength: accumulatedContent.length, finishReason, ...tokenUsage, },);
 
+    // Fetch actor NSFW policy for hook gating
+    const availability = await database
+      .selectFrom("character_availability",)
+      .select(["nsfw_policy",],)
+      .where("actor_id", "=", characterId,)
+      .executeTakeFirst();
+    const nsfwPolicy = availability?.nsfw_policy
+      ? (JSON.parse(availability.nsfw_policy,) as Record<string, unknown>).level as string | undefined
+      : undefined;
+
+    // Determine which hook event types to run based on config
+    const hooksConfig = config.hooks ?? {
+      enableMoodHooks: true,
+      enableEmotionHooks: true,
+      enableNsfwHooks: true,
+      enableModerationHooks: true,
+    };
+    const enabledEventTypes: HookEventType[] = [];
+    if (hooksConfig.enableMoodHooks) { enabledEventTypes.push("mood_shift",); }
+    if (hooksConfig.enableEmotionHooks) { enabledEventTypes.push("emotion_change",); }
+    if (hooksConfig.enableNsfwHooks) { enabledEventTypes.push("nsfw_gate", "privacy_check",); }
+    if (hooksConfig.enableModerationHooks) { enabledEventTypes.push("moderation_flag",); }
+
     // Run content hooks (mood, emotion, NSFW, moderation) before storing
     const hookResult = await runHookChain({
       hooks: [...getRegisteredHooks(),],
@@ -337,8 +361,9 @@ export async function triggerAutoGeneration(opts: AutoGenOpts,): Promise<void> {
         actorId: characterId,
         userId,
         content: accumulatedContent,
-        nsfwPolicy: undefined,
+        nsfwPolicy,
         privacyLevel: "standard",
+        eventTypes: enabledEventTypes,
         config,
         nsfwConfig: config.nsfw ?? { allowNsfw: false, nsfwMinAge: 0, },
         db: database,
