@@ -253,6 +253,8 @@ interface ImageProviderConfig {
   apiFamily: ImageApiFamily;
   /** Optional API key */
   apiKey?: string;
+  /** Provider purpose — determines which use-case picks this provider */
+  purpose?: "generate" | "edit" | "both";
   /** Default generation parameters */
   defaults: ImageProviderDefaults;
   /** Connection timeout in ms */
@@ -268,8 +270,8 @@ interface GenerationProvidersConfig {
   anthropic?: ProviderInstanceConfig;
   /** Ollama native API provider (separate from openai-compatible mode) */
   ollamaNative?: ProviderInstanceConfig;
-  /** Image generation provider (SD, FLUX, etc.) */
-  sd?: ImageProviderConfig;
+  /** Image generation providers (SD, FLUX, etc.) — first entry is default */
+  sd?: ImageProviderConfig[];
   /** AWS Bedrock provider (Claude, Llama, Titan models) */
   bedrock?: BedrockProviderConfig;
 }
@@ -542,6 +544,25 @@ interface NsfwConfig {
   nsfwMinAge: number;
 }
 
+// ── Characters (Template Seeding) ────────────────────────────
+
+interface CharactersConfig {
+  /** Enable character template seeding on app start. Default true. */
+  enabled: boolean;
+  /** Default character templates to seed. Never overrides existing DB records. */
+  templates: {
+    name: string;
+    description: string;
+    personality?: string;
+    scenario?: string;
+    welcome_message?: string;
+    system_prompt?: string;
+    mes_example?: string;
+    tags?: string[];
+    creator?: string;
+  }[];
+}
+
 // ── Hooks (Fast Review & Trigger System) ─────────────────────
 
 interface HooksConfig {
@@ -661,6 +682,7 @@ interface Config {
   headers: HeadersConfig;
   dynamicResponse: DynamicResponseConfig;
   templates: TemplatesConfig;
+  characters: CharactersConfig;
   testing?: TestingConfig;
 }
 
@@ -675,6 +697,36 @@ interface Config {
 //   models: {},
 // };
 
+/**
+ * Pick the best SD provider for a given purpose.
+ *
+ * Selection logic:
+ * 1. Find providers matching `purpose` (or "both")
+ * 2. Among matches, prefer exact purpose match over "both"
+ * 3. Fall back to first provider in array
+ *
+ * @param providers - Array of SD provider configs (may be undefined)
+ * @param purpose - What the provider will be used for
+ * @returns Best matching provider, or undefined if none configured
+ */
+export function pickSdProvider(
+  providers: ImageProviderConfig[] | undefined,
+  purpose: "generate" | "edit",
+): ImageProviderConfig | undefined {
+  if (!providers || providers.length === 0) { return undefined; }
+
+  // Prefer exact purpose match
+  const exact = providers.find((p,) => p.purpose === purpose,);
+  if (exact) { return exact; }
+
+  // Fall back to "both"
+  const both = providers.find((p,) => p.purpose === "both" || !p.purpose,);
+  if (both) { return both; }
+
+  // Last resort: first provider
+  return providers[0];
+}
+
 export type {
   AgeGateConfig,
   AssetsConfig,
@@ -686,6 +738,7 @@ export type {
   Config,
   CspConfig,
   DatabaseConfig as DbConfig,
+  CharactersConfig,
   DocumentationConfig,
   DynamicResponseConfig,
   EncryptionConfig,

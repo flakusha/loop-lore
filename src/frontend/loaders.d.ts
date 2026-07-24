@@ -64,6 +64,9 @@ declare global {
   var editCharacter: (btn: HTMLElement,) => void;
   var deleteCharacter: (btn: HTMLElement,) => Promise<void>;
   var exportCharacter: (btn: HTMLElement,) => void;
+  var saveCharacterEdit: (characterId: string,) => Promise<void>;
+  var uploadAvatar: (input: HTMLInputElement,) => Promise<void>;
+  var clearAvatar: () => void;
   var filterAssets: () => void;
   var openAssetPreview: (id: string,) => Promise<void>;
   var copyAssetUrl: () => Promise<void>;

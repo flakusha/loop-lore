@@ -55,6 +55,8 @@ export function charactersRoutes(opts: HandlerOpts,) {
       }
 
       const id = uid();
+      const tags = body.tags ? (body.tags as string).split(",").map((t: string,) => t.trim(),).filter(Boolean,) : [];
+      const settings = tags.length > 0 ? JSON.stringify({ tags },) : "{}";
       await database
         .insertInto("actors",)
         .values({
@@ -65,8 +67,11 @@ export function charactersRoutes(opts: HandlerOpts,) {
           owner_id: userId,
           agent_type: (body.agentType as AgentType | undefined) ?? AgentType.Ai,
           description: (body.description as string | undefined) ?? null,
+          personality: (body.personality as string | undefined) ?? null,
+          scenario: (body.scenario as string | undefined) ?? null,
+          welcome_message: (body.welcomeMessage as string | undefined) ?? null,
           system_prompt: (body.systemPrompt as string | undefined) ?? null,
-          settings: "{}",
+          settings,
           import_spec: "raw",
           data_version: 0,
         },)
@@ -103,6 +108,8 @@ export function charactersRoutes(opts: HandlerOpts,) {
         return jsonError({ message: "Actor not found", status: HttpStatus.NotFound, },);
       }
 
+      const settings = jsonParseOr(actor.settings, {},) as Record<string, unknown>;
+      const tags = Array.isArray(settings.tags,) ? settings.tags : [];
       const card = {
         spec: "chara_card_v2",
         spec_version: "2.0",
@@ -119,7 +126,7 @@ export function charactersRoutes(opts: HandlerOpts,) {
           creator_notes: actor.creator_notes ?? "",
           creator: actor.creator ?? "",
           character_version: actor.character_version ?? "",
-          tags: [],
+          tags,
           extensions: {},
         },
       };

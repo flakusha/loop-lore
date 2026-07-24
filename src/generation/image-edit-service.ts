@@ -11,6 +11,7 @@ import type { Kysely, } from "kysely";
 import { randomUUID, } from "node:crypto";
 import { createAsset, getAsset, linkAsset, } from "../assets/service";
 import { loadConfig, } from "../config/load";
+import { pickSdProvider, } from "../config/schema";
 import { AssetLinkEntity, } from "../db/enums";
 import type { DB, } from "../db/schema";
 import { getLogger, } from "../logger";
@@ -308,7 +309,7 @@ export class ImageEditService {
     actorId: string;
   },): Promise<string> {
     const config = loadConfig();
-    const sdConfig = config.generation.providers.sd;
+    const sdConfig = pickSdProvider(config.generation.providers.sd, "edit",);
 
     if (!sdConfig) {
       throw new Error("No image generation provider configured",);
