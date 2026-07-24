@@ -32,7 +32,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # shellcheck source=/dev/null
 source "$SCRIPT_DIR/lib/colors.sh"
 
-PROTECTED_BRANCHES="master main"
+PROTECTED_BRANCHES="master main stg dev"
 
 is_protected() {
     local branch="$1"

@@ -5,9 +5,9 @@
  */
 export { EncounterService, } from "./service";
 export type {
-  EncounterPhase,
-  EncounterOutcome,
-  NsfwEncounter,
-  CreateEncounterOpts,
   AdvancePhaseResult,
+  CreateEncounterOpts,
+  EncounterOutcome,
+  EncounterPhase,
+  NsfwEncounter,
 } from "./service";
