@@ -310,7 +310,7 @@ export class IntimacyService {
    *
    * @param decayAmount - How much to decay per call (default 1).
    */
-  async decayAll(actorId: string, decayAmount: number = 1,): Promise<number> {
+  async decayAll(actorId: string, decayAmount = 1,): Promise<number> {
     const pairs = await this.db
       .selectFrom("character_intimacy",)
       .where("actor_id", "=", actorId,)
