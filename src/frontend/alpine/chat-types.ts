@@ -325,6 +325,25 @@ export interface ChatState extends AlpineMagicThis {
   getModifier(stat: number,): number;
   effectiveStat(base: number, effects: StatusEffect[],): number;
 
+  // ── Mood System ───────────────────────────────────────────
+  _mood: {
+    happiness: number;
+    currentMood: string;
+    baseMood: string;
+    moodStability: number;
+    lastMoodChange: string;
+    expressionModifiers: Record<string, number>;
+  } | null;
+  _moodLoading: boolean;
+  _moodCanEdit: boolean;
+  _moodSliderValue: number;
+  loadMood(): Promise<void>;
+  updateMoodHappiness(happiness: number,): Promise<void>;
+  applyMoodDelta(delta: number,): Promise<void>;
+  _getMoodEmoji(mood: string,): string;
+  _getMoodColor(happiness: number,): string;
+  _happinessToMood(happiness: number,): string;
+
   // ── Memory System ───────────────────────────────────────────
   memoryPanel: MemoryPanelState;
   loadMemories(): Promise<void>;
