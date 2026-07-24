@@ -64,6 +64,29 @@ function createMockDeps(): Partial<GenDeps> {
       },)
     ),
     listProviders: mock(() => [{ name: "mock-provider", capabilities: { streaming: false, }, },]),
+    callWithFailover: mock(async (providers, req, handler?,) => {
+      const prov = providers[0]?.provider;
+      if (!prov) { throw new Error("No providers",); }
+      if (handler) { return prov.stream(req, handler,); }
+      return prov.complete(req,);
+    },),
+    buildFailoverList: mock((primaryName,) => {
+      // Return a dummy provider entry — callWithFailover mock uses providers[0]
+      return [{
+        name: primaryName,
+        provider: {
+          complete: mock(() =>
+            Promise.resolve({
+              content: "",
+              thinking: undefined,
+              finishReason: "stop" as const,
+              usage: { promptTokens: 0, completionTokens: 0, totalTokens: 0, },
+            },)
+          ),
+          stream: mock(() => Promise.resolve()),
+        } as any,
+      },];
+    },),
     isEncryptionEnabled: () => false,
     getSmk: () => null,
     deriveChatKeyForChat: mock(() =>

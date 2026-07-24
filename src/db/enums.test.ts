@@ -34,7 +34,7 @@ const EXPECTED_ENUMS: Record<string, string[]> = {
   KeyStatus: ["active", "expired", "revoked",],
   NoteCategory: ["general", "world", "character", "story", "combat", "session",],
   ActorItemType: ["equipment", "consumable", "key_item", "artifact", "misc",],
-  ModelRole: ["main", "captioning", "moderation", "embeddings", "summarization",],
+  ModelRole: ["main", "auxiliary", "captioning", "moderation", "embeddings", "summarization",],
   // enums-story
   TurnType: ["character_action", "narration", "gm_injection", "quest_update", "world_event",],
   TurnStatus: ["pending", "generating", "evaluating", "accepted", "regenerating", "failed", "escalated",],
