@@ -117,6 +117,8 @@ export interface Chats {
   response_length_preset: Generated<string>;
   response_length_custom: number | null;
   context_max_tokens: number | null;
+  /** Streaming mode: true = stream, false = non-stream, null = use provider/config default */
+  streaming: Generated<number | null>;
   created_at: Generated<string>;
   updated_at: Generated<string>;
 }

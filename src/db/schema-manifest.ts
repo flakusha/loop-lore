@@ -198,6 +198,7 @@ export const SCHEMA = new SchemaManifest()
     response_length_preset: col("text",),
     response_length_custom: col("text",),
     context_max_tokens: col("integer",),
+    streaming: col("integer",),
     created_at: col("text", { notNull: true, },),
     updated_at: col("text", { notNull: true, },),
   },)
