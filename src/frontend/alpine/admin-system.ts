@@ -34,7 +34,7 @@ export const adminSystem = {
   loadingHealth: false,
   healthAutoRefresh: false,
   healthRefreshInterval: null as ReturnType<typeof setInterval> | null,
-  nsfwConfig: { allowNsfw: true, nsfwMinAge: 18, defaultNsfwScope: "chat", consentRequired: true, auditLogging: true, },
+  nsfwConfig: { allowNsfw: true, nsfwMinAge: 18, },
   loadingNsfw: false,
 
   async loadSystemConfig() {
