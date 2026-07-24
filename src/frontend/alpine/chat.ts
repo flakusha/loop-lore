@@ -138,9 +138,11 @@ globalThis.chatState = function() {
     // ── Mood Panel State ──
     _moodPanel: createMoodPanelState(),
     async loadMoodPanel(actorId: string,) {
-      await this._moodPanel.loadMood(actorId,);
-      await this._moodPanel.loadEmotions(actorId,);
-      await this._moodPanel.loadEmotionDefs();
+      await Promise.allSettled([
+        this._moodPanel.loadMood(actorId,),
+        this._moodPanel.loadEmotions(actorId,),
+        this._moodPanel.loadEmotionDefs(),
+      ],);
     },
 
     // ── Sub-module state + methods ──
