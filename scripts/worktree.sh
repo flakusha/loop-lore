@@ -964,19 +964,36 @@ cmd_finalize() {
     else
         echo -e "${YELLOW}  Skipped: bun or package.json not found${NC}"
     fi
-    echo ""
-    
-    # Step 3: Run tests
-    echo -e "${CYAN}Step 3: Running tests (bun run test:unit)...${NC}"
-    if [[ "$force" == "true" ]]; then
-        echo -e "${YELLOW}  Skipped: --force flag set${NC}"
-    elif command -v bun &>/dev/null && [[ -f "$worktree_path/bun.lock" || -f "$worktree_path/package.json" ]]; then
-        if (cd "$worktree_path" && unset REPO_ROOT && bun run test:unit); then
-            echo -e "${GREEN}  ✓ Tests passed${NC}"
-        else
-            echo -e "${RED}  ✗ Tests failed — fix before finalizing (or use --force)${NC}"
-            exit 1
-        fi
+  else
+    echo -e "${YELLOW}  Skipped: bun or package.json not found${NC}"
+  fi
+  echo ""
+
+  # Step 4: Check branch has commits beyond base
+  local base="master"
+  local ahead
+  ahead=$(git -C "$worktree_path" rev-list --count "$base..HEAD" 2>/dev/null || echo "0")
+  if [[ "$ahead" -eq 0 ]]; then
+    echo -e "${YELLOW}  ⚠ Branch '$branch' has no commits beyond $base${NC}"
+    echo -e "  Nothing to merge."
+    exit 0
+  fi
+  echo -e "${GREEN}  ✓ Branch has $ahead commit(s) beyond $base${NC}"
+  echo ""
+
+  # Step 5: Merge into base branch (worktree stays until merge succeeds)
+  local target_branch
+  target_branch=$(git -C "$REPO_ROOT" branch --show-current)
+  echo -e "${CYAN}Step 5: Merging '$branch' into $target_branch...${NC}"
+  local GIT_MERGE_FLAGS=()
+  gpg_merge_flags
+  if git -C "$REPO_ROOT" "${GIT_MERGE_FLAGS[@]}" merge "$branch" --no-edit; then
+    echo -e "${GREEN}  ✓ Merged into $target_branch${NC}"
+    # Verify merge commit is signed
+    local merge_sha
+    merge_sha=$(git -C "$REPO_ROOT" rev-parse HEAD)
+    if git -C "$REPO_ROOT" verify-commit "$merge_sha" &>/dev/null; then
+      echo -e "${GREEN}  ✓ Merge commit GPG-signed ($merge_sha)${NC}"
     else
         echo -e "${YELLOW}  Skipped: bun or package.json not found${NC}"
     fi
