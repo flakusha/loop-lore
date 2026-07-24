@@ -94,6 +94,37 @@
           <option value="moderator">Moderator</option>
         </select>
       </div>
+
+      <!-- Mood Editing (GM/Admin only) -->
+      <template x-if="_moodCanEdit">
+        <div class="form-group">
+          <label class="form-label" for="mood-happiness-slider">
+            Character Happiness (<span x-text="_mood?.happiness ?? 50"></span>%)
+          </label>
+          <input
+            type="range"
+            id="mood-happiness-slider"
+            min="0"
+            max="100"
+            x-model.number="_moodSliderValue"
+            @input="updateMoodHappiness(_moodSliderValue)"
+            data-testid="mood-happiness-slider"
+          />
+          <div style="display: flex; justify-content: space-between; font-size: var(--fs-xs); color: var(--text-secondary)">
+            <span>Miserable</span>
+            <span>Neutral</span>
+            <span>Ecstatic</span>
+          </div>
+          <div x-show="_mood" style="margin-top: var(--space-2)">
+            <span x-text="_getMoodEmoji(_mood.currentMood)" style="font-size: 20px"></span>
+            <span x-text="_mood.currentMood" style="margin-left: var(--space-2)"></span>
+          </div>
+          <small style="color: var(--text-secondary); display: block; margin-top: var(--space-2)">
+            GM/Admin only: Direct mood manipulation. Character mood is normally managed by interactions and story
+            development.
+          </small>
+        </div>
+      </template>
     </div>
     <div class="modal-footer">
       <button class="btn btn-ghost" @click="$store.ui.showChatSettings = false">Cancel</button>
