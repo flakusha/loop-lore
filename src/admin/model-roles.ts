@@ -10,9 +10,16 @@ import type { DB, } from "../db/schema";
 import { getProvider, } from "../generation/providers/registry";
 import { getLogger, } from "../logger";
 
-export type ModelRole = "main" | "captioning" | "moderation";
+import { ModelRole, } from "../db/enums-core";
+export type { ModelRole, } from "../db/enums-core";
 
-export const VALID_ROLES: ModelRole[] = ["main", "captioning", "moderation",];
+/** Roles manageable from the admin panel (subset of all ModelRole values). */
+export const VALID_ROLES = [
+  ModelRole.Main,
+  ModelRole.Auxiliary,
+  ModelRole.Captioning,
+  ModelRole.Moderation,
+] as const;
 
 export interface ResolvedModelRole {
   role: ModelRole;
@@ -34,7 +41,7 @@ export async function resolveModelRole(
   config: Config,
   db: Kysely<DB>,
 ): Promise<ResolvedModelRole> {
-  if (!VALID_ROLES.includes(role,)) {
+  if (!(VALID_ROLES as readonly string[]).includes(role,)) {
     throw new Error(`Invalid model role: "${role}". Must be one of: ${VALID_ROLES.join(", ",)}`,);
   }
 
@@ -56,7 +63,7 @@ export async function resolveModelRole(
   }
 
   // 2. Config defaults
-  const configRole = config.generation.modelRoles?.[role];
+  const configRole = config.generation.modelRoles?.[role as keyof typeof config.generation.modelRoles];
   if (configRole) {
     return { role, provider: configRole.provider, model: configRole.model, source: "config", };
   }
@@ -87,7 +94,7 @@ export async function setModelRoleOverride(
   model: string,
   db: Kysely<DB>,
 ): Promise<void> {
-  if (!VALID_ROLES.includes(role,)) {
+  if (!(VALID_ROLES as readonly string[]).includes(role,)) {
     throw new Error(`Invalid model role: "${role}"`,);
   }
 
@@ -115,7 +122,7 @@ export async function setModelRoleOverride(
  * Clear a model role override from the DB (revert to config/default).
  */
 export async function clearModelRoleOverride(role: ModelRole, db: Kysely<DB>,): Promise<void> {
-  if (!VALID_ROLES.includes(role,)) {
+  if (!(VALID_ROLES as readonly string[]).includes(role,)) {
     throw new Error(`Invalid model role: "${role}"`,);
   }
 
