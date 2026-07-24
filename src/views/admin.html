@@ -1,7 +1,7 @@
 <!-- Admin Dashboard -->
 <header id="header-slot" class="main-header" data-testid="admin-header">
   <button class="hamburger" x-on:click="window.toggleSidebar()" data-testid="hamburger">☰</button>
-  <span class="title">{{{t("admin.dashboard")}}}</span>
+  <span class="title">Admin Dashboard</span>
 </header>
 
 <div class="app-layout" x-data="adminPage()" x-init="init()">
@@ -14,45 +14,45 @@
           :class="{ active: activeTab === 'overview' }"
           @click="showTab('overview')"
         >
-          {{{t("admin.overview")}}}
+          Overview
         </button>
         <button class="world-edit-tab" :class="{ active: activeTab === 'users' }" @click="showTab('users')">
-          {{{t("admin.users")}}}
+          Users
         </button>
         <button class="world-edit-tab" :class="{ active: activeTab === 'worlds' }" @click="showTab('worlds')">
-          {{{t("admin.worlds")}}}
+          Worlds
         </button>
         <button class="world-edit-tab" :class="{ active: activeTab === 'chats' }" @click="showTab('chats')">
-          {{{t("admin.chats")}}}
+          Chats
         </button>
         <button class="world-edit-tab" :class="{ active: activeTab === 'audit' }" @click="showTab('audit')">
-          {{{t("admin.audit")}}}
+          Audit
         </button>
         <button class="world-edit-tab" :class="{ active: activeTab === 'models' }" @click="showTab('models')">
-          {{{t("admin.models")}}}
-        </button>
-        <button class="world-edit-tab" :class="{ active: activeTab === 'templates' }" @click="showTab('templates')">
-          {{{t("admin.templates")}}}
+          Models
         </button>
         <button
           class="world-edit-tab"
           :class="{ active: activeTab === 'plugins' }"
           @click="showTab('plugins')"
         >
-          {{{t("admin.plugins")}}}
+          Plugins
         </button>
         <button class="world-edit-tab" :class="{ active: activeTab === 'system' }" @click="showTab('system')">
-          {{{t("admin.system")}}}
+          System
         </button>
         <button
           class="world-edit-tab"
           :class="{ active: activeTab === 'analytics' }"
           @click="showTab('analytics')"
         >
-          {{{t("admin.analytics")}}}
+          Analytics
         </button>
         <button class="world-edit-tab" :class="{ active: activeTab === 'health' }" @click="showTab('health')">
-          {{{t("admin.health")}}}
+          Health
+        </button>
+        <button class="world-edit-tab" :class="{ active: activeTab === 'templates' }" @click="showTab('templates')">
+          Templates
         </button>
       </div>
 
@@ -61,33 +61,31 @@
         <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: var(--space-4); padding: var(--space-6)">
           <div class="admin-stat-card">
             <div class="admin-stat-value" x-text="stats.users">0</div>
-            <div class="admin-stat-label">{{{t("admin.users")}}}</div>
+            <div class="admin-stat-label">Users</div>
           </div>
           <div class="admin-stat-card">
             <div class="admin-stat-value" x-text="stats.chats">0</div>
-            <div class="admin-stat-label">{{{t("admin.chats")}}}</div>
+            <div class="admin-stat-label">Chats</div>
           </div>
           <div class="admin-stat-card">
             <div class="admin-stat-value" x-text="stats.messages">0</div>
-            <div class="admin-stat-label">{{{t("admin.messages")}}}</div>
+            <div class="admin-stat-label">Messages</div>
           </div>
           <div class="admin-stat-card">
             <div class="admin-stat-value" x-text="stats.characters">0</div>
-            <div class="admin-stat-label">{{{t("admin.characters")}}}</div>
+            <div class="admin-stat-label">Characters</div>
           </div>
           <div class="admin-stat-card">
             <div class="admin-stat-value" x-text="stats.assets">0</div>
-            <div class="admin-stat-label">{{{t("admin.assets")}}}</div>
+            <div class="admin-stat-label">Assets</div>
           </div>
           <div class="admin-stat-card">
             <div class="admin-stat-value" x-text="stats.worlds">0</div>
-            <div class="admin-stat-label">{{{t("admin.worlds")}}}</div>
+            <div class="admin-stat-label">Worlds</div>
           </div>
         </div>
         <div style="padding: 0 var(--space-6) var(--space-6)" x-show="recentEntries.length > 0">
-          <h3 style="font-size: 14px; font-weight: 600; margin-bottom: var(--space-3)">
-            {{{t("admin.recentActivity")}}}
-          </h3>
+          <h3 style="font-size: 14px; font-weight: 600; margin-bottom: var(--space-3)">Recent Activity</h3>
           <template x-for="e in recentEntries" :key="e.id">
             <div style="padding: var(--space-2) 0; border-bottom: 1px solid var(--border-default, #e9ecef); font-size: 13px">
               <span x-text="formatDate(e.created_at)"></span>
@@ -102,7 +100,7 @@
       <div x-show="activeTab === 'users'">
         <div x-show="loadingUsers" class="empty-state" style="padding: var(--space-12)">
           <div class="icon">⏳</div>
-          <div class="title">{{{t("admin.loadingUsers")}}}</div>
+          <div class="title">Loading users...</div>
         </div>
         <template x-if="!loadingUsers">
           <div style="padding: var(--space-6)">
@@ -110,16 +108,16 @@
               <input
                 class="form-input"
                 type="search"
-                x-bind:placeholder="t('admin.searchUsers')"
+                placeholder="Search users..."
                 x-model="userSearch"
                 @input.debounce.300ms="searchUsers()"
                 style="flex: 1; min-width: 200px"
               />
               <select class="form-input" style="width: auto" x-model="userRoleFilter" @change="searchUsers()">
-                <option value="">{{{t("admin.allRoles")}}}</option>
-                <option value="admin">{{{t("admin.admin")}}}</option>
-                <option value="user">{{{t("admin.user")}}}</option>
-                <option value="viewer">{{{t("admin.viewer")}}}</option>
+                <option value="">All roles</option>
+                <option value="admin">Admin</option>
+                <option value="user">User</option>
+                <option value="viewer">Viewer</option>
               </select>
               <select
                 class="form-input"
@@ -127,36 +125,34 @@
                 x-model="userStatusFilter"
                 @change="searchUsers()"
               >
-                <option value="">{{{t("admin.allStatuses")}}}</option>
-                <option value="active">{{{t("admin.active")}}}</option>
-                <option value="disabled">{{{t("admin.disabled")}}}</option>
+                <option value="">All statuses</option>
+                <option value="active">Active</option>
+                <option value="disabled">Disabled</option>
               </select>
               <button
                 class="btn btn-secondary btn-xs"
                 x-show="userSearch || userRoleFilter || userStatusFilter"
                 @click="clearUserFilters()"
               >
-                {{{t("common.clear")}}}
+                Clear
               </button>
             </div>
             <table class="admin-table">
               <thead>
                 <tr>
-                  <th>{{{t("admin.username")}}}</th>
-                  <th>{{{t("admin.displayName")}}}</th>
-                  <th>{{{t("admin.role")}}}</th>
-                  <th>{{{t("admin.status")}}}</th>
-                  <th>{{{t("admin.joined")}}}</th>
-                  <th>{{{t("admin.lastSeen")}}}</th>
-                  <th>{{{t("admin.actions")}}}</th>
+                  <th>Username</th>
+                  <th>Display Name</th>
+                  <th>Role</th>
+                  <th>Status</th>
+                  <th>Joined</th>
+                  <th>Last Seen</th>
+                  <th>Actions</th>
                 </tr>
               </thead>
               <tbody aria-busy="true">
                 <template x-if="users.length === 0">
                   <tr>
-                    <td colspan="7" class="empty-state" style="padding: var(--space-8)">
-                      {{{t("admin.noUsersFound")}}}
-                    </td>
+                    <td colspan="7" class="empty-state" style="padding: var(--space-8)">No users found</td>
                   </tr>
                 </template>
                 <template x-for="u in users" :key="u.id">
@@ -170,9 +166,9 @@
                           class="form-input"
                           style="width: 100px; padding: 2px 6px; font-size: 13px"
                         >
-                          <option value="admin">{{{t("admin.admin")}}}</option>
-                          <option value="user">{{{t("admin.user")}}}</option>
-                          <option value="viewer">{{{t("admin.viewer")}}}</option>
+                          <option value="admin">Admin</option>
+                          <option value="user">User</option>
+                          <option value="viewer">Viewer</option>
                         </select>
                       </template>
                       <template x-if="editRoleUserId !== u.id">
@@ -185,29 +181,23 @@
                     <td>
                       <template x-if="editRoleUserId === u.id">
                         <div style="display: flex; gap: 4px">
-                          <button class="btn btn-primary btn-xs" @click="saveRole()">{{{t("common.save")}}}</button>
-                          <button class="btn btn-secondary btn-xs" @click="cancelEditRole()">
-                            {{{t("common.cancel")}}}
-                          </button>
+                          <button class="btn btn-primary btn-xs" @click="saveRole()">Save</button>
+                          <button class="btn btn-secondary btn-xs" @click="cancelEditRole()">Cancel</button>
                         </div>
                       </template>
                       <template x-if="editRoleUserId !== u.id">
                         <div style="display: flex; gap: 4px">
-                          <button class="btn btn-secondary btn-xs" @click="startEditRole(u)">
-                            {{{t("admin.role")}}}
-                          </button>
+                          <button class="btn btn-secondary btn-xs" @click="startEditRole(u)">Role</button>
                           <template x-if="confirmDeleteUser !== u.id">
                             <button class="btn btn-danger btn-xs" @click="confirmDeleteUser = u.id">
-                              {{{t("common.delete")}}}
+                              Delete
                             </button>
                           </template>
                           <template x-if="confirmDeleteUser === u.id">
                             <div style="display: flex; gap: 4px">
-                              <button class="btn btn-danger btn-xs" @click="deleteUser(u.id)">
-                                {{{t("common.confirm")}}}
-                              </button>
+                              <button class="btn btn-danger btn-xs" @click="deleteUser(u.id)">Confirm</button>
                               <button class="btn btn-secondary btn-xs" @click="confirmDeleteUser = ''">
-                                {{{t("common.cancel")}}}
+                                Cancel
                               </button>
                             </div>
                           </template>
@@ -227,18 +217,18 @@
                 :disabled="userPage === 1"
                 @click="goUsersPage(userPage - 1)"
               >
-                {{{t("common.prev")}}}
+                Prev
               </button>
               <span
                 style="display: flex; align-items: center; font-size: 13px"
-                x-text="t('common.pageOf', {page: userPage, total: userPages})"
+                x-text="'Page ' + userPage + ' of ' + userPages"
               ></span>
               <button
                 class="btn btn-secondary btn-xs"
                 :disabled="userPage >= userPages"
                 @click="goUsersPage(userPage + 1)"
               >
-                {{{t("common.next")}}}
+                Next
               </button>
             </div>
           </div>
@@ -249,7 +239,7 @@
       <div x-show="activeTab === 'worlds'">
         <div x-show="loadingWorlds" class="empty-state" style="padding: var(--space-12)">
           <div class="icon">⏳</div>
-          <div class="title">{{{t("admin.loadingWorlds")}}}</div>
+          <div class="title">Loading worlds...</div>
         </div>
         <template x-if="!loadingWorlds">
           <div style="padding: var(--space-6)">
@@ -257,30 +247,28 @@
               <input
                 class="form-input"
                 type="search"
-                x-bind:placeholder="t('admin.searchWorlds')"
+                placeholder="Search worlds..."
                 x-model="worldSearch"
                 @input.debounce.300ms="searchWorlds()"
                 style="flex: 1; min-width: 200px"
               />
               <button class="btn btn-secondary btn-xs" x-show="worldSearch" @click="clearWorldFilters()">
-                {{{t("common.clear")}}}
+                Clear
               </button>
             </div>
             <table class="admin-table">
               <thead>
                 <tr>
-                  <th>{{{t("admin.nameLabel")}}}</th>
-                  <th>{{{t("admin.id")}}}</th>
-                  <th>{{{t("admin.created")}}}</th>
-                  <th>{{{t("admin.actions")}}}</th>
+                  <th>Name</th>
+                  <th>ID</th>
+                  <th>Created</th>
+                  <th>Actions</th>
                 </tr>
               </thead>
               <tbody aria-busy="true">
                 <template x-if="worlds.length === 0">
                   <tr>
-                    <td colspan="4" class="empty-state" style="padding: var(--space-8)">
-                      {{{t("admin.noWorldsFound")}}}
-                    </td>
+                    <td colspan="4" class="empty-state" style="padding: var(--space-8)">No worlds found</td>
                   </tr>
                 </template>
                 <template x-for="w in worlds" :key="w.id">
@@ -291,16 +279,14 @@
                     <td>
                       <template x-if="confirmDeleteWorld !== w.id">
                         <button class="btn btn-danger btn-xs" @click="confirmDeleteWorld = w.id">
-                          {{{t("common.delete")}}}
+                          Delete
                         </button>
                       </template>
                       <template x-if="confirmDeleteWorld === w.id">
                         <div style="display: flex; gap: 4px">
-                          <button class="btn btn-danger btn-xs" @click="deleteWorld(w.id)">
-                            {{{t("common.confirm")}}}
-                          </button>
+                          <button class="btn btn-danger btn-xs" @click="deleteWorld(w.id)">Confirm</button>
                           <button class="btn btn-secondary btn-xs" @click="confirmDeleteWorld = ''">
-                            {{{t("common.cancel")}}}
+                            Cancel
                           </button>
                         </div>
                       </template>
@@ -318,18 +304,18 @@
                 :disabled="worldPage === 1"
                 @click="goWorldsPage(worldPage - 1)"
               >
-                {{{t("common.prev")}}}
+                Prev
               </button>
               <span
                 style="display: flex; align-items: center; font-size: 13px"
-                x-text="t('common.pageOf', {page: worldPage, total: worldPages})"
+                x-text="'Page ' + worldPage + ' of ' + worldPages"
               ></span>
               <button
                 class="btn btn-secondary btn-xs"
                 :disabled="worldPage >= worldPages"
                 @click="goWorldsPage(worldPage + 1)"
               >
-                {{{t("common.next")}}}
+                Next
               </button>
             </div>
           </div>
@@ -340,7 +326,7 @@
       <div x-show="activeTab === 'chats'">
         <div x-show="loadingChats" class="empty-state" style="padding: var(--space-12)">
           <div class="icon">⏳</div>
-          <div class="title">{{{t("admin.loadingChats")}}}</div>
+          <div class="title">Loading chats...</div>
         </div>
         <template x-if="!loadingChats">
           <div style="padding: var(--space-6)">
@@ -348,39 +334,37 @@
               <input
                 class="form-input"
                 type="search"
-                x-bind:placeholder="t('admin.searchChats')"
+                placeholder="Search chats..."
                 x-model="chatSearch"
                 @input.debounce.300ms="searchChats()"
                 style="flex: 1; min-width: 200px"
               />
               <select class="form-input" style="width: auto" x-model="chatTypeFilter" @change="searchChats()">
-                <option value="">{{{t("admin.allTypes")}}}</option>
-                <option value="direct">{{{t("admin.direct")}}}</option>
-                <option value="group">{{{t("admin.group")}}}</option>
+                <option value="">All types</option>
+                <option value="direct">Direct</option>
+                <option value="group">Group</option>
               </select>
               <button
                 class="btn btn-secondary btn-xs"
                 x-show="chatSearch || chatTypeFilter"
                 @click="clearChatFilters()"
               >
-                {{{t("common.clear")}}}
+                Clear
               </button>
             </div>
             <table class="admin-table">
               <thead>
                 <tr>
-                  <th>{{{t("admin.titleLabel")}}}</th>
-                  <th>{{{t("admin.type")}}}</th>
-                  <th>{{{t("admin.created")}}}</th>
-                  <th>{{{t("admin.actions")}}}</th>
+                  <th>Title</th>
+                  <th>Type</th>
+                  <th>Created</th>
+                  <th>Actions</th>
                 </tr>
               </thead>
               <tbody aria-busy="true">
                 <template x-if="adminChats.length === 0">
                   <tr>
-                    <td colspan="4" class="empty-state" style="padding: var(--space-8)">
-                      {{{t("admin.noChatsFound")}}}
-                    </td>
+                    <td colspan="4" class="empty-state" style="padding: var(--space-8)">No chats found</td>
                   </tr>
                 </template>
                 <template x-for="c in adminChats" :key="c.id">
@@ -391,16 +375,16 @@
                     <td>
                       <template x-if="confirmDeleteChat !== c.id">
                         <button class="btn btn-danger btn-xs" @click="confirmDeleteChat = c.id">
-                          {{{t("common.delete")}}}
+                          Delete
                         </button>
                       </template>
                       <template x-if="confirmDeleteChat === c.id">
                         <div style="display: flex; gap: 4px">
                           <button class="btn btn-danger btn-xs" @click="deleteChat(c.id)">
-                            {{{t("admin.confirmDelete")}}}
+                            Confirm Delete
                           </button>
                           <button class="btn btn-secondary btn-xs" @click="confirmDeleteChat = ''">
-                            {{{t("common.cancel")}}}
+                            Cancel
                           </button>
                         </div>
                       </template>
@@ -418,18 +402,18 @@
                 :disabled="chatPage === 1"
                 @click="goChatsPage(chatPage - 1)"
               >
-                {{{t("common.prev")}}}
+                Prev
               </button>
               <span
                 style="display: flex; align-items: center; font-size: 13px"
-                x-text="t('common.pageOf', {page: chatPage, total: chatPages})"
+                x-text="'Page ' + chatPage + ' of ' + chatPages"
               ></span>
               <button
                 class="btn btn-secondary btn-xs"
                 :disabled="chatPage >= chatPages"
                 @click="goChatsPage(chatPage + 1)"
               >
-                {{{t("common.next")}}}
+                Next
               </button>
             </div>
           </div>
@@ -443,34 +427,34 @@
             <input
               class="form-input"
               type="search"
-              x-bind:placeholder="t('admin.searchAudit')"
+              placeholder="Search audit messages..."
               x-model="auditSearch"
               @input.debounce.300ms="searchAudit()"
               style="flex: 1; min-width: 200px"
             />
             <select class="form-input" style="width: auto" x-model="auditEventType" @change="searchAudit()">
-              <option value="">{{{t("admin.allEventTypes")}}}</option>
-              <option value="auth">{{{t("admin.auth")}}}</option>
-              <option value="user">{{{t("admin.user")}}}</option>
-              <option value="chat">{{{t("admin.chat")}}}</option>
-              <option value="world">{{{t("admin.world")}}}</option>
-              <option value="asset">{{{t("admin.asset")}}}</option>
-              <option value="system">{{{t("admin.system")}}}</option>
-              <option value="plugin">{{{t("admin.plugin")}}}</option>
+              <option value="">All event types</option>
+              <option value="auth">Auth</option>
+              <option value="user">User</option>
+              <option value="chat">Chat</option>
+              <option value="world">World</option>
+              <option value="asset">Asset</option>
+              <option value="system">System</option>
+              <option value="plugin">Plugin</option>
             </select>
             <select class="form-input" style="width: auto" x-model="auditEntityType" @change="searchAudit()">
-              <option value="">{{{t("admin.allEntities")}}}</option>
-              <option value="user">{{{t("admin.user")}}}</option>
-              <option value="chat">{{{t("admin.chat")}}}</option>
-              <option value="world">{{{t("admin.world")}}}</option>
-              <option value="asset">{{{t("admin.asset")}}}</option>
+              <option value="">All entities</option>
+              <option value="user">User</option>
+              <option value="chat">Chat</option>
+              <option value="world">World</option>
+              <option value="asset">Asset</option>
             </select>
             <button
               class="btn btn-secondary btn-xs"
               x-show="auditSearch || auditEventType || auditEntityType"
               @click="clearAuditFilters()"
             >
-              {{{t("common.clear")}}}
+              Clear
             </button>
           </div>
           <div x-show="loadingAudit" class="empty-state" style="padding: var(--space-8)">
@@ -481,17 +465,17 @@
               <table class="admin-table">
                 <thead>
                   <tr>
-                    <th>{{{t("admin.time")}}}</th>
-                    <th>{{{t("admin.module")}}}</th>
-                    <th>{{{t("admin.event")}}}</th>
-                    <th>{{{t("admin.message")}}}</th>
+                    <th>Time</th>
+                    <th>Module</th>
+                    <th>Event</th>
+                    <th>Message</th>
                   </tr>
                 </thead>
                 <tbody aria-busy="true">
                   <template x-if="auditEntries.length === 0">
                     <tr>
                       <td colspan="4" class="empty-state" style="padding: var(--space-8)">
-                        {{{t("admin.noAuditEntries")}}}
+                        No audit entries
                       </td>
                     </tr>
                   </template>
@@ -518,18 +502,18 @@
                   :disabled="auditPage === 1"
                   @click="goAuditPage(auditPage - 1)"
                 >
-                  {{{t("common.prev")}}}
+                  Prev
                 </button>
                 <span
                   style="display: flex; align-items: center; font-size: 13px"
-                  x-text="t('common.pageOf', {page: auditPage, total: auditPages})"
+                  x-text="'Page ' + auditPage + ' of ' + auditPages"
                 ></span>
                 <button
                   class="btn btn-secondary btn-xs"
                   :disabled="auditPage >= auditPages"
                   @click="goAuditPage(auditPage + 1)"
                 >
-                  {{{t("common.next")}}}
+                  Next
                 </button>
               </div>
             </div>
@@ -541,7 +525,7 @@
       <div x-show="activeTab === 'models'">
         <div x-show="loadingModels" class="empty-state" style="padding: var(--space-12)">
           <div class="icon">⏳</div>
-          <div class="title">{{{t("admin.loadingProviders")}}}</div>
+          <div class="title">Loading providers...</div>
         </div>
         <template x-if="!loadingModels">
           <div style="padding: var(--space-6)">
@@ -550,13 +534,13 @@
                 class="btn btn-secondary btn-sm"
                 @click="rescanProviders()"
                 :disabled="scanning"
-                x-text="scanning ? t('admin.scanning') : t('admin.rescanProviders')"
+                x-text="scanning ? 'Scanning...' : 'Rescan Providers'"
               >
               </button>
             </div>
             <div style="margin-bottom: var(--space-6)">
               <h3 style="font-size: 16px; font-weight: 600; margin-bottom: var(--space-3)">
-                {{{t("admin.modelRoleAssignments")}}}
+                Model Role Assignments
               </h3>
               <div style="display: grid; gap: var(--space-3)">
                 <template x-for="r in modelRoleList" :key="r.role">
@@ -569,13 +553,13 @@
                         x-model="r.provider"
                         @change="onRoleProviderChange(r.role)"
                       >
-                        <option value="">{{{t("admin.selectProvider")}}}</option>
+                        <option value="">Select provider...</option>
                         <template x-for="p in providers" :key="p.name">
                           <option :value="p.name" x-text="p.label"></option>
                         </template>
                       </select>
                       <select class="form-input" style="font-size: 13px" x-model="r.model">
-                        <option value="">{{{t("admin.selectModel")}}}</option>
+                        <option value="">Select model...</option>
                         <template x-for="m in getModelsForRole(r.role)" :key="m.id">
                           <option :value="m.id" x-text="m.id + (modelSummary(m) ? ' — ' + modelSummary(m) : '')">
                           </option>
@@ -587,14 +571,14 @@
                           @click="saveModelRole(r.role)"
                           :disabled="!r.provider || !r.model"
                         >
-                          {{{t("common.save")}}}
+                          Save
                         </button>
                         <button
                           class="btn btn-secondary btn-xs"
                           @click="clearModelRole(r.role)"
                           x-show="overrides[r.role]"
                         >
-                          {{{t("common.clear")}}}
+                          Clear
                         </button>
                       </div>
                     </div>
@@ -614,9 +598,7 @@
               </div>
             </div>
             <div>
-              <h3 style="font-size: 16px; font-weight: 600; margin-bottom: var(--space-3)">
-                {{{t("admin.providers")}}}
-              </h3>
+              <h3 style="font-size: 16px; font-weight: 600; margin-bottom: var(--space-3)">Providers</h3>
               <div style="display: grid; gap: var(--space-3)">
                 <template x-for="p in providers" :key="p.name">
                   <div style="padding: var(--space-4); background: var(--bg-secondary, #f8f9fa); border-radius: 6px; border: 1px solid var(--border-default, #e9ecef)">
@@ -633,12 +615,12 @@
                         ></span>
                       </div>
                       <div style="display: flex; align-items: center; gap: var(--space-3); font-size: 12px; color: var(--text-secondary, #6c757d)">
-                        <span x-text="t('admin.modelCount', {count: p.modelCount})"></span>
+                        <span x-text="p.modelCount + ' model(s)'"></span>
                         <span x-show="p.latencyMs" x-text="p.latencyMs + 'ms'"></span>
                         <button
                           class="btn btn-secondary btn-xs"
                           @click="expandProvider = expandProvider === p.name ? '' : p.name"
-                          x-text="expandProvider === p.name ? t('admin.collapse') : t('admin.expand')"
+                          x-text="expandProvider === p.name ? 'Collapse' : 'Expand'"
                         >
                         </button>
                       </div>
@@ -651,7 +633,7 @@
                     </div>
                     <div x-show="expandProvider === p.name" style="margin-top: var(--space-2)">
                       <div style="font-size: 12px; color: var(--text-secondary, #6c757d); margin-bottom: var(--space-1)">
-                        {{{t("admin.availableModels")}}}
+                        Available Models:
                       </div>
                       <div style="display: flex; flex-wrap: wrap; gap: 8px">
                         <template x-for="m in getProviderModels(p.name)" :key="m.id">
@@ -671,11 +653,11 @@
                               <span
                                 x-show="m.thinking"
                                 style="font-size: 10px; padding: 1px 5px; background: var(--bg-secondary, #f8f9fa); border: 1px solid var(--border-default, #e9ecef); border-radius: 10px; color: var(--text-secondary, #6c757d)"
-                              >{{{t("admin.thinking")}}}</span>
+                              >thinking</span>
                               <span
                                 x-show="m.toolCalling"
                                 style="font-size: 10px; padding: 1px 5px; background: var(--bg-secondary, #f8f9fa); border: 1px solid var(--border-default, #e9ecef); border-radius: 10px; color: var(--text-secondary, #6c757d)"
-                              >{{{t("admin.tools")}}}</span>
+                              >tools</span>
                               <span
                                 x-show="m.modalities && m.modalities.length"
                                 style="font-size: 10px; padding: 1px 5px; background: var(--bg-secondary, #f8f9fa); border: 1px solid var(--border-default, #e9ecef); border-radius: 10px; color: var(--text-secondary, #6c757d)"
@@ -693,7 +675,7 @@
                         <span
                           x-show="getProviderModels(p.name).length === 0"
                           style="font-size: 12px; color: var(--text-secondary, #6c757d)"
-                        >{{{t("admin.noModelsDiscovered")}}}</span>
+                        >No models discovered</span>
                       </div>
                     </div>
                   </div>
@@ -703,11 +685,11 @@
             <!-- Stable Diffusion Configuration -->
             <div style="margin-top: var(--space-6)">
               <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-3)">
-                <h3 style="font-size: 16px; font-weight: 600; margin: 0">{{{t("admin.stableDiffusion")}}}</h3>
+                <h3 style="font-size: 16px; font-weight: 600; margin: 0">Stable Diffusion</h3>
                 <button
                   class="btn btn-secondary btn-xs"
                   @click="showSdConfig = !showSdConfig"
-                  x-text="showSdConfig ? t('admin.hideConfig') : t('admin.showConfig')"
+                  x-text="showSdConfig ? 'Hide Config' : 'Show Config'"
                 >
                 </button>
               </div>
@@ -719,31 +701,30 @@
                     :style="{background: sdStatus === 'running' ? '#28a745' : sdStatus === 'stopped' ? '#dc3545' : '#ffc107'}"
                   ></span>
                   <strong
-                    x-text="sdStatus === 'running' ? t('admin.running') : sdStatus === 'stopped' ? t('admin.stopped') : t('admin.unknown')"
+                    x-text="sdStatus === 'running' ? 'Running' : sdStatus === 'stopped' ? 'Stopped' : 'Unknown'"
                   ></strong>
-                  <span style="font-size: 12px; color: var(--text-secondary, #6c757d)" x-show="sdPort">—
-                    {{{t("admin.port")}}}<span x-text="sdPort"></span></span>
+                  <span style="font-size: 12px; color: var(--text-secondary, #6c757d)" x-show="sdPort">— Port <span
+                      x-text="sdPort"
+                    ></span></span>
                   <button class="btn btn-secondary btn-xs" @click="loadSdStatus()" style="margin-left: auto">
-                    {{{t("admin.refresh")}}}
+                    Refresh
                   </button>
                 </div>
                 <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: var(--space-3); font-size: 13px; margin-bottom: var(--space-3)">
                   <div>
-                    <div style="color: var(--text-secondary, #6c757d); margin-bottom: 2px">{{{t("admin.status")}}}</div>
+                    <div style="color: var(--text-secondary, #6c757d); margin-bottom: 2px">Status</div>
                     <div
                       style="font-weight: 500"
-                      x-text="sdStatus === 'running' ? t('admin.activeStatus') : sdStatus === 'stopped' ? t('admin.notRunning') : t('admin.unknown')"
+                      x-text="sdStatus === 'running' ? 'Active' : sdStatus === 'stopped' ? 'Not running' : 'Unknown'"
                     >
                     </div>
                   </div>
                   <div>
-                    <div style="color: var(--text-secondary, #6c757d); margin-bottom: 2px">
-                      {{{t("admin.latency")}}}
-                    </div>
+                    <div style="color: var(--text-secondary, #6c757d); margin-bottom: 2px">Latency</div>
                     <div style="font-weight: 500" x-text="sdLatencyMs != null ? sdLatencyMs + 'ms' : '—'"></div>
                   </div>
                   <div>
-                    <div style="color: var(--text-secondary, #6c757d); margin-bottom: 2px">{{{t("admin.port")}}}</div>
+                    <div style="color: var(--text-secondary, #6c757d); margin-bottom: 2px">Port</div>
                     <div style="font-weight: 500" x-text="sdPort"></div>
                   </div>
                 </div>
@@ -753,18 +734,16 @@
                   x-show="showSdConfig"
                   style="padding-top: var(--space-3); border-top: 1px solid var(--border-default, #e9ecef)"
                 >
-                  <h4 style="font-size: 13px; font-weight: 600; margin-bottom: var(--space-2)">
-                    {{{t("admin.sdCppServer")}}}
-                  </h4>
+                  <h4 style="font-size: 13px; font-weight: 600; margin-bottom: var(--space-2)">SD.CPP Server</h4>
                   <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: var(--space-3); margin-bottom: var(--space-3)">
                     <div>
                       <label style="display: block; font-size: 11px; color: var(--text-secondary); margin-bottom: 2px"
-                      >{{{t("admin.enabled")}}}</label>
+                      >Enabled</label>
                       <input type="checkbox" x-model="sdConfig.enabled" style="width: 16px; height: 16px" />
                     </div>
                     <div>
                       <label style="display: block; font-size: 11px; color: var(--text-secondary); margin-bottom: 2px"
-                      >{{{t("admin.port")}}}</label>
+                      >Port</label>
                       <input
                         class="form-input"
                         style="font-size: 12px; padding: 4px 8px"
@@ -774,15 +753,15 @@
                     </div>
                     <div>
                       <label style="display: block; font-size: 11px; color: var(--text-secondary); margin-bottom: 2px"
-                      >{{{t("admin.modelType")}}}</label>
+                      >Model Type</label>
                       <select class="form-input" style="font-size: 12px; padding: 4px 8px" x-model="sdConfig.modelType">
-                        <option value="checkpoint">{{{t("admin.checkpoint")}}}</option>
-                        <option value="diffusion">{{{t("admin.diffusionComponent")}}}</option>
+                        <option value="checkpoint">Checkpoint</option>
+                        <option value="diffusion">Diffusion Component</option>
                       </select>
                     </div>
                     <div>
                       <label style="display: block; font-size: 11px; color: var(--text-secondary); margin-bottom: 2px"
-                      >{{{t("admin.modelPath")}}}</label>
+                      >Model Path</label>
                       <input
                         class="form-input"
                         style="font-size: 12px; padding: 4px 8px"
@@ -793,7 +772,7 @@
                     </div>
                     <div>
                       <label style="display: block; font-size: 11px; color: var(--text-secondary); margin-bottom: 2px"
-                      >{{{t("admin.llmEncoderPath")}}}</label>
+                      >LLM Encoder Path</label>
                       <input
                         class="form-input"
                         style="font-size: 12px; padding: 4px 8px"
@@ -805,17 +784,17 @@
                   </div>
 
                   <h4 style="font-size: 13px; font-weight: 600; margin-bottom: var(--space-2); margin-top: var(--space-3)">
-                    {{{t("admin.comfyui")}}}
+                    ComfyUI
                   </h4>
                   <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: var(--space-3); margin-bottom: var(--space-3)">
                     <div>
                       <label style="display: block; font-size: 11px; color: var(--text-secondary); margin-bottom: 2px"
-                      >{{{t("admin.comfyuiEnabled")}}}</label>
+                      >Enabled</label>
                       <input type="checkbox" x-model="comfyuiConfig.enabled" style="width: 16px; height: 16px" />
                     </div>
                     <div>
                       <label style="display: block; font-size: 11px; color: var(--text-secondary); margin-bottom: 2px"
-                      >{{{t("admin.comfyuiUrl")}}}</label>
+                      >URL</label>
                       <input
                         class="form-input"
                         style="font-size: 12px; padding: 4px 8px"
@@ -827,11 +806,10 @@
                   </div>
 
                   <div style="padding-top: var(--space-3); border-top: 1px solid var(--border-default, #e9ecef); font-size: 11px; color: var(--text-secondary); margin-bottom: var(--space-2)">
-                    {{{t("admin.sdConfigNote")}}}
+                    Note: SD.CPP and ComfyUI should not run simultaneously on the same machine due to GPU resource
+                    contention. Configure one as primary and the other as fallback.
                   </div>
-                  <button class="btn btn-primary btn-xs" @click="saveSdConfig()">
-                    {{{t("admin.saveSdConfiguration")}}}
-                  </button>
+                  <button class="btn btn-primary btn-xs" @click="saveSdConfig()">Save SD Configuration</button>
                 </div>
               </div>
             </div>
@@ -839,16 +817,17 @@
         </template>
       </div>
 
+      <!-- Plugins Tab -->
       <div x-show="activeTab === 'plugins'">
         <div x-show="loadingPlugins" class="empty-state" style="padding: var(--space-12)">
           <div class="icon">⏳</div>
-          <div class="title">{{{t("admin.loadingPlugins")}}}</div>
+          <div class="title">Loading plugins...</div>
         </div>
         <template x-if="!loadingPlugins">
           <div style="padding: var(--space-6)">
             <template x-if="pluginList.length === 0">
               <div class="empty-state" style="padding: var(--space-8)">
-                <div class="title">{{{t("admin.noPluginsFound")}}}</div>
+                <div class="title">No plugins found</div>
               </div>
             </template>
             <div style="display: grid; gap: var(--space-3)">
@@ -873,16 +852,16 @@
                   <div style="display: flex; align-items: center; gap: var(--space-3)">
                     <span
                       :class="p.enabled ? 'status-badge status-active' : 'status-badge status-disabled'"
-                      x-text="p.enabled ? t('common.enabled') : t('common.disabled')"
+                      x-text="p.enabled ? 'Enabled' : 'Disabled'"
                     ></span>
                     <template x-if="p.enabled">
                       <button class="btn btn-secondary btn-xs" @click="togglePlugin(p.name, false)">
-                        {{{t("admin.disable")}}}
+                        Disable
                       </button>
                     </template>
                     <template x-if="!p.enabled">
                       <button class="btn btn-primary btn-xs" @click="togglePlugin(p.name, true)">
-                        {{{t("admin.enable")}}}
+                        Enable
                       </button>
                     </template>
                   </div>
@@ -897,7 +876,7 @@
       <div x-show="activeTab === 'system'">
         <div x-show="loadingSystemConfig" class="empty-state" style="padding: var(--space-12)">
           <div class="icon">⏳</div>
-          <div class="title">{{{t("admin.loadingConfiguration")}}}</div>
+          <div class="title">Loading configuration...</div>
         </div>
         <template x-if="!loadingSystemConfig">
           <div style="padding: var(--space-6)">
@@ -919,18 +898,16 @@
                     :value="c.value"
                     @input="sysConfigDirty[c.key] = $event.target.value"
                   />
-                  <button class="btn btn-primary btn-xs" @click="saveSystemConfig(c.key)">
-                    {{{t("common.save")}}}
-                  </button>
+                  <button class="btn btn-primary btn-xs" @click="saveSystemConfig(c.key)">Save</button>
                   <div style="display: flex; gap: 4px">
                     <template x-if="confirmDeleteConfig !== c.key">
                       <button class="btn btn-danger btn-xs" @click="confirmDeleteConfig = c.key">
-                        {{{t("common.delete")}}}
+                        Delete
                       </button>
                     </template>
                     <template x-if="confirmDeleteConfig === c.key">
                       <button class="btn btn-danger btn-xs" @click="deleteSystemConfig(c.key)">
-                        {{{t("common.confirm")}}}
+                        Confirm
                       </button>
                     </template>
                   </div>
@@ -939,22 +916,20 @@
             </div>
             <!-- NSFW Configuration Section -->
             <div style="margin-top: var(--space-6); padding-top: var(--space-4); border-top: 1px solid var(--border-default, #e9ecef)">
-              <h3 style="font-size: 16px; font-weight: 600; margin-bottom: var(--space-3)">
-                {{{t("admin.nsfwContentPolicy")}}}
-              </h3>
+              <h3 style="font-size: 16px; font-weight: 600; margin-bottom: var(--space-3)">NSFW Content Policy</h3>
               <div style="padding: var(--space-4); background: var(--bg-secondary, #f8f9fa); border-radius: 6px; border: 1px solid var(--border-default, #e9ecef)">
                 <div style="display: grid; grid-template-columns: 200px 1fr; gap: var(--space-3); align-items: center; margin-bottom: var(--space-3)">
-                  <div style="font-size: 13px; font-weight: 500">{{{t("admin.allowNsfwContent")}}}</div>
+                  <div style="font-size: 13px; font-weight: 500">Allow NSFW Content</div>
                   <div style="display: flex; align-items: center; gap: var(--space-2)">
                     <input type="checkbox" x-model="nsfwConfig.allowNsfw" style="width: 16px; height: 16px" />
                     <span
                       style="font-size: 12px; color: var(--text-secondary)"
-                      x-text="nsfwConfig.allowNsfw ? t('common.enabled') : t('common.disabled')"
+                      x-text="nsfwConfig.allowNsfw ? 'Enabled' : 'Disabled'"
                     ></span>
                   </div>
                 </div>
                 <div style="display: grid; grid-template-columns: 200px 1fr; gap: var(--space-3); align-items: center; margin-bottom: var(--space-3)">
-                  <div style="font-size: 13px; font-weight: 500">{{{t("admin.minimumAge")}}}</div>
+                  <div style="font-size: 13px; font-weight: 500">Minimum Age</div>
                   <div style="display: flex; align-items: center; gap: var(--space-2)">
                     <input
                       type="number"
@@ -964,12 +939,10 @@
                       max="25"
                       x-model.number="nsfwConfig.nsfwMinAge"
                     />
-                    <span style="font-size: 12px; color: var(--text-secondary)">{{{t("admin.years")}}}</span>
+                    <span style="font-size: 12px; color: var(--text-secondary)">years</span>
                   </div>
                 </div>
-                <button class="btn btn-primary btn-xs" @click="saveNsfwConfig()">
-                  {{{t("admin.saveNsfwPolicy")}}}
-                </button>
+                <button class="btn btn-primary btn-xs" @click="saveNsfwConfig()">Save NSFW Policy</button>
               </div>
             </div>
           </div>
@@ -978,47 +951,45 @@
       <div x-show="activeTab === 'analytics'">
         <div x-show="loadingAnalytics" class="empty-state" style="padding: var(--space-12)">
           <div class="icon">⏳</div>
-          <div class="title">{{{t("admin.loadingAnalytics")}}}</div>
+          <div class="title">Loading analytics...</div>
         </div>
         <template x-if="!loadingAnalytics">
           <div style="padding: var(--space-6)">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-4)">
-              <h3 style="font-size: 16px; font-weight: 600">{{{t("admin.telemetrySummary")}}}</h3>
+              <h3 style="font-size: 16px; font-weight: 600">Telemetry Summary</h3>
               <div style="display: flex; gap: var(--space-2)">
-                <button class="btn btn-secondary btn-xs" @click="loadAnalytics()">{{{t("admin.refresh")}}}</button>
-                <button class="btn btn-danger btn-xs" @click="purgeAnalytics()">{{{t("admin.purgeOld")}}}</button>
+                <button class="btn btn-secondary btn-xs" @click="loadAnalytics()">Refresh</button>
+                <button class="btn btn-danger btn-xs" @click="purgeAnalytics()">Purge Old</button>
               </div>
             </div>
             <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: var(--space-4); margin-bottom: var(--space-6)">
               <div class="admin-stat-card">
                 <div class="admin-stat-value" x-text="analyticsSummary.total">0</div>
-                <div class="admin-stat-label">{{{t("admin.totalEvents")}}}</div>
+                <div class="admin-stat-label">Total Events</div>
               </div>
               <div class="admin-stat-card">
                 <div class="admin-stat-value" x-text="analyticsSummary.distinct_sessions">0</div>
-                <div class="admin-stat-label">{{{t("admin.sessions")}}}</div>
+                <div class="admin-stat-label">Sessions</div>
               </div>
               <div class="admin-stat-card">
                 <div class="admin-stat-value" x-text="analyticsSummary.distinct_users">0</div>
-                <div class="admin-stat-label">{{{t("admin.activeUsers")}}}</div>
+                <div class="admin-stat-label">Active Users</div>
               </div>
             </div>
-            <h3 style="font-size: 14px; font-weight: 600; margin-bottom: var(--space-3)">
-              {{{t("admin.dailyEvents")}}}
-            </h3>
+            <h3 style="font-size: 14px; font-weight: 600; margin-bottom: var(--space-3)">Daily Events</h3>
             <div
               x-show="dailyStats.length === 0"
               class="empty-state"
               style="padding: var(--space-4); font-size: 13px"
             >
-              {{{t("admin.noDailyData")}}}
+              No daily data available
             </div>
             <table x-show="dailyStats.length > 0" class="admin-table" style="margin-bottom: var(--space-6)">
               <thead>
                 <tr>
-                  <th>{{{t("admin.date")}}}</th>
-                  <th>{{{t("admin.events")}}}</th>
-                  <th>{{{t("admin.activeUsers")}}}</th>
+                  <th>Date</th>
+                  <th>Events</th>
+                  <th>Active Users</th>
                 </tr>
               </thead>
               <tbody aria-busy="true">
@@ -1031,15 +1002,13 @@
                 </template>
               </tbody>
             </table>
-            <h3 style="font-size: 14px; font-weight: 600; margin-bottom: var(--space-3)">
-              {{{t("admin.recentErrors")}}}
-            </h3>
+            <h3 style="font-size: 14px; font-weight: 600; margin-bottom: var(--space-3)">Recent Errors</h3>
             <div
               x-show="errorEvents.length === 0"
               class="empty-state"
               style="padding: var(--space-4); font-size: 13px"
             >
-              {{{t("admin.noErrorsRecorded")}}}
+              No errors recorded
             </div>
             <table x-show="errorEvents.length > 0" class="admin-table">
               <thead>
@@ -1067,7 +1036,7 @@
       <div x-show="activeTab === 'health'">
         <div x-show="loadingHealth" class="empty-state" style="padding: var(--space-12)">
           <div class="icon">⏳</div>
-          <div class="title">{{{t("admin.loadingHealthStatus")}}}</div>
+          <div class="title">Loading health status...</div>
         </div>
         <template x-if="!loadingHealth">
           <div style="padding: var(--space-6)">
@@ -1080,7 +1049,7 @@
                   x-text="healthStatus"
                 ></span>
               </div>
-              <button class="btn btn-secondary btn-xs" @click="loadHealth()">{{{t("admin.refresh")}}}</button>
+              <button class="btn btn-secondary btn-xs" @click="loadHealth()">Refresh</button>
               <button
                 class="btn btn-secondary btn-xs"
                 @click="toggleHealthAutoRefresh()"
@@ -1104,7 +1073,7 @@
                   x-text="healthProviders.filter(p => p.status === 'healthy').length"
                 >
                 </div>
-                <div class="admin-stat-label">{{{t("admin.healthy")}}}</div>
+                <div class="admin-stat-label">Healthy</div>
               </div>
               <div class="admin-stat-card">
                 <div
@@ -1112,14 +1081,14 @@
                   x-text="healthProviders.filter(p => p.status !== 'healthy').length"
                 >
                 </div>
-                <div class="admin-stat-label">{{{t("admin.degraded")}}}</div>
+                <div class="admin-stat-label">Degraded</div>
               </div>
             </div>
             <div
               x-show="healthTimestamp"
               style="font-size: 12px; color: var(--text-secondary); margin-bottom: var(--space-4)"
             >
-              {{{t("admin.lastChecked")}}} <span x-text="healthTimestamp"></span>
+              Last checked: <span x-text="healthTimestamp"></span>
             </div>
             <h3 style="font-size: 14px; font-weight: 600; margin-bottom: var(--space-3)">Providers</h3>
             <div style="display: grid; gap: var(--space-3)">
@@ -1137,7 +1106,7 @@
                   ></span>
                   <span
                     style="font-size: 12px; color: var(--text-secondary)"
-                    x-text="t('admin.modelCount', {count: p.models?.length})"
+                    x-text="p.models?.length + ' model(s)'"
                   ></span>
                   <span
                     x-show="p.latencyMs"
@@ -1160,25 +1129,21 @@
       <div x-show="activeTab === 'templates'">
         <div x-show="loadingTemplates" class="empty-state" style="padding: var(--space-12)">
           <div class="icon">⏳</div>
-          <div class="title">{{{t("admin.loadingTemplates")}}}</div>
+          <div class="title">Loading templates...</div>
         </div>
         <template x-if="!loadingTemplates">
           <div style="padding: var(--space-6)">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-4)">
               <div>
-                <h3 style="font-size: 16px; font-weight: 600; margin: 0">{{{t("admin.imagePromptTemplates")}}}</h3>
+                <h3 style="font-size: 16px; font-weight: 600; margin: 0">Image Prompt Templates</h3>
                 <div style="font-size: 12px; color: var(--text-secondary); margin-top: 2px">
-                  <span x-text="t('admin.builtinCount', {count: builtinCount})"></span> · <span
-                    x-text="t('admin.customCount', {count: customCount})"
-                  ></span>
-                  {{{t("admin.profiles")}}}
+                  <span x-text="builtinCount + ' builtin'"></span> · <span x-text="customCount + ' custom'"></span>
+                  profiles
                 </div>
               </div>
               <div style="display: flex; gap: var(--space-2)">
-                <button class="btn btn-secondary btn-xs" @click="loadTemplates()">{{{t("admin.refresh")}}}</button>
-                <button class="btn btn-primary btn-xs" @click="showCreateModal = true">
-                  {{{t("admin.newProfile")}}}
-                </button>
+                <button class="btn btn-secondary btn-xs" @click="loadTemplates()">Refresh</button>
+                <button class="btn btn-primary btn-xs" @click="showCreateModal = true">New Profile</button>
               </div>
             </div>
 
@@ -1190,26 +1155,21 @@
                     <h4 style="font-size: 14px; font-weight: 600; margin: 0" x-text="selectedProfile.name"></h4>
                     <div style="font-size: 11px; color: var(--text-secondary); margin-top: 2px">
                       <span x-text="selectedProfile.id"></span>
-                      · <span x-text="selectedProfile.promptFormat"></span> {{{t("admin.formatLabel")}}} · <span
-                        x-text="t('admin.maxTokensCount', {count: selectedProfile.maxTokenHint})"
+                      · <span x-text="selectedProfile.promptFormat"></span> format · <span
+                        x-text="selectedProfile.maxTokenHint + ' max tokens'"
                       ></span>
-                      <span x-show="selectedProfile.isBuiltin" style="color: var(--color-primary)">
-                        · {{{t("admin.builtin")}}}</span>
+                      <span x-show="selectedProfile.isBuiltin" style="color: var(--color-primary)"> · builtin</span>
                     </div>
                   </div>
-                  <button class="btn btn-secondary btn-xs" @click="clearSelection()">
-                    {{{t("admin.backToList")}}}
-                  </button>
+                  <button class="btn btn-secondary btn-xs" @click="clearSelection()">Back to List</button>
                 </div>
 
                 <!-- Model Defaults -->
                 <div style="margin-bottom: var(--space-4); padding: var(--space-3); background: var(--bg-tertiary, #fff); border-radius: 4px">
-                  <div style="font-size: 12px; font-weight: 600; margin-bottom: var(--space-2)">
-                    {{{t("admin.modelDefaults")}}}
-                  </div>
+                  <div style="font-size: 12px; font-weight: 600; margin-bottom: var(--space-2)">Model Defaults</div>
                   <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: var(--space-2)">
                     <div>
-                      <label style="font-size: 11px; color: var(--text-secondary)">{{{t("admin.cfgScale")}}}</label>
+                      <label style="font-size: 11px; color: var(--text-secondary)">CFG Scale</label>
                       <input
                         class="form-input"
                         style="font-size: 12px; padding: 4px 8px"
@@ -1219,7 +1179,7 @@
                       />
                     </div>
                     <div>
-                      <label style="font-size: 11px; color: var(--text-secondary)">{{{t("admin.steps")}}}</label>
+                      <label style="font-size: 11px; color: var(--text-secondary)">Steps</label>
                       <input
                         class="form-input"
                         style="font-size: 12px; padding: 4px 8px"
@@ -1228,7 +1188,7 @@
                       />
                     </div>
                     <div>
-                      <label style="font-size: 11px; color: var(--text-secondary)">{{{t("admin.sampler")}}}</label>
+                      <label style="font-size: 11px; color: var(--text-secondary)">Sampler</label>
                       <input
                         class="form-input"
                         style="font-size: 12px; padding: 4px 8px"
@@ -1237,7 +1197,7 @@
                       />
                     </div>
                     <div>
-                      <label style="font-size: 11px; color: var(--text-secondary)">{{{t("admin.scheduler")}}}</label>
+                      <label style="font-size: 11px; color: var(--text-secondary)">Scheduler</label>
                       <input
                         class="form-input"
                         style="font-size: 12px; padding: 4px 8px"
@@ -1247,14 +1207,12 @@
                     </div>
                   </div>
                   <button class="btn btn-primary btn-xs" style="margin-top: var(--space-2)" @click="saveDefaults()">
-                    {{{t("admin.saveDefaults")}}}
+                    Save Defaults
                   </button>
                 </div>
 
                 <!-- Templates Grid -->
-                <div style="font-size: 12px; font-weight: 600; margin-bottom: var(--space-2)">
-                  {{{t("admin.templates")}}}
-                </div>
+                <div style="font-size: 12px; font-weight: 600; margin-bottom: var(--space-2)">Templates</div>
                 <div style="display: grid; gap: var(--space-3)">
                   <template x-for="detail in ['instant', 'balanced', 'detailed']" :key="detail">
                     <div>
@@ -1287,11 +1245,9 @@
                                     @click="saveTemplate()"
                                     :disabled="savingTemplate"
                                   >
-                                    {{{t("common.save")}}}
+                                    Save
                                   </button>
-                                  <button class="btn btn-secondary btn-xs" @click="cancelEditTemplate()">
-                                    {{{t("common.cancel")}}}
-                                  </button>
+                                  <button class="btn btn-secondary btn-xs" @click="cancelEditTemplate()">Cancel</button>
                                 </div>
                               </div>
                             </template>
@@ -1299,14 +1255,14 @@
                               <div style="flex: 1; display: flex; gap: var(--space-2); align-items: flex-start">
                                 <div
                                   style="flex: 1; font-size: 11px; font-family: monospace; padding: 6px 8px; background: var(--bg-tertiary, #fff); border: 1px solid var(--border-default, #e9ecef); border-radius: 4px; white-space: pre-wrap; max-height: 80px; overflow-y: auto"
-                                  x-text="selectedProfile.templates?.[detail]?.[mode] || t('admin.empty')"
+                                  x-text="selectedProfile.templates?.[detail]?.[mode] || '(empty)'"
                                 >
                                 </div>
                                 <button
                                   class="btn btn-secondary btn-xs"
                                   @click="startEditTemplate(detail, mode, selectedProfile.templates?.[detail]?.[mode] || '')"
                                 >
-                                  {{{t("common.edit")}}}
+                                  Edit
                                 </button>
                               </div>
                             </template>
@@ -1324,7 +1280,7 @@
               <div style="display: grid; gap: var(--space-3)">
                 <template x-if="templateProfiles.length === 0">
                   <div class="empty-state" style="padding: var(--space-8)">
-                    <div class="title">{{{t("admin.noTemplatesFound")}}}</div>
+                    <div class="title">No templates found</div>
                   </div>
                 </template>
                 <template x-for="p in templateProfiles" :key="p.id">
@@ -1342,41 +1298,37 @@
                         <span
                           x-show="p.isBuiltin"
                           style="font-size: 10px; padding: 1px 6px; background: var(--bg-tertiary, #fff); border: 1px solid var(--border-default, #e9ecef); border-radius: 10px; color: var(--text-secondary); margin-left: var(--space-2)"
-                        >{{{t("admin.builtin")}}}</span>
+                        >builtin</span>
                         <span
                           x-show="!p.isBuiltin"
                           style="font-size: 10px; padding: 1px 6px; background: #28a74522; border: 1px solid #28a74544; border-radius: 10px; color: #28a745; margin-left: var(--space-2)"
-                        >{{{t("admin.custom")}}}</span>
+                        >custom</span>
                       </div>
                       <div style="display: flex; align-items: center; gap: var(--space-3)">
                         <span
                           style="font-size: 12px; color: var(--text-secondary)"
-                          x-text="t('admin.templateCount', {count: p.templateCount})"
+                          x-text="p.templateCount + ' templates'"
                         ></span>
                         <span
                           style="font-size: 12px; color: var(--text-secondary)"
-                          x-text="t('admin.formatLabel', {format: p.promptFormat})"
+                          x-text="p.promptFormat + ' format'"
                         ></span>
                         <span
                           style="font-size: 12px; color: var(--text-secondary)"
-                          x-text="t('admin.tokenCount', {count: p.maxTokenHint})"
+                          x-text="p.maxTokenHint + ' tokens'"
                         ></span>
                         <template x-if="!p.isBuiltin && p.id !== defaultProfileId">
-                          <button class="btn btn-danger btn-xs" @click.stop="deleteProfile(p.id)">
-                            {{{t("common.delete")}}}
-                          </button>
+                          <button class="btn btn-danger btn-xs" @click.stop="deleteProfile(p.id)">Delete</button>
                         </template>
                       </div>
                     </div>
                     <div style="font-size: 11px; color: var(--text-secondary); margin-top: var(--space-2)">
-                      {{{t("admin.families")}}}: <span x-text="p.families.join(', ')"></span>
+                      Families: <span x-text="p.families.join(', ')"></span>
                     </div>
                     <div style="font-size: 11px; color: var(--text-secondary)">
-                      {{{t("admin.defaultsLabel")}}}: {{{t("admin.cfgLabel")}}} <span
-                        x-text="p.defaults.cfgScale"
-                      ></span> · {{{t("admin.steps")}}} <span x-text="p.defaults.steps"></span> · <span
-                        x-text="p.defaults.sampler"
-                      ></span>
+                      Defaults: CFG <span x-text="p.defaults.cfgScale"></span> · Steps <span
+                        x-text="p.defaults.steps"
+                      ></span> · <span x-text="p.defaults.sampler"></span>
                     </div>
                   </div>
                 </template>
@@ -1390,10 +1342,10 @@
                 @click.self="showCreateModal = false"
               >
                 <div style="background: var(--bg-primary, #fff); border-radius: 8px; padding: var(--space-6); width: 100%; max-width: 480px; display: grid; gap: var(--space-4)">
-                  <h3 style="font-size: 16px; font-weight: 600; margin: 0">{{{t("admin.newProfile")}}}</h3>
+                  <h3 style="font-size: 16px; font-weight: 600; margin: 0">Create Custom Profile</h3>
                   <div>
                     <label style="display: block; font-size: 12px; font-weight: 500; margin-bottom: 4px"
-                    >{{{t("admin.profileId")}}}</label>
+                    >Profile ID</label>
                     <input
                       class="form-input"
                       style="font-size: 13px"
@@ -1402,8 +1354,7 @@
                     />
                   </div>
                   <div>
-                    <label style="display: block; font-size: 12px; font-weight: 500; margin-bottom: 4px"
-                    >{{{t("admin.nameLabel")}}}</label>
+                    <label style="display: block; font-size: 12px; font-weight: 500; margin-bottom: 4px">Name</label>
                     <input
                       class="form-input"
                       style="font-size: 13px"
@@ -1413,7 +1364,7 @@
                   </div>
                   <div>
                     <label style="display: block; font-size: 12px; font-weight: 500; margin-bottom: 4px"
-                    >{{{t("admin.familiesLabel")}}}</label>
+                    >Families (comma-separated)</label>
                     <input
                       class="form-input"
                       style="font-size: 13px"
@@ -1424,16 +1375,16 @@
                   <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3)">
                     <div>
                       <label style="display: block; font-size: 12px; font-weight: 500; margin-bottom: 4px"
-                      >{{{t("admin.promptFormatLabel")}}}</label>
+                      >Prompt Format</label>
                       <select class="form-input" style="font-size: 13px" x-model="newProfile.promptFormat">
-                        <option value="tags">{{{t("admin.tags")}}}</option>
-                        <option value="natural">{{{t("admin.naturalLanguage")}}}</option>
-                        <option value="tags-and-natural">{{{t("admin.mixed")}}}</option>
+                        <option value="tags">Tags</option>
+                        <option value="natural">Natural Language</option>
+                        <option value="tags-and-natural">Mixed</option>
                       </select>
                     </div>
                     <div>
                       <label style="display: block; font-size: 12px; font-weight: 500; margin-bottom: 4px"
-                      >{{{t("admin.maxTokens")}}}</label>
+                      >Max Tokens</label>
                       <input
                         class="form-input"
                         style="font-size: 13px"
@@ -1443,15 +1394,13 @@
                     </div>
                   </div>
                   <div style="display: flex; justify-content: flex-end; gap: var(--space-2)">
-                    <button class="btn btn-secondary btn-xs" @click="showCreateModal = false">
-                      {{{t("common.cancel")}}}
-                    </button>
+                    <button class="btn btn-secondary btn-xs" @click="showCreateModal = false">Cancel</button>
                     <button
                       class="btn btn-primary btn-xs"
                       @click="createProfile()"
                       :disabled="!newProfile.id || !newProfile.name"
                     >
-                      {{{t("common.create")}}}
+                      Create
                     </button>
                   </div>
                 </div>
