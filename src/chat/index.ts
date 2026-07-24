@@ -13,6 +13,7 @@ export type {
   ContextThresholds,
   ContextWindow,
   EventRef,
+  GmConfig,
   MemoryRef,
   MessageRef,
   MessageScore,

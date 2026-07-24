@@ -73,6 +73,22 @@ export function resolveFeatureFlags(
   return { ...defaults, ...overrides, };
 }
 
+// ─── Game Master Config (Chat-Level) ─────────────────────────
+
+/**
+ * Chat-level GM configuration. Stored as JSON in `chats.gm_config`.
+ *
+ * This is the lightweight chat settings config — not the full story-mode
+ * `GameMasterConfig` from `src/story/types.ts`. Story mode uses the richer
+ * `GameMasterConfig` with LLM settings, human GM, escalation thresholds.
+ */
+export interface GmConfig {
+  /** Assistant's role in this chat: off, helper, gm, or moderator */
+  assistantRole?: "off" | "helper" | "gm" | "moderator";
+  /** Visual novel mode (image-heavy, sequential panel display) */
+  visualNovel?: boolean;
+}
+
 // ─── Context Window ───────────────────────────────────────────
 
 /** A message reference within the context window */
