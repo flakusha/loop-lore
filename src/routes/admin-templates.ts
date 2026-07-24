@@ -14,7 +14,7 @@
  *   DELETE /api/admin/templates/:id         — delete custom profile
  */
 
-import { Elysia, t, } from "elysia";
+import { Elysia, } from "elysia";
 import type { Kysely, } from "kysely";
 import { getConfig, setConfig, } from "../admin/config";
 import type { DB, } from "../db/schema";
@@ -23,9 +23,9 @@ import {
   DEFAULT_PROFILE_REGISTRY,
   type DetailLevel,
   type ImageModelProfile,
+  type SdGenMode,
 } from "../generation/prompt-templates";
 import { getLogger, type Logger, } from "../logger";
-import { ErrorResponse, SuccessResponse, } from "../validation/schemas";
 import { jsonError, jsonResponse, } from "./http-utils";
 import { HttpStatus, } from "./http-utils";
 
@@ -73,10 +73,7 @@ export function adminTemplateRoutes(opts: { database: Kysely<DB> },) {
     .get("/api/admin/templates", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
       if (!userId) {
-        return jsonError({
-          message: ctx.t?.("errors.unauthorized",) ?? "Unauthorized",
-          status: HttpStatus.Unauthorized,
-        },);
+        return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, },);
       }
 
       try {
@@ -103,28 +100,16 @@ export function adminTemplateRoutes(opts: { database: Kysely<DB> },) {
       } catch (error) {
         log().error(`Failed to list templates: ${String(error,)}`,);
         return jsonError({
-          message: ctx.t?.("admin.templateListFailed",) ?? "Failed to list templates",
+          message: "Failed to list templates",
           status: HttpStatus.InternalServerError,
         },);
       }
-    }, {
-      response: {
-        200: SuccessResponse,
-      },
-      detail: {
-        summary: "List image model profiles",
-        description: "List all image model profiles (builtin + custom) with summary info.",
-        tags: ["Admin", "Templates",],
-      },
     },)
     // ── Get full registry (all profiles with templates) ────
     .get("/api/admin/templates/registry", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
       if (!userId) {
-        return jsonError({
-          message: ctx.t?.("errors.unauthorized",) ?? "Unauthorized",
-          status: HttpStatus.Unauthorized,
-        },);
+        return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, },);
       }
 
       try {
@@ -139,58 +124,31 @@ export function adminTemplateRoutes(opts: { database: Kysely<DB> },) {
       } catch (error) {
         log().error(`Failed to get registry: ${String(error,)}`,);
         return jsonError({
-          message: ctx.t?.("admin.templateRegistryFailed",) ?? "Failed to get registry",
+          message: "Failed to get registry",
           status: HttpStatus.InternalServerError,
         },);
       }
-    }, {
-      response: {
-        200: SuccessResponse,
-      },
-      detail: {
-        summary: "Get template registry",
-        description: "Get the full image model template registry with all profiles and templates.",
-        tags: ["Admin", "Templates",],
-      },
     },)
     // ── Get one profile ───────────────────────────────────
     .get("/api/admin/templates/:id", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
       if (!userId) {
-        return jsonError({
-          message: ctx.t?.("errors.unauthorized",) ?? "Unauthorized",
-          status: HttpStatus.Unauthorized,
-        },);
+        return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, },);
       }
 
-      const { id, } = ctx.params;
+      const { id, } = ctx.params as { id: string };
       const stored = await loadStoredTemplates(database,);
       const merged = mergeProfiles(BUILTIN_PROFILES, stored.profiles,);
       const profile = merged[id];
 
       if (!profile) {
-        return jsonError({
-          message: ctx.t?.("characters.profileNotFound",) ?? "Profile not found",
-          status: HttpStatus.NotFound,
-        },);
+        return jsonError({ message: "Profile not found", status: HttpStatus.NotFound, },);
       }
 
       return jsonResponse({
         ...profile,
         isBuiltin: id in BUILTIN_PROFILES,
       },);
-    }, {
-      params: t.Object({ id: t.String(), },),
-      response: {
-        200: SuccessResponse,
-        401: ErrorResponse,
-        404: ErrorResponse,
-      },
-      detail: {
-        summary: "Get image model profile",
-        description: "Get a single image model profile by ID.",
-        tags: ["Admin", "Templates",],
-      },
     },)
     // ── Update template text for a profile ────────────────
     .put(
@@ -198,14 +156,15 @@ export function adminTemplateRoutes(opts: { database: Kysely<DB> },) {
       async (ctx: any,) => {
         const userId = ctx.userId as string | null;
         if (!userId) {
-          return jsonError({
-            message: ctx.t?.("errors.unauthorized",) ?? "Unauthorized",
-            status: HttpStatus.Unauthorized,
-          },);
+          return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, },);
         }
 
-        const { id, } = ctx.params;
-        const body = ctx.body;
+        const { id, } = ctx.params as { id: string };
+        const body = ctx.body as {
+          detail?: DetailLevel;
+          mode?: SdGenMode;
+          template?: string;
+        };
 
         if (!body.detail || !body.mode || !body.template) {
           return jsonError({
@@ -219,10 +178,7 @@ export function adminTemplateRoutes(opts: { database: Kysely<DB> },) {
         const existing = merged[id];
 
         if (!existing) {
-          return jsonError({
-            message: ctx.t?.("characters.profileNotFound",) ?? "Profile not found",
-            status: HttpStatus.NotFound,
-          },);
+          return jsonError({ message: "Profile not found", status: HttpStatus.NotFound, },);
         }
 
         // Deep clone the profile
@@ -232,7 +188,7 @@ export function adminTemplateRoutes(opts: { database: Kysely<DB> },) {
         if (!updated.templates) {
           updated.templates = {} as Record<DetailLevel, any>;
         }
-        if (!updated.templates[body.detail as DetailLevel]) {
+        if (!updated.templates[body.detail]) {
           (updated.templates as any)[body.detail] = {};
         }
         (updated.templates as any)[body.detail][body.mode] = body.template;
@@ -244,24 +200,6 @@ export function adminTemplateRoutes(opts: { database: Kysely<DB> },) {
         log().info(`Template updated: ${id}/${body.detail}/${body.mode}`,);
         return jsonResponse({ ok: true, profileId: id, },);
       },
-      {
-        params: t.Object({ id: t.String(), },),
-        body: t.Object({
-          detail: t.String(),
-          mode: t.String(),
-          template: t.String(),
-        },),
-        response: {
-          200: SuccessResponse,
-          401: ErrorResponse,
-          404: ErrorResponse,
-        },
-        detail: {
-          summary: "Update profile template",
-          description: "Update a template text for a specific detail level and mode in a profile.",
-          tags: ["Admin", "Templates",],
-        },
-      },
     )
     // ── Update model defaults for a profile ───────────────
     .put(
@@ -269,24 +207,25 @@ export function adminTemplateRoutes(opts: { database: Kysely<DB> },) {
       async (ctx: any,) => {
         const userId = ctx.userId as string | null;
         if (!userId) {
-          return jsonError({
-            message: ctx.t?.("errors.unauthorized",) ?? "Unauthorized",
-            status: HttpStatus.Unauthorized,
-          },);
+          return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, },);
         }
 
-        const { id, } = ctx.params;
-        const body = ctx.body;
+        const { id, } = ctx.params as { id: string };
+        const body = ctx.body as {
+          cfgScale?: number;
+          steps?: number;
+          sampler?: string;
+          scheduler?: string;
+          clipSkip?: number;
+          maxTokenHint?: number;
+        };
 
         const stored = await loadStoredTemplates(database,);
         const merged = mergeProfiles(BUILTIN_PROFILES, stored.profiles,);
         const existing = merged[id];
 
         if (!existing) {
-          return jsonError({
-            message: ctx.t?.("characters.profileNotFound",) ?? "Profile not found",
-            status: HttpStatus.NotFound,
-          },);
+          return jsonError({ message: "Profile not found", status: HttpStatus.NotFound, },);
         }
 
         const updated = structuredClone(existing,);
@@ -304,27 +243,6 @@ export function adminTemplateRoutes(opts: { database: Kysely<DB> },) {
         log().info(`Model defaults updated: ${id}`,);
         return jsonResponse({ ok: true, profileId: id, },);
       },
-      {
-        params: t.Object({ id: t.String(), },),
-        body: t.Object({
-          cfgScale: t.Optional(t.Numeric(),),
-          steps: t.Optional(t.Numeric(),),
-          sampler: t.Optional(t.String(),),
-          scheduler: t.Optional(t.String(),),
-          clipSkip: t.Optional(t.Numeric(),),
-          maxTokenHint: t.Optional(t.Numeric(),),
-        },),
-        response: {
-          200: SuccessResponse,
-          401: ErrorResponse,
-          404: ErrorResponse,
-        },
-        detail: {
-          summary: "Update profile defaults",
-          description: "Update the default generation parameters (cfg scale, steps, sampler, etc) for a profile.",
-          tags: ["Admin", "Templates",],
-        },
-      },
     )
     // ── Create custom profile ─────────────────────────────
     .post(
@@ -332,13 +250,22 @@ export function adminTemplateRoutes(opts: { database: Kysely<DB> },) {
       async (ctx: any,) => {
         const userId = ctx.userId as string | null;
         if (!userId) {
-          return jsonError({
-            message: ctx.t?.("errors.unauthorized",) ?? "Unauthorized",
-            status: HttpStatus.Unauthorized,
-          },);
+          return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, },);
         }
 
-        const body = ctx.body;
+        const body = ctx.body as {
+          id: string;
+          name: string;
+          families: string[];
+          promptFormat?: string;
+          maxTokenHint?: number;
+          defaults?: {
+            cfgScale: number;
+            steps: number;
+            sampler: string;
+            scheduler?: string;
+          };
+        };
 
         if (!body.id || !body.name || !body.families?.length) {
           return jsonError({
@@ -390,30 +317,6 @@ export function adminTemplateRoutes(opts: { database: Kysely<DB> },) {
         log().info(`Custom profile created: ${body.id}`,);
         return jsonResponse({ ok: true, profileId: body.id, },);
       },
-      {
-        body: t.Object({
-          id: t.String({ minLength: 1, },),
-          name: t.String({ minLength: 1, },),
-          families: t.Array(t.String(),),
-          promptFormat: t.Optional(t.String(),),
-          maxTokenHint: t.Optional(t.Numeric(),),
-          defaults: t.Optional(t.Object({
-            cfgScale: t.Numeric(),
-            steps: t.Numeric(),
-            sampler: t.String(),
-            scheduler: t.Optional(t.String(),),
-          },),),
-        },),
-        response: {
-          200: SuccessResponse,
-          401: ErrorResponse,
-        },
-        detail: {
-          summary: "Create custom profile",
-          description: "Create a new custom image model profile.",
-          tags: ["Admin", "Templates",],
-        },
-      },
     )
     // ── Delete custom profile ─────────────────────────────
     .delete(
@@ -421,13 +324,10 @@ export function adminTemplateRoutes(opts: { database: Kysely<DB> },) {
       async (ctx: any,) => {
         const userId = ctx.userId as string | null;
         if (!userId) {
-          return jsonError({
-            message: ctx.t?.("errors.unauthorized",) ?? "Unauthorized",
-            status: HttpStatus.Unauthorized,
-          },);
+          return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, },);
         }
 
-        const { id, } = ctx.params;
+        const { id, } = ctx.params as { id: string };
 
         if (id in BUILTIN_PROFILES) {
           return jsonError({
@@ -439,10 +339,7 @@ export function adminTemplateRoutes(opts: { database: Kysely<DB> },) {
         const stored = await loadStoredTemplates(database,);
 
         if (!stored.profiles[id]) {
-          return jsonError({
-            message: ctx.t?.("characters.profileNotFound",) ?? "Profile not found",
-            status: HttpStatus.NotFound,
-          },);
+          return jsonError({ message: "Profile not found", status: HttpStatus.NotFound, },);
         }
 
         const { [id]: _, ...rest } = stored.profiles;
@@ -451,19 +348,6 @@ export function adminTemplateRoutes(opts: { database: Kysely<DB> },) {
 
         log().info(`Custom profile deleted: ${id}`,);
         return jsonResponse({ ok: true, },);
-      },
-      {
-        params: t.Object({ id: t.String(), },),
-        response: {
-          200: SuccessResponse,
-          401: ErrorResponse,
-          404: ErrorResponse,
-        },
-        detail: {
-          summary: "Delete custom profile",
-          description: "Delete a custom image model profile. Cannot delete builtin profiles.",
-          tags: ["Admin", "Templates",],
-        },
       },
     );
 }
