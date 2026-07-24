@@ -1,4 +1,5 @@
 // ── Chat page component (chat.html) — core state + init ────
+
 import { chatActions, } from "./chat-actions";
 import { chatActivity, } from "./chat-activity";
 import { chatEditing, } from "./chat-editing";
@@ -9,7 +10,7 @@ import { chatManagement, } from "./chat-management";
 import { chatMessages, } from "./chat-messages";
 import { chatPanels, } from "./chat-panels";
 import { chatSettings, } from "./chat-settings";
-import { chatUtils, initAnonymousModeCheck, } from "./chat-utils";
+import { chatUtils, } from "./chat-utils";
 import { chatVariants, } from "./chat-variants";
 import { jsonParseOr, } from "./json";
 import { getLogger, } from "./logger";
@@ -137,11 +138,9 @@ globalThis.chatState = function() {
     // ── Mood Panel State ──
     _moodPanel: createMoodPanelState(),
     async loadMoodPanel(actorId: string,) {
-      await Promise.allSettled([
-        this._moodPanel.loadMood(actorId,),
-        this._moodPanel.loadEmotions(actorId,),
-        this._moodPanel.loadEmotionDefs(),
-      ],);
+      await this._moodPanel.loadMood(actorId,);
+      await this._moodPanel.loadEmotions(actorId,);
+      await this._moodPanel.loadEmotionDefs();
     },
 
     // ── Sub-module state + methods ──
@@ -198,9 +197,6 @@ globalThis.chatState = function() {
       await this.loadChats();
       this.loadUserInfo();
       this.connectActivitySSE();
-
-      // Initialize anonymous mode check
-      await initAnonymousModeCheck();
 
       const params = new URLSearchParams(location.search,);
       const chatId = params.get("chatid",);
@@ -304,12 +300,7 @@ globalThis.chatState = function() {
       this.currentPage = 1;
       this.hasMoreMessages = true;
       this.loadingOlder = false;
-      await Promise.allSettled([
-        this.loadMessages(),
-        this.loadGalleryAssets(),
-        this.loadCharacterInfo(),
-        this.loadMood(),
-      ],);
+      await Promise.all([this.loadMessages(), this.loadGalleryAssets(), this.loadCharacterInfo(),],);
       await this.markChatAsRead(chatId,);
       await this.loadChatKey(chatId,);
       await this.loadImpersonationState();
