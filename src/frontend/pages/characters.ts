@@ -2,7 +2,6 @@
 import { jsonBody, } from "../alpine/json";
 import { log as rootLog, } from "../alpine/logger";
 import { fetchMood, happinessColor, moodToEmoji, moodToLabel, } from "../alpine/mood-panel";
-import { $, } from "../dom";
 import { feFetch, } from "../fe-fetch";
 import { showToast, } from "../ui";
 import { fetchPartial, filterCards, } from "./shared";
@@ -50,18 +49,6 @@ globalThis.selectCharacterCard = async function(id: string,) {
     modal.querySelector("[data-field='name']",)!.textContent = char.display_name || char.name || "";
     modal.querySelector("[data-field='description']",)!.textContent = char.description || "No description";
     modal.querySelector("[data-field='system-prompt']",)!.textContent = char.system_prompt || "No system prompt";
-    modal.querySelector("[data-field='personality']",)!.textContent = char.personality || "No personality set";
-    modal.querySelector("[data-field='scenario']",)!.textContent = char.scenario || "No scenario set";
-    modal.querySelector("[data-field='welcome-message']",)!.textContent = char.welcome_message || "No welcome message";
-    const tagsEl = modal.querySelector<HTMLElement>("[data-field='tags']",);
-    if (tagsEl) {
-      const tags = char.tags ? (typeof char.tags === "string" ? JSON.parse(char.tags,) : char.tags) : [];
-      tagsEl.innerHTML = Array.isArray(tags,)
-        ? tags.map((t: string,) =>
-          `<span style="padding:2px 8px;background:var(--bg-tertiary);border-radius:12px;font-size:0.85em">${t}</span>`
-        ).join("",)
-        : "";
-    }
     modal.querySelector("[data-field='avatar']",)!.innerHTML = char.avatar_asset_id
       ? `<img src="/api/assets/${char.avatar_asset_id}/thumb" style="width:100%;height:100%;object-fit:cover" alt="Avatar" />`
       : "<span>👤</span>";
@@ -144,7 +131,9 @@ globalThis.exportCharacter = function(btn: HTMLElement,) {
     return;
   }
 
-  const format = $<HTMLInputElement>('input[name="export-format"]:checked', modal,)?.value;
+  const format = (
+    modal.querySelector('input[name="export-format"]:checked',) as HTMLInputElement | null
+  )?.value;
   const characterId = (modal as HTMLElement).dataset.characterId;
 
   if (!characterId) {
@@ -155,86 +144,4 @@ globalThis.exportCharacter = function(btn: HTMLElement,) {
   // Trigger download — backend uses /api/actors/:actorId/export
   globalThis.location.assign(`/api/actors/${characterId}/export?format=${format}`,);
   closeModal(btn,);
-};
-
-// ── Character Edit Handlers ────────────────────────────────────
-
-globalThis.saveCharacterEdit = async function(characterId: string,) {
-  const form = document.querySelector<HTMLFormElement>("#char-edit-form",);
-  if (!form) { return; }
-
-  const name = $<HTMLInputElement>("#edit-name", form,)?.value ?? "";
-  const desc = $<HTMLTextAreaElement>("#edit-desc", form,)?.value ?? "";
-  const systemPrompt = $<HTMLTextAreaElement>("#edit-system", form,)?.value ?? "";
-  const personality = $<HTMLTextAreaElement>("#edit-personality", form,)?.value ?? "";
-  const greeting = $<HTMLTextAreaElement>("#edit-greeting", form,)?.value ?? "";
-  const scenario = $<HTMLTextAreaElement>("#edit-scenario", form,)?.value ?? "";
-  const mesExample = $<HTMLTextAreaElement>("#edit-example", form,)?.value ?? "";
-  const postHistory = $<HTMLTextAreaElement>("#edit-post-history", form,)?.value ?? "";
-  const avatarId = $<HTMLInputElement>("#char-avatar-id", form,)?.value ?? "";
-
-  const body: Record<string, unknown> = {
-    displayName: name,
-    description: desc,
-    systemPrompt,
-    personality,
-    welcomeMessage: greeting,
-    scenario,
-    mesExample,
-    postHistoryInstructions: postHistory,
-  };
-  if (avatarId) { body.avatarAssetId = avatarId; }
-
-  try {
-    const resp = await feFetch(`/api/actors/${characterId}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json", },
-      body: jsonBody(body,),
-    },);
-    if (resp.ok) {
-      showToast("success", "Character saved",);
-      location.assign("/views/characters",);
-    } else {
-      showToast("error", "Failed to save character",);
-    }
-  } catch {
-    showToast("error", "Failed to save character",);
-  }
-};
-
-globalThis.uploadAvatar = async function(input: HTMLInputElement,) {
-  const file = input.files?.[0];
-  if (!file) { return; }
-
-  const formData = new FormData();
-  formData.append("file", file,);
-
-  try {
-    const resp = await fetch("/api/assets", {
-      method: "POST",
-      body: formData,
-    },);
-    if (resp.ok) {
-      const data = await resp.json();
-      const avatarId = data.id;
-      const hiddenInput = document.querySelector<HTMLInputElement>("#char-avatar-id",);
-      if (hiddenInput) { hiddenInput.value = avatarId; }
-      const preview = document.querySelector("#avatar-preview",);
-      if (preview) {
-        preview.innerHTML =
-          `<img src="/api/assets/${avatarId}/thumb" style="width:100%;height:100%;object-fit:cover" alt="Avatar" />`;
-      }
-      const label = document.querySelector("#upload-avatar-label",);
-      if (label) { label.textContent = "Replace Avatar"; }
-    }
-  } catch {
-    showToast("error", "Failed to upload avatar",);
-  }
-};
-
-globalThis.clearAvatar = function() {
-  const hiddenInput = document.querySelector<HTMLInputElement>("#char-avatar-id",);
-  if (hiddenInput) { hiddenInput.value = ""; }
-  const preview = document.querySelector("#avatar-preview",);
-  if (preview) { preview.innerHTML = "<span>👤</span>"; }
 };
