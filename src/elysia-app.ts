@@ -27,6 +27,8 @@ import { actorMemoriesRoutes, } from "./routes/actor-memories";
 import { actorNotesRoutes, } from "./routes/actor-notes";
 import { adminRoutes, } from "./routes/admin";
 import { adminCharacterOverridesRoutes, } from "./routes/admin-character-overrides";
+import { adminNsfwRoutes, } from "./routes/admin-nsfw";
+import { adminTemplateRoutes, } from "./routes/admin-templates";
 import { apiKeysRoutes, } from "./routes/api-keys";
 import { authProtectedRoutes, authPublicRoutes, } from "./routes/auth";
 import { characterAvailabilityRoutes, } from "./routes/character-availability";
@@ -144,6 +146,8 @@ export function createApp(deps: AppDeps,): Elysia {
   app.use(characterAvailabilityRoutes(handleOpts,),);
   app.use(characterLicensingRoutes(handleOpts,),);
   app.use(adminCharacterOverridesRoutes(handleOpts,),);
+  app.use(adminTemplateRoutes(handleOpts,),);
+  app.use(adminNsfwRoutes(handleOpts,),);
   app.use(characterIoRoutes(handleOpts,),);
   app.use(messagesRoutes(handleOpts,),);
   app.use(messageReactionsRoutes(handleOpts,),);
