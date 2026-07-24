@@ -41,6 +41,9 @@ import type {
 // ── Base types ──────────────────────────────────────────────
 
 import {
+  CHARACTERS_DEFAULTS,
+} from "./sections/characters";
+import {
   TEMPLATES_DEFAULTS,
 } from "./sections/templates";
 
@@ -1075,6 +1078,7 @@ export class ConfigSchema {
       headers: this.headers,
       dynamicResponse: this.dynamicResponse,
       templates: TEMPLATES_DEFAULTS,
+      characters: CHARACTERS_DEFAULTS,
     };
   }
 }

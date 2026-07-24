@@ -20,8 +20,8 @@ export function characterIoRoutes(opts: HandlerOpts,) {
   const { database, } = opts;
 
   return new Elysia({ name: "character-io", },)
-    // ── Export ──────────────────────────────────────────────
-    .get("/api/actors/:actorId/export", async (ctx: any,) => {
+    // ── Export Systems Data ─────────────────────────────────
+    .get("/api/actors/:actorId/systems/export", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
       if (!userId) { return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, },); }
 
@@ -42,8 +42,8 @@ export function characterIoRoutes(opts: HandlerOpts,) {
 
       return jsonError({ message: `Unsupported format: ${format}`, status: HttpStatus.BadRequest, },);
     },)
-    // ── Export (POST for complex queries) ───────────────────
-    .post("/api/actors/:actorId/export", async (ctx: any,) => {
+    // ── Export Systems Data (POST for complex queries) ──────
+    .post("/api/actors/:actorId/systems/export", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
       if (!userId) { return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, },); }
 
@@ -73,8 +73,8 @@ export function characterIoRoutes(opts: HandlerOpts,) {
 
       return jsonResponse(filtered,);
     },)
-    // ── Import ──────────────────────────────────────────────
-    .post("/api/actors/:actorId/import", async (ctx: any,) => {
+    // ── Import Systems Data ─────────────────────────────────
+    .post("/api/actors/:actorId/systems/import", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
       if (!userId) { return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, },); }
 
@@ -102,8 +102,8 @@ export function characterIoRoutes(opts: HandlerOpts,) {
         errors: result.errors,
       },);
     },)
-    // ── Import from URL ─────────────────────────────────────
-    .post("/api/actors/:actorId/import/url", async (ctx: any,) => {
+    // ── Import Systems Data from URL ────────────────────────
+    .post("/api/actors/:actorId/systems/import/url", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
       if (!userId) { return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, },); }
 
