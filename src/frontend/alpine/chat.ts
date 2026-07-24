@@ -15,7 +15,7 @@ import { chatVariants, } from "./chat-variants";
 import { jsonParseOr, } from "./json";
 import { getLogger, } from "./logger";
 import { memoryPanel, } from "./memory-panel";
-import { createMoodPanelState, } from "./mood-panel";
+import { moodState, } from "./mood";
 import { rpgStats, } from "./rpg-stats";
 import type { AlpineState, ChatState, } from "./types";
 
@@ -132,16 +132,11 @@ globalThis.chatState = function() {
     ...rpgStats,
     showRpgPanel: false as boolean,
 
+    // ── Mood System ──
+    ...moodState,
+
     // ── Memory Panel State ──
     ...memoryPanel,
-
-    // ── Mood Panel State ──
-    _moodPanel: createMoodPanelState(),
-    async loadMoodPanel(actorId: string,) {
-      await this._moodPanel.loadMood(actorId,);
-      await this._moodPanel.loadEmotions(actorId,);
-      await this._moodPanel.loadEmotionDefs();
-    },
 
     // ── Sub-module state + methods ──
     ...chatKeys,
@@ -300,15 +295,11 @@ globalThis.chatState = function() {
       this.currentPage = 1;
       this.hasMoreMessages = true;
       this.loadingOlder = false;
-      await Promise.all([this.loadMessages(), this.loadGalleryAssets(), this.loadCharacterInfo(),],);
+      await Promise.all([this.loadMessages(), this.loadGalleryAssets(), this.loadCharacterInfo(), this.loadMood(),],);
       await this.markChatAsRead(chatId,);
       await this.loadChatKey(chatId,);
       await this.loadImpersonationState();
       await this.loadChatParticipants();
-      // Load mood data for the current character
-      if (this.currentCharacter?.id) {
-        await this.loadMoodPanel(this.currentCharacter.id,);
-      }
     },
 
     getChatId() {
