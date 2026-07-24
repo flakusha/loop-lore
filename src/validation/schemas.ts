@@ -331,6 +331,7 @@ export const AdminChatUpdateBody = t.Object({
 
 // ── Template management (admin) ─────────────────────────────
 
+/* eslint-disable unicorn/max-nested-calls */
 export const AdminTemplateCreateBody = t.Object({
   id: t.String({ minLength: 1, },),
   name: t.String({ minLength: 1, },),
@@ -350,7 +351,9 @@ export const AdminTemplateCreateBody = t.Object({
     detailed: t.Any(),
   },),
 },);
+/* eslint-enable unicorn/max-nested-calls */
 
+/* eslint-disable unicorn/max-nested-calls */
 export const AdminTemplateUpdateBody = t.Object({
   name: t.Optional(t.String({ minLength: 1, },),),
   families: t.Optional(t.Array(t.String(),),),
@@ -369,6 +372,7 @@ export const AdminTemplateUpdateBody = t.Object({
     detailed: t.Any(),
   },),),
 },);
+/* eslint-enable unicorn/max-nested-calls */
 
 // ── World routes ───────────────────────────────────────────
 
