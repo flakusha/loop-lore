@@ -365,11 +365,22 @@ async function start() {
   const initPromises: Promise<void>[] = [];
 
   // Seed character templates from config (idempotent)
-  if (config.characters.enabled && config.characters.templates.length > 0) {
+  if (config.characters.enabled) {
     initPromises.push(
       (async () => {
-        const { seedCharacterTemplates, } = await import("./characters/seed");
-        const result = await seedCharacterTemplates(database, config.characters,);
+        const { seedCharacterTemplates, mergeCharacterTemplates, } = await import("./characters/seed");
+        const { CHARACTERS_DEFAULTS, } = await import("./config/sections/characters");
+
+        // Use character templates from template loader (configs/templates/character.yaml)
+        // Merge built-in defaults with template-loaded characters
+        const templateCharacters = config.templates.character.templates;
+        const mergedTemplates = mergeCharacterTemplates(
+          CHARACTERS_DEFAULTS.templates,
+          templateCharacters,
+        );
+
+        const mergedConfig = { ...config.characters, templates: mergedTemplates, };
+        const result = await seedCharacterTemplates(database, mergedConfig,);
         if (result.created > 0) {
           logger.info("character templates seeded", {
             module: "server",

@@ -1,0 +1,48 @@
+# Character Template Configuration (TOML format)
+#
+# TOML supports multiline strings with triple quotes:
+#
+# Basic string (auto-combines lines):
+#   description = """lines
+#   are auto-combined"""
+#
+# Literal string (no escape processing):
+#   welcome_message = '''preserve
+#   backslashes \n \t'''
+#
+# One-line strings work too:
+#   name = "My Character"
+#
+# Copy this file to configs/templates/character.toml and customize as needed.
+
+merge = "extend" # extend | override | replace
+
+# ── Example: Custom Character (multiline strings) ──────────
+# [[templates]]
+# id = "tpl-fantasy-hero"
+# name = "Fantasy Hero"
+# description = """
+# A brave warrior from the northern kingdoms. \
+# Skilled with sword and magic alike. \
+# Seeks glory and adventure."""
+# personality = """
+# Brave, loyal, slightly reckless. \
+# Follows a strict code of honor. \
+# Always ready to help those in need."""
+# scenario = """
+# The kingdom is under threat from dark forces. \
+# The hero must gather allies and prepare for battle."""
+# welcome_message = """
+# *A figure approaches from the mist, armor gleaming in the pale light.*
+# Hail, traveler! I am Sir Cedric of the Northern Realms.
+# What brings you to these dangerous lands?"""
+# mes_example = """
+# *Sir Cedric draws his sword, its blade glowing with arcane energy.*
+# Stand firm! The darkness will not pass this day."""
+# tags = ["fantasy", "hero", "warrior"]
+# creator = "Your Name"
+# visibility = "public"
+# content_rating = "sfw"
+# target_roles = ["user", "admin"]
+# is_template = true
+# is_default = true

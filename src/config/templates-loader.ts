@@ -8,8 +8,10 @@ import { load as parseYaml, } from "js-yaml";
 import { existsSync, readFileSync, statSync, } from "node:fs";
 import path from "node:path";
 import { parse as parseToml, } from "smol-toml";
+import { loadCharacterFiles, } from "./character-loader";
 import type {
   AvatarTemplateConfig,
+  CharacterTemplateConfig,
   ImageEditTemplateConfig,
   LlmTemplateConfig,
   MergeStrategy,
@@ -34,6 +36,9 @@ const TEMPLATE_FILES: Record<string, keyof TemplatesConfig> = {
   "image-edit.yaml": "imageEdit",
   "image-edit.yml": "imageEdit",
   "image-edit.toml": "imageEdit",
+  "character.yaml": "character",
+  "character.yml": "character",
+  "character.toml": "character",
 };
 
 /**
@@ -248,13 +253,60 @@ function mergeImageEditConfig(
   };
 }
 
-// ── Main Loader ─────────────────────────────────────────────
+/** Apply merge strategy for character templates */
+function mergeCharacterConfig(
+  base: CharacterTemplateConfig,
+  override: Partial<CharacterTemplateConfig>,
+  strategy: MergeStrategy,
+): CharacterTemplateConfig {
+  if (strategy === "replace") {
+    return {
+      merge: base.merge,
+      templates: override.templates ?? [],
+    };
+  }
 
+  if (strategy === "override") {
+    // Override: user templates replace built-in by name
+    const merged = new Map<string, CharacterTemplateConfig["templates"][number]>();
+    for (const t of base.templates) {
+      merged.set(t.name.toLowerCase(), t,);
+    }
+    const overrideTemplates = override.templates ?? [];
+    for (const t of overrideTemplates) {
+      merged.set(t.name.toLowerCase(), t,);
+    }
+    return {
+      ...base,
+      ...override,
+      merge: base.merge,
+      templates: Array.from(merged.values(),),
+    };
+  }
+
+  // extend: add new templates, user wins on name conflict
+  const merged = new Map<string, CharacterTemplateConfig["templates"][number]>();
+  for (const t of base.templates) {
+    merged.set(t.name.toLowerCase(), t,);
+  }
+  const overrideTemplates = override.templates ?? [];
+  for (const t of overrideTemplates) {
+    merged.set(t.name.toLowerCase(), t,);
+  }
+  return {
+    ...base,
+    ...override,
+    merge: base.merge,
+    templates: Array.from(merged.values(),),
+  };
+}
 /**
  * Load template configuration from configs/templates/ directory.
  *
  * Merges user-provided template files with built-in defaults
  * using per-domain merge strategies.
+ *
+ * Also loads character files from configs/characters/ directory.
  *
  * @param cwd - Working directory to search from (default: process.cwd())
  * @returns Merged template configuration
@@ -263,7 +315,13 @@ export function loadTemplateConfig(cwd?: string,): TemplatesConfig {
   const directory = cwd ?? process.cwd();
   const templateFiles = findTemplateFiles(directory,);
 
-  let config: TemplatesConfig = structuredClone(TEMPLATES_DEFAULTS,);
+  const config: TemplatesConfig = structuredClone(TEMPLATES_DEFAULTS,);
+
+  // Load character files from configs/characters/ directory
+  const characterFiles = loadCharacterFiles(directory,);
+  if (characterFiles.length > 0) {
+    config.character.templates = characterFiles;
+  }
 
   // Process each found template file
   for (const [domain, filePath,] of templateFiles) {
@@ -272,34 +330,46 @@ export function loadTemplateConfig(cwd?: string,): TemplatesConfig {
       const strategy = (raw.merge as MergeStrategy) ?? "extend";
 
       switch (domain) {
-        case "llm":
+        case "llm": {
           config.llm = mergeLlmConfig(
             config.llm,
             raw as Partial<LlmTemplateConfig>,
             strategy,
           );
           break;
-        case "sd":
+        }
+        case "sd": {
           config.sd = mergeSdConfig(
             config.sd,
             raw as Partial<SdTemplateConfig>,
             strategy,
           );
           break;
-        case "avatar":
+        }
+        case "avatar": {
           config.avatar = mergeAvatarConfig(
             config.avatar,
             raw as Partial<AvatarTemplateConfig>,
             strategy,
           );
           break;
-        case "imageEdit":
+        }
+        case "imageEdit": {
           config.imageEdit = mergeImageEditConfig(
             config.imageEdit,
             raw as Partial<ImageEditTemplateConfig>,
             strategy,
           );
           break;
+        }
+        case "character": {
+          config.character = mergeCharacterConfig(
+            config.character,
+            raw as Partial<CharacterTemplateConfig>,
+            strategy,
+          );
+          break;
+        }
       }
     } catch (error) {
       throw new Error(
@@ -316,6 +386,7 @@ export {
   findMainRepoRoot,
   findTemplateFiles,
   mergeAvatarConfig,
+  mergeCharacterConfig,
   mergeImageEditConfig,
   mergeLlmConfig,
   mergeSdConfig,
