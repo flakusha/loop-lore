@@ -3,6 +3,7 @@
 // Seeds default characters from config on app start.
 // Idempotent: checks by display_name + owner_id before insert.
 // Never overrides existing DB records.
+// Supports hard IDs for deterministic test reseeding.
 
 import type { Kysely, } from "kysely";
 import type { CharactersConfig, } from "../config/schema";
@@ -19,6 +20,7 @@ interface SeedResult {
 /**
  * Seed default characters from config templates.
  * Runs on app start — idempotent (skips existing by name+owner).
+ * Supports hard IDs for deterministic test reseeding.
  *
  * @param database - Kysely DB instance
  * @param config - Characters config section
@@ -55,9 +57,14 @@ export async function seedCharacterTemplates(
         continue;
       }
 
-      const id = uid();
+      // Use hard ID if provided, otherwise generate
+      const id = template.id ?? uid();
       const tags = template.tags ?? [];
-      const settingsResult = safeJsonStringify(tags.length > 0 ? { tags, } : {},);
+      const settingsResult = safeJsonStringify(
+        tags.length > 0
+          ? { tags, is_template: template.is_template, is_default: template.is_default, }
+          : { is_template: template.is_template, is_default: template.is_default, },
+      );
       const settings = settingsResult.ok ? settingsResult.value : "{}";
 
       await database
@@ -76,6 +83,8 @@ export async function seedCharacterTemplates(
           system_prompt: template.system_prompt ?? null,
           mes_example: template.mes_example ?? null,
           creator: template.creator ?? null,
+          visibility: template.visibility ?? "public",
+          content_rating: template.content_rating ?? "sfw",
           settings,
           import_spec: "template",
           data_version: 0,
@@ -83,7 +92,7 @@ export async function seedCharacterTemplates(
         .execute();
 
       result.created++;
-      logger.info("seeded character template", { module: "characters", name: template.name, },);
+      logger.info("seeded character template", { module: "characters", name: template.name, id, },);
     } catch (error_) {
       const error = error_ instanceof Error ? error_ : new Error(String(error_,),);
       result.errors.push(`${template.name}: ${error.message}`,);
@@ -92,4 +101,31 @@ export async function seedCharacterTemplates(
   }
 
   return result;
+}
+
+/**
+ * Merge built-in defaults with user config templates.
+ * User templates override built-in by name (case-insensitive).
+ *
+ * @param defaults - Built-in character templates
+ * @param userTemplates - User config templates
+ * @returns Merged templates
+ */
+export function mergeCharacterTemplates(
+  defaults: CharactersConfig["templates"],
+  userTemplates: CharactersConfig["templates"],
+): CharactersConfig["templates"] {
+  const merged = new Map<string, CharactersConfig["templates"][number]>();
+
+  // Add built-in defaults first
+  for (const template of defaults) {
+    merged.set(template.name.toLowerCase(), template,);
+  }
+
+  // User templates override built-in by name
+  for (const template of userTemplates) {
+    merged.set(template.name.toLowerCase(), template,);
+  }
+
+  return Array.from(merged.values(),);
 }
