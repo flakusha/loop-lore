@@ -82,7 +82,13 @@ export async function resolveModelRole(
  * Resolve all model roles at once.
  */
 export async function resolveAllModelRoles(config: Config, db: Kysely<DB>,): Promise<ResolvedModelRole[]> {
-  return Promise.all(VALID_ROLES.map((role,) => resolveModelRole(role, config, db,)),);
+  const promises: Promise<ResolvedModelRole>[] = Array.from(VALID_ROLES, role => resolveModelRole(role, config, db,),);
+  const results = await Promise.allSettled(promises,);
+  const roles: ResolvedModelRole[] = [];
+  for (const r of results) {
+    if (r.status === "fulfilled") { roles.push(r.value,); }
+  }
+  return roles;
 }
 
 /**
