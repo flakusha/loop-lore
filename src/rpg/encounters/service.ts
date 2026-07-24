@@ -103,7 +103,7 @@ export class EncounterService {
   /**
    * Create a new NSFW encounter.
    */
-  async createEncounter(opts: CreateEncounterOpts): Promise<NsfwEncounter> {
+  async createEncounter(opts: CreateEncounterOpts,): Promise<NsfwEncounter> {
     const { worldId, encounterType, intensity, narrativeStyle, participants, phases, outcomes, contentTags, } = opts;
 
     const id = uid();
@@ -304,7 +304,7 @@ export class EncounterService {
     }
 
     const rows = await query.selectAll().execute();
-    return rows.map((r,) => this.getRow(r,),);
+    return rows.map((r,) => this.getRow(r,));
   }
 
   /**
@@ -335,7 +335,7 @@ export class EncounterService {
     completed: number;
     created_at: string;
     updated_at: string;
-  }): NsfwEncounter {
+  },): NsfwEncounter {
     return {
       id: row.id,
       worldId: row.world_id,
@@ -374,7 +374,9 @@ export class EncounterService {
     const log = getLogger().child({ module: "encounters", },);
     for (const outcome of outcomes) {
       log.info(
-        `Encounter ${encounter.id} outcome: ${outcome.type} (intimacy ${outcome.effects.intimacyChange > 0 ? "+" : ""}${outcome.effects.intimacyChange})`,
+        `Encounter ${encounter.id} outcome: ${outcome.type} (intimacy ${
+          outcome.effects.intimacyChange > 0 ? "+" : ""
+        }${outcome.effects.intimacyChange})`,
       );
     }
   }

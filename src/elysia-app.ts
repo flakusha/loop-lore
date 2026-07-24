@@ -9,25 +9,28 @@
  * Uses closure injection (not .state()/.decorate()) to avoid Elysia's
  * complex type inference issues when merging plugins.
  */
+import { Elysia, } from "elysia";
+import { BunAdapter, } from "elysia/adapter/bun";
+import { ageGateRoutes, } from "./age-gate/controller";
+import { assetRoutes, } from "./assets/controller";
 import type { Config, } from "./config/schema";
 import type { Db, } from "./db";
-import { BunAdapter, } from "elysia/adapter/bun";
-import { Elysia, } from "elysia";
+import { generationRoutes, } from "./generation/controller";
+import { authenticate, } from "./middleware/auth";
+import { createI18nContext, detectLocale, } from "./middleware/i18n";
+import { personaRoutes, } from "./personas/controller";
 import { activityRoutes, } from "./routes/activity";
 import { activityStreamRoutes, } from "./routes/activity-stream";
 import { actorItemsRoutes, } from "./routes/actor-items";
 import { actorLoreEntriesRoutes, } from "./routes/actor-lore-entries";
 import { actorMemoriesRoutes, } from "./routes/actor-memories";
 import { actorNotesRoutes, } from "./routes/actor-notes";
+import { adminRoutes, } from "./routes/admin";
 import { adminCharacterOverridesRoutes, } from "./routes/admin-character-overrides";
 import { adminNsfwRoutes, } from "./routes/admin-nsfw";
-import { adminRoutes, } from "./routes/admin";
 import { adminTemplateRoutes, } from "./routes/admin-templates";
-import { ageGateRoutes, } from "./age-gate/controller";
 import { apiKeysRoutes, } from "./routes/api-keys";
-import { assetRoutes, } from "./assets/controller";
 import { authProtectedRoutes, authPublicRoutes, } from "./routes/auth";
-import { authenticate, } from "./middleware/auth";
 import { characterAvailabilityRoutes, } from "./routes/character-availability";
 import { characterAvatarsRoutes, } from "./routes/character-avatars";
 import { characterEmotionAvatarsRoutes, } from "./routes/character-emotion-avatars";
@@ -42,10 +45,7 @@ import { chatContextRoutes, } from "./routes/chat-context";
 import { chatExportRoutes, } from "./routes/chat-export";
 import { chatPinRoutes, } from "./routes/chat-pins";
 import { chatsRoutes, } from "./routes/chats";
-import { createI18nContext, detectLocale, } from "./middleware/i18n";
 import { frontendLogsRoutes, } from "./routes/frontend-logs";
-import { generationRoutes, } from "./generation/controller";
-import { handleApiRequest, } from "./server";
 import { healthRoutes, } from "./routes/health";
 import { i18nRoutes, } from "./routes/i18n";
 import { importRoutes, } from "./routes/import";
@@ -55,8 +55,6 @@ import { messageReactionsRoutes, } from "./routes/message-reactions";
 import { messagesRoutes, } from "./routes/messages";
 import { notificationsRoutes, } from "./routes/notifications";
 import { nsfwRoutes, } from "./routes/nsfw";
-import { onValidationError, } from "./validation";
-import { personaRoutes, } from "./personas/controller";
 import { pluginRoutes, } from "./routes/plugins";
 import { questsRoutes, } from "./routes/quests";
 import { sessionsRoutes, } from "./routes/sessions";
@@ -69,6 +67,8 @@ import { usersRoutes, } from "./routes/users";
 import { viewRoutes, } from "./routes/views";
 import { worldLoreEntriesRoutes, } from "./routes/world-lore-entries";
 import { worldsRoutes, } from "./routes/worlds";
+import { handleApiRequest, } from "./server";
+import { onValidationError, } from "./validation";
 
 export interface AppDeps {
   database: Db;
