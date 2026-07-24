@@ -207,32 +207,6 @@ export const SCHEMA = new SchemaManifest()
     source_message_id: col("text",),
     context: col("text",),
     world_id: col("text",),
-    user_id: col("text",),
-    scope: col("text", { notNull: true, hasDefault: true, },),
-    pinned: col("integer", { notNull: true, hasDefault: true, },),
-    privacy: col("text", { notNull: true, hasDefault: true, },),
-    shareability: col("text",),
-  },)
-  .table("actor_notes", {
-    id: col("text", { primaryKey: true, },),
-    actor_id: col("text", { notNull: true, },),
-    title: col("text", { notNull: true, },),
-    content: col("text", { notNull: true, },),
-    category: col("text", { notNull: true, hasDefault: true, },),
-    pinned: col("text", { notNull: true, hasDefault: true, },),
-    sort_order: col("integer", { notNull: true, hasDefault: true, },),
-    created_at: col("text", { notNull: true, hasDefault: true, },),
-    updated_at: col("text", { notNull: true, hasDefault: true, },),
-  },)
-  .table("character_arousal", {
-    id: col("text", { primaryKey: true, },),
-    actor_id: col("text", { notNull: true, },),
-    world_id: col("text",),
-    level: col("integer", { notNull: true, hasDefault: true, },),
-    buildup_rate: col("real", { notNull: true, hasDefault: true, },),
-    decay_rate: col("real", { notNull: true, hasDefault: true, },),
-    modifiers: col("text", { notNull: true, hasDefault: true, },),
-    last_update: col("text", { notNull: true, },),
     created_at: col("text", { notNull: true, },),
     updated_at: col("text", { notNull: true, },),
   },)
