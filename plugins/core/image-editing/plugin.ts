@@ -15,8 +15,9 @@ import {
   handleCapabilities,
   handleHealth,
 } from "../../../src/image-edit/routes";
-import { templateRegistry } from "../../../src/image-edit/template-registry";
+import { templateRegistry, registerConfigWorkflows } from "../../../src/image-edit/template-registry";
 import { builtinTemplates } from "../../../src/image-edit/templates/builtin";
+import { loadTemplateConfig } from "../../../src/config/templates-loader";
 
 export const plugin: PluginManifest = {
   name: "image-editing",
@@ -32,8 +33,13 @@ export const plugin: PluginManifest = {
       templateRegistry.register(template);
     }
 
+    // Register config-defined workflows
+    const templateConfig = loadTemplateConfig();
+    registerConfigWorkflows(templateConfig.imageEdit);
+
+    const totalCount = builtinTemplates.length + Object.keys(templateConfig.imageEdit.workflows).length;
     context.logger.info(
-      `Loaded ${builtinTemplates.length} image editing templates`,
+      `Loaded ${totalCount} image editing templates (${builtinTemplates.length} built-in, ${Object.keys(templateConfig.imageEdit.workflows).length} config)`,
     );
 
     // Register API routes
