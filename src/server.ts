@@ -20,6 +20,7 @@ import { createLogger, getLogger, } from "./logger";
 import { DynamicResponsePolicy, ResponseHeaderPolicy, } from "./middleware";
 import { generateNonce, } from "./middleware/csp-nonce";
 import { dispatchPluginRoute, loadAllPlugins, unloadAllPlugins, } from "./plugins";
+import { backendToConfig, discoverBackends, } from "./services/sd-discovery";
 import { ServerExternalManager, } from "./services/server-external-manager";
 
 const DOCS_PATH = join(import.meta.dir, "..", "docs", ".vitepress", "dist",);
@@ -228,10 +229,30 @@ function handleDocsRequest(
 }
 
 async function start() {
-  const config = loadConfig();
+  let config = loadConfig();
   createLogger(config.logging,);
   initAgeGate(config.ageGate,);
   await initSmk(config.encryption,);
+
+  // ── Auto-discover SD backends if not configured ──────────
+  if (!config.generation.providers.sd || config.generation.providers.sd.length === 0) {
+    const discovered = await discoverBackends({ timeoutMs: 2000, },);
+    if (discovered.length > 0) {
+      config = {
+        ...config,
+        generation: {
+          ...config.generation,
+          providers: {
+            ...config.generation.providers,
+            sd: discovered.map((b,) =>
+              backendToConfig(b, b.apiFamily === "comfyui" ? "comfyui-auto" : "sd-server-auto",)
+            ),
+          },
+        },
+      };
+    }
+  }
+
   initializeProviders(config,);
 
   // Startup health check — scan providers and log any failures
@@ -347,13 +368,17 @@ async function start() {
   if (config.characters.enabled && config.characters.templates.length > 0) {
     initPromises.push(
       (async () => {
-        const { seedCharacterTemplates } = await import("./characters/seed");
-        const result = await seedCharacterTemplates(database, config.characters);
+        const { seedCharacterTemplates, } = await import("./characters/seed");
+        const result = await seedCharacterTemplates(database, config.characters,);
         if (result.created > 0) {
-          logger.info("character templates seeded", { module: "server", created: result.created, skipped: result.skipped });
+          logger.info("character templates seeded", {
+            module: "server",
+            created: result.created,
+            skipped: result.skipped,
+          },);
         }
         if (result.errors.length > 0) {
-          logger.warn("character template seeding had errors", { module: "server", errors: result.errors });
+          logger.warn("character template seeding had errors", { module: "server", errors: result.errors, },);
         }
       })(),
     );
