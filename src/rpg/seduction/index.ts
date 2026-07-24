@@ -5,9 +5,9 @@
  */
 export { SeductionService, } from "./service";
 export type {
-  DesireProfile,
-  SeductionSkill,
   ArousalState,
-  SeductionResult,
+  DesireProfile,
   SeductionAttemptOpts,
+  SeductionResult,
+  SeductionSkill,
 } from "./service";

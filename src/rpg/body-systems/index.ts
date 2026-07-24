@@ -5,8 +5,8 @@
  */
 export { BodySystemService, } from "./service";
 export type {
+  BodyModification,
   BodyProfile,
   HeatCycleState,
-  BodyModification,
   UpdateBodyProfileOpts,
 } from "./service";
