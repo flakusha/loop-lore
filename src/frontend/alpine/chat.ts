@@ -302,7 +302,12 @@ globalThis.chatState = function() {
       this.currentPage = 1;
       this.hasMoreMessages = true;
       this.loadingOlder = false;
-      await Promise.all([this.loadMessages(), this.loadGalleryAssets(), this.loadCharacterInfo(), this.loadMood(),],);
+      await Promise.allSettled([
+        this.loadMessages(),
+        this.loadGalleryAssets(),
+        this.loadCharacterInfo(),
+        this.loadMood(),
+      ],);
       await this.markChatAsRead(chatId,);
       await this.loadChatKey(chatId,);
       await this.loadImpersonationState();

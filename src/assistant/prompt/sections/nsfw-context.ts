@@ -71,10 +71,10 @@ export const nsfwContextSection: SectionBuilder = {
       const hardLimits = JSON.parse(desire.hard_limits,) as string[];
 
       if (turnOns.length > 0) {
-        sections.push(`Turn-ons: ${turnOns.join(", ")}`,);
+        sections.push(`Turn-ons: ${turnOns.join(", ",)}`,);
       }
       if (hardLimits.length > 0) {
-        sections.push(`Hard limits: ${hardLimits.join(", ")}`,);
+        sections.push(`Hard limits: ${hardLimits.join(", ",)}`,);
       }
     }
 
@@ -89,7 +89,7 @@ export const nsfwContextSection: SectionBuilder = {
           "",
           "Use this context to inform intimate scenes. Respect hard limits absolutely.",
           "Adjust narrative intensity based on arousal and intimacy levels.",
-        ].join("\n"),
+        ].join("\n",),
       },
     ];
   },

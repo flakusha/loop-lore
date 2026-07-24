@@ -5,7 +5,7 @@
  */
 export { FantasyService, } from "./service";
 export type {
-  Fantasy,
   CreateFantasyOpts,
   DiscoveryResult,
+  Fantasy,
 } from "./service";

@@ -93,7 +93,7 @@ export class FantasyService {
   /**
    * Create a fantasy for an actor.
    */
-  async createFantasy(opts: CreateFantasyOpts): Promise<Fantasy> {
+  async createFantasy(opts: CreateFantasyOpts,): Promise<Fantasy> {
     const {
       actorId,
       name,
@@ -185,7 +185,7 @@ export class FantasyService {
       .selectAll()
       .execute();
 
-    return rows.map((r,) => this.getRow(r,),);
+    return rows.map((r,) => this.getRow(r,));
   }
 
   /**
@@ -203,7 +203,7 @@ export class FantasyService {
       .selectAll()
       .execute();
 
-    return rows.map((r,) => this.getRow(r,),);
+    return rows.map((r,) => this.getRow(r,));
   }
 
   /**
@@ -322,7 +322,7 @@ export class FantasyService {
     times_explored: number;
     created_at: string;
     updated_at: string;
-  }): Fantasy {
+  },): Fantasy {
     return {
       id: row.id,
       actorId: row.actor_id,
@@ -343,22 +343,22 @@ export class FantasyService {
 
   /** Infer fantasy category from context keywords. */
   private inferCategory(context: string,): FantasyCategory {
-    if (context.includes("bondage") || context.includes("restrain")) { return "bondage"; }
-    if (context.includes("public") || context.includes("expose")) { return "exhibitionism"; }
-    if (context.includes("watch") || context.includes("peek")) { return "voyeurism"; }
-    if (context.includes("role") || context.includes("costume")) { return "roleplay"; }
-    if (context.includes("dom") || context.includes("control")) { return "power_exchange"; }
-    if (context.includes("sub") || context.includes("obey")) { return "power_exchange"; }
-    if (context.includes("sensation") || context.includes("touch")) { return "sensation"; }
-    if (context.includes("group") || context.includes("multiple")) { return "group"; }
-    if (context.includes("pet") || context.includes("puppy")) { return "pet_play"; }
-    if (context.includes("praise") || context.includes("compliment")) { return "praise"; }
+    if (context.includes("bondage",) || context.includes("restrain",)) { return "bondage"; }
+    if (context.includes("public",) || context.includes("expose",)) { return "exhibitionism"; }
+    if (context.includes("watch",) || context.includes("peek",)) { return "voyeurism"; }
+    if (context.includes("role",) || context.includes("costume",)) { return "roleplay"; }
+    if (context.includes("dom",) || context.includes("control",)) { return "power_exchange"; }
+    if (context.includes("sub",) || context.includes("obey",)) { return "power_exchange"; }
+    if (context.includes("sensation",) || context.includes("touch",)) { return "sensation"; }
+    if (context.includes("group",) || context.includes("multiple",)) { return "group"; }
+    if (context.includes("pet",) || context.includes("puppy",)) { return "pet_play"; }
+    if (context.includes("praise",) || context.includes("compliment",)) { return "praise"; }
     return "roleplay";
   }
 
   /** Infer fantasy name from context keywords. */
   private inferName(context: string,): string {
-    const words = context.split(/\s+/,).filter((w,) => w.length > 3,);
+    const words = context.split(/\s+/,).filter((w,) => w.length > 3);
     const name = words.slice(0, 3,).join(" ",);
     return name.charAt(0,).toUpperCase() + name.slice(1,);
   }

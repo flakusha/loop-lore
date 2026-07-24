@@ -5,8 +5,8 @@
  */
 export { LocationNsfwService, } from "./service";
 export type {
-  LocationNsfwConfig,
   LocationAtmosphere,
+  LocationNsfwConfig,
   LocationRisks,
   UpdateLocationNsfwOpts,
 } from "./service";
