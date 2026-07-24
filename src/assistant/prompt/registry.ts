@@ -12,6 +12,7 @@ import { examplesSection, } from "./sections/examples";
 import { groupParticipantsSection, } from "./sections/group-participants";
 import { loreSection, } from "./sections/lore";
 import { memorySection, } from "./sections/memories";
+import { nsfwContextSection, } from "./sections/nsfw-context";
 import { postHistorySection, } from "./sections/post-history";
 import { recentEventsSection, } from "./sections/recent-events";
 import { storyContextSection, } from "./sections/story-context";
@@ -25,6 +26,7 @@ export const PROMPT_SECTIONS: SectionBuilder[] = [
   actorHeaderSection,
   groupParticipantsSection,
   userPersonaSection,
+  nsfwContextSection,
   loreSection,
   memorySection,
   eventSection,
