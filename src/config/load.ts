@@ -258,7 +258,7 @@ function loadConfig(cwd?: string,): Config {
   config = applyEnvironmentOverrides(config, ENV_MAP,);
   applyProviderEnvVars(config,);
 
-  // 5. Load template configs from config/templates/ directory
+  // 5. Load template configs from configs/templates/ directory
   config.templates = loadTemplateConfig(directory,);
 
   validateConfig(config,);

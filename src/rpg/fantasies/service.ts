@@ -217,7 +217,7 @@ export class FantasyService {
   async attemptDiscovery(
     actorId: string,
     context: string,
-    discoveryChance: number = 0.1,
+    discoveryChance = 0.1,
   ): Promise<DiscoveryResult> {
     // Check if already discovered
     const existing = await this.db
