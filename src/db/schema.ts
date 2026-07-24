@@ -71,6 +71,16 @@ export interface DB {
   character_availability: import("./schema-character").CharacterAvailability;
   character_licensing: import("./schema-character").CharacterLicensing;
   admin_character_overrides: import("./schema-character").AdminCharacterOverrides;
+  // NSFW systems
+  character_intimacy: import("./schema-character").CharacterIntimacy;
+  character_arousal: import("./schema-character").CharacterArousal;
+  character_desire_profile: import("./schema-character").CharacterDesireProfile;
+  character_seduction_skills: import("./schema-character").CharacterSeductionSkills;
+  nsfw_encounters: import("./schema-character").NsfwEncounters;
+  character_body_profile: import("./schema-character").CharacterBodyProfile;
+  character_heat_cycle: import("./schema-character").CharacterHeatCycle;
+  character_fantasies: import("./schema-character").CharacterFantasies;
+  location_nsfw_config: import("./schema-character").LocationNsfwConfig;
   // Crafting systems
   crafting_recipes: import("./schema-crafting").CraftingRecipes;
   crafting_recipe_materials: import("./schema-crafting").CraftingRecipeMaterials;
