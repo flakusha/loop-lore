@@ -154,7 +154,7 @@ export function nsfwRoutes(opts: HandlerOpts,) {
             const body = ctx.body as Record<string, unknown>;
             const success = await seductionService.updateDesireProfile(
               ctx.params.actorId,
-              body as any,
+              body,
             );
             return jsonResponse({ success, },);
           } catch (error) {
@@ -216,7 +216,7 @@ export function nsfwRoutes(opts: HandlerOpts,) {
             const body = ctx.body as Record<string, unknown>;
             const success = await bodyService.updateProfile(
               ctx.params.actorId,
-              body as any,
+              body,
             );
             return jsonResponse({ success, },);
           } catch (error) {
@@ -406,7 +406,7 @@ export function nsfwRoutes(opts: HandlerOpts,) {
             const body = ctx.body as Record<string, unknown>;
             const success = await locationService.updateConfig(
               ctx.params.locationId,
-              body as any,
+              body,
             );
             return jsonResponse({ success, },);
           } catch (error) {

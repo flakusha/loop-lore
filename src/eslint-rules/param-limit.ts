@@ -10,7 +10,6 @@
  * Pattern: function a(b, c, d) => function a({b, c, d})
  */
 
-// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-explicit-any
 const rule: any = {
   meta: {
     type: "suggestion",
