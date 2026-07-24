@@ -1,0 +1,63 @@
+# Avatar Templates
+#
+# Emotion-to-asset mapping and intent patterns for avatar changes.
+# Merge strategy: replace | extend (default) | override
+#
+# extend: adds new emotions/patterns, existing keys from config win on conflict
+# replace: wipes all built-in emotions, uses only these
+# override: deep merges over built-ins
+
+merge: extend
+
+# Emotion key -> asset mapping
+# Each emotion maps to an asset file and an intent description for LLM context
+emotions:
+  happy:
+    asset: happy.png
+    intent: "The character smiles warmly"
+  sad:
+    asset: sad.png
+    intent: "The character looks downcast"
+  angry:
+    asset: angry.png
+    intent: "The character frowns with irritation"
+  surprised:
+    asset: surprised.png
+    intent: "The character raises an eyebrow"
+  thinking:
+    asset: thinking.png
+    intent: "The character looks thoughtful"
+  embarrassed:
+    asset: embarrassed.png
+    intent: "The character blushes slightly"
+
+# Intent patterns for detecting avatar change requests
+# pattern: text to match (substring or regex)
+# emotion: target emotion key from the emotions map above
+intentPatterns:
+  - pattern: "smile"
+    emotion: happy
+  - pattern: "grin"
+    emotion: happy
+  - pattern: "laugh"
+    emotion: happy
+  - pattern: "cry"
+    emotion: sad
+  - pattern: "weep"
+    emotion: sad
+  - pattern: "frown"
+    emotion: angry
+  - pattern: "scowl"
+    emotion: angry
+  - pattern: "surprise"
+    emotion: surprised
+  - pattern: "shock"
+    emotion: surprised
+  - pattern: "think"
+    emotion: thinking
+  - pattern: "ponder"
+    emotion: thinking
+  - pattern: "blush"
+    emotion: embarrassed
+  - pattern: "embarrass"
+    emotion: embarrassed
