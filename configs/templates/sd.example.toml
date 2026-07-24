@@ -11,7 +11,6 @@ merge = "extend"
 
 # Custom image model profiles (merged with built-in BUILTIN_PROFILES)
 [profiles]
-
 # Model name pattern matching (appended to built-in rules)
 # First match wins. Pattern is matched against lowercase model name.
 modelMatching = []

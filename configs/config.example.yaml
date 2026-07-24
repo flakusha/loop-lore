@@ -12,11 +12,11 @@ server:
   port: 3000
   host: "localhost"
   tls:
-    key: "../loop-lore-data/certs/key.pem"      # auto-generated if missing
-    cert: "../loop-lore-data/certs/cert.pem"    # auto-generated if missing
+    key: "../loop-lore-data/certs/key.pem" # auto-generated if missing
+    cert: "../loop-lore-data/certs/cert.pem" # auto-generated if missing
 
 db:
-  type: sqlite          # "sqlite" or "postgres"
+  type: sqlite # "sqlite" or "postgres"
   sqliteFilename: "../loop-lore-data/loop-lore.db"
   # For Postgres:
   # type: postgres
@@ -25,25 +25,25 @@ db:
 assets:
   enabled: true
   uploadDir: "../loop-lore-data/uploads"
-  maxFileSize: 10485760  # 10 MB
+  maxFileSize: 10485760 # 10 MB
   compression: true
 
 assistant:
   enabled: true
 
 logging:
-  level: debug          # debug | info | warn | error
-  # jsonlPath: "./data/logs/loop-lore.jsonl"   # enable JSONL output
-  # jsonlMaxBytes: 104857600                   # 100 MB rotation
-  # jsonlMaxFiles: 5
-  # dbEnabled: false                           # log_entries table
-  # censorEnabled: true                        # PII redaction (default)
-  # censorFields: ["x-api-key", "authorization"]
-  # queueMaxSize: 10000
-  # maxMessageBytes: 10240
-  # maxMetaBytes: 102400
-  # maxMetaDepth: 5
-  # maxStackBytes: 5120
+  level: debug # debug | info | warn | error
+# jsonlPath: "./data/logs/loop-lore.jsonl"   # enable JSONL output
+# jsonlMaxBytes: 104857600                   # 100 MB rotation
+# jsonlMaxFiles: 5
+# dbEnabled: false                           # log_entries table
+# censorEnabled: true                        # PII redaction (default)
+# censorFields: ["x-api-key", "authorization"]
+# queueMaxSize: 10000
+# maxMessageBytes: 10240
+# maxMetaBytes: 102400
+# maxMetaDepth: 5
+# maxStackBytes: 5120
 
 tui:
   enabled: true
@@ -53,7 +53,7 @@ docs:
   # public: ["guide", "frontend", "assets", "actors"]    # uncomment to restrict visible sections
 
 auth:
-  required: false             # true = remote auth, false = solo/demo mode
+  required: false # true = remote auth, false = solo/demo mode
   registrationOpen: true
   sessionTimeoutHours: 24
   maxSessionsPerUser: 10
@@ -64,7 +64,7 @@ auth:
 ageGate:
   enabled: false
   minimumAge: 18
-  mode: self-declaration    # none | self-declaration | verification
+  mode: self-declaration # none | self-declaration | verification
 
 # ── Transport ──
 transport:
@@ -204,12 +204,16 @@ headers:
   enabled: true
   referrerPolicy: "strict-origin-when-cross-origin"
   xContentTypeOptions: true
-  xFrameOptions: DENY                  # DENY | SAMEORIGIN | null
+  xFrameOptions: DENY # DENY | SAMEORIGIN | null
   permissionsPolicy: "accelerometer=(), camera=(), display-capture=(), geolocation=(), gyroscope=(), microphone=(), usb=()"
   csp:
     enabled: true
     defaultSrc: ["'self'"]
-    scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'"] # 'unsafe-inline': Alpine.js @x directive; 'unsafe-eval': Alpine.js new Function() for expression evaluation
+    scriptSrc: [
+      "'self'",
+      "'unsafe-inline'",
+      "'unsafe-eval'",
+    ] # 'unsafe-inline': Alpine.js @x directive; 'unsafe-eval': Alpine.js new Function() for expression evaluation
     styleSrc: ["'self'", "'unsafe-inline'"] # inline style= attrs need unsafe-inline
     imgSrc: ["'self'", "data:", "blob:"]
     fontSrc: ["'self'"]
@@ -221,13 +225,13 @@ headers:
     # reportOnly: false                # true = emit Content-Security-Policy-Report-Only (observe, don't enforce)
   # crossOriginOpenerPolicy: null      # same-origin | same-origin-allow-popups | null
   # crossOriginEmbedderPolicy: null    # require-corp | null  (keep null until wasm/SAB ready)
-  crossOriginResourcePolicy: cross-origin   # same-origin | cross-origin
+  crossOriginResourcePolicy: cross-origin # same-origin | cross-origin
   immutableHashedAssets: true
   linkPreload: ["/vendor.js", "/app.js", "/css/app.css"]
   # acceptClientHints: ["Device-Memory", "RTT"]   # needs HTTPS; opt-in client hints
   # saveData: false
   earlyHints:
-    enabled: false                     # 103 Early Hints — needs transport support (spike)
-  # reportingEndpoints:
-  #   default: "https://example.com/report"
-  # nel: '{ "report_to": "default", "max_age": 31536000 }'
+    enabled: false # 103 Early Hints — needs transport support (spike)
+# reportingEndpoints:
+#   default: "https://example.com/report"
+# nel: '{ "report_to": "default", "max_age": 31536000 }'

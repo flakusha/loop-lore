@@ -3,7 +3,7 @@
 // Default characters created on app start from config templates.
 // Templates NEVER override existing DB records (idempotent seeding).
 
-import type { CharactersConfig } from "../schema";
+import type { CharactersConfig, } from "../schema";
 
 export interface CharacterTemplate {
   /** Display name (required) */
@@ -35,8 +35,8 @@ export class CharactersSection implements CharactersConfig {
   enabled = CHARACTERS_DEFAULTS.enabled;
   templates: CharacterTemplate[] = CHARACTERS_DEFAULTS.templates;
 
-  constructor(overrides?: Partial<CharactersConfig>) {
-    Object.assign(this, overrides);
+  constructor(overrides?: Partial<CharactersConfig>,) {
+    Object.assign(this, overrides,);
   }
 }
 
@@ -55,19 +55,19 @@ export const charactersMeta = {
       items: {
         type: "object",
         properties: {
-          name: { type: "string", description: "Character display name" },
-          description: { type: "string", description: "Character description" },
-          personality: { type: "string", description: "Personality traits" },
-          scenario: { type: "string", description: "RP scenario/setting" },
-          welcome_message: { type: "string", description: "Welcome message" },
-          system_prompt: { type: "string", description: "System prompt override" },
-          mes_example: { type: "string", description: "Example dialogue" },
-          tags: { type: "array", items: { type: "string" }, description: "Classification tags" },
-          creator: { type: "string", description: "Creator attribution" },
+          name: { type: "string", description: "Character display name", },
+          description: { type: "string", description: "Character description", },
+          personality: { type: "string", description: "Personality traits", },
+          scenario: { type: "string", description: "RP scenario/setting", },
+          welcome_message: { type: "string", description: "Welcome message", },
+          system_prompt: { type: "string", description: "System prompt override", },
+          mes_example: { type: "string", description: "Example dialogue", },
+          tags: { type: "array", items: { type: "string", }, description: "Classification tags", },
+          creator: { type: "string", description: "Creator attribution", },
         },
-        required: ["name", "description"],
+        required: ["name", "description",],
       },
     },
   },
-  required: ["enabled", "templates"] as const,
+  required: ["enabled", "templates",] as const,
 };

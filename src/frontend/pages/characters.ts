@@ -55,8 +55,10 @@ globalThis.selectCharacterCard = async function(id: string,) {
     const tagsEl = modal.querySelector<HTMLElement>("[data-field='tags']",);
     if (tagsEl) {
       const tags = char.tags ? (typeof char.tags === "string" ? JSON.parse(char.tags,) : char.tags) : [];
-      tagsEl.innerHTML = Array.isArray(tags)
-        ? tags.map((t: string,) => `<span style="padding:2px 8px;background:var(--bg-tertiary);border-radius:12px;font-size:0.85em">${t}</span>`,).join("")
+      tagsEl.innerHTML = Array.isArray(tags,)
+        ? tags.map((t: string,) =>
+          `<span style="padding:2px 8px;background:var(--bg-tertiary);border-radius:12px;font-size:0.85em">${t}</span>`
+        ).join("",)
         : "";
     }
     modal.querySelector("[data-field='avatar']",)!.innerHTML = char.avatar_asset_id
@@ -220,7 +222,8 @@ globalThis.uploadAvatar = async function(input: HTMLInputElement,) {
       if (hiddenInput) { hiddenInput.value = avatarId; }
       const preview = document.querySelector("#avatar-preview",);
       if (preview) {
-        preview.innerHTML = `<img src="/api/assets/${avatarId}/thumb" style="width:100%;height:100%;object-fit:cover" alt="Avatar" />`;
+        preview.innerHTML =
+          `<img src="/api/assets/${avatarId}/thumb" style="width:100%;height:100%;object-fit:cover" alt="Avatar" />`;
       }
       const label = document.querySelector("#upload-avatar-label",);
       if (label) { label.textContent = "Replace Avatar"; }

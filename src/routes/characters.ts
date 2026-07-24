@@ -55,8 +55,8 @@ export function charactersRoutes(opts: HandlerOpts,) {
       }
 
       const id = uid();
-      const tags = body.tags ? (body.tags as string).split(",").map((t: string,) => t.trim(),).filter(Boolean,) : [];
-      const settings = tags.length > 0 ? JSON.stringify({ tags },) : "{}";
+      const tags = body.tags ? (body.tags as string).split(",",).map((t: string,) => t.trim()).filter(Boolean,) : [];
+      const settings = tags.length > 0 ? JSON.stringify({ tags, },) : "{}";
       await database
         .insertInto("actors",)
         .values({
