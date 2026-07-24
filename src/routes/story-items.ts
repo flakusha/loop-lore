@@ -213,7 +213,7 @@ export function storyItemsRoutes({ database, }: { database: Kysely<DB> },): Elys
     .post("/api/worlds/:worldId/item-instances", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
       const userRole = ctx.userRole as string | null;
-      const worldId = ctx.params.id as string;
+      const worldId = ctx.params.worldId as string;
 
       if (!(await checkWorldOwnership(database, worldId, userId, userRole,))) {
         return jsonError({ message: "World not found", status: HttpStatus.NotFound, },);
@@ -246,7 +246,7 @@ export function storyItemsRoutes({ database, }: { database: Kysely<DB> },): Elys
     .get("/api/worlds/:worldId/item-instances", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
       const userRole = ctx.userRole as string | null;
-      const worldId = ctx.params.id as string;
+      const worldId = ctx.params.worldId as string;
 
       if (!(await checkWorldOwnership(database, worldId, userId, userRole,))) {
         return jsonError({ message: "World not found", status: HttpStatus.NotFound, },);

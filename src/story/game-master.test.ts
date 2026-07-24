@@ -165,6 +165,17 @@ function createTestDb(): TestDbResult {
     `CREATE TABLE world_states (id TEXT PRIMARY KEY, world_id TEXT NOT NULL, snapshot TEXT NOT NULL DEFAULT '', trigger_message_id TEXT, trigger_turn_id TEXT, description TEXT, created_at TEXT NOT NULL DEFAULT (datetime('now')))`,
   );
 
+  // NSFW tables needed by PromptAssembler nsfwContextSection
+  sqlite.run(
+    `CREATE TABLE character_intimacy (id TEXT PRIMARY KEY, actor_id TEXT NOT NULL, target_actor_id TEXT NOT NULL, world_id TEXT, score INTEGER NOT NULL DEFAULT 0, action_history TEXT NOT NULL DEFAULT '[]', unlocked_thresholds TEXT NOT NULL DEFAULT '[]', created_at TEXT NOT NULL, updated_at TEXT NOT NULL, UNIQUE(actor_id, target_actor_id, world_id))`,
+  );
+  sqlite.run(
+    `CREATE TABLE character_arousal (id TEXT PRIMARY KEY, actor_id TEXT NOT NULL, world_id TEXT, level INTEGER NOT NULL DEFAULT 0, buildup_rate REAL NOT NULL DEFAULT 1, decay_rate REAL NOT NULL DEFAULT 1, modifiers TEXT NOT NULL DEFAULT '[]', last_update TEXT NOT NULL, created_at TEXT NOT NULL, updated_at TEXT NOT NULL, UNIQUE(actor_id, world_id))`,
+  );
+  sqlite.run(
+    `CREATE TABLE character_desire_profile (id TEXT PRIMARY KEY, actor_id TEXT NOT NULL, turn_ons TEXT NOT NULL DEFAULT '[]', turn_offs TEXT NOT NULL DEFAULT '[]', fetishes TEXT NOT NULL DEFAULT '[]', hard_limits TEXT NOT NULL DEFAULT '[]', current_desire INTEGER NOT NULL DEFAULT 0, desire_decay_rate REAL NOT NULL DEFAULT 1, desire_buildup_rate REAL NOT NULL DEFAULT 1, created_at TEXT NOT NULL, updated_at TEXT NOT NULL, UNIQUE(actor_id))`,
+  );
+
   return { sqlite, db, };
 }
 

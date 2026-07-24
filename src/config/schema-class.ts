@@ -25,6 +25,7 @@ import type {
   GenerationConfig,
   GenerationProvidersConfig,
   HeadersConfig,
+  HooksConfig,
   LoggingConfig,
   MessagesConfig,
   ModelRoleAssignment,
@@ -129,6 +130,13 @@ export class ConfigSchema {
     nsfwMinAge: 18,
   } satisfies NsfwConfig;
 
+  readonly hooks = {
+    enableMoodHooks: true,
+    enableEmotionHooks: true,
+    enableNsfwHooks: true,
+    enableModerationHooks: true,
+  } satisfies HooksConfig;
+
   readonly generation = {
     providers: {
       openaiCompatible: [] as ProviderInstanceConfig[],
@@ -223,6 +231,7 @@ export class ConfigSchema {
     add("transport", s.transport,);
     add("messages", s.messages,);
     add("nsfw", s.nsfw,);
+    add("hooks", s.hooks,);
     add("generation", s.generation,);
     add("byoKey", s.byoKey,);
     add("encryption", s.encryption,);
@@ -276,6 +285,10 @@ export class ConfigSchema {
     map.MESSAGE_IDEMPOTENCY_EXPIRY_HOURS = "messages.idempotencyExpiryHours";
     map.ALLOW_NSFW = "nsfw.allowNsfw";
     map.NSFW_MIN_AGE = "nsfw.nsfwMinAge";
+    map.ENABLE_MOOD_HOOKS = "hooks.enableMoodHooks";
+    map.ENABLE_EMOTION_HOOKS = "hooks.enableEmotionHooks";
+    map.ENABLE_NSFW_HOOKS = "hooks.enableNsfwHooks";
+    map.ENABLE_MODERATION_HOOKS = "hooks.enableModerationHooks";
     map.LLM_DEFAULT_PROVIDER = "generation.defaultProvider";
     map.BYO_KEY_ENABLED = "byoKey.enabled";
     map.BYO_KEY_ENCRYPTION_KEY = "byoKey.encryptionKey";
@@ -630,6 +643,17 @@ export class ConfigSchema {
             nsfwMinAge: { type: "integer", default: 18, description: "Minimum age for NSFW content", },
           },
           required: ["allowNsfw", "nsfwMinAge",],
+        },
+        hooks: {
+          type: "object",
+          description: "Content hooks configuration (mood, emotion, NSFW, moderation)",
+          properties: {
+            enableMoodHooks: { type: "boolean", default: true, description: "Enable mood shift detection", },
+            enableEmotionHooks: { type: "boolean", default: true, description: "Enable emotion change detection", },
+            enableNsfwHooks: { type: "boolean", default: true, description: "Enable NSFW content gating", },
+            enableModerationHooks: { type: "boolean", default: true, description: "Enable moderation flagging", },
+          },
+          required: ["enableMoodHooks", "enableEmotionHooks", "enableNsfwHooks", "enableModerationHooks",],
         },
         generation: {
           type: "object",
@@ -1028,6 +1052,7 @@ export class ConfigSchema {
       transport: this.transport,
       messages: this.messages,
       nsfw: this.nsfw,
+      hooks: this.hooks,
       generation: this.generation,
       byoKey: this.byoKey,
       encryption: this.encryption,
