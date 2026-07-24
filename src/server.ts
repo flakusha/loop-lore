@@ -305,6 +305,10 @@ async function start() {
   // Applied to EVERY outgoing response via createRequestHandler.
   const handleRequest = createRequestHandler(app, config, logger,);
 
+  // ── Run migrations before serving (ensure DB schema ready) ───
+  await runMigrations(database,);
+  await seedDefaultActors(database, config,);
+
   // ── Start HTTP server ──────────────────────────────────────
   serve({ port: config.server.port, fetch: handleRequest, },);
   serverLogger.info(`HTTP  → http://localhost:${config.server.port}`,);
@@ -326,10 +330,6 @@ async function start() {
   }
 
   serverLogger.info(`Docs  → http://localhost:${config.server.port}/docs/`,);
-
-  // ── Run migrations before serving (ensure DB schema ready) ───
-  await runMigrations(database,);
-  await seedDefaultActors(database, config,);
 
   // Admin — seed system config defaults + wire DB log transport
   const { seedDefaults, } = await import("./admin/config");

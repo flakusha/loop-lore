@@ -254,7 +254,9 @@ export class GameMasterService {
 
     const gmDecision = await this.getGmDecision(context, debugActorId,);
     const turnId = randomUUID();
-    const turnNumber = this.turnManager.currentTurn + 1;
+    // selectNextActor() increments currentTurn when debugActorId is not provided.
+    // When debugActorId is provided, currentTurn is not incremented, so we add 1.
+    const turnNumber = debugActorId ? this.turnManager.currentTurn + 1 : this.turnManager.currentTurn;
 
     if (gmDecision.narration) {
       await this.injectNarration(context.world.id, gmDecision.narration,);

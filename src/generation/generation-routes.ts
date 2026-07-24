@@ -9,7 +9,6 @@
 
 import type { Kysely, } from "kysely";
 import { CancelReason, CancelSource, GenerationStatus, } from "../db/enums";
-import { getDatabase, } from "../db/index";
 import type { DB, } from "../db/schema";
 import { cancelGenerationByChat, getActiveAttemptId, listActiveGenerations, } from "./cancellation-manager";
 import { getPartialContent, } from "./continuation";
@@ -31,8 +30,8 @@ import { getProvider, } from "./providers/registry";
  *   { attemptId: string }            — cancel by attempt ID
  *   { reason?: string, source?: string, detail?: string }
  */
-export function handleCancelGeneration(body: unknown, database?: Kysely<DB>,): Response {
-  const db = database ?? getDatabase();
+export function handleCancelGeneration(body: unknown, database: Kysely<DB>,): Response {
+  const db = database;
   const input = validateCancel(body,);
 
   if (!input) {
@@ -133,8 +132,8 @@ function validateRetryFromPoint(body: unknown,): { chatId: string; attemptId?: s
  * Cancel active generation and return retry metadata
  * including which step to resume from in a multi-step pipeline.
  */
-export async function handleRetryGeneration(body: unknown, database?: Kysely<DB>,): Promise<Response> {
-  const db = database ?? getDatabase();
+export async function handleRetryGeneration(body: unknown, database: Kysely<DB>,): Promise<Response> {
+  const db = database;
   const input = validateRetryFromPoint(body,);
 
   if (!input) {
@@ -211,8 +210,8 @@ function validateContinue(
  * Continue a partial/cancelled message. Captures partial content
  * and returns attempt metadata for the frontend to send the LLM request.
  */
-export async function handleContinueGeneration(body: unknown, database?: Kysely<DB>,): Promise<Response> {
-  const db = database ?? getDatabase();
+export async function handleContinueGeneration(body: unknown, database: Kysely<DB>,): Promise<Response> {
+  const db = database;
   const input = validateContinue(body,);
 
   if (!input) {
@@ -333,8 +332,8 @@ export function handleListActiveGenerations(_database?: Kysely<DB>,): Response {
  * Cancel current generation and signal frontend to trigger
  * fresh generation for the same parent message.
  */
-export function handleRegenerate(body: unknown, database?: Kysely<DB>,): Response {
-  const db = database ?? getDatabase();
+export function handleRegenerate(body: unknown, database: Kysely<DB>,): Response {
+  const db = database;
   const input = validateRegenerate(body,);
 
   if (!input) {

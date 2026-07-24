@@ -296,7 +296,7 @@ describe("handleContinueGeneration", () => {
 
   test("returns 400 when messageId missing", async () => {
     const body = { chatId: "chat-1", actorId: "actor-1", };
-    const response = await handleContinueGeneration(body,);
+    const response = await handleContinueGeneration(body, testDb,);
     const data = (await response.json()) as Record<string, unknown>;
     expect(response.status,).toBe(400,);
     expect(data.error,).toContain("messageId",);
@@ -304,7 +304,7 @@ describe("handleContinueGeneration", () => {
 
   test("returns 404 when no cancelled/failed attempt exists", async () => {
     const body = { messageId: "msg-nonexistent", chatId: "chat-1", actorId: "actor-1", };
-    const response = await handleContinueGeneration(body,);
+    const response = await handleContinueGeneration(body, testDb,);
     expect(response.status,).toBe(404,);
   });
 
@@ -327,7 +327,7 @@ describe("handleContinueGeneration", () => {
       .execute();
 
     const body = { messageId: "msg-1", chatId: "chat-1", actorId: "actor-1", };
-    const response = await handleContinueGeneration(body,);
+    const response = await handleContinueGeneration(body, testDb,);
     expect(response.status,).toBe(422,);
   });
 
@@ -353,7 +353,7 @@ describe("handleContinueGeneration", () => {
       .execute();
 
     const body = { messageId: "msg-1", chatId: "chat-1", actorId: "actor-1", };
-    const response = await handleContinueGeneration(body,);
+    const response = await handleContinueGeneration(body, testDb,);
     const data = (await response.json()) as Record<string, unknown>;
 
     expect(response.status,).toBe(200,);
@@ -406,7 +406,7 @@ describe("handleContinueGeneration", () => {
       .execute();
 
     const body = { messageId: "msg-1", chatId: "chat-1", actorId: "actor-1", };
-    const response = await handleContinueGeneration(body,);
+    const response = await handleContinueGeneration(body, testDb,);
     const data = (await response.json()) as Record<string, unknown>;
 
     expect(data.continuationNumber,).toBe(2,);
@@ -450,7 +450,7 @@ describe("handleRetryGeneration", () => {
 
   test("returns 400 when chatId missing", async () => {
     const body = { attemptId: "some-attempt", };
-    const response = await handleRetryGeneration(body,);
+    const response = await handleRetryGeneration(body, testDb,);
     const data = (await response.json()) as Record<string, unknown>;
     expect(response.status,).toBe(400,);
     expect(data.error,).toContain("chatId",);
@@ -458,7 +458,7 @@ describe("handleRetryGeneration", () => {
 
   test("returns retry response with defaults when no step specified", async () => {
     const body = { chatId: "chat-1", };
-    const response = await handleRetryGeneration(body,);
+    const response = await handleRetryGeneration(body, testDb,);
     const data = (await response.json()) as Record<string, unknown>;
     expect(response.status,).toBe(200,);
     expect(data.ok,).toBe(true,);
@@ -469,7 +469,7 @@ describe("handleRetryGeneration", () => {
 
   test("returns 404 when attempt not found with specific attemptId", async () => {
     const body = { chatId: "chat-1", attemptId: "nonexistent-attempt", step: 0, };
-    const response = await handleRetryGeneration(body,);
+    const response = await handleRetryGeneration(body, testDb,);
     expect(response.status,).toBe(404,);
   });
 
@@ -491,7 +491,7 @@ describe("handleRetryGeneration", () => {
       .execute();
 
     const body = { chatId: "chat-1", attemptId: "attempt-step-2", step: 2, };
-    const response = await handleRetryGeneration(body,);
+    const response = await handleRetryGeneration(body, testDb,);
     const data = (await response.json()) as Record<string, unknown>;
     expect(response.status,).toBe(200,);
     expect(data.resumeFromStep,).toBe(2,);
@@ -516,14 +516,14 @@ describe("handleRetryGeneration", () => {
       .execute();
 
     const body = { chatId: "chat-1", attemptId: "attempt-step-cap", step: 10, };
-    const response = await handleRetryGeneration(body,);
+    const response = await handleRetryGeneration(body, testDb,);
     const data = (await response.json()) as Record<string, unknown>;
     expect(data.resumeFromStep,).toBe(2,);
   });
 
   test("step without attemptId uses step as-is", async () => {
     const body = { chatId: "chat-1", step: 3, };
-    const response = await handleRetryGeneration(body,);
+    const response = await handleRetryGeneration(body, testDb,);
     const data = (await response.json()) as Record<string, unknown>;
     expect(data.resumeFromStep,).toBe(3,);
     expect(data.totalSteps,).toBe(1,);
@@ -531,7 +531,7 @@ describe("handleRetryGeneration", () => {
 
   test("negative step is clamped to 0", async () => {
     const body = { chatId: "chat-1", step: -5, };
-    const response = await handleRetryGeneration(body,);
+    const response = await handleRetryGeneration(body, testDb,);
     const data = (await response.json()) as Record<string, unknown>;
     expect(data.resumeFromStep,).toBe(0,);
   });
