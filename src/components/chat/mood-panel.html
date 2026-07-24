@@ -1,0 +1,110 @@
+<!-- Mood Panel — Character mood & emotions display -->
+<template x-if="_moodPanel.mood">
+  <div class="mood-section">
+    <div class="mood-header">
+      <h4 class="mood-title">Mood</h4>
+      <span class="mood-emoji" x-text="_moodPanel.getMoodEmoji()"></span>
+    </div>
+
+    <!-- Happiness Bar -->
+    <div class="mood-happiness">
+      <div class="mood-happiness-label">
+        <span x-text="_moodPanel.getMoodLabel()"></span>
+        <span class="mood-happiness-value" x-text="_moodPanel.mood?.happiness + '%'"></span>
+      </div>
+      <div class="mood-progress-track">
+        <div
+          class="mood-progress-fill"
+          :style="{
+            width: (_moodPanel.mood?.happiness ?? 50) + '%',
+            backgroundColor: _moodPanel.getHappinessColor()
+          }"
+        >
+        </div>
+      </div>
+    </div>
+
+    <!-- Happiness Slider -->
+    <div class="mood-slider">
+      <label class="mood-slider-label">Adjust Happiness</label>
+      <input
+        type="range"
+        min="-20"
+        max="20"
+        value="5"
+        x-model.number="_moodPanel._happinessDelta"
+        class="mood-range-input"
+      />
+      <button
+        class="btn btn-secondary btn-xs"
+        @click="_moodPanel.applyHappinessDelta(currentCharacter?.id, _moodPanel._happinessDelta)"
+      >
+        Apply <span x-text="(_moodPanel._happinessDelta > 0 ? '+' : '') + _moodPanel._happinessDelta"></span>
+      </button>
+    </div>
+
+    <!-- Expression Modifiers -->
+    <template x-if="_moodPanel.mood?.expressionModifiers">
+      <div class="mood-expressions">
+        <div class="mood-expression-title">Expression Modifiers</div>
+        <template x-for="[key, value] in Object.entries(_moodPanel.mood.expressionModifiers)" :key="key">
+          <div class="mood-expression-row">
+            <span class="mood-expression-name" x-text="key"></span>
+            <div class="mood-expression-bar">
+              <div
+                class="mood-expression-fill"
+                :style="{ width: Math.abs(value as number) * 50 + '%', backgroundColor: (value as number) >= 0 ? 'var(--accent-green)' : 'var(--accent-red)' }"
+              >
+              </div>
+            </div>
+            <span class="mood-expression-value" x-text="(value as number) > 0 ? '+' + value : value"></span>
+          </div>
+        </template>
+      </div>
+    </template>
+  </div>
+</template>
+
+<!-- Active Emotions -->
+<template x-if="_moodPanel.getActiveEmotions().length > 0">
+  <div class="mood-emotions-section">
+    <div class="mood-emotions-title">Active Emotions</div>
+    <div class="mood-emotions-list">
+      <template x-for="emotion in _moodPanel.getActiveEmotions()" :key="emotion.def.id">
+        <div class="mood-emotion-chip">
+          <span class="mood-emotion-icon" x-text="emotion.def.icon || '💭'"></span>
+          <span class="mood-emotion-name" x-text="emotion.def.display_name"></span>
+          <div class="mood-emotion-intensity">
+            <div
+              class="mood-emotion-intensity-fill"
+              :style="{ width: (emotion.intensity * 100) + '%' }"
+            >
+            </div>
+          </div>
+        </div>
+      </template>
+    </div>
+  </div>
+</template>
+
+<!-- No Mood State -->
+<template x-if="!_moodPanel.mood && !_moodPanel.loading">
+  <div class="mood-section mood-empty">
+    <div class="mood-empty-icon">😐</div>
+    <div class="mood-empty-text">No mood data for this character.</div>
+    <button
+      class="btn btn-secondary btn-xs"
+      @click="currentCharacter?.id && _moodPanel.applyHappinessDelta(currentCharacter.id, 0)"
+    >
+      Initialize Mood
+    </button>
+  </div>
+</template>
+
+<!-- Loading State -->
+<template x-if="_moodPanel.loading">
+  <div class="mood-section mood-loading">
+    <div class="mood-loading-spinner"></div>
+    <span>Loading mood...</span>
+  </div>
+</template>
