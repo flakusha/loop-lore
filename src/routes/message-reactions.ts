@@ -153,6 +153,25 @@ export function messageReactionsRoutes(opts: HandlerOpts,) {
           if (!userId) { return unauthorized(); }
           const messageId = ctx.params.id;
 
+          // Verify message exists and user has access
+          const msg = await database
+            .selectFrom("messages",)
+            .innerJoin("chats", "chats.id", "messages.chat_id",)
+            .select(["messages.id", "messages.chat_id", "chats.created_by",],)
+            .where("messages.id", "=", messageId,)
+            .executeTakeFirst();
+          if (!msg) { return notFound("Message not found",); }
+
+          // Simple access check: chat owner or participant
+          const isOwner = msg.created_by === userId;
+          const isParticipant = await database
+            .selectFrom("chat_participants",)
+            .select("actor_id",)
+            .where("chat_id", "=", msg.chat_id,)
+            .where("actor_id", "=", userId,)
+            .executeTakeFirst();
+          if (!isOwner && !isParticipant) { return notFound("Message not found",); }
+
           await database
             .deleteFrom("message_reactions",)
             .where("message_id", "=", messageId,)
