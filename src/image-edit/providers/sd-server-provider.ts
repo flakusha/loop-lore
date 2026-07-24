@@ -8,7 +8,8 @@
  */
 
 import { loadConfig, } from "../../config/load";
-import { pickSdProvider, type ImageProviderConfig, } from "../../config/schema";
+import { type ImageProviderConfig, pickSdProvider, } from "../../config/schema";
+import type { ImageApiFamily, } from "../../db/enums-config";
 import { getLogger, } from "../../logger";
 import { safeJsonStringify, uid, } from "../../utils";
 import { validateProviderUrl, } from "../../utils/url-validation";
@@ -29,7 +30,7 @@ export class SDServerEditProvider implements ImageEditProvider {
   readonly name: ImageEditBackend = "sd-server";
 
   private baseUrl: string | null = null;
-  private apiFamily: "openai" | "sdapi" | "sdcpp" = "sdcpp";
+  private apiFamily: ImageApiFamily = "sdcpp";
   private config: ImageProviderConfig | null = null;
 
   private getConfig(): ImageProviderConfig | null {

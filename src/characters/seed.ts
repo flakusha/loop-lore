@@ -4,11 +4,11 @@
 // Idempotent: checks by display_name + owner_id before insert.
 // Never overrides existing DB records.
 
-import type { Kysely } from "kysely";
-import type { CharactersConfig } from "../config/schema";
-import type { DB } from "../db/schema";
-import { getLogger } from "../logger";
-import { safeJsonStringify, uid } from "../utils";
+import type { Kysely, } from "kysely";
+import type { CharactersConfig, } from "../config/schema";
+import type { DB, } from "../db/schema";
+import { getLogger, } from "../logger";
+import { safeJsonStringify, uid, } from "../utils";
 
 interface SeedResult {
   created: number;
@@ -31,7 +31,7 @@ export async function seedCharacterTemplates(
   ownerId: string | null = null,
 ): Promise<SeedResult> {
   const logger = getLogger();
-  const result: SeedResult = { created: 0, skipped: 0, errors: [] };
+  const result: SeedResult = { created: 0, skipped: 0, errors: [], };
 
   if (!config.enabled || config.templates.length === 0) {
     return result;
@@ -40,13 +40,13 @@ export async function seedCharacterTemplates(
   for (const template of config.templates) {
     try {
       const exists = await database
-        .selectFrom("actors")
-        .select("id")
-        .where("display_name", "=", template.name)
-        .where((eb) =>
+        .selectFrom("actors",)
+        .select("id",)
+        .where("display_name", "=", template.name,)
+        .where((eb,) =>
           ownerId
-            ? eb("owner_id", "=", ownerId)
-            : eb("owner_id", "is", null)
+            ? eb("owner_id", "=", ownerId,)
+            : eb("owner_id", "is", null,)
         )
         .executeTakeFirst();
 
@@ -57,11 +57,11 @@ export async function seedCharacterTemplates(
 
       const id = uid();
       const tags = template.tags ?? [];
-      const settingsResult = safeJsonStringify(tags.length > 0 ? { tags } : {});
+      const settingsResult = safeJsonStringify(tags.length > 0 ? { tags, } : {},);
       const settings = settingsResult.ok ? settingsResult.value : "{}";
 
       await database
-        .insertInto("actors")
+        .insertInto("actors",)
         .values({
           id,
           actor_type: "character",
@@ -79,15 +79,15 @@ export async function seedCharacterTemplates(
           settings,
           import_spec: "template",
           data_version: 0,
-        })
+        },)
         .execute();
 
       result.created++;
-      logger.info("seeded character template", { module: "characters", name: template.name });
+      logger.info("seeded character template", { module: "characters", name: template.name, },);
     } catch (error_) {
-      const error = error_ instanceof Error ? error_ : new Error(String(error_));
-      result.errors.push(`${template.name}: ${error.message}`);
-      logger.error("failed to seed character template", error, { module: "characters", name: template.name });
+      const error = error_ instanceof Error ? error_ : new Error(String(error_,),);
+      result.errors.push(`${template.name}: ${error.message}`,);
+      logger.error("failed to seed character template", error, { module: "characters", name: template.name, },);
     }
   }
 

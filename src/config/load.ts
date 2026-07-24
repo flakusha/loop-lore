@@ -241,18 +241,22 @@ function loadConfig(cwd?: string,): Config {
   //    YAML takes priority over TOML (if both exist, YAML wins).
   //    Also check main repo root when running in a worktree.
   const envConfigCandidates = [
-    path.join(directory, "env.yaml",), path.join(directory, "configs", "env.yaml",),
-    path.join(directory, "env.toml",), path.join(directory, "configs", "env.toml",),
+    path.join(directory, "env.yaml",),
+    path.join(directory, "configs", "env.yaml",),
+    path.join(directory, "env.toml",),
+    path.join(directory, "configs", "env.toml",),
   ];
   if (mainRoot && mainRoot !== directory) {
     envConfigCandidates.push(
-      path.join(mainRoot, "env.yaml",), path.join(mainRoot, "configs", "env.yaml",),
-      path.join(mainRoot, "env.toml",), path.join(mainRoot, "configs", "env.toml",),
+      path.join(mainRoot, "env.yaml",),
+      path.join(mainRoot, "configs", "env.yaml",),
+      path.join(mainRoot, "env.toml",),
+      path.join(mainRoot, "configs", "env.toml",),
     );
   }
   const envConfigPath = firstExisting(envConfigCandidates,);
   if (envConfigPath) {
-    const ext = envConfigPath.split(".").pop() as string;
+    const ext = envConfigPath.split(".",).pop() as string;
     try {
       const content = readFileSync(envConfigPath, "utf8",);
       const parsed = parseFileContent(content, ext,);
