@@ -178,6 +178,9 @@ export class SeductionService {
     actorId: string,
     updates: Partial<Pick<DesireProfile, "turnOns" | "turnOffs" | "fetishes" | "hardLimits" | "desireDecayRate" | "desireBuildupRate">>,
   ): Promise<boolean> {
+    // Ensure profile exists
+    await this.getDesireProfile(actorId,);
+
     const now = new Date().toISOString();
     const setClause: Record<string, unknown> = { updated_at: now, };
 

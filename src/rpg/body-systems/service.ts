@@ -159,6 +159,9 @@ export class BodySystemService {
     actorId: string,
     updates: UpdateBodyProfileOpts,
   ): Promise<boolean> {
+    // Ensure profile exists
+    await this.getProfile(actorId,);
+
     const now = new Date().toISOString();
     const setClause: Record<string, unknown> = { updated_at: now, };
 
