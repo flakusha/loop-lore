@@ -251,6 +251,7 @@ export default tseslint.config(
       "tree/",
       "bun.lock",
       "*.har",
+      "*.example.*",
     ],
   },
   // ── Markdown files: extract & lint code blocks ─────────────────
