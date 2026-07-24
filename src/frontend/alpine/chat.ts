@@ -1,5 +1,4 @@
 // ── Chat page component (chat.html) — core state + init ────
-
 import { chatActions, } from "./chat-actions";
 import { chatActivity, } from "./chat-activity";
 import { chatEditing, } from "./chat-editing";
@@ -15,6 +14,7 @@ import { chatVariants, } from "./chat-variants";
 import { jsonParseOr, } from "./json";
 import { getLogger, } from "./logger";
 import { memoryPanel, } from "./memory-panel";
+import { moodState, } from "./mood";
 import { createMoodPanelState, } from "./mood-panel";
 import { rpgStats, } from "./rpg-stats";
 import type { AlpineState, ChatState, } from "./types";
@@ -302,7 +302,7 @@ globalThis.chatState = function() {
       this.currentPage = 1;
       this.hasMoreMessages = true;
       this.loadingOlder = false;
-      await Promise.all([this.loadMessages(), this.loadGalleryAssets(), this.loadCharacterInfo(),],);
+      await Promise.all([this.loadMessages(), this.loadGalleryAssets(), this.loadCharacterInfo(), this.loadMood(),],);
       await this.markChatAsRead(chatId,);
       await this.loadChatKey(chatId,);
       await this.loadImpersonationState();
