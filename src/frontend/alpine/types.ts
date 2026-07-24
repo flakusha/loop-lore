@@ -30,6 +30,12 @@ export interface GalleryAsset {
   width?: number;
   height?: number;
   alt_text?: string;
+  /** Preview URL (constructed from asset ID) */
+  url?: string;
+  /** Preview type (alias for asset_type, used by media-preview-modal) */
+  type?: string;
+  /** Caption for preview modal */
+  caption?: string;
 }
 
 export interface PreviewAsset {

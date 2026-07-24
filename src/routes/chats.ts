@@ -252,6 +252,7 @@ export function chatsRoutes(opts: HandlerOpts,) {
             freezePanel: body.freezePanel,
             gmConfig: body.gmConfig ?? undefined,
             visualNovel: body.visualNovel ?? undefined,
+            streaming: body.streaming,
             userRole,
           },);
           if ("code" in result) {
