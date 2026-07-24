@@ -28,6 +28,8 @@
     <link rel="stylesheet" href="/css/gallery.css" media="all" />
 
     <!-- Vendor bundle: htmx, Alpine.js, morph plugin, htmx extensions (built via bun bundler) -->
+    <!-- Configure HTMX CSP nonce before vendor.js loads so swapped <script> tags get the nonce -->
+    <script nonce="{{cspNonce}}">htmx.config = htmx.config || {}; htmx.config.inlineScriptNonce = "{{cspNonce}}";</script>
     <script src="/vendor.js" defer></script>
 
     <!-- App bundle: defines app(), chatState(), Alpine stores -->

@@ -397,52 +397,67 @@ async function start() {
 
   // Auto-start external AI servers (llama.cpp, sd.cpp) in background
   const autoStart = config.generation.autoStart;
-  const llamaCppCfg = autoStart?.llamaCpp;
-  if (llamaCppCfg?.enabled) {
-    initPromises.push(
-      (async () => {
-        const instance = await serverManager.startLlamaCpp(llamaCppCfg,);
-        if (instance) {
-          const name = llamaCppCfg.alias || "llama";
-          registerProvider(
-            name,
-            new OpenAiCompatibleProvider({
+  if (autoStart) {
+    const llamaCppCfg = autoStart?.llamaCpp;
+    if (llamaCppCfg?.enabled) {
+      serverLogger.info("auto-starting llama.cpp", { module: "server", port: llamaCppCfg.port, },);
+      initPromises.push(
+        (async () => {
+          const instance = await serverManager.startLlamaCpp(llamaCppCfg,);
+          if (instance) {
+            const name = llamaCppCfg.alias || "llama";
+            registerProvider(
               name,
-              label: "Auto-started llama.cpp",
-              baseUrl: `http://127.0.0.1:${instance.port}/v1`,
-              model: name,
-              timeout: 30_000,
-              retries: 3,
-              allowUserApiKey: false,
-              models: {},
-            },),
-          );
-          if (!config.generation.defaultProvider) {
-            config.generation.defaultProvider = name;
+              new OpenAiCompatibleProvider({
+                name,
+                label: "Auto-started llama.cpp",
+                baseUrl: `http://127.0.0.1:${instance.port}/v1`,
+                model: name,
+                timeout: 30_000,
+                retries: 3,
+                allowUserApiKey: false,
+                models: {},
+              },),
+            );
+            if (!config.generation.defaultProvider) {
+              config.generation.defaultProvider = name;
+            }
+            config.generation.defaultModels[name] ??= name;
           }
-          config.generation.defaultModels[name] ??= name;
-        }
-      })(),
-    );
-  }
-  const llamaSwapCfg = autoStart?.llamaSwap;
-  if (llamaSwapCfg?.enabled) {
-    initPromises.push(
-      (async () => {
-        const instance = await serverManager.startLlamaSwap({ configPath: llamaSwapCfg.configPath, },);
-        if (instance) {
-          serverLogger.info(`llama-swap ready → http://127.0.0.1:${instance.port}`,);
-        }
-      })(),
-    );
-  }
-  const sdCppCfg = autoStart?.sdCpp;
-  if (sdCppCfg?.enabled) {
-    initPromises.push(
-      (async () => {
-        await serverManager.startSdCpp(sdCppCfg,);
-      })(),
-    );
+        })(),
+      );
+    }
+    const llamaSwapCfg = autoStart?.llamaSwap;
+    if (llamaSwapCfg?.enabled) {
+      serverLogger.info("auto-starting llama-swap", {
+        module: "server",
+        configPath: llamaSwapCfg.configPath,
+      },);
+      initPromises.push(
+        (async () => {
+          const instance = await serverManager.startLlamaSwap({ configPath: llamaSwapCfg.configPath, },);
+          if (instance) {
+            serverLogger.info(`llama-swap ready → http://127.0.0.1:${instance.port}`,);
+          } else {
+            serverLogger.warn("llama-swap auto-start failed or skipped", { module: "server", },);
+          }
+        })(),
+      );
+    }
+    const sdCppCfg = autoStart?.sdCpp;
+    if (sdCppCfg?.enabled) {
+      serverLogger.info("auto-starting sd-cpp", { module: "server", port: sdCppCfg.port, },);
+      initPromises.push(
+        (async () => {
+          const instance = await serverManager.startSdCpp(sdCppCfg,);
+          if (!instance) {
+            serverLogger.warn("sd-cpp auto-start failed or skipped", { module: "server", },);
+          }
+        })(),
+      );
+    }
+  } else {
+    serverLogger.debug("autoStart not configured — skipping external server launch", { module: "server", },);
   }
 
   // Resolve all background init before proceeding to rest
