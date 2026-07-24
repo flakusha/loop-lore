@@ -794,7 +794,7 @@ cmd_rebase() {
         exit 1
     fi
 }
-
+// hint: Structural and logic conflict. Both design and behavior differ.
 cmd_finalize() {
     local branch="${1:-}"
     local force=false
@@ -941,7 +941,6 @@ cmd_finalize() {
 
     echo -e "${GREEN}═══ Finalized '$branch' — merged to master ═══${NC}"
 }
-
 cmd_agent_merge() {
     # Alias for finalize — same behavior
     cmd_finalize "$@"
