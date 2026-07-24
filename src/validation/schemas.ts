@@ -4,57 +4,10 @@
  * Centralizes all `t.Object` definitions so route handlers
  * share a single source of truth for request validation.
  *
- * Type inference: use `Static<typeof Schema>` from `@sinclair/typebox`
- * to derive TypeScript types from schemas — eliminates duplicate interfaces.
- *
  * @module validation/schemas
  */
-import { type Static, type TSchema, } from "@sinclair/typebox";
+
 import { t, } from "elysia";
-import {
-  ActorItemType,
-  ActorType,
-  ActorVisibility,
-  AgentType,
-  AssetType,
-  AssetVisibility,
-  AvailabilityStatus,
-  AvatarSelectionRule,
-  ChatMode,
-  ChatParticipantRole,
-  ChatType,
-  ContentEncoding,
-  ContentRating,
-  EmotionType,
-  GenerationStatus,
-  ItemCategory,
-  ItemRarity,
-  LicenseType,
-  MemoryType,
-  MessageContentType,
-  MessageRole,
-  MessageStatus,
-  MessageVisibility,
-  ModelRole,
-  NoteCategory,
-  NsfwEncounterType,
-  PinnedState,
-  QuestStatus,
-  QuestType,
-  RelationshipEventType,
-  RelationshipType,
-  StorageBackend,
-  TraitCategory,
-  TurnStatus,
-  TurnStrategy,
-  TurnType,
-  UserRole,
-  UserStatus,
-  WorldEventType,
-  WorldTraitCategory,
-} from "../db/enums";
-/** Extract enum values as a readonly tuple for t.UnionEnum compatibility. */
-const ev = <V extends string,>(o: Record<string, V>,): [V, ...V[],] => Object.values(o,) as [V, ...V[],];
 
 // ── Primitives ─────────────────────────────────────────────
 
@@ -71,11 +24,17 @@ export const PaginationQuery = t.Object({
   pageSize: t.Optional(t.Numeric({ minimum: 1, maximum: 200, default: 50, },),),
 },);
 
-// ── Enums (derived from src/db/enums-*.ts) ─────────────────
+// ── Enums (mirrors src/db/enums-*.ts) ──────────────────────
 
-export const ChatTypeSchema = t.UnionEnum(ev(ChatType,),);
-export const ChatModeSchema = t.UnionEnum(ev(ChatMode,),);
-export const TurnStrategySchema = t.UnionEnum(ev(TurnStrategy,),);
+export const ChatTypeSchema = t.UnionEnum(["direct", "group",],);
+export const ChatModeSchema = t.UnionEnum(["direct", "group", "story",],);
+export const TurnStrategySchema = t.UnionEnum([
+  "round_robin",
+  "scene_based",
+  "initiative",
+  "quest_driven",
+  "hybrid",
+],);
 
 /** Chat-level GM configuration — stored as JSON in `chats.gm_config` */
 export const GmConfigSchema = t.Object({
@@ -83,33 +42,115 @@ export const GmConfigSchema = t.Object({
   visualNovel: t.Optional(t.Boolean(),),
 },);
 
-export const MessageRoleSchema = t.UnionEnum(ev(MessageRole,),);
-export const MessageContentTypeSchema = t.UnionEnum(ev(MessageContentType,),);
-export const MessageVisibilitySchema = t.UnionEnum(ev(MessageVisibility,),);
-export const MessageStatusSchema = t.UnionEnum(ev(MessageStatus,),);
-export const ActorTypeSchema = t.UnionEnum(ev(ActorType,),);
-export const AgentTypeSchema = t.UnionEnum(ev(AgentType,),);
-export const UserRoleSchema = t.UnionEnum(ev(UserRole,),);
-export const UserStatusSchema = t.UnionEnum(ev(UserStatus,),);
-export const ChatParticipantRoleSchema = t.UnionEnum(ev(ChatParticipantRole,),);
-export const PinnedStateSchema = t.UnionEnum(ev(PinnedState,),);
-export const ActorVisibilitySchema = t.UnionEnum(ev(ActorVisibility,),);
-export const ContentEncodingSchema = t.UnionEnum(ev(ContentEncoding,),);
-export const AssetTypeSchema = t.UnionEnum(ev(AssetType,),);
-export const AssetVisibilitySchema = t.UnionEnum(ev(AssetVisibility,),);
-export const StorageBackendSchema = t.UnionEnum(ev(StorageBackend,),);
-export const GenerationStatusSchema = t.UnionEnum(ev(GenerationStatus,),);
-export const WorldEventTypeSchema = t.UnionEnum(ev(WorldEventType,),);
-export const QuestTypeSchema = t.UnionEnum(ev(QuestType,),);
-export const QuestStatusSchema = t.UnionEnum(ev(QuestStatus,),);
-export const TurnTypeSchema = t.UnionEnum(ev(TurnType,),);
-export const TurnStatusSchema = t.UnionEnum(ev(TurnStatus,),);
-export const MemoryTypeSchema = t.UnionEnum(ev(MemoryType,),);
-export const NoteCategorySchema = t.UnionEnum(ev(NoteCategory,),);
-export const ActorItemTypeSchema = t.UnionEnum(ev(ActorItemType,),);
-export const ItemCategorySchema = t.UnionEnum(ev(ItemCategory,),);
-export const ItemRaritySchema = t.UnionEnum(ev(ItemRarity,),);
-export const ModelRoleSchema = t.UnionEnum(ev(ModelRole,),);
+export const MessageRoleSchema = t.UnionEnum(["user", "assistant", "character", "system",],);
+export const MessageContentTypeSchema = t.UnionEnum([
+  "text",
+  "action",
+  "narration",
+  "system",
+  "continuation",
+],);
+export const MessageVisibilitySchema = t.UnionEnum([
+  "visible",
+  "hidden_by_user",
+  "hidden_by_moderator",
+  "auto_hidden",
+  "redacted",
+],);
+export const MessageStatusSchema = t.UnionEnum([
+  "sending",
+  "confirmed",
+  "failed",
+  "partial",
+  "rejected",
+  "cancelled",
+],);
+export const ActorTypeSchema = t.UnionEnum(["user", "character", "narrator", "system",],);
+export const AgentTypeSchema = t.UnionEnum(["none", "ai", "narrator", "npc",],);
+export const UserRoleSchema = t.UnionEnum(["admin", "user", "viewer", "solo",],);
+export const UserStatusSchema = t.UnionEnum(["active", "disabled", "deactivated",],);
+export const ChatParticipantRoleSchema = t.UnionEnum(["member", "owner", "observer",],);
+export const PinnedStateSchema = t.UnionEnum(["unpinned", "pinned", "archived",],);
+export const ActorVisibilitySchema = t.UnionEnum(["private", "public",],);
+export const ContentEncodingSchema = t.UnionEnum(["identity", "gzip", "zstd", "brotli",],);
+export const AssetTypeSchema = t.UnionEnum(["image", "audio", "video", "memory", "other",],);
+export const AssetVisibilitySchema = t.UnionEnum(["private", "shared", "public",],);
+export const StorageBackendSchema = t.UnionEnum(["local", "s3", "gcs",],);
+export const GenerationStatusSchema = t.UnionEnum([
+  "pending",
+  "processing",
+  "streaming",
+  "completed",
+  "failed",
+  "cancelled",
+],);
+export const WorldEventTypeSchema = t.UnionEnum([
+  "location_change",
+  "npc_state_change",
+  "item_transfer",
+  "time_advancement",
+  "location_modification",
+  "world_lore_update",
+  "quest_progress",
+  "combat_event",
+],);
+export const QuestTypeSchema = t.UnionEnum([
+  "time",
+  "collection",
+  "destruction",
+  "rescue",
+  "discovery",
+  "social",
+  "composite",
+],);
+export const QuestStatusSchema = t.UnionEnum(["active", "completed", "failed", "abandoned",],);
+export const TurnTypeSchema = t.UnionEnum([
+  "character_action",
+  "narration",
+  "gm_injection",
+  "quest_update",
+  "world_event",
+],);
+export const TurnStatusSchema = t.UnionEnum([
+  "pending",
+  "generating",
+  "evaluating",
+  "accepted",
+  "regenerating",
+  "failed",
+  "escalated",
+],);
+export const MemoryTypeSchema = t.UnionEnum(["episodic", "semantic", "procedural",],);
+export const NoteCategorySchema = t.UnionEnum([
+  "general",
+  "world",
+  "character",
+  "story",
+  "combat",
+  "session",
+],);
+export const ActorItemTypeSchema = t.UnionEnum(["equipment", "consumable", "key_item", "artifact", "misc",],);
+export const ItemCategorySchema = t.UnionEnum([
+  "weapon",
+  "armor",
+  "consumable",
+  "key_item",
+  "quest_item",
+  "material",
+  "tool",
+  "container",
+  "treasure",
+  "book",
+  "other",
+],);
+export const ItemRaritySchema = t.UnionEnum(["common", "uncommon", "rare", "epic", "legendary", "unique",],);
+export const ModelRoleSchema = t.UnionEnum([
+  "main",
+  "captioning",
+  "moderation",
+  "embeddings",
+  "summarization",
+],);
 
 // ── Chat routes ────────────────────────────────────────────
 
@@ -123,13 +164,7 @@ export const ChatCreateBody = t.Object({
   currentLocationId: OptionalId,
   gmConfig: t.Optional(GmConfigSchema,),
   visualNovel: t.Optional(t.Boolean(),),
-  /** Memory carry mode: "full" (default), "selective", or "fresh" */
-  memoryCarry: t.Optional(t.Union([t.Literal("full",), t.Literal("selective",), t.Literal("fresh",),],),),
-  /** Specific memory IDs to carry forward (when memoryCarry === "selective") */
-  memoryCarryIds: t.Optional(t.Array(t.String(),),),
 },);
-
-const OptionalBooleanOrNull = t.Optional(t.Union([t.Boolean(), t.Null(),],),);
 
 export const ChatUpdateBody = t.Object({
   name: t.Optional(Name,),
@@ -141,20 +176,10 @@ export const ChatUpdateBody = t.Object({
   freezePanel: t.Optional(t.Boolean(),),
   gmConfig: t.Optional(GmConfigSchema,),
   visualNovel: t.Optional(t.Boolean(),),
-  streaming: OptionalBooleanOrNull,
 },);
 
 export const ChatIdParams = t.Object({
   id: Id,
-},);
-
-export const ChatRenameBody = t.Object({
-  name: Name,
-  name_source: t.Union([
-    t.Literal("manual",),
-    t.Literal("auto-rule",),
-    t.Literal("auto-llm",),
-  ],),
 },);
 
 export const ChatParticipantParams = t.Object({
@@ -237,13 +262,9 @@ export const MessagesQuery = t.Object({
 
 export const ActorCreateBody = t.Object({
   displayName: DisplayName,
-  tags: t.Optional(t.String(),),
   actorType: t.Optional(ActorTypeSchema,),
   agentType: t.Optional(AgentTypeSchema,),
   description: t.Optional(t.String(),),
-  personality: t.Optional(t.String(),),
-  scenario: t.Optional(t.String(),),
-  welcomeMessage: t.Optional(t.String(),),
   systemPrompt: t.Optional(t.String(),),
 },);
 
@@ -261,12 +282,10 @@ export const ActorUpdateBody = t.Object({
   creator: t.Optional(t.String(),),
   characterVersion: t.Optional(t.String(),),
   settings: t.Optional(t.Any(),),
-  /** Format version: current format_version from client. Required for updates. */
-  dataVersion: t.Optional(t.Number(),),
 },);
 
 export const ActorIdParams = t.Object({
-  actorId: Id,
+  id: Id,
 },);
 
 export const ActorsQuery = t.Object({
@@ -309,51 +328,6 @@ export const AdminChatUpdateBody = t.Object({
   is_pinned: t.Optional(t.String(),),
   world_id: OptionalId,
 },);
-
-// ── Template management (admin) ─────────────────────────────
-
-/* eslint-disable unicorn/max-nested-calls */
-export const AdminTemplateCreateBody = t.Object({
-  id: t.String({ minLength: 1, },),
-  name: t.String({ minLength: 1, },),
-  families: t.Array(t.String(),),
-  promptFormat: t.UnionEnum(["tags", "natural", "tags-and-natural", "json",],),
-  maxTokenHint: t.Numeric({ minimum: 64, maximum: 4096, },),
-  defaults: t.Object({
-    cfgScale: t.Numeric({ minimum: 1, maximum: 30, },),
-    steps: t.Numeric({ minimum: 1, maximum: 200, },),
-    sampler: t.String(),
-    scheduler: t.Optional(t.String(),),
-    clipSkip: t.Optional(t.Numeric(),),
-  },),
-  templates: t.Object({
-    instant: t.Any(),
-    balanced: t.Any(),
-    detailed: t.Any(),
-  },),
-},);
-/* eslint-enable unicorn/max-nested-calls */
-
-/* eslint-disable unicorn/max-nested-calls */
-export const AdminTemplateUpdateBody = t.Object({
-  name: t.Optional(t.String({ minLength: 1, },),),
-  families: t.Optional(t.Array(t.String(),),),
-  promptFormat: t.Optional(t.UnionEnum(["tags", "natural", "tags-and-natural", "json",],),),
-  maxTokenHint: t.Optional(t.Numeric({ minimum: 64, maximum: 4096, },),),
-  defaults: t.Optional(t.Object({
-    cfgScale: t.Numeric({ minimum: 1, maximum: 30, },),
-    steps: t.Numeric({ minimum: 1, maximum: 200, },),
-    sampler: t.String(),
-    scheduler: t.Optional(t.String(),),
-    clipSkip: t.Optional(t.Numeric(),),
-  },),),
-  templates: t.Optional(t.Object({
-    instant: t.Any(),
-    balanced: t.Any(),
-    detailed: t.Any(),
-  },),),
-},);
-/* eslint-enable unicorn/max-nested-calls */
 
 // ── World routes ───────────────────────────────────────────
 
@@ -416,639 +390,3 @@ export const LoginBody = t.Object({
 export const SettingsUpdateBody = t.Object({
   body: t.Any(),
 },);
-
-// ── Character Avatars ─────────────────────────────────────
-
-export const ActorIdAvatarParams = t.Object({
-  actorId: Id,
-},);
-
-export const ActorIdAvatarIdParams = t.Object({
-  actorId: Id,
-  avatarId: Id,
-},);
-
-export const WorldActorParams = t.Object({
-  worldId: Id,
-  actorId: Id,
-},);
-
-export const AvatarCreateBody = t.Object({
-  assetId: Id,
-  label: t.Optional(t.String(),),
-  tags: t.Optional(t.Record(t.String(), t.Array(t.String(),),),),
-  isPrimary: t.Optional(t.Boolean(),),
-  sortOrder: t.Optional(t.Numeric(),),
-},);
-
-export const AvatarUpdateBody = t.Object({
-  label: t.Optional(t.String(),),
-  tags: t.Optional(t.Record(t.String(), t.Array(t.String(),),),),
-  isPrimary: t.Optional(t.Boolean(),),
-  sortOrder: t.Optional(t.Numeric(),),
-},);
-
-export const AvatarSelectBody = t.Object({
-  emotion: t.Optional(t.String(),),
-  mood: t.Optional(t.String(),),
-  action: t.Optional(t.String(),),
-  location: t.Optional(t.String(),),
-  time: t.Optional(t.String(),),
-  outfit: t.Optional(t.String(),),
-  worldId: t.Optional(t.String(),),
-},);
-
-export const AvatarConfigBody = t.Object({
-  selectionRule: t.Optional(t.UnionEnum(ev(AvatarSelectionRule,),),),
-  weights: t.Optional(t.Record(t.String(), t.Numeric(),),),
-  fallbackChain: t.Optional(t.Array(t.UnionEnum(ev(AvatarSelectionRule,),),),),
-},);
-
-export const WorldAvatarConfigBody = t.Object({
-  selectionRuleOverride: t.Optional(t.UnionEnum(ev(AvatarSelectionRule,),),),
-  weightsOverride: t.Optional(t.Record(t.String(), t.Numeric(),),),
-},);
-
-// ── Character Emotions ────────────────────────────────────
-
-export const ActorEmotionParams = t.Object({
-  actorId: Id,
-  emotionId: Id,
-},);
-
-export const CharacterEmotionBody = t.Object({
-  emotionId: Id,
-  intensity: t.Optional(t.Numeric({ minimum: 0, maximum: 1, },),),
-  context: t.Optional(t.String(),),
-  expiresAt: t.Optional(t.String(),),
-},);
-
-export const EmotionDefinitionCreateBody = t.Object({
-  name: t.String({ minLength: 1, },),
-  displayName: t.String({ minLength: 1, },),
-  category: t.String({ minLength: 1, },),
-  valence: t.Numeric({ minimum: -1, maximum: 1, },),
-  arousal: t.Numeric({ minimum: 0, maximum: 1, },),
-  icon: t.Optional(t.String(),),
-},);
-
-// ── Character Emotion Avatars ─────────────────────────────
-
-export const ActorJobParams = t.Object({
-  actorId: Id,
-  jobId: Id,
-},);
-
-export const EmotionAvatarBatchBody = t.Object({
-  baseAvatarId: Id,
-  emotions: t.Optional(t.Array(t.UnionEnum(ev(EmotionType,),),),),
-  promptPrefix: t.Optional(t.String(),),
-  negativePrompt: t.Optional(t.String(),),
-},);
-
-// ── Character Mood ────────────────────────────────────────
-
-export const MoodCreateBody = t.Object({
-  worldId: t.Optional(t.String(),),
-  happiness: t.Optional(t.Numeric({ minimum: 0, maximum: 100, },),),
-  baseMood: t.Optional(t.String(),),
-  moodStability: t.Optional(t.Numeric({ minimum: 0, maximum: 1, },),),
-},);
-
-export const MoodUpdateBody = t.Object({
-  worldId: t.Optional(t.String(),),
-  happiness: t.Optional(t.Numeric({ minimum: 0, maximum: 100, },),),
-  currentMood: t.Optional(t.String(),),
-  moodStability: t.Optional(t.Numeric({ minimum: 0, maximum: 1, },),),
-  expressionModifiers: t.Optional(t.Record(t.String(), t.Numeric(),),),
-},);
-
-export const MoodDeltaBody = t.Object({
-  worldId: t.Optional(t.String(),),
-  delta: t.Numeric({ minimum: -100, maximum: 100, },),
-},);
-
-export const MoodEventBody = t.Object({
-  worldId: t.Optional(t.String(),),
-  eventType: t.String({ minLength: 1, },),
-  happinessDelta: t.Numeric({ minimum: -100, maximum: 100, },),
-  moodOverride: t.Optional(t.String(),),
-  source: t.String({ minLength: 1, },),
-  sourceId: t.Optional(t.String(),),
-},);
-
-export const MoodEventsQuery = t.Object({
-  worldId: t.Optional(t.String(),),
-  limit: t.Optional(t.Numeric({ minimum: 1, maximum: 500, default: 50, },),),
-},);
-
-// ── Character Relationships ───────────────────────────────
-
-export const ActorTargetParams = t.Object({
-  actorId: Id,
-  targetActorId: Id,
-},);
-
-export const RelationshipCreateBody = t.Object({
-  targetActorId: Id,
-  worldId: t.Optional(t.String(),),
-  relationshipType: t.UnionEnum(ev(RelationshipType,),),
-  standing: t.Optional(t.Numeric(),),
-  trust: t.Optional(t.Numeric(),),
-  familiarity: t.Optional(t.Numeric({ minimum: 0, maximum: 100, },),),
-  isBidirectional: t.Optional(t.Boolean(),),
-  metadata: t.Optional(t.Record(t.String(), t.Any(),),),
-},);
-
-export const RelationshipUpdateBody = t.Object({
-  worldId: t.Optional(t.String(),),
-  relationshipType: t.Optional(t.UnionEnum(ev(RelationshipType,),),),
-  standing: t.Optional(t.Numeric(),),
-  trust: t.Optional(t.Numeric(),),
-  familiarity: t.Optional(t.Numeric({ minimum: 0, maximum: 100, },),),
-  metadata: t.Optional(t.Record(t.String(), t.Any(),),),
-},);
-
-export const RelationshipEventBody = t.Object({
-  targetActorId: Id,
-  worldId: t.Optional(t.String(),),
-  eventType: t.UnionEnum(ev(RelationshipEventType,),),
-  standingDelta: t.Optional(t.Numeric(),),
-  trustDelta: t.Optional(t.Numeric(),),
-  familiarityDelta: t.Optional(t.Numeric(),),
-},);
-
-// ── Character Traits ──────────────────────────────────────
-
-export const TraitCreateBody = t.Object({
-  category: t.UnionEnum(ev(TraitCategory,),),
-  name: t.String({ minLength: 1, },),
-  value: t.String({ minLength: 1, },),
-},);
-
-export const TraitUpdateBody = t.Object({
-  name: t.String({ minLength: 1, },),
-  value: t.String({ minLength: 1, },),
-},);
-
-export const WorldTraitCreateBody = t.Object({
-  category: t.UnionEnum(ev(WorldTraitCategory,),),
-  name: t.String({ minLength: 1, },),
-  value: t.String({ minLength: 1, },),
-},);
-
-export const LocationTraitCreateBody = t.Object({
-  name: t.String({ minLength: 1, },),
-  value: t.String({ minLength: 1, },),
-  bonus: t.Optional(t.Numeric(),),
-  penalty: t.Optional(t.Numeric(),),
-  effects: t.Optional(t.Record(t.String(), t.Any(),),),
-},);
-
-export const LocationTraitUpdateBody = t.Object({
-  name: t.String({ minLength: 1, },),
-  value: t.String({ minLength: 1, },),
-  bonus: t.Optional(t.Numeric(),),
-  penalty: t.Optional(t.Numeric(),),
-  effects: t.Optional(t.Record(t.String(), t.Any(),),),
-},);
-
-// ── Character IO ──────────────────────────────────────────
-
-export const CharacterSystemsExportBody = t.Object({
-  worldId: t.Optional(t.String(),),
-  includeTraits: t.Optional(t.Boolean(),),
-  includeMood: t.Optional(t.Boolean(),),
-  includeRelationships: t.Optional(t.Boolean(),),
-  includeAvatars: t.Optional(t.Boolean(),),
-  includeLicensing: t.Optional(t.Boolean(),),
-  includeAvailability: t.Optional(t.Boolean(),),
-},);
-
-export const CharacterSystemsImportUrlBody = t.Object({
-  url: t.String({ minLength: 1, format: "uri", },),
-},);
-
-// ── Character Licensing ───────────────────────────────────
-
-export const LicensingBody = t.Object({
-  licenseType: t.Optional(t.UnionEnum(ev(LicenseType,),),),
-  customLicenseText: t.Optional(t.String(),),
-  attribution: t.Optional(t.String(),),
-  allowDerivatives: t.Optional(t.Boolean(),),
-  allowCommercial: t.Optional(t.Boolean(),),
-  shareAlike: t.Optional(t.Boolean(),),
-},);
-
-// ── Character Availability ────────────────────────────────
-
-export const AvailabilityBody = t.Object({
-  status: t.Optional(t.UnionEnum(ev(AvailabilityStatus,),),),
-  usagePolicy: t.Optional(t.String(),),
-  activityRestrictions: t.Optional(t.Array(t.String(),),),
-  contentPolicy: t.Optional(t.String(),),
-  nsfwPolicy: t.Optional(t.String(),),
-},);
-
-// ── Characters (actors) ──────────────────────────────────
-// ActorCreateBody and ActorUpdateBody are defined in the Actor routes section above.
-
-// ── Story Items ───────────────────────────────────────────
-
-export const StoryItemInstanceBody = t.Object({
-  itemId: Id,
-  locationId: Id,
-  quantity: t.Optional(t.Numeric({ minimum: 1, default: 1, },),),
-},);
-
-// ── Story States ──────────────────────────────────────────
-
-export const NpcStateBody = t.Object({
-  locationId: t.Optional(t.String(),),
-  status: t.Optional(t.String(),),
-  mood: t.Optional(t.String(),),
-  inventory: t.Optional(t.Array(t.String(),),),
-  notes: t.Optional(t.String(),),
-},);
-
-export const LocationStateBody = t.Object({
-  weather: t.Optional(t.String(),),
-  timeOfDay: t.Optional(t.String(),),
-  events: t.Optional(t.Array(t.String(),),),
-  description: t.Optional(t.String(),),
-},);
-
-export const WorldStateCreateBody = t.Object({
-  name: t.Optional(t.String(),),
-  description: t.Optional(t.String(),),
-  data: t.Optional(t.Record(t.String(), t.Any(),),),
-},);
-
-// ── Quests ────────────────────────────────────────────────
-
-export const QuestUpdateBody = t.Object({
-  name: t.Optional(Name,),
-  description: t.Optional(t.String(),),
-  status: t.Optional(t.UnionEnum(ev(QuestStatus,),),),
-  objectives: t.Optional(t.Array(t.Object({
-    id: t.Optional(t.String(),),
-    description: t.String(),
-    completed: t.Optional(t.Boolean(),),
-  },),),),
-},);
-
-export const QuestProgressBody = t.Object({
-  objectiveId: t.Optional(t.String(),),
-  completed: t.Optional(t.Boolean(),),
-  chatId: t.Optional(t.String(),),
-},);
-
-// ── Blog ──────────────────────────────────────────────────
-
-export const BlogPostCreateBody = t.Object({
-  title: t.String({ minLength: 1, },),
-  body: t.String({ minLength: 1, },),
-  visibility: t.Optional(t.String(),),
-  author_type: t.Optional(t.String(),),
-  category: t.Optional(t.String(),),
-  world_id: t.Optional(t.String(),),
-  character_id: t.Optional(t.String(),),
-  tags: t.Optional(t.Array(t.String(),),),
-  scheduled_at: t.Optional(t.String(),),
-  metadata: t.Optional(t.Record(t.String(), t.Any(),),),
-},);
-
-export const BlogPostUpdateBody = t.Object({
-  title: t.Optional(t.String({ minLength: 1, },),),
-  body: t.Optional(t.String({ minLength: 1, },),),
-  visibility: t.Optional(t.String(),),
-  status: t.Optional(t.String(),),
-  category: t.Optional(t.String(),),
-  tags: t.Optional(t.Array(t.String(),),),
-  metadata: t.Optional(t.Record(t.String(), t.Any(),),),
-},);
-
-export const BlogCommentCreateBody = t.Object({
-  body: t.String({ minLength: 1, },),
-},);
-
-export const BlogPostStatusBody = t.Object({
-  status: t.String({ minLength: 1, },),
-},);
-
-// ── Telemetry ─────────────────────────────────────────────
-
-export const TelemetryEventBody = t.Object({
-  type: t.String({ minLength: 1, },),
-  sessionId: t.Optional(t.String(),),
-  userId: t.Optional(t.String(),),
-  chatId: t.Optional(t.String(),),
-  data: t.Optional(t.Record(t.String(), t.Any(),),),
-},);
-
-// ── Notifications ─────────────────────────────────────────
-
-export const NotificationPreferencesBody = t.Object({
-  enabled: t.Optional(t.Record(t.String(), t.Boolean(),),),
-  mutedWorlds: t.Optional(t.Array(t.String(),),),
-},);
-
-// ── Admin Character Overrides ─────────────────────────────
-
-export const AdminOverrideCreateBody = t.Object({
-  action: t.String({ minLength: 1, },),
-  visibilityOverride: t.Optional(t.String(),),
-  licenseOverride: t.Optional(t.String(),),
-  reason: t.Optional(t.String(),),
-  expiresAt: t.Optional(t.String(),),
-},);
-
-// ── API Keys ──────────────────────────────────────────────
-
-export const ApiKeyCreateBody = t.Object({
-  providerName: t.String({ minLength: 1, },),
-  apiKey: t.String({ minLength: 1, },),
-},);
-
-// ── Type Inference (deduplicate with service interfaces) ─────
-//
-// Use these types instead of manually declaring interfaces in services.
-// Example: `opts: MoodCreateInput` instead of `opts: CreateMoodOpts`
-
-/** Input type for MoodService.createMood (body only — actorId comes from params) */
-export type MoodCreateInput = Static<typeof MoodCreateBody>;
-/** Input type for MoodService.updateMood */
-export type MoodUpdateInput = Static<typeof MoodUpdateBody>;
-/** Input type for MoodService.logEvent */
-export type MoodEventInput = Static<typeof MoodEventBody>;
-
-/** Input type for RelationshipsService.create */
-export type RelationshipCreateInput = Static<typeof RelationshipCreateBody>;
-/** Input type for RelationshipsService.update */
-export type RelationshipUpdateInput = Static<typeof RelationshipUpdateBody>;
-/** Input type for RelationshipsService.logEvent */
-export type RelationshipEventInput = Static<typeof RelationshipEventBody>;
-
-/** Input type for AvatarService.create */
-export type AvatarCreateInput = Static<typeof AvatarCreateBody>;
-/** Input type for AvatarService.update */
-export type AvatarUpdateInput = Static<typeof AvatarUpdateBody>;
-
-/** Input type for TraitsService.createPermanent */
-export type TraitCreateInput = Static<typeof TraitCreateBody>;
-/** Input type for TraitsService.updatePermanent */
-export type TraitUpdateInput = Static<typeof TraitUpdateBody>;
-/** Input type for TraitsService.createWorld */
-export type WorldTraitCreateInput = Static<typeof WorldTraitCreateBody>;
-/** Input type for TraitsService.createLocation */
-export type LocationTraitCreateInput = Static<typeof LocationTraitCreateBody>;
-/** Input type for TraitsService.updateLocation */
-export type LocationTraitUpdateInput = Static<typeof LocationTraitUpdateBody>;
-
-/** Input type for EmotionAvatarService.batchGenerate */
-export type EmotionAvatarBatchInput = Static<typeof EmotionAvatarBatchBody>;
-
-/** Input type for BlogService.createPost */
-export type BlogPostCreateInput = Static<typeof BlogPostCreateBody>;
-/** Input type for BlogService.updatePost */
-export type BlogPostUpdateInput = Static<typeof BlogPostUpdateBody>;
-/** Input type for BlogService.createComment */
-export type BlogCommentCreateInput = Static<typeof BlogCommentCreateBody>;
-
-/** Input type for licensing update */
-export type LicensingInput = Static<typeof LicensingBody>;
-/** Input type for availability update */
-export type AvailabilityInput = Static<typeof AvailabilityBody>;
-
-/** Input type for QuestService.create */
-export type QuestCreateInput = Static<typeof QuestCreateBody>;
-/** Input type for QuestService.update */
-export type QuestUpdateInput = Static<typeof QuestUpdateBody>;
-/** Input type for QuestService.addProgress */
-export type QuestProgressInput = Static<typeof QuestProgressBody>;
-
-/** Input type for StoryItemService.createInstance */
-export type StoryItemInstanceInput = Static<typeof StoryItemInstanceBody>;
-
-// ── Response Schemas ──────────────────────────────────────────
-//
-// Define response shapes for OpenAPI documentation and runtime validation.
-// Use `response:` option in route definitions to enable response validation.
-
-export const ErrorResponse = t.Object({
-  message: t.String(),
-  status: t.Optional(t.Number(),),
-},);
-
-export const SuccessResponse = t.Object({
-  success: t.Boolean(),
-},);
-
-export const MoodStateResponse = t.Object({
-  id: t.String(),
-  actorId: t.String(),
-  worldId: t.Optional(t.String(),),
-  happiness: t.Number(),
-  baseMood: t.Optional(t.String(),),
-  currentMood: t.Optional(t.String(),),
-  moodStability: t.Optional(t.Number(),),
-  expressionModifiers: t.Optional(t.Record(t.String(), t.Number(),),),
-},);
-
-export const RelationshipResponse = t.Object({
-  id: t.String(),
-  sourceActorId: t.String(),
-  targetActorId: t.String(),
-  relationshipType: t.String(),
-  standing: t.Optional(t.Number(),),
-  trust: t.Optional(t.Number(),),
-  events: t.Optional(t.Array(t.Object({
-    eventType: t.String(),
-    timestamp: t.String(),
-    standingDelta: t.Optional(t.Number(),),
-    trustDelta: t.Optional(t.Number(),),
-  },),),),
-},);
-
-export const AvatarResponse = t.Object({
-  id: t.String(),
-  actorId: t.String(),
-  label: t.Optional(t.String(),),
-  url: t.String(),
-  isPrimary: t.Optional(t.Boolean(),),
-  sortOrder: t.Optional(t.Number(),),
-  tags: t.Optional(t.Array(t.String(),),),
-},);
-
-export const TraitResponse = t.Object({
-  id: t.String(),
-  actorId: t.String(),
-  traitType: t.String(),
-  category: t.Optional(t.String(),),
-  name: t.String(),
-  description: t.Optional(t.String(),),
-  metadata: t.Optional(t.Record(t.String(), t.Any(),),),
-},);
-
-export const QuestResponse = t.Object({
-  id: t.String(),
-  worldId: t.String(),
-  title: t.String(),
-  description: t.Optional(t.String(),),
-  questType: t.Optional(t.String(),),
-  status: t.Optional(t.String(),),
-  progress: t.Optional(t.Number(),),
-  maxProgress: t.Optional(t.Number(),),
-},);
-
-export const StoryItemResponse = t.Object({
-  id: t.String(),
-  worldId: t.String(),
-  actorId: t.Optional(t.String(),),
-  definitionId: t.String(),
-  quantity: t.Optional(t.Number(),),
-  metadata: t.Optional(t.Record(t.String(), t.Any(),),),
-},);
-
-export const BlogPostResponse = t.Object({
-  id: t.String(),
-  authorId: t.String(),
-  title: t.String(),
-  body: t.String(),
-  visibility: t.Optional(t.String(),),
-  status: t.Optional(t.String(),),
-  category: t.Optional(t.String(),),
-  tags: t.Optional(t.Array(t.String(),),),
-  createdAt: t.Optional(t.String(),),
-  updatedAt: t.Optional(t.String(),),
-},);
-
-export const BlogCommentResponse = t.Object({
-  id: t.String(),
-  postId: t.String(),
-  authorId: t.String(),
-  body: t.String(),
-  status: t.Optional(t.String(),),
-  createdAt: t.Optional(t.String(),),
-},);
-
-export const ApiKeyResponse = t.Object({
-  id: t.String(),
-  providerName: t.String(),
-  createdAt: t.String(),
-  lastUsedAt: t.Optional(t.String(),),
-},);
-
-// ── Shared Cross-System Schemas ─────────────────────────────
-
-/** Reputation tier — maps numeric score to social standing label. */
-export const ReputationTier = t.Union([
-  t.Literal("hostile",),
-  t.Literal("unfriendly",),
-  t.Literal("neutral",),
-  t.Literal("friendly",),
-  t.Literal("allied",),
-  t.Literal("devoted",),
-], { description: "Reputation tier based on score value", },);
-export type ReputationTier = Static<typeof ReputationTier>;
-
-/** Source system that modified reputation. */
-export const ReputationSource = t.Union([
-  t.Literal("social",),
-  t.Literal("faction",),
-  t.Literal("nsfw",),
-  t.Literal("combined",),
-], { description: "System that produced the reputation score", },);
-
-/** Single reputation modifier entry — tracks what changed the score. */
-export const ReputationModifier = t.Object({
-  source: t.String({ description: "What caused the change (e.g. quest name, NPC id)", },),
-  amount: t.Number({ minimum: -100, maximum: 100, description: "Score delta (+/-)", },),
-  timestamp: t.String({ format: "date-time", description: "When the change occurred", },),
-  reason: t.String({ description: "Human-readable reason for the change", },),
-  context: t.Optional(t.Record(t.String(), t.Unknown(),),),
-},);
-
-/** Unified reputation score — used by Social, Faction, and NSFW systems. */
-export const ReputationScore = t.Object({
-  value: t.Number({ minimum: -100, maximum: 100, description: "Reputation value (-100 to +100)", },),
-  tier: ReputationTier,
-  source: ReputationSource,
-  lastModified: t.String({ format: "date-time", },),
-  decayRate: t.Number({ minimum: 0, maximum: 1, description: "Decay per day (0 = no decay)", },),
-  modifiers: t.Array(ReputationModifier,),
-},);
-export type ReputationScore = Static<typeof ReputationScore>;
-
-/** Request body to update reputation for an actor. */
-export const ReputationUpdateBody = t.Object({
-  source: ReputationSource,
-  amount: t.Number({ minimum: -100, maximum: 100, },),
-  reason: t.String({ minLength: 1, },),
-  context: t.Optional(t.Record(t.String(), t.Unknown(),),),
-},);
-
-/** NSFW content rating — 5-tier system from Character Core. */
-export const NsfwContentRatingSchema = t.UnionEnum(ev(ContentRating,),);
-export type NsfwContentRatingSchema = Static<typeof NsfwContentRatingSchema>;
-
-/** Consent scope — where consent applies. */
-export const ConsentScope = t.Union([
-  t.Literal("chat",),
-  t.Literal("user",),
-  t.Literal("world",),
-  t.Literal("global",),
-], { description: "Scope at which consent is recorded", },);
-
-/** Consent state — tracks user consent for NSFW content. */
-export const ConsentState = t.Object({
-  userId: t.String({ format: "uuid", },),
-  scope: ConsentScope,
-  scopeId: t.Optional(t.String({ description: "Chat or world ID when scope is chat/world", },),),
-  consentGiven: t.Boolean(),
-  consentVersion: t.Number({ minimum: 1, description: "Schema version for consent format changes", },),
-  createdAt: t.String({ format: "date-time", },),
-  revokedAt: t.Optional(t.String({ format: "date-time", },),),
-  revokedBy: t.Optional(t.String({ format: "uuid", },),),
-  reason: t.Optional(t.String({ description: "Reason for granting or revoking consent", },),),
-},);
-export type ConsentState = Static<typeof ConsentState>;
-
-/** Request body to grant or revoke consent. */
-export const ConsentUpdateBody = t.Object({
-  scope: ConsentScope,
-  scopeId: t.Optional(t.String(),),
-  consentGiven: t.Boolean(),
-  reason: t.Optional(t.String(),),
-},);
-
-/** NSFW encounter type — from Character Core enums. */
-export const NsfwEncounterTypeSchema = t.UnionEnum(ev(NsfwEncounterType,),);
-export type NsfwEncounterTypeSchema = Static<typeof NsfwEncounterTypeSchema>;
-
-/** NSFW content rating enforcement — runtime gate for generation boundary. */
-export const NsfwRatingEnforcement = t.Object({
-  allowed: t.Boolean({ description: "Whether this rating passes the gate", },),
-  rating: NsfwContentRatingSchema,
-  maxAllowed: NsfwContentRatingSchema,
-  reason: t.Optional(t.String(),),
-},);
-
-/** List response wrapper */
-export const ListResponse = <T extends TSchema,>(itemSchema: T,) =>
-  t.Object({
-    data: t.Array(itemSchema,),
-    total: t.Number(),
-  },);
-
-/** Paginated list response wrapper */
-export const PaginatedResponse = <T extends TSchema,>(itemSchema: T,) =>
-  t.Object({
-    data: t.Array(itemSchema,),
-    pagination: t.Object({
-      total: t.Number(),
-      page: t.Number(),
-      pageSize: t.Number(),
-      totalPages: t.Number(),
-    },),
-  },);
