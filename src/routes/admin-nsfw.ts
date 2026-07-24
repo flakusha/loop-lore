@@ -9,13 +9,11 @@
  * Requires admin role.
  */
 
-import { Elysia, t, } from "elysia";
+import { Elysia, } from "elysia";
 import type { Kysely, } from "kysely";
 import { getConfig, setConfig, } from "../admin/config";
 import type { DB, } from "../db/schema";
-import type { TranslatorFn, } from "../i18n/types";
 import { getLogger, type Logger, } from "../logger";
-import { ErrorResponse, SuccessResponse, } from "../validation/schemas";
 import { jsonError, jsonResponse, } from "./http-utils";
 import { HttpStatus, } from "./http-utils";
 
@@ -38,11 +36,8 @@ export function adminNsfwRoutes({ database, }: { database: Kysely<DB> },) {
     .get("/api/admin/nsfw", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
       const userRole = ctx.userRole as string | null;
-      const t = ctx.t as TranslatorFn | undefined;
-      if (!userId) { return jsonError({ message: "errors.unauthorized", status: HttpStatus.Unauthorized, t, },); }
-      if (userRole !== "admin") {
-        return jsonError({ message: "errors.forbidden", status: HttpStatus.Forbidden, t, },);
-      }
+      if (!userId) { return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, },); }
+      if (userRole !== "admin") { return jsonError({ message: "Forbidden", status: HttpStatus.Forbidden, },); }
 
       try {
         const allowRaw = await getConfig(database, NSFW_ALLOW_KEY,);
@@ -57,22 +52,10 @@ export function adminNsfwRoutes({ database, }: { database: Kysely<DB> },) {
       } catch (error) {
         log().error(`Failed to get NSFW config: ${String(error,)}`,);
         return jsonError({
-          message: "errors.serverError",
+          message: "Failed to get NSFW config",
           status: HttpStatus.InternalServerError,
-          t,
         },);
       }
-    }, {
-      response: {
-        200: SuccessResponse,
-        401: ErrorResponse,
-      },
-      detail: {
-        summary: "Get NSFW configuration",
-        description:
-          "Retrieve the current server-wide NSFW policy settings including content allowance and minimum age.",
-        tags: ["Admin", "NSFW",],
-      },
     },)
     // ── Update NSFW config ────────────────────────────────
     .put(
@@ -80,17 +63,13 @@ export function adminNsfwRoutes({ database, }: { database: Kysely<DB> },) {
       async (ctx: any,) => {
         const userId = ctx.userId as string | null;
         const userRole = ctx.userRole as string | null;
-        const t = ctx.t as TranslatorFn | undefined;
-        if (!userId) { return jsonError({ message: "errors.unauthorized", status: HttpStatus.Unauthorized, t, },); }
-        if (userRole !== "admin") {
-          return jsonError({
-            message: "errors.forbidden",
-            status: HttpStatus.Forbidden,
-            t,
-          },);
-        }
+        if (!userId) { return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, },); }
+        if (userRole !== "admin") { return jsonError({ message: "Forbidden", status: HttpStatus.Forbidden, },); }
 
-        const body = ctx.body;
+        const body = ctx.body as {
+          allowNsfw?: boolean;
+          nsfwMinAge?: number;
+        };
 
         try {
           if (body.allowNsfw !== undefined) {
@@ -106,37 +85,18 @@ export function adminNsfwRoutes({ database, }: { database: Kysely<DB> },) {
         } catch (error) {
           log().error(`Failed to update NSFW config: ${String(error,)}`,);
           return jsonError({
-            message: "errors.serverError",
+            message: "Failed to update NSFW config",
             status: HttpStatus.InternalServerError,
-            t,
           },);
         }
-      },
-      {
-        body: t.Object({
-          allowNsfw: t.Optional(t.Boolean(),),
-          nsfwMinAge: t.Optional(t.Numeric(),),
-        },),
-        response: {
-          200: SuccessResponse,
-          401: ErrorResponse,
-        },
-        detail: {
-          summary: "Update NSFW configuration",
-          description: "Update server-wide NSFW policy settings. Admin role required.",
-          tags: ["Admin", "NSFW",],
-        },
       },
     )
     // ── List character NSFW policies ──────────────────────
     .get("/api/admin/nsfw/policy", async (ctx: any,) => {
       const userId = ctx.userId as string | null;
       const userRole = ctx.userRole as string | null;
-      const t = ctx.t as TranslatorFn | undefined;
-      if (!userId) { return jsonError({ message: "errors.unauthorized", status: HttpStatus.Unauthorized, t, },); }
-      if (userRole !== "admin") {
-        return jsonError({ message: "errors.forbidden", status: HttpStatus.Forbidden, t, },);
-      }
+      if (!userId) { return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, },); }
+      if (userRole !== "admin") { return jsonError({ message: "Forbidden", status: HttpStatus.Forbidden, },); }
 
       try {
         const policies = await database
@@ -149,20 +109,9 @@ export function adminNsfwRoutes({ database, }: { database: Kysely<DB> },) {
       } catch (error) {
         log().error(`Failed to list NSFW policies: ${String(error,)}`,);
         return jsonError({
-          message: "errors.serverError",
+          message: "Failed to list NSFW policies",
           status: HttpStatus.InternalServerError,
-          t,
         },);
       }
-    }, {
-      response: {
-        200: SuccessResponse,
-        401: ErrorResponse,
-      },
-      detail: {
-        summary: "List character NSFW policies",
-        description: "Retrieve all characters with non-SFW content ratings. Admin role required.",
-        tags: ["Admin", "NSFW",],
-      },
     },);
 }
