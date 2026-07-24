@@ -65,6 +65,21 @@
         </div>
         <div class="gallery-item-info">
           <span class="name" x-text="asset.filename || asset.name"></span>
+          <template x-if="asset.alt_text">
+            <span
+              class="caption"
+              x-text="asset.alt_text"
+              style="font-size: 11px; color: var(--text-tertiary); display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap"
+            ></span>
+          </template>
+          <div class="meta" style="font-size: 11px; color: var(--text-tertiary); display: flex; gap: var(--space-2)">
+            <template x-if="asset.size_bytes">
+              <span x-text="(asset.size_bytes / 1024).toFixed(1) + ' KB'"></span>
+            </template>
+            <template x-if="asset.width && asset.height">
+              <span x-text="asset.width + '×' + asset.height"></span>
+            </template>
+          </div>
         </div>
       </div>
     </template>

@@ -148,6 +148,8 @@ export function assetRoutes({ database, config, }: { database: Kysely<DB>; confi
         const entityType = searchParams.get("entity_type",) ?? undefined;
         const entityId = searchParams.get("entity_id",) ?? undefined;
         const label = searchParams.get("label",) ?? undefined;
+        const userId = (ctx as any).userId as string | null ?? null;
+        const userRole = (ctx as any).userRole as string | null ?? null;
 
         const result = await listAssets(database, {
           page,
@@ -155,6 +157,8 @@ export function assetRoutes({ database, config, }: { database: Kysely<DB>; confi
           entityType: entityType as AssetLinkEntity,
           entityId,
           label,
+          actorId: userId,
+          actorRole: userRole,
         },);
         return jsonPaginated({ data: result.data, total: result.total, page, pageSize, },);
       },)
@@ -166,11 +170,11 @@ export function assetRoutes({ database, config, }: { database: Kysely<DB>; confi
       // route directly on the parent app avoids this issue.
       // ── Single asset routes ──────────────────────────
       .get("/api/assets/:id", async (ctx,) => {
-        const asset = await getAsset(database, ctx.params.id,);
-        if (!asset) {
-          return notFoundResponse("Asset not found",);
-        }
-        return jsonResponse(asset,);
+        const userId = (ctx as any).userId as string | null ?? null;
+        const userRole = (ctx as any).userRole as string | null ?? null;
+        const resolved = await resolveAsset(database, ctx.params.id, userId, userRole,);
+        if (resolved instanceof Response) { return resolved; }
+        return jsonResponse(resolved.asset,);
       },)
       .patch("/api/assets/:id", async (ctx,) => {
         const userId = requireUserId(ctx,);
