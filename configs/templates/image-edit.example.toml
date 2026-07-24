@@ -1,0 +1,15 @@
+# Image-Edit Templates
+#
+# ComfyUI workflow templates for image editing operations.
+# Merge strategy: replace | extend (default) | override
+#
+# extend: adds new workflows, existing keys from config win on conflict
+# replace: wipes all built-in workflows, uses only these
+# override: deep merges over built-ins
+
+merge = "extend"
+
+# Custom workflow definitions
+# Each workflow has: id, name, category, backend, description
+# Workflow nodes are defined inline or referenced
+[workflows]

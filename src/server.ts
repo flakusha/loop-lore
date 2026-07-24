@@ -343,6 +343,22 @@ async function start() {
   // ── Background initialization (non-blocking) ─────────────
   const initPromises: Promise<void>[] = [];
 
+  // Seed character templates from config (idempotent)
+  if (config.characters.enabled && config.characters.templates.length > 0) {
+    initPromises.push(
+      (async () => {
+        const { seedCharacterTemplates } = await import("./characters/seed");
+        const result = await seedCharacterTemplates(database, config.characters);
+        if (result.created > 0) {
+          logger.info("character templates seeded", { module: "server", created: result.created, skipped: result.skipped });
+        }
+        if (result.errors.length > 0) {
+          logger.warn("character template seeding had errors", { module: "server", errors: result.errors });
+        }
+      })(),
+    );
+  }
+
   // Auto-start external AI servers (llama.cpp, sd.cpp) in background
   const autoStart = config.generation.autoStart;
   const llamaCppCfg = autoStart?.llamaCpp;

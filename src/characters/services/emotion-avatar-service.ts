@@ -15,6 +15,7 @@ import type { Kysely, } from "kysely";
 import { randomUUID, } from "node:crypto";
 import { createAsset, linkAsset, } from "../../assets/service";
 import { loadConfig, } from "../../config/load";
+import { pickSdProvider, } from "../../config/schema";
 import { EmotionType, } from "../../db/enums";
 import { getDatabase, } from "../../db/index";
 import type { DB, } from "../../db/schema";
@@ -245,7 +246,7 @@ export class EmotionAvatarService {
     job.status = "running";
 
     const config = loadConfig();
-    const sdConfig = config.generation.providers.sd;
+    const sdConfig = pickSdProvider(config.generation.providers.sd, "generate",);
 
     if (!sdConfig) {
       throw new Error("No image generation provider configured",);
@@ -300,7 +301,7 @@ export class EmotionAvatarService {
   private async generateEmotionAvatar(opts: {
     actorId: string;
     emotion: EmotionType;
-    sdConfig: NonNullable<ReturnType<typeof loadConfig>["generation"]["providers"]["sd"]>;
+    sdConfig: import("../../config/schema").ImageProviderConfig;
     uploadDir: string;
     promptPrefix?: string;
     negativePrompt?: string;

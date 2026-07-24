@@ -8,7 +8,7 @@
  */
 
 import { loadConfig, } from "../../config/load";
-import type { ImageProviderConfig, } from "../../config/schema";
+import { pickSdProvider, type ImageProviderConfig, } from "../../config/schema";
 import { getLogger, } from "../../logger";
 import { safeJsonStringify, uid, } from "../../utils";
 import { validateProviderUrl, } from "../../utils/url-validation";
@@ -36,7 +36,7 @@ export class SDServerEditProvider implements ImageEditProvider {
     if (this.config) { return this.config; }
 
     const appConfig = loadConfig();
-    const sdConfig = appConfig.generation.providers.sd;
+    const sdConfig = pickSdProvider(appConfig.generation.providers.sd, "edit",);
     if (!sdConfig) { return null; }
 
     const validated = validateProviderUrl(sdConfig.baseUrl,);

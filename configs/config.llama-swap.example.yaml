@@ -62,22 +62,23 @@ generation:
 # ── Image generation (sd.cpp, Illustrious SDXL model) ────
 # Uncomment and edit paths for your setup:
 #   sd:
-#     name: sd-cpp-illustrious
-#     label: "SD Illustrious"
-#     baseUrl: http://localhost:9010
-#     apiFamily: sdapi
-#     timeout: 10000
-#     generationTimeout: 120000
-#     defaults:
-#       width: 512
-#       height: 512
-#       steps: 20
-#       cfgScale: 2.0
-#       sampler: euler_a
-#       scheduler: discrete
-#       negativePrompt: "worst quality, incorrect anatomy"
-#       loraModelDir: "/path/to/ai-models/Models/Lora"
-#       loras:
-#         - path: "sdxl/AddMicroDetails_Illustrious_v5.safetensors"
-#           multiplier: 0.9
-#           isHighNoise: false
+#     - name: sd-cpp-illustrious
+#       label: "SD Illustrious"
+#       baseUrl: http://localhost:9010
+#       apiFamily: sdapi
+#       purpose: both
+#       timeout: 10000
+#       generationTimeout: 120000
+#       defaults:
+#         width: 512
+#         height: 512
+#         steps: 20
+#         cfgScale: 2.0
+#         sampler: euler_a
+#         scheduler: discrete
+#         negativePrompt: "worst quality, incorrect anatomy"
+#         loraModelDir: "/path/to/ai-models/Models/Lora"
+#         loras:
+#           - path: "sdxl/AddMicroDetails_Illustrious_v5.safetensors"
+#             multiplier: 0.9
+#             isHighNoise: false

@@ -1,6 +1,7 @@
 import { extractImageMetadata, } from "../assets/metadata";
 import { createAsset, linkAsset, } from "../assets/service";
 import { loadConfig, } from "../config/load";
+import { pickSdProvider, } from "../config/schema";
 import { getDatabase, } from "../db/index";
 import { safeJsonStringify, uid, } from "../utils";
 import { safeFromBase64, } from "../utils/safe-buffer";
@@ -31,7 +32,7 @@ export async function handleImageGeneration(body: unknown,): Promise<Response> {
   }
 
   const config = loadConfig();
-  const sdConfig = config.generation.providers.sd;
+  const sdConfig = pickSdProvider(config.generation.providers.sd, "generate",);
   if (!sdConfig) {
     return Response.json(
       {
