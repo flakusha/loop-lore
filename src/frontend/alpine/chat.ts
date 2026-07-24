@@ -15,6 +15,7 @@ import { chatVariants, } from "./chat-variants";
 import { jsonParseOr, } from "./json";
 import { getLogger, } from "./logger";
 import { memoryPanel, } from "./memory-panel";
+import { createMoodPanelState, } from "./mood-panel";
 import { rpgStats, } from "./rpg-stats";
 import type { AlpineState, ChatState, } from "./types";
 
@@ -133,6 +134,14 @@ globalThis.chatState = function() {
 
     // ── Memory Panel State ──
     ...memoryPanel,
+
+    // ── Mood Panel State ──
+    _moodPanel: createMoodPanelState(),
+    async loadMoodPanel(actorId: string,) {
+      await this._moodPanel.loadMood(actorId,);
+      await this._moodPanel.loadEmotions(actorId,);
+      await this._moodPanel.loadEmotionDefs();
+    },
 
     // ── Sub-module state + methods ──
     ...chatKeys,
@@ -296,6 +305,10 @@ globalThis.chatState = function() {
       await this.loadChatKey(chatId,);
       await this.loadImpersonationState();
       await this.loadChatParticipants();
+      // Load mood data for the current character
+      if (this.currentCharacter?.id) {
+        await this.loadMoodPanel(this.currentCharacter.id,);
+      }
     },
 
     getChatId() {
