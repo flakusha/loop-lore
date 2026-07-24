@@ -119,5 +119,35 @@
         </template>
       </div>
     </template>
+
+    <!-- Mood Section -->
+    <template x-if="_mood">
+      <div class="mood-section">
+        <div class="mood-header">
+          <h4 class="mood-title">Mood</h4>
+          <span x-text="_getMoodEmoji(_mood.currentMood)" style="font-size: 24px"></span>
+        </div>
+        <div class="mood-happiness-bar">
+          <div
+            class="mood-happiness-fill"
+            :style="{width: _mood.happiness + '%', background: _getMoodColor(_mood.happiness)}"
+          >
+          </div>
+        </div>
+        <div class="mood-details">
+          <span
+            class="mood-label"
+            :style="{color: _getMoodColor(_mood.happiness)}"
+            x-text="_mood.currentMood"
+          ></span>
+          <span class="mood-value" x-text="_mood.happiness + '%'"></span>
+        </div>
+        <template x-if="_moodCanEdit">
+          <div class="mood-edit-hint">
+            <small>GM/Admin: Adjust mood in chat settings</small>
+          </div>
+        </template>
+      </div>
+    </template>
   </div>
 </aside>
