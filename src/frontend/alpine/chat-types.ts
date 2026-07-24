@@ -518,6 +518,10 @@ export interface ChatState extends AlpineMagicThis {
 
   effectiveStat(base: number, effects: StatusEffect[],): number;
 
+  // ── Mood System ──────────────────────────────────────────────
+  _moodPanel: MoodPanelState;
+  loadMoodPanel(actorId: string,): Promise<void>;
+
   // ── Memory System ───────────────────────────────────────────
   memoryPanel: MemoryPanelState;
 
