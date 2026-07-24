@@ -203,3 +203,35 @@ export function isApprovedTool(toolId: string,): boolean {
 export function getApiPolicy(apiId: string,): { description: string; requires_approval: boolean } | undefined {
   return EXTERNAL_APIS[apiId];
 }
+
+// ── Avatar Change Intent Detection ──────────────────────────
+
+import type { AvatarTemplateConfig, } from "../config/sections/templates";
+
+/**
+ * Detect avatar change intent using config-defined patterns.
+ *
+ * @param input - User message text
+ * @param avatarConfig - Avatar template config with intent patterns
+ * @returns Detected emotion key or null if no match
+ *
+ * @example
+ * ```typescript
+ * const emotion = detectAvatarChangeIntent("She smiles warmly", avatarConfig);
+ * // "happy"
+ * ```
+ */
+export function detectAvatarChangeIntent(
+  input: string,
+  avatarConfig: AvatarTemplateConfig,
+): string | null {
+  const lower = input.toLowerCase();
+
+  for (const pattern of avatarConfig.intentPatterns) {
+    if (lower.includes(pattern.pattern.toLowerCase(),)) {
+      return pattern.emotion;
+    }
+  }
+
+  return null;
+}
