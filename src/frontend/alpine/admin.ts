@@ -74,6 +74,10 @@ import { adminWorlds, } from "./admin-worlds";
           this.loadSdConfig();
           break;
         }
+        case "templates": {
+          this.loadTemplates();
+          break;
+        }
         case "plugins": {
           this.loadPlugins();
           break;
