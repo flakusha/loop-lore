@@ -51,6 +51,9 @@
         <button class="world-edit-tab" :class="{ active: activeTab === 'health' }" @click="showTab('health')">
           Health
         </button>
+        <button class="world-edit-tab" :class="{ active: activeTab === 'templates' }" @click="showTab('templates')">
+          Templates
+        </button>
       </div>
 
       <!-- Overview Tab -->
@@ -679,12 +682,19 @@
                 </template>
               </div>
             </div>
-            <!-- Stable Diffusion Info -->
+            <!-- Stable Diffusion Configuration -->
             <div style="margin-top: var(--space-6)">
-              <h3 style="font-size: 16px; font-weight: 600; margin-bottom: var(--space-3)">
-                Stable Diffusion
-              </h3>
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-3)">
+                <h3 style="font-size: 16px; font-weight: 600; margin: 0">Stable Diffusion</h3>
+                <button
+                  class="btn btn-secondary btn-xs"
+                  @click="showSdConfig = !showSdConfig"
+                  x-text="showSdConfig ? 'Hide Config' : 'Show Config'"
+                >
+                </button>
+              </div>
               <div style="padding: var(--space-4); background: var(--bg-secondary, #f8f9fa); border-radius: 6px; border: 1px solid var(--border-default, #e9ecef)">
+                <!-- Status Bar -->
                 <div style="display: flex; align-items: center; gap: var(--space-2); margin-bottom: var(--space-3)">
                   <span
                     style="display: inline-block; width: 8px; height: 8px; border-radius: 50%"
@@ -693,14 +703,14 @@
                   <strong
                     x-text="sdStatus === 'running' ? 'Running' : sdStatus === 'stopped' ? 'Stopped' : 'Unknown'"
                   ></strong>
-                  <span style="font-size: 12px; color: var(--text-secondary, #6c757d)" x-show="sdPort">
-                    — Port <span x-text="sdPort"></span>
-                  </span>
+                  <span style="font-size: 12px; color: var(--text-secondary, #6c757d)" x-show="sdPort">— Port <span
+                      x-text="sdPort"
+                    ></span></span>
                   <button class="btn btn-secondary btn-xs" @click="loadSdStatus()" style="margin-left: auto">
                     Refresh
                   </button>
                 </div>
-                <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: var(--space-3); font-size: 13px">
+                <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: var(--space-3); font-size: 13px; margin-bottom: var(--space-3)">
                   <div>
                     <div style="color: var(--text-secondary, #6c757d); margin-bottom: 2px">Status</div>
                     <div
@@ -711,26 +721,95 @@
                   </div>
                   <div>
                     <div style="color: var(--text-secondary, #6c757d); margin-bottom: 2px">Latency</div>
-                    <div
-                      style="font-weight: 500"
-                      x-text="sdLatencyMs != null ? sdLatencyMs + 'ms' : '—'"
-                    >
-                    </div>
+                    <div style="font-weight: 500" x-text="sdLatencyMs != null ? sdLatencyMs + 'ms' : '—'"></div>
                   </div>
                   <div>
                     <div style="color: var(--text-secondary, #6c757d); margin-bottom: 2px">Port</div>
                     <div style="font-weight: 500" x-text="sdPort"></div>
                   </div>
-                  <div>
-                    <div style="color: var(--text-secondary, #6c757d); margin-bottom: 2px">
-                      Supported Backends
-                    </div>
-                    <div style="font-weight: 500">SD.CPP, ComfyUI, External API</div>
-                  </div>
                 </div>
-                <div style="margin-top: var(--space-3); padding-top: var(--space-3); border-top: 1px solid var(--border-default, #e9ecef); font-size: 12px; color: var(--text-secondary, #6c757d)">
-                  Image generation will be available once a Stable Diffusion backend is configured. Supported backends:
-                  local SD.CPP server, ComfyUI workflow engine, or external API (e.g. Stability AI, Replicate).
+
+                <!-- SD Server Config Form -->
+                <div
+                  x-show="showSdConfig"
+                  style="padding-top: var(--space-3); border-top: 1px solid var(--border-default, #e9ecef)"
+                >
+                  <h4 style="font-size: 13px; font-weight: 600; margin-bottom: var(--space-2)">SD.CPP Server</h4>
+                  <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: var(--space-3); margin-bottom: var(--space-3)">
+                    <div>
+                      <label style="display: block; font-size: 11px; color: var(--text-secondary); margin-bottom: 2px"
+                      >Enabled</label>
+                      <input type="checkbox" x-model="sdConfig.enabled" style="width: 16px; height: 16px" />
+                    </div>
+                    <div>
+                      <label style="display: block; font-size: 11px; color: var(--text-secondary); margin-bottom: 2px"
+                      >Port</label>
+                      <input
+                        class="form-input"
+                        style="font-size: 12px; padding: 4px 8px"
+                        type="number"
+                        x-model.number="sdConfig.port"
+                      />
+                    </div>
+                    <div>
+                      <label style="display: block; font-size: 11px; color: var(--text-secondary); margin-bottom: 2px"
+                      >Model Type</label>
+                      <select class="form-input" style="font-size: 12px; padding: 4px 8px" x-model="sdConfig.modelType">
+                        <option value="checkpoint">Checkpoint</option>
+                        <option value="diffusion">Diffusion Component</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label style="display: block; font-size: 11px; color: var(--text-secondary); margin-bottom: 2px"
+                      >Model Path</label>
+                      <input
+                        class="form-input"
+                        style="font-size: 12px; padding: 4px 8px"
+                        type="text"
+                        x-model="sdConfig.modelPath"
+                        placeholder="/path/to/model.safetensors"
+                      />
+                    </div>
+                    <div>
+                      <label style="display: block; font-size: 11px; color: var(--text-secondary); margin-bottom: 2px"
+                      >LLM Encoder Path</label>
+                      <input
+                        class="form-input"
+                        style="font-size: 12px; padding: 4px 8px"
+                        type="text"
+                        x-model="sdConfig.llmPath"
+                        placeholder="/path/to/encoder.gguf"
+                      />
+                    </div>
+                  </div>
+
+                  <h4 style="font-size: 13px; font-weight: 600; margin-bottom: var(--space-2); margin-top: var(--space-3)">
+                    ComfyUI
+                  </h4>
+                  <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: var(--space-3); margin-bottom: var(--space-3)">
+                    <div>
+                      <label style="display: block; font-size: 11px; color: var(--text-secondary); margin-bottom: 2px"
+                      >Enabled</label>
+                      <input type="checkbox" x-model="comfyuiConfig.enabled" style="width: 16px; height: 16px" />
+                    </div>
+                    <div>
+                      <label style="display: block; font-size: 11px; color: var(--text-secondary); margin-bottom: 2px"
+                      >URL</label>
+                      <input
+                        class="form-input"
+                        style="font-size: 12px; padding: 4px 8px"
+                        type="text"
+                        x-model="comfyuiConfig.url"
+                        placeholder="http://localhost:8188"
+                      />
+                    </div>
+                  </div>
+
+                  <div style="padding-top: var(--space-3); border-top: 1px solid var(--border-default, #e9ecef); font-size: 11px; color: var(--text-secondary); margin-bottom: var(--space-2)">
+                    Note: SD.CPP and ComfyUI should not run simultaneously on the same machine due to GPU resource
+                    contention. Configure one as primary and the other as fallback.
+                  </div>
+                  <button class="btn btn-primary btn-xs" @click="saveSdConfig()">Save SD Configuration</button>
                 </div>
               </div>
             </div>
@@ -835,11 +914,40 @@
                 </div>
               </template>
             </div>
+            <!-- NSFW Configuration Section -->
+            <div style="margin-top: var(--space-6); padding-top: var(--space-4); border-top: 1px solid var(--border-default, #e9ecef)">
+              <h3 style="font-size: 16px; font-weight: 600; margin-bottom: var(--space-3)">NSFW Content Policy</h3>
+              <div style="padding: var(--space-4); background: var(--bg-secondary, #f8f9fa); border-radius: 6px; border: 1px solid var(--border-default, #e9ecef)">
+                <div style="display: grid; grid-template-columns: 200px 1fr; gap: var(--space-3); align-items: center; margin-bottom: var(--space-3)">
+                  <div style="font-size: 13px; font-weight: 500">Allow NSFW Content</div>
+                  <div style="display: flex; align-items: center; gap: var(--space-2)">
+                    <input type="checkbox" x-model="nsfwConfig.allowNsfw" style="width: 16px; height: 16px" />
+                    <span
+                      style="font-size: 12px; color: var(--text-secondary)"
+                      x-text="nsfwConfig.allowNsfw ? 'Enabled' : 'Disabled'"
+                    ></span>
+                  </div>
+                </div>
+                <div style="display: grid; grid-template-columns: 200px 1fr; gap: var(--space-3); align-items: center; margin-bottom: var(--space-3)">
+                  <div style="font-size: 13px; font-weight: 500">Minimum Age</div>
+                  <div style="display: flex; align-items: center; gap: var(--space-2)">
+                    <input
+                      type="number"
+                      class="form-input"
+                      style="width: 80px; font-size: 13px"
+                      min="13"
+                      max="25"
+                      x-model.number="nsfwConfig.nsfwMinAge"
+                    />
+                    <span style="font-size: 12px; color: var(--text-secondary)">years</span>
+                  </div>
+                </div>
+                <button class="btn btn-primary btn-xs" @click="saveNsfwConfig()">Save NSFW Policy</button>
+              </div>
+            </div>
           </div>
         </template>
       </div>
-
-      <!-- Analytics Tab -->
       <div x-show="activeTab === 'analytics'">
         <div x-show="loadingAnalytics" class="empty-state" style="padding: var(--space-12)">
           <div class="icon">⏳</div>
@@ -942,6 +1050,13 @@
                 ></span>
               </div>
               <button class="btn btn-secondary btn-xs" @click="loadHealth()">Refresh</button>
+              <button
+                class="btn btn-secondary btn-xs"
+                @click="toggleHealthAutoRefresh()"
+                :class="healthAutoRefresh ? 'btn-primary' : ''"
+                x-text="healthAutoRefresh ? 'Auto: ON' : 'Auto: OFF'"
+              >
+              </button>
             </div>
             <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: var(--space-4); margin-bottom: var(--space-6)">
               <div class="admin-stat-card">
@@ -1006,6 +1121,291 @@
                 </div>
               </template>
             </div>
+          </div>
+        </template>
+      </div>
+
+      <!-- Templates Tab -->
+      <div x-show="activeTab === 'templates'">
+        <div x-show="loadingTemplates" class="empty-state" style="padding: var(--space-12)">
+          <div class="icon">⏳</div>
+          <div class="title">Loading templates...</div>
+        </div>
+        <template x-if="!loadingTemplates">
+          <div style="padding: var(--space-6)">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-4)">
+              <div>
+                <h3 style="font-size: 16px; font-weight: 600; margin: 0">Image Prompt Templates</h3>
+                <div style="font-size: 12px; color: var(--text-secondary); margin-top: 2px">
+                  <span x-text="builtinCount + ' builtin'"></span> · <span x-text="customCount + ' custom'"></span>
+                  profiles
+                </div>
+              </div>
+              <div style="display: flex; gap: var(--space-2)">
+                <button class="btn btn-secondary btn-xs" @click="loadTemplates()">Refresh</button>
+                <button class="btn btn-primary btn-xs" @click="showCreateModal = true">New Profile</button>
+              </div>
+            </div>
+
+            <!-- Selected Profile Detail View -->
+            <template x-if="selectedProfile">
+              <div style="margin-bottom: var(--space-6); padding: var(--space-4); background: var(--bg-secondary, #f8f9fa); border-radius: 6px; border: 1px solid var(--border-default, #e9ecef)">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-3)">
+                  <div>
+                    <h4 style="font-size: 14px; font-weight: 600; margin: 0" x-text="selectedProfile.name"></h4>
+                    <div style="font-size: 11px; color: var(--text-secondary); margin-top: 2px">
+                      <span x-text="selectedProfile.id"></span>
+                      · <span x-text="selectedProfile.promptFormat"></span> format · <span
+                        x-text="selectedProfile.maxTokenHint + ' max tokens'"
+                      ></span>
+                      <span x-show="selectedProfile.isBuiltin" style="color: var(--color-primary)"> · builtin</span>
+                    </div>
+                  </div>
+                  <button class="btn btn-secondary btn-xs" @click="clearSelection()">Back to List</button>
+                </div>
+
+                <!-- Model Defaults -->
+                <div style="margin-bottom: var(--space-4); padding: var(--space-3); background: var(--bg-tertiary, #fff); border-radius: 4px">
+                  <div style="font-size: 12px; font-weight: 600; margin-bottom: var(--space-2)">Model Defaults</div>
+                  <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: var(--space-2)">
+                    <div>
+                      <label style="font-size: 11px; color: var(--text-secondary)">CFG Scale</label>
+                      <input
+                        class="form-input"
+                        style="font-size: 12px; padding: 4px 8px"
+                        type="number"
+                        step="0.5"
+                        x-model.number="selectedProfile.defaults.cfgScale"
+                      />
+                    </div>
+                    <div>
+                      <label style="font-size: 11px; color: var(--text-secondary)">Steps</label>
+                      <input
+                        class="form-input"
+                        style="font-size: 12px; padding: 4px 8px"
+                        type="number"
+                        x-model.number="selectedProfile.defaults.steps"
+                      />
+                    </div>
+                    <div>
+                      <label style="font-size: 11px; color: var(--text-secondary)">Sampler</label>
+                      <input
+                        class="form-input"
+                        style="font-size: 12px; padding: 4px 8px"
+                        type="text"
+                        x-model="selectedProfile.defaults.sampler"
+                      />
+                    </div>
+                    <div>
+                      <label style="font-size: 11px; color: var(--text-secondary)">Scheduler</label>
+                      <input
+                        class="form-input"
+                        style="font-size: 12px; padding: 4px 8px"
+                        type="text"
+                        x-model="selectedProfile.defaults.scheduler"
+                      />
+                    </div>
+                  </div>
+                  <button class="btn btn-primary btn-xs" style="margin-top: var(--space-2)" @click="saveDefaults()">
+                    Save Defaults
+                  </button>
+                </div>
+
+                <!-- Templates Grid -->
+                <div style="font-size: 12px; font-weight: 600; margin-bottom: var(--space-2)">Templates</div>
+                <div style="display: grid; gap: var(--space-3)">
+                  <template x-for="detail in ['instant', 'balanced', 'detailed']" :key="detail">
+                    <div>
+                      <div
+                        style="font-size: 11px; font-weight: 600; color: var(--text-secondary); margin-bottom: var(--space-1)"
+                        x-text="formatDetail(detail)"
+                      >
+                      </div>
+                      <div style="display: grid; gap: var(--space-2)">
+                        <template
+                          x-for="mode in ['yourself', 'face', 'me', 'scene', 'last', 'background']"
+                          :key="detail + '-' + mode"
+                        >
+                          <div style="display: flex; gap: var(--space-2); align-items: flex-start">
+                            <div
+                              style="font-size: 11px; color: var(--text-secondary); min-width: 90px; padding-top: 6px"
+                              x-text="formatMode(mode)"
+                            >
+                            </div>
+                            <template x-if="editingTemplate.detail === detail && editingTemplate.mode === mode">
+                              <div style="flex: 1; display: flex; gap: var(--space-2)">
+                                <textarea
+                                  class="form-input"
+                                  style="flex: 1; font-size: 11px; min-height: 60px; font-family: monospace"
+                                  x-model="editingTemplate.value"
+                                ></textarea>
+                                <div style="display: flex; flex-direction: column; gap: 4px">
+                                  <button
+                                    class="btn btn-primary btn-xs"
+                                    @click="saveTemplate()"
+                                    :disabled="savingTemplate"
+                                  >
+                                    Save
+                                  </button>
+                                  <button class="btn btn-secondary btn-xs" @click="cancelEditTemplate()">Cancel</button>
+                                </div>
+                              </div>
+                            </template>
+                            <template x-if="editingTemplate.detail !== detail || editingTemplate.mode !== mode">
+                              <div style="flex: 1; display: flex; gap: var(--space-2); align-items: flex-start">
+                                <div
+                                  style="flex: 1; font-size: 11px; font-family: monospace; padding: 6px 8px; background: var(--bg-tertiary, #fff); border: 1px solid var(--border-default, #e9ecef); border-radius: 4px; white-space: pre-wrap; max-height: 80px; overflow-y: auto"
+                                  x-text="selectedProfile.templates?.[detail]?.[mode] || '(empty)'"
+                                >
+                                </div>
+                                <button
+                                  class="btn btn-secondary btn-xs"
+                                  @click="startEditTemplate(detail, mode, selectedProfile.templates?.[detail]?.[mode] || '')"
+                                >
+                                  Edit
+                                </button>
+                              </div>
+                            </template>
+                          </div>
+                        </template>
+                      </div>
+                    </div>
+                  </template>
+                </div>
+              </div>
+            </template>
+
+            <!-- Profile List -->
+            <template x-if="!selectedProfile">
+              <div style="display: grid; gap: var(--space-3)">
+                <template x-if="templateProfiles.length === 0">
+                  <div class="empty-state" style="padding: var(--space-8)">
+                    <div class="title">No templates found</div>
+                  </div>
+                </template>
+                <template x-for="p in templateProfiles" :key="p.id">
+                  <div
+                    style="padding: var(--space-4); background: var(--bg-secondary, #f8f9fa); border-radius: 6px; border: 1px solid var(--border-default, #e9ecef); cursor: pointer"
+                    @click="selectProfile(p.id)"
+                  >
+                    <div style="display: flex; justify-content: space-between; align-items: center">
+                      <div>
+                        <strong x-text="p.name"></strong>
+                        <span
+                          style="font-size: 11px; color: var(--text-secondary); margin-left: var(--space-2)"
+                          x-text="'(' + p.id + ')'"
+                        ></span>
+                        <span
+                          x-show="p.isBuiltin"
+                          style="font-size: 10px; padding: 1px 6px; background: var(--bg-tertiary, #fff); border: 1px solid var(--border-default, #e9ecef); border-radius: 10px; color: var(--text-secondary); margin-left: var(--space-2)"
+                        >builtin</span>
+                        <span
+                          x-show="!p.isBuiltin"
+                          style="font-size: 10px; padding: 1px 6px; background: #28a74522; border: 1px solid #28a74544; border-radius: 10px; color: #28a745; margin-left: var(--space-2)"
+                        >custom</span>
+                      </div>
+                      <div style="display: flex; align-items: center; gap: var(--space-3)">
+                        <span
+                          style="font-size: 12px; color: var(--text-secondary)"
+                          x-text="p.templateCount + ' templates'"
+                        ></span>
+                        <span
+                          style="font-size: 12px; color: var(--text-secondary)"
+                          x-text="p.promptFormat + ' format'"
+                        ></span>
+                        <span
+                          style="font-size: 12px; color: var(--text-secondary)"
+                          x-text="p.maxTokenHint + ' tokens'"
+                        ></span>
+                        <template x-if="!p.isBuiltin && p.id !== defaultProfileId">
+                          <button class="btn btn-danger btn-xs" @click.stop="deleteProfile(p.id)">Delete</button>
+                        </template>
+                      </div>
+                    </div>
+                    <div style="font-size: 11px; color: var(--text-secondary); margin-top: var(--space-2)">
+                      Families: <span x-text="p.families.join(', ')"></span>
+                    </div>
+                    <div style="font-size: 11px; color: var(--text-secondary)">
+                      Defaults: CFG <span x-text="p.defaults.cfgScale"></span> · Steps <span
+                        x-text="p.defaults.steps"
+                      ></span> · <span x-text="p.defaults.sampler"></span>
+                    </div>
+                  </div>
+                </template>
+              </div>
+            </template>
+
+            <!-- Create Profile Modal -->
+            <template x-if="showCreateModal">
+              <div
+                class="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
+                @click.self="showCreateModal = false"
+              >
+                <div style="background: var(--bg-primary, #fff); border-radius: 8px; padding: var(--space-6); width: 100%; max-width: 480px; display: grid; gap: var(--space-4)">
+                  <h3 style="font-size: 16px; font-weight: 600; margin: 0">Create Custom Profile</h3>
+                  <div>
+                    <label style="display: block; font-size: 12px; font-weight: 500; margin-bottom: 4px"
+                    >Profile ID</label>
+                    <input
+                      class="form-input"
+                      style="font-size: 13px"
+                      x-model="newProfile.id"
+                      placeholder="e.g. my-model"
+                    />
+                  </div>
+                  <div>
+                    <label style="display: block; font-size: 12px; font-weight: 500; margin-bottom: 4px">Name</label>
+                    <input
+                      class="form-input"
+                      style="font-size: 13px"
+                      x-model="newProfile.name"
+                      placeholder="e.g. My Custom Model"
+                    />
+                  </div>
+                  <div>
+                    <label style="display: block; font-size: 12px; font-weight: 500; margin-bottom: 4px"
+                    >Families (comma-separated)</label>
+                    <input
+                      class="form-input"
+                      style="font-size: 13px"
+                      x-model="newProfile.families"
+                      placeholder="e.g. sdxl, flux"
+                    />
+                  </div>
+                  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3)">
+                    <div>
+                      <label style="display: block; font-size: 12px; font-weight: 500; margin-bottom: 4px"
+                      >Prompt Format</label>
+                      <select class="form-input" style="font-size: 13px" x-model="newProfile.promptFormat">
+                        <option value="tags">Tags</option>
+                        <option value="natural">Natural Language</option>
+                        <option value="tags-and-natural">Mixed</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label style="display: block; font-size: 12px; font-weight: 500; margin-bottom: 4px"
+                      >Max Tokens</label>
+                      <input
+                        class="form-input"
+                        style="font-size: 13px"
+                        type="number"
+                        x-model.number="newProfile.maxTokenHint"
+                      />
+                    </div>
+                  </div>
+                  <div style="display: flex; justify-content: flex-end; gap: var(--space-2)">
+                    <button class="btn btn-secondary btn-xs" @click="showCreateModal = false">Cancel</button>
+                    <button
+                      class="btn btn-primary btn-xs"
+                      @click="createProfile()"
+                      :disabled="!newProfile.id || !newProfile.name"
+                    >
+                      Create
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </template>
           </div>
         </template>
       </div>
