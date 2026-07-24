@@ -73,6 +73,20 @@
           </template>
         </select>
       </div>
+      <div class="form-group">
+        <label class="form-label" for="settings-streaming">Streaming</label>
+        <select
+          class="form-input"
+          id="settings-streaming"
+          x-model="_chatSettingsStreaming"
+          data-testid="settings-streaming"
+        >
+          <option value="default">Use default</option>
+          <option value="on">Stream responses</option>
+          <option value="off">Show full response at once</option>
+        </select>
+        <small style="color: var(--text-secondary)">Token-by-token display when enabled.</small>
+      </div>
       <div class="form-group" x-show="currentCharacter">
         <label style="display: flex; align-items: center; gap: var(--space-2)">
           <input type="checkbox" x-model="impersonationActive" />

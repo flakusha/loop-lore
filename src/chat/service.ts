@@ -169,6 +169,8 @@ export interface UpdateChatParams {
   userRole?: string | null;
   gmConfig?: Record<string, unknown> | null;
   visualNovel?: boolean;
+  /** Streaming mode: true = stream, false = non-stream, null = use provider/config default */
+  streaming?: boolean | null;
 }
 
 /**
@@ -228,6 +230,9 @@ export async function updateChat(
   }
   if (typeof params.visualNovel === "boolean") {
     updates.visual_novel = params.visualNovel ? 1 : 0;
+  }
+  if (params.streaming !== undefined) {
+    updates.streaming = params.streaming === null ? null : (params.streaming ? 1 : 0);
   }
 
   await database.updateTable("chats",).set(updates,).where("id", "=", chatId,).execute();

@@ -40,6 +40,7 @@ function createTestDb(): { sqlite: Database; db: Kysely<DB> } {
     CREATE TABLE chats (
       id TEXT PRIMARY KEY, name TEXT NOT NULL, type TEXT NOT NULL DEFAULT 'direct',
       mode TEXT NOT NULL DEFAULT 'direct', created_by TEXT NOT NULL,
+      streaming INTEGER,
       created_at TEXT NOT NULL DEFAULT (datetime('now')), updated_at TEXT NOT NULL DEFAULT (datetime('now'))
     )
   `,);
@@ -286,6 +287,7 @@ describe("handleGenerate — non-streaming (complete)", () => {
       actorId,
       parentMessageId: msgId,
       prompt: [{ role: "user" as const, content: "Test prompt", },],
+      stream: false,
     },);
     const config = makeConfig();
     const res = await handleGenerate({ body, database: testDb, config, },);
@@ -309,6 +311,7 @@ describe("handleGenerate — non-streaming (complete)", () => {
       actorId,
       parentMessageId: msgId,
       prompt: [{ role: "user" as const, content: "Hi", },],
+      stream: false,
     },);
     const config = makeConfig();
     await handleGenerate({ body, database: testDb, config, },);
@@ -338,6 +341,7 @@ describe("handleGenerate — non-streaming (complete)", () => {
       actorId,
       parentMessageId: msgId,
       prompt: [{ role: "user" as const, content: "Hi", },],
+      stream: false,
     },);
     const config = makeConfig();
     const res = await handleGenerate({ body, database: testDb, config, },);
@@ -386,7 +390,17 @@ describe("handleGenerate — streaming (SSE)", () => {
       stream: true,
     },);
     const config = makeConfig();
-    await handleGenerate({ body, database: testDb, config, },);
+    const res = await handleGenerate({ body, database: testDb, config, },);
+
+    // Consume the SSE stream to trigger the start() callback which stores the message
+    const reader = res.body?.getReader();
+    if (reader) {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      while (true) {
+        const { done, } = await reader.read();
+        if (done) { break; }
+      }
+    }
 
     const messages = await testDb
       .selectFrom("messages",)
@@ -436,6 +450,7 @@ describe("handleGenerate — prompt assembly path", () => {
       chatId,
       actorId: "actor-prompt-test",
       parentMessageId: msgId,
+      stream: false,
       // No prompt property — triggers PromptAssembler
     },);
     const config = makeConfig();
