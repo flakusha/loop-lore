@@ -215,6 +215,11 @@ export async function createAsset({ database, input, uploadDir, }: CreateAssetOp
     if (altText === null && meta.caption) { altText = meta.caption; }
   }
 
+  // Sanitize alt_text: strip HTML tags, limit length
+  if (altText) {
+    altText = altText.replaceAll(/<[^>]*>/g, "",).trim().slice(0, 500,);
+  }
+
   const asset: AssetRecord = {
     id,
     owner_id: input.ownerId,
@@ -265,11 +270,15 @@ export async function listAssets(
     entityType?: AssetLinkEntity;
     entityId?: string;
     label?: string;
+    actorId?: string | null;
+    actorRole?: string | null;
   } = {},
 ): Promise<{ data: AssetRecord[]; total: number }> {
   const page = options.page ?? 1;
   const pageSize = Math.min(options.pageSize ?? 50, 200,);
   const offset = (page - 1) * pageSize;
+  const isAdmin = options.actorRole === "admin";
+  const actorId = options.actorId ?? "";
 
   // If entity filter is provided, join through asset_links
   if (options.entityType || options.entityId) {
@@ -296,6 +305,24 @@ export async function listAssets(
       listQuery = listQuery.where("asset_links.label", "=", options.label,);
     }
 
+    // Apply visibility filter (admin sees all)
+    if (!isAdmin) {
+      countQuery = countQuery.where((eb,) =>
+        eb.or([
+          eb("assets.visibility", "=", AssetVisibility.Public,),
+          eb("assets.owner_id", "=", actorId,),
+          eb("assets.visibility", "=", AssetVisibility.Shared,),
+        ],)
+      );
+      listQuery = listQuery.where((eb,) =>
+        eb.or([
+          eb("assets.visibility", "=", AssetVisibility.Public,),
+          eb("assets.owner_id", "=", actorId,),
+          eb("assets.visibility", "=", AssetVisibility.Shared,),
+        ],)
+      );
+    }
+
     const countResult = await countQuery.executeTakeFirst();
     const total = countResult?.total ?? 0;
     const data = await listQuery
@@ -307,16 +334,36 @@ export async function listAssets(
     return { data: data as unknown as AssetRecord[], total, };
   }
 
-  // No filter — list all assets
-  const countResult = await database
+  // No filter — list all assets (with visibility filter)
+  let countQuery = database
     .selectFrom("assets",)
-    .select(database.fn.countAll<number>().as("total",),)
-    .executeTakeFirst();
+    .select(database.fn.countAll<number>().as("total",),);
+
+  let listQuery = database
+    .selectFrom("assets",)
+    .selectAll();
+
+  if (!isAdmin) {
+    countQuery = countQuery.where((eb,) =>
+      eb.or([
+        eb("visibility", "=", AssetVisibility.Public,),
+        eb("owner_id", "=", actorId,),
+        eb("visibility", "=", AssetVisibility.Shared,),
+      ],)
+    );
+    listQuery = listQuery.where((eb,) =>
+      eb.or([
+        eb("visibility", "=", AssetVisibility.Public,),
+        eb("owner_id", "=", actorId,),
+        eb("visibility", "=", AssetVisibility.Shared,),
+      ],)
+    );
+  }
+
+  const countResult = await countQuery.executeTakeFirst();
   const total = countResult?.total ?? 0;
 
-  const data = await database
-    .selectFrom("assets",)
-    .selectAll()
+  const data = await listQuery
     .orderBy("created_at", "desc",)
     .limit(pageSize,)
     .offset(offset,)

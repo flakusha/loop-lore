@@ -30,6 +30,7 @@ export interface GalleryAsset {
   width?: number;
   height?: number;
   alt_text?: string;
+  visibility?: string;
   /** Preview URL (constructed from asset ID) */
   url?: string;
   /** Preview type (alias for asset_type, used by media-preview-modal) */
