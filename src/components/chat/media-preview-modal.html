@@ -16,9 +16,49 @@
       <template x-if="previewMediaAsset?.type === 'image'">
         <img
           :src="previewMediaAsset.url"
-          style="max-width: 100%; max-height: 80vh; display: block; margin: 0 auto"
+          style="max-width: 100%; max-height: 70vh; display: block; margin: 0 auto"
         />
       </template>
+      <template x-if="previewMediaAsset?.type === 'audio'">
+        <audio controls style="width: 100%; padding: var(--space-6)">
+          <source :src="previewMediaAsset.url" />
+        </audio>
+      </template>
+      <template x-if="previewMediaAsset?.type === 'video'">
+        <video controls style="max-width: 100%; max-height: 70vh; display: block; margin: 0 auto">
+          <source :src="previewMediaAsset.url" />
+        </video>
+      </template>
+    </div>
+    <div class="modal-footer" style="flex-direction: column; gap: var(--space-3)">
+      <!-- Metadata chips -->
+      <div style="display: flex; gap: var(--space-2); flex-wrap: wrap; align-items: center">
+        <span class="tag" x-text="previewMediaAsset?.mime_type"></span>
+        <span
+          class="tag"
+          x-text="previewMediaAsset?.size_bytes ? (previewMediaAsset.size_bytes / 1024).toFixed(1) + ' KB' : ''"
+        ></span>
+        <template x-if="previewMediaAsset?.width && previewMediaAsset?.height">
+          <span class="tag" x-text="previewMediaAsset.width + ' × ' + previewMediaAsset.height"></span>
+        </template>
+        <span class="tag" x-text="previewMediaAsset?.visibility || 'private'" style="text-transform: capitalize"></span>
+      </div>
+      <!-- Caption (VL-generated or user-provided) -->
+      <template x-if="previewMediaAsset?.alt_text">
+        <div style="text-align: left; padding: var(--space-2) var(--space-3); background: var(--bg-tertiary); border-radius: var(--radius-sm); font-size: 13px; color: var(--text-secondary)">
+          <span style="opacity: 0.7">Caption:</span>
+          <span x-text="previewMediaAsset.alt_text" style="margin-left: var(--space-2)"></span>
+        </div>
+      </template>
+      <!-- Actions -->
+      <div style="display: flex; gap: var(--space-2); justify-content: flex-end">
+        <button class="btn btn-ghost" x-on:click="window.copyAssetUrl && window.copyAssetUrl()" title="Copy URL">
+          📋 Copy URL
+        </button>
+        <button class="btn btn-ghost" x-on:click="window.downloadAsset && window.downloadAsset()" title="Download">
+          ⬇ Download
+        </button>
+      </div>
     </div>
   </div>
 </div>
