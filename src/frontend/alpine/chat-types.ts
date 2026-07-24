@@ -1,3 +1,4 @@
+import type { MoodPanelState, } from "./mood-panel";
 import type { AlpineMagicThis, GalleryAsset, } from "./types";
 
 export interface MessageAttachment {
@@ -324,6 +325,10 @@ export interface ChatState extends AlpineMagicThis {
   loadRpgStats(): Promise<void>;
   getModifier(stat: number,): number;
   effectiveStat(base: number, effects: StatusEffect[],): number;
+
+  // ── Mood System ──────────────────────────────────────────────
+  _moodPanel: MoodPanelState;
+  loadMoodPanel(actorId: string,): Promise<void>;
 
   // ── Memory System ───────────────────────────────────────────
   memoryPanel: MemoryPanelState;
