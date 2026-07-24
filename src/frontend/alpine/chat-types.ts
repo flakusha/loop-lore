@@ -337,12 +337,17 @@ export interface ChatState extends AlpineMagicThis {
   _moodLoading: boolean;
   _moodCanEdit: boolean;
   _moodSliderValue: number;
+  _emotionAvatars: { emotion: string; avatarId: string; assetId: string }[];
+  _emotionAvatarsLoading: boolean;
+  _currentEmotionAvatar: string | null;
   loadMood(): Promise<void>;
+  loadEmotionAvatars(): Promise<void>;
+  selectEmotionAvatar(emotion: string,): string | null;
   updateMoodHappiness(happiness: number,): Promise<void>;
   applyMoodDelta(delta: number,): Promise<void>;
+  _happinessToMood(happiness: number,): string;
   _getMoodEmoji(mood: string,): string;
   _getMoodColor(happiness: number,): string;
-  _happinessToMood(happiness: number,): string;
 
   // ── Memory System ───────────────────────────────────────────
   memoryPanel: MemoryPanelState;
