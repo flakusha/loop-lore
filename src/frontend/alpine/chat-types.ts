@@ -122,31 +122,8 @@ export interface MemoryPanelState {
 export interface GmConfig {
   assistantRole?: "off" | "helper" | "gm" | "moderator";
   visualNovel?: boolean;
-  /** VN layout mode */
-  vnLayout?: "overlay" | "below" | "split";
-  /** Image scaling mode */
-  vnImageScaling?: "contain" | "cover" | "fill" | "auto";
-  /** Scene transition type */
-  vnTransition?: "fade" | "cut" | "dissolve" | "slide" | "wipe";
-  /** Enable typewriter text effect */
-  vnTypewriter?: boolean;
-  /** Typewriter speed (ms per character) */
-  vnTypewriterSpeed?: number;
-  /** Auto-advance to next scene after delay */
-  vnAutoAdvance?: boolean;
-  /** Auto-advance delay in seconds */
-  vnAutoAdvanceDelay?: number;
-  /** Dialogue box opacity for overlay mode (0-1) */
-  vnDialogueBoxOpacity?: number;
-  /** Portrait size as percentage of scene width */
-  vnPortraitSize?: number;
-  /** Split ratio portrait:text (e.g. 40 = 40% portrait) */
-  vnSplitRatio?: number;
-  /** GM turn order control */
-  gmTurnOrder?: "sequential" | "free" | " gm-controlled";
-  /** Quest log enabled */
-  questEnabled?: boolean;
 }
+
 export interface ChatState extends AlpineMagicThis {
   isGenerating: boolean;
 

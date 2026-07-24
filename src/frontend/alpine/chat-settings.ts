@@ -36,12 +36,6 @@ export const chatSettings: Partial<ChatState> & ThisType<ChatState> = {
     if (chat?.gm_config) {
       const config = jsonParseOr<GmConfig>(chat.gm_config, {},);
       this._assistantRole = config.assistantRole ?? "off";
-      this._vnEnabled = Boolean(config.visualNovel,);
-      this._vnLayout = config.vnLayout ?? "overlay";
-      this._vnTypewriter = config.vnTypewriter ?? true;
-      this._vnTypewriterSpeed = config.vnTypewriterSpeed ?? 30;
-      this._vnTransition = config.vnTransition ?? "fade";
-      this._vnAutoAdvance = config.vnAutoAdvance ?? false;
     }
     Alpine.store("ui",).showChatSettings = true;
   },
