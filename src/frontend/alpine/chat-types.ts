@@ -117,6 +117,12 @@ export interface MemoryPanelState {
   newMemoryContent: string;
 }
 
+/** Chat-level GM configuration — mirrors `src/chat/types.ts::GmConfig` */
+export interface GmConfig {
+  assistantRole?: "off" | "helper" | "gm" | "moderator";
+  visualNovel?: boolean;
+}
+
 export interface ChatState extends AlpineMagicThis {
   isGenerating: boolean;
   generationLabel: string;
@@ -133,6 +139,7 @@ export interface ChatState extends AlpineMagicThis {
     turn_strategy?: string;
     story_state?: string;
     gm_config?: string;
+    visual_novel?: number;
   }[];
   activeChat: string | null;
   messages: Message[];
@@ -290,6 +297,7 @@ export interface ChatState extends AlpineMagicThis {
     turn_strategy?: string;
     story_state?: string;
     gm_config?: string;
+    visual_novel?: number;
   } | null;
   toggleGroupPause(): Promise<void>;
   loadChatParticipants(): Promise<void>;
