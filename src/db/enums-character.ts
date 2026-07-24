@@ -175,9 +175,6 @@ export const IntimacyLevel = {
 } as const;
 export type IntimacyLevel = (typeof IntimacyLevel)[keyof typeof IntimacyLevel];
 
-/** Numeric intimacy score (0–100). */
-export type IntimacyScore = number;
-
 // ── NSFW Intimacy Action Types ───────────────────────────
 export const IntimacyActionType = {
   Verbal: "verbal",

@@ -134,22 +134,22 @@ export class LocationNsfwService {
   ): Promise<boolean> {
     const current = await this.getConfig(locationId,);
     const now = new Date().toISOString();
-    const setClause: Record<string, unknown> = { updated_at: now, };
+    const fields: Record<string, unknown> = { updated_at: now, };
 
-    if (updates.locationType !== undefined) { setClause.location_type = updates.locationType; }
-    if (updates.privacyLevel !== undefined) { setClause.privacy_level = updates.privacyLevel; }
-    if (updates.discoveryChance !== undefined) { setClause.discovery_chance = updates.discoveryChance; }
+    if (updates.locationType !== undefined) { fields.location_type = updates.locationType; }
+    if (updates.privacyLevel !== undefined) { fields.privacy_level = updates.privacyLevel; }
+    if (updates.discoveryChance !== undefined) { fields.discovery_chance = updates.discoveryChance; }
     if (updates.atmosphere !== undefined) {
-      setClause.atmosphere = JSON.stringify({ ...current.atmosphere, ...updates.atmosphere, },);
+      fields.atmosphere = JSON.stringify({ ...current.atmosphere, ...updates.atmosphere, },);
     }
-    if (updates.equipment !== undefined) { setClause.equipment = JSON.stringify(updates.equipment,); }
+    if (updates.equipment !== undefined) { fields.equipment = JSON.stringify(updates.equipment,); }
     if (updates.risks !== undefined) {
-      setClause.risks = JSON.stringify({ ...current.risks, ...updates.risks, },);
+      fields.risks = JSON.stringify({ ...current.risks, ...updates.risks, },);
     }
 
     const result = await this.db
       .updateTable("location_nsfw_config",)
-      .set(setClause,)
+      .set(fields,)
       .where("location_id", "=", locationId,)
       .executeTakeFirst();
 
@@ -188,7 +188,7 @@ export class LocationNsfwService {
    */
   async isSuitableForEncounter(
     locationId: string,
-    minPrivacy: string = "semi_private",
+    minPrivacy = "semi_private",
   ): Promise<{ suitable: boolean; reason?: string }> {
     const config = await this.getConfig(locationId,);
 
