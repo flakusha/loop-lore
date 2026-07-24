@@ -12,7 +12,6 @@ import { randomUUID, } from "node:crypto";
 import { createAsset, getAsset, linkAsset, } from "../assets/service";
 import { loadConfig, } from "../config/load";
 import { AssetLinkEntity, } from "../db/enums";
-import { getDatabase, } from "../db/index";
 import type { DB, } from "../db/schema";
 import { getLogger, } from "../logger";
 import { jsonStringifyOr, } from "../utils";
@@ -75,7 +74,10 @@ export class ImageEditService {
   private readonly uploadDir: string;
 
   constructor(opts: ImageEditServiceOpts = {},) {
-    this.db = opts.database ?? getDatabase();
+    if (!opts.database) {
+      throw new Error("ImageEditService requires a database instance",);
+    }
+    this.db = opts.database;
     const config = loadConfig();
     this.uploadDir = opts.uploadDir ?? config.assets.uploadDir;
   }
@@ -426,7 +428,7 @@ export class ImageEditService {
     }
 
     // Store result as asset
-    const db = getDatabase();
+    const db = this.db;
     let resultAssetId = "";
 
     for (const buffer of resultImages) {
