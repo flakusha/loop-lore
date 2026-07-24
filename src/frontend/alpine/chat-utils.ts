@@ -163,14 +163,16 @@ export const chatUtils: Partial<ChatState> & ThisType<ChatState> = {
   },
 
   openAssetPreview(asset: { id: string; asset_type?: string; filename?: string; name?: string },) {
-    if (asset.asset_type === "image") {
-      window.open(`/api/assets/${asset.id}/raw`, "_blank", "noopener,noreferrer",);
-    } else {
-      this.$dispatch?.("show-toast", {
-        type: "info",
-        message: `${asset.filename || asset.name} (${asset.asset_type || "unknown"})`,
-      },);
-    }
+    if (!asset?.id) { return; }
+    const url = `/api/assets/${asset.id}/raw`;
+    this.previewMediaAsset = {
+      id: asset.id,
+      filename: asset.filename || asset.name || "Asset",
+      asset_type: asset.asset_type,
+      type: asset.asset_type || "image",
+      url,
+      caption: asset.filename || asset.name,
+    };
   },
 
   escapeHtml(str: string,) {

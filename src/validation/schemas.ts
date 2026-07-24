@@ -166,6 +166,8 @@ export const ChatCreateBody = t.Object({
   visualNovel: t.Optional(t.Boolean(),),
 },);
 
+const OptionalBooleanOrNull = t.Optional(t.Union([t.Boolean(), t.Null(),],),);
+
 export const ChatUpdateBody = t.Object({
   name: t.Optional(Name,),
   mode: t.Optional(ChatModeSchema,),
@@ -176,6 +178,7 @@ export const ChatUpdateBody = t.Object({
   freezePanel: t.Optional(t.Boolean(),),
   gmConfig: t.Optional(GmConfigSchema,),
   visualNovel: t.Optional(t.Boolean(),),
+  streaming: OptionalBooleanOrNull,
 },);
 
 export const ChatIdParams = t.Object({

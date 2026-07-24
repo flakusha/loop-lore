@@ -188,7 +188,7 @@ export class ServerExternalManager {
     const port = this.resolveLlamaSwapPort(resolvedConfig,);
     this.log.info("Starting llama-swap", { binary, config: resolvedConfig, port, },);
     const proc = spawn({
-      cmd: [binary, "--config", resolvedConfig, "--host", "127.0.0.1",],
+      cmd: [binary, "--config", resolvedConfig, "--listen", `127.0.0.1:${port}`,],
       stdout: "pipe",
       stderr: "pipe",
     },);
