@@ -329,6 +329,47 @@ export const AdminChatUpdateBody = t.Object({
   world_id: OptionalId,
 },);
 
+// ── Template management (admin) ─────────────────────────────
+
+export const AdminTemplateCreateBody = t.Object({
+  id: t.String({ minLength: 1, },),
+  name: t.String({ minLength: 1, },),
+  families: t.Array(t.String(),),
+  promptFormat: t.UnionEnum(["tags", "natural", "tags-and-natural", "json",],),
+  maxTokenHint: t.Numeric({ minimum: 64, maximum: 4096, },),
+  defaults: t.Object({
+    cfgScale: t.Numeric({ minimum: 1, maximum: 30, },),
+    steps: t.Numeric({ minimum: 1, maximum: 200, },),
+    sampler: t.String(),
+    scheduler: t.Optional(t.String(),),
+    clipSkip: t.Optional(t.Numeric(),),
+  },),
+  templates: t.Object({
+    instant: t.Any(),
+    balanced: t.Any(),
+    detailed: t.Any(),
+  },),
+},);
+
+export const AdminTemplateUpdateBody = t.Object({
+  name: t.Optional(t.String({ minLength: 1, },),),
+  families: t.Optional(t.Array(t.String(),),),
+  promptFormat: t.Optional(t.UnionEnum(["tags", "natural", "tags-and-natural", "json",],),),
+  maxTokenHint: t.Optional(t.Numeric({ minimum: 64, maximum: 4096, },),),
+  defaults: t.Optional(t.Object({
+    cfgScale: t.Numeric({ minimum: 1, maximum: 30, },),
+    steps: t.Numeric({ minimum: 1, maximum: 200, },),
+    sampler: t.String(),
+    scheduler: t.Optional(t.String(),),
+    clipSkip: t.Optional(t.Numeric(),),
+  },),),
+  templates: t.Optional(t.Object({
+    instant: t.Any(),
+    balanced: t.Any(),
+    detailed: t.Any(),
+  },),),
+},);
+
 // ── World routes ───────────────────────────────────────────
 
 export const WorldCreateBody = t.Object({
