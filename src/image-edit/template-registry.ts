@@ -7,6 +7,7 @@
  * @module template-registry
  */
 
+import type { ComfyUIWorkflow, } from "../generation/providers/comfyui";
 import type {
   ImageEditBackend,
   ImageEditCategory,
@@ -66,3 +67,38 @@ class TemplateRegistry {
 
 /** Singleton registry instance */
 export const templateRegistry = new TemplateRegistry();
+
+// ── Config Integration ──────────────────────────────────────
+
+import type { ImageEditTemplateConfig, } from "../config/sections/templates";
+
+/**
+ * Register workflow templates from config.
+ *
+ * Config workflows are definitions (id, name, category, backend).
+ * They are registered as lightweight templates with a passthrough build function.
+ * Full workflow nodes should be provided via the build function or loaded separately.
+ *
+ * @param config - Image-edit template configuration
+ * @param registry - Registry to register into (default: singleton)
+ */
+export function registerConfigWorkflows(
+  config: ImageEditTemplateConfig,
+  registry: TemplateRegistry = templateRegistry,
+): void {
+  for (const [id, workflow,] of Object.entries(config.workflows,)) {
+    // Convert config workflow to WorkflowTemplate format
+    // Config workflows are definitions; build function returns empty workflow
+    const template: WorkflowTemplate = {
+      id,
+      name: workflow.name,
+      category: workflow.category as ImageEditCategory,
+      backends: [workflow.backend as ImageEditBackend,],
+      description: workflow.description,
+      required_nodes: [],
+      parameters: [],
+      build: () => (workflow.nodes as ComfyUIWorkflow) ?? {},
+    };
+    registry.register(template,);
+  }
+}
