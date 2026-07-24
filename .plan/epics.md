@@ -60,6 +60,7 @@
 | 42 | Assistant Generation Extensions   | ⬜ Not Started | Medium   | `epic-assistant-generation-extensions.md` |
 | 43 | NSFW Game Mechanics               | 📝 Draft       | Medium   | `epic-nsfw-game-mechanics.md`             |
 | 44 | Worlds Extension                  | ⬜ Not Started | Medium   | `epic-worlds-extension.md`                |
+| 45 | Configurable Template System      | 🟢 Complete    | High     | `epic-config-templates.md`                |
 
 ### Permanently Ongoing Epics
 
