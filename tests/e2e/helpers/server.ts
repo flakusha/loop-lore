@@ -348,6 +348,8 @@ export async function createTestServer(
     // so this never affects other suites.
     config.generation.defaultProvider = "mock-provider";
     config.generation.defaultModels["mock-provider"] = "mock-model";
+    // Clear real providers from config so initializeProviders only registers the mock
+    config.generation.providers.openaiCompatible = [];
   }
   initializeProviders(config,);
 
