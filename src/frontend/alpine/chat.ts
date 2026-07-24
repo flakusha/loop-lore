@@ -20,7 +20,6 @@ import { chatVariants, } from "./chat-variants";
 import { jsonParseOr, } from "./json";
 import { getLogger, } from "./logger";
 import { memoryPanel, } from "./memory-panel";
-import { createMoodPanelState, } from "./mood-panel";
 import { rpgStats, } from "./rpg-stats";
 import type { AlpineState, ChatState, } from "./types";
 
@@ -143,6 +142,9 @@ globalThis.chatState = function() {
     // ── RPG Stats State ──
     ...rpgStats,
     showRpgPanel: false as boolean,
+
+    // ── Mood System ──
+    ...moodState,
 
     // ── Memory Panel State ──
     ...memoryPanel,
@@ -396,7 +398,7 @@ globalThis.chatState = function() {
       this.currentPage = 1;
       this.hasMoreMessages = true;
       this.loadingOlder = false;
-      await Promise.all([this.loadMessages(), this.loadGalleryAssets(), this.loadCharacterInfo(),],);
+      await Promise.all([this.loadMessages(), this.loadGalleryAssets(), this.loadCharacterInfo(), this.loadMood(),],);
       await this.markChatAsRead(chatId,);
       await this.loadChatKey(chatId,);
       await this.loadImpersonationState();
