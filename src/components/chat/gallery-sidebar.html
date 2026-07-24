@@ -15,6 +15,21 @@
 >
   <button class="btn-icon" @click="$store.ui.showGallery = false" title="Close">&times;</button>
   <div class="nav-section-title" style="margin-bottom: var(--space-3)">Chat Assets</div>
+  <template x-if="activeChat">
+    <div style="margin-bottom: var(--space-3)">
+      <button
+        class="btn btn-primary btn-sm"
+        style="width: 100%"
+        hx-get="/partials/gallery/upload-modal"
+        hx-target="#modal-container"
+        hx-swap="innerHTML"
+        hx-on::after-request="window.openModal('upload-modal')"
+        data-testid="gallery-upload-link"
+      >
+        + Upload & Link
+      </button>
+    </div>
+  </template>
   <div id="gallery-items">
     <template x-if="!activeChat">
       <div class="gallery-empty">

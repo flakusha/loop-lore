@@ -57,6 +57,7 @@ describe("Generation E2E", () => {
       actorId: SEED.character.id,
       idempotencyKey: "e2e-idemp-1",
       prompt: [{ role: "user", content: "Hello bot", },],
+      stream: false,
     },);
 
     expect(res.ok,).toBe(true,);
@@ -77,6 +78,7 @@ describe("Generation E2E", () => {
         actorId: SEED.character.id,
         idempotencyKey: "e2e-idemp-2",
         prompt: [{ role: "user", content: "DB store test", },],
+        stream: false,
       },
     );
 
@@ -125,6 +127,7 @@ describe("Generation E2E", () => {
         parentMessageId: SEED.message.id,
         actorId: SEED.character.id,
         idempotencyKey: "e2e-assemble-1",
+        stream: false,
         // No prompt field — triggers PromptAssembler path
       },
     );
@@ -314,6 +317,7 @@ describe("Generation E2E", () => {
       actorId: SEED.character.id,
       idempotencyKey: "e2e-fail-1",
       prompt: [{ role: "user", content: "Fail", },],
+      stream: false,
     },);
 
     expect(res.status,).toBe(500,);
@@ -334,6 +338,7 @@ describe("Generation E2E", () => {
         { role: "system", content: "You are a helpful assistant.", },
         { role: "user", content: longContent, },
       ],
+      stream: false,
     },);
 
     // Mock provider ignores content size — succeeds gracefully
@@ -357,6 +362,7 @@ describe("Generation E2E", () => {
         maxTokens: 10,
         temperature: 0.7,
         topP: 0.9,
+        stream: false,
       },
     );
 
