@@ -1,5 +1,5 @@
 // ── Chat page component (chat.html) — core state + init ────
-
+import type { AlpineState, ChatState, } from "./types";
 import { chatActions, } from "./chat-actions";
 import { chatActivity, } from "./chat-activity";
 import { chatEditing, } from "./chat-editing";
@@ -12,12 +12,12 @@ import { chatPanels, } from "./chat-panels";
 import { chatSettings, } from "./chat-settings";
 import { chatUtils, } from "./chat-utils";
 import { chatVariants, } from "./chat-variants";
-import { jsonParseOr, } from "./json";
-import { getLogger, } from "./logger";
-import { memoryPanel, } from "./memory-panel";
 import { createMoodPanelState, } from "./mood-panel";
+import { getLogger, } from "./logger";
+import { jsonParseOr, } from "./json";
+import { memoryPanel, } from "./memory-panel";
+import { moodState, } from "./mood";
 import { rpgStats, } from "./rpg-stats";
-import type { AlpineState, ChatState, } from "./types";
 
 const g = globalThis as Record<string, unknown>;
 
@@ -47,6 +47,7 @@ globalThis.chatState = function() {
     continuingMessageId: null as string | null,
     isContinuing: false,
     _generationEventSource: null as EventSource | null,
+    chats: [] as { id: string; name?: string }[],
     chats: [] as { id: string; name?: string }[],
     activeChat: null as string | null,
     messages: [] as {
@@ -302,7 +303,7 @@ globalThis.chatState = function() {
       this.currentPage = 1;
       this.hasMoreMessages = true;
       this.loadingOlder = false;
-      await Promise.all([this.loadMessages(), this.loadGalleryAssets(), this.loadCharacterInfo(),],);
+      await Promise.all([this.loadMessages(), this.loadGalleryAssets(), this.loadCharacterInfo(), this.loadMood(),],);
       await this.markChatAsRead(chatId,);
       await this.loadChatKey(chatId,);
       await this.loadImpersonationState();
