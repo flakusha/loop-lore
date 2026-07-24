@@ -80,6 +80,46 @@ import {
 // This file is the sole source of truth for defaults, env-map, validation, and JSON Schema.
 // ── Base types ──────────────────────────────────────────────
 
+import {
+  CHARACTERS_DEFAULTS,
+} from "./sections/characters";
+
+// src/config/schema-class.ts — ConfigSchema orchestrator
+//
+// Delegates to section classes in ./sections/ for defaults + schema metadata.
+// Auto-generates envMap by walking section instances.
+// Auto-generates jsonSchema from section metadata + defaults.
+//
+// Replaces hand-duplicated:
+//   - generate-schema.ts (JSON schema defaults)
+//   - load.ts ENV_MAP (env var → dot.path mapping)
+//   - load.ts validateConfig (validation rules)
+// ── Base types ──────────────────────────────────────────────
+// src/config/schema-class.ts — ConfigSchema orchestrator
+//
+// Delegates to section classes in ./sections/ for defaults + schema metadata.
+// Auto-generates envMap by walking section instances.
+// Auto-generates jsonSchema from section metadata + defaults.
+//
+// Replaces hand-duplicated:
+//   - generate-schema.ts (JSON schema defaults)
+//   - load.ts ENV_MAP (env var → dot.path mapping)
+//   - load.ts validateConfig (validation rules)
+// src/config/schema-class.ts — ConfigSchema orchestrator
+//
+// Delegates to section classes in ./sections/ for defaults + schema metadata.
+// Auto-generates envMap by walking section instances.
+// Auto-generates jsonSchema from section metadata + defaults.
+// Each section is a class. Instance = defaults. Static methods generate
+// env-maps, validation, and JSON Schema. Replaces hand-duplicated:
+//   - generate-schema.ts (JSON schema defaults)
+//   - load.ts ENV_MAP (env var → dot.path mapping)
+//   - load.ts validateConfig (validation rules)
+//
+// schema.ts provides the type interfaces consumed here via `satisfies`.
+// This file is the sole source of truth for defaults, env-map, validation, and JSON Schema.
+// ── Base types ──────────────────────────────────────────────
+
 type EnvMap = Record<string, string>;
 type JSONSchema = Record<string, unknown>;
 
@@ -388,6 +428,7 @@ export class ConfigSchema {
       headers: this.headers,
       dynamicResponse: this.dynamicResponse,
       templates: TEMPLATES_DEFAULTS,
+      characters: CHARACTERS_DEFAULTS,
     };
   }
 }

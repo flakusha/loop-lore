@@ -45,6 +45,46 @@
             placeholder="Brief description..."
           ></textarea>
         </div>
+        <div class="form-group">
+          <label class="form-label" for="char-personality">Personality</label>
+          <textarea
+            class="form-input form-textarea"
+            name="personality"
+            id="char-personality"
+            rows="2"
+            placeholder="Traits, mannerisms, speech patterns..."
+          ></textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="char-scenario">Scenario</label>
+          <textarea
+            class="form-input form-textarea"
+            name="scenario"
+            id="char-scenario"
+            rows="2"
+            placeholder="Initial scene/setting context..."
+          ></textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="char-greeting">Welcome Message</label>
+          <textarea
+            class="form-input form-textarea"
+            name="welcomeMessage"
+            id="char-greeting"
+            rows="3"
+            placeholder="First message the character sends..."
+          ></textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="char-tags">Tags</label>
+          <input
+            class="form-input"
+            type="text"
+            name="tags"
+            id="char-tags"
+            placeholder="Comma-separated (e.g., fantasy, elf, mentor)"
+          />
+        </div>
         <div style="display: flex; gap: var(--space-3); justify-content: flex-end">
           <button type="button" class="btn btn-secondary" x-on:click="window.closeModal($el)">Cancel</button>
           <button type="submit" class="btn btn-primary">Create</button>
