@@ -25,6 +25,8 @@ export interface HookContext {
   content: string;
   nsfwPolicy?: string;
   privacyLevel?: string;
+  /** Targeted event types — hooks not in this list are skipped. Omit to run all. */
+  eventTypes?: HookEventType[];
   config: Config;
   nsfwConfig: NsfwConfig;
   db: Kysely<DB>;
