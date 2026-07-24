@@ -132,6 +132,31 @@ export interface TemplatesConfig {
   sd: SdTemplateConfig;
   avatar: AvatarTemplateConfig;
   imageEdit: ImageEditTemplateConfig;
+  character: CharacterTemplateConfig;
+}
+
+// ── Character Template Config ───────────────────────────────
+
+/** Character template configuration loaded from configs/templates/character.yaml */
+export interface CharacterTemplateConfig {
+  merge: MergeStrategy;
+  templates: {
+    id?: string;
+    name: string;
+    description: string;
+    personality?: string;
+    scenario?: string;
+    welcome_message?: string;
+    system_prompt?: string;
+    mes_example?: string;
+    tags?: string[];
+    creator?: string;
+    visibility?: "private" | "public";
+    content_rating?: "sfw" | "nsfw_mild" | "nsfw_moderate" | "nsfw_intense" | "nsfw_extreme";
+    target_roles?: ("admin" | "user" | "viewer" | "solo")[];
+    is_template?: boolean;
+    is_default?: boolean;
+  }[];
 }
 
 // ── Defaults ────────────────────────────────────────────────
@@ -162,5 +187,9 @@ export const TEMPLATES_DEFAULTS: TemplatesConfig = {
   imageEdit: {
     merge: DEFAULT_MERGE,
     workflows: {},
+  },
+  character: {
+    merge: DEFAULT_MERGE,
+    templates: [],
   },
 };
