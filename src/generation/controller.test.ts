@@ -16,18 +16,24 @@ import {
  */
 
 
-/**
- * Tests for generation controller (input validation and non-DB paths).
- */
+import { Database, } from "bun:sqlite";
+import { Kysely, } from "kysely";
+import { createSqliteDialect, } from "../db/index";
+import type { DB, } from "../db/schema";
+
+// Create test database
+const sqlite = new Database(":memory:",);
+const dialect = createSqliteDialect(sqlite,);
+const testDb = new Kysely<DB>({ dialect, },);
 
 describe("handleCancelGeneration", () => {
   test("returns 400 when both chatId and attemptId missing", () => {
-    const res = handleCancelGeneration({},);
+    const res = handleCancelGeneration({}, testDb,);
     expect(res.status,).toBe(400,);
   });
 
   test("returns 404 when no active generation for chatId", () => {
-    const res = handleCancelGeneration({ chatId: "nonexistent-chat", },);
+    const res = handleCancelGeneration({ chatId: "nonexistent-chat", }, testDb,);
     expect(res.status,).toBe(404,);
   });
 });
@@ -60,12 +66,12 @@ describe("handleListActiveGenerations", () => {
 
 describe("handleRetryGeneration", () => {
   test("returns 400 when chatId missing", async () => {
-    const res = await handleRetryGeneration({},);
+    const res = await handleRetryGeneration({}, testDb,);
     expect(res.status,).toBe(400,);
   });
 
   test("returns retry response with defaults", async () => {
-    const res = await handleRetryGeneration({ chatId: "chat-1", },);
+    const res = await handleRetryGeneration({ chatId: "chat-1", }, testDb,);
     expect(res.status,).toBe(200,);
     const data = (await res.json()) as {
       ok: boolean;
@@ -80,7 +86,7 @@ describe("handleRetryGeneration", () => {
   });
 
   test("resumes from specified step when provided without attemptId", async () => {
-    const res = await handleRetryGeneration({ chatId: "chat-1", step: 2, },);
+    const res = await handleRetryGeneration({ chatId: "chat-1", step: 2, }, testDb,);
     expect(res.status,).toBe(200,);
     const data = (await res.json()) as { resumeFromStep: number; totalSteps: number };
     expect(data.resumeFromStep,).toBe(2,);
@@ -88,7 +94,7 @@ describe("handleRetryGeneration", () => {
   });
 
   test("clamps negative step to 0", async () => {
-    const res = await handleRetryGeneration({ chatId: "chat-1", step: -5, },);
+    const res = await handleRetryGeneration({ chatId: "chat-1", step: -5, }, testDb,);
     expect(res.status,).toBe(200,);
     const data = (await res.json()) as { resumeFromStep: number };
     expect(data.resumeFromStep,).toBe(0,);
@@ -97,12 +103,12 @@ describe("handleRetryGeneration", () => {
 
 describe("handleRegenerate", () => {
   test("returns 400 when chatId missing", () => {
-    const res = handleRegenerate({},);
+    const res = handleRegenerate({}, testDb,);
     expect(res.status,).toBe(400,);
   });
 
   test("returns success with ready flag", async () => {
-    const res = handleRegenerate({ chatId: "chat-1", },);
+    const res = handleRegenerate({ chatId: "chat-1", }, testDb,);
     expect(res.status,).toBe(200,);
     const data = (await res.json()) as { ok: boolean; chatId: string; ready: boolean };
     expect(data.ok,).toBe(true,);
