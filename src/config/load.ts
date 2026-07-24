@@ -7,6 +7,7 @@ import { parse as parseToml, } from "smol-toml";
 import { type Config, } from "./schema";
 import type { ProviderInstanceConfig, } from "./schema";
 import { ConfigSchema, } from "./schema-class";
+import { loadTemplateConfig, } from "./templates-loader";
 
 // Map flat env var names to dot-separated config paths
 // Source of truth: ConfigSchema.envMap() — auto-generated from class hierarchy.
@@ -256,6 +257,10 @@ function loadConfig(cwd?: string,): Config {
   // 4. Apply env var overrides — highest priority
   config = applyEnvironmentOverrides(config, ENV_MAP,);
   applyProviderEnvVars(config,);
+
+  // 5. Load template configs from config/templates/ directory
+  config.templates = loadTemplateConfig(directory,);
+
   validateConfig(config,);
   return config;
 }
