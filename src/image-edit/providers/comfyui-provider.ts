@@ -109,7 +109,13 @@ export class ComfyUIEditProvider implements ImageEditProvider {
 
     onProgress?.({ status: "pending", message: "Building workflow...", },);
 
-    const workflow = template.build(request.params,);
+    // Inject emotion parameter into template params if provided
+    const params = { ...request.params, };
+    if (params.emotion) {
+      params.emotion_modifier = this.getEmotionModifier(params.emotion as string,);
+    }
+
+    const workflow = template.build(params,);
 
     onProgress?.({ status: "running", message: "Submitting to ComfyUI...", },);
 
@@ -144,5 +150,33 @@ export class ComfyUIEditProvider implements ImageEditProvider {
     },);
 
     return results;
+  }
+
+  /**
+   * Get emotion-based prompt modifier for ComfyUI workflow.
+   * Maps emotion types to descriptive prompt suffixes for conditioning nodes.
+   */
+  private getEmotionModifier(emotion: string,): string {
+    const modifiers: Record<string, string> = {
+      happy: "happy expression, smiling, bright eyes, cheerful",
+      sad: "sad expression, downcast eyes, melancholy, sorrowful",
+      angry: "angry expression, furrowed brow, intense gaze, furious",
+      fearful: "fearful expression, wide eyes, trembling, scared",
+      surprised: "surprised expression, raised eyebrows, wide eyes, astonished",
+      disgusted: "disgusted expression, wrinkled nose, repulsed",
+      neutral: "neutral expression, calm face, natural look",
+      excited: "excited expression, enthusiastic, eager, thrilled",
+      anxious: "anxious expression, worried brow, nervous, tense",
+      calm: "calm expression, serene face, peaceful, composed",
+      confused: "confused expression, tilted head, puzzled, bewildered",
+      proud: "proud expression, confident, chin up, dignified",
+      shameful: "shameful expression, looking away, embarrassed, guilty",
+      loving: "loving expression, warm gaze, tender, affectionate",
+      jealous: "jealous expression, envious, bitter, resentful",
+      grateful: "grateful expression, thankful, appreciative, warm",
+      bored: "bored expression, disinterested, vacant stare, apathetic",
+      contemptuous: "contemptuous expression, sneering, disdainful look",
+    };
+    return modifiers[emotion] ?? "";
   }
 }
