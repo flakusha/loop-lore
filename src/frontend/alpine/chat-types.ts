@@ -1,4 +1,3 @@
-import type { MoodPanelState, } from "./mood-panel";
 import type { AlpineMagicThis, GalleryAsset, } from "./types";
 
 export interface MessageAttachment {
@@ -118,12 +117,6 @@ export interface MemoryPanelState {
   newMemoryContent: string;
 }
 
-/** Chat-level GM configuration — mirrors `src/chat/types.ts::GmConfig` */
-export interface GmConfig {
-  assistantRole?: "off" | "helper" | "gm" | "moderator";
-  visualNovel?: boolean;
-}
-
 export interface ChatState extends AlpineMagicThis {
   isGenerating: boolean;
   generationLabel: string;
@@ -140,7 +133,6 @@ export interface ChatState extends AlpineMagicThis {
     turn_strategy?: string;
     story_state?: string;
     gm_config?: string;
-    visual_novel?: number;
   }[];
   activeChat: string | null;
   messages: Message[];
@@ -298,7 +290,6 @@ export interface ChatState extends AlpineMagicThis {
     turn_strategy?: string;
     story_state?: string;
     gm_config?: string;
-    visual_novel?: number;
   } | null;
   toggleGroupPause(): Promise<void>;
   loadChatParticipants(): Promise<void>;
@@ -334,9 +325,24 @@ export interface ChatState extends AlpineMagicThis {
   getModifier(stat: number,): number;
   effectiveStat(base: number, effects: StatusEffect[],): number;
 
-  // ── Mood System ──────────────────────────────────────────────
-  _moodPanel: MoodPanelState;
-  loadMoodPanel(actorId: string,): Promise<void>;
+  // ── Mood System ───────────────────────────────────────────
+  _mood: {
+    happiness: number;
+    currentMood: string;
+    baseMood: string;
+    moodStability: number;
+    lastMoodChange: string;
+    expressionModifiers: Record<string, number>;
+  } | null;
+  _moodLoading: boolean;
+  _moodCanEdit: boolean;
+  _moodSliderValue: number;
+  loadMood(): Promise<void>;
+  updateMoodHappiness(happiness: number,): Promise<void>;
+  applyMoodDelta(delta: number,): Promise<void>;
+  _getMoodEmoji(mood: string,): string;
+  _getMoodColor(happiness: number,): string;
+  _happinessToMood(happiness: number,): string;
 
   // ── Memory System ───────────────────────────────────────────
   memoryPanel: MemoryPanelState;
