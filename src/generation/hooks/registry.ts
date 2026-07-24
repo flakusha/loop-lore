@@ -33,6 +33,13 @@ export async function runHookChain(options: HookChainOptions,): Promise<HookChai
   let suppressedContent = false;
 
   for (const hook of registeredHooks) {
+    // If context specifies targeted eventTypes, skip hooks that don't match
+    if (options.context.eventTypes && options.context.eventTypes.length > 0) {
+      const hookEvents = new Set(hook.eventTypes,);
+      const targeted = options.context.eventTypes.some((et,) => hookEvents.has(et,));
+      if (!targeted) { continue; }
+    }
+
     const canHandle = await hook.canHandle(options.context.content, options.context,);
     if (!canHandle) { continue; }
 

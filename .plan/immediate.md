@@ -14,16 +14,17 @@
 
 All 6 merged branches are reconciled:
 
-| Branch             | Commit   | Status      |
-| ------------------ | -------- | ----------- |
-| `mood-frontend`    | `4e8d5d8` | ✅ Clean   |
-| `assistant-gm-schema` | `02c9038` | ✅ Clean |
-| `admin-portal`     | `74e8386` | ✅ Clean   |
-| `llm-sd-injection` | `361f799` | ✅ Resolved conflict |
-| `nsfw-features`    | `bb0b319` | ✅ Clean   |
-| `emotional-avatar` | `37508ba` | ✅ Resolved conflict |
+| Branch                | Commit    | Status               |
+| --------------------- | --------- | -------------------- |
+| `mood-frontend`       | `4e8d5d8` | ✅ Clean             |
+| `assistant-gm-schema` | `02c9038` | ✅ Clean             |
+| `admin-portal`        | `74e8386` | ✅ Clean             |
+| `llm-sd-injection`    | `361f799` | ✅ Resolved conflict |
+| `nsfw-features`       | `bb0b319` | ✅ Clean             |
+| `emotional-avatar`    | `37508ba` | ✅ Resolved conflict |
 
 Deferred DB/schema fixes applied:
+
 - Migration `027_template_injection` — added `down()` function
 - `template_overrides` column synced into `schema-manifest.ts`
 - `character_arousal` table confirmed present in NSFW migration + manifest
@@ -37,6 +38,7 @@ Deferred DB/schema fixes applied:
 Hooks using main/aux LLM on content for triggering events (mood, emotions, NSFW, moderation). All hooks respect privacy and NSFW allowance.
 
 **Infrastructure created** (`src/generation/hooks/`):
+
 - `types.ts` — `HookHandler`, `HookContext`, `HookResult`, `HookChainOptions`
 - `mood-hook.ts` — detects mood shifts in content, emits mood delta events
 - `emotion-hook.ts` — detects emotional content, triggers avatar selection
@@ -46,10 +48,12 @@ Hooks using main/aux LLM on content for triggering events (mood, emotions, NSFW,
 - `index.ts` — barrel export
 
 **Wired into pipeline** (`src/generation/auto-gen.ts`):
+
 - `runHookChain()` called after LLM content generation, before storage
 - Blocks content if NSFW gating or moderation flags suppress it
 
 **Next steps:**
+
 - [ ] Wire hooks into `PromptAssembler` for pre-generation content analysis
 - [ ] Add hook configuration to `Config` schema (`enableMoodHooks`, `enableModerationHooks`)
 - [ ] Add `nsfwPolicy` fetching from actor data in `triggerAutoGeneration`
@@ -58,6 +62,7 @@ Hooks using main/aux LLM on content for triggering events (mood, emotions, NSFW,
 ### 2. Test Coverage for FExBExDB Harmonization
 
 **Next steps:**
+
 - [ ] Migration up/down roundtrip tests for all migrations
 - [ ] Schema manifest ↔ DB column parity validation test
 - [ ] Service-layer integration tests with test DB (`createTestDb`)
@@ -81,6 +86,7 @@ Hooks using main/aux LLM on content for triggering events (mood, emotions, NSFW,
 ### 4. Epic Reconciliation & Structuring
 
 **Next steps:**
+
 - [ ] Update `.plan/epics.md` with current state of all active epics
 - [ ] Structure epics for future dev separation (per-feature epic files)
 - [ ] Close confirmed-feature tickets that are now merged
@@ -93,6 +99,7 @@ Already applied: `stg` and `dev` added to `PROTECTED_BRANCHES` in `scripts/workt
 Both branches already exist in the repo.
 
 **Next steps:**
+
 - [ ] Create `stg` worktree for pre-merge validation
 - [ ] Create `dev` worktree for feature development with fewer restrictions
 - [ ] Document worktree workflow for `stg`/`dev` in AGENTS.md
@@ -101,20 +108,20 @@ Both branches already exist in the repo.
 
 ## Summary of Findings
 
-| Feature                | Backend      | Frontend     | Route | Status                    |
-| ---------------------- | ------------ | ------------ | ----- | ------------------------- |
-| Chat                   | ✅           | ✅           | ✅    | Complete                  |
-| Group Chat             | ✅           | ✅           | ✅    | Complete                  |
-| Character Setup        | ✅           | ✅           | ✅    | Complete                  |
-| Assistant              | ✅ (MVP)     | ✅           | ✅    | Complete                  |
-| Impersonation          | ✅           | ✅           | ✅    | Complete                  |
-| Mood                   | ✅           | ❌           | ✅    | Frontend missing          |
-| Context Window Sliding | ✅           | ✅           | ✅    | Complete                  |
-| Emotional Avatar       | ✅ (service) | ❌           | ❌    | Route + frontend missing  |
-| NSFW Features          | ⚠️ (config)   | ❌           | ❌    | Frontend missing          |
-| Assistant/GM           | ⚠️ (raw JSON) | ⚠️ (raw JSON) | ⚠️   | Typed schema missing      |
-| Encryption/Compression | ✅           | ✅           | ✅    | Complete                  |
-| Hook System            | 🆕           | —            | —     | Infrastructure created    |
+| Feature                | Backend      | Frontend     | Route | Status                   |
+| ---------------------- | ------------ | ------------ | ----- | ------------------------ |
+| Chat                   | ✅           | ✅           | ✅    | Complete                 |
+| Group Chat             | ✅           | ✅           | ✅    | Complete                 |
+| Character Setup        | ✅           | ✅           | ✅    | Complete                 |
+| Assistant              | ✅ (MVP)     | ✅           | ✅    | Complete                 |
+| Impersonation          | ✅           | ✅           | ✅    | Complete                 |
+| Mood                   | ✅           | ❌           | ✅    | Frontend missing         |
+| Context Window Sliding | ✅           | ✅           | ✅    | Complete                 |
+| Emotional Avatar       | ✅ (service) | ❌           | ❌    | Route + frontend missing |
+| NSFW Features          | ⚠️ (config)   | ❌           | ❌    | Frontend missing         |
+| Assistant/GM           | ⚠️ (raw JSON) | ⚠️ (raw JSON) | ⚠️     | Typed schema missing     |
+| Encryption/Compression | ✅           | ✅           | ✅    | Complete                 |
+| Hook System            | 🆕           | —            | —     | Infrastructure created   |
 
 ---
 
