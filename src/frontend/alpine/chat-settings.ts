@@ -9,6 +9,7 @@ export const chatSettings: Partial<ChatState> & ThisType<ChatState> = {
   _chatSettingsName: "",
   _chatSettingsMode: "chat",
   _chatSettingsTurnStrategy: "round_robin",
+  _chatSettingsStreaming: "default" as "default" | "on" | "off",
   _selectedPersonaId: null as string | null,
   _impersonatingActorId: null as string | null,
   _assistantRole: "off",
@@ -25,6 +26,9 @@ export const chatSettings: Partial<ChatState> & ThisType<ChatState> = {
     this._chatSettingsName = chat?.name ?? "";
     this._chatSettingsMode = chat?.mode ?? "chat";
     this._chatSettingsTurnStrategy = chat?.turn_strategy ?? "round_robin";
+    // Convert DB streaming value (1/0/null) to UI value ("on"/"off"/"default")
+    const streamingVal = chat?.streaming;
+    this._chatSettingsStreaming = streamingVal === 1 ? "on" : (streamingVal === 0 ? "off" : "default");
     this._groupPaused = this.isChatPaused(chat,);
     if (chat?.gm_config) {
       const config = jsonParseOr<GmConfig>(chat.gm_config, {},);
@@ -38,6 +42,10 @@ export const chatSettings: Partial<ChatState> & ThisType<ChatState> = {
     if (!this.activeChat || !this._chatSettingsName.trim()) { return; }
     try {
       const gmConfig = { assistantRole: this._assistantRole, };
+      // Convert UI streaming value to DB value (true/false/null)
+      const streamingValue = this._chatSettingsStreaming === "on"
+        ? true
+        : (this._chatSettingsStreaming === "off" ? false : null);
       const res = await apiFetch(`/api/chats/${this.activeChat}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json", },
@@ -47,6 +55,7 @@ export const chatSettings: Partial<ChatState> & ThisType<ChatState> = {
           turnStrategy: this._chatSettingsTurnStrategy,
           isPaused: this._groupPaused,
           gmConfig: jsonBody(gmConfig,),
+          streaming: streamingValue,
         },),
       },);
       if (res.ok) {
@@ -55,6 +64,8 @@ export const chatSettings: Partial<ChatState> & ThisType<ChatState> = {
         if (chat) {
           chat.name = this._chatSettingsName.trim();
           chat.turn_strategy = this._chatSettingsTurnStrategy;
+          // Convert back to DB value for local state
+          chat.streaming = streamingValue === true ? 1 : (streamingValue === false ? 0 : null);
           if (chat.story_state) {
             const st = jsonParseOr<Record<string, unknown>>(chat.story_state, {},);
             st.isPaused = this._groupPaused;

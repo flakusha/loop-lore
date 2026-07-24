@@ -146,6 +146,7 @@ export interface ChatState extends AlpineMagicThis {
     story_state?: string;
     gm_config?: string;
     visual_novel?: number;
+    streaming?: number | null;
   }[];
 
   activeChat: string | null;
@@ -223,6 +224,8 @@ export interface ChatState extends AlpineMagicThis {
   _chatSettingsMode: string;
 
   _chatSettingsTurnStrategy: string;
+
+  _chatSettingsStreaming: "default" | "on" | "off";
 
   _groupPaused: boolean;
 
