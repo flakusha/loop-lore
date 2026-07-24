@@ -162,16 +162,35 @@ export const chatUtils: Partial<ChatState> & ThisType<ChatState> = {
     }
   },
 
-  openAssetPreview(asset: { id: string; asset_type?: string; filename?: string; name?: string },) {
+  openAssetPreview(
+    asset: {
+      id: string;
+      asset_type?: string;
+      filename?: string;
+      name?: string;
+      mime_type?: string;
+      size_bytes?: number;
+      width?: number;
+      height?: number;
+      alt_text?: string;
+      visibility?: string;
+    },
+  ) {
     if (!asset?.id) { return; }
     const url = `/api/assets/${asset.id}/raw`;
     this.previewMediaAsset = {
       id: asset.id,
       filename: asset.filename || asset.name || "Asset",
       asset_type: asset.asset_type,
+      mime_type: asset.mime_type,
+      size_bytes: asset.size_bytes,
+      width: asset.width,
+      height: asset.height,
+      alt_text: asset.alt_text,
+      visibility: asset.visibility,
       type: asset.asset_type || "image",
       url,
-      caption: asset.filename || asset.name,
+      caption: asset.alt_text || asset.filename || asset.name,
     };
   },
 
