@@ -6,6 +6,8 @@ import { getDatabase, } from "../db/index";
 import { safeJsonStringify, uid, } from "../utils";
 import { safeFromBase64, } from "../utils/safe-buffer";
 import { validateProviderUrl, } from "../utils/url-validation";
+import { ComfyUIClient, } from "./providers/comfyui";
+import { loadComfyUIWorkflow, } from "./workflow-loader";
 
 interface ImageGenBody {
   prompt: string;
@@ -22,6 +24,8 @@ interface ImageGenBody {
   enable_hr?: boolean;
   hr_scale?: number;
   denoising_strength?: number;
+  /** ComfyUI workflow name (filename without .json in configs/workflows/) */
+  workflow?: string;
 }
 
 export async function handleImageGeneration(body: unknown,): Promise<Response> {
@@ -240,12 +244,44 @@ export async function handleImageGeneration(body: unknown,): Promise<Response> {
 
       break;
     }
+    case "comfyui": {
+      const workflowName = req.workflow ?? "txt2img";
+      const validatedComfy = validateProviderUrl(sdConfig.baseUrl,);
+      if (!validatedComfy.ok) {
+        return Response.json(
+          { error: `Invalid ComfyUI URL: ${validatedComfy.error}`, status: 400, },
+          { status: 400, },
+        );
+      }
+
+      const workflow = await loadComfyUIWorkflow(workflowName, {
+        prompt: req.prompt,
+        negativePrompt: req.negative_prompt,
+        width: sdConfig.defaults.width,
+        height: sdConfig.defaults.height,
+        steps: req.steps ?? sdConfig.defaults.steps,
+        cfgScale: req.cfgScale ?? sdConfig.defaults.cfgScale,
+        sampler: req.sampler_name ?? sdConfig.defaults.sampler,
+        seed: req.seed,
+      },);
+
+      const comfyClient = new ComfyUIClient({
+        baseUrl: sdConfig.baseUrl,
+        timeout: sdConfig.generationTimeout ?? 120_000,
+      },);
+
+      const buffers = await comfyClient.runWorkflow(workflow,);
+      images = buffers;
+      mimeType = "image/png";
+
+      break;
+    }
     default: {
       return Response.json(
         {
           error: `Image gen API family "${
             String(sdConfig.apiFamily,)
-          }" not implemented. Use "openai", "sdapi", or "sdcpp".`,
+          }" not implemented. Use "openai", "sdapi", "sdcpp", or "comfyui".`,
           status: 501,
         },
         { status: 501, },
