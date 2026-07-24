@@ -110,6 +110,7 @@ export const ImageApiFamily = {
   Openai: "openai",
   Sdapi: "sdapi",
   Sdcpp: "sdcpp",
+  Comfyui: "comfyui",
 } as const;
 export type ImageApiFamily = (typeof ImageApiFamily)[keyof typeof ImageApiFamily];
 
