@@ -140,6 +140,7 @@ export function getTheme(): string {
  * Falls back to key display if not found.
  */
 export function t(key: string, params?: Record<string, string>,): string {
+  if (typeof key !== "string") { return ""; }
   const map = (globalThis.__localeStrings ?? {}) as TranslationMap;
   const value = resolveKey(map, key,);
   if (value === undefined) { return key; }

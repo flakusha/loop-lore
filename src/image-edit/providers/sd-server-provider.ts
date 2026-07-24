@@ -24,7 +24,11 @@ import type {
 } from "../types";
 import type { WorkflowTemplate, } from "../types";
 
-const log = getLogger();
+let _log: ReturnType<typeof getLogger> | null = null;
+function log() {
+  _log ??= getLogger();
+  return _log;
+}
 
 export class SDServerEditProvider implements ImageEditProvider {
   readonly name: ImageEditBackend = "sd-server";
@@ -42,7 +46,7 @@ export class SDServerEditProvider implements ImageEditProvider {
 
     const validated = validateProviderUrl(sdConfig.baseUrl,);
     if (!validated.ok) {
-      log.warn({ message: "Invalid sd-server URL", error: validated.error, },);
+      log().warn({ message: "Invalid sd-server URL", error: validated.error, },);
       return null;
     }
 

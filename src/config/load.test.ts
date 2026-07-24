@@ -1,5 +1,7 @@
 import { describe, expect, test, } from "bun:test";
-import { coerceValue, deepMerge, setByPath, validateConfig, } from "./load";
+import { mkdirSync, rmSync, writeFileSync, } from "node:fs";
+import { join, } from "node:path";
+import { coerceValue, deepMerge, loadConfig, setByPath, validateConfig, } from "./load";
 import type { Config, } from "./schema";
 import { ConfigSchema, } from "./schema-class";
 
@@ -269,5 +271,133 @@ describe("Config layer merging", () => {
     (result.server as Record<string, unknown>).port = 5000;
 
     expect(result.server.port,).toBe(5000,);
+  });
+});
+
+describe("loadConfig integration", () => {
+  const tmpDir = join(import.meta.dir, "__test_config_tmp",);
+
+  function setupConfigFiles(files: Record<string, string>,) {
+    rmSync(tmpDir, { recursive: true, force: true, },);
+    // Create all parent directories needed by file paths
+    const dirs = new Set<string>();
+    for (const name of Object.keys(files,)) {
+      const dir = join(tmpDir, ...name.split("/",).slice(0, -1,),);
+      if (dir !== tmpDir) { dirs.add(dir,); }
+    }
+    mkdirSync(tmpDir, { recursive: true, },);
+    for (const dir of dirs) {
+      mkdirSync(dir, { recursive: true, },);
+    }
+    for (const [name, content,] of Object.entries(files,)) {
+      writeFileSync(join(tmpDir, name,), content,);
+    }
+  }
+
+  function cleanup() {
+    rmSync(tmpDir, { recursive: true, force: true, },);
+  }
+
+  test("loads config.toml from project root", () => {
+    setupConfigFiles({
+      "config.toml": `
+[server]
+port = 7171
+
+[generation.autoStart.llamaSwap]
+enabled = true
+configPath = "/tmp/llama-swap.yaml"
+`,
+    },);
+    try {
+      const config = loadConfig(tmpDir,);
+      expect(config.server.port,).toBe(7171,);
+      expect(config.generation.autoStart?.llamaSwap?.enabled,).toBe(true,);
+      expect(config.generation.autoStart?.llamaSwap?.configPath,).toBe("/tmp/llama-swap.yaml",);
+    } finally {
+      cleanup();
+    }
+  });
+
+  test("loads config.yaml from configs/ subdirectory", () => {
+    setupConfigFiles({
+      "configs/config.yaml": `
+server:
+  port: 8282
+`,
+    },);
+    try {
+      const config = loadConfig(tmpDir,);
+      expect(config.server.port,).toBe(8282,);
+    } finally {
+      cleanup();
+    }
+  });
+
+  test("config.local.toml overrides config.toml", () => {
+    setupConfigFiles({
+      "config.toml": `
+[server]
+port = 7171
+`,
+      "config.local.toml": `
+[server]
+port = 9999
+`,
+    },);
+    try {
+      const config = loadConfig(tmpDir,);
+      expect(config.server.port,).toBe(9999,);
+    } finally {
+      cleanup();
+    }
+  });
+
+  test("config.default.toml is merged under config.toml", () => {
+    setupConfigFiles({
+      "config.default.toml": `
+[server]
+port = 5555
+`,
+      "config.toml": `
+[server]
+port = 7171
+`,
+    },);
+    try {
+      const config = loadConfig(tmpDir,);
+      expect(config.server.port,).toBe(7171,);
+    } finally {
+      cleanup();
+    }
+  });
+
+  test("missing config file uses schema defaults", () => {
+    setupConfigFiles({},);
+    try {
+      const config = loadConfig(tmpDir,);
+      expect(config.server.port,).toBe(3000,);
+      expect(config.generation.autoStart,).toBeUndefined();
+    } finally {
+      cleanup();
+    }
+  });
+
+  test("autoStart from config.toml survives deep merge", () => {
+    setupConfigFiles({
+      "config.toml": `
+[generation.autoStart.llamaSwap]
+enabled = true
+configPath = "~/models/llama-swap.yaml"
+`,
+    },);
+    try {
+      const config = loadConfig(tmpDir,);
+      expect(config.generation.autoStart,).toBeDefined();
+      expect(config.generation.autoStart?.llamaSwap?.enabled,).toBe(true,);
+      expect(config.generation.autoStart?.llamaSwap?.configPath,).toBe("~/models/llama-swap.yaml",);
+    } finally {
+      cleanup();
+    }
   });
 });
