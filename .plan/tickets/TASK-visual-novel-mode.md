@@ -1,11 +1,12 @@
 # TASK: Visual Novel Mode
 
-**Status:** ⬜ Not Started
+**Status:** 🟡 Backend Complete / Frontend Not Started
 **Priority:** Medium
-**Effort:** Med
+**Effort:** Med-High (frontend rendering)
 **Epic:** Epic Immersion & Presentation (sub-task)
 **Tags:** chat, vn, visual-novel, rendering, ux
 **Spec:** `docs/frontend/chat/visual-novel-mode.md`
+**Git Issues:** `8be84a7` (frontend implementation), `cb9e1b7` (chat settings toggle)
 
 ## Summary
 
@@ -14,21 +15,24 @@ full-screen background images, text overlays, character portraits,
 scene transitions, and typewriter text effects. Transforms bubble chat
 into a visual novel experience.
 
-## Rationale
-
-- Visual novel presentation is the #1 requested immersion feature
-- Existing chat backgrounds (TASK-chat-backgrounds-location-sync) provide
-  images but no VN-style text rendering
-- Leverages existing asset system, character avatars, and location data
-- Per-chat toggle means no disruption to standard chat users
-
 ## Current State
 
-- Standard bubble chat layout is complete (P0 + P1)
-- Chat backgrounds task exists but not started
-- 3D avatar task exists but not started
-- No scene rendering infrastructure
-- No VN mode code exists
+### Backend: ✅ Complete
+
+- DB schema: `chats.visual_novel` column (integer, migration `027_gm_config_visual_novel`)
+- API: `ChatCreateBody` and `ChatUpdateBody` accept `visualNovel: boolean`
+- Service: `createChat`/`updateChat` in `src/chat/service.ts` handle `visualNovel` → `visual_novel`
+- Routes: `src/routes/chats.ts` GET/PUT pass `visualNovel` through
+- Validation: `GmConfigSchema` and `ChatUpdateBody` include `visualNovel: t.Optional(t.Boolean())`
+
+### Frontend: ❌ Not Started
+
+- No VN mode UI toggle
+- No scene renderer
+- No portrait manager
+- No transition engine
+- No typewriter effect
+- No VN-specific CSS
 
 ## Architecture
 
@@ -37,7 +41,7 @@ into a visual novel experience.
 ```
 Chat Settings → "Visual Novel Mode" toggle
   ↓
-Chat stores vn_mode_enabled (boolean)
+Chat stores visual_novel (int 0/1 in DB)
   ↓
 On chat load: if enabled, render VN layout instead of bubbles
   ↓
@@ -78,7 +82,7 @@ type TransitionType = "fade" | "cut" | "dissolve" | "slide" | "wipe";
 ```
 src/frontend/vn/
   ├── scene-renderer.ts     — main scene manager
-  ├── dialogue-box.ts       — text overlay renderer
+  ├── dialogue-box.ts       — text overlay renderer (merged into scene-renderer)
   ├── portrait-manager.ts   — character portrait positioning
   ├── transition-engine.ts  — scene transition animations
   ├── typewriter.ts         — character-by-character text reveal
@@ -86,57 +90,63 @@ src/frontend/vn/
   └── styles.css            — VN mode styles
 ```
 
-## Tasks
+## Implementation Phases
 
-### Phase 1: Core Renderer
+### Phase 1: State & Settings Integration
 
-- [ ] Create `src/frontend/vn/scene-renderer.ts` — scene lifecycle
-- [ ] Implement image background rendering (contain/cover/fill/auto)
-- [ ] Implement dialogue box overlay (semi-transparent, positioned)
-- [ ] Implement "below" layout mode
-- [ ] Implement "split" layout mode
-- [ ] Wire to chat message list (map messages → scenes)
+- [ ] Add `_vnEnabled`, `_vnLayout`, `_vnImageScaling`, `_vnTransition` to `ChatState` in `src/frontend/alpine/chat-types.ts`
+- [ ] Add VN settings loading in `chat-settings.ts` (read from `currentChat?.visual_novel`)
+- [ ] Add VN settings saving in `chat-settings.ts` (PUT `/api/chats/:id` with `visualNovel` body)
+- [ ] Add VN toggle UI to `src/components/chat/chat-settings-modal.html`
 
-### Phase 2: Character Portraits
+### Phase 2: VN Mode Container & Toggle
 
-- [ ] Create `src/frontend/vn/portrait-manager.ts`
-- [ ] Position portrait left for character, right for user
+- [ ] Modify `src/views/chat.html` to add VN mode container (conditional: VN layout vs bubble list)
+- [ ] Add `x-show`/`x-transition` logic for VN vs bubble mode mutual exclusivity
+- [ ] Add VN toggle button in chat header or settings
+- [ ] Wire VN mode state to Alpine.js chat component
+
+### Phase 3: Scene Renderer (`src/frontend/vn/scene-renderer.ts`)
+
+- [ ] Map `messages[]` → `VnScene[]` (group consecutive same-role messages)
+- [ ] Resolve background URL from `currentLocationId` → location asset
+- [ ] Implement 3 layout modes: `overlay`, `below`, `split`
+- [ ] Image scaling: `contain`/`cover`/`fill`/`auto`
+- [ ] Dialogue box rendering with speaker name + markdown content
+
+### Phase 4: Portrait Manager (`src/frontend/vn/portrait-manager.ts`)
+
+- [ ] Position portrait left (character) / right (user) / center (system)
+- [ ] Load from `currentCharacter.avatar_asset_id` asset via `/api/assets/:id/thumb`
 - [ ] Size: 30-40% of scene width (configurable)
-- [ ] Load from character `avatar_url` asset
-- [ ] Expression swap on emotion detection (if available)
+- [ ] Expression swap on emotion detection (future hook)
 
-### Phase 3: Transitions
+### Phase 5: Transition Engine (`src/frontend/vn/transition-engine.ts`)
 
-- [ ] Create `src/frontend/vn/transition-engine.ts`
-- [ ] Implement fade (crossfade, 400ms)
-- [ ] Implement cut (instant)
-- [ ] Implement slide (new image slides from right, 300ms)
-- [ ] Implement wipe (horizontal reveal, 400ms)
+- [ ] Implement `fade` (crossfade, 400ms)
+- [ ] Implement `cut` (instant)
+- [ ] Implement `slide` (new image slides from right, 300ms)
+- [ ] Implement `wipe` (horizontal reveal, 400ms)
+- [ ] Implement `dissolve` (pixelated dissolve, 600ms)
 - [ ] Trigger on background change (location, scene)
+- [ ] Preload next scene image
 
-### Phase 4: Typewriter & Navigation
+### Phase 6: Typewriter & Navigation (`src/frontend/vn/typewriter.ts`)
 
-- [ ] Create `src/frontend/vn/typewriter.ts`
-- [ ] Character-by-character reveal (configurable speed)
-- [ ] Pause on punctuation (100ms comma, 200ms sentence end)
-- [ ] Click/Space to reveal remaining text instantly
+- [ ] Character-by-character reveal with `requestAnimationFrame`
+- [ ] Pause on punctuation (100ms `,`, 200ms `.!?`)
+- [ ] Click/Space to instant reveal
 - [ ] Navigation: ←/→ for previous/next scene
 - [ ] Auto-advance timer (optional, configurable delay)
 - [ ] Respect `prefers-reduced-motion`
 
-### Phase 5: Settings & Integration
+### Phase 7: CSS & Polish
 
-- [ ] Create `src/frontend/vn/settings.ts`
-- [ ] Store VN settings per-chat (localStorage or chat record)
-- [ ] Add VN mode toggle to chat settings UI
-- [ ] Wire to chat.html (conditional render: VN vs bubbles)
-- [ ] Wire to chat state (Alpine.js integration)
-- [ ] Add schema column for VN settings (if not localStorage)
-
-### Phase 6: Polish
-
-- [ ] Preload next scene image (smooth transitions)
-- [ ] Scroll through scene history (backgrounds change)
+- [ ] Create `src/frontend/vn/styles.css` — VN-specific styles
+- [ ] Import into `src/public/css/app.css`
+- [ ] Dialogue box styling (overlay opacity, border-radius, padding)
+- [ ] Navigation arrows (←/→ for previous/next scene)
+- [ ] Auto-advance timer UI
 - [ ] Attachment rendering in VN mode (inline images, audio player)
 - [ ] Thinking block display in VN mode (collapsed, expandable)
 - [ ] System/narration messages (centered, no portrait, italic)
@@ -144,7 +154,6 @@ src/frontend/vn/
 ## Files to Create
 
 - `src/frontend/vn/scene-renderer.ts`
-- `src/frontend/vn/dialogue-box.ts`
 - `src/frontend/vn/portrait-manager.ts`
 - `src/frontend/vn/transition-engine.ts`
 - `src/frontend/vn/typewriter.ts`
@@ -153,11 +162,11 @@ src/frontend/vn/
 
 ## Files to Modify
 
-- `src/views/chat.html` — VN mode container, conditional render
-- `src/frontend/alpine/chat.ts` — VN mode state
-- `src/routes/chats.ts` — VN settings CRUD
-- `src/db/migrations/` — vn_mode_settings column (if needed)
-- `src/public/css/app.css` — VN mode imports
+- `src/frontend/alpine/chat-types.ts` — add VN state fields
+- `src/frontend/alpine/chat-settings.ts` — add VN settings load/save
+- `src/components/chat/chat-settings-modal.html` — add VN toggle UI
+- `src/views/chat.html` — add VN mode container, conditional render
+- `src/public/css/app.css` — import VN styles
 
 ## Performance
 
@@ -182,6 +191,4 @@ src/frontend/vn/
 
 ## Risk
 
-Med — significant frontend rendering work but no schema changes beyond
-settings storage. Leverages existing asset system. Main risk is ensuring
-VN mode doesn't conflict with bubble mode state.
+Med — significant frontend rendering work but no schema changes needed. VN mode is conditionally rendered and doesn't touch bubble mode state. Main risk is ensuring VN mode doesn't conflict with bubble mode scroll/positioning.
