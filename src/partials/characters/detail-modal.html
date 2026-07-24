@@ -1,13 +1,13 @@
 <div
   id="character-detail-modal"
   class="modal-overlay"
-  onclick="if (event.target === this) { closeModal(this,); }"
+  x-on:click="window.closeModalOnBackdrop($event)"
   data-testid="character-detail-modal"
 >
   <div class="modal">
     <div class="modal-header">
       <span class="title" data-field="name"></span>
-      <button class="btn-icon" onclick="closeModal(this.closest('.modal-overlay',),)">&times;</button>
+      <button class="btn-icon" x-on:click="window.closeModal($el)">&times;</button>
     </div>
     <div class="modal-body">
       <div style="display: flex; gap: var(--space-4); margin-bottom: var(--space-4)">
@@ -27,54 +27,20 @@
         </div>
       </div>
       <div class="form-group">
-        <label class="form-label">{{{ t("characters.systemPrompt") }}}</label>
+        <label class="form-label">System Prompt</label>
         <div
           style="font-size: var(--fs-base-sm); color: var(--text-secondary); white-space: pre-wrap; background: var(--bg-tertiary); padding: var(--space-3); border-radius: var(--radius-sm); max-height: 200px; overflow-y: auto"
           data-field="system-prompt"
         >
         </div>
       </div>
-      <div class="form-group">
-        <label class="form-label">{{{ t("characters.personality") }}}</label>
-        <div
-          style="font-size: var(--fs-base-sm); color: var(--text-secondary); white-space: pre-wrap; background: var(--bg-tertiary); padding: var(--space-3); border-radius: var(--radius-sm); max-height: 120px; overflow-y: auto"
-          data-field="personality"
-        >
-        </div>
-      </div>
-      <div class="form-group">
-        <label class="form-label">{{{ t("characters.scenario") }}}</label>
-        <div
-          style="font-size: var(--fs-base-sm); color: var(--text-secondary); white-space: pre-wrap; background: var(--bg-tertiary); padding: var(--space-3); border-radius: var(--radius-sm); max-height: 120px; overflow-y: auto"
-          data-field="scenario"
-        >
-        </div>
-      </div>
-      <div class="form-group">
-        <label class="form-label">{{{ t("characters.firstMessage") }}}</label>
-        <div
-          style="font-size: var(--fs-base-sm); color: var(--text-secondary); white-space: pre-wrap; background: var(--bg-tertiary); padding: var(--space-3); border-radius: var(--radius-sm); max-height: 120px; overflow-y: auto"
-          data-field="welcome-message"
-        >
-        </div>
-      </div>
-      <div class="form-group">
-        <label class="form-label">{{{ t("characters.tags") }}}</label>
-        <div
-          style="display: flex; flex-wrap: wrap; gap: var(--space-2)"
-          data-field="tags"
-        >
-        </div>
-      </div>
       <!-- Mood Display -->
       <div class="form-group" data-field="mood-section" style="display: none">
-        <label class="form-label">{{{ t("characters.mood") }}}</label>
+        <label class="form-label">Mood</label>
         <div style="display: flex; align-items: center; gap: var(--space-3); padding: var(--space-3); background: var(--bg-tertiary); border-radius: var(--radius-sm)">
           <span style="font-size: 24px" data-field="mood-emoji">😐</span>
           <div style="flex: 1">
-            <div style="font-size: var(--fs-base-sm); font-weight: 500" data-field="mood-label">
-              {{{ t("characters.neutral") }}}
-            </div>
+            <div style="font-size: var(--fs-base-sm); font-weight: 500" data-field="mood-label">Neutral</div>
             <div style="height: 4px; background: var(--border-default); border-radius: 2px; margin-top: 4px; overflow: hidden">
               <div
                 style="height: 100%; width: 50%; background: var(--text-secondary); border-radius: 2px"
@@ -90,26 +56,26 @@
         <button
           class="btn btn-secondary"
           data-action="start-chat"
-          onclick="startChatFromChar(this,)"
+          x-on:click="window.startChatFromChar($el)"
           data-testid="start-chat-btn"
         >
-          {{{ t("characters.startChat") }}}
+          💬 Start Chat
         </button>
         <button
           class="btn btn-secondary"
           data-action="edit-char"
-          onclick="editCharacter(this,)"
+          x-on:click="window.editCharacter($el)"
           data-testid="edit-character-btn"
         >
-          ✏️ {{{ t("common.edit") }}}
+          ✏️ Edit
         </button>
         <button
           class="btn btn-danger"
           data-action="delete-char"
-          onclick="deleteCharacter(this,)"
+          x-on:click="window.deleteCharacter($el)"
           data-testid="delete-character-btn"
         >
-          🗑 {{{ t("common.delete") }}}
+          🗑 Delete
         </button>
       </div>
     </div>
