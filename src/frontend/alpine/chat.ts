@@ -48,6 +48,7 @@ globalThis.chatState = function() {
     isContinuing: false,
     _generationEventSource: null as EventSource | null,
     chats: [] as { id: string; name?: string }[],
+    chats: [] as { id: string; name?: string }[],
     activeChat: null as string | null,
     messages: [] as {
       id: string;
