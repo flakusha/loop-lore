@@ -188,6 +188,7 @@ export const SCHEMA = new SchemaManifest()
     current_location_id: col("text",),
     story_state: col("text",),
     gm_config: col("text",),
+    visual_novel: col("integer", { notNull: true, },),
     turn_strategy: col("text",),
     max_turns: col("integer",),
     auto_advance: col("integer",),

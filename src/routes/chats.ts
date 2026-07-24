@@ -119,6 +119,8 @@ export function chatsRoutes(opts: HandlerOpts,) {
             currentLocationId: body.currentLocationId,
             turnStrategy: body.turnStrategy,
             participantIds: body.participantIds,
+            gmConfig: body.gmConfig ?? undefined,
+            visualNovel: body.visualNovel ?? undefined,
           },);
 
           const characterActors = await database
@@ -248,6 +250,8 @@ export function chatsRoutes(opts: HandlerOpts,) {
             isPinned: body.isPinned,
             isPaused: body.isPaused,
             freezePanel: body.freezePanel,
+            gmConfig: body.gmConfig ?? undefined,
+            visualNovel: body.visualNovel ?? undefined,
             userRole,
           },);
           if ("code" in result) {
