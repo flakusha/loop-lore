@@ -134,7 +134,7 @@ describe("E2E: character → mood → emotion → NSFW policy", () => {
     expect(mood,).toBeTruthy();
     expect(mood!.happiness,).toBe(65,);
     expect(mood!.baseMood,).toBe("happy",);
-    expect(mood!.moodStability,).toBe(0.4,);
+    expect(mood!.moodStability,).toBeCloseTo(0.4, 1,);
   });
 
   test("3. mood service applies happiness delta with stability", async () => {

@@ -110,10 +110,10 @@ describe("Mood CRUD", () => {
     expect(body.ok,).toBe(true,);
 
     // Verify update
-    const getRes = await app.handle(new Request(`http://localhost/api/actors/${actorId}/mood`,),);
-    const getBody = (await getRes.json()) as { happiness: number; currentMood: string };
-    expect(getBody.happiness,).toBe(90,);
-    expect(getBody.currentMood,).toBe("ecstatic",);
+    const verifyRes = await app.handle(new Request(`http://localhost/api/actors/${actorId}/mood`,),);
+    const verifyBody = (await verifyRes.json()) as { happiness: number; currentMood: string };
+    expect(verifyBody.happiness,).toBe(90,);
+    expect(verifyBody.currentMood,).toBe("ecstatic",);
   });
 
   test("POST /api/actors/:actorId/mood/delta applies delta", async () => {

@@ -95,10 +95,6 @@ import { adminWorlds, } from "./admin-worlds";
           this.loadHealth();
           break;
         }
-        case "templates": {
-          this.loadTemplates();
-          break;
-        }
       }
     },
 
