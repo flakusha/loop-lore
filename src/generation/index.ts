@@ -110,6 +110,7 @@ export {
   type ResolveProviderOpts,
 } from "./providers/registry";
 
+export type { IntentClassification, } from "./auto-gen";
 export { CircuitBreaker, circuitBreaker, type CircuitBreakerConfig, } from "./providers/circuit-breaker";
 export {
   ComfyUIClient,
@@ -118,5 +119,5 @@ export {
   type ComfyUIWorkflow,
 } from "./providers/comfyui";
 export { OpenAiCompatibleProvider, } from "./providers/openai-compatible";
-export { callWithFailover, } from "./providers/registry";
+export { buildFailoverList, callWithFailover, } from "./providers/registry";
 // TODO: export additional providers when implemented.

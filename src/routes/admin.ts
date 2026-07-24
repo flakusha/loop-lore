@@ -309,7 +309,7 @@ export function adminRoutes(opts: { database: Db; config: Config },): Elysia {
         }
 
         const role = p.role as string;
-        if (!VALID_ROLES.includes(role as ModelRole,)) {
+        if (!(VALID_ROLES as readonly string[]).includes(role,)) {
           return jsonError({
             message: `Invalid role: "${role}". Must be one of: ${VALID_ROLES.join(", ",)}`,
             status: HttpStatus.BadRequest,
@@ -334,7 +334,7 @@ export function adminRoutes(opts: { database: Db; config: Config },): Elysia {
           }
 
           const role = p.role as string;
-          if (!VALID_ROLES.includes(role as ModelRole,)) {
+          if (!(VALID_ROLES as readonly string[]).includes(role,)) {
             return jsonError({
               message: `Invalid role: "${role}". Must be one of: ${VALID_ROLES.join(", ",)}`,
               status: HttpStatus.BadRequest,
@@ -368,7 +368,7 @@ export function adminRoutes(opts: { database: Db; config: Config },): Elysia {
         }
 
         const role = p.role as string;
-        if (!VALID_ROLES.includes(role as ModelRole,)) {
+        if (!(VALID_ROLES as readonly string[]).includes(role,)) {
           return jsonError({
             message: `Invalid role: "${role}". Must be one of: ${VALID_ROLES.join(", ",)}`,
             status: HttpStatus.BadRequest,
