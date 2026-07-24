@@ -5,8 +5,8 @@
  */
 export { IntimacyService, } from "./service";
 export type {
-  IntimacyAction,
-  IntimacyThreshold,
   ApplyIntimacyActionOpts,
+  IntimacyAction,
   IntimacyPair,
+  IntimacyThreshold,
 } from "./service";

@@ -11,8 +11,8 @@ createLogger({ level: "error", },);
 // ── Helpers ──────────────────────────────────────────────────
 
 function createTestDb(): Kysely<any> {
-  const db = new Database(":memory:");
-  const kysely = new Kysely({ dialect: createSqliteDialect(db), });
+  const db = new Database(":memory:",);
+  const kysely = new Kysely({ dialect: createSqliteDialect(db,), },);
 
   // Create minimal schema
   db.exec(`
@@ -49,7 +49,7 @@ function createTestDb(): Kysely<any> {
       updated_at TEXT NOT NULL
     );
     INSERT INTO actors (id) VALUES ('actor-1');
-  `);
+  `,);
 
   return kysely;
 }
@@ -81,7 +81,7 @@ describe("BodySystemService", () => {
         stamina: 75,
         build: "athletic",
         beauty: 80,
-      });
+      },);
 
       expect(success,).toBe(true,);
 
@@ -98,7 +98,7 @@ describe("BodySystemService", () => {
       await service.updateProfile("actor-1", {
         stamina: 150,
         flexibility: -10,
-      });
+      },);
 
       const profile = await service.getProfile("actor-1",);
       expect(profile.stamina,).toBe(100,);
@@ -115,8 +115,8 @@ describe("BodySystemService", () => {
         visibility: "visible",
         attractivenessModifier: 5,
         intimidationModifier: 0,
-        fetishAppeal: ["navel"],
-      });
+        fetishAppeal: ["navel",],
+      },);
 
       const profile = await service.getProfile("actor-1",);
       expect(profile.modifications,).toHaveLength(1,);
@@ -134,7 +134,7 @@ describe("BodySystemService", () => {
         attractivenessModifier: 5,
         intimidationModifier: 0,
         fetishAppeal: [],
-      });
+      },);
 
       const success = await service.removeModification("actor-1", 0,);
       expect(success,).toBe(true,);
@@ -189,16 +189,16 @@ describe("BodySystemService", () => {
     });
 
     test("calculateAvailableActions uses flexibility + build", () => {
-      const athletic = { flexibility: 80, build: "athletic" } as any;
-      const heavy = { flexibility: 80, build: "heavy" } as any;
+      const athletic = { flexibility: 80, build: "athletic", } as any;
+      const heavy = { flexibility: 80, build: "heavy", } as any;
 
       expect(BodySystemService.calculateAvailableActions(athletic,),).toBe(10,);
       expect(BodySystemService.calculateAvailableActions(heavy,),).toBe(7,);
     });
 
     test("calculateArousalModifier uses sensitivity", () => {
-      const low = { sensitivity: 20 } as any;
-      const high = { sensitivity: 80 } as any;
+      const low = { sensitivity: 20, } as any;
+      const high = { sensitivity: 80, } as any;
 
       expect(BodySystemService.calculateArousalModifier(low,),).toBeLessThan(1,);
       expect(BodySystemService.calculateArousalModifier(high,),).toBeGreaterThan(1,);

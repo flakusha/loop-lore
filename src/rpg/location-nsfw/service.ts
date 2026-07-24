@@ -168,7 +168,7 @@ export class LocationNsfwService {
       .selectAll()
       .execute();
 
-    return rows.map((r,) => this.getRow(r,),);
+    return rows.map((r,) => this.getRow(r,));
   }
 
   /**
@@ -225,7 +225,7 @@ export class LocationNsfwService {
     risks: string;
     created_at: string;
     updated_at: string;
-  }): LocationNsfwConfig {
+  },): LocationNsfwConfig {
     return {
       id: row.id,
       locationId: row.location_id,
