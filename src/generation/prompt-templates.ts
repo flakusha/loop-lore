@@ -469,6 +469,12 @@ export interface ResolveProfileOptions {
   registry?: ImageModelProfileRegistry;
   /** Explicit profile ID override */
   profileId?: string;
+  /**
+   * Per-character template overrides (JSON from actors.template_overrides).
+   * Keys are `{mode}:{detail}` (e.g. "yourself:balanced") → template string.
+   * Matched overrides replace the built-in template for that mode+detail combo.
+   */
+  characterOverrides?: Record<string, string>;
 }
 
 export interface ResolvedProfile {
@@ -512,7 +518,16 @@ export function resolveProfile(
   const modeKey = mode === "raw_last" ? "last" : mode;
   const modeTemplates = profile.templates[detail] ?? profile.templates.balanced;
   const fallbackMode = modeKey === "free" ? "last" : modeKey;
-  const template = modeTemplates[fallbackMode] ?? modeTemplates.yourself;
+  let template = modeTemplates[fallbackMode] ?? modeTemplates.yourself;
+
+  // Apply per-character template overrides if present
+  if (opts.characterOverrides) {
+    const overrideKey = `${fallbackMode}:${detail}`;
+    const override = opts.characterOverrides[overrideKey];
+    if (override) {
+      template = override;
+    }
+  }
 
   return { profile, template, resolvedProfileId: profileId, };
 }
