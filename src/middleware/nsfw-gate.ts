@@ -6,6 +6,7 @@
  * - NSFW config (allowNsfw toggle + nsfwMinAge)
  * - Character content_rating (actors table column)
  * - Chat NSFW toggle (per-chat)
+ * - Intimacy level (for NSFW encounters)
  *
  * Blocks NSFW content for underage users or when NSFW is disabled.
  * Logs moderation events for audit.
@@ -23,6 +24,9 @@ const NSFW_RATINGS: readonly ContentRating[] = [
   "nsfw_intense",
   "nsfw_extreme",
 ] as const;
+
+/** Minimum intimacy score required for NSFW encounters. */
+const NSFW_INTIMACY_THRESHOLD = 40;
 
 /** Whether a content rating is considered NSFW. */
 export function isNsfwRating(rating: ContentRating,): boolean {
@@ -93,6 +97,33 @@ export async function getActorContentRating(
     .executeTakeFirst();
 
   return actor ? actor.content_rating : "sfw";
+}
+
+/**
+ * Check if intimacy level is sufficient for NSFW content.
+ *
+ * Returns the current intimacy score and whether it meets the threshold.
+ */
+export async function checkIntimacyForNsfw(
+  database: Kysely<DB>,
+  actorId: string,
+  targetActorId: string,
+  worldId: string | null = null,
+): Promise<{ sufficient: boolean; score: number; threshold: number }> {
+  const pair = await database
+    .selectFrom("character_intimacy",)
+    .select("score",)
+    .where("actor_id", "=", actorId,)
+    .where("target_actor_id", "=", targetActorId,)
+    .where("world_id", "is", worldId,)
+    .executeTakeFirst();
+
+  const score = pair?.score ?? 0;
+  return {
+    sufficient: score >= NSFW_INTIMACY_THRESHOLD,
+    score,
+    threshold: NSFW_INTIMACY_THRESHOLD,
+  };
 }
 
 /**
