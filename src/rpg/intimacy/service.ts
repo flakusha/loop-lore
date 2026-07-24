@@ -239,7 +239,7 @@ export class IntimacyService {
     // Update unlocked thresholds
     const newUnlocked = [
       ...pair.unlockedThresholds,
-      ...thresholdsReached.map((t,) => t.level,),
+      ...thresholdsReached.map((t,) => t.level),
     ];
 
     // Determine suggested relationship upgrade
@@ -288,7 +288,7 @@ export class IntimacyService {
     }
 
     const rows = await query.selectAll().execute();
-    return rows.map((r,) => this.rowToPair(r,),);
+    return rows.map((r,) => this.rowToPair(r,));
   }
 
   /**
@@ -351,7 +351,7 @@ export class IntimacyService {
     unlocked_thresholds: string;
     created_at: string;
     updated_at: string;
-  }): IntimacyPair {
+  },): IntimacyPair {
     return {
       id: row.id,
       actorId: row.actor_id,

@@ -1,0 +1,64 @@
+/**
+ * Hook Registry — Registers and chains hook handlers.
+ *
+ * Hooks run in registration order. Each hook's `canHandle`
+ * determines if it processes the content. All hooks that
+ * handle the content produce results; none short-circuit.
+ */
+
+import { getLogger, } from "../../logger";
+import { EmotionHook, } from "./emotion-hook";
+import { ModerationHook, } from "./moderation-hook";
+import { MoodHook, } from "./mood-hook";
+import { NsfwHook, } from "./nsfw-hook";
+import type { HookChainOptions, HookChainResult, HookHandler, HookResult, } from "./types";
+
+const registeredHooks: HookHandler[] = [];
+
+export function registerHook(hook: HookHandler,): void {
+  registeredHooks.push(hook,);
+}
+
+export function clearHooks(): void {
+  registeredHooks.length = 0;
+}
+
+export function getRegisteredHooks(): readonly HookHandler[] {
+  return registeredHooks;
+}
+
+export async function runHookChain(options: HookChainOptions,): Promise<HookChainResult> {
+  const log = getLogger();
+  const results: HookResult[] = [];
+  let suppressedContent = false;
+
+  for (const hook of registeredHooks) {
+    const canHandle = await hook.canHandle(options.context.content, options.context,);
+    if (!canHandle) { continue; }
+
+    log.debug("hook-chain: executing hook", { hook: hook.name, },);
+
+    const result = await hook.execute(options.context.content, options.context,);
+    results.push(result,);
+
+    if (result.handled && result.suppressContent) {
+      suppressedContent = true;
+    }
+  }
+
+  const allowed = !suppressedContent;
+  const events = results.filter((r,) => r.handled);
+
+  return { allowed, results, suppressedContent, events, };
+}
+
+/**
+ * Initialize default hooks for the generation pipeline.
+ */
+export function initDefaultHooks(): void {
+  clearHooks();
+  registerHook(new MoodHook(),);
+  registerHook(new EmotionHook(),);
+  registerHook(new NsfwHook(),);
+  registerHook(new ModerationHook(),);
+}

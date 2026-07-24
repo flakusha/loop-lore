@@ -226,6 +226,7 @@ export const SCHEMA = new SchemaManifest()
     character_version: col("text",),
     import_spec: col("text", { notNull: true, },),
     content_rating: col("text", { notNull: true, },),
+    template_overrides: col("text", { notNull: true, },),
     created_at: col("text", { notNull: true, },),
     updated_at: col("text", { notNull: true, },),
   },)

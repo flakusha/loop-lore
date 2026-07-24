@@ -213,7 +213,7 @@ export class BodySystemService {
     const profile = await this.getProfile(actorId,);
     if (index < 0 || index >= profile.modifications.length) { return false; }
 
-    const mods = profile.modifications.filter((_, i,) => i !== index,);
+    const mods = profile.modifications.filter((_, i,) => i !== index);
 
     const now = new Date().toISOString();
     await this.db
@@ -368,9 +368,12 @@ export class BodySystemService {
    */
   static calculateAvailableActions(profile: BodyProfile,): number {
     const base = Math.floor(profile.flexibility / 10,);
-    const buildBonus = profile.build === "athletic" ? 2
-      : profile.build === "slim" ? 1
-      : profile.build === "heavy" ? -1
+    const buildBonus = profile.build === "athletic"
+      ? 2
+      : profile.build === "slim"
+      ? 1
+      : profile.build === "heavy"
+      ? -1
       : 0;
     return Math.max(1, base + buildBonus,);
   }
@@ -400,7 +403,7 @@ export class BodySystemService {
     modifications: string;
     created_at: string;
     updated_at: string;
-  }): BodyProfile {
+  },): BodyProfile {
     return {
       id: row.id,
       actorId: row.actor_id,
@@ -430,7 +433,7 @@ export class BodySystemService {
     effects: string;
     created_at: string;
     updated_at: string;
-  }): HeatCycleState {
+  },): HeatCycleState {
     return {
       id: row.id,
       actorId: row.actor_id,
