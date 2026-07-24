@@ -15,8 +15,7 @@ import type {
 } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import { getLogger, } from "../../logger";
-import { safeJsonStringify, } from "../../utils";
-import { nowAndId, parseJsonField, } from "../shared/rpg-service-utils";
+import { uid, } from "../../utils";
 
 // ── Constants ──────────────────────────────────────────────
 
@@ -24,7 +23,7 @@ import { nowAndId, parseJsonField, } from "../shared/rpg-service-utils";
 const MAX_SKILL_LEVEL = 100;
 
 /** XP required per skill level (scales quadratically). */
-function xpForLevel(level: number,): number {
+function xpForLevel(level: number): number {
   return Math.floor(50 * level * (1 + level * 0.1),);
 }
 
@@ -137,7 +136,8 @@ export class SeductionService {
     }
 
     // Create default profile
-    const { id, now, } = nowAndId();
+    const now = new Date().toISOString();
+    const id = uid();
 
     await this.db
       .insertInto("character_desire_profile",)
@@ -176,38 +176,24 @@ export class SeductionService {
    */
   async updateDesireProfile(
     actorId: string,
-    updates: Partial<
-      Pick<DesireProfile, "turnOns" | "turnOffs" | "fetishes" | "hardLimits" | "desireDecayRate" | "desireBuildupRate">
-    >,
+    updates: Partial<Pick<DesireProfile, "turnOns" | "turnOffs" | "fetishes" | "hardLimits" | "desireDecayRate" | "desireBuildupRate">>,
   ): Promise<boolean> {
     // Ensure profile exists
     await this.getDesireProfile(actorId,);
 
     const now = new Date().toISOString();
-    const fields: Record<string, unknown> = { updated_at: now, };
+    const setClause: Record<string, unknown> = { updated_at: now, };
 
-    if (updates.turnOns !== undefined) {
-      const _r = safeJsonStringify(updates.turnOns,);
-      fields.turn_ons = _r.ok ? _r.value : "[]";
-    }
-    if (updates.turnOffs !== undefined) {
-      const _r = safeJsonStringify(updates.turnOffs,);
-      fields.turn_offs = _r.ok ? _r.value : "[]";
-    }
-    if (updates.fetishes !== undefined) {
-      const _r = safeJsonStringify(updates.fetishes,);
-      fields.fetishes = _r.ok ? _r.value : "[]";
-    }
-    if (updates.hardLimits !== undefined) {
-      const _r = safeJsonStringify(updates.hardLimits,);
-      fields.hard_limits = _r.ok ? _r.value : "[]";
-    }
-    if (updates.desireDecayRate !== undefined) { fields.desire_decay_rate = updates.desireDecayRate; }
-    if (updates.desireBuildupRate !== undefined) { fields.desire_buildup_rate = updates.desireBuildupRate; }
+    if (updates.turnOns !== undefined) { setClause.turn_ons = JSON.stringify(updates.turnOns,); }
+    if (updates.turnOffs !== undefined) { setClause.turn_offs = JSON.stringify(updates.turnOffs,); }
+    if (updates.fetishes !== undefined) { setClause.fetishes = JSON.stringify(updates.fetishes,); }
+    if (updates.hardLimits !== undefined) { setClause.hard_limits = JSON.stringify(updates.hardLimits,); }
+    if (updates.desireDecayRate !== undefined) { setClause.desire_decay_rate = updates.desireDecayRate; }
+    if (updates.desireBuildupRate !== undefined) { setClause.desire_buildup_rate = updates.desireBuildupRate; }
 
     const result = await this.db
       .updateTable("character_desire_profile",)
-      .set(fields,)
+      .set(setClause,)
       .where("actor_id", "=", actorId,)
       .executeTakeFirst();
 
@@ -237,7 +223,8 @@ export class SeductionService {
     }
 
     // Create level 1 skill
-    const { id, now, } = nowAndId();
+    const now = new Date().toISOString();
+    const id = uid();
 
     await this.db
       .insertInto("character_seduction_skills",)
@@ -325,7 +312,7 @@ export class SeductionService {
       .selectAll()
       .execute();
 
-    return Array.from(rows, (r,) => this.rowToSkill(r,),);
+    return rows.map((r,) => this.rowToSkill(r,),);
   }
 
   // ── Arousal State ─────────────────────────────────────
@@ -349,7 +336,8 @@ export class SeductionService {
     }
 
     // Create default state
-    const { id, now, } = nowAndId();
+    const now = new Date().toISOString();
+    const id = uid();
 
     await this.db
       .insertInto("character_arousal",)
@@ -467,32 +455,11 @@ export class SeductionService {
     await this.db
       .updateTable("character_arousal",)
       .set({
-        modifiers: (() => {
-          const _r = safeJsonStringify(mods,);
-          return _r.ok ? _r.value : "[]";
-        })(),
+        modifiers: JSON.stringify(mods,),
         updated_at: now,
       },)
       .where("id", "=", state.id,)
       .execute();
-  }
-
-  // ── Helpers ───────────────────────────────────────────
-
-  /** Check if approach matches any item in list (case-insensitive includes). */
-  private matchesAny(approachLower: string, items: string[],): boolean {
-    for (const item of items) {
-      if (approachLower.includes(item.toLowerCase(),)) { return true; }
-    }
-    return false;
-  }
-
-  /** Find first skill matching a category. */
-  private findSkillByCategory(skills: SeductionSkill[], category: SeductionSkillCategory,): SeductionSkill | undefined {
-    for (const s of skills) {
-      if (s.category === category) { return s; }
-    }
-    return undefined;
   }
 
   // ── Seduction Attempts ────────────────────────────────
@@ -503,14 +470,16 @@ export class SeductionService {
    * Skill check: roll 1d100 vs DC.
    * DC is influenced by target's arousal, turn-ons, and hard limits.
    */
-  async attemptSeduction(opts: SeductionAttemptOpts,): Promise<SeductionResult> {
+  async attemptSeduction(opts: SeductionAttemptOpts): Promise<SeductionResult> {
     const { actorId, targetId, skillCategory, approach, worldId, } = opts;
     const log = getLogger().child({ module: "seduction", },);
 
     // Check hard limits first
     const targetProfile = await this.getDesireProfile(targetId,);
     const approachLower = approach.toLowerCase();
-    const hardLimitTriggered = this.matchesAny(approachLower, targetProfile.hardLimits,);
+    const hardLimitTriggered = targetProfile.hardLimits.some(
+      (limit,) => approachLower.includes(limit.toLowerCase(),),
+    );
 
     if (hardLimitTriggered) {
       log.info(`Seduction blocked: hard limit triggered for ${targetId}`,);
@@ -528,7 +497,7 @@ export class SeductionService {
 
     // Get actor's skill (category-based, use first matching)
     const skills = await this.getActorSkills(actorId,);
-    const relevantSkill = this.findSkillByCategory(skills, skillCategory,);
+    const relevantSkill = skills.find((s,) => s.category === skillCategory,);
     const skillLevel = relevantSkill?.level ?? 1;
 
     // Calculate DC based on target's state
@@ -541,11 +510,15 @@ export class SeductionService {
     dc -= Math.floor(targetDesire.currentDesire * 0.2,); // Desire makes them easier
 
     // Turn-ons reduce DC
-    const turnOnMatch = this.matchesAny(approachLower, targetDesire.turnOns,);
+    const turnOnMatch = targetDesire.turnOns.some(
+      (on,) => approachLower.includes(on.toLowerCase(),),
+    );
     if (turnOnMatch) { dc -= 15; }
 
     // Turn-offs increase DC
-    const turnOffMatch = this.matchesAny(approachLower, targetDesire.turnOffs,);
+    const turnOffMatch = targetDesire.turnOffs.some(
+      (off,) => approachLower.includes(off.toLowerCase(),),
+    );
     if (turnOffMatch) { dc += 15; }
 
     dc = Math.max(10, Math.min(90, dc,),);
@@ -604,14 +577,14 @@ export class SeductionService {
     desire_buildup_rate: number;
     created_at: string;
     updated_at: string;
-  },): DesireProfile {
+  }): DesireProfile {
     return {
       id: row.id,
       actorId: row.actor_id,
-      turnOns: parseJsonField<string[]>(row.turn_ons, [],),
-      turnOffs: parseJsonField<string[]>(row.turn_offs, [],),
-      fetishes: parseJsonField<string[]>(row.fetishes, [],),
-      hardLimits: parseJsonField<string[]>(row.hard_limits, [],),
+      turnOns: JSON.parse(row.turn_ons,) as string[],
+      turnOffs: JSON.parse(row.turn_offs,) as string[],
+      fetishes: JSON.parse(row.fetishes,) as string[],
+      hardLimits: JSON.parse(row.hard_limits,) as string[],
       currentDesire: row.current_desire,
       desireDecayRate: row.desire_decay_rate,
       desireBuildupRate: row.desire_buildup_rate,
@@ -630,7 +603,7 @@ export class SeductionService {
     xp_to_next: number;
     created_at: string;
     updated_at: string;
-  },): SeductionSkill {
+  }): SeductionSkill {
     return {
       id: row.id,
       actorId: row.actor_id,
@@ -655,7 +628,7 @@ export class SeductionService {
     last_update: string;
     created_at: string;
     updated_at: string;
-  },): ArousalState {
+  }): ArousalState {
     return {
       id: row.id,
       actorId: row.actor_id,
@@ -663,7 +636,7 @@ export class SeductionService {
       level: row.level,
       buildupRate: row.buildup_rate,
       decayRate: row.decay_rate,
-      modifiers: parseJsonField<ArousalModifier[]>(row.modifiers, [],),
+      modifiers: JSON.parse(row.modifiers,) as ArousalModifier[],
       lastUpdate: row.last_update,
       createdAt: row.created_at,
       updatedAt: row.updated_at,
