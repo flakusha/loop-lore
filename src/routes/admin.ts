@@ -35,6 +35,8 @@ import {
   AdminModelRoleOverrideBody,
   AdminRoleUpdateBody,
   AdminSystemConfigBody,
+  AdminTemplateCreateBody,
+  AdminTemplateUpdateBody,
   ChatIdParams,
   PaginationQuery,
   UserIdParams,
@@ -685,6 +687,151 @@ export function adminRoutes(opts: { database: Db; config: Config },): Elysia {
         },
         { params: ChatIdParams, },
       )
+      // ── Template management ─────────────────────────────────
+      .get("/api/admin/templates", async (ctx: any,) => {
+        const { userRole, } = ctx;
+        if (!hasAdminAccess(userRole,)) {
+          return jsonError({
+            message: "Admin access required",
+            status: HttpStatus.Forbidden,
+            code: ErrorCode.Forbidden,
+          },);
+        }
+        const row = await opts.database
+          .selectFrom("system_config",)
+          .select("value",)
+          .where("key", "=", "sd.templates",)
+          .executeTakeFirst();
+        const profiles = row ? JSON.parse(row.value,) : {};
+        return jsonResponse(profiles,);
+      },)
+      .put(
+        "/api/admin/templates/:id",
+        async (ctx: any,) => {
+          const { params: p, userRole, body, } = ctx;
+          if (!hasAdminAccess(userRole,)) {
+            return jsonError({
+              message: "Admin access required",
+              status: HttpStatus.Forbidden,
+              code: ErrorCode.Forbidden,
+            },);
+          }
+          const { id, } = p as { id: string };
+          const update = body as Record<string, unknown>;
+          const row = await opts.database
+            .selectFrom("system_config",)
+            .select("value",)
+            .where("key", "=", "sd.templates",)
+            .executeTakeFirst();
+          const profiles: Record<string, unknown> = row ? JSON.parse(row.value,) : {};
+          if (!profiles[id]) {
+            return jsonError({
+              message: "Template not found",
+              status: HttpStatus.NotFound,
+              code: ErrorCode.NotFound,
+            },);
+          }
+          profiles[id] = { ...profiles[id] as object, ...update, id, };
+          await opts.database
+            .insertInto("system_config",)
+            .values({
+              key: "sd.templates",
+              value: JSON.stringify(profiles,),
+              description: "SD image model prompt templates",
+            },)
+            .onConflict((oc,) =>
+              oc.column("key",).doUpdateSet({
+                value: JSON.stringify(profiles,),
+                updated_at: new Date().toISOString(),
+              },)
+            )
+            .execute();
+          return jsonResponse(profiles[id],);
+        },
+        { body: AdminTemplateUpdateBody, },
+      )
+      .post(
+        "/api/admin/templates",
+        async (ctx: any,) => {
+          const { userRole, body, } = ctx;
+          if (!hasAdminAccess(userRole,)) {
+            return jsonError({
+              message: "Admin access required",
+              status: HttpStatus.Forbidden,
+              code: ErrorCode.Forbidden,
+            },);
+          }
+          const profile = body as Record<string, unknown>;
+          const id = profile.id as string;
+          const row = await opts.database
+            .selectFrom("system_config",)
+            .select("value",)
+            .where("key", "=", "sd.templates",)
+            .executeTakeFirst();
+          const profiles: Record<string, unknown> = row ? JSON.parse(row.value,) : {};
+          if (profiles[id]) {
+            return jsonError({
+              message: "Template already exists",
+              status: HttpStatus.BadRequest,
+              code: ErrorCode.BadRequest,
+            },);
+          }
+          profiles[id] = profile;
+          await opts.database
+            .insertInto("system_config",)
+            .values({
+              key: "sd.templates",
+              value: JSON.stringify(profiles,),
+              description: "SD image model prompt templates",
+            },)
+            .onConflict((oc,) =>
+              oc.column("key",).doUpdateSet({
+                value: JSON.stringify(profiles,),
+                updated_at: new Date().toISOString(),
+              },)
+            )
+            .execute();
+          return jsonResponse(profile,);
+        },
+        { body: AdminTemplateCreateBody, },
+      )
+      .delete("/api/admin/templates/:id", async (ctx: any,) => {
+        const { params: p, userRole, } = ctx;
+        if (!hasAdminAccess(userRole,)) {
+          return jsonError({
+            message: "Admin access required",
+            status: HttpStatus.Forbidden,
+            code: ErrorCode.Forbidden,
+          },);
+        }
+        const { id, } = p as { id: string };
+        const row = await opts.database
+          .selectFrom("system_config",)
+          .select("value",)
+          .where("key", "=", "sd.templates",)
+          .executeTakeFirst();
+        const profiles: Record<string, unknown> = row ? JSON.parse(row.value,) : {};
+        if (!profiles[id]) {
+          return jsonError({
+            message: "Template not found",
+            status: HttpStatus.NotFound,
+            code: ErrorCode.NotFound,
+          },);
+        }
+        delete profiles[id];
+        await opts.database
+          .insertInto("system_config",)
+          .values({
+            key: "sd.templates",
+            value: JSON.stringify(profiles,),
+            description: "SD image model prompt templates",
+          },)
+          .onConflict((oc,) =>
+            oc.column("key",).doUpdateSet({ value: JSON.stringify(profiles,), updated_at: new Date().toISOString(), },)
+          )
+          .execute();
+        return jsonNoContent();
+      },)
       // ── Audit log ──────────────────────────────────────────
       .get(
         "/api/admin/audit",
