@@ -191,7 +191,7 @@ const tsRules = {
   "import/no-mutable-exports": "error",
 
   // ── Custom restricted syntax ────────────────────────────────
-  "no-restricted-syntax": ["warn", ...customRestrictedSyntax],
+  "no-restricted-syntax": ["warn", ...customRestrictedSyntax,],
   // ── Low-value rules generating noise from Elysia/Kysely patterns ──
   "@typescript-eslint/no-unsafe-member-access": "off",
   "@typescript-eslint/no-unsafe-assignment": "off",
@@ -485,7 +485,9 @@ export default tseslint.config(
       "no-restricted-syntax": [
         "warn",
         // Allow JSON.stringify in assertNever (used for error messages only)
-        ...customRestrictedSyntax.filter((rule,) => rule.selector !== "CallExpression[callee.object.name='JSON'][callee.property.name='stringify']",),
+        ...customRestrictedSyntax.filter((rule,) =>
+          rule.selector !== "CallExpression[callee.object.name='JSON'][callee.property.name='stringify']"
+        ),
       ],
     },
   },
