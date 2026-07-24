@@ -115,8 +115,38 @@ export function characterIoRoutes(opts: HandlerOpts,) {
         return jsonError({ message: "url is required", status: HttpStatus.BadRequest, },);
       }
 
+      // SSRF protection: validate URL scheme and block private IPs
+      let parsedUrl: URL;
       try {
-        const response = await fetch(url,);
+        parsedUrl = new URL(url,);
+      } catch {
+        return jsonError({ message: "Invalid URL", status: HttpStatus.BadRequest, },);
+      }
+
+      if (parsedUrl.protocol !== "http:" && parsedUrl.protocol !== "https:") {
+        return jsonError({ message: "Only http and https URLs are allowed", status: HttpStatus.BadRequest, },);
+      }
+
+      // Block private/loopback IPs and cloud metadata endpoints
+      const hostname = parsedUrl.hostname;
+      if (
+        hostname === "localhost" ||
+        hostname === "127.0.0.1" ||
+        hostname === "::1" ||
+        hostname.startsWith("10.",) ||
+        hostname.startsWith("172.",) ||
+        hostname.startsWith("192.168.",) ||
+        hostname === "169.254.169.254" ||
+        hostname.startsWith("169.254.",)
+      ) {
+        return jsonError({
+          message: "URL resolves to a private or restricted address",
+          status: HttpStatus.BadRequest,
+        },);
+      }
+
+      try {
+        const response = await fetch(url, { signal: AbortSignal.timeout(5000,), },);
         if (!response.ok) {
           return jsonError({ message: `Failed to fetch URL: ${response.statusText}`, status: HttpStatus.BadRequest, },);
         }

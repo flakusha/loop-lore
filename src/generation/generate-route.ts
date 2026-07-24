@@ -21,7 +21,6 @@ import {
   MessageStatus,
   MessageVisibility,
 } from "../db/enums";
-import { getDatabase, } from "../db/index";
 import type { DB, } from "../db/schema";
 import { extractAndStoreMemories, } from "../memory";
 import { registry, } from "../plugins/registry";
@@ -266,18 +265,17 @@ export interface GenerateRequest {
  */
 export interface HandleGenerateOpts {
   body: unknown;
-  database?: Kysely<DB>;
+  database: Kysely<DB>;
   config?: Config;
   userId?: string;
 }
 
 export async function handleGenerate({
   body,
-  database: _database,
+  database,
   config: _config,
   userId,
 }: HandleGenerateOpts,): Promise<Response> {
-  const database = _database ?? getDatabase();
   const cfg = _config ?? loadConfig();
   const input = body as GenerateRequest;
 
