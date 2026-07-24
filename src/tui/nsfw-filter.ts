@@ -21,18 +21,10 @@ export interface NsfwFilterConfig {
 /** Default filter configuration. */
 const DEFAULT_CONFIG: NsfwFilterConfig = {
   mode: "show",
-  triggerRatings: ["nsfw_mild", "nsfw_moderate", "nsfw_intense", "nsfw_extreme",],
+  triggerRatings: ["nsfw_mild", "nsfw_moderate", "nsfw_intense", "nsfw_extreme"],
   keywords: [
-    "nude",
-    "naked",
-    "sex",
-    "sexual",
-    "intimate",
-    "arousal",
-    "orgasm",
-    "penetration",
-    "foreplay",
-    "seduction",
+    "nude", "naked", "sex", "sexual", "intimate", "arousal",
+    "orgasm", "penetration", "foreplay", "seduction",
   ],
 };
 
@@ -55,10 +47,7 @@ export class NsfwFilter {
 
     // Check for NSFW keywords
     const lower = content.toLowerCase();
-    for (const kw of this.config.keywords) {
-      if (lower.includes(kw,)) { return true; }
-    }
-    return false;
+    return this.config.keywords.some((kw,) => lower.includes(kw,),);
   }
 
   /**
@@ -72,25 +61,20 @@ export class NsfwFilter {
     }
 
     switch (this.config.mode) {
-      case "show": {
+      case "show":
         return content;
-      }
 
-      case "blur": {
+      case "blur":
         return "[NSFW Content Hidden]";
-      }
 
-      case "hide": {
+      case "hide":
         return null;
-      }
 
-      case "fade_to_black": {
+      case "fade_to_black":
         return "[The scene fades to black...]";
-      }
 
-      default: {
+      default:
         return content;
-      }
     }
   }
 
@@ -121,10 +105,6 @@ export class NsfwFilter {
    * Remove a keyword from the filter list.
    */
   removeKeyword(keyword: string,): void {
-    const filtered: string[] = [];
-    for (const kw of this.config.keywords) {
-      if (kw !== keyword) { filtered.push(kw,); }
-    }
-    this.config.keywords = filtered;
+    this.config.keywords = this.config.keywords.filter((kw,) => kw !== keyword,);
   }
 }

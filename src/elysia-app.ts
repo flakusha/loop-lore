@@ -53,6 +53,7 @@ import { messageEncryptionRoutes, } from "./routes/message-encryption";
 import { messageReactionsRoutes, } from "./routes/message-reactions";
 import { messagesRoutes, } from "./routes/messages";
 import { notificationsRoutes, } from "./routes/notifications";
+import { nsfwRoutes, } from "./routes/nsfw";
 import { pluginRoutes, } from "./routes/plugins";
 import { questsRoutes, } from "./routes/quests";
 import { sessionsRoutes, } from "./routes/sessions";
@@ -159,6 +160,7 @@ export function createApp(deps: AppDeps,): Elysia {
   app.use(personaRoutes(handleOpts,),);
   app.use(generationRoutes(handleOpts,),);
   app.use(ageGateRoutes(handleOpts,),);
+  app.use(nsfwRoutes(handleOpts,),);
   app.use(assetRoutes(handleOpts,),);
   app.use(viewRoutes({ database: handleOpts.database, },),);
 

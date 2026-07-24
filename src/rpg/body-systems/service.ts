@@ -17,8 +17,7 @@ import type {
 } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import { getLogger, } from "../../logger";
-import { safeJsonStringify, } from "../../utils";
-import { nowAndId, parseJsonField, } from "../shared/rpg-service-utils";
+import { uid, } from "../../utils";
 
 // ── Types ──────────────────────────────────────────────────
 
@@ -110,7 +109,8 @@ export class BodySystemService {
     }
 
     // Create default profile
-    const { id, now, } = nowAndId();
+    const now = new Date().toISOString();
+    const id = uid();
 
     await this.db
       .insertInto("character_body_profile",)
@@ -163,22 +163,22 @@ export class BodySystemService {
     await this.getProfile(actorId,);
 
     const now = new Date().toISOString();
-    const fields: Record<string, unknown> = { updated_at: now, };
+    const setClause: Record<string, unknown> = { updated_at: now, };
 
-    if (updates.stamina !== undefined) { fields.stamina = clamp(updates.stamina,); }
-    if (updates.flexibility !== undefined) { fields.flexibility = clamp(updates.flexibility,); }
-    if (updates.sensitivity !== undefined) { fields.sensitivity = clamp(updates.sensitivity,); }
-    if (updates.endurance !== undefined) { fields.endurance = clamp(updates.endurance,); }
-    if (updates.sizeCategory !== undefined) { fields.size_category = updates.sizeCategory; }
-    if (updates.build !== undefined) { fields.build = updates.build; }
-    if (updates.beauty !== undefined) { fields.beauty = clamp(updates.beauty,); }
-    if (updates.charisma !== undefined) { fields.charisma = clamp(updates.charisma,); }
-    if (updates.style !== undefined) { fields.style = clamp(updates.style,); }
-    if (updates.scent !== undefined) { fields.scent = updates.scent; }
+    if (updates.stamina !== undefined) { setClause.stamina = clamp(updates.stamina,); }
+    if (updates.flexibility !== undefined) { setClause.flexibility = clamp(updates.flexibility,); }
+    if (updates.sensitivity !== undefined) { setClause.sensitivity = clamp(updates.sensitivity,); }
+    if (updates.endurance !== undefined) { setClause.endurance = clamp(updates.endurance,); }
+    if (updates.sizeCategory !== undefined) { setClause.size_category = updates.sizeCategory; }
+    if (updates.build !== undefined) { setClause.build = updates.build; }
+    if (updates.beauty !== undefined) { setClause.beauty = clamp(updates.beauty,); }
+    if (updates.charisma !== undefined) { setClause.charisma = clamp(updates.charisma,); }
+    if (updates.style !== undefined) { setClause.style = clamp(updates.style,); }
+    if (updates.scent !== undefined) { setClause.scent = updates.scent; }
 
     const result = await this.db
       .updateTable("character_body_profile",)
-      .set(fields,)
+      .set(setClause,)
       .where("actor_id", "=", actorId,)
       .executeTakeFirst();
 
@@ -196,11 +196,10 @@ export class BodySystemService {
     const mods = [...profile.modifications, modification,];
 
     const now = new Date().toISOString();
-    const modsJson = safeJsonStringify(mods,);
     await this.db
       .updateTable("character_body_profile",)
       .set({
-        modifications: modsJson.ok ? modsJson.value : "[]",
+        modifications: JSON.stringify(mods,),
         updated_at: now,
       },)
       .where("actor_id", "=", actorId,)
@@ -214,17 +213,13 @@ export class BodySystemService {
     const profile = await this.getProfile(actorId,);
     if (index < 0 || index >= profile.modifications.length) { return false; }
 
-    const mods: BodyModification[] = [];
-    for (let i = 0; i < profile.modifications.length; i++) {
-      if (i !== index) { mods.push(profile.modifications[i]!,); }
-    }
+    const mods = profile.modifications.filter((_, i,) => i !== index,);
 
     const now = new Date().toISOString();
-    const modsJson = safeJsonStringify(mods,);
     await this.db
       .updateTable("character_body_profile",)
       .set({
-        modifications: modsJson.ok ? modsJson.value : "[]",
+        modifications: JSON.stringify(mods,),
         updated_at: now,
       },)
       .where("actor_id", "=", actorId,)
@@ -234,21 +229,13 @@ export class BodySystemService {
   }
 
   // ── Heat Cycle ────────────────────────────────────────
-  private defaultEffects: HeatEffects = {
-    arousalMultiplier: 1,
-    seductionResistance: 1,
-    pheromoneEmission: 0,
-    fertilityBoost: 1,
-    moodInstability: 0,
-    desireIntensity: 1,
-  };
 
   /**
    * Get or create a heat cycle for an actor.
    */
   async getHeatCycle(
     actorId: string,
-    species = "human",
+    species: string = "human",
   ): Promise<HeatCycleState> {
     const row = await this.db
       .selectFrom("character_heat_cycle",)
@@ -261,11 +248,18 @@ export class BodySystemService {
     }
 
     // Create default cycle (no heat for humans)
-    const { id, now, } = nowAndId();
+    const now = new Date().toISOString();
+    const id = uid();
     const isHuman = species.toLowerCase() === "human";
 
-    const effectsStringify = safeJsonStringify(this.defaultEffects, 2,);
-    const effects = effectsStringify.ok ? effectsStringify.value : "{}";
+    const defaultEffects: HeatEffects = {
+      arousalMultiplier: 1,
+      seductionResistance: 1,
+      pheromoneEmission: 0,
+      fertilityBoost: 1,
+      moodInstability: 0,
+      desireIntensity: 1,
+    };
 
     await this.db
       .insertInto("character_heat_cycle",)
@@ -276,7 +270,7 @@ export class BodySystemService {
         cycle_length_days: isHuman ? 0 : 30,
         current_phase: "normal",
         days_until_next_heat: isHuman ? 0 : 30,
-        effects,
+        effects: JSON.stringify(defaultEffects,),
         created_at: now,
         updated_at: now,
       },)
@@ -289,7 +283,7 @@ export class BodySystemService {
       cycleLengthDays: isHuman ? 0 : 30,
       currentPhase: "normal",
       daysUntilNextHeat: isHuman ? 0 : 30,
-      effects: this.defaultEffects,
+      effects: defaultEffects,
       createdAt: now,
       updatedAt: now,
     };
@@ -374,24 +368,10 @@ export class BodySystemService {
    */
   static calculateAvailableActions(profile: BodyProfile,): number {
     const base = Math.floor(profile.flexibility / 10,);
-    let buildBonus: number;
-    switch (profile.build) {
-      case "athletic": {
-        buildBonus = 2;
-        break;
-      }
-      case "slim": {
-        buildBonus = 1;
-        break;
-      }
-      case "heavy": {
-        buildBonus = -1;
-        break;
-      }
-      default: {
-        buildBonus = 0;
-      }
-    }
+    const buildBonus = profile.build === "athletic" ? 2
+      : profile.build === "slim" ? 1
+      : profile.build === "heavy" ? -1
+      : 0;
     return Math.max(1, base + buildBonus,);
   }
 
@@ -420,9 +400,7 @@ export class BodySystemService {
     modifications: string;
     created_at: string;
     updated_at: string;
-  },): BodyProfile {
-    const modifications = parseJsonField<BodyModification[]>(row.modifications, [],);
-
+  }): BodyProfile {
     return {
       id: row.id,
       actorId: row.actor_id,
@@ -436,7 +414,7 @@ export class BodySystemService {
       charisma: row.charisma,
       style: row.style,
       scent: row.scent,
-      modifications,
+      modifications: JSON.parse(row.modifications,) as BodyModification[],
       createdAt: row.created_at,
       updatedAt: row.updated_at,
     };
@@ -452,9 +430,7 @@ export class BodySystemService {
     effects: string;
     created_at: string;
     updated_at: string;
-  },): HeatCycleState {
-    const effects = parseJsonField<HeatEffects>(row.effects, this.defaultEffects,);
-
+  }): HeatCycleState {
     return {
       id: row.id,
       actorId: row.actor_id,
@@ -462,7 +438,7 @@ export class BodySystemService {
       cycleLengthDays: row.cycle_length_days,
       currentPhase: row.current_phase,
       daysUntilNextHeat: row.days_until_next_heat,
-      effects,
+      effects: JSON.parse(row.effects,) as HeatEffects,
       createdAt: row.created_at,
       updatedAt: row.updated_at,
     };
