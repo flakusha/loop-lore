@@ -204,6 +204,7 @@ export type ActorItemType = (typeof ActorItemType)[keyof typeof ActorItemType];
 // ── Model Roles ───────────────────────────────────────────
 export const ModelRole = {
   Main: "main",
+  Auxiliary: "auxiliary",
   Captioning: "captioning",
   Moderation: "moderation",
   Embeddings: "embeddings",

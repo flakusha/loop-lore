@@ -489,10 +489,14 @@ interface GenerationConfig {
   defaultModels: Record<string, string>;
   /** Auto-spawn external AI servers at startup (llama.cpp, sd.cpp) */
   autoStart?: AutoStartConfig;
+  /** Default streaming mode when chat-level setting is null. null = use provider capability */
+  defaultStream?: boolean | null;
   /** Default model role assignments (config-level, overridden by DB) */
   modelRoles?: {
     /** Primary reasoning model */
     main?: ModelRoleAssignment;
+    /** Lightweight model for fast decisions, intent classification, short tasks */
+    auxiliary?: ModelRoleAssignment;
     /** Vision/LM model for captioning */
     captioning?: ModelRoleAssignment;
     /** Content moderation/censoring model */

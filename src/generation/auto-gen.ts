@@ -12,6 +12,7 @@
 
 import type { Kysely, } from "kysely";
 import { marked, } from "marked";
+import { resolveModelRole, } from "../admin/model-roles";
 import { PromptAssembler, } from "../assistant/prompt-assembler";
 import { detectHallucinations, } from "../chat";
 import type { Config, } from "../config/schema";
@@ -19,6 +20,7 @@ import { compressThenEncrypt, deriveChatKeyForChat, getSmk, isEncryptionEnabled,
 import {
   CancelReason,
   CancelSource,
+  ChunkAction,
   ContentEncoding,
   MessageContentFormat,
   MessageContentType,
@@ -40,11 +42,73 @@ import {
   completeGeneration,
   failGeneration,
   getOrCreateBuffer,
+  processStreamingChunk,
   scheduleBufferCleanup,
   startGenerationTracking,
 } from "./index";
-import { listProviders, resolveProvider, } from "./providers/registry";
+import {
+  buildFailoverList,
+  callWithFailover,
+  getProvider,
+  listProviders,
+  resolveProvider,
+} from "./providers/registry";
 import type { ChunkEvent, } from "./providers/types";
+
+/**
+ * Pre-generation intent check using the auxiliary model.
+ *
+ * Sends a lightweight classification prompt to the auxiliary model
+ * to determine message intent before committing to full generation.
+ * Returns null if no auxiliary model is configured or on error.
+ */
+export interface IntentClassification {
+  intent: string;
+  confidence: number;
+  shortReply: boolean;
+}
+
+export async function classifyIntent(
+  userMessage: string,
+  config: Config,
+  db: Kysely<DB>,
+): Promise<IntentClassification | null> {
+  try {
+    const auxRole = await resolveModelRole("auxiliary", config, db,);
+    if (!auxRole.provider || !auxRole.model) { return null; }
+
+    const auxProvider = getProvider(auxRole.provider,);
+    if (!auxProvider) { return null; }
+
+    const classificationPrompt = [
+      {
+        role: "system" as const,
+        content:
+          'Classify the user message intent. Reply with ONLY a JSON object: {"intent": "greeting|question|command|roleplay|narrative", "confidence": 0.0-1.0, "shortReply": true/false}. shortReply=true for greetings, simple questions, short commands. shortReply=false for roleplay, narrative, complex requests.',
+      },
+      { role: "user" as const, content: userMessage.slice(0, 500,), },
+    ];
+
+    const response = await auxProvider.complete({
+      model: auxRole.model,
+      messages: classificationPrompt,
+      params: { temperature: 0.1, maxTokens: 100, },
+    },);
+
+    const parsed = jsonParseOr<Partial<IntentClassification>>(response.content, {},);
+    if (!parsed.intent) { return null; }
+
+    return {
+      intent: parsed.intent,
+      confidence: parsed.confidence ?? 0.5,
+      shortReply: parsed.shortReply ?? false,
+    };
+  } catch {
+    // Auxiliary model unavailable — proceed with main generation
+    return null;
+  }
+}
+
 export function isLlmGenerationConfigured(config: Config,): boolean {
   return (
     !!config.generation.defaultProvider ||
@@ -111,7 +175,7 @@ export async function triggerAutoGeneration(opts: AutoGenOpts,): Promise<void> {
 
     const chat = await database
       .selectFrom("chats",)
-      .select(["type", "turn_strategy", "mode", "gm_config", "world_id",],)
+      .select(["type", "turn_strategy", "mode", "gm_config", "world_id", "streaming",],)
       .where("id", "=", chatId,)
       .executeTakeFirst();
 
@@ -220,25 +284,59 @@ export async function triggerAutoGeneration(opts: AutoGenOpts,): Promise<void> {
       lastContentPreview: lastMsg?.content?.slice(0, 200,),
     },);
 
+    // ── Auxiliary model intent classification ────────────────────
+    // Use lightweight model to classify intent and adjust generation params
+    let maxTokens = 2048;
+    if (userMessage) {
+      const intent = await classifyIntent(userMessage, config, database,);
+      if (intent?.shortReply && intent.confidence > 0.7) {
+        maxTokens = 512;
+        log.info("Auxiliary model: short reply detected", {
+          intent: intent.intent,
+          confidence: intent.confidence,
+          maxTokens,
+        },);
+      }
+    }
+
     let accumulatedContent = "";
     let accumulatedThinking: string | undefined;
     let tokenUsage = { promptTokens: 0, completionTokens: 0, totalTokens: 0, };
     let finishReason: "stop" | "length" | "error" | "cancelled" = "stop";
-    const canStream = resolved.provider.capabilities.streaming;
+    // Resolution chain: chat.streaming → config.defaultStream → provider capability
+    const chatStreaming = chat?.streaming;
+    const configDefault = config.generation.defaultStream;
+    const providerCapable = resolved.provider.capabilities.streaming;
+    const canStream = chatStreaming === 1 ||
+      (chatStreaming == null && configDefault === true) ||
+      (chatStreaming == null && configDefault == null && providerCapable);
     const buffer = parentMessageId ? d.getOrCreateBuffer(chatId,) : undefined;
 
+    // Build failover list: primary provider first, then all others
+    const failoverList = d.buildFailoverList(resolved.resolvedProviderName, config,);
+    const genReq = {
+      model: resolved.resolvedModel,
+      messages: prompt.messages,
+      apiKey: resolved.resolvedApiKey,
+      params: { temperature: 0.9, maxTokens, },
+      signal: tracking?.abortSignal,
+    };
+
     if (canStream) {
-      const finalResponse = await resolved.provider.stream(
-        {
-          model: resolved.resolvedModel,
-          messages: prompt.messages,
-          apiKey: resolved.resolvedApiKey,
-          params: { temperature: 0.9, maxTokens: 2048, },
-          signal: tracking?.abortSignal,
-        },
+      const finalResponse = await d.callWithFailover(
+        failoverList,
+        genReq,
         (chunk: ChunkEvent,) => {
           if (chunk.type === "content" && chunk.content) {
             accumulatedContent += chunk.content;
+            // Feed chunk to repetition/policy detector
+            void processStreamingChunk({ attemptId: tracking?.attemptId ?? "", chunk: chunk.content, db: database, },)
+              .then((action,) => {
+                if (action !== ChunkAction.Continue) {
+                  // Detector triggered cancel — abort the stream
+                  tracking?.abortSignal?.throwIfAborted();
+                }
+              },);
             buffer?.append(
               "stream-update",
               renderStreamMessage(actorName, accumulatedContent, tracking?.attemptId ?? "", d.markedParse, {
@@ -257,13 +355,7 @@ export async function triggerAutoGeneration(opts: AutoGenOpts,): Promise<void> {
       };
       finishReason = finalResponse.finishReason;
     } else {
-      const response = await resolved.provider.complete({
-        model: resolved.resolvedModel,
-        messages: prompt.messages,
-        apiKey: resolved.resolvedApiKey,
-        params: { temperature: 0.9, maxTokens: 2048, },
-        signal: tracking?.abortSignal,
-      },);
+      const response = await d.callWithFailover(failoverList, genReq,);
       accumulatedContent = response.content;
       accumulatedThinking = response.thinking;
       tokenUsage = {
@@ -831,6 +923,8 @@ export interface GenDeps {
   startGenerationTracking: typeof startGenerationTracking;
   resolveProvider: typeof resolveProvider;
   listProviders: typeof listProviders;
+  callWithFailover: typeof callWithFailover;
+  buildFailoverList: typeof buildFailoverList;
   isEncryptionEnabled: () => boolean;
   getSmk: () => CryptoKey | null;
   deriveChatKeyForChat: typeof deriveChatKeyForChat;
@@ -853,6 +947,8 @@ export function createDefaultDeps(): GenDeps {
     startGenerationTracking,
     resolveProvider,
     listProviders,
+    callWithFailover,
+    buildFailoverList,
     isEncryptionEnabled,
     getSmk,
     deriveChatKeyForChat,
