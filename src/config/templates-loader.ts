@@ -1,6 +1,6 @@
 // src/config/templates-loader.ts — Template config file loader
 //
-// Finds and loads template YAML files from config/templates/ directory.
+// Finds and loads template YAML files from configs/templates/ directory.
 // Applies per-domain merge strategies (replace, extend, override).
 // Reuses existing infrastructure: findConfigFile, parseFileContent, deepMerge.
 
@@ -69,12 +69,12 @@ function findMainRepoRoot(cwd: string,): string | null {
 function findTemplateFiles(cwd: string,): Map<string, string> {
   const mainRoot = findMainRepoRoot(cwd,);
   const searchDirs = [
-    path.join(cwd, "config", "templates",),
+    path.join(cwd, "configs", "templates",),
     path.join(cwd, "templates",),
   ];
   if (mainRoot && mainRoot !== cwd) {
     searchDirs.push(
-      path.join(mainRoot, "config", "templates",),
+      path.join(mainRoot, "configs", "templates",),
       path.join(mainRoot, "templates",),
     );
   }
@@ -242,7 +242,7 @@ function mergeImageEditConfig(
 // ── Main Loader ─────────────────────────────────────────────
 
 /**
- * Load template configuration from config/templates/ directory.
+ * Load template configuration from configs/templates/ directory.
  *
  * Merges user-provided template files with built-in defaults
  * using per-domain merge strategies.

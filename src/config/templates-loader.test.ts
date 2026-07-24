@@ -24,7 +24,7 @@ import {
 const TEST_DIR = path.join(import.meta.dir, "..", ".test-templates",);
 
 function setupTestDir() {
-  mkdirSync(path.join(TEST_DIR, "config", "templates",), { recursive: true, },);
+  mkdirSync(path.join(TEST_DIR, "configs", "templates",), { recursive: true, },);
 }
 
 function teardownTestDir() {
@@ -34,7 +34,7 @@ function teardownTestDir() {
 }
 
 function writeTemplateFile(name: string, content: string,) {
-  writeFileSync(path.join(TEST_DIR, "config", "templates", name,), content,);
+  writeFileSync(path.join(TEST_DIR, "configs", "templates", name,), content,);
 }
 
 // ── Merge Strategy Tests ────────────────────────────────────
@@ -384,7 +384,7 @@ describe("findTemplateFiles", () => {
     teardownTestDir();
   },);
 
-  test("finds template files in config/templates/", () => {
+  test("finds template files in configs/templates/", () => {
     writeTemplateFile("llm.yaml", "merge: extend",);
     writeTemplateFile("sd.yaml", "merge: extend",);
 
