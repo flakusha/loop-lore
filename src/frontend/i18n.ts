@@ -52,6 +52,7 @@ export function resolveKey(
   map: TranslationMap,
   key: string,
 ): string | undefined {
+  if (typeof key !== "string") { return undefined; }
   const parts = key.split(".",);
   let current: TranslationMap | string = map;
 

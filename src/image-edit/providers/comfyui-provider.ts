@@ -22,7 +22,11 @@ import type {
 } from "../types";
 import type { WorkflowTemplate, } from "../types";
 
-const log = getLogger();
+let _log: ReturnType<typeof getLogger> | null = null;
+function log() {
+  _log ??= getLogger();
+  return _log;
+}
 
 /** Node class_type categories that indicate capability */
 const CAPABILITY_NODE_MAP: Record<ImageEditCategory, string[]> = {
@@ -87,7 +91,7 @@ export class ComfyUIEditProvider implements ImageEditProvider {
       this.installedNodes = new Set(Object.keys(nodeInfo,),);
       return this.installedNodes;
     } catch (error) {
-      log.error({ message: "Failed to discover ComfyUI nodes", error: String(error,), },);
+      log().error({ message: "Failed to discover ComfyUI nodes", error: String(error,), },);
       this.installedNodes = new Set();
       return this.installedNodes;
     }
@@ -146,7 +150,7 @@ export class ComfyUIEditProvider implements ImageEditProvider {
 
     onProgress?.({ status: "completed", progress: 1, },);
 
-    log.info({
+    log().info({
       message: "ComfyUI execution completed",
       prompt_id,
       images: results.length,

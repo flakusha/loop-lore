@@ -222,7 +222,22 @@ function loadConfig(cwd?: string,): Config {
     }
   }
 
-  // 2. Load config.local.* if present — per-developer overrides (gitignored)
+  // 2. Load main config file (config.yaml / config.yml / config.toml)
+  //    Priority: .yaml > .yml > .toml (first found wins)
+  const mainFound = findConfigFile(directory,);
+  if (mainFound) {
+    try {
+      const content = readFileSync(mainFound.path, "utf8",);
+      const parsed = parseFileContent(content, mainFound.ext,);
+      config = deepMerge(config as unknown as Record<string, unknown>, parsed,) as unknown as Config;
+    } catch (error) {
+      throw new Error(`Failed to parse config file ${mainFound.path}: ${(error as Error).message}`, {
+        cause: error,
+      },);
+    }
+  }
+
+  // 3. Load config.local.* if present — per-developer overrides (gitignored)
   //    Priority: .yaml > .yml > .toml (first found wins)
   const localFound = findConfigFile(directory, LOCAL_CONFIG_FILES,);
   if (localFound) {
@@ -237,7 +252,7 @@ function loadConfig(cwd?: string,): Config {
     }
   }
 
-  // 3. Load env config if present — overrides config file values
+  // 4. Load env config if present — overrides config file values
   //    YAML takes priority over TOML (if both exist, YAML wins).
   //    Also check main repo root when running in a worktree.
   const envConfigCandidates = [
@@ -268,14 +283,14 @@ function loadConfig(cwd?: string,): Config {
     }
   }
 
-  // 4. Apply env var overrides — highest priority
+  // 5. Apply env var overrides — highest priority
   config = applyEnvironmentOverrides(config, ENV_MAP,);
   applyProviderEnvVars(config,);
 
-  // 5. Load template configs from configs/templates/ directory
+  // 6. Load template configs from configs/templates/ directory
   config.templates = loadTemplateConfig(directory,);
 
-  // 6. Backward compat: wrap single sd provider object in array
+  // 7. Backward compat: wrap single sd provider object in array
   const sd = config.generation.providers.sd;
   if (sd && !Array.isArray(sd,)) {
     config.generation.providers.sd = [sd,];
