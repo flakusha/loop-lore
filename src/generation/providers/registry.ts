@@ -121,6 +121,35 @@ export async function resolveProvider({
   };
 }
 
+/**
+ * Build an ordered failover list of providers for callWithFailover().
+ *
+ * Returns the primary provider first, then any additional providers
+ * from config that differ from the primary. Does NOT include all
+ * registered providers — only those explicitly configured.
+ */
+export function buildFailoverList(
+  primaryName: string,
+  config?: Config,
+): { name: string; provider: LLMProvider }[] {
+  const primary = getProvider(primaryName,);
+  if (!primary) { return []; }
+
+  const result: { name: string; provider: LLMProvider }[] = [{ name: primaryName, provider: primary, },];
+
+  // Add other configured providers as fallbacks (skip primary)
+  // Only include providers that are actually registered in the registry
+  if (config) {
+    for (const instance of config.generation.providers.openaiCompatible) {
+      if (instance.name !== primaryName && registry.has(instance.name,)) {
+        result.push({ name: instance.name, provider: registry.get(instance.name,)!, },);
+      }
+    }
+  }
+
+  return result;
+}
+
 /** Initialize providers from config on startup */
 export function initializeProviders(config: Config,): void {
   for (const instance of config.generation.providers.openaiCompatible) {
