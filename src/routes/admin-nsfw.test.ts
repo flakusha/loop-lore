@@ -111,10 +111,10 @@ describe("PUT /api/admin/nsfw", () => {
     expect(body.ok,).toBe(true,);
 
     // Verify the update
-    const getRes = await app.handle(new Request("http://localhost/api/admin/nsfw",),);
-    const getConfig = (await getRes.json()) as { allowNsfw: boolean; nsfwMinAge: number };
-    expect(getConfig.allowNsfw,).toBe(false,);
-    expect(getConfig.nsfwMinAge,).toBe(21,);
+    const verifyRes = await app.handle(new Request("http://localhost/api/admin/nsfw",),);
+    const verifyConfig = (await verifyRes.json()) as { allowNsfw: boolean; nsfwMinAge: number };
+    expect(verifyConfig.allowNsfw,).toBe(false,);
+    expect(verifyConfig.nsfwMinAge,).toBe(21,);
   });
 
   test("clamps nsfwMinAge to valid range (13-25)", async () => {
@@ -128,9 +128,9 @@ describe("PUT /api/admin/nsfw", () => {
     );
     expect(res.status,).toBe(200,);
 
-    const getRes = await app.handle(new Request("http://localhost/api/admin/nsfw",),);
-    const getConfig = (await getRes.json()) as { nsfwMinAge: number };
-    expect(getConfig.nsfwMinAge,).toBe(13,); // clamped to min 13
+    const verifyRes = await app.handle(new Request("http://localhost/api/admin/nsfw",),);
+    const verifyConfig = (await verifyRes.json()) as { nsfwMinAge: number };
+    expect(verifyConfig.nsfwMinAge,).toBe(13,); // clamped to min 13
   });
 });
 

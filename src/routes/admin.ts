@@ -731,7 +731,7 @@ export function adminRoutes(opts: { database: Db; config: Config },): Elysia {
               code: ErrorCode.NotFound,
             },);
           }
-          profiles[id] = { ...profiles[id] as object, ...update, id, };
+          profiles[id] = { ...profiles[id], ...update, id, };
           await opts.database
             .insertInto("system_config",)
             .values({
@@ -818,6 +818,7 @@ export function adminRoutes(opts: { database: Db; config: Config },): Elysia {
             code: ErrorCode.NotFound,
           },);
         }
+        // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
         delete profiles[id];
         await opts.database
           .insertInto("system_config",)

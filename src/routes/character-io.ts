@@ -136,7 +136,7 @@ export function characterIoRoutes(opts: HandlerOpts,) {
         hostname.startsWith("10.",) ||
         hostname.startsWith("172.",) ||
         hostname.startsWith("192.168.",) ||
-        hostname === "169.254.169.254" ||
+        hostname === "169.254.169.254" || // eslint-disable-line sonarjs/no-hardcoded-ip
         hostname.startsWith("169.254.",)
       ) {
         return jsonError({
