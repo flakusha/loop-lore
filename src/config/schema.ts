@@ -540,6 +540,19 @@ interface NsfwConfig {
   nsfwMinAge: number;
 }
 
+// ── Hooks (Fast Review & Trigger System) ─────────────────────
+
+interface HooksConfig {
+  /** Enable mood shift detection hooks. Default true. */
+  enableMoodHooks: boolean;
+  /** Enable emotion change detection hooks. Default true. */
+  enableEmotionHooks: boolean;
+  /** Enable NSFW content gating hooks. Default true. */
+  enableNsfwHooks: boolean;
+  /** Enable moderation flagging hooks. Default true. */
+  enableModerationHooks: boolean;
+}
+
 // ── Testing (e2e external-server config) ────────────────────
 
 interface TestingConfig {
@@ -639,6 +652,7 @@ interface Config {
   transport: TransportConfig;
   messages: MessagesConfig;
   nsfw: NsfwConfig;
+  hooks: HooksConfig;
   generation: GenerationConfig;
   byoKey: ByoKeyConfig;
   encryption: EncryptionConfig;
@@ -675,6 +689,7 @@ export type {
   GenerationConfig,
   GenerationProvidersConfig,
   HeadersConfig,
+  HooksConfig,
   ImageProviderConfig,
   ImageProviderDefaults,
   LlamaCppAutoStartConfig,
