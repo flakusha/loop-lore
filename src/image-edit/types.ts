@@ -8,6 +8,7 @@
  * @module image-edit-types
  */
 
+import type { ImageApiFamily, } from "../db/enums-config";
 import type { ComfyUIWorkflow, } from "../generation/providers/comfyui";
 
 // ── Template System ──────────────────────────────────────────
@@ -135,7 +136,7 @@ export type { ComfyUINodeInfo, } from "../generation/providers/comfyui";
 
 /** sd-server capability info */
 export interface SDServerCapabilities {
-  apiFamily: "openai" | "sdapi" | "sdcpp";
+  apiFamily: ImageApiFamily;
   features: ImageEditCategory[];
   models: { name: string; type: string }[];
 }
