@@ -37,6 +37,8 @@ export interface PromptParams {
   emotion?: string;
   /** Emotion avatar asset ID to use for this generation (if pre-selected) */
   emotionAvatar?: string;
+  /** Avatar template config for emotion-to-intent mapping */
+  avatarConfig?: import("../../config/sections/templates").AvatarTemplateConfig;
 }
 
 export interface PromptSectionReport {
