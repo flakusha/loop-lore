@@ -7,6 +7,7 @@ import { actorHeaderSection, } from "./sections/actor-header";
 import { authorNoteSection, } from "./sections/author-note";
 import { chatHistorySection, } from "./sections/chat-history";
 import { dynamicContextSection, } from "./sections/dynamic-context";
+import { emotionAvatarSection, } from "./sections/emotion-avatar";
 import { eventSection, } from "./sections/events";
 import { examplesSection, } from "./sections/examples";
 import { groupParticipantsSection, } from "./sections/group-participants";
@@ -27,6 +28,7 @@ export const PROMPT_SECTIONS: SectionBuilder[] = [
   groupParticipantsSection,
   userPersonaSection,
   nsfwContextSection,
+  emotionAvatarSection,
   loreSection,
   memorySection,
   eventSection,
