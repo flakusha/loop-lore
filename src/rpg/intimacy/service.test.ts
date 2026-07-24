@@ -3,7 +3,7 @@ import { describe, expect, test, } from "bun:test";
 import { Kysely, } from "kysely";
 import { createSqliteDialect, } from "../../db/index";
 import { createLogger, } from "../../logger";
-import { INTIMACY_THRESHOLDS, IntimacyService, } from "./service";
+import { IntimacyService, INTIMACY_THRESHOLDS, } from "./service";
 
 // Initialize logger for tests (error only to suppress noise)
 createLogger({ level: "error", },);
@@ -11,11 +11,11 @@ createLogger({ level: "error", },);
 // ── Helpers ──────────────────────────────────────────────────
 
 function createTestDb(): Kysely<any> {
-  const db = new Database(":memory:",);
-  const kysely = new Kysely({ dialect: createSqliteDialect(db,), },);
+  const db = new Database(":memory:");
+  const kysely = new Kysely({ dialect: createSqliteDialect(db), });
 
   // Create minimal schema
-  db.run(`
+  db.exec(`
     CREATE TABLE actors (
       id TEXT PRIMARY KEY,
       content_rating TEXT NOT NULL DEFAULT 'sfw'
@@ -47,7 +47,7 @@ function createTestDb(): Kysely<any> {
       updated_at TEXT NOT NULL
     );
     INSERT INTO actors (id) VALUES ('actor-1'), ('actor-2'), ('actor-3');
-  `,);
+  `);
 
   return kysely;
 }
@@ -94,7 +94,7 @@ describe("IntimacyService", () => {
         minIntimacy: 0,
         requiresConsent: false,
       },
-    },);
+    });
 
     expect(result.applied,).toBe(true,);
     expect(result.newScore,).toBe(10,);
@@ -117,7 +117,7 @@ describe("IntimacyService", () => {
         minIntimacy: 25,
         requiresConsent: false,
       },
-    },);
+    });
 
     expect(result.applied,).toBe(false,);
     expect(result.reason,).toContain("Intimacy too low",);
@@ -128,7 +128,7 @@ describe("IntimacyService", () => {
     const service = new IntimacyService(db,);
 
     // Create a friendship relationship
-    await db.insertInto("character_relationships",).values({
+    await db.insertInto("character_relationships").values({
       id: "rel-1",
       actor_id: "actor-1",
       target_actor_id: "actor-2",
@@ -140,7 +140,7 @@ describe("IntimacyService", () => {
       metadata: "{}",
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
-    },).execute();
+    }).execute();
 
     const result = await service.applyAction({
       database: db,
@@ -152,10 +152,10 @@ describe("IntimacyService", () => {
         type: "verbal",
         delta: 15,
         minIntimacy: 0,
-        allowedRelationships: ["romantic",],
+        allowedRelationships: ["romantic"],
         requiresConsent: false,
       },
-    },);
+    });
 
     expect(result.applied,).toBe(false,);
     expect(result.reason,).toContain("Relationship type not allowed",);
@@ -181,7 +181,7 @@ describe("IntimacyService", () => {
         minIntimacy: 0,
         requiresConsent: false,
       },
-    },);
+    });
 
     expect(result.thresholdsReached.length,).toBeGreaterThan(0,);
     expect(result.thresholdsReached[0]!.level,).toBe(INTIMACY_THRESHOLDS.acquaintances,);
@@ -215,7 +215,7 @@ describe("IntimacyService", () => {
         minIntimacy: 0,
         requiresConsent: false,
       },
-    },);
+    });
 
     const affected = await service.decayAll("actor-1", 5,);
     expect(affected,).toBe(1,);
