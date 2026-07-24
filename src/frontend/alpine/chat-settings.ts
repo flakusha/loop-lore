@@ -1,7 +1,7 @@
 import { apiFetch, } from "./htmx";
 import { jsonBody, jsonParseOr, safeJsonStringify, } from "./json";
 import { log as rootLog, } from "./logger";
-import type { ChatState, } from "./types";
+import type { ChatState, GmConfig, } from "./types";
 
 const log = rootLog.child({ module: "chat-settings", },);
 
@@ -27,8 +27,8 @@ export const chatSettings: Partial<ChatState> & ThisType<ChatState> = {
     this._chatSettingsTurnStrategy = chat?.turn_strategy ?? "round_robin";
     this._groupPaused = this.isChatPaused(chat,);
     if (chat?.gm_config) {
-      const config = jsonParseOr<{ assistantRole?: string }>(chat.gm_config, {},);
-      this._assistantRole = (config.assistantRole as "off" | "helper" | "gm" | "moderator") || "off";
+      const config = jsonParseOr<GmConfig>(chat.gm_config, {},);
+      this._assistantRole = config.assistantRole ?? "off";
     }
     Alpine.store("ui",).showChatSettings = true;
   },
