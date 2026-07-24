@@ -21,6 +21,8 @@ import type {
   XFrameOption,
 } from "../db/enums";
 
+import type { TemplatesConfig } from "./sections/templates";
+
 interface TlsConfig {
   /** Path to TLS private key (PEM). Auto-generated if missing. */
   key: string;
@@ -658,6 +660,7 @@ interface Config {
   encryption: EncryptionConfig;
   headers: HeadersConfig;
   dynamicResponse: DynamicResponseConfig;
+  templates: TemplatesConfig;
   testing?: TestingConfig;
 }
 
@@ -708,4 +711,5 @@ export type {
   TransportConfig,
   TransportLimitsConfig,
   TuiConfig,
+  TemplatesConfig,
 };

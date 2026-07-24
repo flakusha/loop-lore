@@ -1,0 +1,17 @@
+# SD Image Generation Templates
+#
+# Image model profiles, prompt templates, and model matching rules.
+# Merge strategy: replace | extend (default) | override
+#
+# extend: adds new profiles/rules, existing keys from config win on conflict
+# replace: wipes all built-in profiles, uses only these
+# override: deep merges over built-ins
+
+merge: extend
+
+# Custom image model profiles (merged with built-in BUILTIN_PROFILES)
+profiles: {}
+
+# Model name pattern matching (appended to built-in rules)
+# First match wins. Pattern is matched against lowercase model name.
+modelMatching: []
