@@ -4,6 +4,7 @@ import { adminAudit, } from "./admin-audit";
 import { adminChats, } from "./admin-chats";
 import { adminModels, } from "./admin-models";
 import { adminSystem, } from "./admin-system";
+import { adminTemplates, } from "./admin-templates";
 import { adminUsers, } from "./admin-users";
 import { adminWorlds, } from "./admin-worlds";
 
@@ -34,6 +35,7 @@ import { adminWorlds, } from "./admin-worlds";
     ...adminAudit,
     ...adminModels,
     ...adminSystem,
+    ...adminTemplates,
 
     // ── Lifecycle ───────────────────────────────────────
     async init() {
@@ -69,6 +71,10 @@ import { adminWorlds, } from "./admin-worlds";
           this.loadModels();
           this.loadModelRoles();
           this.loadSdStatus();
+          break;
+        }
+        case "templates": {
+          this.loadTemplates();
           break;
         }
         case "plugins": {
