@@ -35,6 +35,13 @@ export const TurnStrategySchema = t.UnionEnum([
   "quest_driven",
   "hybrid",
 ],);
+
+/** Chat-level GM configuration — stored as JSON in `chats.gm_config` */
+export const GmConfigSchema = t.Object({
+  assistantRole: t.Optional(t.UnionEnum(["off", "helper", "gm", "moderator",],),),
+  visualNovel: t.Optional(t.Boolean(),),
+},);
+
 export const MessageRoleSchema = t.UnionEnum(["user", "assistant", "character", "system",],);
 export const MessageContentTypeSchema = t.UnionEnum([
   "text",
@@ -155,6 +162,8 @@ export const ChatCreateBody = t.Object({
   participantIds: t.Optional(t.Array(t.String(),),), // eslint-disable-line unicorn/max-nested-calls
   worldId: OptionalId,
   currentLocationId: OptionalId,
+  gmConfig: t.Optional(GmConfigSchema,),
+  visualNovel: t.Optional(t.Boolean(),),
 },);
 
 export const ChatUpdateBody = t.Object({
@@ -165,6 +174,8 @@ export const ChatUpdateBody = t.Object({
   isPinned: t.Optional(t.Boolean(),),
   isPaused: t.Optional(t.Boolean(),),
   freezePanel: t.Optional(t.Boolean(),),
+  gmConfig: t.Optional(GmConfigSchema,),
+  visualNovel: t.Optional(t.Boolean(),),
 },);
 
 export const ChatIdParams = t.Object({
