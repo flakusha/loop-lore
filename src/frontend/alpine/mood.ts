@@ -16,6 +16,9 @@ export const moodState: Partial<ChatState> & ThisType<ChatState> = {
   _moodLoading: false,
   _moodCanEdit: false,
   _moodSliderValue: 50,
+  _emotionAvatars: [] as { emotion: string; avatarId: string; assetId: string }[],
+  _emotionAvatarsLoading: false,
+  _currentEmotionAvatar: null as string | null,
 
   async loadMood() {
     if (!this.activeChat) { return; }
@@ -46,11 +49,80 @@ export const moodState: Partial<ChatState> & ThisType<ChatState> = {
 
       // Check if user can edit mood (GM or admin role)
       this._moodCanEdit = this.userRole === "admin" || this.userRole === "solo";
+
+      // Load emotion avatars for this character
+      await this.loadEmotionAvatars();
     } catch (error) {
       log.error("Failed to load mood", error instanceof Error ? error : undefined, {},);
     } finally {
       this._moodLoading = false;
     }
+  },
+
+  async loadEmotionAvatars() {
+    if (!this.activeChat) { return; }
+    this._emotionAvatarsLoading = true;
+    try {
+      const res = await apiFetch(`/api/chats/${this.activeChat}/participants`,);
+      if (!res.ok) { return; }
+      const participants = await res.json();
+      const npc = Array.isArray(participants,)
+        ? participants.find((p: any,) => p.role_in_chat === "member" && p.actor_type !== "user")
+        : null;
+      if (!npc?.actor_id) { return; }
+
+      const avatarsRes = await apiFetch(`/api/actors/${npc.actor_id}/avatars`,);
+      if (avatarsRes.ok) {
+        const avatars = await avatarsRes.json();
+        this._emotionAvatars = avatars
+          .filter((a: any,) => a.tags?.emotion)
+          .map((a: any,) => ({
+            emotion: a.tags.emotion,
+            avatarId: a.id,
+            assetId: a.asset_id,
+          }));
+
+        // Select the avatar matching current mood
+        if (this._mood) {
+          this._currentEmotionAvatar = this.selectEmotionAvatar(this._mood.currentMood,);
+        }
+      }
+    } catch (error) {
+      log.error("Failed to load emotion avatars", error instanceof Error ? error : undefined, {},);
+    } finally {
+      this._emotionAvatarsLoading = false;
+    }
+  },
+
+  /**
+   * Select the best emotion avatar for the given emotion.
+   * Returns the asset ID or null if no matching avatar found.
+   */
+  selectEmotionAvatar(emotion: string,): string | null {
+    if (this._emotionAvatars.length === 0) { return null; }
+
+    // Exact match first
+    const exact = this._emotionAvatars.find((a,) => a.emotion === emotion);
+    if (exact) {
+      this._currentEmotionAvatar = exact.assetId;
+      return exact.assetId;
+    }
+
+    // Fallback to neutral
+    const neutral = this._emotionAvatars.find((a,) => a.emotion === "neutral");
+    if (neutral) {
+      this._currentEmotionAvatar = neutral.assetId;
+      return neutral.assetId;
+    }
+
+    // Fallback to first available
+    const first = this._emotionAvatars[0];
+    if (first) {
+      this._currentEmotionAvatar = first.assetId;
+      return first.assetId;
+    }
+
+    return null;
   },
 
   async updateMoodHappiness(happiness: number,) {

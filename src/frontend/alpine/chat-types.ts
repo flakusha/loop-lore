@@ -551,4 +551,14 @@ export interface ChatState extends AlpineMagicThis {
   _getMoodColor(happiness: number,): string;
 
   _happinessToMood(happiness: number,): string;
+
+  _emotionAvatars: { emotion: string; avatarId: string; assetId: string }[];
+
+  _emotionAvatarsLoading: boolean;
+
+  _currentEmotionAvatar: string | null;
+
+  loadEmotionAvatars(): Promise<void>;
+
+  selectEmotionAvatar(emotion: string,): string | null;
 }
