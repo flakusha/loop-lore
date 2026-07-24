@@ -34,6 +34,8 @@ export interface SDRequest {
   size: [number, number,];
   /** Random seed for reproducibility */
   seed?: number;
+  /** Emotion type for emotion-aware generation (e.g., avatar variants) */
+  emotion?: string;
 }
 
 /** Response from SD generation */
