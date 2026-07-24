@@ -61,6 +61,7 @@
 | 43 | NSFW Game Mechanics               | 📝 Draft       | Medium   | `epic-nsfw-game-mechanics.md`             |
 | 44 | Worlds Extension                  | ⬜ Not Started | Medium   | `epic-worlds-extension.md`                |
 | 45 | Configurable Template System      | 🟢 Complete    | High     | `epic-config-templates.md`                |
+| 46 | Creative Studio                   | 📝 Draft       | Medium   | `epic-creative-studio.md`                 |
 
 ### Permanently Ongoing Epics
 
@@ -235,6 +236,7 @@ epics where applicable.
 - **Epic 40:** Blog System ⬜
 - **Epic 43:** NSFW Game Mechanics 📝
 - **Epic 44:** Worlds Extension ⬜
+- **Epic 46:** Creative Studio 📝
 
 ### P3 — Deferred (Post-MVP)
 
