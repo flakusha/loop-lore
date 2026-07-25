@@ -1,21 +1,37 @@
 import type { Kysely, } from "kysely";
 
 /**
- * Migration 027 — NSFW Game Mechanics
+ * Migration 027 — Consolidated feature batch
  *
- * Adds tables for:
- * - Character intimacy tracking (per-pair scores)
- * - Character arousal state (transient, decays)
- * - Character desire profiles (turn-ons, turn-offs, fetishes, hard limits)
- * - Character seduction skills (category + XP/leveling)
- * - NSFW encounters (structured adult scenes with phases)
- * - Character body profiles (physique, modifications)
- * - Character heat cycles (species-specific reproductive cycles)
- * - Character fantasies (kinks, discovery, fulfillment)
- * - Location NSFW config (privacy, atmosphere, equipment)
+ * Merges three previously separate 027 migrations:
+ * - GM Config & Visual Novel (chats columns)
+ * - NSFW Game Mechanics (9 tables)
+ * - Template Injection (actors column)
+ *
+ * The typed schema (`GmConfig`, `VisualNovel`) is enforced at the
+ * application layer, not the DB layer.
  */
 export async function up(database: Kysely<unknown>,): Promise<void> {
-  // ── Character Intimacy ─────────────────────────────────
+  // ── GM Config & Visual Novel (chats columns) ───────────
+  await database.schema
+    .alterTable("chats",)
+    .addColumn("visual_novel", "integer", (col,) => col.notNull().defaultTo(0,),)
+    .execute();
+
+  await database.schema
+    .alterTable("chats",)
+    .addColumn("streaming", "integer",)
+    .execute();
+
+  // ── Template Injection (actors column) ─────────────────
+  await database.schema
+    .alterTable("actors",)
+    .addColumn("template_overrides", "text", (col,) => col.notNull().defaultTo("{}",),)
+    .execute();
+
+  // ── NSFW Game Mechanics (tables) ───────────────────────
+
+  // Character Intimacy
   await database.schema
     .createTable("character_intimacy",)
     .addColumn("id", "text", (col,) => col.primaryKey(),)
@@ -34,7 +50,7 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     ],)
     .execute();
 
-  // ── Character Arousal ──────────────────────────────────
+  // Character Arousal
   await database.schema
     .createTable("character_arousal",)
     .addColumn("id", "text", (col,) => col.primaryKey(),)
@@ -50,7 +66,7 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     .addUniqueConstraint("uq_arousal_actor_world", ["actor_id", "world_id",],)
     .execute();
 
-  // ── Character Desire Profile ───────────────────────────
+  // Character Desire Profile
   await database.schema
     .createTable("character_desire_profile",)
     .addColumn("id", "text", (col,) => col.primaryKey(),)
@@ -67,7 +83,7 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     .addUniqueConstraint("uq_desire_profile_actor", ["actor_id",],)
     .execute();
 
-  // ── Character Seduction Skills ─────────────────────────
+  // Character Seduction Skills
   await database.schema
     .createTable("character_seduction_skills",)
     .addColumn("id", "text", (col,) => col.primaryKey(),)
@@ -86,7 +102,7 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     ],)
     .execute();
 
-  // ── NSFW Encounters ───────────────────────────────────
+  // NSFW Encounters
   await database.schema
     .createTable("nsfw_encounters",)
     .addColumn("id", "text", (col,) => col.primaryKey(),)
@@ -104,7 +120,7 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     .addColumn("updated_at", "text", (col,) => col.notNull(),)
     .execute();
 
-  // ── Character Body Profile ─────────────────────────────
+  // Character Body Profile
   await database.schema
     .createTable("character_body_profile",)
     .addColumn("id", "text", (col,) => col.primaryKey(),)
@@ -125,7 +141,7 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     .addUniqueConstraint("uq_body_profile_actor", ["actor_id",],)
     .execute();
 
-  // ── Character Heat Cycle ───────────────────────────────
+  // Character Heat Cycle
   await database.schema
     .createTable("character_heat_cycle",)
     .addColumn("id", "text", (col,) => col.primaryKey(),)
@@ -140,7 +156,7 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     .addUniqueConstraint("uq_heat_cycle_actor", ["actor_id",],)
     .execute();
 
-  // ── Character Fantasies ────────────────────────────────
+  // Character Fantasies
   await database.schema
     .createTable("character_fantasies",)
     .addColumn("id", "text", (col,) => col.primaryKey(),)
@@ -159,7 +175,7 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     .addColumn("updated_at", "text", (col,) => col.notNull(),)
     .execute();
 
-  // ── Location NSFW Config ───────────────────────────────
+  // Location NSFW Config
   await database.schema
     .createTable("location_nsfw_config",)
     .addColumn("id", "text", (col,) => col.primaryKey(),)
@@ -177,6 +193,7 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
 }
 
 export async function down(database: Kysely<unknown>,): Promise<void> {
+  // ── Drop NSFW tables (reverse creation order) ──────────
   await database.schema.dropTable("location_nsfw_config",).execute();
   await database.schema.dropTable("character_fantasies",).execute();
   await database.schema.dropTable("character_heat_cycle",).execute();
@@ -186,4 +203,21 @@ export async function down(database: Kysely<unknown>,): Promise<void> {
   await database.schema.dropTable("character_desire_profile",).execute();
   await database.schema.dropTable("character_arousal",).execute();
   await database.schema.dropTable("character_intimacy",).execute();
+
+  // ── Drop actors column ─────────────────────────────────
+  await database.schema
+    .alterTable("actors",)
+    .dropColumn("template_overrides",)
+    .execute();
+
+  // ── Drop chats columns (reverse order) ─────────────────
+  await database.schema
+    .alterTable("chats",)
+    .dropColumn("streaming",)
+    .execute();
+
+  await database.schema
+    .alterTable("chats",)
+    .dropColumn("visual_novel",)
+    .execute();
 }
