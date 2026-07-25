@@ -10,6 +10,16 @@
 import type { TranslatorFn, } from "../i18n/types";
 import { safeJsonStringify, } from "../utils";
 
+// ── Auth helpers ──────────────────────────────────────────────
+
+/** Extract auth fields (userId, userRole) from Elysia context. */
+export function extractAuth(ctx: unknown,): { userId: string | null; userRole: string | null } {
+  return {
+    userId: (ctx as any).userId as string | null,
+    userRole: (ctx as any).userRole as string | null,
+  };
+}
+
 // ── HTTP status code constants ────────────────────────────────
 
 export const HttpStatus = {
