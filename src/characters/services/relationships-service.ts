@@ -9,6 +9,7 @@ import { randomUUID, } from "node:crypto";
 import type { RelationshipEventType, RelationshipType, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import { jsonParseOr, } from "../../utils";
+import { guardNotExists, withWorldId, } from "./shared-service-utils";
 
 /** Options for creating a relationship */
 export interface CreateRelationshipOpts {
@@ -78,11 +79,10 @@ export class RelationshipsService {
    * @returns List of relationships
    */
   async getRelationships(actorId: string, worldId?: string,): Promise<Relationship[]> {
-    const rows = await this.db
-      .selectFrom("character_relationships",)
-      .where("actor_id", "=", actorId,)
-      .$if(!!worldId, (qb,) => qb.where("world_id", "=", worldId!,),)
-      .$if(!worldId, (qb,) => qb.where("world_id", "is", null,),)
+    const rows = await withWorldId(
+      this.db.selectFrom("character_relationships",).where("actor_id", "=", actorId,),
+      worldId,
+    )
       .selectAll()
       .execute();
 
@@ -101,12 +101,12 @@ export class RelationshipsService {
     targetActorId: string,
     worldId?: string,
   ): Promise<Relationship | undefined> {
-    const row = await this.db
-      .selectFrom("character_relationships",)
-      .where("actor_id", "=", actorId,)
-      .where("target_actor_id", "=", targetActorId,)
-      .$if(!!worldId, (qb,) => qb.where("world_id", "=", worldId!,),)
-      .$if(!worldId, (qb,) => qb.where("world_id", "is", null,),)
+    const row = await withWorldId(
+      this.db.selectFrom("character_relationships",)
+        .where("actor_id", "=", actorId,)
+        .where("target_actor_id", "=", targetActorId,),
+      worldId,
+    )
       .selectAll()
       .executeTakeFirst();
 
@@ -121,11 +121,7 @@ export class RelationshipsService {
    */
   async createRelationship(opts: CreateRelationshipOpts,): Promise<string> {
     const existing = await this.getRelationship(opts.actorId, opts.targetActorId, opts.worldId,);
-    if (existing) {
-      throw new Error(
-        `Relationship already exists between ${opts.actorId} and ${opts.targetActorId}`,
-      );
-    }
+    guardNotExists(existing, "Relationship", `${opts.actorId}->${opts.targetActorId}`,);
 
     const id = randomUUID();
     const now = new Date().toISOString();
@@ -214,25 +210,23 @@ export class RelationshipsService {
       updateData.metadata = JSON.stringify(opts.metadata,);
     }
 
-    await this.db
-      .updateTable("character_relationships",)
-      .set(updateData,)
-      .where("actor_id", "=", actorId,)
-      .where("target_actor_id", "=", targetActorId,)
-      .$if(!!worldId, (qb,) => qb.where("world_id", "=", worldId!,),)
-      .$if(!worldId, (qb,) => qb.where("world_id", "is", null,),)
-      .execute();
+    await withWorldId(
+      this.db.updateTable("character_relationships",)
+        .set(updateData,)
+        .where("actor_id", "=", actorId,)
+        .where("target_actor_id", "=", targetActorId,),
+      worldId,
+    ).execute();
 
     // Update reverse if bidirectional
     if (existing.isBidirectional) {
-      await this.db
-        .updateTable("character_relationships",)
-        .set(updateData,)
-        .where("actor_id", "=", targetActorId,)
-        .where("target_actor_id", "=", actorId,)
-        .$if(!!worldId, (qb,) => qb.where("world_id", "=", worldId!,),)
-        .$if(!worldId, (qb,) => qb.where("world_id", "is", null,),)
-        .execute();
+      await withWorldId(
+        this.db.updateTable("character_relationships",)
+          .set(updateData,)
+          .where("actor_id", "=", targetActorId,)
+          .where("target_actor_id", "=", actorId,),
+        worldId,
+      ).execute();
     }
   }
 
@@ -254,23 +248,21 @@ export class RelationshipsService {
       );
     }
 
-    await this.db
-      .deleteFrom("character_relationships",)
-      .where("actor_id", "=", actorId,)
-      .where("target_actor_id", "=", targetActorId,)
-      .$if(!!worldId, (qb,) => qb.where("world_id", "=", worldId!,),)
-      .$if(!worldId, (qb,) => qb.where("world_id", "is", null,),)
-      .execute();
+    await withWorldId(
+      this.db.deleteFrom("character_relationships",)
+        .where("actor_id", "=", actorId,)
+        .where("target_actor_id", "=", targetActorId,),
+      worldId,
+    ).execute();
 
     // Delete reverse if bidirectional
     if (existing.isBidirectional) {
-      await this.db
-        .deleteFrom("character_relationships",)
-        .where("actor_id", "=", targetActorId,)
-        .where("target_actor_id", "=", actorId,)
-        .$if(!!worldId, (qb,) => qb.where("world_id", "=", worldId!,),)
-        .$if(!worldId, (qb,) => qb.where("world_id", "is", null,),)
-        .execute();
+      await withWorldId(
+        this.db.deleteFrom("character_relationships",)
+          .where("actor_id", "=", targetActorId,)
+          .where("target_actor_id", "=", actorId,),
+        worldId,
+      ).execute();
     }
   }
 

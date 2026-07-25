@@ -62,6 +62,9 @@ export interface AvatarSelectionContext {
   outfit?: string;
 }
 
+/** All tag types for iteration */
+const ALL_TAG_TYPES: AvatarTagType[] = ["emotion", "mood", "action", "location", "time", "outfit",];
+
 /**
  * Character Avatar Service
  *
@@ -255,7 +258,8 @@ export class AvatarService {
   }
 
   /**
-   * Calculate score for an avatar based on context and weights
+   * Calculate score for an avatar based on context and weights.
+   * Iterates over all tag types, comparing context values to avatar tags.
    * @param avatar - Avatar to score
    * @param context - Selection context
    * @param weights - Tag type weights
@@ -270,40 +274,14 @@ export class AvatarService {
   ): number {
     let score = 0;
 
-    // Emotion match
-    if (context.emotion && avatar.tags.emotion) {
-      const match = avatar.tags.emotion.toLowerCase() === context.emotion.toLowerCase();
-      score += match ? weights.emotion * 100 : 0;
-    }
-
-    // Mood match
-    if (context.mood && avatar.tags.mood) {
-      const match = avatar.tags.mood.toLowerCase() === context.mood.toLowerCase();
-      score += match ? weights.mood * 100 : 0;
-    }
-
-    // Action match
-    if (context.action && avatar.tags.action) {
-      const match = avatar.tags.action.toLowerCase() === context.action.toLowerCase();
-      score += match ? weights.action * 100 : 0;
-    }
-
-    // Location match
-    if (context.location && avatar.tags.location) {
-      const match = avatar.tags.location.toLowerCase() === context.location.toLowerCase();
-      score += match ? weights.location * 100 : 0;
-    }
-
-    // Time match
-    if (context.time && avatar.tags.time) {
-      const match = avatar.tags.time.toLowerCase() === context.time.toLowerCase();
-      score += match ? weights.time * 100 : 0;
-    }
-
-    // Outfit match
-    if (context.outfit && avatar.tags.outfit) {
-      const match = avatar.tags.outfit.toLowerCase() === context.outfit.toLowerCase();
-      score += match ? weights.outfit * 100 : 0;
+    // Score each tag type
+    for (const tag of ALL_TAG_TYPES) {
+      const contextValue = context[tag];
+      const avatarValue = avatar.tags[tag];
+      if (contextValue && avatarValue) {
+        const match = avatarValue.toLowerCase() === contextValue.toLowerCase();
+        score += match ? weights[tag] * 100 : 0;
+      }
     }
 
     // Apply rule modifiers
