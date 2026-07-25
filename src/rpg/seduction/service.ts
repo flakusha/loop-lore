@@ -15,7 +15,7 @@ import type {
 } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import { getLogger, } from "../../logger";
-import { uid, } from "../../utils";
+import { nowAndId, parseJsonField, } from "../shared/rpg-service-utils";
 
 // ── Constants ──────────────────────────────────────────────
 
@@ -136,8 +136,7 @@ export class SeductionService {
     }
 
     // Create default profile
-    const now = new Date().toISOString();
-    const id = uid();
+    const { id, now, } = nowAndId();
 
     await this.db
       .insertInto("character_desire_profile",)
@@ -225,8 +224,7 @@ export class SeductionService {
     }
 
     // Create level 1 skill
-    const now = new Date().toISOString();
-    const id = uid();
+    const { id, now, } = nowAndId();
 
     await this.db
       .insertInto("character_seduction_skills",)
@@ -338,8 +336,7 @@ export class SeductionService {
     }
 
     // Create default state
-    const now = new Date().toISOString();
-    const id = uid();
+    const { id, now, } = nowAndId();
 
     await this.db
       .insertInto("character_arousal",)
@@ -583,10 +580,10 @@ export class SeductionService {
     return {
       id: row.id,
       actorId: row.actor_id,
-      turnOns: JSON.parse(row.turn_ons,) as string[],
-      turnOffs: JSON.parse(row.turn_offs,) as string[],
-      fetishes: JSON.parse(row.fetishes,) as string[],
-      hardLimits: JSON.parse(row.hard_limits,) as string[],
+      turnOns: parseJsonField<string[]>(row.turn_ons, [],),
+      turnOffs: parseJsonField<string[]>(row.turn_offs, [],),
+      fetishes: parseJsonField<string[]>(row.fetishes, [],),
+      hardLimits: parseJsonField<string[]>(row.hard_limits, [],),
       currentDesire: row.current_desire,
       desireDecayRate: row.desire_decay_rate,
       desireBuildupRate: row.desire_buildup_rate,
@@ -638,7 +635,7 @@ export class SeductionService {
       level: row.level,
       buildupRate: row.buildup_rate,
       decayRate: row.decay_rate,
-      modifiers: JSON.parse(row.modifiers,) as ArousalModifier[],
+      modifiers: parseJsonField<ArousalModifier[]>(row.modifiers, [],),
       lastUpdate: row.last_update,
       createdAt: row.created_at,
       updatedAt: row.updated_at,
