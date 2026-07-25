@@ -14,10 +14,10 @@ export function normalizeJsonFlat(data: Record<string, unknown>,): CanonicalChar
   // Flatten: prefer first_mes, fall back to welcome_message
   const flat: Record<string, unknown> = {
     ...data,
-    first_mes: (data.first_mes as string) ?? (data.welcome_message as string) ?? undefined,
+    first_mes: data.first_mes ?? data.welcome_message ?? undefined,
   };
 
   return {
     ...buildCanonicalFields(flat,),
-  } as CanonicalCharacter;
+  };
 }
