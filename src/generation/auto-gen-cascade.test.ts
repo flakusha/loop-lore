@@ -114,6 +114,7 @@ function makeConfig(): any {
       compressThreshold: 128,
       compressAlgorithm: "gzip",
     },
+    templates: { avatar: { merge: "extend", emotions: {}, }, },
   };
 }
 

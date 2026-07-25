@@ -6,8 +6,41 @@
  *
  * @module validation/schemas
  */
-
 import { t, } from "elysia";
+import {
+  ActorItemType,
+  ActorType,
+  ActorVisibility,
+  AgentType,
+  AssetType,
+  AssetVisibility,
+  ChatMode,
+  ChatParticipantRole,
+  ChatType,
+  ContentEncoding,
+  GenerationStatus,
+  ItemCategory,
+  ItemRarity,
+  MemoryType,
+  MessageContentType,
+  MessageRole,
+  MessageStatus,
+  MessageVisibility,
+  ModelRole,
+  NoteCategory,
+  PinnedState,
+  QuestStatus,
+  QuestType,
+  StorageBackend,
+  TurnStatus,
+  TurnStrategy,
+  TurnType,
+  UserRole,
+  UserStatus,
+  WorldEventType,
+} from "../db/enums";
+/** Extract enum values as a readonly tuple for t.UnionEnum compatibility. */
+const ev = <V extends string,>(o: Record<string, V>,): [V, ...V[],] => Object.values(o,) as [V, ...V[],];
 
 // ── Primitives ─────────────────────────────────────────────
 
@@ -24,17 +57,11 @@ export const PaginationQuery = t.Object({
   pageSize: t.Optional(t.Numeric({ minimum: 1, maximum: 200, default: 50, },),),
 },);
 
-// ── Enums (mirrors src/db/enums-*.ts) ──────────────────────
+// ── Enums (derived from src/db/enums-*.ts) ─────────────────
 
-export const ChatTypeSchema = t.UnionEnum(["direct", "group",],);
-export const ChatModeSchema = t.UnionEnum(["direct", "group", "story",],);
-export const TurnStrategySchema = t.UnionEnum([
-  "round_robin",
-  "scene_based",
-  "initiative",
-  "quest_driven",
-  "hybrid",
-],);
+export const ChatTypeSchema = t.UnionEnum(ev(ChatType,),);
+export const ChatModeSchema = t.UnionEnum(ev(ChatMode,),);
+export const TurnStrategySchema = t.UnionEnum(ev(TurnStrategy,),);
 
 /** Chat-level GM configuration — stored as JSON in `chats.gm_config` */
 export const GmConfigSchema = t.Object({
@@ -42,115 +69,33 @@ export const GmConfigSchema = t.Object({
   visualNovel: t.Optional(t.Boolean(),),
 },);
 
-export const MessageRoleSchema = t.UnionEnum(["user", "assistant", "character", "system",],);
-export const MessageContentTypeSchema = t.UnionEnum([
-  "text",
-  "action",
-  "narration",
-  "system",
-  "continuation",
-],);
-export const MessageVisibilitySchema = t.UnionEnum([
-  "visible",
-  "hidden_by_user",
-  "hidden_by_moderator",
-  "auto_hidden",
-  "redacted",
-],);
-export const MessageStatusSchema = t.UnionEnum([
-  "sending",
-  "confirmed",
-  "failed",
-  "partial",
-  "rejected",
-  "cancelled",
-],);
-export const ActorTypeSchema = t.UnionEnum(["user", "character", "narrator", "system",],);
-export const AgentTypeSchema = t.UnionEnum(["none", "ai", "narrator", "npc",],);
-export const UserRoleSchema = t.UnionEnum(["admin", "user", "viewer", "solo",],);
-export const UserStatusSchema = t.UnionEnum(["active", "disabled", "deactivated",],);
-export const ChatParticipantRoleSchema = t.UnionEnum(["member", "owner", "observer",],);
-export const PinnedStateSchema = t.UnionEnum(["unpinned", "pinned", "archived",],);
-export const ActorVisibilitySchema = t.UnionEnum(["private", "public",],);
-export const ContentEncodingSchema = t.UnionEnum(["identity", "gzip", "zstd", "brotli",],);
-export const AssetTypeSchema = t.UnionEnum(["image", "audio", "video", "memory", "other",],);
-export const AssetVisibilitySchema = t.UnionEnum(["private", "shared", "public",],);
-export const StorageBackendSchema = t.UnionEnum(["local", "s3", "gcs",],);
-export const GenerationStatusSchema = t.UnionEnum([
-  "pending",
-  "processing",
-  "streaming",
-  "completed",
-  "failed",
-  "cancelled",
-],);
-export const WorldEventTypeSchema = t.UnionEnum([
-  "location_change",
-  "npc_state_change",
-  "item_transfer",
-  "time_advancement",
-  "location_modification",
-  "world_lore_update",
-  "quest_progress",
-  "combat_event",
-],);
-export const QuestTypeSchema = t.UnionEnum([
-  "time",
-  "collection",
-  "destruction",
-  "rescue",
-  "discovery",
-  "social",
-  "composite",
-],);
-export const QuestStatusSchema = t.UnionEnum(["active", "completed", "failed", "abandoned",],);
-export const TurnTypeSchema = t.UnionEnum([
-  "character_action",
-  "narration",
-  "gm_injection",
-  "quest_update",
-  "world_event",
-],);
-export const TurnStatusSchema = t.UnionEnum([
-  "pending",
-  "generating",
-  "evaluating",
-  "accepted",
-  "regenerating",
-  "failed",
-  "escalated",
-],);
-export const MemoryTypeSchema = t.UnionEnum(["episodic", "semantic", "procedural",],);
-export const NoteCategorySchema = t.UnionEnum([
-  "general",
-  "world",
-  "character",
-  "story",
-  "combat",
-  "session",
-],);
-export const ActorItemTypeSchema = t.UnionEnum(["equipment", "consumable", "key_item", "artifact", "misc",],);
-export const ItemCategorySchema = t.UnionEnum([
-  "weapon",
-  "armor",
-  "consumable",
-  "key_item",
-  "quest_item",
-  "material",
-  "tool",
-  "container",
-  "treasure",
-  "book",
-  "other",
-],);
-export const ItemRaritySchema = t.UnionEnum(["common", "uncommon", "rare", "epic", "legendary", "unique",],);
-export const ModelRoleSchema = t.UnionEnum([
-  "main",
-  "captioning",
-  "moderation",
-  "embeddings",
-  "summarization",
-],);
+export const MessageRoleSchema = t.UnionEnum(ev(MessageRole,),);
+export const MessageContentTypeSchema = t.UnionEnum(ev(MessageContentType,),);
+export const MessageVisibilitySchema = t.UnionEnum(ev(MessageVisibility,),);
+export const MessageStatusSchema = t.UnionEnum(ev(MessageStatus,),);
+export const ActorTypeSchema = t.UnionEnum(ev(ActorType,),);
+export const AgentTypeSchema = t.UnionEnum(ev(AgentType,),);
+export const UserRoleSchema = t.UnionEnum(ev(UserRole,),);
+export const UserStatusSchema = t.UnionEnum(ev(UserStatus,),);
+export const ChatParticipantRoleSchema = t.UnionEnum(ev(ChatParticipantRole,),);
+export const PinnedStateSchema = t.UnionEnum(ev(PinnedState,),);
+export const ActorVisibilitySchema = t.UnionEnum(ev(ActorVisibility,),);
+export const ContentEncodingSchema = t.UnionEnum(ev(ContentEncoding,),);
+export const AssetTypeSchema = t.UnionEnum(ev(AssetType,),);
+export const AssetVisibilitySchema = t.UnionEnum(ev(AssetVisibility,),);
+export const StorageBackendSchema = t.UnionEnum(ev(StorageBackend,),);
+export const GenerationStatusSchema = t.UnionEnum(ev(GenerationStatus,),);
+export const WorldEventTypeSchema = t.UnionEnum(ev(WorldEventType,),);
+export const QuestTypeSchema = t.UnionEnum(ev(QuestType,),);
+export const QuestStatusSchema = t.UnionEnum(ev(QuestStatus,),);
+export const TurnTypeSchema = t.UnionEnum(ev(TurnType,),);
+export const TurnStatusSchema = t.UnionEnum(ev(TurnStatus,),);
+export const MemoryTypeSchema = t.UnionEnum(ev(MemoryType,),);
+export const NoteCategorySchema = t.UnionEnum(ev(NoteCategory,),);
+export const ActorItemTypeSchema = t.UnionEnum(ev(ActorItemType,),);
+export const ItemCategorySchema = t.UnionEnum(ev(ItemCategory,),);
+export const ItemRaritySchema = t.UnionEnum(ev(ItemRarity,),);
+export const ModelRoleSchema = t.UnionEnum(ev(ModelRole,),);
 
 // ── Chat routes ────────────────────────────────────────────
 
