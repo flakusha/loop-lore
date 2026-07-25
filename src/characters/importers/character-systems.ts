@@ -11,6 +11,7 @@ import { AvatarService, } from "../services/avatar-service";
 import { MoodService, } from "../services/mood-service";
 import { RelationshipsService, } from "../services/relationships-service";
 import { TraitsService, } from "../services/traits-service";
+import { errMsg, } from "../shared/character-systems-utils";
 
 /** Import result with counts */
 export interface CharacterSystemsImportResult {
@@ -21,10 +22,6 @@ export interface CharacterSystemsImportResult {
   licensingImported: boolean;
   availabilityImported: boolean;
   errors: string[];
-}
-
-function errMsg(error: unknown,): string {
-  return error instanceof Error ? error.message : String(error,);
 }
 
 /**
