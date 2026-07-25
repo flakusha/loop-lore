@@ -250,7 +250,7 @@ export async function triggerAutoGeneration(opts: AutoGenOpts,): Promise<void> {
       chatId,
       modelId: resolved.resolvedModel,
       groupParticipantIds,
-      avatarConfig: config.templates.avatar,
+      avatarConfig: config.templates?.avatar ?? {},
     },);
 
     // For initial greeting (no parentMessageId), skip generation tracking
