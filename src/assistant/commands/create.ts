@@ -43,6 +43,24 @@ const entityPrompts: Record<string, (desc: string,) => string> = {
     `Generate an item from this description. Return JSON with: name (string), description (string, 1 paragraph). Description: ${desc}`,
 };
 
+/** Build the standard create-entity CommandResult. */
+function createEntityResult(
+  entityLabel: string,
+  entityData: Record<string, string | undefined>,
+  description: string,
+  id: string,
+  label: string,
+): CommandResult {
+  return {
+    systemMessage: `**${entityLabel} created:** ${entityData.name ?? "Unnamed"}\n\n${
+      entityData.description ?? description
+    }`,
+    action: "create-entity",
+    actionPayload: { entityType: label, id, name: entityData.name, },
+    handled: true,
+  };
+}
+
 registerCommand("create", async (args, ctx,): Promise<CommandResult> => {
   const entityType = (args[0] || "").toLowerCase();
   const description = args.slice(1,).join(" ",).trim();
@@ -51,20 +69,14 @@ registerCommand("create", async (args, ctx,): Promise<CommandResult> => {
 
   if (!entityType || !validTypes.includes(entityType,)) {
     return {
-      systemMessage: "Usage: /create <char|loc|world|item> <description>\n\n" +
-        "Examples:\n" +
-        "  /create char A wise old wizard named Gandalf\n" +
-        "  /create loc A medieval tavern with a fireplace\n" +
-        "  /create world A fantasy realm with magic and dragons\n" +
-        "  /create item A magical sword that glows in darkness",
+      systemMessage: "Usage: /create <char|loc|world|item> <description>",
       handled: true,
     };
   }
 
   if (!description) {
     return {
-      systemMessage: `Usage: /create ${entityType} <description>\n\n` +
-        `Provide a description for the ${typeLabels[entityType] ?? entityType}.`,
+      systemMessage: `Usage: /create ${entityType} <description>`,
       handled: true,
     };
   }
@@ -128,14 +140,7 @@ registerCommand("create", async (args, ctx,): Promise<CommandResult> => {
           },)
           .execute();
 
-        return {
-          systemMessage: `**Character created:** ${entityData.name ?? "Unnamed"}\n\n${
-            entityData.description ?? description
-          }`,
-          action: "create-entity",
-          actionPayload: { entityType: label, id, name: entityData.name, },
-          handled: true,
-        };
+        return createEntityResult("Character", entityData, description, id, label,);
       }
 
       case "loc":
@@ -155,14 +160,7 @@ registerCommand("create", async (args, ctx,): Promise<CommandResult> => {
           },)
           .execute();
 
-        return {
-          systemMessage: `**Location created:** ${entityData.name ?? "Unnamed"}\n\n${
-            entityData.description ?? description
-          }`,
-          action: "create-entity",
-          actionPayload: { entityType: label, id, name: entityData.name, },
-          handled: true,
-        };
+        return createEntityResult("Location", entityData, description, id, label,);
       }
 
       case "world": {
@@ -180,14 +178,7 @@ registerCommand("create", async (args, ctx,): Promise<CommandResult> => {
           },)
           .execute();
 
-        return {
-          systemMessage: `**World created:** ${entityData.name ?? "Unnamed"}\n\n${
-            entityData.description ?? description
-          }`,
-          action: "create-entity",
-          actionPayload: { entityType: label, id, name: entityData.name, },
-          handled: true,
-        };
+        return createEntityResult("World", entityData, description, id, label,);
       }
 
       case "item": {
@@ -212,14 +203,7 @@ registerCommand("create", async (args, ctx,): Promise<CommandResult> => {
           },)
           .execute();
 
-        return {
-          systemMessage: `**Item created:** ${entityData.name ?? "Unnamed"}\n\n${
-            entityData.description ?? description
-          }`,
-          action: "create-entity",
-          actionPayload: { entityType: label, id, name: entityData.name, },
-          handled: true,
-        };
+        return createEntityResult("Item", entityData, description, id, label,);
       }
 
       default: {

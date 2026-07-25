@@ -25,6 +25,39 @@ function formatIssueLines(items: ReviewIssue[], prefix: string,): string {
   return Array.from(items, (i,) => `- ${prefix} ${i.field}: ${i.issue}`,).join("\n",);
 }
 
+/**
+ * Format a review report from issues.
+ * Shared by character, world, and location review cases.
+ */
+function formatReviewReport(entityLabel: string, entityName: string, issues: ReviewIssue[],): string {
+  let report = `**${entityLabel} Review: ${entityName}**\n\n`;
+
+  if (issues.length === 0) {
+    report += `✅ ${entityLabel} is well-defined with sufficient detail.`;
+    return report;
+  }
+
+  const errors = issues.filter((i,) => i.severity === "error");
+  const warnings = issues.filter((i,) => i.severity === "warning");
+  const info = issues.filter((i,) => i.severity === "info");
+
+  if (errors.length > 0) {
+    report += `**Errors (${errors.length}):**\n`;
+    report += `${formatIssueLines(errors, "❌",)}\n\n`;
+  }
+  if (warnings.length > 0) {
+    report += `**Warnings (${warnings.length}):**\n`;
+    report += `${formatIssueLines(warnings, "⚠️",)}\n\n`;
+  }
+  if (info.length > 0) {
+    report += `**Suggestions (${info.length}):**\n`;
+    report += `${formatIssueLines(info, "💡",)}\n\n`;
+  }
+
+  report += `**Summary:** ${errors.length} errors, ${warnings.length} warnings, ${info.length} suggestions`;
+  return report;
+}
+
 registerCommand("review", async (args, ctx,): Promise<CommandResult> => {
   const target = (args[0] || "character").toLowerCase();
   const db = getDatabase();
@@ -94,28 +127,7 @@ registerCommand("review", async (args, ctx,): Promise<CommandResult> => {
         issues.push({ field: "description", issue: "Description is very brief (under 50 chars)", severity: "info", },);
       }
 
-      const errors = issues.filter((i,) => i.severity === "error");
-      const warnings = issues.filter((i,) => i.severity === "warning");
-      const info = issues.filter((i,) => i.severity === "info");
-
-      let report = `**Character Review: ${character.display_name}**\n\n`;
-
-      if (errors.length > 0) {
-        report += `**Errors (${errors.length}):**\n`;
-        report += `${formatIssueLines(errors, "❌",)}\n\n`;
-      }
-      if (warnings.length > 0) {
-        report += `**Warnings (${warnings.length}):**\n`;
-        report += `${formatIssueLines(warnings, "⚠️",)}\n\n`;
-      }
-      if (info.length > 0) {
-        report += `**Suggestions (${info.length}):**\n`;
-        report += `${formatIssueLines(info, "💡",)}\n\n`;
-      }
-
-      report += issues.length === 0
-        ? "✅ All fields are populated and consistent."
-        : `**Summary:** ${errors.length} errors, ${warnings.length} warnings, ${info.length} suggestions`;
+      const report = formatReviewReport("Character", character.display_name, issues,);
 
       return {
         systemMessage: report,
@@ -134,7 +146,7 @@ registerCommand("review", async (args, ctx,): Promise<CommandResult> => {
 
       if (!world) {
         return {
-          systemMessage: "No world found. Create a world first with /create world.",
+          systemMessage: "No world found. Create one first with /create world.",
           handled: true,
         };
       }
@@ -165,29 +177,7 @@ registerCommand("review", async (args, ctx,): Promise<CommandResult> => {
         issues.push({ field: "locations", issue: `Only ${count} location(s) defined`, severity: "info", },);
       }
 
-      let report = `**World Review: ${world.name}**\n\n`;
-
-      if (issues.length === 0) {
-        report += "✅ World is well-defined with sufficient detail.";
-      } else {
-        const errors = issues.filter((i,) => i.severity === "error");
-        const warnings = issues.filter((i,) => i.severity === "warning");
-        const info = issues.filter((i,) => i.severity === "info");
-
-        if (errors.length > 0) {
-          report += `**Errors (${errors.length}):**\n`;
-          report += `${formatIssueLines(errors, "❌",)}\n\n`;
-        }
-        if (warnings.length > 0) {
-          report += `**Warnings (${warnings.length}):**\n`;
-          report += `${formatIssueLines(warnings, "⚠️",)}\n\n`;
-        }
-        if (info.length > 0) {
-          report += `**Suggestions (${info.length}):**\n`;
-          report += `${formatIssueLines(info, "💡",)}\n\n`;
-        }
-        report += `**Summary:** ${errors.length} errors, ${warnings.length} warnings, ${info.length} suggestions`;
-      }
+      const report = formatReviewReport("World", world.name, issues,);
 
       return {
         systemMessage: report,
@@ -235,29 +225,7 @@ registerCommand("review", async (args, ctx,): Promise<CommandResult> => {
         issues.push({ field: "connections", issue: "No connections to other locations", severity: "warning", },);
       }
 
-      let report = `**Location Review: ${location.name}**\n\n`;
-
-      if (issues.length === 0) {
-        report += "✅ Location is well-defined.";
-      } else {
-        const errors = issues.filter((i,) => i.severity === "error");
-        const warnings = issues.filter((i,) => i.severity === "warning");
-        const info = issues.filter((i,) => i.severity === "info");
-
-        if (errors.length > 0) {
-          report += `**Errors (${errors.length}):**\n`;
-          report += `${formatIssueLines(errors, "❌",)}\n\n`;
-        }
-        if (warnings.length > 0) {
-          report += `**Warnings (${warnings.length}):**\n`;
-          report += `${formatIssueLines(warnings, "⚠️",)}\n\n`;
-        }
-        if (info.length > 0) {
-          report += `**Suggestions (${info.length}):**\n`;
-          report += `${formatIssueLines(info, "💡",)}\n\n`;
-        }
-        report += `**Summary:** ${errors.length} errors, ${warnings.length} warnings, ${info.length} suggestions`;
-      }
+      const report = formatReviewReport("Location", location.name, issues,);
 
       return {
         systemMessage: report,
@@ -269,8 +237,7 @@ registerCommand("review", async (args, ctx,): Promise<CommandResult> => {
 
     default: {
       return {
-        systemMessage: "Usage: /review <character|world|location>\n\n" +
-          "Reviews the specified entity for completeness and consistency.",
+        systemMessage: "Usage: /review <character|world|location>",
         handled: true,
       };
     }
