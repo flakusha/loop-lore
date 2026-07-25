@@ -15,6 +15,7 @@ import type {
 } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import { getLogger, } from "../../logger";
+import { safeJsonStringify, } from "../../utils";
 import { nowAndId, parseJsonField, } from "../shared/rpg-service-utils";
 
 // ── Constants ──────────────────────────────────────────────
@@ -185,10 +186,10 @@ export class SeductionService {
     const now = new Date().toISOString();
     const fields: Record<string, unknown> = { updated_at: now, };
 
-    if (updates.turnOns !== undefined) { fields.turn_ons = JSON.stringify(updates.turnOns,); }
-    if (updates.turnOffs !== undefined) { fields.turn_offs = JSON.stringify(updates.turnOffs,); }
-    if (updates.fetishes !== undefined) { fields.fetishes = JSON.stringify(updates.fetishes,); }
-    if (updates.hardLimits !== undefined) { fields.hard_limits = JSON.stringify(updates.hardLimits,); }
+    if (updates.turnOns !== undefined) { fields.turn_ons = safeJsonStringify(updates.turnOns,).value ?? "[]"; }
+    if (updates.turnOffs !== undefined) { fields.turn_offs = safeJsonStringify(updates.turnOffs,).value ?? "[]"; }
+    if (updates.fetishes !== undefined) { fields.fetishes = safeJsonStringify(updates.fetishes,).value ?? "[]"; }
+    if (updates.hardLimits !== undefined) { fields.hard_limits = safeJsonStringify(updates.hardLimits,).value ?? "[]"; }
     if (updates.desireDecayRate !== undefined) { fields.desire_decay_rate = updates.desireDecayRate; }
     if (updates.desireBuildupRate !== undefined) { fields.desire_buildup_rate = updates.desireBuildupRate; }
 
@@ -312,7 +313,7 @@ export class SeductionService {
       .selectAll()
       .execute();
 
-    return rows.map((r,) => this.rowToSkill(r,));
+    return Array.from(rows, (r,) => this.rowToSkill(r,),);
   }
 
   // ── Arousal State ─────────────────────────────────────
@@ -454,11 +455,29 @@ export class SeductionService {
     await this.db
       .updateTable("character_arousal",)
       .set({
-        modifiers: JSON.stringify(mods,),
+        modifiers: safeJsonStringify(mods,).value ?? "[]",
         updated_at: now,
       },)
       .where("id", "=", state.id,)
       .execute();
+  }
+
+  // ── Helpers ───────────────────────────────────────────
+
+  /** Check if approach matches any item in list (case-insensitive includes). */
+  private matchesAny(approachLower: string, items: string[],): boolean {
+    for (const item of items) {
+      if (approachLower.includes(item.toLowerCase(),)) { return true; }
+    }
+    return false;
+  }
+
+  /** Find first skill matching a category. */
+  private findSkillByCategory(skills: SeductionSkill[], category: SeductionSkillCategory,): SeductionSkill | undefined {
+    for (const s of skills) {
+      if (s.category === category) { return s; }
+    }
+    return undefined;
   }
 
   // ── Seduction Attempts ────────────────────────────────
@@ -476,9 +495,7 @@ export class SeductionService {
     // Check hard limits first
     const targetProfile = await this.getDesireProfile(targetId,);
     const approachLower = approach.toLowerCase();
-    const hardLimitTriggered = targetProfile.hardLimits.some(
-      (limit,) => approachLower.includes(limit.toLowerCase(),),
-    );
+    const hardLimitTriggered = this.matchesAny(approachLower, targetProfile.hardLimits,);
 
     if (hardLimitTriggered) {
       log.info(`Seduction blocked: hard limit triggered for ${targetId}`,);
@@ -496,7 +513,7 @@ export class SeductionService {
 
     // Get actor's skill (category-based, use first matching)
     const skills = await this.getActorSkills(actorId,);
-    const relevantSkill = skills.find((s,) => s.category === skillCategory);
+    const relevantSkill = this.findSkillByCategory(skills, skillCategory,);
     const skillLevel = relevantSkill?.level ?? 1;
 
     // Calculate DC based on target's state
@@ -509,15 +526,11 @@ export class SeductionService {
     dc -= Math.floor(targetDesire.currentDesire * 0.2,); // Desire makes them easier
 
     // Turn-ons reduce DC
-    const turnOnMatch = targetDesire.turnOns.some(
-      (on,) => approachLower.includes(on.toLowerCase(),),
-    );
+    const turnOnMatch = this.matchesAny(approachLower, targetDesire.turnOns,);
     if (turnOnMatch) { dc -= 15; }
 
     // Turn-offs increase DC
-    const turnOffMatch = targetDesire.turnOffs.some(
-      (off,) => approachLower.includes(off.toLowerCase(),),
-    );
+    const turnOffMatch = this.matchesAny(approachLower, targetDesire.turnOffs,);
     if (turnOffMatch) { dc += 15; }
 
     dc = Math.max(10, Math.min(90, dc,),);
