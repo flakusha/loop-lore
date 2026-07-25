@@ -43,7 +43,7 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     .addColumn("description", "text",)
     .addColumn("category", "text", (col,) => col.notNull(),)
     .addColumn("rarity", "text", (col,) => col.notNull().defaultTo("common",),)
-    .addColumn("stackable", "integer", (col,) => col.notNull().defaultTo(0,),)
+    .addColumn("stackable", "text", (col,) => col.notNull().defaultTo("unique",),)
     .addColumn("max_stack", "integer", (col,) => col.notNull().defaultTo(1,),)
     .addColumn("properties", "text", (col,) => col.notNull().defaultTo("{}",),)
     .addColumn("value", "integer", (col,) => col.notNull().defaultTo(0,),)
