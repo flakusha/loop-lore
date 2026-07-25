@@ -36,5 +36,5 @@ export function normalizeToml(data: Record<string, unknown>,): CanonicalCharacte
 
   return {
     ...buildCanonicalFields(flat, { welcomeKey: "welcome_message", },),
-  } as CanonicalCharacter;
+  };
 }
