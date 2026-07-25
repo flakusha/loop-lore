@@ -23,6 +23,8 @@ import type { DB, } from "../../db/schema";
 import { jsonParseOr, uid, } from "../../utils";
 import { GameMasterService, } from "../game-master";
 import { createQualityEvaluator, QualityEvaluator, } from "../quality-evaluator";
+import type { CaseResult, } from "../shared/story-utils";
+import { collectScoresAndVariance, countByStatus, skippedResult, varianceResult, } from "../shared/story-utils";
 import { TurnManager, } from "../turn-manager";
 import { SyntheticGenerator, } from "./generator";
 import type { SyntheticCase, } from "./types";
@@ -155,9 +157,7 @@ export class SyntheticTestRunner {
       }
     }
 
-    const passed = results.filter((r,) => r.status === "passed").length;
-    const failed = results.filter((r,) => r.status === "failed").length;
-    const skipped = results.filter((r,) => r.status === "skipped").length;
+    const { passed, failed, skipped, } = countByStatus(results,);
 
     const executed = results.length - skipped;
     const summary: SyntheticTestRunSummary = {
@@ -217,12 +217,7 @@ export class SyntheticTestRunner {
         break;
       }
       default: {
-        out = {
-          status: "skipped",
-          expected: c.expected,
-          actual: {},
-          reason: `unsupported scenario type: ${String(row.type,)}`,
-        };
+        out = skippedResult(c.expected, `unsupported scenario type: ${String(row.type,)}`,);
       }
     }
 
@@ -241,12 +236,7 @@ export class SyntheticTestRunner {
     c: SyntheticCase,
     mode: SyntheticTestMode,
     mutationParams?: { temperatureVariance?: number; promptVariations?: number },
-  ): {
-    status: SyntheticTestStatus;
-    expected: Record<string, unknown>;
-    actual: Record<string, unknown>;
-    reason?: string;
-  } {
+  ): CaseResult {
     const input = c.input;
     const response = (input as { content?: string }).content ?? "";
     const actorName = (input as { actorId?: string }).actorId ?? "narrator";
@@ -254,36 +244,34 @@ export class SyntheticTestRunner {
     if (mode === SyntheticTestMode.Mutation) {
       const variations = Math.max(1, mutationParams?.promptVariations ?? 3,);
       const tolerance = (mutationParams?.temperatureVariance ?? 0.2) * 100;
-      const scores: number[] = [];
-      for (let i = 0; i < variations; i++) {
-        const jittered = `${response} ${i}`;
-        const s = this.evaluator.evaluate({ response: jittered, prompt: "", actorName, },).scores.overall;
-        scores.push(s,);
-      }
-      const variance = Math.max(...scores,) - Math.min(...scores,);
+      const { scores, variance, } = collectScoresAndVariance(
+        (i,) => this.evaluator.evaluate({ response: `${response} ${i}`, prompt: "", actorName, },).scores.overall,
+        variations,
+      );
       const passed = variance <= tolerance;
-      return {
-        status: passed ? "passed" : "failed",
-        expected: { ...c.expected, tolerance, },
-        actual: { scores, variance, },
-        reason: passed ? undefined : `variance ${variance} exceeds tolerance ${tolerance}`,
-      };
+      return varianceResult(
+        scores,
+        variance,
+        passed,
+        { ...c.expected, tolerance, },
+        passed ? undefined : `variance ${variance} exceeds tolerance ${tolerance}`,
+      );
     }
 
     if (mode === SyntheticTestMode.Stress) {
       const iterations = Math.max(1, this.defaultIterations,);
-      const scores: number[] = [];
-      for (let i = 0; i < iterations; i++) {
-        scores.push(this.evaluator.evaluate({ response, prompt: "", actorName, },).scores.overall,);
-      }
-      const variance = Math.max(...scores,) - Math.min(...scores,);
+      const { scores, variance, } = collectScoresAndVariance(
+        () => this.evaluator.evaluate({ response, prompt: "", actorName, },).scores.overall,
+        iterations,
+      );
       const passed = variance === 0;
-      return {
-        status: passed ? "passed" : "failed",
-        expected: { ...c.expected, iterations, },
-        actual: { scores, variance, },
-        reason: passed ? undefined : `inconsistent across ${iterations} runs (variance ${variance})`,
-      };
+      return varianceResult(
+        scores,
+        variance,
+        passed,
+        { ...c.expected, iterations, },
+        passed ? undefined : `inconsistent across ${iterations} runs (variance ${variance})`,
+      );
     }
 
     // replay / regression / calibration
@@ -304,19 +292,9 @@ export class SyntheticTestRunner {
 
   // ─── Turn Sequence (structural) ─────────────────────────────
 
-  private runTurnSequence(c: SyntheticCase,): {
-    status: SyntheticTestStatus;
-    expected: Record<string, unknown>;
-    actual: Record<string, unknown>;
-    reason?: string;
-  } {
+  private runTurnSequence(c: SyntheticCase,): CaseResult {
     if (!this.turnManagerFactory) {
-      return {
-        status: "skipped",
-        expected: c.expected,
-        actual: {},
-        reason: "turn orchestration replay requires a turnManagerFactory",
-      };
+      return skippedResult(c.expected, "turn orchestration replay requires a turnManagerFactory",);
     }
     const nextActorId = c.expected.nextActorId;
     const wellFormed = nextActorId === null || typeof nextActorId === "string";
@@ -344,12 +322,7 @@ export class SyntheticTestRunner {
       .where("id", "=", questId,)
       .executeTakeFirst();
     if (!quest) {
-      return {
-        status: "skipped",
-        expected: c.expected,
-        actual: { found: false, },
-        reason: `quest ${questId} not found`,
-      };
+      return skippedResult(c.expected, `quest ${questId} not found`, { found: false, },);
     }
 
     const target = quest.target || 100;
@@ -443,12 +416,7 @@ export class SyntheticTestRunner {
         .where("id", "=", questId,)
         .executeTakeFirst();
       if (!quest) {
-        return {
-          status: "skipped",
-          expected: c.expected,
-          actual: { found: false, },
-          reason: `quest ${questId} not found`,
-        };
+        return skippedResult(c.expected, `quest ${questId} not found`, { found: false, },);
       }
       const escalated = quest.status === "active";
       const expEsc = c.expected.escalated === true;
@@ -461,12 +429,7 @@ export class SyntheticTestRunner {
       };
     }
     // Live GM path: keep read-only — defer decision execution to the caller.
-    return {
-      status: "skipped",
-      expected: c.expected,
-      actual: {},
-      reason: "live GM escalation requires injected decision execution (deferred)",
-    };
+    return skippedResult(c.expected, "live GM escalation requires injected decision execution (deferred)",);
   }
 
   // ─── Helpers ────────────────────────────────────────────────
