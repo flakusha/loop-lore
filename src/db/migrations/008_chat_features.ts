@@ -2,13 +2,14 @@ import type { Kysely, } from "kysely";
 import { sql, } from "kysely";
 
 /**
- * Migration 008 — Chat features: pinning, personas, impersonation
+ * Migration 008 — Chat features: pinning, personas, impersonation, archiving
  *
  * Adds:
  * - `is_pinned` on `chats`: user-surface favorite chats
  * - `personas` table: user-authored identities for chat participation
  * - `impersonate_actor_id` on `chat_participants`: which character a user plays
  * - `persona_id` on `chat_participants`: user's persona for this chat
+ * - `archived_at` on `messages`: soft-delete with 30-day restore window
  *
  * Design: Integer flag (0/1) for is_pinned to match existing boolean-as-number
  * convention (actor_notes.pinned, actor_items.equipped). Per-participant
@@ -57,9 +58,24 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
 
   await database.schema.createIndex("idx_chat_participants_persona",).on("chat_participants",).column("persona_id",)
     .execute();
+
+  // ── Message archiving ──────────────────────────────────
+  await database.schema
+    .alterTable("messages",)
+    .addColumn("archived_at", "text",)
+    .execute();
+
+  await database.schema
+    .createIndex("idx_messages_archived",)
+    .on("messages",)
+    .column("archived_at",)
+    .execute();
 }
 
 export async function down(database: Kysely<unknown>,): Promise<void> {
+  await database.schema.dropIndex("idx_messages_archived",).execute();
+  await database.schema.alterTable("messages",).dropColumn("archived_at",).execute();
+
   await database.schema.dropIndex("idx_chat_participants_persona",).execute();
   await database.schema.dropIndex("idx_chat_participants_impersonate",).execute();
   await database.schema.alterTable("chat_participants",).dropColumn("persona_id",).execute();
