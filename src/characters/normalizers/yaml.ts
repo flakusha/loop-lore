@@ -14,5 +14,5 @@ export function normalizeYaml(data: Record<string, unknown>,): CanonicalCharacte
   // YAML uses "welcome_message" instead of "first_mes"
   return {
     ...buildCanonicalFields(data, { welcomeKey: "welcome_message", },),
-  } as CanonicalCharacter;
+  };
 }
