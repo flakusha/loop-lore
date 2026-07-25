@@ -40,7 +40,7 @@ export function normalizeCcV3(data: Record<string, unknown>,): CanonicalCharacte
   const cardData = raw as CCv3Data;
 
   const lorebook: LorebookData | undefined = cardData.character_book
-    ? buildLorebook(cardData.character_book as Record<string, unknown>,)
+    ? buildLorebook(cardData.character_book,)
     : undefined;
 
   const assets: CharacterAsset[] | undefined = cardData.assets?.map((asset,) => ({
@@ -52,7 +52,7 @@ export function normalizeCcV3(data: Record<string, unknown>,): CanonicalCharacte
 
   return {
     ...buildCanonicalFields(raw,),
-    nickname: cardData.nickname as string | undefined,
+    nickname: cardData.nickname,
     extensions: cardData.extensions,
     lorebook,
     assets,
