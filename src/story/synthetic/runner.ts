@@ -147,11 +147,18 @@ export class SyntheticTestRunner {
       }
       results.push(...rowResults,);
 
+      let allPassed = true;
+      for (const r of rowResults) {
+        if (r.status !== "passed") {
+          allPassed = false;
+          break;
+        }
+      }
       if (
         this.autoValidate &&
         (mode === SyntheticTestMode.Replay || mode === SyntheticTestMode.Regression) &&
         rowResults.length > 0 &&
-        rowResults.every((r,) => r.status === "passed")
+        allPassed
       ) {
         await this.generator.transitionStatus(row.id, SyntheticDataStatus.Validated,);
       }
