@@ -13,6 +13,7 @@ import type { Kysely, } from "kysely";
 import type { IntimacyActionType, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import { getLogger, } from "../../logger";
+import { safeJsonStringify, } from "../../utils";
 import { nowAndId, parseJsonField, } from "../shared/rpg-service-utils";
 
 // ── Constants ──────────────────────────────────────────────
@@ -236,10 +237,10 @@ export class IntimacyService {
     const thresholdsReached = this.checkThresholds(pair.score, newScore, pair.unlockedThresholds,);
 
     // Update unlocked thresholds
-    const newUnlocked = [
-      ...pair.unlockedThresholds,
-      ...thresholdsReached.map((t,) => t.level),
-    ];
+    const newUnlocked = [...pair.unlockedThresholds,];
+    for (const t of thresholdsReached) {
+      newUnlocked.push(t.level,);
+    }
 
     // Determine suggested relationship upgrade
     const suggestedRelationshipUpgrade = this.suggestRelationshipUpgrade(newScore,);
@@ -250,8 +251,8 @@ export class IntimacyService {
       .updateTable("character_intimacy",)
       .set({
         score: newScore,
-        action_history: JSON.stringify(history,),
-        unlocked_thresholds: JSON.stringify(newUnlocked,),
+        action_history: safeJsonStringify(history,).value ?? "[]",
+        unlocked_thresholds: safeJsonStringify(newUnlocked,).value ?? "[]",
         updated_at: now,
       },)
       .where("id", "=", pair.id,)
@@ -287,7 +288,7 @@ export class IntimacyService {
     }
 
     const rows = await query.selectAll().execute();
-    return rows.map((r,) => this.rowToPair(r,));
+    return Array.from(rows, (r,) => this.rowToPair(r,),);
   }
 
   /**
