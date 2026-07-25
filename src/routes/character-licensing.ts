@@ -5,30 +5,9 @@
  * including CC0 public domain and custom licenses.
  */
 import { Elysia, } from "elysia";
-import type { Kysely, } from "kysely";
-import type { DB, } from "../db";
+import { checkActorOwnership, type HandlerOpts, } from "./actor-auth";
 import { jsonCreated, jsonError, jsonResponse, } from "./http-utils";
 import { HttpStatus, } from "./http-utils";
-
-interface HandlerOpts {
-  database: Kysely<DB>;
-}
-
-/** Check if user owns the actor (or is admin/solo) */
-async function checkActorOwnership(
-  database: Kysely<DB>,
-  actorId: string,
-  userId: string | null,
-  userRole: string | null,
-): Promise<boolean> {
-  const actor = await database
-    .selectFrom("actors",)
-    .select("owner_id",)
-    .where("id", "=", actorId,)
-    .executeTakeFirst();
-  if (!actor) { return false; }
-  return actor.owner_id === userId || userRole === "admin" || userRole === "solo";
-}
 
 /** Convert boolean to 0/1 integer, with fallback for undefined. */
 function booleanToInt(value: boolean | undefined, fallback: number,): number {
