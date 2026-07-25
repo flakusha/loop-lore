@@ -73,8 +73,8 @@ export async function exportCharacterSystems(
 
   if (permanentTraits.length > 0 || worldTraits.length > 0) {
     exportData.traits = {
-      permanent: permanentTraits.map(mapTraitForExport,),
-      world: worldTraits.map(mapTraitForExport,),
+      permanent: permanentTraits.map((t,) => mapTraitForExport(t,)),
+      world: worldTraits.map((t,) => mapTraitForExport(t,)),
       location: locationTraits,
     };
   }
@@ -94,7 +94,7 @@ export async function exportCharacterSystems(
   // Export relationships
   const relationships = await relationshipsService.getRelationships(actorId, worldId,);
   if (relationships.length > 0) {
-    exportData.relationships = relationships.map(mapRelationshipForExport,);
+    exportData.relationships = relationships.map((r,) => mapRelationshipForExport(r,));
   }
 
   // Export avatars
@@ -102,7 +102,7 @@ export async function exportCharacterSystems(
   const avatarConfig = await avatarService.getAvatarConfig(actorId,);
   if (avatars.length > 0) {
     exportData.avatars = {
-      avatars: avatars.map(mapAvatarForExport,),
+      avatars: avatars.map((a,) => mapAvatarForExport(a,)),
       config: avatarConfig
         ? {
           selectionRule: avatarConfig.selectionRule,
