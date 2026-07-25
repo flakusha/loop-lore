@@ -7,6 +7,7 @@ import type { Kysely, } from "kysely";
 import { randomUUID, } from "node:crypto";
 import type { DB, } from "../../db/schema";
 import { jsonParseOr, } from "../../utils";
+import { guardNotExists, withWorldId, } from "./shared-service-utils";
 
 /** Options for creating mood state */
 export interface CreateMoodOpts {
@@ -65,11 +66,10 @@ export class MoodService {
    * @returns Mood state or undefined
    */
   async getMood(actorId: string, worldId?: string,): Promise<MoodState | undefined> {
-    const row = await this.db
-      .selectFrom("character_mood",)
-      .where("actor_id", "=", actorId,)
-      .$if(!!worldId, (qb,) => qb.where("world_id", "=", worldId!,),)
-      .$if(!worldId, (qb,) => qb.where("world_id", "is", null,),)
+    const row = await withWorldId(
+      this.db.selectFrom("character_mood",).where("actor_id", "=", actorId,),
+      worldId,
+    )
       .selectAll()
       .executeTakeFirst();
 
@@ -95,9 +95,7 @@ export class MoodService {
    */
   async createMood(opts: CreateMoodOpts,): Promise<string> {
     const existing = await this.getMood(opts.actorId, opts.worldId,);
-    if (existing) {
-      throw new Error(`Mood already exists for actor ${opts.actorId}`,);
-    }
+    guardNotExists(existing, "Mood", opts.actorId,);
 
     const id = randomUUID();
     const now = new Date().toISOString();
@@ -161,13 +159,10 @@ export class MoodService {
       updateData.expression_modifiers = JSON.stringify(opts.expressionModifiers,);
     }
 
-    await this.db
-      .updateTable("character_mood",)
-      .set(updateData,)
-      .where("actor_id", "=", actorId,)
-      .$if(!!worldId, (qb,) => qb.where("world_id", "=", worldId!,),)
-      .$if(!worldId, (qb,) => qb.where("world_id", "is", null,),)
-      .execute();
+    await withWorldId(
+      this.db.updateTable("character_mood",).set(updateData,).where("actor_id", "=", actorId,),
+      worldId,
+    ).execute();
   }
 
   /**
@@ -235,11 +230,10 @@ export class MoodService {
    * @returns List of mood events
    */
   async getEvents(actorId: string, worldId?: string, limit = 50,) {
-    return this.db
-      .selectFrom("mood_events",)
-      .where("actor_id", "=", actorId,)
-      .$if(!!worldId, (qb,) => qb.where("world_id", "=", worldId!,),)
-      .$if(!worldId, (qb,) => qb.where("world_id", "is", null,),)
+    return withWorldId(
+      this.db.selectFrom("mood_events",).where("actor_id", "=", actorId,),
+      worldId,
+    )
       .orderBy("created_at", "desc",)
       .limit(limit,)
       .selectAll()

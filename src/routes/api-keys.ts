@@ -15,17 +15,15 @@ import type { Config, } from "../config/schema";
 import { encryptValue, } from "../crypto";
 import type { DB, } from "../db/schema";
 import { uid, } from "../utils";
-import { forbidden, notFound, unauthorized, } from "../validation/middleware";
-import { HttpStatus, jsonError, jsonResponse, } from "./http-utils";
+import { forbidden, notFound, } from "../validation/middleware";
+import { HttpStatus, jsonError, jsonResponse, requireUserId, } from "./http-utils";
 
 export function apiKeysRoutes({ database, config: cfg, }: { database: Kysely<DB>; config: Config },) {
   const config = cfg;
   return new Elysia({ name: "api-keys", },)
     .get("/api/user-api-keys", async (ctx,) => {
-      const userId = (ctx as any).userId as string | null;
-      if (!userId) {
-        return unauthorized();
-      }
+      const userId = requireUserId(ctx,);
+      if (typeof userId !== "string") { return userId; }
 
       if (!config.byoKey.enabled) {
         return forbidden("BYO API key feature is disabled",);
@@ -41,10 +39,8 @@ export function apiKeysRoutes({ database, config: cfg, }: { database: Kysely<DB>
       return jsonResponse(keys,);
     },)
     .post("/api/user-api-keys", async (ctx,) => {
-      const userId = (ctx as any).userId as string | null;
-      if (!userId) {
-        return unauthorized();
-      }
+      const userId = requireUserId(ctx,);
+      if (typeof userId !== "string") { return userId; }
 
       const request = (ctx as any).request as Request;
 
@@ -127,12 +123,9 @@ export function apiKeysRoutes({ database, config: cfg, }: { database: Kysely<DB>
     },)
     .delete("/api/user-api-keys/:provider", async (ctx,) => {
       const params = (ctx as any).params as { provider: string };
-      const userId = (ctx as any).userId as string | null;
       const provider = params.provider;
-
-      if (!userId) {
-        return unauthorized();
-      }
+      const userId = requireUserId(ctx,);
+      if (typeof userId !== "string") { return userId; }
 
       const existing = await database
         .selectFrom("user_api_keys",)

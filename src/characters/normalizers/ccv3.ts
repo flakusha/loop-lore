@@ -4,6 +4,7 @@
 // Converts CCv3 format to canonical character card.
 
 import type { CanonicalCharacter, CharacterAsset, LorebookData, } from "../parser";
+import { buildCanonicalFields, buildLorebook, extractEnvelope, } from "./shared";
 
 interface CCv3Data {
   name?: string;
@@ -28,62 +29,18 @@ interface CCv3Data {
     uri?: string;
     ext?: string;
   }[];
-  character_book?: {
-    name?: string;
-    description?: string;
-    scan_depth?: number;
-    token_budget?: number;
-    recursive_scanning?: boolean;
-    entries?: {
-      keys?: string[];
-      content?: string;
-      enabled?: boolean;
-      insertion_order?: number;
-      case_sensitive?: boolean;
-      name?: string;
-      priority?: number;
-      id?: number;
-      comment?: string;
-      selective?: boolean;
-      constant?: boolean;
-      position?: string;
-      use_regex?: boolean;
-      extensions?: Record<string, unknown>;
-    }[];
-  };
+  character_book?: Record<string, unknown>;
 }
 
 /**
  * Normalize CCv3 format to canonical character card.
  */
 export function normalizeCcV3(data: Record<string, unknown>,): CanonicalCharacter {
-  // Extract data from envelope if present
-  const cardData = (data.data ?? data) as CCv3Data;
+  const raw = extractEnvelope(data,);
+  const cardData = raw as CCv3Data;
 
   const lorebook: LorebookData | undefined = cardData.character_book
-    ? {
-      name: cardData.character_book.name,
-      description: cardData.character_book.description,
-      scan_depth: cardData.character_book.scan_depth,
-      token_budget: cardData.character_book.token_budget,
-      recursive_scanning: cardData.character_book.recursive_scanning,
-      entries: (cardData.character_book.entries ?? []).map((entry,) => ({
-        keys: entry.keys ?? [],
-        content: entry.content ?? "",
-        enabled: entry.enabled ?? true,
-        insertion_order: entry.insertion_order ?? 0,
-        case_sensitive: entry.case_sensitive ?? false,
-        name: entry.name ?? "",
-        priority: entry.priority ?? 0,
-        id: entry.id ?? 0,
-        comment: entry.comment,
-        selective: entry.selective ?? false,
-        constant: entry.constant ?? false,
-        position: (entry.position as "before_char" | "after_char") ?? "before_char",
-        use_regex: entry.use_regex,
-        extensions: entry.extensions,
-      })),
-    }
+    ? buildLorebook(cardData.character_book as Record<string, unknown>,)
     : undefined;
 
   const assets: CharacterAsset[] | undefined = cardData.assets?.map((asset,) => ({
@@ -94,19 +51,8 @@ export function normalizeCcV3(data: Record<string, unknown>,): CanonicalCharacte
   }));
 
   return {
-    name: cardData.name ?? "",
-    description: cardData.description ?? "",
-    personality: cardData.personality,
-    scenario: cardData.scenario,
-    welcome_message: cardData.first_mes,
-    mes_example: cardData.mes_example,
-    system_prompt: cardData.system_prompt,
-    post_history_instructions: cardData.post_history_instructions,
-    alternate_greetings: cardData.alternate_greetings,
-    tags: cardData.tags,
-    creator: cardData.creator,
-    character_version: cardData.character_version,
-    nickname: cardData.nickname,
+    ...buildCanonicalFields(raw,),
+    nickname: cardData.nickname as string | undefined,
     extensions: cardData.extensions,
     lorebook,
     assets,

@@ -14,16 +14,15 @@ import { validateAge, } from "../age-gate/service";
 import type { Config, } from "../config/schema";
 import type { Db, } from "../db";
 import { jsonParseOr, safeJsonStringify, } from "../utils";
-import { forbidden, notFound, unauthorized, } from "../validation/middleware";
+import { forbidden, notFound, } from "../validation/middleware";
 import { UserIdParams, UserProfileUpdateBody, } from "../validation/schemas";
-import { HttpStatus, jsonError, jsonNoContent, jsonResponse, } from "./http-utils";
+import { HttpStatus, jsonError, jsonNoContent, jsonResponse, requireUserId, } from "./http-utils";
 
 export function usersRoutes(opts: { database: Db; config: Config },): Elysia {
   return new Elysia({ name: "users", },)
     .get("/api/users/me", async (ctx,) => {
-      const userId = (ctx as any).userId as string | null;
-
-      if (!userId) { return unauthorized(); }
+      const userId = requireUserId(ctx,);
+      if (typeof userId !== "string") { return userId; }
 
       const user = await opts.database
         .selectFrom("users",)
@@ -37,10 +36,9 @@ export function usersRoutes(opts: { database: Db; config: Config },): Elysia {
     .put(
       "/api/users/me",
       async (ctx,) => {
-        const userId = (ctx as any).userId as string | null;
+        const userId = requireUserId(ctx,);
+        if (typeof userId !== "string") { return userId; }
         const body = (ctx as any).body as typeof UserProfileUpdateBody;
-
-        if (!userId) { return unauthorized(); }
 
         const updates: Record<string, unknown> = {};
         if (body.displayName != null) { updates.display_name = body.displayName; }
@@ -73,11 +71,10 @@ export function usersRoutes(opts: { database: Db; config: Config },): Elysia {
     .get(
       "/api/users/:id",
       async (ctx,) => {
-        const userId = (ctx as any).userId as string | null;
+        const userId = requireUserId(ctx,);
+        if (typeof userId !== "string") { return userId; }
         const userRole = (ctx as any).userRole as string | null;
         const targetId = (ctx as any).params.id as string;
-
-        if (!userId) { return unauthorized(); }
 
         // Non-admin can only view own profile via /api/users/me
         if (userRole !== "admin") {
@@ -98,12 +95,11 @@ export function usersRoutes(opts: { database: Db; config: Config },): Elysia {
     .put(
       "/api/users/:id",
       async (ctx,) => {
-        const userId = (ctx as any).userId as string | null;
+        const userId = requireUserId(ctx,);
+        if (typeof userId !== "string") { return userId; }
         const userRole = (ctx as any).userRole as string | null;
         const targetId = (ctx as any).params.id as string;
         const body = (ctx as any).body as typeof UserProfileUpdateBody;
-
-        if (!userId) { return unauthorized(); }
 
         // User can update own profile; admin can update any
         if (targetId !== userId && userRole !== "admin") {
@@ -135,8 +131,8 @@ export function usersRoutes(opts: { database: Db; config: Config },): Elysia {
       { body: UserProfileUpdateBody, params: UserIdParams, },
     )
     .patch("/api/users/me/settings", async (ctx,) => {
-      const userId = (ctx as any).userId as string | null;
-      if (!userId) { return unauthorized(); }
+      const userId = requireUserId(ctx,);
+      if (typeof userId !== "string") { return userId; }
 
       const body = (ctx as any).body as Record<string, unknown>;
       const user = await opts.database
@@ -164,12 +160,11 @@ export function usersRoutes(opts: { database: Db; config: Config },): Elysia {
     .put(
       "/api/users/:id/settings",
       async (ctx,) => {
-        const userId = (ctx as any).userId as string | null;
+        const userId = requireUserId(ctx,);
+        if (typeof userId !== "string") { return userId; }
         const userRole = (ctx as any).userRole as string | null;
         const targetId = (ctx as any).params.id as string;
         const body = (ctx as any).body as Record<string, unknown>;
-
-        if (!userId) { return unauthorized(); }
 
         if (targetId !== userId && userRole !== "admin") {
           return forbidden();

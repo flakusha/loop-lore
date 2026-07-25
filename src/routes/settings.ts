@@ -15,8 +15,7 @@ import type { Kysely, } from "kysely";
 import { ActorType, } from "../db/enums";
 import type { DB, } from "../db/schema";
 import { jsonParseOr, safeJsonStringify, } from "../utils";
-import { unauthorized, } from "../validation/middleware";
-import { HttpStatus, jsonError, jsonResponse, } from "./http-utils";
+import { HttpStatus, jsonError, jsonResponse, requireUserId, } from "./http-utils";
 
 async function handleGetSettings(database: Kysely<DB>, userId: string,): Promise<Response> {
   const user = await database
@@ -100,29 +99,23 @@ async function handleExportAll(database: Kysely<DB>, userId: string,): Promise<R
 export function settingsRoutes({ database, }: { database: Kysely<DB> },) {
   return new Elysia({ name: "settings", },)
     .get("/api/settings", async (ctx,) => {
-      const userId = (ctx as any).userId as string | null;
-      if (!userId) {
-        return unauthorized();
-      }
+      const userId = requireUserId(ctx,);
+      if (typeof userId !== "string") { return userId; }
       return handleGetSettings(database, userId,);
     },)
     .patch(
       "/api/settings",
       async (ctx: any,) => {
-        const userId = ctx.userId as string | null;
-        if (!userId) {
-          return unauthorized();
-        }
+        const userId = requireUserId(ctx,);
+        if (typeof userId !== "string") { return userId; }
         const body = ctx.body as Record<string, unknown>;
         return handleUpdateSettings(database, userId, body,);
       },
       { body: t.Any(), },
     )
     .get("/api/settings/export", async (ctx,) => {
-      const userId = (ctx as any).userId as string | null;
-      if (!userId) {
-        return unauthorized();
-      }
+      const userId = requireUserId(ctx,);
+      if (typeof userId !== "string") { return userId; }
       return handleExportAll(database, userId,);
     },);
 }
