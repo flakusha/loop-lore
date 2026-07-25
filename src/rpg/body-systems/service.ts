@@ -199,7 +199,7 @@ export class BodySystemService {
     await this.db
       .updateTable("character_body_profile",)
       .set({
-        modifications: JSON.stringify(mods,),
+        modifications: safeJsonStringify(mods,).value ?? "[]",
         updated_at: now,
       },)
       .where("actor_id", "=", actorId,)
@@ -213,13 +213,16 @@ export class BodySystemService {
     const profile = await this.getProfile(actorId,);
     if (index < 0 || index >= profile.modifications.length) { return false; }
 
-    const mods = profile.modifications.filter((_, i,) => i !== index);
+    const mods: BodyModification[] = [];
+    for (let i = 0; i < profile.modifications.length; i++) {
+      if (i !== index) { mods.push(profile.modifications[i]!,); }
+    }
 
     const now = new Date().toISOString();
     await this.db
       .updateTable("character_body_profile",)
       .set({
-        modifications: JSON.stringify(mods,),
+        modifications: safeJsonStringify(mods,).value ?? "[]",
         updated_at: now,
       },)
       .where("actor_id", "=", actorId,)
