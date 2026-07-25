@@ -26,6 +26,7 @@ import { notFound, unauthorized, } from "../validation/middleware";
 import { WorldCreateBody, WorldUpdateBody, } from "../validation/schemas";
 import {
   ErrorCode,
+  extractAuth,
   HttpStatus,
   jsonCreated,
   jsonError,
@@ -40,13 +41,6 @@ interface HandleOpts {
 }
 
 // ── Helpers ─────────────────────────────────────────────────
-/** Extract auth fields from Elysia context. */
-function extractAuth(ctx: any,): { userId: string | null; userRole: string | null } {
-  return {
-    userId: ctx.userId as string | null,
-    userRole: ctx.userRole as string | null,
-  };
-}
 
 /** Check world access; returns error Response if denied, null if OK. */
 async function requireWorldAccess(
