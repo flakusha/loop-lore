@@ -16,7 +16,7 @@ import type {
 } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import { getLogger, } from "../../logger";
-import { uid, } from "../../utils";
+import { nowAndId, parseJsonField, } from "../shared/rpg-service-utils";
 
 // ── Types ──────────────────────────────────────────────────
 
@@ -106,8 +106,7 @@ export class FantasyService {
       initialReaction,
     } = opts;
 
-    const id = uid();
-    const now = new Date().toISOString();
+    const { id, now, } = nowAndId();
 
     const defaultRequirements: FantasyRequirements = {
       partnerType: [],
@@ -329,9 +328,26 @@ export class FantasyService {
       name: row.fantasy_name,
       category: row.category,
       intensity: row.intensity,
-      requirements: JSON.parse(row.requirements,) as FantasyRequirements,
-      fulfillmentEffects: JSON.parse(row.fulfillment_effects,) as FulfillmentEffects,
-      risks: JSON.parse(row.risks,) as FantasyRisks,
+      requirements: parseJsonField<FantasyRequirements>(row.requirements, {
+        partnerType: [],
+        locationType: [],
+        equipment: [],
+        minIntimacy: 0,
+        minArousal: 0,
+      },),
+      fulfillmentEffects: parseJsonField<FulfillmentEffects>(row.fulfillment_effects, {
+        satisfactionBonus: 10,
+        intimacyBonus: 3,
+        moodBonus: 5,
+        memoryStrength: 50,
+        repeatDesire: 50,
+      },),
+      risks: parseJsonField<FantasyRisks>(row.risks, {
+        reputationRisk: 0,
+        emotionalRisk: 0,
+        physicalRisk: 0,
+        discoveryRisk: 0,
+      },),
       discoveredThrough: row.discovered_through,
       initialReaction: row.initial_reaction,
       currentFeeling: row.current_feeling,

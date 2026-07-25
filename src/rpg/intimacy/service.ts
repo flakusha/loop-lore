@@ -13,7 +13,7 @@ import type { Kysely, } from "kysely";
 import type { IntimacyActionType, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import { getLogger, } from "../../logger";
-import { uid, } from "../../utils";
+import { nowAndId, parseJsonField, } from "../shared/rpg-service-utils";
 
 // ── Constants ──────────────────────────────────────────────
 
@@ -139,8 +139,7 @@ export class IntimacyService {
     }
 
     // Create new pair with score 0
-    const now = new Date().toISOString();
-    const id = uid();
+    const { id, now, } = nowAndId();
 
     await this.db
       .insertInto("character_intimacy",)
@@ -358,8 +357,8 @@ export class IntimacyService {
       targetActorId: row.target_actor_id,
       worldId: row.world_id,
       score: row.score,
-      actionHistory: JSON.parse(row.action_history,) as IntimacyHistoryEntry[],
-      unlockedThresholds: JSON.parse(row.unlocked_thresholds,) as number[],
+      actionHistory: parseJsonField<IntimacyHistoryEntry[]>(row.action_history, [],),
+      unlockedThresholds: parseJsonField<number[]>(row.unlocked_thresholds, [],),
       createdAt: row.created_at,
       updatedAt: row.updated_at,
     };
