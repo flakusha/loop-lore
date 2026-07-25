@@ -10,11 +10,17 @@ import { randomUUID, } from "node:crypto";
 import { QuestProgressStatus, QuestStatus, QuestType, } from "../db/enums";
 import type { QuestType as QT, } from "../db/enums";
 import type { DB, } from "../db/schema";
-import { getLogger, } from "../logger";
-import { jsonParseOr, safeJsonStringify, } from "../utils";
+
+import { jsonParseOr, } from "../utils";
 import { applyEvents, } from "./events";
 import { ItemsService, } from "./items";
 import { PROGRESS_CALCULATORS, } from "./quests/registry";
+import {
+  selectActiveQuests,
+  serializeOrThrow,
+  transitionQuestStatus,
+  upsertQuestProgress,
+} from "./shared/story-utils";
 import type { QuestConfig, QuestReward, WorldEvent, } from "./types";
 import { WorldStateService, } from "./world-state";
 
@@ -67,40 +73,13 @@ export class QuestEngine {
         type: params.type,
         status: QuestStatus.Active,
         priority: params.priority ?? 0,
-        config: (() => {
-          const r = safeJsonStringify(params.config,);
-          if (!r.ok) {
-            getLogger()
-              .child({ module: "quest-engine", },)
-              .error("safeJsonStringify config failed", undefined, { error: r.error, },);
-            throw new Error("Failed to serialize quest config",);
-          }
-          return r.value;
-        })(),
+        config: serializeOrThrow(params.config, "config",),
         progress: 0,
         target: params.target,
         start_time: new Date().toISOString(),
         deadline: params.deadline ?? null,
-        rewards: (() => {
-          const r = safeJsonStringify(params.rewards ?? {},);
-          if (!r.ok) {
-            getLogger()
-              .child({ module: "quest-engine", },)
-              .error("safeJsonStringify rewards failed", undefined, { error: r.error, },);
-            throw new Error("Failed to serialize quest rewards",);
-          }
-          return r.value;
-        })(),
-        narrative_hooks: (() => {
-          const r = safeJsonStringify(params.narrativeHooks ?? [],);
-          if (!r.ok) {
-            getLogger()
-              .child({ module: "quest-engine", },)
-              .error("safeJsonStringify narrative_hooks failed", undefined, { error: r.error, },);
-            throw new Error("Failed to serialize quest narrative hooks",);
-          }
-          return r.value;
-        })(),
+        rewards: serializeOrThrow(params.rewards ?? {}, "rewards",),
+        narrative_hooks: serializeOrThrow(params.narrativeHooks ?? [], "narrative_hooks",),
       },)
       .execute();
     return id;
@@ -111,12 +90,7 @@ export class QuestEngine {
    * Returns all quests that had their progress changed.
    */
   async processEvent(worldId: string, chatId: string, events: WorldEvent[],): Promise<QuestProgressEntry[]> {
-    const activeQuests = await this.db
-      .selectFrom("quests",)
-      .selectAll()
-      .where("world_id", "=", worldId,)
-      .where("status", "=", QuestStatus.Active,)
-      .execute();
+    const activeQuests = await selectActiveQuests(this.db, worldId,);
 
     const results: QuestProgressEntry[] = [];
 
@@ -150,13 +124,7 @@ export class QuestEngine {
 
   /** Get all active quests for a world */
   async getActiveQuests(worldId: string,) {
-    return this.db
-      .selectFrom("quests",)
-      .selectAll()
-      .where("world_id", "=", worldId,)
-      .where("status", "=", QuestStatus.Active,)
-      .orderBy("priority", "desc",)
-      .execute();
+    return selectActiveQuests(this.db, worldId,);
   }
 
   /** Get quest progress for a specific chat */
@@ -171,32 +139,12 @@ export class QuestEngine {
 
   /** Fail a quest (e.g., deadline passed) */
   async fail(questId: string,): Promise<void> {
-    await this.db
-      .updateTable("quests",)
-      .set({ status: QuestStatus.Failed, },)
-      .where("id", "=", questId,)
-      .execute();
-
-    await this.db
-      .updateTable("quest_progress",)
-      .set({ status: QuestProgressStatus.Failed, },)
-      .where("quest_id", "=", questId,)
-      .execute();
+    await transitionQuestStatus(this.db, questId, QuestStatus.Failed, QuestProgressStatus.Failed,);
   }
 
   /** Abandon a quest (GM action) */
   async abandon(questId: string,): Promise<void> {
-    await this.db
-      .updateTable("quests",)
-      .set({ status: QuestStatus.Abandoned, },)
-      .where("id", "=", questId,)
-      .execute();
-
-    await this.db
-      .updateTable("quest_progress",)
-      .set({ status: QuestProgressStatus.Ignored, },)
-      .where("quest_id", "=", questId,)
-      .execute();
+    await transitionQuestStatus(this.db, questId, QuestStatus.Abandoned, QuestProgressStatus.Ignored,);
   }
 
   /** Get completion percentage for a quest */
@@ -300,43 +248,7 @@ export class QuestEngine {
       .where("id", "=", quest.id,)
       .execute();
 
-    const existingChatProgress = await this.db
-      .selectFrom("quest_progress",)
-      .select("id",)
-      .where("quest_id", "=", quest.id,)
-      .where("chat_id", "=", chatId,)
-      .executeTakeFirst();
-
-    if (existingChatProgress) {
-      await this.db
-        .updateTable("quest_progress",)
-        .set({
-          progress: newProgress,
-          status: completed ? QuestProgressStatus.Completed : QuestProgressStatus.Active,
-          updated_at: new Date().toISOString(),
-          completed_at: completed ? new Date().toISOString() : undefined,
-        },)
-        .where("id", "=", existingChatProgress.id,)
-        .execute();
-    } else {
-      await this.db
-        .insertInto("quest_progress",)
-        .values({
-          id: randomUUID() as string,
-          quest_id: quest.id,
-          chat_id: chatId,
-          progress: newProgress,
-          status: completed ? QuestProgressStatus.Completed : QuestProgressStatus.Active,
-          contributed_events: sourceMessageId
-            ? (() => {
-              const r = safeJsonStringify([sourceMessageId,],);
-              return r.ok ? r.value : "[]";
-            })()
-            : "[]",
-          completed_at: completed ? new Date().toISOString() : null,
-        },)
-        .execute();
-    }
+    await upsertQuestProgress(this.db, quest.id, chatId, newProgress, completed, sourceMessageId,);
 
     const hooks = jsonParseOr(quest.narrative_hooks, [],) as { progress: number; narrative: string }[];
     let oldMilestone: { progress: number; narrative: string } | undefined;
