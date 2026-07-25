@@ -80,9 +80,20 @@ export function countByStatus(results: { status: string }[],): {
   let failed = 0;
   let skipped = 0;
   for (const r of results) {
-    if (r.status === "passed") { passed++; }
-    else if (r.status === "failed") { failed++; }
-    else if (r.status === "skipped") { skipped++; }
+    switch (r.status) {
+      case "passed": {
+        passed++;
+        break;
+      }
+      case "failed": {
+        failed++;
+        break;
+      }
+      case "skipped": {
+        skipped++;
+        break;
+      }
+    }
   }
   return { passed, failed, skipped, };
 }
@@ -168,7 +179,7 @@ export async function upsertQuestProgress(
       .updateTable("quest_progress",)
       .set({
         progress: newProgress,
-        status: completed ? ("completed" as never) : ("active" as never),
+        status: completed ? "completed" : "active",
         updated_at: new Date().toISOString(),
         completed_at: completed ? new Date().toISOString() : undefined,
       },)
@@ -182,7 +193,7 @@ export async function upsertQuestProgress(
         quest_id: questId,
         chat_id: chatId,
         progress: newProgress,
-        status: completed ? ("completed" as never) : ("active" as never),
+        status: completed ? "completed" : "active",
         contributed_events: sourceMessageId
           ? (() => {
             const r = safeJsonStringify([sourceMessageId,],);
