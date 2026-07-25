@@ -17,7 +17,8 @@ import type {
 } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import { getLogger, } from "../../logger";
-import { safeJsonParse, safeJsonStringify, uid, } from "../../utils";
+import { safeJsonStringify, } from "../../utils";
+import { nowAndId, parseJsonField, } from "../shared/rpg-service-utils";
 
 // ── Types ──────────────────────────────────────────────────
 
@@ -109,8 +110,7 @@ export class BodySystemService {
     }
 
     // Create default profile
-    const now = new Date().toISOString();
-    const id = uid();
+    const { id, now, } = nowAndId();
 
     await this.db
       .insertInto("character_body_profile",)
@@ -256,8 +256,7 @@ export class BodySystemService {
     }
 
     // Create default cycle (no heat for humans)
-    const now = new Date().toISOString();
-    const id = uid();
+    const { id, now, } = nowAndId();
     const isHuman = species.toLowerCase() === "human";
 
     const effectsStringify = safeJsonStringify(this.defaultEffects, 2,);
@@ -417,8 +416,7 @@ export class BodySystemService {
     created_at: string;
     updated_at: string;
   },): BodyProfile {
-    const modificationsParse = safeJsonParse<BodyModification[]>(row.modifications,);
-    const modifications = modificationsParse.ok ? modificationsParse.value : [];
+    const modifications = parseJsonField<BodyModification[]>(row.modifications, [],);
 
     return {
       id: row.id,
@@ -450,8 +448,7 @@ export class BodySystemService {
     created_at: string;
     updated_at: string;
   },): HeatCycleState {
-    const effectsParse = safeJsonParse<HeatEffects>(row.effects,);
-    const effects = effectsParse.ok ? effectsParse.value : this.defaultEffects;
+    const effects = parseJsonField<HeatEffects>(row.effects, this.defaultEffects,);
 
     return {
       id: row.id,

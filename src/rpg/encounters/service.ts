@@ -17,7 +17,7 @@ import type {
 } from "../../db/enums";
 import type { DB, } from "../../db/schema";
 import { getLogger, } from "../../logger";
-import { uid, } from "../../utils";
+import { nowAndId, parseJsonField, } from "../shared/rpg-service-utils";
 
 // ── Types ──────────────────────────────────────────────────
 
@@ -106,8 +106,7 @@ export class EncounterService {
   async createEncounter(opts: CreateEncounterOpts,): Promise<NsfwEncounter> {
     const { worldId, encounterType, intensity, narrativeStyle, participants, phases, outcomes, contentTags, } = opts;
 
-    const id = uid();
-    const now = new Date().toISOString();
+    const { id, now, } = nowAndId();
 
     const defaultPhases: EncounterPhase[] = [
       {
@@ -342,11 +341,11 @@ export class EncounterService {
       encounterType: row.encounter_type,
       intensity: row.intensity,
       narrativeStyle: row.narrative_style,
-      participants: JSON.parse(row.participants,) as string[],
-      phases: JSON.parse(row.phases,) as EncounterPhase[],
+      participants: parseJsonField<string[]>(row.participants, [],),
+      phases: parseJsonField<EncounterPhase[]>(row.phases, [],),
       currentPhase: row.current_phase,
-      outcomes: JSON.parse(row.outcomes,) as EncounterOutcome[],
-      contentTags: JSON.parse(row.content_tags,) as string[],
+      outcomes: parseJsonField<EncounterOutcome[]>(row.outcomes, [],),
+      contentTags: parseJsonField<string[]>(row.content_tags, [],),
       completed: row.completed === 1,
       createdAt: row.created_at,
       updatedAt: row.updated_at,
