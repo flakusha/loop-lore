@@ -11,6 +11,13 @@ import { AvatarService, } from "../services/avatar-service";
 import { MoodService, } from "../services/mood-service";
 import { RelationshipsService, } from "../services/relationships-service";
 import { TraitsService, } from "../services/traits-service";
+import {
+  LICENSING_FIELDS,
+  mapAvatarForExport,
+  mapRelationshipForExport,
+  mapTraitForExport,
+  toExportFields,
+} from "../shared/character-systems-utils";
 
 /** Complete character systems export */
 export interface CharacterSystemsExport {
@@ -66,16 +73,8 @@ export async function exportCharacterSystems(
 
   if (permanentTraits.length > 0 || worldTraits.length > 0) {
     exportData.traits = {
-      permanent: permanentTraits.map((t,) => ({
-        category: t.trait_category,
-        name: t.trait_name,
-        value: t.trait_value,
-      })),
-      world: worldTraits.map((t,) => ({
-        category: t.trait_category,
-        name: t.trait_name,
-        value: t.trait_value,
-      })),
+      permanent: permanentTraits.map(mapTraitForExport,),
+      world: worldTraits.map(mapTraitForExport,),
       location: locationTraits,
     };
   }
@@ -95,15 +94,7 @@ export async function exportCharacterSystems(
   // Export relationships
   const relationships = await relationshipsService.getRelationships(actorId, worldId,);
   if (relationships.length > 0) {
-    exportData.relationships = relationships.map((r,) => ({
-      targetActorId: r.targetActorId,
-      relationshipType: r.relationshipType,
-      standing: r.standing,
-      trust: r.trust,
-      familiarity: r.familiarity,
-      isBidirectional: r.isBidirectional,
-      metadata: r.metadata,
-    }));
+    exportData.relationships = relationships.map(mapRelationshipForExport,);
   }
 
   // Export avatars
@@ -111,13 +102,7 @@ export async function exportCharacterSystems(
   const avatarConfig = await avatarService.getAvatarConfig(actorId,);
   if (avatars.length > 0) {
     exportData.avatars = {
-      avatars: avatars.map((a,) => ({
-        assetId: a.assetId,
-        label: a.label,
-        tags: a.tags,
-        isPrimary: a.isPrimary,
-        sortOrder: a.sortOrder,
-      })),
+      avatars: avatars.map(mapAvatarForExport,),
       config: avatarConfig
         ? {
           selectionRule: avatarConfig.selectionRule,
@@ -136,14 +121,7 @@ export async function exportCharacterSystems(
     .executeTakeFirst();
 
   if (licensing) {
-    exportData.licensing = {
-      licenseType: licensing.license_type,
-      customLicenseText: licensing.custom_license_text,
-      attribution: licensing.attribution,
-      allowDerivatives: licensing.allow_derivatives,
-      allowCommercial: licensing.allow_commercial,
-      shareAlike: licensing.share_alike,
-    };
+    exportData.licensing = toExportFields(licensing, LICENSING_FIELDS,);
   }
 
   // Export availability (from DB directly)
