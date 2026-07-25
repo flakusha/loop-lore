@@ -40,25 +40,30 @@ interface HandleOpts {
 }
 
 // ── Helpers ─────────────────────────────────────────────────
+/** Extract auth fields from Elysia context. */
+function extractAuth(ctx: any,): { userId: string | null; userRole: string | null } {
+  return {
+    userId: ctx.userId as string | null,
+    userRole: ctx.userRole as string | null,
+  };
+}
 
+/** Check world access; returns error Response if denied, null if OK. */
 async function requireWorldAccess(
   database: Kysely<DB>,
   worldId: string,
   userId: string | null,
   userRole: string | null,
-): Promise<{ world: { owner_id: string }; error: undefined } | { world: undefined; error: Response }> {
+): Promise<Response | null> {
   const world = await database
     .selectFrom("worlds",)
     .select("owner_id",)
     .where("id", "=", worldId,)
     .executeTakeFirst();
   if (!world || (world.owner_id !== userId && userRole !== "admin")) {
-    return {
-      world: undefined,
-      error: notFound("World not found",),
-    };
+    return notFound("World not found",);
   }
-  return { world, error: undefined, };
+  return null;
 }
 
 // ── Handlers ────────────────────────────────────────────────
@@ -111,8 +116,8 @@ async function handleGetWorld(
   userId: string | null,
   userRole: string | null,
 ) {
-  const { error, } = await requireWorldAccess(database, worldId, userId, userRole,);
-  if (error) { return error; }
+  const worldErr = await requireWorldAccess(database, worldId, userId, userRole,);
+  if (worldErr) { return worldErr; }
   const world = await database.selectFrom("worlds",).selectAll().where("id", "=", worldId,).executeTakeFirst();
   return jsonResponse(world,);
 }
@@ -124,8 +129,8 @@ async function handleUpdateWorld(
   userId: string | null,
   userRole: string | null,
 ) {
-  const { error, } = await requireWorldAccess(database, worldId, userId, userRole,);
-  if (error) { return error; }
+  const worldErr = await requireWorldAccess(database, worldId, userId, userRole,);
+  if (worldErr) { return worldErr; }
 
   const updates: Record<string, unknown> = {};
   if (body.name != null) { updates.name = body.name; }
@@ -148,8 +153,8 @@ async function handleDeleteWorld(
   userId: string | null,
   userRole: string | null,
 ) {
-  const { error, } = await requireWorldAccess(database, worldId, userId, userRole,);
-  if (error) { return error; }
+  const worldErr = await requireWorldAccess(database, worldId, userId, userRole,);
+  if (worldErr) { return worldErr; }
 
   const locationIds = await database
     .selectFrom("locations",)
@@ -188,8 +193,8 @@ async function handleInitializeStates(
   userId: string | null,
   userRole: string | null,
 ) {
-  const { error, } = await requireWorldAccess(database, worldId, userId, userRole,);
-  if (error) { return error; }
+  const worldErr = await requireWorldAccess(database, worldId, userId, userRole,);
+  if (worldErr) { return worldErr; }
 
   const state = new WorldStateService(database,);
   const locationsCreated = await state.initializeLocationStates(worldId,);
@@ -208,8 +213,8 @@ async function handleListLocations(
   userId: string | null,
   userRole: string | null,
 ) {
-  const { error, } = await requireWorldAccess(database, worldId, userId, userRole,);
-  if (error) { return error; }
+  const worldErr = await requireWorldAccess(database, worldId, userId, userRole,);
+  if (worldErr) { return worldErr; }
 
   const offset = (page - 1) * pageSize;
   const countResult = await database
@@ -277,8 +282,8 @@ async function handleCreateLocation(
   userId: string | null,
   userRole: string | null,
 ) {
-  const { error, } = await requireWorldAccess(database, worldId, userId, userRole,);
-  if (error) { return error; }
+  const worldErr = await requireWorldAccess(database, worldId, userId, userRole,);
+  if (worldErr) { return worldErr; }
 
   const name = body.name as string | undefined;
   if (!name) { return jsonError({ message: "name is required", status: HttpStatus.BadRequest, },); }
@@ -316,8 +321,8 @@ async function handleGetLocation(
   userId: string | null,
   userRole: string | null,
 ) {
-  const { error, } = await requireWorldAccess(database, worldId, userId, userRole,);
-  if (error) { return error; }
+  const worldErr = await requireWorldAccess(database, worldId, userId, userRole,);
+  if (worldErr) { return worldErr; }
 
   const location = await database
     .selectFrom("locations",)
@@ -338,8 +343,8 @@ async function handleUpdateLocation(
   userId: string | null,
   userRole: string | null,
 ) {
-  const { error, } = await requireWorldAccess(database, worldId, userId, userRole,);
-  if (error) { return error; }
+  const worldErr = await requireWorldAccess(database, worldId, userId, userRole,);
+  if (worldErr) { return worldErr; }
 
   const updates: Record<string, unknown> = {};
   if (body.name) { updates.name = body.name; }
@@ -373,8 +378,8 @@ async function handleDeleteLocation(
   userId: string | null,
   userRole: string | null,
 ) {
-  const { error, } = await requireWorldAccess(database, worldId, userId, userRole,);
-  if (error) { return error; }
+  const worldErr = await requireWorldAccess(database, worldId, userId, userRole,);
+  if (worldErr) { return worldErr; }
 
   await database.deleteFrom("locations",).where("id", "=", locId,).where("world_id", "=", worldId,).execute();
   return jsonNoContent();
@@ -385,7 +390,7 @@ async function handleDeleteLocation(
 export function worldsRoutes({ database, }: HandleOpts,): Elysia {
   return new Elysia({ name: "worlds", },)
     .get("/api/worlds", async (ctx: any,) => {
-      const userId = ctx.userId as string | null;
+      const { userId, } = extractAuth(ctx,);
       const page = Number(ctx.query?.page,) || 1;
       const pageSize = Number(ctx.query?.pageSize,) || 20;
       return handleListWorlds(database, page, pageSize, userId,);
@@ -393,21 +398,19 @@ export function worldsRoutes({ database, }: HandleOpts,): Elysia {
     .post(
       "/api/worlds",
       async (ctx: any,) => {
-        const userId = ctx.userId as string | null;
+        const { userId, } = extractAuth(ctx,);
         return handleCreateWorld(database, ctx.body as Record<string, unknown>, userId,);
       },
       { body: WorldCreateBody, },
     )
     .get("/api/worlds/:worldId", async (ctx: any,) => {
-      const userId = ctx.userId as string | null;
-      const userRole = ctx.userRole as string | null;
+      const { userId, userRole, } = extractAuth(ctx,);
       return handleGetWorld(database, ctx.params.worldId as string, userId, userRole,);
     },)
     .put(
       "/api/worlds/:worldId",
       async (ctx: any,) => {
-        const userId = ctx.userId as string | null;
-        const userRole = ctx.userRole as string | null;
+        const { userId, userRole, } = extractAuth(ctx,);
         return handleUpdateWorld(
           database,
           ctx.params.worldId as string,
@@ -419,20 +422,17 @@ export function worldsRoutes({ database, }: HandleOpts,): Elysia {
       { body: WorldUpdateBody, },
     )
     .delete("/api/worlds/:worldId", async (ctx: any,) => {
-      const userId = ctx.userId as string | null;
-      const userRole = ctx.userRole as string | null;
+      const { userId, userRole, } = extractAuth(ctx,);
       return handleDeleteWorld(database, ctx.params.worldId as string, userId, userRole,);
     },)
     .get("/api/worlds/:worldId/locations", async (ctx: any,) => {
-      const userId = ctx.userId as string | null;
-      const userRole = ctx.userRole as string | null;
+      const { userId, userRole, } = extractAuth(ctx,);
       const page = Number(ctx.query?.page,) || 1;
       const pageSize = Number(ctx.query?.pageSize,) || 20;
       return handleListLocations(database, ctx.params.worldId as string, page, pageSize, userId, userRole,);
     },)
     .post("/api/worlds/:worldId/locations", async (ctx: any,) => {
-      const userId = ctx.userId as string | null;
-      const userRole = ctx.userRole as string | null;
+      const { userId, userRole, } = extractAuth(ctx,);
       return handleCreateLocation(
         database,
         ctx.params.worldId as string,
@@ -442,8 +442,7 @@ export function worldsRoutes({ database, }: HandleOpts,): Elysia {
       );
     },)
     .get("/api/worlds/:worldId/locations/:locId", async (ctx: any,) => {
-      const userId = ctx.userId as string | null;
-      const userRole = ctx.userRole as string | null;
+      const { userId, userRole, } = extractAuth(ctx,);
       return handleGetLocation(
         database,
         ctx.params.worldId as string,
@@ -453,8 +452,7 @@ export function worldsRoutes({ database, }: HandleOpts,): Elysia {
       );
     },)
     .put("/api/worlds/:worldId/locations/:locId", async (ctx: any,) => {
-      const userId = ctx.userId as string | null;
-      const userRole = ctx.userRole as string | null;
+      const { userId, userRole, } = extractAuth(ctx,);
       return handleUpdateLocation(
         database,
         ctx.params.worldId as string,
@@ -465,8 +463,7 @@ export function worldsRoutes({ database, }: HandleOpts,): Elysia {
       );
     },)
     .delete("/api/worlds/:worldId/locations/:locId", async (ctx: any,) => {
-      const userId = ctx.userId as string | null;
-      const userRole = ctx.userRole as string | null;
+      const { userId, userRole, } = extractAuth(ctx,);
       return handleDeleteLocation(
         database,
         ctx.params.worldId as string,
@@ -476,8 +473,7 @@ export function worldsRoutes({ database, }: HandleOpts,): Elysia {
       );
     },)
     .post("/api/worlds/:worldId/initialize-states", async (ctx: any,) => {
-      const userId = ctx.userId as string | null;
-      const userRole = ctx.userRole as string | null;
+      const { userId, userRole, } = extractAuth(ctx,);
       return handleInitializeStates(database, ctx.params.worldId as string, userId, userRole,);
     },) as unknown as Elysia;
 }
