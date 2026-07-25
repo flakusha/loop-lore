@@ -5,20 +5,16 @@ import { sql, } from "kysely";
  * Migration 008 — Chat features: pinning, personas, impersonation, archiving
  *
  * Adds:
- * - `is_pinned` on `chats`: user-surface favorite chats
- * - `personas` table: user-authored identities for chat participation
+ * - `is_pinned` on `chats`: "unpinned"/"pinned" enum
+ * - `personas` table with `is_default`: "not_default"/"default" enum
  * - `impersonate_actor_id` on `chat_participants`: which character a user plays
  * - `persona_id` on `chat_participants`: user's persona for this chat
  * - `archived_at` on `messages`: soft-delete with 30-day restore window
- *
- * Design: Integer flag (0/1) for is_pinned to match existing boolean-as-number
- * convention (actor_notes.pinned, actor_items.equipped). Per-participant
- * impersonation/persona to support group chats.
  */
 export async function up(database: Kysely<unknown>,): Promise<void> {
   await database.schema
     .alterTable("chats",)
-    .addColumn("is_pinned", "integer", (col,) => col.notNull().defaultTo(0,),)
+    .addColumn("is_pinned", "text", (col,) => col.notNull().defaultTo("unpinned",),)
     .execute();
 
   await database.schema.createIndex("idx_chats_pinned",).on("chats",).column("is_pinned",).execute();
@@ -31,7 +27,7 @@ export async function up(database: Kysely<unknown>,): Promise<void> {
     .addColumn("avatar_asset_id", "text", (col,) => col.references("assets.id",),)
     .addColumn("description", "text",)
     .addColumn("title", "text",)
-    .addColumn("is_default", "integer", (col,) => col.notNull().defaultTo(0,),)
+    .addColumn("is_default", "text", (col,) => col.notNull().defaultTo("not_default",),)
     .addColumn("created_at", "text", (col,) => col.notNull().defaultTo(sql`(datetime('now'))`,),)
     .addColumn("updated_at", "text", (col,) => col.notNull().defaultTo(sql`(datetime('now'))`,),)
     .execute();
