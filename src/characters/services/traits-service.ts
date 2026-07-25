@@ -11,6 +11,7 @@ import type {
   WorldTraitCategory,
 } from "../../db/enums";
 import type { DB, } from "../../db/schema";
+import { guardNotExists, } from "./shared-service-utils";
 
 /** Options for creating a permanent trait */
 export interface CreatePermanentTraitOpts {
@@ -108,9 +109,7 @@ export class TraitsService {
    */
   async createPermanentTrait(opts: CreatePermanentTraitOpts,): Promise<string> {
     const existing = await this.getPermanentTrait(opts.actorId, opts.name,);
-    if (existing) {
-      throw new Error(`Permanent trait "${opts.name}" already exists for actor ${opts.actorId}`,);
-    }
+    guardNotExists(existing, "Permanent trait", `${opts.actorId}:${opts.name}`,);
 
     const id = randomUUID();
     const now = new Date().toISOString();
@@ -210,9 +209,7 @@ export class TraitsService {
    */
   async createWorldTrait(opts: CreateWorldTraitOpts,): Promise<string> {
     const existing = await this.getWorldTrait(opts.actorId, opts.worldId, opts.name,);
-    if (existing) {
-      throw new Error(`World trait "${opts.name}" already exists for actor ${opts.actorId} in world ${opts.worldId}`,);
-    }
+    guardNotExists(existing, "World trait", `${opts.actorId}:${opts.worldId}:${opts.name}`,);
 
     const id = randomUUID();
     const now = new Date().toISOString();
@@ -315,11 +312,7 @@ export class TraitsService {
    */
   async createLocationTrait(opts: CreateLocationTraitOpts,): Promise<string> {
     const existing = await this.getLocationTrait(opts.actorId, opts.locationId, opts.name,);
-    if (existing) {
-      throw new Error(
-        `Location trait "${opts.name}" already exists for actor ${opts.actorId} at location ${opts.locationId}`,
-      );
-    }
+    guardNotExists(existing, "Location trait", `${opts.actorId}:${opts.locationId}:${opts.name}`,);
 
     const id = randomUUID();
     const now = new Date().toISOString();

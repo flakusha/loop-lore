@@ -31,7 +31,7 @@ import {
   jsonResponse,
   notFoundResponse,
   notOwnerResponse,
-  unauthorizedResponse,
+  requireUserId,
 } from "../routes/http-utils";
 import { safeFromUint8Array, } from "../utils/safe-buffer";
 import {
@@ -81,15 +81,6 @@ interface ServeCompressedOpts {
 
 interface ResolvedAsset {
   asset: AssetRecord;
-}
-
-/** Extract userId from context or return Unauthorized error. */
-function requireUserId(ctx: unknown,): string | Response {
-  const userId = (ctx as any).userId as string | null;
-  if (!userId) {
-    return unauthorizedResponse();
-  }
-  return userId;
 }
 
 /** Serve a file from disk with proper headers. */
@@ -277,10 +268,8 @@ export function assetRoutes({ database, config, }: { database: Kysely<DB>; confi
       },)
       // ── Share sub-routes ─────────────────────────────
       .post("/api/assets/:id/share", async (ctx,) => {
-        const userId = (ctx as any).userId as string | null;
-        if (!userId) {
-          return unauthorizedResponse();
-        }
+        const userId = requireUserId(ctx,);
+        if (typeof userId !== "string") { return userId; }
 
         const body = (await ctx.request.json()) as { actor_id?: string };
         if (!body.actor_id) {

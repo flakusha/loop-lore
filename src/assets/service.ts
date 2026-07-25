@@ -262,6 +262,22 @@ export async function createAsset({ database, input, uploadDir, }: CreateAssetOp
 /**
  * List assets with optional filters (entity_type, entity_id, label).
  */
+/**
+ * Build an OR filter for asset visibility: public, owned by actor, or shared.
+ * Pass tablePrefix "" for unjoined queries, "assets." for joined queries.
+ */
+function visibilityFilter(
+  eb: any,
+  actorId: string,
+  tablePrefix: string,
+) {
+  return eb.or([
+    eb(`${tablePrefix}visibility`, "=", AssetVisibility.Public,),
+    eb(`${tablePrefix}owner_id`, "=", actorId,),
+    eb(`${tablePrefix}visibility`, "=", AssetVisibility.Shared,),
+  ],);
+}
+
 export async function listAssets(
   database: Kysely<DB>,
   options: {
@@ -307,20 +323,8 @@ export async function listAssets(
 
     // Apply visibility filter (admin sees all)
     if (!isAdmin) {
-      countQuery = countQuery.where((eb,) =>
-        eb.or([
-          eb("assets.visibility", "=", AssetVisibility.Public,),
-          eb("assets.owner_id", "=", actorId,),
-          eb("assets.visibility", "=", AssetVisibility.Shared,),
-        ],)
-      );
-      listQuery = listQuery.where((eb,) =>
-        eb.or([
-          eb("assets.visibility", "=", AssetVisibility.Public,),
-          eb("assets.owner_id", "=", actorId,),
-          eb("assets.visibility", "=", AssetVisibility.Shared,),
-        ],)
-      );
+      countQuery = countQuery.where((eb,) => visibilityFilter(eb, actorId, "assets.",));
+      listQuery = listQuery.where((eb,) => visibilityFilter(eb, actorId, "assets.",));
     }
 
     const countResult = await countQuery.executeTakeFirst();
@@ -344,20 +348,8 @@ export async function listAssets(
     .selectAll();
 
   if (!isAdmin) {
-    countQuery = countQuery.where((eb,) =>
-      eb.or([
-        eb("visibility", "=", AssetVisibility.Public,),
-        eb("owner_id", "=", actorId,),
-        eb("visibility", "=", AssetVisibility.Shared,),
-      ],)
-    );
-    listQuery = listQuery.where((eb,) =>
-      eb.or([
-        eb("visibility", "=", AssetVisibility.Public,),
-        eb("owner_id", "=", actorId,),
-        eb("visibility", "=", AssetVisibility.Shared,),
-      ],)
-    );
+    countQuery = countQuery.where((eb,) => visibilityFilter(eb, actorId, "",));
+    listQuery = listQuery.where((eb,) => visibilityFilter(eb, actorId, "",));
   }
 
   const countResult = await countQuery.executeTakeFirst();

@@ -4,52 +4,37 @@
 // Converts TOML format to canonical character card.
 
 import type { CanonicalCharacter, } from "../parser";
-
-interface TomlCharacter {
-  character?: {
-    name?: string;
-    description?: string;
-    personality?: string;
-    scenario?: string;
-    welcome_message?: string;
-    mes_example?: string;
-    metadata?: {
-      tags?: string[];
-      creator?: string;
-      creator_notes?: string;
-      character_version?: string;
-    };
-    prompts?: {
-      system_prompt?: string;
-      post_history_instructions?: string;
-    };
-    greetings?: {
-      alternate?: string[];
-    };
-  };
-}
+import { buildCanonicalFields, } from "./shared";
 
 /**
  * Normalize TOML format to canonical character card.
- * TOML uses [character] section with subsections.
+ * TOML uses [character] section with nested subsections.
+ * We flatten the nested structure into a flat Record before passing to the shared builder.
  */
 export function normalizeToml(data: Record<string, unknown>,): CanonicalCharacter {
-  const tomlData = data as TomlCharacter;
-  const character = tomlData.character ?? {};
+  const char = (data.character ?? {}) as Record<string, unknown>;
+  const meta = (char.metadata ?? {}) as Record<string, unknown>;
+  const prompts = (char.prompts ?? {}) as Record<string, unknown>;
+  const greetings = (char.greetings ?? {}) as Record<string, unknown>;
+
+  // Flatten nested TOML structure
+  const flat: Record<string, unknown> = {
+    name: char.name,
+    description: char.description,
+    personality: char.personality,
+    scenario: char.scenario,
+    welcome_message: char.welcome_message,
+    mes_example: char.mes_example,
+    system_prompt: prompts.system_prompt,
+    post_history_instructions: prompts.post_history_instructions,
+    alternate_greetings: greetings.alternate,
+    tags: meta.tags,
+    creator: meta.creator,
+    creator_notes: meta.creator_notes,
+    character_version: meta.character_version,
+  };
 
   return {
-    name: character.name ?? "",
-    description: character.description ?? "",
-    personality: character.personality,
-    scenario: character.scenario,
-    welcome_message: character.welcome_message,
-    mes_example: character.mes_example,
-    system_prompt: character.prompts?.system_prompt,
-    post_history_instructions: character.prompts?.post_history_instructions,
-    alternate_greetings: character.greetings?.alternate,
-    tags: character.metadata?.tags,
-    creator: character.metadata?.creator,
-    creator_notes: character.metadata?.creator_notes,
-    character_version: character.metadata?.character_version,
-  };
+    ...buildCanonicalFields(flat, { welcomeKey: "welcome_message", },),
+  } as CanonicalCharacter;
 }

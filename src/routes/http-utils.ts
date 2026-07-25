@@ -302,3 +302,12 @@ export function forbiddenResponse(message?: string, t?: TranslatorFn,): Response
 export function badRequestResponse(message: string,): Response {
   return jsonError({ message, status: HttpStatus.BadRequest, code: ErrorCode.BadRequest, },);
 }
+
+/** Extract userId from Elysia context or return Unauthorized error response. */
+export function requireUserId(ctx: unknown,): string | Response {
+  const userId = (ctx as any).userId as string | null;
+  if (!userId) {
+    return unauthorizedResponse();
+  }
+  return userId;
+}
