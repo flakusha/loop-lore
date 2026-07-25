@@ -55,7 +55,10 @@ export class NsfwFilter {
 
     // Check for NSFW keywords
     const lower = content.toLowerCase();
-    return this.config.keywords.some((kw,) => lower.includes(kw,));
+    for (const kw of this.config.keywords) {
+      if (lower.includes(kw,)) { return true; }
+    }
+    return false;
   }
 
   /**
@@ -118,6 +121,10 @@ export class NsfwFilter {
    * Remove a keyword from the filter list.
    */
   removeKeyword(keyword: string,): void {
-    this.config.keywords = this.config.keywords.filter((kw,) => kw !== keyword);
+    const filtered: string[] = [];
+    for (const kw of this.config.keywords) {
+      if (kw !== keyword) { filtered.push(kw,); }
+    }
+    this.config.keywords = filtered;
   }
 }
