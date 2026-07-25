@@ -15,6 +15,10 @@ export interface MessageAttachment {
   height: number;
 }
 
+/** API response projection — DB columns from Messages + joined/computed fields.
+ *  Not derived from DB schema because it includes JOINed data (actor_name),
+ *  UI state (variantIndex, totalVariants), and related-entity data (reactions, pinned).
+ *  @see Messages in src/db/schema-core.ts for the canonical column set. */
 export interface Message {
   id: string;
   role: string;
