@@ -12,7 +12,7 @@
 import type { Kysely, } from "kysely";
 import type { NsfwLocationType, } from "../../db/enums";
 import type { DB, } from "../../db/schema";
-import { uid, } from "../../utils";
+import { nowAndId, parseJsonField, } from "../shared/rpg-service-utils";
 
 // ── Types ──────────────────────────────────────────────────
 
@@ -77,8 +77,7 @@ export class LocationNsfwService {
     }
 
     // Create default config
-    const now = new Date().toISOString();
-    const id = uid();
+    const { id, now, } = nowAndId();
 
     const defaultAtmosphere: LocationAtmosphere = {
       romantic: 50,
@@ -232,9 +231,15 @@ export class LocationNsfwService {
       locationType: row.location_type,
       privacyLevel: row.privacy_level,
       discoveryChance: row.discovery_chance,
-      atmosphere: JSON.parse(row.atmosphere,) as LocationAtmosphere,
-      equipment: JSON.parse(row.equipment,) as string[],
-      risks: JSON.parse(row.risks,) as LocationRisks,
+      atmosphere: parseJsonField<LocationAtmosphere>(row.atmosphere, {
+        romantic: 50,
+        dangerous: 0,
+        comfortable: 50,
+        exotic: 0,
+        seedy: 0,
+      },),
+      equipment: parseJsonField<string[]>(row.equipment, [],),
+      risks: parseJsonField<LocationRisks>(row.risks, { discovery: 10, injury: 0, arrest: 0, reputation: 5, },),
       createdAt: row.created_at,
       updatedAt: row.updated_at,
     };
