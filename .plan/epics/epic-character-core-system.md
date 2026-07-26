@@ -872,3 +872,4 @@ CREATE TABLE description_transfers (
 ## Linked Tasks
 
 - TASK-character-core-system.md
+- TASK-character-legacy-heir.md
