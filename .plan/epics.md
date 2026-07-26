@@ -204,6 +204,15 @@ epics where applicable.
 - `TASK-memory-distillation-dreams.md` — memory distillation, dream system (Memory)
 - `TASK-world-shaping-divine.md` — world-altering actions, divine intervention (Worlds)
 - `TASK-vn-branching-choices.md` — VN branching choices, relationship impact (Immersion)
+- `TASK-vn-dynamic-generation.md` — dynamic image/story generation (Visual Novel Mode 51)
+- `TASK-vn-qa-mode.md` — Q&A mode for VN (Visual Novel Mode 51)
+- `TASK-chat-battle-mode-switch.md` — chat→battle mode switching (Battle & Action Systems)
+- `TASK-travel-party-migration.md` — party migration between chats (Chat Transfer & Location)
+- `TASK-random-encounters-events.md` — structured encounter tables, event chains (World Event System)
+- `TASK-gm-whitenotes.md` — GM whitenote system (GM/Shadow Notes 52)
+- `TASK-gm-shadow-notes.md` — Shadow notes for hidden narrative influence (GM/Shadow Notes 52)
+- `TASK-enemies-monsters-systems.md` — enemy/monster system with config files (Battle & Action Systems)
+- `TASK-config-gallery-attachment-idempotent.md` — gallery, file attachment, idempotent load (Config Extensions)
 
 ---
 
