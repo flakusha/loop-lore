@@ -1,6 +1,6 @@
 // src/routes/export.ts
 //
-// Bulk export routes — export characters, chats, worlds as ZIP archive.
+// Bulk export routes — export characters, chats, worlds, assets as ZIP archive.
 //
 // POST /api/export
 // Returns a ZIP archive with all requested data.
@@ -56,15 +56,12 @@ export function exportRoutes({ database, }: HandlerOpts,): Elysia {
       const chatIds = body.chat_ids as string[] | undefined;
 
       const zip = new JSZip();
-      const manifest: Record<string, unknown> = {
-        version: "1.0",
-        exported_at: new Date().toISOString(),
-        exported_by: userId,
-        format,
-        contents: {},
-      };
-
       const counts: Record<string, number> = {};
+      const checksums: Record<string, string> = {};
+
+      function addChecksum(path: string, content: string | Buffer,) {
+        checksums[path] = `sha256:${crypto.createHash("sha256",).update(content,).digest("hex",)}`;
+      }
 
       // Export characters
       if (include.includes("characters",)) {
@@ -107,9 +104,13 @@ export function exportRoutes({ database, }: HandlerOpts,): Elysia {
 
           const filename = char.display_name.replaceAll(/[^a-z0-9]/gi, "_",).toLowerCase();
           if (format === "yaml") {
-            charsFolder?.file(`${filename}.yaml`, exportToYaml(canonical,),);
+            const content = exportToYaml(canonical,);
+            charsFolder?.file(`${filename}.yaml`, content,);
+            addChecksum(`characters/${filename}.yaml`, content,);
           } else {
-            charsFolder?.file(`${filename}.json`, exportToCcV3Json(canonical,),);
+            const content = exportToCcV3Json(canonical,);
+            charsFolder?.file(`${filename}.json`, content,);
+            addChecksum(`characters/${filename}.json`, content,);
           }
         }
         counts.characters = characters.length;
@@ -160,19 +161,102 @@ export function exportRoutes({ database, }: HandlerOpts,): Elysia {
           };
 
           const filename = (chat.name ?? chat.id).replaceAll(/[^a-z0-9]/gi, "_",).toLowerCase();
-          chatsFolder?.file(`${filename}.json`, JSON.stringify(chatData, null, 2,),);
+          const content = JSON.stringify(chatData, null, 2,);
+          chatsFolder?.file(`${filename}.json`, content,);
+          addChecksum(`chats/${filename}.json`, content,);
         }
         counts.chats = chats.length;
       }
 
-      manifest.contents = counts;
+      // Export worlds
+      if (include.includes("worlds",)) {
+        const worlds = await database
+          .selectFrom("worlds",)
+          .selectAll()
+          .where("owner_id", "=", userId,)
+          .execute();
 
-      // Add manifest
-      zip.file("manifest.json", JSON.stringify(manifest, null, 2,),);
+        const worldsFolder = zip.folder("worlds",);
+        for (const world of worlds) {
+          const content = JSON.stringify(world, null, 2,);
+          worldsFolder?.file(`${world.id}.json`, content,);
+          addChecksum(`worlds/${world.id}.json`, content,);
+        }
+        counts.worlds = worlds.length;
+      }
+
+      // Export assets
+      if (include.includes("assets",)) {
+        const assets = await database
+          .selectFrom("assets",)
+          .selectAll()
+          .where("owner_id", "=", userId,)
+          .execute();
+
+        const assetsFolder = zip.folder("assets",);
+        for (const asset of assets) {
+          if (!asset.storage_path) { continue; }
+          const file = Bun.file(asset.storage_path,);
+          if (!(await file.exists())) { continue; }
+          const buffer = await file.arrayBuffer();
+          const name = `${asset.id}-${asset.filename}`;
+          assetsFolder?.file(name, buffer,);
+          addChecksum(`assets/${name}`, Buffer.from(buffer,),);
+        }
+        counts.assets = assets.length;
+      }
+
+      // Build metadata
+      const now = new Date();
+      const exportInfo = {
+        exported_at: now.toISOString(),
+        exported_by: userId,
+        format,
+        includes: include,
+        item_count: Object.values(counts,).reduce((a, b,) => a + b, 0,),
+      };
+      const schemaVersion = {
+        schema_version: "1.0",
+        export_format_version: "1.0",
+      };
+
+      // Add metadata to zip + checksums
+      const metadataFolder = zip.folder("metadata",);
+      const exportInfoStr = JSON.stringify(exportInfo, null, 2,);
+      metadataFolder?.file("export-info.json", exportInfoStr,);
+      addChecksum("metadata/export-info.json", exportInfoStr,);
+
+      const schemaVersionStr = JSON.stringify(schemaVersion, null, 2,);
+      metadataFolder?.file("schema-version.json", schemaVersionStr,);
+      addChecksum("metadata/schema-version.json", schemaVersionStr,);
+
+      // Build manifest (includes checksums from all folders + metadata)
+      const manifest = {
+        version: "1.0",
+        exported_at: now.toISOString(),
+        exported_by: userId,
+        format_version: "1.0",
+        contents: counts,
+        checksums,
+      };
+      const manifestStr = JSON.stringify(manifest, null, 2,);
+      zip.file("manifest.json", manifestStr,);
+      addChecksum("manifest.json", manifestStr,);
+
+      // Regenerate ZIP with final manifest (checksums updated)
+      const finalManifest = {
+        version: "1.0",
+        exported_at: now.toISOString(),
+        exported_by: userId,
+        format_version: "1.0",
+        contents: counts,
+        checksums,
+      };
+      zip.file("manifest.json", JSON.stringify(finalManifest, null, 2,),);
 
       // Generate ZIP
       const zipBuffer = await zip.generateAsync({ type: "nodebuffer", },);
-      const timestamp = new Date().toISOString().slice(0, 10,);
+      const timestamp = now.toISOString().slice(0, 10,);
 
       return new Response(new Uint8Array(zipBuffer,), {
         headers: {
