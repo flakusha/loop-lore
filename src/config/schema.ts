@@ -676,8 +676,8 @@ interface HeadersConfig {
 }
 
 interface FrontendConfig {
-  /** Frontend rendering mode: "spa" for single-page app, "ssr" for server-side rendering, "static" for pre-rendered */
-  mode: "spa" | "ssr" | "static";
+  /** Frontend rendering mode: "htmx" for htmx partials (default), "spa" for single-page app, "none" for API-only */
+  mode: "htmx" | "spa" | "none";
 }
 interface Config {
   server: ServerConfig;
