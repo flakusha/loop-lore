@@ -20,6 +20,7 @@ import { dispatchPluginRoute, loadAllPlugins, unloadAllPlugins, } from "./plugin
 import { ensureTlsCerts, } from "./config/cert";
 import { generateNonce, } from "./middleware/csp-nonce";
 import { getDatabase, } from "./db/index";
+import { initDefaultHooks, } from "./generation/hooks";
 import { initSmk, } from "./crypto";
 import { initializeProviders, OpenAiCompatibleProvider, registerProvider, } from "./generation";
 
@@ -262,6 +263,7 @@ async function start() {
   }
 
   initializeProviders(config,);
+  initDefaultHooks();
 
   // Startup health check — scan providers and log any failures
   const { scanAllProviders, } = await import("./admin/provider-health");
