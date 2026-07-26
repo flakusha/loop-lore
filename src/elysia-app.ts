@@ -29,6 +29,7 @@ import { adminRoutes, } from "./routes/admin";
 import { adminCharacterOverridesRoutes, } from "./routes/admin-character-overrides";
 import { adminNsfwRoutes, } from "./routes/admin-nsfw";
 import { adminTemplateRoutes, } from "./routes/admin-templates";
+import { analyticsRoutes, } from "./routes/analytics";
 import { apiKeysRoutes, } from "./routes/api-keys";
 import { authProtectedRoutes, authPublicRoutes, } from "./routes/auth";
 import { characterAvailabilityRoutes, } from "./routes/character-availability";
@@ -112,6 +113,7 @@ export function createApp(deps: AppDeps,): Elysia {
   app.use(healthRoutes(handleOpts,),);
   app.use(i18nRoutes(handleOpts,),);
   app.use(telemetryRoutes(handleOpts,),);
+  app.use(analyticsRoutes(handleOpts,),);
   app.use(frontendLogsRoutes(),);
 
   // ── Auth protected routes ───────────────────────────────────────────────────
