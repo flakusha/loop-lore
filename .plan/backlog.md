@@ -110,26 +110,28 @@ Tasks that creatively extend existing epics with new layers, mechanics, and soci
 
 ## New Epics (2026-07-26)
 
-| #                                          | Name                                         | Status                   | Priority | Epic File                   |
-| ------------------------------------------ | -------------------------------------------- | ------------------------ | -------- | --------------------------- |
-| 51                                         | Visual Novel Mode (Extended)                 | 📝 Draft                 | Medium   | `epic-visual-novel-mode.md` |
-| 52                                         | GM/Assistant Story Whitenotes & Shadow Notes | 📝 Draft                 | High     | `epic-gm-shadow-notes.md`   |
-| VN Branching Choices & Relationship Impact | Med                                          | Immersion & Presentation |          |                             |
+| #  | Name                                         | Status   | Priority | Epic File                   |
+| -- | -------------------------------------------- | -------- | -------- | --------------------------- |
+| 51 | Visual Novel Mode (Extended)                 | 📝 Draft | Medium   | `epic-visual-novel-mode.md` |
+| 52 | GM/Assistant Story Whitenotes & Shadow Notes | 📝 Draft | High     | `epic-gm-shadow-notes.md`   |
+
+## New Tasks (2026-07-26)
+
+Tasks that extend existing systems with new mechanics and capabilities.
+
+| Task                                               | Effort   | Epic Extended            |
+| -------------------------------------------------- | -------- | ------------------------ |
+| VN Dynamic Image & Story Generation                | Med–High | Visual Novel Mode (51)   |
+| VN Q&A (Question <-> Answer) Mode                  | Med      | Visual Novel Mode (51)   |
+| Chat Switch to Battle Mode (Turn-Based)            | Med      | Battle & Action Systems  |
+| Travel Mode — Party Migration Between Chats        | Med      | Chat Transfer & Location |
+| Random Encounters & Random Events Generation       | Med      | World Event System       |
+| GM/Assistant Story Whitenotes                      | Med      | GM/Shadow Notes (52)     |
+| GM/Assistant Shadow Notes                          | Med      | GM/Shadow Notes (52)     |
+| Enemies & Monsters Systems                         | Med      | Battle & Action Systems  |
+| Config: Gallery, File Attachment & Idempotent Load | Med      | Config Extensions        |
 
 ## Generation Templates (FEAT-065 — expanded)
-
-Unified prompt template system across LLM, image, video, audio. Image templates
-already implemented (`src/generation/prompt-templates.ts`); LLM assembler hardcoded
-(`src/assistant/prompt-assembler.ts`); video/audio not started.
-
-| Item                                     | Spec / Plan                                         | Status     |
-| ---------------------------------------- | --------------------------------------------------- | ---------- |
-| FEAT-065 parent (expanded scope)         | `.plan/tickets/FEAT-065-prompt-library-expanded.md` | 📋 Planned |
-| FEAT-065-LLM: LLM prompt templates       | `.plan/tickets/FEAT-065-sub-llm.md`                 | 📋 Planned |
-| FEAT-065-IMG: Image template persistence | `.plan/tickets/FEAT-065-sub-image.md`               | 📋 Planned |
-| FEAT-065-VID: Video generation templates | `.plan/tickets/FEAT-065-sub-video.md`               | 📋 Planned |
-| FEAT-065-AUD: Audio/sound templates      | `.plan/tickets/FEAT-065-sub-audio.md`               | 📋 Planned |
-| Unified Template Registry spec           | `docs/spec/template-system.md`                      | 📋 Draft   |
 
 ## Quick Wins — Low Effort, High Leverage
 
