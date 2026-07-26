@@ -251,8 +251,14 @@ export class IntimacyService {
       .updateTable("character_intimacy",)
       .set({
         score: newScore,
-        action_history: safeJsonStringify(history,).value ?? "[]",
-        unlocked_thresholds: safeJsonStringify(newUnlocked,).value ?? "[]",
+        action_history: (() => {
+          const _r = safeJsonStringify(history,);
+          return _r.ok ? _r.value : "[]";
+        })(),
+        unlocked_thresholds: (() => {
+          const _r = safeJsonStringify(newUnlocked,);
+          return _r.ok ? _r.value : "[]";
+        })(),
         updated_at: now,
       },)
       .where("id", "=", pair.id,)

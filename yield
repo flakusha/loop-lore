@@ -1,0 +1,1 @@
+{"data":{"files_changed":["src/rpg/body-systems/service.ts","src/rpg/intimacy/service.ts","src/rpg/seduction/service.ts"],"call_sites_fixed":8,"pattern":"safeJsonStringify(...).value ?? \"[]\"  →  narrow via .ok check","tsc_clean":true}}

@@ -180,3 +180,4 @@ extensions surface a clear error at precompile time.
 ## Linked Tasks
 
 - TASK-config-extensions.md
+- TASK-config-gallery-attachment-idempotent.md
