@@ -35,3 +35,4 @@ Support multiple sessions for the same user. Enable concurrent access from diffe
 ## Linked Tasks
 
 - TASK-multi-session.md
+- TASK-multi-session-continuity.md

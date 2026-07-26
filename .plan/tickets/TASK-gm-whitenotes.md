@@ -1,0 +1,39 @@
+# TASK: GM/Assistant Story Whitenotes System
+
+**Priority:** High
+**Status:** ⬜ Not Started
+**Epic:** epic-gm-shadow-notes
+**Tags:** gm, whitenotes, story-steering, narrative, assistant, system-message
+
+## Description
+
+Implement the GM/Assistant whitenote system for story steering. Whitenotes are structured annotations attached to system/user messages that provide narrative context for the LLM. They are visible in the prompt assembly pipeline but not exposed to players in chat.
+
+## How It Extends Existing Work
+
+Builds on the GM/Assistant Story Whitenotes & Shadow Notes epic. Adds the whitenote system on top of the existing prompt assembly pipeline and hook system.
+
+## Acceptance Criteria
+
+- [ ] Whitenote data model (type, content, priority, scope, expiry)
+- [ ] Whitenote creation API (GM/assistant can add whitenotes to messages)
+- [ ] Whitenote assembly into prompt context before LLM call
+- [ ] Whitenote expiry (auto-expire after N turns)
+- [ ] Whitenote types: narrative_direction, character_context, world_state, tone, pacing, theme
+- [ ] Whitenote priority system (higher priority = stronger LLM influence)
+- [ ] Whitenote scope (scene, chapter, session, world)
+- [ ] `POST /api/chat/:id/whitenotes` — create a whitenote
+- [ ] `GET /api/chat/:id/whitenotes` — list active whitenotes
+- [ ] `DELETE /api/chat/:id/whitenotes/:id` — remove a whitenote
+- [ ] Frontend GM whitenote panel (add/edit/remove whitenotes)
+- [ ] Frontend whitenote indicator (shows when whitenotes are active)
+- [ ] Whitenote history log (track all whitenotes added/removed)
+
+## Technical Notes
+
+- Whitenotes stored in a new `whitenotes` table with chat_id and message_id references
+- Assembly happens in `src/assistant/prompt/` during prompt context building
+- Expiry is checked during prompt assembly (expired whitenotes are excluded)
+- Integrates with the existing hook system (src/generation/hooks/) for pre-generation analysis
+- Integrates with Chat Lifecycle & Moderation epic for prompt assembly
+- Whitenotes are NOT sent to the LLM as visible chat messages — only assembled into prompt context

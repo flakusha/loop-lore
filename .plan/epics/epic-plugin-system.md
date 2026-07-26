@@ -459,5 +459,6 @@ The following memory-related tasks have been migrated to Epic 36 as they are cor
 - TASK-memory-trust-modifier-wiring.md — trust-based memory sharing
 - TASK-character-memory-injection.md — injection probability & privacy
 - TASK-chat-route-extraction.md — chat business logic extraction
+- TASK-plugin-marketplace.md — community sharing & discovery
 
 **Plugin System Focus:** Plugin infrastructure (hooks, overrides, security, lifecycle) remains in Epic 37. Memory injection via plugins should reference Epic 36 for the core pipeline.

@@ -57,3 +57,4 @@ Journey Chat
 ## Linked Tasks
 
 - TASK-chat-transfer-location.md
+- TASK-travel-party-migration.md

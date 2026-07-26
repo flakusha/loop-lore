@@ -141,3 +141,5 @@ interface ModerationAction {
 ## Linked Tasks
 
 - TASK-chat-lifecycle-moderation.md
+- TASK-gm-whitenotes.md
+- TASK-gm-shadow-notes.md
