@@ -54,6 +54,7 @@ import {
   resolveProvider,
 } from "./providers/registry";
 import type { ChunkEvent, } from "./providers/types";
+import { applyRegexTransforms, } from "./transforms";
 
 
 // ── Dependency Injection ────────────────────────────────────────
@@ -477,6 +478,19 @@ export async function triggerAutoGeneration(opts: AutoGenOpts,): Promise<void> {
         reason: hookResult.events.map((e,) => e.reason).join("; ",),
       },);
       return;
+    }
+
+    // ── Regex Output Transforms ──────────────────────────────────
+    // Apply user-configured regex transforms to LLM output before storage
+    const regexTransforms = config.generation.regexTransforms;
+    if (regexTransforms && regexTransforms.length > 0) {
+      const transformResult = applyRegexTransforms(accumulatedContent, regexTransforms,);
+      if (transformResult.applied.length > 0) {
+        log.debug("regex transforms applied", {
+          transforms: transformResult.applied.map((t,) => ({ name: t.name, matches: t.matches, })),
+        },);
+        accumulatedContent = transformResult.text;
+      }
     }
 
     const messageId = uid();
