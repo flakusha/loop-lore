@@ -399,3 +399,4 @@ interface SocialEvent {
 ## Linked Tasks
 
 - TASK-social-interaction.md
+- TASK-social-guild-system.md

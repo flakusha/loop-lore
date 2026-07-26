@@ -42,7 +42,12 @@
 - `TASK-chat-backgrounds-location-sync.md` — backgrounds for VN mode scenes
 - `TASK-emotion-intent-detection.md` — emotion triggers for effects + portraits
 - `TASK-info-bubbles.md` — reusable help tooltip component for config menus (i18n)
+- `TASK-vn-branching-choices.md` — VN branching choices, relationship impact
+- `TASK-vn-dynamic-generation.md` — dynamic image/story generation
+- `TASK-vn-qa-mode.md` — Q&A mode for VN
 
 ## Linked Tasks
 
 - TASK-immersion-presentation.md
+- TASK-vn-dynamic-generation.md
+- TASK-vn-qa-mode.md

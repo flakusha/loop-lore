@@ -184,6 +184,74 @@ epics where applicable.
 - `TASK-chat-context-feature-permissions.md` — UI feature gating based on context (Epic 36)
 - `TASK-info-bubbles.md` — reusable help tooltip component for config menus (i18n)
 - `TASK-data-migration-transitivity.md` — migration state lifecycle, validation gating
+- `TASK-character-legacy-heir.md` — generational continuity, heir system (Character Core)
+- `TASK-battle-arena-spectator.md` — arena challenges, spectating, replays (Battle Systems)
+- `TASK-crafting-rare-discovery.md` — rare materials, crafting competitions (Crafting)
+- `TASK-social-guild-system.md` — guilds, roles, guild bank (Social Interaction)
+- `TASK-world-event-system.md` — dynamic world events, timeline (World & Locations)
+- `TASK-magic-spell-crafting.md` — spell creation, magical discovery (Magic Systems)
+- `TASK-exploration-expedition-teams.md` — cooperative exploration teams (Exploration)
+- `TASK-economy-player-shops.md` — player-run shops, economic events (Economy)
+- `TASK-companion-bonding-quests.md` — companion quests, bonding, legacy (Companion)
+- `TASK-housing-neighborhood.md` — neighborhoods, decoration contests (Housing)
+- `TASK-nsfw-reputation-consequences.md` — NSFW social reputation (NSFW Mechanics)
+- `TASK-plugin-marketplace.md` — community plugin sharing (Plugin System)
+- `TASK-multi-session-continuity.md` — cross-session carryforward, replay (Multi-Session)
+- `TASK-memory-distillation-dreams.md` — memory distillation, dream system (Memory)
+- `TASK-world-shaping-divine.md` — world-altering actions, divine intervention (Worlds)
+- `TASK-vn-branching-choices.md` — VN branching choices, relationship impact (Immersion)
+
+---
+
+## Creative Extension Tasks
+
+Tasks that creatively extend existing epics — adding new layers, mechanics, and social systems on top of established foundations.
+
+| Task                                               | Effort | Epic(s)                       | Status         |
+| -------------------------------------------------- | ------ | ----------------------------- | -------------- |
+| Character Legacy & Heir System                     | Med    | Character Core (47)           | ⬜ Not Started |
+| Battle Arena & Spectator Mode                      | Med    | Battle & Action Systems       | ⬜ Not Started |
+| Rare Material Discovery & Crafting Competitions    | Med    | Crafting & Professions        | ⬜ Not Started |
+| Guild & Social Organization System                 | Med    | Social Interaction            | ⬜ Not Started |
+| World Event & Timeline System                      | Med    | World & Locations             | ⬜ Not Started |
+| Spell Crafting & Magical Discovery                 | Med    | Magic & Spell Systems         | ⬜ Not Started |
+| Expedition Teams & Collaborative Exploration       | Med    | Exploration & Discovery       | ⬜ Not Started |
+| Player-Run Shops & Economic Events                 | Med    | Economy & Trading             | ⬜ Not Started |
+| Companion Bonding Quests & Legacy                  | Med    | Companion, Pet & Mount        | ⬜ Not Started |
+| Neighborhood & Housing Customization               | Med    | Housing & Base Building       | ⬜ Not Started |
+| NSFW Social Reputation & Consequences              | Med    | NSFW Game Mechanics           | ⬜ Not Started |
+| Plugin Marketplace & Community Sharing             | Med    | Plugin System & Extensibility | ⬜ Not Started |
+| Cross-Session Continuity & Session Replay          | Med    | Multi-Session Support         | ⬜ Not Started |
+| Memory Distillation & Dream System                 | Med    | Memory Systems (3-tier)       | ⬜ Not Started |
+| World-Shaping Player Actions & Divine Intervention | Med    | Worlds Extension              | ⬜ Not Started |
+| VN Branching Choices & Relationship Impact         | Med    | Immersion & Presentation      | ⬜ Not Started |
+
+---
+
+## New Epics (2026-07-26)
+
+| #  | Name                                         | Status   | Priority | Epic File                   |
+| -- | -------------------------------------------- | -------- | -------- | --------------------------- |
+| 51 | Visual Novel Mode (Extended)                 | 📝 Draft | Medium   | `epic-visual-novel-mode.md` |
+| 52 | GM/Assistant Story Whitenotes & Shadow Notes | 📝 Draft | High     | `epic-gm-shadow-notes.md`   |
+
+---
+
+## New Tasks (2026-07-26)
+
+Tasks that extend existing systems with new mechanics and capabilities.
+
+| Task                                               | Effort   | Epic(s)                  | Status         |
+| -------------------------------------------------- | -------- | ------------------------ | -------------- |
+| VN Dynamic Image & Story Generation                | Med–High | Visual Novel Mode (51)   | ⬜ Not Started |
+| VN Q&A (Question <-> Answer) Mode                  | Med      | Visual Novel Mode (51)   | ⬜ Not Started |
+| Chat Switch to Battle Mode (Turn-Based)            | Med      | Battle & Action Systems  | ⬜ Not Started |
+| Travel Mode — Party Migration Between Chats        | Med      | Chat Transfer & Location | ⬜ Not Started |
+| Random Encounters & Random Events Generation       | Med      | World Event System       | ⬜ Not Started |
+| GM/Assistant Story Whitenotes                      | Med      | GM/Shadow Notes (52)     | ⬜ Not Started |
+| GM/Assistant Shadow Notes                          | Med      | GM/Shadow Notes (52)     | ⬜ Not Started |
+| Enemies & Monsters Systems                         | Med      | Battle & Action Systems  | ⬜ Not Started |
+| Config: Gallery, File Attachment & Idempotent Load | Med      | Config Extensions        | ⬜ Not Started |
 
 ---
 
@@ -201,6 +269,29 @@ epics where applicable.
 | GitHub Pages VitePress         | Low      | ⬜ Not Started |
 | Frontend E2E Improvements      | High     | ⬜ Not Started |
 | Branch Workflow dev→stg→master | Low      | ⬜ Post-0.1.0  |
+
+### Creative Extensions (New — 2026-07-26)
+
+Tasks that extend existing epics with creative new mechanics and social systems.
+
+| Task                                               | Priority | Status         |
+| -------------------------------------------------- | -------- | -------------- |
+| Character Legacy & Heir System                     | Medium   | ⬜ Not Started |
+| Battle Arena & Spectator Mode                      | Medium   | ⬜ Not Started |
+| Rare Material Discovery & Crafting Competitions    | Medium   | ⬜ Not Started |
+| Guild & Social Organization System                 | Medium   | ⬜ Not Started |
+| World Event & Timeline System                      | Medium   | ⬜ Not Started |
+| Spell Crafting & Magical Discovery                 | Medium   | ⬜ Not Started |
+| Expedition Teams & Collaborative Exploration       | Medium   | ⬜ Not Started |
+| Player-Run Shops & Economic Events                 | Medium   | ⬜ Not Started |
+| Companion Bonding Quests & Legacy                  | Medium   | ⬜ Not Started |
+| Neighborhood & Housing Customization               | Medium   | ⬜ Not Started |
+| NSFW Social Reputation & Consequences              | Medium   | ⬜ Not Started |
+| Plugin Marketplace & Community Sharing             | Medium   | ⬜ Not Started |
+| Cross-Session Continuity & Session Replay          | Medium   | ⬜ Not Started |
+| Memory Distillation & Dream System                 | Medium   | ⬜ Not Started |
+| World-Shaping Player Actions & Divine Intervention | Medium   | ⬜ Not Started |
+| VN Branching Choices & Relationship Impact         | Medium   | ⬜ Not Started |
 
 ---
 
