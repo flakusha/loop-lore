@@ -1,6 +1,6 @@
 # Epics Consolidation
 
-**Last Updated:** 2026-07-20
+**Last Updated:** 2026-07-26
 **Source:** `.plan/epics/`, `.plan/tickets/`, `.plan/backlog.md`
 
 > **Numbering rule:** `docs/meta/plan.md` is the canonical source for epic numbers.
@@ -16,7 +16,7 @@
 | #  | Name                         | Status             | Plan Ref    | Epic File                  |
 | -- | ---------------------------- | ------------------ | ----------- | -------------------------- |
 | 10 | Generation Foundation        | ✅ Complete        | plan.md §10 | —                          |
-| 11 | Admin & Settings             | ✅ Complete (core) | plan.md §11 | `epic-14.md`               |
+| 11 | Admin & Settings             | ✅ Complete (core) | plan.md §11 | —                          |
 | 12 | Memory Foundation            | ✅ Complete        | plan.md §12 | —                          |
 | 13 | Frontend Responsive          | ✅ Complete        | plan.md §13 | —                          |
 | 14 | Import/Export                | ✅ Complete        | plan.md §14 | `epic-import-export-io.md` |
@@ -43,25 +43,33 @@
 | 30 | Assistant Intelligence      | ⬜ Not Started | Medium   | plan.md §30 |                                   |
 | 31 | World Persistence & Sync    | ⬜ Not Started | Medium   | plan.md §31 |                                   |
 
+**Active Infrastructure (created 2026-07-24):**
+
+Generation hooks infrastructure (`src/generation/hooks/`) — mood, emotion, NSFW, moderation hooks wired into `auto-gen.ts` pipeline. Supports plugin system (Epic 37) and chat lifecycle (Epic 36). No independent epic number — tracked as shared infrastructure.
+
 ### New Epics (from docs reconciliation)
 
-| #  | Name                              | Status         | Priority | Epic File                                 |
-| -- | --------------------------------- | -------------- | -------- | ----------------------------------------- |
-| 32 | Deployment Topologies & Packaging | 📝 Draft       | Medium   | `epic-deployment-topologies.md`           |
-| 33 | Multi-Instance Reconciliation     | 📝 Draft       | High     | `epic-multi-instance-reconciliation.md`   |
-| 34 | Data Integrity & ACID Guarantees  | 📝 Draft       | High     | `epic-data-integrity-acid.md`             |
-| 35 | Configuration Extensions (ECE)    | 📝 Draft       | Medium   | `epic-config-extensions.md`               |
-| 36 | Chat Lifecycle & Moderation       | ⬜ Not Started | High     | `epic-chat-lifecycle-moderation.md`       |
-| 37 | Plugin System & Extensibility     | ⬜ Not Started | High     | `epic-plugin-system.md`                   |
-| 38 | World & Locations                 | ⬜ Not Started | Medium   | `epic-world-locations.md`                 |
-| 39 | Item System Extensions            | ⬜ Not Started | High     | `epic-item-system-extensions.md`          |
-| 40 | Blog System                       | ⬜ Not Started | Medium   | `epic-blog-system.md`                     |
-| 41 | Chat Transfer & Location Change   | ⬜ Not Started | Medium   | `epic-chat-transfer-location.md`          |
-| 42 | Assistant Generation Extensions   | ⬜ Not Started | Medium   | `epic-assistant-generation-extensions.md` |
-| 43 | NSFW Game Mechanics               | 📝 Draft       | Medium   | `epic-nsfw-game-mechanics.md`             |
-| 44 | Worlds Extension                  | ⬜ Not Started | Medium   | `epic-worlds-extension.md`                |
-| 45 | Configurable Template System      | 🟢 Complete    | High     | `epic-config-templates.md`                |
-| 46 | Creative Studio                   | 📝 Draft       | Medium   | `epic-creative-studio.md`                 |
+| #  | Name                              | Status         | Priority | Plan Ref    | Epic File                                 |
+| -- | --------------------------------- | -------------- | -------- | ----------- | ----------------------------------------- |
+| 32 | Deployment Topologies & Packaging | 📝 Draft       | Medium   | —           | `epic-deployment-topologies.md`           |
+| 33 | Multi-Instance Reconciliation     | 📝 Draft       | High     | —           | `epic-multi-instance-reconciliation.md`   |
+| 34 | Data Integrity & ACID Guarantees  | 📝 Draft       | High     | —           | `epic-data-integrity-acid.md`             |
+| 35 | Configuration Extensions (ECE)    | 📝 Draft       | Medium   | —           | `epic-config-extensions.md`               |
+| 36 | Chat Lifecycle & Moderation       | ⬜ Not Started | High     | —           | `epic-chat-lifecycle-moderation.md`       |
+| 37 | Plugin System & Extensibility     | ⬜ Not Started | High     | —           | `epic-plugin-system.md`                   |
+| 38 | World & Locations                 | ⬜ Not Started | Medium   | —           | `epic-world-locations.md`                 |
+| 39 | Item System Extensions            | ⬜ Not Started | High     | —           | `epic-item-system-extensions.md`          |
+| 40 | Blog System                       | ⬜ Not Started | Medium   | —           | `epic-blog-system.md`                     |
+| 41 | Chat Transfer & Location Change   | ⬜ Not Started | Medium   | —           | `epic-chat-transfer-location.md`          |
+| 42 | Assistant Generation Extensions   | ⬜ Not Started | Medium   | —           | `epic-assistant-generation-extensions.md` |
+| 43 | NSFW Game Mechanics               | 📝 Draft       | Medium   | —           | `epic-nsfw-game-mechanics.md`             |
+| 44 | Worlds Extension                  | ⬜ Not Started | Medium   | —           | `epic-worlds-extension.md`                |
+| 45 | Configurable Template System      | 🟢 Complete    | High     | —           | `epic-config-templates.md`                |
+| 46 | Creative Studio                   | 📝 Draft       | Medium   | —           | `epic-creative-studio.md`                 |
+| 47 | Character Core System             | 📝 Draft       | High     | —           | `epic-character-core-system.md`           |
+| 48 | Immersion & Presentation          | ⬜ Not Started | Medium   | plan.md §48 | `epic-immersion-presentation.md`          |
+| 49 | Analytics & Observability         | ⬜ Not Started | Medium   | plan.md §50 | `epic-analytics-observability.md`         |
+| 50 | Prompt & Output Control           | ⬜ Not Started | Medium   | plan.md §51 | `epic-output-control-transforms.md`       |
 
 ### Permanently Ongoing Epics
 
@@ -201,6 +209,7 @@ epics where applicable.
 ### P0 — Immediate (In Progress)
 
 - **Epic 16:** Observability & CI 🟡
+- **Generation Hooks Infrastructure** — mood, emotion, NSFW, moderation hooks (created 2026-07-24)
 
 ### P1 — Next Cycle (Not Started)
 
@@ -211,6 +220,7 @@ epics where applicable.
 - **Epic 34:** Data Integrity & ACID 📝
 - **Epic 36:** Chat Lifecycle & Moderation ⬜
 - **Epic 37:** Plugin System & Extensibility ⬜
+- **Epic 47:** Character Core System 📝
 
 ### P2 — Specified, Not Implemented
 
@@ -233,6 +243,9 @@ epics where applicable.
 - **Epic 43:** NSFW Game Mechanics 📝
 - **Epic 44:** Worlds Extension ⬜
 - **Epic 46:** Creative Studio 📝
+- **Epic 48:** Immersion & Presentation ⬜
+- **Epic 49:** Analytics & Observability ⬜
+- **Epic 50:** Prompt & Output Control ⬜
 
 ### P3 — Deferred (Post-MVP)
 
@@ -253,10 +266,14 @@ Epic 34 (Data Integrity) ──→ Epic 32 (Deployment Topologies)
 Epic 22 (RPG Core) ──→ 15 sub-systems (Battle, Magic, Crafting, etc.)
 
 Epic 37 (Plugin System) ──→ Epic 29 (Provider & Plugin Ecosystem)
+                          ──→ Generation Hooks Infrastructure
 
 Epic 35 (ECE) ──→ Epic 26 (Avatar & Expression, via emotions)
                ──→ Epic 22 (RPG, via status effects)
                ──→ Epic 37 (Plugin, via extension store)
+
+Epic 47 (Character Core) ──→ Epic 22 (RPG, via traits/combat stats)
+                         ──→ Epic 48 (Immersion, via portraits/mood)
 ```
 
 ---
