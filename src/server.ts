@@ -16,6 +16,7 @@ import { runMigrations, } from "./db/migrate";
 import { seedDefaultActors, } from "./db/seed";
 import { createApp, } from "./elysia-app";
 import { initializeProviders, OpenAiCompatibleProvider, registerProvider, } from "./generation";
+import { initDefaultHooks, } from "./generation/hooks";
 import { createLogger, getLogger, } from "./logger";
 import { DynamicResponsePolicy, ResponseHeaderPolicy, } from "./middleware";
 import { generateNonce, } from "./middleware/csp-nonce";
@@ -262,6 +263,7 @@ async function start() {
   }
 
   initializeProviders(config,);
+  initDefaultHooks();
 
   // Startup health check — scan providers and log any failures
   const { scanAllProviders, } = await import("./admin/provider-health");
