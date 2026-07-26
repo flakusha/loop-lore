@@ -34,6 +34,7 @@ import { selectNextGroupActor, } from "../group-chat/turn-selector";
 import { getLogger, } from "../logger";
 import { type GameMasterConfig, GameMasterService, } from "../story";
 import type { GenerateTextFn, } from "../story/game-master";
+import { isTelemetryEnabled, record, } from "../telemetry/service";
 import { jsonParseOr, uid, } from "../utils";
 import { getRegisteredHooks, runHookChain, } from "./hooks";
 import type { HookEventType, } from "./hooks";
@@ -517,6 +518,23 @@ export async function triggerAutoGeneration(opts: AutoGenOpts,): Promise<void> {
         })),
       },);
     }
+    // Record generation telemetry event
+    if (isTelemetryEnabled()) {
+      void record(database, {
+        eventType: "generation.completed",
+        userId,
+        chatId,
+        data: {
+          promptTokens: tokenUsage.promptTokens,
+          completionTokens: tokenUsage.completionTokens,
+          totalTokens: tokenUsage.totalTokens,
+          latencyMs: 0,
+          model: resolved.resolvedModel,
+          provider: resolved.resolvedProviderName,
+          finishReason,
+        },
+      },);
+    }
 
     if (attemptId) {
       await d.completeGeneration({
@@ -563,6 +581,18 @@ export async function triggerAutoGeneration(opts: AutoGenOpts,): Promise<void> {
       try {
         await d.failGeneration({ attemptId, error: error as Error, db: database, },);
       } catch {}
+    }
+    // Record generation failure telemetry
+    if (isTelemetryEnabled()) {
+      void record(database, {
+        eventType: "generation.failed",
+        userId,
+        chatId,
+        data: {
+          error: (error as Error).message,
+          chatId,
+        },
+      },);
     }
     try {
       const buf = d.getOrCreateBuffer(chatId,);
