@@ -480,6 +480,18 @@ interface ModelRoleAssignment {
   model: string;
 }
 
+interface RegexTransform {
+  /** Human-readable name for this transform */
+  name: string;
+  /** Regex pattern string */
+  pattern: string;
+  /** Replacement string (supports $1, $2, etc.) */
+  replacement: string;
+  /** Regex flags - default 'g' (global). Use 'gi' for case-insensitive. */
+  flags?: string;
+  /** Whether this transform is active */
+  enabled: boolean;
+}
 interface GenerationConfig {
   /** Provider configurations */
   providers: GenerationProvidersConfig;
@@ -502,6 +514,8 @@ interface GenerationConfig {
     /** Content moderation/censoring model */
     moderation?: ModelRoleAssignment;
   };
+  /** Regex transforms applied to LLM output before display */
+  regexTransforms?: RegexTransform[];
 }
 
 // ── BYO API Key ────────────────────────────────────────────

@@ -5,6 +5,7 @@ import type {
   GenerationProvidersConfig,
   ModelRoleAssignment,
   ProviderInstanceConfig,
+  RegexTransform,
 } from "../schema";
 
 export const GENERATION_PROVIDERS_DEFAULTS = {
@@ -25,6 +26,7 @@ export class GenerationSection implements GenerationConfig {
   defaultProvider = GENERATION_DEFAULTS.defaultProvider;
   defaultModels: Record<string, string> = {};
   modelRoles: Record<string, ModelRoleAssignment> = {};
+  regexTransforms: RegexTransform[] = [];
   autoStart: GenerationConfig["autoStart"];
 
   constructor(overrides?: Partial<GenerationConfig>,) {
@@ -58,6 +60,23 @@ export const generationMeta = {
     defaultModels: {
       type: "object",
       description: "Default model per provider",
+    },
+    regexTransforms: {
+      type: "array",
+      default: [],
+      description: "Regex transforms applied to LLM output before display",
+      items: {
+        type: "object",
+        description: "A single regex transform rule",
+        properties: {
+          name: { type: "string", description: "Human-readable name", },
+          pattern: { type: "string", description: "Regex pattern string", },
+          replacement: { type: "string", description: "Replacement string", },
+          flags: { type: "string", default: "g", description: "Regex flags", },
+          enabled: { type: "boolean", description: "Whether this transform is active", },
+        },
+        required: ["name", "pattern", "replacement", "enabled",],
+      },
     },
     autoStart: {
       type: "object",

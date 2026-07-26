@@ -59,6 +59,19 @@ import {
   CHARACTERS_DEFAULTS,
 } from "./sections/characters";
 
+
+// src/config/schema-class.ts — ConfigSchema orchestrator
+//
+// Delegates to section classes in ./sections/ for defaults + schema metadata.
+// Auto-generates envMap by walking section instances.
+// Auto-generates jsonSchema from section metadata + defaults.
+//
+// Replaces hand-duplicated:
+//   - generate-schema.ts (JSON schema defaults)
+//   - load.ts ENV_MAP (env var → dot.path mapping)
+//   - load.ts validateConfig (validation rules)
+// ── Base types ──────────────────────────────────────────────
+
 type EnvMap = Record<string, string>;
 type JSONSchema = Record<string, unknown>;
 
@@ -113,7 +126,7 @@ export class ConfigSchema {
 
   readonly nsfw = new NsfwSection();
 
-  readonly generation = new GenerationSection();
+"21: @ours\n22: @ours"
 
   readonly byoKey = new ByoKeySection();
 
@@ -334,15 +347,7 @@ export class ConfigSchema {
     }
   }
 
-  // ── JSON Schema generation (auto-build from metadata) ──
-
-  static jsonSchema(): JSONSchema {
-    return {
-      $schema: "https://json-schema.org/draft/2020-12/schema",
-      $id: "./schemas/loop-lore-config.schema.json",
-      title: "loop-lore Config",
-      type: "object",
-      properties: Object.fromEntries(Object.entries(SECTION_METAS,).map(([key, meta,],) => [key, meta,]),),
+"21: @ours\n22: @ours"
       required: [
         "server",
         "db",
