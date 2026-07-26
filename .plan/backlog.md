@@ -77,6 +77,45 @@ Ordered by user impact × effort. Items with partial `src/` code listed first.
 | Extract chat business logic from routes                                 | `TASK-chat-route-extraction.md`                                         | Move logic from chats.ts/messages.ts into service.ts                                                               |
 | Implement memory promotion pipeline                                     | `TASK-memory-promotion-pipeline.md`                                     | Wire promotedToMemory: extract → scope detect → store                                                              |
 
+### Creative Extension Tasks (New — 2026-07-26)
+
+Tasks that creatively extend existing epics with new layers, mechanics, and social systems.
+
+| Task                                               | Effort   | Epic Extended                 |
+| -------------------------------------------------- | -------- | ----------------------------- |
+| Character Legacy & Heir System                     | Med      | Character Core System         |
+| Battle Arena & Spectator Mode                      | Med      | Battle & Action Systems       |
+| Rare Material Discovery & Crafting Competitions    | Med      | Crafting & Professions        |
+| Guild & Social Organization System                 | Med      | Social Interaction            |
+| World Event & Timeline System                      | Med      | World & Locations             |
+| Spell Crafting & Magical Discovery                 | Med      | Magic & Spell Systems         |
+| Expedition Teams & Collaborative Exploration       | Med      | Exploration & Discovery       |
+| Player-Run Shops & Economic Events                 | Med      | Economy & Trading             |
+| Companion Bonding Quests & Legacy                  | Med      | Companion, Pet & Mount        |
+| Neighborhood & Housing Customization               | Med      | Housing & Base Building       |
+| NSFW Social Reputation & Consequences              | Med      | NSFW Game Mechanics           |
+| Plugin Marketplace & Community Sharing             | Med      | Plugin System & Extensibility |
+| Cross-Session Continuity & Session Replay          | Med      | Multi-Session Support         |
+| Memory Distillation & Dream System                 | Med      | Memory Systems (3-tier)       |
+| World-Shaping Player Actions & Divine Intervention | Med      | Worlds Extension              |
+| VN Dynamic Image & Story Generation                | Med–High | Visual Novel Mode (51)        |
+| VN Q&A (Question <-> Answer) Mode                  | Med      | Visual Novel Mode (51)        |
+| Chat Switch to Battle Mode (Turn-Based)            | Med      | Battle & Action Systems       |
+| Travel Mode — Party Migration Between Chats        | Med      | Chat Transfer & Location      |
+| Random Encounters & Random Events Generation       | Med      | World Event System            |
+| GM/Assistant Story Whitenotes                      | Med      | GM/Shadow Notes (52)          |
+| GM/Assistant Shadow Notes                          | Med      | GM/Shadow Notes (52)          |
+| Enemies & Monsters Systems                         | Med      | Battle & Action Systems       |
+| Config: Gallery, File Attachment & Idempotent Load | Med      | Config Extensions             |
+
+## New Epics (2026-07-26)
+
+| #                                          | Name                                         | Status                   | Priority | Epic File                   |
+| ------------------------------------------ | -------------------------------------------- | ------------------------ | -------- | --------------------------- |
+| 51                                         | Visual Novel Mode (Extended)                 | 📝 Draft                 | Medium   | `epic-visual-novel-mode.md` |
+| 52                                         | GM/Assistant Story Whitenotes & Shadow Notes | 📝 Draft                 | High     | `epic-gm-shadow-notes.md`   |
+| VN Branching Choices & Relationship Impact | Med                                          | Immersion & Presentation |          |                             |
+
 ## Generation Templates (FEAT-065 — expanded)
 
 Unified prompt template system across LLM, image, video, audio. Image templates

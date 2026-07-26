@@ -22,6 +22,7 @@ import type {
   DocumentationConfig,
   DynamicResponseConfig,
   EncryptionConfig,
+  FrontendConfig,
   GenerationConfig,
   GenerationProvidersConfig,
   HeadersConfig,
@@ -219,6 +220,10 @@ export class ConfigSchema {
     compressThreshold: 512,
   } satisfies DynamicResponseConfig;
 
+  readonly frontend = {
+    mode: "htmx" as const,
+  } satisfies FrontendConfig;
+
   // ── ENV_MAP generation ─────────────────────────────────
 
   /** Build flat ENV_VAR → dot.path mapping from all section fields */
@@ -256,6 +261,7 @@ export class ConfigSchema {
     add("encryption", s.encryption,);
     add("headers", s.headers,);
     add("dynamicResponse", s.dynamicResponse,);
+    add("frontend", s.frontend,);
 
     // Manual overrides for renamed/mapped env vars
     map.PORT = "server.port";
@@ -1051,6 +1057,7 @@ export class ConfigSchema {
         "encryption",
         "headers",
         "dynamicResponse",
+        "frontend",
       ],
     };
   }
@@ -1077,6 +1084,7 @@ export class ConfigSchema {
       encryption: this.encryption,
       headers: this.headers,
       dynamicResponse: this.dynamicResponse,
+      frontend: this.frontend,
       templates: TEMPLATES_DEFAULTS,
       characters: CHARACTERS_DEFAULTS,
     };

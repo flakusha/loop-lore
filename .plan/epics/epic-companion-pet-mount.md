@@ -311,3 +311,4 @@ interface BattleAbility {
 ## Linked Tasks
 
 - TASK-companion-pet-mount.md
+- TASK-companion-bonding-quests.md

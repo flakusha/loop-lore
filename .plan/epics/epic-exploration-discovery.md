@@ -372,3 +372,4 @@ interface TravelEncounter {
 ## Linked Tasks
 
 - TASK-exploration-discovery.md
+- TASK-exploration-expedition-teams.md

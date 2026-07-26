@@ -167,7 +167,7 @@ export function createRequestHandler(
     const requestId = crypto.randomUUID();
     // Attach request ID to the cloned request so downstream handlers can read it
     const taggedRequest = new Request(request, {
-      headers: new Headers([...request.headers.entries(), ["x-request-id", requestId,],],),
+      headers: new Headers([...request.headers, ["x-request-id", requestId,],],),
     },);
     generateNonce(taggedRequest,);
     let response = await app.fetch(taggedRequest,);

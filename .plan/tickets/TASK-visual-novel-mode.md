@@ -192,3 +192,10 @@ src/frontend/vn/
 ## Risk
 
 Med — significant frontend rendering work but no schema changes needed. VN mode is conditionally rendered and doesn't touch bubble mode state. Main risk is ensuring VN mode doesn't conflict with bubble mode scroll/positioning.
+
+## Related
+
+- `epic-visual-novel-mode.md` — extended VN mode with dynamic generation & Q&A
+- `TASK-vn-branching-choices.md` — branching choices with relationship impact
+- `TASK-vn-dynamic-generation.md` — dynamic image/story generation
+- `TASK-vn-qa-mode.md` — Q&A mode for VN

@@ -196,10 +196,11 @@ export class BodySystemService {
     const mods = [...profile.modifications, modification,];
 
     const now = new Date().toISOString();
+    const modsJson = safeJsonStringify(mods,);
     await this.db
       .updateTable("character_body_profile",)
       .set({
-        modifications: safeJsonStringify(mods,).value ?? "[]",
+        modifications: modsJson.ok ? modsJson.value : "[]",
         updated_at: now,
       },)
       .where("actor_id", "=", actorId,)
@@ -219,10 +220,11 @@ export class BodySystemService {
     }
 
     const now = new Date().toISOString();
+    const modsJson = safeJsonStringify(mods,);
     await this.db
       .updateTable("character_body_profile",)
       .set({
-        modifications: safeJsonStringify(mods,).value ?? "[]",
+        modifications: modsJson.ok ? modsJson.value : "[]",
         updated_at: now,
       },)
       .where("actor_id", "=", actorId,)

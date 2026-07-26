@@ -508,3 +508,6 @@ interface BackgroundTransition {
 ## Linked Tasks
 
 - TASK-battle-action-systems.md
+- TASK-battle-arena-spectator.md
+- TASK-chat-battle-mode-switch.md
+- TASK-enemies-monsters-systems.md

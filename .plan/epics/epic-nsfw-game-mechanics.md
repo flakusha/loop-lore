@@ -845,3 +845,4 @@ interface Rumor {
 ## Linked Tasks
 
 - TASK-nsfw-game-mechanics.md
+- TASK-nsfw-reputation-consequences.md
