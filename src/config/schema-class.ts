@@ -32,6 +32,7 @@ import type {
   ModelRoleAssignment,
   NsfwConfig,
   ProviderInstanceConfig,
+  RegexTransform,
   ServerConfig,
   TransportCompressionConfig,
   TransportConfig,
@@ -164,6 +165,7 @@ export class ConfigSchema {
     defaultProvider: "",
     defaultModels: {} as Record<string, string>,
     modelRoles: {} as Record<string, ModelRoleAssignment>,
+    regexTransforms: [] as RegexTransform[],
   } satisfies GenerationConfig;
 
   readonly byoKey = {
@@ -877,6 +879,23 @@ export class ConfigSchema {
                   },
                   required: ["enabled", "modelType", "modelPath", "port",],
                 },
+              },
+            },
+            regexTransforms: {
+              type: "array",
+              default: [],
+              description: "Regex transforms applied to LLM output before display",
+              items: {
+                type: "object",
+                description: "A single regex transform rule",
+                properties: {
+                  name: { type: "string", description: "Human-readable name", },
+                  pattern: { type: "string", description: "Regex pattern string", },
+                  replacement: { type: "string", description: "Replacement string", },
+                  flags: { type: "string", default: "g", description: "Regex flags", },
+                  enabled: { type: "boolean", description: "Whether this transform is active", },
+                },
+                required: ["name", "pattern", "replacement", "enabled",],
               },
             },
           },
