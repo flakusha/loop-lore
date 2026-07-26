@@ -27,6 +27,7 @@ import { extractAndStoreMemories, } from "../memory";
 import { registry, } from "../plugins/registry";
 import type { ToolDefinition, } from "../plugins/types";
 import { jsonError, jsonResponse, } from "../routes/http-utils";
+import { isTelemetryEnabled, record, } from "../telemetry/service";
 import { jsonParseOr, jsonStringifyOr, safeJsonStringify, } from "../utils";
 import {
   completeGeneration,
@@ -502,6 +503,23 @@ export async function handleGenerate({
         provider: resolved.resolvedProviderName,
       },);
 
+      // Record generation telemetry event
+      if (isTelemetryEnabled()) {
+        void record(database, {
+          eventType: "generation.completed",
+          userId,
+          chatId: input.chatId,
+          data: {
+            promptTokens: result.tokenUsage.promptTokens,
+            completionTokens: result.tokenUsage.completionTokens,
+            totalTokens: result.tokenUsage.totalTokens,
+            latencyMs: 0,
+            model: resolved.resolvedModel,
+            provider: resolved.resolvedProviderName,
+            finishReason: finalResponse.finishReason,
+          },
+        },);
+      }
       // Background: extract memories from the generated response
       void extractAndStoreMemories(database, {
         db: database,
@@ -634,6 +652,23 @@ export async function handleGenerate({
           continuationNumber: input.continuationNumber,
         },);
 
+        // Record generation telemetry event
+        if (isTelemetryEnabled()) {
+          void record(database, {
+            eventType: "generation.completed",
+            userId,
+            chatId: input.chatId,
+            data: {
+              promptTokens: result.tokenUsage.promptTokens,
+              completionTokens: result.tokenUsage.completionTokens,
+              totalTokens: result.tokenUsage.totalTokens,
+              latencyMs: 0,
+              model: resolved.resolvedModel,
+              provider: resolved.resolvedProviderName,
+              finishReason: finalResponse.finishReason,
+            },
+          },);
+        }
         // Background: extract memories from the generated response
         void extractAndStoreMemories(database, {
           db: database,
