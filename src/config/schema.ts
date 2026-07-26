@@ -675,9 +675,10 @@ interface HeadersConfig {
   nel: string | null;
 }
 
-// ── Centralized data directory ──────────────────────────────
-// See src/config/constants.ts for DATA_DIR — single source of truth.
-
+interface FrontendConfig {
+  /** Frontend rendering mode: "spa" for single-page app, "ssr" for server-side rendering, "static" for pre-rendered */
+  mode: "spa" | "ssr" | "static";
+}
 interface Config {
   server: ServerConfig;
   db: DatabaseConfig;
@@ -700,6 +701,7 @@ interface Config {
   templates: TemplatesConfig;
   characters: CharactersConfig;
   testing?: TestingConfig;
+  frontend: FrontendConfig;
 }
 
 // DEAD CODE: Bedrock provider defaults (add when implementing)
