@@ -186,10 +186,22 @@ export class SeductionService {
     const now = new Date().toISOString();
     const fields: Record<string, unknown> = { updated_at: now, };
 
-    if (updates.turnOns !== undefined) { fields.turn_ons = safeJsonStringify(updates.turnOns,).value ?? "[]"; }
-    if (updates.turnOffs !== undefined) { fields.turn_offs = safeJsonStringify(updates.turnOffs,).value ?? "[]"; }
-    if (updates.fetishes !== undefined) { fields.fetishes = safeJsonStringify(updates.fetishes,).value ?? "[]"; }
-    if (updates.hardLimits !== undefined) { fields.hard_limits = safeJsonStringify(updates.hardLimits,).value ?? "[]"; }
+    if (updates.turnOns !== undefined) {
+      const _r = safeJsonStringify(updates.turnOns,);
+      fields.turn_ons = _r.ok ? _r.value : "[]";
+    }
+    if (updates.turnOffs !== undefined) {
+      const _r = safeJsonStringify(updates.turnOffs,);
+      fields.turn_offs = _r.ok ? _r.value : "[]";
+    }
+    if (updates.fetishes !== undefined) {
+      const _r = safeJsonStringify(updates.fetishes,);
+      fields.fetishes = _r.ok ? _r.value : "[]";
+    }
+    if (updates.hardLimits !== undefined) {
+      const _r = safeJsonStringify(updates.hardLimits,);
+      fields.hard_limits = _r.ok ? _r.value : "[]";
+    }
     if (updates.desireDecayRate !== undefined) { fields.desire_decay_rate = updates.desireDecayRate; }
     if (updates.desireBuildupRate !== undefined) { fields.desire_buildup_rate = updates.desireBuildupRate; }
 
@@ -455,7 +467,10 @@ export class SeductionService {
     await this.db
       .updateTable("character_arousal",)
       .set({
-        modifiers: safeJsonStringify(mods,).value ?? "[]",
+        modifiers: (() => {
+          const _r = safeJsonStringify(mods,);
+          return _r.ok ? _r.value : "[]";
+        })(),
         updated_at: now,
       },)
       .where("id", "=", state.id,)
