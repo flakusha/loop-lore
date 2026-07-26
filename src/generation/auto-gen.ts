@@ -140,6 +140,8 @@ export interface AutoGenOpts {
   _cascadeActorId?: string;
   /** Injectable dependencies — omit for production (uses real implementations). */
   deps?: Partial<GenDeps>;
+  /** Request ID from HTTP middleware for traceability through the generation pipeline. */
+  requestId?: string;
 }
 
 /**
@@ -154,11 +156,15 @@ export async function triggerAutoGeneration(opts: AutoGenOpts,): Promise<void> {
   const { database, config, chatId, parentMessageId, userId, userMessage, } = opts;
   const cascadeDepth = opts._cascadeDepth ?? 0;
   const cascadeActorId = opts._cascadeActorId;
+  const requestId = opts.requestId;
   const d = { ...createDefaultDeps(), ...opts.deps, };
   if (
     d.listProviders().length === 0 && !config.generation.defaultProvider &&
     config.generation.providers.openaiCompatible.length === 0
   ) { return; }
+
+  const log = getLogger().child({ module: "auto-gen", requestId, },);
+  log.debug("generation pipeline start", { chatId, parentMessageId, userId, cascadeDepth, },);
 
   let attemptId: string | undefined;
 
@@ -233,6 +239,7 @@ export async function triggerAutoGeneration(opts: AutoGenOpts,): Promise<void> {
     }
 
     const resolved = await d.resolveProvider({ userId, config, db: database, },);
+    log.debug("provider resolved", { provider: resolved.resolvedProviderName, model: resolved.resolvedModel, },);
     const assembler = d.createPromptAssembler(database,);
 
     let groupParticipantIds: string[] | undefined;
@@ -252,6 +259,7 @@ export async function triggerAutoGeneration(opts: AutoGenOpts,): Promise<void> {
       groupParticipantIds,
       avatarConfig: config.templates?.avatar ?? {},
     },);
+    log.debug("prompt assembled", { messageCount: prompt.messages.length, },);
 
     // For initial greeting (no parentMessageId), skip generation tracking
     // to avoid NOT NULL FK constraint on generation_attempts.parent_message_id.
@@ -274,7 +282,6 @@ export async function triggerAutoGeneration(opts: AutoGenOpts,): Promise<void> {
 
     const actorName = characterName;
     const lastMsg = prompt.messages[prompt.messages.length - 1];
-    const log = getLogger().child({ module: "auto-gen", },);
 
     log.info("LLM request", {
       model: resolved.resolvedModel,
@@ -314,6 +321,7 @@ export async function triggerAutoGeneration(opts: AutoGenOpts,): Promise<void> {
 
     // Build failover list: primary provider first, then all others
     const failoverList = d.buildFailoverList(resolved.resolvedProviderName, config,);
+    log.debug("calling LLM", { streaming: canStream, failoverCount: failoverList.length, requestId, },);
     const genReq = {
       model: resolved.resolvedModel,
       messages: prompt.messages,
@@ -398,6 +406,7 @@ export async function triggerAutoGeneration(opts: AutoGenOpts,): Promise<void> {
     if (hooksConfig.enableModerationHooks) { enabledEventTypes.push("moderation_flag",); }
 
     // Run content hooks (mood, emotion, NSFW, moderation) before storing
+    log.debug("running content hooks", { eventTypes: enabledEventTypes, },);
     const hookResult = await runHookChain({
       hooks: [...getRegisteredHooks(),],
       context: {
@@ -473,6 +482,7 @@ export async function triggerAutoGeneration(opts: AutoGenOpts,): Promise<void> {
         swipe_index: swipeIndex,
       },)
       .execute();
+    log.debug("message stored", { messageId, contentLength: accumulatedContent.length, requestId, },);
 
     // ── Hallucination guard ────────────────────────────────────────
     // Check generated content against known world entities

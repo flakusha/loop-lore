@@ -855,6 +855,7 @@ export function messagesRoutes(opts: HandlerOpts,) {
               parentMessageId: id,
               userId: actorId,
               userMessage: effectiveContent,
+              requestId: (ctx.request as Request).headers.get("x-request-id",) ?? undefined,
             },);
           } else if (isAssistantEnabled(config,)) {
             const assistantResponse = generateResponse({ userInput: effectiveContent, },);
