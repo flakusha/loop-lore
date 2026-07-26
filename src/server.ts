@@ -162,10 +162,18 @@ export function createRequestHandler(
   const dynamicPolicy = new DynamicResponsePolicy(config.dynamicResponse, logger,);
 
   return async (request: Request,): Promise<Response> => {
-    generateNonce(request,);
-    let response = await app.fetch(request,);
-    response = await dynamicPolicy.apply({ request, response, },);
-    response = headerPolicy.apply({ request, response, },);
+    // Generate a unique request ID for traceability
+    const requestId = crypto.randomUUID();
+    // Attach request ID to the cloned request so downstream handlers can read it
+    const taggedRequest = new Request(request, {
+      headers: new Headers([...request.headers.entries(), ["x-request-id", requestId,],],),
+    },);
+    generateNonce(taggedRequest,);
+    let response = await app.fetch(taggedRequest,);
+    // Return the request ID in the response header
+    response.headers.set("X-Request-Id", requestId,);
+    response = await dynamicPolicy.apply({ request: taggedRequest, response, },);
+    response = headerPolicy.apply({ request: taggedRequest, response, },);
     return response;
   };
 }
