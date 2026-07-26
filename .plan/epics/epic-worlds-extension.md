@@ -114,3 +114,4 @@ type ChatMode = "normal" | "battle" | "question" | "inventory";
 ## Linked Tasks
 
 - TASK-worlds-extension.md
+- TASK-world-shaping-divine.md

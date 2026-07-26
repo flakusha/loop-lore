@@ -316,3 +316,4 @@ interface GuildHall {
 ## Linked Tasks
 
 - TASK-housing-base-building.md
+- TASK-housing-neighborhood.md

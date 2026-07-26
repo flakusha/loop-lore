@@ -233,3 +233,4 @@ interface SpellMastery {
 ## Linked Tasks
 
 - TASK-magic-spell-systems.md
+- TASK-magic-spell-crafting.md

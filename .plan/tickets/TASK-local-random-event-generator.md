@@ -35,6 +35,8 @@ Chats can feel static without ambient activity. Random events add life without r
 ## Related
 
 - Epic 36 (Chat Lifecycle & Moderation)
+- TASK-world-event-system.md — dynamic world events, timeline
+- TASK-random-encounters-events.md — structured encounter tables, event chains
 
 ## Completion Note
 

@@ -1402,3 +1402,5 @@ interface FormattingRules {
 ## Linked Tasks
 
 - TASK-world-locations.md
+- TASK-world-event-system.md
+- TASK-random-encounters-events.md

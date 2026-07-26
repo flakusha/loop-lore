@@ -55,70 +55,9 @@ import {
   TEMPLATES_DEFAULTS,
 } from "./sections/templates";
 
-// src/config/schema-class.ts — ConfigSchema orchestrator
-//
-// Delegates to section classes in ./sections/ for defaults + schema metadata.
-// Auto-generates envMap by walking section instances.
-// Auto-generates jsonSchema from section metadata + defaults.
-//
-// Replaces hand-duplicated:
-//   - generate-schema.ts (JSON schema defaults)
-//   - load.ts ENV_MAP (env var → dot.path mapping)
-//   - load.ts validateConfig (validation rules)
-// src/config/schema-class.ts — ConfigSchema orchestrator
-//
-// Delegates to section classes in ./sections/ for defaults + schema metadata.
-// Auto-generates envMap by walking section instances.
-// Auto-generates jsonSchema from section metadata + defaults.
-// Each section is a class. Instance = defaults. Static methods generate
-// env-maps, validation, and JSON Schema. Replaces hand-duplicated:
-//   - generate-schema.ts (JSON schema defaults)
-//   - load.ts ENV_MAP (env var → dot.path mapping)
-//   - load.ts validateConfig (validation rules)
-//
-// schema.ts provides the type interfaces consumed here via `satisfies`.
-// This file is the sole source of truth for defaults, env-map, validation, and JSON Schema.
-// ── Base types ──────────────────────────────────────────────
-
 import {
   CHARACTERS_DEFAULTS,
 } from "./sections/characters";
-
-// src/config/schema-class.ts — ConfigSchema orchestrator
-//
-// Delegates to section classes in ./sections/ for defaults + schema metadata.
-// Auto-generates envMap by walking section instances.
-// Auto-generates jsonSchema from section metadata + defaults.
-//
-// Replaces hand-duplicated:
-//   - generate-schema.ts (JSON schema defaults)
-//   - load.ts ENV_MAP (env var → dot.path mapping)
-//   - load.ts validateConfig (validation rules)
-// ── Base types ──────────────────────────────────────────────
-// src/config/schema-class.ts — ConfigSchema orchestrator
-//
-// Delegates to section classes in ./sections/ for defaults + schema metadata.
-// Auto-generates envMap by walking section instances.
-// Auto-generates jsonSchema from section metadata + defaults.
-//
-// Replaces hand-duplicated:
-//   - generate-schema.ts (JSON schema defaults)
-//   - load.ts ENV_MAP (env var → dot.path mapping)
-//   - load.ts validateConfig (validation rules)
-// src/config/schema-class.ts — ConfigSchema orchestrator
-//
-// Delegates to section classes in ./sections/ for defaults + schema metadata.
-// Auto-generates envMap by walking section instances.
-// Auto-generates jsonSchema from section metadata + defaults.
-// Each section is a class. Instance = defaults. Static methods generate
-// env-maps, validation, and JSON Schema. Replaces hand-duplicated:
-//   - generate-schema.ts (JSON schema defaults)
-//   - load.ts ENV_MAP (env var → dot.path mapping)
-//   - load.ts validateConfig (validation rules)
-//
-// schema.ts provides the type interfaces consumed here via `satisfies`.
-// This file is the sole source of truth for defaults, env-map, validation, and JSON Schema.
-// ── Base types ──────────────────────────────────────────────
 
 type EnvMap = Record<string, string>;
 type JSONSchema = Record<string, unknown>;
@@ -151,21 +90,37 @@ export class ConfigSchema {
   // ── Section instances (defaults) ───────────────────────
 
   readonly server = new ServerSection();
+
   readonly db = new DatabaseSection();
+
   readonly assets = new AssetsSection();
+
   readonly assistant = new AssistantSection();
+
   readonly logging = new LoggingSection();
+
   readonly tui = new TuiSection();
+
   readonly docs = new DocsSection();
+
   readonly ageGate = new AgeGateSection();
+
   readonly auth = new AuthSection();
+
   readonly transport = new TransportSection();
+
   readonly messages = new MessagesSection();
+
   readonly nsfw = new NsfwSection();
+
   readonly generation = new GenerationSection();
+
   readonly byoKey = new ByoKeySection();
+
   readonly encryption = new EncryptionSection();
+
   readonly headers = new HeadersSection();
+
   readonly dynamicResponse = new DynamicResponseSection();
 
   constructor(overrides?: Partial<Config>,) {
@@ -402,6 +357,7 @@ export class ConfigSchema {
         "encryption",
         "headers",
         "dynamicResponse",
+        "frontend",
       ],
     };
   }
@@ -427,10 +383,15 @@ export class ConfigSchema {
       encryption: this.encryption,
       headers: this.headers,
       dynamicResponse: this.dynamicResponse,
+      frontend: this.frontend,
       templates: TEMPLATES_DEFAULTS,
       characters: CHARACTERS_DEFAULTS,
     };
   }
+
+  readonly frontend = {
+    mode: "htmx" as const,
+  } satisfies FrontendConfig;
 }
 
 /** Singleton: config class instance for defaults generation */

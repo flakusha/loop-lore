@@ -42,16 +42,12 @@ export function apiKeysRoutes({ database, config: cfg, }: { database: Kysely<DB>
       const userId = requireUserId(ctx,);
       if (typeof userId !== "string") { return userId; }
 
-      const request = (ctx as any).request as Request;
-
       if (!config.byoKey.enabled) {
         return forbidden("BYO API key feature is disabled",);
       }
 
-      let body: Record<string, unknown>;
-      try {
-        body = (await request.json()) as Record<string, unknown>;
-      } catch {
+      const body = ctx.body as Record<string, unknown> | undefined;
+      if (!body || typeof body !== "object") {
         return jsonError({ message: "Invalid JSON body", status: HttpStatus.BadRequest, },);
       }
 
