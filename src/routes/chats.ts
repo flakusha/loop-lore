@@ -162,6 +162,7 @@ export function chatsRoutes(opts: HandlerOpts,) {
                 chatId: newChatId,
                 parentMessageId: null,
                 userId,
+                requestId: (ctx.request as Request).headers.get("x-request-id",) ?? undefined,
               },);
             }
           }
