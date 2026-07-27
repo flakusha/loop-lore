@@ -83,6 +83,139 @@ Comprehensive testing infrastructure including unit tests, e2e tests, benchmarki
 - Input validation performance
 - Rate limiting performance
 
+## Performance Targets & SLOs
+
+### API Latency Targets
+
+| Metric             | Target  | Tier     | Notes                          |
+| ------------------ | ------- | -------- | ------------------------------ |
+| API p50 latency    | < 20ms  | Baseline | Non-LLM endpoints (auth, CRUD) |
+| API p95 latency    | < 50ms  | Baseline | Non-LLM endpoints              |
+| API p99 latency    | < 200ms | Baseline | Non-LLM endpoints              |
+| LLM round-trip p95 | < 5s    | LLM      | Includes generation time       |
+| LLM round-trip p99 | < 15s   | LLM      | Includes generation time       |
+
+### Throughput Targets
+
+| Metric              | Target        | Tier     | Notes                         |
+| ------------------- | ------------- | -------- | ----------------------------- |
+| Concurrent sessions | 1,000         | Baseline | Single instance, 1 CPU        |
+| Concurrent sessions | 10,000        | High     | Multi-instance, load balanced |
+| Message throughput  | > 500 msg/s   | Baseline | User-to-user chat, no LLM     |
+| Message throughput  | > 5,000 msg/s | High     | With LLM generation pipeline  |
+| Asset upload        | > 50 MB/s     | Baseline | Local SSD                     |
+| Asset upload        | > 20 MB/s     | Baseline | Network (1 Gbps LAN)          |
+| Asset retrieval     | > 100 MB/s    | Baseline | Cached, local SSD             |
+| Asset retrieval     | > 10 MB/s     | Baseline | Cold, network                 |
+
+### Resource Targets
+
+| Metric               | Target   | Notes          |
+| -------------------- | -------- | -------------- |
+| Memory per session   | < 5 MB   | Idle session   |
+| Memory per session   | < 50 MB  | Active session |
+| CPU per 100 sessions | < 1 core | Baseline       |
+| DB query p95         | < 10ms   | Simple queries |
+| DB query p95         | < 50ms   | Complex joins  |
+
+### Concurrent User Tiers
+
+| Tier      | Users  | Duration | Purpose               |
+| --------- | ------ | -------- | --------------------- |
+| Smoke     | 10     | 1 min    | Basic functionality   |
+| Light     | 100    | 5 min    | Typical load          |
+| Medium    | 1,000  | 15 min   | Peak load             |
+| Heavy     | 10,000 | 30 min   | Stress test           |
+| Endurance | 1,000  | 24h+     | Memory leak detection |
+
+## CI-Integrated Performance Regression Detection
+
+### Benchmark Runner
+
+Benchmarks run on every PR via GitHub Actions, comparing against the baseline
+(main branch). Results stored as artifacts for historical analysis.
+
+```yaml
+# .github/workflows/perf-regression.yml
+name: Performance Regression
+on:
+  pull_request:
+    branches: [main]
+  schedule:
+    - cron: "0 2 * * 1" # Weekly on Mondays
+
+jobs:
+  benchmark:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven/setup-bun@v1
+      - run: bun install
+      - run: bun run bench:ci
+      - uses: actions/upload-artifact@v4
+        with:
+          name: benchmark-results
+          path: tests/benchmarks/results/
+      - name: Check regression
+        run: bun run bench:compare
+```
+
+### Regression Thresholds
+
+| Metric             | Regression Threshold | Action on PR |
+| ------------------ | -------------------- | ------------ |
+| API p95 latency    | > 10% increase       | Block merge  |
+| API p99 latency    | > 15% increase       | Block merge  |
+| Message throughput | > 5% decrease        | Block merge  |
+| Memory usage       | > 10% increase       | Block merge  |
+| CPU usage          | > 15% increase       | Block merge  |
+| DB query p95       | > 10% increase       | Block merge  |
+
+### Benchmark Configuration
+
+```typescript
+interface PerfRegressionConfig {
+  // Benchmarks to run
+  benchmarks: string[];
+
+  // Baseline branch to compare against
+  baselineBranch: string;
+
+  // Regression thresholds per metric
+  thresholds: Record<string, {
+    maxIncrease: number; // percentage
+    maxDecrease: number; // percentage
+  }>;
+
+  // Environment configuration
+  environment: {
+    cpu: number; // CPU cores
+    memory: number; // GB
+    storage: string; // 'ssd' | 'hdd'
+  };
+
+  // Output format
+  output: {
+    format: "json" | "junit" | "github";
+    path: string;
+  };
+}
+```
+
+### Implementation Tasks
+
+- [ ] Define benchmark suite structure (`tests/benchmarks/`)
+- [ ] Implement benchmark runner with baseline comparison
+- [ ] Add API latency benchmarks (p50/p95/p99)
+- [ ] Add message throughput benchmarks
+- [ ] Add asset upload/download benchmarks
+- [ ] Add memory/CPU profiling benchmarks
+- [ ] Add DB query benchmarks
+- [ ] Implement regression threshold checking
+- [ ] Add CI workflow for perf regression
+- [ ] Add historical results dashboard
+- [ ] Add performance report generation
+
 ## Design
 
 ### Test Framework
