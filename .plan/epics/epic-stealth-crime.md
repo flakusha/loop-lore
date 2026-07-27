@@ -306,6 +306,7 @@ interface BlackMarketItem {
 - **NPC System** — NPC awareness, reactions, memory
 - **World & Locations** — Restricted areas, guard patrols
 - **Economy System** — Bounties, fines, black market
+- **Social Interaction** — Criminal reputation feeds into social standing; social skills (deception, disguise) aid crime
 - **Faction System** — Law enforcement, criminal factions
 - **Combat System** — Stealth attacks, pursuit combat
 
@@ -337,6 +338,7 @@ interface BlackMarketItem {
 - **Epic World & Locations** — Restricted areas
 - **Epic NPC System** — NPC awareness, reactions
 - **Epic Economy System** — Bounties, fines
+- **Social Interaction** — Criminal reputation feeds into social standing; social skills (deception, disguise) aid crime
 - **Epic Faction System** — Law enforcement
 
 ## Linked Tasks

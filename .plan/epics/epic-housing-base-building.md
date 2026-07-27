@@ -277,6 +277,50 @@ interface GuildHall {
 
 ## Integration Points
 
+### Systems This Epic Depends On
+
+| System                  | What It Provides                          | How Used                                                |
+| ----------------------- | ----------------------------------------- | ------------------------------------------------------- |
+| RPG Mechanics           | Stats (INT, DEX), skill checks            | Construction success, crafting station bonuses          |
+| Crafting & Professions  | Recipe definitions, material requirements | Home crafting station recipes and quality bonuses       |
+| Inventory System        | Item storage, equipment                   | Storage containers, furniture items                     |
+| Economy System          | Currency, market pricing                  | Housing costs, rent, furniture market                   |
+| World & Locations       | Terrain, placement rules                  | Housing placement, location-based bonuses               |
+| Social Interaction      | Reputation, relationships                 | Visitor access control, party mechanics                 |
+| Companion, Pet & Mount  | Pet/mount management                      | Stable rooms, pet housing, mount care                   |
+| NSFW Game Mechanics     | Private space requirements                | Bedroom bonuses, private encounter spaces               |
+| Weather & Environmental | Climate effects                           | Garden yields, seasonal decorations, weather protection |
+
+### Systems That Depend On This Epic
+
+| System                  | What It Consumes              | How Used                               |
+| ----------------------- | ----------------------------- | -------------------------------------- |
+| Guild System            | Guild halls, treasury         | Guild hall construction, guild storage |
+| Crime & Stealth         | Housing security, lockpicking | Burglary targets, guard systems        |
+| Battle & Action Systems | Fortification, siege          | Castle defense, battle arenas          |
+
+### Shared Data Contracts
+
+| Contract           | Shared With    | Purpose                                       |
+| ------------------ | -------------- | --------------------------------------------- |
+| `CraftingStation`  | Crafting       | Home crafting stations use same station model |
+| `StorageContainer` | Inventory      | Housing storage extends inventory system      |
+| `WorldLocation`    | World, Economy | Housing placement uses shared location model  |
+
+### Cross-System Events
+
+| Event                     | Direction                   | Purpose                                              |
+| ------------------------- | --------------------------- | ---------------------------------------------------- |
+| `housing.crafted`         | emits → Crafting, Inventory | Crafting in home stations triggers recipe completion |
+| `housing.visitor_arrived` | emits → Social              | Visitor arrival affects social reputation            |
+| `housing.burglary`        | emits → Crime               | Security breach triggers crime detection             |
+| `companion.housed`        | subscribes ← Companion      | Companion housing assigns stable/room                |
+| `weather.season_changed`  | subscribes ← Weather        | Seasonal decoration changes, garden yields           |
+
+---
+
+### Previous Integration Notes
+
 - **Crafting System** — Home crafting stations
 - **Inventory System** — Storage management
 - **World & Locations** — Housing placement

@@ -366,6 +366,7 @@ interface SocialEvent {
 - **Economy System** — Barter, trading
 - **Quest System** — Social quest objectives
 - **Combat System** — Intimidation in combat
+- **Crime & Stealth** — Social skills aid crime (deception, disguise); criminal reputation feeds into social standing
 
 ## Open Questions
 

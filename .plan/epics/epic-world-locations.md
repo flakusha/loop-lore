@@ -2,7 +2,7 @@
 
 **Status:** ⬜ Not Started
 **Priority:** Medium
-**Effort:** Very High
+**Effort:** Very High (split into 4 sub-epics)
 **Issue:** `136d857`
 **Type:** Feature Epic
 
@@ -10,16 +10,25 @@
 
 World and location system — overall conditions, lore following/quality investigation on creation, overall style (fantasy, real, cyberpunk, sci-fi, etc.), random location generation, anomalies/effects, item search/generation, unique places, resource extraction, persistent storage, NPC placement/migration/inventories.
 
-## Slicing
+> **⚠️ This epic is too large to ship in one pass.** It has been split into 4 sub-epics below. Each sub-epic delivers independently shippable value.
 
-This epic is too large to ship in one pass (8 phases, ~100 interface blocks). Propose splitting into 2–4 independently shippable sub-epics, sequenced so each delivers user-visible value:
+## Sub-Epics
 
-1. **Travel & Time** — World Conditions, environmental state (weather/time/season), travel between locations, random location generation. Lowest coupling; good first slice.
-2. **NPCs & Memories** — NPC placement/migration/inventories, NPC memories (overlaps `docs/spec/actors.md` memory system — owning epic: actor/memory subsystem), persistent storage.
-3. **Encounters & Monsters** — anomalies/effects, resource extraction, item search/generation, unique places. Overlaps Epic RPG Mechanics & Epic Battle Action Systems (combat/loot); coordinate ownership there.
-4. **Diplomacy & Karma** — world-level modifiers, factions, reputation/karma, lore-following/quality-investigation on creation.
+| Sub-Epic                   | Epic File                       | Scope                                                                     | Priority |
+| -------------------------- | ------------------------------- | ------------------------------------------------------------------------- | -------- |
+| **Travel & Time**          | `epic-world-travel-time.md`     | World conditions, weather/time/season, travel, random location generation | High     |
+| **NPCs & Memories**        | `epic-world-npcs.md`            | NPC placement/migration/inventories, NPC memory system                    | High     |
+| **Encounters & Resources** | `epic-world-encounters.md`      | Anomalies, resource extraction, item search/generation, unique places     | Medium   |
+| **Diplomacy & Karma**      | `epic-world-diplomacy-karma.md` | Factions, reputation/karma, lore-following/quality, world state           | Medium   |
 
-**Overlap note:** World Conditions/style and item generation overlap Epic Platform Research (feature-adoption tracking) and the RPG/Battle epics (mechanics, combat, loot). Style-specific asset generation overlaps image-gen work; lore/quality investigation overlaps assistant/TTS RAG work. Each sub-epic above should delegate the overlapping piece to its owning epic rather than re-specifying it.
+## Slicing Rationale
+
+The original epic had 8 phases and ~100 interface blocks. Splitting into 4 sub-epics allows each to be independently shippable and reduces coupling:
+
+1. **Travel & Time** — Lowest coupling; good first slice. Core infrastructure that other subs depend on.
+2. **NPCs & Memories** — Medium coupling; depends on Travel & Time for NPC placement.
+3. **Encounters & Resources** — Medium coupling; independent of NPCs.
+4. **Diplomacy & Karma** — Highest coupling; depends on NPCs and reputation systems.
 
 ## Core Features
 

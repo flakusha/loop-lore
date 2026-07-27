@@ -120,22 +120,26 @@ Tasks that creatively extend existing epics with new layers, mechanics, and soci
 
 Tasks that extend existing systems with new mechanics and capabilities.
 
-| Task                                               | Effort   | Epic Extended            |
-| -------------------------------------------------- | -------- | ------------------------ |
-| VN Dynamic Image & Story Generation                | Med–High | Visual Novel Mode (51)   |
-| VN Q&A (Question <-> Answer) Mode                  | Med      | Visual Novel Mode (51)   |
-| Chat Switch to Battle Mode (Turn-Based)            | Med      | Battle & Action Systems  |
-| Travel Mode — Party Migration Between Chats        | Med      | Chat Transfer & Location |
-| Random Encounters & Random Events Generation       | Med      | World Event System       |
-| GM/Assistant Story Whitenotes                      | Med      | GM/Shadow Notes (52)     |
-| GM/Assistant Shadow Notes                          | Med      | GM/Shadow Notes (52)     |
-| Enemies & Monsters Systems                         | Med      | Battle & Action Systems  |
-| Config: Gallery, File Attachment & Idempotent Load | Med      | Config Extensions        |
-| VN Scene & Dialogue Templates                      | Med      | Visual Novel Mode (51)   |
-| VN Scene Template System                           | Med      | Visual Novel Mode (51)   |
-| Battle Action Templates                            | Med      | Battle & Action Systems  |
-| Battle Encounter Template System                   | Med      | Battle & Action Systems  |
-| TypeScript/MJS Reconciliation                      | Med      | Logic Reconciliation     |
+| Task                                               | Effort   | Epic Extended                     |
+| -------------------------------------------------- | -------- | --------------------------------- |
+| VN Dynamic Image & Story Generation                | Med–High | Visual Novel Mode (51)            |
+| VN Q&A (Question <-> Answer) Mode                  | Med      | Visual Novel Mode (51)            |
+| Chat Switch to Battle Mode (Turn-Based)            | Med      | Battle & Action Systems           |
+| Travel Mode — Party Migration Between Chats        | Med      | Chat Transfer & Location          |
+| Random Encounters & Random Events Generation       | Med      | World Event System                |
+| GM/Assistant Story Whitenotes                      | Med      | GM/Shadow Notes (52)              |
+| GM/Assistant Shadow Notes                          | Med      | GM/Shadow Notes (52)              |
+| Enemies & Monsters Systems                         | Med      | Battle & Action Systems           |
+| Config: Gallery, File Attachment & Idempotent Load | Med      | Config Extensions                 |
+| VN Scene & Dialogue Templates                      | Med      | Visual Novel Mode (51)            |
+| VN Scene Template System                           | Med      | Visual Novel Mode (51)            |
+| Battle Action Templates                            | Med      | Battle & Action Systems           |
+| Battle Encounter Template System                   | Med      | Battle & Action Systems           |
+| TypeScript/MJS Reconciliation                      | Med      | Logic Reconciliation              |
+| SQLite Backup Mechanisms Research                  | Low      | DB & Asset Snapshot Recovery (53) |
+| Asset Storage Snapshot Research                    | Low      | DB & Asset Snapshot Recovery (53) |
+| Character Bundle Format Research                   | Low      | DB & Asset Snapshot Recovery (53) |
+| Disaster Recovery Procedure Research               | Low      | DB & Asset Snapshot Recovery (53) |
 
 ## Generation Templates (FEAT-065 — expanded)
 

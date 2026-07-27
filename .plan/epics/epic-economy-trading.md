@@ -367,6 +367,7 @@ interface GuildTax {
 - **Inventory System** — Item management
 - **World & Locations** — Markets, banks, auction houses
 - **Faction System** — Faction currency, reputation
+- **Crime & Stealth** — Black market operates on market mechanics with crime-specific pricing; stolen goods enter economy
 - **Crafting System** — Crafted item sales
 - **Guild System** — Guild banking, taxes
 - **Quest System** — Trading objectives
@@ -398,6 +399,7 @@ interface GuildTax {
 - **Epic Inventory System** — Item management
 - **Epic World & Locations** — Markets, banks
 - **Epic Faction System** — Faction currency
+- **Crime & Stealth** — Black market operates on market mechanics with crime-specific pricing; stolen goods enter economy
 - **Epic Crafting System** — Item sales
 - **Epic Guild System** — Guild banking
 
