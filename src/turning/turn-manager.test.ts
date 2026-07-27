@@ -68,6 +68,8 @@ beforeAll(async () => {
         agent_type: "ai",
         settings: "{}",
         import_spec: "raw",
+        data_source_format: "json",
+        data_raw: null,
       },
       {
         id: "actor-ai-2",
@@ -77,6 +79,8 @@ beforeAll(async () => {
         agent_type: "ai",
         settings: "{}",
         import_spec: "raw",
+        data_source_format: "json",
+        data_raw: null,
       },
       {
         id: "actor-narrator",
@@ -86,6 +90,8 @@ beforeAll(async () => {
         agent_type: "narrator",
         settings: "{}",
         import_spec: "raw",
+        data_source_format: "json",
+        data_raw: null,
       },
     ],)
     .execute();

@@ -3,7 +3,7 @@
 // Character.AI export normalizer.
 // Converts Character.AI format to canonical character card.
 
-import type { CanonicalCharacter, } from "../parser";
+import type { CanonicalCharacter, } from "../spec";
 
 interface CharacterAIData {
   name?: string;
@@ -32,6 +32,7 @@ export function normalizeCharacterAI(data: Record<string, unknown>,): CanonicalC
   return {
     name: cardData.name ?? "",
     description,
+    personality: "",
     welcome_message: cardData.greeting,
     mes_example: cardData.examples_of_dialogue,
     tags: cardData.tags,
