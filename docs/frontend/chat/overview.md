@@ -46,23 +46,26 @@ See [group-chat.md](./group-chat.md) and [assistant.md](./assistant.md).
 
 ---
 
-### Generation Style Presets (Future)
+### Response Style (Future)
 
-A per-chat configuration that controls how the LLM generates responses. Not implemented in v1 — all chats use the default preset. Planned options:
+A per-chat configuration that controls how the LLM generates responses. Not implemented in v1 — all chats use the default style. Planned options:
 
-| Preset   | Description                                                       | Use case                                       | Cost/speed             |
+| Style    | Description                                                       | Use case                                       | Cost/speed             |
 | -------- | ----------------------------------------------------------------- | ---------------------------------------------- | ---------------------- |
 | Short    | 1-2 paragraphs, minimal description, action-focused dialogue      | Fast-paced games, quick back-and-forth, combat | Cheaper, faster        |
 | Default  | 1-5 paragraphs with descriptions, balanced narration and dialogue | Standard roleplay, most conversations          | Baseline               |
 | Detailed | Long-form responses, rich descriptions, deep character immersion  | Literary RP, slow-burn storytelling            | More expensive, slower |
+| Custom   | User-defined max_tokens (50–2000)                                 | Fine-grained control                           | Variable               |
 
-Each preset maps to a system prompt instruction appended to the chat context. The preset is selectable per chat (not per-character) so the same character can have short action chats and long literary chats.
+Each style maps to a system prompt instruction appended to the chat context. The style is selectable per chat (not per-character) so the same character can have short action chats and long literary chats.
+
+See [chat-mode-reconciliation.md](../../.plan/design/chat-mode-reconciliation.md) for full design covering three orthogonal axes: ChatType (participant structure), ChatMode (behavioral mode), and ResponseStyle.
 
 **Future considerations**:
 
-- Per-chat preset stored in the chat record
-- Preset can be changed mid-chat (affects future generations only, not existing messages)
-- Tied to the main model selector — if the user switches to a cheaper model, they may want shorter presets to control costs
+- Per-chat style stored in the `response_style` column (migration 008)
+- Style can be changed mid-chat (affects future generations only, not existing messages)
+- Tied to the main model selector — if the user switches to a cheaper model, they may want shorter styles to control costs
 
 ---
 
