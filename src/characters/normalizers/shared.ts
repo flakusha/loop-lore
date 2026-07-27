@@ -37,7 +37,7 @@ export function buildCanonicalFields(
   return {
     name: (raw.name as string) ?? "",
     description: (raw.description as string) ?? "",
-    personality: raw.personality as string | undefined,
+    personality: (raw.personality as string) ?? "",
     scenario: raw.scenario as string | undefined,
     welcome_message: raw[welcomeKey] as string | undefined,
     mes_example: raw.mes_example as string | undefined,
