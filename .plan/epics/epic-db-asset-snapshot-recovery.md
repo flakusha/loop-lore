@@ -142,9 +142,9 @@ Research and plan comprehensive database and asset snapshot/recovery system. Cov
 
 ```typescript
 // SQLite backup via Bun
-const backup = await db.backup("backup.db");
+const backup = await db.backup("backup.db",);
 // Or via Kysely raw query
-await db.executeQuery(sql`VACUUM INTO ${sql.ref("backup.db")}`);
+await db.executeQuery(sql`VACUUM INTO ${sql.ref("backup.db",)}`,);
 ```
 
 ### WAL Archiving
