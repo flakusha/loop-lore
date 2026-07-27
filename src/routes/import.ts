@@ -20,6 +20,8 @@ interface ImportActorOpts {
   warnings: string[];
   database: Kysely<DB>;
   userId: string;
+  rawSource?: string;
+  sourceFormat?: string;
 }
 
 async function importActor(opts: ImportActorOpts,): Promise<Response> {
@@ -64,6 +66,8 @@ async function importActor(opts: ImportActorOpts,): Promise<Response> {
       creator: character.creator ?? null,
       character_version: character.character_version ?? null,
       import_spec: format,
+      data_source_format: opts.sourceFormat ?? format,
+      data_raw: opts.rawSource ?? null,
       alternate_greetings: alternateGreetings,
       settings: "{}",
       data_version: 1,
