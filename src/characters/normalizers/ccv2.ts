@@ -3,7 +3,7 @@
 // CCv2 (Character Card V2) normalizer.
 // Converts CCv2 format to canonical character card.
 
-import type { CanonicalCharacter, LorebookData, } from "../parser";
+import type { CanonicalCharacter, LorebookData, } from "../spec";
 import { buildCanonicalFields, buildLorebook, extractEnvelope, } from "./shared";
 
 interface CCv2Data {
