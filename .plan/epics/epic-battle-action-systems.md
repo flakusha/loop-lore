@@ -2,13 +2,44 @@
 
 **Status:** ⬜ Not Started
 **Priority:** Medium
-**Effort:** Very High
-**Issue:** `baa672b`
+**Effort:** Very High (split into 5 sub-epics)
 **Type:** Feature Epic
+**Tags:** battle, combat, trading, inventory, spells, skills
 
 ## Summary
 
 Battle UI, battle mechanics (turn-based, scripted, LLM-involved), utilities for battle mechanics, similar mechanics for trading/inventory/items/spells/actions, skill rolls/checks, and dynamic backgrounds.
+
+> **⚠️ This epic is too large to ship in one pass.** It has been split into 5 sub-epics below. Each sub-epic delivers independently shippable value.
+
+## Sub-Epics
+
+| Sub-Epic                | Epic File                   | Scope                                                                   | Priority |
+| ----------------------- | --------------------------- | ----------------------------------------------------------------------- | -------- |
+| **Battle Core**         | `epic-battle-core.md`       | Turn-based mechanics, battle modes, actions, state management           | High     |
+| **Battle UI**           | `epic-battle-ui.md`         | Reduced message size, state display, turn order, action selection       | High     |
+| **Battle Utilities**    | `epic-battle-utilities.md`  | Dice roller, stat calculator, initiative tracker, status effect manager | Medium   |
+| **Trading & Inventory** | `epic-trading-inventory.md` | Trading system, inventory management, items transfer, market dynamics   | Medium   |
+| **Spells & Skills**     | `epic-spells-skills.md`     | Spell system, action system, cooldowns, skill rolls/checks              | Medium   |
+
+## Splitting Rationale
+
+The original epic mixed core battle mechanics with trading, inventory, spells, and far-fetched features (dynamic backgrounds). Splitting into focused sub-epics allows:
+
+1. **Battle Core** — Ship the combat loop first; all other features build on this.
+2. **Battle UI** — Can be implemented in parallel with Battle Core.
+3. **Battle Utilities** — Reusable across all sub-epics.
+4. **Trading & Inventory** — Independent of combat; shares economy spec with World/Locations.
+5. **Spells & Skills** — Extends the RPG mechanics system; lower priority than core combat.
+
+## Far-Fetched Features (Deferred)
+
+The following features are moved to a separate deferred epic or removed from scope:
+
+- Dynamic backgrounds (scene generation, character placement, movement visualization)
+- Scene visualization (top-down/isometric view, sprites, animations)
+
+These should be tracked separately in `epic-immersion-visuals.md` or deferred to a future version.
 
 ## Core Features
 
@@ -498,6 +529,49 @@ interface BackgroundTransition {
 - Performance optimization
 - Balance tuning
 - Documentation
+
+## Integration Points
+
+### Systems This Epic Depends On
+
+| System                | What It Provides                                   | How Used                                                  |
+| --------------------- | -------------------------------------------------- | --------------------------------------------------------- |
+| RPG Mechanics         | Stats (STR, DEX, CON), dice resolution, XP rewards | Damage calculation, stat modifiers, level-up after combat |
+| Magic & Spell Systems | Spell definitions, mana costs, elemental effects   | Spells as combat actions, spell damage/healing            |
+| Item System           | Equipment stats, consumable effects                | Weapon damage, armor defense, potion healing              |
+| Inventory System      | Item storage, equipped items                       | Loot drop pipeline, equipment loadout management          |
+| Weather & Environment | Terrain modifiers, weather effects                 | Environmental combat modifiers, terrain cover bonuses     |
+| Social Interaction    | Persuasion, intimidation, deception                | Negotiate action, morale breaks, surrender mechanics      |
+| Resolution System     | Unified dice/action resolution                     | Skill checks, attack rolls, saving throws                 |
+
+### Systems That Depend On This Epic
+
+| System                 | What It Consumes               | How Used                                         |
+| ---------------------- | ------------------------------ | ------------------------------------------------ |
+| Companion, Pet & Mount | Battle participation rules     | Companions fight alongside players, pet combat   |
+| Crime & Stealth        | Stealth attack mechanics       | Assassinate action, ambush from stealth          |
+| Disease & Poison       | Poison application in combat   | Poisoned weapons, venomous creature attacks      |
+| NPC/Actor System       | Enemy AI behavior              | NPC-driven combat decisions, morale, personality |
+| NSFW Game Mechanics    | Combat injuries, battle damage | Injury system, wound narratives                  |
+
+### Shared Data Contracts
+
+| Contract         | Shared With                    | Purpose                                      |
+| ---------------- | ------------------------------ | -------------------------------------------- |
+| `StatusEffect`   | RPG, Magic, Disease, Social    | Shared buff/debuff model across all systems  |
+| `DiceRoll`       | RPG, Resolution, Social, Crime | Unified dice resolution for all skill checks |
+| `CharacterStats` | RPG, Character Core, Social    | STR/DEX/CON/etc. shared across all systems   |
+
+### Cross-System Events
+
+| Event                   | Direction                          | Purpose                                                 |
+| ----------------------- | ---------------------------------- | ------------------------------------------------------- |
+| `battle.victory`        | emits → XP, Loot, Economy          | Grants XP, generates loot drops, affects reputation     |
+| `battle.defeat`         | emits → Companion, Disease, Social | Companion loyalty loss, injury/disease, reputation loss |
+| `battle.poison_applied` | subscribes ← Disease               | Disease system applies poison effects during combat     |
+| `weather.changed`       | subscribes ← Weather               | Environmental modifiers update mid-battle               |
+
+---
 
 ## Related Epics
 

@@ -194,6 +194,13 @@ interface CharacterBundle {
 - [ ] Document open questions and trade-offs
 - [ ] Create implementation plan with phases
 
+## Linked Tasks
+
+- TASK-sqlite-backup-research.md
+- TASK-asset-snapshot-research.md
+- TASK-character-bundle-research.md
+- TASK-disaster-recovery-research.md
+
 ## Related
 
 - `docs/spec/archival-workflow.md` — message archival (not implemented)

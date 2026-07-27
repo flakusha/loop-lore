@@ -70,6 +70,8 @@
     "version:predict": "bun run src/scripts/version-bump.ts",
     "version:bump": "bun run src/scripts/version-bump.ts --bump",
     "version:sync": "bun run src/scripts/version-bump.ts --sync",
+    "plan:sync": "bun run scripts/sync-ticket-index.ts",
+    "plan:sync:fix": "bun run scripts/sync-ticket-index.ts --fix",
     "ci": "bun run check:ci && bun run test:unit:parallel && E2E_SAFEGUARD=1 bun run test:e2e && bun run build"
   },
   "dependencies": {

@@ -43,6 +43,45 @@ switch. Mixing families risks inconsistency and a dominant strategy.
 `epic-rpg-mechanics.md`, `epic-battle-action-systems.md`, `epic-config-extensions.md`
 (ECE can model resolution families as extensible enums)
 
+## Integration Points
+
+### Systems This Epic Depends On
+
+| System            | What It Provides                   | How Used                                          |
+| ----------------- | ---------------------------------- | ------------------------------------------------- |
+| RPG Mechanics     | Character stats, skill definitions | Stat modifiers for dice rolls, skill check DCs    |
+| Config Extensions | Per-world ruleset configuration    | Resolution family selection (PbtA/FATE/GURPS/d20) |
+
+### Systems That Depend On This Epic
+
+| System                  | What It Consumes                               | How Used                                    |
+| ----------------------- | ---------------------------------------------- | ------------------------------------------- |
+| Battle & Action Systems | Attack rolls, damage resolution, saving throws | Core combat resolution for all battle modes |
+| Social Interaction      | Persuasion, intimidation, deception checks     | Social skill check resolution               |
+| Crime & Stealth         | Stealth checks, lockpicking, detection         | Stealth/crime action resolution             |
+| Exploration & Discovery | Navigation, perception, cartography checks     | Exploration skill check resolution          |
+| Magic & Spell Systems   | Spell casting checks, counterspelling          | Magic action resolution                     |
+| Disease & Poison        | Resistance saves, contamination checks         | Affliction resistance resolution            |
+| NSFW Game Mechanics     | Seduction checks, resistance saves             | NSFW encounter skill resolution             |
+
+### Shared Data Contracts
+
+| Contract     | Shared With                             | Purpose                               |
+| ------------ | --------------------------------------- | ------------------------------------- |
+| `DiceRoll`   | RPG, Battle, Social, Crime, Exploration | Unified dice model for all roll types |
+| `SkillCheck` | RPG, Battle, Social, Crime, Magic       | Unified skill check result model      |
+| `SaveType`   | RPG, Battle, Disease, NSFW              | CON/DEX/WIS/CHA save types            |
+
+### Cross-System Events
+
+| Event                   | Direction                     | Purpose                                              |
+| ----------------------- | ----------------------------- | ---------------------------------------------------- |
+| `resolution.roll`       | emits → All systems           | All skill checks flow through unified resolver       |
+| `resolution.critical`   | emits → Battle, Social, Crime | Critical success/failure triggers special effects    |
+| `world.ruleset_changed` | subscribes ← Config           | Resolution family switches when world config changes |
+
+---
+
 ## Linked Tasks
 
 - TASK-resolution-system.md
