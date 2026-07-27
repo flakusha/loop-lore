@@ -24,14 +24,13 @@ Extend 1x1 chat to multiple participants (users/characters/assistants). Keep tre
   - `talkativity` enum (low, medium, high)
   - user config weight
   - character personality preset
-- Talkativity feeds the orchestration strategy. The implementation already defines a
-  `turn_strategy` enum on `chats` (`round_robin`, `scene_based`, `initiative`,
-  `quest_driven`, `hybrid`) — this draft's `FIXED/ROTATE/RANDOM` modes should be reconciled
-  with that enum, with talkativity as an input to `scene_based`/`hybrid` selection.
+- Talkativity feeds the orchestration strategy (`chats.turn_strategy` enum — see `src/db/enums.ts`).
 - Configurable mode:
-  - `FIXED` — order static by score
-  - `ROTATE` — cycle through participants each message
-  - `RANDOM` — random per message
+  - `round_robin` — fixed cycle through participants (ignores talkativity)
+  - `scene_based` — narrator every 3rd turn, otherwise round-robin
+  - `initiative` — weighted random by talkativity + initiative score
+  - `quest_driven` — prioritize actors relevant to active quest (MVP: delegates to round-robin)
+  - `hybrid` — group: talkativity-weighted random with context boost; story: scene-based with quest triggers
 - In a **story** chat the **Game Master** (an assistant role — see
   [assistant.md](./assistant.md)) selects the next actor rather than a fixed rotation.
 

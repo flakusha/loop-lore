@@ -3690,5 +3690,27 @@
     "status": "open",
     "git_issue": "6c84baa",
     "hash": "6c84baa"
+  },
+  "FEAT-BYOK-API-KEYS": {
+    "extid": "FEAT-BYOK-API-KEYS",
+    "type": "FEAT",
+    "title": "FEAT BYOK API Keys",
+    "label": "feat",
+    "priority": "high",
+    "epic": "epic-byok-api-keys",
+    "tags": ["byok", "api-keys", "llm", "providers", "privacy"],
+    "source": ".plan/tickets/FEAT-byok-api-keys.md",
+    "status": "open"
+  },
+  "FEAT-BYOK-LOCAL-MODELS": {
+    "extid": "FEAT-BYOK-LOCAL-MODELS",
+    "type": "FEAT",
+    "title": "FEAT BYOK Local Models",
+    "label": "feat",
+    "priority": "high",
+    "epic": "epic-byok-local-models",
+    "tags": ["byok", "local-models", "wasm", "inference", "llama", "browser", "offline"],
+    "source": ".plan/tickets/FEAT-byok-local-models.md",
+    "status": "open"
   }
 }
