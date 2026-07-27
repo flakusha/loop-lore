@@ -19,6 +19,7 @@ import { jsonError, jsonResponse, } from "../routes/http-utils";
 import { safeJsonStringify, } from "../utils";
 import { getBuffer, isChatGenerating, } from "./index";
 import { getProvider, } from "./providers/registry";
+import { buildStylePrompt, isValidRegenStyle, type RegenStyle, } from "./smart-regen";
 
 // ── Route: Cancel generation ──────────────────────────────
 
@@ -293,11 +294,16 @@ function validateCancel(
 
 // ── Route: Regenerate (validator) ─────────────────────────
 
-function validateRegenerate(body: unknown,): { chatId: string } | null {
+function validateRegenerate(body: unknown,): { chatId: string; style?: RegenStyle } | null {
   if (!body || typeof body !== "object") { return null; }
   const b = body as Record<string, unknown>;
   if (typeof b.chatId !== "string" || !b.chatId) { return null; }
-  return { chatId: b.chatId, };
+  let style: RegenStyle = null;
+  if (b.style !== undefined && b.style !== null) {
+    if (!isValidRegenStyle(b.style,)) { return null; }
+    style = b.style;
+  }
+  return { chatId: b.chatId, style, };
 }
 
 // ── Route: Test connection (validator) ────────────────────
@@ -340,7 +346,7 @@ export function handleRegenerate(body: unknown, database: Kysely<DB>,): Response
     return jsonError({ message: "chatId is required", status: 400, },);
   }
 
-  const { chatId, } = input;
+  const { chatId, style, } = input;
 
   const wasActive = cancelGenerationByChat({
     db,
@@ -350,15 +356,17 @@ export function handleRegenerate(body: unknown, database: Kysely<DB>,): Response
     detail: "User requested regeneration (replacing existing response)",
   },);
 
+  const stylePrompt = style ? buildStylePrompt(style,) : null;
+
   return jsonResponse({
     ok: true,
     chatId,
     cancelled: wasActive,
     ready: true,
+    style: style ?? null,
+    stylePrompt: stylePrompt || null,
   },);
 }
-
-// ── Route: SSE generation stream ──────────────────────────
 
 /**
  * GET /api/generation/stream/:chatId
