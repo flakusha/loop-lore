@@ -544,8 +544,16 @@ function buildEdges(): IntegrationEdge[] {
           target: "faction",
           notes: "Social reputation affects faction relationships",
         },
+        {
+          id: "poll.resolved",
+          direction: "emits",
+          source: "social",
+          target: "faction",
+          notes: "Faction leadership/election polls drive faction state changes",
+        },
       ],
-      notes: "G14: Shared ReputationScore type MUST be defined once, used by both systems",
+      notes:
+        "G14: Shared ReputationScore type MUST be defined once, used by both systems. Polls can drive faction decisions.",
     },
 
     // ── Disease ──
@@ -684,6 +692,23 @@ function buildEdges(): IntegrationEdge[] {
           source: "companion",
           target: "housing",
           notes: "Companion housing assigns stable/room",
+        },
+      ],
+    },
+
+    // ── Social (Polls) ──
+    {
+      source: "social",
+      target: "housing",
+      direction: "depends_on",
+      interfaces: ["Relationship",],
+      events: [
+        {
+          id: "poll.resolved",
+          direction: "emits",
+          source: "social",
+          target: "housing",
+          notes: "Decoration contest voting drives housing contest results",
         },
       ],
     },
