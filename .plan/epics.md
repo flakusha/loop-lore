@@ -67,7 +67,8 @@ Generation hooks infrastructure (`src/generation/hooks/`) — mood, emotion, NSF
 | 45 | Configurable Template System      | 🟢 Complete    | High     | —           | `epic-config-templates.md`                |
 | 46 | Creative Studio                   | 📝 Draft       | Medium   | —           | `epic-creative-studio.md`                 |
 | 47 | Character Core System             | 📝 Draft       | High     | —           | `epic-character-core-system.md`           |
-| 48 | Immersion & Presentation          | ⬜ Not Started | Medium   | plan.md §48 | `epic-immersion-presentation.md`          |
+| 48 | Character Spec & Unified API      | 📝 Draft       | High     | —           | `epic-character-spec.md`                  |
+| 49 | Immersion & Presentation          | ⬜ Not Started | Medium   | plan.md §48 | `epic-immersion-presentation.md`          |
 | 49 | Analytics & Observability         | ⬜ Not Started | Medium   | plan.md §50 | `epic-analytics-observability.md`         |
 | 50 | Prompt & Output Control           | ⬜ Not Started | Medium   | plan.md §51 | `epic-output-control-transforms.md`       |
 
@@ -209,6 +210,11 @@ epics where applicable.
 - `TASK-gm-shadow-notes.md` — Shadow notes for hidden narrative influence (GM/Shadow Notes 52)
 - `TASK-enemies-monsters-systems.md` — enemy/monster system with config files (Battle & Action Systems)
 - `TASK-config-gallery-attachment-idempotent.md` — gallery, file attachment, idempotent load (Config Extensions)
+- `TASK-vn-template-actions.md` — pre-configured scene/dialogue templates (Visual Novel Mode 51)
+- `TASK-vn-scene-template-system.md` — custom template engine with variables (Visual Novel Mode 51)
+- `TASK-battle-template-actions.md` — pre-configured battle action templates (Battle & Action Systems)
+- `TASK-battle-encounter-template-system.md` — battle encounter template engine (Battle & Action Systems)
+- `TASK-typescript-mjs-reconciliation.md` — TypeScript/MJS pattern reconciliation (Logic Reconciliation)
 
 ---
 
@@ -261,6 +267,11 @@ Tasks that extend existing systems with new mechanics and capabilities.
 | GM/Assistant Shadow Notes                          | Med      | GM/Shadow Notes (52)     | ⬜ Not Started |
 | Enemies & Monsters Systems                         | Med      | Battle & Action Systems  | ⬜ Not Started |
 | Config: Gallery, File Attachment & Idempotent Load | Med      | Config Extensions        | ⬜ Not Started |
+| VN Scene & Dialogue Templates                      | Med      | Visual Novel Mode (51)   | ⬜ Not Started |
+| VN Scene Template System                           | Med      | Visual Novel Mode (51)   | ⬜ Not Started |
+| Battle Action Templates                            | Med      | Battle & Action Systems  | ⬜ Not Started |
+| Battle Encounter Template System                   | Med      | Battle & Action Systems  | ⬜ Not Started |
+| TypeScript/MJS Reconciliation                      | Med      | Logic Reconciliation     | ⬜ Not Started |
 
 ---
 

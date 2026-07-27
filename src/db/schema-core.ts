@@ -149,6 +149,8 @@ export interface Actors {
   character_version: string | null;
   template_overrides: Generated<string>; // JSON: per-character prompt template overrides
   import_spec: string;
+  data_source_format: string;
+  data_raw: string | null;
   created_at: Generated<string>;
   updated_at: Generated<string>;
 }
