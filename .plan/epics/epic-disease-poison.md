@@ -270,6 +270,7 @@ interface PoisonRecipe {
 - **Alchemy System** — Antidote/poison crafting
 - **NPC System** — NPC infection, symptoms
 - **World & Locations** — Plague zones, toxic areas
+- **Weather & Environment** — Weather affects disease transmission rates (rain spreads waterborne, cold weakens immunity)
 - **Healing System** — Treatment mechanics
 
 ## Open Questions
@@ -300,6 +301,7 @@ interface PoisonRecipe {
 - **Epic Combat System** — Poison weapons
 - **Epic NPC System** — NPC infection
 - **Epic World & Locations** — Plague zones
+- **Weather & Environment** — Weather affects disease transmission rates (rain spreads waterborne, cold weakens immunity)
 
 ## Linked Tasks
 

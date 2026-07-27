@@ -3,8 +3,8 @@
 **Status:** ⬜ Not Started
 **Priority:** High
 **Effort:** High
-**Type:** Feature Epic
 **Source:** .plan/research/rpg-landscape.md §6.6, §6.8, §9, §10
+**Spec:** `docs/spec/quests-encounters.md` (data model, schema, implementation notes)
 
 ## Summary
 
@@ -35,6 +35,16 @@ social layer that predates engines (forum-RP reputation/consent systems, §4.3).
 - Standing computation on choice events
 - Quest / NPC gating by standing
 - World-state persistence + archival
+
+## Integration Points
+
+- **Social Interaction** — Shared reputation schema; faction standing feeds into social checks
+- **RPG Mechanics** — Stats affect faction quest requirements
+- **Crime & Stealth** — Criminal factions, law enforcement reputation
+- **Economy System** — Faction currency, trade agreements
+- **World & Locations** — Territory control, faction territories
+
+> **Note (G14):** Faction standing and Social reputation MUST share a unified `ReputationScore` type. Two systems defining reputation differently will conflict at implementation. The `PlayerState` social layer accumulates conditions from both systems.
 
 ## Related
 

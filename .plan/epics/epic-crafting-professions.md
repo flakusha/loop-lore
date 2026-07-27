@@ -161,6 +161,54 @@ Multi-system epic combining:
 
 ## Integration Points
 
+### Systems This Epic Depends On
+
+| System                  | What It Provides                              | How Used                                                 |
+| ----------------------- | --------------------------------------------- | -------------------------------------------------------- |
+| RPG Mechanics           | Stats (INT, DEX, STR, WIS), skill checks      | Crafting success rates, quality bonuses, speed modifiers |
+| World & Locations       | Gathering nodes, terrain, climate             | Resource availability, seasonal herbs, node spawning     |
+| Weather & Environmental | Seasonal effects, weather-dependent resources | Seasonal recipe ingredients, weather-gated gathering     |
+| Magic & Spell Systems   | Enchantment recipes, magical materials        | Enchanting as cross-crafting-magic discipline            |
+| Plugin System           | Extensibility framework                       | Custom disciplines, community recipes                    |
+| Memory System           | Decay, promotion, trust                       | Memory injection for crafting context                    |
+| Prompt Assembly         | Context window assembly                       | Memory/event injection into crafting prompts             |
+
+### Systems That Depend On This Epic
+
+| System                  | What It Consumes                   | How Used                                     |
+| ----------------------- | ---------------------------------- | -------------------------------------------- |
+| Battle & Action Systems | Equipment, consumables             | Crafted weapons/armor/potions used in combat |
+| Inventory System        | Crafted items, materials           | Items flow from crafting to inventory        |
+| Economy System          | Crafted goods, material market     | Crafted items enter economy as trade goods   |
+| Housing & Base Building | Crafting stations, furniture       | Home crafting stations, furniture crafting   |
+| Companion, Pet & Mount  | Pet equipment, mount gear          | Crafted pet/mount equipment                  |
+| Disease & Poison        | Antidotes, poison crafting         | Alchemy produces antidotes and poisons       |
+| NSFW Game Mechanics     | Aphrodisiacs, toys, contraceptives | Alchemy produces NSFW consumables            |
+| Stealth & Crime         | Lockpicks, poisons, gadgets        | Engineering produces crime tools             |
+
+### Shared Data Contracts
+
+| Contract          | Shared With                             | Purpose                                           |
+| ----------------- | --------------------------------------- | ------------------------------------------------- |
+| `Item`            | Battle, Inventory, Economy, Housing     | Crafted items share unified item model            |
+| `Recipe`          | Magic (enchanting), Housing (furniture) | Recipe definitions shared across crafting systems |
+| `CraftingStation` | Housing                                 | Home crafting stations use same station model     |
+| `CharacterStats`  | RPG, Battle, Social                     | INT/DEX/STR affect crafting success               |
+
+### Cross-System Events
+
+| Event                          | Direction                          | Purpose                                        |
+| ------------------------------ | ---------------------------------- | ---------------------------------------------- |
+| `crafting.item_crafted`        | emits → Battle, Inventory, Economy | Crafted items enter inventory/economy          |
+| `crafting.recipe_discovered`   | emits → Character Core             | New recipe knowledge for character progression |
+| `gathering.resource_harvested` | emits → Economy                    | Gathered materials enter market supply         |
+| `weather.season_changed`       | subscribes ← Weather               | Seasonal recipes unlock/lock                   |
+| `magic.enchantment_applied`    | subscribes ← Magic                 | Cross-system enchanting workflow               |
+
+---
+
+### Previous Integration Notes
+
 - **RPG Mechanics** — Stats affect crafting success, quality, speed
 - **Inventory System** — Material storage, crafted item management
 - **Economy System** — Trading, market, currency
