@@ -16,6 +16,7 @@ import type { Config, } from "../config/schema";
 import { CancelReason, CancelSource, } from "../db/enums";
 import type { DB, } from "../db/schema";
 import { cancelGenerationByChat, } from "../generation/cancellation-manager";
+import { isValidRegenStyle, type RegenStyle, } from "../generation/smart-regen";
 import { getLogger, } from "../logger";
 import { ChatIdParams, } from "../validation/schemas";
 import {
@@ -36,15 +37,23 @@ interface HandlerOpts {
 }
 
 /** Validate regenerate request body */
-function validateRegenerateBody(body: unknown,): { chatId: string; messageId: string; parentId?: string } | null {
+function validateRegenerateBody(
+  body: unknown,
+): { chatId: string; messageId: string; parentId?: string; style?: RegenStyle } | null {
   if (!body || typeof body !== "object") { return null; }
   const b = body as Record<string, unknown>;
   if (typeof b.chatId !== "string" || !b.chatId) { return null; }
   if (typeof b.messageId !== "string" || !b.messageId) { return null; }
+  let style: RegenStyle = null;
+  if (b.style !== undefined && b.style !== null) {
+    if (!isValidRegenStyle(b.style,)) { return null; }
+    style = b.style;
+  }
   return {
     chatId: b.chatId,
     messageId: b.messageId,
     parentId: typeof b.parentId === "string" ? b.parentId : undefined,
+    style,
   };
 }
 
@@ -108,16 +117,6 @@ async function handleGetContext(
     willTrim: result.willTrim,
   },);
 }
-
-/**
- * POST /api/messages/regenerate
- *
- * Regenerate a specific assistant message. Cancels any active generation
- * for the chat, then signals the frontend to trigger a fresh generation
- * from the parent message.
- *
- * Body: { chatId, messageId, parentId? }
- */
 async function handleRegenerateMessage(
   database: Kysely<DB>,
   chatId: string,
@@ -125,6 +124,7 @@ async function handleRegenerateMessage(
   parentId: string | undefined,
   userId: string | null,
   userRole: string | null,
+  style?: string,
 ): Promise<Response> {
   if (!userId) {
     return jsonError({ message: "Unauthorized", status: HttpStatus.Unauthorized, code: ErrorCode.Unauthorized, },);
@@ -177,7 +177,6 @@ async function handleRegenerateMessage(
     parentId: effectiveParentId,
     cancelled: wasActive,
   },);
-
   return jsonResponse({
     ok: true,
     chatId,
@@ -185,6 +184,7 @@ async function handleRegenerateMessage(
     parentId: effectiveParentId,
     cancelled: wasActive,
     ready: true,
+    style: style ?? null,
   },);
 }
 
