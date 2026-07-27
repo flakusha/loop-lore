@@ -137,6 +137,8 @@ registerCommand("create", async (args, ctx,): Promise<CommandResult> => {
             personality: entityData.personality ?? null,
             scenario: entityData.scenario ?? null,
             import_spec: "llm-generated",
+            data_source_format: "json",
+            data_raw: null,
           },)
           .execute();
 

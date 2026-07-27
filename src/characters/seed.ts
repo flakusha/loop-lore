@@ -87,6 +87,8 @@ export async function seedCharacterTemplates(
           content_rating: template.content_rating ?? "sfw",
           settings,
           import_spec: "template",
+          data_source_format: "json",
+          data_raw: null,
           data_version: 0,
         },)
         .execute();

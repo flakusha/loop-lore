@@ -5,7 +5,7 @@
 
 import JSZip from "jszip";
 import { jsonParseOr, } from "../utils";
-import type { CharacterAsset, } from "./parser";
+import type { CharacterAsset, } from "./spec";
 
 interface CharxResult {
   card: Record<string, unknown>;
