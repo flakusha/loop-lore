@@ -80,6 +80,10 @@ describe("Database schema", () => {
           agent_type: "none",
           settings: "{}",
           import_spec: "raw",
+          data_source_format: "json",
+          data_raw: null,
+          data_source_format: "json",
+          data_raw: null,
         },)
         .execute();
 
@@ -102,6 +106,10 @@ describe("Database schema", () => {
           description: "An AI character",
           settings: "{}",
           import_spec: "raw",
+          data_source_format: "json",
+          data_raw: null,
+          data_source_format: "json",
+          data_raw: null,
         },)
         .execute();
 
@@ -122,6 +130,10 @@ describe("Database schema", () => {
           agent_type: "narrator",
           settings: "{}",
           import_spec: "raw",
+          data_source_format: "json",
+          data_raw: null,
+          data_source_format: "json",
+          data_raw: null,
         },)
         .execute();
 
