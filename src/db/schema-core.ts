@@ -381,7 +381,6 @@ export interface MessageTranslations {
   updated_at: string | null;
 }
 
-
 // ── Model Comparisons (Q4) ──────────────────────────────────
 export interface ModelComparisons {
   id: Generated<string>;

@@ -11,8 +11,8 @@ import { Elysia, } from "elysia";
 import type { Kysely, } from "kysely";
 import { sql, } from "kysely";
 import type { DB, } from "../db/schema";
-import { jsonError, jsonResponse, } from "./http-utils";
 import { uid, } from "../utils";
+import { jsonError, jsonResponse, } from "./http-utils";
 
 interface HandleOpts {
   database: Kysely<DB>;
@@ -108,12 +108,12 @@ export function modelComparisonsRoutes({ database, }: HandleOpts,): Elysia {
 
       const leaderboard = rows.map((r,) => ({
         reference_model: r.reference_model,
-        totalComparisons: Number(r.totalComparisons),
-        betterCount: Number(r.betterCount),
-        worseCount: Number(r.worseCount),
-        sameCount: Number(r.sameCount),
-        avgConfidence: Math.round(Number(r.avgConfidence) * 100) / 100,
-      }),);
+        totalComparisons: Number(r.totalComparisons,),
+        betterCount: Number(r.betterCount,),
+        worseCount: Number(r.worseCount,),
+        sameCount: Number(r.sameCount,),
+        avgConfidence: Math.round(Number(r.avgConfidence,) * 100,) / 100,
+      }));
 
       return jsonResponse({ leaderboard, },);
     },)
@@ -125,7 +125,7 @@ export function modelComparisonsRoutes({ database, }: HandleOpts,): Elysia {
       }
 
       const query = ctx.query as Record<string, string> | undefined;
-      const limit = Math.min(Math.max(Number(query?.limit) || 50, 1,), 200,);
+      const limit = Math.min(Math.max(Number(query?.limit,) || 50, 1,), 200,);
 
       const rows = await database
         .selectFrom("model_comparisons",)
