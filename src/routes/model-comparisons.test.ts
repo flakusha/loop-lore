@@ -175,7 +175,7 @@ describe("GET /api/analytics/comparisons", () => {
     );
     expect(res.status,).toBe(200,);
     const body = (await res.json()) as { comparisons: unknown[] };
-    expect(Array.isArray(body.comparisons),).toBe(true,);
+    expect(Array.isArray(body.comparisons,),).toBe(true,);
     expect(body.comparisons.length,).toBeGreaterThanOrEqual(3,);
   });
 });
@@ -247,15 +247,15 @@ describe("GET /api/analytics/comparisons/leaderboard", () => {
         avgConfidence: number;
       }>;
     };
-    expect(Array.isArray(body.leaderboard),).toBe(true,);
+    expect(Array.isArray(body.leaderboard,),).toBe(true,);
     expect(body.leaderboard.length,).toBeGreaterThanOrEqual(2,);
 
-    const claude = body.leaderboard.find((r,) => r.reference_model === "claude-3",);
+    const claude = body.leaderboard.find((r,) => r.reference_model === "claude-3");
     expect(claude,).toBeDefined();
     expect(claude!.totalComparisons,).toBe(2,);
     expect(claude!.betterCount,).toBe(2,);
 
-    const gpt4 = body.leaderboard.find((r,) => r.reference_model === "gpt-4",);
+    const gpt4 = body.leaderboard.find((r,) => r.reference_model === "gpt-4");
     expect(gpt4,).toBeDefined();
     expect(gpt4!.totalComparisons,).toBe(1,);
     expect(gpt4!.worseCount,).toBe(1,);
