@@ -32,8 +32,11 @@ rule-based responder exists today; the per-chat entity is not yet implemented.
 `chat_participants` many-to-many table, and the new-chat UI all exist), but the behaviors
 that make it useful are **not yet implemented**:
 
-- **Talkativity** — multiple AI characters taking turns — requires the generation path to
-  select more than one participant (today it replies as only the first non-user actor).
+- **Talkativity** â multiple AI characters taking turns via strategy-based
+  selection (`round_robin`, `initiative`, `scene_based`, etc.). Talkativity
+  scores bias _which_ actor is selected (implemented in `src/group-chat/turn-selector.ts`).
+  Gap: talkativity does not yet influence _how much_ the selected actor says
+  (see `.plan/design/group-chat-reconciliation.md` G2).
 - **Multi-user** — the new-chat UI filters out `actor_type = user`, so multiple humans
   cannot currently be added as participants.
 - **Story orchestration** — `ChatMode.Story` is selectable but the story API/turn-manager is
