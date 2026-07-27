@@ -279,6 +279,7 @@ interface BattleAbility {
 - **Combat System** — Companions/pets in battle
 - **Inventory System** — Pet/mount equipment
 - **World & Locations** — Wild pet spawns, mount terrain
+- **Housing & Base Building** — Stables, pet rooms, mount housing from housing system
 
 ## Open Questions
 

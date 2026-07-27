@@ -833,6 +833,50 @@ interface Rumor {
 | TASK-nsfw-trauma-recovery.md        | Medium   | Medium    | Not Started |
 | TASK-nsfw-species-mechanics.md      | Low      | Very High | Not Started |
 
+## Integration Points
+
+### Systems This Epic Depends On
+
+| System                 | What It Provides                           | How Used                                                        |
+| ---------------------- | ------------------------------------------ | --------------------------------------------------------------- |
+| RPG Mechanics          | Stats (CHA, WIS, CON), dice resolution, XP | Seduction skill checks, arousal calculations, XP for encounters |
+| Character Core         | Personality, mood, relationships, traits   | Intimacy progression, mood modifiers, relationship state        |
+| Social Interaction     | Persuasion, reputation, dialogue           | Seduction mechanics, reputation effects, social consequences    |
+| Magic & Spell Systems  | Enchantment, potion effects                | Aphrodisiacs, magical seduction, heat cycle manipulation        |
+| Crafting & Professions | Potion brewing, item creation              | Aphrodisiac crafting, contraceptive items, toys                 |
+| Resolution System      | Unified dice/action resolution             | Skill checks during encounters, seduction rolls                 |
+
+### Systems That Depend On This Epic
+
+| System                  | What It Consumes                | How Used                                                       |
+| ----------------------- | ------------------------------- | -------------------------------------------------------------- |
+| Battle & Action Systems | Combat injuries, wounds         | Injury system from NSFW encounters, wound narratives           |
+| Housing & Base Building | Private spaces, bedroom bonuses | NSFW encounters in player housing, comfort modifiers           |
+| Weather & Environmental | Environmental mood              | Weather affects encounter atmosphere and location availability |
+| Disease & Poison        | Reproductive health, STDs       | Pregnancy complications, sexually transmitted conditions       |
+| Companion, Pet & Mount  | Companion relationships         | Romantic companions, bonding through intimacy                  |
+
+### Shared Data Contracts
+
+| Contract          | Shared With                       | Purpose                                                     |
+| ----------------- | --------------------------------- | ----------------------------------------------------------- |
+| `StatusEffect`    | RPG, Battle, Disease, Social      | Shared buff/debuff model (arousal, pheromone effects)       |
+| `CharacterStats`  | RPG, Character Core, Social       | CHA/WIS/CON affect seduction and resistance                 |
+| `ReputationScore` | Social, Crime, Faction            | Shared reputation model (NSFW reputation feeds into social) |
+| `Relationship`    | Character Core, Social, Companion | Shared relationship state model                             |
+
+### Cross-System Events
+
+| Event                      | Direction                      | Purpose                                                  |
+| -------------------------- | ------------------------------ | -------------------------------------------------------- |
+| `intimacy.level_changed`   | emits → Social, Character Core | Relationship level changes affect social interactions    |
+| `nsfw.encounter_completed` | emits → Disease, XP, Social    | Triggers pregnancy checks, grants XP, affects reputation |
+| `nsfw.reputation_changed`  | emits → Social, Faction        | NSFW reputation affects faction standing                 |
+| `housing.nsfw_encounter`   | subscribes ← Housing           | Housing provides private space modifiers for encounters  |
+| `weather.changed`          | subscribes ← Weather           | Weather affects encounter atmosphere                     |
+
+---
+
 ## Related Epics
 
 - **Epic: RPG Mechanics** — Stats, combat, skills, XP, loot (NSFW skills are RPG skills)

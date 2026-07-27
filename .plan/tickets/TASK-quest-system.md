@@ -102,12 +102,12 @@ interface QuestChain {
 
 ## Tasks
 
-- [ ] Design quest data model
-- [ ] Implement quest state machine
-- [ ] Implement main quest system
+- [x] Design quest data model
+- [x] Implement quest state machine
+- [x] Implement main quest system
 - [ ] Implement side quest system
-- [ ] Implement quest objectives tracking
-- [ ] Implement quest rewards
+- [x] Implement quest objectives tracking
+- [x] Implement quest rewards
 - [ ] Implement quest prerequisites
 - [ ] Implement story end conditions
 - [ ] Implement quest chains
@@ -116,14 +116,13 @@ interface QuestChain {
 - [ ] Connect quests to skills
 - [ ] Connect quests to achievements
 - [ ] Implement quest UI components
-- [ ] Write tests for quest system
+- [x] Write tests for quest system
 
 ## Files
 
-- `src/rpg/quests.ts` — quest system
-- `src/rpg/quest-chains.ts` — quest chains
-- `src/rpg/quest-objectives.ts` — objective tracking
-- `src/rpg/quest-rewards.ts` — reward system
-- `src/db/schema-quests.ts` — quest tables
-- `src/routes/quests.ts` — quest API
-- `src/frontend/rpg/quests/` — quest UI
+- `src/rpg/quests/service.ts` — quest service (✅ created)
+- `src/rpg/quests/index.ts` — public API (✅ created)
+- `src/rpg/quests/service.test.ts` — tests (✅ created)
+- `src/rpg/quest-chains.ts` — quest chains (TODO)
+- `src/routes/quests.ts` — quest API (TODO)
+- `src/frontend/rpg/quests/` — quest UI (TODO)
