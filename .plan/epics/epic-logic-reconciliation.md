@@ -119,3 +119,8 @@ Reconciliation of logic across the codebase — chat logic, group chat logic, pe
 - `src/turning/` — turn management
 - `src/routes/notes.ts` — notes system
 - `docs/.nsfw/` — NSFW documentation (to be moved)
+
+## Linked Tasks
+
+- TASK-reconciliation-plan.md
+- TASK-typescript-mjs-reconciliation.md

@@ -1,6 +1,6 @@
 # EPIC: Character Specification & Unified API
 
-**Status:** 📝 Draft
+**Status:** 🟡 In Progress
 **Priority:** High
 **Effort:** High
 **Type:** Feature Epic
