@@ -73,6 +73,7 @@ export function charactersRoutes(opts: HandlerOpts,) {
           system_prompt: (body.systemPrompt as string | undefined) ?? null,
           settings,
           import_spec: "raw",
+          data_source_format: "json",
           data_version: 0,
         },)
         .execute();
@@ -211,7 +212,7 @@ export function charactersRoutes(opts: HandlerOpts,) {
       const canonical: CanonicalCharacter = {
         name: actor.display_name,
         description: actor.description ?? "",
-        personality: actor.personality ?? undefined,
+        personality: actor.personality ?? "",
         scenario: actor.scenario ?? undefined,
         welcome_message: actor.welcome_message ?? undefined,
         mes_example: actor.mes_example ?? undefined,
@@ -226,6 +227,25 @@ export function charactersRoutes(opts: HandlerOpts,) {
       };
 
       const safeName = actor.display_name.replaceAll(/[^a-z0-9]/gi, "_",).toLowerCase();
+
+      // If stored as YAML/TOML with raw source, return the raw source for fidelity
+      const sourceFormat = (actor as Record<string, unknown>).data_source_format as string | undefined;
+      const rawSource = (actor as Record<string, unknown>).data_raw as string | undefined;
+
+      if (
+        (format === "yaml" || format === "toml") &&
+        sourceFormat &&
+        sourceFormat === format &&
+        rawSource
+      ) {
+        const contentType = format === "yaml" ? "text/yaml" : "text/plain";
+        return new Response(rawSource, {
+          headers: {
+            "Content-Type": `${contentType}; charset=utf-8`,
+            "Content-Disposition": `attachment; filename="${safeName}.${format}"`,
+          },
+        },);
+      }
 
       switch (format) {
         case "yaml": {
