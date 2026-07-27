@@ -56,6 +56,8 @@ export interface DB {
   telemetry_events: import("./schema-telemetry").TelemetryEvents;
   message_reactions: import("./schema-core").MessageReactions;
   chat_pins: import("./schema-core").ChatPins;
+  // Model comparisons (Q4)
+  model_comparisons: import("./schema-core").ModelComparisons;
   // Character systems
   character_permanent_traits: import("./schema-character").CharacterPermanentTraits;
   character_world_traits: import("./schema-character").CharacterWorldTraits;

@@ -380,3 +380,15 @@ export interface MessageTranslations {
   created_at: Generated<string>;
   updated_at: string | null;
 }
+
+
+// ── Model Comparisons (Q4) ──────────────────────────────────
+export interface ModelComparisons {
+  id: Generated<string>;
+  message_id: string;
+  user_id: string;
+  reference_model: string;
+  preference: string;
+  confidence: number;
+  created_at: Generated<string>;
+}
