@@ -101,6 +101,8 @@ interface VNConsequence {
 - `TASK-vn-branching-choices.md` — branching choices with relationship impact
 - `TASK-vn-dynamic-generation.md` — dynamic image/story generation
 - `TASK-vn-qa-mode.md` — Q&A mode for VN
+- `TASK-vn-template-actions.md` — pre-configured scene/dialogue templates
+- `TASK-vn-scene-template-system.md` — custom template engine with variables
 
 ## Linked Tasks
 
@@ -108,3 +110,5 @@ interface VNConsequence {
 - TASK-vn-branching-choices.md
 - TASK-vn-dynamic-generation.md
 - TASK-vn-qa-mode.md
+- TASK-vn-template-actions.md
+- TASK-vn-scene-template-system.md

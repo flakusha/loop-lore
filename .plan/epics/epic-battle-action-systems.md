@@ -511,3 +511,5 @@ interface BackgroundTransition {
 - TASK-battle-arena-spectator.md
 - TASK-chat-battle-mode-switch.md
 - TASK-enemies-monsters-systems.md
+- TASK-battle-template-actions.md
+- TASK-battle-encounter-template-system.md

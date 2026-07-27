@@ -130,6 +130,11 @@ Tasks that extend existing systems with new mechanics and capabilities.
 | GM/Assistant Shadow Notes                          | Med      | GM/Shadow Notes (52)     |
 | Enemies & Monsters Systems                         | Med      | Battle & Action Systems  |
 | Config: Gallery, File Attachment & Idempotent Load | Med      | Config Extensions        |
+| VN Scene & Dialogue Templates                      | Med      | Visual Novel Mode (51)   |
+| VN Scene Template System                           | Med      | Visual Novel Mode (51)   |
+| Battle Action Templates                            | Med      | Battle & Action Systems  |
+| Battle Encounter Template System                   | Med      | Battle & Action Systems  |
+| TypeScript/MJS Reconciliation                      | Med      | Logic Reconciliation     |
 
 ## Generation Templates (FEAT-065 — expanded)
 
