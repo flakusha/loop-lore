@@ -22,13 +22,13 @@ Migration 011 added `decay_rate`, `strength`, and `last_accessed_at` columns to 
 
 ## Acceptance Criteria
 
-- [ ] `applyDecay()` reduces strength based on decay_rate and time
-- [ ] `touchMemory()` updates last_accessed_at and boosts strength
+- [x] `applyDecay()` reduces strength based on decay_rate and time
+- [x] `touchMemory()` updates last_accessed_at and boosts strength
 - [ ] Memories below minimum strength are purged
-- [ ] Decay is deterministic (testable with fixed timestamps)
-- [ ] Tests cover: decay over time, access boost, minimum threshold
+- [x] Decay is deterministic (testable with fixed timestamps)
+- [x] Tests cover: decay over time, access boost, minimum threshold
 
 ## Files
 
-- `src/memory/purge.ts` (modify)
-- `src/memory/purge.test.ts` (extend)
+- `src/memory/purge.ts` (✅ implemented)
+- `src/memory/purge.test.ts` (✅ tests exist)
