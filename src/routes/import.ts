@@ -106,12 +106,15 @@ async function handleImport(request: Request, database: Kysely<DB>, userId: stri
       const result = await parseCharacterCard(fileBytes, filename,);
 
       // Import the character
+      const rawSource = fileBytes.toString("utf8",);
       return await importActor({
         character: result.character,
         format: result.format,
         warnings: result.warnings,
         database,
         userId,
+        rawSource,
+        sourceFormat: result.format,
       },);
     } catch (error) {
       const parseError = error as { code?: string; message?: string; suggestion?: string };
