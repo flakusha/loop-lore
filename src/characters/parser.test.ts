@@ -4,7 +4,7 @@
 
 import { describe, expect, test, } from "bun:test";
 import { parseCharacterCard, validateCharacter, } from "./parser";
-import type { CanonicalCharacter, } from "./parser";
+import type { CanonicalCharacter, } from "./spec";
 
 describe("parseCharacterCard", () => {
   test("detects CCv2 JSON format", async () => {
@@ -100,6 +100,7 @@ describe("validateCharacter", () => {
     const character: CanonicalCharacter = {
       name: "",
       description: "",
+      personality: "",
     };
 
     const errors = validateCharacter(character,);
@@ -111,6 +112,7 @@ describe("validateCharacter", () => {
     const character: CanonicalCharacter = {
       name: "Valid Character",
       description: "A valid character",
+      personality: "A valid personality",
     };
 
     const errors = validateCharacter(character,);
@@ -151,6 +153,7 @@ describe("CCv2 normalization", () => {
       data: {
         name: "Lore Char",
         description: "Has lore",
+        personality: "Lore personality",
         character_book: {
           entries: [
             {
@@ -177,6 +180,7 @@ describe("CCv3 normalization", () => {
       data: {
         name: "V3 Char",
         description: "V3 description",
+        personality: "V3 personality",
         nickname: "V3 Nick",
         assets: [
           {
@@ -201,6 +205,7 @@ describe("CCv3 normalization", () => {
       data: {
         name: "Regex Char",
         description: "Has regex lore",
+        personality: "Regex personality",
         character_book: {
           entries: [
             {
