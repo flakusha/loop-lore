@@ -124,24 +124,20 @@ interface TransitionResult {
 
 ## Tasks
 
-- [ ] Design quest state management architecture
-- [ ] Implement quest state machine
-- [ ] Implement quest state transitions
+- [x] Design quest state management architecture
+- [x] Implement quest state machine
+- [x] Implement quest state transitions
 - [ ] Implement quest mode integration (battle, trading, exploration)
-- [ ] Implement quest state persistence
-- [ ] Implement quest progress tracking
-- [ ] Implement quest objective management
-- [ ] Implement quest reward management
-- [ ] Implement quest validation
-- [ ] Implement quest error handling
-- [ ] Write tests for quest state management
+- [x] Implement quest state persistence
+- [x] Implement quest progress tracking
+- [x] Implement quest objective management
+- [x] Implement quest reward management
+- [x] Implement quest validation
+- [x] Implement quest error handling
+- [x] Write tests for quest state management
 
 ## Files
 
-- `src/rpg/quests/state.ts` — quest state management
-- `src/rpg/quests/transitions.ts` — quest transitions
-- `src/rpg/quests/integration.ts` — quest integration
-- `src/rpg/quests/persistence.ts` — quest persistence
-- `src/rpg/quests/progress.ts` — quest progress
-- `src/rpg/quests/objectives.ts` — quest objectives
-- `src/rpg/quests/rewards.ts` — quest rewards
+- `src/rpg/quests/service.ts` — quest service with state management (✅ created)
+- `src/rpg/quests/service.test.ts` — tests (✅ created)
+- `src/rpg/quests/integration.ts` — quest integration with battle/trading/exploration (TODO)
