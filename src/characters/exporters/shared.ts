@@ -2,7 +2,11 @@
 //
 // Shared export helpers for character card formats (CCv2, CCv3).
 
-import type { CanonicalCharacter, LorebookData, LorebookEntry, } from "../parser";
+import type {
+  CanonicalCharacter,
+  LorebookData,
+  LorebookEntry,
+} from "../spec";
 
 /**
  * Map canonical character fields to version-agnostic data object.
