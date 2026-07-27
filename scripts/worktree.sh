@@ -78,6 +78,9 @@ Issue Tracking (git-issue):
   attach <ID> <FILE>                  Attach file to issue comment
   attach-dir <ID> <DIR>               Attach all files in directory
 
+Plan Sync:
+  sync [--fix] [--verbose]             Sync index.json with ticket files + git issues
+
 Aliases:
   gi                                  Shortcut for git-issue commands
 
@@ -505,6 +508,12 @@ EOF
   echo -e "${GREEN}✓ Created ticket ${extid}${NC}"
   echo -e "  Ticket file: ${ticket_file}"
   [[ -n "$hash" ]] && echo -e "  Git issue: ${hash}"
+
+  # Sync index.json with new ticket
+  if [[ -f "$REPO_ROOT/scripts/sync-ticket-index.ts" ]]; then
+    echo -e "${CYAN}Syncing index.json...${NC}"
+    bun run "$REPO_ROOT/scripts/sync-ticket-index.ts" --fix 2>/dev/null || true
+  fi
 }
 
 cmd_issues() {
@@ -1279,6 +1288,37 @@ cmd_commit() {
   fi
 }
 
+cmd_sync() {
+  # Sync .plan/tickets/index.json with ticket .md files and git issues
+  # Usage: ./scripts/worktree.sh sync [--fix] [--verbose]
+  local fix_flag=""
+  local verbose_flag=""
+
+  while [[ $# -gt 0 ]]; do
+    case "$1" in
+      --fix)
+        fix_flag="--fix"
+        shift
+        ;;
+      --verbose)
+        verbose_flag="--verbose"
+        shift
+        ;;
+      *)
+        shift
+        ;;
+    esac
+  done
+
+  if [[ ! -f "$REPO_ROOT/scripts/sync-ticket-index.ts" ]]; then
+    echo -e "${RED}Error: sync-ticket-index.ts not found${NC}"
+    exit 1
+  fi
+
+  echo -e "${CYAN}Syncing ticket index...${NC}"
+  bun run "$REPO_ROOT/scripts/sync-ticket-index.ts" $fix_flag $verbose_flag
+}
+
 # Main
 case "${1:-}" in
   create)
@@ -1365,6 +1405,10 @@ case "${1:-}" in
     ;;
   prs)
     cmd_prs
+    ;;
+  sync)
+    shift
+    cmd_sync "$@"
     ;;
   *)
     usage

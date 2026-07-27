@@ -215,6 +215,10 @@ epics where applicable.
 - `TASK-battle-template-actions.md` — pre-configured battle action templates (Battle & Action Systems)
 - `TASK-battle-encounter-template-system.md` — battle encounter template engine (Battle & Action Systems)
 - `TASK-typescript-mjs-reconciliation.md` — TypeScript/MJS pattern reconciliation (Logic Reconciliation)
+- `TASK-sqlite-backup-research.md` — SQLite backup mechanisms research (DB & Asset Snapshot Recovery 53)
+- `TASK-asset-snapshot-research.md` — Asset storage snapshot research (DB & Asset Snapshot Recovery 53)
+- `TASK-character-bundle-research.md` — Character bundle format research (DB & Asset Snapshot Recovery 53)
+- `TASK-disaster-recovery-research.md` — Disaster recovery procedure research (DB & Asset Snapshot Recovery 53)
 
 ---
 
@@ -257,22 +261,26 @@ Tasks that creatively extend existing epics — adding new layers, mechanics, an
 
 Tasks that extend existing systems with new mechanics and capabilities.
 
-| Task                                               | Effort   | Epic(s)                  | Status         |
-| -------------------------------------------------- | -------- | ------------------------ | -------------- |
-| VN Dynamic Image & Story Generation                | Med–High | Visual Novel Mode (51)   | ⬜ Not Started |
-| VN Q&A (Question <-> Answer) Mode                  | Med      | Visual Novel Mode (51)   | ⬜ Not Started |
-| Chat Switch to Battle Mode (Turn-Based)            | Med      | Battle & Action Systems  | ⬜ Not Started |
-| Travel Mode — Party Migration Between Chats        | Med      | Chat Transfer & Location | ⬜ Not Started |
-| Random Encounters & Random Events Generation       | Med      | World Event System       | ⬜ Not Started |
-| GM/Assistant Story Whitenotes                      | Med      | GM/Shadow Notes (52)     | ⬜ Not Started |
-| GM/Assistant Shadow Notes                          | Med      | GM/Shadow Notes (52)     | ⬜ Not Started |
-| Enemies & Monsters Systems                         | Med      | Battle & Action Systems  | ⬜ Not Started |
-| Config: Gallery, File Attachment & Idempotent Load | Med      | Config Extensions        | ⬜ Not Started |
-| VN Scene & Dialogue Templates                      | Med      | Visual Novel Mode (51)   | ⬜ Not Started |
-| VN Scene Template System                           | Med      | Visual Novel Mode (51)   | ⬜ Not Started |
-| Battle Action Templates                            | Med      | Battle & Action Systems  | ⬜ Not Started |
-| Battle Encounter Template System                   | Med      | Battle & Action Systems  | ⬜ Not Started |
-| TypeScript/MJS Reconciliation                      | Med      | Logic Reconciliation     | ⬜ Not Started |
+| Task                                               | Effort   | Epic(s)                           | Status         |
+| -------------------------------------------------- | -------- | --------------------------------- | -------------- |
+| VN Dynamic Image & Story Generation                | Med–High | Visual Novel Mode (51)            | ⬜ Not Started |
+| VN Q&A (Question <-> Answer) Mode                  | Med      | Visual Novel Mode (51)            | ⬜ Not Started |
+| Chat Switch to Battle Mode (Turn-Based)            | Med      | Battle & Action Systems           | ⬜ Not Started |
+| Travel Mode — Party Migration Between Chats        | Med      | Chat Transfer & Location          | ⬜ Not Started |
+| Random Encounters & Random Events Generation       | Med      | World Event System                | ⬜ Not Started |
+| GM/Assistant Story Whitenotes                      | Med      | GM/Shadow Notes (52)              | ⬜ Not Started |
+| GM/Assistant Shadow Notes                          | Med      | GM/Shadow Notes (52)              | ⬜ Not Started |
+| Enemies & Monsters Systems                         | Med      | Battle & Action Systems           | ⬜ Not Started |
+| Config: Gallery, File Attachment & Idempotent Load | Med      | Config Extensions                 | ⬜ Not Started |
+| VN Scene & Dialogue Templates                      | Med      | Visual Novel Mode (51)            | ⬜ Not Started |
+| VN Scene Template System                           | Med      | Visual Novel Mode (51)            | ⬜ Not Started |
+| Battle Action Templates                            | Med      | Battle & Action Systems           | ⬜ Not Started |
+| Battle Encounter Template System                   | Med      | Battle & Action Systems           | ⬜ Not Started |
+| TypeScript/MJS Reconciliation                      | Med      | Logic Reconciliation              | ⬜ Not Started |
+| SQLite Backup Mechanisms Research                  | Low      | DB & Asset Snapshot Recovery (53) | ⬜ Not Started |
+| Asset Storage Snapshot Research                    | Low      | DB & Asset Snapshot Recovery (53) | ⬜ Not Started |
+| Character Bundle Format Research                   | Low      | DB & Asset Snapshot Recovery (53) | ⬜ Not Started |
+| Disaster Recovery Procedure Research               | Low      | DB & Asset Snapshot Recovery (53) | ⬜ Not Started |
 
 ---
 

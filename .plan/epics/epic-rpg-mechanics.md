@@ -271,6 +271,7 @@ interface WorldMechanicsConfig {
 - **Epic Platform Research** — feature-adoption source for RPG systems.
 - **Epic World & Locations** — world-level modifiers / factions overlap; delegates world state to that epic.
 - **Epic Battle & Action Systems** — combat, loot, inventory, skills shared; coordinate ownership there.
+- **Epic Character Core System** — Character traits, personality, mood; RPG owns mechanics stats, Character Core owns identity.
 - **Epic Plugin System** — mechanics registry is plugin-based (`plugins/core/`).
 
 ## Linked Tasks
