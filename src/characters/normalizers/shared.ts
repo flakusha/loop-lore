@@ -4,7 +4,11 @@
 // Eliminates duplicate field-mapping and lorebook-construction logic
 // across ccv2, ccv3, yaml, toml, and json-flat normalizers.
 
-import type { CanonicalCharacter, LorebookData, LorebookEntry, } from "../parser";
+import type {
+  CanonicalCharacter,
+  LorebookData,
+  LorebookEntry,
+} from "../spec";
 
 /**
  * Extract card data from an envelope wrapper.
