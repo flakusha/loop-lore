@@ -236,6 +236,8 @@ export interface CanonicalCharacter {
   content_rating?: ContentRating;
   nsfw_categories?: string[];
   nsfw_hard_limits?: string[];
+  lorebook?: LorebookData;
+  assets?: CharacterAsset[];
   extensions?: CharacterExtensions;
 }
 
@@ -308,6 +310,78 @@ export interface ValidationWarning {
   code: string;
   message: string;
   value: unknown;
+}
+
+// ── Lorebook ──────────────────────────────────
+export interface LorebookData {
+  name?: string;
+  description?: string;
+  scan_depth?: number;
+  token_budget?: number;
+  recursive_scanning?: boolean;
+  entries: LorebookEntry[];
+}
+
+export interface LorebookEntry {
+  keys: string[];
+  content: string;
+  enabled: boolean;
+  insertion_order: number;
+  case_sensitive: boolean;
+  name: string;
+  priority: number;
+  id: number;
+  comment?: string;
+  selective: boolean;
+  constant: boolean;
+  position: "before_char" | "after_char";
+  use_regex?: boolean;
+  extensions?: Record<string, unknown>;
+}
+
+// ── Character Asset ───────────────────────────
+export interface CharacterAsset {
+  type: string;
+  name: string;
+  uri: string;
+  ext: string;
+  data?: Buffer; // For CHARX imports
+}
+
+// ── Parse Result ──────────────────────────────
+export type CharacterFormat =
+  | "ccv2"
+  | "ccv3"
+  | "character-ai"
+  | "json-flat"
+  | "yaml"
+  | "toml"
+  | "png-v2"
+  | "png-v3"
+  | "charx";
+
+export interface ParseResult {
+  character: CanonicalCharacter;
+  format: CharacterFormat;
+  warnings: string[];
+}
+
+export interface ParseError {
+  code:
+    | "FORMAT_NOT_DETECTED"
+    | "PARSE_ERROR"
+    | "VALIDATION_ERROR"
+    | "UNSUPPORTED_VERSION"
+    | "FILE_READ_ERROR";
+  message: string;
+  details?: {
+    line?: number;
+    column?: number;
+    field?: string;
+    expected?: string;
+    actual?: string;
+  };
+  suggestion?: string;
 }
 
 // ── Plugin Bundle ────────────────────────────────────

@@ -16,90 +16,12 @@ import { normalizeToml, } from "./normalizers/toml";
 import { normalizeYaml, } from "./normalizers/yaml";
 import { extractCharacterDataFromPng, } from "./steganography";
 
-// Canonical character card format (superset of CCv2/V3)
-export interface CanonicalCharacter {
-  name: string;
-  description: string;
-  personality?: string;
-  scenario?: string;
-  welcome_message?: string;
-  mes_example?: string;
-  system_prompt?: string;
-  post_history_instructions?: string;
-  alternate_greetings?: string[];
-  tags?: string[];
-  creator?: string;
-  creator_notes?: string;
-  character_version?: string;
-  nickname?: string;
-  extensions?: Record<string, unknown>;
-  lorebook?: LorebookData;
-  assets?: CharacterAsset[];
-}
-
-export interface LorebookData {
-  name?: string;
-  description?: string;
-  scan_depth?: number;
-  token_budget?: number;
-  recursive_scanning?: boolean;
-  entries: LorebookEntry[];
-}
-
-export interface LorebookEntry {
-  keys: string[];
-  content: string;
-  enabled: boolean;
-  insertion_order: number;
-  case_sensitive: boolean;
-  name: string;
-  priority: number;
-  id: number;
-  comment?: string;
-  selective: boolean;
-  constant: boolean;
-  position: "before_char" | "after_char";
-  use_regex?: boolean;
-  extensions?: Record<string, unknown>;
-}
-
-export interface CharacterAsset {
-  type: string;
-  name: string;
-  uri: string;
-  ext: string;
-  data?: Buffer; // For CHARX imports
-}
-
-export type CharacterFormat =
-  | "ccv2"
-  | "ccv3"
-  | "character-ai"
-  | "json-flat"
-  | "yaml"
-  | "toml"
-  | "png-v2"
-  | "png-v3"
-  | "charx";
-
-export interface ParseResult {
-  character: CanonicalCharacter;
-  format: CharacterFormat;
-  warnings: string[];
-}
-
-export interface ParseError {
-  code: "FORMAT_NOT_DETECTED" | "PARSE_ERROR" | "VALIDATION_ERROR" | "UNSUPPORTED_VERSION" | "FILE_READ_ERROR";
-  message: string;
-  details?: {
-    line?: number;
-    column?: number;
-    field?: string;
-    expected?: string;
-    actual?: string;
-  };
-  suggestion?: string;
-}
+import type {
+  CanonicalCharacter,
+  CharacterFormat,
+  ParseError,
+  ParseResult,
+} from "./spec";
 
 // PNG magic bytes: 0x89 0x50 0x4E 0x47
 const PNG_MAGIC = Buffer.from([0x89, 0x50, 0x4E, 0x47,],);
@@ -265,3 +187,5 @@ export function validateCharacter(character: CanonicalCharacter,): string[] {
 
   return errors;
 }
+
+export { type CanonicalCharacter, type CharacterFormat, type ParseError, type ParseResult, } from "./spec";
