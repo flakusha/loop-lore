@@ -14,4 +14,4 @@ export type {
   LorebookEntry,
   ParseError,
   ParseResult,
-} from "./parser";
+} from "./spec";

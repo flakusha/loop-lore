@@ -91,7 +91,7 @@ export function exportRoutes({ database, }: HandlerOpts,): Elysia {
           const canonical: CanonicalCharacter = {
             name: char.display_name,
             description: char.description ?? "",
-            personality: char.personality ?? undefined,
+            personality: char.personality ?? "",
             scenario: char.scenario ?? undefined,
             welcome_message: char.welcome_message ?? undefined,
             mes_example: char.mes_example ?? undefined,

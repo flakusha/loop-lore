@@ -68,6 +68,8 @@ async function importActor(opts: ImportActorOpts,): Promise<Response> {
       import_spec: format,
       data_source_format: opts.sourceFormat ?? format,
       data_raw: opts.rawSource ?? null,
+      data_source_format: opts.sourceFormat ?? format,
+      data_raw: opts.rawSource ?? null,
       alternate_greetings: alternateGreetings,
       settings: "{}",
       data_version: 1,

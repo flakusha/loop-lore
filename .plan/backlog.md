@@ -110,10 +110,11 @@ Tasks that creatively extend existing epics with new layers, mechanics, and soci
 
 ## New Epics (2026-07-26)
 
-| #  | Name                                         | Status   | Priority | Epic File                   |
-| -- | -------------------------------------------- | -------- | -------- | --------------------------- |
-| 51 | Visual Novel Mode (Extended)                 | 📝 Draft | Medium   | `epic-visual-novel-mode.md` |
-| 52 | GM/Assistant Story Whitenotes & Shadow Notes | 📝 Draft | High     | `epic-gm-shadow-notes.md`   |
+| #  | Name                                         | Status      | Priority | Epic File                            |
+| -- | -------------------------------------------- | ----------- | -------- | ------------------------------------ |
+| 51 | Visual Novel Mode (Extended)                 | 📝 Draft    | Medium   | `epic-visual-novel-mode.md`          |
+| 52 | GM/Assistant Story Whitenotes & Shadow Notes | 📝 Draft    | High     | `epic-gm-shadow-notes.md`            |
+| 53 | DB & Asset Snapshot Recovery                 | 🔵 Research | High     | `epic-db-asset-snapshot-recovery.md` |
 
 ## New Tasks (2026-07-26)
 
