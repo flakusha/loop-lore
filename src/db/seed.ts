@@ -47,6 +47,8 @@ export async function seedDefaultActors(database: Kysely<DB>, config?: Config,):
         visibility: "public",
         settings: "{}",
         import_spec: "raw",
+        data_source_format: "json",
+        data_raw: null,
         data_version: 1,
       },)
       .execute();
@@ -147,6 +149,8 @@ async function seedBootstrapAdmin(database: Kysely<DB>, config: Config, log: Log
         agent_type: "none",
         settings: "{}",
         import_spec: "raw",
+        data_source_format: "json",
+        data_raw: null,
         data_version: 0,
       },)
       .execute();
