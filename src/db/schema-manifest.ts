@@ -1209,4 +1209,14 @@ export const SCHEMA = new SchemaManifest()
     risks: col("text", { notNull: true, },),
     created_at: col("text", { notNull: true, },),
     updated_at: col("text", { notNull: true, },),
+  })
+  // ── Q4: Model Comparisons ─────────────────────────────────
+  .table("model_comparisons", {
+    id: col("text", { primaryKey: true, },),
+    message_id: col("text", { notNull: true, },),
+    user_id: col("text", { notNull: true, },),
+    reference_model: col("text", { notNull: true, },),
+    preference: col("text", { notNull: true, },),
+    confidence: col("real", { notNull: true, },),
+    created_at: col("text", { notNull: true, },),
   },);
