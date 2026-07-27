@@ -71,6 +71,8 @@ Generation hooks infrastructure (`src/generation/hooks/`) — mood, emotion, NSF
 | 49 | Immersion & Presentation          | ⬜ Not Started | Medium   | plan.md §48 | `epic-immersion-presentation.md`          |
 | 49 | Analytics & Observability         | ⬜ Not Started | Medium   | plan.md §50 | `epic-analytics-observability.md`         |
 | 50 | Prompt & Output Control           | ⬜ Not Started | Medium   | plan.md §51 | `epic-output-control-transforms.md`       |
+| 51 | BYOK API Keys                     | ⬜ Not Started | High     | —           | `epic-byok-api-keys.md`                   |
+| 52 | BYOK Local Models                 | ⬜ Not Started | High     | —           | `epic-byok-local-models.md`               |
 
 ### Permanently Ongoing Epics
 
@@ -253,11 +255,13 @@ Tasks that creatively extend existing epics — adding new layers, mechanics, an
 
 ## New Epics (2026-07-26)
 
-| #  | Name                                         | Status      | Priority | Epic File                            |
-| -- | -------------------------------------------- | ----------- | -------- | ------------------------------------ |
-| 51 | Visual Novel Mode (Extended)                 | 📝 Draft    | Medium   | `epic-visual-novel-mode.md`          |
-| 52 | GM/Assistant Story Whitenotes & Shadow Notes | 📝 Draft    | High     | `epic-gm-shadow-notes.md`            |
-| 53 | DB & Asset Snapshot Recovery                 | 🔵 Research | High     | `epic-db-asset-snapshot-recovery.md` |
+| #  | Name                                         | Status         | Priority | Epic File                            |
+| -- | -------------------------------------------- | -------------- | -------- | ------------------------------------ |
+| 51 | Visual Novel Mode (Extended)                 | 📝 Draft       | Medium   | `epic-visual-novel-mode.md`          |
+| 52 | GM/Assistant Story Whitenotes & Shadow Notes | 📝 Draft       | High     | `epic-gm-shadow-notes.md`            |
+| 53 | DB & Asset Snapshot Recovery                 | 🔵 Research    | High     | `epic-db-asset-snapshot-recovery.md` |
+| 54 | BYOK API Keys                                | ⬜ Not Started | High     | `epic-byok-api-keys.md`              |
+| 55 | BYOK Local Models                            | ⬜ Not Started | High     | `epic-byok-local-models.md`          |
 
 ---
 
