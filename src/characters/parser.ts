@@ -18,10 +18,7 @@ import { extractCharacterDataFromPng, } from "./steganography";
 
 import type {
   CanonicalCharacter,
-  CharacterAsset,
   CharacterFormat,
-  LorebookData,
-  LorebookEntry,
   ParseError,
   ParseResult,
 } from "./spec";
