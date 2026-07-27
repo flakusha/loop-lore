@@ -149,6 +149,10 @@ export class PersonasService {
         settings: "{}",
         data_version: 0,
         import_spec: "raw",
+        data_source_format: "json",
+        data_raw: null,
+        data_source_format: "json",
+        data_raw: null,
       },)
       .execute();
 
