@@ -66,6 +66,7 @@ import { storyTurnsRoutes, } from "./routes/story-turns";
 import { telemetryRoutes, } from "./routes/telemetry";
 import { usersRoutes, } from "./routes/users";
 import { viewRoutes, } from "./routes/views";
+import { modelComparisonsRoutes, } from "./routes/model-comparisons";
 import { worldLoreEntriesRoutes, } from "./routes/world-lore-entries";
 import { worldsRoutes, } from "./routes/worlds";
 import { handleApiRequest, } from "./server";
@@ -114,6 +115,7 @@ export function createApp(deps: AppDeps,): Elysia {
   app.use(i18nRoutes(handleOpts,),);
   app.use(telemetryRoutes(handleOpts,),);
   app.use(analyticsRoutes(handleOpts,),);
+  app.use(modelComparisonsRoutes(handleOpts,),);
   app.use(frontendLogsRoutes(),);
 
   // ── Auth protected routes ───────────────────────────────────────────────────
