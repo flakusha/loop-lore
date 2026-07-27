@@ -1,4 +1,8 @@
-> High-level notes — may drift from implementation. Authoritative source is `src/` and AGENTS.md.
+> **Note:** This document has been superseded by [`character-spec.md`](./character-spec.md).
+> The canonical character specification, including mandatory/optional fields, multi-level
+> object descriptions, format conversion, validation modes, and API design, is now defined
+> in `docs/spec/character-spec.md`. This document retains the original multi-format support
+> and import/export pipeline details.
 
 # Characters
 
