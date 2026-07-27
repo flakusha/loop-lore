@@ -11,9 +11,14 @@ import type { Kysely, } from "kysely";
  */
 export async function up(database: Kysely<unknown>,): Promise<void> {
   // ── Add storage format columns to actors ────────────
+  // SQLite only supports one ADD COLUMN per ALTER TABLE
   await database.schema
     .alterTable("actors",)
     .addColumn("data_source_format", "text", (col,) => col.defaultTo("json",),)
+    .execute();
+
+  await database.schema
+    .alterTable("actors",)
     .addColumn("data_raw", "text", (col,) => col,)
     .execute();
 }
@@ -22,6 +27,10 @@ export async function down(database: Kysely<unknown>,): Promise<void> {
   await database.schema
     .alterTable("actors",)
     .dropColumn("data_raw",)
+    .execute();
+
+  await database.schema
+    .alterTable("actors",)
     .dropColumn("data_source_format",)
     .execute();
 }
