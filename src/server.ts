@@ -286,7 +286,7 @@ async function start() {
   const { startAutoRotationTimer, } = await import("./crypto/key-rotation");
   const rotationTimer = startAutoRotationTimer(
     database,
-    config.encryption.keyRotationDays,
+    config.encryption.keyRotationDays ?? 0,
   );
 
   // Clean up timer on shutdown
