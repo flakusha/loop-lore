@@ -1,7 +1,7 @@
 # Character Specification — Unified Setup API
 
 **Status:** Draft
-**Supersedes:** `docs/spec/character-setup.md` (canonical fields section)
+**Supersedes:** `docs/spec/character-spec.md` (canonical fields section)
 **Authoritative source:** `src/` and `AGENTS.md`
 
 ---
@@ -602,7 +602,7 @@ No new dependencies required for the core spec.
 
 | Document                                    | Covers                                                                |
 | ------------------------------------------- | --------------------------------------------------------------------- |
-| `docs/spec/character-setup.md`              | Legacy character setup spec (format support, import/export pipelines) |
+| `docs/spec/character-spec.md`               | Legacy character setup spec (format support, import/export pipelines) |
 | `docs/spec/personas.md`                     | Persona system and impersonation                                      |
 | `docs/spec/rpg-mechanics.md`                | RPG stat system and plugin bundles                                    |
 | `docs/spec/plugin-system.md`                | Plugin architecture and hook definitions                              |

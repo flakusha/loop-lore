@@ -7,7 +7,7 @@
 
 ## Summary
 
-Impersonation system: chat.impersonate_id field, GM impersonation of characters, audit trail. From docs/spec/character-setup.md.
+Impersonation system: chat.impersonate_id field, GM impersonation of characters, audit trail. From docs/spec/character-spec.md.
 
 ## Acceptance Criteria
 

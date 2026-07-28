@@ -5,22 +5,22 @@ Goal: prove how much is reusable before proposing new build.
 
 ## Generic primitives already present
 
-| Module (`src/`)                                             | Spec                                        | Agentic / Business mapping                                               |
-| ----------------------------------------------------------- | ------------------------------------------- | ------------------------------------------------------------------------ |
-| `db/` (Kysely, `bun:sqlite`→PG)                             | `docs/spec/schema.md`                       | Durable task/agent/artifact store; swap to PG for multi-tenant           |
-| `actors/` + `characters/`                                   | `docs/spec/actors.md`, `character-setup.md` | **Agent** registry: role, system prompt, model config, tool list         |
-| `assets/` (polymorphic)                                     | `docs/spec/assets.md`                       | **Artifacts**: code, docs, data, notebooks linked to any entity          |
-| `generation/` (streaming, cancellation, step-pipeline)      | `docs/spec/implementation.md`               | LLM call layer for any agent turn; streaming UI already built            |
-| `assistant/` (rule-based help, commands)                    | `docs/spec/assistant-commands.md`           | **Copilot layer**: suggestions, text improvement, idea prompts           |
-| `story/` + `turning/` (multi-LLM orchestration, GM, quests) | `docs/spec/multi-llm-story.md`              | **Multi-agent orchestration** primitive — turn manager = agent scheduler |
-| `group-chat/` (mentions, turn order)                        | `docs/frontend/chat/group-chat.md`          | **Multi-agent conversation** with @mention routing                       |
-| `crypto/` (AES-256-GCM, key hierarchy, BYOK)                | `docs/spec/crypto.md`                       | **Confidential business data** at rest; per-workspace keys               |
-| `users-sessions/` (roles, remote sessions)                  | `docs/spec/users-sessions.md`               | **Team/multi-user** access; role guard already in `auth-middleware`      |
-| `plugins/` (loader, registry, types)                        | `docs/spec/plugin-system.md`                | **Tool / integration marketplace** (core/community/local)                |
-| `transport/` (HTTP/2, WS, SSE)                              | `docs/spec/transport-unified.md`            | Streaming + co-authoring + live agent status                             |
-| `logger/` (structured, censors, rotation)                   | `docs/spec/logging.md`                      | **Audit trail** foundation (needs audit-specific sink)                   |
-| `content/` (gzip/zstd/brotli, minify)                       | `docs/spec/content-compression.md`          | Cheap large-artifact storage                                             |
-| `frontend/` (htmx + Alpine, responsive)                     | `docs/frontend/overview.md`                 | Web workspace UI; TUI for power users (`src/tui/`)                       |
+| Module (`src/`)                                             | Spec                                                 | Agentic / Business mapping                                               |
+| ----------------------------------------------------------- | ---------------------------------------------------- | ------------------------------------------------------------------------ |
+| `db/` (Kysely, `bun:sqlite`→PG)                             | `docs/spec/schema.md`                                | Durable task/agent/artifact store; swap to PG for multi-tenant           |
+| `actors/` + `characters/`                                   | `docs/spec/actors.md`, `docs/spec/character-spec.md` | **Agent** registry: role, system prompt, model config, tool list         |
+| `assets/` (polymorphic)                                     | `docs/spec/assets.md`                                | **Artifacts**: code, docs, data, notebooks linked to any entity          |
+| `generation/` (streaming, cancellation, step-pipeline)      | `docs/spec/implementation.md`                        | LLM call layer for any agent turn; streaming UI already built            |
+| `assistant/` (rule-based help, commands)                    | `docs/spec/assistant-commands.md`                    | **Copilot layer**: suggestions, text improvement, idea prompts           |
+| `story/` + `turning/` (multi-LLM orchestration, GM, quests) | `docs/spec/multi-llm-story.md`                       | **Multi-agent orchestration** primitive — turn manager = agent scheduler |
+| `group-chat/` (mentions, turn order)                        | `docs/frontend/chat/group-chat.md`                   | **Multi-agent conversation** with @mention routing                       |
+| `crypto/` (AES-256-GCM, key hierarchy, BYOK)                | `docs/spec/crypto.md`                                | **Confidential business data** at rest; per-workspace keys               |
+| `users-sessions/` (roles, remote sessions)                  | `docs/spec/users-sessions.md`                        | **Team/multi-user** access; role guard already in `auth-middleware`      |
+| `plugins/` (loader, registry, types)                        | `docs/spec/plugin-system.md`                         | **Tool / integration marketplace** (core/community/local)                |
+| `transport/` (HTTP/2, WS, SSE)                              | `docs/spec/transport-unified.md`                     | Streaming + co-authoring + live agent status                             |
+| `logger/` (structured, censors, rotation)                   | `docs/spec/logging.md`                               | **Audit trail** foundation (needs audit-specific sink)                   |
+| `content/` (gzip/zstd/brotli, minify)                       | `docs/spec/content-compression.md`                   | Cheap large-artifact storage                                             |
+| `frontend/` (htmx + Alpine, responsive)                     | `docs/frontend/overview.md`                          | Web workspace UI; TUI for power users (`src/tui/`)                       |
 
 ## Why the schema needs almost no change
 

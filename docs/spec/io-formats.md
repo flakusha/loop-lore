@@ -1000,10 +1000,10 @@ None required — PNG metadata parsing and ZIP extraction use native Node.js/Bun
 
 ## Related Documents
 
-| Document                       | Covers                                                |
-| ------------------------------ | ----------------------------------------------------- |
-| `docs/spec/character-setup.md` | Character system, import/export, persona relationship |
-| `docs/spec/assets.md`          | Asset upload and linking pipeline                     |
-| `docs/spec/actors.md`          | Actor data model, import field mapping                |
-| `docs/frontend/characters.md`  | Character list and edit UI                            |
-| `docs/frontend/gallery.md`     | Asset gallery UI                                      |
+| Document                      | Covers                                                |
+| ----------------------------- | ----------------------------------------------------- |
+| `docs/spec/character-spec.md` | Character system, import/export, persona relationship |
+| `docs/spec/assets.md`         | Asset upload and linking pipeline                     |
+| `docs/spec/actors.md`         | Actor data model, import field mapping                |
+| `docs/frontend/characters.md` | Character list and edit UI                            |
+| `docs/frontend/gallery.md`    | Asset gallery UI                                      |
