@@ -39,4 +39,4 @@ Defines how characters interact with each other in chat, including relationship-
 
 ## Related Tickets
 
-- (To be added)
+- TASK-npc-behavior, TASK-npc-memory, TASK-npc-inventory
