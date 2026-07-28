@@ -1,0 +1,30 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "loop-lore-config.nsfw.schema.json",
+  "title": "Loop Lore Nsfw Config",
+  "description": "Domain-specific configuration for nsfw",
+  "type": "object",
+  "properties": {
+    "nsfw": {
+      "type": "object",
+      "description": "NSFW configuration",
+      "properties": {
+        "allowNsfw": {
+          "type": "boolean",
+          "default": true,
+          "description": "Allow NSFW content"
+        },
+        "nsfwMinAge": {
+          "type": "integer",
+          "default": 18,
+          "description": "Minimum age for NSFW content"
+        }
+      },
+      "required": [
+        "allowNsfw",
+        "nsfwMinAge"
+      ]
+    }
+  },
+  "required": []
+}

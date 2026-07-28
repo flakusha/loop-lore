@@ -1,0 +1,28 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "loop-lore-config.byokey.schema.json",
+  "title": "Loop Lore Byokey Config",
+  "description": "Domain-specific configuration for byokey",
+  "type": "object",
+  "properties": {
+    "byoKey": {
+      "type": "object",
+      "description": "BYO API Key configuration",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable user-owned API keys"
+        },
+        "encryptionKey": {
+          "type": "string",
+          "description": "Encryption key for stored API keys"
+        }
+      },
+      "required": [
+        "enabled"
+      ]
+    }
+  },
+  "required": []
+}
