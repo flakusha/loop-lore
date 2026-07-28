@@ -198,9 +198,8 @@ This section contains the actionable task proposals derived from that analysis.
 ### Actionable Task Proposals
 
 #### Priority 1 - Close Critical Spec Gaps
-
-| Task | Spec File |
-| --- | --- |
+| Task | Spec File | Status |
+| --- | --- | --- |
 | Finalize social-interaction spec | docs/spec/social-interaction.md | ✅ Done
 | Finalize chat-privacy spec | docs/spec/chat-privacy.md | ✅ Done
 | Finalize worlds spec | docs/spec/worlds.md | ✅ Done
@@ -228,7 +227,25 @@ This section contains the actionable task proposals derived from that analysis.
 #### Phase Execution Order
 
 1. Phase 1 (Cleanup) - Done
-2. Phase 2 (Spec Gaps) - In progress
-3. Phase 3 (Cross-Mechanics G1-G11 tickets)
+2. Phase 2 (Spec Gaps) - Done
+3. Phase 3 (Cross-Mechanics G1-G11) - Done
 4. Phase 4 (Split oversized epics, create missing epics)
 5. Phase 5 (Verification: bun run check, bun test, docs:gen)
+
+### Phase 4 Details — Split oversized epics
+
+Completed sub-epic files (from epic-world-locations.md split):
+- `.plan/epics/epic-world-travel-time.md` — conditions, weather, travel, random generation
+- `.plan/epics/epic-world-npcs.md` — NPC placement, migration, inventories
+- `.plan/epics/epic-world-encounters.md` — anomalies, resources, items, unique places
+- `.plan/epics/epic-world-diplomacy-karma.md` — factions, reputation, karma, lore
+
+epic-world-locations.md still needs split into its remaining sub-epics:
+- `.plan/epics/epic-world-diplomacy-karma.md` (Diplomacy & Karma — not yet created)
+- `.plan/epics/epic-world-encounters.md` (Encounters & Resources — not yet created)
+
+### Phase 5 — Verification
+
+- `bun run check` (pre-existing TS errors in `src/routes/export.test.ts` and `src/routes/import.ts` unrelated)
+- `bun test src/`
+- `bun run docs:gen` (no such script — epics.md is canonical auto-generated index)
