@@ -6,6 +6,7 @@
 import type { SectionBuilder, } from "./types";
 import { actorHeaderSection, } from "./sections/actor-header";
 import { authorNoteSection, } from "./sections/author-note";
+import { characterTraitsSection, } from "./sections/character-traits";
 import { chatHistorySection, } from "./sections/chat-history";
 import { dynamicContextSection, } from "./sections/dynamic-context";
 import { emotionAvatarSection, } from "./sections/emotion-avatar";
@@ -38,4 +39,5 @@ export const PROMPT_SECTIONS: SectionBuilder[] = [
   recentEventsSection,
   examplesSection,
   chatHistorySection,
+  characterTraitsSection,
 ];
