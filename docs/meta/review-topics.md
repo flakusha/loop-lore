@@ -53,14 +53,7 @@
 
 ### Gaps & Issues
 
-1. **No `docs/spec/social-interaction.md`** — The social interaction epic is well-defined but there's no corresponding spec in `docs/spec/`. The spec layer should document the interaction model, skill check resolution, and prompt injection format.
-2. **Interaction model is not linked to character spec** — The character-spec.md defines `CharacterRelationship` in extensions but the social interaction epic defines its own relationship model. These need to be reconciled.
-3. **No spec for NPC-to-NPC interactions** — The social interaction epic covers player-NPC and player-player but not NPC-to-NPC social dynamics (which are critical for world immersion).
-4. **Relationship persistence is unclear** — The actors.md says relationships are per-world but doesn't specify what happens when characters move between worlds or when a world is deleted.
-
-### Recommended Actions
-
-- [ ] Create `docs/spec/social-interaction.md` — skill check resolution, prompt injection, interaction flow
+1. `docs/spec/social-interaction.md` exists and is marked **Implemented** (was Draft).
 - [ ] Reconcile character relationships (spec) with social interaction epic (plan)
 - [ ] Add NPC-to-NPC interaction section to the social interaction spec
 - [ ] Define relationship persistence rules in `docs/spec/actors.md`
