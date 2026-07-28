@@ -3,6 +3,7 @@
 **Status:** ⬜ Not Started
 **Priority:** High
 **Effort:** —
+**Epic:** epic-crypto
 **Parent:** TASK-epic17-encryption-e2e-expansion
 **Source:** User clarification, 2026-07-20
 
@@ -98,3 +99,7 @@ Public/private key pairs
 ## Risk
 
 Med — two encryption models, different key management, different sharing semantics.
+
+## Linked Epics
+
+- `epic-crypto.md`

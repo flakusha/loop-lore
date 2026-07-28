@@ -3,6 +3,7 @@
 **Status:** ⬜ Not Started
 **Priority:** Medium
 **Effort:** Low
+**Epic:** epic-tooling-improvement
 
 ## Summary
 
@@ -70,3 +71,7 @@ Update `AGENTS.md` and `.agents/` files to properly document `scripts/worktree.s
 ## Risk
 
 Low — documentation-only changes, no functional impact.
+
+## Linked Epics
+
+- `epic-tooling-improvement.md`

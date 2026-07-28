@@ -5,7 +5,7 @@
 
 **Status:** Not Started
 **Priority:** Low
-**Epic:** EPIC-2026-28
+**Epic:** epic-items
 **Tags:** asset, 3d, rpg
 
 ## Summary

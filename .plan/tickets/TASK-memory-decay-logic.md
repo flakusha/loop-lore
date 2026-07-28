@@ -3,7 +3,7 @@
 **Issue:** d1b048b4-509a-43e8-b175-4798aa3c74fe
 **Status:** open
 **Priority:** medium
-**Epic:** EPIC-2026-36
+**Epic:** epic-memory-knowledge-systems
 
 ## Overview
 

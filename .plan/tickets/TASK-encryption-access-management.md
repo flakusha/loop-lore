@@ -3,6 +3,7 @@
 **Status:** ⬜ Not Started
 **Priority:** Medium
 **Effort:** Med
+**Epic:** epic-crypto
 **Parent:** TASK-epic17-encryption-e2e-expansion
 **Blocked by:** TASK-encryption-group-key-distribution
 
@@ -70,3 +71,7 @@ interface AccessGrant {
 ## Risk
 
 Med — time-based logic, admin UI, notification on expiry.
+
+## Linked Epics
+
+- `epic-crypto.md`
