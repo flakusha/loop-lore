@@ -1,0 +1,54 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "loop-lore-config.server.schema.json",
+  "title": "Loop Lore Server Config",
+  "description": "Domain-specific configuration for server",
+  "type": "object",
+  "properties": {
+    "server": {
+      "type": "object",
+      "description": "HTTP server configuration",
+      "properties": {
+        "port": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 65535,
+          "default": 3000,
+          "description": "Server port (0 = random)"
+        },
+        "host": {
+          "type": "string",
+          "default": "localhost",
+          "description": "Server host"
+        },
+        "tls": {
+          "type": "object",
+          "description": "TLS certificate configuration",
+          "properties": {
+            "key": {
+              "type": "string",
+              "default": "/home/flak/git-ai/loop-lore/loop-lore-data/certs/key.pem",
+              "description": "Path to TLS private key (PEM)"
+            },
+            "cert": {
+              "type": "string",
+              "default": "/home/flak/git-ai/loop-lore/loop-lore-data/certs/cert.pem",
+              "description": "Path to TLS certificate (PEM)"
+            }
+          },
+          "required": [
+            "key",
+            "cert"
+          ]
+        }
+      },
+      "required": [
+        "port",
+        "host"
+      ]
+    }
+  },
+  "required": [
+    "server"
+  ]
+}
