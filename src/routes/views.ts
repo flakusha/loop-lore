@@ -58,6 +58,7 @@ const ALLOWED_VIEWS = new Set([
   "admin",
   "quests",
   "register",
+  "chat-list",
 ],);
 
 const ALLOWED_PARTIALS = new Set([
@@ -799,6 +800,135 @@ async function serveWorldsSearch(database: Kysely<DB>, params: URLSearchParams,)
 
 // ── Elysia plugin ───────────────────────────────────────────
 
+async function serveChatsListDb(database: Kysely<DB>,): Promise<Response> {
+  const rows = await database
+    .selectFrom("chats",)
+    .leftJoin("worlds", "worlds.id", "chats.world_id",)
+    .leftJoin("locations", "locations.id", "chats.current_location_id",)
+    .select([
+      "chats.id",
+      "chats.name",
+      "chats.type",
+      "chats.purpose",
+      "chats.is_pinned",
+      "chats.updated_at",
+      "chats.created_at",
+      "worlds.name as world_name",
+      "locations.name as location_name",
+    ])
+    .orderBy("chats.is_pinned", "desc",)
+    .orderBy("chats.updated_at", "desc",)
+    .limit(200,)
+    .execute();
+
+  if (rows.length === 0) {
+    return htmlResponse(`<div class="empty-state" style="padding: var(--space-12)">
+      <div class="icon">💬</div>
+      <div class="title">No chats yet</div>
+      <div class="description">Create your first chat to get started.</div>
+    </div>`,);
+  }
+
+  const items = renderChatListItems(rows,);
+  return htmlResponse(items,);
+}
+
+async function serveChatsSearch(database: Kysely<DB>, params: URLSearchParams,): Promise<Response> {
+  const query = params.get("q",)?.toLowerCase().trim() ?? "";
+  const worldId = params.get("world",)?.trim() ?? "";
+  const chatType = params.get("type",)?.trim() ?? "";
+  const sort = params.get("sort",) ?? "recent";
+
+  let qb = database
+    .selectFrom("chats",)
+    .leftJoin("worlds", "worlds.id", "chats.world_id",)
+    .leftJoin("locations", "locations.id", "chats.current_location_id",)
+    .select([
+      "chats.id",
+      "chats.name",
+      "chats.type",
+      "chats.purpose",
+      "chats.is_pinned",
+      "chats.updated_at",
+      "chats.created_at",
+      "worlds.name as world_name",
+      "locations.name as location_name",
+    ]);
+
+  if (query) {
+    qb = qb.where("chats.name", "like", `%${query}%`,);
+  }
+  if (worldId) {
+    qb = qb.where("chats.world_id", "=", worldId,);
+  }
+  if (chatType) {
+    qb = qb.where("chats.type", "=", chatType as any,);
+  }
+
+  if (sort === "name") { qb = qb.orderBy("chats.name", "asc",); }
+  else if (sort === "oldest") { qb = qb.orderBy("chats.created_at", "asc",); }
+  else { qb = qb.orderBy("chats.is_pinned", "desc",).orderBy("chats.updated_at", "desc",); }
+
+  const rows = await qb.limit(200,).execute();
+
+  if (rows.length === 0) {
+    return htmlResponse(`<div class="empty-state" style="padding: var(--space-12)">
+      <div class="icon">🔍</div>
+      <div class="title">No chats match your search</div>
+      <div class="description">Try different search terms or filters.</div>
+    </div>`,);
+  }
+
+  const items = renderChatListItems(rows,);
+  return htmlResponse(items,);
+}
+
+function renderChatListItems(rows: Array<{
+  id: string; name: string; type: string; purpose: string | null;
+  is_pinned: string; updated_at: string; created_at: string;
+  world_name: string | null; location_name: string | null;
+}>,): string {
+  const now = Date.now();
+  return rows
+    .map((r,) => {
+      const name = escapeHtml(r.name,);
+      const typeLabel = r.type === "group" ? "👥" : "💬";
+      const pinned = r.is_pinned === "pinned" ? " ★" : "";
+      const worldTag = r.world_name
+        ? `<span class="tag" style="background:var(--bg-tertiary);padding:1px 6px;border-radius:var(--radius-sm);font-size:11px">🌍 ${escapeHtml(r.world_name,)}</span>`
+        : "";
+      const locationTag = r.location_name
+        ? `<span class="tag" style="background:var(--bg-tertiary);padding:1px 6px;border-radius:var(--radius-sm);font-size:11px">📍 ${escapeHtml(r.location_name,)}</span>`
+        : "";
+      const ts = new Date(r.updated_at,).getTime();
+      const age = now - ts;
+      let ageStr: string;
+      if (age < 60_000) { ageStr = "just now"; }
+      else if (age < 3_600_000) { ageStr = `${Math.floor(age / 60_000,)}m ago`; }
+      else if (age < 86_400_000) { ageStr = `${Math.floor(age / 3_600_000,)}h ago`; }
+      else { ageStr = `${Math.floor(age / 86_400_000,)}d ago`; }
+
+      return `<div class="chat-list-card" onclick="location.assign('/views/chat?chatid=${encodeURIComponent(r.id,)}')"
+        style="display:flex;align-items:center;gap:var(--space-3);padding:var(--space-3) var(--space-4);border:1px solid var(--border-default);border-radius:var(--radius-md);cursor:pointer;background:var(--bg-primary);transition:background 0.15s"
+        onmouseenter="this.style.background='var(--bg-tertiary)'" onmouseleave="this.style.background='var(--bg-primary)'"
+        data-testid="chat-card-${r.id}">
+        <span style="font-size:18px;flex-shrink:0">${typeLabel}</span>
+        <div style="flex:1;min-width:0">
+          <div style="font-weight:500;font-size:14px;display:flex;align-items:center;gap:var(--space-1)">
+            ${name}${pinned ? `<span style="color:var(--accent-yellow)">${pinned}</span>` : ""}
+          </div>
+          <div style="display:flex;gap:var(--space-2);margin-top:2px;flex-wrap:wrap">
+            ${worldTag}${locationTag}
+            ${r.purpose ? `<span style="font-size:11px;color:var(--text-secondary)">${escapeHtml(r.purpose.slice(0, 40,),)}</span>` : ""}
+          </div>
+        </div>
+        <span style="font-size:11px;color:var(--text-secondary);flex-shrink:0;white-space:nowrap">${ageStr}</span>
+      </div>`;
+    },)
+    .join("\n",);
+}
+
+
 export function viewRoutes({ database, }: { database: Kysely<DB> },) {
   return (
     new Elysia({ name: "views", },)
@@ -860,7 +990,22 @@ export function viewRoutes({ database, }: { database: Kysely<DB> },) {
         }
         const url = new URL(ctx.request.url,);
         return await serveWorldsSearch(database, url.searchParams,);
-      },)
+      })
+      .get("/dynamic/chats/list", async (ctx,) => {
+        const isHtmx = ctx.request.headers.get("HX-Request",) === "true";
+        if (!isHtmx) {
+          return new Response(null, { status: 302, headers: { Location: "/views/", }, },);
+        }
+        return await serveChatsListDb(database,);
+      })
+      .get("/dynamic/chats/search", async (ctx,) => {
+        const isHtmx = ctx.request.headers.get("HX-Request",) === "true";
+        if (!isHtmx) {
+          return new Response(null, { status: 302, headers: { Location: "/views/", }, },);
+        }
+        const url = new URL(ctx.request.url,);
+        return await serveChatsSearch(database, url.searchParams,);
+      })
       .get("/dynamic/worlds/:id/detail", async (ctx,) => {
         const isHtmx = ctx.request.headers.get("HX-Request",) === "true";
         if (!isHtmx) {
