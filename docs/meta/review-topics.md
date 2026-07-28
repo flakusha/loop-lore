@@ -32,10 +32,10 @@
 
 ### Recommended Actions
 
-- [ ] Delete or archive `docs/spec/character-spec.md` (superseded)
+- [x] Delete or archive `docs/spec/character-spec.md` (superseded by `character-spec.md`, file already deleted)` (superseded)
 - [ ] Create `docs/spec/character-interactions.md` — interaction rules, relationship-based dialogue modifiers
-- [ ] Create `docs/spec/character-migration.md` — detailed migration paths
-- [ ] Create `docs/spec/licensing.md` — legal-grade license definitions
+- [x] Create `docs/spec/character-migration.md` (completed as Final)md` — detailed migration paths
+- [x] Create `docs/spec/licensing.md` (completed as Final)md` — legal-grade license definitions
 - [ ] Add review escalation workflow to `docs/spec/character-spec.md` §5.4
 
 ---
