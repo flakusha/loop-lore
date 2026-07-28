@@ -36,6 +36,21 @@ config.e2e.yaml
 # Server launch scripts — user-specific paths, not committed
 config.*.sh
 
+# configs/ — only example files and workflow assets are tracked
+# Split config files (config.<domain>.toml/yaml) are user-specific
+configs/*.toml
+configs/*.yaml
+configs/*.yml
+# Character bundles are user-specific data
+configs/characters/*.toml
+configs/characters/*.yaml
+configs/characters/*.yml
+# Whitelist: only example files + workflows are committed
+!configs/*.example.toml
+!configs/*.example.yaml
+!configs/*.example.yml
+!configs/env.example.yaml
+
 # TODO Remove once confirmed AND agent-related paths
 .opencode/
 .hermes
