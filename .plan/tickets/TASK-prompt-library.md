@@ -3,6 +3,7 @@
 **Status:** ⬜ Not Started
 **Priority:** Low
 **Effort:** Low–Med
+**Epic:** epic-assistant-generation-extensions
 **Source:** Roadmap migration, 2026-07-19
 
 ## Summary
@@ -60,3 +61,7 @@ interface PromptTemplate {
 ## Risk
 
 Low — standalone feature, minimal integration points.
+
+## Linked Epics
+
+- `epic-assistant-generation-extensions.md`

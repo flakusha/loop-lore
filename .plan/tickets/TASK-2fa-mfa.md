@@ -3,7 +3,7 @@
 **Status:** ⬜ Not Started
 **Priority:** Medium
 **Effort:** Medium
-**Epic:** epic-2fa-mfa
+**Epic:** epic-two-factor-auth
 
 ## Summary
 
@@ -11,7 +11,7 @@ Add two-factor (2FA) and multi-factor (MFA) authentication support. Enhance secu
 
 ## Linked Epics
 
-- `epic-2fa-mfa.md`
+- `epic-two-factor-auth.md`
 
 ## Acceptance Criteria
 

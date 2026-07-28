@@ -858,7 +858,7 @@ CREATE TABLE description_transfers (
 
 ## References
 
-- `docs/spec/character-setup.md` — Character system overview
+- `docs/spec/character-spec.md` — Character system overview
 - `docs/spec/actors.md` — Actor data model
 - `docs/spec/schema.md` — Database schema
 - `.plan/tickets/TASK-character-world-data-separation.md` — Layer architecture

@@ -1,198 +1,89 @@
-# TASK: Epic 17 Expansion — E2E Encryption, Asset Encryption, Access Management
+# TASK-epic17-encryption-e2e-expansion
 
-**Status:** ⬜ Not Started
-**Priority:** High
-**Effort:** High
-**Source:** User clarification, 2026-07-19
-**Related:** docs/spec/encryption-workflow.md, docs/spec/crypto.md, docs/frontend/encryption.md
+## Epic: Encryption E2E Expansion (Epic 17)
+
+## Status: 🟨 Partially Implemented
 
 ## Summary
+End-to-end encryption for chat messages, assets, and player state. This epic covers the full encryption lifecycle: key derivation, key distribution, message encryption/decryption, key rotation, and access management.
 
-Expand Epic 17 from "at-rest AES-256-GCM" to full e2e encryption scope: private chats, worlds, locations, asset encryption, and access management with key rotation when participants leave or lose access.
+## Current State (Updated)
 
-## Clarified Scope (from user)
+### Already Implemented
+- **`src/crypto/pipeline.ts`** — `compressThenEncrypt` / `decryptThenDecompress` pipeline (DONE, wired into `routes/messages.ts`)
+- **`src/crypto/at-rest.ts`** — `encryptAtRest` / `decryptAtRest` / `needsEncryption` / `getChatEncryptionLevel` (DONE)
+- **`src/crypto/chat-keys.ts`** — `deriveChatKey`, `deriveChatKeyForChat`, `getChatParticipantActorIds` (DONE, tested)
+- **`src/crypto/actor-keys.ts`** — `generateActorKey`, `ensureActorKey`, `loadActorKeys`, `getActorKey`, `rotateActorKey`, `revokeActorKey`, `listActorKeys` (DONE, tested)
+- **`src/crypto/smk.ts`** — `initSmk`, `getSmk`, `isEncryptionEnabled` (DONE, tested)
+- **`src/crypto/key-distribution.ts`** — `getChatKey`, `distributeKeysOnJoin`, `rotateKeyOnLeave`, `resolveChatKey` (DONE)
+- **`src/crypto/user-keys.ts`** — `verifyPassphrase`, `storeUserKey`, `deriveUserKey`, `revokeUserKey`, `hasUserKey` (DONE)
+- **`src/crypto/byok.ts`** — `encryptValue`, `decryptValue` (DONE, tested)
+- **`src/crypto/e2e/key-bundle.ts`** — `encryptChatKeyForUser`, `decryptChatKeyFromBundle`, `storeKeyBundle`, `loadKeyBundle`, `removeKeyBundles`, `listBundleUsers` (DONE)
 
-> e2e encryption for private chats / worlds / locations / etc, asset encryption, proper access management (based on access time allowance - documented as keys rotation upon person leaving chat or losing access, same with assets)
+### Routes Wired
+- `routes/messages.ts` — encrypts on store, decrypts on retrieve (compressThenEncrypt/decryptThenDecompress)
+- `routes/chats.ts` — `distributeKeysOnJoin` on participant add, `rotateKeyOnLeave` on participant remove
+- `routes/key-management.ts` — full CRUD: list keys, generate, rotate, revoke
+- `routes/message-encryption.ts` — GET endpoint for chat encryption key
+- `routes/auth.ts` — `ensureActorKey` on login
+- `routes/api-keys.ts` — encrypts API keys via `byok.ts`
 
-## Current State
+### Schema
+- `encryption_level` column on `chats` table (migration 024)
 
-### What Exists (spec only, not implemented)
+### Genuinely Missing
+1. **Standalone `key-rotation.ts` module** — rotation logic is split between `key-distribution.ts` (rotateKeyOnLeave) and `actor-keys.ts` (rotateActorKey), but no timer/cron-based auto-rotation, no `KEY_ROTATION_DAYS` config, no batch re-encryption pipeline
+2. **Asset encryption** — ticket exists but nothing wired in asset routes
+3. **Time-based access expiry** — ticket exists but no expiry columns, no expiry check logic
+4. **World/Location encryption** — no schema columns, no key derivation chain for worlds→locations
+5. **Asymmetric key pairs** — `e2e/key-bundle.ts` only handles symmetric key wrapping; no public/private key pair generation
 
-- `docs/spec/encryption-workflow.md` — 3-tier model (public/standard/private), key hierarchy, integrity verification
-- `docs/spec/crypto.md` — encryption spec (actor keys, chat keys, BYOK, SMK)
-- `docs/frontend/encryption.md` — frontend UX spec
-- Messages stored as **plaintext** in DB
+## Phases
 
-### What's Missing
+### Phase 1: Key Management System
+- [x] `src/crypto/user-keys.ts` — passphrase verification, user key storage
+- [x] `src/crypto/actor-keys.ts` — actor key lifecycle (generate, rotate, revoke)
+- [x] `src/crypto/smk.ts` — system master key initialization
+- [x] `src/crypto/key-distribution.ts` — chat key distribution on join/leave
+- [ ] `src/crypto/key-rotation.ts` — **NEW**: standalone auto-rotation module with timer/cron
+- [ ] `KEY_ROTATION_DAYS` config option
+- [ ] Batch re-encryption pipeline for rotated keys
 
-- No encryption code in `src/`
-- No key management system
-- No access control for encrypted content
-- No key rotation on participant leave
-- No asset encryption
+### Phase 2: Message Encryption
+- [x] `src/crypto/pipeline.ts` — compressThenEncrypt/decryptThenDecompress
+- [x] `routes/messages.ts` — encrypt on store, decrypt on retrieve
+- [x] `routes/key-management.ts` — full CRUD endpoints
+- [x] `routes/message-encryption.ts` — GET chat key endpoint
 
-## Expanded Architecture
+### Phase 3: Asset & World Encryption
+- [ ] Asset encryption in asset routes (not wired)
+- [ ] World/Location encryption schema columns (not added)
+- [ ] Key derivation chain: world key → location key → chat key (not implemented)
+- [ ] Time-based access expiry columns and logic (not implemented)
 
-### Encryption Tiers
+### Phase 4: Asymmetric Key Pairs
+- [ ] Public/private key pair generation in `e2e/`
+- [ ] Extend `e2e/key-bundle.ts` to support asymmetric wrapping
+- [ ] Asymmetric key exchange protocol
 
-| Tier         | Scope                           | Encryption          | Key Management                 |
-| ------------ | ------------------------------- | ------------------- | ------------------------------ |
-| **Public**   | Public chats, world info        | None (plaintext)    | None                           |
-| **Standard** | User's private chats            | AES-256-GCM at-rest | User key derived from password |
-| **Private**  | Private chats with participants | E2E AES-256-GCM     | Shared keys, rotation on leave |
+## Related Tickets
+- TASK-encryption-wire-message-pipeline.md — ✅ DONE
+- TASK-encryption-asset-encryption.md — ⬜ TODO
+- TASK-encryption-group-key-distribution.md — ✅ DONE
+- TASK-encryption-key-rotation.md — 🟨 PARTIAL (manual done, auto missing)
+- TASK-encryption-access-management.md — ⬜ TODO
+- TASK-encryption-browser-pre-encrypt.md — ⬜ TODO
+- TASK-encryption-key-management-ui.md — 🟨 PARTIAL (routes done, UI pending)
+- TASK-client-side-encryption-aes-256-gcm.md — ✅ DONE
+- TASK-fix-crypto-isolation.md — ⬜ TODO (~20 test failures)
+- TASK-stable-stored-chat-key-future.md — ⬜ TODO (low priority)
+- TASK-encryption-architecture-clarification.md — ⬜ TODO (design phase)
+- TASK-encryption-auto-key-rotation.md — ⬜ NEW
+- TASK-world-location-encryption.md — ⬜ NEW
+- TASK-asymmetric-key-pairs.md — ⬜ NEW
 
-### Key Hierarchy
-
-```
-User Password
-  ↓ Argon2id
-User Master Key (UMK)
-  ↓ HKDF
-  ├── Chat Key (per chat)
-  │   ↓ HKDF
-  │   ├── Message Key (per message)
-  │   └── Asset Key (per asset in chat)
-  ├── World Key (per world)
-  │   ↓ HKDF
-  │   └── Location Key (per location)
-  └── Actor Key (per character)
-```
-
-### Access Management
-
-```
-Participant Joins Chat
-  ↓
-Key Derivation:
-  ├── Derive chat key from UMK
-  ├── Share encrypted chat key with new participant
-  └── Grant access to existing messages (re-encrypt or key wrap)
-
-Participant Leaves Chat
-  ↓
-Key Rotation:
-  ├── Generate new chat key
-  ├── Re-encrypt all messages with new key
-  ├── Re-encrypt all assets with new key
-  ├── Distribute new key to remaining participants
-  └── Old key becomes invalid (forward secrecy)
-
-Access Revocation (time-based)
-  ↓
-  ├── Admin sets access time limit
-  ├── After expiry: key becomes invalid
-  ├── Messages remain encrypted (not deleted)
-  └── Re-access requires new key grant
-```
-
-### Asset Encryption
-
-```
-Asset Upload
-  ↓
-  ├── Determine encryption tier from parent entity (chat/world/location)
-  ├── Generate asset key (HKDF from parent key)
-  ├── Encrypt asset with AES-256-GCM
-  ├── Store encrypted blob + IV + auth tag
-  └── Store key reference (encrypted with parent key)
-
-Asset Download
-  ↓
-  ├── Verify access (participant check)
-  ├── Derive asset key from parent key
-  ├── Decrypt asset
-  └── Return plaintext to authorized user
-```
-
-## Tasks
-
-### Phase 1: Key Management Foundation
-
-- [ ] Create `src/crypto/key-derivation.ts` — Argon2id, HKDF
-- [ ] Create `src/crypto/key-store.ts` — key storage, retrieval
-- [ ] Create `src/crypto/key-rotation.ts` — rotation logic
-- [ ] Create `src/crypto/aes-gcm.ts` — encrypt/decrypt primitives
-- [ ] Unit tests for all crypto operations
-
-### Phase 2: Chat Encryption
-
-- [ ] Add `encryption_tier` column to chats table
-- [ ] Add `encrypted_key` column to chat_participants table
-- [ ] Encrypt messages on storage (standard/private tier)
-- [ ] Decrypt messages on retrieval (authorized participants only)
-- [ ] Key derivation: user password → UMK → chat key
-
-### Phase 3: World/Location Encryption
-
-- [ ] Add `encryption_tier` column to worlds table
-- [ ] Add `encryption_tier` column to locations table
-- [ ] Encrypt world/location data
-- [ ] Key derivation: UMK → world key → location key
-
-### Phase 4: Asset Encryption
-
-- [ ] Add `encryption_tier` column to assets table
-- [ ] Encrypt asset blobs on upload
-- [ ] Decrypt asset blobs on download (authorized only)
-- [ ] Key derivation: parent key → asset key
-
-### Phase 5: Access Management
-
-- [ ] Participant join: key sharing (wrap chat key with new participant's UMK)
-- [ ] Participant leave: key rotation (new chat key, re-encrypt, distribute)
-- [ ] Time-based access: expiry check on key retrieval
-- [ ] Admin access override: emergency key recovery
-
-### Phase 6: Key Rotation
-
-- [ ] Automatic rotation on participant leave
-- [ ] Manual rotation (admin trigger)
-- [ ] Re-encryption pipeline (batch messages + assets)
-- [ ] Forward secrecy: old keys become invalid
-
-### Phase 7: Frontend Integration
-
-- [ ] Password-based key derivation (browser-side Argon2id)
-- [ ] Key storage in browser (IndexedDB or similar)
-- [ ] Encryption indicator in chat UI
-- [ ] Key rotation notification
-- [ ] Access expiry warning
-
-## Files to Create
-
-- `src/crypto/key-derivation.ts` — Argon2id, HKDF
-- `src/crypto/key-store.ts` — key storage
-- `src/crypto/key-rotation.ts` — rotation logic
-- `src/crypto/aes-gcm.ts` — encrypt/decrypt
-- `src/crypto/key-derivation.test.ts` — tests
-- `src/crypto/aes-gcm.test.ts` — tests
-- `src/db/migrations/` — encryption columns migration
-- `src/routes/encryption.ts` — key management API
-
-## Files to Modify
-
-- `src/db/schema-chats.ts` — encryption_tier column
-- `src/db/schema-worlds.ts` — encryption_tier column
-- `src/db/schema-assets.ts` — encryption_tier column
-- `src/routes/messages.ts` — encrypt on store, decrypt on retrieve
-- `src/routes/assets.ts` — encrypt/decrypt assets
-- `src/frontend/alpine/chat.ts` — encryption UI
-
-## Risk
-
-High — cryptographic implementation, key management complexity, performance impact of re-encryption, browser crypto API compatibility.
-
-## Dependency
-
-- Can start Phase 1 (crypto foundation) immediately
-- Phase 2-4 depend on schema changes
-- Phase 5-6 depend on chat/world encryption
-- Phase 7 depends on all previous phases
-
-## Open Questions
-
-1. **Re-encryption performance:** Re-encrypting all messages on participant leave could be slow for large chats. Batch strategy?
-2. **Browser crypto:** Argon2id in browser — WebAssembly or JS implementation?
-3. **Key backup:** What if user loses password? Recovery mechanism?
-4. **Admin access:** Should admins have emergency access to encrypted content?
-5. **Migration:** How to handle existing plaintext messages?
+## Related Epics
+- epic-crypto.md
+- epic-encryption-workflow.md
+- epic-frontend-encryption.md
+- epic-byok-api-keys.md

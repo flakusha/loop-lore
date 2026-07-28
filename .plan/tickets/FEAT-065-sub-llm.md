@@ -1,5 +1,7 @@
 # FEAT-065-LLM: LLM Prompt Template System
 
+**Epic:** epic-items
+
 **Status**: open
 **Priority**: high
 **Labels**: generation, llm, prompts, templates
@@ -93,6 +95,11 @@ interface LlmTemplateSection {
 - [ ] `PromptAssembler.assemble()` checks for template override before using hardcoded sections
 
 ---
+
+
+## Linked Epics
+
+- `epic-items.md`
 
 ## Acceptance Criteria
 

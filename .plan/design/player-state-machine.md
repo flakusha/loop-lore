@@ -787,3 +787,7 @@ interface DyingState {
 4. **State UI**: How to display 8 layers of state without overwhelming the player?
    - Priority display: Vitality > Combat > Consciousness > Physical > Mental > Social > NSFW > Environmental
    - Collapsed by default, expandable on hover/click.
+
+## Related Epics
+
+- `epic-rpg-mechanics.md`
