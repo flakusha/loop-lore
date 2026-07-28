@@ -6,6 +6,7 @@
 **Status:** ⬜ Not Started
 **Priority:** Low
 **Effort:** High
+**Epic:** epic-character-core-system
 **Related:** TASK-3d-character-avatars, TASK-rigged-model-buffer-render
 
 ## Summary
@@ -122,3 +123,7 @@ Base Layer (VRM/Spine 2D)
 ## Risk
 
 High — significant art pipeline requirements, animation complexity, performance concerns, licensing (Spine).
+
+## Linked Epics
+
+- `epic-character-core-system.md`

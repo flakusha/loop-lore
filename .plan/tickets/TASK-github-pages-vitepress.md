@@ -3,6 +3,7 @@
 **Status:** ⬜ Not Started
 **Priority:** Low
 **Effort:** Low–Med
+**Epic:** epic-tooling-improvement
 
 ## Summary
 
@@ -68,3 +69,7 @@ Host project documentation on GitHub Pages using VitePress. Open-source project 
 ## Risk
 
 Low — static site hosting, no runtime impact, open-source safe.
+
+## Linked Epics
+
+- `epic-tooling-improvement.md`

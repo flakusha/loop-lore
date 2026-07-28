@@ -1,5 +1,7 @@
 # FEAT-065-IMG: Image Prompt Template Persistence
 
+**Epic:** epic-items
+
 **Status**: open
 **Priority**: medium
 **Labels**: generation, image, prompts, templates
@@ -70,6 +72,11 @@ interface ImagePromptTemplateRow {
 - [ ] `buildImagePromptMessages()` accepts `templateOverride` param
 
 ---
+
+
+## Linked Epics
+
+- `epic-items.md`
 
 ## Acceptance Criteria
 
