@@ -30,7 +30,9 @@ export type SystemId =
   | "nsfw"
   | "resolution"
   | "items"
-  | "emergent_narrative";
+  | "emergent_narrative"
+  | "blog"
+  | "world_location_traits";
 
 /** Direction of a dependency or integration edge. */
 export type EdgeDirection = "depends_on" | "depended_by" | "bidirectional";
@@ -802,6 +804,54 @@ function buildEdges(): IntegrationEdge[] {
         },
       ],
     },
+    // ── Blog ──
+    {
+      source: "blog",
+      target: "social",
+      direction: "depends_on",
+      interfaces: ["Notification"],
+      events: [
+        {
+          id: "blog.post_created",
+          direction: "emits",
+          source: "blog",
+          target: "social",
+          notes: "New blog post triggers social notifications",
+        },
+        {
+          id: "blog.comment_added",
+          direction: "emits",
+          source: "blog",
+          target: "social",
+          notes: "New comment triggers social notifications",
+        },
+      ],
+      notes: "Blog posts and comments feed into social activity stream",
+    },
+    // ── World-Location Traits ──
+    {
+      source: "world_location_traits",
+      target: "character_core",
+      direction: "depends_on",
+      interfaces: ["WorldTraitRow", "LocationTraitRow"],
+      events: [
+        {
+          id: "traits.world_trait_changed",
+          direction: "emits",
+          source: "world_location_traits",
+          target: "character_core",
+          notes: "World trait change affects character state",
+        },
+        {
+          id: "traits.location_trait_changed",
+          direction: "emits",
+          source: "world_location_traits",
+          target: "character_core",
+          notes: "Location trait change affects character state",
+        },
+      ],
+      notes: "World/location traits feed into prompt assembly for character context",
+    }
   ];
 }
 
