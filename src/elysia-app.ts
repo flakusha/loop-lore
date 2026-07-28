@@ -32,6 +32,7 @@ import { adminTemplateRoutes, } from "./routes/admin-templates";
 import { analyticsRoutes, } from "./routes/analytics";
 import { apiKeysRoutes, } from "./routes/api-keys";
 import { authProtectedRoutes, authPublicRoutes, } from "./routes/auth";
+import { blogRoutes, } from "./routes/blog";
 import { characterAvailabilityRoutes, } from "./routes/character-availability";
 import { characterAvatarsRoutes, } from "./routes/character-avatars";
 import { characterEmotionAvatarsRoutes, } from "./routes/character-emotion-avatars";
@@ -125,6 +126,7 @@ export function createApp(deps: AppDeps,): Elysia {
   app.use(activityRoutes(handleOpts,),);
   app.use(activityStreamRoutes(handleOpts,),);
   app.use(notificationsRoutes(handleOpts,),);
+app.use(blogRoutes(handleOpts,),);
   app.use(apiKeysRoutes(handleOpts,),);
   app.use(settingsRoutes(handleOpts,),);
   app.use(messageEncryptionRoutes(handleOpts,),);
