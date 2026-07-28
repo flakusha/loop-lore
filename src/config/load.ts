@@ -24,6 +24,14 @@ const CONFIG_FILES = ["config.yaml", "config.yml", "config.toml",];
 const DEFAULT_CONFIG_FILES = ["config.default.yaml", "config.default.yml", "config.default.toml",];
 const LOCAL_CONFIG_FILES = ["config.local.yaml", "config.local.yml", "config.local.toml",];
 
+// Domain config file patterns (config.<domain>.yaml/yml/toml)
+const DOMAIN_CONFIG_EXTENSIONS = [".yaml", ".yml", ".toml",];
+const DOMAINS = [
+  "server", "database", "assets", "logging", "tui", "docs",
+  "auth", "transport", "messages", "nsfw", "generation", "byokey",
+  "encryption", "headers",
+] as const;
+
 function deepMerge<T extends Record<string, unknown>,>(base: T, overrides: Partial<T>,): T {
   const result = { ...base, };
   for (const key of Object.keys(overrides,)) {
@@ -168,6 +176,101 @@ function parseFileContent(content: string, extension: string,): Record<string, u
   throw new Error(`Unknown config file extension: .${extension}`,);
 }
 
+/**
+ * Load domain-specific config files from configs/ directory.
+ *
+ * Each domain file (config.<domain>.yaml/yml/toml) is loaded and merged
+ * into the base config. Domain configs override the main config.
+ *
+ * @param directory - The directory to search for domain configs
+ * @param baseConfig - The base config to merge domain configs into
+ * @returns Merged config with domain overrides applied
+ */
+function loadDomainConfigs(directory: string, baseConfig: Config,): Config {
+  const configsDir = path.join(directory, "configs",);
+  let config = baseConfig;
+
+  for (const domain of DOMAINS) {
+    for (const ext of DOMAIN_CONFIG_EXTENSIONS) {
+      const domainFile = `config.${domain}${ext}`;
+      const domainPath = path.join(configsDir, domainFile,);
+      if (existsSync(domainPath,)) {
+        try {
+          const content = readFileSync(domainPath, "utf8",);
+          const parsed = parseFileContent(content, ext.slice(1,),);
+          validateDomainConfig(domain, parsed, domainPath,);
+          config = deepMerge(config as unknown as Record<string, unknown>, parsed,) as unknown as Config;
+        } catch (error) {
+          throw new Error(`Failed to parse domain config ${domainPath}: ${(error as Error).message}`, {
+            cause: error,
+          },);
+        }
+        break; // First found wins per domain
+      }
+    }
+  }
+
+  return config;
+}
+
+/**
+ * Validate a domain config against its expected structure.
+ *
+ * @param domain - The domain name (e.g., "server", "database")
+ * @param parsed - The parsed config object
+ * @param filePath - The file path for error messages
+ */
+function validateDomainConfig(domain: string, parsed: Record<string, unknown>, filePath: string,): void {
+  // Validate domain-specific constraints
+  switch (domain) {
+    case "server": {
+      const server = parsed.server as Record<string, unknown> | undefined;
+      if (server) {
+        if (server.port !== undefined) {
+          const port = Number(server.port,);
+          if (isNaN(port,) || port < 0 || port > 65_535) {
+            throw new Error(`Invalid server.port in ${filePath}: ${server.port}. Must be 0-65535`,);
+          }
+        }
+      }
+      break;
+    }
+    case "database": {
+      const db = parsed.db as Record<string, unknown> | undefined;
+      if (db) {
+        if (db.type !== undefined && !["sqlite", "postgres",].includes(db.type as string,)) {
+          throw new Error(`Invalid db.type in ${filePath}: "${db.type}". Must be "sqlite" or "postgres"`,);
+        }
+        if (db.type === "postgres" && !db.url) {
+          throw new Error(`db.url is required when db.type is 'postgres' in ${filePath}`,);
+        }
+      }
+      break;
+    }
+    case "logging": {
+      const logging = parsed.logging as Record<string, unknown> | undefined;
+      if (logging) {
+        if (logging.level !== undefined && !["debug", "info", "warn", "error",].includes(logging.level as string,)) {
+          throw new Error(`Invalid logging.level in ${filePath}: "${logging.level}". Must be debug/info/warn/error`,);
+        }
+      }
+      break;
+    }
+    case "headers": {
+      const headers = parsed.headers as Record<string, unknown> | undefined;
+      if (headers) {
+        if (headers.xFrameOptions !== undefined && headers.xFrameOptions !== null) {
+          if (!["DENY", "SAMEORIGIN",].includes(headers.xFrameOptions as string,)) {
+            throw new Error(`Invalid headers.xFrameOptions in ${filePath}: "${headers.xFrameOptions}". Must be DENY or SAMEORIGIN`,);
+          }
+        }
+      }
+      break;
+    }
+    // Other domains have no specific validation constraints
+  }
+}
+
 function validateConfig(config: Config,): void {
   ConfigSchema.validate(config,);
 }
@@ -236,6 +339,10 @@ function loadConfig(cwd?: string,): Config {
       },);
     }
   }
+
+  // 2.5. Load domain-specific config files (config.<domain>.yaml/yml/toml)
+  //      These override the main config per domain.
+  config = loadDomainConfigs(directory, config,);
 
   // 3. Load config.local.* if present — per-developer overrides (gitignored)
   //    Priority: .yaml > .yml > .toml (first found wins)
