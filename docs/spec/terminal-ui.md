@@ -69,3 +69,7 @@ Backend server must be running on expected port (default 3000).
 ## Future
 
 Theming, mouse support, thumbnails, command history, split views, custom keybindings.
+
+## Related Epics
+
+- `.plan/epics/epic-terminal-ui.md`
