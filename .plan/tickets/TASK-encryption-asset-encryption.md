@@ -1,6 +1,6 @@
 # TASK: Encryption — Asset Encryption
 
-**Status:** ⬜ Not Started
+**Status:** 🟨 Partial
 **Priority:** Medium
 **Effort:** Med
 **Parent:** TASK-epic17-encryption-e2e-expansion
@@ -40,19 +40,24 @@ Asset Download
 
 ## Tasks
 
-- [ ] Add `encryption_tier` column to `assets` table
-- [ ] Add `encrypted_key_id` column to `assets` table
-- [ ] On upload: if tier ≠ public, encrypt blob before storage
-- [ ] On download: if encrypted, decrypt blob before serving
+- [x] Add `encryption_tier` column to `assets` table
+- [x] Add `encrypted_key_id` column to `assets` table
+- [x] On upload: if tier ≠ public, encrypt blob before storage
+- [x] On download: if encrypted, decrypt blob before serving
 - [ ] Key derivation: parent key → asset key (HKDF)
 - [ ] Add tests: encrypt on upload, decrypt on download, tier inheritance
 
-## Files to Modify
+## Files Created
 
-- `src/db/schema-assets.ts` — add encryption columns
-- `src/db/migrations/` — migration
-- `src/assets/service.ts` — encrypt/decrypt blobs
-- `src/assets/controller.ts` — wire encryption
+- `src/crypto/asset-encryption.ts` — encrypt/decrypt asset blobs ✅
+- `src/db/migrations/031_asset_encryption.ts` — migration ✅
+
+## Files Modified
+
+- `src/db/schema-content.ts` — added encryption_tier and encrypted_key_id ✅
+- `src/assets/service.ts` — encrypt on upload, decrypt on download ✅
+- `src/assets/controller.ts` — wire encryption in routes ✅
+- `src/crypto/index.ts` — export asset encryption functions ✅
 
 ## Risk
 
