@@ -1,0 +1,32 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "loop-lore-config.docs.schema.json",
+  "title": "Loop Lore Docs Config",
+  "description": "Domain-specific configuration for docs",
+  "type": "object",
+  "properties": {
+    "docs": {
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable documentation serving"
+        },
+        "public": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Allowlist of doc path prefixes"
+        }
+      },
+      "required": [
+        "enabled"
+      ]
+    }
+  },
+  "required": [
+    "docs"
+  ]
+}

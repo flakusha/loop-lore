@@ -1,0 +1,25 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "loop-lore-config.tui.schema.json",
+  "title": "Loop Lore Tui Config",
+  "description": "Domain-specific configuration for tui",
+  "type": "object",
+  "properties": {
+    "tui": {
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable TUI mode"
+        }
+      },
+      "required": [
+        "enabled"
+      ]
+    }
+  },
+  "required": [
+    "tui"
+  ]
+}
