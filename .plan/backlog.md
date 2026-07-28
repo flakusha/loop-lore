@@ -240,10 +240,6 @@ Completed sub-epic files (from epic-world-locations.md split):
 - `.plan/epics/epic-world-encounters.md` — anomalies, resources, items, unique places
 - `.plan/epics/epic-world-diplomacy-karma.md` — factions, reputation, karma, lore
 
-epic-world-locations.md still needs split into its remaining sub-epics:
-- `.plan/epics/epic-world-diplomacy-karma.md` (Diplomacy & Karma — not yet created)
-- `.plan/epics/epic-world-encounters.md` (Encounters & Resources — not yet created)
-
 ### Phase 5 — Verification
 
 - `bun run check` (pre-existing TS errors in `src/routes/export.test.ts` and `src/routes/import.ts` unrelated)
