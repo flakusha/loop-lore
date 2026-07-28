@@ -1219,4 +1219,52 @@ export const SCHEMA = new SchemaManifest()
     preference: col("text", { notNull: true, },),
     confidence: col("real", { notNull: true, },),
     created_at: col("text", { notNull: true, },),
+  },)
+  // ── Blog System ───────────────────────────────────────
+  .table("blog_posts", {
+    id: col("text", { primaryKey: true, },),
+    author_id: col("text", { notNull: true, },),
+    title: col("text", { notNull: true, },),
+    body: col("text", { notNull: true, },),
+    visibility: col("text", { notNull: true, },),
+    author_type: col("text", { notNull: true, },),
+    status: col("text", { notNull: true, },),
+    category: col("text",),
+    world_id: col("text",),
+    character_id: col("text",),
+    scheduled_at: col("text",),
+    published_at: col("text",),
+    view_count: col("integer", { notNull: true, },),
+    metadata: col("text", { notNull: true, },),
+    created_at: col("text", { notNull: true, },),
+    updated_at: col("text", { notNull: true, },),
+  },)
+  .table("blog_comments", {
+    id: col("text", { primaryKey: true, },),
+    post_id: col("text", { notNull: true, },),
+    author_id: col("text", { notNull: true, },),
+    body: col("text", { notNull: true, },),
+    status: col("text", { notNull: true, },),
+    created_at: col("text", { notNull: true, },),
+  },)
+  .table("blog_tags", {
+    id: col("text", { primaryKey: true, },),
+    post_id: col("text", { notNull: true, },),
+    tag: col("text", { notNull: true, },),
+  },)
+  .table("blog_follows", {
+    id: col("text", { primaryKey: true, },),
+    follower_id: col("text", { notNull: true, },),
+    author_id: col("text", { notNull: true, },),
+    created_at: col("text", { notNull: true, },),
+  },)
+  .table("blog_rag_sources", {
+    id: col("text", { primaryKey: true, },),
+    post_id: col("text", { notNull: true, },),
+    source_type: col("text", { notNull: true, },),
+    uri: col("text", { notNull: true, },),
+    title: col("text", { notNull: true, },),
+    relevance_score: col("real", { notNull: true, },),
+    snippet: col("text", { notNull: true, },),
+    created_at: col("text", { notNull: true, },),
   },);
