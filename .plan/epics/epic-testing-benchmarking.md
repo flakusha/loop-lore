@@ -118,6 +118,30 @@ Comprehensive testing infrastructure including unit tests, e2e tests, benchmarki
 | DB query p95         | < 10ms   | Simple queries |
 | DB query p95         | < 50ms   | Complex joins  |
 
+### Ultra-Low Latency Hot-Path Targets (~1ms)
+
+Aggressive round-trip targets for non-LLM synchronous operations. These represent
+the achievable floor for Bun's optimized async I/O on local and LAN paths.
+
+| Metric                      | Target  | Tier     | Notes                                            |
+| --------------------------- | ------- | -------- | ------------------------------------------------ |
+| JSON parse + serialize      | < 0.1ms | Hot-path | `JSON.parse` / `JSON.stringify` on small objects |
+| In-memory CRUD round-trip   | < 0.5ms | Hot-path | Kysely SELECT/INSERT/UPDATE, single row, no join |
+| Auth token verify (JWT)     | < 0.2ms | Hot-path | `crypto.verify` on Ed25519, cached key           |
+| WebSocket frame dispatch    | < 0.3ms | Hot-path | Server→client, measured at event loop tick       |
+| File read (cached, < 64 KB) | < 0.5ms | Hot-path | `Bun.file().arrayBuffer()` from OS page cache    |
+| DB connection acquire       | < 0.2ms | Hot-path | Kysely pool reuse, no TCP reconnect              |
+| Middleware chain (auth+log) | < 0.5ms | Hot-path | Combined auth + structured log, per-request      |
+| Full non-LLM API round-trip | < 1ms   | Hot-path | Network + parse + handler + serialize + respond  |
+| Full non-LLM API p99        | < 5ms   | Baseline | Inclusive of worst-case GC pause                 |
+| Full non-LLM API p99.9      | < 20ms  | Baseline | Inclusive of GC + cold DB pool                   |
+
+> **Achievability note:** The ~1ms full round-trip is measured from TCP connect to
+> response bytes flushed, on localhost with a warm Kysely pool, warm OS page cache,
+> and no GC pressure. On LAN (RTT < 0.5ms) the achievable floor is ~1.5ms.
+> These targets assume Bun's single-threaded event loop; the async execution model
+> section below defines the threading extensions.
+
 ### Concurrent User Tiers
 
 | Tier      | Users  | Duration | Purpose               |
@@ -127,6 +151,173 @@ Comprehensive testing infrastructure including unit tests, e2e tests, benchmarki
 | Medium    | 1,000  | 15 min   | Peak load             |
 | Heavy     | 10,000 | 30 min   | Stress test           |
 | Endurance | 1,000  | 24h+     | Memory leak detection |
+
+## Concurrency & Async Execution Model
+
+Bun's single-threaded event loop is the baseline. For CPU-bound and high-concurrency
+workloads, Bun provides Worker threads, `Bun.spawn`, and task queues.
+
+### Execution Model Targets
+
+| Metric                        | Target              | Tier     | Notes                                  |
+| ----------------------------- | ------------------- | -------- | -------------------------------------- |
+| Event loop tick latency       | < 0.1ms             | Baseline | Single-threaded, no blocking ops       |
+| Worker thread spawn overhead  | < 5ms               | Baseline | `new Worker()` to ready state          |
+| Worker thread IPC throughput  | > 10,000 msg/s      | Baseline | `postMessage` serialized, 1 KB payload |
+| `Bun.spawn` process overhead  | < 10ms              | Baseline | Fork to first stdout byte              |
+| `Bun.spawn` IPC throughput    | > 5,000 msg/s       | Baseline | Stdin/stdout pipe, 1 KB payload        |
+| Task queue throughput         | > 50,000 tasks/s    | Baseline | In-memory queue, no I/O                |
+| Task queue latency (p99)      | < 1ms               | Baseline | From enqueue to dequeue                |
+| Worker thread memory overhead | < 10 MB per worker  | Baseline | Idle worker, shared nothing            |
+| Worker thread memory overhead | < 100 MB per worker | Active   | Active worker with workspace           |
+| Max concurrent workers        | 16 (CPU cores)      | Baseline | One per core, no contention            |
+| Max concurrent workers        | 64                  | High     | Oversubscribed, I/O-bound tasks only   |
+
+### Concurrency Patterns to Benchmark
+
+| Pattern                        | Throughput Target | Latency Target | Notes                             |
+| ------------------------------ | ----------------- | -------------- | --------------------------------- |
+| Single-thread event loop       | > 10,000 req/s    | p99 < 5ms      | Default, non-blocking I/O only    |
+| Worker pool (N workers)        | > 50,000 req/s    | p99 < 10ms     | CPU-bound tasks offloaded         |
+| `Bun.spawn` child process pool | > 5,000 req/s     | p99 < 50ms     | Isolated processes, crash-safe    |
+| Hybrid (event loop + workers)  | > 100,000 req/s   | p99 < 5ms      | I/O on event loop, CPU in workers |
+| Task queue (bounded)           | > 50,000 tasks/s  | p99 < 1ms      | In-memory, backpressure-aware     |
+| Task queue (persistent)        | > 10,000 tasks/s  | p99 < 5ms      | SQLite-backed, crash-recoverable  |
+
+### GC Pressure Metrics
+
+Bun's GC is generational. Track GC pauses per execution mode:
+
+| Metric                | Target    | Tier     | Notes                                    |
+| --------------------- | --------- | -------- | ---------------------------------------- |
+| GC minor pause p50    | < 0.5ms   | Baseline | Young generation collection              |
+| GC minor pause p99    | < 2ms     | Baseline | Young generation collection              |
+| GC major pause p50    | < 5ms     | Baseline | Old generation collection                |
+| GC major pause p99    | < 20ms    | Baseline | Old generation collection                |
+| GC heap growth rate   | < 50 MB/s | Baseline | Max heap growth before major GC          |
+| GC heap live ratio    | < 60%     | Baseline | Live objects / total heap after major GC |
+| GC total pause budget | < 2%      | Baseline | Total GC time / wall clock time          |
+
+### Worker Thread Benchmarking Tasks
+
+- [ ] Benchmark Worker thread spawn overhead (cold/warm)
+- [ ] Benchmark Worker thread IPC throughput (serialized buffers)
+- [ ] Benchmark `postMessage` with SharedArrayBuffer
+- [ ] Benchmark Worker pool scaling (1 to 64 workers)
+- [ ] Benchmark GC pause distribution across Worker count
+- [ ] Benchmark `Bun.spawn` process overhead vs Worker thread
+- [ ] Benchmark `Bun.spawn` stdin/stdout throughput
+- [ ] Benchmark task queue throughput (bounded, in-memory)
+- [ ] Benchmark task queue throughput (persistent, SQLite-backed)
+- [ ] Benchmark hybrid event-loop + worker patterns
+- [ ] Benchmark backpressure handling under sustained load
+- [ ] Benchmark Worker memory isolation (no shared heap)
+- [ ] Benchmark context-switching cost between Workers
+
+## Native/WASM Module Performance Benchmarks
+
+Benchmarks for the native module system (`epic-precompiled-hot-binaries`).
+Measures the performance delta between native FFI, WASM, and pure-JS fallbacks.
+
+### Module Comparison Targets
+
+| Module             | Native (FFI) | WASM    | Pure-JS Fallback | Target Delta   |
+| ------------------ | ------------ | ------- | ---------------- | -------------- |
+| SHA-256 (1 MB)     | < 1ms        | < 3ms   | < 10ms           | Native 10x JS  |
+| AES-256-GCM (1 MB) | < 1ms        | < 4ms   | < 15ms           | Native 10x JS  |
+| gzip (1 MB)        | < 5ms        | < 15ms  | < 50ms           | Native 5x JS   |
+| brotli (1 MB)      | < 10ms       | < 30ms  | < 100ms          | Native 5x JS   |
+| zstd (1 MB)        | < 2ms        | < 8ms   | N/A              | Native 4x WASM |
+| Image resize       | < 10ms       | < 50ms  | < 200ms          | Native 10x JS  |
+| Thumbnail gen      | < 15ms       | < 80ms  | < 300ms          | Native 10x JS  |
+| Embedding gen      | < 50ms       | < 200ms | < 1,000ms        | Native 10x JS  |
+
+### Module Loading and Initialization
+
+| Metric                     | Target   | Tier     | Notes                                   |
+| -------------------------- | -------- | -------- | --------------------------------------- |
+| Native module load (cold)  | < 50ms   | Baseline | First dlopen call                       |
+| Native module load (warm)  | < 1ms    | Baseline | Subsequent loads, shared lib cached     |
+| WASM module compile (cold) | < 200ms  | Baseline | WebAssembly.compile()                   |
+| WASM module instantiate    | < 10ms   | Baseline | WebAssembly.instantiate()               |
+| FFI call overhead          | < 0.01ms | Baseline | Single FFI call boundary                |
+| WASM call overhead         | < 0.05ms | Baseline | Single WASM call boundary               |
+| Module fallback detection  | < 1ms    | Baseline | Auto-detect: native, then WASM, then JS |
+
+### Module Benchmarking Tasks
+
+- [ ] Benchmark SHA-256: native FFI vs WASM vs pure-JS (Web Crypto)
+- [ ] Benchmark AES-256-GCM: native FFI vs WASM vs pure-JS
+- [ ] Benchmark gzip/brotli/zstd: native FFI vs WASM vs pure-JS (fflate)
+- [ ] Benchmark image resize: native FFI (libvips) vs WASM vs canvas API
+- [ ] Benchmark thumbnail generation: native vs WASM vs canvas API
+- [ ] Benchmark embedding generation: native ONNX vs WASM vs transformers.js
+- [ ] Benchmark module load times: cold/warm across all three modes
+- [ ] Benchmark FFI vs WASM call overhead (1K, 10K, 100K calls)
+- [ ] Benchmark hot-reload: native module swap time under load
+- [ ] Benchmark fallback chain: auto-detect overhead in practice
+- [ ] Benchmark concurrent module access: thread safety under load
+
+## Per-Component Memory Profiling Targets
+
+Per-component memory tracking with heap, RSS, and GC pressure targets.
+
+### Component Memory Budgets
+
+| Component                    | Heap Max | RSS Max  | GC Budget | Notes                                    |
+| ---------------------------- | -------- | -------- | --------- | ---------------------------------------- |
+| HTTP server (idle)           | < 10 MB  | < 30 MB  | < 1%      | Elysia + static assets                   |
+| HTTP server (per-connection) | < 50 KB  | N/A      | N/A       | Per open connection state                |
+| Kysely pool (idle)           | < 5 MB   | < 20 MB  | < 0.5%    | Connection pool + prepared statements    |
+| Kysely pool (active)         | < 20 MB  | < 50 MB  | < 2%      | Under load, all connections active       |
+| WebSocket server             | < 5 MB   | < 15 MB  | < 1%      | Connection registry + message buffers    |
+| Asset pipeline               | < 50 MB  | < 100 MB | < 3%      | During resize/transcode, peak allocation |
+| LLM generation buffer        | < 20 MB  | < 40 MB  | < 2%      | Streaming response accumulation          |
+| Worker thread (idle)         | < 10 MB  | < 30 MB  | < 0.5%    | Shared-nothing, no leaked state          |
+| Worker thread (active)       | < 100 MB | < 200 MB | < 3%      | CPU-bound task execution                 |
+| Native module (crypto)       | < 1 MB   | < 10 MB  | N/A       | FFI, no JS heap contribution             |
+| Native module (image)        | < 20 MB  | < 50 MB  | N/A       | libvips buffer allocation                |
+| Native module (compression)  | < 5 MB   | < 15 MB  | N/A       | Streaming compression buffer             |
+
+### Memory Profiling Metrics
+
+| Metric                         | Target   | Tier     | Notes                                       |
+| ------------------------------ | -------- | -------- | ------------------------------------------- |
+| Heap used at idle              | < 20 MB  | Baseline | All services initialized, no requests       |
+| Heap used at peak              | < 200 MB | Baseline | 1000 concurrent users, active processing    |
+| RSS at idle                    | < 60 MB  | Baseline | Resident set, includes V8 overhead          |
+| RSS at peak                    | < 500 MB | Baseline | 1000 concurrent users, active processing    |
+| External memory                | < 50 MB  | Baseline | Buffers, ArrayBuffer, typed arrays          |
+| Array buffer allocations       | < 20 MB  | Baseline | Total active ArrayBuffer/TypedArray         |
+| Leak detection threshold       | 0        | Strict   | No leaked objects after GC + 5s settle      |
+| Memory growth rate (sustained) | < 1 MB/m | Baseline | No growth under constant request rate       |
+| Memory reclamation time        | < 5s     | Baseline | Time to reclaim 90% of peak after load drop |
+
+### GC Pause Budget by Component
+
+| Component                 | Minor GC Budget | Major GC Budget | Notes                              |
+| ------------------------- | --------------- | --------------- | ---------------------------------- |
+| HTTP request handler      | < 2ms           | < 10ms          | Must not stall request processing  |
+| WebSocket message handler | < 1ms           | < 5ms           | Must not stall message dispatch    |
+| DB query handler          | < 1ms           | < 5ms           | Must not stall connection pool     |
+| Asset pipeline            | < 5ms           | < 20ms          | Longer budget, non-blocking path   |
+| LLM streaming             | < 2ms           | < 10ms          | Must not stall token streaming     |
+| Worker thread             | < 5ms           | < 20ms          | Isolated, no impact on main thread |
+
+### Memory Profiling Tasks
+
+- [ ] Implement per-component memory tracking (heap, RSS, external)
+- [ ] Add GC pause measurement per request handler
+- [ ] Add memory leak detection: long-running endurance tests
+- [ ] Add memory reclamation measurement after load drop
+- [ ] Add per-component heap snapshot diffing
+- [ ] Add RSS tracking over time (memory growth rate)
+- [ ] Add external memory tracking (ArrayBuffer, TypedArray)
+- [ ] Add GC pressure dashboard (minor/major pause distribution)
+- [ ] Add memory regression detection in CI (per-component)
+- [ ] Benchmark Worker thread memory isolation under load
+- [ ] Benchmark native module memory footprint vs JS equivalent
+- [ ] Add memory profiling to asset pipeline (peak allocation tracking)
 
 ## CI-Integrated Performance Regression Detection
 
