@@ -2,21 +2,35 @@
  * Quest Service Tests
  */
 import { beforeEach, describe, expect, it, } from "bun:test";
+import type { Kysely, } from "kysely";
 import { QuestStatus, QuestType, } from "../../db/enums-story";
+import type { DB, } from "../../db/schema";
+import { createTestDb, } from "../../test-utils/create-test-db";
+import { createTestActors, createTestWorld, } from "../../characters/services/test-helpers";
 import { QuestService, } from "./service";
 
 describe("QuestService", () => {
+  let db: Kysely<DB>;
   let service: QuestService;
+  let worldId: string;
+  let actorId: string;
 
-  beforeEach(() => {
-    service = new QuestService();
+  beforeEach(async () => {
+    const testDb = await createTestDb();
+    db = testDb.db;
+    service = new QuestService(db,);
+
+    // Create required FK records — actors first (creates user), then world
+    const actors = await createTestActors(db, "test-actor-quest",);
+    actorId = actors.actorId;
+    worldId = await createTestWorld(db, "test-world-quest",);
   },);
 
   describe("createQuest", () => {
     it("should create a quest with defaults", async () => {
       const quest = await service.createQuest({
-        world_id: "world-1",
-        creator_id: "user-1",
+        world_id: worldId,
+        creator_id: actorId,
         name: "Test Quest",
       },);
 
@@ -31,8 +45,8 @@ describe("QuestService", () => {
 
     it("should create a quest with custom values", async () => {
       const quest = await service.createQuest({
-        world_id: "world-1",
-        creator_id: "user-1",
+        world_id: worldId,
+        creator_id: actorId,
         name: "Custom Quest",
         description: "A custom quest",
         type: QuestType.Collection,
@@ -73,8 +87,8 @@ describe("QuestService", () => {
 
     it("should return quest by ID", async () => {
       const created = await service.createQuest({
-        world_id: "world-1",
-        creator_id: "user-1",
+        world_id: worldId,
+        creator_id: actorId,
         name: "Test Quest",
       },);
 
@@ -87,36 +101,39 @@ describe("QuestService", () => {
   describe("listQuests", () => {
     it("should list quests for a world", async () => {
       await service.createQuest({
-        world_id: "world-1",
-        creator_id: "user-1",
+        world_id: worldId,
+        creator_id: actorId,
         name: "Quest 1",
       },);
       await service.createQuest({
-        world_id: "world-1",
-        creator_id: "user-1",
+        world_id: worldId,
+        creator_id: actorId,
         name: "Quest 2",
       },);
+
+      // Create a quest in a different world
+      const otherWorldId = await createTestWorld(db, "test-world-other",);
       await service.createQuest({
-        world_id: "world-2",
-        creator_id: "user-1",
+        world_id: otherWorldId,
+        creator_id: actorId,
         name: "Quest 3",
       },);
 
-      const quests = await service.listQuests("world-1",);
+      const quests = await service.listQuests(worldId,);
       expect(quests.length,).toBe(2,);
     });
 
     it("should filter by status", async () => {
       const quest = await service.createQuest({
-        world_id: "world-1",
-        creator_id: "user-1",
+        world_id: worldId,
+        creator_id: actorId,
         name: "Test Quest",
       },);
 
       await service.transitionQuest(quest.id, QuestStatus.Completed,);
 
-      const activeQuests = await service.listQuests("world-1", QuestStatus.Active,);
-      const completedQuests = await service.listQuests("world-1", QuestStatus.Completed,);
+      const activeQuests = await service.listQuests(worldId, QuestStatus.Active,);
+      const completedQuests = await service.listQuests(worldId, QuestStatus.Completed,);
 
       expect(activeQuests.length,).toBe(0,);
       expect(completedQuests.length,).toBe(1,);
@@ -126,8 +143,8 @@ describe("QuestService", () => {
   describe("transitionQuest", () => {
     it("should transition from active to completed", async () => {
       const quest = await service.createQuest({
-        world_id: "world-1",
-        creator_id: "user-1",
+        world_id: worldId,
+        creator_id: actorId,
         name: "Test Quest",
       },);
 
@@ -141,8 +158,8 @@ describe("QuestService", () => {
 
     it("should transition from active to failed", async () => {
       const quest = await service.createQuest({
-        world_id: "world-1",
-        creator_id: "user-1",
+        world_id: worldId,
+        creator_id: actorId,
         name: "Test Quest",
       },);
 
@@ -154,8 +171,8 @@ describe("QuestService", () => {
 
     it("should transition from active to abandoned", async () => {
       const quest = await service.createQuest({
-        world_id: "world-1",
-        creator_id: "user-1",
+        world_id: worldId,
+        creator_id: actorId,
         name: "Test Quest",
       },);
 
@@ -167,8 +184,8 @@ describe("QuestService", () => {
 
     it("should allow retry from abandoned to active", async () => {
       const quest = await service.createQuest({
-        world_id: "world-1",
-        creator_id: "user-1",
+        world_id: worldId,
+        creator_id: actorId,
         name: "Test Quest",
       },);
 
@@ -181,8 +198,8 @@ describe("QuestService", () => {
 
     it("should reject invalid transitions", async () => {
       const quest = await service.createQuest({
-        world_id: "world-1",
-        creator_id: "user-1",
+        world_id: worldId,
+        creator_id: actorId,
         name: "Test Quest",
       },);
 
@@ -197,8 +214,8 @@ describe("QuestService", () => {
   describe("updateProgress", () => {
     it("should update quest progress", async () => {
       const quest = await service.createQuest({
-        world_id: "world-1",
-        creator_id: "user-1",
+        world_id: worldId,
+        creator_id: actorId,
         name: "Test Quest",
         target: 5,
       },);
@@ -210,8 +227,8 @@ describe("QuestService", () => {
 
     it("should auto-complete when progress reaches target", async () => {
       const quest = await service.createQuest({
-        world_id: "world-1",
-        creator_id: "user-1",
+        world_id: worldId,
+        creator_id: actorId,
         name: "Test Quest",
         target: 3,
       },);
@@ -226,8 +243,8 @@ describe("QuestService", () => {
   describe("objectives", () => {
     it("should get and update objectives", async () => {
       const quest = await service.createQuest({
-        world_id: "world-1",
-        creator_id: "user-1",
+        world_id: worldId,
+        creator_id: actorId,
         name: "Test Quest",
         objectives: [
           {
@@ -258,8 +275,8 @@ describe("QuestService", () => {
   describe("rewards", () => {
     it("should get and claim rewards", async () => {
       const quest = await service.createQuest({
-        world_id: "world-1",
-        creator_id: "user-1",
+        world_id: worldId,
+        creator_id: actorId,
         name: "Test Quest",
         rewards: [
           { type: "experience", value: 100, claimed: false, },
