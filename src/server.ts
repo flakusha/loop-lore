@@ -10,7 +10,7 @@ import { ensureTlsCerts, } from "./config/cert";
 import { loadConfig, } from "./config/load";
 import { compressAssets, copyDirectory, } from "./content/compress";
 import { injectContentHashes, } from "./content/hash-injection";
-import { initSmk, } from "./crypto";
+import { initSmk, initAnonymousMode, } from "./crypto";
 import { getDatabase, } from "./db/index";
 import { runMigrations, } from "./db/migrate";
 import { seedDefaultActors, } from "./db/seed";
@@ -242,6 +242,7 @@ async function start() {
   createLogger(config.logging,);
   initAgeGate(config.ageGate,);
   await initSmk(config.encryption,);
+  initAnonymousMode(config,);
 
   // ── Auto-discover SD backends if not configured ──────────
   if (!config.generation.providers.sd || config.generation.providers.sd.length === 0) {
