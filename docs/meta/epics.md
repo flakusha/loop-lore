@@ -31,7 +31,7 @@
 | ⬜ Not Started                                                                        | BYOK Local Models (Bring Your Own Model)                            | High     | Large                              | 16    | [epic-byok-local-models.md](/.plan/epics/epic-byok-local-models.md)                             |
 | ⬜ Not Started                                                                        | Chat Lifecycle, Transitions & Moderation                            | High     | High                               | 9     | [epic-chat-lifecycle-moderation.md](/.plan/epics/epic-chat-lifecycle-moderation.md)             |
 | ⬜ Not Started                                                                        | Chat/Group Chat Transfer & Location Change Mechanics                | Medium   | High                               | 6     | [epic-chat-transfer-location.md](/.plan/epics/epic-chat-transfer-location.md)                   |
-| ⬜ Not Started                                                                        | ComfyUI Plugin & Workflow Templates                                 | High     | High                               | 15    | [epic-comfyui-plugin.md](/.plan/epics/epic-comfyui-plugin.md)                                   |
+| ⬜ Not Started                                                                        | ComfyUI Plugin & Workflow Templates                                 | High     | High                               | 24    | [epic-comfyui-plugin.md](/.plan/epics/epic-comfyui-plugin.md)                                   |
 | ⬜ Not Started                                                                        | Companion, Pet & Mount Systems                                      | Medium   | Very High                          | 0     | [epic-companion-pet-mount.md](/.plan/epics/epic-companion-pet-mount.md)                         |
 | ⬜ Not Started                                                                        | Deno Support (Possible Node)                                        | Low      | Medium                             | 14    | [epic-deno-support.md](/.plan/epics/epic-deno-support.md)                                       |
 | ⬜ Not Started                                                                        | Disease & Poison Systems                                            | Medium   | High                               | 0     | [epic-disease-poison.md](/.plan/epics/epic-disease-poison.md)                                   |
@@ -212,10 +212,12 @@ Long-horizon vision for 3D asset generation and rendering. This epic covers:
 - **Type:** Feature
 - **File:** `.plan/epics/epic-analytics-observability.md`
 
-### Assistant Generation Extensions (SD, Intent, Scenario Source)
+### Assistant Generation Extensions (Image Gen, Intent, Scenario Source)
 
 - **Status:** ⬜ Not Started
 - **Priority:** Medium
+- **ComfyUI Status:** Primary backend
+- **Practical Testing:** FLUX.1 Kontext (untested, high potential), Qwen Image Edit (works, slow), LoRA (works, 0.3-0.7 coeff)
 - **Effort:** High
 - **Type:** Feature Epic
 - **Tags:** assistant, stable-diffusion, intent-detection, tool-execution, scenario-source
@@ -311,6 +313,8 @@ Covers the full chat lifecycle beyond raw message exchange: context management
 
 - **Status:** ⬜ Not Started
 - **Priority:** High
+- **ComfyUI Status:** First-class citizen
+- **Practical Testing:** FLUX.1 Kontext (untested, high potential), Qwen Image Edit (works, slow), LoRA (works, 0.3-0.7 coeff)
 - **Effort:** High
 - **Type:** Feature Epic
 - **Tags:** comfyui, plugin, workflow, image-generation, templates, api
