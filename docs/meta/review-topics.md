@@ -194,7 +194,7 @@
 
 ### Gaps & Issues
 
-1. **No `docs/spec/visual-novel.md`** — The frontend doc covers rendering but there's no spec for the VN data model, scene format, template system, or Q&A mechanics.
+1. `docs/spec/visual-novel.md` is now Final
 2. **VN backend is "complete" but thin** — The ticket says backend is complete (DB column + API pass-through) but the actual VN-specific backend logic (scene management, branching, Q&A state machine) is not implemented.
 3. **Dynamic generation is not specified** — The VN epic mentions dynamic image/story generation but doesn't define the generation pipeline, prompt format, or caching strategy in a spec doc.
 4. **Q&A mode is underspecified** — The VN epic defines the TypeScript interfaces but doesn't specify how Q&A integrates with the chat system, how answers affect story state, or how consequences are tracked across sessions.
@@ -202,7 +202,7 @@
 
 ### Recommended Actions
 
-- [ ] Create `docs/spec/visual-novel.md` — VN data model, scene format, branching, Q&A mechanics
+- [x] Create `docs/spec/visual-novel.md` — VN data model, scene format, branching, Q&A mechanics
 - [ ] Create `docs/spec/vn-assets.md` — VN asset storage, linking, versioning
 - [ ] Create `docs/spec/vn-generation.md` — dynamic image/story generation pipeline
 - [ ] Update `.plan/epics/epic-visual-novel-mode.md` to reference new spec docs
