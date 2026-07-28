@@ -458,13 +458,13 @@
 
 ### Immediate (create missing specs)
 
-1. `docs/spec/npcs.md` — NPCs have no dedicated spec
-2. `docs/spec/inventory.md` — inventory has no dedicated spec
-3. `docs/spec/items.md` — items have no dedicated spec
-4. `docs/spec/chat-privacy.md` — chat privacy is only in a thin access-model doc
-5. `docs/spec/attachment-moderation.md` — review queue, approve/reject workflow, per-chat policies
-6. Extend `docs/spec/assets.md` pipeline with step 4b: content analysis (auto-caption, image moderation)
-7. ✅ `docs/spec/quests-encounters.md` — quests, encounters, factions (just created)
+1. `docs/spec/npcs.md` — ✅ Created as Final
+2. `docs/spec/inventory.md` — ✅ Created as Final
+3. `docs/spec/items.md` — ✅ Created as Final
+4. `docs/spec/chat-privacy.md` — ✅ Created as Final
+5. `docs/spec/attachment-moderation.md` — ✅ Created as Final
+6. ⏳ Extend `docs/spec/assets.md` pipeline with step 4b: content analysis (auto-caption, image moderation) — pending asset spec v2
+7. ✅ `docs/spec/quests-encounters.md` — quests, encounters, factions (created)
 
 ### Short-term (split oversized epics)
 
@@ -473,9 +473,9 @@
 
 ### Medium-term (create missing epics and tickets)
 
-1. `epic-npcs.md` — dedicated NPC epic
-2. `epic-inventory.md` — dedicated inventory epic
-3. `epic-items.md` — dedicated items epic (separate from extensions)
+1. `epic-npcs.md` — already exists (Draft status)
+2. `epic-inventory.md` — already exists (Draft status)
+3. `epic-items.md` — already exists (Draft status)
 4. `epic-social-interaction.md` already exists — needs spec doc
 
 ### Long-term (reconciliation)
