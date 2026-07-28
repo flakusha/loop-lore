@@ -1,6 +1,6 @@
 # Items Specification
 
-**Status:** Draft
+**Status:** Final
 **Authoritative source:** `src/` and `AGENTS.md`
 
 ---

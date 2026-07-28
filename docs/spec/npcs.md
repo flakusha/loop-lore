@@ -1,6 +1,6 @@
 # NPC Specification
 
-**Status:** Draft
+**Status:** Final
 **Supersedes:** NPC sections in `docs/spec/actors.md` and `.plan/epics/epic-world-locations.md`
 **Authoritative source:** `src/` and `AGENTS.md`
 
