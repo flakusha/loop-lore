@@ -23,24 +23,55 @@ This epic assumes the confirmation/quality gating flow from
 `epic-assistant-gm-flows.md` still applies; it adds the _routing_ and _media_
 layers on top.
 
-## Stable Diffusion Integration
+## Image Generation Integration
+
+### Primary Backend: ComfyUI
+
+ComfyUI is the first-class citizen. Finalized workflow files (JSON) are the API
+contract. The existing HTTP client (`src/generation/providers/comfyui.ts`) submits
+workflow JSON, polls for completion, and retrieves images.
+
+### Secondary Backend: sd.cpp Server
+
+sd.cpp in server mode provides simpler single-model calls via OpenAI, WebUI, or
+sdcpp API families. Good for fast txt2img and basic img2img.
 
 ### Generation Targets
 
-| Entity    | Asset kind     |
-| --------- | -------------- |
-| Character | Portrait       |
-| Item      | Icon / render  |
-| Location  | Scene art      |
-| World     | Map / mood art |
+| Entity    | Asset kind     | Model (Primary)       | Model (Fallback)      |
+| --------- | -------------- | --------------------- | --------------------- |
+| Character | Portrait       | FLUX.1 Kontext        | Qwen Image Edit       |
+| Item      | Icon / render  | FLUX.1 Kontext        | Qwen Image Edit       |
+| Location  | Scene art      | FLUX.1 Kontext        | Qwen Image Edit       |
+| World     | Map / mood art | FLUX.1 Kontext        | Qwen Image Edit       |
+
+### Editing Models (Tested 2026-07-28)
+
+| Model | Status | VRAM | Notes |
+|-------|--------|------|-------|
+| FLUX.1 Kontext | Not tested | 4-6GB (--clip-on-cpu) | High priority, best potential |
+| Qwen Image Edit | Works | >20GB real | Slow, needs layer rotation |
+| Krea 2 Edit | Not working | ~12GB | Needs retest |
+| Klein 4B/9B | Strange results | 4-16GB | Needs investigation |
+| LoRA | Works | Varies | Coeff 0.3-0.7 typical |
+
+### Request Interface
 
 ```typescript
-interface SDRequest {
+interface ImageGenRequest {
   prompt: string;
   negative_prompt?: string;
-  entity_ref: EntityRef;
-  size: [number, number,];
+  entity_ref?: EntityRef;
+  size: [number, number];
   seed?: number;
+  // Editing
+  mode: "txt2img" | "edit" | "style" | "upscale";
+  ref_image?: string; // path or base64 for edit/style modes
+  mask_image?: string; // path or base64 for inpainting (low priority)
+  lora?: { name: string; strength: number }; // 0.1-1.0, typical 0.3-0.7
+  // Backend routing
+  backend: "comfyui" | "sd-server";
+  workflow_template?: string; // ComfyUI template id
 }
 ```
 
@@ -82,17 +113,34 @@ interface ScenarioSource {
 
 ## Tasks
 
-- [ ] Stable Diffusion request/response adapter
-- [ ] Entity→asset mapping for characters/items/locations/worlds
+### Phase 1: Core Image Generation (MVP)
+- [ ] Image generation request/response adapter (ComfyUI primary, sd.cpp secondary)
+- [ ] `/image <prompt>` command (txt2img via ComfyUI workflow)
+- [ ] Entity-to-asset mapping for characters/items/locations/worlds
+- [ ] Backend routing logic (ComfyUI for complex, sd.cpp for simple)
+
+### Phase 2: Text-Guided Editing (High Priority)
+- [ ] `/image edit <prompt> --ref <file>` command (FLUX.1 Kontext template)
+- [ ] FLUX.1 Kontext ComfyUI workflow template
+- [ ] Qwen Image Edit ComfyUI workflow template (fallback)
+- [ ] LoRA application in workflows (LoraLoader node, coeff 0.3-0.7)
+
+### Phase 3: Supporting Features (Medium Priority)
+- [ ] `/image style <ref-image>` command (Krea 2 style reference or LoRA)
+- [ ] `/image upscale <file>` command (ESRGAN template)
 - [ ] Intent detection model + routing table
+
+### Phase 4: Advanced Features (Lower Priority)
+- [ ] `/image edit <prompt> --mask <file>` command (inpainting, low priority)
 - [ ] Approved tool-execution allowlist + policy
 - [ ] External API call policy gate
 - [ ] Scenario source store + reuse in generation
-- [ ] Bridge scenario source ↔ blog world seed
+- [ ] Bridge scenario source to blog world seed
 
 ## Files
 
-- `src/assistant/sd.ts` — Stable Diffusion adapter (TODO: create)
+- `src/assistant/commands/image.ts` — /image command with subcommands (TODO: create)
+- `src/assistant/sd.ts` — Image generation adapter (ComfyUI + sd.cpp) (TODO: create)
 - `src/assistant/intent.ts` — intent detection + routing (TODO: create)
 - `src/assistant/tools.ts` — approved tool execution (TODO: create)
 - `src/assistant/scenario-source.ts` — scenario store (shared w/ blog) (TODO: create)
@@ -147,20 +195,44 @@ registerCommand("improve", (args,): CommandResult => {
 
 ### `/image` Command (To Create)
 
+ComfyUI is the primary backend. Finalized workflow files are the API contract.
+sd.cpp in server mode is secondary for simpler single-model calls.
+
 ```typescript
 // src/assistant/commands/image.ts
 import { type CommandResult, registerCommand, } from "./registry";
 
 registerCommand("image", async (args, ctx,): Promise<CommandResult> => {
-  const prompt = args.join(" ",).trim();
-  if (!prompt) {
+  const [subcommand, ...rest] = args;
+  const prompt = rest.join(" ",).trim();
+
+  // /image <prompt> — txt2img
+  // /image edit <prompt> --ref <file> — instruction-based edit (FLUX.1 Kontext)
+  // /image edit <prompt> --mask <file> — inpainting (low priority, users prefer Krita)
+  // /image style <ref-image> — style transfer (Krea 2 style reference or LoRA)
+  // /image upscale <file> — ESRGAN/RealESRGAN upscaling
+
+  if (!subcommand || subcommand === "edit" && !prompt) {
     return {
-      systemMessage: "Usage: /image <prompt> — generate an image from text.",
+      systemMessage: `**Usage:**
+/image <prompt> — generate image from text
+/image edit <prompt> --ref <file> — edit image with instruction
+/image style <ref-image> — apply style from reference
+/image upscale <file> — upscale image`,
       handled: true,
     };
   }
-  // TODO: Call Stable Diffusion adapter (src/assistant/sd.ts)
-  // TODO: Return image asset link in response
+
+  // Route to appropriate ComfyUI workflow template:
+  // - txt2img: basic text-to-image template
+  // - edit: FLUX.1 Kontext template (primary) or Qwen Image Edit (fallback)
+  // - style: Krea 2 style reference or LoRA-based
+  // - upscale: ESRGAN template
+
+  // LoRA application: coefficient 0.3-0.7 typical
+  // FLUX.1 Kontext: untested but high priority, 4-6GB VRAM with --clip-on-cpu
+  // Qwen Image Edit: tested, works but >20GB real usage, needs layer rotation
+
   return {
     systemMessage: `**Image generation queued:** ${prompt}`,
     handled: true,
