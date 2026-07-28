@@ -935,7 +935,7 @@ export function adminRoutes(opts: { database: Db; config: Config },): Elysia {
         }
 
         const { runAutoRotation, } = await import("../crypto/key-rotation");
-        const rotationDays = opts.config.encryption.keyRotationDays;
+        const rotationDays = opts.config.encryption.keyRotationDays ?? 0;
 
         if (rotationDays <= 0) {
           return jsonError({
