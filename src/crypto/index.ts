@@ -36,3 +36,15 @@ export type { RotationResult, RotationSummary, } from "./key-rotation";
 export { compressThenEncrypt, decryptThenDecompress, extractKeyIdFromPayload, isEncryptedPayload, } from "./pipeline";
 export type { EncryptedPayload, PipelineConfig, } from "./pipeline";
 export { getSmk, initSmk, isEncryptionEnabled, } from "./smk";
+export {
+  encryptAssetBlob,
+  decryptAssetBlob,
+  isEncryptedAsset,
+} from "./asset-encryption";
+export type { AssetEncryptionResult, } from "./asset-encryption";
+export {
+  initAnonymousMode,
+  isAnonymousModeEnabled,
+  getAnonymousDisplayName,
+  getAnonymousAvatar,
+} from "./anonymous";
