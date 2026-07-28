@@ -186,3 +186,49 @@ Items completed and merged to master:
 - **Epic 13 (Frontend Responsive)**: ✅ Complete — mobile breakpoints, touch targets, keyboard shortcuts, HTMX implemented — merged to master
 - **Epic 19 (Chat Notifications)**: ✅ Complete — cross-chat SSE, read-state schema, unread badge, toast implemented — merged to master
 - **Epic 10 (Generation Foundation)**: ✅ Complete — tool-call loop, provider failover, SSE reconnect implemented — merged to master
+
+
+---
+
+## Deduplication & Gap Analysis (2026-07-28)
+
+See docs/meta/analysis-dedup-tasks.md for the high-level dedup matrix.
+This section contains the actionable task proposals derived from that analysis.
+
+### Actionable Task Proposals
+
+#### Priority 1 - Close Critical Spec Gaps
+
+| Task | Spec File |
+| --- | --- |
+| Finalize social-interaction spec | docs/spec/social-interaction.md |
+| Finalize chat-privacy spec | docs/spec/chat-privacy.md |
+| Finalize worlds spec | docs/spec/worlds.md |
+| Finalize items/inventory specs | docs/spec/items.md, docs/spec/inventory.md |
+| Create attachment-moderation spec | docs/spec/attachment-moderation.md |
+| Create character-migration spec | docs/spec/character-migration.md |
+| Create licensing spec | docs/spec/licensing.md |
+
+#### Priority 2 - Cross-Mechanics Gap Tickets (from integration matrix)
+
+| Gap ID | Systems | Proposed Ticket |
+| --- | --- | --- |
+| G1 | Battle + Items | TASK-battle-item-integration |
+| G2 | Battle + Social | TASK-battle-social-chests |
+| G3 | Battle + NPC/Actor | TASK-battle-npc-ai |
+| G4 | Battle + Weather | TASK-battle-environment |
+| G5 | Resolution + all combat/social/magic | TASK-resolution-integration |
+| G6 | NSFW + Housing | TASK-nsfw-housing |
+| G7 | NSFW + Weather | TASK-nsfw-weather |
+| G8 | NSFW + Social | TASK-nsfw-social |
+| G9 | NSFW + Disease | TASK-nsfw-disease |
+| G10 | Housing + Companion | TASK-housing-companion |
+| G11 | Crafting + Magic | TASK-crafting-enchanting |
+
+#### Phase Execution Order
+
+1. Phase 1 (Cleanup) - Done
+2. Phase 2 (Spec Gaps) - In progress
+3. Phase 3 (Cross-Mechanics G1-G11 tickets)
+4. Phase 4 (Split oversized epics, create missing epics)
+5. Phase 5 (Verification: bun run check, bun test, docs:gen)
