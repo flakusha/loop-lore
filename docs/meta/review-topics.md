@@ -53,7 +53,7 @@
 
 ### Gaps & Issues
 
-1. `docs/spec/social-interaction.md` exists and is marked **Implemented** (was Draft).
+1. `docs/spec/social-interaction.md` exists and is marked **Final** (was Draft).
 - [ ] Reconcile character relationships (spec) with social interaction epic (plan)
 - [ ] Add NPC-to-NPC interaction section to the social interaction spec
 - [ ] Define relationship persistence rules in `docs/spec/actors.md`
