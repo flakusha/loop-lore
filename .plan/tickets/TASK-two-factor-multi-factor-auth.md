@@ -3,7 +3,7 @@
 **Status:** ⬜ Not Started
 **Priority:** medium
 **Effort:** Medium
-**Epic:** epic-2fa-mfa
+**Epic:** epic-two-factor-auth
 
 ## Summary
 

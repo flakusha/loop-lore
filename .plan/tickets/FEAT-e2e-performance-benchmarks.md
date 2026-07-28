@@ -3,7 +3,7 @@
 **Status:** ⬜ Not Started
 **Priority:** medium
 **Effort:** Medium
-**Epic:** epic-e2e-performance
+**Epic:** epic-testing-benchmarking
 
 ## Summary
 

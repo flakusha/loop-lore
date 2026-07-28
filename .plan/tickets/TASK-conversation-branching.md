@@ -2,6 +2,7 @@
 
 **Status:** ⬜ Not Started
 **Priority:** Medium
+**Epic:** epic-conversation-branching
 **Effort:** Med
 **Source:** Roadmap migration, 2026-07-19
 
