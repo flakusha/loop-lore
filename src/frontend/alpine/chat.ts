@@ -1,4 +1,5 @@
 // ── Chat page component (chat.html) — core state + init ────
+import type { AlpineState, ChatState, } from "./types";
 import { chatActions, } from "./chat-actions";
 import { chatActivity, } from "./chat-activity";
 import { chatEditing, } from "./chat-editing";
@@ -9,15 +10,14 @@ import { chatManagement, } from "./chat-management";
 import { chatMessages, } from "./chat-messages";
 import { chatPanels, } from "./chat-panels";
 import { chatSettings, } from "./chat-settings";
-import { chatUtils, } from "./chat-utils";
+import { chatUtils, initAnonymousModeCheck, } from "./chat-utils";
 import { chatVariants, } from "./chat-variants";
-import { jsonParseOr, } from "./json";
+import { createMoodPanelState, } from "./mood-panel";
 import { getLogger, } from "./logger";
+import { jsonParseOr, } from "./json";
 import { memoryPanel, } from "./memory-panel";
 import { moodState, } from "./mood";
-import { createMoodPanelState, } from "./mood-panel";
 import { rpgStats, } from "./rpg-stats";
-import type { AlpineState, ChatState, } from "./types";
 
 const g = globalThis as Record<string, unknown>;
 
@@ -47,6 +47,8 @@ globalThis.chatState = function() {
     continuingMessageId: null as string | null,
     isContinuing: false,
     _generationEventSource: null as EventSource | null,
+    chats: [] as { id: string; name?: string }[],
+    chats: [] as { id: string; name?: string }[],
     chats: [] as { id: string; name?: string }[],
     chats: [] as { id: string; name?: string }[],
     activeChat: null as string | null,
@@ -200,6 +202,9 @@ globalThis.chatState = function() {
       await this.loadChats();
       this.loadUserInfo();
       this.connectActivitySSE();
+
+      // Initialize anonymous mode check
+      await initAnonymousModeCheck();
 
       const params = new URLSearchParams(location.search,);
       const chatId = params.get("chatid",);
