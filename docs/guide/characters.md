@@ -128,7 +128,7 @@ Comma-separated in character editor. Filter on characters list. Suggested: `fant
 
 ## See Also
 
-- `docs/spec/character-setup.md` — Technical spec
+- `docs/spec/character-spec.md` — Technical spec
 - `docs/spec/actors.md` — DB schema and field mapping
 - `docs/frontend/characters.md` — Character list and edit page
 - `docs/frontend/chat/overview.md` — Chat types
