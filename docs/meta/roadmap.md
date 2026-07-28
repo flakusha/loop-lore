@@ -60,7 +60,7 @@ See `.plan/backlog.md` § Quick Wins for the full queue (Q1–Q5).
 | -------------------------------- | ------------ | --------------------------------- |
 | Advanced Memory Systems          | 🟡 Partial   | `docs/spec/memory-system.md`      |
 | Lorebook/World Info              | 🟡 Partial   | `docs/spec/actors.md`             |
-| Character Cards (V2/V3 PNG/JSON) | 🟡 Partial   | `docs/spec/character-setup.md`    |
+| Character Cards (V2/V3 PNG/JSON) | 🟡 Partial   | `docs/spec/character-spec.md`     |
 | Streaming Responses              | ✅ Built     | `src/generation/stream-buffer.ts` |
 | Multi-modal Support              | 🟡 Partial   | Image gen built; audio/video not  |
 | Plugin System                    | 🟡 Partial   | `src/plugins/` skeleton; no API   |

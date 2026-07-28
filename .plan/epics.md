@@ -1,3 +1,5 @@
+# DEPRECATED — Use docs/meta/epics.md instead. This file is auto-generated upstream and now stale.
+
 # Epics Consolidation
 
 **Last Updated:** 2026-07-26
@@ -126,7 +128,7 @@ Deferred or long-term infrastructure work.
 | LLM Request Throughput & Scheduling   | ⬜ Not Started | Medium   | `epic-llm-queue.md`                       |
 | Platform Integrations                 | 📝 Draft       | Low      | `epic-platform-integrations.md`           |
 | Testing & Benchmarking                | ⬜ Not Started | High     | `epic-testing-benchmarking.md`            |
-| Pre-Compiled Hot Binary Modules        | ⬜ Not Started | Medium   | `epic-precompiled-hot-binaries.md`      |
+| Pre-Compiled Hot Binary Modules       | ⬜ Not Started | Medium   | `epic-precompiled-hot-binaries.md`        |
 | Embeddable Engine (Far Fetched)       | ⬜ Not Started | Low      | `epic-embeddable-engine-game-frontend.md` |
 | OpenAPI-Driven API Reference          | ⬜ Not Started | High     | `epic-openapi-reference.md`               |
 
@@ -263,7 +265,7 @@ Tasks that creatively extend existing epics — adding new layers, mechanics, an
 | 53 | DB & Asset Snapshot Recovery                 | 🔵 Research    | High     | `epic-db-asset-snapshot-recovery.md` |
 | 54 | BYOK API Keys                                | ⬜ Not Started | High     | `epic-byok-api-keys.md`              |
 | 55 | BYOK Local Models                            | ⬜ Not Started | High     | `epic-byok-local-models.md`          |
-| 56 | Pre-Compiled Hot Binary Modules                | ⬜ Not Started | Medium   | `epic-precompiled-hot-binaries.md`  |
+| 56 | Pre-Compiled Hot Binary Modules              | ⬜ Not Started | Medium   | `epic-precompiled-hot-binaries.md`   |
 
 ---
 
