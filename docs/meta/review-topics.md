@@ -13,7 +13,7 @@
 | File                                                | Type   | Status                                                                                          |
 | --------------------------------------------------- | ------ | ----------------------------------------------------------------------------------------------- |
 | `docs/spec/character-spec.md`                       | Spec   | ✅ Comprehensive — fields, NSFW, impersonation, format conversion, API design, validation modes |
-| `docs/spec/character-setup.md`                      | Spec   | ⚠️ Superseded by character-spec.md but still referenced                                          |
+| `docs/spec/character-spec.md`                      | Spec   | ⚠️ Superseded by character-spec.md but still referenced                                          |
 | `docs/spec/actors.md`                               | Spec   | ✅ Actor data model, memories, notes, lorebooks, items, economics                               |
 | `.plan/epics/epic-character-core-system.md`         | Epic   | ✅ Covers traits, personality integrity, mood, relationships, licensing, avatars                |
 | `.plan/tickets/TASK-character-core-system.md`       | Ticket | ✅ Exists                                                                                       |
@@ -24,7 +24,7 @@
 
 ### Gaps & Issues
 
-1. **`docs/spec/character-setup.md` is superseded but still linked** — The character-spec.md says it supersedes it, but `docs/spec/character-setup.md` still exists and is referenced from the epic's "References" section. Either delete it or update the reference.
+1. **`docs/spec/character-spec.md` is superseded but still linked** — The character-spec.md says it supersedes it, but `docs/spec/character-spec.md` still exists and is referenced from the epic's "References" section. Either delete it or update the reference.
 2. **No spec for character-to-character interaction rules** — The character-spec.md defines impersonation rules but not interaction mechanics (how characters interact with each other in chat, relationship-based dialogue modifiers, etc.).
 3. **Character review workflow is underspecified** — The spec defines draft/pending_review/approved/rejected/archived states but the review API endpoints are thin. No spec for review escalation or admin override workflows.
 4. **No character migration spec** — The character-spec.md mentions migration but there's no `docs/spec/character-migration.md` with detailed migration paths between spec versions.
@@ -32,7 +32,7 @@
 
 ### Recommended Actions
 
-- [ ] Delete or archive `docs/spec/character-setup.md` (superseded)
+- [ ] Delete or archive `docs/spec/character-spec.md` (superseded)
 - [ ] Create `docs/spec/character-interactions.md` — interaction rules, relationship-based dialogue modifiers
 - [ ] Create `docs/spec/character-migration.md` — detailed migration paths
 - [ ] Create `docs/spec/licensing.md` — legal-grade license definitions
@@ -455,7 +455,7 @@
 
 ### 4. Stale References
 
-- `docs/spec/character-setup.md` is superseded by `docs/spec/character-spec.md` — should be archived or deleted
+- `docs/spec/character-spec.md` is superseded by `docs/spec/character-spec.md` — should be archived or deleted
 - `docs/meta/plan.md` references epics that have been renamed or restructured
 - Several `.plan/tickets/` files reference epics that don't exist or have been split
 
@@ -487,7 +487,7 @@
 
 ### Long-term (reconciliation)
 
-1. Archive `docs/spec/character-setup.md`
+1. Archive `docs/spec/character-spec.md`
 2. Reconcile all cross-references between specs and epics
 3. Update `.plan/tickets/index.json` to reflect current state
 4. Update `docs/meta/plan.md` to reflect current epic numbering
