@@ -922,6 +922,30 @@ export function adminRoutes(opts: { database: Db; config: Config },): Elysia {
           },);
         }
         return jsonResponse(entry,);
+      },)
+      // ── Manual key rotation trigger ─────────────────────────
+      .post("/api/admin/rotate-expired-keys", async (ctx: any,) => {
+        const { userRole, } = ctx;
+        if (!hasAdminAccess(userRole,)) {
+          return jsonError({
+            message: "Admin access required",
+            status: HttpStatus.Forbidden,
+            code: ErrorCode.Forbidden,
+          },);
+        }
+
+        const { runAutoRotation, } = await import("../crypto/key-rotation");
+        const rotationDays = opts.config.encryption.keyRotationDays;
+
+        if (rotationDays <= 0) {
+          return jsonError({
+            message: "Auto-rotation is disabled (keyRotationDays = 0)",
+            status: HttpStatus.BadRequest,
+          },);
+        }
+
+        const result = await runAutoRotation(opts.database, rotationDays,);
+        return jsonResponse(result,);
       },) as unknown as Elysia
   );
 }
