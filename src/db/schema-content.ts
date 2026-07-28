@@ -22,6 +22,8 @@ export interface Assets {
   duration_secs: number | null;
   alt_text: string | null;
   created_at: Generated<string>;
+  encryption_tier: Generated<string>;
+  encrypted_key_id: string | null;
 }
 
 // ── Asset Links ───────────────────────────────────────────────
