@@ -33,7 +33,7 @@
 ### Recommended Actions
 
 - [x] Delete or archive `docs/spec/character-spec.md` (superseded by `character-spec.md`, file already deleted)` (superseded)
-- [ ] Create `docs/spec/character-interactions.md` — interaction rules, relationship-based dialogue modifiers
+- [x] Create `docs/spec/character-interactions.md` — created as Final
 - [x] Create `docs/spec/character-migration.md` (completed as Final)md` — detailed migration paths
 - [x] Create `docs/spec/licensing.md` (completed as Final)md` — legal-grade license definitions
 - [ ] Add review escalation workflow to `docs/spec/character-spec.md` §5.4
@@ -81,10 +81,10 @@
 ### Recommended Actions
 
 - [ ] Create `docs/spec/npcs.md` — NPC data model, behavior system, memory, interaction patterns
-- [ ] Create `.plan/epics/epic-npcs.md` — dedicated NPC epic with phased implementation
-- [ ] Create `.plan/tickets/TASK-npc-behavior.md` — NPC behavior state machine
-- [ ] Create `.plan/tickets/TASK-npc-memory.md` — NPC memory system
-- [ ] Create `.plan/tickets/TASK-npc-inventory.md` — NPC inventory and trading
+- [x] Create `.plan/epics/epic-npcs.md` — already exists (draft status)
+- [x] Create `.plan/tickets/TASK-npc-behavior.md` — created
+- [x] Create `.plan/tickets/TASK-npc-memory.md` — created
+- [x] Create `.plan/tickets/TASK-npc-inventory.md` — created
 - [ ] Add NPC section to `docs/spec/actors.md` (expand the "Draft" section into a full spec)
 
 ---
@@ -272,7 +272,7 @@
 ### Recommended Actions
 
 - [ ] Create `docs/spec/inventory.md` — inventory data model, capacity, weight, organization
-- [ ] Create `.plan/epics/epic-inventory.md` — dedicated inventory epic
+- [x] Create `.plan/epics/epic-inventory.md` — already exists (draft status)
 - [ ] Create `.plan/tickets/TASK-inventory-management.md` — inventory UI and management
 - [ ] Create `.plan/tickets/TASK-inventory-weight.md` — weight/encumbrance system
 - [ ] Create `.plan/tickets/TASK-inventory-persistence.md` — inventory persistence across worlds
@@ -303,7 +303,7 @@
 ### Recommended Actions
 
 - [ ] Create `docs/spec/items.md` — item type taxonomy, properties, rarity, crafting, economics
-- [ ] Create `.plan/epics/epic-items.md` — dedicated items epic (separate from extensions)
+- [x] Create `.plan/epics/epic-items.md` — already exists (draft status)
 - [ ] Create `.plan/tickets/TASK-item-types.md` — item type taxonomy (usable, consumable, equippable, tradeable, quest, etc.)
 - [ ] Create `.plan/tickets/TASK-item-crafting.md` — crafting system
 - [ ] Create `.plan/tickets/TASK-item-rarity.md` — rarity system
