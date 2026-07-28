@@ -3,15 +3,22 @@
  *
  * Core CRUD operations for the polymorphic asset system.
  * Handles file storage (local), DB records, and linking.
+ * Supports optional encryption for standard/private tier assets.
  */
 import type { Kysely, } from "kysely";
-import { existsSync, mkdirSync, unlinkSync, writeFileSync, } from "node:fs";
+import { existsSync, mkdirSync, unlinkSync, writeFileSync, readFileSync, } from "node:fs";
 import { join, resolve, } from "node:path";
 import type { AssetType as AssetTypeT, } from "../db/enums";
 import { AssetLinkEntity, AssetType, AssetVisibility, StorageBackend, } from "../db/enums";
 import type { DB, } from "../db/schema";
 import { uid, } from "../utils";
 import { extractImageMetadata, } from "./metadata";
+import {
+  encryptAssetBlob,
+  decryptAssetBlob,
+} from "../crypto/asset-encryption";
+import type { ChatKey, } from "../crypto/chat-keys";
+import type { PipelineConfig, } from "../crypto/pipeline";
 
 export interface AssetRecord {
   id: string;
@@ -28,6 +35,8 @@ export interface AssetRecord {
   duration_secs: number | null;
   alt_text: string | null;
   created_at: string;
+  encryption_tier: string;
+  encrypted_key_id: string | null;
 }
 
 export interface CreateAssetInput {
@@ -40,6 +49,10 @@ export interface CreateAssetInput {
   altText?: string;
   width?: number;
   height?: number;
+  encryptionTier?: string;
+  chatKey?: ChatKey | null;
+  keyId?: string | null;
+  pipelineConfig?: PipelineConfig;
 }
 
 export interface AssetLinkInput {
@@ -199,12 +212,35 @@ export interface UnshareAssetOpts {
 
 /**
  * Create an asset record and store the file.
+ * Optionally encrypts the blob if encryption tier is set and chatKey is provided.
  */
 export async function createAsset({ database, input, uploadDir, }: CreateAssetOpts,): Promise<AssetRecord> {
   const id = uid();
-  const storagePath = storeFile(uploadDir, id, input.filename, input.buffer,);
 
-  // Extract image metadata from buffer headers
+  // Determine encryption tier (default: public)
+  const encryptionTier = input.encryptionTier ?? "public";
+
+  // Encrypt blob if needed
+  let storageBuffer = input.buffer;
+  let encryptedKeyId: string | null = null;
+
+  if (encryptionTier !== "public" && input.chatKey && input.keyId && input.pipelineConfig) {
+    const result = await encryptAssetBlob(
+      input.buffer,
+      input.chatKey,
+      input.keyId,
+      input.pipelineConfig,
+      encryptionTier,
+    );
+    if (result.encrypted) {
+      storageBuffer = result.data;
+      encryptedKeyId = result.keyId;
+    }
+  }
+
+  const storagePath = storeFile(uploadDir, id, input.filename, storageBuffer,);
+
+  // Extract image metadata from original buffer (before encryption)
   let width = input.width ?? null;
   let height = input.height ?? null;
   let altText = input.altText ?? null;
@@ -235,6 +271,8 @@ export async function createAsset({ database, input, uploadDir, }: CreateAssetOp
     duration_secs: null,
     alt_text: altText,
     created_at: new Date().toISOString(),
+    encryption_tier: encryptionTier,
+    encrypted_key_id: encryptedKeyId,
   };
 
   await database
@@ -253,6 +291,8 @@ export async function createAsset({ database, input, uploadDir, }: CreateAssetOp
       height: asset.height,
       duration_secs: asset.duration_secs,
       alt_text: asset.alt_text,
+      encryption_tier: asset.encryption_tier,
+      encrypted_key_id: asset.encrypted_key_id,
     },)
     .execute();
 
@@ -370,6 +410,53 @@ export async function listAssets(
 export async function getAsset(database: Kysely<DB>, assetId: string,): Promise<AssetRecord | null> {
   const asset = await database.selectFrom("assets",).selectAll().where("id", "=", assetId,).executeTakeFirst();
   return (asset as AssetRecord | null) ?? null;
+}
+
+/**
+ * Get decrypted asset data. If asset is encrypted, decrypts using provided chat key.
+ * If asset is not encrypted, returns raw file data.
+ *
+ * @param database - Database connection
+ * @param assetId - Asset ID
+ * @param uploadDir - Upload directory path
+ * @param chatKey - Chat key for decryption (optional, required for encrypted assets)
+ * @returns Decrypted buffer or null if asset not found
+ */
+export async function getAssetData(
+  database: Kysely<DB>,
+  assetId: string,
+  uploadDir: string,
+  chatKey?: ChatKey,
+): Promise<Buffer | null> {
+  const asset = await getAsset(database, assetId,);
+  if (!asset) return null;
+
+  const filePath = getAssetFilePath(uploadDir, asset.storage_path,);
+  if (!existsSync(filePath,)) return null;
+
+  const fileData = readFileSync(filePath,);
+
+  // If asset is encrypted, decrypt it
+  if (asset.encryption_tier !== "public" && asset.encrypted_key_id) {
+    if (!chatKey) {
+      throw new Error("Chat key required to decrypt encrypted asset");
+    }
+    return decryptAssetBlob(fileData, chatKey);
+  }
+
+  return fileData;
+}
+
+/**
+ * Check if an asset is encrypted.
+ */
+export async function isAssetEncrypted(
+  database: Kysely<DB>,
+  assetId: string,
+): Promise<boolean> {
+  const asset = await getAsset(database, assetId,);
+  if (!asset) return false;
+  return asset.encryption_tier !== "public" && asset.encrypted_key_id !== null;
 }
 
 /**
