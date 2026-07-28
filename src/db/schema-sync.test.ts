@@ -80,7 +80,7 @@ describe("schema sync — migrated DB vs manifest", () => {
 
   test("manifest table count matches DB interface", () => {
     const manifestCount = SCHEMA.tableNames.length;
-    // 39 tables in DB interface (schema.ts) + 1 system table (data_migrations) + 14 character_system tables + 13 crafting/story tables + 9 NSFW tables + 1 model_comparisons
-    expect(manifestCount, "manifest should have 77 tables",).toBe(77,);
+    // 39 tables in DB interface (schema.ts) + 1 system table (data_migrations) + 14 character_system tables + 13 crafting/story tables + 9 NSFW tables + 1 model_comparisons + 5 blog tables
+    expect(manifestCount, "manifest should have 82 tables",).toBe(82,);
   });
 });
