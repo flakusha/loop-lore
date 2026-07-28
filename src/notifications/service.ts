@@ -45,6 +45,8 @@ const DEFAULT_PREFS: NotificationPreferences = {
     [NotificationType.CharacterUpdate]: false,
     [NotificationType.GmAction]: true,
     [NotificationType.System]: true,
+    [NotificationType.BlogPost]: true,
+    [NotificationType.BlogComment]: true,
   },
   mutedWorlds: [],
 };
@@ -362,5 +364,30 @@ export async function notifySystem(
     type: NotificationType.System,
     title: opts.title,
     body: opts.body,
+  },);
+}
+
+
+export async function notifyBlogPost(
+  db: Kysely<DB>,
+  opts: { userId: string; postId: string; title: string },
+): Promise<void> {
+  await new NotificationService(db,).create({
+    userId: opts.userId,
+    type: NotificationType.BlogPost,
+    title: `New blog post: ${opts.title}`,
+    data: { postId: opts.postId, },
+  },);
+}
+
+export async function notifyBlogComment(
+  db: Kysely<DB>,
+  opts: { userId: string; postId: string; commenterName: string },
+): Promise<void> {
+  await new NotificationService(db,).create({
+    userId: opts.userId,
+    type: NotificationType.BlogComment,
+    title: `${opts.commenterName} commented on your post`,
+    data: { postId: opts.postId, },
   },);
 }
