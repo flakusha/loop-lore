@@ -21,7 +21,7 @@ import { ensureTlsCerts, } from "./config/cert";
 import { generateNonce, } from "./middleware/csp-nonce";
 import { getDatabase, } from "./db/index";
 import { initDefaultHooks, } from "./generation/hooks";
-import { initSmk, } from "./crypto";
+import { initSmk, initAnonymousMode, } from "./crypto";
 import { initializeProviders, OpenAiCompatibleProvider, registerProvider, } from "./generation";
 
 const DOCS_PATH = join(import.meta.dir, "..", "docs", ".vitepress", "dist",);
@@ -242,6 +242,7 @@ async function start() {
   createLogger(config.logging,);
   initAgeGate(config.ageGate,);
   await initSmk(config.encryption,);
+  initAnonymousMode(config,);
 
   // ── Auto-discover SD backends if not configured ──────────
   if (!config.generation.providers.sd || config.generation.providers.sd.length === 0) {
