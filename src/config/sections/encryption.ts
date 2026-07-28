@@ -6,12 +6,14 @@ export const ENCRYPTION_DEFAULTS = {
   required: false,
   compressThreshold: 128,
   compressAlgorithm: "gzip" as const,
+  keyRotationDays: 90,
 } satisfies EncryptionConfig;
 
 export class EncryptionSection implements EncryptionConfig {
   required = ENCRYPTION_DEFAULTS.required;
   compressThreshold = ENCRYPTION_DEFAULTS.compressThreshold;
   compressAlgorithm = ENCRYPTION_DEFAULTS.compressAlgorithm;
+  keyRotationDays = ENCRYPTION_DEFAULTS.keyRotationDays;
   serverEncryptionKey?: string;
 
   constructor(overrides?: Partial<EncryptionConfig>,) {
@@ -42,6 +44,11 @@ export const encryptionMeta = {
       default: ENCRYPTION_DEFAULTS.compressAlgorithm,
       description: "Preferred compression algorithm",
     },
+    keyRotationDays: {
+      type: "integer",
+      default: ENCRYPTION_DEFAULTS.keyRotationDays,
+      description: "Days before auto-rotating actor keys. 0 = disabled.",
+    },
   },
-  required: ["required", "compressThreshold", "compressAlgorithm",] as const,
+  required: ["required", "compressThreshold", "compressAlgorithm", "keyRotationDays",] as const,
 };
